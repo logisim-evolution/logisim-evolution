@@ -71,7 +71,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     public void update(MapComponent map) {
       this.map = map;
     }
-    
+
     public MapComponent getMap() {
       return map;
     }
@@ -94,7 +94,7 @@ public class FPGAIOInformationContainer implements Cloneable {
 
   private IOComponentTypes MyType;
   protected BoardRectangle MyRectangle;
-  protected int myRotation = IOComponentTypes.rotationZero;
+  protected int myRotation = IOComponentTypes.ROTATION_ZERO;
   private Map<Integer, String> MyPinLocations;
   private HashSet<Integer> MyInputPins;
   private HashSet<Integer> MyOutputPins;
@@ -115,7 +115,7 @@ public class FPGAIOInformationContainer implements Cloneable {
   private boolean highlighted = false;
   private int nrOfRows = 4;
   private int nrOfColumns = 4;
-  private char Driving = LedArrayDriving.LedDefault;
+  private char Driving = LedArrayDriving.LED_DEFAULT;
   protected boolean selectable = false;
   protected int selectedPin = -1;
   protected MapListModel.MapInfo selComp = null;
@@ -125,10 +125,10 @@ public class FPGAIOInformationContainer implements Cloneable {
     MyRectangle = null;
     MyPinLocations = new HashMap<>();
     setNrOfPins(0);
-    MyPullBehavior = PullBehaviors.Unknown;
+    MyPullBehavior = PullBehaviors.UNKNOWN;
     MyActivityLevel = PinActivity.Unknown;
-    MyIOStandard = IoStandards.Unknown;
-    MyDriveStrength = DriveStrength.Unknown;
+    MyIOStandard = IoStandards.UNKNOWN;
+    MyDriveStrength = DriveStrength.UNKNOWN;
     MyLabel = null;
   }
 
@@ -138,10 +138,10 @@ public class FPGAIOInformationContainer implements Cloneable {
     MyRectangle = rect;
     MyPinLocations = new HashMap<>();
     setNrOfPins(0);
-    MyPullBehavior = PullBehaviors.Unknown;
+    MyPullBehavior = PullBehaviors.UNKNOWN;
     MyActivityLevel = PinActivity.Unknown;
-    MyIOStandard = IoStandards.Unknown;
-    MyDriveStrength = DriveStrength.Unknown;
+    MyIOStandard = IoStandards.UNKNOWN;
+    MyDriveStrength = DriveStrength.UNKNOWN;
     MyLabel = null;
     if (rect != null) rect.SetLabel(null);
     if (IOComponentTypes.SimpleInputSet.contains(Type)) {
@@ -172,10 +172,10 @@ public class FPGAIOInformationContainer implements Cloneable {
     MyRectangle = null;
     MyPinLocations = new HashMap<>();
     setNrOfPins(0);
-    MyPullBehavior = PullBehaviors.Unknown;
+    MyPullBehavior = PullBehaviors.UNKNOWN;
     MyActivityLevel = PinActivity.Unknown;
-    MyIOStandard = IoStandards.Unknown;
-    MyDriveStrength = DriveStrength.Unknown;
+    MyIOStandard = IoStandards.UNKNOWN;
+    MyDriveStrength = DriveStrength.UNKNOWN;
     MyLabel = null;
     ArrayList<String> InputLocs = new ArrayList<>();
     ArrayList<String> OutputLocs = new ArrayList<>();
@@ -190,22 +190,22 @@ public class FPGAIOInformationContainer implements Cloneable {
     int x = -1, y = -1, width = -1, height = -1;
     for (var attributeIndex = 0; attributeIndex < attrs.getLength(); attributeIndex++) {
       final var thisAttr = attrs.item(attributeIndex);
-      if (thisAttr.getNodeName().equals(BoardWriterClass.mapRotation)) {
+      if (thisAttr.getNodeName().equals(BoardWriterClass.MAP_ROTATION)) {
         myRotation = Integer.parseInt(thisAttr.getNodeValue());
       }
-      if (thisAttr.getNodeName().equals(BoardWriterClass.LocationXString)) {
+      if (thisAttr.getNodeName().equals(BoardWriterClass.LOCATION_X_STRING)) {
         x = Integer.parseInt(thisAttr.getNodeValue());
       }
-      if (thisAttr.getNodeName().equals(BoardWriterClass.LocationYString)) {
+      if (thisAttr.getNodeName().equals(BoardWriterClass.LOCATION_Y_STRING)) {
         y = Integer.parseInt(thisAttr.getNodeValue());
       }
-      if (thisAttr.getNodeName().equals(BoardWriterClass.WidthString)) {
+      if (thisAttr.getNodeName().equals(BoardWriterClass.WIDTH_STRING)) {
         width = Integer.parseInt(thisAttr.getNodeValue());
       }
-      if (thisAttr.getNodeName().equals(BoardWriterClass.HeightString)) {
+      if (thisAttr.getNodeName().equals(BoardWriterClass.HEIGHT_STRING)) {
         height = Integer.parseInt(thisAttr.getNodeValue());
       }
-      if (thisAttr.getNodeName().equals(BoardWriterClass.RectSetString)) {
+      if (thisAttr.getNodeName().equals(BoardWriterClass.RECT_SET_STRING)) {
         final var vals = thisAttr.getNodeValue().split(",");
         if (vals.length == 4) {
           try {
@@ -218,7 +218,7 @@ public class FPGAIOInformationContainer implements Cloneable {
           }
         }
       }
-      if (thisAttr.getNodeName().equals(BoardWriterClass.LedArrayInfoString)) {
+      if (thisAttr.getNodeName().equals(BoardWriterClass.LED_ARRAY_INFO_STRING)) {
         final var vals = thisAttr.getNodeValue().split(",");
         if (vals.length == 3) {
           try {
@@ -227,44 +227,44 @@ public class FPGAIOInformationContainer implements Cloneable {
             Driving = LedArrayDriving.getId(vals[2]);
           } catch (NumberFormatException e) {
             nrOfRows = nrOfColumns = 4;
-            Driving = LedArrayDriving.LedDefault;
+            Driving = LedArrayDriving.LED_DEFAULT;
           }
         }
       }
-      if (thisAttr.getNodeName().equals(BoardWriterClass.PinLocationString)) {
+      if (thisAttr.getNodeName().equals(BoardWriterClass.PIN_LOCATION_STRING)) {
         setNrOfPins(1);
         MyPinLocations.put(0, thisAttr.getNodeValue());
       }
-      if (thisAttr.getNodeName().equals(BoardWriterClass.MultiPinInformationString)) {
+      if (thisAttr.getNodeName().equals(BoardWriterClass.MULTI_PIN_INFORMATION_STRING)) {
         setNrOfPins(Integer.parseInt(thisAttr.getNodeValue()));
       }
-      if (thisAttr.getNodeName().startsWith(BoardWriterClass.MultiPinPrefixString)) {
+      if (thisAttr.getNodeName().startsWith(BoardWriterClass.MULTI_PIN_PREFIX_STRING)) {
         String Id =
-            thisAttr.getNodeName().substring(BoardWriterClass.MultiPinPrefixString.length());
+            thisAttr.getNodeName().substring(BoardWriterClass.MULTI_PIN_PREFIX_STRING.length());
         MyPinLocations.put(Integer.parseInt(Id), thisAttr.getNodeValue());
       }
-      if (thisAttr.getNodeName().equals(BoardWriterClass.LabelString)) {
+      if (thisAttr.getNodeName().equals(BoardWriterClass.LABEL_STRING)) {
         MyLabel = thisAttr.getNodeValue();
       }
-      if (thisAttr.getNodeName().equals(DriveStrength.DriveAttributeString)) {
+      if (thisAttr.getNodeName().equals(DriveStrength.DRIVE_ATTRIBUTE_STRING)) {
         MyDriveStrength = DriveStrength.getId(thisAttr.getNodeValue());
       }
-      if (thisAttr.getNodeName().equals(PullBehaviors.PullAttributeString)) {
+      if (thisAttr.getNodeName().equals(PullBehaviors.PULL_ATTRIBUTE_STRING)) {
         MyPullBehavior = PullBehaviors.getId(thisAttr.getNodeValue());
       }
-      if (thisAttr.getNodeName().equals(IoStandards.IOAttributeString)) {
+      if (thisAttr.getNodeName().equals(IoStandards.IO_ATTRIBUTE_STRING)) {
         MyIOStandard = IoStandards.getId(thisAttr.getNodeValue());
       }
-      if (thisAttr.getNodeName().equals(PinActivity.ActivityAttributeString)) {
+      if (thisAttr.getNodeName().equals(PinActivity.ACTIVITY_ATTRIBUTE_STRING)) {
         MyActivityLevel = PinActivity.getId(thisAttr.getNodeValue());
       }
-      if (thisAttr.getNodeName().contentEquals(BoardWriterClass.InputSetString)) {
+      if (thisAttr.getNodeName().contentEquals(BoardWriterClass.INPUT_SET_STRING)) {
         InputLocs.addAll(Arrays.asList(thisAttr.getNodeValue().split(",")));
       }
-      if (thisAttr.getNodeName().contentEquals(BoardWriterClass.OutputSetString)) {
+      if (thisAttr.getNodeName().contentEquals(BoardWriterClass.OUTPUT_SET_STRING)) {
         OutputLocs.addAll(Arrays.asList(thisAttr.getNodeValue().split(",")));
       }
-      if (thisAttr.getNodeName().contentEquals(BoardWriterClass.IOSetString)) {
+      if (thisAttr.getNodeName().contentEquals(BoardWriterClass.IO_SET_STRING)) {
         IOLocs.addAll(Arrays.asList(thisAttr.getNodeValue().split(",")));
       }
     }
@@ -318,10 +318,10 @@ public class FPGAIOInformationContainer implements Cloneable {
       }
     }
     /* End backward compatibility */
-    if (MyType.equals(IOComponentTypes.Pin)) MyActivityLevel = PinActivity.ActiveHigh;
+    if (MyType.equals(IOComponentTypes.Pin)) MyActivityLevel = PinActivity.ACTIVE_HIGH;
     MyRectangle = new BoardRectangle(x, y, width, height);
     if (MyLabel != null) MyRectangle.SetLabel(MyLabel);
-    
+
     if (MyType.equals(IOComponentTypes.LEDArray)) {
       NrOfExternalPins = NrOfPins;
       NrOfPins = nrOfRows * nrOfColumns;
@@ -331,30 +331,30 @@ public class FPGAIOInformationContainer implements Cloneable {
         MyOutputPins.add(i);
     }
   }
-  
+
   public void setArrayId(int val) {
     MyArrayId = val;
   }
-  
+
   public int getArrayId() {
     return MyArrayId;
   }
-  
+
   public void setMapRotation(int val) {
-    if ((val == IOComponentTypes.rotationCW90) 
-        || (val == IOComponentTypes.rotationCCW90)
-        || (val == IOComponentTypes.rotationZero))
+    if ((val == IOComponentTypes.ROTATION_CW_90)
+        || (val == IOComponentTypes.ROTATION_CCW_90)
+        || (val == IOComponentTypes.ROTATION_ZERO))
       myRotation = val;
   }
-  
+
   public int getMapRotation() {
     return myRotation;
   }
-  
+
   public int getExternalPinCount() {
     return NrOfExternalPins;
   }
-  
+
   public boolean hasMap() {
     boolean ret = false;
     for (var i = 0; i < NrOfPins; i++)
@@ -376,19 +376,19 @@ public class FPGAIOInformationContainer implements Cloneable {
     if (MyIOPins == null) return 0;
     return MyIOPins.size();
   }
-  
+
   public int getNrOfRows() {
     return nrOfRows;
   }
-  
+
   public int getNrOfColumns() {
     return nrOfColumns;
   }
-  
+
   public char getArrayDriveMode() {
     return Driving;
   }
-  
+
   public void setNrOfRows(int value) {
     nrOfRows = value;
   }
@@ -401,7 +401,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     Driving = value;
   }
 
-  
+
   public void edit(Boolean deleteButton, IOComponentsInformation IOcomps) {
     FPGAIOInformationSettingsDialog.GetSimpleInformationDialog(deleteButton, IOcomps, this);
   }
@@ -427,6 +427,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     MyActivityLevel = activity;
   }
 
+  @Override
   public Object clone() throws CloneNotSupportedException {
     return super.clone();
   }
@@ -468,7 +469,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     try {
       var result = doc.createElement(MyType.toString());
       result.setAttribute(
-          BoardWriterClass.RectSetString,
+          BoardWriterClass.RECT_SET_STRING,
           MyRectangle.getXpos()
               + ","
               + MyRectangle.getYpos()
@@ -477,13 +478,13 @@ public class FPGAIOInformationContainer implements Cloneable {
               + ","
               + MyRectangle.getHeight());
       if (MyLabel != null) {
-        var label = doc.createAttribute(BoardWriterClass.LabelString);
+        var label = doc.createAttribute(BoardWriterClass.LABEL_STRING);
         label.setValue(MyLabel);
         result.setAttributeNode(label);
       }
       if (MyType.equals(IOComponentTypes.LEDArray)) {
         result.setAttribute(
-            BoardWriterClass.LedArrayInfoString, 
+            BoardWriterClass.LED_ARRAY_INFO_STRING,
             nrOfRows
             + ","
             + nrOfColumns
@@ -492,16 +493,16 @@ public class FPGAIOInformationContainer implements Cloneable {
       }
       if (IOComponentTypes.hasRotationAttribute(MyType)) {
         switch (myRotation) {
-          case IOComponentTypes.rotationCW90 :
-          case IOComponentTypes.rotationCCW90 : {
-            result.setAttribute(BoardWriterClass.mapRotation, Integer.toString(myRotation));
+          case IOComponentTypes.ROTATION_CW_90:
+          case IOComponentTypes.ROTATION_CCW_90: {
+            result.setAttribute(BoardWriterClass.MAP_ROTATION, Integer.toString(myRotation));
             break;
           }
-          default : break;
+          default: break;
         }
       }
       if (MyInputPins != null && !MyInputPins.isEmpty()) {
-        var Set = doc.createAttribute(BoardWriterClass.InputSetString);
+        var Set = doc.createAttribute(BoardWriterClass.INPUT_SET_STRING);
         var s = new StringBuilder();
         var first = true;
         for (var i = 0; i < NrOfPins; i++)
@@ -514,7 +515,7 @@ public class FPGAIOInformationContainer implements Cloneable {
         result.setAttributeNode(Set);
       }
       if (MyOutputPins != null && !MyOutputPins.isEmpty()) {
-        var Set = doc.createAttribute(BoardWriterClass.OutputSetString);
+        var Set = doc.createAttribute(BoardWriterClass.OUTPUT_SET_STRING);
         var s = new StringBuilder();
         var first = true;
         for (var i = 0; i < NrOfPins; i++)
@@ -527,7 +528,7 @@ public class FPGAIOInformationContainer implements Cloneable {
         result.setAttributeNode(Set);
       }
       if (MyIOPins != null && !MyIOPins.isEmpty()) {
-        var Set = doc.createAttribute(BoardWriterClass.IOSetString);
+        var Set = doc.createAttribute(BoardWriterClass.IO_SET_STRING);
         var s = new StringBuilder();
         var first = true;
         for (var i = 0; i < NrOfPins; i++)
@@ -539,25 +540,25 @@ public class FPGAIOInformationContainer implements Cloneable {
         Set.setValue(s.toString());
         result.setAttributeNode(Set);
       }
-      if (MyDriveStrength != DriveStrength.Unknown
-          && MyDriveStrength != DriveStrength.DefaulStength) {
-        var drive = doc.createAttribute(DriveStrength.DriveAttributeString);
-        drive.setValue(DriveStrength.Behavior_strings[MyDriveStrength]);
+      if (MyDriveStrength != DriveStrength.UNKNOWN
+          && MyDriveStrength != DriveStrength.DEFAULT_STENGTH) {
+        var drive = doc.createAttribute(DriveStrength.DRIVE_ATTRIBUTE_STRING);
+        drive.setValue(DriveStrength.BEHAVIOR_STRINGS[MyDriveStrength]);
         result.setAttributeNode(drive);
       }
-      if (MyPullBehavior != PullBehaviors.Unknown && MyPullBehavior != PullBehaviors.Float) {
-        var pull = doc.createAttribute(PullBehaviors.PullAttributeString);
-        pull.setValue(PullBehaviors.Behavior_strings[MyPullBehavior]);
+      if (MyPullBehavior != PullBehaviors.UNKNOWN && MyPullBehavior != PullBehaviors.FLOAT) {
+        var pull = doc.createAttribute(PullBehaviors.PULL_ATTRIBUTE_STRING);
+        pull.setValue(PullBehaviors.BEHAVIOR_STRINGS[MyPullBehavior]);
         result.setAttributeNode(pull);
       }
-      if (MyIOStandard != IoStandards.Unknown && MyIOStandard != IoStandards.DefaulStandard) {
-        var stand = doc.createAttribute(IoStandards.IOAttributeString);
+      if (MyIOStandard != IoStandards.UNKNOWN && MyIOStandard != IoStandards.DEFAULT_STANDARD) {
+        var stand = doc.createAttribute(IoStandards.IO_ATTRIBUTE_STRING);
         stand.setValue(IoStandards.Behavior_strings[MyIOStandard]);
         result.setAttributeNode(stand);
       }
-      if (MyActivityLevel != PinActivity.Unknown && MyActivityLevel != PinActivity.ActiveHigh) {
-        var act = doc.createAttribute(PinActivity.ActivityAttributeString);
-        act.setValue(PinActivity.Behavior_strings[MyActivityLevel]);
+      if (MyActivityLevel != PinActivity.Unknown && MyActivityLevel != PinActivity.ACTIVE_HIGH) {
+        var act = doc.createAttribute(PinActivity.ACTIVITY_ATTRIBUTE_STRING);
+        act.setValue(PinActivity.BEHAVIOR_STRINGS[MyActivityLevel]);
         result.setAttributeNode(act);
       }
       return result;
@@ -642,12 +643,12 @@ public class FPGAIOInformationContainer implements Cloneable {
     if (index < 0 || index >= NrOfPins) return true;
     return pinIsMapped.get(index) != null;
   }
-  
+
   public MapComponent getPinMap(int index) {
     if (index < 0 || index >= NrOfPins) return null;
     return pinIsMapped.get(index).getMap();
   }
-  
+
   public int getMapPin(int index) {
     if (index < 0 || index >= NrOfPins) return -1;
     return pinIsMapped.get(index).pin;
@@ -664,7 +665,7 @@ public class FPGAIOInformationContainer implements Cloneable {
       String label) {
     MyType = Type;
     MyRectangle = rect;
-    rect.SetActiveOnHigh(active.equals(PinActivity.Behavior_strings[PinActivity.ActiveHigh]));
+    rect.SetActiveOnHigh(active.equals(PinActivity.BEHAVIOR_STRINGS[PinActivity.ACTIVE_HIGH]));
     setNrOfPins(0);
     MyPinLocations.put(0, loc);
     MyPullBehavior = PullBehaviors.getId(pull);
@@ -859,10 +860,10 @@ public class FPGAIOInformationContainer implements Cloneable {
     if (mapMode) {
       if (PartialMapArray == null) {
         PartialMapArray = new Integer[MyRectangle.getWidth()][MyRectangle.getHeight()];
-        IOComponentTypes.getPartialMapInfo(PartialMapArray, 
-            MyRectangle.getWidth(), 
-            MyRectangle.getHeight(), 
-            NrOfPins, 
+        IOComponentTypes.getPartialMapInfo(PartialMapArray,
+            MyRectangle.getWidth(),
+            MyRectangle.getHeight(),
+            NrOfPins,
             nrOfRows,
             nrOfColumns,
             myRotation,
@@ -899,15 +900,15 @@ public class FPGAIOInformationContainer implements Cloneable {
     }
     return false;
   }
-  
+
   public boolean selectedPinChanged(int xPos, int Ypos) {
     if (!(highlighted && selectable)) return false;
     if (PartialMapArray == null) {
       PartialMapArray = new Integer[MyRectangle.getWidth()][MyRectangle.getHeight()];
-      IOComponentTypes.getPartialMapInfo(PartialMapArray, 
-          MyRectangle.getWidth(), 
-          MyRectangle.getHeight(), 
-          NrOfPins, 
+      IOComponentTypes.getPartialMapInfo(PartialMapArray,
+          MyRectangle.getWidth(),
+          MyRectangle.getHeight(),
+          NrOfPins,
           nrOfRows,
           nrOfColumns,
           myRotation,
@@ -920,7 +921,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     }
     return false;
   }
-  
+
   public boolean isCompleteMap() {
     if (selComp == null) return true;
     var map = selComp.getMap();
@@ -952,7 +953,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     }
     return false;
   }
-  
+
   public boolean tryLedArrayMap(JPanel parent) {
     var map = selComp.getMap();
     if (selComp.getPin() >= 0 && selectedPin >= 0) {
@@ -999,9 +1000,9 @@ public class FPGAIOInformationContainer implements Cloneable {
       }
     }
     if (fact instanceof RgbLed) {
-      if (Driving == LedArrayDriving.RgbColumnScanning
-          || Driving == LedArrayDriving.RgbDefault
-          || Driving == LedArrayDriving.RgbRowScanning) {
+      if (Driving == LedArrayDriving.RGB_COLUMN_SCANNING
+          || Driving == LedArrayDriving.RGB_DEFAULT
+          || Driving == LedArrayDriving.RGB_ROW_SCANNING) {
         /* only if we have an RGB-array we are going to do something special */
         map.unmap(); /* remove all previous maps */
         return map.tryCompleteMap(this, selectedPin);
@@ -1085,7 +1086,7 @@ public class FPGAIOInformationContainer implements Cloneable {
     if (col == null) return;
     if (NrOfPins == 0 && selectable) {
       alpha = highlighted ? 150 : 100;
-      IOComponentTypes.paintPartialMap(g, 0, height, width, NrOfPins, nrOfRows, nrOfColumns, 
+      IOComponentTypes.paintPartialMap(g, 0, height, width, NrOfPins, nrOfRows, nrOfColumns,
           myRotation, x, y, col, alpha, MyType);
     }
     for (var i = 0; i < NrOfPins; i++) {

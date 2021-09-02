@@ -33,6 +33,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -54,27 +55,25 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
+    final var contents = new LineBuffer();
     final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     final var numOutputs = (1 << nrOfSelectBits);
     var space = " ";
     for (var i = 0; i < numOutputs; i++) {
-      final var binValue = IntToBin(i, nrOfSelectBits);
-      if (i == 10) space = "";
+      if (i == 7) space = "";
+      contents.pair("bin", IntToBin(i, nrOfSelectBits))
+              .pair("space", space)
+              .pair("i", i);
       if (HDL.isVHDL()) {
-        contents.add("   DecoderOut_" + i + space + "<= '1' WHEN sel = " + binValue + " AND");
-        contents.add(space + "                             Enable = '1' ELSE '0';");
+        contents.addLines(
+            "DecoderOut_{{i}}{{space}}<= '1' WHEN sel = {{bin}} AND",
+            "DecoderOut_{{i}}{{space}}<= '1' WHEN sel = {{bin}} AND",
+            "{{space}}                             Enable = '1' ELSE '0';");
       } else {
-        contents.add(
-            "   assign DecoderOut_"
-                + i
-                + space
-                + " = (Enable&(sel == "
-                + binValue
-                + ")) ? 1'b1 : 1'b0;");
+        contents.add("assign DecoderOut_{{i}}{{space}} = (Enable&(sel == {{bin}})) ? 1'b1 : 1'b0;");
       }
     }
-    return contents;
+    return contents.getWithIndent();
   }
 
   @Override
@@ -92,7 +91,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var comp = (NetlistComponent) mapInfo;
     final var nrOfSelectBits =
-        comp.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
+        comp.getComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     final var selectInputIndex = (1 << nrOfSelectBits);
     // first outputs
     for (var i = 0; i < selectInputIndex; i++)
@@ -101,7 +100,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.putAll(GetNetMap("Sel", true, comp, selectInputIndex, nets));
 
     // now connect enable input...
-    if (comp.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_ENABLE).booleanValue()) {
+    if (comp.getComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_ENABLE).booleanValue()) {
       map.putAll(GetNetMap("Enable", false, comp, selectInputIndex + 1, nets));
     } else {
       map.put("Enable", HDL.oneBit());

@@ -32,7 +32,6 @@ import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.fpga.data.FPGACommanderListModel;
 import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
-import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.proj.Project;
 import java.awt.Color;
 import java.awt.Component;
@@ -296,7 +295,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
 
   public void clearDRCTrace() {
     if (DRCTraceActive) {
-      ActiveDRCContainer.ClearMarks();
+      ActiveDRCContainer.clearMarks();
       DRCTraceActive = false;
       if (MyProject != null) MyProject.repaintCanvas();
     }
@@ -358,10 +357,10 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
   private void GenerateDRCTrace(SimpleDRCContainer dc) {
     DRCTraceActive = true;
     ActiveDRCContainer = dc;
-    if (dc.HasCircuit())
-      if (MyProject != null && !MyProject.getCurrentCircuit().equals(dc.GetCircuit()))
-        MyProject.setCurrentCircuit(dc.GetCircuit());
-    dc.MarkComponents();
+    if (dc.hasCircuit())
+      if (MyProject != null && !MyProject.getCurrentCircuit().equals(dc.getCircuit()))
+        MyProject.setCurrentCircuit(dc.getCircuit());
+    dc.markComponents();
     if (MyProject != null) MyProject.repaintCanvas();
   }
 

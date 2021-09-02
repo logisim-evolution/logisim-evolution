@@ -196,7 +196,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 
     @Override
     public Dimension getDimension(Object orientation) {
-      val pad = 2 * AppPreferences.IconBorder;
+      final var pad = 2 * AppPreferences.ICON_BORDER;
       return new Dimension(AppPreferences.getIconSize() + pad, AppPreferences.getIconSize() + pad);
     }
 
@@ -227,8 +227,8 @@ class LayoutToolbarModel extends AbstractToolbarModel {
       if (tool == haloedTool && AppPreferences.ATTRIBUTE_HALO.getBoolean()) {
         gfx.setColor(Canvas.HALO_COLOR);
         gfx.fillRect(
-            AppPreferences.IconBorder,
-            AppPreferences.IconBorder,
+            AppPreferences.ICON_BORDER,
+            AppPreferences.ICON_BORDER,
             AppPreferences.getIconSize(),
             AppPreferences.getIconSize());
       }
@@ -237,7 +237,7 @@ class LayoutToolbarModel extends AbstractToolbarModel {
       gfx.setColor(Color.BLACK);
       final var gfxCopy = gfx.create();
       final var c = new ComponentDrawContext(destination, null, null, gfx, gfxCopy);
-      tool.paintIcon(c, AppPreferences.IconBorder, AppPreferences.IconBorder);
+      tool.paintIcon(c, AppPreferences.ICON_BORDER, AppPreferences.ICON_BORDER);
       gfxCopy.dispose();
     }
   }

@@ -33,41 +33,43 @@ import java.util.ArrayList;
 
 public class ConnectionEnd {
 
-  private final boolean IsOutput;
-  private final Byte nr_of_bits;
-  private final ArrayList<ConnectionPoint> MyConnections;
+  private final boolean isOutput;
+  private final Byte nrOfBits;
+  private final ArrayList<ConnectionPoint> myConnections;
 
-  public ConnectionEnd(boolean OutputEnd, Byte nr_of_bits, Component comp) {
-    IsOutput = OutputEnd;
-    this.nr_of_bits = nr_of_bits;
-    MyConnections = new ArrayList<>();
-    for (byte i = 0; i < nr_of_bits; i++) MyConnections.add(new ConnectionPoint(comp));
+  public ConnectionEnd(boolean isOutputEnd, Byte nrOfBits, Component comp) {
+    this.isOutput = isOutputEnd;
+    this.nrOfBits = nrOfBits;
+    this.myConnections = new ArrayList<>();
+    for (byte i = 0; i < nrOfBits; i++) {
+      myConnections.add(new ConnectionPoint(comp));
+    }
   }
 
-  public ConnectionPoint GetConnection(Byte BitIndex) {
-    if ((BitIndex < 0) || (BitIndex >= nr_of_bits)) return null;
-    return MyConnections.get(BitIndex);
+  public ConnectionPoint get(Byte bitIndex) {
+    if ((bitIndex < 0) || (bitIndex >= nrOfBits)) return null;
+    return myConnections.get(bitIndex);
   }
 
-  public boolean IsOutputEnd() {
-    return IsOutput;
+  public boolean isOutputEnd() {
+    return isOutput;
   }
 
-  public int NrOfBits() {
-    return nr_of_bits;
+  public int getNrOfBits() {
+    return nrOfBits;
   }
 
-  public boolean SetChildPortIndex(Net ConnectedNet, Byte BitIndex, int PortIndex) {
-    if ((BitIndex < 0) || (BitIndex >= nr_of_bits)) return false;
-    ConnectionPoint Connection = MyConnections.get(BitIndex);
+  public boolean setChildPortIndex(Net connectedNet, Byte bitIndex, int portIndex) {
+    if ((bitIndex < 0) || (bitIndex >= nrOfBits)) return false;
+    final var Connection = myConnections.get(bitIndex);
     if (Connection == null) return false;
-    Connection.setChildsPortIndex(PortIndex);
+    Connection.setChildsPortIndex(portIndex);
     return true;
   }
 
-  public boolean SetConnection(ConnectionPoint Connection, Byte BitIndex) {
-    if ((BitIndex < 0) || (BitIndex >= nr_of_bits)) return false;
-    MyConnections.set(BitIndex, Connection);
+  public boolean setConnection(ConnectionPoint Connection, Byte BitIndex) {
+    if ((BitIndex < 0) || (BitIndex >= nrOfBits)) return false;
+    myConnections.set(BitIndex, Connection);
     return true;
   }
 }

@@ -47,8 +47,8 @@ public class LayoutEditHandler extends EditHandler implements ProjectListener, L
   LayoutEditHandler(Frame frame) {
     this.frame = frame;
 
-    val proj = frame.getProject();
-    Clipboard.addPropertyChangeListener(Clipboard.contentsProperty, this);
+    Project proj = frame.getProject();
+    Clipboard.addPropertyChangeListener(Clipboard.CONTENTS_PROPERTY, this);
     proj.addProjectListener(this);
     proj.addLibraryListener(this);
   }
@@ -163,7 +163,7 @@ public class LayoutEditHandler extends EditHandler implements ProjectListener, L
 
   @Override
   public void propertyChange(PropertyChangeEvent event) {
-    if (event.getPropertyName().equals(Clipboard.contentsProperty)) {
+    if (event.getPropertyName().equals(Clipboard.CONTENTS_PROPERTY)) {
       computeEnabled();
     }
   }

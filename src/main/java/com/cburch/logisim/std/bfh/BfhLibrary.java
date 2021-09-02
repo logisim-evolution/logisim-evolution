@@ -63,9 +63,4 @@ public class BfhLibrary extends Library {
     }
     return tools;
   }
-
-  @Override
-  public boolean removeLibrary(String name) {
-    return false;
-  }
 }

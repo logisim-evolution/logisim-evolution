@@ -45,26 +45,26 @@ public class SocBusTransaction {
   public static final int BLOCK_MARKER = 14;
   public static final int BLOCK_HEX = 78;
 
-  public static final int READTransaction = 1;
-  public static final int WRITETransaction = 2;
-  public static final int ATOMICTransaction = 4;
+  public static final int READ_TRANSACTION = 1;
+  public static final int WRITE_TRANSACTION = 2;
+  public static final int ATOMIC_TRANSACTION = 4;
 
-  public static final int NoError = 0;
-  public static final int NoResponsError = 1;
-  public static final int NoSlavesError = 2;
-  public static final int MultipleSlavesError = 3;
-  public static final int NoneAtomicReadWriteError = 4;
-  public static final int NoSocBusConnectedError = 5;
-  public static final int MisalignedAddressError = 6;
-  public static final int AccessTypeNotSupportedError = 7;
-  public static final int ReadOnlyAccessError = 8;
-  public static final int WriteOnlyAccessError = 9;
-  public static final int RegisterDoesNotExistError = 10;
+  public static final int NO_ERROR = 0;
+  public static final int NO_RESPONS_ERROR = 1;
+  public static final int NO_SLAVES_ERROR = 2;
+  public static final int MULTIPLE_SLAVES_ERROR = 3;
+  public static final int NONE_ATOMIC_READ_WRITE_ERROR = 4;
+  public static final int NO_SOC_BUS_CONNECTED_ERROR = 5;
+  public static final int MISALIGNED_ADDRESS_ERROR = 6;
+  public static final int ACCESS_TYPE_NOT_SUPPORTED_ERROR = 7;
+  public static final int READ_ONLY_ACCESS_ERROR = 8;
+  public static final int WRITE_ONLY_ACCESS_ERROR = 9;
+  public static final int REGISTER_DOES_NOT_EXIST_ERROR = 10;
 
 
-  public static final int ByteAccess = 1;
-  public static final int HalfWordAccess = 2;
-  public static final int WordAccess = 3;
+  public static final int BYTE_ACCESS = 1;
+  public static final int HALF_WORD_ACCESS = 2;
+  public static final int WORD_ACCESS = 3;
 
   private final int address;
   private final int writeData;
@@ -84,7 +84,7 @@ public class SocBusTransaction {
     this.master = master;
     slave = null;
     readData = 0;
-    Error = NoError;
+    Error = NO_ERROR;
     hidden = false;
   }
 
@@ -101,47 +101,45 @@ public class SocBusTransaction {
   }
 
   public String getErrorMessage() {
-    switch (Error) {
-      case NoError : return S.get("SocTransactionSuccessfull");
-      case NoResponsError : return S.get("SocTransactionNoRespons");
-      case NoSlavesError : return S.get("SocTransactionNoSlavesAttached");
-      case MultipleSlavesError : return S.get("SocTransactionMultipleSlaveAnswers");
-      case NoneAtomicReadWriteError : return S.get("SocTransactionNoneAtomicRW");
-      case NoSocBusConnectedError : return S.get("SocTransactionNoBusConnected");
-      case MisalignedAddressError: return S.get("SocTransactionMisalignedAddress");
-      case AccessTypeNotSupportedError :
-        switch (access) {
-          case ByteAccess     : return S.get("SocTransactionByteAccesNoSupport");
-          case HalfWordAccess : return S.get("SocTransactionHalfWordAccesNoSupport");
-          default             : return S.get("SocTransactionWordAccesNoSupport");
-        }
-      case ReadOnlyAccessError : return S.get("SocTransactionReadOnlyAccessError");
-      case WriteOnlyAccessError: return S.get("SocTransactionWriteOnlyAccessError");
-      case RegisterDoesNotExistError : return S.get("SocTransactionRegisterDoesNotExist");
-    }
-    return S.get("SocTransactionUnknownError");
+    return switch (Error) {
+      case NO_ERROR -> S.get("SocTransactionSuccessfull");
+      case NO_RESPONS_ERROR -> S.get("SocTransactionNoRespons");
+      case NO_SLAVES_ERROR -> S.get("SocTransactionNoSlavesAttached");
+      case MULTIPLE_SLAVES_ERROR -> S.get("SocTransactionMultipleSlaveAnswers");
+      case NONE_ATOMIC_READ_WRITE_ERROR -> S.get("SocTransactionNoneAtomicRW");
+      case NO_SOC_BUS_CONNECTED_ERROR -> S.get("SocTransactionNoBusConnected");
+      case MISALIGNED_ADDRESS_ERROR -> S.get("SocTransactionMisalignedAddress");
+      case ACCESS_TYPE_NOT_SUPPORTED_ERROR -> switch (access) {
+        case BYTE_ACCESS -> S.get("SocTransactionByteAccesNoSupport");
+        case HALF_WORD_ACCESS -> S.get("SocTransactionHalfWordAccesNoSupport");
+        default -> S.get("SocTransactionWordAccesNoSupport");
+      };
+      case READ_ONLY_ACCESS_ERROR -> S.get("SocTransactionReadOnlyAccessError");
+      case WRITE_ONLY_ACCESS_ERROR -> S.get("SocTransactionWriteOnlyAccessError");
+      case REGISTER_DOES_NOT_EXIST_ERROR -> S.get("SocTransactionRegisterDoesNotExist");
+      default -> S.get("SocTransactionUnknownError");
+    };
   }
 
   public String getShortErrorMessage() {
-    switch (Error) {
-      case NoError : return S.get("SocTransactionSuccessfullShort");
-      case NoResponsError : return S.get("SocTransactionNoResponsShort");
-      case NoSlavesError : return S.get("SocTransactionNoSlavesAttachedShort");
-      case MultipleSlavesError : return S.get("SocTransactionMultipleSlaveAnswersShort");
-      case NoneAtomicReadWriteError : return S.get("SocTransactionNoneAtomicRWShort");
-      case NoSocBusConnectedError : return S.get("SocTransactionNoBusConnectedShort");
-      case MisalignedAddressError: return S.get("SocTransactionMisalignedAddressShort");
-      case AccessTypeNotSupportedError :
-        switch (access) {
-          case ByteAccess     : return S.get("SocTransactionByteAccesNoSupportShort");
-          case HalfWordAccess : return S.get("SocTransactionHalfWordAccesNoSupportShort");
-          default             : return S.get("SocTransactionWordAccesNoSupportShort");
-        }
-      case ReadOnlyAccessError : return S.get("SocTransactionReadOnlyAccessErrorShort");
-      case WriteOnlyAccessError: return S.get("SocTransactionWriteOnlyAccessErrorShort");
-      case RegisterDoesNotExistError : return S.get("SocTransactionRegisterDoesNotExistShort");
-    }
-    return S.get("SocTransactionUnknownErrorShort");
+    return switch (Error) {
+      case NO_ERROR -> S.get("SocTransactionSuccessfullShort");
+      case NO_RESPONS_ERROR -> S.get("SocTransactionNoResponsShort");
+      case NO_SLAVES_ERROR -> S.get("SocTransactionNoSlavesAttachedShort");
+      case MULTIPLE_SLAVES_ERROR -> S.get("SocTransactionMultipleSlaveAnswersShort");
+      case NONE_ATOMIC_READ_WRITE_ERROR -> S.get("SocTransactionNoneAtomicRWShort");
+      case NO_SOC_BUS_CONNECTED_ERROR -> S.get("SocTransactionNoBusConnectedShort");
+      case MISALIGNED_ADDRESS_ERROR -> S.get("SocTransactionMisalignedAddressShort");
+      case ACCESS_TYPE_NOT_SUPPORTED_ERROR -> switch (access) {
+        case BYTE_ACCESS -> S.get("SocTransactionByteAccesNoSupportShort");
+        case HALF_WORD_ACCESS -> S.get("SocTransactionHalfWordAccesNoSupportShort");
+        default -> S.get("SocTransactionWordAccesNoSupportShort");
+      };
+      case READ_ONLY_ACCESS_ERROR -> S.get("SocTransactionReadOnlyAccessErrorShort");
+      case WRITE_ONLY_ACCESS_ERROR -> S.get("SocTransactionWriteOnlyAccessErrorShort");
+      case REGISTER_DOES_NOT_EXIST_ERROR -> S.get("SocTransactionRegisterDoesNotExistShort");
+      default -> S.get("SocTransactionUnknownErrorShort");
+    };
   }
 
   public int getType() {
@@ -153,19 +151,19 @@ public class SocBusTransaction {
   }
 
   public boolean hasError() {
-    return Error != NoError;
+    return Error != NO_ERROR;
   }
 
   public boolean isReadTransaction() {
-    return (type & READTransaction) != 0;
+    return (type & READ_TRANSACTION) != 0;
   }
 
   public boolean isWriteTransaction() {
-    return (type & WRITETransaction) != 0;
+    return (type & WRITE_TRANSACTION) != 0;
   }
 
   public boolean isAtomicTransaction() {
-    return (type & ATOMICTransaction) != 0;
+    return (type & ATOMIC_TRANSACTION) != 0;
   }
 
   public int getAddress() {
@@ -213,12 +211,12 @@ public class SocBusTransaction {
     Bounds bds;
     if (!scale) {
       g.setColor(Color.BLACK);
-      g.drawLine(0, 0, 0, SocBusStateInfo.TraceHeight - 2);
+      g.drawLine(0, 0, 0, SocBusStateInfo.TRACE_HEIGHT - 2);
     }
     if (hasError() && !isRequest) {
       g.setColor(Color.RED);
       g.setFont(StdAttr.DEFAULT_LABEL_FONT);
-      bds = getScaled(bi.blockWidth / 2, (SocBusStateInfo.TraceHeight - 2) >> 1, 0, 0, scale);
+      bds = getScaled(bi.blockWidth / 2, (SocBusStateInfo.TRACE_HEIGHT - 2) >> 1, 0, 0, scale);
       GraphicsUtil.drawCenteredText(g, getShortErrorMessage(), bds.getX(), bds.getY());
       g.dispose();
       return;
@@ -227,38 +225,38 @@ public class SocBusTransaction {
         isRequest
             ? S.get("SocBusStateMaster") + getTransactionInitiatorName()
             : S.get("SocBusStateSlave") + getTransactionResponderName();
-    bds = getScaled(bi.blockWidth / 2, (SocBusStateInfo.TraceHeight - 2) >> 2, 0, 0, scale);
+    bds = getScaled(bi.blockWidth / 2, (SocBusStateInfo.TRACE_HEIGHT - 2) >> 2, 0, 0, scale);
     GraphicsUtil.drawCenteredText(g, title, bds.getX(), bds.getY());
-    bds = getScaled(bi.skip, ((SocBusStateInfo.TraceHeight - 2) >> 1) + 1,
-            bi.mark + bi.hex, (SocBusStateInfo.TraceHeight - 2) >> 1, scale);
+    bds = getScaled(bi.skip, ((SocBusStateInfo.TRACE_HEIGHT - 2) >> 1) + 1,
+                    bi.mark + bi.hex, (SocBusStateInfo.TRACE_HEIGHT - 2) >> 1, scale);
     g.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
-    bds = getScaled(bi.skip + bi.mark, ((SocBusStateInfo.TraceHeight - 2) >> 1) + 1,
-            0, SocBusStateInfo.TraceHeight - 2, scale);
+    bds = getScaled(bi.skip + bi.mark, ((SocBusStateInfo.TRACE_HEIGHT - 2) >> 1) + 1,
+                    0, SocBusStateInfo.TRACE_HEIGHT - 2, scale);
     g.drawLine(bds.getX(), bds.getY(), bds.getX(), bds.getHeight());
     bds =
-        getScaled(bi.skip + bi.mark / 2, (3 * (SocBusStateInfo.TraceHeight - 2)) / 4, 0, 0, scale);
+        getScaled(bi.skip + bi.mark / 2, (3 * (SocBusStateInfo.TRACE_HEIGHT - 2)) / 4, 0, 0, scale);
     GraphicsUtil.drawCenteredText(g, "A", bds.getX(), bds.getY());
     String Str = String.format("0x%08X", getAddress());
-    bds = getScaled(bi.skip + bi.mark + bi.hex / 2, (3 * (SocBusStateInfo.TraceHeight - 2)) / 4, 0, 0, scale);
+    bds = getScaled(bi.skip + bi.mark + bi.hex / 2, (3 * (SocBusStateInfo.TRACE_HEIGHT - 2)) / 4, 0, 0, scale);
     GraphicsUtil.drawCenteredText(g, Str, bds.getX(), bds.getY());
     bds = getScaled(bi.skip + bi.mark + bi.hex, 0, 0, 0, scale);
     g.translate(bds.getX(), 0);
-    bds = getScaled(bi.skip, ((SocBusStateInfo.TraceHeight - 2) >> 1) + 1, bi.mark + bi.hex,
-            (SocBusStateInfo.TraceHeight - 2) >> 1, scale);
+    bds = getScaled(bi.skip, ((SocBusStateInfo.TRACE_HEIGHT - 2) >> 1) + 1, bi.mark + bi.hex,
+                    (SocBusStateInfo.TRACE_HEIGHT - 2) >> 1, scale);
     g.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
-    bds = getScaled(bi.skip + bi.mark, ((SocBusStateInfo.TraceHeight - 2) >> 1) + 1, 0,
-            (SocBusStateInfo.TraceHeight - 2), scale);
+    bds = getScaled(bi.skip + bi.mark, ((SocBusStateInfo.TRACE_HEIGHT - 2) >> 1) + 1, 0,
+                    (SocBusStateInfo.TRACE_HEIGHT - 2), scale);
     g.drawLine(bds.getX(), bds.getY(), bds.getX(), bds.getHeight());
-    bds = getScaled(bi.skip + bi.mark / 2, (3 * (SocBusStateInfo.TraceHeight - 2)) / 4, 0, 0, scale);
+    bds = getScaled(bi.skip + bi.mark / 2, (3 * (SocBusStateInfo.TRACE_HEIGHT - 2)) / 4, 0, 0, scale);
     GraphicsUtil.drawCenteredText(g, "D", bds.getX(), bds.getY());
     if ((isRequest && isWriteTransaction()) || (!isRequest && isReadTransaction())) {
       String format = "0x%08X";
-      if (getAccessType() == SocBusTransaction.HalfWordAccess) format = "0x%04X";
-      if (getAccessType() == SocBusTransaction.ByteAccess) format = "0x%02X";
+      if (getAccessType() == SocBusTransaction.HALF_WORD_ACCESS) format = "0x%04X";
+      if (getAccessType() == SocBusTransaction.BYTE_ACCESS) format = "0x%02X";
       Str = String.format(format, isRequest ? getWriteData() : getReadData());
     } else
       Str = S.get("SocBusStateNoDataMax10chars");
-    bds = getScaled(bi.skip + bi.mark + bi.hex / 2, (3 * (SocBusStateInfo.TraceHeight - 2)) / 4, 0, 0, scale);
+    bds = getScaled(bi.skip + bi.mark + bi.hex / 2, (3 * (SocBusStateInfo.TRACE_HEIGHT - 2)) / 4, 0, 0, scale);
     GraphicsUtil.drawCenteredText(g, Str, bds.getX(), bds.getY());
     if (!isRequest) {
       g.dispose();
@@ -268,30 +266,30 @@ public class SocBusTransaction {
     g.translate(bds.getX(), 0);
     if (isAtomicTransaction()) {
       g.setColor(Color.yellow);
-      bds = getScaled(0, ((SocBusStateInfo.TraceHeight - 2) >> 1) + 1, bi.mark, (SocBusStateInfo.TraceHeight - 2) >> 1, scale);
+      bds = getScaled(0, ((SocBusStateInfo.TRACE_HEIGHT - 2) >> 1) + 1, bi.mark, (SocBusStateInfo.TRACE_HEIGHT - 2) >> 1, scale);
       g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g.setColor(Color.BLUE);
-      bds = getScaled(bi.mark / 2, (3 * (SocBusStateInfo.TraceHeight - 2)) / 4, 0, 0, scale);
+      bds = getScaled(bi.mark / 2, (3 * (SocBusStateInfo.TRACE_HEIGHT - 2)) / 4, 0, 0, scale);
       GraphicsUtil.drawCenteredText(g, "A", bds.getX(), bds.getY());
       g.setColor(Color.BLACK);
     }
     bds = getScaled(bi.skip + bi.mark, 0, 0, 0, scale);
     g.translate(bds.getX(), 0);
     if (isWriteTransaction()) {
-      bds = getScaled(0, ((SocBusStateInfo.TraceHeight - 2) >> 1) + 1, bi.mark, (SocBusStateInfo.TraceHeight - 2) >> 1, scale);
+      bds = getScaled(0, ((SocBusStateInfo.TRACE_HEIGHT - 2) >> 1) + 1, bi.mark, (SocBusStateInfo.TRACE_HEIGHT - 2) >> 1, scale);
       g.setColor(Color.MAGENTA);
       g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
       g.setColor(Color.BLACK);
-      bds = getScaled(bi.mark / 2, (3 * (SocBusStateInfo.TraceHeight - 2)) / 4, 0, 0, scale);
+      bds = getScaled(bi.mark / 2, (3 * (SocBusStateInfo.TRACE_HEIGHT - 2)) / 4, 0, 0, scale);
       GraphicsUtil.drawCenteredText(g, "W", bds.getX(), bds.getY());
     }
     bds = getScaled(bi.skip + bi.mark, 0, 0, 0, scale);
     g.translate(bds.getX(), 0);
     if (isReadTransaction()) {
-      bds = getScaled(0, ((SocBusStateInfo.TraceHeight - 2) >> 1) + 1, bi.mark, (SocBusStateInfo.TraceHeight - 2) >> 1, scale);
+      bds = getScaled(0, ((SocBusStateInfo.TRACE_HEIGHT - 2) >> 1) + 1, bi.mark, (SocBusStateInfo.TRACE_HEIGHT - 2) >> 1, scale);
       g.setColor(Color.CYAN);
       g.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
-      bds = getScaled(bi.mark / 2, (3 * (SocBusStateInfo.TraceHeight - 2)) / 4, 0, 0, scale);
+      bds = getScaled(bi.mark / 2, (3 * (SocBusStateInfo.TRACE_HEIGHT - 2)) / 4, 0, 0, scale);
       g.setColor(Color.BLACK);
       GraphicsUtil.drawCenteredText(g, "R", bds.getX(), bds.getY());
     }
@@ -303,11 +301,11 @@ public class SocBusTransaction {
     Graphics2D g = (Graphics2D) g2.create();
     g.translate(x, y);
     g.setColor(Color.WHITE);
-    g.fillRect(0, 0, SocBusStateInfo.TraceWidth - 2, SocBusStateInfo.TraceHeight - 1);
+    g.fillRect(0, 0, SocBusStateInfo.TRACE_WIDTH - 2, SocBusStateInfo.TRACE_HEIGHT - 1);
     g.setColor(Color.BLACK);
-    g.drawRect(0, 0, SocBusStateInfo.TraceWidth - 2, SocBusStateInfo.TraceHeight - 1);
-    GraphicsUtil.drawCenteredText(g, S.get("SocBusStateTraceIndex"), 79, (SocBusStateInfo.TraceHeight - 2) / 4);
-    GraphicsUtil.drawCenteredText(g, index.toString(), 79, (3 * (SocBusStateInfo.TraceHeight - 2) / 4));
+    g.drawRect(0, 0, SocBusStateInfo.TRACE_WIDTH - 2, SocBusStateInfo.TRACE_HEIGHT - 1);
+    GraphicsUtil.drawCenteredText(g, S.get("SocBusStateTraceIndex"), 79, (SocBusStateInfo.TRACE_HEIGHT - 2) / 4);
+    GraphicsUtil.drawCenteredText(g, index.toString(), 79, (3 * (SocBusStateInfo.TRACE_HEIGHT - 2) / 4));
     g.translate(158, 0);
     paintTraceInfo(g, realWidth, true, false);
     g.translate(235, 0);
@@ -331,7 +329,7 @@ public class SocBusTransaction {
       i.skip = BLOCK_SKIP;
       i.mark = BLOCK_MARKER;
       i.hex = BLOCK_HEX;
-      i.blockWidth = SocBusStateInfo.BlockWidth;
+      i.blockWidth = SocBusStateInfo.BLOCK_WIDTH;
     }
     return i;
   }
@@ -353,7 +351,7 @@ public class SocBusTransaction {
   public int paint(Graphics2D g2, Long index, int width) {
     BoxInfo realWidth = getRealBlockWidth(g2, true);
     int usedWidth = Math.max(realWidth.blockWidth, width);
-    Bounds bds = getScaled(usedWidth / 2, (SocBusStateInfo.TraceHeight - 2) / 4, usedWidth, SocBusStateInfo.TraceHeight >> 1, true);
+    Bounds bds = getScaled(usedWidth / 2, (SocBusStateInfo.TRACE_HEIGHT - 2) / 4, usedWidth, SocBusStateInfo.TRACE_HEIGHT >> 1, true);
     g2.setColor(Color.LIGHT_GRAY);
     g2.fillRect(0, 0, bds.getWidth(), bds.getHeight() - 1);
     g2.setColor(Color.black);
@@ -361,14 +359,14 @@ public class SocBusTransaction {
     GraphicsUtil.drawCenteredText(
         g2, S.get("SocBusStateTraceIndex") + " " + index.toString(), bds.getX(), bds.getY());
     g2.translate(0, bds.getHeight());
-    bds = getScaled(0, 0, usedWidth, SocBusStateInfo.TraceHeight, true);
+    bds = getScaled(0, 0, usedWidth, SocBusStateInfo.TRACE_HEIGHT, true);
     g2.drawLine(0, -1, bds.getWidth(), -1);
     g2.setColor(Color.WHITE);
     g2.fillRect(0, 1, bds.getWidth() - 2, bds.getHeight() - 1);
     g2.setColor(Color.BLACK);
     g2.drawRect(0, 1, bds.getWidth() - 2, bds.getHeight() - 1);
     paintTraceInfo(g2, realWidth, true, true);
-    bds = getScaled(0, 0, usedWidth, SocBusStateInfo.TraceHeight, true);
+    bds = getScaled(0, 0, usedWidth, SocBusStateInfo.TRACE_HEIGHT, true);
     g2.translate(0, bds.getHeight());
     g2.setColor(Color.YELLOW);
     g2.fillRect(0, 0, bds.getWidth(), bds.getHeight());

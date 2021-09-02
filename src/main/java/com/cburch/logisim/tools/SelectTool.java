@@ -142,7 +142,7 @@ public class SelectTool extends Tool {
   private boolean drawConnections;
   private MoveGesture moveGesture;
   private HashMap<Component, KeyConfigurator> keyHandlers;
-  private static final SelectIcon icon = new SelectIcon();
+  private static final SelectIcon ICON = new SelectIcon();
 
   private final HashSet<Selection> selectionsAdded;
   private final AutoLabel AutoLabler = new AutoLabel();
@@ -563,7 +563,7 @@ public class SelectTool extends Tool {
 
   @Override
   public void paintIcon(ComponentDrawContext c, int x, int y) {
-    icon.paintIcon(null, c.getGraphics(), x, y);
+    ICON.paintIcon(null, c.getGraphics(), x, y);
   }
 
   private void processKeyEvent(Canvas canvas, KeyEvent e, int type) {

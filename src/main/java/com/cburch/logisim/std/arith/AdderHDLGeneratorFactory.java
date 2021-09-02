@@ -34,6 +34,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -62,25 +63,26 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
+    final var Contents = new LineBuffer();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
-      Contents.add("   s_extended_dataA <= \"0\"&DataA;");
-      Contents.add("   s_extended_dataB <= \"0\"&DataB;");
-      Contents.add("   s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA)+");
-      Contents.add("                                        unsigned(s_extended_dataB)+");
-      Contents.add("                                        (\"\"&CarryIn));");
-      Contents.add("");
+      Contents.addLines(
+          "s_extended_dataA <= \"0\"&DataA;",
+          "s_extended_dataB <= \"0\"&DataB;",
+          "s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA)+",
+          "                                     unsigned(s_extended_dataB)+",
+          "                                     (\"\"&CarryIn));",
+          "");
       if (nrOfBits == 1) {
-        Contents.add("   Result <= s_sum_result(0);");
+        Contents.add("Result <= s_sum_result(0);");
       } else {
-        Contents.add("   Result <= s_sum_result( (" + NrOfBitsStr + "-1) DOWNTO 0 );");
+        Contents.add("Result <= s_sum_result( ({{1}}-1) DOWNTO 0 )", NrOfBitsStr);
       }
-      Contents.add("   CarryOut <= s_sum_result(" + ExtendedBitsStr + "-1);");
+      Contents.add("CarryOut <= s_sum_result({{1}}-1);", ExtendedBitsStr);
     } else {
-      Contents.add("    assign   {CarryOut,Result} = DataA + DataB + CarryIn;");
+      Contents.add("assign   {CarryOut,Result} = DataA + DataB + CarryIn;");
     }
-    return Contents;
+    return Contents.getWithIndent();
   }
 
   @Override
@@ -104,7 +106,7 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var map = new TreeMap<String, Integer>();
-    int nrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    int nrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
     map.put(ExtendedBitsStr, nrOfBits + 1);
     if (nrOfBits > 1) map.put(NrOfBitsStr, nrOfBits);
     return map;

@@ -35,6 +35,7 @@ import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -83,37 +84,39 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
-    contents.add("   NextState <= CurState WHEN tick = '0' ELSE");
-    contents.add("                D4&D3&D2&D1;");
-    contents.add(" ");
-    contents.add("   dffs : PROCESS( CLK , nCLR ) IS");
-    contents.add("      BEGIN");
-    contents.add("         IF (nCLR = '0') THEN CurState <= \"0000\";");
-    contents.add("         ELSIF (rising_edge(CLK)) THEN");
-    contents.add("            CurState <= NextState;");
-    contents.add("         END IF;");
-    contents.add("      END PROCESS dffs;");
-    contents.add(" ");
-    contents.add("   nQ1 <= NOT(CurState(0));");
-    contents.add("   Q1  <= CurState(0);");
-    contents.add("   nQ2 <= NOT(CurState(1));");
-    contents.add("   Q2  <= CurState(1);");
-    contents.add("   nQ3 <= NOT(CurState(2));");
-    contents.add("   Q3  <= CurState(2);");
-    contents.add("   nQ4 <= NOT(CurState(3));");
-    contents.add("   Q4  <= CurState(3);");
-    return contents;
+    return (new LineBuffer())
+        .addLines(
+            "NextState <= CurState WHEN tick = '0' ELSE",
+            "             D4&D3&D2&D1;",
+            "",
+            "dffs : PROCESS( CLK , nCLR ) IS",
+            "   BEGIN",
+            "      IF (nCLR = '0') THEN CurState <= \"0000\";",
+            "      ELSIF (rising_edge(CLK)) THEN",
+            "         CurState <= NextState;",
+            "      END IF;",
+            "   END PROCESS dffs;",
+            "",
+            "nQ1 <= NOT(CurState(0));",
+            "Q1  <= CurState(0);",
+            "nQ2 <= NOT(CurState(1));",
+            "Q2  <= CurState(1);",
+            "nQ3 <= NOT(CurState(2));",
+            "Q3  <= CurState(2);",
+            "nQ4 <= NOT(CurState(3));",
+            "Q4  <= CurState(3);")
+        .getWithIndent();
   }
 
+  @Override
   public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var comp = (NetlistComponent) mapInfo;
     var gatedClock = false;
     var hasClock = true;
-    int clockPinIndex = comp.GetComponent().getFactory().ClockPinIndex(null)[0];
-    if (!comp.EndIsConnected(clockPinIndex)) {
+    int clockPinIndex = comp.getComponent().getFactory().ClockPinIndex(null)[0];
+    if (!comp.isEndConnected(clockPinIndex)) {
       Reporter.Report.AddSevereWarning("Component \"TTL74165\" in circuit \"" + nets.getCircuitName()
               + "\" has no clock connection");
       hasClock = false;
@@ -129,19 +132,19 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
       map.put("Tick", "'1'");
       map.put("CLK", GetNetName(comp, clockPinIndex, true, nets));
     } else {
-      if (nets.RequiresGlobalClockConnection()) {
+      if (nets.requiresGlobalClockConnection()) {
         map.put("Tick", "'1'");
       } else {
         map.put(
             "Tick",
             clockNetName
                 + "("
-                + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
+                + ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX
                 + ")");
       }
       map.put(
           "CLK",
-          clockNetName + "(" + ClockHDLGeneratorFactory.GlobalClockIndex + ")");
+          clockNetName + "(" + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX + ")");
     }
     map.putAll(GetNetMap("nCLR", true, comp, 0, nets));
     map.putAll(GetNetMap("Q1", true, comp, 1, nets));

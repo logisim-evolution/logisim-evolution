@@ -20,8 +20,8 @@
 
 ## Requirements ##
 
-`Logisim-evolution` is written in Java 14. To build it from sources you need JDK
-(or equivalent, e.g. [OpenJDK](https://adoptopenjdk.net/)) version 14 or newer.
+`Logisim-evolution` is written in Java 16. To build it from sources you need JDK
+(or equivalent, e.g. [OpenJDK](https://adoptopenjdk.net/)) version 16 or newer.
 
 **NOTE:** Ensure your `$JAVA_HOME` environment variable points to the proper JDK version.
 
@@ -42,6 +42,21 @@ favorite IDE is this:
 * [How to import Gradle project into Eclipse](https://www.eclipse.org/community/eclipse_newsletter/2018/february/buildship.php),
 * [How to import Gradle project into IntelliJ IDEA](https://www.jetbrains.com/help/idea/gradle.html) (section "Importing a project
   from a Gradle model").
+
+**Note for Eclipse Users:**
+
+Eclipse needs to have Gradle build the generated source files before it can build the project.
+You can do this by running task `genBuildInfo` before importing the project.
+See [Building from sources](#building-from-sources) for how to run Gradle.
+
+To run the task within Eclipse after importing the logisim-evolution project:
+
+* Bring up the `Gradle Tasks` view, if it is not already showing, by selecting the Menu `Window/Show View/Other...`
+  and selecting `Gradle Tasks` under Gradle.
+* In the `Gradle Tasks` view, double-click on `logisim-evolution/build/genBuildInfo`.
+  Check the `Console View` to see when it finishes.
+* Right click on the logisim-evolution project in the Project Explorer and select `Gradle/Refresh Gradle Project`.
+* You may then need to Right click on the logisim-evolution project and select `Refresh`
 
 ## Building from sources ##
 
@@ -68,10 +83,16 @@ If you wish to create a Java JAR package, which can then be run without [Gradle]
 ```
 
 which will create `logisim-evolution-<version>-all.jar` in `build/libs/`.
-To run it with JRE/JDK 14 or higher, type:
+To run it with JRE/JDK 16 or higher, type:
 
 ```bash
-java -jar logisim-evolution-<version>-all.jar
+java -jar logisim-evolution-<version>-all-jdk<jdk>.jar
+```
+
+for example:
+
+```bash
+java -jar logisim-evolution-3.6.0-all-jdk16.jar
 ```
 
 You can also generate a platform-specific installer, which gets saved in `build/dist`.

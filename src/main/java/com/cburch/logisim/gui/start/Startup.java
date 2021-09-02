@@ -52,7 +52,6 @@ import com.cburch.logisim.std.base.BaseLibrary;
 import com.cburch.logisim.std.gates.GatesLibrary;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.MacCompatibility;
-import com.cburch.logisim.util.StringUtil;
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Toolkit;
@@ -63,7 +62,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import javax.help.JHelp;
 import javax.swing.JButton;
@@ -455,8 +453,6 @@ public class Startup implements AWTEventListener {
         ret.circuitToTest = args[i];
       } else if (arg.equals("-clearprefs") || arg.equals("-clearprops")) {
         // already handled above
-      } else if (arg.equals("-analyze")) {
-        Main.ANALYZE = true;
       } else if (arg.equals("-questa")) {
         i++;
         if (i >= args.length) {
@@ -503,7 +499,6 @@ public class Startup implements AWTEventListener {
       "argAccentsOption",
       "argClearOption",
       "argEmptyOption",
-      "argAnalyzeOption",
       "argTestOption",
       "argGatesOption",
       "argHelpOption",

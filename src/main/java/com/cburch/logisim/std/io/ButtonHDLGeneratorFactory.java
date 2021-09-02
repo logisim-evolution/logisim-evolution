@@ -41,16 +41,18 @@ public class ButtonHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
     final var contents = new ArrayList<String>();
-    for (int i = 0; i < componentInfo.NrOfEnds(); i++) {
-      if (componentInfo.EndIsConnected(i)) {
+    for (int i = 0; i < componentInfo.nrOfEnds(); i++) {
+      if (componentInfo.isEndConnected(i)) {
+        final var pressPassive = componentInfo.getComponent().getAttributeSet().getValue(Button.ATTR_PRESS) ==  Button.BUTTON_PRESS_PASSIVE;
         contents.add(
             "   "
                 + HDL.assignPreamble()
                 + GetNetName(componentInfo, i, true, nets)
                 + HDL.assignOperator()
+                + (pressPassive ? HDL.notOperator() : "")
                 + HDLGeneratorFactory.LocalInputBubbleBusname
                 + HDL.BracketOpen()
-                + (componentInfo.GetLocalBubbleInputStartId() + i)
+                + (componentInfo.getLocalBubbleInputStartId() + i)
                 + HDL.BracketClose()
                 + ";");
       }

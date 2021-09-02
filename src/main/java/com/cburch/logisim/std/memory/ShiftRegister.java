@@ -380,6 +380,19 @@ public class ShiftRegister extends InstanceFactory {
     }
     return data;
   }
+  
+  private void updateData(Instance instance) {
+    final var comp = instance.getComponent().getInstanceStateImpl();
+    if (comp == null) return;
+    final var circuitState = comp.getCircuitState();
+    if (circuitState == null) return;
+    final var state = circuitState.getInstanceState(instance);
+    if (state == null) return;
+    final var data = (ShiftRegisterData) state.getData();
+    if (data == null) return;
+    final var lenObj = state.getAttributeValue(ATTR_LENGTH);
+    data.setDimensions(state.getAttributeValue(StdAttr.WIDTH), lenObj == null ? 8 : lenObj);
+  }
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
@@ -409,6 +422,7 @@ public class ShiftRegister extends InstanceFactory {
         || attr == StdAttr.APPEARANCE) {
       instance.recomputeBounds();
       configurePorts(instance);
+      updateData(instance);
     }
   }
 
@@ -424,16 +438,15 @@ public class ShiftRegister extends InstanceFactory {
   private void paintInstanceEvolution(InstancePainter painter) {
     // draw boundary, label
     painter.drawLabel();
-    int xpos = painter.getLocation().getX();
-    int ypos = painter.getLocation().getY();
-    BitWidth widObj = painter.getAttributeValue(StdAttr.WIDTH);
-    int wid = widObj.getWidth();
-    Integer lenObj = painter.getAttributeValue(ATTR_LENGTH);
-    int len = lenObj == null ? 8 : lenObj;
-    Boolean parallelObj = painter.getAttributeValue(ATTR_LOAD);
-    boolean Negedge = painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
-    DrawControl(painter, xpos, ypos, len, wid, parallelObj, Negedge);
-    ShiftRegisterData data = (ShiftRegisterData) painter.getData();
+    final var xpos = painter.getLocation().getX();
+    final var ypos = painter.getLocation().getY();
+    final var wid = painter.getAttributeValue(StdAttr.WIDTH).getWidth();
+    final var lenObj = painter.getAttributeValue(ATTR_LENGTH);
+    final var len = lenObj == null ? 8 : lenObj;
+    final var parallelObj = painter.getAttributeValue(ATTR_LOAD);
+    final var negEdge = painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
+    DrawControl(painter, xpos, ypos, len, wid, parallelObj, negEdge);
+    final var data = (ShiftRegisterData) painter.getData();
 
     // In the case data is null we assume that the different value are null. This allow the user to
     // instantiate the shift register without simulation mode
@@ -442,9 +455,8 @@ public class ShiftRegister extends InstanceFactory {
         DrawDataBlock(painter, xpos, ypos, len, wid, stage, null, parallelObj);
       }
     } else {
-      for (var stage = 0; stage < len; stage++) {
+      for (var stage = 0; stage < len; stage++) 
         DrawDataBlock(painter, xpos, ypos, len, wid, stage, data.get(len - stage - 1), parallelObj);
-      }
     }
   }
 

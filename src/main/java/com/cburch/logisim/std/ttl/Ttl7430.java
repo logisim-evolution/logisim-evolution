@@ -56,14 +56,14 @@ public class Ttl7430 extends AbstractTtlGate {
     super.paintBase(painter, false, false);
     final var g = painter.getGraphics();
     Drawgates.paintAnd(g, x + 123, y + 30, 10, 18, true);
-    g.drawLine(x + 70, y + AbstractTtlGate.pinheight, x + 70, y + 23);
-    g.drawLine(x + 50, y + AbstractTtlGate.pinheight, x + 50, y + 25);
-    g.drawLine(x + 10, y + height - AbstractTtlGate.pinheight, x + 10, y + 27);
-    g.drawLine(x + 30, y + height - AbstractTtlGate.pinheight, x + 30, y + 29);
-    g.drawLine(x + 50, y + height - AbstractTtlGate.pinheight, x + 50, y + 31);
-    g.drawLine(x + 70, y + height - AbstractTtlGate.pinheight, x + 70, y + 33);
-    g.drawLine(x + 90, y + height - AbstractTtlGate.pinheight, x + 90, y + 35);
-    g.drawLine(x + 110, y + height - AbstractTtlGate.pinheight, x + 110, y + 37);
+    g.drawLine(x + 70, y + AbstractTtlGate.PIN_HEIGHT, x + 70, y + 23);
+    g.drawLine(x + 50, y + AbstractTtlGate.PIN_HEIGHT, x + 50, y + 25);
+    g.drawLine(x + 10, y + height - AbstractTtlGate.PIN_HEIGHT, x + 10, y + 27);
+    g.drawLine(x + 30, y + height - AbstractTtlGate.PIN_HEIGHT, x + 30, y + 29);
+    g.drawLine(x + 50, y + height - AbstractTtlGate.PIN_HEIGHT, x + 50, y + 31);
+    g.drawLine(x + 70, y + height - AbstractTtlGate.PIN_HEIGHT, x + 70, y + 33);
+    g.drawLine(x + 90, y + height - AbstractTtlGate.PIN_HEIGHT, x + 90, y + 35);
+    g.drawLine(x + 110, y + height - AbstractTtlGate.PIN_HEIGHT, x + 110, y + 37);
     g.drawLine(x + 70, y + 23, x + 113, y + 23);
     g.drawLine(x + 50, y + 25, x + 113, y + 25);
     g.drawLine(x + 10, y + 27, x + 113, y + 27);
@@ -73,7 +73,7 @@ public class Ttl7430 extends AbstractTtlGate {
     g.drawLine(x + 90, y + 35, x + 113, y + 35);
     g.drawLine(x + 110, y + 37, x + 113, y + 37);
     g.drawLine(x + 128, y + 30, x + 130, y + 30);
-    g.drawLine(x + 130, y + AbstractTtlGate.pinheight, x + 130, y + 30);
+    g.drawLine(x + 130, y + AbstractTtlGate.PIN_HEIGHT, x + 130, y + 30);
   }
 
   @Override

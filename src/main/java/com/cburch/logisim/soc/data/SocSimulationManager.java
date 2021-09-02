@@ -272,7 +272,7 @@ public class SocSimulationManager implements SocBusMasterInterface {
     state = cState;
     SocBusStateInfo info = socBusses.get(busId);
     if (info == null || info.getComponent() == null) {
-      trans.setError(SocBusTransaction.NoSocBusConnectedError);
+      trans.setError(SocBusTransaction.NO_SOC_BUS_CONNECTED_ERROR);
       return;
     }
     Iterator<Component> iter = toBeChecked.iterator();

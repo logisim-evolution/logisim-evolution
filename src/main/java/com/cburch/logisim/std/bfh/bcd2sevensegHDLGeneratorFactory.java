@@ -33,6 +33,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -64,6 +65,7 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
     return Outputs;
   }
 
+  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_output_value", 7);
@@ -72,32 +74,33 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
-    Contents.add("   Segment_a <= s_output_value(0);");
-    Contents.add("   Segment_b <= s_output_value(1);");
-    Contents.add("   Segment_c <= s_output_value(2);");
-    Contents.add("   Segment_d <= s_output_value(3);");
-    Contents.add("   Segment_e <= s_output_value(4);");
-    Contents.add("   Segment_f <= s_output_value(5);");
-    Contents.add("   Segment_g <= s_output_value(6);");
-    Contents.add("   ");
-    Contents.add("   MakeSegs : PROCESS( BCDin )");
-    Contents.add("   BEGIN");
-    Contents.add("      CASE (BCDin) IS");
-    Contents.add("         WHEN \"0000\" => s_output_value <= \"0111111\";");
-    Contents.add("         WHEN \"0001\" => s_output_value <= \"0000110\";");
-    Contents.add("         WHEN \"0010\" => s_output_value <= \"1011011\";");
-    Contents.add("         WHEN \"0011\" => s_output_value <= \"1001111\";");
-    Contents.add("         WHEN \"0100\" => s_output_value <= \"1100110\";");
-    Contents.add("         WHEN \"0101\" => s_output_value <= \"1101101\";");
-    Contents.add("         WHEN \"0110\" => s_output_value <= \"1111101\";");
-    Contents.add("         WHEN \"0111\" => s_output_value <= \"0000111\";");
-    Contents.add("         WHEN \"1000\" => s_output_value <= \"1111111\";");
-    Contents.add("         WHEN \"1001\" => s_output_value <= \"1101111\";");
-    Contents.add("         WHEN OTHERS => s_output_value <= \"-------\";");
-    Contents.add("      END CASE;");
-    Contents.add("   END PROCESS MakeSegs;");
-    return Contents;
+    return (new LineBuffer())
+        .addLines(
+            "Segment_a <= s_output_value(0);",
+            "Segment_b <= s_output_value(1);",
+            "Segment_c <= s_output_value(2);",
+            "Segment_d <= s_output_value(3);",
+            "Segment_e <= s_output_value(4);",
+            "Segment_f <= s_output_value(5);",
+            "Segment_g <= s_output_value(6);",
+            "",
+            "MakeSegs : PROCESS( BCDin )",
+            "BEGIN",
+            "   CASE (BCDin) IS",
+            "      WHEN \"0000\" => s_output_value <= \"0111111\";",
+            "      WHEN \"0001\" => s_output_value <= \"0000110\";",
+            "      WHEN \"0010\" => s_output_value <= \"1011011\";",
+            "      WHEN \"0011\" => s_output_value <= \"1001111\";",
+            "      WHEN \"0100\" => s_output_value <= \"1100110\";",
+            "      WHEN \"0101\" => s_output_value <= \"1101101\";",
+            "      WHEN \"0110\" => s_output_value <= \"1111101\";",
+            "      WHEN \"0111\" => s_output_value <= \"0000111\";",
+            "      WHEN \"1000\" => s_output_value <= \"1111111\";",
+            "      WHEN \"1001\" => s_output_value <= \"1101111\";",
+            "      WHEN OTHERS => s_output_value <= \"-------\";",
+            "   END CASE;",
+            "END PROCESS MakeSegs;")
+        .getWithIndent();
   }
 
   @Override

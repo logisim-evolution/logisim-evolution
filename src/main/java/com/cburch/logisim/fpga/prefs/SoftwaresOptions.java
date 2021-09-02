@@ -62,11 +62,11 @@ public class SoftwaresOptions extends OptionsPanel {
       } else if (source == questaValidationCheckBox) {
         AppPreferences.QUESTA_VALIDATION.setBoolean(questaValidationCheckBox.isSelected());
       } else if (source == QuartusPathButton) {
-        FPGACommander.selectToolPath(VendorSoftware.VendorAltera);
+        FPGACommander.selectToolPath(VendorSoftware.VENDOR_ALTERA);
       } else if (source == ISEPathButton) {
-        FPGACommander.selectToolPath(VendorSoftware.VendorXilinx);
+        FPGACommander.selectToolPath(VendorSoftware.VENDOR_XILINX);
       } else if (source == VivadoPathButton) {
-        FPGACommander.selectToolPath(VendorSoftware.VendorVivado);
+        FPGACommander.selectToolPath(VendorSoftware.VENDOR_VIVADO);
       }
     }
 

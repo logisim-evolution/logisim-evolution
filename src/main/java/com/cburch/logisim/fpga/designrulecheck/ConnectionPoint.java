@@ -32,41 +32,41 @@ import com.cburch.logisim.comp.Component;
 
 public class ConnectionPoint {
 
-  private Net MyOwnNet;
-  private Byte MyOwnNetBitIndex;
-  private int MyChildsPortIndex;
-  private final Component MyComp;
+  private Net myOwnNet;
+  private Byte myOwnNetBitIndex;
+  private int myChildsPortIndex;
+  private final Component myComp;
 
   public ConnectionPoint(Component comp) {
-    MyOwnNet = null;
-    MyOwnNetBitIndex = -1;
-    MyChildsPortIndex = -1;
-    MyComp = comp;
+    myOwnNet = null;
+    myOwnNetBitIndex = -1;
+    myChildsPortIndex = -1;
+    myComp = comp;
   }
 
-  public Component GetComp() {
-    return MyComp;
+  public Component getComp() {
+    return myComp;
   }
 
   public int getChildsPortIndex() {
-    return MyChildsPortIndex;
+    return myChildsPortIndex;
   }
 
-  public Net GetParentNet() {
-    return MyOwnNet;
+  public Net getParentNet() {
+    return myOwnNet;
   }
 
-  public Byte GetParentNetBitIndex() {
-    return MyOwnNetBitIndex;
+  public Byte getParentNetBitIndex() {
+    return myOwnNetBitIndex;
   }
 
-  public void setChildsPortIndex(int Index) {
-    MyChildsPortIndex = Index;
+  public void setChildsPortIndex(int index) {
+    myChildsPortIndex = index;
   }
 
-  public void SetParentNet(Net ConnectedNet, Byte BitIndex) {
-    MyOwnNet = ConnectedNet;
-    MyOwnNetBitIndex = BitIndex;
+  public void setParentNet(Net connectedNet, Byte bitIndex) {
+    myOwnNet = connectedNet;
+    myOwnNetBitIndex = bitIndex;
   }
-  
+
 }

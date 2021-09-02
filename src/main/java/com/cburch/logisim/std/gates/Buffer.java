@@ -50,6 +50,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.LineBuffer;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -66,11 +67,10 @@ class Buffer extends InstanceFactory {
   private static class BufferGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      ArrayList<String> Contents = new ArrayList<>();
-      if (HDL.isVHDL()) Contents.add("   Result <= Input_1;");
-      else Contents.add("   assign Result = Input_1;");
-      Contents.add("");
-      return Contents;
+      return (new LineBuffer())
+          .add(HDL.isVHDL() ? "Result <= Input_1;" : "assign Result = Input_1;")
+          .empty()
+          .getWithIndent();
     }
   }
 
@@ -259,7 +259,7 @@ class Buffer extends InstanceFactory {
   public void propagate(InstanceState state) {
     var in = state.getPortValue(1);
     in = Buffer.repair(state, in);
-    state.setPort(0, in, GateAttributes.DELAY);
+    state.setPort(0, in.not().not(), GateAttributes.DELAY);
   }
 
   @Override

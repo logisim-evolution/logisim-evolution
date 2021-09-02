@@ -57,7 +57,7 @@ public class ShowStateIcon extends BaseIcon {
         gfx,
         (float) ((double) getIconWidth() / 2.0 - textLayout.getBounds().getCenterX()),
         (float) ((double) getIconHeight() / 4.0 - textLayout.getBounds().getCenterY()));
-    final var iconBorder = AppPreferences.IconBorder;
+    final var iconBorder = AppPreferences.ICON_BORDER;
     final var wh = AppPreferences.getScaled(AppPreferences.IconSize / 2 - iconBorder);
     final var offset = AppPreferences.getScaled(iconBorder);
     gfx.setColor(Color.RED);

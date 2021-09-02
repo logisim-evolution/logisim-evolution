@@ -35,6 +35,7 @@ import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -83,32 +84,34 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
-    contents.add("   Q1  <= state1;");
-    contents.add("   nQ1 <= NOT(state1);");
-    contents.add("   Q2  <= state1;");
-    contents.add("   nQ2 <= NOT(state1);");
-    contents.add(" ");
-    contents.add("   next1 <= D1 WHEN tick1='1' ELSE state1;");
-    contents.add("   next2 <= D2 WHEN tick2='1' ELSE state2;");
-    contents.add(" ");
-    contents.add("   ff1 : PROCESS ( CLK1 , nCLR1 , nPRE1 ) IS");
-    contents.add("      BEGIN");
-    contents.add("         IF (nCLR1 = '0') THEN state1 <= '0';");
-    contents.add("         ELSIF (nPRE1 = '1') THEN state1 <= '1';");
-    contents.add("         ELSIF (rising_edge(CLK1)) THEN state1 <= next1;");
-    contents.add("         END IF;");
-    contents.add("      END PROCESS ff1;");
-    contents.add(" ");
-    contents.add("   ff2 : PROCESS ( CLK2 , nCLR2 , nPRE2 ) IS");
-    contents.add("      BEGIN");
-    contents.add("         IF (nCLR2 = '0') THEN state2 <= '0';");
-    contents.add("         ELSIF (nPRE2 = '1') THEN state2 <= '1';");
-    contents.add("         ELSIF (rising_edge(CLK2)) THEN state2 <= next2;");
-    contents.add("         END IF;");
-    contents.add("      END PROCESS ff2;");
-    return contents;
+  public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+    final var contents = new LineBuffer();
+    return contents
+        .addLines(
+            "Q1  <= state1;",
+            "nQ1 <= NOT(state1,",
+            "Q2  <= state1;",
+            "nQ2 <= NOT(state1,",
+            "",
+            "next1 <= D1 WHEN tick1='1' ELSE state1;",
+            "next2 <= D2 WHEN tick2='1' ELSE state2;",
+            "",
+            "ff1 : PROCESS ( CLK1 , nCLR1 , nPRE1 ) IS",
+            "   BEGIN",
+            "      IF (nCLR1 = '0') THEN state1 <= '0';",
+            "      ELSIF (nPRE1 = '1') THEN state1 <= '1';",
+            "      ELSIF (rising_edge(CLK1)) THEN state1 <= next1;",
+            "      END IF;",
+            "   END PROCESS ff1;",
+            "",
+            "ff2 : PROCESS ( CLK2 , nCLR2 , nPRE2 ) IS",
+            "   BEGIN",
+            "      IF (nCLR2 = '0') THEN state2 <= '0';",
+            "      ELSIF (nPRE2 = '1') THEN state2 <= '1';",
+            "      ELSIF (rising_edge(CLK2)) THEN state2 <= next2;",
+            "      END IF;",
+            "   END PROCESS ff2;")
+        .getWithIndent();
   }
 
   @Override
@@ -119,8 +122,8 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
     for (var i = 0; i < 2; i++) {
       var gatedClock = false;
       var hasClock = true;
-      int clockPinIndex = componentinfo.GetComponent().getFactory().ClockPinIndex(null)[i];
-      if (!componentinfo.EndIsConnected(clockPinIndex)) {
+      int clockPinIndex = componentinfo.getComponent().getFactory().ClockPinIndex(null)[i];
+      if (!componentinfo.isEndConnected(clockPinIndex)) {
         Reporter.Report.AddSevereWarning(
             "Component \"TTL7474\" in circuit \""
                 + Nets.getCircuitName()
@@ -141,19 +144,19 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
             "CLK" + (i + 1),
             GetNetName(componentinfo, clockPinIndex, true, Nets));
       } else {
-        if (Nets.RequiresGlobalClockConnection()) {
+        if (Nets.requiresGlobalClockConnection()) {
           map.put("tick" + (i + 1), "'1'");
         } else {
           map.put(
               "tick" + (i + 1),
               clockNetName
                   + "("
-                  + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
+                  + ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX
                   + ")");
         }
         map.put(
             "CLK" + (i + 1),
-            clockNetName + "(" + ClockHDLGeneratorFactory.GlobalClockIndex + ")");
+            clockNetName + "(" + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX + ")");
       }
     }
     map.putAll(GetNetMap("nCLR1", false, componentinfo, 0, Nets));

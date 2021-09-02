@@ -35,89 +35,87 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
 public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
-  public ArrayList<String> GetInlinedCode(
-      Netlist nets,
-      Long componentId,
-      NetlistComponent componentInfo,
-      String circuitName) {
-    final var contents = new ArrayList<String>();
-    final var label = componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL);
-    final var busName = GetBusName(componentInfo, HexDigit.HEX, nets);
-    final var dpName = GetNetName(componentInfo, HexDigit.DP, true, nets);
+  public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
+    final var startId = componentInfo.getLocalBubbleOutputStartId();
+    final var bubbleBusName = HDLGeneratorFactory.LocalOutputBubbleBusname;
+    final var contents =
+        (new LineBuffer())
+            .pair("busName", GetBusName(componentInfo, HexDigit.HEX, nets))
+            .pair("bubbleBusName", bubbleBusName)
+            .pair("startId", startId)
+            .pair("regName", LineBuffer.format("s_{{1}}_reg", componentInfo.getComponent().getAttributeSet().getValue(StdAttr.LABEL)))
+            .pair("sigName", LineBuffer.format("{{1}}[{{2}}:{{3}}]", bubbleBusName, (startId + 6), startId))
+            .pair("dpName", GetNetName(componentInfo, HexDigit.DP, true, nets));
+
     if (HDL.isVHDL()) {
-      contents.add(" ");
-      if (componentInfo.EndIsConnected(HexDigit.HEX)) {
-        contents.add("   WITH (" + busName + ") SELECT " + HDLGeneratorFactory.LocalOutputBubbleBusname
-                + "( " + (componentInfo.GetLocalBubbleOutputStartId() + 6) + " DOWNTO "
-                + componentInfo.GetLocalBubbleOutputStartId() + ") <= ");
-        contents.add("      \"0111111\" WHEN \"0000\",");
-        contents.add("      \"0000110\" WHEN \"0001\",");
-        contents.add("      \"1011011\" WHEN \"0010\",");
-        contents.add("      \"1001111\" WHEN \"0011\",");
-        contents.add("      \"1100110\" WHEN \"0100\",");
-        contents.add("      \"1101101\" WHEN \"0101\",");
-        contents.add("      \"1111101\" WHEN \"0110\",");
-        contents.add("      \"0000111\" WHEN \"0111\",");
-        contents.add("      \"1111111\" WHEN \"1000\",");
-        contents.add("      \"1100111\" WHEN \"1001\",");
-        contents.add("      \"1110111\" WHEN \"1010\",");
-        contents.add("      \"1111100\" WHEN \"1011\",");
-        contents.add("      \"0111001\" WHEN \"1100\",");
-        contents.add("      \"1011110\" WHEN \"1101\",");
-        contents.add("      \"1111001\" WHEN \"1110\",");
-        contents.add("      \"1110001\" WHEN OTHERS;");
+      contents.add("");
+      if (componentInfo.isEndConnected(HexDigit.HEX)) {
+        contents
+            .add("WITH ({{busName}}) SELECT {{bubbleBusName}}( {{1}} DOWNTO {{startId}} ) <= ", (startId + 6))
+            .addLines(
+                "   \"0111111\" WHEN \"0000\",",
+                "   \"0000110\" WHEN \"0001\",",
+                "   \"1011011\" WHEN \"0010\",",
+                "   \"1001111\" WHEN \"0011\",",
+                "   \"1100110\" WHEN \"0100\",",
+                "   \"1101101\" WHEN \"0101\",",
+                "   \"1111101\" WHEN \"0110\",",
+                "   \"0000111\" WHEN \"0111\",",
+                "   \"1111111\" WHEN \"1000\",",
+                "   \"1100111\" WHEN \"1001\",",
+                "   \"1110111\" WHEN \"1010\",",
+                "   \"1111100\" WHEN \"1011\",",
+                "   \"0111001\" WHEN \"1100\",",
+                "   \"1011110\" WHEN \"1101\",",
+                "   \"1111001\" WHEN \"1110\",",
+                "   \"1110001\" WHEN OTHERS;");
       } else {
-        contents.add("   " + HDLGeneratorFactory.LocalOutputBubbleBusname + "( "
-                + (componentInfo.GetLocalBubbleOutputStartId() + 6) + " DOWNTO "
-                + componentInfo.GetLocalBubbleOutputStartId() + ") <= " + busName + ";");
+        contents.add("{{bubbleBusName}}({{1}} DOWNTO {{startId}}) <= {{busName}};", (startId + 6));
       }
-      if (componentInfo.GetComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
-        contents.add("   " + HDLGeneratorFactory.LocalOutputBubbleBusname + "("
-                + (componentInfo.GetLocalBubbleOutputStartId() + 7) + ") <= " + dpName + ";");
+      if (componentInfo.getComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
+        contents.add("{{bubbleBusName}}({{1}}) <= {{dpName}};", (startId + 7));
       }
     } else {
-      String Signame = HDLGeneratorFactory.LocalOutputBubbleBusname + "["
-                        + (componentInfo.GetLocalBubbleOutputStartId() + 6) + ":"
-                        + componentInfo.GetLocalBubbleOutputStartId() + "]";
-      if (componentInfo.EndIsConnected(HexDigit.HEX)) {
-        String RegName = "s_" + label + "_reg";
-        contents.add(" ");
-        contents.add("   reg[6:0] " + RegName + ";");
-        contents.add("   always @(*)");
-        contents.add("      case (" + busName + ")");
-        contents.add("         4'b0000 : " + RegName + " = 7'b0111111;");
-        contents.add("         4'b0001 : " + RegName + " = 7'b0000110;");
-        contents.add("         4'b0010 : " + RegName + " = 7'b1011011;");
-        contents.add("         4'b0011 : " + RegName + " = 7'b1001111;");
-        contents.add("         4'b0100 : " + RegName + " = 7'b1100110;");
-        contents.add("         4'b0101 : " + RegName + " = 7'b1101101;");
-        contents.add("         4'b0110 : " + RegName + " = 7'b1111101;");
-        contents.add("         4'b0111 : " + RegName + " = 7'b0000111;");
-        contents.add("         4'b1000 : " + RegName + " = 7'b1111111;");
-        contents.add("         4'b1001 : " + RegName + " = 7'b1100111;");
-        contents.add("         4'b1010 : " + RegName + " = 7'b1110111;");
-        contents.add("         4'b1011 : " + RegName + " = 7'b1111100;");
-        contents.add("         4'b1100 : " + RegName + " = 7'b0111001;");
-        contents.add("         4'b1101 : " + RegName + " = 7'b1011110;");
-        contents.add("         4'b1110 : " + RegName + " = 7'b1111001;");
-        contents.add("         default : " + RegName + " = 7'b1110001;");
-        contents.add("      endcase");
-        contents.add(" ");
-        contents.add("   assign " + Signame + " = " + RegName + ";");
+      if (componentInfo.isEndConnected(HexDigit.HEX)) {
+        contents
+            .addLines(
+                "",
+                "reg[6:0] {{regName}};",
+                "always @(*)",
+                "   case ({{busName}})",
+                "      4'b0000 : {{regName}} = 7'b0111111;",
+                "      4'b0001 : {{regName}} = 7'b0000110;",
+                "      4'b0010 : {{regName}} = 7'b1011011;",
+                "      4'b0011 : {{regName}} = 7'b1001111;",
+                "      4'b0100 : {{regName}} = 7'b1100110;",
+                "      4'b0101 : {{regName}} = 7'b1101101;",
+                "      4'b0110 : {{regName}} = 7'b1111101;",
+                "      4'b0111 : {{regName}} = 7'b0000111;",
+                "      4'b1000 : {{regName}} = 7'b1111111;",
+                "      4'b1001 : {{regName}} = 7'b1100111;",
+                "      4'b1010 : {{regName}} = 7'b1110111;",
+                "      4'b1011 : {{regName}} = 7'b1111100;",
+                "      4'b1100 : {{regName}} = 7'b0111001;",
+                "      4'b1101 : {{regName}} = 7'b1011110;",
+                "      4'b1110 : {{regName}} = 7'b1111001;",
+                "      default : {{regName}} = 7'b1110001;",
+                "   endcase",
+                "",
+                "assign {{sigName}} = {{regName}};");
       } else {
-        contents.add("   assign " + Signame + " = " + busName + ";");
+        contents.add("assign {{sigName}} = {{busName}};");
       }
-      if (componentInfo.GetComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
-        contents.add("   assign " + HDLGeneratorFactory.LocalOutputBubbleBusname + "["
-                + (componentInfo.GetLocalBubbleOutputStartId()  +  7) + "] = " + dpName + ";");
+      if (componentInfo.getComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
+        contents.add("assign {{bubbleBusName}}[{{1}}] = {{dpName}};", (componentInfo.getLocalBubbleOutputStartId() + 7));
       }
     }
-    return contents;
+    return contents.getWithIndent();
   }
 
   @Override

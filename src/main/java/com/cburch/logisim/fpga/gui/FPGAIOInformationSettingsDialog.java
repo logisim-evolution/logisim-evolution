@@ -119,7 +119,7 @@ public class FPGAIOInformationSettingsDialog {
     NrOfPins.put(IO_ID, 0);
     var nrOfPins = 0;
     switch (driveMode) {
-      case LedArrayDriving.LedDefault : {
+      case LedArrayDriving.LED_DEFAULT: {
         nrOfPins = nrOfRows * nrOfColumns;
         for (var row = 0; row < nrOfRows; row++) {
           for (var col = 0; col < nrOfColumns; col++)
@@ -127,7 +127,7 @@ public class FPGAIOInformationSettingsDialog {
         }
         break;
       }
-      case LedArrayDriving.LedRowScanning : {
+      case LedArrayDriving.LED_ROW_SCANNING: {
         final var nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfRows);
         nrOfPins = nrBits + nrOfColumns;
         for (var i = 0; i < nrOfPins; i++) {
@@ -139,7 +139,7 @@ public class FPGAIOInformationSettingsDialog {
         }
         break;
       }
-      case LedArrayDriving.LedColumnScanning : {
+      case LedArrayDriving.LED_COLUMN_SCANNING: {
         final var nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
         nrOfPins = nrBits + nrOfRows;
         for (var i = 0; i < nrOfPins; i++) {
@@ -151,20 +151,20 @@ public class FPGAIOInformationSettingsDialog {
         }
         break;
       }
-      case LedArrayDriving.RgbDefault : {
+      case LedArrayDriving.RGB_DEFAULT: {
         nrOfPins = nrOfRows * nrOfColumns * 3;
         var preamble = "";
         for (var rgb = 0; rgb < 3; rgb++) {
           switch (rgb) {
-            case 0 : {
+            case 0: {
               preamble = "Red_";
               break;
             }
-            case 1 : {
+            case 1: {
               preamble = "Green_";
               break;
             }
-            default : {
+            default: {
               preamble = "Blue_";
               break;
             }
@@ -176,7 +176,7 @@ public class FPGAIOInformationSettingsDialog {
         }
         break;
       }
-      case LedArrayDriving.RgbRowScanning : {
+      case LedArrayDriving.RGB_ROW_SCANNING: {
         final var nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfRows);
         nrOfPins = nrBits + 3 * nrOfColumns;
         var preamble = "";
@@ -188,25 +188,25 @@ public class FPGAIOInformationSettingsDialog {
             final var rgb = id / nrOfColumns;
             final var col = id % nrOfColumns;
             switch (rgb) {
-              case 0 : {
+              case 0: {
                 preamble = "Red_";
                 break;
               }
-              case 1 : {
+              case 1: {
                 preamble = "Green_";
                 break;
               }
-              default : {
+              default: {
                 preamble = "Blue_";
                 break;
               }
-            }            
+            }
             pinLabels.add(preamble + "Col_" + col);
           }
         }
         break;
       }
-      case LedArrayDriving.RgbColumnScanning : {
+      case LedArrayDriving.RGB_COLUMN_SCANNING: {
         final var nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
         nrOfPins = nrBits + 3 * nrOfRows;
         var preamble = "";
@@ -218,25 +218,25 @@ public class FPGAIOInformationSettingsDialog {
             final var rgb = id / nrOfRows;
             final var col = id % nrOfRows;
             switch (rgb) {
-              case 0 : {
+              case 0: {
                 preamble = "Red_";
                 break;
               }
-              case 1 : {
+              case 1: {
                 preamble = "Green_";
                 break;
               }
-              default : {
+              default: {
                 preamble = "Blue_";
                 break;
               }
-            }            
+            }
             pinLabels.add(preamble + "Row_" + col);
           }
         }
         break;
       }
-      default : {
+      default: {
         nrOfPins = 0;
       }
     }
@@ -270,7 +270,7 @@ public class FPGAIOInformationSettingsDialog {
       rectPanel.add(rectLocations.get(c.gridy), c);
     return rectPanel;
   }
-  
+
 
   private static final int INPUT_ID = 0;
   private static final int OUTPUT_ID = 1;
@@ -281,9 +281,9 @@ public class FPGAIOInformationSettingsDialog {
     HashMap<Integer, Integer> NrOfPins = new HashMap<>();
     final var selWindow = new JDialog(IOcomps.getParentFrame(), info.GetType() + " " + S.get("FpgaIoProperties"));
     final var contents = new JPanel();
-    final var DriveInput = new JComboBox<String>(DriveStrength.Behavior_strings);
-    final var PullInput = new JComboBox<String>(PullBehaviors.Behavior_strings);
-    final var ActiveInput = new JComboBox<String>(PinActivity.Behavior_strings);
+    final var DriveInput = new JComboBox<String>(DriveStrength.BEHAVIOR_STRINGS);
+    final var PullInput = new JComboBox<String>(PullBehaviors.BEHAVIOR_STRINGS);
+    final var ActiveInput = new JComboBox<String>(PinActivity.BEHAVIOR_STRINGS);
     final var Inputsize = new JComboBox<Integer>();
     final var Outputsize = new JComboBox<Integer>();
     final var IOsize = new JComboBox<Integer>();
@@ -356,7 +356,7 @@ public class FPGAIOInformationSettingsDialog {
               selWindow.pack();
               return;
             }
-            case "LedArray" : {
+            case "LedArray": {
               info.setNrOfRows(RowSize.getSelectedIndex() + 1);
               info.setNrOfColumns(ColSize.getSelectedIndex() + 1);
               info.setArrayDriveMode((char) Encoding.getSelectedIndex());
@@ -408,20 +408,20 @@ public class FPGAIOInformationSettingsDialog {
       panel.setLayout(new BorderLayout());
       panel.setBorder(BorderFactory.createTitledBorder(
           BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaRotationDefinition")));
-      mapRotation.addItem(S.get(IOComponentTypes.getRotationString(myType, IOComponentTypes.rotationZero)));
-      mapRotation.addItem(S.get(IOComponentTypes.getRotationString(myType, IOComponentTypes.rotationCW90)));
-      mapRotation.addItem(S.get(IOComponentTypes.getRotationString(myType, IOComponentTypes.rotationCCW90)));
+      mapRotation.addItem(S.get(IOComponentTypes.getRotationString(myType, IOComponentTypes.ROTATION_ZERO)));
+      mapRotation.addItem(S.get(IOComponentTypes.getRotationString(myType, IOComponentTypes.ROTATION_CW_90)));
+      mapRotation.addItem(S.get(IOComponentTypes.getRotationString(myType, IOComponentTypes.ROTATION_CCW_90)));
       panel.add(mapRotation, BorderLayout.CENTER);
       switch (myRotation) {
-        case IOComponentTypes.rotationCW90 : {
+        case IOComponentTypes.ROTATION_CW_90: {
           mapRotation.setSelectedIndex(1);
           break;
         }
-        case IOComponentTypes.rotationCCW90 : {
+        case IOComponentTypes.ROTATION_CCW_90: {
           mapRotation.setSelectedIndex(2);
           break;
         }
-        default : {
+        default: {
           mapRotation.setSelectedIndex(0);
           break;
         }
@@ -574,7 +574,7 @@ public class FPGAIOInformationSettingsDialog {
     c.gridx = 0;
     contents.add(StandardText, c);
     final var StandardInput = new JComboBox<String>(IoStandards.Behavior_strings);
-    if (info.GetIOStandard() != IoStandards.Unknown)
+    if (info.GetIOStandard() != IoStandards.UNKNOWN)
       StandardInput.setSelectedIndex(info.GetIOStandard());
     else StandardInput.setSelectedIndex(IOcomps.GetDefaultStandard());
     c.gridx = 1;
@@ -585,7 +585,7 @@ public class FPGAIOInformationSettingsDialog {
       c.gridy++;
       c.gridx = 0;
       contents.add(DriveText, c);
-      if (info.GetDrive() != DriveStrength.Unknown) DriveInput.setSelectedIndex(info.GetDrive());
+      if (info.GetDrive() != DriveStrength.UNKNOWN) DriveInput.setSelectedIndex(info.GetDrive());
       else DriveInput.setSelectedIndex(IOcomps.GetDefaultDriveStrength());
       c.gridx = 1;
       contents.add(DriveInput, c);
@@ -596,7 +596,7 @@ public class FPGAIOInformationSettingsDialog {
       c.gridy++;
       c.gridx = 0;
       contents.add(PullText, c);
-      if (info.GetPullBehavior() != PullBehaviors.Unknown)
+      if (info.GetPullBehavior() != PullBehaviors.UNKNOWN)
         PullInput.setSelectedIndex(info.GetPullBehavior());
       else PullInput.setSelectedIndex(IOcomps.GetDefaultPullSelection());
       c.gridx = 1;
@@ -692,24 +692,15 @@ public class FPGAIOInformationSettingsDialog {
                 values[i] = Integer.parseUnsignedInt(rectLocations.get(i).getText());
               } catch (NumberFormatException e) {
                 correct = false;
-                switch (i) {
-                  case 0 : DialogNotification.showDialogNotification(IOcomps.getParentFrame(),
-                                "Error", S.get("FpgaIoIntError", S.get("FpgaIoXpos"),
-                                  rectLocations.get(i).getText()));
-                           break;
-                  case 1 : DialogNotification.showDialogNotification(IOcomps.getParentFrame(),
-                                "Error", S.get("FpgaIoIntError", S.get("FpgaIoYpos"),
-                                  rectLocations.get(i).getText()));
-                           break;
-                  case 2 : DialogNotification.showDialogNotification(IOcomps.getParentFrame(),
-                                "Error", S.get("FpgaIoIntError", S.get("FpgaIoWidth"),
-                                  rectLocations.get(i).getText()));
-                            break;
-                  default : DialogNotification.showDialogNotification(IOcomps.getParentFrame(),
-                                "Error", S.get("FpgaIoIntError", S.get("FpgaIoHeight"),
-                                  rectLocations.get(i).getText()));
-                            break;
-                }
+                final var msgKey = switch (i) {
+                  case 0 -> "FpgaIoXpos";
+                  case 1 -> "FpgaIoYpos";
+                  case 2 -> "FpgaIoWidth";
+                  default -> "FpgaIoHeight";
+                };
+                DialogNotification.showDialogNotification(
+                        // FIXME: hardcoded string
+                        IOcomps.getParentFrame(), "Error", S.get("FpgaIoIntError", S.get(msgKey), rectLocations.get(i).getText()));
               }
             }
             if (!correct) continue;
@@ -719,22 +710,27 @@ public class FPGAIOInformationSettingsDialog {
                 || values[3] != MyRectangle.getHeight()) {
               final var update = new Rectangle(values[0], values[1], values[2], values[3]);
               if (IOcomps.hasOverlap(MyRectangle, new BoardRectangle(update))) {
+                // FIXME: hardcoded string
                 DialogNotification.showDialogNotification(
                     IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectError"));
                 continue;
               } else if (update.getX() + update.getWidth() >= BoardManipulator.IMAGE_WIDTH) {
+                // FIXME: hardcoded string
                 DialogNotification.showDialogNotification(
                     IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectTWide"));
                 continue;
               } else if (update.getY() + update.getHeight() >= BoardManipulator.IMAGE_HEIGHT) {
+                // FIXME: hardcoded string
                 DialogNotification.showDialogNotification(
                     IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectTHeigt"));
                 continue;
               } else if (update.getWidth() < 2) {
+                // FIXME: hardcoded string
                 DialogNotification.showDialogNotification(
                     IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectWNLE"));
                 continue;
               } else if (update.getHeight() < 2) {
+                // FIXME: hardcoded string
                 DialogNotification.showDialogNotification(
                     IOcomps.getParentFrame(), "Error", S.get("FpgaIoRectHNLE"));
                 continue;
@@ -768,21 +764,12 @@ public class FPGAIOInformationSettingsDialog {
             IOcomps.SetDefaultActivity(ActiveInput.getSelectedIndex());
             info.setActivityLevel(PinActivity.getId(ActiveInput.getSelectedItem().toString()));
           }
-          final var selectedRotation = mapRotation.getSelectedIndex();
-          switch (selectedRotation) {
-            case 1 : {
-              info.setMapRotation(IOComponentTypes.rotationCW90);
-              break;
-            }
-            case 2 : {
-              info.setMapRotation(IOComponentTypes.rotationCCW90);
-              break;
-            }
-            default : {
-              info.setMapRotation(IOComponentTypes.rotationZero);
-              break;
-            }
-          }
+          final var rotation = switch (mapRotation.getSelectedIndex()) {
+            case 1 -> IOComponentTypes.ROTATION_CW_90;
+            case 2 -> IOComponentTypes.ROTATION_CCW_90;
+            default -> IOComponentTypes.ROTATION_ZERO;
+          };
+          info.setMapRotation(rotation);
           abort = true;
         }
       }
@@ -791,7 +778,7 @@ public class FPGAIOInformationSettingsDialog {
   }
 
   private static boolean abort;
-  
+
   public static void getFpgaInformation(Frame panel, BoardInformation TheBoard) {
     final var selWindow = new JDialog(panel, S.get("FpgaBoardFpgaProp"));
     /* here the action listener is defined */
@@ -854,7 +841,7 @@ public class FPGAIOInformationSettingsDialog {
     c.gridx = 0;
     ClockPanel.add(PullText, c);
 
-    final var PullInput = new JComboBox<String>(PullBehaviors.Behavior_strings);
+    final var PullInput = new JComboBox<String>(PullBehaviors.BEHAVIOR_STRINGS);
     if (TheBoard.fpga.FpgaInfoPresent()) {
       PullInput.setSelectedIndex(TheBoard.fpga.getClockPull());
     } else PullInput.setSelectedIndex(0);
@@ -886,7 +873,7 @@ public class FPGAIOInformationSettingsDialog {
     c.fill = GridBagConstraints.HORIZONTAL;
     FPGAPanel.add(VendorText, c);
 
-    final var VendorInput = new JComboBox<String>(VendorSoftware.Vendors);
+    final var VendorInput = new JComboBox<String>(VendorSoftware.VENDORS);
     if (TheBoard.fpga.FpgaInfoPresent()) {
       VendorInput.setSelectedIndex(TheBoard.fpga.getVendor());
     } else VendorInput.setSelectedIndex(0);
@@ -938,7 +925,7 @@ public class FPGAIOInformationSettingsDialog {
     c.gridx = 0;
     FPGAPanel.add(UnusedPinsText, c);
 
-    final var UnusedPinsInput = new JComboBox<String>(PullBehaviors.Behavior_strings);
+    final var UnusedPinsInput = new JComboBox<String>(PullBehaviors.BEHAVIOR_STRINGS);
     if (TheBoard.fpga.FpgaInfoPresent()) {
       UnusedPinsInput.setSelectedIndex(TheBoard.fpga.getUnusedPinsBehavior());
     } else UnusedPinsInput.setSelectedIndex(0);

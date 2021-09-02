@@ -38,16 +38,16 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CorrectLabel {
-  public static String getCorrectLabel(String Label) {
-    if (Label.isEmpty()) return Label;
-    StringBuilder result = new StringBuilder();
-    if (Numbers.contains(Label.substring(0, 1))) result.append("L_");
-    result.append(Label.replace(" ", "_").replace("-", "_"));
+  public static String getCorrectLabel(String label) {
+    if (label.isEmpty()) return label;
+    final var result = new StringBuilder();
+    if (NUMBERS.contains(label.substring(0, 1))) result.append("L_");
+    result.append(label.replace(" ", "_").replace("-", "_"));
     return result.toString();
   }
 
-  public static boolean IsCorrectLabel(String Label, String ErrorIdentifierString) {
-    String err = NameErrors(Label, ErrorIdentifierString);
+  public static boolean isCorrectLabel(String label, String errorIdentifierString) {
+    final var err = nameErrors(label, errorIdentifierString);
     if (err != null) {
       Reporter.Report.AddFatalError(err);
       return false;
@@ -55,91 +55,88 @@ public class CorrectLabel {
     return true;
   }
 
-  public static String VhdlNameErrors(String Label) {
-    return NameErrors(Label, "VHDL entity name");
+  public static String vhdlNameErrors(String label) {
+    return nameErrors(label, "VHDL entity name");
   }
 
-  public static String NameErrors(String Label, String ErrorIdentifierString) {
-    if (Label.isEmpty()) return null;
-    for (int i = 0; i < Label.length(); i++) {
-      if (!Chars.contains(Label.toLowerCase().substring(i, i + 1))
-          && !Numbers.contains(Label.substring(i, i + 1))) {
-        return ErrorIdentifierString + S.get("IllegalChar", Label.substring(i, i + 1));
+  public static String nameErrors(String label, String errorIdentifierString) {
+    if (label.isEmpty()) return null;
+    for (var i = 0; i < label.length(); i++) {
+      if (!CHARS.contains(label.toLowerCase().substring(i, i + 1)) && !NUMBERS.contains(label.substring(i, i + 1))) {
+        return errorIdentifierString + S.get("IllegalChar", label.substring(i, i + 1));
       }
     }
     if (HDL.isVHDL()) {
-      if (VHDLKeywords.contains(Label.toLowerCase())) {
-        return ErrorIdentifierString + S.get("ReservedVHDLKeyword");
+      if (VHDL_KEYWORDS.contains(label.toLowerCase())) {
+        return errorIdentifierString + S.get("ReservedVHDLKeyword");
       }
     } else {
       if (HDL.isVerilog()) {
-        if (VerilogKeywords.contains(Label)) {
-          return ErrorIdentifierString + S.get("ReservedVerilogKeyword");
+        if (VERILOG_KEYWORDS.contains(label)) {
+          return errorIdentifierString + S.get("ReservedVerilogKeyword");
         }
       }
     }
     return null;
   }
 
-  public static String HDLCorrectLabel(String Label) {
-    if (Label.isEmpty()) return null;
-    if (VHDLKeywords.contains(Label.toLowerCase())) return HDLGeneratorFactory.VHDL;
-    if (VerilogKeywords.contains(Label)) return HDLGeneratorFactory.VERILOG;
+  public static String hdlCorrectLabel(String label) {
+    if (label.isEmpty()) return null;
+    if (VHDL_KEYWORDS.contains(label.toLowerCase())) return HDLGeneratorFactory.VHDL;
+    if (VERILOG_KEYWORDS.contains(label)) return HDLGeneratorFactory.VERILOG;
     return null;
   }
 
-  public static String FirstInvalidCharacter(String Label) {
-    if (Label.isEmpty()) return "";
-    for (int i = 0; i < Label.length(); i++) {
-      var str = Label.substring(i, i + 1);
-      var low = str.toLowerCase();
-      if (!Chars.contains(low)
-          && !Numbers.contains(str)) {
+  public static String firstInvalidCharacter(String label) {
+    if (label.isEmpty()) return "";
+    for (var i = 0; i < label.length(); i++) {
+      final var str = label.substring(i, i + 1);
+      final var low = str.toLowerCase();
+      if (!CHARS.contains(low) && !NUMBERS.contains(str)) {
         return low;
       }
     }
     return "";
   }
 
-  public static boolean IsCorrectLabel(String Label) {
+  public static boolean isCorrectLabel(String Label) {
     if (Label.isEmpty()) return true;
-    for (int i = 0; i < Label.length(); i++) {
-      if (!Chars.contains(Label.toLowerCase().substring(i, i + 1))
-          && !Numbers.contains(Label.substring(i, i + 1))) {
+    for (var i = 0; i < Label.length(); i++) {
+      if (!CHARS.contains(Label.toLowerCase().substring(i, i + 1)) && !NUMBERS.contains(Label.substring(i, i + 1))) {
         return false;
       }
     }
     if (HDL.isVHDL()) {
-      return !VHDLKeywords.contains(Label.toLowerCase());
+      return !VHDL_KEYWORDS.contains(Label.toLowerCase());
     } else {
       if (HDL.isVerilog()) {
-        return !VerilogKeywords.contains(Label);
+        return !VERILOG_KEYWORDS.contains(Label);
       }
     }
     return true;
   }
 
-  public static boolean IsKeyword(String Label, Boolean ShowDialog) {
+  public static boolean isKeyword(String label, Boolean showDialog) {
     boolean ret = false;
 
-    if (VHDLKeywords.contains(Label.toLowerCase())) {
+    if (VHDL_KEYWORDS.contains(label.toLowerCase())) {
       ret = true;
-      if (ShowDialog) OptionPane.showMessageDialog(null, S.get("VHDLKeywordNameError"));
-    } else if (VerilogKeywords.contains(Label.toLowerCase())) {
-      if (ShowDialog) OptionPane.showMessageDialog(null, S.get("VerilogKeywordNameError"));
+      if (showDialog) OptionPane.showMessageDialog(null, S.get("VHDLKeywordNameError"));
+    } else if (VERILOG_KEYWORDS.contains(label.toLowerCase())) {
+      if (showDialog) OptionPane.showMessageDialog(null, S.get("VerilogKeywordNameError"));
       ret = true;
     }
     return ret;
   }
 
-  private static final String[] NumbersStr = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-  public static final List<String> Numbers = Arrays.asList(NumbersStr);
-  private static final String[] AllowedStrings = {
+  private static final String[] NUMBERS_STR = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
+  public static final List<String> NUMBERS = Arrays.asList(NUMBERS_STR);
+  private static final String[] ALLOWED_STRINGS = {
     "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
     "t", "u", "v", "w", "x", "y", "z", " ", "-", "_"
   };
-  private static final List<String> Chars = Arrays.asList(AllowedStrings);
-  private static final String[] ReservedVHDLWords = {
+  private static final List<String> CHARS = Arrays.asList(ALLOWED_STRINGS);
+  private static final String[] RESERVED_VHDL_WORDS = {
     "abs",
     "access",
     "after",
@@ -238,9 +235,9 @@ public class CorrectLabel {
     "xnor",
     "xor"
   };
-  public static final List<String> VHDLKeywords = Arrays.asList(ReservedVHDLWords);
+  public static final List<String> VHDL_KEYWORDS = Arrays.asList(RESERVED_VHDL_WORDS);
 
-  private static final String[] ReservedVerilogWords = {
+  private static final String[] RESERVED_VERILOG_WORDS = {
     "always",
     "ifnone",
     "rpmos",
@@ -365,5 +362,5 @@ public class CorrectLabel {
     "noshowcancelled"
   };
 
-  private static final List<String> VerilogKeywords = Arrays.asList(ReservedVerilogWords);
+  private static final List<String> VERILOG_KEYWORDS = Arrays.asList(RESERVED_VERILOG_WORDS);
 }

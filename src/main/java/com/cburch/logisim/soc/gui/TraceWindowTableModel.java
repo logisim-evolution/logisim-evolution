@@ -61,7 +61,7 @@ public class TraceWindowTableModel extends AbstractTableModel
   private final SocBusMenuProvider.InstanceInformation parent;
   private final HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> myTraceList;
   private JTable table;
-  private int BoxWidth = SocBusStateInfo.BlockWidth;
+  private int BoxWidth = SocBusStateInfo.BLOCK_WIDTH;
   public TraceWindowTableModel(
       HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> traceList,
       SocBusMenuProvider.InstanceInformation p) {
@@ -95,7 +95,7 @@ public class TraceWindowTableModel extends AbstractTableModel
         table.getColumnModel().getColumn(i).setPreferredWidth(AppPreferences.getScaled(BoxWidth));
       table.setRowHeight(
           AppPreferences.getScaled(
-              2 * SocBusStateInfo.TraceHeight + SocBusStateInfo.TraceHeight / 2));
+              2 * SocBusStateInfo.TRACE_HEIGHT + SocBusStateInfo.TRACE_HEIGHT / 2));
       table
           .getTableHeader()
           .setPreferredSize(

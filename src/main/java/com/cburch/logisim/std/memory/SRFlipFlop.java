@@ -34,8 +34,8 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -73,10 +73,10 @@ public class SRFlipFlop extends AbstractFlipFlop {
 
     @Override
     public ArrayList<String> GetUpdateLogic() {
-      ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   " + HDL.assignPreamble() + "s_next_state" + HDL.assignOperator()
-              + "(s_current_state_reg" + HDL.orOperator() + "S)" + HDL.andOperator() + HDL.notOperator() + "(R);");
-      return Contents;
+      return (new LineBuffer())
+          .addHdlPairs()
+          .add("{{assign}} s_next_state {{=}} (s_current_state_reg {{or}} S) {{and}} {{not}}(R);")
+          .getWithIndent();
     }
   }
 

@@ -93,13 +93,13 @@ public class Ttl74175 extends AbstractTtlGate {
 
   private void DrawFlops(Graphics g, int x, int y, int height) {
     // Reset line
-    g.drawLine(x + 10, y + height - 10, x + 10, y + height - AbstractTtlGate.pinheight);
+    g.drawLine(x + 10, y + height - 10, x + 10, y + height - AbstractTtlGate.PIN_HEIGHT);
     g.drawLine(x + 10, y + height - 10, x + 140, y + height - 10);
     g.drawLine(x + 140, y + height - 10, x + 140, y + 10);
     g.drawLine(x + 60, y + 10, x + 140, y + 10);
 
     // Clock line
-    g.drawLine(x + 150, y + AbstractTtlGate.pinheight, x + 150, y + 30);
+    g.drawLine(x + 150, y + AbstractTtlGate.PIN_HEIGHT, x + 150, y + 30);
     g.drawLine(x + 80, y + 30, x + 150, y + 30);
 
     // dff1
@@ -110,13 +110,13 @@ public class Ttl74175 extends AbstractTtlGate {
     g.drawLine(x + 60, y + 47, x + 60, y + 50);
 
     g.drawOval(x + 55, y + 40, 2, 2);
-    g.drawLine(x + 50, y + height - AbstractTtlGate.pinheight, x + 50, y + 41);
+    g.drawLine(x + 50, y + height - AbstractTtlGate.PIN_HEIGHT, x + 50, y + 41);
     g.drawLine(x + 50, y + 41, x + 55, y + 41);
 
-    g.drawLine(x + 30, y + height - AbstractTtlGate.pinheight, x + 30, y + 37);
+    g.drawLine(x + 30, y + height - AbstractTtlGate.PIN_HEIGHT, x + 30, y + 37);
     g.drawLine(x + 30, y + 37, x + 57, y + 37);
 
-    g.drawLine(x + 70, y + height - AbstractTtlGate.pinheight, x + 70, y + 37);
+    g.drawLine(x + 70, y + height - AbstractTtlGate.PIN_HEIGHT, x + 70, y + 37);
     g.drawLine(x + 63, y + 37, x + 70, y + 37);
 
     g.drawLine(x + 61, y + 41, x + 63, y + 42);
@@ -135,13 +135,13 @@ public class Ttl74175 extends AbstractTtlGate {
     g.drawLine(x + 100, y + 47, x + 100, y + 50);
 
     g.drawOval(x + 103, y + 40, 2, 2);
-    g.drawLine(x + 110, y + height - AbstractTtlGate.pinheight, x + 110, y + 41);
+    g.drawLine(x + 110, y + height - AbstractTtlGate.PIN_HEIGHT, x + 110, y + 41);
     g.drawLine(x + 105, y + 41, x + 110, y + 41);
 
-    g.drawLine(x + 130, y + height - AbstractTtlGate.pinheight, x + 130, y + 37);
+    g.drawLine(x + 130, y + height - AbstractTtlGate.PIN_HEIGHT, x + 130, y + 37);
     g.drawLine(x + 130, y + 37, x + 103, y + 37);
 
-    g.drawLine(x + 90, y + height - AbstractTtlGate.pinheight, x + 90, y + 37);
+    g.drawLine(x + 90, y + height - AbstractTtlGate.PIN_HEIGHT, x + 90, y + 37);
     g.drawLine(x + 90, y + 37, x + 97, y + 37);
 
     g.drawLine(x + 97, y + 42, x + 99, y + 41);
@@ -158,13 +158,13 @@ public class Ttl74175 extends AbstractTtlGate {
     g.drawLine(x + 100, y + 13, x + 100, y + 10);
 
     g.drawOval(x + 103, y + 18, 2, 2);
-    g.drawLine(x + 110, y + AbstractTtlGate.pinheight, x + 110, y + 19);
+    g.drawLine(x + 110, y + AbstractTtlGate.PIN_HEIGHT, x + 110, y + 19);
     g.drawLine(x + 105, y + 19, x + 110, y + 19);
 
-    g.drawLine(x + 130, y + AbstractTtlGate.pinheight, x + 130, y + 23);
+    g.drawLine(x + 130, y + AbstractTtlGate.PIN_HEIGHT, x + 130, y + 23);
     g.drawLine(x + 130, y + 23, x + 103, y + 23);
 
-    g.drawLine(x + 90, y + AbstractTtlGate.pinheight, x + 90, y + 23);
+    g.drawLine(x + 90, y + AbstractTtlGate.PIN_HEIGHT, x + 90, y + 23);
     g.drawLine(x + 90, y + 23, x + 97, y + 23);
 
     g.drawLine(x + 97, y + 20, x + 99, y + 19);
@@ -180,13 +180,13 @@ public class Ttl74175 extends AbstractTtlGate {
     g.drawLine(x + 60, y + 13, x + 60, y + 10);
 
     g.drawOval(x + 55, y + 18, 2, 2);
-    g.drawLine(x + 50, y + AbstractTtlGate.pinheight, x + 50, y + 19);
+    g.drawLine(x + 50, y + AbstractTtlGate.PIN_HEIGHT, x + 50, y + 19);
     g.drawLine(x + 50, y + 19, x + 55, y + 19);
 
-    g.drawLine(x + 30, y + AbstractTtlGate.pinheight, x + 30, y + 23);
+    g.drawLine(x + 30, y + AbstractTtlGate.PIN_HEIGHT, x + 30, y + 23);
     g.drawLine(x + 30, y + 23, x + 57, y + 23);
 
-    g.drawLine(x + 70, y + AbstractTtlGate.pinheight, x + 70, y + 23);
+    g.drawLine(x + 70, y + AbstractTtlGate.PIN_HEIGHT, x + 70, y + 23);
     g.drawLine(x + 63, y + 23, x + 70, y + 23);
 
     g.drawLine(x + 61, y + 19, x + 63, y + 20);

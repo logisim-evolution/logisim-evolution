@@ -81,6 +81,7 @@ public class JtagUartState  implements SocBusSlaveInterface {
       return (last == Value.FALSE && clock == Value.TRUE);
     }
 
+    @Override
     public PioRegState clone() {
       try {
         return (PioRegState) super.clone();
@@ -193,6 +194,7 @@ public class JtagUartState  implements SocBusSlaveInterface {
     return attachedBus;
   }
 
+  @Override
   public Integer getStartAddress() {
     return startAddress;
   }
@@ -268,8 +270,8 @@ public class JtagUartState  implements SocBusSlaveInterface {
   }
 
   public void handleOperations(InstanceState state) {
-    Value curReset = state.getPortValue(JtagUart.ResetPin);
-    Value curClock = state.getPortValue(JtagUart.ClockPin);
+    Value curReset = state.getPortValue(JtagUart.RESET_PIN);
+    Value curClock = state.getPortValue(JtagUart.CLOCK_PIN);
     JtagUartFifoState instState = (JtagUartFifoState) state.getData();
     if (instState == null) {
       instState = new JtagUartFifoState();
@@ -277,40 +279,40 @@ public class JtagUartState  implements SocBusSlaveInterface {
     }
     instState.setReset(curReset);
     if (instState.doReset) {
-      state.setPort(JtagUart.ReadEnablePin, Value.FALSE, 5);
-      state.setPort(JtagUart.ClearKeyboardPin, Value.TRUE, 5);
-      state.setPort(JtagUart.DataOutPin, Value.createKnown(7, 0), 5);
-      state.setPort(JtagUart.WritePin, Value.FALSE, 5);
-      state.setPort(JtagUart.ClearTtyPin, Value.TRUE, 5);
-      state.setPort(JtagUart.IRQPin, Value.FALSE, 5);
+      state.setPort(JtagUart.READ_ENABLE_PIN, Value.FALSE, 5);
+      state.setPort(JtagUart.CLEAR_KEYBOARD_PIN, Value.TRUE, 5);
+      state.setPort(JtagUart.DATA_OUT_PIN, Value.createKnown(7, 0), 5);
+      state.setPort(JtagUart.WRITE_PIN, Value.FALSE, 5);
+      state.setPort(JtagUart.CLEAR_TTY_PIN, Value.TRUE, 5);
+      state.setPort(JtagUart.IRQ_PIN, Value.FALSE, 5);
       instState.reset();
     }
     if (instState.endReset) {
-      state.setPort(JtagUart.ReadEnablePin, Value.FALSE, 5);
-      state.setPort(JtagUart.ClearKeyboardPin, Value.FALSE, 5);
-      state.setPort(JtagUart.DataOutPin, Value.createKnown(7, 0), 5);
-      state.setPort(JtagUart.WritePin, Value.FALSE, 5);
-      state.setPort(JtagUart.ClearTtyPin, Value.FALSE, 5);
-      state.setPort(JtagUart.IRQPin, Value.FALSE, 5);
+      state.setPort(JtagUart.READ_ENABLE_PIN, Value.FALSE, 5);
+      state.setPort(JtagUart.CLEAR_KEYBOARD_PIN, Value.FALSE, 5);
+      state.setPort(JtagUart.DATA_OUT_PIN, Value.createKnown(7, 0), 5);
+      state.setPort(JtagUart.WRITE_PIN, Value.FALSE, 5);
+      state.setPort(JtagUart.CLEAR_TTY_PIN, Value.FALSE, 5);
+      state.setPort(JtagUart.IRQ_PIN, Value.FALSE, 5);
     }
     if (curReset == Value.TRUE) return;
     if (instState.risingEdge(curClock)) {
-      state.setPort(JtagUart.IRQPin, instState.IrqPending() ? Value.TRUE : Value.FALSE, 5);
+      state.setPort(JtagUart.IRQ_PIN, instState.IrqPending() ? Value.TRUE : Value.FALSE, 5);
       if (instState.WriteFifoEmpty()) {
-        state.setPort(JtagUart.WritePin, Value.FALSE, 5);
+        state.setPort(JtagUart.WRITE_PIN, Value.FALSE, 5);
       } else {
         int val = instState.popWriteFifo();
         instState.setAcBit();
-        state.setPort(JtagUart.WritePin, Value.TRUE, 5);
-        state.setPort(JtagUart.DataOutPin, Value.createKnown(7, val), 5);
+        state.setPort(JtagUart.WRITE_PIN, Value.TRUE, 5);
+        state.setPort(JtagUart.DATA_OUT_PIN, Value.createKnown(7, val), 5);
       }
-      if (state.getPortValue(JtagUart.AvailablePin) == Value.TRUE
-          && state.getPortValue(JtagUart.ReadEnablePin) == Value.FALSE) {
+      if (state.getPortValue(JtagUart.AVAILABLE_PIN) == Value.TRUE
+          && state.getPortValue(JtagUart.READ_ENABLE_PIN) == Value.FALSE) {
         instState.setAcBit();
-        instState.pushReadFifo((int) state.getPortValue(JtagUart.DataInPin).toLongValue());
-        state.setPort(JtagUart.ReadEnablePin, Value.TRUE, 5);
+        instState.pushReadFifo((int) state.getPortValue(JtagUart.DATA_IN_PIN).toLongValue());
+        state.setPort(JtagUart.READ_ENABLE_PIN, Value.TRUE, 5);
       } else {
-        state.setPort(JtagUart.ReadEnablePin, Value.FALSE, 5);
+        state.setPort(JtagUart.READ_ENABLE_PIN, Value.FALSE, 5);
       }
     }
   }
@@ -329,8 +331,8 @@ public class JtagUartState  implements SocBusSlaveInterface {
     trans.setTransactionResponder(attachedBus.getComponent());
     long addr = SocSupport.convUnsignedInt(trans.getAddress());
     long start = SocSupport.convUnsignedInt(startAddress);
-    if (trans.getAccessType() != SocBusTransaction.WordAccess) {
-      trans.setError(SocBusTransaction.AccessTypeNotSupportedError);
+    if (trans.getAccessType() != SocBusTransaction.WORD_ACCESS) {
+      trans.setError(SocBusTransaction.ACCESS_TYPE_NOT_SUPPORTED_ERROR);
       return;
     }
     JtagUartFifoState state =
@@ -355,7 +357,7 @@ public class JtagUartState  implements SocBusSlaveInterface {
       }
       return;
     }
-    trans.setError(SocBusTransaction.MisalignedAddressError);
+    trans.setError(SocBusTransaction.MISALIGNED_ADDRESS_ERROR);
   }
 
   @Override

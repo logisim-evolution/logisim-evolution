@@ -33,6 +33,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -69,45 +70,46 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
+    final var contents = new LineBuffer();
     long addr;
     final var rom = attrs.getValue(Rom.CONTENTS_ATTR);
     if (HDL.isVHDL()) {
-      contents.add("   MakeRom : PROCESS( Address )");
-      contents.add("      BEGIN");
-      contents.add("         CASE (Address) IS");
+      contents.addLines(
+              "MakeRom : PROCESS( Address )",
+              "   BEGIN",
+              "      CASE (Address) IS");
       for (addr = 0; addr < (1 << attrs.getValue(Mem.ADDR_ATTR).getWidth()); addr++) {
         if (rom.get(addr) != 0) {
           contents.add(
-              "            WHEN "
-                  + getBin(addr, attrs.getValue(Mem.ADDR_ATTR).getWidth())
-                  + " => Data <= "
-                  + getBin(rom.get(addr), attrs.getValue(Mem.DATA_ATTR).getWidth())
-                  + ";");
+              "         WHEN {{1}} => Data <= {{2}};",
+              getBin(addr, attrs.getValue(Mem.ADDR_ATTR).getWidth()),
+              getBin(rom.get(addr), attrs.getValue(Mem.DATA_ATTR).getWidth()));
         }
       }
       if (attrs.getValue(Mem.DATA_ATTR).getWidth() == 1)
-        contents.add("            WHEN OTHERS => Data <= '0';");
+        contents.add("         WHEN OTHERS => Data <= '0';");
       else
-        contents.add("            WHEN OTHERS => Data <= (OTHERS => '0');");
-      contents.add("         END CASE;");
-      contents.add("      END PROCESS MakeRom;");
+        contents.add("         WHEN OTHERS => Data <= (OTHERS => '0');");
+      contents.add("      END CASE;");
+      contents.add("   END PROCESS MakeRom;");
     } else {
-      contents.add("   reg[" + (attrs.getValue(Mem.DATA_ATTR).getWidth() - 1) + ":0] Data;");
-      contents.add("");
-      contents.add("   always @ (Address)");
-      contents.add("   begin");
-      contents.add("      case(Address)");
+      contents
+          .add("reg[{{1}}:0] Data;", attrs.getValue(Mem.DATA_ATTR).getWidth() - 1)
+          .add("")
+          .add("always @ (Address)")
+          .add("begin")
+          .add("   case(Address)");
       for (addr = 0; addr < (1 << attrs.getValue(Mem.ADDR_ATTR).getWidth()); addr++) {
         if (rom.get(addr) != 0) {
-          contents.add("         " + addr + " : Data = " + rom.get(addr) + ";");
+          contents.add("      {{1}} : Data = {{2}};", addr, rom.get(addr));
         }
       }
-      contents.add("         default : Data = 0;");
-      contents.add("      endcase");
-      contents.add("   end");
+      contents.addLines(
+          "      default : Data = 0;",
+          "   endcase",
+          "end");
     }
-    return contents;
+    return contents.getWithIndent();
   }
 
   @Override
@@ -122,7 +124,7 @@ public class RomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var comp = (NetlistComponent) mapInfo;
-    final var attrs = comp.GetComponent().getAttributeSet();
+    final var attrs = comp.getComponent().getAttributeSet();
     map.putAll(GetNetMap("Address", true, comp, RamAppearance.getAddrIndex(0, attrs), nets));
     map.putAll(GetNetMap("Data", true, comp, RamAppearance.getDataOutIndex(0, attrs), nets));
     return map;

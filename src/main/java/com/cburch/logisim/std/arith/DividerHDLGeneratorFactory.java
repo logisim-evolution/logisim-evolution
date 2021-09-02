@@ -34,6 +34,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -62,25 +63,25 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
+    final var Contents = (new LineBuffer())
+            .pair("nrOfBits", NrOfBitsStr)
+            .pair("unsigned", UnsignedStr)
+            .pair("calcBits", CalcBitsStr);
+
     if (HDL.isVHDL()) {
-      Contents.add(
-          "   s_extended_dividend(" + CalcBitsStr + "-1 DOWNTO " + NrOfBitsStr + ") <= Upper;");
-      Contents.add("   s_extended_dividend(" + NrOfBitsStr + "-1 DOWNTO 0) <= INP_A;");
-      Contents.add(
-          "   s_div_result <= std_logic_vector(unsigned(s_extended_dividend) / unsigned(INP_B))");
-      Contents.add("                      WHEN " + UnsignedStr + " = 1 ELSE");
-      Contents.add(
-          "                   std_logic_vector(signed(s_extended_dividend) / signed(INP_B));");
-      Contents.add(
-          "   s_mod_result <= std_logic_vector(unsigned(s_extended_dividend) mod unsigned(INP_B))");
-      Contents.add("                      WHEN " + UnsignedStr + " = 1 ELSE");
-      Contents.add(
-          "                   std_logic_vector(signed(s_extended_dividend) mod signed(INP_B));");
-      Contents.add("   Quotient  <= s_div_result(" + NrOfBitsStr + "-1 DOWNTO 0);");
-      Contents.add("   Remainder <= s_mod_result(" + NrOfBitsStr + "-1 DOWNTO 0);");
+      Contents.addLines(
+          "s_extended_dividend({{calcBits}}-1 DOWNTO {{nrOfBits}}) <= Upper;",
+          "s_extended_dividend({{nrOfBits}}-1 DOWNTO 0) <= INP_A;",
+          "s_div_result <= std_logic_vector(unsigned(s_extended_dividend) / unsigned(INP_B))",
+          "                   WHEN {{unsigned}} = 1 ELSE",
+          "                std_logic_vector(signed(s_extended_dividend) / signed(INP_B));",
+          "s_mod_result <= std_logic_vector(unsigned(s_extended_dividend) mod unsigned(INP_B))",
+          "                   WHEN {{unsigned}} = 1 ELSE",
+          "                std_logic_vector(signed(s_extended_dividend) mod signed(INP_B));",
+          "Quotient  <= s_div_result({{nrOfBits}}-1 DOWNTO 0);",
+          "Remainder <= s_mod_result({{nrOfBits}}-1 DOWNTO 0);");
     }
-    return Contents;
+    return Contents.getWithIndent();
   }
 
   @Override
@@ -104,8 +105,8 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var map = new TreeMap<String, Integer>();
     final var nrOfBits =
-        ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
-    final var isUnsigned = ComponentInfo.GetComponent()
+        ComponentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
+    final var isUnsigned = ComponentInfo.getComponent()
             .getAttributeSet()
             .getValue(Multiplier.MODE_ATTR)
             .equals(Multiplier.UNSIGNED_OPTION);

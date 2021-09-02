@@ -86,21 +86,26 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface, S
         return false;
       clear();
       switch (getMode()) {
-        case VgaAttributes.MODE_160_120 : lineSize = 160;
-                                          nrOfLines = 120;
-                                          break;
-        case VgaAttributes.MODE_320_240 : lineSize = 320;
-                                          nrOfLines = 240;
-                                          break;
-        case VgaAttributes.MODE_640_480 : lineSize = 640;
-                                          nrOfLines = 480;
-                                          break;
-        case VgaAttributes.MODE_800_600 : lineSize = 800;
-                                          nrOfLines = 600;
-                                          break;
-        case VgaAttributes.MODE_1024_768: lineSize = 1024;
-                                          nrOfLines = 768;
-                                          break;
+        case VgaAttributes.MODE_160_120:
+          lineSize = 160;
+          nrOfLines = 120;
+          break;
+        case VgaAttributes.MODE_320_240:
+          lineSize = 320;
+          nrOfLines = 240;
+          break;
+        case VgaAttributes.MODE_640_480:
+          lineSize = 640;
+          nrOfLines = 480;
+          break;
+        case VgaAttributes.MODE_800_600:
+          lineSize = 800;
+          nrOfLines = 600;
+          break;
+        case VgaAttributes.MODE_1024_768:
+          lineSize = 1024;
+          nrOfLines = 768;
+          break;
       }
       myImage = new BufferedImage(lineSize, nrOfLines, BufferedImage.TYPE_INT_RGB);
       return true;
@@ -117,6 +122,7 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface, S
       reload = true;
     }
 
+    @Override
     public VgaDisplayState clone() {
       try {
         return (VgaDisplayState) super.clone();
@@ -132,10 +138,10 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface, S
             int index = line * lineSize + pixel;
             SocBusTransaction trans =
                 new SocBusTransaction(
-                    SocBusTransaction.READTransaction,
+                    SocBusTransaction.READ_TRANSACTION,
                     vgaBufferAddress + index * 4,
                     0,
-                    SocBusTransaction.WordAccess,
+                    SocBusTransaction.WORD_ACCESS,
                     "vgadma");
             trans.setAsHiddenTransaction();
             initializeTransaction(trans, attachedBus.getBusId(), cState);
@@ -346,12 +352,14 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface, S
   }
 
   /* here all Socbus interface handles are defined */
+  @Override
   public void initializeTransaction(SocBusTransaction trans, String busId, CircuitState cState) {
     if (attachedBus.getSocSimulationManager() == null)
       return;
     attachedBus.getSocSimulationManager().initializeTransaction(trans, busId, cState);
   }
 
+  @Override
   public void sniffTransaction(SocBusTransaction trans) {
     if (!trans.isWriteTransaction())
       return;
@@ -367,6 +375,7 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface, S
     }
   }
 
+  @Override
   public boolean canHandleTransaction(SocBusTransaction trans) {
     long addr = SocSupport.convUnsignedInt(trans.getAddress());
     long start = SocSupport.convUnsignedInt(startAddress);
@@ -374,12 +383,13 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface, S
     return addr >= start && addr < end;
   }
 
+  @Override
   public void handleTransaction(SocBusTransaction trans) {
     if (!canHandleTransaction(trans))
       return;
     trans.setTransactionResponder(attachedBus.getComponent());
-    if (trans.getAccessType() != SocBusTransaction.WordAccess) {
-      trans.setError(SocBusTransaction.AccessTypeNotSupportedError);
+    if (trans.getAccessType() != SocBusTransaction.WORD_ACCESS) {
+      trans.setError(SocBusTransaction.ACCESS_TYPE_NOT_SUPPORTED_ERROR);
       return;
     }
     if (trans.isReadTransaction()) {
@@ -408,14 +418,17 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface, S
     }
   }
 
+  @Override
   public Integer getStartAddress() {
     return startAddress;
   }
 
+  @Override
   public Integer getMemorySize() {
     return 4;
   }
 
+  @Override
   public String getName() {
     String name = label;
     if (name == null || name.isEmpty()) {
@@ -425,14 +438,17 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface, S
     return name;
   }
 
+  @Override
   public void registerListener(SocBusSlaveListener l) {
     if (!listeners.contains(l)) listeners.add(l);
   }
 
+  @Override
   public void removeListener(SocBusSlaveListener l) {
     listeners.remove(l);
   }
 
+  @Override
   public InstanceComponent getComponent() {
     return (InstanceComponent) attachedBus.getComponent();
   }

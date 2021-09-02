@@ -296,6 +296,7 @@ public class PLATable {
       return a;
     }
 
+    @Override
     public String toString() {
       return toStandardString();
     }
@@ -415,6 +416,7 @@ public class PLATable {
       setLocationRelativeTo(parent);
     }
 
+    @Override
     public void setValue(Object o) {
       if (!(o instanceof PLATable)) return;
       oldTable = (PLATable) o;
@@ -592,7 +594,7 @@ public class PLATable {
           int outSz = row.outBits.length;
 
           final var layout = new GridLayout(1, 1 + inSz + 1 + Math.max(outSz, 2) + 1);
-          layout.setHgap(buttonHgap);
+          layout.setHgap(BUTTON_HGAP);
           final var bitPanel = new JPanel(layout);
 
           bitPanel.add(new Box(BoxLayout.X_AXIS));
@@ -674,9 +676,9 @@ public class PLATable {
         add(
             Box.createRigidArea(
                 new Dimension(
-                    AppPreferences.getScaled(75 + bs),
+                    AppPreferences.getScaled(75 + BS),
                     AppPreferences.getScaled(15)))); // space for remove button
-        final var dim = new Dimension(AppPreferences.getScaled(bs), AppPreferences.getScaled(15));
+        final var dim = new Dimension(AppPreferences.getScaled(BS), AppPreferences.getScaled(15));
 
         for (var i = inSz - 1; i >= 0; i--) {
           final var l = new JLabel("" + i, SwingConstants.CENTER);
@@ -718,28 +720,28 @@ public class PLATable {
         add(
             Box.createRigidArea(
                 new Dimension(
-                    AppPreferences.getScaled(75 + bs - Math.max(3 - inSz, 0) * bs),
+                    AppPreferences.getScaled(75 + BS - Math.max(3 - inSz, 0) * BS),
                     AppPreferences.getScaled(15)))); // space for remove button
 
         final var i = new JLabel("input", SwingConstants.RIGHT);
         i.setFont(AppPreferences.getScaledFont(i.getFont().deriveFont(smallFont)));
         i.setPreferredSize(
             new Dimension(
-                AppPreferences.getScaled(Math.max(inSz, 3) * bs), AppPreferences.getScaled(15)));
+                    AppPreferences.getScaled(Math.max(inSz, 3) * BS), AppPreferences.getScaled(15)));
         add(i);
 
         final var o = new JLabel("output", SwingConstants.RIGHT);
         o.setFont(AppPreferences.getScaledFont(o.getFont().deriveFont(smallFont)));
         o.setPreferredSize(
             new Dimension(
-                AppPreferences.getScaled(Math.max(outSz + 1, 3) * bs),
+                AppPreferences.getScaled(Math.max(outSz + 1, 3) * BS),
                 AppPreferences.getScaled(15)));
         add(o);
 
         add(
             Box.createRigidArea(
                 new Dimension(
-                    AppPreferences.getScaled(bs + 125 - 8),
+                    AppPreferences.getScaled(BS + 125 - 8),
                     AppPreferences.getScaled(15)))); // space for comment, mystery 8
 
         pack();
@@ -748,15 +750,15 @@ public class PLATable {
       }
     }
 
-    private static final int bs = 18;
-    private static final int buttonHgap = 2;
-    private static final int edgeThickness = 2;
-    private static final Border stdBorder = BorderFactory.createEtchedBorder();
-    private static final Border clickBorder = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
-    private static final Dimension buttonSize =
+    private static final int BS = 18;
+    private static final int BUTTON_HGAP = 2;
+    private static final int EDGE_THICKNESS = 2;
+    private static final Border STD_BORDER = BorderFactory.createEtchedBorder();
+    private static final Border CLICK_BORDER = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
+    private static final Dimension BUTTON_SIZE =
         new Dimension(
-            AppPreferences.getScaled(bs - 2 * edgeThickness - buttonHgap),
-            AppPreferences.getScaled(bs - 2 * edgeThickness));
+            AppPreferences.getScaled(BS - 2 * EDGE_THICKNESS - BUTTON_HGAP),
+            AppPreferences.getScaled(BS - 2 * EDGE_THICKNESS));
 
     abstract static class BitStateButton extends JPanel {
       private static final long serialVersionUID = 1L;
@@ -766,20 +768,20 @@ public class PLATable {
 
       BitStateButton(char s) {
         super(new FlowLayout(FlowLayout.CENTER, 0, 0));
-        setBorder(stdBorder);
+        setBorder(STD_BORDER);
         text = new JLabel("" + s, SwingConstants.CENTER);
-        text.setPreferredSize(buttonSize);
+        text.setPreferredSize(BUTTON_SIZE);
         add(text);
         addMouseListener(
             new MouseAdapter() {
               @Override
               public void mousePressed(MouseEvent e) {
-                setBorder(clickBorder);
+                setBorder(CLICK_BORDER);
               }
 
               @Override
               public void mouseReleased(MouseEvent e) {
-                setBorder(stdBorder);
+                setBorder(STD_BORDER);
               }
 
               @Override

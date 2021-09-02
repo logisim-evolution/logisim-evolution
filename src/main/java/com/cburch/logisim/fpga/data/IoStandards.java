@@ -33,7 +33,7 @@ import java.util.LinkedList;
 
 public class IoStandards {
   public static String GetConstraintedIoStandard(char id) {
-    if ((id > DefaulStandard) && (id <= LVTTL)) {
+    if ((id > DEFAULT_STANDARD) && (id <= LVTTL)) {
       return Behavior_strings[id];
     }
     return "";
@@ -48,7 +48,7 @@ public class IoStandards {
       if (iter.next().equals(identifier)) return result;
       result++;
     }
-    return Unknown;
+    return UNKNOWN;
   }
 
   public static LinkedList<String> getStrings() {
@@ -65,8 +65,8 @@ public class IoStandards {
     return result;
   }
 
-  public static final String IOAttributeString = "FPGAPinIOStandard";
-  public static final char DefaulStandard = 0;
+  public static final String IO_ATTRIBUTE_STRING = "FPGAPinIOStandard";
+  public static final char DEFAULT_STANDARD = 0;
   public static char LVCMOS12 = 1;
   public static char LVCMOS15 = 2;
   public static char LVCMOS18 = 3;
@@ -75,7 +75,7 @@ public class IoStandards {
 
   public static final char LVTTL = 6;
 
-  public static final char Unknown = 255;
+  public static final char UNKNOWN = 255;
 
   public static final String[] Behavior_strings = {
     "Default", "LVCMOS12", "LVCMOS15", "LVCMOS18", "LVCMOS25", "LVCMOS33", "LVTTL"

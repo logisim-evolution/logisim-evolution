@@ -36,6 +36,7 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -71,160 +72,144 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
-    contents.addAll(
-        MakeRemarkBlock(
-            "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
-                + "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down",
-            3));
+    final var contents = (new LineBuffer()).pair("activeEdge", activeEdgeStr);
+    contents.addRemarkBlock(
+        "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
+            + "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down");
     if (HDL.isVHDL()) {
-      contents.add("");
-      contents.add("   CompareOut   <= s_carry;");
-      contents.add("   CountValue   <= s_counter_value;");
-      contents.add("");
-      contents.add("   make_carry : PROCESS( Up_n_Down ,");
-      contents.add("                         s_counter_value )");
-      contents.add("   BEGIN");
-      contents.add("      IF (Up_n_Down = '0') THEN");
-      contents.add("         IF (s_counter_value = std_logic_vector(to_unsigned(0,width))) THEN");
-      contents.add("            s_carry <= '1';");
-      contents.add("                                                               ELSE");
-      contents.add("            s_carry <= '0';");
-      contents.add("         END IF; -- Down counting");
-      contents.add("                           ELSE");
-      contents.add(
-          "         IF (s_counter_value = std_logic_vector(to_unsigned(max_val,width))) THEN");
-      contents.add("            s_carry <= '1';");
-      contents.add("                                                                     ELSE");
-      contents.add("            s_carry <= '0';");
-      contents.add("         END IF; -- Up counting");
-      contents.add("      END IF;");
-      contents.add("   END PROCESS make_carry;");
-      contents.add("");
-      contents.add(
-          "   s_real_enable <= '0' WHEN (load = '0' AND enable = '0') -- Counter disabled");
-      contents.add("                             OR");
-      contents.add(
-          "                             (mode = 1 AND s_carry = '1' AND load = '0') -- Stay at value situation");
-      contents.add("                        ELSE ClockEnable;");
-      contents.add("");
-      contents.add("   make_next_value : PROCESS( load , Up_n_Down , s_counter_value ,");
-      contents.add("                              LoadData , s_carry )");
-      contents.add("      VARIABLE v_downcount : std_logic;         ");
-      contents.add("   BEGIN");
-      contents.add("      v_downcount := NOT(Up_n_Down);");
-      contents.add("      IF ((load = '1') OR -- load condition");
-      contents.add("          (mode = 3 AND s_carry = '1')    -- Wrap load condition");
-      contents.add("         ) THEN s_next_counter_value <= LoadData;");
-      contents.add("           ELSE");
-      contents.add("         CASE (mode) IS");
-      contents.add("            WHEN  0     => IF (s_carry = '1') THEN");
-      contents.add("                              IF (v_downcount = '1') THEN ");
-      contents.add(
-          "                                 s_next_counter_value <= std_logic_vector(to_unsigned(max_val,width));");
-      contents.add("                                                     ELSE ");
-      contents.add("                                 s_next_counter_value <= (OTHERS => '0');");
-      contents.add("                              END IF;");
-      contents.add("                                              ELSE");
-      contents.add("                              IF (v_downcount = '1') THEN ");
-      contents.add(
-          "                                 s_next_counter_value <= std_logic_vector(unsigned(s_counter_value) - 1);");
-      contents.add("                                                     ELSE ");
-      contents.add(
-          "                                 s_next_counter_value <= std_logic_vector(unsigned(s_counter_value) + 1);");
-      contents.add("                              END IF;");
-      contents.add("                           END IF;");
-      contents.add("            WHEN OTHERS => IF (v_downcount = '1') THEN ");
-      contents.add(
-          "                              s_next_counter_value <= std_logic_vector(unsigned(s_counter_value) - 1);");
-      contents.add("                                                  ELSE ");
-      contents.add(
-          "                              s_next_counter_value <= std_logic_vector(unsigned(s_counter_value) + 1);");
-      contents.add("                           END IF;");
-      contents.add("         END CASE;");
-      contents.add("      END IF;");
-      contents.add("   END PROCESS make_next_value;");
-      contents.add("");
-      contents.add(
-          "   make_flops : PROCESS( GlobalClock , s_real_enable , clear , s_next_counter_value )");
-      contents.add("      VARIABLE temp : std_logic_vector(0 DOWNTO 0);");
-      contents.add("   BEGIN");
-      contents.add("      temp := std_logic_vector(to_unsigned(" + activeEdgeStr + ",1));");
-      contents.add("      IF (clear = '1') THEN s_counter_value <= (OTHERS => '0');");
-      contents.add("      ELSIF (GlobalClock'event AND (GlobalClock = temp(0))) THEN");
-      contents.add(
-          "         IF (s_real_enable = '1') THEN s_counter_value <= s_next_counter_value;");
-      contents.add("         END IF;");
-      contents.add("      END IF;");
-      contents.add("   END PROCESS make_flops;");
+      contents.addLines(
+          "CompareOut   <= s_carry;",
+          "CountValue   <= s_counter_value;",
+          "",
+          "make_carry : PROCESS( Up_n_Down,",
+          "                      s_counter_value )",
+          "BEGIN",
+          "   IF (Up_n_Down = '0') THEN",
+          "      IF (s_counter_value = std_logic_vector(to_unsigned(0,width))) THEN",
+          "         s_carry <= '1';",
+          "      ELSE",
+          "         s_carry <= '0';",
+          "      END IF; -- Down counting",
+          "   ELSE",
+          "      IF (s_counter_value = std_logic_vector(to_unsigned(max_val,width))) THEN",
+          "         s_carry <= '1';",
+          "      ELSE",
+          "          s_carry <= '0';",
+          "      END IF; -- Up counting",
+          "   END IF;",
+          "END PROCESS make_carry;",
+          "",
+          "s_real_enable <= '0' WHEN (load = '0' AND enable = '0') -- Counter disabled",
+          "                       OR (mode = 1 AND s_carry = '1' AND load = '0') -- Stay at value situation",
+          "                     ELSE ClockEnable;",
+          "",
+          "make_next_value : PROCESS( load , Up_n_Down , s_counter_value ,",
+          "                           LoadData , s_carry )",
+          "   VARIABLE v_downcount : std_logic;",
+          "BEGIN",
+          "   v_downcount := NOT(Up_n_Down);",
+          "   IF ((load = '1') OR -- load condition",
+          "       (mode = 3 AND s_carry = '1')    -- Wrap load condition",
+          "      ) THEN s_next_counter_value <= LoadData;",
+          "   ELSE",
+          "      CASE (mode) IS",
+          "         WHEN  0    => IF (s_carry = '1') THEN",
+          "                          IF (v_downcount = '1') THEN",
+          "                             s_next_counter_value <= std_logic_vector(to_unsigned(max_val,width));",
+          "                          ELSE",
+          "                             s_next_counter_value <= (OTHERS => '0');",
+          "                          END IF;",
+          "                       ELSE",
+          "                          IF (v_downcount = '1') THEN",
+          "                             s_next_counter_value <= std_logic_vector(unsigned(s_counter_value) - 1);",
+          "                          ELSE",
+          "                             s_next_counter_value <= std_logic_vector(unsigned(s_counter_value) + 1);",
+          "                          END IF;",
+          "                       END IF;",
+          "        WHEN OTHERS => IF (v_downcount = '1') THEN",
+          "                           s_next_counter_value <= std_logic_vector(unsigned(s_counter_value) - 1);",
+          "                        ELSE",
+          "                           s_next_counter_value <= std_logic_vector(unsigned(s_counter_value) + 1);",
+          "                        END IF;",
+          "      END CASE;",
+          "   END IF;",
+          "END PROCESS make_next_value;",
+          "",
+          "make_flops : PROCESS( GlobalClock , s_real_enable , clear , s_next_counter_value )",
+          "   VARIABLE temp : std_logic_vector(0 DOWNTO 0);",
+          "BEGIN",
+          "   temp := std_logic_vector(to_unsigned({{activeEdge}}, 1));",
+          "   IF (clear = '1') THEN s_counter_value <= (OTHERS => '0');",
+          "   ELSIF (GlobalClock'event AND (GlobalClock = temp(0))) THEN",
+          "     IF (s_real_enable = '1') THEN s_counter_value <= s_next_counter_value;",
+          "      END IF;",
+          "   END IF;",
+          "END PROCESS make_flops;");
     } else {
-      contents.add("");
-      contents.add("   assign CompareOut = s_carry;");
-      contents.add(
-          "   assign CountValue = ("
-              + activeEdgeStr
-              + ") ? s_counter_value : s_counter_value_neg_edge;");
-      contents.add("");
-      contents.add("   always@(*)");
-      contents.add("   begin");
-      contents.add("      if (Up_n_Down)");
-      contents.add("         begin");
-      contents.add("            if (" + activeEdgeStr + ")");
-      contents.add("               s_carry = (s_counter_value == max_val) ? 1'b1 : 1'b0;");
-      contents.add("            else");
-      contents.add("               s_carry = (s_counter_value_neg_edge == max_val) ? 1'b1 : 1'b0;");
-      contents.add("         end");
-      contents.add("      else");
-      contents.add("         begin");
-      contents.add("            if (" + activeEdgeStr + ")");
-      contents.add("               s_carry = (s_counter_value == 0) ? 1'b1 : 1'b0;");
-      contents.add("            else");
-      contents.add("               s_carry = (s_counter_value_neg_edge == 0) ? 1'b1 : 1'b0;");
-      contents.add("         end");
-      contents.add("   end");
-      contents.add("");
-      contents.add("   assign s_real_enable = ((~(load)&~(Enable))|");
-      contents.add("                           ((mode==1)&s_carry&~(load))) ? 1'b0 : ClockEnable;");
-      contents.add("");
-      contents.add("   always @(*)");
-      contents.add("   begin");
-      contents.add("      if ((load)|((mode==3)&s_carry))");
-      contents.add("         s_next_counter_value = LoadData;");
-      contents.add("      else if ((mode==0)&s_carry&Up_n_Down)");
-      contents.add("         s_next_counter_value = 0;");
-      contents.add("      else if ((mode==0)&s_carry)");
-      contents.add("         s_next_counter_value = max_val;");
-      contents.add("      else if (Up_n_Down)");
-      contents.add("         begin");
-      contents.add("            if (" + activeEdgeStr + ")");
-      contents.add("               s_next_counter_value = s_counter_value + 1;");
-      contents.add("            else");
-      contents.add("               s_next_counter_value = s_counter_value_neg_edge + 1;");
-      contents.add("         end");
-      contents.add("      else");
-      contents.add("         begin");
-      contents.add("            if (" + activeEdgeStr + ")");
-      contents.add("               s_next_counter_value = s_counter_value - 1;");
-      contents.add("            else");
-      contents.add("               s_next_counter_value = s_counter_value_neg_edge - 1;");
-      contents.add("         end");
-      contents.add("   end");
-      contents.add("");
-      contents.add("   always @(posedge GlobalClock or posedge clear)");
-      contents.add("   begin");
-      contents.add("       if (clear) s_counter_value <= 0;");
-      contents.add("       else if (s_real_enable) s_counter_value <= s_next_counter_value;");
-      contents.add("   end");
-      contents.add("");
-      contents.add("   always @(negedge GlobalClock or posedge clear)");
-      contents.add("   begin");
-      contents.add("       if (clear) s_counter_value_neg_edge <= 0;");
-      contents.add(
-          "       else if (s_real_enable) s_counter_value_neg_edge <= s_next_counter_value;");
-      contents.add("   end");
-      contents.add("");
+      contents.addLines(
+          "",
+          "assign CompareOut = s_carry;",
+          "assign CountValue = ({{activeEdge}}) ? s_counter_value : s_counter_value_neg_edge;",
+          "",
+          "always@(*)",
+          "begin",
+          "if (Up_n_Down)",
+          "   begin",
+          "      if ({{activeEdge}})",
+          "            s_carry = (s_counter_value == max_val) ? 1'b1 : 1'b0;",
+          "         else",
+          "            s_carry = (s_counter_value_neg_edge == max_val) ? 1'b1 : 1'b0;",
+          "      end",
+          "   else",
+          "      begin",
+          "         if ({{activeEdge}})",
+          "            s_carry = (s_counter_value == 0) ? 1'b1 : 1'b0;",
+          "         else",
+          "            s_carry = (s_counter_value_neg_edge == 0) ? 1'b1 : 1'b0;",
+          "      end",
+          "end",
+          "",
+          "assign s_real_enable = ((~(load)&~(Enable))|",
+          "                        ((mode==1)&s_carry&~(load))) ? 1'b0 : ClockEnable;",
+          "",
+          "always @(*)",
+          "begin",
+          "   if ((load)|((mode==3)&s_carry))",
+          "      s_next_counter_value = LoadData;",
+          "   else if ((mode==0)&s_carry&Up_n_Down)",
+          "      s_next_counter_value = 0;",
+          "   else if ((mode==0)&s_carry)",
+          "      s_next_counter_value = max_val;",
+          "   else if (Up_n_Down)",
+          "      begin",
+          "         if ({{activeEdge}})",
+          "            s_next_counter_value = s_counter_value + 1;",
+          "         else",
+          "            s_next_counter_value = s_counter_value_neg_edge + 1;",
+          "      end",
+          "   else",
+          "      begin",
+          "         if ({{activeEdge}})",
+          "            s_next_counter_value = s_counter_value - 1;",
+          "         else",
+          "            s_next_counter_value = s_counter_value_neg_edge - 1;",
+          "      end",
+          "end",
+          "",
+          "always @(posedge GlobalClock or posedge clear)",
+          "begin",
+          "    if (clear) s_counter_value <= 0;",
+          "    else if (s_real_enable) s_counter_value <= s_next_counter_value;",
+          "end",
+          "",
+          "always @(negedge GlobalClock or posedge clear)",
+          "begin",
+          "    if (clear) s_counter_value_neg_edge <= 0;",
+          "    else if (s_real_enable) s_counter_value_neg_edge <= s_next_counter_value;",
+          "end",
+          "");
     }
-    return contents;
+    return contents.getWithIndent();
   }
 
   @Override
@@ -248,7 +233,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var map = new TreeMap<String, Integer>();
-    final var attrs = componentInfo.GetComponent().getAttributeSet();
+    final var attrs = componentInfo.getComponent().getAttributeSet();
     var mode = 0;
     if (attrs.containsAttribute(Counter.ATTR_ON_GOAL)) {
       if (attrs.getValue(Counter.ATTR_ON_GOAL) == Counter.ON_GOAL_STAY) mode = 1;
@@ -272,8 +257,8 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var componentInfo = (NetlistComponent) mapInfo;
-    final var attrs = componentInfo.GetComponent().getAttributeSet();
-    if (!componentInfo.EndIsConnected(Counter.CK)) {
+    final var attrs = componentInfo.getComponent().getAttributeSet();
+    if (!componentInfo.isEndConnected(Counter.CK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Counter\" in circuit \""
               + nets.getCircuitName()
@@ -286,39 +271,39 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         map.putAll(GetNetMap("GlobalClock", true, componentInfo, Counter.CK, nets));
         map.put("ClockEnable", HDL.oneBit());
       } else {
-        var clockBusIndex = ClockHDLGeneratorFactory.DerivedClockIndex;
-        if (nets.RequiresGlobalClockConnection()) {
-          clockBusIndex = ClockHDLGeneratorFactory.GlobalClockIndex;
+        var clockBusIndex = ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX;
+        if (nets.requiresGlobalClockConnection()) {
+          clockBusIndex = ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX;
         } else {
           if (attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_LOW)
-            clockBusIndex = ClockHDLGeneratorFactory.InvertedDerivedClockIndex;
+            clockBusIndex = ClockHDLGeneratorFactory.INVERTED_DERIVED_CLOCK_INDEX;
           else if (attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_RISING)
-            clockBusIndex = ClockHDLGeneratorFactory.PositiveEdgeTickIndex;
+            clockBusIndex = ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX;
           else if (attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING)
-            clockBusIndex = ClockHDLGeneratorFactory.InvertedDerivedClockIndex;
+            clockBusIndex = ClockHDLGeneratorFactory.INVERTED_DERIVED_CLOCK_INDEX;
         }
         map.put(
             "GlobalClock",
             clockNetName
                 + HDL.BracketOpen()
-                + ClockHDLGeneratorFactory.GlobalClockIndex
+                + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX
                 + HDL.BracketClose());
         map.put(
-            "ClockEnable",
-            clockNetName + HDL.BracketOpen() + clockBusIndex + HDL.BracketClose());
+            "ClockEnable", clockNetName + HDL.BracketOpen() + clockBusIndex + HDL.BracketClose());
       }
     }
     var input = "LoadData";
-    if (HDL.isVHDL() & (componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
+    if (HDL.isVHDL()
+        & (componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       input += "(0)";
     map.putAll(GetNetMap(input, true, componentInfo, Counter.IN, nets));
     map.putAll(GetNetMap("clear", true, componentInfo, Counter.CLR, nets));
     map.putAll(GetNetMap("load", true, componentInfo, Counter.LD, nets));
     map.putAll(GetNetMap("Enable", false, componentInfo, Counter.EN, nets));
-    map.putAll(
-        GetNetMap("Up_n_Down", false, componentInfo, Counter.UD, nets));
+    map.putAll(GetNetMap("Up_n_Down", false, componentInfo, Counter.UD, nets));
     var output = "CountValue";
-    if (HDL.isVHDL() & (componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
+    if (HDL.isVHDL()
+        & (componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       output += "(0)";
     map.putAll(GetNetMap(output, true, componentInfo, Counter.OUT, nets));
     map.putAll(GetNetMap("CompareOut", true, componentInfo, Counter.CARRY, nets));

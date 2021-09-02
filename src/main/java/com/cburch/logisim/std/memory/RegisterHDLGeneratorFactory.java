@@ -36,6 +36,7 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -44,7 +45,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   private static final String NrOfBitsStr = "NrOfBits";
   private static final int NrOfBitsId = -1;
-  private static final String ActiveLevelStr = "ActiveLevel";
+  private static final String ACTIVE_LEVEL_STR = "ActiveLevel";
   private static final int ActiveLevelId = -2;
 
   @Override
@@ -65,79 +66,74 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
+    final var contents = (new LineBuffer())
+            .pair("activeLevel", ACTIVE_LEVEL_STR);
     if (HDL.isVHDL()) {
-      contents.add("   Q <= s_state_reg;");
-      contents.add("");
-      contents.add("   make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )");
-      contents.add("   BEGIN");
-      contents.add("      IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');");
-      if (Netlist.IsFlipFlop(attrs)) {
-        contents.add("      ELSIF (" + ActiveLevelStr + " = 1) THEN");
-        contents.add("         IF (Clock'event AND (Clock = '1')) THEN");
-        contents.add("            IF (ClockEnable = '1' AND Tick = '1') THEN");
-        contents.add("               s_state_reg <= D;");
-        contents.add("            END IF;");
-        contents.add("         END IF;");
-        contents.add("      ELSIF (" + ActiveLevelStr + " = 0) THEN");
-        contents.add("         IF (Clock'event AND (Clock = '0')) THEN");
-        contents.add("         IF (ClockEnable = '1' AND Tick = '1') THEN");
-        contents.add("               s_state_reg <= D;");
-        contents.add("            END IF;");
-        contents.add("         END IF;");
-
-        /////
-        // Contents.add("      ELSIF (Clock'event AND (Clock = std_logic_vector(to_unsigned("
-        //           + ActiveLevelStr + ",1)) )) THEN");
+      contents.addLines(
+          "Q <= s_state_reg;",
+          "",
+          "make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )",
+          "BEGIN",
+          "   IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');");
+      if (Netlist.isFlipFlop(attrs)) {
+        contents.addLines(
+            "   ELSIF ({{activeLevel}} = 1) THEN",
+            "      IF (Clock'event AND (Clock = '1')) THEN",
+            "         IF (ClockEnable = '1' AND Tick = '1') THEN",
+            "            s_state_reg <= D;",
+            "         END IF;",
+            "      END IF;",
+            "   ELSIF ({{activeLevel}} = 0) THEN",
+            "      IF (Clock'event AND (Clock = '0')) THEN",
+            "      IF (ClockEnable = '1' AND Tick = '1') THEN",
+            "         s_state_reg <= D;",
+            "      END IF;",
+            "   END IF;");
       } else {
-        contents.add("      ELSIF (" + ActiveLevelStr + " = 1) THEN");
-        contents.add("         IF (Clock = '1') THEN");
-        contents.add("            IF (ClockEnable = '1' AND Tick = '1') THEN");
-        contents.add("               s_state_reg <= D;");
-        contents.add("            END IF;");
-        contents.add("         END IF;");
-        contents.add("      ELSIF (" + ActiveLevelStr + " = 0) THEN");
-        contents.add("         IF (Clock = '0') THEN");
-        contents.add("            IF (ClockEnable = '1' AND Tick = '1') THEN");
-        contents.add("               s_state_reg <= D;");
-        contents.add("            END IF;");
-        contents.add("         END IF;");
-        // Contents.add("      ELSIF (Clock = std_logic_vector(to_unsigned("
-        //            + ActiveLevelStr + ",1)) ) THEN");
+        contents.addLines(
+            "   ELSIF ({{activeLevel}} = 1) THEN",
+            "      IF (Clock = '1') THEN",
+            "         IF (ClockEnable = '1' AND Tick = '1') THEN",
+            "            s_state_reg <= D;",
+            "         END IF;",
+            "      END IF;",
+            "  ELSIF ({{activeLevel}} = 0) THEN",
+            "      IF (Clock = '0') THEN",
+            "         IF (ClockEnable = '1' AND Tick = '1') THEN",
+            "            s_state_reg <= D;",
+            "         END IF;",
+            "      END IF;");
       }
-      // Contents.add("         IF (ClockEnable = '1' AND Tick = '1') THEN");
-      // Contents.add("            s_state_reg <= D;");
-      // Contents.add("         END IF;");
-      contents.add("      END IF;");
-      contents.add("   END PROCESS make_memory;");
+      contents.addLines("   END IF;",
+                        "END PROCESS make_memory;");
     } else {
-      if (!Netlist.IsFlipFlop(attrs)) {
-        contents.add("   assign Q = s_state_reg;");
-        contents.add("");
-        contents.add("   always @(*)");
-        contents.add("   begin");
-        contents.add("      if (Reset) s_state_reg <= 0;");
-        contents.add(
-            "      else if ((Clock==" + ActiveLevelStr + ")&ClockEnable&Tick) s_state_reg <= D;");
-        contents.add("   end");
+      if (!Netlist.isFlipFlop(attrs)) {
+        contents.addLines(
+            "assign Q = s_state_reg;",
+            "",
+            "always @(*)",
+            "begin",
+            "   if (Reset) s_state_reg <= 0;",
+            "   else if ((Clock=={{activeLevel}})&ClockEnable&Tick) s_state_reg <= D;",
+            "end");
       } else {
-        contents.add(
-            "   assign Q = (" + ActiveLevelStr + ") ? s_state_reg : s_state_reg_neg_edge;");
-        contents.add("");
-        contents.add("   always @(posedge Clock or posedge Reset)");
-        contents.add("   begin");
-        contents.add("      if (Reset) s_state_reg <= 0;");
-        contents.add("      else if (ClockEnable&Tick) s_state_reg <= D;");
-        contents.add("   end");
-        contents.add("");
-        contents.add("   always @(negedge Clock or posedge Reset)");
-        contents.add("   begin");
-        contents.add("      if (Reset) s_state_reg_neg_edge <= 0;");
-        contents.add("      else if (ClockEnable&Tick) s_state_reg_neg_edge <= D;");
-        contents.add("   end");
+        contents.addLines(
+            "assign Q = ({{activeLevel}}) ? s_state_reg : s_state_reg_neg_edge;",
+            "",
+            "always @(posedge Clock or posedge Reset)",
+            "begin",
+            "   if (Reset) s_state_reg <= 0;",
+            "   else if (ClockEnable&Tick) s_state_reg <= D;",
+            "end",
+            "",
+            "always @(negedge Clock or posedge Reset)",
+            "begin",
+            "   if (Reset) s_state_reg_neg_edge <= 0;",
+            "   else if (ClockEnable&Tick) s_state_reg_neg_edge <= D;",
+            "end");
       }
     }
-    return contents;
+    return contents.getWithIndent();
   }
 
   @Override
@@ -150,7 +146,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
     final var map = new TreeMap<Integer, String>();
-    map.put(ActiveLevelId, ActiveLevelStr);
+    map.put(ActiveLevelId, ACTIVE_LEVEL_STR);
     map.put(NrOfBitsId, NrOfBitsStr);
     return map;
   }
@@ -161,11 +157,11 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var activeLevel = 1;
     var gatedclock = false;
     var activeLow = false;
-    final var attrs = componentInfo.GetComponent().getAttributeSet();
+    final var attrs = componentInfo.getComponent().getAttributeSet();
     final var clockNetName = GetClockNetName(componentInfo, Register.CK, nets);
     if (clockNetName.isEmpty()) {
       gatedclock = true;
-      if (Netlist.IsFlipFlop(attrs))
+      if (Netlist.isFlipFlop(attrs))
         Reporter.Report.AddWarning(
             "Found a gated clock for component \"Register\" in circuit \""
                 + nets.getCircuitName()
@@ -177,9 +173,9 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (gatedclock && activeLow) {
       activeLevel = 0;
     }
-    map.put(ActiveLevelStr, activeLevel);
+    map.put(ACTIVE_LEVEL_STR, activeLevel);
     map.put(
-        NrOfBitsStr, componentInfo.GetComponent().getEnd(Register.IN).getWidth().getWidth());
+        NrOfBitsStr, componentInfo.getComponent().getEnd(Register.IN).getWidth().getWidth());
     return map;
   }
 
@@ -191,8 +187,8 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var gatedClock = false;
     var hasClock = true;
     var activeLow = false;
-    final var attrs = comp.GetComponent().getAttributeSet();
-    if (!comp.EndIsConnected(Register.CK)) {
+    final var attrs = comp.getComponent().getAttributeSet();
+    if (!comp.isEndConnected(Register.CK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Register\" in circuit \""
               + Nets.getCircuitName()
@@ -209,8 +205,8 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.putAll(
         GetNetMap("ClockEnable", false, comp, Register.EN, Nets));
 
-    if (hasClock && !gatedClock && Netlist.IsFlipFlop(attrs)) {
-      if (Nets.RequiresGlobalClockConnection()) {
+    if (hasClock && !gatedClock && Netlist.isFlipFlop(attrs)) {
+      if (Nets.requiresGlobalClockConnection()) {
         map.put("Tick", HDL.oneBit());
       } else {
         if (activeLow)
@@ -218,21 +214,21 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               "Tick",
               clockNetName
                   + HDL.BracketOpen()
-                  + ClockHDLGeneratorFactory.NegativeEdgeTickIndex
+                  + ClockHDLGeneratorFactory.NEGATIVE_EDGE_TICK_INDEX
                   + HDL.BracketClose());
         else
           map.put(
               "Tick",
               clockNetName
                   + HDL.BracketOpen()
-                  + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
+                  + ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX
                   + HDL.BracketClose());
       }
       map.put(
           "Clock",
           clockNetName
               + HDL.BracketOpen()
-              + ClockHDLGeneratorFactory.GlobalClockIndex
+              + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX
               + HDL.BracketClose());
     } else if (!hasClock) {
       map.put("Tick", HDL.zeroBit());
@@ -245,14 +241,14 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               "Clock",
               clockNetName
                   + HDL.BracketOpen()
-                  + ClockHDLGeneratorFactory.InvertedDerivedClockIndex
+                  + ClockHDLGeneratorFactory.INVERTED_DERIVED_CLOCK_INDEX
                   + HDL.BracketClose());
         else
           map.put(
               "Clock",
               clockNetName
                   + HDL.BracketOpen()
-                  + ClockHDLGeneratorFactory.DerivedClockIndex
+                  + ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX
                   + HDL.BracketClose());
       } else {
         map.put("Clock", GetNetName(comp, Register.CK, true, Nets));
@@ -261,7 +257,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var input = "D";
     var output = "Q";
     if (HDL.isVHDL()
-        & (comp.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth()
+        & (comp.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth()
             == 1)) {
       input += "(0)";
       output += "(0)";
@@ -275,7 +271,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
     final var regs = new TreeMap<String, Integer>();
     regs.put("s_state_reg", NrOfBitsId);
-    if (HDL.isVerilog() & Netlist.IsFlipFlop(attrs))
+    if (HDL.isVerilog() & Netlist.isFlipFlop(attrs))
       regs.put("s_state_reg_neg_edge", NrOfBitsId);
     return regs;
   }

@@ -33,8 +33,8 @@ import java.util.LinkedList;
 
 public class DriveStrength {
   public static String GetContraintedDriveStrength(char id) {
-    if ((id > DefaulStength) && (id <= Drive_24)) {
-      return Behavior_strings[id].replace(" mA", " ");
+    if ((id > DEFAULT_STENGTH) && (id <= DRIVE_24)) {
+      return BEHAVIOR_STRINGS[id].replace(" mA", " ");
     }
     return "";
   }
@@ -48,33 +48,33 @@ public class DriveStrength {
       if (iter.next().equals(identifier)) return result;
       result++;
     }
-    return Unknown;
+    return UNKNOWN;
   }
 
   public static LinkedList<String> getStrings() {
     LinkedList<String> result = new LinkedList<>();
 
-    result.add(Behavior_strings[0]);
-    result.add(Behavior_strings[1]);
-    result.add(Behavior_strings[2]);
-    result.add(Behavior_strings[3]);
-    result.add(Behavior_strings[4]);
-    result.add(Behavior_strings[5]);
+    result.add(BEHAVIOR_STRINGS[0]);
+    result.add(BEHAVIOR_STRINGS[1]);
+    result.add(BEHAVIOR_STRINGS[2]);
+    result.add(BEHAVIOR_STRINGS[3]);
+    result.add(BEHAVIOR_STRINGS[4]);
+    result.add(BEHAVIOR_STRINGS[5]);
 
     return result;
   }
 
-  public static final String DriveAttributeString = "FPGAPinDriveStrength";
-  public static final char DefaulStength = 0;
-  public static char Drive_2 = 1;
-  public static char Drive_4 = 2;
-  public static char Drive_8 = 3;
-  public static char Drive_16 = 4;
-  public static final char Drive_24 = 5;
+  public static final String DRIVE_ATTRIBUTE_STRING = "FPGAPinDriveStrength";
+  public static final char DEFAULT_STENGTH = 0;
+  public static char DRIVE_2 = 1;
+  public static char DRIVE_4 = 2;
+  public static char DRIVE_8 = 3;
+  public static char DRIVE_16 = 4;
+  public static final char DRIVE_24 = 5;
 
-  public static final char Unknown = 255;
+  public static final char UNKNOWN = 255;
 
-  public static final String[] Behavior_strings = {
+  public static final String[] BEHAVIOR_STRINGS = {
     "Default", "2 mA", "4 mA", "8 mA", "16 mA", "24 mA"
   };
 }

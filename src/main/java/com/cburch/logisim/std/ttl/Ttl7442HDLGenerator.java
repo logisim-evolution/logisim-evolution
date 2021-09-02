@@ -32,7 +32,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -85,44 +85,46 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
-    final var NOT = HDL.notOperator();
-    final var AND = HDL.andOperator();
+    final var contents = (new LineBuffer()).addHdlPairs();
+
     if (IsExes3) {
-      contents.add("   " + HDL.assignPreamble() + "O0" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O1" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O2" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O3" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O4" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O5" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O6" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O7" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O8" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + "B" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O9" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
+      contents.addLines(
+          "{{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} A );",
+          "{{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );",
+          "{{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} A );",
+          "{{assign}} O3 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} {{not}}(A) );",
+          "{{assign}} O4 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} A );",
+          "{{assign}} O5 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} {{not}}(A) );",
+          "{{assign}} O6 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} A );",
+          "{{assign}} O7 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} B {{and}} {{not}}(A) );",
+          "{{assign}} O8 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} B {{and}} A );",
+          "{{assign}} O9 {{=}} {{not}}( D {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );");
     } else if (IsGray) {
-      contents.add("   " + HDL.assignPreamble() + "O0" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O1" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O2" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O3" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O4" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O5" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O6" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + NOT + "(B)" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O7" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + "B" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O8" + HDL.assignOperator() + NOT + "(D" + AND + "C" + AND + "B" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O9" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));");
+      contents.addLines(
+          "{{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} {{not}}(A) );",
+          "{{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} {{not}}(A) );",
+          "{{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} A );",
+          "{{assign}} O3 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} A );",
+          "{{assign}} O4 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} {{not}(A) );",
+          "{{assign}} O5 {{=}} {{not}}( D {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );",
+          "{{assign}} O6 {{=}} {{not}}( D {{and}} C {{and}} {{not}}(B) {{and}} A );",
+          "{{assign}} O7 {{=}} {{not}}( D {{and}} C {{and}} B {{and}} A );",
+          "{{assign}} O8 {{=}} {{not}}( D {{and}} C {{and}} B {{and}} {{not}}(A) );",
+          "{{assign}} O9 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} B {{and}} {not}}(A) );");
     } else {
-      contents.add("   " + HDL.assignPreamble() + "O0" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O1" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O2" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O3" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + NOT + "(C)" + AND + "B" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O4" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O5" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + NOT + "(B)" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O6" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O7" + HDL.assignOperator() + NOT + "(" + NOT + "(D)" + AND + "C" + AND + "B" + AND + "A);");
-      contents.add("   " + HDL.assignPreamble() + "O8" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + NOT + "(A));");
-      contents.add("   " + HDL.assignPreamble() + "O9" + HDL.assignOperator() + NOT + "(D" + AND + NOT + "(C)" + AND + NOT + "(B)" + AND + "A);");
+      contents.addLines(
+          "{{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} {{not}}(A) );",
+          "{{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} A );",
+          "{{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} {{not}}(A) );",
+          "{{assign}} O3 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} A );",
+          "{{assign}} O4 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );",
+          "{{assign}} O5 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} A );",
+          "{{assign}} O6 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} {{not}}(A) );",
+          "{{assign}} O7 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} A );",
+          "{{assign}} O8 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} {{not}}(A) );",
+          "{{assign}} O9 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} A );");
     }
-    return contents;
+    return contents.get();
   }
 
   @Override

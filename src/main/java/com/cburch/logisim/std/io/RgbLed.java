@@ -64,7 +64,7 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   public static final String _ID = "RGBLED";
 
   public static class Logger extends InstanceLogger {
-    static final BitWidth bitwidth = BitWidth.create(3);
+    static final BitWidth BITWIDTH = BitWidth.create(3);
 
     @Override
     public String getLogName(InstanceState state, Object option) {
@@ -73,7 +73,7 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
 
     @Override
     public BitWidth getBitWidth(InstanceState state, Object option) {
-      return bitwidth;
+      return BITWIDTH;
     }
 
     @Override
@@ -81,9 +81,9 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
       final var data = (InstanceDataSingleton) state.getData();
       int rgb = 0;
       if (data == null)
-        return Value.createUnknown(bitwidth);
+        return Value.createUnknown(BITWIDTH);
       else
-        return Value.createKnown(bitwidth, (Integer) data.getValue());
+        return Value.createKnown(BITWIDTH, (Integer) data.getValue());
     }
   }
 

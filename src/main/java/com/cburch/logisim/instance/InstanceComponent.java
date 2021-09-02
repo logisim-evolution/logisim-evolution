@@ -159,8 +159,8 @@ public final class InstanceComponent implements Component, AttributeListener, To
         } else if (getFactory().getName().equalsIgnoreCase(value)) {
           OptionPane.showMessageDialog(null, S.get("MatchedLabelNameError"));
           e.getSource().setValue(lattr, oldValue);
-        } else if (CorrectLabel.IsKeyword(value, false)) {
-          OptionPane.showMessageDialog(null, StringUtil.format("\"%s\": %s", value, S.get("KeywordNameError")));
+        } else if (CorrectLabel.isKeyword(value, false)) {
+          OptionPane.showMessageDialog(null, "\"" + value + "\": " + S.get("KeywordNameError"));
           e.getSource().setValue(lattr, oldValue);
         } else {
           fireLabelChanged(e);

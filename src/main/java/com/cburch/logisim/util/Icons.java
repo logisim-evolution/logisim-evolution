@@ -39,7 +39,7 @@ import javax.swing.ImageIcon;
 
 public class Icons {
   public static ImageIcon getIcon(String name) {
-    final var url = Icons.class.getClassLoader().getResource(path + "/" + name);
+    final var url = Icons.class.getClassLoader().getResource(PATH + "/" + name);
     if (url == null) return null;
     final var icon = new ImageIcon(url);
     icon.setImage(
@@ -74,7 +74,7 @@ public class Icons {
     g2.dispose();
   }
 
-  private static final String path = "resources/logisim/icons";
+  private static final String PATH = "resources/logisim/icons";
 
   private Icons() {}
 }

@@ -38,103 +38,97 @@ import java.util.Map;
 
 public class NetlistComponent {
 
-  private final int nr_of_ends;
-  private final Component CompReference;
-  private final ArrayList<ConnectionEnd> Ends;
-  final ComponentMapInformationContainer MyMapInformation;
-  private Map<ArrayList<String>, BubbleInformationContainer> GlobalIds;
-  private BubbleInformationContainer LocalId;
-  private boolean IsGatedInstance;
+  private final int nrOfEnds;
+  private final Component compReference;
+  private final ArrayList<ConnectionEnd> endEnds;
+  final ComponentMapInformationContainer myMapInformation;
+  private Map<ArrayList<String>, BubbleInformationContainer> globalIds;
+  private BubbleInformationContainer localId;
+  private boolean isGatedInstance;
 
-  public NetlistComponent(Component Ref) {
-    IsGatedInstance = false;
-    nr_of_ends = Ref.getEnds().size();
-    CompReference = Ref;
-    Ends = new ArrayList<>();
-    for (int i = 0; i < Ref.getEnds().size(); i++) {
-      Ends.add(
-          new ConnectionEnd(
-              Ref.getEnd(i).isOutput(), (byte) Ref.getEnd(i).getWidth().getWidth(), Ref));
+  public NetlistComponent(Component ref) {
+    isGatedInstance = false;
+    nrOfEnds = ref.getEnds().size();
+    compReference = ref;
+    endEnds = new ArrayList<>();
+    for (var i = 0; i < ref.getEnds().size(); i++) {
+      endEnds.add(new ConnectionEnd(ref.getEnd(i).isOutput(), (byte) ref.getEnd(i).getWidth().getWidth(), ref));
     }
-    if (Ref.getAttributeSet().containsAttribute(StdAttr.MAPINFO)) {
-      MyMapInformation = Ref.getAttributeSet().getValue(StdAttr.MAPINFO).clone();
+    if (ref.getAttributeSet().containsAttribute(StdAttr.MAPINFO)) {
+      myMapInformation = ref.getAttributeSet().getValue(StdAttr.MAPINFO).clone();
     } else {
-      if (Ref.getFactory() instanceof Pin) {
-        int NrOfBits = Ref.getEnd(0).getWidth().getWidth();
-        if (Ref.getEnd(0).isInput() && Ref.getEnd(0).isOutput()) {
-          MyMapInformation = new ComponentMapInformationContainer(0, 0, NrOfBits);
-        } else if (Ref.getEnd(0).isInput()) {
-          MyMapInformation = new ComponentMapInformationContainer(0, NrOfBits, 0);
+      if (ref.getFactory() instanceof Pin) {
+        final var nrOfBits = ref.getEnd(0).getWidth().getWidth();
+        if (ref.getEnd(0).isInput() && ref.getEnd(0).isOutput()) {
+          myMapInformation = new ComponentMapInformationContainer(0, 0, nrOfBits);
+        } else if (ref.getEnd(0).isInput()) {
+          myMapInformation = new ComponentMapInformationContainer(0, nrOfBits, 0);
         } else {
-          MyMapInformation = new ComponentMapInformationContainer(NrOfBits, 0, 0);
+          myMapInformation = new ComponentMapInformationContainer(nrOfBits, 0, 0);
         }
       } else {
-        MyMapInformation = null;
+        myMapInformation = null;
       }
     }
-    GlobalIds = null;
-    LocalId = null;
+    globalIds = null;
+    localId = null;
   }
 
-  public void AddGlobalBubbleID(
-      ArrayList<String> HierarchyName,
-      int InputBubblesStartId,
-      int NrOfInputBubbles,
-      int OutputBubblesStartId,
-      int NrOfOutputBubbles,
-      int InOutBubblesStartId,
-      int NrOfInOutBubbles) {
-    if ((NrOfInputBubbles == 0) && (NrOfOutputBubbles == 0) && (NrOfInOutBubbles == 0)) {
+  public void addGlobalBubbleId(
+      ArrayList<String> hierarchyName,
+      int inputBubblesStartId,
+      int nrOfInputBubbles,
+      int outputBubblesStartId,
+      int nrOfOutputBubbles,
+      int inOutBubblesStartId,
+      int nrOfInOutBubbles) {
+    if ((nrOfInputBubbles == 0) && (nrOfOutputBubbles == 0) && (nrOfInOutBubbles == 0)) {
       return;
     }
-    if (GlobalIds == null) {
-      GlobalIds = new HashMap<>();
+    if (globalIds == null) {
+      globalIds = new HashMap<>();
     }
-    BubbleInformationContainer thisInfo = new BubbleInformationContainer();
-    if (NrOfInputBubbles > 0) {
-      thisInfo.SetInputBubblesInformation(
-          InputBubblesStartId, InputBubblesStartId + NrOfInputBubbles - 1);
+    final var thisInfo = new BubbleInformationContainer();
+    if (nrOfInputBubbles > 0) {
+      thisInfo.setInputBubblesInformation(inputBubblesStartId, inputBubblesStartId + nrOfInputBubbles - 1);
     }
-    if (NrOfInOutBubbles > 0) {
-      thisInfo.SetInOutBubblesInformation(
-          InOutBubblesStartId, InOutBubblesStartId + NrOfInOutBubbles - 1);
+    if (nrOfInOutBubbles > 0) {
+      thisInfo.setInOutBubblesInformation(inOutBubblesStartId, inOutBubblesStartId + nrOfInOutBubbles - 1);
     }
-    if (NrOfOutputBubbles > 0) {
-      thisInfo.SetOutputBubblesInformation(
-          OutputBubblesStartId, OutputBubblesStartId + NrOfOutputBubbles - 1);
+    if (nrOfOutputBubbles > 0) {
+      thisInfo.setOutputBubblesInformation(outputBubblesStartId, outputBubblesStartId + nrOfOutputBubbles - 1);
     }
-    GlobalIds.put(HierarchyName, thisInfo);
+    globalIds.put(hierarchyName, thisInfo);
   }
 
-  public boolean EndIsConnected(int index) {
-    if ((index < 0) || (index >= nr_of_ends)) {
+  public boolean isEndConnected(int index) {
+    if ((index < 0) || (index >= nrOfEnds)) {
       return false;
     }
-    boolean isConnected = false;
-    ConnectionEnd ThisEnd = Ends.get(index);
-    for (int i = 0; i < ThisEnd.NrOfBits(); i++) {
-      isConnected |= (ThisEnd.GetConnection((byte) i).GetParentNet() != null);
+    var isConnected = false;
+    final var ThisEnd = endEnds.get(index);
+    for (var i = 0; i < ThisEnd.getNrOfBits(); i++) {
+      isConnected |= (ThisEnd.get((byte) i).getParentNet() != null);
     }
     return isConnected;
   }
 
-  public boolean EndIsInput(int index) {
-    if ((index < 0) || (index >= nr_of_ends)) {
+  public boolean isEndInput(int index) {
+    if ((index < 0) || (index >= nrOfEnds)) {
       return false;
     }
-    return CompReference.getEnd(index).isInput();
+    return compReference.getEnd(index).isInput();
   }
 
-  public Component GetComponent() {
-    return CompReference;
+  public Component getComponent() {
+    return compReference;
   }
 
-  public byte GetConnectionBitIndex(Net RootNet, byte BitIndex) {
-    for (ConnectionEnd search : Ends) {
-      for (byte bit = 0; bit < search.NrOfBits(); bit++) {
-        ConnectionPoint connection = search.GetConnection(bit);
-        if (connection.GetParentNet() == RootNet
-            && connection.GetParentNetBitIndex() == BitIndex) {
+  public byte getConnectionBitIndex(Net rootNet, byte bitIndex) {
+    for (final var search : endEnds) {
+      for (byte bit = 0; bit < search.getNrOfBits(); bit++) {
+        final var connection = search.get(bit);
+        if (connection.getParentNet() == rootNet && connection.getParentNetBitIndex() == bitIndex) {
           return bit;
         }
       }
@@ -142,85 +136,65 @@ public class NetlistComponent {
     return -1;
   }
 
-  public ArrayList<ConnectionPoint> GetConnections(Net RootNet, byte BitIndex, boolean IsOutput) {
-    ArrayList<ConnectionPoint> Connections = new ArrayList<>();
-    for (ConnectionEnd search : Ends) {
-      for (byte bit = 0; bit < search.NrOfBits(); bit++) {
-        ConnectionPoint connection = search.GetConnection(bit);
-        if (connection.GetParentNet() == RootNet
-            && connection.GetParentNetBitIndex() == BitIndex
-            && search.IsOutputEnd() == IsOutput) {
-          Connections.add(connection);
+  public ArrayList<ConnectionPoint> getConnections(Net rootNet, byte bitIndex, boolean isOutput) {
+    final var connections = new ArrayList<ConnectionPoint>();
+    for (final var search : endEnds) {
+      for (byte bit = 0; bit < search.getNrOfBits(); bit++) {
+        final var connection = search.get(bit);
+        if (connection.getParentNet() == rootNet
+            && connection.getParentNetBitIndex() == bitIndex
+            && search.isOutputEnd() == isOutput) {
+          connections.add(connection);
         }
       }
     }
-    return Connections;
+    return connections;
   }
 
   public ConnectionEnd getEnd(int index) {
-    if ((index < 0) || (index >= nr_of_ends)) {
+    if ((index < 0) || (index >= nrOfEnds)) {
       return null;
     }
-    return Ends.get(index);
+    return endEnds.get(index);
   }
 
-  public BubbleInformationContainer GetGlobalBubbleId(ArrayList<String> HierarchyName) {
-    if (GlobalIds == null) return null;
-    return GlobalIds.getOrDefault(HierarchyName, null);
+  public BubbleInformationContainer getGlobalBubbleId(ArrayList<String> hierarchyName) {
+    return (globalIds == null) ? null : globalIds.getOrDefault(hierarchyName, null);
   }
 
-  public ComponentMapInformationContainer GetMapInformationContainer() {
-    return MyMapInformation;
+  public ComponentMapInformationContainer getMapInformationContainer() {
+    return myMapInformation;
   }
 
-  public int GetLocalBubbleInOutEndId() {
-    if (LocalId == null) {
-      return 0;
-    }
-    return LocalId.GetInOutEndIndex();
+  public int getLocalBubbleInOutEndId() {
+    return (localId == null) ? 0 : localId.getInOutEndIndex();
   }
 
-  public int GetLocalBubbleInOutStartId() {
-    if (LocalId == null) {
-      return 0;
-    }
-    return LocalId.GetInOutStartIndex();
+  public int getLocalBubbleInOutStartId() {
+    return (localId == null) ? 0 : localId.getInOutStartIndex();
   }
 
-  public int GetLocalBubbleInputEndId() {
-    if (LocalId == null) {
-      return 0;
-    }
-    return LocalId.GetInputEndIndex();
+  public int getLocalBubbleInputEndId() {
+    return (localId == null) ? 0 : localId.getInputEndIndex();
   }
 
-  public int GetLocalBubbleInputStartId() {
-    if (LocalId == null) {
-      return 0;
-    }
-    return LocalId.GetInputStartIndex();
+  public int getLocalBubbleInputStartId() {
+    return (localId == null) ? 0 : localId.getInputStartIndex();
   }
 
-  public int GetLocalBubbleOutputEndId() {
-    if (LocalId == null) {
-      return 0;
-    }
-    return LocalId.GetOutputEndIndex();
+  public int getLocalBubbleOutputEndId() {
+    return (localId == null) ? 0 : localId.getOutputEndIndex();
   }
 
-  public int GetLocalBubbleOutputStartId() {
-    if (LocalId == null) {
-      return 0;
-    }
-    return LocalId.GetOutputStartIndex();
+  public int getLocalBubbleOutputStartId() {
+    return (localId == null) ? 0 : localId.getOutputStartIndex();
   }
 
   public boolean hasConnection(Net RootNet, byte BitIndex) {
-    for (ConnectionEnd search : Ends) {
-      for (byte bit = 0; bit < search.NrOfBits(); bit++) {
-        ConnectionPoint connection = search.GetConnection(bit);
-        if (connection.GetParentNet() == RootNet
-            && connection.GetParentNetBitIndex() == BitIndex) {
+    for (final var search : endEnds) {
+      for (byte bit = 0; bit < search.getNrOfBits(); bit++) {
+        final var connection = search.get(bit);
+        if (connection.getParentNet() == RootNet && connection.getParentNetBitIndex() == BitIndex) {
           return true;
         }
       }
@@ -228,47 +202,44 @@ public class NetlistComponent {
     return false;
   }
 
-  public int NrOfEnds() {
-    return nr_of_ends;
+  public int nrOfEnds() {
+    return nrOfEnds;
   }
 
   public boolean setEnd(int index, ConnectionEnd End) {
-    if ((index < 0) || (index >= nr_of_ends)) {
+    if ((index < 0) || (index >= nrOfEnds)) {
       return false;
     }
-    Ends.set(index, End);
+    endEnds.set(index, End);
     return true;
   }
 
-  public void SetLocalBubbleID(
-      int InputBubblesStartId,
-      int NrOfInputBubbles,
-      int OutputBubblesStartId,
-      int NrOfOutputBubbles,
-      int InOutBubblesStartId,
-      int NrOfInOutBubbles) {
-    if (LocalId == null) {
-      LocalId = new BubbleInformationContainer();
+  public void setLocalBubbleID(
+      int inputBubblesStartId,
+      int nrOfInputBubbles,
+      int outputBubblesStartId,
+      int nrOfOutputBubbles,
+      int inOutBubblesStartId,
+      int nrOfInOutBubbles) {
+    if (localId == null) {
+      localId = new BubbleInformationContainer();
     }
-    if (NrOfInputBubbles > 0) {
-      LocalId.SetInputBubblesInformation(
-          InputBubblesStartId, InputBubblesStartId + NrOfInputBubbles - 1);
+    if (nrOfInputBubbles > 0) {
+      localId.setInputBubblesInformation(inputBubblesStartId, inputBubblesStartId + nrOfInputBubbles - 1);
     }
-    if (NrOfInOutBubbles > 0) {
-      LocalId.SetInOutBubblesInformation(
-          InOutBubblesStartId, InOutBubblesStartId + NrOfInOutBubbles - 1);
+    if (nrOfInOutBubbles > 0) {
+      localId.setInOutBubblesInformation(inOutBubblesStartId, inOutBubblesStartId + nrOfInOutBubbles - 1);
     }
-    if (NrOfOutputBubbles > 0) {
-      LocalId.SetOutputBubblesInformation(
-          OutputBubblesStartId, OutputBubblesStartId + NrOfOutputBubbles - 1);
+    if (nrOfOutputBubbles > 0) {
+      localId.setOutputBubblesInformation(outputBubblesStartId, outputBubblesStartId + nrOfOutputBubbles - 1);
     }
   }
 
-  public boolean IsGatedInstance() {
-    return IsGatedInstance;
+  public boolean isGatedInstance() {
+    return isGatedInstance;
   }
 
-  public void SetIsGatedInstance() {
-    IsGatedInstance = true;
+  public void setIsGatedInstance() {
+    isGatedInstance = true;
   }
 }

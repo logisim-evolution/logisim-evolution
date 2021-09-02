@@ -90,10 +90,4 @@ public class BaseLibrary extends Library {
   public String getDisplayName() {
     return S.get("baseLibrary");
   }
-
-  @Override
-  public boolean removeLibrary(String Name) {
-    return false;
-  }
-
 }

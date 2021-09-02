@@ -147,10 +147,10 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     if (RootSheet == null) return;
     var steps = BasicSteps;
     switch (Vendor) {
-      case VendorSoftware.VendorAltera:
+      case VendorSoftware.VENDOR_ALTERA:
         Downloader =
             new AlteraDownload(
-                GetProjDir(TopLevelSheet),
+                getProjDir(TopLevelSheet),
                 RootSheet.getNetList(),
                 MyBoardInformation,
                 Entities,
@@ -158,10 +158,10 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
                 AppPreferences.HDL_Type.get(),
                 writeToFlash);
         break;
-      case VendorSoftware.VendorXilinx:
+      case VendorSoftware.VENDOR_XILINX:
         Downloader =
             new XilinxDownload(
-                GetProjDir(TopLevelSheet),
+                getProjDir(TopLevelSheet),
                 RootSheet.getNetList(),
                 MyBoardInformation,
                 Entities,
@@ -169,10 +169,10 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
                 AppPreferences.HDL_Type.get(),
                 writeToFlash);
         break;
-      case VendorSoftware.VendorVivado:
+      case VendorSoftware.VENDOR_VIVADO:
         Downloader =
             new VivadoDownload(
-                GetProjDir(TopLevelSheet),
+                getProjDir(TopLevelSheet),
                 RootSheet.getNetList(),
                 MyBoardInformation,
                 Entities,
@@ -372,9 +372,9 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       if (MyProject.getLogisimFile().getLoader().getMainFile() != null) {
         MapPannel = new ComponentMapDialog(parent,
                 MyProject.getLogisimFile().getLoader().getMainFile().getAbsolutePath(),
-                MyBoardInformation, MyMappableResources);
+                MyBoardInformation, myMappableResources);
       } else {
-        MapPannel = new ComponentMapDialog(parent, "", MyBoardInformation, MyMappableResources);
+        MapPannel = new ComponentMapDialog(parent, "", MyBoardInformation, myMappableResources);
       }
       if (!MapPannel.run()) {
         Reporter.Report.AddError(S.get("FPGADownloadAborted"));
@@ -384,11 +384,11 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       if (MapFileName != null) {
         var MapFile = new File(MapFileName);
         if (!MapFile.exists()) return false;
-        var cmp = new ComponentMapParser(MapFile, MyMappableResources, MyBoardInformation);
+        var cmp = new ComponentMapParser(MapFile, myMappableResources, MyBoardInformation);
         cmp.parseFile();
       }
     }
-    if (!MapDesignCheckIOs()) {
+    if (!mapDesignCheckIOs()) {
       Reporter.Report.AddError(S.get("FPGAMapNotComplete", MyBoardInformation.getBoardName()));
       return false;
     }
@@ -403,14 +403,14 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     if (!writeHDL(TopLevelSheet, TickFrequency)) {
       return false;
     }
-    final var ProjectPath = GetProjDir(TopLevelSheet);
+    final var ProjectPath = getProjDir(TopLevelSheet);
     final var SourcePath = ProjectPath + AppPreferences.HDL_Type.get().toLowerCase() + File.separator;
-    GetVHDLFiles(ProjectPath, SourcePath, Entities, Architectures, AppPreferences.HDL_Type.get());
+    getVhdlFiles(ProjectPath, SourcePath, Entities, Architectures, AppPreferences.HDL_Type.get());
     if (UseGui) {
       MyProgress.setValue(4);
       MyProgress.setString(S.get("FPGAState4"));
     }
-    Downloader.SetMapableResources(MyMappableResources);
+    Downloader.SetMapableResources(myMappableResources);
     /* Stage 4 Create Download Scripts */
     return CreateDownloadScripts();
   }

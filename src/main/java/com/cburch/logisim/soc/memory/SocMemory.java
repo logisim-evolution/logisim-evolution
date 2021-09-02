@@ -59,7 +59,7 @@ public class SocMemory extends SocInstanceFactory {
   public static final String _ID = "Socmem";
 
   public SocMemory() {
-    super(_ID, S.getter("SocMemoryComponent"), SocSlave);
+    super(_ID, S.getter("SocMemoryComponent"), SOC_SLAVE);
     setIcon(new ArithmeticIcon("SocMem", 3));
     setOffsetBounds(Bounds.create(0, 0, 320, 60));
   }

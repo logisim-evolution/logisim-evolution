@@ -34,6 +34,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -62,59 +63,54 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
+    final var Contents =
+        (new LineBuffer())
+            .pair("nrOfBits", NrOfBitsStr)
+            .pair("unsigned", UnsignedStr)
+            .pair("calcBits", CalcBitsStr);
+
     if (HDL.isVHDL()) {
-      Contents.add("   s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B))");
-      Contents.add("                       WHEN " + UnsignedStr + "= 1 ELSE");
-      Contents.add("                    std_logic_vector(signed(INP_A)*signed(INP_B));");
-      Contents.add(
-          "   s_extended_Cin("
-              + CalcBitsStr
-              + "-1 DOWNTO "
-              + NrOfBitsStr
-              + ") <= (OTHERS => '0') WHEN "
-              + UnsignedStr
-              + "= 1 ELSE (OTHERS => Cin("
-              + NrOfBitsStr
-              + "-1));");
-      Contents.add("   s_extended_Cin(" + NrOfBitsStr + "-1 DOWNTO 0) <= Cin;");
-      Contents.add(
-          "   s_new_result  <= std_logic_vector(unsigned(s_mult_result) + unsigned(s_extended_Cin))");
-      Contents.add("                       WHEN " + UnsignedStr + "= 1 ELSE");
-      Contents.add(
-          "                    std_logic_vector(signed(s_mult_result) + signed(s_extended_Cin));");
-      Contents.add(
-          "   Mult_hi       <= s_new_result(" + CalcBitsStr + "-1 DOWNTO " + NrOfBitsStr + ");");
-      Contents.add("   Mult_lo       <= s_new_result(" + NrOfBitsStr + "-1 DOWNTO 0);");
+      Contents.addLines(
+          "s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B))",
+          "                    WHEN {{unsigned}}= 1 ELSE",
+          "                 std_logic_vector(signed(INP_A)*signed(INP_B));",
+          "s_extended_Cin({{calcBits}}-1 DOWNTO {{nrOfBits}}) <= (OTHERS => '0') WHEN {{unsigned}} = 1 ELSE (OTHERS => Cin({{nrOfBits}}-1));",
+          "s_extended_Cin({{nrOfBits}}-1 DOWNTO 0) <= Cin;",
+          "s_new_result  <= std_logic_vector(unsigned(s_mult_result) + unsigned(s_extended_Cin))",
+          "                    WHEN {{unsigned}}= 1 ELSE",
+          "                 std_logic_vector(signed(s_mult_result) + signed(s_extended_Cin));",
+          "Mult_hi       <= s_new_result({{calcBits}}-1 DOWNTO {{nrOfBits}});",
+          "Mult_lo       <= s_new_result({{nrOfBits}}-1 DOWNTO 0);");
     } else {
-      Contents.add("   reg[" + CalcBitsStr + "-1:0] s_Cin;");
-      Contents.add("   reg[" + CalcBitsStr + "-1:0] s_mult_unsigned;");
-      Contents.add("   reg[" + CalcBitsStr + "-1:0] s_interm_result;");
-      Contents.add("   reg signed[" + CalcBitsStr + "-1:0] s_mult_signed;");
-      Contents.add("   always @(*)");
-      Contents.add("   begin");
-      Contents.add("      s_Cin[" + NrOfBitsStr + "-1:0] = Cin;");
-      Contents.add("      if (" + UnsignedStr + "== 1)");
-      Contents.add("         begin");
-      Contents.add("            s_Cin[" + CalcBitsStr + "-1:" + NrOfBitsStr + "] = 0;");
-      Contents.add("            s_mult_unsigned = $unsigned(INP_A) * $unsigned(INP_B);");
-      Contents.add("            s_interm_result = $unsigned(s_mult_unsigned) + $unsigned(s_Cin);");
-      Contents.add("          end");
-      Contents.add("       else");
-      Contents.add("         begin");
-      Contents.add("            if (Cin[" + NrOfBitsStr + "-1] == 1)");
-      Contents.add("               s_Cin[" + CalcBitsStr + "-1:" + NrOfBitsStr + "] = -1;");
-      Contents.add("            else");
-      Contents.add("               s_Cin[" + CalcBitsStr + "-1:" + NrOfBitsStr + "] = 0;");
-      Contents.add("            s_mult_signed = $signed(INP_A) * $signed(INP_B);");
-      Contents.add("            s_interm_result = $signed(s_mult_signed) + $signed(s_Cin);");
-      Contents.add("          end");
-      Contents.add("   end");
-      Contents.add("   ");
-      Contents.add("   assign Mult_hi = s_interm_result[" + CalcBitsStr + "-1:" + NrOfBitsStr + "];");
-      Contents.add("   assign Mult_lo = s_interm_result[" + NrOfBitsStr + "-1:0];");
+      Contents.addLines(
+          "reg[{{calcBits}}-1:0] s_Cin;",
+          "reg[{{calcBits}}-1:0] s_mult_unsigned;",
+          "reg[{{calcBits}}-1:0] s_interm_result;",
+          "reg signed[{{calcBits}}-1:0] s_mult_signed;",
+          "always @(*)",
+          "begin",
+          "   s_Cin[{{nrOfBits}}-1:0] = Cin;",
+          "   if ({{unsigned}}== 1)",
+          "      begin",
+          "         s_Cin[{{calcBits}}-1:{{nrOfBits}}] = 0;",
+          "         s_mult_unsigned = $unsigned(INP_A) * $unsigned(INP_B);",
+          "         s_interm_result = $unsigned(s_mult_unsigned) + $unsigned(s_Cin);",
+          "       end",
+          "    else",
+          "      begin",
+          "         if (Cin[{{nrOfBits}}-1] == 1)",
+          "            s_Cin[{{calcBits}}-1:{{nrOfBits}}] = -1;",
+          "         else",
+          "            s_Cin[{{calcBits}}-1:{{nrOfBits}}] = 0;",
+          "         s_mult_signed = $signed(INP_A) * $signed(INP_B);",
+          "         s_interm_result = $signed(s_mult_signed) + $signed(s_Cin);",
+          "       end",
+          "end",
+          "",
+          "assign Mult_hi = s_interm_result[{{calcBits}}-1:{{nrOfBits}}];",
+          "assign Mult_lo = s_interm_result[{{nrOfBits}}-1:0];");
     }
-    return Contents;
+    return Contents.getWithIndent();
   }
 
   @Override
@@ -137,9 +133,9 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var parameterMap = new TreeMap<String, Integer>();
-    final var nrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    final var nrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
     boolean isUnsigned =
-        ComponentInfo.GetComponent()
+        ComponentInfo.getComponent()
             .getAttributeSet()
             .getValue(Multiplier.MODE_ATTR)
             .equals(Multiplier.UNSIGNED_OPTION);

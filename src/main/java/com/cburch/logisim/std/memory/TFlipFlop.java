@@ -36,6 +36,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,9 +72,9 @@ public class TFlipFlop extends AbstractFlipFlop {
 
     @Override
     public ArrayList<String> GetUpdateLogic() {
-      ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   " + HDL.assignPreamble() + "s_next_state" + HDL.assignOperator() + "s_current_state_reg" + HDL.xorOperator() + "T;");
-      return Contents;
+      return (new LineBuffer())
+          .add("{{1}} s_next_state {{2}} s_current_state_reg {{3}} T;", HDL.assignPreamble(), HDL.assignOperator(), HDL.xorOperator())
+          .getWithIndent();
     }
   }
 

@@ -400,13 +400,13 @@ public class AppPreferences {
   }
 
   public static Font getScaledFont(Font myfont) {
-    if (myfont != null) return myfont.deriveFont(getScaled((float) FontSize));
-    return null;
+    if (myfont != null) return myfont.deriveFont(getScaled((float) FONT_SIZE));
+    else return null;
   }
 
   public static Font getScaledFont(Font myfont, float scale) {
-    if (myfont != null) return myfont.deriveFont(getScaled((float) FontSize, scale));
-    return null;
+    if (myfont != null) return myfont.deriveFont(getScaled((float) FONT_SIZE, scale));
+    else return null;
   }
 
   public static ImageIcon getScaledImageIcon(ImageIcon icon) {
@@ -435,9 +435,9 @@ public class AppPreferences {
 
   // Template preferences
   public static final int IconSize = 16;
-  public static final int FontSize = 14;
-  public static final int IconBorder = 2;
-  public static final int BoxSize = IconSize + 2 * IconBorder;
+  public static final int FONT_SIZE = 14;
+  public static final int ICON_BORDER = 2;
+  public static final int BOX_SIZE = IconSize + 2 * ICON_BORDER;
   public static final int TEMPLATE_UNKNOWN = -1;
   public static final int TEMPLATE_EMPTY = 0;
   public static final int TEMPLATE_PLAIN = 1;
@@ -459,7 +459,7 @@ public class AppPreferences {
   }
 
   public static int getIconBorder() {
-    return getScaled(IconBorder);
+    return getScaled(ICON_BORDER);
   }
 
   // International preferences
@@ -490,7 +490,7 @@ public class AppPreferences {
   public static final PrefMonitor<String> SelectedBoard =
       create(new PrefMonitorString("SelectedBoard", null));
 
-  public static final String External_Boards = "ExternalBoards";
+  public static final String EXTERNAL_BOARDS = "ExternalBoards";
   public static final FPGABoards Boards = new FPGABoards();
   public static final PrefMonitor<Boolean> SupressGatedClockWarnings =
       create(new PrefMonitorBoolean("NoGatedClockWarnings", false));
@@ -517,27 +517,27 @@ public class AppPreferences {
       create(new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
 
   // defaiult grid colors
-  public static final int defaultCanvasBgColor = 0xFFFFFFFF;
-  public static final int defaultGridBgColor = 0xFFFFFFFF;
-  public static final int defaultGridDotColor = 0xFF777777;
-  public static final int defaultZoomedDotColor = 0xFFCCCCCC;
+  public static final int DEFAULT_CANVAS_BG_COLOR = 0xFFFFFFFF;
+  public static final int DEFAULT_GRID_BG_COLOR = 0xFFFFFFFF;
+  public static final int DEFAULT_GRID_DOT_COLOR = 0xFF777777;
+  public static final int DEFAULT_ZOOMED_DOT_COLOR = 0xFFCCCCCC;
 
   // restores default grid colors
   public static void setDefaultGridColors() {
-    CANVAS_BG_COLOR.set(defaultCanvasBgColor);
-    GRID_BG_COLOR.set(defaultGridBgColor);
-    GRID_DOT_COLOR.set(defaultGridDotColor);
-    GRID_ZOOMED_DOT_COLOR.set(defaultZoomedDotColor);
+    CANVAS_BG_COLOR.set(DEFAULT_CANVAS_BG_COLOR);
+    GRID_BG_COLOR.set(DEFAULT_GRID_BG_COLOR);
+    GRID_DOT_COLOR.set(DEFAULT_GRID_DOT_COLOR);
+    GRID_ZOOMED_DOT_COLOR.set(DEFAULT_ZOOMED_DOT_COLOR);
   }
 
   public static final PrefMonitor<Integer> CANVAS_BG_COLOR =
-      create(new PrefMonitorInt("canvasBgColor", defaultCanvasBgColor));
+      create(new PrefMonitorInt("canvasBgColor", DEFAULT_CANVAS_BG_COLOR));
   public static final PrefMonitor<Integer> GRID_BG_COLOR =
-      create(new PrefMonitorInt("gridBgColor", defaultGridBgColor));
+      create(new PrefMonitorInt("gridBgColor", DEFAULT_GRID_BG_COLOR));
   public static final PrefMonitor<Integer> GRID_DOT_COLOR =
-      create(new PrefMonitorInt("gridDotColor", defaultGridDotColor));
+      create(new PrefMonitorInt("gridDotColor", DEFAULT_GRID_DOT_COLOR));
   public static final PrefMonitor<Integer> GRID_ZOOMED_DOT_COLOR =
-      create(new PrefMonitorInt("gridZoomedDotColor", defaultZoomedDotColor));
+      create(new PrefMonitorInt("gridZoomedDotColor", DEFAULT_ZOOMED_DOT_COLOR));
 
   // Layout preferences
   public static final String ADD_AFTER_UNCHANGED = "unchanged";

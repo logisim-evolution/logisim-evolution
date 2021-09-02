@@ -52,7 +52,8 @@ import java.awt.event.MouseEvent;
 import java.util.HashSet;
 
 public abstract class AbstractTtlGate extends InstanceFactory {
-  protected static final int pinwidth = 10, pinheight = 7;
+  protected static final int PIN_WIDTH = 10;
+  protected static final int PIN_HEIGHT = 7;
   private int height = 60;
   protected final byte pinnumber;
   private final String name;
@@ -213,40 +214,40 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     var height = bds.getHeight();
     for (byte i = 0; i < this.pinnumber; i++) {
       if (i < this.pinnumber / 2) {
-        if (dir == Direction.WEST || dir == Direction.EAST) xp = i * 20 + (10 - pinwidth / 2) + x;
-        else yp = i * 20 + (10 - pinwidth / 2) + y;
+        if (dir == Direction.WEST || dir == Direction.EAST) xp = i * 20 + (10 - PIN_WIDTH / 2) + x;
+        else yp = i * 20 + (10 - PIN_WIDTH / 2) + y;
       } else {
         if (dir == Direction.WEST || dir == Direction.EAST) {
-          xp = (i - this.pinnumber / 2) * 20 + (10 - pinwidth / 2) + x;
-          yp = height + y - pinheight;
+          xp = (i - this.pinnumber / 2) * 20 + (10 - PIN_WIDTH / 2) + x;
+          yp = height + y - PIN_HEIGHT;
         } else {
-          yp = (i - this.pinnumber / 2) * 20 + (10 - pinwidth / 2) + y;
-          xp = width + x - pinheight;
+          yp = (i - this.pinnumber / 2) * 20 + (10 - PIN_WIDTH / 2) + y;
+          xp = width + x - PIN_HEIGHT;
         }
       }
       if (dir == Direction.WEST || dir == Direction.EAST) {
         // fill the background of white if selected from preferences
-        g.drawRect(xp, yp, pinwidth, pinheight);
+        g.drawRect(xp, yp, PIN_WIDTH, PIN_HEIGHT);
       } else {
         // fill the background of white if selected from preferences
-        g.drawRect(xp, yp, pinheight, pinwidth);
+        g.drawRect(xp, yp, PIN_HEIGHT, PIN_WIDTH);
       }
     }
     if (dir == Direction.SOUTH) {
       // fill the background of white if selected from preferences
-      g.drawRoundRect(x + pinheight, y, bds.getWidth() - pinheight * 2, bds.getHeight(), 10, 10);
+      g.drawRoundRect(x + PIN_HEIGHT, y, bds.getWidth() - PIN_HEIGHT * 2, bds.getHeight(), 10, 10);
       g.drawArc(x + width / 2 - 7, y - 7, 14, 14, 180, 180);
     } else if (dir == Direction.WEST) {
       // fill the background of white if selected from preferences
-      g.drawRoundRect(x, y + pinheight, bds.getWidth(), bds.getHeight() - pinheight * 2, 10, 10);
+      g.drawRoundRect(x, y + PIN_HEIGHT, bds.getWidth(), bds.getHeight() - PIN_HEIGHT * 2, 10, 10);
       g.drawArc(x + width - 7, y + height / 2 - 7, 14, 14, 90, 180);
     } else if (dir == Direction.NORTH) {
       // fill the background of white if selected from preferences
-      g.drawRoundRect(x + pinheight, y, bds.getWidth() - pinheight * 2, bds.getHeight(), 10, 10);
+      g.drawRoundRect(x + PIN_HEIGHT, y, bds.getWidth() - PIN_HEIGHT * 2, bds.getHeight(), 10, 10);
       g.drawArc(x + width / 2 - 7, y + height - 7, 14, 14, 0, 180);
     } else { // east
       // fill the background of white if selected from preferences
-      g.drawRoundRect(x, y + pinheight, bds.getWidth(), bds.getHeight() - pinheight * 2, 10, 10);
+      g.drawRoundRect(x, y + PIN_HEIGHT, bds.getWidth(), bds.getHeight() - PIN_HEIGHT * 2, 10, 10);
       g.drawArc(x - 7, y + height / 2 - 7, 14, 14, 270, 180);
     }
     g.rotate(Math.toRadians(-dir.toDegrees()), x + width / 2, y + height / 2);
@@ -265,8 +266,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
       height = bds.getWidth();
     }
     g.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 7));
-    GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + pinheight + 4);
-    GraphicsUtil.drawCenteredText(g, "GND", xp + width - 10, yp + height - pinheight - 7);
+    GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + PIN_HEIGHT + 4);
+    GraphicsUtil.drawCenteredText(g, "GND", xp + width - 10, yp + height - PIN_HEIGHT - 7);
   }
 
   @Override
@@ -294,20 +295,20 @@ public abstract class AbstractTtlGate extends InstanceFactory {
           yp = y;
           if (dir == Direction.WEST || dir == Direction.EAST) {
             g.setColor(Color.DARK_GRAY.darker());
-            g.fillRoundRect(xp, yp + pinheight, width, height - pinheight * 2 + 2, 10, 10);
+            g.fillRoundRect(xp, yp + PIN_HEIGHT, width, height - PIN_HEIGHT * 2 + 2, 10, 10);
             g.setColor(Color.DARK_GRAY);
-            g.fillRoundRect(xp, yp + pinheight, width, height - pinheight * 2 - 2, 10, 10);
+            g.fillRoundRect(xp, yp + PIN_HEIGHT, width, height - PIN_HEIGHT * 2 - 2, 10, 10);
             g.setColor(Color.BLACK);
-            g.drawRoundRect(xp, yp + pinheight, width, height - pinheight * 2 - 2, 10, 10);
-            g.drawRoundRect(xp, yp + pinheight, width, height - pinheight * 2 + 2, 10, 10);
+            g.drawRoundRect(xp, yp + PIN_HEIGHT, width, height - PIN_HEIGHT * 2 - 2, 10, 10);
+            g.drawRoundRect(xp, yp + PIN_HEIGHT, width, height - PIN_HEIGHT * 2 + 2, 10, 10);
           } else {
             g.setColor(Color.DARK_GRAY.darker());
-            g.fillRoundRect(xp + pinheight, yp, width - pinheight * 2, height, 10, 10);
+            g.fillRoundRect(xp + PIN_HEIGHT, yp, width - PIN_HEIGHT * 2, height, 10, 10);
             g.setColor(Color.DARK_GRAY);
-            g.fillRoundRect(xp + pinheight, yp, width - pinheight * 2, height - 4, 10, 10);
+            g.fillRoundRect(xp + PIN_HEIGHT, yp, width - PIN_HEIGHT * 2, height - 4, 10, 10);
             g.setColor(Color.BLACK);
-            g.drawRoundRect(xp + pinheight, yp, width - pinheight * 2, height - 4, 10, 10);
-            g.drawRoundRect(xp + pinheight, yp, width - pinheight * 2, height, 10, 10);
+            g.drawRoundRect(xp + PIN_HEIGHT, yp, width - PIN_HEIGHT * 2, height - 4, 10, 10);
+            g.drawRoundRect(xp + PIN_HEIGHT, yp, width - PIN_HEIGHT * 2, height, 10, 10);
           }
           if (dir == Direction.SOUTH) g.fillArc(xp + width / 2 - 7, yp - 7, 14, 14, 180, 180);
           else if (dir == Direction.WEST)
@@ -318,27 +319,27 @@ public abstract class AbstractTtlGate extends InstanceFactory {
             g.fillArc(xp - 7, yp + height / 2 - 7, 14, 14, 270, 180);
         }
         if (i < this.pinnumber / 2) {
-          if (dir == Direction.WEST || dir == Direction.EAST) xp = i * 20 + (10 - pinwidth / 2) + x;
-          else yp = i * 20 + (10 - pinwidth / 2) + y;
+          if (dir == Direction.WEST || dir == Direction.EAST) xp = i * 20 + (10 - PIN_WIDTH / 2) + x;
+          else yp = i * 20 + (10 - PIN_WIDTH / 2) + y;
         } else {
           if (dir == Direction.WEST || dir == Direction.EAST) {
-            xp = (i - this.pinnumber / 2) * 20 + (10 - pinwidth / 2) + x;
-            yp = height + y - pinheight;
+            xp = (i - this.pinnumber / 2) * 20 + (10 - PIN_WIDTH / 2) + x;
+            yp = height + y - PIN_HEIGHT;
           } else {
-            yp = (i - this.pinnumber / 2) * 20 + (10 - pinwidth / 2) + y;
-            xp = width + x - pinheight;
+            yp = (i - this.pinnumber / 2) * 20 + (10 - PIN_WIDTH / 2) + y;
+            xp = width + x - PIN_HEIGHT;
           }
         }
         if (dir == Direction.WEST || dir == Direction.EAST) {
           g.setColor(Color.LIGHT_GRAY);
-          g.fillRect(xp, yp, pinwidth, pinheight);
+          g.fillRect(xp, yp, PIN_WIDTH, PIN_HEIGHT);
           g.setColor(Color.BLACK);
-          g.drawRect(xp, yp, pinwidth, pinheight);
+          g.drawRect(xp, yp, PIN_WIDTH, PIN_HEIGHT);
         } else {
           g.setColor(Color.LIGHT_GRAY);
-          g.fillRect(xp, yp, pinheight, pinwidth);
+          g.fillRect(xp, yp, PIN_HEIGHT, PIN_WIDTH);
           g.setColor(Color.BLACK);
-          g.drawRect(xp, yp, pinheight, pinwidth);
+          g.drawRect(xp, yp, PIN_HEIGHT, PIN_WIDTH);
         }
       }
 
@@ -355,17 +356,17 @@ public abstract class AbstractTtlGate extends InstanceFactory {
         yp = y + (height - width) / 2;
       }
       if (dir == Direction.SOUTH) {
-        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + pinheight + 4);
-        GraphicsUtil.drawCenteredText(g, "GND", xp + height - 14, yp + width - pinheight - 8);
+        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + PIN_HEIGHT + 4);
+        GraphicsUtil.drawCenteredText(g, "GND", xp + height - 14, yp + width - PIN_HEIGHT - 8);
       } else if (dir == Direction.WEST) {
-        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + pinheight + 6);
-        GraphicsUtil.drawCenteredText(g, "GND", xp + width - 10, yp + height - pinheight - 8);
+        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + PIN_HEIGHT + 6);
+        GraphicsUtil.drawCenteredText(g, "GND", xp + width - 10, yp + height - PIN_HEIGHT - 8);
       } else if (dir == Direction.NORTH) {
-        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 14, yp + pinheight + 4);
-        GraphicsUtil.drawCenteredText(g, "GND", xp + height - 10, yp + width - pinheight - 8);
+        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 14, yp + PIN_HEIGHT + 4);
+        GraphicsUtil.drawCenteredText(g, "GND", xp + height - 10, yp + width - PIN_HEIGHT - 8);
       } else { // east
-        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + pinheight + 4);
-        GraphicsUtil.drawCenteredText(g, "GND", xp + width - 10, yp + height - pinheight - 10);
+        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + PIN_HEIGHT + 4);
+        GraphicsUtil.drawCenteredText(g, "GND", xp + width - 10, yp + height - PIN_HEIGHT - 10);
       }
     } else paintInternalBase(painter);
   }

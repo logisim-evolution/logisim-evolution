@@ -46,7 +46,7 @@ import javax.swing.JFrame;
 public class LFrame extends JFrame implements WindowClosable {
   private static final long serialVersionUID = 1L;
   private static final String PATH = "resources/logisim/img/logisim-icon-";
-  private static final int[] SIZES = {16, 20, 24, 48, 64, 128};
+  private static final int[] SIZES = {16, 32, 48, 64, 128};
   private static final int DEFAULT_SIZE = 48;
   private static List<Image> ICONS = null;
   private static Image DEFAULT_ICON = null;
@@ -106,7 +106,7 @@ public class LFrame extends JFrame implements WindowClosable {
     if (type == MAIN_WINDOW) {
       menubar = new LogisimMenuBar(this, p, p, p);
       setJMenuBar(menubar);
-    } else if (type == SUB_WINDOW || Main.MacOS) {
+    } else if (type == SUB_WINDOW || Main.RUNNING_ON_MAC) {
       // use null project so there will be no Close, Save, etc.
       menubar = new LogisimMenuBar(this, null, p, enableSim ? p : null);
       setJMenuBar(menubar);

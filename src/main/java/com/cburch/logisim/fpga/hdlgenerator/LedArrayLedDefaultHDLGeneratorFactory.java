@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -42,54 +43,47 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   public static String nrOfLedsString = "nrOfLeds";
   public static String activeLowString = "activeLow";
   public static String LedArrayName = "LedArrayLedDefault";
-  
-  public static ArrayList<String> getGenericMap(int nrOfRows,
-      int nrOfColumns,
-      long FpgaClockFrequency,
-      boolean activeLow) {
-    ArrayList<String> map = new ArrayList<>();
+
+  public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
+    final var contents =
+        (new LineBuffer())
+            .pair("nrOfLeds", nrOfLedsString)
+            .pair("ledsCount", nrOfRows * nrOfColumns)
+            .pair("rows", nrOfRows)
+            .pair("cols", nrOfColumns)
+            .pair("activeLow", activeLowString)
+            .pair("activeLowVal", activeLow ? "1" : "0");
+
     if (HDL.isVHDL()) {
-      map.add("      GENERIC MAP ( " + nrOfLedsString + " => " + (nrOfRows * nrOfColumns) + ",");
-      map.add("                    " + activeLowString + " => " + ((activeLow) ? "1" : "0") + ")");
+      contents.addLines(
+          "GENERIC MAP ( {{nrOfLeds}} => {{ledsCount}},",
+          "              {{activeLow}} => {{activeLowVal}} )");
     } else {
-      map.add("      #( ." + nrOfLedsString + "(" + (nrOfRows * nrOfColumns) + "),");
-      map.add("         ." + activeLowString + "(" + ((activeLow) ? "1" : "0") + "))");
+      contents.addLines(
+          "#( .{{nrOfLeds}}({{ledsCount}}),",
+          "   .{{activeLow}}({{activeLowVal}}) )");
     }
-    return map;
+    return contents.getWithIndent(6);
   }
-  
+
   public static ArrayList<String> getPortMap(int id) {
-    final var map = new ArrayList<String>();
+    final var map =
+        (new LineBuffer())
+            .pair("id", id)
+            .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+            .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
     if (HDL.isVHDL()) {
-      map.add("      PORT MAP ( " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs 
-          + " => "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs 
-          + id
-          + ",");
-      map.add("                 "
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + " => s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + id
-          + ");");
+      map.addLines(
+          "PORT MAP ( {{outs}} => {{outs}}{{id}},",
+          "           {{ins }} => s_{{ins}}{{id}} );");
     } else {
-      map.add("      (." 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs
-          + "("
-          + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs
-          + id
-          + "),");
-      map.add("       ."
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + "(s_"
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + id
-          + "));");
+      map.addLines(
+          "( .{{outs}}({{outs}}{{id}}),",
+          "  .{{ins}}(s_{{ins}}{{id}}) );");
     }
-    return map;
+    return map.getWithIndent(6);
   }
-  
+
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
     final var outputs = new TreeMap<String, Integer>();
@@ -114,40 +108,34 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
-    if (HDL.isVHDL()) {
-      contents.add("   genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE");
-      contents.add("      " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs
-          + "(n) <= NOT("
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + "(n)) WHEN activeLow = 1 ELSE " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + "(n);");
-      contents.add("   END GENERATE;");
-    } else {
-      contents.add("   genvar i;");
-      contents.add("   generate");
-      contents.add("      for (i = 0; i < nrOfLeds; i = i + 1) begin");
-      contents.add("         assign " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayOutputs
-          + "[i] = (activeLow == 1) ? ~" 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + "[n] : " 
-          + LedArrayGenericHDLGeneratorFactory.LedArrayInputs
-          + "[n];");
-      contents.add("      end");
-      contents.add("   endgenerate");
-    }
-    return contents;
-  }
+    final var contents =
+        (new LineBuffer())
+            .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+            .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
 
+    if (HDL.isVHDL()) {
+      contents.addLines(
+          "genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE",
+          "   {{outs}}(n) <= NOT({{ins}}(n)) WHEN activeLow = 1 ELSE {{ins}}(n);",
+          "END GENERATE;");
+    } else {
+      contents.addLines(
+          "genvar i;",
+          "generate",
+          "   for (i = 0; i < nrOfLeds; i = i + 1)",
+          "   begin:outputs",
+          "      assign {{outs}}[i] = (activeLow == 1) ? ~{{ins}}[i] : {{ins}}[i];",
+          "   end",
+          "endgenerate");
+    }
+    return contents.getWithIndent();
+  }
 
   @Override
   public String getComponentStringIdentifier() {
     return LedArrayName;
   }
-  
+
   @Override
   public String GetSubDir() {
     /*

@@ -83,7 +83,7 @@ public class BoardReaderClass {
         BoardDoc = parser.parse(xml);
       }
 
-      NodeList ImageList = BoardDoc.getElementsByTagName(BoardWriterClass.ImageInformationString);
+      NodeList ImageList = BoardDoc.getElementsByTagName(BoardWriterClass.IMAGE_INFORMATION_STRING);
       if (ImageList.getLength() != 1) return null;
       Node ThisImage = ImageList.item(0);
       NodeList ImageParameters = ThisImage.getChildNodes();
@@ -153,7 +153,7 @@ public class BoardReaderClass {
       // backward
       // compatibility
       ProcessComponentList(CompList, result);
-      CompList = BoardDoc.getElementsByTagName(BoardWriterClass.ComponentsSectionString); // new
+      CompList = BoardDoc.getElementsByTagName(BoardWriterClass.COMPONENTS_SECTION_STRING); // new
       // format
       ProcessComponentList(CompList, result);
       return result;
@@ -168,7 +168,7 @@ public class BoardReaderClass {
 
   private FPGAClass GetFPGAInfo() {
     NodeList FPGAList =
-        BoardDoc.getElementsByTagName(BoardWriterClass.BoardInformationSectionString);
+        BoardDoc.getElementsByTagName(BoardWriterClass.BOARD_INFORMATION_SECTION_STRING);
     long frequency = -1;
     String clockpin = null;
     String clockpull = null;
@@ -189,20 +189,20 @@ public class BoardReaderClass {
     for (int i = 0; i < FPGAParameters.getLength(); i++) {
       if (FPGAParameters.item(i)
           .getNodeName()
-          .equals(BoardWriterClass.ClockInformationSectionString)) {
+          .equals(BoardWriterClass.CLOCK_INFORMATION_SECTION_STRING)) {
         NamedNodeMap ClockAttrs = FPGAParameters.item(i).getAttributes();
         for (int j = 0; j < ClockAttrs.getLength(); j++) {
-          if (ClockAttrs.item(j).getNodeName().equals(BoardWriterClass.ClockSectionStrings[0]))
+          if (ClockAttrs.item(j).getNodeName().equals(BoardWriterClass.CLOCK_SECTION_STRINGS[0]))
             frequency = Long.parseLong(ClockAttrs.item(j).getNodeValue());
-          if (ClockAttrs.item(j).getNodeName().equals(BoardWriterClass.ClockSectionStrings[1]))
+          if (ClockAttrs.item(j).getNodeName().equals(BoardWriterClass.CLOCK_SECTION_STRINGS[1]))
             clockpin = ClockAttrs.item(j).getNodeValue();
-          if (ClockAttrs.item(j).getNodeName().equals(BoardWriterClass.ClockSectionStrings[2]))
+          if (ClockAttrs.item(j).getNodeName().equals(BoardWriterClass.CLOCK_SECTION_STRINGS[2]))
             clockpull = ClockAttrs.item(j).getNodeValue();
-          if (ClockAttrs.item(j).getNodeName().equals(BoardWriterClass.ClockSectionStrings[3]))
+          if (ClockAttrs.item(j).getNodeName().equals(BoardWriterClass.CLOCK_SECTION_STRINGS[3]))
             clockstand = ClockAttrs.item(j).getNodeValue();
         }
       }
-      if (FPGAParameters.item(i).getNodeName().equals(BoardWriterClass.UnusedPinsString)) {
+      if (FPGAParameters.item(i).getNodeName().equals(BoardWriterClass.UNUSED_PINS_STRING)) {
         NamedNodeMap UnusedAttrs = FPGAParameters.item(i).getAttributes();
         for (int j = 0; j < UnusedAttrs.getLength(); j++)
           if (UnusedAttrs.item(j).getNodeName().equals("PullBehavior"))
@@ -210,26 +210,26 @@ public class BoardReaderClass {
       }
       if (FPGAParameters.item(i)
           .getNodeName()
-          .equals(BoardWriterClass.FPGAInformationSectionString)) {
+          .equals(BoardWriterClass.FPGA_INFORMATION_SECTION_STRING)) {
         NamedNodeMap FPGAAttrs = FPGAParameters.item(i).getAttributes();
         for (int j = 0; j < FPGAAttrs.getLength(); j++) {
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGASectionStrings[0]))
+          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[0]))
             vendor = FPGAAttrs.item(j).getNodeValue();
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGASectionStrings[1]))
+          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[1]))
             Part = FPGAAttrs.item(j).getNodeValue();
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGASectionStrings[2]))
+          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[2]))
             family = FPGAAttrs.item(j).getNodeValue();
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGASectionStrings[3]))
+          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[3]))
             Package = FPGAAttrs.item(j).getNodeValue();
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGASectionStrings[4]))
+          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[4]))
             Speed = FPGAAttrs.item(j).getNodeValue();
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGASectionStrings[5]))
+          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[5]))
             UsbTmc = FPGAAttrs.item(j).getNodeValue();
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGASectionStrings[6]))
+          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[6]))
             JTAGPos = FPGAAttrs.item(j).getNodeValue();
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGASectionStrings[7]))
+          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[7]))
             FlashName = FPGAAttrs.item(j).getNodeValue();
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGASectionStrings[8]))
+          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[8]))
             FlashPos = FPGAAttrs.item(j).getNodeValue();
         }
       }

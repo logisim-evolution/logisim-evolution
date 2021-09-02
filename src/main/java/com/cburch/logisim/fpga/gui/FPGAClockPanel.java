@@ -80,6 +80,7 @@ public class FPGAClockPanel extends JPanel implements ActionListener, LocaleList
     localeChanged();
   }
 
+  @Override
   public void setEnabled(boolean enabled) {
     freqLabel.setEnabled(enabled);
     divLabel.setEnabled(enabled);
@@ -93,8 +94,8 @@ public class FPGAClockPanel extends JPanel implements ActionListener, LocaleList
       frequenciesList.addItem(freq);
     }
     frequenciesList.setSelectedIndex(0);
-    for (int i = 0; i < MenuSimulate.SupportedTickFrequencies.length; i++) {
-      if (MenuSimulate.SupportedTickFrequencies[i].equals(
+    for (int i = 0; i < MenuSimulate.SUPPORTED_TICK_FREQUENCIES.length; i++) {
+      if (MenuSimulate.SUPPORTED_TICK_FREQUENCIES[i].equals(
           MyProject.getSimulator().getTickFrequency())) {
         frequenciesList.setSelectedIndex(i);
         recalculateFrequency();
@@ -103,8 +104,8 @@ public class FPGAClockPanel extends JPanel implements ActionListener, LocaleList
   }
 
   public void setSelectedFrequency() {
-    for (int i = 0; i < MenuSimulate.SupportedTickFrequencies.length; i++) {
-      if (MenuSimulate.SupportedTickFrequencies[i].equals(
+    for (int i = 0; i < MenuSimulate.SUPPORTED_TICK_FREQUENCIES.length; i++) {
+      if (MenuSimulate.SUPPORTED_TICK_FREQUENCIES[i].equals(
           MyProject.getSimulator().getTickFrequency())) {
         if (i != frequenciesList.getSelectedIndex()) {
           frequenciesList.setSelectedIndex(i);
@@ -116,8 +117,8 @@ public class FPGAClockPanel extends JPanel implements ActionListener, LocaleList
   }
 
   private void setSelectedFrequency(double freq) {
-    for (int i = 0; i < MenuSimulate.SupportedTickFrequencies.length; i++) {
-      if (MenuSimulate.SupportedTickFrequencies[i] == freq) {
+    for (int i = 0; i < MenuSimulate.SUPPORTED_TICK_FREQUENCIES.length; i++) {
+      if (MenuSimulate.SUPPORTED_TICK_FREQUENCIES[i] == freq) {
         frequenciesList.setSelectedIndex(i);
         return;
       }
@@ -161,14 +162,11 @@ public class FPGAClockPanel extends JPanel implements ActionListener, LocaleList
         extention = TickIndex.charAt(i);
       i++;
     }
-    ret = Double.parseDouble(number.toString());
-    switch (extention) {
-      case 'K' : ret *= 1000;
-                 break;
-      case 'M' : ret *= 1000000;
-                 break;
-    }
-    return ret;
+    return Double.parseDouble(number.toString()) * switch (extention) {
+      case 'K' -> 1000d;
+      case 'M' -> 1000000d;
+      default -> 1d;
+    };
   }
 
   private void recalculateFrequency() {

@@ -30,7 +30,6 @@ package com.cburch.logisim.std.gates;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
 import com.cburch.logisim.circuit.ExpressionComputer;
 import com.cburch.logisim.comp.TextField;
@@ -42,9 +41,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -54,6 +51,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.LineBuffer;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -71,10 +69,11 @@ class NotGate extends InstanceFactory {
   private static class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   " + HDL.assignPreamble() + "Result" + HDL.assignOperator() + HDL.notOperator() + "Input_1;");
-      Contents.add("");
-      return Contents;
+      return (new LineBuffer())
+          .addHdlPairs()
+          .add("{{assign}} Result {{=}} {{not}}Input_1;")
+          .add("")
+          .getWithIndent();
     }
   }
 

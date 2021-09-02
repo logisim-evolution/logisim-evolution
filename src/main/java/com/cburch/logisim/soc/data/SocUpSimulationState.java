@@ -39,21 +39,21 @@ import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class SocUpSimulationState {
-  public static final int SimulationRunning = 0;
-  public static final int SimulationHaltedByError = 1;
-  public static final int SimulationHaltedByBreakpoint = 2;
-  public static final int SimulationHaltedByStop = 3;
+  public static final int SIMULATION_RUNNING = 0;
+  public static final int SIMULATION_HALTED_BY_ERROR = 1;
+  public static final int SIMULATION_HALTED_BY_BREAKPOINT = 2;
+  public static final int SIMULATION_HALTED_BY_STOP = 3;
 
-  private int simulationState = SimulationRunning;
+  private int simulationState = SIMULATION_RUNNING;
   private final ArrayList<SocUpSimulationStateListener> listeners = new ArrayList<>();
   private boolean canContinueAfterBreak = false;
 
   public String getStateString() {
     switch (simulationState) {
-      case SimulationRunning : return S.get("SocUpSimRunning");
-      case SimulationHaltedByError : return S.get("SocUpSimHaltError");
-      case SimulationHaltedByBreakpoint : return S.get("SocUpSimHaltBreak");
-      case SimulationHaltedByStop : return S.get("SocUpSimHalt");
+      case SIMULATION_RUNNING: return S.get("SocUpSimRunning");
+      case SIMULATION_HALTED_BY_ERROR: return S.get("SocUpSimHaltError");
+      case SIMULATION_HALTED_BY_BREAKPOINT: return S.get("SocUpSimHaltBreak");
+      case SIMULATION_HALTED_BY_STOP: return S.get("SocUpSimHalt");
     }
     return S.get("SocUpUnknown");
   }
@@ -64,16 +64,16 @@ public class SocUpSimulationState {
 
   public void reset() {
     canContinueAfterBreak = false;
-    simulationState = SimulationHaltedByStop;
+    simulationState = SIMULATION_HALTED_BY_STOP;
     fireChange();
   }
 
   public boolean canExecute() {
-    return simulationState == SimulationRunning;
+    return simulationState == SIMULATION_RUNNING;
   }
 
   public void errorInExecution() {
-    simulationState = SimulationHaltedByError;
+    simulationState = SIMULATION_HALTED_BY_ERROR;
     fireChange();
   }
 
@@ -82,17 +82,17 @@ public class SocUpSimulationState {
       canContinueAfterBreak = false;
       return false;
     }
-    simulationState = SimulationHaltedByBreakpoint;
+    simulationState = SIMULATION_HALTED_BY_BREAKPOINT;
     fireChange();
     return true;
   }
 
   public void buttonPressed() {
-    if (simulationState == SimulationRunning)
-      simulationState = SimulationHaltedByStop;
+    if (simulationState == SIMULATION_RUNNING)
+      simulationState = SIMULATION_HALTED_BY_STOP;
     else {
-      if (simulationState == SimulationHaltedByBreakpoint) canContinueAfterBreak = true;
-      simulationState = SimulationRunning;
+      if (simulationState == SIMULATION_HALTED_BY_BREAKPOINT) canContinueAfterBreak = true;
+      simulationState = SIMULATION_RUNNING;
     }
     fireChange();
   }
@@ -120,13 +120,13 @@ public class SocUpSimulationState {
     g.setColor(Color.BLACK);
     g.drawRect(state.getX(), state.getY(), state.getWidth(), state.getHeight());
     switch (simulationState) {
-      case SimulationRunning:
+      case SIMULATION_RUNNING:
         g.setColor(Color.GREEN);
         break;
-      case SimulationHaltedByError:
+      case SIMULATION_HALTED_BY_ERROR:
         g.setColor(Color.RED);
         break;
-      case SimulationHaltedByBreakpoint:
+      case SIMULATION_HALTED_BY_BREAKPOINT:
         g.setColor(Color.MAGENTA);
         break;
     }
@@ -140,7 +140,7 @@ public class SocUpSimulationState {
     g.setColor(Color.BLUE);
     Font f = g.getFont();
     g.setFont(StdAttr.DEFAULT_LABEL_FONT);
-    String bname = simulationState == SimulationRunning ? S.get("SocUpSimstateStop") : S.get("SocUpSimstateStart");
+    String bname = simulationState == SIMULATION_RUNNING ? S.get("SocUpSimstateStop") : S.get("SocUpSimstateStart");
     GraphicsUtil.drawCenteredText(g, bname, button.getCenterX(), button.getCenterY());
     Bounds labloc = getLabelLocation(x, y, b);
     g.setColor(Color.black);

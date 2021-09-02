@@ -36,15 +36,16 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private static final String NrOfBitsStr = "NrOfBits";
+  private static final String NR_OF_BITS_STR = "NrOfBits";
   private static final int NrOfBitsId = -1;
-  private static final String SeedStr = "Seed";
+  private static final String SEED_STR = "Seed";
   private static final int SeedId = -2;
 
   @Override
@@ -64,156 +65,143 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
-    contents.addAll(
-        MakeRemarkBlock("This is a multicycle implementation of the Random Component", 3));
-    contents.add("");
+    final var contents =
+        (new LineBuffer())
+            .pair("seed", SEED_STR)
+            .pair("nrOfBits", NR_OF_BITS_STR)
+            .addRemarkBlock("This is a multicycle implementation of the Random Component")
+            .empty();
+
     if (HDL.isVHDL()) {
-      contents.add("   Q            <= s_output_reg;");
-      contents.add("   s_InitSeed   <= X\"0005DEECE66D\" WHEN " + SeedStr + " = 0 ELSE");
-      contents.add(
-          "                   X\"0000\"&std_logic_vector(to_unsigned(" + SeedStr + ",32));");
-      contents.add("   s_reset      <= '1' WHEN s_reset_reg /= \"010\" ELSE '0';");
-      contents.add("   s_reset_next <= \"010\" WHEN (s_reset_reg = \"101\" OR");
-      contents.add("                               s_reset_reg = \"010\") AND");
-      contents.add("                               clear = '0' ELSE");
-      contents.add("                   \"101\" WHEN s_reset_reg = \"001\" ELSE");
-      contents.add("                   \"001\";");
-      contents.add("   s_start      <= '1' WHEN (ClockEnable = '1' AND enable = '1') OR");
-      contents.add("                            (s_reset_reg = \"101\" AND clear = '0') ELSE '0';");
-      contents.add("   s_mult_shift_next <= (OTHERS => '0') WHEN s_reset = '1' ELSE");
-      contents.add("                        X\"5DEECE66D\" WHEN s_start_reg = '1' ELSE");
-      contents.add("                        '0'&s_mult_shift_reg(35 DOWNTO 1);");
-      contents.add("   s_seed_shift_next <= (OTHERS => '0') WHEN s_reset = '1' ELSE");
-      contents.add("                        s_current_seed WHEN s_start_reg = '1' ELSE");
-      contents.add("                        s_seed_shift_reg(46 DOWNTO 0)&'0';");
-      contents.add("   s_mult_busy       <= '0' WHEN s_mult_shift_reg = X\"000000000\" ELSE '1';");
-      contents.add("");
-      contents.add("   s_mac_lo_in_1     <= (OTHERS => '0') WHEN s_start_reg = '1' OR");
-      contents.add("                                             s_reset = '1' ELSE");
-      contents.add("                        '0'&s_mac_lo_reg(23 DOWNTO 0);");
-      contents.add("   s_mac_lo_in_2     <= '0'&X\"00000B\"");
-      contents.add("                           WHEN s_start_reg = '1' ELSE");
-      contents.add("                        '0'&s_seed_shift_reg(23 DOWNTO 0) ");
-      contents.add("                           WHEN s_mult_shift_reg(0) = '1' ELSE");
-      contents.add("                        (OTHERS => '0');");
-      contents.add("   s_mac_hi_in_2     <= (OTHERS => '0') WHEN s_start_reg = '1' ELSE");
-      contents.add("                        s_mac_hi_reg;");
-      contents.add("   s_mac_hi_1_next   <= s_seed_shift_reg(47 DOWNTO 24) ");
-      contents.add("                           WHEN s_mult_shift_reg(0) = '1' ELSE");
-      contents.add("                        (OTHERS => '0');");
-      contents.add("   s_busy_pipe_next  <= \"00\" WHEN s_reset = '1' ELSE");
-      contents.add("                        s_busy_pipe_reg(0)&s_mult_busy;");
-      contents.add("");
-      contents.add("   make_current_seed : PROCESS( GlobalClock , s_busy_pipe_reg , s_reset )");
-      contents.add("   BEGIN");
-      contents.add("      IF (GlobalClock'event AND (GlobalClock = '1')) THEN");
-      contents.add("         IF (s_reset = '1') THEN s_current_seed <= s_InitSeed;");
-      contents.add("         ELSIF (s_busy_pipe_reg = \"10\") THEN");
-      contents.add("            s_current_seed <= s_mac_hi_reg&s_mac_lo_reg(23 DOWNTO 0 );");
-      contents.add("         END IF;");
-      contents.add("      END IF;");
-      contents.add("   END PROCESS make_current_seed;");
-      contents.add("   ");
-      contents.add("   make_shift_regs : PROCESS(GlobalClock,s_mult_shift_next,s_seed_shift_next,");
-      contents.add("                             s_mac_lo_in_1,s_mac_lo_in_2)");
-      contents.add("   BEGIN");
-      contents.add("      IF (GlobalClock'event AND (GlobalClock = '1')) THEN");
-      contents.add("         s_mult_shift_reg <= s_mult_shift_next;");
-      contents.add("         s_seed_shift_reg <= s_seed_shift_next;");
-      contents.add(
-          "         s_mac_lo_reg     <= std_logic_vector(unsigned(s_mac_lo_in_1)+unsigned(s_mac_lo_in_2));");
-      contents.add("         s_mac_hi_1_reg   <= s_mac_hi_1_next;");
-      contents.add(
-          "         s_mac_hi_reg     <= std_logic_vector(unsigned(s_mac_hi_1_reg)+unsigned(s_mac_hi_in_2)+");
-      contents.add("                             unsigned(s_mac_lo_reg(24 DOWNTO 24)));");
-      contents.add("         s_busy_pipe_reg  <= s_busy_pipe_next;");
-      contents.add("      END IF;");
-      contents.add("   END PROCESS make_shift_regs;");
-      contents.add("");
-      contents.add("   make_start_reg : PROCESS(GlobalClock,s_start)");
-      contents.add("   BEGIN");
-      contents.add("      IF (GlobalClock'event AND (GlobalClock = '1')) THEN");
-      contents.add("         s_start_reg <= s_start;");
-      contents.add("      END IF;");
-      contents.add("   END PROCESS make_start_reg;");
-      contents.add("");
-      contents.add("   make_reset_reg : PROCESS(GlobalClock,s_reset_next)");
-      contents.add("   BEGIN");
-      contents.add("      IF (GlobalClock'event AND (GlobalClock = '1')) THEN");
-      contents.add("         s_reset_reg <= s_reset_next;");
-      contents.add("      END IF;");
-      contents.add("   END PROCESS make_reset_reg;");
-      contents.add("");
-      contents.add("   make_output : PROCESS( GlobalClock , s_reset , s_InitSeed )");
-      contents.add("   BEGIN");
-      contents.add("      IF (GlobalClock'event AND (GlobalClock = '1')) THEN");
-      contents.add(
-          "         IF (s_reset = '1') THEN s_output_reg <= s_InitSeed( ("
-              + NrOfBitsStr
-              + "-1) DOWNTO 0 );");
-      contents.add("         ELSIF (ClockEnable = '1' AND enable = '1') THEN");
-      contents.add(
-          "            s_output_reg <= s_current_seed((" + NrOfBitsStr + "+11) DOWNTO 12);");
-      contents.add("         END IF;");
-      contents.add("      END IF;");
-      contents.add("   END PROCESS make_output;");
+      contents.addLines(
+          "Q            <= s_output_reg;",
+          "s_InitSeed   <= X\"0005DEECE66D\" WHEN {{seed}} = 0 ELSE",
+          "                X\"0000\"&std_logic_vector(to_unsigned({{seed}}, 32));",
+          "s_reset      <= '1' WHEN s_reset_reg /= \"010\" ELSE '0';",
+          "s_reset_next <= \"010\" WHEN (s_reset_reg = \"101\" OR",
+          "                            s_reset_reg = \"010\") AND",
+          "                            clear = '0' ELSE",
+          "                \"101\" WHEN s_reset_reg = \"001\" ELSE",
+          "                \"001\";",
+          "s_start      <= '1' WHEN (ClockEnable = '1' AND enable = '1') OR",
+          "                         (s_reset_reg = \"101\" AND clear = '0') ELSE '0';",
+          "s_mult_shift_next <= (OTHERS => '0') WHEN s_reset = '1' ELSE",
+          "                     X\"5DEECE66D\" WHEN s_start_reg = '1' ELSE",
+          "                     '0'&s_mult_shift_reg(35 DOWNTO 1);",
+          "s_seed_shift_next <= (OTHERS => '0') WHEN s_reset = '1' ELSE",
+          "                     s_current_seed WHEN s_start_reg = '1' ELSE",
+          "                     s_seed_shift_reg(46 DOWNTO 0)&'0';",
+          "s_mult_busy       <= '0' WHEN s_mult_shift_reg = X\"000000000\" ELSE '1';",
+          "",
+          "s_mac_lo_in_1     <= (OTHERS => '0') WHEN s_start_reg = '1' OR",
+          "                                          s_reset = '1' ELSE",
+          "                     '0'&s_mac_lo_reg(23 DOWNTO 0);",
+          "s_mac_lo_in_2     <= '0'&X\"00000B\"",
+          "                        WHEN s_start_reg = '1' ELSE",
+          "                     '0'&s_seed_shift_reg(23 DOWNTO 0) ",
+          "                        WHEN s_mult_shift_reg(0) = '1' ELSE",
+          "                     (OTHERS => '0');",
+          "s_mac_hi_in_2     <= (OTHERS => '0') WHEN s_start_reg = '1' ELSE",
+          "                     s_mac_hi_reg;",
+          "s_mac_hi_1_next   <= s_seed_shift_reg(47 DOWNTO 24) ",
+          "                        WHEN s_mult_shift_reg(0) = '1' ELSE",
+          "                     (OTHERS => '0');",
+          "s_busy_pipe_next  <= \"00\" WHEN s_reset = '1' ELSE",
+          "                     s_busy_pipe_reg(0)&s_mult_busy;",
+          "",
+          "make_current_seed : PROCESS( GlobalClock , s_busy_pipe_reg , s_reset )",
+          "BEGIN",
+          "   IF (GlobalClock'event AND (GlobalClock = '1')) THEN",
+          "      IF (s_reset = '1') THEN s_current_seed <= s_InitSeed;",
+          "      ELSIF (s_busy_pipe_reg = \"10\") THEN",
+          "         s_current_seed <= s_mac_hi_reg&s_mac_lo_reg(23 DOWNTO 0);",
+          "      END IF;",
+          "   END IF;",
+          "END PROCESS make_current_seed;",
+          "",
+          "make_shift_regs : PROCESS(GlobalClock,s_mult_shift_next,s_seed_shift_next,",
+          "                          s_mac_lo_in_1,s_mac_lo_in_2)",
+          "BEGIN",
+          "   IF (GlobalClock'event AND (GlobalClock = '1')) THEN",
+          "      s_mult_shift_reg <= s_mult_shift_next;",
+          "      s_seed_shift_reg <= s_seed_shift_next;",
+          "      s_mac_lo_reg     <= std_logic_vector(unsigned(s_mac_lo_in_1)+unsigned(s_mac_lo_in_2));",
+          "      s_mac_hi_1_reg   <= s_mac_hi_1_next;",
+          "      s_mac_hi_reg     <= std_logic_vector(unsigned(s_mac_hi_1_reg)+unsigned(s_mac_hi_in_2)+",
+          "                          unsigned(s_mac_lo_reg(24 DOWNTO 24)));",
+          "      s_busy_pipe_reg  <= s_busy_pipe_next;",
+          "   END IF;",
+          "END PROCESS make_shift_regs;",
+          "",
+          "make_start_reg : PROCESS(GlobalClock,s_start)",
+          "BEGIN",
+          "   IF (GlobalClock'event AND (GlobalClock = '1')) THEN",
+          "      s_start_reg <= s_start;",
+          "   END IF;",
+          "END PROCESS make_start_reg;",
+          "",
+          "make_reset_reg : PROCESS(GlobalClock,s_reset_next)",
+          "BEGIN",
+          "   IF (GlobalClock'event AND (GlobalClock = '1')) THEN",
+          "      s_reset_reg <= s_reset_next;",
+          "   END IF;",
+          "END PROCESS make_reset_reg;",
+          "",
+          "   make_output : PROCESS( GlobalClock , s_reset , s_InitSeed )",
+          "   BEGIN",
+          "      IF (GlobalClock'event AND (GlobalClock = '1')) THEN",
+          "         IF (s_reset = '1') THEN s_output_reg <= s_InitSeed( ({{nrOfBits}}-1) DOWNTO 0 );",
+          "         ELSIF (ClockEnable = '1' AND enable = '1') THEN",
+          "            s_output_reg <= s_current_seed(({{nrOfBits}}+11) DOWNTO 12);",
+          "         END IF;",
+          "      END IF;",
+          "   END PROCESS make_output;");
     } else {
-      contents.add("   assign Q = s_output_reg;");
-      contents.add("   assign s_InitSeed = (" + SeedStr + ") ? " + SeedStr + " : 48'h5DEECE66D;");
-      contents.add("   assign s_reset = (s_reset_reg==3'b010) ? 1'b1 : 1'b0;");
-      contents.add("   assign s_reset_next = (((s_reset_reg == 3'b101)|");
-      contents.add("                           (s_reset_reg == 3'b010))&clear) ? 3'b010 :");
-      contents.add("                         (s_reset_reg==3'b001) ? 3'b101 : 3'b001;");
-      contents.add(
-          "   assign s_start = ((ClockEnable&enable)|((s_reset_reg == 3'b101)&clear)) ? 1'b1 : 1'b0;");
-      contents.add("   assign s_mult_shift_next = (s_reset) ? 36'd0 :");
-      contents.add(
-          "                              (s_start_reg) ? 36'h5DEECE66D : {1'b0,s_mult_shift_reg[35:1]};");
-      contents.add("   assign s_seed_shift_next = (s_reset) ? 48'd0 :");
-      contents.add(
-          "                              (s_start_reg) ? s_current_seed : {s_seed_shift_reg[46:0],1'b0};");
-      contents.add("   assign s_mult_busy = (s_mult_shift_reg == 0) ? 1'b0 : 1'b1;");
-      contents.add(
-          "   assign s_mac_lo_in_1 = (s_start_reg|s_reset) ? 25'd0 : {1'b0,s_mac_lo_reg[23:0]};");
-      contents.add("   assign s_mac_lo_in_2 = (s_start_reg) ? 25'hB :");
-      contents.add(
-          "                          (s_mult_shift_reg[0]) ? {1'b0,s_seed_shift_reg[23:0]} : 25'd0;");
-      contents.add("   assign s_mac_hi_in_2 = (s_start_reg) ? 0 : s_mac_hi_reg;");
-      contents.add(
-          "   assign s_mac_hi_1_next = (s_mult_shift_reg[0]) ? s_seed_shift_reg[47:24] : 0;");
-      contents.add(
-          "   assign s_busy_pipe_next = (s_reset) ? 2'd0 : {s_busy_pipe_reg[0],s_mult_busy};");
-      contents.add("");
-      contents.add("   always @(posedge GlobalClock)");
-      contents.add("   begin");
-      contents.add("      if (s_reset) s_current_seed <= s_InitSeed;");
-      contents.add(
-          "      else if (s_busy_pipe_reg == 2'b10) s_current_seed <= {s_mac_hi_reg,s_mac_lo_reg[23:0]};");
-      contents.add("   end");
-      contents.add("");
-      contents.add("   always @(posedge GlobalClock)");
-      contents.add("   begin");
-      contents.add("         s_mult_shift_reg <= s_mult_shift_next;");
-      contents.add("         s_seed_shift_reg <= s_seed_shift_next;");
-      contents.add("         s_mac_lo_reg     <= s_mac_lo_in_1+s_mac_lo_in_2;");
-      contents.add("         s_mac_hi_1_reg   <= s_mac_hi_1_next;");
-      contents.add("         s_mac_hi_reg     <= s_mac_hi_1_reg+s_mac_hi_in_2+s_mac_lo_reg[24];");
-      contents.add("         s_busy_pipe_reg  <= s_busy_pipe_next;");
-      contents.add("         s_start_reg      <= s_start;");
-      contents.add("         s_reset_reg      <= s_reset_next;");
-      contents.add("   end");
-      contents.add("");
-      contents.add("   always @(posedge GlobalClock)");
-      contents.add("   begin");
-      contents.add("      if (s_reset) s_output_reg <= s_InitSeed[(" + NrOfBitsStr + "-1):0];");
-      contents.add(
-          "      else if (ClockEnable&enable) s_output_reg <= s_current_seed[("
-              + NrOfBitsStr
-              + "+11):12];");
-      contents.add("   end");
+      contents.addLines(
+          "assign Q = s_output_reg;",
+          "assign s_InitSeed = ({{seed}}) ? {{seed}} : 48'h5DEECE66D;",
+          "assign s_reset = (s_reset_reg==3'b010) ? 1'b1 : 1'b0;",
+          "assign s_reset_next = (((s_reset_reg == 3'b101)|",
+          "                        (s_reset_reg == 3'b010))&clear) ? 3'b010 :",
+          "                      (s_reset_reg==3'b001) ? 3'b101 : 3'b001;",
+          "assign s_start = ((ClockEnable&enable)|((s_reset_reg == 3'b101)&clear)) ? 1'b1 : 1'b0;",
+          "assign s_mult_shift_next = (s_reset) ? 36'd0 :",
+          "                           (s_start_reg) ? 36'h5DEECE66D : {1'b0,s_mult_shift_reg[35:1]};",
+          "assign s_seed_shift_next = (s_reset) ? 48'd0 :",
+          "                           (s_start_reg) ? s_current_seed : {s_seed_shift_reg[46:0],1'b0};",
+          "assign s_mult_busy = (s_mult_shift_reg == 0) ? 1'b0 : 1'b1;",
+          "assign s_mac_lo_in_1 = (s_start_reg|s_reset) ? 25'd0 : {1'b0,s_mac_lo_reg[23:0]};",
+          "assign s_mac_lo_in_2 = (s_start_reg) ? 25'hB :",
+          "                       (s_mult_shift_reg[0]) ? {1'b0,s_seed_shift_reg[23:0]} : 25'd0;",
+          "assign s_mac_hi_in_2 = (s_start_reg) ? 0 : s_mac_hi_reg;",
+          "assign s_mac_hi_1_next = (s_mult_shift_reg[0]) ? s_seed_shift_reg[47:24] : 0;",
+          "assign s_busy_pipe_next = (s_reset) ? 2'd0 : {s_busy_pipe_reg[0],s_mult_busy};",
+          "",
+          "always @(posedge GlobalClock)",
+          "begin",
+          "   if (s_reset) s_current_seed <= s_InitSeed;",
+          "   else if (s_busy_pipe_reg == 2'b10) s_current_seed <= {s_mac_hi_reg,s_mac_lo_reg[23:0]};",
+          "end",
+          "",
+          "always @(posedge GlobalClock)",
+          "begin",
+          "      s_mult_shift_reg <= s_mult_shift_next;",
+          "      s_seed_shift_reg <= s_seed_shift_next;",
+          "      s_mac_lo_reg     <= s_mac_lo_in_1+s_mac_lo_in_2;",
+          "      s_mac_hi_1_reg   <= s_mac_hi_1_next;",
+          "      s_mac_hi_reg     <= s_mac_hi_1_reg+s_mac_hi_in_2+s_mac_lo_reg[24];",
+          "      s_busy_pipe_reg  <= s_busy_pipe_next;",
+          "      s_start_reg      <= s_start;",
+          "      s_reset_reg      <= s_reset_next;",
+          "end",
+          "",
+          "   always @(posedge GlobalClock)",
+          " begin",
+          "   if (s_reset) s_output_reg <= s_InitSeed[({{nrOfBits}}-1):0];",
+          "   else if (ClockEnable&enable) s_output_reg <= s_current_seed[({{nrOfBits}}+11):12];",
+          "end");
     }
-    return contents;
+    return contents.getWithIndent();
   }
 
   @Override
@@ -226,20 +214,20 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
     final var map = new TreeMap<Integer, String>();
-    map.put(NrOfBitsId, NrOfBitsStr);
-    map.put(SeedId, SeedStr);
+    map.put(NrOfBitsId, NR_OF_BITS_STR);
+    map.put(SeedId, SEED_STR);
     return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var map = new TreeMap<String, Integer>();
-    var seed = ComponentInfo.GetComponent().getAttributeSet().getValue(Random.ATTR_SEED);
+    var seed = ComponentInfo.getComponent().getAttributeSet().getValue(Random.ATTR_SEED);
     if (seed == 0) seed = (int) System.currentTimeMillis();
     map.put(
-        NrOfBitsStr,
-        ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth());
-    map.put(SeedStr, seed);
+            NR_OF_BITS_STR,
+        ComponentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth());
+    map.put(SEED_STR, seed);
     return map;
   }
 
@@ -251,7 +239,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var gatedClock = false;
     var hasClock = true;
     var activeLow = false;
-    if (!comp.EndIsConnected(Random.CK)) {
+    if (!comp.isEndConnected(Random.CK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Random\" in circuit \""
               + Nets.getCircuitName()
@@ -267,9 +255,9 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + "\"");
       Reporter.Report.AddError("This RNG will not work!");
     }
-    if (comp.GetComponent().getAttributeSet().containsAttribute(StdAttr.EDGE_TRIGGER)) {
+    if (comp.getComponent().getAttributeSet().containsAttribute(StdAttr.EDGE_TRIGGER)) {
       activeLow =
-          comp.GetComponent().getAttributeSet().getValue(StdAttr.EDGE_TRIGGER)
+          comp.getComponent().getAttributeSet().getValue(StdAttr.EDGE_TRIGGER)
               == StdAttr.TRIG_FALLING;
     }
     if (!hasClock || gatedClock) {
@@ -280,14 +268,14 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "GlobalClock",
           clockNetName
               + HDL.BracketOpen()
-              + ClockHDLGeneratorFactory.GlobalClockIndex
+              + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX
               + HDL.BracketClose());
-      if (Nets.RequiresGlobalClockConnection()) {
+      if (Nets.requiresGlobalClockConnection()) {
         map.put(
             "ClockEnable",
             clockNetName
                 + HDL.BracketOpen()
-                + ClockHDLGeneratorFactory.GlobalClockIndex
+                + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX
                 + HDL.BracketClose());
       } else {
         if (activeLow)
@@ -295,14 +283,14 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               "ClockEnable",
               clockNetName
                   + HDL.BracketOpen()
-                  + ClockHDLGeneratorFactory.NegativeEdgeTickIndex
+                  + ClockHDLGeneratorFactory.NEGATIVE_EDGE_TICK_INDEX
                   + HDL.BracketClose());
         else
           map.put(
               "ClockEnable",
               clockNetName
                   + HDL.BracketOpen()
-                  + ClockHDLGeneratorFactory.PositiveEdgeTickIndex
+                  + ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX
                   + HDL.BracketClose());
       }
     }
@@ -310,7 +298,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.putAll(GetNetMap("enable", false, comp, Random.NXT, Nets));
     var output = "Q";
     if (HDL.isVHDL()
-        & (comp.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
+        & (comp.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       output += "(0)";
     map.putAll(GetNetMap(output, true, comp, Random.OUT, Nets));
     return map;

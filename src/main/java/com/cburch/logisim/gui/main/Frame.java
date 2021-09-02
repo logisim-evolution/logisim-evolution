@@ -31,7 +31,6 @@ package com.cburch.logisim.gui.main;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.draw.toolbar.Toolbar;
-import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
@@ -42,6 +41,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
+import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.appear.AppearanceView;
 import com.cburch.logisim.gui.generic.AttrTable;
 import com.cburch.logisim.gui.generic.AttrTableModel;
@@ -54,6 +54,7 @@ import com.cburch.logisim.gui.generic.RegTabContent;
 import com.cburch.logisim.gui.generic.ZoomControl;
 import com.cburch.logisim.gui.generic.ZoomModel;
 import com.cburch.logisim.gui.menu.MainMenuListener;
+import com.cburch.logisim.Main;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
@@ -73,23 +74,23 @@ import com.cburch.logisim.vhdl.gui.VhdlSimState;
 import com.cburch.logisim.vhdl.gui.VhdlSimulatorConsole;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.awt.Font;
 import java.awt.GraphicsEnvironment;
 import java.awt.IllegalComponentStateException;
 import java.awt.Point;
 import java.awt.Rectangle;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Timer;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import lombok.Getter;
 import lombok.val;
 
@@ -121,18 +122,15 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   private final SimulationExplorer simExplorer;
   private final AttrTable attrTable;
 
-  @Getter
-  private final ZoomControl zoomControl;
+  @Getter private final ZoomControl zoomControl;
 
   // for the Layout view
   private final LayoutToolbarModel layoutToolbarModel;
   private final Canvas layoutCanvas;
 
-  @Getter
-  private final VhdlSimulatorConsole vhdlSimulatorConsole;
+  @Getter private final VhdlSimulatorConsole vhdlSimulatorConsole;
   private final HdlContentView hdlEditor;
-  @Getter
-  private final ZoomModel zoomModel;
+  @Getter private final ZoomModel zoomModel;
   private final LayoutEditHandler layoutEditHandler;
   private final AttrTableSelectionModel attrTableSelectionModel;
   // for the Appearance view
@@ -211,9 +209,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     val bottomTabAndZoom = new JPanel(new BorderLayout());
     bottomTabAndZoom.add(bottomTab, BorderLayout.CENTER);
     bottomTabAndZoom.add(attrFooter, BorderLayout.SOUTH);
-    leftRegion =
-        new HorizontalSplitPane(
-            topTab, bottomTabAndZoom, AppPreferences.WINDOW_LEFT_SPLIT.get());
+    leftRegion = new HorizontalSplitPane(topTab, bottomTabAndZoom, AppPreferences.WINDOW_LEFT_SPLIT.get());
 
     hdlEditor = new HdlContentView(project);
     vhdlSimulatorConsole = new VhdlSimulatorConsole(project);
@@ -295,7 +291,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     if (s == null) {
       return null;
     }
-    int comma = s.indexOf(',');
+    final var comma = s.indexOf(',');
     if (comma < 0) {
       return null;
     }
@@ -361,7 +357,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     return toolbar;
   }
 
-  private void computeTitle() {
+  private void buildTitleString() {
     val circuit = project.getCurrentCircuit();
     val name = project.getLogisimFile().getName();
 
@@ -394,6 +390,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     if (!project.isFileDirty()) {
       return true;
     }
+
     toFront();
     String[] options = {S.get("saveOption"), S.get("discardOption"), S.get("cancelOption")};
     val result =
@@ -457,7 +454,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
   @Override
   public void localeChanged() {
-    computeTitle();
+    buildTitleString();
     topTab.setTitleAt(0, S.get("designTab"));
     topTab.setTitleAt(1, S.get("simulateTab"));
     bottomTab.setTitleAt(0, S.get("propertiesTab"));
@@ -605,19 +602,13 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     }
   }
 
-  class MyProjectListener
-      implements ProjectListener,
-          LibraryListener,
-          CircuitListener,
-          PropertyChangeListener,
-          ChangeListener {
-
+  class MyProjectListener implements ProjectListener, LibraryListener, CircuitListener, PropertyChangeListener, ChangeListener {
     public void attributeListChanged(AttributeEvent e) {}
 
     @Override
     public void circuitChanged(CircuitEvent event) {
       if (event.getAction() == CircuitEvent.ACTION_SET_NAME) {
-        computeTitle();
+        buildTitleString();
       }
     }
 
@@ -629,9 +620,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     @Override
     public void libraryChanged(LibraryEvent e) {
       if (e.getAction() == LibraryEvent.SET_NAME) {
-        computeTitle();
+        buildTitleString();
       } else if (e.getAction() == LibraryEvent.DIRTY_STATE) {
-        computeTitle();
+        buildTitleString();
         enableSave();
       }
     }
@@ -640,7 +631,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     public void projectChanged(ProjectEvent event) {
       val action = event.getAction();
       if (action == ProjectEvent.ACTION_SET_FILE) {
-        computeTitle();
+        buildTitleString();
         project.setTool(project.getOptions().getToolbarData().getFirstTool());
         placeToolbar();
       } else if (action == ProjectEvent.ACTION_SET_STATE) {
@@ -658,7 +649,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
           setHdlEditorView((HdlModel) event.getData());
         }
         viewAttributes(project.getTool());
-        computeTitle();
+        buildTitleString();
       } else if (action == ProjectEvent.ACTION_SET_TOOL) {
         if (attrTable == null) {
           return; // for startup

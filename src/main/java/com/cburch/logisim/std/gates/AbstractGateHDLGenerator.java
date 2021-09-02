@@ -34,16 +34,17 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
-  private static final int BitWidthGeneric = -1;
-  private static final String BitWidthString = "NrOfBits";
-  private static final int BubblesGeneric = -2;
-  private static final String BubblesString = "BubblesMask";
+  private static final int BIT_WIDTH_GENERIC = -1;
+  private static final String BIT_WIDTH_STRING = "NrOfBits";
+  private static final int BUBBLES_GENERIC = -2;
+  private static final String BUBBLES_MASK = "BubblesMask";
 
   @Override
   public String getComponentStringIdentifier() {
@@ -57,7 +58,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
-    final var Bitwidth = (is_bus(attrs)) ? BitWidthGeneric : 1;
+    final var Bitwidth = (is_bus(attrs)) ? BIT_WIDTH_GENERIC : 1;
     final var NrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
             ? attrs.getValue(GateAttributes.ATTR_INPUTS)
@@ -74,75 +75,53 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
-    final var bitWidht = attrs.getValue(StdAttr.WIDTH).getWidth();
+    final var contents = new LineBuffer();
+    final var bitWidth = attrs.getValue(StdAttr.WIDTH).getWidth();
     final var nrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
             ? attrs.getValue(GateAttributes.ATTR_INPUTS)
             : 1;
 
     if (nrOfInputs > 1) {
-      contents.add("");
-      contents.addAll(MakeRemarkBlock("Here the bubbles are processed", 3));
+      contents.empty();
+      contents.addRemarkBlock("Here the bubbles are processed");
       if (HDL.isVHDL()) {
         String allignmentSpaces;
         if (nrOfInputs < 10) allignmentSpaces = " ";
         else if (nrOfInputs < 100) allignmentSpaces = "  ";
         else allignmentSpaces = "   ";
-        contents.add(
-            "   s_signal_invert_mask <= std_logic_vector(to_unsigned("
-                + BubblesString
-                + ","
-                + nrOfInputs
-                + "));");
+        contents.add("   s_signal_invert_mask <= std_logic_vector(to_unsigned({{1}},{{2}}));", BUBBLES_MASK, nrOfInputs);
         final var whenLineBegin = new StringBuilder();
         whenLineBegin.append(" ".repeat(21 + allignmentSpaces.length()));
         for (var i = 0; i < nrOfInputs; i++) {
           var localSpaces = " ";
           if (i < 10) localSpaces = allignmentSpaces;
+          // FIXME: why we need this code at all? What will happenif we remove these aligment spaces completely?
           else if (i < 100)
             localSpaces = allignmentSpaces.substring(0, allignmentSpaces.length() - 1);
           else if (i < 1000)
             localSpaces = allignmentSpaces.substring(0, allignmentSpaces.length() - 2);
-          contents.add(
-              "   s_real_input_"
-                  + (i + 1)
-                  + localSpaces
-                  + " <= NOT( Input_"
-                  + (i + 1)
-                  + " )");
-          contents.add(
-              whenLineBegin
-                  + "   WHEN s_signal_invert_mask("
-                  + i
-                  + ") = '1' ELSE");
-          contents.add(whenLineBegin + "Input_" + (i + 1) + ";");
+          contents
+              .add("   s_real_input_{{1}}{{2}} <= NOT( Input_{{3}} )", (i + 1), localSpaces, (i + 1))
+              .add("{{1}}   WHEN s_signal_invert_mask({{2}}) = '1' ELSE", whenLineBegin, i)
+              .add("{{1}}Input_{{2}};", whenLineBegin, (i + 1));
         }
       } else {
-        contents.add("   assign s_signal_invert_mask = " + BubblesString + ";");
+        contents.add("   assign s_signal_invert_mask = {{1}};", BUBBLES_MASK);
         for (var i = 0; i < nrOfInputs; i++) {
           contents.add(
-              "   assign s_real_input_"
-                  + (i + 1)
-                  + " = (s_signal_invert_mask["
-                  + i
-                  + "]) ? ~Input_"
-                  + (i + 1)
-                  + ":"
-                  + " Input_"
-                  + (i + 1)
-                  + ";");
+              "   assign s_real_input_{{1}} = (s_signal_invert_mask[{{2}}]) ? ~Input_{{3}}: Input_{{4}};",
+              (i + 1), i, (i + 1), (i + 1));
         }
       }
     }
-    contents.add("");
-    contents.addAll(MakeRemarkBlock("Here the functionality is defined", 3));
+    contents.empty().addRemarkBlock("Here the functionality is defined");
     var onehot = false;
     if (attrs.containsAttribute(GateAttributes.ATTR_XOR)) {
       onehot = attrs.getValue(GateAttributes.ATTR_XOR) == GateAttributes.XOR_ONE;
     }
-    contents.addAll(GetLogicFunction(nrOfInputs, bitWidht, onehot));
-    return contents;
+    contents.add(GetLogicFunction(nrOfInputs, bitWidth, onehot));
+    return contents.get();
   }
 
   public ArrayList<String> GetOneHot(boolean inverted, int nrOfInputs, boolean isBus) {
@@ -151,13 +130,13 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     var indexString = "";
     if (isBus) {
       if (HDL.isVHDL()) {
-        lines.add(spaces + "GenBits : FOR n IN (" + BitWidthString + "-1) DOWNTO 0 GENERATE");
+        lines.add(spaces + "GenBits : FOR n IN (" + BIT_WIDTH_STRING + "-1) DOWNTO 0 GENERATE");
         spaces += "   ";
         indexString = "(n)";
       } else {
         lines.add("   genvar n;");
         lines.add("   generate");
-        lines.add("      for (n = 0 ; n < " + BitWidthString + " ; n = n + 1)");
+        lines.add("      for (n = 0 ; n < " + BIT_WIDTH_STRING + " ; n = n + 1)");
         lines.add("         begin: bit");
         spaces += "         ";
         indexString = "[n]";
@@ -211,7 +190,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
     final var outputs = new TreeMap<String, Integer>();
-    final var bitWidth = (is_bus(attrs)) ? BitWidthGeneric : 1;
+    final var bitWidth = (is_bus(attrs)) ? BIT_WIDTH_GENERIC : 1;
     outputs.put("Result", bitWidth);
     return outputs;
   }
@@ -224,10 +203,10 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
             ? attrs.getValue(GateAttributes.ATTR_INPUTS)
             : 1;
     if (is_bus(attrs)) {
-      params.put(BitWidthGeneric, BitWidthString);
+      params.put(BIT_WIDTH_GENERIC, BIT_WIDTH_STRING);
     }
     if (nrOfInputs > 1) {
-      params.put(BubblesGeneric, BubblesString);
+      params.put(BUBBLES_GENERIC, BUBBLES_MASK);
     }
     return params;
   }
@@ -235,26 +214,22 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var parameterMap = new TreeMap<String, Integer>();
-    final var isBus = is_bus(componentInfo.GetComponent().getAttributeSet());
-    final var myAttrs = componentInfo.GetComponent().getAttributeSet();
-    int nrOfInputs =
+    final var isBus = is_bus(componentInfo.getComponent().getAttributeSet());
+    final var myAttrs = componentInfo.getComponent().getAttributeSet();
+    var nrOfInputs =
         myAttrs.containsAttribute(GateAttributes.ATTR_INPUTS)
             ? myAttrs.getValue(GateAttributes.ATTR_INPUTS)
             : 1;
-    int bubleMask, mask;
-    if (isBus) {
-      parameterMap.put(BitWidthString, myAttrs.getValue(StdAttr.WIDTH).getWidth());
-    }
+    if (isBus) parameterMap.put(BIT_WIDTH_STRING, myAttrs.getValue(StdAttr.WIDTH).getWidth());
     if (nrOfInputs > 1) {
-      bubleMask = 0;
-      mask = 1;
+      var bubbleMask = 0;
+      var mask = 1;
       for (var i = 0; i < nrOfInputs; i++) {
-        final var inputIsInverted =
-            componentInfo.GetComponent().getAttributeSet().getValue(new NegateAttribute(i, null));
-        if (inputIsInverted) bubleMask |= mask;
+        final var inputIsInverted = componentInfo.getComponent().getAttributeSet().getValue(new NegateAttribute(i, null));
+        if (inputIsInverted) bubbleMask |= mask;
         mask <<= 1;
       }
-      parameterMap.put(BubblesString, bubleMask);
+      parameterMap.put(BUBBLES_MASK, bubbleMask);
     }
 
     return parameterMap;
@@ -266,13 +241,13 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     var indexString = "";
     if (isBus) {
       if (HDL.isVHDL()) {
-        lines.add(spaces + "GenBits : FOR n IN (" + BitWidthString + "-1) DOWNTO 0 GENERATE");
+        lines.add(spaces + "GenBits : FOR n IN (" + BIT_WIDTH_STRING + "-1) DOWNTO 0 GENERATE");
         spaces += "   ";
         indexString = "(n)";
       } else {
         lines.add("   genvar n;");
         lines.add("   generate");
-        lines.add("      for (n = 0 ; n < " + BitWidthString + " ; n = n + 1)");
+        lines.add("      for (n = 0 ; n < " + BIT_WIDTH_STRING + " ; n = n + 1)");
         lines.add("         begin: bit");
         spaces += "         ";
         indexString = "[n]";
@@ -312,7 +287,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     final var portMap = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return portMap;
     final var componentInfo = (NetlistComponent) mapInfo;
-    final var attrs = componentInfo.GetComponent().getAttributeSet();
+    final var attrs = componentInfo.getComponent().getAttributeSet();
     final var nrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
             ? attrs.getValue(GateAttributes.ATTR_INPUTS)
@@ -359,7 +334,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
             : 1;
     if (nrOfInputs > 1) {
       for (var i = 0; i < nrOfInputs; i++) {
-        if (bitWidth > 1) wires.put("s_real_input_" + (i + 1), BitWidthGeneric);
+        if (bitWidth > 1) wires.put("s_real_input_" + (i + 1), BIT_WIDTH_GENERIC);
         else wires.put("s_real_input_" + (i + 1), 1);
       }
       wires.put("s_signal_invert_mask", nrOfInputs);

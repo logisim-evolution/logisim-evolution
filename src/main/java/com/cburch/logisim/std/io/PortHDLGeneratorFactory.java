@@ -50,18 +50,14 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetInlinedCode(
-      Netlist nets,
-      Long componentId,
-      NetlistComponent componentInfo,
-      String circuitName) {
+  public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
     final var contents = new ArrayList<String>();
-    final var dir = componentInfo.GetComponent().getAttributeSet().getValue(PortIO.ATTR_DIR);
-    var size = componentInfo.GetComponent().getAttributeSet().getValue(PortIO.ATTR_SIZE).getWidth();
+    final var dir = componentInfo.getComponent().getAttributeSet().getValue(PortIO.ATTR_DIR);
+    var size = componentInfo.getComponent().getAttributeSet().getValue(PortIO.ATTR_SIZE).getWidth();
     final var nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
     if (dir == PortIO.INPUT) {
       for (var i = 0; i < nBus; i++) {
-        final var start = componentInfo.GetLocalBubbleInputStartId() + i * BitWidth.MAXWIDTH;
+        final var start = componentInfo.getLocalBubbleInputStartId() + i * BitWidth.MAXWIDTH;
         var end = start - 1;
         end += Math.min(size, BitWidth.MAXWIDTH);
         size -= BitWidth.MAXWIDTH;
@@ -80,7 +76,7 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     } else if (dir == PortIO.OUTPUT) {
       for (var i = 0; i < nBus; i++) {
-        final var start = componentInfo.GetLocalBubbleOutputStartId() + i * BitWidth.MAXWIDTH;
+        final var start = componentInfo.getLocalBubbleOutputStartId() + i * BitWidth.MAXWIDTH;
         var end = start - 1;
         end += Math.min(size, BitWidth.MAXWIDTH);
         size -= BitWidth.MAXWIDTH;
@@ -90,7 +86,7 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     } else {
       for (var i = 0; i < nBus; i++) {
-        final var start = componentInfo.GetLocalBubbleInOutStartId() + i * BitWidth.MAXWIDTH;
+        final var start = componentInfo.getLocalBubbleInOutStartId() + i * BitWidth.MAXWIDTH;
         final var nbits = Math.min(size, BitWidth.MAXWIDTH);
         final var end = start - 1 + nbits;
         size -= nbits;

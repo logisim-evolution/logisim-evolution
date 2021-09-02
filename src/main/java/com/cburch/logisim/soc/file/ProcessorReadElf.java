@@ -201,10 +201,10 @@ public class ProcessorReadElf {
         int addr = ElfHeader.getIntValue(ElfHeader.returnCorrectValue(startAddr + (long) j, true));
         SocBusTransaction trans =
             new SocBusTransaction(
-                SocBusTransaction.WRITETransaction,
+                SocBusTransaction.WRITE_TRANSACTION,
                 addr,
                 data,
-                SocBusTransaction.ByteAccess,
+                SocBusTransaction.BYTE_ACCESS,
                 "elf");
         cpu.insertTransaction(trans, true, cState);
         if (trans.hasError()) {
