@@ -54,7 +54,7 @@ public class LibraryUtil {
       }
     }
 
-    /* for backward compatibility we return the class name */
+    // for backward compatibility we return the class name
     return cls.getSimpleName();
   }
 }
