@@ -117,18 +117,18 @@ public class Slider extends InstanceFactory {
         return null;
       }
     }
-    
+
     public int getCurrentValue() {
-      final var completeValue = rightToLeft ? MAXIMUM_SLIDER_POSITION - sliderPosition : sliderPosition; 
+      final var completeValue = rightToLeft ? (MAXIMUM_SLIDER_POSITION - sliderPosition) : sliderPosition; 
       return completeValue >> (MAXIMUM_NUMBER_OF_BITS - nrOfBits);
     }
-    
+
     public int getSliderPosition() {
       return sliderPosition;
     }
 
     public void setSliderPosition(int value) {
-      sliderPosition = (value < 0) ? 0 : (value > MAXIMUM_SLIDER_POSITION) ? MAXIMUM_SLIDER_POSITION : value; 
+      sliderPosition = Math.max(0, Math.min(value, MAXIMUM_SLIDER_POSITION)); 
     }
 
     public void setCurrentBitWidth(int width) {
