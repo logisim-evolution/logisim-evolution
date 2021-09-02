@@ -35,9 +35,6 @@ import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.circuit.Analyze;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.circuit.Propagator;
-import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.FileStatistics;
 import com.cburch.logisim.file.LoadFailedException;
@@ -50,11 +47,8 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.io.Keyboard;
 import com.cburch.logisim.std.io.Tty;
-import com.cburch.logisim.std.memory.MemContents;
 import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.wiring.Pin;
-import com.cburch.logisim.tools.Library;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.io.File;
 import java.io.IOException;
@@ -287,6 +281,8 @@ public class TtyInterface {
       return;
     }
     final var proj = new Project(file);
+    if (file.requiresTickFrequencyForce())
+      proj.getSimulator().setTickFrequency(file.getRequiredTickFrequency());
     if (args.isFpgaDownload()) {
       if (!args.FpgaDownload(proj)) System.exit(-1);
     }
