@@ -155,10 +155,9 @@ public class Startup implements AWTEventListener {
     }
   }
 
-  // Used single letters keys
+  // Non-used args short keys
   // --------------------------
-  // abcdefghijklmnopqrstuvwxtz
-  // XXX XXXX X XXXXXXXXX X X X
+  //    d    i k         u w t
   public static final String ARG_HELP = "h";
   public static final String ARG_HELP_LONG = "help";
   public static final String ARG_VERSION = "v";
@@ -166,8 +165,8 @@ public class Startup implements AWTEventListener {
 
   public static final String ARG_TTY = "t";
   public static final String ARG_TTY_LONG = "tty";
-  public static final String ARG_TEST_FGPA_IMPL = "f";
-  public static final String ARG_TEST_FGPA_IMPL_LONG = "test-fpga";
+  public static final String ARG_TEST_FGPA = "f";
+  public static final String ARG_TEST_FGPA_LONG = "test-fpga";
   public static final String ARG_CLEAR_PREFS = "r";
   public static final String ARG_CLEAR_PREFS_LONG = "clear-prefs";
   public static final String ARG_SUBSTITUTE = "s";
@@ -297,7 +296,7 @@ public class Startup implements AWTEventListener {
     // Set up supported arguments for the arg parser to look for.
     // Note: you need to create handler for each option. See handler loop below.
     addOption(opts, "argTtyOption", ARG_TTY, ARG_TTY_LONG, 1);
-    addOption(opts, "argTestImplement", ARG_TEST_FGPA_IMPL, ARG_TEST_FGPA_IMPL_LONG, Option.UNLIMITED_VALUES);
+    addOption(opts, "argTestImplement", ARG_TEST_FGPA, ARG_TEST_FGPA_LONG, Option.UNLIMITED_VALUES);  // We can have 3, 4 or 5 arguments here
     addOption(opts, "argClearOption", ARG_CLEAR_PREFS, ARG_CLEAR_PREFS_LONG);
     addOption(opts, "argSubOption", ARG_SUBSTITUTE, ARG_SUBSTITUTE_LONG, 2);
     addOption(opts, "argLoadOption", ARG_LOAD, ARG_LOAD_LONG, 1);
@@ -330,7 +329,7 @@ public class Startup implements AWTEventListener {
     // see whether we'll be using any graphics
     var isTty = false;
     var shallClearPreferences = false;
-    if (cmd.hasOption(ARG_TTY) || cmd.hasOption(ARG_TEST_FGPA_IMPL)) {
+    if (cmd.hasOption(ARG_TTY) || cmd.hasOption(ARG_TEST_FGPA)) {
       isTty = true;
       Main.headless = true;
     } else {
@@ -378,7 +377,7 @@ public class Startup implements AWTEventListener {
         case ARG_TEMPLATE -> handleArgTemplate(startup, opt);
         case ARG_NO_SPLASH -> handleArgNoSplash(startup, opt);
         case ARG_TEST_VECTOR -> handleArgTestVector(startup, opt);
-        case ARG_TEST_FGPA_IMPL -> handleArgTestFpgaImpl(startup, opt);
+        case ARG_TEST_FGPA -> handleArgTestFpga(startup, opt);
         case ARG_TEST_CIRCUIT -> handleArgTestCircuit(startup, opt);
         case ARG_TEST_CIRC_GEN -> handleArgTestCircGen(startup, opt);
         case ARG_CIRCUIT -> handleArgCircuit(startup, opt);
@@ -613,25 +612,50 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
-  private static RC handleArgTestFpgaImpl(Startup startup, Option opt) {
+
+  /**
+   * Supported argument formats for `--test-fpga`
+   *   <circ_input> <circuit_name> <board>
+   *   <circ_input> <circuit_name> <board> [HDLONLY]
+   *   <circ_input> <circuit_name> <board> [tick frequency]
+   *   <circ_input> <circuit_name> <board> [tick frequency] [HDLONLY]
+   */
+  private final static String testFpgaUsage =
+          LineBuffer.format("--{{1}} <circ_input> <circuit_name> <board> [tick frequency] [HDLONLY]", ARG_TEST_FGPA_LONG);
+
+  private static RC handleArgTestFpgaParseArg(Startup startup, String argVal) {
+    // Value can be either "HDLONLY" literal...
+    if ("HDLONLY".equals(argVal)) {
+      startup.testCircuitHdlOnly = true;
+    } else {
+      try {
+        // or valid tick frequency
+        startup.testTickFrequency = Integer.parseUnsignedInt(argVal);
+      } catch (NumberFormatException ex) {
+        // FIXME: hardcoded string
+        logger.error(testFpgaUsage);
+        return RC.QUIT;
+      }
+    }
+    return RC.OK;
+  }
+
+  private static RC handleArgTestFpga(Startup startup, Option opt) {
     final var optArgs = opt.getValues();
+    final var argsCnt = optArgs.length;
+
+    if (argsCnt < 3 || argsCnt > 5) {
+      logger.error(S.get("argTestInvalidArguments"));
+      return RC.QUIT;
+    }
 
     // already handled above
     startup.testCircuitImpPath = optArgs[0];
-    startup.testCircuitImpMapFile = optArgs[1];
-    startup.testCircuitImpName = optArgs[2];
-    startup.testCircuitImpBoard = optArgs[3];
+    startup.testCircuitImpName = optArgs[1];
+    startup.testCircuitImpBoard = optArgs[2];
 
-    if (optArgs.length > 4) {
-      try {
-        startup.testTickFrequency = Integer.parseUnsignedInt(optArgs[4]);
-      } catch (NumberFormatException ignored) {
-        // FIXME: do nothing, but that's not the best error handlong
-      }
-      if (optArgs.length > 5) {
-        startup.testCircuitHdlOnly = optArgs[5].equalsIgnoreCase("HDLONLY");
-      }
-    }
+    if (argsCnt >= 4) handleArgTestFpgaParseArg(startup, optArgs[3]);
+    if (argsCnt >= 5) handleArgTestFpgaParseArg(startup, optArgs[4]);
 
     startup.doFpgaDownload = true;
     startup.showSplash = false;
