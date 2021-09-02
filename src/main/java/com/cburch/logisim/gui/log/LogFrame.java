@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.log;
@@ -68,6 +49,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   private class MyListener
       implements ProjectListener, LibraryListener, Simulator.Listener, LocaleListener {
 
+    @Override
     public void libraryChanged(LibraryEvent event) {
       int action = event.getAction();
       if (action == LibraryEvent.SET_NAME) {
@@ -75,6 +57,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
       }
     }
 
+    @Override
     public void localeChanged() {
       setTitle(computeTitle(curModel, project));
       for (int i = 0; i < panels.length; i++) {
@@ -85,6 +68,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
       windowManager.localeChanged();
     }
 
+    @Override
     public void projectChanged(ProjectEvent event) {
       int action = event.getAction();
       if (action == ProjectEvent.ACTION_SET_STATE) {
@@ -139,17 +123,20 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
       return LogFrame.this;
     }
 
+    @Override
     public void libraryChanged(LibraryEvent event) {
       if (event.getAction() == LibraryEvent.SET_NAME) {
         localeChanged();
       }
     }
 
+    @Override
     public void localeChanged() {
       String title = proj.getLogisimFile().getDisplayName();
       setText(S.get("logFrameMenuItem", title));
     }
 
+    @Override
     public void projectChanged(ProjectEvent event) {
       if (event.getAction() == ProjectEvent.ACTION_SET_FILE) {
         localeChanged();
@@ -189,10 +176,12 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
       setVisible(true);
     }
 
+    @Override
     public void cancelClicked() {
       okClicked();
     }
 
+    @Override
     public void okClicked() {}
   }
 
@@ -264,6 +253,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
         });
   }
 
+  @Override
   public LogisimMenuBar getLogisimMenuBar() {
     return menubar;
   }
@@ -327,6 +317,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   }
 
   private class MyChangeListener implements ChangeListener {
+    @Override
     public void stateChanged(ChangeEvent e) {
       Object selected = tabbedPane.getSelectedComponent();
       if (selected instanceof JScrollPane) {
