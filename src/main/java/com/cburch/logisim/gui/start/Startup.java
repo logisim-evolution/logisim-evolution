@@ -614,15 +614,16 @@ public class Startup implements AWTEventListener {
 
 
   /**
-   * Supported argument formats for `--test-fpga`
+   * Handles 4th argument of --test-fpga argument which can be either string literal
+   * or tick frequency.
+   *
+   * Supported argument formats for `--test-fpga`:
    *   <circ_input> <circuit_name> <board>
    *   <circ_input> <circuit_name> <board> [HDLONLY]
+   *   <circ_input> <circuit_name> <board> [HDLONLY] [tick frequency]
    *   <circ_input> <circuit_name> <board> [tick frequency]
    *   <circ_input> <circuit_name> <board> [tick frequency] [HDLONLY]
    */
-  private final static String testFpgaUsage =
-          LineBuffer.format("--{{1}} <circ_input> <circuit_name> <board> [tick frequency] [HDLONLY]", ARG_TEST_FGPA_LONG);
-
   private static RC handleArgTestFpgaParseArg(Startup startup, String argVal) {
     // Value can be either "HDLONLY" literal...
     if ("HDLONLY".equals(argVal)) {
@@ -633,7 +634,7 @@ public class Startup implements AWTEventListener {
         startup.testTickFrequency = Integer.parseUnsignedInt(argVal);
       } catch (NumberFormatException ex) {
         // FIXME: hardcoded string
-        logger.error(testFpgaUsage);
+        logger.error(S.get("argTestInvalidArguments"));
         return RC.QUIT;
       }
     }
