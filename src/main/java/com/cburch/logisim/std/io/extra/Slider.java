@@ -52,6 +52,8 @@ import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.LocaleManager;
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
@@ -229,7 +231,7 @@ public class Slider extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    final var gfx = painter.getGraphics();
+    final var gfx = (Graphics2D) painter.getGraphics();
     final var bounds = painter.getBounds();
     final var data = (SliderValue) painter.getData();
     final var posX = bounds.getX();
@@ -248,13 +250,11 @@ public class Slider extends InstanceFactory {
     painter.drawPorts();
     painter.drawLabel();
     // paint current value
-    gfx.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 9));
-    final var value = painter.getPortValue(0);
-    final var radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
-    final var valueString = radix.toString(value);
-    GraphicsUtil.drawCenteredText(gfx, valueString, posX + bounds.getWidth() / 2, posY + 6);
+    gfx.setFont(new Font(Font.SANS_SERIF, Font.BOLD, 10));
+    GraphicsUtil.drawCenteredValue(gfx, painter.getPortValue(0), 
+        painter.getAttributeValue(RadixOption.ATTRIBUTE), posX + bounds.getWidth() / 2, posY + 6);
   }
-
+  
   @Override
   public void propagate(InstanceState state) {
     final var data = (SliderValue) state.getData();
