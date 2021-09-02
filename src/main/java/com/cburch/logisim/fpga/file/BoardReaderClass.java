@@ -120,16 +120,19 @@ public class BoardReaderClass {
       }
       if (CodeTable == null) {
         DialogNotification.showDialogNotification(
+            // FIXME: hardcoded string
             null, "Error", "The selected XML file does not contain a compression code table");
         return null;
       }
       if ((PictureWidth == 0) || (PictureHeight == 0)) {
         DialogNotification.showDialogNotification(
+            // FIXME: hardcoded string
             null, "Error", "The selected XML file does not contain the picture dimensions");
         return null;
       }
       if (PixelData == null) {
         DialogNotification.showDialogNotification(
+            // FIXME: hardcoded string
             null, "Error", "The selected XML file does not contain the picture data");
         return null;
       }
@@ -167,8 +170,7 @@ public class BoardReaderClass {
   }
 
   private FPGAClass GetFPGAInfo() {
-    NodeList FPGAList =
-        BoardDoc.getElementsByTagName(BoardWriterClass.BOARD_INFORMATION_SECTION_STRING);
+    NodeList FPGAList = BoardDoc.getElementsByTagName(BoardWriterClass.BOARD_INFORMATION_SECTION_STRING);
     long frequency = -1;
     String clockpin = null;
     String clockpull = null;
