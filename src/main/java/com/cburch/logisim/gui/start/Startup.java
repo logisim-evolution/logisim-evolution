@@ -614,15 +614,16 @@ public class Startup implements AWTEventListener {
 
 
   /**
-   * Handles 4th argument of --test-fpga argument which can be either string literal
+   * Handles 4th argument of `--test-fpga` argument which can be either string literal
    * or tick frequency.
    *
    * Supported argument formats for `--test-fpga`:
-   *   <circ_input> <circuit_name> <board>
-   *   <circ_input> <circuit_name> <board> [HDLONLY]
-   *   <circ_input> <circuit_name> <board> [HDLONLY] [tick frequency]
-   *   <circ_input> <circuit_name> <board> [tick frequency]
-   *   <circ_input> <circuit_name> <board> [tick frequency] [HDLONLY]
+   *   `<circ_input> <circuit_name> <board>`
+   *   `<circ_input> <circuit_name> <board> [HDLONLY]`
+   *   `<circ_input> <circuit_name> <board> [HDLONLY] [tick frequency]`
+   *   `<circ_input> <circuit_name> <board> [tick frequency]`
+   *   `<circ_input> <circuit_name> <board> [tick frequency] [HDLONLY]`
+   *
    */
   private static RC handleArgTestFpgaParseArg(Startup startup, String argVal) {
     // Value can be either "HDLONLY" literal...
