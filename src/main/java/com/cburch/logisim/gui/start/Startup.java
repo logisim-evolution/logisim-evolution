@@ -155,6 +155,10 @@ public class Startup implements AWTEventListener {
     }
   }
 
+  // Used single letters keys
+  // --------------------------
+  // abcdefghijklmnopqrstuvwxtz
+  // XXX XXXX X XXXXXXXXX X X X
   public static final String ARG_HELP = "h";
   public static final String ARG_HELP_LONG = "help";
   public static final String ARG_VERSION = "v";
@@ -186,11 +190,11 @@ public class Startup implements AWTEventListener {
   public static final String ARG_TEMPLATE_LONG = "template";
   public static final String ARG_NO_SPLASH = "n";
   public static final String ARG_NO_SPLASH_LONG = "no-splash";
-  public static final String ARG_TEST_VECTOR = "tv";
+  public static final String ARG_TEST_VECTOR = "w";
   public static final String ARG_TEST_VECTOR_LONG = "test-vector";
-  public static final String ARG_TEST_CIRCUIT = "tc";
+  public static final String ARG_TEST_CIRCUIT = "b";
   public static final String ARG_TEST_CIRCUIT_LONG = "test-circuit";
-  public static final String ARG_TEST_CIRC_GEN = "tg";
+  public static final String ARG_TEST_CIRC_GEN = "j";
   public static final String ARG_TEST_CIRC_GEN_LONG = "test-circ-gen";
   public static final String ARG_CIRCUIT = "c";
   public static final String ARG_CIRCUIT_LONG = "circuit";
