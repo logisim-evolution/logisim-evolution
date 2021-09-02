@@ -242,10 +242,9 @@ public class Startup implements AWTEventListener {
    */
   protected static RC printVersion() {
     System.out.println(Main.APP_DISPLAY_NAME);
-    System.out.println(S.get("appVersionBuildDate", BuildInfo.dateIso8601));
-    System.out.println(S.get("appVersionBuildId", BuildInfo.buildId));
-    System.out.println(S.get("appVersionUrl", Main.APP_URL));
-    System.out.println(S.get("appVersionJvm", LineBuffer.format("{{1}} ({{2}})", Main.JVM_VERSION, Main.JVM_VENDOR)));
+    System.out.println(Main.APP_URL);
+    System.out.println(LineBuffer.format("{{1}} ({{2}})", BuildInfo.buildId, BuildInfo.dateIso8601));
+    System.out.println(LineBuffer.format("{{1}} ({{2}})", Main.JVM_VERSION, Main.JVM_VENDOR));
     return RC.QUIT;
   }
 
