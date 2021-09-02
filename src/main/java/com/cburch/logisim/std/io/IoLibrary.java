@@ -94,9 +94,4 @@ public class IoLibrary extends Library {
     }
     return tools;
   }
-
-  @Override
-  public boolean removeLibrary(String Name) {
-    return false;
-  }
 }

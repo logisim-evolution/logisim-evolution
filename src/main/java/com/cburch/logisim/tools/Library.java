@@ -73,7 +73,9 @@ public abstract class Library {
     return null;
   }
 
-  public abstract boolean removeLibrary(String name);
+  public boolean removeLibrary(String name) {
+    return false;
+  }
 
   public Tool getTool(String name) {
     for (final var tool : getTools()) {

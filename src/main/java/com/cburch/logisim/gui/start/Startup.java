@@ -453,8 +453,6 @@ public class Startup implements AWTEventListener {
         ret.circuitToTest = args[i];
       } else if (arg.equals("-clearprefs") || arg.equals("-clearprops")) {
         // already handled above
-      } else if (arg.equals("-analyze")) {
-        Main.ANALYZE = true;
       } else if (arg.equals("-questa")) {
         i++;
         if (i >= args.length) {
@@ -501,7 +499,6 @@ public class Startup implements AWTEventListener {
       "argAccentsOption",
       "argClearOption",
       "argEmptyOption",
-      "argAnalyzeOption",
       "argTestOption",
       "argGatesOption",
       "argHelpOption",
