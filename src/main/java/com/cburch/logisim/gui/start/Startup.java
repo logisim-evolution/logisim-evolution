@@ -229,10 +229,9 @@ public class Startup implements AWTEventListener {
    * @return Handler return code enum (RC.xxx)
    */
   protected static RC printHelp(Options opts) {
-    final var header = Main.APP_DISPLAY_NAME;
     printVersion();
-    final var fmt = new HelpFormatter();
-    fmt.printHelp(Main.APP_NAME, null, opts, null, true);
+    System.out.println();
+    (new HelpFormatter()).printHelp(Main.APP_NAME, null, opts, null, true);
     return RC.QUIT;
   }
 
@@ -242,11 +241,11 @@ public class Startup implements AWTEventListener {
    * @return Handler return code enum (RC.xxx)
    */
   protected static RC printVersion() {
-    System.out.println(S.get(Main.APP_DISPLAY_NAME));
+    System.out.println(Main.APP_DISPLAY_NAME);
     System.out.println(S.get("appVersionBuildDate", BuildInfo.dateIso8601));
     System.out.println(S.get("appVersionBuildId", BuildInfo.buildId));
     System.out.println(S.get("appVersionUrl", Main.APP_URL));
-    System.out.println();
+    System.out.println(S.get("appVersionJvm", LineBuffer.format("{{1}} ({{2}})", Main.JVM_VERSION, Main.JVM_VENDOR)));
     return RC.QUIT;
   }
 
