@@ -72,7 +72,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = (new LineBuffer()).addPair("activeEdge", activeEdgeStr);
+    final var contents = (new LineBuffer()).pair("activeEdge", activeEdgeStr);
     contents.addRemarkBlock(
         "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
             + "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down");

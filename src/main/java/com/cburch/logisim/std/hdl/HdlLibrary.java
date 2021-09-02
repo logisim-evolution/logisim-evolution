@@ -64,8 +64,4 @@ public class HdlLibrary extends Library {
     }
     return tools;
   }
-
-  public boolean removeLibrary(String Name) {
-    return false;
-  }
 }

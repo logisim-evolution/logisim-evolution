@@ -67,8 +67,8 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents =
         (new LineBuffer())
-            .addPair("seed", SEED_STR)
-            .addPair("nrOfBits", NR_OF_BITS_STR)
+            .pair("seed", SEED_STR)
+            .pair("nrOfBits", NR_OF_BITS_STR)
             .addRemarkBlock("This is a multicycle implementation of the Random Component")
             .empty();
 

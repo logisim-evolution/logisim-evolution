@@ -32,8 +32,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.Map;
@@ -75,21 +77,12 @@ public class LineBufferTest extends TestBase {
   /** Tests is plain add(String) works as expected. */
   @Test
   public void testAdd() {
-    final var tests =
-        new ArrayList<String>() {
-          {
-            add(getRandomString());
-            add(" {{placeholders}} should not be processed");
-          }
-        };
+    final var lb = new LineBuffer();
+    final var test = getRandomString();
+    lb.add(test);
 
-    for (final var test : tests) {
-      final var lb = new LineBuffer();
-      lb.add(test);
-
-      assertEquals(1, lb.size());
-      assertEquals(test, lb.get(0));
-    }
+    assertEquals(1, lb.size());
+    assertEquals(test, lb.get(0));
   }
 
   /** Tests is add(String, Object...) works as expected. */
@@ -116,7 +109,7 @@ public class LineBufferTest extends TestBase {
     final var bar = getRandomInt(0, 100);
 
     final var lb = (new LineBuffer())
-            .addPair("pair", pair)
+            .pair("pair", pair)
             .add("{{pair}}-{{1}}-{{2}}", foo, bar);
     System.out.println(lb.toString());
     assertEquals(1, lb.size());
@@ -173,7 +166,7 @@ public class LineBufferTest extends TestBase {
     for (final var test : tests.entrySet()) {
       final var lb = new LineBuffer(pairs);
       lb.add(test.getKey());
-      final var expected = new LineBuffer(test.getValue(), pairs);
+      final var expected = (new LineBuffer()).add(test.getValue(), pairs);
       assertEquals(expected, lb);
     }
   }
@@ -190,7 +183,7 @@ public class LineBufferTest extends TestBase {
             " {{   bar}} ", " BAR ",
             " {{bang}} ", " BANG ");
 
-    final var pairs =
+    final var globalPairs =
         new LineBuffer.Pairs() {
           {
             add("foo", "FOO");
@@ -199,7 +192,7 @@ public class LineBufferTest extends TestBase {
         };
 
     for (final var test : tests.entrySet()) {
-      final var lb = new LineBuffer(pairs);
+      final var lb = new LineBuffer(globalPairs);
       lb.add(test.getKey(), new LineBuffer.Pairs("bang", "BANG"));
 
       final var expPairs =
@@ -214,6 +207,50 @@ public class LineBufferTest extends TestBase {
       final var expected = new LineBuffer(test.getValue(), expPairs);
       assertEquals(expected, lb);
     }
+  }
+
+  @Test
+  public void testMultiplePlaceholdersInLine() {
+    final var arg1 = "ARG_1";
+    final var line = "{{assign}} s_{{ins}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{1}};";
+
+    final var buffer = new LineBuffer();
+    // lb.addHdlPairs();  // FIXME: mock isVHDL()
+    buffer
+        .pair("assign", "assign")
+        .pair("=", "=")
+        .pair("<", "<")
+        .pair(">", ">");
+
+    buffer
+        .pair("id", "ID")
+        .pair("pin", "PIN")
+        .pair("ins", "INS");
+
+    buffer.add(line, arg1);
+
+    final var exp = "assign s_INSID<PIN> = " + arg1 + ";";
+    assertEquals(1, buffer.size());
+    assertEquals(exp, buffer.get(0));
+  }
+
+  /* ********************************************************************************************* */
+
+  /**
+   * Checks if providing less arguments than positional placeholders would be detected.
+   */
+  @Test
+  public void testAddTooLittlePosArgs() {
+    assertThrows(RuntimeException.class, () -> {
+      this.lb.add("This is {{1}} bar {{   2}} test", 666);
+    });
+  }
+
+  @Test
+  public void testGetUsedPlaceholders() {
+    assertThrows(RuntimeException.class, () -> {
+      this.lb.validateLineNoPositionals("This is {{foo}} bar {{   2}} test");
+    });
   }
 
   /* ********************************************************************************************* */

@@ -215,11 +215,11 @@ public class XilinxDownload implements VendorDownload {
           && DownloadFile.exists();
     }
     final var contents = (new LineBuffer())
-            .addPair("JTAGPos", JTAGPos)
-            .addPair("fileExt", bitfileExt)
-            .addPair("fileBaseName", ToplevelHDLGeneratorFactory.FPGAToplevelName)
-            .addPair("mcsFile", ScriptPath + File.separator + MCS_FILE)
-            .addPair("hdlType", HDLType.toUpperCase().toUpperCase());
+            .pair("JTAGPos", JTAGPos)
+            .pair("fileExt", bitfileExt)
+            .pair("fileBaseName", ToplevelHDLGeneratorFactory.FPGAToplevelName)
+            .pair("mcsFile", ScriptPath + File.separator + MCS_FILE)
+            .pair("hdlType", HDLType.toUpperCase().toUpperCase());
 
     for (var entity : Entities) contents.add("{{hdlType}} work \"{{1}}\"", entity);
     for (var arch : architectures) contents.add("{{hdlType}} work \"{{1}}\"", arch);
@@ -244,8 +244,8 @@ public class XilinxDownload implements VendorDownload {
         Reporter.Report.AddFatalError(S.get("XilinxFlashMissing", boardInfo.getBoardName()));
       }
 
-      contents.addPair("flashPos", String.valueOf(boardInfo.fpga.getFlashJTAGChainPosition()))
-              .addPair("flashName", boardInfo.fpga.getFlashName())
+      contents.pair("flashPos", String.valueOf(boardInfo.fpga.getFlashJTAGChainPosition()))
+              .pair("flashName", boardInfo.fpga.getFlashName())
               .add("""
                 setmode -pff
                 setSubMode -pffserial
@@ -280,9 +280,9 @@ public class XilinxDownload implements VendorDownload {
     contents.clear();
     if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
       contents
-          .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
-          .addPair("clockFreq", Download.GetClockFrequencyString(boardInfo))
-          .addPair("clockPin", GetXilinxClockPin(boardInfo))
+          .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+          .pair("clockFreq", Download.GetClockFrequencyString(boardInfo))
+          .pair("clockPin", GetXilinxClockPin(boardInfo))
           .add("""
             NET "{{clock}}" {{clockPin}} ;
             NET "{{clock}}" TNM_NET = "{{clock}}" ;

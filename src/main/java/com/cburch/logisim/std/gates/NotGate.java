@@ -70,7 +70,7 @@ class NotGate extends InstanceFactory {
     @Override
     public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       return (new LineBuffer())
-          .withHdlPairs()
+          .addHdlPairs()
           .add("{{assign}} Result {{=}} {{not}}Input_1;")
           .add("")
           .getWithIndent();

@@ -62,7 +62,7 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
       Long ComponentId,
       NetlistComponent ComponentInfo,
       String CircuitName) {
-    final var Contents = (new LineBuffer()).withHdlPairs();
+    final var Contents = (new LineBuffer()).addHdlPairs();
     int NrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
     if (ComponentInfo.isEndConnected(0)) {
       long ConstantValue = GetConstant(ComponentInfo.getComponent().getAttributeSet());

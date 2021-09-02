@@ -204,9 +204,9 @@ public class AlteraDownload implements VendorDownload {
     final var fileType = HDLType.equals(HDLGeneratorFactory.VHDL) ? "VHDL_FILE" : "VERILOG_FILE";
     final var contents = new LineBuffer();
     contents
-        .addPair("topLevelName", ToplevelHDLGeneratorFactory.FPGAToplevelName)
-        .addPair("fileType", fileType)
-        .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
+        .pair("topLevelName", ToplevelHDLGeneratorFactory.FPGAToplevelName)
+        .pair("fileType", fileType)
+        .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
 
     contents
         .add("""
@@ -301,7 +301,7 @@ public class AlteraDownload implements VendorDownload {
     };
 
     return (new LineBuffer())
-        .addPair("assignName", "set_global_assignment -name")
+        .pair("assignName", "set_global_assignment -name")
         .add("{{assignName}} FAMILY \"{{1}}\"", currentBoard.fpga.getTechnology())
         .add("{{assignName}} DEVICE {{1}}", currentBoard.fpga.getPart())
         .add("{{assignName}} DEVICE_FILTER_PACKAGE {{1}}", pkg[0])

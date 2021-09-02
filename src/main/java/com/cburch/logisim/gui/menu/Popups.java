@@ -30,7 +30,6 @@ package com.cburch.logisim.gui.menu;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LoadedLibrary;
 import com.cburch.logisim.gui.main.Frame;
@@ -91,10 +90,8 @@ public class Popups {
       editLayout.addActionListener(this);
       add(editAppearance);
       editAppearance.addActionListener(this);
-      if (Main.ANALYZE) {
-        add(analyze);
-        analyze.addActionListener(this);
-      }
+      add(analyze);
+      analyze.addActionListener(this);
       add(stats);
       stats.addActionListener(this);
       addSeparator();
@@ -125,7 +122,7 @@ public class Popups {
       } else if (source == editAppearance) {
         proj.setCurrentCircuit(circuit);
         proj.getFrame().setEditorView(Frame.EDIT_APPEARANCE);
-      } else if (source == analyze && Main.ANALYZE) {
+      } else if (source == analyze) {
         ProjectCircuitActions.doAnalyze(proj, circuit);
       } else if (source == stats) {
         JFrame frame = (JFrame) SwingUtilities.getRoot(this);

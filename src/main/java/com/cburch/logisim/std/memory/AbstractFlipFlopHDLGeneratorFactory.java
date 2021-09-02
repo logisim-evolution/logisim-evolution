@@ -84,7 +84,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
         .add("   {{1}}Q    {{2}}s_current_state_reg{{3}};", HDL.assignPreamble(), HDL.assignOperator(), SelectOperator)
         .add("   {{1}}Q_bar{{2}}{{3}}(s_current_state_reg{{4}});", HDL.assignPreamble(), HDL.assignOperator(), HDL.notOperator(), SelectOperator)
         .add("")
-        .add("Here the update logic is defined")
+        .addRemarkBlock("Here the update logic is defined")
         .add(GetUpdateLogic())
         .add("");
     if (HDL.isVerilog()) {
@@ -140,7 +140,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
             """);
       } else {
         contents
-            .addPair("activityLevel", ACTIVITY_LEVEL_STR)
+            .pair("activityLevel", ACTIVITY_LEVEL_STR)
             .add("""
                 always @(*)
                 begin

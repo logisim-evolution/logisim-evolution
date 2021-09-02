@@ -67,7 +67,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = (new LineBuffer())
-            .addPair("activeLevel", ACTIVE_LEVEL_STR);
+            .pair("activeLevel", ACTIVE_LEVEL_STR);
     if (HDL.isVHDL()) {
       contents.add("""
           Q <= s_state_reg;

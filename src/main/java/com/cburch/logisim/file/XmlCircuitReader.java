@@ -56,10 +56,6 @@ import org.w3c.dom.Element;
 public class XmlCircuitReader extends CircuitTransaction {
 
   /**
-   * Get a circuit's component from a read XML file. If the component has a non-null "trackercomp"
-   * field, it means that it is tracked, therefore it is skipped in the non-tracked version to avoid
-   * errors.
-   *
    * @param elt XML element to parse
    * @param reader XML file reader
    * @return the component built from its XML description
@@ -166,43 +162,33 @@ public class XmlCircuitReader extends CircuitTransaction {
       /* Here we check the attribute circuitnamedbox for backwards compatibility */
       var hasNamedBox = false;
       var hasNamedBoxFixedSize = false;
-      var HasAppearAttr = false;
+      var hasAppearAttr = false;
       for (final var attrElt : XmlIterator.forChildElements(circData.circuitElement, "a")) {
         if (attrElt.hasAttribute("name")) {
           final var name = attrElt.getAttribute("name");
-          if (name.equals("circuitnamedbox")) {
-            hasNamedBox = true;
-          }
-          if (name.equals("appearance")) HasAppearAttr = true;
-          if (name.equals("circuitnamedboxfixedsize")) {
-            hasNamedBoxFixedSize = true;
-          }
+          hasNamedBox |= name.equals("circuitnamedbox");
+          hasAppearAttr |= name.equals("appearance");
+          hasNamedBoxFixedSize |= name.equals("circuitnamedboxfixedsize");
         }
       }
-      reader.initAttributeSet(
-          circData.circuitElement, dest.getStaticAttributes(), null, IsHolyCross, IsEvolution);
+      reader.initAttributeSet(circData.circuitElement, dest.getStaticAttributes(), null, IsHolyCross, IsEvolution);
       if (circData.circuitElement.hasChildNodes()) {
         if (hasNamedBox) {
           /* This situation is clear, it is an older logisim-evolution file */
-          dest.getStaticAttributes()
-              .setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_EVOLUTION);
+          dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_EVOLUTION);
         } else {
-          if (!HasAppearAttr) {
+          if (!hasAppearAttr) {
             /* Here we have 2 possibilities, either a Holycross file or a logisim-evolution file
              * before the introduction of the named circuit boxes. So let's ask the user.
              */
             if (IsHolyCross)
-              dest.getStaticAttributes()
-                  .setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_FPGA);
+              dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_FPGA);
             else
-              dest.getStaticAttributes()
-                  .setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CLASSIC);
+              dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CLASSIC);
           }
         }
-        if (!hasNamedBoxFixedSize) {
-          dest.getStaticAttributes()
-              .setValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE, false);
-        }
+        if (!hasNamedBoxFixedSize)
+          dest.getStaticAttributes().setValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE, false);
       }
     } catch (XmlReaderException e) {
       reader.addErrors(e, circData.circuit.getName() + ".static");

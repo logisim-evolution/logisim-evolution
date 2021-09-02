@@ -62,8 +62,8 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = (new LineBuffer())
-            .addPair("selBits", NR_OF_SELECT_BITS_STR)
-            .addPair("inBits", NR_OF_INPUT_BITS_STR);
+            .pair("selBits", NR_OF_SELECT_BITS_STR)
+            .pair("inBits", NR_OF_INPUT_BITS_STR);
     if (HDL.isVHDL()) {
       contents.add("""
           -- Output Signals

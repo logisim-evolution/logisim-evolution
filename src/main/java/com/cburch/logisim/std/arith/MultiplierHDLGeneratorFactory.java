@@ -65,9 +65,9 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents =
         (new LineBuffer())
-            .addPair("nrOfBits", NrOfBitsStr)
-            .addPair("unsigned", UnsignedStr)
-            .addPair("calcBits", CalcBitsStr);
+            .pair("nrOfBits", NrOfBitsStr)
+            .pair("unsigned", UnsignedStr)
+            .pair("calcBits", CalcBitsStr);
 
     if (HDL.isVHDL()) {
       Contents.add("""
