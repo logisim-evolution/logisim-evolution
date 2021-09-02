@@ -618,28 +618,25 @@ public class Startup implements AWTEventListener {
    * or tick frequency.
    *
    * Supported argument formats for `--test-fpga`:
-   *   `<circ_input> <circuit_name> <board>`
-   *   `<circ_input> <circuit_name> <board> [HDLONLY]`
-   *   `<circ_input> <circuit_name> <board> [HDLONLY] [tick frequency]`
-   *   `<circ_input> <circuit_name> <board> [tick frequency]`
-   *   `<circ_input> <circuit_name> <board> [tick frequency] [HDLONLY]`
+   * - `circ_input circuit_name board`
+   * - `circ_input circuit_name board [HDLONLY]`
+   * - `circ_input circuit_name board [HDLONLY] [tick frequency]`
+   * - `circ_input circuit_name board [tick frequency]`
+   * - `circ_input circuit_name board [tick frequency] [HDLONLY]`
    *
    */
   private static RC handleArgTestFpgaParseArg(Startup startup, String argVal) {
-    // Value can be either "HDLONLY" literal...
     if ("HDLONLY".equals(argVal)) {
       startup.testCircuitHdlOnly = true;
-    } else {
-      try {
-        // or valid tick frequency
-        startup.testTickFrequency = Integer.parseUnsignedInt(argVal);
-      } catch (NumberFormatException ex) {
-        // FIXME: hardcoded string
-        logger.error(S.get("argTestInvalidArguments"));
-        return RC.QUIT;
-      }
+      return RC.OK;
     }
-    return RC.OK;
+    try {
+      startup.testTickFrequency = Integer.parseUnsignedInt(argVal);
+      return RC.OK;
+    } catch (NumberFormatException ex) {
+      logger.error(S.get("argTestInvalidArguments"));
+    }
+    return RC.QUIT;
   }
 
   private static RC handleArgTestFpga(Startup startup, Option opt) {
