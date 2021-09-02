@@ -19,8 +19,6 @@
 
 package com.cburch.logisim.util;
 
-import java.util.NoSuchElementException;
-
 public class LibraryUtil {
 
   public static final String ID_FIELD_NAME = "_ID";
@@ -56,6 +54,7 @@ public class LibraryUtil {
       }
     }
 
-    throw new NoSuchElementException("Missing " + ID_FIELD_NAME + " static const field for " + cls);
+    // for backward compatibility we return the class name
+    return cls.getSimpleName();
   }
 }
