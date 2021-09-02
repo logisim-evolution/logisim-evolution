@@ -108,6 +108,7 @@ public class ReplacementMap {
       if (!inverse.containsKey(c)) {
         final var bs = e.getValue();
         if (!bs.isEmpty()) {
+          // FIXME: hardcoded string
           logger.error("Internal error: component replaced but not represented");
         }
         inverse.put(c, new HashSet<>(3));

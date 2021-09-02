@@ -120,17 +120,17 @@ public class BoardReaderClass {
       }
       if (CodeTable == null) {
         DialogNotification.showDialogNotification(
-            null, "Error", "The selected xml file does not contain a compression code table");
+            null, "Error", "The selected XML file does not contain a compression code table");
         return null;
       }
       if ((PictureWidth == 0) || (PictureHeight == 0)) {
         DialogNotification.showDialogNotification(
-            null, "Error", "The selected xml file does not contain the picture dimensions");
+            null, "Error", "The selected XML file does not contain the picture dimensions");
         return null;
       }
       if (PixelData == null) {
         DialogNotification.showDialogNotification(
-            null, "Error", "The selected xml file does not contain the picture data");
+            null, "Error", "The selected XML file does not contain the picture data");
         return null;
       }
 
