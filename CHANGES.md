@@ -4,6 +4,7 @@
 
 * @dev (????-??-??)
   * Reworked the slider component in the I/O extra library
+  * The selected tick-frequency is now written to the .circ file and restored upon reading.
 
 * v3.6.0 (2021-??-??)
   * Introducing project logo.
