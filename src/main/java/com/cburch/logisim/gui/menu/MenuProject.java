@@ -30,7 +30,6 @@ package com.cburch.logisim.gui.menu;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.Main;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JMenu;
@@ -80,7 +79,7 @@ class MenuProject extends Menu {
     menubar.registerItem(LogisimMenuBar.EDIT_LAYOUT, layout);
     menubar.registerItem(LogisimMenuBar.EDIT_APPEARANCE, appearance);
     menubar.registerItem(LogisimMenuBar.TOGGLE_APPEARANCE, toggleLayoutAppearance);
-    if (Main.ANALYZE)  menubar.registerItem(LogisimMenuBar.ANALYZE_CIRCUIT, analyze);
+    menubar.registerItem(LogisimMenuBar.ANALYZE_CIRCUIT, analyze);
     menubar.registerItem(LogisimMenuBar.CIRCUIT_STATS, stats);
     options.addActionListener(myListener);
 
@@ -103,7 +102,7 @@ class MenuProject extends Menu {
     add(layout);
     add(appearance);
     addSeparator();
-    if (Main.ANALYZE) add(analyze);
+    add(analyze);
     add(stats);
     addSeparator();
     add(options);

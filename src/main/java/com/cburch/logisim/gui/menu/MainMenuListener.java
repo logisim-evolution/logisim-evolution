@@ -30,7 +30,6 @@ package com.cburch.logisim.gui.menu;
 
 import com.cburch.draw.model.CanvasModelEvent;
 import com.cburch.draw.model.CanvasModelListener;
-import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
@@ -122,7 +121,7 @@ public class MainMenuListener extends MenuListener {
         frame.setEditorView(viewAppearance ? Frame.EDIT_LAYOUT : Frame.EDIT_APPEARANCE);
       } else if (src == LogisimMenuBar.REVERT_APPEARANCE) {
         proj.doAction(new RevertAppearanceAction(cur));
-      } else if (src == LogisimMenuBar.ANALYZE_CIRCUIT && Main.ANALYZE) {
+      } else if (src == LogisimMenuBar.ANALYZE_CIRCUIT) {
         ProjectCircuitActions.doAnalyze(proj, cur);
       } else if (src == LogisimMenuBar.CIRCUIT_STATS) {
         StatisticsDialog.show(frame, proj.getLogisimFile(), cur);

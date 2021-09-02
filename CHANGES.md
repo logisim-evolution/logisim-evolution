@@ -38,7 +38,7 @@
     * All long arguments require `--` prefix i.e. `--version`,
     * All long arguments require single `-` as prefix i.e. `-v`,
     * `-clearprefs` is now `--clear-prefs` or `-cp`,
-    * `-clearprops` option is remove (use `--clear-prefs` instead),
+    * `-clearprops` option is removed (use `--clear-prefs` instead),
     * `-geom` is now `--geometry`,
     * `-nosplash` is now `--no-splash` or `-ns,
     * `-sub` is now `--substitute` or `-s`,

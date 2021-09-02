@@ -65,12 +65,6 @@ public class ExtraIoLibrary extends Library {
   }
 
   @Override
-  public boolean removeLibrary(String name) {
-    // TODO Auto-generated method stub
-    return false;
-  }
-
-  @Override
   public List<? extends Tool> getTools() {
     if (tools == null) {
       List<Tool> ret = new ArrayList<>(ADD_TOOLS.length + DESCRIPTIONS.length);

@@ -198,8 +198,6 @@ public class Startup implements AWTEventListener {
   public static final String ARG_TEST_CIRC_GEN_LONG = "test-circ-gen";
   public static final String ARG_CIRCUIT = "c";
   public static final String ARG_CIRCUIT_LONG = "circuit";
-  public static final String ARG_ANALYZE = "a";
-  public static final String ARG_ANALYZE_LONG = "analyze";
   public static final String ARG_QUESTA = "q";
   public static final String ARG_QUESTA_LONG = "questa";
 
@@ -316,7 +314,6 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR, ARG_TEST_VECTOR_LONG);    // FIXME: NO LANG STR FOR IT!
     addOption(opts, "argTestCircuit", ARG_TEST_CIRCUIT, ARG_TEST_CIRCUIT_LONG);   // FIXME add "Option" suffix to key name
     addOption(opts, "argTestCircGen", ARG_TEST_CIRC_GEN, ARG_TEST_CIRC_GEN_LONG, 2);   // FIXME add "Option" suffix to key name
-    addOption(opts, "argAnalyzeOption", ARG_ANALYZE, ARG_ANALYZE_LONG);
     addOption(opts, "argQuestaOption", ARG_QUESTA, ARG_QUESTA_LONG);
 
     CommandLine cmd;
@@ -388,7 +385,6 @@ public class Startup implements AWTEventListener {
         case ARG_TEST_CIRCUIT -> handleArgTestCircuit(startup, opt);
         case ARG_TEST_CIRC_GEN -> handleArgTestCircGen(startup, opt);
         case ARG_CIRCUIT -> handleArgCircuit(startup, opt);
-        case ARG_ANALYZE -> handleArgAnalyze(startup, opt);
         case ARG_QUESTA -> handleArgQuesta(startup, opt);
         default -> RC.OK; // should not really happen IRL.
       };
@@ -671,11 +667,6 @@ public class Startup implements AWTEventListener {
 
   private static RC handleArgCircuit(Startup startup, Option opt) {
     startup.circuitToTest = opt.getValue();
-    return RC.OK;
-  }
-
-  private static RC handleArgAnalyze(Startup startup, Option opt) {
-    Main.ANALYZE = true;
     return RC.OK;
   }
 
