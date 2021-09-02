@@ -198,8 +198,6 @@ public class Startup implements AWTEventListener {
   public static final String ARG_TEST_CIRC_GEN_LONG = "test-circ-gen";
   public static final String ARG_CIRCUIT = "c";
   public static final String ARG_CIRCUIT_LONG = "circuit";
-  public static final String ARG_QUESTA = "q";
-  public static final String ARG_QUESTA_LONG = "questa";
 
   /**
    * Parses provided string expecting it represent boolean option. Accepted values
@@ -314,7 +312,6 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR, ARG_TEST_VECTOR_LONG);    // FIXME: NO LANG STR FOR IT!
     addOption(opts, "argTestCircuit", ARG_TEST_CIRCUIT, ARG_TEST_CIRCUIT_LONG);   // FIXME add "Option" suffix to key name
     addOption(opts, "argTestCircGen", ARG_TEST_CIRC_GEN, ARG_TEST_CIRC_GEN_LONG, 2);   // FIXME add "Option" suffix to key name
-    addOption(opts, "argQuestaOption", ARG_QUESTA, ARG_QUESTA_LONG);
 
     CommandLine cmd;
     try {
@@ -385,7 +382,6 @@ public class Startup implements AWTEventListener {
         case ARG_TEST_CIRCUIT -> handleArgTestCircuit(startup, opt);
         case ARG_TEST_CIRC_GEN -> handleArgTestCircGen(startup, opt);
         case ARG_CIRCUIT -> handleArgCircuit(startup, opt);
-        case ARG_QUESTA -> handleArgQuesta(startup, opt);
         default -> RC.OK; // should not really happen IRL.
       };
       if (optHandlerRc == RC.QUIT) return null;
@@ -668,17 +664,6 @@ public class Startup implements AWTEventListener {
   private static RC handleArgCircuit(Startup startup, Option opt) {
     startup.circuitToTest = opt.getValue();
     return RC.OK;
-  }
-
-  private static RC handleArgQuesta(Startup startup, Option opt) {
-    try {
-      final var flag = opt.getValue().toLowerCase();
-      AppPreferences.QUESTA_VALIDATION.setBoolean(parseBool(flag));
-      return RC.OK;
-    } catch (IllegalArgumentException ex) {
-      logger.error(S.get("argQuestaOptionError"));
-    }
-    return RC.QUIT;
   }
 
   /* ********************************************************************************************* */

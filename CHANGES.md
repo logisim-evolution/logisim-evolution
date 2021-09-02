@@ -43,7 +43,8 @@
     * `-nosplash` is now `--no-splash` or `-ns,
     * `-sub` is now `--substitute` or `-s`,
     * `-testvector` is now `--test-vector` or `-w`,
-    * `-test-fpga-implementation` is now `--test-fpga` or `-f`
+    * `-test-fpga-implementation` is now `--test-fpga` or `-f`,
+    * `-questa` is removed.
 
 * v3.5.0 (2021-05-25)
   * Many code-cleanups, bug fixes and again the chronogram.
