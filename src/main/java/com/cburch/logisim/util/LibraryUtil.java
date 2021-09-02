@@ -19,7 +19,6 @@
 
 package com.cburch.logisim.util;
 
-import java.util.NoSuchElementException;
 
 public class LibraryUtil {
 
@@ -55,7 +54,7 @@ public class LibraryUtil {
         iaeEx.printStackTrace();
       }
     }
-
-    throw new NoSuchElementException("Missing " + ID_FIELD_NAME + " static const field for " + cls);
+    // for backward compatibility we return the class name 
+    return cls.getSimpleName();
   }
 }
