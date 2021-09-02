@@ -164,7 +164,17 @@ class XmlReader {
           } else {
             attrVal = attrElt.getTextContent();
           }
-          attrsDefined.put(attrName, attrVal);
+          if (attrName.equals("tickFreq")) {
+            // Special attribute saved at the clock component, so special treatment
+            file.requiresTickFrequencyForce(true);
+            try {
+              file.setRequiredTickFrequency(Double.parseDouble(attrVal));
+            } catch (NumberFormatException e) {
+              file.requiresTickFrequencyForce(false);
+            }
+          } else {
+            attrsDefined.put(attrName, attrVal);
+          }
         }
       }
 
@@ -175,11 +185,11 @@ class XmlReader {
       // We need to process this in order, and we have to refetch the
       // attribute list each time because it may change as we iterate
       // (as it will for a splitter).
+      final var attrList = attrs.getAttributes();
       for (var i = 0; true; i++) {
-        final var attrList = attrs.getAttributes();
         if (i >= attrList.size()) break;
         @SuppressWarnings("unchecked")
-        Attribute<Object> attr = (Attribute<Object>) attrList.get(i);
+        final var attr = (Attribute<Object>) attrList.get(i);
         final var attrName = attr.getName();
         final var attrVal = attrsDefined.get(attrName);
         if (attrVal == null) {
@@ -189,13 +199,13 @@ class XmlReader {
             if (IsHolyCross) attrs.setValue(StdAttr.APPEARANCE, StdAttr.APPEAR_CLASSIC);
             else if (IsEvolution) attrs.setValue(StdAttr.APPEARANCE, StdAttr.APPEAR_EVOLUTION);
             else {
-              Object val = defaults.getDefaultAttributeValue(attr, ver);
+              final var val = defaults.getDefaultAttributeValue(attr, ver);
               if (val != null) {
                 attrs.setValue(attr, val);
               }
             }
           } else if (setDefaults) {
-            Object val = defaults.getDefaultAttributeValue(attr, ver);
+            final var val = defaults.getDefaultAttributeValue(attr, ver);
             if (val != null) {
               attrs.setValue(attr, val);
             }

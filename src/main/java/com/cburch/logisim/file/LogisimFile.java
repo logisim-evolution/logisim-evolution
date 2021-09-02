@@ -45,7 +45,6 @@ import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.EventSourceWeakSupport;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
@@ -230,16 +229,29 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   private Loader loader;
   private final LinkedList<String> messages = new LinkedList<>();
   private final Options options = new Options();
-
   private final LinkedList<AddTool> tools = new LinkedList<>();
-
   private final LinkedList<Library> libraries = new LinkedList<>();
-
   private Circuit main = null;
-
   private String name;
-
   private boolean dirty = false;
+  private boolean forceTickFrequency = false;
+  private double tickFrequencyToForce = 1;
+  
+  public boolean requiresTickFrequencyForce() {
+    return forceTickFrequency;
+  }
+  
+  public void requiresTickFrequencyForce(boolean value) {
+    forceTickFrequency = value;
+  }
+  
+  public double getRequiredTickFrequency() {
+    return tickFrequencyToForce;
+  }
+
+  public void setRequiredTickFrequency(double value) {
+    tickFrequencyToForce = value;
+  }
 
   LogisimFile(Loader loader) {
     this.loader = loader;

@@ -43,7 +43,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.LibraryTools;
 import com.cburch.logisim.util.JFileChoosers;
-import com.cburch.logisim.util.StringUtil;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
@@ -339,6 +338,8 @@ public class ProjectActions {
         updatecircs(lib, proj);
         proj.setLogisimFile(lib);
       }
+      if (lib.requiresTickFrequencyForce())
+        proj.getSimulator().setTickFrequency(lib.getRequiredTickFrequency());
     } catch (LoadFailedException ex) {
       if (!ex.isShown()) {
         OptionPane.showMessageDialog(
