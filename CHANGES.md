@@ -3,6 +3,9 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Reworked the slider component in the I/O extra library
+
+* v3.6.0 (2021-??-??)
   * Introducing project logo.
   * Fixed project loader to correctly handle hex values with a 1 in bit 63rd.
   * Added TTL74x34 hex buffer gate.
