@@ -41,6 +41,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.base.Text;
+import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
@@ -242,6 +243,12 @@ class XmlWriter {
           elt.appendChild(a);
         }
       }
+    }
+    if (source instanceof Clock) {
+      final var a = doc.createElement("a");
+      a.setAttribute("name", "tickFreq");
+      a.setAttribute("val", Double.toString(file.getMainCircuit().getProject().getSimulator().getTickFrequency()));
+      elt.appendChild(a);
     }
   }
 
