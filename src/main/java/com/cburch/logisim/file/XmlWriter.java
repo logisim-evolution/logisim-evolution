@@ -246,7 +246,7 @@ class XmlWriter {
     }
     if (source instanceof Clock) {
       final var a = doc.createElement("a");
-      a.setAttribute("name", "tickFreq");
+      a.setAttribute("name", Clock.FORCED_TICK_FREQUENCY_ATTRIBUTE);
       a.setAttribute("val", Double.toString(file.getMainCircuit().getProject().getSimulator().getTickFrequency()));
       elt.appendChild(a);
     }

@@ -164,7 +164,7 @@ class XmlReader {
           } else {
             attrVal = attrElt.getTextContent();
           }
-          if (attrName.equals("tickFreq")) {
+          if (attrName.equals(Clock.FORCED_TICK_FREQUENCY_ATTRIBUTE)) {
             // Special attribute saved at the clock component, so special treatment
             file.requiresTickFrequencyForce(true);
             try {

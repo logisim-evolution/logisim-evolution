@@ -112,7 +112,6 @@ public class Clock extends InstanceFactory {
 
   private static class ClockState implements InstanceData, Cloneable {
     Value sending = Value.UNKNOWN;
-    int currentTick;
 
     ClockState(int curTick, AttributeSet attrs) {
       updateTick(curTick, attrs);
@@ -178,6 +177,7 @@ public class Clock extends InstanceFactory {
   public static final Clock FACTORY = new Clock();
 
   private static final Icon toolIcon = Icons.getIcon("clock.gif");
+  public static final String FORCED_TICK_FREQUENCY_ATTRIBUTE = "preselectedTickFrequency";
 
   public Clock() {
     super(_ID, S.getter("clockComponent"));
