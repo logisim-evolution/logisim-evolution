@@ -83,8 +83,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Circuit {
   private class EndChangedTransaction extends CircuitTransaction {
@@ -258,8 +256,6 @@ public class Circuit {
   CircuitWires wires = new CircuitWires();
   private final ArrayList<Component> clocks = new ArrayList<>();
   private final CircuitLocker locker;
-
-  static final Logger logger = LoggerFactory.getLogger(Circuit.class);
 
   private final WeakHashMap<Component, Circuit> circuitsUsingThis;
   private final Netlist myNetList;
@@ -819,7 +815,7 @@ public class Circuit {
   public boolean hasConflict(Component comp) {
     return wires.points.hasConflict(comp) || isDoubleMapped(comp);
   }
-  
+
   private boolean isDoubleMapped(Component comp) {
     final var loc = comp.getLocation();
     final var existing = wires.points.getNonWires(loc);
@@ -830,7 +826,7 @@ public class Circuit {
           final var dir1 = comp.getAttributeSet().getValue(Pin.ATTR_TYPE);
           final var dir2 = existingComp.getAttributeSet().getValue(Pin.ATTR_TYPE);
           if (dir1 == dir2) return true;
-        } else { 
+        } else {
           return true;
         }
       }
@@ -846,7 +842,6 @@ public class Circuit {
   }
 
   void mutatorAdd(Component c) {
-    // logger.debug("mutatorAdd: {}", c);
     locker.checkForWritePermission("add", this);
 
     isAnnotated = false;
@@ -916,8 +911,6 @@ public class Circuit {
   }
 
   void mutatorRemove(Component c) {
-    // logger.debug("mutatorRemove: {}", c);
-
     locker.checkForWritePermission("remove", this);
 
     isAnnotated = false;

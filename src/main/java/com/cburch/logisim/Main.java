@@ -44,8 +44,6 @@ import java.io.StringWriter;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.FontUIResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Main {
   /**
@@ -88,8 +86,6 @@ public class Main {
     }
   }
 
-  static final Logger logger = LoggerFactory.getLogger(Main.class);
-
   // @deprecated use BuildInfo instead
   public static final String APP_NAME = BuildInfo.name;
   // @deprecated use BuildInfo instead
@@ -102,7 +98,6 @@ public class Main {
 
   // FloppyDisk unicode character: https://charbase.com/1f4be-unicode-floppy-disk
   public static final String DIRTY_MARKER = "\ud83d\udcbe";
-
 
   public static boolean hasGui() {
     return !headless;
