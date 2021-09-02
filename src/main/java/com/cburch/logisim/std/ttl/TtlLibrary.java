@@ -102,9 +102,4 @@ public class TtlLibrary extends Library {
     }
     return tools;
   }
-
-  @Override
-  public boolean removeLibrary(String name) {
-    return false;
-  }
 }

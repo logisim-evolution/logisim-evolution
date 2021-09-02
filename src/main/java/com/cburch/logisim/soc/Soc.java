@@ -76,8 +76,4 @@ public class Soc  extends Library {
     }
     return tools;
   }
-
-  public boolean removeLibrary(String Name) {
-    return false;
-  }
 }
