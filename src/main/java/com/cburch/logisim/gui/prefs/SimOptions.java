@@ -83,6 +83,8 @@ public class SimOptions extends OptionsPanel {
   private final JLabel widthErrorHighlightColorTitle = new JLabel();
   private final ColorChooserButton widthErrorHighlightColor;
   private final JLabel widthErrorBackgroundColorTitle = new JLabel();
+  private final ColorChooserButton clockFrequencyColor;
+  private final JLabel clockFrequencyColorTitle = new JLabel();
   private final ColorChooserButton widthErrorBackgroundColor;
   private final JButton defaultButton = new JButton();
   private final JButton colorBlindButton = new JButton();
@@ -132,6 +134,7 @@ public class SimOptions extends OptionsPanel {
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
     add(trueColorTitle, c);
+
     c.gridx++;
     trueColor = new ColorChooserButton(window, AppPreferences.TRUE_COLOR);
     add(trueColor, c);
@@ -219,6 +222,21 @@ public class SimOptions extends OptionsPanel {
     c.gridx++;
     widthErrorBackgroundColor = new ColorChooserButton(window, AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR);
     add(widthErrorBackgroundColor, c);
+
+    c.gridx = 0;
+    c.gridy++;
+    add(clockFrequencyColorTitle, c);
+    c.gridx++;
+    clockFrequencyColor = new ColorChooserButton(window, AppPreferences.CLOCK_FREQUENCY_COLOR);
+    add(clockFrequencyColor, c);
+//    c.gridx++;
+//    add(widthErrorBackgroundColorTitle, c);
+//    c.gridx++;
+//    widthErrorBackgroundColor = new ColorChooserButton(window, AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR);
+//    add(widthErrorBackgroundColor, c);
+
+
+
 
     c.gridx = 0;
     c.gridy++;
@@ -364,6 +382,7 @@ public class SimOptions extends OptionsPanel {
     widthErrorCaptionColorTitle.setText(S.get("simWidthErrorCaptionTitle"));
     widthErrorHighlightColorTitle.setText(S.get("simWidthErrorHighlightTitle"));
     widthErrorBackgroundColorTitle.setText(S.get("simWidthErrorBackgroundTitle"));
+    clockFrequencyColorTitle.setText(S.get("simClockFrequencyTitle"));
     defaultButton.setText(S.get("simDefaultColors"));
     colorBlindButton.setText(S.get("simColorBlindColors"));
     kmap1ColorTitle.setText(S.get("simKmapColors", 1));
@@ -397,6 +416,7 @@ public class SimOptions extends OptionsPanel {
     AppPreferences.WIDTH_ERROR_CAPTION_COLOR.set(0x560000);
     AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.set(0xFFFE00);
     AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.set(0xFFE6D2);
+    AppPreferences.CLOCK_FREQUENCY_COLOR.set(0xFF00B4);
     AppPreferences.KMAP1_COLOR.set(0x810000);
     AppPreferences.KMAP2_COLOR.set(0xE7194B);
     AppPreferences.KMAP3_COLOR.set(0xFABEBF);
@@ -428,6 +448,7 @@ public class SimOptions extends OptionsPanel {
     AppPreferences.WIDTH_ERROR_CAPTION_COLOR.set(0x560000);
     AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.set(0xFFFE00);
     AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.set(0xFFE6D2);
+    AppPreferences.CLOCK_FREQUENCY_COLOR.set(0xFF00B4);   // FIXME: Calculate proper color!
     AppPreferences.KMAP1_COLOR.set(0x490092);
     AppPreferences.KMAP2_COLOR.set(0x920000);
     AppPreferences.KMAP3_COLOR.set(0x004949);
@@ -452,57 +473,61 @@ public class SimOptions extends OptionsPanel {
     @Override
     public void preferenceChange(PreferenceChangeEvent evt) {
       var update = false;
-      if (evt.getKey().equals(AppPreferences.TRUE_COLOR.getIdentifier())) {
+      final var key = evt.getKey();
+      if (key.equals(AppPreferences.TRUE_COLOR.getIdentifier())) {
         Value.TRUE_COLOR = new Color(AppPreferences.TRUE_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.TRUE_CHAR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.TRUE_CHAR.getIdentifier())) {
         Value.TRUECHAR = AppPreferences.TRUE_CHAR.get().charAt(0);
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.FALSE_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.FALSE_COLOR.getIdentifier())) {
         Value.FALSE_COLOR = new Color(AppPreferences.FALSE_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.FALSE_CHAR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.FALSE_CHAR.getIdentifier())) {
         Value.FALSECHAR = AppPreferences.FALSE_CHAR.get().charAt(0);
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.UNKNOWN_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.UNKNOWN_COLOR.getIdentifier())) {
         Value.UNKNOWN_COLOR = new Color(AppPreferences.UNKNOWN_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.UNKNOWN_CHAR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.UNKNOWN_CHAR.getIdentifier())) {
         Value.UNKNOWNCHAR = AppPreferences.UNKNOWN_CHAR.get().charAt(0);
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.ERROR_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.ERROR_COLOR.getIdentifier())) {
         Value.ERROR_COLOR = new Color(AppPreferences.ERROR_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.ERROR_CHAR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.ERROR_CHAR.getIdentifier())) {
         Value.ERRORCHAR = AppPreferences.ERROR_CHAR.get().charAt(0);
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.NIL_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.NIL_COLOR.getIdentifier())) {
         Value.NIL_COLOR = new Color(AppPreferences.NIL_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.DONTCARE_CHAR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.DONTCARE_CHAR.getIdentifier())) {
         Value.DONTCARECHAR = AppPreferences.DONTCARE_CHAR.get().charAt(0);
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.BUS_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.BUS_COLOR.getIdentifier())) {
         Value.MULTI_COLOR = new Color(AppPreferences.BUS_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.STROKE_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.STROKE_COLOR.getIdentifier())) {
         Value.STROKE_COLOR = new Color(AppPreferences.STROKE_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.WIDTH_ERROR_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.WIDTH_ERROR_COLOR.getIdentifier())) {
         Value.WIDTH_ERROR_COLOR = new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.getIdentifier())) {
         Value.WIDTH_ERROR_CAPTION_COLOR = new Color(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.getIdentifier())) {
         Value.WIDTH_ERROR_HIGHLIGHT_COLOR = new Color(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.getIdentifier())) {
         Value.WIDTH_ERROR_CAPTION_BGCOLOR = new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
+        update = true;
+      } else if (key.equals(AppPreferences.CLOCK_FREQUENCY_COLOR.getIdentifier())) {
+        Value.CLOCK_FREQUENCY_COLOR = new Color(AppPreferences.CLOCK_FREQUENCY_COLOR.get());
         update = true;
       }
       if (update) {
-        for (Project proj : Projects.getOpenProjects()) proj.getFrame().repaint();
+        for (final var proj : Projects.getOpenProjects()) proj.getFrame().repaint();
       }
     }
   }
