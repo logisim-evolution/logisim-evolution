@@ -49,10 +49,10 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .pair("busName", GetBusName(componentInfo, HexDigit.HEX, nets))
             .pair("bubbleBusName", bubbleBusName)
             .pair("startId", startId)
+            .pair("startId6", startId + 6)
             .pair("regName", LineBuffer.format("s_{{1}}_reg", componentInfo.getComponent().getAttributeSet().getValue(StdAttr.LABEL)))
             .pair("sigName", LineBuffer.format("{{1}}[{{2}}:{{3}}]", bubbleBusName, (startId + 6), startId))
             .pair("dpName", GetNetName(componentInfo, HexDigit.DP, true, nets));
-
     if (HDL.isVHDL()) {
       contents.add("");
       if (componentInfo.isEndConnected(HexDigit.HEX)) {
