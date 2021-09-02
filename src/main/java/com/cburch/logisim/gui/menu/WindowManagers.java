@@ -28,7 +28,6 @@
 
 package com.cburch.logisim.gui.menu;
 
-import com.cburch.logisim.Main;
 import com.cburch.logisim.analyze.gui.AnalyzerManager;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
@@ -76,7 +75,7 @@ public class WindowManagers {
   public static void initialize() {
     if (!initialized) {
       initialized = true;
-      if (Main.ANALYZE) AnalyzerManager.initialize();
+      AnalyzerManager.initialize();
       PreferencesFrame.initializeManager();
       Projects.addPropertyChangeListener(Projects.PROJECT_LIST_PROPERTY, myListener);
       computeListeners();
