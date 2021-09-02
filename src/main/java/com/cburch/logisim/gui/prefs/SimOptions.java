@@ -229,14 +229,6 @@ public class SimOptions extends OptionsPanel {
     c.gridx++;
     clockFrequencyColor = new ColorChooserButton(window, AppPreferences.CLOCK_FREQUENCY_COLOR);
     add(clockFrequencyColor, c);
-//    c.gridx++;
-//    add(widthErrorBackgroundColorTitle, c);
-//    c.gridx++;
-//    widthErrorBackgroundColor = new ColorChooserButton(window, AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR);
-//    add(widthErrorBackgroundColor, c);
-
-
-
 
     c.gridx = 0;
     c.gridy++;
