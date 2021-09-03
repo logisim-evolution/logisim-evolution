@@ -59,6 +59,7 @@ public class LineBuffer implements RandomAccess {
    */
   public LineBuffer() {
     super();
+    addDefaultPairs();
   }
 
   /**
@@ -67,6 +68,7 @@ public class LineBuffer implements RandomAccess {
    * @param line text line to be added to buffer
    */
   public LineBuffer(String line) {
+    this();
     add(line);
   }
 
@@ -79,6 +81,7 @@ public class LineBuffer implements RandomAccess {
    * @param pairs Placeholder pairs to be used.
    */
   public LineBuffer(String line, Pairs pairs) {
+    this();
     addPairs(pairs);
     add(line);
   }
@@ -89,7 +92,7 @@ public class LineBuffer implements RandomAccess {
    * @param pairs Placeholder pairs to be used.
    */
   public LineBuffer(Pairs pairs) {
-    super();
+    this();
     addPairs(pairs);
   }
 
