@@ -967,11 +967,25 @@ public class Circuit {
       timedOut = true;
     }
   }
+  
+  public double getTickFrequency() {
+    return staticAttrs.getValue(CircuitAttributes.SIMULATION_FREQUENCY);
+  }
 
   public void setTickFrequency(double value) {
     final var currentTickFrequency = staticAttrs.getValue(CircuitAttributes.SIMULATION_FREQUENCY); 
     if (value == currentTickFrequency) return;
     staticAttrs.setValue(CircuitAttributes.SIMULATION_FREQUENCY, value);
     if ((proj != null) && (currentTickFrequency > 0)) proj.setForcedDirty();
+  }
+  
+  public double getDownloadFrequency() {
+    return staticAttrs.getValue(CircuitAttributes.DOWNLOAD_FREQUENCY);
+  }
+
+  public void setDownloadFrequency(double value) {
+    if (value == staticAttrs.getValue(CircuitAttributes.DOWNLOAD_FREQUENCY)) return;
+    staticAttrs.setValue(CircuitAttributes.DOWNLOAD_FREQUENCY, value);
+    if (proj != null) proj.setForcedDirty();
   }
 }

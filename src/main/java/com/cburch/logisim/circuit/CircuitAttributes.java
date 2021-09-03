@@ -207,8 +207,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
     LabelVisible = true;
     pinInstances = new Instance[0];
     NameReadOnly = false;
-    // FIXME: enable after debugging
-//    DOWNLOAD_FREQUENCY.setHidden(true);
+    DOWNLOAD_FREQUENCY.setHidden(true);
     SIMULATION_FREQUENCY.setHidden(true);
   }
 
