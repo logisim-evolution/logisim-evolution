@@ -658,8 +658,13 @@ public class Startup implements AWTEventListener {
 
   private static RC handleArgTestFpga(Startup startup, Option opt) {
     final var optArgs = opt.getValues();
-    final var argsCnt = optArgs.length;
 
+    if (optArgs == null) {
+      logger.error(S.get("argTestInvalidArguments"));
+      return RC.QUIT;
+    }
+
+    final var argsCnt = optArgs.length;
     if (argsCnt < 3 || argsCnt > 5) {
       logger.error(S.get("argTestInvalidArguments"));
       return RC.QUIT;
