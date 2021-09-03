@@ -30,12 +30,8 @@ package com.cburch.logisim.tools.move;
 
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class SearchNode implements Comparable<SearchNode> {
-
-  static final Logger logger = LoggerFactory.getLogger(SearchNode.class);
 
   private static final int CROSSING_PENALTY = 20;
   private static final int TURN_PENALTY = 50;
