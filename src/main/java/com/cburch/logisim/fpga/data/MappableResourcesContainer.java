@@ -41,8 +41,6 @@ import org.slf4j.LoggerFactory;
 
 public class MappableResourcesContainer {
 
-  static final Logger logger = LoggerFactory.getLogger(MappableResourcesContainer.class);
-
   private final Circuit myCircuit;
   private final BoardInformation currentUsedBoard;
   private IOComponentsInformation IOcomps;
