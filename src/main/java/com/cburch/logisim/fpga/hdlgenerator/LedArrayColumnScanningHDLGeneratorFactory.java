@@ -265,8 +265,8 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
           generate
              for (i = 0; i < {{nrOfRows}}; i = i + 1) begin
                 assign {{outs}}[i] = (activeLow == 1)
-                    ? ~{{ins}}[i*nrOfColumns+s_columnCounterReg]
-                    : {{ins}}[i*nrOfColumns+s_columnCounterReg];
+                    ? ~{{ins}}[i * nrOfColumns + s_columnCounterReg]
+                    : {{ins}}[i * nrOfColumns + s_columnCounterReg];
              end
           endgenerate
           """);

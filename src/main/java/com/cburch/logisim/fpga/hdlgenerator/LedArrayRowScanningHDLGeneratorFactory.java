@@ -263,7 +263,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
                    ? ~{{ins}}[{{nrOfColumns}} * s_rowCounterReg + i]
                    :  {{ins}}[{{nrOfColumns}} * s_rowCounterReg + i];
              end
-          endgenerate" +
+          endgenerate
           """);
     }
     return contents.getWithIndent();

@@ -61,9 +61,10 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     final var contents = new LineBuffer();
     final var SelectOperator = (HDL.isVHDL()) ? "" : "[" + ACTIVITY_LEVEL_STR + "]";
     contents
+        .addHdlPairs()
         .addRemarkBlock("Here the output signals are defined")
-        .add("   {{1}}Q    {{2}}s_current_state_reg{{3}};", HDL.assignPreamble(), HDL.assignOperator(), SelectOperator)
-        .add("   {{1}}Q_bar{{2}}{{3}}(s_current_state_reg{{4}});", HDL.assignPreamble(), HDL.assignOperator(), HDL.notOperator(), SelectOperator)
+        .add("   {{assign}}Q    {{=}}s_current_state_reg{{1}};", SelectOperator)
+        .add("   {{assign}}Q_bar{{=}}{{not}}(s_current_state_reg{{1}});", SelectOperator)
         .add("")
         .addRemarkBlock("Here the update logic is defined")
         .add(GetUpdateLogic())
@@ -100,7 +101,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
                    s_current_state_reg <= s_next_state;
                 END IF;
              END IF;
-          END PROCESS make_memory;"
+          END PROCESS make_memory;
           """);
     } else {
       if (Netlist.isFlipFlop(attrs)) {

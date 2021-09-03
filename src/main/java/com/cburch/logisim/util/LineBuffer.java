@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -771,7 +771,7 @@ public class LineBuffer implements RandomAccess {
   /* ********************************************************************************************* */
 
   public LineBuffer pair(String key, Object value) {
-    pairs.add(key, value);
+    pairs.pair(key, value);
     return this;
   }
 
@@ -792,17 +792,17 @@ public class LineBuffer implements RandomAccess {
       final var map = new Pairs();
       var idx = 1;
       for (final var arg : args) {
-        map.add(String.valueOf(idx++), "" + arg);
+        map.pair(String.valueOf(idx++), "" + arg);
       }
       return map;
     }
 
 
     public Pairs(String key, Object value) {
-      add(key, value);
+      pair(key, value);
     }
 
-    public Pairs add(String key, Object value) {
+    public Pairs pair(String key, Object value) {
       put(key, value);
       return this;
     }

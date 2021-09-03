@@ -199,8 +199,8 @@ public class AlteraDownload implements VendorDownload {
             
             # Check that the right project is open
             if {[is_project_open]} {
-                if {[string compare $quartus(project) \"{{topLevelName}}\"]} {
-                    puts \"Project {{topLevelName}} is not open\"
+                if {[string compare $quartus(project) "{{topLevelName}}"]} {
+                    puts "Project {{topLevelName}} is not open"
                     set make_assignments 0
                 }
             } else {
@@ -256,9 +256,9 @@ public class AlteraDownload implements VendorDownload {
       for (var i = 0; i < map.getNrOfPins(); i++) {
         if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
           final var pairs = new LineBuffer.Pairs()
-                  .add("pinLoc", map.getPinLocation(i))
-                  .add("inv", map.isExternalInverted(i) ? "n_" : "")
-                  .add("hdlStr", map.getHdlString(i));
+                  .pair("pinLoc", map.getPinLocation(i))
+                  .pair("inv", map.isExternalInverted(i) ? "n_" : "")
+                  .pair("hdlStr", map.getHdlString(i));
           contents.add("set_location_assignment {{pinLoc}} -to {{inv}}{{hdlStr}}", pairs);
           if (map.requiresPullup(i))
             contents.add("set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to {{inv}}{{hdlStr}}", pairs);

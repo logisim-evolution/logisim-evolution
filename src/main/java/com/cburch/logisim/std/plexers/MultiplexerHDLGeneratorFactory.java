@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -63,7 +63,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
                       CASE (Sel) IS
                 """);
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++)
-        contents.add("         WHEN {{1}} => MuxOut <= MuxIn_{{2}} ", IntToBin(i, nrOfSelectBits), i);
+        contents.add("         WHEN {{1}} => MuxOut <= MuxIn_{{2}};", IntToBin(i, nrOfSelectBits), i);
       contents.add("         WHEN OTHERS  => MuxOut <= MuxIn_{{1}};", (1 << nrOfSelectBits) - 1)
               .add("""
                          END CASE; 

@@ -22,12 +22,12 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
 
   static final LineBuffer.Pairs sharedPairs =
       new LineBuffer.Pairs()
-          .add("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
-          .add("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
-          .add("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
-          .add("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs)
-          .add("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs)
-          .add("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs);
+          .pair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
+          .pair("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
+          .pair("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
+          .pair("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs)
+          .pair("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs)
+          .pair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs);
 
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
@@ -45,7 +45,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
                      {{outsB}} => {{outsB}}{{id}},
                      {{insR}} => s_{{insR}}{{id}},
                      {{insG}} => s_{{insG}}{{id}},
-                     {{insB}} => s_{{insB}}{{id}});
+                     {{insB}} => s_{{insB}}{{id}} );
           """);
     } else {
       contents.add("""

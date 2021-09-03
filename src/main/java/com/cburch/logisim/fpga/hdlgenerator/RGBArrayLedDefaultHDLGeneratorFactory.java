@@ -24,13 +24,13 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
   private static final LineBuffer.Pairs sharedPairs =
       new LineBuffer.Pairs() {
         {
-          add("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs);
-          add("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs);
-          add("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs);
-          add("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs);
-          add("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs);
-          add("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs);
-          add("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
+          pair("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs);
+          pair("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs);
+          pair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs);
+          pair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs);
+          pair("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs);
+          pair("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs);
+          pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
         }
       };
 

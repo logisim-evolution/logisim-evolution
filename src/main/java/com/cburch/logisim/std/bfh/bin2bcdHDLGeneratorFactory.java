@@ -206,8 +206,8 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   s_level_10(15 DOWNTO 13) <= s_level_9(15 DOWNTO 13);
                   s_level_10(0)            <= s_level_9(0);
                   
-                  BCD1    <= s_level_10( 3 DOWNTO  0 );
-                  BCD10   <= s_level_10( 7 DOWNTO  4 );
+                  BCD1    <= s_level_10( 3 DOWNTO  0);
+                  BCD10   <= s_level_10( 7 DOWNTO  4);
                   BCD100  <= s_level_10(11 DOWNTO  8);
                   BCD1000 <= s_level_10(15 DOWNTO 12);
                   """)

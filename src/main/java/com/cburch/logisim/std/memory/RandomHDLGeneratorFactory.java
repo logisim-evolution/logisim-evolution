@@ -57,7 +57,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       contents.add("""
           Q            <= s_output_reg;
           s_InitSeed   <= X"0005DEECE66D" WHEN {{seed}} = 0 ELSE
-                          X"0000"&std_logic_vector(to_unsigned({{seed}}, 32))
+                          X"0000"&std_logic_vector(to_unsigned({{seed}}, 32));
           s_reset      <= '1' WHEN s_reset_reg /= "010" ELSE '0';
           s_reset_next <= "010" WHEN (s_reset_reg = "101" OR
                                       s_reset_reg = "010") AND
@@ -68,7 +68,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                                    (s_reset_reg = "101" AND clear = '0') ELSE '0';
           s_mult_shift_next <= (OTHERS => '0') WHEN s_reset = '1' ELSE
                                X"5DEECE66D" WHEN s_start_reg = '1' ELSE
-                               '0'&s_mult_shift_reg(35 DOWNTO 1)
+                               '0'&s_mult_shift_reg(35 DOWNTO 1);
           s_seed_shift_next <= (OTHERS => '0') WHEN s_reset = '1' ELSE
                                s_current_seed WHEN s_start_reg = '1' ELSE
                                s_seed_shift_reg(46 DOWNTO 0)&'0';
@@ -76,17 +76,17 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           
           s_mac_lo_in_1     <= (OTHERS => '0') WHEN s_start_reg = '1' OR
                                                     s_reset = '1' ELSE
-                               '0'&s_mac_lo_reg(23 DOWNTO 0)
+                               '0'&s_mac_lo_reg(23 DOWNTO 0);
           s_mac_lo_in_2     <= '0'&X"00000B"
                                   WHEN s_start_reg = '1' ELSE
                                '0'&s_seed_shift_reg(23 DOWNTO 0) 
                                   WHEN s_mult_shift_reg(0) = '1' ELSE
-                               (OTHERS => '0')
+                               (OTHERS => '0');
           s_mac_hi_in_2     <= (OTHERS => '0') WHEN s_start_reg = '1' ELSE
                                s_mac_hi_reg;
           s_mac_hi_1_next   <= s_seed_shift_reg(47 DOWNTO 24) 
                                   WHEN s_mult_shift_reg(0) = '1' ELSE
-                               (OTHERS => '0')
+                               (OTHERS => '0');
           s_busy_pipe_next  <= "00" WHEN s_reset = '1' ELSE
                                s_busy_pipe_reg(0)&s_mult_busy;
           
@@ -95,7 +95,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
              IF (GlobalClock'event AND (GlobalClock = '1')) THEN
                 IF (s_reset = '1') THEN s_current_seed <= s_InitSeed;
                 ELSIF (s_busy_pipe_reg = "10") THEN
-                   s_current_seed <= s_mac_hi_reg&s_mac_lo_reg(23 DOWNTO 0 ,
+                   s_current_seed <= s_mac_hi_reg&s_mac_lo_reg(23 DOWNTO 0);
                 END IF;
              END IF;
           END PROCESS make_current_seed;
@@ -106,10 +106,10 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
              IF (GlobalClock'event AND (GlobalClock = '1')) THEN
                 s_mult_shift_reg <= s_mult_shift_next;
                 s_seed_shift_reg <= s_seed_shift_next;
-                s_mac_lo_reg     <= std_logic_vector(unsigned(s_mac_lo_in_1)+unsigned(s_mac_lo_in_2),
+                s_mac_lo_reg     <= std_logic_vector(unsigned(s_mac_lo_in_1)+unsigned(s_mac_lo_in_2);
                 s_mac_hi_1_reg   <= s_mac_hi_1_next;
                 s_mac_hi_reg     <= std_logic_vector(unsigned(s_mac_hi_1_reg)+unsigned(s_mac_hi_in_2)+
-                                    unsigned(s_mac_lo_reg(24 DOWNTO 24)),
+                                    unsigned(s_mac_lo_reg(24 DOWNTO 24));
                 s_busy_pipe_reg  <= s_busy_pipe_next;
              END IF;
           END PROCESS make_shift_regs;
@@ -177,8 +177,8 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 s_reset_reg      <= s_reset_next;
           end
           
-             always @(posedge GlobalClock)
-           begin
+          always @(posedge GlobalClock)
+          begin
              if (s_reset) s_output_reg <= s_InitSeed[({{nrOfBits}}-1):0];
              else if (ClockEnable&enable) s_output_reg <= s_current_seed[({{nrOfBits}}+11):12];
           end

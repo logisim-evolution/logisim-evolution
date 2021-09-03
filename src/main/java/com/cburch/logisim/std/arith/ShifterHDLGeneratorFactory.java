@@ -159,7 +159,10 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   private ArrayList<String> GetStageFunctionalityVerilog(int stageNumber, int nrOfBits) {
     final var contents = (new LineBuffer())
-            .pair("shiftMode", shiftModeStr);
+            .pair("shiftMode", shiftModeStr)
+            .pair("stageNumber", stageNumber)
+            .pair("nrOfBits1", nrOfBits - 1)
+            .pair("nrOfBits2", nrOfBits - 2);
     final var nrOfBitsToShift = (1 << stageNumber);
     contents.add("""
           "/***************************************************************************
@@ -170,24 +173,22 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (stageNumber == 0) {
       contents.add("""
           assign s_stage_0_shiftin = (({{shiftMode}} == 1) || ({{shiftMode}} == 3))
-               ? DataA[{{shiftMode}}] : ({{nrOfBitsA}} == 4) ? DataA[0] : 0;
+               ? DataA[{{shiftMode}}] : ({{nrOfBits1}} == 4) ? DataA[0] : 0;
           
           assign s_stage_0_result  = (ShiftAmount == 0)
                ? DataA
                : (({{shiftMode}} == 0) || ({{shiftMode}} == 1))
-                  ? {DataA[{{nrOfBitsB}}:0],s_stage_0_shiftin}
-                  : {s_stage_0_shiftin,DataA[{{nrOfBitsA}}:1]};
+                  ? {DataA[{{nrOfBits2}}:0],s_stage_0_shiftin}
+                  : {s_stage_0_shiftin,DataA[{{nrOfBits1}}:1]};
           
-          """, (new LineBuffer.Pairs().add("nrOfBitsA", nrOfBits - 1).add("nrOfBitsB", (nrOfBits - 2))));
+          """);
     } else {
       final var pairs =
           (new LineBuffer.Pairs())
-              .add("stageNumber", stageNumber)
-              .add("stageNumber1", stageNumber - 1)
-              .add("nrOfBitsToShift", nrOfBitsToShift)
-              .add("nrOfBits1", nrOfBits - 1)
-              .add("bitsShiftDiff", (nrOfBits - nrOfBitsToShift))
-              .add("bitsShiftDiff1", (nrOfBits - nrOfBitsToShift - 1));
+              .pair("stageNumber1", stageNumber - 1)
+              .pair("nrOfBitsToShift", nrOfBitsToShift)
+              .pair("bitsShiftDiff", (nrOfBits - nrOfBitsToShift))
+              .pair("bitsShiftDiff1", (nrOfBits - nrOfBitsToShift - 1));
 
       contents.add("""
           assign s_stage_{{stageNumber}}_shiftin = ({{shiftMode}} == 1) ?
@@ -197,8 +198,8 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                                      ({{shiftMode}} == 4) ?
                                      s_stage_{{stageNumber1}}_result[{{nrOfBitsToShift1}}:0] : 0;
 
-          assign s_stage_{{1}}_result  = (ShiftAmount[{{stageNumber}}]==0) ?
-                                     s_stage_{{1}}_result : ", (stageNumber - 1))
+          assign s_stage_{{stageNumber1}}_result  = (ShiftAmount[{{stageNumber}}]==0) ?
+                                     s_stage_{{stageNumber1}}_result :
                                      (({{shiftMode}} == 0)||({{shiftMode}} == 1)) ?
                                      {s_stage_{{stageNumber1}}_result[{{bitsShiftDiff1}}:0],s_stage_{{stageNumber}}_shiftin} :
                                      {s_stage_{{stageNumber}}_shiftin,s_stage_{{stageNumber1}}_result[{{nrOfBits1}}:{{nrOfBitsToShift}}]};
@@ -209,15 +210,25 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   private ArrayList<String> GetStageFunctionalityVHDL(int stageNumber, int nrOfBits) {
-    final var contents = (new LineBuffer()).pair("shiftMode", shiftModeStr);
-
     final var nrOfBitsToShift = (1 << stageNumber);
+    final var contents =
+      (new LineBuffer())
+        .pair("shiftMode", shiftModeStr)
+        .pair("stageNumber", stageNumber)
+        .pair("stageNumber1", stageNumber - 1)
+        .pair("nrOfBits1", nrOfBits - 1)
+        .pair("nrOfBits2", nrOfBits - 2)
+        .pair("bitsShiftDiff", (nrOfBits - nrOfBitsToShift))
+        .pair("bitsShiftDiff1", (nrOfBits - nrOfBitsToShift - 1))
+        .pair("nrOfBitsToShift", nrOfBitsToShift)
+        .pair("nrOfBitsToShift1", nrOfBitsToShift - 1);
+
     contents.add("""
         -----------------------------------------------------------------------------
-        --- Here stage {{1}} of the binary shift tree is defined
+        --- Here stage {{stageNumber}} of the binary shift tree is defined
         -----------------------------------------------------------------------------
           
-        """, new LineBuffer.Pairs("stageNumber", stageNumber));
+        """);
 
     if (stageNumber == 0) {
       contents
@@ -229,21 +240,25 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               (nrOfBits == 2)
                   ? "                        WHEN ShiftAmount = '0' ELSE"
                   : "                        WHEN ShiftAmount(0) = '0' ELSE")
-          .add("                     DataA({{1}} DOWNTO 0)&s_stage_0_shiftin", (nrOfBits - 2))
-          .add("                        WHEN {{shiftMode}} = 0 OR {{shiftMode}} = 1 ELSE")
-          .add("                     s_stage_0_shiftin&DataA( {{1}} DOWNTO 1 );", (nrOfBits - 1));
+          .add("""
+                               DataA({{nrOfBits2}} DOWNTO 0)&s_stage_0_shiftin
+                                  WHEN {{shiftMode}} = 0 OR {{shiftMode}} = 1 ELSE
+                               s_stage_0_shiftin&DataA( {{nrOfBits2}} DOWNTO 1 );
+          """);
     } else {
       contents
-          .add("s_stage_{{1}}_shiftin <= s_stage_{{2}}_result( {{3}} DOWNTO {{4}} ) WHEN {{shiftMode}} = 1 ELSE", stageNumber, (stageNumber - 1), (nrOfBits - 1), (nrOfBits - nrOfBitsToShift))
-          .add("                     (OTHERS => s_stage_{{1}}_result({{2}})) WHEN {{shiftMode}} = 3 ELSE", (stageNumber - 1), (nrOfBits - 1))
-          .add("                     s_stage_{{1}}_result( {{2}} DOWNTO 0 ) WHEN {{shiftMode}} = 4 ELSE", (stageNumber - 1), (nrOfBitsToShift - 1))
-          .add("                     (OTHERS => '0');")
-          .empty()
-          .add("s_stage_{{1}}_result  <= s_stage_{{2}}_result", stageNumber, (stageNumber - 1))
-          .add("                        WHEN ShiftAmount({{1}}) = '0' ELSE", stageNumber)
-          .add("                     s_stage_{{1}}_result( {{2}} DOWNTO 0 )&s_stage_{{3}}_shiftin", (stageNumber - 1), (nrOfBits - nrOfBitsToShift - 1), stageNumber)
-          .add("                        WHEN {{shiftMode}} = 0 OR {{shiftMode}} = 1 ELSE")
-          .add("                     s_stage_{{1}}_shiftin&s_stage_{{2}}_result( {{3}} DOWNTO {{4}} );", stageNumber, (stageNumber - 1), (nrOfBits - 1), nrOfBitsToShift);
+          .add("""
+            s_stage_{{stageNumber}}_shiftin <= s_stage_{{stageNumber1}}_result( {{nrOfBits1}} DOWNTO {{bitsShiftDiff}} ) WHEN {{shiftMode}} = 1 ELSE
+                                 (OTHERS => s_stage_{{stageNumber1}}_result({{stageNumber1}})) WHEN {{shiftMode}} = 3 ELSE
+                                 s_stage_{{stageNumber1}}_result( {{nrOfBitsToShift1}} DOWNTO 0 ) WHEN {{shiftMode}} = 4 ELSE
+                                 (OTHERS => '0');
+            
+            s_stage_{{stageNumber}}_result  <= s_stage_{{stageNumber1}}_result
+                                    WHEN ShiftAmount({{stageNumber}}) = '0' ELSE
+                                 s_stage_{{stageNumber1}}_result( {{bitsShiftDiff1}} DOWNTO 0 )&s_stage_{{stageNumber}}_shiftin
+                                    WHEN {{shiftMode}} = 0 OR {{shiftMode}} = 1 ELSE
+                                 s_stage_{{stageNumber}}_shiftin&s_stage_{{stageNumber1}}_result( {{nrOfBits1}} DOWNTO {{nrOfBitsToShift}} );
+            """);
     }
     contents.empty();
     return contents.getWithIndent();

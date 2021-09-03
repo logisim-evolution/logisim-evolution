@@ -37,8 +37,8 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   private LineBuffer.Pairs sharedPairs =
       new LineBuffer.Pairs() {
         {
-          add("nrOfStages", NR_OF_STAGES_STR);
-          add("activeLevel", ACTIVE_LEVEL_STR);
+          pair("nrOfStages", NR_OF_STAGES_STR);
+          pair("activeLevel", ACTIVE_LEVEL_STR);
         }
       };
 
