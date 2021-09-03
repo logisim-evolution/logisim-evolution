@@ -47,6 +47,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import javax.help.UnsupportedOperationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * VHDL simulator allows Logisim to simulate the behavior of VHDL architectures. It delegate this
@@ -62,6 +64,8 @@ public class VhdlSimulatorTop implements CircuitListener {
   private final VhdlSimulatorTclComp tclRun = new VhdlSimulatorTclComp(this);
   private VhdlSimulatorTclBinder tclBinder;
   private final SocketClient socketClient = new SocketClient();
+
+  public static final Logger logger = LoggerFactory.getLogger(VhdlSimulatorTop.class);
 
   private final Project project;
 
@@ -210,7 +214,7 @@ public class VhdlSimulatorTop implements CircuitListener {
           Paths.get(VhdlSimConstants.SIM_COMP_PATH + "modelsim.ini"),
           StandardCopyOption.REPLACE_EXISTING);
     } catch (IOException e) {
-      VhdlSimConstants.logger.error("Cannot copy simulation files: {}", e.getMessage());
+      VhdlSimulatorTop.logger.error("Cannot copy simulation files: {}", e.getMessage());
       e.printStackTrace();
     }
 

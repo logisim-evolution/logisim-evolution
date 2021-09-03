@@ -4,6 +4,19 @@
 
 * @dev (????-??-??)
   * Reworked the slider component in the I/O extra library
+  * Tick clock frequency display moved to left corner. It's also bigger and text color is configurable.
+  * Completely rewritten command line argument parser:
+    * All options have both short and long version now,
+    * All long arguments require `--` prefix i.e. `--version`,
+    * All long arguments require single `-` as prefix i.e. `-v`,
+    * `-clearprefs` is now `--clear-prefs` or `-cp`,
+    * `-clearprops` option is removed (use `--clear-prefs` instead),
+    * `-geom` is now `--geometry`,
+    * `-nosplash` is now `--no-splash` or `-ns,
+    * `-sub` is now `--substitute` or `-s`,
+    * `-testvector` is now `--test-vector` or `-w`,
+    * `-test-fpga-implementation` is now `--test-fpga` or `-f`,
+    * `-questa` is removed.
   * The selected tick-frequency is now written to the .circ file and restored upon reading.
 
 * v3.6.0 (2021-??-??)

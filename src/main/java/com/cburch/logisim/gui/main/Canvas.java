@@ -118,7 +118,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   private static final Color SIM_EXCEPTION_COLOR = DEFAULT_ERROR_COLOR;
   private static final Font ERR_MSG_FONT = new Font("Sans Serif", Font.BOLD, 18);
   private static final Color TICK_RATE_COLOR = new Color(0, 0, 92, 92);
-  private static final Font TICK_RATE_FONT = new Font("serif", Font.BOLD, 12);
+  private static final Font TICK_RATE_FONT = new Font("Monospaced", Font.PLAIN, 28);
   private static final Color SINGLE_STEP_MSG_COLOR = Color.BLUE;
   private static final Font SINGLE_STEP_MSG_FONT = new Font("Sans Serif", Font.BOLD, 12);
   public static final Color DEFAULT_ZOOM_BUTTON_COLOR = Color.WHITE;
@@ -1282,13 +1282,14 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
           GraphicsUtil.drawArrow2(g, 30, sz.height - 5, 5, sz.height - 5, 5, sz.height - 30);
       } else zoomButtonVisible = false;
       if (AppPreferences.SHOW_TICK_RATE.getBoolean()) {
-        String hz = tickCounter.getTickRate();
+        final var hz = tickCounter.getTickRate();
         if (hz != null && !hz.equals("")) {
-          g.setColor(TICK_RATE_COLOR);
+          final var fm = g.getFontMetrics();
+          int x = 10;
+          int y = fm.getAscent() + 10;
+
+          g.setColor(new Color(AppPreferences.CLOCK_FREQUENCY_COLOR.get()));
           g.setFont(TICK_RATE_FONT);
-          FontMetrics fm = g.getFontMetrics();
-          int x = getWidth() - fm.stringWidth(hz) - 5;
-          int y = fm.getAscent() + 5;
           g.drawString(hz, x, y);
         }
       }

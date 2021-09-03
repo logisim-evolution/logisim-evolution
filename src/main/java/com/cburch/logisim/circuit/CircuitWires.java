@@ -598,7 +598,7 @@ class CircuitWires {
         masterBundleMap = ret;
       } catch (Exception t) {
         ret.invalidate();
-        logger.error("{}", t.getLocalizedMessage());
+        logger.error(t.getLocalizedMessage());
       }
       return ret;
     } else {
