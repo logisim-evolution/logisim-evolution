@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.start;
@@ -229,7 +210,9 @@ public class Startup implements AWTEventListener {
   protected static RC printHelp(Options opts) {
     printVersion();
     System.out.println();
-    (new HelpFormatter()).printHelp(Main.APP_NAME, null, opts, null, true);
+    final var formatter = new HelpFormatter();
+    formatter.setWidth(100);  // Arbitrary chosen value.
+    formatter.printHelp(Main.APP_NAME, null, opts, null, true);
     return RC.QUIT;
   }
 
@@ -321,9 +304,9 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argLocaleOption", ARG_LOCALE, ARG_LOCALE_LONG, 1);
     addOption(opts, "argTemplateOption", ARG_TEMPLATE, ARG_TEMPLATE_LONG, 1);
     addOption(opts, "argNoSplashOption", ARG_NO_SPLASH, ARG_NO_SPLASH_LONG);
-    addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR, ARG_TEST_VECTOR_LONG, 2);    // FIXME: NO LANG STR FOR IT!
-    addOption(opts, "argTestCircuit", ARG_TEST_CIRCUIT, ARG_TEST_CIRCUIT_LONG, 1);   // FIXME add "Option" suffix to key name
-    addOption(opts, "argTestCircGen", ARG_TEST_CIRC_GEN, ARG_TEST_CIRC_GEN_LONG, 2);   // FIXME add "Option" suffix to key name
+    addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR, ARG_TEST_VECTOR_LONG, 2);
+    addOption(opts, "argTestCircuitOption", ARG_TEST_CIRCUIT, ARG_TEST_CIRCUIT_LONG, 1);   // FIXME add "Option" suffix to key name
+    addOption(opts, "argTestCircGenOption", ARG_TEST_CIRC_GEN, ARG_TEST_CIRC_GEN_LONG, 2);   // FIXME add "Option" suffix to key name
 
     CommandLine cmd;
     try {
@@ -521,11 +504,11 @@ public class Startup implements AWTEventListener {
   }
 
   private static RC handleArgGates(Startup startup, Option opt) {
-    final var gateShape = opt.getValue();
-    if ("shaped".equals(gateShape)) {
+    final var gateShape = opt.getValue().toLowerCase();
+    if ("ansi".equals(gateShape)) {
       AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
       return RC.OK;
-    } else if ("rectangular".equals(gateShape)) {
+    } else if ("iec".equals(gateShape)) {
       AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_RECTANGULAR);
       return RC.OK;
     }
