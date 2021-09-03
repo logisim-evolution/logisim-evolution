@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.memory;
@@ -68,7 +49,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             .add(FileWriter.getGenerateRemark(componentName, nets.projName()));
     if (HDL.isVHDL()) {
       contents
-          .add(
+          .addLines(
               "ARCHITECTURE NoPlatformSpecific OF SingleBitShiftReg IS",
               "",
               "   SIGNAL s_state_reg  : std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 );",
@@ -95,7 +76,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           .empty(3);
     } else {
       contents
-          .add(
+          .addLines(
               "module SingleBitShiftReg ( Reset,",
               "                           Tick,",
               "                           Clock,",
@@ -151,7 +132,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public ArrayList<String> GetComponentDeclarationSection(Netlist nets, AttributeSet attrs) {
     return (new LineBuffer(sharedPairs))
-        .add(
+        .addLines(
             "COMPONENT SingleBitShiftReg",
             "   GENERIC ( {{activeLevel}} : INTEGER;",
             "             {{nrOfStages}}  : INTEGER );",
@@ -181,7 +162,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       contents
           .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
           .add(FileWriter.getExtendedLibrary())
-          .add(
+          .addLines(
               "ENTITY SingleBitShiftReg IS",
               "   GENERIC ( {{activeLevel}} : INTEGER;",
               "             {{nrOfStages}}  : INTEGER);",
@@ -218,7 +199,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = new LineBuffer(sharedPairs);
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "GenBits : FOR n IN ({{nrOfBits}}-1) DOWNTO 0 GENERATE",
           "   OneBit : SingleBitShiftReg",
           "   GENERIC MAP ( {{activeLevel}} => {{activeLevel}},",
@@ -234,7 +215,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           "              Q           => Q( ((n+1) * {{nrOfStages}})-1 DOWNTO (n*{{nrOfStages}})));",
           "END GENERATE genbits;");
     } else {
-      contents.add(
+      contents.addLines(
           "genvar n;",
           "generate",
           "   for (n = 0 ; n < {{nrOfBits}}; n=n+1)",
@@ -277,7 +258,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var map = new TreeMap<String, Integer>();
-    final var attrs = componentInfo.GetComponent().getAttributeSet();
+    final var attrs = componentInfo.getComponent().getAttributeSet();
     var activeLevel = 1;
     var gatedClock = false;
     var activeLow = false;
@@ -306,10 +287,10 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     var gatedClock = false;
     var hasClock = true;
     var activeLow = false;
-    final var attrs = comp.GetComponent().getAttributeSet();
+    final var attrs = comp.getComponent().getAttributeSet();
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
-    if (!comp.EndIsConnected(ShiftRegister.CK)) {
+    if (!comp.isEndConnected(ShiftRegister.CK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Shift Register\" in circuit \""
               + nets.getCircuitName()
@@ -322,7 +303,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     final var hasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD);
     map.putAll(GetNetMap("Reset", true, comp, ShiftRegister.CLR, nets));
     if (hasClock && !gatedClock) {
-      if (nets.RequiresGlobalClockConnection()) {
+      if (nets.requiresGlobalClockConnection()) {
         map.put(
             "Tick",
             clockNetName

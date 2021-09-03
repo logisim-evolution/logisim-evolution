@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.arith;
@@ -60,11 +41,11 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = (new LineBuffer())
-            .addPair("shiftMode", shiftModeStr);
+            .pair("shiftMode", shiftModeStr);
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
       contents
-          .add(
+          .addLines(
               "-----------------------------------------------------------------------------",
               "--- ShifterMode represents when:                                          ---",
               "--- 0 : Logical Shift Left                                                ---",
@@ -76,7 +57,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           .empty(2);
 
       if (nrOfBits == 1) {
-        contents.add(
+        contents.addLines(
             "Result <= DataA WHEN {{shiftMode}} = 1 OR",
             "                     {{shiftMode}} = 3 OR",
             "                     {{shiftMode}} = 4 ELSE DataA AND NOT(ShiftAmount);");
@@ -85,7 +66,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           contents.add(GetStageFunctionalityVHDL(stage, nrOfBits));
         }
         contents
-            .add(
+            .addLines(
                 "-----------------------------------------------------------------------------",
                 "--- Here we assign the result                                             ---",
                 "-----------------------------------------------------------------------------",
@@ -95,7 +76,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     } else {
       contents
-          .add(
+          .addLines(
               "/***************************************************************************",
               " ** ShifterMode represents when:                                          **",
               " ** 0 : Logical Shift Left                                                **",
@@ -107,7 +88,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           .empty(2);
 
       if (nrOfBits == 1) {
-        contents.add(
+        contents.addLines(
             "assign Result = ( ({{shiftMode}} == 1) ||",
             "                  ({{shiftMode}} == 3) ||",
             "                  ({{shiftMode}} == 4) ) ? DataA : DataA&(~ShiftAmount);");
@@ -116,7 +97,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           contents.add(GetStageFunctionalityVerilog(stage, nrOfBits));
         }
         contents
-            .add(
+            .addLines(
                 "/***************************************************************************",
                 " ** Here we assign the result                                             **",
                 " ***************************************************************************/")
@@ -153,7 +134,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var parameterMap = new TreeMap<String, Integer>();
-    Object shift = ComponentInfo.GetComponent().getAttributeSet().getValue(Shifter.ATTR_SHIFT);
+    Object shift = ComponentInfo.getComponent().getAttributeSet().getValue(Shifter.ATTR_SHIFT);
     if (shift == Shifter.SHIFT_LOGICAL_LEFT) parameterMap.put(shiftModeStr, 0);
     else if (shift == Shifter.SHIFT_ROLL_LEFT) parameterMap.put(shiftModeStr, 1);
     else if (shift == Shifter.SHIFT_LOGICAL_RIGHT) parameterMap.put(shiftModeStr, 2);
@@ -175,7 +156,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   private ArrayList<String> GetStageFunctionalityVerilog(int stageNumber, int nrOfBits) {
     final var contents = (new LineBuffer())
-            .addPair("shiftMode", shiftModeStr);
+            .pair("shiftMode", shiftModeStr);
     final var nrOfBitsToShift = (1 << stageNumber);
     contents
         .add("/***************************************************************************")
@@ -213,7 +194,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   private ArrayList<String> GetStageFunctionalityVHDL(int stageNumber, int nrOfBits) {
-    final var contents = (new LineBuffer()).addPair("shiftMode", shiftModeStr);
+    final var contents = (new LineBuffer()).pair("shiftMode", shiftModeStr);
 
     final var nrOfBitsToShift = (1 << stageNumber);
     contents

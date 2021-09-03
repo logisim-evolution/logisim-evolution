@@ -1,34 +1,18 @@
 /*
- * This file is part of logisim-evolution.
- *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
+ * 
+ * https://github.com/logisim-evolution/
+ * 
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.util;
 
 import com.cburch.draw.util.TextMetrics;
+import com.cburch.logisim.circuit.RadixOption;
+import com.cburch.logisim.data.Value;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -75,13 +59,28 @@ public class GraphicsUtil {
     drawText(g, text, x, y, H_CENTER, V_CENTER);
   }
 
-  public static void drawCenteredText(
-      Graphics g, Font font, String text, int x, int y, Color fg, Color bg) {
+  public static void drawCenteredText(Graphics g, Font font, String text, int x, int y, Color fg, Color bg) {
     drawText(g, text, x, y, H_CENTER, V_CENTER);
   }
 
-  public static void drawCenteredColoredText(
-      Graphics g, String text, Color fg, Color bg, int x, int y) {
+  public static void drawCenteredValue(Graphics2D gfx, Value value, RadixOption radix, int x, int y) {
+    final var valueString = radix.toString(value);
+    final var radixIdentifier = radix.GetIndexChar();
+    final var fontMetrics = gfx.getFontMetrics();
+    final var valueBounds = fontMetrics.getStringBounds(valueString, gfx);
+    gfx.drawString(valueString, x - (int) (valueBounds.getWidth() / 2), y + (int) (valueBounds.getHeight() / 2));
+    gfx.scale(0.7, 0.7);
+    final var radixBounds = fontMetrics.getStringBounds(radixIdentifier, gfx);
+    final var currentColor = gfx.getColor();
+    gfx.setColor(Color.BLUE);
+    final var radixXpos = x + (valueBounds.getWidth() / 2) + 1;
+    final var radixYpos = y + valueBounds.getHeight() - (radixBounds.getHeight() / 3);
+    gfx.drawString(radixIdentifier, (int) (radixXpos / 0.7), (int) (radixYpos / 0.7));
+    gfx.scale(1 / 0.7, 1 / 0.7);
+    gfx.setColor(currentColor);
+  }
+
+  public static void drawCenteredColoredText(Graphics g, String text, Color fg, Color bg, int x, int y) {
     drawText(g, text, x, y, H_CENTER, V_CENTER, fg, bg);
   }
 

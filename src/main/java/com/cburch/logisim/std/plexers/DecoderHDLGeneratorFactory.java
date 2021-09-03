@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.plexers;
@@ -61,11 +42,11 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var space = " ";
     for (var i = 0; i < numOutputs; i++) {
       if (i == 7) space = "";
-      contents.addPair("bin", IntToBin(i, nrOfSelectBits))
-              .addPair("space", space)
-              .addPair("i", i);
+      contents.pair("bin", IntToBin(i, nrOfSelectBits))
+              .pair("space", space)
+              .pair("i", i);
       if (HDL.isVHDL()) {
-        contents.add(
+        contents.addLines(
             "DecoderOut_{{i}}{{space}}<= '1' WHEN sel = {{bin}} AND",
             "DecoderOut_{{i}}{{space}}<= '1' WHEN sel = {{bin}} AND",
             "{{space}}                             Enable = '1' ELSE '0';");
@@ -91,7 +72,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var comp = (NetlistComponent) mapInfo;
     final var nrOfSelectBits =
-        comp.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
+        comp.getComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     final var selectInputIndex = (1 << nrOfSelectBits);
     // first outputs
     for (var i = 0; i < selectInputIndex; i++)
@@ -100,7 +81,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.putAll(GetNetMap("Sel", true, comp, selectInputIndex, nets));
 
     // now connect enable input...
-    if (comp.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_ENABLE).booleanValue()) {
+    if (comp.getComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_ENABLE).booleanValue()) {
       map.putAll(GetNetMap("Enable", false, comp, selectInputIndex + 1, nets));
     } else {
       map.put("Enable", HDL.oneBit());

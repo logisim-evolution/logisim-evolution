@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.hdlgenerator;
@@ -258,7 +239,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.empty();
         Contents.addRemarkBlock("Here all module parameters are defined with a dummy value");
         for (final var param : params.keySet()) {
-          Contents.add("   parameter %s = 1;", params.get(param));
+          Contents.add("   parameter {{1}} = 1;", params.get(param));
         }
         Contents.empty();
       }
@@ -421,12 +402,12 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Netlist theNets) {
 
     var contents = new StringBuilder();
-    if ((endIndex >= 0) && (endIndex < comp.NrOfEnds())) {
+    if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
       final var thisEnd = comp.getEnd(endIndex);
-      final var isOutput = thisEnd.IsOutputEnd();
-      final var nrOfBits = thisEnd.NrOfBits();
+      final var isOutput = thisEnd.isOutputEnd();
+      final var nrOfBits = thisEnd.getNrOfBits();
       if ((nrOfBits > 1) && (bitindex >= 0) && (bitindex < nrOfBits)) {
-        if (thisEnd.GetConnection((byte) bitindex).GetParentNet() == null) {
+        if (thisEnd.get((byte) bitindex).getParentNet() == null) {
           /* The net is not connected */
           if (isOutput) {
             contents.append(HDL.unconnected(false));
@@ -434,14 +415,14 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             contents.append(HDL.GetZeroVector(1, floatingNetTiedToGround));
           }
         } else {
-          final var connectedNet = thisEnd.GetConnection((byte) bitindex).GetParentNet();
-          final var connectedNetBitIndex = thisEnd.GetConnection((byte) bitindex).GetParentNetBitIndex();
+          final var connectedNet = thisEnd.get((byte) bitindex).getParentNet();
+          final var connectedNetBitIndex = thisEnd.get((byte) bitindex).getParentNetBitIndex();
           if (!connectedNet.isBus()) {
-            contents.append(NetName).append(theNets.GetNetId(connectedNet));
+            contents.append(NetName).append(theNets.getNetId(connectedNet));
           } else {
             contents
                 .append(BusName)
-                .append(theNets.GetNetId(connectedNet))
+                .append(theNets.getNetId(connectedNet))
                 .append(HDL.BracketOpen())
                 .append(connectedNetBitIndex)
                 .append(HDL.BracketClose());
@@ -453,57 +434,57 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   public static String GetBusNameContinues(NetlistComponent comp, int EndIndex, Netlist TheNets) {
-    if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
+    if ((EndIndex < 0) || (EndIndex >= comp.nrOfEnds())) {
       return "";
     }
     final var ConnectionInformation = comp.getEnd(EndIndex);
-    final var NrOfBits = ConnectionInformation.NrOfBits();
+    final var NrOfBits = ConnectionInformation.getNrOfBits();
     if (NrOfBits == 1) {
       return "";
     }
-    if (!TheNets.IsContinuesBus(comp, EndIndex)) {
+    if (!TheNets.isContinuesBus(comp, EndIndex)) {
       return "";
     }
-    final var ConnectedNet = ConnectionInformation.GetConnection((byte) 0).GetParentNet();
+    final var ConnectedNet = ConnectionInformation.get((byte) 0).getParentNet();
     return BusName
-        + TheNets.GetNetId(ConnectedNet)
+        + TheNets.getNetId(ConnectedNet)
         + HDL.BracketOpen()
-        + ConnectionInformation.GetConnection((byte) (ConnectionInformation.NrOfBits() - 1))
-            .GetParentNetBitIndex()
+        + ConnectionInformation.get((byte) (ConnectionInformation.getNrOfBits() - 1))
+            .getParentNetBitIndex()
         + HDL.vectorLoopId()
-        + ConnectionInformation.GetConnection((byte) (0)).GetParentNetBitIndex()
+        + ConnectionInformation.get((byte) (0)).getParentNetBitIndex()
         + HDL.BracketClose();
   }
 
   public static String GetBusName(NetlistComponent comp, int EndIndex, Netlist TheNets) {
-    if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
+    if ((EndIndex < 0) || (EndIndex >= comp.nrOfEnds())) {
       return "";
     }
     final var ConnectionInformation = comp.getEnd(EndIndex);
-    final var NrOfBits = ConnectionInformation.NrOfBits();
+    final var NrOfBits = ConnectionInformation.getNrOfBits();
     if (NrOfBits == 1) {
       return "";
     }
-    if (!TheNets.IsContinuesBus(comp, EndIndex)) {
+    if (!TheNets.isContinuesBus(comp, EndIndex)) {
       return "";
     }
-    final var ConnectedNet = ConnectionInformation.GetConnection((byte) 0).GetParentNet();
-    if (ConnectedNet.BitWidth() != NrOfBits) return GetBusNameContinues(comp, EndIndex, TheNets);
-    return BusName + TheNets.GetNetId(ConnectedNet);
+    final var ConnectedNet = ConnectionInformation.get((byte) 0).getParentNet();
+    if (ConnectedNet.getBitWidth() != NrOfBits) return GetBusNameContinues(comp, EndIndex, TheNets);
+    return BusName + TheNets.getNetId(ConnectedNet);
   }
 
   public static String GetClockNetName(NetlistComponent comp, int EndIndex, Netlist TheNets) {
     var Contents = new StringBuilder();
-    if ((TheNets.GetCurrentHierarchyLevel() != null)
+    if ((TheNets.getCurrentHierarchyLevel() != null)
         && (EndIndex >= 0)
-        && (EndIndex < comp.NrOfEnds())) {
+        && (EndIndex < comp.nrOfEnds())) {
       final var EndData = comp.getEnd(EndIndex);
-      if (EndData.NrOfBits() == 1) {
-        final var ConnectedNet = EndData.GetConnection((byte) 0).GetParentNet();
-        final var ConnectedNetBitIndex = EndData.GetConnection((byte) 0).GetParentNetBitIndex();
+      if (EndData.getNrOfBits() == 1) {
+        final var ConnectedNet = EndData.get((byte) 0).getParentNet();
+        final var ConnectedNetBitIndex = EndData.get((byte) 0).getParentNetBitIndex();
         /* Here we search for a clock net Match */
-        final var clocksourceid = TheNets.GetClockSourceId(
-            TheNets.GetCurrentHierarchyLevel(), ConnectedNet, ConnectedNetBitIndex);
+        final var clocksourceid = TheNets.getClockSourceId(
+            TheNets.getCurrentHierarchyLevel(), ConnectedNet, ConnectedNetBitIndex);
         if (clocksourceid >= 0) {
           Contents.append(ClockTreeName).append(clocksourceid);
         }
@@ -541,9 +522,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     final var CompName = (Name != null && !Name.isEmpty()) ? Name :
         (ComponentInfo == null)
             ? this.getComponentStringIdentifier()
-            : ComponentInfo.GetComponent()
+            : ComponentInfo.getComponent()
                 .getFactory()
-                .getHDLName(ComponentInfo.GetComponent().getAttributeSet());
+                .getHDLName(ComponentInfo.getComponent().getAttributeSet());
     final var ThisInstanceIdentifier = GetInstanceIdentifier(ComponentInfo, ComponentId);
     final var OneLine = new StringBuilder();
     var TabLength = 0;
@@ -763,13 +744,13 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       int EndIndex,
       Netlist TheNets) {
     var NetMap = new HashMap<String, String>();
-    if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
+    if ((EndIndex < 0) || (EndIndex >= comp.nrOfEnds())) {
       Reporter.Report.AddFatalError("INTERNAL ERROR: Component tried to index non-existing SolderPoint");
       return NetMap;
     }
     final var ConnectionInformation = comp.getEnd(EndIndex);
-    final var IsOutput = ConnectionInformation.IsOutputEnd();
-    final var NrOfBits = ConnectionInformation.NrOfBits();
+    final var IsOutput = ConnectionInformation.isOutputEnd();
+    final var NrOfBits = ConnectionInformation.getNrOfBits();
     if (NrOfBits == 1) {
       /* Here we have the easy case, just a single bit net */
       NetMap.put(SourceName, GetNetName(comp, EndIndex, FloatingPinTiedToGround, TheNets));
@@ -781,7 +762,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       /* First we check if the bus has a connection */
       var Connected = false;
       for (var i = 0; i < NrOfBits; i++) {
-        if (ConnectionInformation.GetConnection((byte) i).GetParentNet() != null) {
+        if (ConnectionInformation.get((byte) i).getParentNet() != null) {
           Connected = true;
         }
       }
@@ -797,7 +778,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
          * There are connections, we detect if it is a continues bus
          * connection
          */
-        if (TheNets.IsContinuesBus(comp, EndIndex)) {
+        if (TheNets.isContinuesBus(comp, EndIndex)) {
           /* Another easy case, the continues bus connection */
           NetMap.put(SourceName, GetBusNameContinues(comp, EndIndex, TheNets));
         } else {
@@ -808,8 +789,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
               /* First we build the Line information */
               SourceNetName.setLength(0);
               SourceNetName.append(SourceName).append("(").append(i).append(") ");
-              ConnectionPoint SolderPoint = ConnectionInformation.GetConnection((byte) i);
-              if (SolderPoint.GetParentNet() == null) {
+              ConnectionPoint SolderPoint = ConnectionInformation.get((byte) i);
+              if (SolderPoint.getParentNet() == null) {
                 /* The net is not connected */
                 if (IsOutput) {
                   NetMap.put(SourceNetName.toString(), HDL.unconnected(false));
@@ -821,19 +802,19 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
                  * The net is connected, we have to find out if
                  * the connection is to a bus or to a normal net
                  */
-                if (SolderPoint.GetParentNet().BitWidth() == 1) {
+                if (SolderPoint.getParentNet().getBitWidth() == 1) {
                   /* The connection is to a Net */
                   NetMap.put(
                       SourceNetName.toString(),
-                      NetName + TheNets.GetNetId(SolderPoint.GetParentNet()));
+                      NetName + TheNets.getNetId(SolderPoint.getParentNet()));
                 } else {
                   /* The connection is to an entry of a bus */
                   NetMap.put(
                       SourceNetName.toString(),
                       BusName
-                          + TheNets.GetNetId(SolderPoint.GetParentNet())
+                          + TheNets.getNetId(SolderPoint.getParentNet())
                           + "("
-                          + SolderPoint.GetParentNetBitIndex()
+                          + SolderPoint.getParentNetBitIndex()
                           + ")");
                 }
               }
@@ -845,8 +826,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
              * need to be concatenated
              */
             for (var i = 0; i < NrOfBits; i++) {
-              final var SolderPoint = ConnectionInformation.GetConnection((byte) i);
-              if (SolderPoint.GetParentNet() == null) {
+              final var SolderPoint = ConnectionInformation.get((byte) i);
+              if (SolderPoint.getParentNet() == null) {
                 /* this entry is not connected */
                 if (IsOutput) {
                   SeperateSignals.add("1'bZ");
@@ -858,16 +839,16 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
                  * The net is connected, we have to find out if
                  * the connection is to a bus or to a normal net
                  */
-                if (SolderPoint.GetParentNet().BitWidth() == 1) {
+                if (SolderPoint.getParentNet().getBitWidth() == 1) {
                   /* The connection is to a Net */
-                  SeperateSignals.add(NetName + TheNets.GetNetId(SolderPoint.GetParentNet()));
+                  SeperateSignals.add(NetName + TheNets.getNetId(SolderPoint.getParentNet()));
                 } else {
                   /* The connection is to an entry of a bus */
                   SeperateSignals.add(
                       BusName
-                          + TheNets.GetNetId(SolderPoint.GetParentNet())
+                          + TheNets.getNetId(SolderPoint.getParentNet())
                           + "["
-                          + SolderPoint.GetParentNetBitIndex()
+                          + SolderPoint.getParentNetBitIndex()
                           + "]");
                 }
               }
@@ -897,12 +878,12 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Netlist MyNetlist) {
     var Contents = new StringBuilder();
     final var FloatingValue = (FloatingNetTiedToGround) ? HDL.zeroBit() : HDL.oneBit();
-    if ((EndIndex >= 0) && (EndIndex < comp.NrOfEnds())) {
+    if ((EndIndex >= 0) && (EndIndex < comp.nrOfEnds())) {
       final var ThisEnd = comp.getEnd(EndIndex);
-      final var IsOutput = ThisEnd.IsOutputEnd();
-      if (ThisEnd.NrOfBits() == 1) {
-        final var SolderPoint = ThisEnd.GetConnection((byte) 0);
-        if (SolderPoint.GetParentNet() == null) {
+      final var IsOutput = ThisEnd.isOutputEnd();
+      if (ThisEnd.getNrOfBits() == 1) {
+        final var SolderPoint = ThisEnd.get((byte) 0);
+        if (SolderPoint.getParentNet() == null) {
           /* The net is not connected */
           if (IsOutput) {
             Contents.append(HDL.unconnected(true));
@@ -914,15 +895,15 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
            * The net is connected, we have to find out if the
            * connection is to a bus or to a normal net
            */
-          if (SolderPoint.GetParentNet().BitWidth() == 1) {
+          if (SolderPoint.getParentNet().getBitWidth() == 1) {
             /* The connection is to a Net */
-            Contents.append(NetName).append(MyNetlist.GetNetId(SolderPoint.GetParentNet()));
+            Contents.append(NetName).append(MyNetlist.getNetId(SolderPoint.getParentNet()));
           } else {
             /* The connection is to an entry of a bus */
             Contents.append(BusName)
-                .append(MyNetlist.GetNetId(SolderPoint.GetParentNet()))
+                .append(MyNetlist.getNetId(SolderPoint.getParentNet()))
                 .append(HDL.BracketOpen())
-                .append(SolderPoint.GetParentNetBitIndex())
+                .append(SolderPoint.getParentNetBitIndex())
                 .append(HDL.BracketClose());
           }
         }

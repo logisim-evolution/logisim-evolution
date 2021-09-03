@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.memory;
@@ -67,16 +48,16 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents =
         (new LineBuffer())
-            .addPair("seed", SEED_STR)
-            .addPair("nrOfBits", NR_OF_BITS_STR)
+            .pair("seed", SEED_STR)
+            .pair("nrOfBits", NR_OF_BITS_STR)
             .addRemarkBlock("This is a multicycle implementation of the Random Component")
             .empty();
 
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "Q            <= s_output_reg;",
           "s_InitSeed   <= X\"0005DEECE66D\" WHEN {{seed}} = 0 ELSE",
-          "                X\"0000\"&std_logic_vector(to_unsigned({{seed}}, 32))",
+          "                X\"0000\"&std_logic_vector(to_unsigned({{seed}}, 32));",
           "s_reset      <= '1' WHEN s_reset_reg /= \"010\" ELSE '0';",
           "s_reset_next <= \"010\" WHEN (s_reset_reg = \"101\" OR",
           "                            s_reset_reg = \"010\") AND",
@@ -87,7 +68,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "                         (s_reset_reg = \"101\" AND clear = '0') ELSE '0';",
           "s_mult_shift_next <= (OTHERS => '0') WHEN s_reset = '1' ELSE",
           "                     X\"5DEECE66D\" WHEN s_start_reg = '1' ELSE",
-          "                     '0'&s_mult_shift_reg(35 DOWNTO 1)",
+          "                     '0'&s_mult_shift_reg(35 DOWNTO 1);",
           "s_seed_shift_next <= (OTHERS => '0') WHEN s_reset = '1' ELSE",
           "                     s_current_seed WHEN s_start_reg = '1' ELSE",
           "                     s_seed_shift_reg(46 DOWNTO 0)&'0';",
@@ -95,17 +76,17 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "",
           "s_mac_lo_in_1     <= (OTHERS => '0') WHEN s_start_reg = '1' OR",
           "                                          s_reset = '1' ELSE",
-          "                     '0'&s_mac_lo_reg(23 DOWNTO 0)",
+          "                     '0'&s_mac_lo_reg(23 DOWNTO 0);",
           "s_mac_lo_in_2     <= '0'&X\"00000B\"",
           "                        WHEN s_start_reg = '1' ELSE",
           "                     '0'&s_seed_shift_reg(23 DOWNTO 0) ",
           "                        WHEN s_mult_shift_reg(0) = '1' ELSE",
-          "                     (OTHERS => '0')",
+          "                     (OTHERS => '0');",
           "s_mac_hi_in_2     <= (OTHERS => '0') WHEN s_start_reg = '1' ELSE",
           "                     s_mac_hi_reg;",
           "s_mac_hi_1_next   <= s_seed_shift_reg(47 DOWNTO 24) ",
           "                        WHEN s_mult_shift_reg(0) = '1' ELSE",
-          "                     (OTHERS => '0')",
+          "                     (OTHERS => '0');",
           "s_busy_pipe_next  <= \"00\" WHEN s_reset = '1' ELSE",
           "                     s_busy_pipe_reg(0)&s_mult_busy;",
           "",
@@ -114,7 +95,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "   IF (GlobalClock'event AND (GlobalClock = '1')) THEN",
           "      IF (s_reset = '1') THEN s_current_seed <= s_InitSeed;",
           "      ELSIF (s_busy_pipe_reg = \"10\") THEN",
-          "         s_current_seed <= s_mac_hi_reg&s_mac_lo_reg(23 DOWNTO 0 ,",
+          "         s_current_seed <= s_mac_hi_reg&s_mac_lo_reg(23 DOWNTO 0);",
           "      END IF;",
           "   END IF;",
           "END PROCESS make_current_seed;",
@@ -125,10 +106,10 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "   IF (GlobalClock'event AND (GlobalClock = '1')) THEN",
           "      s_mult_shift_reg <= s_mult_shift_next;",
           "      s_seed_shift_reg <= s_seed_shift_next;",
-          "      s_mac_lo_reg     <= std_logic_vector(unsigned(s_mac_lo_in_1)+unsigned(s_mac_lo_in_2),",
+          "      s_mac_lo_reg     <= std_logic_vector(unsigned(s_mac_lo_in_1)+unsigned(s_mac_lo_in_2));",
           "      s_mac_hi_1_reg   <= s_mac_hi_1_next;",
           "      s_mac_hi_reg     <= std_logic_vector(unsigned(s_mac_hi_1_reg)+unsigned(s_mac_hi_in_2)+",
-          "                          unsigned(s_mac_lo_reg(24 DOWNTO 24)),",
+          "                          unsigned(s_mac_lo_reg(24 DOWNTO 24)));",
           "      s_busy_pipe_reg  <= s_busy_pipe_next;",
           "   END IF;",
           "END PROCESS make_shift_regs;",
@@ -157,9 +138,9 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "      END IF;",
           "   END PROCESS make_output;");
     } else {
-      contents.add(
+      contents.addLines(
           "assign Q = s_output_reg;",
-          "assign s_InitSeed = ({{seed}}) ? {{seed}}} : 48'h5DEECE66D;",
+          "assign s_InitSeed = ({{seed}}) ? {{seed}} : 48'h5DEECE66D;",
           "assign s_reset = (s_reset_reg==3'b010) ? 1'b1 : 1'b0;",
           "assign s_reset_next = (((s_reset_reg == 3'b101)|",
           "                        (s_reset_reg == 3'b010))&clear) ? 3'b010 :",
@@ -222,11 +203,11 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var map = new TreeMap<String, Integer>();
-    var seed = ComponentInfo.GetComponent().getAttributeSet().getValue(Random.ATTR_SEED);
+    var seed = ComponentInfo.getComponent().getAttributeSet().getValue(Random.ATTR_SEED);
     if (seed == 0) seed = (int) System.currentTimeMillis();
     map.put(
             NR_OF_BITS_STR,
-        ComponentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth());
+        ComponentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth());
     map.put(SEED_STR, seed);
     return map;
   }
@@ -239,7 +220,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var gatedClock = false;
     var hasClock = true;
     var activeLow = false;
-    if (!comp.EndIsConnected(Random.CK)) {
+    if (!comp.isEndConnected(Random.CK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Random\" in circuit \""
               + Nets.getCircuitName()
@@ -255,9 +236,9 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + "\"");
       Reporter.Report.AddError("This RNG will not work!");
     }
-    if (comp.GetComponent().getAttributeSet().containsAttribute(StdAttr.EDGE_TRIGGER)) {
+    if (comp.getComponent().getAttributeSet().containsAttribute(StdAttr.EDGE_TRIGGER)) {
       activeLow =
-          comp.GetComponent().getAttributeSet().getValue(StdAttr.EDGE_TRIGGER)
+          comp.getComponent().getAttributeSet().getValue(StdAttr.EDGE_TRIGGER)
               == StdAttr.TRIG_FALLING;
     }
     if (!hasClock || gatedClock) {
@@ -270,7 +251,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + HDL.BracketOpen()
               + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX
               + HDL.BracketClose());
-      if (Nets.RequiresGlobalClockConnection()) {
+      if (Nets.requiresGlobalClockConnection()) {
         map.put(
             "ClockEnable",
             clockNetName
@@ -298,7 +279,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.putAll(GetNetMap("enable", false, comp, Random.NXT, Nets));
     var output = "Q";
     if (HDL.isVHDL()
-        & (comp.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
+        & (comp.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       output += "(0)";
     map.putAll(GetNetMap(output, true, comp, Random.OUT, Nets));
     return map;

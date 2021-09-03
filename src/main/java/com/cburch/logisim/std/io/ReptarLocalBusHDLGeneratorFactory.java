@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
- *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
+ * 
+ * https://github.com/logisim-evolution/
+ * 
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.io;
@@ -46,9 +27,9 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
     final var contents = new LineBuffer();
     if (HDL.isVHDL()) {
       contents
-          .addPair("compName", componentName)
+          .pair("compName", componentName)
           .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
-          .add(
+          .addLines(
               "",
               "ARCHITECTURE PlatformIndependent OF {{compName}} IS ",
               "",
@@ -85,23 +66,23 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   @Override
   public ArrayList<String> GetComponentInstantiation(Netlist TheNetlist, AttributeSet attrs, String ComponentName) {
     return (new LineBuffer())
-        .add(
-            "   COMPONENT LocalBus",
-            "      PORT ( SP6_LB_WAIT3_i     : IN  std_logic;",
-            "             IRQ_i              : IN  std_logic;",
-            "             Addr_Data_LB_io    : INOUT  std_logic_vector( 15 DOWNTO 0 );",
-            "             Addr_LB_o          : OUT std_logic_vector( 8 DOWNTO 0 );",
-            "             SP6_LB_RE_nOE_o    : OUT std_logic;",
-            "             SP6_LB_nADV_ALE_o  : OUT std_logic;",
-            "             SP6_LB_nCS3_o      : OUT std_logic;",
-            "             SP6_LB_nWE_o       : OUT std_logic;",
-            "             FPGA_in            : IN std_logic_vector(12 downto 0);",
-            "             FPGA_out           : OUT std_logic_vector(1 downto 0);",
-            "            Addr_Data_LB_i      : IN std_logic_vector(15 downto 0);",
-            "            Addr_Data_LB_o      : OUT std_logic_vector(15 downto 0);",
-            "            Addr_Data_LB_tris_i : IN std_logic);",
-            "   END COMPONENT;")
-        .get();
+        .addLines(
+            "COMPONENT LocalBus",
+            "   PORT ( SP6_LB_WAIT3_i     : IN  std_logic;",
+            "          IRQ_i              : IN  std_logic;",
+            "          Addr_Data_LB_io    : INOUT  std_logic_vector( 15 DOWNTO 0 );",
+            "          Addr_LB_o          : OUT std_logic_vector( 8 DOWNTO 0 );",
+            "          SP6_LB_RE_nOE_o    : OUT std_logic;",
+            "          SP6_LB_nADV_ALE_o  : OUT std_logic;",
+            "          SP6_LB_nCS3_o      : OUT std_logic;",
+            "          SP6_LB_nWE_o       : OUT std_logic;",
+            "          FPGA_in            : IN std_logic_vector(12 downto 0);",
+            "          FPGA_out           : OUT std_logic_vector(1 downto 0);",
+            "         Addr_Data_LB_i      : IN std_logic_vector(15 downto 0);",
+            "         Addr_Data_LB_o      : OUT std_logic_vector(15 downto 0);",
+            "         Addr_Data_LB_tris_i : IN std_logic);",
+            "END COMPONENT;")
+        .getWithIndent();
   }
 
   @Override
@@ -112,10 +93,10 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   @Override
   public ArrayList<String> GetEntity(Netlist nets, AttributeSet attrs, String componentName) {
     return (new LineBuffer())
-        .addPair("compName", componentName)
+        .pair("compName", componentName)
         .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
         .add(FileWriter.getExtendedLibrary())
-        .add(
+        .addLines(
             "Library UNISIM;",
             "use UNISIM.vcomponents.all;",
             "",
@@ -186,22 +167,22 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
         String.format(
             "%s(%d DOWNTO %d)",
             LocalInOutBubbleBusname,
-            ComponentInfo.GetLocalBubbleInOutEndId(),
-            ComponentInfo.GetLocalBubbleInOutStartId()));
+            ComponentInfo.getLocalBubbleInOutEndId(),
+            ComponentInfo.getLocalBubbleInOutStartId()));
     map.put(
         "FPGA_in",
         String.format(
             "%s(%d DOWNTO %d)",
             LocalInputBubbleBusname,
-            ComponentInfo.GetLocalBubbleInputEndId(),
-            ComponentInfo.GetLocalBubbleInputStartId()));
+            ComponentInfo.getLocalBubbleInputEndId(),
+            ComponentInfo.getLocalBubbleInputStartId()));
     map.put(
         "FPGA_out",
         String.format(
             "%s(%d DOWNTO %d)",
             LocalOutputBubbleBusname
-                + ComponentInfo.GetLocalBubbleOutputEndId()
-                + ComponentInfo.GetLocalBubbleOutputStartId()));
+                + ComponentInfo.getLocalBubbleOutputEndId()
+                + ComponentInfo.getLocalBubbleOutputStartId()));
     map.putAll(
         GetNetMap(
             "SP6_LB_nCS3_o",

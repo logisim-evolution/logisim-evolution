@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 import org.gradle.internal.os.OperatingSystem
@@ -59,6 +40,9 @@ dependencies {
   implementation("org.slf4j:slf4j-api:1.7.30")
   implementation("org.slf4j:slf4j-simple:1.7.30")
   implementation("com.formdev:flatlaf:1.2")
+  implementation("commons-cli:commons-cli:1.4")
+
+  compileOnly("org.jetbrains:annotations:22.0.0")
 
   // NOTE: Be aware of reported issues with Eclipse and Batik
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
@@ -84,13 +68,13 @@ val TARGET_FILE_PATH_BASE = "targetFilePathBase"
 val UPPERCASE_PROJECT_NAME = "uppercaseProjectName"
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_14
-  targetCompatibility = JavaVersion.VERSION_14
+  sourceCompatibility = JavaVersion.VERSION_16
+  targetCompatibility = JavaVersion.VERSION_16
 }
 
 java {
   sourceSets["main"].java {
-    srcDir("${buildDir}/generated/logisim/")
+    srcDir("${buildDir}/generated/logisim/java")
     srcDir("${buildDir}/generated/sources/srcgen")
   }
 }
@@ -468,8 +452,10 @@ tasks.register("createDmg") {
 fun genBuildInfo(buildInfoFilePath: String) {
   val now = Date()
   val nowIso = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(now)
-  val branchName = runCommand(listOf("git","rev-parse", "--abbrev-ref", "HEAD"), "Failed getting branch name.")
-  val branchLastCommitHash = runCommand(listOf("git","rev-parse", "--short=8", "HEAD"), "Failed getting last commit has.")
+  val branchName = runCommand(listOf("git", "-C", "$projectDir", "rev-parse", "--abbrev-ref", "HEAD"),
+      "Failed getting branch name.")
+  val branchLastCommitHash = runCommand(listOf("git", "-C", "$projectDir", "rev-parse", "--short=8", "HEAD"),
+      "Failed getting last commit has.")
   val currentMillis = Date().time
   val buildYear = SimpleDateFormat("yyyy").format(now)
 

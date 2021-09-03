@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.download;
@@ -70,9 +51,9 @@ public class VivadoDownload implements VendorDownload {
       BoardInformation BoardInfo,
       ArrayList<String> Entities,
       ArrayList<String> Architectures) {
-    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
-    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
-    this.xdcPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.XDC_PATH);
+    this.SandboxPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
+    this.ScriptPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
+    this.xdcPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.XDC_PATH);
     this.RootNetList = RootNetList;
     this.BoardInfo = BoardInfo;
     this.Entities = Entities;
@@ -188,7 +169,7 @@ public class VivadoDownload implements VendorDownload {
     contents.clear();
 
     // fill the xdc file
-    if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
+    if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
       final var clockPin = BoardInfo.fpga.getClockPinLocation();
       final var clockSignal = TickComponentHDLGeneratorFactory.FPGA_CLOCK;
       final var getPortsString = " [get_ports {" + clockSignal + "}]";
@@ -257,14 +238,14 @@ public class VivadoDownload implements VendorDownload {
           if (info != null) {
             final var ioStandard = info.GetIOStandard();
             if (ioStandard != IoStandards.UNKNOWN && ioStandard != IoStandards.DEFAULT_STANDARD)
-              contents.add("    set_property IOSTANDARD %s [get_ports {%s}]", IoStandards.GetConstraintedIoStandard(info.GetIOStandard()), netName);
+              contents.add("    set_property IOSTANDARD {{1}} [get_ports {{{2}}}]", IoStandards.GetConstraintedIoStandard(info.GetIOStandard()), netName);
           }
         }
       }
     }
     final var LedArrayMap = DownloadBase.getLedArrayMaps(MapInfo, RootNetList, BoardInfo);
     for (final var key : LedArrayMap.keySet()) {
-      contents.add("set_property PACKAGE_PIN %s [get_ports {%s}]", key, LedArrayMap.get(key));
+      contents.add("set_property PACKAGE_PIN {{1}} [get_ports {{{2}}}]", key, LedArrayMap.get(key));
     }
     return contents.get();
   }

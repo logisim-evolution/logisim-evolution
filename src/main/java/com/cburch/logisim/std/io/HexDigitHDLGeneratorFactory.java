@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.io;
@@ -42,23 +23,23 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
-    final var startId = componentInfo.GetLocalBubbleOutputStartId();
+    final var startId = componentInfo.getLocalBubbleOutputStartId();
     final var bubbleBusName = HDLGeneratorFactory.LocalOutputBubbleBusname;
     final var contents =
         (new LineBuffer())
-            .addPair("busName", GetBusName(componentInfo, HexDigit.HEX, nets))
-            .addPair("bubbleBusName", bubbleBusName)
-            .addPair("startId", startId)
-            .addPair("regName", LineBuffer.format("s_{{1}}_reg", componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)))
-            .addPair("sigName", LineBuffer.format("{{1}}[{{2}}:{{3}}]", bubbleBusName, (startId + 6), startId))
-            .addPair("dpName", GetNetName(componentInfo, HexDigit.DP, true, nets));
+            .pair("busName", GetBusName(componentInfo, HexDigit.HEX, nets))
+            .pair("bubbleBusName", bubbleBusName)
+            .pair("startId", startId)
+            .pair("regName", LineBuffer.format("s_{{1}}_reg", componentInfo.getComponent().getAttributeSet().getValue(StdAttr.LABEL)))
+            .pair("sigName", LineBuffer.format("{{1}}[{{2}}:{{3}}]", bubbleBusName, (startId + 6), startId))
+            .pair("dpName", GetNetName(componentInfo, HexDigit.DP, true, nets));
 
     if (HDL.isVHDL()) {
       contents.add("");
-      if (componentInfo.EndIsConnected(HexDigit.HEX)) {
+      if (componentInfo.isEndConnected(HexDigit.HEX)) {
         contents
             .add("WITH ({{busName}}) SELECT {{bubbleBusName}}( {{1}} DOWNTO {{startId}} ) <= ", (startId + 6))
-            .add(
+            .addLines(
                 "   \"0111111\" WHEN \"0000\",",
                 "   \"0000110\" WHEN \"0001\",",
                 "   \"1011011\" WHEN \"0010\",",
@@ -78,13 +59,13 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       } else {
         contents.add("{{bubbleBusName}}({{1}} DOWNTO {{startId}}) <= {{busName}};", (startId + 6));
       }
-      if (componentInfo.GetComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
+      if (componentInfo.getComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
         contents.add("{{bubbleBusName}}({{1}}) <= {{dpName}};", (startId + 7));
       }
     } else {
-      if (componentInfo.EndIsConnected(HexDigit.HEX)) {
+      if (componentInfo.isEndConnected(HexDigit.HEX)) {
         contents
-            .add(
+            .addLines(
                 "",
                 "reg[6:0] {{regName}};",
                 "always @(*)",
@@ -111,8 +92,8 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       } else {
         contents.add("assign {{sigName}} = {{busName}};");
       }
-      if (componentInfo.GetComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
-        contents.add("assign {{bubbleBusName}}[{{1}}] = {{dpName}};", (componentInfo.GetLocalBubbleOutputStartId() + 7));
+      if (componentInfo.getComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
+        contents.add("assign {{bubbleBusName}}[{{1}}] = {{dpName}};", (componentInfo.getLocalBubbleOutputStartId() + 7));
       }
     }
     return contents.getWithIndent();

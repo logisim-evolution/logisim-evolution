@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.designrulecheck;
@@ -34,61 +15,56 @@ import java.util.ArrayList;
 public class ClockTreeFactory {
 
   private ClockSourceContainer sources;
-  private final ArrayList<ClockTreeContainer> sourcetrees;
+  private final ArrayList<ClockTreeContainer> sourceTrees;
 
   public ClockTreeFactory() {
-    sourcetrees = new ArrayList<>();
+    sourceTrees = new ArrayList<>();
   }
 
-  public void AddClockNet(ArrayList<String> HierarchyNames, int clocksourceid,
-                           ConnectionPoint connection, boolean isPinClock) {
+  public void addClockNet(ArrayList<String> hierarchyNames, int clocksourceid, ConnectionPoint connection, boolean isPinClock) {
     ClockTreeContainer destination = null;
-    for (ClockTreeContainer search : sourcetrees) {
-      if (search.equals(HierarchyNames, clocksourceid)) {
+    for (final var search : sourceTrees) {
+      if (search.equals(hierarchyNames, clocksourceid)) {
         destination = search;
       }
     }
     if (destination == null) {
-      destination = new ClockTreeContainer(HierarchyNames, clocksourceid, isPinClock);
-      sourcetrees.add(destination);
+      destination = new ClockTreeContainer(hierarchyNames, clocksourceid, isPinClock);
+      sourceTrees.add(destination);
     } else if (!destination.IsPinClockSource() && isPinClock) destination.setPinClock();
     destination.addNet(connection);
   }
 
-  public void AddClockSource(
-      ArrayList<String> HierarchyNames, int clocksourceid, ConnectionPoint connection) {
+  public void addClockSource(ArrayList<String> HierarchyNames, int clocksourceid, ConnectionPoint connection) {
     ClockTreeContainer destination = null;
-    for (ClockTreeContainer search : sourcetrees) {
+    for (final var search : sourceTrees) {
       if (search.equals(HierarchyNames, clocksourceid)) {
         destination = search;
       }
     }
     if (destination == null) {
       destination = new ClockTreeContainer(HierarchyNames, clocksourceid, false);
-      sourcetrees.add(destination);
+      sourceTrees.add(destination);
     }
     destination.addSource(connection);
   }
 
   public void clean() {
-    for (ClockTreeContainer tree : sourcetrees) {
-      tree.clear();
-    }
-    sourcetrees.clear();
+    for (final var tree : sourceTrees) tree.clear();
+    sourceTrees.clear();
     if (sources != null) sources.clear();
   }
 
-  public int GetClockSourceId(
-      ArrayList<String> Hierarchy, Net SelectedNet, byte SelectedNetBitIndex) {
-    for (int i = 0; i < sources.getNrofSources(); i++) {
-      for (ClockTreeContainer ThisClockNet : sourcetrees) {
-        if (ThisClockNet.equals(Hierarchy, i)) {
+  public int getClockSourceId(ArrayList<String> hierarchy, Net selectedNet, byte selectedNetBitIndex) {
+    for (var i = 0; i < sources.getNrofSources(); i++) {
+      for (final var ThisClockNet : sourceTrees) {
+        if (ThisClockNet.equals(hierarchy, i)) {
           /*
            * we found a clock net corresponding the Hierarchy and
            * clock source id
            */
-          for (Byte ClockEntry : ThisClockNet.GetClockEntries(SelectedNet)) {
-            if (ClockEntry == SelectedNetBitIndex) return i;
+          for (final var clockEntry : ThisClockNet.GetClockEntries(selectedNet)) {
+            if (clockEntry == selectedNetBitIndex) return i;
           }
         }
       }
@@ -96,19 +72,17 @@ public class ClockTreeFactory {
     return -1;
   }
 
-  public int GetClockSourceId(Component comp) {
+  public int getClockSourceId(Component comp) {
     if (sources == null) return -1;
     return sources.getClockId(comp);
   }
 
-  public ClockSourceContainer GetSourceContainer() {
-    if (sources == null) {
-      sources = new ClockSourceContainer();
-    }
+  public ClockSourceContainer getSourceContainer() {
+    if (sources == null) sources = new ClockSourceContainer();
     return sources;
   }
 
-  public void SetSourceContainer(ClockSourceContainer source) {
+  public void setSourceContainer(ClockSourceContainer source) {
     sources = source;
   }
 }

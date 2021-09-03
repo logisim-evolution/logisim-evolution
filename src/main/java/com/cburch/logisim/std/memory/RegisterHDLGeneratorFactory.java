@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.memory;
@@ -67,16 +48,16 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = (new LineBuffer())
-            .addPair("activeLevel", ACTIVE_LEVEL_STR);
+            .pair("activeLevel", ACTIVE_LEVEL_STR);
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "Q <= s_state_reg;",
           "",
           "make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )",
           "BEGIN",
           "   IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');");
-      if (Netlist.IsFlipFlop(attrs)) {
-        contents.add(
+      if (Netlist.isFlipFlop(attrs)) {
+        contents.addLines(
             "   ELSIF ({{activeLevel}} = 1) THEN",
             "      IF (Clock'event AND (Clock = '1')) THEN",
             "         IF (ClockEnable = '1' AND Tick = '1') THEN",
@@ -90,7 +71,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             "      END IF;",
             "   END IF;");
       } else {
-        contents.add(
+        contents.addLines(
             "   ELSIF ({{activeLevel}} = 1) THEN",
             "      IF (Clock = '1') THEN",
             "         IF (ClockEnable = '1' AND Tick = '1') THEN",
@@ -104,11 +85,11 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             "         END IF;",
             "      END IF;");
       }
-      contents.add("   END IF;",
-                   "END PROCESS make_memory;");
+      contents.addLines("   END IF;",
+                        "END PROCESS make_memory;");
     } else {
-      if (!Netlist.IsFlipFlop(attrs)) {
-        contents.add(
+      if (!Netlist.isFlipFlop(attrs)) {
+        contents.addLines(
             "assign Q = s_state_reg;",
             "",
             "always @(*)",
@@ -117,7 +98,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             "   else if ((Clock=={{activeLevel}})&ClockEnable&Tick) s_state_reg <= D;",
             "end");
       } else {
-        contents.add(
+        contents.addLines(
             "assign Q = ({{activeLevel}}) ? s_state_reg : s_state_reg_neg_edge;",
             "",
             "always @(posedge Clock or posedge Reset)",
@@ -157,11 +138,11 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var activeLevel = 1;
     var gatedclock = false;
     var activeLow = false;
-    final var attrs = componentInfo.GetComponent().getAttributeSet();
+    final var attrs = componentInfo.getComponent().getAttributeSet();
     final var clockNetName = GetClockNetName(componentInfo, Register.CK, nets);
     if (clockNetName.isEmpty()) {
       gatedclock = true;
-      if (Netlist.IsFlipFlop(attrs))
+      if (Netlist.isFlipFlop(attrs))
         Reporter.Report.AddWarning(
             "Found a gated clock for component \"Register\" in circuit \""
                 + nets.getCircuitName()
@@ -175,7 +156,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     map.put(ACTIVE_LEVEL_STR, activeLevel);
     map.put(
-        NrOfBitsStr, componentInfo.GetComponent().getEnd(Register.IN).getWidth().getWidth());
+        NrOfBitsStr, componentInfo.getComponent().getEnd(Register.IN).getWidth().getWidth());
     return map;
   }
 
@@ -187,8 +168,8 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var gatedClock = false;
     var hasClock = true;
     var activeLow = false;
-    final var attrs = comp.GetComponent().getAttributeSet();
-    if (!comp.EndIsConnected(Register.CK)) {
+    final var attrs = comp.getComponent().getAttributeSet();
+    if (!comp.isEndConnected(Register.CK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Register\" in circuit \""
               + Nets.getCircuitName()
@@ -205,8 +186,8 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.putAll(
         GetNetMap("ClockEnable", false, comp, Register.EN, Nets));
 
-    if (hasClock && !gatedClock && Netlist.IsFlipFlop(attrs)) {
-      if (Nets.RequiresGlobalClockConnection()) {
+    if (hasClock && !gatedClock && Netlist.isFlipFlop(attrs)) {
+      if (Nets.requiresGlobalClockConnection()) {
         map.put("Tick", HDL.oneBit());
       } else {
         if (activeLow)
@@ -257,7 +238,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var input = "D";
     var output = "Q";
     if (HDL.isVHDL()
-        & (comp.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth()
+        & (comp.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth()
             == 1)) {
       input += "(0)";
       output += "(0)";
@@ -271,7 +252,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
     final var regs = new TreeMap<String, Integer>();
     regs.put("s_state_reg", NrOfBitsId);
-    if (HDL.isVerilog() & Netlist.IsFlipFlop(attrs))
+    if (HDL.isVerilog() & Netlist.isFlipFlop(attrs))
       regs.put("s_state_reg_neg_edge", NrOfBitsId);
     return regs;
   }

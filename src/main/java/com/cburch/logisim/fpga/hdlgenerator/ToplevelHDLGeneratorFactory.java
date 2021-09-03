@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.hdlgenerator;
@@ -97,7 +78,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
     final var components = new ArrayList<String>();
-    final var nrOfClockTrees = theNetlist.NumberOfClockTrees();
+    final var nrOfClockTrees = theNetlist.numberOfClockTrees();
     if (nrOfClockTrees > 0) {
       TickComponentHDLGeneratorFactory ticker =
           new TickComponentHDLGeneratorFactory(
@@ -106,18 +87,18 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           ticker.GetComponentInstantiation(
               theNetlist, null, ticker.getComponentStringIdentifier()));
       HDLGeneratorFactory clockWorker =
-          theNetlist.GetAllClockSources()
+          theNetlist.getAllClockSources()
               .get(0)
               .getFactory()
-              .getHDLGenerator(theNetlist.GetAllClockSources().get(0).getAttributeSet());
+              .getHDLGenerator(theNetlist.getAllClockSources().get(0).getAttributeSet());
       components.addAll(
           clockWorker.GetComponentInstantiation(
               theNetlist,
-              theNetlist.GetAllClockSources().get(0).getAttributeSet(),
-              theNetlist.GetAllClockSources()
+              theNetlist.getAllClockSources().get(0).getAttributeSet(),
+              theNetlist.getAllClockSources()
                   .get(0)
                   .getFactory()
-                  .getHDLName(theNetlist.GetAllClockSources().get(0).getAttributeSet())));
+                  .getHDLName(theNetlist.getAllClockSources().get(0).getAttributeSet())));
     }
     for (final var type : LedArrayDriving.DRIVING_STRINGS) {
       if (hasLedArrayType(type)) {
@@ -169,9 +150,9 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist theNetlist, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
-    final var nrOfClockTrees = theNetlist.NumberOfClockTrees();
+    final var nrOfClockTrees = theNetlist.numberOfClockTrees();
     /* First we instantiate the Clock tree busses when present */
-    if (nrOfClockTrees > 0 || theNetlist.RequiresGlobalClockConnection() || requiresFPGAClock) {
+    if (nrOfClockTrees > 0 || theNetlist.requiresGlobalClockConnection() || requiresFPGAClock) {
       inputs.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1);
     }
     for (var in : myIOComponents.GetMappedInputPinNames()) {
@@ -183,7 +164,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = new LineBuffer();
-    final var nrOfClockTrees = theNetlist.NumberOfClockTrees();
+    final var nrOfClockTrees = theNetlist.numberOfClockTrees();
     /* First we process all components */
     contents.addRemarkBlock("Here all signal adaptations are performed");
     for (final var key : myIOComponents.getMappableResources().keySet()) {
@@ -196,11 +177,11 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       final var ticker = new TickComponentHDLGeneratorFactory(fpgaClockFrequency, tickFrequency);
       contents.add(ticker.GetComponentMap(null, 0L, null, null, ""));
       var index = 0L;
-      for (var clockGen : theNetlist.GetAllClockSources()) {
+      for (var clockGen : theNetlist.getAllClockSources()) {
         final var thisClock = new NetlistComponent(clockGen);
         contents.add(
             clockGen.getFactory()
-                .getHDLGenerator(thisClock.GetComponent().getAttributeSet())
+                .getHDLGenerator(thisClock.getComponent().getAttributeSet())
                 .GetComponentMap(theNetlist, index++, thisClock, null, ""));
       }
     }
@@ -245,12 +226,12 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist nets) {
     final var wires = new TreeMap<String, Integer>();
-    final var nrOfClockTrees = nets.NumberOfClockTrees();
-    final var nrOfInputBubbles = nets.NumberOfInputBubbles();
-    final var nrOfOutputBubbles = nets.NumberOfOutputBubbles();
-    final var nrOfInputPorts = nets.NumberOfInputPorts();
-    final var nrOfInOutPorts = nets.NumberOfInOutPorts();
-    final var nrOfOutputPorts = nets.NumberOfOutputPorts();
+    final var nrOfClockTrees = nets.numberOfClockTrees();
+    final var nrOfInputBubbles = nets.getNumberOfInputBubbles();
+    final var nrOfOutputBubbles = nets.numberOfOutputBubbles();
+    final var nrOfInputPorts = nets.getNumberOfInputPorts();
+    final var nrOfInOutPorts = nets.numberOfInOutPorts();
+    final var nrOfOutputPorts = nets.numberOfOutputPorts();
     if (nrOfClockTrees > 0) {
       wires.put(TickComponentHDLGeneratorFactory.FPGA_TICK, 1);
       for (var clockBus = 0; clockBus < nrOfClockTrees; clockBus++) {
@@ -277,11 +258,11 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       for (var input = 0; input < nrOfInputPorts; input++) {
         String sName = "s_"
             + CorrectLabel.getCorrectLabel(
-                nets.GetInputPin(input)
-                    .GetComponent()
+                nets.getInputPin(input)
+                    .getComponent()
                     .getAttributeSet()
                     .getValue(StdAttr.LABEL));
-        final var nrOfBits = nets.GetInputPin(input).GetComponent().getEnd(0).getWidth().getWidth();
+        final var nrOfBits = nets.getInputPin(input).getComponent().getEnd(0).getWidth().getWidth();
         wires.put(sName, nrOfBits);
       }
     }
@@ -289,11 +270,11 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       for (var inout = 0; inout < nrOfInOutPorts; inout++) {
         final var sName = "s_"
             + CorrectLabel.getCorrectLabel(
-                nets.GetInOutPin(inout)
-                    .GetComponent()
+                nets.getInOutPin(inout)
+                    .getComponent()
                     .getAttributeSet()
                     .getValue(StdAttr.LABEL));
-        final var nrOfBits = nets.GetInOutPin(inout).GetComponent().getEnd(0).getWidth().getWidth();
+        final var nrOfBits = nets.getInOutPin(inout).getComponent().getEnd(0).getWidth().getWidth();
         wires.put(sName, nrOfBits);
       }
     }
@@ -301,11 +282,11 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       for (var output = 0; output < nrOfOutputPorts; output++) {
         final var sName = "s_"
             + CorrectLabel.getCorrectLabel(
-                nets.GetOutputPin(output)
-                    .GetComponent()
+                nets.getOutputPin(output)
+                    .getComponent()
                     .getAttributeSet()
                     .getValue(StdAttr.LABEL));
-        final var nrOfBits = nets.GetOutputPin(output).GetComponent().getEnd(0).getWidth().getWidth();
+        final var nrOfBits = nets.getOutputPin(output).getComponent().getEnd(0).getWidth().getWidth();
         wires.put(sName, nrOfBits);
       }
     }

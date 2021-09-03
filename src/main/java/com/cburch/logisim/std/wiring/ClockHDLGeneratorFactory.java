@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
- *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
+ * 
+ * https://github.com/logisim-evolution/
+ * 
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.wiring;
@@ -59,7 +40,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   private String GetClockNetName(Component comp, Netlist TheNets) {
     StringBuilder Contents = new StringBuilder();
-    int ClockNetId = TheNets.GetClockSourceId(comp);
+    int ClockNetId = TheNets.getClockSourceId(comp);
     if (ClockNetId >= 0) {
       Contents.append(ClockTreeName).append(ClockNetId);
     }
@@ -83,14 +64,14 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents =
         (new LineBuffer())
-            .addPair("phase", PHASE_STR)
-            .addPair("nrOfBits", NR_OF_BITS_STR)
-            .addPair("lowTick", LOW_TICK_STR)
-            .addPair("highTick", HIGH_TICK_STR)
+            .pair("phase", PHASE_STR)
+            .pair("nrOfBits", NR_OF_BITS_STR)
+            .pair("lowTick", LOW_TICK_STR)
+            .pair("highTick", HIGH_TICK_STR)
             .addRemarkBlock("Here the output signals are defines; we synchronize them all on the main clock");
 
     if (HDL.isVHDL()) {
-      Contents.add(
+      Contents.addLines(
           "ClockBus <= GlobalClock&s_output_regs;",
           "makeOutputs : PROCESS( GlobalClock )",
           "BEGIN",
@@ -104,7 +85,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "   END IF;",
           "END PROCESS makeOutputs;");
     } else {
-      Contents.add(
+      Contents.addLines(
           "assign ClockBus = {GlobalClock,s_output_regs};",
           "always @(posedge GlobalClock)",
           "begin",
@@ -118,16 +99,16 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     Contents.add("").addRemarkBlock("Here the control signals are defined");
     if (HDL.isVHDL()) {
-      Contents.add(
-          "s_counter_is_zero <= '1' WHEN s_counter_reg = std_logic_vector(to_unsigned(0,{{nrOfBitsStr}})) ELSE '0';",
+      Contents.addLines(
+          "s_counter_is_zero <= '1' WHEN s_counter_reg = std_logic_vector(to_unsigned(0,{{nrOfBits}})) ELSE '0';",
           "s_counter_next    <= std_logic_vector(unsigned(s_counter_reg) - 1)",
           "                       WHEN s_counter_is_zero = '0' ELSE",
-          "                    std_logic_vector(to_unsigned(({{lowTick}}-1), {{nrOfBitsStr}}))",
+          "                    std_logic_vector(to_unsigned(({{lowTick}}-1), {{nrOfBits}}))",
           "                       WHEN s_derived_clock_reg(0) = '1' ELSE",
-          "                    std_logic_vector(to_unsigned(({{highTick}}-1), {{nrOfBitsStr}}));"
+          "                    std_logic_vector(to_unsigned(({{highTick}}-1), {{nrOfBits}}));"
       );
     } else {
-      Contents.add(
+      Contents.addLines(
               "assign s_counter_is_zero = (s_counter_reg == 0) ? 1'b1 : 1'b0;",
               "assign s_counter_next = (s_counter_is_zero == 1'b0)",
               "                           ? s_counter_reg - 1",
@@ -136,7 +117,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               "                              : {{highTick}} - 1;",
               "")
           .addRemarkBlock("Here the initial values are defined (for simulation only)")
-          .add(
+          .addLines(
               "initial",
               "begin",
               "   s_output_regs = 0;",
@@ -146,7 +127,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     Contents.add("").addRemarkBlock("Here the state registers are defined");
     if (HDL.isVHDL()) {
-      Contents.add(
+      Contents.addLines(
           "makeDerivedClock : PROCESS( GlobalClock , ClockTick , s_counter_is_zero ,",
           "                            s_derived_clock_reg)",
           "BEGIN",
@@ -174,7 +155,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "   END IF;",
           "END PROCESS makeCounter;");
     } else {
-      Contents.add(
+      Contents.addLines(
           "integer n;",
           "always @(posedge GlobalClock)",
           "begin",
@@ -219,9 +200,9 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var map = new TreeMap<String, Integer>();
-    int HighTicks = ComponentInfo.GetComponent().getAttributeSet().getValue(Clock.ATTR_HIGH);
-    int LowTicks = ComponentInfo.GetComponent().getAttributeSet().getValue(Clock.ATTR_LOW);
-    int Phase = ComponentInfo.GetComponent().getAttributeSet().getValue(Clock.ATTR_PHASE);
+    int HighTicks = ComponentInfo.getComponent().getAttributeSet().getValue(Clock.ATTR_HIGH);
+    int LowTicks = ComponentInfo.getComponent().getAttributeSet().getValue(Clock.ATTR_LOW);
+    int Phase = ComponentInfo.getComponent().getAttributeSet().getValue(Clock.ATTR_PHASE);
     Phase = Phase % (HighTicks + LowTicks);
     int MaxValue = Math.max(HighTicks, LowTicks);
     int nr_of_bits = 0;
@@ -243,7 +224,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
     map.put("GlobalClock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
     map.put("ClockTick", TickComponentHDLGeneratorFactory.FPGA_TICK);
-    map.put("ClockBus", "s_" + GetClockNetName(ComponentInfo.GetComponent(), Nets));
+    map.put("ClockBus", "s_" + GetClockNetName(ComponentInfo.getComponent(), Nets));
     return map;
   }
 

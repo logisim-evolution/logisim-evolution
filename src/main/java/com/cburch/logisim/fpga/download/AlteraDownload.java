@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.download;
@@ -82,8 +63,8 @@ public class AlteraDownload implements VendorDownload {
       String HDLType,
       boolean WriteToFlash) {
     this.ProjectPath = ProjectPath;
-    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
-    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
+    this.SandboxPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
+    this.ScriptPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
     this.RootNetList = RootNetList;
     this.boardInfo = BoardInfo;
     this.entities = Entities;
@@ -204,12 +185,12 @@ public class AlteraDownload implements VendorDownload {
     final var fileType = HDLType.equals(HDLGeneratorFactory.VHDL) ? "VHDL_FILE" : "VERILOG_FILE";
     final var contents = new LineBuffer();
     contents
-        .addPair("topLevelName", ToplevelHDLGeneratorFactory.FPGAToplevelName)
-        .addPair("fileType", fileType)
-        .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
+        .pair("topLevelName", ToplevelHDLGeneratorFactory.FPGAToplevelName)
+        .pair("fileType", fileType)
+        .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
 
     contents
-        .add(
+        .addLines(
             "# Load Quartus II Tcl Project package",
             "package require ::quartus::project",
             "",
@@ -234,7 +215,7 @@ public class AlteraDownload implements VendorDownload {
             "# Make assignments",
             "if {$make_assignments} {")
         .add(getAlteraAssignments(boardInfo))
-        .add(
+        .addLines(
             "",
             "    # Include all entities and gates",
             "");
@@ -246,12 +227,12 @@ public class AlteraDownload implements VendorDownload {
     }
     contents.add("");
     contents.add("    # Map fpga_clk and ionets to fpga pins");
-    if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
+    if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
       contents.add("    set_location_assignment {{1}} -to {{clock}}", boardInfo.fpga.getClockPinLocation());
     }
     contents
         .add(getPinLocStrings())
-        .add(
+        .addLines(
             "    # Commit assignments",
             "    export_assignments",
             "",
@@ -283,7 +264,7 @@ public class AlteraDownload implements VendorDownload {
     }
     final var ledArrayMap = DownloadBase.getLedArrayMaps(mapInfo, RootNetList, boardInfo);
     for (final var key : ledArrayMap.keySet())
-      contents.add("set_location_assignment %s-to %s", ledArrayMap.get(key), key);
+      contents.add("set_location_assignment {{1}} -to {{2}}", ledArrayMap.get(key), key);
     return contents.getWithIndent(4);
   }
 
@@ -298,15 +279,15 @@ public class AlteraDownload implements VendorDownload {
     };
 
     return (new LineBuffer())
-        .addPair("assign", "set_global_assignment -name")
-        .add("{{assign}} FAMILY \"{{1}}\"", currentBoard.fpga.getTechnology())
-        .add("{{assign}} DEVICE {{1}}", currentBoard.fpga.getPart())
-        .add("{{assign}} DEVICE_FILTER_PACKAGE {{1}}", pkg[0])
-        .add("{{assign}} DEVICE_FILTER_PIN_COUNT {{1}}", pkg[1])
-        .add("{{assign}} RESERVE_ALL_UNUSED_PINS \"AS INPUT {{1}}\"", behavior)
-        .add("{{assign}} FMAX_REQUIREMENT \"{{1}}\"", Download.GetClockFrequencyString(currentBoard))
-        .add("{{assign}} RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
-        .add("{{assign}} CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
+        .pair("assignName", "set_global_assignment -name")
+        .add("{{assignName}} FAMILY \"{{1}}\"", currentBoard.fpga.getTechnology())
+        .add("{{assignName}} DEVICE {{1}}", currentBoard.fpga.getPart())
+        .add("{{assignName}} DEVICE_FILTER_PACKAGE {{1}}", pkg[0])
+        .add("{{assignName}} DEVICE_FILTER_PIN_COUNT {{1}}", pkg[1])
+        .add("{{assignName}} RESERVE_ALL_UNUSED_PINS \"AS INPUT {{1}}\"", behavior)
+        .add("{{assignName}} FMAX_REQUIREMENT \"{{1}}\"", Download.GetClockFrequencyString(currentBoard))
+        .add("{{assignName}} RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
+        .add("{{assignName}} CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
         .getWithIndent();
   }
 
@@ -389,7 +370,7 @@ public class AlteraDownload implements VendorDownload {
         .add("-m")
         .add("jtag")
         .add("-o")
-        .add("P;%s", jicFile);
+        .add("P;{{1}}", jicFile);
     final var prog = new ProcessBuilder(command.get());
     prog.directory(new File(SandboxPath));
     try {

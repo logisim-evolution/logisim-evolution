@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.memory;
@@ -381,6 +362,19 @@ public class ShiftRegister extends InstanceFactory {
     return data;
   }
 
+  private void updateData(Instance instance) {
+    final var comp = instance.getComponent().getInstanceStateImpl();
+    if (comp == null) return;
+    final var circuitState = comp.getCircuitState();
+    if (circuitState == null) return;
+    final var state = circuitState.getInstanceState(instance);
+    if (state == null) return;
+    final var data = (ShiftRegisterData) state.getData();
+    if (data == null) return;
+    final var lenObj = state.getAttributeValue(ATTR_LENGTH);
+    data.setDimensions(state.getAttributeValue(StdAttr.WIDTH), lenObj == null ? 8 : lenObj);
+  }
+
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     if (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
@@ -409,6 +403,7 @@ public class ShiftRegister extends InstanceFactory {
         || attr == StdAttr.APPEARANCE) {
       instance.recomputeBounds();
       configurePorts(instance);
+      updateData(instance);
     }
   }
 
@@ -424,16 +419,15 @@ public class ShiftRegister extends InstanceFactory {
   private void paintInstanceEvolution(InstancePainter painter) {
     // draw boundary, label
     painter.drawLabel();
-    int xpos = painter.getLocation().getX();
-    int ypos = painter.getLocation().getY();
-    BitWidth widObj = painter.getAttributeValue(StdAttr.WIDTH);
-    int wid = widObj.getWidth();
-    Integer lenObj = painter.getAttributeValue(ATTR_LENGTH);
-    int len = lenObj == null ? 8 : lenObj;
-    Boolean parallelObj = painter.getAttributeValue(ATTR_LOAD);
-    boolean Negedge = painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
-    DrawControl(painter, xpos, ypos, len, wid, parallelObj, Negedge);
-    ShiftRegisterData data = (ShiftRegisterData) painter.getData();
+    final var xpos = painter.getLocation().getX();
+    final var ypos = painter.getLocation().getY();
+    final var wid = painter.getAttributeValue(StdAttr.WIDTH).getWidth();
+    final var lenObj = painter.getAttributeValue(ATTR_LENGTH);
+    final var len = lenObj == null ? 8 : lenObj;
+    final var parallelObj = painter.getAttributeValue(ATTR_LOAD);
+    final var negEdge = painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
+    DrawControl(painter, xpos, ypos, len, wid, parallelObj, negEdge);
+    final var data = (ShiftRegisterData) painter.getData();
 
     // In the case data is null we assume that the different value are null. This allow the user to
     // instantiate the shift register without simulation mode
@@ -442,9 +436,8 @@ public class ShiftRegister extends InstanceFactory {
         DrawDataBlock(painter, xpos, ypos, len, wid, stage, null, parallelObj);
       }
     } else {
-      for (var stage = 0; stage < len; stage++) {
+      for (var stage = 0; stage < len; stage++)
         DrawDataBlock(painter, xpos, ypos, len, wid, stage, data.get(len - stage - 1), parallelObj);
-      }
     }
   }
 

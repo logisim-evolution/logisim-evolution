@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.download;
@@ -150,7 +131,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       case VendorSoftware.VENDOR_ALTERA:
         Downloader =
             new AlteraDownload(
-                GetProjDir(TopLevelSheet),
+                getProjDir(TopLevelSheet),
                 RootSheet.getNetList(),
                 MyBoardInformation,
                 Entities,
@@ -161,7 +142,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       case VendorSoftware.VENDOR_XILINX:
         Downloader =
             new XilinxDownload(
-                GetProjDir(TopLevelSheet),
+                getProjDir(TopLevelSheet),
                 RootSheet.getNetList(),
                 MyBoardInformation,
                 Entities,
@@ -172,7 +153,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       case VendorSoftware.VENDOR_VIVADO:
         Downloader =
             new VivadoDownload(
-                GetProjDir(TopLevelSheet),
+                getProjDir(TopLevelSheet),
                 RootSheet.getNetList(),
                 MyBoardInformation,
                 Entities,
@@ -372,9 +353,9 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       if (MyProject.getLogisimFile().getLoader().getMainFile() != null) {
         MapPannel = new ComponentMapDialog(parent,
                 MyProject.getLogisimFile().getLoader().getMainFile().getAbsolutePath(),
-                MyBoardInformation, MyMappableResources);
+                MyBoardInformation, myMappableResources);
       } else {
-        MapPannel = new ComponentMapDialog(parent, "", MyBoardInformation, MyMappableResources);
+        MapPannel = new ComponentMapDialog(parent, "", MyBoardInformation, myMappableResources);
       }
       if (!MapPannel.run()) {
         Reporter.Report.AddError(S.get("FPGADownloadAborted"));
@@ -384,11 +365,11 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       if (MapFileName != null) {
         var MapFile = new File(MapFileName);
         if (!MapFile.exists()) return false;
-        var cmp = new ComponentMapParser(MapFile, MyMappableResources, MyBoardInformation);
+        var cmp = new ComponentMapParser(MapFile, myMappableResources, MyBoardInformation);
         cmp.parseFile();
       }
     }
-    if (!MapDesignCheckIOs()) {
+    if (!mapDesignCheckIOs()) {
       Reporter.Report.AddError(S.get("FPGAMapNotComplete", MyBoardInformation.getBoardName()));
       return false;
     }
@@ -403,14 +384,14 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     if (!writeHDL(TopLevelSheet, TickFrequency)) {
       return false;
     }
-    final var ProjectPath = GetProjDir(TopLevelSheet);
+    final var ProjectPath = getProjDir(TopLevelSheet);
     final var SourcePath = ProjectPath + AppPreferences.HDL_Type.get().toLowerCase() + File.separator;
-    GetVHDLFiles(ProjectPath, SourcePath, Entities, Architectures, AppPreferences.HDL_Type.get());
+    getVhdlFiles(ProjectPath, SourcePath, Entities, Architectures, AppPreferences.HDL_Type.get());
     if (UseGui) {
       MyProgress.setValue(4);
       MyProgress.setString(S.get("FPGAState4"));
     }
-    Downloader.SetMapableResources(MyMappableResources);
+    Downloader.SetMapableResources(myMappableResources);
     /* Stage 4 Create Download Scripts */
     return CreateDownloadScripts();
   }

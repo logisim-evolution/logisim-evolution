@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.designrulecheck;
@@ -45,146 +26,145 @@ public class SimpleDRCContainer {
   public static final int MARK_LABEL = 2;
   public static final int MARK_WIRE = 4;
 
-  private final String Message;
-  private final int SeverityLevel;
-  private Set<Object> DRCComponents;
-  private Circuit MyCircuit;
-  private final int MarkType;
-  private int ListNumber;
-  private final boolean SuppressCount;
+  private final String message;
+  private final int severityLevel;
+  private Set<Object> drcComponents;
+  private Circuit myCircuit;
+  private final int markType;
+  private int listNumber;
+  private final boolean suppressCount;
 
-  public SimpleDRCContainer(String Message, int level) {
-    this.Message = Message;
-    this.SeverityLevel = level;
-    MarkType = MARK_NONE;
-    ListNumber = 0;
-    SuppressCount = false;
+  public SimpleDRCContainer(String message, int level) {
+    this.message = message;
+    this.severityLevel = level;
+    this.markType = MARK_NONE;
+    this.listNumber = 0;
+    this.suppressCount = false;
   }
 
-  public SimpleDRCContainer(String Message, int level, boolean SupressCount) {
-    this.Message = Message;
-    this.SeverityLevel = level;
-    MarkType = MARK_NONE;
-    ListNumber = 0;
-    this.SuppressCount = SupressCount;
+  public SimpleDRCContainer(String message, int level, boolean supressCount) {
+    this.message = message;
+    this.severityLevel = level;
+    this.markType = MARK_NONE;
+    this.listNumber = 0;
+    this.suppressCount = supressCount;
   }
 
-  public SimpleDRCContainer(Object Message, int level) {
-    this.Message = Message.toString();
-    this.SeverityLevel = level;
-    MarkType = MARK_NONE;
-    ListNumber = 0;
-    SuppressCount = false;
+  public SimpleDRCContainer(Object message, int level) {
+    this.message = message.toString();
+    this.severityLevel = level;
+    this.markType = MARK_NONE;
+    this.listNumber = 0;
+    this.suppressCount = false;
   }
 
-  public SimpleDRCContainer(Object Message, int level, boolean SupressCount) {
-    this.Message = Message.toString();
-    this.SeverityLevel = level;
-    MarkType = MARK_NONE;
-    ListNumber = 0;
-    this.SuppressCount = SupressCount;
+  public SimpleDRCContainer(Object message, int level, boolean supressCount) {
+    this.message = message.toString();
+    this.severityLevel = level;
+    this.markType = MARK_NONE;
+    this.listNumber = 0;
+    this.suppressCount = supressCount;
   }
 
-  public SimpleDRCContainer(Circuit circ, Object Message, int level, int MarkMask) {
-    this.Message = Message.toString();
-    this.SeverityLevel = level;
-    MyCircuit = circ;
-    MarkType = MarkMask;
-    ListNumber = 0;
-    SuppressCount = false;
+  public SimpleDRCContainer(Circuit circ, Object message, int level, int markMask) {
+    this.message = message.toString();
+    this.severityLevel = level;
+    this.myCircuit = circ;
+    this.markType = markMask;
+    this.listNumber = 0;
+    this.suppressCount = false;
   }
 
-  public SimpleDRCContainer(
-      Circuit circ, Object Message, int level, int MarkMask, boolean SupressCount) {
-    this.Message = Message.toString();
-    this.SeverityLevel = level;
-    MyCircuit = circ;
-    MarkType = MarkMask;
-    ListNumber = 0;
-    this.SuppressCount = SupressCount;
+  public SimpleDRCContainer(Circuit circ, Object message, int level, int markMask, boolean supressCount) {
+    this.message = message.toString();
+    this.severityLevel = level;
+    this.myCircuit = circ;
+    this.markType = markMask;
+    this.listNumber = 0;
+    this.suppressCount = supressCount;
   }
 
   @Override
   public String toString() {
-    return Message;
+    return message;
   }
 
-  public int Severity() {
-    return SeverityLevel;
+  public int getSeverity() {
+    return severityLevel;
   }
 
-  public boolean DRCInfoPresent() {
-    if (DRCComponents == null || MyCircuit == null) return false;
-    return !DRCComponents.isEmpty();
+  public boolean isDrcInfoPresent() {
+    if (drcComponents == null || myCircuit == null) return false;
+    return !drcComponents.isEmpty();
   }
 
-  public Circuit GetCircuit() {
-    return MyCircuit;
+  public Circuit getCircuit() {
+    return myCircuit;
   }
 
-  public boolean HasCircuit() {
-    return (MyCircuit != null);
+  public boolean hasCircuit() {
+    return (myCircuit != null);
   }
 
-  public void AddMarkComponent(Object comp) {
-    if (DRCComponents == null) DRCComponents = new HashSet<>();
-    DRCComponents.add(comp);
+  public void addMarkComponent(Object comp) {
+    if (drcComponents == null) drcComponents = new HashSet<>();
+    drcComponents.add(comp);
   }
 
-  public void AddMarkComponents(Set<?> set) {
-    if (DRCComponents == null) DRCComponents = new HashSet<>();
-    DRCComponents.addAll(set);
+  public void addMarkComponents(Set<?> set) {
+    if (drcComponents == null) drcComponents = new HashSet<>();
+    drcComponents.addAll(set);
   }
 
-  public void SetListNumber(int number) {
-    ListNumber = number;
+  public void setListNumber(int number) {
+    listNumber = number;
   }
 
-  public boolean SupressCount() {
-    return this.SuppressCount;
+  public boolean getSupressCount() {
+    return suppressCount;
   }
 
-  public int GetListNumber() {
-    return ListNumber;
+  public int getListNumber() {
+    return listNumber;
   }
 
-  public void MarkComponents() {
-    if (!DRCInfoPresent()) return;
-    for (Object obj : DRCComponents) {
+  public void markComponents() {
+    if (!isDrcInfoPresent()) return;
+    for (final var obj : drcComponents) {
       if (obj instanceof Wire) {
-        Wire wire = (Wire) obj;
-        if ((MarkType & MARK_WIRE) != 0) {
+        final var wire = (Wire) obj;
+        if ((markType & MARK_WIRE) != 0) {
           wire.SetDRCHighlight(true);
         }
       } else if (obj instanceof Splitter) {
-        Splitter split = (Splitter) obj;
-        if ((MarkType & MARK_INSTANCE) != 0) {
+        final var split = (Splitter) obj;
+        if ((markType & MARK_INSTANCE) != 0) {
           split.SetMarked(true);
         }
       } else if (obj instanceof InstanceComponent) {
-        InstanceComponent comp = (InstanceComponent) obj;
-        if ((MarkType & MARK_INSTANCE) != 0) comp.markInstance();
-        if ((MarkType & MARK_LABEL) != 0) comp.markLabel();
+        final var comp = (InstanceComponent) obj;
+        if ((markType & MARK_INSTANCE) != 0) comp.markInstance();
+        if ((markType & MARK_LABEL) != 0) comp.markLabel();
       } else {
       }
     }
   }
 
-  public void ClearMarks() {
-    if (!DRCInfoPresent()) return;
-    for (Object obj : DRCComponents) {
+  public void clearMarks() {
+    if (!isDrcInfoPresent()) return;
+    for (final var obj : drcComponents) {
       if (obj instanceof Wire) {
-        Wire wire = (Wire) obj;
-        if ((MarkType & MARK_WIRE) != 0) {
+        final var wire = (Wire) obj;
+        if ((markType & MARK_WIRE) != 0) {
           wire.SetDRCHighlight(false);
         }
       } else if (obj instanceof Splitter) {
-        Splitter split = (Splitter) obj;
-        if ((MarkType & MARK_INSTANCE) != 0) {
+        final var split = (Splitter) obj;
+        if ((markType & MARK_INSTANCE) != 0) {
           split.SetMarked(false);
         }
       } else if (obj instanceof InstanceComponent) {
-        InstanceComponent comp = (InstanceComponent) obj;
+        final var comp = (InstanceComponent) obj;
         comp.clearMarks();
       }
     }

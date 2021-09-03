@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
- *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
+ * 
+ * https://github.com/logisim-evolution/
+ * 
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.file;
@@ -56,10 +37,6 @@ import org.w3c.dom.Element;
 public class XmlCircuitReader extends CircuitTransaction {
 
   /**
-   * Get a circuit's component from a read XML file. If the component has a non-null "trackercomp"
-   * field, it means that it is tracked, therefore it is skipped in the non-tracked version to avoid
-   * errors.
-   *
    * @param elt XML element to parse
    * @param reader XML file reader
    * @return the component built from its XML description
@@ -166,43 +143,33 @@ public class XmlCircuitReader extends CircuitTransaction {
       /* Here we check the attribute circuitnamedbox for backwards compatibility */
       var hasNamedBox = false;
       var hasNamedBoxFixedSize = false;
-      var HasAppearAttr = false;
+      var hasAppearAttr = false;
       for (final var attrElt : XmlIterator.forChildElements(circData.circuitElement, "a")) {
         if (attrElt.hasAttribute("name")) {
           final var name = attrElt.getAttribute("name");
-          if (name.equals("circuitnamedbox")) {
-            hasNamedBox = true;
-          }
-          if (name.equals("appearance")) HasAppearAttr = true;
-          if (name.equals("circuitnamedboxfixedsize")) {
-            hasNamedBoxFixedSize = true;
-          }
+          hasNamedBox |= name.equals("circuitnamedbox");
+          hasAppearAttr |= name.equals("appearance");
+          hasNamedBoxFixedSize |= name.equals("circuitnamedboxfixedsize");
         }
       }
-      reader.initAttributeSet(
-          circData.circuitElement, dest.getStaticAttributes(), null, IsHolyCross, IsEvolution);
+      reader.initAttributeSet(circData.circuitElement, dest.getStaticAttributes(), null, IsHolyCross, IsEvolution);
       if (circData.circuitElement.hasChildNodes()) {
         if (hasNamedBox) {
           /* This situation is clear, it is an older logisim-evolution file */
-          dest.getStaticAttributes()
-              .setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_EVOLUTION);
+          dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_EVOLUTION);
         } else {
-          if (!HasAppearAttr) {
+          if (!hasAppearAttr) {
             /* Here we have 2 possibilities, either a Holycross file or a logisim-evolution file
              * before the introduction of the named circuit boxes. So let's ask the user.
              */
             if (IsHolyCross)
-              dest.getStaticAttributes()
-                  .setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_FPGA);
+              dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_FPGA);
             else
-              dest.getStaticAttributes()
-                  .setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CLASSIC);
+              dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CLASSIC);
           }
         }
-        if (!hasNamedBoxFixedSize) {
-          dest.getStaticAttributes()
-              .setValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE, false);
-        }
+        if (!hasNamedBoxFixedSize)
+          dest.getStaticAttributes().setValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE, false);
       }
     } catch (XmlReaderException e) {
       reader.addErrors(e, circData.circuit.getName() + ".static");

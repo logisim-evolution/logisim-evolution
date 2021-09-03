@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.arith;
@@ -65,12 +46,12 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents =
         (new LineBuffer())
-            .addPair("nrOfBits", NrOfBitsStr)
-            .addPair("unsigned", UnsignedStr)
-            .addPair("calcBits", CalcBitsStr);
+            .pair("nrOfBits", NrOfBitsStr)
+            .pair("unsigned", UnsignedStr)
+            .pair("calcBits", CalcBitsStr);
 
     if (HDL.isVHDL()) {
-      Contents.add(
+      Contents.addLines(
           "s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B))",
           "                    WHEN {{unsigned}}= 1 ELSE",
           "                 std_logic_vector(signed(INP_A)*signed(INP_B));",
@@ -82,7 +63,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "Mult_hi       <= s_new_result({{calcBits}}-1 DOWNTO {{nrOfBits}});",
           "Mult_lo       <= s_new_result({{nrOfBits}}-1 DOWNTO 0);");
     } else {
-      Contents.add(
+      Contents.addLines(
           "reg[{{calcBits}}-1:0] s_Cin;",
           "reg[{{calcBits}}-1:0] s_mult_unsigned;",
           "reg[{{calcBits}}-1:0] s_interm_result;",
@@ -133,9 +114,9 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var parameterMap = new TreeMap<String, Integer>();
-    final var nrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    final var nrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
     boolean isUnsigned =
-        ComponentInfo.GetComponent()
+        ComponentInfo.getComponent()
             .getAttributeSet()
             .getValue(Multiplier.MODE_ATTR)
             .equals(Multiplier.UNSIGNED_OPTION);

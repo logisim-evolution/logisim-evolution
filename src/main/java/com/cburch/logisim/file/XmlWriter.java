@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
- *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
+ * 
+ * https://github.com/logisim-evolution/
+ * 
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.file;
@@ -50,7 +31,9 @@ import java.io.File;
 import java.io.OutputStream;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -96,32 +79,20 @@ class XmlWriter {
     return String.join(" ", lst);
   }
 
-  static int stringCompare(String a, String b) {
-    if (a == null) return -1;
-    if (b == null) return 1;
-    return a.compareTo(b);
+  private static final int stringCompare(String stringA, String stringB) {
+    if (stringA == null) return -1;
+    if (stringB == null) return 1;
+    return stringA.compareTo(stringB);
   }
   
-  static final void swap(Node top, Node nodeA, Node nodeB) {
-    final var nameNodeA = nodeA.getNodeName();
-    final var nameNodeB = nodeB.getNodeName();
-    var compare = stringCompare(nameNodeA, nameNodeB);
-    if (compare > 0) {
-      top.insertBefore(nodeB, nodeA);
-    } else if (compare < 0) return;
-    final var nameAttributesNodeA = attrsToString(nodeA.getAttributes());
-    final var nameAttributesNodeB = attrsToString(nodeB.getAttributes());
-    compare = stringCompare(nameAttributesNodeA, nameAttributesNodeB);
-    if (compare > 0) {
-      top.insertBefore(nodeB, nodeA);
-    } else if (compare < 0) return;
-    final var nameNodeValueNodeA = nodeA.getNodeValue();
-    final var nameNodeValueNodeB = nodeB.getNodeValue();
-    compare = stringCompare(nameNodeValueNodeA, nameNodeValueNodeB);
-    if (compare > 0) {
-      top.insertBefore(nodeB, nodeA);
-    }
-  }
+  private static final Comparator<Node> nodeComparator =
+      (nodeA, nodeB) -> {
+        var compareResult = stringCompare(nodeA.getNodeName(), nodeB.getNodeName());
+        if (compareResult != 0) return compareResult;
+        compareResult = stringCompare(attrsToString(nodeA.getAttributes()), attrsToString(nodeB.getAttributes()));
+        if (compareResult != 0) return compareResult;
+        return stringCompare(nodeA.getNodeValue(), nodeB.getNodeValue());
+      };
 
   static void sort(Node top) {
     final var children = top.getChildNodes();
@@ -141,14 +112,25 @@ class XmlWriter {
     //   - a(s)
     //   - comp(s)
     //   - wire(s)
-    if (name.equals("appear")) return; // do not sort the appearance section, we do not have to go down 
+    if (name.equals("appear")) { 
+      // the appearance section only has to sort the circuit ports, the rest is static.
+      final var circuitPortIndexes = new ArrayList<Integer>(); 
+      for (var nodeIndex = 0; nodeIndex < childrenCount; nodeIndex++) 
+        if (children.item(nodeIndex).getNodeName().equals("circ-port")) circuitPortIndexes.add(nodeIndex);
+      if (circuitPortIndexes.isEmpty()) return;
+      final var numberOfPorts = circuitPortIndexes.size();
+      final var nodeSet = new Node[numberOfPorts];
+      for (var portIndex = 0; portIndex < numberOfPorts; portIndex++) 
+        nodeSet[portIndex] = children.item(circuitPortIndexes.get(portIndex));
+      Arrays.sort(nodeSet, nodeComparator);
+      for (var portIndex = 0; portIndex < numberOfPorts; portIndex++) top.insertBefore(nodeSet[portIndex], null);
+      return;
+    }
     if (childrenCount > 1 && !name.equals("project") && !name.equals("lib") && !name.equals("toolbar")) {
-      for (var bubbleLoop1 = 0; bubbleLoop1 < childrenCount - 1; bubbleLoop1++)
-        for (var bubbleLoop2 = 0; bubbleLoop2 < childrenCount - bubbleLoop1 - 1; bubbleLoop2++) {
-          final var nodeA = children.item(bubbleLoop2);
-          final var nodeB = children.item(bubbleLoop2 + 1);
-          swap(top, nodeA, nodeB);
-        }
+      final var nodeSet = new Node[childrenCount];
+      for (var nodeIndex = 0; nodeIndex < childrenCount; nodeIndex++) nodeSet[nodeIndex] = children.item(nodeIndex);
+      Arrays.sort(nodeSet, nodeComparator);
+      for (var nodeIndex = 0; nodeIndex < childrenCount; nodeIndex++) top.insertBefore(nodeSet[nodeIndex], null);
     }
     for (var childId = 0; childId < childrenCount; childId++) {
       sort(children.item(childId));

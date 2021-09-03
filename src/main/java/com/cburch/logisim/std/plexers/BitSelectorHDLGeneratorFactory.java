@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.plexers;
@@ -66,24 +47,25 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents =
         (new LineBuffer())
-            .addPair("extBits", EXTENDED_BITS_STR)
-            .addPair("inBits", INPUT_BITS_STR)
-            .add("outBits", OUTPUTS_BITS_STR);
+            .pair("extBits", EXTENDED_BITS_STR)
+            .pair("inBits", INPUT_BITS_STR)
+            .pair("outBits", OUTPUTS_BITS_STR);
     final var outputBits = attrs.getValue(BitSelector.GROUP_ATTR).getWidth();
     if (HDL.isVHDL()) {
-      contents.add(
-          "s_extended_vector(({{extBits}}-1) DOWNTO {{inBits}}) <= (OTHERS => '0');",
-          "s_extended_vector(({{inBits}}-1) DOWNTO 0) <= DataIn;");
-      if (outputBits > 1)
-        contents.add(
-            "DataOut <= s_extended_vector(((to_integer(unsigned(Sel))+1) * {{outBits}})-1 DOWNTO to_integer(unsigned(Sel))*{{outBits}});");
-      else contents.add("DataOut <= s_extended_vector(to_integer(unsigned(Sel)));");
+      contents
+          .addLines(
+              "s_extended_vector(({{extBits}}-1) DOWNTO {{inBits}}) <= (OTHERS => '0');",
+              "s_extended_vector(({{inBits}}-1) DOWNTO 0) <= DataIn;")
+          .add(
+              outputBits > 1
+                  ? "DataOut <= s_extended_vector(((to_integer(unsigned(Sel))+1) * {{outBits}})-1 DOWNTO to_integer(unsigned(Sel))*{{outBits}});"
+                  : "DataOut <= s_extended_vector(to_integer(unsigned(Sel)));");
     } else {
-      contents.add(
+      contents.addLines(
           "assign s_extended_vector[{{extBits}}-1:{{inBits}}] = 0;",
           "assign s_extended_vector[{{inBits}}-1:0] = DataIn;");
       if (outputBits > 1) {
-        contents.add(
+        contents.addLines(
             "wire[513:0] s_select_vector;",
             "reg[{{outBits}}-1:0] s_selected_slice;",
             "assign s_select_vector[513:{{extBits}}] = 0;",
@@ -96,7 +78,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
         for (var i = 15; i > 0; i--) {
           contents.add("      {{1}} : s_selected_slice <= s_select_vector[({{2}}*{{outBits}})-1:{{1}}*{{outBits}}];", i, (i + 1));
         }
-        contents.add(
+        contents.addLines(
             "      default : s_selected_slice <= s_select_vector[{{outBits}}-1:0];",
             "   endcase",
             "end");
@@ -129,9 +111,9 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var map = new TreeMap<String, Integer>();
-    int selBits = componentInfo.GetComponent().getEnd(2).getWidth().getWidth();
-    int inputBits = componentInfo.GetComponent().getEnd(1).getWidth().getWidth();
-    int outputBits = componentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    int selBits = componentInfo.getComponent().getEnd(2).getWidth().getWidth();
+    int inputBits = componentInfo.getComponent().getEnd(1).getWidth().getWidth();
+    int outputBits = componentInfo.getComponent().getEnd(0).getWidth().getWidth();
     map.put(INPUT_BITS_STR, inputBits);
     map.put(SelectBitsStr, selBits);
     if (outputBits > 1) map.put(OUTPUTS_BITS_STR, outputBits);

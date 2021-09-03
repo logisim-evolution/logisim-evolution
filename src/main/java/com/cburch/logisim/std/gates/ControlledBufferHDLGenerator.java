@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.gates;
@@ -56,7 +37,7 @@ public class ControlledBufferHDLGenerator extends AbstractHDLGeneratorFactory {
     var inpName = "";
     var outpName = "";
     var triState = "";
-    final var nrBits = componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
+    final var nrBits = componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
     if (nrBits > 1) {
       inpName = GetBusName(componentInfo, 1, nets);
       outpName = GetBusName(componentInfo, 0, nets);
@@ -66,8 +47,8 @@ public class ControlledBufferHDLGenerator extends AbstractHDLGeneratorFactory {
       outpName = GetNetName(componentInfo, 0, true, nets);
       triState = HDL.isVHDL() ? "'Z'" : "1'bZ";
     }
-    if (componentInfo.EndIsConnected(2) && componentInfo.EndIsConnected(0)) {
-      final var invert = ((ControlledBuffer) componentInfo.GetComponent().getFactory()).isInverter()
+    if (componentInfo.isEndConnected(2) && componentInfo.isEndConnected(0)) {
+      final var invert = ((ControlledBuffer) componentInfo.getComponent().getFactory()).isInverter()
               ? HDL.notOperator()
               : "";
       if (HDL.isVHDL()) {

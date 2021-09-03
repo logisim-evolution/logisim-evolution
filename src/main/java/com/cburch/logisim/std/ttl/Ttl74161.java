@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.ttl;
@@ -81,14 +62,14 @@ public class Ttl74161 extends AbstractTtlGate {
       "A1/QB",
       "A0/QA",
       "TC/RC0 (Terminal Count)"
-  }; 
-  private static final byte[] OUTPUT_PORTS = {11, 12, 13, 14, 15}; 
+  };
+  private static final byte[] OUTPUT_PORTS = {11, 12, 13, 14, 15};
 
   public Ttl74161() {
     super(_ID, (byte) 16, OUTPUT_PORTS, PORT_NAMES);
     super.setInstancePoker(Poker.class);
   }
-  
+
   public Ttl74161(String name) {
     super(name, (byte) 16, OUTPUT_PORTS, PORT_NAMES);
     super.setInstancePoker(Poker.class);
@@ -171,10 +152,10 @@ public class Ttl74161 extends AbstractTtlGate {
       gfx.setColor(Color.BLACK);
     }
   }
-  
+
   public static void updateState(InstanceState state, Long value) {
     var data = getStateData(state);
-    
+
     data.setValue(Value.createKnown(BitWidth.create(4), value));
     final var vA = data.getValue().get(0);
     final var vB = data.getValue().get(1);
@@ -189,7 +170,7 @@ public class Ttl74161 extends AbstractTtlGate {
     // RC0 = QA AND QB AND QC AND QD AND ENT
     state.setPort(PORT_INDEX_RC0, state.getPortValue(PORT_INDEX_EnT).and(vA).and(vB).and(vC).and(vD), 1);
   }
-  
+
   public static TtlRegisterData getStateData(InstanceState state) {
     var data = (TtlRegisterData) state.getData();
     if (data == null) {
@@ -205,7 +186,7 @@ public class Ttl74161 extends AbstractTtlGate {
     final var triggered = data.updateClock(state.getPortValue(PORT_INDEX_CLK), StdAttr.TRIG_RISING);
     final var nClear = state.getPortValue(PORT_INDEX_nCLR).toLongValue();
     var counter = data.getValue().toLongValue();
-    
+
     if (nClear == 0) {
       counter = 0;
     } else if (triggered) {

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
- *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
+ * 
+ * https://github.com/logisim-evolution/
+ * 
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.ttl;
@@ -150,25 +131,26 @@ public class Drawgates {
   }
 
   static void paintOutputgate(Graphics g, int xpin, int y, int xoutput, int youtput, boolean up, int height) {
-    int[] yPoints;
     final var xPoints = new int[] {xoutput, xpin, xpin};
-    if (!up) yPoints = new int[] {youtput, youtput, y + height - AbstractTtlGate.PIN_HEIGHT};
-    else yPoints = new int[] {youtput, youtput, y + AbstractTtlGate.PIN_HEIGHT};
+    final var yPoints =
+        !up
+            ? new int[] {youtput, youtput, y + height - AbstractTtlGate.PIN_HEIGHT}
+            : new int[] {youtput, youtput, y + AbstractTtlGate.PIN_HEIGHT};
     g.drawPolyline(xPoints, yPoints, 3);
   }
 
-  static void paintPortNames(InstancePainter painter, int x, int y, int height, String[] portnames) {
-    final var g = painter.getGraphics();
-    g.drawRect(
+  static void paintPortNames(InstancePainter painter, int x, int y, int height, String[] portNames) {
+    final var gfx = painter.getGraphics();
+    gfx.drawRect(
         x + 10,
         y + AbstractTtlGate.PIN_HEIGHT + 10,
-        portnames.length * 10,
+        portNames.length * 10,
         height - 2 * AbstractTtlGate.PIN_HEIGHT - 20);
     for (var i = 0; i < 2; i++) {
-      for (var j = 0; j < portnames.length / 2; j++) {
+      for (var j = 0; j < portNames.length / 2; j++) {
         GraphicsUtil.drawCenteredText(
-            g,
-            portnames[j + (i * 7)],
+            gfx,
+            portNames[j + (i * 7)],
             i == 0 ? x + 10 + j * 20 : x + 160 - j * 20 - 10,
             y
                 + height
@@ -180,10 +162,11 @@ public class Drawgates {
   }
 
   static void paintSingleInputgate(Graphics g, int xpin, int y, int xinput, int youtput, boolean up, int height) {
-    int[] yPoints;
     final var xPoints = new int[] {xpin, xpin, xinput};
-    if (!up) yPoints = new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, youtput, youtput};
-    else yPoints = new int[] {y + AbstractTtlGate.PIN_HEIGHT, youtput, youtput};
+    final var yPoints =
+        !up
+            ? new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, youtput, youtput}
+            : new int[] {y + AbstractTtlGate.PIN_HEIGHT, youtput, youtput};
     g.drawPolyline(xPoints, yPoints, 3);
   }
 

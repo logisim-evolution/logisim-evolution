@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
- *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
+ * 
+ * https://github.com/logisim-evolution/
+ * 
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.io;
@@ -52,12 +33,12 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
     final var contents = new ArrayList<String>();
-    final var dir = componentInfo.GetComponent().getAttributeSet().getValue(PortIO.ATTR_DIR);
-    var size = componentInfo.GetComponent().getAttributeSet().getValue(PortIO.ATTR_SIZE).getWidth();
+    final var dir = componentInfo.getComponent().getAttributeSet().getValue(PortIO.ATTR_DIR);
+    var size = componentInfo.getComponent().getAttributeSet().getValue(PortIO.ATTR_SIZE).getWidth();
     final var nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
     if (dir == PortIO.INPUT) {
       for (var i = 0; i < nBus; i++) {
-        final var start = componentInfo.GetLocalBubbleInputStartId() + i * BitWidth.MAXWIDTH;
+        final var start = componentInfo.getLocalBubbleInputStartId() + i * BitWidth.MAXWIDTH;
         var end = start - 1;
         end += Math.min(size, BitWidth.MAXWIDTH);
         size -= BitWidth.MAXWIDTH;
@@ -76,7 +57,7 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     } else if (dir == PortIO.OUTPUT) {
       for (var i = 0; i < nBus; i++) {
-        final var start = componentInfo.GetLocalBubbleOutputStartId() + i * BitWidth.MAXWIDTH;
+        final var start = componentInfo.getLocalBubbleOutputStartId() + i * BitWidth.MAXWIDTH;
         var end = start - 1;
         end += Math.min(size, BitWidth.MAXWIDTH);
         size -= BitWidth.MAXWIDTH;
@@ -86,7 +67,7 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     } else {
       for (var i = 0; i < nBus; i++) {
-        final var start = componentInfo.GetLocalBubbleInOutStartId() + i * BitWidth.MAXWIDTH;
+        final var start = componentInfo.getLocalBubbleInOutStartId() + i * BitWidth.MAXWIDTH;
         final var nbits = Math.min(size, BitWidth.MAXWIDTH);
         final var end = start - 1 + nbits;
         size -= nbits;

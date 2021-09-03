@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
- *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
+ * 
+ * https://github.com/logisim-evolution/
+ * 
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.plexers;
@@ -70,7 +51,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       for (var i = 0; i < (1 << nrOfSelectBits); i++) {
         contents.add("                    MuxIn_{{1}},", i);
       }
-      contents.add(
+      contents.addLines(
           "                    Sel )",
           "BEGIN",
           "   IF (Enable = '0') THEN",
@@ -80,13 +61,15 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
           "                     ELSE",
           "      CASE (Sel) IS");
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++) {
-        contents.add("          WHEN {{1}} => MuxOut <= MuxIn_{{2}};", IntToBin(i, nrOfSelectBits), i);
+        contents.add("         WHEN {{1}} => MuxOut <= MuxIn_{{2}};", IntToBin(i, nrOfSelectBits), i);
       }
-      contents.add("         WHEN OTHERS  => MuxOut <= MuxIn_{{1}};", (1 << nrOfSelectBits) - 1,
-                   "      END CASE;", "   END IF;",
-                   "END PROCESS make_mux;");
+      contents.add("         WHEN OTHERS  => MuxOut <= MuxIn_{{1}};", (1 << nrOfSelectBits) - 1);
+      contents.addLines(
+          "      END CASE;", 
+          "   END IF;",
+          "END PROCESS make_mux;");
     } else {
-      contents.add(
+      contents.addLines(
           "assign MuxOut = s_selected_vector;",
           "",
           "always @(*)",
@@ -127,7 +110,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var map = new TreeMap<String, Integer>();
     final var nrOfBits =
-        componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
+        componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
     if (nrOfBits > 1) map.put(NrOfBitsStr, nrOfBits);
     return map;
   }
@@ -137,7 +120,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var comp = (NetlistComponent) mapInfo;
-    final var nrOfSelectBits = comp.GetComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
+    final var nrOfSelectBits = comp.getComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     var selectInputIndex = (1 << nrOfSelectBits);
     // begin with connecting all inputs of multiplexer
     for (var i = 0; i < selectInputIndex; i++)
@@ -145,7 +128,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     // now select..
     map.putAll(GetNetMap("Sel", true, comp, selectInputIndex, nets));
     // now connect enable input...
-    if (comp.GetComponent()
+    if (comp.getComponent()
         .getAttributeSet()
         .getValue(PlexersLibrary.ATTR_ENABLE)) {
       map.putAll(

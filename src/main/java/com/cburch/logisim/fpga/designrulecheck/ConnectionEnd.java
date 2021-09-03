@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.designrulecheck;
@@ -33,41 +14,43 @@ import java.util.ArrayList;
 
 public class ConnectionEnd {
 
-  private final boolean IsOutput;
-  private final Byte nr_of_bits;
-  private final ArrayList<ConnectionPoint> MyConnections;
+  private final boolean isOutput;
+  private final Byte nrOfBits;
+  private final ArrayList<ConnectionPoint> myConnections;
 
-  public ConnectionEnd(boolean OutputEnd, Byte nr_of_bits, Component comp) {
-    IsOutput = OutputEnd;
-    this.nr_of_bits = nr_of_bits;
-    MyConnections = new ArrayList<>();
-    for (byte i = 0; i < nr_of_bits; i++) MyConnections.add(new ConnectionPoint(comp));
+  public ConnectionEnd(boolean isOutputEnd, Byte nrOfBits, Component comp) {
+    this.isOutput = isOutputEnd;
+    this.nrOfBits = nrOfBits;
+    this.myConnections = new ArrayList<>();
+    for (byte i = 0; i < nrOfBits; i++) {
+      myConnections.add(new ConnectionPoint(comp));
+    }
   }
 
-  public ConnectionPoint GetConnection(Byte BitIndex) {
-    if ((BitIndex < 0) || (BitIndex >= nr_of_bits)) return null;
-    return MyConnections.get(BitIndex);
+  public ConnectionPoint get(Byte bitIndex) {
+    if ((bitIndex < 0) || (bitIndex >= nrOfBits)) return null;
+    return myConnections.get(bitIndex);
   }
 
-  public boolean IsOutputEnd() {
-    return IsOutput;
+  public boolean isOutputEnd() {
+    return isOutput;
   }
 
-  public int NrOfBits() {
-    return nr_of_bits;
+  public int getNrOfBits() {
+    return nrOfBits;
   }
 
-  public boolean SetChildPortIndex(Net ConnectedNet, Byte BitIndex, int PortIndex) {
-    if ((BitIndex < 0) || (BitIndex >= nr_of_bits)) return false;
-    ConnectionPoint Connection = MyConnections.get(BitIndex);
+  public boolean setChildPortIndex(Net connectedNet, Byte bitIndex, int portIndex) {
+    if ((bitIndex < 0) || (bitIndex >= nrOfBits)) return false;
+    final var Connection = myConnections.get(bitIndex);
     if (Connection == null) return false;
-    Connection.setChildsPortIndex(PortIndex);
+    Connection.setChildsPortIndex(portIndex);
     return true;
   }
 
-  public boolean SetConnection(ConnectionPoint Connection, Byte BitIndex) {
-    if ((BitIndex < 0) || (BitIndex >= nr_of_bits)) return false;
-    MyConnections.set(BitIndex, Connection);
+  public boolean setConnection(ConnectionPoint Connection, Byte BitIndex) {
+    if ((BitIndex < 0) || (BitIndex >= nrOfBits)) return false;
+    myConnections.set(BitIndex, Connection);
     return true;
   }
 }

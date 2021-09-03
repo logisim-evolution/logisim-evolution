@@ -1,111 +1,92 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.designrulecheck;
 
 public class BubbleInformationContainer {
-  private int MyInBubblesStartIndex;
-  private int MyInBubblesEndIndex;
-  private int MyInOutBubblesStartIndex;
-  private int MyInOutBubblesEndIndex;
-  private int MyOutBubblesStartIndex;
-  private int MyOutBubblesEndIndex;
+  private int myInBubblesStartIndex;
+  private int myInBubblesEndIndex;
+  private int myInOutBubblesStartIndex;
+  private int myInOutBubblesEndIndex;
+  private int myOutBubblesStartIndex;
+  private int myOutBubblesEndIndex;
 
   public void BubbleInformation() {
-    MyInBubblesStartIndex =
-        MyInBubblesEndIndex =
-            MyOutBubblesStartIndex =
-                MyOutBubblesEndIndex = MyInOutBubblesStartIndex = MyInOutBubblesEndIndex = -1;
+    myInBubblesStartIndex =
+        myInBubblesEndIndex =
+            myOutBubblesStartIndex =
+                myOutBubblesEndIndex = myInOutBubblesStartIndex = myInOutBubblesEndIndex = -1;
   }
 
-  public int GetInOutEndIndex() {
-    return MyInOutBubblesEndIndex;
+  public int getInOutEndIndex() {
+    return myInOutBubblesEndIndex;
   }
 
-  public int GetInOutStartIndex() {
-    return MyInOutBubblesStartIndex;
+  public int getInOutStartIndex() {
+    return myInOutBubblesStartIndex;
   }
 
-  public int GetInputEndIndex() {
-    return MyInBubblesEndIndex;
+  public int getInputEndIndex() {
+    return myInBubblesEndIndex;
   }
 
-  public int GetInputStartIndex() {
-    return MyInBubblesStartIndex;
+  public int getInputStartIndex() {
+    return myInBubblesStartIndex;
   }
 
-  public int GetOutputEndIndex() {
-    return MyOutBubblesEndIndex;
+  public int getOutputEndIndex() {
+    return myOutBubblesEndIndex;
   }
 
-  public int GetOutputStartIndex() {
-    return MyOutBubblesStartIndex;
+  public int getOutputStartIndex() {
+    return myOutBubblesStartIndex;
   }
 
-  public boolean HasInOutBubbles() {
-    return ((MyInOutBubblesStartIndex >= 0) && (MyInOutBubblesEndIndex >= 0));
+  public boolean hasInOutBubbles() {
+    return ((myInOutBubblesStartIndex >= 0) && (myInOutBubblesEndIndex >= 0));
   }
 
-  public boolean HasInputBubbles() {
-    return ((MyInBubblesStartIndex >= 0) && (MyInBubblesEndIndex >= 0));
+  public boolean hasInputBubbles() {
+    return ((myInBubblesStartIndex >= 0) && (myInBubblesEndIndex >= 0));
   }
 
-  public boolean HasOutputBubbles() {
-    return ((MyOutBubblesStartIndex >= 0) && (MyOutBubblesEndIndex >= 0));
+  public boolean hasOutputBubbles() {
+    return ((myOutBubblesStartIndex >= 0) && (myOutBubblesEndIndex >= 0));
   }
 
-  public int NrOfInOutBubbles() {
-    if ((MyInOutBubblesStartIndex < 0) || (MyInOutBubblesEndIndex < 0)) return 0;
-    return (MyInOutBubblesEndIndex - MyInOutBubblesStartIndex) + 1;
+  public int nrOfInOutBubbles() {
+    if ((myInOutBubblesStartIndex < 0) || (myInOutBubblesEndIndex < 0)) return 0;
+    return (myInOutBubblesEndIndex - myInOutBubblesStartIndex) + 1;
   }
 
-  public int NrOfInputBubbles() {
-    if ((MyInBubblesStartIndex < 0) || (MyInBubblesEndIndex < 0)) return 0;
-    return (MyInBubblesEndIndex - MyInBubblesStartIndex) + 1;
+  public int nrOfInputBubbles() {
+    if ((myInBubblesStartIndex < 0) || (myInBubblesEndIndex < 0)) return 0;
+    return (myInBubblesEndIndex - myInBubblesStartIndex) + 1;
   }
 
-  public int NrOfOutputBubbles() {
-    if ((MyOutBubblesStartIndex < 0) || (MyOutBubblesEndIndex < 0)) return 0;
-    return (MyOutBubblesEndIndex - MyOutBubblesStartIndex) + 1;
+  public int nrOfOutputBubbles() {
+    if ((myOutBubblesStartIndex < 0) || (myOutBubblesEndIndex < 0)) return 0;
+    return (myOutBubblesEndIndex - myOutBubblesStartIndex) + 1;
   }
 
-  public void SetInOutBubblesInformation(int StartIndex, int EndIndex) {
-    MyInOutBubblesStartIndex = StartIndex;
-    MyInOutBubblesEndIndex = EndIndex;
+  public void setInOutBubblesInformation(int startIndex, int endIndex) {
+    myInOutBubblesStartIndex = startIndex;
+    myInOutBubblesEndIndex = endIndex;
   }
 
-  public void SetInputBubblesInformation(int StartIndex, int EndIndex) {
-    MyInBubblesStartIndex = StartIndex;
-    MyInBubblesEndIndex = EndIndex;
+  public void setInputBubblesInformation(int startIndex, int endIndex) {
+    myInBubblesStartIndex = startIndex;
+    myInBubblesEndIndex = endIndex;
   }
 
-  public void SetOutputBubblesInformation(int StartIndex, int EndIndex) {
-    MyOutBubblesStartIndex = StartIndex;
-    MyOutBubblesEndIndex = EndIndex;
+  public void setOutputBubblesInformation(int startIndex, int EndIndex) {
+    myOutBubblesStartIndex = startIndex;
+    myOutBubblesEndIndex = EndIndex;
   }
 }

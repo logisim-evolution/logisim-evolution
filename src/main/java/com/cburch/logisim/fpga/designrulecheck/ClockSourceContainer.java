@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.designrulecheck;
@@ -35,16 +16,16 @@ import java.util.ArrayList;
 public class ClockSourceContainer {
 
   final ArrayList<Component> sources;
-  boolean RequiresFPGAGlobalClock;
+  boolean requiresFpgaGlobalClock;
 
   public ClockSourceContainer() {
     sources = new ArrayList<>();
-    RequiresFPGAGlobalClock = false;
+    requiresFpgaGlobalClock = false;
   }
 
   public void clear() {
     sources.clear();
-    RequiresFPGAGlobalClock = false;
+    requiresFpgaGlobalClock = false;
   }
 
   private boolean equals(Component comp1, Component comp2) {
@@ -62,7 +43,7 @@ public class ClockSourceContainer {
     if (!(comp.getFactory() instanceof Clock)) {
       return -1;
     }
-    for (Component clock : sources) {
+    for (final var clock : sources) {
       if (equals(comp, clock)) {
         return sources.indexOf(clock);
       }
@@ -79,11 +60,11 @@ public class ClockSourceContainer {
     return sources;
   }
 
-  public boolean RequiresFPGAGlobalClock() {
-    return RequiresFPGAGlobalClock;
+  public boolean getRequiresFpgaGlobalClock() {
+    return requiresFpgaGlobalClock;
   }
 
-  public void SetGloblaClockRequirement() {
-    RequiresFPGAGlobalClock = true;
+  public void setRequiresFpgaGlobalClock() {
+    requiresFpgaGlobalClock = true;
   }
 }

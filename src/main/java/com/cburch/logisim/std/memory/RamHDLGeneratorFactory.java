@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.memory;
@@ -120,14 +101,14 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               .add("s_we_{{1}}          <= s_ByteEnableReg({{1}}) AND s_TickDelayLine(0) AND s_WEReg;", i);
         }
       } else {
-        contents.add(
+        contents.addLines(
             "s_oe <= s_TickDelayLine(2) AND s_OEReg;",
             "s_we <= s_TickDelayLine(0) AND s_WEReg;");
       }
       contents
           .empty()
           .addRemarkBlock("Here the input registers are defined")
-          .add(
+          .addLines(
               "InputRegs : PROCESS (Clock, Tick, Address, DataIn, WE, OE)",
               "BEGIN",
               "   IF (Clock'event AND (Clock = '1')) THEN",
@@ -138,15 +119,15 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               "          s_OEReg            <= OE;");
       if (byteEnables) {
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++)
-          contents.add("         s_ByteEnableReg(%1$d) <= ByteEnable%1$d;", i);
+          contents.add("         s_ByteEnableReg({{1}}) <= ByteEnable{{1}}};", i);
       }
       contents
-          .add(
+          .addLines(
               "      END IF;",
               "   END IF;",
               "END PROCESS InputRegs;")
           .empty()
-          .add(
+          .addLines(
               "TickPipeReg : PROCESS(Clock)",
               "BEGIN",
               "   IF (Clock'event AND (Clock = '1')) THEN",
@@ -161,7 +142,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         final var truncated = (attrs.getValue(Mem.DATA_ATTR).getWidth() % 8) != 0;
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
           contents
-              .add("Mem%1$d : PROCESS(Clock, s_we_{{1}}, s_DataInReg, s_Address_reg)", i)
+              .add("Mem{{1}} : PROCESS(Clock, s_we_{{1}}, s_DataInReg, s_Address_reg)", i)
               .add("BEGIN")
               .add("   IF (Clock'event AND (Clock = '1')) THEN")
               .add("      IF (s_we_{{1}} = '1') THEN", i);
@@ -184,7 +165,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         }
       } else {
         contents
-            .add(
+            .addLines(
                 "Mem : PROCESS( Clock , s_we, s_DataInReg, s_Address_reg)",
                 "BEGIN",
                 "   IF (Clock'event AND (Clock = '1')) THEN",
@@ -203,7 +184,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               .add("Res{{1}} : PROCESS(Clock, s_byte_enable_{{1}}, s_ram_data_out)", i)
               .add("BEGIN")
               .add("   IF (Clock'event AND (Clock = '1')) THEN")
-              .add("      IF (s_byte_enable_%s = '1') THEN", i);
+              .add("      IF (s_byte_enable_{{1}} = '1') THEN", i);
           final var startIndex = i * 8;
           final var endIndex =
               (i == (RamAppearance.getNrBEPorts(attrs) - 1))
@@ -213,12 +194,12 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               .add("         DataOut({{1}} DOWNTO {{2}}) <= s_ram_data_out({{1}} DOWNTO {{2}});", endIndex, startIndex)
               .add("      END IF;")
               .add("   END IF;")
-              .add("END PROCESS Res%d;", i)
+              .add("END PROCESS Res{{1}};", i)
               .empty();
         }
       } else {
         contents
-            .add(
+            .addLines(
                 "Res : PROCESS( Clock , s_oe, s_ram_data_out)",
                 "BEGIN",
                 "   IF (Clock'event AND (Clock = '1')) THEN",
@@ -253,7 +234,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var comp = (NetlistComponent) mapInfo;
-    final var attrs = comp.GetComponent().getAttributeSet();
+    final var attrs = comp.getComponent().getAttributeSet();
     Object trigger = attrs.getValue(StdAttr.TRIGGER);
     final var asynch = trigger.equals(StdAttr.TRIG_HIGH) || trigger.equals(StdAttr.TRIG_LOW);
     Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
@@ -264,7 +245,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.putAll(GetNetMap("WE", true, comp, RamAppearance.getWEIndex(0, attrs), nets));
     map.putAll(GetNetMap("OE", true, comp, RamAppearance.getOEIndex(0, attrs), nets));
     if (!asynch) {
-      if (!comp.EndIsConnected(RamAppearance.getClkIndex(0, attrs))) {
+      if (!comp.isEndConnected(RamAppearance.getClkIndex(0, attrs))) {
         Reporter.Report.AddError(
             "Component \"RAM\" in circuit \""
                 + nets.getCircuitName()
@@ -278,7 +259,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           map.put("Tick", HDL.oneBit());
         } else {
           int clockBusIndex;
-          if (nets.RequiresGlobalClockConnection()) {
+          if (nets.requiresGlobalClockConnection()) {
             clockBusIndex = ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX;
           } else {
             clockBusIndex =
@@ -298,8 +279,8 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     }
     if (byteEnables) {
-      final var nrOfByteEnables = RamAppearance.getNrBEPorts(comp.GetComponent().getAttributeSet());
-      final var byteEnableOffset = RamAppearance.getBEIndex(0, comp.GetComponent().getAttributeSet());
+      final var nrOfByteEnables = RamAppearance.getNrBEPorts(comp.getComponent().getAttributeSet());
+      final var byteEnableOffset = RamAppearance.getBEIndex(0, comp.getComponent().getAttributeSet());
       for (var i = 0; i < nrOfByteEnables; i++) {
         map.putAll(
             GetNetMap(

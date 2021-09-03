@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.hdlgenerator;
@@ -64,25 +45,25 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
 
     final var contents =
         (new LineBuffer())
-            .addPair("nrOfLeds", nrOfLedsString)
-            .addPair("ledsCount", nrOfRows * nrOfColumns)
-            .addPair("maxNrLeds", maxNrLedsString)
-            .addPair("maxNrLedsCount", maxNrLeds)
-            .addPair("nrOfRows", nrOfRowsString)
-            .addPair("nrOfRowsCount", nrOfRows)
-            .addPair("nrOfColumns", nrOfColumnsString)
-            .addPair("nrOfColumnsCount", nrOfColumns)
-            .addPair("activeLow", activeLowString)
-            .addPair("activeLowValue", activeLow ? "1" : "0")
-            .addPair("nrColAddrBits", nrOfColumnAddressBitsString)
-            .addPair("nrColAddrBitsCount", nrColAddrBits)
-            .addPair("scanningCounterBits", scanningCounterBitsString)
-            .addPair("nrOfScanningBitsCount", nrOfScanningBitsCount)
-            .addPair("scanningCounter", scanningCounterValueString)
-            .addPair("scanningValue", (scanningReload - 1));
+            .pair("nrOfLeds", nrOfLedsString)
+            .pair("ledsCount", nrOfRows * nrOfColumns)
+            .pair("maxNrLeds", maxNrLedsString)
+            .pair("maxNrLedsCount", maxNrLeds)
+            .pair("nrOfRows", nrOfRowsString)
+            .pair("nrOfRowsCount", nrOfRows)
+            .pair("nrOfColumns", nrOfColumnsString)
+            .pair("nrOfColumnsCount", nrOfColumns)
+            .pair("activeLow", activeLowString)
+            .pair("activeLowValue", activeLow ? "1" : "0")
+            .pair("nrColAddrBits", nrOfColumnAddressBitsString)
+            .pair("nrColAddrBitsCount", nrColAddrBits)
+            .pair("scanningCounterBits", scanningCounterBitsString)
+            .pair("nrOfScanningBitsCount", nrOfScanningBitsCount)
+            .pair("scanningCounter", scanningCounterValueString)
+            .pair("scanningValue", (scanningReload - 1));
 
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "GENERIC MAP ( {{nrOfLeds}} => {{ledsCount}},",
           "              {{nrOfRows}} => {{nrOfRowsCount}},",
           "              {{nrOfColumns}} => {{nrOfColumnsCount}},",
@@ -92,7 +73,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
           "              {{maxNrLeds}} => {{maxNrLedsCount}},",
           "              {{activeLow}} => {{activeLowValue}} )");
     } else {
-      contents.add(
+      contents.addLines(
           "#( .{{nrOfLeds}}({{ledsCount}}),",
           "   .{{nrOfRows}}({{nrOfRowsCount}}),",
           "   .{{nrOfColumns}}({{nrOfColumnsCount}}),",
@@ -108,20 +89,20 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
         (new LineBuffer())
-            .addPair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
-            .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
-            .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
-            .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
-            .addPair("id", id);
+            .pair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
+            .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
+            .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+            .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+            .pair("id", id);
 
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "PORT MAP ( {{columnAddress}} => {{columnAddress}}{{id}},",
           "           {{outs}} => {{outs}}{{id}},",
           "           {{clock}} => {{clock}},",
           "           {{ins}} => s_{{ins}}{{id}} );");
     } else {
-      contents.add(
+      contents.addLines(
           "( .{{columnAddress}}({{columnAddress}}{{id}}),",
           "  .{{outs}}({{outs}}{{id}}),",
           "  .{{clock}}({{clock}}),",
@@ -182,13 +163,13 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
   public ArrayList<String> getColumnCounterCode() {
     final var contents =
         (new LineBuffer())
-            .addPair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
-            .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
-            .addPair("counterBits", scanningCounterBitsString)
-            .addPair("counterValue", scanningCounterValueString);
+            .pair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
+            .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+            .pair("counterBits", scanningCounterBitsString)
+            .pair("counterValue", scanningCounterValueString);
 
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "",
           "{{columnAddress}} <= s_columnCounterReg;",
           "",
@@ -216,17 +197,17 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
           "");
     } else {
       contents
-          .add(
+          .addLines(
               "",
               "assign columnAddress = s_columnCounterReg;",
               "",
               "assign s_tickNext = (s_scanningCounterReg == 0) ? 1'b1 : 1'b0;",
               "assign s_scanningCounterNext = (s_scanningCounterReg == 0) ? {{counterValue}} : s_scanningCounterReg - 1;",
               "assign s_columnCounterNext = (s_tickReg == 1'b0) ? s_columnCounterReg : ",
-              "                             (s_rowCounterReg == 0) ? nrOfColumns-1 : s_columnCounterReg-1;",
+              "                             (s_columnCounterReg == 0) ? nrOfColumns-1 : s_columnCounterReg-1;",
               "")
           .addRemarkBlock("Here the simulation only initial is defined")
-          .add(
+          .addLines(
               "initial",
               "begin",
               "   s_columnCounterReg   = 0;",
@@ -248,16 +229,16 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents =
         (new LineBuffer())
-            .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
-            .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
-            .addPair("nrOfLeds", nrOfLedsString)
-            .addPair("nrOfRows", nrOfRowsString)
-            .addPair("activeLow", activeLowString)
+            .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+            .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
+            .pair("nrOfLeds", nrOfLedsString)
+            .pair("nrOfRows", nrOfRowsString)
+            .pair("activeLow", activeLowString)
             .add(getColumnCounterCode());
 
     if (HDL.isVHDL()) {
-      contents
-          .add("makeVirtualInputs : PROCESS ( internalLeds ) IS",
+      contents.addLines(
+          "makeVirtualInputs : PROCESS ( internalLeds ) IS",
           "BEGIN",
           "   s_maxLedInputs <= (OTHERS => '0');",
           "   IF ({{activeLow}} = 1) THEN",
@@ -271,11 +252,12 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
           "   {{outs}}(n) <= s_maxLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);",
           "END GENERATE GenOutputs;");
     } else {
-      contents.add(
+      contents.addLines(
           "",
           "genvar i;",
           "generate",
-          "   for (i = 0; i < {{nrOfRows}}; i = i + 1) begin",
+          "   for (i = 0; i < {{nrOfRows}}; i = i + 1)",
+          "   begin: outputs",
           "      assign {{outs}}[i] = (activeLow == 1)",
           "          ? ~{{ins}}[i*nrOfColumns+s_columnCounterReg]",
           "          : {{ins}}[i*nrOfColumns+s_columnCounterReg];",

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim;
@@ -32,12 +13,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-import com.cburch.logisim.std.memory.Random;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
@@ -77,21 +58,12 @@ public class LineBufferTest extends TestBase {
   /** Tests is plain add(String) works as expected. */
   @Test
   public void testAdd() {
-    final var tests =
-        new ArrayList<String>() {
-          {
-            add(getRandomString());
-            add(" {{placeholders}} should not be processed");
-          }
-        };
+    final var lb = new LineBuffer();
+    final var test = getRandomString();
+    lb.add(test);
 
-    for (final var test : tests) {
-      final var lb = new LineBuffer();
-      lb.add(test);
-
-      assertEquals(1, lb.size());
-      assertEquals(test, lb.get(0));
-    }
+    assertEquals(1, lb.size());
+    assertEquals(test, lb.get(0));
   }
 
   /** Tests is add(String, Object...) works as expected. */
@@ -109,6 +81,21 @@ public class LineBufferTest extends TestBase {
     lb.add("{{2}}{{1}}", foo, bar);
     assertEquals(1, lb.size());
     assertEquals(bar + foo, lb.get(0));
+  }
+
+  @Test
+  public void testAddWordsAndWithPair() {
+    final var pair = getRandomString();
+    final var foo = getRandomString();
+    final var bar = getRandomInt(0, 100);
+
+    final var lb = (new LineBuffer())
+            .pair("pair", pair)
+            .add("{{pair}}-{{1}}-{{2}}", foo, bar);
+    System.out.println(lb.toString());
+    assertEquals(1, lb.size());
+    final var expected = String.format("%s-%s-%d", pair, foo, bar);
+    assertEquals(expected, lb.get(0));
   }
 
   @Test
@@ -160,7 +147,7 @@ public class LineBufferTest extends TestBase {
     for (final var test : tests.entrySet()) {
       final var lb = new LineBuffer(pairs);
       lb.add(test.getKey());
-      final var expected = new LineBuffer(test.getValue(), pairs);
+      final var expected = (new LineBuffer()).add(test.getValue(), pairs);
       assertEquals(expected, lb);
     }
   }
@@ -177,7 +164,7 @@ public class LineBufferTest extends TestBase {
             " {{   bar}} ", " BAR ",
             " {{bang}} ", " BANG ");
 
-    final var pairs =
+    final var globalPairs =
         new LineBuffer.Pairs() {
           {
             add("foo", "FOO");
@@ -186,7 +173,7 @@ public class LineBufferTest extends TestBase {
         };
 
     for (final var test : tests.entrySet()) {
-      final var lb = new LineBuffer(pairs);
+      final var lb = new LineBuffer(globalPairs);
       lb.add(test.getKey(), new LineBuffer.Pairs("bang", "BANG"));
 
       final var expPairs =
@@ -201,6 +188,50 @@ public class LineBufferTest extends TestBase {
       final var expected = new LineBuffer(test.getValue(), expPairs);
       assertEquals(expected, lb);
     }
+  }
+
+  @Test
+  public void testMultiplePlaceholdersInLine() {
+    final var arg1 = "ARG_1";
+    final var line = "{{assign}} s_{{ins}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{1}};";
+
+    final var buffer = new LineBuffer();
+    // lb.addHdlPairs();  // FIXME: mock isVHDL()
+    buffer
+        .pair("assign", "assign")
+        .pair("=", "=")
+        .pair("<", "<")
+        .pair(">", ">");
+
+    buffer
+        .pair("id", "ID")
+        .pair("pin", "PIN")
+        .pair("ins", "INS");
+
+    buffer.add(line, arg1);
+
+    final var exp = "assign s_INSID<PIN> = " + arg1 + ";";
+    assertEquals(1, buffer.size());
+    assertEquals(exp, buffer.get(0));
+  }
+
+  /* ********************************************************************************************* */
+
+  /**
+   * Checks if providing less arguments than positional placeholders would be detected.
+   */
+  @Test
+  public void testAddTooLittlePosArgs() {
+    assertThrows(RuntimeException.class, () -> {
+      this.lb.add("This is {{1}} bar {{   2}} test", 666);
+    });
+  }
+
+  @Test
+  public void testGetUsedPlaceholders() {
+    assertThrows(RuntimeException.class, () -> {
+      this.lb.validateLineNoPositionals("This is {{foo}} bar {{   2}} test");
+    });
   }
 
   /* ********************************************************************************************* */

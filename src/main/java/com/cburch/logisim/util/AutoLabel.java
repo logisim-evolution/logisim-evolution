@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
- *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
+ * 
+ * https://github.com/logisim-evolution/
+ * 
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.util;
@@ -160,12 +141,12 @@ public class AutoLabel {
   }
 
   public static boolean labelEndsWithNumber(String label) {
-    return CorrectLabel.Numbers.contains(label.substring(label.length() - 1));
+    return CorrectLabel.NUMBERS.contains(label.substring(label.length() - 1));
   }
 
   private int getLabelBaseEndIndex(String label) {
     var index = label.length();
-    while ((index > 1) && CorrectLabel.Numbers.contains(label.substring(index - 1, index))) index--;
+    while ((index > 1) && CorrectLabel.NUMBERS.contains(label.substring(index - 1, index))) index--;
     return (index - 1);
   }
 
@@ -214,7 +195,7 @@ public class AutoLabel {
       if (newLabel != null) {
         if (Circuit.IsCorrectLabel(circ.getName(), newLabel, circ.getNonWires(), attrs, compFactory, true)
             && SyntaxChecker.isVariableNameAcceptable(newLabel, true)
-            && !CorrectLabel.IsKeyword(newLabel, true)) {
+            && !CorrectLabel.isKeyword(newLabel, true)) {
           if (createAction) act.set(comp, StdAttr.LABEL, newLabel);
           else setLabel(newLabel, circ, compFactory);
           correct = true;

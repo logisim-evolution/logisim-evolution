@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.ttl;
@@ -86,23 +67,24 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
-    return contents.add(
-        "Q7  <= CurState(0);",
-        "Q7n <= NOT(CurState(0));",
-        "",
-        "Enable  <= NOT(CKIh) AND Tick;",
-        "ParData <= P7&P6&P5&P4&P3&P2&P1&P0;",
-        "",
-        "NextState <= CurState WHEN Enable = '0' ELSE",
-        "             ParData WHEN SHnLD = '0' ELSE",
-        "             SER&CurState(7 DOWNTO 1);",
-        "",
-        "dffs : PROCESS( CK ) IS",
-        "   BEGIN",
-        "      IF (rising_edge(CK)) THEN CurState <= NextState;",
-        "      END IF;",
-        "   END PROCESS dffs;").getWithIndent();
+    return (new LineBuffer())
+        .addLines(
+            "Q7  <= CurState(0);",
+            "Q7n <= NOT(CurState(0));",
+            "",
+            "Enable  <= NOT(CKIh) AND Tick;",
+            "ParData <= P7&P6&P5&P4&P3&P2&P1&P0;",
+            "",
+            "NextState <= CurState WHEN Enable = '0' ELSE",
+            "             ParData WHEN SHnLD = '0' ELSE",
+            "             SER&CurState(7 DOWNTO 1);",
+            "",
+            "dffs : PROCESS( CK ) IS",
+            "   BEGIN",
+            "      IF (rising_edge(CK)) THEN CurState <= NextState;",
+            "      END IF;",
+            "   END PROCESS dffs;")
+        .getWithIndent();
   }
 
   @Override
@@ -112,8 +94,8 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
     final var comp = (NetlistComponent) mapInfo;
     var gatedClock = false;
     var hasClock = true;
-    final var ClockPinIndex = comp.GetComponent().getFactory().ClockPinIndex(null)[0];
-    if (!comp.EndIsConnected(ClockPinIndex)) {
+    final var ClockPinIndex = comp.getComponent().getFactory().ClockPinIndex(null)[0];
+    if (!comp.isEndConnected(ClockPinIndex)) {
       Reporter.Report.AddSevereWarning(
           "Component \"TTL74165\" in circuit \""
               + nets.getCircuitName()
@@ -131,7 +113,7 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
       map.put("Tick", "'1'");
       map.put("CK", GetNetName(comp, ClockPinIndex, true, nets));
     } else {
-      if (nets.RequiresGlobalClockConnection()) {
+      if (nets.requiresGlobalClockConnection()) {
         map.put("Tick", "'1'");
       } else {
         map.put(

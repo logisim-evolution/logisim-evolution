@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.hdlgenerator;
@@ -71,31 +52,31 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents =
         (new LineBuffer())
-            .withHdlPairs()
-            .addPair("nrOfCounterBits", NrOfCounterBitsStr)
+            .addHdlPairs()
+            .pair("nrOfCounterBits", NrOfCounterBitsStr)
             .add("")
             .addRemarkBlock("Here the Output is defined")
             .add(
-                TheNetlist.RequiresGlobalClockConnection()
+                TheNetlist.requiresGlobalClockConnection()
                     ? "   {{assign}} FPGATick {{=}} '1';"
                     : "   {{assign}} FPGATick {{=}} s_tick_reg;")
             .add("")
             .addRemarkBlock("Here the update logic is defined");
 
     if (HDL.isVHDL()) {
-      Contents.add(
+      Contents.addLines(
           "s_tick_next   <= '1' WHEN s_count_reg = std_logic_vector(to_unsigned(0, {{nrOfCounterBits}})) ELSE '0';",
           "s_count_next  <= (OTHERS => '0') WHEN s_tick_reg /= '0' AND s_tick_reg /= '1' ELSE -- For simulation only!",
           "                 std_logic_vector(to_unsigned((ReloadValue-1), {{nrOfCounterBits}})) WHEN s_tick_next = '1' ELSE",
           "                 std_logic_vector(unsigned(s_count_reg)-1);",
           "");
     } else {
-      Contents.add(
+      Contents.addLines(
               "assign s_tick_next  = (s_count_reg == 0) ? 1'b1 : 1'b0;",
               "assign s_count_next = (s_count_reg == 0) ? ReloadValue-1 : s_count_reg-1;",
               "")
           .addRemarkBlock("Here the simulation only initial is defined")
-          .add(
+          .addLines(
               "initial",
               "begin",
               "   s_count_reg = 0;",
@@ -105,7 +86,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     }
     Contents.addRemarkBlock("Here the flipflops are defined");
     if (HDL.isVHDL()) {
-      Contents.add(
+      Contents.addLines(
           "make_tick : PROCESS( FPGAClock , s_tick_next )",
           "BEGIN",
           "   IF (FPGAClock'event AND (FPGAClock = '1')) THEN",
@@ -120,7 +101,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           "   END IF;",
           "END PROCESS make_counter;");
     } else {
-      Contents.add(
+      Contents.addLines(
           "always @(posedge FPGAClock)",
           "begin",
           "    s_count_reg <= s_count_next;",

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.ttl;
@@ -87,7 +68,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = new LineBuffer();
     return contents
-        .add(
+        .addLines(
             "Q1  <= state1;",
             "nQ1 <= NOT(state1,",
             "Q2  <= state1;",
@@ -122,8 +103,8 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
     for (var i = 0; i < 2; i++) {
       var gatedClock = false;
       var hasClock = true;
-      int clockPinIndex = componentinfo.GetComponent().getFactory().ClockPinIndex(null)[i];
-      if (!componentinfo.EndIsConnected(clockPinIndex)) {
+      int clockPinIndex = componentinfo.getComponent().getFactory().ClockPinIndex(null)[i];
+      if (!componentinfo.isEndConnected(clockPinIndex)) {
         Reporter.Report.AddSevereWarning(
             "Component \"TTL7474\" in circuit \""
                 + Nets.getCircuitName()
@@ -144,7 +125,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
             "CLK" + (i + 1),
             GetNetName(componentinfo, clockPinIndex, true, Nets));
       } else {
-        if (Nets.RequiresGlobalClockConnection()) {
+        if (Nets.requiresGlobalClockConnection()) {
           map.put("tick" + (i + 1), "'1'");
         } else {
           map.put(

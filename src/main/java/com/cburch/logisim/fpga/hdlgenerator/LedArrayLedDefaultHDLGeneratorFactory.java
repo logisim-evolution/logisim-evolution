@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.hdlgenerator;
@@ -47,19 +28,19 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
     final var contents =
         (new LineBuffer())
-            .addPair("nrOfLeds", nrOfLedsString)
-            .addPair("ledsCount", nrOfRows * nrOfColumns)
-            .addPair("rows", nrOfRows)
-            .addPair("cols", nrOfColumns)
-            .addPair("activeLow", activeLow)
-            .addPair("activeLowVal", activeLow ? "1" : "0");
+            .pair("nrOfLeds", nrOfLedsString)
+            .pair("ledsCount", nrOfRows * nrOfColumns)
+            .pair("rows", nrOfRows)
+            .pair("cols", nrOfColumns)
+            .pair("activeLow", activeLowString)
+            .pair("activeLowVal", activeLow ? "1" : "0");
 
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "GENERIC MAP ( {{nrOfLeds}} => {{ledsCount}},",
           "              {{activeLow}} => {{activeLowVal}} )");
     } else {
-      contents.add(
+      contents.addLines(
           "#( .{{nrOfLeds}}({{ledsCount}}),",
           "   .{{activeLow}}({{activeLowVal}}) )");
     }
@@ -69,14 +50,15 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   public static ArrayList<String> getPortMap(int id) {
     final var map =
         (new LineBuffer())
-            .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
-            .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
+            .pair("id", id)
+            .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+            .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
     if (HDL.isVHDL()) {
-      map.add(
+      map.addLines(
           "PORT MAP ( {{outs}} => {{outs}}{{id}},",
           "           {{ins }} => s_{{ins}}{{id}} );");
     } else {
-      map.add(
+      map.addLines(
           "( .{{outs}}({{outs}}{{id}}),",
           "  .{{ins}}(s_{{ins}}{{id}}) );");
     }
@@ -109,20 +91,21 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents =
         (new LineBuffer())
-            .addPair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
-            .addPair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
+            .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
+            .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
 
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE",
           "   {{outs}}(n) <= NOT({{ins}}(n)) WHEN activeLow = 1 ELSE {{ins}}(n);",
           "END GENERATE;");
     } else {
-      contents.add(
+      contents.addLines(
           "genvar i;",
           "generate",
-          "   for (i = 0; i < nrOfLeds; i = i + 1) begin",
-          "      assign {{outs}}[i] = (activeLow == 1) ? ~{{ins}}[n] : {{ins}}[n];",
+          "   for (i = 0; i < nrOfLeds; i = i + 1)",
+          "   begin:outputs",
+          "      assign {{outs}}[i] = (activeLow == 1) ? ~{{ins}}[i] : {{ins}}[i];",
           "   end",
           "endgenerate");
     }

@@ -1,36 +1,16 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.prefs;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.Main;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.prefs.PrefMonitor;
@@ -84,6 +64,8 @@ public class SimOptions extends OptionsPanel {
   private final JLabel widthErrorHighlightColorTitle = new JLabel();
   private final ColorChooserButton widthErrorHighlightColor;
   private final JLabel widthErrorBackgroundColorTitle = new JLabel();
+  private final ColorChooserButton clockFrequencyColor;
+  private final JLabel clockFrequencyColorTitle = new JLabel();
   private final ColorChooserButton widthErrorBackgroundColor;
   private final JButton defaultButton = new JButton();
   private final JButton colorBlindButton = new JButton();
@@ -133,6 +115,7 @@ public class SimOptions extends OptionsPanel {
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
     add(trueColorTitle, c);
+
     c.gridx++;
     trueColor = new ColorChooserButton(window, AppPreferences.TRUE_COLOR);
     add(trueColor, c);
@@ -221,108 +204,114 @@ public class SimOptions extends OptionsPanel {
     widthErrorBackgroundColor = new ColorChooserButton(window, AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR);
     add(widthErrorBackgroundColor, c);
 
-    if (Main.ANALYZE) {
-      c.gridx = 0;
-      c.gridy++;
-      c.gridwidth = 4;
-      add(kmapColorsTitle, c);
+    c.gridx = 0;
+    c.gridy++;
+    add(clockFrequencyColorTitle, c);
+    c.gridx++;
+    clockFrequencyColor = new ColorChooserButton(window, AppPreferences.CLOCK_FREQUENCY_COLOR);
+    add(clockFrequencyColor, c);
 
-      c.gridy++;
-      c.gridwidth = 1;
-      add(kmap1ColorTitle, c);
-      c.gridx++;
-      kmap1Color = new ColorChooserButton(window, AppPreferences.KMAP1_COLOR);
-      add(kmap1Color, c);
-      c.gridx++;
-      add(kmap2ColorTitle, c);
-      c.gridx++;
-      kmap2Color = new ColorChooserButton(window, AppPreferences.KMAP2_COLOR);
-      add(kmap2Color, c);
+    c.gridx = 0;
+    c.gridy++;
+    c.gridwidth = 4;
+    add(kmapColorsTitle, c);
 
-      c.gridx = 0;
-      c.gridy++;
-      add(kmap3ColorTitle, c);
-      c.gridx++;
-      kmap3Color = new ColorChooserButton(window, AppPreferences.KMAP3_COLOR);
-      add(kmap3Color, c);
-      c.gridx++;
-      add(kmap4ColorTitle, c);
-      c.gridx++;
-      kmap4Color = new ColorChooserButton(window, AppPreferences.KMAP4_COLOR);
-      add(kmap4Color, c);
+    // FIXME: refactor this code
+    c.gridy++;
+    c.gridwidth = 1;
+    add(kmap1ColorTitle, c);
+    c.gridx++;
+    kmap1Color = new ColorChooserButton(window, AppPreferences.KMAP1_COLOR);
+    add(kmap1Color, c);
+    c.gridx++;
+    add(kmap2ColorTitle, c);
+    c.gridx++;
+    kmap2Color = new ColorChooserButton(window, AppPreferences.KMAP2_COLOR);
+    add(kmap2Color, c);
 
-      c.gridx = 0;
-      c.gridy++;
-      add(kmap5ColorTitle, c);
-      c.gridx++;
-      kmap5Color = new ColorChooserButton(window, AppPreferences.KMAP5_COLOR);
-      add(kmap5Color, c);
-      c.gridx++;
-      add(kmap6ColorTitle, c);
-      c.gridx++;
-      kmap6Color = new ColorChooserButton(window, AppPreferences.KMAP6_COLOR);
-      add(kmap6Color, c);
+    c.gridx = 0;
+    c.gridy++;
+    add(kmap3ColorTitle, c);
+    c.gridx++;
+    kmap3Color = new ColorChooserButton(window, AppPreferences.KMAP3_COLOR);
+    add(kmap3Color, c);
+    c.gridx++;
+    add(kmap4ColorTitle, c);
+    c.gridx++;
+    kmap4Color = new ColorChooserButton(window, AppPreferences.KMAP4_COLOR);
+    add(kmap4Color, c);
 
-      c.gridx = 0;
-      c.gridy++;
-      add(kmap7ColorTitle, c);
-      c.gridx++;
-      kmap7Color = new ColorChooserButton(window, AppPreferences.KMAP7_COLOR);
-      add(kmap7Color, c);
-      c.gridx++;
-      add(kmap8ColorTitle, c);
-      c.gridx++;
-      kmap8Color = new ColorChooserButton(window, AppPreferences.KMAP8_COLOR);
-      add(kmap8Color, c);
+    c.gridx = 0;
+    c.gridy++;
+    add(kmap5ColorTitle, c);
+    c.gridx++;
+    kmap5Color = new ColorChooserButton(window, AppPreferences.KMAP5_COLOR);
+    add(kmap5Color, c);
+    c.gridx++;
+    add(kmap6ColorTitle, c);
+    c.gridx++;
+    kmap6Color = new ColorChooserButton(window, AppPreferences.KMAP6_COLOR);
+    add(kmap6Color, c);
 
-      c.gridx = 0;
-      c.gridy++;
-      add(kmap9ColorTitle, c);
-      c.gridx++;
-      kmap9Color = new ColorChooserButton(window, AppPreferences.KMAP9_COLOR);
-      add(kmap9Color, c);
-      c.gridx++;
-      add(kmap10ColorTitle, c);
-      c.gridx++;
-      kmap10Color = new ColorChooserButton(window, AppPreferences.KMAP10_COLOR);
-      add(kmap10Color, c);
+    c.gridx = 0;
+    c.gridy++;
+    add(kmap7ColorTitle, c);
+    c.gridx++;
+    kmap7Color = new ColorChooserButton(window, AppPreferences.KMAP7_COLOR);
+    add(kmap7Color, c);
+    c.gridx++;
+    add(kmap8ColorTitle, c);
+    c.gridx++;
+    kmap8Color = new ColorChooserButton(window, AppPreferences.KMAP8_COLOR);
+    add(kmap8Color, c);
 
-      c.gridx = 0;
-      c.gridy++;
-      add(kmap11ColorTitle, c);
-      c.gridx++;
-      kmap11Color = new ColorChooserButton(window, AppPreferences.KMAP11_COLOR);
-      add(kmap11Color, c);
-      c.gridx++;
-      add(kmap12ColorTitle, c);
-      c.gridx++;
-      kmap12Color = new ColorChooserButton(window, AppPreferences.KMAP12_COLOR);
-      add(kmap12Color, c);
+    c.gridx = 0;
+    c.gridy++;
+    add(kmap9ColorTitle, c);
+    c.gridx++;
+    kmap9Color = new ColorChooserButton(window, AppPreferences.KMAP9_COLOR);
+    add(kmap9Color, c);
+    c.gridx++;
+    add(kmap10ColorTitle, c);
+    c.gridx++;
+    kmap10Color = new ColorChooserButton(window, AppPreferences.KMAP10_COLOR);
+    add(kmap10Color, c);
 
-      c.gridx = 0;
-      c.gridy++;
-      add(kmap13ColorTitle, c);
-      c.gridx++;
-      kmap13Color = new ColorChooserButton(window, AppPreferences.KMAP13_COLOR);
-      add(kmap13Color, c);
-      c.gridx++;
-      add(kmap14ColorTitle, c);
-      c.gridx++;
-      kmap14Color = new ColorChooserButton(window, AppPreferences.KMAP14_COLOR);
-      add(kmap14Color, c);
+    c.gridx = 0;
+    c.gridy++;
+    add(kmap11ColorTitle, c);
+    c.gridx++;
+    kmap11Color = new ColorChooserButton(window, AppPreferences.KMAP11_COLOR);
+    add(kmap11Color, c);
+    c.gridx++;
+    add(kmap12ColorTitle, c);
+    c.gridx++;
+    kmap12Color = new ColorChooserButton(window, AppPreferences.KMAP12_COLOR);
+    add(kmap12Color, c);
 
-      c.gridx = 0;
-      c.gridy++;
-      add(kmap15ColorTitle, c);
-      c.gridx++;
-      kmap15Color = new ColorChooserButton(window, AppPreferences.KMAP15_COLOR);
-      add(kmap15Color, c);
-      c.gridx++;
-      add(kmap16ColorTitle, c);
-      c.gridx++;
-      kmap16Color = new ColorChooserButton(window, AppPreferences.KMAP16_COLOR);
-      add(kmap16Color, c);
-    }
+    c.gridx = 0;
+    c.gridy++;
+    add(kmap13ColorTitle, c);
+    c.gridx++;
+    kmap13Color = new ColorChooserButton(window, AppPreferences.KMAP13_COLOR);
+    add(kmap13Color, c);
+    c.gridx++;
+    add(kmap14ColorTitle, c);
+    c.gridx++;
+    kmap14Color = new ColorChooserButton(window, AppPreferences.KMAP14_COLOR);
+    add(kmap14Color, c);
+
+    c.gridx = 0;
+    c.gridy++;
+    add(kmap15ColorTitle, c);
+    c.gridx++;
+    kmap15Color = new ColorChooserButton(window, AppPreferences.KMAP15_COLOR);
+    add(kmap15Color, c);
+    c.gridx++;
+    add(kmap16ColorTitle, c);
+    c.gridx++;
+    kmap16Color = new ColorChooserButton(window, AppPreferences.KMAP16_COLOR);
+    add(kmap16Color, c);
 
     c.gridx = 0;
     c.gridy++;
@@ -366,6 +355,7 @@ public class SimOptions extends OptionsPanel {
     widthErrorCaptionColorTitle.setText(S.get("simWidthErrorCaptionTitle"));
     widthErrorHighlightColorTitle.setText(S.get("simWidthErrorHighlightTitle"));
     widthErrorBackgroundColorTitle.setText(S.get("simWidthErrorBackgroundTitle"));
+    clockFrequencyColorTitle.setText(S.get("simClockFrequencyTitle"));
     defaultButton.setText(S.get("simDefaultColors"));
     colorBlindButton.setText(S.get("simColorBlindColors"));
     kmap1ColorTitle.setText(S.get("simKmapColors", 1));
@@ -399,6 +389,7 @@ public class SimOptions extends OptionsPanel {
     AppPreferences.WIDTH_ERROR_CAPTION_COLOR.set(0x560000);
     AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.set(0xFFFE00);
     AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.set(0xFFE6D2);
+    AppPreferences.CLOCK_FREQUENCY_COLOR.set(0xFF00B4);
     AppPreferences.KMAP1_COLOR.set(0x810000);
     AppPreferences.KMAP2_COLOR.set(0xE7194B);
     AppPreferences.KMAP3_COLOR.set(0xFABEBF);
@@ -430,6 +421,7 @@ public class SimOptions extends OptionsPanel {
     AppPreferences.WIDTH_ERROR_CAPTION_COLOR.set(0x560000);
     AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.set(0xFFFE00);
     AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.set(0xFFE6D2);
+    AppPreferences.CLOCK_FREQUENCY_COLOR.set(0xFF00B4);   // FIXME: Calculate proper color!
     AppPreferences.KMAP1_COLOR.set(0x490092);
     AppPreferences.KMAP2_COLOR.set(0x920000);
     AppPreferences.KMAP3_COLOR.set(0x004949);
@@ -454,57 +446,61 @@ public class SimOptions extends OptionsPanel {
     @Override
     public void preferenceChange(PreferenceChangeEvent evt) {
       var update = false;
-      if (evt.getKey().equals(AppPreferences.TRUE_COLOR.getIdentifier())) {
+      final var key = evt.getKey();
+      if (key.equals(AppPreferences.TRUE_COLOR.getIdentifier())) {
         Value.TRUE_COLOR = new Color(AppPreferences.TRUE_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.TRUE_CHAR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.TRUE_CHAR.getIdentifier())) {
         Value.TRUECHAR = AppPreferences.TRUE_CHAR.get().charAt(0);
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.FALSE_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.FALSE_COLOR.getIdentifier())) {
         Value.FALSE_COLOR = new Color(AppPreferences.FALSE_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.FALSE_CHAR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.FALSE_CHAR.getIdentifier())) {
         Value.FALSECHAR = AppPreferences.FALSE_CHAR.get().charAt(0);
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.UNKNOWN_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.UNKNOWN_COLOR.getIdentifier())) {
         Value.UNKNOWN_COLOR = new Color(AppPreferences.UNKNOWN_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.UNKNOWN_CHAR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.UNKNOWN_CHAR.getIdentifier())) {
         Value.UNKNOWNCHAR = AppPreferences.UNKNOWN_CHAR.get().charAt(0);
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.ERROR_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.ERROR_COLOR.getIdentifier())) {
         Value.ERROR_COLOR = new Color(AppPreferences.ERROR_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.ERROR_CHAR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.ERROR_CHAR.getIdentifier())) {
         Value.ERRORCHAR = AppPreferences.ERROR_CHAR.get().charAt(0);
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.NIL_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.NIL_COLOR.getIdentifier())) {
         Value.NIL_COLOR = new Color(AppPreferences.NIL_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.DONTCARE_CHAR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.DONTCARE_CHAR.getIdentifier())) {
         Value.DONTCARECHAR = AppPreferences.DONTCARE_CHAR.get().charAt(0);
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.BUS_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.BUS_COLOR.getIdentifier())) {
         Value.MULTI_COLOR = new Color(AppPreferences.BUS_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.STROKE_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.STROKE_COLOR.getIdentifier())) {
         Value.STROKE_COLOR = new Color(AppPreferences.STROKE_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.WIDTH_ERROR_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.WIDTH_ERROR_COLOR.getIdentifier())) {
         Value.WIDTH_ERROR_COLOR = new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.getIdentifier())) {
         Value.WIDTH_ERROR_CAPTION_COLOR = new Color(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.getIdentifier())) {
         Value.WIDTH_ERROR_HIGHLIGHT_COLOR = new Color(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
         update = true;
-      } else if (evt.getKey().equals(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.getIdentifier())) {
+      } else if (key.equals(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.getIdentifier())) {
         Value.WIDTH_ERROR_CAPTION_BGCOLOR = new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
+        update = true;
+      } else if (key.equals(AppPreferences.CLOCK_FREQUENCY_COLOR.getIdentifier())) {
+        Value.CLOCK_FREQUENCY_COLOR = new Color(AppPreferences.CLOCK_FREQUENCY_COLOR.get());
         update = true;
       }
       if (update) {
-        for (Project proj : Projects.getOpenProjects()) proj.getFrame().repaint();
+        for (final var proj : Projects.getOpenProjects()) proj.getFrame().repaint();
       }
     }
   }

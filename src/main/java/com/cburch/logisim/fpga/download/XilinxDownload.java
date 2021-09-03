@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.download;
@@ -86,9 +67,9 @@ public class XilinxDownload implements VendorDownload {
       String HDLType,
       boolean WriteToFlash) {
     this.ProjectPath = ProjectPath;
-    this.SandboxPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
-    this.ScriptPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
-    this.UcfPath = DownloadBase.GetDirectoryLocation(ProjectPath, DownloadBase.UCF_PATH);
+    this.SandboxPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
+    this.ScriptPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
+    this.UcfPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.UCF_PATH);
     this.RootNetList = RootNetList;
     this.boardInfo = BoardInfo;
     this.Entities = Entities;
@@ -221,7 +202,7 @@ public class XilinxDownload implements VendorDownload {
 
     contents.clear();
     contents.add(
-        "run -top %s -ofn logisim.ngc -ofmt NGC -ifn %s%s -ifmt mixed -p %s",
+        "run -top {{1}} -ofn logisim.ngc -ofmt NGC -ifn {{2}}{{3}} -ifmt mixed -p {{4}}",
         ToplevelHDLGeneratorFactory.FPGAToplevelName,
         ScriptPath.replace(ProjectPath, "../"),
         VHDL_LIST_FILE,
@@ -243,7 +224,7 @@ public class XilinxDownload implements VendorDownload {
           .add("addPromDevice -p {{1}} -size 0 -name {{2}}", JTAGPos, boardInfo.fpga.getFlashName())
           .add("addDesign -version 0 -name \"0\"")
           .add("addDeviceChain -index 0")
-          .add("addDevice -p %s -file {{1}}.{{2}}", ToplevelHDLGeneratorFactory.FPGAToplevelName, bitfileExt)
+          .add("addDevice -p {{1}} -file {{2}}.{{3}}", JTAGPos, ToplevelHDLGeneratorFactory.FPGAToplevelName, bitfileExt)
           .add("generate -format mcs -fillvalue FF -output {{1}}", mcsFile)
           .add("setMode -bs")
           .add("setCable -port auto")
@@ -266,16 +247,16 @@ public class XilinxDownload implements VendorDownload {
     if (!FileWriter.WriteContents(DownloadFile, contents.get())) return false;
 
     contents.clear();
-    if (RootNetList.NumberOfClockTrees() > 0 || RootNetList.RequiresGlobalClockConnection()) {
+    if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
       contents
-          .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
-          .addPair("clockFreq", Download.GetClockFrequencyString(boardInfo))
-          .addPair("clockPin", GetXilinxClockPin(boardInfo));
-      contents.add(
-          "NET \"{{clock}}\" {{clockPin}} ;",
-          "NET \"{{clock}}\" TNM_NET = \"{{clock}}\" ;",
-          "TIMESPEC \"TS_{{clock}}\" = PERIOD \"{{clock}}\" {{clockFreq}} HIGH 50 % ;",
-          "");
+          .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+          .pair("clockFreq", Download.GetClockFrequencyString(boardInfo))
+          .pair("clockPin", GetXilinxClockPin(boardInfo))
+          .addLines(
+            "NET \"{{clock}}\" {{clockPin}} ;",
+            "NET \"{{clock}}\" TNM_NET = \"{{clock}}\" ;",
+            "TIMESPEC \"TS_{{clock}}\" = PERIOD \"{{clock}}\" {{clockFreq}} HIGH 50 % ;",
+            "");
     }
     contents.add(getPinLocStrings());
     return FileWriter.WriteContents(UcfFile, contents.get());

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.gates;
@@ -107,7 +88,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
               .add("{{1}}Input_{{2}};", whenLineBegin, (i + 1));
         }
       } else {
-        contents.add("   assign s_signal_invert_mask = %s;", BUBBLES_MASK);
+        contents.add("   assign s_signal_invert_mask = {{1}};", BUBBLES_MASK);
         for (var i = 0; i < nrOfInputs; i++) {
           contents.add(
               "   assign s_real_input_{{1}} = (s_signal_invert_mask[{{2}}]) ? ~Input_{{3}}: Input_{{4}};",
@@ -214,26 +195,22 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var parameterMap = new TreeMap<String, Integer>();
-    final var isBus = is_bus(componentInfo.GetComponent().getAttributeSet());
-    final var myAttrs = componentInfo.GetComponent().getAttributeSet();
-    int nrOfInputs =
+    final var isBus = is_bus(componentInfo.getComponent().getAttributeSet());
+    final var myAttrs = componentInfo.getComponent().getAttributeSet();
+    var nrOfInputs =
         myAttrs.containsAttribute(GateAttributes.ATTR_INPUTS)
             ? myAttrs.getValue(GateAttributes.ATTR_INPUTS)
             : 1;
-    int bubleMask, mask;
-    if (isBus) {
-      parameterMap.put(BIT_WIDTH_STRING, myAttrs.getValue(StdAttr.WIDTH).getWidth());
-    }
+    if (isBus) parameterMap.put(BIT_WIDTH_STRING, myAttrs.getValue(StdAttr.WIDTH).getWidth());
     if (nrOfInputs > 1) {
-      bubleMask = 0;
-      mask = 1;
+      var bubbleMask = 0;
+      var mask = 1;
       for (var i = 0; i < nrOfInputs; i++) {
-        final var inputIsInverted =
-            componentInfo.GetComponent().getAttributeSet().getValue(new NegateAttribute(i, null));
-        if (inputIsInverted) bubleMask |= mask;
+        final var inputIsInverted = componentInfo.getComponent().getAttributeSet().getValue(new NegateAttribute(i, null));
+        if (inputIsInverted) bubbleMask |= mask;
         mask <<= 1;
       }
-      parameterMap.put(BUBBLES_MASK, bubleMask);
+      parameterMap.put(BUBBLES_MASK, bubbleMask);
     }
 
     return parameterMap;
@@ -291,7 +268,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     final var portMap = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return portMap;
     final var componentInfo = (NetlistComponent) mapInfo;
-    final var attrs = componentInfo.GetComponent().getAttributeSet();
+    final var attrs = componentInfo.getComponent().getAttributeSet();
     final var nrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
             ? attrs.getValue(GateAttributes.ATTR_INPUTS)

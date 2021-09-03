@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.memory;
@@ -72,12 +53,12 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = (new LineBuffer()).addPair("activeEdge", activeEdgeStr);
+    final var contents = (new LineBuffer()).pair("activeEdge", activeEdgeStr);
     contents.addRemarkBlock(
         "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
             + "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down");
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "CompareOut   <= s_carry;",
           "CountValue   <= s_counter_value;",
           "",
@@ -146,7 +127,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "   END IF;",
           "END PROCESS make_flops;");
     } else {
-      contents.add(
+      contents.addLines(
           "",
           "assign CompareOut = s_carry;",
           "assign CountValue = ({{activeEdge}}) ? s_counter_value : s_counter_value_neg_edge;",
@@ -233,7 +214,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var map = new TreeMap<String, Integer>();
-    final var attrs = componentInfo.GetComponent().getAttributeSet();
+    final var attrs = componentInfo.getComponent().getAttributeSet();
     var mode = 0;
     if (attrs.containsAttribute(Counter.ATTR_ON_GOAL)) {
       if (attrs.getValue(Counter.ATTR_ON_GOAL) == Counter.ON_GOAL_STAY) mode = 1;
@@ -257,8 +238,8 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var componentInfo = (NetlistComponent) mapInfo;
-    final var attrs = componentInfo.GetComponent().getAttributeSet();
-    if (!componentInfo.EndIsConnected(Counter.CK)) {
+    final var attrs = componentInfo.getComponent().getAttributeSet();
+    if (!componentInfo.isEndConnected(Counter.CK)) {
       Reporter.Report.AddSevereWarning(
           "Component \"Counter\" in circuit \""
               + nets.getCircuitName()
@@ -272,7 +253,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         map.put("ClockEnable", HDL.oneBit());
       } else {
         var clockBusIndex = ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX;
-        if (nets.RequiresGlobalClockConnection()) {
+        if (nets.requiresGlobalClockConnection()) {
           clockBusIndex = ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX;
         } else {
           if (attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_LOW)
@@ -294,7 +275,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     var input = "LoadData";
     if (HDL.isVHDL()
-        & (componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
+        & (componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       input += "(0)";
     map.putAll(GetNetMap(input, true, componentInfo, Counter.IN, nets));
     map.putAll(GetNetMap("clear", true, componentInfo, Counter.CLR, nets));
@@ -303,7 +284,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.putAll(GetNetMap("Up_n_Down", false, componentInfo, Counter.UD, nets));
     var output = "CountValue";
     if (HDL.isVHDL()
-        & (componentInfo.GetComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
+        & (componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       output += "(0)";
     map.putAll(GetNetMap(output, true, componentInfo, Counter.OUT, nets));
     map.putAll(GetNetMap("CompareOut", true, componentInfo, Counter.CARRY, nets));

@@ -32,7 +32,6 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -86,10 +85,10 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = (new LineBuffer()).withHdlPairs();
+    final var contents = (new LineBuffer()).addHdlPairs();
 
     if (IsExes3) {
-      contents.add(
+      contents.addLines(
           "{{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} A );",
           "{{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );",
           "{{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} A );",
@@ -101,7 +100,7 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
           "{{assign}} O8 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} B {{and}} A );",
           "{{assign}} O9 {{=}} {{not}}( D {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );");
     } else if (IsGray) {
-      contents.add(
+      contents.addLines(
           "{{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} {{not}}(A) );",
           "{{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} {{not}}(A) );",
           "{{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} A );",
@@ -113,7 +112,7 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
           "{{assign}} O8 {{=}} {{not}}( D {{and}} C {{and}} B {{and}} {{not}}(A) );",
           "{{assign}} O9 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} B {{and}} {not}}(A) );");
     } else {
-      contents.add(
+      contents.addLines(
           "{{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} {{not}}(A) );",
           "{{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} A );",
           "{{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} {{not}}(A) );",

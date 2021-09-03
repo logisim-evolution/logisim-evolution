@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.hdlgenerator;
@@ -51,12 +32,12 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
         (new LineBuffer(sharedPairs))
-            .addPair("address", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
-            .addPair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
-            .addPair("id", id);
+            .pair("address", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
+            .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+            .pair("id", id);
 
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "PORT MAP ( {{address}} => {{address}}{{id}}",
           "           {{clock     }} => {{clock}},",
           "           {{outsR     }} => {{outsR}}{{id}},",
@@ -66,7 +47,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
           "           {{insG      }} => s_{{insG}}{{id}},",
           "           {{insB      }} => s_{{insB}}{{id}});");
     } else {
-      contents.add(
+      contents.addLines(
           "( .{{address}}({{address}}{{id}}),",
           "  .{{clock     }}({{clock}}),",
           "  .{{outsR   }}({{outsR}}{{id}}),",
@@ -113,13 +94,13 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents =
         (new LineBuffer(sharedPairs))
-            .addPair("activeLow", activeLowString)
-            .addPair("nrOfLeds", nrOfLedsString)
-            .addPair("nrOfColumns", nrOfColumnsString);
+            .pair("activeLow", activeLowString)
+            .pair("nrOfLeds", nrOfLedsString)
+            .pair("nrOfColumns", nrOfColumnsString);
 
     contents.add(getRowCounterCode());
     if (HDL.isVHDL()) {
-      contents.add(
+      contents.addLines(
           "",
           "makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS",
           "BEGIN",
@@ -143,11 +124,12 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
           "   {{outsB}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
           "END GENERATE GenOutputs;");
     } else {
-      contents.add(
+      contents.addLines(
           "",
           "genvar i;",
           "generate",
-          "   for (i = 0; i < {{nrOfColumns}}; i = i + 1) begin",
+          "   for (i = 0; i < {{nrOfColumns}}; i = i + 1)",
+          "   begin:outputs",
           "      assign {{outsR}}[i] = (activeLow == 1)",
           "         ? ~{{insR}}[{{nrOfColumns}} * s_rowCounterReg + i]",
           "         : {{insR}}[nrOfColumns * s_rowCounterReg + i];",

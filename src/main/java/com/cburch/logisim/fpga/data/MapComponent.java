@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.data;
@@ -85,9 +66,9 @@ public class MapComponent {
 
   // In the below structure the first Integer is the pin identifier,
   // the second is the global bubble id
-  private final HashMap<Integer, Integer> MyInputBubles = new HashMap<>();
-  private final HashMap<Integer, Integer> MyOutputBubles = new HashMap<>();
-  private final HashMap<Integer, Integer> MyIOBubles = new HashMap<>();
+  private final HashMap<Integer, Integer> myInputBubbles = new HashMap<>();
+  private final HashMap<Integer, Integer> MyOutputBubbles = new HashMap<>();
+  private final HashMap<Integer, Integer> myIoBubbles = new HashMap<>();
   /*
    * The following structure defines if the pin is mapped
    */
@@ -104,37 +85,37 @@ public class MapComponent {
   private int nrOfPins;
 
   public MapComponent(ArrayList<String> name, NetlistComponent comp) {
-    myFactory = comp.GetComponent().getFactory();
-    myAttributes = comp.GetComponent().getAttributeSet();
+    myFactory = comp.getComponent().getFactory();
+    myAttributes = comp.getComponent().getAttributeSet();
     myName = name;
-    var mapInfo = comp.GetMapInformationContainer();
+    var mapInfo = comp.getMapInformationContainer();
     var bName = new ArrayList<String>();
     for (var i = 1; i < name.size(); i++) bName.add(name.get(i));
-    var BubbleInfo = comp.GetGlobalBubbleId(bName);
+    var BubbleInfo = comp.getGlobalBubbleId(bName);
     nrOfPins = 0;
     for (var i = 0; i < mapInfo.GetNrOfInports(); i++) {
       maps.add(null);
       opens.add(false);
       constants.add(-1);
-      var idx = BubbleInfo == null ? -1 : BubbleInfo.GetInputStartIndex() + i;
+      var idx = BubbleInfo == null ? -1 : BubbleInfo.getInputStartIndex() + i;
       pinLabels.add(mapInfo.GetInportLabel(i));
-      MyInputBubles.put(nrOfPins++, idx);
+      myInputBubbles.put(nrOfPins++, idx);
     }
     for (var i = 0; i < mapInfo.GetNrOfOutports(); i++) {
       maps.add(null);
       opens.add(false);
       constants.add(-1);
-      var idx = BubbleInfo == null ? -1 : BubbleInfo.GetOutputStartIndex() + i;
+      var idx = BubbleInfo == null ? -1 : BubbleInfo.getOutputStartIndex() + i;
       pinLabels.add(mapInfo.GetOutportLabel(i));
-      MyOutputBubles.put(nrOfPins++, idx);
+      MyOutputBubbles.put(nrOfPins++, idx);
     }
     for (var i = 0; i < mapInfo.GetNrOfInOutports(); i++) {
       maps.add(null);
       opens.add(false);
       constants.add(-1);
-      var idx = BubbleInfo == null ? -1 : BubbleInfo.GetInOutStartIndex() + i;
+      var idx = BubbleInfo == null ? -1 : BubbleInfo.getInOutStartIndex() + i;
       pinLabels.add(mapInfo.GetInOutportLabel(i));
-      MyIOBubles.put(nrOfPins++, idx);
+      myIoBubbles.put(nrOfPins++, idx);
     }
   }
 
@@ -151,44 +132,44 @@ public class MapComponent {
   }
 
   public boolean hasInputs() {
-    return MyInputBubles.keySet().size() != 0;
+    return myInputBubbles.keySet().size() != 0;
   }
 
   public boolean hasOutputs() {
-    return MyOutputBubles.keySet().size() != 0;
+    return MyOutputBubbles.keySet().size() != 0;
   }
 
   public boolean hasIOs() {
-    return MyIOBubles.keySet().size() != 0;
+    return myIoBubbles.keySet().size() != 0;
   }
 
   public boolean isInput(int pin) {
-    return MyInputBubles.containsKey(pin);
+    return myInputBubbles.containsKey(pin);
   }
 
   public boolean isOutput(int pin) {
-    return MyOutputBubles.containsKey(pin);
+    return MyOutputBubbles.containsKey(pin);
   }
 
   public boolean isIO(int pin) {
-    return MyIOBubles.containsKey(pin);
+    return myIoBubbles.containsKey(pin);
   }
 
   public int nrInputs() {
-    return MyInputBubles.keySet().size();
+    return myInputBubbles.keySet().size();
   }
 
   public int nrOutputs() {
-    return MyOutputBubles.keySet().size();
+    return MyOutputBubbles.keySet().size();
   }
 
   public int nrIOs() {
-    return MyIOBubles.keySet().size();
+    return myIoBubbles.keySet().size();
   }
 
-  public int getIOBublePinId(int id) {
-    for (var key : MyIOBubles.keySet())
-      if (MyIOBubles.get(key) == id) return key;
+  public int getIoBubblePinId(int id) {
+    for (var key : myIoBubbles.keySet())
+      if (myIoBubbles.get(key) == id) return key;
     return -1;
   }
 
@@ -235,7 +216,7 @@ public class MapComponent {
   }
 
   public boolean equalsType(NetlistComponent comp) {
-    return myFactory.equals(comp.GetComponent().getFactory());
+    return myFactory.equals(comp.getComponent().getFactory());
   }
 
   public void unmap(int pin) {
@@ -457,18 +438,18 @@ public class MapComponent {
       var newMap = new MapClass(comp, -1);
       var oldMap = maps.get(i);
       if (oldMap != null) oldMap.unmap();
-      if (MyInputBubles.containsKey(i)) {
+      if (myInputBubbles.containsKey(i)) {
         var res = comp.tryInputMap(this, i, i);
         success &= res.mapResult;
         newMap.setIOPin(res.pinId);
-      } else if (MyOutputBubles.containsKey(i)) {
-        var outputid = i - (MyInputBubles == null ? 0 : MyInputBubles.size());
+      } else if (MyOutputBubbles.containsKey(i)) {
+        var outputid = i - (myInputBubbles == null ? 0 : myInputBubbles.size());
         var res = comp.tryOutputMap(this, i, outputid);
         success &= res.mapResult;
         newMap.setIOPin(res.pinId);
-      } else if (MyIOBubles.containsKey(i)) {
-        var ioid = i - (MyInputBubles == null ? 0 : MyInputBubles.size())
-            - (MyOutputBubles == null ? 0 : MyOutputBubles.size());
+      } else if (myIoBubbles.containsKey(i)) {
+        var ioid = i - (myInputBubbles == null ? 0 : myInputBubbles.size())
+            - (MyOutputBubbles == null ? 0 : MyOutputBubbles.size());
         var res = comp.tryIOMap(this, i, ioid);
         success &= res.mapResult;
         newMap.setIOPin(res.pinId);
@@ -502,7 +483,7 @@ public class MapComponent {
       var maskinp = 1L;
       var change = false;
       for (var i = 0; i < nrOfPins; i++) {
-        if (MyInputBubles.containsKey(i)) {
+        if (myInputBubbles.containsKey(i)) {
           if (maps.get(i) != null) maps.get(i).unmap();
           maps.set(i, null);
           constants.set(i, (value & maskinp) == 0 ? 0 : 1);
@@ -513,7 +494,7 @@ public class MapComponent {
       }
       return change;
     } else {
-      if (MyInputBubles.containsKey(pin)) {
+      if (myInputBubbles.containsKey(pin)) {
         if (maps.get(pin) != null) maps.get(pin).unmap();
         maps.set(pin, null);
         constants.set(pin, (int) (value & 1));
@@ -527,7 +508,7 @@ public class MapComponent {
   public boolean tryOpenMap(int pin) {
     if (pin < 0) {
       for (var i = 0; i < nrOfPins; i++) {
-        if (MyOutputBubles.containsKey(i) || MyIOBubles.containsKey(i)) {
+        if (MyOutputBubbles.containsKey(i) || myIoBubbles.containsKey(i)) {
           if (maps.get(i) != null)  maps.get(i).unmap();
           maps.set(i, null);
           constants.set(i, -1);
@@ -535,7 +516,7 @@ public class MapComponent {
         }
       }
       return true;
-    } else  if (MyOutputBubles.containsKey(pin) || MyIOBubles.containsKey(pin)) {
+    } else  if (MyOutputBubbles.containsKey(pin) || myIoBubbles.containsKey(pin)) {
       if (maps.get(pin) != null) {
         maps.get(pin).unmap();
       }
@@ -612,18 +593,18 @@ public class MapComponent {
 
   public String getHdlSignalName(int pin) {
     if (pin < 0 || pin >= nrOfPins) return null;
-    if (MyInputBubles.containsKey(pin) && MyInputBubles.get(pin) >= 0) {
+    if (myInputBubbles.containsKey(pin) && myInputBubbles.get(pin) >= 0) {
       return "s_"
           + HDLGeneratorFactory.LocalInputBubbleBusname
           + HDL.BracketOpen()
-          + MyInputBubles.get(pin)
+          + myInputBubbles.get(pin)
           + HDL.BracketClose();
     }
-    if (MyOutputBubles.containsKey(pin) && MyOutputBubles.get(pin) >= 0) {
+    if (MyOutputBubbles.containsKey(pin) && MyOutputBubbles.get(pin) >= 0) {
       return "s_"
           + HDLGeneratorFactory.LocalOutputBubbleBusname
           + HDL.BracketOpen()
-          + MyOutputBubles.get(pin)
+          + MyOutputBubbles.get(pin)
           + HDL.BracketClose();
     }
     var s = new StringBuilder();
@@ -654,15 +635,15 @@ public class MapComponent {
       var ioConst = 0L;
       var open = S.get("MapOpen");
       for (var i = nrOfPins - 1; i >= 0; i--) {
-        if (MyInputBubles.containsKey(i)) {
+        if (myInputBubbles.containsKey(i)) {
           inpAllConst &= constants.get(i) >= 0;
           inpConst <<= 1;
           inpConst |= constants.get(i) & 1;
         }
-        if (MyOutputBubles.containsKey(i)) {
+        if (MyOutputBubbles.containsKey(i)) {
           outAllOpens &= opens.get(i);
         }
-        if (MyIOBubles.containsKey(i)) {
+        if (myIoBubbles.containsKey(i)) {
           ioAllOpens &= opens.get(i);
           ioAllConst &= constants.get(i) >= 0;
           ioConst <<= 1;

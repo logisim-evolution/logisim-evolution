@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.memory;
@@ -81,10 +62,10 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     final var SelectOperator = (HDL.isVHDL()) ? "" : "[" + ACTIVITY_LEVEL_STR + "]";
     contents
         .addRemarkBlock("Here the output signals are defined")
-        .add("   %sQ    %ss_current_state_reg%s;", HDL.assignPreamble(), HDL.assignOperator(), SelectOperator)
-        .add("   %sQ_bar%s%s(s_current_state_reg%s);", HDL.assignPreamble(), HDL.assignOperator(), HDL.notOperator(), SelectOperator)
+        .add("   {{1}}Q    {{2}}s_current_state_reg{{3}};", HDL.assignPreamble(), HDL.assignOperator(), SelectOperator)
+        .add("   {{1}}Q_bar{{2}}{{3}}(s_current_state_reg{{4}});", HDL.assignPreamble(), HDL.assignOperator(), HDL.notOperator(), SelectOperator)
         .add("")
-        .add("Here the update logic is defined")
+        .addRemarkBlock("Here the update logic is defined")
         .add(GetUpdateLogic())
         .add("");
     if (HDL.isVerilog()) {
@@ -103,10 +84,10 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
           .add("make_memory : PROCESS( clock , Reset , Preset , Tick , s_next_state )")
           .add("   VARIABLE temp : std_logic_vector(0 DOWNTO 0);")
           .add("BEGIN")
-          .add("   temp := std_logic_vector(to_unsigned(%s,1));", ACTIVITY_LEVEL_STR)
+          .add("   temp := std_logic_vector(to_unsigned({{1}}, 1));", ACTIVITY_LEVEL_STR)
           .add("   IF (Reset = '1') THEN s_current_state_reg <= '0';")
           .add("   ELSIF (Preset = '1') THEN s_current_state_reg <= '1';");
-      if (Netlist.IsFlipFlop(attrs)) {
+      if (Netlist.isFlipFlop(attrs)) {
         contents.add("   ELSIF (Clock'event AND (Clock = temp(0))) THEN");
       } else {
         contents.add("   ELSIF (Clock = temp(0)) THEN");
@@ -118,8 +99,8 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
           .add("   END IF;")
           .add("END PROCESS make_memory;");
     } else {
-      if (Netlist.IsFlipFlop(attrs)) {
-        contents.add(
+      if (Netlist.isFlipFlop(attrs)) {
+        contents.addLines(
             "always @(posedge Reset or posedge Preset or negedge Clock)",
             "begin",
             "   if (Reset) s_current_state_reg[0] <= 1'b0;",
@@ -135,8 +116,8 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
             "end");
       } else {
         contents
-            .addPair("activityLevel", ACTIVITY_LEVEL_STR)
-            .add(
+            .pair("activityLevel", ACTIVITY_LEVEL_STR)
+            .addLines(
                 "always @(*)",
                 "begin",
                 "   if (Reset) s_current_state_reg <= 2'b0;",
@@ -170,8 +151,8 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     var activityLevel = 1;
     var gatedClock = false;
     var activeLow = false;
-    final var attrs = ComponentInfo.GetComponent().getAttributeSet();
-    final var clockNetName = GetClockNetName(ComponentInfo, ComponentInfo.NrOfEnds() - 5, Nets);
+    final var attrs = ComponentInfo.getComponent().getAttributeSet();
+    final var clockNetName = GetClockNetName(ComponentInfo, ComponentInfo.nrOfEnds() - 5, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -198,9 +179,9 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     var gatedClock = false;
     var hasClock = true;
     var activeLow = false;
-    final var nrOfPins = comp.NrOfEnds();
-    final var attrs = comp.GetComponent().getAttributeSet();
-    if (!comp.EndIsConnected(comp.NrOfEnds() - 5)) {
+    final var nrOfPins = comp.nrOfEnds();
+    final var attrs = comp.getComponent().getAttributeSet();
+    if (!comp.isEndConnected(comp.nrOfEnds() - 5)) {
       Reporter.Report.AddSevereWarning(
           "Component \""
               + ComponentName()
@@ -209,7 +190,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(comp, comp.NrOfEnds() - 5, Nets);
+    final var clockNetName = GetClockNetName(comp, comp.nrOfEnds() - 5, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -223,8 +204,8 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     }
     map.putAll(GetNetMap("Reset", true, comp, nrOfPins - 2, Nets));
     map.putAll(GetNetMap("Preset", true, comp, nrOfPins - 1, Nets));
-    if (hasClock && !gatedClock && Netlist.IsFlipFlop(attrs)) {
-      if (Nets.RequiresGlobalClockConnection()) {
+    if (hasClock && !gatedClock && Netlist.isFlipFlop(attrs)) {
+      if (Nets.requiresGlobalClockConnection()) {
         map.put(
             "Tick",
             clockNetName
@@ -274,7 +255,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
                   + ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX
                   + HDL.BracketClose());
       } else {
-        map.put("Clock", GetNetName(comp, comp.NrOfEnds() - 5, true, Nets));
+        map.put("Clock", GetNetName(comp, comp.nrOfEnds() - 5, true, Nets));
       }
     }
     map.putAll(GetInputMaps(comp, Nets));
