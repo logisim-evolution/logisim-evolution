@@ -95,8 +95,8 @@ public class FPGAClockPanel extends JPanel implements ActionListener, LocaleList
     if (rootSheet != null) {
       final var savedDownloadFrequency = rootSheet.getDownloadFrequency();
       final var savedSimFrequency = rootSheet.getTickFrequency();
-      if (((savedDownloadFrequency > 0) && (freq != savedDownloadFrequency)) ||
-          ((freq != savedSimFrequency) && (freq != savedDownloadFrequency)))
+      if (((savedDownloadFrequency > 0) && (freq != savedDownloadFrequency))
+          || ((freq != savedSimFrequency) && (freq != savedDownloadFrequency)))
         rootSheet.setDownloadFrequency(freq);
     }
     for (int i = 0; i < MenuSimulate.SUPPORTED_TICK_FREQUENCIES.length; i++) {
