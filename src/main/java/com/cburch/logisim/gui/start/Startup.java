@@ -229,7 +229,9 @@ public class Startup implements AWTEventListener {
   protected static RC printHelp(Options opts) {
     printVersion();
     System.out.println();
-    (new HelpFormatter()).printHelp(Main.APP_NAME, null, opts, null, true);
+    final var formatter = new HelpFormatter();
+    formatter.setWidth(100);  // Arbitrary chosen value.
+    formatter.printHelp(Main.APP_NAME, null, opts, null, true);
     return RC.QUIT;
   }
 
@@ -521,11 +523,11 @@ public class Startup implements AWTEventListener {
   }
 
   private static RC handleArgGates(Startup startup, Option opt) {
-    final var gateShape = opt.getValue();
-    if ("shaped".equals(gateShape)) {
+    final var gateShape = opt.getValue().toLowerCase();
+    if ("ansi".equals(gateShape)) {
       AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
       return RC.OK;
-    } else if ("rectangular".equals(gateShape)) {
+    } else if ("iec".equals(gateShape)) {
       AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_RECTANGULAR);
       return RC.OK;
     }
