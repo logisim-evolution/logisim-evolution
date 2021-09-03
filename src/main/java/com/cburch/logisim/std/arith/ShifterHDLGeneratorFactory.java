@@ -212,16 +212,16 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private ArrayList<String> GetStageFunctionalityVHDL(int stageNumber, int nrOfBits) {
     final var nrOfBitsToShift = (1 << stageNumber);
     final var contents =
-      (new LineBuffer())
-        .pair("shiftMode", shiftModeStr)
-        .pair("stageNumber", stageNumber)
-        .pair("stageNumber1", stageNumber - 1)
-        .pair("nrOfBits1", nrOfBits - 1)
-        .pair("nrOfBits2", nrOfBits - 2)
-        .pair("bitsShiftDiff", (nrOfBits - nrOfBitsToShift))
-        .pair("bitsShiftDiff1", (nrOfBits - nrOfBitsToShift - 1))
-        .pair("nrOfBitsToShift", nrOfBitsToShift)
-        .pair("nrOfBitsToShift1", nrOfBitsToShift - 1);
+        (new LineBuffer())
+          .pair("shiftMode", shiftModeStr)
+          .pair("stageNumber", stageNumber)
+          .pair("stageNumber1", stageNumber - 1)
+          .pair("nrOfBits1", nrOfBits - 1)
+          .pair("nrOfBits2", nrOfBits - 2)
+          .pair("bitsShiftDiff", (nrOfBits - nrOfBitsToShift))
+          .pair("bitsShiftDiff1", (nrOfBits - nrOfBitsToShift - 1))
+          .pair("nrOfBitsToShift", nrOfBitsToShift)
+          .pair("nrOfBitsToShift1", nrOfBitsToShift - 1);
 
     contents.add("""
         -----------------------------------------------------------------------------
@@ -232,10 +232,12 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
     if (stageNumber == 0) {
       contents
-          .add("s_stage_0_shiftin <= DataA({{1}}) WHEN {{shiftMode}} = 1 OR {{shiftMode}} = 3 ELSE", (nrOfBits - 1))
-          .add("                     DataA(0) WHEN {{shiftMode}} = 4 ELSE '0';")
-          .empty()
-          .add("s_stage_0_result  <= DataA")
+          .add("""
+            s_stage_0_shiftin <= DataA({{nrOfBits1}}) WHEN {{shiftMode}} = 1 OR {{shiftMode}} = 3 ELSE
+                                 DataA(0) WHEN {{shiftMode}} = 4 ELSE '0';")
+ 
+            s_stage_0_result  <= DataA
+            """)
           .add(
               (nrOfBits == 2)
                   ? "                        WHEN ShiftAmount = '0' ELSE"
@@ -244,7 +246,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                                DataA({{nrOfBits2}} DOWNTO 0)&s_stage_0_shiftin
                                   WHEN {{shiftMode}} = 0 OR {{shiftMode}} = 1 ELSE
                                s_stage_0_shiftin&DataA( {{nrOfBits2}} DOWNTO 1 );
-          """);
+            """);
     } else {
       contents
           .add("""
