@@ -31,7 +31,6 @@ package com.cburch.logisim.gui.prefs;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.LocaleManager;
 import java.awt.Component;
 import java.awt.Dimension;
 import javax.swing.Box;
@@ -44,14 +43,12 @@ class IntlOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
   private final JLabel localeLabel = new RestrictedLabel();
   private final JComponent locale;
-  private final PrefBoolean replAccents;
   private final PrefOptionList gateShape;
 
   public IntlOptions(PreferencesFrame window) {
     super(window);
 
     locale = S.createLocaleSelector();
-    replAccents = new PrefBoolean(AppPreferences.ACCENTS_REPLACE, S.getter("intlReplaceAccents"));
     gateShape =
         new PrefOptionList(
             AppPreferences.GATE_SHAPE,
@@ -79,7 +76,6 @@ class IntlOptions extends OptionsPanel {
     add(Box.createGlue());
     add(shapePanel);
     add(localePanel);
-    add(replAccents);
     add(Box.createGlue());
   }
 
@@ -97,8 +93,6 @@ class IntlOptions extends OptionsPanel {
   public void localeChanged() {
     gateShape.localeChanged();
     localeLabel.setText(S.get("intlLocale") + " ");
-    replAccents.localeChanged();
-    replAccents.setEnabled(LocaleManager.canReplaceAccents());
   }
 
   private static class RestrictedLabel extends JLabel {
