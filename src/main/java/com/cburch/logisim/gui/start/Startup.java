@@ -215,7 +215,10 @@ public class Startup implements AWTEventListener {
     final var flag = option.toLowerCase();
     if (positives.contains(flag)) return true;
     if (negatives.contains(flag)) return false;
-    throw new IllegalArgumentException("Invalid boolean flag value.");
+    // FIXME: hardcoded string
+    throw new IllegalArgumentException(
+            LineBuffer.format("Invalid boolean flag value. Use '{{1}}' for positives and '{{2}}' for negatives.",
+                    String.join(", ", positives), String.join(", ", negatives)));
   }
 
   /**
