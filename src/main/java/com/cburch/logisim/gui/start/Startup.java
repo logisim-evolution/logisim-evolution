@@ -751,7 +751,7 @@ public class Startup implements AWTEventListener {
     final var simTickFreq = mainCircuit.getTickFrequency();
     final var downTickFreq = mainCircuit.getDownloadFrequency();
     final var usedFrequency = (testTickFrequency > 0) ? testTickFrequency : 
-      (downTickFreq > 0) ? downTickFreq : simTickFreq;
+        (downTickFreq > 0) ? downTickFreq : simTickFreq;
     Download Downloader =
         new Download(
             proj,
