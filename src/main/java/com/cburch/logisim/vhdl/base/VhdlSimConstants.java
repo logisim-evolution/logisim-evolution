@@ -91,7 +91,6 @@ public class VhdlSimConstants {
     RUNNING
   }
 
-  public static final Logger logger = LoggerFactory.getLogger(VhdlSimulatorTop.class);
   public static final Charset ENCODING = StandardCharsets.UTF_8;
   public static final String VHDL_TEMPLATES_PATH = "/resources/logisim/hdl/";
   public static final String SIM_RESOURCES_PATH = "/resources/logisim/sim/";

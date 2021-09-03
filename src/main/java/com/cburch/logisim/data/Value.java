@@ -223,6 +223,8 @@ public class Value {
       new Color(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
   public static Color WIDTH_ERROR_CAPTION_BGCOLOR =
       new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
+  public static Color CLOCK_FREQUENCY_COLOR =
+      new Color(AppPreferences.CLOCK_FREQUENCY_COLOR.get());
 
   private static final Cache cache = new Cache();
 

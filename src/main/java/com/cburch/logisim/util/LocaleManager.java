@@ -111,38 +111,6 @@ public class LocaleManager {
     listeners.add(l);
   }
 
-  public static boolean canReplaceAccents() {
-    return fetchReplaceAccents() != null;
-  }
-
-  private static HashMap<Character, String> fetchReplaceAccents() {
-    HashMap<Character, String> ret = null;
-    String val;
-    try {
-      val = S.locale.getString("accentReplacements");
-    } catch (MissingResourceException e) {
-      return null;
-    }
-    final var toks = new StringTokenizer(val, "/");
-    while (toks.hasMoreTokens()) {
-      final var tok = toks.nextToken().trim();
-      var c = '\0';
-      String s = null;
-      if (tok.length() == 1) {
-        c = tok.charAt(0);
-        s = "";
-      } else if (tok.length() >= 2 && tok.charAt(1) == ' ') {
-        c = tok.charAt(0);
-        s = tok.substring(2).trim();
-      }
-      if (s != null) {
-        if (ret == null) ret = new HashMap<>();
-        ret.put(c, s);
-      }
-    }
-    return ret;
-  }
-
   private static void fireLocaleChanged() {
     for (final var l : listeners) {
       l.localeChanged();
@@ -248,17 +216,9 @@ public class LocaleManager {
       for (final var man : managers) {
         man.loadDefault();
       }
-      repl = replaceAccents ? fetchReplaceAccents() : null;
       updateButtonText();
       fireLocaleChanged();
     }
-  }
-
-  public static void setReplaceAccents(boolean value) {
-    final var newRepl = value ? fetchReplaceAccents() : null;
-    replaceAccents = value;
-    repl = newRepl;
-    fireLocaleChanged();
   }
 
   // static members
@@ -271,8 +231,6 @@ public class LocaleManager {
   public static final SimpleDateFormat parserSDF = new SimpleDateFormat(LocaleManager.DATE_FORMAT);
 
   private static final ArrayList<LocaleListener> listeners = new ArrayList<>();
-
-  private static boolean replaceAccents = false;
 
   private static HashMap<Character, String> repl = null;
 

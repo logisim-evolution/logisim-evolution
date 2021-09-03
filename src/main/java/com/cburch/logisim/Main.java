@@ -44,8 +44,6 @@ import java.io.StringWriter;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.FontUIResource;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import lombok.val;
 
 public class Main {
@@ -74,10 +72,10 @@ public class Main {
       e.printStackTrace();
     }
 
-    val startup = Startup.parseArgs(args);
-    if (startup == null) {
-      System.exit(0);
-    }
+    final var startup = Startup.parseArgs(args);
+    if (startup == null) System.exit(10);
+    if (startup.shallQuit()) System.exit(0);
+
     try {
       startup.run();
     } catch (Throwable e) {
@@ -89,8 +87,6 @@ public class Main {
     }
   }
 
-  static final Logger logger = LoggerFactory.getLogger(Main.class);
-
   // @deprecated use BuildInfo instead
   public static final String APP_NAME = BuildInfo.name;
   // @deprecated use BuildInfo instead
@@ -98,12 +94,14 @@ public class Main {
   public static final String APP_DISPLAY_NAME = APP_NAME + " v" + VERSION;
   public static final String APP_URL = "https://github.com/logisim-evolution/";
 
+  public static final String JVM_VERSION = System.getProperty("java.vm.name") + " v" + System.getProperty("java.version");
+  public static final String JVM_VENDOR = System.getProperty("java.vendor");
+
   public static boolean headless = false;
   public static final boolean RUNNING_ON_MAC = MacCompatibility.isRunningOnMac();
 
   // FloppyDisk unicode character: https://charbase.com/1f4be-unicode-floppy-disk
   public static final String DIRTY_MARKER = "\ud83d\udcbe";
-
 
   public static boolean hasGui() {
     return !headless;
