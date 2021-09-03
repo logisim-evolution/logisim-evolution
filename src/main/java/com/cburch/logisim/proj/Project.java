@@ -10,7 +10,6 @@
 package com.cburch.logisim.proj;
 
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitLocker;
 import com.cburch.logisim.circuit.CircuitState;
@@ -480,7 +479,7 @@ public class Project {
         for (final var l : circuitListeners) {
           newCircuit.addCircuitListener(l);
         }
-        final var circTickFrequency = newCircuit.getStaticAttributes().getValue(CircuitAttributes.SIMULATION_FREQUENCY);
+        final var circTickFrequency = newCircuit.getTickFrequency();
         final var simTickFrequency = simulator.getTickFrequency(); 
         if (circTickFrequency < 0) {
           newCircuit.setTickFrequency(simTickFrequency);
