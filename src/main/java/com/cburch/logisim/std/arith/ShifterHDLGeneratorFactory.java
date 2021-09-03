@@ -234,7 +234,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       contents
           .add("""
             s_stage_0_shiftin <= DataA({{nrOfBits1}}) WHEN {{shiftMode}} = 1 OR {{shiftMode}} = 3 ELSE
-                                 DataA(0) WHEN {{shiftMode}} = 4 ELSE '0';")
+                                 DataA(0) WHEN {{shiftMode}} = 4 ELSE '0';
  
             s_stage_0_result  <= DataA
             """)
