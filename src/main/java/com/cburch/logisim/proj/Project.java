@@ -475,7 +475,6 @@ public class Project {
     }
     simulator.setCircuitState(circuitState);
     if (circuitChanged) {
-      simulator.setTickFrequencyListener(newCircuit);
       fireEvent(ProjectEvent.ACTION_SET_CURRENT, oldActive, newCircuit);
       if (newCircuit != null) {
         for (final var l : circuitListeners) {
@@ -484,7 +483,7 @@ public class Project {
         final var circTickFrequency = newCircuit.getStaticAttributes().getValue(CircuitAttributes.SIMULATION_FREQUENCY);
         final var simTickFrequency = simulator.getTickFrequency(); 
         if (circTickFrequency < 0) {
-          newCircuit.setFrequency(simTickFrequency);
+          newCircuit.setTickFrequency(simTickFrequency);
         } else if (circTickFrequency != simTickFrequency) {
           simulator.setTickFrequency(circTickFrequency);
         }

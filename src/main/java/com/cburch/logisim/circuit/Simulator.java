@@ -413,7 +413,6 @@ public class Simulator {
   // suspect.
   private final ArrayList<Listener> listeners = new ArrayList<>();
   private final Object lock = new Object();
-  private TickFrequencyListener tickFrequencyListener; //There is always only 1 circuit "active", the root circuit
 
   public Simulator() {
     simThread = new SimThread(this);
@@ -550,12 +549,10 @@ public class Simulator {
       fireSimulatorStateChanged();
   }
   
-  public void setTickFrequencyListener(TickFrequencyListener listener) {
-    tickFrequencyListener = listener;
-  }
-
   public void setTickFrequency(double freq) {
-    if (tickFrequencyListener != null) tickFrequencyListener.setFrequency(freq);
+    final var circuitState = getCircuitState();
+    if (circuitState != null)
+      circuitState.getCircuit().setTickFrequency(freq);
     if (simThread.setTickFrequency(freq))
       fireSimulatorStateChanged();
   }

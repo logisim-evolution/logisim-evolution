@@ -65,7 +65,7 @@ import java.util.TimerTask;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
 
-public class Circuit implements TickFrequencyListener {
+public class Circuit {
   private class EndChangedTransaction extends CircuitTransaction {
     private final Component comp;
     private final Map<Location, EndData> toRemove;
@@ -968,10 +968,10 @@ public class Circuit implements TickFrequencyListener {
     }
   }
 
-  @Override
-  public void setFrequency(double value) {
-    if (value == staticAttrs.getValue(CircuitAttributes.SIMULATION_FREQUENCY)) return;
+  public void setTickFrequency(double value) {
+    final var currentTickFrequency = staticAttrs.getValue(CircuitAttributes.SIMULATION_FREQUENCY); 
+    if (value == currentTickFrequency) return;
     staticAttrs.setValue(CircuitAttributes.SIMULATION_FREQUENCY, value);
-    if (proj != null) proj.setForcedDirty();
+    if ((proj != null) && (currentTickFrequency > 0)) proj.setForcedDirty();
   }
 }
