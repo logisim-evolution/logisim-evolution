@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
- * Copyright by Logisim-evolution developers
- * 
+ * Copyright by the Logisim-evolution developers
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -23,6 +23,7 @@ public interface CanvasPaneContents extends Scrollable {
 
   boolean getScrollableTracksViewportWidth();
 
+  @Override
   int getScrollableUnitIncrement(Rectangle visibleRect, int orientation, int direction);
 
   void recomputeSize();

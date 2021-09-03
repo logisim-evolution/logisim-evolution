@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
- * Copyright by Logisim-evolution developers
- * 
+ * Copyright by the Logisim-evolution developers
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -42,6 +42,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
     contents.addHexModelListener(this);
   }
 
+  @Override
   public void bytesChanged(HexModel source, long start, long numBytes, long[] oldValues) {}
 
   private void CalculateDisplayParameters(
@@ -185,6 +186,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
     return addr >>> addrBits == 0;
   }
 
+  @Override
   public void metainfoChanged(HexModel source) {
     setBits(contents.getLogLength(), contents.getWidth());
   }

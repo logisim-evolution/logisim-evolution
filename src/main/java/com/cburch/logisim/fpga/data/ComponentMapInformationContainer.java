@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
- * Copyright by Logisim-evolution developers
- * 
+ * Copyright by the Logisim-evolution developers
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -47,6 +47,7 @@ public class ComponentMapInformationContainer {
     InOutBubbleLabels = null;
   }
 
+  @Override
   public ComponentMapInformationContainer clone() {
     @SuppressWarnings("unchecked")
     ComponentMapInformationContainer Myclone =

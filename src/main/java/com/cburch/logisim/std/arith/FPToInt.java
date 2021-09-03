@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
- * Copyright by Logisim-evolution developers
- * 
+ * Copyright by the Logisim-evolution developers
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -97,7 +97,7 @@ public class FPToInt extends InstanceFactory {
     final var a_val = dataWidthIn.getWidth() == 64 ? a.toDoubleValue() : a.toFloatValue();
 
     long out_val;
-  
+
     if (roundMode.getValue().equals("ceil")) out_val = (long) Math.ceil(a_val);
     else if (roundMode.getValue().equals("floor")) out_val = (long) Math.floor(a_val);
     else if (roundMode.getValue().equals("round")) out_val = (long) Math.round(a_val);

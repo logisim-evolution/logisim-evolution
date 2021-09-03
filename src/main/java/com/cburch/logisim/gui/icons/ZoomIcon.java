@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
- * Copyright by Logisim-evolution developers
- * 
+ * Copyright by the Logisim-evolution developers
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -31,6 +31,7 @@ public class ZoomIcon extends BaseIcon {
     zoomType = type;
   }
 
+  @Override
   protected void paintIcon(Graphics2D g2) {
     g2.setStroke(new BasicStroke((int) AppPreferences.getScaled(1.5)));
     g2.setColor(g2.getBackground().darker());

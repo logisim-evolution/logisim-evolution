@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
- * Copyright by Logisim-evolution developers
- * 
+ * Copyright by the Logisim-evolution developers
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -62,14 +62,14 @@ public class Ttl74161 extends AbstractTtlGate {
       "A1/QB",
       "A0/QA",
       "TC/RC0 (Terminal Count)"
-  }; 
-  private static final byte[] OUTPUT_PORTS = {11, 12, 13, 14, 15}; 
+  };
+  private static final byte[] OUTPUT_PORTS = {11, 12, 13, 14, 15};
 
   public Ttl74161() {
     super(_ID, (byte) 16, OUTPUT_PORTS, PORT_NAMES);
     super.setInstancePoker(Poker.class);
   }
-  
+
   public Ttl74161(String name) {
     super(name, (byte) 16, OUTPUT_PORTS, PORT_NAMES);
     super.setInstancePoker(Poker.class);
@@ -152,10 +152,10 @@ public class Ttl74161 extends AbstractTtlGate {
       gfx.setColor(Color.BLACK);
     }
   }
-  
+
   public static void updateState(InstanceState state, Long value) {
     var data = getStateData(state);
-    
+
     data.setValue(Value.createKnown(BitWidth.create(4), value));
     final var vA = data.getValue().get(0);
     final var vB = data.getValue().get(1);
@@ -170,7 +170,7 @@ public class Ttl74161 extends AbstractTtlGate {
     // RC0 = QA AND QB AND QC AND QD AND ENT
     state.setPort(PORT_INDEX_RC0, state.getPortValue(PORT_INDEX_EnT).and(vA).and(vB).and(vC).and(vD), 1);
   }
-  
+
   public static TtlRegisterData getStateData(InstanceState state) {
     var data = (TtlRegisterData) state.getData();
     if (data == null) {
@@ -186,7 +186,7 @@ public class Ttl74161 extends AbstractTtlGate {
     final var triggered = data.updateClock(state.getPortValue(PORT_INDEX_CLK), StdAttr.TRIG_RISING);
     final var nClear = state.getPortValue(PORT_INDEX_nCLR).toLongValue();
     var counter = data.getValue().toLongValue();
-    
+
     if (nClear == 0) {
       counter = 0;
     } else if (triggered) {

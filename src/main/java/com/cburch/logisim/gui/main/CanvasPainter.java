@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
- * Copyright by Logisim-evolution developers
- * 
+ * Copyright by the Logisim-evolution developers
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -222,6 +222,7 @@ class CanvasPainter implements PropertyChangeListener {
     gfxScaled.dispose();
   }
 
+  @java.lang.Override
   public void propertyChange(PropertyChangeEvent event) {
     if (AppPreferences.GRID_BG_COLOR.isSource(event)
         || AppPreferences.GRID_DOT_COLOR.isSource(event)

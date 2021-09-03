@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
- * Copyright by Logisim-evolution developers
- * 
+ * Copyright by the Logisim-evolution developers
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -47,7 +47,7 @@ public class Button extends InstanceFactory {
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Button";
-  
+
   public static final AttributeOption BUTTON_PRESS_ACTIVE =
       new AttributeOption("active", S.getter("buttonPressActive"));
   public static final AttributeOption BUTTON_PRESS_PASSIVE =

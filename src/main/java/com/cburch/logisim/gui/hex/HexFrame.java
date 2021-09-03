@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
- * Copyright by Logisim-evolution developers
- * 
+ * Copyright by the Logisim-evolution developers
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -45,7 +45,7 @@ public class HexFrame extends LFrame.SubWindow {
   private final JButton save = new JButton();
   private final JButton close = new JButton();
   private final Instance instance;
-  
+
   public HexFrame(Project project, Instance instance, HexModel model) {
     super(project);
     setDefaultCloseOperation(HIDE_ON_CLOSE);
@@ -109,6 +109,7 @@ public class HexFrame extends LFrame.SubWindow {
   private class EditListener implements ActionListener, ChangeListener {
     private Clip clip = null;
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       Object src = e.getSource();
       if (src == LogisimMenuBar.CUT) {
@@ -149,12 +150,14 @@ public class HexFrame extends LFrame.SubWindow {
       enableItems(menubar);
     }
 
+    @Override
     public void stateChanged(ChangeEvent e) {
       enableItems((LogisimMenuBar) getJMenuBar());
     }
   }
 
   private class MyListener implements ActionListener, LocaleListener {
+    @Override
     public void actionPerformed(ActionEvent event) {
       Object src = event.getSource();
       if (src == open) {
@@ -167,6 +170,7 @@ public class HexFrame extends LFrame.SubWindow {
       }
     }
 
+    @Override
     public void localeChanged() {
       setTitle(S.get("hexFrameTitle"));
       open.setText(S.get("openButton"));
@@ -186,6 +190,7 @@ public class HexFrame extends LFrame.SubWindow {
       return HexFrame.this;
     }
 
+    @Override
     public void localeChanged() {
       setText(S.get("hexFrameMenuItem"));
     }

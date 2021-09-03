@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
- * Copyright by Logisim-evolution developers
- * 
+ * Copyright by the Logisim-evolution developers
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -72,6 +72,7 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   }
 
   // ProjectListener methods
+  @Override
   public void projectChanged(ProjectEvent event) {
     int act = event.getAction();
     if (act == ProjectEvent.ACTION_SET_FILE) {

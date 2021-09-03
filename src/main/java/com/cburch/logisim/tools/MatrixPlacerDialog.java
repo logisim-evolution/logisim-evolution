@@ -1,6 +1,6 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
- * Copyright by Logisim-evolution developers
+ * Copyright by the Logisim-evolution developers
  * 
  * https://github.com/logisim-evolution/
  * 
