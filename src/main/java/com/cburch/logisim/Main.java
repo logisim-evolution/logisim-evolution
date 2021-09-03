@@ -74,9 +74,9 @@ public class Main {
     }
 
     final var startup = Startup.parseArgs(args);
-    if (startup == null) {
-      System.exit(0);
-    }
+    if (startup == null) System.exit(10);
+    if (startup.shallQuit()) System.exit(0);
+
     try {
       startup.run();
     } catch (Throwable e) {
@@ -96,6 +96,9 @@ public class Main {
   public static final LogisimVersion VERSION = BuildInfo.version;
   public static final String APP_DISPLAY_NAME = APP_NAME + " v" + VERSION;
   public static final String APP_URL = "https://github.com/logisim-evolution/";
+
+  public static final String JVM_VERSION = System.getProperty("java.vm.name") + " v" + System.getProperty("java.version");
+  public static final String JVM_VENDOR = System.getProperty("java.vendor");
 
   public static boolean headless = false;
   public static final boolean RUNNING_ON_MAC = MacCompatibility.isRunningOnMac();

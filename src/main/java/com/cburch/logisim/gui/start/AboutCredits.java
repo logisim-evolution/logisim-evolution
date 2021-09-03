@@ -32,6 +32,7 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.Main;
 import com.cburch.logisim.generated.BuildInfo;
+import com.cburch.logisim.util.LineBuffer;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
 import java.awt.Font;
@@ -60,6 +61,9 @@ class AboutCredits extends JComponent {
   private final Lines lines;
 
   public AboutCredits(int width, int height) {
+    final var jvm = LineBuffer.format("{{1}} v{{2}} ({{3}})", System.getProperty("java.vm.name"), System.getProperty("java.version"), System.getProperty("java.vendor"));
+    System.out.println(S.get("appVersionJvm", jvm));
+
     lines = new Lines();
     lines
         .title(Main.APP_DISPLAY_NAME)
@@ -88,7 +92,10 @@ class AboutCredits extends JComponent {
         .space()
         .h1(S.get("creditsBuildInfo"))
         .text(S.get("creditsCompiled", BuildInfo.dateIso8601))
-        .text(BuildInfo.buildId);
+        .text(BuildInfo.buildId)
+        .space()
+        .text(Main.JVM_VERSION)
+        .text(Main.JVM_VENDOR);
   }
 
   private long startMillis = 0;
