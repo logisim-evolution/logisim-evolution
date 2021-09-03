@@ -673,37 +673,32 @@ public class LineBuffer implements RandomAccess {
   protected void validateLineWithPositionalArgs(String fmt, Object... args) {
     initValidator(fmt);
 
-    final var positionalsCnt = positionalPlaceholders.size();
+    final var posArgsCnt = positionalPlaceholders.size();
 
     // Do we have positional placeholders in fmt?
     if (positionalPlaceholders.isEmpty()) {
       // Warn if we have no positional placeholders used, but still receive positional arguments.
       if (args.length > 0)
-        warn("#E004: Useless positional arguments. Expected nothing, but received {{2}} for '{{1}}'.",
-                fmt, positionalsCnt);
+        warn("#E004: Useless positional arguments. Expected nothing, but received {{2}} for '{{1}}'.", fmt, posArgsCnt);
     } else {
-      if (positionalsCnt < args.length)
+      if (posArgsCnt < args.length)
         // We had too many positional args given compared to positional placeholders. But that
         // difference can be OK, so just warn.
         abort("#E001: Too many positional arguments, Expected {{2}}, but received {{3}} for '{{1}}'.",
-                fmt, positionalsCnt, args.length);
+                fmt, posArgsCnt, args.length);
 
-      if (positionalsCnt > args.length)
+      if (posArgsCnt > args.length)
         // Too little arguments provided vs. awaiting placeholders. That's life threatening condition.
-        abort("#E002: Insufficient positional arguments. Expected {{2}}, but received {{3}} for '{{1}}'.",
-                fmt, positionalsCnt, args.length);
+        abort("#E002: Insufficient positional arguments. Expected {{2}}, but received {{3}} for '{{1}}'.", fmt, posArgsCnt, args.length);
 
       // count matches, let's see if contents too.
-      var errorCnt = 0;
       for (final var posKey : positionalPlaceholders) {
-        if (Integer.valueOf(posKey) > positionalsCnt) {
-          // Reference to non-existing position found. Warn about all detected issues. We fail later.
-          warn("#E003: Invalid positional argument. '{{1}}' used, but max value is {{2}}.", posKey, positionalsCnt);
-          errorCnt++;
+        if (Integer.valueOf(posKey) > posArgsCnt) {
+          // Reference to non-existing position found. Warn about all detected issues. We fail
+          // later.
+          warn("#E003: Invalid positional argument. '{{1}}' used, but max value is {{2}} for '{{3}}'.", posKey, posArgsCnt, fmt);
         }
       }
-      if (errorCnt > 0)
-        abort("#E003: Non-existing positional arguments found in '{{1}}'. See console output for details.", fmt);
     }
   }
 
@@ -711,14 +706,11 @@ public class LineBuffer implements RandomAccess {
     initValidator(fmt);
 
     // check if we use any non mapped placeholder
-    var errorCnt = 0;
     for (final var key : pairedPlaceholders) {
       if (!placeholders.contains(key)) {
-        warn("#E005: Placeholder '{{2}}' has no mapping while processing '{{1}}'.", fmt, key);
-        errorCnt++;
+        abort("#E005: Placeholder '{{1}}' has no mapping while processing '{{2}}'.", key, fmt);
       }
     }
-    if (errorCnt > 0) abort("#E005: Unmapped placeholders detected. See console output for details.");
   }
 
   protected void validateLine(String fmt, Pairs argPairs) {
@@ -728,21 +720,15 @@ public class LineBuffer implements RandomAccess {
       validateLineWithPositionalArgs(fmt, argPairs);
     } else {
       if (positionalPlaceholders.size() > 0)
-        abort(
-            "#E004: No positional arguments, but expected {{2}} for '{{1}}'.",
-            fmt, positionalPlaceholders.size());
+        abort("#E004: No positional arguments, but expected {{2}} for '{{1}}'.", fmt, positionalPlaceholders.size());
     }
 
     // Check if paired placeholders used in formatting string are known at this point.
-    var errorCount = 0;
     for (final var key : pairedPlaceholders) {
       if (!(pairs.containsKey(key) || (argPairs != null && argPairs.containsKey(key)))) {
-        warn("#E006: No mapping for placeholder: '{{1}}'", key);
-        errorCount++;
+        abort("#E006: No mapping for '{{1}}' placeholder in '{{2}}'.", key, fmt);
       }
     }
-    if (errorCount > 0)
-      abort("#E006: {{1}} unmapped placeholders detected in '{{2}}'. See console output for details.", errorCount, fmt);
   }
 
   /* ********************************************************************************************* */
