@@ -229,7 +229,9 @@ public class Startup implements AWTEventListener {
   protected static RC printHelp(Options opts) {
     printVersion();
     System.out.println();
-    (new HelpFormatter()).printHelp(Main.APP_NAME, null, opts, null, true);
+    final var formatter = new HelpFormatter();
+    formatter.setWidth(100);  // Arbitrary chosen value.
+    formatter.printHelp(Main.APP_NAME, null, opts, null, true);
     return RC.QUIT;
   }
 
