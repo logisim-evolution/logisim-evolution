@@ -970,6 +970,8 @@ public class Circuit implements TickFrequencyListener {
 
   @Override
   public void setFrequency(double value) {
-    getStaticAttributes().setValue(CircuitAttributes.SIMULATION_FREQUENCY, value);
+    if (value == staticAttrs.getValue(CircuitAttributes.SIMULATION_FREQUENCY)) return;
+    staticAttrs.setValue(CircuitAttributes.SIMULATION_FREQUENCY, value);
+    if (proj != null) proj.setForcedDirty();
   }
 }
