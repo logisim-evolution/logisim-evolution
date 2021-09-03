@@ -72,7 +72,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
                        END IF;
                     END IF;
                  END PROCESS make_state;
-              END NoPlatformSpecific;")
+              END NoPlatformSpecific;
               
               
               
@@ -150,7 +150,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
                       ShiftIn     : IN  std_logic;
                       D           : IN  std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 );
                       ShiftOut    : OUT std_logic;
-                      Q           : OUT std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 ));
+                      Q           : OUT std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 ) );
             END COMPONENT;
             """)
         .getWithIndent();
@@ -222,7 +222,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
                         ShiftIn     => ShiftIn(n),
                         D           => D( ((n+1) * {{nrOfStages}})-1 DOWNTO (n*{{nrOfStages}})),
                         ShiftOut    => ShiftOut(n),
-                        Q           => Q( ((n+1) * {{nrOfStages}})-1 DOWNTO (n*{{nrOfStages}})));
+                        Q           => Q( ((n+1) * {{nrOfStages}})-1 DOWNTO (n*{{nrOfStages}})) );
           END GENERATE genbits;
           """);
     } else {
@@ -241,7 +241,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
                            .ShiftIn(ShiftIn[n]),
                            .D(D[((n+1)*{{nrOfStages}})-1:(n*{{nrOfStages}})]),
                            .ShiftOut(ShiftOut[n]),
-                           .Q(Q[((n+1)*{{nrOfStages}})-1:(n*{{nrOfStages}})]));
+                           .Q(Q[((n+1)*{{nrOfStages}})-1:(n*{{nrOfStages}})]) );
              end
           endgenerate
           """);

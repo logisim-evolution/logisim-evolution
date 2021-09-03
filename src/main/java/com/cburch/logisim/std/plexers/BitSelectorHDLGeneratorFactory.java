@@ -59,8 +59,8 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
               """)
           .add(
               outputBits > 1
-                  ? "DataOut <= s_extended_vector(((to_integer(unsigned(Sel))+1) * {{outBits}})-1 DOWNTO to_integer(unsigned(Sel))*{{outBits}});"
-                  : "DataOut <= s_extended_vector(to_integer(unsigned(Sel)));");
+                  ? "DataOut <= s_extended_vector( ((to_integer(unsigned(Sel))+1) * {{outBits}})-1 DOWNTO to_integer(unsigned(Sel))*{{outBits}} );"
+                  : "DataOut <= s_extended_vector( to_integer(unsigned(Sel)) );");
     } else {
       contents.add("""
           assign s_extended_vector[{{extBits}}-1:{{inBits}}] = 0;

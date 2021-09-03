@@ -75,7 +75,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 IF (s_counter_value = std_logic_vector(to_unsigned(max_val,width))) THEN
                    s_carry <= '1';
                 ELSE
-                    s_carry <= '0';
+                   s_carry <= '0';
                 END IF; -- Up counting
              END IF;
           END PROCESS make_carry;
@@ -109,9 +109,9 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                                  END IF;
                   WHEN OTHERS => IF (v_downcount = '1') THEN
                                      s_next_counter_value <= std_logic_vector(unsigned(s_counter_value) - 1);
-                                  ELSE
+                                 ELSE
                                      s_next_counter_value <= std_logic_vector(unsigned(s_counter_value) + 1);
-                                  END IF;
+                                 END IF;
                 END CASE;
              END IF;
           END PROCESS make_next_value;
@@ -122,7 +122,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
              temp := std_logic_vector(to_unsigned({{activeEdge}}, 1));
              IF (clear = '1') THEN s_counter_value <= (OTHERS => '0');
              ELSIF (GlobalClock'event AND (GlobalClock = temp(0))) THEN
-               IF (s_real_enable = '1') THEN s_counter_value <= s_next_counter_value;
+                IF (s_real_enable = '1') THEN s_counter_value <= s_next_counter_value;
                 END IF;
              END IF;
           END PROCESS make_flops;
@@ -180,14 +180,14 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           
           always @(posedge GlobalClock or posedge clear)
           begin
-              if (clear) s_counter_value <= 0;
-              else if (s_real_enable) s_counter_value <= s_next_counter_value;
+             if (clear) s_counter_value <= 0;
+             else if (s_real_enable) s_counter_value <= s_next_counter_value;
           end
           
           always @(negedge GlobalClock or posedge clear)
           begin
-              if (clear) s_counter_value_neg_edge <= 0;
-              else if (s_real_enable) s_counter_value_neg_edge <= s_next_counter_value;
+             if (clear) s_counter_value_neg_edge <= 0;
+             else if (s_real_enable) s_counter_value_neg_edge <= s_next_counter_value;
           end
           
           """);
