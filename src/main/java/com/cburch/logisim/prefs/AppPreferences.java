@@ -671,6 +671,8 @@ public class AppPreferences {
       create(new PrefMonitorInt("SimWidthErrorHighlightColor", 0xFFFF00));
   public static final PrefMonitor<Integer> WIDTH_ERROR_BACKGROUND_COLOR =
       create(new PrefMonitorInt("SimWidthErrorBackgroundColor", 0xFFE6D2));
+  public static final PrefMonitor<Integer> CLOCK_FREQUENCY_COLOR =
+      create(new PrefMonitorInt("SimClockFrequencyColor", 0xFF00B4));
   public static final PrefMonitor<Integer> KMAP1_COLOR =
       create(new PrefMonitorInt("KMAPColor1", 0x800000));
   public static final PrefMonitor<Integer> KMAP2_COLOR =
