@@ -321,7 +321,7 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argLocaleOption", ARG_LOCALE, ARG_LOCALE_LONG, 1);
     addOption(opts, "argTemplateOption", ARG_TEMPLATE, ARG_TEMPLATE_LONG, 1);
     addOption(opts, "argNoSplashOption", ARG_NO_SPLASH, ARG_NO_SPLASH_LONG);
-    addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR, ARG_TEST_VECTOR_LONG, 2);    // FIXME: NO LANG STR FOR IT!
+    addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR, ARG_TEST_VECTOR_LONG, 2);
     addOption(opts, "argTestCircuit", ARG_TEST_CIRCUIT, ARG_TEST_CIRCUIT_LONG, 1);   // FIXME add "Option" suffix to key name
     addOption(opts, "argTestCircGen", ARG_TEST_CIRC_GEN, ARG_TEST_CIRC_GEN_LONG, 2);   // FIXME add "Option" suffix to key name
 
