@@ -498,6 +498,13 @@ public class Project {
         for (final var l : circuitListeners) {
           newCircuit.addCircuitListener(l);
         }
+        final var circTickFrequency = newCircuit.getTickFrequency();
+        final var simTickFrequency = simulator.getTickFrequency(); 
+        if (circTickFrequency < 0) {
+          newCircuit.setTickFrequency(simTickFrequency);
+        } else if (circTickFrequency != simTickFrequency) {
+          simulator.setTickFrequency(circTickFrequency);
+        }
       }
       if (oldCircuit != null) oldCircuit.displayChanged();
       if (oldHdl != null) oldHdl.displayChanged();

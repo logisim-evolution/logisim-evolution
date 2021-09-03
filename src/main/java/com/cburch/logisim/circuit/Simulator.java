@@ -569,6 +569,9 @@ public class Simulator {
   }
 
   public void setTickFrequency(double freq) {
+    final var circuitState = getCircuitState();
+    if (circuitState != null)
+      circuitState.getCircuit().setTickFrequency(freq);
     if (simThread.setTickFrequency(freq))
       fireSimulatorStateChanged();
   }

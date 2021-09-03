@@ -29,7 +29,6 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.MapComponent;
@@ -152,32 +151,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     String ComponentName = CorrectLabel.getCorrectLabel(MyCircuit.getName());
     if (gatedInstance) ComponentName = ComponentName.concat("_gated");
     if (!HandledComponents.contains(ComponentName)) {
-      if (!WriteEntity(
-          WorkPath + GetRelativeDirectory(),
-          GetEntity(MyNetList, null, ComponentName),
-          ComponentName)) {
+      if (!WriteEntity(WorkPath + GetRelativeDirectory(),
+          GetEntity(MyNetList, null, ComponentName), ComponentName)) 
         return false;
-      }
-
-      // is the current circuit an 'empty vhdl box' ?
-      String ArchName =
-          MyCircuit.getStaticAttributes().getValue(CircuitAttributes.CIRCUIT_VHDL_PATH);
-
-      if (!ArchName.isEmpty()) {
-        if (!FileWriter.CopyArchitecture(
-            ArchName, WorkPath + GetRelativeDirectory(), ComponentName)) {
-          return false;
-        }
-      } else {
-        if (!WriteArchitecture(
-            WorkPath + GetRelativeDirectory(),
-            GetArchitecture(MyNetList, null, ComponentName),
-            ComponentName)) {
-          return false;
-        }
-      }
-      HandledComponents.add(ComponentName);
+      if (!WriteArchitecture(WorkPath + GetRelativeDirectory(),
+          GetArchitecture(MyNetList, null, ComponentName), ComponentName)) 
+        return false;
     }
+    HandledComponents.add(ComponentName);
     return true;
   }
 

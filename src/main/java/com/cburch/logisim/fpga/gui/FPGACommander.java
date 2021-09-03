@@ -34,7 +34,6 @@ import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
-import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.fpga.data.BoardInformation;
@@ -74,7 +73,6 @@ public class FPGACommander
     implements ActionListener,
         LibraryListener,
         ProjectListener,
-        Simulator.Listener,
         CircuitListener,
         BaseWindowListenerContract,
         LocaleListener,
@@ -135,17 +133,6 @@ public class FPGACommander
     } else if (event.getAction() == ProjectEvent.ACTION_SET_FILE) {
       RebuildCircuitSelection();
     }
-  }
-
-
-  @Override
-  public void simulatorReset(Simulator.Event e) {
-    // do nothing
-  }
-
-  @Override
-  public void simulatorStateChanged(Simulator.Event e) {
-    FrequencyPanel.setSelectedFrequency();
   }
 
   @Override
@@ -242,11 +229,10 @@ public class FPGACommander
     JPanel pan1 = new JPanel();
     pan1.setLayout(new BorderLayout());
     pan1.add(textMainCircuit, BorderLayout.WEST);
-    circuitsList.setActionCommand("mainCircuit");
     RebuildCircuitSelection();
     MyProject.addProjectListener(this);
     MyProject.getLogisimFile().addLibraryListener(this);
-    circuitsList.setActionCommand("Circuit");
+    circuitsList.setActionCommand("mainCircuit");
     circuitsList.addActionListener(this);
     pan1.add(circuitsList, BorderLayout.CENTER);
     pan.add(pan1, BorderLayout.NORTH);
@@ -267,11 +253,11 @@ public class FPGACommander
   public FPGACommander(Project Main) {
     MyProject = Main;
     FrequencyPanel = new FPGAClockPanel(Main);
-    rebuildBoardSelectionPanel();
     ToolPath.setActionCommand("ToolPath");
     ToolPath.addActionListener(this);
-    MyProject.getSimulator().addSimulatorListener(this);
     MyProject.getFrame().addWindowListener(this);
+    FrequencyPanel.updateFrequencyList(Main.getCurrentCircuit().getName());
+    rebuildBoardSelectionPanel();
 
     panel = new JFrame();
     panel.setResizable(false);
@@ -406,6 +392,8 @@ public class FPGACommander
       StopButton.setEnabled(false);
       Progress.setString(S.get("FpgaGuiIdle"));
       Progress.setValue(0);
+    } else if (e.getActionCommand().equals("mainCircuit")) {
+      FrequencyPanel.updateFrequencyList(circuitsList.getSelectedItem().toString());
     }
   }
 
