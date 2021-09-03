@@ -210,10 +210,12 @@ public class Startup implements AWTEventListener {
    * @throws IllegalArgumentException
    */
   protected static boolean parseBool(String option) throws IllegalArgumentException {
+    final var positives = List.of("yes", "y", "1", "true", "t");
+    final var negatives = List.of("no", "n", "0", "false", "f");
     final var flag = option.toLowerCase();
-    if (flag.equals("yes") || flag.equals("1") || flag.equals("true")) return true;
-    if (flag.equals("no") || flag.equals("0") || flag.equals("false")) return false;
-    throw new IllegalArgumentException("Invalid boolean flag. Use 'yes'/'true'/'1' or 'no'/'false'/'0'.");
+    if (positives.contains(flag)) return true;
+    if (negatives.contains(flag)) return false;
+    throw new IllegalArgumentException("Invalid boolean flag value.");
   }
 
   /**
