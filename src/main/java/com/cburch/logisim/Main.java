@@ -75,7 +75,7 @@ public class Main {
 
     final var startup = Startup.parseArgs(args);
     if (startup == null) System.exit(10);
-    if(startup.shallQuit()) System.exit(0);
+    if (startup.shallQuit()) System.exit(0);
 
     try {
       startup.run();

@@ -400,8 +400,8 @@ public class Startup implements AWTEventListener {
           return startup;
         default:
           continue;
-        }
       }
+    }
 
     // positional argument being files to load
     for (final var arg : cmd.getArgs()) {
