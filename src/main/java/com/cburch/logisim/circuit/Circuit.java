@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
- *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
- *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
+ * 
+ * https://github.com/logisim-evolution/
+ * 
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.circuit;
@@ -83,8 +64,6 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Circuit {
   private class EndChangedTransaction extends CircuitTransaction {
@@ -258,8 +237,6 @@ public class Circuit {
   CircuitWires wires = new CircuitWires();
   private final ArrayList<Component> clocks = new ArrayList<>();
   private final CircuitLocker locker;
-
-  static final Logger logger = LoggerFactory.getLogger(Circuit.class);
 
   private final WeakHashMap<Component, Circuit> circuitsUsingThis;
   private final Netlist myNetList;
@@ -819,7 +796,7 @@ public class Circuit {
   public boolean hasConflict(Component comp) {
     return wires.points.hasConflict(comp) || isDoubleMapped(comp);
   }
-  
+
   private boolean isDoubleMapped(Component comp) {
     final var loc = comp.getLocation();
     final var existing = wires.points.getNonWires(loc);
@@ -830,7 +807,7 @@ public class Circuit {
           final var dir1 = comp.getAttributeSet().getValue(Pin.ATTR_TYPE);
           final var dir2 = existingComp.getAttributeSet().getValue(Pin.ATTR_TYPE);
           if (dir1 == dir2) return true;
-        } else { 
+        } else {
           return true;
         }
       }
@@ -846,7 +823,6 @@ public class Circuit {
   }
 
   void mutatorAdd(Component c) {
-    // logger.debug("mutatorAdd: {}", c);
     locker.checkForWritePermission("add", this);
 
     isAnnotated = false;
@@ -916,8 +892,6 @@ public class Circuit {
   }
 
   void mutatorRemove(Component c) {
-    // logger.debug("mutatorRemove: {}", c);
-
     locker.checkForWritePermission("remove", this);
 
     isAnnotated = false;
