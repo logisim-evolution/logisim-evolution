@@ -61,11 +61,14 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     final var contents = new LineBuffer();
     final var SelectOperator = (HDL.isVHDL()) ? "" : "[" + ACTIVITY_LEVEL_STR + "]";
     contents
+        .pair("activityLevel", ACTIVITY_LEVEL_STR)
         .addHdlPairs()
         .addRemarkBlock("Here the output signals are defined")
-        .add("   {{assign}}Q    {{=}}s_current_state_reg{{1}};", SelectOperator)
-        .add("   {{assign}}Q_bar{{=}}{{not}}(s_current_state_reg{{1}});", SelectOperator)
-        .add("")
+        .add("""
+                 {{assign}}Q    {{=}}s_current_state_reg{{1}};
+                 {{assign}}Q_bar{{=}}{{not}}(s_current_state_reg{{1}});
+                 
+             """, SelectOperator)
         .addRemarkBlock("Here the update logic is defined")
         .add(GetUpdateLogic())
         .add("");
@@ -90,7 +93,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
              temp := std_logic_vector(to_unsigned({{activityLevel}}, 1));
              IF (Reset = '1') THEN s_current_state_reg <= '0';
              ELSIF (Preset = '1') THEN s_current_state_reg <= '1';
-          """, new LineBuffer.Pairs("activityLevel", ACTIVITY_LEVEL_STR));
+          """);
       if (Netlist.isFlipFlop(attrs)) {
         contents.add("   ELSIF (Clock'event AND (Clock = temp(0))) THEN");
       } else {
@@ -122,7 +125,6 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
             """);
       } else {
         contents
-            .pair("activityLevel", ACTIVITY_LEVEL_STR)
             .add("""
                 always @(*)
                 begin

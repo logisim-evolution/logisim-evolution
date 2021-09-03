@@ -104,9 +104,9 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
              ** Here we assign the result                                             **
              ***************************************************************************/
              
-            .add("assign Result = s_stage_{{nrShiftBits}}_result;
+            assign Result = s_stage_{{1}}_result;
             
-            """, new LineBuffer.Pairs("nrShiftBits", (getNrofShiftBits(attrs) - 1)));
+            """, getNrofShiftBits(attrs) - 1);
       }
     }
     return contents.getWithIndent();
@@ -169,7 +169,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           ** Here stage {{stageNumber}} of the binary shift tree is defined
           ***************************************************************************/
           
-          """, new LineBuffer.Pairs("stageNumber", stageNumber));
+          """);
     if (stageNumber == 0) {
       contents.add("""
           assign s_stage_0_shiftin = (({{shiftMode}} == 1) || ({{shiftMode}} == 3))
