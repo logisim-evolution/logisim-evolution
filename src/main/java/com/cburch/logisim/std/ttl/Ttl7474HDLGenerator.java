@@ -90,7 +90,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
                   IF (nCLR2 = '0') THEN state2 <= '0';
                   ELSIF (nPRE2 = '1') THEN state2 <= '1';
                   ELSIF (rising_edge(CLK2)) THEN state2 <= next2;
-                  END IF;",
+                  END IF;
                END PROCESS ff2;
            """)
         .getWithIndent();
