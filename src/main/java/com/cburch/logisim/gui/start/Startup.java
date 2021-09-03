@@ -522,10 +522,10 @@ public class Startup implements AWTEventListener {
 
   private static RC handleArgGates(Startup startup, Option opt) {
     final var gateShape = opt.getValue();
-    if ("shaped".equals(gateShape)) {
+    if ("ansi".equals(gateShape)) {
       AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
       return RC.OK;
-    } else if ("rectangular".equals(gateShape)) {
+    } else if ("iec".equals(gateShape)) {
       AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_RECTANGULAR);
       return RC.OK;
     }
