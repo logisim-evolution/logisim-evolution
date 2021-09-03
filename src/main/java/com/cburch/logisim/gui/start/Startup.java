@@ -313,14 +313,14 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argLoadOption", ARG_LOAD, ARG_LOAD_LONG, 1);
     addOption(opts, "argEmptyOption", ARG_EMPTY, ARG_EMPTY_LONG);
     addOption(opts, "argPlainOption", ARG_PLAIN, ARG_PLAIN_LONG);
-    addOption(opts, "argGatesOption", ARG_GATES, ARG_GATES_LONG);
+    addOption(opts, "argGatesOption", ARG_GATES, ARG_GATES_LONG, 1);
     addOption(opts, "argGeometryOption", ARG_GEOMETRY, ARG_GEOMETRY_LONG, 1);
     addOption(opts, "argLocaleOption", ARG_LOCALE, ARG_LOCALE_LONG, 1);
     addOption(opts, "argAccentsOption", ARG_ACCENTS, ARG_ACCENTS_LONG, 1);
     addOption(opts, "argTemplateOption", ARG_TEMPLATE, ARG_TEMPLATE_LONG, 1);
     addOption(opts, "argNoSplashOption", ARG_NO_SPLASH, ARG_NO_SPLASH_LONG);
-    addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR, ARG_TEST_VECTOR_LONG);    // FIXME: NO LANG STR FOR IT!
-    addOption(opts, "argTestCircuit", ARG_TEST_CIRCUIT, ARG_TEST_CIRCUIT_LONG);   // FIXME add "Option" suffix to key name
+    addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR, ARG_TEST_VECTOR_LONG, 2);    // FIXME: NO LANG STR FOR IT!
+    addOption(opts, "argTestCircuit", ARG_TEST_CIRCUIT, ARG_TEST_CIRCUIT_LONG, 1);   // FIXME add "Option" suffix to key name
     addOption(opts, "argTestCircGen", ARG_TEST_CIRC_GEN, ARG_TEST_CIRC_GEN_LONG, 2);   // FIXME add "Option" suffix to key name
 
     CommandLine cmd;
@@ -522,10 +522,10 @@ public class Startup implements AWTEventListener {
 
   private static RC handleArgGates(Startup startup, Option opt) {
     final var gateShape = opt.getValue();
-    if (gateShape.equals("shaped")) {
+    if ("shaped".equals(gateShape)) {
       AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
       return RC.OK;
-    } else if (gateShape.equals("rectangular")) {
+    } else if ("rectangular".equals(gateShape)) {
       AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_RECTANGULAR);
       return RC.OK;
     }
