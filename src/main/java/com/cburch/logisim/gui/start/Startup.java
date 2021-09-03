@@ -208,10 +208,15 @@ public class Startup implements AWTEventListener {
    * @throws IllegalArgumentException
    */
   protected static boolean parseBool(String option) throws IllegalArgumentException {
+    final var positives = List.of("yes", "y", "1", "true", "t");
+    final var negatives = List.of("no", "n", "0", "false", "f");
     final var flag = option.toLowerCase();
-    if (flag.equals("yes") || flag.equals("1") || flag.equals("true")) return true;
-    if (flag.equals("no") || flag.equals("0") || flag.equals("false")) return false;
-    throw new IllegalArgumentException("Invalid boolean flag. Use 'yes'/'true'/'1' or 'no'/'false'/'0'.");
+    if (positives.contains(flag)) return true;
+    if (negatives.contains(flag)) return false;
+    // FIXME: hardcoded string
+    throw new IllegalArgumentException(
+            LineBuffer.format("Invalid boolean flag value. Use '{{1}}' for positives and '{{2}}' for negatives.",
+                    String.join(", ", positives), String.join(", ", negatives)));
   }
 
   /**
@@ -311,13 +316,13 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argLoadOption", ARG_LOAD, ARG_LOAD_LONG, 1);
     addOption(opts, "argEmptyOption", ARG_EMPTY, ARG_EMPTY_LONG);
     addOption(opts, "argPlainOption", ARG_PLAIN, ARG_PLAIN_LONG);
-    addOption(opts, "argGatesOption", ARG_GATES, ARG_GATES_LONG);
+    addOption(opts, "argGatesOption", ARG_GATES, ARG_GATES_LONG, 1);
     addOption(opts, "argGeometryOption", ARG_GEOMETRY, ARG_GEOMETRY_LONG, 1);
     addOption(opts, "argLocaleOption", ARG_LOCALE, ARG_LOCALE_LONG, 1);
     addOption(opts, "argTemplateOption", ARG_TEMPLATE, ARG_TEMPLATE_LONG, 1);
     addOption(opts, "argNoSplashOption", ARG_NO_SPLASH, ARG_NO_SPLASH_LONG);
-    addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR, ARG_TEST_VECTOR_LONG);    // FIXME: NO LANG STR FOR IT!
-    addOption(opts, "argTestCircuit", ARG_TEST_CIRCUIT, ARG_TEST_CIRCUIT_LONG);   // FIXME add "Option" suffix to key name
+    addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR, ARG_TEST_VECTOR_LONG, 2);    // FIXME: NO LANG STR FOR IT!
+    addOption(opts, "argTestCircuit", ARG_TEST_CIRCUIT, ARG_TEST_CIRCUIT_LONG, 1);   // FIXME add "Option" suffix to key name
     addOption(opts, "argTestCircGen", ARG_TEST_CIRC_GEN, ARG_TEST_CIRC_GEN_LONG, 2);   // FIXME add "Option" suffix to key name
 
     CommandLine cmd;
@@ -517,10 +522,10 @@ public class Startup implements AWTEventListener {
 
   private static RC handleArgGates(Startup startup, Option opt) {
     final var gateShape = opt.getValue();
-    if (gateShape.equals("shaped")) {
+    if ("shaped".equals(gateShape)) {
       AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
       return RC.OK;
-    } else if (gateShape.equals("rectangular")) {
+    } else if ("rectangular".equals(gateShape)) {
       AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_RECTANGULAR);
       return RC.OK;
     }
@@ -642,8 +647,13 @@ public class Startup implements AWTEventListener {
 
   private static RC handleArgTestFpga(Startup startup, Option opt) {
     final var optArgs = opt.getValues();
-    final var argsCnt = optArgs.length;
 
+    if (optArgs == null) {
+      logger.error(S.get("argTestInvalidArguments"));
+      return RC.QUIT;
+    }
+
+    final var argsCnt = optArgs.length;
     if (argsCnt < 3 || argsCnt > 5) {
       logger.error(S.get("argTestInvalidArguments"));
       return RC.QUIT;
