@@ -183,8 +183,6 @@ public class Startup implements AWTEventListener {
   public static final String ARG_GEOMETRY_LONG = "geometry";
   public static final String ARG_LOCALE = "o";
   public static final String ARG_LOCALE_LONG = "locale";
-  public static final String ARG_ACCENTS = "x";
-  public static final String ARG_ACCENTS_LONG = "accents";
   public static final String ARG_TEMPLATE = "z";
   public static final String ARG_TEMPLATE_LONG = "template";
   public static final String ARG_NO_SPLASH = "n";
@@ -288,7 +286,7 @@ public class Startup implements AWTEventListener {
   /**
    * Returns {@true} if last argument handler called requested app termination (w/o error).
    */
-  public static boolean shallQuit() {
+  public boolean shallQuit() {
     return lastHandlerRc == RC.QUIT;
   }
 
@@ -316,7 +314,6 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argGatesOption", ARG_GATES, ARG_GATES_LONG);
     addOption(opts, "argGeometryOption", ARG_GEOMETRY, ARG_GEOMETRY_LONG, 1);
     addOption(opts, "argLocaleOption", ARG_LOCALE, ARG_LOCALE_LONG, 1);
-    addOption(opts, "argAccentsOption", ARG_ACCENTS, ARG_ACCENTS_LONG, 1);
     addOption(opts, "argTemplateOption", ARG_TEMPLATE, ARG_TEMPLATE_LONG, 1);
     addOption(opts, "argNoSplashOption", ARG_NO_SPLASH, ARG_NO_SPLASH_LONG);
     addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR, ARG_TEST_VECTOR_LONG);    // FIXME: NO LANG STR FOR IT!
@@ -350,7 +347,6 @@ public class Startup implements AWTEventListener {
     if (!isTty) {
       // we're using the GUI: Set up the Look&Feel to match the platform
       System.setProperty("apple.laf.useScreenMenuBar", "true");
-      LocaleManager.setReplaceAccents(false);
       // Initialize graphics acceleration if appropriate
       AppPreferences.handleGraphicsAcceleration();
     }
@@ -384,7 +380,6 @@ public class Startup implements AWTEventListener {
         case ARG_GATES -> handleArgGates(startup, opt);
         case ARG_GEOMETRY -> handleArgGeometry(startup, opt);
         case ARG_LOCALE -> handleArgLocale(startup, opt);
-        case ARG_ACCENTS -> handleArgAccents(startup, opt);
         case ARG_TEMPLATE -> handleArgTemplate(startup, opt);
         case ARG_NO_SPLASH -> handleArgNoSplash(startup, opt);
         case ARG_TEST_VECTOR -> handleArgTestVector(startup, opt);
@@ -587,17 +582,6 @@ public class Startup implements AWTEventListener {
 
   private static RC handleArgLocale(Startup startup, Option opt) {
     setLocale(opt.getValue());
-    return RC.OK;
-  }
-
-  private static RC handleArgAccents(Startup startup, Option opt) {
-    final var flag = opt.getValue().toLowerCase();
-    try {
-      AppPreferences.ACCENTS_REPLACE.setBoolean(!parseBool(flag));
-    } catch (IllegalArgumentException ex) {
-      logger.error(S.get("argAccentsOptionError"));
-      return RC.QUIT;
-    }
     return RC.OK;
   }
 

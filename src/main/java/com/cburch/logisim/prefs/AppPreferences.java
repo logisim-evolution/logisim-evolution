@@ -49,7 +49,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -115,10 +114,7 @@ public class AppPreferences {
     public void preferenceChange(PreferenceChangeEvent event) {
       final var prefs = event.getNode();
       final var prop = event.getKey();
-      if (ACCENTS_REPLACE.getIdentifier().equals(prop)) {
-        getPrefs();
-        LocaleManager.setReplaceAccents(ACCENTS_REPLACE.getBoolean());
-      } else if (prop.equals(TEMPLATE_TYPE)) {
+      if (prop.equals(TEMPLATE_TYPE)) {
         int oldValue = templateType;
         int value = prefs.getInt(TEMPLATE_TYPE, TEMPLATE_UNKNOWN);
         if (value != oldValue) {
@@ -475,8 +471,6 @@ public class AppPreferences {
           new PrefMonitorStringOpts(
               "gateShape", new String[] {SHAPE_SHAPED, SHAPE_RECTANGULAR}, SHAPE_SHAPED));
   public static final PrefMonitor<String> LOCALE = create(new LocalePreference());
-  public static final PrefMonitor<Boolean> ACCENTS_REPLACE =
-      create(new PrefMonitorBoolean("accentsReplace", false));
 
   // FPGA Commander Preferences
   public static final PrefMonitor<String> FPGA_Workspace =
