@@ -11,6 +11,7 @@ package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.gui.menu.MenuSimulate;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.LocaleListener;
@@ -29,7 +30,8 @@ import javax.swing.JTextField;
 public class FPGAClockPanel extends JPanel implements ActionListener, LocaleListener {
 
   private static final long serialVersionUID = 1L;
-  private final Project MyProject;
+  private final Project myProject;
+  private Circuit rootSheet;
   private final JLabel freqLabel = new JLabel();
   private final JLabel divLabel = new JLabel();
   private final JComboBox<String> frequenciesList = new JComboBox<>();
@@ -38,11 +40,10 @@ public class FPGAClockPanel extends JPanel implements ActionListener, LocaleList
 
   public FPGAClockPanel(Project proj) {
     super();
-    MyProject = proj;
+    myProject = proj;
     setLayout(new BorderLayout());
     setBorder(BorderFactory.createTitledBorder(
         BorderFactory.createStrokeBorder(new BasicStroke(2)), S.get("FpgaFreqTitle")));
-    updateFrequencyList();
     JPanel pan1 = new JPanel();
     pan1.setLayout(new BorderLayout());
     pan1.add(freqLabel, BorderLayout.NORTH);
@@ -50,6 +51,9 @@ public class FPGAClockPanel extends JPanel implements ActionListener, LocaleList
     frequenciesList.addActionListener(this);
     frequenciesList.setActionCommand("frequency");
     frequenciesList.setEditable(true);
+    for (var freq : MenuSimulate.getTickFrequencyStrings())
+      frequenciesList.addItem(freq);
+    frequenciesList.setSelectedIndex(0);
     add(pan1, BorderLayout.WEST);
     pan1 = new JPanel();
     pan1.setLayout(new BorderLayout());
@@ -68,36 +72,33 @@ public class FPGAClockPanel extends JPanel implements ActionListener, LocaleList
     frequenciesList.setEnabled(enabled);
     divider.setEnabled(enabled);
   }
-
-  private void updateFrequencyList() {
-    frequenciesList.removeAllItems();
-    for (String freq : MenuSimulate.getTickFrequencyStrings()) {
-      frequenciesList.addItem(freq);
-    }
-    frequenciesList.setSelectedIndex(0);
-    for (int i = 0; i < MenuSimulate.SUPPORTED_TICK_FREQUENCIES.length; i++) {
-      if (MenuSimulate.SUPPORTED_TICK_FREQUENCIES[i].equals(
-          MyProject.getSimulator().getTickFrequency())) {
+  
+  public void updateFrequencyList(String circuitName) {
+    final var newTopCircuit = myProject.getLogisimFile().getCircuit(circuitName);
+    if ((newTopCircuit == null) || (newTopCircuit == rootSheet)) return;
+    rootSheet = newTopCircuit;
+    final var savedDownloadFrequency = rootSheet.getDownloadFrequency();
+    final var savedSimFrequency = rootSheet.getTickFrequency();
+    final var selectedFrequency = (savedDownloadFrequency > 0) ? savedDownloadFrequency : savedSimFrequency;
+    for (var i = 0; i < MenuSimulate.SUPPORTED_TICK_FREQUENCIES.length; i++) {
+      if (MenuSimulate.SUPPORTED_TICK_FREQUENCIES[i].equals(selectedFrequency)) {
         frequenciesList.setSelectedIndex(i);
         recalculateFrequency();
+        return;
       }
     }
-  }
-
-  public void setSelectedFrequency() {
-    for (int i = 0; i < MenuSimulate.SUPPORTED_TICK_FREQUENCIES.length; i++) {
-      if (MenuSimulate.SUPPORTED_TICK_FREQUENCIES[i].equals(
-          MyProject.getSimulator().getTickFrequency())) {
-        if (i != frequenciesList.getSelectedIndex()) {
-          frequenciesList.setSelectedIndex(i);
-          recalculateFrequency();
-        }
-        break;
-      }
-    }
+    setSelectedFrequency(selectedFrequency);
   }
 
   private void setSelectedFrequency(double freq) {
+    if (freq <= 0) return;
+    if (rootSheet != null) {
+      final var savedDownloadFrequency = rootSheet.getDownloadFrequency();
+      final var savedSimFrequency = rootSheet.getTickFrequency();
+      if (((savedDownloadFrequency > 0) && (freq != savedDownloadFrequency))
+          || ((freq != savedSimFrequency) && (freq != savedDownloadFrequency)))
+        rootSheet.setDownloadFrequency(freq);
+    }
     for (int i = 0; i < MenuSimulate.SUPPORTED_TICK_FREQUENCIES.length; i++) {
       if (MenuSimulate.SUPPORTED_TICK_FREQUENCIES[i] == freq) {
         frequenciesList.setSelectedIndex(i);
@@ -128,7 +129,6 @@ public class FPGAClockPanel extends JPanel implements ActionListener, LocaleList
   }
 
   public double GetTickfrequency() {
-    double ret = 0.0;
     String TickIndex = frequenciesList.getSelectedItem().toString().trim().toUpperCase();
     int i = 0;
     /* first pass, find the number */
