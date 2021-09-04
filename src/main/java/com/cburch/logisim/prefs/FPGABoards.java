@@ -192,7 +192,7 @@ public class FPGABoards implements ActionListener {
   private JComboBox<String> boardSelector;
   private final ExternalBoardModel extBoardModel = new ExternalBoardModel();
 
-  FPGABoards() {
+  public FPGABoards() {
     final var prefs = AppPreferences.getPrefs();
     for (var i = 0; i < MaxBoards; i++) {
       final var encoding = prefs.get(ExtBoard + i, null);
