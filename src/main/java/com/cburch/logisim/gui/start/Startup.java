@@ -139,43 +139,42 @@ public class Startup implements AWTEventListener {
   // Non-used args short keys
   // --------------------------
   //    d    i k         u w t
-  public static final String ARG_HELP = "h";
-  public static final String ARG_HELP_LONG = "help";
-  public static final String ARG_VERSION = "v";
-  public static final String ARG_VERSION_LONG = "version";
+  private static final String ARG_HELP_SHORT = "h";
+  private static final String ARG_HELP_LONG = "help";
+  private static final String ARG_VERSION_SHORT = "v";
+  private static final String ARG_VERSION_LONG = "version";
 
-  public static final String ARG_TTY = "t";
-  public static final String ARG_TTY_LONG = "tty";
-  public static final String ARG_TEST_FGPA = "f";
-  public static final String ARG_TEST_FGPA_LONG = "test-fpga";
-  public static final String ARG_CLEAR_PREFS = "r";
-  public static final String ARG_CLEAR_PREFS_LONG = "clear-prefs";
-  public static final String ARG_SUBSTITUTE = "s";
-  public static final String ARG_SUBSTITUTE_LONG = "substitute";
-  public static final String ARG_LOAD = "l";
-  public static final String ARG_LOAD_LONG = "load";
-  public static final String ARG_EMPTY = "e";
-  public static final String ARG_EMPTY_LONG = "empty";
-  public static final String ARG_PLAIN = "p";
-  public static final String ARG_PLAIN_LONG = "plain";
-  public static final String ARG_GATES = "g";
-  public static final String ARG_GATES_LONG = "gates";
-  public static final String ARG_GEOMETRY = "m";
-  public static final String ARG_GEOMETRY_LONG = "geometry";
-  public static final String ARG_LOCALE = "o";
-  public static final String ARG_LOCALE_LONG = "locale";
-  public static final String ARG_TEMPLATE = "z";
-  public static final String ARG_TEMPLATE_LONG = "template";
-  public static final String ARG_NO_SPLASH = "n";
-  public static final String ARG_NO_SPLASH_LONG = "no-splash";
-  public static final String ARG_TEST_VECTOR = "w";
-  public static final String ARG_TEST_VECTOR_LONG = "test-vector";
-  public static final String ARG_TEST_CIRCUIT = "b";
-  public static final String ARG_TEST_CIRCUIT_LONG = "test-circuit";
-  public static final String ARG_TEST_CIRC_GEN = "j";
-  public static final String ARG_TEST_CIRC_GEN_LONG = "test-circ-gen";
-  public static final String ARG_CIRCUIT = "c";
-  public static final String ARG_CIRCUIT_LONG = "circuit";
+  private static final String ARG_TTY_SHORT = "t";
+  private static final String ARG_TTY_LONG = "tty";
+  private static final String ARG_TEST_FGPA_SHORT = "f";
+  private static final String ARG_TEST_FGPA_LONG = "test-fpga";
+  private static final String ARG_CLEAR_PREFS_SHORT = "r";
+  private static final String ARG_CLEAR_PREFS_LONG = "clear-prefs";
+  private static final String ARG_SUBSTITUTE_SHORT = "s";
+  private static final String ARG_SUBSTITUTE_LONG = "substitute";
+  private static final String ARG_LOAD_SHORT = "l";
+  private static final String ARG_LOAD_LONG = "load";
+  private static final String ARG_EMPTY_SHORT = "e";
+  private static final String ARG_EMPTY_LONG = "empty";
+  private static final String ARG_PLAIN_SHORT = "p";
+  private static final String ARG_PLAIN_LONG = "plain";
+  private static final String ARG_GATES_SHORT = "g";
+  private static final String ARG_GATES_LONG = "gates";
+  private static final String ARG_GEOMETRY_SHORT = "m";
+  private static final String ARG_GEOMETRY_LONG = "geometry";
+  private static final String ARG_LOCALE_SHORT = "o";
+  private static final String ARG_LOCALE_LONG = "locale";
+  private static final String ARG_TEMPLATE_SHORT = "z";
+  private static final String ARG_TEMPLATE_LONG = "template";
+  private static final String ARG_NO_SPLASH_LONG = "no-splash";
+  private static final String ARG_TEST_VECTOR_SHORT = "w";
+  private static final String ARG_TEST_VECTOR_LONG = "test-vector";
+  private static final String ARG_TEST_CIRCUIT_SHORT = "b";
+  private static final String ARG_TEST_CIRCUIT_LONG = "test-circuit";
+  private static final String ARG_TEST_CIRC_GEN_SHORT = "j";
+  private static final String ARG_TEST_CIRC_GEN_LONG = "test-circ-gen";
+  private static final String ARG_CIRCUIT_SHORT = "c";
+  private static final String ARG_CIRCUIT_LONG = "circuit";
 
   /**
    * Parses provided string expecting it represent boolean option. Accepted values
@@ -231,6 +230,17 @@ public class Startup implements AWTEventListener {
 
   /**
    * Helper class that simplifies setup of parser argument option.
+   *
+   * @param opts Instance of {@link Options}.
+   * @param stringBaseKey String localization base key.
+   * @param longKey Argument ling key (i.e. "foo" for "--foo").
+   */
+  protected static void addOption(Options opts, String stringBaseKey, String longKey) {
+    addOption(opts, stringBaseKey, longKey, null, 0);
+  }
+
+  /**
+   * Helper class that simplifies setup of parser argument option.
    * Note: it assumes that if option have arguments, then there's
    * localization string named after option string base key with "ArgName"
    * suffix (i.e. for "fooBar" expecting arguments there must be "fooBarArgName"
@@ -239,11 +249,28 @@ public class Startup implements AWTEventListener {
    *
    * @param opts Instance of {@link Options}.
    * @param stringBaseKey String localization base key.
-   * @param shortKey Argument short key (i.e. "c" for "-c").
    * @param longKey Argument ling key (i.e. "foo" for "--foo").
    * @param expectedArgsCount Number of required option arguments.
    */
-  protected static void addOption(Options opts, String stringBaseKey, String shortKey, String longKey, int expectedArgsCount) {
+  protected static void addOption(Options opts, String stringBaseKey, String longKey, int expectedArgsCount) {
+    addOption(opts, stringBaseKey, longKey, null, expectedArgsCount);
+  }
+
+  /**
+   * Helper class that simplifies setup of parser argument option.
+   * Note: it assumes that if option have arguments, then there's
+   * localization string named after option string base key with "ArgName"
+   * suffix (i.e. for "fooBar" expecting arguments there must be "fooBarArgName"
+   * string describing (short as possible, best in single word) type
+   * of arguments (used to print CLI help page).
+   *
+   * @param opts Instance of {@link Options}.
+   * @param stringBaseKey String localization base key.
+   * @param longKey Argument ling key (i.e. "foo" for "--foo").
+   * @param shortKey Argument short key (i.e. "c" for "-c") or null if none.
+   * @param expectedArgsCount Number of required option arguments.
+   */
+  protected static void addOption(Options opts, String stringBaseKey, String longKey, String shortKey, int expectedArgsCount) {
     final var builder = Option.builder(shortKey).longOpt(longKey).desc(S.get(stringBaseKey));
     if (expectedArgsCount > 0) {
       final var argNameKey = LineBuffer.format("{{1}}ArgName", stringBaseKey);
@@ -286,27 +313,29 @@ public class Startup implements AWTEventListener {
    * @return Instance of Startup class.
    */
   public static Startup parseArgs(String[] args) {
+
     final var opts = new Options();
-    addOption(opts, "argHelpOption", ARG_HELP, ARG_HELP_LONG);
-    addOption(opts, "argVersionOption", ARG_VERSION, ARG_VERSION_LONG);
+    addOption(opts, "argHelpOption", ARG_HELP_LONG, ARG_HELP_SHORT);
+    addOption(opts, "argVersionOption", ARG_VERSION_LONG, ARG_VERSION_SHORT);
 
     // Set up supported arguments for the arg parser to look for.
     // Note: you need to create handler for each option. See handler loop below.
-    addOption(opts, "argTtyOption", ARG_TTY, ARG_TTY_LONG, 1);
-    addOption(opts, "argTestImplement", ARG_TEST_FGPA, ARG_TEST_FGPA_LONG, Option.UNLIMITED_VALUES);  // We can have 3, 4 or 5 arguments here
-    addOption(opts, "argClearOption", ARG_CLEAR_PREFS, ARG_CLEAR_PREFS_LONG);
-    addOption(opts, "argSubOption", ARG_SUBSTITUTE, ARG_SUBSTITUTE_LONG, 2);
-    addOption(opts, "argLoadOption", ARG_LOAD, ARG_LOAD_LONG, 1);
-    addOption(opts, "argEmptyOption", ARG_EMPTY, ARG_EMPTY_LONG);
-    addOption(opts, "argPlainOption", ARG_PLAIN, ARG_PLAIN_LONG);
-    addOption(opts, "argGatesOption", ARG_GATES, ARG_GATES_LONG, 1);
-    addOption(opts, "argGeometryOption", ARG_GEOMETRY, ARG_GEOMETRY_LONG, 1);
-    addOption(opts, "argLocaleOption", ARG_LOCALE, ARG_LOCALE_LONG, 1);
-    addOption(opts, "argTemplateOption", ARG_TEMPLATE, ARG_TEMPLATE_LONG, 1);
-    addOption(opts, "argNoSplashOption", ARG_NO_SPLASH, ARG_NO_SPLASH_LONG);
-    addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR, ARG_TEST_VECTOR_LONG, 2);
-    addOption(opts, "argTestCircuitOption", ARG_TEST_CIRCUIT, ARG_TEST_CIRCUIT_LONG, 1);   // FIXME add "Option" suffix to key name
-    addOption(opts, "argTestCircGenOption", ARG_TEST_CIRC_GEN, ARG_TEST_CIRC_GEN_LONG, 2);   // FIXME add "Option" suffix to key name
+    // It is assumed that evey option always has long-form switch. Short forms are optional.
+    addOption(opts, "argTtyOption", ARG_TTY_LONG, ARG_TTY_SHORT, 1);
+    addOption(opts, "argTestImplement", ARG_TEST_FGPA_LONG, ARG_TEST_FGPA_SHORT, Option.UNLIMITED_VALUES);  // We can have 3, 4 or 5 arguments here
+    addOption(opts, "argClearOption", ARG_CLEAR_PREFS_LONG, ARG_CLEAR_PREFS_SHORT);
+    addOption(opts, "argSubOption", ARG_SUBSTITUTE_LONG, ARG_SUBSTITUTE_SHORT, 2);
+    addOption(opts, "argLoadOption", ARG_LOAD_LONG, ARG_LOAD_SHORT, 1);
+    addOption(opts, "argEmptyOption", ARG_EMPTY_LONG, ARG_EMPTY_SHORT);
+    addOption(opts, "argPlainOption", ARG_PLAIN_LONG, ARG_PLAIN_SHORT);
+    addOption(opts, "argGatesOption", ARG_GATES_LONG, ARG_GATES_SHORT, 1);
+    addOption(opts, "argGeometryOption", ARG_GEOMETRY_LONG, ARG_GEOMETRY_SHORT, 1);
+    addOption(opts, "argLocaleOption", ARG_LOCALE_LONG, ARG_LOCALE_SHORT, 1);
+    addOption(opts, "argTemplateOption", ARG_TEMPLATE_LONG, ARG_TEMPLATE_SHORT, 1);
+    addOption(opts, "argNoSplashOption", ARG_NO_SPLASH_LONG);
+    addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR_LONG, ARG_TEST_VECTOR_SHORT, 2);
+    addOption(opts, "argTestCircuitOption", ARG_TEST_CIRCUIT_LONG, ARG_TEST_CIRCUIT_SHORT, 1);     // FIXME add "Option" suffix to key name
+    addOption(opts, "argTestCircGenOption", ARG_TEST_CIRC_GEN_LONG, ARG_TEST_CIRC_GEN_SHORT, 2);   // FIXME add "Option" suffix to key name
 
     CommandLine cmd;
     try {
@@ -325,11 +354,11 @@ public class Startup implements AWTEventListener {
     // see whether we'll be using any graphics
     var isTty = false;
     var shallClearPreferences = false;
-    if (cmd.hasOption(ARG_TTY) || cmd.hasOption(ARG_TEST_FGPA)) {
+    if (cmd.hasOption(ARG_TTY_SHORT) || cmd.hasOption(ARG_TEST_FGPA_SHORT)) {
       isTty = true;
       Main.headless = true;
     } else {
-      shallClearPreferences = cmd.hasOption(ARG_CLEAR_PREFS);
+      shallClearPreferences = cmd.hasOption(ARG_CLEAR_PREFS_SHORT);
     }
 
     if (!isTty) {
@@ -357,24 +386,24 @@ public class Startup implements AWTEventListener {
       final var opt = optionIter.next();
       // Note: you should have handler for each option. So number of `case`s
       // here should equal number of calls to `addOption()` above.
-      final var optHandlerRc = switch (opt.getOpt()) {
-        case ARG_HELP -> printHelp(opts);
-        case ARG_VERSION -> printVersion();
-        case ARG_TTY -> handleArgTty(startup, opt);
-        case ARG_SUBSTITUTE -> handleArgSubstitute(startup, opt);
-        case ARG_LOAD -> handleArgLoad(startup, opt);
-        case ARG_EMPTY -> handleArgEmpty(startup, opt);
-        case ARG_PLAIN -> handleArgPlain(startup, opt);
-        case ARG_GATES -> handleArgGates(startup, opt);
-        case ARG_GEOMETRY -> handleArgGeometry(startup, opt);
-        case ARG_LOCALE -> handleArgLocale(startup, opt);
-        case ARG_TEMPLATE -> handleArgTemplate(startup, opt);
-        case ARG_NO_SPLASH -> handleArgNoSplash(startup, opt);
-        case ARG_TEST_VECTOR -> handleArgTestVector(startup, opt);
-        case ARG_TEST_FGPA -> handleArgTestFpga(startup, opt);
-        case ARG_TEST_CIRCUIT -> handleArgTestCircuit(startup, opt);
-        case ARG_TEST_CIRC_GEN -> handleArgTestCircGen(startup, opt);
-        case ARG_CIRCUIT -> handleArgCircuit(startup, opt);
+      final var optHandlerRc = switch (opt.getLongOpt()) {
+        case ARG_HELP_LONG -> printHelp(opts);
+        case ARG_VERSION_LONG -> printVersion();
+        case ARG_TTY_LONG -> handleArgTty(startup, opt);
+        case ARG_SUBSTITUTE_LONG -> handleArgSubstitute(startup, opt);
+        case ARG_LOAD_LONG -> handleArgLoad(startup, opt);
+        case ARG_EMPTY_LONG -> handleArgEmpty(startup, opt);
+        case ARG_PLAIN_LONG -> handleArgPlain(startup, opt);
+        case ARG_GATES_LONG -> handleArgGates(startup, opt);
+        case ARG_GEOMETRY_LONG -> handleArgGeometry(startup, opt);
+        case ARG_LOCALE_LONG -> handleArgLocale(startup, opt);
+        case ARG_TEMPLATE_LONG -> handleArgTemplate(startup, opt);
+        case ARG_NO_SPLASH_LONG -> handleArgNoSplash(startup, opt);
+        case ARG_TEST_VECTOR_LONG -> handleArgTestVector(startup, opt);
+        case ARG_TEST_FGPA_LONG -> handleArgTestFpga(startup, opt);
+        case ARG_TEST_CIRCUIT_LONG -> handleArgTestCircuit(startup, opt);
+        case ARG_TEST_CIRC_GEN_LONG -> handleArgTestCircGen(startup, opt);
+        case ARG_CIRCUIT_LONG -> handleArgCircuit(startup, opt);
         default -> RC.OK; // should not really happen IRL.
       };
       lastHandlerRc = optHandlerRc;
@@ -750,7 +779,7 @@ public class Startup implements AWTEventListener {
     if (mainCircuit == null) return false;
     final var simTickFreq = mainCircuit.getTickFrequency();
     final var downTickFreq = mainCircuit.getDownloadFrequency();
-    final var usedFrequency = (testTickFrequency > 0) ? testTickFrequency : 
+    final var usedFrequency = (testTickFrequency > 0) ? testTickFrequency :
         (downTickFreq > 0) ? downTickFreq : simTickFreq;
     Download Downloader =
         new Download(
