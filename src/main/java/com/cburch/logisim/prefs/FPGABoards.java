@@ -190,8 +190,8 @@ public class FPGABoards implements ActionListener {
 
   public FPGABoards() {
     final var prefs = AppPreferences.getPrefs();
-    for (var i = 0; i < MaxBoards; i++) {
-      final var encoding = prefs.get(ExtBoard + i, null);
+    for (var i = 0; i < maxBoards; i++) {
+      final var encoding = prefs.get(extBoard + i, null);
       if (encoding != null) addExternalBoard(encoding, i, prefs);
     }
     val selectedBoard = AppPreferences.SelectedBoard.get();
