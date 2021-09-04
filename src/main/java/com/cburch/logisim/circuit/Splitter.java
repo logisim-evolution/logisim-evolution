@@ -231,9 +231,9 @@ public class Splitter extends ManagedComponent
       }
       if (inString) appendBuf(buf, bit_end.length - 1, beginString);
       val base = switch (bits) {
-         case 0 -> S.get("splitterSplit0Tip");
-         case 1 -> S.get("splitterSplit1Tip");
-         default -> S.get("splitterSplitManyTip");
+        case 0 -> S.get("splitterSplit0Tip");
+        case 1 -> S.get("splitterSplit1Tip");
+        default -> S.get("splitterSplitManyTip");
       };
       return StringUtil.format(base, buf.toString());
     } else {

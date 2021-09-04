@@ -65,7 +65,7 @@ public class AppearancePort extends AppearanceElement {
     val result = new StringBuffer(getDisplayName());
     val label = pin.getAttributeValue(StdAttr.LABEL);
     if (label != null && label.length() > 0) {
-         result.append(" \"" + label + "\"");
+      result.append(" \"" + label + "\"");
     }
     return result.toString();
   }
