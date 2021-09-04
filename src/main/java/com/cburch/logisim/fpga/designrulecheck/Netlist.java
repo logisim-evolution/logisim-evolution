@@ -227,13 +227,13 @@ public class Netlist {
     final var compNames = new ArrayList<String>();
     final var labels = new HashMap<String, Component>();
     final var drc = new ArrayList<SimpleDRCContainer>();
-    
-    // if we are the toplevel component we clear the complete netlist 
+
+    // if we are the toplevel component we clear the complete netlist
     if (isTopLevel) clear();
-    
+
     // if we already have good drc results we can leave
     if (drcStatus == DRC_PASSED) return DRC_PASSED;
-    
+
     // we mark already passed, if an error * occurs the status is changed
     drcStatus = DRC_PASSED;
 
@@ -254,7 +254,7 @@ public class Netlist {
       sheetNames.add(myCircuit.getName());
     }
     // we have to go down the tree to build first all subcircuits
-    final var handledCircuits = new ArrayList<Circuit>(); 
+    final var handledCircuits = new ArrayList<Circuit>();
     for (final var comp : myCircuit.getNonWires()) {
       if (comp.getFactory() instanceof SubcircuitFactory) {
         final var factory = (SubcircuitFactory) comp.getFactory();
@@ -267,7 +267,7 @@ public class Netlist {
         }
       }
     }
-    
+
     // Preparing stage
     for (final var comp : myCircuit.getNonWires()) {
       final var compName = comp.getFactory().getHDLName(comp.getAttributeSet());
