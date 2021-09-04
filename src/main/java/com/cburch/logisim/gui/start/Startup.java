@@ -387,24 +387,24 @@ public class Startup implements AWTEventListener {
       // Note: you should have handler for each option. So number of `case`s
       // here should equal number of calls to `addOption()` above.
       final var optHandlerRc = switch (opt.getLongOpt()) {
-          case ARG_HELP_LONG -> printHelp(opts);
-          case ARG_VERSION_LONG -> printVersion();
-          case ARG_TTY_LONG -> handleArgTty(startup, opt);
-          case ARG_SUBSTITUTE_LONG -> handleArgSubstitute(startup, opt);
-          case ARG_LOAD_LONG -> handleArgLoad(startup, opt);
-          case ARG_EMPTY_LONG -> handleArgEmpty(startup, opt);
-          case ARG_PLAIN_LONG -> handleArgPlain(startup, opt);
-          case ARG_GATES_LONG -> handleArgGates(startup, opt);
-          case ARG_GEOMETRY_LONG -> handleArgGeometry(startup, opt);
-          case ARG_LOCALE_LONG -> handleArgLocale(startup, opt);
-          case ARG_TEMPLATE_LONG -> handleArgTemplate(startup, opt);
-          case ARG_NO_SPLASH_LONG -> handleArgNoSplash(startup, opt);
-          case ARG_TEST_VECTOR_LONG -> handleArgTestVector(startup, opt);
-          case ARG_TEST_FGPA_LONG -> handleArgTestFpga(startup, opt);
-          case ARG_TEST_CIRCUIT_LONG -> handleArgTestCircuit(startup, opt);
-          case ARG_TEST_CIRC_GEN_LONG -> handleArgTestCircGen(startup, opt);
-          case ARG_CIRCUIT_LONG -> handleArgCircuit(startup, opt);
-          default -> RC.OK; // should not really happen IRL.
+        case ARG_HELP_LONG -> printHelp(opts);
+        case ARG_VERSION_LONG -> printVersion();
+        case ARG_TTY_LONG -> handleArgTty(startup, opt);
+        case ARG_SUBSTITUTE_LONG -> handleArgSubstitute(startup, opt);
+        case ARG_LOAD_LONG -> handleArgLoad(startup, opt);
+        case ARG_EMPTY_LONG -> handleArgEmpty(startup, opt);
+        case ARG_PLAIN_LONG -> handleArgPlain(startup, opt);
+        case ARG_GATES_LONG -> handleArgGates(startup, opt);
+        case ARG_GEOMETRY_LONG -> handleArgGeometry(startup, opt);
+        case ARG_LOCALE_LONG -> handleArgLocale(startup, opt);
+        case ARG_TEMPLATE_LONG -> handleArgTemplate(startup, opt);
+        case ARG_NO_SPLASH_LONG -> handleArgNoSplash(startup, opt);
+        case ARG_TEST_VECTOR_LONG -> handleArgTestVector(startup, opt);
+        case ARG_TEST_FGPA_LONG -> handleArgTestFpga(startup, opt);
+        case ARG_TEST_CIRCUIT_LONG -> handleArgTestCircuit(startup, opt);
+        case ARG_TEST_CIRC_GEN_LONG -> handleArgTestCircGen(startup, opt);
+        case ARG_CIRCUIT_LONG -> handleArgCircuit(startup, opt);
+        default -> RC.OK; // should not really happen IRL.
       };
       lastHandlerRc = optHandlerRc;
       switch (optHandlerRc) {
@@ -464,16 +464,16 @@ public class Startup implements AWTEventListener {
       // FIXME: why we support multiple TTY types in one invocation? fallback?
       for (final var singleFmt : fmts) {
         final var val = switch (singleFmt.trim()) {
-            case "table" -> TtyInterface.FORMAT_TABLE;
-            case "speed" -> TtyInterface.FORMAT_SPEED;
-            case "tty" -> TtyInterface.FORMAT_TTY;
-            case "halt" -> TtyInterface.FORMAT_HALT;
-            case "stats" -> TtyInterface.FORMAT_STATISTICS;
-            case "binary" -> TtyInterface.FORMAT_TABLE_BIN;
-            case "hex" -> TtyInterface.FORMAT_TABLE_HEX;
-            case "csv" -> TtyInterface.FORMAT_TABLE_CSV;
-            case "tabs" -> TtyInterface.FORMAT_TABLE_TABBED;
-            default -> 0;
+          case "table" -> TtyInterface.FORMAT_TABLE;
+          case "speed" -> TtyInterface.FORMAT_SPEED;
+          case "tty" -> TtyInterface.FORMAT_TTY;
+          case "halt" -> TtyInterface.FORMAT_HALT;
+          case "stats" -> TtyInterface.FORMAT_STATISTICS;
+          case "binary" -> TtyInterface.FORMAT_TABLE_BIN;
+          case "hex" -> TtyInterface.FORMAT_TABLE_HEX;
+          case "csv" -> TtyInterface.FORMAT_TABLE_CSV;
+          case "tabs" -> TtyInterface.FORMAT_TABLE_TABBED;
+          default -> 0;
         };
 
         if (val == 0) {
