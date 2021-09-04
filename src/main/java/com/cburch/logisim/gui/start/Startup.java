@@ -52,7 +52,6 @@ import com.cburch.logisim.std.base.BaseLibrary;
 import com.cburch.logisim.std.gates.GatesLibrary;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.MacCompatibility;
-import com.cburch.logisim.util.StringUtil;
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Toolkit;
@@ -63,7 +62,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import javax.help.JHelp;
 import javax.swing.JButton;
@@ -118,7 +116,7 @@ public class Startup implements AWTEventListener {
   /* Test implementation */
   private String testCircuitImpPath = null;
   private boolean doFpgaDownload = false;
-  private double testTickFrequency = 1;
+  private double testTickFrequency = -1;
   /* Name of the circuit withing logisim */
   private String testCircuitImpName = null;
   /* Name of the board to run on i.e Reptar, MAXV ...*/
@@ -593,11 +591,17 @@ public class Startup implements AWTEventListener {
 
   boolean FpgaDownload(Project proj) {
     /* Testing synthesis */
+    final var mainCircuit = proj.getLogisimFile().getCircuit(testCircuitImpName);
+    if (mainCircuit == null) return false;
+    final var simTickFreq = mainCircuit.getTickFrequency();
+    final var downTickFreq = mainCircuit.getDownloadFrequency();
+    final var usedFrequency = (testTickFrequency > 0) ? testTickFrequency : 
+        (downTickFreq > 0) ? downTickFreq : simTickFreq;
     Download Downloader =
         new Download(
             proj,
             testCircuitImpName,
-            testTickFrequency,
+            usedFrequency,
             new BoardReaderClass(AppPreferences.Boards.getBoardFilePath(testCircuitImpBoard))
                 .GetBoardInformation(),
             testCircuitImpMapFile,

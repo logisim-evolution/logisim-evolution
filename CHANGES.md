@@ -2,7 +2,7 @@
 
 # Changes #
 
-* @dev (????-??-??)
+* v3.6.0 (2021-??-??)
   * Introducing project logo.
   * Fixed project loader to correctly handle hex values with a 1 in bit 63rd.
   * Added TTL74x34 hex buffer gate.
@@ -33,6 +33,10 @@
   * Added LED-array support for FPGA-boards
   * Improved partial placement on FPGA-boards for multi-pin components
   * Fixed several small bugs
+  * Each circuit will now remember, restore, and save:
+    * The last tick-frequency used for simulation
+    * The last download frequency used
+  * Removed obsolete VHDL-Architecture attribute from circuit
 
 * v3.5.0 (2021-05-25)
   * Many code-cleanups, bug fixes and again the chronogram.
