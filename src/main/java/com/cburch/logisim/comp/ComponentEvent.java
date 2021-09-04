@@ -9,10 +9,13 @@
 
 package com.cburch.logisim.comp;
 
+import lombok.Getter;
+
+@Getter
 public class ComponentEvent {
   private final Component source;
   private final Object oldData;
-  private final Object newData;
+  private final Object data;
 
   public ComponentEvent(Component source) {
     this(source, null, null);
@@ -21,18 +24,6 @@ public class ComponentEvent {
   public ComponentEvent(Component source, Object oldData, Object newData) {
     this.source = source;
     this.oldData = oldData;
-    this.newData = newData;
-  }
-
-  public Object getData() {
-    return newData;
-  }
-
-  public Object getOldData() {
-    return oldData;
-  }
-
-  public Component getSource() {
-    return source;
+    this.data = newData;
   }
 }

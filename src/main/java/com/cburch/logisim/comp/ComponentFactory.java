@@ -29,9 +29,9 @@ import java.awt.Color;
  * particular category.
  */
 public interface ComponentFactory extends AttributeDefaultProvider {
-  Object SHOULD_SNAP = new Object();
-  Object TOOL_TIP = new Object();
-  Object FACING_ATTRIBUTE_KEY = new Object();
+  public Object SHOULD_SNAP = new Object();
+  public Object TOOL_TIP = new Object();
+  public Object FACING_ATTRIBUTE_KEY = new Object();
 
   boolean ActiveOnHigh(AttributeSet attrs);
 

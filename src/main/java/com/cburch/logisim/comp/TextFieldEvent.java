@@ -9,26 +9,11 @@
 
 package com.cburch.logisim.comp;
 
+import lombok.Data;
+
+@Data
 public class TextFieldEvent {
-  private final TextField field;
-  private final String oldval;
-  private final String newval;
-
-  public TextFieldEvent(TextField field, String old, String val) {
-    this.field = field;
-    this.oldval = old;
-    this.newval = val;
-  }
-
-  public String getOldText() {
-    return oldval;
-  }
-
-  public String getText() {
-    return newval;
-  }
-
-  public TextField getTextField() {
-    return field;
-  }
+  private final TextField textField;
+  private final String oldText;
+  private final String text;
 }
