@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CircuitAttributes extends AbstractAttributeSet {
+
   private class MyListener implements AttributeListener, CircuitAppearanceListener {
     private final Circuit source;
 
@@ -125,7 +126,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
     ret.addAttributeListener(new StaticListener(source));
     return ret;
   }
-
+  
   public static final Attribute<String> NAME_ATTR =
       Attributes.forString("circuit", S.getter("circuitName"));
 
@@ -142,8 +143,6 @@ public class CircuitAttributes extends AbstractAttributeSet {
       Attributes.forFont("clabelfont", S.getter("circuitLabelFontAttr"));
   public static final Attribute<Boolean> CIRCUIT_IS_VHDL_BOX =
       Attributes.forBoolean("circuitvhdl", S.getter("circuitIsVhdl"));
-  public static final Attribute<String> CIRCUIT_VHDL_PATH =
-      Attributes.forString("circuitvhdlpath", S.getter("circuitVhdlPath"));
   public static final Attribute<Boolean> NAMED_CIRCUIT_BOX_FIXED_SIZE =
       Attributes.forBoolean("circuitnamedboxfixedsize", S.getter("circuitNamedBoxFixedSize"));
   public static final AttributeOption APPEAR_CLASSIC = StdAttr.APPEAR_CLASSIC;
@@ -156,6 +155,8 @@ public class CircuitAttributes extends AbstractAttributeSet {
           "appearance",
           S.getter("circuitAppearanceAttr"),
           new AttributeOption[] {APPEAR_CLASSIC, APPEAR_FPGA, APPEAR_EVOLUTION, APPEAR_CUSTOM});
+  public static final Attribute<Double> SIMULATION_FREQUENCY = Attributes.forDouble("simulationFrequency");
+  public static final Attribute<Double> DOWNLOAD_FREQUENCY = Attributes.forDouble("downloadFrequency");
 
   private static final Attribute<?>[] STATIC_ATTRS = {
     NAME_ATTR,
@@ -164,11 +165,12 @@ public class CircuitAttributes extends AbstractAttributeSet {
     CIRCUIT_LABEL_FONT_ATTR,
     APPEARANCE_ATTR,
     NAMED_CIRCUIT_BOX_FIXED_SIZE,
-    CIRCUIT_VHDL_PATH
+    SIMULATION_FREQUENCY,
+    DOWNLOAD_FREQUENCY
   };
 
   private static final Object[] STATIC_DEFAULTS = {
-    "", "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT, APPEAR_CLASSIC, false, ""
+    "", "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT, APPEAR_CLASSIC, false, -1d, -1d
   };
 
   private static final List<Attribute<?>> INSTANCE_ATTRS =
@@ -182,8 +184,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
           CIRCUIT_LABEL_ATTR,
           CIRCUIT_LABEL_FACING_ATTR,
           CIRCUIT_LABEL_FONT_ATTR,
-          APPEARANCE_ATTR,
-          CIRCUIT_VHDL_PATH);
+          APPEARANCE_ATTR);
 
   private final Circuit source;
   private Instance subcircInstance;
@@ -206,6 +207,8 @@ public class CircuitAttributes extends AbstractAttributeSet {
     LabelVisible = true;
     pinInstances = new Instance[0];
     NameReadOnly = false;
+    DOWNLOAD_FREQUENCY.setHidden(true);
+    SIMULATION_FREQUENCY.setHidden(true);
   }
 
   @Override
