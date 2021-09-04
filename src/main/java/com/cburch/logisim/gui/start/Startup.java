@@ -106,7 +106,7 @@ public class Startup implements AWTEventListener {
   /* Test implementation */
   private String testCircuitImpPath = null;
   private boolean doFpgaDownload = false;
-  private double testTickFrequency = 1;
+  private double testTickFrequency = -1;
   /* Name of the circuit withing logisim */
   private String testCircuitImpName = null;
   /* Name of the board to run on i.e Reptar, MAXV ...*/
@@ -776,11 +776,17 @@ public class Startup implements AWTEventListener {
 
   boolean FpgaDownload(Project proj) {
     /* Testing synthesis */
+    final var mainCircuit = proj.getLogisimFile().getCircuit(testCircuitImpName);
+    if (mainCircuit == null) return false;
+    final var simTickFreq = mainCircuit.getTickFrequency();
+    final var downTickFreq = mainCircuit.getDownloadFrequency();
+    final var usedFrequency = (testTickFrequency > 0) ? testTickFrequency : 
+        (downTickFreq > 0) ? downTickFreq : simTickFreq;
     Download Downloader =
         new Download(
             proj,
             testCircuitImpName,
-            testTickFrequency,
+            usedFrequency,
             new BoardReaderClass(AppPreferences.Boards.getBoardFilePath(testCircuitImpBoard))
                 .GetBoardInformation(),
             testCircuitImpMapFile,
