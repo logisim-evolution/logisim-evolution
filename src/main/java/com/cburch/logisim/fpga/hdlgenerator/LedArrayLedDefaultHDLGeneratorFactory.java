@@ -19,11 +19,11 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 
 public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  public final static int nrOfLedsGeneric = -1;
-  public final static int activeLowGeneric = -2;
-  public final static String nrOfLedsString = "nrOfLeds";
-  public final static String activeLowString = "activeLow";
-  public final static String LedArrayName = "LedArrayLedDefault";
+  public static final int nrOfLedsGeneric = -1;
+  public static final int activeLowGeneric = -2;
+  public static final String nrOfLedsString = "nrOfLeds";
+  public static final String activeLowString = "activeLow";
+  public static final String LedArrayName = "LedArrayLedDefault";
 
   public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
     final var contents =
