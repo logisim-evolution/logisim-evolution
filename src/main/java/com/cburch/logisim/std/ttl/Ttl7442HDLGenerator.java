@@ -88,41 +88,44 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
     final var contents = (new LineBuffer()).addHdlPairs();
 
     if (IsExes3) {
-      contents.addLines(
-          "{{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} A );",
-          "{{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );",
-          "{{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} A );",
-          "{{assign}} O3 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} {{not}}(A) );",
-          "{{assign}} O4 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} A );",
-          "{{assign}} O5 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} {{not}}(A) );",
-          "{{assign}} O6 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} A );",
-          "{{assign}} O7 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} B {{and}} {{not}}(A) );",
-          "{{assign}} O8 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} B {{and}} A );",
-          "{{assign}} O9 {{=}} {{not}}( D {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );");
+      contents.add("""
+          {{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} A );
+          {{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );
+          {{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} A );
+          {{assign}} O3 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} {{not}}(A) );
+          {{assign}} O4 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} A );
+          {{assign}} O5 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} {{not}}(A) );
+          {{assign}} O6 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} A );
+          {{assign}} O7 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} B {{and}} {{not}}(A) );
+          {{assign}} O8 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} B {{and}} A );
+          {{assign}} O9 {{=}} {{not}}( D {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );");
+          """);
     } else if (IsGray) {
-      contents.addLines(
-          "{{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} {{not}}(A) );",
-          "{{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} {{not}}(A) );",
-          "{{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} A );",
-          "{{assign}} O3 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} A );",
-          "{{assign}} O4 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} {{not}(A) );",
-          "{{assign}} O5 {{=}} {{not}}( D {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );",
-          "{{assign}} O6 {{=}} {{not}}( D {{and}} C {{and}} {{not}}(B) {{and}} A );",
-          "{{assign}} O7 {{=}} {{not}}( D {{and}} C {{and}} B {{and}} A );",
-          "{{assign}} O8 {{=}} {{not}}( D {{and}} C {{and}} B {{and}} {{not}}(A) );",
-          "{{assign}} O9 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} B {{and}} {not}}(A) );");
+      contents.add("""
+          {{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} {{not}}(A) );
+          {{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} {{not}}(A) );
+          {{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} A );
+          {{assign}} O3 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} A );
+          {{assign}} O4 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} {{not}(A) );
+          {{assign}} O5 {{=}} {{not}}( D {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );
+          {{assign}} O6 {{=}} {{not}}( D {{and}} C {{and}} {{not}}(B) {{and}} A );
+          {{assign}} O7 {{=}} {{not}}( D {{and}} C {{and}} B {{and}} A );
+          {{assign}} O8 {{=}} {{not}}( D {{and}} C {{and}} B {{and}} {{not}}(A) );
+          {{assign}} O9 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} B {{and}} {not}}(A) );");
+          """);
     } else {
-      contents.addLines(
-          "{{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} {{not}}(A) );",
-          "{{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} A );",
-          "{{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} {{not}}(A) );",
-          "{{assign}} O3 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} A );",
-          "{{assign}} O4 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );",
-          "{{assign}} O5 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} A );",
-          "{{assign}} O6 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} {{not}}(A) );",
-          "{{assign}} O7 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} A );",
-          "{{assign}} O8 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} {{not}}(A) );",
-          "{{assign}} O9 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} A );");
+      contents.add("""
+          {{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} {{not}}(A) );
+          {{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} A );
+          {{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} {{not}}(A) );
+          {{assign}} O3 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} A );
+          {{assign}} O4 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );
+          {{assign}} O5 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} A );
+          {{assign}} O6 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} {{not}}(A) );
+          {{assign}} O7 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} A );
+          {{assign}} O8 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} {{not}}(A) );
+          {{assign}} O9 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} A );"
+          """);
     }
     return contents.get();
   }

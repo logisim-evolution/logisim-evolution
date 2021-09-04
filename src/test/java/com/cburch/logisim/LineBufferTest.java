@@ -16,9 +16,7 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
@@ -112,8 +110,8 @@ public class LineBufferTest extends TestBase {
     final var pairs =
         new LineBuffer.Pairs() {
           {
-            add("foo", "FOO");
-            add("bar", "BAR");
+            pair("foo", "FOO");
+            pair("bar", "BAR");
           }
         };
 
@@ -139,8 +137,8 @@ public class LineBufferTest extends TestBase {
     final var pairs =
         new LineBuffer.Pairs() {
           {
-            add("foo", "FOO");
-            add("bar", "BAR");
+            pair("foo", "FOO");
+            pair("bar", "BAR");
           }
         };
 
@@ -167,8 +165,8 @@ public class LineBufferTest extends TestBase {
     final var globalPairs =
         new LineBuffer.Pairs() {
           {
-            add("foo", "FOO");
-            add("bar", "BAR");
+            pair("foo", "FOO");
+            pair("bar", "BAR");
           }
         };
 
@@ -179,9 +177,9 @@ public class LineBufferTest extends TestBase {
       final var expPairs =
           new LineBuffer.Pairs() {
             {
-              add("foo", "FOO");
-              add("bar", "BAR");
-              add("bang", "BANG");
+              pair("foo", "FOO");
+              pair("bar", "BAR");
+              pair("bang", "BANG");
             }
           };
 

@@ -71,110 +71,116 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .addRemarkBlock("Here the output signals are defines; we synchronize them all on the main clock");
 
     if (HDL.isVHDL()) {
-      Contents.addLines(
-          "ClockBus <= GlobalClock&s_output_regs;",
-          "makeOutputs : PROCESS( GlobalClock )",
-          "BEGIN",
-          "   IF (GlobalClock'event AND (GlobalClock = '1')) THEN",
-          "      s_buf_regs(0)     <= s_derived_clock_reg({{phase}}-1);",
-          "      s_buf_regs(1)     <= NOT(s_derived_clock_reg({{phase}}-1));",
-          "      s_output_regs(0)  <= s_buf_regs(0);",
-          "      s_output_regs(1)  <= s_buf_regs(1);",
-          "      s_output_regs(2)  <= NOT(s_buf_regs(0)) AND s_derived_clock_reg({{phase}}-1);",
-          "      s_output_regs(3)  <= s_buf_regs(0) AND NOT(s_derived_clock_reg({{phase}}-1));",
-          "   END IF;",
-          "END PROCESS makeOutputs;");
+      Contents.add("""
+          ClockBus <= GlobalClock&s_output_regs;
+          makeOutputs : PROCESS( GlobalClock )
+          BEGIN
+             IF (GlobalClock'event AND (GlobalClock = '1')) THEN
+                s_buf_regs(0)     <= s_derived_clock_reg({{phase}}-1);
+                s_buf_regs(1)     <= NOT(s_derived_clock_reg({{phase}}-1));
+                s_output_regs(0)  <= s_buf_regs(0);
+                s_output_regs(1)  <= s_buf_regs(1);
+                s_output_regs(2)  <= NOT(s_buf_regs(0)) AND s_derived_clock_reg({{phase}}-1);
+                s_output_regs(3)  <= s_buf_regs(0) AND NOT(s_derived_clock_reg({{phase}}-1));
+             END IF;
+          END PROCESS makeOutputs;
+          """);
     } else {
-      Contents.addLines(
-          "assign ClockBus = {GlobalClock,s_output_regs};",
-          "always @(posedge GlobalClock)",
-          "begin",
-          "   s_buf_regs[0]    <= s_derived_clock_reg[{{phase}}-1];",
-          "   s_buf_regs[1]    <= ~s_derived_clock_reg[{{phase}}-1];",
-          "   s_output_regs[0] <= s_buf_regs[0];",
-          "   s_output_regs[1] <= s_output_regs[1];",
-          "   s_output_regs[2] <= ~s_buf_regs[0] & s_derived_clock_reg[{{phase}}-1];",
-          "   s_output_regs[3] <= ~s_derived_clock_reg[{{phase}}-1] & s_buf_regs[0];",
-          "end");
+      Contents.add("""
+          assign ClockBus = {GlobalClock,s_output_regs};
+          always @(posedge GlobalClock)
+          begin
+             s_buf_regs[0]    <= s_derived_clock_reg[{{phase}}-1];
+             s_buf_regs[1]    <= ~s_derived_clock_reg[{{phase}}-1];
+             s_output_regs[0] <= s_buf_regs[0];
+             s_output_regs[1] <= s_output_regs[1];
+             s_output_regs[2] <= ~s_buf_regs[0] & s_derived_clock_reg[{{phase}}-1];
+             s_output_regs[3] <= ~s_derived_clock_reg[{{phase}}-1] & s_buf_regs[0];
+          end
+          """);
     }
     Contents.add("").addRemarkBlock("Here the control signals are defined");
     if (HDL.isVHDL()) {
-      Contents.addLines(
-          "s_counter_is_zero <= '1' WHEN s_counter_reg = std_logic_vector(to_unsigned(0,{{nrOfBits}})) ELSE '0';",
-          "s_counter_next    <= std_logic_vector(unsigned(s_counter_reg) - 1)",
-          "                       WHEN s_counter_is_zero = '0' ELSE",
-          "                    std_logic_vector(to_unsigned(({{lowTick}}-1), {{nrOfBits}}))",
-          "                       WHEN s_derived_clock_reg(0) = '1' ELSE",
-          "                    std_logic_vector(to_unsigned(({{highTick}}-1), {{nrOfBits}}));"
-      );
+      Contents.add("""
+          s_counter_is_zero <= '1' WHEN s_counter_reg = std_logic_vector(to_unsigned(0,{{nrOfBits}})) ELSE '0';
+          s_counter_next    <= std_logic_vector(unsigned(s_counter_reg) - 1)
+                                 WHEN s_counter_is_zero = '0' ELSE
+                              std_logic_vector(to_unsigned(({{lowTick}}-1), {{nrOfBits}}))
+                                 WHEN s_derived_clock_reg(0) = '1' ELSE
+                              std_logic_vector(to_unsigned(({{highTick}}-1), {{nrOfBits}}));
+          """);
     } else {
-      Contents.addLines(
-              "assign s_counter_is_zero = (s_counter_reg == 0) ? 1'b1 : 1'b0;",
-              "assign s_counter_next = (s_counter_is_zero == 1'b0)",
-              "                           ? s_counter_reg - 1",
-              "                           : (s_derived_clock_reg[0] == 1'b1)",
-              "                              ? {{lowTick}} - 1",
-              "                              : {{highTick}} - 1;",
-              "")
+      Contents.add("""
+              assign s_counter_is_zero = (s_counter_reg == 0) ? 1'b1 : 1'b0;
+              assign s_counter_next = (s_counter_is_zero == 1'b0)
+                                         ? s_counter_reg - 1
+                                         : (s_derived_clock_reg[0] == 1'b1)
+                                            ? {{lowTick}} - 1
+                                            : {{highTick}} - 1;
+              
+              """)
           .addRemarkBlock("Here the initial values are defined (for simulation only)")
-          .addLines(
-              "initial",
-              "begin",
-              "   s_output_regs = 0;",
-              "   s_derived_clock_reg = 0;",
-              "   s_counter_reg = 0;",
-              "end");
+          .add("""
+              initial
+              begin
+                 s_output_regs = 0;
+                 s_derived_clock_reg = 0;
+                 s_counter_reg = 0;
+              end
+              """);
     }
     Contents.add("").addRemarkBlock("Here the state registers are defined");
     if (HDL.isVHDL()) {
-      Contents.addLines(
-          "makeDerivedClock : PROCESS( GlobalClock , ClockTick , s_counter_is_zero ,",
-          "                            s_derived_clock_reg)",
-          "BEGIN",
-          "   IF (GlobalClock'event AND (GlobalClock = '1')) THEN",
-          "      IF (s_derived_clock_reg(0) /= '0' AND s_derived_clock_reg(0) /= '1') THEN --For simulation only",
-          "         s_derived_clock_reg <= (OTHERS => '1');",
-          "      ELSIF (ClockTick = '1') THEN",
-          "         FOR n IN {{phase}}-1 DOWNTO 1 LOOP",
-          "           s_derived_clock_reg(n) <= s_derived_clock_reg(n-1);",
-          "         END LOOP;",
-          "         s_derived_clock_reg(0) <= s_derived_clock_reg(0) XOR s_counter_is_zero;",
-          "      END IF;",
-          "   END IF;",
-          "END PROCESS makeDerivedClock;",
-          "",
-          "makeCounter : PROCESS( GlobalClock , ClockTick , s_counter_next ,",
-          "                       s_derived_clock_reg )",
-          "BEGIN",
-          "   IF (GlobalClock'event AND (GlobalClock = '1')) THEN",
-          "      IF (s_derived_clock_reg(0) /= '0' AND s_derived_clock_reg(0) /= '1') THEN --For simulation only",
-          "         s_counter_reg <= (OTHERS => '0');",
-          "      ELSIF (ClockTick = '1') THEN",
-          "         s_counter_reg <= s_counter_next;",
-          "      END IF;",
-          "   END IF;",
-          "END PROCESS makeCounter;");
+      Contents.add("""
+          makeDerivedClock : PROCESS( GlobalClock , ClockTick , s_counter_is_zero ,
+                                      s_derived_clock_reg)
+          BEGIN
+             IF (GlobalClock'event AND (GlobalClock = '1')) THEN
+                IF (s_derived_clock_reg(0) /= '0' AND s_derived_clock_reg(0) /= '1') THEN --For simulation only
+                   s_derived_clock_reg <= (OTHERS => '1');
+                ELSIF (ClockTick = '1') THEN
+                   FOR n IN {{phase}}-1 DOWNTO 1 LOOP
+                     s_derived_clock_reg(n) <= s_derived_clock_reg(n-1);
+                   END LOOP;
+                   s_derived_clock_reg(0) <= s_derived_clock_reg(0) XOR s_counter_is_zero;
+                END IF;
+             END IF;
+          END PROCESS makeDerivedClock;
+          
+          makeCounter : PROCESS( GlobalClock , ClockTick , s_counter_next ,
+                                 s_derived_clock_reg )
+          BEGIN
+             IF (GlobalClock'event AND (GlobalClock = '1')) THEN
+                IF (s_derived_clock_reg(0) /= '0' AND s_derived_clock_reg(0) /= '1') THEN --For simulation only
+                   s_counter_reg <= (OTHERS => '0');
+                ELSIF (ClockTick = '1') THEN
+                   s_counter_reg <= s_counter_next;
+                END IF;
+             END IF;
+          END PROCESS makeCounter;
+          """);
     } else {
-      Contents.addLines(
-          "integer n;",
-          "always @(posedge GlobalClock)",
-          "begin",
-          "   if (ClockTick)",
-          "   begin",
-          "      s_derived_clock_reg[0] <= s_derived_clock_reg[0] ^ s_counter_is_zero;",
-          "      for (n = 1; n < {{phase}}; n = n+1) begin",
-          "         s_derived_clock_reg[n] <= s_derived_clock_reg[n-1];",
-          "      end",
-          "   end",
-          "end",
-          "",
-          "always @(posedge GlobalClock)",
-          "begin",
-          "   if (ClockTick)",
-          "   begin",
-          "      s_counter_reg <= s_counter_next;",
-          "   end",
-          "end");
+      Contents.add("""
+          integer n;
+          always @(posedge GlobalClock)
+          begin
+             if (ClockTick)
+             begin
+                s_derived_clock_reg[0] <= s_derived_clock_reg[0] ^ s_counter_is_zero;
+                for (n = 1; n < {{phase}}; n = n+1) begin
+                   s_derived_clock_reg[n] <= s_derived_clock_reg[n-1];
+                end
+             end
+          end
+          
+          always @(posedge GlobalClock)
+          begin
+             if (ClockTick)
+             begin
+                s_counter_reg <= s_counter_next;
+             end
+          end
+          """);
     }
     Contents.add("");
     return Contents.getWithIndent();

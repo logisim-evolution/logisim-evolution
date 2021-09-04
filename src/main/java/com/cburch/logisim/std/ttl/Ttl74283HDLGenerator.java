@@ -65,16 +65,17 @@ public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     return (new LineBuffer())
-        .addLines(
-            "oppA   <= \"0\"&A4&A3&A2&A1;",
-            "oppB   <= \"0\"&B4&B3&B2&B1;",
-            "oppC   <= \"0000\"&Cin;",
-            "Result <= std_logic_vector(unsigned(oppA)+unsigned(oppB)+unsigned(oppC));",
-            "S1     <= Result(0);",
-            "S2     <= Result(1);",
-            "S3     <= Result(2);",
-            "S4     <= Result(3);",
-            "Cout   <= Result(4);")
+        .add("""
+            oppA   <= "0"&A4&A3&A2&A1;
+            oppB   <= "0"&B4&B3&B2&B1;
+            oppC   <= "0000"&Cin;
+            Result <= std_logic_vector(unsigned(oppA)+unsigned(oppB)+unsigned(oppC));
+            S1     <= Result(0);
+            S2     <= Result(1);
+            S3     <= Result(2);
+            S4     <= Result(3);
+            Cout   <= Result(4);
+            """)
         .getWithIndent();
   }
 

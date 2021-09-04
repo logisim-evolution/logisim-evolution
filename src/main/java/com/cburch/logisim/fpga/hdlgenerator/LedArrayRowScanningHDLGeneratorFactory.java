@@ -63,25 +63,27 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .pair("activeLowVal", activeLow ? "1" : "0");
 
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "GENERIC MAP ( {{nrOfLeds}} => {{nrOfLedsVal}},",
-          "              {{nrOfRows}} => {{nrOfRowsVal}},",
-          "              {{nrOfColumns}} => {{nrOfColumnsVal}},",
-          "              {{nrOfRowAddressBits}} => {{nrOfRowAddressBitsVal}},",
-          "              {{scanningCounterBits}} => {{scanningCounterBitsVal}},",
-          "              {{scanningCounterValue}} => {{scanningCounterValueVal}},",
-          "              {{maxNrLeds}} => {{maxNrLedsVal}},",
-          "              {{activeLow}} => {{activeLowVal}} )");
+      contents.add("""
+          GENERIC MAP ( {{nrOfLeds}} => {{nrOfLedsVal}},
+                        {{nrOfRows}} => {{nrOfRowsVal}},
+                        {{nrOfColumns}} => {{nrOfColumnsVal}},
+                        {{nrOfRowAddressBits}} => {{nrOfRowAddressBitsVal}},
+                        {{scanningCounterBits}} => {{scanningCounterBitsVal}},
+                        {{scanningCounterValue}} => {{scanningCounterValueVal}},
+                        {{maxNrLeds}} => {{maxNrLedsVal}},
+                        {{activeLow}} => {{activeLowVal}} )
+          """);
     } else {
-      contents.addLines(
-          "#( .{{nrOfLeds}}({{nrOfLedsVal}}),",
-          "   .{{nrOfRows}}({{nrOfRowsVal}}),",
-          "   .{{nrOfColumns}}({{nrOfColumns}}),",
-          "   .{{nrOfRowAddressBits}}({{nrOfRowAddressBitsVal}}),",
-          "   .{{scanningCounterBits}}({{scanningCounterBitsVal}}),",
-          "   .{{scanningCounterValue}}({{scanningCounterValueVal}}),",
-          "   .{{maxNrLeds}}({{maxNrLedsVal}}),",
-          "   .{{activeLow}}({{activeLowVal}}) )");
+      contents.add("""
+          #( .{{nrOfLeds}}({{nrOfLedsVal}}),
+             .{{nrOfRows}}({{nrOfRowsVal}}),
+             .{{nrOfColumns}}({{nrOfColumns}}),
+             .{{nrOfRowAddressBits}}({{nrOfRowAddressBitsVal}}),
+             .{{scanningCounterBits}}({{scanningCounterBitsVal}}),
+             .{{scanningCounterValue}}({{scanningCounterValueVal}}),
+             .{{maxNrLeds}}({{maxNrLedsVal}}),
+             .{{activeLow}}({{activeLowVal}}) )
+          """);
     }
     return contents.getWithIndent(6);
   }
@@ -95,17 +97,19 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
                 .pair("id", id);
     if (HDL.isVHDL()) {
-      map.addLines(
-          "PORT MAP ( {{rowAddr}} => {{rowAddr}}{{id}},",
-          "           {{outs}} => {{outs}}{{id}},",
-          "           {{clock}} => {{clock}},",
-          "           {{ins}} => => s_{{ins}}{{id}} );");
+      map.add("""
+          PORT MAP ( {{rowAddr}} => {{rowAddr}}{{id}},
+                     {{outs}} => {{outs}}{{id}},
+                     {{clock}} => {{clock}},
+                     {{ins}} => => s_{{ins}}{{id}} );
+          """);
     } else {
-      map.addLines(
-          "( .{{rowAddr}}({{rowAddr}}{{id}}),",
-          "  .{{outs}}({{outs}}{{id}}),",
-          "  .{{clock}}({{clock}}),",
-          "  .{{ins}}(s_{{ins}}{{id}}) );");
+      map.add("""
+          ( .{{rowAddr}}({{rowAddr}}{{id}}),
+            .{{outs}}({{outs}}{{id}}),
+            .{{clock}}({{clock}}),
+            .{{ins}}(s_{{ins}}{{id}}) );
+          """);
     }
     return map.getWithIndent(6);
   }
@@ -167,57 +171,57 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .pair("value", scanningCounterValueString)
             .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "",
-          "{{rowAddress}} <= s_rowCounterReg;",
-          "",
-          "s_tickNext <= '1' WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{bits}})) ELSE '0';",
-          "",
-          "s_scanningCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation",
-          "                         std_logic_vector(to_unsigned({{value}}-1, {{bits}})) WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{bits}})) ELSE ",
-          "                         std_logic_vector(unsigned(s_scanningCounterReg)-1);",
-          "",
-          "s_rowCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation",
-          "                    s_rowCounterReg WHEN s_tickReg = '0' ELSE",
-          "                    std_logic_vector(to_unsigned(nrOfRows-1,nrOfRowAddressBits))",
-          "                       WHEN s_rowCounterReg = std_logic_vector(to_unsigned(0,nrOfRowAddressBits)) ELSE",
-          "                    std_logic_vector(unsigned(s_rowCounterReg)-1);",
-          "",
-          "makeFlops : PROCESS ({{clock}}) IS",
-          "BEGIN",
-          "   IF (rising_edge({{clock}})) THEN",
-          "      s_rowCounterReg      <= s_rowCounterNext;",
-          "      s_scanningCounterReg <= s_scanningCounterNext;",
-          "      s_tickReg            <= s_tickNext;",
-          "   END IF;",
-          "END PROCESS makeFlops;",
-          "");
+      contents.add("""
+          
+          {{rowAddress}} <= s_rowCounterReg;
+          
+          s_tickNext <= '1' WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{bits}})) ELSE '0';
+          
+          s_scanningCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation
+                                   std_logic_vector(to_unsigned({{value}}-1, {{bits}})) WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{bits}})) ELSE 
+                                   std_logic_vector(unsigned(s_scanningCounterReg)-1);
+          
+          s_rowCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation
+                              s_rowCounterReg WHEN s_tickReg = '0' ELSE
+                              std_logic_vector(to_unsigned(nrOfRows-1,nrOfRowAddressBits))
+                                 WHEN s_rowCounterReg = std_logic_vector(to_unsigned(0,nrOfRowAddressBits)) ELSE
+                              std_logic_vector(unsigned(s_rowCounterReg)-1);
+          
+          makeFlops : PROCESS ({{clock}}) IS
+          BEGIN
+             IF (rising_edge({{clock}})) THEN
+                s_rowCounterReg      <= s_rowCounterNext;
+                s_scanningCounterReg <= s_scanningCounterNext;
+                s_tickReg            <= s_tickNext;
+             END IF;
+          END PROCESS makeFlops;
+          """);
     } else {
-      contents
-          .addLines(
-              "",
-              "assign rowAddress = s_rowCounterReg;",
-              "",
-              "assign s_tickNext = (s_scanningCounterReg == 0) ? 1'b1 : 1'b0;",
-              "assign s_scanningCounterNext = (s_scanningCounterReg == 0) ? {{value}} : s_scanningCounterReg - 1;",
-              "assign s_rowCounterNext = (s_tickReg == 1'b0) ? s_rowCounterReg : ",
-              "                          (s_rowCounterReg == 0) ? nrOfRows-1 : s_rowCounterReg-1;",
-              "")
+      contents.add("""
+          
+          assign rowAddress = s_rowCounterReg;
+          
+          assign s_tickNext = (s_scanningCounterReg == 0) ? 1'b1 : 1'b0;
+          assign s_scanningCounterNext = (s_scanningCounterReg == 0) ? {{value}} : s_scanningCounterReg - 1;
+          assign s_rowCounterNext = (s_tickReg == 1'b0) ? s_rowCounterReg : 
+                                    (s_rowCounterReg == 0) ? nrOfRows-1 : s_rowCounterReg-1;
+          """)
           .addRemarkBlock("Here the simulation only initial is defined")
-          .addLines(
-              "initial",
-              "begin",
-              "   s_rowCounterReg      = 0;",
-              "   s_scanningCounterReg = 0;",
-              "   s_tickReg            = 1'b0;",
-              "end",
-              "",
-              "always @(posedge {{clock}})",
-              "begin",
-              "    s_rowCounterReg      = s_rowCounterNext;",
-              "    s_scanningCounterReg = s_scanningCounterNext;",
-              "    s_tickReg            = s_tickNext;",
-              "end");
+          .add("""
+               initial
+               begin
+                  s_rowCounterReg      = 0;
+                  s_scanningCounterReg = 0;
+                  s_tickReg            = 1'b0;
+               end
+     
+               always @(posedge {{clock}})
+               begin
+                   s_rowCounterReg      = s_rowCounterNext;
+                   s_scanningCounterReg = s_scanningCounterNext;
+                   s_tickReg            = s_tickNext;
+               end
+               """);
     }
     return contents.getWithIndent();
   }
@@ -234,32 +238,34 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .add(getRowCounterCode());
 
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "makeVirtualInputs : PROCESS ( internalLeds ) IS",
-          "BEGIN",
-          "   s_maxLedInputs <= (OTHERS => '0');",
-          "   IF ({{activeLow}} = 1) THEN",
-          "      s_maxLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{ins}};",
-          "   ELSE",
-          "      s_maxLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{ins}};",
-          "   END IF;",
-          "END PROCESS makeVirtualInputs;",
-          "",
-          "GenOutputs : FOR n IN {{nrOfColumns}}-1 DOWNTO 0 GENERATE",
-          "   {{outs}}(n) <= s_maxLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);",
-          "END GENERATE GenOutputs;");
+      contents.add("""
+          makeVirtualInputs : PROCESS ( internalLeds ) IS
+          BEGIN
+             s_maxLedInputs <= (OTHERS => '0');
+             IF ({{activeLow}} = 1) THEN
+                s_maxLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{ins}};
+             ELSE
+                s_maxLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{ins}};
+             END IF;
+          END PROCESS makeVirtualInputs;
+          
+          GenOutputs : FOR n IN {{nrOfColumns}}-1 DOWNTO 0 GENERATE
+             {{outs}}(n) <= s_maxLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);
+          END GENERATE GenOutputs;
+          """);
     } else {
-      contents.addLines(
-          "",
-          "genvar i;",
-          "generate",
-          "   for (i = 0; i < {{nrOfColumns}}; i = i + 1)",
-          "   begin:outputs",
-          "      assign {{outs}}[i] = (activeLow == 1)",
-          "         ? ~{{ins}}[{{nrOfColumns}} * s_rowCounterReg + i]",
-          "         :  {{ins}}[{{nrOfColumns}} * s_rowCounterReg + i];",
-          "   end",
-          "endgenerate");
+      contents.add("""
+          
+          genvar i;
+          generate
+             for (i = 0; i < {{nrOfColumns}}; i = i + 1)
+             begin:outputs
+                assign {{outs}}[i] = (activeLow == 1)
+                   ? ~{{ins}}[{{nrOfColumns}} * s_rowCounterReg + i]
+                   :  {{ins}}[{{nrOfColumns}} * s_rowCounterReg + i];
+             end
+          endgenerate
+          """);
     }
     return contents.getWithIndent();
   }
@@ -271,10 +277,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
 
   @Override
   public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
+    // This method returns the module directory where the HDL code needs to be placed
     return "ledarrays";
   }
 
