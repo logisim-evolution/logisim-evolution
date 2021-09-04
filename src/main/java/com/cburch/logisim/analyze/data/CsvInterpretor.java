@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 import javax.swing.JFrame;
+import lombok.val;
 
 public class CsvInterpretor {
   /*
@@ -98,11 +99,11 @@ public class CsvInterpretor {
 
   public void getTruthTable(AnalyzerModel model) throws IOException {
     if (content.size() <= 1) return;
-    final var rows = new ArrayList<Entry[]>();
+    val rows = new ArrayList<Entry[]>();
     var nrOfEntries = inputs.bits.size() + outputs.bits.size();
     for (int row = 1; row < content.size(); row++) {
-      final var entryRow = new ArrayList<Entry>();
-      final var line = content.get(row);
+      val entryRow = new ArrayList<Entry>();
+      val line = content.get(row);
       var col = 0;
       while (col < line.size()) {
         if (col != inputs.bits.size()) {
@@ -125,7 +126,7 @@ public class CsvInterpretor {
     } catch (IllegalArgumentException e) {
       throw new IOException(e.getMessage());
     }
-    final var table = model.getTruthTable();
+    val table = model.getTruthTable();
     try {
       table.setVisibleRows(rows, false);
     } catch (IllegalArgumentException e) {
@@ -146,8 +147,7 @@ public class CsvInterpretor {
 
   private boolean checkEntries() {
     if (content.size() == 1) {
-      OptionPane.showMessageDialog(
-          parent, S.get("CsvNoEntries", fileName), S.get("openButton"), OptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(parent, S.get("CsvNoEntries", fileName), S.get("openButton"), OptionPane.ERROR_MESSAGE);
       return false;
     }
     for (int row = 1; row < content.size(); row++) {
@@ -210,9 +210,9 @@ public class CsvInterpretor {
 
   private boolean getInputsOutputs() {
     /* first check: are all the lines the same size */
-    final var header = content.get(0);
-    final var nrOfEntries = header.size();
-    for (int line = 1; line < content.size(); line++) {
+    val header = content.get(0);
+    val nrOfEntries = header.size();
+    for (var line = 1; line < content.size(); line++) {
       if (content.get(line).size() != nrOfEntries) {
         OptionPane.showMessageDialog(
             parent,
@@ -226,8 +226,8 @@ public class CsvInterpretor {
     var processingInputs = true;
     var inOuSepDetected = false;
     /* now read the cells */
-    for (int idx = 0; idx < nrOfEntries; idx++) {
-      final var field = header.get(idx);
+    for (var idx = 0; idx < nrOfEntries; idx++) {
+      val field = header.get(idx);
       if (field == null) {
         OptionPane.showMessageDialog(
             parent,
@@ -243,11 +243,11 @@ public class CsvInterpretor {
       }
       if (field.contains(":")) {
         /* Is B:<a> format */
-        int pos = field.indexOf(":");
-        final var name = field.substring(0, pos);
+        var pos = field.indexOf(":");
+        val name = field.substring(0, pos);
         if (!isCorrectName(name)) return false;
-        final var index = field.substring(pos + 1);
-        for (char kar : index.toCharArray()) {
+        val index = field.substring(pos + 1);
+        for (val kar : index.toCharArray()) {
           if ("0123456789".indexOf(kar) < 0) {
             OptionPane.showMessageDialog(
                 parent,
@@ -257,10 +257,10 @@ public class CsvInterpretor {
             return false;
           }
         }
-        final var bitIndex = Integer.parseInt(index);
+        val bitIndex = Integer.parseInt(index);
 
         if (bitspresent.containsKey(name.toLowerCase())) {
-          final var sels = bitspresent.get(name.toLowerCase());
+          val sels = bitspresent.get(name.toLowerCase());
           if (bitIndex >= sels.size() || !sels.get(bitIndex + 1)) {
             OptionPane.showMessageDialog(
                 parent,
@@ -280,8 +280,8 @@ public class CsvInterpretor {
           sels.set(bitIndex, true);
         } else {
           if (isDuplicate(name)) return false;
-          final var variable = new Var(name, bitIndex + 1);
-          final var sels = new ArrayList<Boolean>();
+          val variable = new Var(name, bitIndex + 1);
+          val sels = new ArrayList<Boolean>();
           for (int a = 0; a < bitIndex; a++) {
             sels.add(false);
           }
@@ -295,11 +295,11 @@ public class CsvInterpretor {
         }
       } else if (field.contains("[")) {
         /* check indexes and empty field */
-        final var pos = field.indexOf('[');
-        final var name = field.substring(0, pos);
+        val pos = field.indexOf('[');
+        val name = field.substring(0, pos);
         if (!isCorrectName(name)) return false;
         if (isDuplicate(name)) return false;
-        final var nrOfBits = VariableTab.checkindex(field.substring(pos));
+        val nrOfBits = VariableTab.checkindex(field.substring(pos));
         if (nrOfBits <= 0) {
           OptionPane.showMessageDialog(
               parent,
@@ -327,7 +327,7 @@ public class CsvInterpretor {
           }
         }
         idx += nrOfBits - 1;
-        final var variable = new Var(name, nrOfBits);
+        val variable = new Var(name, nrOfBits);
         if (processingInputs) {
           inputs.add(variable);
         } else {
@@ -337,7 +337,7 @@ public class CsvInterpretor {
         if (!isCorrectName(field) || isDuplicate(field)) {
           return false;
         }
-        final var variable = new Var(field, 1);
+        val variable = new Var(field, 1);
         if (processingInputs) {
           inputs.add(variable);
         } else {
@@ -362,7 +362,7 @@ public class CsvInterpretor {
       return false;
     }
     for (String key : bitspresent.keySet()) {
-      final var bit = bitspresent.get(key);
+      val bit = bitspresent.get(key);
       for (int x = 0; x < bit.size(); x++) {
         if (!bit.get(x)) {
           OptionPane.showMessageDialog(
@@ -379,7 +379,7 @@ public class CsvInterpretor {
 
   private void readFile(File file, CsvParameter param) {
     try {
-      final var scanner = new Scanner(file);
+      val scanner = new Scanner(file);
       while (scanner.hasNext()) {
         content.add(parseCsvLine(scanner.next(), param.seperator(), param.quote()));
       }

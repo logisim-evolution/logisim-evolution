@@ -25,6 +25,7 @@ import java.util.Scanner;
 import java.util.regex.Pattern;
 import javax.swing.JFrame;
 import javax.swing.filechooser.FileFilter;
+import lombok.val;
 
 public class TruthtableTextFile {
 
@@ -64,8 +65,10 @@ public class TruthtableTextFile {
    * 1  ----   |  0000
    */
 
+  public static final FileFilter FILE_FILTER = new TruthtableFileFilter(S.getter("tableTxtFileFilter"), ".txt");
+
   private static void center(PrintStream out, String s, int n) {
-    int pad = n - s.length();
+    val pad = n - s.length();
     if (pad <= 0) {
       out.printf("%s", s);
     } else {
@@ -78,7 +81,7 @@ public class TruthtableTextFile {
   public static void doSave(File file, AnalyzerModel model) throws IOException {
     try (PrintStream out = new PrintStream(file)) {
       out.println(S.get("tableRemark1"));
-      final var c = model.getCurrentCircuit();
+      val c = model.getCurrentCircuit();
       if (c != null) out.println(S.get("tableRemark2", c.getName()));
       out.println(S.get("tableRemark3", new Date()));
       out.println();
@@ -86,17 +89,17 @@ public class TruthtableTextFile {
       out.println();
       VariableList inputs = model.getInputs();
       VariableList outputs = model.getOutputs();
-      final var colwidth = new int[inputs.vars.size() + outputs.vars.size()];
+      val colwidth = new int[inputs.vars.size() + outputs.vars.size()];
       var i = 0;
-      for (final var variable : inputs.vars) colwidth[i++] = Math.max(variable.toString().length(), variable.width);
-      for (final var variable : outputs.vars) colwidth[i++] = Math.max(variable.toString().length(), variable.width);
+      for (val variable : inputs.vars) colwidth[i++] = Math.max(variable.toString().length(), variable.width);
+      for (val variable : outputs.vars) colwidth[i++] = Math.max(variable.toString().length(), variable.width);
       i = 0;
-      for (final var variable : inputs.vars) {
+      for (val variable : inputs.vars) {
         center(out, variable.toString(), colwidth[i++]);
         out.print(" ");
       }
       out.print("|");
-      for (final var variable : outputs.vars) {
+      for (val variable : outputs.vars) {
         out.print(" ");
         center(out, variable.toString(), colwidth[i++]);
       }
@@ -105,15 +108,15 @@ public class TruthtableTextFile {
         for (var j = 0; j < colwidth[i] + 1; j++) out.print("~");
       }
       out.println("~");
-      final var table = model.getTruthTable();
-      final var rows = table.getVisibleRowCount();
+      val table = model.getTruthTable();
+      val rows = table.getVisibleRowCount();
       for (var row = 0; row < rows; row++) {
         i = 0;
         var col = 0;
-        for (final var variable : inputs.vars) {
-          final var s = new StringBuilder();
+        for (val variable : inputs.vars) {
+          val s = new StringBuilder();
           for (var b = variable.width - 1; b >= 0; b--) {
-            final var val = table.getVisibleInputEntry(row, col++);
+            val val = table.getVisibleInputEntry(row, col++);
             s.append(val.toBitString());
           }
           center(out, s.toString(), colwidth[i++]);
@@ -121,10 +124,10 @@ public class TruthtableTextFile {
         }
         out.print("|");
         col = 0;
-        for (final var variable : outputs.vars) {
-          final var s = new StringBuilder();
+        for (val variable : outputs.vars) {
+          val s = new StringBuilder();
           for (var b = variable.width - 1; b >= 0; b--) {
-            final var val = table.getVisibleOutputEntry(row, col++);
+            val val = table.getVisibleOutputEntry(row, col++);
             s.append(val.toBitString());
           }
           out.print(" ");
@@ -138,9 +141,9 @@ public class TruthtableTextFile {
   static final Pattern NAME_FORMAT = Pattern.compile("([a-zA-Z][a-zA-Z_0-9]*)\\[(-?[0-9]+)\\.\\.(-?[0-9]+)]");
 
   static void validateHeader(String line, VariableList inputs, VariableList outputs, int lineno) throws IOException {
-    final var s = line.split("\\s+");
+    val s = line.split("\\s+");
     var cur = inputs;
-    for (final var value : s) {
+    for (val value : s) {
       if (value.equals("|")) {
         if (cur != inputs) throw new IOException(String.format("Line %d: Separator '|' must appear only once.", lineno));
         cur = outputs;
@@ -177,15 +180,13 @@ public class TruthtableTextFile {
   }
 
   static Entry parseBit(char c, String sval, Var var, int lineno) throws IOException {
-    if (c == 'x' || c == 'X' || c == '-') {
-      return Entry.DONT_CARE;
-    } else if (c == '0') {
-      return Entry.ZERO;
-    } else if (c == '1') {
-      return Entry.ONE;
-    }
-
-    throw new IOException(String.format("Line %d: Bit value '%c' in \"%s\" must be one of '0', '1', 'x', or '-'.", lineno, c, sval));
+    return switch(c) {
+      case 'x', 'X', '-' -> Entry.DONT_CARE;
+      case '0' -> Entry.ZERO;
+      case '1' -> Entry.ONE;
+      default -> throw new IOException(
+              String.format("Line %d: Bit value '%c' in \"%s\" must be one of '0', '1', 'x', or '-'.", lineno, c, sval));
+    };
   }
 
   static Entry parseHex(char c, int bit, int nbits, String sval, Var var, int lineno) throws IOException {
@@ -203,7 +204,8 @@ public class TruthtableTextFile {
     }
 
     if (nbits < 4 && (d >= (1 << nbits))) {
-      throw new IOException(String.format("Line %d: Hex value \"%s\" contains too many bits for %s.", lineno, sval, var.name));
+      throw new IOException(
+          String.format("Line %d: Hex value \"%s\" contains too many bits for %s.", lineno, sval, var.name));
     }
 
     return ((d & (1 << bit)) == 0) ? Entry.ZERO : Entry.ONE;
@@ -212,7 +214,9 @@ public class TruthtableTextFile {
   static int parseVal(Entry[] row, int col, String sval, Var var, int lineno) throws IOException {
     if (sval.length() == var.width) {
       // must be binary
-      for (var i = 0; i < var.width; i++) row[col++] = parseBit(sval.charAt(i), sval, var, lineno);
+      for (var i = 0; i < var.width; i++) {
+        row[col++] = parseBit(sval.charAt(i), sval, var, lineno);
+      }
     } else if (sval.length() == (var.width + 3) / 4) {
       // try hex
       for (var i = 0; i < var.width; i++) {
@@ -235,11 +239,11 @@ public class TruthtableTextFile {
   }
 
   static void validateRow(String line, VariableList inputs, VariableList outputs, ArrayList<Entry[]> rows, int lineno) throws IOException {
-    final var row = new Entry[inputs.bits.size() + outputs.bits.size()];
+    val row = new Entry[inputs.bits.size() + outputs.bits.size()];
     var col = 0;
-    final var s = line.split("\\s+");
+    val s = line.split("\\s+");
     var ix = 0;
-    for (final var variable : inputs.vars) {
+    for (val variable : inputs.vars) {
       if (ix >= s.length || s[ix].equals("|"))
         throw new IOException(String.format("Line %d: Not enough input columns.", lineno));
       col = parseVal(row, col, s[ix++], variable, lineno);
@@ -249,7 +253,7 @@ public class TruthtableTextFile {
     else if (!s[ix].equals("|"))
       throw new IOException(String.format("Line %d: Too many input columns.", lineno));
     ix++;
-    for (final var variable : outputs.vars) {
+    for (val variable : outputs.vars) {
       if (ix >= s.length)
         throw new IOException(String.format("Line %d: Not enough output columns.", lineno));
       else if (s[ix].equals("|"))
@@ -265,13 +269,13 @@ public class TruthtableTextFile {
   public static void doLoad(File file, AnalyzerModel model, JFrame parent) throws IOException {
     var lineno = 0;
     try (Scanner sc = new Scanner(file)) {
-      final var inputs = new VariableList(AnalyzerModel.MAX_INPUTS);
-      final var outputs = new VariableList(AnalyzerModel.MAX_OUTPUTS);
-      final var rows = new ArrayList<Entry[]>();
+      val inputs = new VariableList(AnalyzerModel.MAX_INPUTS);
+      val outputs = new VariableList(AnalyzerModel.MAX_OUTPUTS);
+      val rows = new ArrayList<Entry[]>();
       while (sc.hasNextLine()) {
         lineno++;
-        String line = sc.nextLine();
-        int ix = line.indexOf('#');
+        var line = sc.nextLine();
+        var ix = line.indexOf('#');
         if (ix >= 0) line = line.substring(0, ix);
         line = line.trim();
         if (line.equals("") || (line.matches("\\s*[~_=-][ ~_=-|]*"))) {
@@ -288,11 +292,11 @@ public class TruthtableTextFile {
       } catch (IllegalArgumentException e) {
         throw new IOException(e.getMessage());
       }
-      final var table = model.getTruthTable();
+      val table = model.getTruthTable();
       try {
         table.setVisibleRows(rows, false);
       } catch (IllegalArgumentException e) {
-        int confirm =
+        val confirm =
             OptionPane.showConfirmDialog(
                 parent, new String[]{e.getMessage(), S.get("tableParseErrorMessage")},
                 S.get("tableParseErrorTitle"), OptionPane.YES_NO_OPTION);
@@ -305,7 +309,4 @@ public class TruthtableTextFile {
       }
     }
   }
-
-  public static final FileFilter FILE_FILTER =
-      new TruthtableFileFilter(S.getter("tableTxtFileFilter"), ".txt");
 }

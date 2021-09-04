@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
+import lombok.val;
 
 public class CoverColor implements PreferenceChangeListener {
   public static final CoverColor COVER_COLOR = new CoverColor();
@@ -43,7 +44,7 @@ public class CoverColor implements PreferenceChangeListener {
           AppPreferences.KMAP16_COLOR);
 
   public CoverColor() {
-    for (final var color : availableColors) {
+    for (val color : availableColors) {
       colors.add(new Color(color.get()));
     }
   }
@@ -77,7 +78,7 @@ public class CoverColor implements PreferenceChangeListener {
     var idx = 0;
     Color newColor = null;
 
-    for (final var color : availableColors) {
+    for (val color : availableColors) {
       if (evt.getKey().contentEquals(color.getIdentifier())) {
         newColor = new Color(color.get());
         break;

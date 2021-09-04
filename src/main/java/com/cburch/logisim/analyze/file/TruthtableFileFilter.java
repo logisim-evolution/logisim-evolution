@@ -12,6 +12,7 @@ package com.cburch.logisim.analyze.file;
 import com.cburch.logisim.util.StringGetter;
 import java.io.File;
 import javax.swing.filechooser.FileFilter;
+import lombok.val;
 
 public class TruthtableFileFilter extends FileFilter {
 
@@ -24,10 +25,10 @@ public class TruthtableFileFilter extends FileFilter {
   }
 
   @Override
-  public boolean accept(File f) {
-    if (!f.isFile()) return true;
-    final var name = f.getName();
-    final var i = name.lastIndexOf('.');
+  public boolean accept(File file) {
+    if (!file.isFile()) return true;
+    val name = file.getName();
+    val i = name.lastIndexOf('.');
     return (i > 0 && name.substring(i).toLowerCase().equals(extention));
   }
 

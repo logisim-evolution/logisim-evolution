@@ -16,9 +16,4 @@ import lombok.Data;
 public class AttributeMapKey {
   private final Attribute<?> attribute;
   private final CanvasObject object;
-
-  public AttributeMapKey(Attribute<?> attribute, CanvasObject object) {
-    this.attribute = attribute;
-    this.object = object;
-  }
 }

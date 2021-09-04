@@ -28,13 +28,15 @@ import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.text.AttributedString;
 import java.util.ArrayList;
+import lombok.Getter;
+import lombok.val;
 
 public class ExpressionRenderData {
 
   private final Expression expr;
   private final Notation notation;
   private final int prefWidth;
-  private final int parentWidth;
+  @Getter private final int parentWidth;
   private int height;
   private String[] lineText;
   private final ArrayList<ArrayList<Range>> lineNots;
@@ -60,7 +62,7 @@ public class ExpressionRenderData {
     notSep = AppPreferences.getScaled(3);
     extraLeading = AppPreferences.getScaled(4);
     expressionBaseFont = AppPreferences.getScaledFont(new Font(Font.MONOSPACED, Font.PLAIN, 14));
-    final var img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+    val img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
     final Graphics2D g = (Graphics2D) img.getGraphics().create();
     if (AppPreferences.AntiAliassing.getBoolean()) {
       g.setRenderingHint(
@@ -68,7 +70,7 @@ public class ExpressionRenderData {
       g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
     g.setFont(expressionBaseFont);
-    final var fm = expressionBaseFontMetrics = g.getFontMetrics();
+    val fm = expressionBaseFontMetrics = g.getFontMetrics();
     minimumHeight = fm.getHeight() + fm.getHeight() >> 1;
     g.dispose();
     if (expr == null || expr.toString(notation, true).length() == 0) {
@@ -99,14 +101,14 @@ public class ExpressionRenderData {
   }
 
   private ArrayList<ArrayList<Range>> computeLineAttribs(ArrayList<Range> attribs) {
-    final var attrs = new ArrayList<ArrayList<Range>>();
+    val attrs = new ArrayList<ArrayList<Range>>();
     for (int i = 0; i < lineText.length; i++) {
       attrs.add(new ArrayList<>());
     }
     for (Range nd : attribs) {
       var pos = 0;
       for (int j = 0; j < attrs.size() && pos < nd.stopIndex; j++) {
-        final var line = lineText[j];
+        val line = lineText[j];
         var nextPos = pos + line.length();
         if (nextPos > nd.startIndex) {
           Range toAdd = new Range();
@@ -120,26 +122,22 @@ public class ExpressionRenderData {
     return attrs;
   }
 
-  public int getParentWidth() {
-    return parentWidth;
-  }
-
   private void computeLineText() {
     var text = expr.toString(notation, true);
-    final var badness = expr.getBadness();
-    final var bestBreakPositions = new ArrayList<Integer>();
-    final var secondBestBreakPositions = new ArrayList<Integer>();
+    val badness = expr.getBadness();
+    val bestBreakPositions = new ArrayList<Integer>();
+    val secondBestBreakPositions = new ArrayList<Integer>();
     var minimal1 = Integer.MAX_VALUE;
     var minimal2 = Integer.MAX_VALUE;
     lineStyled = null;
-    for (int i = 0; i < text.length(); i++) {
+    for (var i = 0; i < text.length(); i++) {
       if (badness[i] < minimal1) {
         minimal1 = badness[i];
       } else if (badness[i] < minimal2 && badness[i] > minimal1) {
         minimal2 = badness[i];
       }
     }
-    for (int i = 0; i < text.length(); i++) {
+    for (var i = 0; i < text.length(); i++) {
       if (badness[i] == minimal1) {
         bestBreakPositions.add(i + 1);
         secondBestBreakPositions.add(i + 1);
@@ -147,23 +145,20 @@ public class ExpressionRenderData {
     }
     bestBreakPositions.add(text.length());
     secondBestBreakPositions.add(text.length());
-    final var lines = new ArrayList<String>();
-    final var img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-    final var g = (Graphics2D) img.getGraphics().create();
+    val lines = new ArrayList<String>();
+    val img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+    val g = (Graphics2D) img.getGraphics().create();
     if (AppPreferences.AntiAliassing.getBoolean()) {
-      g.setRenderingHint(
-          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
     g.setFont(expressionBaseFont);
-    final var ctx = g.getFontRenderContext();
+    val ctx = g.getFontRenderContext();
     /* first pass, we are going to break on the best positions if required */
     var i = bestBreakPositions.size() - 1;
     var breakPosition = 0;
     while (i >= 0 && text.length() > 0 && (bestBreakPositions.get(i) - breakPosition) > 0) {
-      if (getWidth(
-              ctx, text, bestBreakPositions.get(i) - breakPosition, expr.subscripts, expr.marks)
-          <= parentWidth) {
+      if (getWidth(ctx, text, bestBreakPositions.get(i) - breakPosition, expr.subscripts, expr.marks) <= parentWidth) {
         String addedLine = text.substring(0, bestBreakPositions.get(i) - breakPosition);
         lines.add(addedLine);
         text = text.substring(bestBreakPositions.get(i) - breakPosition);
@@ -199,9 +194,9 @@ public class ExpressionRenderData {
   private void computeLineY() {
     lineY = new int[lineNots.size()];
     var curY = 0;
-    for (int i = 0; i < lineY.length; i++) {
-      int maxDepth = -1;
-      final var nots = lineNots.get(i);
+    for (var i = 0; i < lineY.length; i++) {
+      var maxDepth = -1;
+      val nots = lineNots.get(i);
       for (Range nd : nots) {
         if (nd.depth > maxDepth) maxDepth = nd.depth;
       }
@@ -212,16 +207,16 @@ public class ExpressionRenderData {
   }
 
   private void computeNotDepths() {
-    for (ArrayList<Range> nots : lineNots) {
-      final var n = nots.size();
-      final var stack = new int[n];
-      for (int i = 0; i < nots.size(); i++) {
-        final var nd = nots.get(i);
+    for (val nots : lineNots) {
+      val n = nots.size();
+      val stack = new int[n];
+      for (var i = 0; i < nots.size(); i++) {
+        val nd = nots.get(i);
         var depth = 0;
         var top = 0;
         stack[0] = nd.stopIndex;
-        for (int j = i + 1; j < nots.size(); j++) {
-          final var nd2 = nots.get(j);
+        for (var j = i + 1; j < nots.size(); j++) {
+          val nd2 = nots.get(j);
           if (nd2.startIndex >= nd.stopIndex) break;
           while (nd2.startIndex >= stack[top]) top--;
           ++top;
@@ -247,14 +242,14 @@ public class ExpressionRenderData {
     if (replaceSpaces) {
       sub = sub.replaceAll(" ", "_");
     }
-    AttributedString as = new AttributedString(sub);
+    val as = new AttributedString(sub);
     as.addAttribute(TextAttribute.FAMILY, expressionBaseFont.getFamily());
     as.addAttribute(TextAttribute.SIZE, expressionBaseFont.getSize());
-    for (Range r : subs) {
+    for (val r : subs) {
       if (r.stopIndex <= end)
         as.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, r.startIndex, r.stopIndex);
     }
-    for (Range m : marks) {
+    for (val m : marks) {
       if (m.stopIndex <= end)
         as.addAttribute(TextAttribute.FOREGROUND, MARKCOLOR, m.startIndex, m.stopIndex);
     }
@@ -262,27 +257,27 @@ public class ExpressionRenderData {
   }
 
   public int getWidth() {
-    final var img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
-    final var g = (Graphics2D) img.getGraphics().create();
+    val img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_RGB);
+    val g = (Graphics2D) img.getGraphics().create();
     g.setFont(expressionBaseFont);
     if (AppPreferences.AntiAliassing.getBoolean()) {
       g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
-    final var ctx = g.getFontRenderContext();
+    val ctx = g.getFontRenderContext();
     if (lineStyled == null) {
       lineStyled = new AttributedString[lineText.length];
       notStarts = new int[lineText.length][];
       notStops = new int[lineText.length][];
-      for (int i = 0; i < lineText.length; i++) {
-        final var line = lineText[i];
-        final var nots = lineNots.get(i);
-        final var subs = lineSubscripts.get(i);
-        final var marks = lineMarks.get(i);
+      for (var i = 0; i < lineText.length; i++) {
+        val line = lineText[i];
+        val nots = lineNots.get(i);
+        val subs = lineSubscripts.get(i);
+        val marks = lineMarks.get(i);
         notStarts[i] = new int[nots.size()];
         notStops[i] = new int[nots.size()];
-        for (int j = 0; j < nots.size(); j++) {
-          final var not = nots.get(j);
+        for (var j = 0; j < nots.size(); j++) {
+          val not = nots.get(j);
           notStarts[i][j] = getWidth(ctx, line, not.startIndex, subs, marks);
           notStops[i][j] = getWidth(ctx, line, not.stopIndex, subs, marks);
         }
@@ -290,8 +285,8 @@ public class ExpressionRenderData {
       }
     }
     var width = 0;
-    for (AttributedString attributedString : lineStyled) {
-      final var test = new TextLayout(attributedString.getIterator(), ctx);
+    for (val attributedString : lineStyled) {
+      val test = new TextLayout(attributedString.getIterator(), ctx);
       if (test.getBounds().getWidth() > width)
         width = (int) test.getBounds().getWidth();
     }
@@ -301,50 +296,50 @@ public class ExpressionRenderData {
 
   private int getWidth(FontRenderContext ctx, String s, int end, ArrayList<Range> subs, ArrayList<Range> marks) {
     if (end == 0) return 0;
-    final var as = style(s, end, subs, marks, true);
+    val as = style(s, end, subs, marks, true);
     /* The TextLayout class will omit trailing spaces,
      * hence the width is incorrectly calculated. Therefore in the previous method we can
      * replace the spaces by underscores to prevent this problem; maybe
      * there is a more intelligent way.
      */
-    final var layout = new TextLayout(as.getIterator(), ctx);
+    val layout = new TextLayout(as.getIterator(), ctx);
     return (int) layout.getBounds().getWidth();
   }
 
   public void paint(Graphics g, int x, int y) {
     g.setFont(expressionBaseFont);
     if (AppPreferences.AntiAliassing.getBoolean()) {
-      final var g2 = (Graphics2D) g;
+      val g2 = (Graphics2D) g;
       g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
-    final var fm = g.getFontMetrics();
+    val fm = g.getFontMetrics();
     if (lineStyled == null) {
-      final var ctx = ((Graphics2D) g).getFontRenderContext();
+      val ctx = ((Graphics2D) g).getFontRenderContext();
       lineStyled = new AttributedString[lineText.length];
       notStarts = new int[lineText.length][];
       notStops = new int[lineText.length][];
-      for (int i = 0; i < lineText.length; i++) {
-        final var line = lineText[i];
-        final var nots = lineNots.get(i);
-        final var subs = lineSubscripts.get(i);
-        final var marks = lineMarks.get(i);
+      for (var i = 0; i < lineText.length; i++) {
+        val line = lineText[i];
+        val nots = lineNots.get(i);
+        val subs = lineSubscripts.get(i);
+        val marks = lineMarks.get(i);
         notStarts[i] = new int[nots.size()];
         notStops[i] = new int[nots.size()];
-        for (int j = 0; j < nots.size(); j++) {
-          Range not = nots.get(j);
+        for (var j = 0; j < nots.size(); j++) {
+          val not = nots.get(j);
           notStarts[i][j] = getWidth(ctx, line, not.startIndex, subs, marks);
           notStops[i][j] = getWidth(ctx, line, not.stopIndex, subs, marks);
         }
         lineStyled[i] = style(line, line.length(), subs, marks, false);
       }
     }
-    final var col = g.getColor();
+    val col = g.getColor();
     var curCol = col;
     for (int i = 0; i < lineStyled.length; i++) {
-      final var as = lineStyled[i];
-      final var nots = lineNots.get(i);
-      final var marks = lineMarks.get(i);
+      val as = lineStyled[i];
+      val nots = lineNots.get(i);
+      val marks = lineMarks.get(i);
       Range md;
       if (marks.isEmpty()) {
         md = new Range();
@@ -359,10 +354,10 @@ public class ExpressionRenderData {
       g.drawString(as.getIterator(), x, y + lineY[i] + fm.getAscent());
 
       for (int j = 0; j < nots.size(); j++) {
-        final var nd = nots.get(j);
-        final var notY = y + lineY[i] - nd.depth * AppPreferences.getScaled(notSep);
-        final var startX = x + notStarts[i][j];
-        final var stopX = x + notStops[i][j];
+        val nd = nots.get(j);
+        val notY = y + lineY[i] - nd.depth * AppPreferences.getScaled(notSep);
+        val startX = x + notStarts[i][j];
+        val stopX = x + notStops[i][j];
         if (nd.startIndex >= md.startIndex && nd.stopIndex <= md.stopIndex) g.setColor(MARKCOLOR);
         GraphicsUtil.switchToWidth(g, 2);
         g.drawLine(startX, notY, stopX, notY);

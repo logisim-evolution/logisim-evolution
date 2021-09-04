@@ -17,56 +17,40 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
+import lombok.val;
 
 public class KMapGroups {
 
   public static class CoverInfo {
-    private final int startRow;
-    private final int startCol;
-    private int width;
-    private int height;
+    @Getter private final int row;  // start row
+    @Getter private final int col; // start col
+    @Getter private int width = 1;
+    @Getter private int height = 1;
 
     public CoverInfo(int col, int row) {
-      this.startRow = row;
-      this.startCol = col;
-      this.width = 1;
-      this.height = 1;
-    }
-
-    public int getCol() {
-      return startCol;
-    }
-
-    public int getRow() {
-      return startRow;
-    }
-
-    public int getWidth() {
-      return width;
-    }
-
-    public int getHeight() {
-      return height;
+      this.row = row;
+      this.col = col;
     }
 
     private boolean canMerge(int col, int row) {
       /* we know that we scan left to right and top down, hence we can simplify
        * this test.
        */
-      if (col >= startCol && col < (startCol + width)) {
+      if (col >= this.col && col < (this.col + width)) {
         // the same col, two possibilities:
         // 1) either also the same row-range
-        if (row >= startRow && row < (startRow + height)) return true;
+        if (row >= this.row && row < (this.row + height)) return true;
         // 2) maybe one down
-        return row >= startRow && row <= (startRow + height);
+        return row >= this.row && row <= (this.row + height);
         // nope, distance too big
       }
-      if (row >= startRow && row < (startRow + height)) {
+      if (row >= this.row && row < (this.row + height)) {
         // same row, two possibilities:
         // 1) either also the same col-range; we do not need to check as it collides
         //    with the previous check of the same row range (see 1) above)
         // 2) maybe one to the right
-        return col >= startCol && col <= (startCol + width);
+        return col >= this.col && col <= (this.col + width);
       }
       return false;
     }
@@ -74,8 +58,8 @@ public class KMapGroups {
     public boolean merge(int col, int row) {
       if (!canMerge(col, row)) return false;
       // let's look where to merge:
-      if (col >= startCol && col < (startCol + width)) {
-        if (row >= startRow && row < (startRow + height))
+      if (col >= this.col && col < (this.col + width)) {
+        if (row >= this.row && row < (this.row + height))
           // 1) already inside
           return true;
         else
@@ -89,8 +73,8 @@ public class KMapGroups {
   }
 
   public class KMapGroupInfo {
-    private final ArrayList<CoverInfo> areas;
-    private final Color color;
+    @Getter private final ArrayList<CoverInfo> areas;
+    @Getter private final Color color;
     private final ArrayList<Implicant> singleCoveredImplicants;
     private final Expression expression;
 
@@ -98,18 +82,10 @@ public class KMapGroups {
       this.color = col;
       areas = new ArrayList<>();
       singleCoveredImplicants = new ArrayList<>();
-      List<Implicant> one = new ArrayList<>();
+      val one = new ArrayList<Implicant>();
       one.add(imp);
       expression = Implicant.toExpression(format, model, one);
       build(imp);
-    }
-
-    public ArrayList<CoverInfo> getAreas() {
-      return areas;
-    }
-
-    public Color getColor() {
-      return color;
     }
 
     public void removeSingleCover(Implicant imp) {
@@ -120,22 +96,15 @@ public class KMapGroups {
       return singleCoveredImplicants.contains(imp);
     }
 
-    public void paint(
-        Graphics2D g,
-        int x,
-        int y,
-        int cellWidth,
-        int cellHeight,
-        boolean highlighted,
-        boolean colored) {
-      int d = 2 * IMP_RADIUS;
-      final var col = g.getColor();
+    public void paint(Graphics2D g, int x, int y, int cellWidth, int cellHeight, boolean highlighted, boolean colored) {
+      var d = 2 * IMP_RADIUS;
+      val col = g.getColor();
       if (highlighted)
         g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 180));
       else if (colored)
         g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 128));
       else g.setColor(new Color(128, 128, 128, 128));
-      for (CoverInfo cover : areas) {
+      for (val cover : areas) {
         g.fillRoundRect(
             x + cover.getCol() * cellWidth + IMP_INSET,
             y + cover.getRow() * cellHeight + IMP_INSET,
@@ -148,15 +117,15 @@ public class KMapGroups {
     }
 
     public boolean insideCover(int col, int row) {
-      final var table = model.getTruthTable();
+      val table = model.getTruthTable();
       if (table.getInputColumnCount() > KarnaughMapPanel.MAX_VARS) return false;
-      final var kmapRows = 1 << KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
-      final var kmapCols = 1 << KarnaughMapPanel.COL_VARS[table.getInputColumnCount()];
-      for (Implicant sq : singleCoveredImplicants) {
-        final var tableRow = sq.getRow();
+      val kmapRows = 1 << KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
+      val kmapCols = 1 << KarnaughMapPanel.COL_VARS[table.getInputColumnCount()];
+      for (val sq : singleCoveredImplicants) {
+        val tableRow = sq.getRow();
         if (tableRow < 0) return false;
-        final var krow = KarnaughMapPanel.getRow(tableRow, kmapRows, kmapCols);
-        final var kcol = KarnaughMapPanel.getCol(tableRow, kmapRows, kmapCols);
+        val krow = KarnaughMapPanel.getRow(tableRow, kmapRows, kmapCols);
+        val kcol = KarnaughMapPanel.getCol(tableRow, kmapRows, kmapCols);
         if (krow == row && kcol == col) return true;
       }
       return false;
@@ -168,7 +137,7 @@ public class KMapGroups {
        * a multi-covered implicant from the existing covers. We could also
        * not add it to the current cover, it's a choice.
        */
-      for (KMapGroupInfo other : covers) {
+      for (val other : covers) {
         if (other.containsSingleCover(imp)) {
           other.removeSingleCover(imp);
         }
@@ -177,26 +146,26 @@ public class KMapGroups {
     }
 
     private void build(Implicant imp) {
-      final var table = model.getTruthTable();
+      val table = model.getTruthTable();
       if (table.getInputColumnCount() > KarnaughMapPanel.MAX_VARS) return;
       int kmapRows = 1 << KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
       int kmapCols = 1 << KarnaughMapPanel.COL_VARS[table.getInputColumnCount()];
 
-      final var imps = new Boolean[kmapRows][kmapCols];
-      for (int row = 0; row < kmapRows; row++) {
-        for (int col = 0; col < kmapCols; col++) imps[row][col] = false;
+      val imps = new Boolean[kmapRows][kmapCols];
+      for (var row = 0; row < kmapRows; row++) {
+        for (var col = 0; col < kmapCols; col++) imps[row][col] = false;
       }
-      for (Implicant sq : imp.getTerms()) {
+      for (val sq : imp.getTerms()) {
         addSingleCover(sq);
-        final var tableRow = sq.getRow();
+        val tableRow = sq.getRow();
         if (tableRow < 0) return;
-        final var row = KarnaughMapPanel.getRow(tableRow, kmapRows, kmapCols);
-        final var col = KarnaughMapPanel.getCol(tableRow, kmapRows, kmapCols);
+        val row = KarnaughMapPanel.getRow(tableRow, kmapRows, kmapCols);
+        val col = KarnaughMapPanel.getCol(tableRow, kmapRows, kmapCols);
         if ((row < kmapRows) && (col < kmapCols)) imps[row][col] = true;
       }
       CoverInfo current = null;
-      for (int row = 0; row < kmapRows; row++)
-        for (int col = 0; col < kmapCols; col++) {
+      for (var row = 0; row < kmapRows; row++)
+        for (var col = 0; col < kmapCols; col++) {
           if (imps[row][col]) {
             // we have a candidate
             if (current != null) {
@@ -205,7 +174,7 @@ public class KMapGroups {
             }
             // can we merge with an existing ?
             var found = false;
-            for (CoverInfo area : areas) {
+            for (val area : areas) {
               if (!found && area.merge(col, row)) {
                 current = area;
                 found = true;
@@ -225,7 +194,7 @@ public class KMapGroups {
   private final AnalyzerModel model;
   private String output;
   private int format;
-  private ArrayList<KMapGroupInfo> covers;
+  @Getter private ArrayList<KMapGroupInfo> covers;
   private static final int IMP_RADIUS = 5;
   private static final int IMP_INSET = 4;
   private int highlighted;
@@ -240,17 +209,13 @@ public class KMapGroups {
     update();
   }
 
-  public ArrayList<KMapGroupInfo> getCovers() {
-    return covers;
-  }
-
   public void setOutput(String name) {
     output = name;
     update();
   }
 
   public boolean highlight(int col, int row) {
-    final var oldHighlighted = highlighted;
+    val oldHighlighted = highlighted;
     highlighted = -1;
     for (int nr = 0; nr < covers.size() && highlighted < 0; nr++) {
       if (covers.get(nr).insideCover(col, row)) highlighted = nr;
@@ -259,7 +224,7 @@ public class KMapGroups {
   }
 
   public boolean clearHighlight() {
-    final var ret = highlighted >= 0;
+    val ret = highlighted >= 0;
     highlighted = -1;
     return ret;
   }
@@ -271,16 +236,16 @@ public class KMapGroups {
 
   public Color getBackgroundColor() {
     if (highlighted < 0 || highlighted >= covers.size()) return null;
-    final var col = covers.get(highlighted).color;
+    val col = covers.get(highlighted).color;
     return new Color(col.getRed(), col.getGreen(), col.getBlue(), 60);
   }
 
   public void update() {
-    final var implicants = model.getOutputExpressions().getMinimalImplicants(output);
+    val implicants = model.getOutputExpressions().getMinimalImplicants(output);
     covers = new ArrayList<>();
     CoverColor.COVER_COLOR.reset();
     if (implicants != null) {
-      for (Implicant imp : implicants) {
+      for (val imp : implicants) {
         covers.add(new KMapGroupInfo(imp, CoverColor.COVER_COLOR.getNext()));
       }
     }
@@ -288,9 +253,9 @@ public class KMapGroups {
   }
 
   public void paint(Graphics2D g, int x, int y, int cellWidth, int cellHeight) {
-    for (int cov = 0; cov < covers.size(); cov++) {
+    for (var cov = 0; cov < covers.size(); cov++) {
       if (cov == highlighted) continue;
-      final var curCov = covers.get(cov);
+      val curCov = covers.get(cov);
       curCov.paint(g, x, y, cellWidth, cellHeight, false, highlighted < 0);
     }
     if (highlighted >= 0 && highlighted < covers.size())

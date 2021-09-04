@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import lombok.val;
 
 public class HdlFile {
 
@@ -25,11 +26,11 @@ public class HdlFile {
 
     try (BufferedReader in = new BufferedReader(new FileReader(file))) {
 
-      StringBuilder content = new StringBuilder();
-      String l;
+      val content = new StringBuilder();
+      String line;
 
-      while ((l = in.readLine()) != null) {
-        content.append(l);
+      while ((line = in.readLine()) != null) {
+        content.append(line);
         content.append(System.getProperty("line.separator"));
       }
       editor.setText(content.toString());

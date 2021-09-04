@@ -14,6 +14,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import lombok.val;
 
 public class DrawShapeIcon extends BaseIcon {
 
@@ -30,13 +31,13 @@ public class DrawShapeIcon extends BaseIcon {
 
   @Override
   protected void paintIcon(Graphics2D gfx) {
-    final var state = 3;
+    val state = 3;
 
     gfx.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
-    final var x = scale(1);
-    final var y = scale(3);
-    final var width = scale(points[(state - 1) * 2]);
-    final var height = scale(points[(state - 1) * 2 + 1]);
+    val x = scale(1);
+    val y = scale(3);
+    val width = scale(points[(state - 1) * 2]);
+    val height = scale(points[(state - 1) * 2 + 1]);
 
     switch (shapeType) {
       case RECTANGLE:
