@@ -166,7 +166,6 @@ public class Startup implements AWTEventListener {
   private static final String ARG_LOCALE_LONG = "locale";
   private static final String ARG_TEMPLATE_SHORT = "z";
   private static final String ARG_TEMPLATE_LONG = "template";
-//  private static final String ARG_NO_SPLASH_SHORT = "n";
   private static final String ARG_NO_SPLASH_LONG = "no-splash";
   private static final String ARG_TEST_VECTOR_SHORT = "w";
   private static final String ARG_TEST_VECTOR_LONG = "test-vector";
@@ -316,8 +315,8 @@ public class Startup implements AWTEventListener {
   public static Startup parseArgs(String[] args) {
 
     final var opts = new Options();
-    addOption(opts, "argHelpOption", ARG_HELP_SHORT, ARG_HELP_LONG);
-    addOption(opts, "argVersionOption", ARG_VERSION_SHORT, ARG_VERSION_LONG);
+    addOption(opts, "argHelpOption", ARG_HELP_LONG, ARG_HELP_SHORT);
+    addOption(opts, "argVersionOption", ARG_VERSION_LONG, ARG_VERSION_SHORT);
 
     // Set up supported arguments for the arg parser to look for.
     // Note: you need to create handler for each option. See handler loop below.
@@ -780,7 +779,7 @@ public class Startup implements AWTEventListener {
     if (mainCircuit == null) return false;
     final var simTickFreq = mainCircuit.getTickFrequency();
     final var downTickFreq = mainCircuit.getDownloadFrequency();
-    final var usedFrequency = (testTickFrequency > 0) ? testTickFrequency : 
+    final var usedFrequency = (testTickFrequency > 0) ? testTickFrequency :
         (downTickFreq > 0) ? downTickFreq : simTickFreq;
     Download Downloader =
         new Download(
