@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -303,7 +303,7 @@ public class AnalyzerTexWriter {
     final var kmapRows = 1 << KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
     for (final var group : groups.getCovers()) {
       for (final var thiscover : group.getAreas()) {
-        content.append("   \\node[grp={").append(CoverColor.COVERCOLOR.getColorName(group.getColor())).append("}");
+        content.append("   \\node[grp={").append(CoverColor.COVER_COLOR.getColorName(group.getColor())).append("}");
         double width = thiscover.getWidth() - OFFSET;
         double height = thiscover.getHeight() - OFFSET;
         content.append("{").append(df.format(width)).append("}{").append(df.format(height)).append("}]");
@@ -366,7 +366,7 @@ public class AnalyzerTexWriter {
       /*
        * Here we define our own colors
        */
-      CoverColor cols = CoverColor.COVERCOLOR;
+      CoverColor cols = CoverColor.COVER_COLOR;
       for (int i = 0; i < cols.nrOfColors(); i++) {
         Color col = cols.getColor(i);
         out.println(
