@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -16,7 +16,7 @@ class PrefMonitorInt extends AbstractPrefMonitor<Integer> {
   private final int dflt;
   private int value;
 
-  PrefMonitorInt(String name, int dflt) {
+  public PrefMonitorInt(String name, int dflt) {
     super(name);
     this.dflt = dflt;
     this.value = dflt;

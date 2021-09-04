@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -23,7 +23,7 @@ class PrefMonitorStringOpts extends AbstractPrefMonitor<String> {
 
   private final String dflt;
 
-  PrefMonitorStringOpts(String name, String[] opts, String dflt) {
+  public PrefMonitorStringOpts(String name, String[] opts, String dflt) {
     super(name);
     this.opts = opts;
     this.value = opts[0];

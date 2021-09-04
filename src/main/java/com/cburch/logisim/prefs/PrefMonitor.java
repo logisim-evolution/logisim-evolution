@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -17,14 +17,15 @@ import java.util.prefs.PreferenceChangeListener;
 public interface PrefMonitor<E> extends PreferenceChangeListener {
   void addPropertyChangeListener(PropertyChangeListener listener);
 
-  E get();
+  public E get();
 
-  boolean getBoolean();
+  public boolean getBoolean();
 
-  String getIdentifier();
+  public String getIdentifier();
 
   boolean isSource(PropertyChangeEvent event);
 
+  @Override
   void preferenceChange(PreferenceChangeEvent e);
 
   void removePropertyChangeListener(PropertyChangeListener listener);

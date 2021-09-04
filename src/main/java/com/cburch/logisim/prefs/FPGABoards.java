@@ -188,13 +188,11 @@ public class FPGABoards implements ActionListener {
   private JComboBox<String> boardSelector;
   private final ExternalBoardModel extBoardModel = new ExternalBoardModel();
 
-  FPGABoards() {
-    val prefs = AppPreferences.getPrefs();
-    for (var i = 0; i < maxBoards; i++) {
-      val encoding = prefs.get(extBoard + i, null);
-      if (encoding != null) {
-        addExternalBoard(encoding, i, prefs);
-      }
+  public FPGABoards() {
+    final var prefs = AppPreferences.getPrefs();
+    for (var i = 0; i < MaxBoards; i++) {
+      final var encoding = prefs.get(ExtBoard + i, null);
+      if (encoding != null) addExternalBoard(encoding, i, prefs);
     }
     val selectedBoard = AppPreferences.SelectedBoard.get();
     if (!buildInBoards.GetBoardNames().contains(selectedBoard)) {
