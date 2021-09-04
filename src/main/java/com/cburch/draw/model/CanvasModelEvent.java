@@ -37,7 +37,7 @@ public class CanvasModelEvent extends EventObject {
   @Getter private Map<AttributeMapKey, Object> oldValues;
   @Getter private Map<AttributeMapKey, Object> newValues;
   @Getter private Collection<ReorderRequest> reorderRequests;
-  private Handle handle;
+  @Getter private Handle handle;
   @Getter private HandleGesture handleGesture;
   @Getter private String oldText;
   @Getter private String newText;
