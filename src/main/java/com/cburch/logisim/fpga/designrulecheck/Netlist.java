@@ -13,8 +13,6 @@ import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
-import com.cburch.logisim.circuit.CircuitEvent;
-import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.Splitter;
 import com.cburch.logisim.circuit.SplitterAttributes;
 import com.cburch.logisim.circuit.SplitterFactory;
@@ -25,7 +23,6 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.wiring.Clock;
@@ -41,57 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class Netlist implements CircuitListener {
-
-  @Override
-  public void circuitChanged(CircuitEvent event) {
-    final var ev = event.getAction();
-    if (event.getData() instanceof InstanceComponent) {
-      final var inst = (InstanceComponent) event.getData();
-      if (!(event.getCircuit().equals(myCircuit))) {
-        if (inst.getFactory() instanceof Pin) drcStatus = DRC_REQUIRED;
-        return;
-      }
-
-      switch (ev) {
-        case CircuitEvent.ACTION_ADD:
-          drcStatus = DRC_REQUIRED;
-          if (inst.getFactory() instanceof SubcircuitFactory) {
-            final var fac = (SubcircuitFactory) inst.getFactory();
-            final var sub = fac.getSubcircuit();
-
-            if (mySubCircuitMap.containsKey(sub)) {
-              mySubCircuitMap.put(sub, mySubCircuitMap.get(sub) + 1);
-            } else {
-              mySubCircuitMap.put(sub, 1);
-              sub.addCircuitListener(this);
-            }
-          }
-          break;
-        case CircuitEvent.ACTION_REMOVE:
-          drcStatus = DRC_REQUIRED;
-          if (inst.getFactory() instanceof SubcircuitFactory) {
-            final var fac = (SubcircuitFactory) inst.getFactory();
-            final var sub = fac.getSubcircuit();
-            if (mySubCircuitMap.containsKey(sub)) {
-              if (mySubCircuitMap.get(sub) == 1) {
-                mySubCircuitMap.remove(sub);
-                sub.removeCircuitListener(this);
-              } else {
-                mySubCircuitMap.put(sub, mySubCircuitMap.get(sub) - 1);
-              }
-            }
-          }
-          break;
-        case CircuitEvent.ACTION_CLEAR:
-        case CircuitEvent.ACTION_INVALIDATE:
-          drcStatus = DRC_REQUIRED;
-          break;
-        default:
-          throw new IllegalStateException("Invalid value of 'ev': " + ev);
-      }
-    }
-  }
+public class Netlist {
 
   private static class SourceInfo {
     private final ConnectionPoint source;
@@ -132,7 +79,6 @@ public class Netlist implements CircuitListener {
 
   private String circuitName;
   private final ArrayList<Net> myNets = new ArrayList<>();
-  private final Map<Circuit, Integer> mySubCircuitMap = new HashMap<>();
   private final ArrayList<NetlistComponent> mySubCircuits = new ArrayList<>();
   private final ArrayList<NetlistComponent> myComponents = new ArrayList<>();
   private final ArrayList<NetlistComponent> myClockGenerators = new ArrayList<>();
@@ -159,7 +105,7 @@ public class Netlist implements CircuitListener {
 
   public Netlist(Circuit ThisCircuit) {
     myCircuit = ThisCircuit;
-    this.clear();
+    clear();
   }
 
   public void cleanClockTree(ClockSourceContainer ClockSources) {
@@ -281,17 +227,15 @@ public class Netlist implements CircuitListener {
     final var compNames = new ArrayList<String>();
     final var labels = new HashMap<String, Component>();
     final var drc = new ArrayList<SimpleDRCContainer>();
-    var commonDrcStatus = DRC_PASSED;
-    /* First we go down the tree and get the DRC status of all sub-circuits */
-    for (final var circ : mySubCircuitMap.keySet()) {
-      commonDrcStatus |= circ.getNetList().designRuleCheckResult(false, sheetNames);
-    }
-    // Check if we are okay
-    if (drcStatus == DRC_PASSED) return commonDrcStatus;
-    // There are changes, so we clean up the old information
-    clear();
-    drcStatus = DRC_PASSED;
+    
+    // if we are the toplevel component we clear the complete netlist 
+    if (isTopLevel) clear();
+    
+    // if we already have good drc results we can leave
+    if (drcStatus == DRC_PASSED) return DRC_PASSED;
+    
     // we mark already passed, if an error * occurs the status is changed
+    drcStatus = DRC_PASSED;
 
     // Check for duplicated sheet names, this is bad as we will have
     // multiple "different" components with the same name
@@ -309,6 +253,21 @@ public class Netlist implements CircuitListener {
     } else {
       sheetNames.add(myCircuit.getName());
     }
+    // we have to go down the tree to build first all subcircuits
+    final var handledCircuits = new ArrayList<Circuit>(); 
+    for (final var comp : myCircuit.getNonWires()) {
+      if (comp.getFactory() instanceof SubcircuitFactory) {
+        final var factory = (SubcircuitFactory) comp.getFactory();
+        final var subCircuit = factory.getSubcircuit();
+        if (handledCircuits.contains(subCircuit)) continue;
+        handledCircuits.add(subCircuit);
+        if (subCircuit.getNetList().designRuleCheckResult(false, sheetNames) != DRC_PASSED) {
+          drcStatus = DRC_REQUIRED;
+          return DRC_ERROR;
+        }
+      }
+    }
+    
     // Preparing stage
     for (final var comp : myCircuit.getNonWires()) {
       final var compName = comp.getFactory().getHDLName(comp.getAttributeSet());
@@ -410,7 +369,7 @@ public class Netlist implements CircuitListener {
     }
     drc.clear();
     /* Here we have to quit as the netlist generation needs a clean tree */
-    if ((drcStatus | commonDrcStatus) != DRC_PASSED) return drcStatus | commonDrcStatus;
+    if (drcStatus != DRC_PASSED) return drcStatus;
 
     /*
      * Okay we now know for sure that all elements are supported, lets build
@@ -424,13 +383,13 @@ public class Netlist implements CircuitListener {
        * here we have to quit, as all the following steps depend on a
        * proper netlist
        */
-      return drcStatus | commonDrcStatus;
+      return drcStatus;
     }
 
     if (netlistHasShortCircuits()) {
       clear();
       drcStatus = DRC_ERROR;
-      return drcStatus | commonDrcStatus;
+      return drcStatus;
     }
 
     /* Check for connections without a source */
@@ -508,7 +467,7 @@ public class Netlist implements CircuitListener {
     if (isTopLevel) {
       if (!detectClockTree()) {
         drcStatus = DRC_ERROR;
-        return drcStatus | commonDrcStatus;
+        return drcStatus;
       }
       constructHierarchyTree(null, new ArrayList<>(), 0, 0, 0);
       var ports =
@@ -520,19 +479,19 @@ public class Netlist implements CircuitListener {
       if (ports == 0) {
         Reporter.Report.AddFatalError(S.get("TopLevelNoIO", myCircuit.getName()));
         drcStatus = DRC_ERROR;
-        return drcStatus | commonDrcStatus;
+        return drcStatus;
       }
       /* Check for gated clocks */
       if (!detectGatedClocks()) {
         drcStatus = DRC_ERROR;
-        return drcStatus | commonDrcStatus;
+        return drcStatus;
       }
     }
 
     Reporter.Report.AddInfo(S.get("CircuitInfoString", myCircuit.getName(), numberOfNets(), numberOfBusses()));
     Reporter.Report.AddInfo(S.get("DRCPassesString", myCircuit.getName()));
     drcStatus = DRC_PASSED;
-    return drcStatus | commonDrcStatus;
+    return drcStatus;
   }
 
   private boolean detectClockTree() {
