@@ -106,10 +106,10 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
              IF (GlobalClock'event AND (GlobalClock = '1')) THEN
                 s_mult_shift_reg <= s_mult_shift_next;
                 s_seed_shift_reg <= s_seed_shift_next;
-                s_mac_lo_reg     <= std_logic_vector(unsigned(s_mac_lo_in_1)+unsigned(s_mac_lo_in_2);
+                s_mac_lo_reg     <= std_logic_vector( unsigned(s_mac_lo_in_1) + unsigned(s_mac_lo_in_2) );
                 s_mac_hi_1_reg   <= s_mac_hi_1_next;
-                s_mac_hi_reg     <= std_logic_vector(unsigned(s_mac_hi_1_reg)+unsigned(s_mac_hi_in_2)+
-                                    unsigned(s_mac_lo_reg(24 DOWNTO 24));
+                s_mac_hi_reg     <= std_logic_vector( unsigned(s_mac_hi_1_reg) + unsigned(s_mac_hi_in_2) +
+                                       unsigned(s_mac_lo_reg(24 DOWNTO 24) );
                 s_busy_pipe_reg  <= s_busy_pipe_next;
              END IF;
           END PROCESS make_shift_regs;
@@ -143,18 +143,21 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           assign Q = s_output_reg;
           assign s_InitSeed = ({{seed}}) ? {{seed}}} : 48'h5DEECE66D;
           assign s_reset = (s_reset_reg==3'b010) ? 1'b1 : 1'b0;
-          assign s_reset_next = (((s_reset_reg == 3'b101)|
-                                  (s_reset_reg == 3'b010))&clear) ? 3'b010 :
-                                (s_reset_reg==3'b001) ? 3'b101 : 3'b001;
+          assign s_reset_next = (( (s_reset_reg == 3'b101) | (s_reset_reg == 3'b010)) & clear)
+                                ? 3'b010 
+                                : (s_reset_reg==3'b001) ? 3'b101 : 3'b001;
           assign s_start = ((ClockEnable&enable)|((s_reset_reg == 3'b101)&clear)) ? 1'b1 : 1'b0;
-          assign s_mult_shift_next = (s_reset) ? 36'd0 :
-                                     (s_start_reg) ? 36'h5DEECE66D : {1'b0,s_mult_shift_reg[35:1]};
-          assign s_seed_shift_next = (s_reset) ? 48'd0 :
-                                     (s_start_reg) ? s_current_seed : {s_seed_shift_reg[46:0],1'b0};
+          assign s_mult_shift_next = (s_reset) 
+                                     ? 36'd0
+                                     : (s_start_reg) ? 36'h5DEECE66D : {1'b0,s_mult_shift_reg[35:1]};
+          assign s_seed_shift_next = (s_reset)
+                                     ? 48'd0
+                                     : (s_start_reg) ? s_current_seed : {s_seed_shift_reg[46:0],1'b0};
           assign s_mult_busy = (s_mult_shift_reg == 0) ? 1'b0 : 1'b1;
           assign s_mac_lo_in_1 = (s_start_reg|s_reset) ? 25'd0 : {1'b0,s_mac_lo_reg[23:0]};
-          assign s_mac_lo_in_2 = (s_start_reg) ? 25'hB :
-                                 (s_mult_shift_reg[0]) ? {1'b0,s_seed_shift_reg[23:0]} : 25'd0;
+          assign s_mac_lo_in_2 = (s_start_reg) ? 25'hB
+                                 : (s_mult_shift_reg[0])
+                                 ? {1'b0,s_seed_shift_reg[23:0]} : 25'd0;
           assign s_mac_hi_in_2 = (s_start_reg) ? 0 : s_mac_hi_reg;
           assign s_mac_hi_1_next = (s_mult_shift_reg[0]) ? s_seed_shift_reg[47:24] : 0;
           assign s_busy_pipe_next = (s_reset) ? 2'd0 : {s_busy_pipe_reg[0],s_mult_busy};

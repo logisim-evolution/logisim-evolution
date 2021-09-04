@@ -127,16 +127,16 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
           generate
              for (i = 0; i < {{nrOfRows}}; i = i + 1) begin
                 assign {{outsR}}[i] = (activeLow == 1)
-                   ? ~{{insR}}[i*nrOfColumns+s_columnCounterReg]
-                   :  {{insR}}[i*nrOfColumns+s_columnCounterReg];
+                    ? ~{{insR}}[i*nrOfColumns+s_columnCounterReg]
+                    :  {{insR}}[i*nrOfColumns+s_columnCounterReg];
                 assign {{outsG}}[i] = (activeLow == 1)
-                   ? ~{{insG}}[i*nrOfColumns+s_columnCounterReg]
-                   :  {{insG}}[i*nrOfColumns+s_columnCounterReg];
+                    ? ~{{insG}}[i*nrOfColumns+s_columnCounterReg]
+                    :  {{insG}}[i*nrOfColumns+s_columnCounterReg];
                 assign {{outsB}}[i] = (activeLow == 1)
-                   ? ~{{insB}}[i*nrOfColumns+s_columnCounterReg]
-                   :  [{insB}}[i*nrOfColumns+s_columnCounterReg];
+                    ? ~{{insB}}[i*nrOfColumns+s_columnCounterReg]
+                    :  {{insB}}[i*nrOfColumns+s_columnCounterReg];
              end
-          endgenerate" +
+          endgenerate
           """);
     }
     return contents.getWithIndent();

@@ -55,7 +55,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           
           make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )
           BEGIN
-             IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');"
+             IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');
           """);
       if (Netlist.isFlipFlop(attrs)) {
         contents.add("""
