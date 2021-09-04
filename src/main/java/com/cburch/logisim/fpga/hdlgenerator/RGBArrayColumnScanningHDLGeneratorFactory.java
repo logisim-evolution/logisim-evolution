@@ -27,25 +27,25 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
 
     if (HDL.isVHDL()) {
       contents.add("""
-          PORT MAP ( {{addr}} => {{addr}}{{id}},
+          PORT MAP ( {{addr }} => {{addr}}{{id}},
                      {{clock}} => {{clock}},
                      {{outsR}} => {{outsR}}{{id}},
                      {{outsG}} => {{outsG}}{{id}},
                      {{outsB}} => {{outsB}}{{id}},
-                     {{insR}} => s_{{insR}}{{id}},
-                     {{insG}} => s_{{insG}}{{id}},
-                     {{insB}} => s_{{insB}}{{id}} );
+                     {{insR }} => s_{{insR}}{{id}},
+                     {{insG }} => s_{{insG}}{{id}},
+                     {{insB }} => s_{{insB}}{{id}} );
           """);
     } else {
       contents.add("""
-          ( .{{addr}}({{addr}}{{id}}),
-            .{{clock}({{clock}}),
+          ( .{{addr }}({{addr}}{{id}}),
+            .{{clock}}({{clock}}),
             .{{outsR}}({{outsR}}{{id}}),
             .{{outsG}}({{outsG}}{{id}}),
             .{{outsB}}({{outsB}}{{id}}),
-            .{{insR}}(s_{{insR}}{{id}}),
-            .{{insG}}(s_{{insG}}{{id}}),
-            .{{insB}}(s_{{insB}}{{id}}) );
+            .{{insR }}(s_{{insR}}{{id}}),
+            .{{insG }}(s_{{insG}}{{id}}),
+            .{{insB }}(s_{{insB}}{{id}}) );
           """);
     }
     return contents.getWithIndent(6);
@@ -125,16 +125,17 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
 
           genvar i;
           generate
-             for (i = 0; i < {{nrOfRows}}; i = i + 1) begin
+             for (i = 0; i < {{nrOfRows}}; i = i + 1)
+             begin:outputs
                 assign {{outsR}}[i] = (activeLow == 1)
-                    ? ~{{insR}}[i*nrOfColumns+s_columnCounterReg]
-                    :  {{insR}}[i*nrOfColumns+s_columnCounterReg];
+                    ? ~{{insR }}[i*nrOfColumns+s_columnCounterReg]
+                    :  {{insR }}[i*nrOfColumns+s_columnCounterReg];
                 assign {{outsG}}[i] = (activeLow == 1)
-                    ? ~{{insG}}[i*nrOfColumns+s_columnCounterReg]
-                    :  {{insG}}[i*nrOfColumns+s_columnCounterReg];
+                    ? ~{{insG }}[i*nrOfColumns+s_columnCounterReg]
+                    :  {{insG }}[i*nrOfColumns+s_columnCounterReg];
                 assign {{outsB}}[i] = (activeLow == 1)
-                    ? ~{{insB}}[i*nrOfColumns+s_columnCounterReg]
-                    :  {{insB}}[i*nrOfColumns+s_columnCounterReg];
+                    ? ~{{insB }}[i*nrOfColumns+s_columnCounterReg]
+                    :  {{insB }}[i*nrOfColumns+s_columnCounterReg];
              end
           endgenerate
           """);

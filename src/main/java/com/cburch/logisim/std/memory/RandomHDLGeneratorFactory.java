@@ -141,7 +141,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     } else {
       contents.add("""
           assign Q = s_output_reg;
-          assign s_InitSeed = ({{seed}}) ? {{seed}}} : 48'h5DEECE66D;
+          assign s_InitSeed = ({{seed}}) ? {{seed}} : 48'h5DEECE66D;
           assign s_reset = (s_reset_reg==3'b010) ? 1'b1 : 1'b0;
           assign s_reset_next = (( (s_reset_reg == 3'b101) | (s_reset_reg == 3'b010)) & clear)
                                 ? 3'b010 

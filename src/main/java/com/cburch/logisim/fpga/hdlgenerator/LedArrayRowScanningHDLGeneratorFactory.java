@@ -258,7 +258,8 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
           
           genvar i;
           generate
-             for (i = 0; i < {{nrOfColumns}}; i = i + 1) begin
+             for (i = 0; i < {{nrOfColumns}}; i = i + 1)
+             begin:outputs
                 assign {{outs}}[i] = (activeLow == 1)
                    ? ~{{ins}}[{{nrOfColumns}} * s_rowCounterReg + i]
                    :  {{ins}}[{{nrOfColumns}} * s_rowCounterReg + i];

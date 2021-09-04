@@ -32,31 +32,31 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
         (new LineBuffer(sharedPairs))
-            .pair("address", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
+            .pair("addr", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
             .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
             .pair("id", id);
 
     if (HDL.isVHDL()) {
       contents.add("""
-          PORT MAP ( {{address}} => {{address}}{{id}}
+          PORT MAP ( {{addr }} => {{addr}}{{id}}
                      {{clock}} => {{clock}},
                      {{outsR}} => {{outsR}}{{id}},
                      {{outsG}} => {{outsG}}{{id}},
                      {{outsB}} => {{outsB}}{{id}},
-                     {{insR}} => s_{{insR}}{{id}},
-                     {{insG}} => s_{{insG}}{{id}},
-                     {{insB}} => s_{{insB}}{{id}} );
+                     {{insR }} => s_{{insR}}{{id}},
+                     {{insG }} => s_{{insG}}{{id}},
+                     {{insB }} => s_{{insB}}{{id}} );
           """);
     } else {
       contents.add("""
-          ( .{{address}}({{address}}{{id}}),
+          ( .{{addr }}({{addr}}{{id}}),
             .{{clock}}({{clock}}),
             .{{outsR}}({{outsR}}{{id}}),
             .{{outsG}}({{outsG}}{{id}}),
             .{{outsB}}({{outsB}}{{id}}),
-            .{{insR}}(s_{{insR}}{{id}}),
-            .{{insG}}(s_{{insG}}{{id}}),
-            .{{insB}}(s_{{insB}}{{id}}) );
+            .{{insR }}(s_{{insR}}{{id}}),
+            .{{insG }}(s_{{insG}}{{id}}),
+            .{{insB }}(s_{{insB}}{{id}}) );
           """);
     }
     return contents.getWithIndent(6);
@@ -131,16 +131,17 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
           
           genvar i;
           generate
-             for (i = 0; i < {{nrOfColumns}}; i = i + 1) begin
+             for (i = 0; i < {{nrOfColumns}}; i = i + 1)
+             begin:outputs
                 assign {{outsR}}[i] = (activeLow == 1)
                    ? ~{{insR}}[{{nrOfColumns}} * s_rowCounterReg + i]
-                   : {{insR}}[nrOfColumns * s_rowCounterReg + i];
+                   :  {{insR}}[{{nrOfColumns}} * s_rowCounterReg + i];
                 assign {{outsG}}[i] = (activeLow == 1)
                    ? ~{{insG}}[{{nrOfColumns}} * s_rowCounterReg + i]
-                    : {{insG}}[{{nrOfColumns}} * s_rowCounterReg + i];
+                   :  {{insG}}[{{nrOfColumns}} * s_rowCounterReg + i];
                 assign {{outsB}}[i] = (activeLow == 1)
-                    ? ~{{insB}}[{{nrOfColumns}} * s_rowCounterReg + i]
-                   : {{insB}}[{{nrOfColumns}} * s_rowCounterReg + i];
+                   ? ~{{insB}}[{{nrOfColumns}} * s_rowCounterReg + i]
+                   :  {{insB}}[{{nrOfColumns}} * s_rowCounterReg + i];
              end
           endgenerate" +
           """);
