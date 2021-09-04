@@ -70,7 +70,7 @@ public class Reporter {
   }
 
   public void addFatalErrorFmt(String fmt, Object... args) {
-    addFatalErrorFmt(String.format(fmt, args));
+    addFatalError(String.format(fmt, args));
   }
 
   public void AddFatalError(String Message) {
