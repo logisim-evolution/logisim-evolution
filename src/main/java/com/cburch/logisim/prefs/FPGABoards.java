@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -171,9 +171,7 @@ public class FPGABoards implements ActionListener {
     } else if (e.getSource().equals(boardSelector)) {
       if (boardSelector.getSelectedItem() == null) return;
       if (boardSelector.getSelectedItem().equals("Other")) {
-        if (!addBoard(true)) {
-          rebuildBoardSelector(false, null);
-        }
+        if (!addBoard(true)) rebuildBoardSelector(false, null);
       } else {
         AppPreferences.SelectedBoard.set(boardSelector.getSelectedItem().toString());
       }
@@ -208,9 +206,7 @@ public class FPGABoards implements ActionListener {
     /* first we check if the file exists */
     val f = new File(filename);
     if (!f.exists() || f.isDirectory()) {
-      if (prefs != null) {
-        prefs.remove(extBoard + oldindex);
-      }
+      if (prefs != null) prefs.remove(extBoard + oldindex);
       return false;
     }
     /* we check if the list is full and clean-up */
