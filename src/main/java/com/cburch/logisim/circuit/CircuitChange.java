@@ -191,15 +191,15 @@ public class CircuitChange {
 
   public CircuitChange getReverseChange() {
     return switch (type) {
-       case CLEAR -> CircuitChange.addAll(circuit, comps);
-       case ADD-> CircuitChange.remove(circuit, component);
-       case ADD_ALL->  CircuitChange.removeAll(circuit, comps);
-       case REMOVE-> CircuitChange.add(circuit, component);
-       case REMOVE_ALL-> CircuitChange.addAll(circuit, comps);
-       case SET->  CircuitChange.set(circuit, component, attribute, newValue, oldValue);
-       case SET_FOR_CIRCUIT->  CircuitChange.setForCircuit(circuit, attribute, newValue, oldValue);
-       case REPLACE-> CircuitChange.replace(circuit, ((ReplacementMap) newValue).getInverseMap());
-       default->throw new IllegalArgumentException("unknown change type " + type);
+      case CLEAR -> CircuitChange.addAll(circuit, comps);
+      case ADD-> CircuitChange.remove(circuit, component);
+      case ADD_ALL->  CircuitChange.removeAll(circuit, comps);
+      case REMOVE-> CircuitChange.add(circuit, component);
+      case REMOVE_ALL-> CircuitChange.addAll(circuit, comps);
+      case SET->  CircuitChange.set(circuit, component, attribute, newValue, oldValue);
+      case SET_FOR_CIRCUIT->  CircuitChange.setForCircuit(circuit, attribute, newValue, oldValue);
+      case REPLACE-> CircuitChange.replace(circuit, ((ReplacementMap) newValue).getInverseMap());
+      default->throw new IllegalArgumentException("unknown change type " + type);
     };
   }
 
