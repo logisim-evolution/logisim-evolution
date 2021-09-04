@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -16,6 +16,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
+import lombok.Getter;
+import lombok.val;
 
 class ToolbarButton extends JComponent implements BaseMouseListenerContract {
   private static final long serialVersionUID = 1L;
@@ -23,7 +25,7 @@ class ToolbarButton extends JComponent implements BaseMouseListenerContract {
   private static final int BORDER = 2;
 
   private final Toolbar toolbar;
-  private final ToolbarItem item;
+  @Getter private final ToolbarItem item;
 
   ToolbarButton(Toolbar toolbar, ToolbarItem item) {
     this.toolbar = toolbar;
@@ -33,10 +35,6 @@ class ToolbarButton extends JComponent implements BaseMouseListenerContract {
     setToolTipText("");
   }
 
-  public ToolbarItem getItem() {
-    return item;
-  }
-
   @Override
   public Dimension getMinimumSize() {
     return getPreferredSize();
@@ -44,7 +42,7 @@ class ToolbarButton extends JComponent implements BaseMouseListenerContract {
 
   @Override
   public Dimension getPreferredSize() {
-    final var dim = item.getDimension(toolbar.getOrientation());
+    val dim = item.getDimension(toolbar.getOrientation());
     dim.width += 2 * BORDER;
     dim.height += 2 * BORDER;
     return dim;
@@ -93,14 +91,14 @@ class ToolbarButton extends JComponent implements BaseMouseListenerContract {
   public void paintComponent(Graphics g) {
     if (toolbar.getPressed() == this) {
       if (item instanceof ToolbarClickableItem) {
-        final var g2 = g.create();
+        val g2 = g.create();
         g2.translate(BORDER, BORDER);
         ((ToolbarClickableItem) item).paintPressedIcon(ToolbarButton.this, g2);
         g2.dispose();
         return;
       }
-      final var dim = item.getDimension(toolbar.getOrientation());
-      final var defaultColor = g.getColor();
+      val dim = item.getDimension(toolbar.getOrientation());
+      val defaultColor = g.getColor();
       GraphicsUtil.switchToWidth(g, 2);
       g.setColor(Color.GRAY);
       g.fillRect(BORDER, BORDER, dim.width, dim.height);
@@ -108,14 +106,14 @@ class ToolbarButton extends JComponent implements BaseMouseListenerContract {
       g.setColor(defaultColor);
     }
 
-    final var g2 = g.create();
+    val g2 = g.create();
     g2.translate(BORDER, BORDER);
     item.paintIcon(ToolbarButton.this, g2);
     g2.dispose();
 
     // draw selection indicator
     if (toolbar.getToolbarModel().isSelected(item)) {
-      final var dim = item.getDimension(toolbar.getOrientation());
+      val dim = item.getDimension(toolbar.getOrientation());
       GraphicsUtil.switchToWidth(g, 2);
       g.setColor(Color.BLACK);
       g.drawRect(BORDER, BORDER, dim.width, dim.height);

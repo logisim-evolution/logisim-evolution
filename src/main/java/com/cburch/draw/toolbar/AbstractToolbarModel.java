@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -11,6 +11,7 @@ package com.cburch.draw.toolbar;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.val;
 
 public abstract class AbstractToolbarModel implements ToolbarModel {
   private final List<ToolbarModelListener> listeners;
@@ -25,15 +26,15 @@ public abstract class AbstractToolbarModel implements ToolbarModel {
   }
 
   protected void fireToolbarAppearanceChanged() {
-    final var event = new ToolbarModelEvent(this);
-    for (final var listener : listeners) {
+    val event = new ToolbarModelEvent(this);
+    for (val listener : listeners) {
       listener.toolbarAppearanceChanged(event);
     }
   }
 
   protected void fireToolbarContentsChanged() {
-    final var event = new ToolbarModelEvent(this);
-    for (final var listener : listeners) {
+    val event = new ToolbarModelEvent(this);
+    for (val listener : listeners) {
       listener.toolbarContentsChanged(event);
     }
   }

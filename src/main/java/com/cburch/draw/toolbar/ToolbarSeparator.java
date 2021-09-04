@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -14,6 +14,7 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
+import lombok.val;
 
 public class ToolbarSeparator implements ToolbarItem {
   private final int size;
@@ -39,12 +40,12 @@ public class ToolbarSeparator implements ToolbarItem {
 
   @Override
   public void paintIcon(Component destination, Graphics gfx) {
-    final var dim = destination.getSize();
+    val dim = destination.getSize();
     var x = 0;
     var y = 0;
     var w = dim.width;
     var h = dim.height;
-    final var width = AppPreferences.getScaled(2);
+    val width = AppPreferences.getScaled(2);
     if (h >= w) { // separator is a vertical line in horizontal toolbar
       x = (w - width - 2) / 2;
       w = width;

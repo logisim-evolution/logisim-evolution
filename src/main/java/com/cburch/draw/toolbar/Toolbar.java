@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -13,6 +13,8 @@ import java.awt.BorderLayout;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import lombok.Getter;
+import lombok.val;
 
 public class Toolbar extends JPanel {
   public static final Object VERTICAL = new Object();
@@ -20,14 +22,14 @@ public class Toolbar extends JPanel {
   private static final long serialVersionUID = 1L;
   private final JPanel subpanel;
   private final MyListener myListener;
-  private ToolbarModel model;
-  private Object orientation;
+  @Getter private ToolbarModel toolbarModel;
+  @Getter private Object orientation;
   private ToolbarButton curPressed;
 
-  public Toolbar(ToolbarModel model) {
+  public Toolbar(ToolbarModel toolbarModel) {
     super(new BorderLayout());
     this.subpanel = new JPanel();
-    this.model = model;
+    this.toolbarModel = toolbarModel;
     this.orientation = HORIZONTAL;
     this.myListener = new MyListener();
     this.curPressed = null;
@@ -36,12 +38,12 @@ public class Toolbar extends JPanel {
     setOrientation(HORIZONTAL);
 
     computeContents();
-    if (model != null) model.addToolbarModelListener(myListener);
+    if (toolbarModel != null) toolbarModel.addToolbarModelListener(myListener);
   }
 
   private void computeContents() {
     subpanel.removeAll();
-    final var m = model;
+    val m = toolbarModel;
     if (m != null) {
       for (ToolbarItem item : m.getItems()) {
         subpanel.add(new ToolbarButton(this, item));
@@ -49,10 +51,6 @@ public class Toolbar extends JPanel {
       subpanel.add(Box.createGlue());
     }
     revalidate();
-  }
-
-  Object getOrientation() {
-    return orientation;
   }
 
   public void setOrientation(Object value) {
@@ -78,7 +76,7 @@ public class Toolbar extends JPanel {
   }
 
   void setPressed(ToolbarButton value) {
-    final var oldValue = curPressed;
+    val oldValue = curPressed;
     if (oldValue != value) {
       curPressed = value;
       if (oldValue != null) oldValue.repaint();
@@ -86,16 +84,12 @@ public class Toolbar extends JPanel {
     }
   }
 
-  public ToolbarModel getToolbarModel() {
-    return model;
-  }
-
   public void setToolbarModel(ToolbarModel value) {
-    final var oldValue = model;
+    val oldValue = toolbarModel;
     if (value != oldValue) {
       if (oldValue != null) oldValue.removeToolbarModelListener(myListener);
       if (value != null) value.addToolbarModelListener(myListener);
-      model = value;
+      toolbarModel = value;
       computeContents();
     }
   }
