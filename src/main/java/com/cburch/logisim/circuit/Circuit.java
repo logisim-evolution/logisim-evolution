@@ -257,7 +257,6 @@ public class Circuit {
     myNetList = new Netlist(this);
     myMappableResources = new HashMap<>();
     loadedMaps = new HashMap<>();
-    addCircuitListener(myNetList);
     isAnnotated = false;
     logiFile = file;
     staticAttrs.setValue(
