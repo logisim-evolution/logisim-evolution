@@ -166,7 +166,6 @@ public class Startup implements AWTEventListener {
   private static final String ARG_LOCALE_LONG = "locale";
   private static final String ARG_TEMPLATE_SHORT = "z";
   private static final String ARG_TEMPLATE_LONG = "template";
-//  private static final String ARG_NO_SPLASH_SHORT = "n";
   private static final String ARG_NO_SPLASH_LONG = "no-splash";
   private static final String ARG_TEST_VECTOR_SHORT = "w";
   private static final String ARG_TEST_VECTOR_LONG = "test-vector";
@@ -316,8 +315,8 @@ public class Startup implements AWTEventListener {
   public static Startup parseArgs(String[] args) {
 
     final var opts = new Options();
-    addOption(opts, "argHelpOption", ARG_HELP_SHORT, ARG_HELP_LONG);
-    addOption(opts, "argVersionOption", ARG_VERSION_SHORT, ARG_VERSION_LONG);
+    addOption(opts, "argHelpOption", ARG_HELP_LONG, ARG_HELP_SHORT);
+    addOption(opts, "argVersionOption", ARG_VERSION_LONG, ARG_VERSION_SHORT);
 
     // Set up supported arguments for the arg parser to look for.
     // Note: you need to create handler for each option. See handler loop below.
@@ -335,7 +334,7 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argTemplateOption", ARG_TEMPLATE_LONG, ARG_TEMPLATE_SHORT, 1);
     addOption(opts, "argNoSplashOption", ARG_NO_SPLASH_LONG);
     addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR_LONG, ARG_TEST_VECTOR_SHORT, 2);
-    addOption(opts, "argTestCircuitOption", ARG_TEST_CIRCUIT_LONG, 	ARG_TEST_CIRCUIT_SHORT, 1);   // FIXME add "Option" suffix to key name
+    addOption(opts, "argTestCircuitOption", ARG_TEST_CIRCUIT_LONG, ARG_TEST_CIRCUIT_SHORT, 1);     // FIXME add "Option" suffix to key name
     addOption(opts, "argTestCircGenOption", ARG_TEST_CIRC_GEN_LONG, ARG_TEST_CIRC_GEN_SHORT, 2);   // FIXME add "Option" suffix to key name
 
     CommandLine cmd;
@@ -388,24 +387,24 @@ public class Startup implements AWTEventListener {
       // Note: you should have handler for each option. So number of `case`s
       // here should equal number of calls to `addOption()` above.
       final var optHandlerRc = switch (opt.getLongOpt()) {
-        case ARG_HELP_LONG -> printHelp(opts);
-        case ARG_VERSION_LONG -> printVersion();
-        case ARG_TTY_LONG -> handleArgTty(startup, opt);
-        case ARG_SUBSTITUTE_LONG -> handleArgSubstitute(startup, opt);
-        case ARG_LOAD_LONG -> handleArgLoad(startup, opt);
-        case ARG_EMPTY_LONG -> handleArgEmpty(startup, opt);
-        case ARG_PLAIN_LONG -> handleArgPlain(startup, opt);
-        case ARG_GATES_LONG -> handleArgGates(startup, opt);
-        case ARG_GEOMETRY_LONG -> handleArgGeometry(startup, opt);
-        case ARG_LOCALE_LONG -> handleArgLocale(startup, opt);
-        case ARG_TEMPLATE_LONG -> handleArgTemplate(startup, opt);
-        case ARG_NO_SPLASH_LONG -> handleArgNoSplash(startup, opt);
-        case ARG_TEST_VECTOR_LONG -> handleArgTestVector(startup, opt);
-        case ARG_TEST_FGPA_LONG -> handleArgTestFpga(startup, opt);
-        case ARG_TEST_CIRCUIT_LONG -> handleArgTestCircuit(startup, opt);
-        case ARG_TEST_CIRC_GEN_LONG -> handleArgTestCircGen(startup, opt);
-        case ARG_CIRCUIT_LONG -> handleArgCircuit(startup, opt);
-        default -> RC.OK; // should not really happen IRL.
+          case ARG_HELP_LONG -> printHelp(opts);
+          case ARG_VERSION_LONG -> printVersion();
+          case ARG_TTY_LONG -> handleArgTty(startup, opt);
+          case ARG_SUBSTITUTE_LONG -> handleArgSubstitute(startup, opt);
+          case ARG_LOAD_LONG -> handleArgLoad(startup, opt);
+          case ARG_EMPTY_LONG -> handleArgEmpty(startup, opt);
+          case ARG_PLAIN_LONG -> handleArgPlain(startup, opt);
+          case ARG_GATES_LONG -> handleArgGates(startup, opt);
+          case ARG_GEOMETRY_LONG -> handleArgGeometry(startup, opt);
+          case ARG_LOCALE_LONG -> handleArgLocale(startup, opt);
+          case ARG_TEMPLATE_LONG -> handleArgTemplate(startup, opt);
+          case ARG_NO_SPLASH_LONG -> handleArgNoSplash(startup, opt);
+          case ARG_TEST_VECTOR_LONG -> handleArgTestVector(startup, opt);
+          case ARG_TEST_FGPA_LONG -> handleArgTestFpga(startup, opt);
+          case ARG_TEST_CIRCUIT_LONG -> handleArgTestCircuit(startup, opt);
+          case ARG_TEST_CIRC_GEN_LONG -> handleArgTestCircGen(startup, opt);
+          case ARG_CIRCUIT_LONG -> handleArgCircuit(startup, opt);
+          default -> RC.OK; // should not really happen IRL.
       };
       lastHandlerRc = optHandlerRc;
       switch (optHandlerRc) {
@@ -465,16 +464,16 @@ public class Startup implements AWTEventListener {
       // FIXME: why we support multiple TTY types in one invocation? fallback?
       for (final var singleFmt : fmts) {
         final var val = switch (singleFmt.trim()) {
-          case "table" -> TtyInterface.FORMAT_TABLE;
-          case "speed" -> TtyInterface.FORMAT_SPEED;
-          case "tty" -> TtyInterface.FORMAT_TTY;
-          case "halt" -> TtyInterface.FORMAT_HALT;
-          case "stats" -> TtyInterface.FORMAT_STATISTICS;
-          case "binary" -> TtyInterface.FORMAT_TABLE_BIN;
-          case "hex" -> TtyInterface.FORMAT_TABLE_HEX;
-          case "csv" -> TtyInterface.FORMAT_TABLE_CSV;
-          case "tabs" -> TtyInterface.FORMAT_TABLE_TABBED;
-          default -> 0;
+            case "table" -> TtyInterface.FORMAT_TABLE;
+            case "speed" -> TtyInterface.FORMAT_SPEED;
+            case "tty" -> TtyInterface.FORMAT_TTY;
+            case "halt" -> TtyInterface.FORMAT_HALT;
+            case "stats" -> TtyInterface.FORMAT_STATISTICS;
+            case "binary" -> TtyInterface.FORMAT_TABLE_BIN;
+            case "hex" -> TtyInterface.FORMAT_TABLE_HEX;
+            case "csv" -> TtyInterface.FORMAT_TABLE_CSV;
+            case "tabs" -> TtyInterface.FORMAT_TABLE_TABBED;
+            default -> 0;
         };
 
         if (val == 0) {
@@ -780,7 +779,7 @@ public class Startup implements AWTEventListener {
     if (mainCircuit == null) return false;
     final var simTickFreq = mainCircuit.getTickFrequency();
     final var downTickFreq = mainCircuit.getDownloadFrequency();
-    final var usedFrequency = (testTickFrequency > 0) ? testTickFrequency : 
+    final var usedFrequency = (testTickFrequency > 0) ? testTickFrequency :
         (downTickFreq > 0) ? downTickFreq : simTickFreq;
     Download Downloader =
         new Download(
