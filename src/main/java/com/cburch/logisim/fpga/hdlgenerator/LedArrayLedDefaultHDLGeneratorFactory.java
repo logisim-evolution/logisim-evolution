@@ -108,7 +108,8 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
       contents.add("""
           genvar i;
           generate
-             for (i = 0; i < nrOfLeds; i = i + 1) begin
+             for (i = 0; i < nrOfLeds; i = i + 1)
+             begin:outputs
                 assign {{outs}}[i] = (activeLow == 1) ? ~{{ins}}[n] : {{ins}}[n];
              end
           endgenerate

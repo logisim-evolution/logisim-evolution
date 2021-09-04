@@ -109,7 +109,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 s_mac_lo_reg     <= std_logic_vector( unsigned(s_mac_lo_in_1) + unsigned(s_mac_lo_in_2) );
                 s_mac_hi_1_reg   <= s_mac_hi_1_next;
                 s_mac_hi_reg     <= std_logic_vector( unsigned(s_mac_hi_1_reg) + unsigned(s_mac_hi_in_2) +
-                                       unsigned(s_mac_lo_reg(24 DOWNTO 24) );
+                                       unsigned(s_mac_lo_reg(24 DOWNTO 24)) );
                 s_busy_pipe_reg  <= s_busy_pipe_next;
              END IF;
           END PROCESS make_shift_regs;
