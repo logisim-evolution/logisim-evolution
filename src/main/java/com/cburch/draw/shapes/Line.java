@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -23,6 +23,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.List;
 import java.util.Random;
+import lombok.Getter;
+import lombok.val;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -33,7 +35,7 @@ public class Line extends AbstractCanvasObject {
   private int y0;
   private int x1;
   private int y1;
-  private Bounds bounds;
+  @Getter private Bounds bounds;
   private int strokeWidth;
   private Color strokeColor;
 
@@ -54,10 +56,10 @@ public class Line extends AbstractCanvasObject {
 
   @Override
   public boolean contains(Location loc, boolean assumeFilled) {
-    final var xq = loc.getX();
-    final var yq = loc.getY();
-    final var d = LineUtil.ptDistSqSegment(x0, y0, x1, y1, xq, yq);
-    final var thresh = Math.max(ON_LINE_THRESH, strokeWidth / 2);
+    val xq = loc.getX();
+    val yq = loc.getY();
+    val d = LineUtil.ptDistSqSegment(x0, y0, x1, y1, xq, yq);
+    val thresh = Math.max(ON_LINE_THRESH, strokeWidth / 2);
     return d < thresh * thresh;
   }
 
@@ -66,10 +68,6 @@ public class Line extends AbstractCanvasObject {
     return DrawAttr.ATTRS_STROKE;
   }
 
-  @Override
-  public Bounds getBounds() {
-    return bounds;
-  }
 
   @Override
   public String getDisplayName() {
@@ -91,13 +89,12 @@ public class Line extends AbstractCanvasObject {
   @Override
   public List<Handle> getHandles(HandleGesture gesture) {
     if (gesture == null) {
-      return UnmodifiableList.create(
-          new Handle[] {new Handle(this, x0, y0), new Handle(this, x1, y1)});
+      return UnmodifiableList.create(new Handle[] {new Handle(this, x0, y0), new Handle(this, x1, y1)});
     } else {
-      final var h = gesture.getHandle();
-      final var dx = gesture.getDeltaX();
-      final var dy = gesture.getDeltaY();
-      final var ret = new Handle[2];
+      val h = gesture.getHandle();
+      val dx = gesture.getDeltaX();
+      val dy = gesture.getDeltaY();
+      val ret = new Handle[2];
       ret[0] = new Handle(this, h.isAt(x0, y0) ? Location.create(x0 + dx, y0 + dy) : Location.create(x0, y0));
       ret[1] = new Handle(this, h.isAt(x1, y1) ? Location.create(x1 + dx, y1 + dy) : Location.create(x1, y1));
       return UnmodifiableList.create(ret);
@@ -106,10 +103,10 @@ public class Line extends AbstractCanvasObject {
 
   @Override
   public Location getRandomPoint(Bounds bds, Random rand) {
-    final var u = rand.nextDouble();
+    val u = rand.nextDouble();
     var x = (int) Math.round(x0 + u * (x1 - x0));
     var y = (int) Math.round(y0 + u * (y1 - y0));
-    final var w = strokeWidth;
+    val w = strokeWidth;
     if (w > 1) {
       x += (rand.nextInt(w) - w / 2);
       y += (rand.nextInt(w) - w / 2);
@@ -132,7 +129,7 @@ public class Line extends AbstractCanvasObject {
   @Override
   public boolean matches(CanvasObject other) {
     if (other instanceof Line) {
-      Line that = (Line) other;
+      val that = (Line) other;
       return this.x0 == that.x0
           && this.y0 == that.x1
           && this.x1 == that.y0
@@ -155,9 +152,9 @@ public class Line extends AbstractCanvasObject {
 
   @Override
   public Handle moveHandle(HandleGesture gesture) {
-    final var h = gesture.getHandle();
-    final var dx = gesture.getDeltaX();
-    final var dy = gesture.getDeltaY();
+    val h = gesture.getHandle();
+    val dx = gesture.getDeltaX();
+    val dy = gesture.getDeltaY();
     Handle ret = null;
     if (h.isAt(x0, y0)) {
       x0 += dx;
@@ -180,7 +177,7 @@ public class Line extends AbstractCanvasObject {
       var y0 = this.y0;
       var x1 = this.x1;
       var y1 = this.y1;
-      final var h = gesture.getHandle();
+      val h = gesture.getHandle();
       if (h.isAt(x0, y0)) {
         x0 += gesture.getDeltaX();
         y0 += gesture.getDeltaY();

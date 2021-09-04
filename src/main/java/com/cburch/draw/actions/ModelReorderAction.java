@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -19,11 +19,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import lombok.Getter;
+import lombok.val;
 
 public class ModelReorderAction extends ModelAction {
   private final List<ReorderRequest> requests;
-  private final List<CanvasObject> objects;
+  @Getter private final List<CanvasObject> objects;
   private final int type;
 
   public ModelReorderAction(CanvasModel model, List<ReorderRequest> requests) {
@@ -35,10 +36,10 @@ public class ModelReorderAction extends ModelAction {
     }
     int typeIndex = 0; // 0 = mixed/unknown, -1 = to greater index, 1 = to
     // smaller index
-    for (ReorderRequest r : requests) {
+    for (val r : requests) {
       int thisType;
-      int from = r.getFromIndex();
-      int to = r.getToIndex();
+      val from = r.getFromIndex();
+      val to = r.getToIndex();
       thisType = Integer.compare(to, from);
       if (typeIndex == 2) {
         typeIndex = thisType;
@@ -50,103 +51,84 @@ public class ModelReorderAction extends ModelAction {
     this.type = typeIndex;
   }
 
-  public static ModelReorderAction createLower(
-      CanvasModel model, Collection<? extends CanvasObject> objects) {
-    List<ReorderRequest> reqs = new ArrayList<>();
-    Map<CanvasObject, Integer> zmap = ZOrder.getZIndex(objects, model);
-    for (Map.Entry<CanvasObject, Integer> entry : zmap.entrySet()) {
-      CanvasObject obj = entry.getKey();
-      int from = entry.getValue();
-      CanvasObject above = ZOrder.getObjectBelow(obj, model, objects);
+  public static ModelReorderAction createLower(CanvasModel model, Collection<? extends CanvasObject> objects) {
+    val reqs = new ArrayList<ReorderRequest>();
+    val zMap = ZOrder.getZIndex(objects, model);
+    for (val entry : zMap.entrySet()) {
+      val obj = entry.getKey();
+      val from = entry.getValue();
+      val above = ZOrder.getObjectBelow(obj, model, objects);
       if (above != null) {
-        int to = ZOrder.getZIndex(above, model);
-        if (objects.contains(above)) {
-          to++;
-        }
+        var to = ZOrder.getZIndex(above, model);
+        if (objects.contains(above)) to++;
         reqs.add(new ReorderRequest(obj, from, to));
       }
     }
-    if (reqs.isEmpty()) {
-      return null;
-    } else {
-      reqs.sort(ReorderRequest.ASCENDING_FROM);
-      repairRequests(reqs);
-      return new ModelReorderAction(model, reqs);
-    }
+    if (reqs.isEmpty()) return null;
+
+    reqs.sort(ReorderRequest.ASCENDING_FROM);
+    repairRequests(reqs);
+    return new ModelReorderAction(model, reqs);
   }
 
-  public static ModelReorderAction createLowerBottom(
-      CanvasModel model, Collection<? extends CanvasObject> objects) {
-    List<ReorderRequest> reqs = new ArrayList<>();
-    Map<CanvasObject, Integer> zmap = ZOrder.getZIndex(objects, model);
-    int to = 0;
-    for (Map.Entry<CanvasObject, Integer> entry : zmap.entrySet()) {
-      CanvasObject obj = entry.getKey();
-      int from = entry.getValue();
+  public static ModelReorderAction createLowerBottom(CanvasModel model, Collection<? extends CanvasObject> objects) {
+    val reqs = new ArrayList<ReorderRequest>();
+    val zMap = ZOrder.getZIndex(objects, model);
+    var to = 0;
+    for (val entry : zMap.entrySet()) {
+      val obj = entry.getKey();
+      val from = entry.getValue();
       reqs.add(new ReorderRequest(obj, from, to));
     }
-    if (reqs.isEmpty()) {
-      return null;
-    } else {
-      reqs.sort(ReorderRequest.ASCENDING_FROM);
-      repairRequests(reqs);
-      return new ModelReorderAction(model, reqs);
-    }
+    if (reqs.isEmpty()) return null;
+    reqs.sort(ReorderRequest.ASCENDING_FROM);
+    repairRequests(reqs);
+    return new ModelReorderAction(model, reqs);
   }
 
-  public static ModelReorderAction createRaise(
-      CanvasModel model, Collection<? extends CanvasObject> objects) {
-    List<ReorderRequest> reqs = new ArrayList<>();
-    Map<CanvasObject, Integer> zmap = ZOrder.getZIndex(objects, model);
-    for (Map.Entry<CanvasObject, Integer> entry : zmap.entrySet()) {
-      CanvasObject obj = entry.getKey();
-      int from = entry.getValue();
-      CanvasObject above = ZOrder.getObjectAbove(obj, model, objects);
+  public static ModelReorderAction createRaise(CanvasModel model, Collection<? extends CanvasObject> objects) {
+    val reqs = new ArrayList<ReorderRequest>();
+    val zmap = ZOrder.getZIndex(objects, model);
+    for (val entry : zmap.entrySet()) {
+      val obj = entry.getKey();
+      val from = entry.getValue();
+      val above = ZOrder.getObjectAbove(obj, model, objects);
       if (above != null) {
-        int to = ZOrder.getZIndex(above, model);
-        if (objects.contains(above)) {
-          to--;
-        }
+        var to = ZOrder.getZIndex(above, model);
+        if (objects.contains(above)) to--;
         reqs.add(new ReorderRequest(obj, from, to));
       }
     }
-    if (reqs.isEmpty()) {
-      return null;
-    } else {
-      reqs.sort(ReorderRequest.DESCENDING_FROM);
-      repairRequests(reqs);
-      return new ModelReorderAction(model, reqs);
-    }
+    if (reqs.isEmpty()) return null;
+    reqs.sort(ReorderRequest.DESCENDING_FROM);
+    repairRequests(reqs);
+    return new ModelReorderAction(model, reqs);
   }
 
-  public static ModelReorderAction createRaiseTop(
-      CanvasModel model, Collection<? extends CanvasObject> objects) {
-    List<ReorderRequest> reqs = new ArrayList<>();
-    Map<CanvasObject, Integer> zmap = ZOrder.getZIndex(objects, model);
-    int to = model.getObjectsFromBottom().size() - 1;
-    for (Map.Entry<CanvasObject, Integer> entry : zmap.entrySet()) {
-      CanvasObject obj = entry.getKey();
-      int from = entry.getValue();
+  public static ModelReorderAction createRaiseTop(CanvasModel model, Collection<? extends CanvasObject> objects) {
+    val reqs = new ArrayList<ReorderRequest>();
+    val zmap = ZOrder.getZIndex(objects, model);
+    val to = model.getObjectsFromBottom().size() - 1;
+    for (val entry : zmap.entrySet()) {
+      val obj = entry.getKey();
+      val from = entry.getValue();
       reqs.add(new ReorderRequest(obj, from, to));
     }
-    if (reqs.isEmpty()) {
-      return null;
-    } else {
-      reqs.sort(ReorderRequest.ASCENDING_FROM);
-      repairRequests(reqs);
-      return new ModelReorderAction(model, reqs);
-    }
+    if (reqs.isEmpty()) return null;
+    reqs.sort(ReorderRequest.ASCENDING_FROM);
+    repairRequests(reqs);
+    return new ModelReorderAction(model, reqs);
   }
 
   private static void repairRequests(List<ReorderRequest> reqs) {
     for (int i = 0, n = reqs.size(); i < n; i++) {
-      ReorderRequest req = reqs.get(i);
-      int from = req.getFromIndex();
-      int to = req.getToIndex();
-      for (int j = 0; j < i; j++) {
-        ReorderRequest prev = reqs.get(j);
-        int prevFrom = prev.getFromIndex();
-        int prevTo = prev.getToIndex();
+      val req = reqs.get(i);
+      var from = req.getFromIndex();
+      var to = req.getToIndex();
+      for (var j = 0; j < i; j++) {
+        val prev = reqs.get(j);
+        val prevFrom = prev.getFromIndex();
+        val prevTo = prev.getToIndex();
         if (prevFrom <= from && from < prevTo) {
           from--;
         } else if (prevTo <= from && from < prevFrom) {
@@ -163,10 +145,8 @@ public class ModelReorderAction extends ModelAction {
       }
     }
     for (int i = reqs.size() - 1; i >= 0; i--) {
-      ReorderRequest req = reqs.get(i);
-      if (req.getFromIndex() == req.getToIndex()) {
-        reqs.remove(i);
-      }
+      val req = reqs.get(i);
+      if (req.getFromIndex() == req.getToIndex()) reqs.remove(i);
     }
   }
 
@@ -181,14 +161,8 @@ public class ModelReorderAction extends ModelAction {
       return S.get("actionRaise", getShapesName(objects));
     } else if (type > 0) {
       return S.get("actionLower", getShapesName(objects));
-    } else {
-      return S.get("actionReorder", getShapesName(objects));
     }
-  }
-
-  @Override
-  public Collection<CanvasObject> getObjects() {
-    return objects;
+    return S.get("actionReorder", getShapesName(objects));
   }
 
   public List<ReorderRequest> getReorderRequests() {
@@ -197,9 +171,9 @@ public class ModelReorderAction extends ModelAction {
 
   @Override
   void undoSub(CanvasModel model) {
-    List<ReorderRequest> inv = new ArrayList<>(requests.size());
-    for (int i = requests.size() - 1; i >= 0; i--) {
-      ReorderRequest r = requests.get(i);
+    val inv = new ArrayList<ReorderRequest>(requests.size());
+    for (var i = requests.size() - 1; i >= 0; i--) {
+      val r = requests.get(i);
       inv.add(new ReorderRequest(r.getObject(), r.getToIndex(), r.getFromIndex()));
     }
     model.reorderObjects(inv);

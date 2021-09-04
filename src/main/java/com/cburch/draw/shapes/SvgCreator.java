@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -14,6 +14,7 @@ import com.cburch.draw.model.Handle;
 import com.cburch.logisim.data.Location;
 import java.awt.Color;
 import java.awt.Font;
+import lombok.val;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -27,10 +28,10 @@ public class SvgCreator {
   }
 
   public static Element createCurve(Document doc, Curve curve) {
-    Element elt = doc.createElement("path");
-    Location e0 = curve.getEnd0();
-    Location e1 = curve.getEnd1();
-    Location ct = curve.getControl();
+    val elt = doc.createElement("path");
+    val e0 = curve.getEnd0();
+    val e1 = curve.getEnd1();
+    val ct = curve.getControl();
     elt.setAttribute(
         "d",
         "M" + e0.getX() + "," + e0.getY() + " Q" + ct.getX() + "," + ct.getY() + " " + e1.getX()
@@ -40,9 +41,9 @@ public class SvgCreator {
   }
 
   public static Element createLine(Document doc, Line line) {
-    Element elt = doc.createElement("line");
-    Location v1 = line.getEnd0();
-    Location v2 = line.getEnd1();
+    val elt = doc.createElement("line");
+    val v1 = line.getEnd0();
+    val v2 = line.getEnd1();
     elt.setAttribute("x1", "" + v1.getX());
     elt.setAttribute("y1", "" + v1.getY());
     elt.setAttribute("x2", "" + v2.getX());
@@ -52,11 +53,11 @@ public class SvgCreator {
   }
 
   public static Element createOval(Document doc, Oval oval) {
-    double x = oval.getX();
-    double y = oval.getY();
-    double width = oval.getWidth();
-    double height = oval.getHeight();
-    Element elt = doc.createElement("ellipse");
+    val x = oval.getX();
+    val y = oval.getY();
+    val width = oval.getWidth();
+    val height = oval.getHeight();
+    val elt = doc.createElement("ellipse");
     elt.setAttribute("cx", "" + (x + width / 2));
     elt.setAttribute("cy", "" + (y + height / 2));
     elt.setAttribute("rx", "" + (width / 2));
@@ -66,16 +67,10 @@ public class SvgCreator {
   }
 
   public static Element createPoly(Document doc, Poly poly) {
-    Element elt;
-    if (poly.isClosed()) {
-      elt = doc.createElement("polygon");
-    } else {
-      elt = doc.createElement("polyline");
-    }
-
-    StringBuilder points = new StringBuilder();
-    boolean first = true;
-    for (Handle h : poly.getHandles(null)) {
+    val elt = poly.isClosed() ? doc.createElement("polygon") : doc.createElement("polyline");
+    val points = new StringBuilder();
+    var first = true;
+    for (val h : poly.getHandles(null)) {
       if (!first) points.append(" ");
       points.append(h.getX()).append(",").append(h.getY());
       first = false;
@@ -91,7 +86,7 @@ public class SvgCreator {
   }
 
   private static Element createRectangular(Document doc, Rectangular rect) {
-    Element elt = doc.createElement("rect");
+    val elt = doc.createElement("rect");
     elt.setAttribute("x", "" + rect.getX());
     elt.setAttribute("y", "" + rect.getY());
     elt.setAttribute("width", "" + rect.getWidth());
@@ -101,20 +96,20 @@ public class SvgCreator {
   }
 
   public static Element createRoundRectangle(Document doc, RoundRectangle rrect) {
-    Element elt = createRectangular(doc, rrect);
-    int r = rrect.getValue(DrawAttr.CORNER_RADIUS);
+    val elt = createRectangular(doc, rrect);
+    val r = rrect.getValue(DrawAttr.CORNER_RADIUS);
     elt.setAttribute("rx", "" + r);
     elt.setAttribute("ry", "" + r);
     return elt;
   }
 
   public static Element createText(Document doc, Text text) {
-    final var elt = doc.createElement("text");
-    final var loc = text.getLocation();
-    final var font = text.getValue(DrawAttr.FONT);
-    final var fill = text.getValue(DrawAttr.FILL_COLOR);
-    final Object halign = text.getValue(DrawAttr.HALIGNMENT);
-    final Object valign = text.getValue(DrawAttr.VALIGNMENT);
+    val elt = doc.createElement("text");
+    val loc = text.getLocation();
+    val font = text.getValue(DrawAttr.FONT);
+    val fill = text.getValue(DrawAttr.FILL_COLOR);
+    val halign = text.getValue(DrawAttr.HALIGNMENT);
+    val valign = text.getValue(DrawAttr.VALIGNMENT);
     elt.setAttribute("x", "" + loc.getX());
     elt.setAttribute("y", "" + loc.getY());
     if (!colorMatches(fill, Color.BLACK)) {
@@ -124,6 +119,7 @@ public class SvgCreator {
       elt.setAttribute("fill-opacity", getOpacityString(fill));
     }
     setFontAttribute(elt, font, "");
+
     if (halign == DrawAttr.HALIGN_LEFT) {
       elt.setAttribute("text-anchor", "start");
     } else if (halign == DrawAttr.HALIGN_RIGHT) {
@@ -131,6 +127,7 @@ public class SvgCreator {
     } else {
       elt.setAttribute("text-anchor", "middle");
     }
+
     if (valign == DrawAttr.VALIGN_TOP) {
       elt.setAttribute("dominant-baseline", "top");
     } else if (valign == DrawAttr.VALIGN_BOTTOM) {
@@ -140,13 +137,14 @@ public class SvgCreator {
     } else {
       elt.setAttribute("dominant-baseline", "central");
     }
+
     elt.appendChild(doc.createTextNode(text.getText()));
     return elt;
   }
 
   public static void setFontAttribute(Element elt, Font font, String prefix) {
     elt.setAttribute(prefix + "font-family", font.getFamily());
-    elt.setAttribute(prefix + "font-size", "" + font.getSize());
+    elt.setAttribute(prefix + "font-size", String.valueOf(font.getSize()));
     int style = font.getStyle();
     if ((style & Font.ITALIC) != 0) {
       elt.setAttribute(prefix + "font-style", "italic");
@@ -165,7 +163,7 @@ public class SvgCreator {
   }
 
   private static void populateFill(Element elt, AbstractCanvasObject shape) {
-    Object type = shape.getValue(DrawAttr.PAINT_TYPE);
+    val type = shape.getValue(DrawAttr.PAINT_TYPE);
     if (type == DrawAttr.PAINT_FILL) {
       elt.setAttribute("stroke", "none");
     } else {
@@ -174,7 +172,7 @@ public class SvgCreator {
     if (type == DrawAttr.PAINT_STROKE) {
       elt.setAttribute("fill", "none");
     } else {
-      Color fill = shape.getValue(DrawAttr.FILL_COLOR);
+      val fill = shape.getValue(DrawAttr.FILL_COLOR);
       if (colorMatches(fill, Color.BLACK)) {
         elt.removeAttribute("fill");
       } else {
@@ -187,11 +185,11 @@ public class SvgCreator {
   }
 
   private static void populateStroke(Element elt, AbstractCanvasObject shape) {
-    Integer width = shape.getValue(DrawAttr.STROKE_WIDTH);
+    val width = shape.getValue(DrawAttr.STROKE_WIDTH);
     if (width != null && width != 1) {
       elt.setAttribute("stroke-width", width.toString());
     }
-    Color stroke = shape.getValue(DrawAttr.STROKE_COLOR);
+    val stroke = shape.getValue(DrawAttr.STROKE_COLOR);
     elt.setAttribute("stroke", getColorString(stroke));
     if (showOpacity(stroke)) {
       elt.setAttribute("stroke-opacity", getOpacityString(stroke));

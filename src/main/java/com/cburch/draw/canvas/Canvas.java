@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -20,15 +20,17 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
+import lombok.Getter;
+import lombok.val;
 
 public class Canvas extends JComponent {
   public static final String TOOL_PROPERTY = "tool";
   public static final String MODEL_PROPERTY = "model";
   private static final long serialVersionUID = 1L;
   private final CanvasListener listener;
-  private CanvasModel model;
+  @Getter private CanvasModel model;
   private ActionDispatcher dispatcher;
-  private Selection selection;
+  @Getter private Selection selection;
 
   public Canvas() {
     model = null;
@@ -45,14 +47,6 @@ public class Canvas extends JComponent {
     dispatcher.doAction(action);
   }
 
-  public CanvasModel getModel() {
-    return model;
-  }
-
-  public Selection getSelection() {
-    return selection;
-  }
-
   protected void setSelection(Selection value) {
     selection = value;
     repaint();
@@ -63,7 +57,7 @@ public class Canvas extends JComponent {
   }
 
   public void setTool(CanvasTool value) {
-    CanvasTool oldValue = listener.getTool();
+    val oldValue = listener.getTool();
     if (value != oldValue) {
       listener.setTool(value);
       firePropertyChange(TOOL_PROPERTY, oldValue, value);
@@ -76,12 +70,10 @@ public class Canvas extends JComponent {
 
   protected void paintBackground(Graphics g) {
     if (AppPreferences.AntiAliassing.getBoolean()) {
-      Graphics2D g2 = (Graphics2D) g;
-      g2.setRenderingHint(
-          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      val g2 = (Graphics2D) g;
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
-
     g.clearRect(0, 0, getWidth(), getHeight());
   }
 
@@ -92,15 +84,15 @@ public class Canvas extends JComponent {
   }
 
   protected void paintForeground(Graphics g) {
-    var canvasModel = this.model;
-    var tool = listener.getTool();
+    val canvasModel = this.model;
+    val tool = listener.getTool();
     if (canvasModel != null) {
-      var dup = g.create();
+      val dup = g.create();
       canvasModel.paint(g, selection);
       dup.dispose();
     }
     if (tool != null) {
-      var dup = g.create();
+      val dup = g.create();
       tool.draw(this, dup);
       dup.dispose();
     }
@@ -111,7 +103,7 @@ public class Canvas extends JComponent {
   }
 
   public void setModel(CanvasModel value, ActionDispatcher dispatcher) {
-    CanvasModel oldValue = model;
+    val oldValue = model;
     if (oldValue != null) {
       if (!oldValue.equals(value)) {
         oldValue.removeCanvasModelListener(listener);

@@ -1,35 +1,35 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.hex;
 
-import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
+import lombok.Getter;
+import lombok.val;
 
 class Measures {
   private final HexEditor hex;
-  private int headerChars;
-  private int cellChars;
-  private int headerWidth;
+  @Getter private int headerChars;
+  @Getter private int cellChars;
+  @Getter private int headerWidth;
   private int spacerWidth;
-  private int cellWidth;
-  private int cellHeight;
-  private int cols;
-  private int baseX;
+  @Getter private int cellWidth;
+  @Getter private int cellHeight;
+  @Getter private int columnCount;
+  @Getter private int baseX;
   private boolean guessed;
 
   public Measures(HexEditor hex) {
     this.hex = hex;
     this.guessed = true;
-    this.cols = 1;
+    this.columnCount = 1;
     this.cellWidth = -1;
     this.cellHeight = -1;
     this.cellChars = 2;
@@ -56,7 +56,7 @@ class Measures {
     }
 
     // compute character sizes
-    FontMetrics fm = g == null ? null : g.getFontMetrics(hex.getFont());
+    val fm = g == null ? null : g.getFontMetrics(hex.getFont());
     int charWidth;
     int spaceWidth;
     int lineHeight;
@@ -64,11 +64,8 @@ class Measures {
       charWidth = 8;
       spaceWidth = 6;
       Font font = hex.getFont();
-      if (font == null) {
-        lineHeight = 16;
-      } else {
-        lineHeight = font.getSize();
-      }
+      // FIXME: should be 16 hardcoded or configurable?
+      lineHeight = (font == null) ? 16 : font.getSize();
     } else {
       guessed = false;
       charWidth = 0;
@@ -87,20 +84,20 @@ class Measures {
     cellHeight = lineHeight;
 
     // compute preferred size
-    int width = headerWidth + cols * cellWidth + (cols / 4) * spacerWidth;
+    val width = headerWidth + columnCount * cellWidth + (columnCount / 4) * spacerWidth;
     long height;
     if (model == null) {
       height = 16 * cellHeight;
     } else {
-      long addr0 = getBaseAddress(model);
-      long addr1 = model.getLastOffset();
-      long rows = (int) (((addr1 - addr0 + 1) + cols - 1) / cols);
+      val addr0 = getBaseAddress(model);
+      val addr1 = model.getLastOffset();
+      val rows = (int) (((addr1 - addr0 + 1) + columnCount - 1) / columnCount);
       height = rows * cellHeight;
       if (height > Integer.MAX_VALUE) height = Integer.MAX_VALUE;
     }
 
     // update preferred size
-    Dimension pref = hex.getPreferredSize();
+    val pref = hex.getPreferredSize();
     if (pref.width != width || pref.height != height) {
       pref.width = width;
       pref.height = (int) height;
@@ -120,40 +117,12 @@ class Measures {
       return 0;
     } else {
       long addr0 = model.getFirstOffset();
-      return addr0 - addr0 % cols;
+      return addr0 - addr0 % columnCount;
     }
   }
 
-  public int getBaseX() {
-    return baseX;
-  }
-
-  public int getCellChars() {
-    return cellChars;
-  }
-
-  public int getCellHeight() {
-    return cellHeight;
-  }
-
-  public int getCellWidth() {
-    return cellWidth;
-  }
-
-  public int getColumnCount() {
-    return cols;
-  }
-
-  public int getLabelChars() {
-    return headerChars;
-  }
-
-  public int getLabelWidth() {
-    return headerWidth;
-  }
-
   public int getValuesWidth() {
-    return ((cols - 1) / 4) * spacerWidth + cols * cellWidth;
+    return ((columnCount - 1) / 4) * spacerWidth + columnCount * cellWidth;
   }
 
   public int getValuesX() {
@@ -170,10 +139,10 @@ class Measures {
     final long addr0 = model.getFirstOffset();
     final long addr1 = model.getLastOffset();
 
-    long base = getBaseAddress(model) + ((long) y / cellHeight) * cols;
+    long base = getBaseAddress(model) + ((long) y / cellHeight) * columnCount;
     int offs = (x - baseX) / (cellWidth + (spacerWidth + 2) / 4);
     if (offs < 0) offs = 0;
-    if (offs >= cols) offs = cols - 1;
+    if (offs >= columnCount) offs = columnCount - 1;
 
     long ret = base + offs;
     if (ret > addr1) ret = addr1;
@@ -182,35 +151,35 @@ class Measures {
   }
 
   public int toX(long addr) {
-    int col = (int) (addr % cols);
+    int col = (int) (addr % columnCount);
     return baseX + (1 + (col / 4)) * spacerWidth + col * cellWidth;
   }
 
   public int toY(long addr) {
-    long row = (addr - getBaseAddress(hex.getModel())) / cols;
+    long row = (addr - getBaseAddress(hex.getModel())) / columnCount;
     long ret = row * cellHeight;
     return ret < Integer.MAX_VALUE ? (int) ret : Integer.MAX_VALUE;
   }
 
   void widthChanged() {
-    int oldCols = cols;
+    int oldCols = columnCount;
     int width;
     if (guessed || cellWidth < 0) {
-      cols = 16;
+      columnCount = 16;
       width = hex.getPreferredSize().width;
     } else {
       width = hex.getWidth();
       int ret = (width - headerWidth) / (cellWidth + (spacerWidth + 3) / 4);
-      if (ret >= 16) cols = 16;
-      else if (ret >= 8) cols = 8;
-      else cols = 4;
+      if (ret >= 16) columnCount = 16;
+      else if (ret >= 8) columnCount = 8;
+      else columnCount = 4;
     }
-    int lineWidth = headerWidth + cols * cellWidth + ((cols / 4) - 1) * spacerWidth;
+    int lineWidth = headerWidth + columnCount * cellWidth + ((columnCount / 4) - 1) * spacerWidth;
     int newBase = headerWidth + Math.max(0, (width - lineWidth) / 2);
     if (baseX != newBase) {
       baseX = newBase;
       hex.repaint();
     }
-    if (cols != oldCols) recompute();
+    if (columnCount != oldCols) recompute();
   }
 }

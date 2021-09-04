@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -17,10 +17,12 @@ import com.cburch.draw.model.Handle;
 import com.cburch.draw.model.HandleGesture;
 import java.util.Collection;
 import java.util.Collections;
+import lombok.Getter;
+import lombok.val;
 
 public class ModelMoveHandleAction extends ModelAction {
   private final HandleGesture gesture;
-  private Handle newHandle;
+  @Getter private Handle newHandle;
 
   public ModelMoveHandleAction(CanvasModel model, HandleGesture gesture) {
     super(model);
@@ -37,10 +39,6 @@ public class ModelMoveHandleAction extends ModelAction {
     return S.get("actionMoveHandle");
   }
 
-  public Handle getNewHandle() {
-    return newHandle;
-  }
-
   @Override
   public Collection<CanvasObject> getObjects() {
     return Collections.singleton(gesture.getHandle().getObject());
@@ -48,10 +46,10 @@ public class ModelMoveHandleAction extends ModelAction {
 
   @Override
   void undoSub(CanvasModel model) {
-    Handle oldHandle = gesture.getHandle();
-    int dx = oldHandle.getX() - newHandle.getX();
-    int dy = oldHandle.getY() - newHandle.getY();
-    HandleGesture reverse = new HandleGesture(newHandle, dx, dy, 0);
+    val oldHandle = gesture.getHandle();
+    val dx = oldHandle.getX() - newHandle.getX();
+    val dy = oldHandle.getY() - newHandle.getY();
+    val reverse = new HandleGesture(newHandle, dx, dy, 0);
     model.moveHandle(reverse);
   }
 }

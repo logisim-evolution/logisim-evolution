@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -50,11 +50,11 @@ public class Rectangle extends Rectangular {
   @Override
   protected Location getRandomPoint(Bounds bds, Random rand) {
     if (getPaintType() == DrawAttr.PAINT_STROKE) {
-      int w = getWidth();
-      int h = getHeight();
-      int u = rand.nextInt(2 * w + 2 * h);
-      int x = getX();
-      int y = getY();
+      var w = getWidth();
+      var h = getHeight();
+      var u = rand.nextInt(2 * w + 2 * h);
+      var x = getX();
+      var y = getY();
       if (u < w) {
         x += u;
       } else if (u < 2 * w) {
@@ -66,29 +66,20 @@ public class Rectangle extends Rectangular {
         x += w;
         y += (u - 2 * w - h);
       }
-      int d = getStrokeWidth();
+      var d = getStrokeWidth();
       if (d > 1) {
         x += rand.nextInt(d) - d / 2;
         y += rand.nextInt(d) - d / 2;
       }
       return Location.create(x, y);
-    } else {
-      return super.getRandomPoint(bds, rand);
     }
+
+    return super.getRandomPoint(bds, rand);
   }
 
   @Override
   public boolean matches(CanvasObject other) {
-    if (other instanceof Rectangle) {
-      return super.matches(other);
-    } else {
-      return false;
-    }
-  }
-
-  @Override
-  public int matchesHashCode() {
-    return super.matchesHashCode();
+    return (other instanceof Rectangle) ? super.matches(other) : false;
   }
 
   @Override

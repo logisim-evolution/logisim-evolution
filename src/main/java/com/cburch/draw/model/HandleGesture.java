@@ -1,52 +1,31 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.draw.model;
 
+import com.cburch.logisim.util.LineBuffer;
 import java.awt.event.InputEvent;
+import lombok.Getter;
+import lombok.Setter;
 
 public class HandleGesture {
-  private final Handle handle;
-  private final int dx;
-  private final int dy;
-  private final int modifiersEx;
-  private Handle resultingHandle;
+  @Getter private final Handle handle;
+  @Getter private final int deltaX;
+  @Getter private final int deltaY;
+  @Getter private final int modifiersEx;
+  @Setter @Getter private Handle resultingHandle;
 
-  public HandleGesture(Handle handle, int dx, int dy, int modifiersEx) {
+  public HandleGesture(Handle handle, int deltaX, int deltaY, int modifiersEx) {
     this.handle = handle;
-    this.dx = dx;
-    this.dy = dy;
+    this.deltaX = deltaX;
+    this.deltaY = deltaY;
     this.modifiersEx = modifiersEx;
-  }
-
-  public int getDeltaX() {
-    return dx;
-  }
-
-  public int getDeltaY() {
-    return dy;
-  }
-
-  public Handle getHandle() {
-    return handle;
-  }
-
-  public int getModifiersEx() {
-    return modifiersEx;
-  }
-
-  public Handle getResultingHandle() {
-    return resultingHandle;
-  }
-
-  public void setResultingHandle(Handle value) {
-    resultingHandle = value;
   }
 
   public boolean isAltDown() {
@@ -63,16 +42,16 @@ public class HandleGesture {
 
   @Override
   public String toString() {
-    return ("HandleGesture() ["
-        + dx
+    return "HandleGesture() ["
+        + deltaX
         + ", "
-        + dy
+        + deltaY
         + " : "
         + handle.getObject()
         + "/"
         + handle.getX()
         + ", "
         + handle.getY()
-        + "]");
+        + "]";
   }
 }

@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import lombok.val;
 
 public class Drawing implements CanvasModel {
   private final EventSourceWeakSupport<CanvasModelListener> listeners;
@@ -35,21 +35,23 @@ public class Drawing implements CanvasModel {
     overlaps = new DrawingOverlaps();
   }
 
+  @Override
   public void addCanvasModelListener(CanvasModelListener l) {
     listeners.add(l);
   }
 
+  @Override
   public void addObjects(int index, Collection<? extends CanvasObject> shapes) {
-    Map<CanvasObject, Integer> indexes;
-    indexes = new LinkedHashMap<>();
-    int i = index;
-    for (CanvasObject shape : shapes) {
+    val indexes = new LinkedHashMap<CanvasObject, Integer>();
+    var i = index;
+    for (val shape : shapes) {
       indexes.put(shape, i);
       i++;
     }
     addObjectsHelp(indexes);
   }
 
+  @Override
   public void addObjects(Map<? extends CanvasObject, Integer> shapes) {
     addObjectsHelp(shapes);
   }
@@ -58,25 +60,26 @@ public class Drawing implements CanvasModel {
     // this is separate method so that subclass can call super.add to either
     // of the add methods, and it won't get redirected into the subclass
     // in calling the other add method
-    CanvasModelEvent e = CanvasModelEvent.forAdd(this, shapes.keySet());
-    if (!shapes.isEmpty() && isChangeAllowed(e)) {
-      for (Map.Entry<? extends CanvasObject, Integer> entry : shapes.entrySet()) {
-        CanvasObject shape = entry.getKey();
-        int index = entry.getValue();
+    val event = CanvasModelEvent.forAdd(this, shapes.keySet());
+    if (!shapes.isEmpty() && isChangeAllowed(event)) {
+      for (val entry : shapes.entrySet()) {
+        val shape = entry.getKey();
+        val index = entry.getValue();
         canvasObjects.add(index, shape);
         overlaps.addShape(shape);
       }
-      fireChanged(e);
+      fireChanged(event);
     }
   }
 
+  @Override
   public Handle deleteHandle(Handle handle) {
-    CanvasModelEvent e = CanvasModelEvent.forDeleteHandle(this, handle);
-    if (isChangeAllowed(e)) {
-      CanvasObject o = handle.getObject();
-      Handle ret = o.deleteHandle(handle);
-      overlaps.invalidateShape(o);
-      fireChanged(e);
+    val eve = CanvasModelEvent.forDeleteHandle(this, handle);
+    if (isChangeAllowed(eve)) {
+      val obj = handle.getObject();
+      val ret = obj.deleteHandle(handle);
+      overlaps.invalidateShape(obj);
+      fireChanged(eve);
       return ret;
     } else {
       return null;
@@ -84,21 +87,22 @@ public class Drawing implements CanvasModel {
   }
 
   private void fireChanged(CanvasModelEvent e) {
-    for (CanvasModelListener listener : listeners) {
-      listener.modelChanged(e);
-    }
+    for (val listener : listeners) listener.modelChanged(e);
   }
 
+  @Override
   public List<CanvasObject> getObjectsFromBottom() {
     return Collections.unmodifiableList(canvasObjects);
   }
 
+  @Override
   public List<CanvasObject> getObjectsFromTop() {
-    List<CanvasObject> ret = new ArrayList<>(getObjectsFromBottom());
+    val ret = new ArrayList<>(getObjectsFromBottom());
     Collections.reverse(ret);
     return ret;
   }
 
+  @Override
   public Collection<CanvasObject> getObjectsIn(Bounds bds) {
     List<CanvasObject> ret = null;
     for (CanvasObject shape : getObjectsFromBottom()) {
@@ -107,24 +111,23 @@ public class Drawing implements CanvasModel {
         ret.add(shape);
       }
     }
-    if (ret == null) {
-      return Collections.emptyList();
-    } else {
-      return ret;
-    }
+
+    return (ret == null) ? Collections.emptyList() : ret;
   }
 
+  @Override
   public Collection<CanvasObject> getObjectsOverlapping(CanvasObject shape) {
     return overlaps.getObjectsOverlapping(shape);
   }
 
+  @Override
   public void insertHandle(Handle desired, Handle previous) {
-    CanvasObject obj = desired.getObject();
-    CanvasModelEvent e = CanvasModelEvent.forInsertHandle(this, desired);
-    if (isChangeAllowed(e)) {
+    val obj = desired.getObject();
+    val event = CanvasModelEvent.forInsertHandle(this, desired);
+    if (isChangeAllowed(event)) {
       obj.insertHandle(desired, previous);
       overlaps.invalidateShape(obj);
-      fireChanged(e);
+      fireChanged(event);
     }
   }
 
@@ -132,26 +135,27 @@ public class Drawing implements CanvasModel {
     return true;
   }
 
+  @Override
   public Handle moveHandle(HandleGesture gesture) {
-    CanvasModelEvent e = CanvasModelEvent.forMoveHandle(this, gesture);
-    CanvasObject o = gesture.getHandle().getObject();
-    if (canvasObjects.contains(o)
+    val event = CanvasModelEvent.forMoveHandle(this, gesture);
+    val obj = gesture.getHandle().getObject();
+    if (canvasObjects.contains(obj)
         && (gesture.getDeltaX() != 0 || gesture.getDeltaY() != 0)
-        && isChangeAllowed(e)) {
-      Handle moved = o.moveHandle(gesture);
+        && isChangeAllowed(event)) {
+      Handle moved = obj.moveHandle(gesture);
       gesture.setResultingHandle(moved);
-      overlaps.invalidateShape(o);
-      fireChanged(e);
+      overlaps.invalidateShape(obj);
+      fireChanged(event);
       return moved;
-    } else {
-      return null;
     }
+    return null;
   }
 
-  public void paint(Graphics g, Selection selection) {
-    Set<CanvasObject> suppressed = selection.getDrawsSuppressed();
-    for (CanvasObject shape : getObjectsFromBottom()) {
-      Graphics dup = g.create();
+  @Override
+  public void paint(Graphics gfx, Selection selection) {
+    val suppressed = selection.getDrawsSuppressed();
+    for (val shape : getObjectsFromBottom()) {
+      val dup = gfx.create();
       if (suppressed.contains(shape)) {
         selection.drawSuppressed(dup, shape);
       } else {
@@ -161,97 +165,99 @@ public class Drawing implements CanvasModel {
     }
   }
 
+  @Override
   public void removeCanvasModelListener(CanvasModelListener l) {
     listeners.remove(l);
   }
 
+  @Override
   public void removeObjects(Collection<? extends CanvasObject> shapes) {
-    List<CanvasObject> found = restrict(shapes);
-    CanvasModelEvent e = CanvasModelEvent.forRemove(this, found);
-    if (!found.isEmpty() && isChangeAllowed(e)) {
-      for (CanvasObject shape : found) {
+    val found = restrict(shapes);
+    val event = CanvasModelEvent.forRemove(this, found);
+    if (!found.isEmpty() && isChangeAllowed(event)) {
+      for (val shape : found) {
         canvasObjects.remove(shape);
         overlaps.removeShape(shape);
       }
-      fireChanged(e);
+      fireChanged(event);
     }
   }
 
+  @Override
   public void reorderObjects(List<ReorderRequest> requests) {
-    boolean hasEffect = false;
-    for (ReorderRequest r : requests) {
-      if (r.getFromIndex() != r.getToIndex()) {
+    var hasEffect = false;
+    for (val req : requests) {
+      if (req.getFromIndex() != req.getToIndex()) {
         hasEffect = true;
         break;
       }
     }
-    CanvasModelEvent e = CanvasModelEvent.forReorder(this, requests);
-    if (hasEffect && isChangeAllowed(e)) {
-      for (ReorderRequest r : requests) {
-        if (canvasObjects.get(r.getFromIndex()) != r.getObject()) {
+    val event = CanvasModelEvent.forReorder(this, requests);
+    if (hasEffect && isChangeAllowed(event)) {
+      for (val req : requests) {
+        if (canvasObjects.get(req.getFromIndex()) != req.getObject()) {
           throw new IllegalArgumentException(
-              "object not present" + " at indicated index: " + r.getFromIndex());
+              "object not present at indicated index: " + req.getFromIndex());
         }
-        canvasObjects.remove(r.getFromIndex());
-        canvasObjects.add(r.getToIndex(), r.getObject());
+        canvasObjects.remove(req.getFromIndex());
+        canvasObjects.add(req.getToIndex(), req.getObject());
       }
-      fireChanged(e);
+      fireChanged(event);
     }
   }
 
   private ArrayList<CanvasObject> restrict(Collection<? extends CanvasObject> shapes) {
-    ArrayList<CanvasObject> ret;
-    ret = new ArrayList<>(shapes.size());
-    for (CanvasObject shape : shapes) {
-      if (canvasObjects.contains(shape)) {
-        ret.add(shape);
-      }
+    val ret = new ArrayList<CanvasObject>(shapes.size());
+    for (val shape : shapes) {
+      if (canvasObjects.contains(shape)) ret.add(shape);
     }
     return ret;
   }
 
+  @Override
   public void setAttributeValues(Map<AttributeMapKey, Object> values) {
-    Map<AttributeMapKey, Object> oldValues;
-    oldValues = new HashMap<>();
-    for (AttributeMapKey key : values.keySet()) {
+    val oldValues = new HashMap<AttributeMapKey, Object>();
+    for (val key : values.keySet()) {
       @SuppressWarnings("unchecked")
       Attribute<Object> attr = (Attribute<Object>) key.getAttribute();
-      Object oldValue = key.getObject().getValue(attr);
+      val oldValue = key.getObject().getValue(attr);
       oldValues.put(key, oldValue);
     }
-    CanvasModelEvent e = CanvasModelEvent.forChangeAttributes(this, oldValues, values);
-    if (isChangeAllowed(e)) {
-      for (Map.Entry<AttributeMapKey, Object> entry : values.entrySet()) {
-        AttributeMapKey key = entry.getKey();
-        CanvasObject shape = key.getObject();
+    val event = CanvasModelEvent.forChangeAttributes(this, oldValues, values);
+    if (isChangeAllowed(event)) {
+      for (val entry : values.entrySet()) {
+        val key = entry.getKey();
+        val shape = key.getObject();
         @SuppressWarnings("unchecked")
         Attribute<Object> attr = (Attribute<Object>) key.getAttribute();
         shape.setValue(attr, entry.getValue());
         overlaps.invalidateShape(shape);
       }
-      fireChanged(e);
+      fireChanged(event);
     }
   }
 
+  @Override
   public void setText(Text text, String value) {
-    String oldValue = text.getText();
-    CanvasModelEvent e = CanvasModelEvent.forChangeText(this, text, oldValue, value);
-    if (canvasObjects.contains(text) && !oldValue.equals(value) && isChangeAllowed(e)) {
+    val oldValue = text.getText();
+    val event = CanvasModelEvent.forChangeText(this, text, oldValue, value);
+    if (canvasObjects.contains(text) && !oldValue.equals(value) && isChangeAllowed(event)) {
       text.setText(value);
       overlaps.invalidateShape(text);
-      fireChanged(e);
+      fireChanged(event);
     }
   }
 
+  @Override
   public void translateObjects(Collection<? extends CanvasObject> shapes, int dx, int dy) {
-    List<CanvasObject> found = restrict(shapes);
-    CanvasModelEvent e = CanvasModelEvent.forTranslate(this, found, dx, dy);
-    if (!found.isEmpty() && (dx != 0 || dy != 0) && isChangeAllowed(e)) {
-      for (CanvasObject shape : shapes) {
+    val found = restrict(shapes);
+    val event = CanvasModelEvent.forTranslate(this, found, dx, dy);
+    if (!found.isEmpty() && (dx != 0 || dy != 0) && isChangeAllowed(event)) {
+      for (val shape : shapes) {
         shape.translate(dx, dy);
         overlaps.invalidateShape(shape);
       }
-      fireChanged(e);
+      fireChanged(event);
     }
   }
 }

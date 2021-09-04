@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -20,22 +20,20 @@ import java.awt.Cursor;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.List;
+import lombok.Getter;
+import lombok.val;
 
 class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListenerContract, BaseKeyListenerContract, CanvasModelListener {
   private final Canvas canvas;
-  private CanvasTool tool;
+  @Getter private CanvasTool tool;
 
   public CanvasListener(Canvas canvas) {
     this.canvas = canvas;
     tool = null;
   }
 
-  public CanvasTool getTool() {
-    return tool;
-  }
-
   public void setTool(CanvasTool value) {
-    final var oldValue = tool;
+    val oldValue = tool;
     if (value != oldValue) {
       tool = value;
       if (oldValue != null) oldValue.toolDeselected(canvas);
@@ -49,17 +47,17 @@ class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListen
   }
 
   private void handlePopupTrigger(MouseEvent e) {
-    final var loc = Location.create(e.getX(), e.getY());
-    final var objects = canvas.getModel().getObjectsFromTop();
+    val loc = Location.create(e.getX(), e.getY());
+    val objects = canvas.getModel().getObjectsFromTop();
     CanvasObject clicked = null;
-    for (final var o : objects) {
+    for (val o : objects) {
       if (o.contains(loc, false)) {
         clicked = o;
         break;
       }
     }
     if (clicked == null) {
-      for (final var o : objects) {
+      for (val o : objects) {
         if (o.contains(loc, true)) {
           clicked = o;
           break;

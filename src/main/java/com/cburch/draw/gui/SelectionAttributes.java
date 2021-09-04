@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -21,12 +21,12 @@ import com.cburch.logisim.data.AttributeSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import lombok.val;
 
 public class SelectionAttributes extends AbstractAttributeSet {
   private final Selection selection;
@@ -50,9 +50,9 @@ public class SelectionAttributes extends AbstractAttributeSet {
 
   private static Object getSelectionValue(Attribute<?> attr, Set<AttributeSet> sel) {
     Object ret = null;
-    for (AttributeSet attrs : sel) {
+    for (val attrs : sel) {
       if (attrs.containsAttribute(attr)) {
-        Object val = attrs.getValue(attr);
+        var val = attrs.getValue(attr);
         if (ret == null) {
           ret = val;
         } else if (val != null && val.equals(ret)) {
@@ -75,10 +75,8 @@ public class SelectionAttributes extends AbstractAttributeSet {
   }
 
   public Iterable<Map.Entry<AttributeSet, CanvasObject>> entries() {
-    Set<Map.Entry<AttributeSet, CanvasObject>> raw = selected.entrySet();
-    List<Map.Entry<AttributeSet, CanvasObject>> ret;
-    ret = new ArrayList<>(raw);
-    return ret;
+    val raw = selected.entrySet();
+    return new ArrayList<Map.Entry<AttributeSet, CanvasObject>>(raw);
   }
 
   @Override
@@ -88,9 +86,9 @@ public class SelectionAttributes extends AbstractAttributeSet {
 
   @Override
   public <V> V getValue(Attribute<V> attr) {
-    Attribute<?>[] attrs = this.selAttrs;
-    Object[] values = this.selValues;
-    for (int i = 0; i < attrs.length; i++) {
+    val attrs = this.selAttrs;
+    val values = this.selValues;
+    for (var i = 0; i < attrs.length; i++) {
       if (attrs[i] == attr) {
         @SuppressWarnings("unchecked")
         V ret = (V) values[i];
@@ -102,14 +100,14 @@ public class SelectionAttributes extends AbstractAttributeSet {
 
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
-    Attribute<?>[] attrs = this.selAttrs;
-    Object[] values = this.selValues;
-    for (int i = 0; i < attrs.length; i++) {
+    val attrs = this.selAttrs;
+    val values = this.selValues;
+    for (var i = 0; i < attrs.length; i++) {
       if (attrs[i] == attr) {
-        boolean same = Objects.equals(value, values[i]);
+        var same = Objects.equals(value, values[i]);
         if (!same) {
           values[i] = value;
-          for (AttributeSet objAttrs : selected.keySet()) {
+          for (val objAttrs : selected.keySet()) {
             objAttrs.setValue(attr, value);
           }
         }
@@ -144,21 +142,21 @@ public class SelectionAttributes extends AbstractAttributeSet {
     }
 
     private void computeAttributeList(Set<AttributeSet> attrsSet) {
-      Set<Attribute<?>> attrSet = new LinkedHashSet<>();
-      Iterator<AttributeSet> sit = attrsSet.iterator();
+      val attrSet = new LinkedHashSet<Attribute<?>>();
+      val sit = attrsSet.iterator();
       if (sit.hasNext()) {
-        AttributeSet first = sit.next();
+        val first = sit.next();
         attrSet.addAll(first.getAttributes());
         while (sit.hasNext()) {
-          AttributeSet next = sit.next();
+          val next = sit.next();
           attrSet.removeIf(attr -> !next.containsAttribute(attr));
         }
       }
 
-      Attribute<?>[] attrs = new Attribute[attrSet.size()];
-      Object[] values = new Object[attrs.length];
+      val attrs = new Attribute<?>[attrSet.size()];
+      val values = new Object[attrs.length];
       int i = 0;
-      for (Attribute<?> attr : attrSet) {
+      for (val attr : attrSet) {
         attrs[i] = attr;
         values[i] = getSelectionValue(attr, attrsSet);
         i++;
@@ -174,20 +172,20 @@ public class SelectionAttributes extends AbstractAttributeSet {
     //
     @Override
     public void selectionChanged(SelectionEvent ex) {
-      Map<AttributeSet, CanvasObject> oldSel = selected;
-      Map<AttributeSet, CanvasObject> newSel = new HashMap<>();
+      val oldSel = selected;
+      val newSel = new HashMap<AttributeSet, CanvasObject>();
       for (CanvasObject o : selection.getSelected()) {
         if (o != null) newSel.put(o.getAttributeSet(), o);
       }
       selected = newSel;
-      boolean change = false;
-      for (AttributeSet attrs : oldSel.keySet()) {
+      var change = false;
+      for (val attrs : oldSel.keySet()) {
         if (!newSel.containsKey(attrs)) {
           change = true;
           attrs.removeAttributeListener(this);
         }
       }
-      for (AttributeSet attrs : newSel.keySet()) {
+      for (val attrs : newSel.keySet()) {
         if (!oldSel.containsKey(attrs)) {
           change = true;
           attrs.addAttributeListener(this);

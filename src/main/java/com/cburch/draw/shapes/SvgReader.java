@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import lombok.val;
 import org.w3c.dom.Element;
 
 public class SvgReader {
@@ -30,22 +31,22 @@ public class SvgReader {
   }
 
   private static AbstractCanvasObject createLine(Element elt) {
-    int x0 = Integer.parseInt(elt.getAttribute("x1"));
-    int y0 = Integer.parseInt(elt.getAttribute("y1"));
-    int x1 = Integer.parseInt(elt.getAttribute("x2"));
-    int y1 = Integer.parseInt(elt.getAttribute("y2"));
+    val x0 = Integer.parseInt(elt.getAttribute("x1"));
+    val y0 = Integer.parseInt(elt.getAttribute("y1"));
+    val x1 = Integer.parseInt(elt.getAttribute("x2"));
+    val y1 = Integer.parseInt(elt.getAttribute("y2"));
     return new Line(x0, y0, x1, y1);
   }
 
   private static AbstractCanvasObject createOval(Element elt) {
-    double cx = Double.parseDouble(elt.getAttribute("cx"));
-    double cy = Double.parseDouble(elt.getAttribute("cy"));
-    double rx = Double.parseDouble(elt.getAttribute("rx"));
-    double ry = Double.parseDouble(elt.getAttribute("ry"));
-    int x = (int) Math.round(cx - rx);
-    int y = (int) Math.round(cy - ry);
-    int w = (int) Math.round(rx * 2);
-    int h = (int) Math.round(ry * 2);
+    val cx = Double.parseDouble(elt.getAttribute("cx"));
+    val cy = Double.parseDouble(elt.getAttribute("cy"));
+    val rx = Double.parseDouble(elt.getAttribute("rx"));
+    val ry = Double.parseDouble(elt.getAttribute("ry"));
+    val x = (int) Math.round(cx - rx);
+    val y = (int) Math.round(cy - ry);
+    val w = (int) Math.round(rx * 2);
+    val h = (int) Math.round(ry * 2);
     return new Oval(x, y, w, h);
   }
 

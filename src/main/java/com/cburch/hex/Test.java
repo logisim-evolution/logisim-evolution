@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
+import lombok.val;
 
 public class Test {
   public static void main(String[] args) {
@@ -29,39 +30,50 @@ public class Test {
     private final ArrayList<HexModelListener> listeners = new ArrayList<>();
     private final long[] data = new long[924];
 
+    @Override
     public void addHexModelListener(HexModelListener l) {
       listeners.add(l);
     }
 
+    @Override
     public void fill(long start, long len, long value) {
-      long[] oldValues = new long[(int) len];
+      var oldValues = new long[(int) len];
       System.arraycopy(data, (int) (start - 11111), oldValues, 0, (int) len);
       Arrays.fill(data, (int) (start - 11111), (int) len, value);
-      for (HexModelListener l : listeners) {
+      for (val l : listeners) {
         l.bytesChanged(this, start, len, oldValues);
       }
     }
 
+    @Override
     public long get(long address) {
       return data[(int) (address - 11111)];
     }
 
+    @Override
     public long getFirstOffset() {
+      // FIXME: why 11111?
       return 11111;
     }
 
+    @Override
     public long getLastOffset() {
+      // FIXME: why this value??
       return data.length + 11110;
     }
 
+    @Override
     public int getValueWidth() {
+      // FIXME: why 9?
       return 9;
     }
 
+    @Override
     public void removeHexModelListener(HexModelListener l) {
       listeners.remove(l);
     }
 
+    @Override
     public void set(long address, long value) {
       long[] oldValues = new long[] {data[(int) (address - 11111)]};
       data[(int) (address - 11111)] = value & 0x1FF;
@@ -70,6 +82,7 @@ public class Test {
       }
     }
 
+    @Override
     public void set(long start, long[] values) {
       long[] oldValues = new long[values.length];
       System.arraycopy(data, (int) (start - 11111), oldValues, 0, values.length);

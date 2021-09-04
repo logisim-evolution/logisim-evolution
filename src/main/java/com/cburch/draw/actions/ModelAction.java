@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -16,9 +16,10 @@ import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.undo.Action;
 import java.util.Collection;
 import java.util.Collections;
+import lombok.Getter;
 
 public abstract class ModelAction extends Action {
-  private final CanvasModel model;
+  @Getter private final CanvasModel model;
 
   public ModelAction(CanvasModel model) {
     this.model = model;
@@ -27,10 +28,9 @@ public abstract class ModelAction extends Action {
   static String getShapesName(Collection<CanvasObject> coll) {
     if (coll.size() != 1) {
       return S.get("shapeMultiple");
-    } else {
-      CanvasObject shape = coll.iterator().next();
-      return shape.getDisplayName();
     }
+    CanvasObject shape = coll.iterator().next();
+    return shape.getDisplayName();
   }
 
   @Override
@@ -39,13 +39,6 @@ public abstract class ModelAction extends Action {
   }
 
   abstract void doSub(CanvasModel model);
-
-  public CanvasModel getModel() {
-    return model;
-  }
-
-  @Override
-  public abstract String getName();
 
   public Collection<CanvasObject> getObjects() {
     return Collections.emptySet();

@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -24,6 +24,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import java.util.HashMap;
 import java.util.Map;
+import lombok.val;
 
 class AttrTableSelectionModel extends AttributeSetTableModel implements SelectionListener {
   private final Canvas canvas;
@@ -60,9 +61,9 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
       return S.get("selectionVarious", "" + totalCount);
     } else if (commonCount == 1) {
       return firstObject.getDisplayNameAndLabel();
-    } else {
-      return S.get("selectionMultiple", firstObject.getDisplayName(), "" + commonCount);
     }
+
+    return S.get("selectionMultiple", firstObject.getDisplayName(), "" + commonCount);
   }
 
   //
@@ -75,17 +76,15 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
 
   @Override
   public void setValueRequested(Attribute<Object> attr, Object value) {
-    SelectionAttributes attrs = (SelectionAttributes) getAttributeSet();
-    Map<AttributeMapKey, Object> oldVals;
-    oldVals = new HashMap<>();
-    Map<AttributeMapKey, Object> newVals;
-    newVals = new HashMap<>();
-    for (Map.Entry<AttributeSet, CanvasObject> ent : attrs.entries()) {
-      AttributeMapKey key = new AttributeMapKey(attr, ent.getValue());
+    val attrs = (SelectionAttributes) getAttributeSet();
+    val oldVals = new HashMap<AttributeMapKey, Object>();
+    val newVals = new HashMap<AttributeMapKey, Object>();
+    for (val ent : attrs.entries()) {
+      val key = new AttributeMapKey(attr, ent.getValue());
       oldVals.put(key, ent.getKey().getValue(attr));
       newVals.put(key, value);
     }
-    CanvasModel model = canvas.getModel();
+    val model = canvas.getModel();
     canvas.doAction(new ModelChangeAttributeAction(model, oldVals, newVals));
     fireTitleChanged();
   }

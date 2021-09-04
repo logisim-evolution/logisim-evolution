@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import lombok.val;
 
 public class ModelChangeAttributeAction extends ModelAction {
   private final Map<AttributeMapKey, Object> oldValues;
@@ -42,11 +43,11 @@ public class ModelChangeAttributeAction extends ModelAction {
 
   @Override
   public String getName() {
-    Attribute<?> a = attr;
+    var a = attr;
     if (a == null) {
-      boolean found = false;
-      for (AttributeMapKey key : newValues.keySet()) {
-        Attribute<?> at = key.getAttribute();
+      var found = false;
+      for (val key : newValues.keySet()) {
+        val at = key.getAttribute();
         if (found) {
           if (!Objects.equals(a, at)) {
             a = null;
@@ -59,11 +60,9 @@ public class ModelChangeAttributeAction extends ModelAction {
       }
       attr = a;
     }
-    if (a == null) {
-      return S.get("actionChangeAttributes");
-    } else {
-      return S.get("actionChangeAttribute", a.getDisplayName());
-    }
+    return (a == null)
+        ? S.get("actionChangeAttributes")
+        : S.get("actionChangeAttribute", a.getDisplayName());
   }
 
   @Override

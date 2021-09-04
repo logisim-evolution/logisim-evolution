@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -17,6 +17,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.util.UnmodifiableList;
 import java.awt.Graphics;
 import java.util.List;
+import lombok.val;
 
 abstract class Rectangular extends FillableCanvasObject {
   private Bounds bounds; // excluding the stroke's width
@@ -34,54 +35,50 @@ abstract class Rectangular extends FillableCanvasObject {
 
   @Override
   public boolean contains(Location loc, boolean assumeFilled) {
-    Object type = getPaintType();
+    var type = getPaintType();
     if (assumeFilled && type == DrawAttr.PAINT_STROKE) {
       type = DrawAttr.PAINT_STROKE_FILL;
     }
-    Bounds b = bounds;
-    int x = b.getX();
-    int y = b.getY();
-    int w = b.getWidth();
-    int h = b.getHeight();
-    int qx = loc.getX();
-    int qy = loc.getY();
+    val b = bounds;
+    val x = b.getX();
+    val y = b.getY();
+    val w = b.getWidth();
+    val h = b.getHeight();
+    val qx = loc.getX();
+    val qy = loc.getY();
     if (type == DrawAttr.PAINT_FILL) {
       return isInRect(qx, qy, x, y, w, h) && contains(x, y, w, h, loc);
     } else if (type == DrawAttr.PAINT_STROKE) {
-      int stroke = getStrokeWidth();
-      int tol2 = Math.max(2 * Line.ON_LINE_THRESH, stroke);
-      int tol = tol2 / 2;
+      val stroke = getStrokeWidth();
+      val tol2 = Math.max(2 * Line.ON_LINE_THRESH, stroke);
+      val tol = tol2 / 2;
       return isInRect(qx, qy, x - tol, y - tol, w + tol2, h + tol2)
           && contains(x - tol, y - tol, w + tol2, h + tol2, loc)
           && !contains(x + tol, y + tol, w - tol2, h - tol2, loc);
     } else if (type == DrawAttr.PAINT_STROKE_FILL) {
-      int tol = getStrokeWidth() / 2;
+      val tol = getStrokeWidth() / 2;
       return isInRect(qx, qy, x - tol, y - tol, w + getStrokeWidth(), h + getStrokeWidth())
           && contains(x - tol, y - tol, w + getStrokeWidth(), h + getStrokeWidth(), loc);
-    } else {
-      return false;
     }
+
+    return false;
   }
 
   protected abstract void draw(Graphics g, int x, int y, int w, int h);
 
   @Override
   public Bounds getBounds() {
-    int wid = getStrokeWidth();
-    Object type = getPaintType();
-    if (wid < 2 || type == DrawAttr.PAINT_FILL) {
-      return bounds;
-    } else {
-      return bounds.expand(wid / 2);
-    }
+    val wid = getStrokeWidth();
+    val type = getPaintType();
+    return (wid < 2 || type == DrawAttr.PAINT_FILL) ? bounds : bounds.expand(wid / 2);
   }
 
   private Handle[] getHandleArray(HandleGesture gesture) {
-    Bounds bds = bounds;
-    int x0 = bds.getX();
-    int y0 = bds.getY();
-    int x1 = x0 + bds.getWidth();
-    int y1 = y0 + bds.getHeight();
+    val bds = bounds;
+    val x0 = bds.getX();
+    val y0 = bds.getY();
+    val x1 = x0 + bds.getWidth();
+    val y1 = y0 + bds.getHeight();
     if (gesture == null) {
       return new Handle[] {
         new Handle(this, x0, y0),
@@ -90,14 +87,14 @@ abstract class Rectangular extends FillableCanvasObject {
         new Handle(this, x0, y1)
       };
     } else {
-      int hx = gesture.getHandle().getX();
-      int hy = gesture.getHandle().getY();
-      int dx = gesture.getDeltaX();
-      int dy = gesture.getDeltaY();
-      int newX0 = x0 == hx ? x0 + dx : x0;
-      int newY0 = y0 == hy ? y0 + dy : y0;
-      int newX1 = x1 == hx ? x1 + dx : x1;
-      int newY1 = y1 == hy ? y1 + dy : y1;
+      val hx = gesture.getHandle().getX();
+      val hy = gesture.getHandle().getY();
+      val dx = gesture.getDeltaX();
+      val dy = gesture.getDeltaY();
+      var newX0 = x0 == hx ? x0 + dx : x0;
+      var newY0 = y0 == hy ? y0 + dy : y0;
+      var newX1 = x1 == hx ? x1 + dx : x1;
+      var newY1 = y1 == hy ? y1 + dy : y1;
       if (gesture.isShiftDown()) {
         if (gesture.isAltDown()) {
           if (x0 == hx) newX1 -= dx;
@@ -105,20 +102,20 @@ abstract class Rectangular extends FillableCanvasObject {
           if (y0 == hy) newY1 -= dy;
           if (y1 == hy) newY0 -= dy;
 
-          int w = Math.abs(newX1 - newX0);
-          int h = Math.abs(newY1 - newY0);
+          val w = Math.abs(newX1 - newX0);
+          val h = Math.abs(newY1 - newY0);
           if (w > h) { // reduce width to h
             int dw = (w - h) / 2;
             newX0 -= (newX0 > newX1 ? 1 : -1) * dw;
             newX1 -= (newX1 > newX0 ? 1 : -1) * dw;
           } else {
-            int dh = (h - w) / 2;
+            val dh = (h - w) / 2;
             newY0 -= (newY0 > newY1 ? 1 : -1) * dh;
             newY1 -= (newY1 > newY0 ? 1 : -1) * dh;
           }
         } else {
-          int w = Math.abs(newX1 - newX0);
-          int h = Math.abs(newY1 - newY0);
+          val w = Math.abs(newX1 - newX0);
+          val h = Math.abs(newY1 - newY0);
           if (w > h) { // reduce width to h
             if (x0 == hx) {
               newX0 = newX1 + (newX0 > newX1 ? 1 : -1) * h;
@@ -182,7 +179,7 @@ abstract class Rectangular extends FillableCanvasObject {
   @Override
   public boolean matches(CanvasObject other) {
     if (other instanceof Rectangular) {
-      Rectangular that = (Rectangular) other;
+      val that = (Rectangular) other;
       return this.bounds.equals(that.bounds) && super.matches(that);
     } else {
       return false;
@@ -196,22 +193,22 @@ abstract class Rectangular extends FillableCanvasObject {
 
   @Override
   public Handle moveHandle(HandleGesture gesture) {
-    Handle[] oldHandles = getHandleArray(null);
-    Handle[] newHandles = getHandleArray(gesture);
-    Handle moved = gesture == null ? null : gesture.getHandle();
+    val oldHandles = getHandleArray(null);
+    val newHandles = getHandleArray(gesture);
+    val moved = gesture == null ? null : gesture.getHandle();
     Handle result = null;
-    int x0 = Integer.MAX_VALUE;
-    int x1 = Integer.MIN_VALUE;
-    int y0 = Integer.MAX_VALUE;
-    int y1 = Integer.MIN_VALUE;
-    int i = -1;
-    for (Handle h : newHandles) {
+    var x0 = Integer.MAX_VALUE;
+    var x1 = Integer.MIN_VALUE;
+    var y0 = Integer.MAX_VALUE;
+    var y1 = Integer.MIN_VALUE;
+    var i = -1;
+    for (val handle : newHandles) {
       i++;
       if (oldHandles[i].equals(moved)) {
-        result = h;
+        result = handle;
       }
-      int hx = h.getX();
-      int hy = h.getY();
+      val hx = handle.getX();
+      val hy = handle.getY();
       if (hx < x0) x0 = hx;
       if (hx > x1) x1 = hx;
       if (hy < y0) y0 = hy;
@@ -224,25 +221,25 @@ abstract class Rectangular extends FillableCanvasObject {
   @Override
   public void paint(Graphics g, HandleGesture gesture) {
     if (gesture == null) {
-      Bounds bds = bounds;
+      val bds = bounds;
       draw(g, bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     } else {
-      Handle[] handles = getHandleArray(gesture);
-      Handle p0 = handles[0];
-      Handle p1 = handles[2];
-      int x0 = p0.getX();
-      int y0 = p0.getY();
-      int x1 = p1.getX();
-      int y1 = p1.getY();
+      val handles = getHandleArray(gesture);
+      val p0 = handles[0];
+      val p1 = handles[2];
+      var x0 = p0.getX();
+      var y0 = p0.getY();
+      var x1 = p1.getX();
+      var y1 = p1.getY();
       if (x1 < x0) {
-        int t = x0;
+        val tmp = x0;
         x0 = x1;
-        x1 = t;
+        x1 = tmp;
       }
       if (y1 < y0) {
-        int t = y0;
+        val tmp = y0;
         y0 = y1;
-        y1 = t;
+        y1 = tmp;
       }
 
       draw(g, x0, y0, x1 - x0, y1 - y0);

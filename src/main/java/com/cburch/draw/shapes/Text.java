@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -25,11 +25,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.List;
+import lombok.Getter;
+import lombok.val;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class Text extends AbstractCanvasObject {
-  private EditableLabel label;
+  @Getter private EditableLabel label;
 
   private Text(int x, int y, int halign, int valign, String text, Font font, Color color) {
     label = new EditableLabel(x, y, text, font);
@@ -44,7 +46,7 @@ public class Text extends AbstractCanvasObject {
 
   @Override
   public Text clone() {
-    final var ret = (Text) super.clone();
+    val ret = (Text) super.clone();
     ret.label = this.label.clone();
     return ret;
   }
@@ -70,11 +72,11 @@ public class Text extends AbstractCanvasObject {
   }
 
   public List<Handle> getHandles() {
-    final var bds = getBounds();
-    final var x = bds.getX();
-    final var y = bds.getY();
-    final var w = bds.getWidth();
-    final var h = bds.getHeight();
+    val bds = getBounds();
+    val x = bds.getX();
+    val y = bds.getY();
+    val w = bds.getWidth();
+    val h = bds.getHeight();
     return UnmodifiableList.create(
         new Handle[] {
           new Handle(this, x, y),
@@ -87,10 +89,6 @@ public class Text extends AbstractCanvasObject {
   @Override
   public List<Handle> getHandles(HandleGesture gesture) {
     return getHandles();
-  }
-
-  public EditableLabel getLabel() {
-    return label;
   }
 
   public Location getLocation() {

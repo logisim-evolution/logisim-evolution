@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -24,6 +24,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import lombok.Getter;
+import lombok.val;
 
 public class Selection {
   private static final String MOVING_HANDLE = "movingHandle";
@@ -35,7 +37,7 @@ public class Selection {
   private final Set<CanvasObject> selectedView;
   private final Map<CanvasObject, String> suppressed;
   private final Set<CanvasObject> suppressedView;
-  private Handle selectedHandle;
+  @Getter private Handle selectedHandle;
   private HandleGesture curHandleGesture;
   private int moveDx;
   private int moveDy;
@@ -59,8 +61,7 @@ public class Selection {
 
   public void clearSelected() {
     if (!selected.isEmpty()) {
-      List<CanvasObject> oldSelected;
-      oldSelected = new ArrayList<>(selected);
+      val oldSelected = new ArrayList<CanvasObject>(selected);
       selected.clear();
       suppressed.clear();
       setHandleSelected(null);
@@ -69,7 +70,7 @@ public class Selection {
   }
 
   public void drawSuppressed(Graphics g, CanvasObject shape) {
-    String state = suppressed.get(shape);
+    val state = suppressed.get(shape);
     if (state.equals(MOVING_HANDLE)) {
       shape.paint(g, curHandleGesture);
     } else if (state.equals(TRANSLATING)) {
@@ -80,7 +81,7 @@ public class Selection {
 
   private void fireChanged(int action, Collection<CanvasObject> affected) {
     SelectionEvent e = null;
-    for (SelectionListener listener : listeners) {
+    for (val listener : listeners) {
       if (e == null) e = new SelectionEvent(this, action, affected);
       listener.selectionChanged(e);
     }
@@ -96,10 +97,6 @@ public class Selection {
 
   public Set<CanvasObject> getSelected() {
     return selectedView;
-  }
-
-  public Handle getSelectedHandle() {
-    return selectedHandle;
   }
 
   public boolean isEmpty() {
@@ -198,43 +195,33 @@ public class Selection {
 
   public void setSelected(Collection<CanvasObject> shapes, boolean value) {
     if (value) {
-      List<CanvasObject> added;
-      added = new ArrayList<>(shapes.size());
-      for (CanvasObject shape : shapes) {
-        if (selected.add(shape)) {
-          added.add(shape);
-        }
+      val added = new ArrayList<CanvasObject>(shapes.size());
+      for (val shape : shapes) {
+        if (selected.add(shape)) added.add(shape);
       }
-      if (!added.isEmpty()) {
-        fireChanged(SelectionEvent.ACTION_ADDED, added);
-      }
+      if (!added.isEmpty()) fireChanged(SelectionEvent.ACTION_ADDED, added);
     } else {
-      List<CanvasObject> removed;
-      removed = new ArrayList<>(shapes.size());
-      for (CanvasObject shape : shapes) {
+      val removed = new ArrayList<CanvasObject>(shapes.size());
+      for (val shape : shapes) {
         if (selected.remove(shape)) {
           suppressed.remove(shape);
-          Handle h = selectedHandle;
-          if (h != null && h.getObject() == shape) setHandleSelected(null);
+          val handle = selectedHandle;
+          if (handle != null && handle.getObject() == shape) setHandleSelected(null);
           removed.add(shape);
         }
       }
-      if (!removed.isEmpty()) {
-        fireChanged(SelectionEvent.ACTION_REMOVED, removed);
-      }
+      if (!removed.isEmpty()) fireChanged(SelectionEvent.ACTION_REMOVED, removed);
     }
   }
 
   public void toggleSelected(Collection<CanvasObject> shapes) {
-    List<CanvasObject> added;
-    added = new ArrayList<>(shapes.size());
-    List<CanvasObject> removed;
-    removed = new ArrayList<>(shapes.size());
+    val added = new ArrayList<CanvasObject>(shapes.size());
+    val removed = new ArrayList<CanvasObject>(shapes.size());
     for (CanvasObject shape : shapes) {
       if (selected.contains(shape)) {
         selected.remove(shape);
         suppressed.remove(shape);
-        Handle h = selectedHandle;
+        val h = selectedHandle;
         if (h != null && h.getObject() == shape) setHandleSelected(null);
         removed.add(shape);
       } else {
@@ -242,11 +229,7 @@ public class Selection {
         added.add(shape);
       }
     }
-    if (!removed.isEmpty()) {
-      fireChanged(SelectionEvent.ACTION_REMOVED, removed);
-    }
-    if (!added.isEmpty()) {
-      fireChanged(SelectionEvent.ACTION_ADDED, added);
-    }
+    if (!removed.isEmpty()) fireChanged(SelectionEvent.ACTION_REMOVED, removed);
+    if (!added.isEmpty()) fireChanged(SelectionEvent.ACTION_ADDED, added);
   }
 }

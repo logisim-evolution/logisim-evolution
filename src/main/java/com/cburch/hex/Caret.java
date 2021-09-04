@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -30,13 +30,16 @@ import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import lombok.Getter;
+import lombok.val;
 
 public class Caret {
   private static final Color SELECT_COLOR = new Color(192, 192, 255);
   private static final Stroke CURSOR_STROKE = new BasicStroke(2.0f);
   private final HexEditor hex;
   private final List<ChangeListener> listeners;
-  private long mark;
+  @Getter private long mark;
+  @Getter
   private long cursor;
   private Object highlight;
 
@@ -45,15 +48,15 @@ public class Caret {
     this.listeners = new ArrayList<>();
     this.cursor = -1;
 
-    final var l = new Listener();
+    val l = new Listener();
     hex.addMouseListener(l);
     hex.addMouseMotionListener(l);
     hex.addKeyListener(l);
     hex.addFocusListener(l);
 
-    final var imap = hex.getInputMap();
-    final var amap = hex.getActionMap();
-    final var nullAction =
+    val imap = hex.getInputMap();
+    val amap = hex.getActionMap();
+    val nullAction =
         new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
@@ -62,7 +65,7 @@ public class Caret {
             // dummy
           }
         };
-    final var nullKey = "null";
+    val nullKey = "null";
     amap.put(nullKey, nullAction);
     imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, 0), nullKey);
     imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_UP, 0), nullKey);
@@ -81,11 +84,11 @@ public class Caret {
 
   private void expose(long loc, boolean scrollTo) {
     if (loc >= 0) {
-      final var measures = hex.getMeasures();
-      final var x = measures.toX(loc);
-      final var y = measures.toY(loc);
-      final var w = measures.getCellWidth();
-      final var h = measures.getCellHeight();
+      val measures = hex.getMeasures();
+      val x = measures.toX(loc);
+      val y = measures.toY(loc);
+      val w = measures.getCellWidth();
+      val h = measures.getCellHeight();
       hex.repaint(x - 1, y - 1, w + 2, h + 2);
       if (scrollTo) {
         hex.scrollRectToVisible(new Rectangle(x, y, w, h));
@@ -97,17 +100,13 @@ public class Caret {
     return cursor;
   }
 
-  public long getMark() {
-    return mark;
-  }
-
   void paintForeground(Graphics g, long start, long end) {
     if (cursor >= start && cursor < end && hex.isFocusOwner()) {
-      final var measures = hex.getMeasures();
-      final var x = measures.toX(cursor);
-      final var y = measures.toY(cursor);
-      final var g2 = (Graphics2D) g;
-      final var oldStroke = g2.getStroke();
+      val measures = hex.getMeasures();
+      val x = measures.toX(cursor);
+      val y = measures.toY(cursor);
+      val g2 = (Graphics2D) g;
+      val oldStroke = g2.getStroke();
       g2.setColor(hex.getForeground());
       g2.setStroke(CURSOR_STROKE);
       g2.drawRect(x, y, measures.getCellWidth() - 1, measures.getCellHeight() - 1);
@@ -120,12 +119,12 @@ public class Caret {
   }
 
   public void setDot(long value, boolean keepMark) {
-    final var model = hex.getModel();
+    val model = hex.getModel();
     if (model == null || value < model.getFirstOffset() || value > model.getLastOffset()) {
       value = -1;
     }
     if (cursor != value) {
-      final var oldValue = cursor;
+      val oldValue = cursor;
       if (highlight != null) {
         hex.getHighlighter().remove(highlight);
         highlight = null;
@@ -139,8 +138,8 @@ public class Caret {
       expose(oldValue, false);
       expose(value, true);
       if (!listeners.isEmpty()) {
-        final var event = new ChangeEvent(this);
-        for (final var l : listeners) {
+        val event = new ChangeEvent(this);
+        for (val l : listeners) {
           l.stateChanged(event);
         }
       }
@@ -160,9 +159,9 @@ public class Caret {
 
     @Override
     public void keyPressed(KeyEvent e) {
-      final var cols = hex.getMeasures().getColumnCount();
+      val cols = hex.getMeasures().getColumnCount();
       int rows;
-      final var shift = (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
+      val shift = (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0;
       switch (e.getKeyCode()) {
         case KeyEvent.VK_UP:
           if (cursor >= cols) setDot(cursor - cols, shift);
@@ -182,7 +181,7 @@ public class Caret {
           break;
         case KeyEvent.VK_HOME:
           if (cursor >= 0) {
-            final var dist = (int) (cursor % cols);
+            val dist = (int) (cursor % cols);
             if (dist == 0) {
               setDot(0, shift);
             } else {
@@ -192,10 +191,10 @@ public class Caret {
           break;
         case KeyEvent.VK_END:
           if (cursor >= 0) {
-            final var model = hex.getModel();
+            val model = hex.getModel();
             var dest = (cursor / cols * cols) + cols - 1;
             if (model != null) {
-              final var end = model.getLastOffset();
+              val end = model.getLastOffset();
               if (dest > end || dest == cursor) dest = end;
             }
             setDot(dest, shift);
@@ -205,7 +204,7 @@ public class Caret {
           rows = hex.getVisibleRect().height / hex.getMeasures().getCellHeight();
           if (rows > 2) rows--;
           if (cursor >= 0) {
-            final var max = hex.getModel().getLastOffset();
+            val max = hex.getModel().getLastOffset();
             if (cursor + rows * cols <= max) {
               setDot(cursor + rows * cols, shift);
             } else {
@@ -229,11 +228,11 @@ public class Caret {
 
     @Override
     public void keyTyped(KeyEvent e) {
-      final var mask = e.getModifiersEx();
+      val mask = e.getModifiersEx();
       if ((mask & ~InputEvent.SHIFT_DOWN_MASK) != 0) return;
 
-      final var c = e.getKeyChar();
-      final var cols = hex.getMeasures().getColumnCount();
+      val c = e.getKeyChar();
+      val cols = hex.getMeasures().getColumnCount();
       switch (c) {
         case ' ':
           if (cursor >= 0) setDot(cursor + 1, (mask & InputEvent.SHIFT_DOWN_MASK) != 0);
@@ -247,14 +246,14 @@ public class Caret {
           // setDot(cursor - 1, (mask & InputEvent.SHIFT_MASK) != 0);
           break;
         default:
-          final var digit = Character.digit(e.getKeyChar(), 16);
+          val digit = Character.digit(e.getKeyChar(), 16);
           if (digit >= 0) {
-            final var model = hex.getModel();
+            val model = hex.getModel();
             if (model != null
                 && cursor >= model.getFirstOffset()
                 && cursor <= model.getLastOffset()) {
-              final var curValue = model.get(cursor);
-              final var newValue = 16 * curValue + digit;
+              val curValue = model.get(cursor);
+              val newValue = 16 * curValue + digit;
               model.set(cursor, newValue);
             }
           }
@@ -263,8 +262,8 @@ public class Caret {
 
     @Override
     public void mouseDragged(MouseEvent e) {
-      final var measures = hex.getMeasures();
-      final var loc = measures.toAddress(e.getX(), e.getY());
+      val measures = hex.getMeasures();
+      val loc = measures.toAddress(e.getX(), e.getY());
       setDot(loc, true);
 
       // TODO should repeat dragged events when mouse leaves the
@@ -278,8 +277,8 @@ public class Caret {
 
     @Override
     public void mousePressed(MouseEvent e) {
-      final var measures = hex.getMeasures();
-      final var loc = measures.toAddress(e.getX(), e.getY());
+      val measures = hex.getMeasures();
+      val loc = measures.toAddress(e.getX(), e.getY());
       setDot(loc, (e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) != 0);
       if (!hex.isFocusOwner()) hex.requestFocus();
     }

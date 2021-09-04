@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -17,6 +17,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import lombok.val;
 
 class DrawingOverlaps {
   private final Map<CanvasObject, List<CanvasObject>> map;
@@ -28,10 +29,8 @@ class DrawingOverlaps {
   }
 
   private void addOverlap(CanvasObject a, CanvasObject b) {
-    List<CanvasObject> alist = map.computeIfAbsent(a, k -> new ArrayList<>());
-    if (!alist.contains(b)) {
-      alist.add(b);
-    }
+    val alist = map.computeIfAbsent(a, k -> new ArrayList<>());
+    if (!alist.contains(b)) alist.add(b);
   }
 
   public void addShape(CanvasObject shape) {
@@ -39,15 +38,15 @@ class DrawingOverlaps {
   }
 
   private void ensureUpdated() {
-    for (CanvasObject o : untested) {
-      List<CanvasObject> over = new ArrayList<>();
-      for (CanvasObject o2 : map.keySet()) {
-        if (o != o2 && o.overlaps(o2)) {
-          over.add(o2);
-          addOverlap(o2, o);
+    for (val obj : untested) {
+      val over = new ArrayList<CanvasObject>();
+      for (val obj2 : map.keySet()) {
+        if (obj != obj2 && obj.overlaps(obj2)) {
+          over.add(obj2);
+          addOverlap(obj2, obj);
         }
       }
-      map.put(o, over);
+      map.put(obj, over);
     }
     untested.clear();
   }
@@ -55,12 +54,10 @@ class DrawingOverlaps {
   public Collection<CanvasObject> getObjectsOverlapping(CanvasObject o) {
     ensureUpdated();
 
-    List<CanvasObject> ret = map.get(o);
-    if (ret == null || ret.isEmpty()) {
-      return Collections.emptyList();
-    } else {
-      return Collections.unmodifiableList(ret);
-    }
+    val ret = map.get(o);
+    return (ret == null || ret.isEmpty())
+        ? Collections.emptyList()
+        : Collections.unmodifiableList(ret);
   }
 
   public void invalidateShape(CanvasObject shape) {
@@ -69,20 +66,16 @@ class DrawingOverlaps {
   }
 
   public void invalidateShapes(Collection<? extends CanvasObject> shapes) {
-    for (CanvasObject o : shapes) {
-      invalidateShape(o);
-    }
+    for (val obj : shapes) invalidateShape(obj);
   }
 
   public void removeShape(CanvasObject shape) {
     untested.remove(shape);
-    List<CanvasObject> mapped = map.remove(shape);
+    val mapped = map.remove(shape);
     if (mapped != null) {
-      for (CanvasObject o : mapped) {
-        List<CanvasObject> reverse = map.get(o);
-        if (reverse != null) {
-          reverse.remove(shape);
-        }
+      for (val obj : mapped) {
+        val reverse = map.get(obj);
+        if (reverse != null) reverse.remove(shape);
       }
     }
   }

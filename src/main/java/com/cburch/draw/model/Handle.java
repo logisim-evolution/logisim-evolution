@@ -1,20 +1,21 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.draw.model;
 
 import com.cburch.logisim.data.Location;
+import lombok.Getter;
 
 public class Handle {
-  private final CanvasObject object;
-  private final int x;
-  private final int y;
+  @Getter private final CanvasObject object;
+  @Getter private final int x;
+  @Getter private final int y;
 
   public Handle(CanvasObject object, int x, int y) {
     this.object = object;
@@ -38,18 +39,6 @@ public class Handle {
 
   public Location getLocation() {
     return Location.create(x, y);
-  }
-
-  public CanvasObject getObject() {
-    return object;
-  }
-
-  public int getX() {
-    return x;
-  }
-
-  public int getY() {
-    return y;
   }
 
   @Override

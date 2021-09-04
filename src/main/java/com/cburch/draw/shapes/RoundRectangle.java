@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -18,6 +18,7 @@ import com.cburch.logisim.data.Location;
 import java.awt.Graphics;
 import java.util.List;
 import java.util.Random;
+import lombok.val;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -30,18 +31,18 @@ public class RoundRectangle extends Rectangular {
   }
 
   private static boolean inCircle(int qx, int qy, int cx, int cy, int rx, int ry) {
-    double dx = qx - cx;
-    double dy = qy - cy;
-    double sum = (dx * dx) / (4 * rx * rx) + (dy * dy) / (4 * ry * ry);
+    val dx = qx - cx;
+    val dy = qy - cy;
+    val sum = (dx * dx) / (4 * rx * rx) + (dy * dy) / (4 * ry * ry);
     return sum <= 0.25;
   }
 
   @Override
   protected boolean contains(int x, int y, int w, int h, Location q) {
-    int qx = q.getX();
-    int qy = q.getY();
-    int rx = radius;
-    int ry = radius;
+    val qx = q.getX();
+    val qy = q.getY();
+    var rx = radius;
+    var ry = radius;
     if (2 * rx > w) rx = w / 2;
     if (2 * ry > h) ry = h / 2;
     if (!isInRect(qx, qy, x, y, w, h)) {
@@ -61,7 +62,7 @@ public class RoundRectangle extends Rectangular {
 
   @Override
   public void draw(Graphics g, int x, int y, int w, int h) {
-    int diam = 2 * radius;
+    val diam = 2 * radius;
     if (setForFill(g)) g.fillRoundRect(x, y, w, h, diam, diam);
     if (setForStroke(g)) g.drawRoundRect(x, y, w, h, diam, diam);
   }
@@ -79,15 +80,15 @@ public class RoundRectangle extends Rectangular {
   @Override
   protected Location getRandomPoint(Bounds bds, Random rand) {
     if (getPaintType() == DrawAttr.PAINT_STROKE) {
-      int w = getWidth();
-      int h = getHeight();
-      int r = radius;
-      int horz = Math.max(0, w - 2 * r); // length of horizontal segment
-      int vert = Math.max(0, h - 2 * r);
-      double len = 2 * horz + 2 * vert + 2 * Math.PI * r;
-      double u = len * rand.nextDouble();
-      int x = getX();
-      int y = getY();
+      val w = getWidth();
+      val h = getHeight();
+      val r = radius;
+      val horz = Math.max(0, w - 2 * r); // length of horizontal segment
+      val vert = Math.max(0, h - 2 * r);
+      val len = 2 * horz + 2 * vert + 2 * Math.PI * r;
+      var u = len * rand.nextDouble();
+      var x = getX();
+      var y = getY();
       if (u < horz) {
         x += r + (int) u;
       } else if (u < 2 * horz) {
@@ -118,7 +119,7 @@ public class RoundRectangle extends Rectangular {
         }
       }
 
-      int d = getStrokeWidth();
+      val d = getStrokeWidth();
       if (d > 1) {
         x += rand.nextInt(d) - d / 2;
         y += rand.nextInt(d) - d / 2;
@@ -134,9 +135,8 @@ public class RoundRectangle extends Rectangular {
   public <V> V getValue(Attribute<V> attr) {
     if (attr == DrawAttr.CORNER_RADIUS) {
       return (V) Integer.valueOf(radius);
-    } else {
-      return super.getValue(attr);
     }
+    return super.getValue(attr);
   }
 
   @Override
@@ -144,9 +144,8 @@ public class RoundRectangle extends Rectangular {
     if (other instanceof RoundRectangle) {
       RoundRectangle that = (RoundRectangle) other;
       return super.matches(other) && this.radius == that.radius;
-    } else {
-      return false;
     }
+    return false;
   }
 
   @Override
