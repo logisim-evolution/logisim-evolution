@@ -31,6 +31,8 @@ import com.cburch.logisim.util.SyntaxChecker;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
+import lombok.Getter;
+import lombok.val;
 
 public class CircuitAttributes extends AbstractAttributeSet {
 
@@ -126,7 +128,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
     ret.addAttributeListener(new StaticListener(source));
     return ret;
   }
-  
+
   public static final Attribute<String> NAME_ATTR =
       Attributes.forString("circuit", S.getter("circuitName"));
 
@@ -188,13 +190,13 @@ public class CircuitAttributes extends AbstractAttributeSet {
 
   private final Circuit source;
   private Instance subcircInstance;
-  private Direction facing;
+  @Getter private Direction facing;
   private String label;
   private Direction labelLocation;
   private Font labelFont;
   private Boolean LabelVisible;
   private MyListener listener;
-  private Instance[] pinInstances;
+  @Getter private Instance[] pinInstances;
   private boolean NameReadOnly;
 
   public CircuitAttributes(Circuit source) {
@@ -223,14 +225,6 @@ public class CircuitAttributes extends AbstractAttributeSet {
     return INSTANCE_ATTRS;
   }
 
-  public Direction getFacing() {
-    return facing;
-  }
-
-  public Instance[] getPinInstances() {
-    return pinInstances;
-  }
-
   @Override
   @SuppressWarnings("unchecked")
   public <E> E getValue(Attribute<E> attr) {
@@ -244,8 +238,8 @@ public class CircuitAttributes extends AbstractAttributeSet {
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    for (Attribute<?> aStatic : STATIC_ATTRS) {
-      if (aStatic == attr)
+    for (val attrStatic : STATIC_ATTRS) {
+      if (attrStatic == attr)
         return false;
     }
     return attr.isToSave();

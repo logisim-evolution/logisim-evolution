@@ -81,6 +81,7 @@ public class WidthIncompatibilityData {
 
   @Override
   public int hashCode() {
+    // FIXME: really?!! this will collide so frequently!
     return this.size();
   }
 

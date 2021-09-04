@@ -10,17 +10,18 @@
 package com.cburch.logisim.circuit;
 
 import java.util.concurrent.CopyOnWriteArraySet;
+import lombok.Getter;
 
 class WireThread {
   private WireThread parent;
-  private final CopyOnWriteArraySet<CircuitWires.ThreadBundle> bundles =
+  @Getter private final CopyOnWriteArraySet<CircuitWires.ThreadBundle> bundles =
       new CopyOnWriteArraySet<>();
 
-  WireThread() {
+  public WireThread() {
     parent = this;
   }
 
-  WireThread find() {
+  public WireThread find() {
     var ret = this;
     if (ret.parent != ret) {
       do ret = ret.parent;
@@ -28,10 +29,6 @@ class WireThread {
       this.parent = ret;
     }
     return ret;
-  }
-
-  CopyOnWriteArraySet<CircuitWires.ThreadBundle> getBundles() {
-    return bundles;
   }
 
   void unite(WireThread other) {

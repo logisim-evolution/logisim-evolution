@@ -315,7 +315,7 @@ public class MapComponent {
       for (var comp : IOcomps) {
         if (comp.GetRectangle().PointInside(rect.getXpos(), rect.getYpos())) {
           if (cmap.isSinglePin()) {
-            tryMap(cmap.getPinId(), comp, cmap.getIOId());
+            tryMap(cmap.getPinId(), comp, cmap.getIoId());
           } else {
             tryMap(comp);
           }
@@ -336,9 +336,9 @@ public class MapComponent {
           final var rect2 = pmaps.get(1).getRectangle();
           final var rect3 = pmaps.get(2).getRectangle();
           if (rect1.equals(rect2) && rect2.equals(rect3)) {
-            final var iomap1 = pmaps.get(0).getIOId();
-            final var iomap2 = pmaps.get(1).getIOId();
-            final var iomap3 = pmaps.get(2).getIOId();
+            final var iomap1 = pmaps.get(0).getIoId();
+            final var iomap2 = pmaps.get(1).getIoId();
+            final var iomap3 = pmaps.get(2).getIoId();
             if (iomap1 == iomap2 && iomap2 == iomap3) {
               /* we have a triple map on a LEDArray, so do it */
               for (var comp : IOcomps) {
@@ -728,7 +728,7 @@ public class MapComponent {
           else if (pinmap.isSinglePin())
             s.append(pinmap.getRectangle().getXpos()).append("_")
                 .append(pinmap.getRectangle().getYpos()).append("_").append(pinmap
-                .getIOId());
+                .getIoId());
           else
             s.append(NO_MAP);
         }

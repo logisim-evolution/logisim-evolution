@@ -134,7 +134,7 @@ public class SimpleDRCContainer {
       if (obj instanceof Wire) {
         final var wire = (Wire) obj;
         if ((markType & MARK_WIRE) != 0) {
-          wire.SetDRCHighlight(true);
+          wire.setDRCHighlighted(true);
         }
       } else if (obj instanceof Splitter) {
         final var split = (Splitter) obj;
@@ -156,7 +156,7 @@ public class SimpleDRCContainer {
       if (obj instanceof Wire) {
         final var wire = (Wire) obj;
         if ((markType & MARK_WIRE) != 0) {
-          wire.SetDRCHighlight(false);
+          wire.setDRCHighlighted(false);
         }
       } else if (obj instanceof Splitter) {
         final var split = (Splitter) obj;

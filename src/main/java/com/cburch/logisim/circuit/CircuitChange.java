@@ -15,6 +15,8 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
 import java.util.Collection;
+import lombok.Getter;
+import lombok.val;
 
 public class CircuitChange {
   public static CircuitChange add(Circuit circuit, Component comp) {
@@ -76,13 +78,13 @@ public class CircuitChange {
 
   static final int SET_FOR_CIRCUIT = 7;
 
-  private final Circuit circuit;
+  @Getter private final Circuit circuit;
   private final int type;
-  private final Component comp;
+  @Getter private final Component component;
   private Collection<? extends Component> comps;
-  private final Attribute<?> attr;
-  private final Object oldValue;
-  private final Object newValue;
+  @Getter private final Attribute<?> attribute;
+  @Getter private final Object oldValue;
+  @Getter private final Object newValue;
 
   private CircuitChange(Circuit circuit, int type, Collection<? extends Component> comps) {
     this(circuit, type, null, null, null, null);
@@ -102,72 +104,72 @@ public class CircuitChange {
       Object newValue) {
     this.circuit = circuit;
     this.type = type;
-    this.comp = comp;
-    this.attr = attr;
+    this.component = comp;
+    this.attribute = attr;
     this.oldValue = oldValue;
     this.newValue = newValue;
   }
 
-  boolean concernsSupercircuit() {
+  public boolean concernsSupercircuit() {
     switch (type) {
       case CLEAR:
         return true;
       case ADD:
       case REMOVE:
-        return comp.getFactory() instanceof Pin;
+        return component.getFactory() instanceof Pin;
       case ADD_ALL:
       case REMOVE_ALL:
-        for (Component comp : comps) {
+        for (val comp : comps) {
           if (comp.getFactory() instanceof Pin) return true;
         }
         return false;
       case REPLACE:
-        ReplacementMap repl = (ReplacementMap) newValue;
-        for (Component comp : repl.getRemovals()) {
+        val repl = (ReplacementMap) newValue;
+        for (val comp : repl.getRemovals()) {
           if (comp.getFactory() instanceof Pin) return true;
         }
-        for (Component comp : repl.getAdditions()) {
+        for (val comp : repl.getAdditions()) {
           if (comp.getFactory() instanceof Pin) return true;
         }
         return false;
       case SET:
-        return comp.getFactory() instanceof Pin
-            && (attr == StdAttr.WIDTH || attr == Pin.ATTR_TYPE || attr == StdAttr.LABEL);
+        return component.getFactory() instanceof Pin
+            && (attribute == StdAttr.WIDTH || attribute == Pin.ATTR_TYPE || attribute == StdAttr.LABEL);
       case SET_FOR_CIRCUIT:
-        return (attr == CircuitAttributes.NAME_ATTR
-            || attr == CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE
-            || attr == CircuitAttributes.APPEARANCE_ATTR);
+        return (attribute == CircuitAttributes.NAME_ATTR
+            || attribute == CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE
+            || attribute == CircuitAttributes.APPEARANCE_ATTR);
       default:
         return false;
     }
   }
 
-  boolean concernsSiblingComponents() {
+  public boolean concernsSiblingComponents() {
     if (type == SET) {
-      return (comp.getFactory() instanceof SubcircuitFactory
-          && attr == CircuitAttributes.APPEARANCE_ATTR)
-          || (comp.getFactory() instanceof VhdlEntity && attr == StdAttr.APPEARANCE);
+      return (component.getFactory() instanceof SubcircuitFactory
+          && attribute == CircuitAttributes.APPEARANCE_ATTR)
+          || (component.getFactory() instanceof VhdlEntity && attribute == StdAttr.APPEARANCE);
     }
     return false;
   }
 
-  void execute(CircuitMutator mutator, ReplacementMap prevReplacements) {
+  public void execute(CircuitMutator mutator, ReplacementMap prevReplacements) {
     switch (type) {
       case CLEAR:
         mutator.clear(circuit);
         prevReplacements.reset();
         break;
       case ADD:
-        prevReplacements.add(comp);
+        prevReplacements.add(component);
         break;
       case ADD_ALL:
-        for (Component comp : comps) prevReplacements.add(comp);
+        for (val comp : comps) prevReplacements.add(comp);
         break;
       case REMOVE:
-        prevReplacements.remove(comp);
+        prevReplacements.remove(component);
         break;
       case REMOVE_ALL:
-        for (Component comp : comps) prevReplacements.remove(comp);
+        for (val comp : comps) prevReplacements.remove(comp);
         break;
       case REPLACE:
         prevReplacements.append((ReplacementMap) newValue);
@@ -175,59 +177,30 @@ public class CircuitChange {
       case SET:
         mutator.replace(circuit, prevReplacements);
         prevReplacements.reset();
-        mutator.set(circuit, comp, attr, newValue);
+        mutator.set(circuit, component, attribute, newValue);
         break;
       case SET_FOR_CIRCUIT:
         mutator.replace(circuit, prevReplacements);
         prevReplacements.reset();
-        mutator.setForCircuit(circuit, attr, newValue);
+        mutator.setForCircuit(circuit, attribute, newValue);
         break;
       default:
         throw new IllegalArgumentException("unknown change type " + type);
     }
   }
 
-  public Attribute<?> getAttribute() {
-    return attr;
-  }
-
-  public Circuit getCircuit() {
-    return circuit;
-  }
-
-  public Component getComponent() {
-    return comp;
-  }
-
-  public Object getNewValue() {
-    return newValue;
-  }
-
-  public Object getOldValue() {
-    return oldValue;
-  }
-
-  CircuitChange getReverseChange() {
-    switch (type) {
-      case CLEAR:
-        return CircuitChange.addAll(circuit, comps);
-      case ADD:
-        return CircuitChange.remove(circuit, comp);
-      case ADD_ALL:
-        return CircuitChange.removeAll(circuit, comps);
-      case REMOVE:
-        return CircuitChange.add(circuit, comp);
-      case REMOVE_ALL:
-        return CircuitChange.addAll(circuit, comps);
-      case SET:
-        return CircuitChange.set(circuit, comp, attr, newValue, oldValue);
-      case SET_FOR_CIRCUIT:
-        return CircuitChange.setForCircuit(circuit, attr, newValue, oldValue);
-      case REPLACE:
-        return CircuitChange.replace(circuit, ((ReplacementMap) newValue).getInverseMap());
-      default:
-        throw new IllegalArgumentException("unknown change type " + type);
-    }
+  public CircuitChange getReverseChange() {
+    return switch (type) {
+       case CLEAR -> CircuitChange.addAll(circuit, comps);
+       case ADD-> CircuitChange.remove(circuit, component);
+       case ADD_ALL->  CircuitChange.removeAll(circuit, comps);
+       case REMOVE-> CircuitChange.add(circuit, component);
+       case REMOVE_ALL-> CircuitChange.addAll(circuit, comps);
+       case SET->  CircuitChange.set(circuit, component, attribute, newValue, oldValue);
+       case SET_FOR_CIRCUIT->  CircuitChange.setForCircuit(circuit, attribute, newValue, oldValue);
+       case REPLACE-> CircuitChange.replace(circuit, ((ReplacementMap) newValue).getInverseMap());
+       default->throw new IllegalArgumentException("unknown change type " + type);
+    };
   }
 
   public int getType() {

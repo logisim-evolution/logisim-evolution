@@ -10,6 +10,7 @@
 package com.cburch.logisim.circuit.appear;
 
 import com.cburch.logisim.circuit.Circuit;
+import lombok.Getter;
 
 public class CircuitAppearanceEvent {
   public static final int APPEARANCE = 1;
@@ -17,16 +18,12 @@ public class CircuitAppearanceEvent {
   public static final int PORTS = 4;
   public static final int ALL_TYPES = 7;
 
-  private final Circuit circuit;
+  @Getter private final Circuit source;
   private final int affects;
 
   CircuitAppearanceEvent(Circuit circuit, int affects) {
-    this.circuit = circuit;
+    this.source = circuit;
     this.affects = affects;
-  }
-
-  public Circuit getSource() {
-    return circuit;
   }
 
   public boolean isConcerning(int type) {

@@ -235,7 +235,7 @@ public class ProjectActions {
 
   private static void updatecircs(LogisimFile lib, Project proj) {
     for (final var circ : lib.getCircuits()) {
-      circ.SetProject(proj);
+      circ.setProject(proj);
     }
     for (final var libs : lib.getLibraries()) {
       if (libs instanceof LoadedLibrary) {

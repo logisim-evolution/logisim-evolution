@@ -32,6 +32,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import lombok.Getter;
 
 public class CircuitState implements InstanceData {
 
@@ -101,7 +102,7 @@ public class CircuitState implements InstanceData {
         // If simulator is in single step mode, we want to hilight the
         // invalidated components (which are likely Pins, Buttons, or other
         // inputs), so pass this component to the simulator for display.
-        proj.getSimulator().addPendingInput(CircuitState.this, comp);
+        project.getSimulator().addPendingInput(CircuitState.this, comp);
         // TODO detemine if this should really be missing if (base !=
         // null) base.checkComponentEnds(CircuitState.this, comp);
       } else if (action == CircuitEvent.TRANSACTION_DONE) {
@@ -132,15 +133,15 @@ public class CircuitState implements InstanceData {
 
   private final MyCircuitListener myCircuitListener = new MyCircuitListener();
   private Propagator base = null; // base of tree of CircuitStates
-  private final Project proj; // project where circuit liespr
-  private final Circuit circuit; // circuit being simulated
+  @Getter private final Project project; // project where circuit liespr
+  @Getter private final Circuit circuit; // circuit being simulated
 
-  private CircuitState parentState = null; // parent in tree of CircuitStates
+  @Getter private CircuitState parentState = null; // parent in tree of CircuitStates
   private Component parentComp = null; // subcircuit component containing this
   // state
-  private HashSet<CircuitState> subStates = new HashSet<>();
+  @Getter private HashSet<CircuitState> subStates = new HashSet<>();
 
-  private CircuitWires.State wireData = null;
+  @Getter private CircuitWires.State wireData = null;
   private final HashMap<Component, Object> componentData = new HashMap<>();
   private final Map<Location, Value> values = new HashMap<>();
   private CopyOnWriteArraySet<Component> dirtyComponents = new CopyOnWriteArraySet<>();
@@ -151,7 +152,7 @@ public class CircuitState implements InstanceData {
   private final int id = lastId++;
 
   public CircuitState(Project proj, Circuit circuit) {
-    this.proj = proj;
+    this.project = proj;
     this.circuit = circuit;
     circuit.addCircuitListener(myCircuitListener);
   }
@@ -162,7 +163,7 @@ public class CircuitState implements InstanceData {
   }
 
   public CircuitState cloneState() {
-    final var ret = new CircuitState(proj, circuit);
+    final var ret = new CircuitState(project, circuit);
     ret.copyFrom(this, new Propagator(ret));
     ret.parentComp = null;
     ret.parentState = null;
@@ -180,7 +181,7 @@ public class CircuitState implements InstanceData {
     final var substateData = new HashMap<CircuitState, CircuitState>();
     this.subStates = new HashSet<>();
     for (final var oldSub : src.subStates) {
-      final var newSub = new CircuitState(src.proj, oldSub.circuit);
+      final var newSub = new CircuitState(src.project, oldSub.circuit);
       newSub.copyFrom(oldSub, base);
       newSub.parentState = this;
       this.subStates.add(newSub);
@@ -219,13 +220,6 @@ public class CircuitState implements InstanceData {
     if (base != null) base.drawOscillatingPoints(context);
   }
 
-  //
-  // public methods
-  //
-  public Circuit getCircuit() {
-    return circuit;
-  }
-
   Value getComponentOutputAt(Location p) {
     // for CircuitWires - to get values, ignoring wires' contributions
     final var cause_list = causes.get(p);
@@ -254,14 +248,6 @@ public class CircuitState implements InstanceData {
     }
   }
 
-  public CircuitState getParentState() {
-    return parentState;
-  }
-
-  public Project getProject() {
-    return proj;
-  }
-
   public Propagator getPropagator() {
     if (base == null) {
       base = new Propagator(this);
@@ -270,12 +256,8 @@ public class CircuitState implements InstanceData {
     return base;
   }
 
-  Component getSubcircuit() {
+  public Component getSubcircuit() {
     return parentComp;
-  }
-
-  public Set<CircuitState> getSubStates() { // returns Set of CircuitStates
-    return subStates;
   }
 
   public Value getValue(Location pt) {
@@ -288,10 +270,6 @@ public class CircuitState implements InstanceData {
 
   Value getValueByWire(Location p) {
     return values.get(p);
-  }
-
-  CircuitWires.State getWireData() {
-    return wireData;
   }
 
   //
@@ -525,7 +503,7 @@ public class CircuitState implements InstanceData {
   }
 
   private boolean knownClocks;
-  private Component temporaryClock;
+  @Getter private Component temporaryClock;
 
   public boolean hasKnownClocks() {
     return knownClocks || temporaryClock != null;
@@ -538,10 +516,6 @@ public class CircuitState implements InstanceData {
   public boolean setTemporaryClock(Component clk) {
     temporaryClock = clk;
     return clk == null || temporaryClockValidateOrTick(-1);
-  }
-
-  public Component getTemporaryClock() {
-    return temporaryClock;
   }
 
   @Override

@@ -36,15 +36,16 @@ import java.util.Iterator;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import javax.swing.SwingUtilities;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 class CircuitWires {
 
   static class BundleMap {
-    final HashMap<Location, WireBundle> pointBundles = new HashMap<>();
-    final HashSet<WireBundle> bundles = new HashSet<>();
-    boolean isValid = true;
+    private final HashMap<Location, WireBundle> pointBundles = new HashMap<>();
+    @Getter private final HashSet<WireBundle> bundles = new HashSet<>();
+    @Getter private boolean isValid = true;
     // NOTE: It would make things more efficient if we also had
     // a set of just the first bundle in each tree.
     HashSet<WidthIncompatibilityData> incompatibilityData = null;
@@ -75,20 +76,12 @@ class CircuitWires {
       return pointBundles.keySet();
     }
 
-    Set<WireBundle> getBundles() {
-      return bundles;
-    }
-
     HashSet<WidthIncompatibilityData> getWidthIncompatibilityData() {
       return incompatibilityData;
     }
 
     void invalidate() {
       isValid = false;
-    }
-
-    boolean isValid() {
-      return isValid;
     }
 
     void setBundleAt(Location p, WireBundle b) {
@@ -108,7 +101,7 @@ class CircuitWires {
     final BundleMap bundleMap;
     final HashMap<WireThread, Value> thr_values = new HashMap<>();
 
-    State(BundleMap bundleMap) {
+    public State(BundleMap bundleMap) {
       this.bundleMap = bundleMap;
     }
 
@@ -216,12 +209,12 @@ class CircuitWires {
     voidBundleMap();
   }
 
-  private boolean addWire(Wire w) {
-    final var added = wires.add(w);
+  private boolean addWire(Wire wire) {
+    final var added = wires.add(wire);
     if (!added) return false;
 
     if (bounds != Bounds.EMPTY_BOUNDS) { // update bounds
-      bounds = bounds.add(w.e0).add(w.e1);
+      bounds = bounds.add(wire.getEnd0()).add(wire.getEnd1());
     }
     return true;
   }
@@ -395,16 +388,16 @@ class CircuitWires {
   private void connectWires(BundleMap ret) {
     // make a WireBundle object for each tree of connected wires
     for (final var wire : wires) {
-      final var b0 = ret.getBundleAt(wire.e0);
+      final var b0 = ret.getBundleAt(wire.getEnd0());
       if (b0 == null) {
-        final var b1 = ret.createBundleAt(wire.e1);
-        b1.points.add(wire.e0);
-        ret.setBundleAt(wire.e0, b1);
+        final var b1 = ret.createBundleAt(wire.getEnd1());
+        b1.points.add(wire.getEnd0());
+        ret.setBundleAt(wire.getEnd0(), b1);
       } else {
-        final var b1 = ret.getBundleAt(wire.e1);
+        final var b1 = ret.getBundleAt(wire.getEnd1());
         if (b1 == null) { // t1 doesn't exist
-          b0.points.add(wire.e1);
-          ret.setBundleAt(wire.e1, b0);
+          b0.points.add(wire.getEnd1());
+          ret.setBundleAt(wire.getEnd1(), b0);
         } else {
           b1.unite(b0); // unite b0 and b1
         }
@@ -424,8 +417,8 @@ class CircuitWires {
     final var isValid = bmap.isValid();
     if (hidden == null || hidden.size() == 0) {
       for (final var wire : wires) {
-        final var s = wire.e0;
-        final var t = wire.e1;
+        final var s = wire.getEnd0();
+        final var t = wire.getEnd1();
         final var wb = bmap.getBundleAt(s);
         var width = 5;
         if (!wb.isValid()) {
@@ -456,9 +449,9 @@ class CircuitWires {
         /* The following part is used by the FPGA-commanders DRC to highlight a wire with DRC
          * problems (KTT1)
          */
-        if (wire.IsDRCHighlighted()) {
+        if (wire.isDRCHighlighted()) {
           width += 2;
-          g.setColor(wire.GetDRCHighlightColor());
+          g.setColor(wire.getDRCHighlightColor());
           GraphicsUtil.switchToWidth(g, 2);
           if (wire.isVertical()) {
             g.drawLine(s.getX() - width, s.getY(), t.getX() - width, t.getY());
@@ -500,8 +493,8 @@ class CircuitWires {
     } else {
       for (final var wire : wires) {
         if (!hidden.contains(wire)) {
-          final var s = wire.e0;
-          final var t = wire.e1;
+          final var s = wire.getEnd0();
+          final var t = wire.getEnd1();
           final var wb = bmap.getBundleAt(s);
           if (!wb.isValid()) {
             g.setColor(Value.WIDTH_ERROR_COLOR);
@@ -663,7 +656,7 @@ class CircuitWires {
   }
 
   WireSet getWireSet(Wire start) {
-    final var bundle = getWireBundle(start.e0);
+    final var bundle = getWireBundle(start.getEnd0());
     if (bundle == null) return WireSet.EMPTY;
     final var wires = new HashSet<Wire>();
     for (final var loc : bundle.points) {
@@ -772,19 +765,19 @@ class CircuitWires {
     }
 
     var w = it.next();
-    var xmin = w.e0.getX();
-    var ymin = w.e0.getY();
-    var xmax = w.e1.getX();
-    var ymax = w.e1.getY();
+    var xmin = w.getEnd0().getX();
+    var ymin = w.getEnd0().getY();
+    var xmax = w.getEnd1().getX();
+    var ymax = w.getEnd1().getY();
     while (it.hasNext()) {
       w = it.next();
-      final var x0 = w.e0.getX();
+      final var x0 = w.getEnd0().getX();
       if (x0 < xmin) xmin = x0;
-      final var x1 = w.e1.getX();
+      final var x1 = w.getEnd1().getX();
       if (x1 > xmax) xmax = x1;
-      final var y0 = w.e0.getY();
+      final var y0 = w.getEnd0().getY();
       if (y0 < ymin) ymin = y0;
-      final var y1 = w.e1.getY();
+      final var y1 = w.getEnd1().getY();
       if (y1 > ymax) ymax = y1;
     }
     bounds = Bounds.create(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1);
@@ -821,7 +814,7 @@ class CircuitWires {
     if (bounds != Bounds.EMPTY_BOUNDS) {
       // bounds is valid - invalidate if endpoint on border
       final var smaller = bounds.expand(-2);
-      if (!smaller.contains(w.e0) || !smaller.contains(w.e1)) {
+      if (!smaller.contains(w.getEnd0()) || !smaller.contains(w.getEnd1())) {
         bounds = Bounds.EMPTY_BOUNDS;
       }
     }

@@ -66,7 +66,7 @@ class SplitterPainter {
       dx = dy;
       dy = t;
     }
-    final var halign = parms.getTextHorzAlign();
+    final var halign = parms.getTextHorizAlign();
     final var valign = parms.getTextVertAlign();
     x += (halign == GraphicsUtil.H_RIGHT ? -1 : 1) * (SPINE_WIDTH / 2 + 1);
     y += valign == GraphicsUtil.V_TOP ? 0 : -3;

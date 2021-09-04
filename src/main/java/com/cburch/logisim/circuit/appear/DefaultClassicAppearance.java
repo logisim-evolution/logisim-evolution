@@ -22,44 +22,43 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import lombok.val;
 
 public class DefaultClassicAppearance {
 
   private static final int OFFS = 50;
 
   public static List<CanvasObject> build(Collection<Instance> pins) {
-    Map<Direction, List<Instance>> edge;
-    edge = new HashMap<>();
+    val edge = new HashMap<Direction, List<Instance>>();
     edge.put(Direction.NORTH, new ArrayList<>());
     edge.put(Direction.SOUTH, new ArrayList<>());
     edge.put(Direction.EAST, new ArrayList<>());
     edge.put(Direction.WEST, new ArrayList<>());
-    for (Instance pin : pins) {
-      Direction pinFacing = pin.getAttributeValue(StdAttr.FACING);
-      Direction pinEdge = pinFacing.reverse();
-      List<Instance> e = edge.get(pinEdge);
+    for (val pin : pins) {
+      val pinFacing = pin.getAttributeValue(StdAttr.FACING);
+      val pinEdge = pinFacing.reverse();
+      val e = edge.get(pinEdge);
       e.add(pin);
     }
 
-    for (Map.Entry<Direction, List<Instance>> entry : edge.entrySet()) {
+    for (val entry : edge.entrySet()) {
       DefaultAppearance.sortPinList(entry.getValue(), entry.getKey());
     }
 
-    int numNorth = edge.get(Direction.NORTH).size();
-    int numSouth = edge.get(Direction.SOUTH).size();
-    int numEast = edge.get(Direction.EAST).size();
-    int numWest = edge.get(Direction.WEST).size();
-    int maxVert = Math.max(numNorth, numSouth);
-    int maxHorz = Math.max(numEast, numWest);
+    val numNorth = edge.get(Direction.NORTH).size();
+    val numSouth = edge.get(Direction.SOUTH).size();
+    val numEast = edge.get(Direction.EAST).size();
+    val numWest = edge.get(Direction.WEST).size();
+    val maxVert = Math.max(numNorth, numSouth);
+    val maxHorz = Math.max(numEast, numWest);
 
-    int offsNorth = computeOffset(numNorth, numSouth, maxHorz);
-    int offsSouth = computeOffset(numSouth, numNorth, maxHorz);
-    int offsEast = computeOffset(numEast, numWest, maxVert);
-    int offsWest = computeOffset(numWest, numEast, maxVert);
+    val offsNorth = computeOffset(numNorth, numSouth, maxHorz);
+    val offsSouth = computeOffset(numSouth, numNorth, maxHorz);
+    val offsEast = computeOffset(numEast, numWest, maxVert);
+    val offsWest = computeOffset(numWest, numEast, maxVert);
 
-    int width = computeDimension(maxVert, maxHorz);
-    int height = computeDimension(maxHorz, maxVert);
+    val width = computeDimension(maxVert, maxHorz);
+    val height = computeDimension(maxHorz, maxVert);
 
     // compute position of anchor relative to top left corner of box
     int ax;
@@ -82,19 +81,19 @@ public class DefaultClassicAppearance {
     }
 
     // place rectangle so anchor is on the grid
-    int rx = OFFS + (9 - (ax + 9) % 10);
-    int ry = OFFS + (9 - (ay + 9) % 10);
+    val rx = OFFS + (9 - (ax + 9) % 10);
+    val ry = OFFS + (9 - (ay + 9) % 10);
 
-    Location e0 = Location.create(rx + (width - 8) / 2, ry + 1);
-    Location e1 = Location.create(rx + (width + 8) / 2, ry + 1);
-    Location ct = Location.create(rx + width / 2, ry + 11);
-    Curve notch = new Curve(e0, e1, ct);
+    val e0 = Location.create(rx + (width - 8) / 2, ry + 1);
+    val e1 = Location.create(rx + (width + 8) / 2, ry + 1);
+    val ct = Location.create(rx + width / 2, ry + 11);
+    val notch = new Curve(e0, e1, ct);
     notch.setValue(DrawAttr.STROKE_WIDTH, 2);
     notch.setValue(DrawAttr.STROKE_COLOR, Color.GRAY);
-    Rectangle rect = new Rectangle(rx, ry, width, height);
+    val rect = new Rectangle(rx, ry, width, height);
     rect.setValue(DrawAttr.STROKE_WIDTH, 2);
 
-    List<CanvasObject> ret = new ArrayList<>();
+    val ret = new ArrayList<CanvasObject>();
     ret.add(notch);
     ret.add(rect);
     placePins(ret, edge.get(Direction.WEST), rx, ry + offsWest, 0, 10);

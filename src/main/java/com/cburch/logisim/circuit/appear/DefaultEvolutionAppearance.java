@@ -25,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import lombok.val;
 
 public class DefaultEvolutionAppearance {
 
@@ -33,24 +33,22 @@ public class DefaultEvolutionAppearance {
 
   private DefaultEvolutionAppearance() {}
 
-  public static List<CanvasObject> build(
-      Collection<Instance> pins, String CircuitName, boolean FixedSize) {
-    Map<Direction, List<Instance>> edge;
-    edge = new HashMap<>();
+  public static List<CanvasObject> build(Collection<Instance> pins, String CircuitName, boolean FixedSize) {
+    val edge = new HashMap<Direction, List<Instance>>();
     edge.put(Direction.EAST, new ArrayList<>());
     edge.put(Direction.WEST, new ArrayList<>());
-    int MaxLeftLabelLength = 0;
-    int MaxRightLabelLength = 0;
-    int TitleWidth =
+    var MaxLeftLabelLength = 0;
+    var MaxRightLabelLength = 0;
+    val TitleWidth =
         (CircuitName == null)
             ? 14 * DrawAttr.FIXED_FONT_CHAR_WIDTH
             : CircuitName.length() * DrawAttr.FIXED_FONT_CHAR_WIDTH;
 
     if (!pins.isEmpty()) {
-      for (Instance pin : pins) {
+      for (val pin : pins) {
         Direction pinEdge;
-        Text label = new Text(0, 0, pin.getAttributeValue(StdAttr.LABEL));
-        int LabelWidth = label.getText().length() * DrawAttr.FIXED_FONT_CHAR_WIDTH;
+        val label = new Text(0, 0, pin.getAttributeValue(StdAttr.LABEL));
+        val LabelWidth = label.getText().length() * DrawAttr.FIXED_FONT_CHAR_WIDTH;
         if (pin.getAttributeValue(Pin.ATTR_TYPE)) {
           pinEdge = Direction.EAST;
           if (LabelWidth > MaxRightLabelLength) MaxRightLabelLength = LabelWidth;
@@ -63,23 +61,23 @@ public class DefaultEvolutionAppearance {
       }
     }
 
-    for (Map.Entry<Direction, List<Instance>> entry : edge.entrySet()) {
+    for (val entry : edge.entrySet()) {
       DefaultAppearance.sortPinList(entry.getValue(), entry.getKey());
     }
 
-    int numEast = edge.get(Direction.EAST).size();
-    int numWest = edge.get(Direction.WEST).size();
-    int maxVert = Math.max(numEast, numWest);
+    val numEast = edge.get(Direction.EAST).size();
+    val numWest = edge.get(Direction.WEST).size();
+    val maxVert = Math.max(numEast, numWest);
 
-    int dy = ((DrawAttr.FIXED_FONT_HEIGHT + (DrawAttr.FIXED_FONT_HEIGHT >> 2) + 5) / 10) * 10;
-    int textWidth =
+    val dy = ((DrawAttr.FIXED_FONT_HEIGHT + (DrawAttr.FIXED_FONT_HEIGHT >> 2) + 5) / 10) * 10;
+    val textWidth =
         (FixedSize)
             ? 25 * DrawAttr.FIXED_FONT_CHAR_WIDTH
             : Math.max((MaxLeftLabelLength + MaxRightLabelLength + 35), (TitleWidth + 15));
-    int Thight = ((DrawAttr.FIXED_FONT_HEIGHT + 10) / 10) * 10;
-    int width = (textWidth / 10) * 10 + 20;
-    int height = (maxVert > 0) ? maxVert * dy + Thight : 10 + Thight;
-    int sdy = (DrawAttr.FIXED_FONT_ASCENT - DrawAttr.FIXED_FONT_DESCENT) >> 1;
+    val Thight = ((DrawAttr.FIXED_FONT_HEIGHT + 10) / 10) * 10;
+    val width = (textWidth / 10) * 10 + 20;
+    val height = (maxVert > 0) ? maxVert * dy + Thight : 10 + Thight;
+    val sdy = (DrawAttr.FIXED_FONT_ASCENT - DrawAttr.FIXED_FONT_DESCENT) >> 1;
 
     // compute position of anchor relative to top left corner of box
     int ax;
@@ -96,13 +94,13 @@ public class DefaultEvolutionAppearance {
     }
 
     // place rectangle so anchor is on the grid
-    int rx = OFFS + (9 - (ax + 9) % 10);
-    int ry = OFFS + (9 - (ay + 9) % 10);
+    val rx = OFFS + (9 - (ax + 9) % 10);
+    val ry = OFFS + (9 - (ay + 9) % 10);
 
-    List<CanvasObject> ret = new ArrayList<>();
+    val ret = new ArrayList<CanvasObject>();
     placePins(ret, edge.get(Direction.WEST), rx, ry + 10, 0, dy, true, sdy, FixedSize);
     placePins(ret, edge.get(Direction.EAST), rx + width, ry + 10, 0, dy, false, sdy, FixedSize);
-    Rectangle rect = new Rectangle(rx + 10, ry + height - Thight, width - 20, Thight);
+    var rect = new Rectangle(rx + 10, ry + height - Thight, width - 20, Thight);
     rect.setValue(DrawAttr.STROKE_WIDTH, 1);
     rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
     rect.setValue(DrawAttr.FILL_COLOR, Color.BLACK);
@@ -110,50 +108,40 @@ public class DefaultEvolutionAppearance {
     rect = new Rectangle(rx + 10, ry, width - 20, height);
     rect.setValue(DrawAttr.STROKE_WIDTH, 2);
     ret.add(rect);
-    String Label = CircuitName == null ? "VHDL Component" : CircuitName;
-    if (FixedSize) {
-      if (Label.length() > 23) {
-        Label = Label.substring(0, 20);
-        Label = Label.concat("...");
-      }
+    var labelA = CircuitName == null ? "VHDL Component" : CircuitName;
+    if (FixedSize && labelA.length() > 23) {
+      labelA = labelA.substring(0, 20);
+      labelA = labelA.concat("...");
     }
-    Text label = new Text(rx + (width >> 1), ry + (height - DrawAttr.FIXED_FONT_DESCENT - 5), Label);
-    label.getLabel().setHorizontalAlignment(EditableLabel.CENTER);
-    label.getLabel().setColor(Color.WHITE);
-    label.getLabel().setFont(DrawAttr.DEFAULT_NAME_FONT);
-    ret.add(label);
+    val labelB = new Text(rx + (width >> 1), ry + (height - DrawAttr.FIXED_FONT_DESCENT - 5), labelA);
+    labelB.getLabel().setHorizontalAlignment(EditableLabel.CENTER);
+    labelB.getLabel().setColor(Color.WHITE);
+    labelB.getLabel().setFont(DrawAttr.DEFAULT_NAME_FONT);
+    ret.add(labelB);
     ret.add(new AppearanceAnchor(Location.create(rx + ax, ry + ay)));
     return ret;
   }
 
-  private static void placePins(
-      List<CanvasObject> dest,
-      List<Instance> pins,
-      int x,
-      int y,
-      int dx,
-      int dy,
-      boolean LeftSide,
-      int ldy,
-      boolean FixedSize) {
-    int halign;
-    Color color = Color.DARK_GRAY;
+  private static void placePins(List<CanvasObject> dest, List<Instance> pins,
+                                int x, int y, int dx, int dy, boolean LeftSide, int ldy, boolean FixedSize) {
+    int hAlign;
+    val color = Color.DARK_GRAY;
     int ldx;
-    for (Instance pin : pins) {
+    for (val pin : pins) {
       int offset =
           (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1)
               ? Wire.WIDTH_BUS >> 1
               : Wire.WIDTH >> 1;
-      int height =
+      val height =
           (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1) ? Wire.WIDTH_BUS : Wire.WIDTH;
       Rectangle rect;
       if (LeftSide) {
         ldx = 15;
-        halign = EditableLabel.LEFT;
+        hAlign = EditableLabel.LEFT;
         rect = new Rectangle(x, y - offset, 10, height);
       } else {
         ldx = -15;
-        halign = EditableLabel.RIGHT;
+        hAlign = EditableLabel.RIGHT;
         rect = new Rectangle(x - 10, y - offset, 10, height);
       }
       rect.setValue(DrawAttr.STROKE_WIDTH, 1);
@@ -162,18 +150,18 @@ public class DefaultEvolutionAppearance {
       dest.add(rect);
       dest.add(new AppearancePort(Location.create(x, y), pin));
       if (pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
-        String Label = pin.getAttributeValue(StdAttr.LABEL);
+        var labelA = pin.getAttributeValue(StdAttr.LABEL);
         if (FixedSize) {
-          if (Label.length() > 12) {
-            Label = Label.substring(0, 9);
-            Label = Label.concat("..");
+          if (labelA.length() > 12) {
+            labelA = labelA.substring(0, 9);
+            labelA = labelA.concat("..");
           }
         }
-        Text label = new Text(x + ldx, y + ldy, Label);
-        label.getLabel().setHorizontalAlignment(halign);
-        label.getLabel().setColor(color);
-        label.getLabel().setFont(DrawAttr.DEFAULT_FIXED_PICH_FONT);
-        dest.add(label);
+        val labelB = new Text(x + ldx, y + ldy, labelA);
+        labelB.getLabel().setHorizontalAlignment(hAlign);
+        labelB.getLabel().setColor(color);
+        labelB.getLabel().setFont(DrawAttr.DEFAULT_FIXED_PICH_FONT);
+        dest.add(labelB);
       }
       x += dx;
       y += dy;

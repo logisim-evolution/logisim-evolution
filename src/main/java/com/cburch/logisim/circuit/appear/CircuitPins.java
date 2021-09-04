@@ -25,12 +25,13 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import lombok.val;
 
 public class CircuitPins {
   private class MyComponentListener implements ComponentListener, AttributeListener {
     @Override
     public void attributeValueChanged(AttributeEvent e) {
-      Attribute<?> attr = e.getAttribute();
+      val attr = e.getAttribute();
       if (attr == StdAttr.FACING || attr == StdAttr.LABEL || attr == Pin.ATTR_TYPE) {
         appearanceManager.updatePorts();
       }
@@ -58,13 +59,13 @@ public class CircuitPins {
 
   public void transactionCompleted(ReplacementMap repl) {
     // determine the changes
-    Set<Instance> adds = new HashSet<>();
-    Set<Instance> removes = new HashSet<>();
-    Map<Instance, Instance> replaces = new HashMap<>();
-    for (Component comp : repl.getAdditions()) {
+    val adds = new HashSet<Instance>();
+    val removes = new HashSet<Instance>();
+    val replaces = new HashMap<Instance, Instance>();
+    for (val comp : repl.getAdditions()) {
       if (comp.getFactory() instanceof Pin) {
-        Instance in = Instance.getInstanceFor(comp);
-        boolean added = pins.add(in);
+        val in = Instance.getInstanceFor(comp);
+        val added = pins.add(in);
         if (added) {
           comp.addComponentListener(myComponentListener);
           in.getAttributeSet().addAttributeListener(myComponentListener);
@@ -72,19 +73,19 @@ public class CircuitPins {
         }
       }
     }
-    for (Component comp : repl.getRemovals()) {
+    for (val comp : repl.getRemovals()) {
       if (comp.getFactory() instanceof Pin) {
-        Instance in = Instance.getInstanceFor(comp);
-        boolean removed = pins.remove(in);
+        val in = Instance.getInstanceFor(comp);
+        val removed = pins.remove(in);
         if (removed) {
           comp.removeComponentListener(myComponentListener);
           in.getAttributeSet().removeAttributeListener(myComponentListener);
-          Collection<Component> rs = repl.getReplacementsFor(comp);
+          val rs = repl.getReplacementsFor(comp);
           if (rs.isEmpty()) {
             removes.add(in);
           } else {
-            Component r = rs.iterator().next();
-            Instance rin = Instance.getInstanceFor(r);
+            val r = rs.iterator().next();
+            val rin = Instance.getInstanceFor(r);
             adds.remove(rin);
             replaces.put(in, rin);
           }

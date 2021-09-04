@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.circuit;
 
+import com.cburch.draw.shapes.Oval;
 import com.cburch.logisim.circuit.appear.DynamicElementWithPoker;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.gui.main.Canvas;
@@ -17,6 +18,7 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import java.awt.Color;
 import java.awt.event.MouseEvent;
+import lombok.val;
 
 public class SubcircuitPoker extends InstancePoker {
 
@@ -27,19 +29,19 @@ public class SubcircuitPoker extends InstancePoker {
 
   @Override
   public Bounds getBounds(InstancePainter painter) {
-    final var bds = painter.getInstance().getBounds();
-    int cx = bds.getX() + bds.getWidth() / 2;
-    int cy = bds.getY() + bds.getHeight() / 2;
-    return Bounds.create(cx - 5, cy - 5, 15, 15);
+    val bounds = painter.getInstance().getBounds();
+    val cX = bounds.getX() + bounds.getWidth() / 2;
+    val cY = bounds.getY() + bounds.getHeight() / 2;
+    return Bounds.create(cX - 5, cY - 5, 15, 15);
   }
 
   private boolean isWithin(InstanceState state, MouseEvent e) {
-    final var bds = state.getInstance().getBounds();
-    int cx = bds.getX() + bds.getWidth() / 2;
-    int cy = bds.getY() + bds.getHeight() / 2;
-    int dx = e.getX() - cx;
-    int dy = e.getY() - cy;
-    return dx * dx + dy * dy <= 60;
+    val bounds = state.getInstance().getBounds();
+    val cX = bounds.getX() + bounds.getWidth() / 2;
+    val cY = bounds.getY() + bounds.getHeight() / 2;
+    val dX = e.getX() - cX;
+    val dY = e.getY() - cY;
+    return dX * dX + dY * dY <= 60;
   }
 
   @Override

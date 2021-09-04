@@ -59,11 +59,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.val;
 
 public class Circuit {
   private class EndChangedTransaction extends CircuitTransaction {
@@ -71,8 +73,7 @@ public class Circuit {
     private final Map<Location, EndData> toRemove;
     private final Map<Location, EndData> toAdd;
 
-    EndChangedTransaction(
-        Component comp, Map<Location, EndData> toRemove, Map<Location, EndData> toAdd) {
+    EndChangedTransaction(Component comp, Map<Location, EndData> toRemove, Map<Location, EndData> toAdd) {
       this.comp = comp;
       this.toRemove = toRemove;
       this.toAdd = toAdd;
@@ -85,16 +86,16 @@ public class Circuit {
 
     @Override
     protected void run(CircuitMutator mutator) {
-      for (final var loc : toRemove.keySet()) {
-        final var removed = toRemove.get(loc);
-        final var replaced = toAdd.remove(loc);
+      for (val loc : toRemove.keySet()) {
+        val removed = toRemove.get(loc);
+        val replaced = toAdd.remove(loc);
         if (replaced == null) {
           wires.remove(comp, removed);
         } else if (!replaced.equals(removed)) {
           wires.replace(comp, removed, replaced);
         }
       }
-      for (final var end : toAdd.values()) {
+      for (val end : toAdd.values()) {
         wires.add(comp, end);
       }
       ((CircuitMutatorImpl) mutator).markModified(Circuit.this);
@@ -111,27 +112,27 @@ public class Circuit {
     public void endChanged(ComponentEvent e) {
       locker.checkForWritePermission("ends changed", Circuit.this);
       isAnnotated = false;
-      myNetList.clear();
-      final var comp = e.getSource();
-      final var toRemove = toMap(e.getOldData());
-      final var toAdd = toMap(e.getData());
-      final var xn = new EndChangedTransaction(comp, toRemove, toAdd);
+      netList.clear();
+      val comp = e.getSource();
+      val toRemove = toMap(e.getOldData());
+      val toAdd = toMap(e.getData());
+      val xn = new EndChangedTransaction(comp, toRemove, toAdd);
       locker.execute(xn);
       fireEvent(CircuitEvent.ACTION_INVALIDATE, comp);
     }
 
     private HashMap<Location, EndData> toMap(Object val) {
-      final var map = new HashMap<Location, EndData>();
+      val map = new HashMap<Location, EndData>();
       if (val instanceof List) {
         @SuppressWarnings("unchecked")
-        final var valList = (List<EndData>) val;
-        for (final var end : valList) {
+        val valList = (List<EndData>) val;
+        for (val end : valList) {
           if (end != null) {
             map.put(end.getLocation(), end);
           }
         }
       } else if (val instanceof EndData) {
-        final var end = (EndData) val;
+        val end = (EndData) val;
         map.put(end.getLocation(), end);
       }
       return map;
@@ -139,12 +140,12 @@ public class Circuit {
 
     @Override
     public void LabelChanged(ComponentEvent e) {
-      final var attre = (AttributeEvent) e.getData();
+      val attre = (AttributeEvent) e.getData();
       if (attre.getSource() == null || attre.getValue() == null) {
         return;
       }
-      final var newLabel = (String) attre.getValue();
-      final var oldLabel = attre.getOldValue() != null ? (String) attre.getOldValue() : "";
+      val newLabel = (String) attre.getValue();
+      val oldLabel = attre.getOldValue() != null ? (String) attre.getOldValue() : "";
       @SuppressWarnings("unchecked")
       Attribute<String> lattr = (Attribute<String>) attre.getAttribute();
       if (!IsCorrectLabel(
@@ -181,10 +182,10 @@ public class Circuit {
 
   private static boolean IsComponentName(String name, Set<Component> comps, Boolean showDialog) {
     if (name.isEmpty()) return false;
-    for (final var comp : comps) {
+    for (val comp : comps) {
       if (comp.getFactory().getName().equalsIgnoreCase(name)) {
         if (showDialog) {
-          final var msg = S.get("ComponentLabelNameError");
+          val msg = S.get("ComponentLabelNameError");
           OptionPane.showMessageDialog(null, "\"" + name + "\" : " + msg);
         }
         return true;
@@ -195,18 +196,17 @@ public class Circuit {
     return false;
   }
 
-  private static boolean IsExistingLabel(
-      String name, AttributeSet me, Set<Component> comps, Boolean showDialog) {
+  private static boolean IsExistingLabel(String name, AttributeSet me, Set<Component> comps, Boolean showDialog) {
     if (name.isEmpty()) return false;
-    for (final var comp : comps) {
+    for (val comp : comps) {
       if (!comp.getAttributeSet().equals(me) && !(comp.getFactory() instanceof Tunnel)) {
-        final var Label =
+        val Label =
             (comp.getAttributeSet().containsAttribute(StdAttr.LABEL))
                 ? comp.getAttributeSet().getValue(StdAttr.LABEL)
                 : "";
         if (Label.equalsIgnoreCase(name)) {
           if (showDialog) {
-            final var msg = S.get("UsedLabelNameError");
+            val msg = S.get("UsedLabelNameError");
             OptionPane.showMessageDialog(null, "\"" + name + "\" : " + msg);
           }
           return true;
@@ -227,50 +227,42 @@ public class Circuit {
 
   private static final int MAX_TIMEOUT_TEST_BENCH_SEC = 60000;
   private final MyComponentListener myComponentListener = new MyComponentListener();
-  private final CircuitAppearance appearance;
-  private final AttributeSet staticAttrs;
-  private final SubcircuitFactory subcircuitFactory;
+  @Getter private final CircuitAppearance appearance;
+  @Getter private final AttributeSet staticAttributes;
+  @Getter private final SubcircuitFactory subcircuitFactory;
   private final EventSourceWeakSupport<CircuitListener> listeners = new EventSourceWeakSupport<>();
   private LinkedHashSet<Component> comps = new LinkedHashSet<>(); // doesn't
   // include
   // wires
   CircuitWires wires = new CircuitWires();
-  private final ArrayList<Component> clocks = new ArrayList<>();
-  private final CircuitLocker locker;
+  @Getter private final ArrayList<Component> clocks = new ArrayList<>();
+  @Getter private final CircuitLocker locker;
 
   private final WeakHashMap<Component, Circuit> circuitsUsingThis;
-  private final Netlist myNetList;
+  @Getter private final Netlist netList;
   private final HashMap<String, MappableResourcesContainer> myMappableResources;
   private final HashMap<String, HashMap<String, CircuitMapInfo>> loadedMaps;
   private boolean isAnnotated;
-  private Project proj;
+  @Getter @Setter private Project project;
   private final SocSimulationManager socSim = new SocSimulationManager();
 
   private final LogisimFile logiFile;
 
   public Circuit(String name, LogisimFile file, Project proj) {
-    staticAttrs = CircuitAttributes.createBaseAttrs(this, name);
+    staticAttributes = CircuitAttributes.createBaseAttrs(this, name);
     appearance = new CircuitAppearance(this);
     subcircuitFactory = new SubcircuitFactory(this);
     locker = new CircuitLocker();
     circuitsUsingThis = new WeakHashMap<>();
-    myNetList = new Netlist(this);
+    netList = new Netlist(this);
     myMappableResources = new HashMap<>();
     loadedMaps = new HashMap<>();
     isAnnotated = false;
     logiFile = file;
-    staticAttrs.setValue(
+    staticAttributes.setValue(
         CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE,
         AppPreferences.NAMED_CIRCUIT_BOXES_FIXED_SIZE.getBoolean());
-    this.proj = proj;
-  }
-
-  public void SetProject(Project proj) {
-    this.proj = proj;
-  }
-
-  public Project getProject() {
-    return proj;
+    this.project = proj;
   }
 
   public SocSimulationManager getSocSimulationManager() {
@@ -291,56 +283,43 @@ public class Circuit {
   }
 
   private static String GetAnnotationName(Component comp) {
-    String componentName;
-    /* Pins are treated specially */
-    if (comp.getFactory() instanceof Pin) {
-      if (comp.getEnd(0).isOutput()) {
-        if (comp.getEnd(0).getWidth().getWidth() > 1) {
-          componentName = "Input_bus";
-        } else {
-          componentName = "Input";
-        }
-      } else {
-        if (comp.getEnd(0).getWidth().getWidth() > 1) {
-          componentName = "Output_bus";
-        } else {
-          componentName = "Output";
-        }
-      }
-    } else {
-      componentName = comp.getFactory().getHDLName(comp.getAttributeSet());
-    }
+    val componentName =
+        (comp.getFactory() instanceof Pin)
+            // Pins are treated specially
+            ? (comp.getEnd(0).isOutput())
+                ? (comp.getEnd(0).getWidth().getWidth() > 1) ? "Input_bus" : "Input"
+                : (comp.getEnd(0).getWidth().getWidth() > 1) ? "Output_bus" : "Output"
+            : comp.getFactory().getHDLName(comp.getAttributeSet());
     return componentName;
   }
 
   public void Annotate(Project proj, boolean clearExistingLabels, boolean insideLibrary) {
-    if (this.proj == null) this.proj = proj;
+    if (this.project == null) this.project = proj;
     this.Annotate(clearExistingLabels, insideLibrary);
   }
 
   public void Annotate(boolean clearExistingLabels, boolean insideLibrary) {
     /* If I am already completely annotated, return */
     if (isAnnotated) {
-      Reporter.Report.AddInfo("Nothing to do !");
+      Reporter.Report.AddInfo("Nothing to do!");
       return;
     }
-    SortedSet<Component> comps = new TreeSet<>(Location.CompareVertical);
-    final var lablers = new HashMap<String, AutoLabel>();
-    final var labelNames = new LinkedHashSet<String>();
-    final var subCircuits = new LinkedHashSet<String>();
-    for (Component comp : getNonWires()) {
+    val comps = new TreeSet<Component>(Location.CompareVertical);
+    val lablers = new HashMap<String, AutoLabel>();
+    val labelNames = new LinkedHashSet<String>();
+    val subCircuits = new LinkedHashSet<String>();
+    for (val comp : getNonWires()) {
       if (comp.getFactory() instanceof Tunnel) continue;
       /* we are directly going to remove duplicated labels */
-      final var attrs = comp.getAttributeSet();
+      val attrs = comp.getAttributeSet();
       if (attrs.containsAttribute(StdAttr.LABEL)) {
-        final var label = attrs.getValue(StdAttr.LABEL);
+        val label = attrs.getValue(StdAttr.LABEL);
         if (!label.isEmpty()) {
           if (labelNames.contains(label.toUpperCase())) {
-            final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
+            val act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
             act.set(comp, StdAttr.LABEL, "");
-            proj.doAction(act);
-            Reporter.Report.AddSevereWarning(
-                "Removed duplicated label " + this.getName() + "/" + label);
+            project.doAction(act);
+            Reporter.Report.AddSevereWarningFmt("Removed duplicated label %s/%s", this.getName(), label);
           } else {
             labelNames.add(label.toUpperCase());
           }
@@ -350,15 +329,14 @@ public class Circuit {
       if (comp.getFactory().RequiresNonZeroLabel()) {
         if (clearExistingLabels) {
           /* in case of label cleaning, we clear first the old label */
-          Reporter.Report.AddInfo(
-              "Cleared " + this.getName() + "/" + comp.getAttributeSet().getValue(StdAttr.LABEL));
-          final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
+          Reporter.Report.AddInfoFmt("Cleared %s/%s", this.getName(), comp.getAttributeSet().getValue(StdAttr.LABEL));
+          val act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
           act.set(comp, StdAttr.LABEL, "");
-          proj.doAction(act);
+          project.doAction(act);
         }
         if (comp.getAttributeSet().getValue(StdAttr.LABEL).isEmpty()) {
           comps.add(comp);
-          final var componentName = GetAnnotationName(comp);
+          val componentName = GetAnnotationName(comp);
           if (!lablers.containsKey(componentName)) {
             lablers.put(componentName, new AutoLabel(componentName + "_0", this));
           }
@@ -366,47 +344,48 @@ public class Circuit {
       }
       /* if the current component is a sub-circuit, recurse into it */
       if (comp.getFactory() instanceof SubcircuitFactory) {
-        final var sub = (SubcircuitFactory) comp.getFactory();
+        val sub = (SubcircuitFactory) comp.getFactory();
         subCircuits.add(sub.getName());
       }
     }
     /* Now Annotate */
     var sizeMightHaveChanged = false;
-    for (final var comp : comps) {
-      final var componentName = GetAnnotationName(comp);
+    for (val comp : comps) {
+      val componentName = GetAnnotationName(comp);
       if (!lablers.containsKey(componentName) || !lablers.get(componentName).hasNext(this)) {
         /* This should never happen! */
         Reporter.Report.AddFatalError(
-            "Annotate internal Error: Either there exists duplicate labels or the label syntax is incorrect!\nPlease try annotation on labeled components also\n");
+            "Annotate internal Error: "
+                + "Either there exists duplicate labels or the label syntax is incorrect! "
+                + "Please try annotation on labeled components also.");
         return;
       } else {
-        final var newLabel = lablers.get(componentName).getNext(this, comp.getFactory());
-        final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
+        val newLabel = lablers.get(componentName).getNext(this, comp.getFactory());
+        val act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
         act.set(comp, StdAttr.LABEL, newLabel);
-        proj.doAction(act);
-        Reporter.Report.AddInfo("Labeled " + this.getName() + "/" + newLabel);
+        project.doAction(act);
+        Reporter.Report.AddInfoFmt("Labeled %s/%s", this.getName(), newLabel);
         if (comp.getFactory() instanceof Pin) {
           sizeMightHaveChanged = true;
         }
       }
     }
     if (!comps.isEmpty() & insideLibrary) {
-      Reporter.Report.AddSevereWarning(
-          "Annotated the circuit \""
-              + this.getName()
-              + "\" which is inside a library these changes will not be saved!");
+      Reporter.Report.AddSevereWarningFmt(
+          "Annotated the circuit \"%s\" which is inside a library these changes will not be saved!",
+          this.getName());
     }
     if (sizeMightHaveChanged)
-      Reporter.Report.AddSevereWarning(
-          "Annotated one ore more pins in circuit \""
-              + this.getName()
-              + "\" this might have changed it's boxsize and might have impacted it's connections in circuits using this one!");
+      Reporter.Report.AddSevereWarningFmt(
+          "Annotated one ore more pins in circuit \"%s\" this might have changed it's boxsize "
+              + "and might have impacted it's connections in circuits using this one!",
+          this.getName());
     isAnnotated = true;
     /* Now annotate all circuits below me */
-    for (final var subs : subCircuits) {
-      final var circ = LibraryTools.getCircuitFromLibs(proj.getLogisimFile(), subs.toUpperCase());
-      final var inLibrary = !proj.getLogisimFile().getCircuits().contains(circ);
-      circ.Annotate(proj, clearExistingLabels, inLibrary);
+    for (val subs : subCircuits) {
+      val circ = LibraryTools.getCircuitFromLibs(project.getLogisimFile(), subs.toUpperCase());
+      val inLibrary = !project.getLogisimFile().getCircuits().contains(circ);
+      circ.Annotate(project, clearExistingLabels, inLibrary);
     }
   }
 
@@ -414,10 +393,10 @@ public class Circuit {
   // Annotation module for all components that require a non-zero-length label
   public void ClearAnnotationLevel() {
     isAnnotated = false;
-    myNetList.clear();
-    for (final var comp : this.getNonWires()) {
+    netList.clear();
+    for (val comp : this.getNonWires()) {
       if (comp.getFactory() instanceof SubcircuitFactory) {
-        final var sub = (SubcircuitFactory) comp.getFactory();
+        val sub = (SubcircuitFactory) comp.getFactory();
         sub.getSubcircuit().ClearAnnotationLevel();
       }
     }
@@ -434,14 +413,14 @@ public class Circuit {
    * will be checked and if the value of pin[1] is 1 the function return true.
    * It will return zero otherwise  */
   public boolean doTestBench(Project project, Instance[] pin, Value[] val) {
-    final var state = project.getCircuitState();
+    val state = project.getCircuitState();
     /* This is introduced in order to not block in case both the signal never happend*/
-    final var pinsState = new InstanceState[pin.length];
-    final var vPins = new Value[pin.length];
+    val pinsState = new InstanceState[pin.length];
+    val vPins = new Value[pin.length];
     state.reset();
 
-    final var ts = new TimeoutSimulation();
-    final var timer = new Timer();
+    val ts = new TimeoutSimulation();
+    val timer = new Timer();
     timer.schedule(ts, MAX_TIMEOUT_TEST_BENCH_SEC);
 
     while (true) {
@@ -449,7 +428,7 @@ public class Circuit {
       project.getSimulator().tick(1);
       Thread.yield();
 
-      for (final var pinStatus : pin) {
+      for (val pinStatus : pin) {
         pinsState[i] = state.getInstanceState(pinStatus);
         vPins[i] = Pin.FACTORY.getValue(pinsState[i]);
         i++;
@@ -471,17 +450,17 @@ public class Circuit {
    * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
    */
   public void doTestVector(Project project, Instance[] pin, Value[] val) throws TestException {
-    final var state = project.getCircuitState();
+    val state = project.getCircuitState();
     state.reset();
 
     for (var i = 0; i < pin.length; ++i) {
       if (Pin.FACTORY.isInputPin(pin[i])) {
-        final var pinState = state.getInstanceState(pin[i]);
+        val pinState = state.getInstanceState(pin[i]);
         Pin.FACTORY.setValue(pinState, val[i]);
       }
     }
 
-    final var prop = state.getPropagator();
+    val prop = state.getPropagator();
 
     try {
       prop.propagate();
@@ -494,10 +473,10 @@ public class Circuit {
     FailException err = null;
 
     for (var i = 0; i < pin.length; i++) {
-      final var pinState = state.getInstanceState(pin[i]);
+      val pinState = state.getInstanceState(pin[i]);
       if (Pin.FACTORY.isInputPin(pin[i])) continue;
 
-      final var v = Pin.FACTORY.getValue(pinState);
+      val v = Pin.FACTORY.getValue(pinState);
       if (!val[i].compatible(v)) {
         if (err == null) {
           err = new FailException(i, pinState.getAttributeValue(StdAttr.LABEL), val[i], v);
@@ -516,14 +495,14 @@ public class Circuit {
   // Graphics methods
   //
   public void draw(ComponentDrawContext context, Collection<Component> hidden) {
-    final var g = context.getGraphics();
+    val g = context.getGraphics();
     var gCopy = g.create();
     context.setGraphics(gCopy);
     wires.draw(context, hidden);
 
     if (hidden == null || hidden.size() == 0) {
-      for (final var c : comps) {
-        final var gNew = g.create();
+      for (val c : comps) {
+        val gNew = g.create();
         context.setGraphics(gNew);
         gCopy.dispose();
         gCopy = gNew;
@@ -531,9 +510,9 @@ public class Circuit {
         c.draw(context);
       }
     } else {
-      for (Component c : comps) {
+      for (val c : comps) {
         if (!hidden.contains(c)) {
-          final var gNew = g.create();
+          val gNew = g.create();
           context.setGraphics(gNew);
           gCopy.dispose();
           gCopy = gNew;
@@ -541,8 +520,7 @@ public class Circuit {
           try {
             c.draw(context);
           } catch (RuntimeException e) {
-            // this is a JAR developer error - display it and move
-            // on
+            // this is a JAR developer error - display it and move on
             e.printStackTrace();
           }
         }
@@ -553,7 +531,7 @@ public class Circuit {
   }
 
   private void fireEvent(CircuitEvent event) {
-    for (final var l : listeners) {
+    for (val l : listeners) {
       l.circuitChanged(event);
     }
   }
@@ -567,47 +545,43 @@ public class Circuit {
   }
 
   public Collection<Component> getAllContaining(Location pt) {
-    final var ret = new LinkedHashSet<Component>();
-    for (final var comp : getComponents()) {
+    val ret = new LinkedHashSet<Component>();
+    for (val comp : getComponents()) {
       if (comp.contains(pt)) ret.add(comp);
     }
     return ret;
   }
 
   public Collection<Component> getAllContaining(Location pt, Graphics g) {
-    final var ret = new LinkedHashSet<Component>();
-    for (final var comp : getComponents()) {
+    val ret = new LinkedHashSet<Component>();
+    for (val comp : getComponents()) {
       if (comp.contains(pt, g)) ret.add(comp);
     }
     return ret;
   }
 
   public Collection<Component> getAllWithin(Bounds bds) {
-    final var ret = new LinkedHashSet<Component>();
-    for (final var comp : getComponents()) {
+    val ret = new LinkedHashSet<Component>();
+    for (val comp : getComponents()) {
       if (bds.contains(comp.getBounds())) ret.add(comp);
     }
     return ret;
   }
 
   public Collection<Component> getAllWithin(Bounds bds, Graphics g) {
-    final var ret = new LinkedHashSet<Component>();
-    for (final var comp : getComponents()) {
+    val ret = new LinkedHashSet<Component>();
+    for (val comp : getComponents()) {
       if (bds.contains(comp.getBounds(g))) ret.add(comp);
     }
     return ret;
   }
 
-  public CircuitAppearance getAppearance() {
-    return appearance;
-  }
-
   public Bounds getBounds() {
-    final var wireBounds = wires.getWireBounds();
-    final var it = comps.iterator();
+    val wireBounds = wires.getWireBounds();
+    val it = comps.iterator();
     if (!it.hasNext()) return wireBounds;
-    final var first = it.next();
-    final var firstBounds = first.getBounds();
+    val first = it.next();
+    val firstBounds = first.getBounds();
     var xMin = firstBounds.getX();
     var yMin = firstBounds.getY();
     var xMax = xMin + firstBounds.getWidth();
@@ -615,25 +589,23 @@ public class Circuit {
     while (it.hasNext()) {
       Component c = it.next();
       Bounds bds = c.getBounds();
-      int x0 = bds.getX();
-      int x1 = x0 + bds.getWidth();
-      int y0 = bds.getY();
-      int y1 = y0 + bds.getHeight();
+      val x0 = bds.getX();
+      val x1 = x0 + bds.getWidth();
+      val y0 = bds.getY();
+      val y1 = y0 + bds.getHeight();
       if (x0 < xMin) xMin = x0;
       if (x1 > xMax) xMax = x1;
       if (y0 < yMin) yMin = y0;
       if (y1 > yMax) yMax = y1;
     }
-    final var compBounds = Bounds.create(xMin, yMin, xMax - xMin, yMax - yMin);
-    if (wireBounds.getWidth() == 0 || wireBounds.getHeight() == 0) {
-      return compBounds;
-    } else {
-      return compBounds.add(wireBounds);
-    }
+    val compBounds = Bounds.create(xMin, yMin, xMax - xMin, yMax - yMin);
+    return (wireBounds.getWidth() == 0 || wireBounds.getHeight() == 0)
+        ? compBounds
+        : compBounds.add(wireBounds);
   }
 
   public Bounds getBounds(Graphics g) {
-    final var ret = wires.getWireBounds();
+    val ret = wires.getWireBounds();
     var xMin = ret.getX();
     var yMin = ret.getY();
     var xMax = xMin + ret.getWidth();
@@ -644,13 +616,13 @@ public class Circuit {
       xMax = Integer.MIN_VALUE;
       yMax = Integer.MIN_VALUE;
     }
-    for (final var comp : comps) {
-      final var bds = comp.getBounds(g);
+    for (val comp : comps) {
+      val bds = comp.getBounds(g);
       if (bds != null && bds != Bounds.EMPTY_BOUNDS) {
-        int x0 = bds.getX();
-        int x1 = x0 + bds.getWidth();
-        int y0 = bds.getY();
-        int y1 = y0 + bds.getHeight();
+        val x0 = bds.getX();
+        val x1 = x0 + bds.getWidth();
+        val y0 = bds.getY();
+        val y1 = y0 + bds.getHeight();
         if (x0 < xMin) xMin = x0;
         if (x1 > xMax) xMax = x1;
         if (y0 < yMin) yMin = y0;
@@ -669,10 +641,6 @@ public class Circuit {
     circuitsUsingThis.remove(c);
   }
 
-  public ArrayList<Component> getClocks() {
-    return clocks;
-  }
-
   public Set<Component> getComponents() {
     return CollectionUtil.createUnmodifiableSetUnion(comps, wires.getWires());
   }
@@ -685,19 +653,11 @@ public class Circuit {
     return wires.points.getExclusive(loc);
   }
 
-  public CircuitLocker getLocker() {
-    return locker;
-  }
-
   //
   // access methods
   //
   public String getName() {
-    return staticAttrs.getValue(CircuitAttributes.NAME_ATTR);
-  }
-
-  public Netlist getNetList() {
-    return myNetList;
+    return staticAttributes.getValue(CircuitAttributes.NAME_ATTR);
   }
 
   public void addLoadedMap(String boardName, HashMap<String, CircuitMapInfo> map) {
@@ -705,7 +665,7 @@ public class Circuit {
   }
 
   public Set<String> getBoardMapNamestoSave() {
-    final var ret = new HashSet<String>();
+    val ret = new HashSet<String>();
     ret.addAll(loadedMaps.keySet());
     ret.addAll(myMappableResources.keySet());
     return ret;
@@ -721,8 +681,8 @@ public class Circuit {
 
   public void setBoardMap(String boardName, MappableResourcesContainer map) {
     if (loadedMaps.containsKey(boardName)) {
-      for (final var key : loadedMaps.get(boardName).keySet()) {
-        final var cmap = loadedMaps.get(boardName).get(key);
+      for (val key : loadedMaps.get(boardName).keySet()) {
+        val cmap = loadedMaps.get(boardName).get(key);
         map.tryMap(key, cmap);
       }
       loadedMaps.remove(boardName);
@@ -760,14 +720,6 @@ public class Circuit {
     return wires.points.getSplitLocations();
   }
 
-  public AttributeSet getStaticAttributes() {
-    return staticAttrs;
-  }
-
-  public SubcircuitFactory getSubcircuitFactory() {
-    return subcircuitFactory;
-  }
-
   public BitWidth getWidth(Location p) {
     return wires.getWidth(p);
   }
@@ -797,14 +749,14 @@ public class Circuit {
   }
 
   private boolean isDoubleMapped(Component comp) {
-    final var loc = comp.getLocation();
-    final var existing = wires.points.getNonWires(loc);
-    for (final var existingComp : existing) {
+    val loc = comp.getLocation();
+    val existing = wires.points.getNonWires(loc);
+    for (val existingComp : existing) {
       if (existingComp.getFactory().equals(comp.getFactory())) {
         /* we make an exception for the pin in case we have an input placed on an output */
         if (comp.getFactory() instanceof Pin) {
-          final var dir1 = comp.getAttributeSet().getValue(Pin.ATTR_TYPE);
-          final var dir2 = existingComp.getAttributeSet().getValue(Pin.ATTR_TYPE);
+          val dir1 = comp.getAttributeSet().getValue(Pin.ATTR_TYPE);
+          val dir2 = existingComp.getAttributeSet().getValue(Pin.ATTR_TYPE);
           if (dir1 == dir2) return true;
         } else {
           return true;
@@ -815,7 +767,7 @@ public class Circuit {
   }
 
   public boolean isConnected(Location loc, Component ignore) {
-    for (Component o : wires.points.getComponents(loc)) {
+    for (val o : wires.points.getComponents(loc)) {
       if (o != ignore) return true;
     }
     return false;
@@ -825,9 +777,9 @@ public class Circuit {
     locker.checkForWritePermission("add", this);
 
     isAnnotated = false;
-    myNetList.clear();
+    netList.clear();
     if (c instanceof Wire) {
-      final var w = (Wire) c;
+      val w = (Wire) c;
       if (w.getEnd0().equals(w.getEnd1())) return;
       var added = wires.add(w);
       if (!added) return;
@@ -840,31 +792,31 @@ public class Circuit {
       // if it already exists in the circuit
       if (c.getAttributeSet().containsAttribute(StdAttr.LABEL)
           && !(c.getFactory() instanceof Tunnel)) {
-        final var labels = new HashSet<String>();
-        for (Component comp : comps) {
+        val labels = new HashSet<String>();
+        for (val comp : comps) {
           if (comp.equals(c) || comp.getFactory() instanceof Tunnel) continue;
           if (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
-            final var label = comp.getAttributeSet().getValue(StdAttr.LABEL);
+            val label = comp.getAttributeSet().getValue(StdAttr.LABEL);
             if (label != null && !label.isEmpty()) labels.add(label.toUpperCase());
           }
         }
         /* we also have to check for the entity name */
         if (getName() != null && !getName().isEmpty()) labels.add(getName());
-        final var label = c.getAttributeSet().getValue(StdAttr.LABEL);
+        val label = c.getAttributeSet().getValue(StdAttr.LABEL);
         if (label != null && !label.isEmpty() && labels.contains(label.toUpperCase()))
           c.getAttributeSet().setValue(StdAttr.LABEL, "");
       }
       wires.add(c);
-      final var factory = c.getFactory();
+      val factory = c.getFactory();
       if (factory instanceof Clock) {
         clocks.add(c);
       } else if (factory instanceof Rom) {
         Rom.closeHexFrame(c);
       } else if (factory instanceof SubcircuitFactory) {
-        final var subcirc = (SubcircuitFactory) factory;
+        val subcirc = (SubcircuitFactory) factory;
         subcirc.getSubcircuit().circuitsUsingThis.put(c, this);
       } else if (factory instanceof VhdlEntity) {
-        final var vhdl = (VhdlEntity) factory;
+        val vhdl = (VhdlEntity) factory;
         vhdl.addCircuitUsing(c, this);
       }
       c.addComponentListener(myComponentListener);
@@ -876,16 +828,16 @@ public class Circuit {
   public void mutatorClear() {
     locker.checkForWritePermission("clear", this);
 
-    Set<Component> oldComps = comps;
+    val oldComps = comps;
     comps = new LinkedHashSet<>();
     wires = new CircuitWires();
     clocks.clear();
-    myNetList.clear();
+    netList.clear();
     isAnnotated = false;
-    for (final var comp : oldComps) {
+    for (val comp : oldComps) {
       socSim.removeComponent(comp);
-      final var factory = comp.getFactory();
-      factory.removeComponent(this, comp, proj.getCircuitState(this));
+      val factory = comp.getFactory();
+      factory.removeComponent(this, comp, project.getCircuitState(this));
     }
     fireEvent(CircuitEvent.ACTION_CLEAR, oldComps);
   }
@@ -894,15 +846,15 @@ public class Circuit {
     locker.checkForWritePermission("remove", this);
 
     isAnnotated = false;
-    myNetList.clear();
+    netList.clear();
     if (c instanceof Wire) {
       wires.remove(c);
     } else {
       wires.remove(c);
       comps.remove(c);
       socSim.removeComponent(c);
-      final var factory = c.getFactory();
-      factory.removeComponent(this, c, proj.getCircuitState(this));
+      val factory = c.getFactory();
+      factory.removeComponent(this, c, project.getCircuitState(this));
       if (factory instanceof Clock) {
         clocks.remove(c);
       } else if (factory instanceof DynamicElementProvider) {
@@ -915,10 +867,10 @@ public class Circuit {
 
   private void RemoveWrongLabels(String label) {
     var haveAChange = false;
-    for (final var comp : comps) {
-      final var attrs = comp.getAttributeSet();
+    for (val comp : comps) {
+      val attrs = comp.getAttributeSet();
       if (attrs.containsAttribute(StdAttr.LABEL)) {
-        final var compLabel = attrs.getValue(StdAttr.LABEL);
+        val compLabel = attrs.getValue(StdAttr.LABEL);
         if (label.equalsIgnoreCase(compLabel)) {
           attrs.setValue(StdAttr.LABEL, "");
           haveAChange = true;
@@ -940,12 +892,12 @@ public class Circuit {
   // action methods
   //
   public void setName(String name) {
-    staticAttrs.setValue(CircuitAttributes.NAME_ATTR, name);
+    staticAttributes.setValue(CircuitAttributes.NAME_ATTR, name);
   }
 
   @Override
   public String toString() {
-    return staticAttrs.getValue(CircuitAttributes.NAME_ATTR);
+    return staticAttributes.getValue(CircuitAttributes.NAME_ATTR);
   }
 
   public static class TimeoutSimulation extends TimerTask {
@@ -966,25 +918,25 @@ public class Circuit {
       timedOut = true;
     }
   }
-  
+
   public double getTickFrequency() {
-    return staticAttrs.getValue(CircuitAttributes.SIMULATION_FREQUENCY);
+    return staticAttributes.getValue(CircuitAttributes.SIMULATION_FREQUENCY);
   }
 
   public void setTickFrequency(double value) {
-    final var currentTickFrequency = staticAttrs.getValue(CircuitAttributes.SIMULATION_FREQUENCY); 
+    val currentTickFrequency = staticAttributes.getValue(CircuitAttributes.SIMULATION_FREQUENCY);
     if (value == currentTickFrequency) return;
-    staticAttrs.setValue(CircuitAttributes.SIMULATION_FREQUENCY, value);
-    if ((proj != null) && (currentTickFrequency > 0)) proj.setForcedDirty();
+    staticAttributes.setValue(CircuitAttributes.SIMULATION_FREQUENCY, value);
+    if ((project != null) && (currentTickFrequency > 0)) project.setForcedDirty();
   }
-  
+
   public double getDownloadFrequency() {
-    return staticAttrs.getValue(CircuitAttributes.DOWNLOAD_FREQUENCY);
+    return staticAttributes.getValue(CircuitAttributes.DOWNLOAD_FREQUENCY);
   }
 
   public void setDownloadFrequency(double value) {
-    if (value == staticAttrs.getValue(CircuitAttributes.DOWNLOAD_FREQUENCY)) return;
-    staticAttrs.setValue(CircuitAttributes.DOWNLOAD_FREQUENCY, value);
-    if (proj != null) proj.setForcedDirty();
+    if (value == staticAttributes.getValue(CircuitAttributes.DOWNLOAD_FREQUENCY)) return;
+    staticAttributes.setValue(CircuitAttributes.DOWNLOAD_FREQUENCY, value);
+    if (project != null) project.setForcedDirty();
   }
 }

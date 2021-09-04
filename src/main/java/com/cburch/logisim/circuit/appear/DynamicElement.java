@@ -35,6 +35,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.List;
+import lombok.val;
 import org.w3c.dom.Element;
 
 public abstract class DynamicElement extends AbstractCanvasObject {
@@ -69,8 +70,8 @@ public abstract class DynamicElement extends AbstractCanvasObject {
     }
 
     public boolean contains(Component c) {
-      for (InstanceComponent ic : elt) {
-        if (ic == c) return true;
+      for (val instanceComp : elt) {
+        if (instanceComp == c) return true;
       }
       return false;
     }
@@ -79,14 +80,15 @@ public abstract class DynamicElement extends AbstractCanvasObject {
       return elt[elt.length - 1];
     }
 
+    @Override
     public String toString() {
       return toSvgString();
     }
 
     public String toSvgString() {
-      StringBuilder s = new StringBuilder();
+      val s = new StringBuilder();
       for (InstanceComponent instanceComponent : elt) {
-        Location loc = instanceComponent.getLocation();
+        val loc = instanceComponent.getLocation();
         s.append("/").append(escape(instanceComponent.getFactory().getName())).append(loc);
       }
       return s.toString();
@@ -94,22 +96,22 @@ public abstract class DynamicElement extends AbstractCanvasObject {
 
     public static Path fromSvgString(String s, Circuit circuit) throws IllegalArgumentException {
       if (!s.startsWith("/")) throw new IllegalArgumentException("Bad path: " + s);
-      String[] parts = s.substring(1).split("(?<!\\\\)/");
-      InstanceComponent[] elt = new InstanceComponent[parts.length];
-      for (int i = 0; i < parts.length; i++) {
-        String ss = parts[i];
-        int p = ss.lastIndexOf("(");
-        int c = ss.lastIndexOf(",");
-        int e = ss.lastIndexOf(")");
+      val parts = s.substring(1).split("(?<!\\\\)/");
+      val elt = new InstanceComponent[parts.length];
+      for (var i = 0; i < parts.length; i++) {
+        val ss = parts[i];
+        val p = ss.lastIndexOf("(");
+        val c = ss.lastIndexOf(",");
+        val e = ss.lastIndexOf(")");
         if (e != ss.length() - 1 || p <= 0 || c <= p)
           throw new IllegalArgumentException("Bad path element: " + ss);
-        int x = Integer.parseInt(ss.substring(p + 1, c).trim());
-        int y = Integer.parseInt(ss.substring(c + 1, e).trim());
-        Location loc = Location.create(x, y);
-        String name = unescape(ss.substring(0, p));
-        Circuit circ = circuit;
+        val x = Integer.parseInt(ss.substring(p + 1, c).trim());
+        val y = Integer.parseInt(ss.substring(c + 1, e).trim());
+        val loc = Location.create(x, y);
+        val name = unescape(ss.substring(0, p));
+        var circ = circuit;
         if (i > 0) circ = ((SubcircuitFactory) elt[i - 1].getFactory()).getSubcircuit();
-        InstanceComponent ic = find(circ, loc, name);
+        val ic = find(circ, loc, name);
         if (ic == null) throw new IllegalArgumentException("Missing component: " + ss);
         elt[i] = ic;
       }
@@ -117,7 +119,7 @@ public abstract class DynamicElement extends AbstractCanvasObject {
     }
 
     private static InstanceComponent find(Circuit circuit, Location loc, String name) {
-      for (Component c : circuit.getNonWires()) {
+      for (val c : circuit.getNonWires()) {
         if (name.equals(c.getFactory().getName()) && loc.equals(c.getLocation()))
           return (InstanceComponent) c;
       }
@@ -193,10 +195,10 @@ public abstract class DynamicElement extends AbstractCanvasObject {
 
   @Override
   public List<Handle> getHandles(HandleGesture gesture) {
-    int x0 = bounds.getX();
-    int y0 = bounds.getY();
-    int x1 = x0 + bounds.getWidth();
-    int y1 = y0 + bounds.getHeight();
+    val x0 = bounds.getX();
+    val y0 = bounds.getY();
+    val x1 = x0 + bounds.getWidth();
+    val y1 = y0 + bounds.getHeight();
     return UnmodifiableList.create(
         new Handle[] {
           new Handle(this, x0, y0),
@@ -207,46 +209,46 @@ public abstract class DynamicElement extends AbstractCanvasObject {
   }
 
   protected Object getData(CircuitState state) {
-    Object o = state.getData(path.elt[0]);
-    for (int i = 1; i < path.elt.length && o != null; i++) {
-      if (!(o instanceof CircuitState)) {
+    var obj = state.getData(path.elt[0]);
+    for (var i = 1; i < path.elt.length && obj != null; i++) {
+      if (!(obj instanceof CircuitState)) {
         throw new IllegalStateException(
             "Expecting CircuitState for path["
                 + (i - 1)
                 + "] "
                 + path.elt[i - 1]
                 + "  but got: "
-                + o);
+                + obj);
       }
-      state = (CircuitState) o;
-      o = state.getData(path.elt[i]);
+      state = (CircuitState) obj;
+      obj = state.getData(path.elt[i]);
     }
-    return o;
+    return obj;
   }
 
   protected InstanceComponent getComponent(CircuitState state) {
-    Object o = state.getData(path.elt[0]);
-    InstanceComponent comp = path.elt[0];
-    for (int i = 1; i < path.elt.length && o != null; i++) {
-      if (!(o instanceof CircuitState)) {
+    var obj = state.getData(path.elt[0]);
+    var comp = path.elt[0];
+    for (var i = 1; i < path.elt.length && obj != null; i++) {
+      if (!(obj instanceof CircuitState)) {
         throw new IllegalStateException(
             "Expecting CircuitState for path["
                 + (i - 1)
                 + "] "
                 + path.elt[i - 1]
                 + "  but got: "
-                + o);
+                + obj);
       }
-      state = (CircuitState) o;
+      state = (CircuitState) obj;
       comp = path.elt[i];
-      o = state.getData(path.elt[i]);
+      obj = state.getData(path.elt[i]);
     }
     return comp;
   }
 
   @Override
   public String getDisplayNameAndLabel() {
-    String label = path.leaf().getInstance().getAttributeValue(StdAttr.LABEL);
+    val label = path.leaf().getInstance().getAttributeValue(StdAttr.LABEL);
     if (label != null && label.length() > 0) return getDisplayName() + " \"" + label + "\"";
     else return getDisplayName();
   }
@@ -260,32 +262,21 @@ public abstract class DynamicElement extends AbstractCanvasObject {
     if (elt.hasAttribute("stroke-width"))
       strokeWidth = Integer.parseInt(elt.getAttribute("stroke-width").trim());
     if (elt.hasAttribute("label")) {
-      String loc = elt.getAttribute("label").trim().toLowerCase();
-      switch (loc) {
-        case "left":
-          labelLoc = LABEL_LEFT;
-          break;
-        case "right":
-          labelLoc = LABEL_RIGHT;
-          break;
-        case "top":
-          labelLoc = LABEL_TOP;
-          break;
-        case "bottom":
-          labelLoc = LABEL_BOTTOM;
-          break;
-        case "center":
-          labelLoc = LABEL_CENTER;
-          break;
-        default:
-        case "none":
-          labelLoc = LABEL_NONE;
-          break;
-      }
+      val loc = elt.getAttribute("label").trim().toLowerCase();
+      labelLoc = switch (loc) {
+        case "left" -> LABEL_LEFT;
+        case "right" -> LABEL_RIGHT;
+        case "top" -> LABEL_TOP;
+        case "bottom" -> LABEL_BOTTOM;
+        case "center" -> LABEL_CENTER;
+        case "none" -> LABEL_NONE;
+        default -> LABEL_NONE;
+      };
     }
     labelFont = SvgReader.getFontAttribute(elt, "", "SansSerif", 7);
-    if (elt.hasAttribute("label-color"))
+    if (elt.hasAttribute("label-color")) {
       labelColor = SvgReader.getColor(elt.getAttribute("label-color"), null);
+    }
   }
 
   protected Element toSvgElement(Element ret) {
@@ -312,31 +303,31 @@ public abstract class DynamicElement extends AbstractCanvasObject {
 
   public void drawLabel(Graphics g) {
     if (labelLoc == LABEL_NONE) return;
-    String label = path.leaf().getAttributeSet().getValue(StdAttr.LABEL);
+    val label = path.leaf().getAttributeSet().getValue(StdAttr.LABEL);
     if (label == null || label.length() == 0) return;
-    int x = bounds.getX();
-    int y = bounds.getY();
-    int w = bounds.getWidth();
-    int h = bounds.getHeight();
-    int valign = GraphicsUtil.V_CENTER;
-    int halign = GraphicsUtil.H_CENTER;
-    int px = x + w / 2;
-    int py = y + h / 2;
+    val x = bounds.getX();
+    val y = bounds.getY();
+    val w = bounds.getWidth();
+    val h = bounds.getHeight();
+    var vAlign = GraphicsUtil.V_CENTER;
+    var hAlign = GraphicsUtil.H_CENTER;
+    var px = x + w / 2;
+    var py = y + h / 2;
     if (labelLoc == LABEL_TOP) {
       py = y - 1;
-      valign = GraphicsUtil.V_BOTTOM;
+      vAlign = GraphicsUtil.V_BOTTOM;
     } else if (labelLoc == LABEL_BOTTOM) {
       py = y + h + 1;
-      valign = GraphicsUtil.V_TOP;
+      vAlign = GraphicsUtil.V_TOP;
     } else if (labelLoc == LABEL_RIGHT) {
       px = x + w + 1;
-      halign = GraphicsUtil.H_LEFT;
+      hAlign = GraphicsUtil.H_LEFT;
     } else if (labelLoc == LABEL_LEFT) {
       px = x - 1;
-      halign = GraphicsUtil.H_RIGHT;
+      hAlign = GraphicsUtil.H_RIGHT;
     }
     g.setColor(labelColor);
-    GraphicsUtil.drawText(g, labelFont, label, px, py, halign, valign);
+    GraphicsUtil.drawText(g, labelFont, label, px, py, hAlign, vAlign);
   }
 
   @Override

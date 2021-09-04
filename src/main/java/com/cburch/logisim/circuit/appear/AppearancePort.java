@@ -23,6 +23,8 @@ import com.cburch.logisim.util.UnmodifiableList;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.List;
+import lombok.Getter;
+import lombok.val;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -32,30 +34,25 @@ public class AppearancePort extends AppearanceElement {
   private static final int MINOR_RADIUS = 2;
   public static final Color COLOR = Color.BLUE;
 
-  private Instance pin;
+  @Getter private Instance pin;
 
   public AppearancePort(Location location, Instance pin) {
     super(location);
     this.pin = pin;
   }
-  
+
   public static boolean isInputAppearance(int radius) {
     return radius == INPUT_RADIUS;
   }
 
   @Override
   public boolean contains(Location loc, boolean assumeFilled) {
-    if (isInput()) {
-      return getBounds().contains(loc);
-    } else {
-      return super.isInCircle(loc, OUTPUT_RADIUS);
-    }
+    return (isInput()) ? getBounds().contains(loc) : super.isInCircle(loc, OUTPUT_RADIUS);
   }
 
   @Override
   public Bounds getBounds() {
-    int r = isInput() ? INPUT_RADIUS : OUTPUT_RADIUS;
-    return super.getBounds(r);
+    return super.getBounds(getRadius());
   }
 
   @Override
@@ -65,42 +62,39 @@ public class AppearancePort extends AppearanceElement {
 
   @Override
   public String getDisplayNameAndLabel() {
-    String label = pin.getAttributeValue(StdAttr.LABEL);
-    if (label != null && label.length() > 0) return getDisplayName() + " \"" + label + "\"";
-    else return getDisplayName();
+    val result = new StringBuffer(getDisplayName());
+    val label = pin.getAttributeValue(StdAttr.LABEL);
+    if (label != null && label.length() > 0) {
+         result.append(" \"" + label + "\"");
+    }
+    return result.toString();
   }
 
   @Override
   public List<Handle> getHandles(HandleGesture gesture) {
-    Location loc = getLocation();
-
-    int r = isInput() ? INPUT_RADIUS : OUTPUT_RADIUS;
+    val loc = getLocation();
+    val radius = getRadius();
     return UnmodifiableList.create(
         new Handle[] {
-          new Handle(this, loc.translate(-r, -r)),
-          new Handle(this, loc.translate(r, -r)),
-          new Handle(this, loc.translate(r, r)),
-          new Handle(this, loc.translate(-r, r))
+          new Handle(this, loc.translate(-radius, -radius)),
+          new Handle(this, loc.translate(radius, -radius)),
+          new Handle(this, loc.translate(radius, radius)),
+          new Handle(this, loc.translate(-radius, radius))
         });
   }
 
-  public Instance getPin() {
-    return pin;
-  }
-
   private boolean isInput() {
-    Instance p = pin;
+    val p = pin;
     return p == null || Pin.FACTORY.isInputPin(p);
   }
 
   @Override
   public boolean matches(CanvasObject other) {
     if (other instanceof AppearancePort) {
-      AppearancePort that = (AppearancePort) other;
+      val that = (AppearancePort) other;
       return this.matches(that) && this.pin == that.pin;
-    } else {
-      return false;
     }
+    return false;
   }
 
   @Override
@@ -110,16 +104,16 @@ public class AppearancePort extends AppearanceElement {
 
   @Override
   public void paint(Graphics g, HandleGesture gesture) {
-    Location location = getLocation();
-    int x = location.getX();
-    int y = location.getY();
+    val location = getLocation();
+    val x = location.getX();
+    val y = location.getY();
     g.setColor(COLOR);
     if (isInput()) {
-      int r = INPUT_RADIUS;
-      g.drawRect(x - r, y - r, 2 * r, 2 * r);
+      val radius = INPUT_RADIUS;
+      g.drawRect(x - radius, y - radius, 2 * radius, 2 * radius);
     } else {
-      int r = OUTPUT_RADIUS;
-      g.drawOval(x - r, y - r, 2 * r, 2 * r);
+      val radius = OUTPUT_RADIUS;
+      g.drawOval(x - radius, y - radius, 2 * radius, 2 * radius);
     }
     g.fillOval(x - MINOR_RADIUS, y - MINOR_RADIUS, 2 * MINOR_RADIUS, 2 * MINOR_RADIUS);
   }
@@ -130,15 +124,19 @@ public class AppearancePort extends AppearanceElement {
 
   @Override
   public Element toSvgElement(Document doc) {
-    Location loc = getLocation();
-    Location pinLoc = pin.getLocation();
-    Element ret = doc.createElement("circ-port");
-    int r = isInput() ? INPUT_RADIUS : OUTPUT_RADIUS;
-    ret.setAttribute("x", "" + (loc.getX() - r));
-    ret.setAttribute("y", "" + (loc.getY() - r));
-    ret.setAttribute("width", "" + 2 * r);
-    ret.setAttribute("height", "" + 2 * r);
+    val loc = getLocation();
+    val pinLoc = pin.getLocation();
+    val ret = doc.createElement("circ-port");
+    val radius = getRadius();
+    ret.setAttribute("x", "" + (loc.getX() - radius));
+    ret.setAttribute("y", "" + (loc.getY() - radius));
+    ret.setAttribute("width", "" + 2 * radius);
+    ret.setAttribute("height", "" + 2 * radius);
     ret.setAttribute("pin", "" + pinLoc.getX() + "," + pinLoc.getY());
     return ret;
+  }
+
+  private int getRadius() {
+    return isInput() ? INPUT_RADIUS : OUTPUT_RADIUS;
   }
 }

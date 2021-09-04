@@ -17,13 +17,18 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.ToString;
+import lombok.val;
 
 public class CircuitLocker {
   private static class CircuitComparator implements Comparator<Circuit> {
     @Override
     public int compare(Circuit a, Circuit b) {
-      int an = a.getLocker().serialNumber;
-      int bn = b.getLocker().serialNumber;
+      val an = a.getLocker().serialNumber;
+      val bn = b.getLocker().serialNumber;
       return an - bn;
     }
   }
@@ -66,7 +71,7 @@ public class CircuitLocker {
 
   static void releaseLocks(Map<Circuit, Lock> locks) {
     final var curThread = Thread.currentThread();
-    for (Map.Entry<Circuit, Lock> entry : locks.entrySet()) {
+    for (val entry : locks.entrySet()) {
       final var circ = entry.getKey();
       final var lock = entry.getValue();
       final var locker = circ.getLocker();
@@ -125,36 +130,25 @@ public class CircuitLocker {
     return mutatingThread == Thread.currentThread();
   }
 
+  // Can't use @Data annotation, because there's no way to pass callSuper value.
+  @Getter
+  @ToString
+  @EqualsAndHashCode(callSuper = true)
   public static class LockException extends IllegalStateException {
     private static final long serialVersionUID = 1L;
     private final Circuit circuit;
     private final int serialNumber;
     private final transient Thread mutatingThread;
-    private final CircuitMutatorImpl mutatingMutator;
+    private final CircuitMutatorImpl circuitMutator;  // mutating mutator
 
-    public LockException(
-        String msg, Circuit circ, int serial, Thread thread, CircuitMutatorImpl mutator) {
+    // Not sure Lombok's generated constructor would call super() propertly (if ever), so keep ours
+    public LockException(String msg, Circuit circ, int serial, Thread thread, CircuitMutatorImpl mutator) {
       super(msg);
       circuit = circ;
       serialNumber = serial;
       mutatingThread = thread;
-      mutatingMutator = mutator;
+      circuitMutator = mutator;
     }
+  } // end of LockException class
 
-    public Circuit getCircuit() {
-      return circuit;
-    }
-
-    public int getSerialNumber() {
-      return serialNumber;
-    }
-
-    public Thread getMutatingThread() {
-      return mutatingThread;
-    }
-
-    public CircuitMutatorImpl getCircuitMutator() {
-      return mutatingMutator;
-    }
-  }
 }

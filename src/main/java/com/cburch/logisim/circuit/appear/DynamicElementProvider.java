@@ -14,6 +14,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.instance.InstanceComponent;
 import java.util.HashSet;
 import java.util.LinkedList;
+import lombok.val;
 
 public interface DynamicElementProvider {
 
@@ -21,17 +22,19 @@ public interface DynamicElementProvider {
 
   static void removeDynamicElements(Circuit circuit, Component c) {
     if (!(c instanceof InstanceComponent)) return;
-    HashSet<Circuit> allAffected = new HashSet<>();
-    LinkedList<Circuit> todo = new LinkedList<>();
+    val allAffected = new HashSet<Circuit>();
+    val todo = new LinkedList<Circuit>();
     todo.add(circuit);
     while (!todo.isEmpty()) {
-      Circuit circ = todo.remove();
+      val circ = todo.remove();
       if (allAffected.contains(circ)) continue;
       allAffected.add(circ);
-      for (Circuit other : circ.getCircuitsUsingThis())
+      for (val other : circ.getCircuitsUsingThis()) {
         if (!allAffected.contains(other)) todo.add(other);
+      }
     }
-    for (Circuit circ : allAffected)
+    for (val circ : allAffected) {
       circ.getAppearance().removeDynamicElement((InstanceComponent) c);
+    }
   }
 }

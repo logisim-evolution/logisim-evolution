@@ -33,6 +33,7 @@ import com.cburch.logisim.tools.WireRepairData;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 import javax.swing.JPopupMenu;
+import lombok.val;
 
 public class Splitter extends ManagedComponent
     implements WireRepair, ToolTipMaker, MenuExtender, AttributeListener {
@@ -229,18 +230,11 @@ public class Splitter extends ManagedComponent
         }
       }
       if (inString) appendBuf(buf, bit_end.length - 1, beginString);
-      String base;
-      switch (bits) {
-        case 0:
-          base = S.get("splitterSplit0Tip");
-          break;
-        case 1:
-          base = S.get("splitterSplit1Tip");
-          break;
-        default:
-          base = S.get("splitterSplitManyTip");
-          break;
-      }
+      val base = switch (bits) {
+         case 0 -> S.get("splitterSplit0Tip");
+         case 1 -> S.get("splitterSplit1Tip");
+         default -> S.get("splitterSplitManyTip");
+      };
       return StringUtil.format(base, buf.toString());
     } else {
       return null;

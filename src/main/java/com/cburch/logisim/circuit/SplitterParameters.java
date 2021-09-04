@@ -11,23 +11,24 @@ package com.cburch.logisim.circuit;
 
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.util.GraphicsUtil;
+import lombok.Getter;
 
 class SplitterParameters {
-  private final int dxEnd0; // location of split end 0 relative to origin
-  private final int dyEnd0;
-  private final int ddxEnd; // distance from split end i to split end (i + 1)
-  private final int ddyEnd;
-  private final int dxEndSpine; // distance from split end to spine
-  private final int dyEndSpine;
-  private final int dxSpine0; // distance from origin to far end of spine
-  private final int dySpine0;
-  private final int dxSpine1; // distance from origin to near end of spine
-  private final int dySpine1;
-  private final int textAngle; // angle to rotate text
-  private final int halign; // justification of text
-  private final int valign;
+  @Getter private final int end0X; // location of split end 0 relative to origin
+  @Getter private final int end0Y;
+  @Getter private final int endToEndDeltaX; // distance from split end i to split end (i + 1)
+  @Getter private final int endToEndDeltaY;
+  @Getter private final int endToSpineDeltaX; // distance from split end to spine
+  @Getter private final int endToSpineDeltaY;
+  @Getter private final int spine0X; // distance from origin to far end of spine
+  @Getter private final int spine0Y;
+  @Getter private final int spine1X; // distance from origin to near end of spine
+  @Getter private final int spine1Y;
+  @Getter private final int textAngle; // angle to rotate text
+  @Getter private final int textHorizAlign; // justification of text
+  @Getter private final int textVertAlign;
 
-  SplitterParameters(SplitterAttributes attrs) {
+  public SplitterParameters(SplitterAttributes attrs) {
 
     Object appear = attrs.appear;
     int fanout = attrs.fanout;
@@ -47,90 +48,38 @@ class SplitterParameters {
     final var offs = 6;
     if (facing == Direction.NORTH || facing == Direction.SOUTH) { // ^ or V
       int m = facing == Direction.NORTH ? 1 : -1;
-      dxEnd0 =
+      end0X =
           justify == 0
               ? gap * ((fanout + 1) / 2 - 1)
               : m * justify < 0 ? -10 : (10 + gap * (fanout - 1));
-      dyEnd0 = -m * width;
-      ddxEnd = -gap;
-      ddyEnd = 0;
-      dxEndSpine = 0;
-      dyEndSpine = m * (width - offs);
-      dxSpine0 = m * justify * (10 + gap * (fanout - 1) - 1);
-      dySpine0 = -m * offs;
-      dxSpine1 = m * justify * offs;
-      dySpine1 = -m * offs;
+      end0Y = -m * width;
+      endToEndDeltaX = -gap;
+      endToEndDeltaY = 0;
+      endToSpineDeltaX = 0;
+      endToSpineDeltaY = m * (width - offs);
+      spine0X = m * justify * (10 + gap * (fanout - 1) - 1);
+      spine0Y = -m * offs;
+      spine1X = m * justify * offs;
+      spine1Y = -m * offs;
       textAngle = 90;
-      halign = m > 0 ? GraphicsUtil.H_RIGHT : GraphicsUtil.H_LEFT;
-      valign = GraphicsUtil.V_BASELINE;
+      textHorizAlign = m > 0 ? GraphicsUtil.H_RIGHT : GraphicsUtil.H_LEFT;
+      textVertAlign = GraphicsUtil.V_BASELINE;
     } else { // > or <
       final var m = facing == Direction.WEST ? -1 : 1;
-      dxEnd0 = m * width;
-      dyEnd0 =
+      end0X = m * width;
+      end0Y =
           justify == 0 ? -gap * (fanout / 2) : m * justify > 0 ? 10 : -(10 + gap * (fanout - 1));
-      ddxEnd = 0;
-      ddyEnd = gap;
-      dxEndSpine = -m * (width - offs);
-      dyEndSpine = 0;
-      dxSpine0 = m * offs;
-      dySpine0 = m * justify * (10 + gap * (fanout - 1) - 1);
-      dxSpine1 = m * offs;
-      dySpine1 = m * justify * offs;
+      endToEndDeltaX = 0;
+      endToEndDeltaY = gap;
+      endToSpineDeltaX = -m * (width - offs);
+      endToSpineDeltaY = 0;
+      spine0X = m * offs;
+      spine0Y = m * justify * (10 + gap * (fanout - 1) - 1);
+      spine1X = m * offs;
+      spine1Y = m * justify * offs;
       textAngle = 0;
-      halign = m > 0 ? GraphicsUtil.H_LEFT : GraphicsUtil.H_RIGHT;
-      valign = m * justify < 0 ? GraphicsUtil.V_TOP : GraphicsUtil.V_BASELINE;
+      textHorizAlign = m > 0 ? GraphicsUtil.H_LEFT : GraphicsUtil.H_RIGHT;
+      textVertAlign = m * justify < 0 ? GraphicsUtil.V_TOP : GraphicsUtil.V_BASELINE;
     }
-  }
-
-  public int getEnd0X() {
-    return dxEnd0;
-  }
-
-  public int getEnd0Y() {
-    return dyEnd0;
-  }
-
-  public int getEndToEndDeltaX() {
-    return ddxEnd;
-  }
-
-  public int getEndToEndDeltaY() {
-    return ddyEnd;
-  }
-
-  public int getEndToSpineDeltaX() {
-    return dxEndSpine;
-  }
-
-  public int getEndToSpineDeltaY() {
-    return dyEndSpine;
-  }
-
-  public int getSpine0X() {
-    return dxSpine0;
-  }
-
-  public int getSpine0Y() {
-    return dySpine0;
-  }
-
-  public int getSpine1X() {
-    return dxSpine1;
-  }
-
-  public int getSpine1Y() {
-    return dySpine1;
-  }
-
-  public int getTextAngle() {
-    return textAngle;
-  }
-
-  public int getTextHorzAlign() {
-    return halign;
-  }
-
-  public int getTextVertAlign() {
-    return valign;
   }
 }

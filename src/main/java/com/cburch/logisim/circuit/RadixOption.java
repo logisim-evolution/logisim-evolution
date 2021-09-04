@@ -17,6 +17,7 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.util.StringGetter;
+import lombok.Getter;
 
 public abstract class RadixOption extends AttributeOption {
   private static class Radix10Signed extends RadixOption {
@@ -334,7 +335,7 @@ public abstract class RadixOption extends AttributeOption {
 
   public static RadixOption decode(String value) {
     for (final var opt : OPTIONS) {
-      if (value.equals(opt.saveName)) {
+      if (value.equals(opt.saveString)) {
         return opt;
       }
     }
@@ -358,29 +359,20 @@ public abstract class RadixOption extends AttributeOption {
 
   public static final Attribute<RadixOption> ATTRIBUTE = Attributes.forOption("radix", S.getter("radixAttr"), OPTIONS);
 
-  private final String saveName;
+  @Getter private final String saveString;  // save name
 
-  private final StringGetter displayGetter;
+  @Getter private final StringGetter displayGetter;
 
   private RadixOption(String saveName, StringGetter displayGetter) {
     super(saveName, displayGetter);
-    this.saveName = saveName;
+    this.saveString = saveName;
     this.displayGetter = displayGetter;
-  }
-
-  @Override
-  public StringGetter getDisplayGetter() {
-    return displayGetter;
   }
 
   public abstract int getMaxLength(BitWidth width);
 
   public int getMaxLength(Value value) {
     return getMaxLength(value.getBitWidth());
-  }
-
-  public String getSaveString() {
-    return saveName;
   }
 
   @Override
@@ -394,7 +386,7 @@ public abstract class RadixOption extends AttributeOption {
 
   @Override
   public String toString() {
-    return saveName;
+    return saveString;
   }
 
   public abstract String toString(Value value);

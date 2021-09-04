@@ -27,69 +27,63 @@ import com.cburch.logisim.std.memory.RegisterShape;
 import com.cburch.logisim.std.wiring.Pin;
 
 import java.util.List;
+import lombok.Getter;
+import lombok.val;
 import org.w3c.dom.Element;
 
 public class AppearanceSvgReader {
   public static class pinInfo {
-    private final Location myLocation;
-    private final Instance myInstance;
-    private Boolean pinIsUsed;
-    
+    @Getter private final Location pinLocation; // my location
+    @Getter private final Instance pinInstance; // my instance
+    private Boolean pinUsed;  // indicates if pin is used
+
     public pinInfo(Location loc, Instance inst) {
-      myLocation = loc;
-      myInstance = inst;
-      pinIsUsed = false;
+      pinLocation = loc;
+      pinInstance = inst;
+      pinUsed = false;
     }
-    
+
     public Boolean pinIsAlreadyUsed() {
-      return pinIsUsed;
+      return pinUsed;
     }
-    
-    public Location getPinLocation() {
-      return myLocation;
-    }
-    
-    public Instance getPinInstance() {
-      return myInstance;
-    }
-    
-    public void setPinIsUsed() {
-      pinIsUsed = true;
+
+    public void setPinUsed() {
+      pinUsed = true;
     }
   }
-  
+
   public static pinInfo getPinInfo(Location loc, Instance inst) {
     return new pinInfo(loc, inst);
   }
-  
+
   public static AbstractCanvasObject createShape(Element elt, List<pinInfo> pins, Circuit circuit) {
-    final var name = elt.getTagName();
+    val name = elt.getTagName();
     if (name.equals("circ-anchor") || name.equals("circ-origin")) {
-      final var loc = getLocation(elt);
-      final var ret = new AppearanceAnchor(loc);
+      val loc = getLocation(elt);
+      val ret = new AppearanceAnchor(loc);
       if (elt.hasAttribute("facing")) {
-        final var facing = Direction.parse(elt.getAttribute("facing"));
+        val facing = Direction.parse(elt.getAttribute("facing"));
         ret.setValue(AppearanceAnchor.FACING, facing);
       }
       return ret;
     } else if (name.equals("circ-port")) {
-      final var loc = getLocation(elt);
-      final var pinStr = elt.getAttribute("pin").split(",");
-      final var pinLoc = Location.create(Integer.parseInt(pinStr[0].trim()), Integer.parseInt(pinStr[1].trim()));
-      for (final var pin : pins) {
+      val loc = getLocation(elt);
+      val pinStr = elt.getAttribute("pin").split(",");
+      val pinLoc = Location.create(Integer.parseInt(pinStr[0].trim()), Integer.parseInt(pinStr[1].trim()));
+      for (val pin : pins) {
         if (pin.pinIsAlreadyUsed()) continue;
         if (pin.getPinLocation().equals(pinLoc)) {
-          final var isInputPin = ((Pin) pin.getPinInstance().getFactory()).isInputPin(pin.getPinInstance());
-          final var isInputRef = isInputPinReference(elt);
+          val isInputPin = ((Pin) pin.getPinInstance().getFactory()).isInputPin(pin.getPinInstance());
+          val isInputRef = isInputPinReference(elt);
           if (isInputPin == isInputRef) {
-            pin.setPinIsUsed();
-            return new AppearancePort(loc, pin.getPinInstance()); 
+            pin.setPinUsed();
+            return new AppearancePort(loc, pin.getPinInstance());
           }
         }
       }
-      return null; 
+      return null;
     } else if (name.startsWith("visible-")) {
-      final var pathstr = elt.getAttribute("path");
+      val pathstr = elt.getAttribute("path");
       if (pathstr == null || pathstr.length() == 0) return null;
       DynamicElement.Path path;
       try {
@@ -98,9 +92,9 @@ public class AppearanceSvgReader {
         System.out.println(e.getMessage());
         return null;
       }
-      final var x = (int) Double.parseDouble(elt.getAttribute("x").trim());
-      final var y = (int) Double.parseDouble(elt.getAttribute("y").trim());
-      final var shape = getDynamicElement(name, path, x, y);
+      val x = (int) Double.parseDouble(elt.getAttribute("x").trim());
+      val y = (int) Double.parseDouble(elt.getAttribute("y").trim());
+      val shape = getDynamicElement(name, path, x, y);
       if (shape == null) {
         return null;
       }
@@ -115,45 +109,35 @@ public class AppearanceSvgReader {
     return SvgReader.createShape(elt);
   }
 
-  private static DynamicElement getDynamicElement(String name, DynamicElement.Path path, int x,
-      int y) {
-    switch (name) {
-      case "visible-led":
-        return new LedShape(x, y, path);
-      case "visible-rgbled":
-        return new RGBLedShape(x, y, path);
-      case "visible-hexdigit":
-        return new HexDigitShape(x, y, path);
-      case "visible-sevensegment":
-        return new SevenSegmentShape(x, y, path);
-      case "visible-register":
-        return new RegisterShape(x, y, path);
-      case "visible-counter":
-        return new CounterShape(x, y, path);
-      case "visible-vga":
-        return new SocVgaShape(x, y, path);
-      case "visible-soc-cpu":
-        return new SocCPUShape(x, y, path);
-      case "visible-tty":
-        return new TtyShape(x, y, path);
-      default:
-        return null;
-    }
+  private static DynamicElement getDynamicElement(String name, DynamicElement.Path path, int x, int y) {
+    return
+      switch (name) {
+        case "visible-led" -> new LedShape(x, y, path);
+        case "visible-rgbled" -> new RGBLedShape(x, y, path);
+        case "visible-hexdigit" -> new HexDigitShape(x, y, path);
+        case "visible-sevensegment" -> new SevenSegmentShape(x, y, path);
+        case "visible-register" -> new RegisterShape(x, y, path);
+        case "visible-counter" -> new CounterShape(x, y, path);
+        case "visible-vga" -> new SocVgaShape(x, y, path);
+        case "visible-soc-cpu" -> new SocCPUShape(x, y, path);
+        case "visible-tty" -> new TtyShape(x, y, path);
+        default -> null;
+      };
   }
-  
+
   private static Boolean isInputPinReference(Element elt) {
-    final var width = Double.parseDouble(elt.getAttribute("width"));
-    final var radius = (int) Math.round(width / 2.0);
+    val width = Double.parseDouble(elt.getAttribute("width"));
+    val radius = (int) Math.round(width / 2.0);
     return AppearancePort.isInputAppearance(radius);
   }
 
   private static Location getLocation(Element elt) {
-    double x = Double.parseDouble(elt.getAttribute("x"));
-    double y = Double.parseDouble(elt.getAttribute("y"));
-    double w = Double.parseDouble(elt.getAttribute("width"));
-    double h = Double.parseDouble(elt.getAttribute("height"));
-    int px = (int) Math.round(x + w / 2);
-    int py = (int) Math.round(y + h / 2);
+    val x = Double.parseDouble(elt.getAttribute("x"));
+    val y = Double.parseDouble(elt.getAttribute("y"));
+    val w = Double.parseDouble(elt.getAttribute("width"));
+    val h = Double.parseDouble(elt.getAttribute("height"));
+    val px = (int) Math.round(x + w / 2);
+    val py = (int) Math.round(y + h / 2);
     return Location.create(px, py);
   }
 }

@@ -28,6 +28,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.val;
 
 public class DefaultHolyCrossAppearance {
   // Precise font dimensions vary based on the platform. We need component
@@ -76,15 +77,16 @@ public class DefaultHolyCrossAppearance {
   };
 
   public static void calculateTextDimensions(float fontsize) {
-    Text label = new Text(0, 0, "a");
-    Font f = label.getLabel().getFont().deriveFont(fontsize);
-    Canvas canvas = new Canvas();
-    FontMetrics fm = canvas.getFontMetrics(f);
+    val label = new Text(0, 0, "a");
+    val font = label.getLabel().getFont().deriveFont(fontsize);
+    val canvas = new Canvas();
+    val fm = canvas.getFontMetrics(font);
+    // FIXME: why are these println()s here? why not via logger? debug leftover?
     System.out.println("private static int[] asciiWidths = {");
-    for (char row = ' '; row <= '~'; row += 8) {
-      StringBuilder comment = new StringBuilder("//");
-      StringBuilder chars = new StringBuilder("    ");
-      for (char c = row; c < row + 8; c++) {
+    for (var row = ' '; row <= '~'; row += 8) {
+      val comment = new StringBuilder("//");
+      val chars = new StringBuilder("    ");
+      for (var c = row; c < row + 8; c++) {
         if (c >= '~') {
           chars.append("    ");
         } else {
@@ -92,7 +94,7 @@ public class DefaultHolyCrossAppearance {
           // label = new Text(0, 0, "" + c);
           // label.getLabel().setFont(f);
           // int w = label.getLabel().getWidth();
-          int w = fm.stringWidth("" + c);
+          val w = fm.stringWidth("" + c);
           chars.append(String.format(" %2d,", w));
         }
       }
@@ -103,9 +105,9 @@ public class DefaultHolyCrossAppearance {
   }
 
   private static int textWidth(String s) {
-    int w = 0;
-    for (int i = 0; i < s.length(); i++) {
-      char c = s.charAt(i);
+    var w = 0;
+    for (var i = 0; i < s.length(); i++) {
+      val c = s.charAt(i);
       if (c >= ' ' && c <= '~') {
         w += asciiWidths[c - ' '];
       } else {
@@ -116,16 +118,15 @@ public class DefaultHolyCrossAppearance {
   }
 
   public static List<CanvasObject> build(Collection<Instance> pins, String name) {
-    Map<Direction, List<Instance>> edge;
-    edge = new HashMap<>();
+    val edge = new HashMap<Direction, List<Instance>>();
     edge.put(Direction.EAST, new ArrayList<>());
     edge.put(Direction.WEST, new ArrayList<>());
     var maxLeftLabelLength = 0;
     var maxRightLabelLength = 0;
-    for (Instance pin : pins) {
+    for (val pin : pins) {
       Direction pinEdge;
-      final var labelString = pin.getAttributeValue(StdAttr.LABEL);
-      final var LabelWidth = textWidth(labelString);
+      val labelString = pin.getAttributeValue(StdAttr.LABEL);
+      val LabelWidth = textWidth(labelString);
       if (pin.getAttributeValue(Pin.ATTR_TYPE)) {
         pinEdge = Direction.EAST;
         if (LabelWidth > maxRightLabelLength) {
@@ -137,24 +138,24 @@ public class DefaultHolyCrossAppearance {
           maxLeftLabelLength = LabelWidth;
         }
       }
-      List<Instance> e = edge.get(pinEdge);
+      val e = edge.get(pinEdge);
       e.add(pin);
     }
-    for (Map.Entry<Direction, List<Instance>> entry : edge.entrySet()) {
+    for (val entry : edge.entrySet()) {
       DefaultAppearance.sortPinList(entry.getValue(), entry.getKey());
     }
 
-    int numEast = edge.get(Direction.EAST).size();
-    int numWest = edge.get(Direction.WEST).size();
-    int maxHorz = Math.max(numEast, numWest);
+    val numEast = edge.get(Direction.EAST).size();
+    val numWest = edge.get(Direction.WEST).size();
+    val maxHorz = Math.max(numEast, numWest);
 
-    int offsEast = computeOffset(numEast, numWest);
-    int offsWest = computeOffset(numWest, numEast);
+    val offsEast = computeOffset(numEast, numWest);
+    val offsWest = computeOffset(numWest, numEast);
 
-    int width = 2 * LABEL_OUTSIDE + maxLeftLabelLength + maxRightLabelLength + LABEL_GAP;
+    var width = 2 * LABEL_OUTSIDE + maxLeftLabelLength + maxRightLabelLength + LABEL_GAP;
     width = Math.max(MIN_WIDTH, (width + 9) / 10 * 10);
 
-    int height = PORT_GAP * maxHorz + TOP_MARGIN + BOTTOM_MARGIN;
+    var height = PORT_GAP * maxHorz + TOP_MARGIN + BOTTOM_MARGIN;
     height = Math.max(MIN_HEIGHT, height);
 
     // compute position of anchor relative to top left corner of box
@@ -172,10 +173,10 @@ public class DefaultHolyCrossAppearance {
     }
 
     // place rectangle so anchor is on the grid
-    int rx = OFFS + (9 - (ax + 9) % 10);
-    int ry = OFFS + (9 - (ay + 9) % 10);
+    val rx = OFFS + (9 - (ax + 9) % 10);
+    val ry = OFFS + (9 - (ay + 9) % 10);
 
-    final var rect = new Rectangle(rx, ry, width, height);
+    val rect = new Rectangle(rx, ry, width, height);
     rect.setValue(DrawAttr.STROKE_WIDTH, 2);
     List<CanvasObject> ret = new ArrayList<>();
     ret.add(rect);
@@ -184,7 +185,7 @@ public class DefaultHolyCrossAppearance {
     placePins(ret, edge.get(Direction.EAST), rx + width, ry + offsEast, 0, PORT_GAP, false);
 
     if (name != null && name.length() > 0) {
-      final var label = new Text(rx + width / 2, ry + TOP_TEXT_MARGIN, name);
+      val label = new Text(rx + width / 2, ry + TOP_TEXT_MARGIN, name);
       label.getLabel().setHorizontalAlignment(EditableLabel.CENTER);
       label.getLabel().setVerticalAlignment(EditableLabel.TOP);
       label.getLabel().setColor(Color.BLACK);
@@ -199,18 +200,11 @@ public class DefaultHolyCrossAppearance {
     return TOP_MARGIN;
   }
 
-  private static void placePins(
-      List<CanvasObject> dest,
-      List<Instance> pins,
-      int x,
-      int y,
-      int dx,
-      int dy,
-      boolean leftSide) {
+  private static void placePins(List<CanvasObject> dest, List<Instance> pins, int x, int y, int dx, int dy, boolean leftSide) {
     int halign;
-    final var color = Color.DARK_GRAY; // maybe GRAY instead?
+    val color = Color.DARK_GRAY; // maybe GRAY instead?
     int ldx;
-    for (Instance pin : pins) {
+    for (val pin : pins) {
       dest.add(new AppearancePort(Location.create(x, y), pin));
       if (leftSide) {
         ldx = LABEL_OUTSIDE;
@@ -221,9 +215,9 @@ public class DefaultHolyCrossAppearance {
       }
       Font pinFont = null;
       if (pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
-        final var text = pin.getAttributeValue(StdAttr.LABEL);
+        val text = pin.getAttributeValue(StdAttr.LABEL);
         if (text != null && text.length() > 0) {
-          final var label = new Text(x + ldx, y, text);
+          val label = new Text(x + ldx, y, text);
           label.getLabel().setHorizontalAlignment(halign);
           label.getLabel().setVerticalAlignment(EditableLabel.MIDDLE);
           label.getLabel().setColor(color);

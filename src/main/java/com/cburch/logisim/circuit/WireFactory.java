@@ -20,9 +20,13 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
+import lombok.Getter;
 
 class WireFactory extends AbstractComponentFactory {
   public static final WireFactory instance = new WireFactory();
+
+  @Getter(lazy = true) private final StringGetter displayGetter = S.getter("wireComponent");
+  @Getter public final String name = "Wire";
 
   private WireFactory() {}
 
@@ -35,12 +39,9 @@ class WireFactory extends AbstractComponentFactory {
   public Component createComponent(Location loc, AttributeSet attrs) {
     Object dir = attrs.getValue(Wire.DIR_ATTR);
     final var len = attrs.getValue(Wire.LEN_ATTR);
-
-    if (dir == Wire.VALUE_HORZ) {
-      return Wire.create(loc, loc.translate(len, 0));
-    } else {
-      return Wire.create(loc, loc.translate(0, len));
-    }
+    return (dir == Wire.VALUE_HORZ)
+        ? Wire.create(loc, loc.translate(len, 0))
+        : Wire.create(loc, loc.translate(0, len));
   }
 
   //
@@ -59,16 +60,6 @@ class WireFactory extends AbstractComponentFactory {
     } else {
       g.drawLine(x, y, x, y + len);
     }
-  }
-
-  @Override
-  public StringGetter getDisplayGetter() {
-    return S.getter("wireComponent");
-  }
-
-  @Override
-  public String getName() {
-    return "Wire";
   }
 
   @Override

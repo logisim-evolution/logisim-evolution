@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.PriorityQueue;
 import java.util.Random;
+import lombok.Getter;
 
 public class Propagator {
   private static class ComponentPoint {
@@ -122,10 +123,10 @@ public class Propagator {
     return ret;
   }
 
-  private final CircuitState root; // root of state tree
+  @Getter private final CircuitState rootState; // root of state tree
 
   /** The number of clock cycles to let pass before deciding that the circuit is oscillating. */
-  private static final int simLimit = 1000;
+  private static final int SIM_LIMIT = 1000;
 
   /**
    * On average, one out of every 2**simRandomShift propagations through a component is delayed one
@@ -136,7 +137,7 @@ public class Propagator {
 
   private final PriorityQueue<SetData> toProcess = new PriorityQueue<>();
   private int clock = 0;
-  private boolean isOscillating = false;
+  @Getter private boolean isOscillating = false;
   private boolean oscAdding = false;
   private PropagationPoints oscPoints = new PropagationPoints();
   private int halfClockCycles = 0;
@@ -148,10 +149,10 @@ public class Propagator {
 
   final int id = lastId++;
 
-  public Propagator(CircuitState root) {
-    this.root = root;
+  public Propagator(CircuitState rootState) {
+    this.rootState = rootState;
     final var l = new Listener(this);
-    root.getProject().getOptions().getAttributeSet().addAttributeListener(l);
+    rootState.getProject().getOptions().getAttributeSet().addAttributeListener(l);
     updateRandomness();
   }
 
@@ -163,7 +164,7 @@ public class Propagator {
     final var causes = state.causes;
 
     // first check whether this is change of previous info.
-    boolean replaced = false;
+    var replaced = false;
     for (SetData n = head; n != null; n = n.next) {
       if (n.cause == data.cause) {
         n.val = data.val;
@@ -212,16 +213,9 @@ public class Propagator {
   //
   // public methods
   //
-  CircuitState getRootState() {
-    return root;
-  }
 
   public int getTickCount() {
     return halfClockCycles;
-  }
-
-  public boolean isOscillating() {
-    return isOscillating;
   }
 
   boolean isPending() {
@@ -266,10 +260,10 @@ public class Propagator {
 
   public boolean propagate(Simulator.Listener propListener, Simulator.Event propEvent) {
     oscPoints.clear();
-    root.processDirtyPoints();
-    root.processDirtyComponents();
+    rootState.processDirtyPoints();
+    rootState.processDirtyComponents();
 
-    final var oscThreshold = simLimit;
+    final var oscThreshold = SIM_LIMIT;
     final var logThreshold = 3 * oscThreshold / 4;
     var iters = 0;
     while (!toProcess.isEmpty()) {
@@ -319,7 +313,7 @@ public class Propagator {
   void reset() {
     halfClockCycles = 0;
     toProcess.clear();
-    root.reset();
+    rootState.reset();
     isOscillating = false;
   }
 
@@ -356,8 +350,8 @@ public class Propagator {
 
   boolean step(PropagationPoints changedPoints) {
     oscPoints.clear();
-    root.processDirtyPoints();
-    root.processDirtyComponents();
+    rootState.processDirtyPoints();
+    rootState.processDirtyComponents();
 
     if (toProcess.isEmpty()) return false;
 
@@ -414,13 +408,13 @@ public class Propagator {
       }
     }
 
-    root.processDirtyPoints();
-    root.processDirtyComponents();
+    rootState.processDirtyPoints();
+    rootState.processDirtyComponents();
   }
 
   public boolean toggleClocks() {
     halfClockCycles++;
-    return root.toggleClocks(halfClockCycles);
+    return rootState.toggleClocks(halfClockCycles);
   }
 
   @Override
@@ -429,7 +423,7 @@ public class Propagator {
   }
 
   private void updateRandomness() {
-    final var opts = root.getProject().getOptions();
+    final var opts = rootState.getProject().getOptions();
     Object rand = opts.getAttributeSet().getValue(Options.ATTR_SIM_RAND);
     final var val = (Integer) rand;
     var logVal = 0;

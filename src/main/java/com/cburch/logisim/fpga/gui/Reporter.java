@@ -74,12 +74,18 @@ public class Reporter {
     else
       myCommander.AddInfo(Message);
   }
+  public void AddInfoFmt(String fmt, Object... args) {
+    AddInfo(String.format(fmt, args));
+  }
 
   public void AddSevereWarning(String Message) {
     if (myCommander == null)
       logger.warn(Message);
     else
       myCommander.AddWarning(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_SEVERE));
+  }
+  public void AddSevereWarningFmt(String fmt, Object... args) {
+    AddSevereWarning(String.format(fmt, args));
   }
 
   public void AddWarningIncrement(String Message) {
