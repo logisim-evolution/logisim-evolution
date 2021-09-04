@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -143,7 +143,7 @@ public class FPGABoards implements ActionListener {
     public void insertSorted(String value) {
       add(value);
       Comparable<String> cmp = BoardList.getBoardName(value);
-      for (int i = size() - 1; i > 0 && cmp.compareTo(BoardList.getBoardName(get(i - 1))) < 0; i--)
+      for (var i = size() - 1; i > 0 && cmp.compareTo(BoardList.getBoardName(get(i - 1))) < 0; i--)
         Collections.swap(this, i, i - 1);
     }
   }
@@ -175,9 +175,7 @@ public class FPGABoards implements ActionListener {
     } else if (e.getSource().equals(boardSelector)) {
       if (boardSelector.getSelectedItem() == null) return;
       if (boardSelector.getSelectedItem().equals("Other")) {
-        if (!addBoard(true)) {
-          rebuildBoardSelector(false, null);
-        }
+        if (!addBoard(true)) rebuildBoardSelector(false, null);
       } else {
         AppPreferences.SelectedBoard.set(boardSelector.getSelectedItem().toString());
       }
@@ -198,9 +196,7 @@ public class FPGABoards implements ActionListener {
     final var prefs = AppPreferences.getPrefs();
     for (var i = 0; i < MaxBoards; i++) {
       final var encoding = prefs.get(ExtBoard + i, null);
-      if (encoding != null) {
-        addExternalBoard(encoding, i, prefs);
-      }
+      if (encoding != null) addExternalBoard(encoding, i, prefs);
     }
     final var selectedBoard = AppPreferences.SelectedBoard.get();
     if (!buildInBoards.GetBoardNames().contains(selectedBoard)) {
@@ -212,9 +208,7 @@ public class FPGABoards implements ActionListener {
     /* first we check if the file exists */
     final var f = new File(filename);
     if (!f.exists() || f.isDirectory()) {
-      if (prefs != null) {
-        prefs.remove(ExtBoard + oldindex);
-      }
+      if (prefs != null) prefs.remove(ExtBoard + oldindex);
       return false;
     }
     /* we check if the list is full and clean-up */
