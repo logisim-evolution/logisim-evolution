@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -48,34 +48,37 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     int nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     if (HDL.isVHDL()) {
       contents.add("make_mux : PROCESS( Enable,");
-      for (var i = 0; i < (1 << nrOfSelectBits); i++) {
+      for (var i = 0; i < (1 << nrOfSelectBits); i++)
         contents.add("                    MuxIn_{{1}},", i);
-      }
-      contents.addLines(
-          "                    Sel )",
-          "BEGIN",
-          "   IF (Enable = '0') THEN",
-          (attrs.getValue(StdAttr.WIDTH).getWidth() > 1
-              ? "      MuxOut <= (OTHERS => '0');"
-              : "      MuxOut <= '0';"),
-          "                     ELSE",
-          "      CASE (Sel) IS");
-      for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++) {
+      contents.add("""
+                              Sel )
+          BEGIN
+             IF (Enable = '0') THEN
+          """)
+          .add(attrs.getValue(StdAttr.WIDTH).getWidth() > 1
+              ? "{{2u}}MuxOut <= (OTHERS => '0');"
+              : "{{2u}}MuxOut <= '0';")
+          .add("""
+                                     ELSE
+                      CASE (Sel) IS
+                """);
+      for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++)
         contents.add("         WHEN {{1}} => MuxOut <= MuxIn_{{2}};", IntToBin(i, nrOfSelectBits), i);
-      }
-      contents.add("         WHEN OTHERS  => MuxOut <= MuxIn_{{1}};", (1 << nrOfSelectBits) - 1);
-      contents.addLines(
-          "      END CASE;", 
-          "   END IF;",
-          "END PROCESS make_mux;");
+      contents.add("         WHEN OTHERS  => MuxOut <= MuxIn_{{1}};", (1 << nrOfSelectBits) - 1)
+              .add("""
+                         END CASE; 
+                      END IF;
+                   END PROCESS make_mux;
+                   """);
     } else {
-      contents.addLines(
-          "assign MuxOut = s_selected_vector;",
-          "",
-          "always @(*)",
-          "begin",
-          "   if (~Enable) s_selected_vector <= 0;",
-          "   else case (Sel)");
+      contents.add("""
+          assign MuxOut = s_selected_vector;
+          
+          always @(*)
+          begin
+             if (~Enable) s_selected_vector <= 0;
+             else case (Sel)
+          """);
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++) {
         contents
             .add("      {{1}}:", IntToBin(i, nrOfSelectBits))

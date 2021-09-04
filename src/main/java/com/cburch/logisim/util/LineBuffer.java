@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -25,8 +25,8 @@ import java.util.regex.Pattern;
  */
 public class LineBuffer implements RandomAccess {
   public static final int MAX_LINE_LENGTH = 80;
-  public static final int DEFAULT_INDENT = 3;
-  public static final String DEFAULT_INDENT_STR = " ";
+  public static final int DEFAULT_INDENT = 1;
+  public static final String DEFAULT_INDENT_STR = "   ";
 
   private ArrayList<String> contents = new java.util.ArrayList<String>();
 
@@ -40,6 +40,7 @@ public class LineBuffer implements RandomAccess {
    */
   public LineBuffer() {
     super();
+    addDefaultPairs();
   }
 
   /**
@@ -48,6 +49,7 @@ public class LineBuffer implements RandomAccess {
    * @param line text line to be added to buffer
    */
   public LineBuffer(String line) {
+    this();
     add(line);
   }
 
@@ -60,6 +62,7 @@ public class LineBuffer implements RandomAccess {
    * @param pairs Placeholder pairs to be used.
    */
   public LineBuffer(String line, Pairs pairs) {
+    this();
     addPairs(pairs);
     add(line);
   }
@@ -70,7 +73,7 @@ public class LineBuffer implements RandomAccess {
    * @param pairs Placeholder pairs to be used.
    */
   public LineBuffer(Pairs pairs) {
-    super();
+    this();
     addPairs(pairs);
   }
 
@@ -85,8 +88,24 @@ public class LineBuffer implements RandomAccess {
     return contents.size();
   }
 
-  public boolean isEmpty() {
-    return contents.isEmpty();
+  public LineBuffer addDefaultPairs() {
+    return pair("1u", getDefaultIndent())
+        .pair("2u", getIndent(2))
+        .pair("3u", getIndent(3));
+  }
+
+  public LineBuffer withHdlPairs() {
+    return pair("assign", HDL.assignPreamble())
+        .pair("=", HDL.assignOperator())
+        .pair("or", HDL.orOperator())
+        .pair("and", HDL.andOperator())
+        .pair("not", HDL.notOperator())
+        .pair("bracketOpen", HDL.BracketOpen())
+        .pair("bracketClose", HDL.BracketClose())
+        .pair("<", HDL.BracketOpen())
+        .pair(">", HDL.BracketClose())
+        .pair("0b", HDL.zeroBit())
+        .pair("1b", HDL.oneBit());
   }
 
   public boolean contains(Object obj) {
@@ -398,7 +417,7 @@ public class LineBuffer implements RandomAccess {
    * @return indented content of the buffer.
    */
   public ArrayList<String> getWithIndent() {
-    return getWithIndent(DEFAULT_INDENT, DEFAULT_INDENT_STR);
+    return getWithIndent(getDefaultIndent());
   }
 
   /**
@@ -410,7 +429,7 @@ public class LineBuffer implements RandomAccess {
    * @return indented content of the buffer.
    */
   public ArrayList<String> getWithIndent(int howMany) {
-    return getWithIndent(howMany, DEFAULT_INDENT_STR);
+    return getWithIndent(getIndent(howMany));
   }
 
   /**
@@ -440,6 +459,20 @@ public class LineBuffer implements RandomAccess {
       result.add((line.length() == 0) ? line : indent + line);
     }
     return result;
+  }
+
+  /* ********************************************************************************************* */
+
+  public static String getDefaultIndent() {
+    return getIndent(DEFAULT_INDENT, DEFAULT_INDENT_STR);
+  }
+
+  public static String getIndent(int indentUnits) {
+    return getIndent(indentUnits, DEFAULT_INDENT_STR);
+  }
+
+  public static String getIndent(int indentUnits, String indentString) {
+    return indentString.repeat(indentUnits);
   }
 
   /* ********************************************************************************************* */
@@ -624,37 +657,32 @@ public class LineBuffer implements RandomAccess {
   protected void validateLineWithPositionalArgs(String fmt, Object... args) {
     initValidator(fmt);
 
-    final var positionalsCnt = positionalPlaceholders.size();
+    final var posArgsCnt = positionalPlaceholders.size();
 
     // Do we have positional placeholders in fmt?
     if (positionalPlaceholders.isEmpty()) {
       // Warn if we have no positional placeholders used, but still receive positional arguments.
       if (args.length > 0)
-        warn("#E004: Useless positional arguments. Expected nothing, but received {{2}} for '{{1}}'.",
-                fmt, positionalsCnt);
+        warn("#E004: Useless positional arguments. Expected nothing, but received {{2}} for '{{1}}'.", fmt, posArgsCnt);
     } else {
-      if (positionalsCnt < args.length)
+      if (posArgsCnt < args.length)
         // We had too many positional args given compared to positional placeholders. But that
         // difference can be OK, so just warn.
         abort("#E001: Too many positional arguments, Expected {{2}}, but received {{3}} for '{{1}}'.",
-                fmt, positionalsCnt, args.length);
+                fmt, posArgsCnt, args.length);
 
-      if (positionalsCnt > args.length)
+      if (posArgsCnt > args.length)
         // Too little arguments provided vs. awaiting placeholders. That's life threatening condition.
-        abort("#E002: Insufficient positional arguments. Expected {{2}}, but received {{3}} for '{{1}}'.",
-                fmt, positionalsCnt, args.length);
+        abort("#E002: Insufficient positional arguments. Expected {{2}}, but received {{3}} for '{{1}}'.", fmt, posArgsCnt, args.length);
 
       // count matches, let's see if contents too.
-      var errorCnt = 0;
       for (final var posKey : positionalPlaceholders) {
-        if (Integer.valueOf(posKey) > positionalsCnt) {
-          // Reference to non-existing position found. Warn about all detected issues. We fail later.
-          warn("#E003: Invalid positional argument. '{{1}}' used, but max value is {{2}}.", posKey, positionalsCnt);
-          errorCnt++;
+        if (Integer.valueOf(posKey) > posArgsCnt) {
+          // Reference to non-existing position found. Warn about all detected issues. We fail
+          // later.
+          warn("#E003: Invalid positional argument. '{{1}}' used, but max value is {{2}} for '{{3}}'.", posKey, posArgsCnt, fmt);
         }
       }
-      if (errorCnt > 0)
-        abort("#E003: Non-existing positional arguments found in '{{1}}'. See console output for details.", fmt);
     }
   }
 
@@ -662,14 +690,11 @@ public class LineBuffer implements RandomAccess {
     initValidator(fmt);
 
     // check if we use any non mapped placeholder
-    var errorCnt = 0;
     for (final var key : pairedPlaceholders) {
       if (!placeholders.contains(key)) {
-        warn("#E005: Placeholder '{{2}}' has no mapping while processing '{{1}}'.", fmt, key);
-        errorCnt++;
+        abort("#E005: Placeholder '{{1}}' has no mapping while processing '{{2}}'.", key, fmt);
       }
     }
-    if (errorCnt > 0) abort("#E005: Unmapped placeholders detected. See console output for details.");
   }
 
   protected void validateLine(String fmt, Pairs argPairs) {
@@ -679,21 +704,15 @@ public class LineBuffer implements RandomAccess {
       validateLineWithPositionalArgs(fmt, argPairs);
     } else {
       if (positionalPlaceholders.size() > 0)
-        abort(
-            "#E004: No positional arguments, but expected {{2}} for '{{1}}'.",
-            fmt, positionalPlaceholders.size());
+        abort("#E004: No positional arguments, but expected {{2}} for '{{1}}'.", fmt, positionalPlaceholders.size());
     }
 
     // Check if paired placeholders used in formatting string are known at this point.
-    var errorCount = 0;
     for (final var key : pairedPlaceholders) {
       if (!(pairs.containsKey(key) || (argPairs != null && argPairs.containsKey(key)))) {
-        warn("#E006: No mapping for placeholder: '{{1}}'", key);
-        errorCount++;
+        abort("#E006: No mapping for '{{1}}' placeholder in '{{2}}'.", key, fmt);
       }
     }
-    if (errorCount > 0)
-      abort("#E006: {{1}} unmapped placeholders detected in '{{2}}'. See console output for details.", errorCount, fmt);
   }
 
   /* ********************************************************************************************* */
@@ -752,7 +771,7 @@ public class LineBuffer implements RandomAccess {
   /* ********************************************************************************************* */
 
   public LineBuffer pair(String key, Object value) {
-    pairs.add(key, value);
+    pairs.pair(key, value);
     return this;
   }
 
@@ -773,17 +792,17 @@ public class LineBuffer implements RandomAccess {
       final var map = new Pairs();
       var idx = 1;
       for (final var arg : args) {
-        map.add(String.valueOf(idx++), "" + arg);
+        map.pair(String.valueOf(idx++), "" + arg);
       }
       return map;
     }
 
 
     public Pairs(String key, Object value) {
-      add(key, value);
+      pair(key, value);
     }
 
-    public Pairs add(String key, Object value) {
+    public Pairs pair(String key, Object value) {
       put(key, value);
       return this;
     }
