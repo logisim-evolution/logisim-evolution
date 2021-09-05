@@ -180,7 +180,7 @@ public class TruthtableTextFile {
   }
 
   static Entry parseBit(char c, String sval, Var var, int lineno) throws IOException {
-    return switch(c) {
+    return switch (c) {
       case 'x', 'X', '-' -> Entry.DONT_CARE;
       case '0' -> Entry.ZERO;
       case '1' -> Entry.ONE;

@@ -39,7 +39,7 @@ public class CircuitEvent {
 
   @Override
   public String toString() {
-    String s = switch (action) {
+    return switch (action) {
        case ACTION_SET_NAME -> "ACTION_SET_NAME";
        case ACTION_ADD -> "ACTION_ADD";
        case ACTION_REMOVE -> "ACTION_REMOVE";
@@ -50,7 +50,6 @@ public class CircuitEvent {
        case ACTION_CHECK_NAME -> "CHECK_NAME";
        case ACTION_DISPLAY_CHANGE -> "ACTION_DISPLAY_CHANGE";
        default -> "UNKNOWN_ACTION(" + action + ")";
-    };
-    return s + "{\n  circuit=" + circuit + "\n  data=" + data + "\n}";
+    } + "{\n  circuit=" + circuit + "\n  data=" + data + "\n}";
   }
 }
