@@ -267,7 +267,7 @@ class ExpressionTab extends AnalyzerTab {
         super.stopCellEditing();
         oldExpr = null;
         return true;
-        }
+      }
       return false;
     }
 
