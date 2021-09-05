@@ -35,6 +35,7 @@ import java.util.Collections;
 import java.util.List;
 import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
+import lombok.val;
 
 class TableTabCaret {
   private class Listener
@@ -242,31 +243,28 @@ class TableTabCaret {
         var oldCursor = cursor;
         var oldMarkA = markA;
         var oldMarkB = markB;
-        List<Integer> oldCursorIdx;
-        List<Integer> oldMarkIdx;
-        oldCursorIdx = allIndexesForRowRange(cursor.row, cursor.row);
-        oldMarkIdx = allIndexesForRowRange(markA.row, markB.row);
+        val oldCursorIdx = allIndexesForRowRange(cursor.row, cursor.row);
+        val oldMarkIdx = allIndexesForRowRange(markA.row, markB.row);
         // Second: do the actual update
-        var updated = model.setVisibleInputEntry(cursor.row, cursor.col, newEntry, true);
+        val updated = model.setVisibleInputEntry(cursor.row, cursor.col, newEntry, true);
         // Third: try to update the cursor and selection.
         if (updated) {
           // Update the cursor position
           cursor = invalid;
-          var rows = allRowsContaining(oldCursorIdx);
+          val rows = allRowsContaining(oldCursorIdx);
           if (rows != null) {
-            if (newEntry != Entry.ONE) {
-              cursor = new Pt(rows[0], oldCursor.col);
-            } else {
-              cursor = new Pt(rows[rows.length - 1], oldCursor.col);
-            }
+            cursor =
+                (newEntry != Entry.ONE)
+                    ? new Pt(rows[0], oldCursor.col)
+                    : new Pt(rows[rows.length - 1], oldCursor.col);
             hilightRows = rows;
           }
           // Update the selection
           markA = cursor;
           markB = invalid;
-          var marks = allRowsContaining(oldMarkIdx);
+          val marks = allRowsContaining(oldMarkIdx);
           if (marks != null) {
-            var n = marks.length;
+            val n = marks.length;
             if (isContiguous(marks)) {
               final var fwd = oldMarkA.row <= oldMarkB.row;
               markA = new Pt(marks[fwd ? 0 : n - 1], oldMarkA.col);

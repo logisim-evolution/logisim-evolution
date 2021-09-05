@@ -21,6 +21,7 @@ import java.awt.datatransfer.UnsupportedFlavorException;
 import java.io.IOException;
 import java.io.Serializable;
 import java.util.StringTokenizer;
+import lombok.val;
 
 class TableTabClip implements ClipboardOwner {
   private static class Data implements Transferable, Serializable {
@@ -70,7 +71,7 @@ class TableTabClip implements ClipboardOwner {
 
   private final TableTab table;
 
-  TableTabClip(TableTab table) {
+  public TableTabClip(TableTab table) {
     this.table = table;
   }
 
@@ -87,11 +88,7 @@ class TableTabClip implements ClipboardOwner {
     final var inputs = t.getInputColumnCount();
     final var header = new String[s.width];
     for (var c = s.x; c < s.x + s.width; c++) {
-      if (c < inputs) {
-        header[c - s.x] = t.getInputHeader(c);
-      } else {
-        header[c - s.x] = t.getOutputHeader(c - inputs);
-      }
+      header[c - s.x] = (c < inputs) ? t.getInputHeader(c) : t.getOutputHeader(c - inputs);
     }
     final var contents = new String[s.height][s.width];
     for (var r = s.y; r < s.y + s.height; r++) {
@@ -104,7 +101,7 @@ class TableTabClip implements ClipboardOwner {
       }
     }
 
-    Clipboard clip = table.getToolkit().getSystemClipboard();
+    val clip = table.getToolkit().getSystemClipboard();
     clip.setContents(new Data(header, contents), this);
   }
 

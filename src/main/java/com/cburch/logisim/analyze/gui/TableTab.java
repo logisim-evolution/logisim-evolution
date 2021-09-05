@@ -51,6 +51,7 @@ import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
+import lombok.val;
 
 class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   private class MyListener implements TruthTableListener, LocaleListener {
@@ -381,13 +382,14 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     computePreferredSize();
     this.addComponentListener(new ComponentAdapter() {
       boolean done;
+      @Override
       public void componentShown(ComponentEvent e) {
         TableTab.this.removeComponentListener(this);
         if (done) return;
         done = true;
         // account for missing scrollbar on header portion
         final var pad = bodyPane.getVerticalScrollBar().getWidth();
-        GridBagConstraints gc = layout.getConstraints(headerPane);
+        val gc = layout.getConstraints(headerPane);
         Insets i = gc.insets;
         gc.insets.set(i.top, i.left, i.bottom, i.right + pad);
         layout.setConstraints(headerPane, gc);
@@ -735,7 +737,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
       final var s = caret.getSelection();
       final var inputs = table.getInputColumnCount();
       for (var c = s.x; c < s.x + s.width; c++) {
-        if (c < inputs) continue; // todo: allow input row delete?
+        if (c < inputs) continue; // TODO: allow input row delete?
         for (var r = s.y; r < s.y + s.height; r++) {
           table.setVisibleOutputEntry(r, c - inputs, Entry.DONT_CARE);
         }

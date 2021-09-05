@@ -60,6 +60,8 @@ import javax.swing.border.Border;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellEditor;
+import lombok.Getter;
+import lombok.val;
 import org.jdesktop.swingx.prompt.BuddySupport;
 
 public class VariableTab extends AnalyzerTab {
@@ -96,7 +98,7 @@ public class VariableTab extends AnalyzerTab {
     table.setDropMode(DropMode.INSERT_ROWS);
 
     final var inputMap = table.getInputMap();
-    for (LogisimMenuItem item : LogisimMenuBar.EDIT_ITEMS) {
+    for (val item : LogisimMenuBar.EDIT_ITEMS) {
       final var accel = menubar.getAccelerator(item);
       inputMap.put(accel, item);
     }
@@ -305,7 +307,7 @@ public class VariableTab extends AnalyzerTab {
   public static final int RESIZED = 3;
   public static final int BAD_NAME = 4;
   public static final int DUP_NAME = 5;
-  private static final int TOO_WIDE = 6;
+  public static final int TOO_WIDE = 6;
   public static final int NO_START_PAR = -1;
   public static final int NO_VALID_MSB_INDEX = -2;
   public static final int NO_VALID_INDEX_SEP = -3;
@@ -390,12 +392,7 @@ public class VariableTab extends AnalyzerTab {
     return err;
   }
 
-  @Override
-  EditHandler getEditHandler() {
-    return editHandler;
-  }
-
-  final EditHandler editHandler =
+  @Getter final EditHandler editHandler =
       new EditHandler() {
         @Override
         public void computeEnabled() {
@@ -548,12 +545,8 @@ public class VariableTab extends AnalyzerTab {
   static class BitWidthRenderer extends DefaultListCellRenderer {
     private static final long serialVersionUID = 1L;
 
-    public BitWidthRenderer() {
-    }
-
     @Override
-    public Component getListCellRendererComponent(JList<?> list,
-        Object w, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(JList<?> list, Object w, int index, boolean isSelected, boolean cellHasFocus) {
       final var s = ((Integer) w) == 1 ? ("1 bit") : (w + " bits");
       return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
     }
@@ -573,7 +566,7 @@ public class VariableTab extends AnalyzerTab {
       this.data = data;
       final var maxwidth = data.getMaximumSize();
       final var widths = new Integer[Math.min(maxwidth, 32)];
-      for (int i = 0; i < widths.length; i++) widths[i] = i + 1;
+      for (var i = 0; i < widths.length; i++) widths[i] = i + 1;
       width = new JComboBox<>(widths);
       width.setFocusable(false);
       width.setRenderer(new BitWidthRenderer());
@@ -614,7 +607,7 @@ public class VariableTab extends AnalyzerTab {
       var index = "";
       int w;
       if (text.contains("[")) {
-        int idx = text.indexOf('[');
+        val idx = text.indexOf('[');
         name = text.substring(0, idx);
         index = text.substring(idx);
         w = checkindex(index);
@@ -755,9 +748,8 @@ public class VariableTab extends AnalyzerTab {
         table.changeSelection(oldIdx, 0, false, false);
         table.grabFocus();
         return true;
-      } else {
-        return false;
       }
+      return false;
     }
 
     @Override
@@ -787,6 +779,5 @@ public class VariableTab extends AnalyzerTab {
       return support.isDataFlavorSupported(DataFlavor.stringFlavor);
     }
   }
-
 
 }
