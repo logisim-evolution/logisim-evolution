@@ -32,7 +32,6 @@ import com.cburch.logisim.analyze.gui.KarnaughMapPanel;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Implicant;
-import com.cburch.logisim.analyze.model.TruthTable;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -91,7 +90,7 @@ public class KMapGroups {
       return false;
     }
 
-    public boolean Merge(int col, int row) {
+    public boolean merge(int col, int row) {
       if (!canMerge(col, row)) return false;
       // let's look where to merge:
       if (col >= startCol && col < (startCol + width)) {
@@ -109,14 +108,14 @@ public class KMapGroups {
   }
 
   public class KMapGroupInfo {
-    private final ArrayList<CoverInfo> Areas;
+    private final ArrayList<CoverInfo> areas;
     private final Color color;
     private final ArrayList<Implicant> singleCoveredImplicants;
     private final Expression expression;
 
     public KMapGroupInfo(Implicant imp, Color col) {
       this.color = col;
-      Areas = new ArrayList<>();
+      areas = new ArrayList<>();
       singleCoveredImplicants = new ArrayList<>();
       List<Implicant> one = new ArrayList<>();
       one.add(imp);
@@ -125,7 +124,7 @@ public class KMapGroups {
     }
 
     public ArrayList<CoverInfo> getAreas() {
-      return Areas;
+      return areas;
     }
 
     public Color getColor() {
@@ -149,13 +148,13 @@ public class KMapGroups {
         boolean highlighted,
         boolean colored) {
       int d = 2 * IMP_RADIUS;
-      Color col = g.getColor();
+      final var col = g.getColor();
       if (highlighted)
         g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 180));
       else if (colored)
         g.setColor(new Color(color.getRed(), color.getGreen(), color.getBlue(), 128));
       else g.setColor(new Color(128, 128, 128, 128));
-      for (CoverInfo cover : Areas) {
+      for (CoverInfo cover : areas) {
         g.fillRoundRect(
             x + cover.getCol() * cellWidth + IMP_INSET,
             y + cover.getRow() * cellHeight + IMP_INSET,
@@ -168,15 +167,15 @@ public class KMapGroups {
     }
 
     public boolean insideCover(int col, int row) {
-      TruthTable table = model.getTruthTable();
+      final var table = model.getTruthTable();
       if (table.getInputColumnCount() > KarnaughMapPanel.MAX_VARS) return false;
-      int kmapRows = 1 << KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
-      int kmapCols = 1 << KarnaughMapPanel.COL_VARS[table.getInputColumnCount()];
+      final var kmapRows = 1 << KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
+      final var kmapCols = 1 << KarnaughMapPanel.COL_VARS[table.getInputColumnCount()];
       for (Implicant sq : singleCoveredImplicants) {
-        int tableRow = sq.getRow();
+        final var tableRow = sq.getRow();
         if (tableRow < 0) return false;
-        int krow = KarnaughMapPanel.getRow(tableRow, kmapRows, kmapCols);
-        int kcol = KarnaughMapPanel.getCol(tableRow, kmapRows, kmapCols);
+        final var krow = KarnaughMapPanel.getRow(tableRow, kmapRows, kmapCols);
+        final var kcol = KarnaughMapPanel.getCol(tableRow, kmapRows, kmapCols);
         if (krow == row && kcol == col) return true;
       }
       return false;
@@ -197,20 +196,21 @@ public class KMapGroups {
     }
 
     private void build(Implicant imp) {
-      TruthTable table = model.getTruthTable();
+      final var table = model.getTruthTable();
       if (table.getInputColumnCount() > KarnaughMapPanel.MAX_VARS) return;
       int kmapRows = 1 << KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
       int kmapCols = 1 << KarnaughMapPanel.COL_VARS[table.getInputColumnCount()];
 
-      Boolean[][] imps = new Boolean[kmapRows][kmapCols];
-      for (int row = 0; row < kmapRows; row++)
+      final var imps = new Boolean[kmapRows][kmapCols];
+      for (int row = 0; row < kmapRows; row++) {
         for (int col = 0; col < kmapCols; col++) imps[row][col] = false;
+      }
       for (Implicant sq : imp.getTerms()) {
         addSingleCover(sq);
-        int tableRow = sq.getRow();
+        final var tableRow = sq.getRow();
         if (tableRow < 0) return;
-        int row = KarnaughMapPanel.getRow(tableRow, kmapRows, kmapCols);
-        int col = KarnaughMapPanel.getCol(tableRow, kmapRows, kmapCols);
+        final var row = KarnaughMapPanel.getRow(tableRow, kmapRows, kmapCols);
+        final var col = KarnaughMapPanel.getCol(tableRow, kmapRows, kmapCols);
         if ((row < kmapRows) && (col < kmapCols)) imps[row][col] = true;
       }
       CoverInfo current = null;
@@ -219,29 +219,25 @@ public class KMapGroups {
           if (imps[row][col]) {
             // we have a candidate
             if (current != null) {
-              if (current.Merge(col, row)) {
-                continue;
-              }
-              if (!Areas.contains(current)) Areas.add(current);
+              if (current.merge(col, row)) continue;
+              if (!areas.contains(current)) areas.add(current);
             }
             // can we merge with an existing ?
-            boolean found = false;
-            for (CoverInfo area : Areas) {
-              if (!found && area.Merge(col, row)) {
+            var found = false;
+            for (CoverInfo area : areas) {
+              if (!found && area.merge(col, row)) {
                 current = area;
                 found = true;
               }
             }
-            if (!found) {
-              current = new CoverInfo(col, row);
-            }
+            if (!found) current = new CoverInfo(col, row);
           } else {
             // no candidate
-            if (current != null && !Areas.contains(current)) Areas.add(current);
+            if (current != null && !areas.contains(current)) areas.add(current);
             current = null;
           }
         }
-      if (current != null && !Areas.contains(current)) Areas.add(current);
+      if (current != null && !areas.contains(current)) areas.add(current);
     }
   }
 
@@ -262,7 +258,7 @@ public class KMapGroups {
     this.format = format;
     update();
   }
-  
+
   public ArrayList<KMapGroupInfo> getCovers() {
     return covers;
   }
@@ -273,7 +269,7 @@ public class KMapGroups {
   }
 
   public boolean highlight(int col, int row) {
-    int oldHighlighted = highlighted;
+    final var oldHighlighted = highlighted;
     highlighted = -1;
     for (int nr = 0; nr < covers.size() && highlighted < 0; nr++) {
       if (covers.get(nr).insideCover(col, row)) highlighted = nr;
@@ -282,24 +278,24 @@ public class KMapGroups {
   }
 
   public boolean clearHighlight() {
-    boolean ret = highlighted >= 0;
+    final var ret = highlighted >= 0;
     highlighted = -1;
     return ret;
   }
 
-  public Expression GetHighlightedExpression() {
+  public Expression getHighlightedExpression() {
     if (highlighted < 0 || highlighted >= covers.size()) return null;
     return covers.get(highlighted).expression;
   }
 
-  public Color GetBackgroundColor() {
+  public Color getBackgroundColor() {
     if (highlighted < 0 || highlighted >= covers.size()) return null;
-    Color col = covers.get(highlighted).color;
+    final var col = covers.get(highlighted).color;
     return new Color(col.getRed(), col.getGreen(), col.getBlue(), 60);
   }
 
   public void update() {
-    List<Implicant> implicants = model.getOutputExpressions().getMinimalImplicants(output);
+    final var implicants = model.getOutputExpressions().getMinimalImplicants(output);
     covers = new ArrayList<>();
     CoverColor.COVERCOLOR.reset();
     if (implicants != null) {
@@ -313,7 +309,7 @@ public class KMapGroups {
   public void paint(Graphics2D g, int x, int y, int cellWidth, int cellHeight) {
     for (int cov = 0; cov < covers.size(); cov++) {
       if (cov == highlighted) continue;
-      KMapGroupInfo curCov = covers.get(cov);
+      final var curCov = covers.get(cov);
       curCov.paint(g, x, y, cellWidth, cellHeight, false, highlighted < 0);
     }
     if (highlighted >= 0 && highlighted < covers.size())

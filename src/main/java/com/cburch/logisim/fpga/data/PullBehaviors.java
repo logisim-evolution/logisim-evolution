@@ -34,9 +34,9 @@ import java.util.LinkedList;
 public class PullBehaviors {
   public static String getContraintedPullString(char id) {
     switch (id) {
-      case PullUp:
+      case PULL_UP:
         return "PULLUP";
-      case PullDown:
+      case PULL_DOWN:
         return "PULLDOWN";
       default:
         return "";
@@ -52,26 +52,25 @@ public class PullBehaviors {
       if (iter.next().equals(identifier)) return result;
       result++;
     }
-    return PullBehaviors.Unknown;
+    return PullBehaviors.UNKNOWN;
   }
 
   public static LinkedList<String> getStrings() {
     LinkedList<String> result = new LinkedList<>();
 
-    result.add(Behavior_strings[0]);
-    result.add(Behavior_strings[1]);
-    result.add(Behavior_strings[2]);
+    result.add(BEHAVIOR_STRINGS[0]);
+    result.add(BEHAVIOR_STRINGS[1]);
+    result.add(BEHAVIOR_STRINGS[2]);
 
     return result;
   }
 
-  public static final String PullAttributeString = "FPGAPinPullBehavior";
-  public static final char Float = 0;
-  public static final char PullUp = 1;
+  public static final String PULL_ATTRIBUTE_STRING = "FPGAPinPullBehavior";
+  public static final char FLOAT = 0;
+  public static final char PULL_UP = 1;
+  public static final char PULL_DOWN = 2;
 
-  public static final char PullDown = 2;
+  public static final char UNKNOWN = 255;
 
-  public static final char Unknown = 255;
-
-  public static final String[] Behavior_strings = {"Float", "Pull Up", "Pull Down"};
+  public static final String[] BEHAVIOR_STRINGS = {"Float", "Pull Up", "Pull Down"};
 }

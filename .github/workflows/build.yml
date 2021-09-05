@@ -1,0 +1,79 @@
+# This workflow will build a Java project with Gradle
+# For more information see:
+#  https://help.github.com/actions/language-and-framework-guides/building-and-testing-java-with-gradle
+
+name: "Build"
+on:
+  push:
+    # No need to run on push to "develop" as there should not be any direct pushes.
+    # master is left just for emergency cases.
+    branches: [ master ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  analyze_sources:
+    name: "Do we need to build the application?"
+    runs-on: ubuntu-latest
+
+    outputs:
+      # Export 'filter' step check result so next step can use it.
+      run_build: ${{ steps.filter.outputs.src }}
+
+    steps:
+    - name: "Install packages..."
+      run: sudo apt-get install sysvbanner
+
+      # https://github.com/marketplace/actions/checkout
+    - name: "Checkout sources"
+      uses: actions/checkout@v2
+
+      # https://github.com/marketplace/actions/paths-changes-filter
+    - name: "Look for changes in monitored locations"
+      uses: dorny/paths-filter@v2
+      id: filter
+      with:
+        filters: |
+          src:
+            - 'src/**/*.flex'
+            - 'src/**/*.java'
+            - 'src/**/*.properties'
+            - '*.gradle*'
+            - 'gradle.properties'
+
+    - name: "WILL BUILD STEP BE RUN?"
+      run: |
+        found="NO"
+        [[ ${{ steps.filter.outputs.src }} == 'true' ]] && found="YES"
+        echo "::set-output name=run_build::${found}"
+        echo -e "\n****************************************\n"
+        banner "${found}"
+        echo -e "****************************************"
+
+  # Build step.
+  build:
+    name: "Gradle builder"
+    runs-on: ubuntu-latest
+
+    # Will run only if analyze_sources determined it is needed.
+    needs: analyze_sources
+    if: needs.analyze_sources.outputs.run_build == 'true'
+
+    strategy:
+      matrix:
+        jdk: [ 14 ]
+
+    steps:
+    - name: "Checkout sources"
+      uses: actions/checkout@v2
+
+    - name: "Set up JDK"
+      uses: actions/setup-java@v2
+      with:
+        java-version: ${{ matrix.jdk }}
+        distribution: 'adopt'
+
+    - name: "Build with Gradle"
+      run: |
+       chmod +x gradlew
+       ./gradlew build -x checkstyleMain -x checkstyleTest

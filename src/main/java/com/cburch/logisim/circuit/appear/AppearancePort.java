@@ -57,6 +57,10 @@ public class AppearancePort extends AppearanceElement {
     super(location);
     this.pin = pin;
   }
+  
+  public static boolean isInputAppearance(int radius) {
+    return radius == INPUT_RADIUS;
+  }
 
   @Override
   public boolean contains(Location loc, boolean assumeFilled) {

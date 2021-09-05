@@ -36,21 +36,30 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class TFlipFlop extends AbstractFlipFlop {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "T Flip-Flop";
+
   private static class TFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
     @Override
     public String ComponentName() {
-      return "T Flip-Flop";
+      return _ID;
     }
 
     @Override
-    public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist Nets) {
+    public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist nets) {
       Map<String, String> PortMap = new HashMap<>();
-      PortMap.putAll(GetNetMap("T", true, ComponentInfo, 0, Nets));
+      PortMap.putAll(GetNetMap("T", true, ComponentInfo, 0, nets));
       return PortMap;
     }
 
@@ -63,15 +72,14 @@ public class TFlipFlop extends AbstractFlipFlop {
 
     @Override
     public ArrayList<String> GetUpdateLogic() {
-      ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   "+HDL.assignPreamble()+"s_next_state"+HDL.assignOperator()+"s_current_state_reg"+
-                   HDL.xorOperator()+"T;");
-      return Contents;
+      return (new LineBuffer())
+          .add("{{1}} s_next_state {{2}} s_current_state_reg {{3}} T;", HDL.assignPreamble(), HDL.assignOperator(), HDL.xorOperator())
+          .getWithIndent();
     }
   }
 
   public TFlipFlop() {
-    super("T Flip-Flop", new FlipFlopIcon(FlipFlopIcon.T_FLIPFLOP), S.getter("tFlipFlopComponent"), 1, false);
+    super(_ID, new FlipFlopIcon(FlipFlopIcon.T_FLIPFLOP), S.getter("tFlipFlopComponent"), 1, false);
   }
 
   @Override

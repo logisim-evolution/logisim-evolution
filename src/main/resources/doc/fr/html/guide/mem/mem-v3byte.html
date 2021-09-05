@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html lang="fr">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2020-01-10T06:18:10.521000000">
@@ -15,7 +15,7 @@
     <h1>
       v3.0 hex byte plain big-endian
     </h1>
-    <div class=maindiv>
+    <div class="maindiv">
       <p>
         Ce fichier est structuré comme dans les versions précédentes, la première ligne indique le type de structure et ensuite les lignes suivantes représentent la suite des bits de la mémoire. Ils sont en ASCII avec seulement des symboles hexadécimaux (deux digits) sans la balise 0x.
       </p>
@@ -48,7 +48,7 @@ a7eb2d655343913e6b7d39db17730c77
 	      <h1 id='little'>
       v3.0 hex byte plain little-endian
     </h1>
-    <div class=maindiv>
+    <div class="maindiv">
       <p>
        Ce format suit les mêmes règles que dans les formats précédents. A la différence qu'il est lut dans le mode little-endian, de la droite vers la gauche.
       </p>
@@ -63,9 +63,9 @@ a7eb2d655343913e6b7d39db17730c77
         <img  src="../../../../img-guide/membyteplainle.png" alt="#########" height=348 width=480>
       </p>
       <p>
-        Dans le mode little-endian la mémoire est considérée comme une suite d'octet avec de droite à gauche les bits de faible faible puis les bits de poids fort. Dans la figure ci-dessus on peut observer que les octets du fichier (en haut) sont recopiés dans la mémoire en séquence avec des exemples pour des mémoires avec des mots de 4bits,7bits et 12bits. Vous pouvez observer le décalage d'alignement par exemple pour la mémoire de mot de 7 bits.
+        Dans le mode little-endian la mémoire est considérée comme une suite d'octet avec de droite à gauche les bits de poids faible puis les bits de poids fort. Dans la figure ci-dessus on peut observer que les octets du fichier (en haut) sont recopiés dans la mémoire en séquence avec des exemples pour des mémoires avec des mots de 4bits,7bits et 12bits. Vous pouvez observer le décalage d'alignement par exemple pour la mémoire de mot de 7 bits.
 		<p align="center">
-        <img  class=notscal src="../../../../img-guide/memelitle.png" alt="#########">
+        <img  class="notscal" src="../../../../img-guide/memelitle.png" alt="#########">
         </p>
 		Ces mêmes exemples affichés dans le composant.
       </p>
@@ -86,7 +86,7 @@ a7eb2d655343913e6b7d39db17730c77
         Dans cet exemple les 8 mots a l'adresse 0x10 ne sont pas précisés. Ces cellules seront initialisées à 0 et pour les RAM selon les paramètres dans <a href="../opts/index.html">Les options de projet</a>, à 0 ou aléatoirement.
       </p>
       <p align="center">
-        <img class=notscal src="../../../../img-guide/membytepleinadrbig.png" alt="#########">
+        <img class="notscal" src="../../../../img-guide/membytepleinadrbig.png" alt="#########">
       </p>
       <h1 id='addr'>
         v3.0 hex bytes addressed little-endian

@@ -32,7 +32,6 @@ import static com.cburch.logisim.analyze.Strings.S;
 
 import com.cburch.logisim.analyze.file.AnalyzerTexWriter;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
-import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.util.JFileChoosers;
 import java.io.File;
@@ -42,8 +41,6 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 
 public class ExportLatexButton extends JButton {
-
-  /** */
   private static final long serialVersionUID = 1L;
 
   private final JFrame parent;
@@ -65,9 +62,12 @@ public class ExportLatexButton extends JButton {
   private void doSave() {
     /* code taken from Kevin Walsh'e ExportTableButton and slightly modified*/
     if (lastFile == null) {
-      Circuit c = model.getCurrentCircuit();
-      if (c != null) lastFile = new File(c.getName() + ".tex");
-      else lastFile = new File("logisim_evolution_analyze.tex");
+      final var c = model.getCurrentCircuit();
+      if (c != null) {
+        lastFile = new File(c.getName() + ".tex");
+      } else {
+        lastFile = new File("logisim_evolution_analyze.tex");
+      }
     }
     JFileChooser chooser = JFileChoosers.createSelected(lastFile);
     chooser.setDialogTitle(S.get("saveButton"));
@@ -76,11 +76,11 @@ public class ExportLatexButton extends JButton {
     chooser.setFileFilter(AnalyzerTexWriter.FILE_FILTER);
     int choice = chooser.showSaveDialog(parent);
     if (choice == JFileChooser.APPROVE_OPTION) {
-      File file = chooser.getSelectedFile();
+      final var file = chooser.getSelectedFile();
       if (file.isDirectory()) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("notFileMessage", file.getName()),
+            S.get("notFileMessage", file.getName()),
             S.get("saveErrorTitle"),
             OptionPane.OK_OPTION);
         return;
@@ -88,16 +88,16 @@ public class ExportLatexButton extends JButton {
       if (file.exists() && !file.canWrite()) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("cantWriteMessage", file.getName()),
+            S.get("cantWriteMessage", file.getName()),
             S.get("saveErrorTitle"),
             OptionPane.OK_OPTION);
         return;
       }
       if (file.exists()) {
-        int confirm =
+        final var confirm =
             OptionPane.showConfirmDialog(
                 parent,
-                S.fmt("confirmOverwriteMessage", file.getName()),
+                S.get("confirmOverwriteMessage", file.getName()),
                 S.get("confirmOverwriteTitle"),
                 OptionPane.YES_NO_OPTION);
         if (confirm != OptionPane.YES_OPTION) return;

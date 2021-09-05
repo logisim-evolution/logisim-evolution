@@ -43,6 +43,7 @@ class MenuItemImpl extends JMenuItem implements MenuItem {
     setEnabled(true);
   }
 
+  @Override
   public void actionPerformed(ActionEvent event) {
     helper.actionPerformed(event);
   }
@@ -52,6 +53,7 @@ class MenuItemImpl extends JMenuItem implements MenuItem {
     helper.addActionListener(l);
   }
 
+  @Override
   public boolean hasListeners() {
     return helper.hasListeners();
   }

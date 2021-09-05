@@ -39,7 +39,7 @@ import com.cburch.logisim.instance.StdAttr;
 public class ShiftRegisterLogger extends InstanceLogger {
   @Override
   public String getLogName(InstanceState state, Object option) {
-    String inName = state.getAttributeValue(StdAttr.LABEL);
+    var inName = state.getAttributeValue(StdAttr.LABEL);
     if (inName == null || inName.equals("")) {
       inName = S.get("shiftRegisterComponent") + state.getInstance().getLocation();
     }
@@ -54,11 +54,11 @@ public class ShiftRegisterLogger extends InstanceLogger {
   public BitWidth getBitWidth(InstanceState state, Object option) {
     return state.getAttributeValue(StdAttr.WIDTH);
   }
-  
+
   @Override
   public Object[] getLogOptions(InstanceState state) {
-    Integer stages = state.getAttributeValue(ShiftRegister.ATTR_LENGTH);
-    Object[] ret = new Object[stages];
+    final var stages = state.getAttributeValue(ShiftRegister.ATTR_LENGTH);
+    final var ret = new Object[stages];
     for (int i = 0; i < ret.length; i++) {
       ret[i] = i;
     }
@@ -67,9 +67,9 @@ public class ShiftRegisterLogger extends InstanceLogger {
 
   @Override
   public Value getLogValue(InstanceState state, Object option) {
-    BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+    var dataWidth = state.getAttributeValue(StdAttr.WIDTH);
     if (dataWidth == null) dataWidth = BitWidth.create(0);
-    ShiftRegisterData data = (ShiftRegisterData) state.getData();
+    final var data = (ShiftRegisterData) state.getData();
     if (data == null) {
       return Value.createKnown(dataWidth, 0);
     } else {

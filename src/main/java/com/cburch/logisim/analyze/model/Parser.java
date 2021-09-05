@@ -36,9 +36,10 @@ import java.util.ArrayList;
 import java.util.function.Predicate;
 
 public class Parser {
-  //
-  // parsing code
-  //
+  private Parser() {
+    // dummy, private
+  }
+
   private static class Context {
     final int level;
     final Expression current;
@@ -83,11 +84,16 @@ public class Parser {
         || "\u21D4\u2261\u2194\u02DC\u00B7\u2225\u22BB\u22A4\u22A5".indexOf(c) >= 0;
   }
 
+  public static Expression parseMaybeAssignment(String in, AnalyzerModel model)
+          throws ParserException {
+    return parse(in, model, true);
+  }
+
   private static Expression parse(ArrayList<Token> tokens) throws ParserException {
-    ArrayList<Context> stack = new ArrayList<>();
+    final var stack = new ArrayList<Context>();
     Expression current = null;
-    for (int i = 0; i < tokens.size(); i++) {
-      Token t = tokens.get(i);
+    for (var i = 0; i < tokens.size(); i++) {
+      final var t = tokens.get(i);
       if (t.type == TOKEN_IDENT || t.type == TOKEN_CONST) {
         Expression here;
         if (t.type == TOKEN_IDENT) {
@@ -122,8 +128,8 @@ public class Parser {
         throw t.error(S.getter("unexpectedApostrophe"));
       } else if (t.type == TOKEN_LPAREN) {
         if (current != null) {
-          push(stack,current,Notation.IMPLICIT_AND_PRECEDENCE,
-        		  new Token(TOKEN_AND, t.offset, 0, S.get("implicitAndOperator"), Notation.IMPLICIT_AND_PRECEDENCE));
+          push(stack, current, Notation.IMPLICIT_AND_PRECEDENCE,
+              new Token(TOKEN_AND, t.offset, 0, S.get("implicitAndOperator"), Notation.IMPLICIT_AND_PRECEDENCE));
         }
         push(stack, null, -2, t);
         current = null;
@@ -158,18 +164,15 @@ public class Parser {
   public static Expression parse(String in, AnalyzerModel model) throws ParserException {
     return parse(in, model, false);
   }
-  
-  public static Expression parseMaybeAssignment(String in, AnalyzerModel model) throws ParserException {
-    return parse(in, model, true);
-  }
-  
-  private static Expression parse(String in, AnalyzerModel model, boolean allowOutputAssignment) throws ParserException {
-    ArrayList<Token> tokens = toTokens(in, false);
+
+  private static Expression parse(String in, AnalyzerModel model, boolean allowOutputAssignment)
+      throws ParserException {
+    final var tokens = toTokens(in, false);
 
     if (tokens.size() == 0) return null;
 
-    int i = -1;
-    for (Token token : tokens) {
+    var i = -1;
+    for (final var token : tokens) {
       i++;
       if (token.type == TOKEN_ERROR_BADCHAR) {
         throw token.error(S.getter("invalidCharacterError", token.text));
@@ -185,7 +188,7 @@ public class Parser {
         int index = model.getInputs().bits.indexOf(token.text);
         if (index < 0) {
           // ok; but maybe this is an  a python-like (spelled out) operator
-          String opText = token.text.toUpperCase();
+          final var opText = token.text.toUpperCase();
           if (opText.equals("NOT")) {
             token.type = TOKEN_NOT;
             token.precedence = Expression.Notation.NOT_PRECEDENCE;
@@ -202,11 +205,12 @@ public class Parser {
             token.type = TOKEN_XNOR;
             token.precedence = Expression.Notation.LOGIC_PRECEDENCE;
           } else {
-        	// or, maybe it is a top-level assignment like "foo: expr", "foo = expr", etc
+            // or, maybe it is a top-level assignment like "foo: expr", "foo = expr", etc
             if (i == 0 && allowOutputAssignment) {
               index = model.getOutputs().bits.indexOf(token.text);
-              if (index >= 0 && tokens.size() >= 2 && 
-                      (tokens.get(1).type == TOKEN_XNOR || tokens.get(1).type == TOKEN_EQ)) {
+              if (index >= 0
+                  && tokens.size() >= 2
+                  && (tokens.get(1).type == TOKEN_XNOR || tokens.get(1).type == TOKEN_EQ)) {
                 tokens.get(1).type = TOKEN_EQ;
                 tokens.get(1).precedence = Expression.Notation.EQ_PRECEDENCE;
                 continue;
@@ -223,7 +227,7 @@ public class Parser {
 
   private static int peekLevel(ArrayList<Context> stack) {
     if (stack.isEmpty()) return -3;
-    Context context = stack.get(stack.size() - 1);
+    final var context = stack.get(stack.size() - 1);
     return context.level;
   }
 
@@ -234,7 +238,7 @@ public class Parser {
   private static Expression popTo(ArrayList<Context> stack, int level, Expression current)
       throws ParserException {
     while (!stack.isEmpty() && peekLevel(stack) >= level) {
-      Context top = pop(stack);
+      final var top = pop(stack);
       if (current == null)
         throw top.cause.error(S.getter("missingRightOperandError", top.cause.text));
       else if (top.cause.type == TOKEN_AND)
@@ -259,8 +263,8 @@ public class Parser {
 
   //Note: Doing this without "tokenizing then re-stringify" is tricky.
   static String replaceVariable(String in, String oldName, String newName) {
-    StringBuilder ret = new StringBuilder();
-    ArrayList<Token> tokens = toTokens(in, true);
+    final var ret = new StringBuilder();
+    final var tokens = toTokens(in, true);
     for (Token token : tokens) {
       if (token.type == TOKEN_IDENT && token.text.equals(oldName)) {
         ret.append(newName);
@@ -271,8 +275,7 @@ public class Parser {
     return ret.toString();
   }
 
-  static class Tokenizer
-  {
+  static class Tokenizer {
     private final String in;
     private final boolean includeWhite;
     private int pos;
@@ -286,39 +289,31 @@ public class Parser {
       this.includeWhite = includeWhite;
     }
 
-    boolean skipWhile(Predicate<Character> pred)
-    {
-      while (pos < len && pred.test(peek()))
-        pos++;
+    boolean skipWhile(Predicate<Character> pred) {
+      while (pos < len && pred.test(peek())) pos++;
       return pos == len;
     }
 
-    boolean skipUntil(Predicate<Character> pred)
-    {
+    boolean skipUntil(Predicate<Character> pred) {
       return skipWhile(pred.negate());
     }
 
-    boolean skipSpaces()
-    {
+    boolean skipSpaces() {
       return skipWhile(Character::isWhitespace);
     }
 
-    String readNumber()
-    {
-      int substart = pos;
+    String readNumber() {
+      final var substart = pos;
       skipWhile(this::isDigit);
       return in.substring(substart, pos);
     }
 
-    boolean isDigit(char c)
-    {
+    boolean isDigit(char c) {
       return c >= '0' && c <= '9';
     }
 
-    boolean accept(char c)
-    {
-      if (peek() == c)
-      {
+    boolean accept(char c) {
+      if (peek() == c) {
         pos++;
         return true;
       }
@@ -326,18 +321,15 @@ public class Parser {
       return false;
     }
 
-    char peek()
-    {
+    char peek() {
       return in.charAt(pos);
     }
 
-    char next()
-    {
+    char next() {
       return in.charAt(pos++);
     }
-    
-    Token readToken(char startChar, int start)
-    {
+
+    Token readToken(char startChar, int start) {
       switch (startChar) {
         case '(':
           return new Token(TOKEN_LPAREN, start, "(", Integer.MAX_VALUE);
@@ -355,8 +347,7 @@ public class Parser {
         case '\u02DC': // tilde
           return new Token(TOKEN_NOT, start, "~", Notation.NOT_PRECEDENCE);
         case '!':
-          if (accept('='))
-          {
+          if (accept('=')) {
             return new Token(TOKEN_XOR, start, in.substring(start, pos), Notation.LOGIC_PRECEDENCE);
           } else {
             return new Token(TOKEN_NOT, start, "~", Notation.NOT_PRECEDENCE);
@@ -413,18 +404,17 @@ public class Parser {
           return new Token(TOKEN_ERROR_IDENT, start, in.substring(start, start + 1), 0);
         default:
           skipUntil(Parser::okCharacter);
-          String errorText = in.substring(start, pos);
+          final var errorText = in.substring(start, pos);
           return new Token(TOKEN_ERROR_BADCHAR, start, errorText, 0);
       }
     }
 
-    ArrayList<Token> tokenize()
-    {
+    ArrayList<Token> tokenize() {
       ArrayList<Token> tokens = new ArrayList<>();
 
       pos = 0;
       while (true) {
-        int whiteStart = pos;
+        final var whiteStart = pos;
         skipSpaces();
 
         if (includeWhite && pos != whiteStart) {
@@ -434,11 +424,11 @@ public class Parser {
           return tokens;
         }
 
-        int start = pos;
-        char startChar = next();
+        final var start = pos;
+        final var startChar = next();
         if (Character.isJavaIdentifierStart(startChar)) {
           skipWhile(Character::isJavaIdentifierPart);
-          String name = in.substring(start, pos);
+          final var name = in.substring(start, pos);
           String subscript = null;
           if (in.charAt(pos) == ':' && isDigit(in.charAt(pos + 1))) {
             pos++;
@@ -500,6 +490,4 @@ public class Parser {
   private static final int TOKEN_ERROR_BRACE = 13;
   private static final int TOKEN_ERROR_SUBSCRIPT = 14;
   private static final int TOKEN_ERROR_IDENT = 15;
-
-  private Parser() {}
 }

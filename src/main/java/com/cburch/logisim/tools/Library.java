@@ -29,18 +29,19 @@
 package com.cburch.logisim.tools;
 
 import com.cburch.logisim.comp.ComponentFactory;
+import com.cburch.logisim.util.LibraryUtil;
 import java.util.Collections;
 import java.util.List;
 
 public abstract class Library {
   private boolean hidden = false;
-	
+
   public boolean contains(ComponentFactory query) {
     return indexOf(query) >= 0;
   }
 
   public boolean containsFromSource(Tool query) {
-    for (Tool tool : getTools()) {
+    for (final var tool : getTools()) {
       if (tool.sharesSource(query)) {
         return true;
       }
@@ -52,12 +53,19 @@ public abstract class Library {
     return getName();
   }
 
+  /**
+   * Returns unique library identifier as specified in library static const "_ID" attribute.
+   */
+  public String getName() {
+    return LibraryUtil.getName(getClass());
+  }
+
   public List<Library> getLibraries() {
     return Collections.emptyList();
   }
 
   public Library getLibrary(String name) {
-    for (Library lib : getLibraries()) {
+    for (final var lib : getLibraries()) {
       if (lib.getName().equals(name)) {
         return lib;
       }
@@ -67,12 +75,8 @@ public abstract class Library {
 
   public abstract boolean removeLibrary(String name);
 
-  public String getName() {
-    return getClass().getName();
-  }
-
   public Tool getTool(String name) {
-    for (Tool tool : getTools()) {
+    for (final var tool : getTools()) {
       if (tool.getName().equals(name)) {
         return tool;
       }
@@ -84,7 +88,7 @@ public abstract class Library {
 
   public int indexOf(ComponentFactory query) {
     int index = -1;
-    for (Tool obj : getTools()) {
+    for (final var obj : getTools()) {
       index++;
       if (obj instanceof AddTool) {
         AddTool tool = (AddTool) obj;
@@ -97,11 +101,11 @@ public abstract class Library {
   public boolean isDirty() {
     return false;
   }
-  
+
   public boolean isHidden() {
-    return hidden;  
+    return hidden;
   }
-  
+
   public void setHidden() {
     hidden = true;
   }

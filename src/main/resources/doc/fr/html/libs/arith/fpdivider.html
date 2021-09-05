@@ -1,0 +1,132 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Divisieur à virgule flottante 
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img  class="iconlibs" src="../../../../icons/6464/fpdivider.png" alt="#########" width="32" height="32" align="middle"> 
+		<em> Divisieur à virgule flottante</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Arithmétique</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.0 Beta 22
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+              <img class="Apparencelibs" src="../../../../img-libs/divider.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        This component divides two values coming in via the west inputs and outputs the quotient on the east output. The component is designed so that it can be cascaded with other dividers to provide support a dividend with more bits than is possible with a single divider: The upper input provides the upper <var>dataBits</var> bits of the dividend (if it is specified at all), and the <var>rem</var> bits provide the remainder, which can be fed as the <var>upper</var> input into another divider.
+      </p>
+      <p>
+        If the divisor is 0, then no division is performed (i.e., the divisor is assumed to be 1).
+      </p>
+      <p>
+        The divider essentially performs unsigned division. That is, the remainder will always be between 0 and <var>divisor</var>-1. The quotient will always be an integer so that
+      </p>
+      <center>
+        <var>quotient</var> * <var>divisor</var> + <var>remainder</var> = <var>dividend</var> .
+      </center>If, however, the <var>quotient</var> does not fit into <var>dataBits</var> bits, then only the lower <var>dataBits</var> bits will be reported. The component does not provide any method for accessing the upper <var>dataBits</var> bits.
+      <p>
+        If either of the operands contains some floating bits or some error bits, then the component's outputs will be either entirely floating or entirely error values.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <dl>
+        <dt>
+          West edge, north end (input, bit width matches Largeur de données attribute)
+        </dt>
+        <dd>
+          The lower <var>dataBits</var> bits of the dividend (that is, the first operand for the division).
+        </dd>
+        <dt>
+          West edge, south end (input, bit width matches Largeur de données attribute)
+        </dt>
+        <dd>
+          The divisor (that is, the second operand for the division)
+        </dd>
+        <dt>
+          North edge, labeled <var>upper</var> (input, bit width matches Largeur de données attribute)
+        </dt>
+        <dd>
+          The upper <var>dataBits</var> bits of the dividend (that is, the first operand for the division).
+        </dd>
+        <dt>
+          East edge (output, bit width matches Largeur de données attribute)
+        </dt>
+        <dd>
+          The lower <var>dataBits</var> bits of the quotient, as specified above.
+        </dd>
+        <dt>
+          South edge, labeled <var>rem</var> (output, bit width matches Largeur de données attribute)
+        </dt>
+        <dd>
+          The remainder of the division. This value will always be between 0 and <var>divisor</var>-1.
+        </dd>
+      </dl>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Largeur de données</q> attribute.
+      </p>
+      <dl>
+        <dt>
+          Largeur de données
+        </dt>
+        <dd>
+          The bit width of the values to be divided and of the result.
+        </dd>
+      </dl>
+      <h2>
+        Comportement de l'outil pousser
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <h2>
+        Comportement de l'outil text 
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <p>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
+      </p>
+    </div>
+  </body>
+</html>

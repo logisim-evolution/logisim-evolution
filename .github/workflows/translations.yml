@@ -1,0 +1,78 @@
+#
+# Logisim-evolution translation files (*.properties) checker.
+#
+# Github action that ensures project translation files are in sync and
+# in a good shape in general.
+#
+# Worker uses trans-tool: https://github.com/MarcinOrlowski/trans-tool
+#
+# Marcin Orlowski
+#
+
+name: "Translations"
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master, develop ]
+
+jobs:
+  translations_lint:
+    name: "Translations linter"
+    runs-on: ubuntu-latest
+
+    steps:
+      # https://github.com/marketplace/actions/checkout
+      - name: "Checkout sources"
+        uses: actions/checkout@v2
+
+      # https://github.com/marketplace/actions/paths-changes-filter
+      - name: "Looking for modified files..."
+        uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            translations:
+              - 'src/main/resources/resources/logisim/**/*.properties'
+
+      - name: "===> SEE HERE FOR LINTING REPORT"
+        if: steps.filter.outputs.translations == 'true'
+        run: |
+          # Have no mercy.
+          set -euo pipefail
+
+          sudo pip install trans-tool
+          trans-tool --version
+          
+          # Declare constants
+          declare -r resources_path="src/main/resources/resources/logisim/"
+          declare -r base_language="en"
+
+          # Get all Logisim's localization base (EN) files
+          declare -r base_files=$(find ${resources_path}* -name "*.properties" | grep -E '*/[a-zA-Z]+.properties$' | grep -v settings.properties)
+
+          # Read currently supported languages from settings.properties
+          declare -r langs="$(cut -d  ' ' -f3- < "${resources_path}settings.properties")"
+
+          # Validate.
+          failed=
+          for file in ${base_files}; do
+            # Keep validating even if previous run failed, so we can have complete report.
+            trans-tool -l "${langs}" -ls "${base_language}" -b "${file}" >> /tmp/report.txt || failed="YES"
+          done
+
+          if [[ "${failed}" == "YES" ]]; then
+            echo ""
+            echo "Project *.properties files have some problems or are out of sync."
+            echo "Please see 'Update existing translations' in trans-tool's docs:"
+            echo "  https://github.com/MarcinOrlowski/trans-tool"
+            echo "for more info on how to address these issues."
+            echo ""
+            cat /tmp/report.txt
+            echo ""
+
+            # Do not fail the action no matter what. This is intentional
+            # unless translation files are in better condition.
+            # exit 1
+          fi

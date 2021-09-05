@@ -1,185 +1,226 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html lang="fr">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2018-10-23T06:18:42.262000000">
+    <meta name="changed" content="2021-08-08T06:15:23.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="fr">
     <title>
-      NOT Gate
+      Porte Non
     </title>
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
-  <body bgcolor="#FFFFFF">
-    <h1>
-       <em>NOT Gate</em>
-    </h1>
-	<img class=notscal src="../../../../icons/notGate.gif" align="middle" alt="#########">
-    <table>
-      <tbody>
-        <tr>
-          <td>
-            <strong>Library:</strong>
-          </td>
-          <td>
-            <a href="index.html">Gates</a>
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <strong>Introduced:</strong>
-          </td>
-          <td>
-            2.0 Beta 1
-          </td>
-        </tr>
-        <tr>
-          <td valign="top">
-            <strong>Appearance:</strong>
-          </td>
-          <td valign="top">
-            <table>
-              <tbody>
-                <tr>
-                  <th align="left">
-                    Shaped:
-                  </th>
-                  <td>
-                    <img src="../../../../img-libs/not-shaped.png" width="34" height="16" alt="#########">
-                  </td>
-                </tr>
-                <tr>
-                  <th align="left">
-                    Rectangular:
-                  </th>
-                  <td>
-                    <img src="../../../../img-libs/not-rect.png" width="34" height="16" alt="#########">
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <h2>
-      Behavior
-    </h2>
-    <p>
-      The NOT Gate emits the complement of whatever input it receives. The truth table for a NOT gate is the following.
-    </p>
-    <center>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/iecnotgate.png" alt="#########" width="32" height="32">&nbsp; 
+		<img class="iconlibs" src="../../../../icons/6464/ansnotgate.png" alt="#########" width="32" height="32">&nbsp;  
+		<em>Porte Non</em>
+      </h1>
       <table>
         <tbody>
           <tr>
-            <th>
-              <var>x</var>
-            </th>
-            <th>
-              out
-            </th>
-          </tr>
-          <tr>
-            <td align="center">
-              0
+            <td>
+              <strong>Librairie:</strong>
             </td>
-            <td align="center">
-              1
+            <td>
+              <a href="index.html">Portes</a>
             </td>
           </tr>
           <tr>
-            <td align="center">
-              1
+            <td>
+              <strong>Introduction:</strong>
             </td>
-            <td align="center">
-              0
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                    <th>
+                      ANSI:
+                    </th>
+                    <th>
+                      IEC:
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <img class="Appearancelibs" src="../../../../img-libs/ansnotgate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="Appearancelibs" src="../../../../img-libs/iecnotgate.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
             </td>
           </tr>
         </tbody>
       </table>
-    </center>
-    <p>
-      If the input is unspecified (i.e., floating), then the output will also be unspecified - unless the "Gate Output When Undefined" option is "Error for undefined inputs," in which case the output is an error. If the input is an error value, then the output will also be.
-    </p>
-    <p>
-      A multi-bit NOT gate will perform the above transformation bitwise on its input.
-    </p>
-    <h2>
-      Pins (assuming component faces east)
-    </h2>
-    <dl>
-      <dt>
-        West edge (input, bit width according to Data Bits attribute)
-      </dt>
-      <dd>
-        The component's input.
-      </dd>
-      <dt>
-        East edge (output, bit width according to Data Bits attribute)
-      </dt>
-      <dd>
-        The output, whose value is the complement of the input value.
-      </dd>
-    </dl>
-    <h2>
-      Attributes
-    </h2>
-    <p>
-      When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute and the arrow keys alter its <q>Facing</q> attribute.
-    </p>
-    <dl>
-      <dt>
-        Facing
-      </dt>
-      <dd>
-        The direction of the component (its output relative to its input).
-      </dd>
-      <dt>
-        Data Bits
-      </dt>
-      <dd>
-        The bit width of the component's input and output.
-      </dd>
-      <dt>
-        Gate Size
-      </dt>
-      <dd>
-        Determines whether to draw a larger or a smaller version of the component.
-      </dd>
-      <dt>
-        Output Value
-      </dt>
-      <dd>
-        Indicates how false and true results should be translated into output values. By default, false is indicated by a low voltage (0) and true by a high voltage (1), but one or the other can be replaced by a high-impedance (<q>floating</q>) value instead. This allows wired-or and wired-and connections, as illustrated in the <a href="basic.html">AND/OR/NAND/NOR Gate documentation</a>.
-      </dd>
-      <dt>
-        Label
-      </dt>
-      <dd>
-        The text within the label associated with the gate.
-      </dd>
-      <dt>
-        Label Font
-      </dt>
-      <dd>
-        The font with which to render the label.
-      </dd>
-    </dl>
-    <h2>
-      Poke Tool Behavior
-    </h2>
-    <p>
-      None.
-    </p>
-    <h2>
-      Text Tool Behavior
-    </h2>
-    <p>
-      Allows the label associated with the gate to be edited.
-    </p>
-    <p>
-      <a href="../index.html">Back to <em>Library Reference</em></a>
-    </p>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        La porte Non émet le complément de l'entrée qu'elle reçoit. La propriété <b class="propertie">Valeur de sortie</b> permet de modifier le comportement de la sortie selon trois modes. La table de vérité d'une porte non est la suivante. 
+      </p>
+      <center>
+        <table>
+          <tbody>
+		    <th class="tspace">
+                Entrée
+              </th>
+              <th class="tspace" colspan="3">
+                Sortie
+            </th>
+            <tr>
+              <th class="tspace"></th>
+              <th class="tspace">
+                &nbsp;&nbsp;O/1&nbsp;&nbsp;
+              </th>
+              <th class="tspace">
+                O/flt.
+              </th>
+              <th class="tspace">
+                flt./1
+              </th>
+            </tr>
+            <tr>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="zerov">
+                0
+              </td>
+            </tr>
+            <tr>
+              <td class="unov">
+                1
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="zerov">
+                <b class="uvalue">U</b>/<b class="evalue">E</b>
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p>
+        Si l'entrée est flottante (<b class="uvalue">U</b>) ou une valeur d'erreur (<b class="evalue">E</b>) alors la sortie sera une valeur d'erreur (<b class="evalue">E</b>).
+      </p>
+      <p>
+        Une porte NOT multibits effectuera la transformation ci-dessus par bit sur son entrée.
+      </p>
+      <h2>
+        Pins (en supposant que le composant est orienté vers l'est)
+      </h2>
+      <dl>
+        <dt>
+          Bord ouest :
+        </dt>
+        <dd>
+          L'entrée du composant. Sa largeur de données est définie par l'attribut <b class="propertie">largeur de données</b>.
+        </dd>
+        <dt>
+          Bord est :
+        </dt>
+        <dd>
+          La sortie, dont la valeur est le complément de la valeur d'entrée. Sa largeur de données est définie par l'attribut <b class="propertie">largeur de données</b>. Le mode de présentation des données est défini par l'attribut <b class="propertie">Valeur de sortie</b>.
+        </dd>
+      </dl>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+	    Lorsque le composant est sélectionné ou ajouté, <b class="tkeybd">Alt-0</b> à <b class="tkeybd">Alt-9</b> modifie l'attribut <b class="propertie">Largeur de données</b>, et les touches fléchées modifient son attribut <b class="propertie">Orientation</b>.
+      </p>
+      <div class="attliste">
+        <dl>
+          <dt>
+            <b class="propertie">Orientation</b>
+          </dt>
+          <dd>
+            Le côté du composant dessiné où doit se trouver sa broche de sortie. 
+          </dd>
+          <dt>
+            <b class="propertie">Data Bits</b>
+          </dt>
+          <dd>
+            La largeur en bit placé sur le(s) entrée(s) ou sortie(s). 
+          </dd>
+          <dt>
+            <b class="propertie">Taille de la porte</b>
+          </dt>
+          <dd>
+            Détermine s'il faut dessiner une version plus grande ou plus petite du composant.
+          </dd>
+          <dt>
+            <b class="propertie">Valeur de sortie</b>
+          </dt>
+          <dd>
+		  Indique comment les résultats faux et vrais doivent être traduits en valeurs de sortie. Par défaut, faux est indiqué par une tension faible (<b class="zerov">0</b>) et vraie par une tension élevée (<b class="unov">1</b>), mais l'un ou l'autre peuvent être remplacé par une valeur à haute impédance (<q>flottant</q> <b class="uvalue">U</b>) à la place. Cela permet des connexions de type ou-câblé et et-câblé, comme illustré dans la <a href="basic.html">documentation sur les portes AND/OR/NAND/NOR</a>.
+          </dd>
+          <dt>
+            <b class="propertie">Étiquette</b>
+          </dt>
+          <dd>
+            Le texte de l'étiquette associée à la porte.
+          </dd>
+          <dt>
+            <b class="propertie">Police des étiquettes</b>
+          </dt>
+          <dd>
+            La police avec laquelle l'étiquette doit être rendue.
+          </dd>
+        </dl>
+      </div>
+      <h2>
+        Comportement de l'outil pousser 
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <h2>
+        Comportement de l'outil text
+      </h2>
+      <p>
+        Permets de modifier l'étiquette associée à la porte.
+      </p>
+      <p>
+        <b>Retour à</b>  <a href="../index.html">Référence de la bibliothèque</a>
+      </p>
+    </div>
   </body>
 </html>

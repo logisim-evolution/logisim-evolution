@@ -44,7 +44,9 @@ import org.w3c.dom.Element;
 public class SvgReader {
   private static final Pattern PATH_REGEX = Pattern.compile("[a-zA-Z]|[-0-9.]+");
 
-  private SvgReader() {}
+  private SvgReader() {
+    // dummy
+  }
 
   private static AbstractCanvasObject createLine(Element elt) {
     int x0 = Integer.parseInt(elt.getAttribute("x1"));

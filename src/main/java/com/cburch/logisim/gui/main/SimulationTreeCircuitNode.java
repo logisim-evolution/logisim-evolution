@@ -66,8 +66,7 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
 
   //
   // AttributeListener methods
-  public void attributeListChanged(AttributeEvent e) {}
-
+  @Override
   public void attributeValueChanged(AttributeEvent e) {
     Object attr = e.getAttribute();
     if (attr == CircuitAttributes.CIRCUIT_LABEL_ATTR || attr == StdAttr.LABEL) {
@@ -75,6 +74,7 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
     }
   }
 
+  @Override
   public void circuitChanged(CircuitEvent event) {
     int action = event.getAction();
     if (action == CircuitEvent.ACTION_SET_NAME) {
@@ -86,11 +86,12 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
     }
   }
 
+  @Override
   public int compare(Component a, Component b) {
     if (a != b) {
-      String aName = a.getFactory().getDisplayName();
-      String bName = b.getFactory().getDisplayName();
-      int ret = aName.compareToIgnoreCase(bName);
+      var nameA = a.getFactory().getDisplayName();
+      var nameB = b.getFactory().getDisplayName();
+      int ret = nameA.compareToIgnoreCase(nameB);
       if (ret != 0) return ret;
     }
     return a.getLocation().toString().compareTo(b.getLocation().toString());
@@ -169,6 +170,7 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
   }
 
   private static class CompareByName implements Comparator<Object> {
+    @Override
     public int compare(Object a, Object b) {
       return a.toString().compareToIgnoreCase(b.toString());
     }

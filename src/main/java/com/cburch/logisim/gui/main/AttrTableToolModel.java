@@ -50,8 +50,8 @@ public class AttrTableToolModel extends AttributeSetTableModel {
     super(tool.getAttributeSet());
     if (tool instanceof AddTool) {
       AddTool mytool = (AddTool) tool;
-      SetInstance(mytool.getFactory());
-      SetIsTool();
+      setInstance(mytool.getFactory());
+      setIsTool();
     }
     this.proj = proj;
     this.tool = tool;
@@ -59,7 +59,7 @@ public class AttrTableToolModel extends AttributeSetTableModel {
 
   @Override
   public String getTitle() {
-    return S.fmt("toolAttrTitle", tool.getDisplayName());
+    return tool.getDisplayName();
   }
 
   public Tool getTool() {

@@ -38,21 +38,21 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.tools.WireRepairData;
+import com.cburch.logisim.util.LineBuffer;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 class XnorGate extends AbstractGate {
   private static class XNorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
-      ArrayList<String> Contents = new ArrayList<>();
-      if (is_one_hot) {
-        Contents.addAll(GetOneHot(true, nr_of_inputs, bitwidth > 1));
-      } else {
-        Contents.addAll(GetParity(true, nr_of_inputs, bitwidth > 1));
-      }
-      Contents.add("");
-      return Contents;
+    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+      return (new LineBuffer())
+          .add(
+              isOneHot
+                  ? GetOneHot(true, nrOfInputs, bitwidth > 1)
+                  : GetParity(true, nrOfInputs, bitwidth > 1))
+          .add("")
+          .get();
     }
   }
 
@@ -103,7 +103,7 @@ class XnorGate extends AbstractGate {
 
   @Override
   public void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize) {
-    XorGate.paintIconANSI(g, iconSize, borderSize, negateSize,true);
+    XorGate.paintIconANSI(g, iconSize, borderSize, negateSize, true);
   }
 
   @Override

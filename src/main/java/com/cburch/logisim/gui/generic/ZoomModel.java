@@ -30,13 +30,12 @@ package com.cburch.logisim.gui.generic;
 
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
+import java.util.ArrayList;
 
 public interface ZoomModel {
   String ZOOM = "zoom";
   String SHOW_GRID = "grid";
   String CENTER = "center";
-
-  void addPropertyChangeListener(String prop, PropertyChangeListener l);
 
   boolean getShowGrid();
 
@@ -44,13 +43,16 @@ public interface ZoomModel {
 
   double getZoomFactor();
 
+  ArrayList<Double> getZoomOptions();
+
   void setZoomFactor(double value);
 
-  double[] getZoomOptions();
-
-  void removePropertyChangeListener(String prop, PropertyChangeListener l);
+  void setZoomFactor(double value, MouseEvent e);
 
   void setZoomFactorCenter(double value);
 
-  void setZoomFactor(double value, MouseEvent e);
+  void addPropertyChangeListener(String prop, PropertyChangeListener l);
+
+  void removePropertyChangeListener(String prop, PropertyChangeListener l);
+
 }

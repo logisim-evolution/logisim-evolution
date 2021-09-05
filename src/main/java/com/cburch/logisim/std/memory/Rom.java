@@ -30,13 +30,13 @@ package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
@@ -52,7 +52,6 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import java.awt.Window;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.io.IOException;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
@@ -60,6 +59,14 @@ import java.util.WeakHashMap;
 import javax.swing.JLabel;
 
 public class Rom extends Mem {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "ROM";
+
   static class ContentsAttribute extends Attribute<MemContents> {
     public ContentsAttribute() {
       super("contents", S.getter("romContentsAttr"));
@@ -68,25 +75,25 @@ public class Rom extends Mem {
     @Override
     public java.awt.Component getCellEditor(Window source, MemContents value) {
       if (source instanceof Frame) {
-        Project proj = ((Frame) source).getProject();
+        final var proj = ((Frame) source).getProject();
         RomAttributes.register(value, proj);
       }
-      ContentsCell ret = new ContentsCell(source, value);
+      final var ret = new ContentsCell(source, value);
       ret.mouseClicked(null);
       return ret;
     }
 
     @Override
     public MemContents parse(String value) {
-      int lineBreak = value.indexOf('\n');
-      String first = lineBreak < 0 ? value : value.substring(0, lineBreak);
-      String rest = lineBreak < 0 ? "" : value.substring(lineBreak + 1);
-      StringTokenizer toks = new StringTokenizer(first);
+      final var lineBreak = value.indexOf('\n');
+      final var first = lineBreak < 0 ? value : value.substring(0, lineBreak);
+      final var rest = lineBreak < 0 ? "" : value.substring(lineBreak + 1);
+      final var toks = new StringTokenizer(first);
       try {
-        String header = toks.nextToken();
+        final var header = toks.nextToken();
         if (!header.equals("addr/data:")) return null;
-        int addr = Integer.parseInt(toks.nextToken());
-        int data = Integer.parseInt(toks.nextToken());
+        final var addr = Integer.parseInt(toks.nextToken());
+        final var data = Integer.parseInt(toks.nextToken());
         return HexFile.parseFromCircFile(rest, addr, data);
       } catch (IOException | NoSuchElementException | NumberFormatException e) {
         return null;
@@ -100,15 +107,15 @@ public class Rom extends Mem {
 
     @Override
     public String toStandardString(MemContents state) {
-      int addr = state.getLogLength();
-      int data = state.getWidth();
-      String contents = HexFile.saveToString(state);
+      final var addr = state.getLogLength();
+      final var data = state.getWidth();
+      final var contents = HexFile.saveToString(state);
       return "addr/data: " + addr + " " + data + "\n" + contents;
     }
   }
 
   @SuppressWarnings("serial")
-  private static class ContentsCell extends JLabel implements MouseListener {
+  private static class ContentsCell extends JLabel implements BaseMouseListenerContract {
     final Window source;
     final MemContents contents;
 
@@ -119,21 +126,14 @@ public class Rom extends Mem {
       addMouseListener(this);
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
       if (contents == null) return;
-      Project proj = source instanceof Frame ? ((Frame) source).getProject() : null;
-      HexFrame frame = RomAttributes.getHexFrame(contents, proj, null);
+      final var proj = source instanceof Frame ? ((Frame) source).getProject() : null;
+      final var frame = RomAttributes.getHexFrame(contents, proj, null);
       frame.setVisible(true);
       frame.toFront();
     }
-
-    public void mouseEntered(MouseEvent e) {}
-
-    public void mouseExited(MouseEvent e) {}
-
-    public void mousePressed(MouseEvent e) {}
-
-    public void mouseReleased(MouseEvent e) {}
   }
 
   public static final Attribute<MemContents> CONTENTS_ATTR = new ContentsAttribute();
@@ -143,16 +143,16 @@ public class Rom extends Mem {
   private final WeakHashMap<Instance, MemListener> memListeners;
 
   public Rom() {
-    super("ROM", S.getter("romComponent"), 0);
-    setIcon(new ArithmeticIcon("ROM",3));
+    super(_ID, S.getter("romComponent"), 0);
+    setIcon(new ArithmeticIcon("ROM", 3));
     memListeners = new WeakHashMap<>();
   }
 
   @Override
   protected void configureNewInstance(Instance instance) {
     super.configureNewInstance(instance);
-    MemContents contents = getMemContents(instance);
-    MemListener listener = new MemListener(instance);
+    final var contents = getMemContents(instance);
+    final var listener = new MemListener(instance);
     memListeners.put(instance, listener);
     contents.addHexModelListener(listener);
     instance.addAttributeListener();
@@ -165,11 +165,9 @@ public class Rom extends Mem {
 
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    if (attr.equals(StdAttr.APPEARANCE)) {
-      return StdAttr.APPEAR_CLASSIC;
-    } else {
-      return super.getDefaultAttributeValue(attr, ver);
-    }
+    return (attr.equals(StdAttr.APPEARANCE))
+        ? StdAttr.APPEAR_CLASSIC
+        : super.getDefaultAttributeValue(attr, ver);
   }
 
   @Override
@@ -179,12 +177,8 @@ public class Rom extends Mem {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    String Label = CorrectLabel.getCorrectLabel(attrs.getValue(StdAttr.LABEL));
-    if (Label.length() == 0) {
-      return "ROM";
-    } else {
-      return "ROMCONTENTS_" + Label;
-    }
+    final var Label = CorrectLabel.getCorrectLabel(attrs.getValue(StdAttr.LABEL));
+    return (Label.length() == 0) ? "ROM" : "ROMCONTENTS_" + Label;
   }
 
   @Override
@@ -195,16 +189,16 @@ public class Rom extends Mem {
   public static MemContents getMemContents(Instance instance) {
     return instance.getAttributeValue(CONTENTS_ATTR);
   }
-  
+
   public static void closeHexFrame(Component c) {
     if (!(c instanceof InstanceComponent)) return;
-    Instance inst =((InstanceComponent)c).getInstance();
+    final var inst = ((InstanceComponent) c).getInstance();
     RomAttributes.closeHexFrame(getMemContents(inst));
   }
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    int len = attrs.getValue(Mem.DATA_ATTR).getWidth();
+    final var len = attrs.getValue(Mem.DATA_ATTR).getWidth();
     if (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
       return Bounds.create(0, 0, SymbolWidth + 40, 140);
     } else {
@@ -214,9 +208,9 @@ public class Rom extends Mem {
 
   @Override
   MemState getState(Instance instance, CircuitState state) {
-    MemState ret = (MemState) instance.getData(state);
+    var ret = (MemState) instance.getData(state);
     if (ret == null) {
-      MemContents contents = getMemContents(instance);
+      final var contents = getMemContents(instance);
       ret = new MemState(contents);
       instance.setData(state, ret);
     }
@@ -225,9 +219,9 @@ public class Rom extends Mem {
 
   @Override
   MemState getState(InstanceState state) {
-    MemState ret = (MemState) state.getData();
+    var ret = (MemState) state.getData();
     if (ret == null) {
-      MemContents contents = getMemContents(state.getInstance());
+      final var contents = getMemContents(state.getInstance());
       ret = new MemState(contents);
       state.setData(ret);
     }
@@ -251,29 +245,29 @@ public class Rom extends Mem {
   @Override
   public void paintInstance(InstancePainter painter) {
     if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
-    	RamAppearance.DrawRamClassic(painter);
+      RamAppearance.DrawRamClassic(painter);
     } else {
-    	RamAppearance.DrawRamEvolution(painter);
+      RamAppearance.DrawRamEvolution(painter);
     }
   }
 
   @Override
   public void propagate(InstanceState state) {
-    MemState myState = getState(state);
-    BitWidth dataBits = state.getAttributeValue(DATA_ATTR);
-    AttributeSet attrs = state.getAttributeSet();
+    final var myState = getState(state);
+    final var dataBits = state.getAttributeValue(DATA_ATTR);
+    final var attrs = state.getAttributeSet();
 
-    Value addrValue = state.getPortValue(RamAppearance.getAddrIndex(0, attrs));
-    int nrDataLines = RamAppearance.getNrDataOutPorts(attrs);
+    final var addrValue = state.getPortValue(RamAppearance.getAddrIndex(0, attrs));
+    final var nrDataLines = RamAppearance.getNrDataOutPorts(attrs);
 
-    long addr = addrValue.toLongValue();
+    final var addr = addrValue.toLongValue();
     if (addrValue.isErrorValue() || (addrValue.isFullyDefined() && addr < 0)) {
-      for (int i = 0 ; i < nrDataLines ; i++)
+      for (var i = 0; i < nrDataLines; i++)
         state.setPort(RamAppearance.getDataOutIndex(i, attrs), Value.createError(dataBits), DELAY);
       return;
     }
     if (!addrValue.isFullyDefined()) {
-      for (int i = 0 ; i < nrDataLines ; i++)
+      for (var i = 0; i < nrDataLines; i++)
         state.setPort(RamAppearance.getDataOutIndex(i, attrs), Value.createUnknown(dataBits), DELAY);
       return;
     }
@@ -281,19 +275,21 @@ public class Rom extends Mem {
       myState.setCurrent(addr);
       myState.scrollToShow(addr);
     }
-    
-    boolean misaligned = addr%nrDataLines != 0; 
+
+    boolean misaligned = addr % nrDataLines != 0;
     boolean misalignError = misaligned && !state.getAttributeValue(ALLOW_MISALIGNED);
 
-    for (int i = 0 ; i < nrDataLines ; i++) {
-      long val = myState.getContents().get(addr+i);
-      state.setPort(RamAppearance.getDataOutIndex(i, attrs),
-              misalignError ? Value.createError(dataBits) : Value.createKnown(dataBits, val), DELAY);
+    for (var i = 0; i < nrDataLines; i++) {
+      long val = myState.getContents().get(addr + i);
+      state.setPort(
+          RamAppearance.getDataOutIndex(i, attrs),
+          misalignError ? Value.createError(dataBits) : Value.createKnown(dataBits, val),
+          DELAY);
     }
   }
-  
+
   @Override
-  public void removeComponent(Circuit circ, Component c , CircuitState state) {
+  public void removeComponent(Circuit circ, Component c, CircuitState state) {
     closeHexFrame(c);
   }
 

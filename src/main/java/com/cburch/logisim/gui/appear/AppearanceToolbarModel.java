@@ -51,8 +51,7 @@ class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyCha
   private final Canvas canvas;
   private final List<ToolbarItem> items;
 
-  public AppearanceToolbarModel(
-      AbstractTool selectTool, ShowStateTool ssTool, Canvas canvas, DrawingAttributeSet attrs) {
+  public AppearanceToolbarModel(AbstractTool selectTool, ShowStateTool showStateTool, Canvas canvas, DrawingAttributeSet attrs) {
     this.canvas = canvas;
 
     AbstractTool[] tools = {
@@ -67,17 +66,17 @@ class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyCha
       new PolyTool(true, attrs),
     };
 
-    ArrayList<ToolbarItem> rawItems = new ArrayList<>();
-    for (AbstractTool tool : tools) {
+    final var rawItems = new ArrayList<ToolbarItem>();
+    for (final var tool : tools) {
       rawItems.add(new ToolbarToolItem(tool));
     }
-    rawItems.add(ssTool);
+    rawItems.add(showStateTool);
     items = Collections.unmodifiableList(rawItems);
     canvas.addPropertyChangeListener(Canvas.TOOL_PROPERTY, this);
   }
 
   AbstractTool getFirstTool() {
-    ToolbarToolItem item = (ToolbarToolItem) items.get(0);
+    final var item = (ToolbarToolItem) items.get(0);
     return item.getTool();
   }
 
@@ -89,7 +88,7 @@ class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyCha
   @Override
   public boolean isSelected(ToolbarItem item) {
     if (item instanceof ToolbarToolItem) {
-      AbstractTool tool = ((ToolbarToolItem) item).getTool();
+      final var tool = ((ToolbarToolItem) item).getTool();
       return canvas != null && tool == canvas.getTool();
     } else {
       return false;
@@ -99,14 +98,15 @@ class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyCha
   @Override
   public void itemSelected(ToolbarItem item) {
     if (item instanceof ToolbarToolItem) {
-      AbstractTool tool = ((ToolbarToolItem) item).getTool();
+      final var tool = ((ToolbarToolItem) item).getTool();
       canvas.setTool(tool);
       fireToolbarAppearanceChanged();
     }
   }
 
+  @Override
   public void propertyChange(PropertyChangeEvent e) {
-    String prop = e.getPropertyName();
+    final var prop = e.getPropertyName();
     if (Canvas.TOOL_PROPERTY.equals(prop)) {
       fireToolbarAppearanceChanged();
     }

@@ -35,29 +35,36 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class Ttl74377 extends AbstractOctalFlops {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "74377";
 
   public static class Ttl74377HDLGenerator extends AbstractOctalFlopsHDLGenerator {
 
     @Override
     public String getComponentStringIdentifier() {
-      return "TTL74377";
+      return "TTL" + _ID;
     }
 
     @Override
-    public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-      SortedMap<String, String> PortMap = new TreeMap<>();
-      if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-      NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-      PortMap.putAll(super.GetPortMap(Nets, ComponentInfo));
-      PortMap.put("nCLR", "'1'");
-      PortMap.putAll(GetNetMap("nCLKEN", false, ComponentInfo, 0, Nets));
-      return PortMap;
+    public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+      final var map = new TreeMap<String, String>();
+      if (!(mapInfo instanceof NetlistComponent)) return map;
+      final var comp = (NetlistComponent) mapInfo;
+      map.putAll(super.GetPortMap(nets, comp));
+      map.put("nCLR", "'1'");
+      map.putAll(GetNetMap("nCLKEN", false, comp, 0, nets));
+      return map;
     }
   }
 
   public Ttl74377() {
     super(
-        "74377",
+        _ID,
         (byte) 20,
         new byte[] {2, 5, 6, 9, 12, 15, 16, 19},
         new String[] {

@@ -132,7 +132,7 @@ public abstract class RadixOption extends AttributeOption {
         case 64:
           return 20; // 1E..4E
         default:
-          throw new AssertionError("unexpected bit width: "+ width);
+          throw new AssertionError("unexpected bit width: " + width);
       }
     }
 
@@ -241,7 +241,7 @@ public abstract class RadixOption extends AttributeOption {
         case 64:
           return 20; // 8E..16E-1
         default:
-          throw new AssertionError("unexpected bit width: "+ width);
+          throw new AssertionError("unexpected bit width: " + width);
       }
     }
 
@@ -284,9 +284,8 @@ public abstract class RadixOption extends AttributeOption {
 
     @Override
     public int getMaxLength(BitWidth width) {
-      int bits = width.getWidth();
-      if (bits <= 1) return 1;
-      return bits + ((bits - 1) / 4);
+      final var bits = width.getWidth();
+      return (bits <= 1) ? 1 : bits + ((bits - 1) / 4);
     }
 
     @Override
@@ -331,8 +330,29 @@ public abstract class RadixOption extends AttributeOption {
     }
   }
 
+  private static class RadixFloat extends RadixOption {
+    private RadixFloat() {
+      super("float", S.getter("radixFloat"));
+    }
+
+    @Override
+    public int getMaxLength(BitWidth width) {
+      return width.getWidth() == 64 ? 24 : 12;
+    }
+
+    @Override
+    public String toString(Value value) {
+      return value.getWidth() == 64 ? Double.toString(value.toDoubleValue()) : Float.toString(value.toFloatValue());
+    }
+
+    @Override
+    public String GetIndexChar() {
+      return "f";
+    }
+  }
+
   public static RadixOption decode(String value) {
-    for (RadixOption opt : OPTIONS) {
+    for (final var opt : OPTIONS) {
       if (value.equals(opt.saveName)) {
         return opt;
       }
@@ -349,12 +369,13 @@ public abstract class RadixOption extends AttributeOption {
 
   public static final RadixOption RADIX_16 = new Radix16();
 
+  public static final RadixOption RADIX_FLOAT = new RadixFloat();
+
   public static final RadixOption[] OPTIONS = {
-    RADIX_2, RADIX_8, RADIX_10_SIGNED, RADIX_10_UNSIGNED, RADIX_16
+    RADIX_2, RADIX_8, RADIX_10_SIGNED, RADIX_10_UNSIGNED, RADIX_16, RADIX_FLOAT
   };
 
-  public static final Attribute<RadixOption> ATTRIBUTE =
-      Attributes.forOption("radix", S.getter("radixAttr"), OPTIONS);
+  public static final Attribute<RadixOption> ATTRIBUTE = Attributes.forOption("radix", S.getter("radixAttr"), OPTIONS);
 
   private final String saveName;
 
@@ -366,6 +387,7 @@ public abstract class RadixOption extends AttributeOption {
     this.displayGetter = displayGetter;
   }
 
+  @Override
   public StringGetter getDisplayGetter() {
     return displayGetter;
   }
@@ -385,13 +407,13 @@ public abstract class RadixOption extends AttributeOption {
     return displayGetter.toString();
   }
 
+  public String GetIndexChar() {
+    return "";
+  }
+
   @Override
   public String toString() {
     return saveName;
-  }
-
-  public String GetIndexChar() {
-    return "";
   }
 
   public abstract String toString(Value value);

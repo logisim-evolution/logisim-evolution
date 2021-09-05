@@ -37,7 +37,8 @@ import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
-import com.cburch.logisim.std.base.Base;
+import com.cburch.logisim.std.base.BaseLibrary;
+import com.cburch.logisim.tools.EditTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import java.beans.PropertyChangeEvent;
@@ -51,7 +52,7 @@ public class LayoutEditHandler extends EditHandler
     this.frame = frame;
 
     Project proj = frame.getProject();
-    Clipboard.addPropertyChangeListener(Clipboard.contentsProperty, this);
+    Clipboard.addPropertyChangeListener(Clipboard.CONTENTS_PROPERTY, this);
     proj.addProjectListener(this);
     proj.addLibraryListener(this);
   }
@@ -70,7 +71,7 @@ public class LayoutEditHandler extends EditHandler
 
     boolean selectAvailable = false;
     for (Library lib : proj.getLogisimFile().getLibraries()) {
-      if (lib instanceof Base) {
+      if (lib instanceof BaseLibrary) {
         selectAvailable = true;
         break;
       }
@@ -118,6 +119,7 @@ public class LayoutEditHandler extends EditHandler
     proj.doAction(SelectionActions.duplicate(sel));
   }
 
+  @Override
   public void libraryChanged(LibraryEvent e) {
     int action = e.getAction();
     if (action == LibraryEvent.ADD_LIBRARY) {
@@ -148,6 +150,7 @@ public class LayoutEditHandler extends EditHandler
     }
   }
 
+  @Override
   public void projectChanged(ProjectEvent e) {
     int action = e.getAction();
     if (action == ProjectEvent.ACTION_SET_FILE) {
@@ -159,8 +162,9 @@ public class LayoutEditHandler extends EditHandler
     }
   }
 
+  @Override
   public void propertyChange(PropertyChangeEvent event) {
-    if (event.getPropertyName().equals(Clipboard.contentsProperty)) {
+    if (event.getPropertyName().equals(Clipboard.CONTENTS_PROPERTY)) {
       computeEnabled();
     }
   }
@@ -193,9 +197,9 @@ public class LayoutEditHandler extends EditHandler
 
   private void selectSelectTool(Project proj) {
     for (Library sub : proj.getLogisimFile().getLibraries()) {
-      if (sub instanceof Base) {
-        Base base = (Base) sub;
-        Tool tool = base.getTool("Edit Tool");
+      if (sub instanceof BaseLibrary) {
+        BaseLibrary baseLibrary = (BaseLibrary) sub;
+        Tool tool = baseLibrary.getTool(EditTool._ID);
         if (tool != null) proj.setTool(tool);
       }
     }

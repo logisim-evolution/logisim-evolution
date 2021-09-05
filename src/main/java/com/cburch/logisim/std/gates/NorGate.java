@@ -45,29 +45,35 @@ import java.util.ArrayList;
 class NorGate extends AbstractGate {
   private static class NorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
-      ArrayList<String> Contents = new ArrayList<>();
-      StringBuffer OneLine = new StringBuffer();
-      OneLine.append("   " + HDL.assignPreamble() + "Result" + HDL.assignOperator() + HDL.notOperator() + "(");
-      int TabWidth = OneLine.length();
-      boolean first = true;
-      for (int i = 0; i < nr_of_inputs; i++) {
+    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+      final var contents = new ArrayList<String>();
+      final var oneLine = new StringBuilder();
+      oneLine
+          .append("   ")
+          .append(HDL.assignPreamble())
+          .append("Result")
+          .append(HDL.assignOperator())
+          .append(HDL.notOperator())
+          .append("(");
+      final var tabWidth = oneLine.length();
+      var first = true;
+      for (var i = 0; i < nrOfInputs; i++) {
         if (!first) {
-          OneLine.append(HDL.orOperator());
-          Contents.add(OneLine.toString());
-          OneLine.setLength(0);
-          while (OneLine.length() < TabWidth) {
-            OneLine.append(" ");
+          oneLine.append(HDL.orOperator());
+          contents.add(oneLine.toString());
+          oneLine.setLength(0);
+          while (oneLine.length() < tabWidth) {
+            oneLine.append(" ");
           }
         } else {
           first = false;
         }
-        OneLine.append("s_real_input_").append(i + 1);
+        oneLine.append("s_real_input_").append(i + 1);
       }
-      OneLine.append(");");
-      Contents.add(OneLine.toString());
-      Contents.add("");
-      return Contents;
+      oneLine.append(");");
+      contents.add(oneLine.toString());
+      contents.add("");
+      return contents;
     }
   }
 
@@ -82,7 +88,7 @@ class NorGate extends AbstractGate {
 
   @Override
   protected Expression computeExpression(Expression[] inputs, int numInputs) {
-    Expression ret = inputs[0];
+    var ret = inputs[0];
     for (int i = 1; i < numInputs; i++) {
       ret = Expressions.or(ret, inputs[i]);
     }
@@ -112,7 +118,7 @@ class NorGate extends AbstractGate {
 
   @Override
   public void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize) {
-    OrGate.paintIconANSI(g, iconSize, borderSize, negateSize,true);
+    OrGate.paintIconANSI(g, iconSize, borderSize, negateSize, true);
   }
 
   @Override

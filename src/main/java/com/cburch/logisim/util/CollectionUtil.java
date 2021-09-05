@@ -36,48 +36,48 @@ import java.util.Set;
 
 public class CollectionUtil {
   private static class UnionList<E> extends AbstractList<E> {
-    private final List<? extends E> a;
-    private final List<? extends E> b;
+    private final List<? extends E> listA;
+    private final List<? extends E> listB;
 
     UnionList(List<? extends E> a, List<? extends E> b) {
-      this.a = a;
-      this.b = b;
+      this.listA = a;
+      this.listB = b;
     }
 
     @Override
     public E get(int index) {
       E ret;
-      if (index < a.size()) {
-        ret = a.get(index);
+      if (index < listA.size()) {
+        ret = listA.get(index);
       } else {
-        ret = a.get(index - a.size());
+        ret = listA.get(index - listA.size());
       }
       return ret;
     }
 
     @Override
     public int size() {
-      return a.size() + b.size();
+      return listA.size() + listB.size();
     }
   }
 
   private static class UnionSet<E> extends AbstractSet<E> {
-    private final Set<? extends E> a;
-    private final Set<? extends E> b;
+    private final Set<? extends E> setA;
+    private final Set<? extends E> setB;
 
     UnionSet(Set<? extends E> a, Set<? extends E> b) {
-      this.a = a;
-      this.b = b;
+      this.setA = a;
+      this.setB = b;
     }
 
     @Override
     public Iterator<E> iterator() {
-      return IteratorUtil.createJoinedIterator(a.iterator(), b.iterator());
+      return IteratorUtil.createJoinedIterator(setA.iterator(), setB.iterator());
     }
 
     @Override
     public int size() {
-      return a.size() + b.size();
+      return setA.size() + setB.size();
     }
   }
 

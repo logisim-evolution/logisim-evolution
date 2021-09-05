@@ -46,9 +46,16 @@ import java.util.List;
  * files (std.properties).
  */
 public class TclConsoleReds extends TclComponent {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "TclConsoleReds";
 
   public TclConsoleReds() {
-    super("TclConsoleReds", S.getter("tclConsoleReds"));
+    super(_ID, S.getter("tclConsoleReds"));
 
     List<PortDescription> inputsDesc = new ArrayList<>();
     List<PortDescription> outputsDesc = new ArrayList<>();
@@ -98,17 +105,17 @@ public class TclConsoleReds extends TclComponent {
     inputsDesc.add(new PortDescription("sysclk_i", "input", 1));
     inputsDesc.add(new PortDescription("rst_in", "input", 1));
 
-    Port[] inputs = new Port[inputsDesc.size()];
-    Port[] outputs = new Port[outputsDesc.size()];
+    final var inputs = new Port[inputsDesc.size()];
+    final var outputs = new Port[outputsDesc.size()];
 
-    for (int i = 0; i < inputsDesc.size(); i++) {
-      PortDescription desc = inputsDesc.get(i);
+    for (var i = 0; i < inputsDesc.size(); i++) {
+      final var desc = inputsDesc.get(i);
       inputs[i] = new Port(0, (i * PORT_GAP) + HEIGHT, desc.getType(), desc.getWidth());
       inputs[i].setToolTip(S.getter(desc.getName()));
     }
 
-    for (int i = 0; i < outputsDesc.size(); i++) {
-      PortDescription desc = outputsDesc.get(i);
+    for (var i = 0; i < outputsDesc.size(); i++) {
+      final var desc = outputsDesc.get(i);
       outputs[i] = new Port(WIDTH, (i * PORT_GAP) + HEIGHT, desc.getType(), desc.getWidth());
       outputs[i].setToolTip(S.getter(desc.getName()));
     }

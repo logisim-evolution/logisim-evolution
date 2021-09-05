@@ -31,7 +31,6 @@ package com.cburch.logisim.std.ttl;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
@@ -39,14 +38,20 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Graphics;
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 public class Ttl7474 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "7474";
 
   public Ttl7474() {
     super(
-        "7474",
+        _ID,
         (byte) 14,
         new byte[] {5, 6, 8, 9},
         new String[] {
@@ -59,23 +64,22 @@ public class Ttl7474 extends AbstractTtlGate {
     boolean isPressed = true;
 
     private boolean isInside(InstanceState state, MouseEvent e) {
-      Point p = TTLGetTranslatedXY(state, e);
-      int dx = p.x - 37;
-      int dy = p.y - 35;
-      int d2 = dx * dx + dy * dy;
+      final var p = TTLGetTranslatedXY(state, e);
+      var dx = p.x - 37;
+      var dy = p.y - 35;
+      var d2 = dx * dx + dy * dy;
       dx = p.x - 107;
       dy = p.y - 32;
-      int d3 = dx * dx + dy * dy;
+      final var d3 = dx * dx + dy * dy;
       return ((d2 < 5 * 5) || (d3 < 5 * 5));
     }
 
     private int getIndex(InstanceState state, MouseEvent e) {
-      Point p = TTLGetTranslatedXY(state, e);
-      int dx = p.x - 37;
-      int dy = p.y - 35;
-      int d2 = dx * dx + dy * dy;
-      if (d2 < 5 * 5) return 0;
-      return 1;
+      final var p = TTLGetTranslatedXY(state, e);
+      final var dx = p.x - 37;
+      final var dy = p.y - 35;
+      final var d2 = dx * dx + dy * dy;
+      return (d2 < 5 * 5) ? 0 : 1;
     }
 
     @Override
@@ -85,14 +89,16 @@ public class Ttl7474 extends AbstractTtlGate {
 
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
-      if (!state.getAttributeValue(TTL.DRAW_INTERNAL_STRUCTURE)) return;
+      if (!state.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE)) return;
       if (isPressed && isInside(state, e)) {
-        int index = getIndex(state, e);
-        TTLRegisterData myState = (TTLRegisterData) state.getData();
+        final var index = getIndex(state, e);
+        final var myState = (TtlRegisterData) state.getData();
         if (myState == null) return;
-        Value[] values = myState.getValue().getAll();
-        if (values[index].isFullyDefined()) values[index] = values[index].not();
-        else values[index] = Value.createKnown(1, 0);
+        final var values = myState.getValue().getAll();
+        if (values[index].isFullyDefined())
+          values[index] = values[index].not();
+        else
+          values[index] = Value.createKnown(1, 0);
         myState.setValue(Value.create(values));
         state.fireInvalidated();
       }
@@ -102,8 +108,8 @@ public class Ttl7474 extends AbstractTtlGate {
 
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
-    Graphics g = painter.getGraphics();
-    TTLRegisterData state = (TTLRegisterData) painter.getData();
+    final var g = painter.getGraphics();
+    final var state = (TtlRegisterData) painter.getData();
     super.paintBase(painter, false, false);
     drawflop(g, x, y + 1);
     drawflop(g, x + 70, y - 2);
@@ -115,14 +121,14 @@ public class Ttl7474 extends AbstractTtlGate {
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    TTLRegisterData data = (TTLRegisterData) state.getData();
+    var data = (TtlRegisterData) state.getData();
     if (data == null) {
-      data = new TTLRegisterData(BitWidth.create(2));
+      data = new TtlRegisterData(BitWidth.create(2));
       state.setData(data);
     }
-    boolean triggered1 = data.updateClock(state.getPortValue(2), 0);
-    boolean triggered2 = data.updateClock(state.getPortValue(9), 1);
-    Value[] values = data.getValue().getAll();
+    final var triggered1 = data.updateClock(state.getPortValue(2), 0);
+    final var triggered2 = data.updateClock(state.getPortValue(9), 1);
+    final var values = data.getValue().getAll();
     if ((state.getPortValue(0) == Value.FALSE) && (state.getPortValue(3) == Value.FALSE)) {
       values[0] = Value.createUnknown(BitWidth.create(1));
     } else if (state.getPortValue(0) == Value.FALSE) {
@@ -149,7 +155,7 @@ public class Ttl7474 extends AbstractTtlGate {
     state.setPort(7, data.getValue().get(1), 8);
   }
 
-  private void drawState(Graphics g, int x, int y, int ID, TTLRegisterData state) {
+  private void drawState(Graphics g, int x, int y, int ID, TtlRegisterData state) {
     if (state != null) {
       g.setColor(state.getValue().get(ID).getColor());
       g.fillOval(x + 33, y + 30, 8, 8);
@@ -171,59 +177,59 @@ public class Ttl7474 extends AbstractTtlGate {
   }
 
   private void drawCon1(Graphics g, int x, int y, int height) {
-    g.drawLine(x + 70, y + height - AbstractTtlGate.pinheight, x + 70, y + 16);
+    g.drawLine(x + 70, y + height - AbstractTtlGate.PIN_HEIGHT, x + 70, y + 16);
     g.drawLine(x + 35, y + 16, x + 70, y + 16);
     g.drawLine(x + 35, y + 16, x + 35, y + 17);
 
-    g.drawLine(x + 10, y + height - AbstractTtlGate.pinheight, x + 10, y + 46);
+    g.drawLine(x + 10, y + height - AbstractTtlGate.PIN_HEIGHT, x + 10, y + 46);
     g.drawLine(x + 10, y + 46, x + 35, y + 46);
     g.drawLine(x + 35, y + 45, x + 35, y + 46);
 
-    g.drawLine(x + 30, y + height - AbstractTtlGate.pinheight, x + 30, y + 50);
+    g.drawLine(x + 30, y + height - AbstractTtlGate.PIN_HEIGHT, x + 30, y + 50);
     g.drawLine(x + 20, y + 50, x + 30, y + 50);
     g.drawLine(x + 20, y + 26, x + 20, y + 50);
     g.drawLine(x + 20, y + 26, x + 27, y + 26);
 
-    g.drawLine(x + 50, y + height - AbstractTtlGate.pinheight, x + 50, y + 48);
+    g.drawLine(x + 50, y + height - AbstractTtlGate.PIN_HEIGHT, x + 50, y + 48);
     g.drawLine(x + 22, y + 48, x + 50, y + 48);
     g.drawLine(x + 22, y + 36, x + 22, y + 48);
     g.drawLine(x + 22, y + 36, x + 27, y + 36);
 
-    g.drawLine(x + 90, y + height - AbstractTtlGate.pinheight, x + 90, y + 48);
+    g.drawLine(x + 90, y + height - AbstractTtlGate.PIN_HEIGHT, x + 90, y + 48);
     g.drawLine(x + 68, y + 48, x + 90, y + 48);
     g.drawLine(x + 68, y + 26, x + 68, y + 48);
     g.drawLine(x + 43, y + 26, x + 68, y + 26);
 
-    g.drawLine(x + 110, y + height - AbstractTtlGate.pinheight, x + 110, y + 50);
+    g.drawLine(x + 110, y + height - AbstractTtlGate.PIN_HEIGHT, x + 110, y + 50);
     g.drawLine(x + 66, y + 50, x + 110, y + 50);
     g.drawLine(x + 66, y + 36, x + 66, y + 50);
     g.drawLine(x + 47, y + 36, x + 66, y + 36);
   }
 
   private void drawCon2(Graphics g, int x, int y) {
-    g.drawLine(x + 130, y + AbstractTtlGate.pinheight, x + 130, y + 33);
+    g.drawLine(x + 130, y + AbstractTtlGate.PIN_HEIGHT, x + 130, y + 33);
     g.drawLine(x + 117, y + 33, x + 130, y + 33);
 
-    g.drawLine(x + 110, y + AbstractTtlGate.pinheight, x + 110, y + 10);
+    g.drawLine(x + 110, y + AbstractTtlGate.PIN_HEIGHT, x + 110, y + 10);
     g.drawLine(x + 110, y + 10, x + 120, y + 10);
     g.drawLine(x + 120, y + 10, x + 120, y + 23);
     g.drawLine(x + 113, y + 23, x + 120, y + 23);
 
-    g.drawLine(x + 90, y + AbstractTtlGate.pinheight, x + 90, y + 10);
+    g.drawLine(x + 90, y + AbstractTtlGate.PIN_HEIGHT, x + 90, y + 10);
     g.drawLine(x + 90, y + 10, x + 105, y + 10);
     g.drawLine(x + 105, y + 10, x + 105, y + 14);
 
-    g.drawLine(x + 70, y + AbstractTtlGate.pinheight, x + 70, y + 10);
+    g.drawLine(x + 70, y + AbstractTtlGate.PIN_HEIGHT, x + 70, y + 10);
     g.drawLine(x + 70, y + 10, x + 88, y + 10);
     g.drawLine(x + 88, y + 10, x + 88, y + 33);
     g.drawLine(x + 88, y + 33, x + 97, y + 33);
 
-    g.drawLine(x + 50, y + AbstractTtlGate.pinheight, x + 50, y + 12);
+    g.drawLine(x + 50, y + AbstractTtlGate.PIN_HEIGHT, x + 50, y + 12);
     g.drawLine(x + 50, y + 12, x + 86, y + 12);
     g.drawLine(x + 86, y + 12, x + 86, y + 23);
     g.drawLine(x + 86, y + 23, x + 97, y + 23);
 
-    g.drawLine(x + 30, y + AbstractTtlGate.pinheight, x + 30, y + 14);
+    g.drawLine(x + 30, y + AbstractTtlGate.PIN_HEIGHT, x + 30, y + 14);
     g.drawLine(x + 30, y + 14, x + 84, y + 14);
     g.drawLine(x + 84, y + 14, x + 84, y + 44);
     g.drawLine(x + 84, y + 44, x + 105, y + 44);
@@ -238,11 +244,6 @@ public class Ttl7474 extends AbstractTtlGate {
   @Override
   public int[] ClockPinIndex(NetlistComponent comp) {
     return new int[] {2, 9};
-  }
-
-  @Override
-  public String getHDLName(AttributeSet attrs) {
-    return CorrectLabel.getCorrectLabel("TTL" + this.getName()).toUpperCase();
   }
 
   @Override

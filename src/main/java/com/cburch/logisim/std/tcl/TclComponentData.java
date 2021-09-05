@@ -32,7 +32,6 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.InstanceStateImpl;
-import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.SocketClient;
 
 /**
@@ -97,12 +96,12 @@ public class TclComponentData implements InstanceData {
   }
 
   public boolean isNewTick() {
-    boolean newTick = false;
-    boolean found = false;
+    var newTick = false;
+    var found = false;
 
-    for (Port p : instanceState.getInstance().getPorts()) {
+    for (final var p : instanceState.getInstance().getPorts()) {
       if (p.getToolTip().equals("sysclk_i")) {
-        Value val = instanceState.getPortValue(instanceState.getPortIndex(p));
+        final var val = instanceState.getPortValue(instanceState.getPortIndex(p));
         newTick = (val != prevClockValue);
         if (newTick) {
           prevClockValue = val;

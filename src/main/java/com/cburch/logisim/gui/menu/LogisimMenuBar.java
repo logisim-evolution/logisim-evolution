@@ -85,7 +85,8 @@ public class LogisimMenuBar extends JMenuBar {
   public static final LogisimMenuItem REMOVE_CIRCUIT = new LogisimMenuItem("RemoveCircuit");
   public static final LogisimMenuItem EDIT_LAYOUT = new LogisimMenuItem("EditLayout");
   public static final LogisimMenuItem EDIT_APPEARANCE = new LogisimMenuItem("EditAppearance");
-  public static final LogisimMenuItem TOGGLE_APPEARANCE = new LogisimMenuItem("ToggleEditLayoutAppearance");
+  public static final LogisimMenuItem TOGGLE_APPEARANCE =
+      new LogisimMenuItem("ToggleEditLayoutAppearance");
   public static final LogisimMenuItem REVERT_APPEARANCE = new LogisimMenuItem("RevertAppearance");
   public static final LogisimMenuItem ANALYZE_CIRCUIT = new LogisimMenuItem("AnalyzeCircuit");
   public static final LogisimMenuItem CIRCUIT_STATS = new LogisimMenuItem("GetCircuitStatistics");
@@ -93,8 +94,10 @@ public class LogisimMenuBar extends JMenuBar {
   public static final LogisimMenuItem SIMULATE_RUN = new LogisimMenuItem("SimulateRun");
   public static final LogisimMenuItem SIMULATE_RUN_TOGGLE = new LogisimMenuItem("SimulateRun");
   public static final LogisimMenuItem SIMULATE_STEP = new LogisimMenuItem("SimulateStep");
-  public static final LogisimMenuItem SIMULATE_VHDL_ENABLE = new LogisimMenuItem("SimulateVhdlEnable");
-  public static final LogisimMenuItem GENERATE_VHDL_SIM_FILES = new LogisimMenuItem("GenerateVhdlSimFiles");
+  public static final LogisimMenuItem SIMULATE_VHDL_ENABLE =
+      new LogisimMenuItem("SimulateVhdlEnable");
+  public static final LogisimMenuItem GENERATE_VHDL_SIM_FILES =
+      new LogisimMenuItem("GenerateVhdlSimFiles");
   public static final LogisimMenuItem TICK_ENABLE = new LogisimMenuItem("TickEnable");
   public static final LogisimMenuItem TICK_HALF = new LogisimMenuItem("TickHalf");
   public static final LogisimMenuItem TICK_FULL = new LogisimMenuItem("TickFull");
@@ -106,7 +109,9 @@ public class LogisimMenuBar extends JMenuBar {
   public final MenuFPGA fpga;
   private final LFrame parent;
   private final MyListener listener;
-  private final Project saveProj, baseProj, simProj;
+  private final Project saveProj;
+  private final Project baseProj;
+  private final Project simProj;
   private final HashMap<LogisimMenuItem, MenuItem> menuItems = new HashMap<>();
   private final ArrayList<ChangeListener> enableListeners;
   private SimulateListener simulateListener = null;
@@ -139,7 +144,7 @@ public class LogisimMenuBar extends JMenuBar {
   }
 
   public void addActionListener(LogisimMenuItem which, ActionListener l) {
-    MenuItem item = menuItems.get(which);
+    final var item = menuItems.get(which);
     if (item != null) item.addActionListener(l);
   }
 
@@ -148,18 +153,18 @@ public class LogisimMenuBar extends JMenuBar {
   }
 
   public void doAction(LogisimMenuItem which) {
-    MenuItem item = menuItems.get(which);
+    final var item = menuItems.get(which);
     item.actionPerformed(new ActionEvent(item, ActionEvent.ACTION_PERFORMED, which.toString()));
   }
 
   public KeyStroke getAccelerator(LogisimMenuItem which) {
-    MenuItem item = menuItems.get(which);
+    final var item = menuItems.get(which);
     return item == null ? null : item.getAccelerator();
   }
 
   void fireEnableChanged() {
-    ChangeEvent e = new ChangeEvent(this);
-    for (ChangeListener listener : enableListeners) {
+    final var e = new ChangeEvent(this);
+    for (final var listener : enableListeners) {
       listener.stateChanged(e);
     }
   }
@@ -187,7 +192,7 @@ public class LogisimMenuBar extends JMenuBar {
   }
 
   public boolean isEnabled(LogisimMenuItem item) {
-    MenuItem menuItem = menuItems.get(item);
+    final var menuItem = menuItems.get(item);
     return menuItem != null && menuItem.isEnabled();
   }
 
@@ -196,7 +201,7 @@ public class LogisimMenuBar extends JMenuBar {
   }
 
   public void removeActionListener(LogisimMenuItem which, ActionListener l) {
-    MenuItem item = menuItems.get(which);
+    final var item = menuItems.get(which);
     if (item != null) item.removeActionListener(l);
   }
 
@@ -209,7 +214,7 @@ public class LogisimMenuBar extends JMenuBar {
   }
 
   public void setEnabled(LogisimMenuItem which, boolean value) {
-    MenuItem item = menuItems.get(which);
+    final var item = menuItems.get(which);
     if (item != null) item.setEnabled(value);
   }
 
@@ -218,6 +223,7 @@ public class LogisimMenuBar extends JMenuBar {
   }
 
   private class MyListener implements LocaleListener {
+    @Override
     public void localeChanged() {
       file.localeChanged();
       edit.localeChanged();

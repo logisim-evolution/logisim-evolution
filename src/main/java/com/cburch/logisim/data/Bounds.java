@@ -37,13 +37,13 @@ import java.awt.Rectangle;
  */
 public class Bounds {
   public static Bounds create(int x, int y, int wid, int ht) {
-    int hashCode = 13 * (31 * (31 * x + y) + wid) + ht;
+    final var hashCode = 13 * (31 * (31 * x + y) + wid) + ht;
     Object cached = cache.get(hashCode);
     if (cached != null) {
-      Bounds bds = (Bounds) cached;
+      final var bds = (Bounds) cached;
       if (bds.x == x && bds.y == y && bds.wid == wid && bds.ht == ht) return bds;
     }
-    Bounds ret = new Bounds(x, y, wid, ht);
+    final var ret = new Bounds(x, y, wid, ht);
     cache.put(hashCode, ret);
     return ret;
   }
@@ -83,10 +83,10 @@ public class Bounds {
   public Bounds add(Bounds bd) {
     if (this == EMPTY_BOUNDS) return bd;
     if (bd == EMPTY_BOUNDS) return this;
-    int retX = Math.min(bd.x, this.x);
-    int retY = Math.min(bd.y, this.y);
-    int retWidth = Math.max(bd.x + bd.wid, this.x + this.wid) - retX;
-    int retHeight = Math.max(bd.y + bd.ht, this.y + this.ht) - retY;
+    final var retX = Math.min(bd.x, this.x);
+    final var retY = Math.min(bd.y, this.y);
+    final var retWidth = Math.max(bd.x + bd.wid, this.x + this.wid) - retX;
+    final var retHeight = Math.max(bd.y + bd.ht, this.y + this.ht) - retY;
     if (retX == this.x && retY == this.y && retWidth == this.wid && retHeight == this.ht) {
       return this;
     } else if (retX == bd.x && retY == bd.y && retWidth == bd.wid && retHeight == bd.ht) {
@@ -100,33 +100,33 @@ public class Bounds {
     if (this == EMPTY_BOUNDS) return Bounds.create(x, y, 1, 1);
     if (contains(x, y)) return this;
 
-    int new_x = this.x;
-    int new_wid = this.wid;
-    int new_y = this.y;
-    int new_ht = this.ht;
+    var newX = this.x;
+    var newWidth = this.wid;
+    var newY = this.y;
+    var newHeight = this.ht;
     if (x < this.x) {
-      new_x = x;
-      new_wid = (this.x + this.wid) - x;
+      newX = x;
+      newWidth = (this.x + this.wid) - x;
     } else if (x >= this.x + this.wid) {
-      new_x = this.x;
-      new_wid = x - this.x + 1;
+      newX = this.x;
+      newWidth = x - this.x + 1;
     }
     if (y < this.y) {
-      new_y = y;
-      new_ht = (this.y + this.ht) - y;
+      newY = y;
+      newHeight = (this.y + this.ht) - y;
     } else if (y >= this.y + this.ht) {
-      new_y = this.y;
-      new_ht = y - this.y + 1;
+      newY = this.y;
+      newHeight = y - this.y + 1;
     }
-    return create(new_x, new_y, new_wid, new_ht);
+    return create(newX, newY, newWidth, newHeight);
   }
 
   public Bounds add(int x, int y, int wid, int ht) {
     if (this == EMPTY_BOUNDS) return Bounds.create(x, y, wid, ht);
-    int retX = Math.min(x, this.x);
-    int retY = Math.min(y, this.y);
-    int retWidth = Math.max(x + wid, this.x + this.wid) - retX;
-    int retHeight = Math.max(y + ht, this.y + this.ht) - retY;
+    final var retX = Math.min(x, this.x);
+    final var retY = Math.min(y, this.y);
+    final var retWidth = Math.max(x + wid, this.x + this.wid) - retX;
+    final var retHeight = Math.max(y + ht, this.y + this.ht) - retY;
     if (retX == this.x && retY == this.y && retWidth == this.wid && retHeight == this.ht) {
       return this;
     } else {
@@ -139,8 +139,8 @@ public class Bounds {
   }
 
   public boolean borderContains(int px, int py, int fudge) {
-    int x1 = x + wid - 1;
-    int y1 = y + ht - 1;
+    final var x1 = x + wid - 1;
+    final var y1 = y + ht - 1;
     if (Math.abs(px - x) <= fudge || Math.abs(px - x1) <= fudge) {
       // maybe on east or west border?
       return y - fudge >= py && py <= y1 + fudge;
@@ -172,9 +172,9 @@ public class Bounds {
   }
 
   public boolean contains(int x, int y, int wid, int ht) {
-    int oth_x = (wid <= 0 ? x : x + wid - 1);
-    int oth_y = (ht <= 0 ? y : y + ht - 1);
-    return contains(x, y) && contains(oth_x, oth_y);
+    final var othX = (wid <= 0 ? x : x + wid - 1);
+    final var othY = (ht <= 0 ? y : y + ht - 1);
+    return contains(x, y) && contains(othX, othY);
   }
 
   public boolean contains(Location p) {
@@ -186,9 +186,9 @@ public class Bounds {
   }
 
   @Override
-  public boolean equals(Object other_obj) {
-    if (!(other_obj instanceof Bounds)) return false;
-    Bounds other = (Bounds) other_obj;
+  public boolean equals(Object otherObj) {
+    if (!(otherObj instanceof Bounds)) return false;
+    final var other = (Bounds) otherObj;
     return x == other.x && y == other.y && wid == other.wid && ht == other.ht;
   }
 
@@ -231,34 +231,31 @@ public class Bounds {
   }
 
   public Bounds intersect(Bounds other) {
-    int x0 = this.x;
-    int y0 = this.y;
-    int x1 = x0 + this.wid;
-    int y1 = y0 + this.ht;
-    int x2 = other.x;
-    int y2 = other.y;
-    int x3 = x2 + other.wid;
-    int y3 = y2 + other.ht;
+    var x0 = this.x;
+    var y0 = this.y;
+    var x1 = x0 + this.wid;
+    var y1 = y0 + this.ht;
+    final var x2 = other.x;
+    final var y2 = other.y;
+    final var x3 = x2 + other.wid;
+    final var y3 = y2 + other.ht;
     if (x2 > x0) x0 = x2;
     if (y2 > y0) y0 = y2;
     if (x3 < x1) x1 = x3;
     if (y3 < y1) y1 = y3;
-    if (x1 < x0 || y1 < y0) {
-      return EMPTY_BOUNDS;
-    } else {
-      return create(x0, y0, x1 - x0, y1 - y0);
-    }
+
+    return (x1 < x0 || y1 < y0) ? EMPTY_BOUNDS : create(x0, y0, x1 - x0, y1 - y0);
   }
 
   // rotates this around (xc,yc) assuming that this is facing in the
   // from direction and the returned bounds should face in the to direction.
   public Bounds rotate(Direction from, Direction to, int xc, int yc) {
-    int degrees = to.toDegrees() - from.toDegrees();
+    var degrees = to.toDegrees() - from.toDegrees();
     while (degrees >= 360) degrees -= 360;
     while (degrees < 0) degrees += 360;
 
-    int dx = x - xc;
-    int dy = y - yc;
+    final var dx = x - xc;
+    final var dy = y - yc;
     if (degrees == 90) {
       return create(xc + dy, yc - dx - wid, ht, wid);
     } else if (degrees == 180) {

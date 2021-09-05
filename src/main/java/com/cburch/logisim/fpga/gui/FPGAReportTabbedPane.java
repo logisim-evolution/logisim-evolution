@@ -28,9 +28,10 @@
 
 package com.cburch.logisim.fpga.gui;
 
+import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.fpga.data.FPGACommanderListModel;
 import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
-import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.proj.Project;
 import java.awt.Color;
 import java.awt.Component;
@@ -40,9 +41,7 @@ import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -55,7 +54,7 @@ import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.text.DefaultCaret;
 
-public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, WindowListener {
+public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListenerContract, BaseWindowListenerContract {
 
   /** */
   private static final long serialVersionUID = 1L;
@@ -139,8 +138,6 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
     WarningsWindow.setSize(new Dimension(740, 400));
     WarningsWindow.addWindowListener(this);
     WarningsWindow.getListObject().addMouseListener(this);
-    Frame.ANNIMATIONICONTIMER.addParrent(panelWarnings);
-    Frame.ANNIMATIONICONTIMER.addParrent(WarningsWindow);
 
     /* here we setup the Error window */
     ErrorsList = new FPGACommanderListModel(false);
@@ -167,8 +164,6 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
     ErrorsWindow.addWindowListener(this);
     ErrorsWindow.setSize(new Dimension(740, 400));
     ErrorsWindow.getListObject().addMouseListener(this);
-    Frame.ANNIMATIONICONTIMER.addParrent(panelErrors);
-    Frame.ANNIMATIONICONTIMER.addParrent(ErrorsWindow);
 
     /* finally we define the console window */
     ConsoleMessages = new ArrayList<>();
@@ -300,9 +295,9 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
 
   public void clearDRCTrace() {
     if (DRCTraceActive) {
-      ActiveDRCContainer.ClearMarks();
+      ActiveDRCContainer.clearMarks();
       DRCTraceActive = false;
-      if (MyProject!=null) MyProject.repaintCanvas();
+      if (MyProject != null) MyProject.repaintCanvas();
     }
   }
 
@@ -362,17 +357,19 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
   private void GenerateDRCTrace(SimpleDRCContainer dc) {
     DRCTraceActive = true;
     ActiveDRCContainer = dc;
-    if (dc.HasCircuit())
-      if (MyProject!= null && !MyProject.getCurrentCircuit().equals(dc.GetCircuit()))
-        MyProject.setCurrentCircuit(dc.GetCircuit());
-    dc.MarkComponents();
+    if (dc.hasCircuit())
+      if (MyProject != null && !MyProject.getCurrentCircuit().equals(dc.getCircuit()))
+        MyProject.setCurrentCircuit(dc.getCircuit());
+    dc.markComponents();
     if (MyProject != null) MyProject.repaintCanvas();
   }
 
-  /* Here the mouse events are handled */
   @Override
-  public void mouseClicked(MouseEvent e) {}
+  public void mouseClicked(MouseEvent mouseEvent) {
+    // do nothing
+  }
 
+  /* Here the mouse events are handled */
   @Override
   public void mousePressed(MouseEvent e) {
     if (e.getClickCount() > 1) {
@@ -446,15 +443,6 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
   }
 
   @Override
-  public void mouseEntered(MouseEvent e) {}
-
-  @Override
-  public void mouseExited(MouseEvent e) {}
-
-  @Override
-  public void windowOpened(WindowEvent e) {}
-
-  @Override
   public void windowClosing(WindowEvent e) {
     if (e.getSource().equals(InfoWindow)) {
       add(panelInfos, InfoTabIndex);
@@ -484,19 +472,4 @@ public class FPGAReportTabbedPane extends JTabbedPane implements MouseListener, 
       clearDRCTrace();
     }
   }
-
-  @Override
-  public void windowClosed(WindowEvent e) {}
-
-  @Override
-  public void windowIconified(WindowEvent e) {}
-
-  @Override
-  public void windowDeiconified(WindowEvent e) {}
-
-  @Override
-  public void windowActivated(WindowEvent e) {}
-
-  @Override
-  public void windowDeactivated(WindowEvent e) {}
 }

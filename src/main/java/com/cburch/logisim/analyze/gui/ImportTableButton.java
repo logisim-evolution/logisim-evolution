@@ -33,7 +33,6 @@ import static com.cburch.logisim.analyze.Strings.S;
 import com.cburch.logisim.analyze.file.TruthtableCsvFile;
 import com.cburch.logisim.analyze.file.TruthtableTextFile;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
-import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.util.JFileChoosers;
 import java.io.File;
@@ -64,22 +63,22 @@ public class ImportTableButton extends JButton {
 
   void doLoad() {
     if (lastFile == null) {
-      Circuit c = model.getCurrentCircuit();
+      final var c = model.getCurrentCircuit();
       if (c != null) lastFile = new File(c.getName() + ".txt");
       else lastFile = new File("truthtable.txt");
     }
-    JFileChooser chooser = JFileChoosers.createSelected(lastFile);
+    final var chooser = JFileChoosers.createSelected(lastFile);
     chooser.setDialogTitle(S.get("openButton"));
     chooser.addChoosableFileFilter(TruthtableTextFile.FILE_FILTER);
     chooser.addChoosableFileFilter(TruthtableCsvFile.FILE_FILTER);
     chooser.setFileFilter(TruthtableTextFile.FILE_FILTER);
-    int choice = chooser.showOpenDialog(parent);
+    final var choice = chooser.showOpenDialog(parent);
     if (choice == JFileChooser.APPROVE_OPTION) {
-      File file = chooser.getSelectedFile();
+      final var file = chooser.getSelectedFile();
       if (file.isDirectory()) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("notFileMessage", file.getName()),
+            S.get("notFileMessage", file.getName()),
             S.get("openErrorTitle"),
             OptionPane.OK_OPTION);
         return;
@@ -87,29 +86,30 @@ public class ImportTableButton extends JButton {
       if (!file.exists() || !file.canRead()) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("cantReadMessage", file.getName()),
+            S.get("cantReadMessage", file.getName()),
             S.get("openErrorTitle"),
             OptionPane.OK_OPTION);
         return;
       }
       try {
-        String FileName = file.getName();
-        int idx = FileName.lastIndexOf(".");
-        String ext = FileName.substring(idx + 1);
-        if (ext.equals("txt")) TruthtableTextFile.doLoad(file, model, parent);
-        else if (ext.equals("csv")) TruthtableCsvFile.doLoad(file, model, parent);
-        else {
+        final var fileName = file.getName();
+        final var idx = fileName.lastIndexOf(".");
+        final var ext = fileName.substring(idx + 1);
+        if (ext.equals("txt")) {
+          TruthtableTextFile.doLoad(file, model, parent);
+        } else if (ext.equals("csv")) {
+          TruthtableCsvFile.doLoad(file, model, parent);
+        } else {
           OptionPane.showMessageDialog(
               parent,
-              S.fmt("DoNotKnowHowto", FileName),
+              S.get("DoNotKnowHowto", fileName),
               S.get("openErrorTitle"),
               OptionPane.ERROR_MESSAGE);
           return;
         }
         lastFile = file;
       } catch (IOException e) {
-        OptionPane.showMessageDialog(
-            parent, e.getMessage(), S.get("openErrorTitle"), OptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(parent, e.getMessage(), S.get("openErrorTitle"), OptionPane.ERROR_MESSAGE);
       }
     }
   }

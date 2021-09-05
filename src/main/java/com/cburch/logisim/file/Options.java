@@ -52,9 +52,11 @@ public class Options {
           S.getter("gateUndefinedOption"),
           new AttributeOption[] {GATE_UNDEFINED_IGNORE, GATE_UNDEFINED_ERROR});
 
-  public static final Integer sim_rand_dflt = 32;
+  public static final Integer SIM_RAND_DFLT = 32;
 
-  private static final Attribute<?>[] ATTRIBUTES = {ATTR_GATE_UNDEFINED, ATTR_SIM_LIMIT, ATTR_SIM_RAND};
+  private static final Attribute<?>[] ATTRIBUTES = {
+    ATTR_GATE_UNDEFINED, ATTR_SIM_LIMIT, ATTR_SIM_RAND
+  };
   private static final Object[] DEFAULTS = {GATE_UNDEFINED_IGNORE, 1000, 0};
 
   private final AttributeSet attrs;

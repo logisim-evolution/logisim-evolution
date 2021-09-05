@@ -34,8 +34,8 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -52,8 +52,8 @@ import java.awt.event.MouseEvent;
 import java.util.HashSet;
 
 public abstract class AbstractTtlGate extends InstanceFactory {
-
-  protected static final int pinwidth = 10, pinheight = 7;
+  protected static final int PIN_WIDTH = 10;
+  protected static final int PIN_HEIGHT = 7;
   private int height = 60;
   protected final byte pinnumber;
   private final String name;
@@ -72,7 +72,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     super(name);
     setIconName("ttl.gif");
     setAttributes(
-        new Attribute[] {StdAttr.FACING, TTL.VCC_GND, TTL.DRAW_INTERNAL_STRUCTURE, StdAttr.LABEL},
+        new Attribute[] {StdAttr.FACING, TtlLibrary.VCC_GND, TtlLibrary.DRAW_INTERNAL_STRUCTURE, StdAttr.LABEL},
         new Object[] {Direction.EAST, false, false, ""});
     setFacingAttribute(StdAttr.FACING);
     this.name = name;
@@ -122,8 +122,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     this(name, pins, outputports);
     portnames = Ttlportnames;
     if (NotUsedPins == null) return;
-    for (byte notUsedPin : NotUsedPins)
-      unusedpins.add(notUsedPin);
+    for (final var notUsedPin : NotUsedPins) unusedpins.add(notUsedPin);
   }
 
   protected AbstractTtlGate(
@@ -137,8 +136,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   }
 
   private void computeTextField(Instance instance) {
-    Bounds bds = instance.getBounds();
-    Direction dir = instance.getAttributeValue(StdAttr.FACING);
+    final var bds = instance.getBounds();
+    final var dir = instance.getAttributeValue(StdAttr.FACING);
     if (dir == Direction.EAST || dir == Direction.WEST)
       instance.setTextField(
           StdAttr.LABEL,
@@ -166,7 +165,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    Direction dir = attrs.getValue(StdAttr.FACING);
+    final var dir = attrs.getValue(StdAttr.FACING);
     return Bounds.create(0, -30, this.pinnumber * 10, height).rotate(Direction.EAST, dir, 0, 0);
   }
 
@@ -176,17 +175,17 @@ public abstract class AbstractTtlGate extends InstanceFactory {
       instance.recomputeBounds();
       updateports(instance);
       computeTextField(instance);
-    } else if (attr == TTL.VCC_GND) {
+    } else if (attr == TtlLibrary.VCC_GND) {
       updateports(instance);
     }
   }
 
   static Point TTLGetTranslatedXY(InstanceState state, MouseEvent e) {
     int x = 0, y = 0;
-    Location loc = state.getInstance().getLocation();
-    int height = state.getInstance().getBounds().getHeight();
-    int width = state.getInstance().getBounds().getWidth();
-    Direction dir = state.getAttributeValue(StdAttr.FACING);
+    final var loc = state.getInstance().getLocation();
+    final var height = state.getInstance().getBounds().getHeight();
+    final var width = state.getInstance().getBounds().getWidth();
+    final var dir = state.getAttributeValue(StdAttr.FACING);
     if (dir.equals(Direction.EAST)) {
       x = e.getX() - loc.getX();
       y = e.getY() + 30 - loc.getY();
@@ -204,50 +203,51 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   }
 
   protected void paintBase(InstancePainter painter, boolean drawname, boolean ghost) {
-    Direction dir = painter.getAttributeValue(StdAttr.FACING);
-    Graphics2D g = (Graphics2D) painter.getGraphics();
-    Bounds bds = painter.getBounds();
-    int x = bds.getX();
-    int y = bds.getY();
-    int xp = x, yp = y;
-    int width = bds.getWidth();
-    int height = bds.getHeight();
+    final var dir = painter.getAttributeValue(StdAttr.FACING);
+    final var g = (Graphics2D) painter.getGraphics();
+    final var bds = painter.getBounds();
+    final var x = bds.getX();
+    final var y = bds.getY();
+    var xp = x;
+    var yp = y;
+    var width = bds.getWidth();
+    var height = bds.getHeight();
     for (byte i = 0; i < this.pinnumber; i++) {
       if (i < this.pinnumber / 2) {
-        if (dir == Direction.WEST || dir == Direction.EAST) xp = i * 20 + (10 - pinwidth / 2) + x;
-        else yp = i * 20 + (10 - pinwidth / 2) + y;
+        if (dir == Direction.WEST || dir == Direction.EAST) xp = i * 20 + (10 - PIN_WIDTH / 2) + x;
+        else yp = i * 20 + (10 - PIN_WIDTH / 2) + y;
       } else {
         if (dir == Direction.WEST || dir == Direction.EAST) {
-          xp = (i - this.pinnumber / 2) * 20 + (10 - pinwidth / 2) + x;
-          yp = height + y - pinheight;
+          xp = (i - this.pinnumber / 2) * 20 + (10 - PIN_WIDTH / 2) + x;
+          yp = height + y - PIN_HEIGHT;
         } else {
-          yp = (i - this.pinnumber / 2) * 20 + (10 - pinwidth / 2) + y;
-          xp = width + x - pinheight;
+          yp = (i - this.pinnumber / 2) * 20 + (10 - PIN_WIDTH / 2) + y;
+          xp = width + x - PIN_HEIGHT;
         }
       }
       if (dir == Direction.WEST || dir == Direction.EAST) {
         // fill the background of white if selected from preferences
-        g.drawRect(xp, yp, pinwidth, pinheight);
+        g.drawRect(xp, yp, PIN_WIDTH, PIN_HEIGHT);
       } else {
         // fill the background of white if selected from preferences
-        g.drawRect(xp, yp, pinheight, pinwidth);
+        g.drawRect(xp, yp, PIN_HEIGHT, PIN_WIDTH);
       }
     }
     if (dir == Direction.SOUTH) {
       // fill the background of white if selected from preferences
-      g.drawRoundRect(x + pinheight, y, bds.getWidth() - pinheight * 2, bds.getHeight(), 10, 10);
+      g.drawRoundRect(x + PIN_HEIGHT, y, bds.getWidth() - PIN_HEIGHT * 2, bds.getHeight(), 10, 10);
       g.drawArc(x + width / 2 - 7, y - 7, 14, 14, 180, 180);
     } else if (dir == Direction.WEST) {
       // fill the background of white if selected from preferences
-      g.drawRoundRect(x, y + pinheight, bds.getWidth(), bds.getHeight() - pinheight * 2, 10, 10);
+      g.drawRoundRect(x, y + PIN_HEIGHT, bds.getWidth(), bds.getHeight() - PIN_HEIGHT * 2, 10, 10);
       g.drawArc(x + width - 7, y + height / 2 - 7, 14, 14, 90, 180);
     } else if (dir == Direction.NORTH) {
       // fill the background of white if selected from preferences
-      g.drawRoundRect(x + pinheight, y, bds.getWidth() - pinheight * 2, bds.getHeight(), 10, 10);
+      g.drawRoundRect(x + PIN_HEIGHT, y, bds.getWidth() - PIN_HEIGHT * 2, bds.getHeight(), 10, 10);
       g.drawArc(x + width / 2 - 7, y + height - 7, 14, 14, 0, 180);
     } else { // east
       // fill the background of white if selected from preferences
-      g.drawRoundRect(x, y + pinheight, bds.getWidth(), bds.getHeight() - pinheight * 2, 10, 10);
+      g.drawRoundRect(x, y + PIN_HEIGHT, bds.getWidth(), bds.getHeight() - PIN_HEIGHT * 2, 10, 10);
       g.drawArc(x - 7, y + height / 2 - 7, 14, 14, 270, 180);
     }
     g.rotate(Math.toRadians(-dir.toDegrees()), x + width / 2, y + height / 2);
@@ -266,8 +266,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
       height = bds.getWidth();
     }
     g.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 7));
-    GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + pinheight + 4);
-    GraphicsUtil.drawCenteredText(g, "GND", xp + width - 10, yp + height - pinheight - 7);
+    GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + PIN_HEIGHT + 4);
+    GraphicsUtil.drawCenteredText(g, "GND", xp + width - 10, yp + height - PIN_HEIGHT - 7);
   }
 
   @Override
@@ -278,36 +278,37 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     painter.drawPorts();
-    Graphics2D g = (Graphics2D) painter.getGraphics();
+    final var g = (Graphics2D) painter.getGraphics();
     painter.drawLabel();
-    if (!painter.getAttributeValue(TTL.DRAW_INTERNAL_STRUCTURE)) {
-      Direction dir = painter.getAttributeValue(StdAttr.FACING);
-      Bounds bds = painter.getBounds();
-      int x = bds.getX();
-      int y = bds.getY();
-      int xp = x, yp = y;
-      int width = bds.getWidth();
-      int height = bds.getHeight();
+    if (!painter.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE)) {
+      final var dir = painter.getAttributeValue(StdAttr.FACING);
+      final var bds = painter.getBounds();
+      final var x = bds.getX();
+      final var y = bds.getY();
+      var xp = x;
+      var yp = y;
+      final var width = bds.getWidth();
+      final var height = bds.getHeight();
       for (byte i = 0; i < this.pinnumber; i++) {
         if (i == this.pinnumber / 2) {
           xp = x;
           yp = y;
           if (dir == Direction.WEST || dir == Direction.EAST) {
             g.setColor(Color.DARK_GRAY.darker());
-            g.fillRoundRect(xp, yp + pinheight, width, height - pinheight * 2 + 2, 10, 10);
+            g.fillRoundRect(xp, yp + PIN_HEIGHT, width, height - PIN_HEIGHT * 2 + 2, 10, 10);
             g.setColor(Color.DARK_GRAY);
-            g.fillRoundRect(xp, yp + pinheight, width, height - pinheight * 2 - 2, 10, 10);
+            g.fillRoundRect(xp, yp + PIN_HEIGHT, width, height - PIN_HEIGHT * 2 - 2, 10, 10);
             g.setColor(Color.BLACK);
-            g.drawRoundRect(xp, yp + pinheight, width, height - pinheight * 2 - 2, 10, 10);
-            g.drawRoundRect(xp, yp + pinheight, width, height - pinheight * 2 + 2, 10, 10);
+            g.drawRoundRect(xp, yp + PIN_HEIGHT, width, height - PIN_HEIGHT * 2 - 2, 10, 10);
+            g.drawRoundRect(xp, yp + PIN_HEIGHT, width, height - PIN_HEIGHT * 2 + 2, 10, 10);
           } else {
             g.setColor(Color.DARK_GRAY.darker());
-            g.fillRoundRect(xp + pinheight, yp, width - pinheight * 2, height, 10, 10);
+            g.fillRoundRect(xp + PIN_HEIGHT, yp, width - PIN_HEIGHT * 2, height, 10, 10);
             g.setColor(Color.DARK_GRAY);
-            g.fillRoundRect(xp + pinheight, yp, width - pinheight * 2, height - 4, 10, 10);
+            g.fillRoundRect(xp + PIN_HEIGHT, yp, width - PIN_HEIGHT * 2, height - 4, 10, 10);
             g.setColor(Color.BLACK);
-            g.drawRoundRect(xp + pinheight, yp, width - pinheight * 2, height - 4, 10, 10);
-            g.drawRoundRect(xp + pinheight, yp, width - pinheight * 2, height, 10, 10);
+            g.drawRoundRect(xp + PIN_HEIGHT, yp, width - PIN_HEIGHT * 2, height - 4, 10, 10);
+            g.drawRoundRect(xp + PIN_HEIGHT, yp, width - PIN_HEIGHT * 2, height, 10, 10);
           }
           if (dir == Direction.SOUTH) g.fillArc(xp + width / 2 - 7, yp - 7, 14, 14, 180, 180);
           else if (dir == Direction.WEST)
@@ -315,30 +316,30 @@ public abstract class AbstractTtlGate extends InstanceFactory {
           else if (dir == Direction.NORTH)
             g.fillArc(xp + width / 2 - 7, yp + height - 11, 14, 14, 0, 180);
           else // east
-          g.fillArc(xp - 7, yp + height / 2 - 7, 14, 14, 270, 180);
+            g.fillArc(xp - 7, yp + height / 2 - 7, 14, 14, 270, 180);
         }
         if (i < this.pinnumber / 2) {
-          if (dir == Direction.WEST || dir == Direction.EAST) xp = i * 20 + (10 - pinwidth / 2) + x;
-          else yp = i * 20 + (10 - pinwidth / 2) + y;
+          if (dir == Direction.WEST || dir == Direction.EAST) xp = i * 20 + (10 - PIN_WIDTH / 2) + x;
+          else yp = i * 20 + (10 - PIN_WIDTH / 2) + y;
         } else {
           if (dir == Direction.WEST || dir == Direction.EAST) {
-            xp = (i - this.pinnumber / 2) * 20 + (10 - pinwidth / 2) + x;
-            yp = height + y - pinheight;
+            xp = (i - this.pinnumber / 2) * 20 + (10 - PIN_WIDTH / 2) + x;
+            yp = height + y - PIN_HEIGHT;
           } else {
-            yp = (i - this.pinnumber / 2) * 20 + (10 - pinwidth / 2) + y;
-            xp = width + x - pinheight;
+            yp = (i - this.pinnumber / 2) * 20 + (10 - PIN_WIDTH / 2) + y;
+            xp = width + x - PIN_HEIGHT;
           }
         }
         if (dir == Direction.WEST || dir == Direction.EAST) {
           g.setColor(Color.LIGHT_GRAY);
-          g.fillRect(xp, yp, pinwidth, pinheight);
+          g.fillRect(xp, yp, PIN_WIDTH, PIN_HEIGHT);
           g.setColor(Color.BLACK);
-          g.drawRect(xp, yp, pinwidth, pinheight);
+          g.drawRect(xp, yp, PIN_WIDTH, PIN_HEIGHT);
         } else {
           g.setColor(Color.LIGHT_GRAY);
-          g.fillRect(xp, yp, pinheight, pinwidth);
+          g.fillRect(xp, yp, PIN_HEIGHT, PIN_WIDTH);
           g.setColor(Color.BLACK);
-          g.drawRect(xp, yp, pinheight, pinwidth);
+          g.drawRect(xp, yp, PIN_HEIGHT, PIN_WIDTH);
         }
       }
 
@@ -355,17 +356,17 @@ public abstract class AbstractTtlGate extends InstanceFactory {
         yp = y + (height - width) / 2;
       }
       if (dir == Direction.SOUTH) {
-        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + pinheight + 4);
-        GraphicsUtil.drawCenteredText(g, "GND", xp + height - 14, yp + width - pinheight - 8);
+        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + PIN_HEIGHT + 4);
+        GraphicsUtil.drawCenteredText(g, "GND", xp + height - 14, yp + width - PIN_HEIGHT - 8);
       } else if (dir == Direction.WEST) {
-        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + pinheight + 6);
-        GraphicsUtil.drawCenteredText(g, "GND", xp + width - 10, yp + height - pinheight - 8);
+        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + PIN_HEIGHT + 6);
+        GraphicsUtil.drawCenteredText(g, "GND", xp + width - 10, yp + height - PIN_HEIGHT - 8);
       } else if (dir == Direction.NORTH) {
-        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 14, yp + pinheight + 4);
-        GraphicsUtil.drawCenteredText(g, "GND", xp + height - 10, yp + width - pinheight - 8);
+        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 14, yp + PIN_HEIGHT + 4);
+        GraphicsUtil.drawCenteredText(g, "GND", xp + height - 10, yp + width - PIN_HEIGHT - 8);
       } else { // east
-        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + pinheight + 4);
-        GraphicsUtil.drawCenteredText(g, "GND", xp + width - 10, yp + height - pinheight - 10);
+        GraphicsUtil.drawCenteredText(g, "Vcc", xp + 10, yp + PIN_HEIGHT + 4);
+        GraphicsUtil.drawCenteredText(g, "GND", xp + width - 10, yp + height - PIN_HEIGHT - 10);
       }
     } else paintInternalBase(painter);
   }
@@ -385,12 +386,12 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   public abstract void paintInternal(InstancePainter painter, int x, int y, int height, boolean up);
 
   private void paintInternalBase(InstancePainter painter) {
-    Direction dir = painter.getAttributeValue(StdAttr.FACING);
-    Bounds bds = painter.getBounds();
-    int x = bds.getX();
-    int y = bds.getY();
-    int width = bds.getWidth();
-    int height = bds.getHeight();
+    final var dir = painter.getAttributeValue(StdAttr.FACING);
+    final var bds = painter.getBounds();
+    var x = bds.getX();
+    var y = bds.getY();
+    var width = bds.getWidth();
+    var height = bds.getHeight();
     if (dir == Direction.SOUTH || dir == Direction.NORTH) {
       x += (width - height) / 2;
       y += (height - width) / 2;
@@ -398,7 +399,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
       height = bds.getWidth();
     }
 
-    if (this.ngatestodraw == 0) paintInternal(painter, x, y, height, false);
+    if (this.ngatestodraw == 0)
+      paintInternal(painter, x, y, height, false);
     else {
       paintBase(painter, false, false);
       for (byte i = 0; i < this.ngatestodraw; i++) {
@@ -418,11 +420,11 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   /** Here you have to write the logic of your component */
   @Override
   public void propagate(InstanceState state) {
-    int NrOfUnusedPins = unusedpins.size();
-    if (state.getAttributeValue(TTL.VCC_GND)
+    final var NrOfUnusedPins = unusedpins.size();
+    if (state.getAttributeValue(TtlLibrary.VCC_GND)
         && (state.getPortValue(this.pinnumber - 2 - NrOfUnusedPins) != Value.FALSE
             || state.getPortValue(this.pinnumber - 1 - NrOfUnusedPins) != Value.TRUE)) {
-      int port = 0;
+      var port = 0;
       for (byte i = 1; i <= pinnumber; i++) {
         if (!unusedpins.contains(i) && (i != (pinnumber / 2))) {
           if (outputports.contains(i)) state.setPort(port, Value.UNKNOWN, 1);
@@ -435,19 +437,22 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   public abstract void ttlpropagate(InstanceState state);
 
   private void updateports(Instance instance) {
-    Bounds bds = instance.getBounds();
-    Direction dir = instance.getAttributeValue(StdAttr.FACING);
-    int dx = 0, dy = 0, width = bds.getWidth(), height = bds.getHeight();
+    final var bds = instance.getBounds();
+    final var dir = instance.getAttributeValue(StdAttr.FACING);
+    var dx = 0;
+    var dy = 0;
+    final var width = bds.getWidth();
+    final var height = bds.getHeight();
     byte portindex = 0;
-    boolean isoutput = false, hasvccgnd = instance.getAttributeValue(TTL.VCC_GND);
-    boolean skip = false;
-    int NrOfUnusedPins = unusedpins.size();
+    var isoutput = false;
+    var hasvccgnd = instance.getAttributeValue(TtlLibrary.VCC_GND);
+    var skip = false;
+    final var NrOfUnusedPins = unusedpins.size();
     /*
      * array port is composed in this order: lower ports less GND, upper ports less
      * Vcc, GND, Vcc
      */
-    Port[] ps =
-        new Port[hasvccgnd ? this.pinnumber - NrOfUnusedPins : this.pinnumber - 2 - NrOfUnusedPins];
+    final var ps = new Port[hasvccgnd ? this.pinnumber - NrOfUnusedPins : this.pinnumber - 2 - NrOfUnusedPins];
 
     for (byte i = 0; i < this.pinnumber; i++) {
       isoutput = outputports.contains((byte) (i + 1));
@@ -498,7 +503,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
         } else if (i == this.pinnumber / 2 - 1) { // GND
           if (hasvccgnd) {
             ps[ps.length - 2] = new Port(dx, dy, Port.INPUT, 1);
-            ps[ps.length - 2].setToolTip(S.getter("GNDPin",Integer.toString(this.pinnumber / 2)));
+            ps[ps.length - 2].setToolTip(S.getter("GNDPin", Integer.toString(this.pinnumber / 2)));
           }
           portindex--;
         } else if (i != this.pinnumber - 1 && i != this.pinnumber / 2 - 1) { // normal output
@@ -513,29 +518,35 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     }
     instance.setPorts(ps);
   }
-  
+
   @Override
   public final void paintIcon(InstancePainter painter) {
-    Graphics2D g = (Graphics2D) painter.getGraphics().create();
+    final var g = (Graphics2D) painter.getGraphics().create();
     g.setColor(Color.DARK_GRAY.brighter());
     GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
-    g.fillRoundRect(AppPreferences.getScaled(4), 0 , AppPreferences.getScaled(8), AppPreferences.getScaled(16), 
-    		AppPreferences.getScaled(3), AppPreferences.getScaled(3));
+    g.fillRoundRect(AppPreferences.getScaled(4), 0, AppPreferences.getScaled(8), AppPreferences.getScaled(16),
+            AppPreferences.getScaled(3), AppPreferences.getScaled(3));
     g.setColor(Color.black);
-    g.drawRoundRect(AppPreferences.getScaled(4), 0 , AppPreferences.getScaled(8), AppPreferences.getScaled(16), 
-    		AppPreferences.getScaled(3), AppPreferences.getScaled(3));
-    int wh1 = AppPreferences.getScaled(3);
-    int wh2 = AppPreferences.getScaled(2);
-    for (int y = 0 ; y < 3 ; y++) {
+    g.drawRoundRect(AppPreferences.getScaled(4), 0, AppPreferences.getScaled(8), AppPreferences.getScaled(16),
+            AppPreferences.getScaled(3), AppPreferences.getScaled(3));
+    final var wh1 = AppPreferences.getScaled(3);
+    final var wh2 = AppPreferences.getScaled(2);
+    for (int y = 0; y < 3; y++) {
       g.setColor(Color.LIGHT_GRAY);
-      g.fillRect(wh2, AppPreferences.getScaled(y*5+1), wh1, wh1);
-      g.fillRect(AppPreferences.getScaled(12), AppPreferences.getScaled(y*5+1),wh1,wh1);
+      g.fillRect(wh2, AppPreferences.getScaled(y * 5 + 1), wh1, wh1);
+      g.fillRect(AppPreferences.getScaled(12), AppPreferences.getScaled(y * 5 + 1), wh1, wh1);
       g.setColor(Color.BLACK);
-      g.drawRect(wh2, AppPreferences.getScaled(y*5+1), wh1, wh1);
-      g.drawRect(AppPreferences.getScaled(12), AppPreferences.getScaled(y*5+1),wh1,wh1);
+      g.drawRect(wh2, AppPreferences.getScaled(y * 5 + 1), wh1, wh1);
+      g.drawRect(AppPreferences.getScaled(12), AppPreferences.getScaled(y * 5 + 1), wh1, wh1);
     }
-    g.drawRoundRect(AppPreferences.getScaled(6), 0 , AppPreferences.getScaled(6), AppPreferences.getScaled(16), 
-    		AppPreferences.getScaled(3), AppPreferences.getScaled(3));
+    g.drawRoundRect(AppPreferences.getScaled(6), 0, AppPreferences.getScaled(6), AppPreferences.getScaled(16),
+            AppPreferences.getScaled(3), AppPreferences.getScaled(3));
     g.dispose();
   }
+
+  @Override
+  public String getHDLName(AttributeSet attrs) {
+    return CorrectLabel.getCorrectLabel("TTL" + getName()).toUpperCase();
+  }
+
 }

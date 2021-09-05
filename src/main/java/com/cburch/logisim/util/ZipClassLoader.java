@@ -34,7 +34,6 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -55,7 +54,7 @@ public class ZipClassLoader extends ClassLoader {
 
     @SuppressWarnings("unused")
     void ensureDone() {
-      boolean aborted = false;
+      var aborted = false;
       synchronized (this) {
         if (!responseSent) {
           aborted = true;
@@ -65,7 +64,7 @@ public class ZipClassLoader extends ClassLoader {
         }
       }
       if (aborted && DEBUG >= 1) {
-        logger.error("request not handled successfully"); // OK
+        logger.error("request not handled successfully");
       }
     }
 
@@ -91,8 +90,7 @@ public class ZipClassLoader extends ClassLoader {
 
     @Override
     public String toString() {
-      String act =
-          action == REQUEST_LOAD ? "load" : action == REQUEST_FIND ? "find" : "act" + action;
+      final var act = action == REQUEST_LOAD ? "load" : action == REQUEST_FIND ? "find" : "act" + action;
       return act + ":" + resource;
     }
   }
@@ -109,11 +107,11 @@ public class ZipClassLoader extends ClassLoader {
     private void ensureZipOpen() {
       if (zipFile == null) {
         try {
-          if (DEBUG >= 3) logger.debug("  open ZIP file"); // OK
+          if (DEBUG >= 3) logger.debug("  open ZIP file");
           zipFile = new ZipFile(zipPath);
-          if (DEBUG >= 1) logger.debug("  ZIP opened"); // OK
+          if (DEBUG >= 1) logger.debug("  ZIP opened");
         } catch (IOException e) {
-          if (DEBUG >= 1) logger.error("  error opening ZIP file"); // OK
+          if (DEBUG >= 1) logger.error("  error opening ZIP file");
         }
       }
     }
@@ -124,17 +122,17 @@ public class ZipClassLoader extends ClassLoader {
       Object ret = null;
       try {
         if (zipFile != null) {
-          if (DEBUG >= 3) logger.debug("  retrieve ZIP entry"); // OK
-          String res = req.resource;
-          ZipEntry zipEntry = zipFile.getEntry(res);
+          if (DEBUG >= 3) logger.debug("  retrieve ZIP entry");
+          final var res = req.resource;
+          final var zipEntry = zipFile.getEntry(res);
           if (zipEntry != null) {
-            String url = "jar:" + zipPath.toURI() + "!/" + res;
+            final var url = "jar:" + zipPath.toURI() + "!/" + res;
             ret = new URL(url);
-            if (DEBUG >= 3) logger.debug("  found: " + url); // OK
+            if (DEBUG >= 3) logger.debug("  found: " + url);
           }
         }
       } catch (Exception ex) {
-        if (DEBUG >= 3) logger.error("  error retrieving data"); // OK
+        if (DEBUG >= 3) logger.error("  error retrieving data");
         ex.printStackTrace();
       }
       req.setResponse(ret);
@@ -147,30 +145,30 @@ public class ZipClassLoader extends ClassLoader {
       Object ret = null;
       try {
         if (zipFile != null) {
-          if (DEBUG >= 3) logger.debug("  retrieve ZIP entry"); // OK
-          ZipEntry zipEntry = zipFile.getEntry(req.resource);
+          if (DEBUG >= 3) logger.debug("  retrieve ZIP entry");
+          final var zipEntry = zipFile.getEntry(req.resource);
           if (zipEntry != null) {
-            if (DEBUG >= 3) logger.debug("  load file"); // OK
-            byte[] result = new byte[(int) zipEntry.getSize()];
+            if (DEBUG >= 3) logger.debug("  load file");
+            final var result = new byte[(int) zipEntry.getSize()];
             bis = new BufferedInputStream(zipFile.getInputStream(zipEntry));
             try {
               bis.read(result, 0, result.length);
               ret = result;
             } catch (IOException e) {
-              if (DEBUG >= 3) logger.error("  error loading file"); // OK
+              if (DEBUG >= 3) logger.error("  error loading file");
             }
           }
         }
       } catch (Exception ex) {
-        if (DEBUG >= 3) logger.error("  error retrieving data"); // OK
+        if (DEBUG >= 3) logger.error("  error retrieving data");
         ex.printStackTrace();
       } finally {
         if (bis != null) {
           try {
-            if (DEBUG >= 3) logger.debug("  close file"); // OK
+            if (DEBUG >= 3) logger.debug("  close file");
             bis.close();
           } catch (IOException ioex) {
-            if (DEBUG >= 3) logger.error("  error closing data"); // OK
+            if (DEBUG >= 3) logger.error("  error closing data");
           }
         }
       }
@@ -182,10 +180,10 @@ public class ZipClassLoader extends ClassLoader {
     public void run() {
       try {
         while (true) {
-          Request request = waitForNextRequest();
+          final var request = waitForNextRequest();
           if (request == null) return;
 
-          if (DEBUG >= 2) logger.debug("processing " + request); // OK
+          if (DEBUG >= 2) logger.debug("processing " + request);
           try {
             switch (request.action) {
               case REQUEST_LOAD:
@@ -198,21 +196,21 @@ public class ZipClassLoader extends ClassLoader {
           } finally {
             request.ensureDone();
           }
-          if (DEBUG >= 2) logger.debug("processed: " + request.getResponse()); // OK
+          if (DEBUG >= 2) logger.debug("processed: " + request.getResponse());
         }
       } catch (Exception t) {
         if (DEBUG >= 3) {
           logger.error("uncaught: ");
           t.printStackTrace();
-        } // OK
+        }
       } finally {
         if (zipFile != null) {
           try {
             zipFile.close();
             zipFile = null;
-            if (DEBUG >= 1) logger.debug("  ZIP closed"); // OK
+            if (DEBUG >= 1) logger.debug("  ZIP closed");
           } catch (IOException e) {
-            if (DEBUG >= 1) logger.error("Error closing ZIP file"); // OK
+            if (DEBUG >= 1) logger.error("Error closing ZIP file");
           }
         }
       }
@@ -271,7 +269,7 @@ public class ZipClassLoader extends ClassLoader {
   @SuppressWarnings("unused")
   @Override
   public Class<?> findClass(String className) throws ClassNotFoundException {
-    boolean found = false;
+    var found = false;
     Object result = null;
 
     // check whether we have loaded this class before
@@ -282,17 +280,17 @@ public class ZipClassLoader extends ClassLoader {
 
     // try loading it from the ZIP file if we haven't
     if (!found) {
-      String resourceName = className.replace('.', '/') + ".class";
+      final var resourceName = className.replace('.', '/') + ".class";
       result = request(REQUEST_LOAD, resourceName);
 
       if (result instanceof byte[]) {
-        if (DEBUG >= 3) logger.debug("  define class"); // OK
-        byte[] data = (byte[]) result;
+        if (DEBUG >= 3) logger.debug("  define class");
+        final var data = (byte[]) result;
         result = defineClass(className, data, 0, data.length);
         if (result != null) {
-          if (DEBUG >= 3) logger.debug("  class defined"); // OK
+          if (DEBUG >= 3) logger.debug("  class defined");
         } else {
-          if (DEBUG >= 3) logger.error("  format error"); // OK
+          if (DEBUG >= 3) logger.error("  format error");
           result = new ClassFormatError(className);
         }
       }
@@ -316,8 +314,8 @@ public class ZipClassLoader extends ClassLoader {
   @SuppressWarnings("unused")
   @Override
   public URL findResource(String resourceName) {
-    if (DEBUG >= 3) logger.debug("findResource " + resourceName); // OK
-    Object ret = request(REQUEST_FIND, resourceName);
+    if (DEBUG >= 3) logger.debug("findResource " + resourceName);
+    final var ret = request(REQUEST_FIND, resourceName);
     if (ret instanceof URL) {
       return (URL) ret;
     } else {

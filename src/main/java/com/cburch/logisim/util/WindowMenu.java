@@ -46,6 +46,7 @@ import javax.swing.KeyStroke;
 
 public class WindowMenu extends JMenu {
   private class MyListener implements LocaleListener, ActionListener {
+    @Override
     public void actionPerformed(ActionEvent e) {
       Object src = e.getSource();
       if (src == minimize) {
@@ -76,6 +77,7 @@ public class WindowMenu extends JMenu {
       return null;
     }
 
+    @Override
     public void localeChanged() {
       WindowMenu.this.setText(S.get("windowMenu"));
       minimize.setText(S.get("windowMinimizeItem"));
@@ -98,11 +100,16 @@ public class WindowMenu extends JMenu {
   private final ArrayList<WindowMenuItem> persistentItems = new ArrayList<>();
   private final ArrayList<WindowMenuItem> transientItems = new ArrayList<>();
 
+  /**
+   * Constructor for "Window" menu.
+   *
+   * @param owner Parent frame.
+   */
   public WindowMenu(JFrame owner) {
     this.owner = owner;
     WindowMenuManager.addMenu(this);
 
-    int menuMask = getToolkit().getMenuShortcutKeyMaskEx();
+    final var menuMask = getToolkit().getMenuShortcutKeyMaskEx();
     minimize.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, menuMask));
     close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask));
 
@@ -131,7 +138,7 @@ public class WindowMenu extends JMenu {
   }
 
   private void computeContents() {
-    ButtonGroup bgroup = new ButtonGroup();
+    final var bgroup = new ButtonGroup();
     bgroup.add(nullItem);
 
     removeAll();
@@ -196,12 +203,12 @@ public class WindowMenu extends JMenu {
     if (owner == null) return;
 
     owner.pack();
-    Dimension screenSize = owner.getToolkit().getScreenSize();
-    Dimension windowSize = owner.getPreferredSize();
-    Point windowLoc = owner.getLocation();
+    final var screenSize = owner.getToolkit().getScreenSize();
+    final var windowSize = owner.getPreferredSize();
+    final var windowLoc = owner.getLocation();
 
-    boolean locChanged = false;
-    boolean sizeChanged = false;
+    var locChanged = false;
+    var sizeChanged = false;
     if (windowLoc.x + windowSize.width > screenSize.width) {
       windowLoc.x = Math.max(0, screenSize.width - windowSize.width);
       locChanged = true;

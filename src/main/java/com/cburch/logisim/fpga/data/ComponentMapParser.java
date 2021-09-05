@@ -47,10 +47,10 @@ public class ComponentMapParser {
   private MappableResourcesContainer MappableComponents = null;
   private BoardInformation BoardInfo = null;
   private final String[] MapSectionStrings = {"Key", "LocationX", "LocationY", "Width", "Height"};
-  private final static int WrongCircuit = -1;
-  private final static int WrongBoard = -2;
-  private final static int ErrorCreatingDocument = -3;
-  private final static int ErrorParsingFile = -4;
+  private static final int WrongCircuit = -1;
+  private static final int WrongBoard = -2;
+  private static final int ErrorCreatingDocument = -3;
+  private static final int ErrorParsingFile = -4;
 
   public ComponentMapParser(
       File file, MappableResourcesContainer mapResContainer, BoardInformation brdInfo) {
@@ -64,15 +64,20 @@ public class ComponentMapParser {
     MappableComponents.unMapAll();
     MappableComponents.updateMapableComponents();
   }
-  
+
   public String getError(int error) {
-	switch (error) {
-	   case WrongCircuit : return S.get("BoardMapWrongCircuit");
-	   case WrongBoard   : return S.get("BoardMapWrongBoard");
-	   case ErrorCreatingDocument : return S.get("BoardMapErrorCD");
-	   case ErrorParsingFile : return S.get("BoardMapErrorPF");
-	   default           : return S.get("BoardMapUnknown");
-	}
+    switch (error) {
+      case WrongCircuit:
+        return S.get("BoardMapWrongCircuit");
+      case WrongBoard:
+        return S.get("BoardMapWrongBoard");
+      case ErrorCreatingDocument:
+        return S.get("BoardMapErrorCD");
+      case ErrorParsingFile:
+        return S.get("BoardMapErrorPF");
+      default:
+        return S.get("BoardMapUnknown");
+    }
   }
 
   public int parseFile() {

@@ -37,41 +37,77 @@ import java.util.HashSet;
 
 public abstract class Expression {
   public interface Visitor<T> {
-    default T visitVariable(String name) { return null; }
-    default T visitConstant(int value) { return null; }
-    default T visitNot(Expression a) { return null; }
+    default T visitVariable(String name) {
+      return null;
+    }
+
+    default T visitConstant(int value) {
+      return null;
+    }
+
+    default T visitNot(Expression a) {
+      return null;
+    }
+
     default T visitBinary(Expression a, Expression b, Op op) {
       a.visit(this);
       b.visit(this);
       return null;
     }
-    default T visitAnd(Expression a, Expression b) { return visitBinary(a, b, Op.AND); }
-    default T visitOr(Expression a, Expression b) { return visitBinary(a, b, Op.OR); }
-    default T visitXor(Expression a, Expression b) { return visitBinary(a, b, Op.XOR); }
-    default T visitXnor(Expression a, Expression b) { return visitBinary(a, b, Op.XNOR); }
-    default T visitEq(Expression a, Expression b) { return visitBinary(a, b, Op.EQ); }
+
+    default T visitAnd(Expression a, Expression b) {
+      return visitBinary(a, b, Op.AND);
+    }
+
+    default T visitOr(Expression a, Expression b) {
+      return visitBinary(a, b, Op.OR);
+    }
+
+    default T visitXor(Expression a, Expression b) {
+      return visitBinary(a, b, Op.XOR);
+    }
+
+    default T visitXnor(Expression a, Expression b) {
+      return visitBinary(a, b, Op.XNOR);
+    }
+
+    default T visitEq(Expression a, Expression b) {
+      return visitBinary(a, b, Op.EQ);
+    }
   }
-  
+
   protected interface IntVisitor {
     int visitVariable(String name);
+
     int visitConstant(int value);
+
     int visitNot(Expression a);
+
     int visitAnd(Expression a, Expression b);
+
     int visitOr(Expression a, Expression b);
+
     int visitXor(Expression a, Expression b);
+
     int visitXnor(Expression a, Expression b);
+
     int visitEq(Expression a, Expression b);
   }
 
   public boolean contains(Op o) {
-    return o == visit(new Visitor<Op>() {
-      @Override
-      public Op visitBinary(Expression a, Expression b, Op op) {
-        return (op == o || a.visit(this) == o || b.visit(this) == o) ? o : null;
-      }
-      @Override
-      public Op visitNot(Expression a) { return a.visit(this); }
-    });
+    return o
+        == visit(
+            new Visitor<Op>() {
+              @Override
+              public Op visitBinary(Expression a, Expression b, Op op) {
+                return (op == o || a.visit(this) == o || b.visit(this) == o) ? o : null;
+              }
+
+              @Override
+              public Op visitNot(Expression a) {
+                return a.visit(this);
+              }
+            });
   }
 
   public boolean evaluate(final Assignments assignments) {
@@ -107,91 +143,98 @@ public abstract class Expression {
               public int visitXor(Expression a, Expression b) {
                 return a.visit(this) ^ b.visit(this);
               }
-              
+
               @Override
               public int visitXnor(Expression a, Expression b) {
-            	  return ~(a.visit(this) ^ b.visit(this));
+                return ~(a.visit(this) ^ b.visit(this));
               }
-              
+
               @Override
               public int visitEq(Expression a, Expression b) {
-                return ~(a.visit(this) ^ b.visit(this)&1);
+                return ~(a.visit(this) ^ b.visit(this) & 1);
               }
             });
     return (ret & 1) != 0;
   }
-  
-  public enum Notation { MATHEMATICAL(0), LOGIC(1), ALTLOGIC(2), PROGBOOLS(3), PROGBITS(4), LaTeX(5);
 
-  public final int Id;
+  public enum Notation {
+    MATHEMATICAL(0),
+    LOGIC(1),
+    ALTLOGIC(2),
+    PROGBOOLS(3),
+    PROGBITS(4),
+    LaTeX(5);
 
-  public final int[] opLvl;
-  public final String[] opSym;
+    public final int id;
 
-  // Notes on precedence:
-  // all forms of NOT are the highest precedence level
-  public static final int NOT_PRECEDENCE = 14;
-  // times and implicit and are next
-  public static final int IMPLICIT_AND_PRECEDENCE = 13;
-  public static final int TIMES_PRECEDENCE = 13;
-  // oplus is next
-  public static final int OPLUS_PRECEDENCE = 12;
-  // plus is next
-  public static final int PLUS_PRECEDENCE = 11;
-  // otimes is next
-  public static final int OTIMES_PRECEDENCE = 10;
-  // not-equals, not-equiv, equiv, vee, vee-underbar, and cap are next
-  public static final int LOGIC_PRECEDENCE = 9;
-  // & is next
-  public static final int BITAND_PRECEDENCE = 8;
-  // ^ is next
-  public static final int BITXOR_PRECEDENCE = 7;
-  // | is next
-  public static final int BITOR_PRECEDENCE = 6;
-  // && is next
-  public static final int AND_PRECEDENCE = 5;
-  // || is next
-  public static final int OR_PRECEDENCE = 4;
-  // "and" is next
-  public static final int PYTHON_AND_PRECEDENCE = 3;
-  // "xor" is next
-  public static final int PYTHON_XOR_PRECEDENCE = 2;
-  // "or" is next
-  public static final int PYTHON_OR_PRECEDENCE = 1;
-  // all forms of equals are level 0
-  public static final int EQ_PRECEDENCE = 0;
+    public final int[] opLvl;
+    public final String[] opSym;
 
-  Notation(int id) {
-    Id = id;
-    // Precendence level and symbol for each of { EQ, XNOR, OR, XOR, AND, NOT }
-    switch (id) {
-      case 1 : // Logic notation: equiv, vee, vee-underbar, cap, tilde
-          opLvl = new int[] { 0, 9, 9, 9, 9, 14, };
+    // Notes on precedence:
+    // all forms of NOT are the highest precedence level
+    public static final int NOT_PRECEDENCE = 14;
+    // times and implicit and are next
+    public static final int IMPLICIT_AND_PRECEDENCE = 13;
+    public static final int TIMES_PRECEDENCE = 13;
+    // oplus is next
+    public static final int OPLUS_PRECEDENCE = 12;
+    // plus is next
+    public static final int PLUS_PRECEDENCE = 11;
+    // otimes is next
+    public static final int OTIMES_PRECEDENCE = 10;
+    // not-equals, not-equiv, equiv, vee, vee-underbar, and cap are next
+    public static final int LOGIC_PRECEDENCE = 9;
+    // & is next
+    public static final int BITAND_PRECEDENCE = 8;
+    // ^ is next
+    public static final int BITXOR_PRECEDENCE = 7;
+    // | is next
+    public static final int BITOR_PRECEDENCE = 6;
+    // && is next
+    public static final int AND_PRECEDENCE = 5;
+    // || is next
+    public static final int OR_PRECEDENCE = 4;
+    // "and" is next
+    public static final int PYTHON_AND_PRECEDENCE = 3;
+    // "xor" is next
+    public static final int PYTHON_XOR_PRECEDENCE = 2;
+    // "or" is next
+    public static final int PYTHON_OR_PRECEDENCE = 1;
+    // all forms of equals are level 0
+    public static final int EQ_PRECEDENCE = 0;
+
+    Notation(int id) {
+      this.id = id;
+      // Precendence level and symbol for each of { EQ, XNOR, OR, XOR, AND, NOT }
+      switch (id) {
+        case 1: // Logic notation: equiv, vee, vee-underbar, cap, tilde
+          opLvl = new int[] {0, 9, 9, 9, 9, 14, };
           opSym = new String[] { " = ", "\u2261", "\u2228", "\u22BB", "\u2227", "\u00AC", };
           break;
-      case 2 :  // Alternative Logic notation: equiv, vee, not-equiv, cap, ell
-          opLvl = new int[] { 0, 9, 9, 9, 9, 14, };
-          opSym = new String[] { " = ", "\u2261", "\u2228", "\u2262", "\u2227", "~", };
+        case 2: // Alternative Logic notation: equiv, vee, not-equiv, cap, ell
+          opLvl = new int[] {0, 9, 9, 9, 9, 14, };
+          opSym = new String[] {" = ", "\u2261", "\u2228", "\u2262", "\u2227", "~", };
           break;
-      case 3 : // Programming with booleans notation: ==, ||, !=, &&, !
-          opLvl = new int[] { 0, 9, 4, 9, 5, 14, };
-          opSym = new String[] { " = ", "==", "||", "!=", "&&", "!", };
+        case 3: // Programming with booleans notation: ==, ||, !=, &&, !
+          opLvl = new int[] {0, 9, 4, 9, 5, 14, };
+          opSym = new String[] {" = ", "==", "||", "!=", "&&", "!", };
           break;
-      case 4 : // Programming with bits notation: ^ ~, |, ^, &, ~
-          opLvl = new int[] { 0, 9, 6, 7, 8, 14, };
-          opSym = new String[] { " = ", "^~", "|", "^", "&", "~", };
+        case 4: // Programming with bits notation: ^ ~, |, ^, &, ~
+          opLvl = new int[] {0, 9, 6, 7, 8, 14, };
+          opSym = new String[] {" = ", "^~", "|", "^", "&", "~", };
           break;
-      case 5 : // LaTeX
-    	  opLvl = new int[] { 0, 10, 11, 12, 13, 14, };
-    	  opSym = new String[] {" = " , " \\oplus " , "+" , " \\oplus " , " \\cdot " , " \\overline{", };
-    	  break;
-      default :  // Mathematical notation: otimes, plus, oplus, times, and overbar
-    	  opLvl = new int[] { 0, 10, 11, 12, 13, 14, };
-    	  opSym = new String[] {" = " , "\u2299" , "+" , "\u2295" , "\u22C5" , "~", };
-    	  break;
+        case 5: // LaTeX
+          opLvl = new int[] {0, 10, 11, 12, 13, 14, };
+          opSym = new String[] {" = ", " \\oplus ", "+", " \\oplus ", " \\cdot ", " \\overline{", };
+          break;
+        default: // Mathematical notation: otimes, plus, oplus, times, and overbar
+          opLvl = new int[] {0, 10, 11, 12, 13, 14, };
+          opSym = new String[] {" = ", "\u2299", "+", "\u2295", "\u22C5", "~", };
+          break;
+      }
     }
-  }
 
+    @Override
     public String toString() {
       String key = name().toLowerCase() + "Notation";
       return S.get(key);
@@ -199,23 +242,28 @@ public abstract class Expression {
   }
 
   public enum Op {
-    EQ(0,2), XNOR(1,2) , OR(2,2), XOR(3,2), AND(4,2), NOT(5,1);
-
-    public final int Id, Arity;
+    EQ(0, 2),
+    XNOR(1, 2),
+    OR(2, 2),
+    XOR(3, 2),
+    AND(4, 2),
+    NOT(5, 1);
+    public final int id;
+    public final int arity;
 
     Op(int id, int arity) {
-      Id = id;
-      Arity = arity;
+      this.id = id;
+      this.arity = arity;
     }
   }
 
-//  // Notation choices:
-//  public static final String[][] OPSYM = {
-//    {"=" , "+" , "\u2295" , "\u22C5" , "~", }, // Mathematic
-//    {"=", "\u2228", "\u2295", "\u2227", "\u00AC", }, // Logic
-//    {"==", "||", "^", "&&", "!",}, // programming
-//    {" = ", " + ", " \\oplus ", " \\cdot ", " \\overline{",}, // LaTeX
-//  };
+  //  // Notation choices:
+  //  public static final String[][] OPSYM = {
+  //    {"=" , "+" , "\u2295" , "\u22C5" , "~", }, // Mathematic
+  //    {"=", "\u2228", "\u2295", "\u2227", "\u00AC", }, // Logic
+  //    {"==", "||", "^", "&&", "!",}, // programming
+  //    {" = ", " + ", " \\oplus ", " \\cdot ", " \\overline{",}, // LaTeX
+  //  };
 
 
   public final ArrayList<Range> nots = new ArrayList<>();
@@ -224,6 +272,7 @@ public abstract class Expression {
   private Integer[] badness;
 
   public abstract int getPrecedence(Notation notation);
+
   public abstract Op getOp();
 
   public boolean isCircular() {
@@ -233,32 +282,19 @@ public abstract class Expression {
     return loop == visit(new Visitor<>() {
       @Override
       public Object visitBinary(Expression a, Expression b, Op op) {
-        if (!visited.add(a)) {
-          return loop;
-        }
-        if (a.visit(this) == loop) {
-          return loop;
-        }
+        if (!visited.add(a)) return loop;
+        if (a.visit(this) == loop) return loop;
         visited.remove(a);
-
-        if (!visited.add(b)) {
-          return loop;
-        }
-        if (b.visit(this) == loop) {
-          return loop;
-        }
+        if (!visited.add(b)) return loop;
+        if (b.visit(this) == loop) return loop;
         visited.remove(b);
         return null;
       }
 
       @Override
       public Object visitNot(Expression a) {
-        if (!visited.add(a)) {
-          return loop;
-        }
-        if (a.visit(this) == loop) {
-          return loop;
-        }
+        if (!visited.add(a)) return loop;
+        if (a.visit(this) == loop) return loop;
         visited.remove(a);
         return null;
       }
@@ -266,18 +302,16 @@ public abstract class Expression {
   }
 
   public boolean isCnf() {
-    Object cnf = new Object();
+    final var cnf = new Object();
     return cnf == visit(new Visitor<>() {
       int level = 0;
 
       @Override
       public Object visitAnd(Expression a, Expression b) {
-        if (level > 1) {
-          return null;
-        }
-        int oldLevel = level;
+        if (level > 1) return null;
+        final var oldLevel = level;
         level = 1;
-        Object ret = a.visit(this) == cnf && b.visit(this) == cnf ? cnf : null;
+        final var ret = a.visit(this) == cnf && b.visit(this) == cnf ? cnf : null;
         level = oldLevel;
         return ret;
       }
@@ -289,21 +323,17 @@ public abstract class Expression {
 
       @Override
       public Object visitNot(Expression a) {
-        if (level == 2) {
-          return null;
-        }
-        int oldLevel = level;
+        if (level == 2) return null;
+        final var oldLevel = level;
         level = 2;
-        Object ret = a.visit(this);
+        final var ret = a.visit(this);
         level = oldLevel;
         return ret;
       }
 
       @Override
       public Object visitOr(Expression a, Expression b) {
-        if (level > 0) {
-          return null;
-        }
+        if (level > 0) return null;
         return a.visit(this) == cnf && b.visit(this) == cnf ? cnf : null;
       }
 
@@ -333,14 +363,10 @@ public abstract class Expression {
     return visit(new Visitor<>() {
       @Override
       public Expression visitAnd(Expression a, Expression b) {
-        Expression l = a.visit(this);
-        Expression r = b.visit(this);
-        if (l == null) {
-          return r;
-        }
-        if (r == null) {
-          return l;
-        }
+        final var l = a.visit(this);
+        final var r = b.visit(this);
+        if (l == null) return r;
+        if (r == null) return l;
         return Expressions.and(l, r);
       }
 
@@ -351,23 +377,17 @@ public abstract class Expression {
 
       @Override
       public Expression visitNot(Expression a) {
-        Expression l = a.visit(this);
-        if (l == null) {
-          return null;
-        }
+        final var l = a.visit(this);
+        if (l == null) return null;
         return Expressions.not(l);
       }
 
       @Override
       public Expression visitOr(Expression a, Expression b) {
-        Expression l = a.visit(this);
-        Expression r = b.visit(this);
-        if (l == null) {
-          return r;
-        }
-        if (r == null) {
-          return l;
-        }
+        final var l = a.visit(this);
+        final var r = b.visit(this);
+        if (l == null) return r;
+        if (r == null) return l;
         return Expressions.or(l, r);
       }
 
@@ -378,40 +398,28 @@ public abstract class Expression {
 
       @Override
       public Expression visitXor(Expression a, Expression b) {
-        Expression l = a.visit(this);
-        Expression r = b.visit(this);
-        if (l == null) {
-          return r;
-        }
-        if (r == null) {
-          return l;
-        }
+        final var l = a.visit(this);
+        final var r = b.visit(this);
+        if (l == null) return r;
+        if (r == null) return l;
         return Expressions.xor(l, r);
       }
 
       @Override
       public Expression visitXnor(Expression a, Expression b) {
-        Expression l = a.visit(this);
-        Expression r = b.visit(this);
-        if (l == null) {
-          return r;
-        }
-        if (r == null) {
-          return l;
-        }
+        final var l = a.visit(this);
+        final var r = b.visit(this);
+        if (l == null) return r;
+        if (r == null) return l;
         return Expressions.xnor(l, r);
       }
 
       @Override
       public Expression visitEq(Expression a, Expression b) {
-        Expression l = a.visit(this);
-        Expression r = b.visit(this);
-        if (l == null) {
-          return r;
-        }
-        if (r == null) {
-          return l;
-        }
+        final var l = a.visit(this);
+        final var r = b.visit(this);
+        if (l == null) return r;
+        if (r == null) return l;
         return Expressions.eq(l, r);
       }
     });
@@ -421,8 +429,8 @@ public abstract class Expression {
     return visit(new Visitor<>() {
       @Override
       public Expression visitAnd(Expression a, Expression b) {
-        Expression l = a.visit(this);
-        Expression r = b.visit(this);
+        final var l = a.visit(this);
+        final var r = b.visit(this);
         return Expressions.and(l, r);
       }
 
@@ -433,14 +441,14 @@ public abstract class Expression {
 
       @Override
       public Expression visitNot(Expression a) {
-        Expression l = a.visit(this);
+        final var l = a.visit(this);
         return Expressions.not(l);
       }
 
       @Override
       public Expression visitOr(Expression a, Expression b) {
-        Expression l = a.visit(this);
-        Expression r = b.visit(this);
+        final var l = a.visit(this);
+        final var r = b.visit(this);
         return Expressions.or(l, r);
       }
 
@@ -451,22 +459,22 @@ public abstract class Expression {
 
       @Override
       public Expression visitXor(Expression a, Expression b) {
-        Expression l = a.visit(this);
-        Expression r = b.visit(this);
+        final var l = a.visit(this);
+        final var r = b.visit(this);
         return Expressions.xor(l, r);
       }
 
       @Override
       public Expression visitXnor(Expression a, Expression b) {
-        Expression l = a.visit(this);
-        Expression r = b.visit(this);
+        final var l = a.visit(this);
+        final var r = b.visit(this);
         return Expressions.xnor(l, r);
       }
 
       @Override
       public Expression visitEq(Expression a, Expression b) {
-        Expression l = a.visit(this);
-        Expression r = b.visit(this);
+        final var l = a.visit(this);
+        final var r = b.visit(this);
         return Expressions.eq(l, r);
       }
     });
@@ -476,209 +484,204 @@ public abstract class Expression {
   public String toString() {
     return toString(Notation.MATHEMATICAL);
   }
-  
+
   public String toString(Notation notation) {
-    return toString(notation,false);
+    return toString(notation, false);
   }
 
   public String toString(Notation notation, boolean reduce) {
-    return toString(notation , reduce , null);
+    return toString(notation, reduce, null);
   }
-  
-  
+
   private static final int BADNESS_NOT_BREAK = 15;
   private static final int BADNESS_PARENTESIS_BREAK = 10;
   private static final int BADNESS_CONST_BREAK = 100;
   private static final int BADNESS_VAR_BREAK = 200;
   private static final int BADNESS_AND_BREAK = 5;
-  
+
   public String toString(Notation notation, boolean reduce, Expression other) {
-    final StringBuilder text = new StringBuilder();
-    final ArrayList<Integer> badnessList = new ArrayList<>();
+    final var text = new StringBuilder();
+    final var badnessList = new ArrayList<Integer>();
     if (reduce) {
       nots.clear();
       subscripts.clear();
       marks.clear();
     }
-    visit(new Visitor<Void>() {
-      int curBadness = 0;
-      boolean AndOp = false;
-      boolean inXnor = false;
-      
-      private void add(String txt) {
-    	  text.append(txt);
-    	  for (int i = 0 ; i < txt.length() ; i++)
-    		  badnessList.add(curBadness);
-      }
-      
-      @Override
-      public Void visitBinary(Expression a, Expression b, Op op) {
-        Range mark = null;
-        if (a.equals(other)) {
-          mark = new Range();
-          mark.startIndex = text.length();
-          marks.add(mark);
-        }
-        int opLvl = notation.opLvl[op.Id];
-        int aLvl = a.getPrecedence(notation);
-        int bLvl = b.getPrecedence(notation);
-        if (aLvl < opLvl || (aLvl == opLvl && a.getOp() != op)) {
-          curBadness += BADNESS_PARENTESIS_BREAK;
-          add("(");
-          a.visit(this);
-          add(")");
-          curBadness -= BADNESS_PARENTESIS_BREAK;
-        } else {
-          a.visit(this);
-        }
-        if (mark != null) {
-          mark.stopIndex = text.length();
-          mark = null;
-        }
-        add(notation.opSym[op.Id]);
-        if (b.equals(other)) {
-          mark = new Range();
-          mark.startIndex = text.length();
-          marks.add(mark);
-        }
-        if (bLvl < opLvl || (bLvl == opLvl && b.getOp() != op)) {
-          curBadness += BADNESS_PARENTESIS_BREAK;
-          add("(");
-          b.visit(this);
-          add(")");
-          curBadness -= BADNESS_PARENTESIS_BREAK;
-        } else {
-          b.visit(this);
-        }
-        if (mark != null) {
-          mark.stopIndex = text.length();
-        }
-        return null;
-      }
-      
-      @Override
-      public Void visitConstant(int value) {
-        curBadness += BADNESS_CONST_BREAK;
-        add(Integer.toString(value, 16));
-        curBadness -= BADNESS_CONST_BREAK;
-        return null;
-      }
-      
-      @Override
-      public Void visitNot(Expression a) {
-        curBadness += BADNESS_NOT_BREAK;
-        int opLvl = notation.opLvl[Op.NOT.Id];
-        int aLvl = a.getPrecedence(notation);
-        if (reduce && notation.equals(Notation.MATHEMATICAL)) {
-          Range notData = new Range();
-          notData.startIndex = text.length();
-          nots.add(notData);
-          a.visit(this);
-          notData.stopIndex = text.length();
-        } else {
-          add(notation.opSym[Op.NOT.Id]);
-    	  if (notation.equals(Notation.LaTeX)) {
-    	    a.visit(this);
-    	    add("} ");
-    	  } else if (aLvl < opLvl || (aLvl == opLvl && a.getOp() != Op.NOT)) {
-            curBadness += BADNESS_PARENTESIS_BREAK;
-            add("(");
-            a.visit(this);
-            add(")");
-            curBadness -= BADNESS_PARENTESIS_BREAK;
-          } else {
-            a.visit(this);
-          }
-        }
-        curBadness -= BADNESS_NOT_BREAK;
-    	return null;
-      }
-      
-      @Override
-      public Void visitXnor(Expression a, Expression b) {
-        if (inXnor || !notation.equals(Notation.LaTeX))
-          visitBinary(a, b, notation.equals(Notation.LaTeX) ? Op.XOR : Op.XNOR);
-        else {
-          inXnor = true;
-          text.append(" \\overline{");
-          visitBinary(a, b, Op.XOR);
-          text.append("}");
-          inXnor = false;
-        }
-        return null;
-      }
+    visit(
+        new Visitor<Void>() {
+          int curBadness = 0;
+          boolean andOp = false;
+          boolean inXnor = false;
 
-      @Override
-      public Void visitVariable(String name) {
-        String baseName = name;
-        String index = null;
-        try {
-            Bit b = Bit.parse(name);
-        	baseName = b.name;
-        	if (b.b >= 0)
-        	  index = Integer.toString(b.b);
-          } catch (ParserException except) {
-            /* TODO: catch exception */
+          private void add(String txt) {
+            text.append(txt);
+            for (int i = 0; i < txt.length(); i++) badnessList.add(curBadness);
           }
-        curBadness += BADNESS_VAR_BREAK;
-        if (reduce && index != null) {
-          add(baseName);
-          Range subscript = new Range();
-          subscript.startIndex = text.length();
-          add(index);
-          subscript.stopIndex = text.length();
-          subscripts.add(subscript);
-        } else if (notation.equals(Notation.LaTeX)) {
-          add(baseName);
-          if (index != null)
-        	  add("_{"+index+"}");	
-        } else
-    	  add(name);
-        curBadness -= BADNESS_VAR_BREAK;
-        return null;
-      }
-      
-      @Override
-      public Void visitAnd(Expression a, Expression b) {
-        if (AndOp)
-          visitBinary(a, b, Op.AND);
-        else {
-          AndOp = true;
-          curBadness += BADNESS_AND_BREAK;
-          visitBinary(a, b, Op.AND);
-    	  curBadness -= BADNESS_AND_BREAK;
-    	  AndOp = false;
-        }
-    	return null;
-      }
-    });
+
+          @Override
+          public Void visitBinary(Expression a, Expression b, Op op) {
+            Range mark = null;
+            if (a.equals(other)) {
+              mark = new Range();
+              mark.startIndex = text.length();
+              marks.add(mark);
+            }
+            final var opLvl = notation.opLvl[op.id];
+            final var aLvl = a.getPrecedence(notation);
+            final var bLvl = b.getPrecedence(notation);
+            if (aLvl < opLvl || (aLvl == opLvl && a.getOp() != op)) {
+              curBadness += BADNESS_PARENTESIS_BREAK;
+              add("(");
+              a.visit(this);
+              add(")");
+              curBadness -= BADNESS_PARENTESIS_BREAK;
+            } else {
+              a.visit(this);
+            }
+            if (mark != null) {
+              mark.stopIndex = text.length();
+              mark = null;
+            }
+            add(notation.opSym[op.id]);
+            if (b.equals(other)) {
+              mark = new Range();
+              mark.startIndex = text.length();
+              marks.add(mark);
+            }
+            if (bLvl < opLvl || (bLvl == opLvl && b.getOp() != op)) {
+              curBadness += BADNESS_PARENTESIS_BREAK;
+              add("(");
+              b.visit(this);
+              add(")");
+              curBadness -= BADNESS_PARENTESIS_BREAK;
+            } else {
+              b.visit(this);
+            }
+            if (mark != null) {
+              mark.stopIndex = text.length();
+            }
+            return null;
+          }
+
+          @Override
+          public Void visitConstant(int value) {
+            curBadness += BADNESS_CONST_BREAK;
+            add(Integer.toString(value, 16));
+            curBadness -= BADNESS_CONST_BREAK;
+            return null;
+          }
+
+          @Override
+          public Void visitNot(Expression a) {
+            curBadness += BADNESS_NOT_BREAK;
+            final var opLvl = notation.opLvl[Op.NOT.id];
+            final var levelOfA = a.getPrecedence(notation);
+            if (reduce && notation.equals(Notation.MATHEMATICAL)) {
+              final var notData = new Range();
+              notData.startIndex = text.length();
+              nots.add(notData);
+              a.visit(this);
+              notData.stopIndex = text.length();
+            } else {
+              add(notation.opSym[Op.NOT.id]);
+              if (notation.equals(Notation.LaTeX)) {
+                a.visit(this);
+                add("} ");
+              } else if (levelOfA < opLvl || (levelOfA == opLvl && a.getOp() != Op.NOT)) {
+                curBadness += BADNESS_PARENTESIS_BREAK;
+                add("(");
+                a.visit(this);
+                add(")");
+                curBadness -= BADNESS_PARENTESIS_BREAK;
+              } else {
+                a.visit(this);
+              }
+            }
+            curBadness -= BADNESS_NOT_BREAK;
+            return null;
+          }
+
+          @Override
+          public Void visitXnor(Expression a, Expression b) {
+            if (inXnor || !notation.equals(Notation.LaTeX)) {
+              visitBinary(a, b, notation.equals(Notation.LaTeX) ? Op.XOR : Op.XNOR);
+            } else {
+              inXnor = true;
+              text.append(" \\overline{");
+              visitBinary(a, b, Op.XOR);
+              text.append("}");
+              inXnor = false;
+            }
+            return null;
+          }
+
+          @Override
+          public Void visitVariable(String name) {
+            var baseName = name;
+            String index = null;
+            try {
+              final var b = Bit.parse(name);
+              baseName = b.name;
+              if (b.bitIndex >= 0) index = Integer.toString(b.bitIndex);
+            } catch (ParserException except) {
+              /* TODO: catch exception */
+            }
+            curBadness += BADNESS_VAR_BREAK;
+            if (reduce && index != null) {
+              add(baseName);
+              final var subscript = new Range();
+              subscript.startIndex = text.length();
+              add(index);
+              subscript.stopIndex = text.length();
+              subscripts.add(subscript);
+            } else if (notation.equals(Notation.LaTeX)) {
+              add(baseName);
+              if (index != null) add("_{" + index + "}");
+            } else {
+              add(name);
+            }
+            curBadness -= BADNESS_VAR_BREAK;
+            return null;
+          }
+
+          @Override
+          public Void visitAnd(Expression a, Expression b) {
+            if (andOp) {
+              visitBinary(a, b, Op.AND);
+            } else {
+              andOp = true;
+              curBadness += BADNESS_AND_BREAK;
+              visitBinary(a, b, Op.AND);
+              curBadness -= BADNESS_AND_BREAK;
+              andOp = false;
+            }
+            return null;
+          }
+        });
     badness = badnessList.toArray(new Integer[0]);
-    return notation.equals(Notation.LaTeX) ?"$"+ text +"$" : text.toString();
+    return notation.equals(Notation.LaTeX) ? "$" + text + "$" : text.toString();
   }
-  
+
   public Integer[] getBadness() {
-    return badness;  
+    return badness;
   }
- 
+
   public static boolean isAssignment(Expression expr) {
-    if (!(expr instanceof Expressions.Eq))
-      return false;
-    Expressions.Eq eq = (Expressions.Eq)expr;
-    return ((eq.a instanceof Expressions.Variable));
+    if (!(expr instanceof Expressions.Eq)) return false;
+    final var eq = (Expressions.Eq) expr;
+    return ((eq.exprA instanceof Expressions.Variable));
   }
 
   public static String getAssignmentVariable(Expression expr) {
-    if (!(expr instanceof Expressions.Eq))
-      return null;
-    Expressions.Eq eq = (Expressions.Eq)expr;
-    return ((eq.a instanceof Expressions.Variable)) ? eq.a.toString() : null;
+    if (!(expr instanceof Expressions.Eq)) return null;
+    final var eq = (Expressions.Eq) expr;
+    return ((eq.exprA instanceof Expressions.Variable)) ? eq.exprA.toString() : null;
   }
 
   public static Expression getAssignmentExpression(Expression expr) {
-    if (!(expr instanceof Expressions.Eq))
-      return null;
-    Expressions.Eq eq = (Expressions.Eq)expr;
-    return ((eq.a instanceof Expressions.Variable)) ? eq.b : null;
+    if (!(expr instanceof Expressions.Eq)) return null;
+    final var eq = (Expressions.Eq) expr;
+    return ((eq.exprA instanceof Expressions.Variable)) ? eq.exprB : null;
   }
 
   public abstract <T> T visit(Visitor<T> visitor);

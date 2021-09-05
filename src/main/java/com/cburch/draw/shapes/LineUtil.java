@@ -35,7 +35,9 @@ public class LineUtil {
   // (this is used for double solutions in 2nd or 3d degree equation)
   private static final double zeroMax = 0.0000001;
 
-  private LineUtil() {}
+  private LineUtil() {
+    // dummy
+  }
 
   public static double distance(double x0, double y0, double x1, double y1) {
     return Math.sqrt(distanceSquared(x0, y0, x1, y1));

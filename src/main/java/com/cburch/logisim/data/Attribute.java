@@ -35,7 +35,7 @@ import javax.swing.JTextField;
 public abstract class Attribute<V> {
   private final String name;
   private StringGetter disp;
-  private boolean hidden = false;
+  private boolean hidden;
 
   public Attribute() {
     hidden = true;
@@ -45,6 +45,7 @@ public abstract class Attribute<V> {
   public Attribute(String name, StringGetter disp) {
     this.name = name;
     this.disp = disp;
+    this.hidden = false;
   }
 
   protected java.awt.Component getCellEditor(V value) {
@@ -74,14 +75,19 @@ public abstract class Attribute<V> {
   }
 
   public String toStandardString(V value) {
-    String oldString = value.toString();
-    String newString = oldString.replaceAll("[\u0000-\u001f]", "");
-    newString = newString.replaceAll("&#.*?;", "");
-    return newString;
+    return value.toString().replaceAll("[\u0000-\u001f]", "").replaceAll("&#.*?;", "");
+  }
+
+  public void setHidden(boolean val) {
+    this.hidden = val;
   }
 
   public boolean isHidden() {
     return hidden;
+  }
+  
+  public boolean isToSave() {
+    return true;
   }
 
   @Override

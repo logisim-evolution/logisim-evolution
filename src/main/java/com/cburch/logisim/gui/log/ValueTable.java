@@ -28,9 +28,6 @@
 
 package com.cburch.logisim.gui.log;
 
-/**
- * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
- */
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.data.BitWidth;
@@ -53,6 +50,9 @@ import javax.swing.border.Border;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+/**
+ * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
+ */
 public class ValueTable extends JPanel {
 
   private static final long serialVersionUID = 1L;
@@ -377,7 +377,7 @@ public class ValueTable extends JPanel {
 
       if (radix == 0) return null;
 
-      return StringUtil.format(S.get("tableHeaderHelp"), Integer.toString(radix));
+      return S.get("tableHeaderHelp", Integer.toString(radix));
     }
 
     public void paintComponent(Graphics g) {

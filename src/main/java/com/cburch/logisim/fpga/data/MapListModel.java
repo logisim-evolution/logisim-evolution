@@ -33,19 +33,24 @@ import java.util.Map;
 import javax.swing.DefaultListModel;
 
 public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
-	
+
   public static class MapInfo {
     private final int pinNr;
     private final MapComponent map;
-    
-    public MapInfo(int pin , MapComponent map) {
+
+    public MapInfo(int pin, MapComponent map) {
       pinNr = pin;
       this.map = map;
     }
-    
-    public int getPin() { return pinNr; }
-    public MapComponent getMap() { return map; }
-    
+
+    public int getPin() {
+      return pinNr;
+    }
+
+    public MapComponent getMap() {
+      return map;
+    }
+
     @Override
     public String toString() {
       return map.getDisplayString(pinNr);
@@ -56,39 +61,39 @@ public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
   private boolean mappedList = false;
   private final Map<ArrayList<String>, MapComponent> myMappableResources;
   private ArrayList<MapInfo> myItems;
-  
-  public MapListModel(boolean mappedList , Map<ArrayList<String>, MapComponent> myMappableResources) {
+
+  public MapListModel(boolean mappedList, Map<ArrayList<String>, MapComponent> myMappableResources) {
     this.mappedList = mappedList;
     this.myMappableResources = myMappableResources;
     rebuild();
   }
-  
+
   public void rebuild() {
-	int oldsize = 0;
-	if (myItems == null) myItems = new ArrayList<>();
-	else {
-	  oldsize = myItems.size();
-	  myItems.clear();
-	}
-    for (ArrayList<String> key : myMappableResources.keySet()) {
-      MapComponent map = myMappableResources.get(key);
+    var oldsize = 0;
+    if (myItems == null) myItems = new ArrayList<>();
+    else {
+      oldsize = myItems.size();
+      myItems.clear();
+    }
+    for (var key : myMappableResources.keySet()) {
+      var map = myMappableResources.get(key);
       if (mappedList) {
         if (map.isCompleteMap(false)) {
-          int idx = getInsertionPoint(map);
-          myItems.add(idx, new MapInfo(-1, map));
+          var idx = getInsertionPoint(map);
+          myItems.add(idx, new MapInfo(map.getNrOfPins() == 1 ? 0 : -1, map));
         } else {
-          int idx = getInsertionPoint(map);
-          for (int i = map.getNrOfPins()-1 ; i >= 0  ; i--) {
+          var idx = getInsertionPoint(map);
+          for (var i = map.getNrOfPins() - 1; i >= 0; i--) {
             if (map.isMapped(i)) myItems.add(idx, new MapInfo(i, map));
           }
         }
       } else {
         if (map.isNotMapped()) {
-          int idx = getInsertionPoint(map);
-          myItems.add(idx, new MapInfo(-1, map));
+          var idx = getInsertionPoint(map);
+          myItems.add(idx, new MapInfo(map.getNrOfPins() == 1 ? 0 : -1, map));
         } else {
-          int idx = getInsertionPoint(map);
-          for (int i = map.getNrOfPins()-1 ; i >= 0  ; i--) {
+          var idx = getInsertionPoint(map);
+          for (var i = map.getNrOfPins() - 1; i >= 0; i--) {
             if (!map.isMapped(i)) {
               myItems.add(idx, new MapInfo(i, map));
             }
@@ -100,30 +105,41 @@ public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
       fireContentsChanged(this, 0, Math.max(oldsize, myItems.size()));
     }
   }
-  
+
   private int getInsertionPoint(MapComponent map) {
     if (myItems.isEmpty()) return 0;
-    int idx = 0;
-    while (idx < myItems.size() && myItems.get(idx).getMap().getDisplayString(-1).
-            compareToIgnoreCase(map.getDisplayString(-1)) < 0) idx++;
+    var idx = 0;
+    while (idx < myItems.size() && myItems
+        .get(idx)
+        .getMap()
+        .getDisplayString(-1)
+        .compareToIgnoreCase(map.getDisplayString(-1)) < 0) idx++;
     return idx;
   }
-  
+
   @Override
-  public int getSize() { return myItems.size(); }
-  
+  public int getSize() {
+    return myItems.size();
+  }
+
   @Override
-  public boolean isEmpty() { return myItems.isEmpty(); }
-  
-  @Override 
-  public int size() { return myItems.size(); }
-  
+  public boolean isEmpty() {
+    return myItems.isEmpty();
+  }
+
+  @Override
+  public int size() {
+    return myItems.size();
+  }
+
   @Override
   public MapInfo elementAt(int idx) {
     if (idx < 0 || idx >= myItems.size()) return null;
     return myItems.get(idx);
   }
-  
+
   @Override
-  public MapInfo getElementAt(int idx) { return elementAt(idx); }
+  public MapInfo getElementAt(int idx) {
+    return elementAt(idx);
+  }
 }

@@ -110,36 +110,38 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
     }
 
     if (variousFound) {
-      SetInstance(factory);
-      return S.fmt("selectionVarious", "" + totalCount);
+      setInstance(factory);
+      return S.get("selectionVarious", "" + totalCount);
     } else if (factoryCount == 0) {
       Circuit circ = frame.getCanvas().getCircuit();
       if (circ != null) {
         String circName = circ.getName();
-        SetInstance(circ.getSubcircuitFactory());
-        return S.fmt("circuitAttrTitle", circName);
+        setInstance(circ.getSubcircuitFactory());
+        return S.get("circuitAttrTitle", circName);
       } else {
         VhdlContent hdl = (VhdlContent) frame.getCanvas().getCurrentHdl();
         String circName = hdl.getName();
-        SetInstance(null);
-        return S.fmt("hdlAttrTitle", circName);
+        setInstance(null);
+        return S.get("hdlAttrTitle", circName);
       }
     } else if (factoryCount == 1) {
-      SetInstance(factory);
-      if (label != null && label.length() > 0)
-        return S.fmt("selectionOne", factory.getDisplayName()) + " \"" + label + "\"";
-      else if (loc != null)
-        return S.fmt("selectionOne", factory.getDisplayName() + " " + loc);
-      else
-        return S.fmt( "selectionOne", factory.getDisplayName());
+      setInstance(factory);
+      if (label != null && label.length() > 0) {
+        return factory.getDisplayName() + " \"" + label + "\"";
+      } else if (loc != null) {
+        return factory.getDisplayName() + " " + loc;
+      } else {
+        return factory.getDisplayName();
+      }
     } else {
-      SetInstance(factory);
-      return S.fmt("selectionMultiple", factory.getDisplayName(), "" + factoryCount);
+      setInstance(factory);
+      return S.get("selectionMultiple", factory.getDisplayName(), "" + factoryCount);
     }
   }
 
   //
   // Selection.Listener methods
+  @Override
   public void selectionChanged(Event event) {
     fireTitleChanged();
     if (!frame.getEditorView().equals(Frame.EDIT_APPEARANCE)) {
@@ -183,10 +185,10 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
           if (attr.equals(StdAttr.LABEL)) {
             if (labler.hasNext(circuit)) {
               if (comps.size() > 1) {
-                act.set(comp, attr, labler.GetNext(circuit, comp.getFactory()));
+                act.set(comp, attr, labler.getNext(circuit, comp.getFactory()));
               } else {
                 if (getAttributeSet().getValue(StdAttr.LABEL).equals(value)) return;
-                else act.set(comp, attr, labler.GetCurrent(circuit, comp.getFactory()));
+                else act.set(comp, attr, labler.getCurrent(circuit, comp.getFactory()));
               }
             } else act.set(comp, attr, "");
           } else act.set(comp, attr, value);
@@ -195,5 +197,4 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
       project.doAction(act);
     }
   }
-
 }

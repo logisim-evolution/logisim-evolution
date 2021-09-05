@@ -48,7 +48,8 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
   private final HashMap<Attribute<?>, AttrRow> rowMap;
   private AttributeSet attrs;
   private ArrayList<AttrRow> rows;
-  private ComponentFactory CompInst = null;
+  private ComponentFactory compInst = null;
+
   public AttributeSetTableModel(AttributeSet attrs) {
     this.attrs = attrs;
     this.listeners = new ArrayList<>();
@@ -68,11 +69,11 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     }
   }
 
-  public void SetInstance(ComponentFactory fact) {
-    CompInst = fact;
+  public void setInstance(ComponentFactory fact) {
+    compInst = fact;
   }
 
-  public void SetIsTool() {
+  public void setIsTool() {
     /* We remove the label attribute for a tool */
     for (Attribute<?> attr : attrs.getAttributes()) {
       if (attr.getName().equals("label")) {
@@ -83,6 +84,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     }
   }
 
+  @Override
   public void addAttrTableModelListener(AttrTableModelListener listener) {
     if (listeners.isEmpty() && attrs != null) {
       attrs.addAttributeListener(this);
@@ -93,6 +95,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
   //
   // AttributeListener methods
   //
+  @Override
   public void attributeListChanged(AttributeEvent e) {
     // if anything has changed, don't do anything
     int index = 0;
@@ -134,6 +137,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     fireStructureChanged();
   }
 
+  @Override
   public void attributeValueChanged(AttributeEvent e) {
     Attribute<?> attr = e.getAttribute();
     AttrTableModelRow row = rowMap.get(attr);
@@ -183,16 +187,20 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     }
   }
 
+  @Override
   public AttrTableModelRow getRow(int rowIndex) {
     return rows.get(rowIndex);
   }
 
+  @Override
   public int getRowCount() {
     return rows.size();
   }
 
+  @Override
   public abstract String getTitle();
 
+  @Override
   public void removeAttrTableModelListener(AttrTableModelListener listener) {
     listeners.remove(listener);
     if (listeners.isEmpty() && attrs != null) {
@@ -212,15 +220,18 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
       this.attr = objAttr;
     }
 
+    @Override
     public Component getEditor(Window parent) {
       Object value = attrs.getValue(attr);
       return attr.getCellEditor(parent, value);
     }
 
+    @Override
     public String getLabel() {
       return attr.getDisplayName();
     }
 
+    @Override
     public String getValue() {
       Object value = attrs.getValue(attr);
       if (value == null) {
@@ -231,22 +242,24 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
         }
       } else {
         try {
-          String Str = attr.toDisplayString(value);
-          if (Str.isEmpty()
+          var str = attr.toDisplayString(value);
+          if (str.isEmpty()
               && attr.getName().equals("label")
-              && CompInst != null
-              && CompInst.RequiresNonZeroLabel()) return HDLColorRenderer.RequiredFieldString;
-          return Str;
+              && compInst != null
+              && compInst.RequiresNonZeroLabel()) return HDLColorRenderer.REQUIRED_FIELD_STRING;
+          return str;
         } catch (Exception e) {
           return "???";
         }
       }
     }
 
+    @Override
     public boolean isValueEditable() {
       return !attrs.isReadOnly(attr);
     }
 
+    @Override
     public boolean multiEditCompatible(AttrTableModelRow other) {
       if (!(other instanceof AttrRow)) return false;
       AttrRow o = (AttrRow) other;
@@ -257,6 +270,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
       return a.sameOptions(b);
     }
 
+    @Override
     public void setValue(Window parent, Object value) throws AttrTableSetException {
       Attribute<Object> attr = this.attr;
       if (attr == null || value == null) return;
@@ -292,10 +306,10 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 
     @Override
     public String getValue() {
-      if (CompInst == null) return HDLColorRenderer.UnKnownString;
-      if (CompInst.HDLSupportedComponent(attrs))
-        return HDLColorRenderer.SupportString;
-      return HDLColorRenderer.NoSupportString;
+      if (compInst == null) return HDLColorRenderer.UNKNOWN_STRING;
+      if (compInst.HDLSupportedComponent(attrs))
+        return HDLColorRenderer.SUPPORT_STRING;
+      return HDLColorRenderer.NO_SUPPORT_STRING;
     }
 
     @Override

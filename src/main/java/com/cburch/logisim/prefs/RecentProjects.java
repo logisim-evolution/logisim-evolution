@@ -51,7 +51,7 @@ class RecentProjects implements PreferenceChangeListener {
     @Override
     public boolean equals(Object other) {
       if (other instanceof FileTime) {
-        FileTime o = (FileTime) other;
+        final var o = (FileTime) other;
         return this.time == o.time && isSame(this.file, o.file);
       } else {
         return false;
@@ -75,32 +75,32 @@ class RecentProjects implements PreferenceChangeListener {
     recentTimes = new long[NUM_RECENT];
     Arrays.fill(recentTimes, System.currentTimeMillis());
 
-    Preferences prefs = AppPreferences.getPrefs();
+    final var prefs = AppPreferences.getPrefs();
     prefs.addPreferenceChangeListener(this);
 
-    for (int index = 0; index < NUM_RECENT; index++) {
+    for (var index = 0; index < NUM_RECENT; index++) {
       getAndDecode(prefs, index);
     }
   }
 
   private void getAndDecode(Preferences prefs, int index) {
-    String encoding = prefs.get(BASE_PROPERTY + index, null);
+    final var encoding = prefs.get(BASE_PROPERTY + index, null);
     if (encoding == null) return;
     int semi = encoding.indexOf(';');
     if (semi < 0) return;
     try {
-      long time = Long.parseLong(encoding.substring(0, semi));
-      File file = new File(encoding.substring(semi + 1));
+      final var time = Long.parseLong(encoding.substring(0, semi));
+      final var file = new File(encoding.substring(semi + 1));
       updateInto(index, time, file);
     } catch (NumberFormatException ignored) {
     }
   }
 
   public List<File> getRecentFiles() {
-    long now = System.currentTimeMillis();
-    long[] ages = new long[NUM_RECENT];
-    long[] toSort = new long[NUM_RECENT];
-    for (int i = 0; i < NUM_RECENT; i++) {
+    final var now = System.currentTimeMillis();
+    final var ages = new long[NUM_RECENT];
+    final var toSort = new long[NUM_RECENT];
+    for (var i = 0; i < NUM_RECENT; i++) {
       if (recentFiles[i] == null) {
         ages[i] = -1;
       } else {
@@ -110,11 +110,11 @@ class RecentProjects implements PreferenceChangeListener {
     }
     Arrays.sort(toSort);
 
-    List<File> ret = new ArrayList<>();
-    for (long age : toSort) {
+    final var ret = new ArrayList<File>();
+    for (final var age : toSort) {
       if (age >= 0) {
-        int index = -1;
-        for (int i = 0; i < NUM_RECENT; i++) {
+        var index = -1;
+        for (var i = 0; i < NUM_RECENT; i++) {
           if (ages[i] == age) {
             index = i;
             ages[i] = -1;
@@ -131,9 +131,9 @@ class RecentProjects implements PreferenceChangeListener {
 
   private int getReplacementIndex(long now, File f) {
     long oldestAge = -1;
-    int oldestIndex = 0;
-    int nullIndex = -1;
-    for (int i = 0; i < NUM_RECENT; i++) {
+    var oldestIndex = 0;
+    var nullIndex = -1;
+    for (var i = 0; i < NUM_RECENT; i++) {
       if (f.equals(recentFiles[i])) {
         return i;
       }
@@ -154,10 +154,10 @@ class RecentProjects implements PreferenceChangeListener {
   }
 
   public void preferenceChange(PreferenceChangeEvent event) {
-    Preferences prefs = event.getNode();
-    String prop = event.getKey();
+    final var prefs = event.getNode();
+    final var prop = event.getKey();
     if (prop.startsWith(BASE_PROPERTY)) {
-      String rest = prop.substring(BASE_PROPERTY.length());
+      final var rest = prop.substring(BASE_PROPERTY.length());
       int index = -1;
       try {
         index = Integer.parseInt(rest);
@@ -165,11 +165,11 @@ class RecentProjects implements PreferenceChangeListener {
       } catch (NumberFormatException ignored) {
       }
       if (index >= 0) {
-        File oldValue = recentFiles[index];
-        long oldTime = recentTimes[index];
+        final var oldValue = recentFiles[index];
+        final var oldTime = recentTimes[index];
         getAndDecode(prefs, index);
-        File newValue = recentFiles[index];
-        long newTime = recentTimes[index];
+        final var newValue = recentFiles[index];
+        final var newTime = recentTimes[index];
         if (!isSame(oldValue, newValue) || oldTime != newTime) {
           AppPreferences.firePropertyChange(
               AppPreferences.RECENT_PROJECTS,
@@ -181,8 +181,8 @@ class RecentProjects implements PreferenceChangeListener {
   }
 
   private void updateInto(int index, long time, File file) {
-    File oldFile = recentFiles[index];
-    long oldTime = recentTimes[index];
+    final var oldFile = recentFiles[index];
+    final var oldTime = recentTimes[index];
     if (!isSame(oldFile, file) || oldTime != time) {
       recentFiles[index] = file;
       recentTimes[index] = time;
@@ -201,13 +201,13 @@ class RecentProjects implements PreferenceChangeListener {
   }
 
   public void updateRecent(File file) {
-    File fileToSave = file;
+    var fileToSave = file;
     try {
       fileToSave = file.getCanonicalFile();
     } catch (IOException ignored) {
     }
-    long now = System.currentTimeMillis();
-    int index = getReplacementIndex(now, fileToSave);
+    final var now = System.currentTimeMillis();
+    final var index = getReplacementIndex(now, fileToSave);
     updateInto(index, now, fileToSave);
   }
 }

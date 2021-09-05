@@ -53,6 +53,13 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 
 public class DigitalOscilloscope extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Digital Oscilloscope";
 
   private static final Attribute<Integer> ATTR_INPUTS =
       Attributes.forIntegerRange("inputs", S.getter("gateInputsAttr"), 1, 32);
@@ -82,7 +89,7 @@ public class DigitalOscilloscope extends InstanceFactory {
   private final int border = 10;
 
   public DigitalOscilloscope() {
-    super("Digital Oscilloscope", S.getter("DigitalOscilloscopeComponent"));
+    super(_ID, S.getter("DigitalOscilloscopeComponent"));
     setAttributes(
         new Attribute<?>[] {
           ATTR_INPUTS,
@@ -236,9 +243,9 @@ public class DigitalOscilloscope extends InstanceFactory {
           },
           3);
       if (showclock == 1 && i == 0) // clock diagram color
-      g.setColor(painter.getAttributeValue(ATTR_COLOR).darker().darker());
-      else // input diagrams color
-      g.setColor(Color.BLACK);
+        g.setColor(painter.getAttributeValue(ATTR_COLOR).darker().darker());
+      else
+        g.setColor(Color.BLACK);  // input diagrams color
       // draw diagram
       for (byte j = 0; j < length; j++) {
         // vertical line
@@ -282,9 +289,8 @@ public class DigitalOscilloscope extends InstanceFactory {
               g.setColor(painter.getAttributeValue(ATTR_COLOR).darker().darker());
             else g.setColor(Color.BLACK);
           }
-        }
-        // 0 line
-        else if (diagramstate.getState(i + (showclock == 0 ? 1 : 0), j) == Boolean.FALSE)
+        } else if (diagramstate.getState(i + (showclock == 0 ? 1 : 0), j) == Boolean.FALSE)
+          // 0 line
           g.drawLine(
               x + border + 15 * j,
               y + border + 30 * (i + 1) + showclock * 2,
@@ -351,9 +357,7 @@ public class DigitalOscilloscope extends InstanceFactory {
                     : (state.getPortValue(i) == Value.FALSE) ? Boolean.FALSE : null);
         }
       }
-    }
-    // clear
-    else if (clear == Value.TRUE) {
+    } else if (clear == Value.TRUE) {
       diagramstate.clear();
       diagramstate.setusedcell((byte) -1);
       diagramstate.setLastClock(Value.UNKNOWN);

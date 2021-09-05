@@ -49,12 +49,12 @@ public class XmlIterator<E extends Node> implements Iterable<E>, Iterator<E>, Cl
   }
 
   public static Iterable<Element> forChildElements(Element node, String tagName) {
-    NodeList nodes = node.getChildNodes();
-    ArrayList<Element> ret = new ArrayList<>();
+    final var nodes = node.getChildNodes();
+    final var ret = new ArrayList<Element>();
     for (int i = 0, n = nodes.getLength(); i < n; i++) {
-      Node sub = nodes.item(i);
+      final var sub = nodes.item(i);
       if (sub.getNodeType() == Node.ELEMENT_NODE) {
-        Element elt = (Element) sub;
+        final var elt = (Element) sub;
         if (elt.getTagName().equals(tagName)) ret.add(elt);
       }
     }
@@ -81,23 +81,26 @@ public class XmlIterator<E extends Node> implements Iterable<E>, Iterator<E>, Cl
   public XmlIterator<E> clone() {
     try {
       @SuppressWarnings("unchecked")
-      XmlIterator<E> ret = (XmlIterator<E>) super.clone();
+      final var ret = (XmlIterator<E>) super.clone();
       return ret;
     } catch (CloneNotSupportedException e) {
       return this;
     }
   }
 
+  @Override
   public boolean hasNext() {
     return list != null && index < list.getLength();
   }
 
+  @Override
   public Iterator<E> iterator() {
-    XmlIterator<E> ret = this.clone();
+    final var ret = this.clone();
     ret.index = 0;
     return ret;
   }
 
+  @Override
   public E next() {
     Node ret = list.item(index);
     if (ret == null) {
@@ -110,6 +113,7 @@ public class XmlIterator<E extends Node> implements Iterable<E>, Iterator<E>, Cl
     }
   }
 
+  @Override
   public void remove() {
     throw new UnsupportedOperationException("XmlChildIterator.remove");
   }

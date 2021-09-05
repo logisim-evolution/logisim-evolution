@@ -28,42 +28,43 @@
 
 package com.cburch.logisim.util;
 
+import com.cburch.contracts.BaseWindowListenerContract;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.util.HashMap;
 import javax.swing.JFrame;
 import javax.swing.JRadioButtonMenuItem;
 
 public abstract class WindowMenuItemManager {
-  private class MyListener implements WindowListener {
+  private class MyListener implements BaseWindowListenerContract {
+    @Override
     public void windowActivated(WindowEvent event) {
       addToManager();
       WindowMenuManager.setCurrentManager(WindowMenuItemManager.this);
     }
 
+    @Override
     public void windowClosed(WindowEvent event) {
       removeFromManager();
     }
 
+    @Override
     public void windowClosing(WindowEvent event) {
-      JFrame frame = getJFrame(false, null);
+      final var frame = getJFrame(false, null);
       if (frame.getDefaultCloseOperation() == JFrame.HIDE_ON_CLOSE) {
         removeFromManager();
       }
     }
 
+    @Override
     public void windowDeactivated(WindowEvent event) {
       WindowMenuManager.unsetCurrentManager(WindowMenuItemManager.this);
     }
 
-    public void windowDeiconified(WindowEvent event) {}
-
+    @Override
     public void windowIconified(WindowEvent event) {
       addToManager();
       WindowMenuManager.setCurrentManager(WindowMenuItemManager.this);
     }
-
-    public void windowOpened(WindowEvent event) {}
   }
 
   private final MyListener myListener = new MyListener();
@@ -71,8 +72,7 @@ public abstract class WindowMenuItemManager {
   private final boolean persistent;
   private boolean listenerAdded = false;
   private boolean inManager = false;
-  private final HashMap<WindowMenu, JRadioButtonMenuItem> menuItems =
-      new HashMap<>();
+  private final HashMap<WindowMenu, JRadioButtonMenuItem> menuItems = new HashMap<>();
 
   public WindowMenuItemManager(String text, boolean persistent) {
     this.text = text;
@@ -90,7 +90,7 @@ public abstract class WindowMenuItemManager {
   }
 
   void createMenuItem(WindowMenu menu) {
-    WindowMenuItem ret = new WindowMenuItem(this);
+    final var ret = new WindowMenuItem(this);
     menuItems.put(menu, ret);
     menu.addMenuItem(this, ret, persistent);
   }
@@ -127,8 +127,8 @@ public abstract class WindowMenuItemManager {
   private void removeFromManager() {
     if (!persistent && inManager) {
       inManager = false;
-      for (WindowMenu menu : WindowMenuManager.getMenus()) {
-        JRadioButtonMenuItem menuItem = menuItems.get(menu);
+      for (final var menu : WindowMenuManager.getMenus()) {
+        final var menuItem = menuItems.get(menu);
         menu.removeMenuItem(this, menuItem);
       }
       WindowMenuManager.removeManager(this);
@@ -136,19 +136,19 @@ public abstract class WindowMenuItemManager {
   }
 
   void removeMenuItem(WindowMenu menu) {
-    JRadioButtonMenuItem item = menuItems.remove(menu);
+    final var item = menuItems.remove(menu);
     if (item != null) menu.removeMenuItem(this, item);
   }
 
   void setSelected(boolean selected) {
-    for (JRadioButtonMenuItem item : menuItems.values()) {
+    for (final var item : menuItems.values()) {
       item.setSelected(selected);
     }
   }
 
   public void setText(String value) {
     text = value;
-    for (JRadioButtonMenuItem menuItem : menuItems.values()) {
+    for (final var menuItem : menuItems.values()) {
       menuItem.setText(text);
     }
   }

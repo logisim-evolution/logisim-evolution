@@ -30,16 +30,21 @@ package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import java.awt.Graphics;
 
 public class Ttl7430 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "7430";
 
   public Ttl7430() {
     super(
-        "7430",
+        _ID,
         (byte) 14,
         new byte[] {8},
         new byte[] {9, 10, 13},
@@ -49,16 +54,16 @@ public class Ttl7430 extends AbstractTtlGate {
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     super.paintBase(painter, false, false);
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     Drawgates.paintAnd(g, x + 123, y + 30, 10, 18, true);
-    g.drawLine(x + 70, y + AbstractTtlGate.pinheight, x + 70, y + 23);
-    g.drawLine(x + 50, y + AbstractTtlGate.pinheight, x + 50, y + 25);
-    g.drawLine(x + 10, y + height - AbstractTtlGate.pinheight, x + 10, y + 27);
-    g.drawLine(x + 30, y + height - AbstractTtlGate.pinheight, x + 30, y + 29);
-    g.drawLine(x + 50, y + height - AbstractTtlGate.pinheight, x + 50, y + 31);
-    g.drawLine(x + 70, y + height - AbstractTtlGate.pinheight, x + 70, y + 33);
-    g.drawLine(x + 90, y + height - AbstractTtlGate.pinheight, x + 90, y + 35);
-    g.drawLine(x + 110, y + height - AbstractTtlGate.pinheight, x + 110, y + 37);
+    g.drawLine(x + 70, y + AbstractTtlGate.PIN_HEIGHT, x + 70, y + 23);
+    g.drawLine(x + 50, y + AbstractTtlGate.PIN_HEIGHT, x + 50, y + 25);
+    g.drawLine(x + 10, y + height - AbstractTtlGate.PIN_HEIGHT, x + 10, y + 27);
+    g.drawLine(x + 30, y + height - AbstractTtlGate.PIN_HEIGHT, x + 30, y + 29);
+    g.drawLine(x + 50, y + height - AbstractTtlGate.PIN_HEIGHT, x + 50, y + 31);
+    g.drawLine(x + 70, y + height - AbstractTtlGate.PIN_HEIGHT, x + 70, y + 33);
+    g.drawLine(x + 90, y + height - AbstractTtlGate.PIN_HEIGHT, x + 90, y + 35);
+    g.drawLine(x + 110, y + height - AbstractTtlGate.PIN_HEIGHT, x + 110, y + 37);
     g.drawLine(x + 70, y + 23, x + 113, y + 23);
     g.drawLine(x + 50, y + 25, x + 113, y + 25);
     g.drawLine(x + 10, y + 27, x + 113, y + 27);
@@ -68,12 +73,12 @@ public class Ttl7430 extends AbstractTtlGate {
     g.drawLine(x + 90, y + 35, x + 113, y + 35);
     g.drawLine(x + 110, y + 37, x + 113, y + 37);
     g.drawLine(x + 128, y + 30, x + 130, y + 30);
-    g.drawLine(x + 130, y + AbstractTtlGate.pinheight, x + 130, y + 30);
+    g.drawLine(x + 130, y + AbstractTtlGate.PIN_HEIGHT, x + 130, y + 30);
   }
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    Value val1 =
+    var val1 =
         state
             .getPortValue(0)
             .and(state.getPortValue(1).and(state.getPortValue(2).and(state.getPortValue(3))));
@@ -83,11 +88,6 @@ public class Ttl7430 extends AbstractTtlGate {
                 .getPortValue(4)
                 .and(state.getPortValue(5).and(state.getPortValue(7).and(state.getPortValue(8)))));
     state.setPort(6, val2.not(), 1);
-  }
-
-  @Override
-  public String getHDLName(AttributeSet attrs) {
-    return CorrectLabel.getCorrectLabel("TTL" + this.getName()).toUpperCase();
   }
 
   @Override

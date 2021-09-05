@@ -50,8 +50,9 @@ import javax.swing.KeyStroke;
 
 public abstract class JDialogOk extends JDialog {
   private class MyListener extends WindowAdapter implements ActionListener {
+    @Override
     public void actionPerformed(ActionEvent e) {
-      Object src = e.getSource();
+      final var src = e.getSource();
       if (src == ok) {
         okClicked();
         dispose();
@@ -75,28 +76,29 @@ public abstract class JDialogOk extends JDialog {
   protected final JButton ok = new JButton(S.get("dlogOkButton"));
   protected final JButton cancel = new JButton(S.get("dlogCancelButton"));
   protected Window parent;
-  
+
   public JDialogOk(String title) {
-    this(title,true);
+    this(title, true);
   }
+
   public JDialogOk(String title, boolean withCancel) {
-    super(KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
-        title, Dialog.ModalityType.APPLICATION_MODAL);
+    super(
+        KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow(),
+        title,
+        Dialog.ModalityType.APPLICATION_MODAL);
     parent = KeyboardFocusManager.getCurrentKeyboardFocusManager().getActiveWindow();
     configure(withCancel);
   }
-  
-  
 
   public void cancelClicked() {}
 
   private void configure(boolean withCancel) {
-    MyListener listener = new MyListener();
+    final var listener = new MyListener();
     this.addWindowListener(listener);
     ok.addActionListener(listener);
     cancel.addActionListener(listener);
 
-    Box buttons = Box.createHorizontalBox();
+    final var buttons = Box.createHorizontalBox();
     buttons.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
     buttons.add(Box.createHorizontalGlue());
     buttons.add(ok);
@@ -106,18 +108,28 @@ public abstract class JDialogOk extends JDialog {
     }
     buttons.add(Box.createHorizontalGlue());
 
-    Container pane = super.getContentPane();
+    final var pane = super.getContentPane();
     pane.add(contents, BorderLayout.CENTER);
     pane.add(buttons, BorderLayout.SOUTH);
-    
-    getRootPane().registerKeyboardAction(e -> { setVisible(false); cancelClicked(); dispose(); }, KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), JComponent.WHEN_IN_FOCUSED_WINDOW);
 
-    addWindowListener(new WindowAdapter() {
-      public void windowOpened(WindowEvent e) {
-        ok.requestFocus();
-        e.getWindow().removeWindowListener(this);
-      }
-    });
+    getRootPane()
+        .registerKeyboardAction(
+            e -> {
+              setVisible(false);
+              cancelClicked();
+              dispose();
+            },
+            KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
+            JComponent.WHEN_IN_FOCUSED_WINDOW);
+
+    addWindowListener(
+        new WindowAdapter() {
+          @Override
+          public void windowOpened(WindowEvent e) {
+            ok.requestFocus();
+            e.getWindow().removeWindowListener(this);
+          }
+        });
   }
 
   @Override
@@ -125,10 +137,10 @@ public abstract class JDialogOk extends JDialog {
     return contents;
   }
 
+  @Override
   public void pack() {
     super.pack();
-    while (parent != null && !parent.isShowing())
-      parent = parent.getOwner();
+    while (parent != null && !parent.isShowing()) parent = parent.getOwner();
     setLocationRelativeTo(parent);
     parent = null;
   }

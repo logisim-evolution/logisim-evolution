@@ -35,34 +35,34 @@ import java.util.ArrayList;
 public class ClockSourceContainer {
 
   final ArrayList<Component> sources;
-  boolean RequiresFPGAGlobalClock;
+  boolean requiresFpgaGlobalClock;
 
   public ClockSourceContainer() {
     sources = new ArrayList<>();
-    RequiresFPGAGlobalClock = false;
+    requiresFpgaGlobalClock = false;
   }
 
   public void clear() {
     sources.clear();
-    RequiresFPGAGlobalClock = false;
+    requiresFpgaGlobalClock = false;
   }
 
   private boolean equals(Component comp1, Component comp2) {
-    if (comp1.getAttributeSet().getValue(Clock.ATTR_PHASE).intValue() !=
-        comp2.getAttributeSet().getValue(Clock.ATTR_PHASE).intValue()) return false;
+    if (comp1.getAttributeSet().getValue(Clock.ATTR_PHASE).intValue()
+        != comp2.getAttributeSet().getValue(Clock.ATTR_PHASE).intValue()) return false;
     if (comp1.getAttributeSet().getValue(Clock.ATTR_HIGH).intValue()
         != comp2.getAttributeSet().getValue(Clock.ATTR_HIGH).intValue()) {
       return false;
     }
-    return comp1.getAttributeSet().getValue(Clock.ATTR_LOW).intValue() == comp2.getAttributeSet()
-        .getValue(Clock.ATTR_LOW).intValue();
+    return comp1.getAttributeSet().getValue(Clock.ATTR_LOW).intValue()
+        == comp2.getAttributeSet().getValue(Clock.ATTR_LOW).intValue();
   }
 
   public int getClockId(Component comp) {
     if (!(comp.getFactory() instanceof Clock)) {
       return -1;
     }
-    for (Component clock : sources) {
+    for (final var clock : sources) {
       if (equals(comp, clock)) {
         return sources.indexOf(clock);
       }
@@ -79,11 +79,11 @@ public class ClockSourceContainer {
     return sources;
   }
 
-  public boolean RequiresFPGAGlobalClock() {
-    return RequiresFPGAGlobalClock;
+  public boolean getRequiresFpgaGlobalClock() {
+    return requiresFpgaGlobalClock;
   }
 
-  public void SetGloblaClockRequirement() {
-    RequiresFPGAGlobalClock = true;
+  public void setRequiresFpgaGlobalClock() {
+    requiresFpgaGlobalClock = true;
   }
 }

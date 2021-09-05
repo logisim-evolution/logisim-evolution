@@ -1,0 +1,105 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2020-06-26T10:59:00.126200000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Inverseur à virgule flottante
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/fpnegator.png" alt="#########" width="32" height="32" align="middle"> 
+		<em>Inverseur à virgule flottante</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Arithmétique</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.0 Beta 22
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+              <img class="Apparencelibs" src="../../../../img-libs/negator.png" alt="#########" width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        Computes the two's-complement negation of the input. This negation is performed by maintaining all the lower-order bits up to the lowest-order 1, and complementing all bits above that.
+      </p>
+      <p>
+        If the value to be negated happens to be the least negative value, then its negation (which cannot be represented in two's-complement form), is still the least negative value.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <dl>
+        <dt>
+          West edge (input, bit width matches Largeur de données attribute)
+        </dt>
+        <dd>
+          The value to negate.
+        </dd>
+        <dt>
+          East edge, labeled -<var>x</var> (output, bit width matches Largeur de données attribute)
+        </dt>
+        <dd>
+          The negation of the input. If the input happens to be the least negative value representable in <var>dataBits</var> bits, however, then the output matches the input.
+        </dd>
+      </dl>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        When the component is selected or being added, Alt-0 through Alt-9 alter its <q>Largeur de données</q> attribute.
+      </p>
+      <dl>
+        <dt>
+          Largeur de données
+        </dt>
+        <dd>
+          The bit width of the component's input and output.
+        </dd>
+      </dl>
+      <h2>
+        Comportement de l'outil pousser
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <h2>
+        Comportement de l'outil text 
+      </h2>
+      <p>
+        Aucun.
+      </p>
+      <p>
+        <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
+      </p>
+    </div>
+  </body>
+</html>

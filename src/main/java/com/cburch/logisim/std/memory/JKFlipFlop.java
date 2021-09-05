@@ -41,40 +41,48 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class JKFlipFlop extends AbstractFlipFlop {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "J-K Flip-Flop";
+
   private static class JKFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
     @Override
     public String ComponentName() {
-      return "J-K Flip-Flop";
+      return _ID;
     }
 
     @Override
-    public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist Nets) {
-      Map<String, String> PortMap = new HashMap<>();
-      PortMap.putAll(GetNetMap("J", true, ComponentInfo, 0, Nets));
-      PortMap.putAll(GetNetMap("K", true, ComponentInfo, 1, Nets));
-      return PortMap;
+    public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist nets) {
+      final var portMap = new HashMap<String, String>();
+      portMap.putAll(GetNetMap("J", true, ComponentInfo, 0, nets));
+      portMap.putAll(GetNetMap("K", true, ComponentInfo, 1, nets));
+      return portMap;
     }
 
     @Override
     public Map<String, Integer> GetInputPorts() {
-      Map<String, Integer> Inputs = new HashMap<>();
-      Inputs.put("J", 1);
-      Inputs.put("K", 1);
-      return Inputs;
+      final var inputs = new HashMap<String, Integer>();
+      inputs.put("J", 1);
+      inputs.put("K", 1);
+      return inputs;
     }
 
     @Override
     public ArrayList<String> GetUpdateLogic() {
-      ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   "+HDL.assignPreamble()+"s_next_state"+HDL.assignOperator()+
-          "("+HDL.notOperator()+"(s_current_state_reg)"+HDL.andOperator()+"J)"+HDL.orOperator());
-      Contents.add("         (s_current_state_reg"+HDL.andOperator()+HDL.notOperator()+"(K));");
-      return Contents;
+      final var contents = new ArrayList<String>();
+      contents.add("   " + HDL.assignPreamble() + "s_next_state" + HDL.assignOperator()
+              + "(" + HDL.notOperator() + "(s_current_state_reg)" + HDL.andOperator() + "J)" + HDL.orOperator());
+      contents.add("         (s_current_state_reg" + HDL.andOperator() + HDL.notOperator() + "(K));");
+      return contents;
     }
   }
 
   public JKFlipFlop() {
-    super("J-K Flip-Flop", new FlipFlopIcon(FlipFlopIcon.JK_FLIPFLOP), S.getter("jkFlipFlopComponent"), 2, false);
+    super(_ID, new FlipFlopIcon(FlipFlopIcon.JK_FLIPFLOP), S.getter("jkFlipFlopComponent"), 2, false);
   }
 
   @Override

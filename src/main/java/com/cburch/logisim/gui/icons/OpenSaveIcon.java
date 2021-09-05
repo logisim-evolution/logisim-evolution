@@ -33,7 +33,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
-public class OpenSaveIcon extends AbstractIcon {
+public class OpenSaveIcon extends BaseIcon {
 
   public static final int FILE_OPEN = 0;
   public static final int FILE_SAVE = 1;
@@ -56,9 +56,9 @@ public class OpenSaveIcon extends AbstractIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {
-    Color DiscCol = myType == FILE_SAVE_AS ? Color.GRAY : Color.BLUE;
-    Bounds bds = getScaled(2, 2, 12, 12);
-    g2.setColor(DiscCol);
+    final var discCol = myType == FILE_SAVE_AS ? Color.GRAY : Color.BLUE;
+    var bds = getScaled(2, 2, 12, 12);
+    g2.setColor(discCol);
     g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     g2.setColor(Color.YELLOW);
     bds = getScaled(4, 2, 8, 7);
@@ -70,7 +70,8 @@ public class OpenSaveIcon extends AbstractIcon {
     bds = getScaled(8, 11, 1, 2);
     g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     g2.setColor(Color.MAGENTA);
-    int[] xpoints, ypoints;
+    int[] xpoints;
+    int[] ypoints;
     switch (myType) {
       case FILE_OPEN:
         xpoints = new int[7];
@@ -90,6 +91,9 @@ public class OpenSaveIcon extends AbstractIcon {
           ypoints[i] = AppPreferences.getScaled(Arrowdown[i * 2 + 1]);
         }
         g2.fillPolygon(xpoints, ypoints, 7);
+        break;
+      default:
+        // do nothing. should not really happen.
         break;
     }
   }

@@ -71,12 +71,12 @@ public class PolyTool extends AbstractTool {
     if (!active) return null;
     CanvasObject add = null;
     active = false;
-    List<Location> locs = locations;
-    for (int i = locs.size() - 2; i >= 0; i--) {
+    final var locs = locations;
+    for (var i = locs.size() - 2; i >= 0; i--) {
       if (locs.get(i).equals(locs.get(i + 1))) locs.remove(i);
     }
     if (locs.size() > 1) {
-      CanvasModel model = canvas.getModel();
+      final var model = canvas.getModel();
       add = new Poly(closed, locs);
       canvas.doAction(new ModelAddAction(model, add));
       repaintArea(canvas);
@@ -86,21 +86,21 @@ public class PolyTool extends AbstractTool {
   }
 
   @Override
-  public void draw(Canvas canvas, Graphics g) {
+  public void draw(Canvas canvas, Graphics gfx) {
     if (active) {
-      g.setColor(Color.GRAY);
+      gfx.setColor(Color.GRAY);
       int size = locations.size();
-      int[] xs = new int[size];
-      int[] ys = new int[size];
-      for (int i = 0; i < size; i++) {
-        Location loc = locations.get(i);
+      final var xs = new int[size];
+      final var ys = new int[size];
+      for (var i = 0; i < size; i++) {
+        final var loc = locations.get(i);
         xs[i] = loc.getX();
         ys[i] = loc.getY();
       }
-      g.drawPolyline(xs, ys, size);
-      int lastX = xs[xs.length - 1];
-      int lastY = ys[ys.length - 1];
-      g.fillOval(lastX - 2, lastY - 2, 4, 4);
+      gfx.drawPolyline(xs, ys, size);
+      final var lastX = xs[xs.length - 1];
+      final var lastY = ys[ys.length - 1];
+      gfx.fillOval(lastX - 2, lastY - 2, 4, 4);
     }
   }
 
@@ -121,7 +121,7 @@ public class PolyTool extends AbstractTool {
 
   @Override
   public void keyPressed(Canvas canvas, KeyEvent e) {
-    int code = e.getKeyCode();
+    final var code = e.getKeyCode();
     if (active && mouseDown && (code == KeyEvent.VK_SHIFT || code == KeyEvent.VK_CONTROL)) {
       updateMouse(canvas, lastMouseX, lastMouseY, e.getModifiersEx());
     }
@@ -135,14 +135,14 @@ public class PolyTool extends AbstractTool {
   @Override
   public void keyTyped(Canvas canvas, KeyEvent e) {
     if (active) {
-      char ch = e.getKeyChar();
+      final var ch = e.getKeyChar();
       if (ch == '\u001b') { // escape key
         active = false;
         locations.clear();
         repaintArea(canvas);
         canvas.toolGestureComplete(this, null);
       } else if (ch == '\n') { // enter key
-        CanvasObject add = commit(canvas);
+        final var add = commit(canvas);
         canvas.toolGestureComplete(this, add);
       }
     }
@@ -155,24 +155,23 @@ public class PolyTool extends AbstractTool {
 
   @Override
   public void mousePressed(Canvas canvas, MouseEvent e) {
-    int mx = e.getX();
-    int my = e.getY();
+    var mx = e.getX();
+    var my = e.getY();
     lastMouseX = mx;
     lastMouseY = my;
-    int mods = e.getModifiersEx();
-    if ((mods & InputEvent.CTRL_DOWN_MASK) != 0) {
+    if ((e.getModifiersEx() & InputEvent.CTRL_DOWN_MASK) != 0) {
       mx = canvas.snapX(mx);
       my = canvas.snapY(my);
     }
 
     if (active && e.getClickCount() > 1) {
-      CanvasObject add = commit(canvas);
+      final var add = commit(canvas);
       canvas.toolGestureComplete(this, add);
       return;
     }
 
-    Location loc = Location.create(mx, my);
-    List<Location> locs = locations;
+    final var loc = Location.create(mx, my);
+    final var locs = locations;
     if (!active) {
       locs.clear();
       locs.add(loc);
@@ -191,11 +190,11 @@ public class PolyTool extends AbstractTool {
       mouseDown = false;
       int size = locations.size();
       if (size >= 3) {
-        Location first = locations.get(0);
-        Location last = locations.get(size - 1);
+        final var first = locations.get(0);
+        final var last = locations.get(size - 1);
         if (first.manhattanDistanceTo(last) <= CLOSE_TOLERANCE) {
           locations.remove(size - 1);
-          CanvasObject add = commit(canvas);
+          final var add = commit(canvas);
           canvas.toolGestureComplete(this, add);
         }
       }
@@ -208,7 +207,7 @@ public class PolyTool extends AbstractTool {
 
   @Override
   public void toolDeselected(Canvas canvas) {
-    CanvasObject add = commit(canvas);
+    final var add = commit(canvas);
     canvas.toolGestureComplete(this, add);
     repaintArea(canvas);
   }
@@ -218,17 +217,17 @@ public class PolyTool extends AbstractTool {
     lastMouseY = my;
     if (active) {
       int index = locations.size() - 1;
-      Location last = locations.get(index);
+      final var last = locations.get(index);
       Location newLast;
       if ((mods & MouseEvent.SHIFT_DOWN_MASK) != 0 && index > 0) {
-        Location nextLast = locations.get(index - 1);
+        final var nextLast = locations.get(index - 1);
         newLast = LineUtil.snapTo8Cardinals(nextLast, mx, my);
       } else {
         newLast = Location.create(mx, my);
       }
       if ((mods & MouseEvent.CTRL_DOWN_MASK) != 0) {
-        int lastX = newLast.getX();
-        int lastY = newLast.getY();
+        var lastX = newLast.getX();
+        var lastY = newLast.getY();
         lastX = canvas.snapX(lastX);
         lastY = canvas.snapY(lastY);
         newLast = Location.create(lastX, lastY);

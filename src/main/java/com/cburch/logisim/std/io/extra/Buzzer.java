@@ -62,6 +62,13 @@ import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
 public class Buzzer extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Buzzer";
 
   private static final byte FREQ = 0;
   private static final byte ENABLE = 1;
@@ -104,13 +111,28 @@ public class Buzzer extends InstanceFactory {
       Attributes.forIntegerRange("smooth_width", S.getter("buzzerSmoothWidth"), 1, 10);
 
   public Buzzer() {
-    super("Buzzer", S.getter("buzzerComponent"));
+    super(_ID, S.getter("buzzerComponent"));
     setAttributes(
         new Attribute[]{
-            StdAttr.FACING, FREQUENCY_MEASURE, VOLUME_WIDTH, StdAttr.LABEL, StdAttr.LABEL_FONT,
-            WAVEFORM, CHANNEL, SMOOTH_LEVEL, SMOOTH_WIDTH
+            StdAttr.FACING,
+            StdAttr.SELECT_LOC,
+            FREQUENCY_MEASURE,
+            VOLUME_WIDTH,
+            StdAttr.LABEL,
+            StdAttr.LABEL_FONT,
+            WAVEFORM,
+            CHANNEL,
+            SMOOTH_LEVEL,
+            SMOOTH_WIDTH
         },
-        new Object[]{Direction.WEST, Hz, BitWidth.create(7), "", StdAttr.DEFAULT_LABEL_FONT, Sine,
+        new Object[]{
+            Direction.WEST,
+            StdAttr.SELECT_BOTTOM_LEFT,
+            Hz,
+            BitWidth.create(7),
+            "",
+            StdAttr.DEFAULT_LABEL_FONT,
+            Sine,
             C_BOTH, 2, 2});
     setFacingAttribute(StdAttr.FACING);
     setIconName("buzzer.gif");
@@ -125,10 +147,8 @@ public class Buzzer extends InstanceFactory {
       if (d != null && d.thread.isAlive()) {
         d.is_on.set(false);
       }
-    }
-    // if it's a subcircuit search other buzzer's instances inside it and stop all
-    // sound threads
-    else if (compFact instanceof SubcircuitFactory) {
+    } else if (compFact instanceof SubcircuitFactory) {
+      // if it's a subcircuit search other buzzer's instances inside it and stop all sound threads
       for (Component subComponent :
           ((SubcircuitFactory) comp.getFactory()).getSubcircuit().getComponents()) {
         // recursive if there are other subcircuits
@@ -166,7 +186,7 @@ public class Buzzer extends InstanceFactory {
     if (attr == StdAttr.FACING) {
       instance.recomputeBounds();
       updateports(instance);
-    } else if (attr == VOLUME_WIDTH) {
+    } else if (attr == VOLUME_WIDTH || attr == StdAttr.SELECT_LOC) {
       updateports(instance);
     } else if (attr == WAVEFORM || attr == CHANNEL || attr == SMOOTH_LEVEL || attr == SMOOTH_WIDTH) {
       instance.fireInvalidated();
@@ -218,17 +238,15 @@ public class Buzzer extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     Data d = getData(state);
-    boolean active = state.getPortValue(ENABLE) == Value.TRUE;
+    var active = state.getPortValue(ENABLE) == Value.TRUE;
     d.is_on.set(active);
-    int freq = (int) state.getPortValue(FREQ).toLongValue();
+    var freq = (int) state.getPortValue(FREQ).toLongValue();
     if (freq >= 0) {
       if (state.getAttributeValue(FREQUENCY_MEASURE) == dHz) {
         freq /= 10;
       }
       d.hz = freq;
-    }
-    else
-    {
+    } else {
       d.hz = 440;
     }
     d.wf = (BuzzerWaveform) state.getAttributeValue(WAVEFORM).getValue();
@@ -243,9 +261,7 @@ public class Buzzer extends InstanceFactory {
       int vol = (int) state.getPortValue(VOL).toLongValue();
       byte VolumeWidth = (byte) state.getAttributeValue(VOLUME_WIDTH).getWidth();
       d.vol = ((vol & 0xffffffffL) * 32767) / (Math.pow(2, VolumeWidth) - 1);
-    }
-    else
-    {
+    } else {
       d.vol = 0.5;
     }
     d.updateRequired = true;
@@ -255,22 +271,32 @@ public class Buzzer extends InstanceFactory {
   }
 
   private void updateports(Instance instance) {
-    Direction dir = instance.getAttributeValue(StdAttr.FACING);
+    Direction facing = instance.getAttributeValue(StdAttr.FACING);
     byte VolumeWidth = (byte) instance.getAttributeValue(VOLUME_WIDTH).getWidth();
     Port[] p = new Port[4];
-    if (dir == Direction.EAST || dir == Direction.WEST) {
+    if (facing == Direction.EAST || facing == Direction.WEST) {
       p[FREQ] = new Port(0, -10, Port.INPUT, 14);
       p[VOL] = new Port(0, 10, Port.INPUT, VolumeWidth);
     } else {
       p[FREQ] = new Port(-10, 0, Port.INPUT, 14);
       p[VOL] = new Port(10, 0, Port.INPUT, VolumeWidth);
     }
-    p[ENABLE] = new Port(0, 0, Port.INPUT, 1);
-    p[PW] = new Port(20, 20, Port.INPUT, 8);
     p[FREQ].setToolTip(S.getter("buzzerFrequecy"));
-    p[PW].setToolTip(S.getter("buzzerDutyCycle"));
-    p[ENABLE].setToolTip(S.getter("enableSound"));
     p[VOL].setToolTip(S.getter("buzzerVolume"));
+    p[ENABLE] = new Port(0, 0, Port.INPUT, 1);
+    p[ENABLE].setToolTip(S.getter("enableSound"));
+    Object selectLoc = instance.getAttributeValue(StdAttr.SELECT_LOC);
+    var xPw = 20;
+    var yPw = 20;
+    if (facing == Direction.NORTH || facing == Direction.SOUTH) {
+      xPw *= selectLoc == StdAttr.SELECT_BOTTOM_LEFT ? -1 : 1;
+      yPw *= facing == Direction.SOUTH ? -1 : 1;
+    } else {
+      xPw *= facing == Direction.EAST ? -1 : 1;
+      yPw *= selectLoc == StdAttr.SELECT_TOP_RIGHT ? -1 : 1;
+    }
+    p[PW] = new Port(xPw, yPw, Port.INPUT, 8);
+    p[PW].setToolTip(S.getter("buzzerDutyCycle"));
     instance.setPorts(p);
   }
 
@@ -324,8 +350,8 @@ public class Buzzer extends InstanceFactory {
       AudioFormat af = null;
       Clip clip = null;
       AudioInputStream ais = null;
-      int oldfreq = -1;
-      int oldpw = -1;
+      var oldfreq = -1;
+      var oldpw = -1;
       try {
         while (is_on.get()) {
           if (updateRequired) {
@@ -335,25 +361,23 @@ public class Buzzer extends InstanceFactory {
               return;
             }
 
-            if (hz != oldfreq)
-            {
-              sampleRate = (int)Math.ceil(44100.0 / hz) * hz;
+            if (hz != oldfreq) {
+              sampleRate = (int) Math.ceil(44100.0 / hz) * hz;
               af = new AudioFormat(sampleRate, 16, 2, true, false);
               oldfreq = hz;
             }
 
             // TODO: Computing all those values takes time; it may be interesting to replace this by a LUT
-            int cycle = Math.max(1, sampleRate / hz);
-            double[] values = new double[4 * cycle];
-            for (int i = 0; i < values.length; i++)
-            {
-              values[i] = wf.strategy.amplitude(i / (double)sampleRate, hz, pw / 256.0);
+            var cycle = Math.max(1, sampleRate / hz);
+            var values = new double[4 * cycle];
+            for (var i = 0; i < values.length; i++) {
+              values[i] = wf.strategy.amplitude(i / (double) sampleRate, hz, pw / 256.0);
             }
 
             if (wf != BuzzerWaveform.Sine && smoothLevel > 0 && smoothWidth > 0) {
-              double[] nsig = new double[values.length];
-              for (int k = 0; k < smoothLevel; k++) {
-                double sum = 0;
+              var nsig = new double[values.length];
+              for (var k = 0; k < smoothLevel; k++) {
+                var sum = 0;
                 for (var i = 0; i < values.length; i++) {
                   if (i > 2 * smoothWidth) {
                     nsig[i - smoothWidth - 1] = (sum - values[i - smoothWidth - 1]) / (2 * smoothWidth);
@@ -365,15 +389,14 @@ public class Buzzer extends InstanceFactory {
               }
             }
 
-            double[] rvalues = new double[sampleRate];
-            for(var i = 0; i < sampleRate; i += cycle)
-            {
+            var rvalues = new double[sampleRate];
+            for (var i = 0; i < sampleRate; i += cycle) {
               System.arraycopy(values, 2 * cycle, rvalues, i, Math.min(cycle, sampleRate - i));
             }
 
             byte[] buf = new byte[4 * sampleRate];
             for (int i = 0, j = 0; i < buf.length; i += 4, j++) {
-              short val = (short) Math.round(rvalues[j] * vol);
+              var val = (short) Math.round(rvalues[j] * vol);
               if ((channels & 1) != 0) {
                 buf[i] = (byte) (val & 0xff);
                 buf[i + 1] = (byte) (val >> 8);

@@ -44,7 +44,7 @@ import java.util.ArrayList;
 
 public class PioState implements SocBusSlaveInterface {
 
-  public class PioRegState implements InstanceData,Cloneable {
+  public class PioRegState implements InstanceData, Cloneable {
     public int outputRegister;
     public int captureRegister;
     public int directionRegister;
@@ -53,11 +53,12 @@ public class PioState implements SocBusSlaveInterface {
     public boolean oldIrqValid;
     private int oldInputs;
     private boolean oldInputsValid;
-    
+
     public PioRegState() {
       reset();
     }
-    
+
+    @Override
     public PioRegState clone() {
       try {
         return (PioRegState) super.clone();
@@ -65,14 +66,14 @@ public class PioState implements SocBusSlaveInterface {
         return null;
       }
     }
-    
+
     public void updateCaptureRegister(int newInputs) {
       if (oldInputsValid && newInputs == oldInputs)
         return;
       if (oldInputsValid && inputIsCapturedSynchronisely()) {
-        for (int i = 0 ; i < nrOfIOs.getWidth() ; i++) {
-          int oldi = (oldInputs >> i)&1;
-          int newi = (newInputs >> i)&1;
+        for (int i = 0; i < nrOfIOs.getWidth(); i++) {
+          int oldi = (oldInputs >> i) & 1;
+          int newi = (newInputs >> i) & 1;
           if (edgeCaptureType == PioAttributes.CAPT_ANY) {
             if (oldi != newi)
               captureRegister |= 1 << i;
@@ -86,8 +87,8 @@ public class PioState implements SocBusSlaveInterface {
       oldInputsValid = true;
       oldInputs = newInputs;
     }
-    
-    public void reset() { 
+
+    public void reset() {
       outputRegister = outputResetValue;
       captureRegister = 0;
       directionRegister = 0;
@@ -98,7 +99,7 @@ public class PioState implements SocBusSlaveInterface {
       oldIrqValid = false;
     }
   }
-  
+
   private static final int DATA_REG_INDEX  = 0x0;
   private static final int DIR_REG_INDEX   = 0x4;
   private static final int IRQ_MASK_INDEX  = 0x8;
@@ -120,7 +121,7 @@ public class PioState implements SocBusSlaveInterface {
   private Boolean inputGeneratesIrq = false;
   private AttributeOption irqType = PioAttributes.IRQ_LEVEL;
 
-  
+
   public void copyInto(PioState d) {
     d.nrOfIOs = nrOfIOs;
     d.label = label;
@@ -135,27 +136,60 @@ public class PioState implements SocBusSlaveInterface {
     d.inputGeneratesIrq = inputGeneratesIrq;
     d.irqType = irqType;
   }
-  
-  public BitWidth getNrOfIOs() { return nrOfIOs; }
-  public String getLabel() { return label; }
-  public SocBusInfo getAttachedBus() { return attachedBus; }
-  public AttributeOption getPortDirection() { return direction; }
-  public Integer getOutputResetValue() { return outputResetValue; }
-  public Boolean outputSupportsBitManipulations() { return outputEnableBitManipulations; }
 
-  public Boolean inputIsCapturedSynchronisely() { return inputSynchronousCapture; }
-  public AttributeOption getInputCaptureEdge() { return edgeCaptureType; }
-  public Boolean inputCaptureSupportsBitClearing() { return inputCaptBitClearing; }
-  public Boolean inputGeneratesIrq() { return inputGeneratesIrq && direction != PioAttributes.PORT_OUTPUT; }
-  public AttributeOption getIrqType() { return (inputGeneratesIrq()&&inputIsCapturedSynchronisely()) ? irqType : PioAttributes.IRQ_LEVEL; }
-  
+  public BitWidth getNrOfIOs() {
+    return nrOfIOs;
+  }
+
+  public String getLabel() {
+    return label;
+  }
+
+  public SocBusInfo getAttachedBus() {
+    return attachedBus;
+  }
+
+  public AttributeOption getPortDirection() {
+    return direction;
+  }
+
+  public Integer getOutputResetValue() {
+    return outputResetValue;
+  }
+
+  public Boolean outputSupportsBitManipulations() {
+    return outputEnableBitManipulations;
+  }
+
+  public Boolean inputIsCapturedSynchronisely() {
+    return inputSynchronousCapture;
+  }
+
+  public AttributeOption getInputCaptureEdge() {
+    return edgeCaptureType;
+  }
+
+  public Boolean inputCaptureSupportsBitClearing() {
+    return inputCaptBitClearing;
+  }
+
+  public Boolean inputGeneratesIrq() {
+    return inputGeneratesIrq && direction != PioAttributes.PORT_OUTPUT;
+  }
+
+  public AttributeOption getIrqType() {
+    return (inputGeneratesIrq() && inputIsCapturedSynchronisely())
+        ? irqType
+        : PioAttributes.IRQ_LEVEL;
+  }
+
   public boolean setNrOfIOs(BitWidth nr) {
     if (nr.getWidth() == nrOfIOs.getWidth())
       return false;
     nrOfIOs = nr;
     return true;
   }
-  
+
   public boolean setLabel(String l) {
     if (label.equals(l))
       return false;
@@ -163,92 +197,92 @@ public class PioState implements SocBusSlaveInterface {
     fireNameChanged();
     return true;
   }
-  
+
   public boolean setAttachedBus(SocBusInfo i) {
     if (attachedBus.getBusId().equals(i.getBusId()))
       return false;
     attachedBus.setBusId(i.getBusId());
     return true;
   }
-  
-  public boolean setStartAddress( Integer addr ) {
+
+  public boolean setStartAddress(Integer addr) {
     if (startAddress == addr)
       return false;
     startAddress = addr;
     firememMapChanged();
     return true;
   }
-  
-  public boolean setPortDirection( AttributeOption dir ) {
+
+  public boolean setPortDirection(AttributeOption dir) {
     if (direction == dir)
       return false;
     direction = dir;
     return true;
   }
-  
-  public boolean setOutputResetValue( Integer val ) {
+
+  public boolean setOutputResetValue(Integer val) {
     if (outputResetValue == val)
       return false;
     outputResetValue = val;
     return true;
   }
-  
-  public boolean setOutputBitManupulations( Boolean b ) {
+
+  public boolean setOutputBitManupulations(Boolean b) {
     if (outputEnableBitManipulations == b)
       return false;
     outputEnableBitManipulations = b;
     return true;
   }
-  
-  public boolean setInputSynchronousCapture( Boolean b ) {
+
+  public boolean setInputSynchronousCapture(Boolean b) {
     if (inputSynchronousCapture == b)
       return false;
     inputSynchronousCapture = b;
     return true;
   }
-  
-  public boolean setInputCaptureEdge( AttributeOption val ) {
+
+  public boolean setInputCaptureEdge(AttributeOption val) {
     if (edgeCaptureType == val)
       return false;
     edgeCaptureType = val;
     return true;
   }
-  
-  public boolean setInputCaptureBitClearing( Boolean b ) {
+
+  public boolean setInputCaptureBitClearing(Boolean b) {
     if (inputCaptBitClearing == b)
       return false;
     inputCaptBitClearing = b;
     return true;
   }
-  
-  public boolean setIrqGeneration( Boolean b ) {
+
+  public boolean setIrqGeneration(Boolean b) {
     if (inputGeneratesIrq == b)
       return false;
     inputGeneratesIrq = b;
     return true;
   }
-  
-  public boolean setIrqType( AttributeOption val) {
+
+  public boolean setIrqType(AttributeOption val) {
     if (irqType == val)
       return false;
     irqType = val;
     return true;
   }
-  
+
   public int handleOperations(InstanceState state, boolean captureOnly) {
-	PioState.PioRegState regs = (PioState.PioRegState)state.getData();
-	if (regs == null) {
-		regs = new PioRegState();
-	  state.setData(regs);
-	}
-    if (state.getPortValue(SocPio.ResetIndex) == Value.TRUE)
+    PioState.PioRegState regs = (PioState.PioRegState) state.getData();
+    if (regs == null) {
+      regs = new PioRegState();
+      state.setData(regs);
+    }
+    if (state.getPortValue(SocPio.RESET_INDEX) == Value.TRUE)
       regs.reset();
     int index = inputGeneratesIrq() ? 2 : 1;
     int nrOfBits = nrOfIOs.getWidth();
     int outputStart = index + (direction == PioAttributes.PORT_INOUT ? nrOfIOs.getWidth() : 0);
     int inputs = 0;
-    for (int i = 0 ; i < nrOfBits ; i++) {
-      if (state.getPortValue(index +i) == Value.TRUE)
+    for (int i = 0; i < nrOfBits; i++) {
+      if (state.getPortValue(index + i) == Value.TRUE)
         inputs |= 1 << i;
     }
     if (inputGeneratesIrq()) {
@@ -256,23 +290,24 @@ public class PioState implements SocBusSlaveInterface {
       int irqs = irqSource & regs.interruptMask;
       boolean isIrq = irqs != 0;
       if (!regs.oldIrqValid || isIrq != regs.oldIrq)
-        state.setPort(SocPio.IRQIndex, isIrq ? Value.TRUE : Value.FALSE, 10);
+        state.setPort(SocPio.IRQ_INDEX, isIrq ? Value.TRUE : Value.FALSE, 10);
       regs.oldIrqValid = true;
       regs.oldIrq = isIrq;
     }
     if (captureOnly) return inputs;
     regs.updateCaptureRegister(inputs);
     if (direction != PioAttributes.PORT_INPUT) {
-      for (int i = 0 ; i < nrOfBits ; i++) {
-        Value val = (regs.outputRegister&(1<<i)) != 0 ? Value.TRUE : Value.FALSE;
-        boolean isOutput = direction != PioAttributes.PORT_BIDIR || ((regs.directionRegister>>i)&1) != 0;
+      for (int i = 0; i < nrOfBits; i++) {
+        Value val = (regs.outputRegister & (1 << i)) != 0 ? Value.TRUE : Value.FALSE;
+        boolean isOutput =
+            direction != PioAttributes.PORT_BIDIR || ((regs.directionRegister >> i) & 1) != 0;
         if (isOutput)
-          state.setPort(outputStart+i, val, 10);
+          state.setPort(outputStart + i, val, 10);
       }
     }
     return 0;
   }
-  
+
   private PioRegState getRegPropagateState() {
     return (PioRegState) attachedBus.getSocSimulationManager().getdata(attachedBus.getComponent());
   }
@@ -283,24 +318,24 @@ public class PioState implements SocBusSlaveInterface {
 
   private void handleOutputWriteTransaction(SocBusTransaction trans) {
     if (direction == PioAttributes.PORT_INPUT)
-      trans.setError(SocBusTransaction.ReadOnlyAccessError);
+      trans.setError(SocBusTransaction.READ_ONLY_ACCESS_ERROR);
     else {
       PioRegState pdata = getRegPropagateState();
       pdata.outputRegister = trans.getWriteData();
-      handleOperations(getPropagateState(),false);
+      handleOperations(getPropagateState(), false);
     }
   }
-  
+
   private void handleInputReadTransaction(SocBusTransaction trans) {
     if (direction == PioAttributes.PORT_OUTPUT)
-      trans.setError(SocBusTransaction.WriteOnlyAccessError);
-    else 
-      trans.setReadData(handleOperations(getPropagateState(),true));
+      trans.setError(SocBusTransaction.WRITE_ONLY_ACCESS_ERROR);
+    else
+      trans.setReadData(handleOperations(getPropagateState(), true));
   }
-  
+
   private void handleDirectionRegister(SocBusTransaction trans) {
     if (direction != PioAttributes.PORT_BIDIR) {
-      trans.setError(SocBusTransaction.RegisterDoesNotExistError);
+      trans.setError(SocBusTransaction.REGISTER_DOES_NOT_EXIST_ERROR);
       return;
     }
     PioRegState s = getRegPropagateState();
@@ -309,10 +344,10 @@ public class PioState implements SocBusSlaveInterface {
     if (trans.isWriteTransaction())
       s.directionRegister = trans.getWriteData();
   }
-  
+
   private void handleIrqMaskRegister(SocBusTransaction trans) {
     if (!inputGeneratesIrq()) {
-      trans.setError(SocBusTransaction.RegisterDoesNotExistError);
+      trans.setError(SocBusTransaction.REGISTER_DOES_NOT_EXIST_ERROR);
       return;
     }
     PioRegState s = getRegPropagateState();
@@ -321,14 +356,14 @@ public class PioState implements SocBusSlaveInterface {
     else
       s.interruptMask = trans.getWriteData();
   }
-  
+
   private void handleCaptureRegister(SocBusTransaction trans) {
     if (!inputIsCapturedSynchronisely()) {
-      trans.setError(SocBusTransaction.RegisterDoesNotExistError);
+      trans.setError(SocBusTransaction.REGISTER_DOES_NOT_EXIST_ERROR);
       return;
     }
     PioRegState s = getRegPropagateState();
-    if (trans.isReadTransaction()) 
+    if (trans.isReadTransaction())
       trans.setReadData(s.captureRegister);
     if (trans.isWriteTransaction()) {
       if (inputCaptureSupportsBitClearing()) {
@@ -338,14 +373,14 @@ public class PioState implements SocBusSlaveInterface {
         s.captureRegister = 0;
     }
   }
-  
+
   private void handleOutputBitOperation(SocBusTransaction trans, boolean clear) {
     if (!outputSupportsBitManipulations()) {
-      trans.setError(SocBusTransaction.RegisterDoesNotExistError);
+      trans.setError(SocBusTransaction.REGISTER_DOES_NOT_EXIST_ERROR);
       return;
     }
     if (trans.isReadTransaction()) {
-      trans.setError(SocBusTransaction.WriteOnlyAccessError);
+      trans.setError(SocBusTransaction.WRITE_ONLY_ACCESS_ERROR);
     }
     PioRegState s = getRegPropagateState();
     int mask = trans.getWriteData();
@@ -355,7 +390,7 @@ public class PioState implements SocBusSlaveInterface {
     } else {
       s.outputRegister |= mask;
     }
-    handleOperations(getPropagateState(),false);
+    handleOperations(getPropagateState(), false);
   }
 
   /* Here the SocBusSlave interface handles are defined */
@@ -363,7 +398,7 @@ public class PioState implements SocBusSlaveInterface {
   public boolean canHandleTransaction(SocBusTransaction trans) {
     long addr = SocSupport.convUnsignedInt(trans.getAddress());
     long start = SocSupport.convUnsignedInt(startAddress);
-    long end = start+24L;
+    long end = start + 24L;
     return (addr >= start && addr < end);
   }
 
@@ -374,37 +409,46 @@ public class PioState implements SocBusSlaveInterface {
     trans.setTransactionResponder(attachedBus.getComponent());
     long addr = SocSupport.convUnsignedInt(trans.getAddress());
     long start = SocSupport.convUnsignedInt(startAddress);
-    int index = (int)(addr-start);
-    if (trans.getAccessType() != SocBusTransaction.WordAccess) {
-      trans.setError(SocBusTransaction.AccessTypeNotSupportedError);
+    int index = (int) (addr - start);
+    if (trans.getAccessType() != SocBusTransaction.WORD_ACCESS) {
+      trans.setError(SocBusTransaction.ACCESS_TYPE_NOT_SUPPORTED_ERROR);
       return;
     }
     switch (index) {
-      case DATA_REG_INDEX  : if (trans.isWriteTransaction())
-                               handleOutputWriteTransaction(trans);
-                             if (trans.isReadTransaction())
-                               handleInputReadTransaction(trans);
-                             break;
-      case DIR_REG_INDEX   : handleDirectionRegister(trans);
-                             break;
-      case IRQ_MASK_INDEX  : handleIrqMaskRegister(trans);
-                             break;
-      case EDGE_CAPT_INDEX : handleCaptureRegister(trans);
-                             break;
-      case OUT_SET_INDEX   : handleOutputBitOperation(trans,false);
-                             break;
-      case OUT_CLEAR_INDEX : handleOutputBitOperation(trans,true);
-                             break;
-      default              : trans.setError(SocBusTransaction.MisalignedAddressError);
-                             break;
+      case DATA_REG_INDEX:
+        if (trans.isWriteTransaction()) handleOutputWriteTransaction(trans);
+        if (trans.isReadTransaction()) handleInputReadTransaction(trans);
+        break;
+      case DIR_REG_INDEX:
+        handleDirectionRegister(trans);
+        break;
+      case IRQ_MASK_INDEX:
+        handleIrqMaskRegister(trans);
+        break;
+      case EDGE_CAPT_INDEX:
+        handleCaptureRegister(trans);
+        break;
+      case OUT_SET_INDEX:
+        handleOutputBitOperation(trans, false);
+        break;
+      case OUT_CLEAR_INDEX:
+        handleOutputBitOperation(trans, true);
+        break;
+      default:
+        trans.setError(SocBusTransaction.MISALIGNED_ADDRESS_ERROR);
+        break;
     }
   }
 
   @Override
-  public Integer getStartAddress() { return startAddress; }
+  public Integer getStartAddress() {
+    return startAddress;
+  }
 
   @Override
-  public Integer getMemorySize() { return 24; }
+  public Integer getMemorySize() {
+    return 24;
+  }
 
   @Override
   public String getName() {
@@ -413,7 +457,8 @@ public class PioState implements SocBusSlaveInterface {
     String name = label;
     if (name == null || name.isEmpty()) {
       Location loc = attachedBus.getComponent().getLocation();
-      name = attachedBus.getComponent().getFactory().getDisplayName()+"@"+loc.getX()+","+loc.getY();
+      name = attachedBus.getComponent().getFactory().getDisplayName()
+              + "@" + loc.getX() + "," + loc.getY();
     }
     return name;
   }
@@ -423,7 +468,7 @@ public class PioState implements SocBusSlaveInterface {
     if (!listeners.contains(l))
       listeners.add(l);
   }
-      
+
   @Override
   public void removeListener(SocBusSlaveListener l) {
     listeners.remove(l);
@@ -441,7 +486,7 @@ public class PioState implements SocBusSlaveInterface {
     for (SocBusSlaveListener l : listeners)
       l.labelChanged();
   }
-      
+
   private void firememMapChanged() {
     for (SocBusSlaveListener l : listeners)
       l.memoryMapChanged();

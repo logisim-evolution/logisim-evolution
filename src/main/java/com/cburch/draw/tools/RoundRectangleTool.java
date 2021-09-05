@@ -68,6 +68,6 @@ public class RoundRectangleTool extends RectangularTool {
 
   @Override
   public Icon getIcon() {
-    return new DrawShapeIcon(DrawShapeIcon.ROUNDEDRECTANGLE);
+    return new DrawShapeIcon(DrawShapeIcon.ROUNDED_RECTANGLE);
   }
 }

@@ -31,7 +31,6 @@ package com.cburch.logisim.gui.menu;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.Main;
-import com.cburch.logisim.proj.Project;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import javax.swing.JMenu;
@@ -109,7 +108,7 @@ class MenuProject extends Menu {
     addSeparator();
     add(options);
 
-    boolean known = menubar.getSaveProject() != null;
+    final var known = menubar.getSaveProject() != null;
     loadLibrary.setEnabled(known);
     loadBuiltin.setEnabled(known);
     loadLogisim.setEnabled(known);
@@ -162,9 +161,10 @@ class MenuProject extends Menu {
   }
 
   private class MyListener implements ActionListener {
+    @Override
     public void actionPerformed(ActionEvent event) {
-      Object src = event.getSource();
-      Project proj = menubar.getSaveProject();
+      final var src = event.getSource();
+      final var proj = menubar.getSaveProject();
       if (proj == null) return;
       if (src == loadBuiltin) {
         ProjectLibraryActions.doLoadBuiltinLibrary(proj);

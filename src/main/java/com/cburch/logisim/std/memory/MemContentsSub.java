@@ -39,8 +39,8 @@ class MemContentsSub {
       this.mask = mask;
       data = new byte[size];
       if (AppPreferences.Memory_Startup_Unknown.get()) {
-        java.util.Random generator = new java.util.Random();
-        for (int i = 0; i < size; i++) {
+        final var generator = new java.util.Random();
+        for (var i = 0; i < size; i++) {
           data[i] = (byte) (generator.nextInt(256) & mask);
         }
       }
@@ -48,7 +48,7 @@ class MemContentsSub {
 
     @Override
     public BytePage clone() {
-      BytePage ret = (BytePage) super.clone();
+      final var ret = (BytePage) super.clone();
       ret.data = new byte[this.data.length];
       System.arraycopy(this.data, 0, ret.data, 0, this.data.length);
       return ret;
@@ -56,7 +56,7 @@ class MemContentsSub {
 
     @Override
     long get(long addr) {
-      return addr >= 0 && addr < data.length ? data[(int)addr] : 0;
+      return addr >= 0 && addr < data.length ? data[(int) addr] : 0;
     }
 
     //
@@ -69,18 +69,18 @@ class MemContentsSub {
 
     @Override
     void load(long start, long[] values, long mask) {
-      int n = Math.min(values.length, data.length - (int)start);
-      for (int i = 0; i < n; i++) {
-        data[(int)start + i] = (byte) (values[i] & mask);
+      final var n = Math.min(values.length, data.length - (int) start);
+      for (var i = 0; i < n; i++) {
+        data[(int) start + i] = (byte) (values[i] & mask);
       }
     }
 
     @Override
     void set(long addr, long value) {
       if (addr >= 0 && addr < data.length) {
-        byte oldValue = data[(int)addr];
+        final var oldValue = data[(int) addr];
         if (value != oldValue) {
-          data[(int)addr] = (byte) value;
+          data[(int) addr] = (byte) value;
         }
       }
     }
@@ -94,14 +94,14 @@ class MemContentsSub {
       this.mask = mask;
       data = new int[size];
       if (AppPreferences.Memory_Startup_Unknown.get()) {
-        java.util.Random generator = new java.util.Random();
-        for (int i = 0; i < size; i++) data[i] = (int) (generator.nextInt() & mask);
+        final var generator = new java.util.Random();
+        for (var i = 0; i < size; i++) data[i] = (int) (generator.nextInt() & mask);
       }
     }
 
     @Override
     public IntPage clone() {
-      IntPage ret = (IntPage) super.clone();
+      final var ret = (IntPage) super.clone();
       ret.data = new int[this.data.length];
       System.arraycopy(this.data, 0, ret.data, 0, this.data.length);
       return ret;
@@ -109,7 +109,7 @@ class MemContentsSub {
 
     @Override
     long get(long addr) {
-      return addr >= 0 && addr < data.length ? data[(int)addr] : 0;
+      return addr >= 0 && addr < data.length ? data[(int) addr] : 0;
     }
 
     //
@@ -122,18 +122,18 @@ class MemContentsSub {
 
     @Override
     void load(long start, long[] values, long mask) {
-      int n = Math.min(values.length, data.length - (int)start);
-      for (int i = 0; i < n; i++) {
-        data[(int)start+i] = (int)(values[i] & mask);
+      final var n = Math.min(values.length, data.length - (int) start);
+      for (var i = 0; i < n; i++) {
+        data[(int) start + i] = (int) (values[i] & mask);
       }
     }
 
     @Override
     void set(long addr, long value) {
       if (addr >= 0 && addr < data.length) {
-        int oldValue = data[(int)addr];
+        int oldValue = data[(int) addr];
         if (value != oldValue) {
-          data[(int)addr] = (int)value;
+          data[(int) addr] = (int) value;
         }
       }
     }
@@ -147,14 +147,14 @@ class MemContentsSub {
       data = new short[size];
       this.mask = mask;
       if (AppPreferences.Memory_Startup_Unknown.get()) {
-        java.util.Random generator = new java.util.Random();
-        for (int i = 0; i < size; i++) data[i] = (short) (generator.nextInt(1 << 16) & mask);
+        final var generator = new java.util.Random();
+        for (var i = 0; i < size; i++) data[i] = (short) (generator.nextInt(1 << 16) & mask);
       }
     }
 
     @Override
     public ShortPage clone() {
-      ShortPage ret = (ShortPage) super.clone();
+      final var ret = (ShortPage) super.clone();
       ret.data = new short[this.data.length];
       System.arraycopy(this.data, 0, ret.data, 0, this.data.length);
       return ret;
@@ -162,7 +162,7 @@ class MemContentsSub {
 
     @Override
     long get(long addr) {
-      return addr >= 0 && addr < data.length ? data[(int)addr] : 0;
+      return addr >= 0 && addr < data.length ? data[(int) addr] : 0;
     }
 
     //
@@ -175,22 +175,22 @@ class MemContentsSub {
 
     @Override
     void load(long start, long[] values, long mask) {
-      int n = Math.min(values.length, data.length - (int)start);
+      final var n = Math.min(values.length, data.length - (int) start);
       /*
        * Bugfix in memory writing (by Roy77)
        * https://github.com/roy77
        */
-      for (int i = (int)start; i < n; i++) {
-        data[(int)start + i] = (short) (values[i] & mask);
+      for (var i = (int) start; i < n; i++) {
+        data[(int) start + i] = (short) (values[i] & mask);
       }
     }
 
     @Override
     void set(long addr, long value) {
       if (addr >= 0 && addr < data.length) {
-        short oldValue = data[(int)addr];
+        final var oldValue = data[(int) addr];
         if (value != oldValue) {
-          data[(int)addr] = (short) value;
+          data[(int) addr] = (short) value;
         }
       }
     }
@@ -204,14 +204,14 @@ class MemContentsSub {
       this.mask = mask;
       data = new long[size];
       if (AppPreferences.Memory_Startup_Unknown.get()) {
-        java.util.Random generator = new java.util.Random();
-        for (int i = 0; i < size; i++) data[i] = (int) generator.nextLong() & mask;
+        final var generator = new java.util.Random();
+        for (var i = 0; i < size; i++) data[i] = (int) generator.nextLong() & mask;
       }
     }
 
     @Override
     public LongPage clone() {
-      LongPage ret = (LongPage) super.clone();
+      final var ret = (LongPage) super.clone();
       ret.data = new long[this.data.length];
       System.arraycopy(this.data, 0, ret.data, 0, this.data.length);
       return ret;
@@ -219,7 +219,7 @@ class MemContentsSub {
 
     @Override
     long get(long addr) {
-      return addr >= 0 && addr < data.length ? data[(int)addr] : 0;
+      return addr >= 0 && addr < data.length ? data[(int) addr] : 0;
     }
 
     //
@@ -232,18 +232,18 @@ class MemContentsSub {
 
     @Override
     void load(long start, long[] values, long mask) {
-      int n = Math.min(values.length, data.length - (int)start);
-      for (int i = 0; i < n; i++) {
-        data[(int)start+i] = (values[i] & mask);
+      final var n = Math.min(values.length, data.length - (int) start);
+      for (var i = 0; i < n; i++) {
+        data[(int) start + i] = (values[i] & mask);
       }
     }
 
     @Override
     void set(long addr, long value) {
       if (addr >= 0 && addr < data.length) {
-        long oldValue = data[(int)addr];
+        final var oldValue = data[(int) addr];
         if (value != oldValue) {
-          data[(int)addr] = value;
+          data[(int) addr] = value;
         }
       }
     }

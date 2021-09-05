@@ -28,12 +28,12 @@
 
 package com.cburch.logisim.gui.menu;
 
+import com.cburch.contracts.BaseKeyListenerContract;
+import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.Simulator;
-import com.cburch.logisim.circuit.Simulator.Event;
 import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
@@ -46,16 +46,11 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
 import java.util.prefs.Preferences;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.JButton;
 import javax.swing.JCheckBoxMenuItem;
@@ -73,8 +68,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
 
-public class AssemblyWindow
-    implements ActionListener, WindowListener, Simulator.Listener, KeyListener {
+public class AssemblyWindow implements ActionListener, BaseWindowListenerContract, Simulator.Listener, BaseKeyListenerContract {
 
   private static Circuit curCircuit;
   private static CircuitState curCircuitState;
@@ -98,15 +92,14 @@ public class AssemblyWindow
   private File file;
 
   public AssemblyWindow(Project proj) {
-
     this.proj = proj;
     curCircuit = proj.getCurrentCircuit();
     curCircuitState = proj.getCircuitState();
     winMenuBar = new JMenuBar();
-    JMenu windowMenu = new JMenu("Window");
-    JMenu fileMenu = new JMenu("File");
-    JPanel main = new JPanel(new BorderLayout());
-    JPanel north = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));
+    final var windowMenu = new JMenu("Window");
+    final var fileMenu = new JMenu("File");
+    final var main = new JPanel(new BorderLayout());
+    final var north = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 2));
     /* LinePainter painter = new LinePainter(document); */
 
     windowMenu.setMnemonic('W');
@@ -149,8 +142,7 @@ public class AssemblyWindow
 
     document.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
     document.setEditable(false);
-    document.setPreferredSize(
-        new Dimension(document.getWidth() * 4 / 5, Math.max(200, document.getHeight() * 2 / 3)));
+    document.setPreferredSize(new Dimension(document.getWidth() * 4 / 5, Math.max(200, document.getHeight() * 2 / 3)));
     document.addKeyListener(this);
     main.add(new JScrollPane(document), BorderLayout.CENTER);
     main.add(north, BorderLayout.NORTH);
@@ -161,19 +153,18 @@ public class AssemblyWindow
     windows.pack();
     prefs = Preferences.userRoot().node(this.getClass().getName());
     windows.setLocation(prefs.getInt("X", 0), prefs.getInt("Y", 0));
-    windows.setSize(
-        prefs.getInt("W", windows.getSize().width), prefs.getInt("H", windows.getSize().height));
+    windows.setSize(prefs.getInt("W", windows.getSize().width), prefs.getInt("H", windows.getSize().height));
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    Object src = e.getSource();
+    final var src = e.getSource();
     if (src == ontopItem) {
       e.paramString();
       windows.setAlwaysOnTop(ontopItem.getState());
     } else if (src == openFileItem) {
-      final JFileChooser fileChooser = proj.createChooser();
-      FileFilter ff =
+      final var fileChooser = proj.createChooser();
+      final var ff =
           new FileFilter() {
             @Override
             public boolean accept(File f) {
@@ -231,11 +222,11 @@ public class AssemblyWindow
 
   @SuppressWarnings("unchecked")
   private void fillCombo() {
-    Set<Component> comps = curCircuit.getNonWires();
-    Iterator<Component> iter = comps.iterator();
+    final var comps = curCircuit.getNonWires();
+    final var iter = comps.iterator();
     entry.clear();
     while (iter.hasNext()) {
-      Component comp = iter.next();
+      final var comp = iter.next();
       if (comp.getFactory().getName().equals("Register")) {
         if (!comp.getAttributeSet().getValue(StdAttr.LABEL).equals("")) {
           entry.put(comp.getAttributeSet().getValue(StdAttr.LABEL), comp);
@@ -251,10 +242,10 @@ public class AssemblyWindow
     } else {
       status.setText("");
       combo.setEnabled(true);
-      Object[] objArr = entry.keySet().toArray();
+      final var objArr = entry.keySet().toArray();
       Arrays.sort(objArr);
-      for (Object o : objArr) {
-        combo.addItem(o);
+      for (final var obj : objArr) {
+        combo.addItem(obj);
       }
     }
   }
@@ -273,21 +264,22 @@ public class AssemblyWindow
   }
 
   @Override
+  public void keyTyped(KeyEvent ke) {
+    // FIXME: we should have some more advanced logic here pehaps?
+    // throw new UnsupportedOperationException("Not supported yet.");
+  }
+
+  @Override
   public void keyPressed(KeyEvent ke) {
+    // FIXME: this should have some more advanced logic?
     // throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
   public void keyReleased(KeyEvent ke) {
-    int keyCode = ke.getKeyCode();
-    if (keyCode == KeyEvent.VK_F2) {
+    if (ke.getKeyCode() == KeyEvent.VK_F2) {
       if (proj.getSimulator() != null) proj.getSimulator().tick(2);
     }
-  }
-
-  @Override
-  public void keyTyped(KeyEvent ke) {
-    // throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override
@@ -297,12 +289,19 @@ public class AssemblyWindow
     }
   }
 
-  public void setTitle(String title) {
-    windows.setTitle(title);
+  @Override
+  public void simulatorReset(Simulator.Event e) {
+    // do nothing
   }
 
   @Override
-  public void simulatorStateChanged(Simulator.Event e) {}
+  public void simulatorStateChanged(Simulator.Event e) {
+    // do nothing
+  }
+
+  public void setTitle(String title) {
+    windows.setTitle(title);
+  }
 
   /*
    * Track the movement of the Caret by painting a background line at the
@@ -319,15 +318,14 @@ public class AssemblyWindow
     String where;
     if (combo.getSelectedItem() != null) {
       selReg = entry.get(combo.getSelectedItem().toString());
-      Value val = curCircuitState.getInstanceState(selReg).getPortValue(Register.OUT);
+      final var val = curCircuitState.getInstanceState(selReg).getPortValue(Register.OUT);
       if (val.isFullyDefined()) {
         where = val.toHexString().replaceAll("^0*", "");
         if (where.isEmpty()) {
           where = "0";
         }
-        Pattern pattern =
-            Pattern.compile("^[ ]+" + where + ":", Pattern.MULTILINE + Pattern.CASE_INSENSITIVE);
-        Matcher m = pattern.matcher(document.getText().replaceAll("\r", ""));
+        final var pattern = Pattern.compile("^[ ]+" + where + ":", Pattern.MULTILINE + Pattern.CASE_INSENSITIVE);
+        final var m = pattern.matcher(document.getText().replaceAll("\r", ""));
         if (m.find()) {
           document.setCaretPosition(m.start());
           status.setText("");
@@ -347,31 +345,10 @@ public class AssemblyWindow
   }
 
   @Override
-  public void windowActivated(WindowEvent e) {}
-
-  @Override
-  public void windowClosed(WindowEvent e) {}
-
-  @Override
-  public void windowClosing(WindowEvent e) {}
-
-  @Override
   public void windowDeactivated(WindowEvent e) {
     prefs.putInt("X", windows.getX());
     prefs.putInt("Y", windows.getY());
     prefs.putInt("W", windows.getWidth());
     prefs.putInt("H", windows.getHeight());
   }
-
-  @Override
-  public void windowDeiconified(WindowEvent e) {}
-
-  @Override
-  public void windowIconified(WindowEvent e) {}
-
-  @Override
-  public void windowOpened(WindowEvent e) {}
-
-  @Override
-  public void simulatorReset(Event e) { }
 }

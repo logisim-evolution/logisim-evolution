@@ -35,7 +35,6 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
@@ -66,26 +65,26 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
   }
 
   private static AttributeSet createAttributes(ComponentFactory factory, AttributeSet src) {
-    AttributeSet dest = factory.createAttributeSet();
+    final var dest = factory.createAttributeSet();
     copyAttributes(dest, src);
     return dest;
   }
 
   private static void replaceAll(Circuit circuit, Map<ComponentFactory, ComponentFactory> compMap) {
     ArrayList<Component> toReplace = null;
-    for (Component comp : circuit.getNonWires()) {
+    for (final var comp : circuit.getNonWires()) {
       if (compMap.containsKey(comp.getFactory())) {
         if (toReplace == null) toReplace = new ArrayList<>();
         toReplace.add(comp);
       }
     }
     if (toReplace != null) {
-      CircuitMutation xn = new CircuitMutation(circuit);
-      for (Component comp : toReplace) {
+      final var xn = new CircuitMutation(circuit);
+      for (final var comp : toReplace) {
         xn.remove(comp);
-        ComponentFactory factory = compMap.get(comp.getFactory());
+        final var factory = compMap.get(comp.getFactory());
         if (factory != null) {
-          AttributeSet newAttrs = createAttributes(factory, comp.getAttributeSet());
+          final var newAttrs = createAttributes(factory, comp.getAttributeSet());
           xn.add(factory.createComponent(comp.getLocation(), newAttrs));
         }
       }
@@ -93,32 +92,29 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     }
   }
 
-  private static void replaceAll(
-      LogisimFile file, Map<ComponentFactory, ComponentFactory> compMap, Map<Tool, Tool> toolMap) {
+  private static void replaceAll(LogisimFile file, Map<ComponentFactory, ComponentFactory> compMap, Map<Tool, Tool> toolMap) {
     file.getOptions().getToolbarData().replaceAll(toolMap);
     file.getOptions().getMouseMappings().replaceAll(toolMap);
-    for (Circuit circuit : file.getCircuits()) {
+    for (final var circuit : file.getCircuits()) {
       replaceAll(circuit, compMap);
     }
   }
 
-  private static void replaceAll(
-      Map<ComponentFactory, ComponentFactory> compMap, Map<Tool, Tool> toolMap) {
-    for (Project proj : Projects.getOpenProjects()) {
-      Tool oldTool = proj.getTool();
-      Circuit oldCircuit = proj.getCurrentCircuit();
+  private static void replaceAll(Map<ComponentFactory, ComponentFactory> compMap, Map<Tool, Tool> toolMap) {
+    for (final var proj : Projects.getOpenProjects()) {
+      final var oldTool = proj.getTool();
+      final var oldCircuit = proj.getCurrentCircuit();
       if (toolMap.containsKey(oldTool)) {
         proj.setTool(toolMap.get(oldTool));
       }
-      SubcircuitFactory oldFactory = oldCircuit.getSubcircuitFactory();
+      final var oldFactory = oldCircuit.getSubcircuitFactory();
       if (compMap.containsKey(oldFactory)) {
-        SubcircuitFactory newFactory;
-        newFactory = (SubcircuitFactory) compMap.get(oldFactory);
+        final var newFactory = (SubcircuitFactory) compMap.get(oldFactory);
         proj.setCurrentCircuit(newFactory.getSubcircuit());
       }
       replaceAll(proj.getLogisimFile(), compMap, toolMap);
     }
-    for (LogisimFile file : LibraryManager.instance.getLogisimLibraries()) {
+    for (final var file : LibraryManager.instance.getLogisimLibraries()) {
       replaceAll(file, compMap, toolMap);
     }
   }
@@ -155,7 +151,7 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     if (event.getSource() != this) {
       event = new LibraryEvent(this, event.getAction(), event.getData());
     }
-    for (LibraryListener l : listeners) {
+    for (final var l : listeners) {
       l.libraryChanged(event);
     }
   }
@@ -204,30 +200,28 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
       fireLibraryEvent(LibraryEvent.SET_NAME, base.getDisplayName());
     }
 
-    HashSet<Library> changes = new HashSet<>(old.getLibraries());
+    final var changes = new HashSet<Library>(old.getLibraries());
     base.getLibraries().forEach(changes::remove);
-    for (Library lib : changes) {
+    for (final var lib : changes) {
       fireLibraryEvent(LibraryEvent.REMOVE_LIBRARY, lib);
     }
 
     changes.clear();
     changes.addAll(base.getLibraries());
     old.getLibraries().forEach(changes::remove);
-    for (Library lib : changes) {
+    for (final var lib : changes) {
       fireLibraryEvent(LibraryEvent.ADD_LIBRARY, lib);
     }
 
-    HashMap<ComponentFactory, ComponentFactory> componentMap;
-    HashMap<Tool, Tool> toolMap;
-    componentMap = new HashMap<>();
-    toolMap = new HashMap<>();
-    for (Tool oldTool : old.getTools()) {
-      Tool newTool = base.getTool(oldTool.getName());
+    final var componentMap = new HashMap<ComponentFactory, ComponentFactory>();
+    final var toolMap = new HashMap<Tool, Tool>();
+    for (final var oldTool : old.getTools()) {
+      final var newTool = base.getTool(oldTool.getName());
       toolMap.put(oldTool, newTool);
       if (oldTool instanceof AddTool) {
-        ComponentFactory oldFactory = ((AddTool) oldTool).getFactory();
+        final var oldFactory = ((AddTool) oldTool).getFactory();
         if (newTool instanceof AddTool) {
-          ComponentFactory newFactory = ((AddTool) newTool).getFactory();
+          final var newFactory = ((AddTool) newTool).getFactory();
           componentMap.put(oldFactory, newFactory);
         } else {
           componentMap.put(oldFactory, null);
@@ -236,7 +230,7 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     }
     replaceAll(componentMap, toolMap);
 
-    HashSet<Tool> toolChanges = new HashSet<>(old.getTools());
+    var toolChanges = new HashSet<Tool>(old.getTools());
     toolChanges.removeAll(toolMap.keySet());
     for (Tool tool : toolChanges) {
       fireLibraryEvent(LibraryEvent.REMOVE_TOOL, tool);
@@ -253,7 +247,7 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     if (base instanceof LibraryEventSource) {
       ((LibraryEventSource) base).removeLibraryListener(myListener);
     }
-    Library old = base;
+    final var old = base;
     base = value;
     resolveChanges(old);
     if (base instanceof LibraryEventSource) {

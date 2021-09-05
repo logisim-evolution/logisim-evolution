@@ -28,6 +28,7 @@
 
 package com.cburch.logisim.soc.gui;
 
+import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.comp.Component;
@@ -41,7 +42,6 @@ import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.tools.CircuitStateHolder;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.BorderFactory;
@@ -52,21 +52,21 @@ import javax.swing.table.AbstractTableModel;
 import javax.swing.table.TableCellRenderer;
 
 public class TraceWindowTableModel extends AbstractTableModel
-    implements MouseListener,
+    implements BaseMouseListenerContract,
         SocBusStateInfo.SocBusStateListener,
         ComponentListener,
         CircuitListener {
 
   private static final long serialVersionUID = 1L;
-  private final SocBusMenuProvider.InstanceInformation parrent;
+  private final SocBusMenuProvider.InstanceInformation parent;
   private final HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> myTraceList;
   private JTable table;
-  private int BoxWidth = SocBusStateInfo.BlockWidth;
+  private int BoxWidth = SocBusStateInfo.BLOCK_WIDTH;
   public TraceWindowTableModel(
       HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> traceList,
       SocBusMenuProvider.InstanceInformation p) {
     myTraceList = traceList;
-    parrent = p;
+    parent = p;
     rebuild();
   }
 
@@ -95,7 +95,7 @@ public class TraceWindowTableModel extends AbstractTableModel
         table.getColumnModel().getColumn(i).setPreferredWidth(AppPreferences.getScaled(BoxWidth));
       table.setRowHeight(
           AppPreferences.getScaled(
-              2 * SocBusStateInfo.TraceHeight + SocBusStateInfo.TraceHeight / 2));
+              2 * SocBusStateInfo.TRACE_HEIGHT + SocBusStateInfo.TRACE_HEIGHT / 2));
       table
           .getTableHeader()
           .setPreferredSize(
@@ -195,28 +195,10 @@ public class TraceWindowTableModel extends AbstractTableModel
         myTraceList.get(i).deregisterComponentListener(this);
         myTraceList.put(i, null);
         rebuild();
-        if (getColumnCount() == 0) parrent.destroyTraceWindow();
+        if (getColumnCount() == 0) parent.destroyTraceWindow();
       }
     }
   }
-
-  @Override
-  public void mousePressed(MouseEvent e) {}
-
-  @Override
-  public void mouseReleased(MouseEvent e) {}
-
-  @Override
-  public void mouseEntered(MouseEvent e) {}
-
-  @Override
-  public void mouseExited(MouseEvent e) {}
-
-  @Override
-  public void componentInvalidated(ComponentEvent e) {}
-
-  @Override
-  public void endChanged(ComponentEvent e) {}
 
   @Override
   public void LabelChanged(ComponentEvent e) {

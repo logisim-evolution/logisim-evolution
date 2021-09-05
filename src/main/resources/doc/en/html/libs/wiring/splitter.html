@@ -1,9 +1,9 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html lang="en">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
-    <meta name="changed" content="2021-05-27T06:18:42.262000000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
     <meta http-equiv="content-type" content="text/html; charset=utf-8">
     <meta http-equiv="Content-Language" content="en">
     <title>
@@ -14,7 +14,7 @@
   <body>
     <div class="maindiv">
       <h1>
-        <img class="iconlibs" src="../../../../icons/splitter.gif" alt="#########"> <em>Splitter</em>
+        <img class="iconlibs" src="../../../../icons/6464/splitter.png" alt="#########" height="32" width="32"> <em>Splitter</em>
       </h1>
       <table>
         <tbody>
@@ -48,13 +48,13 @@
         Behavior
       </h2>
       <p>
-        The splitter creates a correspondence between a multi-bit value and several separate subsets of those bits. Despite its name, it can either split a multi-bit value into component parts, or it can combine component parts into a multi-bit value - or indeed it can do both at once. A more complete description of splitters is found in the `<a href="../../guide/feature/fet-splitting.html">Splitters</a>' section of the <em>User's Guide</em>
+        The splitter creates a correspondence between a multi-bit value and several separate subsets of those bits. Despite its name, it can either split a multi-bit value into component parts, or it can combine component parts into a multi-bit value - or indeed it can do both at once. A more complete description of splitters is found in the <a class=refguide href="../../guide/feature/fet-splitting.html">Splitters</a> section of the <a href="../index.html">User guide</a>
       </p>
       <p>
         Logisim treats splitters specially when propagating values within a circuit: Whereas all other components have a computed delay for purposes of simulating their behavior, values propagate through splitters (as well as wires) instantaneously.
       </p>
       <p>
-        <strong>Note:</strong> The term <em>splitter</em> is a non-standard term, which is unique to Logisim as far as I know. I am unaware of any standard term for such a concept; the only term I have heard used is <em>bus ripper</em>, but this term is unnecessarily violent for my tastes.
+        <b classe=note>Note:</b> The term <em>splitter</em> is a non-standard term, which is unique to Logisim as far as I know. I am unaware of any standard term for such a concept; the only term I have heard used is <em>bus ripper</em>, but this term is unnecessarily violent for my tastes.
       </p>
       <h2>
         Pins
@@ -83,13 +83,13 @@
       <dl>
 	  <dd></dd>
         <dt>
-          Bus :
+          <b class="propertie">Bus :</b>
         </dt>
 		<dd>
-		  the bit width of the bus corresponds to the <q>Bit width</q> attribute and it is the value counting all the conductors transiting the bus.
+		  the bit width of the bus corresponds to the <b class="propertie">Bit width</b> attribute and it is the value counting all the conductors transiting the bus.
 		</dd>
-		<dd></dd>
-		<dt>Split ends :
+		<dt>
+		  <b class="propertie">Split ends :</b>
 		</dt>
          <dd>
           The bit width of the terminations is determined by the bit width of the bus divided (integer division) by the number of terminations. In other cases, the widths will be distributed in a balanced fractional way.
@@ -101,11 +101,12 @@
         Attributes
       </h2>
       <p>
-        When the component is selected or being added, the digits '0' through '9' alter its <q>Fan Out</q> attribute, Alt-0 through Alt-9 alter both the <q>Fan Out</q> and <q>Bit Width In</q> attributes, and the arrow keys alter its <q>Facing</q> attribute.
+        When the component is selected or being added, the digits <b class="tkeybd">0</b> through <b class="tkeybd">9</b> alter its <b class="propertie">Fan Out</b> attribute, <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter both the <<b class="propertie">Fan Out</b> and <b class="propertie">Bit Width In</b> attributes, and the arrow keys alter its <b class="propertie">Facing</b> attribute.
       </p>
+	  <div class="attliste">
       <dl>
         <dt>
-          Facing
+          <b class="propertie">Facing</b>
         </dt>
         <dd>
           <p>
@@ -113,7 +114,7 @@
           </p>
         </dd>
         <dt>
-          Fan Out
+          <b class="propertie">Fan Out</b>
         </dt>
         <dd>
           <p>
@@ -121,7 +122,7 @@
           </p>
         </dd>
         <dt>
-          Bit Width In
+          <b class="propertie">Bit Width In</b>
         </dt>
         <dd>
           <p>
@@ -129,7 +130,7 @@
           </p>
         </dd>
         <dt>
-          Appearance
+          <b class="propertie">Appearance</b>
         </dt>
         <dd>
           <p>
@@ -142,38 +143,44 @@
               <tbody>
                 <tr>
                   <td>
-                    <img src="../../../../img-libs/splitter-right.png" alt="#########" align="middle">
+                    <img class="notscal" src="../../../../img-libs/splitter-left.png" alt="#########" align="middle">
                   </td>
                   <td>
-                    <img src="../../../../img-libs/splitter-left.png" alt="#########" align="middle">
+                    <img class="notscal"  src="../../../../img-libs/splitter-right.png" alt="#########" align="middle">
                   </td>
                   <td>
-                    <img src="../../../../img-libs/splitter-center.png" alt="#########" align="middle">
+                    <img class="notscal"  src="../../../../img-libs/splitter-center.png" alt="#########" align="middle">
                   </td>
                   <td>
-                    <img src="../../../../img-libs/splitter-legacy.png" alt="#########" align="middle">
+                    <img class="notscal"  src="../../../../img-libs/splitter-legacy.png" alt="#########" align="middle">
                   </td>
                 </tr>
                 <tr>
                   <td>
-                    A droite
+                    Left-handed
                   </td>
                   <td>
-                    A gauche
+                    Right-handed
                   </td>
                   <td>
-                    Au centre
+                    Centered
                   </td>
                   <td>
-                    Héritage
+                    Legacy
                   </td>
                 </tr>
               </tbody>
             </table>
           </center>
         </dd>
+		<dt>
+          <b class="propertie">Spacing</b>
+      </dt>
+      <dd>
+	    Determines the spacing between terminations.
+      <dt>
         <dt>
-          Bit <var>x</var>
+          <b class="propertie">Bit <var>x</var></b>
         </dt>
         <dd>
           <p>
@@ -187,6 +194,7 @@
           </p>
         </dd>
       </dl>
+	  </div>
       <h2>
         Poke Tool Behavior
       </h2>
@@ -200,7 +208,7 @@
         None.
       </p>
       <p>
-        <a href="../index.html">Back to <em>Library Reference</em></a>
+        <b>Back to</b> <a href="../index.html">Library Reference</a>
       </p>
     </div>
   </body>

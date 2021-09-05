@@ -30,9 +30,9 @@ package com.cburch.logisim.fpga.download;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.fpga.data.BoardInformation;
+import com.cburch.logisim.fpga.data.IOComponentTypes;
+import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
@@ -40,6 +40,7 @@ import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.LedArrayGenericHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
@@ -48,15 +49,14 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 public abstract class DownloadBase {
 
   protected Project MyProject;
   protected BoardInformation MyBoardInformation = null;
-  protected MappableResourcesContainer MyMappableResources;
+  protected MappableResourcesContainer myMappableResources;
   static final String[] HDLPaths = {
     HDLGeneratorFactory.VERILOG.toLowerCase(),
     HDLGeneratorFactory.VHDL.toLowerCase(),
@@ -65,12 +65,12 @@ public abstract class DownloadBase {
     "ucf",
     "xdc"
   };
-  public static final Integer VerilogSourcePath = 0;
-  public static final Integer VHDLSourcePath = 1;
-  public static final Integer ScriptPath = 2;
-  public static final Integer SandboxPath = 3;
-  public static final Integer UCFPath = 4;
-  public static final Integer XDCPath = 5;
+  public static final Integer VERILOG_SOURCE_PATH = 0;
+  public static final Integer VHDL_SOURCE_PATH = 1;
+  public static final Integer SCRIPT_PATH = 2;
+  public static final Integer SANDBOX_PATH = 3;
+  public static final Integer UCF_PATH = 4;
+  public static final Integer XDC_PATH = 5;
 
   protected boolean VendorSoftwarePresent() {
     return VendorSoftware.toolsPresent(
@@ -79,9 +79,9 @@ public abstract class DownloadBase {
   }
 
   protected boolean MapDesign(String CircuitName) {
-    LogisimFile myfile = MyProject.getLogisimFile();
-    Circuit RootSheet = myfile.getCircuit(CircuitName);
-    if (RootSheet == null) {
+    final var myFile = MyProject.getLogisimFile();
+    final var rootSheet = myFile.getCircuit(CircuitName);
+    if (rootSheet == null) {
       Reporter.Report.AddError("INTERNAL ERROR: Circuit not found ?!?");
       return false;
     }
@@ -90,10 +90,10 @@ public abstract class DownloadBase {
       return false;
     }
 
-    Map<String, ArrayList<Integer>> BoardComponents = MyBoardInformation.GetComponents();
+    final var boardComponents = MyBoardInformation.GetComponents();
     Reporter.Report.AddInfo("The Board " + MyBoardInformation.getBoardName() + " has:");
-    for (String key : BoardComponents.keySet()) {
-      Reporter.Report.AddInfo(BoardComponents.get(key).size() + " " + key + "(s)");
+    for (final var key : boardComponents.keySet()) {
+      Reporter.Report.AddInfo(boardComponents.get(key).size() + " " + key + "(s)");
     }
     /*
      * At this point I require 2 sorts of information: 1) A hierarchical
@@ -103,47 +103,46 @@ public abstract class DownloadBase {
      * mapped to PCB components. Identification can be done by a hierarchy
      * name plus component/sub-circuit name
      */
-    MyMappableResources = RootSheet.getBoardMap(MyBoardInformation.getBoardName());
-    if (MyMappableResources == null) 
-      MyMappableResources = new MappableResourcesContainer(MyBoardInformation, RootSheet);
+    myMappableResources = rootSheet.getBoardMap(MyBoardInformation.getBoardName());
+    if (myMappableResources == null)
+      myMappableResources = new MappableResourcesContainer(MyBoardInformation, rootSheet);
     else
-      MyMappableResources.updateMapableComponents();
+      myMappableResources.updateMapableComponents();
 
     return true;
   }
 
-  protected boolean MapDesignCheckIOs() {
-	if (MyMappableResources.isCompletelyMapped()) return true;
-	int confirm = OptionPane.showConfirmDialog(MyProject.getFrame(), S.get("FpgaNotCompleteMap"), 
-      S.get("FpgaIncompleteMap"), OptionPane.YES_NO_OPTION);
+  protected boolean mapDesignCheckIOs() {
+    if (myMappableResources.isCompletelyMapped()) return true;
+    final var confirm = OptionPane.showConfirmDialog(MyProject.getFrame(), S.get("FpgaNotCompleteMap"),
+        S.get("FpgaIncompleteMap"), OptionPane.YES_NO_OPTION);
     return confirm == OptionPane.YES_OPTION;
   }
 
   protected boolean performDRC(String CircuitName, String HDLType) {
-    Circuit root = MyProject.getLogisimFile().getCircuit(CircuitName);
-    ArrayList<String> SheetNames = new ArrayList<>();
-    int DRCResult = Netlist.DRC_PASSED;
+    final var root = MyProject.getLogisimFile().getCircuit(CircuitName);
+    final var sheetNames = new ArrayList<String>();
+    var drcResult = Netlist.DRC_PASSED;
     if (root == null) {
-      DRCResult |= Netlist.DRC_ERROR;
+      drcResult |= Netlist.DRC_ERROR;
     } else {
       root.getNetList().clear();
-      DRCResult = root.getNetList().DesignRuleCheckResult(true, SheetNames);
+      drcResult = root.getNetList().designRuleCheckResult(true, sheetNames);
     }
-    return (DRCResult == Netlist.DRC_PASSED);
+    return drcResult == Netlist.DRC_PASSED;
   }
 
-  protected String GetProjDir(String selectedCircuit) {
-    String ProjectDir =
-        AppPreferences.FPGA_Workspace.get() + File.separator + MyProject.getLogisimFile().getName();
-    if (!ProjectDir.endsWith(File.separator)) {
-      ProjectDir += File.separator;
+  protected String getProjDir(String selectedCircuit) {
+    var projectDir = AppPreferences.FPGA_Workspace.get() + File.separator + MyProject.getLogisimFile().getName();
+    if (!projectDir.endsWith(File.separator)) {
+      projectDir += File.separator;
     }
-    ProjectDir += CorrectLabel.getCorrectLabel(selectedCircuit) + File.separator;
-    return ProjectDir;
+    projectDir += CorrectLabel.getCorrectLabel(selectedCircuit) + File.separator;
+    return projectDir;
   }
 
   protected boolean writeHDL(String selectedCircuit, Double frequency) {
-    if (!GenDirectory(
+    if (!genDirectory(
         AppPreferences.FPGA_Workspace.get()
             + File.separator
             + MyProject.getLogisimFile().getName())) {
@@ -155,163 +154,152 @@ public abstract class DownloadBase {
               + "\"");
       return false;
     }
-    String ProjectDir = GetProjDir(selectedCircuit);
-    Circuit RootSheet = MyProject.getLogisimFile().getCircuit(selectedCircuit);
-    if (!CleanDirectory(ProjectDir)) {
+    final var projectDir = getProjDir(selectedCircuit);
+    final var rootSheet = MyProject.getLogisimFile().getCircuit(selectedCircuit);
+    if (!cleanDirectory(projectDir)) {
       Reporter.Report.AddFatalError(
-          "Unable to cleanup old project files in directory: \"" + ProjectDir + "\"");
+          "Unable to cleanup old project files in directory: \"" + projectDir + "\"");
       return false;
     }
-    if (!GenDirectory(ProjectDir)) {
-      Reporter.Report.AddFatalError("Unable to create directory: \"" + ProjectDir + "\"");
+    if (!genDirectory(projectDir)) {
+      Reporter.Report.AddFatalError("Unable to create directory: \"" + projectDir + "\"");
       return false;
     }
-    for (String hdlPath : HDLPaths) {
-      if (!GenDirectory(ProjectDir + hdlPath)) {
-        Reporter.Report.AddFatalError(
-            "Unable to create directory: \"" + ProjectDir + hdlPath + "\"");
+    for (final var hdlPath : HDLPaths) {
+      if (!genDirectory(projectDir + hdlPath)) {
+        Reporter.Report.AddFatalError("Unable to create directory: \"" + projectDir + hdlPath + "\"");
         return false;
       }
     }
 
-    Set<String> GeneratedHDLComponents = new HashSet<>();
-    HDLGeneratorFactory Worker =
-        RootSheet.getSubcircuitFactory().getHDLGenerator(RootSheet.getStaticAttributes());
-    if (Worker == null) {
+    final var generatedHDLComponents = new HashSet<String>();
+    var worker = rootSheet.getSubcircuitFactory().getHDLGenerator(rootSheet.getStaticAttributes());
+    if (worker == null) {
       Reporter.Report.AddFatalError("Internal error on HDL generation, null pointer exception");
       return false;
     }
-    if (!Worker.GenerateAllHDLDescriptions(GeneratedHDLComponents, ProjectDir, null)) {
+    if (!worker.GenerateAllHDLDescriptions(generatedHDLComponents, projectDir, null)) {
       return false;
     }
     /* Here we generate the top-level shell */
-    if (RootSheet.getNetList().NumberOfClockTrees() > 0) {
-      TickComponentHDLGeneratorFactory Ticker =
-          new TickComponentHDLGeneratorFactory(
-              MyBoardInformation.fpga.getClockFrequency(),
-              frequency /* , boardFreq.isSelected() */);
+    if (rootSheet.getNetList().numberOfClockTrees() > 0) {
+      final var ticker = new TickComponentHDLGeneratorFactory(MyBoardInformation.fpga.getClockFrequency(), frequency /* , boardFreq.isSelected() */);
       if (!AbstractHDLGeneratorFactory.WriteEntity(
-          ProjectDir + Ticker.GetRelativeDirectory(),
-          Ticker.GetEntity(
-              RootSheet.getNetList(),
-              null,
-              Ticker.getComponentStringIdentifier()),
-          Ticker.getComponentStringIdentifier())) {
+          projectDir + ticker.GetRelativeDirectory(),
+          ticker.GetEntity(rootSheet.getNetList(), null, ticker.getComponentStringIdentifier()),
+          ticker.getComponentStringIdentifier())) {
         return false;
       }
       if (!AbstractHDLGeneratorFactory.WriteArchitecture(
-          ProjectDir + Ticker.GetRelativeDirectory(),
-          Ticker.GetArchitecture(
-              RootSheet.getNetList(),
-              null,
-              Ticker.getComponentStringIdentifier()),
-          Ticker.getComponentStringIdentifier())) {
+          projectDir + ticker.GetRelativeDirectory(),
+          ticker.GetArchitecture(rootSheet.getNetList(), null, ticker.getComponentStringIdentifier()), ticker.getComponentStringIdentifier())) {
         return false;
       }
 
-      HDLGeneratorFactory ClockGen =
-          RootSheet.getNetList()
-              .GetAllClockSources()
-              .get(0)
-              .getFactory()
-              .getHDLGenerator(RootSheet.getNetList().GetAllClockSources().get(0).getAttributeSet());
-      String CompName =
-          RootSheet.getNetList().GetAllClockSources().get(0).getFactory().getHDLName(null);
+      final var clockGen = rootSheet.getNetList()
+          .getAllClockSources()
+          .get(0)
+          .getFactory()
+          .getHDLGenerator(rootSheet.getNetList().getAllClockSources().get(0).getAttributeSet());
+      final var compName = rootSheet.getNetList().getAllClockSources().get(0).getFactory().getHDLName(null);
       if (!AbstractHDLGeneratorFactory.WriteEntity(
-          ProjectDir + ClockGen.GetRelativeDirectory(),
-          ClockGen.GetEntity(RootSheet.getNetList(), null, CompName),
-          CompName)) {
+          projectDir + clockGen.GetRelativeDirectory(),
+          clockGen.GetEntity(rootSheet.getNetList(), null, compName),
+          compName)) {
         return false;
       }
       if (!AbstractHDLGeneratorFactory.WriteArchitecture(
-          ProjectDir + ClockGen.GetRelativeDirectory(),
-          ClockGen.GetArchitecture(RootSheet.getNetList(), null, CompName),
-          CompName)) {
+          projectDir + clockGen.GetRelativeDirectory(),
+          clockGen.GetArchitecture(rootSheet.getNetList(), null, compName),
+          compName)) {
         return false;
       }
     }
-    Worker =
-        new ToplevelHDLGeneratorFactory(
-            MyBoardInformation.fpga.getClockFrequency(), frequency, RootSheet, MyMappableResources);
+    final var top = new ToplevelHDLGeneratorFactory(MyBoardInformation.fpga.getClockFrequency(),
+        frequency, rootSheet, myMappableResources);
+    if (top.hasLedArray()) {
+      for (var type : LedArrayDriving.DRIVING_STRINGS) {
+        if (top.hasLedArrayType(type)) {
+          worker = LedArrayGenericHDLGeneratorFactory.getSpecificHDLGenerator(type);
+          final var name = LedArrayGenericHDLGeneratorFactory.getSpecificHDLName(type);
+          if (worker != null && name != null) {
+            if (!AbstractHDLGeneratorFactory.WriteEntity(
+                projectDir + worker.GetRelativeDirectory(),
+                worker.GetEntity(rootSheet.getNetList(), null, name),
+                worker.getComponentStringIdentifier())) {
+              return false;
+            }
+            if (!AbstractHDLGeneratorFactory.WriteArchitecture(
+                projectDir + worker.GetRelativeDirectory(),
+                worker.GetArchitecture(rootSheet.getNetList(), null, name),
+                worker.getComponentStringIdentifier())) {
+              return false;
+            }
+          }
+        }
+      }
+    }
     if (!AbstractHDLGeneratorFactory.WriteEntity(
-        ProjectDir + Worker.GetRelativeDirectory(),
-        Worker.GetEntity(RootSheet.getNetList(),null,ToplevelHDLGeneratorFactory.FPGAToplevelName),
-        Worker.getComponentStringIdentifier())) {
+        projectDir + top.GetRelativeDirectory(),
+        top.GetEntity(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGAToplevelName),
+        top.getComponentStringIdentifier())) {
       return false;
     }
     return AbstractHDLGeneratorFactory.WriteArchitecture(
-        ProjectDir + Worker.GetRelativeDirectory(),
-        Worker.GetArchitecture(RootSheet.getNetList(),null,ToplevelHDLGeneratorFactory.FPGAToplevelName),
-        Worker.getComponentStringIdentifier());
+        projectDir + top.GetRelativeDirectory(),
+        top.GetArchitecture(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGAToplevelName),
+        top.getComponentStringIdentifier());
   }
 
-  protected boolean GenDirectory(String dir) {
+  protected boolean genDirectory(String dirPath) {
     try {
-      File Dir = new File(dir);
-      if (Dir.exists()) {
-        return true;
-      }
-      return Dir.mkdirs();
+      var dir = new File(dirPath);
+      return dir.exists() ? true : dir.mkdirs();
     } catch (Exception e) {
-      Reporter.Report.AddFatalError("Could not check/create directory :" + dir);
+      Reporter.Report.AddFatalError("Could not check/create directory :" + dirPath);
       return false;
     }
   }
 
-  protected void GetVHDLFiles(
-      String SourcePath,
-      String Path,
-      ArrayList<String> Entities,
-      ArrayList<String> Behaviors,
-      String HDLType) {
-    File Dir = new File(Path);
-    File[] Files = Dir.listFiles();
-    for (File thisFile : Files) {
+  protected void getVhdlFiles(String sourcePath, String path, ArrayList<String> entities, ArrayList<String> behaviors, String type) {
+    final var dir = new File(path);
+    final var files = dir.listFiles();
+    for (final var thisFile : files) {
       if (thisFile.isDirectory()) {
-        if (Path.endsWith(File.separator)) {
-          GetVHDLFiles(SourcePath, Path + thisFile.getName(), Entities, Behaviors, HDLType);
+        if (path.endsWith(File.separator)) {
+          getVhdlFiles(sourcePath, path + thisFile.getName(), entities, behaviors, type);
         } else {
-          GetVHDLFiles(
-              SourcePath, Path + File.separator + thisFile.getName(), Entities, Behaviors, HDLType);
+          getVhdlFiles(sourcePath, path + File.separator + thisFile.getName(), entities, behaviors, type);
         }
       } else {
-        String EntityMask =
-            (HDLType.equals(HDLGeneratorFactory.VHDL)) ? FileWriter.EntityExtension + ".vhd" : ".v";
-        String ArchitecturMask =
-            (HDLType.equals(HDLGeneratorFactory.VHDL))
-                ? FileWriter.ArchitectureExtension + ".vhd"
-                : "#not_searched#";
-        if (thisFile.getName().endsWith(EntityMask)) {
-          Entities.add((Path + File.separator + thisFile.getName()).replace("\\", "/"));
-        } else if (thisFile.getName().endsWith(ArchitecturMask)) {
-          Behaviors.add((Path + File.separator + thisFile.getName()).replace("\\", "/"));
+        final var entityMask = (type.equals(HDLGeneratorFactory.VHDL)) ? FileWriter.ENTITY_EXTENSION + ".vhd" : ".v";
+        final var architectureMask = (type.equals(HDLGeneratorFactory.VHDL))
+            ? FileWriter.ARCHITECTURE_EXTENSION + ".vhd"
+            : "#not_searched#";
+        if (thisFile.getName().endsWith(entityMask)) {
+          entities.add((path + File.separator + thisFile.getName()).replace("\\", "/"));
+        } else if (thisFile.getName().endsWith(architectureMask)) {
+          behaviors.add((path + File.separator + thisFile.getName()).replace("\\", "/"));
         }
       }
     }
   }
 
-  public static String GetDirectoryLocation(String ProjectBase, int Identifier) {
-    String Base =
-        (ProjectBase.endsWith(File.separator)) ? ProjectBase : ProjectBase + File.separator;
-    if (Identifier >= HDLPaths.length) return null;
-    return Base + HDLPaths[Identifier] + File.separator;
+  public static String getDirectoryLocation(String projectBase, int identifier) {
+    final var base = (projectBase.endsWith(File.separator)) ? projectBase : projectBase + File.separator;
+    if (identifier >= HDLPaths.length) return null;
+    return base + HDLPaths[identifier] + File.separator;
   }
 
-  private boolean CleanDirectory(String dir) {
+  private boolean cleanDirectory(String dir) {
     try {
-      File thisDir = new File(dir);
-      if (!thisDir.exists()) {
-        return true;
-      }
-      for (File theFiles : thisDir.listFiles()) {
+      final var thisDir = new File(dir);
+      if (!thisDir.exists()) return true;
+      for (var theFiles : thisDir.listFiles()) {
         if (theFiles.isDirectory()) {
-          if (!CleanDirectory(theFiles.getPath())) {
-            return false;
-          }
+          if (!cleanDirectory(theFiles.getPath())) return false;
         } else {
-          if (!theFiles.delete()) {
-            return false;
-          }
+          if (!theFiles.delete()) return false;
         }
       }
       return thisDir.delete();
@@ -319,5 +307,29 @@ public abstract class DownloadBase {
       Reporter.Report.AddFatalError("Could not remove directory tree :" + dir);
       return false;
     }
+  }
+
+  public static HashMap<String, String> getLedArrayMaps(MappableResourcesContainer maps, Netlist nets, BoardInformation board) {
+    final var ledArrayMaps = new HashMap<String, String>();
+    var hasMappedClockedArray = false;
+    for (final var comp : maps.getIOComponentInformation().getComponents()) {
+      if (comp.GetType().equals(IOComponentTypes.LEDArray)) {
+        if (comp.hasMap()) {
+          hasMappedClockedArray |= LedArrayGenericHDLGeneratorFactory.requiresClock(comp.getArrayDriveMode());
+          for (var pin = 0; pin < comp.getExternalPinCount(); pin++) {
+            ledArrayMaps.put(LedArrayGenericHDLGeneratorFactory.getExternalSignalName(
+                comp.getArrayDriveMode(),
+                comp.getNrOfRows(),
+                comp.getNrOfColumns(),
+                comp.getArrayId(),
+                pin), comp.getPinLocation(pin));
+          }
+        }
+      }
+    }
+    if (hasMappedClockedArray && (nets.numberOfClockTrees() == 0) && !nets.requiresGlobalClockConnection()) {
+      ledArrayMaps.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, board.fpga.getClockPinLocation());
+    }
+    return ledArrayMaps;
   }
 }

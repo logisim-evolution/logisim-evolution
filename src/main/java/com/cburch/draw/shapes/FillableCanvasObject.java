@@ -93,7 +93,7 @@ abstract class FillableCanvasObject extends AbstractCanvasObject {
 
   @Override
   public int matchesHashCode() {
-    int ret = paintType.hashCode();
+    var ret = paintType.hashCode();
     if (paintType != DrawAttr.PAINT_FILL) {
       ret = ret * 31 + strokeWidth;
       ret = ret * 31 + strokeColor.hashCode();

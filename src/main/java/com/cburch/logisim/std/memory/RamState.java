@@ -54,9 +54,6 @@ public class RamState extends MemState implements AttributeListener {
   }
 
   @Override
-  public void attributeListChanged(AttributeEvent e) {}
-
-  @Override
   public void attributeValueChanged(AttributeEvent e) {
     AttributeSet attrs = e.getSource();
     BitWidth addrBits = attrs.getValue(Mem.ADDR_ATTR);

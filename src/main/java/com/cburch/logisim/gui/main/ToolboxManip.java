@@ -49,7 +49,7 @@ import com.cburch.logisim.gui.menu.ProjectLibraryActions;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
-import com.cburch.logisim.std.base.Base;
+import com.cburch.logisim.std.base.BaseLibrary;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.EditTool;
 import com.cburch.logisim.tools.Library;
@@ -77,8 +77,8 @@ class ToolboxManip implements ProjectExplorer.Listener {
       proj.setTool(lastSelected);
     } else {
       for (Library sub : proj.getLogisimFile().getLibraries()) {
-        if (sub instanceof Base) {
-          Tool tool = sub.getTool("Edit Tool");
+        if (sub instanceof BaseLibrary) {
+          Tool tool = sub.getTool(EditTool._ID);
           if (tool != null) {
             proj.setTool(tool);
             break;
@@ -88,6 +88,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
     }
   }
 
+  @Override
   public void deleteRequested(ProjectExplorer.Event event) {
     Object request = event.getTarget();
     if (request instanceof ProjectExplorerLibraryNode) {
@@ -105,6 +106,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
     }
   }
 
+  @Override
   public void doubleClicked(ProjectExplorer.Event event) {
     Object clicked = event.getTarget();
     if (clicked instanceof ProjectExplorerToolNode) {
@@ -126,6 +128,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
     }
   }
 
+  @Override
   public JPopupMenu menuRequested(ProjectExplorer.Event event) {
     Object clicked = event.getTarget();
     if (clicked instanceof ProjectExplorerToolNode) {
@@ -150,14 +153,15 @@ class ToolboxManip implements ProjectExplorer.Listener {
       if (lib == proj.getLogisimFile()) {
         return Popups.forProject(proj);
       } else {
-        boolean is_top = event.getTreePath().getPathCount() <= 2;
-        return Popups.forLibrary(proj, lib, is_top);
+        final var isTop = event.getTreePath().getPathCount() <= 2;
+        return Popups.forLibrary(proj, lib, isTop);
       }
     } else {
       return null;
     }
   }
 
+  @Override
   public void moveRequested(ProjectExplorer.Event event, AddTool dragged, AddTool target) {
     LogisimFile file = proj.getLogisimFile();
     int draggedIndex = file.getTools().indexOf(dragged);
@@ -166,6 +170,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
     proj.doAction(LogisimFileActions.moveCircuit(dragged, targetIndex));
   }
 
+  @Override
   public void selectionChanged(ProjectExplorer.Event event) {
     if (proj.getTool() instanceof PokeTool || proj.getTool() instanceof EditTool) {
       lastSelected = proj.getTool();
@@ -206,12 +211,12 @@ class ToolboxManip implements ProjectExplorer.Listener {
       }
     }
 
-    public void attributeListChanged(AttributeEvent e) {}
-
+    @Override
     public void attributeValueChanged(AttributeEvent e) {
       explorer.repaint();
     }
 
+    @Override
     public void libraryChanged(LibraryEvent event) {
       int action = event.getAction();
       if (action == LibraryEvent.ADD_LIBRARY) {
@@ -234,6 +239,7 @@ class ToolboxManip implements ProjectExplorer.Listener {
       explorer.repaint();
     }
 
+    @Override
     public void projectChanged(ProjectEvent event) {
       int action = event.getAction();
       if (action == ProjectEvent.ACTION_SET_FILE) {

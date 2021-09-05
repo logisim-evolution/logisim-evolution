@@ -35,6 +35,13 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class Ttl74273 extends AbstractOctalFlops {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "74273";
 
   public static class Ttl74273HDLGenerator extends AbstractOctalFlopsHDLGenerator {
 
@@ -44,20 +51,20 @@ public class Ttl74273 extends AbstractOctalFlops {
     }
 
     @Override
-    public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-      SortedMap<String, String> PortMap = new TreeMap<>();
-      if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-      NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-      PortMap.putAll(super.GetPortMap(Nets, ComponentInfo));
-      PortMap.put("nCLKEN", "'0'");
-      PortMap.putAll(GetNetMap("nCLR", false, ComponentInfo, 0, Nets));
-      return PortMap;
+    public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+      final var map = new TreeMap<String, String>();
+      if (!(mapInfo instanceof NetlistComponent)) return map;
+      final var comp = (NetlistComponent) mapInfo;
+      map.putAll(super.GetPortMap(nets, comp));
+      map.put("nCLKEN", "'0'");
+      map.putAll(GetNetMap("nCLR", false, comp, 0, nets));
+      return map;
     }
   }
 
   public Ttl74273() {
     super(
-        "74273",
+        _ID,
         (byte) 20,
         new byte[] {2, 5, 6, 9, 12, 15, 16, 19},
         new String[] {
@@ -68,7 +75,7 @@ public class Ttl74273 extends AbstractOctalFlops {
   }
 
   @Override
-  public boolean HDLSupportedComponent( AttributeSet attrs) {
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) MyHDLGenerator = new Ttl74273HDLGenerator();
     return MyHDLGenerator.HDLTargetSupported(attrs);
   }

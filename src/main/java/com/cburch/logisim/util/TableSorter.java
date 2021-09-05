@@ -50,7 +50,6 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumnModel;
 import javax.swing.table.TableModel;
 
 /**
@@ -109,16 +108,19 @@ public class TableSorter extends AbstractTableModel {
       this.priority = priority;
     }
 
+    @Override
     public int getIconHeight() {
       return size;
     }
 
+    @Override
     public int getIconWidth() {
       return size;
     }
 
+    @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
-      Color color = c == null ? Color.GRAY : c.getBackground();
+      final var color = c == null ? Color.GRAY : c.getBackground();
       // In a compound sort, make each succesive triangle 20%
       // smaller than the previous one.
       int dx = (int) (size / 2 * Math.pow(0.8, priority));
@@ -163,12 +165,12 @@ public class TableSorter extends AbstractTableModel {
 
   private class MouseHandler extends MouseAdapter {
     public void mouseClicked(MouseEvent e) {
-      JTableHeader h = (JTableHeader) e.getSource();
-      TableColumnModel columnModel = h.getColumnModel();
-      int viewColumn = columnModel.getColumnIndexAtX(e.getX());
-      int column = columnModel.getColumn(viewColumn).getModelIndex();
+      final var h = (JTableHeader) e.getSource();
+      final var columnModel = h.getColumnModel();
+      final var viewColumn = columnModel.getColumnIndexAtX(e.getX());
+      final var column = columnModel.getColumn(viewColumn).getModelIndex();
       if (column != -1) {
-        int status = getSortingStatus(column);
+        var status = getSortingStatus(column);
         if (!e.isControlDown()) {
           cancelSorting();
         }
@@ -191,9 +193,9 @@ public class TableSorter extends AbstractTableModel {
       this.modelIndex = index;
     }
 
+    @Override
     public int compareTo(Row o) {
-
-      for (Directive directive : sortingColumns) {
+      for (final var directive : sortingColumns) {
         int column = directive.column;
 
         Object o1 = tableModel.getValueAt(modelIndex, column);
@@ -225,15 +227,16 @@ public class TableSorter extends AbstractTableModel {
       this.tableCellRenderer = tableCellRenderer;
     }
 
+    @Override
     public Component getTableCellRendererComponent(
         JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-      Component c =
+      final var c =
           tableCellRenderer.getTableCellRendererComponent(
               table, value, isSelected, hasFocus, row, column);
       if (c instanceof JLabel) {
-        JLabel l = (JLabel) c;
+        final var l = (JLabel) c;
         l.setHorizontalTextPosition(JLabel.LEFT);
-        int modelColumn = table.convertColumnIndexToModel(column);
+        final var modelColumn = table.convertColumnIndexToModel(column);
         l.setIcon(getHeaderRendererIcon(modelColumn, l.getFont().getSize()));
       }
       return c;
@@ -241,6 +244,7 @@ public class TableSorter extends AbstractTableModel {
   }
 
   private class TableModelHandler implements TableModelListener {
+    @Override
     public void tableChanged(TableModelEvent e) {
       // If we're not sorting by anything, just pass the event along.
       if (!isSorting()) {
@@ -282,7 +286,7 @@ public class TableSorter extends AbstractTableModel {
       // it this class can end up re-sorting on alternate cell updates -
       // which can be a performance problem for large tables. The last
       // clause avoids this problem.
-      int column = e.getColumn();
+      final var column = e.getColumn();
       if (e.getFirstRow() == e.getLastRow()
           && column != TableModelEvent.ALL_COLUMNS
           && getSortingStatus(column) == NOT_SORTED
@@ -388,6 +392,7 @@ public class TableSorter extends AbstractTableModel {
     return tableModel.getColumnClass(column);
   }
 
+  @Override
   public int getColumnCount() {
     return (tableModel == null) ? 0 : tableModel.getColumnCount();
   }
@@ -427,7 +432,7 @@ public class TableSorter extends AbstractTableModel {
 
   private int[] getModelToView() {
     if (modelToView == null) {
-      int n = getViewToModel().length;
+      final var n = getViewToModel().length;
       modelToView = new int[n];
       for (int i = 0; i < n; i++) {
         modelToView[modelIndex(i)] = i;
@@ -436,6 +441,7 @@ public class TableSorter extends AbstractTableModel {
     return modelToView;
   }
 
+  @Override
   public int getRowCount() {
     return (tableModel == null) ? 0 : tableModel.getRowCount();
   }
@@ -454,15 +460,16 @@ public class TableSorter extends AbstractTableModel {
     return tableModel;
   }
 
+  @Override
   public Object getValueAt(int row, int column) {
     return tableModel.getValueAt(modelIndex(row), column);
   }
 
   private Row[] getViewToModel() {
     if (viewToModel == null) {
-      int tableModelRowCount = tableModel.getRowCount();
+      final var tableModelRowCount = tableModel.getRowCount();
       viewToModel = new Row[tableModelRowCount];
-      for (int row = 0; row < tableModelRowCount; row++) {
+      for (var row = 0; row < tableModelRowCount; row++) {
         viewToModel[row] = new Row(row);
       }
 
@@ -498,7 +505,7 @@ public class TableSorter extends AbstractTableModel {
   }
 
   public void setSortingStatus(int column, int status) {
-    Directive directive = getDirective(column);
+    final var directive = getDirective(column);
     if (directive != EMPTY_DIRECTIVE) {
       sortingColumns.remove(directive);
     }
@@ -511,7 +518,7 @@ public class TableSorter extends AbstractTableModel {
   public void setTableHeader(JTableHeader tableHeader) {
     if (this.tableHeader != null) {
       this.tableHeader.removeMouseListener(mouseListener);
-      TableCellRenderer defaultRenderer = this.tableHeader.getDefaultRenderer();
+      final var defaultRenderer = this.tableHeader.getDefaultRenderer();
       if (defaultRenderer instanceof SortableHeaderRenderer) {
         this.tableHeader.setDefaultRenderer(
             ((SortableHeaderRenderer) defaultRenderer).tableCellRenderer);

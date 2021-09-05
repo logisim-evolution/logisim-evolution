@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html  lang="pt">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="pt">
+    <title>
+      Extensor de Bits
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/extender.png" alt="#########" height=16 width=16> <em>Extensor de Bits</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Biblioteca:</strong>
+            </td>
+            <td>
+              <a href="index.html">Base</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introdução:</strong>
+            </td>
+            <td>
+              2.5.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Aparência:</strong>
+            </td>
+            <td valign="top">
+ <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/extender.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/extender1.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportamento
+      </h2>
+      <p>
+        O extensor de bits transformará um valor em outro de largura diferente. Se for para transformar para uma largura menor, os bits de mais baixa ordem serão simplesmente truncados. Se for para transformar para uma largura maior, os bits menos significativos serão os mesmos, e você terá uma escolha para os bits de mais alta ordem: eles poderão ser todos iguais a 0, ou todos iguais a 1, o concordarem com a entrada do <q>bit de sinal</q> (o mais significativo), ou ainda ter esse valor determinado por uma entrada adicional.
+      </p>
+      <h2>
+        Pinos
+      </h2>
+      <dl>
+        <dt>
+          Na face oeste (entrada, com largura em bits de acordo com o atributo Largura da Entrada)
+        </dt>
+        <dd>
+          <p>
+            A entrada multibit cujo valor será transformado.
+          </p>
+        </dd>
+        <dt>
+          Na face leste (saída, com largura em bits de acordo com o atributo Largura da Saída)
+        </dt>
+        <dd>
+          <p>
+            A saída calculada.
+          </p>
+        </dd>
+        <dt>
+          Na face norte (entrada, com largura de 1 bit)
+        </dt>
+        <dd>
+          <p>
+            Especificará como deverão ser os bits adicionais à saída. Esse pino estará disponível apenas se o atributo Tipo da Extensão for <q>Entrada.</q>
+          </p>
+        </dd>
+      </dl>
+      <h2>
+        Atributos
+      </h2>
+      <p>
+        Quando o componente for selecionado ou estiver sendo acrescentado, os dígitos de <b class="tkeybd">0</b> a <b class="tkeybd">9</b> poderão alterar o atributo <b class="propertie">Largura da Entrada</b> , <b class="tkeybd">Alt-0</b> até <b class="tkeybd">ALT-9</b> irão alterar o seu atributo <b class="propertie">Largura da Saída</b>.
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">Largura da Entrada</b>
+        </dt>
+        <dd>
+          A largura em bits da entrada.
+        </dd>
+        <dt>
+          <b class="propertie">Largura da Saída</b>
+        </dt>
+        <dd>
+          A largura em bits da saída.
+        </dd>
+        <dt>
+         <b class="propertie"> Tipo da Extensão</b>
+        </dt>
+        <dd>
+          Se a largura dos bits à saída puderem exceder aquela à entrada, esse atributo irá configurar como deverão ser os bits adicionais da saída. Se <q>Zero</q> ou <q>Um</q>, os bits adicionais serão 0 ou 1 respectivamente. Se <q>Sinal</q>, os bits adicionais serão tomados de acordo com o bit de mais alta ordem da entrada. E se <q>Entrada</q>, o componente usará o valor de uma segunda entrada adicional na face norte.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Comportamento da ferramenta Testar
+      </h2>
+      <p>
+        Nenhum.
+      </p>
+      <h2>
+        Comportamento da ferramenta Texto
+      </h2>
+      <p>
+        Nenhum.
+      </p>
+      <p>
+       <b>Voltar à </b><a href="../index.html">Referência para bibliotecas</a>
+      </p>
+    </div>
+  </body>
+</html>

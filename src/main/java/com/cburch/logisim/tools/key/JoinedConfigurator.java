@@ -54,19 +54,19 @@ public class JoinedConfigurator implements KeyConfigurator, Cloneable {
     }
     int len = this.handlers.length;
     ret.handlers = new KeyConfigurator[len];
-    for (int i = 0; i < len; i++) {
+    for (var i = 0; i < len; i++) {
       ret.handlers[i] = this.handlers[i].clone();
     }
     return ret;
   }
 
   public KeyConfigurationResult keyEventReceived(KeyConfigurationEvent event) {
-    KeyConfigurator[] hs = handlers;
+    final var hs = handlers;
     if (event.isConsumed()) {
       return null;
     }
     for (KeyConfigurator h : hs) {
-      KeyConfigurationResult result = h.keyEventReceived(event);
+      final var result = h.keyEventReceived(event);
       if (result != null || event.isConsumed()) {
         return result;
       }

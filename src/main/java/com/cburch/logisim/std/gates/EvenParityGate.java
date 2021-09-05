@@ -36,22 +36,20 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.util.LineBuffer;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 class EvenParityGate extends AbstractGate {
   private static class XNorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
-      ArrayList<String> Contents = new ArrayList<>();
-      Contents.addAll(GetParity(true, nr_of_inputs, bitwidth > 1));
-      Contents.add("");
-      return Contents;
+    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+      return (new LineBuffer()).add(GetParity(true, nrOfInputs, bitwidth > 1)).empty().get();
     }
   }
 
   public static final EvenParityGate FACTORY = new EvenParityGate();
-  private final String LABEL = "2k";
+  private static final String LABEL = "2k";
 
   private EvenParityGate() {
     super("Even Parity", S.getter("evenParityComponent"));
@@ -60,8 +58,8 @@ class EvenParityGate extends AbstractGate {
 
   @Override
   protected Expression computeExpression(Expression[] inputs, int numInputs) {
-    Expression ret = inputs[0];
-    for (int i = 1; i < numInputs; i++) {
+    var ret = inputs[0];
+    for (var i = 1; i < numInputs; i++) {
       ret = Expressions.xor(ret, inputs[i]);
     }
     return Expressions.not(ret);

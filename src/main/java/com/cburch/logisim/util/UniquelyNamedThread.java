@@ -38,15 +38,15 @@ public class UniquelyNamedThread extends Thread {
   private static String nextName(String prefix) {
     int id = 0;
     synchronized (lock) {
-      Integer i = lastID.get(prefix);
+      final var i = lastID.get(prefix);
       if (i != null) id = i + 1;
       lastID.put(prefix, id);
     }
     return prefix + "-" + id;
   }
 
-  // private UniquelyNamedThread() { }
-  // private UniquelyNamedThread(Runnable runnable) { }
+  // private UniquelyNamedThread() {}
+  // private UniquelyNamedThread(Runnable runnable) {}
 
   public UniquelyNamedThread(String prefix) {
     super(nextName(prefix));

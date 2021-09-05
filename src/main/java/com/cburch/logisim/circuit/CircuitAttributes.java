@@ -32,7 +32,6 @@ import static com.cburch.logisim.circuit.Strings.S;
 
 import com.cburch.logisim.circuit.appear.CircuitAppearanceEvent;
 import com.cburch.logisim.circuit.appear.CircuitAppearanceListener;
-import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
@@ -53,6 +52,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CircuitAttributes extends AbstractAttributeSet {
+
   private class MyListener implements AttributeListener, CircuitAppearanceListener {
     private final Circuit source;
 
@@ -60,17 +60,19 @@ public class CircuitAttributes extends AbstractAttributeSet {
       source = s;
     }
 
+    @Override
     public void attributeListChanged(AttributeEvent e) {}
 
+    @Override
     public void attributeValueChanged(AttributeEvent e) {
       @SuppressWarnings("unchecked")
       Attribute<Object> a = (Attribute<Object>) e.getAttribute();
       fireAttributeValueChanged(a, e.getValue(), e.getOldValue());
     }
 
+    @Override
     public void circuitAppearanceChanged(CircuitAppearanceEvent e) {
-      SubcircuitFactory factory;
-      factory = (SubcircuitFactory) subcircInstance.getFactory();
+      final var factory = (SubcircuitFactory) subcircInstance.getFactory();
       if (e.isConcerning(CircuitAppearanceEvent.PORTS)) {
         factory.computePorts(subcircInstance);
       }
@@ -90,16 +92,17 @@ public class CircuitAttributes extends AbstractAttributeSet {
       source = s;
     }
 
+    @Override
     public void attributeListChanged(AttributeEvent e) {}
 
+    @Override
     public void attributeValueChanged(AttributeEvent e) {
       if (e.getAttribute() == NAME_ATTR) {
-        String NewName = (String) e.getValue();
-        String OldName = e.getOldValue() == null ? "ThisShouldNotHappen" : (String) e.getOldValue();
+        final var NewName = (String) e.getValue();
+        final var OldName = e.getOldValue() == null ? "ThisShouldNotHappen" : (String) e.getOldValue();
         if (!NewName.equals(OldName)) {
           if (NewName.isEmpty()) {
-            OptionPane.showMessageDialog(
-                null, S.get("EmptyNameError"), "", OptionPane.ERROR_MESSAGE);
+            OptionPane.showMessageDialog(null, S.get("EmptyNameError"), "", OptionPane.ERROR_MESSAGE);
             e.getSource().setValue(NAME_ATTR, OldName);
             source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
             return;
@@ -108,11 +111,11 @@ public class CircuitAttributes extends AbstractAttributeSet {
             source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
             return;
           } else {
-            for (Component c : source.getNonWires()) {
-              if (c.getFactory() instanceof Pin) {
-                String label = c.getAttributeSet().getValue(StdAttr.LABEL).toUpperCase();
+            for (final var component : source.getNonWires()) {
+              if (component.getFactory() instanceof Pin) {
+                final var label = component.getAttributeSet().getValue(StdAttr.LABEL).toUpperCase();
                 if (!label.isEmpty() && label.equals(NewName.toUpperCase())) {
-                  String msg = S.get("CircuitSameInputOutputLabel");
+                  final var msg = S.get("CircuitSameInputOutputLabel");
                   OptionPane.showMessageDialog(null, "\"" + NewName + "\" : " + msg);
                   e.getSource().setValue(NAME_ATTR, OldName);
                   source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
@@ -136,7 +139,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
   }
 
   static AttributeSet createBaseAttrs(Circuit source, String name) {
-    AttributeSet ret = AttributeSets.fixedSet(STATIC_ATTRS, STATIC_DEFAULTS);
+    final var ret = AttributeSets.fixedSet(STATIC_ATTRS, STATIC_DEFAULTS);
     ret.setValue(APPEARANCE_ATTR, AppPreferences.getDefaultCircuitAppearance());
     ret.setValue(CircuitAttributes.NAME_ATTR, name);
     ret.addAttributeListener(new StaticListener(source));
@@ -159,8 +162,6 @@ public class CircuitAttributes extends AbstractAttributeSet {
       Attributes.forFont("clabelfont", S.getter("circuitLabelFontAttr"));
   public static final Attribute<Boolean> CIRCUIT_IS_VHDL_BOX =
       Attributes.forBoolean("circuitvhdl", S.getter("circuitIsVhdl"));
-  public static final Attribute<String> CIRCUIT_VHDL_PATH =
-      Attributes.forString("circuitvhdlpath", S.getter("circuitVhdlPath"));
   public static final Attribute<Boolean> NAMED_CIRCUIT_BOX_FIXED_SIZE =
       Attributes.forBoolean("circuitnamedboxfixedsize", S.getter("circuitNamedBoxFixedSize"));
   public static final AttributeOption APPEAR_CLASSIC = StdAttr.APPEAR_CLASSIC;
@@ -173,6 +174,8 @@ public class CircuitAttributes extends AbstractAttributeSet {
           "appearance",
           S.getter("circuitAppearanceAttr"),
           new AttributeOption[] {APPEAR_CLASSIC, APPEAR_FPGA, APPEAR_EVOLUTION, APPEAR_CUSTOM});
+  public static final Attribute<Double> SIMULATION_FREQUENCY = Attributes.forDouble("simulationFrequency");
+  public static final Attribute<Double> DOWNLOAD_FREQUENCY = Attributes.forDouble("downloadFrequency");
 
   private static final Attribute<?>[] STATIC_ATTRS = {
     NAME_ATTR,
@@ -181,11 +184,12 @@ public class CircuitAttributes extends AbstractAttributeSet {
     CIRCUIT_LABEL_FONT_ATTR,
     APPEARANCE_ATTR,
     NAMED_CIRCUIT_BOX_FIXED_SIZE,
-    CIRCUIT_VHDL_PATH
+    SIMULATION_FREQUENCY,
+    DOWNLOAD_FREQUENCY,
   };
 
   private static final Object[] STATIC_DEFAULTS = {
-    "", "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT, APPEAR_CLASSIC, false, ""
+    "", "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT, APPEAR_CLASSIC, false, -1d, -1d
   };
 
   private static final List<Attribute<?>> INSTANCE_ATTRS =
@@ -199,8 +203,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
           CIRCUIT_LABEL_ATTR,
           CIRCUIT_LABEL_FACING_ATTR,
           CIRCUIT_LABEL_FONT_ATTR,
-          APPEARANCE_ATTR,
-          CIRCUIT_VHDL_PATH);
+          APPEARANCE_ATTR);
 
   private final Circuit source;
   private Instance subcircInstance;
@@ -223,11 +226,13 @@ public class CircuitAttributes extends AbstractAttributeSet {
     LabelVisible = true;
     pinInstances = new Instance[0];
     NameReadOnly = false;
+    DOWNLOAD_FREQUENCY.setHidden(true);
+    SIMULATION_FREQUENCY.setHidden(true);
   }
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {
-    CircuitAttributes other = (CircuitAttributes) dest;
+    final var other = (CircuitAttributes) dest;
     other.subcircInstance = null;
     other.listener = null;
   }
@@ -262,7 +267,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
       if (aStatic == attr)
         return false;
     }
-    return true;
+    return attr.isToSave();
   }
 
   void setPinInstances(Instance[] value) {
@@ -285,6 +290,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
     }
   }
 
+  @Override
   public boolean isReadOnly(Attribute<?> attr) {
     if (attr == NAME_ATTR) {
       return NameReadOnly;
@@ -295,29 +301,29 @@ public class CircuitAttributes extends AbstractAttributeSet {
   @Override
   public <E> void setValue(Attribute<E> attr, E value) {
     if (attr == StdAttr.FACING) {
-      Direction val = (Direction) value;
+      final var val = (Direction) value;
       if (facing.equals(val)) return;
       facing = val;
       fireAttributeValueChanged(StdAttr.FACING, val, null);
       if (subcircInstance != null) subcircInstance.recomputeBounds();
     } else if (attr == StdAttr.LABEL) {
-      String val = (String) value;
-      String oldval = label;
+      final var val = (String) value;
+      final var oldval = label;
       if (label.equals(val)) return;
       label = val;
       fireAttributeValueChanged(StdAttr.LABEL, val, oldval);
     } else if (attr == StdAttr.LABEL_FONT) {
-      Font val = (Font) value;
+      final var val = (Font) value;
       if (labelFont.equals(val)) return;
       labelFont = val;
       fireAttributeValueChanged(StdAttr.LABEL_FONT, val, null);
     } else if (attr == StdAttr.LABEL_VISIBILITY) {
-      Boolean val = (Boolean) value;
+      final var val = (Boolean) value;
       if (LabelVisible == value) return;
       LabelVisible = val;
       fireAttributeValueChanged(StdAttr.LABEL_VISIBILITY, val, null);
     } else if (attr == LABEL_LOCATION_ATTR) {
-      Direction val = (Direction) value;
+      final var val = (Direction) value;
       if (labelLocation.equals(val)) return;
       labelLocation = val;
       fireAttributeValueChanged(LABEL_LOCATION_ATTR, val, null);

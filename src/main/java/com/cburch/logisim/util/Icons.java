@@ -39,9 +39,9 @@ import javax.swing.ImageIcon;
 
 public class Icons {
   public static ImageIcon getIcon(String name) {
-    java.net.URL url = Icons.class.getClassLoader().getResource(path + "/" + name);
+    final var url = Icons.class.getClassLoader().getResource(PATH + "/" + name);
     if (url == null) return null;
-    ImageIcon icon = new ImageIcon(url);
+    final var icon = new ImageIcon(url);
     icon.setImage(
         icon.getImage()
             .getScaledInstance(
@@ -51,15 +51,16 @@ public class Icons {
     return icon;
   }
 
-  public static void paintRotated(Graphics g, int x, int y, Direction dir, Icon icon, Component dest) {
+  public static void paintRotated(
+      Graphics g, int x, int y, Direction dir, Icon icon, Component dest) {
     if (!(g instanceof Graphics2D) || dir == Direction.EAST) {
       icon.paintIcon(dest, g, x, y);
       return;
     }
 
-    Graphics2D g2 = (Graphics2D) g.create();
-    double cx = x + icon.getIconWidth() / 2.0;
-    double cy = y + icon.getIconHeight() / 2.0;
+    final var g2 = (Graphics2D) g.create();
+    final var cx = x + icon.getIconWidth() / 2.0;
+    final var cy = y + icon.getIconHeight() / 2.0;
     if (dir == Direction.WEST) {
       g2.rotate(Math.PI, cx, cy);
     } else if (dir == Direction.NORTH) {
@@ -73,7 +74,7 @@ public class Icons {
     g2.dispose();
   }
 
-  private static final String path = "resources/logisim/icons";
+  private static final String PATH = "resources/logisim/icons";
 
   private Icons() {}
 }

@@ -28,10 +28,8 @@
 
 package com.cburch.logisim.gui.generic;
 
-/**
- * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
- */
-
+import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.ComponentDrawContext;
@@ -56,7 +54,6 @@ import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import javax.swing.AbstractAction;
@@ -76,18 +73,20 @@ import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+/**
+ * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
+ */
 public class ProjectExplorer extends JTree implements LocaleListener {
-
   public static final Color MAGNIFYING_INTERIOR = new Color(200, 200, 255, 64);
   private static final long serialVersionUID = 1L;
-  private static final String DIRTY_MARKER = "*";
+
   private final Project proj;
   private final MyListener myListener = new MyListener();
   private final MyCellRenderer renderer = new MyCellRenderer();
   private final DeleteAction deleteAction = new DeleteAction();
   private Listener listener = null;
   private Tool haloedTool = null;
-  
+
   public ProjectExplorer(Project proj, boolean showMouseTools) {
     super();
     this.proj = proj;
@@ -133,6 +132,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     model.updateStructure();
   }
 
+  @Override
   public void localeChanged() {
     // repaint() would work, except that names that get longer will be
     // abbreviated with an ellipsis, even when they fit into the window.
@@ -152,6 +152,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
     private static final long serialVersionUID = 1L;
 
+    @Override
     public void actionPerformed(ActionEvent event) {
       TreePath path = getSelectionPath();
       if (listener != null && path != null && path.getPathCount() == 2) {
@@ -175,9 +176,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
         boolean leaf,
         int row,
         boolean hasFocus) {
-      java.awt.Component ret;
-      ret =
-          super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
+      java.awt.Component ret = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
       Font plainFont = AppPreferences.getScaledFont(ret.getFont());
       Font boldFont = new Font(plainFont.getFontName(), Font.BOLD, plainFont.getSize());
       ret.setFont(plainFont);
@@ -187,7 +186,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       }
       if (value instanceof ProjectExplorerToolNode) {
         ProjectExplorerToolNode toolNode = (ProjectExplorerToolNode) value;
-        Tool tool = toolNode.getValue();
+        var tool = toolNode.getValue();
         if (ret instanceof JLabel) {
           JLabel label = (JLabel) ret;
           boolean viewed = false;
@@ -210,12 +209,19 @@ public class ProjectExplorer extends JTree implements LocaleListener {
           label.setToolTipText(tool.getDescription());
         }
       } else if (value instanceof ProjectExplorerLibraryNode) {
-        ProjectExplorerLibraryNode libNode = (ProjectExplorerLibraryNode) value;
-        Library lib = libNode.getValue();
+        final var libNode = (ProjectExplorerLibraryNode) value;
+        final var lib = libNode.getValue();
 
         if (ret instanceof JLabel) {
-          String text = lib.getDisplayName();
-          if (lib.isDirty()) text += DIRTY_MARKER;
+          final var baseName = lib.getDisplayName();
+          var text = baseName;
+          if (lib.isDirty()) {
+            // TODO: Would be nice to use DIRTY_MARKER here instead of "*" but it does not render
+            // corectly in project tree, font seem to have the character as frame title is fine.
+            // Needs to figure out what is different (java fonts?). Keep "*" unless bug is resolved.
+            final var DIRTY_MARKER_LOCAL = "*"; // useless var for easy DIRTY_MARKER hunt in future.
+            text = DIRTY_MARKER_LOCAL + baseName;
+          }
 
           ((JLabel) ret).setText(text);
         }
@@ -224,8 +230,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     }
   }
 
-  private class MyListener
-      implements MouseListener, TreeSelectionListener, ProjectListener, PropertyChangeListener {
+  private class MyListener implements BaseMouseListenerContract, TreeSelectionListener, ProjectListener, PropertyChangeListener {
     private void checkForPopup(MouseEvent e) {
       if (e.isPopupTrigger()) {
         TreePath path = getPathForLocation(e.getX(), e.getY());
@@ -238,6 +243,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       }
     }
 
+    @Override
     public void mouseClicked(MouseEvent e) {
       if (e.getClickCount() == 2) {
         TreePath path = getPathForLocation(e.getX(), e.getY());
@@ -250,15 +256,13 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     //
     // MouseListener methods
     //
-    public void mouseEntered(MouseEvent e) {}
-
-    public void mouseExited(MouseEvent e) {}
-
+    @Override
     public void mousePressed(MouseEvent e) {
       ProjectExplorer.this.requestFocus();
       checkForPopup(e);
     }
 
+    @Override
     public void mouseReleased(MouseEvent e) {
       checkForPopup(e);
     }
@@ -270,9 +274,11 @@ public class ProjectExplorer extends JTree implements LocaleListener {
         if (node != null) node.fireNodeChanged();
       }
     }
+
     //
     // project/library file/circuit listener methods
     //
+    @Override
     public void projectChanged(ProjectEvent event) {
       int act = event.getAction();
       if (act == ProjectEvent.ACTION_SET_CURRENT || act == ProjectEvent.ACTION_SET_TOOL) {
@@ -284,6 +290,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     //
     // PropertyChangeListener methods
     //
+    @Override
     public void propertyChange(PropertyChangeEvent event) {
       if (AppPreferences.GATE_SHAPE.isSource(event)) {
         ProjectExplorer.this.repaint();
@@ -293,6 +300,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     //
     // TreeSelectionListener methods
     //
+    @Override
     public void valueChanged(TreeSelectionEvent e) {
       TreePath path = e.getNewLeadSelectionPath();
       if (listener != null) {
@@ -382,19 +390,24 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       }
     }
 
+    @Override
     public int getIconHeight() {
-      return AppPreferences.getScaled(AppPreferences.BoxSize);
+      return AppPreferences.getScaled(AppPreferences.BOX_SIZE);
     }
 
+    @Override
     public int getIconWidth() {
-      return AppPreferences.getScaled(AppPreferences.BoxSize);
+      return AppPreferences.getScaled(AppPreferences.BOX_SIZE);
     }
 
+    @Override
     public void paintIcon(java.awt.Component c, Graphics g, int x, int y) {
       boolean viewed;
-      if (proj.getFrame().getHdlEditorView() == null)
+      if (proj.getFrame().getHdlEditorView() == null) {
         viewed = (circ != null && circ == proj.getCurrentCircuit());
-      else viewed = (vhdl != null && vhdl == proj.getFrame().getHdlEditorView());
+      } else {
+        viewed = (vhdl != null && vhdl == proj.getFrame().getHdlEditorView());
+      }
       boolean haloed =
           !viewed && (tool == haloedTool && AppPreferences.ATTRIBUTE_HALO.getBoolean());
       // draw halo if appropriate
@@ -403,71 +416,89 @@ public class ProjectExplorer extends JTree implements LocaleListener {
         g.clipRect(
             x,
             y,
-            AppPreferences.getScaled(AppPreferences.BoxSize),
-            AppPreferences.getScaled(AppPreferences.BoxSize));
+            AppPreferences.getScaled(AppPreferences.BOX_SIZE),
+            AppPreferences.getScaled(AppPreferences.BOX_SIZE));
         g.setColor(Canvas.HALO_COLOR);
         g.setColor(Color.BLACK);
         g.setClip(s);
       }
 
       // draw tool icon
-      Graphics gIcon = g.create();
+      var gfxIcon = g.create();
       ComponentDrawContext context =
-          new ComponentDrawContext(ProjectExplorer.this, null, null, g, gIcon);
+          new ComponentDrawContext(ProjectExplorer.this, null, null, g, gfxIcon);
       tool.paintIcon(
           context,
-          x + AppPreferences.getScaled(AppPreferences.IconBorder),
-          y + AppPreferences.getScaled(AppPreferences.IconBorder));
-      gIcon.dispose();
+          x + AppPreferences.getScaled(AppPreferences.ICON_BORDER),
+          y + AppPreferences.getScaled(AppPreferences.ICON_BORDER));
+      gfxIcon.dispose();
 
       // draw magnifying glass if appropriate
       if (viewed) {
-        int tx = x + AppPreferences.getScaled(AppPreferences.BoxSize - 7);
-        int ty = y + AppPreferences.getScaled(AppPreferences.BoxSize - 7);
+        int tx = x + AppPreferences.getScaled(AppPreferences.BOX_SIZE - 7);
+        int ty = y + AppPreferences.getScaled(AppPreferences.BOX_SIZE - 7);
         int[] xp = {
           tx - 1,
-          x + AppPreferences.getScaled(AppPreferences.BoxSize - 2),
-          x + AppPreferences.getScaled(AppPreferences.BoxSize),
+          x + AppPreferences.getScaled(AppPreferences.BOX_SIZE - 2),
+          x + AppPreferences.getScaled(AppPreferences.BOX_SIZE),
           tx + 1
         };
         int[] yp = {
           ty + 1,
-          y + AppPreferences.getScaled(AppPreferences.BoxSize),
-          y + AppPreferences.getScaled(AppPreferences.BoxSize - 2),
+          y + AppPreferences.getScaled(AppPreferences.BOX_SIZE),
+          y + AppPreferences.getScaled(AppPreferences.BOX_SIZE - 2),
           ty - 1
         };
         g.setColor(MAGNIFYING_INTERIOR);
         g.fillOval(
-            x + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
-            y + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
-            AppPreferences.getScaled(AppPreferences.BoxSize >> 1),
-            AppPreferences.getScaled(AppPreferences.BoxSize >> 1));
+            x + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
+            y + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
+            AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1),
+            AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1));
         g.setColor(new Color(139, 69, 19));
         g.drawOval(
-            x + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
-            y + AppPreferences.getScaled(AppPreferences.BoxSize >> 2),
-            AppPreferences.getScaled(AppPreferences.BoxSize >> 1),
-            AppPreferences.getScaled(AppPreferences.BoxSize >> 1));
+            x + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
+            y + AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 2),
+            AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1),
+            AppPreferences.getScaled(AppPreferences.BOX_SIZE >> 1));
         g.fillPolygon(xp, yp, xp.length);
       }
     }
   }
 
   public interface Listener {
-    void deleteRequested(Event event);
-    void doubleClicked(Event event);
+    default void deleteRequested(Event event) {
+      // no-op implementation
+    }
+
+    default void doubleClicked(Event event) {
+      // no-op implementation
+    }
+
     JPopupMenu menuRequested(Event event);
-    void moveRequested(Event event, AddTool dragged, AddTool target);
-    void selectionChanged(Event event);
+
+    default void moveRequested(Event event, AddTool dragged, AddTool target) {
+      // no-op implementation
+    }
+
+    default void selectionChanged(Event event) {
+      // no-op implementation
+    }
   }
 
   public static class Event {
     private final TreePath path;
-    public Event(TreePath p) { path = p; }
-    public TreePath getTreePath() { return path; }
+
+    public Event(TreePath p) {
+      path = p;
+    }
+
+    public TreePath getTreePath() {
+      return path;
+    }
+
     public Object getTarget() {
       return path == null ? null : path.getLastPathComponent();
     }
   }
-
 }

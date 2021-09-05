@@ -33,7 +33,6 @@ import static com.cburch.logisim.analyze.Strings.S;
 import com.cburch.logisim.analyze.gui.VariableTab;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Entry;
-import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.analyze.model.VariableList;
 import com.cburch.logisim.gui.generic.OptionPane;
@@ -53,20 +52,21 @@ public class CsvInterpretor {
    * 1) The first line must contain the names (Labels) of the inputs and the outputs
    *    there are 3 types of names:
    *    a) Just a string (e.g. "A", "MyNiceSignal"...) which indicates a 1 bit quantity
-   *    b) A string followed by a : followed by a number (e.g. "A:3", "MyNiceSignal:5") which indicates
-   *       the bit-number (indicated by the number) of the bit-vector indicated by the string. In this
-   *       case you MUST adhere to the MSB...LSB rule (hence D:3,D:2,D:1,D:0 is correct, but
-   *       D:3,D:0,D:1,D:2 or D:0,D:1,D:2,D:3 are not!)
-   *    c) A string followed by [<a>..0] or [<b>] (e.g. B[3..0], D[4]) indicate bit vectors where <a>
-   *       indicates the MSB-index and <b> the number of bits in the vector. In this case the string indicates
-   *       the MSB position and the following <a> resp. <b>-1 fields MUST be empty.
-   *    To separate the inputs from the outputs the first line Must contain a separator field which contains
-   *    a | character (extra characters are allowed).
+   *    b) A string followed by a : followed by a number (e.g. "A:3", "MyNiceSignal:5") which
+   *       indicates the bit-number (indicated by the number) of the bit-vector indicated by
+   *       the string. In this case you MUST adhere to the MSB...LSB rule (hence D:3,D:2,D:1,D:0
+   *       is correct, but D:3,D:0,D:1,D:2 or D:0,D:1,D:2,D:3 are not!)
+   *    c) A string followed by [<a>..0] or [<b>] (e.g. B[3..0], D[4]) indicate bit vectors
+   *       where <a> indicates the MSB-index and <b> the number of bits in the vector. In this
+   *       case the string indicates the MSB position and the following <a> resp. <b>-1 fields
+   *       MUST be empty.
+   *    To separate the inputs from the outputs the first line Must contain a separator field
+   *    which contains a | character (extra characters are allowed).
    * 2) The following lines are the truth table entries. They must be formatted according to the
    *    following rules:
    *    a) Each line must have exactly the same number of entries as the first line.
-   *    b) The separator filed may contain a | symbol, may be empty, or contain something else, it is
-   *       ignored.
+   *    b) The separator filed may contain a | symbol, may be empty, or contain something else,
+   *       it is ignored.
    *    c) Each field, other than the separator field must contain one of the following values;
    *       - 0 to indicate a logic 0
    *       - 1 to indicate a logic one
@@ -98,57 +98,57 @@ public class CsvInterpretor {
   final JFrame parent;
   private final VariableList inputs;
   private final VariableList outputs;
-  private final String FileName;
+  private final String fileName;
 
   public CsvInterpretor(File file, CsvParameter param, JFrame parent) {
     content = new ArrayList<>();
     inputs = new VariableList(AnalyzerModel.MAX_INPUTS);
     outputs = new VariableList(AnalyzerModel.MAX_OUTPUTS);
-    FileName = file.getName();
+    fileName = file.getName();
     this.parent = parent;
     readFile(file, param);
     if (content.isEmpty()) {
       return;
     }
-    if (!getInputsOutputs() || !CheckEntries()) {
+    if (!getInputsOutputs() || !checkEntries()) {
       content = new ArrayList<>();
     }
   }
 
   public void getTruthTable(AnalyzerModel model) throws IOException {
     if (content.size() <= 1) return;
-    ArrayList<Entry[]> rows = new ArrayList<>();
-    int NrOfEntries = inputs.bits.size() + outputs.bits.size();
+    final var rows = new ArrayList<Entry[]>();
+    var nrOfEntries = inputs.bits.size() + outputs.bits.size();
     for (int row = 1; row < content.size(); row++) {
-      ArrayList<Entry> Entryrow = new ArrayList<>();
-      int col = 0;
-      List<String> line = content.get(row);
+      final var entryRow = new ArrayList<Entry>();
+      final var line = content.get(row);
+      var col = 0;
       while (col < line.size()) {
         if (col != inputs.bits.size()) {
-          String E = line.get(col);
-          if ("-xX".indexOf(E.charAt(0)) >= 0) {
-            Entryrow.add(Entry.DONT_CARE);
-          } else if (E.charAt(0) == '0') {
-            Entryrow.add(Entry.ZERO);
-          } else if (E.charAt(0) == '1') {
-            Entryrow.add(Entry.ONE);
+          var entry = line.get(col);
+          if ("-xX".indexOf(entry.charAt(0)) >= 0) {
+            entryRow.add(Entry.DONT_CARE);
+          } else if (entry.charAt(0) == '0') {
+            entryRow.add(Entry.ZERO);
+          } else if (entry.charAt(0) == '1') {
+            entryRow.add(Entry.ONE);
           } else throw new IOException("Invalid entry value");
         }
         col++;
       }
-      if (Entryrow.size() != NrOfEntries) throw new IOException("Invalid nr of entries");
-      rows.add(Entryrow.toArray(new Entry[NrOfEntries]));
+      if (entryRow.size() != nrOfEntries) throw new IOException("Invalid nr of entries");
+      rows.add(entryRow.toArray(new Entry[nrOfEntries]));
     }
     try {
       model.setVariables(inputs.vars, outputs.vars);
     } catch (IllegalArgumentException e) {
       throw new IOException(e.getMessage());
     }
-    TruthTable table = model.getTruthTable();
+    final var table = model.getTruthTable();
     try {
       table.setVisibleRows(rows, false);
     } catch (IllegalArgumentException e) {
-      int confirm =
+      var confirm =
           OptionPane.showConfirmDialog(
               parent,
               new String[] {e.getMessage(), S.get("tableParseErrorMessage")},
@@ -163,23 +163,23 @@ public class CsvInterpretor {
     }
   }
 
-  private boolean CheckEntries() {
+  private boolean checkEntries() {
     if (content.size() == 1) {
       OptionPane.showMessageDialog(
-          parent, S.fmt("CsvNoEntries", FileName), S.get("openButton"), OptionPane.ERROR_MESSAGE);
+          parent, S.get("CsvNoEntries", fileName), S.get("openButton"), OptionPane.ERROR_MESSAGE);
       return false;
     }
     for (int row = 1; row < content.size(); row++) {
-      int col = 0;
-      List<String> line = content.get(row);
+      var col = 0;
+      var line = content.get(row);
       while (col < line.size()) {
         /* we skip the seperator field */
         if (col != inputs.bits.size()) {
-          String Entry = line.get(col);
-          if (Entry == null || Entry.length() != 1 || "01-xX".indexOf(Entry.charAt(0)) < 0) {
+          var entry = line.get(col);
+          if (entry == null || entry.length() != 1 || "01-xX".indexOf(entry.charAt(0)) < 0) {
             OptionPane.showMessageDialog(
                 parent,
-                S.fmt("CsvInvalidEntry", row + 1, FileName, Entry, col + 1),
+                S.get("CsvInvalidEntry", row + 1, fileName, entry, col + 1),
                 S.get("openButton"),
                 OptionPane.ERROR_MESSAGE);
             return false;
@@ -191,12 +191,12 @@ public class CsvInterpretor {
     return true;
   }
 
-  private boolean IsDuplicate(String name) {
+  private boolean isDuplicate(String name) {
     for (Var v : inputs.vars) {
       if (v.name.equalsIgnoreCase(name)) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("CsvDuplicatedVar", 1, FileName, name),
+            S.get("CsvDuplicatedVar", 1, fileName, name),
             S.get("openButton"),
             OptionPane.ERROR_MESSAGE);
         return true;
@@ -206,7 +206,7 @@ public class CsvInterpretor {
       if (v.name.equalsIgnoreCase(name)) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("CsvDuplicatedVar", 1, FileName, name),
+            S.get("CsvDuplicatedVar", 1, fileName, name),
             S.get("openButton"),
             OptionPane.ERROR_MESSAGE);
         return true;
@@ -215,11 +215,11 @@ public class CsvInterpretor {
     return false;
   }
 
-  private boolean IsCorrectName(String name) {
+  private boolean isCorrectName(String name) {
     if (!SyntaxChecker.isVariableNameAcceptable(name, false)) {
       OptionPane.showMessageDialog(
           parent,
-          S.fmt("CsvIncorrectVarName", 1, FileName, name),
+          S.get("CsvIncorrectVarName", 1, fileName, name),
           S.get("openButton"),
           OptionPane.ERROR_MESSAGE);
       return false;
@@ -229,133 +229,145 @@ public class CsvInterpretor {
 
   private boolean getInputsOutputs() {
     /* first check: are all the lines the same size */
-    List<String> header = content.get(0);
-    int NrOfEntries = header.size();
+    final var header = content.get(0);
+    final var nrOfEntries = header.size();
     for (int line = 1; line < content.size(); line++) {
-      if (content.get(line).size() != NrOfEntries) {
+      if (content.get(line).size() != nrOfEntries) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("CsvIncorrectLine", line + 1, FileName, content.get(line).size(), NrOfEntries),
+            S.get("CsvIncorrectLine", line + 1, fileName, content.get(line).size(), nrOfEntries),
             S.get("openButton"),
             OptionPane.ERROR_MESSAGE);
         return false;
       }
     }
     HashMap<String, ArrayList<Boolean>> bitspresent = new HashMap<>();
-    boolean ProcessingInputs = true;
-    boolean InOuSepDetected = false;
+    var processingInputs = true;
+    var inOuSepDetected = false;
     /* now read the cells */
-    for (int idx = 0; idx < NrOfEntries; idx++) {
-      String field = header.get(idx);
+    for (int idx = 0; idx < nrOfEntries; idx++) {
+      final var field = header.get(idx);
       if (field == null) {
         OptionPane.showMessageDialog(
             parent,
-            S.fmt("CsvIncorrectEmpty", 1, FileName, idx),
+            S.get("CsvIncorrectEmpty", 1, fileName, idx),
             S.get("openButton"),
             OptionPane.ERROR_MESSAGE);
         return false;
       }
       if (field.contains("|")) {
-        ProcessingInputs = false;
-        InOuSepDetected = true;
+        processingInputs = false;
+        inOuSepDetected = true;
         continue;
       }
       if (field.contains(":")) {
         /* Is B:<a> format */
         int pos = field.indexOf(":");
-        String name = field.substring(0, pos);
-        if (!IsCorrectName(name)) return false;
-        String index = field.substring(pos + 1);
+        final var name = field.substring(0, pos);
+        if (!isCorrectName(name)) return false;
+        final var index = field.substring(pos + 1);
         for (char kar : index.toCharArray()) {
           if ("0123456789".indexOf(kar) < 0) {
             OptionPane.showMessageDialog(
                 parent,
-                S.fmt("CsvIncorrectVarName", 1, FileName, field),
+                S.get("CsvIncorrectVarName", 1, fileName, field),
                 S.get("openButton"),
                 OptionPane.ERROR_MESSAGE);
             return false;
           }
         }
-        int BitIndex = Integer.parseInt(index);
+        final var bitIndex = Integer.parseInt(index);
 
         if (bitspresent.containsKey(name.toLowerCase())) {
-          ArrayList<Boolean> sels = bitspresent.get(name.toLowerCase());
-          if (BitIndex >= sels.size() || !sels.get(BitIndex + 1)) {
+          final var sels = bitspresent.get(name.toLowerCase());
+          if (bitIndex >= sels.size() || !sels.get(bitIndex + 1)) {
             OptionPane.showMessageDialog(
                 parent,
-                S.fmt("CsvIncorrectBitOrder", 1, FileName, name),
+                S.get("CsvIncorrectBitOrder", 1, fileName, name),
                 S.get("openButton"),
                 OptionPane.ERROR_MESSAGE);
             return false;
           }
-          if (sels.get(BitIndex)) {
+          if (sels.get(bitIndex)) {
             OptionPane.showMessageDialog(
                 parent,
-                S.fmt("CsvDuplicatedBit", 1, FileName, BitIndex, name),
+                S.get("CsvDuplicatedBit", 1, fileName, bitIndex, name),
                 S.get("openButton"),
                 OptionPane.ERROR_MESSAGE);
             return false;
           }
-          sels.set(BitIndex, true);
+          sels.set(bitIndex, true);
         } else {
-          if (IsDuplicate(name)) return false;
-          Var var = new Var(name, BitIndex + 1);
-          ArrayList<Boolean> sels = new ArrayList<>();
-          for (int a = 0; a < BitIndex; a++) sels.add(false);
+          if (isDuplicate(name)) return false;
+          final var variable = new Var(name, bitIndex + 1);
+          final var sels = new ArrayList<Boolean>();
+          for (int a = 0; a < bitIndex; a++) {
+            sels.add(false);
+          }
           sels.add(true);
           bitspresent.put(name.toLowerCase(), sels);
-          if (ProcessingInputs) inputs.add(var);
-          else outputs.add(var);
+          if (processingInputs) {
+            inputs.add(variable);
+          } else {
+            outputs.add(variable);
+          }
         }
       } else if (field.contains("[")) {
         /* check indexes and empty field */
-        int pos = field.indexOf('[');
-        String name = field.substring(0, pos);
-        if (!IsCorrectName(name)) return false;
-        if (IsDuplicate(name)) return false;
-        int NrOfBits = VariableTab.checkindex(field.substring(pos));
-        if (NrOfBits <= 0) {
+        final var pos = field.indexOf('[');
+        final var name = field.substring(0, pos);
+        if (!isCorrectName(name)) return false;
+        if (isDuplicate(name)) return false;
+        final var nrOfBits = VariableTab.checkindex(field.substring(pos));
+        if (nrOfBits <= 0) {
           OptionPane.showMessageDialog(
               parent,
-              S.fmt("CsvIncorrectVarName", 1, FileName, field),
+              S.get("CsvIncorrectVarName", 1, fileName, field),
               S.get("openButton"),
               OptionPane.ERROR_MESSAGE);
           return false;
         }
-        if (idx + NrOfBits > NrOfEntries) {
+        if (idx + nrOfBits > nrOfEntries) {
           OptionPane.showMessageDialog(
               parent,
-              S.fmt("CsvNotEnoughEmpty", 1, FileName, field),
+              S.get("CsvNotEnoughEmpty", 1, fileName, field),
               S.get("openButton"),
               OptionPane.ERROR_MESSAGE);
           return false;
         }
-        for (int x = 1; x < NrOfBits; x++) {
+        for (int x = 1; x < nrOfBits; x++) {
           if (header.get(idx + x) != null) {
             OptionPane.showMessageDialog(
                 parent,
-                S.fmt("CsvNotEnoughEmpty", 1, FileName, field),
+                S.get("CsvNotEnoughEmpty", 1, fileName, field),
                 S.get("openButton"),
                 OptionPane.ERROR_MESSAGE);
             return false;
           }
         }
-        idx += NrOfBits - 1;
-        Var var = new Var(name, NrOfBits);
-        if (ProcessingInputs) inputs.add(var);
-        else outputs.add(var);
+        idx += nrOfBits - 1;
+        final var variable = new Var(name, nrOfBits);
+        if (processingInputs) {
+          inputs.add(variable);
+        } else {
+          outputs.add(variable);
+        }
       } else {
-        if (!IsCorrectName(field)) return false;
-        if (IsDuplicate(field)) return false;
-        Var var = new Var(field, 1);
-        if (ProcessingInputs) inputs.add(var);
-        else outputs.add(var);
+        if (!isCorrectName(field) || isDuplicate(field)) {
+          return false;
+        }
+        final var variable = new Var(field, 1);
+        if (processingInputs) {
+          inputs.add(variable);
+        } else {
+          outputs.add(variable);
+        }
       }
     }
-    if (!InOuSepDetected) {
+    if (!inOuSepDetected) {
       OptionPane.showMessageDialog(
           parent,
-          S.fmt("CsvNoSepFound", 1, FileName),
+          S.get("CsvNoSepFound", 1, fileName),
           S.get("openButton"),
           OptionPane.ERROR_MESSAGE);
       return false;
@@ -363,18 +375,18 @@ public class CsvInterpretor {
     if (inputs.bits.isEmpty()) {
       OptionPane.showMessageDialog(
           parent,
-          S.fmt("CsvNoInputsFound", 1, FileName),
+          S.get("CsvNoInputsFound", 1, fileName),
           S.get("openButton"),
           OptionPane.ERROR_MESSAGE);
       return false;
     }
     for (String key : bitspresent.keySet()) {
-      ArrayList<Boolean> bit = bitspresent.get(key);
+      final var bit = bitspresent.get(key);
       for (int x = 0; x < bit.size(); x++) {
         if (!bit.get(x)) {
           OptionPane.showMessageDialog(
               parent,
-              S.fmt("CsvBitNotSpecified", 1, FileName, x, key),
+              S.get("CsvBitNotSpecified", 1, fileName, x, key),
               S.get("openButton"),
               OptionPane.ERROR_MESSAGE);
           return false;
@@ -386,7 +398,7 @@ public class CsvInterpretor {
 
   private void readFile(File file, CsvParameter param) {
     try {
-      Scanner scanner = new Scanner(file);
+      final var scanner = new Scanner(file);
       while (scanner.hasNext()) {
         content.add(parseCsvLine(scanner.next(), param.seperator(), param.quote()));
       }
@@ -394,17 +406,17 @@ public class CsvInterpretor {
     } catch (FileNotFoundException e) {
       OptionPane.showMessageDialog(
           parent,
-          S.fmt("cantReadMessage", file.getName()),
+          S.get("cantReadMessage", file.getName()),
           S.get("openButton"),
           OptionPane.ERROR_MESSAGE);
     }
   }
 
   public static List<String> parseCsvLine(String line, char seperator, char quote) {
-    boolean inQuote = false;
-    int nrofcontquotes = 0;
+    var inQuote = false;
+    var nrofcontquotes = 0;
 
-    StringBuilder working = new StringBuilder();
+    var working = new StringBuilder();
     List<String> result = new ArrayList<>();
     for (char kar : line.toCharArray()) {
       if (inQuote) {
@@ -412,22 +424,25 @@ public class CsvInterpretor {
           nrofcontquotes++;
         } else {
           if (nrofcontquotes > 1) {
-            int quotestoprint = nrofcontquotes >> 1;
+            var quotestoprint = nrofcontquotes >> 1;
             working.append(String.valueOf(quote).repeat(quotestoprint));
             nrofcontquotes -= quotestoprint << 1;
           }
           if (nrofcontquotes == 1) {
             inQuote = false;
             if (kar == seperator) {
-              if (working.length() == 0) result.add(null);
-              else {
+              if (working.length() == 0) {
+                result.add(null);
+              } else {
                 result.add(working.toString());
                 working = new StringBuilder();
               }
             } else {
               working.append(kar);
             }
-          } else working.append(kar);
+          } else {
+            working.append(kar);
+          }
           nrofcontquotes = 0;
         }
       } else {
@@ -446,10 +461,8 @@ public class CsvInterpretor {
         } else working.append(kar);
       }
     }
-    if (working.length() == 0) result.add(null);
-    else {
-      result.add(working.toString());
-    }
+    result.add(working.length() > 0 ? working.toString() : null);
+
     return result;
   }
 }

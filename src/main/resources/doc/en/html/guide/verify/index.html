@@ -1,5 +1,5 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
+<html lang="fr">
   <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="created" content="2018-10-23T06:18:10.521000000">
@@ -12,7 +12,7 @@
     <link rel="stylesheet" type="text/css" href="../../style.css">
   </head>
   <body>
-    <div class=maindiv>
+    <div class="maindiv">
       <h1>
         Command-line verification
       </h1>
@@ -30,7 +30,7 @@
         We'll start by seeing how to execute a circuit from the command line. For our example, we'll suppose we've built the below circuit in a file named <tt>adder-test.circ</tt>. It uses a two-bit adder as a subcircuit and iterates using a counter through all 16 possible inputs to it.
       </p>
       <p align="center">
-        <img class=notscal src="../../../../img-guide/verify-adder-test.png" alt="#########">
+        <img class="notscal" src="../../../../img-guide/verify-adder-test.png" alt="#########">
       </p>
       <p>
         After this circuit has been built, we then execute Logisim from the command line, providing the filename of the project and the <b class=propertie>-tty</b> option with the &lt;<b class=propertie>table</b> parameter.
@@ -41,7 +41,7 @@
 	  </div>
       </blockquote>
       <p>
-        Without bringing up any windows, Logisim loads the circuit and begins to execute it, ticking any clocks as fast as it can while completing the propagation between each tick. After each propagation is completed, Logisim loads the current values of the output pins; if any have changed from the previous propagation, then all values are displayed in tab-delimited format. If there is an output pin labeled with the special word <var>halt</var>, its output is not displayed — but once the pin's value reaches 1 after a propagation is completed, Logisim ends the simulation.
+        Without bringing up any windows, Logisim loads the circuit and begins to execute it, ticking any clocks as fast as it can while completing the propagation between each tick. After each propagation is completed, Logisim loads the current values of the output pins; if any have changed from the previous propagation, then all values are displayed in tab-delimited format. If there is an output pin labeled with the special word <var>halt</var> (case sensitive), its output is not displayed — but once the pin's value reaches 1 after a propagation is completed, Logisim ends the simulation.
       </p>
       <p>
         For our example, Logisim displays the table below. Because we have two output pins corresponding to the two inputs <var>a</var> and <var>b</var> into the two-bit adder, these outputs are included as the first two columns of the output. And there is another output pin <var>sum</var> corresponding to the two-bit adder's output, so it is the third column. The columns are ordered left-to-right according to the top-down ordering within the circuit.

@@ -41,7 +41,6 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.WindowMenuItemManager;
 import java.awt.BorderLayout;
 import java.awt.Container;
@@ -75,7 +74,8 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
   private final JLabel fail = new JLabel();
   private Simulator curSimulator = null;
   private Model curModel;
-  private int finished, count;
+  private int finished;
+  private int count;
   private File curFile;
 
   public TestFrame(Project project) {
@@ -122,8 +122,8 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
   }
 
   private static String computeTitle(Model data, Project proj) {
-    String name = data == null ? "???" : data.getCircuit().getName();
-    return StringUtil.format(S.get("testFrameTitle"), name, proj.getLogisimFile().getDisplayName());
+    var name = data == null ? "???" : data.getCircuit().getName();
+    return S.get("testFrameTitle", name, proj.getLogisimFile().getDisplayName());
   }
 
   Model getModel() {
@@ -160,14 +160,20 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
     if (panel != null) panel.modelChanged(oldModel, curModel);
   }
 
+  @Override
   public void setVisible(boolean value) {
     if (value) windowManager.frameOpened(this);
     super.setVisible(value);
   }
 
   private class MyListener
-      implements ActionListener, ProjectListener, Simulator.Listener, LocaleListener, ModelListener {
+      implements ActionListener,
+          ProjectListener,
+          Simulator.Listener,
+          LocaleListener,
+          ModelListener {
 
+    @Override
     public void actionPerformed(ActionEvent event) {
       Object src = event.getSource();
       if (src == close) {
@@ -179,7 +185,7 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
         if (!file.exists() || !file.canRead() || file.isDirectory()) {
           OptionPane.showMessageDialog(
               TestFrame.this,
-              StringUtil.format(S.get("fileCannotReadMessage"), file.getName()),
+              S.get("fileCannotReadMessage", file.getName()),
               S.get("fileCannotReadTitle"),
               OptionPane.OK_OPTION);
           return;
@@ -195,13 +201,13 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
         } catch (IOException e) {
           OptionPane.showMessageDialog(
               TestFrame.this,
-              StringUtil.format(S.get("fileCannotParseMessage"), file.getName(), e.getMessage()),
+              S.get("fileCannotParseMessage", file.getName(), e.getMessage()),
               S.get("fileCannotReadTitle"),
               OptionPane.OK_OPTION);
         } catch (TestException e) {
           OptionPane.showMessageDialog(
               TestFrame.this,
-              StringUtil.format(S.get("fileWrongPinsMessage"), file.getName(), e.getMessage()),
+              S.get("fileWrongPinsMessage", file.getName(), e.getMessage()),
               S.get("fileWrongPinsTitle"),
               OptionPane.OK_OPTION);
         }
@@ -211,7 +217,7 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
         } catch (TestException e) {
           OptionPane.showMessageDialog(
               TestFrame.this,
-              StringUtil.format(S.get("fileWrongPinsMessage"), curFile.getName(), e.getMessage()),
+              S.get("fileWrongPinsMessage", curFile.getName(), e.getMessage()),
               S.get("fileWrongPinsTitle"),
               OptionPane.OK_OPTION);
         }
@@ -223,6 +229,7 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
       }
     }
 
+    @Override
     public void localeChanged() {
       setTitle(computeTitle(curModel, project));
       panel.localeChanged();
@@ -235,28 +242,18 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
       windowManager.localeChanged();
     }
 
+    @Override
     public void projectChanged(ProjectEvent event) {
       int action = event.getAction();
       if (action == ProjectEvent.ACTION_SET_STATE) {
-        setSimulator(event.getProject().getSimulator(), event.getProject().getCircuitState().getCircuit());
+        setSimulator(
+            event.getProject().getSimulator(), event.getProject().getCircuitState().getCircuit());
       } else if (action == ProjectEvent.ACTION_SET_FILE) {
         setTitle(computeTitle(curModel, project));
       }
     }
 
     @Override
-    public void simulatorReset(Simulator.Event e) {
-      // ? curModel.propagationCompleted();
-    }
-
-    @Override
-    public void propagationCompleted(Simulator.Event e) {
-      // curModel.propagationCompleted();
-    }
-
-    @Override
-    public void simulatorStateChanged(Simulator.Event e) {}
-
     public void testingChanged() {
       if (getModel().isRunning() && !getModel().isPaused()) {
         run.setEnabled(false);
@@ -271,13 +268,36 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
       reset.setEnabled(getModel().getVector() != null && finished > 0);
     }
 
+    @Override
     public void testResultsChanged(int numPass, int numFail) {
-      pass.setText(StringUtil.format(S.get("passMessage"), Integer.toString(numPass)));
-      fail.setText(StringUtil.format(S.get("failMessage"), Integer.toString(numFail)));
+      pass.setText(S.get("passMessage", Integer.toString(numPass)));
+      fail.setText(S.get("failMessage", Integer.toString(numFail)));
       finished = numPass + numFail;
     }
 
-    public void vectorChanged() {}
+    @Override
+    public void vectorChanged() {
+      // do nothing
+    }
+
+    // simulator
+    @Override
+    public void simulatorReset(Simulator.Event e) {
+      // FIXME: is no-op the right implementation here?
+      // ? curModel.propagationCompleted();
+    }
+
+    @Override
+    public void propagationCompleted(Simulator.Event e) {
+      // FIXME: is no-op the right implementation here?
+      // curMoedl.propagationCompleted();
+    }
+
+    @Override
+    public void simulatorStateChanged(Simulator.Event e) {
+      // do nothing
+    }
+
   }
 
   private class WindowMenuManager extends WindowMenuItemManager
@@ -288,15 +308,18 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
       project.addProjectListener(this);
     }
 
+    @Override
     public JFrame getJFrame(boolean create, java.awt.Component parent) {
       return TestFrame.this;
     }
 
+    @Override
     public void localeChanged() {
       String title = project.getLogisimFile().getDisplayName();
-      setText(StringUtil.format(S.get("testFrameMenuItem"), title));
+      setText(S.get("testFrameMenuItem", title));
     }
 
+    @Override
     public void projectChanged(ProjectEvent event) {
       if (event.getAction() == ProjectEvent.ACTION_SET_FILE) {
         localeChanged();

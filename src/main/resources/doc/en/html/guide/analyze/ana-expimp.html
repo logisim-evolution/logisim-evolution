@@ -1,0 +1,59 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2021-06-12T10:36:10.000000000">
+    <meta name="changed" content="2021-01-12T10:36:10.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      buttons Export / Import Table
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        Buttons Export / Import Table
+      </h1>
+      <p>
+	   The two buttons <b class="button">Import table</b> and <b class="button">Export table</b> allow to save and respectively reload a truth table definition. 
+      </p>
+      <p>
+        The information is stored in a TEXT file of this format: 
+      </p>
+      <blockquote>
+        <pre>a b c_in | s c_out
+~~~~~~~~~~~~~~~~~~
+0 0  0   | 0   0  
+0 0  1   | 1   0  
+0 1  0   | 1   0  
+0 1  1   | 0   1  
+1 0  0   | 1   0  
+1 0  1   | 0   1  
+1 1  0   | 0   1  
+1 1  1   | 1   1</pre>
+      </blockquote>Les règles suivantes s'appliquent :
+      <ul>
+        <li>Everything after a '#' is a comment and will be ignored.
+        </li>
+        <li> Blank lines and separator lines (e.g., ~~~~~~) are ignored.
+        </li>
+        <li> Keep column names simple (no spaces, punctuation, etc.).
+        </li>
+        <li>Name[N..0]' indicates an N+1 bit variable, while 'Name' by itself indicates a 1 bit variable.
+        </li>
+        <li>You can use 'x' or '-' to indicate which input and output bits to ignore.
+        </li>
+        <li>You can use binary notation (for example, '10100011xxxx') or hexadecimal notation (for example, 'C3x'). Logisim will determine which is which.
+        </li>
+      </ul>
+      <p>
+        You can export the table to a file, modify it and re-import it. This can be a useful aid for complex tables. 
+      </p>
+      <p>
+        <b>Next:</b> <a href="ana-table.html#impexp">Editing the truth table</a>.
+      </p>
+    </div>
+  </body>
+</html>

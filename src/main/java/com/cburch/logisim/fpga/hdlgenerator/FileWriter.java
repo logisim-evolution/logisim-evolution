@@ -34,7 +34,7 @@ import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-
+import com.cburch.logisim.Main;
 import com.cburch.logisim.fpga.gui.Reporter;
 
 public class FileWriter {
@@ -51,7 +51,7 @@ public class FileWriter {
         return false;
       }
       // copy file
-      String destPath = dest + componentName + ArchitectureExtension + ".vhd";
+      String destPath = dest + componentName + ARCHITECTURE_EXTENSION + ".vhd";
       File outFile = new File(destPath);
       InputStream in = new FileInputStream(inFile);
       OutputStream out = new FileOutputStream(outFile);
@@ -98,11 +98,11 @@ public class FileWriter {
       FileName += ComponentName;
       if (IsEntity) {
         if (HDL.isVHDL()) {
-          FileName += EntityExtension;
+          FileName += ENTITY_EXTENSION;
         }
       } else {
         if (HDL.isVHDL()) {
-          FileName += ArchitectureExtension;
+          FileName += ARCHITECTURE_EXTENSION;
         }
       }
       if (HDL.isVHDL()) {
@@ -151,46 +151,43 @@ public class FileWriter {
 
   public static ArrayList<String> getGenerateRemark(String compName, String projName) {
     ArrayList<String> Lines = new ArrayList<>();
+    final int headWidth;
+    final String headOpen;
+    final String headClose;
+
+    final var headText = " " + Main.APP_NAME + " goes FPGA automatic generated " + (HDL.isVHDL() ? "VHDL" : "Verilog") + " code";
+    final var headUrl  = " " + Main.APP_URL;
+    final var headProj = " Project   : " + projName;
+    final var headComp = " Component : " + compName;
+
     if (HDL.isVHDL()) {
-      Lines.add("--==============================================================================");
-      Lines.add("--== Logisim goes FPGA automatic generated VHDL code                          ==");
-      Lines.add("--==                                                                          ==");
-      Lines.add("--==                                                                          ==");
-      StringBuilder ThisLine = new StringBuilder("--== Project   : ");
-      int nr_of_spaces = (80 - 2 - ThisLine.length() - projName.length());
-      ThisLine.append(projName);
-      ThisLine.append(" ".repeat(Math.max(0, nr_of_spaces)));
-      ThisLine.append("==");
-      Lines.add(ThisLine.toString());
-      ThisLine = new StringBuilder("--== Component : ");
-      nr_of_spaces = (80 - 2 - ThisLine.length() - compName.length());
-      ThisLine.append(compName);
-      ThisLine.append(" ".repeat(Math.max(0, nr_of_spaces)));
-      ThisLine.append("==");
-      Lines.add(ThisLine.toString());
-      Lines.add("--==                                                                          ==");
-      Lines.add("--==============================================================================");
+      headWidth = 74;
+      headOpen = "--==";
+      headClose = "==";
+
+      Lines.add(headOpen + "=".repeat(headWidth) + headClose);
+      Lines.add(headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
+      Lines.add(headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
+      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      Lines.add(headOpen + headProj + " ".repeat(Math.max(0, headWidth - headProj.length())) + headClose);
+      Lines.add(headOpen + headComp + " ".repeat(Math.max(0, headWidth - headComp.length())) + headClose);
+      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      Lines.add(headOpen + "=".repeat(headWidth) + headClose);
       Lines.add("");
-    } else {
-      if (HDL.isVerilog()) {
-        Lines.add(
-            "/******************************************************************************");
-        Lines.add(
-            " ** Logisim goes FPGA automatic generated Verilog code                       **");
-        Lines.add(
-            " **                                                                          **");
-        StringBuilder ThisLine = new StringBuilder(" ** Component : ");
-        int nr_of_spaces = (79 - 2 - ThisLine.length() - compName.length());
-        ThisLine.append(compName);
-        ThisLine.append(" ".repeat(Math.max(0, nr_of_spaces)));
-        ThisLine.append("**");
-        Lines.add(ThisLine.toString());
-        Lines.add(
-            " **                                                                          **");
-        Lines.add(
-            " ******************************************************************************/");
-        Lines.add("");
-      }
+    } else if (HDL.isVerilog()) {
+      headWidth = 74;
+      headOpen = " **";
+      headClose = "**";
+
+      Lines.add("/**" + "*".repeat(headWidth) + headClose);
+      Lines.add(headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
+      Lines.add(headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
+      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      Lines.add(headOpen + headComp + " ".repeat(Math.max(0, headWidth - headComp.length())) + headClose);
+      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      Lines.add(headOpen + "*".repeat(headWidth) + "*/");
+      Lines.add("");
     }
     return Lines;
   }
@@ -217,15 +214,16 @@ public class FileWriter {
       output.close();
       return true;
     } catch (Exception e) {
-      Reporter.Report.AddFatalError("Could not write to file \"" + outfile.getAbsolutePath() + "\"");
+      Reporter.Report.AddFatalError(
+          "Could not write to file \"" + outfile.getAbsolutePath() + "\"");
       return false;
     }
   }
 
-  public static final String RemarkLine =
+  public static final String REMARK_LINE =
       "--------------------------------------------------------------------------------";
 
-  public static final String EntityExtension = "_entity";
+  public static final String ENTITY_EXTENSION = "_entity";
 
-  public static final String ArchitectureExtension = "_behavior";
+  public static final String ARCHITECTURE_EXTENSION = "_behavior";
 }

@@ -39,7 +39,7 @@ class MacOsAdapter {
   private static boolean listenersAdded = false;
 
   /**
-   * addListeners adds listeners for external events for the Mac. It allows the program to work like
+   * addListeners() adds listeners for external events for the Mac. It allows the program to work like
    * a normal Mac application with double-click opening of the .circ documents. Note that the .jar
    * file must be wrapped in a .app for this to be meaningful on the Mac. This code requires Java 9
    * or higher.
@@ -50,11 +50,12 @@ class MacOsAdapter {
     }
     if (Desktop.isDesktopSupported()) {
       listenersAdded = true;
-      Desktop dt = Desktop.getDesktop();
+      final var dt = Desktop.getDesktop();
       try {
         dt.setAboutHandler(
             e -> About.showAboutDialog(null));
       } catch (Exception ignored) {
+          // can fail, but just ignore it.
       }
       try {
         dt.setQuitHandler(
@@ -63,11 +64,13 @@ class MacOsAdapter {
               response.performQuit();
             });
       } catch (Exception ignored) {
+          // can fail, but just ignore it.
       }
       try {
         dt.setPreferencesHandler(
             e -> PreferencesFrame.showPreferences());
       } catch (Exception ignored) {
+          // can fail, but just ignore it.
       }
       try {
         dt.setPrintFileHandler(
@@ -77,6 +80,7 @@ class MacOsAdapter {
               }
             });
       } catch (Exception ignored) {
+          // can fail, but just ignore it.
       }
       try {
         dt.setOpenFileHandler(
@@ -86,6 +90,7 @@ class MacOsAdapter {
               }
             });
       } catch (Exception ignored) {
+          // can fail, but just ignore it.
       }
     }
   }

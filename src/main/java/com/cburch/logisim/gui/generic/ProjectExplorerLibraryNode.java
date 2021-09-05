@@ -28,14 +28,10 @@
 
 package com.cburch.logisim.gui.generic;
 
-/**
- * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
- */
-
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.file.LogisimFile;
-import com.cburch.logisim.std.base.Base;
+import com.cburch.logisim.std.base.BaseLibrary;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import java.util.ArrayList;
@@ -45,6 +41,9 @@ import java.util.List;
 import java.util.Map;
 import javax.swing.JTree;
 
+/**
+ * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
+ */
 public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Library>
     implements LibraryListener {
 
@@ -53,7 +52,8 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
   private JTree guiElement = null;
   private final boolean showMouseTools;
 
-  ProjectExplorerLibraryNode(ProjectExplorerModel model, Library lib, JTree gui, boolean showMouseTools) {
+  ProjectExplorerLibraryNode(
+      ProjectExplorerModel model, Library lib, JTree gui, boolean showMouseTools) {
     super(model, lib);
     guiElement = gui;
     if (lib instanceof LogisimFile) {
@@ -67,12 +67,13 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
   private void buildChildren() {
     Library lib = getValue();
     if (lib != null) {
-      boolean showLib = (showMouseTools & lib instanceof Base) || !lib.isHidden();
+      boolean showLib = (showMouseTools & lib instanceof BaseLibrary) || !lib.isHidden();
       if (showLib) {
         buildChildren(new ProjectExplorerToolNode(getModel(), null), lib.getTools(), 0);
         buildChildren(
-          new ProjectExplorerLibraryNode(getModel(), null, guiElement, showMouseTools),
-            lib.getLibraries(), lib.getTools().size());
+            new ProjectExplorerLibraryNode(getModel(), null, guiElement, showMouseTools),
+            lib.getLibraries(),
+            lib.getTools().size());
       }
     }
   }
@@ -106,12 +107,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
 
     for (T tool : items) {
       if (tool instanceof Library && ((Library) tool).isHidden()) {
-        if (!showMouseTools) continue;
-        else if (!(tool instanceof Base)) continue;
-      }
-      if (tool instanceof AddTool) {
-        AddTool a = (AddTool) tool;
-        a.registerParrent(guiElement);
+        if (!showMouseTools || !(tool instanceof BaseLibrary)) continue;
       }
       ProjectExplorerModel.Node<T> node = nodeMap.get(tool);
 
@@ -219,6 +215,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
     }
   }
 
+  @Override
   public void libraryChanged(LibraryEvent event) {
     switch (event.getAction()) {
       case LibraryEvent.DIRTY_STATE:

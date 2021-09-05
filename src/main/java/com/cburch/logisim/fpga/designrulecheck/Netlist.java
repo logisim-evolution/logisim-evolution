@@ -32,22 +32,16 @@ import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
-import com.cburch.logisim.circuit.CircuitEvent;
-import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.Splitter;
 import com.cburch.logisim.circuit.SplitterAttributes;
 import com.cburch.logisim.circuit.SplitterFactory;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.comp.ComponentFactory;
-import com.cburch.logisim.comp.EndData;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.instance.Instance;
-import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.wiring.Clock;
@@ -62,58 +56,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import javax.swing.JProgressBar;
 
-public class Netlist implements CircuitListener {
-
-  @Override
-  public void circuitChanged(CircuitEvent event) {
-    int ev = event.getAction();
-    if (event.getData() instanceof InstanceComponent) {
-      InstanceComponent inst = (InstanceComponent) event.getData();
-      if (event.getCircuit().equals(MyCircuit)) {
-        switch (ev) {
-          case CircuitEvent.ACTION_ADD:
-            DRCStatus = DRC_REQUIRED;
-            if (inst.getFactory() instanceof SubcircuitFactory) {
-              SubcircuitFactory fac = (SubcircuitFactory) inst.getFactory();
-              Circuit sub = fac.getSubcircuit();
-
-              if (MySubCircuitMap.containsKey(sub)) {
-                MySubCircuitMap.put(sub, MySubCircuitMap.get(sub) + 1);
-              } else {
-                MySubCircuitMap.put(sub, 1);
-                sub.addCircuitListener(this);
-              }
-            }
-            break;
-          case CircuitEvent.ACTION_REMOVE:
-            DRCStatus = DRC_REQUIRED;
-            if (inst.getFactory() instanceof SubcircuitFactory) {
-              SubcircuitFactory fac = (SubcircuitFactory) inst.getFactory();
-              Circuit sub = fac.getSubcircuit();
-              if (MySubCircuitMap.containsKey(sub)) {
-                if (MySubCircuitMap.get(sub) == 1) {
-                  MySubCircuitMap.remove(sub);
-                  sub.removeCircuitListener(this);
-                } else {
-                  MySubCircuitMap.put(sub, MySubCircuitMap.get(sub) - 1);
-                }
-              }
-            }
-            break;
-          case CircuitEvent.ACTION_CLEAR:
-          case CircuitEvent.ACTION_INVALIDATE:
-            DRCStatus = DRC_REQUIRED;
-            break;
-        }
-      } else {
-        if (inst.getFactory() instanceof Pin) {
-          DRCStatus = DRC_REQUIRED;
-        }
-      }
-    }
-  }
+public class Netlist {
 
   private static class SourceInfo {
     private final ConnectionPoint source;
@@ -135,41 +79,40 @@ public class Netlist implements CircuitListener {
 
   public static class NetInfo {
 
-    private final Net TheNet;
-    private final byte BitIndex;
+    private final Net theNet;
+    private final byte bitIndex;
 
-    public NetInfo(Net ConcernedNet, byte Index) {
-      TheNet = ConcernedNet;
-      BitIndex = Index;
+    public NetInfo(Net concernedNet, byte index) {
+      theNet = concernedNet;
+      bitIndex = index;
     }
 
     public Byte getIndex() {
-      return BitIndex;
+      return bitIndex;
     }
 
     public Net getNet() {
-      return TheNet;
+      return theNet;
     }
   }
 
-  private String CircuitName;
-  private final ArrayList<Net> MyNets = new ArrayList<>();
-  private final Map<Circuit, Integer> MySubCircuitMap = new HashMap<>();
-  private final ArrayList<NetlistComponent> MySubCircuits = new ArrayList<>();
-  private final ArrayList<NetlistComponent> MyComponents = new ArrayList<>();
-  private final ArrayList<NetlistComponent> MyClockGenerators = new ArrayList<>();
-  private final ArrayList<NetlistComponent> MyInOutPorts = new ArrayList<>();
-  private final ArrayList<NetlistComponent> MyInputPorts = new ArrayList<>();
-  private final ArrayList<NetlistComponent> MyOutputPorts = new ArrayList<>();
-  private final ArrayList<Component> MyComplexSplitters = new ArrayList<>();
-  private Integer LocalNrOfInportBubles;
-  private Integer LocalNrOfOutportBubles;
-  private Integer LocalNrOfInOutBubles;
-  private final ClockTreeFactory MyClockInformation = new ClockTreeFactory();
-  private final Circuit MyCircuit;
-  private int DRCStatus;
+  private String circuitName;
+  private final ArrayList<Net> myNets = new ArrayList<>();
+  private final ArrayList<NetlistComponent> mySubCircuits = new ArrayList<>();
+  private final ArrayList<NetlistComponent> myComponents = new ArrayList<>();
+  private final ArrayList<NetlistComponent> myClockGenerators = new ArrayList<>();
+  private final ArrayList<NetlistComponent> myInOutPorts = new ArrayList<>();
+  private final ArrayList<NetlistComponent> myInputPorts = new ArrayList<>();
+  private final ArrayList<NetlistComponent> myOutputPorts = new ArrayList<>();
+  private final ArrayList<Component> mySplitters = new ArrayList<>();
+  private Integer localNrOfInportBubbles;
+  private Integer localNrOfOutportBubbles;
+  private Integer localNrOfInOutBubbles;
+  private final ClockTreeFactory myClockInformation = new ClockTreeFactory();
+  private final Circuit myCircuit;
+  private int drcStatus;
   private final Set<Wire> wires = new HashSet<>();
-  private ArrayList<String> CurrentHierarchyLevel;
+  private ArrayList<String> currentHierarchyLevel;
   public static final int DRC_REQUIRED = 4;
   public static final int DRC_PASSED = 0;
   public static final int ANNOTATE_REQUIRED = 1;
@@ -180,822 +123,753 @@ public class Netlist implements CircuitListener {
   public static final Color DRC_WIRE_MARK_COLOR = Color.RED;
 
   public Netlist(Circuit ThisCircuit) {
-    MyCircuit = ThisCircuit;
-    this.clear();
+    myCircuit = ThisCircuit;
+    clear();
   }
 
   public void cleanClockTree(ClockSourceContainer ClockSources) {
     /* First pass, we cleanup all old information */
-    MyClockInformation.clean();
-    MyClockInformation.SetSourceContainer(ClockSources);
+    myClockInformation.clean();
+    myClockInformation.setSourceContainer(ClockSources);
     /* Second pass, we go down the hierarchy */
-    for (NetlistComponent sub : MySubCircuits) {
-      SubcircuitFactory SubFact = (SubcircuitFactory) sub.GetComponent().getFactory();
-      SubFact.getSubcircuit().getNetList().cleanClockTree(ClockSources);
+    for (final var sub : mySubCircuits) {
+      final var subFact = (SubcircuitFactory) sub.getComponent().getFactory();
+      subFact.getSubcircuit().getNetList().cleanClockTree(ClockSources);
     }
   }
 
   public void clear() {
-    for (NetlistComponent subcirc : MySubCircuits) {
-      SubcircuitFactory SubFact = (SubcircuitFactory) subcirc.GetComponent().getFactory();
-      SubFact.getSubcircuit().getNetList().clear();
+    for (final var subcirc : mySubCircuits) {
+      final var subFact = (SubcircuitFactory) subcirc.getComponent().getFactory();
+      subFact.getSubcircuit().getNetList().clear();
     }
-    DRCStatus = DRC_REQUIRED;
-    MyNets.clear();
-    MySubCircuits.clear();
-    MyComponents.clear();
-    MyClockGenerators.clear();
-    MyInputPorts.clear();
-    MyInOutPorts.clear();
-    MyOutputPorts.clear();
-    MyComplexSplitters.clear();
-    LocalNrOfInportBubles = 0;
-    LocalNrOfOutportBubles = 0;
-    LocalNrOfInOutBubles = 0;
-    if (CurrentHierarchyLevel == null) {
-      CurrentHierarchyLevel = new ArrayList<>();
+    drcStatus = DRC_REQUIRED;
+    myNets.clear();
+    mySubCircuits.clear();
+    myComponents.clear();
+    myClockGenerators.clear();
+    myInputPorts.clear();
+    myInOutPorts.clear();
+    myOutputPorts.clear();
+    mySplitters.clear();
+    localNrOfInportBubbles = 0;
+    localNrOfOutportBubbles = 0;
+    localNrOfInOutBubbles = 0;
+    if (currentHierarchyLevel == null) {
+      currentHierarchyLevel = new ArrayList<>();
     } else {
-      CurrentHierarchyLevel.clear();
+      currentHierarchyLevel.clear();
     }
   }
 
   public String getName() {
-    if (MyCircuit != null) return MyCircuit.getName();
+    if (myCircuit != null) return myCircuit.getName();
     else return "Unknown";
   }
 
-  public void ConstructHierarchyTree(
-      Set<String> ProcessedCircuits,
-      ArrayList<String> HierarchyName,
-      Integer GlobalInputID,
-      Integer GlobalOutputID,
-      Integer GlobalInOutID) {
-    if (ProcessedCircuits == null) {
-      ProcessedCircuits = new HashSet<>();
+  /**
+   *
+   * @param circuits Processed circuits
+   * @param name Hierarchy name.
+   * @param gInputId Global input Id.
+   * @param gOutputId Global output Id.
+   * @param gInOutId Global In/Out Id
+   */
+  public void constructHierarchyTree(Set<String> circuits, ArrayList<String> name, Integer gInputId, Integer gOutputId, Integer gInOutId) {
+    if (circuits == null) {
+      circuits = new HashSet<>();
     }
     /*
      * The first step is to go down to the leaves and visit all involved
      * sub-circuits to construct the local bubble information and form the
      * Mappable components tree
      */
-    LocalNrOfInportBubles = 0;
-    LocalNrOfOutportBubles = 0;
-    LocalNrOfInOutBubles = 0;
-    for (NetlistComponent comp : MySubCircuits) {
-      SubcircuitFactory sub = (SubcircuitFactory) comp.GetComponent().getFactory();
-      ArrayList<String> MyHierarchyName = new ArrayList<>(HierarchyName);
-      MyHierarchyName.add(
+    localNrOfInportBubbles = 0;
+    localNrOfOutportBubbles = 0;
+    localNrOfInOutBubbles = 0;
+    for (final var comp : mySubCircuits) {
+      final var subFactory = (SubcircuitFactory) comp.getComponent().getFactory();
+      final var names = new ArrayList<String>(name);
+      names.add(
           CorrectLabel.getCorrectLabel(
-              comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-      boolean FirstTime = !ProcessedCircuits.contains(sub.getName());
-      if (FirstTime) {
-        ProcessedCircuits.add(sub.getName());
-        sub.getSubcircuit()
+              comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
+      final var firstTime = !circuits.contains(subFactory.getName());
+      if (firstTime) {
+        circuits.add(subFactory.getName());
+        subFactory.getSubcircuit()
             .getNetList()
-            .ConstructHierarchyTree(
-                ProcessedCircuits, MyHierarchyName, GlobalInputID, GlobalOutputID, GlobalInOutID);
+            .constructHierarchyTree(circuits, names, gInputId, gOutputId, gInOutId);
       }
-      int subInputBubbles = sub.getSubcircuit().getNetList().NumberOfInputBubbles();
-      int subInOutBubbles = sub.getSubcircuit().getNetList().NumberOfInOutBubbles();
-      int subOutputBubbles = sub.getSubcircuit().getNetList().NumberOfOutputBubbles();
-      comp.SetLocalBubbleID(
-          LocalNrOfInportBubles,
-          subInputBubbles,
-          LocalNrOfOutportBubles,
-          subOutputBubbles,
-          LocalNrOfInOutBubles,
-          subInOutBubbles);
-      LocalNrOfInportBubles += subInputBubbles;
-      LocalNrOfInOutBubles += subInOutBubbles;
-      LocalNrOfOutportBubles += subOutputBubbles;
-      comp.AddGlobalBubbleID(
-          MyHierarchyName,
-          GlobalInputID,
-          subInputBubbles,
-          GlobalOutputID,
-          subOutputBubbles,
-          GlobalInOutID,
-          subInOutBubbles);
-      if (!FirstTime) {
-        sub.getSubcircuit()
+      final var subInputBubbles = subFactory.getSubcircuit().getNetList().getNumberOfInputBubbles();
+      final var subInOutBubbles = subFactory.getSubcircuit().getNetList().numberOfInOutBubbles();
+      final var subOutputBubbles = subFactory.getSubcircuit().getNetList().numberOfOutputBubbles();
+      comp.setLocalBubbleID(localNrOfInportBubbles, subInputBubbles, localNrOfOutportBubbles, subOutputBubbles, localNrOfInOutBubbles, subInOutBubbles);
+      localNrOfInportBubbles += subInputBubbles;
+      localNrOfInOutBubbles += subInOutBubbles;
+      localNrOfOutportBubbles += subOutputBubbles;
+      comp.addGlobalBubbleId(names, gInputId, subInputBubbles, gOutputId, subOutputBubbles, gInOutId, subInOutBubbles);
+      if (!firstTime) {
+        subFactory.getSubcircuit()
             .getNetList()
-            .EnumerateGlobalBubbleTree(
-                MyHierarchyName, GlobalInputID, GlobalOutputID, GlobalInOutID);
+            .enumerateGlobalBubbleTree(names, gInputId, gOutputId, gInOutId);
       }
-      GlobalInputID += subInputBubbles;
-      GlobalInOutID += subInOutBubbles;
-      GlobalOutputID += subOutputBubbles;
+      gInputId += subInputBubbles;
+      gInOutId += subInOutBubbles;
+      gOutputId += subOutputBubbles;
     }
     /*
      * Here we processed all sub-circuits of the local hierarchy level, now
      * we have to process the IO components
      */
-    for (NetlistComponent comp : MyComponents) {
-      if (comp.GetMapInformationContainer() != null) {
-        ArrayList<String> MyHierarchyName = new ArrayList<>(HierarchyName);
-        MyHierarchyName.add(
+    for (final var comp : myComponents) {
+      if (comp.getMapInformationContainer() != null) {
+        final var myHierarchyName = new ArrayList<String>(name);
+        myHierarchyName.add(
             CorrectLabel.getCorrectLabel(
-                comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-        int subInputBubbles = comp.GetMapInformationContainer().GetNrOfInports();
-        int subInOutBubbles = comp.GetMapInformationContainer().GetNrOfInOutports();
-        int subOutputBubbles = comp.GetMapInformationContainer().GetNrOfOutports();
-        comp.SetLocalBubbleID(
-            LocalNrOfInportBubles,
-            subInputBubbles,
-            LocalNrOfOutportBubles,
-            subOutputBubbles,
-            LocalNrOfInOutBubles,
-            subInOutBubbles);
-        LocalNrOfInportBubles += subInputBubbles;
-        LocalNrOfInOutBubles += subInOutBubbles;
-        LocalNrOfOutportBubles += subOutputBubbles;
-        comp.AddGlobalBubbleID(
-            MyHierarchyName,
-            GlobalInputID,
-            subInputBubbles,
-            GlobalOutputID,
-            subOutputBubbles,
-            GlobalInOutID,
-            subInOutBubbles);
-        GlobalInputID += subInputBubbles;
-        GlobalInOutID += subInOutBubbles;
-        GlobalOutputID += subOutputBubbles;
+                comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
+        final var subInputBubbles = comp.getMapInformationContainer().GetNrOfInports();
+        final var subInOutBubbles = comp.getMapInformationContainer().GetNrOfInOutports();
+        final var subOutputBubbles = comp.getMapInformationContainer().GetNrOfOutports();
+        comp.setLocalBubbleID(localNrOfInportBubbles, subInputBubbles, localNrOfOutportBubbles, subOutputBubbles, localNrOfInOutBubbles, subInOutBubbles);
+        localNrOfInportBubbles += subInputBubbles;
+        localNrOfInOutBubbles += subInOutBubbles;
+        localNrOfOutportBubbles += subOutputBubbles;
+        comp.addGlobalBubbleId(myHierarchyName, gInputId, subInputBubbles, gOutputId, subOutputBubbles, gInOutId, subInOutBubbles);
+        gInputId += subInputBubbles;
+        gInOutId += subInOutBubbles;
+        gOutputId += subOutputBubbles;
       }
     }
   }
 
-  public int DesignRuleCheckResult(boolean IsTopLevel, ArrayList<String> Sheetnames) {
-    ArrayList<String> CompName = new ArrayList<>();
-    Map<String, Component> Labels = new HashMap<>();
-    ArrayList<SimpleDRCContainer> drc = new ArrayList<>();
-    int CommonDRCStatus = DRC_PASSED;
-    /* First we go down the tree and get the DRC status of all sub-circuits */
-    for (Circuit circ : MySubCircuitMap.keySet()) {
-      CommonDRCStatus |= circ.getNetList().DesignRuleCheckResult(false, Sheetnames);
-    }
-    /* Check if we are okay */
-    if (DRCStatus == DRC_PASSED) {
-      return CommonDRCStatus;
-    } else {
-      /* There are changes, so we clean up the old information */
-      clear();
-      DRCStatus = DRC_PASSED; /*
-			 * we mark already passed, if an error
-			 * occurs the status is changed
-			 */
-    }
-    /*
-     * Check for duplicated sheet names, this is bad as we will have
-     * multiple "different" components with the same name
-     */
-    if (MyCircuit.getName().isEmpty()) {
-      /*
-       * in the current implementation of logisim this should never
-       * happen, but we leave it in
-       */
+  public int designRuleCheckResult(boolean isTopLevel, ArrayList<String> sheetNames) {
+    final var compNames = new ArrayList<String>();
+    final var labels = new HashMap<String, Component>();
+    final var drc = new ArrayList<SimpleDRCContainer>();
+
+    // if we are the toplevel component we clear the complete netlist 
+    if (isTopLevel) clear();
+
+    // if we already have good drc results we can leave
+    if (drcStatus == DRC_PASSED) return DRC_PASSED;
+
+    // we mark already passed, if an error * occurs the status is changed
+    drcStatus = DRC_PASSED;
+
+    // Check for duplicated sheet names, this is bad as we will have
+    // multiple "different" components with the same name
+    if (myCircuit.getName().isEmpty()) {
+      // in the current implementation of logisim this should never
+      // happen, but we leave it in
       Reporter.Report.AddFatalError(S.get("EmptyNamedSheet"));
-      DRCStatus |= DRC_ERROR;
+      drcStatus |= DRC_ERROR;
     }
-    if (Sheetnames.contains(MyCircuit.getName())) {
-      /*
-       * in the current implementation of logisim this should never
-       * happen, but we leave it in
-       */
-      Reporter.Report.AddFatalError(S.fmt("MultipleSheetSameName", MyCircuit.getName()));
-      DRCStatus |= DRC_ERROR;
+    if (sheetNames.contains(myCircuit.getName())) {
+      // in the current implementation of logisim this should never
+      // happen, but we leave it in
+      Reporter.Report.AddFatalError(S.get("MultipleSheetSameName", myCircuit.getName()));
+      drcStatus |= DRC_ERROR;
     } else {
-      Sheetnames.add(MyCircuit.getName());
+      sheetNames.add(myCircuit.getName());
     }
-    /* Preparing stage */
-    for (Component comp : MyCircuit.getNonWires()) {
-      String ComponentName = comp.getFactory().getHDLName(comp.getAttributeSet());
-      if (!CompName.contains(ComponentName)) {
-        CompName.add(ComponentName);
+    
+    // we have to go down the tree to build first all subcircuits
+    final var handledCircuits = new ArrayList<Circuit>(); 
+    for (final var comp : myCircuit.getNonWires()) {
+      if (comp.getFactory() instanceof SubcircuitFactory) {
+        final var factory = (SubcircuitFactory) comp.getFactory();
+        final var subCircuit = factory.getSubcircuit();
+        if (handledCircuits.contains(subCircuit)) continue;
+        handledCircuits.add(subCircuit);
+        if (subCircuit.getNetList().designRuleCheckResult(false, sheetNames) != DRC_PASSED) {
+          drcStatus = DRC_REQUIRED;
+          return DRC_ERROR;
+        }
       }
     }
+    
+    // Preparing stage
+    for (final var comp : myCircuit.getNonWires()) {
+      final var compName = comp.getFactory().getHDLName(comp.getAttributeSet());
+      if (!compNames.contains(compName)) compNames.add(compName);
+    }
+    
     drc.add(
         new SimpleDRCContainer(
-            MyCircuit,
+            myCircuit,
             S.get("HDL_noLabel"),
             SimpleDRCContainer.LEVEL_FATAL,
             SimpleDRCContainer.MARK_INSTANCE));
     drc.add(
         new SimpleDRCContainer(
-            MyCircuit,
+            myCircuit,
             S.get("HDL_CompNameIsLabel"),
             SimpleDRCContainer.LEVEL_FATAL,
             SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_LABEL));
     drc.add(
         new SimpleDRCContainer(
-            MyCircuit,
+            myCircuit,
             S.get("HDL_LabelInvalid"),
             SimpleDRCContainer.LEVEL_FATAL,
             SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_LABEL));
     drc.add(
         new SimpleDRCContainer(
-            MyCircuit,
+            myCircuit,
             S.get("HDL_DuplicatedLabels"),
             SimpleDRCContainer.LEVEL_FATAL,
             SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_LABEL));
     drc.add(
         new SimpleDRCContainer(
-            MyCircuit,
+            myCircuit,
             S.get("HDL_Tristate"),
             SimpleDRCContainer.LEVEL_FATAL,
             SimpleDRCContainer.MARK_INSTANCE));
     drc.add(
         new SimpleDRCContainer(
-            MyCircuit,
+            myCircuit,
             S.get("HDL_unsupported"),
             SimpleDRCContainer.LEVEL_FATAL,
             SimpleDRCContainer.MARK_INSTANCE));
-    for (Component comp : MyCircuit.getNonWires()) {
-      /*
-       * Here we check if the components are supported for the HDL
-       * generation
-       */
+
+    for (final var comp : myCircuit.getNonWires()) {
+      // Here we check if the components are supported for the HDL generation
       if (!comp.getFactory().HDLSupportedComponent(comp.getAttributeSet())) {
-        drc.get(5).AddMarkComponent(comp);
-        DRCStatus |= DRC_ERROR;
+        drc.get(5).addMarkComponent(comp);
+        drcStatus |= DRC_ERROR;
       }
-      /*
-       * we check that all components that require a non zero label
-       * (annotation) have a label set
-       */
+      // we check that all components that require a non zero label (annotation) have a label set
       if (comp.getFactory().RequiresNonZeroLabel()) {
-        String Label =
-            CorrectLabel.getCorrectLabel(comp.getAttributeSet().getValue(StdAttr.LABEL))
-                .toUpperCase();
-        String ComponentName = comp.getFactory().getHDLName(comp.getAttributeSet());
-        if (Label.isEmpty()) {
-          drc.get(0).AddMarkComponent(comp);
-          DRCStatus |= ANNOTATE_REQUIRED;
+        final var label = CorrectLabel.getCorrectLabel(comp.getAttributeSet().getValue(StdAttr.LABEL)).toUpperCase();
+        final var componentName = comp.getFactory().getHDLName(comp.getAttributeSet());
+        if (label.isEmpty()) {
+          drc.get(0).addMarkComponent(comp);
+          drcStatus |= ANNOTATE_REQUIRED;
         } else {
-          if (CompName.contains(Label)) {
-            drc.get(1).AddMarkComponent(comp);
-            DRCStatus |= DRC_ERROR;
+          if (compNames.contains(label)) {
+            drc.get(1).addMarkComponent(comp);
+            drcStatus |= DRC_ERROR;
           }
-          if (!CorrectLabel.IsCorrectLabel(Label)) {
+          if (!CorrectLabel.isCorrectLabel(label)) {
             /* this should not happen anymore */
-            drc.get(2).AddMarkComponent(comp);
-            DRCStatus |= DRC_ERROR;
+            drc.get(2).addMarkComponent(comp);
+            drcStatus |= DRC_ERROR;
           }
-          if (Labels.containsKey(Label)) {
-            drc.get(3).AddMarkComponent(comp);
-            drc.get(3).AddMarkComponent(Labels.get(Label));
-            DRCStatus |= DRC_ERROR;
+          if (labels.containsKey(label)) {
+            drc.get(3).addMarkComponent(comp);
+            drc.get(3).addMarkComponent(labels.get(label));
+            drcStatus |= DRC_ERROR;
           } else {
-            Labels.put(Label, comp);
+            labels.put(label, comp);
           }
         }
         if (comp.getFactory() instanceof SubcircuitFactory) {
-          /* Special care has to be taken for sub-circuits */
-          if (Label.equals(ComponentName.toUpperCase())) {
-            drc.get(1).AddMarkComponent(comp);
-            DRCStatus |= DRC_ERROR;
+          // Special care has to be taken for sub-circuits
+          if (label.equals(componentName.toUpperCase())) {
+            drc.get(1).addMarkComponent(comp);
+            drcStatus |= DRC_ERROR;
           }
-          if (!CorrectLabel.IsCorrectLabel(
+          if (!CorrectLabel.isCorrectLabel(
               comp.getFactory().getName(),
-              S.fmt("FoundBadComponent", comp.getFactory().getName(), MyCircuit.getName()))) {
-            DRCStatus |= DRC_ERROR;
+              S.get("FoundBadComponent", comp.getFactory().getName(), myCircuit.getName()))) {
+            drcStatus |= DRC_ERROR;
           }
-          SubcircuitFactory sub = (SubcircuitFactory) comp.getFactory();
-          LocalNrOfInportBubles =
-              LocalNrOfInportBubles + sub.getSubcircuit().getNetList().NumberOfInputBubbles();
-          LocalNrOfOutportBubles =
-              LocalNrOfOutportBubles + sub.getSubcircuit().getNetList().NumberOfOutputBubbles();
-          LocalNrOfInOutBubles =
-              LocalNrOfInOutBubles + sub.getSubcircuit().getNetList().NumberOfInOutBubbles();
+          final var sub = (SubcircuitFactory) comp.getFactory();
+          localNrOfInportBubbles += sub.getSubcircuit().getNetList().getNumberOfInputBubbles();
+          localNrOfOutportBubbles += sub.getSubcircuit().getNetList().numberOfOutputBubbles();
+          localNrOfInOutBubbles += sub.getSubcircuit().getNetList().numberOfInOutBubbles();
         }
       }
       /* Now we check that no tri-state are present */
       if (comp.getFactory().HasThreeStateDrivers(comp.getAttributeSet())) {
-        drc.get(4).AddMarkComponent(comp);
-        DRCStatus |= DRC_ERROR;
+        drc.get(4).addMarkComponent(comp);
+        drcStatus |= DRC_ERROR;
       }
     }
-    for (SimpleDRCContainer simpleDRCContainer : drc)
-      if (simpleDRCContainer.DRCInfoPresent())
-        Reporter.Report.AddError(simpleDRCContainer);
+    for (final var simpleDRCContainer : drc) {
+      if (simpleDRCContainer.isDrcInfoPresent()) Reporter.Report.AddError(simpleDRCContainer);
+    }
     drc.clear();
     /* Here we have to quit as the netlist generation needs a clean tree */
-    if ((DRCStatus | CommonDRCStatus) != DRC_PASSED) {
-      return DRCStatus | CommonDRCStatus;
-    }
+    if (drcStatus != DRC_PASSED) return drcStatus;
+
     /*
      * Okay we now know for sure that all elements are supported, lets build
      * the net list
      */
-    Reporter.Report.AddInfo(S.fmt("BuildingNetlistFor", MyCircuit.getName()));
-    if (!this.GenerateNetlist()) {
+    Reporter.Report.AddInfo(S.get("BuildingNetlistFor", myCircuit.getName()));
+    if (!this.generateNetlist()) {
       this.clear();
-      DRCStatus = DRC_ERROR;
+      drcStatus = DRC_ERROR;
       /*
        * here we have to quit, as all the following steps depend on a
        * proper netlist
        */
-      return DRCStatus | CommonDRCStatus;
+      return drcStatus;
     }
-    if (NetlistHasShortCircuits()) {
+
+    if (netlistHasShortCircuits()) {
       clear();
-      DRCStatus = DRC_ERROR;
-      return DRCStatus | CommonDRCStatus;
+      drcStatus = DRC_ERROR;
+      return drcStatus;
     }
+
     /* Check for connections without a source */
-    NetlistHasSinksWithoutSource();
+    netlistHasSinksWithoutSource();
     /* Check for unconnected input pins on components and generate warnings */
-    for (NetlistComponent comp : MyComponents) {
-      boolean openInputs = false;
-      for (int j = 0; j < comp.NrOfEnds(); j++) {
-        if (comp.EndIsInput(j) && !comp.EndIsConnected(j)) openInputs = true;
+    for (final var comp : myComponents) {
+      var openInputs = false;
+      for (var j = 0; j < comp.nrOfEnds(); j++) {
+        if (comp.isEndInput(j) && !comp.isEndConnected(j)) openInputs = true;
       }
-      if (openInputs&&!AppPreferences.SupressOpenPinWarnings.get()) {
-        SimpleDRCContainer warn =
+      if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
+        final var warn =
             new SimpleDRCContainer(
-                MyCircuit,
-                S.get("NetList_UnconnectedInputs"),
-                SimpleDRCContainer.LEVEL_NORMAL,
-                SimpleDRCContainer.MARK_INSTANCE);
-        warn.AddMarkComponent(comp.GetComponent());
+                    myCircuit,
+                    S.get("NetList_UnconnectedInputs"),
+                    SimpleDRCContainer.LEVEL_NORMAL,
+                    SimpleDRCContainer.MARK_INSTANCE);
+        warn.addMarkComponent(comp.getComponent());
         Reporter.Report.AddWarning(warn);
       }
     }
     /* Check for unconnected input pins on subcircuits and generate warnings */
-    for (NetlistComponent comp : MySubCircuits) {
-      boolean openInputs = false;
-      for (int j = 0; j < comp.NrOfEnds(); j++) {
-        if (comp.EndIsInput(j) && !comp.EndIsConnected(j)) openInputs = true;
+    for (final var comp : mySubCircuits) {
+      var openInputs = false;
+      for (var j = 0; j < comp.nrOfEnds(); j++) {
+        if (comp.isEndInput(j) && !comp.isEndConnected(j)) openInputs = true;
       }
-      if (openInputs&&!AppPreferences.SupressOpenPinWarnings.get()) {
-        SimpleDRCContainer warn =
+      if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
+        final var warn =
             new SimpleDRCContainer(
-                MyCircuit,
-                S.get("NetList_UnconnectedInputs"),
-                SimpleDRCContainer.LEVEL_SEVERE,
-                SimpleDRCContainer.MARK_INSTANCE);
-        warn.AddMarkComponent(comp.GetComponent());
+                    myCircuit,
+                    S.get("NetList_UnconnectedInputs"),
+                    SimpleDRCContainer.LEVEL_SEVERE,
+                    SimpleDRCContainer.MARK_INSTANCE);
+        warn.addMarkComponent(comp.getComponent());
         Reporter.Report.AddWarning(warn);
       }
     }
     /* Check for unconnected input pins in my circuit and generate warnings */
-    for (NetlistComponent comp : MyInputPorts) {
-      boolean openInputs = false;
-      for (int j = 0; j < comp.NrOfEnds(); j++) {
-        if (!comp.EndIsConnected(j)) openInputs = true;
+    for (final var comp : myInputPorts) {
+      var openInputs = false;
+      for (var j = 0; j < comp.nrOfEnds(); j++) {
+        if (!comp.isEndConnected(j)) openInputs = true;
       }
-      if (openInputs&&!AppPreferences.SupressOpenPinWarnings.get()) {
-        SimpleDRCContainer warn =
+      if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
+        final var warn =
             new SimpleDRCContainer(
-                MyCircuit,
-                S.get("NetList_UnconnectedInput"),
-                SimpleDRCContainer.LEVEL_NORMAL,
-                SimpleDRCContainer.MARK_INSTANCE);
-        warn.AddMarkComponent(comp.GetComponent());
+                    myCircuit,
+                    S.get("NetList_UnconnectedInput"),
+                    SimpleDRCContainer.LEVEL_NORMAL,
+                    SimpleDRCContainer.MARK_INSTANCE);
+        warn.addMarkComponent(comp.getComponent());
         Reporter.Report.AddWarning(warn);
       }
     }
     /* Check for unconnected output pins in my circuit and generate warnings */
-    for (NetlistComponent comp : MyOutputPorts) {
-      boolean openOutputs = false;
-      for (int j = 0; j < comp.NrOfEnds(); j++) {
-        if (!comp.EndIsConnected(j)) openOutputs = true;
+    for (final var comp : myOutputPorts) {
+      var openOutputs = false;
+      for (var j = 0; j < comp.nrOfEnds(); j++) {
+        if (!comp.isEndConnected(j)) openOutputs = true;
       }
-      if (openOutputs&&!AppPreferences.SupressOpenPinWarnings.get()) {
-        SimpleDRCContainer warn =
+      if (openOutputs && !AppPreferences.SupressOpenPinWarnings.get()) {
+        final var warn =
             new SimpleDRCContainer(
-                MyCircuit,
-                S.get("NetList_UnconnectedOutput"),
-                SimpleDRCContainer.LEVEL_NORMAL,
-                SimpleDRCContainer.MARK_INSTANCE);
-        warn.AddMarkComponent(comp.GetComponent());
+                    myCircuit,
+                    S.get("NetList_UnconnectedOutput"),
+                    SimpleDRCContainer.LEVEL_NORMAL,
+                    SimpleDRCContainer.MARK_INSTANCE);
+        warn.addMarkComponent(comp.getComponent());
         Reporter.Report.AddWarning(warn);
       }
     }
 
     /* Only if we are on the top-level we are going to build the clock-tree */
-    if (IsTopLevel) {
-      if (!DetectClockTree()) {
-        DRCStatus = DRC_ERROR;
-        return DRCStatus | CommonDRCStatus;
+    if (isTopLevel) {
+      if (!detectClockTree()) {
+        drcStatus = DRC_ERROR;
+        return drcStatus;
       }
-      ConstructHierarchyTree(null, new ArrayList<>(), 0, 0, 0);
-      int ports =
-          NumberOfInputPorts()
-              + NumberOfOutputPorts()
-              + LocalNrOfInportBubles
-              + LocalNrOfOutportBubles
-              + LocalNrOfInOutBubles;
+      constructHierarchyTree(null, new ArrayList<>(), 0, 0, 0);
+      var ports =
+          getNumberOfInputPorts()
+              + numberOfOutputPorts()
+              + localNrOfInportBubbles
+              + localNrOfOutportBubbles
+              + localNrOfInOutBubbles;
       if (ports == 0) {
-        Reporter.Report.AddFatalError(S.fmt("TopLevelNoIO", MyCircuit.getName()));
-        DRCStatus = DRC_ERROR;
-        return DRCStatus | CommonDRCStatus;
+        Reporter.Report.AddFatalError(S.get("TopLevelNoIO", myCircuit.getName()));
+        drcStatus = DRC_ERROR;
+        return drcStatus;
       }
       /* Check for gated clocks */
-      if (!DetectGatedClocks()) {
-        DRCStatus = DRC_ERROR;
-        return DRCStatus | CommonDRCStatus;
+      if (!detectGatedClocks()) {
+        drcStatus = DRC_ERROR;
+        return drcStatus;
       }
     }
 
-    Reporter.Report.AddInfo(
-        S.fmt("CircuitInfoString", MyCircuit.getName(), NumberOfNets(), NumberOfBusses()));
-    Reporter.Report.AddInfo(S.fmt("DRCPassesString", MyCircuit.getName()));
-    DRCStatus = DRC_PASSED;
-    return DRCStatus | CommonDRCStatus;
+    Reporter.Report.AddInfo(S.get("CircuitInfoString", myCircuit.getName(), numberOfNets(), numberOfBusses()));
+    Reporter.Report.AddInfo(S.get("DRCPassesString", myCircuit.getName()));
+    drcStatus = DRC_PASSED;
+    return drcStatus;
   }
 
-  private boolean DetectClockTree() {
-    /*
-     * First pass, we remove all information of previously detected
-     * clock-trees
-     */
-    ClockSourceContainer ClockSources = MyClockInformation.GetSourceContainer();
-    cleanClockTree(ClockSources);
-    /* Second pass, we build the clock tree */
-    ArrayList<Netlist> HierarchyNetlists = new ArrayList<>();
-    HierarchyNetlists.add(this);
-    return MarkClockSourceComponents(new ArrayList<>(), HierarchyNetlists, ClockSources);
+  private boolean detectClockTree() {
+    // First pass, we remove all information of previously detected clock-trees.
+    final var clockSources = myClockInformation.getSourceContainer();
+    cleanClockTree(clockSources);
+    // Second pass, we build the clock tree
+    final var hierarchyNetlists = new ArrayList<Netlist>();
+    hierarchyNetlists.add(this);
+    return markClockSourceComponents(new ArrayList<>(), hierarchyNetlists, clockSources);
   }
 
   /* Here all private handles are defined */
-  private void EnumerateGlobalBubbleTree(
-      ArrayList<String> HierarchyName, int StartInputID, int StartOutputID, int StartInOutID) {
-    for (NetlistComponent comp : MySubCircuits) {
-      SubcircuitFactory sub = (SubcircuitFactory) comp.GetComponent().getFactory();
-      ArrayList<String> MyHierarchyName = new ArrayList<>(HierarchyName);
-      MyHierarchyName.add(
+  private void enumerateGlobalBubbleTree(ArrayList<String> hierarchyname, int startInputID, int startOutputID, int startInOutID) {
+    for (final var comp : mySubCircuits) {
+      final var sub = (SubcircuitFactory) comp.getComponent().getFactory();
+      final var myHierarchyName = new ArrayList<String>(hierarchyname);
+      myHierarchyName.add(
           CorrectLabel.getCorrectLabel(
-              comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
+              comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
       sub.getSubcircuit()
           .getNetList()
-          .EnumerateGlobalBubbleTree(
-              MyHierarchyName,
-              StartInputID + comp.GetLocalBubbleInputStartId(),
-              StartOutputID + comp.GetLocalBubbleOutputStartId(),
-              StartInOutID + comp.GetLocalBubbleInOutStartId());
+          .enumerateGlobalBubbleTree(
+              myHierarchyName,
+              startInputID + comp.getLocalBubbleInputStartId(),
+              startOutputID + comp.getLocalBubbleOutputStartId(),
+              startInOutID + comp.getLocalBubbleInOutStartId());
     }
-    for (NetlistComponent comp : MyComponents) {
-      if (comp.GetMapInformationContainer() != null) {
-        ArrayList<String> MyHierarchyName = new ArrayList<>(HierarchyName);
-        MyHierarchyName.add(
+    for (final var comp : myComponents) {
+      if (comp.getMapInformationContainer() != null) {
+        final var myHierarchyName = new ArrayList<String>(hierarchyname);
+        myHierarchyName.add(
             CorrectLabel.getCorrectLabel(
-                comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-        int subInputBubbles = comp.GetMapInformationContainer().GetNrOfInports();
-        int subInOutBubbles = comp.GetMapInformationContainer().GetNrOfInOutports();
-        int subOutputBubbles = comp.GetMapInformationContainer().GetNrOfOutports();
-        comp.AddGlobalBubbleID(
-            MyHierarchyName,
-            StartInputID + comp.GetLocalBubbleInputStartId(),
+                comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
+        int subInputBubbles = comp.getMapInformationContainer().GetNrOfInports();
+        int subInOutBubbles = comp.getMapInformationContainer().GetNrOfInOutports();
+        int subOutputBubbles = comp.getMapInformationContainer().GetNrOfOutports();
+        comp.addGlobalBubbleId(
+            myHierarchyName,
+            startInputID + comp.getLocalBubbleInputStartId(),
             subInputBubbles,
-            StartOutputID + comp.GetLocalBubbleOutputStartId(),
+            startOutputID + comp.getLocalBubbleOutputStartId(),
             subOutputBubbles,
-            StartInOutID,
+            startInOutID,
             subInOutBubbles);
       }
     }
   }
 
-  private Net FindConnectedNet(Location loc) {
-    for (Net Current : MyNets) {
-      if (Current.contains(loc)) {
-        return Current;
-      }
+  private Net findConnectedNet(Location loc) {
+    for (final var current : myNets) {
+      if (current.contains(loc)) return current;
     }
     return null;
   }
 
-  private boolean GenerateNetlist() {
-    ArrayList<SimpleDRCContainer> drc = new ArrayList<>();
-    boolean errors = false;
-    CircuitName = MyCircuit.getName();
-    JProgressBar progress = Reporter.Report.getProgressBar();
-    int curMax = 0;
-    int curVal = 0;
-    String curStr = ""; 
+  private boolean generateNetlist() {
+    final var drc = new ArrayList<SimpleDRCContainer>();
+    var errors = false;
+    circuitName = myCircuit.getName();
+    final var progress = Reporter.Report.getProgressBar();
+    var curMax = 0;
+    var curVal = 0;
+    var curStr = "";
     if (progress != null) {
       curMax = progress.getMaximum();
       curVal = progress.getValue();
       curStr = progress.getString();
       progress.setMaximum(7);
-      progress.setString(S.fmt("NetListBuild", CircuitName,1));
+      progress.setString(S.get("NetListBuild", circuitName, 1));
     }
 
     wires.clear();
-    wires.addAll(MyCircuit.getWires());
-    /*
-     * FIRST PASS: In this pass we take all wire segments and see if they
-     * are connected to other segments. If they are connected we build a
-     * net.
-     */
+    wires.addAll(myCircuit.getWires());
+    // FIRST PASS: In this pass we take all wire segments and see if they
+    // are connected to other segments. If they are connected we build a net.
     while (wires.size() != 0) {
-      Net NewNet = new Net();
-      GetNet(null, NewNet);
-      if (!NewNet.isEmpty()) {
-        MyNets.add(NewNet);
-      }
+      final var newNet = new Net();
+      getNet(null, newNet);
+      if (!newNet.isEmpty()) myNets.add(newNet);
     }
-    /*
-     * Here we start to detect direct input-output component connections,
-     * read we detect "hidden" nets
-     */
-    Set<Component> components = MyCircuit.getNonWires();
+    // Here we start to detect direct input-output component connections, read we detect "hidden"
+    // nets
+    final var components = myCircuit.getNonWires();
     /* we Start with the creation of an outputs list */
-    Set<Location> OutputsList = new HashSet<>();
-    Set<Location> InputsList = new HashSet<>();
-    Set<Component> TunnelList = new HashSet<>();
-    MyComplexSplitters.clear();
+    final var outputsList = new HashSet<Location>();
+    final var inputsList = new HashSet<Location>();
+    final var tunnelList = new HashSet<Component>();
+    mySplitters.clear();
     drc.add(
         new SimpleDRCContainer(
-            MyCircuit,
+            myCircuit,
             S.get("NetList_IOError"),
             SimpleDRCContainer.LEVEL_FATAL,
             SimpleDRCContainer.MARK_INSTANCE));
     drc.add(
         new SimpleDRCContainer(
-            MyCircuit,
+            myCircuit,
             S.get("NetList_BitwidthError"),
             SimpleDRCContainer.LEVEL_FATAL,
             SimpleDRCContainer.MARK_WIRE));
-    for (Component com : components) {
-      /*
-       * We do not process the splitter and tunnel, they are processed
-       * later on
-       */
-      boolean Ignore = false;
 
-      /* In this case, the probe should not be synthetised:
-       * We could set the Probe as non-HDL element. But If we set the Probe
-       * as non HDL element, logisim will not allow user to download the design.
-       *
-       * In some case we need to use Logisim Simulation before running the design on the hardware.
-       * During simulation, probes are very helpful to see signals values. And when simulation is ok,
-       * the user does not want to delete all probes.
-       * Thus, here we remove it form the netlist so it is transparent.
-       */
-      if (com.getFactory() instanceof Probe) {
-        continue;
+    for (final var comp : components) {
+      // We do not process the splitter and tunnel, they are processed later on
+      var ignore = false;
+
+      // In this case, the probe should not be synthetised:
+      // We could set the Probe as non-HDL element. But If we set the Probe
+      // as non HDL element, logisim will not allow user to download the design.
+      //
+      // In some case we need to use Logisim Simulation before running the design on the hardware.
+      // During simulation, probes are very helpful to see signals values. And when simulation is
+      // ok, the user does not want to delete all probes.
+      // Thus, here we remove it form the netlist so it is transparent.
+      if (comp.getFactory() instanceof Probe) continue;
+      if (comp.getFactory() instanceof SplitterFactory) {
+        mySplitters.add(comp);
+        ignore = true;
+      }
+      if (comp.getFactory() instanceof Tunnel) {
+        tunnelList.add(comp);
+        ignore = true;
       }
 
-      if (com.getFactory() instanceof SplitterFactory) {
-        MyComplexSplitters.add(com);
-        Ignore = true;
-      }
-      if (com.getFactory() instanceof Tunnel) {
-        TunnelList.add(com);
-        Ignore = true;
-      }
-
-      List<EndData> ends = com.getEnds();
-      for (EndData end : ends) {
-        if (!Ignore) {
+      final var ends = comp.getEnds();
+      for (final var end : ends) {
+        if (!ignore) {
           if (end.isInput() && end.isOutput()) {
             /* The IO Port can be either output or input */
-            //		if (!(com.getFactory() instanceof PortIO)) {
-            //			drc.get(0).AddMarkComponent(com);
-            //		}
+          //            if (!(com.getFactory() instanceof PortIO)) {
+          //              drc.get(0).AddMarkComponent(com);
+          //            }
           } else if (end.isOutput()) {
-            OutputsList.add(end.getLocation());
+            outputsList.add(end.getLocation());
           } else {
-            InputsList.add(end.getLocation());
+            inputsList.add(end.getLocation());
           }
         }
         /* Here we are going to mark the bitwidths on the nets */
-        int width = end.getWidth().getWidth();
-        Location loc = end.getLocation();
-        // Collection<Component> component_verify = MyCircuit.getAllContaining(loc);
-        for (Net ThisNet : MyNets) {
-          if (ThisNet.contains(loc)) {
-            if (!ThisNet.setWidth(width)) {
-              drc.get(1).AddMarkComponents(ThisNet.getWires());
-            }
-          }
+        final var width = end.getWidth().getWidth();
+        final var loc = end.getLocation();
+        for (final var thisNet : myNets) {
+          if (thisNet.contains(loc) && !thisNet.setWidth(width)) drc.get(1).addMarkComponents(thisNet.getWires());
         }
       }
     }
-    for (SimpleDRCContainer simpleDRCContainer : drc) {
-      if (simpleDRCContainer.DRCInfoPresent()) {
+    for (final var simpleDRCContainer : drc) {
+      if (simpleDRCContainer.isDrcInfoPresent()) {
         errors = true;
         Reporter.Report.AddError(simpleDRCContainer);
       }
     }
-    if (errors) {
-      return false;
-    }
+    if (errors) return false;
     if (progress != null) {
       progress.setValue(1);
-      progress.setString(S.fmt("NetListBuild", CircuitName,2));
+      progress.setString(S.get("NetListBuild", circuitName, 2));
     }
-    /*
-     * Now we check if an input pin is connected to an output and in case of
-     * a Splitter if it is connected to either of them
-     */
+    // Now we check if an input pin is connected to an output and in case of
+    // a Splitter if it is connected to either of them
     drc.add(
         new SimpleDRCContainer(
-            MyCircuit,
+            myCircuit,
             S.get("NetAdd_ComponentWidthMismatch"),
             SimpleDRCContainer.LEVEL_FATAL,
             SimpleDRCContainer.MARK_INSTANCE));
-    Map<Location, Integer> Points = new HashMap<>();
-    for (Component comp : components) {
-      for (EndData end : comp.getEnds()) {
-        Location loc = end.getLocation();
-        if (Points.containsKey(loc)) {
+    final var points = new HashMap<Location, Integer>();
+    for (final var comp : components) {
+      for (final var end : comp.getEnds()) {
+        final var loc = end.getLocation();
+        if (points.containsKey(loc)) {
           /* Found a connection already used */
-          boolean newNet = true;
-          for (Net net : MyNets) {
+          var newNet = true;
+          for (final var net : myNets) {
             if (net.contains(loc)) newNet = false;
           }
           if (newNet) {
-            int BitWidth = Points.get(loc);
-            if (BitWidth == end.getWidth().getWidth()) {
-              MyNets.add(new Net(loc, BitWidth));
+            final var bitWidth = points.get(loc);
+            if (bitWidth == end.getWidth().getWidth()) {
+              myNets.add(new Net(loc, bitWidth));
             } else {
-              drc.get(0).AddMarkComponent(comp);
+              drc.get(0).addMarkComponent(comp);
             }
           }
-        } else Points.put(loc, end.getWidth().getWidth());
+        } else {
+          points.put(loc, end.getWidth().getWidth());
+        }
       }
     }
-    if (drc.get(0).DRCInfoPresent()) {
+    if (drc.get(0).isDrcInfoPresent()) {
       Reporter.Report.AddError(drc.get(0));
       return false;
     }
 
     if (progress != null) {
       progress.setValue(2);
-      progress.setString(S.fmt("NetListBuild", CircuitName,3));
+      progress.setString(S.get("NetListBuild", circuitName, 3));
     }
     /*
      * Here we are going to process the tunnels and possible merging of the
      * tunneled nets
      */
-    boolean TunnelsPresent = false;
-    for (Component com : TunnelList) {
-      List<EndData> ends = com.getEnds();
-      for (EndData end : ends) {
-        for (Net ThisNet : MyNets) {
-          if (ThisNet.contains(end.getLocation())) {
-            ThisNet.addTunnel(com.getAttributeSet().getValue(StdAttr.LABEL));
-            TunnelsPresent = true;
+    var areTunnelsPresent = false;
+    for (final var comp : tunnelList) {
+      final var ends = comp.getEnds();
+      for (final var end : ends) {
+        for (final var thisNet : myNets) {
+          if (thisNet.contains(end.getLocation())) {
+            thisNet.addTunnel(comp.getAttributeSet().getValue(StdAttr.LABEL));
+            areTunnelsPresent = true;
           }
         }
       }
     }
     drc.clear();
-    drc.add(
-        new SimpleDRCContainer(
-            MyCircuit,
-            S.get("NetMerge_BitWidthError"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_WIRE));
-    if (TunnelsPresent) {
-      Iterator<Net> NetIterator = MyNets.listIterator();
-      while (NetIterator.hasNext()) {
-        Net ThisNet = NetIterator.next();
-        if (ThisNet.HasTunnel() && (MyNets.indexOf(ThisNet) < (MyNets.size() - 1))) {
-          boolean merged = false;
-          Iterator<Net> SearchIterator = MyNets.listIterator(MyNets.indexOf(ThisNet) + 1);
-          while (SearchIterator.hasNext() && !merged) {
-            Net SearchNet = SearchIterator.next();
-            for (String name : ThisNet.TunnelNames()) {
-              if (SearchNet.ContainsTunnel(name) && !merged) {
+    drc.add(new SimpleDRCContainer(myCircuit, S.get("NetMerge_BitWidthError"), SimpleDRCContainer.LEVEL_FATAL, SimpleDRCContainer.MARK_WIRE));
+    if (areTunnelsPresent) {
+      final var netIterator = myNets.listIterator();
+      while (netIterator.hasNext()) {
+        final var thisNet = netIterator.next();
+        if (thisNet.hasTunnel() && (myNets.indexOf(thisNet) < (myNets.size() - 1))) {
+          var merged = false;
+          final var searchIterator = myNets.listIterator(myNets.indexOf(thisNet) + 1);
+          while (searchIterator.hasNext() && !merged) {
+            final var searchNet = searchIterator.next();
+            for (final var name : thisNet.getTunnelNames()) {
+              if (searchNet.ContainsTunnel(name) && !merged) {
                 merged = true;
-                if (!SearchNet.merge(ThisNet)) {
-                  drc.get(0).AddMarkComponents(SearchNet.getWires());
-                  drc.get(0).AddMarkComponents(ThisNet.getWires());
+                if (!searchNet.merge(thisNet)) {
+                  drc.get(0).addMarkComponents(searchNet.getWires());
+                  drc.get(0).addMarkComponents(thisNet.getWires());
                 }
               }
             }
           }
-          if (merged) {
-            NetIterator.remove();
-          }
+          if (merged) netIterator.remove();
         }
       }
     }
-    if (drc.get(0).DRCInfoPresent()) {
+    if (drc.get(0).isDrcInfoPresent()) {
       Reporter.Report.AddError(drc.get(0));
       return false;
     }
     if (progress != null) {
       progress.setValue(3);
-      progress.setString(S.fmt("NetListBuild", CircuitName,4));
+      progress.setString(S.get("NetListBuild", circuitName, 4));
     }
 
-    /* At this point all net segments are build. All tunnels have been removed. There is still the processing of
-     * the splitters and the determination of the direction of the nets.
+    /* At this point all net segments are build. All tunnels have been removed.
+     * There is still the processing of the splitters and the determination of
+     * the direction of the nets.
      */
 
     /* First we are going to check on duplicated splitters and remove them */
-    Iterator<Component> MySplitIterator = MyComplexSplitters.listIterator();
-    while (MySplitIterator.hasNext()) {
-      Component ThisSplitter = MySplitIterator.next();
-      if (MyComplexSplitters.indexOf(ThisSplitter) < (MyComplexSplitters.size() - 1)) {
-        boolean FoundDuplicate = false;
-        Iterator<Component> SearchIterator =
-            MyComplexSplitters.listIterator(MyComplexSplitters.indexOf(ThisSplitter) + 1);
-        while (SearchIterator.hasNext() && !FoundDuplicate) {
-          Component SearchSplitter = SearchIterator.next();
-          if (SearchSplitter.getLocation().equals(ThisSplitter.getLocation())) {
-            FoundDuplicate = true;
-            for (int i = 0; i < SearchSplitter.getEnds().size(); i++) {
+    Iterator<Component> mySplitIter = mySplitters.listIterator();
+    while (mySplitIter.hasNext()) {
+      final var thisSplitter = mySplitIter.next();
+      if (mySplitters.indexOf(thisSplitter) < (mySplitters.size() - 1)) {
+        var dupeFound = false;
+        final var searchIter = mySplitters.listIterator(mySplitters.indexOf(thisSplitter) + 1);
+        while (searchIter.hasNext() && !dupeFound) {
+          final var SearchSplitter = searchIter.next();
+          if (SearchSplitter.getLocation().equals(thisSplitter.getLocation())) {
+            dupeFound = true;
+            for (var i = 0; i < SearchSplitter.getEnds().size(); i++) {
               if (!SearchSplitter.getEnd(i)
                   .getLocation()
-                  .equals(ThisSplitter.getEnd(i).getLocation())) FoundDuplicate = false;
+                  .equals(thisSplitter.getEnd(i).getLocation())) dupeFound = false;
             }
           }
         }
-        if (FoundDuplicate) {
-          SimpleDRCContainer warn =
+        if (dupeFound) {
+          final var warn =
               new SimpleDRCContainer(
-                  MyCircuit,
-                  S.get("NetList_duplicatedSplitter"),
-                  SimpleDRCContainer.LEVEL_SEVERE,
-                  SimpleDRCContainer.MARK_INSTANCE);
-          warn.AddMarkComponent(ThisSplitter);
+                      myCircuit,
+                      S.get("NetList_duplicatedSplitter"),
+                      SimpleDRCContainer.LEVEL_SEVERE,
+                      SimpleDRCContainer.MARK_INSTANCE);
+          warn.addMarkComponent(thisSplitter);
           Reporter.Report.AddWarning(warn);
-          MySplitIterator.remove();
+          mySplitIter.remove();
         }
       }
     }
 
-    /* In this round we are going to detect the unconnected nets meaning those having a width of 0 and remove them */
+    // In this round we are going to detect the unconnected nets meaning those having a width of 0
+    // and remove them
     drc.clear();
-    Iterator<Net> NetIterator = MyNets.listIterator();
+    final Iterator<Net> netIterator = myNets.listIterator();
     drc.add(
         new SimpleDRCContainer(
-            MyCircuit,
-            S.get("NetList_emptynets"),
-            SimpleDRCContainer.LEVEL_NORMAL,
-            SimpleDRCContainer.MARK_WIRE));
-    while (NetIterator.hasNext()) {
-      Net wire = NetIterator.next();
-      if (wire.BitWidth() == 0) {
-        drc.get(0).AddMarkComponents(wire.getWires());
-        NetIterator.remove();
+                myCircuit,
+                S.get("NetList_emptynets"),
+                SimpleDRCContainer.LEVEL_NORMAL,
+                SimpleDRCContainer.MARK_WIRE));
+    while (netIterator.hasNext()) {
+      final var wire = netIterator.next();
+      if (wire.getBitWidth() == 0) {
+        drc.get(0).addMarkComponents(wire.getWires());
+        netIterator.remove();
       }
     }
-    if (drc.get(0).DRCInfoPresent()) {
+    if (drc.get(0).isDrcInfoPresent()) {
       Reporter.Report.AddWarning(drc.get(0));
     }
-    MySplitIterator = MyComplexSplitters.iterator();
-    /* We also check quickly the splitters and remove the ones where input-bus is output-bus. We mark those who are not
-     * correctly connected and remove both versions from the set.
-     */
+    mySplitIter = mySplitters.iterator();
+    // We also check quickly the splitters and remove the ones where input-bus is output-bus. We
+    // mark those who are not correctly connected and remove both versions from the set.
     drc.clear();
     drc.add(
         new SimpleDRCContainer(
-            MyCircuit,
-            S.get("NetList_ShortCircuit"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_WIRE));
+                myCircuit,
+                S.get("NetList_ShortCircuit"),
+                SimpleDRCContainer.LEVEL_FATAL,
+                SimpleDRCContainer.MARK_WIRE));
     errors = false;
-    while (MySplitIterator.hasNext()) {
-      Component mySplitter = MySplitIterator.next();
-      int BusWidth = mySplitter.getEnd(0).getWidth().getWidth();
-      List<EndData> myEnds = mySplitter.getEnds();
-      int MaxFanoutWidth = 0;
-      int index = -1;
-      for (int i = 1; i < myEnds.size(); i++) {
-        int width = mySplitter.getEnd(i).getWidth().getWidth();
-        if (width > MaxFanoutWidth) {
-          MaxFanoutWidth = width;
+    while (mySplitIter.hasNext()) {
+      final var mySplitter = mySplitIter.next();
+      var busWidth = mySplitter.getEnd(0).getWidth().getWidth();
+      final var myEnds = mySplitter.getEnds();
+      var maxFanoutWidth = 0;
+      var index = -1;
+      for (var i = 1; i < myEnds.size(); i++) {
+        var width = mySplitter.getEnd(i).getWidth().getWidth();
+        if (width > maxFanoutWidth) {
+          maxFanoutWidth = width;
           index = i;
         }
       }
       /* stupid situation first: the splitters bus connection is a single fanout */
-      if (BusWidth == MaxFanoutWidth) {
+      if (busWidth == maxFanoutWidth) {
         Net busnet = null;
         Net connectedNet = null;
-        Location BusLoc = mySplitter.getEnd(0).getLocation();
-        Location ConnectedLoc = mySplitter.getEnd(index).getLocation();
-        boolean issueWarning = false;
+        final var busLoc = mySplitter.getEnd(0).getLocation();
+        final var connectedLoc = mySplitter.getEnd(index).getLocation();
+        var issueWarning = false;
         /* here we search for the nets */
-        for (Net CurrentNet : MyNets) {
-          if (CurrentNet.contains(BusLoc)) {
+        for (final var currentNet : myNets) {
+          if (currentNet.contains(busLoc)) {
             if (busnet != null) {
-              Reporter.Report.AddFatalError(
-                  "BUG: Multiple bus nets found for a single splitter\n ==> "
-                      + this.getClass().getName().replaceAll("\\.", "/")
-                      + ":"
-                      + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                      + "\n");
+              Reporter.Report.addFatalErrorFmt(
+                  "BUG: Multiple bus nets found for a single splitter\n ==> %s:%d\n",
+                  this.getClass().getName().replaceAll("\\.", "/"),
+                  Thread.currentThread().getStackTrace()[2].getLineNumber());
               return false;
             } else {
-              busnet = CurrentNet;
+              busnet = currentNet;
             }
           }
-          if (CurrentNet.contains(ConnectedLoc)) {
+          if (currentNet.contains(connectedLoc)) {
             if (connectedNet != null) {
-              Reporter.Report.AddFatalError(
-                  "BUG: Multiple nets found for a single splitter split connection\n ==> "
-                      + this.getClass().getName().replaceAll("\\.", "/")
-                      + ":"
-                      + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                      + "\n");
+              Reporter.Report.addFatalErrorFmt(
+                  "BUG: Multiple nets found for a single splitter split connection\n ==> %s:%d\n",
+                  this.getClass().getName().replaceAll("\\.", "/"),
+                  Thread.currentThread().getStackTrace()[2].getLineNumber());
               return false;
             } else {
-              connectedNet = CurrentNet;
+              connectedNet = currentNet;
             }
           }
         }
@@ -1003,15 +877,13 @@ public class Netlist implements CircuitListener {
           if (busnet != null) {
             /* we can merge both nets */
             if (!busnet.merge(connectedNet)) {
-              Reporter.Report.AddFatalError(
-                  "BUG: Splitter bus merge error\n ==> "
-                      + this.getClass().getName().replaceAll("\\.", "/")
-                      + ":"
-                      + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                      + "\n");
+              Reporter.Report.addFatalErrorFmt(
+                  "BUG: Splitter bus merge error\n ==> %s:%d\n",
+                  this.getClass().getName().replaceAll("\\.", "/"),
+                  Thread.currentThread().getStackTrace()[2].getLineNumber());
               return false;
             } else {
-              MyNets.remove(connectedNet);
+              myNets.remove(connectedNet);
             }
           } else {
             issueWarning = true;
@@ -1020,88 +892,80 @@ public class Netlist implements CircuitListener {
           issueWarning = true;
         }
         if (issueWarning) {
-          SimpleDRCContainer warn =
+          final var warn =
               new SimpleDRCContainer(
-                  MyCircuit,
-                  S.get("NetList_NoSplitterConnection"),
-                  SimpleDRCContainer.LEVEL_SEVERE,
-                  SimpleDRCContainer.MARK_INSTANCE);
-          warn.AddMarkComponent(mySplitter);
+                      myCircuit,
+                      S.get("NetList_NoSplitterConnection"),
+                      SimpleDRCContainer.LEVEL_SEVERE,
+                      SimpleDRCContainer.MARK_INSTANCE);
+          warn.addMarkComponent(mySplitter);
           Reporter.Report.AddWarning(warn);
         }
-        MySplitIterator.remove(); /* Does not exist anymore */
+        mySplitIter.remove(); /* Does not exist anymore */
       }
     }
 
     if (progress != null) {
       progress.setValue(4);
-      progress.setString(S.fmt("NetListBuild", CircuitName,5));
+      progress.setString(S.get("NetListBuild", circuitName, 5));
     }
-    /*
-     * Finally we have to process the splitters to determine the bus
-     * hierarchy (if any)
-     */
-    /*
-     * In this round we only process the evident splitters and remove them
-     * from the list
-     */
-    for (Component com : MyComplexSplitters) {
-      /*
-       * Currently by definition end(0) is the combined end of the
-       * splitter
-       */
-      List<EndData> ends = com.getEnds();
-      EndData CombinedEnd = ends.get(0);
-      int RootNet = -1;
+
+    // Finally we have to process the splitters to determine the bus
+    // hierarchy (if any).
+    //
+    // In this round we only process the evident splitters and remove them
+    // from the list.
+    for (final var comp : mySplitters) {
+      // Currently by definition end(0) is the combined end of the splitter
+      final var ends = comp.getEnds();
+      final var combinedEnd = ends.get(0);
+      var rootNet = -1;
       /* We search for the root net in the list of nets */
-      for (int i = 0; i < MyNets.size() && RootNet < 0; i++) {
-        if (MyNets.get(i).contains(CombinedEnd.getLocation())) {
-          RootNet = i;
+      for (var i = 0; i < myNets.size() && rootNet < 0; i++) {
+        if (myNets.get(i).contains(combinedEnd.getLocation())) {
+          rootNet = i;
+          // FIXME: shouldn't we `break` once we found it?
         }
       }
-      if (RootNet < 0) {
-        Reporter.Report.AddFatalError(
-            "BUG: Splitter without a bus connection\n ==> "
-                + this.getClass().getName().replaceAll("\\.", "/")
-                + ":"
-                + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                + "\n");
+      if (rootNet < 0) {
+        Reporter.Report.addFatalErrorFmt(
+            "BUG: Splitter without a bus connection\n ==> %s:%d\n",
+            this.getClass().getName().replaceAll("\\.", "/"),
+            Thread.currentThread().getStackTrace()[2].getLineNumber());
         this.clear();
         return false;
       }
-      /*
-       * Now we process all the other ends to find the child busses/nets
-       * of this root bus
-       */
-      ArrayList<Integer> Connections = new ArrayList<>();
-      for (int i = 1; i < ends.size(); i++) {
-        EndData ThisEnd = ends.get(i);
+      // Now we process all the other ends to find the child busses/nets
+      // of this root bus
+      final var connections = new ArrayList<Integer>();
+      for (var i = 1; i < ends.size(); i++) {
+        final var thisEnd = ends.get(i);
         /* Find the connected net */
-        int ConnectedNet = -1;
-        for (int j = 0; j < MyNets.size() && ConnectedNet < 1; j++) {
-          if (MyNets.get(j).contains(ThisEnd.getLocation())) {
-            ConnectedNet = j;
+        var connectedNet = -1;
+        for (var j = 0; j < myNets.size() && connectedNet < 1; j++) {
+          if (myNets.get(j).contains(thisEnd.getLocation())) {
+            connectedNet = j;
           }
         }
-        Connections.add(ConnectedNet);
+        connections.add(connectedNet);
       }
-      boolean unconnectedEnds = false;
-      boolean connectedUnknownEnds = false;
-      SplitterAttributes sattrs = (SplitterAttributes) com.getAttributeSet();
-      for (int i = 1; i < ends.size(); i++) {
-        int ConnectedNet = Connections.get(i - 1);
-        if (ConnectedNet >= 0) {
+      var unconnectedEnds = false;
+      var connectedUnknownEnds = false;
+      final var sattrs = (SplitterAttributes) comp.getAttributeSet();
+      for (var i = 1; i < ends.size(); i++) {
+        var connectedNet = connections.get(i - 1);
+        if (connectedNet >= 0) {
           /* Has this end a connection to the root bus? */
           connectedUnknownEnds |= sattrs.isNoConnect(i);
           /* There is a net connected to this splitter's end point */
-          if (!MyNets.get(ConnectedNet).setParent(MyNets.get(RootNet))) {
-            MyNets.get(ConnectedNet).ForceRootNet();
+          if (!myNets.get(connectedNet).setParent(myNets.get(rootNet))) {
+            myNets.get(connectedNet).ForceRootNet();
           }
           /* Here we have to process the inherited bits of the parent */
-          byte[] BusBitConnection = ((Splitter) com).GetEndpoints();
-          for (byte b = 0; b < BusBitConnection.length; b++) {
-            if (BusBitConnection[b] == i) {
-              MyNets.get(ConnectedNet).AddParrentBit(b);
+          final var busBitConnection = ((Splitter) comp).GetEndpoints();
+          for (byte b = 0; b < busBitConnection.length; b++) {
+            if (busBitConnection[b] == i) {
+              myNets.get(connectedNet).AddParentBit(b);
             }
           }
         } else {
@@ -1109,29 +973,29 @@ public class Netlist implements CircuitListener {
         }
       }
       if (unconnectedEnds) {
-        SimpleDRCContainer warn =
+        final var warn =
             new SimpleDRCContainer(
-                MyCircuit,
-                S.get("NetList_NoSplitterEndConnections"),
-                SimpleDRCContainer.LEVEL_NORMAL,
-                SimpleDRCContainer.MARK_INSTANCE);
-        warn.AddMarkComponent(com);
+                    myCircuit,
+                    S.get("NetList_NoSplitterEndConnections"),
+                    SimpleDRCContainer.LEVEL_NORMAL,
+                    SimpleDRCContainer.MARK_INSTANCE);
+        warn.addMarkComponent(comp);
         Reporter.Report.AddWarning(warn);
       }
       if (connectedUnknownEnds) {
-        SimpleDRCContainer warn =
+        final var warn =
             new SimpleDRCContainer(
-                MyCircuit,
-                S.get("NetList_NoEndSplitterConnections"),
-                SimpleDRCContainer.LEVEL_SEVERE,
-                SimpleDRCContainer.MARK_INSTANCE);
-         warn.AddMarkComponent(com);
-         Reporter.Report.AddWarning(warn);
+                    myCircuit,
+                    S.get("NetList_NoEndSplitterConnections"),
+                    SimpleDRCContainer.LEVEL_SEVERE,
+                    SimpleDRCContainer.MARK_INSTANCE);
+        warn.addMarkComponent(comp);
+        Reporter.Report.AddWarning(warn);
       }
     }
     if (progress != null) {
       progress.setValue(5);
-      progress.setString(S.fmt("NetListBuild", CircuitName,6));
+      progress.setString(S.get("NetListBuild", circuitName, 6));
     }
     /*
      * Now the complete netlist is created, we have to check that each
@@ -1139,9 +1003,9 @@ public class Netlist implements CircuitListener {
      * more than 1 source we have a short circuit! We keep track of the
      * sources and sinks at the root nets/buses
      */
-    for (Net ThisNet : MyNets) {
-      if (ThisNet.IsRootNet()) {
-        ThisNet.InitializeSourceSinks();
+    for (final var thisNet : myNets) {
+      if (thisNet.isRootNet()) {
+        thisNet.InitializeSourceSinks();
       }
     }
     /*
@@ -1151,16 +1015,16 @@ public class Netlist implements CircuitListener {
      * already processed those
      */
 
-    for (Component comp : components) {
+    for (final var comp : components) {
       if (comp.getFactory() instanceof SubcircuitFactory) {
-        if (!ProcessSubcircuit(comp)) {
+        if (!processSubcircuit(comp)) {
           this.clear();
           return false;
         }
       } else if ((comp.getFactory() instanceof Pin)
           || comp.getAttributeSet().containsAttribute(StdAttr.MAPINFO)
           || (comp.getFactory().getHDLGenerator(comp.getAttributeSet()) != null)) {
-        if (!ProcessNormalComponent(comp)) {
+        if (!processNormalComponent(comp)) {
           this.clear();
           return false;
         }
@@ -1168,7 +1032,7 @@ public class Netlist implements CircuitListener {
     }
     if (progress != null) {
       progress.setValue(6);
-      progress.setString(S.fmt("NetListBuild", CircuitName,7));
+      progress.setString(S.get("NetListBuild", circuitName, 7));
     }
 
     /*
@@ -1177,90 +1041,61 @@ public class Netlist implements CircuitListener {
      * complex splitter with a forcerootnet annotation; we are going to
      * cycle trough all these nets
      */
-    for (Net thisnet : MyNets) {
-      if (thisnet.IsForcedRootNet()) {
+    for (final var thisNet : myNets) {
+      if (thisNet.isForcedRootNet()) {
         /* Cycle through all the bits of this net */
-        for (int bit = 0; bit < thisnet.BitWidth(); bit++) {
-          for (Component comp : MyComplexSplitters) {
-            /*
-             * Currently by definition end(0) is the combined end of
-             * the splitter
-             */
-            List<EndData> ends = comp.getEnds();
-            EndData CombinedEnd = ends.get(0);
-            int ConnectedBus = -1;
-            SplitterAttributes sattrs = (SplitterAttributes)comp.getAttributeSet();
+        for (var bit = 0; bit < thisNet.getBitWidth(); bit++) {
+          for (final var comp : mySplitters) {
+            // Currently by definition end(0) is the combined end of the splitter
+            final var ends = comp.getEnds();
+            final var combinedEnd = ends.get(0);
+            var connectedBus = -1;
+            final var sattrs = (SplitterAttributes) comp.getAttributeSet();
             /* We search for the root net in the list of nets */
-            for (int i = 0; i < MyNets.size() && ConnectedBus < 0; i++) {
-              if (MyNets.get(i).contains(CombinedEnd.getLocation())) {
-                ConnectedBus = i;
-              }
+            for (var i = 0; i < myNets.size() && connectedBus < 0; i++) {
+              if (myNets.get(i).contains(combinedEnd.getLocation())) connectedBus = i;
             }
-            if (ConnectedBus < 0) {
-              /*
-               * This should never happen as we already checked in
-               * the first pass
-               */
-              Reporter.Report.AddFatalError(
-                  "BUG: This is embarasing as this should never happen\n ==> "
-                      + this.getClass().getName().replaceAll("\\.", "/")
-                      + ":"
-                      + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                      + "\n");
+            if (connectedBus < 0) {
+              // This should never happen as we already checked in the first pass.
+              Reporter.Report.addFatalErrorFmt(
+                  "BUG: This is embarasing as this should never happen\n ==> %s:%d\n",
+                  this.getClass().getName().replaceAll("\\.", "/"),
+                  Thread.currentThread().getStackTrace()[2].getLineNumber());
               this.clear();
               return false;
             }
-            for (int endid = 1; endid < ends.size(); endid++) {
-              /*
-               * If this is an end that is not connected to the root bus
-               * we can continue we already warned severly before.
-               */
-              if (sattrs.isNoConnect(endid)) continue;
-              /*
-               * we iterate through all bits to see if the current
-               * net is connected to this splitter
-               */
-              if (thisnet.contains(ends.get(endid).getLocation())) {
-                /*
-                 * first we have to get the bitindices of the
-                 * rootbus
-                 */
-                /*
-                 * Here we have to process the inherited bits of
-                 * the parent
-                 */
-                byte[] BusBitConnection = ((Splitter) comp).GetEndpoints();
-                ArrayList<Byte> IndexBits = new ArrayList<>();
-                for (byte b = 0; b < BusBitConnection.length; b++) {
-                  if (BusBitConnection[b] == endid) {
-                    IndexBits.add(b);
+            for (int endId = 1; endId < ends.size(); endId++) {
+              //If this is an end that is not connected to the root bus
+              //we can continue we already warned severly before.
+              if (sattrs.isNoConnect(endId)) continue;
+              // we iterate through all bits to see if the current net is connected to this splitter
+              if (thisNet.contains(ends.get(endId).getLocation())) {
+                // first we have to get the bitindices of the rootbus
+                // Here we have to process the inherited bits of the parent
+                final var busBitConnection = ((Splitter) comp).GetEndpoints();
+                final var indexBits = new ArrayList<Byte>();
+                for (byte b = 0; b < busBitConnection.length; b++) {
+                  if (busBitConnection[b] == endId) indexBits.add(b);
+                }
+                byte connectedBusIndex = indexBits.get(bit);
+                // Figure out the rootbusid and rootbusindex
+                var rootBus = myNets.get(connectedBus);
+                while (!rootBus.isRootNet()) {
+                  connectedBusIndex = rootBus.getBit(connectedBusIndex);
+                  rootBus = rootBus.getParent();
+                }
+                final var solderPoint = new ConnectionPoint(comp);
+                solderPoint.setParentNet(rootBus, connectedBusIndex);
+                var isSink = true;
+                if (!thisNet.hasBitSource(bit)) {
+                  if (hasHiddenSource(thisNet, (byte) bit, rootBus, connectedBusIndex, mySplitters, new HashSet<String>(), comp)) {
+                    isSink = false;
                   }
                 }
-                byte ConnectedBusIndex = IndexBits.get(bit);
-                /* Figure out the rootbusid and rootbusindex */
-                Net Rootbus = MyNets.get(ConnectedBus);
-                while (!Rootbus.IsRootNet()) {
-                  ConnectedBusIndex = Rootbus.getBit(ConnectedBusIndex);
-                  Rootbus = Rootbus.getParent();
-                }
-                ConnectionPoint SolderPoint = new ConnectionPoint(comp);
-                SolderPoint.SetParrentNet(Rootbus, ConnectedBusIndex);
-                boolean IsSink = true;
-                if (!thisnet.hasBitSource(bit)) {
-                  if (HasHiddenSource(
-                      thisnet,
-                      (byte) 0,
-                      Rootbus,
-                      ConnectedBusIndex,
-                      MyComplexSplitters,
-                      new HashSet<>())) {
-                    IsSink = false;
-                  }
-                }
-                if (IsSink) {
-                  thisnet.addSinkNet(bit, SolderPoint);
+                if (isSink) {
+                  thisNet.addSinkNet(bit, solderPoint);
                 } else {
-                  thisnet.addSourceNet(bit, SolderPoint);
+                  thisNet.addSourceNet(bit, solderPoint);
                 }
               }
             }
@@ -1273,127 +1108,99 @@ public class Netlist implements CircuitListener {
       progress.setValue(curVal);
       progress.setString(curStr);
     }
-    /* So now we have all information we need! */
     return true;
   }
 
-  public ArrayList<Component> GetAllClockSources() {
-    return MyClockInformation.GetSourceContainer().getSources();
+  public ArrayList<Component> getAllClockSources() {
+    return myClockInformation.getSourceContainer().getSources();
   }
 
-  public ArrayList<Net> GetAllNets() {
-    return MyNets;
+  public ArrayList<Net> getAllNets() {
+    return myNets;
   }
 
   public Circuit getCircuit() {
-    return MyCircuit;
+    return myCircuit;
   }
 
   public String getCircuitName() {
-    return CircuitName;
+    return circuitName;
   }
 
-  public int GetClockSourceId(ArrayList<String> HierarchyLevel, Net WhichNet, Byte Bitid) {
-    return MyClockInformation.GetClockSourceId(HierarchyLevel, WhichNet, Bitid);
+  public int getClockSourceId(ArrayList<String> hierarchyLevel, Net whichNet, Byte bitId) {
+    return myClockInformation.getClockSourceId(hierarchyLevel, whichNet, bitId);
   }
 
-  public int GetClockSourceId(Component comp) {
-    return MyClockInformation.GetClockSourceId(comp);
+  public int getClockSourceId(Component comp) {
+    return myClockInformation.getClockSourceId(comp);
   }
 
-  public ArrayList<NetlistComponent> GetClockSources() {
-    return MyClockGenerators;
+  public ArrayList<NetlistComponent> getClockSources() {
+    return myClockGenerators;
   }
 
-  public ArrayList<String> GetCurrentHierarchyLevel() {
-    return CurrentHierarchyLevel;
+  public ArrayList<String> getCurrentHierarchyLevel() {
+    return currentHierarchyLevel;
   }
 
-  public int GetEndIndex(NetlistComponent comp, String PinLabel, boolean IsOutputPort) {
-    String label = CorrectLabel.getCorrectLabel(PinLabel);
-    SubcircuitFactory sub = (SubcircuitFactory) comp.GetComponent().getFactory();
-    for (int end = 0; end < comp.NrOfEnds(); end++) {
-      if (comp.getEnd(end).IsOutputEnd() == IsOutputPort) {
-        if (comp.getEnd(end).GetConnection((byte) 0).getChildsPortIndex()
-            == sub.getSubcircuit().getNetList().GetPortInfo(label)) {
-          return end;
-        }
+  public int getEndIndex(NetlistComponent comp, String pinLabel, boolean isOutputPort) {
+    final var label = CorrectLabel.getCorrectLabel(pinLabel);
+    final var subFactory = (SubcircuitFactory) comp.getComponent().getFactory();
+    for (var end = 0; end < comp.nrOfEnds(); end++) {
+      if ((comp.getEnd(end).isOutputEnd() == isOutputPort)
+          && (comp.getEnd(end).get((byte) 0).getChildsPortIndex() == subFactory.getSubcircuit().getNetList().getPortInfo(label))) {
+        return end;
       }
     }
     return -1;
   }
 
-  private ArrayList<ConnectionPoint> GetHiddenSinks(
-      Net thisNet,
-      Byte bitIndex,
-      ArrayList<Component> SplitterList,
-      Set<String> HandledNets,
-      Boolean isSourceNet) {
-    ArrayList<ConnectionPoint> result = new ArrayList<>();
-    /*
-     * to prevent deadlock situations we check if we already looked at this
-     * net
-     */
-    String NetId = MyNets.indexOf(thisNet) + "-" + bitIndex;
-    if (HandledNets.contains(NetId)) {
-      return result;
-    } else {
-      HandledNets.add(NetId);
+  private ArrayList<ConnectionPoint> GetHiddenSinks(Net thisNet, Byte bitIndex, ArrayList<Component> splitters, Set<String> handledNets, Boolean isSourceNet) {
+    final var result = new ArrayList<ConnectionPoint>();
+    // to prevent deadlock situations we check if we already looked at this net
+    final var netId = myNets.indexOf(thisNet) + "-" + bitIndex;
+    if (handledNets.contains(netId)) return result;
+    handledNets.add(netId);
+
+    if (thisNet.hasBitSinks(bitIndex) && !isSourceNet && thisNet.isRootNet()) {
+      result.addAll(thisNet.getBitSinks(bitIndex));
     }
-    if (thisNet.hasBitSinks(bitIndex) && !isSourceNet && thisNet.IsRootNet()) {
-      result.addAll(thisNet.GetBitSinks(bitIndex));
-    }
-    /* Check if we have a connection to another splitter */
-    for (Component currentSplitter : SplitterList) {
-      List<EndData> ends = currentSplitter.getEnds();
-      SplitterAttributes sattrs = (SplitterAttributes)currentSplitter.getAttributeSet();
+    // Check if we have a connection to another splitter
+    for (final var currentSplitter : splitters) {
+      final var ends = currentSplitter.getEnds();
+      final var splitterAttrs = (SplitterAttributes) currentSplitter.getAttributeSet();
       for (byte end = 0; end < ends.size(); end++) {
-    	/* prevent the search for ends that are not connected to the root bus */
-    	if (end > 0 && sattrs.isNoConnect(end)) continue;
+        /* prevent the search for ends that are not connected to the root bus */
+        if (end > 0 && splitterAttrs.isNoConnect(end)) continue;
         if (thisNet.contains(ends.get(end).getLocation())) {
-          /* Here we have to process the inherited bits of the parent */
-          byte[] BusBitConnection = ((Splitter) currentSplitter).GetEndpoints();
+          // Here we have to process the inherited bits of the parent.
+          final var busBitConnection = ((Splitter) currentSplitter).GetEndpoints();
           if (end == 0) {
-            /* this is a main net, find the connected end */
-            byte SplitterEnd = BusBitConnection[bitIndex];
+            // This is a main net, find the connected end.
+            final var splitterEnd = busBitConnection[bitIndex];
             /* Find the corresponding Net index */
-            Byte Netindex = 0;
-            for (int index = 0; index < bitIndex; index++) {
-              if (BusBitConnection[index] == SplitterEnd) {
-                Netindex++;
-              }
+            Byte netIndex = 0;
+            for (var index = 0; index < bitIndex; index++) {
+              if (busBitConnection[index] == splitterEnd) netIndex++;
             }
-            /* Find the connected Net */
-            Net SlaveNet = null;
-            for (Net thisnet : MyNets) {
-              if (thisnet.contains(ends.get(SplitterEnd).getLocation())) {
-                SlaveNet = thisnet;
-              }
+            // Find the connected Net
+            Net slaveNet = null;
+            for (final var thisnet : myNets) {
+              if (thisnet.contains(ends.get(splitterEnd).getLocation())) slaveNet = thisnet;
             }
-            if (SlaveNet != null) {
-              result.addAll(GetHiddenSinks(SlaveNet, Netindex, SplitterList, HandledNets, false));
-            }
+            if (slaveNet != null)
+              result.addAll(GetHiddenSinks(slaveNet, netIndex, splitters, handledNets, false));
           } else {
-            ArrayList<Byte> Rootindices = new ArrayList<>();
-            for (byte b = 0; b < BusBitConnection.length; b++) {
-              if (BusBitConnection[b] == end) {
-                Rootindices.add(b);
-              }
+            final var rootIndices = new ArrayList<Byte>();
+            for (byte b = 0; b < busBitConnection.length; b++) {
+              if (busBitConnection[b] == end) rootIndices.add(b);
             }
-            Net RootNet = null;
-            for (Net thisnet : MyNets) {
-              if (thisnet.contains(currentSplitter.getEnd(0).getLocation())) {
-                RootNet = thisnet;
-              }
+            Net rootNet = null;
+            for (final var thisnet : myNets) {
+              if (thisnet.contains(currentSplitter.getEnd(0).getLocation())) rootNet = thisnet;
             }
-            if (RootNet != null) {
-              result.addAll(GetHiddenSinks(
-                        RootNet,
-                        Rootindices.get(bitIndex),
-                        SplitterList,
-                        HandledNets,
-                        false));
-            }
+            if (rootNet != null)
+              result.addAll(GetHiddenSinks(rootNet, rootIndices.get(bitIndex), splitters, handledNets, false));
           }
         }
       }
@@ -1401,123 +1208,105 @@ public class Netlist implements CircuitListener {
     return result;
   }
 
-  public NetlistComponent GetInOutPin(int index) {
-    if ((index < 0) || (index >= MyInOutPorts.size())) {
-      return null;
-    }
-    return MyInOutPorts.get(index);
+  public NetlistComponent getInOutPin(int index) {
+    return ((index < 0) || (index >= myInOutPorts.size())) ? null : myInOutPorts.get(index);
   }
 
-  public NetlistComponent GetInOutPort(int Index) {
-    if ((Index < 0) || (Index >= MyInOutPorts.size())) {
-      return null;
-    }
-    return MyInOutPorts.get(Index);
+  public NetlistComponent getInOutPort(int Index) {
+    return ((Index < 0) || (Index >= myInOutPorts.size())) ? null : myInOutPorts.get(Index);
   }
 
-  public NetlistComponent GetInputPin(int index) {
-    if ((index < 0) || (index >= MyInputPorts.size())) {
-      return null;
-    }
-    return MyInputPorts.get(index);
+  public NetlistComponent getInputPin(int index) {
+    return ((index < 0) || (index >= myInputPorts.size())) ? null : myInputPorts.get(index);
   }
 
-  public NetlistComponent GetInputPort(int Index) {
-    if ((Index < 0) || (Index >= MyInputPorts.size())) {
-      return null;
-    }
-    return MyInputPorts.get(Index);
+  public NetlistComponent getInputPort(int Index) {
+    return ((Index < 0) || (Index >= myInputPorts.size())) ? null : myInputPorts.get(Index);
   }
 
-  public Map<ArrayList<String>, NetlistComponent> GetMappableResources(
-      ArrayList<String> Hierarchy, boolean toplevel) {
-    Map<ArrayList<String>, NetlistComponent> Components =
-        new HashMap<>();
+  public Map<ArrayList<String>, NetlistComponent> getMappableResources(ArrayList<String> hierarchy, boolean toplevel) {
+    final var components = new HashMap<ArrayList<String>, NetlistComponent>();
     /* First we search through my sub-circuits and add those IO components */
-    for (NetlistComponent comp : MySubCircuits) {
-      SubcircuitFactory sub = (SubcircuitFactory) comp.GetComponent().getFactory();
-      ArrayList<String> MyHierarchyName = new ArrayList<>(Hierarchy);
+    for (final var comp : mySubCircuits) {
+      final var sub = (SubcircuitFactory) comp.getComponent().getFactory();
+      final var MyHierarchyName = new ArrayList<>(hierarchy);
       MyHierarchyName.add(
           CorrectLabel.getCorrectLabel(
-              comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-      Components.putAll(
-          sub.getSubcircuit().getNetList().GetMappableResources(MyHierarchyName, false));
+              comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
+      components.putAll(
+          sub.getSubcircuit().getNetList().getMappableResources(MyHierarchyName, false));
     }
     /* Now we search for all local IO components */
-    for (NetlistComponent comp : MyComponents) {
-      if (comp.GetMapInformationContainer() != null) {
-        ArrayList<String> MyHierarchyName = new ArrayList<>(Hierarchy);
-        MyHierarchyName.add(
+    for (final var comp : myComponents) {
+      if (comp.getMapInformationContainer() != null) {
+        final var myHierarchyName = new ArrayList<>(hierarchy);
+        myHierarchyName.add(
             CorrectLabel.getCorrectLabel(
-                comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-        Components.put(MyHierarchyName, comp);
+                comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
+        components.put(myHierarchyName, comp);
       }
     }
     /* On the toplevel we have to add the pins */
     if (toplevel) {
-      for (NetlistComponent comp : MyInputPorts) {
-        ArrayList<String> MyHierarchyName = new ArrayList<>(Hierarchy);
-        MyHierarchyName.add(
+      for (final var comp : myInputPorts) {
+        final var myHierarchyName = new ArrayList<>(hierarchy);
+        myHierarchyName.add(
             CorrectLabel.getCorrectLabel(
-                comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-        Components.put(MyHierarchyName, comp);
+                comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
+        components.put(myHierarchyName, comp);
       }
-      for (NetlistComponent comp : MyInOutPorts) {
-        ArrayList<String> MyHierarchyName = new ArrayList<>(Hierarchy);
-        MyHierarchyName.add(
+      for (final var comp : myInOutPorts) {
+        final var myHierarchyName = new ArrayList<>(hierarchy);
+        myHierarchyName.add(
             CorrectLabel.getCorrectLabel(
-                comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-        Components.put(MyHierarchyName, comp);
+                comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
+        components.put(myHierarchyName, comp);
       }
-      for (NetlistComponent comp : MyOutputPorts) {
-        ArrayList<String> MyHierarchyName = new ArrayList<>(Hierarchy);
-        MyHierarchyName.add(
+      for (final var comp : myOutputPorts) {
+        final var myHierarchyName = new ArrayList<>(hierarchy);
+        myHierarchyName.add(
             CorrectLabel.getCorrectLabel(
-                comp.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-        Components.put(MyHierarchyName, comp);
+                comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
+        components.put(myHierarchyName, comp);
       }
     }
-    return Components;
+    return components;
   }
 
-  private void GetNet(Wire wire, Net ThisNet) {
-    Iterator<Wire> MyIterator = wires.iterator();
-    ArrayList<Wire> MatchedWires = new ArrayList<>();
-    Wire CompWire = wire;
-    while (MyIterator.hasNext()) {
-      Wire ThisWire = MyIterator.next();
-      if (CompWire == null) {
-        CompWire = ThisWire;
-        ThisNet.add(ThisWire);
-        MyIterator.remove();
-      } else if (ThisWire.sharesEnd(CompWire)) {
-        MatchedWires.add(ThisWire);
-        ThisNet.add(ThisWire);
-        MyIterator.remove();
+  private void getNet(Wire wire, Net thisNet) {
+    final var myIterator = wires.iterator();
+    final var matchedWires = new ArrayList<Wire>();
+    var compWire = wire;
+    while (myIterator.hasNext()) {
+      final var thisWire = myIterator.next();
+      if (compWire == null) {
+        compWire = thisWire;
+        thisNet.add(thisWire);
+        myIterator.remove();
+      } else if (thisWire.sharesEnd(compWire)) {
+        matchedWires.add(thisWire);
+        thisNet.add(thisWire);
+        myIterator.remove();
       }
     }
-    for (Wire matched : MatchedWires) GetNet(matched, ThisNet);
-    MatchedWires.clear();
+    for (final var matched : matchedWires) getNet(matched, thisNet);
+    matchedWires.clear();
   }
 
-  public Integer GetNetId(Net selectedNet) {
-    return MyNets.indexOf(selectedNet);
+  public Integer getNetId(Net selectedNet) {
+    return myNets.indexOf(selectedNet);
   }
 
-  public ConnectionPoint GetNetlistConnectionForSubCircuit(
-      String Label, int PortIndex, byte bitindex) {
-    for (NetlistComponent search : MySubCircuits) {
-      String CircuitLabel =
-          CorrectLabel.getCorrectLabel(
-              search.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-      if (CircuitLabel.equals(Label)) {
-        /* Found the component, let's search the ends */
-        for (int i = 0; i < search.NrOfEnds(); i++) {
-          ConnectionEnd ThisEnd = search.getEnd(i);
-          if (ThisEnd.IsOutputEnd() && (bitindex < ThisEnd.NrOfBits())) {
-            if (ThisEnd.GetConnection(bitindex).getChildsPortIndex() == PortIndex) {
-              return ThisEnd.GetConnection(bitindex);
-            }
+  public ConnectionPoint getNetlistConnectionForSubCircuit(String label, int PortIndex, byte bitindex) {
+    for (final var search : mySubCircuits) {
+      final var circuitLabel = CorrectLabel.getCorrectLabel(search.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
+      if (circuitLabel.equals(label)) {
+        // Found the component, let's search the ends
+        for (var i = 0; i < search.nrOfEnds(); i++) {
+          final var thisEnd = search.getEnd(i);
+          if (thisEnd.isOutputEnd() && (bitindex < thisEnd.getNrOfBits())) {
+            if (thisEnd.get(bitindex).getChildsPortIndex() == PortIndex)
+              return thisEnd.get(bitindex);
           }
         }
       }
@@ -1525,20 +1314,16 @@ public class Netlist implements CircuitListener {
     return null;
   }
 
-  public ConnectionPoint GetNetlistConnectionForSubCircuitInput(
-      String Label, int PortIndex, byte bitindex) {
-    for (NetlistComponent search : MySubCircuits) {
-      String CircuitLabel =
-          CorrectLabel.getCorrectLabel(
-              search.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-      if (CircuitLabel.equals(Label)) {
-        /* Found the component, let's search the ends */
-        for (int i = 0; i < search.NrOfEnds(); i++) {
-          ConnectionEnd ThisEnd = search.getEnd(i);
-          if (!ThisEnd.IsOutputEnd() && (bitindex < ThisEnd.NrOfBits())) {
-            if (ThisEnd.GetConnection(bitindex).getChildsPortIndex() == PortIndex) {
-              return ThisEnd.GetConnection(bitindex);
-            }
+  public ConnectionPoint getNetlistConnectionForSubCircuitInput(String label, int portIndex, byte bitIndex) {
+    for (final var search : mySubCircuits) {
+      final var circuitLabel = CorrectLabel.getCorrectLabel(search.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
+      if (circuitLabel.equals(label)) {
+        // Found the component, let's search the ends.
+        for (var i = 0; i < search.nrOfEnds(); i++) {
+          final var thisEnd = search.getEnd(i);
+          if (!thisEnd.isOutputEnd() && (bitIndex < thisEnd.getNrOfBits())) {
+            if (thisEnd.get(bitIndex).getChildsPortIndex() == portIndex)
+              return thisEnd.get(bitIndex);
           }
         }
       }
@@ -1546,192 +1331,133 @@ public class Netlist implements CircuitListener {
     return null;
   }
 
-  public ArrayList<NetlistComponent> GetNormalComponents() {
-    return MyComponents;
+  public ArrayList<NetlistComponent> getNormalComponents() {
+    return myComponents;
   }
 
-  public NetlistComponent GetOutputPin(int index) {
-    if ((index < 0) || (index >= MyOutputPorts.size())) {
-      return null;
-    }
-    return MyOutputPorts.get(index);
+  public NetlistComponent getOutputPin(int index) {
+    return ((index < 0) || (index >= myOutputPorts.size())) ? null : myOutputPorts.get(index);
   }
 
-  public int GetPortInfo(String Label) {
-    String Source = CorrectLabel.getCorrectLabel(Label);
-    for (NetlistComponent Inport : MyInputPorts) {
-      String Comp =
-          CorrectLabel.getCorrectLabel(
-              Inport.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-      if (Comp.equals(Source)) {
-        return MyInputPorts.indexOf(Inport);
-      }
+  public int getPortInfo(String label) {
+    final var source = CorrectLabel.getCorrectLabel(label);
+    for (final var inPort : myInputPorts) {
+      final var comp = CorrectLabel.getCorrectLabel(inPort.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
+      if (comp.equals(source)) return myInputPorts.indexOf(inPort);
     }
-    for (NetlistComponent InOutport : MyInOutPorts) {
-      String Comp =
-          CorrectLabel.getCorrectLabel(
-              InOutport.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-      if (Comp.equals(Source)) {
-        return MyInOutPorts.indexOf(InOutport);
-      }
+    for (final var inOutPort : myInOutPorts) {
+      final var comp = CorrectLabel.getCorrectLabel(inOutPort.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
+      if (comp.equals(source)) return myInOutPorts.indexOf(inOutPort);
     }
-    for (NetlistComponent Outport : MyOutputPorts) {
-      String Comp =
-          CorrectLabel.getCorrectLabel(
-              Outport.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-      if (Comp.equals(Source)) {
-        return MyOutputPorts.indexOf(Outport);
-      }
+    for (final var outPort : myOutputPorts) {
+      final var comp = CorrectLabel.getCorrectLabel(outPort.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
+      if (comp.equals(source)) return myOutputPorts.indexOf(outPort);
     }
     return -1;
   }
 
-  private Net GetRootNet(Net Child) {
-    if (Child == null) {
-      return null;
-    }
-    if (Child.IsRootNet()) {
-      return Child;
-    }
-    Net RootNet = Child.getParent();
-    while (!RootNet.IsRootNet()) {
-      RootNet = RootNet.getParent();
-    }
-    return RootNet;
+  private Net getRootNet(Net child) {
+    if (child == null) return null;
+    if (child.isRootNet()) return child;
+    var rootNet = child.getParent();
+    while (!rootNet.isRootNet()) rootNet = rootNet.getParent();
+    return rootNet;
   }
 
-  private byte GetRootNetIndex(Net Child, byte BitIndex) {
-    if (Child == null) {
-      return -1;
+  private byte getRootNetIndex(Net child, byte bitIndex) {
+    if ((child == null) || ((bitIndex < 0) || (bitIndex > child.getBitWidth()))) return -1;
+    if (child.isRootNet()) return bitIndex;
+    var rootNet = child.getParent();
+    var rootIndex = child.getBit(bitIndex);
+    while (!rootNet.isRootNet()) {
+      rootIndex = rootNet.getBit(rootIndex);
+      rootNet = rootNet.getParent();
     }
-    if ((BitIndex < 0) || (BitIndex > Child.BitWidth())) {
-      return -1;
-    }
-    if (Child.IsRootNet()) {
-      return BitIndex;
-    }
-    Net RootNet = Child.getParent();
-    byte RootIndex = Child.getBit(BitIndex);
-    while (!RootNet.IsRootNet()) {
-      RootIndex = RootNet.getBit(RootIndex);
-      RootNet = RootNet.getParent();
-    }
-    return RootIndex;
+    return rootIndex;
   }
 
   public Set<Splitter> getSplitters() {
     /* This may be cause bugs due to dual splitter on same location situations */
-    Set<Splitter> SplitterList = new HashSet<>();
-    for (Component comp : MyCircuit.getNonWires()) {
-      if (comp.getFactory() instanceof SplitterFactory) {
-        SplitterList.add((Splitter) comp);
-      }
+    final var splitters = new HashSet<Splitter>();
+    for (final var comp : myCircuit.getNonWires()) {
+      if (comp.getFactory() instanceof SplitterFactory) splitters.add((Splitter) comp);
     }
-    return SplitterList;
+    return splitters;
   }
 
-  public ArrayList<NetlistComponent> GetSubCircuits() {
-    return MySubCircuits;
+  public ArrayList<NetlistComponent> getSubCircuits() {
+    return mySubCircuits;
   }
 
-  private SourceInfo GetHiddenSource(
-     Net sourceNet,
-     Byte sourceBitIndex,
-     Net thisNet,
-     Byte bitIndex,
-     List<Component> SplitterList,
-     Set<String> HandledNets,
-     Set<Wire> Segments) {
-	/* If the source net not is null add it to the set of visited nets to
-	 * prevent back-search on this net
-	 */
-	if (sourceNet != null) {
-      String NetId = MyNets.indexOf(sourceNet) + "-" + sourceBitIndex;
-      if (HandledNets.contains(NetId)) {
-        return null;
-      } else {
-        HandledNets.add(NetId);
-      }
-	}
-    /*
-     * to prevent deadlock situations we check if we already looked at this
-     * net
-     */
-    String NetId = MyNets.indexOf(thisNet) + "-" + bitIndex;
-    if (HandledNets.contains(NetId)) {
-      return null;
-    } else {
-      HandledNets.add(NetId);
-      Segments.addAll(thisNet.getWires());
+  private SourceInfo getHiddenSource(
+      Net srcNet,
+      Byte srcBitIndex,
+      Net thisNet,
+      Byte bitIndex,
+      List<Component> splitters,
+      Set<String> handledNets,
+      Set<Wire> segments,
+      Component splitterToIgnore) {
+    // If the source net not is null add it to the set of visited nets to prevent back-search on
+    // this net
+    if (srcNet != null) {
+      final var netId = myNets.indexOf(srcNet) + "-" + srcBitIndex;
+      if (handledNets.contains(netId)) return null;
+      handledNets.add(netId);
     }
+    // to prevent deadlock situations we check if we already looked at this net
+    final var netId = myNets.indexOf(thisNet) + "-" + bitIndex;
+    if (handledNets.contains(netId)) return null;
+    handledNets.add(netId);
+    segments.addAll(thisNet.getWires());
+
     if (thisNet.hasBitSource(bitIndex)) {
       List<ConnectionPoint> sources = thisNet.GetBitSources(bitIndex);
       if (sources.size() != 1) {
-        Reporter.Report.AddFatalError(
-            "BUG: Found multiple sources\n ==> "
-                + this.getClass().getName().replaceAll("\\.", "/")
-                + ":"
-                + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                + "\n");
+        Reporter.Report.addFatalErrorFmt(
+            "BUG: Found multiple sources\n ==> %s:%d\n",
+            this.getClass().getName().replaceAll("\\.", "/"),
+            Thread.currentThread().getStackTrace()[2].getLineNumber());
         return null;
       }
       return new SourceInfo(sources.get(0), bitIndex);
     }
     /* Check if we have a connection to another splitter */
-    for (Component currentSplitter : SplitterList) {
-      List<EndData> ends = currentSplitter.getEnds();
-      for (byte end = 0; end < ends.size(); end++) {
+    for (final var splitter : splitters) {
+      if (splitter.equals(splitterToIgnore)) continue;
+      final var ends = splitter.getEnds();
+      for (var end = 0; end < ends.size(); end++) {
         if (thisNet.contains(ends.get(end).getLocation())) {
           /* Here we have to process the inherited bits of the parent */
-          byte[] BusBitConnection = ((Splitter) currentSplitter).GetEndpoints();
+          final var busBitConnection = ((Splitter) splitter).GetEndpoints();
           if (end == 0) {
             /* this is a main net, find the connected end */
-            byte SplitterEnd = BusBitConnection[bitIndex];
+            final var splitterEnd = busBitConnection[bitIndex];
             /* Find the corresponding Net index */
-            Byte Netindex = 0;
-            for (int index = 0; index < bitIndex; index++) {
-              if (BusBitConnection[index] == SplitterEnd) {
-                Netindex++;
-              }
+            Byte netIndex = 0;
+            for (var index = 0; index < bitIndex; index++) {
+              if (busBitConnection[index] == splitterEnd) netIndex++;
             }
             /* Find the connected Net */
-            Net SlaveNet = null;
-            for (Net thisnet : MyNets) {
-              if (thisnet.contains(ends.get(SplitterEnd).getLocation())) {
-                SlaveNet = thisnet;
-              }
+            Net slaveNet = null;
+            for (final var thisnet : myNets) {
+              if (thisnet.contains(ends.get(splitterEnd).getLocation())) slaveNet = thisnet;
             }
-            if (SlaveNet != null) {
-              SourceInfo ret =
-                  GetHiddenSource(null, (byte) 0,
-                      SlaveNet,
-                      Netindex,
-                      SplitterList,
-                      HandledNets,
-                      Segments);
+            if (slaveNet != null) {
+              final var ret = getHiddenSource(null, (byte) 0, slaveNet, netIndex, splitters, handledNets, segments, splitter);
               if (ret != null) return ret;
             }
           } else {
-            ArrayList<Byte> Rootindices = new ArrayList<>();
-            for (byte b = 0; b < BusBitConnection.length; b++) {
-              if (BusBitConnection[b] == end) {
-                Rootindices.add(b);
-              }
+            final var rootIndices = new ArrayList<Byte>();
+            for (byte b = 0; b < busBitConnection.length; b++) {
+              if (busBitConnection[b] == end) rootIndices.add(b);
             }
-            Net RootNet = null;
-            for (Net thisnet : MyNets) {
-              if (thisnet.contains(currentSplitter.getEnd(0).getLocation())) {
-                RootNet = thisnet;
-              }
+            Net rootNet = null;
+            for (final var thisnet : myNets) {
+              if (thisnet.contains(splitter.getEnd(0).getLocation())) rootNet = thisnet;
             }
-            if (RootNet != null) {
-              SourceInfo ret =
-                  GetHiddenSource(null, (byte) 0,
-                      RootNet,
-                      Rootindices.get(bitIndex),
-                      SplitterList,
-                      HandledNets,
-                      Segments);
+            if (rootNet != null) {
+              final var ret = getHiddenSource(null, (byte) 0, rootNet, rootIndices.get(bitIndex), splitters, handledNets, segments, splitter);
               if (ret != null) return ret;
             }
           }
@@ -1741,88 +1467,61 @@ public class Netlist implements CircuitListener {
     return null;
   }
 
-  private boolean HasHiddenSource(
-	  Net sourceNet,
-	  Byte sourceBitIndex,
-      Net thisNet,
-      Byte bitIndex,
-      List<Component> SplitterList,
-      Set<String> HandledNets) {
-	/* If the source net not is null add it to the set of visited nets to
-	 * prevent back-search on this net
-	 */
-	if (sourceNet != null) {
-      String NetId = MyNets.indexOf(sourceNet) + "-" + sourceBitIndex;
-      if (HandledNets.contains(NetId)) {
-        return false;
-      } else {
-        HandledNets.add(NetId);
-      }
-	}
-    /*
-     * to prevent deadlock situations we check if we already looked at this
-     * net
-     */
-    String NetId = MyNets.indexOf(thisNet) + "-" + bitIndex;
-    if (HandledNets.contains(NetId)) {
-      return false;
-    } else {
-      HandledNets.add(NetId);
+  private boolean hasHiddenSource(
+      Net fannoutNet,
+      Byte fannoutBitIndex,
+      Net combinedNet,
+      Byte combinedBitIndex,
+      List<Component> splitterList,
+      Set<String> handledNets,
+      Component ignoreSplitter) {
+    // If the fannout net not is null add it to the set of visited nets to prevent back-search on
+    // this net
+    if (fannoutNet != null) {
+      final var netId = myNets.indexOf(fannoutNet) + "-" + fannoutBitIndex;
+      if (handledNets.contains(netId)) return false;
+      handledNets.add(netId);
     }
-    if (thisNet.hasBitSource(bitIndex)) {
-      return true;
-    }
+    // to prevent deadlock situations we check if we already looked at this net
+    final var netId = myNets.indexOf(combinedNet) + "-" + combinedBitIndex;
+    if (handledNets.contains(netId)) return false;
+    handledNets.add(netId);
+    if (combinedNet.hasBitSource(combinedBitIndex)) return true;
     /* Check if we have a connection to another splitter */
-    for (Component currentSplitter : SplitterList) {
-      List<EndData> ends = currentSplitter.getEnds();
-      for (byte end = 0; end < ends.size(); end++) {
-        if (thisNet.contains(ends.get(end).getLocation())) {
+    for (var currentSplitter : splitterList) {
+      if (currentSplitter.equals(ignoreSplitter)) continue;
+      final var ends = currentSplitter.getEnds();
+      for (var end = 0; end < ends.size(); end++) {
+        if (combinedNet.contains(ends.get(end).getLocation())) {
           /* Here we have to process the inherited bits of the parent */
-          byte[] BusBitConnection = ((Splitter) currentSplitter).GetEndpoints();
+          final var busBitConnection = ((Splitter) currentSplitter).GetEndpoints();
           if (end == 0) {
-            /* this is a main net, find the connected end */
-            byte SplitterEnd = BusBitConnection[bitIndex];
+            // This is a main net, find the connected end.
+            var splitterEnd = busBitConnection[combinedBitIndex];
             /* Find the corresponding Net index */
-            Byte Netindex = 0;
-            for (int index = 0; index < bitIndex; index++) {
-              if (BusBitConnection[index] == SplitterEnd) {
-                Netindex++;
-              }
+            Byte netIndex = 0;
+            for (var index = 0; index < combinedBitIndex; index++) {
+              if (busBitConnection[index] == splitterEnd) netIndex++;
             }
-            /* Find the connected Net */
-            Net SlaveNet = null;
-            for (Net thisnet : MyNets) {
-              if (thisnet.contains(ends.get(SplitterEnd).getLocation())) {
-                SlaveNet = thisnet;
-              }
+            // Find the connected Net
+            Net slaveNet = null;
+            for (final var thisnet : myNets) {
+              if (thisnet.contains(ends.get(splitterEnd).getLocation())) slaveNet = thisnet;
             }
-            if (SlaveNet != null) {
-              if (HasHiddenSource(null,(byte) 0,
-                  SlaveNet, Netindex, SplitterList, HandledNets)) {
-                return true;
-              }
-            }
+            if (slaveNet != null && hasHiddenSource(null, (byte) 0, slaveNet, netIndex, splitterList, handledNets, currentSplitter))
+              return true;
           } else {
-            ArrayList<Byte> Rootindices = new ArrayList<>();
-            for (byte b = 0; b < BusBitConnection.length; b++) {
-              if (BusBitConnection[b] == end) {
-                Rootindices.add(b);
-              }
+            final var rootIndices = new ArrayList<Byte>();
+            for (byte b = 0; b < busBitConnection.length; b++) {
+              if (busBitConnection[b] == end) rootIndices.add(b);
             }
-            Net RootNet = null;
-            for (Net thisnet : MyNets) {
-              if (thisnet.contains(currentSplitter.getEnd(0).getLocation())) {
-                RootNet = thisnet;
-              }
+            Net rootNet = null;
+            for (final var thisnet : myNets) {
+              if (thisnet.contains(currentSplitter.getEnd(0).getLocation())) rootNet = thisnet;
             }
-            if (RootNet != null) {
-              if (HasHiddenSource(null,(byte) 0,
-                  RootNet,
-                  Rootindices.get(bitIndex),
-                  SplitterList,
-                  HandledNets)) {
-                return true;
-              }
+            if (rootNet != null
+                && hasHiddenSource(null, (byte) 0, rootNet, rootIndices.get(combinedBitIndex), splitterList, handledNets, currentSplitter)) {
+              return true;
             }
           }
         }
@@ -1831,619 +1530,537 @@ public class Netlist implements CircuitListener {
     return false;
   }
 
-  public boolean IsContinuesBus(NetlistComponent comp, int EndIndex) {
-    boolean ContinuesBus = true;
-    if ((EndIndex < 0) || (EndIndex >= comp.NrOfEnds())) {
-      return true;
-    }
-    ConnectionEnd ConnectionInformation = comp.getEnd(EndIndex);
-    int NrOfBits = ConnectionInformation.NrOfBits();
-    if (NrOfBits == 1) {
-      return true;
-    }
-    Net ConnectedNet = ConnectionInformation.GetConnection((byte) 0).GetParrentNet();
-    byte ConnectedNetIndex = ConnectionInformation.GetConnection((byte) 0).GetParrentNetBitIndex();
-    for (int i = 1; (i < NrOfBits) && ContinuesBus; i++) {
-      if (ConnectedNet != ConnectionInformation.GetConnection((byte) i).GetParrentNet()) {
-        /* This bit is connected to another bus */
-        ContinuesBus = false;
-      }
-      if ((ConnectedNetIndex + 1)
-          != ConnectionInformation.GetConnection((byte) i).GetParrentNetBitIndex()) {
-        /* Connected to a none incremental position of the bus */
-        ContinuesBus = false;
+  // FIXME: This method name is very unfortunate.
+  public boolean isContinuesBus(NetlistComponent comp, int endIndex) {
+    var continuesBus = true;
+    if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) return true;
+
+    final var connInfo = comp.getEnd(endIndex);
+    final var nrOfBits = connInfo.getNrOfBits();
+    if (nrOfBits == 1) return true;
+    final var connectedNet = connInfo.get((byte) 0).getParentNet();
+    var connectedNetIndex = connInfo.get((byte) 0).getParentNetBitIndex();
+    for (var i = 1; (i < nrOfBits) && continuesBus; i++) {
+      if (connectedNet != connInfo.get((byte) i).getParentNet())
+        continuesBus = false; // This bit is connected to another bus
+      if ((connectedNetIndex + 1) != connInfo.get((byte) i).getParentNetBitIndex()) {
+        continuesBus = false; // Connected to a none incremental position of the bus
       } else {
-        ConnectedNetIndex++;
+        connectedNetIndex++;
       }
     }
-    return ContinuesBus;
+    return continuesBus;
   }
 
-  public boolean IsValid() {
-    return DRCStatus == DRC_PASSED;
+  public boolean isValid() {
+    return drcStatus == DRC_PASSED;
   }
 
-  public void MarkClockNet(ArrayList<String> HierarchyNames, int clocksourceid, 
-        ConnectionPoint connection, boolean isPinClockSource) {
-    MyClockInformation.AddClockNet(HierarchyNames, clocksourceid, connection,isPinClockSource);
+  public void markClockNet(ArrayList<String> HierarchyNames, int clocksourceid, ConnectionPoint connection, boolean isPinClockSource) {
+    myClockInformation.addClockNet(HierarchyNames, clocksourceid, connection, isPinClockSource);
   }
 
-  public boolean MarkClockSourceComponents(
-      ArrayList<String> HierarchyNames,
-      ArrayList<Netlist> HierarchyNetlists,
-      ClockSourceContainer ClockSources) {
-    /* First pass: we go down the hierarchy till the leaves */
-    for (NetlistComponent sub : MySubCircuits) {
-      SubcircuitFactory SubFact = (SubcircuitFactory) sub.GetComponent().getFactory();
-      ArrayList<String> NewHierarchyNames = new ArrayList<>(HierarchyNames);
-      NewHierarchyNames.add(
+  public boolean markClockSourceComponents(ArrayList<String> hierarchyNames, ArrayList<Netlist> hierarchyNetlists, ClockSourceContainer clockSources) {
+    //First pass: we go down the hierarchy till the leaves
+    for (final var sub : mySubCircuits) {
+      final var subFact = (SubcircuitFactory) sub.getComponent().getFactory();
+      final var newHierarchyNames = new ArrayList<>(hierarchyNames);
+      newHierarchyNames.add(
           CorrectLabel.getCorrectLabel(
-              sub.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-      ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>(HierarchyNetlists);
-      NewHierarchyNetlists.add(SubFact.getSubcircuit().getNetList());
-      if (!SubFact.getSubcircuit()
+              sub.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
+      final var newHierarchyNetlists = new ArrayList<>(hierarchyNetlists);
+      newHierarchyNetlists.add(subFact.getSubcircuit().getNetList());
+      if (!subFact.getSubcircuit()
           .getNetList()
-          .MarkClockSourceComponents(NewHierarchyNames, NewHierarchyNetlists, ClockSources)) {
+          .markClockSourceComponents(newHierarchyNames, newHierarchyNetlists, clockSources)) {
         return false;
       }
     }
-    /*
-     * We see if some components require the Global fast FPGA
-     * clock
-     */
-    for (Component comp : MyCircuit.getNonWires()) {
-      if (comp.getFactory().RequiresGlobalClock()) {
-        ClockSources.SetGloblaClockRequirement();
-      }
+    // We see if some components require the Global fast FPGA clock
+    for (final var comp : myCircuit.getNonWires()) {
+      if (comp.getFactory().RequiresGlobalClock()) clockSources.setRequiresFpgaGlobalClock();
     }
     /* Second pass: We mark all clock sources */
-    for (NetlistComponent ClockSource : MyClockGenerators) {
-      if (ClockSource.NrOfEnds() != 1) {
-        Reporter.Report.AddFatalError(
-            "BUG: Found a clock source with more than 1 connection\n ==> "
-                + this.getClass().getName().replaceAll("\\.", "/")
-                + ":"
-                + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                + "\n");
+    for (final var clockSource : myClockGenerators) {
+      if (clockSource.nrOfEnds() != 1) {
+        Reporter.Report.addFatalErrorFmt(
+            "BUG: Found a clock source with more than 1 connection\n ==> %s:%d\n",
+            this.getClass().getName().replaceAll("\\.", "/"),
+            Thread.currentThread().getStackTrace()[2].getLineNumber());
         return false;
       }
-      ConnectionEnd ClockConnection = ClockSource.getEnd(0);
-      if (ClockConnection.NrOfBits() != 1) {
-        Reporter.Report.AddFatalError(
-            "BUG: Found a clock source with a bus as output\n ==> "
-                + this.getClass().getName().replaceAll("\\.", "/")
-                + ":"
-                + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                + "\n");
+      final var clockConnection = clockSource.getEnd(0);
+      if (clockConnection.getNrOfBits() != 1) {
+        Reporter.Report.addFatalErrorFmt(
+            "BUG: Found a clock source with a bus as output\n ==> %s:%d\n",
+            this.getClass().getName().replaceAll("\\.", "/"),
+            Thread.currentThread().getStackTrace()[2].getLineNumber());
         return false;
       }
-      ConnectionPoint SolderPoint = ClockConnection.GetConnection((byte) 0);
+      final var solderPoint = clockConnection.get((byte) 0);
       /* Check if the clock source is connected */
-      if (SolderPoint.GetParrentNet() != null) {
+      if (solderPoint.getParentNet() != null) {
         /* Third pass: add this clock to the list of ClockSources */
-        int clockid = ClockSources.getClockId(ClockSource.GetComponent());
+        final var clockid = clockSources.getClockId(clockSource.getComponent());
         /* Forth pass: Add this source as clock source to the tree */
-        MyClockInformation.AddClockSource(HierarchyNames, clockid, SolderPoint);
+        myClockInformation.addClockSource(hierarchyNames, clockid, solderPoint);
         /* Fifth pass: trace the clock net all the way */
-        if (!TraceClockNet(
-            SolderPoint.GetParrentNet(),
-            SolderPoint.GetParrentNetBitIndex(),
+        if (!traceClockNet(
+            solderPoint.getParentNet(),
+            solderPoint.getParentNetBitIndex(),
             clockid,
             false,
-            HierarchyNames,
-            HierarchyNetlists)) {
+            hierarchyNames,
+            hierarchyNetlists)) {
           return false;
         }
       }
     }
+
     return true;
   }
 
-  public boolean NetlistHasShortCircuits() {
-    boolean ret = false;
-    for (Net net : MyNets) {
-      if (net.IsRootNet()) {
+  public boolean netlistHasShortCircuits() {
+    var ret = false;
+    for (final var net : myNets) {
+      if (net.isRootNet()) {
         if (net.hasShortCircuit()) {
-          SimpleDRCContainer error =
+          final var error =
               new SimpleDRCContainer(
-                  MyCircuit,
+                  myCircuit,
                   S.get("NetList_ShortCircuit"),
                   SimpleDRCContainer.LEVEL_FATAL,
                   SimpleDRCContainer.MARK_WIRE);
-          error.AddMarkComponents(net.getWires());
+          error.addMarkComponents(net.getWires());
           Reporter.Report.AddError(error);
           ret = true;
-        } else if (net.BitWidth() == 1 && net.GetSourceNets(0).size() > 1) {
-          /* We have to check if the net is connected to multiple drivers */
-          ArrayList<ConnectionPoint> sourceNets = net.GetSourceNets(0);
-          HashMap<Component,Integer> sourceConnections = new HashMap<>();
-          HashSet<Wire> segments = new HashSet<>(net.getWires());
-          boolean foundShortCrcuit = false;
-          SimpleDRCContainer error =
-              new SimpleDRCContainer(
-                  MyCircuit,
-                  S.get("NetList_ShortCircuit"),
-                  SimpleDRCContainer.LEVEL_FATAL,
-                  SimpleDRCContainer.MARK_WIRE|SimpleDRCContainer.MARK_INSTANCE);
+        } else if (net.getBitWidth() == 1 && net.getSourceNets(0).size() > 1) {
+          // We have to check if the net is connected to multiple drivers
+          final var sourceNets = net.getSourceNets(0);
+          final var sourceConnections = new HashMap<Component, Integer>();
+          final var segments = new HashSet<Wire>(net.getWires());
+          var foundShortCrcuit = false;
+          final var error = new SimpleDRCContainer(myCircuit, S.get("NetList_ShortCircuit"), SimpleDRCContainer.LEVEL_FATAL, SimpleDRCContainer.MARK_WIRE | SimpleDRCContainer.MARK_INSTANCE);
           for (ConnectionPoint sourceNet : sourceNets) {
-            Net connectedNet = sourceNet.GetParrentNet();
-            byte bitIndex = sourceNet.GetParrentNetBitIndex();
-            if (HasHiddenSource(net, (byte) 0, connectedNet, bitIndex, MyComplexSplitters,
-                new HashSet<>())) {
-              SourceInfo source = GetHiddenSource(net, (byte) 0, connectedNet, bitIndex,
-                  MyComplexSplitters, new HashSet<>(), segments);
-              if (source == null) {
-                /* this should never happen */
-                return true;
-              }
-              Component comp = source.getSource().GetComp();
-              for (Wire seg : segments)
-                error.AddMarkComponent(seg);
-              error.AddMarkComponent(comp);
-              int index = source.getIndex();
-              foundShortCrcuit |= (sourceConnections.containsKey(comp) &&
-                  sourceConnections.get(comp) != index) ||
-                  (sourceConnections.keySet().size() > 0);
+            final var connectedNet = sourceNet.getParentNet();
+            final byte bitIndex = sourceNet.getParentNetBitIndex();
+            if (hasHiddenSource(net, (byte) 0, connectedNet, bitIndex, mySplitters, new HashSet<>(), null)) {
+              final var source = getHiddenSource(net, (byte) 0, connectedNet, bitIndex, mySplitters, new HashSet<>(), segments, null);
+              if (source == null) return true; // this should never happen
+              final var comp = source.getSource().getComp();
+              for (final var seg : segments) error.addMarkComponent(seg);
+              error.addMarkComponent(comp);
+              final var index = source.getIndex();
+              foundShortCrcuit |= (sourceConnections.containsKey(comp) && sourceConnections.get(comp) != index) || (sourceConnections.keySet().size() > 0);
               sourceConnections.put(comp, index);
             }
           }
           if (foundShortCrcuit) {
             ret = true;
             Reporter.Report.AddError(error);
-          } else net.CleanupSourceNets(0);
+          } else {
+            net.cleanupSourceNets(0);
+          }
         }
       }
     }
     return ret;
   }
 
-  public boolean NetlistHasSinksWithoutSource() {
+  public boolean netlistHasSinksWithoutSource() {
     /* First pass: we make a set with all sinks */
-    Set<ConnectionPoint> MySinks = new HashSet<>();
-    for (Net ThisNet : MyNets) {
-      if (ThisNet.IsRootNet()) {
-        MySinks.addAll(ThisNet.GetSinks());
-      }
+    final var mySinks = new HashSet<ConnectionPoint>();
+    for (final var thisNet : myNets) {
+      if (thisNet.isRootNet()) mySinks.addAll(thisNet.getSinks());
     }
     /* Second pass: we iterate along all the sources */
-    for (Net ThisNet : MyNets) {
-      if (ThisNet.IsRootNet()) {
-        for (int i = 0; i < ThisNet.BitWidth(); i++) {
-          if (ThisNet.hasBitSource(i)) {
-            boolean HasSink = false;
-            ArrayList<ConnectionPoint> Sinks = ThisNet.GetBitSinks(i);
-            HasSink |= !Sinks.isEmpty();
-            Sinks.forEach(MySinks::remove);
-            ArrayList<ConnectionPoint> HiddenSinkNets =
-                GetHiddenSinks(
-                    ThisNet, (byte) i, MyComplexSplitters, new HashSet<>(), true);
-            HasSink |= !HiddenSinkNets.isEmpty();
-            HiddenSinkNets.forEach(MySinks::remove);
-            if (!HasSink) {
-              SimpleDRCContainer warn =
+    for (final var thisNet : myNets) {
+      if (thisNet.isRootNet()) {
+        for (var i = 0; i < thisNet.getBitWidth(); i++) {
+          if (thisNet.hasBitSource(i)) {
+            var hasSink = false;
+            final var sinks = thisNet.getBitSinks(i);
+            hasSink |= !sinks.isEmpty();
+            sinks.forEach(mySinks::remove);
+            final var hiddenSinkNets = GetHiddenSinks(thisNet, (byte) i, mySplitters, new HashSet<>(), true);
+            hasSink |= !hiddenSinkNets.isEmpty();
+            hiddenSinkNets.forEach(mySinks::remove);
+            if (!hasSink) {
+              final var warn =
                   new SimpleDRCContainer(
-                      MyCircuit,
+                      myCircuit,
                       S.get("NetList_SourceWithoutSink"),
                       SimpleDRCContainer.LEVEL_NORMAL,
                       SimpleDRCContainer.MARK_WIRE);
-              warn.AddMarkComponents(ThisNet.getWires());
+              warn.addMarkComponents(thisNet.getWires());
               Reporter.Report.AddWarning(warn);
             }
           }
         }
       }
     }
-    if (MySinks.size() != 0) {
-      for (ConnectionPoint Sink : MySinks) {
-        SimpleDRCContainer warn =
+    if (mySinks.size() != 0) {
+      for (final var sink : mySinks) {
+        final var warn =
             new SimpleDRCContainer(
-                MyCircuit,
-                S.get("NetList_UnsourcedSink"),
-                SimpleDRCContainer.LEVEL_SEVERE,
-                SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_WIRE);
-        warn.AddMarkComponents(Sink.GetParrentNet().getWires());
-        if (Sink.GetComp() != null) {
-          warn.AddMarkComponent(Sink.GetComp());
-        }
+                    myCircuit,
+                    S.get("NetList_UnsourcedSink"),
+                    SimpleDRCContainer.LEVEL_SEVERE,
+                    SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_WIRE);
+        warn.addMarkComponents(sink.getParentNet().getWires());
+        if (sink.getComp() != null) warn.addMarkComponent(sink.getComp());
         Reporter.Report.AddWarning(warn);
       }
     }
     return false;
   }
 
-  public int NumberOfBusses() {
-    int nr_of_busses = 0;
-    for (Net ThisNet : MyNets) {
-      if (ThisNet.IsRootNet() && ThisNet.isBus()) {
-        nr_of_busses++;
-      }
+  public int numberOfBusses() {
+    var nrOfBusses = 0;
+    for (final var thisNet : myNets) {
+      if (thisNet.isRootNet() && thisNet.isBus()) nrOfBusses++;
     }
-    return nr_of_busses;
+    return nrOfBusses;
   }
 
-  public int NumberOfClockTrees() {
-    return MyClockInformation.GetSourceContainer().getNrofSources();
+  public int numberOfClockTrees() {
+    return myClockInformation.getSourceContainer().getNrofSources();
   }
 
-  public int NumberOfInOutBubbles() {
-    return LocalNrOfInOutBubles;
+  public int numberOfInOutBubbles() {
+    return localNrOfInOutBubbles;
   }
 
-  public int NumberOfInOutPortBits() {
-    int count = 0;
-    for (NetlistComponent inp : MyInOutPorts) {
-      count += inp.getEnd(0).NrOfBits();
-    }
+  public int numberOfInOutPortBits() {
+    var count = 0;
+    for (final var inp : myInOutPorts) count += inp.getEnd(0).getNrOfBits();
     return count;
   }
 
-  public int NumberOfInOutPorts() {
-    return MyInOutPorts.size();
+  public int numberOfInOutPorts() {
+    return myInOutPorts.size();
   }
 
-  public int NumberOfInputBubbles() {
-    return LocalNrOfInportBubles;
+  public int getNumberOfInputBubbles() {
+    return localNrOfInportBubbles;
   }
 
-  public int NumberOfInputPortBits() {
-    int count = 0;
-    for (NetlistComponent inp : MyInputPorts) {
-      count += inp.getEnd(0).NrOfBits();
-    }
+  public int getNumberOfInputPortBits() {
+    var count = 0;
+    for (final var inPort : myInputPorts) count += inPort.getEnd(0).getNrOfBits();
     return count;
   }
 
-  public int NumberOfInputPorts() {
-    return MyInputPorts.size();
+  public int getNumberOfInputPorts() {
+    return myInputPorts.size();
   }
 
-  public int NumberOfNets() {
-    int nr_of_nets = 0;
-    for (Net ThisNet : MyNets) {
-      if (ThisNet.IsRootNet() && !ThisNet.isBus()) {
-        nr_of_nets++;
-      }
+  public int numberOfNets() {
+    var nrOfNets = 0;
+    for (final var thisNet : myNets) {
+      if (thisNet.isRootNet() && !thisNet.isBus()) nrOfNets++;
     }
-    return nr_of_nets;
+    return nrOfNets;
   }
 
-  public int NumberOfOutputBubbles() {
-    return LocalNrOfOutportBubles;
+  public int numberOfOutputBubbles() {
+    return localNrOfOutportBubbles;
   }
 
-  public int NumberOfOutputPortBits() {
-    int count = 0;
-    for (NetlistComponent outp : MyOutputPorts) {
-      count += outp.getEnd(0).NrOfBits();
-    }
+  public int numberOfOutputPortBits() {
+    var count = 0;
+    for (final var outPort : myOutputPorts) count += outPort.getEnd(0).getNrOfBits();
     return count;
   }
 
-  public int NumberOfOutputPorts() {
-    return MyOutputPorts.size();
+  public int numberOfOutputPorts() {
+    return myOutputPorts.size();
   }
 
-  private boolean ProcessNormalComponent(Component comp) {
-    NetlistComponent NormalComponent = new NetlistComponent(comp);
-    for (EndData ThisPin : comp.getEnds()) {
-      Net Connection = FindConnectedNet(ThisPin.getLocation());
-      if (Connection != null) {
-        int PinId = comp.getEnds().indexOf(ThisPin);
-        boolean PinIsSink = ThisPin.isInput();
-        ConnectionEnd ThisEnd = NormalComponent.getEnd(PinId);
-        Net RootNet = GetRootNet(Connection);
-        if (RootNet == null) {
-          Reporter.Report.AddFatalError(
-              "BUG: Unable to find a root net for a normal component\n ==> "
-                  + this.getClass().getName().replaceAll("\\.", "/")
-                  + ":"
-                  + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                  + "\n");
+  private boolean processNormalComponent(Component comp) {
+    final var normalComponent = new NetlistComponent(comp);
+    for (final var thisPin : comp.getEnds()) {
+      final var connection = findConnectedNet(thisPin.getLocation());
+      if (connection != null) {
+        final var pinId = comp.getEnds().indexOf(thisPin);
+        final var pinIsSink = thisPin.isInput();
+        final var thisEnd = normalComponent.getEnd(pinId);
+        final var rootNet = getRootNet(connection);
+        if (rootNet == null) {
+          Reporter.Report.addFatalErrorFmt(
+              "BUG: Unable to find a root net for a normal component\n ==> %s:%d\n",
+              this.getClass().getName().replaceAll("\\.", "/"),
+              Thread.currentThread().getStackTrace()[2].getLineNumber());
           return false;
         }
-        for (byte bitid = 0; bitid < ThisPin.getWidth().getWidth(); bitid++) {
-          byte RootNetBitIndex = GetRootNetIndex(Connection, bitid);
-          if (RootNetBitIndex < 0) {
-            Reporter.Report.AddFatalError(
-                "BUG:  Unable to find a root-net bit-index for a normal component\n ==> "
-                    + this.getClass().getName().replaceAll("\\.", "/")
-                    + ":"
-                    + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                    + "\n");
+        for (var bitid = 0; bitid < thisPin.getWidth().getWidth(); bitid++) {
+          final var rootNetBitIndex = getRootNetIndex(connection, (byte) bitid);
+          if (rootNetBitIndex < 0) {
+            Reporter.Report.addFatalErrorFmt(
+                // FIXME: Some "BUG:" have 2 spaces, other just 1. Is this intentional or all can have 1 (multiple places)?
+                "BUG:  Unable to find a root-net bit-index for a normal component\n ==> %s:%d\n",
+                this.getClass().getName().replaceAll("\\.", "/"),
+                Thread.currentThread().getStackTrace()[2].getLineNumber());
             return false;
           }
-          ConnectionPoint ThisSolderPoint = ThisEnd.GetConnection(bitid);
-          ThisSolderPoint.SetParrentNet(RootNet, RootNetBitIndex);
-          if (PinIsSink) {
-            RootNet.addSink(RootNetBitIndex, ThisSolderPoint);
+          final var thisSolderPoint = thisEnd.get((byte) bitid);
+          thisSolderPoint.setParentNet(rootNet, rootNetBitIndex);
+          if (pinIsSink) {
+            rootNet.addSink(rootNetBitIndex, thisSolderPoint);
           } else {
-            RootNet.addSource(RootNetBitIndex, ThisSolderPoint);
+            rootNet.addSource(rootNetBitIndex, thisSolderPoint);
           }
         }
       }
     }
     if (comp.getFactory() instanceof Clock) {
-      MyClockGenerators.add(NormalComponent);
+      myClockGenerators.add(normalComponent);
     } else if (comp.getFactory() instanceof Pin) {
       if (comp.getEnd(0).isInput()) {
-        MyOutputPorts.add(NormalComponent);
+        myOutputPorts.add(normalComponent);
       } else {
-        MyInputPorts.add(NormalComponent);
+        myInputPorts.add(normalComponent);
       }
     } else {
-      MyComponents.add(NormalComponent);
+      myComponents.add(normalComponent);
     }
     return true;
   }
 
-  private boolean ProcessSubcircuit(Component comp) {
-    NetlistComponent Subcircuit = new NetlistComponent(comp);
-    SubcircuitFactory sub = (SubcircuitFactory) comp.getFactory();
-    Instance[] subPins = ((CircuitAttributes) comp.getAttributeSet()).getPinInstances();
-    Netlist subNetlist = sub.getSubcircuit().getNetList();
-    for (EndData ThisPin : comp.getEnds()) {
-      Net Connection = FindConnectedNet(ThisPin.getLocation());
-      int PinId = comp.getEnds().indexOf(ThisPin);
-      int SubPortIndex = subNetlist.GetPortInfo(subPins[PinId].getAttributeValue(StdAttr.LABEL));
-      if (SubPortIndex < 0) {
-        Reporter.Report.AddFatalError(
-            "BUG:  Unable to find pin in sub-circuit\n ==> "
-                + this.getClass().getName().replaceAll("\\.", "/")
-                + ":"
-                + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                + "\n");
+  private boolean processSubcircuit(Component comp) {
+    final var subCircuit = new NetlistComponent(comp);
+    final var subFactory = (SubcircuitFactory) comp.getFactory();
+    final var subPins = ((CircuitAttributes) comp.getAttributeSet()).getPinInstances();
+    final var subNetlist = subFactory.getSubcircuit().getNetList();
+    for (final var thisPin : comp.getEnds()) {
+      final var connection = findConnectedNet(thisPin.getLocation());
+      final var pinId = comp.getEnds().indexOf(thisPin);
+      final var subPortIndex = subNetlist.getPortInfo(subPins[pinId].getAttributeValue(StdAttr.LABEL));
+      if (subPortIndex < 0) {
+        Reporter.Report.addFatalErrorFmt(
+            "BUG:  Unable to find pin in sub-circuit\n ==> %s:%d\n",
+            this.getClass().getName().replaceAll("\\.", "/"),
+            Thread.currentThread().getStackTrace()[2].getLineNumber());
         return false;
       }
-      if (Connection != null) {
-        boolean PinIsSink = ThisPin.isInput();
-        Net RootNet = GetRootNet(Connection);
-        if (RootNet == null) {
-          Reporter.Report.AddFatalError(
-              "BUG:  Unable to find a root net for sub-circuit\n ==> "
-                  + this.getClass().getName().replaceAll("\\.", "/")
-                  + ":"
-                  + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                  + "\n");
+      if (connection != null) {
+        var pinIsSink = thisPin.isInput();
+        final var rootNet = getRootNet(connection);
+        if (rootNet == null) {
+          Reporter.Report.addFatalErrorFmt(
+              "BUG:  Unable to find a root net for sub-circuit\n ==> %s:%d\n",
+              this.getClass().getName().replaceAll("\\.", "/"),
+              Thread.currentThread().getStackTrace()[2].getLineNumber());
           return false;
         }
-        for (byte bitid = 0; bitid < ThisPin.getWidth().getWidth(); bitid++) {
-          byte RootNetBitIndex = GetRootNetIndex(Connection, bitid);
-          if (RootNetBitIndex < 0) {
-            Reporter.Report.AddFatalError(
-                "BUG:  Unable to find a root-net bit-index for sub-circuit\n ==> "
-                    + this.getClass().getName().replaceAll("\\.", "/")
-                    + ":"
-                    + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                    + "\n");
+        for (byte bitid = 0; bitid < thisPin.getWidth().getWidth(); bitid++) {
+          final var rootNetBitIndex = getRootNetIndex(connection, bitid);
+          if (rootNetBitIndex < 0) {
+            Reporter.Report.addFatalErrorFmt(
+                "BUG:  Unable to find a root-net bit-index for sub-circuit\n ==> %s:%d\n",
+                this.getClass().getName().replaceAll("\\.", "/"),
+                Thread.currentThread().getStackTrace()[2].getLineNumber());
             return false;
           }
-          Subcircuit.getEnd(PinId).GetConnection(bitid).SetParrentNet(RootNet, RootNetBitIndex);
-          if (PinIsSink) {
-            RootNet.addSink(RootNetBitIndex, Subcircuit.getEnd(PinId).GetConnection(bitid));
+          subCircuit.getEnd(pinId).get(bitid).setParentNet(rootNet, rootNetBitIndex);
+          if (pinIsSink) {
+            rootNet.addSink(rootNetBitIndex, subCircuit.getEnd(pinId).get(bitid));
           } else {
-            RootNet.addSource(RootNetBitIndex, Subcircuit.getEnd(PinId).GetConnection(bitid));
+            rootNet.addSource(rootNetBitIndex, subCircuit.getEnd(pinId).get(bitid));
           }
-          /*
-           * Special handling for sub-circuits; we have to find out
-           * the connection to the corresponding net in the underlying
-           * net-list; At this point the underlying net-lists have
-           * already been generated.
-           */
-          Subcircuit.getEnd(PinId).GetConnection(bitid).setChildsPortIndex(SubPortIndex);
+          // Special handling for sub-circuits; we have to find out  the connection to the
+          // corresponding net in the underlying net-list; At this point the underlying net-lists
+          // have already been generated.
+          subCircuit.getEnd(pinId).get(bitid).setChildsPortIndex(subPortIndex);
         }
       } else {
-        for (byte bitid = 0; bitid < ThisPin.getWidth().getWidth(); bitid++) {
-          Subcircuit.getEnd(PinId).GetConnection(bitid).setChildsPortIndex(SubPortIndex);
-        }
+        for (byte bitid = 0; bitid < thisPin.getWidth().getWidth(); bitid++)
+          subCircuit.getEnd(pinId).get(bitid).setChildsPortIndex(subPortIndex);
       }
     }
-    MySubCircuits.add(Subcircuit);
+    mySubCircuits.add(subCircuit);
     return true;
   }
 
   public String projName() {
-    return MyCircuit.getProjName();
+    return myCircuit.getProjName();
   }
 
-  public boolean RequiresGlobalClockConnection() {
-    return MyClockInformation.GetSourceContainer().RequiresFPGAGlobalClock();
+  public boolean requiresGlobalClockConnection() {
+    return myClockInformation.getSourceContainer().getRequiresFpgaGlobalClock();
   }
 
-  public void SetCurrentHierarchyLevel(ArrayList<String> Level) {
-    CurrentHierarchyLevel.clear();
-    CurrentHierarchyLevel.addAll(Level);
+  public void setCurrentHierarchyLevel(ArrayList<String> level) {
+    currentHierarchyLevel.clear();
+    currentHierarchyLevel.addAll(level);
   }
-  
-  private boolean TraceDownSubcircuit(
-		  ConnectionPoint p,
-		  int ClockSourceId,
-	      ArrayList<String> HierarchyNames,
-	      ArrayList<Netlist> HierarchyNetlists) {
-    if (p.getChildsPortIndex() < 0) {
-      Reporter.Report.AddFatalError(
-          "BUG: Subcircuit port is not annotated!\n ==> "
-              + this.getClass().getName().replaceAll("\\.", "/")
-              + ":"
-              + Thread.currentThread().getStackTrace()[2].getLineNumber()
-              + "\n");
+
+  private boolean TraceDownSubcircuit(ConnectionPoint point, int clockSourceId, ArrayList<String> hierarchyNames, ArrayList<Netlist> hierarchyNetlists) {
+    if (point.getChildsPortIndex() < 0) {
+      Reporter.Report.addFatalErrorFmt(
+          "BUG: Subcircuit port is not annotated!\n ==> %s:%d\n",
+          this.getClass().getName().replaceAll("\\.", "/"),
+          Thread.currentThread().getStackTrace()[2].getLineNumber());
       return false;
     }
-    SubcircuitFactory sub = (SubcircuitFactory) p.GetComp().getFactory();
-    NetlistComponent InputPort = sub.getSubcircuit().getNetList().GetInputPin(p.getChildsPortIndex());
-    if (InputPort == null) {
-      Reporter.Report.AddFatalError(
-          "BUG: Unable to find Subcircuit input port!\n ==> "
-              + this.getClass().getName().replaceAll("\\.", "/")
-              + ":"
-              + Thread.currentThread().getStackTrace()[2].getLineNumber()
-              + "\n");
+    final var sub = (SubcircuitFactory) point.getComp().getFactory();
+    final var inputPort = sub.getSubcircuit().getNetList().getInputPin(point.getChildsPortIndex());
+    if (inputPort == null) {
+      Reporter.Report.addFatalErrorFmt(
+          "BUG: Unable to find Subcircuit input port!\n ==> %s:%d\n",
+          this.getClass().getName().replaceAll("\\.", "/"),
+          Thread.currentThread().getStackTrace()[2].getLineNumber());
       return false;
     }
-    NetlistComponent subCirc = getSubCirc(p.GetComp());
+    final var subCirc = getSubCirc(point.getComp());
     if (subCirc == null) {
-      Reporter.Report.AddFatalError(
-          "BUG: Unable to find Subcircuit!\n ==> "
-              + this.getClass().getName().replaceAll("\\.", "/")
-              + ":"
-              + Thread.currentThread().getStackTrace()[2].getLineNumber()
-              + "\n");
+      Reporter.Report.addFatalErrorFmt(
+          "BUG: Unable to find Subcircuit!\n ==> %s:%d\n",
+          this.getClass().getName().replaceAll("\\.", "/"),
+          Thread.currentThread().getStackTrace()[2].getLineNumber());
       return false;
     }
-    byte BitIndex = subCirc.GetConnectionBitIndex(p.GetParrentNet(), p.GetParrentNetBitIndex());
-    if (BitIndex < 0) {
-      Reporter.Report.AddFatalError(
-          "BUG: Unable to find the bit index of a Subcircuit input port!\n ==> "
-              + this.getClass().getName().replaceAll("\\.", "/")
-              + ":"
-              + Thread.currentThread().getStackTrace()[2].getLineNumber()
-              + "\n");
+    final var bitindex = subCirc.getConnectionBitIndex(point.getParentNet(), point.getParentNetBitIndex());
+    if (bitindex < 0) {
+      Reporter.Report.addFatalErrorFmt(
+          "BUG: Unable to find the bit index of a Subcircuit input port!\n ==> %s:%d\n",
+          this.getClass().getName().replaceAll("\\.", "/"),
+          Thread.currentThread().getStackTrace()[2].getLineNumber());
       return false;
     }
-    ConnectionPoint SubClockNet = InputPort.getEnd(0).GetConnection(BitIndex);
-    if (SubClockNet.GetParrentNet() != null) {
+    final var subClockNet = inputPort.getEnd(0).get(bitindex);
+    if (subClockNet.getParentNet() != null) {
       /* we have a connected pin */
-      ArrayList<String> NewHierarchyNames = new ArrayList<>(HierarchyNames);
-      String Label = CorrectLabel.getCorrectLabel(
-              subCirc.GetComponent().getAttributeSet().getValue(StdAttr.LABEL));
-      NewHierarchyNames.add(Label);
-      ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>(HierarchyNetlists);
-      NewHierarchyNetlists.add(sub.getSubcircuit().getNetList());
-      sub.getSubcircuit().getNetList()
-          .MarkClockNet(NewHierarchyNames, ClockSourceId, SubClockNet,true);
+      final var newHierarchyNames = new ArrayList<>(hierarchyNames);
+      final var label =
+          CorrectLabel.getCorrectLabel(
+              subCirc.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
+      newHierarchyNames.add(label);
+      final var newHierarchyNetlists = new ArrayList<>(hierarchyNetlists);
+      newHierarchyNetlists.add(sub.getSubcircuit().getNetList());
+      sub.getSubcircuit()
+          .getNetList()
+          .markClockNet(newHierarchyNames, clockSourceId, subClockNet, true);
       return sub.getSubcircuit()
           .getNetList()
-          .TraceClockNet(
-              SubClockNet.GetParrentNet(),
-              SubClockNet.GetParrentNetBitIndex(),
-              ClockSourceId,
+          .traceClockNet(
+              subClockNet.getParentNet(),
+              subClockNet.getParentNetBitIndex(),
+              clockSourceId,
               true,
-              NewHierarchyNames,
-              NewHierarchyNetlists);
+              newHierarchyNames,
+              newHierarchyNetlists);
     }
     return true;
   }
 
-  public boolean TraceClockNet(
-      Net ClockNet,
-      byte ClockNetBitIndex,
-      int ClockSourceId,
-      boolean isPinSource,
-      ArrayList<String> HierarchyNames,
-      ArrayList<Netlist> HierarchyNetlists) {
- 	    ArrayList<ConnectionPoint> HiddenComps = GetHiddenSinks(ClockNet, ClockNetBitIndex, MyComplexSplitters,
-         new HashSet<>(), false);
- 	    for (ConnectionPoint p : HiddenComps) {
- 	    MarkClockNet(HierarchyNames, ClockSourceId, p, isPinSource);
-      if (p.GetComp().getFactory() instanceof SubcircuitFactory)
-        if (!TraceDownSubcircuit(p,ClockSourceId,HierarchyNames,HierarchyNetlists))
-        	return false;
+  public boolean traceClockNet(Net clockNet, byte clockNetBitIndex, int clockSourceId, boolean isPinSource, ArrayList<String> hierarchyNames, ArrayList<Netlist> hierarchyNetlists) {
+    final var hiddenComps = GetHiddenSinks(clockNet, clockNetBitIndex, mySplitters, new HashSet<>(), false);
+    for (final var point : hiddenComps) {
+      markClockNet(hierarchyNames, clockSourceId, point, isPinSource);
+      if (point.getComp().getFactory() instanceof SubcircuitFactory)
+        if (!TraceDownSubcircuit(point, clockSourceId, hierarchyNames, hierarchyNetlists)) return false;
       /* On top level we do not have to go up */
-      if (HierarchyNames.isEmpty()) continue;
-      if (p.GetComp().getFactory() instanceof Pin) {
-        NetlistComponent OutputPort = getOutPort(p.GetComp());
-        if (OutputPort == null) {
-          Reporter.Report.AddFatalError(
-              "BUG: Could not find an output port!\n ==> "
-                  + this.getClass().getName().replaceAll("\\.", "/")
-                  + ":"
-                  + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                  + "\n");
+      if (hierarchyNames.isEmpty()) continue;
+      if (point.getComp().getFactory() instanceof Pin) {
+        final var outputPort = getOutPort(point.getComp());
+        if (outputPort == null) {
+          Reporter.Report.addFatalErrorFmt(
+              "BUG: Could not find an output port!\n ==> %s:%d\n",
+              this.getClass().getName().replaceAll("\\.", "/"),
+              Thread.currentThread().getStackTrace()[2].getLineNumber());
           return false;
         }
-        byte bitindex = OutputPort.GetConnectionBitIndex(p.GetParrentNet(), p.GetParrentNetBitIndex());
-        ConnectionPoint SubClockNet =
-            HierarchyNetlists.get(HierarchyNetlists.size() - 2)
-                .GetNetlistConnectionForSubCircuit(
-                    HierarchyNames.get(HierarchyNames.size() - 1),
-                    MyOutputPorts.indexOf(OutputPort),
-                    bitindex);
-        if (SubClockNet == null) {
-          Reporter.Report.AddFatalError(
-              "BUG: Could not find a sub-circuit connection in overlying hierarchy level!\n ==> "
-                  + this.getClass().getName().replaceAll("\\.", "/")
-                  + ":"
-                  + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                  + "\n");
+        final var bitIndex = outputPort.getConnectionBitIndex(point.getParentNet(), point.getParentNetBitIndex());
+        final var subClockNet =
+            hierarchyNetlists.get(hierarchyNetlists.size() - 2)
+                .getNetlistConnectionForSubCircuit(
+                    hierarchyNames.get(hierarchyNames.size() - 1),
+                    myOutputPorts.indexOf(outputPort),
+                    bitIndex);
+        if (subClockNet == null) {
+          Reporter.Report.addFatalErrorFmt(
+              "BUG: Could not find a sub-circuit connection in overlying hierarchy level!\n ==> %s:%d\n",
+              this.getClass().getName().replaceAll("\\.", "/"),
+              Thread.currentThread().getStackTrace()[2].getLineNumber());
           return false;
         }
-        if (SubClockNet.GetParrentNet() == null) {
+        if (subClockNet.getParentNet() == null) {
         } else {
-          ArrayList<String> NewHierarchyNames = new ArrayList<>(HierarchyNames);
-          NewHierarchyNames.remove(NewHierarchyNames.size() - 1);
-          ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>(HierarchyNetlists);
-          NewHierarchyNetlists.remove(NewHierarchyNetlists.size() - 1);
-          HierarchyNetlists.get(HierarchyNetlists.size() - 2)
-              .MarkClockNet(NewHierarchyNames, ClockSourceId, SubClockNet,true);
-          if (!HierarchyNetlists.get(HierarchyNetlists.size() - 2)
-              .TraceClockNet(
-                  SubClockNet.GetParrentNet(),
-                  SubClockNet.GetParrentNetBitIndex(),
-                  ClockSourceId,
+          final var newHierarchyNames = new ArrayList<String>(hierarchyNames);
+          newHierarchyNames.remove(newHierarchyNames.size() - 1);
+          final var newHierarchyNetlists = new ArrayList<>(hierarchyNetlists);
+          newHierarchyNetlists.remove(newHierarchyNetlists.size() - 1);
+          hierarchyNetlists.get(hierarchyNetlists.size() - 2).markClockNet(newHierarchyNames, clockSourceId, subClockNet, true);
+          if (!hierarchyNetlists.get(hierarchyNetlists.size() - 2)
+              .traceClockNet(
+                  subClockNet.getParentNet(),
+                  subClockNet.getParentNetBitIndex(),
+                  clockSourceId,
                   true,
-                  NewHierarchyNames,
-                  NewHierarchyNetlists)) {
+                  newHierarchyNames,
+                  newHierarchyNetlists)) {
             return false;
           }
         }
       }
-	}
+    }
     return true;
   }
-  
+
   private NetlistComponent getSubCirc(Component comp) {
-    for (NetlistComponent current : MySubCircuits)
-      if (current.GetComponent().equals(comp))
-        return current;
-    return null;
-  }
-  
-  private NetlistComponent getOutPort(Component comp) {
-    for (NetlistComponent current : MyOutputPorts)
-      if (current.GetComponent().equals(comp))
-        return current;
+    for (final var current : mySubCircuits) {
+      if (current.getComponent().equals(comp)) return current;
+    }
     return null;
   }
 
-  private boolean DetectGatedClocks() {
-    /* First Pass: We gather a complete information tree about components with clock inputs and their connected nets in
-     * case it is not a clock net. The moment we call this function the clock tree has been marked already !*/
-    ArrayList<Netlist> root = new ArrayList<>();
-    boolean suppress = AppPreferences.SupressGatedClockWarnings.getBoolean();
+  private NetlistComponent getOutPort(Component comp) {
+    for (final var current : myOutputPorts) {
+      if (current.getComponent().equals(comp)) return current;
+    }
+    return null;
+  }
+
+  private boolean detectGatedClocks() {
+    // First Pass: We gather a complete information tree about components with clock inputs and
+    // their connected nets in    case it is not a clock net. The moment we call this function the
+    // clock tree has been marked already!
+    final var root = new ArrayList<Netlist>();
+    var suppress = AppPreferences.SupressGatedClockWarnings.getBoolean();
     root.add(this);
-    Map<String, Map<NetlistComponent, Circuit>> NotGatedSet =
-        new HashMap<>();
-    Map<String, Map<NetlistComponent, Circuit>> GatedSet =
-        new HashMap<>();
-    SetCurrentHierarchyLevel(new ArrayList<>());
-    GetGatedClockComponents(root, null, NotGatedSet, GatedSet, new HashSet<>());
-    for (String key : NotGatedSet.keySet()) {
-      if (GatedSet.containsKey(key) && !suppress) {
+    final var notGatedSet = new HashMap<String, Map<NetlistComponent, Circuit>>();
+    final var gatedSet = new HashMap<String, Map<NetlistComponent, Circuit>>();
+    setCurrentHierarchyLevel(new ArrayList<>());
+    getGatedClockComponents(root, null, notGatedSet, gatedSet, new HashSet<>());
+    for (final var key : notGatedSet.keySet()) {
+      if (gatedSet.containsKey(key) && !suppress) {
         /* big Problem, we have a component that is used with and without gated clocks */
         Reporter.Report.AddSevereWarning(S.get("NetList_CircuitGatedNotGated"));
         Reporter.Report.AddWarningIncrement(S.get("NetList_TraceListBegin"));
-        Map<NetlistComponent, Circuit> instances = NotGatedSet.get(key);
-        for (NetlistComponent comp : instances.keySet()) {
-          SimpleDRCContainer warn =
+        Map<NetlistComponent, Circuit> instances = notGatedSet.get(key);
+        for (final var comp : instances.keySet()) {
+          final var warn =
               new SimpleDRCContainer(
                   instances.get(comp),
                   S.get("NetList_CircuitNotGated"),
                   SimpleDRCContainer.LEVEL_NORMAL,
                   SimpleDRCContainer.MARK_INSTANCE,
                   true);
-          warn.AddMarkComponent(comp.GetComponent());
+          warn.addMarkComponent(comp.getComponent());
           Reporter.Report.AddWarning(warn);
         }
-        instances = GatedSet.get(key);
-        for (NetlistComponent comp : instances.keySet()) {
-          comp.SetIsGatedInstance();
-          SimpleDRCContainer warn =
+        instances = gatedSet.get(key);
+        for (final var comp : instances.keySet()) {
+          comp.setIsGatedInstance();
+          final var warn =
               new SimpleDRCContainer(
-                  instances.get(comp),
-                  S.get("NetList_CircuitGated"),
-                  SimpleDRCContainer.LEVEL_NORMAL,
-                  SimpleDRCContainer.MARK_INSTANCE,
-                  true);
-          warn.AddMarkComponent(comp.GetComponent());
+                      instances.get(comp),
+                      S.get("NetList_CircuitGated"),
+                      SimpleDRCContainer.LEVEL_NORMAL,
+                      SimpleDRCContainer.MARK_INSTANCE,
+                      true);
+          warn.addMarkComponent(comp.getComponent());
           Reporter.Report.AddWarning(warn);
         }
         Reporter.Report.AddWarningIncrement(S.get("NetList_TraceListEnd"));
@@ -2452,476 +2069,427 @@ public class Netlist implements CircuitListener {
     return true;
   }
 
-  public void GetGatedClockComponents(
-      ArrayList<Netlist> HierarchyNetlists,
-      NetlistComponent SubCircuit,
-      Map<String, Map<NetlistComponent, Circuit>> NotGatedSet,
-      Map<String, Map<NetlistComponent, Circuit>> GatedSet,
-      Set<NetlistComponent> WarnedComponents) {
+  public void getGatedClockComponents(
+      ArrayList<Netlist> hierarchyNetlists,
+      NetlistComponent subCircuit,
+      Map<String, Map<NetlistComponent, Circuit>> notGatedSet,
+      Map<String, Map<NetlistComponent, Circuit>> gatedSet,
+      Set<NetlistComponent> warnedComponents) {
     /* First pass: we go down the tree */
-    for (NetlistComponent SubCirc : MySubCircuits) {
-      SubcircuitFactory sub = (SubcircuitFactory) SubCirc.GetComponent().getFactory();
-      ArrayList<String> NewHierarchyNames = new ArrayList<>(GetCurrentHierarchyLevel());
-      NewHierarchyNames.add(
+    for (final var subCirc : mySubCircuits) {
+      final var sub = (SubcircuitFactory) subCirc.getComponent().getFactory();
+      final var newHierarchyNames = new ArrayList<>(getCurrentHierarchyLevel());
+      newHierarchyNames.add(
           CorrectLabel.getCorrectLabel(
-              SubCirc.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-      ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>(HierarchyNetlists);
-      NewHierarchyNetlists.add(sub.getSubcircuit().getNetList());
-      sub.getSubcircuit().getNetList().SetCurrentHierarchyLevel(NewHierarchyNames);
+              subCirc.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
+      final var newHierarchyNetlists = new ArrayList<>(hierarchyNetlists);
+      newHierarchyNetlists.add(sub.getSubcircuit().getNetList());
+      sub.getSubcircuit().getNetList().setCurrentHierarchyLevel(newHierarchyNames);
       sub.getSubcircuit()
           .getNetList()
-          .GetGatedClockComponents(
-              NewHierarchyNetlists, SubCirc, NotGatedSet, GatedSet, WarnedComponents);
+          .getGatedClockComponents(newHierarchyNetlists, subCirc, notGatedSet, gatedSet, warnedComponents);
     }
-    /* Second pass: we find all components with a clock input and see if they are connected to a clock */
-    boolean GatedClock = false;
-    List<SourceInfo> PinSources = new ArrayList<>();
-    List<Set<Wire>> PinWires = new ArrayList<>();
-    List<Set<NetlistComponent>> PinGatedComponents = new ArrayList<>();
-    List<SourceInfo> NonPinSources = new ArrayList<>();
-    List<Set<Wire>> NonPinWires = new ArrayList<>();
-    List<Set<NetlistComponent>> NonPinGatedComponents = new ArrayList<>();
-    for (NetlistComponent comp : MyComponents) {
-      ComponentFactory fact = comp.GetComponent().getFactory();
+    // Second pass: we find all components with a clock input and see if they are
+    // connected to a clock.
+    var gatedClock = false;
+    final var pinSources = new ArrayList<SourceInfo>();
+    final var pinWires = new ArrayList<Set<Wire>>();
+    final var pinGatedComponents = new ArrayList<Set<NetlistComponent>>();
+    final var nonPinSources = new ArrayList<SourceInfo>();
+    final var nonPinWires = new ArrayList<Set<Wire>>();
+    final var nonPinGatedComponents = new ArrayList<Set<NetlistComponent>>();
+    for (final var comp : myComponents) {
+      final var fact = comp.getComponent().getFactory();
       if (fact.CheckForGatedClocks(comp)) {
-        int[] clockpins = fact.ClockPinIndex(comp);
-        for (int clockpin : clockpins)
-          GatedClock |=
-              HasGatedClock(
+        final var clockPins = fact.ClockPinIndex(comp);
+        for (final var clockPin : clockPins)
+          gatedClock |=
+              hasGatedClock(
                   comp,
-                  clockpin,
-                  PinSources,
-                  PinWires,
-                  PinGatedComponents,
-                  NonPinSources,
-                  NonPinWires,
-                  NonPinGatedComponents,
-                  WarnedComponents);
+                  clockPin,
+                  pinSources,
+                  pinWires,
+                  pinGatedComponents,
+                  nonPinSources,
+                  nonPinWires,
+                  nonPinGatedComponents,
+                  warnedComponents);
       }
     }
     /* We have two situations:
-     * 1) The gated clock net is generated locally, in this case we can mark them and add the current system to the non-gated set as
+     * 1) The gated clock net is generated locally, in this case we can mark them and add the
+     *    current system to the non-gated set as
      *    each instance will be equal at higher/lower levels.
-     * 2) The gated clock nets are connected to a pin, in this case each instance of this circuit could be either gated or non-gated,
-     *    we have to do something on the level higher and we mark this in the sets to be processed later.
+     * 2) The gated clock nets are connected to a pin, in this case each instance of this circuit
+     *    could be either gated or non-gated,
+     *    we have to do something on the level higher and we mark this in the sets to be
+     *    processed later.
      */
 
-    String MyName = CorrectLabel.getCorrectLabel(CircuitName);
-    if (HierarchyNetlists.size() > 1) {
-      if (GatedClock && PinSources.isEmpty()) {
-        GatedClock = false; /* we have only non-pin driven gated clocks */
-        WarningForGatedClock(
-            NonPinSources,
-            NonPinGatedComponents,
-            NonPinWires,
-            WarnedComponents,
-            HierarchyNetlists,
+    final var myName = CorrectLabel.getCorrectLabel(circuitName);
+    if (hierarchyNetlists.size() > 1) {
+      if (gatedClock && pinSources.isEmpty()) {
+        gatedClock = false; // we have only non-pin driven gated clocks
+        warningForGatedClock(
+            nonPinSources,
+            nonPinGatedComponents,
+            nonPinWires,
+            warnedComponents,
+            hierarchyNetlists,
             S.get("NetList_GatedClock"));
       }
 
-      if (GatedClock && !PinSources.isEmpty()&&!AppPreferences.SupressGatedClockWarnings.getBoolean()) {
-        for (int i = 0; i < PinSources.size(); i++) {
+      if (gatedClock && !pinSources.isEmpty() && !AppPreferences.SupressGatedClockWarnings.getBoolean()) {
+        for (var i = 0; i < pinSources.size(); i++) {
           Reporter.Report.AddSevereWarning(S.get("NetList_GatedClock"));
           Reporter.Report.AddWarningIncrement(S.get("NetList_TraceListBegin"));
-          SimpleDRCContainer warn =
+          final var warn =
               new SimpleDRCContainer(
-                  MyCircuit,
-                  S.get("NetList_GatedClockSink"),
-                  SimpleDRCContainer.LEVEL_NORMAL,
-                  SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_WIRE,
-                  true);
-          warn.AddMarkComponents(PinWires.get(i));
-          for (NetlistComponent comp : PinGatedComponents.get(i))
-            warn.AddMarkComponent(comp.GetComponent());
+                      myCircuit,
+                      S.get("NetList_GatedClockSink"),
+                      SimpleDRCContainer.LEVEL_NORMAL,
+                      SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_WIRE,
+                      true);
+          warn.addMarkComponents(pinWires.get(i));
+          for (final var comp : pinGatedComponents.get(i)) warn.addMarkComponent(comp.getComponent());
           Reporter.Report.AddWarning(warn);
-          WarningTraceForGatedClock(
-              PinSources.get(i).getSource(),
-              PinSources.get(i).getIndex(),
-              HierarchyNetlists,
-              CurrentHierarchyLevel);
+          warningTraceForGatedClock(
+              pinSources.get(i).getSource(),
+              pinSources.get(i).getIndex(),
+              hierarchyNetlists,
+              currentHierarchyLevel);
           Reporter.Report.AddWarningIncrement(S.get("NetList_TraceListEnd"));
         }
       }
 
       /* we only mark if we are not at top-level */
-      if (GatedClock) {
-        if (GatedSet.containsKey(MyName))
-          GatedSet.get(MyName)
-              .put(SubCircuit, HierarchyNetlists.get(HierarchyNetlists.size() - 2).getCircuit());
+      if (gatedClock) {
+        if (gatedSet.containsKey(myName))
+          gatedSet.get(myName).put(subCircuit, hierarchyNetlists.get(hierarchyNetlists.size() - 2).getCircuit());
         else {
-          Map<NetlistComponent, Circuit> newList = new HashMap<>();
-          newList.put(SubCircuit, HierarchyNetlists.get(HierarchyNetlists.size() - 2).getCircuit());
-          GatedSet.put(MyName, newList);
+          final var newList = new HashMap<NetlistComponent, Circuit>();
+          newList.put(subCircuit, hierarchyNetlists.get(hierarchyNetlists.size() - 2).getCircuit());
+          gatedSet.put(myName, newList);
         }
       } else {
-        if (NotGatedSet.containsKey(MyName))
-          NotGatedSet.get(MyName)
-              .put(SubCircuit, HierarchyNetlists.get(HierarchyNetlists.size() - 2).getCircuit());
+        if (notGatedSet.containsKey(myName))
+          notGatedSet.get(myName).put(subCircuit, hierarchyNetlists.get(hierarchyNetlists.size() - 2).getCircuit());
         else {
-          Map<NetlistComponent, Circuit> newList = new HashMap<>();
-          newList.put(SubCircuit, HierarchyNetlists.get(HierarchyNetlists.size() - 2).getCircuit());
-          NotGatedSet.put(MyName, newList);
+          final var newList = new HashMap<NetlistComponent, Circuit>();
+          newList.put(subCircuit, hierarchyNetlists.get(hierarchyNetlists.size() - 2).getCircuit());
+          notGatedSet.put(myName, newList);
         }
       }
     } else {
       /* At toplevel we warn for all possible gated clocks */
-      WarningForGatedClock(
-          NonPinSources,
-          NonPinGatedComponents,
-          NonPinWires,
-          WarnedComponents,
-          HierarchyNetlists,
-          S.get("NetList_GatedClock"));
-      WarningForGatedClock(
-          PinSources,
-          PinGatedComponents,
-          PinWires,
-          WarnedComponents,
-          HierarchyNetlists,
-          S.get("NetList_PossibleGatedClock"));
+      warningForGatedClock(nonPinSources, nonPinGatedComponents, nonPinWires, warnedComponents, hierarchyNetlists, S.get("NetList_GatedClock"));
+      warningForGatedClock(pinSources, pinGatedComponents, pinWires, warnedComponents, hierarchyNetlists, S.get("NetList_PossibleGatedClock"));
     }
   }
 
-  private boolean HasGatedClock(
+  private boolean hasGatedClock(
       NetlistComponent comp,
-      int ClockPinIndex,
-      List<SourceInfo> PinSources,
-      List<Set<Wire>> PinWires,
-      List<Set<NetlistComponent>> PinGatedComponents,
-      List<SourceInfo> NonPinSources,
-      List<Set<Wire>> NonPinWires,
-      List<Set<NetlistComponent>> NonPinGatedComponents,
-      Set<NetlistComponent> WarnedComponents) {
-    boolean GatedClock = false;
-    String ClockNetName = AbstractHDLGeneratorFactory.GetClockNetName(comp, ClockPinIndex, this);
-    if (ClockNetName.isEmpty()) {
+      int clockPinIndex,
+      List<SourceInfo> pinSources,
+      List<Set<Wire>> pinWires,
+      List<Set<NetlistComponent>> pinGatedComponents,
+      List<SourceInfo> nonPinSources,
+      List<Set<Wire>> nonPinWires,
+      List<Set<NetlistComponent>> nonPinGatedComponents,
+      Set<NetlistComponent> warnedComponents) {
+    var isGatedClock = false;
+    final var clockNetName = AbstractHDLGeneratorFactory.GetClockNetName(comp, clockPinIndex, this);
+    if (clockNetName.isEmpty()) {
       /* we search for the source in case it is connected otherwise we ignore */
-      ConnectionPoint connection = comp.getEnd(ClockPinIndex).GetConnection((byte) 0);
-      Net connectedNet = connection.GetParrentNet();
-      byte connectedNetindex = connection.GetParrentNetBitIndex();
+      final var connection = comp.getEnd(clockPinIndex).get((byte) 0);
+      final var connectedNet = connection.getParentNet();
+      final var connectedNetindex = connection.getParentNetBitIndex();
       if (connectedNet != null) {
-        GatedClock = true;
-        Set<Wire> Segments = new HashSet<>();
-        SourceInfo source =
-            GetHiddenSource(
-              	  null,
-              	  (byte) 0,
-                  connectedNet,
-                  connectedNetindex,
-                  MyComplexSplitters,
-                new HashSet<>(),
-                  Segments);
-        ConnectionPoint sourceCon = source.getSource();
-        if (sourceCon.GetComp().getFactory() instanceof Pin) {
-          int index = IndexOfEntry(PinSources, sourceCon, (int) connectedNetindex);
+        isGatedClock = true;
+        final var segments = new HashSet<Wire>();
+        final var source = getHiddenSource(null, (byte) 0, connectedNet, connectedNetindex, mySplitters, new HashSet<>(), segments, null);
+        final var sourceCon = source.getSource();
+        if (sourceCon.getComp().getFactory() instanceof Pin) {
+          var index = getEntryIndex(pinSources, sourceCon, (int) connectedNetindex);
           if (index < 0) {
-            PinSources.add(source);
-            PinWires.add(Segments);
-            Set<NetlistComponent> comps = new HashSet<>();
+            pinSources.add(source);
+            pinWires.add(segments);
+            final var comps = new HashSet<NetlistComponent>();
             comps.add(comp);
-            comps.add(new NetlistComponent(sourceCon.GetComp()));
-            PinGatedComponents.add(comps);
+            comps.add(new NetlistComponent(sourceCon.getComp()));
+            pinGatedComponents.add(comps);
           } else {
-            PinGatedComponents.get(index).add(comp);
+            pinGatedComponents.get(index).add(comp);
           }
         } else {
-            int index = IndexOfEntry(NonPinSources, sourceCon, (int) connectedNetindex);
-            if (index < 0) {
-              NonPinSources.add(source);
-              NonPinWires.add(Segments);
-              Set<NetlistComponent> comps = new HashSet<>();
-              comps.add(comp);
-              NonPinGatedComponents.add(comps);
-            } else {
-              NonPinGatedComponents.get(index).add(comp);
-            }
+          int index = getEntryIndex(nonPinSources, sourceCon, (int) connectedNetindex);
+          if (index < 0) {
+            nonPinSources.add(source);
+            nonPinWires.add(segments);
+            final var comps = new HashSet<NetlistComponent>();
+            comps.add(comp);
+            nonPinGatedComponents.add(comps);
+          } else {
+            nonPinGatedComponents.get(index).add(comp);
+          }
         }
       } else {
         /* Add severe warning, we found a sequential element with an unconnected clock input */
-        if (!WarnedComponents.contains(comp)) {
-          SimpleDRCContainer warn =
+        if (!warnedComponents.contains(comp)) {
+          final var warn =
               new SimpleDRCContainer(
-                  MyCircuit,
+                  myCircuit,
                   S.get("NetList_NoClockConnection"),
                   SimpleDRCContainer.LEVEL_SEVERE,
                   SimpleDRCContainer.MARK_INSTANCE);
-          warn.AddMarkComponent(comp.GetComponent());
+          warn.addMarkComponent(comp.getComponent());
           Reporter.Report.AddWarning(warn);
-          WarnedComponents.add(comp);
+          warnedComponents.add(comp);
         }
       }
     }
-    return GatedClock;
+    return isGatedClock;
   }
 
-  private int IndexOfEntry(List<SourceInfo> SearchList, ConnectionPoint Connection, Integer index) {
-    int result = -1;
-    for (int i = 0; i < SearchList.size(); i++) {
-      SourceInfo thisEntry = SearchList.get(i);
-      if (thisEntry.getSource().equals(Connection) && thisEntry.getIndex().equals(index))
+  private int getEntryIndex(List<SourceInfo> searchList, ConnectionPoint connection, Integer index) {
+    var result = -1;
+    for (var i = 0; i < searchList.size(); i++) {
+      final var thisEntry = searchList.get(i);
+      if (thisEntry.getSource().equals(connection) && thisEntry.getIndex().equals(index))
         result = i;
     }
     return result;
   }
 
-  private void WarningTraceForGatedClock(
-      ConnectionPoint Source,
-      int index,
-      ArrayList<Netlist> HierarchyNetlists,
-      ArrayList<String> HierarchyNames) {
-
-    Component comp = Source.GetComp();
+  private void warningTraceForGatedClock(ConnectionPoint sourcePoint, int index, ArrayList<Netlist> hierarchyNetlists, ArrayList<String> hierarchyNames) {
+    final var comp = sourcePoint.getComp();
     if (comp.getFactory() instanceof Pin) {
-      if (HierarchyNames.isEmpty())
+      if (hierarchyNames.isEmpty())
         /* we cannot go up at toplevel, so leave */
         return;
-      int idx = -1;
-      for (int i = 0; i < MyInputPorts.size(); i++) {
-        if (MyInputPorts.get(i).GetComponent().equals(comp)) idx = i;
+      var idx = -1;
+      for (var i = 0; i < myInputPorts.size(); i++) {
+        if (myInputPorts.get(i).getComponent().equals(comp)) idx = i;
       }
       if (idx < 0) {
-        Reporter.Report.AddFatalError(
-            "BUG: Could not find port!\n ==> "
-                + this.getClass().getName().replaceAll("\\.", "/")
-                + ":"
-                + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                + "\n");
+        Reporter.Report.addFatalErrorFmt(
+            "BUG: Could not find port!\n ==> %s:%d\n",
+            this.getClass().getName().replaceAll("\\.", "/"),
+            Thread.currentThread().getStackTrace()[2].getLineNumber());
         return;
       }
-      ConnectionPoint SubNet =
-          HierarchyNetlists.get(HierarchyNetlists.size() - 2)
-              .GetNetlistConnectionForSubCircuitInput(
-                  HierarchyNames.get(HierarchyNames.size() - 1), idx, (byte) index);
-      if (SubNet == null) {
-        Reporter.Report.AddFatalError(
-            "BUG: Could not find a sub-circuit connection in overlying hierarchy level!\n ==> "
-                + this.getClass().getName().replaceAll("\\.", "/")
-                + ":"
-                + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                + "\n");
+      final var subNet =
+          hierarchyNetlists
+              .get(hierarchyNetlists.size() - 2)
+              .getNetlistConnectionForSubCircuitInput(
+                  hierarchyNames.get(hierarchyNames.size() - 1), idx, (byte) index);
+      if (subNet == null) {
+        Reporter.Report.addFatalErrorFmt(
+            "BUG: Could not find a sub-circuit connection in overlying hierarchy level!\n ==> %s:%d\n",
+            this.getClass().getName().replaceAll("\\.", "/"),
+            Thread.currentThread().getStackTrace()[2].getLineNumber());
         return;
       }
-      if (SubNet.GetParrentNet() != null) {
-        ArrayList<String> NewHierarchyNames = new ArrayList<>(HierarchyNames);
-        NewHierarchyNames.remove(NewHierarchyNames.size() - 1);
-        ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>(HierarchyNetlists);
-        NewHierarchyNetlists.remove(NewHierarchyNetlists.size() - 1);
-        Netlist SubNetList = HierarchyNetlists.get(HierarchyNetlists.size() - 2);
-        Net NewNet = SubNet.GetParrentNet();
-        Byte NewNetIndex = SubNet.GetParrentNetBitIndex();
-        Set<Wire> Segments = new HashSet<>();
-        SourceInfo source =
-            SubNetList.GetHiddenSource(
-                null,
-                (byte) 0,
-                NewNet,
-                NewNetIndex,
-                SubNetList.MyComplexSplitters,
-                new HashSet<>(),
-                Segments);
+      if (subNet.getParentNet() != null) {
+        final var newHierarchyNames = new ArrayList<>(hierarchyNames);
+        newHierarchyNames.remove(newHierarchyNames.size() - 1);
+        final var newHierarchyNetlists = new ArrayList<>(hierarchyNetlists);
+        newHierarchyNetlists.remove(newHierarchyNetlists.size() - 1);
+        final var subNetList = hierarchyNetlists.get(hierarchyNetlists.size() - 2);
+        final var newNet = subNet.getParentNet();
+        final var newNetIndex = subNet.getParentNetBitIndex();
+        final var segments = new HashSet<Wire>();
+        final var source = subNetList.getHiddenSource(null, (byte) 0, newNet, newNetIndex, subNetList.mySplitters, new HashSet<>(), segments, null);
         if (source == null) {
-          Reporter.Report.AddFatalError(
-              "BUG: Unable to find source in sub-circuit!\n ==> "
-                  + this.getClass().getName().replaceAll("\\.", "/")
-                  + ":"
-                  + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                  + "\n");
+          Reporter.Report.addFatalErrorFmt(
+              "BUG: Unable to find source in sub-circuit!\n ==> %s:%d\n",
+              this.getClass().getName().replaceAll("\\.", "/"),
+              Thread.currentThread().getStackTrace()[2].getLineNumber());
           return;
         }
-        ComponentFactory sfac = source.getSource().GetComp().getFactory();
+        final var sfac = source.getSource().getComp().getFactory();
         if (sfac instanceof Pin || sfac instanceof SubcircuitFactory) {
-          SimpleDRCContainer warn =
+          final var warn =
               new SimpleDRCContainer(
-                  SubNetList.getCircuit(),
-                  S.get("NetList_GatedClockInt"),
-                  SimpleDRCContainer.LEVEL_NORMAL,
-                  SimpleDRCContainer.MARK_WIRE,
-                  true);
-          warn.AddMarkComponents(Segments);
+                      subNetList.getCircuit(),
+                      S.get("NetList_GatedClockInt"),
+                      SimpleDRCContainer.LEVEL_NORMAL,
+                      SimpleDRCContainer.MARK_WIRE,
+                      true);
+          warn.addMarkComponents(segments);
           Reporter.Report.AddWarning(warn);
-          SubNetList.WarningTraceForGatedClock(
+          subNetList.warningTraceForGatedClock(
               source.getSource(),
               source.getIndex(),
-              NewHierarchyNetlists,
-              NewHierarchyNames);
+              newHierarchyNetlists,
+              newHierarchyNames);
         } else {
-          SimpleDRCContainer warn =
+          final var warn =
               new SimpleDRCContainer(
-                  SubNetList.getCircuit(),
-                  S.get("NetList_GatedClockSource"),
-                  SimpleDRCContainer.LEVEL_NORMAL,
-                  SimpleDRCContainer.MARK_WIRE,
-                  true);
-          warn.AddMarkComponents(Segments);
+                      subNetList.getCircuit(),
+                      S.get("NetList_GatedClockSource"),
+                      SimpleDRCContainer.LEVEL_NORMAL,
+                      SimpleDRCContainer.MARK_WIRE,
+                      true);
+          warn.addMarkComponents(segments);
           Reporter.Report.AddWarning(warn);
         }
       }
     }
     if (comp.getFactory() instanceof SubcircuitFactory) {
-      SubcircuitFactory sub = (SubcircuitFactory) comp.getFactory();
-      if (Source.getChildsPortIndex() < 0) {
-        Reporter.Report.AddFatalError(
-            "BUG: Subcircuit port is not annotated!\n ==> "
-                + this.getClass().getName().replaceAll("\\.", "/")
-                + ":"
-                + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                + "\n");
+      final var sub = (SubcircuitFactory) comp.getFactory();
+      if (sourcePoint.getChildsPortIndex() < 0) {
+        Reporter.Report.addFatalErrorFmt(
+            "BUG: Subcircuit port is not annotated!\n ==> %s:%d\n",
+            this.getClass().getName().replaceAll("\\.", "/"),
+            Thread.currentThread().getStackTrace()[2].getLineNumber());
         return;
       }
-      NetlistComponent OutputPort =
-          sub.getSubcircuit().getNetList().GetOutputPin(Source.getChildsPortIndex());
-      if (OutputPort == null) {
-        Reporter.Report.AddFatalError(
-            "BUG: Unable to find Subcircuit output port!\n ==> "
-                + this.getClass().getName().replaceAll("\\.", "/")
-                + ":"
-                + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                + "\n");
+      final var outputPort = sub.getSubcircuit().getNetList().getOutputPin(sourcePoint.getChildsPortIndex());
+      if (outputPort == null) {
+        Reporter.Report.addFatalErrorFmt(
+            "BUG: Unable to find Subcircuit output port!\n ==> %s:%d\n",
+            this.getClass().getName().replaceAll("\\.", "/"),
+            Thread.currentThread().getStackTrace()[2].getLineNumber());
         return;
       }
-      Net ConnectedNet = Source.GetParrentNet();
+      final var connectedNet = sourcePoint.getParentNet();
       /* Find the correct subcircuit */
-      NetlistComponent SubCirc = null;
-      for (NetlistComponent subc : MySubCircuits) {
-        if (subc.GetComponent().equals(Source.GetComp())) SubCirc = subc;
+      NetlistComponent subCirc = null;
+      for (final var circ : mySubCircuits) {
+        if (circ.getComponent().equals(sourcePoint.getComp())) subCirc = circ;
       }
-      if (SubCirc == null) {
-        Reporter.Report.AddFatalError(
-            "BUG: Unable to find Subcircuit!\n ==> "
-                + this.getClass().getName().replaceAll("\\.", "/")
-                + ":"
-                + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                + "\n");
+      if (subCirc == null) {
+        Reporter.Report.addFatalErrorFmt(
+            "BUG: Unable to find Subcircuit!\n ==> %s:%d\n",
+            this.getClass().getName().replaceAll("\\.", "/"),
+            Thread.currentThread().getStackTrace()[2].getLineNumber());
         return;
       }
-      byte BitIndex = SubCirc.GetConnectionBitIndex(ConnectedNet, (byte) index);
-      if (BitIndex < 0) {
-        Reporter.Report.AddFatalError(
-            "BUG: Unable to find the bit index of a Subcircuit output port!\n ==> "
-                + this.getClass().getName().replaceAll("\\.", "/")
-                + ":"
-                + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                + "\n");
+
+      final var bitIndex = subCirc.getConnectionBitIndex(connectedNet, (byte) index);
+      if (bitIndex < 0) {
+        Reporter.Report.addFatalErrorFmt(
+            "BUG: Unable to find the bit index of a Subcircuit output port!\n ==> %s:%d\n",
+            this.getClass().getName().replaceAll("\\.", "/"),
+            Thread.currentThread().getStackTrace()[2].getLineNumber());
         return;
       }
-      ConnectionPoint SubNet = OutputPort.getEnd(0).GetConnection(BitIndex);
-      if (SubNet.GetParrentNet() != null) {
+      final var subNet = outputPort.getEnd(0).get(bitIndex);
+      if (subNet.getParentNet() != null) {
         /* we have a connected pin */
-        Netlist SubNetList = sub.getSubcircuit().getNetList();
-        ArrayList<String> NewHierarchyNames = new ArrayList<>(HierarchyNames);
-        NewHierarchyNames.add(
+        final var subNetList = sub.getSubcircuit().getNetList();
+        final var newHierarchyNames = new ArrayList<>(hierarchyNames);
+        newHierarchyNames.add(
             CorrectLabel.getCorrectLabel(
-                SubCirc.GetComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-        ArrayList<Netlist> NewHierarchyNetlists = new ArrayList<>(HierarchyNetlists);
-        NewHierarchyNetlists.add(SubNetList);
-        Net NewNet = SubNet.GetParrentNet();
-        Byte NewNetIndex = SubNet.GetParrentNetBitIndex();
-        Set<Wire> Segments = new HashSet<>();
-        SourceInfo source =
-            SubNetList.GetHiddenSource(
-            	null,
-            	(byte) 0,
-                NewNet,
-                NewNetIndex,
-                SubNetList.MyComplexSplitters,
+                subCirc.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
+        final var newHierarchyNetlists = new ArrayList<>(hierarchyNetlists);
+        newHierarchyNetlists.add(subNetList);
+        final var newNet = subNet.getParentNet();
+        final var newNetIndex = subNet.getParentNetBitIndex();
+        final var segments = new HashSet<Wire>();
+        final var source =
+            subNetList.getHiddenSource(
+                null,
+                (byte) 0,
+                newNet,
+                newNetIndex,
+                subNetList.mySplitters,
                 new HashSet<>(),
-                Segments);
+                segments,
+                null);
         if (source == null) {
-          Reporter.Report.AddFatalError(
-              "BUG: Unable to find source in sub-circuit!\n ==> "
-                  + this.getClass().getName().replaceAll("\\.", "/")
-                  + ":"
-                  + Thread.currentThread().getStackTrace()[2].getLineNumber()
-                  + "\n");
+          Reporter.Report.addFatalErrorFmt(
+              "BUG: Unable to find source in sub-circuit!\n ==> %s:%d\n",
+              this.getClass().getName().replaceAll("\\.", "/"),
+              Thread.currentThread().getStackTrace()[2].getLineNumber());
           return;
         }
-        ComponentFactory sfac = source.getSource().GetComp().getFactory();
+        final var sfac = source.getSource().getComp().getFactory();
         if (sfac instanceof Pin || sfac instanceof SubcircuitFactory) {
-          SimpleDRCContainer warn =
+          final var warn =
               new SimpleDRCContainer(
-                  SubNetList.getCircuit(),
-                  S.get("NetList_GatedClockInt"),
-                  SimpleDRCContainer.LEVEL_NORMAL,
-                  SimpleDRCContainer.MARK_WIRE,
-                  true);
-          warn.AddMarkComponents(Segments);
+                      subNetList.getCircuit(),
+                      S.get("NetList_GatedClockInt"),
+                      SimpleDRCContainer.LEVEL_NORMAL,
+                      SimpleDRCContainer.MARK_WIRE,
+                      true);
+          warn.addMarkComponents(segments);
           Reporter.Report.AddWarning(warn);
-          SubNetList.WarningTraceForGatedClock(
+          subNetList.warningTraceForGatedClock(
               source.getSource(),
               source.getIndex(),
-              NewHierarchyNetlists,
-              NewHierarchyNames);
+              newHierarchyNetlists,
+              newHierarchyNames);
         } else {
-          SimpleDRCContainer warn =
+          final var warn =
               new SimpleDRCContainer(
-                  SubNetList.getCircuit(),
-                  S.get("NetList_GatedClockSource"),
-                  SimpleDRCContainer.LEVEL_NORMAL,
-                  SimpleDRCContainer.MARK_WIRE,
-                  true);
-          warn.AddMarkComponents(Segments);
+                      subNetList.getCircuit(),
+                      S.get("NetList_GatedClockSource"),
+                      SimpleDRCContainer.LEVEL_NORMAL,
+                      SimpleDRCContainer.MARK_WIRE,
+                      true);
+          warn.addMarkComponents(segments);
           Reporter.Report.AddWarning(warn);
         }
       }
     }
   }
 
-  private void WarningForGatedClock(
-      List<SourceInfo> Sources,
-      List<Set<NetlistComponent>> Components,
-      List<Set<Wire>> Wires,
-      Set<NetlistComponent> WarnedComponents,
-      ArrayList<Netlist> HierarchyNetlists,
-      String Warning) {
-	if (AppPreferences.SupressGatedClockWarnings.getBoolean()) return;
-    for (int i = 0; i < Sources.size(); i++) {
-      boolean AlreadyWarned = false;
-      for (NetlistComponent comp : Components.get(i))
-        AlreadyWarned |= WarnedComponents.contains(comp);
-      if (!AlreadyWarned) {
-        if (Sources.get(i).getSource().GetComp().getFactory() instanceof SubcircuitFactory) {
+  private void warningForGatedClock(
+      List<SourceInfo> sources,
+      List<Set<NetlistComponent>> components,
+      List<Set<Wire>> wires,
+      Set<NetlistComponent> warnedComponents,
+      ArrayList<Netlist> hierarchyNetlists,
+      String warning) {
+    if (AppPreferences.SupressGatedClockWarnings.getBoolean()) return;
+    for (var i = 0; i < sources.size(); i++) {
+      var alreadyWarned = false;
+      for (final var comp : components.get(i))
+        alreadyWarned |= warnedComponents.contains(comp);
+      if (!alreadyWarned) {
+        if (sources.get(i).getSource().getComp().getFactory() instanceof SubcircuitFactory) {
           Reporter.Report.AddSevereWarning(S.get("NetList_GatedClock"));
           Reporter.Report.AddWarningIncrement(S.get("NetList_TraceListBegin"));
-          SimpleDRCContainer warn =
+          final var warn =
               new SimpleDRCContainer(
-                  MyCircuit,
-                  S.get("NetList_GatedClockSink"),
-                  SimpleDRCContainer.LEVEL_NORMAL,
-                  SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_WIRE,
-                  true);
-          warn.AddMarkComponents(Wires.get(i));
-          for (NetlistComponent comp : Components.get(i))
-            warn.AddMarkComponent(comp.GetComponent());
+                      myCircuit,
+                      S.get("NetList_GatedClockSink"),
+                      SimpleDRCContainer.LEVEL_NORMAL,
+                      SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_WIRE,
+                      true);
+          warn.addMarkComponents(wires.get(i));
+          for (final var comp : components.get(i)) warn.addMarkComponent(comp.getComponent());
           Reporter.Report.AddWarning(warn);
-          WarningTraceForGatedClock(
-              Sources.get(i).getSource(),
-              Sources.get(i).getIndex(),
-              HierarchyNetlists,
-              CurrentHierarchyLevel);
+          warningTraceForGatedClock(
+              sources.get(i).getSource(),
+              sources.get(i).getIndex(),
+              hierarchyNetlists,
+              currentHierarchyLevel);
           Reporter.Report.AddWarningIncrement(S.get("NetList_TraceListEnd"));
         } else {
-          SimpleDRCContainer warn =
+          final var warn =
               new SimpleDRCContainer(
-                  MyCircuit,
-                  Warning,
+                  myCircuit,
+                  warning,
                   SimpleDRCContainer.LEVEL_SEVERE,
                   SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_WIRE);
-          for (NetlistComponent comp : Components.get(i))
-            warn.AddMarkComponent(comp.GetComponent());
-          warn.AddMarkComponents(Wires.get(i));
+          for (final var comp : components.get(i))
+            warn.addMarkComponent(comp.getComponent());
+          warn.addMarkComponents(wires.get(i));
           Reporter.Report.AddWarning(warn);
         }
-        WarnedComponents.addAll(Components.get(i));
+        warnedComponents.addAll(components.get(i));
       }
     }
   }
 
-  public static boolean IsFlipFlop(AttributeSet attrs) {
+  public static boolean isFlipFlop(AttributeSet attrs) {
     if (attrs.containsAttribute(StdAttr.EDGE_TRIGGER)) return true;
-    if (attrs.containsAttribute(StdAttr.TRIGGER)) {
+    if (attrs.containsAttribute(StdAttr.TRIGGER))
       return ((attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_FALLING)
           || (attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_RISING));
-    }
     return false;
   }
 }

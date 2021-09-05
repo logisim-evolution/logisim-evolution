@@ -127,7 +127,7 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
             "<html><div style='text-align:center'>"
                 + S.get("clockHighAttr")
                 + "<br>("
-                + S.fmt("clockDurationValue", "")
+                + S.get("clockDurationValue", "")
                 + ")</div></html>");
     gbs.ipadx = 10;
     gbs.ipady = 5;
@@ -140,7 +140,7 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
             "<html><div style='text-align:center'>"
                 + S.get("clockLowAttr")
                 + "<br>("
-                + S.fmt("clockDurationValue", "")
+                + S.get("clockDurationValue", "")
                 + ")</div></html>");
     gbs.gridx = 2;
     panel.add(down, gbs);

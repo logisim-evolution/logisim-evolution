@@ -47,11 +47,11 @@ import com.cburch.logisim.tools.key.ParallelConfigurator;
 import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.awt.event.InputEvent;
 import javax.swing.Icon;
 
 public class SplitterFactory extends AbstractComponentFactory {
+
   public static final SplitterFactory instance = new SplitterFactory();
 
   private static final Icon toolIcon = Icons.getIcon("splitter.gif");
@@ -72,11 +72,10 @@ public class SplitterFactory extends AbstractComponentFactory {
   // user interface methods
   //
   @Override
-  public void drawGhost(
-      ComponentDrawContext context, Color color, int x, int y, AttributeSet attrsBase) {
-    SplitterAttributes attrs = (SplitterAttributes) attrsBase;
+  public void drawGhost(ComponentDrawContext context, Color color, int x, int y, AttributeSet attrsBase) {
+    final var attrs = (SplitterAttributes) attrsBase;
     context.getGraphics().setColor(color);
-    Location loc = Location.create(x, y);
+    final var loc = Location.create(x, y);
     if (attrs.appear == SplitterAttributes.APPEAR_LEGACY) {
       SplitterPainter.drawLegacy(context, attrs, loc);
     } else {
@@ -87,15 +86,13 @@ public class SplitterFactory extends AbstractComponentFactory {
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
     if (attr == SplitterAttributes.ATTR_APPEARANCE) {
-      if (ver.compareTo(LogisimVersion.get(2, 6, 4)) < 0) {
+      if (ver.compareTo(new LogisimVersion(2, 6, 4)) < 0) {
         return SplitterAttributes.APPEAR_LEGACY;
       } else {
         return SplitterAttributes.APPEAR_LEFT;
       }
     } else if (attr instanceof SplitterAttributes.BitOutAttribute) {
-      SplitterAttributes.BitOutAttribute a;
-      a = (SplitterAttributes.BitOutAttribute) attr;
-      return a.getDefault();
+      return ((SplitterAttributes.BitOutAttribute) attr).getDefault();
     } else {
       return super.getDefaultAttributeValue(attr, ver);
     }
@@ -124,22 +121,19 @@ public class SplitterFactory extends AbstractComponentFactory {
 
   @Override
   public String getName() {
-    return "Splitter";
+    return Splitter._ID;
   }
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrsBase) {
-    SplitterAttributes attrs = (SplitterAttributes) attrsBase;
-    int fanout = attrs.fanout;
-    SplitterParameters parms = attrs.getParameters();
-    int xEnd0 = parms.getEnd0X();
-    int yEnd0 = parms.getEnd0Y();
-    Bounds bds = Bounds.create(0, 0, 1, 1);
+    final var attrs = (SplitterAttributes) attrsBase;
+    final var fanout = attrs.fanout;
+    final var parms = attrs.getParameters();
+    final var xEnd0 = parms.getEnd0X();
+    final var yEnd0 = parms.getEnd0Y();
+    var bds = Bounds.create(0, 0, 1, 1);
     bds = bds.add(xEnd0, yEnd0);
-    bds =
-        bds.add(
-            xEnd0 + (fanout - 1) * parms.getEndToEndDeltaX(),
-            yEnd0 + (fanout - 1) * parms.getEndToEndDeltaY());
+    bds = bds.add(xEnd0 + (fanout - 1) * parms.getEndToEndDeltaX(), yEnd0 + (fanout - 1) * parms.getEndToEndDeltaY());
     return bds;
   }
 
@@ -150,7 +144,7 @@ public class SplitterFactory extends AbstractComponentFactory {
 
   @Override
   public void paintIcon(ComponentDrawContext c, int x, int y, AttributeSet attrs) {
-    Graphics g = c.getGraphics();
+    final var g = c.getGraphics();
     if (toolIcon != null) {
       toolIcon.paintIcon(c.getDestination(), g, x + 2, y + 2);
     }

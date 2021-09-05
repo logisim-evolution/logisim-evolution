@@ -41,8 +41,7 @@ public class VariableListEvent {
   private final Integer index;
   private final Integer bitIndex;
 
-  public VariableListEvent(
-      VariableList source, int type, Var variable, Integer index, Integer bitIndex) {
+  public VariableListEvent(VariableList source, int type, Var variable, Integer index, Integer bitIndex) {
     this.source = source;
     this.type = type;
     this.variable = variable;

@@ -77,6 +77,7 @@ public class AttrTable extends JPanel implements LocaleListener {
   private final TableModelAdapter tableModel;
   private final CellEditor editor = new CellEditor();
   private boolean titleEnabled;
+
   public AttrTable(Window parent) {
     super(new BorderLayout());
     this.parent = parent;
@@ -89,7 +90,7 @@ public class AttrTable extends JPanel implements LocaleListener {
     table = new JTable(tableModel);
     table.setDefaultEditor(Object.class, editor);
     table.setTableHeader(null);
-    table.setRowHeight(AppPreferences.getScaled(AppPreferences.BoxSize));
+    table.setRowHeight(AppPreferences.getScaled(AppPreferences.BOX_SIZE));
 
     Font baseFont = title.getFont();
     int titleSize = Math.round(baseFont.getSize() * 1.2f);

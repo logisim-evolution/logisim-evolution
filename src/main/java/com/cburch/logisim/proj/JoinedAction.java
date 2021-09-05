@@ -40,7 +40,7 @@ public class JoinedAction extends Action {
 
   @Override
   public Action append(Action other) {
-    int oldLen = todo.length;
+    final var oldLen = todo.length;
     Action[] newToDo = new Action[oldLen + 1];
     System.arraycopy(todo, 0, newToDo, 0, oldLen);
     newToDo[oldLen] = other;
@@ -50,7 +50,7 @@ public class JoinedAction extends Action {
 
   @Override
   public void doIt(Project proj) {
-    for (Action act : todo) {
+    for (final var act : todo) {
       act.doIt(proj);
     }
   }
@@ -74,7 +74,7 @@ public class JoinedAction extends Action {
 
   @Override
   public boolean isModification() {
-    for (Action act : todo) {
+    for (final var act : todo) {
       if (act.isModification()) return true;
     }
     return false;
@@ -82,7 +82,7 @@ public class JoinedAction extends Action {
 
   @Override
   public void undo(Project proj) {
-    for (int i = todo.length - 1; i >= 0; i--) {
+    for (var i = todo.length - 1; i >= 0; i--) {
       todo[i].undo(proj);
     }
   }

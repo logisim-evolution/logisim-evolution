@@ -30,7 +30,6 @@ package com.cburch.logisim.gui.start;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
@@ -49,31 +48,20 @@ import com.cburch.logisim.gui.test.TestBench;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
-import com.cburch.logisim.util.ArgonXML;
+import com.cburch.logisim.std.base.BaseLibrary;
+import com.cburch.logisim.std.gates.GatesLibrary;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.MacCompatibility;
-import com.cburch.logisim.util.StringUtil;
 import java.awt.AWTEvent;
 import java.awt.Component;
 import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ContainerEvent;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import javax.help.JHelp;
 import javax.swing.JButton;
@@ -96,7 +84,6 @@ import javax.swing.JTabbedPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.JToolTip;
-import javax.swing.ProgressMonitor;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 import org.drjekyll.fontchooser.FontChooser;
@@ -129,7 +116,7 @@ public class Startup implements AWTEventListener {
   /* Test implementation */
   private String testCircuitImpPath = null;
   private boolean doFpgaDownload = false;
-  private double testTickFrequency = 1;
+  private double testTickFrequency = -1;
   /* Name of the circuit withing logisim */
   private String testCircuitImpName = null;
   /* Name of the board to run on i.e Reptar, MAXV ...*/
@@ -157,9 +144,8 @@ public class Startup implements AWTEventListener {
       startupTemp.doPrintFile(file);
     }
   }
-  
-  private static int parseTtyFormat(String fmt)
-  {
+
+  private static int parseTtyFormat(String fmt) {
     switch (fmt) {
       case "table":
         return TtyInterface.FORMAT_TABLE;
@@ -186,9 +172,9 @@ public class Startup implements AWTEventListener {
 
   public static Startup parseArgs(String[] args) {
     // see whether we'll be using any graphics
-    boolean isTty = false;
-    boolean isClearPreferences = false;
-    for (String value : args) {
+    var isTty = false;
+    var isClearPreferences = false;
+    for (final var value : args) {
       if (value.equals("-tty") || value.equals("-test-fpga-implementation")) {
         isTty = true;
         Main.headless = true;
@@ -207,7 +193,7 @@ public class Startup implements AWTEventListener {
       AppPreferences.handleGraphicsAcceleration();
     }
 
-    Startup ret = new Startup(isTty);
+    final var ret = new Startup(isTty);
     startupTemp = ret;
     if (!isTty) {
       registerHandler();
@@ -217,33 +203,19 @@ public class Startup implements AWTEventListener {
       AppPreferences.clear();
     }
 
-    if (AppPreferences.FirstTimeStartup.getBoolean() & !isTty) {
-      System.out.println("First time startup");
-      int Result =
-          OptionPane.showConfirmDialog(
-              null,
-              "Logisim can automatically check for new updates and versions.\n"
-                  + "Would you like to enable this feature?\n"
-                  + "(This feature can be disabled in Window -> Preferences -> Software)\n",
-              "Autoupdate",
-              OptionPane.YES_NO_OPTION);
-      if (Result == OptionPane.YES_OPTION) AppPreferences.AutomaticUpdateCheck.setBoolean(true);
-      AppPreferences.FirstTimeStartup.set(false);
-    }
-
     // parse arguments
-    for (int i = 0; i < args.length; i++) {
-      String arg = args[i];
+    for (var i = 0; i < args.length; i++) {
+      final var arg = args[i];
       if (arg.equals("-tty")) {
         if (i + 1 < args.length) {
           i++;
-          String[] fmts = args[i].split(",");
+          final var fmts = args[i].split(",");
           if (fmts.length == 0) {
             logger.error("{}", S.get("ttyFormatError"));
           }
-          for (String s : fmts) {
-            String fmt = s.trim();
-            int val = parseTtyFormat(fmt);
+          for (final var s : fmts) {
+            final var fmt = s.trim();
+            final var val = parseTtyFormat(fmt);
             if (val == 0)
               logger.error("{}", S.get("ttyFormatError"));
             else
@@ -255,8 +227,8 @@ public class Startup implements AWTEventListener {
         }
       } else if (arg.equals("-sub")) {
         if (i + 2 < args.length) {
-          File a = new File(args[i + 1]);
-          File b = new File(args[i + 2]);
+          final var a = new File(args[i + 1]);
+          final var b = new File(args[i + 2]);
           if (ret.substitutions.containsKey(a)) {
             logger.error("{}", S.get("argDuplicateSubstitutionError"));
             return null;
@@ -292,14 +264,14 @@ public class Startup implements AWTEventListener {
         }
         ret.templPlain = true;
       } else if (arg.equals("-version")) {
-        System.out.println(Main.VERSION_NAME); // OK
+        System.out.println(Main.VERSION);
         return null;
       } else if (arg.equals("-gates")) {
         i++;
         if (i >= args.length) {
           printUsage();
         }
-        String a = args[i];
+        final var a = args[i];
         if (a.equals("shaped")) {
           AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
         } else if (a.equals("rectangular")) {
@@ -313,18 +285,19 @@ public class Startup implements AWTEventListener {
         if (i >= args.length) {
           printUsage();
         }
-        String[] wxh = args[i].split("[xX]");
+        final var wxh = args[i].split("[xX]");
         if (wxh.length != 2 || wxh[0].length() < 1 || wxh[1].length() < 1) {
           logger.error("{}", S.get("argGeometryError"));
           System.exit(1);
         }
-        int p = wxh[1].indexOf('+', 1);
+        final var p = wxh[1].indexOf('+', 1);
         String loc = null;
-        int x = 0, y = 0;
+        var x = 0;
+        var y = 0;
         if (p >= 0) {
           loc = wxh[1].substring(p + 1);
           wxh[1] = wxh[1].substring(0, p);
-          String[] xy = loc.split("\\+");
+          final var xy = loc.split("\\+");
           if (xy.length != 2 || xy[0].length() < 1 || xy[1].length() < 1) {
             logger.error("{}", S.get("argGeometryError"));
             System.exit(1);
@@ -337,7 +310,8 @@ public class Startup implements AWTEventListener {
             System.exit(1);
           }
         }
-        int w = 0, h = 0;
+        var w = 0;
+        var h = 0;
         try {
           w = Integer.parseInt(wxh[0]);
           h = Integer.parseInt(wxh[1]);
@@ -363,7 +337,7 @@ public class Startup implements AWTEventListener {
         if (i >= args.length) {
           printUsage();
         }
-        String a = args[i];
+        final var a = args[i];
         if (a.equals("yes")) {
           AppPreferences.ACCENTS_REPLACE.setBoolean(false);
         } else if (a.equals("no")) {
@@ -383,9 +357,9 @@ public class Startup implements AWTEventListener {
         }
         ret.templFile = new File(args[i]);
         if (!ret.templFile.exists()) {
-          logger.error("{}", StringUtil.format(S.get("templateMissingError"), args[i]));
+          logger.error("{}", S.get("templateMissingError", args[i]));
         } else if (!ret.templFile.canRead()) {
-          logger.error("{}", StringUtil.format(S.get("templateCannotReadError"), args[i]));
+          logger.error("{}", S.get("templateCannotReadError", args[i]));
         }
       } else if (arg.equals("-nosplash")) {
         ret.showSplash = false;
@@ -433,6 +407,7 @@ public class Startup implements AWTEventListener {
               ret.testTickFrequency = Integer.parseUnsignedInt(args[i]);
               i++;
             } catch (NumberFormatException ignored) {
+              // do nothing
             }
             if (i < args.length) {
               if (!args[i].startsWith("-")) {
@@ -480,8 +455,6 @@ public class Startup implements AWTEventListener {
         // already handled above
       } else if (arg.equals("-analyze")) {
         Main.ANALYZE = true;
-      } else if (arg.equals("-noupdates")) {
-        AppPreferences.AutomaticUpdateCheck.setBoolean(false);
       } else if (arg.equals("-questa")) {
         i++;
         if (i >= args.length) {
@@ -520,33 +493,37 @@ public class Startup implements AWTEventListener {
   }
 
   private static void printUsage() {
-    System.err.println(StringUtil.format(S.get("argUsage"), Startup.class.getName())); // OK
-    System.err.println(); // OK
-    System.err.println(S.get("argOptionHeader")); // OK
-    System.err.println("   " + S.get("argNoUpdatesOption")); // OK
-    System.err.println("   " + S.get("argGeometryOption")); // OK
-    System.err.println("   " + S.get("argAccentsOption")); // OK
-    System.err.println("   " + S.get("argClearOption")); // OK
-    System.err.println("   " + S.get("argEmptyOption")); // OK
-    System.err.println("   " + S.get("argAnalyzeOption")); // OK
-    System.err.println("   " + S.get("argTestOption")); // OK
-    System.err.println("   " + S.get("argGatesOption")); // OK
-    System.err.println("   " + S.get("argHelpOption")); // OK
-    System.err.println("   " + S.get("argLoadOption")); // OK
-    System.err.println("   " + S.get("argLocaleOption")); // OK
-    System.err.println("   " + S.get("argNoSplashOption")); // OK
-    System.err.println("   " + S.get("argPlainOption")); // OK
-    System.err.println("   " + S.get("argSubOption")); // OK
-    System.err.println("   " + S.get("argTemplateOption")); // OK
-    System.err.println("   " + S.get("argTtyOption")); // OK
-    System.err.println("   " + S.get("argQuestaOption")); // OK
-    System.err.println("   " + S.get("argVersionOption")); // OK
-    System.err.println("   " + S.get("argTestCircGen")); // OK
-    System.err.println("   " + S.get("argTestCircuit")); // OK
-    System.err.println("   " + S.get("argTestImplement")); // OK
-    System.err.println("   " + S.get("argCircuitOption")); // OK
+    System.err.println(S.get("argUsage", Startup.class.getName()));
+    System.err.println();
+    System.err.println(S.get("argOptionHeader"));
+    String[] opts = {
+      "argGeometryOption",
+      "argAccentsOption",
+      "argClearOption",
+      "argEmptyOption",
+      "argAnalyzeOption",
+      "argTestOption",
+      "argGatesOption",
+      "argHelpOption",
+      "argLoadOption",
+      "argLocaleOption",
+      "argNoSplashOption",
+      "argPlainOption",
+      "argSubOption",
+      "argTemplateOption",
+      "argTtyOption",
+      "argQuestaOption",
+      "argVersionOption",
+      "argTestCircGen",
+      "argTestCircuit",
+      "argTestImplement",
+      "argCircuitOption",
+    };
+    for (final var opt : opts) {
+      System.err.println("   " + S.get(opt));
+    }
 
-    System.exit(-1);
+    System.exit(0);
   }
 
   private static void registerHandler() {
@@ -554,8 +531,8 @@ public class Startup implements AWTEventListener {
   }
 
   private static void setLocale(String lang) {
-    Locale[] opts = S.getLocaleOptions();
-    for (Locale locale : opts) {
+    final var opts = S.getLocaleOptions();
+    for (final var locale : opts) {
       if (lang.equals(locale.toString())) {
         LocaleManager.setLocale(locale);
         return;
@@ -564,132 +541,10 @@ public class Startup implements AWTEventListener {
     logger.warn("{}", S.get("invalidLocaleError"));
     logger.warn("{}", S.get("invalidLocaleOptionsHeader"));
 
-    for (Locale opt : opts) {
+    for (final var opt : opts) {
       logger.warn("   {}", opt.toString());
     }
     System.exit(-1);
-  }
-
-  /**
-   * Auto-update Logisim-evolution if a new version is available
-   *
-   * <p>Original idea taken from Jupar: http://masterex.github.io/archive/2011/12/25/jupar.html by
-   * Periklis Master_ex Ntanasis <pntanasis@gmail.com>
-   *
-   * @return true if the code has been updated, and therefore the execution has to be stopped, false
-   *     otherwise
-   */
-  public boolean autoUpdate() {
-    if (!AppPreferences.AutomaticUpdateCheck.getBoolean()) return false;
-    ProgressMonitor Monitor =
-        new ProgressMonitor(null, "Checking for new logisim version", "Autoupdate", 0, 4);
-    Monitor.setProgress(0);
-    Monitor.setMillisToPopup(0);
-    Monitor.setMillisToDecideToPopup(0);
-    if (!networkConnectionAvailable()) {
-      Monitor.close();
-      return false;
-    }
-    Monitor.setProgress(1);
-    // Get the remote XML file containing the current version
-    URL xmlURL;
-    try {
-      xmlURL = new URL(Main.UPDATE_URL);
-    } catch (MalformedURLException e) {
-      logger.error(
-          "The URL of the XML file for the auto-updater is malformed.\nPlease report this error to the software maintainer\n-- AUTO-UPDATE ABORTED --");
-      Monitor.close();
-      return (false);
-    }
-    URLConnection conn;
-    try {
-      conn = xmlURL.openConnection();
-    } catch (IOException e) {
-      logger.error(
-          "Although an Internet connection should be available, the system couldn't connect to the URL requested by the auto-updater\nIf the error persist, please contact the software maintainer\n-- AUTO-UPDATE ABORTED --");
-      Monitor.close();
-      return (false);
-    }
-    InputStream in;
-    try {
-      in = conn.getInputStream();
-    } catch (IOException e) {
-      logger.error(
-          "Although an Internet connection should be available, the system couldn't retrieve the data requested by the auto-updater.\nIf the error persist, please contact the software maintainer\n-- AUTO-UPDATE ABORTED --");
-      Monitor.close();
-      return (false);
-    }
-    ArgonXML logisimData = new ArgonXML(in, "logisim-evolution");
-    Monitor.setProgress(2);
-
-    // Get the appropriate remote version number
-    LogisimVersion remoteVersion = LogisimVersion.parse(logisimData.child("version").content());
-
-    // If the remote version is newer, perform the update
-    Monitor.setProgress(3);
-    if (remoteVersion.compareTo(Main.VERSION) > 0) {
-      int answer =
-          OptionPane.showConfirmDialog(
-              null,
-              "A new Logisim-evolution version ("
-                  + remoteVersion
-                  + ") is available!\nWould you like to update?",
-              "Update",
-              OptionPane.YES_NO_OPTION,
-              OptionPane.INFORMATION_MESSAGE);
-
-      if (answer == 1) {
-        // User refused to update -- we just hope he gets sufficiently
-        // annoyed by the message that he finally updates!
-        Monitor.close();
-        return (false);
-      }
-
-      // Obtain the base directory of the jar archive
-      CodeSource codeSource = Startup.class.getProtectionDomain().getCodeSource();
-      File jarFile = null;
-      try {
-        jarFile = new File(codeSource.getLocation().toURI().getPath());
-      } catch (URISyntaxException e) {
-        logger.error(
-            "Error in the syntax of the URI for the path of the executed Logisim-evolution JAR file!");
-        e.printStackTrace();
-        OptionPane.showMessageDialog(
-            null,
-            "An error occurred while updating to the new Logisim-evolution version.\nPlease check the console for log information.",
-            "Update failed",
-            OptionPane.ERROR_MESSAGE);
-        Monitor.close();
-        return (false);
-      }
-
-      // Get the appropriate remote filename to download
-      String remoteJar = logisimData.child("file").content();
-
-      boolean updateOk = downloadInstallUpdatedVersion(remoteJar, jarFile.getAbsolutePath());
-
-      if (updateOk) {
-        OptionPane.showMessageDialog(
-            null,
-            "The new Logisim-evolution version ("
-                + remoteVersion
-                + ") has been correctly installed.\nPlease restart Logisim-evolution for the changes to take effect.",
-            "Update succeeded",
-            OptionPane.INFORMATION_MESSAGE);
-        Monitor.close();
-        return (true);
-      } else {
-        OptionPane.showMessageDialog(
-            null,
-            "An error occurred while updating to the new Logisim-evolution version.\nPlease check the console for log information.",
-            "Update failed",
-            OptionPane.ERROR_MESSAGE);
-        Monitor.close();
-        return (false);
-      }
-    }
-    Monitor.close();
-    return (false);
   }
 
   private void doOpenFile(File file) {
@@ -702,126 +557,12 @@ public class Startup implements AWTEventListener {
 
   private void doPrintFile(File file) {
     if (initialized) {
-      Project toPrint = ProjectActions.doOpen(null, null, file);
+      final var toPrint = ProjectActions.doOpen(null, null, file);
       Print.doPrint(toPrint);
       toPrint.getFrame().dispose();
     } else {
       filesToPrint.add(file);
     }
-  }
-
-  /**
-   * Download a new version of Logisim, according to the instructions received from autoUpdate(),
-   * and install it at the specified location
-   *
-   * <p>Original idea taken from: http://baptiste-wicht.developpez.com/tutoriels/java/update/ by
-   * Baptiste Wicht
-   *
-   * @param filePath remote file URL
-   * @param destination local destination for the updated Jar file
-   * @return true if the new version has been downloaded and installed, false otherwise
-   * @throws IOException
-   */
-  private boolean downloadInstallUpdatedVersion(String filePath, String destination) {
-    URL fileURL;
-    try {
-      fileURL = new URL(filePath);
-    } catch (MalformedURLException e) {
-      logger.error(
-          "The URL of the requested update file is malformed.\nPlease report this error to the software maintainer.\n-- AUTO-UPDATE ABORTED --");
-      return (false);
-    }
-    URLConnection conn;
-    try {
-      conn = fileURL.openConnection();
-    } catch (IOException e) {
-      logger.error(
-          "Although an Internet connection should be available, the system couldn't connect to the URL of the updated file requested by the auto-updater.\nIf the error persist, please contact the software maintainer\n-- AUTO-UPDATE ABORTED --");
-      return (false);
-    }
-
-    // Get remote file size
-    int length = conn.getContentLength();
-    if (length == -1) {
-      logger.error(
-          "Cannot retrieve the file containing the updated version.\nIf the error persist, please contact the software maintainer\n-- AUTO-UPDATE ABORTED --");
-      return (false);
-    }
-
-    // Get remote file stream
-    InputStream is;
-    try {
-      is = new BufferedInputStream(conn.getInputStream());
-    } catch (IOException e) {
-      logger.error(
-          "Cannot get remote file stream.\nIf the error persist, please contact the software maintainer\n-- AUTO-UPDATE ABORTED --");
-      return (false);
-    }
-
-    // Local file buffer
-    byte[] data = new byte[length];
-
-    // Helper variables for marking the current position in the downloaded
-    // file
-    int currentBit = 0;
-    int deplacement = 0;
-
-    // Download remote content
-    try {
-      while (deplacement < length) {
-        currentBit = is.read(data, deplacement, data.length - deplacement);
-
-        if (currentBit == -1) {
-          // Reached EOF
-          break;
-        }
-        deplacement += currentBit;
-      }
-    } catch (IOException e) {
-      logger.error(
-          "An error occured while retrieving remote file (remote peer hung up).\nIf the error persist, please contact the software maintainer\n-- AUTO-UPDATE ABORTED --");
-      return (false);
-    }
-    // Close remote stream
-    try {
-      is.close();
-    } catch (IOException e) {
-      logger.error("Error encountered while closing the remote stream!");
-      e.printStackTrace();
-    }
-
-    // If not all the bytes have been retrieved, abort update
-    if (deplacement != length) {
-      logger.error(
-          "An error occured while retrieving remote file (local size != remote size), download corrupted.\nIf the error persist, please contact the software maintainer\n-- AUTO-UPDATE ABORTED --");
-      return (false);
-    }
-
-    // Open stream for local Jar and write data
-    FileOutputStream destinationFile;
-    try {
-      destinationFile = new FileOutputStream(destination);
-    } catch (FileNotFoundException e) {
-      logger.error("An error occured while opening the local Jar file.\n-- AUTO-UPDATE ABORTED --");
-      return (false);
-    }
-    try {
-      destinationFile.write(data);
-      destinationFile.flush();
-    } catch (IOException e) {
-      logger.error(
-          "An error occured while writing to the local Jar file.\n-- AUTO-UPDATE ABORTED --\nThe local file might be corrupted. If this is the case, please download a new copy of Logisim.");
-    } finally {
-      try {
-        destinationFile.close();
-      } catch (IOException e) {
-        logger.error(
-            "Error encountered while closing the local destination file!\nThe local file might be corrupted. If this is the case, please download a new copy of Logisim.");
-        return (false);
-      }
-    }
-
-    return (true);
   }
 
   List<File> getFilesToOpen() {
@@ -850,12 +591,18 @@ public class Startup implements AWTEventListener {
 
   boolean FpgaDownload(Project proj) {
     /* Testing synthesis */
+    final var mainCircuit = proj.getLogisimFile().getCircuit(testCircuitImpName);
+    if (mainCircuit == null) return false;
+    final var simTickFreq = mainCircuit.getTickFrequency();
+    final var downTickFreq = mainCircuit.getDownloadFrequency();
+    final var usedFrequency = (testTickFrequency > 0) ? testTickFrequency : 
+        (downTickFreq > 0) ? downTickFreq : simTickFreq;
     Download Downloader =
         new Download(
             proj,
             testCircuitImpName,
-            testTickFrequency,
-            new BoardReaderClass(AppPreferences.Boards.GetBoardFilePath(testCircuitImpBoard))
+            usedFrequency,
+            new BoardReaderClass(AppPreferences.Boards.getBoardFilePath(testCircuitImpBoard))
                 .GetBoardInformation(),
             testCircuitImpMapFile,
             false,
@@ -876,32 +623,6 @@ public class Startup implements AWTEventListener {
     } else if (templPlain) {
       AppPreferences.setTemplateType(AppPreferences.TEMPLATE_PLAIN);
     }
-  }
-
-  /**
-   * Check if network connection is available.
-   *
-   * <p>This function tries to connect to google in order to test the availability of a network
-   * connection. This step is needed before attempting to perform an auto-update. It assumes that
-   * google is accessible -- usually this is the case, and it should also provide a quick reply to
-   * the connection attempt, reducing the lag.
-   *
-   * @return true if the connection is available, false otherwise
-   */
-  private boolean networkConnectionAvailable() {
-    try {
-      URL url = new URL("http://www.google.com");
-      URLConnection uC = url.openConnection();
-      uC.connect();
-      return (true);
-    } catch (MalformedURLException e) {
-      logger.error("The URL used to check the connectivity is malformed -- no Google?");
-      e.printStackTrace();
-    } catch (IOException e) {
-      // If we get here, the connection somehow failed
-      return (false);
-    }
-    return (false);
   }
 
   public void run() {
@@ -935,13 +656,13 @@ public class Startup implements AWTEventListener {
     if (showSplash) {
       monitor.setProgress(SplashScreen.LIBRARIES);
     }
-    Loader templLoader = new Loader(monitor);
-    int count =
-        templLoader.getBuiltin().getLibrary("Base").getTools().size()
-            + templLoader.getBuiltin().getLibrary("Gates").getTools().size();
+    final var templLoader = new Loader(monitor);
+    final var count =
+        templLoader.getBuiltin().getLibrary(BaseLibrary._ID).getTools().size()
+            + templLoader.getBuiltin().getLibrary(GatesLibrary._ID).getTools().size();
     if (count < 0) {
       // this will never happen, but the optimizer doesn't know that...
-      logger.error("FATAL ERROR - no components"); // OK
+      logger.error("FATAL ERROR - no components");
       System.exit(-1);
     }
 
@@ -981,16 +702,16 @@ public class Startup implements AWTEventListener {
 
     // load file
     if (filesToOpen.isEmpty()) {
-      Project proj = ProjectActions.doNew(monitor);
+      final var proj = ProjectActions.doNew(monitor);
       proj.setStartupScreen(true);
       if (showSplash) {
         monitor.close();
       }
     } else {
-      int numOpened = 0;
-      boolean first = true;
+      var numOpened = 0;
+      var first = true;
       Project proj;
-      for (File fileToOpen : filesToOpen) {
+      for (final var fileToOpen : filesToOpen) {
         try {
           if (testVector != null) {
             proj = ProjectActions.doOpenNoWindow(monitor, fileToOpen);
@@ -1003,7 +724,7 @@ public class Startup implements AWTEventListener {
             ProjectActions.doSave(proj, new File(testCircPathOutput));
           } else if (testCircuitPathInput != null) {
             /* Testing test bench*/
-            TestBench testB = new TestBench(testCircuitPathInput, monitor, substitutions);
+            final var testB = new TestBench(testCircuitPathInput, monitor, substitutions);
 
             if (testB.startTestBench()) {
               System.out.println("Test bench pass\n");
@@ -1030,7 +751,7 @@ public class Startup implements AWTEventListener {
       if (numOpened == 0) System.exit(-1);
     }
 
-    for (File fileToPrint : filesToPrint) {
+    for (final var fileToPrint : filesToPrint) {
       doPrintFile(fileToPrint);
     }
 
@@ -1040,7 +761,7 @@ public class Startup implements AWTEventListener {
   }
 
   private boolean HasIcon(Component comp) {
-    boolean result = false;
+    var result = false;
     if (comp instanceof JOptionPane) {
       for (Component comp1 : ((JOptionPane) comp).getComponents()) result |= HasIcon(comp1);
     } else if (comp instanceof JPanel) {
@@ -1054,9 +775,9 @@ public class Startup implements AWTEventListener {
   @Override
   public void eventDispatched(AWTEvent event) {
     if (event instanceof ContainerEvent) {
-      ContainerEvent containerEvent = (ContainerEvent) event;
+      final var containerEvent = (ContainerEvent) event;
       if (containerEvent.getID() == ContainerEvent.COMPONENT_ADDED) {
-        Component container = containerEvent.getChild();
+        final var container = containerEvent.getChild();
         if ((container instanceof JButton)
             || (container instanceof JCheckBox)
             || (container instanceof JComboBox)
@@ -1085,7 +806,7 @@ public class Startup implements AWTEventListener {
           }
         }
         if (container instanceof JOptionPane) {
-          JOptionPane pane = (JOptionPane) container;
+          final var pane = (JOptionPane) container;
           if (HasIcon(pane)) {
             switch (pane.getMessageType()) {
               case OptionPane.ERROR_MESSAGE:

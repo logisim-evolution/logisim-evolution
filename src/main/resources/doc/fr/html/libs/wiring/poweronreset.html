@@ -1,0 +1,102 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="fr">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="fr">
+    <title>
+      Reset au démarrage
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/por.png" alt="#########" height="32" width="32"> 
+		<em>Reset à la mise sous tension</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Librairie:</strong>
+            </td>
+            <td>
+              <a href="index.html">Câblage</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduction:</strong>
+            </td>
+            <td>
+              2.14.6
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Apparence:</strong>
+            </td>
+            <td valign="top">
+              <img class="notscal" src="../../../../img-libs/por.png" width="128" height="23" alt="#########">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Comportement
+      </h2>
+      <p>
+        Le composant POR émet un signal haut au démarrage de la simulation durant un délais défini par la propriété <b class="propertie">Temps Reset</b> . Cela se passe soit a l'ouverture du projet par logisim soit quand on utilise le menu <a href="../../guide/menu/simulate.html">Redémarer la simulation</a><br>
+        En mode pas à pas <b class="menu"> Menu Simulation | Simulation pas à pas </b> la transition aura lieu après le délais mais en sychronisation avec l'appuis de la touche (<b class="tkeybd">Ctrl-I </b>).
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <p>
+        Ce composant ne possède qu'une seule broche de un bit dont la valeur représentera l'état actuel du reset. L'emplacement de cette broche est spécifié dans l'attribut <b class="propertie">Orientation.</b>
+      </p>
+      <h2>
+        Attributs
+      </h2>
+      <p>
+        Lorsque le composant est sélectionné ou ajouté, les touches fléchées modifient son attribut <b class="propertie">Orientation</b>.
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">Orientation</b>
+        </dt>
+        <dd>
+          Le côté du composant dessiné où doit se trouver sa broche de sortie.
+        </dd>
+        <dt>
+          <b class="propertie">Temps reset</b>
+        </dt>
+        <dd>
+          Le temps en seconde avant que le signale descende au niveau bas (0)
+        </dd>
+        </dl>
+</div>		
+          <h2>
+            Comportement de l'outil pousser 
+          </h2>
+          <p>
+            Aucun.
+          </p>
+          <h2>
+            Comportement de l'outil text
+          </h2>
+          <p>
+            Aucun.
+          </p>
+          <p>
+           <b>Retour à</b> <a href="../index.html">Référence de la bibliothèque</a>
+          </p>
+        
+
+    </div>
+  </body>
+</html>

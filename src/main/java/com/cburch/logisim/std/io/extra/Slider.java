@@ -47,7 +47,7 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.io.Io;
+import com.cburch.logisim.std.io.IoLibrary;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.LocaleManager;
 import java.awt.Color;
@@ -58,6 +58,14 @@ import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 
 public class Slider extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Slider";
+
   public static class Poker extends InstancePoker {
     private SliderValue data;
     private boolean dragging = false;
@@ -192,13 +200,13 @@ public class Slider extends InstanceFactory {
   }
 
   public Slider() {
-    super("Slider", S.getter("Slider"));
+    super(_ID, S.getter("Slider"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
           StdAttr.WIDTH,
           RadixOption.ATTRIBUTE,
-          Io.ATTR_COLOR,
+          IoLibrary.ATTR_COLOR,
           StdAttr.LABEL,
           StdAttr.LABEL_FONT,
           StdAttr.LABEL_VISIBILITY,
@@ -250,8 +258,7 @@ public class Slider extends InstanceFactory {
     if (facing == Direction.EAST) return Bounds.create(-width, -height / 2, width, height);
     else if (facing == Direction.WEST) return Bounds.create(0, -height / 2, width, height);
     else if (facing == Direction.NORTH) return Bounds.create(-width / 2, 0, width, height);
-    else // Direction SUD
-    return Bounds.create(-width / 2, -height, width, height);
+    else return Bounds.create(-width / 2, -height, width, height); // Direction SUD
   }
 
   @Override
@@ -272,7 +279,7 @@ public class Slider extends InstanceFactory {
     Bounds bds = painter.getBounds();
     SliderValue data = getValueState(painter);
     int x = bds.getX(), y = bds.getY();
-    painter.drawRoundBounds(painter.getAttributeValue(Io.ATTR_COLOR));
+    painter.drawRoundBounds(painter.getAttributeValue(IoLibrary.ATTR_COLOR));
     GraphicsUtil.switchToWidth(g, 2);
     // slider line
     g.drawLine(x + 10, y + bds.getHeight() - 10, x + bds.getWidth() - 10, y + bds.getHeight() - 10);

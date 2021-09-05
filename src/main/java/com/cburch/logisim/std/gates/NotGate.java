@@ -30,7 +30,6 @@ package com.cburch.logisim.std.gates;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
 import com.cburch.logisim.circuit.ExpressionComputer;
 import com.cburch.logisim.comp.TextField;
@@ -42,9 +41,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -54,26 +51,35 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.LineBuffer;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 class NotGate extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "NOT Gate";
 
   private static class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
-      ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   "+HDL.assignPreamble()+"Result"+HDL.assignOperator()+HDL.notOperator()+"Input_1;");
-      Contents.add("");
-      return Contents;
+    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+      return (new LineBuffer())
+          .addHdlPairs()
+          .add("{{assign}} Result {{=}} {{not}}Input_1;")
+          .add("")
+          .getWithIndent();
     }
   }
 
   static void configureLabel(Instance instance, boolean isRectangular, Location control) {
     Object facing = instance.getAttributeValue(StdAttr.FACING);
-    Bounds bds = instance.getBounds();
+    final var bds = instance.getBounds();
     int x;
     int y;
     int halign;
@@ -105,12 +111,12 @@ class NotGate extends InstanceFactory {
           "size", S.getter("gateSizeAttr"), new AttributeOption[] {SIZE_NARROW, SIZE_WIDE});
   private static final String RECT_LABEL = "1";
 
-  //	private static final Icon toolIconDin = Icons.getIcon("dinNotGate.gif");
+  // private static final Icon toolIconDin = Icons.getIcon("dinNotGate.gif");
 
   public static final InstanceFactory FACTORY = new NotGate();
 
   private NotGate() {
-    super("NOT Gate", S.getter("notGateComponent"));
+    super(_ID, S.getter("notGateComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -145,10 +151,10 @@ class NotGate extends InstanceFactory {
 
   private void configurePorts(Instance instance) {
     Object size = instance.getAttributeValue(ATTR_SIZE);
-    Direction facing = instance.getAttributeValue(StdAttr.FACING);
+    final var facing = instance.getAttributeValue(StdAttr.FACING);
     int dx = size == SIZE_NARROW ? -20 : -30;
 
-    Port[] ports = new Port[2];
+    final var ports = new Port[2];
     ports[0] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
     Location out = Location.create(0, 0).translate(facing, dx);
     ports[1] = new Port(out.getX(), out.getY(), Port.INPUT, StdAttr.WIDTH);
@@ -157,9 +163,9 @@ class NotGate extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuilder CompleteName = new StringBuilder();
+    final var CompleteName = new StringBuilder();
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
-    BitWidth width = attrs.getValue(StdAttr.WIDTH);
+    final var width = attrs.getValue(StdAttr.WIDTH);
     if (width.getWidth() > 1) CompleteName.append("_BUS");
     return CompleteName.toString();
   }
@@ -169,8 +175,8 @@ class NotGate extends InstanceFactory {
     if (key == ExpressionComputer.class) {
       return (ExpressionComputer) expressionMap -> {
         int width = instance.getAttributeValue(StdAttr.WIDTH).getWidth();
-        for (int b = 0; b < width; b++) {
-          Expression e = expressionMap.get(instance.getPortLocation(1), b);
+        for (var b = 0; b < width; b++) {
+          final var e = expressionMap.get(instance.getPortLocation(1), b);
           if (e != null) {
             expressionMap.put(instance.getPortLocation(0), b, Expressions.not(e));
           }
@@ -184,7 +190,7 @@ class NotGate extends InstanceFactory {
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Object value = attrs.getValue(ATTR_SIZE);
     if (value == SIZE_NARROW) {
-      Direction facing = attrs.getValue(StdAttr.FACING);
+      final var facing = attrs.getValue(StdAttr.FACING);
       if (facing == Direction.SOUTH) return Bounds.create(-9, -20, 18, 20);
       if (facing == Direction.NORTH) return Bounds.create(-9, 0, 18, 20);
       if (facing == Direction.WEST) return Bounds.create(0, -9, 20, 18);
@@ -222,13 +228,13 @@ class NotGate extends InstanceFactory {
   }
 
   private void paintBase(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    Direction facing = painter.getAttributeValue(StdAttr.FACING);
-    Location loc = painter.getLocation();
-    int x = loc.getX();
-    int y = loc.getY();
+    final var g = painter.getGraphics();
+    final var facing = painter.getAttributeValue(StdAttr.FACING);
+    final var loc = painter.getLocation();
+    final var x = loc.getX();
+    final var y = loc.getY();
     g.translate(x, y);
-    double rotate = 0.0;
+    var rotate = 0.0;
     if (facing != null && facing != Direction.EAST && g instanceof Graphics2D) {
       rotate = -facing.toRadians();
       ((Graphics2D) g).rotate(rotate);
@@ -237,10 +243,11 @@ class NotGate extends InstanceFactory {
     Object shape = painter.getGateShape();
     if (shape == AppPreferences.SHAPE_RECTANGULAR) {
       paintRectangularBase(g, painter);
-      //		} else if (shape == AppPreferences.SHAPE_DIN40700) {
-      //			int width = painter.getAttributeValue(ATTR_SIZE) == SIZE_NARROW ? 20
-      //					: 30;
-      //			PainterDin.paintAnd(painter, width, 18, true);
+
+    //    } else if (shape == AppPreferences.SHAPE_DIN40700) {
+    //      int width = painter.getAttributeValue(ATTR_SIZE) == SIZE_NARROW ? 20 : 30;
+    //      PainterDin.paintAnd(painter, width, 18, true);
+
     } else {
       PainterShaped.paintNot(painter);
     }
@@ -261,11 +268,11 @@ class NotGate extends InstanceFactory {
   //
   @Override
   public void paintIcon(InstancePainter painter) {
-    Graphics2D g = (Graphics2D)painter.getGraphics();
-    if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR) 
-      AbstractGate.paintIconIEC(g, RECT_LABEL, true,true);
+    final var g = (Graphics2D) painter.getGraphics();
+    if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR)
+      AbstractGate.paintIconIEC(g, RECT_LABEL, true, true);
     else
-      AbstractGate.paintIconBufferANSI(g, true,false);
+      AbstractGate.paintIconBufferANSI(g, true, false);
   }
 
   @Override
@@ -292,8 +299,8 @@ class NotGate extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    Value in = state.getPortValue(1);
-    Value out = in.not();
+    final var in = state.getPortValue(1);
+    var out = in.not();
     out = Buffer.repair(state, out);
     state.setPort(0, out, GateAttributes.DELAY);
   }

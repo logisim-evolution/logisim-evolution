@@ -197,7 +197,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   protected void copyInto(AbstractAttributeSet dest) {
     VhdlEntityAttributes attr = (VhdlEntityAttributes) dest;
     attr.content = content; // .clone();
-    // 	attr.label = unchanged;
+    // attr.label = unchanged;
     attr.labelFont = labelFont;
     attr.labelVisible = labelVisible;
     attr.facing = facing;
@@ -321,12 +321,6 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     }
 
     @Override
-    public void aboutToSave(HdlModel source) {}
-
-    @Override
-    public void displayChanged(HdlModel source) {}
-
-    @Override
     public void appearanceChanged(HdlModel source) {
       attrs.vhdlInstance.recomputeBounds();
       attrs.fireAttributeValueChanged(
@@ -336,6 +330,6 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
 
   @Override
   public boolean isToSave(Attribute<?> attr) {
-    return attr != VhdlSimConstants.SIM_NAME_ATTR;
+    return attr.isToSave() && attr != VhdlSimConstants.SIM_NAME_ATTR;
   }
 }

@@ -28,35 +28,25 @@
 
 package com.cburch.logisim;
 
+/** Logisim follows Semantic Versioning https://semver.org/ */
 public class LogisimVersion {
-  /**
-   * Create a new version object for the current Logisim instance (the constructor is private) where
-   * the revision number is set to its default value and no variant is used
-   */
-  public static LogisimVersion get(int major, int minor, int release) {
-    return (get(major, minor, release, FINAL_REVISION, ""));
+  private int major = 0;
+  private int minor = 0;
+  private int patch = 0;
+  private String suffix = "";
+
+  public LogisimVersion(int major, int minor, int patch) {
+    this(major, minor, patch, "");
   }
 
-  /**
-   * Create a new version object for the current Logisim instance (the constructor is private) where
-   * no variant is used
-   */
-  public static LogisimVersion get(int major, int minor, int release, int revision) {
-    return (get(major, minor, release, revision, ""));
-  }
-
-  /** Create a new version object for the current Logisim instance (the constructor is private) */
-  public static LogisimVersion get(
-      int major, int minor, int release, int revision, String variant) {
-    return (new LogisimVersion(major, minor, release, revision, variant));
-  }
-
-  /**
-   * Create a new version object for the current Logisim instance (the constructor is private) where
-   * the revision field is set to its default value
-   */
-  public static LogisimVersion get(int major, int minor, int release, String variant) {
-    return (get(major, minor, release, FINAL_REVISION, variant));
+  public LogisimVersion(int major, int minor, int patch, String suffix) {
+    this.major = major;
+    this.minor = minor;
+    this.patch = patch;
+    if (suffix == null) {
+      suffix = "";
+    }
+    this.suffix = suffix.strip();
   }
 
   /**
@@ -64,131 +54,91 @@ public class LogisimVersion {
    * No exception is thrown if the version string contains non-integers, because literal values are
    * allowed.
    *
+   * <p>Supported version string formats are `X.Y.Z` or `X.Y.Z-SUFFIX`
+   *
    * @return LogisimVersion built from the string passed as parameter
    */
-  public static LogisimVersion parse(String versionString) {
-    String[] parts = versionString.split("\\.");
-    int major = 0;
-    int minor = 0;
-    int release = 0;
-    int revision = FINAL_REVISION;
-    String variant = "";
+  public static LogisimVersion fromString(String versionString) {
+    var major = 0;
+    var minor = 0;
+    var patch = 0;
+    var suffix = "";
 
-    if (versionString.isEmpty()) {
-      // Return the default values for an empty version string
-      return (new LogisimVersion(major, minor, release, revision, variant));
+    // Let's see if we have suffix segment or not.
+    final var segments = versionString.split("-");
+
+    if (segments.length > 0) {
+      if (segments.length == 2) {
+        suffix = segments[1].strip();
+      }
+
+      final var parts = segments[0].split("\\.");
+      try {
+        if (parts.length >= 1) major = Integer.parseInt(parts[0]);
+        if (parts.length >= 2) minor = Integer.parseInt(parts[1]);
+        if (parts.length >= 3) patch = Integer.parseInt(parts[2]);
+      } catch (NumberFormatException ignored) {
+        // Just ignore. We will just fall back to `0`
+      }
     }
 
-    try {
-      if (parts.length >= 1) major = Integer.parseInt(parts[0]);
-      if (parts.length >= 2) minor = Integer.parseInt(parts[1]);
-      if (parts.length >= 3) release = Integer.parseInt(parts[2]);
-      if (parts.length >= 4) revision = Integer.parseInt(parts[3]);
-      if (parts.length >= 5) variant = parts[4];
-    } catch (NumberFormatException ignored) {
-    }
-    return (new LogisimVersion(major, minor, release, revision, variant));
-  }
-
-  public static final int FINAL_REVISION = Integer.MAX_VALUE / 4;
-  private final int major;
-
-  private final int minor;
-
-  private final int release;
-
-  private final int revision;
-
-  private final String variant;
-
-  private String repr;
-
-  private LogisimVersion(int major, int minor, int release, int revision, String variant) {
-    this.major = major;
-    this.minor = minor;
-    this.release = release;
-    this.revision = revision;
-    this.variant = variant;
-    this.repr = null;
+    return new LogisimVersion(major, minor, patch, suffix);
   }
 
   /**
-   * Compare two Logisim version, returning whether the one passed as parameter is newer than the
-   * current one or not
+   * Compare two Logisim versions, returning positive non-zero value whether the one passed as
+   * parameter is newer than the current one, equal (0) or older (negative non-zero value).
    *
-   * @return Negative value if the current version is older than the one passed as parameter
+   * @return Negative value if the current version is older than the one passed as parameter, zero
+   *     if equal, positive if newer.
    */
   public int compareTo(LogisimVersion other) {
-    int ret = this.major - other.major;
+    var result = this.major - other.major;
 
-    if (ret != 0) {
-      return ret;
-    } else {
-      ret = this.minor - other.minor;
-      if (ret != 0) {
-        return (ret);
-      } else {
-        ret = this.release - other.release;
-        if (ret != 0) {
-          return (ret);
-        } else {
-          ret = this.revision - other.revision;
-          if (ret != 0) {
-            return (ret);
-          } else {
-            return (this.variant.compareTo(other.variant));
-          }
-        }
+    if (result == 0) {
+      result = this.minor - other.minor;
+      if (result == 0) {
+        result = this.patch - other.patch;
       }
     }
-  }
 
-  /** Compares two Logisim version numbers. */
-  @Override
-  public boolean equals(Object other) {
-    if (other instanceof LogisimVersion) {
-      LogisimVersion o = (LogisimVersion) other;
-      return (this.major == o.major
-          && this.minor == o.minor
-          && this.release == o.release
-          && this.revision == o.revision
-          && this.variant.equals(o.variant));
-    } else {
-      return (false);
+    // TODO: we do not understand what suffix means. The only rule here is that "no suffix"
+    // means stable version, while presence of suffix indicates unstable one, so in case
+    // all other values are equal, "no suffix" is considered newer.
+    if (result == 0) {
+      if (this.suffix.equals("") && !other.suffix.equals("")) {
+        result = 1; // this one is newer
+      } else if (!this.suffix.equals("") && other.suffix.equals("")) {
+        result = -1; // this one is older
+      }
     }
+
+    return result;
   }
 
-  /** Build the hash code starting from the version number */
+  /**
+   * Returns TRUE if version is considered stable, false otherwise. Note the implementation is
+   * plaind dumb and relies on presence of version suffix (which, if not empty means non-stable
+   * release).
+   *
+   * @return
+   */
+  public boolean isStable() {
+    return suffix.equals("");
+  }
+
+  /** Build the hash code starting from the version number. */
   @Override
   public int hashCode() {
-    int ret = major * 31 + minor;
-    ret = ret * 31 + release;
-    ret = ret * 31 + revision;
-    return (ret);
-  }
-
-  public String mainVersion() {
-    return (major + "." + minor + "." + release);
-  }
-
-  public String rev() {
-    if (revision != FINAL_REVISION) {
-      return ("rev. " + revision);
-    } else {
-      return ("");
-    }
+    return (major * 31 + minor) * 31 + patch + suffix.hashCode();
   }
 
   @Override
   public String toString() {
-    String ret = repr;
-
-    if (ret == null) {
-      ret = major + "." + minor + "." + release;
-      if (revision != FINAL_REVISION) ret += "." + revision;
-      if (!variant.equals("")) ret += "." + variant;
-      repr = ret;
+    String result = major + "." + minor + "." + patch;
+    if (!suffix.equals("")) {
+      result += "-" + suffix;
     }
-    return (ret);
+    return result;
   }
 }

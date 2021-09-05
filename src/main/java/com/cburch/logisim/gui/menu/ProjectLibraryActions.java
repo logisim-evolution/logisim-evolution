@@ -31,17 +31,14 @@ package com.cburch.logisim.gui.menu;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.file.Loader;
-import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.Library;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.jar.JarFile;
-import java.util.jar.Manifest;
 import javax.swing.JFileChooser;
 import javax.swing.JList;
 import javax.swing.JScrollPane;
@@ -50,9 +47,9 @@ public class ProjectLibraryActions {
   private ProjectLibraryActions() {}
 
   public static void doLoadBuiltinLibrary(Project proj) {
-    LogisimFile file = proj.getLogisimFile();
-    List<Library> baseBuilt = file.getLoader().getBuiltin().getLibraries();
-    ArrayList<Library> builtins = new ArrayList<>(baseBuilt);
+    final var file = proj.getLogisimFile();
+    final var baseBuilt = file.getLoader().getBuiltin().getLibraries();
+    final var builtins = new ArrayList<>(baseBuilt);
     builtins.removeAll(file.getLibraries());
     if (builtins.isEmpty()) {
       OptionPane.showMessageDialog(
@@ -62,8 +59,8 @@ public class ProjectLibraryActions {
           OptionPane.INFORMATION_MESSAGE);
       return;
     }
-    LibraryJList list = new LibraryJList(builtins);
-    JScrollPane listPane = new JScrollPane(list);
+    final var list = new LibraryJList(builtins);
+    final var listPane = new JScrollPane(list);
     int action =
         OptionPane.showConfirmDialog(
             proj.getFrame(),
@@ -72,27 +69,27 @@ public class ProjectLibraryActions {
             OptionPane.OK_CANCEL_OPTION,
             OptionPane.QUESTION_MESSAGE);
     if (action == OptionPane.OK_OPTION) {
-      Library[] libs = list.getSelectedLibraries();
+      final var libs = list.getSelectedLibraries();
       if (libs != null)
         proj.doAction(LogisimFileActions.loadLibraries(libs, proj.getLogisimFile()));
     }
   }
 
   public static void doLoadJarLibrary(Project proj) {
-    Loader loader = proj.getLogisimFile().getLoader();
-    JFileChooser chooser = loader.createChooser();
+    final var loader = proj.getLogisimFile().getLoader();
+    final var chooser = loader.createChooser();
     chooser.setDialogTitle(S.get("loadJarDialogTitle"));
     chooser.setFileFilter(Loader.JAR_FILTER);
     int check = chooser.showOpenDialog(proj.getFrame());
     if (check == JFileChooser.APPROVE_OPTION) {
-      File f = chooser.getSelectedFile();
+      final var f = chooser.getSelectedFile();
       String className = null;
 
       // try to retrieve the class name from the "Library-Class"
       // attribute in the manifest. This section of code was contributed
       // by Christophe Jacquet (Request Tracker #2024431).
-      try (JarFile jarFile = new JarFile(f)) {
-        Manifest manifest = jarFile.getManifest();
+      try (final var jarFile = new JarFile(f)) {
+        final var manifest = jarFile.getManifest();
         className = manifest.getMainAttributes().getValue("Library-Class");
       } catch (IOException e) {
         // if opening the JAR file failed, do nothing
@@ -110,7 +107,7 @@ public class ProjectLibraryActions {
         if (className == null) return;
       }
 
-      Library lib = loader.loadJarLibrary(f, className);
+      final var lib = loader.loadJarLibrary(f, className);
       if (lib != null) {
         proj.doAction(LogisimFileActions.loadLibrary(lib, proj.getLogisimFile()));
       }
@@ -118,14 +115,14 @@ public class ProjectLibraryActions {
   }
 
   public static void doLoadLogisimLibrary(Project proj) {
-    Loader loader = proj.getLogisimFile().getLoader();
-    JFileChooser chooser = loader.createChooser();
+    final var loader = proj.getLogisimFile().getLoader();
+    final var chooser = loader.createChooser();
     chooser.setDialogTitle(S.get("loadLogisimDialogTitle"));
     chooser.setFileFilter(Loader.LOGISIM_FILTER);
-    int check = chooser.showOpenDialog(proj.getFrame());
+    final var check = chooser.showOpenDialog(proj.getFrame());
     if (check == JFileChooser.APPROVE_OPTION) {
-      File f = chooser.getSelectedFile();
-      Library lib = loader.loadLogisimLibrary(f);
+      final var f = chooser.getSelectedFile();
+      final var lib = loader.loadLogisimLibrary(f);
       if (lib != null) {
         proj.doAction(LogisimFileActions.loadLibrary(lib, proj.getLogisimFile()));
       }
@@ -133,10 +130,10 @@ public class ProjectLibraryActions {
   }
 
   public static void doUnloadLibraries(Project proj) {
-    LogisimFile file = proj.getLogisimFile();
-    ArrayList<Library> canUnload = new ArrayList<>();
-    for (Library lib : file.getLibraries()) {
-      String message = file.getUnloadLibraryMessage(lib);
+    final var file = proj.getLogisimFile();
+    final var canUnload = new ArrayList<Library>();
+    for (final var lib : file.getLibraries()) {
+      final var message = file.getUnloadLibraryMessage(lib);
       if (message == null) canUnload.add(lib);
     }
     if (canUnload.isEmpty()) {
@@ -147,9 +144,9 @@ public class ProjectLibraryActions {
           OptionPane.INFORMATION_MESSAGE);
       return;
     }
-    LibraryJList list = new LibraryJList(canUnload);
-    JScrollPane listPane = new JScrollPane(list);
-    int action =
+    final var list = new LibraryJList(canUnload);
+    final var listPane = new JScrollPane(list);
+    final var action =
         OptionPane.showConfirmDialog(
             proj.getFrame(),
             listPane,
@@ -157,16 +154,15 @@ public class ProjectLibraryActions {
             OptionPane.OK_CANCEL_OPTION,
             OptionPane.QUESTION_MESSAGE);
     if (action == OptionPane.OK_OPTION) {
-      Library[] libs = list.getSelectedLibraries();
+      final var libs = list.getSelectedLibraries();
       if (libs != null) proj.doAction(LogisimFileActions.unloadLibraries(libs));
     }
   }
 
   public static void doUnloadLibrary(Project proj, Library lib) {
-    String message = proj.getLogisimFile().getUnloadLibraryMessage(lib);
+    final var message = proj.getLogisimFile().getUnloadLibraryMessage(lib);
     if (message != null) {
-      OptionPane.showMessageDialog(
-          proj.getFrame(), message, S.get("unloadErrorTitle"), OptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(proj.getFrame(), message, S.get("unloadErrorTitle"), OptionPane.ERROR_MESSAGE);
     } else {
       proj.doAction(LogisimFileActions.unloadLibrary(lib));
     }
@@ -191,18 +187,18 @@ public class ProjectLibraryActions {
 
     @SuppressWarnings("unchecked")
     LibraryJList(List<Library> libraries) {
-      ArrayList<BuiltinOption> options = new ArrayList<>();
-      for (Library lib : libraries) {
+      final var options = new ArrayList<BuiltinOption>();
+      for (final var lib : libraries) {
         options.add(new BuiltinOption(lib));
       }
       setListData(options.toArray());
     }
 
     Library[] getSelectedLibraries() {
-      Object[] selected = getSelectedValuesList().toArray();
+      final var selected = getSelectedValuesList().toArray();
       if (selected != null && selected.length > 0) {
-        Library[] libs = new Library[selected.length];
-        for (int i = 0; i < selected.length; i++) {
+        final var libs = new Library[selected.length];
+        for (var i = 0; i < selected.length; i++) {
           libs[i] = ((BuiltinOption) selected[i]).lib;
         }
         return libs;

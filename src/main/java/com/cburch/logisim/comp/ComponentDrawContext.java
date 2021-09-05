@@ -39,7 +39,6 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 
 public class ComponentDrawContext {
@@ -91,22 +90,22 @@ public class ComponentDrawContext {
   public void drawBounds(Component comp) {
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(Color.BLACK);
-    Bounds bds = comp.getBounds();
+    final var bds = comp.getBounds();
     g.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     GraphicsUtil.switchToWidth(g, 1);
   }
 
   public void drawClock(Component comp, int i, Direction dir) {
-    Color curColor = g.getColor();
+    final var curColor = g.getColor();
     g.setColor(Color.BLACK);
     GraphicsUtil.switchToWidth(g, 2);
 
-    EndData e = comp.getEnd(i);
-    Location pt = e.getLocation();
-    int x = pt.getX();
-    int y = pt.getY();
-    final int CLK_SZ = 4;
-    final int CLK_SZD = CLK_SZ - 1;
+    final var e = comp.getEnd(i);
+    final var pt = e.getLocation();
+    final var x = pt.getX();
+    final var y = pt.getY();
+    final var CLK_SZ = 4;
+    final var CLK_SZD = CLK_SZ - 1;
     if (dir == Direction.NORTH) {
       g.drawLine(x - CLK_SZD, y - 1, x, y - CLK_SZ);
       g.drawLine(x + CLK_SZD, y - 1, x, y - CLK_SZ);
@@ -150,45 +149,70 @@ public class ComponentDrawContext {
   }
 
   public void drawHandles(Component comp) {
-    Bounds b = comp.getBounds(g);
-    int left = b.getX();
-    int right = left + b.getWidth();
-    int top = b.getY();
-    int bot = top + b.getHeight();
+    final var b = comp.getBounds(g);
+    final var left = b.getX();
+    final var right = left + b.getWidth();
+    final var top = b.getY();
+    final var bot = top + b.getHeight();
     drawHandle(right, top);
     drawHandle(left, bot);
     drawHandle(right, bot);
     drawHandle(left, top);
   }
 
-  public void drawPin(Component comp, int i) {
-    EndData e = comp.getEnd(i);
-    Location pt = e.getLocation();
-    Color curColor = g.getColor();
-    if (getShowState()) {
-      CircuitState state = getCircuitState();
-      g.setColor(state.getValue(pt).getColor());
-    } else {
-      g.setColor(Color.BLACK);
+
+  protected void drawPinMarker(int x, int y) {
+    final int defaultRadius = 4;
+    final int defaultOffset = 2;
+    final int mediumDotRadius = 6;
+    final int mediumDotOffset = 3;
+    final int bigDotRadius = 8;
+    final int bigDotOffset = 4;
+
+    String appearance = AppPreferences.PinAppearance.get();
+    int radius = 4;
+    int offset = 2;
+    switch (appearance) {
+      case AppPreferences.PIN_APPEAR_DOT_MEDIUM:
+        radius = 6;
+        offset = 3;
+        break;
+      case AppPreferences.PIN_APPEAR_DOT_BIG:
+        radius = 8;
+        offset = 4;
+        break;
+      case AppPreferences.PIN_APPEAR_DOT_BIGGER:
+        radius = 10;
+        offset = 5;
+        break;
     }
-    g.fillOval(pt.getX() - PIN_OFFS, pt.getY() - PIN_OFFS, PIN_RAD, PIN_RAD);
+    g.fillOval(x - offset, y - offset, radius, radius);
+  }
+
+  public void drawPin(Component comp, int i) {
+    final var e = comp.getEnd(i);
+    final var pt = e.getLocation();
+    final var curColor = g.getColor();
+    g.setColor(getShowState()
+            ? getCircuitState().getValue(pt).getColor()
+            : Color.BLACK);
+    drawPinMarker(pt.getX(), pt.getY());
     g.setColor(curColor);
   }
 
   public void drawPin(Component comp, int i, String label, Direction dir) {
-    Color curColor = g.getColor();
+    final var curColor = g.getColor();
     if (i < 0 || i >= comp.getEnds().size()) return;
-    EndData e = comp.getEnd(i);
-    Location pt = e.getLocation();
+    final var e = comp.getEnd(i);
+    final var pt = e.getLocation();
     int x = pt.getX();
     int y = pt.getY();
     if (getShowState()) {
-      CircuitState state = getCircuitState();
-      g.setColor(state.getValue(pt).getColor());
+      g.setColor(getCircuitState().getValue(pt).getColor());
     } else {
       g.setColor(Color.BLACK);
     }
-    g.fillOval(x - PIN_OFFS, y - PIN_OFFS, PIN_RAD, PIN_RAD);
+    drawPinMarker(x, y);
     g.setColor(curColor);
     if (dir == Direction.EAST) {
       GraphicsUtil.drawText(g, label, x + 3, y, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
@@ -202,16 +226,15 @@ public class ComponentDrawContext {
   }
 
   public void drawPins(Component comp) {
-    Color curColor = g.getColor();
-    for (EndData e : comp.getEnds()) {
-      Location pt = e.getLocation();
+    final var curColor = g.getColor();
+    for (final var e : comp.getEnds()) {
+      final var pt = e.getLocation();
       if (getShowState()) {
-        CircuitState state = getCircuitState();
-        g.setColor(state.getValue(pt).getColor());
+        g.setColor(getCircuitState().getValue(pt).getColor());
       } else {
         g.setColor(Color.BLACK);
       }
-      g.fillOval(pt.getX() - PIN_OFFS, pt.getY() - PIN_OFFS, PIN_RAD, PIN_RAD);
+      drawPinMarker(pt.getX(), pt.getY());
     }
     g.setColor(curColor);
   }
@@ -221,23 +244,21 @@ public class ComponentDrawContext {
   }
 
   public void drawRectangle(Component comp, String label) {
-    Bounds bds = comp.getBounds(g);
+    final var bds = comp.getBounds(g);
     drawRectangle(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight(), label);
   }
 
-  public void drawRectangle(
-      ComponentFactory source, int x, int y, AttributeSet attrs, String label) {
-    Bounds bds = source.getOffsetBounds(attrs);
+  public void drawRectangle(ComponentFactory source, int x, int y, AttributeSet attrs, String label) {
+    final var bds = source.getOffsetBounds(attrs);
     drawRectangle(source, x + bds.getX(), y + bds.getY(), bds.getWidth(), bds.getHeight(), label);
   }
 
-  public void drawRectangle(
-      ComponentFactory source, int x, int y, int width, int height, String label) {
+  public void drawRectangle(ComponentFactory source, int x, int y, int width, int height, String label) {
     GraphicsUtil.switchToWidth(g, 2);
     g.drawRect(x + 1, y + 1, width - 1, height - 1);
     if (label != null && !label.equals("")) {
-      FontMetrics fm = base.getFontMetrics(g.getFont());
-      int lwid = fm.stringWidth(label);
+      final var fm = base.getFontMetrics(g.getFont());
+      final var lwid = fm.stringWidth(label);
       if (height > 20) { // centered at top edge
         g.drawString(label, x + (width - lwid) / 2, y + 2 + fm.getAscent());
       } else { // centered overall
@@ -250,8 +271,8 @@ public class ComponentDrawContext {
     GraphicsUtil.switchToWidth(g, 2);
     g.drawRect(x, y, width, height);
     if (label != null && !label.equals("")) {
-      FontMetrics fm = base.getFontMetrics(g.getFont());
-      int lwid = fm.stringWidth(label);
+      final var fm = base.getFontMetrics(g.getFont());
+      final var lwid = fm.stringWidth(label);
       if (height > 20) { // centered at top edge
         g.drawString(label, x + (width - lwid) / 2, y + 2 + fm.getAscent());
       } else { // centered overall

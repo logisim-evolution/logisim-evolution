@@ -30,7 +30,6 @@ package com.cburch.logisim.prefs;
 
 import java.util.Objects;
 import java.util.prefs.PreferenceChangeEvent;
-import java.util.prefs.Preferences;
 
 class PrefMonitorString extends AbstractPrefMonitor<String> {
   private static boolean isSame(String a, String b) {
@@ -44,7 +43,7 @@ class PrefMonitorString extends AbstractPrefMonitor<String> {
   PrefMonitorString(String name, String dflt) {
     super(name);
     this.dflt = dflt;
-    Preferences prefs = AppPreferences.getPrefs();
+    final var prefs = AppPreferences.getPrefs();
     this.value = prefs.get(name, dflt);
     prefs.addPreferenceChangeListener(this);
   }
@@ -54,12 +53,12 @@ class PrefMonitorString extends AbstractPrefMonitor<String> {
   }
 
   public void preferenceChange(PreferenceChangeEvent event) {
-    Preferences prefs = event.getNode();
-    String prop = event.getKey();
-    String name = getIdentifier();
+    final var prefs = event.getNode();
+    final var prop = event.getKey();
+    final var name = getIdentifier();
     if (prop.equals(name)) {
-      String oldValue = value;
-      String newValue = prefs.get(name, dflt);
+      final var oldValue = value;
+      final var newValue = prefs.get(name, dflt);
       if (!isSame(oldValue, newValue)) {
         value = newValue;
         AppPreferences.firePropertyChange(name, oldValue, newValue);
@@ -68,7 +67,7 @@ class PrefMonitorString extends AbstractPrefMonitor<String> {
   }
 
   public void set(String newValue) {
-    String oldValue = value;
+    final var oldValue = value;
     if (!isSame(oldValue, newValue)) {
       value = newValue;
       AppPreferences.getPrefs().put(getIdentifier(), newValue);

@@ -31,7 +31,6 @@ package com.cburch.logisim.util;
 import java.awt.Component;
 import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
-import javax.swing.BoundedRangeModel;
 import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.SwingUtilities;
@@ -121,8 +120,8 @@ public class SmartScroller implements AdjustmentListener {
     Component view = scrollPane.getViewport().getView();
 
     if (view instanceof JTextComponent) {
-      JTextComponent textComponent = (JTextComponent) view;
-      DefaultCaret caret = (DefaultCaret) textComponent.getCaret();
+      final var textComponent = (JTextComponent) view;
+      final var caret = (DefaultCaret) textComponent.getCaret();
       caret.setUpdatePolicy(DefaultCaret.NEVER_UPDATE);
     }
   }
@@ -141,14 +140,14 @@ public class SmartScroller implements AdjustmentListener {
     // The scroll bar listModel contains information needed to determine
     // whether the viewport should be repositioned or not.
 
-    JScrollBar scrollBar = (JScrollBar) e.getSource();
-    BoundedRangeModel listModel = scrollBar.getModel();
-    int value = listModel.getValue();
-    int extent = listModel.getExtent();
-    int maximum = listModel.getMaximum();
+    final var scrollBar = (JScrollBar) e.getSource();
+    final var listModel = scrollBar.getModel();
+    var value = listModel.getValue();
+    final var extent = listModel.getExtent();
+    final var maximum = listModel.getMaximum();
 
-    boolean valueChanged = previousValue != value;
-    boolean maximumChanged = previousMaximum != maximum;
+    final var valueChanged = previousValue != value;
+    final var maximumChanged = previousMaximum != maximum;
 
     // Check if the user has manually repositioned the scrollbar
 

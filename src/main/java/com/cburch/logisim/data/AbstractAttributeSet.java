@@ -34,8 +34,7 @@ import java.util.List;
 public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
   private ArrayList<AttributeListener> listeners = null;
 
-  public AbstractAttributeSet() {}
-
+  @Override
   public void addAttributeListener(AttributeListener l) {
     if (listeners == null) listeners = new ArrayList<>();
     listeners.add(l);
@@ -47,17 +46,17 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
 
   @Override
   public Object clone() {
-    AbstractAttributeSet ret;
     try {
-      ret = (AbstractAttributeSet) super.clone();
+      AbstractAttributeSet ret = (AbstractAttributeSet) super.clone();
+      ret.listeners = new ArrayList<>();
+      this.copyInto(ret);
+      return ret;
     } catch (CloneNotSupportedException ex) {
       throw new UnsupportedOperationException();
     }
-    ret.listeners = new ArrayList<>();
-    this.copyInto(ret);
-    return ret;
   }
 
+  @Override
   public boolean containsAttribute(Attribute<?> attr) {
     return getAttributes().contains(attr);
   }
@@ -66,9 +65,8 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
 
   protected void fireAttributeListChanged() {
     if (listeners != null) {
-      AttributeEvent event = new AttributeEvent(this);
-      List<AttributeListener> ls = new ArrayList<>(listeners);
-      for (AttributeListener l : ls) {
+      final var event = new AttributeEvent(this);
+      for (final var l : new ArrayList<>(listeners)) {
         l.attributeListChanged(event);
       }
     }
@@ -76,14 +74,15 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
 
   protected <V> void fireAttributeValueChanged(Attribute<? super V> attr, V value, V oldvalue) {
     if (listeners != null) {
-      AttributeEvent event = new AttributeEvent(this, attr, value, oldvalue);
-      List<AttributeListener> ls = new ArrayList<>(listeners);
-      for (AttributeListener l : ls) {
+      final var event = new AttributeEvent(this, attr, value, oldvalue);
+      final var ls = new ArrayList<>(listeners);
+      for (final var l : ls) {
         l.attributeValueChanged(event);
       }
     }
   }
 
+  @Override
   public Attribute<?> getAttribute(String name) {
     for (Attribute<?> attr : getAttributes()) {
       if (attr.getName().equals(name)) {
@@ -93,27 +92,34 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
     return null;
   }
 
+  @Override
   public abstract List<Attribute<?>> getAttributes();
 
+  @Override
   public abstract <V> V getValue(Attribute<V> attr);
 
+  @Override
   public boolean isReadOnly(Attribute<?> attr) {
     return false;
   }
 
+  @Override
   public boolean isToSave(Attribute<?> attr) {
-    return true;
+    return attr.isToSave();
   }
 
+  @Override
   public void removeAttributeListener(AttributeListener l) {
     listeners.remove(l);
     if (listeners.isEmpty()) listeners = null;
   }
 
+  @Override
   public void setReadOnly(Attribute<?> attr, boolean value) {
     throw new UnsupportedOperationException();
   }
 
+  @Override
   public abstract <V> void setValue(Attribute<V> attr, V value);
-  
+
 }

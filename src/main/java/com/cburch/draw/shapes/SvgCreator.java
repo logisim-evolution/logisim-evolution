@@ -37,7 +37,9 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class SvgCreator {
-  private SvgCreator() {}
+  private SvgCreator() {
+    // dummy
+  }
 
   public static boolean colorMatches(Color a, Color b) {
     return a.getRed() == b.getRed() && a.getGreen() == b.getGreen() && a.getBlue() == b.getBlue();
@@ -126,12 +128,12 @@ public class SvgCreator {
   }
 
   public static Element createText(Document doc, Text text) {
-    Element elt = doc.createElement("text");
-    Location loc = text.getLocation();
-    Font font = text.getValue(DrawAttr.FONT);
-    Color fill = text.getValue(DrawAttr.FILL_COLOR);
-    Object halign = text.getValue(DrawAttr.HALIGNMENT);
-    Object valign = text.getValue(DrawAttr.VALIGNMENT);
+    final var elt = doc.createElement("text");
+    final var loc = text.getLocation();
+    final var font = text.getValue(DrawAttr.FONT);
+    final var fill = text.getValue(DrawAttr.FILL_COLOR);
+    final Object halign = text.getValue(DrawAttr.HALIGNMENT);
+    final Object valign = text.getValue(DrawAttr.VALIGNMENT);
     elt.setAttribute("x", "" + loc.getX());
     elt.setAttribute("y", "" + loc.getY());
     if (!colorMatches(fill, Color.BLACK)) {

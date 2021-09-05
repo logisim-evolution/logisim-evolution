@@ -38,7 +38,7 @@ import java.io.Reader;
  */
 public class ReaderInputStream extends InputStream {
 
-  /** Source Reader */
+  /** Source Reader. */
   private Reader in;
 
   private String encoding = System.getProperty("file.encoding");
@@ -120,7 +120,8 @@ public class ReaderInputStream extends InputStream {
     }
   }
 
-  /** @return false - mark is not supported */
+  /**
+   *  @return false - mark is not supported */
   @Override
   public boolean markSupported() {
     return false; // would be imprecise
@@ -145,7 +146,7 @@ public class ReaderInputStream extends InputStream {
         slack = null;
       }
     } else {
-      byte[] buf = new byte[1];
+      final var buf = new byte[1];
       if (read(buf, 0, 1) <= 0) {
         result = -1;
       }
@@ -175,7 +176,7 @@ public class ReaderInputStream extends InputStream {
     }
 
     while (slack == null) {
-      char[] buf = new char[len]; // might read too much
+      final var buf = new char[len]; // might read too much
       int n = in.read(buf);
       if (n == -1) {
         return -1;

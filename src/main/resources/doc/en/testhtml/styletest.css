@@ -105,13 +105,13 @@ td.zerov {
 td.unov {
 	color:#00FF00;
 }
-td.xvalue {
+td.uvalue {
 	color:#0000FF;
 }
 td.evalue {
 	color:#FF0000;
 }
-span.xvalue {
+span.uvalue {
 	color:#0000FF;
 }
 span.evalue {
@@ -183,11 +183,20 @@ table {
  border-style:solid; 
  border-color:black;
  }
+ 
 td { 
  border-width:0px 0px 1px;
  border-style:solid; 
  border-color:black;
  }
+
+img.tabl {
+	height: 20%;
+	width: 20%;
+	border:0;
+}
+ 
+ 
 /* for font test */
 font.px8 {
 	font-size: 8px;
@@ -231,6 +240,10 @@ img {
 
 div.test {
 	width=80%
+}
+
+img.tabl {
+	border:none;
 }
 
 

@@ -38,7 +38,6 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
@@ -61,6 +60,14 @@ import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 
 public class Register extends InstanceFactory implements DynamicElementProvider {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Register";
+
   public static void DrawRegisterClassic(
       InstancePainter painter,
       int x,
@@ -75,16 +82,16 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       InstancePainter painter,
       int x,
       int y,
-      int nr_of_bits,
+      int nrOfBits,
       boolean isLatch,
-      boolean neg_active,
-      boolean has_we,
+      boolean negActive,
+      boolean hasWE,
       Value value) {
-    int dq_width = (nr_of_bits == 1) ? 2 : 5;
-    int len = (nr_of_bits + 3) / 4;
-    int wid = 8 * len + 2;
-    int xoff = (60 - wid) / 2;
-    Graphics g = painter.getGraphics();
+    final var dq_widtdqWidth = (nrOfBits == 1) ? 2 : 5;
+    final var len = (nrOfBits + 3) / 4;
+    final var wid = 8 * len + 2;
+    final var xoff = (60 - wid) / 2;
+    final var g = painter.getGraphics();
     if (painter.getShowState() && (value != null)) {
       if (value.isFullyDefined()) g.setColor(Color.LIGHT_GRAY);
       else if (value.isErrorValue()) g.setColor(Color.RED);
@@ -92,8 +99,8 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       g.fillRect(x + xoff, y + 1, wid, 16);
       if (value.isFullyDefined()) g.setColor(Color.DARK_GRAY);
       else g.setColor(Color.YELLOW);
-      String str = "";
-      if (value.isFullyDefined()) str = StringUtil.toHexString(nr_of_bits, value.toLongValue());
+      var str = "";
+      if (value.isFullyDefined()) str = StringUtil.toHexString(nrOfBits, value.toLongValue());
       else {
         for (int i = 0; i < len; i++) str = str.concat("?");
       }
@@ -102,12 +109,12 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     }
     GraphicsUtil.switchToWidth(g, 2);
     g.drawRect(x + 10, y + 20, 40, 60);
-    if (nr_of_bits > 1) {
+    if (nrOfBits > 1) {
       g.drawLine(x + 15, y + 80, x + 15, y + 85);
       g.drawLine(x + 15, y + 85, x + 55, y + 85);
       g.drawLine(x + 55, y + 25, x + 55, y + 85);
       g.drawLine(x + 50, y + 25, x + 55, y + 25);
-      if (nr_of_bits > 2) {
+      if (nrOfBits > 2) {
         g.drawLine(x + 20, y + 85, x + 20, y + 90);
         g.drawLine(x + 20, y + 90, x + 60, y + 90);
         g.drawLine(x + 60, y + 30, x + 60, y + 90);
@@ -115,7 +122,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       }
     }
     GraphicsUtil.switchToWidth(g, 1);
-    GraphicsUtil.switchToWidth(g, dq_width);
+    GraphicsUtil.switchToWidth(g, dq_widtdqWidth);
     g.drawLine(x, y + 30, x + 8, y + 30);
     g.drawLine(x + 52, y + 30, x + 60, y + 30);
     GraphicsUtil.switchToWidth(g, 1);
@@ -127,7 +134,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     g.setColor(Color.GRAY);
     GraphicsUtil.drawCenteredText(g, "R", x + 30, y + 68);
     g.setColor(Color.BLACK);
-    if (has_we) {
+    if (hasWE) {
       GraphicsUtil.drawCenteredText(g, "WE", x + 22, y + 48);
       GraphicsUtil.switchToWidth(g, 2);
       g.drawLine(x, y + 50, x + 9, y + 50);
@@ -138,7 +145,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     } else {
       GraphicsUtil.drawCenteredText(g, "E", x + 18, y + 68);
     }
-    if (!neg_active) {
+    if (!negActive) {
       GraphicsUtil.switchToWidth(g, 2);
       g.drawLine(x, y + 70, x + 9, y + 70);
     } else {
@@ -160,7 +167,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     String b = null;
     if (painter.getShowState()) {
       long val = state == null ? 0 : state.value.toLongValue();
-      String str = StringUtil.toHexString(width, val);
+      final var str = StringUtil.toHexString(width, val);
       if (str.length() <= 4) {
         a = str;
       } else {
@@ -170,7 +177,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       }
     } else {
       a = S.get("registerLabel");
-      b = S.fmt("registerWidthLabel", "" + widthVal.getWidth());
+      b = S.get("registerWidthLabel", "" + widthVal.getWidth());
     }
 
     // draw boundary, label
@@ -217,7 +224,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       Attributes.forBoolean("showInTab", S.getter("registerShowInTab"));
 
   public Register() {
-    super("Register", S.getter("registerComponent"));
+    super(_ID, S.getter("registerComponent"));
     setAttributes(
         new Attribute[] {
           StdAttr.WIDTH,
@@ -263,7 +270,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
   }
 
   private void updatePorts(Instance instance) {
-    Port[] ps = new Port[5];
+    final var ps = new Port[5];
     if (instance.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
       ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
       ps[IN] = new Port(-30, 0, Port.INPUT, StdAttr.WIDTH);
@@ -287,7 +294,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuilder CompleteName = new StringBuilder();
+    final var CompleteName = new StringBuilder();
     CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
     if ((attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_FALLING)
         || (attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_RISING)) {
@@ -311,17 +318,17 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
       DrawRegisterClassic(painter);
     } else {
-      RegisterData state = (RegisterData) painter.getData();
-      BitWidth widthVal = painter.getAttributeValue(StdAttr.WIDTH);
-      int width = widthVal == null ? 8 : widthVal.getWidth();
-      Location loc = painter.getLocation();
+      final var state = (RegisterData) painter.getData();
+      final var widthVal = painter.getAttributeValue(StdAttr.WIDTH);
+      final var width = widthVal == null ? 8 : widthVal.getWidth();
+      final var loc = painter.getLocation();
       int x = loc.getX();
       int y = loc.getY();
 
       // determine text to draw in label
       Object Trigger = painter.getAttributeValue(StdAttr.TRIGGER);
-      boolean IsLatch = Trigger.equals(StdAttr.TRIG_HIGH) || Trigger.equals(StdAttr.TRIG_LOW);
-      boolean NegActive = Trigger.equals(StdAttr.TRIG_FALLING) || Trigger.equals(StdAttr.TRIG_LOW);
+      final var IsLatch = Trigger.equals(StdAttr.TRIG_HIGH) || Trigger.equals(StdAttr.TRIG_LOW);
+      final var NegActive = Trigger.equals(StdAttr.TRIG_FALLING) || Trigger.equals(StdAttr.TRIG_LOW);
 
       DrawRegisterEvolution(
           painter, x, y, width, IsLatch, NegActive, true, (state == null) ? null : state.value);
@@ -338,16 +345,16 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
 
   @Override
   public void propagate(InstanceState state) {
-    BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
+    final var dataWidth = state.getAttributeValue(StdAttr.WIDTH);
     Object triggerType = state.getAttributeValue(StdAttr.TRIGGER);
-    RegisterData data = (RegisterData) state.getData();
+    var data = (RegisterData) state.getData();
 
     if (data == null) {
       data = new RegisterData(dataWidth);
       state.setData(data);
     }
 
-    boolean triggered = data.updateClock(state.getPortValue(CK), triggerType);
+    final var triggered = data.updateClock(state.getPortValue(CK), triggerType);
 
     if (state.getPortValue(CLR) == Value.TRUE) {
       data.value = Value.createKnown(dataWidth, 0);
@@ -360,7 +367,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
 
   @Override
   public boolean CheckForGatedClocks(NetlistComponent comp) {
-    return Netlist.IsFlipFlop(comp.GetComponent().getAttributeSet());
+    return Netlist.isFlipFlop(comp.getComponent().getAttributeSet());
   }
 
   @Override
@@ -379,6 +386,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     }
   }
 
+  @Override
   public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {
     return new RegisterShape(x, y, path);
   }

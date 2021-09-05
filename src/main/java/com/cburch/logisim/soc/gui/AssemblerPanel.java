@@ -30,6 +30,10 @@ package com.cburch.logisim.soc.gui;
 
 import static com.cburch.logisim.soc.Strings.S;
 
+import com.cburch.contracts.BaseDocumentListenerContract;
+import com.cburch.contracts.BaseKeyListenerContract;
+import com.cburch.contracts.BaseMouseListenerContract;
+import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.CompileIcon;
@@ -48,11 +52,8 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -76,13 +77,13 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class AssemblerPanel extends JPanel
-    implements MouseListener,
+    implements BaseMouseListenerContract,
         LocaleListener,
         ActionListener,
-        KeyListener,
-        DocumentListener,
+        BaseKeyListenerContract,
+        BaseDocumentListenerContract,
         CaretListener,
-        WindowListener {
+        BaseWindowListenerContract {
 
   private static final long serialVersionUID = 1L;
 
@@ -217,7 +218,7 @@ public class AssemblerPanel extends JPanel
     } catch (IOException e) {
       OptionPane.showMessageDialog(
           parent,
-          S.fmt("AsmPanErrorReadingFile", textFile.getName()),
+          S.get("AsmPanErrorReadingFile", textFile.getName()),
           parent.getParentTitle(),
           OptionPane.ERROR_MESSAGE);
       textFile = null;
@@ -252,7 +253,7 @@ public class AssemblerPanel extends JPanel
     } catch (IOException e) {
       OptionPane.showMessageDialog(
           parent,
-          S.fmt("AsmPanErrorCreateFile", textFile.getName()),
+          S.get("AsmPanErrorCreateFile", textFile.getName()),
           parent.getParentTitle(),
           OptionPane.ERROR_MESSAGE);
     }
@@ -283,7 +284,7 @@ public class AssemblerPanel extends JPanel
 
   private void updateLineNumber() {
     Line.setBackground(documentChanged ? Color.YELLOW : Color.WHITE);
-    Line.setText(S.fmt("RV32imAsmLineIndicator", lineNumber, numberOfLines));
+    Line.setText(S.get("RV32imAsmLineIndicator", lineNumber, numberOfLines));
     Line.repaint();
   }
 
@@ -340,24 +341,6 @@ public class AssemblerPanel extends JPanel
   }
 
   @Override
-  public void mousePressed(MouseEvent e) {}
-
-  @Override
-  public void mouseReleased(MouseEvent e) {}
-
-  @Override
-  public void mouseEntered(MouseEvent e) {}
-
-  @Override
-  public void mouseExited(MouseEvent e) {}
-
-  @Override
-  public void keyTyped(KeyEvent e) {}
-
-  @Override
-  public void keyReleased(KeyEvent e) {}
-
-  @Override
   public void localeChanged() {
     Open.setToolTipText(S.get("AsmPanOpenFile"));
     Save.setToolTipText(S.get("AsmPanSaveFile"));
@@ -385,20 +368,11 @@ public class AssemblerPanel extends JPanel
   }
 
   @Override
-  public void changedUpdate(DocumentEvent e) {}
-
-  @Override
   public void caretUpdate(CaretEvent e) {
     numberOfLines = asmWindow.getDocument().getDefaultRootElement().getElementCount();
     lineNumber = asmWindow.getCaretLineNumber() + 1;
     updateLineNumber();
   }
-
-  @Override
-  public void windowOpened(WindowEvent e) {}
-
-  @Override
-  public void windowClosing(WindowEvent e) {}
 
   @Override
   public void windowClosed(WindowEvent e) {
@@ -419,16 +393,4 @@ public class AssemblerPanel extends JPanel
     documentChanged = false;
     updateLineNumber();
   }
-
-  @Override
-  public void windowIconified(WindowEvent e) {}
-
-  @Override
-  public void windowDeiconified(WindowEvent e) {}
-
-  @Override
-  public void windowActivated(WindowEvent e) {}
-
-  @Override
-  public void windowDeactivated(WindowEvent e) {}
 }

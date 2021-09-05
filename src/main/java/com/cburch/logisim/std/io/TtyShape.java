@@ -38,7 +38,6 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.UnmodifiableList;
 import java.awt.Color;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.util.List;
 import org.w3c.dom.Document;
@@ -50,41 +49,39 @@ public class TtyShape extends DynamicElement {
     super(p, Bounds.create(x, y, 240, 130));
   }
 
-  public void setBounds(int width , int height) {
+  public void setBounds(int width, int height) {
     bounds = Bounds.create(bounds.getX(), bounds.getY(), width, height);
   }
 
   @Override
   public void paintDynamic(Graphics g, CircuitState state) {
-    TtyState data = state == null ? null : (TtyState) getData(state);
+    final var data = state == null ? null : (TtyState) getData(state);
     if (data != null) {
-      int rows = data.getNrRows();
-      int cols = data.getNrCols();
-      int width = 2 * Tty.BORDER + cols * Tty.COL_WIDTH;
-      int height = 2 * Tty.BORDER + rows * Tty.ROW_HEIGHT;
+      final var rows = data.getNrRows();
+      final var cols = data.getNrCols();
+      var width = 2 * Tty.BORDER + cols * Tty.COL_WIDTH;
       if (width < 30) width = 30;
+      var height = 2 * Tty.BORDER + rows * Tty.ROW_HEIGHT;
       if (height < 30) height = 30;
-      setBounds(width,height);
+      setBounds(width, height);
     }
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(Color.YELLOW);
-    g.fillRoundRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(),
-    		2 * Tty.BORDER, 2 * Tty.BORDER);
+    g.fillRoundRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), 2 * Tty.BORDER, 2 * Tty.BORDER);
     g.setColor(Color.BLACK);
-    g.drawRoundRect( bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), 
-                     2 * Tty.BORDER, 2 * Tty.BORDER);
+    g.drawRoundRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), 2 * Tty.BORDER, 2 * Tty.BORDER);
     if (data != null) {
-      int rows = data.getNrRows();
-      String[] rowData = new String[rows];
+      final var rows = data.getNrRows();
+      final var rowData = new String[rows];
       synchronized (data) {
-        for (int i = 0 ; i < rows; i++)
+        for (var i = 0; i < rows; i++)
           rowData[i] = data.getRowString(i);
       }
       g.setFont(Tty.DEFAULT_FONT);
-      FontMetrics fm = g.getFontMetrics();
-      int x = bounds.getX() + Tty.BORDER;
-      int y = bounds.getY() + Tty.BORDER + (Tty.ROW_HEIGHT + fm.getAscent()) / 2;
-      for (int i = 0; i < rows; i++) {
+      final var fm = g.getFontMetrics();
+      final var x = bounds.getX() + Tty.BORDER;
+      var y = bounds.getY() + Tty.BORDER + (Tty.ROW_HEIGHT + fm.getAscent()) / 2;
+      for (var i = 0; i < rows; i++) {
         g.drawString(rowData[i], x, y);
         y += Tty.ROW_HEIGHT;
       }

@@ -28,21 +28,21 @@
 
 package com.cburch.logisim.fpga.gui;
 
+import com.cburch.contracts.BaseKeyListenerContract;
+import com.cburch.contracts.BaseWindowListenerContract;
 import java.awt.Color;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.text.DefaultCaret;
 
 @SuppressWarnings("serial")
-public class FPGACommanderTextWindow extends JFrame implements KeyListener, WindowListener {
+public class FPGACommanderTextWindow extends JFrame implements BaseKeyListenerContract, BaseWindowListenerContract {
 
   private int FontSize;
   private final String Title;
@@ -98,9 +98,6 @@ public class FPGACommanderTextWindow extends JFrame implements KeyListener, Wind
   }
 
   @Override
-  public void keyTyped(KeyEvent e) {}
-
-  @Override
   public void keyPressed(KeyEvent e) {
     Rectangle rect;
     switch (e.getKeyCode()) {
@@ -129,31 +126,13 @@ public class FPGACommanderTextWindow extends JFrame implements KeyListener, Wind
   }
 
   @Override
-  public void keyReleased(KeyEvent e) {}
-
-  @Override
-  public void windowOpened(WindowEvent e) {}
-
-  @Override
   public void windowClosing(WindowEvent e) {
     IsActive = false;
     setVisible(false);
   }
 
   @Override
-  public void windowClosed(WindowEvent e) {}
-
-  @Override
-  public void windowIconified(WindowEvent e) {}
-
-  @Override
-  public void windowDeiconified(WindowEvent e) {}
-
-  @Override
   public void windowActivated(WindowEvent e) {
     IsActive = true;
   }
-
-  @Override
-  public void windowDeactivated(WindowEvent e) {}
 }

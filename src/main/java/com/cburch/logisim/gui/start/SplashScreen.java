@@ -30,6 +30,7 @@ package com.cburch.logisim.gui.start;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.logisim.Main;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -44,7 +45,7 @@ import javax.swing.SwingUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SplashScreen extends JWindow implements ActionListener {
+public class SplashScreen extends JWindow {
 
   public static final int LIBRARIES = 0;
   public static final int TEMPLATE_CREATE = 1;
@@ -75,42 +76,23 @@ public class SplashScreen extends JWindow implements ActionListener {
       };
   boolean inClose = false; // for avoiding mutual recursion
   final JProgressBar progress = new JProgressBar(0, PROGRESS_MAX);
-  final JButton close = new JButton(S.get("startupCloseButton"));
-  final JButton cancel = new JButton(S.get("startupQuitButton"));
   final long startTime = System.currentTimeMillis();
   public SplashScreen() {
-    setName("Welcome to Logisim Evolution");
+    setName(Main.APP_DISPLAY_NAME);
     JPanel imagePanel = About.getImagePanel();
     imagePanel.setBorder(null);
 
     progress.setStringPainted(true);
 
-    JPanel buttonPanel = new JPanel();
-    buttonPanel.add(close);
-    close.addActionListener(this);
-    buttonPanel.add(cancel);
-    cancel.addActionListener(this);
-
     JPanel contents = new JPanel(new BorderLayout());
     contents.add(imagePanel, BorderLayout.NORTH);
     contents.add(progress, BorderLayout.CENTER);
-    contents.add(buttonPanel, BorderLayout.SOUTH);
     contents.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
     Color bg = imagePanel.getBackground();
     contents.setBackground(bg);
-    buttonPanel.setBackground(bg);
     setBackground(bg);
     setContentPane(contents);
-  }
-
-  public void actionPerformed(ActionEvent e) {
-    Object src = e.getSource();
-    if (src == cancel) {
-      System.exit(0);
-    } else if (src == close) {
-      close();
-    }
   }
 
   public void close() {
@@ -146,9 +128,9 @@ public class SplashScreen extends JWindow implements ActionListener {
   public void setVisible(boolean value) {
     if (value) {
       pack();
-      Dimension dim = getToolkit().getScreenSize();
-      int x = (int) (dim.getWidth() - getWidth()) / 2;
-      int y = (int) (dim.getHeight() - getHeight()) / 2;
+      final var dim = getToolkit().getScreenSize();
+      final var x = (int) (dim.getWidth() - getWidth()) / 2;
+      final var y = (int) (dim.getHeight() - getHeight()) / 2;
       setLocation(x, y);
     }
     super.setVisible(value);

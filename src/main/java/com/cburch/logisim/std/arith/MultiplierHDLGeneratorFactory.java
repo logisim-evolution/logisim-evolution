@@ -34,6 +34,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 
+import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -53,113 +54,108 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    Inputs.put("INP_A", NrOfBitsId);
-    Inputs.put("INP_B", NrOfBitsId);
-    Inputs.put("Cin", NrOfBitsId);
-    return Inputs;
+    final var inputs = new TreeMap<String, Integer>();
+    inputs.put("INP_A", NrOfBitsId);
+    inputs.put("INP_B", NrOfBitsId);
+    inputs.put("Cin", NrOfBitsId);
+    return inputs;
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Contents = new ArrayList<>();
+    final var Contents =
+        (new LineBuffer())
+            .pair("nrOfBits", NrOfBitsStr)
+            .pair("unsigned", UnsignedStr)
+            .pair("calcBits", CalcBitsStr);
+
     if (HDL.isVHDL()) {
-      Contents.add("   s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B))");
-      Contents.add("                       WHEN " + UnsignedStr + "= 1 ELSE");
-      Contents.add("                    std_logic_vector(signed(INP_A)*signed(INP_B));");
-      Contents.add(
-          "   s_extended_Cin("
-              + CalcBitsStr
-              + "-1 DOWNTO "
-              + NrOfBitsStr
-              + ") <= (OTHERS => '0') WHEN "
-              + UnsignedStr 
-              + "= 1 ELSE (OTHERS => Cin("
-              +NrOfBitsStr
-              +"-1));");
-      Contents.add("   s_extended_Cin(" + NrOfBitsStr + "-1 DOWNTO 0) <= Cin;");
-      Contents.add(
-          "   s_new_result  <= std_logic_vector(unsigned(s_mult_result) + unsigned(s_extended_Cin))");
-      Contents.add("                       WHEN " + UnsignedStr + "= 1 ELSE");
-      Contents.add(
-          "                    std_logic_vector(signed(s_mult_result) + signed(s_extended_Cin));");
-      Contents.add(
-          "   Mult_hi       <= s_new_result(" + CalcBitsStr + "-1 DOWNTO " + NrOfBitsStr + ");");
-      Contents.add("   Mult_lo       <= s_new_result(" + NrOfBitsStr + "-1 DOWNTO 0);");
+      Contents.addLines(
+          "s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B))",
+          "                    WHEN {{unsigned}}= 1 ELSE",
+          "                 std_logic_vector(signed(INP_A)*signed(INP_B));",
+          "s_extended_Cin({{calcBits}}-1 DOWNTO {{nrOfBits}}) <= (OTHERS => '0') WHEN {{unsigned}} = 1 ELSE (OTHERS => Cin({{nrOfBits}}-1));",
+          "s_extended_Cin({{nrOfBits}}-1 DOWNTO 0) <= Cin;",
+          "s_new_result  <= std_logic_vector(unsigned(s_mult_result) + unsigned(s_extended_Cin))",
+          "                    WHEN {{unsigned}}= 1 ELSE",
+          "                 std_logic_vector(signed(s_mult_result) + signed(s_extended_Cin));",
+          "Mult_hi       <= s_new_result({{calcBits}}-1 DOWNTO {{nrOfBits}});",
+          "Mult_lo       <= s_new_result({{nrOfBits}}-1 DOWNTO 0);");
     } else {
-      Contents.add("   reg["+CalcBitsStr+"-1:0] s_Cin;");
-      Contents.add("   reg["+CalcBitsStr+"-1:0] s_mult_unsigned;");
-      Contents.add("   reg["+CalcBitsStr+"-1:0] s_interm_result;");
-      Contents.add("   reg signed["+CalcBitsStr+"-1:0] s_mult_signed;");
-      Contents.add("   always @(*)");
-      Contents.add("   begin");
-      Contents.add("      s_Cin["+NrOfBitsStr+"-1:0] = Cin;");
-      Contents.add("      if ("+UnsignedStr+"== 1)");
-      Contents.add("         begin");
-      Contents.add("            s_Cin["+CalcBitsStr+"-1:"+NrOfBitsStr+"] = 0;");
-      Contents.add("            s_mult_unsigned = $unsigned(INP_A) * $unsigned(INP_B);");
-      Contents.add("            s_interm_result = $unsigned(s_mult_unsigned) + $unsigned(s_Cin);");
-      Contents.add("          end");
-      Contents.add("       else");
-      Contents.add("         begin");
-      Contents.add("            if (Cin["+NrOfBitsStr+"-1] == 1)");
-      Contents.add("               s_Cin["+CalcBitsStr+"-1:"+NrOfBitsStr+"] = -1;");
-      Contents.add("            else");
-      Contents.add("               s_Cin["+CalcBitsStr+"-1:"+NrOfBitsStr+"] = 0;");
-      Contents.add("            s_mult_signed = $signed(INP_A) * $signed(INP_B);");
-      Contents.add("            s_interm_result = $signed(s_mult_signed) + $signed(s_Cin);");
-      Contents.add("          end");
-      Contents.add("   end");
-      Contents.add("   ");
-      Contents.add("   assign Mult_hi = s_interm_result["+CalcBitsStr + "-1:"+NrOfBitsStr+"];");
-      Contents.add("   assign Mult_lo = s_interm_result["+NrOfBitsStr + "-1:0];");
+      Contents.addLines(
+          "reg[{{calcBits}}-1:0] s_Cin;",
+          "reg[{{calcBits}}-1:0] s_mult_unsigned;",
+          "reg[{{calcBits}}-1:0] s_interm_result;",
+          "reg signed[{{calcBits}}-1:0] s_mult_signed;",
+          "always @(*)",
+          "begin",
+          "   s_Cin[{{nrOfBits}}-1:0] = Cin;",
+          "   if ({{unsigned}}== 1)",
+          "      begin",
+          "         s_Cin[{{calcBits}}-1:{{nrOfBits}}] = 0;",
+          "         s_mult_unsigned = $unsigned(INP_A) * $unsigned(INP_B);",
+          "         s_interm_result = $unsigned(s_mult_unsigned) + $unsigned(s_Cin);",
+          "       end",
+          "    else",
+          "      begin",
+          "         if (Cin[{{nrOfBits}}-1] == 1)",
+          "            s_Cin[{{calcBits}}-1:{{nrOfBits}}] = -1;",
+          "         else",
+          "            s_Cin[{{calcBits}}-1:{{nrOfBits}}] = 0;",
+          "         s_mult_signed = $signed(INP_A) * $signed(INP_B);",
+          "         s_interm_result = $signed(s_mult_signed) + $signed(s_Cin);",
+          "       end",
+          "end",
+          "",
+          "assign Mult_hi = s_interm_result[{{calcBits}}-1:{{nrOfBits}}];",
+          "assign Mult_lo = s_interm_result[{{nrOfBits}}-1:0];");
     }
-    return Contents;
+    return Contents.getWithIndent();
   }
 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    Outputs.put("Mult_lo", NrOfBitsId);
-    Outputs.put("Mult_hi", NrOfBitsId);
-    return Outputs;
+    final var outputs = new TreeMap<String, Integer>();
+    outputs.put("Mult_lo", NrOfBitsId);
+    outputs.put("Mult_hi", NrOfBitsId);
+    return outputs;
   }
 
   @Override
   public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    SortedMap<Integer, String> Parameters = new TreeMap<>();
-    Parameters.put(NrOfBitsId, NrOfBitsStr);
-    Parameters.put(CalcBitsId, CalcBitsStr);
-    Parameters.put(UnsignedId, UnsignedStr);
-    return Parameters;
+    final var parameters = new TreeMap<Integer, String>();
+    parameters.put(NrOfBitsId, NrOfBitsStr);
+    parameters.put(CalcBitsId, CalcBitsStr);
+    parameters.put(UnsignedId, UnsignedStr);
+    return parameters;
   }
 
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
-    int NrOfBits = ComponentInfo.GetComponent().getEnd(0).getWidth().getWidth();
+    final var parameterMap = new TreeMap<String, Integer>();
+    final var nrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
     boolean isUnsigned =
-        ComponentInfo.GetComponent()
+        ComponentInfo.getComponent()
             .getAttributeSet()
             .getValue(Multiplier.MODE_ATTR)
             .equals(Multiplier.UNSIGNED_OPTION);
-    ParameterMap.put(NrOfBitsStr, NrOfBits);
-    ParameterMap.put(CalcBitsStr, 2 * NrOfBits);
-    ParameterMap.put(UnsignedStr, isUnsigned ? 1 : 0);
-    return ParameterMap;
+    parameterMap.put(NrOfBitsStr, nrOfBits);
+    parameterMap.put(CalcBitsStr, 2 * nrOfBits);
+    parameterMap.put(UnsignedStr, isUnsigned ? 1 : 0);
+    return parameterMap;
   }
 
   @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-	if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-	NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    PortMap.putAll(GetNetMap("INP_A", true, ComponentInfo, Multiplier.IN0, Nets));
-    PortMap.putAll(GetNetMap("INP_B", true, ComponentInfo, Multiplier.IN1, Nets));
-    PortMap.putAll(GetNetMap("Cin", true, ComponentInfo, Multiplier.C_IN, Nets));
-    PortMap.putAll(GetNetMap("Mult_lo", true, ComponentInfo, Multiplier.OUT, Nets));
-    PortMap.putAll(GetNetMap("Mult_hi", true, ComponentInfo, Multiplier.C_OUT, Nets));
-    return PortMap;
+    final var portMap = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return portMap;
+    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
+    portMap.putAll(GetNetMap("INP_A", true, ComponentInfo, Multiplier.IN0, Nets));
+    portMap.putAll(GetNetMap("INP_B", true, ComponentInfo, Multiplier.IN1, Nets));
+    portMap.putAll(GetNetMap("Cin", true, ComponentInfo, Multiplier.C_IN, Nets));
+    portMap.putAll(GetNetMap("Mult_lo", true, ComponentInfo, Multiplier.OUT, Nets));
+    portMap.putAll(GetNetMap("Mult_hi", true, ComponentInfo, Multiplier.C_OUT, Nets));
+    return portMap;
   }
 
   @Override
@@ -169,11 +165,11 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
-    Wires.put("s_mult_result", CalcBitsId);
-    Wires.put("s_extended_Cin", CalcBitsId);
-    Wires.put("s_new_result", CalcBitsId);
-    return Wires;
+    final var wires = new TreeMap<String, Integer>();
+    wires.put("s_mult_result", CalcBitsId);
+    wires.put("s_extended_Cin", CalcBitsId);
+    wires.put("s_new_result", CalcBitsId);
+    return wires;
   }
 
   @Override

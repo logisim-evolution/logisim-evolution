@@ -30,21 +30,18 @@ package com.cburch.logisim.gui.opts;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.logisim.file.MouseMappings;
 import com.cburch.logisim.gui.generic.AttrTable;
-import com.cburch.logisim.gui.generic.AttrTableModel;
 import com.cburch.logisim.gui.generic.ProjectExplorer;
 import com.cburch.logisim.gui.generic.ProjectExplorerToolNode;
 import com.cburch.logisim.gui.main.AttrTableToolModel;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
-import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
@@ -54,7 +51,6 @@ import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import javax.swing.BorderFactory;
@@ -83,7 +79,7 @@ class MouseOptions extends OptionsPanel {
   public MouseOptions(OptionsFrame window) {
     super(window, new GridLayout(1, 3));
 
-    explorer = new ProjectExplorer(getProject(),true);
+    explorer = new ProjectExplorer(getProject(), true);
     explorer.setListener(listener);
 
     // Area for adding mappings
@@ -96,10 +92,10 @@ class MouseOptions extends OptionsPanel {
     mappings.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mappings.getSelectionModel().addListSelectionListener(listener);
     mappings.clearSelection();
-    JScrollPane mapPane = new JScrollPane(mappings);
+    final var mapPane = new JScrollPane(mappings);
 
     // Button for removing current mapping
-    JPanel removeArea = new JPanel();
+    final var removeArea = new JPanel();
     remove.addActionListener(listener);
     remove.setEnabled(false);
     removeArea.add(remove);
@@ -107,22 +103,18 @@ class MouseOptions extends OptionsPanel {
     // Area for viewing/changing attributes
     attrTable = new AttrTable(getOptionsFrame());
 
-    GridBagLayout gridbag = new GridBagLayout();
-    GridBagConstraints gbc = new GridBagConstraints();
+    final var gridbag = new GridBagLayout();
+    final var gbc = new GridBagConstraints();
     setLayout(gridbag);
     gbc.weightx = 1.0;
     gbc.weighty = 1.0;
     gbc.gridheight = 4;
     gbc.fill = GridBagConstraints.BOTH;
-    JScrollPane explorerPane =
-        new JScrollPane(
-            explorer,
-            ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
-            ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+    final var explorerPane = new JScrollPane(explorer, ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS, ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     gridbag.setConstraints(explorerPane, gbc);
     add(explorerPane);
     gbc.weightx = 0.0;
-    JPanel gap = new JPanel();
+    final var gap = new JPanel();
     gap.setPreferredSize(new Dimension(10, 10));
     gridbag.setConstraints(gap, gbc);
     add(gap);
@@ -190,13 +182,12 @@ class MouseOptions extends OptionsPanel {
     @Override
     public void paintComponent(Graphics g) {
       if (AppPreferences.AntiAliassing.getBoolean()) {
-        Graphics2D g2 = (Graphics2D) g;
-        g2.setRenderingHint(
-            RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+        final var g2 = (Graphics2D) g;
+        g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       }
       super.paintComponent(g);
-      Dimension sz = getSize();
+      final var sz = getSize();
       g.setFont(remove.getFont());
       String label1;
       String label2;
@@ -207,16 +198,16 @@ class MouseOptions extends OptionsPanel {
       } else {
         g.setColor(Color.BLACK);
         label1 = S.get("mouseMapText");
-        label2 = StringUtil.format(S.get("mouseMapText2"), curTool.getDisplayName());
+        label2 = S.get("mouseMapText2", curTool.getDisplayName());
       }
-      FontMetrics fm = g.getFontMetrics();
-      int x1 = (sz.width - fm.stringWidth(label1)) / 2;
+      final var fm = g.getFontMetrics();
+      final var x1 = (sz.width - fm.stringWidth(label1)) / 2;
       if (label2 == null) {
-        int y = Math.max(0, (sz.height - fm.getHeight()) / 2 + fm.getAscent() - 2);
+        final var y = Math.max(0, (sz.height - fm.getHeight()) / 2 + fm.getAscent() - 2);
         g.drawString(label1, x1, y);
       } else {
-        int x2 = (sz.width - fm.stringWidth(label2)) / 2;
-        int y = Math.max(0, (sz.height - 2 * fm.getHeight()) / 2 + fm.getAscent() - 2);
+        final var x2 = (sz.width - fm.stringWidth(label2)) / 2;
+        var y = Math.max(0, (sz.height - 2 * fm.getHeight()) / 2 + fm.getAscent() - 2);
         g.drawString(label1, x1, y);
         y += fm.getHeight();
         g.drawString(label2, x2, y);
@@ -226,7 +217,7 @@ class MouseOptions extends OptionsPanel {
 
   private class MappingsModel extends AbstractTableModel {
     private static final long serialVersionUID = 1L;
-    ArrayList<Integer> cur_keys;
+    ArrayList<Integer> curKeys;
 
     MappingsModel() {
       fireTableStructureChanged();
@@ -235,112 +226,105 @@ class MouseOptions extends OptionsPanel {
     // AbstractTableModel methods
     @Override
     public void fireTableStructureChanged() {
-      cur_keys = new ArrayList<>(getOptions().getMouseMappings().getMappedModifiers());
-      Collections.sort(cur_keys);
+      curKeys = new ArrayList<>(getOptions().getMouseMappings().getMappedModifiers());
+      Collections.sort(curKeys);
       super.fireTableStructureChanged();
     }
 
+    @Override
     public int getColumnCount() {
       return 2;
     }
 
     // other methods
     Integer getKey(int row) {
-      return cur_keys.get(row);
+      return curKeys.get(row);
     }
 
     int getRow(Integer mods) {
-      int row = Collections.binarySearch(cur_keys, mods);
+      var row = Collections.binarySearch(curKeys, mods);
       if (row < 0) row = -(row + 1);
       return row;
     }
 
+    @Override
     public int getRowCount() {
-      return cur_keys.size();
+      return curKeys.size();
     }
 
     Tool getTool(int row) {
-      if (row < 0 || row >= cur_keys.size()) return null;
-      Integer key = cur_keys.get(row);
-      return getOptions().getMouseMappings().getToolFor(key.intValue());
+      if (row < 0 || row >= curKeys.size()) return null;
+      return getOptions().getMouseMappings().getToolFor(curKeys.get(row).intValue());
     }
 
+    @Override
     public Object getValueAt(int row, int column) {
-      Integer key = cur_keys.get(row);
+      final var key = curKeys.get(row);
       if (column == 0) {
         return InputEventUtil.toDisplayString(key);
       } else {
-        Tool tool = getOptions().getMouseMappings().getToolFor(key);
-        return tool.getDisplayName();
+        return getOptions().getMouseMappings().getToolFor(key).getDisplayName();
       }
     }
   }
 
   private class MyListener
       implements ActionListener,
-          MouseListener,
+          BaseMouseListenerContract,
           ListSelectionListener,
           MouseMappings.MouseMappingsListener,
           ProjectExplorer.Listener {
     //
     // ActionListener method
     //
+    @Override
     public void actionPerformed(ActionEvent e) {
-      Object src = e.getSource();
+      final var src = e.getSource();
       if (src == remove) {
-        int row = mappings.getSelectedRow();
-        getProject()
-            .doAction(
-                OptionsActions.removeMapping(getOptions().getMouseMappings(), model.getKey(row)));
+        var row = mappings.getSelectedRow();
+        getProject().doAction(OptionsActions.removeMapping(getOptions().getMouseMappings(), model.getKey(row)));
         row = Math.min(row, model.getRowCount() - 1);
         if (row >= 0) setSelectedRow(row);
       }
     }
 
-    public void deleteRequested(ProjectExplorer.Event event) {}
-
-    public void doubleClicked(ProjectExplorer.Event event) {}
-
+    @Override
     public JPopupMenu menuRequested(ProjectExplorer.Event event) {
       return null;
     }
 
-    //
-    // MouseListener methods
-    //
-    public void mouseClicked(MouseEvent e) {}
-
-    public void mouseEntered(MouseEvent e) {}
-
-    public void mouseExited(MouseEvent e) {}
 
     //
     // MouseMappingsListener method
     //
+    @Override
     public void mouseMappingsChanged() {
       model.fireTableStructureChanged();
     }
 
+    @Override
+    public void mouseClicked(MouseEvent mouseEvent) {
+      // do nothing
+    }
+
+    @Override
     public void mousePressed(MouseEvent e) {
       if (e.getSource() == addArea && curTool != null) {
-        Tool t = curTool.cloneTool();
+        final var t = curTool.cloneTool();
         Integer mods = e.getModifiersEx();
         getProject().doAction(OptionsActions.setMapping(getOptions().getMouseMappings(), mods, t));
         setSelectedRow(model.getRow(mods));
       }
     }
 
-    public void mouseReleased(MouseEvent e) {}
-
-    public void moveRequested(ProjectExplorer.Event event, AddTool dragged, AddTool target) {}
-
     //
     // Explorer.Listener methods
     //
+    @Override
     public void selectionChanged(ProjectExplorer.Event event) {
-      Object target = event.getTarget();
+      final var target = event.getTarget();
       if (target instanceof ProjectExplorerToolNode) {
-        Tool tool = ((ProjectExplorerToolNode) target).getValue();
+        final var tool = ((ProjectExplorerToolNode) target).getValue();
         setCurrentTool(tool);
       } else {
         setCurrentTool(null);
@@ -350,6 +334,7 @@ class MouseOptions extends OptionsPanel {
     //
     // ListSelectionListener method
     //
+    @Override
     public void valueChanged(ListSelectionEvent e) {
       int row = mappings.getSelectedRow();
       if (row < 0) {
@@ -357,14 +342,9 @@ class MouseOptions extends OptionsPanel {
         attrTable.setAttrTableModel(null);
       } else {
         remove.setEnabled(true);
-        Tool tool = model.getTool(row);
-        Project proj = getProject();
-        AttrTableModel model;
-        if (tool.getAttributeSet() == null) {
-          model = null;
-        } else {
-          model = new AttrTableToolModel(proj, tool);
-        }
+        final var tool = model.getTool(row);
+        final var proj = getProject();
+        final var model = (tool.getAttributeSet() != null) ? new AttrTableToolModel(proj, tool) : null;
         attrTable.setAttrTableModel(model);
       }
     }

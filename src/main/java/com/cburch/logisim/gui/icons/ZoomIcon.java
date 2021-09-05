@@ -34,7 +34,7 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 
-public class ZoomIcon extends AbstractIcon {
+public class ZoomIcon extends BaseIcon {
 
   public static final int ZOOMIN = 0;
   public static final int ZOOMOUT = 1;

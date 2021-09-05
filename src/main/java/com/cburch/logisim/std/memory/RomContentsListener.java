@@ -60,14 +60,14 @@ class RomContentsListener implements HexModelListener {
     @Override
     public Action append(Action other) {
       if (other instanceof Change) {
-        Change o = (Change) other;
-        long oEnd = o.start + o.newValues.length;
-        long end = start + newValues.length;
+        final var o = (Change) other;
+        final var oEnd = o.start + o.newValues.length;
+        final var end = start + newValues.length;
         if (oEnd >= start && end >= o.start) {
-          long nStart = Math.min(start, o.start);
-          long nEnd = Math.max(end, oEnd);
-          long[] nOld = new long[(int) (nEnd - nStart)];
-          long[] nNew = new long[(int) (nEnd - nStart)];
+          final var nStart = Math.min(start, o.start);
+          final var nEnd = Math.max(end, oEnd);
+          final var nOld = new long[(int) (nEnd - nStart)];
+          final var nNew = new long[(int) (nEnd - nStart)];
           System.arraycopy(o.oldValues, 0, nOld, (int) (o.start - nStart), o.oldValues.length);
           System.arraycopy(oldValues, 0, nOld, (int) (start - nStart), oldValues.length);
           System.arraycopy(newValues, 0, nNew, (int) (start - nStart), newValues.length);
@@ -99,9 +99,9 @@ class RomContentsListener implements HexModelListener {
     @Override
     public boolean shouldAppendTo(Action other) {
       if (other instanceof Change) {
-        Change o = (Change) other;
-        long oEnd = o.start + o.newValues.length;
-        long end = start + newValues.length;
+        final var o = (Change) other;
+        final var oEnd = o.start + o.newValues.length;
+        final var end = start + newValues.length;
         if (oEnd >= start && end >= o.start) return true;
       }
       return super.shouldAppendTo(other);
@@ -131,8 +131,8 @@ class RomContentsListener implements HexModelListener {
   public void bytesChanged(HexModel source, long start, long numBytes, long[] oldValues) {
     if (enabled && proj != null && oldValues != null) {
       // this change needs to be logged in the undo log
-      long[] newValues = new long[oldValues.length];
-      for (int i = 0; i < newValues.length; i++) {
+      final var newValues = new long[oldValues.length];
+      for (var i = 0; i < newValues.length; i++) {
         newValues[i] = source.get(start + i);
       }
       proj.doAction(new Change(this, (MemContents) source, start, oldValues, newValues));

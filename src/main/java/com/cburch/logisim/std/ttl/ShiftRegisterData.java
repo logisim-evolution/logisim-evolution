@@ -82,15 +82,15 @@ public class ShiftRegisterData extends ClockState implements InstanceData {
   }
 
   public void setDimensions(BitWidth newWidth, int newLength) {
-    Value[] v = vs;
-    BitWidth oldWidth = width;
-    int oldW = oldWidth.getWidth();
-    int newW = newWidth.getWidth();
+    var v = vs;
+    final var oldWidth = width;
+    final var oldW = oldWidth.getWidth();
+    final var newW = newWidth.getWidth();
     if (v.length != newLength) {
-      Value[] newV = new Value[newLength];
-      int j = vsPos;
-      int copy = Math.min(newLength, v.length);
-      for (int i = 0; i < copy; i++) {
+      final var newV = new Value[newLength];
+      var j = vsPos;
+      final var copy = Math.min(newLength, v.length);
+      for (var i = 0; i < copy; i++) {
         newV[i] = v[j];
         j++;
         if (j == v.length) j = 0;
@@ -101,8 +101,8 @@ public class ShiftRegisterData extends ClockState implements InstanceData {
       vs = newV;
     }
     if (oldW != newW) {
-      for (int i = 0; i < v.length; i++) {
-        Value vi = v[i];
+      for (var i = 0; i < v.length; i++) {
+        final var vi = v[i];
         if (vi.getWidth() != newW) {
           v[i] = vi.extendWidth(newW, Value.FALSE);
         }

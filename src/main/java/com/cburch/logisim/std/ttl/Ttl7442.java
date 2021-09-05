@@ -30,34 +30,31 @@ package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import java.awt.Graphics;
 
 public class Ttl7442 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "7442";
 
   private boolean IsExec3 = false;
   private boolean IsGray = false;
 
+  private static final byte pinCount = 14;
+  private static final byte[] outPins = {1, 2, 3, 4, 5, 6, 7, 9, 10, 11};
+  private static final String[] pinNames = {"O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", "D", "C", "B", "A"};
+
   public Ttl7442() {
-    super(
-        "7442",
-        (byte) 16,
-        new byte[] {1, 2, 3, 4, 5, 6, 7, 9, 10, 11},
-        new String[] {
-          "O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", "D", "C", "B", "A"
-        });
+    super(_ID, pinCount, outPins, pinNames);
   }
 
   public Ttl7442(String name, int encoding) {
-    super(
-        name,
-        (byte) 16,
-        new byte[] {1, 2, 3, 4, 5, 6, 7, 9, 10, 11},
-        new String[] {
-          "O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", "D", "C", "B", "A"
-        });
+    super(name, pinCount, outPins, pinNames);
     IsExec3 = encoding == 1;
     IsGray = encoding == 2;
   }
@@ -65,45 +62,45 @@ public class Ttl7442 extends AbstractTtlGate {
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     super.paintBase(painter, false, false);
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     g.drawRect(x + 18, y + 10, 84, 18);
-    int mask = 1;
+    var mask = 1;
     for (int i = 0; i < 10; i++) {
       g.drawOval(x + 22 + i * 8, y + 28, 4, 4);
       g.drawLine(
           x + 24 + i * 8,
           y + 32,
           x + 24 + i * 8,
-          y + height - AbstractTtlGate.pinheight - (i + 1) * 2);
+          y + height - AbstractTtlGate.PIN_HEIGHT - (i + 1) * 2);
       g.drawString(Integer.toString(i), x + 22 + i * 8, y + 26);
       if (i < 4) {
         g.drawString(Integer.toString(mask), x + 27 + i * 20, y + 16);
         mask <<= 1;
-        g.drawLine(x + 30 + i * 20, y + AbstractTtlGate.pinheight, x + 30 + i * 20, y + 10);
+        g.drawLine(x + 30 + i * 20, y + AbstractTtlGate.PIN_HEIGHT, x + 30 + i * 20, y + 10);
       }
       if (i < 7) {
         g.drawLine(
             x + 10 + i * 20,
-            y + height - AbstractTtlGate.pinheight,
+            y + height - AbstractTtlGate.PIN_HEIGHT,
             x + 10 + i * 20,
-            y + height - AbstractTtlGate.pinheight - (i + 1) * 2);
+            y + height - AbstractTtlGate.PIN_HEIGHT - (i + 1) * 2);
         g.drawLine(
             x + 10 + i * 20,
-            y + height - AbstractTtlGate.pinheight - (i + 1) * 2,
+            y + height - AbstractTtlGate.PIN_HEIGHT - (i + 1) * 2,
             x + 24 + i * 8,
-            y + height - AbstractTtlGate.pinheight - (i + 1) * 2);
+            y + height - AbstractTtlGate.PIN_HEIGHT - (i + 1) * 2);
       } else {
         int j = i == 7 ? 9 : i == 9 ? 7 : 8;
         g.drawLine(
             x + i * 20 - 30,
-            y + AbstractTtlGate.pinheight,
+            y + AbstractTtlGate.PIN_HEIGHT,
             x + i * 20 - 30,
-            y + height - AbstractTtlGate.pinheight - (j + 1) * 2);
+            y + height - AbstractTtlGate.PIN_HEIGHT - (j + 1) * 2);
         g.drawLine(
             x + i * 20 - 30,
-            y + height - AbstractTtlGate.pinheight - (j + 1) * 2,
+            y + height - AbstractTtlGate.PIN_HEIGHT - (j + 1) * 2,
             x + 24 + j * 8,
-            y + height - AbstractTtlGate.pinheight - (j + 1) * 2);
+            y + height - AbstractTtlGate.PIN_HEIGHT - (j + 1) * 2);
       }
     }
   }
@@ -158,11 +155,6 @@ public class Ttl7442 extends AbstractTtlGate {
       state.setPort(8, decode == 8 ? Value.FALSE : Value.TRUE, 1);
       state.setPort(9, decode == 9 ? Value.FALSE : Value.TRUE, 1);
     }
-  }
-
-  @Override
-  public String getHDLName(AttributeSet attrs) {
-    return CorrectLabel.getCorrectLabel("TTL" + this.getName()).toUpperCase();
   }
 
   @Override

@@ -1,0 +1,5 @@
+# Logisim-evolution code owners
+# See: https://docs.github.com/en/github/creating-cloning-and-archiving-repositories/creating-a-repository-on-github/about-code-owners
+
+# Default owners or everything in the repo. Unless a later match takes precedence,
+*	@BFH-ktt1 @maehne @MarcinOrlowski

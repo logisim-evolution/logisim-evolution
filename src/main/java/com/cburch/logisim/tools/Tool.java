@@ -35,6 +35,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.gui.main.Canvas;
+import com.cburch.logisim.util.LibraryUtil;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
@@ -51,7 +52,9 @@ public abstract class Tool implements AttributeDefaultProvider {
     return this;
   }
 
-  public void deselect(Canvas canvas) {}
+  public void deselect(Canvas canvas) {
+    // no-op implementation
+  }
 
   public void draw(Canvas canvas, ComponentDrawContext context) {
     draw(context);
@@ -59,7 +62,9 @@ public abstract class Tool implements AttributeDefaultProvider {
 
   // This was the draw method until 2.0.4 - As of 2.0.5, you should
   // use the other draw method.
-  public void draw(ComponentDrawContext context) {}
+  public void draw(ComponentDrawContext context) {
+    // no-op implementation
+  }
 
   public AttributeSet getAttributeSet() {
     return null;
@@ -73,6 +78,7 @@ public abstract class Tool implements AttributeDefaultProvider {
     return dflt_cursor;
   }
 
+  @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
     return null;
   }
@@ -81,41 +87,75 @@ public abstract class Tool implements AttributeDefaultProvider {
 
   public abstract String getDisplayName();
 
+  /**
+   * Returns Tool unique ID as defined in its _ID constant.
+   *
+   * For each tool extending this class, define
+   *    public static final String _ID = "UNIQUE ID"
+   *
+   * @return unique ID of the tool
+   */
+  public String getName() {
+    return LibraryUtil.getName(getClass());
+  }
+
   public Set<Component> getHiddenComponents(Canvas canvas) {
     return null;
   }
 
-  public abstract String getName();
-
+  @Override
   public boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver) {
     return false;
   }
 
-  public void keyPressed(Canvas canvas, KeyEvent e) {}
+  public void keyPressed(Canvas canvas, KeyEvent e) {
+    // no-op implementation
+  }
 
-  public void keyReleased(Canvas canvas, KeyEvent e) {}
+  public void keyReleased(Canvas canvas, KeyEvent e) {
+    // no-op implementation
+  }
 
-  public void keyTyped(Canvas canvas, KeyEvent e) {}
+  public void keyTyped(Canvas canvas, KeyEvent e) {
+    // no-op implementation
+  }
 
-  public void mouseDragged(Canvas canvas, Graphics g, MouseEvent e) {}
+  public void mouseDragged(Canvas canvas, Graphics g, MouseEvent e) {
+    // no-op implementation
+  }
 
-  public void mouseEntered(Canvas canvas, Graphics g, MouseEvent e) {}
+  public void mouseEntered(Canvas canvas, Graphics g, MouseEvent e) {
+    // no-op implementation
+  }
 
-  public void mouseExited(Canvas canvas, Graphics g, MouseEvent e) {}
+  public void mouseExited(Canvas canvas, Graphics g, MouseEvent e) {
+    // no-op implementation
+  }
 
-  public void mouseMoved(Canvas canvas, Graphics g, MouseEvent e) {}
+  public void mouseMoved(Canvas canvas, Graphics g, MouseEvent e) {
+    // no-op implementation
+  }
 
-  public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {}
+  public void mousePressed(Canvas canvas, Graphics g, MouseEvent e) {
+    // no-op implementation
+  }
 
-  public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {}
+  public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {
+    // no-op implementation
+  }
 
-  public void paintIcon(ComponentDrawContext c, int x, int y) {}
-  
-  public void registerParrent(java.awt.Component parrent) {}
+  public void paintIcon(ComponentDrawContext c, int x, int y) {
+    // no-op implementation
+  }
 
-  public void select(Canvas canvas) {}
 
-  public void setAttributeSet(AttributeSet attrs) {}
+  public void select(Canvas canvas) {
+    // no-op implementation
+  }
+
+  public void setAttributeSet(AttributeSet attrs) {
+    // no-op implementation
+  }
 
   public boolean sharesSource(Tool other) {
     return this == other;

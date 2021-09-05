@@ -36,7 +36,7 @@ import java.util.Collection;
 import java.util.HashSet;
 
 class Clipboard {
-  public static final String contentsProperty = "contents";
+  public static final String CONTENTS_PROPERTY = "contents";
   private static final PropertyChangeWeakSupport propertySupport =
       new PropertyChangeWeakSupport(Clipboard.class);
   private static Clipboard current = null;
@@ -100,7 +100,7 @@ class Clipboard {
   public static void set(Clipboard value) {
     Clipboard old = current;
     current = value;
-    propertySupport.firePropertyChange(contentsProperty, old, current);
+    propertySupport.firePropertyChange(CONTENTS_PROPERTY, old, current);
   }
 
   public static void set(Selection value, AttributeSet oldAttrs) {

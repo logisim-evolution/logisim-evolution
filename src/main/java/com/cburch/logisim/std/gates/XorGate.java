@@ -38,6 +38,7 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.tools.WireRepairData;
+import com.cburch.logisim.util.LineBuffer;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
@@ -46,15 +47,14 @@ import java.util.ArrayList;
 class XorGate extends AbstractGate {
   private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
-      ArrayList<String> Contents = new ArrayList<>();
-      if (is_one_hot) {
-        Contents.addAll(GetOneHot(false, nr_of_inputs, bitwidth > 1));
-      } else {
-        Contents.addAll(GetParity(false, nr_of_inputs, bitwidth > 1));
-      }
-      Contents.add("");
-      return Contents;
+    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+      return (new LineBuffer())
+          .add(
+              isOneHot
+                  ? GetOneHot(false, nrOfInputs, bitwidth > 1)
+                  : GetParity(false, nrOfInputs, bitwidth > 1))
+          .add("")
+          .get();
     }
   }
 
@@ -124,29 +124,29 @@ class XorGate extends AbstractGate {
 
   @Override
   public void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize) {
-    paintIconANSI(g, iconSize, borderSize, negateSize,false);
+    paintIconANSI(g, iconSize, borderSize, negateSize, false);
   }
-	  
+
   protected static void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize, boolean inverted) {
-    int xoff = negateSize >>1;
-    int ystart = negateSize >>1;
-    int yend = iconSize-ystart;
+    int xoff = negateSize >> 1;
+    int ystart = negateSize >> 1;
+    int yend = iconSize - ystart;
     int xstart = 0;
-    int xend = iconSize-negateSize;
+    int xend = iconSize - negateSize;
     GeneralPath shape = new GeneralPath();
-    shape.moveTo(xend, iconSize>>1);
-    shape.quadTo((2*xend)/3, ystart, xstart+xoff, ystart);
-    shape.quadTo(xoff+xend/3, iconSize>>1, xstart+xoff, yend);
-    shape.quadTo((2*xend)/3, yend, xend, iconSize>>1);
+    shape.moveTo(xend, iconSize >> 1);
+    shape.quadTo((2 * xend) / 3, ystart, xstart + xoff, ystart);
+    shape.quadTo(xoff + xend / 3, iconSize >> 1, xstart + xoff, yend);
+    shape.quadTo((2 * xend) / 3, yend, xend, iconSize >> 1);
     shape.closePath();
     shape.moveTo(xstart, ystart);
-    shape.quadTo(xend/3, iconSize>>1, xstart, yend);
+    shape.quadTo(xend / 3, iconSize >> 1, xstart, yend);
     shape.moveTo(xstart, ystart);
     shape.closePath();
     AffineTransform af = g.getTransform();
     g.translate(borderSize, borderSize);
     g.draw(shape);
-    paintIconPins(g,iconSize,borderSize,negateSize,inverted,false);
+    paintIconPins(g, iconSize, borderSize, negateSize, inverted, false);
     g.setTransform(af);
   }
 

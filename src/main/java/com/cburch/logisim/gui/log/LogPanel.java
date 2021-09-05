@@ -53,8 +53,7 @@ public abstract class LogPanel extends JPanel {
 
   void updateTab() {
     EditHandler h = getEditHandler();
-    if (h != null)
-      h.computeEnabled();
+    if (h != null) h.computeEnabled();
   }
 
   public EditHandler getEditHandler() {
@@ -65,14 +64,10 @@ public abstract class LogPanel extends JPanel {
     return null;
   }
 
-// SimulationHandler getSimulationHandler() {
-//   return null;
-// }
-
   public LogFrame getLogFrame() {
     return logFrame;
   }
-  
+
   protected LogisimMenuBar getLogisimMenuBar() {
     return logFrame.getLogisimMenuBar();
   }
@@ -87,7 +82,11 @@ public abstract class LogPanel extends JPanel {
 
   public abstract String getTitle();
 
-  public abstract void localeChanged();
+  public void localeChanged() {
+    // no-op implementation
+  }
 
-  public abstract void modelChanged(Model oldModel, Model newModel);
+  public void modelChanged(Model oldModel, Model newModel) {
+    // no-op implementation
+  }
 }

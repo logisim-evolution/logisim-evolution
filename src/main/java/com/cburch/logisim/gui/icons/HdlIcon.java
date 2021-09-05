@@ -35,7 +35,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
 
-public class HdlIcon extends AbstractIcon {
+public class HdlIcon extends BaseIcon {
 
   private final String type;
 

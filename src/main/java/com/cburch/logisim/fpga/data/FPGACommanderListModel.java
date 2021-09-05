@@ -66,8 +66,8 @@ public class FPGACommanderListModel extends AbstractListModel<Object> {
     count++;
     if (toAdd instanceof SimpleDRCContainer) {
       SimpleDRCContainer add = (SimpleDRCContainer) toAdd;
-      if (add.SupressCount()) count--;
-      else add.SetListNumber(count);
+      if (add.getSupressCount()) count--;
+      else add.setListNumber(count);
     }
     myData.add(toAdd);
     ListDataEvent e = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, myData.size());

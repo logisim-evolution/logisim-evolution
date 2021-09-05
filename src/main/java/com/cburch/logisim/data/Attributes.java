@@ -54,8 +54,7 @@ public class Attributes {
 
     @Override
     public Boolean parse(String value) {
-      Boolean b = Boolean.valueOf(value);
-      return vals[b ? 0 : 1];
+      return vals[Boolean.valueOf(value) ? 0 : 1];
     }
 
     @Override
@@ -64,17 +63,23 @@ public class Attributes {
       else return S.get("booleanFalseOption");
     }
   }
-  
+
   private static class IOMapAttribute extends Attribute<ComponentMapInformationContainer> {
 
-	@Override
-	public ComponentMapInformationContainer parse(String value) {
-		return null;
-	}
-	
-	@Override
-	public boolean isHidden() {return true;}
-	  
+    @Override
+    public ComponentMapInformationContainer parse(String value) {
+      return null;
+    }
+    
+    @Override
+    public boolean isToSave() {
+      return false;
+    }
+
+    @Override
+    public boolean isHidden() {
+      return true;
+    }
   }
 
   private static class ColorAttribute extends Attribute<Color> {
@@ -84,7 +89,7 @@ public class Attributes {
 
     @Override
     public java.awt.Component getCellEditor(Color value) {
-      Color init = value == null ? Color.WHITE : value;
+      final var init = (value == null) ? Color.WHITE : value;
       return new ColorChooser(init);
     }
 
@@ -113,13 +118,12 @@ public class Attributes {
 
     @Override
     public String toStandardString(Color c) {
-      String ret = "#" + hex(c.getRed()) + hex(c.getGreen()) + hex(c.getBlue());
+      final var ret = "#" + hex(c.getRed()) + hex(c.getGreen()) + hex(c.getBlue());
       return c.getAlpha() == 255 ? ret : ret + hex(c.getAlpha());
     }
   }
 
   private static class ColorChooser extends ColorPicker implements JInputComponent {
-    /** */
     private static final long serialVersionUID = 1L;
 
     ColorChooser(Color initial) {
@@ -212,7 +216,6 @@ public class Attributes {
   }
 
   private static class LFontChooser extends FontChooser implements JInputComponent {
-    /** */
     private static final long serialVersionUID = 1L;
 
     LFontChooser(Font initial) {
@@ -268,7 +271,7 @@ public class Attributes {
 
     @Override
     public String toDisplayString(Integer value) {
-      int val = value;
+      final var val = value;
       return "0x" + Integer.toHexString(val);
     }
 
@@ -362,7 +365,7 @@ public class Attributes {
             options[i - start] = i;
           }
         }
-        ComboBox combo = new ComboBox<>(options);
+        final var combo = new ComboBox<>(options);
         if (value == null) combo.setSelectedIndex(-1);
         else combo.setSelectedItem(value);
         return combo;
@@ -399,8 +402,8 @@ public class Attributes {
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
-    public java.awt.Component getCellEditor(Object value) {
-      ComboBox combo = new ComboBox<>(vals);
+    public Component getCellEditor(Object value) {
+      final var combo = new ComboBox<>(vals);
       combo.setRenderer(new OptionComboRenderer<>(this));
       if (value == null) combo.setSelectedIndex(-1);
       else combo.setSelectedItem(value);
@@ -438,7 +441,7 @@ public class Attributes {
     @Override
     public Component getListCellRendererComponent(
         JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-      Component ret =
+      final var ret =
           super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
       if (ret instanceof JLabel) {
         @SuppressWarnings("unchecked")
@@ -506,7 +509,7 @@ public class Attributes {
   public static Attribute<Color> forColor(String name, StringGetter disp) {
     return new ColorAttribute(name, disp);
   }
-  
+
   public static Attribute<ComponentMapInformationContainer> forMap() {
     return new IOMapAttribute();
   }
@@ -539,12 +542,12 @@ public class Attributes {
     return forHexInteger(name, getter(name));
   }
 
-  public static Attribute<Long> forHexLong(String name) {
-    return forHexLong(name, getter(name));
-  }
-
   public static Attribute<Integer> forHexInteger(String name, StringGetter disp) {
     return new HexIntegerAttribute(name, disp);
+  }
+
+  public static Attribute<Long> forHexLong(String name) {
+    return forHexLong(name, getter(name));
   }
 
   public static Attribute<Long> forHexLong(String name, StringGetter disp) {

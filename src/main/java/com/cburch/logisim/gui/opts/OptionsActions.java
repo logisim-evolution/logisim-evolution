@@ -36,7 +36,6 @@ import com.cburch.logisim.file.MouseMappings;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.Tool;
-import com.cburch.logisim.util.StringUtil;
 
 class OptionsActions {
   private OptionsActions() {}
@@ -107,7 +106,7 @@ class OptionsActions {
 
     @Override
     public String getName() {
-      return StringUtil.format(S.get("setOptionAction"), attr.getDisplayName());
+      return S.get("setOptionAction", attr.getDisplayName());
     }
 
     @Override

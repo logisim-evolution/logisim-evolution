@@ -69,6 +69,14 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
 class PLA extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "PLA";
+
   static final int IN_PORT = 0;
   static final int OUT_PORT = 1;
 
@@ -190,7 +198,7 @@ class PLA extends InstanceFactory {
   }
 
   public PLA() {
-    super("PLA", S.getter("PLA"));
+    super(_ID, S.getter("PLA"));
     setIconName("pla.gif");
     setFacingAttribute(StdAttr.FACING);
   }
@@ -203,7 +211,7 @@ class PLA extends InstanceFactory {
   @Override
   protected void configureNewInstance(Instance instance) {
     super.configureNewInstance(instance);
-    PLAAttributes attributes = (PLAAttributes) instance.getAttributeSet();
+    final var attributes = (PLAAttributes) instance.getAttributeSet();
     attributes.tt = new PLATable(instance.getAttributeValue(ATTR_TABLE));
     attributes.tt.setLabel(instance.getAttributeValue(StdAttr.LABEL));
     instance.addAttributeListener();
@@ -212,7 +220,7 @@ class PLA extends InstanceFactory {
   }
 
   private void updatePorts(Instance instance) {
-    Direction dir = instance.getAttributeValue(StdAttr.FACING);
+    final var dir = instance.getAttributeValue(StdAttr.FACING);
     int dx = 0, dy = 0;
     if (dir == Direction.WEST) dx = -50;
     else if (dir == Direction.NORTH) dy = -50;
@@ -243,16 +251,16 @@ class PLA extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    BitWidth outWidth = state.getAttributeValue(ATTR_OUT_WIDTH);
-    PLATable tt = state.getAttributeValue(ATTR_TABLE);
-    Value input = state.getPortValue(IN_PORT);
+    final var outWidth = state.getAttributeValue(ATTR_OUT_WIDTH);
+    final var tt = state.getAttributeValue(ATTR_TABLE);
+    final var input = state.getPortValue(IN_PORT);
     long val = tt.valueFor(input.toLongValue());
     state.setPort(1, Value.createKnown(outWidth, val), 1);
   }
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    Direction dir = attrs.getValue(StdAttr.FACING);
+    final var dir = attrs.getValue(StdAttr.FACING);
     return Bounds.create(0, -25, 50, 50).rotate(Direction.EAST, dir, 0, 0);
   }
 
@@ -267,8 +275,8 @@ class PLA extends InstanceFactory {
   }
 
   void paintInstance(InstancePainter painter, boolean ghost) {
-    Graphics g = painter.getGraphics();
-    Bounds bds = painter.getBounds();
+    final var g = painter.getGraphics();
+    final var bds = painter.getBounds();
     int x = bds.getX();
     int y = bds.getY();
     int w = bds.getWidth();
@@ -306,9 +314,9 @@ class PLA extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    String Name = CorrectLabel.getCorrectLabel(attrs.getValue(StdAttr.LABEL));
-    if (Name.length() == 0) return "PLA";
-    else return "PLA_" + Name;
+    final var name = CorrectLabel.getCorrectLabel(attrs.getValue(StdAttr.LABEL));
+    if (name.length() == 0) return "PLA";
+    else return "PLA_" + name;
   }
 
   @Override

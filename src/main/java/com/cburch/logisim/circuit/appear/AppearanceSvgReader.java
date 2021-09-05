@@ -43,31 +43,72 @@ import com.cburch.logisim.std.io.SevenSegmentShape;
 import com.cburch.logisim.std.io.TtyShape;
 import com.cburch.logisim.std.memory.CounterShape;
 import com.cburch.logisim.std.memory.RegisterShape;
-import java.util.Map;
+import com.cburch.logisim.std.wiring.Pin;
+
+import java.util.List;
 import org.w3c.dom.Element;
 
 public class AppearanceSvgReader {
-  public static AbstractCanvasObject createShape(
-      Element elt, Map<Location, Instance> pins, Circuit circuit) {
-    String name = elt.getTagName();
+  public static class pinInfo {
+    private final Location myLocation;
+    private final Instance myInstance;
+    private Boolean pinIsUsed;
+    
+    public pinInfo(Location loc, Instance inst) {
+      myLocation = loc;
+      myInstance = inst;
+      pinIsUsed = false;
+    }
+    
+    public Boolean pinIsAlreadyUsed() {
+      return pinIsUsed;
+    }
+    
+    public Location getPinLocation() {
+      return myLocation;
+    }
+    
+    public Instance getPinInstance() {
+      return myInstance;
+    }
+    
+    public void setPinIsUsed() {
+      pinIsUsed = true;
+    }
+  }
+  
+  public static pinInfo getPinInfo(Location loc, Instance inst) {
+    return new pinInfo(loc, inst);
+  }
+  
+  public static AbstractCanvasObject createShape(Element elt, List<pinInfo> pins, Circuit circuit) {
+    final var name = elt.getTagName();
     if (name.equals("circ-anchor") || name.equals("circ-origin")) {
-      Location loc = getLocation(elt);
-      AbstractCanvasObject ret = new AppearanceAnchor(loc);
+      final var loc = getLocation(elt);
+      final var ret = new AppearanceAnchor(loc);
       if (elt.hasAttribute("facing")) {
-        Direction facing = Direction.parse(elt.getAttribute("facing"));
+        final var facing = Direction.parse(elt.getAttribute("facing"));
         ret.setValue(AppearanceAnchor.FACING, facing);
       }
       return ret;
     } else if (name.equals("circ-port")) {
-      Location loc = getLocation(elt);
-      String[] pinStr = elt.getAttribute("pin").split(",");
-      Location pinLoc =
-          Location.create(Integer.parseInt(pinStr[0].trim()), Integer.parseInt(pinStr[1].trim()));
-      Instance pin = pins.get(pinLoc);
-      if (pin == null) return null;
-      return new AppearancePort(loc, pin);
+      final var loc = getLocation(elt);
+      final var pinStr = elt.getAttribute("pin").split(",");
+      final var pinLoc = Location.create(Integer.parseInt(pinStr[0].trim()), Integer.parseInt(pinStr[1].trim()));
+      for (final var pin : pins) {
+        if (pin.pinIsAlreadyUsed()) continue;
+        if (pin.getPinLocation().equals(pinLoc)) {
+          final var isInputPin = ((Pin) pin.getPinInstance().getFactory()).isInputPin(pin.getPinInstance());
+          final var isInputRef = isInputPinReference(elt);
+          if (isInputPin == isInputRef) {
+            pin.setPinIsUsed();
+            return new AppearancePort(loc, pin.getPinInstance()); 
+          }
+        }
+      }
+      return null; 
     } else if (name.startsWith("visible-")) {
-      String pathstr = elt.getAttribute("path");
+      final var pathstr = elt.getAttribute("path");
       if (pathstr == null || pathstr.length() == 0) return null;
       DynamicElement.Path path;
       try {
@@ -76,9 +117,9 @@ public class AppearanceSvgReader {
         System.out.println(e.getMessage());
         return null;
       }
-      int x = (int) Double.parseDouble(elt.getAttribute("x").trim());
-      int y = (int) Double.parseDouble(elt.getAttribute("y").trim());
-      DynamicElement shape = getDynamicElement(name, path, x, y);
+      final var x = (int) Double.parseDouble(elt.getAttribute("x").trim());
+      final var y = (int) Double.parseDouble(elt.getAttribute("y").trim());
+      final var shape = getDynamicElement(name, path, x, y);
       if (shape == null) {
         return null;
       }
@@ -117,6 +158,12 @@ public class AppearanceSvgReader {
       default:
         return null;
     }
+  }
+  
+  private static Boolean isInputPinReference(Element elt) {
+    final var width = Double.parseDouble(elt.getAttribute("width"));
+    final var radius = (int) Math.round(width / 2.0);
+    return AppearancePort.isInputAppearance(radius);
   }
 
   private static Location getLocation(Element elt) {

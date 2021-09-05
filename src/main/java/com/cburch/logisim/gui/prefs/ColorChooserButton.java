@@ -29,7 +29,7 @@
 package com.cburch.logisim.gui.prefs;
 
 import com.bric.colorpicker.ColorPickerDialog;
-import com.cburch.logisim.gui.icons.AbstractIcon;
+import com.cburch.logisim.gui.icons.BaseIcon;
 import com.cburch.logisim.prefs.PrefMonitor;
 import java.awt.Color;
 import java.awt.Frame;
@@ -63,14 +63,14 @@ public class ColorChooserButton extends JButton implements PropertyChangeListene
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    JButton but = (JButton) e.getSource();
+    final var but = (JButton) e.getSource();
     if (but.getIcon() instanceof ColorIcon) {
-      ColorIcon i = (ColorIcon) but.getIcon();
+      final var i = (ColorIcon) but.getIcon();
       i.update(frame);
     }
   }
 
-  private class ColorIcon extends AbstractIcon {
+  private class ColorIcon extends BaseIcon {
     @Override
     protected void paintIcon(Graphics2D g2) {
       g2.setColor(new Color(myMonitor.get()));
@@ -78,8 +78,8 @@ public class ColorChooserButton extends JButton implements PropertyChangeListene
     }
 
     public void update(Frame frame) {
-      Color col = new Color(myMonitor.get());
-      Color newCol = ColorPickerDialog.showDialog(frame, col, false);
+      var col = new Color(myMonitor.get());
+      final var newCol = ColorPickerDialog.showDialog(frame, col, false);
       if (newCol == null) return;
       if (!newCol.equals(col)) {
         col = newCol;

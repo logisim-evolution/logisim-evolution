@@ -60,7 +60,7 @@ public class Toolbar extends JPanel {
 
   private void computeContents() {
     subpanel.removeAll();
-    ToolbarModel m = model;
+    final var m = model;
     if (m != null) {
       for (ToolbarItem item : m.getItems()) {
         subpanel.add(new ToolbarButton(this, item));
@@ -97,7 +97,7 @@ public class Toolbar extends JPanel {
   }
 
   void setPressed(ToolbarButton value) {
-    ToolbarButton oldValue = curPressed;
+    final var oldValue = curPressed;
     if (oldValue != value) {
       curPressed = value;
       if (oldValue != null) oldValue.repaint();
@@ -110,7 +110,7 @@ public class Toolbar extends JPanel {
   }
 
   public void setToolbarModel(ToolbarModel value) {
-    ToolbarModel oldValue = model;
+    final var oldValue = model;
     if (value != oldValue) {
       if (oldValue != null) oldValue.removeToolbarModelListener(myListener);
       if (value != null) value.addToolbarModelListener(myListener);
@@ -120,10 +120,12 @@ public class Toolbar extends JPanel {
   }
 
   private class MyListener implements ToolbarModelListener {
+    @Override
     public void toolbarAppearanceChanged(ToolbarModelEvent event) {
       repaint();
     }
 
+    @Override
     public void toolbarContentsChanged(ToolbarModelEvent event) {
       computeContents();
     }

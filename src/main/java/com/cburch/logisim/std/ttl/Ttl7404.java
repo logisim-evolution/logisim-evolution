@@ -29,14 +29,22 @@
 package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import java.awt.Graphics;
 import java.util.ArrayList;
 
+/**
+ * TTL 74x04: hex inverter gate
+ */
 public class Ttl7404 extends AbstractTtlGate {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "7404";
 
   private static class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
@@ -52,27 +60,31 @@ public class Ttl7404 extends AbstractTtlGate {
 
     @Override
     public ArrayList<String> GetLogicFunction(int index) {
-      ArrayList<String> Contents = new ArrayList<>();
-      Contents.add("   "+HDL.assignPreamble()+"gate_"+index+"_O"+HDL.assignOperator()+
-          HDL.notOperator()+"(gate_"+index+"_A);");
-      Contents.add("");
-      return Contents;
+      final var contents = new ArrayList<String>();
+      contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
+              + HDL.notOperator() + "(gate_" + index + "_A);");
+      contents.add("");
+      return contents;
     }
   }
 
+  private static final byte portCount = 14;
+  private static final byte[] outPorts = {2, 4, 6, 8, 10, 12};
+
   public Ttl7404() {
-    super("7404", (byte) 14, new byte[] {2, 4, 6, 8, 10, 12}, true);
+    super(_ID, portCount, outPorts, true);
   }
 
-  public Ttl7404(String Name) {
-    super(Name, (byte) 14, new byte[] {2, 4, 6, 8, 10, 12}, true);
+  public Ttl7404(String name) {
+    super(name, portCount, outPorts, true);
   }
 
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
-    Graphics g = painter.getGraphics();
-    int portwidth = 12, portheight = 6;
-    int youtput = y + (up ? 20 : 40);
+    final var g = painter.getGraphics();
+    final var portwidth = 12;
+    final var portheight = 6;
+    final var youtput = y + (up ? 20 : 40);
     Drawgates.paintNot(g, x + 26, youtput, portwidth, portheight);
     Drawgates.paintOutputgate(g, x + 30, y, x + 26, youtput, up, height);
     Drawgates.paintSingleInputgate(g, x + 10, y, x + 26 - portwidth, youtput, up, height);
@@ -86,11 +98,6 @@ public class Ttl7404 extends AbstractTtlGate {
     for (byte i = 6; i < 12; i += 2) {
       state.setPort(i, state.getPortValue(i + 1).not(), 1);
     }
-  }
-
-  @Override
-  public String getHDLName(AttributeSet attrs) {
-    return CorrectLabel.getCorrectLabel("TTL" + this.getName()).toUpperCase();
   }
 
   @Override

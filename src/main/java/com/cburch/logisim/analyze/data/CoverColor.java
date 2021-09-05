@@ -36,7 +36,7 @@ import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 
 public class CoverColor implements PreferenceChangeListener {
-  public static final CoverColor COVERCOLOR = new CoverColor(); 
+  public static final CoverColor COVERCOLOR = new CoverColor();
 
   private int index;
   private final List<Color> colors = new ArrayList<>();
@@ -62,7 +62,7 @@ public class CoverColor implements PreferenceChangeListener {
   }
 
   public String getColorName(Color col) {
-    if (colors.contains(col)) return "LogisimKMapColor"+colors.indexOf(col);
+    if (colors.contains(col)) return "LogisimKMapColor" + colors.indexOf(col);
     return null;
   }
 
@@ -74,14 +74,16 @@ public class CoverColor implements PreferenceChangeListener {
     if (index < 0 || index >= colors.size()) return null;
     return colors.get(index);
   }
-  
+
   public Color getNext() {
     index++;
     if (index < 0 || index >= colors.size()) index = 0;
     return colors.get(index);
   }
-  
-  public void reset() { index = 0; }
+
+  public void reset() {
+    index = 0;
+  }
 
   @Override
   public void preferenceChange(PreferenceChangeEvent evt) {

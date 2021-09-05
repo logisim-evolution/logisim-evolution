@@ -40,36 +40,39 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.tools.WireRepairData;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 import java.util.ArrayList;
 
 class OrGate extends AbstractGate {
   private static class OrGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(int nr_of_inputs, int bitwidth, boolean is_one_hot) {
-      ArrayList<String> Contents = new ArrayList<>();
-      StringBuffer OneLine = new StringBuffer();
-      OneLine.append("   " + HDL.assignPreamble() + "Result" + HDL.assignOperator());
-      int TabWidth = OneLine.length();
-      boolean first = true;
-      for (int i = 0; i < nr_of_inputs; i++) {
+    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+      final var contents = new ArrayList<String>();
+      final var oneLine = new StringBuilder();
+      oneLine
+          .append("   ")
+          .append(HDL.assignPreamble())
+          .append("Result")
+          .append(HDL.assignOperator());
+      final var tabWidth = oneLine.length();
+      var first = true;
+      for (int i = 0; i < nrOfInputs; i++) {
         if (!first) {
-          OneLine.append(HDL.orOperator());
-          Contents.add(OneLine.toString());
-          OneLine.setLength(0);
-          while (OneLine.length() < TabWidth) {
-            OneLine.append(" ");
+          oneLine.append(HDL.orOperator());
+          contents.add(oneLine.toString());
+          oneLine.setLength(0);
+          while (oneLine.length() < tabWidth) {
+            oneLine.append(" ");
           }
         } else {
           first = false;
         }
-        OneLine.append("s_real_input_").append(i + 1);
+        oneLine.append("s_real_input_").append(i + 1);
       }
-      OneLine.append(";");
-      Contents.add(OneLine.toString());
-      Contents.add("");
-      return Contents;
+      oneLine.append(";");
+      contents.add(oneLine.toString());
+      contents.add("");
+      return contents;
     }
   }
 
@@ -83,8 +86,8 @@ class OrGate extends AbstractGate {
 
   @Override
   protected Expression computeExpression(Expression[] inputs, int numInputs) {
-    Expression ret = inputs[0];
-    for (int i = 1; i < numInputs; i++) {
+    var ret = inputs[0];
+    for (var i = 1; i < numInputs; i++) {
       ret = Expressions.or(ret, inputs[i]);
     }
     return ret;
@@ -113,27 +116,26 @@ class OrGate extends AbstractGate {
 
   @Override
   public void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize) {
-    paintIconANSI(g, iconSize, borderSize, negateSize,false);
-  }
-  
-  protected static void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize, boolean inverted) {
-    int ystart = negateSize >>1;
-    int yend = iconSize-ystart;
-    int xstart = 0;
-    int xend = iconSize-negateSize;
-    GeneralPath shape = new GeneralPath();
-    shape.moveTo(xend, iconSize>>1);
-    shape.quadTo((2*xend)/3, ystart, xstart, ystart);
-    shape.quadTo(xend/3, iconSize>>1, xstart, yend);
-    shape.quadTo((2*xend)/3, yend, xend, iconSize>>1);
-    shape.closePath();
-    AffineTransform af = g.getTransform();
-    g.translate(borderSize, borderSize);
-    g.draw(shape);
-    paintIconPins(g,iconSize,borderSize,negateSize,inverted,false);
-    g.setTransform(af);
+    paintIconANSI(g, iconSize, borderSize, negateSize, false);
   }
 
+  protected static void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize, boolean inverted) {
+    final var ystart = negateSize >> 1;
+    final var yend = iconSize - ystart;
+    final var xstart = 0;
+    final var xend = iconSize - negateSize;
+    final var shape = new GeneralPath();
+    shape.moveTo(xend, iconSize >> 1);
+    shape.quadTo((2 * xend) / 3, ystart, xstart, ystart);
+    shape.quadTo(xend / 3, iconSize >> 1, xstart, yend);
+    shape.quadTo((2 * xend) / 3, yend, xend, iconSize >> 1);
+    shape.closePath();
+    final var af = g.getTransform();
+    g.translate(borderSize, borderSize);
+    g.draw(shape);
+    paintIconPins(g, iconSize, borderSize, negateSize, inverted, false);
+    g.setTransform(af);
+  }
 
   @Override
   protected void paintShape(InstancePainter painter, int width, int height) {

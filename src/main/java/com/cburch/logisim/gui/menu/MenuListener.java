@@ -79,10 +79,12 @@ public class MenuListener {
   protected class EditListener implements ActionListener, EditHandler.Listener {
     private EditHandler handler = null;
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       if (handler != null) handler.actionPerformed(e);
     }
 
+    @Override
     public void enableChanged(EditHandler handler, LogisimMenuItem action, boolean value) {
       if (handler == this.handler) {
         menubar.setEnabled(action, value);
@@ -91,7 +93,9 @@ public class MenuListener {
     }
 
     public void register() {
-      for (LogisimMenuItem item : LogisimMenuBar.EDIT_ITEMS) menubar.addActionListener(item, this);
+      for (final var item : LogisimMenuBar.EDIT_ITEMS) {
+        menubar.addActionListener(item, this);
+      }
       computeEnabled();
     }
 
@@ -99,7 +103,9 @@ public class MenuListener {
       if (handler != null) {
         handler.computeEnabled();
       } else {
-        for (LogisimMenuItem item : LogisimMenuBar.EDIT_ITEMS) menubar.setEnabled(item, false);
+        for (final var item : LogisimMenuBar.EDIT_ITEMS) {
+          menubar.setEnabled(item, false);
+        }
       }
     }
 

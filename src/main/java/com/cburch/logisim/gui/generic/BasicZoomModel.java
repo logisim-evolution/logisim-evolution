@@ -32,10 +32,11 @@ import com.cburch.logisim.prefs.PrefMonitor;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
+import java.util.ArrayList;
 import javax.swing.SwingUtilities;
 
 public class BasicZoomModel implements ZoomModel {
-  private final double[] zoomOptions;
+  private final ArrayList<Double> zoomOptions;
 
   private final PropertyChangeSupport support;
   private final CanvasPane canvas;
@@ -45,7 +46,7 @@ public class BasicZoomModel implements ZoomModel {
   public BasicZoomModel(
       PrefMonitor<Boolean> gridPref,
       PrefMonitor<Double> zoomPref,
-      double[] zoomOpts,
+      ArrayList<Double> zoomOpts,
       CanvasPane pane) {
     zoomOptions = zoomOpts;
     support = new PropertyChangeSupport(this);
@@ -57,14 +58,17 @@ public class BasicZoomModel implements ZoomModel {
     setShowGrid(gridPref.getBoolean());
   }
 
+  @Override
   public void addPropertyChangeListener(String prop, PropertyChangeListener l) {
     support.addPropertyChangeListener(prop, l);
   }
 
+  @Override
   public boolean getShowGrid() {
     return showGrid;
   }
 
+  @Override
   public void setShowGrid(boolean value) {
     if (value != showGrid) {
       showGrid = value;
@@ -72,10 +76,17 @@ public class BasicZoomModel implements ZoomModel {
     }
   }
 
+  @Override
   public double getZoomFactor() {
     return zoomFactor;
   }
 
+  @Override
+  public ArrayList<Double> getZoomOptions() {
+    return zoomOptions;
+  }
+
+  @Override
   public void setZoomFactor(double value) {
     double oldValue = zoomFactor;
     if (value != oldValue) {
@@ -84,14 +95,7 @@ public class BasicZoomModel implements ZoomModel {
     }
   }
 
-  public double[] getZoomOptions() {
-    return zoomOptions;
-  }
-
-  public void removePropertyChangeListener(String prop, PropertyChangeListener l) {
-    support.removePropertyChangeListener(prop, l);
-  }
-
+  @Override
   public void setZoomFactor(double value, MouseEvent e) {
     double oldValue = zoomFactor;
     if (value != oldValue) {
@@ -118,6 +122,11 @@ public class BasicZoomModel implements ZoomModel {
       canvas.getHorizontalScrollBar().setValue(nvx);
       canvas.getVerticalScrollBar().setValue(nvy);
     }
+  }
+
+  @Override
+  public void removePropertyChangeListener(String prop, PropertyChangeListener l) {
+    support.removePropertyChangeListener(prop, l);
   }
 
   @Override

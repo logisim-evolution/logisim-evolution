@@ -58,7 +58,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
   private TextField field;
   private Attribute<String> labelAttr;
   private Attribute<Font> fontAttr;
-  private boolean LabelIsVisible = true;
+  private boolean isLabelVisible = true;
   private Color fontColor;
   private int fieldX;
   private int fieldY;
@@ -73,8 +73,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
     fontColor = StdAttr.DEFAULT_LABEL_COLOR;
   }
 
-  public void attributeListChanged(AttributeEvent e) {}
-
+  @Override
   public void attributeValueChanged(AttributeEvent e) {
     Attribute<?> attr = e.getAttribute();
     if (attr == labelAttr) {
@@ -84,7 +83,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
     } else if (attr == StdAttr.LABEL_COLOR) {
       fontColor = (Color) e.getValue();
     } else if (attr == StdAttr.LABEL_VISIBILITY) {
-      LabelIsVisible = (Boolean) e.getValue();
+      isLabelVisible = (Boolean) e.getValue();
     }
   }
 
@@ -96,11 +95,10 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
   }
 
   void draw(Component comp, ComponentDrawContext context) {
-    if (field != null && LabelIsVisible) {
+    if (field != null && isLabelVisible) {
       Graphics g = context.getGraphics().create();
       Color currentColor = g.getColor();
-      if (!context.isPrintView())
-        g.setColor(fontColor);
+      if (!context.isPrintView()) g.setColor(fontColor);
       field.draw(g);
       g.setColor(currentColor);
       g.dispose();
@@ -108,15 +106,17 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
   }
 
   Bounds getBounds(Graphics g) {
-    return field == null || !LabelIsVisible ? Bounds.EMPTY_BOUNDS : field.getBounds(g);
+    return field == null || !isLabelVisible ? Bounds.EMPTY_BOUNDS : field.getBounds(g);
   }
 
+  @Override
   public Action getCommitAction(Circuit circuit, String oldText, String newText) {
     SetAttributeAction act = new SetAttributeAction(circuit, S.getter("changeLabelAction"));
     act.set(comp, labelAttr, newText);
     return act;
   }
 
+  @Override
   public Caret getTextCaret(ComponentUserEvent event) {
     canvas = event.getCanvas();
     Graphics g = canvas.getGraphics();
@@ -143,6 +143,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
     return labelAttr != null || fontAttr != null;
   }
 
+  @Override
   public void textChanged(TextFieldEvent e) {
     String prev = e.getOldText();
     String next = e.getText();
@@ -153,17 +154,17 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 
   void update(
       Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
-    boolean wasReg = shouldRegister();
+    final var wasReg = shouldRegister();
     this.labelAttr = labelAttr;
     this.fontAttr = fontAttr;
     this.fieldX = x;
     this.fieldY = y;
     this.halign = halign;
     this.valign = valign;
-    boolean shouldReg = shouldRegister();
-    AttributeSet attrs = comp.getAttributeSet();
+    final var shouldReg = shouldRegister();
+    var attrs = comp.getAttributeSet();
     if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY))
-      LabelIsVisible = attrs.getValue(StdAttr.LABEL_VISIBILITY);
+      isLabelVisible = attrs.getValue(StdAttr.LABEL_VISIBILITY);
     if (!wasReg && shouldReg) attrs.addAttributeListener(this);
     if (wasReg && !shouldReg) attrs.removeAttributeListener(this);
 

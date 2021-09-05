@@ -28,10 +28,8 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
@@ -40,7 +38,6 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 
 public class AbstractOctalFlops extends AbstractTtlGate {
@@ -56,23 +53,23 @@ public class AbstractOctalFlops extends AbstractTtlGate {
     boolean isPressed = true;
 
     private boolean isInside(InstanceState state, MouseEvent e) {
-      Point p = TTLGetTranslatedXY(state, e);
-      boolean inside = false;
-      for (int i = 0; i < 8; i++) {
-        int dx = p.x - (95 + i * 10);
-        int dy = p.y - 40;
-        int d2 = dx * dx + dy * dy;
+      final var p = TTLGetTranslatedXY(state, e);
+      var inside = false;
+      for (var i = 0; i < 8; i++) {
+        final var dx = p.x - (95 + i * 10);
+        final var dy = p.y - 40;
+        final var d2 = dx * dx + dy * dy;
         inside |= (d2 < 4 * 4);
       }
       return inside;
     }
 
     private int getIndex(InstanceState state, MouseEvent e) {
-      Point p = TTLGetTranslatedXY(state, e);
-      for (int i = 0; i < 8; i++) {
-        int dx = p.x - (95 + i * 10);
-        int dy = p.y - 40;
-        int d2 = dx * dx + dy * dy;
+      final var p = TTLGetTranslatedXY(state, e);
+      for (var i = 0; i < 8; i++) {
+        final var dx = p.x - (95 + i * 10);
+        final var dy = p.y - 40;
+        final var d2 = dx * dx + dy * dy;
         if (d2 < 4 * 4) return i;
       }
       return 0;
@@ -85,14 +82,16 @@ public class AbstractOctalFlops extends AbstractTtlGate {
 
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
-      if (!state.getAttributeValue(TTL.DRAW_INTERNAL_STRUCTURE)) return;
+      if (!state.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE)) return;
       if (isPressed && isInside(state, e)) {
-        int index = getIndex(state, e);
-        TTLRegisterData myState = (TTLRegisterData) state.getData();
+        final var index = getIndex(state, e);
+        TtlRegisterData myState = (TtlRegisterData) state.getData();
         if (myState == null) return;
-        Value[] values = myState.getValue().getAll();
-        if (values[index].isFullyDefined()) values[index] = values[index].not();
-        else values[index] = Value.createKnown(1, 0);
+        final var values = myState.getValue().getAll();
+        if (values[index].isFullyDefined())
+          values[index] = values[index].not();
+        else
+          values[index] = Value.createKnown(1, 0);
         myState.setValue(Value.create(values));
         state.fireInvalidated();
       }
@@ -107,8 +106,8 @@ public class AbstractOctalFlops extends AbstractTtlGate {
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     super.paintBase(painter, false, false);
-    Graphics2D g = (Graphics2D) painter.getGraphics();
-    for (int i = 0; i < 8; i++) {
+    final var g = (Graphics2D) painter.getGraphics();
+    for (var i = 0; i < 8; i++) {
       g.drawRect(x + 90 + i * 10, y + 25, 10, 30);
     }
     g.drawLine(x + 85, y + 30, x + 90, y + 30);
@@ -122,12 +121,12 @@ public class AbstractOctalFlops extends AbstractTtlGate {
 
     g.drawLine(x + 78, y + 55, x + 80, y + 50);
     g.drawLine(x + 82, y + 55, x + 80, y + 50);
-    g.drawLine(x + 190, y + AbstractTtlGate.pinheight, x + 190, y + 60);
+    g.drawLine(x + 190, y + AbstractTtlGate.PIN_HEIGHT, x + 190, y + 60);
     g.drawLine(x + 180, y + 60, x + 190, y + 60);
     g.drawLine(x + 180, y + 60, x + 180, y + 70);
     g.drawLine(x + 80, y + 70, x + 180, y + 70);
     g.drawLine(x + 80, y + 55, x + 80, y + 70);
-    g.drawLine(x + 10, y + height - AbstractTtlGate.pinheight, x + 10, y + 60);
+    g.drawLine(x + 10, y + height - AbstractTtlGate.PIN_HEIGHT, x + 10, y + 60);
     g.drawLine(x + 10, y + 60, x + 70, y + 60);
     g.drawLine(x + 70, y + 59, x + 70, y + 60);
 
@@ -148,23 +147,23 @@ public class AbstractOctalFlops extends AbstractTtlGate {
       g.drawLine(x + 95 + i * 10, y + 55, x + 95 + i * 10, y + 60);
       g.drawLine(x + 95 + i * 10, y + 60, x + 95 + i * 10 + 3, y + 63);
     }
-    int[] dincr = new int[] {20, 60, 20, 0};
-    int dpos1 = 50;
-    int dpos2 = 150;
-    int[] qincr = new int[] {60, 20, 60, 0};
-    int qpos1 = 30;
-    int qpos2 = 170;
-    for (int i = 0; i < 4; i++) {
-      g.drawLine(x + dpos1, y + height - AbstractTtlGate.pinheight, x + dpos1, y + 66);
+    final var dincr = new int[] {20, 60, 20, 0};
+    var dpos1 = 50;
+    var dpos2 = 150;
+    final var qincr = new int[] {60, 20, 60, 0};
+    var qpos1 = 30;
+    var qpos2 = 170;
+    for (var i = 0; i < 4; i++) {
+      g.drawLine(x + dpos1, y + height - AbstractTtlGate.PIN_HEIGHT, x + dpos1, y + 66);
       g.drawLine(x + dpos1, y + 66, x + dpos1 + 3, y + 63);
       dpos1 += dincr[i];
-      g.drawLine(x + dpos2, y + AbstractTtlGate.pinheight, x + dpos2, y + 10);
+      g.drawLine(x + dpos2, y + AbstractTtlGate.PIN_HEIGHT, x + dpos2, y + 10);
       g.drawLine(x + dpos2, y + 10, x + dpos2 + 3, y + 13);
       dpos2 -= dincr[i];
-      g.drawLine(x + qpos1, y + height - AbstractTtlGate.pinheight, x + qpos1, y + 70);
+      g.drawLine(x + qpos1, y + height - AbstractTtlGate.PIN_HEIGHT, x + qpos1, y + 70);
       g.drawLine(x + qpos1, y + 70, x + qpos1 + 3, y + 67);
       qpos1 += qincr[i];
-      g.drawLine(x + qpos2, y + AbstractTtlGate.pinheight, x + qpos2, y + 14);
+      g.drawLine(x + qpos2, y + AbstractTtlGate.PIN_HEIGHT, x + qpos2, y + 14);
       g.drawLine(x + qpos2, y + 14, x + qpos2 + 3, y + 17);
       qpos2 -= qincr[i];
     }
@@ -180,19 +179,19 @@ public class AbstractOctalFlops extends AbstractTtlGate {
     g.drawLine(x + 46, y + 57, x + 53, y + 63);
     g.drawLine(x + 46, y + 20, x + 46, y + 57);
     g.setStroke(new BasicStroke(1));
-    drawState(g, x, y, (TTLRegisterData) painter.getData());
+    drawState(g, x, y, (TtlRegisterData) painter.getData());
   }
 
   @Override
   public void ttlpropagate(InstanceState state) {
-    TTLRegisterData data = (TTLRegisterData) state.getData();
+    var data = (TtlRegisterData) state.getData();
     if (data == null) {
-      data = new TTLRegisterData(BitWidth.create(8));
+      data = new TtlRegisterData(BitWidth.create(8));
       state.setData(data);
     }
-    boolean changed = false;
-    boolean triggered = data.updateClock(state.getPortValue(9));
-    Value[] values = data.getValue().getAll();
+    var changed = false;
+    final var triggered = data.updateClock(state.getPortValue(9));
+    var values = data.getValue().getAll();
     if (HasWe) {
       if (triggered && (state.getPortValue(0).equals(Value.FALSE))) {
         changed = true;
@@ -234,10 +233,10 @@ public class AbstractOctalFlops extends AbstractTtlGate {
     state.setPort(17, data.getValue().get(7), 8);
   }
 
-  private void drawState(Graphics2D g, int x, int y, TTLRegisterData state) {
+  private void drawState(Graphics2D g, int x, int y, TtlRegisterData state) {
     if (state != null) {
       g.rotate(-Math.PI / 2, x, y);
-      for (int i = 0; i < 8; i++) {
+      for (var i = 0; i < 8; i++) {
         g.setColor(state.getValue().get(i).getColor());
         g.fillOval(x - 44, y + 91 + i * 10, 8, 8);
         g.setColor(Color.WHITE);
@@ -259,8 +258,4 @@ public class AbstractOctalFlops extends AbstractTtlGate {
     return new int[] {9};
   }
 
-  @Override
-  public String getHDLName(AttributeSet attrs) {
-    return CorrectLabel.getCorrectLabel("TTL" + this.getName()).toUpperCase();
-  }
 }

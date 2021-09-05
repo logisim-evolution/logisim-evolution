@@ -52,7 +52,7 @@ public class AttributeSets {
 
     @Override
     protected void copyInto(AbstractAttributeSet destSet) {
-      FixedSet dest = (FixedSet) destSet;
+      final var dest = (FixedSet) destSet;
       dest.attrs = this.attrs;
       dest.values = this.values.clone();
       dest.readOnly = this.readOnly;
@@ -65,7 +65,7 @@ public class AttributeSets {
 
     @Override
     public <V> V getValue(Attribute<V> attr) {
-      int index = attrs.indexOf(attr);
+      final var index = attrs.indexOf(attr);
       if (index < 0) {
         return null;
       } else {
@@ -77,9 +77,8 @@ public class AttributeSets {
 
     @Override
     public boolean isReadOnly(Attribute<?> attr) {
-      int index = attrs.indexOf(attr);
-      if (index < 0) return true;
-      return isReadOnly(index);
+      final var index = attrs.indexOf(attr);
+      return (index < 0) ? true : isReadOnly(index);
     }
 
     private boolean isReadOnly(int index) {
@@ -88,7 +87,7 @@ public class AttributeSets {
 
     @Override
     public void setReadOnly(Attribute<?> attr, boolean value) {
-      int index = attrs.indexOf(attr);
+      final var index = attrs.indexOf(attr);
       if (index < 0) throw new IllegalArgumentException("attribute " + attr.getName() + " absent");
 
       if (value) readOnly |= (1 << index);
@@ -97,7 +96,7 @@ public class AttributeSets {
 
     @Override
     public <V> void setValue(Attribute<V> attr, V value) {
-      int index = attrs.indexOf(attr);
+      final var index = attrs.indexOf(attr);
       if (index < 0) throw new IllegalArgumentException("attribute " + attr.getName() + " absent");
       if (isReadOnly(index)) throw new IllegalArgumentException("read only");
       @SuppressWarnings("unchecked")
@@ -120,7 +119,7 @@ public class AttributeSets {
 
     @Override
     protected void copyInto(AbstractAttributeSet destSet) {
-      SingletonSet dest = (SingletonSet) destSet;
+      final var dest = (SingletonSet) destSet;
       dest.attrs = this.attrs;
       dest.value = this.value;
       dest.readOnly = this.readOnly;
@@ -133,7 +132,7 @@ public class AttributeSets {
 
     @Override
     public <V> V getValue(Attribute<V> attr) {
-      int index = attrs.indexOf(attr);
+      final var index = attrs.indexOf(attr);
       @SuppressWarnings("unchecked")
       V ret = (V) (index >= 0 ? value : null);
       return ret;
@@ -153,7 +152,7 @@ public class AttributeSets {
 
     @Override
     public <V> void setValue(Attribute<V> attr, V value) {
-      int index = attrs.indexOf(attr);
+      final var index = attrs.indexOf(attr);
       if (index < 0) throw new IllegalArgumentException("attribute " + attr.getName() + " absent");
       if (readOnly) throw new IllegalArgumentException("read only");
       @SuppressWarnings("unchecked")
@@ -161,6 +160,58 @@ public class AttributeSets {
       this.value = value;
       fireAttributeValueChanged(attr, value, oldvalue);
     }
+  }
+
+  public static final AttributeSet EMPTY =
+      new AttributeSet() {
+        @Override
+        public Object clone() {
+          return this;
+        }
+
+        @Override
+        public boolean containsAttribute(Attribute<?> attr) {
+          return false;
+        }
+
+        @Override
+        public Attribute<?> getAttribute(String name) {
+          return null;
+        }
+
+        @Override
+        public List<Attribute<?>> getAttributes() {
+          return Collections.emptyList();
+        }
+
+        @Override
+        public <V> V getValue(Attribute<V> attr) {
+          return null;
+        }
+
+        @Override
+        public boolean isReadOnly(Attribute<?> attr) {
+          return true;
+        }
+
+        @Override
+        public boolean isToSave(Attribute<?> attr) {
+          return attr.isToSave();
+        }
+
+        @Override
+        public void setReadOnly(Attribute<?> attr, boolean value) {
+          throw new UnsupportedOperationException();
+        }
+
+        @Override
+        public <V> void setValue(Attribute<V> attr, V value) {
+          // do nothing
+        }
+      };
+
+  private AttributeSets() {
+    // dummy, private
   }
 
   public static void copy(AttributeSet src, AttributeSet dst) {
@@ -183,47 +234,4 @@ public class AttributeSets {
     }
   }
 
-  public static final AttributeSet EMPTY =
-      new AttributeSet() {
-        public void addAttributeListener(AttributeListener l) {}
-
-        @Override
-        public Object clone() {
-          return this;
-        }
-
-        public boolean containsAttribute(Attribute<?> attr) {
-          return false;
-        }
-
-        public Attribute<?> getAttribute(String name) {
-          return null;
-        }
-
-        public List<Attribute<?>> getAttributes() {
-          return Collections.emptyList();
-        }
-
-        public <V> V getValue(Attribute<V> attr) {
-          return null;
-        }
-
-        public boolean isReadOnly(Attribute<?> attr) {
-          return true;
-        }
-
-        public boolean isToSave(Attribute<?> attr) {
-          return true;
-        }
-
-        public void removeAttributeListener(AttributeListener l) {}
-
-        public void setReadOnly(Attribute<?> attr, boolean value) {
-          throw new UnsupportedOperationException();
-        }
-
-        public <V> void setValue(Attribute<V> attr, V value) {}
-      };
-
-  private AttributeSets() {}
 }

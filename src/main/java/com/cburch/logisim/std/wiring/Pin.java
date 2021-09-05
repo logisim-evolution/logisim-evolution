@@ -30,6 +30,9 @@ package com.cburch.logisim.std.wiring;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.contracts.BaseDocumentListenerContract;
+import com.cburch.contracts.BaseKeyListenerContract;
+import com.cburch.contracts.BaseWindowFocusListenerContract;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.RadixOption;
@@ -70,10 +73,8 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowFocusListener;
 import java.awt.font.TextLayout;
 import java.math.BigInteger;
 import javax.swing.BorderFactory;
@@ -85,9 +86,16 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 public class Pin extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "Pin";
 
   @SuppressWarnings("serial")
-  private static class EditDecimal extends JDialog implements KeyListener, LocaleListener {
+  private static class EditDecimal extends JDialog implements BaseKeyListenerContract, LocaleListener {
 
     private final JFormattedTextField text;
     private final int bitWidth;
@@ -100,6 +108,7 @@ public class Pin extends InstanceFactory {
     final JButton ok;
     final JButton cancel;
 
+    @Override
     public void localeChanged() {
       setTitle(S.get("PinEnterDecimal"));
       ok.setText(S.get("PinOkay"));
@@ -125,12 +134,11 @@ public class Pin extends InstanceFactory {
       cancel.addActionListener(
           e -> EditDecimal.this.setVisible(false));
       addWindowFocusListener(
-          new WindowFocusListener() {
+          new BaseWindowFocusListenerContract() {
+            @Override
             public void windowLostFocus(WindowEvent e) {
               EditDecimal.this.setVisible(false);
             }
-
-            public void windowGainedFocus(WindowEvent e) {}
           });
       setLayout(new GridBagLayout());
 
@@ -142,7 +150,8 @@ public class Pin extends InstanceFactory {
 
       text.getDocument()
           .addDocumentListener(
-              new DocumentListener() {
+              new BaseDocumentListenerContract() {
+                @Override
                 public void insertUpdate(DocumentEvent e) {
                   String s = text.getText();
                   if (isEditValid(s)) {
@@ -154,11 +163,10 @@ public class Pin extends InstanceFactory {
                   }
                 }
 
+                @Override
                 public void removeUpdate(DocumentEvent e) {
                   insertUpdate(e);
                 }
-
-                public void changedUpdate(DocumentEvent e) {}
               });
 
       gbc.gridx = 0;
@@ -184,14 +192,14 @@ public class Pin extends InstanceFactory {
       String s = text.getText();
       if (isEditValid(s)) {
         Value newVal;
-        if (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) || 
-            s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase()) || 
-            s.equals("???")) {
+        if (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase())
+            || s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase())
+            || s.equals("???")) {
           newVal = Value.createUnknown(BitWidth.create(bitWidth));
         } else {
           try {
             BigInteger n = new BigInteger(s);
-            BigInteger signedMax = new BigInteger("1").shiftLeft(bitWidth-1);
+            BigInteger signedMax = new BigInteger("1").shiftLeft(bitWidth - 1);
             if (radix == RadixOption.RADIX_10_SIGNED || n.compareTo(signedMax) < 0) {
               newVal = Value.createKnown(BitWidth.create(bitWidth), n.longValue());
             } else {
@@ -213,13 +221,15 @@ public class Pin extends InstanceFactory {
       if (s == null) return false;
       s = s.trim();
       if (s.equals("")) return false;
-      if (tristate && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase()) || 
-          s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase()) || s.equals("???"))) return true;
+      if (tristate
+          && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase())
+              || s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase())
+              || s.equals("???"))) return true;
       try {
-    	BigInteger n = new BigInteger(s);
+        BigInteger n = new BigInteger(s);
         if (radix == RadixOption.RADIX_10_SIGNED) {
-          BigInteger min = new BigInteger("-1").shiftLeft(bitWidth-1);
-          BigInteger max = new BigInteger("1").shiftLeft(bitWidth-1);
+          BigInteger min = new BigInteger("-1").shiftLeft(bitWidth - 1);
+          BigInteger max = new BigInteger("1").shiftLeft(bitWidth - 1);
           return (n.compareTo(min) >= 0) && (n.compareTo(max) < 0);
         } else {
           BigInteger max = new BigInteger("1").shiftLeft(bitWidth);
@@ -238,12 +248,154 @@ public class Pin extends InstanceFactory {
         setVisible(false);
       }
     }
+  }
+
+  private static class EditFloat extends JDialog implements BaseKeyListenerContract, LocaleListener {
+    private final JFormattedTextField text;
+    private final int bitWidth;
+    final PinState pinState;
+    final InstanceState state;
+    final boolean tristate;
+    private static final Color VALID_COLOR = new Color(0xff, 0xf0, 0x99);
+    private static final Color INVALID_COLOR = new Color(0xff, 0x66, 0x66);
+    final JButton ok;
+    final JButton cancel;
 
     @Override
-    public void keyReleased(KeyEvent e) {}
+    public void localeChanged() {
+      setTitle(S.get("PinEnterFloat"));
+      ok.setText(S.get("PinOkay"));
+      cancel.setText(S.get("PinCancel"));
+    }
+
+    public EditFloat(InstanceState state) {
+      super();
+      this.state = state;
+      pinState = getState(state);
+      final var value = pinState.intendedValue;
+      bitWidth = value.getWidth();
+      final var attrs = (PinAttributes) state.getAttributeSet();
+      tristate = (attrs.threeState && attrs.pull == PULL_NONE);
+
+      setTitle(S.get("PinEnterFloat"));
+      final var gbc = new GridBagConstraints();
+      ok = new JButton(S.get("PinOkay"));
+      cancel = new JButton(S.get("PinCancel"));
+      ok.addActionListener(
+          e -> accept());
+      cancel.addActionListener(
+          e -> EditFloat.this.setVisible(false));
+      addWindowFocusListener(
+          new BaseWindowFocusListenerContract() {
+            @Override
+            public void windowLostFocus(WindowEvent e) {
+              EditFloat.this.setVisible(false);
+            }
+          });
+      setLayout(new GridBagLayout());
+
+      text = new JFormattedTextField();
+      text.setFont(AppPreferences.getScaledFont(DEFAULT_FONT));
+      text.setColumns(11);
+      text.setText(bitWidth == 64 ? Double.toString(value.toDoubleValue()) : Float.toString(value.toFloatValue()));
+      text.selectAll();
+
+      text.getDocument()
+          .addDocumentListener(
+              new DocumentListener() {
+                @Override
+                public void insertUpdate(DocumentEvent e) {
+                  final var s = text.getText();
+                  if (isEditValid(s)) {
+                    text.setBackground(VALID_COLOR);
+                    ok.setEnabled(true);
+                  } else {
+                    text.setBackground(INVALID_COLOR);
+                    ok.setEnabled(false);
+                  }
+                }
+
+                @Override
+                public void removeUpdate(DocumentEvent e) {
+                  insertUpdate(e);
+                }
+
+                @Override
+                public void changedUpdate(DocumentEvent e) {
+                  // do nothing
+                }
+              });
+
+      gbc.gridx = 0;
+      gbc.gridy = 1;
+      add(cancel, gbc);
+      gbc.gridx = 1;
+      gbc.gridy = 1;
+      add(ok, gbc);
+      gbc.gridx = 0;
+      gbc.gridy = 0;
+      gbc.gridwidth = GridBagConstraints.REMAINDER;
+      gbc.anchor = GridBagConstraints.BASELINE;
+      gbc.insets = new Insets(8, 4, 8, 4);
+      text.addKeyListener(this);
+      text.setBorder(BorderFactory.createEmptyBorder(3, 3, 3, 3));
+      text.setBackground(VALID_COLOR);
+      add(text, gbc);
+
+      pack();
+    }
+
+    public void accept() {
+      final var s = text.getText();
+      if (isEditValid(s)) {
+        Value newVal;
+        if (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase())
+            || s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase())
+            || s.equals("???")) {
+          newVal = Value.createUnknown(BitWidth.create(bitWidth));
+        } else {
+          double val;
+          if (s.toLowerCase().equals("inf") || s.toLowerCase().equals("+inf")) val = Double.POSITIVE_INFINITY;
+          else if (s.toLowerCase().equals("-inf")) val = Double.NEGATIVE_INFINITY;
+          else if (s.toLowerCase().equals("nan")) val = Double.NaN;
+          else val = Double.parseDouble(s);
+          newVal = bitWidth == 64 ? Value.createKnown(val) : Value.createKnown((float) val);
+        }
+        setVisible(false);
+        pinState.intendedValue = newVal;
+        state.fireInvalidated();
+      }
+    }
+
+    boolean isEditValid(String s) {
+      if (s == null) return false;
+      s = s.trim();
+      if (s.equals("")) return false;
+      if (tristate
+          && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase())
+              || s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase())
+              || s.equals("???"))) return true;
+      if (s.toLowerCase().equals("nan")
+          || s.toLowerCase().equals("inf")
+          || s.toLowerCase().equals("+inf")
+          || s.toLowerCase().equals("-inf")) return true;
+
+      try {
+        Double.parseDouble(s);
+        return true;
+      } catch (NumberFormatException e) {
+        return false;
+      }
+    }
 
     @Override
-    public void keyTyped(KeyEvent e) {}
+    public void keyPressed(KeyEvent e) {
+      if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+        accept();
+      } else if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
+        setVisible(false);
+      }
+    }
   }
 
   public static class PinLogger extends InstanceLogger {
@@ -271,7 +423,7 @@ public class Pin extends InstanceFactory {
       PinState s = getState(state);
       return s.intendedValue;
     }
-    
+
     @Override
     public boolean isInput(InstanceState state, Object option) {
       PinAttributes attrs = (PinAttributes) state.getAttributeSet();
@@ -394,8 +546,9 @@ public class Pin extends InstanceFactory {
             carry = s / 2;
           }
         }
-      } else if (tristate && (ch == Character.toLowerCase(Value.UNKNOWNCHAR) || 
-                 ch == Character.toUpperCase(Value.UNKNOWNCHAR))) {
+      } else if (tristate
+          && (ch == Character.toLowerCase(Value.UNKNOWNCHAR)
+              || ch == Character.toUpperCase(Value.UNKNOWNCHAR))) {
         for (int b = bit; b < bit + r; b++) val[b] = Value.UNKNOWN;
       } else {
         int d;
@@ -428,6 +581,10 @@ public class Pin extends InstanceFactory {
       RadixOption radix = state.getAttributeValue(RadixOption.ATTRIBUTE);
       if (radix == RadixOption.RADIX_10_SIGNED || radix == RadixOption.RADIX_10_UNSIGNED) {
         EditDecimal dialog = new EditDecimal(state);
+        dialog.setLocation(e.getXOnScreen() - 60, e.getYOnScreen() - 40);
+        dialog.setVisible(true);
+      } else if (radix == RadixOption.RADIX_FLOAT) {
+        final var dialog = new EditFloat(state);
         dialog.setLocation(e.getXOnScreen() - 60, e.getYOnScreen() - 40);
         dialog.setVisible(true);
       } else {
@@ -573,7 +730,7 @@ public class Pin extends InstanceFactory {
       return Value.createKnown(expectedWidth, 0);
     }
   }
-  
+
   public static final Attribute<Boolean> ATTR_TRISTATE =
       Attributes.forBoolean("tristate", S.getter("pinThreeStateAttr"));
   public static final Attribute<Boolean> ATTR_TYPE =
@@ -596,7 +753,7 @@ public class Pin extends InstanceFactory {
   public static final int DIGIT_WIDTH = 8;
 
   public Pin() {
-    super("Pin", S.getter("pinComponent"));
+    super(_ID, S.getter("pinComponent"));
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(
         JoinedConfigurator.create(
@@ -991,40 +1148,47 @@ public class Pin extends InstanceFactory {
     PinAttributes attrs = (PinAttributes) painter.getAttributeSet();
     Direction dir = attrs.facing;
     boolean output = attrs.isOutput();
-    Graphics2D g = (Graphics2D)painter.getGraphics();
+    Graphics2D g = (Graphics2D) painter.getGraphics();
     int iconSize = AppPreferences.getIconSize();
     GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
     BitWidth w = attrs.getValue(StdAttr.WIDTH);
-    int pinSize = iconSize>>2;
+    int pinSize = iconSize >> 2;
     if (attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW) {
-      int arrowHeight = (10*iconSize)>>4;
-      int yoff = (3*iconSize)>>4;
-      int xoff = output?pinSize : 0;
-      int[] yPoints = new int[] {yoff, yoff, yoff+(arrowHeight>>1), yoff+arrowHeight, yoff+arrowHeight};
-      int[] xPoints = new int[] {xoff, xoff+iconSize-(pinSize<<1), xoff+iconSize-pinSize,
-    		  xoff+iconSize-(pinSize<<1), xoff};
+      int arrowHeight = (10 * iconSize) >> 4;
+      int yoff = (3 * iconSize) >> 4;
+      int xoff = output ? pinSize : 0;
+      int[] yPoints =
+          new int[] {yoff, yoff, yoff + (arrowHeight >> 1), yoff + arrowHeight, yoff + arrowHeight};
+      int[] xPoints =
+          new int[] {
+            xoff,
+            xoff + iconSize - (pinSize << 1),
+            xoff + iconSize - pinSize,
+            xoff + iconSize - (pinSize << 1),
+            xoff
+          };
       g.setColor(Color.black);
       g.drawPolygon(xPoints, yPoints, xPoints.length);
       g.setColor(Value.TRUE.getColor());
       GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(2));
       if (output)
-        g.drawLine(0, yoff+(arrowHeight>>1), pinSize , yoff+(arrowHeight>>1));
+        g.drawLine(0, yoff + (arrowHeight >> 1), pinSize, yoff + (arrowHeight >> 1));
       else
-    	g.drawLine(iconSize-pinSize, yoff+(arrowHeight>>1), iconSize , yoff+(arrowHeight>>1));
+        g.drawLine(iconSize - pinSize, yoff + (arrowHeight >> 1), iconSize, yoff + (arrowHeight >> 1));
     } else {
       int iconOffset = AppPreferences.getScaled(4);
-      int boxWidth = iconSize-(iconOffset<<1);
+      int boxWidth = iconSize - (iconOffset << 1);
       int pinWidth = AppPreferences.getScaled(3);
-      int pinx = iconOffset+boxWidth;
-      int piny = iconOffset+(boxWidth>>1)-(pinWidth>>1);
+      int pinx = iconOffset + boxWidth;
+      int piny = iconOffset + (boxWidth >> 1) - (pinWidth >> 1);
       if (dir == Direction.WEST) {
-        pinx = iconOffset-pinWidth;
+        pinx = iconOffset - pinWidth;
       } else if (dir == Direction.NORTH) {
-        pinx = iconOffset+(boxWidth>>1)-(pinWidth>>1);
-        piny = iconOffset-pinWidth;
+        pinx = iconOffset + (boxWidth >> 1) - (pinWidth >> 1);
+        piny = iconOffset - pinWidth;
       } else if (dir == Direction.SOUTH) {
-        pinx = iconOffset+(boxWidth>>1)-(pinWidth>>1);
-        piny = iconOffset+boxWidth;
+        pinx = iconOffset + (boxWidth >> 1) - (pinWidth >> 1);
+        piny = iconOffset + boxWidth;
       }
       g.setColor(Color.black);
       if (output) {
@@ -1033,20 +1197,20 @@ public class Pin extends InstanceFactory {
         g.drawRect(iconOffset, iconOffset, boxWidth, boxWidth);
       }
       g.setColor(Value.TRUE.getColor());
-      g.fillOval(iconOffset+(boxWidth>>2), iconOffset+(boxWidth>>3), boxWidth>>1, (3*boxWidth)>>2);
+      g.fillOval(iconOffset + (boxWidth >> 2), iconOffset + (boxWidth >> 3), boxWidth >> 1, (3 * boxWidth) >> 2);
       g.fillOval(pinx, piny, pinWidth, pinWidth);
     }
     if (!w.equals(BitWidth.ONE)) {
       g.setColor(ICON_WIDTH_COLOR);
       g.setFont(ICON_WIDTH_FONT);
       TextLayout bw = new TextLayout(Integer.toString(w.getWidth()), ICON_WIDTH_FONT, g.getFontRenderContext());
-      float xpos = (float)AppPreferences.getIconSize()/2-(float)bw.getBounds().getCenterX();
-      float ypos = (float)AppPreferences.getIconSize()/2-(float)bw.getBounds().getCenterY();
+      float xpos = (float) AppPreferences.getIconSize() / 2 - (float) bw.getBounds().getCenterX();
+      float ypos = (float) AppPreferences.getIconSize() / 2 - (float) bw.getBounds().getCenterY();
       if (attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW)
         if (output)
-          xpos = pinSize+(iconSize-pinSize)/2-(float)bw.getBounds().getCenterX();
+          xpos = pinSize + (iconSize - pinSize) / 2 - (float) bw.getBounds().getCenterX();
         else
-          xpos = (iconSize-pinSize)/2-(float)bw.getBounds().getCenterX();
+          xpos = (iconSize - pinSize) / 2 - (float) bw.getBounds().getCenterX();
       bw.draw(g, xpos, ypos);
       g.setColor(Color.BLACK);
     }
@@ -1056,7 +1220,7 @@ public class Pin extends InstanceFactory {
   public void paintInstance(InstancePainter painter) {
     PinAttributes attrs = (PinAttributes) painter.getAttributeSet();
     Graphics g = painter.getGraphics();
-    Bounds bds = painter .getInstance().getBounds(); // intentionally with no graphics object - we don't want label included
+    Bounds bds = painter.getInstance().getBounds(); // intentionally with no graphics object - we don't want label included
     boolean IsOutput = attrs.type == EndData.OUTPUT_ONLY;
     PinState state = getState(painter);
     Value found = state.foundValue;

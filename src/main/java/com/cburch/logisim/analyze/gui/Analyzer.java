@@ -32,9 +32,7 @@ import static com.cburch.logisim.analyze.Strings.S;
 
 import com.cburch.logisim.analyze.file.AnalyzerTexWriter;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
-import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Parser;
-import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.TruthTableEvent;
 import com.cburch.logisim.analyze.model.TruthTableListener;
 import com.cburch.logisim.analyze.model.Var;
@@ -43,7 +41,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
@@ -67,6 +64,7 @@ public class Analyzer extends LFrame.SubWindow {
   private final AnalyzerMenuListener menuListener;
 
   private class MyChangeListener implements ChangeListener {
+    @Override
     public void stateChanged(ChangeEvent e) {
 
       Object selected = tabbedPane.getSelectedComponent();
@@ -77,7 +75,7 @@ public class Analyzer extends LFrame.SubWindow {
         ((JPanel) selected).requestFocus();
       }
       if (selected instanceof AnalyzerTab) {
-    	AnalyzerTab tab = (AnalyzerTab)selected;
+        final var tab = (AnalyzerTab) selected;
         menuListener.setEditHandler(tab.getEditHandler());
         menuListener.setPrintHandler(tab.getPrintHandler());
         model.getOutputExpressions().enableUpdates();
@@ -89,13 +87,14 @@ public class Analyzer extends LFrame.SubWindow {
   }
 
   private class MyLocaleListener implements LocaleListener {
+    @Override
     public void localeChanged() {
       Analyzer.this.setTitle(S.get("analyzerWindowTitle"));
       tabbedPane.setTitleAt(IO_TAB, S.get("inputsOutputsTab"));
       tabbedPane.setTitleAt(TABLE_TAB, S.get("tableTab"));
       tabbedPane.setTitleAt(EXPRESSION_TAB, S.get("expressionTab"));
       tabbedPane.setTitleAt(MINIMIZED_TAB, S.get("minimizedTab"));
-      tabbedPane .setToolTipTextAt(IO_TAB, S.get("inputsOutputsTabTip"));
+      tabbedPane.setToolTipTextAt(IO_TAB, S.get("inputsOutputsTabTip"));
       tabbedPane.setToolTipTextAt(TABLE_TAB, S.get("tableTabTip"));
       tabbedPane.setToolTipTextAt(EXPRESSION_TAB, S.get("expressionTabTip"));
       tabbedPane.setToolTipTextAt(MINIMIZED_TAB, S.get("minimizedTabTip"));
@@ -115,18 +114,23 @@ public class Analyzer extends LFrame.SubWindow {
   }
 
   private class TableListener implements TruthTableListener {
+    @Override
     public void rowsChanged(TruthTableEvent event) {
       update();
     }
 
-    public void cellsChanged(TruthTableEvent event) {}
+    @Override
+    public void cellsChanged(TruthTableEvent event) {
+      // dummy
+    }
 
+    @Override
     public void structureChanged(TruthTableEvent event) {
       update();
     }
 
     private void update() {
-      TruthTable tt = model.getTruthTable();
+      final var tt = model.getTruthTable();
       buildCircuit.setEnabled(tt.getInputColumnCount() > 0 && tt.getOutputColumnCount() > 0);
       exportTable.setEnabled(tt.getInputColumnCount() > 0 && tt.getOutputColumnCount() > 0);
       exportTex.setEnabled(tt.getInputColumnCount() > 0 && tt.getOutputColumnCount() > 0
@@ -136,29 +140,26 @@ public class Analyzer extends LFrame.SubWindow {
   }
 
   public static void main(String[] args) throws Exception {
-    Analyzer frame = new Analyzer();
-    AnalyzerModel model = frame.getModel();
+    final var frame = new Analyzer();
+    final var model = frame.getModel();
 
     if (args.length >= 2) {
-      ArrayList<Var> inputs = new ArrayList<>();
-      ArrayList<Var> outputs = new ArrayList<>();
-      for (String s: args[0].split(","))
-        inputs.add(Var.parse(s));
-      for (String s: args[1].split(","))
-        outputs.add(Var.parse(s));
+      final var inputs = new ArrayList<Var>();
+      final var outputs = new ArrayList<Var>();
+      for (String s : args[0].split(",")) inputs.add(Var.parse(s));
+      for (String s : args[1].split(",")) outputs.add(Var.parse(s));
       model.setVariables(inputs, outputs);
     }
-    for (int i = 2; i < args.length; i++) {
-      String s = args[i];
-      int idx = s.indexOf('=');
-      if (idx < 0) {
-        Parser.parse(s, model); // for testing Parser.parse
-        continue;
-      } else {
-        String name = s.substring(0, idx);
-        String exprString = s.substring(idx+1);
-        Expression expr = Parser.parse(exprString, model);
+    for (var i = 2; i < args.length; i++) {
+      final var s = args[i];
+      final var idx = s.indexOf('=');
+      if (idx >= 0) {
+        final var name = s.substring(0, idx);
+        final var exprString = s.substring(idx + 1);
+        final var expr = Parser.parse(exprString, model);
         model.getOutputExpressions().setExpression(name, expr, exprString);
+      } else {
+        Parser.parse(s, model); // for testing Parser.parse
       }
     }
     frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -188,7 +189,7 @@ public class Analyzer extends LFrame.SubWindow {
 
   Analyzer() {
     super(null);
-    TableListener tableListener = new TableListener();
+    final var tableListener = new TableListener();
     model.getTruthTable().addTruthTableListener(tableListener);
     menuListener = new AnalyzerMenuListener(menubar);
     ioPanel = new VariableTab(model.getInputs(), model.getOutputs(), menubar);
@@ -209,12 +210,12 @@ public class Analyzer extends LFrame.SubWindow {
     addTab(EXPRESSION_TAB, expressionPanel);
     addTab(MINIMIZED_TAB, minimizedPanel);
 
-    Container contents = getContentPane();
-    JPanel vertStrut = new JPanel(null);
+    final var contents = getContentPane();
+    final var vertStrut = new JPanel(null);
     vertStrut.setPreferredSize(new Dimension(0, AppPreferences.getScaled(300)));
-    JPanel horzStrut = new JPanel(null);
+    final var horzStrut = new JPanel(null);
     horzStrut.setPreferredSize(new Dimension(AppPreferences.getScaled(450), 0));
-    JPanel buttonPanel = new JPanel();
+    final var buttonPanel = new JPanel();
     buttonPanel.add(importTable);
     buttonPanel.add(buildCircuit);
     buttonPanel.add(exportTable);
@@ -224,10 +225,10 @@ public class Analyzer extends LFrame.SubWindow {
     contents.add(tabbedPane, BorderLayout.CENTER);
     contents.add(buttonPanel, BorderLayout.SOUTH);
 
-    MyLocaleListener myLocaleListener = new MyLocaleListener();
+    final var myLocaleListener = new MyLocaleListener();
     LocaleManager.addLocaleListener(myLocaleListener);
     myLocaleListener.localeChanged();
-    MyChangeListener myChangeListener = new MyChangeListener();
+    final var myChangeListener = new MyChangeListener();
     tabbedPane.addChangeListener(myChangeListener);
     setSelectedTab(0);
     myChangeListener.stateChanged(null);
@@ -235,15 +236,16 @@ public class Analyzer extends LFrame.SubWindow {
 
   private void addTab(int index, final JComponent comp) {
     if (comp instanceof TableTab || comp instanceof VariableTab || comp instanceof ExpressionTab) {
-        tabbedPane.insertTab(S.get("untitled"), null, comp, null, index);
-        return;
+      tabbedPane.insertTab(S.get("untitled"), null, comp, null, index);
+      return;
     }
-    final JScrollPane pane = new JScrollPane(comp,
+    final var pane = new JScrollPane(comp,
         ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
         ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
     pane.addComponentListener(new ComponentAdapter() {
+      @Override
       public void componentResized(ComponentEvent event) {
-        int width = pane.getViewport().getWidth();
+        final var width = pane.getViewport().getWidth();
         comp.setSize(new Dimension(width, comp.getHeight()));
       }
     });
@@ -266,7 +268,6 @@ public class Analyzer extends LFrame.SubWindow {
   }
 
   public abstract static class PleaseWait<T> extends JDialog {
-    /** */
     private static final long serialVersionUID = 1L;
 
     private final SwingWorker<T, Void> worker;
@@ -299,9 +300,9 @@ public class Analyzer extends LFrame.SubWindow {
 
     public T get() {
       worker.execute();
-      JProgressBar progressBar = new JProgressBar();
+      final var progressBar = new JProgressBar();
       progressBar.setIndeterminate(true);
-      JPanel panel = new JPanel(new BorderLayout());
+      final var panel = new JPanel(new BorderLayout());
       panel.add(progressBar, BorderLayout.CENTER);
       panel.add(new JLabel(S.get("analyzePleaseWait")), BorderLayout.PAGE_START);
       add(panel);
@@ -313,6 +314,7 @@ public class Analyzer extends LFrame.SubWindow {
         try {
           return worker.get(300, TimeUnit.MILLISECONDS);
         } catch (TimeoutException ignored) {
+          // do nothing
         }
         if (!alreadyFinished) setVisible(true);
         return worker.get();

@@ -43,10 +43,16 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class ReptarLocalBus extends InstanceFactory {
+  /**
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
+   *
+   * Identifier value must MUST be unique string among all tools.
+   */
+  public static final String _ID = "ReptarLB";
 
   public static String getInputLabel(int id) {
     if (id < 5)
@@ -59,15 +65,18 @@ public class ReptarLocalBus extends InstanceFactory {
     if (id < 13) return "Addr_LB_i_" + (id + 11);
     return "Undefined";
   }
-  
+
   public static String getOutputLabel(int id) {
-    switch(id) {
-      case 0  : return "SP6_LB_WAIT3_o";
-      case 1  : return "IRQ_o";
-      default : return "Undefined";
+    switch (id) {
+      case 0:
+        return "SP6_LB_WAIT3_o";
+      case 1:
+        return "IRQ_o";
+      default:
+        return "Undefined";
     }
   }
-  
+
   public static String getIOLabel(int id) {
     if (id < 16) return "Addr_Data_LB_io_" + id;
     return "Undefined";
@@ -88,26 +97,29 @@ public class ReptarLocalBus extends InstanceFactory {
   private static final String defaultLocalBusName = "LocalBus";
 
   public ReptarLocalBus() {
-    super("ReptarLB", S.getter("repLBComponent"));
+    super(_ID, S.getter("repLBComponent"));
 
-    ArrayList<String> inpLabels = new ArrayList<>();
-    ArrayList<String> outpLabels = new ArrayList<>();
-    ArrayList<String> ioLabels = new ArrayList<>();
-    for (int i = 0 ; i < 16 ; i++) {
+    final var inpLabels = new ArrayList<String>();
+    final var outpLabels = new ArrayList<String>();
+    final var ioLabels = new ArrayList<String>();
+    for (var i = 0; i < 16; i++) {
       if (i < 13) inpLabels.add(getInputLabel(i));
       if (i < 2) outpLabels.add(getOutputLabel(i));
       ioLabels.add(getIOLabel(i));
     }
 
-    setAttributes(new Attribute[] {StdAttr.LABEL,StdAttr.MAPINFO}, 
-        new Object[] {defaultLocalBusName,
-          new ComponentMapInformationContainer( 13, 2, 16, inpLabels, outpLabels, ioLabels)});
+    setAttributes(
+        new Attribute[] {StdAttr.LABEL, StdAttr.MAPINFO},
+        new Object[] {
+          defaultLocalBusName,
+          new ComponentMapInformationContainer(13, 2, 16, inpLabels, outpLabels, ioLabels)
+        });
 
     // setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-110, -10, 110, 110));
     setIconName("localbus.gif");
 
-    Port[] ps = new Port[10];
+    final var ps = new Port[10];
     ps[SP6_LB_nCS3_o] = new Port(0, 0, Port.OUTPUT, 1);
     ps[SP6_LB_nADV_ALE_o] = new Port(0, 10, Port.OUTPUT, 1);
     ps[SP6_LB_RE_nOE_o] = new Port(0, 20, Port.OUTPUT, 1);
@@ -131,7 +143,7 @@ public class ReptarLocalBus extends InstanceFactory {
     ps[IRQ_i].setToolTip(S.getter("repLBTip"));
     // ps[Addr_Data_LB_io ].setToolTip(S.getter("repLBTip"));
     setPorts(ps);
-    
+
   }
 
   @Override
@@ -157,7 +169,7 @@ public class ReptarLocalBus extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
+    final var g = painter.getGraphics();
     painter.drawBounds();
 
     g.setColor(Color.BLACK);

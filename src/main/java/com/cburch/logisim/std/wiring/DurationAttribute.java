@@ -59,9 +59,9 @@ public class DurationAttribute extends Attribute<Integer> {
     try {
       Integer ret = Integer.valueOf(value);
       if (ret < min) {
-        throw new NumberFormatException(StringUtil.format(S.get("durationSmallMessage"), "" + min));
+        throw new NumberFormatException(S.get("durationSmallMessage", "" + min));
       } else if (ret > max) {
-        throw new NumberFormatException(StringUtil.format(S.get("durationLargeMessage"), "" + max));
+        throw new NumberFormatException(S.get("durationLargeMessage", "" + max));
       }
       return ret;
     } catch (NumberFormatException e) {
@@ -75,13 +75,13 @@ public class DurationAttribute extends Attribute<Integer> {
       if (value.equals(1)) {
         return S.get("clockDurationOneValue");
       } else {
-        return StringUtil.format(S.get("clockDurationValue"), value.toString());
+        return S.get("clockDurationValue", value.toString());
       }
     } else {
       if (value.equals(1)) {
         return S.get("PORDurationOneValue");
       } else {
-        return StringUtil.format(S.get("PORDurationValue"), value.toString());
+        return S.get("PORDurationValue", value.toString());
       }
     }
   }
