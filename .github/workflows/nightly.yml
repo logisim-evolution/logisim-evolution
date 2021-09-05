@@ -17,9 +17,9 @@ on:
   # Keep it disabled once it's merged into main branch as we only
   # want "schedule" to be the trigger.
   # NOTE: remove `if` condition marked with `HACK` once merged.
-  pull_request:
-    branches: [ develop ]
-    types: [ closed ]
+  # pull_request:
+  #  branches: [ develop ]
+  #  types: [ closed ]
   schedule:
     # every day at midnight
     - cron: "0 0 * * *"
@@ -34,7 +34,7 @@ jobs:
 
     # HACK: Temporary workaround for `schedule` not working outside main
     # branch and lack of `type: merged` for `pull_request` trigger.
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
 
     # Export build vars so other steps can use it.
     outputs:
