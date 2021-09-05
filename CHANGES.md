@@ -2,7 +2,7 @@
 
 # Changes #
 
-* v3.6.0 (2021-??-??)
+* v3.6.0 (2021-09-05)
   * Introducing project logo.
   * Fixed project loader to correctly handle hex values with a 1 in bit 63rd.
   * Added TTL74x34 hex buffer gate.
