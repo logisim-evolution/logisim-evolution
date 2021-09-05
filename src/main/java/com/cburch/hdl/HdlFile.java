@@ -23,14 +23,14 @@ import lombok.val;
 public class HdlFile {
 
   public static void open(File file, HdlContentEditor editor) throws IOException {
-
-    try (BufferedReader in = new BufferedReader(new FileReader(file))) {
-
+    try {
+      val in = new BufferedReader(new FileReader(file));
       val content = new StringBuilder();
       String line;
 
       while ((line = in.readLine()) != null) {
         content.append(line);
+        // FIXME we can most likely replace `line.property` with Java's "%n" platform specific LF
         content.append(System.getProperty("line.separator"));
       }
       editor.setText(content.toString());
@@ -40,9 +40,9 @@ public class HdlFile {
   }
 
   public static void save(File file, HdlContentEditor editor) throws IOException {
-
-    try (BufferedWriter out = new BufferedWriter(new FileWriter(file))) {
-      String data = editor.getText();
+    try {
+      val out = new BufferedWriter(new FileWriter(file));
+      val data = editor.getText();
       out.write(data, 0, data.length());
     } catch (IOException ex) {
       throw new IOException(S.get("hdlFileWriterError"));

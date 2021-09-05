@@ -20,6 +20,7 @@ import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import lombok.val;
 
 public class ExportLatexButton extends JButton {
   private static final long serialVersionUID = 1L;
@@ -50,7 +51,7 @@ public class ExportLatexButton extends JButton {
         lastFile = new File("logisim_evolution_analyze.tex");
       }
     }
-    JFileChooser chooser = JFileChoosers.createSelected(lastFile);
+    val chooser = JFileChoosers.createSelected(lastFile);
     chooser.setDialogTitle(S.get("saveButton"));
     chooser.addChoosableFileFilter(chooser.getAcceptAllFileFilter());
     chooser.addChoosableFileFilter(AnalyzerTexWriter.FILE_FILTER);

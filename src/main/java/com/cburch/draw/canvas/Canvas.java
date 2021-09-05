@@ -102,7 +102,7 @@ public class Canvas extends JComponent {
     repaint(x, y, width, height);
   }
 
-  public void setModel(CanvasModel value, ActionDispatcher dispatcher) {
+  public void setModel(CanvasModel value, ActionDispatcher disp) {
     val oldValue = model;
     if (oldValue != null) {
       if (!oldValue.equals(value)) {
@@ -110,7 +110,7 @@ public class Canvas extends JComponent {
       }
     }
     model = value;
-    this.dispatcher = dispatcher;
+    dispatcher = disp;
     if (value != null) {
       value.addCanvasModelListener(listener);
     }

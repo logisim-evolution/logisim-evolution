@@ -11,12 +11,14 @@ package com.cburch.draw.util;
 
 import com.cburch.logisim.data.Bounds;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import javax.swing.JTextField;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.val;
 
 public class EditableLabel implements Cloneable {
   public static final int LEFT = JTextField.LEFT;
@@ -28,13 +30,13 @@ public class EditableLabel implements Cloneable {
   public static final int BASELINE = 10;
   public static final int BOTTOM = 11;
 
-  private int x;
-  private int y;
-  private String text;
-  private Font font;
-  private Color color;
-  private int horzAlign;
-  private int vertAlign;
+  @Getter private int x;
+  @Getter private int y;
+  @Getter private String text;
+  @Getter private Font font;
+  @Getter @Setter private Color color;
+  @Getter private int horizontalAlignment;
+  @Getter private int verticalAlignment;
   private boolean dimsKnown;
   private int width;
   private int ascent;
@@ -46,8 +48,8 @@ public class EditableLabel implements Cloneable {
     this.text = text;
     this.font = font;
     this.color = Color.BLACK;
-    this.horzAlign = LEFT;
-    this.vertAlign = BASELINE;
+    this.horizontalAlignment = LEFT;
+    this.verticalAlignment = BASELINE;
     this.dimsKnown = false;
   }
 
@@ -61,7 +63,7 @@ public class EditableLabel implements Cloneable {
   }
 
   private void computeDimensions(Graphics g) {
-    TextMetrics tm = new TextMetrics(g, text);
+    val tm = new TextMetrics(g, text);
     width = tm.width;
     ascent = tm.ascent;
     descent = tm.descent;
@@ -73,19 +75,19 @@ public class EditableLabel implements Cloneable {
   }
 
   public void configureTextField(EditableLabelField field, double zoom) {
-    Font f = font;
+    var font = this.font;
     if (zoom != 1.0) {
-      f = f.deriveFont(AffineTransform.getScaleInstance(zoom, zoom));
+      font = font.deriveFont(AffineTransform.getScaleInstance(zoom, zoom));
     }
-    field.setFont(f);
+    field.setFont(font);
 
-    Dimension dim = field.getPreferredSize();
+    val dim = field.getPreferredSize();
     int w;
-    int border = EditableLabelField.FIELD_BORDER;
+    val border = EditableLabelField.FIELD_BORDER;
     if (dimsKnown) {
       w = width + 1 + 2 * border;
     } else {
-      TextMetrics tm = new TextMetrics(field, font, text);
+      val tm = new TextMetrics(field, this.font, text);
       ascent = tm.ascent;
       descent = tm.descent;
       w = tm.width;
@@ -100,85 +102,60 @@ public class EditableLabel implements Cloneable {
     }
 
     w = Math.max(w, dim.width);
-    final int h = dim.height;
-    switch (horzAlign) {
-      case LEFT:
-        x0 = x0 - border;
-        break;
-      case CENTER:
-        x0 = x0 - (w / 2.0f) + 1;
-        break;
-      case RIGHT:
-        x0 = x0 - w + border + 1;
-        break;
-      default:
-        x0 = x0 - border;
-    }
+    val h = dim.height;
+    x0 = switch (horizontalAlignment) {
+      case LEFT -> x0 - border;
+      case CENTER -> x0 - (w / 2.0f) + 1;
+      case RIGHT -> x0 - w + border + 1;
+      default -> x0 - border;
+    };
     y0 = y0 - border;
 
-    field.setHorizontalAlignment(horzAlign);
+    field.setHorizontalAlignment(horizontalAlignment);
     field.setForeground(color);
     field.setBounds((int) x0, (int) y0, w, h);
   }
 
   public boolean contains(int qx, int qy) {
-    float x0 = getLeftX();
-    float y0 = getBaseY();
+    val x0 = getLeftX();
+    val y0 = getBaseY();
     return (qx >= x0 && qx < x0 + width && qy >= y0 - ascent && qy < y0 + descent);
   }
 
   @Override
   public boolean equals(Object other) {
     if (other instanceof EditableLabel) {
-      EditableLabel that = (EditableLabel) other;
+      val that = (EditableLabel) other;
       return this.x == that.x
           && this.y == that.y
           && this.text.equals(that.text)
           && this.font.equals(that.font)
           && this.color.equals(that.color)
-          && this.horzAlign == that.horzAlign
-          && this.vertAlign == that.vertAlign;
-    } else {
-      return false;
+          && this.horizontalAlignment == that.horizontalAlignment
+          && this.verticalAlignment == that.verticalAlignment;
     }
+    return false;
   }
 
   private float getBaseY() {
-    switch (vertAlign) {
-      case TOP:
-        return y + ascent;
-      case MIDDLE:
-        return y + (ascent - descent) / 2.0f;
-      case BASELINE:
-        return y;
-      case BOTTOM:
-        return y - descent;
-      default:
-        return y;
-    }
+    return switch (verticalAlignment) {
+      case TOP -> y + ascent;
+      case MIDDLE -> y + (ascent - descent) / 2.0f;
+      case BASELINE -> y;
+      case BOTTOM -> y - descent;
+      default -> y;
+    };
   }
 
   //
   // more complex methods
   //
   public Bounds getBounds() {
-    int x0 = (int) getLeftX();
-    int y0 = (int) getBaseY() - ascent;
-    int w = width;
-    int h = ascent + descent;
+    val x0 = (int) getLeftX();
+    val y0 = (int) getBaseY() - ascent;
+    val w = width;
+    val h = ascent + descent;
     return Bounds.create(x0, y0, w, h);
-  }
-
-  public Color getColor() {
-    return color;
-  }
-
-  public void setColor(Color value) {
-    color = value;
-  }
-
-  public Font getFont() {
-    return font;
   }
 
   public void setFont(Font value) {
@@ -186,33 +163,21 @@ public class EditableLabel implements Cloneable {
     dimsKnown = false;
   }
 
-  public int getHorizontalAlignment() {
-    return horzAlign;
-  }
-
   public void setHorizontalAlignment(int value) {
     if (value != LEFT && value != CENTER && value != RIGHT) {
       throw new IllegalArgumentException("argument must be LEFT, CENTER, or RIGHT");
     }
-    horzAlign = value;
+    horizontalAlignment = value;
     dimsKnown = false;
   }
 
   private float getLeftX() {
-    switch (horzAlign) {
-      case LEFT:
-        return x;
-      case CENTER:
-        return x - width / 2.0f;
-      case RIGHT:
-        return x - width;
-      default:
-        return x;
-    }
-  }
-
-  public String getText() {
-    return text;
+    return switch (horizontalAlignment) {
+      case LEFT -> x;
+      case CENTER -> x - width / 2.0f;
+      case RIGHT -> x - width;
+      default -> x;
+    };
   }
 
   public void setText(String value) {
@@ -220,37 +185,25 @@ public class EditableLabel implements Cloneable {
     text = value;
   }
 
-  public int getVerticalAlignment() {
-    return vertAlign;
-  }
-
   public void setVerticalAlignment(int value) {
     if (value != TOP && value != MIDDLE && value != BASELINE && value != BOTTOM) {
       throw new IllegalArgumentException("argument must be TOP, MIDDLE, BASELINE, or BOTTOM");
     }
-    vertAlign = value;
+    verticalAlignment = value;
     dimsKnown = false;
   }
 
   //
   // accessor methods
   //
-  public int getX() {
-    return x;
-  }
-
-  public int getY() {
-    return y;
-  }
-
   @Override
   public int hashCode() {
     int ret = x * 31 + y;
     ret = ret * 31 + text.hashCode();
     ret = ret * 31 + font.hashCode();
     ret = ret * 31 + color.hashCode();
-    ret = ret * 31 + horzAlign;
-    ret = ret * 31 + vertAlign;
+    ret = ret * 31 + horizontalAlignment;
+    ret = ret * 31 + verticalAlignment;
     return ret;
   }
 

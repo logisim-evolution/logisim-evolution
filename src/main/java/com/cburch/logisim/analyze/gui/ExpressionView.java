@@ -22,11 +22,12 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import javax.swing.JPanel;
+import lombok.Getter;
 
 class ExpressionView extends JPanel {
 
   private class MyListener extends ComponentAdapter {
-
+    @Override
     public void componentResized(ComponentEvent arg0) {
       final var width = getWidth();
       if (renderData != null && Math.abs(renderData.getParentWidth() - width) > 2) {
@@ -36,8 +37,7 @@ class ExpressionView extends JPanel {
         repaint();
       }
     }
-
-  }
+  } // end of MyListener
 
   public static class NamedExpression {
     public final String name;
@@ -54,21 +54,17 @@ class ExpressionView extends JPanel {
       expr = e;
       exprString = s;
     }
-  }
+  } // end of NamedExpression
 
 
   private static final long serialVersionUID = 1L;
 
   private final MyListener myListener = new MyListener();
   private Notation notation = Notation.MATHEMATICAL;
-  private ExpressionRenderData renderData;
+  @Getter private ExpressionRenderData renderData;
   private Expression expr;
   private int width;
-  private boolean selected;
-
-  boolean isSelected() {
-    return selected;
-  }
+  @Getter private boolean selected;
 
   public ExpressionView() {
     addComponentListener(myListener);
@@ -94,10 +90,6 @@ class ExpressionView extends JPanel {
   public void setWidth(int w) {
     removeComponentListener(myListener);
     width = w;
-  }
-
-  public ExpressionRenderData getRenderData() {
-    return renderData;
   }
 
   public void setNotation(Notation notation) {

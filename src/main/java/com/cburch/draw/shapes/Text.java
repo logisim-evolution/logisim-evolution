@@ -111,42 +111,41 @@ public class Text extends AbstractCanvasObject {
     } else if (attr == DrawAttr.FILL_COLOR) {
       return (V) label.getColor();
     } else if (attr == DrawAttr.HALIGNMENT) {
-      int halign = label.getHorizontalAlignment();
-      AttributeOption h;
-      if (halign == EditableLabel.LEFT) {
-        h = DrawAttr.HALIGN_LEFT;
-      } else if (halign == EditableLabel.RIGHT) {
-        h = DrawAttr.HALIGN_RIGHT;
+      val horizAlign = label.getHorizontalAlignment();
+      AttributeOption horizAlignVal;
+      if (horizAlign == EditableLabel.LEFT) {
+        horizAlignVal = DrawAttr.HALIGN_LEFT;
+      } else if (horizAlign == EditableLabel.RIGHT) {
+        horizAlignVal = DrawAttr.HALIGN_RIGHT;
       } else {
-        h = DrawAttr.HALIGN_CENTER;
+        horizAlignVal = DrawAttr.HALIGN_CENTER;
       }
-      return (V) h;
+      return (V) horizAlignVal;
     } else if (attr == DrawAttr.VALIGNMENT) {
-      int valign = label.getVerticalAlignment();
-      AttributeOption v;
-      if (valign == EditableLabel.TOP) {
-        v = DrawAttr.VALIGN_TOP;
-      } else if (valign == EditableLabel.BOTTOM) {
-        v = DrawAttr.VALIGN_BOTTOM;
-      } else if (valign == EditableLabel.BASELINE) {
-        v = DrawAttr.VALIGN_BASELINE;
+      val vertAlign = label.getVerticalAlignment();
+      AttributeOption vertAlignVal;
+      if (vertAlign == EditableLabel.TOP) {
+        vertAlignVal = DrawAttr.VALIGN_TOP;
+      } else if (vertAlign == EditableLabel.BOTTOM) {
+        vertAlignVal = DrawAttr.VALIGN_BOTTOM;
+      } else if (vertAlign == EditableLabel.BASELINE) {
+        vertAlignVal = DrawAttr.VALIGN_BASELINE;
       } else {
-        v = DrawAttr.VALIGN_MIDDLE;
+        vertAlignVal = DrawAttr.VALIGN_MIDDLE;
       }
-      return (V) v;
-    } else {
-      return null;
+      return (V) vertAlignVal;
     }
+
+    return null;
   }
 
   @Override
   public boolean matches(CanvasObject other) {
     if (other instanceof Text) {
-      Text that = (Text) other;
+      val that = (Text) other;
       return this.label.equals(that.label);
-    } else {
-      return false;
     }
+    return false;
   }
 
   @Override
@@ -155,8 +154,8 @@ public class Text extends AbstractCanvasObject {
   }
 
   @Override
-  public void paint(Graphics g, HandleGesture gesture) {
-    label.paint(g);
+  public void paint(Graphics gfx, HandleGesture gesture) {
+    label.paint(gfx);
   }
 
   @Override

@@ -48,6 +48,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import javax.swing.JPanel;
+import lombok.Getter;
+import lombok.val;
 
 public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerContract, BaseMouseListenerContract, Entry.EntryChangedListener {
   private class MyListener implements OutputExpressionsListener, TruthTableListener {
@@ -81,51 +83,27 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   private static final long serialVersionUID = 1L;
 
   private static class KMapInfo {
-    private final int headWidth;
-    private final int headHeight;
-    private final int width;
-    private final int height;
-    private int xOff;
-    private int yOff;
+    @Getter private final int headerWidth;
+    @Getter private final int headerHeight;
+    @Getter private final int width;
+    @Getter private final int height;
+    @Getter private int offsetX;
+    @Getter private int offsetY;
 
-    public KMapInfo(int headWidth, int headHeight, int tableWidth, int tableHeight) {
-      xOff = 0;
-      yOff = 0;
-      this.headWidth = headWidth;
-      this.headHeight = headHeight;
+    public KMapInfo(int headerWidth, int headerHeight, int tableWidth, int tableHeight) {
+      offsetX = 0;
+      offsetY = 0;
+      this.headerWidth = headerWidth;
+      this.headerHeight = headerHeight;
       this.width = tableWidth;
       this.height = tableHeight;
     }
 
     public void calculateOffsets(int boxWidth, int boxHeight) {
-      xOff = (boxWidth - width) / 2;
-      yOff = (boxHeight - height) / 2;
+      offsetX = (boxWidth - width) / 2;
+      offsetY = (boxHeight - height) / 2;
     }
-
-    public int getXOffset() {
-      return xOff;
-    }
-
-    public int getYOffset() {
-      return yOff;
-    }
-
-    public int getWidth() {
-      return width;
-    }
-
-    public int getHeight() {
-      return height;
-    }
-
-    public int getHeaderWidth() {
-      return headWidth;
-    }
-
-    public int getHeaderHeight() {
-      return headHeight;
-    }
-  }
+  } // end of KMapInfo
 
   public static final int MAX_VARS = 6;
   public static final int[] ROW_VARS = {0, 0, 1, 1, 2, 2, 3};
@@ -154,12 +132,8 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   private Bounds selInfo;
   private final Point hover;
   private Notation notation = Notation.MATHEMATICAL;
-  private boolean selected;
-  private Dimension kMapDim;
-
-  boolean isSelected() {
-    return selected;
-  }
+  @Getter private boolean selected;
+  @Getter private Dimension kMapDim;
 
   public KarnaughMapPanel(AnalyzerModel model, ExpressionView expr) {
     super(new GridLayout(1, 1));
@@ -245,10 +219,6 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
 
     invalidate();
     if (g != null) repaint();
-  }
-
-  public Dimension getKMapDim() {
-    return kMapDim;
   }
 
   private List<TextLayout> header(
@@ -380,14 +350,11 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     if (cols > 4) {
       return BigCOL_Place[ret];
     }
-    switch (ret) {
-      case 2:
-        return 3;
-      case 3:
-        return 2;
-      default:
-        return ret;
-    }
+    return switch (ret) {
+      case 2 -> 3;
+      case 3 -> 2;
+      default -> ret;
+    };
   }
 
   public void setStyleLined() {
@@ -411,14 +378,11 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     if (rows > 4) {
       return BigCOL_Place[ret];
     }
-    switch (ret) {
-      case 2:
-        return 3;
-      case 3:
-        return 2;
-      default:
-        return ret;
-    }
+    return switch (ret) {
+      case 2 -> 3;
+      case 3 -> 2;
+      default -> ret;
+    };
   }
 
   public int getRow(MouseEvent event) {
@@ -479,10 +443,9 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
 
   public void paintKmap(Graphics gfx, boolean selectionBlock) {
     if (!(gfx instanceof Graphics2D)) return;
-    Graphics2D g2 = (Graphics2D) gfx;
+    val g2 = (Graphics2D) gfx;
     if (AppPreferences.AntiAliassing.getBoolean()) {
-      g2.setRenderingHint(
-          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
     final var col = g2.getColor();
@@ -514,14 +477,14 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     int x;
     int y;
     if (isKMapLined) {
-      x = linedKMapInfo.getXOffset();
-      y = linedKMapInfo.getYOffset();
+      x = linedKMapInfo.getOffsetX();
+      y = linedKMapInfo.getOffsetY();
       drawLinedHeader(g2, x, y);
       x += linedKMapInfo.getHeaderHeight() + 11;
       y += linedKMapInfo.getHeaderHeight() + 11;
     } else {
-      x = numberedKMapInfo.getXOffset();
-      y = numberedKMapInfo.getYOffset();
+      x = numberedKMapInfo.getOffsetX();
+      y = numberedKMapInfo.getOffsetY();
       drawNumberedHeader(g2, x, y);
       x += numberedKMapInfo.getHeaderWidth() + cellWidth;
       y += numberedKMapInfo.getHeaderHeight() + cellHeight;
@@ -639,8 +602,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
               + r * cellHeight);
     }
     final var rowHeader = header(model.getInputs().bits, 0, rowVars, true, false, ctx);
-    final var colHeader =
-        header(model.getInputs().bits, rowVars, rowVars + colVars, false, false, ctx);
+    final var colHeader = header(model.getInputs().bits, rowVars, rowVars + colVars, false, false, ctx);
     var rx = x + 3;
     var ry = y + numberedKMapInfo.getHeaderHeight() + cellHeight / 2;
     for (final var l : rowHeader) {
@@ -649,16 +611,16 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     }
     rx = x + numberedKMapInfo.getHeaderWidth() + cellWidth / 2;
     ry = y + 3;
-    for (TextLayout l : colHeader) {
-      l.draw(gfx, rx, ry + l.getAscent());
-      ry += (int) l.getBounds().getHeight();
+    for (val layout : colHeader) {
+      layout.draw(gfx, rx, ry + layout.getAscent());
+      ry += (int) layout.getBounds().getHeight();
     }
   }
 
   private AttributedString styled(String header, Font font) {
-    ArrayList<Integer> starts = new ArrayList<>();
-    ArrayList<Integer> stops = new ArrayList<>();
-    StringBuilder str = new StringBuilder();
+    val starts = new ArrayList<Integer>();
+    val stops = new ArrayList<Integer>();
+    val str = new StringBuilder();
     var idx = 0;
     while (header != null && idx < header.length()) {
       if (header.charAt(idx) == ':' || header.charAt(idx) == '[') {
@@ -988,37 +950,27 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   private int toRow(int row, int rows) {
     if (rows > 4) {
       return BigCOL_Index[row];
+    } else if (rows == 4) {
+      return switch (row) {
+        case 2 -> 3;
+        case 3 -> 2;
+        default -> row;
+      };
     }
-    if (rows == 4) {
-      switch (row) {
-        case 2:
-          return 3;
-        case 3:
-          return 2;
-        default:
-          return row;
-      }
-    } else {
-      return row;
-    }
+    return row;
   }
 
   private int toCol(int col, int cols) {
     if (cols > 4) {
       return BigCOL_Index[col];
+    } else if (cols == 4) {
+      return switch (col) {
+        case 2 -> 3;
+        case 3 -> 2;
+        default -> col;
+      };
     }
-    if (cols == 4) {
-      switch (col) {
-        case 2:
-          return 3;
-        case 3:
-          return 2;
-        default:
-          return col;
-      }
-    } else {
-      return col;
-    }
+    return col;
   }
 
   @Override

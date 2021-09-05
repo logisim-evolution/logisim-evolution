@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import lombok.val;
 
 public class ModelChangeAttributeAction extends ModelAction {
@@ -67,8 +66,8 @@ public class ModelChangeAttributeAction extends ModelAction {
 
   @Override
   public Collection<CanvasObject> getObjects() {
-    Set<CanvasObject> ret = new HashSet<>();
-    for (AttributeMapKey key : newValues.keySet()) {
+    val ret = new HashSet<CanvasObject>();
+    for (val key : newValues.keySet()) {
       ret.add(key.getObject());
     }
     return ret;

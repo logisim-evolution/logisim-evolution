@@ -155,7 +155,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
 
       val attrs = new Attribute<?>[attrSet.size()];
       val values = new Object[attrs.length];
-      int i = 0;
+      var i = 0;
       for (val attr : attrSet) {
         attrs[i] = attr;
         values[i] = getSelectionValue(attr, attrsSet);
@@ -174,8 +174,8 @@ public class SelectionAttributes extends AbstractAttributeSet {
     public void selectionChanged(SelectionEvent ex) {
       val oldSel = selected;
       val newSel = new HashMap<AttributeSet, CanvasObject>();
-      for (CanvasObject o : selection.getSelected()) {
-        if (o != null) newSel.put(o.getAttributeSet(), o);
+      for (val obj : selection.getSelected()) {
+        if (obj != null) newSel.put(obj.getAttributeSet(), obj);
       }
       selected = newSel;
       var change = false;

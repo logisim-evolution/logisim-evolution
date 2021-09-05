@@ -22,6 +22,7 @@ import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import lombok.val;
 
 public class ExportTableButton extends JButton {
 
@@ -45,8 +46,8 @@ public class ExportTableButton extends JButton {
 
   void doSave() {
     if (lastFile == null) {
-      Circuit c = model.getCurrentCircuit();
-      if (c != null) lastFile = new File(c.getName() + ".txt");
+      val circ = model.getCurrentCircuit();
+      if (circ != null) lastFile = new File(circ.getName() + ".txt");
       else lastFile = new File("truthtable.txt");
     }
     final var chooser = JFileChoosers.createSelected(lastFile);
@@ -100,8 +101,7 @@ public class ExportTableButton extends JButton {
         }
         lastFile = file;
       } catch (IOException e) {
-        OptionPane.showMessageDialog(
-            parent, e.getMessage(), S.get("saveErrorTitle"), OptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(parent, e.getMessage(), S.get("saveErrorTitle"), OptionPane.ERROR_MESSAGE);
       }
     }
   }

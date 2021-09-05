@@ -46,19 +46,19 @@ public class PolyUtil {
     }
     if (ret.distanceSq == Double.MAX_VALUE) {
       return null;
-    } else {
-      val h0 = ret.previousHandle;
-      val h1 = ret.nextHandle;
-      val p = LineUtil.nearestPointSegment(xq, yq, h0.getX(), h0.getY(), h1.getX(), h1.getY());
-      ret.location = Location.create((int) Math.round(p[0]), (int) Math.round(p[1]));
-      return ret;
     }
+    val h0 = ret.previousHandle;
+    val h1 = ret.nextHandle;
+    val p = LineUtil.nearestPointSegment(xq, yq, h0.getX(), h0.getY(), h1.getX(), h1.getY());
+    ret.location = Location.create((int) Math.round(p[0]), (int) Math.round(p[1]));
+    return ret;
   }
 
+  @Getter
   public static class ClosestResult {
-    @Getter private double distanceSq;
-    @Getter private Location location;
-    @Getter private Handle previousHandle;
-    @Getter private Handle nextHandle;
+    private double distanceSq;
+    private Location location;
+    private Handle previousHandle;
+    private Handle nextHandle;
   }
 }

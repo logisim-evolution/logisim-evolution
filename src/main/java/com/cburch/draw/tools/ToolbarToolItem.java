@@ -16,9 +16,10 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import javax.swing.Icon;
+import lombok.Getter;
 
 public class ToolbarToolItem implements ToolbarItem {
-  private final AbstractTool tool;
+  @Getter private final AbstractTool tool;
   private final Icon icon;
 
   public ToolbarToolItem(AbstractTool tool) {
@@ -32,15 +33,10 @@ public class ToolbarToolItem implements ToolbarItem {
       return new Dimension(
           AppPreferences.getScaled(AppPreferences.IconSize),
           AppPreferences.getScaled(AppPreferences.IconSize));
-    } else {
-      return new Dimension(
-          icon.getIconWidth() + 4 * AppPreferences.ICON_BORDER,
-          icon.getIconHeight() + 4 * AppPreferences.ICON_BORDER);
     }
-  }
-
-  public AbstractTool getTool() {
-    return tool;
+    return new Dimension(
+        icon.getIconWidth() + 4 * AppPreferences.ICON_BORDER,
+        icon.getIconHeight() + 4 * AppPreferences.ICON_BORDER);
   }
 
   @Override

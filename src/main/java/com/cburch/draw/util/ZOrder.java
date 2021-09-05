@@ -102,10 +102,6 @@ public class ZOrder {
   }
 
   private static <E> Set<E> toSet(Collection<E> objects) {
-    if (objects instanceof Set) {
-      return (Set<E>) objects;
-    } else {
-      return new HashSet<>(objects);
-    }
+    return (objects instanceof Set) ? (Set<E>) objects : new HashSet<>(objects);
   }
 }

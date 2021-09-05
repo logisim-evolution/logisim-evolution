@@ -14,10 +14,12 @@ import com.cburch.draw.model.CanvasObject;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import java.awt.Color;
+import lombok.Getter;
+import lombok.val;
 
 abstract class FillableCanvasObject extends AbstractCanvasObject {
-  private AttributeOption paintType;
-  private int strokeWidth;
+  @Getter private AttributeOption paintType;
+  @Getter private int strokeWidth;
   private Color strokeColor;
   private Color fillColor;
 
@@ -26,14 +28,6 @@ abstract class FillableCanvasObject extends AbstractCanvasObject {
     strokeWidth = 1;
     strokeColor = Color.BLACK;
     fillColor = Color.WHITE;
-  }
-
-  public AttributeOption getPaintType() {
-    return paintType;
-  }
-
-  public int getStrokeWidth() {
-    return strokeWidth;
   }
 
   @Override
@@ -47,29 +41,27 @@ abstract class FillableCanvasObject extends AbstractCanvasObject {
       return (V) fillColor;
     } else if (attr == DrawAttr.STROKE_WIDTH) {
       return (V) Integer.valueOf(strokeWidth);
-    } else {
-      return null;
     }
+    return null;
   }
 
   @Override
   public boolean matches(CanvasObject other) {
-    if (other instanceof FillableCanvasObject) {
-      FillableCanvasObject that = (FillableCanvasObject) other;
-      boolean ret = this.paintType == that.paintType;
-      if (ret && this.paintType != DrawAttr.PAINT_FILL) {
-        ret =
-            ret
-                && this.strokeWidth == that.strokeWidth
-                && this.strokeColor.equals(that.strokeColor);
-      }
-      if (ret && this.paintType != DrawAttr.PAINT_STROKE) {
-        ret = ret && this.fillColor.equals(that.fillColor);
-      }
-      return ret;
-    } else {
+    if (!(other instanceof FillableCanvasObject)) {
       return false;
     }
+    val that = (FillableCanvasObject) other;
+    var ret = this.paintType == that.paintType;
+    if (ret && this.paintType != DrawAttr.PAINT_FILL) {
+      ret =
+          ret
+              && this.strokeWidth == that.strokeWidth
+              && this.strokeColor.equals(that.strokeColor);
+    }
+    if (ret && this.paintType != DrawAttr.PAINT_STROKE) {
+      ret = ret && this.fillColor.equals(that.fillColor);
+    }
+    return ret;
   }
 
   @Override

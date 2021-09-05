@@ -32,7 +32,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
 
 public class CsvReadParameterDialog extends JDialog implements ActionListener {
 
@@ -93,8 +92,8 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
     labels = new JLabel[16];
     final var border = BorderFactory.createLineBorder(Color.BLACK, AppPreferences.getScaled(1));
     final var dim = new Dimension(celwidth, celHeight);
-    for (int x = 0; x < 4; x++)
-      for (int y = 0; y < 4; y++) {
+    for (var x = 0; x < 4; x++)
+      for (var y = 0; y < 4; y++) {
         final var j = new JPanel();
         labels[y * 4 + x] = new JLabel(x + "," + y);
         j.setBorder(border);
@@ -118,11 +117,11 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
   private void updateLabels() {
     try {
       final var scan = new Scanner(file);
-      for (int y = 0; y < 4; y++) {
+      for (var y = 0; y < 4; y++) {
         List<String> line = null;
         if (scan.hasNext())
           line = CsvInterpretor.parseCsvLine(scan.next(), param.seperator(), param.quote());
-        for (int x = 0; x < 4; x++) {
+        for (var x = 0; x < 4; x++) {
           if (line == null || x >= line.size()) {
             labels[y * 4 + x].setText("");
           } else {
@@ -132,11 +131,7 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
       }
       scan.close();
     } catch (FileNotFoundException e) {
-      OptionPane.showMessageDialog(
-          this,
-          S.get("cantReadMessage", file.getName()),
-          S.get("openButton"),
-          OptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(this, S.get("cantReadMessage", file.getName()), S.get("openButton"), OptionPane.ERROR_MESSAGE);
       setVisible = false;
       if (this.isVisible()) {
         setVisible(false);

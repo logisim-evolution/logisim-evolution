@@ -40,6 +40,7 @@ import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import lombok.val;
 
 public class Analyzer extends LFrame.SubWindow {
   private final AnalyzerMenuListener menuListener;
@@ -238,7 +239,7 @@ public class Analyzer extends LFrame.SubWindow {
   }
 
   public void setSelectedTab(int index) {
-    Object found = tabbedPane.getComponentAt(index);
+    val found = tabbedPane.getComponentAt(index);
     if (found instanceof AnalyzerTab) {
       model.getOutputExpressions().enableUpdates();
       ((AnalyzerTab) found).updateTab();

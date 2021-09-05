@@ -34,6 +34,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import lombok.val;
 
 class BuildCircuitButton extends JButton {
   private class DialogPanel extends JPanel {
@@ -50,7 +51,7 @@ class BuildCircuitButton extends JButton {
       final var options = new Object[projects.size() + 1];
       Object initialSelection = null;
       options[0] = new ProjectItem(null);
-      for (int i = 1; i < options.length; i++) {
+      for (var i = 1; i < options.length; i++) {
         final var proj = projects.get(i - 1);
         options[i] = new ProjectItem(proj);
         if (proj == model.getCurrentProject()) {
@@ -75,7 +76,7 @@ class BuildCircuitButton extends JButton {
 
       final var outputs = model.getOutputs();
       var enableNands = true;
-      for (String output : outputs.bits) {
+      for (val output : outputs.bits) {
         final var expr = model.getOutputExpressions().getExpression(output);
         if (expr != null && (expr.contains(Expression.Op.XOR) || expr.contains(Expression.Op.EQ))) {
           enableNands = false;
@@ -129,7 +130,7 @@ class BuildCircuitButton extends JButton {
 
       var ok = false;
       while (!ok) {
-        DialogPanel dlog = new DialogPanel();
+        val dlog = new DialogPanel();
         var action =
             OptionPane.showConfirmDialog(
                 parent,
@@ -213,6 +214,7 @@ class BuildCircuitButton extends JButton {
 
     @Override
     public String toString() {
+      // FIXME: hardcoded string
       if (project == null) return "< Create New Project >";
       else return project.getLogisimFile().getDisplayName();
     }
@@ -239,6 +241,7 @@ class BuildCircuitButton extends JButton {
     if (replace) {
       final var circuit = dest.getLogisimFile().getCircuit(name);
       if (circuit == null) {
+        // FIXME: hardcoded string
         OptionPane.showMessageDialog(
             parent,
             "Internal error prevents replacing circuit.",

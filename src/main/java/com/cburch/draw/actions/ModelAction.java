@@ -17,6 +17,7 @@ import com.cburch.draw.undo.Action;
 import java.util.Collection;
 import java.util.Collections;
 import lombok.Getter;
+import lombok.val;
 
 public abstract class ModelAction extends Action {
   @Getter private final CanvasModel model;
@@ -29,7 +30,7 @@ public abstract class ModelAction extends Action {
     if (coll.size() != 1) {
       return S.get("shapeMultiple");
     }
-    CanvasObject shape = coll.iterator().next();
+    val shape = coll.iterator().next();
     return shape.getDisplayName();
   }
 

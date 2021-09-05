@@ -19,12 +19,11 @@ abstract class AnalyzerTab extends JPanel {
   abstract void localeChanged();
 
   abstract void updateTab();
-  
 
   EditHandler getEditHandler() {
     return null;
   }
-  
+
   PrintHandler getPrintHandler() {
     return null;
   }

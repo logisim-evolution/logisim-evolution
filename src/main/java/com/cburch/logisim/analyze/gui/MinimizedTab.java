@@ -54,15 +54,14 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.KeyStroke;
 import javax.swing.TransferHandler;
+import lombok.Getter;
+import lombok.val;
 
 class MinimizedTab extends AnalyzerTab {
   @SuppressWarnings("rawtypes")
   private static class FormatModel extends AbstractListModel implements ComboBoxModel {
     static int getFormatIndex(int choice) {
-      if (choice == AnalyzerModel.FORMAT_PRODUCT_OF_SUMS) {
-        return 1;
-      }
-      return 0;
+      return (choice == AnalyzerModel.FORMAT_PRODUCT_OF_SUMS) ? 1 : 0;
     }
 
     private static final long serialVersionUID = 1L;
@@ -82,10 +81,9 @@ class MinimizedTab extends AnalyzerTab {
     }
 
     int getSelectedFormat() {
-      if (selected == 1) {
-        return AnalyzerModel.FORMAT_PRODUCT_OF_SUMS;
-      }
-      return AnalyzerModel.FORMAT_SUM_OF_PRODUCTS;
+      return (selected == 1)
+          ? AnalyzerModel.FORMAT_PRODUCT_OF_SUMS
+          : AnalyzerModel.FORMAT_SUM_OF_PRODUCTS;
     }
 
     @Override
@@ -461,7 +459,7 @@ class MinimizedTab extends AnalyzerTab {
       new EditHandler() {
         @Override
         public void computeEnabled() {
-          boolean viewing = minimizedExpr.isFocusOwner() || karnaughMap.isFocusOwner();
+          val viewing = minimizedExpr.isFocusOwner() || karnaughMap.isFocusOwner();
           setEnabled(LogisimMenuBar.CUT, false);
           setEnabled(LogisimMenuBar.COPY, viewing);
           setEnabled(LogisimMenuBar.PASTE, false);
@@ -601,13 +599,7 @@ class MinimizedTab extends AnalyzerTab {
     }
   }
 
-
-  @Override
-  PrintHandler getPrintHandler() {
-    return printHandler;
-  }
-
-  final PrintHandler printHandler =
+  @Getter private final PrintHandler printHandler =
       new PrintHandler() {
         @Override
         public Dimension getExportImageSize() {

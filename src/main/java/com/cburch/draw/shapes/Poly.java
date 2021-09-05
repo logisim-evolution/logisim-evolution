@@ -162,8 +162,9 @@ public class Poly extends FillableCanvasObject {
     }
 
     val g = gesture.getHandle();
-    val ret = new Handle[hs.length];
-    for (int i = 0, n = hs.length; i < n; i++) {
+    val n = hs.length;
+    val ret = new Handle[n];
+    for (int i = 0; i < n; i++) {
       val h = hs[i];
       if (h.equals(g)) {
         val x = h.getX() + gesture.getDeltaX();

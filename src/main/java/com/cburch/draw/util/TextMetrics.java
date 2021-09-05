@@ -12,11 +12,9 @@ package com.cburch.draw.util;
 import java.awt.Canvas;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.font.FontRenderContext;
-import java.awt.font.LineMetrics;
+import lombok.val;
 
 public class TextMetrics {
 
@@ -44,16 +42,17 @@ public class TextMetrics {
       throw new IllegalStateException("need g");
     }
     if (font == null) font = g.getFont();
-    FontRenderContext fr = ((Graphics2D) g).getFontRenderContext();
+    val fr = ((Graphics2D) g).getFontRenderContext();
 
     if (text == null) {
+      // FIXME: why these characters?!
       text = "ÄAy";
       width = 0;
     } else {
       width = (int) font.getStringBounds(text, fr).getWidth();
     }
 
-    LineMetrics lm = font.getLineMetrics(text, fr);
+    val lm = font.getLineMetrics(text, fr);
     ascent = (int) Math.ceil(lm.getAscent());
     descent = (int) Math.ceil(lm.getDescent());
     leading = (int) Math.ceil(lm.getLeading());
@@ -63,7 +62,7 @@ public class TextMetrics {
   public TextMetrics(Component c, Font font, String text) {
     if (c == null) c = canvas;
     if (font == null) font = c.getFont();
-    FontMetrics fm = c.getFontMetrics(font);
+    val fm = c.getFontMetrics(font);
     width = (text != null ? fm.stringWidth(text) : 0);
     ascent = fm.getAscent();
     descent = fm.getDescent();

@@ -105,7 +105,7 @@ abstract class Rectangular extends FillableCanvasObject {
           val w = Math.abs(newX1 - newX0);
           val h = Math.abs(newY1 - newY0);
           if (w > h) { // reduce width to h
-            int dw = (w - h) / 2;
+            val dw = (w - h) / 2;
             newX0 -= (newX0 > newX1 ? 1 : -1) * dw;
             newX1 -= (newX1 > newX0 ? 1 : -1) * dw;
           } else {
@@ -181,9 +181,8 @@ abstract class Rectangular extends FillableCanvasObject {
     if (other instanceof Rectangular) {
       val that = (Rectangular) other;
       return this.bounds.equals(that.bounds) && super.matches(that);
-    } else {
-      return false;
     }
+    return false;
   }
 
   @Override
@@ -223,27 +222,28 @@ abstract class Rectangular extends FillableCanvasObject {
     if (gesture == null) {
       val bds = bounds;
       draw(g, bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
-    } else {
-      val handles = getHandleArray(gesture);
-      val p0 = handles[0];
-      val p1 = handles[2];
-      var x0 = p0.getX();
-      var y0 = p0.getY();
-      var x1 = p1.getX();
-      var y1 = p1.getY();
-      if (x1 < x0) {
-        val tmp = x0;
-        x0 = x1;
-        x1 = tmp;
-      }
-      if (y1 < y0) {
-        val tmp = y0;
-        y0 = y1;
-        y1 = tmp;
-      }
-
-      draw(g, x0, y0, x1 - x0, y1 - y0);
+      return;
     }
+
+    val handles = getHandleArray(gesture);
+    val p0 = handles[0];
+    val p1 = handles[2];
+    var x0 = p0.getX();
+    var y0 = p0.getY();
+    var x1 = p1.getX();
+    var y1 = p1.getY();
+    if (x1 < x0) {
+      val tmp = x0;
+      x0 = x1;
+      x1 = tmp;
+    }
+    if (y1 < y0) {
+      val tmp = y0;
+      y0 = y1;
+      y1 = tmp;
+    }
+
+    draw(g, x0, y0, x1 - x0, y1 - y0);
   }
 
   @Override

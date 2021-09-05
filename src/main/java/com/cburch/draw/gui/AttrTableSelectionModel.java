@@ -37,12 +37,12 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
 
   @Override
   public String getTitle() {
-    Selection sel = canvas.getSelection();
+    val sel = canvas.getSelection();
     Class<? extends CanvasObject> commonClass = null;
-    int commonCount = 0;
+    var commonCount = 0;
     CanvasObject firstObject = null;
-    int totalCount = 0;
-    for (CanvasObject obj : sel.getSelected()) {
+    var totalCount = 0;
+    for (val obj : sel.getSelected()) {
       if (firstObject == null) {
         firstObject = obj;
         commonClass = obj.getClass();
@@ -63,7 +63,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
       return firstObject.getDisplayNameAndLabel();
     }
 
-    return S.get("selectionMultiple", firstObject.getDisplayName(), "" + commonCount);
+    return S.get("selectionMultiple", firstObject.getDisplayName(), String.valueOf(commonCount));
   }
 
   //

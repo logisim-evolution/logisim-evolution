@@ -12,7 +12,6 @@ package com.cburch.draw.tools;
 import com.cburch.draw.actions.ModelAddAction;
 import com.cburch.draw.canvas.Canvas;
 import com.cburch.draw.icons.DrawCurveIcon;
-import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.shapes.Curve;
 import com.cburch.draw.shapes.CurveUtil;
 import com.cburch.draw.shapes.DrawAttr;
@@ -28,6 +27,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.Icon;
+import lombok.val;
 
 public class CurveTool extends AbstractTool {
   private static final int BEFORE_CREATION = 0;
@@ -112,12 +112,12 @@ public class CurveTool extends AbstractTool {
 
   @Override
   public void mousePressed(Canvas canvas, MouseEvent e) {
-    int mx = e.getX();
-    int my = e.getY();
+    var mx = e.getX();
+    var my = e.getY();
     lastMouseX = mx;
     lastMouseY = my;
     mouseDown = true;
-    int mods = e.getModifiersEx();
+    val mods = e.getModifiersEx();
     if ((mods & InputEvent.CTRL_DOWN_MASK) != 0) {
       mx = canvas.snapX(mx);
       my = canvas.snapY(my);
@@ -141,15 +141,15 @@ public class CurveTool extends AbstractTool {
   }
 
   @Override
-  public void mouseReleased(Canvas canvas, MouseEvent e) {
-    Curve c = updateMouse(canvas, e.getX(), e.getY(), e.getModifiersEx());
+  public void mouseReleased(Canvas canvas, MouseEvent event) {
+    val curve = updateMouse(canvas, event.getX(), event.getY(), event.getModifiersEx());
     mouseDown = false;
     if (state == CONTROL_DRAG) {
-      if (c != null) {
-        attrs.applyTo(c);
-        CanvasModel model = canvas.getModel();
-        canvas.doAction(new ModelAddAction(model, c));
-        canvas.toolGestureComplete(this, c);
+      if (curve != null) {
+        attrs.applyTo(curve);
+        val model = canvas.getModel();
+        canvas.doAction(new ModelAddAction(model, curve));
+        canvas.toolGestureComplete(this, curve);
       }
       state = BEFORE_CREATION;
     }
@@ -170,15 +170,15 @@ public class CurveTool extends AbstractTool {
     lastMouseX = mx;
     lastMouseY = my;
 
-    boolean shiftDown = (mods & MouseEvent.SHIFT_DOWN_MASK) != 0;
-    boolean ctrlDown = (mods & MouseEvent.CTRL_DOWN_MASK) != 0;
-    boolean altDown = (mods & MouseEvent.ALT_DOWN_MASK) != 0;
+    val shiftDown = (mods & MouseEvent.SHIFT_DOWN_MASK) != 0;
+    val ctrlDown = (mods & MouseEvent.CTRL_DOWN_MASK) != 0;
+    val altDown = (mods & MouseEvent.ALT_DOWN_MASK) != 0;
     Curve ret = null;
     switch (state) {
       case ENDPOINT_DRAG:
         if (mouseDown) {
           if (shiftDown) {
-            Location p = LineUtil.snapTo8Cardinals(end0, mx, my);
+            val p = LineUtil.snapTo8Cardinals(end0, mx, my);
             mx = p.getX();
             my = p.getY();
           }
@@ -191,22 +191,22 @@ public class CurveTool extends AbstractTool {
         break;
       case CONTROL_DRAG:
         if (mouseDown) {
-          int cx = mx;
-          int cy = my;
+          var cx = mx;
+          var cy = my;
           if (ctrlDown) {
             cx = canvas.snapX(cx);
             cy = canvas.snapY(cy);
           }
           if (shiftDown) {
-            double x0 = end0.getX();
-            double y0 = end0.getY();
-            double x1 = end1.getX();
-            double y1 = end1.getY();
-            double midx = (x0 + x1) / 2;
-            double midy = (y0 + y1) / 2;
-            double dx = x1 - x0;
-            double dy = y1 - y0;
-            double[] p = LineUtil.nearestPointInfinite(cx, cy, midx, midy, midx - dy, midy + dx);
+            val x0 = end0.getX();
+            val y0 = end0.getY();
+            val x1 = end1.getX();
+            val y1 = end1.getY();
+            val midx = (x0 + x1) / 2;
+            val midy = (y0 + y1) / 2;
+            val dx = x1 - x0;
+            val dy = y1 - y0;
+            val p = LineUtil.nearestPointInfinite(cx, cy, midx, midy, midx - dy, midy + dx);
             cx = (int) Math.round(p[0]);
             cy = (int) Math.round(p[1]);
           }
@@ -214,7 +214,7 @@ public class CurveTool extends AbstractTool {
             double[] e0 = {end0.getX(), end0.getY()};
             double[] e1 = {end1.getX(), end1.getY()};
             double[] mid = {cx, cy};
-            double[] ct = CurveUtil.interpolate(e0, e1, mid);
+            val ct = CurveUtil.interpolate(e0, e1, mid);
             cx = (int) Math.round(ct[0]);
             cy = (int) Math.round(ct[1]);
           }

@@ -105,9 +105,8 @@ public class DrawAttr {
       return ATTRS_FILL_STROKE;
     } else if (paint.equals(PAINT_FILL)) {
       return ATTRS_FILL_FILL;
-    } else {
-      return ATTRS_FILL_BOTH;
     }
+    return ATTRS_FILL_BOTH;
   }
 
   public static List<Attribute<?>> getRoundRectAttributes(AttributeOption paint) {
@@ -115,8 +114,7 @@ public class DrawAttr {
       return ATTRS_RRECT_STROKE;
     } else if (paint.equals(PAINT_FILL)) {
       return ATTRS_RRECT_FILL;
-    } else {
-      return ATTRS_RRECT_BOTH;
     }
+    return ATTRS_RRECT_BOTH;
   }
 }

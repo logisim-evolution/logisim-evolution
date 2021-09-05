@@ -28,6 +28,7 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.Icon;
+import lombok.val;
 
 public class PolyTool extends AbstractTool {
   // how close we need to be to the start point to count as "closing the loop"
@@ -70,7 +71,7 @@ public class PolyTool extends AbstractTool {
   public void draw(Canvas canvas, Graphics gfx) {
     if (active) {
       gfx.setColor(Color.GRAY);
-      int size = locations.size();
+      val size = locations.size();
       final var xs = new int[size];
       final var ys = new int[size];
       for (var i = 0; i < size; i++) {
@@ -169,7 +170,7 @@ public class PolyTool extends AbstractTool {
     if (active) {
       updateMouse(canvas, e.getX(), e.getY(), e.getModifiersEx());
       mouseDown = false;
-      int size = locations.size();
+      val size = locations.size();
       if (size >= 3) {
         final var first = locations.get(0);
         final var last = locations.get(size - 1);

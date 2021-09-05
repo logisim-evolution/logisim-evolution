@@ -55,21 +55,20 @@ public class Oval extends Rectangular {
 
   @Override
   protected Location getRandomPoint(Bounds bds, Random rand) {
-    if (getPaintType() == DrawAttr.PAINT_STROKE) {
-      val rx = getWidth() / 2.0;
-      val ry = getHeight() / 2.0;
-      val u = 2 * Math.PI * rand.nextDouble();
-      var x = (int) Math.round(getX() + rx + rx * Math.cos(u));
-      var y = (int) Math.round(getY() + ry + ry * Math.sin(u));
-      val d = getStrokeWidth();
-      if (d > 1) {
-        x += rand.nextInt(d) - d / 2;
-        y += rand.nextInt(d) - d / 2;
-      }
-      return Location.create(x, y);
-    } else {
+    if (getPaintType() != DrawAttr.PAINT_STROKE) {
       return super.getRandomPoint(bds, rand);
     }
+    val rx = getWidth() / 2.0;
+    val ry = getHeight() / 2.0;
+    val u = 2 * Math.PI * rand.nextDouble();
+    var x = (int) Math.round(getX() + rx + rx * Math.cos(u));
+    var y = (int) Math.round(getY() + ry + ry * Math.sin(u));
+    val d = getStrokeWidth();
+    if (d > 1) {
+      x += rand.nextInt(d) - d / 2;
+      y += rand.nextInt(d) - d / 2;
+    }
+    return Location.create(x, y);
   }
 
   @Override

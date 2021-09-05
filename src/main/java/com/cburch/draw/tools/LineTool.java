@@ -27,6 +27,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.List;
 import javax.swing.Icon;
+import lombok.val;
 
 public class LineTool extends AbstractTool {
   private final DrawingAttributeSet attrs;
@@ -104,7 +105,7 @@ public class LineTool extends AbstractTool {
       x = canvas.snapX(x);
       y = canvas.snapY(y);
     }
-    Location loc = Location.create(x, y);
+    val loc = Location.create(x, y);
     mouseStart = loc;
     mouseEnd = loc;
     lastMouseX = loc.getX();

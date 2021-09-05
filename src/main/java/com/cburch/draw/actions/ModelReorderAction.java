@@ -27,20 +27,19 @@ public class ModelReorderAction extends ModelAction {
   @Getter private final List<CanvasObject> objects;
   private final int type;
 
-  public ModelReorderAction(CanvasModel model, List<ReorderRequest> requests) {
+  public ModelReorderAction(CanvasModel model, List<ReorderRequest> reqs) {
     super(model);
-    this.requests = new ArrayList<>(requests);
-    this.objects = new ArrayList<>(requests.size());
-    for (ReorderRequest r : requests) {
+    requests = new ArrayList<>(reqs);
+    objects = new ArrayList<>(reqs.size());
+    for (ReorderRequest r : reqs) {
       objects.add(r.getObject());
     }
     int typeIndex = 0; // 0 = mixed/unknown, -1 = to greater index, 1 = to
     // smaller index
-    for (val r : requests) {
-      int thisType;
+    for (val r : reqs) {
       val from = r.getFromIndex();
       val to = r.getToIndex();
-      thisType = Integer.compare(to, from);
+      var thisType = Integer.compare(to, from);
       if (typeIndex == 2) {
         typeIndex = thisType;
       } else if (typeIndex != thisType) {
@@ -48,7 +47,7 @@ public class ModelReorderAction extends ModelAction {
         break;
       }
     }
-    this.type = typeIndex;
+    type = typeIndex;
   }
 
   public static ModelReorderAction createLower(CanvasModel model, Collection<? extends CanvasObject> objects) {

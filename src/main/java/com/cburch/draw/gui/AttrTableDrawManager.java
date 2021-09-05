@@ -16,6 +16,7 @@ import com.cburch.draw.tools.SelectTool;
 import com.cburch.logisim.gui.generic.AttrTable;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import lombok.val;
 
 public class AttrTableDrawManager implements PropertyChangeListener {
   private final Canvas canvas;
@@ -40,15 +41,16 @@ public class AttrTableDrawManager implements PropertyChangeListener {
   //
   // PropertyChangeListener method
   //
+  @Override
   public void propertyChange(PropertyChangeEvent evt) {
-    String prop = evt.getPropertyName();
+    val prop = evt.getPropertyName();
     if (prop.equals(Canvas.TOOL_PROPERTY)) {
       updateToolAttributes();
     }
   }
 
   private void updateToolAttributes() {
-    Object tool = canvas.getTool();
+    val tool = canvas.getTool();
     if (tool instanceof SelectTool) {
       table.setAttrTableModel(selectionModel);
     } else if (tool instanceof AbstractTool) {

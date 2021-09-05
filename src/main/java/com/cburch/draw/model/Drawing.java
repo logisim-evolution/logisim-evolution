@@ -81,9 +81,8 @@ public class Drawing implements CanvasModel {
       overlaps.invalidateShape(obj);
       fireChanged(eve);
       return ret;
-    } else {
-      return null;
     }
+    return null;
   }
 
   private void fireChanged(CanvasModelEvent e) {

@@ -20,35 +20,35 @@ public class Toolbar extends JPanel {
   public static final Object VERTICAL = new Object();
   public static final Object HORIZONTAL = new Object();
   private static final long serialVersionUID = 1L;
-  private final JPanel subpanel;
+  private final JPanel subPanel;
   private final MyListener myListener;
   @Getter private ToolbarModel toolbarModel;
   @Getter private Object orientation;
-  private ToolbarButton curPressed;
+  @Getter private ToolbarButton pressed;    // cur pressed
 
-  public Toolbar(ToolbarModel toolbarModel) {
+  public Toolbar(ToolbarModel model) {
     super(new BorderLayout());
-    this.subpanel = new JPanel();
-    this.toolbarModel = toolbarModel;
-    this.orientation = HORIZONTAL;
-    this.myListener = new MyListener();
-    this.curPressed = null;
+    subPanel = new JPanel();
+    toolbarModel = model;
+    orientation = HORIZONTAL;
+    myListener = new MyListener();
+    pressed = null;
 
-    this.add(new JPanel(), BorderLayout.CENTER);
+    add(new JPanel(), BorderLayout.CENTER);
     setOrientation(HORIZONTAL);
 
     computeContents();
-    if (toolbarModel != null) toolbarModel.addToolbarModelListener(myListener);
+    if (model != null) model.addToolbarModelListener(myListener);
   }
 
   private void computeContents() {
-    subpanel.removeAll();
-    val m = toolbarModel;
-    if (m != null) {
-      for (ToolbarItem item : m.getItems()) {
-        subpanel.add(new ToolbarButton(this, item));
+    subPanel.removeAll();
+    val model = toolbarModel;
+    if (model != null) {
+      for (val item : model.getItems()) {
+        subPanel.add(new ToolbarButton(this, item));
       }
-      subpanel.add(Box.createGlue());
+      subPanel.add(Box.createGlue());
     }
     revalidate();
   }
@@ -65,20 +65,16 @@ public class Toolbar extends JPanel {
     } else {
       throw new IllegalArgumentException();
     }
-    this.remove(subpanel);
-    subpanel.setLayout(new BoxLayout(subpanel, axis));
-    this.add(subpanel, position);
-    this.orientation = value;
-  }
-
-  ToolbarButton getPressed() {
-    return curPressed;
+    remove(subPanel);
+    subPanel.setLayout(new BoxLayout(subPanel, axis));
+    add(subPanel, position);
+    orientation = value;
   }
 
   void setPressed(ToolbarButton value) {
-    val oldValue = curPressed;
+    val oldValue = pressed;
     if (oldValue != value) {
-      curPressed = value;
+      pressed = value;
       if (oldValue != null) oldValue.repaint();
       if (value != null) value.repaint();
     }

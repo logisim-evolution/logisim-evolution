@@ -31,6 +31,7 @@ import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.ListCellRenderer;
+import lombok.Getter;
 
 class OutputSelector {
   private class Model extends AbstractListModel<String>
@@ -141,7 +142,7 @@ class OutputSelector {
   }
 
   private final VariableList source;
-  private final JLabel label = new JLabel();
+  @Getter private final JLabel label = new JLabel();
   private final JComboBox<String> select = new JComboBox<>();
 
   public OutputSelector(AnalyzerModel model) {
@@ -166,10 +167,6 @@ class OutputSelector {
 
   public JComboBox<String> getComboBox() {
     return select;
-  }
-
-  public JLabel getLabel() {
-    return label;
   }
 
   public String getSelectedOutput() {
