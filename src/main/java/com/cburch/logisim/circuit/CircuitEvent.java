@@ -40,16 +40,16 @@ public class CircuitEvent {
   @Override
   public String toString() {
     return switch (action) {
-       case ACTION_SET_NAME -> "ACTION_SET_NAME";
-       case ACTION_ADD -> "ACTION_ADD";
-       case ACTION_REMOVE -> "ACTION_REMOVE";
-       case ACTION_INVALIDATE -> "ACTION_INVALIDATE";
-       case ACTION_CLEAR -> "ACTION_CLEAR";
-       case TRANSACTION_DONE -> "TRANSACTION_DONE";
-       case CHANGE_DEFAULT_BOX_APPEARANCE -> "DEFAULT_BOX_APPEARANCE";
-       case ACTION_CHECK_NAME -> "CHECK_NAME";
-       case ACTION_DISPLAY_CHANGE -> "ACTION_DISPLAY_CHANGE";
-       default -> "UNKNOWN_ACTION(" + action + ")";
+      case ACTION_SET_NAME -> "ACTION_SET_NAME";
+      case ACTION_ADD -> "ACTION_ADD";
+      case ACTION_REMOVE -> "ACTION_REMOVE";
+      case ACTION_INVALIDATE -> "ACTION_INVALIDATE";
+      case ACTION_CLEAR -> "ACTION_CLEAR";
+      case TRANSACTION_DONE -> "TRANSACTION_DONE";
+      case CHANGE_DEFAULT_BOX_APPEARANCE -> "DEFAULT_BOX_APPEARANCE";
+      case ACTION_CHECK_NAME -> "CHECK_NAME";
+      case ACTION_DISPLAY_CHANGE -> "ACTION_DISPLAY_CHANGE";
+      default -> "UNKNOWN_ACTION(" + action + ")";
     } + "{\n  circuit=" + circuit + "\n  data=" + data + "\n}";
   }
 }

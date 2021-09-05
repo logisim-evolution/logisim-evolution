@@ -110,19 +110,18 @@ public class AppearanceSvgReader {
   }
 
   private static DynamicElement getDynamicElement(String name, DynamicElement.Path path, int x, int y) {
-    return
-      switch (name) {
-        case "visible-led" -> new LedShape(x, y, path);
-        case "visible-rgbled" -> new RGBLedShape(x, y, path);
-        case "visible-hexdigit" -> new HexDigitShape(x, y, path);
-        case "visible-sevensegment" -> new SevenSegmentShape(x, y, path);
-        case "visible-register" -> new RegisterShape(x, y, path);
-        case "visible-counter" -> new CounterShape(x, y, path);
-        case "visible-vga" -> new SocVgaShape(x, y, path);
-        case "visible-soc-cpu" -> new SocCPUShape(x, y, path);
-        case "visible-tty" -> new TtyShape(x, y, path);
-        default -> null;
-      };
+    return switch (name) {
+      case "visible-led" -> new LedShape(x, y, path);
+      case "visible-rgbled" -> new RGBLedShape(x, y, path);
+      case "visible-hexdigit" -> new HexDigitShape(x, y, path);
+      case "visible-sevensegment" -> new SevenSegmentShape(x, y, path);
+      case "visible-register" -> new RegisterShape(x, y, path);
+      case "visible-counter" -> new CounterShape(x, y, path);
+      case "visible-vga" -> new SocVgaShape(x, y, path);
+      case "visible-soc-cpu" -> new SocCPUShape(x, y, path);
+      case "visible-tty" -> new TtyShape(x, y, path);
+      default -> null;
+    };
   }
 
   private static Boolean isInputPinReference(Element elt) {

@@ -150,12 +150,12 @@ public class AnalyzerTexWriter {
 
   private static int[] reordered(int nrOfInputs) {
     return switch (nrOfInputs) {
-      case 1 -> new int[]{0};
-      case 2 -> new int[]{0, 1};
-      case 3 -> new int[]{1, 0, 2};
-      case 4 -> new int[]{0, 2, 1, 3};
-      case 5 -> new int[]{2, 0, 3, 1, 4};
-      case 6 -> new int[]{0, 3, 1, 4, 2, 5};
+      case 1 -> new int[] {0};
+      case 2 -> new int[] {0, 1};
+      case 3 -> new int[] {1, 0, 2};
+      case 4 -> new int[] {0, 2, 1, 3};
+      case 5 -> new int[] {2, 0, 3, 1, 4};
+      case 6 -> new int[] {0, 3, 1, 4, 2, 5};
       default -> null;
     };
   }
