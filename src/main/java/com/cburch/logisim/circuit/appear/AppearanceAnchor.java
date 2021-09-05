@@ -98,9 +98,8 @@ public class AppearanceAnchor extends AppearanceElement {
     if (other instanceof AppearanceAnchor) {
       val that = (AppearanceAnchor) other;
       return super.matches(that) && this.facing.equals(that.facing);
-    } else {
-      return false;
     }
+    return false;
   }
 
   @Override
