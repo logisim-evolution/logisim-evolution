@@ -18,7 +18,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 
 @Getter
-@RequiredArgsConstructor
 @EqualsAndHashCode
 public class KeyConfigurationResult {
   private final KeyConfigurationEvent event;
