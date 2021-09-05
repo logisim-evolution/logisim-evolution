@@ -9,9 +9,13 @@
 
 package com.cburch.logisim.comp;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
+@Getter
+@RequiredArgsConstructor
+@EqualsAndHashCode
 public class TextFieldEvent {
   private final TextField textField;
   private final String oldText;

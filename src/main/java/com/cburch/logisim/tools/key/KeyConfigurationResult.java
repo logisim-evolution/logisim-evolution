@@ -12,11 +12,14 @@ package com.cburch.logisim.tools.key;
 import com.cburch.logisim.data.Attribute;
 import java.util.HashMap;
 import java.util.Map;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 
-@Data
+@Getter
+@RequiredArgsConstructor
+@EqualsAndHashCode
 public class KeyConfigurationResult {
   private final KeyConfigurationEvent event;
   private final Map<Attribute<?>, Object> attributeValues;

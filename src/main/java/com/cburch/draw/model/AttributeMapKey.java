@@ -10,9 +10,13 @@
 package com.cburch.draw.model;
 
 import com.cburch.logisim.data.Attribute;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
+@Getter
+@RequiredArgsConstructor
+@EqualsAndHashCode
 public class AttributeMapKey {
   private final Attribute<?> attribute;
   private final CanvasObject object;

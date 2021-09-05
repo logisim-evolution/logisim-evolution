@@ -27,7 +27,7 @@ public class Var implements Iterable<String> {
   public boolean equals(Object o) {
     if (!(o instanceof Var)) return false;
     final var other = (Var) o;
-    return (other.name.equals(this.name) && other.width == this.width);
+    return other.name.equals(this.name) && other.width == this.width;
   }
 
   @Override
@@ -73,6 +73,7 @@ public class Var implements Iterable<String> {
       this.bitIndex = b;
     }
 
+    @Override
     public String toString() {
       return (bitIndex == -1) ? name : name + "[" + bitIndex + "]";
     }
@@ -115,6 +116,7 @@ public class Var implements Iterable<String> {
     return (width > 1) ? name + "[" + b + "]" : name;
   }
 
+  @Override
   public Iterator<String> iterator() {
     return new Iterator<>() {
       int bitIndex = width - 1;

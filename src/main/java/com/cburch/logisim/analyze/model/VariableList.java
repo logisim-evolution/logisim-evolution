@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
+import lombok.val;
 
 public class VariableList {
   private final ArrayList<VariableListListener> listeners = new ArrayList<>();
@@ -49,7 +50,7 @@ public class VariableList {
         break;
       }
     }
-    for (int i = 0; i < others.size() && !found; i++) {
+    for (var i = 0; i < others.size() && !found; i++) {
       final var l = others.get(i);
       if (l.equals(data)) continue;
       found |= l.containsDuplicate(data, oldVar, name);
@@ -79,7 +80,7 @@ public class VariableList {
   private void fireEvent(int type, Var variable, Integer index, Integer bitIndex) {
     if (listeners.size() == 0) return;
     final var event = new VariableListEvent(this, type, variable, index, bitIndex);
-    for (VariableListListener l : listeners) {
+    for (val l : listeners) {
       l.listChanged(event);
     }
   }

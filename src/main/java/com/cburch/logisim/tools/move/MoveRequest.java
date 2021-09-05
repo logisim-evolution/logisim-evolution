@@ -9,9 +9,13 @@
 
 package com.cburch.logisim.tools.move;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
+@Getter
+@RequiredArgsConstructor
+@EqualsAndHashCode
 class MoveRequest {
   private final MoveGesture moveGesture;
   private final int deltaX;

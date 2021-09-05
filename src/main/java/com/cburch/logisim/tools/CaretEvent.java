@@ -9,9 +9,13 @@
 
 package com.cburch.logisim.tools;
 
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
+@Getter
+@RequiredArgsConstructor
+@EqualsAndHashCode
 public class CaretEvent {
   private final Caret caret;
   private final String oldText;

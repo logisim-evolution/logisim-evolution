@@ -9,7 +9,10 @@
 
 package com.cburch.logisim.analyze.model;
 
+import lombok.Getter;
+
 public class Expressions {
+
   private Expressions() {
     // dummy, private
   }
@@ -40,11 +43,13 @@ public class Expressions {
     }
   }
 
+  /* ******************************************************************************* */
+
   private abstract static class Binary extends Expression {
     protected final Expression exprA;
     protected final Expression exprB;
 
-    Binary(Expression a, Expression b) {
+    public Binary(Expression a, Expression b) {
       this.exprA = a;
       this.exprB = b;
     }
@@ -63,10 +68,12 @@ public class Expressions {
     }
   }
 
+  /* ******************************************************************************* */
+
   private static class Constant extends Expression {
     private final int value;
 
-    Constant(int value) {
+    public Constant(int value) {
       this.value = value;
     }
 
@@ -103,10 +110,12 @@ public class Expressions {
     }
   }
 
+  /* ******************************************************************************* */
+
   private static class Not extends Expression {
     private final Expression expr;
 
-    Not(Expression a) {
+    public Not(Expression a) {
       this.expr = a;
     }
 
@@ -143,8 +152,10 @@ public class Expressions {
     }
   }
 
+  /* ******************************************************************************* */
+
   private static class Or extends Binary {
-    Or(Expression a, Expression b) {
+    public Or(Expression a, Expression b) {
       super(a, b);
     }
 
@@ -168,6 +179,8 @@ public class Expressions {
       return visitor.visitOr(exprA, exprB);
     }
   }
+
+  /* ******************************************************************************* */
 
   protected static class Variable extends Expression {
     private final String name;
@@ -209,6 +222,8 @@ public class Expressions {
     }
   }
 
+  /* ******************************************************************************* */
+
   private static class Xor extends Binary {
     Xor(Expression a, Expression b) {
       super(a, b);
@@ -234,6 +249,8 @@ public class Expressions {
       return visitor.visitXor(exprA, exprB);
     }
   }
+
+  /* ******************************************************************************* */
 
   private static class Xnor extends Binary {
     Xnor(Expression a, Expression b) {
@@ -261,6 +278,8 @@ public class Expressions {
     }
   }
 
+  /* ******************************************************************************* */
+
   protected static class Eq extends Binary {
     Eq(Expression a, Expression b) {
       super(a, b);
@@ -286,6 +305,8 @@ public class Expressions {
       return visitor.visitEq(exprA, exprB);
     }
   }
+
+  /* ******************************************************************************* */
 
   public static Expression and(Expression a, Expression b) {
     if (a == null) return b;

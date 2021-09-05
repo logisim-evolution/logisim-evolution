@@ -11,9 +11,13 @@ package com.cburch.logisim.tools;
 
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.Location;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
+@Getter
+@RequiredArgsConstructor
+@EqualsAndHashCode
 public class WireRepairData {
   private final Wire wire;
   private final Location point;

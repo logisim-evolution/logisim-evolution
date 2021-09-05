@@ -9,6 +9,13 @@
 
 package com.cburch.logisim.analyze.model;
 
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
+@EqualsAndHashCode
 public class OutputExpressionsEvent {
   public static final int ALL_VARIABLES_REPLACED = 0;
   public static final int OUTPUT_EXPRESSION = 1;
@@ -18,27 +25,4 @@ public class OutputExpressionsEvent {
   private final int type;
   private final String variable;
   private final Object data;
-
-  public OutputExpressionsEvent(AnalyzerModel model, int type, String variable, Object data) {
-    this.model = model;
-    this.type = type;
-    this.variable = variable;
-    this.data = data;
-  }
-
-  public Object getData() {
-    return data;
-  }
-
-  public AnalyzerModel getModel() {
-    return model;
-  }
-
-  public int getType() {
-    return type;
-  }
-
-  public String getVariable() {
-    return variable;
-  }
 }

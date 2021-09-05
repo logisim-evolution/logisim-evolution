@@ -11,10 +11,13 @@ package com.cburch.logisim.tools.key;
 
 import com.cburch.logisim.data.AttributeSet;
 import java.awt.event.KeyEvent;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
+@Getter
+@RequiredArgsConstructor
+@EqualsAndHashCode
 public class KeyConfigurationEvent {
   public static final int KEY_PRESSED = 0;
   public static final int KEY_RELEASED = 1;

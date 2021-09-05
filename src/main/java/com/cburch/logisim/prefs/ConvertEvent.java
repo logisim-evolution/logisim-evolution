@@ -11,8 +11,13 @@ package com.cburch.logisim.prefs;
 
 import com.cburch.logisim.data.AttributeOption;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
-@Data
+@Getter
+@RequiredArgsConstructor
+@EqualsAndHashCode
 public class ConvertEvent {
   private final AttributeOption value;
 }

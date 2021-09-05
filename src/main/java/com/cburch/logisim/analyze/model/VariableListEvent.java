@@ -9,6 +9,12 @@
 
 package com.cburch.logisim.analyze.model;
 
+import lombok.Data;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+
+@Getter
+@RequiredArgsConstructor
 public class VariableListEvent {
   public static final int ALL_REPLACED = 0;
   public static final int ADD = 1;
@@ -21,32 +27,4 @@ public class VariableListEvent {
   private final Var variable;
   private final Integer index;
   private final Integer bitIndex;
-
-  public VariableListEvent(VariableList source, int type, Var variable, Integer index, Integer bitIndex) {
-    this.source = source;
-    this.type = type;
-    this.variable = variable;
-    this.index = index;
-    this.bitIndex = bitIndex;
-  }
-
-  public VariableList getSource() {
-    return source;
-  }
-
-  public Integer getIndex() {
-    return index;
-  }
-
-  public Integer getBitIndex() {
-    return bitIndex;
-  }
-
-  public int getType() {
-    return type;
-  }
-
-  public Var getVariable() {
-    return variable;
-  }
 }

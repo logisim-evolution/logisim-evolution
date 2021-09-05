@@ -10,38 +10,29 @@
 package com.cburch.logisim.analyze.model;
 
 import com.cburch.logisim.util.StringGetter;
+import lombok.Getter;
 
 public class ParserException extends Exception {
   private static final long serialVersionUID = 1L;
-  private final StringGetter message;
-  private final int start;
+  @Getter private final StringGetter messageGetter;
+  @Getter private final int startOffset;
+  @Getter private final int endOffset;
   private final int length;
-  
-  public ParserException(StringGetter message, int start) {
-    this(message, start, 1);
+
+  public ParserException(StringGetter msgGetter, int startOffset) {
+    this(msgGetter, startOffset, 1);
   }
 
-  public ParserException(StringGetter message, int start, int length) {
-    super(message.toString());
-    this.message = message;
-    this.start = start;
+  public ParserException(StringGetter msgGetter, int startOffset, int length) {
+    super(msgGetter.toString());
+    this.messageGetter = msgGetter;
+    this.startOffset = startOffset; // start of the parser exception
+    this.endOffset = startOffset + length;
     this.length = length;
-  }
-
-  public int getEndOffset() {
-    return start + length;
   }
 
   @Override
   public String getMessage() {
-    return message.toString();
-  }
-
-  public StringGetter getMessageGetter() {
-    return message;
-  }
-
-  public int getOffset() {
-    return start;
+    return messageGetter.toString();
   }
 }

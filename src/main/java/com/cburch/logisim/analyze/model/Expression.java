@@ -15,6 +15,8 @@ import com.cburch.logisim.analyze.data.Range;
 import com.cburch.logisim.analyze.model.Var.Bit;
 import java.util.ArrayList;
 import java.util.HashSet;
+import lombok.Getter;
+import lombok.val;
 
 public abstract class Expression {
   public interface Visitor<T> {
@@ -250,7 +252,7 @@ public abstract class Expression {
   public final ArrayList<Range> nots = new ArrayList<>();
   public final ArrayList<Range> subscripts = new ArrayList<>();
   public final ArrayList<Range> marks = new ArrayList<>();
-  private Integer[] badness;
+  @Getter private Integer[] badness;
 
   public abstract int getPrecedence(Notation notation);
 
@@ -259,7 +261,7 @@ public abstract class Expression {
   public boolean isCircular() {
     final HashSet<Expression> visited = new HashSet<>();
     visited.add(this);
-    Object loop = new Object();
+    val loop = new Object();
     return loop == visit(new Visitor<>() {
       @Override
       public Object visitBinary(Expression a, Expression b, Op op) {
@@ -641,10 +643,6 @@ public abstract class Expression {
         });
     badness = badnessList.toArray(new Integer[0]);
     return notation.equals(Notation.LaTeX) ? "$" + text + "$" : text.toString();
-  }
-
-  public Integer[] getBadness() {
-    return badness;
   }
 
   public static boolean isAssignment(Expression expr) {

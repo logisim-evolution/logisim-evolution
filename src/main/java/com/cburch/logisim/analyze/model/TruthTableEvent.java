@@ -9,6 +9,9 @@
 
 package com.cburch.logisim.analyze.model;
 
+import lombok.Getter;
+
+@Getter
 public class TruthTableEvent {
   private final TruthTable source;
   private int column;
@@ -22,17 +25,5 @@ public class TruthTableEvent {
   public TruthTableEvent(TruthTable source, VariableListEvent event) {
     this.source = source;
     this.data = event;
-  }
-
-  public int getColumn() {
-    return column;
-  }
-
-  public Object getData() {
-    return data;
-  }
-
-  public TruthTable getSource() {
-    return source;
   }
 }

@@ -280,7 +280,7 @@ class ExpressionTab extends AnalyzerTab {
         return true;
       } catch (ParserException ex) {
         setError(ex.getMessageGetter());
-        field.setCaretPosition(ex.getOffset());
+        field.setCaretPosition(ex.getStartOffset());
         field.moveCaretPosition(ex.getEndOffset());
         newExpr = null;
         return false;
