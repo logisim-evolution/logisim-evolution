@@ -251,7 +251,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             }
             while (OneLine.length() < SallignmentSize) OneLine.append(" ");
 
-            Contents.addUnique(LineBuffer.format("   {{assign}} {{1}} {{=}} {{2}}{{3}}{{bracketOpen}}{{4}}{{bracketClose}};",
+            Contents.addUnique(LineBuffer.format("   {{assign}} {{1}} {{=}} {{2}}{{3}}{{<}}{{4}}{{>}};",
                 OneLine, BusName, TheNets.getNetId(Source.getParentNet()), Source.getParentNetBitIndex()));
           }
           /* Next we perform all sink connections */
@@ -374,7 +374,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         temp.append(" ");
       }
       if (!theNetlist.requiresGlobalClockConnection()) {
-        contents.add("   {{assign}} {{1}} {{=}} {{2}}{{bracketOpen}}{{3}}{{bracketClose}};", temp, clockNet, ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX);
+        contents.add("   {{assign}} {{1}} {{=}} {{2}}{{<}}{{3}}{{>}};", temp, clockNet, ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX);
       } else {
         contents.add("   {{assign}} {{1}} {{=}} {{2}};", temp, TickComponentHDLGeneratorFactory.FPGA_CLOCK);
       }
