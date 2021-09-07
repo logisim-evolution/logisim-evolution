@@ -272,7 +272,7 @@ public class Startup implements AWTEventListener {
    */
   protected static void addOption(Options opts, String stringBaseKey, String longKey, String shortKey, int expectedArgsCount) {
     final var builder = Option.builder(shortKey).longOpt(longKey).desc(S.get(stringBaseKey));
-    if (expectedArgsCount > 0) {
+    if (expectedArgsCount == Option.UNLIMITED_VALUES || expectedArgsCount > 0) {
       final var argNameKey = LineBuffer.format("{{1}}ArgName", stringBaseKey);
       builder.argName(S.get(argNameKey));
       builder.numberOfArgs(expectedArgsCount);
@@ -635,13 +635,20 @@ public class Startup implements AWTEventListener {
    * Handles 4th argument of `--test-fpga` argument which can be either string literal
    * or tick frequency.
    *
-   * Supported argument formats for `--test-fpga`:
-   * - `circ_input circuit_name board`
-   * - `circ_input circuit_name board [HDLONLY]`
-   * - `circ_input circuit_name board [HDLONLY] [tick frequency]`
-   * - `circ_input circuit_name board [tick frequency]`
-   * - `circ_input circuit_name board [tick frequency] [HDLONLY]`
-   *
+   * Supported argument formats for `--test-fpga`:<br /><br />
+   * * circ_file name board<br />
+   * * circ_file name board [HDLONLY]<br />
+   * * circ_file name board [HDLONLY] [tick frequency]<br />
+   * * circ_file name board [tick_freq]<br />
+   * * circ_file name board [tick_freq] [HDLONLY]<br />
+   * <br />
+   * where:
+   * <br /><br />
+   * * `circ_file` is *.circ project file to load.<br />
+   * * `name` is circuit name present in loaded project file.<br />
+   * * `board` is connected FPGA board name.<br />
+   * * `tick_freq` is optional tick frequency.<br />
+   * * `HDLONLY` (literal), uses HDL only.<br />
    */
   private static RC handleArgTestFpgaParseArg(Startup startup, String argVal) {
     if ("HDLONLY".equals(argVal)) {
