@@ -81,6 +81,34 @@ public abstract class HDL {
     return isVHDL() ? " \= " : "!=";
   }
 
+  public static String greaterOperator(String signalOne, String signalTwo, boolean signed, boolean equal) {
+    return (isVHDL()
+                ? "STD_LOGIC_VECTOR("+ (signed ? "SIGNED" : "UNSIGNED") +"("+ signalOne +")"
+                : (signed ? "$signed("+ signalOne +")" : signalOne))
+            + (equal ? ">=" : ">")
+            + (isVHDL()
+                ? (signed ? "SIGNED" : "UNSIGNED") +"("+ signalTwo +"))"
+                : (signed ? "$signed("+ signalTwo +")" : signalTwo));
+  }
+
+  public static String lessOperator(String signalOne, String signalTwo, boolean signed, boolean equal) {
+    return (isVHDL()
+                ? "STD_LOGIC_VECTOR("+ (signed ? "SIGNED" : "UNSIGNED") +"("+ signalOne +")"
+                : (signed ? "$signed("+ signalOne +")" : signalOne))
+            + (equal ? "<=" : "<")
+            + isVHDL()
+                ? (signed ? "SIGNED" : "UNSIGNED") +"("+ signalTwo +"))"
+                : (signed ? "$signed("+ signalTwo +")" : signalTwo));
+  }
+
+  public static String leqOperator(String signalOne, String signalTwo, boolean signed) {
+    return lessOperator(signalOne, signalTwo, signed, true);
+  }
+  
+  public static String geqOperator(String signalOne, String signalTwo, boolean signed) {
+    return greaterOperator(signalOne, signalTwo, signed, true);
+  }
+
   public static String notOperator() {
     return isVHDL() ? " NOT " : "~";
   }
@@ -97,13 +125,23 @@ public abstract class HDL {
     return isVHDL() ? " XOR " : "^";
   }
 
+  public static String modOperator(String signalOne, String signalTwo, boolean signed) {
+    return (isVHDL()
+                ? "STD_LOGIC_VECTOR("+ (signed ? "SIGNED" : "UNSIGNED") +"("+ signalOne +")"
+                : (signed ? "$signed("+ signalOne +")" : signalOne))
+            + (isVHDL() ? " REM " : "%")
+            + (isVHDL()
+                ? (signed ? "SIGNED" : "UNSIGNED") +"("+ signalTwo +"))"
+                : (signed ? "$signed("+ signalTwo +")" : signalTwo));
+  }
+
   public static String shiftlOperator(String signal, String nrOfBits, boolean arithmetic) {
-    return isVHDL() ? "SHIFT_LEFT("+ (arithmetic ? "SIGNED(" : "UNSIGNED(") + signal +"), "+ nrOfBits +")"
+    return isVHDL() ? "STD_LOGIC_VECTOR(SHIFT_LEFT("+ (arithmetic ? "SIGNED(" : "UNSIGNED(") + signal +"), "+ nrOfBits +"))"
                     : "("+ signal + (arithmetic ? " <<< " : " << ") + nrOfBits +")";
   }
   
   public static String shiftrOperator(String signal, String nrOfBits, boolean arithmetic) {
-    return isVHDL() ? "SHIFT_RIGHT("+ (arithmetic ? "SIGNED(" : "UNSIGNED(") + signal +"), "+ nrOfBits +")"
+    return isVHDL() ? "STD_LOGIC_VECTOR(SHIFT_RIGHT("+ (arithmetic ? "SIGNED(" : "UNSIGNED(") + signal +"), "+ nrOfBits +"))"
                     : "("+ signal + (arithmetic ? " >>> " : " >> ") + nrOfBits +")";
   }
 
@@ -152,6 +190,12 @@ public abstract class HDL {
 
   public static String vectorLoopId() {
     return isVHDL() ? " DOWNTO " : ":";
+  }
+
+  public static String splitVector(int start, int end) {
+    return isVHDL()
+                ? "("+ start +" DOWNTO "+ end +")"
+                : "["+ start +":"+ end +"]";
   }
 
   public static String GetZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
