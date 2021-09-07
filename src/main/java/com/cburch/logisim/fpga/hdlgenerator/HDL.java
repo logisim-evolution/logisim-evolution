@@ -78,7 +78,7 @@ public abstract class HDL {
   }
 
   public static String notEqualOperator() {
-    return isVHDL() ? " \= " : "!=";
+    return isVHDL() ? " \\= " : "!=";
   }
 
   public static String greaterOperator(String signalOne, String signalTwo, boolean signed, boolean equal) {
@@ -96,7 +96,7 @@ public abstract class HDL {
                 ? "STD_LOGIC_VECTOR("+ (signed ? "SIGNED" : "UNSIGNED") +"("+ signalOne +")"
                 : (signed ? "$signed("+ signalOne +")" : signalOne))
             + (equal ? "<=" : "<")
-            + isVHDL()
+            + (isVHDL()
                 ? (signed ? "SIGNED" : "UNSIGNED") +"("+ signalTwo +"))"
                 : (signed ? "$signed("+ signalTwo +")" : signalTwo));
   }
