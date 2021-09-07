@@ -107,7 +107,7 @@ public class LineBuffer implements RandomAccess {
         .pair("bracketClose", HDL.BracketClose())
         .pair("<", HDL.BracketOpen())
         .pair(">", HDL.BracketClose())
-//        .pair("else", HDL.())         // TODO
+        // .pair("else", HDL.())         // TODO
         .pair("endif", HDL.endIf())
         .pair("0b", HDL.zeroBit())
         .pair("1b", HDL.oneBit());
@@ -137,7 +137,7 @@ public class LineBuffer implements RandomAccess {
         .pair("bracketClose", HDL.BracketClose())
         .pair("<", HDL.BracketOpen())
         .pair(">", HDL.BracketClose())
-//        .pair("else", HDL.())         // TODO
+        // .pair("else", HDL.())         // TODO
         .pair("endif", HDL.endIf())
         .pair("0b", HDL.zeroBit())
         .pair("1b", HDL.oneBit());
