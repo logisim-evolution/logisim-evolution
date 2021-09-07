@@ -97,13 +97,18 @@ public class LineBuffer implements RandomAccess {
   public LineBuffer withHdlPairs() {
     return pair("assign", HDL.assignPreamble())
         .pair("=", HDL.assignOperator())
+        .pair("==", HDL.equalOperator())
+        .pair("!=", HDL.notEqualOperator())
         .pair("or", HDL.orOperator())
         .pair("and", HDL.andOperator())
+        .pair("xor", HDL.xorOperator())
         .pair("not", HDL.notOperator())
         .pair("bracketOpen", HDL.BracketOpen())
         .pair("bracketClose", HDL.BracketClose())
         .pair("<", HDL.BracketOpen())
         .pair(">", HDL.BracketClose())
+//        .pair("else", HDL.())         // TODO
+        .pair("endif", HDL.endIf())
         .pair("0b", HDL.zeroBit())
         .pair("1b", HDL.oneBit());
   }
@@ -122,13 +127,18 @@ public class LineBuffer implements RandomAccess {
   public LineBuffer addHdlPairs() {
     return pair("assign", HDL.assignPreamble())
         .pair("=", HDL.assignOperator())
+        .pair("==", HDL.equalOperator())
+        .pair("!=", HDL.notEqualOperator())
         .pair("or", HDL.orOperator())
         .pair("and", HDL.andOperator())
+        .pair("xor", HDL.xorOperator())
         .pair("not", HDL.notOperator())
         .pair("bracketOpen", HDL.BracketOpen())
         .pair("bracketClose", HDL.BracketClose())
         .pair("<", HDL.BracketOpen())
         .pair(">", HDL.BracketClose())
+//        .pair("else", HDL.())         // TODO
+        .pair("endif", HDL.endIf())
         .pair("0b", HDL.zeroBit())
         .pair("1b", HDL.oneBit());
   }

@@ -45,12 +45,40 @@ public abstract class HDL {
     return " ** ";
   }
 
+  public static String startIf(String condition) {
+    return isVHDL() ? "IF ("+ condition +") THEN" : "if ("+ condition +")";
+  }
+
+// TODO find good name
+/* 
+  public static String else() {
+    return isVHDL() ? "ELSE " : "else ";
+  }
+*/
+
+  public static String elseIf(String condition) {
+    return isVHDL() ? "ELSIF ("+ condition +") THEN"
+                    : "else if ("+ condition +")";
+  }
+
+  public static String endIf() {
+    return isVHDL() ? "END IF;" : "";
+  }
+
   public static String assignPreamble() {
     return isVHDL() ? "" : "assign ";
   }
 
   public static String assignOperator() {
     return isVHDL() ? " <= " : " = ";
+  }
+
+  public static String equalOperator() {
+    return isVHDL() ? " = " : "==";
+  }
+
+  public static String notEqualOperator() {
+    return isVHDL() ? " \= " : "!=";
   }
 
   public static String notOperator() {
@@ -67,6 +95,47 @@ public abstract class HDL {
 
   public static String xorOperator() {
     return isVHDL() ? " XOR " : "^";
+  }
+
+  public static String shiftlOperator(String signal, String nrOfBits, boolean arithmetic) {
+    return isVHDL() ? "SHIFT_LEFT("+ (arithmetic ? "SIGNED(" : "UNSIGNED(") + signal +"), "+ nrOfBits +")"
+                    : "("+ signal + (arithmetic ? " <<< " : " << ") + nrOfBits +")";
+  }
+  
+  public static String shiftrOperator(String signal, String nrOfBits, boolean arithmetic) {
+    return isVHDL() ? "SHIFT_RIGHT("+ (arithmetic ? "SIGNED(" : "UNSIGNED(") + signal +"), "+ nrOfBits +")"
+                    : "("+ signal + (arithmetic ? " >>> " : " >> ") + nrOfBits +")";
+  }
+
+  public static String sllOperator(String signal, String nrOfBits) {
+    return shiftlOperator(signal, nrOfBits, false);
+  }
+
+  public static String slaOperator(String signal, String nrOfBits) {
+    return shiftlOperator(signal, nrOfBits, true);
+  }
+
+  public static String srlOperator(String signal, String nrOfBits) {
+    return shiftlOperator(signal, nrOfBits, false);
+  }
+  
+  public static String sraOperator(String signal, String nrOfBits) {
+    return shiftlOperator(signal, nrOfBits, true);
+  }
+
+  public static String rolOperator(String signal, String nrOfBits) {
+    return isVHDL() ? "ROTATE_LEFT("+ signal +", "+ nrOfBits +")"
+                    : "(("+ signal +" << "+ nrOfBits +") | ("+ signal +">> -"+ nrOfBits +"))";
+  }
+  
+  public static String rorOperator(String signal, String nrOfBits) {
+    return isVHDL() ? "ROTATE_RIGHT("+ signal +", "+ nrOfBits +")"
+                    : "(("+ signal +" >> "+ nrOfBits +") | ("+ signal +"<< -"+ nrOfBits +"))";
+  }
+
+  public static String risingEdge(String signal) {
+    return isVHDL() ? "RISING_EDGE("+ signal +")"
+                    : "posedge "+ signal;
   }
 
   public static String zeroBit() {
