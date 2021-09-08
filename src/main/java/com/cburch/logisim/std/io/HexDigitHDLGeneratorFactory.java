@@ -30,9 +30,8 @@ public class HexDigitHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
             .pair("busName", HDL.getBusName(componentInfo, HexDigit.HEX, nets))
             .pair("bubbleBusName", bubbleBusName)
             .pair("regName", LineBuffer.format("s_{{1}}_reg", componentInfo.getComponent().getAttributeSet().getValue(StdAttr.LABEL)))
-            .pair("sigName", HDL.isVHDL() ? 
-                LineBuffer.format("{{1}}({{2}} DOWNTO {{3}})", bubbleBusName, (startId + 6), startId) : 
-                LineBuffer.format("{{1}}[{{2}}:{{3}}]", bubbleBusName, (startId + 6), startId)) 
+            .pair("sigName", LineBuffer.format("{{1}}{{<}}{{2}}{{3}}{{4}}{{>}}", bubbleBusName, 
+                (startId + 6), HDL.vectorLoopId(), startId)) 
             .pair("dpName", HDL.getNetName(componentInfo, HexDigit.DP, true, nets));
     contents.add("");
     if (componentInfo.isEndConnected(HexDigit.HEX)) {
