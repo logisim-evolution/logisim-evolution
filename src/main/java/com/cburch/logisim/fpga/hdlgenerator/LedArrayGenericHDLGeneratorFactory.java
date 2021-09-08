@@ -284,11 +284,11 @@ public class LedArrayGenericHDLGeneratorFactory {
 
   public static ArrayList<String> getRGBArrayConnections(FPGAIOInformationContainer array, int id) {
     final var connections =
-      LineBuffer.getHdlBuffer()
-        .pair("id", id)
-        .pair("insR", LedArrayRedInputs)
-        .pair("insG", LedArrayGreenInputs)
-        .pair("insB", LedArrayBlueInputs);
+        LineBuffer.getHdlBuffer()
+           .pair("id", id)
+           .pair("insR", LedArrayRedInputs)
+           .pair("insG", LedArrayGreenInputs)
+           .pair("insB", LedArrayBlueInputs);
 
     for (var pin = 0; pin < array.getNrOfPins(); pin++) {
       connections.pair("pin", pin);
