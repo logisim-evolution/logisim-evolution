@@ -143,7 +143,6 @@ public class Startup implements AWTEventListener {
   private static final String ARG_HELP_LONG = "help";
   private static final String ARG_VERSION_SHORT = "v";
   private static final String ARG_VERSION_LONG = "version";
-
   private static final String ARG_TTY_SHORT = "t";
   private static final String ARG_TTY_LONG = "tty";
   private static final String ARG_TEST_FGPA_SHORT = "f";
