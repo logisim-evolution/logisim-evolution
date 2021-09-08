@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.std.io;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
@@ -61,13 +60,4 @@ public class HexDigitHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
     return contents.getWithIndent();
   }
 
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
-
-  @Override
-  public boolean IsOnlyInlined() {
-    return true;
-  }
 }
