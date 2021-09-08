@@ -10,7 +10,6 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.MapComponent;
@@ -241,23 +240,23 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           for (ConnectionPoint Source : ThisNet.getSourceNets(bit)) {
             OneLine.setLength(0);
             if (ThisNet.isBus()) {
-              OneLine.append(BusName)
+              OneLine.append(HDL.BUS_NAME)
                   .append(TheNets.getNetId(ThisNet))
                   .append(HDL.BracketOpen())
                   .append(bit)
                   .append(HDL.BracketClose());
             } else {
-              OneLine.append(NetName).append(TheNets.getNetId(ThisNet));
+              OneLine.append(HDL.BUS_NAME).append(TheNets.getNetId(ThisNet));
             }
             while (OneLine.length() < SallignmentSize) OneLine.append(" ");
 
             Contents.addUnique(LineBuffer.format("   {{assign}} {{1}} {{=}} {{2}}{{3}}{{bracketOpen}}{{4}}{{bracketClose}};",
-                OneLine, BusName, TheNets.getNetId(Source.getParentNet()), Source.getParentNetBitIndex()));
+                OneLine, HDL.BUS_NAME, TheNets.getNetId(Source.getParentNet()), Source.getParentNetBitIndex()));
           }
           /* Next we perform all sink connections */
           for (ConnectionPoint Source : ThisNet.getSinkNets(bit)) {
             OneLine.setLength(0);
-            OneLine.append(BusName)
+            OneLine.append(HDL.BUS_NAME)
                 .append(TheNets.getNetId(Source.getParentNet()))
                 .append(HDL.BracketOpen())
                 .append(Source.getParentNetBitIndex())
@@ -265,13 +264,13 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             while (OneLine.length() < SallignmentSize) OneLine.append(" ");
             OneLine.append(HDL.assignOperator());
             if (ThisNet.isBus()) {
-              OneLine.append(BusName)
+              OneLine.append(HDL.BUS_NAME)
                   .append(TheNets.getNetId(ThisNet))
                   .append(HDL.BracketOpen())
                   .append(bit)
                   .append(HDL.BracketClose());
             } else {
-              OneLine.append(NetName).append(TheNets.getNetId(ThisNet));
+              OneLine.append(HDL.NET_NAME).append(TheNets.getNetId(ThisNet));
             }
             Contents.addUnique(LineBuffer.format("   {{1}}{{2}};", HDL.assignPreamble(), OneLine));
           }
@@ -366,7 +365,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         // FIXME: hardcoded string
         Reporter.Report.AddFatalError("INTERNAL ERROR: Cannot find clocknet!");
       }
-      String ConnectedNet = GetNetName(clockSource, 0, true, theNetlist);
+      String ConnectedNet = HDL.getNetName(clockSource, 0, true, theNetlist);
       temp.setLength(0);
       temp.append(ConnectedNet);
       // Padding
@@ -679,14 +678,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       if (isOutput) {
         if (!comp.isEndConnected(endIndex)) return " ";
         source.append(portName);
-        destination.append(GetNetName(comp, endIndex, true, TheNets));
+        destination.append(HDL.getNetName(comp, endIndex, true, TheNets));
       } else {
         if (!comp.isEndConnected(endIndex)) {
           // FIXME: hardcoded string
           Reporter.Report.AddSevereWarning(
               "Found an unconnected output pin, tied the pin to ground!");
         }
-        source.append(GetNetName(comp, endIndex, true, TheNets));
+        source.append(HDL.getNetName(comp, endIndex, true, TheNets));
         destination.append(portName);
         if (!comp.isEndConnected(endIndex)) return contents.toString();
       }
@@ -779,22 +778,22 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               if (solderPoint.getParentNet().getBitWidth() == 1) {
                 /* The connection is to a Net */
                 if (isOutput) {
-                  destination.append(NetName).append(TheNets.getNetId(solderPoint.getParentNet()));
+                  destination.append(HDL.NET_NAME).append(TheNets.getNetId(solderPoint.getParentNet()));
                 } else {
-                  source.append(NetName).append(TheNets.getNetId(solderPoint.getParentNet()));
+                  source.append(HDL.NET_NAME).append(TheNets.getNetId(solderPoint.getParentNet()));
                 }
               } else {
                 /* The connection is to an entry of a bus */
                 if (isOutput) {
                   destination
-                      .append(BusName)
+                      .append(HDL.BUS_NAME)
                       .append(TheNets.getNetId(solderPoint.getParentNet()))
                       .append(HDL.BracketOpen())
                       .append(solderPoint.getParentNetBitIndex())
                       .append(HDL.BracketClose());
                 } else {
                   source
-                      .append(BusName)
+                      .append(HDL.BUS_NAME)
                       .append(TheNets.getNetId(solderPoint.getParentNet()))
                       .append(HDL.BracketOpen())
                       .append(solderPoint.getParentNetBitIndex())
@@ -830,14 +829,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     /* First we define the nets */
     for (final var thisNet : nets.getAllNets()) {
       if (!thisNet.isBus() && thisNet.isRootNet()) {
-        signalMap.put(NetName + nets.getNetId(thisNet), 1);
+        signalMap.put(HDL.NET_NAME + nets.getNetId(thisNet), 1);
       }
     }
     /* now we define the busses */
     for (final var thisNet : nets.getAllNets()) {
       if (thisNet.isBus() && thisNet.isRootNet()) {
         final var nrOfBits = thisNet.getBitWidth();
-        signalMap.put(BusName + nets.getNetId(thisNet), nrOfBits);
+        signalMap.put(HDL.BUS_NAME + nets.getNetId(thisNet), nrOfBits);
       }
     }
     return signalMap;

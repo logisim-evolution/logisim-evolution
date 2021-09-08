@@ -49,7 +49,7 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
       long ConstantValue = GetConstant(ComponentInfo.getComponent().getAttributeSet());
       if (ComponentInfo.getComponent().getEnd(0).getWidth().getWidth() == 1) {
         /* Single Port net */
-        Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetNetName(ComponentInfo, 0, true, Nets), GetConvertOperator(ConstantValue, 1))
+        Contents.add("{{assign}} {{1}} {{=}} {{2}};", HDL.getNetName(ComponentInfo, 0, true, Nets), GetConvertOperator(ConstantValue, 1))
             .add("");
       } else {
         if (Nets.isContinuesBus(ComponentInfo, 0)) {

@@ -112,7 +112,7 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
       map.put("Tick", "'0'");
     } else if (gatedClock) {
       map.put("Tick", "'1'");
-      map.put("CLK", GetNetName(comp, clockPinIndex, true, nets));
+      map.put("CLK", HDL.getNetName(comp, clockPinIndex, true, nets));
     } else {
       if (nets.requiresGlobalClockConnection()) {
         map.put("Tick", "'1'");

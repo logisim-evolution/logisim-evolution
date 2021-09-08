@@ -10,7 +10,6 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.ConnectionPoint;
@@ -30,7 +29,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
-
+  
   protected static String IntToBin(int value, int nr_of_bits) {
     var mask = 1 << (nr_of_bits - 1);
     var result = new StringBuilder();
@@ -418,10 +417,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           final var connectedNet = thisEnd.get((byte) bitindex).getParentNet();
           final var connectedNetBitIndex = thisEnd.get((byte) bitindex).getParentNetBitIndex();
           if (!connectedNet.isBus()) {
-            contents.append(NetName).append(theNets.getNetId(connectedNet));
+            contents.append(HDL.NET_NAME).append(theNets.getNetId(connectedNet));
           } else {
             contents
-                .append(BusName)
+                .append(HDL.BUS_NAME)
                 .append(theNets.getNetId(connectedNet))
                 .append(HDL.BracketOpen())
                 .append(connectedNetBitIndex)
@@ -446,7 +445,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       return "";
     }
     final var ConnectedNet = ConnectionInformation.get((byte) 0).getParentNet();
-    return BusName
+    return HDL.BUS_NAME
         + TheNets.getNetId(ConnectedNet)
         + HDL.BracketOpen()
         + ConnectionInformation.get((byte) (ConnectionInformation.getNrOfBits() - 1))
@@ -470,7 +469,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     }
     final var ConnectedNet = ConnectionInformation.get((byte) 0).getParentNet();
     if (ConnectedNet.getBitWidth() != NrOfBits) return GetBusNameContinues(comp, EndIndex, TheNets);
-    return BusName + TheNets.getNetId(ConnectedNet);
+    return HDL.BUS_NAME + TheNets.getNetId(ConnectedNet);
   }
 
   public static String GetClockNetName(NetlistComponent comp, int EndIndex, Netlist TheNets) {
@@ -753,7 +752,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     final var NrOfBits = ConnectionInformation.getNrOfBits();
     if (NrOfBits == 1) {
       /* Here we have the easy case, just a single bit net */
-      NetMap.put(SourceName, GetNetName(comp, EndIndex, FloatingPinTiedToGround, TheNets));
+      NetMap.put(SourceName, HDL.getNetName(comp, EndIndex, FloatingPinTiedToGround, TheNets));
     } else {
       /*
        * Here we have the more difficult case, it is a bus that needs to
@@ -806,12 +805,12 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
                   /* The connection is to a Net */
                   NetMap.put(
                       SourceNetName.toString(),
-                      NetName + TheNets.getNetId(SolderPoint.getParentNet()));
+                      HDL.NET_NAME + TheNets.getNetId(SolderPoint.getParentNet()));
                 } else {
                   /* The connection is to an entry of a bus */
                   NetMap.put(
                       SourceNetName.toString(),
-                      BusName
+                      HDL.BUS_NAME
                           + TheNets.getNetId(SolderPoint.getParentNet())
                           + "("
                           + SolderPoint.getParentNetBitIndex()
@@ -841,11 +840,11 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
                  */
                 if (SolderPoint.getParentNet().getBitWidth() == 1) {
                   /* The connection is to a Net */
-                  SeperateSignals.add(NetName + TheNets.getNetId(SolderPoint.getParentNet()));
+                  SeperateSignals.add(HDL.NET_NAME + TheNets.getNetId(SolderPoint.getParentNet()));
                 } else {
                   /* The connection is to an entry of a bus */
                   SeperateSignals.add(
-                      BusName
+                      HDL.BUS_NAME
                           + TheNets.getNetId(SolderPoint.getParentNet())
                           + "["
                           + SolderPoint.getParentNetBitIndex()
@@ -869,47 +868,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       }
     }
     return NetMap;
-  }
-
-  public String GetNetName(
-      NetlistComponent comp,
-      int EndIndex,
-      boolean FloatingNetTiedToGround,
-      Netlist MyNetlist) {
-    var Contents = new StringBuilder();
-    final var FloatingValue = (FloatingNetTiedToGround) ? HDL.zeroBit() : HDL.oneBit();
-    if ((EndIndex >= 0) && (EndIndex < comp.nrOfEnds())) {
-      final var ThisEnd = comp.getEnd(EndIndex);
-      final var IsOutput = ThisEnd.isOutputEnd();
-      if (ThisEnd.getNrOfBits() == 1) {
-        final var SolderPoint = ThisEnd.get((byte) 0);
-        if (SolderPoint.getParentNet() == null) {
-          /* The net is not connected */
-          if (IsOutput) {
-            Contents.append(HDL.unconnected(true));
-          } else {
-            Contents.append(FloatingValue);
-          }
-        } else {
-          /*
-           * The net is connected, we have to find out if the
-           * connection is to a bus or to a normal net
-           */
-          if (SolderPoint.getParentNet().getBitWidth() == 1) {
-            /* The connection is to a Net */
-            Contents.append(NetName).append(MyNetlist.getNetId(SolderPoint.getParentNet()));
-          } else {
-            /* The connection is to an entry of a bus */
-            Contents.append(BusName)
-                .append(MyNetlist.getNetId(SolderPoint.getParentNet()))
-                .append(HDL.BracketOpen())
-                .append(SolderPoint.getParentNetBitIndex())
-                .append(HDL.BracketClose());
-          }
-        }
-      }
-    }
-    return Contents.toString();
   }
 
   public int GetNrOfTypes(Netlist TheNetlist, AttributeSet attrs) {

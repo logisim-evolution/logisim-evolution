@@ -201,7 +201,7 @@ public class DipSwitch extends InstanceFactory {
   @Override
   public boolean HDLSupportedComponent(AttributeSet attrs) {
     if (MyHDLGenerator == null) {
-      MyHDLGenerator = new ButtonHDLGeneratorFactory();
+      MyHDLGenerator = new AbstractSimpleIOHDLGeneratorFactory(true);
     }
     return MyHDLGenerator.HDLTargetSupported(attrs);
   }

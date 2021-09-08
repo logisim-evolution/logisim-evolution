@@ -33,7 +33,7 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .pair("startId6", startId + 6)
             .pair("regName", LineBuffer.format("s_{{1}}_reg", componentInfo.getComponent().getAttributeSet().getValue(StdAttr.LABEL)))
             .pair("sigName", LineBuffer.format("{{1}}[{{2}}:{{3}}]", bubbleBusName, (startId + 6), startId))
-            .pair("dpName", GetNetName(componentInfo, HexDigit.DP, true, nets));
+            .pair("dpName", HDL.getNetName(componentInfo, HexDigit.DP, true, nets));
     if (HDL.isVHDL()) {
       contents.add("");
       if (componentInfo.isEndConnected(HexDigit.HEX)) {

@@ -37,7 +37,7 @@ public class LedBarHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           + (componentInfo.getLocalBubbleOutputStartId() + pin)
           + HDL.BracketClose();
       final var sourcePin = isSingleBus ? GetBusEntryName(componentInfo, 0, true, pin, netlist)
-          : GetNetName(componentInfo, pin, true, netlist);
+          : HDL.getNetName(componentInfo, pin, true, netlist);
       contents.add("   " + HDL.assignPreamble() + destPin + HDL.assignOperator() + sourcePin + ";");
     }
     return contents;

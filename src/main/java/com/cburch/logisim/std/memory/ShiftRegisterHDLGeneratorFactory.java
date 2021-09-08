@@ -365,7 +365,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
                   + ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX
                   + HDL.BracketClose());
       } else {
-        map.put("Clock", GetNetName(comp, ShiftRegister.CK, true, nets));
+        map.put("Clock", HDL.getNetName(comp, ShiftRegister.CK, true, nets));
       }
     }
     map.putAll(GetNetMap("ShiftEnable", false, comp, ShiftRegister.SH, nets));
@@ -406,14 +406,14 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
         } else {
           for (var i = nrOfStages - 1; i >= 0; i--) {
             if (vector.length() != 0) vector.append(",");
-            vector.append(GetNetName(comp, 6 + 2 * i, true, nets));
+            vector.append(HDL.getNetName(comp, 6 + 2 * i, true, nets));
           }
           map.put("D", vector.toString());
           vector.setLength(0);
           vector.append("open");
           for (var i = nrOfStages - 2; i >= 0; i--) {
             if (vector.length() != 0) vector.append(",");
-            vector.append(GetNetName(comp, 7 + 2 * i, true, nets));
+            vector.append(HDL.getNetName(comp, 7 + 2 * i, true, nets));
           }
           map.put("Q", vector.toString());
         }

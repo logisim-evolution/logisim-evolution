@@ -115,7 +115,7 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
 
   @Override
   public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new AbstractLedHDLGeneratorFactory();
+    if (MyHDLGenerator == null) MyHDLGenerator = new AbstractSimpleIOHDLGeneratorFactory(false);
     return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 

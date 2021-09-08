@@ -10,7 +10,6 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
@@ -23,8 +22,6 @@ public interface HDLGeneratorFactory {
   String VERILOG = "Verilog";
   int PallignmentSize = 26;
   int SallignmentSize = 35;
-  String NetName = "s_LOGISIM_NET_";
-  String BusName = "s_LOGISIM_BUS_";
   String LocalInputBubbleBusname = "LOGISIM_INPUT_BUBBLES";
   String LocalOutputBubbleBusname = "LOGISIM_OUTPUT_BUBBLES";
   String LocalInOutBubbleBusname = "LOGISIM_INOUT_BUBBLES";

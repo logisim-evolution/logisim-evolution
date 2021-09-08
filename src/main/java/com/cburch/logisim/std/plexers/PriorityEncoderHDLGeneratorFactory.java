@@ -145,7 +145,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
         map.putAll(GetNetMap("input_vector(" + i + ")", true, comp, i, nets));
       else {
         if (vectorList.length() > 0) vectorList.append(",");
-        vectorList.append(GetNetName(comp, i, true, nets));
+        vectorList.append(HDL.getNetName(comp, i, true, nets));
       }
     }
     if (HDL.isVerilog()) map.put("input_vector", vectorList.toString());

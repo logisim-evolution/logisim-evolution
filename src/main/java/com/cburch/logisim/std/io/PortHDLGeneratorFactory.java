@@ -77,7 +77,7 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         final var inputName = GetBusName(componentInfo, inputIndex, nets);
         final var outputName = GetBusName(componentInfo, outputIndex, nets);
         final var enableName = (dir == PortIO.INOUTSE)
-                              ? GetNetName(componentInfo, enableIndex, true, nets)
+                              ? HDL.getNetName(componentInfo, enableIndex, true, nets)
                               : GetBusName(componentInfo, enableIndex, nets);
         contents.add(
             "   " + HDL.assignPreamble() + outputName + HDL.assignOperator()

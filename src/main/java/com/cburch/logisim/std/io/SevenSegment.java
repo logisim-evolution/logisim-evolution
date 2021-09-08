@@ -240,7 +240,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
 
   @Override
   public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new AbstractLedHDLGeneratorFactory();
+    if (MyHDLGenerator == null) MyHDLGenerator = new AbstractSimpleIOHDLGeneratorFactory(false);
     return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 

@@ -124,7 +124,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
         map.put("tick" + (i + 1), "'1'");
         map.put(
             "CLK" + (i + 1),
-            GetNetName(componentinfo, clockPinIndex, true, Nets));
+            HDL.getNetName(componentinfo, clockPinIndex, true, Nets));
       } else {
         if (Nets.requiresGlobalClockConnection()) {
           map.put("tick" + (i + 1), "'1'");

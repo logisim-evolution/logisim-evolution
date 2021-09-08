@@ -9,9 +9,15 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
+import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.LineBuffer;
 
 public abstract class HDL {
+
+  public final static String NET_NAME = "s_LOGISIM_NET_";
+  public final static String BUS_NAME = "s_LOGISIM_BUS_";
 
   public static boolean isVHDL() {
     return AppPreferences.HDL_Type.get().equals(HDLGeneratorFactory.VHDL);
@@ -112,6 +118,37 @@ public abstract class HDL {
       contents.append(floatingPinTiedToGround ? "0" : "-1");
     }
     return contents.toString();
+  }
+
+  public static String getNetName(NetlistComponent comp, int endIndex, boolean floatingNetTiedToGround,
+      Netlist myNetlist) {
+    final var floatingValue = (floatingNetTiedToGround) ? zeroBit() : oneBit();
+    final var contents = (new LineBuffer()).addHdlPairs();
+    if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
+      final var thisEnd = comp.getEnd(endIndex);
+      final var isOutput = thisEnd.isOutputEnd();
+      if (thisEnd.getNrOfBits() == 1) {
+        final var solderPoint = thisEnd.get((byte) 0);
+        if (solderPoint.getParentNet() == null) {
+          /* The net is not connected */
+          contents.add(isOutput ? unconnected(true) : floatingValue);
+        } else {
+          /*
+           * The net is connected, we have to find out if the
+           * connection is to a bus or to a normal net
+           */
+          if (solderPoint.getParentNet().getBitWidth() == 1) {
+            /* The connection is to a Net */
+            contents.add("{{1}}{{2}}", NET_NAME, myNetlist.getNetId(solderPoint.getParentNet()));
+          } else {
+            /* The connection is to an entry of a bus */
+            contents.add("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME, myNetlist.getNetId(solderPoint.getParentNet()),
+                solderPoint.getParentNetBitIndex());
+          }
+        }
+      }
+    }
+    return contents.get(0);
   }
 
 }
