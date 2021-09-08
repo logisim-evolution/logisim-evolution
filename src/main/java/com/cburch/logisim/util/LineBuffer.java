@@ -76,6 +76,16 @@ public class LineBuffer implements RandomAccess {
     this();
     addPairs(pairs);
   }
+  /* ********************************************************************************************* */
+
+  /**
+   * Returns instance of LineBuffer preconfigured with HdlPairs.
+   *
+   * @return instance of LineBuffer
+   */
+  public static LineBuffer getHdlBuffer() {
+    return (new LineBuffer()).addHdlPairs();
+  }
 
   /* ********************************************************************************************* */
 

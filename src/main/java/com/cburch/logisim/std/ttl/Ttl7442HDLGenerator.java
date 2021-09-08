@@ -85,7 +85,7 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = (new LineBuffer()).addHdlPairs();
+    final var contents = LineBuffer.getHdlBuffer();
 
     if (IsExes3) {
       contents.add("""

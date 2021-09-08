@@ -58,11 +58,10 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getHdlBuffer();
     final var SelectOperator = (HDL.isVHDL()) ? "" : "[" + ACTIVITY_LEVEL_STR + "]";
     contents
         .pair("activityLevel", ACTIVITY_LEVEL_STR)
-        .addHdlPairs()
         .addRemarkBlock("Here the output signals are defined")
         .add("""
                  {{assign}}Q    {{=}}s_current_state_reg{{1}};

@@ -33,8 +33,7 @@ public class Ttl7408 extends AbstractTtlGate {
 
     @Override
     public ArrayList<String> GetLogicFunction(int index) {
-      return (new LineBuffer())
-          .addHdlPairs()
+      return LineBuffer.getHdlBuffer()
           .add("{{assign}} gate_{{1}}_O {{=}} gate_{{1}}_A {{and}} gate_{{1}}_B;", index)
           .add("")
           .getWithIndent();
