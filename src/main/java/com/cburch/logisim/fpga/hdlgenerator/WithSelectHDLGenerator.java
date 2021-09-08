@@ -16,14 +16,13 @@ import com.cburch.logisim.util.LineBuffer;
 
 public class WithSelectHDLGenerator {
   
-  private final Map<Integer, Integer> myCases;
+  private final Map<Long, Long> myCases;
   private final String regName;
   private final String sourceSignal;
   private final int nrOfSourceBits;
   private final String destinationSignal;
   private final int nrOfDestinationBits;
-  
-  public static final int OTHERS_INDEX = -1;
+  private Long defaultValue = 0L;
   
   public WithSelectHDLGenerator(String componentName, String sourceSignal, int nrOfSourceBits, 
       String destinationSignal, int nrOfDestinationBits) {
@@ -35,8 +34,8 @@ public class WithSelectHDLGenerator {
     this.nrOfDestinationBits = nrOfDestinationBits;
   }
   
-  private int binairyStringToInt(String binairyValue) {
-    var result = 0;
+  private Long binairyStringToInt(String binairyValue) {
+    var result = 0L;
     for (var charIndex = 0; charIndex < binairyValue.length(); charIndex++) {
       final var character = binairyValue.charAt(charIndex) - '0';
       if ((character < 0) || (character > 1)) throw new NumberFormatException("Invalid binairy value in WithSelectHDLGenerator");
@@ -46,12 +45,12 @@ public class WithSelectHDLGenerator {
     return result;
   }
   
-  public WithSelectHDLGenerator add(int selectValue, int assignValue) {
+  public WithSelectHDLGenerator add(Long selectValue, Long assignValue) {
     myCases.put(selectValue, assignValue);
     return this;
   }
   
-  public WithSelectHDLGenerator add(int selectValue, String binairyAssignValue) {
+  public WithSelectHDLGenerator add(Long selectValue, String binairyAssignValue) {
     myCases.put(selectValue, binairyStringToInt(binairyAssignValue));
     return this;
   }
@@ -61,8 +60,18 @@ public class WithSelectHDLGenerator {
     return this;
   }
   
-  public WithSelectHDLGenerator add(String binairySelectValue, int assignValue) {
+  public WithSelectHDLGenerator add(String binairySelectValue, Long assignValue) {
     myCases.put(binairyStringToInt(binairySelectValue), assignValue);
+    return this;
+  }
+  
+  public WithSelectHDLGenerator addDefault(Long assignValue) {
+    defaultValue = assignValue;
+    return this;
+  }
+  
+  public WithSelectHDLGenerator addDefault(String binairyAssignValue) {
+    defaultValue = binairyStringToInt(binairyAssignValue);
     return this;
   }
   
@@ -91,13 +100,10 @@ public class WithSelectHDLGenerator {
         contents.add("      {{1}} : {{regName}} = {{2}};", HDL.getConstantBitVector(thisCase, nrOfSourceBits), HDL.getConstantBitVector(value, nrOfDestinationBits));
       }
     }
-    if (myCases.containsKey(OTHERS_INDEX)) {
-      final var value = myCases.get(OTHERS_INDEX);
-      if (HDL.isVHDL()) {
-        contents.add("   {{1}} WHEN OTHERS;", HDL.getConstantBitVector(value, nrOfDestinationBits));
-      } else {
-        contents.add("      default : {{regName}} = {{1}};", HDL.getConstantBitVector(value, nrOfDestinationBits));
-      }
+    if (HDL.isVHDL()) {
+      contents.add("   {{1}} WHEN OTHERS;", HDL.getConstantBitVector(defaultValue, nrOfDestinationBits));
+    } else {
+      contents.add("      default : {{regName}} = {{1}};", HDL.getConstantBitVector(defaultValue, nrOfDestinationBits));
     }
     if (HDL.isVerilog()) 
       contents.add("""
