@@ -46,23 +46,23 @@ public abstract class HDL {
   }
 
   public static String startIf(String condition) {
-    return isVHDL() ? "IF (" + condition + ") THEN" : "if (" + condition + ")";
+    return isVHDL() ? "IF (" + condition + ") THEN" : "if (" + condition + ") begin";
   }
 
   // TODO find good name
   /* 
   public static String else() {
-    return isVHDL() ? "ELSE " : "else ";
+    return isVHDL() ? "ELSE " : "end else begin";
   }
   */
 
   public static String elseIf(String condition) {
     return isVHDL() ? "ELSIF (" + condition + ") THEN"
-                    : "else if (" + condition + ")";
+                    : "end else if (" + condition + ") begin";
   }
 
   public static String endIf() {
-    return isVHDL() ? "END IF;" : "";
+    return isVHDL() ? "END IF;" : "end";
   }
 
   public static String assignPreamble() {
