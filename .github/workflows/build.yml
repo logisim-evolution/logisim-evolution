@@ -71,7 +71,7 @@ jobs:
       uses: actions/setup-java@v2
       with:
         java-version: ${{ matrix.jdk }}
-        distribution: 'adopt'
+        distribution: 'zulu'
 
     - name: "Build with Gradle"
       run: |
