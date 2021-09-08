@@ -104,7 +104,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 14
-          distribution: 'adopt'
+          distribution: 'zulu'
 
       # ###########################################################################################
 
@@ -201,7 +201,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 14
-          distribution: 'adopt'
+          distribution: 'zulu'
 
       - name: "Build DMG"
         run: |
@@ -239,7 +239,7 @@ jobs:
         uses: actions/setup-java@v2
         with:
           java-version: 14
-          distribution: 'adopt'
+          distribution: 'zulu'
 
       - name: "Build MSI"
         run: .\gradlew.bat createMsi -x checkstyleMain -x checkstyleTest
