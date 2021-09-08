@@ -34,7 +34,7 @@ public class RomHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
         .setDefault(0L);
     for (var addr = 0L; addr < (1L << addressWidth); addr++) {
       final var romValue = romContents.get(addr); 
-      if (romValue != 0) generator.add(addr, romValue);
+      if (romValue != 0L) generator.add(addr, romValue);
     }
     return (new LineBuffer()).add(generator.getHdlCode()).getWithIndent(3);
   }
