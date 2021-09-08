@@ -651,10 +651,10 @@ public class Startup implements AWTEventListener {
    */
   private static RC handleArgTestFpgaParseArg(Startup startup, String argVal) {
     if ("HDLONLY".equals(argVal)) {
-        if (!testFpgaFlagTickFreqSet) {
-          testFpgaFlagHdlOnlySet = true;
-          startup.testCircuitHdlOnly = true;
-        }
+      if (!testFpgaFlagTickFreqSet) {
+        testFpgaFlagHdlOnlySet = true;
+        startup.testCircuitHdlOnly = true;
+      }
       return RC.OK;
     }
 
