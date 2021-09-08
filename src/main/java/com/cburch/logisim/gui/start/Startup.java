@@ -651,19 +651,33 @@ public class Startup implements AWTEventListener {
    */
   private static RC handleArgTestFpgaParseArg(Startup startup, String argVal) {
     if ("HDLONLY".equals(argVal)) {
-      startup.testCircuitHdlOnly = true;
+        if (!testFpgaFlagTickFreqSet) {
+          testFpgaFlagHdlOnlySet = true;
+          startup.testCircuitHdlOnly = true;
+        }
       return RC.OK;
     }
 
+    int freq;
     try {
-      startup.testTickFrequency = Integer.parseUnsignedInt(argVal);
+      freq = Integer.parseUnsignedInt(argVal);
+      if (!testFpgaFlagTickFreqSet) {
+        startup.testTickFrequency = freq;
+        testFpgaFlagTickFreqSet = true;
+      }
       return RC.OK;
     } catch (NumberFormatException ex) {
-      logger.error(S.get("argTestInvalidTickFrequency", String.valueOf(argVal)));
+      // Do nothing here, we fail later.
     }
 
+    logger.error(S.get("argTestUnknownFlagOrValue", String.valueOf(argVal)));
     return RC.QUIT;
   }
+
+  // Indicates if handleArgTestFpgaParseArg() successfuly parsed and set tick freq.
+  private static boolean testFpgaFlagTickFreqSet = false;
+  // Indicates if handleArgTestFpgaParseArg() successfuly parsed and set HDLONLY flag.
+  private static boolean testFpgaFlagHdlOnlySet = false;
 
   private static RC handleArgTestFpga(Startup startup, Option opt) {
     final var optArgs = opt.getValues();
