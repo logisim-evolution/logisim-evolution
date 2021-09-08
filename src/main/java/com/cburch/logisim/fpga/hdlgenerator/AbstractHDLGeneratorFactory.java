@@ -393,85 +393,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return Contents.get();
   }
 
-  public String GetBusEntryName(
-      NetlistComponent comp,
-      int endIndex,
-      boolean floatingNetTiedToGround,
-      int bitindex,
-      Netlist theNets) {
-
-    var contents = new StringBuilder();
-    if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
-      final var thisEnd = comp.getEnd(endIndex);
-      final var isOutput = thisEnd.isOutputEnd();
-      final var nrOfBits = thisEnd.getNrOfBits();
-      if ((nrOfBits > 1) && (bitindex >= 0) && (bitindex < nrOfBits)) {
-        if (thisEnd.get((byte) bitindex).getParentNet() == null) {
-          /* The net is not connected */
-          if (isOutput) {
-            contents.append(HDL.unconnected(false));
-          } else {
-            contents.append(HDL.GetZeroVector(1, floatingNetTiedToGround));
-          }
-        } else {
-          final var connectedNet = thisEnd.get((byte) bitindex).getParentNet();
-          final var connectedNetBitIndex = thisEnd.get((byte) bitindex).getParentNetBitIndex();
-          if (!connectedNet.isBus()) {
-            contents.append(HDL.NET_NAME).append(theNets.getNetId(connectedNet));
-          } else {
-            contents
-                .append(HDL.BUS_NAME)
-                .append(theNets.getNetId(connectedNet))
-                .append(HDL.BracketOpen())
-                .append(connectedNetBitIndex)
-                .append(HDL.BracketClose());
-          }
-        }
-      }
-    }
-    return contents.toString();
-  }
-
-  public static String GetBusNameContinues(NetlistComponent comp, int EndIndex, Netlist TheNets) {
-    if ((EndIndex < 0) || (EndIndex >= comp.nrOfEnds())) {
-      return "";
-    }
-    final var ConnectionInformation = comp.getEnd(EndIndex);
-    final var NrOfBits = ConnectionInformation.getNrOfBits();
-    if (NrOfBits == 1) {
-      return "";
-    }
-    if (!TheNets.isContinuesBus(comp, EndIndex)) {
-      return "";
-    }
-    final var ConnectedNet = ConnectionInformation.get((byte) 0).getParentNet();
-    return HDL.BUS_NAME
-        + TheNets.getNetId(ConnectedNet)
-        + HDL.BracketOpen()
-        + ConnectionInformation.get((byte) (ConnectionInformation.getNrOfBits() - 1))
-            .getParentNetBitIndex()
-        + HDL.vectorLoopId()
-        + ConnectionInformation.get((byte) (0)).getParentNetBitIndex()
-        + HDL.BracketClose();
-  }
-
-  public static String GetBusName(NetlistComponent comp, int EndIndex, Netlist TheNets) {
-    if ((EndIndex < 0) || (EndIndex >= comp.nrOfEnds())) {
-      return "";
-    }
-    final var ConnectionInformation = comp.getEnd(EndIndex);
-    final var NrOfBits = ConnectionInformation.getNrOfBits();
-    if (NrOfBits == 1) {
-      return "";
-    }
-    if (!TheNets.isContinuesBus(comp, EndIndex)) {
-      return "";
-    }
-    final var ConnectedNet = ConnectionInformation.get((byte) 0).getParentNet();
-    if (ConnectedNet.getBitWidth() != NrOfBits) return GetBusNameContinues(comp, EndIndex, TheNets);
-    return HDL.BUS_NAME + TheNets.getNetId(ConnectedNet);
-  }
-
   public static String GetClockNetName(NetlistComponent comp, int EndIndex, Netlist TheNets) {
     var Contents = new StringBuilder();
     if ((TheNets.getCurrentHierarchyLevel() != null)
@@ -779,7 +700,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
          */
         if (TheNets.isContinuesBus(comp, EndIndex)) {
           /* Another easy case, the continues bus connection */
-          NetMap.put(SourceName, GetBusNameContinues(comp, EndIndex, TheNets));
+          NetMap.put(SourceName, HDL.getBusNameContinues(comp, EndIndex, TheNets));
         } else {
           /* The last case, we have to enumerate through each bit */
           if (HDL.isVHDL()) {

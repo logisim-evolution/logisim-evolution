@@ -423,14 +423,14 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             for (var i = 0; i < nrOfStages; i++) {
               map.put(
                   "D" + HDL.BracketOpen() + (bit * nrOfStages + i) + HDL.BracketClose(),
-                  GetBusEntryName(comp, 6 + 2 * i, true, bit, nets));
+                  HDL.getBusEntryName(comp, 6 + 2 * i, true, bit, nets));
             }
           }
           for (var bit = 0; bit < nrOfBits; bit++) {
             for (var i = 0; i < nrOfStages - 1; i++) {
               map.put(
                   "Q" + HDL.BracketOpen() + (bit * nrOfStages + i) + HDL.BracketClose(),
-                  GetBusEntryName(comp, 7 + 2 * i, true, bit, nets));
+                  HDL.getBusEntryName(comp, 7 + 2 * i, true, bit, nets));
             }
             map.put(
                 "Q" + HDL.BracketOpen() + ((bit + 1) * nrOfStages - 1) + HDL.BracketClose(),
@@ -441,7 +441,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           for (var bit = nrOfBits - 1; bit >= 0; bit--) {
             for (var i = nrOfStages - 1; i >= 0; i--) {
               if (vector.length() != 0) vector.append(",");
-              vector.append(GetBusEntryName(comp, 6 + 2 * i, true, bit, nets));
+              vector.append(HDL.getBusEntryName(comp, 6 + 2 * i, true, bit, nets));
             }
           }
           map.put("D", vector.toString());
@@ -451,7 +451,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             vector.append("open");
             for (var i = nrOfStages - 2; i >= 0; i--) {
               if (vector.length() != 0) vector.append(",");
-              vector.append(GetBusEntryName(comp, 7 + 2 * i, true, bit, nets));
+              vector.append(HDL.getBusEntryName(comp, 7 + 2 * i, true, bit, nets));
             }
           }
           map.put("Q", vector.toString());

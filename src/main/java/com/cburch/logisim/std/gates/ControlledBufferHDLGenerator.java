@@ -39,8 +39,8 @@ public class ControlledBufferHDLGenerator extends AbstractHDLGeneratorFactory {
     var triState = "";
     final var nrBits = componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
     if (nrBits > 1) {
-      inpName = GetBusName(componentInfo, 1, nets);
-      outpName = GetBusName(componentInfo, 0, nets);
+      inpName = HDL.getBusName(componentInfo, 1, nets);
+      outpName = HDL.getBusName(componentInfo, 0, nets);
       triState = HDL.isVHDL() ? "(OTHERS => 'Z')" : nrBits + "'bZ";
     } else {
       inpName = HDL.getNetName(componentInfo, 1, true, nets);

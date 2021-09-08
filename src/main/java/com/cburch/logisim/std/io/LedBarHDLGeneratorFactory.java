@@ -16,11 +16,12 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
+import com.cburch.logisim.util.LineBuffer;
 
-public class LedBarHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class LedBarHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
 
   protected Attribute<BitWidth> getAttributeColumns() {
     return LedBar.ATTR_MATRIX_COLS;
@@ -28,28 +29,21 @@ public class LedBarHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetInlinedCode(Netlist netlist, Long componentId, NetlistComponent componentInfo, String circuitName) {
-    final var contents = new ArrayList<String>();
+    final var contents = (new LineBuffer()).addHdlPairs();
     final var isSingleBus = componentInfo.getComponent().getAttributeSet().getValue(LedBar.ATTR_INPUT_TYPE).equals(LedBar.INPUT_ONE_WIRE);
     final var nrOfSegments = componentInfo.getComponent().getAttributeSet().getValue(getAttributeColumns()).getWidth();
     for (var pin = 0; pin < nrOfSegments; pin++) {
-      final var destPin = HDLGeneratorFactory.LocalOutputBubbleBusname
-          + HDL.BracketOpen()
-          + (componentInfo.getLocalBubbleOutputStartId() + pin)
-          + HDL.BracketClose();
-      final var sourcePin = isSingleBus ? GetBusEntryName(componentInfo, 0, true, pin, netlist)
+      final var destPin = LineBuffer.format("{{1}}{{<}}{{2}}{{>}}", HDLGeneratorFactory.LocalOutputBubbleBusname,
+          componentInfo.getLocalBubbleOutputStartId() + pin);
+      final var sourcePin = isSingleBus ? HDL.getBusEntryName(componentInfo, 0, true, pin, netlist)
           : HDL.getNetName(componentInfo, pin, true, netlist);
-      contents.add("   " + HDL.assignPreamble() + destPin + HDL.assignOperator() + sourcePin + ";");
+      contents.add("{{assign}} {{1}} {{=}} {{2}};", destPin, sourcePin);
     }
-    return contents;
+    return contents.getWithIndent(3);
   }
 
   @Override
   public boolean HDLTargetSupported(AttributeSet attrs) {
     return attrs.getValue(DotMatrixBase.ATTR_PERSIST) == 0;
-  }
-
-  @Override
-  public boolean IsOnlyInlined() {
-    return true;
   }
 }

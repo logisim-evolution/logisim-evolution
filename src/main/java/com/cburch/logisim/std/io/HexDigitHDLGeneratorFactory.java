@@ -12,34 +12,34 @@ package com.cburch.logisim.std.io;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
-public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class HexDigitHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
 
   @Override
   public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
     final var startId = componentInfo.getLocalBubbleOutputStartId();
     final var bubbleBusName = HDLGeneratorFactory.LocalOutputBubbleBusname;
     final var contents =
-        (new LineBuffer())
-            .pair("busName", GetBusName(componentInfo, HexDigit.HEX, nets))
+        (new LineBuffer()).withHdlPairs()
+            .pair("busName", HDL.getBusName(componentInfo, HexDigit.HEX, nets))
             .pair("bubbleBusName", bubbleBusName)
-            .pair("startId", startId)
-            .pair("startId6", startId + 6)
             .pair("regName", LineBuffer.format("s_{{1}}_reg", componentInfo.getComponent().getAttributeSet().getValue(StdAttr.LABEL)))
-            .pair("sigName", LineBuffer.format("{{1}}[{{2}}:{{3}}]", bubbleBusName, (startId + 6), startId))
+            .pair("sigName", HDL.isVHDL() ? 
+                LineBuffer.format("{{1}}({{2}} DOWNTO {{3}})", bubbleBusName, (startId + 6), startId) : 
+                LineBuffer.format("{{1}}[{{2}}:{{3}}]", bubbleBusName, (startId + 6), startId)) 
             .pair("dpName", HDL.getNetName(componentInfo, HexDigit.DP, true, nets));
-    if (HDL.isVHDL()) {
-      contents.add("");
-      if (componentInfo.isEndConnected(HexDigit.HEX)) {
+    contents.add("");
+    if (componentInfo.isEndConnected(HexDigit.HEX)) {
+      if (HDL.isVHDL()) {
         contents
             .add("""
-                 WITH ({{busName}}) SELECT {{bubbleBusName}}({{startId6}} DOWNTO {{startId}}) <= 
+                 WITH ({{busName}}) SELECT {{sigName}} <= 
                     "0111111" WHEN "0000",
                     "0000110" WHEN "0001",
                     "1011011" WHEN "0010",
@@ -58,46 +58,39 @@ public class HexDigitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                     "1110001" WHEN OTHERS;
                  """);
       } else {
-        contents.add("{{bubbleBusName}}({{startId6}} DOWNTO {{startId}}) <= {{busName}};");
-      }
-      if (componentInfo.getComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
-        contents.add("{{bubbleBusName}}({{1}}) <= {{dpName}};", (startId + 7));
+        contents
+        .add("""
+            reg[6:0] {{regName}};
+            always @(*)
+            begin
+               case ({{busName}})
+                  4'b0000 : {{regName}} = 7'b0111111;
+                  4'b0001 : {{regName}} = 7'b0000110;
+                  4'b0010 : {{regName}} = 7'b1011011;
+                  4'b0011 : {{regName}} = 7'b1001111;
+                  4'b0100 : {{regName}} = 7'b1100110;
+                  4'b0101 : {{regName}} = 7'b1101101;
+                  4'b0110 : {{regName}} = 7'b1111101;
+                  4'b0111 : {{regName}} = 7'b0000111;
+                  4'b1000 : {{regName}} = 7'b1111111;
+                  4'b1001 : {{regName}} = 7'b1100111;
+                  4'b1010 : {{regName}} = 7'b1110111;
+                  4'b1011 : {{regName}} = 7'b1111100;
+                  4'b1100 : {{regName}} = 7'b0111001;
+                  4'b1101 : {{regName}} = 7'b1011110;
+                  4'b1110 : {{regName}} = 7'b1111001;
+                  default : {{regName}} = 7'b1110001;
+               endcase
+            end
+            
+            assign {{sigName}} = {{regName}};
+            """);
       }
     } else {
-      if (componentInfo.isEndConnected(HexDigit.HEX)) {
-        contents
-            .add("""
-
-                reg[6:0] {{regName}};
-                always @(*)
-                   case ({{busName}})
-                      4'b0000 : {{regName}} = 7'b0111111;
-                      4'b0001 : {{regName}} = 7'b0000110;
-                      4'b0010 : {{regName}} = 7'b1011011;
-                      4'b0011 : {{regName}} = 7'b1001111;
-                      4'b0100 : {{regName}} = 7'b1100110;
-                      4'b0101 : {{regName}} = 7'b1101101;
-                      4'b0110 : {{regName}} = 7'b1111101;
-                      4'b0111 : {{regName}} = 7'b0000111;
-                      4'b1000 : {{regName}} = 7'b1111111;
-                      4'b1001 : {{regName}} = 7'b1100111;
-                      4'b1010 : {{regName}} = 7'b1110111;
-                      4'b1011 : {{regName}} = 7'b1111100;
-                      4'b1100 : {{regName}} = 7'b0111001;
-                      4'b1101 : {{regName}} = 7'b1011110;
-                      4'b1110 : {{regName}} = 7'b1111001;
-                      default : {{regName}} = 7'b1110001;
-                   endcase
-
-                assign {{sigName}} = {{regName}};
-                """);
-      } else {
-        contents.add("assign {{sigName}} = {{busName}};");
-      }
-      if (componentInfo.getComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP)) {
-        contents.add("assign {{bubbleBusName}}[{{1}}] = {{dpName}};", (componentInfo.getLocalBubbleOutputStartId() + 7));
-      }
+      contents.add("{{assign}} {{sigName}} {{=}} {{1}};", HDL.GetZeroVector(7, true));
     }
+    if (componentInfo.getComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP))
+      contents.add("{{assign}} {{bubbleBusName}}{{<}}{{1}}{{>}} {{=}} {{dpName}};", (startId + 7));
     return contents.getWithIndent();
   }
 

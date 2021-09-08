@@ -732,10 +732,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           /* Another easy case, the continues bus connection */
           if (isOutput) {
             source.append(portName);
-            destination.append(GetBusNameContinues(comp, endIndex, TheNets));
+            destination.append(HDL.getBusNameContinues(comp, endIndex, TheNets));
           } else {
             destination.append(portName);
-            source.append(GetBusNameContinues(comp, endIndex, TheNets));
+            source.append(HDL.getBusNameContinues(comp, endIndex, TheNets));
           }
           while (destination.length() < SallignmentSize) destination.append(" ");
           contents

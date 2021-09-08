@@ -9,26 +9,16 @@
 
 package com.cburch.logisim.std.io;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+
 import java.util.ArrayList;
 
 public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
-
-  @Override
-  public boolean IsOnlyInlined() {
-    return true;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
 
   @Override
   public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
@@ -45,7 +35,7 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         contents.add(
             "   "
                 + HDL.assignPreamble()
-                + GetBusName(componentInfo, i, nets)
+                + HDL.getBusName(componentInfo, i, nets)
                 + HDL.assignOperator()
                 + HDLGeneratorFactory.LocalInputBubbleBusname
                 + HDL.BracketOpen()
@@ -62,7 +52,7 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         end += Math.min(size, BitWidth.MAXWIDTH);
         size -= BitWidth.MAXWIDTH;
         contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
-                + HDL.assignOperator() + GetBusName(componentInfo, i, nets) + HDL.BracketOpen()
+                + HDL.assignOperator() + HDL.getBusName(componentInfo, i, nets) + HDL.BracketOpen()
                 + end + HDL.vectorLoopId() + "0" + HDL.BracketClose() + ";");
       }
     } else {
@@ -74,11 +64,11 @@ public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         final var enableIndex = (dir == PortIO.INOUTSE) ? 0 : i * 2;
         final var inputIndex = (dir == PortIO.INOUTSE) ? i + 1 : i * 2 + 1;
         final var outputIndex = (dir == PortIO.INOUTSE) ? 1 + nBus + i : 2 * nBus + i;
-        final var inputName = GetBusName(componentInfo, inputIndex, nets);
-        final var outputName = GetBusName(componentInfo, outputIndex, nets);
+        final var inputName = HDL.getBusName(componentInfo, inputIndex, nets);
+        final var outputName = HDL.getBusName(componentInfo, outputIndex, nets);
         final var enableName = (dir == PortIO.INOUTSE)
                               ? HDL.getNetName(componentInfo, enableIndex, true, nets)
-                              : GetBusName(componentInfo, enableIndex, nets);
+                              : HDL.getBusName(componentInfo, enableIndex, nets);
         contents.add(
             "   " + HDL.assignPreamble() + outputName + HDL.assignOperator()
                 + HDLGeneratorFactory.LocalInOutBubbleBusname + HDL.BracketOpen()

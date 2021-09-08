@@ -151,4 +151,56 @@ public abstract class HDL {
     return contents.get(0);
   }
 
+  public static String getBusEntryName(NetlistComponent comp, int endIndex, boolean floatingNetTiedToGround,
+      int bitindex, Netlist theNets) {
+
+    final var contents = (new LineBuffer()).addHdlPairs();
+    if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
+      final var thisEnd = comp.getEnd(endIndex);
+      final var isOutput = thisEnd.isOutputEnd();
+      final var nrOfBits = thisEnd.getNrOfBits();
+      if ((nrOfBits > 1) && (bitindex >= 0) && (bitindex < nrOfBits)) {
+        if (thisEnd.get((byte) bitindex).getParentNet() == null) {
+          /* The net is not connected */
+          contents.add(isOutput ? unconnected(false) : GetZeroVector(1, floatingNetTiedToGround));
+        } else {
+          final var connectedNet = thisEnd.get((byte) bitindex).getParentNet();
+          final var connectedNetBitIndex = thisEnd.get((byte) bitindex).getParentNetBitIndex();
+          if (!connectedNet.isBus()) {
+            contents.add("{{1}}{{2}}", NET_NAME, theNets.getNetId(connectedNet));
+          } else {
+            contents.add("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME, theNets.getNetId(connectedNet), connectedNetBitIndex);
+          }
+        }
+      }
+    }
+    return contents.get(0);
+  }
+
+  public static String getBusNameContinues(NetlistComponent comp, int endIndex, Netlist theNets) {
+    if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) return null;
+    final var connectionInformation = comp.getEnd(endIndex);
+    final var nrOfBits = connectionInformation.getNrOfBits();
+    if (nrOfBits == 1) return getNetName(comp, endIndex, true, theNets);
+    if (!theNets.isContinuesBus(comp, endIndex)) return null;
+    final var connectedNet = connectionInformation.get((byte) 0).getParentNet();
+    return LineBuffer.format("{{1}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}}", 
+        BUS_NAME ,
+        theNets.getNetId(connectedNet),
+        connectionInformation.get((byte) (connectionInformation.getNrOfBits() - 1)).getParentNetBitIndex(),
+        HDL.vectorLoopId(),
+        connectionInformation.get((byte) (0)).getParentNetBitIndex());
+  }
+
+  public static String getBusName(NetlistComponent comp, int endIndex, Netlist theNets) {
+    if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) return null;
+    final var connectionInformation = comp.getEnd(endIndex);
+    final var nrOfBits = connectionInformation.getNrOfBits();
+    if (nrOfBits == 1)  return getNetName(comp, endIndex, true, theNets);
+    if (!theNets.isContinuesBus(comp, endIndex)) return null;
+    final var ConnectedNet = connectionInformation.get((byte) 0).getParentNet();
+    if (ConnectedNet.getBitWidth() != nrOfBits) return getBusNameContinues(comp, endIndex, theNets);
+    return LineBuffer.format("{{1}}{{2}}", BUS_NAME, theNets.getNetId(ConnectedNet));
+  }
+
 }

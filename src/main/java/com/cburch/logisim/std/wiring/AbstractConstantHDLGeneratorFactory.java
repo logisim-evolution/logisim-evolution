@@ -54,7 +54,7 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
       } else {
         if (Nets.isContinuesBus(ComponentInfo, 0)) {
           /* easy case */
-          Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetBusNameContinues(ComponentInfo, 0, Nets), GetConvertOperator(ConstantValue, NrOfBits));
+          Contents.add("{{assign}} {{1}} {{=}} {{2}};", HDL.getBusNameContinues(ComponentInfo, 0, Nets), GetConvertOperator(ConstantValue, NrOfBits));
           Contents.add("");
         } else {
           /* we have to enumerate all bits */
@@ -64,7 +64,7 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
             if ((mask & ConstantValue) != 0) ConstValue = HDL.oneBit();
             else ConstValue = HDL.zeroBit();
             mask <<= 1;
-            Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetBusEntryName(ComponentInfo, 0, true, bit, Nets), ConstValue);
+            Contents.add("{{assign}} {{1}} {{=}} {{2}};", HDL.getBusEntryName(ComponentInfo, 0, true, bit, Nets), ConstValue);
           }
           Contents.add("");
         }
