@@ -16,6 +16,8 @@ import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.WithSelectHDLGenerator;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.util.LineBuffer;
+
 import java.util.ArrayList;
 
 public class RomHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
@@ -34,7 +36,7 @@ public class RomHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
       final var romValue = romContents.get(addr); 
       if (romValue != 0) generator.add(addr, romValue);
     }
-    return generator.getHdlCode();
+    return (new LineBuffer()).add(generator.getHdlCode()).getWithIndent(3);
   }
   
   @Override
