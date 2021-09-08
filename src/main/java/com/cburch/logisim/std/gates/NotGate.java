@@ -50,8 +50,7 @@ class NotGate extends InstanceFactory {
   private static class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      return (new LineBuffer())
-          .addHdlPairs()
+      return LineBuffer.getHdlBuffer()
           .add("{{assign}} Result {{=}} {{not}}Input_1;")
           .add("")
           .getWithIndent();

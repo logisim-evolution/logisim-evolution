@@ -230,7 +230,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   public ArrayList<String> GetHDLWiring(Netlist TheNets) {
-    final var Contents = (new LineBuffer()).addHdlPairs();
+    final var Contents = LineBuffer.getHdlBuffer();
     final StringBuilder OneLine = new StringBuilder();
     /* we cycle through all nets with a forcedrootnet annotation */
     for (Net ThisNet : TheNets.getAllNets()) {
@@ -339,7 +339,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    final var contents = (new LineBuffer()).addHdlPairs();
+    final var contents = LineBuffer.getHdlBuffer();
     var isFirstLine = true;
     final var temp = new StringBuilder();
     final var compIds = new HashMap<String, Long>();

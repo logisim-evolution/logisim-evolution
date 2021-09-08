@@ -51,8 +51,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents =
-        (new LineBuffer())
-            .addHdlPairs()
+        LineBuffer.getHdlBuffer()
             .pair("nrOfCounterBits", NrOfCounterBitsStr)
             .add("")
             .addRemarkBlock("Here the Output is defined")
