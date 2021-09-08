@@ -15,6 +15,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.WithSelectHDLGenerator;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -25,65 +26,33 @@ public class HexDigitHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
   public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
     final var startId = componentInfo.getLocalBubbleOutputStartId();
     final var bubbleBusName = HDLGeneratorFactory.LocalOutputBubbleBusname;
+    final var signalName = LineBuffer.format("{{1}}{{<}}{{2}}{{3}}{{4}}{{>}}", bubbleBusName, (startId + 6), HDL.vectorLoopId(), startId); 
     final var contents =
         (new LineBuffer()).withHdlPairs()
-            .pair("busName", HDL.getBusName(componentInfo, HexDigit.HEX, nets))
             .pair("bubbleBusName", bubbleBusName)
-            .pair("regName", LineBuffer.format("s_{{1}}_reg", componentInfo.getComponent().getAttributeSet().getValue(StdAttr.LABEL)))
-            .pair("sigName", LineBuffer.format("{{1}}{{<}}{{2}}{{3}}{{4}}{{>}}", bubbleBusName, 
-                (startId + 6), HDL.vectorLoopId(), startId)) 
+            .pair("sigName", signalName) 
             .pair("dpName", HDL.getNetName(componentInfo, HexDigit.DP, true, nets));
     contents.add("");
     if (componentInfo.isEndConnected(HexDigit.HEX)) {
-      if (HDL.isVHDL()) {
-        contents
-            .add("""
-                 WITH ({{busName}}) SELECT {{sigName}} <= 
-                    "0111111" WHEN "0000",
-                    "0000110" WHEN "0001",
-                    "1011011" WHEN "0010",
-                    "1001111" WHEN "0011",
-                    "1100110" WHEN "0100",
-                    "1101101" WHEN "0101",
-                    "1111101" WHEN "0110",
-                    "0000111" WHEN "0111",
-                    "1111111" WHEN "1000",
-                    "1100111" WHEN "1001",
-                    "1110111" WHEN "1010",
-                    "1111100" WHEN "1011",
-                    "0111001" WHEN "1100",
-                    "1011110" WHEN "1101",
-                    "1111001" WHEN "1110",
-                    "1110001" WHEN OTHERS;
-                 """);
-      } else {
-        contents.add("""
-            reg[6:0] {{regName}};
-            always @(*)
-            begin
-               case ({{busName}})
-                  4'b0000 : {{regName}} = 7'b0111111;
-                  4'b0001 : {{regName}} = 7'b0000110;
-                  4'b0010 : {{regName}} = 7'b1011011;
-                  4'b0011 : {{regName}} = 7'b1001111;
-                  4'b0100 : {{regName}} = 7'b1100110;
-                  4'b0101 : {{regName}} = 7'b1101101;
-                  4'b0110 : {{regName}} = 7'b1111101;
-                  4'b0111 : {{regName}} = 7'b0000111;
-                  4'b1000 : {{regName}} = 7'b1111111;
-                  4'b1001 : {{regName}} = 7'b1100111;
-                  4'b1010 : {{regName}} = 7'b1110111;
-                  4'b1011 : {{regName}} = 7'b1111100;
-                  4'b1100 : {{regName}} = 7'b0111001;
-                  4'b1101 : {{regName}} = 7'b1011110;
-                  4'b1110 : {{regName}} = 7'b1111001;
-                  default : {{regName}} = 7'b1110001;
-               endcase
-            end
-            
-            assign {{sigName}} = {{regName}};
-            """);
-      }
+      final var generator = new WithSelectHDLGenerator(componentInfo.getComponent().getAttributeSet().getValue(StdAttr.LABEL),
+          HDL.getBusName(componentInfo, HexDigit.HEX, nets), 4, signalName , 7);
+      generator.add(0, "0111111");
+      generator.add(1, "0000110");
+      generator.add(2, "1011011");
+      generator.add(3, "1001111");
+      generator.add(4, "1100110");
+      generator.add(5, "1101101");
+      generator.add(6, "1111101");
+      generator.add(7, "0000111");
+      generator.add(8, "1111111");
+      generator.add(9, "1100111");
+      generator.add(10, "1110111");
+      generator.add(11, "1111100");
+      generator.add(12, "0111001");
+      generator.add(13, "1011110");
+      generator.add(14, "1111001");
+      generator.add(WithSelectHDLGenerator.OTHERS_INDEX, "1110001");
+      contents.add(generator.getHdlCode());
     } else {
       contents.add("{{assign}} {{sigName}} {{=}} {{1}};", HDL.GetZeroVector(7, true));
     }
