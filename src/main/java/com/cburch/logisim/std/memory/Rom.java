@@ -20,7 +20,6 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.gui.hex.HexFile;
 import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
@@ -157,12 +156,6 @@ public class Rom extends Mem {
   }
 
   @Override
-  public String getHDLName(AttributeSet attrs) {
-    final var Label = CorrectLabel.getCorrectLabel(attrs.getValue(StdAttr.LABEL));
-    return (Label.length() == 0) ? "ROM" : "ROMCONTENTS_" + Label;
-  }
-
-  @Override
   HexFrame getHexFrame(Project proj, Instance instance, CircuitState state) {
     return RomAttributes.getHexFrame(getMemContents(instance), proj, instance);
   }
@@ -207,12 +200,6 @@ public class Rom extends Mem {
       state.setData(ret);
     }
     return ret;
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new RomHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -272,6 +259,12 @@ public class Rom extends Mem {
   @Override
   public void removeComponent(Circuit circ, Component c, CircuitState state) {
     closeHexFrame(c);
+  }
+
+  @Override
+  public boolean HDLSupportedComponent(AttributeSet attrs) {
+    if (MyHDLGenerator == null) MyHDLGenerator = new RomHDLGeneratorFactory();
+    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
