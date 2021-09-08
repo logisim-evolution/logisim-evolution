@@ -16,7 +16,7 @@ import com.cburch.logisim.util.LineBuffer;
 
 public class WithSelectHDLGenerator {
   
-  private final Map<Integer,Integer> myCases;
+  private final Map<Integer, Integer> myCases;
   private final String regName;
   private final String sourceSignal;
   private final int nrOfSourceBits;
@@ -28,14 +28,14 @@ public class WithSelectHDLGenerator {
   public WithSelectHDLGenerator(String componentName, String sourceSignal, int nrOfSourceBits, 
       String destinationSignal, int nrOfDestinationBits) {
     myCases = new HashMap<>();
-    regName = LineBuffer.format("s_{{1}}_reg",componentName);
+    regName = LineBuffer.format("s_{{1}}_reg", componentName);
     this.sourceSignal = sourceSignal;
     this.nrOfSourceBits = nrOfSourceBits;
     this.destinationSignal = destinationSignal;
     this.nrOfDestinationBits = nrOfDestinationBits;
   }
   
-  private int binairyStringToInd(String binairyValue) {
+  private int binairyStringToInt(String binairyValue) {
     var result = 0;
     for (var charIndex = 0; charIndex < binairyValue.length(); charIndex++) {
       final var character = binairyValue.charAt(charIndex) - '0';
@@ -51,15 +51,15 @@ public class WithSelectHDLGenerator {
   }
   
   public void add(int selectValue, String binairyAssignValue) {
-    myCases.put(selectValue, binairyStringToInd(binairyAssignValue));
+    myCases.put(selectValue, binairyStringToInt(binairyAssignValue));
   }
   
-  public void add(String binairyselectValue, String binairyAssignValue) {
-    myCases.put(binairyStringToInd(binairyselectValue), binairyStringToInd(binairyAssignValue));
+  public void add(String binairySelectValue, String binairyAssignValue) {
+    myCases.put(binairyStringToInt(binairySelectValue), binairyStringToInt(binairyAssignValue));
   }
   
-  public void add(String binairyselectValue, int assignValue) {
-    myCases.put(binairyStringToInd(binairyselectValue), assignValue);
+  public void add(String binairySelectValue, int assignValue) {
+    myCases.put(binairyStringToInt(binairySelectValue), assignValue);
   }
   
   public ArrayList<String> getHdlCode() {
@@ -67,7 +67,7 @@ public class WithSelectHDLGenerator {
         .pair("sourceName", sourceSignal)
         .pair("destName", destinationSignal)
         .pair("regName", regName)
-        .pair("regBits", nrOfDestinationBits-1);
+        .pair("regBits", nrOfDestinationBits - 1);
     if (HDL.isVHDL()) {
       contents.add("WITH ({{sourceName}}) SELECT {{destName}} <=");
     } else {
@@ -76,15 +76,15 @@ public class WithSelectHDLGenerator {
           always @(*)
           begin
              case ({{sourceName}})
-        """);
+          """);
     }
     for (final var thisCase : myCases.keySet()) {
       if (thisCase < 0) continue;
       final var value = myCases.get(thisCase);
       if (HDL.isVHDL()) {
-        contents.add("   {{1}} WHEN {{2}},", HDL.getConstantBitVector(value, nrOfDestinationBits) , HDL.getConstantBitVector(thisCase, nrOfSourceBits));
+        contents.add("   {{1}} WHEN {{2}},", HDL.getConstantBitVector(value, nrOfDestinationBits), HDL.getConstantBitVector(thisCase, nrOfSourceBits));
       } else {
-        contents.add("      {{1}} : {{regName}} = {{2}};",HDL.getConstantBitVector(thisCase, nrOfSourceBits), HDL.getConstantBitVector(value, nrOfDestinationBits));
+        contents.add("      {{1}} : {{regName}} = {{2}};", HDL.getConstantBitVector(thisCase, nrOfSourceBits), HDL.getConstantBitVector(value, nrOfDestinationBits));
       }
     }
     if (myCases.containsKey(OTHERS_INDEX)) {

@@ -35,7 +35,7 @@ public class HexDigitHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
     contents.add("");
     if (componentInfo.isEndConnected(HexDigit.HEX)) {
       final var generator = new WithSelectHDLGenerator(componentInfo.getComponent().getAttributeSet().getValue(StdAttr.LABEL),
-          HDL.getBusName(componentInfo, HexDigit.HEX, nets), 4, signalName , 7);
+          HDL.getBusName(componentInfo, HexDigit.HEX, nets), 4, signalName, 7);
       generator.add(0, "0111111");
       generator.add(1, "0000110");
       generator.add(2, "1011011");
