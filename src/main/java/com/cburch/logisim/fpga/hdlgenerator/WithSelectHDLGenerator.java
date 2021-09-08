@@ -81,18 +81,18 @@ public class WithSelectHDLGenerator {
         .pair("destName", destinationSignal)
         .pair("regName", regName)
         .pair("regBits", nrOfDestinationBits - 1);
+    contents.add("");
     if (HDL.isVHDL()) {
       contents.add("WITH ({{sourceName}}) SELECT {{destName}} <=");
     } else {
       contents.add("""
         reg[{{regBits}}:0] {{regName}};
-          always @(*)
-          begin
-             case ({{sourceName}})
+           always @(*)
+           begin
+              case ({{sourceName}})
           """);
     }
     for (final var thisCase : myCases.keySet()) {
-      if (thisCase < 0) continue;
       final var value = myCases.get(thisCase);
       if (HDL.isVHDL()) {
         contents.add("   {{1}} WHEN {{2}},", HDL.getConstantBitVector(value, nrOfDestinationBits), HDL.getConstantBitVector(thisCase, nrOfSourceBits));
