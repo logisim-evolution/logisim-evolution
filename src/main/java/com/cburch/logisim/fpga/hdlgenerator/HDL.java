@@ -16,8 +16,8 @@ import com.cburch.logisim.util.LineBuffer;
 
 public abstract class HDL {
 
-  public final static String NET_NAME = "s_LOGISIM_NET_";
-  public final static String BUS_NAME = "s_LOGISIM_BUS_";
+  public static final String NET_NAME = "s_LOGISIM_NET_";
+  public static final String BUS_NAME = "s_LOGISIM_BUS_";
 
   public static boolean isVHDL() {
     return AppPreferences.HDL_Type.get().equals(HDLGeneratorFactory.VHDL);
@@ -185,7 +185,7 @@ public abstract class HDL {
     if (!theNets.isContinuesBus(comp, endIndex)) return null;
     final var connectedNet = connectionInformation.get((byte) 0).getParentNet();
     return LineBuffer.format("{{1}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}}", 
-        BUS_NAME ,
+        BUS_NAME,
         theNets.getNetId(connectedNet),
         connectionInformation.get((byte) (connectionInformation.getNrOfBits() - 1)).getParentNetBitIndex(),
         HDL.vectorLoopId(),

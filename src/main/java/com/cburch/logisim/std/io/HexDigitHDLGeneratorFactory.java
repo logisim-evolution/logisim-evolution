@@ -57,8 +57,7 @@ public class HexDigitHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
                     "1110001" WHEN OTHERS;
                  """);
       } else {
-        contents
-        .add("""
+        contents.add("""
             reg[6:0] {{regName}};
             always @(*)
             begin
