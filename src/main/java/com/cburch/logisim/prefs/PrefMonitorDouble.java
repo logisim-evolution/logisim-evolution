@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -15,7 +15,7 @@ class PrefMonitorDouble extends AbstractPrefMonitor<Double> {
   private final double dflt;
   private double value;
 
-  PrefMonitorDouble(String name, double dflt) {
+  public PrefMonitorDouble(String name, double dflt) {
     super(name);
     this.dflt = dflt;
     this.value = dflt;

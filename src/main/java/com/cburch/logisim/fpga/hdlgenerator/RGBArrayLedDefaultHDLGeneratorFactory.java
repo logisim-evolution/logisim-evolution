@@ -24,13 +24,13 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
   private static final LineBuffer.Pairs sharedPairs =
       new LineBuffer.Pairs() {
         {
-          add("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs);
-          add("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs);
-          add("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs);
-          add("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs);
-          add("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs);
-          add("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs);
-          add("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
+          pair("outsR", LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs);
+          pair("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs);
+          pair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs);
+          pair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs);
+          pair("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs);
+          pair("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs);
+          pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
         }
       };
 
@@ -39,21 +39,23 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
     contents.add("id", id);
 
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "PORT MAP ( {{outsR}} => {{outsR}}{{id}},",
-          "           {{outsG}} => {{outsG}}{{id}},",
-          "           {{outsB}} => {{outsB}}{{id}},",
-          "           {{insR }} => s_{{insR}}{{id}},",
-          "           {{insG }} => s_{{insG}}{{id}},",
-          "           {{insB }} => s_{{insB}}{{id}} );");
+      contents.add("""
+          PORT MAP ( {{outsR}} => {{outsR}}{{id}},
+                     {{outsG}} => {{outsG}}{{id}},
+                     {{outsB}} => {{outsB}}{{id}},
+                     {{insR }} => s_{{insR}}{{id}},
+                     {{insG }} => s_{{insG}}{{id}},
+                     {{insB }} => s_{{insB}}{{id}} );
+          """);
     } else {
-      contents.addLines(
-          "( .{{outsR}}({{outsR}}{{id}}),",
-          "  .{{outsG}}({{outsG}}{{id}}),",
-          "  .{{outsB}}({{outsB}}{{id}}),",
-          "  .{{insR}}(s_{{insR}}{{id}}),",
-          "  .{{insG}}(s_{{insG}}{{id}}),",
-          "  .{{insB}}(s_{{insB}}{{id}}) );");
+      contents.add("""
+          ( .{{outsR}}({{outsR}}{{id}}),
+            .{{outsG}}({{outsG}}{{id}}),
+            .{{outsB}}({{outsB}}{{id}}),
+            .{{insR}}(s_{{insR}}{{id}}),
+            .{{insG}}(s_{{insG}}{{id}}),
+            .{{insB}}(s_{{insB}}{{id}}) );
+          """);
     }
     return contents.getWithIndent(6);
   }
@@ -81,23 +83,25 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
     final var contents = new LineBuffer(sharedPairs);
 
     if (HDL.isVHDL()) {
-      contents.addLines(
-          "genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE",
-          "   {{outsR}}(n) <= NOT({{insR}}(n)) WHEN activeLow = 1 ELSE {{insR}}(n);",
-          "   {{outsG}}(n) <= NOT({{insG}}(n)) WHEN activeLow = 1 ELSE {{insG}}(n);",
-          "   {{outsB}}(n) <= NOT({{insB}}(n)) WHEN activeLow = 1 ELSE {{insB}}(n);",
-          "END GENERATE;");
+      contents.add("""
+          genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE
+             {{outsR}}(n) <= NOT({{insR}}(n)) WHEN activeLow = 1 ELSE {{insR}}(n);
+             {{outsG}}(n) <= NOT({{insG}}(n)) WHEN activeLow = 1 ELSE {{insG}}(n);
+             {{outsB}}(n) <= NOT({{insB}}(n)) WHEN activeLow = 1 ELSE {{insB}}(n);
+          END GENERATE;
+          """);
     } else {
-      contents.addLines(
-          "genvar i;",
-          "generate",
-          "   for (i = 0; i < nrOfLeds; i = i + 1)",
-          "   begin:outputs",
-          "      assign {{outsR}}[i] = (activeLow == 1) ? ~{{insR}}[n] : {{insR}}[n];",
-          "      assign {{outsG}}[i] = (activeLow == 1) ? ~{{insG}}[n] : {{insG}}[n];",
-          "      assign {{outsB}}[i] = (activeLow == 1) ? ~{{insB}}[n] : {{insB}}[n];",
-          "   end",
-          "endgenerate");
+      contents.add("""
+          genvar i;
+          generate
+             for (i = 0; i < nrOfLeds; i = i + 1)
+             begin:outputs
+                assign {{outsR}}[i] = (activeLow == 1) ? ~{{insR}}[n] : {{insR}}[n];
+                assign {{outsG}}[i] = (activeLow == 1) ? ~{{insG}}[n] : {{insG}}[n];
+                assign {{outsB}}[i] = (activeLow == 1) ? ~{{insB}}[n] : {{insB}}[n];
+             end
+          endgenerate
+          """);
     }
     return contents.getWithIndent(3);
   }

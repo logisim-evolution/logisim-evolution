@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -21,7 +21,7 @@ public class PrefMonitorBooleanConvert extends PrefMonitorBoolean {
 
   private final ArrayList<ConvertEventListener> myListeners = new ArrayList<>();
 
-  PrefMonitorBooleanConvert(String name, boolean dflt) {
+  public PrefMonitorBooleanConvert(String name, boolean dflt) {
     super(name, dflt);
   }
 

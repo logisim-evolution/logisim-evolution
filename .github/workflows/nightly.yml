@@ -17,9 +17,9 @@ on:
   # Keep it disabled once it's merged into main branch as we only
   # want "schedule" to be the trigger.
   # NOTE: remove `if` condition marked with `HACK` once merged.
-  pull_request:
-    branches: [ develop ]
-    types: [ closed ]
+  # pull_request:
+  #  branches: [ develop ]
+  #  types: [ closed ]
   schedule:
     # every day at midnight
     - cron: "0 0 * * *"
@@ -34,7 +34,7 @@ jobs:
 
     # HACK: Temporary workaround for `schedule` not working outside main
     # branch and lack of `type: merged` for `pull_request` trigger.
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
 
     # Export build vars so other steps can use it.
     outputs:
@@ -65,8 +65,6 @@ jobs:
 
           # Get SHA of last commit in that branch.
           declare -r last_commit_sha="$(git rev-parse HEAD)"
-
-          echo x1
 
           # Let's see if we have any commits in last 24 hours.
           if [[ -n "$(git rev-list --after="24 hours" ${last_commit_sha})" ]]; then
@@ -213,7 +211,6 @@ jobs:
           set -euo pipefail
 
           chmod +x gradlew
-          set JAVA_HOME="${JAVA_HOME_${{ env.JDK_VERSION }}_X64}"
           ./gradlew createDmg -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload DMG'

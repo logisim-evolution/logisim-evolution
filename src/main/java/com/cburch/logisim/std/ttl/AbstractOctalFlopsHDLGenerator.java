@@ -67,24 +67,25 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     return (new LineBuffer())
-        .addLines(
-            "enable <= tick and NOT(nCLKen);",
-            "nexts  <= D7&D6&D5&D4&D3&D2&D1&D0 WHEN enable = '1' ELSE state;",
-            "Q0     <= state(0);",
-            "Q1     <= state(1);",
-            "Q2     <= state(2);",
-            "Q3     <= state(3);",
-            "Q4     <= state(4);",
-            "Q5     <= state(5);",
-            "Q6     <= state(6);",
-            "Q7     <= state(7);",
-            "",
-            "dffs : PROCESS( CLK , nCLR ) IS",
-            "   BEGIN",
-            "      IF (nCLR = '1') THEN state <= (OTHERS => '0');",
-            "      ELSIF (rising_edge(CLK)) THEN state <= nexts;",
-            "      END IF;",
-            "   END PROCESS dffs;")
+        .add("""
+            enable <= tick and NOT(nCLKen);
+            nexts  <= D7&D6&D5&D4&D3&D2&D1&D0 WHEN enable = '1' ELSE state;
+            Q0     <= state(0);
+            Q1     <= state(1);
+            Q2     <= state(2);
+            Q3     <= state(3);
+            Q4     <= state(4);
+            Q5     <= state(5);
+            Q6     <= state(6);
+            Q7     <= state(7);
+            
+            dffs : PROCESS( CLK , nCLR ) IS
+               BEGIN
+                  IF (nCLR = '1') THEN state <= (OTHERS => '0');
+                  ELSIF (rising_edge(CLK)) THEN state <= nexts;
+                  END IF;
+               END PROCESS dffs; 
+            """)
         .getWithIndent();
   }
 

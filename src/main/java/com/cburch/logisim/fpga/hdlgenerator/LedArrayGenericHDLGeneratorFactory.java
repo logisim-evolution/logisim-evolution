@@ -1,3 +1,12 @@
+/*
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
+ *
+ * https://github.com/logisim-evolution/
+ *
+ * This is free software released under GNU GPLv3 license
+ */
+
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.util.LineBuffer;
@@ -285,10 +294,11 @@ public class LedArrayGenericHDLGeneratorFactory {
     for (var pin = 0; pin < array.getNrOfPins(); pin++) {
       connections.pair("pin", pin);
       if (!array.pinIsMapped(pin)) {
-        connections.addLines(
-            "{{assign}} s_{{insR}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};",
-            "{{assign}} s_{{insG}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};",
-            "{{assign}} s_{{insB}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};");
+        connections.add("""
+            {{assign}} s_{{insR}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};
+            {{assign}} s_{{insG}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};
+            {{assign}} s_{{insB}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};
+            """);
       } else {
         final var map = array.getPinMap(pin);
         if (map.getComponentFactory() instanceof RgbLed) {
@@ -296,10 +306,11 @@ public class LedArrayGenericHDLGeneratorFactory {
               .pair("mapR", map.getHdlSignalName(RgbLed.RED))
               .pair("mapG", map.getHdlSignalName(RgbLed.GREEN))
               .pair("mapB", map.getHdlSignalName(RgbLed.BLUE))
-              .addLines(
-                  "{{assign}} s_{{insR}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{mapR}};",
-                  "{{assign}} s_{{insG}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{mapG}};",
-                  "{{assign}} s_{{insB}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{mapB}};");
+              .add("""
+                  {{assign}} s_{{insR}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{mapR}};
+                  {{assign}} s_{{insG}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{mapG}};
+                  {{assign}} s_{{insB}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{mapB}};
+                  """);
         } else if (map.getAttributeSet().containsAttribute(IoLibrary.ATTR_ON_COLOR)
             && map.getAttributeSet().containsAttribute(IoLibrary.ATTR_OFF_COLOR)) {
 

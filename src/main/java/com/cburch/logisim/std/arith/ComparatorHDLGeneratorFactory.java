@@ -49,37 +49,41 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
       if (nrOfBits == 1) {
-        Contents.addLines(
-            "A_EQ_B <= DataA XNOR DataB;",
-            "A_LT_B <= DataA AND NOT(DataB) WHEN {{twosComplement}} = 1 ELSE NOT(DataA) AND DataB;",
-            "A_GT_B <= NOT(DataA) AND DataB WHEN {{twosComplement}} = 1 ELSE DataA AND NOT(DataB);");
+        Contents.add("""
+            A_EQ_B <= DataA XNOR DataB;
+            A_LT_B <= DataA AND NOT(DataB) WHEN {{twosComplement}} = 1 ELSE NOT(DataA) AND DataB;
+            A_GT_B <= NOT(DataA) AND DataB WHEN {{twosComplement}} = 1 ELSE DataA AND NOT(DataB);
+            """);
       } else {
-        Contents.addLines(
-            "s_signed_less <= '1' WHEN signed(DataA) < signed(DataB) ELSE '0';",
-            "s_unsigned_less <= '1' WHEN unsigned(DataA) < unsigned(DataB) ELSE '0';",
-            "s_signed_greater <= '1' WHEN signed(DataA) > signed(DataB) ELSE '0';",
-            "s_unsigned_greater <= '1' WHEN unsigned(DataA) > unsigned(DataB) ELSE '0';",
-            "",
-            "A_EQ_B <= '1' WHEN DataA = DataB ELSE '0';",
-            "A_GT_B <= s_signed_greater WHEN {{twosComplement}} = 1 ELSE s_unsigned_greater;",
-            "A_LT_B <= s_signed_less    WHEN {{TwosComplement}} = 1 ELSE s_unsigned_less;");
+        Contents.add("""
+            s_signed_less <= '1' WHEN signed(DataA) < signed(DataB) ELSE '0';
+            s_unsigned_less <= '1' WHEN unsigned(DataA) < unsigned(DataB) ELSE '0';
+            s_signed_greater <= '1' WHEN signed(DataA) > signed(DataB) ELSE '0';
+            s_unsigned_greater <= '1' WHEN unsigned(DataA) > unsigned(DataB) ELSE '0';
+            "
+            A_EQ_B <= '1' WHEN DataA = DataB ELSE '0';
+            A_GT_B <= s_signed_greater WHEN {{twosComplement}} = 1 ELSE s_unsigned_greater;
+            A_LT_B <= s_signed_less    WHEN {{TwosComplement}} = 1 ELSE s_unsigned_less;
+            """);
       }
     } else {
       if (nrOfBits == 1) {
-        Contents.addLines(
-            "assign A_EQ_B = (DataA == DataB);",
-            "assign A_LT_B = (DataA < DataB);",
-            "assign A_GT_B = (DataA > DataB);");
+        Contents.add("""
+            assign A_EQ_B = (DataA == DataB);
+            assign A_LT_B = (DataA < DataB);
+            assign A_GT_B = (DataA > DataB); 
+            """);
       } else {
-        Contents.addLines(
-            "assign s_signed_less = ($signed(DataA) < $signed(DataB));",
-            "assign s_unsigned_less = (DataA < DataB);",
-            "assign s_signed_greater = ($signed(DataA) > $signed(DataB));",
-            "assign s_unsigned_greater = (DataA > DataB);",
-            "",
-            "assign A_EQ_B = (DataA == DataB);",
-            "assign A_GT_B = ({{twosComplement}}==1) ? s_signed_greater : s_unsigned_greater;",
-            "assign A_LT_B = ({{twosComplement}}==1) ? s_signed_less : s_unsigned_less;");
+        Contents.add("""
+            assign s_signed_less = ($signed(DataA) < $signed(DataB));
+            assign s_unsigned_less = (DataA < DataB);
+            assign s_signed_greater = ($signed(DataA) > $signed(DataB));
+            assign s_unsigned_greater = (DataA > DataB);
+            
+            assign A_EQ_B = (DataA == DataB);
+            assign A_GT_B = ({{twosComplement}}==1) ? s_signed_greater : s_unsigned_greater;
+            assign A_LT_B = ({{twosComplement}}==1) ? s_signed_less : s_unsigned_less;
+            """);
       }
     }
     return Contents.getWithIndent();
