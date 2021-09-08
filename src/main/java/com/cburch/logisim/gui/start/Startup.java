@@ -143,7 +143,6 @@ public class Startup implements AWTEventListener {
   private static final String ARG_HELP_LONG = "help";
   private static final String ARG_VERSION_SHORT = "v";
   private static final String ARG_VERSION_LONG = "version";
-
   private static final String ARG_TTY_SHORT = "t";
   private static final String ARG_TTY_LONG = "tty";
   private static final String ARG_TEST_FGPA_SHORT = "f";
@@ -655,12 +654,14 @@ public class Startup implements AWTEventListener {
       startup.testCircuitHdlOnly = true;
       return RC.OK;
     }
+
     try {
       startup.testTickFrequency = Integer.parseUnsignedInt(argVal);
       return RC.OK;
     } catch (NumberFormatException ex) {
-      logger.error(S.get("argTestInvalidArguments"));
+      logger.error(S.get("argTestInvalidTickFrequency", String.valueOf(argVal)));
     }
+
     return RC.QUIT;
   }
 
@@ -683,8 +684,15 @@ public class Startup implements AWTEventListener {
     startup.testCircuitImpName = optArgs[1];
     startup.testCircuitImpBoard = optArgs[2];
 
-    if (argsCnt >= 4) handleArgTestFpgaParseArg(startup, optArgs[3]);
-    if (argsCnt >= 5) handleArgTestFpgaParseArg(startup, optArgs[4]);
+    var handlerRc = RC.OK;
+    if (argsCnt >= 4) {
+      handlerRc = handleArgTestFpgaParseArg(startup, optArgs[3]);
+      if (handlerRc == RC.QUIT) return handlerRc;
+    }
+    if (argsCnt >= 5) {
+      handlerRc = handleArgTestFpgaParseArg(startup, optArgs[4]);
+      if (handlerRc == RC.QUIT) return handlerRc;
+    }
 
     startup.doFpgaDownload = true;
     startup.showSplash = false;
