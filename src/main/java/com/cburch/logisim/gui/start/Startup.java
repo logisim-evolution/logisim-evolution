@@ -654,12 +654,14 @@ public class Startup implements AWTEventListener {
       startup.testCircuitHdlOnly = true;
       return RC.OK;
     }
+
     try {
       startup.testTickFrequency = Integer.parseUnsignedInt(argVal);
       return RC.OK;
     } catch (NumberFormatException ex) {
-      logger.error(S.get("argTestInvalidArguments"));
+      logger.error(S.get("argTestInvalidTickFrequency"));
     }
+
     return RC.QUIT;
   }
 
