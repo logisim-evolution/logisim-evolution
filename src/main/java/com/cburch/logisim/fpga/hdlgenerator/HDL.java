@@ -92,7 +92,7 @@ public abstract class HDL {
             + typecast(signalOne, signed)
             + (equal ? ">=" : ">")
             + typecast(signalTwo, signed)
-            + (isVHDL()? ")" : "");
+            + (isVHDL() ? ")" : "");
   }
 
   public static String lessOperator(String signalOne, String signalTwo, boolean signed, boolean equal) {
@@ -100,7 +100,7 @@ public abstract class HDL {
             + typecast(signalOne, signed)
             + (equal ? "<=" : "<")
             + typecast(signalTwo, signed)
-            + (isVHDL()? ")" : "");
+            + (isVHDL() ? ")" : "");
   }
 
   public static String leqOperator(String signalOne, String signalTwo, boolean signed) {
@@ -127,12 +127,20 @@ public abstract class HDL {
     return isVHDL() ? " XOR " : "^";
   }
 
-  public static String modOperator(String signalOne, String signalTwo, boolean signed) {
+  public static String addOperator(String signalOne, String signalTwo, boolean signed) {
     return (isVHDL() ? "STD_LOGIC_VECTOR(" : "")
             + typecast(signalOne, signed)
-            + (isVHDL() ? " REM " : "%")
+            + " + "
             + typecast(signalTwo, signed)
-            + (isVHDL()? ")" : "");
+            + (isVHDL() ? ")" : "");
+  }
+  
+  public static String subOperator(String signalOne, String signalTwo, boolean signed) {
+    return (isVHDL() ? "STD_LOGIC_VECTOR(" : "")
+            + typecast(signalOne, signed)
+            + " - "
+            + typecast(signalTwo, signed)
+            + (isVHDL() ? ")" : "");
   }
 
   public static String shiftlOperator(String signal, String nrOfBits, boolean arithmetic) {
