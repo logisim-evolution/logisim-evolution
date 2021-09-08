@@ -65,12 +65,12 @@ public class WithSelectHDLGenerator {
     return this;
   }
   
-  public WithSelectHDLGenerator addDefault(Long assignValue) {
+  public WithSelectHDLGenerator setDefault(Long assignValue) {
     defaultValue = assignValue;
     return this;
   }
   
-  public WithSelectHDLGenerator addDefault(String binairyAssignValue) {
+  public WithSelectHDLGenerator setDefault(String binairyAssignValue) {
     defaultValue = binairyStringToInt(binairyAssignValue);
     return this;
   }

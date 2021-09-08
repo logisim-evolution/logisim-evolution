@@ -51,7 +51,7 @@ public class HexDigitHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
           .add(12L, "0111001")
           .add(13L, "1011110")
           .add(14L, "1111001")
-          .addDefault("1110001");
+          .setDefault("1110001");
       contents.add(generator.getHdlCode());
     } else {
       contents.add("{{assign}} {{sigName}} {{=}} {{1}};", HDL.GetZeroVector(7, true));
