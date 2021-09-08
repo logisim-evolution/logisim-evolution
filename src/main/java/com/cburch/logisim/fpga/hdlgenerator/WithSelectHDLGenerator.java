@@ -46,20 +46,24 @@ public class WithSelectHDLGenerator {
     return result;
   }
   
-  public void add(int selectValue, int assignValue) {
+  public WithSelectHDLGenerator add(int selectValue, int assignValue) {
     myCases.put(selectValue, assignValue);
+    return this;
   }
   
-  public void add(int selectValue, String binairyAssignValue) {
+  public WithSelectHDLGenerator add(int selectValue, String binairyAssignValue) {
     myCases.put(selectValue, binairyStringToInt(binairyAssignValue));
+    return this;
   }
   
-  public void add(String binairySelectValue, String binairyAssignValue) {
+  public WithSelectHDLGenerator add(String binairySelectValue, String binairyAssignValue) {
     myCases.put(binairyStringToInt(binairySelectValue), binairyStringToInt(binairyAssignValue));
+    return this;
   }
   
-  public void add(String binairySelectValue, int assignValue) {
+  public WithSelectHDLGenerator add(String binairySelectValue, int assignValue) {
     myCases.put(binairyStringToInt(binairySelectValue), assignValue);
+    return this;
   }
   
   public ArrayList<String> getHdlCode() {

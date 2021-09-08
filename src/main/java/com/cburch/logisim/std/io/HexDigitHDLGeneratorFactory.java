@@ -34,24 +34,24 @@ public class HexDigitHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
             .pair("dpName", HDL.getNetName(componentInfo, HexDigit.DP, true, nets));
     contents.add("");
     if (componentInfo.isEndConnected(HexDigit.HEX)) {
-      final var generator = new WithSelectHDLGenerator(componentInfo.getComponent().getAttributeSet().getValue(StdAttr.LABEL),
-          HDL.getBusName(componentInfo, HexDigit.HEX, nets), 4, signalName, 7);
-      generator.add(0, "0111111");
-      generator.add(1, "0000110");
-      generator.add(2, "1011011");
-      generator.add(3, "1001111");
-      generator.add(4, "1100110");
-      generator.add(5, "1101101");
-      generator.add(6, "1111101");
-      generator.add(7, "0000111");
-      generator.add(8, "1111111");
-      generator.add(9, "1100111");
-      generator.add(10, "1110111");
-      generator.add(11, "1111100");
-      generator.add(12, "0111001");
-      generator.add(13, "1011110");
-      generator.add(14, "1111001");
-      generator.add(WithSelectHDLGenerator.OTHERS_INDEX, "1110001");
+      final var generator = (new WithSelectHDLGenerator(componentInfo.getComponent().getAttributeSet().getValue(StdAttr.LABEL),
+          HDL.getBusName(componentInfo, HexDigit.HEX, nets), 4, signalName, 7))
+          .add(0, "0111111")
+          .add(1, "0000110")
+          .add(2, "1011011")
+          .add(3, "1001111")
+          .add(4, "1100110")
+          .add(5, "1101101")
+          .add(6, "1111101")
+          .add(7, "0000111")
+          .add(8, "1111111")
+          .add(9, "1100111")
+          .add(10, "1110111")
+          .add(11, "1111100")
+          .add(12, "0111001")
+          .add(13, "1011110")
+          .add(14, "1111001")
+          .add(WithSelectHDLGenerator.OTHERS_INDEX, "1110001");
       contents.add(generator.getHdlCode());
     } else {
       contents.add("{{assign}} {{sigName}} {{=}} {{1}};", HDL.GetZeroVector(7, true));
