@@ -659,7 +659,7 @@ public class Startup implements AWTEventListener {
       startup.testTickFrequency = Integer.parseUnsignedInt(argVal);
       return RC.OK;
     } catch (NumberFormatException ex) {
-      logger.error(S.get("argTestInvalidTickFrequency"));
+      logger.error(S.get("argTestInvalidTickFrequency", String.valueOf(argVal)));
     }
 
     return RC.QUIT;
@@ -684,8 +684,15 @@ public class Startup implements AWTEventListener {
     startup.testCircuitImpName = optArgs[1];
     startup.testCircuitImpBoard = optArgs[2];
 
-    if (argsCnt >= 4) handleArgTestFpgaParseArg(startup, optArgs[3]);
-    if (argsCnt >= 5) handleArgTestFpgaParseArg(startup, optArgs[4]);
+    var handlerRc = RC.OK;
+    if (argsCnt >= 4) {
+      handlerRc = handleArgTestFpgaParseArg(startup, optArgs[3]);
+      if (handlerRc == RC.QUIT) return handlerRc;
+    }
+    if (argsCnt >= 5) {
+      handlerRc = handleArgTestFpgaParseArg(startup, optArgs[4]);
+      if (handlerRc == RC.QUIT) return handlerRc;
+    }
 
     startup.doFpgaDownload = true;
     startup.showSplash = false;
