@@ -81,24 +81,26 @@ public abstract class HDL {
     return isVHDL() ? " \\= " : "!=";
   }
 
+  private static String typecast(String signal, boolean signed) {
+    return isVHDL()
+                ? (signed ? "SIGNED" : "UNSIGNED") + "(" + signal + ")"
+                : (signed ? "$signed(" + signal + ")" : signal);
+  }
+
   public static String greaterOperator(String signalOne, String signalTwo, boolean signed, boolean equal) {
-    return (isVHDL()
-                ? "STD_LOGIC_VECTOR(" + (signed ? "SIGNED" : "UNSIGNED") + "(" + signalOne + ")"
-                : (signed ? "$signed(" + signalOne + ")" : signalOne))
+    return (isVHDL() ? "STD_LOGIC_VECTOR(" : "")
+            + typecast(signalOne, signed)
             + (equal ? ">=" : ">")
-            + (isVHDL()
-                ? (signed ? "SIGNED" : "UNSIGNED") + "(" + signalTwo + "))"
-                : (signed ? "$signed(" + signalTwo + ")" : signalTwo));
+            + typecast(signalTwo, signed)
+            + (isVHDL()? ")" : "");
   }
 
   public static String lessOperator(String signalOne, String signalTwo, boolean signed, boolean equal) {
-    return (isVHDL()
-                ? "STD_LOGIC_VECTOR(" + (signed ? "SIGNED" : "UNSIGNED") + "(" + signalOne + ")"
-                : (signed ? "$signed(" + signalOne + ")" : signalOne))
+    return (isVHDL() ? "STD_LOGIC_VECTOR(" : "")
+            + typecast(signalOne, signed)
             + (equal ? "<=" : "<")
-            + (isVHDL()
-                ? (signed ? "SIGNED" : "UNSIGNED") + "(" + signalTwo + "))"
-                : (signed ? "$signed(" + signalTwo + ")" : signalTwo));
+            + typecast(signalTwo, signed)
+            + (isVHDL()? ")" : "");
   }
 
   public static String leqOperator(String signalOne, String signalTwo, boolean signed) {
@@ -126,22 +128,20 @@ public abstract class HDL {
   }
 
   public static String modOperator(String signalOne, String signalTwo, boolean signed) {
-    return (isVHDL()
-                ? "STD_LOGIC_VECTOR(" + (signed ? "SIGNED" : "UNSIGNED") + "(" + signalOne + ")"
-                : (signed ? "$signed(" + signalOne + ")" : signalOne))
+    return (isVHDL() ? "STD_LOGIC_VECTOR(" : "")
+            + typecast(signalOne, signed)
             + (isVHDL() ? " REM " : "%")
-            + (isVHDL()
-                ? (signed ? "SIGNED" : "UNSIGNED") + "(" + signalTwo + "))"
-                : (signed ? "$signed(" + signalTwo + ")" : signalTwo));
+            + typecast(signalTwo, signed)
+            + (isVHDL()? ")" : "");
   }
 
   public static String shiftlOperator(String signal, String nrOfBits, boolean arithmetic) {
-    return isVHDL() ? "STD_LOGIC_VECTOR(SHIFT_LEFT(" + (arithmetic ? "SIGNED(" : "UNSIGNED(") + signal + "), " + nrOfBits + "))"
+    return isVHDL() ? "STD_LOGIC_VECTOR(SHIFT_LEFT(" + typecast(signal, arithmetic) + ", " + nrOfBits + "))"
                     : "(" + signal + (arithmetic ? " <<< " : " << ") + nrOfBits + ")";
   }
   
   public static String shiftrOperator(String signal, String nrOfBits, boolean arithmetic) {
-    return isVHDL() ? "STD_LOGIC_VECTOR(SHIFT_RIGHT(" + (arithmetic ? "SIGNED(" : "UNSIGNED(") + signal + "), " + nrOfBits + "))"
+    return isVHDL() ? "STD_LOGIC_VECTOR(SHIFT_RIGHT(" + typecast(signal, arithmetic) + ", " + nrOfBits + "))"
                     : "(" + signal + (arithmetic ? " >>> " : " >> ") + nrOfBits + ")";
   }
 
