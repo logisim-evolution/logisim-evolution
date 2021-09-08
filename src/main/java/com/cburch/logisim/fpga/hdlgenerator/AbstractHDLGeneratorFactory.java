@@ -1183,11 +1183,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return false;
   }
 
-  @Override
-  public boolean IsOnlyInlined(IOComponentTypes map) {
-    return true;
-  }
-
   public static ArrayList<String> GetToplevelCode(MapComponent Component) {
     var temp = new StringBuffer();
     var contents = new ArrayList<String>();
