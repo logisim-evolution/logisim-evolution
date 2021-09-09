@@ -10,6 +10,7 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.LineBuffer;
 
 public abstract class HDL {
 
@@ -46,7 +47,8 @@ public abstract class HDL {
   }
 
   public static String startIf(String condition) {
-    return isVHDL() ? "IF (" + condition + ") THEN" : "if (" + condition + ") begin";
+    return isVHDL() ? LineBuffer.format("IF ({{1}}) THEN", condition)
+                    : LineBuffer.format("if ({{1}}) begin", condition);
   }
 
   // TODO find good name
@@ -57,8 +59,8 @@ public abstract class HDL {
   */
 
   public static String elseIf(String condition) {
-    return isVHDL() ? "ELSIF (" + condition + ") THEN"
-                    : "end else if (" + condition + ") begin";
+    return isVHDL() ? LineBuffer.format("ELSIF ({{1}}) THEN", condition)
+                    : LineBuffer.format("end else if ({{1}}) begin", condition);
   }
 
   public static String endIf() {
@@ -83,24 +85,16 @@ public abstract class HDL {
 
   private static String typecast(String signal, boolean signed) {
     return isVHDL()
-                ? (signed ? "SIGNED" : "UNSIGNED") + "(" + signal + ")"
+                ? LineBuffer.format("{{1}}signed({{2}})", signed ? "" : "un", signal)
                 : (signed ? "$signed(" + signal + ")" : signal);
   }
 
   public static String greaterOperator(String signalOne, String signalTwo, boolean signed, boolean equal) {
-    return (isVHDL() ? "STD_LOGIC_VECTOR(" : "")
-            + typecast(signalOne, signed)
-            + (equal ? ">=" : ">")
-            + typecast(signalTwo, signed)
-            + (isVHDL() ? ")" : "");
+    return LineBuffer.format("{{1}} >{{2}} {{3}}", typecast(signalOne, signed), equal ? "=" : "", typecast(signalTwo, signed));
   }
 
   public static String lessOperator(String signalOne, String signalTwo, boolean signed, boolean equal) {
-    return (isVHDL() ? "STD_LOGIC_VECTOR(" : "")
-            + typecast(signalOne, signed)
-            + (equal ? "<=" : "<")
-            + typecast(signalTwo, signed)
-            + (isVHDL() ? ")" : "");
+    return LineBuffer.format("{{1}} <{{2}} {{3}}", typecast(signalOne, signed), equal ? "=" : "", typecast(signalTwo, signed));
   }
 
   public static String leqOperator(String signalOne, String signalTwo, boolean signed) {
@@ -109,6 +103,11 @@ public abstract class HDL {
   
   public static String geqOperator(String signalOne, String signalTwo, boolean signed) {
     return greaterOperator(signalOne, signalTwo, signed, true);
+  }
+
+  public static String risingEdge(String signal) {
+    return isVHDL() ? "rising_edge(" + signal + ")"
+                    : "posedge " + signal;
   }
 
   public static String notOperator() {
@@ -128,7 +127,7 @@ public abstract class HDL {
   }
 
   public static String addOperator(String signalOne, String signalTwo, boolean signed) {
-    return (isVHDL() ? "STD_LOGIC_VECTOR(" : "")
+    return (isVHDL() ? "std_logic_vector(" : "")
             + typecast(signalOne, signed)
             + " + "
             + typecast(signalTwo, signed)
@@ -136,52 +135,57 @@ public abstract class HDL {
   }
   
   public static String subOperator(String signalOne, String signalTwo, boolean signed) {
-    return (isVHDL() ? "STD_LOGIC_VECTOR(" : "")
+    return (isVHDL() ? "std_logic_vector(" : "")
             + typecast(signalOne, signed)
             + " - "
             + typecast(signalTwo, signed)
             + (isVHDL() ? ")" : "");
   }
 
-  public static String shiftlOperator(String signal, String nrOfBits, boolean arithmetic) {
-    return isVHDL() ? "STD_LOGIC_VECTOR(SHIFT_LEFT(" + typecast(signal, arithmetic) + ", " + nrOfBits + "))"
-                    : "(" + signal + (arithmetic ? " <<< " : " << ") + nrOfBits + ")";
+  public static String shiftlOperator(String signal, int with, int nrOfBits, boolean arithmetic) {
+    if (nrOfBits == 0)
+      return signal;
+    return isVHDL() ? LineBuffer.format("{{1}}{{2}} & {{4}}{{3}}{{4}}", signal, splitVector(with - 1 - nrOfBits, 0), "0".repeat(nrOfBits), nrOfBits == 1 ? "'" : "\"")
+                    : LineBuffer.format("{{{1}}{{2}},{{{3}}{1'b0}}}", signal, splitVector(with - 1 - nrOfBits, 0), nrOfBits);
   }
   
-  public static String shiftrOperator(String signal, String nrOfBits, boolean arithmetic) {
-    return isVHDL() ? "STD_LOGIC_VECTOR(SHIFT_RIGHT(" + typecast(signal, arithmetic) + ", " + nrOfBits + "))"
-                    : "(" + signal + (arithmetic ? " >>> " : " >> ") + nrOfBits + ")";
+  public static String shiftrOperator(String signal, int with,int nrOfBits, boolean arithmetic) {
+    if (nrOfBits == 0)
+      return signal;
+    if(arithmetic) {
+      // TODO
+      return "";
+    } else {
+      return isVHDL()
+        ? LineBuffer.format("{{1}}{{2}}{{1}} & {{3}}{{4}", nrOfBits == 1 ? "'" : "\"", "0".repeat(nrOfBits), signal, splitVector(with - 1, with - nrOfBits))
+        : LineBuffer.format("{{{{1}}{1'b0}},{{2}}{{3}}}", with, signal, splitVector(with - 1, with - nrOfBits));
+    }
   }
 
-  public static String sllOperator(String signal, String nrOfBits) {
-    return shiftlOperator(signal, nrOfBits, false);
+  public static String sllOperator(String signal, int with, int nrOfBits) {
+    return shiftlOperator(signal, with, nrOfBits, false);
   }
 
-  public static String slaOperator(String signal, String nrOfBits) {
-    return shiftlOperator(signal, nrOfBits, true);
+  public static String slaOperator(String signal, int with, int nrOfBits) {
+    return shiftlOperator(signal, with, nrOfBits, true);
   }
 
-  public static String srlOperator(String signal, String nrOfBits) {
-    return shiftlOperator(signal, nrOfBits, false);
+  public static String srlOperator(String signal, int with, int nrOfBits) {
+    return shiftlOperator(signal, with, nrOfBits, false);
   }
   
-  public static String sraOperator(String signal, String nrOfBits) {
-    return shiftlOperator(signal, nrOfBits, true);
+  public static String sraOperator(String signal, int with, int nrOfBits) {
+    return shiftlOperator(signal, with, nrOfBits, true);
   }
 
-  public static String rolOperator(String signal, String nrOfBits) {
-    return isVHDL() ? "ROTATE_LEFT(" + signal + ", " + nrOfBits + ")"
-                    : "((" + signal + " << " + nrOfBits + ") | (" + signal + ">> -" + nrOfBits + "))";
+  public static String rolOperator(String signal, int with, int nrOfBits) {
+    return isVHDL() ? LineBuffer.format("{{1}}{{2}} & {{1}}{{3}}", signal, splitVector(with - 1 - nrOfBits, 0), splitVector(with - 1, with - nrOfBits))
+                    : LineBuffer.format("{{{1}}{{2}},{{1}}{{3}}}", signal, splitVector(with - 1 - nrOfBits, 0), splitVector(with - 1, with - nrOfBits));
   }
   
-  public static String rorOperator(String signal, String nrOfBits) {
-    return isVHDL() ? "ROTATE_RIGHT(" + signal + ", " + nrOfBits + ")"
-                    : "((" + signal + " >> " + nrOfBits + ") | (" + signal + "<< -" + nrOfBits + "))";
-  }
-
-  public static String risingEdge(String signal) {
-    return isVHDL() ? "RISING_EDGE(" + signal + ")"
-                    : "posedge " + signal;
+  public static String rorOperator(String signal, int with, int nrOfBits) {
+    return isVHDL() ? LineBuffer.format("{{1}}{{2}} & {{1}}{{3}}", signal, splitVector(nrOfBits, 0), splitVector(with - 1, nrOfBits))
+                    : LineBuffer.format("{{{1}}{{2}},{{1}}{{3}}}", signal, splitVector(nrOfBits, 0), splitVector(with - 1, nrOfBits));
   }
 
   public static String zeroBit() {
@@ -202,8 +206,8 @@ public abstract class HDL {
 
   public static String splitVector(int start, int end) {
     return isVHDL()
-                ? "(" + start + " DOWNTO " + end + ")"
-                : "[" + start + ":" + end + "]";
+                ? LineBuffer.format("({{1}} DOWNTO {{1}})", start, ende)
+                : LineBuffer.format("[{{1}}:{{2}}]", start, ende);
   }
 
   public static String GetZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
