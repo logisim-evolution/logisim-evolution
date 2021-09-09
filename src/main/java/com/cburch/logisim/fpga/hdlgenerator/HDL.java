@@ -149,10 +149,10 @@ public abstract class HDL {
                     : LineBuffer.format("{{{1}}{{2}},{{{3}}{1'b0}}}", signal, splitVector(with - 1 - nrOfBits, 0), nrOfBits);
   }
   
-  public static String shiftrOperator(String signal, int with,int nrOfBits, boolean arithmetic) {
+  public static String shiftrOperator(String signal, int with, int nrOfBits, boolean arithmetic) {
     if (nrOfBits == 0)
       return signal;
-    if(arithmetic) {
+    if (arithmetic) {
       // TODO
       return "";
     } else {
@@ -206,8 +206,8 @@ public abstract class HDL {
 
   public static String splitVector(int start, int end) {
     return isVHDL()
-                ? LineBuffer.format("({{1}} DOWNTO {{1}})", start, ende)
-                : LineBuffer.format("[{{1}}:{{2}}]", start, ende);
+                ? LineBuffer.format("({{1}} DOWNTO {{2}})", start, end)
+                : LineBuffer.format("[{{1}}:{{2}}]", start, end);
   }
 
   public static String GetZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
