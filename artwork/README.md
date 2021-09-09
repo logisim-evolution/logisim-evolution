@@ -29,13 +29,14 @@ must be rendered as image of 200 px height and proportional width (but less than
 When updating icons, the following locations currently hold a PNG copy of the icon:
 
 * in-app (LFrame) icon:
-  * src/main/resources/resources/logisim/img/logisim-icon-*.png
-* ijpackage:
-  * support/jpackage/linux/*.png
-  * support/jpackage/linux/*.icns
-  * support/jpackage/linux/*.ico
+  * `src/main/resources/resources/logisim/img/logisim-icon-*.png`
+* jpackage:
+  * `support/jpackage/linux/*.png`
+  * `support/jpackage/linux/*.icns`
+  * `support/jpackage/linux/*.ico`
 
-Also update images on Github:
+Also update configuration of Github repo and organization:
+
 * repo settings -> Options -> Social preview (upload 1280x640 rendition of main logo)
 * organization profile icon (use one of hi-res PNGs images from set of [in-app icons](..src/main/resources/resources/logisim/img/)).
 
