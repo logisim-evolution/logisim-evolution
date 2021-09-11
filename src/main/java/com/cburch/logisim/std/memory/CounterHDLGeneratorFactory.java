@@ -228,7 +228,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put(NrOfBitsStr, attrs.getValue(StdAttr.WIDTH).getWidth());
     map.put(MaxValStr, attrs.getValue(Counter.ATTR_MAX).intValue());
     var clkEdge = 1;
-    if (GetClockNetName(componentInfo, Counter.CK, nets).isEmpty()
+    if (HDL.getClockNetName(componentInfo, Counter.CK, nets).isEmpty()
         && attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING) clkEdge = 0;
     map.put(activeEdgeStr, clkEdge);
     map.put(modeStr, mode);
@@ -249,7 +249,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       map.put("GlobalClock", HDL.zeroBit());
       map.put("ClockEnable", HDL.zeroBit());
     } else {
-      final var clockNetName = GetClockNetName(componentInfo, Counter.CK, nets);
+      final var clockNetName = HDL.getClockNetName(componentInfo, Counter.CK, nets);
       if (clockNetName.isEmpty()) {
         map.putAll(GetNetMap("GlobalClock", true, componentInfo, Counter.CK, nets));
         map.put("ClockEnable", HDL.oneBit());

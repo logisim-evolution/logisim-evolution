@@ -67,7 +67,7 @@ public class VivadoDownload implements VendorDownload {
             + File.separator
             + "impl_1"
             + File.separator
-            + ToplevelHDLGeneratorFactory.FPGAToplevelName
+            + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME
             + ".bit";
     _bitStreamPath = _bitStreamPath.replace("\\", "/");
   }

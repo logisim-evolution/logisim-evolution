@@ -220,4 +220,22 @@ public abstract class HDL {
     return LineBuffer.format("{{1}}{{2}}", BUS_NAME, theNets.getNetId(ConnectedNet));
   }
 
+  public static String getClockNetName(NetlistComponent comp, int endIndex, Netlist theNets) {
+    var contents = new StringBuilder();
+    if ((theNets.getCurrentHierarchyLevel() != null) && (endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
+      final var endData = comp.getEnd(endIndex);
+      if (endData.getNrOfBits() == 1) {
+        final var ConnectedNet = endData.get((byte) 0).getParentNet();
+        final var ConnectedNetBitIndex = endData.get((byte) 0).getParentNetBitIndex();
+        /* Here we search for a clock net Match */
+        final var clocksourceid = theNets.getClockSourceId(
+            theNets.getCurrentHierarchyLevel(), ConnectedNet, ConnectedNetBitIndex);
+        if (clocksourceid >= 0) {
+          contents.append(HDLGeneratorFactory.CLOCK_TREE_NAME).append(clocksourceid);
+        }
+      }
+    }
+    return contents.toString();
+  }
+
 }

@@ -259,7 +259,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         map.put("Clock", HDL.zeroBit());
         map.put("Tick", HDL.zeroBit());
       } else {
-        final var clockNetName = GetClockNetName(comp, RamAppearance.getClkIndex(0, attrs), nets);
+        final var clockNetName = HDL.getClockNetName(comp, RamAppearance.getClkIndex(0, attrs), nets);
         if (clockNetName.isEmpty()) {
           map.putAll(GetNetMap("Clock", true, comp, RamAppearance.getClkIndex(0, attrs), nets));
           map.put("Tick", HDL.oneBit());

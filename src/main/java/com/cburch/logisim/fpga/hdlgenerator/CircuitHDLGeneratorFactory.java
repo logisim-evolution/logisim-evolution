@@ -248,7 +248,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             } else {
               OneLine.append(HDL.BUS_NAME).append(TheNets.getNetId(ThisNet));
             }
-            while (OneLine.length() < SallignmentSize) OneLine.append(" ");
+            while (OneLine.length() < SIGNAL_ALLIGNMENT_SIZE) OneLine.append(" ");
 
             Contents.addUnique(LineBuffer.format("   {{assign}} {{1}} {{=}} {{2}}{{3}}{{bracketOpen}}{{4}}{{bracketClose}};",
                 OneLine, HDL.BUS_NAME, TheNets.getNetId(Source.getParentNet()), Source.getParentNetBitIndex()));
@@ -261,7 +261,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 .append(HDL.BracketOpen())
                 .append(Source.getParentNetBitIndex())
                 .append(HDL.BracketClose());
-            while (OneLine.length() < SallignmentSize) OneLine.append(" ");
+            while (OneLine.length() < SIGNAL_ALLIGNMENT_SIZE) OneLine.append(" ");
             OneLine.append(HDL.assignOperator());
             if (ThisNet.isBus()) {
               OneLine.append(HDL.BUS_NAME)
@@ -286,9 +286,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     int InOutBubbles = MyNetList.numberOfInOutBubbles();
     if (InOutBubbles > 0) {
       if (InOutBubbles > 1) {
-        InOuts.put(HDLGeneratorFactory.LocalInOutBubbleBusname, InOutBubbles);
+        InOuts.put(LOCAL_INOUT_BUBBLE_BUS_NAME, InOutBubbles);
       } else {
-        InOuts.put(HDLGeneratorFactory.LocalInOutBubbleBusname, 0);
+        InOuts.put(LOCAL_INOUT_BUBBLE_BUS_NAME, 0);
       }
     }
     return InOuts;
@@ -298,7 +298,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, Integer> GetInputList(Netlist MyNetList, AttributeSet attrs) {
     SortedMap<String, Integer> Inputs = new TreeMap<>();
     for (int i = 0; i < MyNetList.numberOfClockTrees(); i++) {
-      Inputs.put(ClockTreeName + i, ClockHDLGeneratorFactory.NR_OF_CLOCK_BITS);
+      Inputs.put(CLOCK_TREE_NAME + i, ClockHDLGeneratorFactory.NR_OF_CLOCK_BITS);
     }
     if (MyNetList.requiresGlobalClockConnection()) {
       Inputs.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1);
@@ -306,9 +306,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     int InputBubbles = MyNetList.getNumberOfInputBubbles();
     if (InputBubbles > 0) {
       if (InputBubbles > 1) {
-        Inputs.put(HDLGeneratorFactory.LocalInputBubbleBusname, InputBubbles);
+        Inputs.put(LOCAL_INPUT_BUBBLE_BUS_NAME, InputBubbles);
       } else {
-        Inputs.put(HDLGeneratorFactory.LocalInputBubbleBusname, 0);
+        Inputs.put(LOCAL_INPUT_BUBBLE_BUS_NAME, 0);
       }
     }
     for (int i = 0; i < MyNetList.getNumberOfInputPorts(); i++) {
@@ -360,7 +360,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         }
         continue;
       }
-      final var clockNet = GetClockNetName(clockSource, 0, theNetlist);
+      final var clockNet = HDL.getClockNetName(clockSource, 0, theNetlist);
       if (clockNet.isEmpty()) {
         // FIXME: hardcoded string
         Reporter.Report.AddFatalError("INTERNAL ERROR: Cannot find clocknet!");
@@ -369,7 +369,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       temp.setLength(0);
       temp.append(ConnectedNet);
       // Padding
-      while (temp.length() < SallignmentSize) {
+      while (temp.length() < SIGNAL_ALLIGNMENT_SIZE) {
         temp.append(" ");
       }
       if (!theNetlist.requiresGlobalClockConnection()) {
@@ -487,7 +487,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var outputs = new TreeMap<String, Integer>();
     final var outputBubbles = myNetList.numberOfOutputBubbles();
     if (outputBubbles > 0) {
-      outputs.put(HDLGeneratorFactory.LocalOutputBubbleBusname, (outputBubbles == 1) ? 0 : outputBubbles);
+      outputs.put(LOCAL_OUTPUT_BUBBLE_BUS_NAME, (outputBubbles == 1) ? 0 : outputBubbles);
     }
 
     for (var i = 0; i < myNetList.numberOfOutputPorts(); i++) {
@@ -514,24 +514,20 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
     /* First we instantiate the Clock tree busses when present */
     for (var i = 0; i < myNetList.numberOfClockTrees(); i++) {
-      PortMap.put(ClockTreeName + i, Preamble + ClockTreeName + i);
+      PortMap.put(CLOCK_TREE_NAME + i, Preamble + CLOCK_TREE_NAME + i);
     }
     if (myNetList.requiresGlobalClockConnection()) {
       PortMap.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, TickComponentHDLGeneratorFactory.FPGA_CLOCK);
     }
     if (myNetList.getNumberOfInputBubbles() > 0) {
-      PortMap.put(
-          HDLGeneratorFactory.LocalInputBubbleBusname,
-          topLevel
-              ? Preamble + HDLGeneratorFactory.LocalInputBubbleBusname
-              : HDLGeneratorFactory.LocalInputBubbleBusname + GetBubbleIndex(componentInfo, 0));
+      // FIXME: remove + by concatination.
+      PortMap.put( LOCAL_INPUT_BUBBLE_BUS_NAME,
+          topLevel ? Preamble + LOCAL_INPUT_BUBBLE_BUS_NAME : LOCAL_INPUT_BUBBLE_BUS_NAME + GetBubbleIndex(componentInfo, 0));
     }
     if (myNetList.numberOfOutputBubbles() > 0) {
-      PortMap.put(
-          HDLGeneratorFactory.LocalOutputBubbleBusname,
-          topLevel
-              ? Preamble + HDLGeneratorFactory.LocalOutputBubbleBusname
-              : HDLGeneratorFactory.LocalOutputBubbleBusname + GetBubbleIndex(componentInfo, 1));
+      // FIXME: remove + by concatination.
+      PortMap.put( LOCAL_OUTPUT_BUBBLE_BUS_NAME,
+          topLevel ? Preamble + LOCAL_OUTPUT_BUBBLE_BUS_NAME : LOCAL_OUTPUT_BUBBLE_BUS_NAME + GetBubbleIndex(componentInfo, 1));
     }
 
     final var nrOfIOBubbles = myNetList.numberOfInOutBubbles();
@@ -559,8 +555,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             continue;
           }
           if (!map.isMapped(compPin) || map.IsOpenMapped(compPin)) {
+            // FIXME: rewrite using LineBuffer
             if (HDL.isVHDL())
-              PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname + "(" + i + ")", "OPEN");
+              PortMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME + "(" + i + ")", "OPEN");
             else {
               if (vector.length() != 0) vector.append(",");
               vector.append("OPEN"); // still not found the correct method but this seems to work
@@ -568,7 +565,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           } else {
             if (HDL.isVHDL())
               PortMap.put(
-                  HDLGeneratorFactory.LocalInOutBubbleBusname + "(" + i + ")",
+                  LOCAL_INOUT_BUBBLE_BUS_NAME + "(" + i + ")",
                   (map.isExternalInverted(compPin) ? "n_" : "") + map.getHdlString(compPin));
             else {
               if (vector.length() != 0) vector.append(",");
@@ -579,11 +576,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           }
         }
         if (HDL.isVerilog())
-          PortMap.put(HDLGeneratorFactory.LocalInOutBubbleBusname, vector.toString());
+          PortMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME, vector.toString());
       } else {
-        PortMap.put(
-            HDLGeneratorFactory.LocalInOutBubbleBusname,
-            HDLGeneratorFactory.LocalInOutBubbleBusname + GetBubbleIndex(componentInfo, 2));
+        PortMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME, LOCAL_INOUT_BUBBLE_BUS_NAME + GetBubbleIndex(componentInfo, 2));
       }
     }
 
@@ -689,7 +684,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         destination.append(portName);
         if (!comp.isEndConnected(endIndex)) return contents.toString();
       }
-      while (destination.length() < SallignmentSize) destination.append(" ");
+      while (destination.length() < SIGNAL_ALLIGNMENT_SIZE) destination.append(" ");
       contents
           .append(tab)
           .append(HDL.assignPreamble())
@@ -713,7 +708,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         // FIXME: hardcoded string
         Reporter.Report.AddSevereWarning("Found an unconnected output bus pin, tied all the pin bits to ground!");
         destination.append(portName);
-        while (destination.length() < SallignmentSize) destination.append(" ");
+        while (destination.length() < SIGNAL_ALLIGNMENT_SIZE) destination.append(" ");
         contents
             .append(tab)
             .append(HDL.assignPreamble())
@@ -737,7 +732,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             destination.append(portName);
             source.append(HDL.getBusNameContinues(comp, endIndex, TheNets));
           }
-          while (destination.length() < SallignmentSize) destination.append(" ");
+          while (destination.length() < SIGNAL_ALLIGNMENT_SIZE) destination.append(" ");
           contents
               .append(tab)
               .append(HDL.assignPreamble())
@@ -801,7 +796,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 }
               }
             }
-            while (destination.length() < SallignmentSize) destination.append(" ");
+            while (destination.length() < SIGNAL_ALLIGNMENT_SIZE) destination.append(" ");
             if (bit != 0) contents.append("\n");
             contents
                 .append(tab)

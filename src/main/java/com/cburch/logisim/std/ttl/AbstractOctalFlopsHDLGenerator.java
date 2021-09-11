@@ -106,7 +106,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
               + "\" has no clock connection");
       hasClock = false;
     }
-    String ClockNetName = GetClockNetName(comp, clockPinIndex, nets);
+    String ClockNetName = HDL.getClockNetName(comp, clockPinIndex, nets);
     if (ClockNetName.isEmpty()) {
       gatedClock = true;
     }

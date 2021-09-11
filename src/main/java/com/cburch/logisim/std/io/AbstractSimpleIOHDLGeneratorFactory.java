@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 
@@ -35,12 +34,12 @@ public class AbstractSimpleIOHDLGeneratorFactory extends InlinedHdlGeneratorFact
         contents.add("{{assign}} {{1}} {{=}} {{2}}{{3}}{{<}}{{4}}{{>}};",
             HDL.getNetName(componentInfo, i, true, nets),
             (pressPassive ? HDL.notOperator() : ""),
-            HDLGeneratorFactory.LocalInputBubbleBusname,
+            LOCAL_INPUT_BUBBLE_BUS_NAME,
             componentInfo.getLocalBubbleInputStartId() + i);
       }
       if (!isInputComponent) {
         contents.add("{{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}};",
-            HDLGeneratorFactory.LocalOutputBubbleBusname,
+            LOCAL_OUTPUT_BUBBLE_BUS_NAME,
             (componentInfo.getLocalBubbleOutputStartId() + i),
             HDL.getNetName(componentInfo, i, true, nets));
       }

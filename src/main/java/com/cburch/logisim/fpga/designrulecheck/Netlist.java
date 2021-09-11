@@ -22,7 +22,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.wiring.Clock;
@@ -2177,7 +2177,7 @@ public class Netlist {
       List<Set<NetlistComponent>> nonPinGatedComponents,
       Set<NetlistComponent> warnedComponents) {
     var isGatedClock = false;
-    final var clockNetName = AbstractHDLGeneratorFactory.GetClockNetName(comp, clockPinIndex, this);
+    final var clockNetName = HDL.getClockNetName(comp, clockPinIndex, this);
     if (clockNetName.isEmpty()) {
       /* we search for the source in case it is connected otherwise we ignore */
       final var connection = comp.getEnd(clockPinIndex).get((byte) 0);

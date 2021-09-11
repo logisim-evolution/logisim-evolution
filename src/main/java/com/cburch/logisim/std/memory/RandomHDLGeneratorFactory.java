@@ -232,7 +232,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(comp, Random.CK, Nets);
+    final var clockNetName = HDL.getClockNetName(comp, Random.CK, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
       Reporter.Report.AddError(

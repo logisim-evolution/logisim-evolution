@@ -15,7 +15,6 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 
@@ -54,7 +53,7 @@ public class DotMatrixHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
           final var wire = (rows == 1) ? HDL.getNetName(componentInfo, ledMatrixCol, true, netlist)
               : HDL.getBusEntryName(componentInfo, ledMatrixCol, true, dotMatrixRow, netlist);
           final var idx = (ledMatrixRow * cols) + ledMatrixCol + componentInfo.getLocalBubbleOutputStartId();
-          contents.add("{{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}};", HDLGeneratorFactory.LocalOutputBubbleBusname,
+          contents.add("{{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}};", LOCAL_OUTPUT_BUBBLE_BUS_NAME,
               idx, wire);
         }
       }
@@ -73,7 +72,7 @@ public class DotMatrixHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
           final var wire = (cols == 1) ? HDL.getNetName(componentInfo, ledMatrixRow, true, netlist)
               : HDL.getBusEntryName(componentInfo, ledMatrixRow, true, ledMatrixCol, netlist);
           final var idx = (ledMatrixRow * cols) + dotMatrixCol + componentInfo.getLocalBubbleOutputStartId();
-          contents.add("{{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}};", HDLGeneratorFactory.LocalOutputBubbleBusname,
+          contents.add("{{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}};", LOCAL_OUTPUT_BUBBLE_BUS_NAME,
               idx, wire);
         }
       }
@@ -94,7 +93,7 @@ public class DotMatrixHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
           final var colWire = (cols == 1) ? HDL.getNetName(componentInfo, 0, true, netlist)
               : HDL.getBusEntryName(componentInfo, 0, true, ledMatrixCol, netlist);
           final var idx = (ledMatrixRow * cols) + ledMatrixCol + componentInfo.getLocalBubbleOutputStartId();
-          contents.add("{{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}} {{and}} {{4}};", HDLGeneratorFactory.LocalOutputBubbleBusname,
+          contents.add("{{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}} {{and}} {{4}};", LOCAL_OUTPUT_BUBBLE_BUS_NAME,
               idx, rowWire, colWire);
         }
       }

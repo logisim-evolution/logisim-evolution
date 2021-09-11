@@ -103,7 +103,7 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(comp, ClockPinIndex, nets);
+    final var clockNetName = HDL.getClockNetName(comp, ClockPinIndex, nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }

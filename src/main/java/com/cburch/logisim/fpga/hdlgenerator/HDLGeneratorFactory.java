@@ -18,22 +18,15 @@ import java.util.Set;
 
 public interface HDLGeneratorFactory {
 
-  String VHDL = "VHDL";
-  String VERILOG = "Verilog";
-  int PallignmentSize = 26;
-  int SallignmentSize = 35;
-  String LocalInputBubbleBusname = "LOGISIM_INPUT_BUBBLES";
-  String LocalOutputBubbleBusname = "LOGISIM_OUTPUT_BUBBLES";
-  String LocalInOutBubbleBusname = "LOGISIM_INOUT_BUBBLES";
-  String FPGAToplevelName = "LogisimToplevelShell";
-  String InputBubblePortName = "LOGISIM_INPUT_BUBBLE_";
-  String OutputBubblePortName = "LOGISIM_OUTPUT_BUBBLE_";
-  String InOutBubblePortName = "LOGISIM_INOUTT_BUBBLE_";
-  String BusToBitAddendum = "_bit_";
-  String ClockTreeName = "LOGISIM_CLOCK_TREE_";
-  String FPGAInputPinName = "FPGA_INPUT_PIN";
-  String FPGAInOutPinName = "FPGA_INOUT_PIN";
-  String FPGAOutputPinName = "FPGA_OUTPUT_PIN";
+  public static final String CLOCK_TREE_NAME = "LOGISIM_CLOCK_TREE_";
+  public static final String VHDL = "VHDL";
+  public static final String VERILOG = "Verilog";
+  public static final String LOCAL_INPUT_BUBBLE_BUS_NAME = "LOGISIM_INPUT_BUBBLES";
+  public static final String LOCAL_OUTPUT_BUBBLE_BUS_NAME = "LOGISIM_OUTPUT_BUBBLES";
+  public static final String LOCAL_INOUT_BUBBLE_BUS_NAME = "LOGISIM_INOUT_BUBBLES";
+  public static final String FPGA_TOP_LEVEL_NAME = "LogisimToplevelShell";
+  public static final int PORT_ALLIGNMENT_SIZE = 26;
+  public static final int SIGNAL_ALLIGNMENT_SIZE = 35;
 
   boolean GenerateAllHDLDescriptions(
       Set<String> HandledComponents,

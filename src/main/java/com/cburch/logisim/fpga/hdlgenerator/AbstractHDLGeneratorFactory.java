@@ -62,8 +62,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return FileWriter.WriteContents(OutFile, Contents);
   }
 
-  public static final int MAX_LINE_LENGTH = 80;
-
   /* Here the common predefined methods are defined */
   @Override
   public boolean GenerateAllHDLDescriptions(
@@ -109,7 +107,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Contents.addRemarkBlock("Here all used signals are defined");
       for (final var wire : wires.keySet()) {
         OneLine.append(wire);
-        while (OneLine.length() < SallignmentSize) OneLine.append(" ");
+        while (OneLine.length() < SIGNAL_ALLIGNMENT_SIZE) OneLine.append(" ");
         OneLine.append(": std_logic");
         if (wires.get(wire) == 1) {
           OneLine.append(";");
@@ -132,7 +130,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
       for (final var reg : regs.keySet()) {
         OneLine.append(reg);
-        while (OneLine.length() < SallignmentSize) OneLine.append(" ");
+        while (OneLine.length() < SIGNAL_ALLIGNMENT_SIZE) OneLine.append(" ");
         OneLine.append(": std_logic");
         if (regs.get(reg) == 1) {
           OneLine.append(";");
@@ -160,7 +158,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
       for (final var Mem : mems.keySet()) {
         OneLine.append(Mem);
-        while (OneLine.length() < SallignmentSize) OneLine.append(" ");
+        while (OneLine.length() < SIGNAL_ALLIGNMENT_SIZE) OneLine.append(" ");
         OneLine.append(": ").append(GetType(mems.get(Mem))).append(";");
         Contents.add("   SIGNAL " + OneLine);
         OneLine.setLength(0);
@@ -369,26 +367,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return Contents.get();
   }
 
-  public static String GetClockNetName(NetlistComponent comp, int EndIndex, Netlist TheNets) {
-    var Contents = new StringBuilder();
-    if ((TheNets.getCurrentHierarchyLevel() != null)
-        && (EndIndex >= 0)
-        && (EndIndex < comp.nrOfEnds())) {
-      final var EndData = comp.getEnd(EndIndex);
-      if (EndData.getNrOfBits() == 1) {
-        final var ConnectedNet = EndData.get((byte) 0).getParentNet();
-        final var ConnectedNetBitIndex = EndData.get((byte) 0).getParentNetBitIndex();
-        /* Here we search for a clock net Match */
-        final var clocksourceid = TheNets.getClockSourceId(
-            TheNets.getCurrentHierarchyLevel(), ConnectedNet, ConnectedNetBitIndex);
-        if (clocksourceid >= 0) {
-          Contents.append(ClockTreeName).append(clocksourceid);
-        }
-      }
-    }
-    return Contents.toString();
-  }
-
   public ArrayList<String> GetComponentDeclarationSection(Netlist TheNetlist, AttributeSet attrs) {
     /*
      * This method returns all the component definitions used as component
@@ -443,7 +421,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             first = false;
           }
           OneLine.append(generic);
-          OneLine.append(" ".repeat(Math.max(0, SallignmentSize - generic.length())));
+          OneLine.append(" ".repeat(Math.max(0, SIGNAL_ALLIGNMENT_SIZE - generic.length())));
           OneLine.append("=> ").append(ParameterMap.get(generic));
         }
         OneLine.append(")");
@@ -466,7 +444,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             first = false;
           }
           OneLine.append(port);
-          OneLine.append(" ".repeat(Math.max(0, SallignmentSize - port.length())));
+          OneLine.append(" ".repeat(Math.max(0, SIGNAL_ALLIGNMENT_SIZE - port.length())));
           OneLine.append("=> ").append(PortMap.get(port));
         }
         OneLine.append(");");
@@ -886,7 +864,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           first = false;
         }
         OneLine.append(ParameterList.get(generic));
-        OneLine.append(" ".repeat(Math.max(0, PallignmentSize - ParameterList.get(generic).length())));
+        OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - ParameterList.get(generic).length())));
         OneLine.append(": INTEGER");
       }
       OneLine.append(");");
@@ -910,7 +888,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           first = false;
         }
         OneLine.append(input);
-        OneLine.append(" ".repeat(Math.max(0, PallignmentSize - input.length())));
+        OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - input.length())));
         OneLine.append(": IN  std_logic");
         nr_of_bits = InputsList.get(input);
         if (nr_of_bits < 0) {
@@ -945,7 +923,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           first = false;
         }
         OneLine.append(inout);
-        OneLine.append(" ".repeat(Math.max(0, PallignmentSize - inout.length())));
+        OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - inout.length())));
         OneLine.append(": INOUT  std_logic");
         nr_of_bits = InOutsList.get(inout);
         if (nr_of_bits < 0) {
@@ -980,7 +958,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           first = false;
         }
         OneLine.append(output);
-        OneLine.append(" ".repeat(Math.max(0, PallignmentSize - output.length())));
+        OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - output.length())));
         OneLine.append(": OUT std_logic");
         nr_of_bits = OutputsList.get(output);
         if (nr_of_bits < 0) {

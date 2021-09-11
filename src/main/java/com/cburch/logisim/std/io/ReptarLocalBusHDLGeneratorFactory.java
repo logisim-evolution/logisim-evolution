@@ -169,21 +169,21 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
         "Addr_Data_LB_io",
         String.format(
             "%s(%d DOWNTO %d)",
-            LocalInOutBubbleBusname,
+            LOCAL_INOUT_BUBBLE_BUS_NAME,
             ComponentInfo.getLocalBubbleInOutEndId(),
             ComponentInfo.getLocalBubbleInOutStartId()));
     map.put(
         "FPGA_in",
         String.format(
             "%s(%d DOWNTO %d)",
-            LocalInputBubbleBusname,
+            LOCAL_INPUT_BUBBLE_BUS_NAME,
             ComponentInfo.getLocalBubbleInputEndId(),
             ComponentInfo.getLocalBubbleInputStartId()));
     map.put(
         "FPGA_out",
         String.format(
             "%s(%d DOWNTO %d)",
-            LocalOutputBubbleBusname
+            LOCAL_OUTPUT_BUBBLE_BUS_NAME
                 + ComponentInfo.getLocalBubbleOutputEndId()
                 + ComponentInfo.getLocalBubbleOutputStartId()));
     map.putAll(

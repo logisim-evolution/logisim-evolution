@@ -13,7 +13,6 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 
@@ -34,7 +33,7 @@ public class PortHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
         final var endIndex = startIndex + nrOfBitsInThisBus - 1;
         contents.add("{{assign}} {{1}}{{=}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}};",
             HDL.getBusName(componentInfo, busIndex, nets),
-            HDLGeneratorFactory.LocalInputBubbleBusname,
+            LOCAL_INPUT_BUBBLE_BUS_NAME,
             endIndex,
             HDL.vectorLoopId(),
             startIndex);
@@ -46,7 +45,7 @@ public class PortHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
         nrOfPins -= nrOfBitsInThisBus;
         final var endIndex = startIndex + nrOfBitsInThisBus - 1;
         contents.add("{{assign}} {{1}}{{<}}{{2}}{{3}}{{4}}{{>}}{{=}}{{5}};",
-            HDLGeneratorFactory.LocalOutputBubbleBusname,
+            LOCAL_OUTPUT_BUBBLE_BUS_NAME,
             endIndex,
             HDL.vectorLoopId(),
             startIndex,
@@ -64,7 +63,7 @@ public class PortHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
         outputIndex = inputIndex + 1;
         contents.add("{{assign}} {{1}}{{=}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}};",
             HDL.getBusName(componentInfo, inputIndex, nets),
-            HDLGeneratorFactory.LocalInOutBubbleBusname,
+            LOCAL_INOUT_BUBBLE_BUS_NAME,
             endIndex,
             HDL.vectorLoopId(),
             startIndex);
@@ -81,14 +80,14 @@ public class PortHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
         if (portType == PortIO.INOUTSE) {
           if (HDL.isVHDL()) {
             contents.add("{{1}}({{2}} DOWNTO {{3}}) <= {{4}} WHEN {{5}} = '1' ELSE (OTHERS => 'Z');",
-                HDLGeneratorFactory.LocalInOutBubbleBusname,
+                LOCAL_INOUT_BUBBLE_BUS_NAME,
                 endIndex,
                 startIndex,
                 HDL.getBusName(componentInfo, outputIndex++, nets),
                 HDL.getNetName(componentInfo, enableIndex, true, nets));
           } else {
             contents.add("assign {{1}}[{{2}}:{{3}}] = ({{4}}) ? {{5}} : {{6}}'bZ;",
-                HDLGeneratorFactory.LocalInOutBubbleBusname,
+                LOCAL_INOUT_BUBBLE_BUS_NAME,
                 endIndex,
                 startIndex,
                 HDL.getNetName(componentInfo, enableIndex, true, nets),
@@ -100,13 +99,13 @@ public class PortHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
           for (var busBitIndex = 0; busBitIndex < nrOfBitsInThisBus; busBitIndex++) {
             if (HDL.isVHDL()) {
               contents.add("{{1}}({{2}}) <= {{3}} WHEN {{4}} = '1' ELSE 'Z';",
-                  HDLGeneratorFactory.LocalInOutBubbleBusname,
+                  LOCAL_INOUT_BUBBLE_BUS_NAME,
                   startIndex + busBitIndex,
                   HDL.getBusEntryName(componentInfo, outputIndex, true, busBitIndex, nets),
                   HDL.getBusEntryName(componentInfo, enableIndex, true, busBitIndex, nets));
             } else {
               contents.add("assign {{1}}[{{2}}] = ({{3}}) ? {{4}} : 1'bZ;",
-                  HDLGeneratorFactory.LocalInOutBubbleBusname,
+                  LOCAL_INOUT_BUBBLE_BUS_NAME,
                   startIndex + busBitIndex,
                   HDL.getBusEntryName(componentInfo, enableIndex, true, busBitIndex, nets),
                   HDL.getBusEntryName(componentInfo, outputIndex, true, busBitIndex, nets));

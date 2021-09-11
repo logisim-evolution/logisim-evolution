@@ -146,7 +146,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var gatedclock = false;
     var activeLow = false;
     final var attrs = componentInfo.getComponent().getAttributeSet();
-    final var clockNetName = GetClockNetName(componentInfo, Register.CK, nets);
+    final var clockNetName = HDL.getClockNetName(componentInfo, Register.CK, nets);
     if (clockNetName.isEmpty()) {
       gatedclock = true;
       if (Netlist.isFlipFlop(attrs))
@@ -183,7 +183,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(comp, Register.CK, Nets);
+    final var clockNetName = HDL.getClockNetName(comp, Register.CK, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }

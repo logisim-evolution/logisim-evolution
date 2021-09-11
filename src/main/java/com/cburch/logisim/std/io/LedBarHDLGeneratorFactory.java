@@ -17,7 +17,6 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 
@@ -33,7 +32,7 @@ public class LedBarHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
     final var isSingleBus = componentInfo.getComponent().getAttributeSet().getValue(LedBar.ATTR_INPUT_TYPE).equals(LedBar.INPUT_ONE_WIRE);
     final var nrOfSegments = componentInfo.getComponent().getAttributeSet().getValue(getAttributeColumns()).getWidth();
     for (var pin = 0; pin < nrOfSegments; pin++) {
-      final var destPin = LineBuffer.format("{{1}}{{<}}{{2}}{{>}}", HDLGeneratorFactory.LocalOutputBubbleBusname,
+      final var destPin = LineBuffer.format("{{1}}{{<}}{{2}}{{>}}", LOCAL_OUTPUT_BUBBLE_BUS_NAME,
           componentInfo.getLocalBubbleOutputStartId() + pin);
       final var sourcePin = isSingleBus ? HDL.getBusEntryName(componentInfo, 0, true, pin, netlist)
           : HDL.getNetName(componentInfo, pin, true, netlist);

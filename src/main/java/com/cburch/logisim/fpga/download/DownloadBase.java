@@ -222,13 +222,13 @@ public abstract class DownloadBase {
     }
     if (!AbstractHDLGeneratorFactory.WriteEntity(
         projectDir + top.GetRelativeDirectory(),
-        top.GetEntity(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGAToplevelName),
+        top.GetEntity(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME),
         top.getComponentStringIdentifier())) {
       return false;
     }
     return AbstractHDLGeneratorFactory.WriteArchitecture(
         projectDir + top.GetRelativeDirectory(),
-        top.GetArchitecture(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGAToplevelName),
+        top.GetArchitecture(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME),
         top.getComponentStringIdentifier());
   }
 

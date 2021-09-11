@@ -274,7 +274,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     var activeLevel = 1;
     var gatedClock = false;
     var activeLow = false;
-    final var clockNetName = GetClockNetName(componentInfo, ShiftRegister.CK, nets);
+    final var clockNetName = HDL.getClockNetName(componentInfo, ShiftRegister.CK, nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -309,7 +309,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(comp, ShiftRegister.CK, nets);
+    final var clockNetName = HDL.getClockNetName(comp, ShiftRegister.CK, nets);
     gatedClock = clockNetName.isEmpty();
     activeLow = attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING;
     final var hasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD);

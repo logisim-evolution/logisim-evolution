@@ -24,11 +24,10 @@ public class HexDigitHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
   @Override
   public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
     final var startId = componentInfo.getLocalBubbleOutputStartId();
-    final var bubbleBusName = HDLGeneratorFactory.LocalOutputBubbleBusname;
-    final var signalName = LineBuffer.format("{{1}}{{<}}{{2}}{{3}}{{4}}{{>}}", bubbleBusName, (startId + 6), HDL.vectorLoopId(), startId); 
+    final var signalName = LineBuffer.format("{{1}}{{<}}{{2}}{{3}}{{4}}{{>}}", LOCAL_OUTPUT_BUBBLE_BUS_NAME, (startId + 6), HDL.vectorLoopId(), startId); 
     final var contents =
         (new LineBuffer()).withHdlPairs()
-            .pair("bubbleBusName", bubbleBusName)
+            .pair("bubbleBusName", LOCAL_OUTPUT_BUBBLE_BUS_NAME)
             .pair("sigName", signalName) 
             .pair("dpName", HDL.getNetName(componentInfo, HexDigit.DP, true, nets));
     contents.add("");
