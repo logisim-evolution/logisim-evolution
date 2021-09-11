@@ -86,10 +86,10 @@ public class WithSelectHDLGenerator {
       contents.add("WITH ({{sourceName}}) SELECT {{destName}} <=");
     } else {
       contents.add("""
-        reg[{{regBits}}:0] {{regName}};
-           always @(*)
-           begin
-              case ({{sourceName}})
+          reg[{{regBits}}:0] {{regName}};
+             always @(*)
+             begin
+                case ({{sourceName}})
           """);
     }
     for (final var thisCase : myCases.keySet()) {

@@ -29,7 +29,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
-  
+
   protected static String IntToBin(int value, int nr_of_bits) {
     var mask = 1 << (nr_of_bits - 1);
     var result = new StringBuilder();
