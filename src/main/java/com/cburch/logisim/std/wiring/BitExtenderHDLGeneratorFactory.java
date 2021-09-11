@@ -41,7 +41,7 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     }
     if (ComponentInfo.getComponent().getEnd(0).getWidth().getWidth() == 1) {
       /* Special case: Single bit output */
-      Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetNetName(ComponentInfo, 0, true, Nets), GetNetName(ComponentInfo, 1, true, Nets));
+      Contents.add("{{assign}} {{1}} {{=}} {{2}};", HDL.getNetName(ComponentInfo, 0, true, Nets), HDL.getNetName(ComponentInfo, 1, true, Nets));
       Contents.add("");
     } else {
       /*
@@ -60,27 +60,27 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       if (type.equals("sign")) {
         if (ComponentInfo.getEnd(1).getNrOfBits() > 1) {
           Replacement.append(
-              GetBusEntryName(
+              HDL.getBusEntryName(
                   ComponentInfo,
                   1,
                   true,
                   ComponentInfo.getComponent().getEnd(1).getWidth().getWidth() - 1,
                   Nets));
         } else {
-          Replacement.append(GetNetName(ComponentInfo, 1, true, Nets));
+          Replacement.append(HDL.getNetName(ComponentInfo, 1, true, Nets));
         }
       }
       if (type.equals("input"))
-        Replacement.append(GetNetName(ComponentInfo, 2, true, Nets));
+        Replacement.append(HDL.getNetName(ComponentInfo, 2, true, Nets));
       for (int bit = 0; bit < ComponentInfo.getComponent().getEnd(0).getWidth().getWidth(); bit++) {
         if (bit < ComponentInfo.getComponent().getEnd(1).getWidth().getWidth()) {
           if (ComponentInfo.getEnd(1).getNrOfBits() > 1) {
-            Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetBusEntryName(ComponentInfo, 0, true, bit, Nets), GetBusEntryName(ComponentInfo, 1, true, bit, Nets));
+            Contents.add("{{assign}} {{1}} {{=}} {{2}};", HDL.getBusEntryName(ComponentInfo, 0, true, bit, Nets), HDL.getBusEntryName(ComponentInfo, 1, true, bit, Nets));
           } else {
-            Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetBusEntryName(ComponentInfo, 0, true, bit, Nets) + GetNetName(ComponentInfo, 1, true, Nets));
+            Contents.add("{{assign}} {{1}} {{=}} {{2}};", HDL.getBusEntryName(ComponentInfo, 0, true, bit, Nets) + HDL.getNetName(ComponentInfo, 1, true, Nets));
           }
         } else {
-          Contents.add("{{assign}} {{1}} {{=}} {{2}};", GetBusEntryName(ComponentInfo, 0, true, bit, Nets), Replacement);
+          Contents.add("{{assign}} {{1}} {{=}} {{2}};", HDL.getBusEntryName(ComponentInfo, 0, true, bit, Nets), Replacement);
         }
       }
       Contents.add("");

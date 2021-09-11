@@ -9,106 +9,113 @@
 
 package com.cburch.logisim.std.io;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
+import com.cburch.logisim.util.LineBuffer;
+
 import java.util.ArrayList;
 
-public class PortHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
-
-  @Override
-  public boolean IsOnlyInlined() {
-    return true;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
+public class PortHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
 
   @Override
   public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
-    final var contents = new ArrayList<String>();
-    final var dir = componentInfo.getComponent().getAttributeSet().getValue(PortIO.ATTR_DIR);
-    var size = componentInfo.getComponent().getAttributeSet().getValue(PortIO.ATTR_SIZE).getWidth();
-    final var nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
-    if (dir == PortIO.INPUT) {
-      for (var i = 0; i < nBus; i++) {
-        final var start = componentInfo.getLocalBubbleInputStartId() + i * BitWidth.MAXWIDTH;
-        var end = start - 1;
-        end += Math.min(size, BitWidth.MAXWIDTH);
-        size -= BitWidth.MAXWIDTH;
-        contents.add(
-            "   "
-                + HDL.assignPreamble()
-                + GetBusName(componentInfo, i, nets)
-                + HDL.assignOperator()
-                + HDLGeneratorFactory.LocalInputBubbleBusname
-                + HDL.BracketOpen()
-                + end
-                + HDL.vectorLoopId()
-                + "0"
-                + HDL.BracketClose()
-                + ";");
+    final var contents = LineBuffer.getHdlBuffer();
+    final var portType = componentInfo.getComponent().getAttributeSet().getValue(PortIO.ATTR_DIR);
+    var nrOfPins = componentInfo.getComponent().getAttributeSet().getValue(PortIO.ATTR_SIZE).getWidth();
+    if (portType == PortIO.INPUT) {
+      for (var busIndex = 0; nrOfPins > 0; busIndex++) {
+        final var startIndex = componentInfo.getLocalBubbleInputStartId() + busIndex * BitWidth.MAXWIDTH;
+        final var nrOfBitsInThisBus = Math.min(nrOfPins, BitWidth.MAXWIDTH);
+        nrOfPins -= nrOfBitsInThisBus;
+        final var endIndex = startIndex + nrOfBitsInThisBus - 1;
+        contents.add("{{assign}} {{1}}{{=}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}};",
+            HDL.getBusName(componentInfo, busIndex, nets),
+            HDLGeneratorFactory.LocalInputBubbleBusname,
+            endIndex,
+            HDL.vectorLoopId(),
+            startIndex);
       }
-    } else if (dir == PortIO.OUTPUT) {
-      for (var i = 0; i < nBus; i++) {
-        final var start = componentInfo.getLocalBubbleOutputStartId() + i * BitWidth.MAXWIDTH;
-        var end = start - 1;
-        end += Math.min(size, BitWidth.MAXWIDTH);
-        size -= BitWidth.MAXWIDTH;
-        contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalOutputBubbleBusname
-                + HDL.assignOperator() + GetBusName(componentInfo, i, nets) + HDL.BracketOpen()
-                + end + HDL.vectorLoopId() + "0" + HDL.BracketClose() + ";");
+    } else if (portType == PortIO.OUTPUT) {
+      for (var busIndex = 0; nrOfPins > 0; busIndex++) {
+        final var startIndex = componentInfo.getLocalBubbleOutputStartId() + busIndex * BitWidth.MAXWIDTH;
+        final var nrOfBitsInThisBus = Math.min(nrOfPins, BitWidth.MAXWIDTH);
+        nrOfPins -= nrOfBitsInThisBus;
+        final var endIndex = startIndex + nrOfBitsInThisBus - 1;
+        contents.add("{{assign}} {{1}}{{<}}{{2}}{{3}}{{4}}{{>}}{{=}}{{5}};",
+            HDLGeneratorFactory.LocalOutputBubbleBusname,
+            endIndex,
+            HDL.vectorLoopId(),
+            startIndex,
+            HDL.getBusName(componentInfo, busIndex, nets));
       }
     } else {
-      for (var i = 0; i < nBus; i++) {
-        final var start = componentInfo.getLocalBubbleInOutStartId() + i * BitWidth.MAXWIDTH;
-        final var nbits = Math.min(size, BitWidth.MAXWIDTH);
-        final var end = start - 1 + nbits;
-        size -= nbits;
-        final var enableIndex = (dir == PortIO.INOUTSE) ? 0 : i * 2;
-        final var inputIndex = (dir == PortIO.INOUTSE) ? i + 1 : i * 2 + 1;
-        final var outputIndex = (dir == PortIO.INOUTSE) ? 1 + nBus + i : 2 * nBus + i;
-        final var inputName = GetBusName(componentInfo, inputIndex, nets);
-        final var outputName = GetBusName(componentInfo, outputIndex, nets);
-        final var enableName = (dir == PortIO.INOUTSE)
-                              ? GetNetName(componentInfo, enableIndex, true, nets)
-                              : GetBusName(componentInfo, enableIndex, nets);
-        contents.add(
-            "   " + HDL.assignPreamble() + outputName + HDL.assignOperator()
-                + HDLGeneratorFactory.LocalInOutBubbleBusname + HDL.BracketOpen()
-                + end + HDL.vectorLoopId() + start + HDL.BracketClose() + ";");
-        if (dir == PortIO.INOUTSE) {
+      // first we handle the input connections, and after that the output connections
+      var outputIndex = 0;
+      for (var busIndex = 0; nrOfPins > 0; busIndex++) {
+        final var startIndex = componentInfo.getLocalBubbleInOutStartId() + busIndex * BitWidth.MAXWIDTH;
+        final var nrOfBitsInThisBus = Math.min(nrOfPins, BitWidth.MAXWIDTH);
+        nrOfPins -= nrOfBitsInThisBus;
+        final var endIndex = startIndex + nrOfBitsInThisBus - 1;
+        final var inputIndex = (portType == PortIO.INOUTSE) ? (busIndex + 1) : (busIndex * 2 + 1);
+        outputIndex = inputIndex + 1;
+        contents.add("{{assign}} {{1}}{{=}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}};",
+            HDL.getBusName(componentInfo, inputIndex, nets),
+            HDLGeneratorFactory.LocalInOutBubbleBusname,
+            endIndex,
+            HDL.vectorLoopId(),
+            startIndex);
+      }
+      var enableIndex = 0;
+      nrOfPins = componentInfo.getComponent().getAttributeSet().getValue(PortIO.ATTR_SIZE).getWidth();
+      for (var busIndex = 0; nrOfPins > 0; busIndex++) {
+        final var startIndex = componentInfo.getLocalBubbleInOutStartId() + busIndex * BitWidth.MAXWIDTH;
+        final var nrOfBitsInThisBus = Math.min(nrOfPins, BitWidth.MAXWIDTH);
+        nrOfPins -= nrOfBitsInThisBus;
+        final var endIndex = startIndex + nrOfBitsInThisBus - 1;
+        if ((portType != PortIO.INOUTSE) && (busIndex > 0)) enableIndex += 2;
+        // simple case first, we have a single output enable
+        if (portType == PortIO.INOUTSE) {
           if (HDL.isVHDL()) {
-            contents.add("   " + HDLGeneratorFactory.LocalInOutBubbleBusname + HDL.BracketOpen()
-                    + end + HDL.vectorLoopId() + start + HDL.BracketClose() + " <= "
-                    + inputName + " WHEN " + enableName + " = '1' ELSE (OTHERS => 'Z');");
+            contents.add("{{1}}({{2}} DOWNTO {{3}}) <= {{4}} WHEN {{5}} = '1' ELSE (OTHERS => 'Z');",
+                HDLGeneratorFactory.LocalInOutBubbleBusname,
+                endIndex,
+                startIndex,
+                HDL.getBusName(componentInfo, outputIndex++, nets),
+                HDL.getNetName(componentInfo, enableIndex, true, nets));
           } else {
-            contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalInOutBubbleBusname
-                    + HDL.BracketOpen() + end + HDL.vectorLoopId() + start
-                    + HDL.BracketClose() + " = (" + enableName + ") ? " + inputName + " : "
-                    + nbits + "'bZ;");
+            contents.add("assign {{1}}[{{2}}:{{3}}] = ({{4}}) ? {{5}} : {{6}}'bZ;",
+                HDLGeneratorFactory.LocalInOutBubbleBusname,
+                endIndex,
+                startIndex,
+                HDL.getNetName(componentInfo, enableIndex, true, nets),
+                HDL.getBusName(componentInfo, outputIndex++, nets),
+                nrOfBitsInThisBus);
           }
         } else {
-          for (var bit = 0; bit < nbits; bit++) {
+          // we have to enumerate over each and every bit
+          for (var busBitIndex = 0; busBitIndex < nrOfBitsInThisBus; busBitIndex++) {
             if (HDL.isVHDL()) {
-              contents.add("   " + HDLGeneratorFactory.LocalInOutBubbleBusname
-                      + HDL.BracketOpen() + (start + bit) + HDL.BracketClose() + " <= " + inputName
-                      + "(" + bit + ") WHEN " + enableName + "(" + bit + ") = '1' ELSE 'Z';");
+              contents.add("{{1}}({{2}}) <= {{3}} WHEN {{4}} = '1' ELSE 'Z';",
+                  HDLGeneratorFactory.LocalInOutBubbleBusname,
+                  startIndex + busBitIndex,
+                  HDL.getBusEntryName(componentInfo, outputIndex, true, busBitIndex, nets),
+                  HDL.getBusEntryName(componentInfo, enableIndex, true, busBitIndex, nets));
             } else {
-              contents.add("   " + HDL.assignPreamble() + HDLGeneratorFactory.LocalInOutBubbleBusname
-                      + HDL.BracketOpen() + (start + bit) + HDL.BracketClose() + " = ("
-                      + enableName + "[" + bit + "]) ? " + inputName + "[" + bit + "] : 1'bZ;");
+              contents.add("assign {{1}}[{{2}}] = ({{3}}) ? {{4}} : 1'bZ;",
+                  HDLGeneratorFactory.LocalInOutBubbleBusname,
+                  startIndex + busBitIndex,
+                  HDL.getBusEntryName(componentInfo, enableIndex, true, busBitIndex, nets),
+                  HDL.getBusEntryName(componentInfo, outputIndex, true, busBitIndex, nets));
             }
           }
+          outputIndex++;
         }
-      }
+      }      
     }
-    return contents;
+    return contents.getWithIndent(3);
   }
 }

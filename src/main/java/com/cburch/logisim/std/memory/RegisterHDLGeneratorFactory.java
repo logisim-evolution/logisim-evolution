@@ -239,7 +239,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   + ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX
                   + HDL.BracketClose());
       } else {
-        map.put("Clock", GetNetName(comp, Register.CK, true, Nets));
+        map.put("Clock", HDL.getNetName(comp, Register.CK, true, Nets));
       }
     }
     var input = "D";

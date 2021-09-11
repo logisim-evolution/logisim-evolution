@@ -365,7 +365,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
                   + ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX
                   + HDL.BracketClose());
       } else {
-        map.put("Clock", GetNetName(comp, ShiftRegister.CK, true, nets));
+        map.put("Clock", HDL.getNetName(comp, ShiftRegister.CK, true, nets));
       }
     }
     map.putAll(GetNetMap("ShiftEnable", false, comp, ShiftRegister.SH, nets));
@@ -406,14 +406,14 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
         } else {
           for (var i = nrOfStages - 1; i >= 0; i--) {
             if (vector.length() != 0) vector.append(",");
-            vector.append(GetNetName(comp, 6 + 2 * i, true, nets));
+            vector.append(HDL.getNetName(comp, 6 + 2 * i, true, nets));
           }
           map.put("D", vector.toString());
           vector.setLength(0);
           vector.append("open");
           for (var i = nrOfStages - 2; i >= 0; i--) {
             if (vector.length() != 0) vector.append(",");
-            vector.append(GetNetName(comp, 7 + 2 * i, true, nets));
+            vector.append(HDL.getNetName(comp, 7 + 2 * i, true, nets));
           }
           map.put("Q", vector.toString());
         }
@@ -423,14 +423,14 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             for (var i = 0; i < nrOfStages; i++) {
               map.put(
                   "D" + HDL.BracketOpen() + (bit * nrOfStages + i) + HDL.BracketClose(),
-                  GetBusEntryName(comp, 6 + 2 * i, true, bit, nets));
+                  HDL.getBusEntryName(comp, 6 + 2 * i, true, bit, nets));
             }
           }
           for (var bit = 0; bit < nrOfBits; bit++) {
             for (var i = 0; i < nrOfStages - 1; i++) {
               map.put(
                   "Q" + HDL.BracketOpen() + (bit * nrOfStages + i) + HDL.BracketClose(),
-                  GetBusEntryName(comp, 7 + 2 * i, true, bit, nets));
+                  HDL.getBusEntryName(comp, 7 + 2 * i, true, bit, nets));
             }
             map.put(
                 "Q" + HDL.BracketOpen() + ((bit + 1) * nrOfStages - 1) + HDL.BracketClose(),
@@ -441,7 +441,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           for (var bit = nrOfBits - 1; bit >= 0; bit--) {
             for (var i = nrOfStages - 1; i >= 0; i--) {
               if (vector.length() != 0) vector.append(",");
-              vector.append(GetBusEntryName(comp, 6 + 2 * i, true, bit, nets));
+              vector.append(HDL.getBusEntryName(comp, 6 + 2 * i, true, bit, nets));
             }
           }
           map.put("D", vector.toString());
@@ -451,7 +451,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             vector.append("open");
             for (var i = nrOfStages - 2; i >= 0; i--) {
               if (vector.length() != 0) vector.append(",");
-              vector.append(GetBusEntryName(comp, 7 + 2 * i, true, bit, nets));
+              vector.append(HDL.getBusEntryName(comp, 7 + 2 * i, true, bit, nets));
             }
           }
           map.put("Q", vector.toString());

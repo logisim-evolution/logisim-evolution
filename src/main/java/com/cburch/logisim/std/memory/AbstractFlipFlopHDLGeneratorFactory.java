@@ -263,7 +263,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
                   + ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX
                   + HDL.BracketClose());
       } else {
-        map.put("Clock", GetNetName(comp, comp.nrOfEnds() - 5, true, Nets));
+        map.put("Clock", HDL.getNetName(comp, comp.nrOfEnds() - 5, true, Nets));
       }
     }
     map.putAll(GetInputMaps(comp, Nets));

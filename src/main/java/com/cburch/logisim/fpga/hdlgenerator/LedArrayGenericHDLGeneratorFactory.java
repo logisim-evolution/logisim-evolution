@@ -274,7 +274,7 @@ public class LedArrayGenericHDLGeneratorFactory {
     for (var pin = 0; pin < info.getNrOfPins(); pin++) {
       connections.pair("pin", pin);
       if (!info.pinIsMapped(pin)) {
-        connections.add("{{assign}} s_{{ins}}{{id}{{<}}{{pin}}{{>}} {{=}} {{0b}};");
+        connections.add("{{assign}} s_{{ins}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};");
       } else {
         connections.add("{{assign}} s_{{ins}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{1}};", info.getPinMap(pin).getHdlSignalName(info.getMapPin(pin)));
       }

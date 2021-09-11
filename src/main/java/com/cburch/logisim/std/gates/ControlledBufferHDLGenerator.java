@@ -33,18 +33,18 @@ public class ControlledBufferHDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
     final var contents = new LineBuffer();
-    final var triName = GetNetName(componentInfo, 2, true, nets);
+    final var triName = HDL.getNetName(componentInfo, 2, true, nets);
     var inpName = "";
     var outpName = "";
     var triState = "";
     final var nrBits = componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
     if (nrBits > 1) {
-      inpName = GetBusName(componentInfo, 1, nets);
-      outpName = GetBusName(componentInfo, 0, nets);
+      inpName = HDL.getBusName(componentInfo, 1, nets);
+      outpName = HDL.getBusName(componentInfo, 0, nets);
       triState = HDL.isVHDL() ? "(OTHERS => 'Z')" : nrBits + "'bZ";
     } else {
-      inpName = GetNetName(componentInfo, 1, true, nets);
-      outpName = GetNetName(componentInfo, 0, true, nets);
+      inpName = HDL.getNetName(componentInfo, 1, true, nets);
+      outpName = HDL.getNetName(componentInfo, 0, true, nets);
       triState = HDL.isVHDL() ? "'Z'" : "1'bZ";
     }
     if (componentInfo.isEndConnected(2) && componentInfo.isEndConnected(0)) {
