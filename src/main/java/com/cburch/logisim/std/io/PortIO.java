@@ -77,7 +77,7 @@ public class PortIO extends InstanceFactory {
       for (var pin = 0; pin < size; pin++) {
         inputState.add(Value.createUnknown(BIT_WIDTH));
         pokeState.add(Value.createUnknown(BIT_WIDTH));
-        enableState.add(Value.createKnown(BIT_WIDTH,0L));
+        enableState.add(Value.createKnown(BIT_WIDTH, 0L));
       }
     }
 
@@ -87,7 +87,7 @@ public class PortIO extends InstanceFactory {
         for (var newPin = size; newPin < newSize; newPin++) {
           inputState.add(Value.createUnknown(BIT_WIDTH));
           pokeState.add(Value.createUnknown(BIT_WIDTH));
-          enableState.add(Value.createKnown(BIT_WIDTH,0L));
+          enableState.add(Value.createKnown(BIT_WIDTH, 0L));
         }
       } else {
         while (inputState.size() > newSize) {
@@ -146,7 +146,7 @@ public class PortIO extends InstanceFactory {
     @Override
     public Object clone() {
       final var other = new PortState(size);
-      for (int pinIndex = 0; pinIndex < size ; pinIndex++) {
+      for (int pinIndex = 0; pinIndex < size; pinIndex++) {
         other.inputState.set(pinIndex, inputState.get(pinIndex));
         other.enableState.set(pinIndex, enableState.get(pinIndex));
         other.pokeState.set(pinIndex, pokeState.get(pinIndex));

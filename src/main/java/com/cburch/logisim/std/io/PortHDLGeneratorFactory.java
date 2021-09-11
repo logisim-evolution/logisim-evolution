@@ -61,7 +61,7 @@ public class PortHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
         nrOfPins -= nrOfBitsInThisBus;
         final var endIndex = startIndex + nrOfBitsInThisBus - 1;
         final var inputIndex = (portType == PortIO.INOUTSE) ? (busIndex + 1) : (busIndex * 2 + 1);
-        outputIndex = inputIndex+1;
+        outputIndex = inputIndex + 1;
         contents.add("{{assign}} {{1}}{{=}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}};",
             HDL.getBusName(componentInfo, inputIndex, nets),
             HDLGeneratorFactory.LocalInOutBubbleBusname,
