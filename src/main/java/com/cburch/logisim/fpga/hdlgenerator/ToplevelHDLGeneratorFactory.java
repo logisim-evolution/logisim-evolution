@@ -235,7 +235,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (nrOfClockTrees > 0) {
       wires.put(TickComponentHDLGeneratorFactory.FPGA_TICK, 1);
       for (var clockBus = 0; clockBus < nrOfClockTrees; clockBus++) {
-        wires.put( "s_" + CLOCK_TREE_NAME + clockBus, ClockHDLGeneratorFactory.NR_OF_CLOCK_BITS);
+        wires.put("s_" + CLOCK_TREE_NAME + clockBus, ClockHDLGeneratorFactory.NR_OF_CLOCK_BITS);
       }
     }
     if (nrOfInputBubbles > 0) {

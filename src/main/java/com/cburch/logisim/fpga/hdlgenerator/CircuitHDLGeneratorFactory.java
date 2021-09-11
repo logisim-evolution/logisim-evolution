@@ -521,12 +521,12 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     if (myNetList.getNumberOfInputBubbles() > 0) {
       // FIXME: remove + by concatination.
-      PortMap.put( LOCAL_INPUT_BUBBLE_BUS_NAME,
+      PortMap.put(LOCAL_INPUT_BUBBLE_BUS_NAME,
           topLevel ? Preamble + LOCAL_INPUT_BUBBLE_BUS_NAME : LOCAL_INPUT_BUBBLE_BUS_NAME + GetBubbleIndex(componentInfo, 0));
     }
     if (myNetList.numberOfOutputBubbles() > 0) {
       // FIXME: remove + by concatination.
-      PortMap.put( LOCAL_OUTPUT_BUBBLE_BUS_NAME,
+      PortMap.put(LOCAL_OUTPUT_BUBBLE_BUS_NAME,
           topLevel ? Preamble + LOCAL_OUTPUT_BUBBLE_BUS_NAME : LOCAL_OUTPUT_BUBBLE_BUS_NAME + GetBubbleIndex(componentInfo, 1));
     }
 
