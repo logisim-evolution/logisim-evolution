@@ -190,7 +190,7 @@ public class PortIO extends InstanceFactory {
   protected static final int DELAY = 1;
 
   public PortIO() {
-    super(_ID, S.getter("pioComponent"));
+    super(_ID, S.getter("pioComponent"), new PortHDLGeneratorFactory(), true);
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -522,16 +522,5 @@ public class PortIO extends InstanceFactory {
       }
       state.setPort(currentPortIndex++, Value.create(outputValue), DELAY);
     }
-  }
-
-  @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new PortHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

@@ -67,7 +67,7 @@ public class Shifter extends InstanceFactory {
   static final int OUT = 2;
 
   public Shifter() {
-    super(_ID, S.getter("shifterComponent"));
+    super(_ID, S.getter("shifterComponent"), new ShifterHDLGeneratorFactory());
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, ATTR_SHIFT},
         new Object[] {BitWidth.create(8), SHIFT_LOGICAL_LEFT});
@@ -107,12 +107,6 @@ public class Shifter extends InstanceFactory {
   @Override
   public String getHDLName(AttributeSet attrs) {
     return "Shifter_" + attrs.getValue(StdAttr.WIDTH).getWidth() + "_bit";
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new ShifterHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

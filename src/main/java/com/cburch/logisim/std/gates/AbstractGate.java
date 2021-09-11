@@ -22,6 +22,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.Options;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -67,12 +68,12 @@ abstract class AbstractGate extends InstanceFactory {
 
   private boolean paintInputLines;
 
-  protected AbstractGate(String name, StringGetter desc) {
-    this(name, desc, false);
+  protected AbstractGate(String name, StringGetter desc, HDLGeneratorFactory generator) {
+    this(name, desc, false, generator);
   }
 
-  protected AbstractGate(String name, StringGetter desc, boolean isXor) {
-    super(name, desc);
+  protected AbstractGate(String name, StringGetter desc, boolean isXor, HDLGeneratorFactory generator) {
+    super(name, desc, generator);
     this.isXor = isXor;
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(

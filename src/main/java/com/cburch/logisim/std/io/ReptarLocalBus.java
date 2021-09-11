@@ -78,7 +78,7 @@ public class ReptarLocalBus extends InstanceFactory {
   private static final String defaultLocalBusName = "LocalBus";
 
   public ReptarLocalBus() {
-    super(_ID, S.getter("repLBComponent"));
+    super(_ID, S.getter("repLBComponent"), new ReptarLocalBusHDLGeneratorFactory(), false, true);
 
     final var inpLabels = new ArrayList<String>();
     final var outpLabels = new ArrayList<String>();
@@ -140,15 +140,6 @@ public class ReptarLocalBus extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    // return false;
-    if (MyHDLGenerator == null) {
-      MyHDLGenerator = new ReptarLocalBusHDLGeneratorFactory();
-    }
-    return MyHDLGenerator.HDLTargetSupported(attrs);
-  }
-
-  @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
     painter.drawBounds();
@@ -194,10 +185,4 @@ public class ReptarLocalBus extends InstanceFactory {
     // state.setPort(OUT, outs[0], delay);
     // state.setPort(C_OUT, outs[1], delay);
   }
-
-  @Override
-  public boolean RequiresGlobalClock() {
-    return true;
-  }
-
 }

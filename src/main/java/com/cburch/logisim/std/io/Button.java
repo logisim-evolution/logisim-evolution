@@ -105,7 +105,7 @@ public class Button extends InstanceFactory {
   private static final int DEPTH = 3;
 
   public Button() {
-    super(_ID, S.getter("buttonComponent"));
+    super(_ID, S.getter("buttonComponent"), new AbstractSimpleIOHDLGeneratorFactory(true), true);
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -147,12 +147,6 @@ public class Button extends InstanceFactory {
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Direction facing = attrs.getValue(StdAttr.FACING);
     return Bounds.create(-20, -10, 20, 20).rotate(Direction.EAST, facing, 0, 0);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new AbstractSimpleIOHDLGeneratorFactory(true);
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -258,10 +252,5 @@ public class Button extends InstanceFactory {
     final var defaultButtonState = state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_ACTIVE ? Value.FALSE : Value.TRUE;
     final var val = data == null ? defaultButtonState : (Value) data.getValue();
     state.setPort(0, val, 1);
-  }
-
-  @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
   }
 }

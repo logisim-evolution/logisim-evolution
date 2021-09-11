@@ -46,7 +46,7 @@ public class Subtractor extends InstanceFactory {
   private static final int B_OUT = 4;
 
   public Subtractor() {
-    super(_ID, S.getter("subtractorComponent"));
+    super(_ID, S.getter("subtractorComponent"), new SubtractorHDLGeneratorFactory());
     setAttributes(new Attribute[] {StdAttr.WIDTH}, new Object[] {BitWidth.create(8)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
@@ -72,12 +72,6 @@ public class Subtractor extends InstanceFactory {
     if (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) CompleteName.append("FullSubtractor");
     else CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
     return CompleteName.toString();
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new SubtractorHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

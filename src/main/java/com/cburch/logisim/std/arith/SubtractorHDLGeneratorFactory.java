@@ -127,9 +127,4 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     wires.put("s_carry", 1);
     return wires;
   }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
 }

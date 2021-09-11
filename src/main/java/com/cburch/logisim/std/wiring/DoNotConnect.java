@@ -16,8 +16,6 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -27,7 +25,6 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 
 public class DoNotConnect extends InstanceFactory {
   /**
@@ -37,13 +34,6 @@ public class DoNotConnect extends InstanceFactory {
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "NoConnect";
-
-  private static class DoNotConnectGateHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
-    @Override
-    public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
-      return new ArrayList<String>();
-    }
-  }
 
   public DoNotConnect() {
     super(_ID, S.getter("noConnectionComponent"));
@@ -84,7 +74,7 @@ public class DoNotConnect extends InstanceFactory {
 
   @Override
   public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new DoNotConnectGateHDLGeneratorFactory();
+    if (MyHDLGenerator == null) MyHDLGenerator = new InlinedHdlGeneratorFactory();
     return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 

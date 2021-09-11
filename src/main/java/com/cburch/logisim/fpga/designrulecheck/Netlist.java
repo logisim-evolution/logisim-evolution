@@ -312,12 +312,12 @@ public class Netlist {
 
     for (final var comp : myCircuit.getNonWires()) {
       // Here we check if the components are supported for the HDL generation
-      if (!comp.getFactory().HDLSupportedComponent(comp.getAttributeSet())) {
+      if (!comp.getFactory().isHDLSupportedComponent(comp.getAttributeSet())) {
         drc.get(5).addMarkComponent(comp);
         drcStatus |= DRC_ERROR;
       }
       // we check that all components that require a non zero label (annotation) have a label set
-      if (comp.getFactory().RequiresNonZeroLabel()) {
+      if (comp.getFactory().requiresNonZeroLabel()) {
         final var label = CorrectLabel.getCorrectLabel(comp.getAttributeSet().getValue(StdAttr.LABEL)).toUpperCase();
         final var componentName = comp.getFactory().getHDLName(comp.getAttributeSet());
         if (label.isEmpty()) {
@@ -1557,7 +1557,7 @@ public class Netlist {
     }
     // We see if some components require the Global fast FPGA clock
     for (final var comp : myCircuit.getNonWires()) {
-      if (comp.getFactory().RequiresGlobalClock()) clockSources.setRequiresFpgaGlobalClock();
+      if (comp.getFactory().requiresGlobalClock()) clockSources.setRequiresFpgaGlobalClock();
     }
     /* Second pass: We mark all clock sources */
     for (final var clockSource : myClockGenerators) {

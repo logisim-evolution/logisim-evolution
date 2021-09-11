@@ -12,7 +12,6 @@ package com.cburch.logisim.std.bfh;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -45,7 +44,7 @@ public class bcd2sevenseg extends InstanceFactory {
   public static final int BCDin = 7;
 
   public bcd2sevenseg() {
-    super(_ID, S.getter("BCD2SevenSegment"));
+    super(_ID, S.getter("BCD2SevenSegment"), new bcd2sevensegHDLGeneratorFactory());
     setAttributes(new Attribute[] {StdAttr.DUMMY}, new Object[] {""});
     setOffsetBounds(Bounds.create(-10, -20, 50, 100));
     Port[] ps = new Port[8];
@@ -197,11 +196,5 @@ public class bcd2sevenseg extends InstanceFactory {
       for (int i = 0; i < 7; i++)
         state.setPort(i, Value.createUnknown(BitWidth.create(1)), PER_DELAY);
     }
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new bcd2sevensegHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

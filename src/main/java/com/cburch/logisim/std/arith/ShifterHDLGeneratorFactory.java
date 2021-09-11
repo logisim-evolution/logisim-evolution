@@ -282,9 +282,4 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     return wires;
   }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
 }

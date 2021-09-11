@@ -120,9 +120,4 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     wires.put("s_sum_result", ExtendedBitsId);
     return wires;
   }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
 }

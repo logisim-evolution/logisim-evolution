@@ -104,7 +104,7 @@ public class DotMatrixHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     return attrs.getValue(DotMatrixBase.ATTR_PERSIST) == 0;
   }
 }

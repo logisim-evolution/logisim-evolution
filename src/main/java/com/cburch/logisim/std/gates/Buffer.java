@@ -85,7 +85,7 @@ class Buffer extends InstanceFactory {
   public static final InstanceFactory FACTORY = new Buffer();
 
   private Buffer() {
-    super(_ID, S.getter("bufferComponent"));
+    super(_ID, S.getter("bufferComponent"), new BufferGateHDLGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -165,12 +165,6 @@ class Buffer extends InstanceFactory {
     if (attrs.containsAttribute(GateAttributes.ATTR_OUTPUT))
       return !(attrs.getValue(GateAttributes.ATTR_OUTPUT) == GateAttributes.OUTPUT_01);
     else return false;
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new BufferGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

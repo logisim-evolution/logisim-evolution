@@ -836,9 +836,4 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     return signalMap;
   }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
 }

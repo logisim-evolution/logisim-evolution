@@ -80,7 +80,7 @@ public interface ComponentFactory extends AttributeDefaultProvider {
 
   boolean HasThreeStateDrivers(AttributeSet attrs);
 
-  boolean HDLSupportedComponent(AttributeSet attrs);
+  boolean isHDLSupportedComponent(AttributeSet attrs);
 
   @Override
   boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver);
@@ -91,10 +91,10 @@ public interface ComponentFactory extends AttributeDefaultProvider {
 
   void paintIcon(ComponentDrawContext context, int x, int y, AttributeSet attrs);
 
-  boolean RequiresGlobalClock();
+  boolean requiresGlobalClock();
 
   /* Added for HDL generation */
-  boolean RequiresNonZeroLabel();
+  boolean requiresNonZeroLabel();
 
   /* Added for Soc simulation core */
   boolean isSocComponent();

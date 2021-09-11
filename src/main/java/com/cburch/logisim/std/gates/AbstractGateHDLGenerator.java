@@ -323,11 +323,6 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     return wires;
   }
 
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
-
   private boolean is_bus(AttributeSet attrs) {
     return attrs.getValue(StdAttr.WIDTH).getWidth() != 1;
   }

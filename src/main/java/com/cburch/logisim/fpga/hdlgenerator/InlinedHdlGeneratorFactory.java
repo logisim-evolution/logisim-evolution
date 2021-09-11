@@ -54,7 +54,7 @@ public class InlinedHdlGeneratorFactory implements HDLGeneratorFactory {
   @Override
   public ArrayList<String> GetInlinedCode(Netlist Nets, Long ComponentId, NetlistComponent ComponentInfo,
       String CircuitName) {
-    return null;
+    return new ArrayList<String>();
   }
 
   @Override
@@ -63,7 +63,7 @@ public class InlinedHdlGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     return true;
   }
 

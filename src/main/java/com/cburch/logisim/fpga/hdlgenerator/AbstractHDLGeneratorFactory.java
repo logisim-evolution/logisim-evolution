@@ -1007,8 +1007,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return false;
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+    return true;
   }
 
   @Override

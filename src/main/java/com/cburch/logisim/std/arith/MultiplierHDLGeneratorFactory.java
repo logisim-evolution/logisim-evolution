@@ -154,9 +154,4 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     wires.put("s_new_result", CalcBitsId);
     return wires;
   }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
 }

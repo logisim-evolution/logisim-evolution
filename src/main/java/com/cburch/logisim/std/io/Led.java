@@ -63,7 +63,7 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
   }
 
   public Led() {
-    super(_ID, S.getter("ledComponent"));
+    super(_ID, S.getter("ledComponent"), new AbstractSimpleIOHDLGeneratorFactory(false), true);
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -111,12 +111,6 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Direction facing = attrs.getValue(StdAttr.FACING);
     return Bounds.create(0, -10, 20, 20).rotate(Direction.WEST, facing, 0, 0);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new AbstractSimpleIOHDLGeneratorFactory(false);
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -169,11 +163,6 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
     } else {
       data.setValue(val);
     }
-  }
-
-  @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
   }
 
   @Override
