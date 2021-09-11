@@ -27,7 +27,7 @@ jobs:
 
     steps:
     - name: "Install packages..."
-      run: sudo apt-get install sysvbanner dos2unix
+      run: sudo apt-get install -y sysvbanner
 
       # https://github.com/marketplace/actions/checkout
     - name: "Checkout sources"
@@ -68,6 +68,9 @@ jobs:
     steps:
     - name: "Checkout sources"
       uses: actions/checkout@v2
+
+    - name: "Install packages..."
+      run: sudo apt-get install -y dos2unix
 
     - name: "Lint changed files"
       # We need bash here as java-wrappers.sh may not work with other shells.
