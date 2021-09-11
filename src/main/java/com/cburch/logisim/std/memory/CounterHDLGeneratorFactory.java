@@ -319,9 +319,4 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put("s_real_enable", 1);
     return map;
   }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
 }

@@ -123,7 +123,7 @@ public class Rom extends Mem {
   private final WeakHashMap<Instance, MemListener> memListeners;
 
   public Rom() {
-    super(_ID, S.getter("romComponent"), 0);
+    super(_ID, S.getter("romComponent"), 0, new RomHDLGeneratorFactory(), true);
     setIcon(new ArithmeticIcon("ROM", 3));
     memListeners = new WeakHashMap<>();
   }
@@ -259,16 +259,5 @@ public class Rom extends Mem {
   @Override
   public void removeComponent(Circuit circ, Component c, CircuitState state) {
     closeHexFrame(c);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new RomHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
-  }
-
-  @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
   }
 }

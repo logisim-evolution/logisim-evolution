@@ -261,9 +261,4 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put("s_counter_is_zero", 1);
     return map;
   }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
 }

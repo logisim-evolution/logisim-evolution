@@ -171,9 +171,4 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
     map.put("v_select_4_vector", 4);
     return map;
   }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
 }

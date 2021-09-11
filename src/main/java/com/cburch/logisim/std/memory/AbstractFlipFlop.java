@@ -21,6 +21,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -130,9 +131,9 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
   private final Attribute<AttributeOption> triggerAttribute;
 
-  protected AbstractFlipFlop(
-      String name, String iconName, StringGetter desc, int numInputs, boolean allowLevelTriggers) {
-    super(name, desc);
+  protected AbstractFlipFlop( String name, String iconName, StringGetter desc, int numInputs, 
+      boolean allowLevelTriggers, HDLGeneratorFactory generator) {
+    super(name, desc, generator);
     this.numInputs = numInputs;
     setIconName(iconName);
     triggerAttribute = allowLevelTriggers ? StdAttr.TRIGGER : StdAttr.EDGE_TRIGGER;
@@ -146,8 +147,8 @@ abstract class AbstractFlipFlop extends InstanceFactory {
   }
 
   protected AbstractFlipFlop(
-      String name, Icon icon, StringGetter desc, int numInputs, boolean allowLevelTriggers) {
-    super(name, desc);
+      String name, Icon icon, StringGetter desc, int numInputs, boolean allowLevelTriggers, HDLGeneratorFactory generator) {
+    super(name, desc, generator);
     this.numInputs = numInputs;
     setIcon(icon);
     triggerAttribute = allowLevelTriggers ? StdAttr.TRIGGER : StdAttr.EDGE_TRIGGER;

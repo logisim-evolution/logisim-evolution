@@ -20,6 +20,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -93,7 +94,6 @@ public class Clock extends InstanceFactory {
 
   private static class ClockState implements InstanceData, Cloneable {
     Value sending = Value.UNKNOWN;
-    int currentTick;
 
     ClockState(int curTick, AttributeSet attrs) {
       updateTick(curTick, attrs);
@@ -159,9 +159,10 @@ public class Clock extends InstanceFactory {
   public static final Clock FACTORY = new Clock();
 
   private static final Icon toolIcon = Icons.getIcon("clock.gif");
+  private static final HDLGeneratorFactory HDL_FACTORY = new ClockHDLGeneratorFactory();
 
   public Clock() {
-    super(_ID, S.getter("clockComponent"));
+    super(_ID, S.getter("clockComponent"), HDL_FACTORY);
     setAttributes(
         new Attribute[] {
           StdAttr.FACING, ATTR_HIGH, ATTR_LOW, ATTR_PHASE, StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT
@@ -200,14 +201,6 @@ public class Clock extends InstanceFactory {
   public Bounds getOffsetBounds(AttributeSet attrs) {
     return Probe.getOffsetBounds(
         attrs.getValue(StdAttr.FACING), BitWidth.ONE, RadixOption.RADIX_2, false, false);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) {
-      MyHDLGenerator = new ClockHDLGeneratorFactory();
-    }
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

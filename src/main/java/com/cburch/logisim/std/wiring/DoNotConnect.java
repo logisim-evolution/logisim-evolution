@@ -16,6 +16,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -34,9 +35,10 @@ public class DoNotConnect extends InstanceFactory {
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "NoConnect";
+  private static final HDLGeneratorFactory HDL_GENERATOR = new InlinedHdlGeneratorFactory();
 
   public DoNotConnect() {
-    super(_ID, S.getter("noConnectionComponent"));
+    super(_ID, S.getter("noConnectionComponent"), HDL_GENERATOR);
     setIconName("noconnect.gif");
     setAttributes(new Attribute[] {StdAttr.WIDTH}, new Object[] {BitWidth.ONE});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
@@ -71,11 +73,4 @@ public class DoNotConnect extends InstanceFactory {
   public void propagate(InstanceState state) {
     // do nothing
   }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new InlinedHdlGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
-  }
-
 }

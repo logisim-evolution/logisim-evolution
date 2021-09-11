@@ -268,9 +268,4 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public String GetSubDir() {
     return "memory";
   }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
 }

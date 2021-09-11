@@ -65,7 +65,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
   private final ArrayList<Instance> MyInstances;
 
   public VhdlEntity(VhdlContent content) {
-    super("", null);
+    super("", null, new VhdlHDLGeneratorFactory(), true);
     this.content = content;
     this.content.addHdlModelListener(this);
     this.setIcon(icon);
@@ -140,12 +140,6 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
     if (appearance == null) return Bounds.create(0, 0, 100, 100);
     Direction facing = attrs.getValue(StdAttr.FACING);
     return appearance.getOffsetBounds().rotate(Direction.EAST, facing, 0, 0);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new VhdlHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -280,11 +274,6 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
       throw new UnsupportedOperationException(
           "VHDL component simulation is not supported. This could be because there is no Questasim/Modelsim simulation server running.");
     }
-  }
-
-  @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
   }
 
   /**

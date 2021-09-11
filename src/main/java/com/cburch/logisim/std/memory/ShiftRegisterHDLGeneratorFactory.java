@@ -483,9 +483,4 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
      */
     return "memory";
   }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
 }

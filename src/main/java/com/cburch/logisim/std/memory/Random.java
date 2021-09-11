@@ -132,8 +132,8 @@ public class Random extends InstanceFactory {
 
   static final int RST = 3;
 
-  public Random() {
-    super(_ID, S.getter("randomComponent"));
+ public Random() {
+    super(_ID, S.getter("randomComponent"), new RandomHDLGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.WIDTH,
@@ -326,12 +326,6 @@ public class Random extends InstanceFactory {
   @Override
   public String getHDLName(AttributeSet attrs) {
     return "LogisimRNG";
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new RandomHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

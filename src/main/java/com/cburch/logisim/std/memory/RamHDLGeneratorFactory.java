@@ -398,7 +398,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     if (attrs == null) return false;
     Object busVal = attrs.getValue(RamAttributes.ATTR_DBUS);
     final var separate = busVal != null && busVal.equals(RamAttributes.BUS_SEP);

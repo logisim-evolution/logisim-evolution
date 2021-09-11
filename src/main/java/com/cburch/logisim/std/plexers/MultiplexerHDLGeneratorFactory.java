@@ -158,9 +158,4 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   public String GetSubDir() {
     return "plexers";
   }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
 }

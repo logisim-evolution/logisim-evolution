@@ -328,9 +328,4 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put("s_busy_pipe_next", 2);
     return map;
   }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
 }

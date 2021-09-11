@@ -121,9 +121,4 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public String GetSubDir() {
     return "plexers";
   }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
 }

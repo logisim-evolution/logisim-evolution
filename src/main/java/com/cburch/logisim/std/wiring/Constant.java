@@ -22,6 +22,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
+import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -124,11 +125,11 @@ public class Constant extends InstanceFactory {
   private static final Color BACKGROUND_COLOR = new Color(230, 230, 230);
   private static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
 
-  private static final List<Attribute<?>> ATTRIBUTES =
-      Arrays.asList(StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE);
+  private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE);
+  private static final HDLGeneratorFactory HDL_GENERATOR = new ConstantHDLGeneratorFactory();
 
   public Constant() {
-    super(_ID, S.getter("constantComponent"));
+    super(_ID, S.getter("constantComponent"), HDL_GENERATOR);
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(
         JoinedConfigurator.create(
@@ -163,12 +164,6 @@ public class Constant extends InstanceFactory {
     else if (facing == Direction.SOUTH) return Bounds.create(-w / 2, -16, w, 16);
     else if (facing == Direction.NORTH) return Bounds.create(-w / 2, 0, w, 16);
     else throw new IllegalArgumentException("unrecognized arguments " + facing + " " + width);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new ConstantHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
