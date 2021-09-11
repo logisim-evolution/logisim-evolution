@@ -121,19 +121,6 @@ public abstract class HDL {
   }
 
   public static String getConstantVector(long value, int nrOfBits) {
-    if (HDL.isVHDL()) {
-      if (nrOfBits == 1) return "'" + value + "'";
-      return "std_logic_vector(to_unsigned("
-          + value
-          + ","
-          + nrOfBits
-          + "))";
-    } else {
-      return nrOfBits + "'d" + value;
-    }
-  }
-
-  public static String getConstantBitVector(long value, int nrOfBits) {
     final var bitString = new StringBuffer();
     var mask = 1L << (nrOfBits - 1);
     if (HDL.isVHDL()) 
@@ -152,7 +139,7 @@ public abstract class HDL {
 
   public static String getNetName(NetlistComponent comp, int endIndex, boolean floatingNetTiedToGround,
       Netlist myNetlist) {
-    final var floatingValue = (floatingNetTiedToGround) ? zeroBit() : oneBit();
+    final var floatingValue = floatingNetTiedToGround ? zeroBit() : oneBit();
     final var contents = (new LineBuffer()).addHdlPairs();
     if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
       final var thisEnd = comp.getEnd(endIndex);

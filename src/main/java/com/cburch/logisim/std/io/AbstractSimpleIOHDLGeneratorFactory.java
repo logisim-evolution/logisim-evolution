@@ -32,20 +32,20 @@ public class AbstractSimpleIOHDLGeneratorFactory extends InlinedHdlGeneratorFact
     for (int i = 0; i < componentInfo.nrOfEnds(); i++) {
       if (componentInfo.isEndConnected(i) && isInputComponent) {
         final var pressPassive = componentInfo.getComponent().getAttributeSet().getValue(Button.ATTR_PRESS) ==  Button.BUTTON_PRESS_PASSIVE;
-        contents.add("   {{assign}} {{1}} {{=}} {{2}}{{3}}{{<}}{{4}}{{>}};",
+        contents.add("{{assign}} {{1}} {{=}} {{2}}{{3}}{{<}}{{4}}{{>}};",
             HDL.getNetName(componentInfo, i, true, nets),
             (pressPassive ? HDL.notOperator() : ""),
             HDLGeneratorFactory.LocalInputBubbleBusname,
-            (componentInfo.getLocalBubbleInputStartId() + i));
+            componentInfo.getLocalBubbleInputStartId() + i);
       }
       if (!isInputComponent) {
-        contents.add("   {{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}};",
+        contents.add("{{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}};",
             HDLGeneratorFactory.LocalOutputBubbleBusname,
             (componentInfo.getLocalBubbleOutputStartId() + i),
             HDL.getNetName(componentInfo, i, true, nets));
       }
     }
-    return contents.get();
+    return contents.getWithIndent(3);
   }
 
 }

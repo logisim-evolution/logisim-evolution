@@ -95,15 +95,15 @@ public class WithSelectHDLGenerator {
     for (final var thisCase : myCases.keySet()) {
       final var value = myCases.get(thisCase);
       if (HDL.isVHDL()) {
-        contents.add("   {{1}} WHEN {{2}},", HDL.getConstantBitVector(value, nrOfDestinationBits), HDL.getConstantBitVector(thisCase, nrOfSourceBits));
+        contents.add("   {{1}} WHEN {{2}},", HDL.getConstantVector(value, nrOfDestinationBits), HDL.getConstantVector(thisCase, nrOfSourceBits));
       } else {
-        contents.add("      {{1}} : {{regName}} = {{2}};", HDL.getConstantBitVector(thisCase, nrOfSourceBits), HDL.getConstantBitVector(value, nrOfDestinationBits));
+        contents.add("      {{1}} : {{regName}} = {{2}};", HDL.getConstantVector(thisCase, nrOfSourceBits), HDL.getConstantVector(value, nrOfDestinationBits));
       }
     }
     if (HDL.isVHDL()) {
-      contents.add("   {{1}} WHEN OTHERS;", HDL.getConstantBitVector(defaultValue, nrOfDestinationBits));
+      contents.add("   {{1}} WHEN OTHERS;", HDL.getConstantVector(defaultValue, nrOfDestinationBits));
     } else {
-      contents.add("      default : {{regName}} = {{1}};", HDL.getConstantBitVector(defaultValue, nrOfDestinationBits));
+      contents.add("      default : {{regName}} = {{1}};", HDL.getConstantVector(defaultValue, nrOfDestinationBits));
     }
     if (HDL.isVerilog()) 
       contents.add("""
