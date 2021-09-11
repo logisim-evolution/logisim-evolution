@@ -38,10 +38,10 @@ public class ReptarLocalBus extends InstanceFactory {
   public static String getInputLabel(int id) {
     if (id < 5)
       switch (id) {
-        case 0 : return "SP6_LB_nCS3_i";
-        case 1 : return "SP6_LB_nADV_ALE_i";
-        case 2 : return "SP6_LB_RE_nOE_i";
-        case 3 : return "SP6_LB_nWE_i";
+        case 0: return "SP6_LB_nCS3_i";
+        case 1: return "SP6_LB_nADV_ALE_i";
+        case 2: return "SP6_LB_RE_nOE_i";
+        case 3: return "SP6_LB_nWE_i";
       }
     if (id < 13) return "Addr_LB_i_" + (id + 11);
     return "Undefined";
