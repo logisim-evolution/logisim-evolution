@@ -491,7 +491,7 @@ public class PortIO extends InstanceFactory {
       var pinIndexCorrection = -BitWidth.MAXWIDTH;
       for (var pinIndex = 0; pinIndex < nrOfPins; pinIndex++) {
         if ((pinIndex % BitWidth.MAXWIDTH) == 0) {
-          if (portType.equals(INOUTME))
+          if ((portType.equals(INOUTME)) && (pinIndex > 0))
             enableValue = state.getPortValue(currentPortIndex++);
           inputValue = state.getPortValue(currentPortIndex++);
           pinIndexCorrection += BitWidth.MAXWIDTH;
