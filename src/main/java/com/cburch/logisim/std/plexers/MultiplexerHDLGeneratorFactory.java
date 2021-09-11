@@ -63,7 +63,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
                       CASE (Sel) IS
                 """);
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++)
-        contents.add("         WHEN {{1}} => MuxOut <= MuxIn_{{2}};", IntToBin(i, nrOfSelectBits), i);
+        contents.add("         WHEN {{1}} => MuxOut <= MuxIn_{{2}};", HDL.getConstantVector(i, nrOfSelectBits), i);
       contents.add("         WHEN OTHERS  => MuxOut <= MuxIn_{{1}};", (1 << nrOfSelectBits) - 1)
               .add("""
                          END CASE; 
@@ -81,7 +81,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
           """);
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++) {
         contents
-            .add("      {{1}}:", IntToBin(i, nrOfSelectBits))
+            .add("      {{1}}:", HDL.getConstantVector(i, nrOfSelectBits))
             .add("         s_selected_vector <= MuxIn_{{1}};", i);
       }
       contents

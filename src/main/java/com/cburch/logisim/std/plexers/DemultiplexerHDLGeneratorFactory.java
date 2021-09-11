@@ -49,7 +49,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     var numOutputs = (1 << nrOfSelectBits);
     for (var i = 0; i < numOutputs; i++) {
       if (i == 10) space = " ";
-      final var binValue = IntToBin(i, nrOfSelectBits);
+      final var binValue = HDL.getConstantVector(i, nrOfSelectBits);
       if (HDL.isVHDL()) {
         contents.add("DemuxOut_{{1}}{{2}}<= DemuxIn WHEN sel = {{3}} AND", i, space, binValue);
         if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) {

@@ -30,30 +30,6 @@ import java.util.TreeSet;
 
 public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
-  protected static String IntToBin(int value, int nr_of_bits) {
-    var mask = 1 << (nr_of_bits - 1);
-    var result = new StringBuilder();
-    var align = (7 - nr_of_bits) >> 1;
-    while ((result.length() < align) && HDL.isVHDL()) {
-      result.append(" ");
-    }
-    var VhdlQuotes = (nr_of_bits == 1) ? "'" : "\"";
-    result.append((HDL.isVHDL()) ? VhdlQuotes : nr_of_bits + "'b");
-    while (mask != 0) {
-      if ((value & mask) != 0) {
-        result.append("1");
-      } else {
-        result.append("0");
-      }
-      mask >>= 1;
-    }
-    if (HDL.isVHDL()) result.append(VhdlQuotes);
-    while ((result.length() < 7) && HDL.isVHDL()) {
-      result.append(" ");
-    }
-    return result.toString();
-  }
-
   public static boolean WriteArchitecture(
       String TargetDirectory,
       ArrayList<String> Contents,
