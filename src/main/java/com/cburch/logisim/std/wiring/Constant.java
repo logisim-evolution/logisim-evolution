@@ -22,7 +22,6 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -126,10 +125,9 @@ public class Constant extends InstanceFactory {
   private static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
 
   private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE);
-  private static final HDLGeneratorFactory HDL_GENERATOR = new ConstantHDLGeneratorFactory();
 
   public Constant() {
-    super(_ID, S.getter("constantComponent"), HDL_GENERATOR);
+    super(_ID, S.getter("constantComponent"), new ConstantHDLGeneratorFactory());
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(
         JoinedConfigurator.create(

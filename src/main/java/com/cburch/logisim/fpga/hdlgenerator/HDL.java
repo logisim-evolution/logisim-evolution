@@ -124,7 +124,7 @@ public abstract class HDL {
     final var bitString = new StringBuffer();
     var mask = 1L << (nrOfBits - 1);
     if (HDL.isVHDL()) 
-      bitString.append('"');
+      bitString.append(nrOfBits == 1 ? '\'' : '"');
     else
       bitString.append(LineBuffer.format("{{1}}'b", nrOfBits));
     while (mask != 0) {
@@ -133,7 +133,7 @@ public abstract class HDL {
       // fix in case of a 64-bit vector
       if (mask < 0) mask &= Long.MAX_VALUE;
     }
-    if (HDL.isVHDL()) bitString.append('"');
+    if (HDL.isVHDL()) bitString.append(nrOfBits == 1 ? '\'' : '"');
     return bitString.toString();
   }
 

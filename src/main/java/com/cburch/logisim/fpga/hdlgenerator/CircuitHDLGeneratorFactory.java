@@ -246,7 +246,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   .append(bit)
                   .append(HDL.BracketClose());
             } else {
-              OneLine.append(BUS_NAME).append(TheNets.getNetId(ThisNet));
+              OneLine.append(NET_NAME).append(TheNets.getNetId(ThisNet));
             }
             while (OneLine.length() < SIGNAL_ALLIGNMENT_SIZE) OneLine.append(" ");
 

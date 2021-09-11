@@ -20,7 +20,6 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -159,10 +158,9 @@ public class Clock extends InstanceFactory {
   public static final Clock FACTORY = new Clock();
 
   private static final Icon toolIcon = Icons.getIcon("clock.gif");
-  private static final HDLGeneratorFactory HDL_FACTORY = new ClockHDLGeneratorFactory();
 
   public Clock() {
-    super(_ID, S.getter("clockComponent"), HDL_FACTORY);
+    super(_ID, S.getter("clockComponent"), new ClockHDLGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.FACING, ATTR_HIGH, ATTR_LOW, ATTR_PHASE, StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT
