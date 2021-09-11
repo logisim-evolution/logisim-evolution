@@ -104,7 +104,8 @@ public class LineBuffer implements RandomAccess {
   }
 
   /**
-   * Checks if given entry exists in content buffer
+   * Checks if given entry exists in content buffer.
+   *
    * @param line Line to look for.
    */
   public boolean contains(String line) {
@@ -470,6 +471,7 @@ public class LineBuffer implements RandomAccess {
 
   /**
    * Returns 2 units of default indentation string.
+   *
    * @param indentUnits Number of indentation units to return.
    */
   public static String getIndent(int indentUnits) {
@@ -829,6 +831,7 @@ public class LineBuffer implements RandomAccess {
 
     /**
      * Creates pairs container and adds new pair to it.
+     *
      * @param key Pair's key.
      * @param value Pair's value.
      */
