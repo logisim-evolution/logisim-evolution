@@ -542,8 +542,8 @@ class XmlReader {
     if (root == null) throw new RuntimeException("Value of 'root' cannot be null");
     if (nodeType == null) throw new RuntimeException("Value of 'nodeType' cannot be null");
     if (attrType == null) throw new RuntimeException("Value of 'attrType' cannot be null");
-    if (nodeType.length() > 0) throw new RuntimeException("Empty string is not a valid value of 'nodeType'.");
-    if (attrType.length() > 0) throw new RuntimeException("Empty string is not a valid value of 'attrType'.");
+    if (nodeType.length() == 0) throw new RuntimeException("Empty string is not a valid value of 'nodeType'.");
+    if (attrType.length() == 0) throw new RuntimeException("Empty string is not a valid value of 'attrType'.");
     if (validLabels == null) throw new RuntimeException("Value of 'validLabels' cannot be null");
 
     switch (nodeType) {
@@ -620,8 +620,8 @@ class XmlReader {
     if (root == null) throw new RuntimeException("Value of 'root' cannot be null");
     if (nodeType == null) throw new RuntimeException("Value of 'nodeType' cannot be null");
     if (attrType == null) throw new RuntimeException("Value of 'attrType' cannot be null");
-    if (nodeType.length() > 0) throw new RuntimeException("Empty string is not a valid value of 'nodeType'.");
-    if (attrType.length() > 0) throw new RuntimeException("Empty string is not a valid value of 'attrType'.");
+    if (nodeType.length() == 0) throw new RuntimeException("Empty string is not a valid value of 'nodeType'.");
+    if (attrType.length() == 0) throw new RuntimeException("Empty string is not a valid value of 'attrType'.");
 
     final var validLabels = new HashMap<String, String>();
 
@@ -734,8 +734,8 @@ class XmlReader {
     if (root == null) throw new RuntimeException("Value of 'root' cannot be null.");
     if (nodeType == null) throw new RuntimeException("Value of 'nodeType' cannot be null.");
     if (attrType == null) throw new RuntimeException("Value of 'attrType' cannot be null.");
-    if (nodeType.length() > 0) throw new RuntimeException("Empty string is not a valid value of 'nodeType'.");
-    if (attrType.length() > 0) throw new RuntimeException("Empty string is not a valid value of 'attrType'.");
+    if (nodeType.length() == 0) throw new RuntimeException("Empty string is not a valid value of 'nodeType'.");
+    if (attrType.length() == 0) throw new RuntimeException("Empty string is not a valid value of 'attrType'.");
 
     final var attrValuesList = new ArrayList<String>();
 
