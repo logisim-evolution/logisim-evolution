@@ -82,7 +82,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   + ComponentName);
           return false;
         }
-        if (!Worker.IsOnlyInlined()) {
+        if (!Worker.isOnlyInlined()) {
           if (!WriteEntity(
               WorkPath + Worker.GetRelativeDirectory(),
               Worker.GetEntity(
@@ -189,7 +189,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 .getFactory()
                 .getHDLGenerator(Gate.getComponent().getAttributeSet());
         if (Worker != null) {
-          if (!Worker.IsOnlyInlined()) {
+          if (!Worker.isOnlyInlined()) {
             Components.addAll(
                 Worker.GetComponentInstantiation(
                     TheNetlist,
@@ -423,7 +423,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     for (final var comp : theNetlist.getNormalComponents()) {
       var worker = comp.getComponent().getFactory().getHDLGenerator(comp.getComponent().getAttributeSet());
       if (worker != null) {
-        if (worker.IsOnlyInlined()) {
+        if (worker.isOnlyInlined()) {
           var inlinedName = comp.getComponent().getFactory().getHDLName(comp.getComponent().getAttributeSet());
           var InlinedId = worker.getComponentStringIdentifier();
           var id = (compIds.containsKey(InlinedId)) ? compIds.get(InlinedId) : (long) 1;
@@ -443,7 +443,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     for (final var comp : theNetlist.getNormalComponents()) {
       var worker = comp.getComponent().getFactory().getHDLGenerator(comp.getComponent().getAttributeSet());
       if (worker != null) {
-        if (!worker.IsOnlyInlined()) {
+        if (!worker.isOnlyInlined()) {
           var compName = comp.getComponent().getFactory().getHDLName(comp.getComponent().getAttributeSet());
           var compId = worker.getComponentStringIdentifier();
           var id = (compIds.containsKey(compId)) ? compIds.get(compId) : (long) 1;

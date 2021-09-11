@@ -1012,7 +1012,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public boolean IsOnlyInlined() {
+  public boolean isOnlyInlined() {
     return false;
   }
 

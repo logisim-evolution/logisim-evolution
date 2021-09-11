@@ -68,7 +68,7 @@ public class InlinedHdlGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public boolean IsOnlyInlined() {
+  public boolean isOnlyInlined() {
     return true;
   }
 

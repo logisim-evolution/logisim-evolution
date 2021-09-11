@@ -9,17 +9,15 @@
 
 package com.cburch.logisim.std.wiring;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-
+import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
-public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class BitExtenderHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
 
   @Override
   public ArrayList<String> GetInlinedCode(
@@ -86,15 +84,5 @@ public class BitExtenderHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       Contents.add("");
     }
     return Contents.getWithIndent();
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
-
-  @Override
-  public boolean IsOnlyInlined() {
-    return true;
   }
 }

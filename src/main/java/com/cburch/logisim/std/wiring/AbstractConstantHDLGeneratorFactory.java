@@ -12,13 +12,12 @@ package com.cburch.logisim.std.wiring;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-
+import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
-public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class AbstractConstantHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
 
   public long GetConstant(AttributeSet attrs) {
     return 0;
@@ -60,13 +59,4 @@ public class AbstractConstantHDLGeneratorFactory extends AbstractHDLGeneratorFac
     return Contents.getWithIndent();
   }
 
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
-
-  @Override
-  public boolean IsOnlyInlined() {
-    return true;
-  }
 }

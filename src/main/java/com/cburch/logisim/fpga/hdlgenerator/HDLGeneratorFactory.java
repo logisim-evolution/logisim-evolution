@@ -70,5 +70,5 @@ public interface HDLGeneratorFactory {
 
   boolean HDLTargetSupported(AttributeSet attrs);
 
-  boolean IsOnlyInlined();
+  boolean isOnlyInlined();
 }
