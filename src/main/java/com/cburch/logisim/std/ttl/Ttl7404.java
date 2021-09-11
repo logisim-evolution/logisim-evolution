@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -53,11 +52,11 @@ public class Ttl7404 extends AbstractTtlGate {
   private static final byte[] outPorts = {2, 4, 6, 8, 10, 12};
 
   public Ttl7404() {
-    super(_ID, portCount, outPorts, true);
+    super(_ID, portCount, outPorts, true, new NotGateHDLGeneratorFactory());
   }
 
   public Ttl7404(String name) {
-    super(name, portCount, outPorts, true);
+    super(name, portCount, outPorts, true, new NotGateHDLGeneratorFactory());
   }
 
   @Override
@@ -79,11 +78,5 @@ public class Ttl7404 extends AbstractTtlGate {
     for (byte i = 6; i < 12; i += 2) {
       state.setPort(i, state.getPortValue(i + 1).not(), 1);
     }
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new NotGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

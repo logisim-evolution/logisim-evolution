@@ -23,7 +23,7 @@ public class Ttl74125 extends AbstractTtlGate {
   public static final String _ID = "74125";
 
   public Ttl74125() {
-    super(_ID, (byte) 14, new byte[] {3, 6, 8, 11}, true);
+    super(_ID, (byte) 14, new byte[] {3, 6, 8, 11}, true, null);
   }
 
   @Override
