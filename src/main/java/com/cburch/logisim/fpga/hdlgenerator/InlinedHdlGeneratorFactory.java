@@ -20,13 +20,13 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 public class InlinedHdlGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
-  public boolean GenerateAllHDLDescriptions(Set<String> HandledComponents, String WorkingDir,
-      ArrayList<String> Hierarchy) {
+  public boolean generateAllHDLDescriptions(Set<String> handledComponents, String workingDirectory,
+      ArrayList<String> hierarchy) {
     return false;
   }
 
   @Override
-  public ArrayList<String> GetArchitecture(Netlist TheNetlist, AttributeSet attrs, String ComponentName) {
+  public ArrayList<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
     return null;
   }
 

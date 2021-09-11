@@ -25,12 +25,12 @@ import java.util.TreeMap;
 public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
-  public ArrayList<String> GetArchitecture(
-      Netlist TheNetlist,
+  public ArrayList<String> getArchitecture(
+      Netlist theNetlist,
       AttributeSet attrs,
       String componentName) {
     ArrayList<String> contents = new ArrayList<>();
-    contents.addAll(FileWriter.getGenerateRemark(componentName, TheNetlist.projName()));
+    contents.addAll(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
 
     VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
     contents.add(content.getLibraries());

@@ -23,7 +23,7 @@ import java.util.TreeMap;
 public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
-  public ArrayList<String> GetArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
+  public ArrayList<String> getArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
     final var contents = new LineBuffer();
     if (HDL.isVHDL()) {
       contents

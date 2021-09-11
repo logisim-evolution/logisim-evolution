@@ -159,7 +159,7 @@ public abstract class DownloadBase {
       Reporter.Report.AddFatalError("Internal error on HDL generation, null pointer exception");
       return false;
     }
-    if (!worker.GenerateAllHDLDescriptions(generatedHDLComponents, projectDir, null)) {
+    if (!worker.generateAllHDLDescriptions(generatedHDLComponents, projectDir, null)) {
       return false;
     }
     /* Here we generate the top-level shell */
@@ -173,7 +173,7 @@ public abstract class DownloadBase {
       }
       if (!AbstractHDLGeneratorFactory.WriteArchitecture(
           projectDir + ticker.GetRelativeDirectory(),
-          ticker.GetArchitecture(rootSheet.getNetList(), null, ticker.getComponentStringIdentifier()), ticker.getComponentStringIdentifier())) {
+          ticker.getArchitecture(rootSheet.getNetList(), null, ticker.getComponentStringIdentifier()), ticker.getComponentStringIdentifier())) {
         return false;
       }
 
@@ -191,7 +191,7 @@ public abstract class DownloadBase {
       }
       if (!AbstractHDLGeneratorFactory.WriteArchitecture(
           projectDir + clockGen.GetRelativeDirectory(),
-          clockGen.GetArchitecture(rootSheet.getNetList(), null, compName),
+          clockGen.getArchitecture(rootSheet.getNetList(), null, compName),
           compName)) {
         return false;
       }
@@ -212,7 +212,7 @@ public abstract class DownloadBase {
             }
             if (!AbstractHDLGeneratorFactory.WriteArchitecture(
                 projectDir + worker.GetRelativeDirectory(),
-                worker.GetArchitecture(rootSheet.getNetList(), null, name),
+                worker.getArchitecture(rootSheet.getNetList(), null, name),
                 worker.getComponentStringIdentifier())) {
               return false;
             }
@@ -228,7 +228,7 @@ public abstract class DownloadBase {
     }
     return AbstractHDLGeneratorFactory.WriteArchitecture(
         projectDir + top.GetRelativeDirectory(),
-        top.GetArchitecture(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME),
+        top.getArchitecture(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME),
         top.getComponentStringIdentifier());
   }
 

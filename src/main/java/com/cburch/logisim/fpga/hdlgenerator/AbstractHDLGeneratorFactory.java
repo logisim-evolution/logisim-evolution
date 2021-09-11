@@ -64,15 +64,15 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   /* Here the common predefined methods are defined */
   @Override
-  public boolean GenerateAllHDLDescriptions(
-      Set<String> HandledComponents,
-      String WorkingDir,
-      ArrayList<String> Hierarchy) {
+  public boolean generateAllHDLDescriptions(
+      Set<String> handledComponents,
+      String workingDirectory,
+      ArrayList<String> hierarchy) {
     return true;
   }
 
   @Override
-  public ArrayList<String> GetArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
+  public ArrayList<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
     final var Contents = new LineBuffer();
     final var inputs = GetInputList(theNetlist, attrs);
     final var inOuts = GetInOutList(theNetlist, attrs);
@@ -680,12 +680,12 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
                   /* The connection is to a Net */
                   NetMap.put(
                       SourceNetName.toString(),
-                      HDL.NET_NAME + TheNets.getNetId(SolderPoint.getParentNet()));
+                      NET_NAME + TheNets.getNetId(SolderPoint.getParentNet()));
                 } else {
                   /* The connection is to an entry of a bus */
                   NetMap.put(
                       SourceNetName.toString(),
-                      HDL.BUS_NAME
+                      BUS_NAME
                           + TheNets.getNetId(SolderPoint.getParentNet())
                           + "("
                           + SolderPoint.getParentNetBitIndex()
@@ -715,11 +715,11 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
                  */
                 if (SolderPoint.getParentNet().getBitWidth() == 1) {
                   /* The connection is to a Net */
-                  SeperateSignals.add(HDL.NET_NAME + TheNets.getNetId(SolderPoint.getParentNet()));
+                  SeperateSignals.add(NET_NAME + TheNets.getNetId(SolderPoint.getParentNet()));
                 } else {
                   /* The connection is to an entry of a bus */
                   SeperateSignals.add(
-                      HDL.BUS_NAME
+                      BUS_NAME
                           + TheNets.getNetId(SolderPoint.getParentNet())
                           + "["
                           + SolderPoint.getParentNetBitIndex()

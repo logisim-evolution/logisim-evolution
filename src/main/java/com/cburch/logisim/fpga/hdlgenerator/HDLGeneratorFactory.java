@@ -13,11 +13,14 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+
 import java.util.ArrayList;
 import java.util.Set;
 
 public interface HDLGeneratorFactory {
 
+  public static final String NET_NAME = HDL.NET_NAME;
+  public static final String BUS_NAME = HDL.BUS_NAME;
   public static final String CLOCK_TREE_NAME = "LOGISIM_CLOCK_TREE_";
   public static final String VHDL = "VHDL";
   public static final String VERILOG = "Verilog";
@@ -28,15 +31,15 @@ public interface HDLGeneratorFactory {
   public static final int PORT_ALLIGNMENT_SIZE = 26;
   public static final int SIGNAL_ALLIGNMENT_SIZE = 35;
 
-  boolean GenerateAllHDLDescriptions(
-      Set<String> HandledComponents,
-      String WorkingDir,
-      ArrayList<String> Hierarchy);
+  boolean generateAllHDLDescriptions(
+      Set<String> handledComponents,
+      String workingDirectory,
+      ArrayList<String> hierarchy);
 
-  ArrayList<String> GetArchitecture(
-      Netlist TheNetlist,
+  ArrayList<String> getArchitecture(
+      Netlist theNetlist,
       AttributeSet attrs,
-      String ComponentName);
+      String componentName);
 
   ArrayList<String> GetComponentInstantiation(
       Netlist TheNetlist,

@@ -43,7 +43,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       };
 
   @Override
-  public ArrayList<String> GetArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
+  public ArrayList<String> getArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
     final var contents =
         (new LineBuffer(sharedPairs))
             .add(FileWriter.getGenerateRemark(componentName, nets.projName()));
@@ -131,7 +131,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
               
               """);
     }
-    contents.add(super.GetArchitecture(nets, attrs, componentName));
+    contents.add(super.getArchitecture(nets, attrs, componentName));
     return contents.get();
   }
 
