@@ -71,12 +71,12 @@ public class Ttl74157 extends AbstractTtlGate {
   private static final byte[] outPins = { L1_Y, L2_Y, L3_Y, L4_Y };
 
   public Ttl74157() {
-    super(_ID, pinCount, outPins, pinNames);
+    super(_ID, pinCount, outPins, pinNames, null);
     invertOutput = false;
   }
 
   public Ttl74157(String icName, boolean invertOutput) {
-    super(icName, pinCount, outPins, pinNames);
+    super(icName, pinCount, outPins, pinNames, null);
     this.invertOutput = invertOutput;
   }
 

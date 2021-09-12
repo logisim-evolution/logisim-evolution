@@ -13,8 +13,8 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.Port;
 import java.util.ArrayList;
@@ -23,14 +23,18 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+  
+  public VhdlHDLGeneratorFactory() {
+    super("circuit");
+  }
 
   @Override
-  public ArrayList<String> GetArchitecture(
-      Netlist TheNetlist,
+  public ArrayList<String> getArchitecture(
+      Netlist theNetlist,
       AttributeSet attrs,
       String componentName) {
     ArrayList<String> contents = new ArrayList<>();
-    contents.addAll(FileWriter.getGenerateRemark(componentName, TheNetlist.projName()));
+    contents.addAll(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
 
     VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
     contents.add(content.getLibraries());
@@ -110,12 +114,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    return "circuit";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     return HDL.isVHDL();
   }
 }

@@ -106,7 +106,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
               + "\" has no clock connection");
       hasClock = false;
     }
-    String ClockNetName = GetClockNetName(comp, clockPinIndex, nets);
+    String ClockNetName = HDL.getClockNetName(comp, clockPinIndex, nets);
     if (ClockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -115,7 +115,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
       map.put("tick", "'0'");
     } else if (gatedClock) {
       map.put("tick", "'1'");
-      map.put("CLK", GetNetName(comp, clockPinIndex, true, nets));
+      map.put("CLK", HDL.getNetName(comp, clockPinIndex, true, nets));
     } else {
       if (nets.requiresGlobalClockConnection()) {
         map.put("tick", "'1'");
@@ -151,16 +151,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
   }
 
   @Override
-  public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
-    return "ttl";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
     return (!attrs.getValue(TtlLibrary.VCC_GND) && (HDL.isVHDL()));

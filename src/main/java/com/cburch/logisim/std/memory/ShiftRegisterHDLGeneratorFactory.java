@@ -12,9 +12,9 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
@@ -43,7 +43,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       };
 
   @Override
-  public ArrayList<String> GetArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
+  public ArrayList<String> getArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
     final var contents =
         (new LineBuffer(sharedPairs))
             .add(FileWriter.getGenerateRemark(componentName, nets.projName()));
@@ -131,7 +131,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
               
               """);
     }
-    contents.add(super.GetArchitecture(nets, attrs, componentName));
+    contents.add(super.getArchitecture(nets, attrs, componentName));
     return contents.get();
   }
 
@@ -162,7 +162,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public ArrayList<String> GetEntity(Netlist nets, AttributeSet attrs, String componentName) {
+  public ArrayList<String> getEntity(Netlist nets, AttributeSet attrs, String componentName) {
 
     final var contents = new LineBuffer(sharedPairs);
     if (HDL.isVHDL()) {
@@ -188,7 +188,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
               
               """);
     }
-    contents.add(super.GetEntity(nets, attrs, componentName));
+    contents.add(super.getEntity(nets, attrs, componentName));
     return contents.get();
   }
 
@@ -274,7 +274,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     var activeLevel = 1;
     var gatedClock = false;
     var activeLow = false;
-    final var clockNetName = GetClockNetName(componentInfo, ShiftRegister.CK, nets);
+    final var clockNetName = HDL.getClockNetName(componentInfo, ShiftRegister.CK, nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -309,7 +309,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(comp, ShiftRegister.CK, nets);
+    final var clockNetName = HDL.getClockNetName(comp, ShiftRegister.CK, nets);
     gatedClock = clockNetName.isEmpty();
     activeLow = attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING;
     final var hasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD);
@@ -365,7 +365,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
                   + ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX
                   + HDL.BracketClose());
       } else {
-        map.put("Clock", GetNetName(comp, ShiftRegister.CK, true, nets));
+        map.put("Clock", HDL.getNetName(comp, ShiftRegister.CK, true, nets));
       }
     }
     map.putAll(GetNetMap("ShiftEnable", false, comp, ShiftRegister.SH, nets));
@@ -406,14 +406,14 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
         } else {
           for (var i = nrOfStages - 1; i >= 0; i--) {
             if (vector.length() != 0) vector.append(",");
-            vector.append(GetNetName(comp, 6 + 2 * i, true, nets));
+            vector.append(HDL.getNetName(comp, 6 + 2 * i, true, nets));
           }
           map.put("D", vector.toString());
           vector.setLength(0);
           vector.append("open");
           for (var i = nrOfStages - 2; i >= 0; i--) {
             if (vector.length() != 0) vector.append(",");
-            vector.append(GetNetName(comp, 7 + 2 * i, true, nets));
+            vector.append(HDL.getNetName(comp, 7 + 2 * i, true, nets));
           }
           map.put("Q", vector.toString());
         }
@@ -423,14 +423,14 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             for (var i = 0; i < nrOfStages; i++) {
               map.put(
                   "D" + HDL.BracketOpen() + (bit * nrOfStages + i) + HDL.BracketClose(),
-                  GetBusEntryName(comp, 6 + 2 * i, true, bit, nets));
+                  HDL.getBusEntryName(comp, 6 + 2 * i, true, bit, nets));
             }
           }
           for (var bit = 0; bit < nrOfBits; bit++) {
             for (var i = 0; i < nrOfStages - 1; i++) {
               map.put(
                   "Q" + HDL.BracketOpen() + (bit * nrOfStages + i) + HDL.BracketClose(),
-                  GetBusEntryName(comp, 7 + 2 * i, true, bit, nets));
+                  HDL.getBusEntryName(comp, 7 + 2 * i, true, bit, nets));
             }
             map.put(
                 "Q" + HDL.BracketOpen() + ((bit + 1) * nrOfStages - 1) + HDL.BracketClose(),
@@ -441,7 +441,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           for (var bit = nrOfBits - 1; bit >= 0; bit--) {
             for (var i = nrOfStages - 1; i >= 0; i--) {
               if (vector.length() != 0) vector.append(",");
-              vector.append(GetBusEntryName(comp, 6 + 2 * i, true, bit, nets));
+              vector.append(HDL.getBusEntryName(comp, 6 + 2 * i, true, bit, nets));
             }
           }
           map.put("D", vector.toString());
@@ -451,7 +451,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             vector.append("open");
             for (var i = nrOfStages - 2; i >= 0; i--) {
               if (vector.length() != 0) vector.append(",");
-              vector.append(GetBusEntryName(comp, 7 + 2 * i, true, bit, nets));
+              vector.append(HDL.getBusEntryName(comp, 7 + 2 * i, true, bit, nets));
             }
           }
           map.put("Q", vector.toString());
@@ -473,19 +473,5 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     if (HDL.isVHDL() & (nrOfBits == 1)) shiftOut += "(0)";
     map.putAll(GetNetMap(shiftOut, true, comp, ShiftRegister.OUT, nets));
     return map;
-  }
-
-  @Override
-  public String GetSubDir() {
-    /*
-     * this method returns the module sub-directory where the HDL code is
-     * placed
-     */
-    return "memory";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

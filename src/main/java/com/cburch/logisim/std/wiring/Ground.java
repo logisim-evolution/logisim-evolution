@@ -39,7 +39,7 @@ public class Ground extends InstanceFactory {
   public static final String _ID = "Ground";
 
   public Ground() {
-    super(_ID, S.getter("groundComponent"));
+    super(_ID, S.getter("groundComponent"), new AbstractConstantHDLGeneratorFactory());
     setIconName("ground.gif");
     setAttributes(
         new Attribute[] {StdAttr.FACING, StdAttr.WIDTH},
@@ -86,12 +86,6 @@ public class Ground extends InstanceFactory {
   public Bounds getOffsetBounds(AttributeSet attrs) {
     return Bounds.create(0, -8, 14, 16)
         .rotate(Direction.EAST, attrs.getValue(StdAttr.FACING), 0, 0);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new AbstractConstantHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

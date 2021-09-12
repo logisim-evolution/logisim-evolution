@@ -595,14 +595,14 @@ public class MapComponent {
     if (pin < 0 || pin >= nrOfPins) return null;
     if (myInputBubbles.containsKey(pin) && myInputBubbles.get(pin) >= 0) {
       return "s_"
-          + HDLGeneratorFactory.LocalInputBubbleBusname
+          + HDLGeneratorFactory.LOCAL_INPUT_BUBBLE_BUS_NAME
           + HDL.BracketOpen()
           + myInputBubbles.get(pin)
           + HDL.BracketClose();
     }
     if (MyOutputBubbles.containsKey(pin) && MyOutputBubbles.get(pin) >= 0) {
       return "s_"
-          + HDLGeneratorFactory.LocalOutputBubbleBusname
+          + HDLGeneratorFactory.LOCAL_OUTPUT_BUBBLE_BUS_NAME
           + HDL.BracketOpen()
           + MyOutputBubbles.get(pin)
           + HDL.BracketClose();

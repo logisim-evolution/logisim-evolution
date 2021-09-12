@@ -31,6 +31,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   public TickComponentHDLGeneratorFactory(
       long fpga_clock_frequency, double tick_frequency /* boolean useFPGAClock */) {
+    super("base");
     fpgaClockFrequency = fpga_clock_frequency;
     tickFrequency = tick_frequency;
     // this.useFPGAClock = useFPGAClock;
@@ -51,8 +52,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents =
-        (new LineBuffer())
-            .addHdlPairs()
+        LineBuffer.getHdlBuffer()
             .pair("nrOfCounterBits", NrOfCounterBitsStr)
             .add("")
             .addRemarkBlock("Here the Output is defined")
@@ -164,20 +164,10 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public String GetSubDir() {
-    return "base";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_tick_next", 1);
     Wires.put("s_count_next", NrOfCounterBitsId);
     return Wires;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -29,7 +28,8 @@ public class Ttl7430 extends AbstractTtlGate {
         (byte) 14,
         new byte[] {8},
         new byte[] {9, 10, 13},
-        new String[] {"A", "B", "C", "D", "E", "F", "Y", "G", "H"});
+        new String[] {"A", "B", "C", "D", "E", "F", "Y", "G", "H"},
+        new Ttl7430HDLGenerator());
   }
 
   @Override
@@ -69,11 +69,5 @@ public class Ttl7430 extends AbstractTtlGate {
                 .getPortValue(4)
                 .and(state.getPortValue(5).and(state.getPortValue(7).and(state.getPortValue(8)))));
     state.setPort(6, val2.not(), 1);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new Ttl7430HDLGenerator();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }
