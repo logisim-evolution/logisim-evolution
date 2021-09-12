@@ -153,9 +153,7 @@ public abstract class HDL {
           // The net is connected, we have to find out if the connection
           // is to a bus or to a normal net.
           netName = (solderPoint.getParentNet().getBitWidth() == 1)
-                  // The connection is to a Net
                   ? LineBuffer.formatHdl("{{1}}{{2}}", NET_NAME, myNetlist.getNetId(solderPoint.getParentNet()))
-                  // The connection is to an entry of a bus
                   : LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME,
                       myNetlist.getNetId(solderPoint.getParentNet()), solderPoint.getParentNetBitIndex());
         }
@@ -165,26 +163,28 @@ public abstract class HDL {
   }
 
   public static String getBusEntryName(NetlistComponent comp, int endIndex, boolean floatingNetTiedToGround, int bitindex, Netlist theNets) {
-    var netName = "";
+    var busName = "";
     if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
       final var thisEnd = comp.getEnd(endIndex);
       final var isOutput = thisEnd.isOutputEnd();
       final var nrOfBits = thisEnd.getNrOfBits();
       if ((nrOfBits > 1) && (bitindex >= 0) && (bitindex < nrOfBits)) {
         if (thisEnd.get((byte) bitindex).getParentNet() == null) {
-          /* The net is not connected */
-          netName = LineBuffer.formatHdl(isOutput ? unconnected(false) : GetZeroVector(1, floatingNetTiedToGround));
+          // The net is not connected
+          busName = LineBuffer.formatHdl(isOutput ? unconnected(false) : GetZeroVector(1, floatingNetTiedToGround));
         } else {
           final var connectedNet = thisEnd.get((byte) bitindex).getParentNet();
           final var connectedNetBitIndex = thisEnd.get((byte) bitindex).getParentNetBitIndex();
-          netName =
+          // The net is connected, we have to find out if the connection
+          // is to a bus or to a normal net.
+          busName =
               !connectedNet.isBus()
                   ? LineBuffer.formatHdl("{{1}}{{2}}", NET_NAME, theNets.getNetId(connectedNet))
                   : LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME, theNets.getNetId(connectedNet), connectedNetBitIndex);
         }
       }
     }
-    return netName;
+    return busName;
   }
 
   public static String getBusNameContinues(NetlistComponent comp, int endIndex, Netlist theNets) {
