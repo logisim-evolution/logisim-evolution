@@ -321,11 +321,6 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    return "memory";
-  }
-
-  @Override
   public String GetType(int TypeNr) {
     switch (TypeNr) {
       case MemArrayId:

@@ -86,9 +86,4 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     portMap.putAll(GetNetMap("MinDataX", true, ComponentInfo, 1, Nets));
     return portMap;
   }
-
-  @Override
-  public String GetSubDir() {
-    return "arithmetic";
-  }
 }

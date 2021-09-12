@@ -7,7 +7,7 @@
  * This is free software released under GNU GPLv3 license
  */
 
-package com.cburch.logisim.fpga.hdlgenerator;
+package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -16,8 +16,8 @@ import java.util.TreeMap;
 
 import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.data.LedArrayDriving;
-import com.cburch.logisim.std.io.IoLibrary;
-import com.cburch.logisim.std.io.RgbLed;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 
 public class LedArrayGenericHDLGeneratorFactory {
   public static String LedArrayOutputs = "externalLeds";

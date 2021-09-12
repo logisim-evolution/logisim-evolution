@@ -474,13 +474,4 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     map.putAll(GetNetMap(shiftOut, true, comp, ShiftRegister.OUT, nets));
     return map;
   }
-
-  @Override
-  public String GetSubDir() {
-    /*
-     * this method returns the module sub-directory where the HDL code is
-     * placed
-     */
-    return "memory";
-  }
 }

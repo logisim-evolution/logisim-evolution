@@ -21,6 +21,10 @@ import java.util.TreeMap;
 
 public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
+  public VhdlHDLGeneratorFactory() {
+    super("circuit");
+  }
+  
   @Override
   public ArrayList<String> getArchitecture(
       Netlist theNetlist,
@@ -88,11 +92,6 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               Nets));
 
     return portMap;
-  }
-
-  @Override
-  public String GetSubDir() {
-    return "circuit";
   }
 
   @Override

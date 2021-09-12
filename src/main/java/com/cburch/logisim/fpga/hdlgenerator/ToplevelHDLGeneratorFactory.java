@@ -10,6 +10,7 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitHDLGeneratorFactory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.data.IOComponentTypes;
@@ -20,6 +21,7 @@ import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.std.io.LedArrayGenericHDLGeneratorFactory;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public ToplevelHDLGeneratorFactory(long fpgaClock, double tickClock, Circuit topLevel,
       MappableResourcesContainer ioComponents) {
+    super("toplevel");
     fpgaClockFrequency = fpgaClock;
     tickFrequency = tickClock;
     myCircuit = topLevel;
@@ -212,15 +215,6 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     }
     return contents.get();
-  }
-
-  @Override
-  public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
-    return "toplevel";
   }
 
   @Override

@@ -251,11 +251,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   }
 
   @Override
-  public String GetSubDir() {
-    return "io";
-  }
-
-  @Override
   public boolean isHDLSupportedTarget(AttributeSet attrs) {
     return HDL.isVHDL();
   }

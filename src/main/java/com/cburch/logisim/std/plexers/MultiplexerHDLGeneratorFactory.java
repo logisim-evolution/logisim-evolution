@@ -153,9 +153,4 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     if (HDL.isVerilog()) map.put("s_selected_vector", nrOfBits);
     return map;
   }
-
-  @Override
-  public String GetSubDir() {
-    return "plexers";
-  }
 }

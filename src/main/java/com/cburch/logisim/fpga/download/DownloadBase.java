@@ -21,13 +21,14 @@ import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.LedArrayGenericHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.io.LedArrayGenericHDLGeneratorFactory;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;

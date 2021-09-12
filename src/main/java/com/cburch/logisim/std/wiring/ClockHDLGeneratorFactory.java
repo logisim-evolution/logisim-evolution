@@ -38,6 +38,10 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int PHASE_ID = -3;
   private static final String NR_OF_BITS_STR = "NrOfBits";
   private static final int NR_OF_BITS_ID = -4;
+  
+  public ClockHDLGeneratorFactory() {
+    super("base");
+  }
 
   private String GetClockNetName(Component comp, Netlist TheNets) {
     StringBuilder Contents = new StringBuilder();
@@ -243,15 +247,6 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put("s_counter_reg", NR_OF_BITS_ID);
     map.put("s_derived_clock_reg", PHASE_ID);
     return map;
-  }
-
-  @Override
-  public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
-    return "base";
   }
 
   @Override

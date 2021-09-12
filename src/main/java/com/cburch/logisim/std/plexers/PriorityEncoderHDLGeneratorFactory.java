@@ -156,11 +156,6 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   }
 
   @Override
-  public String GetSubDir() {
-    return "plexers";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist nets) {
     final var map = new TreeMap<String, Integer>();
     map.put("s_in_is_zero", 1);

@@ -307,11 +307,6 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    return "memory";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     final var map = new TreeMap<String, Integer>();
     map.put("s_InitSeed", 48);
