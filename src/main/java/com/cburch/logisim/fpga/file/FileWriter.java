@@ -105,7 +105,7 @@ public class FileWriter {
   }
 
   public static ArrayList<String> getGenerateRemark(String compName, String projName) {
-    ArrayList<String> Lines = new ArrayList<>();
+    ArrayList<String> lines = new ArrayList<>();
     final int headWidth;
     final String headOpen;
     final String headClose;
@@ -120,31 +120,31 @@ public class FileWriter {
       headOpen = "--==";
       headClose = "==";
 
-      Lines.add(headOpen + "=".repeat(headWidth) + headClose);
-      Lines.add(headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
-      Lines.add(headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
-      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
-      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
-      Lines.add(headOpen + headProj + " ".repeat(Math.max(0, headWidth - headProj.length())) + headClose);
-      Lines.add(headOpen + headComp + " ".repeat(Math.max(0, headWidth - headComp.length())) + headClose);
-      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
-      Lines.add(headOpen + "=".repeat(headWidth) + headClose);
-      Lines.add("");
+      lines.add(headOpen + "=".repeat(headWidth) + headClose);
+      lines.add(headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
+      lines.add(headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
+      lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      lines.add(headOpen + headProj + " ".repeat(Math.max(0, headWidth - headProj.length())) + headClose);
+      lines.add(headOpen + headComp + " ".repeat(Math.max(0, headWidth - headComp.length())) + headClose);
+      lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      lines.add(headOpen + "=".repeat(headWidth) + headClose);
+      lines.add("");
     } else if (HDL.isVerilog()) {
       headWidth = 74;
       headOpen = " **";
       headClose = "**";
 
-      Lines.add("/**" + "*".repeat(headWidth) + headClose);
-      Lines.add(headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
-      Lines.add(headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
-      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
-      Lines.add(headOpen + headComp + " ".repeat(Math.max(0, headWidth - headComp.length())) + headClose);
-      Lines.add(headOpen + " ".repeat(headWidth) + headClose);
-      Lines.add(headOpen + "*".repeat(headWidth) + "*/");
-      Lines.add("");
+      lines.add("/**" + "*".repeat(headWidth) + headClose);
+      lines.add(headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
+      lines.add(headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
+      lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      lines.add(headOpen + headComp + " ".repeat(Math.max(0, headWidth - headComp.length())) + headClose);
+      lines.add(headOpen + " ".repeat(headWidth) + headClose);
+      lines.add(headOpen + "*".repeat(headWidth) + "*/");
+      lines.add("");
     }
-    return Lines;
+    return lines;
   }
 
   public static boolean writeContents(File outfile, ArrayList<String> contents) {
