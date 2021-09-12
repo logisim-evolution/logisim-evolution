@@ -19,7 +19,6 @@ import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.LedArrayGenericHDLGeneratorFactory;
@@ -166,7 +165,7 @@ public abstract class DownloadBase {
     /* Here we generate the top-level shell */
     if (rootSheet.getNetList().numberOfClockTrees() > 0) {
       final var ticker = new TickComponentHDLGeneratorFactory(MyBoardInformation.fpga.getClockFrequency(), frequency /* , boardFreq.isSelected() */);
-      if (!AbstractHDLGeneratorFactory.WriteEntity(
+      if (!HDL.writeEntity(
           projectDir + ticker.getRelativeDirectory(),
           ticker.getEntity(rootSheet.getNetList(), null, ticker.getComponentStringIdentifier()),
           ticker.getComponentStringIdentifier())) {
@@ -184,7 +183,7 @@ public abstract class DownloadBase {
           .getFactory()
           .getHDLGenerator(rootSheet.getNetList().getAllClockSources().get(0).getAttributeSet());
       final var compName = rootSheet.getNetList().getAllClockSources().get(0).getFactory().getHDLName(null);
-      if (!AbstractHDLGeneratorFactory.WriteEntity(
+      if (!HDL.writeEntity(
           projectDir + clockGen.getRelativeDirectory(),
           clockGen.getEntity(rootSheet.getNetList(), null, compName),
           compName)) {
@@ -205,7 +204,7 @@ public abstract class DownloadBase {
           worker = LedArrayGenericHDLGeneratorFactory.getSpecificHDLGenerator(type);
           final var name = LedArrayGenericHDLGeneratorFactory.getSpecificHDLName(type);
           if (worker != null && name != null) {
-            if (!AbstractHDLGeneratorFactory.WriteEntity(
+            if (!HDL.writeEntity(
                 projectDir + worker.getRelativeDirectory(),
                 worker.getEntity(rootSheet.getNetList(), null, name),
                 worker.getComponentStringIdentifier())) {
@@ -221,7 +220,7 @@ public abstract class DownloadBase {
         }
       }
     }
-    if (!AbstractHDLGeneratorFactory.WriteEntity(
+    if (!HDL.writeEntity(
         projectDir + top.getRelativeDirectory(),
         top.getEntity(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME),
         top.getComponentStringIdentifier())) {

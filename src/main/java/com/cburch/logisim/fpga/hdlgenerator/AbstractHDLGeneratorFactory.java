@@ -31,20 +31,6 @@ import java.util.TreeSet;
 
 public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
-  public static boolean WriteEntity(
-      String TargetDirectory,
-      ArrayList<String> Contents,
-      String ComponentName) {
-    if (!HDL.isVHDL()) return true;
-    if (Contents.isEmpty()) {
-      Reporter.Report.AddFatalError("INTERNAL ERROR: Empty entity description received!");
-      return false;
-    }
-    var OutFile = FileWriter.getFilePointer(TargetDirectory, ComponentName, true);
-    if (OutFile == null) return false;
-    return FileWriter.writeContents(OutFile, Contents);
-  }
-
   /* Here the common predefined methods are defined */
   @Override
   public boolean generateAllHDLDescriptions(

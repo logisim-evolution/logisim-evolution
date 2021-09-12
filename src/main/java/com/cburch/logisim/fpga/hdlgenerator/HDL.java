@@ -235,8 +235,21 @@ public abstract class HDL {
     return contents.toString();
   }
 
+  public static boolean writeEntity(String targetDirectory, ArrayList<String> contents, String componentName) {
+    if (!HDL.isVHDL()) return true;
+    if (contents.isEmpty()) {
+      // FIXME: hardcoded string
+      Reporter.Report.AddFatalError("INTERNAL ERROR: Empty entity description received!");
+      return false;
+    }
+    final var outFile = FileWriter.getFilePointer(targetDirectory, componentName, true);
+    if (outFile == null) return false;
+    return FileWriter.writeContents(outFile, contents);
+  }
+
   public static boolean writeArchitecture(String targetDirectory, ArrayList<String> contents, String componentName) {
     if (contents == null || contents.isEmpty()) {
+      // FIXME: hardcoded string
       Reporter.Report.AddFatalError(
           "INTERNAL ERROR: Empty behavior description for Component '"
               + componentName

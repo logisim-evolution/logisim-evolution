@@ -83,7 +83,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           return false;
         }
         if (!Worker.isOnlyInlined()) {
-          if (!WriteEntity(
+          if (!HDL.writeEntity(
               WorkPath + Worker.getRelativeDirectory(),
               Worker.getEntity(
                   MyNetList,
@@ -132,7 +132,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     String ComponentName = CorrectLabel.getCorrectLabel(MyCircuit.getName());
     if (gatedInstance) ComponentName = ComponentName.concat("_gated");
     if (!HandledComponents.contains(ComponentName)) {
-      if (!WriteEntity(
+      if (!HDL.writeEntity(
           WorkPath + getRelativeDirectory(),
           getEntity(MyNetList, null, ComponentName),
           ComponentName)) {
