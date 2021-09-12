@@ -92,7 +92,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               ComponentName)) {
             return false;
           }
-          if (!WriteArchitecture(
+          if (!HDL.writeArchitecture(
               WorkPath + Worker.getRelativeDirectory(),
               Worker.getArchitecture(
                   MyNetList,
@@ -139,7 +139,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         return false;
       }
 
-      if (!WriteArchitecture(
+      if (!HDL.writeArchitecture(
           WorkPath + getRelativeDirectory(),
           getArchitecture(MyNetList, null, ComponentName),
           ComponentName)) {

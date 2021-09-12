@@ -9,8 +9,12 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
+import java.util.ArrayList;
+
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.file.FileWriter;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LineBuffer;
 
@@ -229,6 +233,19 @@ public abstract class HDL {
       }
     }
     return contents.toString();
+  }
+
+  public static boolean writeArchitecture(String targetDirectory, ArrayList<String> contents, String componentName) {
+    if (contents == null || contents.isEmpty()) {
+      Reporter.Report.AddFatalError(
+          "INTERNAL ERROR: Empty behavior description for Component '"
+              + componentName
+              + "' received!");
+      return false;
+    }
+    final var outFile = FileWriter.getFilePointer(targetDirectory, componentName, false);
+    if (outFile == null)  return false;
+    return FileWriter.writeContents(outFile, contents);
   }
 
 }

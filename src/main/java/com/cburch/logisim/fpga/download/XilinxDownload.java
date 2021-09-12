@@ -17,8 +17,8 @@ import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
@@ -181,10 +181,10 @@ public class XilinxDownload implements VendorDownload {
   @Override
   public boolean CreateDownloadScripts() {
     final var JTAGPos = String.valueOf(boardInfo.fpga.getFpgaJTAGChainPosition());
-    var ScriptFile = FileWriter.GetFilePointer(ScriptPath, SCRIPT_FILE);
-    var VhdlListFile = FileWriter.GetFilePointer(ScriptPath, VHDL_LIST_FILE);
-    var UcfFile = FileWriter.GetFilePointer(UcfPath, UCF_FILE);
-    var DownloadFile = FileWriter.GetFilePointer(ScriptPath, DOWNLOAD_FILE);
+    var ScriptFile = FileWriter.getFilePointer(ScriptPath, SCRIPT_FILE);
+    var VhdlListFile = FileWriter.getFilePointer(ScriptPath, VHDL_LIST_FILE);
+    var UcfFile = FileWriter.getFilePointer(UcfPath, UCF_FILE);
+    var DownloadFile = FileWriter.getFilePointer(ScriptPath, DOWNLOAD_FILE);
     if (ScriptFile == null || VhdlListFile == null || UcfFile == null || DownloadFile == null) {
       ScriptFile = new File(ScriptPath + SCRIPT_FILE);
       VhdlListFile = new File(ScriptPath + VHDL_LIST_FILE);
@@ -204,7 +204,7 @@ public class XilinxDownload implements VendorDownload {
 
     for (var entity : Entities) contents.add("{{hdlType}} work \"{{1}}\"", entity);
     for (var arch : architectures) contents.add("{{hdlType}} work \"{{1}}\"", arch);
-    if (!FileWriter.WriteContents(VhdlListFile, contents.get())) return false;
+    if (!FileWriter.writeContents(VhdlListFile, contents.get())) return false;
 
     contents
           .clear()
@@ -215,7 +215,7 @@ public class XilinxDownload implements VendorDownload {
               VHDL_LIST_FILE,
               GetFPGADeviceString(boardInfo));
 
-    if (!FileWriter.WriteContents(ScriptFile, contents.get())) return false;
+    if (!FileWriter.writeContents(ScriptFile, contents.get())) return false;
 
     contents.clear();
     contents.add("setmode -bscan");
@@ -256,7 +256,7 @@ public class XilinxDownload implements VendorDownload {
       }
     }
     contents.add("quit");
-    if (!FileWriter.WriteContents(DownloadFile, contents.get())) return false;
+    if (!FileWriter.writeContents(DownloadFile, contents.get())) return false;
 
     contents.clear();
     if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
@@ -271,7 +271,7 @@ public class XilinxDownload implements VendorDownload {
             """);
     }
     contents.add(getPinLocStrings());
-    return FileWriter.WriteContents(UcfFile, contents.get());
+    return FileWriter.writeContents(UcfFile, contents.get());
   }
 
   private ArrayList<String> getPinLocStrings() {

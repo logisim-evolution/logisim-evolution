@@ -15,8 +15,8 @@ import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
@@ -177,7 +177,7 @@ public class AlteraDownload implements VendorDownload {
 
   @Override
   public boolean CreateDownloadScripts() {
-    var scriptFile = FileWriter.GetFilePointer(ScriptPath, alteraTclFile);
+    var scriptFile = FileWriter.getFilePointer(ScriptPath, alteraTclFile);
     if (scriptFile == null) {
       scriptFile = new File(ScriptPath + alteraTclFile);
       return scriptFile.exists();
@@ -244,7 +244,7 @@ public class AlteraDownload implements VendorDownload {
                 }
             }
             """);
-    return FileWriter.WriteContents(scriptFile, contents.get());
+    return FileWriter.writeContents(scriptFile, contents.get());
   }
 
   private ArrayList<String> getPinLocStrings() {

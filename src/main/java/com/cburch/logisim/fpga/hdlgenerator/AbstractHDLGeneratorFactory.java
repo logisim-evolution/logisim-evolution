@@ -15,6 +15,7 @@ import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.ConnectionPoint;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LineBuffer;
@@ -30,24 +31,6 @@ import java.util.TreeSet;
 
 public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
-  public static boolean WriteArchitecture(
-      String TargetDirectory,
-      ArrayList<String> Contents,
-      String ComponentName) {
-    if (Contents == null || Contents.isEmpty()) {
-      Reporter.Report.AddFatalError(
-          "INTERNAL ERROR: Empty behavior description for Component '"
-              + ComponentName
-              + "' received!");
-      return false;
-    }
-    var OutFile = FileWriter.GetFilePointer(TargetDirectory, ComponentName, false);
-    if (OutFile == null) {
-      return false;
-    }
-    return FileWriter.WriteContents(OutFile, Contents);
-  }
-
   public static boolean WriteEntity(
       String TargetDirectory,
       ArrayList<String> Contents,
@@ -57,9 +40,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Reporter.Report.AddFatalError("INTERNAL ERROR: Empty entity description received!");
       return false;
     }
-    var OutFile = FileWriter.GetFilePointer(TargetDirectory, ComponentName, true);
+    var OutFile = FileWriter.getFilePointer(TargetDirectory, ComponentName, true);
     if (OutFile == null) return false;
-    return FileWriter.WriteContents(OutFile, Contents);
+    return FileWriter.writeContents(OutFile, Contents);
   }
 
   /* Here the common predefined methods are defined */

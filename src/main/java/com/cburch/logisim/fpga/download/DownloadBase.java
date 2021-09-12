@@ -17,9 +17,10 @@ import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.LedArrayGenericHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
@@ -171,7 +172,7 @@ public abstract class DownloadBase {
           ticker.getComponentStringIdentifier())) {
         return false;
       }
-      if (!AbstractHDLGeneratorFactory.WriteArchitecture(
+      if (!HDL.writeArchitecture(
           projectDir + ticker.getRelativeDirectory(),
           ticker.getArchitecture(rootSheet.getNetList(), null, ticker.getComponentStringIdentifier()), ticker.getComponentStringIdentifier())) {
         return false;
@@ -189,7 +190,7 @@ public abstract class DownloadBase {
           compName)) {
         return false;
       }
-      if (!AbstractHDLGeneratorFactory.WriteArchitecture(
+      if (!HDL.writeArchitecture(
           projectDir + clockGen.getRelativeDirectory(),
           clockGen.getArchitecture(rootSheet.getNetList(), null, compName),
           compName)) {
@@ -210,7 +211,7 @@ public abstract class DownloadBase {
                 worker.getComponentStringIdentifier())) {
               return false;
             }
-            if (!AbstractHDLGeneratorFactory.WriteArchitecture(
+            if (!HDL.writeArchitecture(
                 projectDir + worker.getRelativeDirectory(),
                 worker.getArchitecture(rootSheet.getNetList(), null, name),
                 worker.getComponentStringIdentifier())) {
@@ -226,7 +227,7 @@ public abstract class DownloadBase {
         top.getComponentStringIdentifier())) {
       return false;
     }
-    return AbstractHDLGeneratorFactory.WriteArchitecture(
+    return HDL.writeArchitecture(
         projectDir + top.getRelativeDirectory(),
         top.getArchitecture(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME),
         top.getComponentStringIdentifier());
