@@ -132,7 +132,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   public static final Attribute<Boolean> ATTR_DP = Attributes.forBoolean("decimalPoint", S.getter("SevenSegDP"));
 
   public SevenSegment() {
-    super(_ID, S.getter("sevenSegmentComponent"));
+    super(_ID, S.getter("sevenSegmentComponent"), new AbstractSimpleIOHDLGeneratorFactory(false), true);
     setAttributes(
         new Attribute[] {
           IoLibrary.ATTR_ON_COLOR,
@@ -239,12 +239,6 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   }
 
   @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new AbstractSimpleIOHDLGeneratorFactory(false);
-    return MyHDLGenerator.HDLTargetSupported(attrs);
-  }
-
-  @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.FACING) {
       instance.recomputeBounds();
@@ -276,11 +270,6 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     } else {
       data.setValue(value);
     }
-  }
-
-  @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
   }
 
   @Override

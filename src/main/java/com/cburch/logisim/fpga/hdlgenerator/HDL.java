@@ -9,8 +9,12 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
+import java.util.ArrayList;
+
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.file.FileWriter;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LineBuffer;
 
@@ -124,7 +128,7 @@ public abstract class HDL {
     final var bitString = new StringBuffer();
     var mask = 1L << (nrOfBits - 1);
     if (HDL.isVHDL())
-      bitString.append('"');
+      bitString.append(nrOfBits == 1 ? '\'' : '"');
     else
       bitString.append(LineBuffer.format("{{1}}'b", nrOfBits));
     while (mask != 0) {
@@ -133,7 +137,7 @@ public abstract class HDL {
       // fix in case of a 64-bit vector
       if (mask < 0) mask &= Long.MAX_VALUE;
     }
-    if (HDL.isVHDL()) bitString.append('"');
+    if (HDL.isVHDL()) bitString.append(nrOfBits == 1 ? '\'' : '"');
     return bitString.toString();
   }
 
@@ -211,6 +215,50 @@ public abstract class HDL {
     final var ConnectedNet = connectionInformation.get((byte) 0).getParentNet();
     if (ConnectedNet.getBitWidth() != nrOfBits) return getBusNameContinues(comp, endIndex, theNets);
     return LineBuffer.format("{{1}}{{2}}", BUS_NAME, theNets.getNetId(ConnectedNet));
+  }
+
+  public static String getClockNetName(NetlistComponent comp, int endIndex, Netlist theNets) {
+    var contents = new StringBuilder();
+    if ((theNets.getCurrentHierarchyLevel() != null) && (endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
+      final var endData = comp.getEnd(endIndex);
+      if (endData.getNrOfBits() == 1) {
+        final var ConnectedNet = endData.get((byte) 0).getParentNet();
+        final var ConnectedNetBitIndex = endData.get((byte) 0).getParentNetBitIndex();
+        /* Here we search for a clock net Match */
+        final var clocksourceid = theNets.getClockSourceId(
+            theNets.getCurrentHierarchyLevel(), ConnectedNet, ConnectedNetBitIndex);
+        if (clocksourceid >= 0) {
+          contents.append(HDLGeneratorFactory.CLOCK_TREE_NAME).append(clocksourceid);
+        }
+      }
+    }
+    return contents.toString();
+  }
+
+  public static boolean writeEntity(String targetDirectory, ArrayList<String> contents, String componentName) {
+    if (!HDL.isVHDL()) return true;
+    if (contents.isEmpty()) {
+      // FIXME: hardcoded string
+      Reporter.Report.AddFatalError("INTERNAL ERROR: Empty entity description received!");
+      return false;
+    }
+    final var outFile = FileWriter.getFilePointer(targetDirectory, componentName, true);
+    if (outFile == null) return false;
+    return FileWriter.writeContents(outFile, contents);
+  }
+
+  public static boolean writeArchitecture(String targetDirectory, ArrayList<String> contents, String componentName) {
+    if (contents == null || contents.isEmpty()) {
+      // FIXME: hardcoded string
+      Reporter.Report.AddFatalError(
+          "INTERNAL ERROR: Empty behavior description for Component '"
+              + componentName
+              + "' received!");
+      return false;
+    }
+    final var outFile = FileWriter.getFilePointer(targetDirectory, componentName, false);
+    if (outFile == null)  return false;
+    return FileWriter.writeContents(outFile, contents);
   }
 
 }

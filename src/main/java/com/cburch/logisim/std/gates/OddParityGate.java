@@ -13,7 +13,6 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -35,7 +34,7 @@ class OddParityGate extends AbstractGate {
   private final String ODD_PARITY_LABEL = "2k+1";
 
   private OddParityGate() {
-    super("Odd Parity", S.getter("oddParityComponent"));
+    super("Odd Parity", S.getter("oddParityComponent"), new XorGateHDLGeneratorFactory());
     setRectangularLabel(ODD_PARITY_LABEL);
   }
 
@@ -56,12 +55,6 @@ class OddParityGate extends AbstractGate {
   @Override
   protected Value getIdentity() {
     return Value.FALSE;
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new XorGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

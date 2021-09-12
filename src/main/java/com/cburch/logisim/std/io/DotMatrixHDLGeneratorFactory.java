@@ -15,13 +15,12 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.InlinedHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 
 import java.util.ArrayList;
 
-public class DotMatrixHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
+public class DotMatrixHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
 
   protected Attribute<BitWidth> getAttributeRows() {
     return DotMatrix.ATTR_MATRIX_ROWS;
@@ -31,7 +30,7 @@ public class DotMatrixHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetInlinedCode(Netlist netlist, Long componentId, NetlistComponent componentInfo, String circuitName) {
+  public ArrayList<String> getInlinedCode(Netlist netlist, Long componentId, NetlistComponent componentInfo, String circuitName) {
     final var contents = (new LineBuffer()).addHdlPairs();
     final var colBased = componentInfo.getComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_COLUMN;
     final var rowBased = componentInfo.getComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_ROW;
@@ -54,7 +53,7 @@ public class DotMatrixHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
           final var wire = (rows == 1) ? HDL.getNetName(componentInfo, ledMatrixCol, true, netlist)
               : HDL.getBusEntryName(componentInfo, ledMatrixCol, true, dotMatrixRow, netlist);
           final var idx = (ledMatrixRow * cols) + ledMatrixCol + componentInfo.getLocalBubbleOutputStartId();
-          contents.add("{{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}};", HDLGeneratorFactory.LocalOutputBubbleBusname,
+          contents.add("{{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}};", LOCAL_OUTPUT_BUBBLE_BUS_NAME,
               idx, wire);
         }
       }
@@ -73,7 +72,7 @@ public class DotMatrixHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
           final var wire = (cols == 1) ? HDL.getNetName(componentInfo, ledMatrixRow, true, netlist)
               : HDL.getBusEntryName(componentInfo, ledMatrixRow, true, ledMatrixCol, netlist);
           final var idx = (ledMatrixRow * cols) + dotMatrixCol + componentInfo.getLocalBubbleOutputStartId();
-          contents.add("{{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}};", HDLGeneratorFactory.LocalOutputBubbleBusname,
+          contents.add("{{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}};", LOCAL_OUTPUT_BUBBLE_BUS_NAME,
               idx, wire);
         }
       }
@@ -94,7 +93,7 @@ public class DotMatrixHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
           final var colWire = (cols == 1) ? HDL.getNetName(componentInfo, 0, true, netlist)
               : HDL.getBusEntryName(componentInfo, 0, true, ledMatrixCol, netlist);
           final var idx = (ledMatrixRow * cols) + ledMatrixCol + componentInfo.getLocalBubbleOutputStartId();
-          contents.add("{{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}} {{and}} {{4}};", HDLGeneratorFactory.LocalOutputBubbleBusname,
+          contents.add("{{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}} {{and}} {{4}};", LOCAL_OUTPUT_BUBBLE_BUS_NAME,
               idx, rowWire, colWire);
         }
       }
@@ -105,7 +104,7 @@ public class DotMatrixHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     return attrs.getValue(DotMatrixBase.ATTR_PERSIST) == 0;
   }
 }

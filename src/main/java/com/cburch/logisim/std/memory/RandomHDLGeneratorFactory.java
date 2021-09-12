@@ -232,7 +232,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(comp, Random.CK, Nets);
+    final var clockNetName = HDL.getClockNetName(comp, Random.CK, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
       Reporter.Report.AddError(
@@ -327,10 +327,5 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put("s_mac_hi_in_2", 24);
     map.put("s_busy_pipe_next", 2);
     return map;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

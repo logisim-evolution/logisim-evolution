@@ -22,7 +22,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.wiring.Clock;
@@ -312,12 +312,12 @@ public class Netlist {
 
     for (final var comp : myCircuit.getNonWires()) {
       // Here we check if the components are supported for the HDL generation
-      if (!comp.getFactory().HDLSupportedComponent(comp.getAttributeSet())) {
+      if (!comp.getFactory().isHDLSupportedComponent(comp.getAttributeSet())) {
         drc.get(5).addMarkComponent(comp);
         drcStatus |= DRC_ERROR;
       }
       // we check that all components that require a non zero label (annotation) have a label set
-      if (comp.getFactory().RequiresNonZeroLabel()) {
+      if (comp.getFactory().requiresNonZeroLabel()) {
         final var label = CorrectLabel.getCorrectLabel(comp.getAttributeSet().getValue(StdAttr.LABEL)).toUpperCase();
         final var componentName = comp.getFactory().getHDLName(comp.getAttributeSet());
         if (label.isEmpty()) {
@@ -1557,7 +1557,7 @@ public class Netlist {
     }
     // We see if some components require the Global fast FPGA clock
     for (final var comp : myCircuit.getNonWires()) {
-      if (comp.getFactory().RequiresGlobalClock()) clockSources.setRequiresFpgaGlobalClock();
+      if (comp.getFactory().requiresGlobalClock()) clockSources.setRequiresFpgaGlobalClock();
     }
     /* Second pass: We mark all clock sources */
     for (final var clockSource : myClockGenerators) {
@@ -2177,7 +2177,7 @@ public class Netlist {
       List<Set<NetlistComponent>> nonPinGatedComponents,
       Set<NetlistComponent> warnedComponents) {
     var isGatedClock = false;
-    final var clockNetName = AbstractHDLGeneratorFactory.GetClockNetName(comp, clockPinIndex, this);
+    final var clockNetName = HDL.getClockNetName(comp, clockPinIndex, this);
     if (clockNetName.isEmpty()) {
       /* we search for the source in case it is connected otherwise we ignore */
       final var connection = comp.getEnd(clockPinIndex).get((byte) 0);

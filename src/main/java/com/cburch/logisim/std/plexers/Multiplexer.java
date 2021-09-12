@@ -68,7 +68,7 @@ public class Multiplexer extends InstanceFactory {
   }
 
   public Multiplexer() {
-    super(_ID, S.getter("multiplexerComponent"));
+    super(_ID, S.getter("multiplexerComponent"), new MultiplexerHDLGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -141,12 +141,6 @@ public class Multiplexer extends InstanceFactory {
   @Override
   public boolean HasThreeStateDrivers(AttributeSet attrs) {
     return (attrs.getValue(PlexersLibrary.ATTR_DISABLED) == PlexersLibrary.DISABLED_FLOATING);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new MultiplexerHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

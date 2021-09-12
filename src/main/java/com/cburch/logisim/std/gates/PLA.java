@@ -40,7 +40,6 @@ import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.Graphics;
 import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -179,7 +178,7 @@ class PLA extends InstanceFactory {
   }
 
   public PLA() {
-    super(_ID, S.getter("PLA"));
+    super(_ID, S.getter("PLA"), new PLAHDLGeneratorFactory(), true);
     setIconName("pla.gif");
     setFacingAttribute(StdAttr.FACING);
   }
@@ -289,21 +288,10 @@ class PLA extends InstanceFactory {
   }
 
   @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
-  }
-
-  @Override
   public String getHDLName(AttributeSet attrs) {
     final var name = CorrectLabel.getCorrectLabel(attrs.getValue(StdAttr.LABEL));
     if (name.length() == 0) return "PLA";
     else return "PLA_" + name;
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new PLAHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

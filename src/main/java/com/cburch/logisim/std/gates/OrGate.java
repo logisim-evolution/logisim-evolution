@@ -13,7 +13,6 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.Instance;
@@ -60,7 +59,7 @@ class OrGate extends AbstractGate {
   public static final OrGate FACTORY = new OrGate();
 
   private OrGate() {
-    super("OR Gate", S.getter("orGateComponent"));
+    super("OR Gate", S.getter("orGateComponent"), new OrGateHDLGeneratorFactory());
     setRectangularLabel("\u2265" + "1");
     setPaintInputLines(true);
   }
@@ -82,12 +81,6 @@ class OrGate extends AbstractGate {
   @Override
   protected Value getIdentity() {
     return Value.FALSE;
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new OrGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

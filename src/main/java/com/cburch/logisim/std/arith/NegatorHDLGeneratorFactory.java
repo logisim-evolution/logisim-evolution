@@ -91,9 +91,4 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public String GetSubDir() {
     return "arithmetic";
   }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
 }

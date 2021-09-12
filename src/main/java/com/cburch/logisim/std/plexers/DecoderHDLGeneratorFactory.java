@@ -42,7 +42,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var space = " ";
     for (var i = 0; i < numOutputs; i++) {
       if (i == 7) space = "";
-      contents.pair("bin", IntToBin(i, nrOfSelectBits))
+      contents.pair("bin", HDL.getConstantVector(i, nrOfSelectBits))
               .pair("space", space)
               .pair("i", i);
       if (HDL.isVHDL()) {
@@ -92,10 +92,5 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public String GetSubDir() {
     return "plexers";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

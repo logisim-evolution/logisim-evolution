@@ -55,7 +55,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
   static final NoDataDisplayMode NO_DATA_DISPLAY = NoDataDisplayMode.BLANK;
 
   public HexDigit() {
-    super(_ID, S.getter("hexDigitComponent"));
+    super(_ID, S.getter("hexDigitComponent"), new HexDigitHDLGeneratorFactory(), true);
     setAttributes(
         new Attribute[] {
           IoLibrary.ATTR_ON_COLOR,
@@ -257,17 +257,6 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     } else {
       data.setValue(value);
     }
-  }
-
-  @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new HexDigitHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

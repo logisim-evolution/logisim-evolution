@@ -174,9 +174,4 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     Wires.put("s_count_next", NrOfCounterBitsId);
     return Wires;
   }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
 }

@@ -259,7 +259,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         map.put("Clock", HDL.zeroBit());
         map.put("Tick", HDL.zeroBit());
       } else {
-        final var clockNetName = GetClockNetName(comp, RamAppearance.getClkIndex(0, attrs), nets);
+        final var clockNetName = HDL.getClockNetName(comp, RamAppearance.getClkIndex(0, attrs), nets);
         if (clockNetName.isEmpty()) {
           map.putAll(GetNetMap("Clock", true, comp, RamAppearance.getClkIndex(0, attrs), nets));
           map.put("Tick", HDL.oneBit());
@@ -398,7 +398,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     if (attrs == null) return false;
     Object busVal = attrs.getValue(RamAttributes.ATTR_DBUS);
     final var separate = busVal != null && busVal.equals(RamAttributes.BUS_SEP);

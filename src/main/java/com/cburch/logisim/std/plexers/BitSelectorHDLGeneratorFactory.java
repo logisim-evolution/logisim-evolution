@@ -151,9 +151,4 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     map.put("s_extended_vector", ExtendedBitsId);
     return map;
   }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
-  }
 }

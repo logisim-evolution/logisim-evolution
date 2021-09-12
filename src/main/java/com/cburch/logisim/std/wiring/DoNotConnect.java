@@ -16,12 +16,12 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.fpga.hdlgenerator.InlinedHDLGeneratorFactory;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.gates.AbstractGateHDLGenerator;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -35,15 +35,8 @@ public class DoNotConnect extends InstanceFactory {
    */
   public static final String _ID = "NoConnect";
 
-  private static class DoNotConnectGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
-    @Override
-    public boolean IsOnlyInlined() {
-      return true;
-    }
-  }
-
   public DoNotConnect() {
-    super(_ID, S.getter("noConnectionComponent"));
+    super(_ID, S.getter("noConnectionComponent"), new InlinedHDLGeneratorFactory());
     setIconName("noconnect.gif");
     setAttributes(new Attribute[] {StdAttr.WIDTH}, new Object[] {BitWidth.ONE});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
@@ -78,11 +71,4 @@ public class DoNotConnect extends InstanceFactory {
   public void propagate(InstanceState state) {
     // do nothing
   }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new DoNotConnectGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
-  }
-
 }

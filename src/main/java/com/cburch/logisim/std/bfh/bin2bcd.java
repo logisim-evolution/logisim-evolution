@@ -45,7 +45,7 @@ public class bin2bcd extends InstanceFactory {
       Attributes.forBitWidth("binvalue", S.getter("BinaryDataBits"), 4, 13);
 
   public bin2bcd() {
-    super(_ID, S.getter("Bin2BCD"));
+    super(_ID, S.getter("Bin2BCD"), new bin2bcdHDLGeneratorFactory());
     setAttributes(new Attribute[] {bin2bcd.ATTR_BinBits}, new Object[] {BitWidth.create(9)});
     setKeyConfigurator(new BitWidthConfigurator(bin2bcd.ATTR_BinBits, 4, 13, 0));
   }
@@ -127,11 +127,4 @@ public class bin2bcd extends InstanceFactory {
     CompleteName.append("_").append(NrOfPorts).append("_bcd_ports");
     return CompleteName.toString();
   }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new bin2bcdHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
-  }
-
 }

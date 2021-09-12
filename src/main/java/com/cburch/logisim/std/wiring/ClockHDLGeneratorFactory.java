@@ -15,6 +15,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -42,7 +43,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     StringBuilder Contents = new StringBuilder();
     int ClockNetId = TheNets.getClockSourceId(comp);
     if (ClockNetId >= 0) {
-      Contents.append(ClockTreeName).append(ClockNetId);
+      Contents.append(HDLGeneratorFactory.CLOCK_TREE_NAME).append(ClockNetId);
     }
     return Contents.toString();
   }
@@ -259,10 +260,5 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put("s_counter_next", NR_OF_BITS_ID);
     map.put("s_counter_is_zero", 1);
     return map;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

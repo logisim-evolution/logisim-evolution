@@ -113,7 +113,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
                 + (i + 1));
         hasClock = false;
       }
-      final var clockNetName = GetClockNetName(componentinfo, clockPinIndex, Nets);
+      final var clockNetName = HDL.getClockNetName(componentinfo, clockPinIndex, Nets);
       if (clockNetName.isEmpty()) {
         gatedClock = true;
       }
@@ -164,7 +164,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
     return (!attrs.getValue(TtlLibrary.VCC_GND) && HDL.isVHDL());

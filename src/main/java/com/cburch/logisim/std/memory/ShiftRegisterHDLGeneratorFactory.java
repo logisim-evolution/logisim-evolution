@@ -12,9 +12,9 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
@@ -43,7 +43,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       };
 
   @Override
-  public ArrayList<String> GetArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
+  public ArrayList<String> getArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
     final var contents =
         (new LineBuffer(sharedPairs))
             .add(FileWriter.getGenerateRemark(componentName, nets.projName()));
@@ -131,7 +131,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
               
               """);
     }
-    contents.add(super.GetArchitecture(nets, attrs, componentName));
+    contents.add(super.getArchitecture(nets, attrs, componentName));
     return contents.get();
   }
 
@@ -162,7 +162,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public ArrayList<String> GetEntity(Netlist nets, AttributeSet attrs, String componentName) {
+  public ArrayList<String> getEntity(Netlist nets, AttributeSet attrs, String componentName) {
 
     final var contents = new LineBuffer(sharedPairs);
     if (HDL.isVHDL()) {
@@ -188,7 +188,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
               
               """);
     }
-    contents.add(super.GetEntity(nets, attrs, componentName));
+    contents.add(super.getEntity(nets, attrs, componentName));
     return contents.get();
   }
 
@@ -274,7 +274,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     var activeLevel = 1;
     var gatedClock = false;
     var activeLow = false;
-    final var clockNetName = GetClockNetName(componentInfo, ShiftRegister.CK, nets);
+    final var clockNetName = HDL.getClockNetName(componentInfo, ShiftRegister.CK, nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -309,7 +309,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(comp, ShiftRegister.CK, nets);
+    final var clockNetName = HDL.getClockNetName(comp, ShiftRegister.CK, nets);
     gatedClock = clockNetName.isEmpty();
     activeLow = attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING;
     final var hasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD);
@@ -482,10 +482,5 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
      * placed
      */
     return "memory";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

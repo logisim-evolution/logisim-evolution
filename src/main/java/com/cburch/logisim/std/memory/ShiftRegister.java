@@ -58,7 +58,7 @@ public class ShiftRegister extends InstanceFactory {
   static final int symbolWidth = 100;
 
   public ShiftRegister() {
-    super(_ID, S.getter("shiftRegisterComponent"));
+    super(_ID, S.getter("shiftRegisterComponent"), new ShiftRegisterHDLGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.WIDTH,
@@ -387,12 +387,6 @@ public class ShiftRegister extends InstanceFactory {
     } else {
       return Bounds.create(0, 0, symbolWidth + 20, 80 + 20 * attrs.getValue(ATTR_LENGTH));
     }
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new ShiftRegisterHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
