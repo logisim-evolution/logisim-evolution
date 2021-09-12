@@ -111,7 +111,7 @@ public class Constant extends InstanceFactory {
 
   private static class ConstantHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
     @Override
-    public long GetConstant(AttributeSet attrs) {
+    public long getConstant(AttributeSet attrs) {
       return attrs.getValue(Constant.ATTR_VALUE);
     }
   }

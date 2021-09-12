@@ -17,7 +17,7 @@ import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 
-public class InlinedHdlGeneratorFactory implements HDLGeneratorFactory {
+public class InlinedHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public boolean generateAllHDLDescriptions(Set<String> handledComponents, String workingDirectory,
@@ -31,13 +31,13 @@ public class InlinedHdlGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetComponentInstantiation(Netlist TheNetlist, AttributeSet attrs, String ComponentName) {
+  public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
     return null;
   }
 
   @Override
-  public ArrayList<String> GetComponentMap(Netlist Nets, Long ComponentId, NetlistComponent ComponentInfo,
-      MappableResourcesContainer MapInfo, String Name) {
+  public ArrayList<String> getComponentMap(Netlist nets, Long componentId, NetlistComponent componentInfo,
+      MappableResourcesContainer mapInfo, String name) {
     return null;
   }
 
@@ -47,18 +47,18 @@ public class InlinedHdlGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetEntity(Netlist TheNetlist, AttributeSet attrs, String ComponentName) {
+  public ArrayList<String> getEntity(Netlist theNetlist, AttributeSet attrs, String componentName) {
     return null;
   }
 
   @Override
-  public ArrayList<String> GetInlinedCode(Netlist Nets, Long ComponentId, NetlistComponent ComponentInfo,
-      String CircuitName) {
+  public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo,
+      String circuitName) {
     return new ArrayList<String>();
   }
 
   @Override
-  public String GetRelativeDirectory() {
+  public String getRelativeDirectory() {
     return null;
   }
 

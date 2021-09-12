@@ -377,29 +377,29 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetComponentInstantiation(Netlist TheNetlist, AttributeSet attrs, String ComponentName) {
+  public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
     var Contents = new LineBuffer();
-    if (HDL.isVHDL()) Contents.add(GetVHDLBlackBox(TheNetlist, attrs, ComponentName, false));
+    if (HDL.isVHDL()) Contents.add(GetVHDLBlackBox(theNetlist, attrs, componentName, false));
     return Contents.get();
   }
 
   @Override
-  public ArrayList<String> GetComponentMap(
-      Netlist Nets,
-      Long ComponentId,
-      NetlistComponent ComponentInfo,
-      MappableResourcesContainer MapInfo,
-      String Name) {
+  public ArrayList<String> getComponentMap(
+      Netlist nets,
+      Long componentId,
+      NetlistComponent componentInfo,
+      MappableResourcesContainer mapInfo,
+      String name) {
     final var Contents = new ArrayList<String>();
-    final var ParameterMap = GetParameterMap(Nets, ComponentInfo);
-    final var PortMap = GetPortMap(Nets, ComponentInfo == null ? MapInfo : ComponentInfo);
-    final var CompName = (Name != null && !Name.isEmpty()) ? Name :
-        (ComponentInfo == null)
+    final var ParameterMap = GetParameterMap(nets, componentInfo);
+    final var PortMap = GetPortMap(nets, componentInfo == null ? mapInfo : componentInfo);
+    final var CompName = (name != null && !name.isEmpty()) ? name :
+        (componentInfo == null)
             ? this.getComponentStringIdentifier()
-            : ComponentInfo.getComponent()
+            : componentInfo.getComponent()
                 .getFactory()
-                .getHDLName(ComponentInfo.getComponent().getAttributeSet());
-    final var ThisInstanceIdentifier = GetInstanceIdentifier(ComponentInfo, ComponentId);
+                .getHDLName(componentInfo.getComponent().getAttributeSet());
+    final var ThisInstanceIdentifier = GetInstanceIdentifier(componentInfo, componentId);
     final var OneLine = new StringBuilder();
     var TabLength = 0;
     var first = true;
@@ -533,15 +533,15 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetEntity(
-      Netlist TheNetlist,
+  public ArrayList<String> getEntity(
+      Netlist theNetlist,
       AttributeSet attrs,
-      String ComponentName) {
+      String componentName) {
     var Contents = new LineBuffer();
     if (HDL.isVHDL()) {
-      Contents.add(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()))
+      Contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
           .add(FileWriter.getExtendedLibrary())
-          .add(GetVHDLBlackBox(TheNetlist, attrs, ComponentName, true /* , false */));
+          .add(GetVHDLBlackBox(theNetlist, attrs, componentName, true /* , false */));
     }
     return Contents.get();
   }
@@ -556,12 +556,12 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetInlinedCode(
-      Netlist Nets,
-      Long ComponentId,
-      NetlistComponent ComponentInfo,
-      String CircuitName) {
-    return new ArrayList<>();
+  public ArrayList<String> getInlinedCode(
+      Netlist nets,
+      Long componentId,
+      NetlistComponent componentInfo,
+      String circuitName) {
+    return null;
   }
 
   public SortedMap<String, Integer> GetInOutList(Netlist TheNetlist, AttributeSet attrs) {
@@ -803,7 +803,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public String GetRelativeDirectory() {
+  public String getRelativeDirectory() {
     var Subdir = GetSubDir();
     if (!Subdir.endsWith(File.separator) & !Subdir.isEmpty()) {
       Subdir += File.separatorChar;

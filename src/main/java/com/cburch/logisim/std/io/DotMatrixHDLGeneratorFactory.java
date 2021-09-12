@@ -15,12 +15,12 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.InlinedHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 
 import java.util.ArrayList;
 
-public class DotMatrixHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
+public class DotMatrixHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
 
   protected Attribute<BitWidth> getAttributeRows() {
     return DotMatrix.ATTR_MATRIX_ROWS;
@@ -30,7 +30,7 @@ public class DotMatrixHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetInlinedCode(Netlist netlist, Long componentId, NetlistComponent componentInfo, String circuitName) {
+  public ArrayList<String> getInlinedCode(Netlist netlist, Long componentId, NetlistComponent componentInfo, String circuitName) {
     final var contents = (new LineBuffer()).addHdlPairs();
     final var colBased = componentInfo.getComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_COLUMN;
     final var rowBased = componentInfo.getComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_ROW;

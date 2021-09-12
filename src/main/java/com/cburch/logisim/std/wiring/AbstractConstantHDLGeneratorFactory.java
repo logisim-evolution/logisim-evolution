@@ -13,34 +13,34 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.InlinedHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
-public class AbstractConstantHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
+public class AbstractConstantHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
 
-  public long GetConstant(AttributeSet attrs) {
+  public long getConstant(AttributeSet attrs) {
     return 0;
   }
 
   @Override
-  public ArrayList<String> GetInlinedCode(
-      Netlist Nets,
-      Long ComponentId,
-      NetlistComponent ComponentInfo,
-      String CircuitName) {
+  public ArrayList<String> getInlinedCode(
+      Netlist nets,
+      Long componentId,
+      NetlistComponent componentInfo,
+      String circuitName) {
     final var Contents = LineBuffer.getHdlBuffer();
-    int NrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
-    if (ComponentInfo.isEndConnected(0)) {
-      long ConstantValue = GetConstant(ComponentInfo.getComponent().getAttributeSet());
-      if (ComponentInfo.getComponent().getEnd(0).getWidth().getWidth() == 1) {
+    int NrOfBits = componentInfo.getComponent().getEnd(0).getWidth().getWidth();
+    if (componentInfo.isEndConnected(0)) {
+      long ConstantValue = getConstant(componentInfo.getComponent().getAttributeSet());
+      if (componentInfo.getComponent().getEnd(0).getWidth().getWidth() == 1) {
         /* Single Port net */
-        Contents.add("{{assign}} {{1}} {{=}} {{2}};", HDL.getNetName(ComponentInfo, 0, true, Nets), HDL.getConstantVector(ConstantValue, 1))
+        Contents.add("{{assign}} {{1}} {{=}} {{2}};", HDL.getNetName(componentInfo, 0, true, nets), HDL.getConstantVector(ConstantValue, 1))
             .add("");
       } else {
-        if (Nets.isContinuesBus(ComponentInfo, 0)) {
+        if (nets.isContinuesBus(componentInfo, 0)) {
           /* easy case */
-          Contents.add("{{assign}} {{1}} {{=}} {{2}};", HDL.getBusNameContinues(ComponentInfo, 0, Nets), HDL.getConstantVector(ConstantValue, NrOfBits));
+          Contents.add("{{assign}} {{1}} {{=}} {{2}};", HDL.getBusNameContinues(componentInfo, 0, nets), HDL.getConstantVector(ConstantValue, NrOfBits));
           Contents.add("");
         } else {
           /* we have to enumerate all bits */
@@ -50,7 +50,7 @@ public class AbstractConstantHDLGeneratorFactory extends InlinedHdlGeneratorFact
             if ((mask & ConstantValue) != 0) ConstValue = HDL.oneBit();
             else ConstValue = HDL.zeroBit();
             mask <<= 1;
-            Contents.add("{{assign}} {{1}} {{=}} {{2}};", HDL.getBusEntryName(ComponentInfo, 0, true, bit, Nets), ConstValue);
+            Contents.add("{{assign}} {{1}} {{=}} {{2}};", HDL.getBusEntryName(componentInfo, 0, true, bit, nets), ConstValue);
           }
           Contents.add("");
         }

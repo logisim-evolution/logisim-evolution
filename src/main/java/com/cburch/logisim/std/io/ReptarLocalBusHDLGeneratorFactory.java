@@ -65,7 +65,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   }
 
   @Override
-  public ArrayList<String> GetComponentInstantiation(Netlist TheNetlist, AttributeSet attrs, String ComponentName) {
+  public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
     return (new LineBuffer())
         .add("""
             COMPONENT LocalBus
@@ -93,7 +93,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   }
 
   @Override
-  public ArrayList<String> GetEntity(Netlist nets, AttributeSet attrs, String componentName) {
+  public ArrayList<String> getEntity(Netlist nets, AttributeSet attrs, String componentName) {
     return (new LineBuffer())
         .pair("compName", componentName)
         .add(FileWriter.getGenerateRemark(componentName, nets.projName()))

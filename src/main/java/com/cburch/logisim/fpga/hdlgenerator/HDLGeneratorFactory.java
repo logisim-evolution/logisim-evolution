@@ -41,32 +41,32 @@ public interface HDLGeneratorFactory {
       AttributeSet attrs,
       String componentName);
 
-  ArrayList<String> GetComponentInstantiation(
-      Netlist TheNetlist,
+  ArrayList<String> getComponentInstantiation(
+      Netlist theNetlist,
       AttributeSet attrs,
-      String ComponentName);
+      String componentName);
 
-  ArrayList<String> GetComponentMap(
-      Netlist Nets,
-      Long ComponentId,
-      NetlistComponent ComponentInfo,
-      MappableResourcesContainer MapInfo,
-      String Name);
+  ArrayList<String> getComponentMap(
+      Netlist nets,
+      Long componentId,
+      NetlistComponent componentInfo,
+      MappableResourcesContainer mapInfo,
+      String name);
 
   String getComponentStringIdentifier();
 
-  ArrayList<String> GetEntity(
-      Netlist TheNetlist,
+  ArrayList<String> getEntity(
+      Netlist theNetlist,
       AttributeSet attrs,
-      String ComponentName);
+      String componentName);
 
-  ArrayList<String> GetInlinedCode(
-      Netlist Nets,
-      Long ComponentId,
-      NetlistComponent ComponentInfo,
-      String CircuitName);
+  ArrayList<String> getInlinedCode(
+      Netlist nets,
+      Long componentId,
+      NetlistComponent componentInfo,
+      String circuitName);
 
-  String GetRelativeDirectory();
+  String getRelativeDirectory();
 
   boolean isHDLSupportedTarget(AttributeSet attrs);
 

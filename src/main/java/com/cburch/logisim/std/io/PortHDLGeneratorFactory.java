@@ -13,15 +13,15 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.InlinedHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 
 import java.util.ArrayList;
 
-public class PortHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
+public class PortHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
 
   @Override
-  public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
+  public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
     final var contents = LineBuffer.getHdlBuffer();
     final var portType = componentInfo.getComponent().getAttributeSet().getValue(PortIO.ATTR_DIR);
     var nrOfPins = componentInfo.getComponent().getAttributeSet().getValue(PortIO.ATTR_SIZE).getWidth();

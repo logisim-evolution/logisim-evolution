@@ -162,7 +162,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public ArrayList<String> GetEntity(Netlist nets, AttributeSet attrs, String componentName) {
+  public ArrayList<String> getEntity(Netlist nets, AttributeSet attrs, String componentName) {
 
     final var contents = new LineBuffer(sharedPairs);
     if (HDL.isVHDL()) {
@@ -188,7 +188,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
               
               """);
     }
-    contents.add(super.GetEntity(nets, attrs, componentName));
+    contents.add(super.getEntity(nets, attrs, componentName));
     return contents.get();
   }
 

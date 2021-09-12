@@ -13,17 +13,17 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.InlinedHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.WithSelectHDLGenerator;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 
 import java.util.ArrayList;
 
-public class RomHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
+public class RomHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
 
   @Override
-  public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
+  public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
     AttributeSet attrs = componentInfo.getComponent().getAttributeSet();
     final var addressWidth = attrs.getValue(Mem.ADDR_ATTR).getWidth();
     final var dataWidth = attrs.getValue(Mem.DATA_ATTR).getWidth();

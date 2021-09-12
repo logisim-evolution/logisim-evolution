@@ -40,7 +40,7 @@ public class Power extends InstanceFactory {
 
   private static class PowerHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
     @Override
-    public long GetConstant(AttributeSet attrs) {
+    public long getConstant(AttributeSet attrs) {
       long ConstantValue = 0;
       for (int bit = 0; bit < attrs.getValue(StdAttr.WIDTH).getWidth(); bit++) {
         ConstantValue <<= 1;

@@ -17,17 +17,17 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.InlinedHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 
-public class LedBarHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
+public class LedBarHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
 
   protected Attribute<BitWidth> getAttributeColumns() {
     return LedBar.ATTR_MATRIX_COLS;
   }
 
   @Override
-  public ArrayList<String> GetInlinedCode(Netlist netlist, Long componentId, NetlistComponent componentInfo, String circuitName) {
+  public ArrayList<String> getInlinedCode(Netlist netlist, Long componentId, NetlistComponent componentInfo, String circuitName) {
     final var contents = (new LineBuffer()).addHdlPairs();
     final var isSingleBus = componentInfo.getComponent().getAttributeSet().getValue(LedBar.ATTR_INPUT_TYPE).equals(LedBar.INPUT_ONE_WIRE);
     final var nrOfSegments = componentInfo.getComponent().getAttributeSet().getValue(getAttributeColumns()).getWidth();
