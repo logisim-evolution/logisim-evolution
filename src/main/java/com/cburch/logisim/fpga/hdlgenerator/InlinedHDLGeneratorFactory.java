@@ -22,33 +22,33 @@ public class InlinedHDLGeneratorFactory implements HDLGeneratorFactory {
   @Override
   public boolean generateAllHDLDescriptions(Set<String> handledComponents, String workingDirectory,
       ArrayList<String> hierarchy) {
-    return false;
+    throw new IllegalAccessError("BUG: generateAllHDLDescriptions not supported");
   }
 
   @Override
   public ArrayList<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    return null;
+    throw new IllegalAccessError("BUG: getArchitecture not supported");
   }
 
   @Override
   public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    return null;
+    throw new IllegalAccessError("BUG: getComponentInstantiation not supported");
   }
 
   @Override
   public ArrayList<String> getComponentMap(Netlist nets, Long componentId, NetlistComponent componentInfo,
       MappableResourcesContainer mapInfo, String name) {
-    return null;
+    throw new IllegalAccessError("BUG: getComponentMap not supported");
   }
 
   @Override
   public String getComponentStringIdentifier() {
-    return null;
+    throw new IllegalAccessError("BUG: getComponentStringIdentifier not supported");
   }
 
   @Override
   public ArrayList<String> getEntity(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    return null;
+    throw new IllegalAccessError("BUG: getEntity not supported");
   }
 
   @Override
@@ -59,7 +59,7 @@ public class InlinedHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public String getRelativeDirectory() {
-    return null;
+    throw new IllegalAccessError("BUG: getRelativeDirectory not supported");
   }
 
   @Override

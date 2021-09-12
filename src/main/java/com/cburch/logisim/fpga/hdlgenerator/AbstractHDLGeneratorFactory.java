@@ -561,7 +561,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Long componentId,
       NetlistComponent componentInfo,
       String circuitName) {
-    return null;
+    throw new IllegalAccessError("BUG: Inline code not supported");
   }
 
   public SortedMap<String, Integer> GetInOutList(Netlist TheNetlist, AttributeSet attrs) {
