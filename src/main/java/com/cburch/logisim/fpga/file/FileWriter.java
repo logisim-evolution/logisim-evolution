@@ -20,8 +20,7 @@ import com.cburch.logisim.util.LineBuffer;
 
 public class FileWriter {
 
-  public static final String REMARK_LINE =
-      "--------------------------------------------------------------------------------";
+  public static final String REMARK_LINE = "-".repeat(80);
   public static final String ENTITY_EXTENSION = "_entity";
   public static final String ARCHITECTURE_EXTENSION = "_behavior";
 
