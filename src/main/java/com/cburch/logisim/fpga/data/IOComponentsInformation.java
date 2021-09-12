@@ -102,7 +102,8 @@ public class IOComponentsInformation {
   }
 
   public void removeSelectable(float scale) {
-    for (var io : IOcomps) {
+    for (var compId = 0; compId < IOcomps.size(); compId++) {
+      final var io = IOcomps.get(compId);
       if (io.removeSelectable()) this.fireRedraw(io.GetRectangle(), scale);
     }
   }
