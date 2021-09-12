@@ -123,7 +123,7 @@ public abstract class HDL {
   public static String getConstantVector(long value, int nrOfBits) {
     final var bitString = new StringBuffer();
     var mask = 1L << (nrOfBits - 1);
-    if (HDL.isVHDL()) 
+    if (HDL.isVHDL())
       bitString.append('"');
     else
       bitString.append(LineBuffer.format("{{1}}'b", nrOfBits));
@@ -137,61 +137,54 @@ public abstract class HDL {
     return bitString.toString();
   }
 
-  public static String getNetName(NetlistComponent comp, int endIndex, boolean floatingNetTiedToGround,
-      Netlist myNetlist) {
-    final var floatingValue = floatingNetTiedToGround ? zeroBit() : oneBit();
-    final var contents = (new LineBuffer()).addHdlPairs();
+  public static String getNetName(NetlistComponent comp, int endIndex, boolean floatingNetTiedToGround, Netlist myNetlist) {
+    var netName = "";
     if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
+      final var floatingValue = floatingNetTiedToGround ? zeroBit() : oneBit();
       final var thisEnd = comp.getEnd(endIndex);
       final var isOutput = thisEnd.isOutputEnd();
+
       if (thisEnd.getNrOfBits() == 1) {
         final var solderPoint = thisEnd.get((byte) 0);
         if (solderPoint.getParentNet() == null) {
-          /* The net is not connected */
-          contents.add(isOutput ? unconnected(true) : floatingValue);
+          // The net is not connected
+          netName = LineBuffer.formatHdl(isOutput ? unconnected(true) : floatingValue);
         } else {
-          /*
-           * The net is connected, we have to find out if the
-           * connection is to a bus or to a normal net
-           */
-          if (solderPoint.getParentNet().getBitWidth() == 1) {
-            /* The connection is to a Net */
-            contents.add("{{1}}{{2}}", NET_NAME, myNetlist.getNetId(solderPoint.getParentNet()));
-          } else {
-            /* The connection is to an entry of a bus */
-            contents.add("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME, myNetlist.getNetId(solderPoint.getParentNet()),
-                solderPoint.getParentNetBitIndex());
-          }
+          // The net is connected, we have to find out if the connection
+          // is to a bus or to a normal net.
+          netName = (solderPoint.getParentNet().getBitWidth() == 1)
+                  ? LineBuffer.formatHdl("{{1}}{{2}}", NET_NAME, myNetlist.getNetId(solderPoint.getParentNet()))
+                  : LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME,
+                      myNetlist.getNetId(solderPoint.getParentNet()), solderPoint.getParentNetBitIndex());
         }
       }
     }
-    return contents.get(0);
+    return netName;
   }
 
-  public static String getBusEntryName(NetlistComponent comp, int endIndex, boolean floatingNetTiedToGround,
-      int bitindex, Netlist theNets) {
-
-    final var contents = (new LineBuffer()).addHdlPairs();
+  public static String getBusEntryName(NetlistComponent comp, int endIndex, boolean floatingNetTiedToGround, int bitindex, Netlist theNets) {
+    var busName = "";
     if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
       final var thisEnd = comp.getEnd(endIndex);
       final var isOutput = thisEnd.isOutputEnd();
       final var nrOfBits = thisEnd.getNrOfBits();
       if ((nrOfBits > 1) && (bitindex >= 0) && (bitindex < nrOfBits)) {
         if (thisEnd.get((byte) bitindex).getParentNet() == null) {
-          /* The net is not connected */
-          contents.add(isOutput ? unconnected(false) : GetZeroVector(1, floatingNetTiedToGround));
+          // The net is not connected
+          busName = LineBuffer.formatHdl(isOutput ? unconnected(false) : GetZeroVector(1, floatingNetTiedToGround));
         } else {
           final var connectedNet = thisEnd.get((byte) bitindex).getParentNet();
           final var connectedNetBitIndex = thisEnd.get((byte) bitindex).getParentNetBitIndex();
-          if (!connectedNet.isBus()) {
-            contents.add("{{1}}{{2}}", NET_NAME, theNets.getNetId(connectedNet));
-          } else {
-            contents.add("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME, theNets.getNetId(connectedNet), connectedNetBitIndex);
-          }
+          // The net is connected, we have to find out if the connection
+          // is to a bus or to a normal net.
+          busName =
+              !connectedNet.isBus()
+                  ? LineBuffer.formatHdl("{{1}}{{2}}", NET_NAME, theNets.getNetId(connectedNet))
+                  : LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME, theNets.getNetId(connectedNet), connectedNetBitIndex);
         }
       }
     }
-    return contents.get(0);
+    return busName;
   }
 
   public static String getBusNameContinues(NetlistComponent comp, int endIndex, Netlist theNets) {
@@ -201,7 +194,7 @@ public abstract class HDL {
     if (nrOfBits == 1) return getNetName(comp, endIndex, true, theNets);
     if (!theNets.isContinuesBus(comp, endIndex)) return null;
     final var connectedNet = connectionInformation.get((byte) 0).getParentNet();
-    return LineBuffer.format("{{1}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}}", 
+    return LineBuffer.format("{{1}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}}",
         BUS_NAME,
         theNets.getNetId(connectedNet),
         connectionInformation.get((byte) (connectionInformation.getNrOfBits() - 1)).getParentNetBitIndex(),
