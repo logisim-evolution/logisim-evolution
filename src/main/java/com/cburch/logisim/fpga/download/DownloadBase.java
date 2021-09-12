@@ -168,13 +168,13 @@ public abstract class DownloadBase {
       final var ticker = new TickComponentHDLGeneratorFactory(MyBoardInformation.fpga.getClockFrequency(), frequency /* , boardFreq.isSelected() */);
       if (!HDL.writeEntity(
           projectDir + ticker.getRelativeDirectory(),
-          ticker.getEntity(rootSheet.getNetList(), null, ticker.getComponentStringIdentifier()),
-          ticker.getComponentStringIdentifier())) {
+          ticker.getEntity(rootSheet.getNetList(), null, ticker.getComponentIdentifier()),
+          ticker.getComponentIdentifier())) {
         return false;
       }
       if (!HDL.writeArchitecture(
           projectDir + ticker.getRelativeDirectory(),
-          ticker.getArchitecture(rootSheet.getNetList(), null, ticker.getComponentStringIdentifier()), ticker.getComponentStringIdentifier())) {
+          ticker.getArchitecture(rootSheet.getNetList(), null, ticker.getComponentIdentifier()), ticker.getComponentIdentifier())) {
         return false;
       }
 
@@ -208,13 +208,13 @@ public abstract class DownloadBase {
             if (!HDL.writeEntity(
                 projectDir + worker.getRelativeDirectory(),
                 worker.getEntity(rootSheet.getNetList(), null, name),
-                worker.getComponentStringIdentifier())) {
+                worker.getComponentIdentifier())) {
               return false;
             }
             if (!HDL.writeArchitecture(
                 projectDir + worker.getRelativeDirectory(),
                 worker.getArchitecture(rootSheet.getNetList(), null, name),
-                worker.getComponentStringIdentifier())) {
+                worker.getComponentIdentifier())) {
               return false;
             }
           }
@@ -224,13 +224,13 @@ public abstract class DownloadBase {
     if (!HDL.writeEntity(
         projectDir + top.getRelativeDirectory(),
         top.getEntity(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME),
-        top.getComponentStringIdentifier())) {
+        top.getComponentIdentifier())) {
       return false;
     }
     return HDL.writeArchitecture(
         projectDir + top.getRelativeDirectory(),
         top.getArchitecture(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME),
-        top.getComponentStringIdentifier());
+        top.getComponentIdentifier());
   }
 
   protected boolean genDirectory(String dirPath) {

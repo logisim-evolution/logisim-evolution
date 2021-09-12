@@ -27,10 +27,9 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int CalcBitsId = -2;
   private static final String UnsignedStr = "UnsignedDivider";
   private static final int UnsignedId = -3;
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "DIV";
+  
+  public DividerHDLGeneratorFactory() {
+    super("Divider");
   }
 
   @Override

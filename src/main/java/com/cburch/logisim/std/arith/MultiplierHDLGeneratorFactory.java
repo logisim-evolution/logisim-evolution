@@ -28,9 +28,8 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final String UnsignedStr = "UnsignedMultiplier";
   private static final int UnsignedId = -3;
 
-  @Override
-  public String getComponentStringIdentifier() {
-    return "MULT";
+  public MultiplierHDLGeneratorFactory() {
+    super("Multiplier");
   }
 
   @Override

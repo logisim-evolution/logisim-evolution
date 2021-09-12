@@ -22,6 +22,10 @@ import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDLGeneratorFactory {
 
   public static String RGBArrayName = "RGBArrayLedDefault";
+  
+  public RGBArrayLedDefaultHDLGeneratorFactory() {
+    super(RGBArrayName);
+  }
 
   private static final LineBuffer.Pairs sharedPairs =
       new LineBuffer.Pairs() {
@@ -107,10 +111,4 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
     }
     return contents.getWithIndent(3);
   }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return RGBArrayName;
-  }
-
 }

@@ -21,9 +21,8 @@ import java.util.TreeMap;
 
 public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  @Override
-  public String getComponentStringIdentifier() {
-    return "PLA_COMPONENT";
+  public PLAHDLGeneratorFactory() {
+    super("PLA_COMPONENT");
   }
 
   @Override

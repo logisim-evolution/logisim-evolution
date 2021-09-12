@@ -21,6 +21,10 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+  
+  public ReptarLocalBusHDLGeneratorFactory() {
+    super("ReptarLB");
+  }
 
   @Override
   public ArrayList<String> getArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
@@ -85,11 +89,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
             END COMPONENT;
             """)
         .getWithIndent();
-  }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "ReptarLB";
   }
 
   @Override

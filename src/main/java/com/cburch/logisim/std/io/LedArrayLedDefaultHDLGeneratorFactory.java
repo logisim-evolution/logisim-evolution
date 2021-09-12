@@ -25,7 +25,15 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   public static final int activeLowGeneric = -2;
   public static final String nrOfLedsString = "nrOfLeds";
   public static final String activeLowString = "activeLow";
-  public static final String LedArrayName = "LedArrayLedDefault";
+  public static String LedArrayName = "LedArrayLedDefault"; 
+  
+  public LedArrayLedDefaultHDLGeneratorFactory() {
+    super(LedArrayName);
+  }
+
+  public LedArrayLedDefaultHDLGeneratorFactory(String id) {
+    super(id);
+  }
 
   public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
     final var contents =
@@ -118,10 +126,5 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
           """);
     }
     return contents.getWithIndent();
-  }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return LedArrayName;
   }
 }

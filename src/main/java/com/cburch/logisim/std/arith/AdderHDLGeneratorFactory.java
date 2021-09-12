@@ -26,10 +26,9 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int NrOfBitsId = -1;
   private static final String ExtendedBitsStr = "ExtendedBits";
   private static final int ExtendedBitsId = -2;
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "ADDER2C";
+  
+  public AdderHDLGeneratorFactory() {
+    super("ADDER2C");
   }
 
   @Override

@@ -30,16 +30,10 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public static final String FPGA_TICK = "s_FPGA_Tick";
 
   public TickComponentHDLGeneratorFactory(
-      long fpga_clock_frequency, double tick_frequency /* boolean useFPGAClock */) {
-    super("base");
+      long fpga_clock_frequency, double tick_frequency) {
+    super("base", "LogisimTickGenerator");
     fpgaClockFrequency = fpga_clock_frequency;
     tickFrequency = tick_frequency;
-    // this.useFPGAClock = useFPGAClock;
-  }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "LogisimTickGenerator";
   }
 
   @Override

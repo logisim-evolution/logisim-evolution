@@ -25,9 +25,8 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final String shiftModeStr = "ShifterMode";
   private static final int ShiftModeId = -1;
 
-  @Override
-  public String getComponentStringIdentifier() {
-    return "Shifter";
+  public ShifterHDLGeneratorFactory() {
+    super("Shifter");
   }
 
   @Override

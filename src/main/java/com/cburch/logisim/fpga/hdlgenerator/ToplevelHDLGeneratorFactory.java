@@ -41,7 +41,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public ToplevelHDLGeneratorFactory(long fpgaClock, double tickClock, Circuit topLevel,
       MappableResourcesContainer ioComponents) {
-    super("toplevel");
+    super("toplevel", FPGA_TOP_LEVEL_NAME);
     fpgaClockFrequency = fpgaClock;
     tickFrequency = tickClock;
     myCircuit = topLevel;
@@ -88,7 +88,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               fpgaClockFrequency, tickFrequency);
       components.addAll(
           ticker.getComponentInstantiation(
-              theNetlist, null, ticker.getComponentStringIdentifier()));
+              theNetlist, null, ticker.getComponentIdentifier()));
       HDLGeneratorFactory clockWorker =
           theNetlist.getAllClockSources()
               .get(0)
@@ -118,11 +118,6 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             null,
             CorrectLabel.getCorrectLabel(myCircuit.getName())));
     return components;
-  }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return FPGA_TOP_LEVEL_NAME;
   }
 
   @Override

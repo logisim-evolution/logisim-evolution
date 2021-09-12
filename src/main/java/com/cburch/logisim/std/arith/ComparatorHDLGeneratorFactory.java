@@ -26,10 +26,9 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int NrOfBitsId = -1;
   private static final String TwosComplementStr = "TwosComplement";
   private static final int TwosComplementId = -2;
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "Comparator";
+  
+  public ComparatorHDLGeneratorFactory() {
+    super("Comparator");
   }
 
   @Override

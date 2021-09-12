@@ -21,9 +21,8 @@ import java.util.TreeMap;
 
 public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  @Override
-  public String getComponentStringIdentifier() {
-    return "BCD2SEVENSEGMENT";
+  public bcd2sevensegHDLGeneratorFactory() {
+    super("BCD2SEVENSEGMENT");
   }
 
   @Override

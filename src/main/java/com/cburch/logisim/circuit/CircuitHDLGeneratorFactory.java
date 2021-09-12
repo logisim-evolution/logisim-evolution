@@ -38,6 +38,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private final Circuit MyCircuit;
 
   public CircuitHDLGeneratorFactory(Circuit source) {
+    // default initialisation with a dummy component identifier
+    super("Acircuit");
     MyCircuit = source;
   }
 
@@ -226,7 +228,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String getComponentStringIdentifier() {
+  public String getComponentIdentifier() {
+    // this is an exception to the rule as a circuit can be renamed, hence we overrule the default handle
     return CorrectLabel.getCorrectLabel(MyCircuit.getName());
   }
 
@@ -335,7 +338,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         return compId;
       }
     }
-    return getComponentStringIdentifier() + "_" + componentId.toString();
+    return getComponentIdentifier() + "_" + componentId.toString();
   }
 
   @Override
@@ -427,7 +430,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       if (worker != null) {
         if (worker.isOnlyInlined()) {
           var inlinedName = comp.getComponent().getFactory().getHDLName(comp.getComponent().getAttributeSet());
-          var InlinedId = worker.getComponentStringIdentifier();
+          var InlinedId = worker.getComponentIdentifier();
           var id = (compIds.containsKey(InlinedId)) ? compIds.get(InlinedId) : (long) 1;
           if (isFirstLine) {
             contents.add("");
@@ -447,7 +450,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       if (worker != null) {
         if (!worker.isOnlyInlined()) {
           var compName = comp.getComponent().getFactory().getHDLName(comp.getComponent().getAttributeSet());
-          var compId = worker.getComponentStringIdentifier();
+          var compId = worker.getComponentIdentifier();
           var id = (compIds.containsKey(compId)) ? compIds.get(compId) : (long) 1;
           if (isFirstLine) {
             contents.add("").addRemarkBlock("Here all normal components are defined");
@@ -466,7 +469,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       if (worker != null) {
         var compName = comp.getComponent().getFactory().getHDLName(comp.getComponent().getAttributeSet());
         if (comp.isGatedInstance())  compName = compName.concat("_gated");
-        final var CompId = worker.getComponentStringIdentifier();
+        final var CompId = worker.getComponentIdentifier();
         var id = (compIds.containsKey(CompId)) ? compIds.get(CompId) : (long) 1;
         final var compMap = worker.getComponentMap(theNetlist, id++, comp, null, compName);
         if (!compMap.isEmpty()) {

@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 public interface HDLGeneratorFactory {
-
+  
   public static final String NET_NAME = HDL.NET_NAME;
   public static final String BUS_NAME = HDL.BUS_NAME;
   public static final String CLOCK_TREE_NAME = "LOGISIM_CLOCK_TREE_";
@@ -53,7 +53,7 @@ public interface HDLGeneratorFactory {
       MappableResourcesContainer mapInfo,
       String name);
 
-  String getComponentStringIdentifier();
+  String getComponentIdentifier();
 
   ArrayList<String> getEntity(
       Netlist theNetlist,

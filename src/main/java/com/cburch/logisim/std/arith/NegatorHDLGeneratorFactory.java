@@ -25,9 +25,8 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final String NrOfBitsStr = "NrOfBits";
   private static final int NrOfBitsId = -1;
 
-  @Override
-  public String getComponentStringIdentifier() {
-    return "NEGATOR2C";
+  public NegatorHDLGeneratorFactory() {
+    super("NEGATOR2C");
   }
 
   @Override

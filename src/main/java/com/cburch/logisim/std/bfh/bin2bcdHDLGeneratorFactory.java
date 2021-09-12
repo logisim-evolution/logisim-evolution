@@ -25,9 +25,8 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final String NR_OF_BITS_STR = "NrOfBits";
   private static final int NR_OF_BITS_ID = -1;
 
-  @Override
-  public String getComponentStringIdentifier() {
-    return "BIN2BCD";
+  public bin2bcdHDLGeneratorFactory() {
+    super("BIN2BCD");
   }
 
   @Override

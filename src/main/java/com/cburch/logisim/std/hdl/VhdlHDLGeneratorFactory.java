@@ -22,7 +22,7 @@ import java.util.TreeMap;
 public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public VhdlHDLGeneratorFactory() {
-    super("circuit");
+    super("circuit", "VHDL");
   }
   
   @Override
@@ -39,11 +39,6 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     contents.add(content.getArchitecture());
 
     return contents;
-  }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "VHDL";
   }
 
   @Override

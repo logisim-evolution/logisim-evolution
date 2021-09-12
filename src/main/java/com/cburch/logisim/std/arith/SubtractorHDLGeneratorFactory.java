@@ -27,9 +27,8 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final String ExtendedBitsStr = "ExtendedBits";
   private static final int ExtendedBitsId = -2;
 
-  @Override
-  public String getComponentStringIdentifier() {
-    return "SUBTRACTOR2C";
+  public SubtractorHDLGeneratorFactory() {
+    super("SUBTRACTOR2C");
   }
 
   @Override
