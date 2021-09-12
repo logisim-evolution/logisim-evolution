@@ -30,7 +30,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
-  
+
   private final String subDirectoryName;
 
   public AbstractHDLGeneratorFactory() {
@@ -38,12 +38,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     final var parts = className.split(":");
     if (parts.length < 2) throw new ExceptionInInitializerError("Cannot read class path!");
     subDirectoryName = parts[parts.length - 2];
-    System.out.println("1:" + subDirectoryName);
   }
-  
+
   public AbstractHDLGeneratorFactory(String subDirectory) {
     subDirectoryName = subDirectory;
-    System.out.println("2:" + subDirectoryName);
   }
 
   /* Here the common predefined methods are defined */
