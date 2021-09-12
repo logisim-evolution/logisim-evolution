@@ -27,9 +27,8 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   private static final String NR_OF_INPUT_BITS_STR = "NrOfInputBits";
   private static final int NrOfInputBitsId = -2;
 
-  @Override
-  public String getComponentStringIdentifier() {
-    return "PRIENC";
+  public PriorityEncoderHDLGeneratorFactory() {
+    super("PRIENC");
   }
 
   @Override

@@ -32,10 +32,9 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int ActiveEdgeId = -3;
   private static final String modeStr = "mode";
   private static final int ModeId = -4;
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "COUNTER";
+  
+  public CounterHDLGeneratorFactory() {
+    super("COUNTER");
   }
 
   @Override

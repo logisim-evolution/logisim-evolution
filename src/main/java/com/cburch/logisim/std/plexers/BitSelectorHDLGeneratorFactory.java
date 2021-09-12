@@ -30,9 +30,8 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   private static final String EXTENDED_BITS_STR = "NrOfExtendedBits";
   private static final int ExtendedBitsId = -4;
 
-  @Override
-  public String getComponentStringIdentifier() {
-    return "BITSELECTOR";
+  public BitSelectorHDLGeneratorFactory() {
+    super("BITSELECTOR");
   }
 
   @Override

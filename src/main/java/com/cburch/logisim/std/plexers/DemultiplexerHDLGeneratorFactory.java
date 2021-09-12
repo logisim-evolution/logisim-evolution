@@ -25,9 +25,8 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   private static final String NrOfBitsStr = "NrOfBits";
   private static final int NrOfBitsId = -1;
 
-  @Override
-  public String getComponentStringIdentifier() {
-    return "DEMUX";
+  public DemultiplexerHDLGeneratorFactory() {
+    super("DEMUX");
   }
 
   @Override

@@ -34,6 +34,10 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   private static final String NrOfParBitsStr = "NrOfParBits";
   private static final int NrOfParBitsId = -4;
 
+  public ShiftRegisterHDLGeneratorFactory() {
+    super("SHIFTER");
+  }
+
   private LineBuffer.Pairs sharedPairs =
       new LineBuffer.Pairs() {
         {
@@ -154,11 +158,6 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             END COMPONENT;
             """)
         .getWithIndent();
-  }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "SHIFTER";
   }
 
   @Override

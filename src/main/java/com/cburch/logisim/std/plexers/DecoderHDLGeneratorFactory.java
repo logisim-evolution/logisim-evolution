@@ -21,9 +21,8 @@ import java.util.TreeMap;
 
 public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  @Override
-  public String getComponentStringIdentifier() {
-    return "BINDECODER";
+  public DecoderHDLGeneratorFactory() {
+    super("BINDECODER");
   }
 
   @Override

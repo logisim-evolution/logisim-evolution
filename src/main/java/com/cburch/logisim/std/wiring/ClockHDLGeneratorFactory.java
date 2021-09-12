@@ -40,7 +40,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int NR_OF_BITS_ID = -4;
   
   public ClockHDLGeneratorFactory() {
-    super("base");
+    super("base", "CLOCKGEN");
   }
 
   private String GetClockNetName(Component comp, Netlist TheNets) {
@@ -50,11 +50,6 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Contents.append(HDLGeneratorFactory.CLOCK_TREE_NAME).append(ClockNetId);
     }
     return Contents.toString();
-  }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "CLOCKGEN";
   }
 
   @Override

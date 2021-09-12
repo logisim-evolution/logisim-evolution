@@ -33,9 +33,8 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final String MemArrayStr = "MEMORY_ARRAY";
   private static final int MemArrayId = -3;
 
-  @Override
-  public String getComponentStringIdentifier() {
-    return "RAM";
+  public RamHDLGeneratorFactory() {
+    super("RAM");
   }
 
   @Override

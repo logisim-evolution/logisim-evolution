@@ -29,9 +29,8 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final String ACTIVE_LEVEL_STR = "ActiveLevel";
   private static final int ActiveLevelId = -2;
 
-  @Override
-  public String getComponentStringIdentifier() {
-    return "REGISTER_FILE";
+  public RegisterHDLGeneratorFactory() {
+    super("REGISTER_FILE");
   }
 
   @Override

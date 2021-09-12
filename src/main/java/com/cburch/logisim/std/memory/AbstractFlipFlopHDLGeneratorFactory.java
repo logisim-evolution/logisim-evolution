@@ -27,14 +27,13 @@ import java.util.TreeMap;
 public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   private static final String ACTIVITY_LEVEL_STR = "ActiveLevel";
+  
+  public AbstractFlipFlopHDLGeneratorFactory() {
+    super("FF_LATCH");
+  }
 
   public String ComponentName() {
     return "";
-  }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "FF_LATCH";
   }
 
   @Override

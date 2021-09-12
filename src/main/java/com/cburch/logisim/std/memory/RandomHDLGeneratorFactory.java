@@ -29,9 +29,8 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final String SEED_STR = "Seed";
   private static final int SeedId = -2;
 
-  @Override
-  public String getComponentStringIdentifier() {
-    return "RNG";
+  public RandomHDLGeneratorFactory() {
+    super("RNG");
   }
 
   @Override
