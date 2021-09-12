@@ -127,7 +127,7 @@ public abstract class HDL {
   public static String getConstantVector(long value, int nrOfBits) {
     final var bitString = new StringBuffer();
     var mask = 1L << (nrOfBits - 1);
-    if (HDL.isVHDL()) 
+    if (HDL.isVHDL())
       bitString.append(nrOfBits == 1 ? '\'' : '"');
     else
       bitString.append(LineBuffer.format("{{1}}'b", nrOfBits));
