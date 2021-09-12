@@ -77,7 +77,8 @@ jobs:
       shell: bash
       run: |
         # Run CheckStyle
-        CHECKSTYLE_VERSION="8.45.1"
+        # https://github.com/checkstyle/checkstyle/releases/
+        CHECKSTYLE_VERSION="9.0"
         JAR="checkstyle-${CHECKSTYLE_VERSION}-all.jar"
         URL="https://github.com/checkstyle/checkstyle/releases/download/checkstyle-${CHECKSTYLE_VERSION}/${JAR}"
 
