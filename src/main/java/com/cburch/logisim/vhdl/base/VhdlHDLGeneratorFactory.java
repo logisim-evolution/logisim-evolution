@@ -23,6 +23,10 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+  
+  public VhdlHDLGeneratorFactory() {
+    super("circuit");
+  }
 
   @Override
   public ArrayList<String> getArchitecture(
@@ -107,11 +111,6 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       PortMap.putAll(GetNetMap(p.getName(), true, ComponentInfo, i++, Nets));
     }
     return PortMap;
-  }
-
-  @Override
-  public String GetSubDir() {
-    return "circuit";
   }
 
   @Override

@@ -31,6 +31,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   public TickComponentHDLGeneratorFactory(
       long fpga_clock_frequency, double tick_frequency /* boolean useFPGAClock */) {
+    super("base");
     fpgaClockFrequency = fpga_clock_frequency;
     tickFrequency = tick_frequency;
     // this.useFPGAClock = useFPGAClock;
@@ -160,11 +161,6 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     Regs.put("s_tick_reg", 1);
     Regs.put("s_count_reg", NrOfCounterBitsId);
     return Regs;
-  }
-
-  @Override
-  public String GetSubDir() {
-    return "base";
   }
 
   @Override

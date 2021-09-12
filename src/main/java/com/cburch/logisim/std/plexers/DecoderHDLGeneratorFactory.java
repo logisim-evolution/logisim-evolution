@@ -88,9 +88,4 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     return map;
   }
-
-  @Override
-  public String GetSubDir() {
-    return "plexers";
-  }
 }

@@ -263,9 +263,4 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       regs.put("s_state_reg_neg_edge", NrOfBitsId);
     return regs;
   }
-
-  @Override
-  public String GetSubDir() {
-    return "memory";
-  }
 }

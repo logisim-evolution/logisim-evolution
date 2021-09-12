@@ -279,11 +279,6 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     return map;
   }
 
-  @Override
-  public String GetSubDir() {
-    return "memory";
-  }
-
   public ArrayList<String> GetUpdateLogic() {
     return new ArrayList<>();
   }

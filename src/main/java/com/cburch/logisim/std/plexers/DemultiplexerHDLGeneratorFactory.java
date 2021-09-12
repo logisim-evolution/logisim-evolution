@@ -116,9 +116,4 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     map.putAll(GetNetMap("DemuxIn", true, comp, selectInputIndex + 2, nets));
     return map;
   }
-
-  @Override
-  public String GetSubDir() {
-    return "plexers";
-  }
 }

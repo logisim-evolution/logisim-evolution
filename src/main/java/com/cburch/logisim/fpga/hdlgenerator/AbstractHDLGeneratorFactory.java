@@ -30,6 +30,21 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
+  
+  private final String subDirectoryName;
+
+  public AbstractHDLGeneratorFactory() {
+    final var className = getClass().toString().replace('.', ':').replace(' ', ':'); 
+    final var parts = className.split(":");
+    if (parts.length < 2) throw new ExceptionInInitializerError("Cannot read class path!");
+    subDirectoryName = parts[parts.length - 2];
+    System.out.println("1:" + subDirectoryName);
+  }
+  
+  public AbstractHDLGeneratorFactory(String subDirectory) {
+    subDirectoryName = subDirectory;
+    System.out.println("2:" + subDirectoryName);
+  }
 
   /* Here the common predefined methods are defined */
   @Override
@@ -773,19 +788,15 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public String getRelativeDirectory() {
-    var Subdir = GetSubDir();
-    if (!Subdir.endsWith(File.separator) & !Subdir.isEmpty()) {
-      Subdir += File.separatorChar;
+    final var mainDirectory = AppPreferences.HDL_Type.get().toLowerCase();
+    final var directoryName = new StringBuilder();
+    directoryName.append(mainDirectory);
+    if (!mainDirectory.endsWith(File.separator)) directoryName.append(File.separator);
+    if (!subDirectoryName.isEmpty()) {
+      directoryName.append(subDirectoryName);
+      if (!subDirectoryName.endsWith(File.separator)) directoryName.append(File.separator);
     }
-    return AppPreferences.HDL_Type.get().toLowerCase() + File.separatorChar + Subdir;
-  }
-
-  public String GetSubDir() {
-    /*
-     * this method returns the module sub-directory where the HDL code is
-     * placed
-     */
-    return "";
+    return directoryName.toString();
   }
 
   public String GetType(int TypeNr) {
