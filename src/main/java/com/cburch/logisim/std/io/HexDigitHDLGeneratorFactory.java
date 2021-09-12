@@ -12,7 +12,6 @@ package com.cburch.logisim.std.io;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.WithSelectHDLGenerator;
 import com.cburch.logisim.instance.StdAttr;
@@ -24,11 +23,12 @@ public class HexDigitHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
   @Override
   public ArrayList<String> GetInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
     final var startId = componentInfo.getLocalBubbleOutputStartId();
-    final var signalName = LineBuffer.format("{{1}}{{<}}{{2}}{{3}}{{4}}{{>}}", LOCAL_OUTPUT_BUBBLE_BUS_NAME, (startId + 6), HDL.vectorLoopId(), startId); 
+    final var bubbleBusName = LOCAL_OUTPUT_BUBBLE_BUS_NAME;
+    final var signalName = LineBuffer.format("{{1}}{{<}}{{2}}{{3}}{{4}}{{>}}", bubbleBusName, (startId + 6), HDL.vectorLoopId(), startId);
     final var contents =
-        (new LineBuffer()).withHdlPairs()
-            .pair("bubbleBusName", LOCAL_OUTPUT_BUBBLE_BUS_NAME)
-            .pair("sigName", signalName) 
+        (new LineBuffer()).addHdlPairs()
+            .pair("bubbleBusName", bubbleBusName)
+            .pair("sigName", signalName)
             .pair("dpName", HDL.getNetName(componentInfo, HexDigit.DP, true, nets));
     contents.add("");
     if (componentInfo.isEndConnected(HexDigit.HEX)) {

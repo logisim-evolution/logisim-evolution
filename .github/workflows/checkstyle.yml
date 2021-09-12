@@ -27,7 +27,7 @@ jobs:
 
     steps:
     - name: "Install packages..."
-      run: sudo apt-get install sysvbanner dos2unix
+      run: sudo apt-get install -y sysvbanner
 
       # https://github.com/marketplace/actions/checkout
     - name: "Checkout sources"
@@ -69,12 +69,16 @@ jobs:
     - name: "Checkout sources"
       uses: actions/checkout@v2
 
+    - name: "Install packages..."
+      run: sudo apt-get install -y dos2unix
+
     - name: "Lint changed files"
       # We need bash here as java-wrappers.sh may not work with other shells.
       shell: bash
       run: |
         # Run CheckStyle
-        CHECKSTYLE_VERSION="8.45.1"
+        # https://github.com/checkstyle/checkstyle/releases/
+        CHECKSTYLE_VERSION="9.0"
         JAR="checkstyle-${CHECKSTYLE_VERSION}-all.jar"
         URL="https://github.com/checkstyle/checkstyle/releases/download/checkstyle-${CHECKSTYLE_VERSION}/${JAR}"
 
