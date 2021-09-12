@@ -43,7 +43,7 @@ public class InlinedHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public String getComponentStringIdentifier() {
-    throw new IllegalAccessError("BUG: getComponentStringIdentifier not supported");
+    return "Logisim_InLined";
   }
 
   @Override
