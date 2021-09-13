@@ -152,7 +152,6 @@ public class Startup implements AWTEventListener {
   private static final String ARG_TEST_CIRC_GEN_LONG = "new-file-format";
   private static final String ARG_LOCALE_SHORT = "o";
   private static final String ARG_LOCALE_LONG = "locale";
-  private static final String ARG_CLEAR_PREFS_SHORT = "r";
   private static final String ARG_CLEAR_PREFS_LONG = "clear-prefs";
   private static final String ARG_SUBSTITUTE_SHORT = "s";
   private static final String ARG_SUBSTITUTE_LONG = "substitute";
@@ -313,7 +312,7 @@ public class Startup implements AWTEventListener {
     // It is assumed that evey option always has long-form switch. Short forms are optional.
     addOption(opts, "argTtyOption", ARG_TTY_LONG, ARG_TTY_SHORT, 1);
     addOption(opts, "argTestImplement", ARG_TEST_FGPA_LONG, ARG_TEST_FGPA_SHORT, Option.UNLIMITED_VALUES);  // We can have 3, 4 or 5 arguments here
-    addOption(opts, "argClearOption", ARG_CLEAR_PREFS_LONG, ARG_CLEAR_PREFS_SHORT);
+    addOption(opts, "argClearOption", ARG_CLEAR_PREFS_LONG);
     addOption(opts, "argSubOption", ARG_SUBSTITUTE_LONG, ARG_SUBSTITUTE_SHORT, 2);
     addOption(opts, "argLoadOption", ARG_LOAD_LONG, ARG_LOAD_SHORT, 1);
     addOption(opts, "argGatesOption", ARG_GATES_LONG, ARG_GATES_SHORT, 1);
@@ -342,11 +341,11 @@ public class Startup implements AWTEventListener {
     // see whether we'll be using any graphics
     var isTty = false;
     var shallClearPreferences = false;
-    if (cmd.hasOption(ARG_TTY_SHORT) || cmd.hasOption(ARG_TEST_FGPA_SHORT)) {
+    if (cmd.hasOption(ARG_TTY_SHORT) || cmd.hasOption(ARG_TEST_FGPA_SHORT) || cmd.hasOption(ARG_TEST_FGPA_LONG)) {
       isTty = true;
       Main.headless = true;
     } else {
-      shallClearPreferences = cmd.hasOption(ARG_CLEAR_PREFS_SHORT);
+      shallClearPreferences = cmd.hasOption(ARG_CLEAR_PREFS_LONG);
     }
 
     if (!isTty) {
