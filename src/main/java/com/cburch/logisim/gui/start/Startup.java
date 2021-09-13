@@ -152,7 +152,6 @@ public class Startup implements AWTEventListener {
   private static final String ARG_TEST_CIRC_GEN_LONG = "new-file-format";
   private static final String ARG_LOCALE_SHORT = "o";
   private static final String ARG_LOCALE_LONG = "locale";
-  private static final String ARG_CLEAR_PREFS_SHORT = "r";
   private static final String ARG_CLEAR_PREFS_LONG = "clear-prefs";
   private static final String ARG_SUBSTITUTE_SHORT = "s";
   private static final String ARG_SUBSTITUTE_LONG = "substitute";
@@ -342,11 +341,11 @@ public class Startup implements AWTEventListener {
     // see whether we'll be using any graphics
     var isTty = false;
     var shallClearPreferences = false;
-    if (cmd.hasOption(ARG_TTY_SHORT) || cmd.hasOption(ARG_TEST_FGPA_SHORT)) {
+    if (cmd.hasOption(ARG_TTY_SHORT) || cmd.hasOption(ARG_TEST_FGPA_SHORT) || cmd.hasOption(ARG_TEST_FGPA_LONG)) {
       isTty = true;
       Main.headless = true;
     } else {
-      shallClearPreferences = cmd.hasOption(ARG_CLEAR_PREFS_SHORT);
+      shallClearPreferences = cmd.hasOption(ARG_CLEAR_PREFS_LONG);
     }
 
     if (!isTty) {
