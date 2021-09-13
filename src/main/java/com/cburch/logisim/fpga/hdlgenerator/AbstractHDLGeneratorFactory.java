@@ -375,11 +375,11 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Object componentInfo,
       String name) {
     final var Contents = new ArrayList<String>();
-    final var ParameterMap = (componentInfo == null) | componentInfo instanceof NetlistComponent ? 
-        GetParameterMap(nets, (NetlistComponent) componentInfo) : null;
+    final var ParameterMap = (componentInfo == null) | componentInfo instanceof NetlistComponent 
+        ? GetParameterMap(nets, (NetlistComponent) componentInfo) : null;
     final var PortMap = GetPortMap(nets, componentInfo);
-    final var componentHDLName = componentInfo instanceof NetlistComponent ? 
-        ((NetlistComponent) componentInfo).getComponent().getFactory().getHDLName(((NetlistComponent) componentInfo).getComponent().getAttributeSet()) : 
+    final var componentHDLName = componentInfo instanceof NetlistComponent 
+        ? ((NetlistComponent) componentInfo).getComponent().getFactory().getHDLName(((NetlistComponent) componentInfo).getComponent().getAttributeSet()) : 
           name;
     final var CompName = (name != null && !name.isEmpty()) ? name : componentHDLName;
     final var ThisInstanceIdentifier = getInstanceIdentifier(componentInfo, componentId);
