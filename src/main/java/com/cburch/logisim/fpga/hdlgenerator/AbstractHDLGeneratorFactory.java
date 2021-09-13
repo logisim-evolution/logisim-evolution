@@ -30,6 +30,10 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
+  /* each child of this class has to have this identifier
+   * as it is used as label and in most cases as filename
+   */
+  public final static String _HDL_ID = null;
 
   private final String subDirectoryName;
   private final String componentIdentifier;
