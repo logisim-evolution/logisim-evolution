@@ -23,10 +23,6 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
 
   public static final String HDL_IDENTIFIER = "RGBArrayLedDefault";
 
-  public RGBArrayLedDefaultHDLGeneratorFactory() {
-    super(HDL_IDENTIFIER);
-  }
-
   private static final LineBuffer.Pairs sharedPairs =
       new LineBuffer.Pairs() {
         {

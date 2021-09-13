@@ -31,9 +31,8 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public static final String HDL_IDENTIFIER = "LogisimTickGenerator";
   public static final String HDL_DIRECTORY = "base";
 
-  public TickComponentHDLGeneratorFactory(
-      long fpga_clock_frequency, double tick_frequency /* boolean useFPGAClock */) {
-    super(HDL_IDENTIFIER, HDL_DIRECTORY);
+  public TickComponentHDLGeneratorFactory(long fpga_clock_frequency, double tick_frequency) {
+    super(HDL_DIRECTORY);
     fpgaClockFrequency = fpga_clock_frequency;
     tickFrequency = tick_frequency;
     // this.useFPGAClock = useFPGAClock;

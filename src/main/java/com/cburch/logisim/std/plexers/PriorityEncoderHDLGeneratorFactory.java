@@ -28,11 +28,6 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   private static final int NrOfInputBitsId = -2;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "PRIENC";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("enable", 1);

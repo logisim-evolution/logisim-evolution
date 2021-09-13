@@ -38,8 +38,6 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private final Circuit MyCircuit;
 
   public CircuitHDLGeneratorFactory(Circuit source) {
-    // special case, as a circuit can be renamed we put in a dummy
-    super("circuit");
     MyCircuit = source;
   }
 
@@ -227,12 +225,6 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     return Components;
   }
 
-  @Override
-  public String getComponentIdentifier() {
-    // special case, as a circuit can be renamed we overrule the default
-    return CorrectLabel.getCorrectLabel(MyCircuit.getName());
-  }
-
   public ArrayList<String> GetHDLWiring(Netlist TheNets) {
     final var Contents = LineBuffer.getHdlBuffer();
     final StringBuilder OneLine = new StringBuilder();
@@ -329,19 +321,6 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetInstanceIdentifier(NetlistComponent componentInfo, Long componentId) {
-    if (componentInfo != null) {
-      String compId =
-          CorrectLabel.getCorrectLabel(
-              componentInfo.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
-      if (!compId.isEmpty()) {
-        return compId;
-      }
-    }
-    return LineBuffer.format("{{1}}_{{2}}", getComponentIdentifier(), componentId.toString());
-  }
-
-  @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
     var isFirstLine = true;
@@ -430,7 +409,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       if (worker != null) {
         if (worker.isOnlyInlined()) {
           var inlinedName = comp.getComponent().getFactory().getHDLName(comp.getComponent().getAttributeSet());
-          var InlinedId = worker.getComponentIdentifier();
+          var InlinedId = "InlinedComponent";
           var id = (compIds.containsKey(InlinedId)) ? compIds.get(InlinedId) : (long) 1;
           if (isFirstLine) {
             contents.add("");
@@ -438,7 +417,6 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             isFirstLine = false;
           }
           contents.add(worker.getInlinedCode(theNetlist, id++, comp, inlinedName));
-          compIds.remove(InlinedId);
           compIds.put(InlinedId, id);
         }
       }
@@ -450,14 +428,13 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       if (worker != null) {
         if (!worker.isOnlyInlined()) {
           var compName = comp.getComponent().getFactory().getHDLName(comp.getComponent().getAttributeSet());
-          var compId = worker.getComponentIdentifier();
+          var compId = "NormalComponent";
           var id = (compIds.containsKey(compId)) ? compIds.get(compId) : (long) 1;
           if (isFirstLine) {
             contents.add("").addRemarkBlock("Here all normal components are defined");
             isFirstLine = false;
           }
-          contents.add(worker.getComponentMap(theNetlist, id++, comp, null, compName));
-          compIds.remove(compId);
+          contents.add(worker.getComponentMap(theNetlist, id++, comp, compName));
           compIds.put(compId, id);
         }
       }
@@ -469,9 +446,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       if (worker != null) {
         var compName = comp.getComponent().getFactory().getHDLName(comp.getComponent().getAttributeSet());
         if (comp.isGatedInstance())  compName = compName.concat("_gated");
-        final var CompId = worker.getComponentIdentifier();
+        final var CompId = "SubCircuits";
         var id = (compIds.containsKey(CompId)) ? compIds.get(CompId) : (long) 1;
-        final var compMap = worker.getComponentMap(theNetlist, id++, comp, null, compName);
+        final var compMap = worker.getComponentMap(theNetlist, id++, comp, compName);
         if (!compMap.isEmpty()) {
           if (isFirstLine) {
             contents.add("").addRemarkBlock("Here all sub-circuits are defined");

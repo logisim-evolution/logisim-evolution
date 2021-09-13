@@ -26,11 +26,6 @@ public class Ttl74266 extends AbstractTtlGate {
   private static class XNorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
     @Override
-    public String getComponentStringIdentifier() {
-      return "TTL74266";
-    }
-
-    @Override
     public ArrayList<String> GetLogicFunction(int index) {
       final var contents = new ArrayList<String>();
       contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator() + HDL.notOperator()

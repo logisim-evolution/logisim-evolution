@@ -34,11 +34,6 @@ public class Ttl7404 extends AbstractTtlGate {
     }
 
     @Override
-    public String getComponentStringIdentifier() {
-      return "TTL7404";
-    }
-
-    @Override
     public ArrayList<String> GetLogicFunction(int index) {
       final var contents = new ArrayList<String>();
       contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()

@@ -29,11 +29,6 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int UnsignedId = -3;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "MULT";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
     inputs.put("INP_A", NrOfBitsId);

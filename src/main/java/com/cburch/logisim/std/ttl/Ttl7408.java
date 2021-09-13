@@ -26,11 +26,6 @@ public class Ttl7408 extends AbstractTtlGate {
   private static class AndGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
     @Override
-    public String getComponentStringIdentifier() {
-      return "TTL7408";
-    }
-
-    @Override
     public ArrayList<String> GetLogicFunction(int index) {
       return LineBuffer.getHdlBuffer()
           .add("{{assign}} gate_{{1}}_O {{=}} gate_{{1}}_A {{and}} gate_{{1}}_B;", index)

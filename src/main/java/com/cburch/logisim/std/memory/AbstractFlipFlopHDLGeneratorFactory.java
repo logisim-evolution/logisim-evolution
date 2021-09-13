@@ -33,11 +33,6 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
   }
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "FF_LATCH";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("Reset", 1);

@@ -11,12 +11,13 @@ package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.MapComponent;
-import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.ConnectionPoint;
+import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
@@ -33,25 +34,16 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   /* each child of this class has to have this identifier
    * as it is used as label and in most cases as filename
    */
-  public final static String _HDL_ID = null;
-
   private final String subDirectoryName;
-  private final String componentIdentifier;
 
   public AbstractHDLGeneratorFactory() {
-    throw new ExceptionInInitializerError("Cannot initialize HDLGeneratorFactory without identifier");
-  }
-
-  public AbstractHDLGeneratorFactory(String componentIdentifier) {
     final var className = getClass().toString().replace('.', ':').replace(' ', ':'); 
     final var parts = className.split(":");
     if (parts.length < 2) throw new ExceptionInInitializerError("Cannot read class path!");
     subDirectoryName = parts[parts.length - 2];
-    this.componentIdentifier = componentIdentifier;
   }
 
-  public AbstractHDLGeneratorFactory(String componentIdentifier, String subDirectory) {
-    this.componentIdentifier = componentIdentifier;
+  public AbstractHDLGeneratorFactory(String subDirectory) {
     subDirectoryName = subDirectory;
   }
 
@@ -380,25 +372,23 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   public ArrayList<String> getComponentMap(
       Netlist nets,
       Long componentId,
-      NetlistComponent componentInfo,
-      MappableResourcesContainer mapInfo,
+      Object componentInfo,
       String name) {
     final var Contents = new ArrayList<String>();
-    final var ParameterMap = GetParameterMap(nets, componentInfo);
-    final var PortMap = GetPortMap(nets, componentInfo == null ? mapInfo : componentInfo);
-    final var CompName = (name != null && !name.isEmpty()) ? name :
-        (componentInfo == null)
-            ? this.getComponentIdentifier()
-            : componentInfo.getComponent()
-                .getFactory()
-                .getHDLName(componentInfo.getComponent().getAttributeSet());
-    final var ThisInstanceIdentifier = GetInstanceIdentifier(componentInfo, componentId);
+    final var ParameterMap = (componentInfo == null) | componentInfo instanceof NetlistComponent ? 
+        GetParameterMap(nets, (NetlistComponent) componentInfo) : null;
+    final var PortMap = GetPortMap(nets, componentInfo);
+    final var componentHDLName = componentInfo instanceof NetlistComponent ? 
+        ((NetlistComponent) componentInfo).getComponent().getFactory().getHDLName(((NetlistComponent) componentInfo).getComponent().getAttributeSet()) : 
+          name;
+    final var CompName = (name != null && !name.isEmpty()) ? name : componentHDLName;
+    final var ThisInstanceIdentifier = getInstanceIdentifier(componentInfo, componentId);
     final var OneLine = new StringBuilder();
     var TabLength = 0;
     var first = true;
     if (HDL.isVHDL()) {
       Contents.add("   " + ThisInstanceIdentifier + " : " + CompName);
-      if (!ParameterMap.isEmpty()) {
+      if ((ParameterMap != null) && !ParameterMap.isEmpty()) {
         OneLine.append("      GENERIC MAP ( ");
         TabLength = OneLine.length();
         first = true;
@@ -446,7 +436,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       }
     } else {
       OneLine.append("   ").append(CompName);
-      if (!ParameterMap.isEmpty()) {
+      if ((ParameterMap != null) && !ParameterMap.isEmpty()) {
         OneLine.append(" #(");
         TabLength = OneLine.length();
         first = true;
@@ -521,11 +511,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public String getComponentIdentifier() {
-    return componentIdentifier;
-  }
-
-  @Override
   public ArrayList<String> getEntity(
       Netlist theNetlist,
       AttributeSet attrs,
@@ -537,6 +522,18 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           .add(GetVHDLBlackBox(theNetlist, attrs, componentName, true /* , false */));
     }
     return Contents.get();
+  }
+
+  private String getInstanceIdentifier(Object componentInfo, Long componentId) {
+    if (componentInfo != null && componentInfo instanceof NetlistComponent) {
+      final var attrs = ((NetlistComponent) componentInfo).getComponent().getAttributeSet();
+      if (attrs.containsAttribute(StdAttr.LABEL)) {
+        final var label = attrs.getValue(StdAttr.LABEL);
+        if ((label != null) && !label.isEmpty())
+          return CorrectLabel.getCorrectLabel(label);
+      }
+    }
+    return LineBuffer.format("{{1}}_{{2}}", subDirectoryName.toUpperCase(), componentId.toString());
   }
 
   /* Here all public entries for HDL generation are defined */
@@ -577,14 +574,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
      * an invalid value and must not be used
      */
     return new TreeMap<>();
-  }
-
-  public String GetInstanceIdentifier(NetlistComponent ComponentInfo, Long ComponentId) {
-    /*
-     * this method returns the Name of this instance of an used component,
-     * e.g. "GATE_1"
-     */
-    return getComponentIdentifier() + "_" + ComponentId.toString();
   }
 
   public SortedMap<String, Integer> GetMemList(AttributeSet attrs) {

@@ -26,11 +26,6 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   private static final int NrOfBitsId = -1;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "MUX";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist theNetList, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();

@@ -29,11 +29,6 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int UnsignedId = -3;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "DIV";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("INP_A", NrOfBitsId);

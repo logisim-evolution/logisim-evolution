@@ -29,11 +29,6 @@ public class Ttl7400 extends AbstractTtlGate {
   private static class NandGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
     @Override
-    public String getComponentStringIdentifier() {
-      return "TTL7400";
-    }
-
-    @Override
     public ArrayList<String> GetLogicFunction(int index) {
       final var contents = new ArrayList<String>();
       contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()

@@ -28,11 +28,6 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int TwosComplementId = -2;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "Comparator";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     final var inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;

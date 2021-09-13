@@ -22,11 +22,6 @@ import java.util.TreeMap;
 public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "TTL7447";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("BCD0", 1);

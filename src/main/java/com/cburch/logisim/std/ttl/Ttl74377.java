@@ -26,11 +26,6 @@ public class Ttl74377 extends AbstractOctalFlops {
   public static class Ttl74377HDLGenerator extends AbstractOctalFlopsHDLGenerator {
 
     @Override
-    public String getComponentStringIdentifier() {
-      return "TTL" + _ID;
-    }
-
-    @Override
     public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
       final var map = new TreeMap<String, String>();
       if (!(mapInfo instanceof NetlistComponent)) return map;

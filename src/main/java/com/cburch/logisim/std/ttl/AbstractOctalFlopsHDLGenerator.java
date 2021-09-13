@@ -15,6 +15,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -96,11 +97,12 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
     final var comp = (NetlistComponent) mapInfo;
     var gatedClock = false;
     var hasClock = true;
+    final var cmp = (InstanceFactory) comp.getComponent();
     final var clockPinIndex = comp.getComponent().getFactory().ClockPinIndex(null)[0];
     if (!comp.isEndConnected(clockPinIndex)) {
       Reporter.Report.AddSevereWarning(
           "Component \""
-              + getComponentStringIdentifier()
+              + cmp.getDisplayName()
               + "\" in circuit \""
               + nets.getCircuitName()
               + "\" has no clock connection");

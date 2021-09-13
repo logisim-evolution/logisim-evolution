@@ -27,14 +27,6 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   public static final String activeLowString = "activeLow";
   public static final String HDL_IDENTIFIER = "LedArrayLedDefault";
 
-  public LedArrayLedDefaultHDLGeneratorFactory() {
-    super(HDL_IDENTIFIER);
-  }
-
-  public LedArrayLedDefaultHDLGeneratorFactory(String id) {
-    super(id);
-  }
-
   public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
     final var contents =
         (new LineBuffer())

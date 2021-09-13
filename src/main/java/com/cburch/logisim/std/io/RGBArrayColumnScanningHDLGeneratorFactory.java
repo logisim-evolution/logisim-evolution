@@ -23,10 +23,6 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
 
   public static final String HDL_IDENTIFIER =  "RGBArrayColumnScanning";
 
-  public RGBArrayColumnScanningHDLGeneratorFactory() {
-    super(HDL_IDENTIFIER);
-  }
-
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
         (new LineBuffer())

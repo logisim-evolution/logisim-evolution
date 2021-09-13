@@ -13,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 
@@ -36,14 +35,8 @@ public class InlinedHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getComponentMap(Netlist nets, Long componentId, NetlistComponent componentInfo,
-      MappableResourcesContainer mapInfo, String name) {
+  public ArrayList<String> getComponentMap(Netlist nets, Long componentId, Object componentInfo, String name) {
     throw new IllegalAccessError("BUG: getComponentMap not supported");
-  }
-
-  @Override
-  public String getComponentIdentifier() {
-    return "Logisim_InLined";
   }
 
   @Override

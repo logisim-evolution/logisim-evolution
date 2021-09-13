@@ -40,14 +40,6 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
   public static String maxNrLedsString = "maxNrLedsAddrColumns";
   public static final String HDL_IDENTIFIER = "LedArrayRowScanning";
 
-  public LedArrayRowScanningHDLGeneratorFactory() {
-    super(HDL_IDENTIFIER);
-  }
-
-  public LedArrayRowScanningHDLGeneratorFactory(String id) {
-    super(id);
-  }
-
   public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long FpgaClockFrequency, boolean activeLow) {
     final var nrRowAddrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfRows);
     final var scanningReload = (int) (FpgaClockFrequency / (long) 1000);

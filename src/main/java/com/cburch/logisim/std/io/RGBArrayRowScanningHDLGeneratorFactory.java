@@ -22,10 +22,6 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
 
   public static final String HDL_IDENTIFIER = "RGBArrayRowScanning";
 
-  public RGBArrayRowScanningHDLGeneratorFactory() {
-    super(HDL_IDENTIFIER);
-  }
-
   static final LineBuffer.Pairs sharedPairs =
       new LineBuffer.Pairs()
           .pair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)

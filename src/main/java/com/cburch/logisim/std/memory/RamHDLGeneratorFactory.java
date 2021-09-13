@@ -34,11 +34,6 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int MemArrayId = -3;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "RAM";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
