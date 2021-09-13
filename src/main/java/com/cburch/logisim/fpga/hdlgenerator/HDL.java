@@ -154,7 +154,7 @@ public abstract class HDL {
       return signal;
     if (arithmetic) {
       return isVHDL()
-        ? LineBuffer.format("({{1}} DOWNTO 0 => {{2}}({{1}})) & {{2}}{{3}}", with -1, signal, splitVector(with - 1, with - nrOfBits))
+        ? LineBuffer.format("({{1}} DOWNTO 0 => {{2}}({{1}})) & {{2}}{{3}}", with - 1, signal, splitVector(with - 1, with - nrOfBits))
         : LineBuffer.format("{{{{1}}{{{2}}[{{1}}-1]}},{{2}}{{3}}}", with, signal, splitVector(with - 1, with - nrOfBits));
     } else {
       return isVHDL()
@@ -207,7 +207,7 @@ public abstract class HDL {
 
   public static String splitVector(int start, int end) {
     if (start == end)
-      return LineBuffer.format("{{1}}{{2}}{{3}}", BracketOpen(), start, BracketClose());
+      return LineBuffer.format("{{1}}{{2}}{{3}} ", BracketOpen(), start, BracketClose());
     return isVHDL()
                 ? LineBuffer.format("({{1}} DOWNTO {{2}}) ", start, end)
                 : LineBuffer.format("[{{1}}:{{2}}] ", start, end);
