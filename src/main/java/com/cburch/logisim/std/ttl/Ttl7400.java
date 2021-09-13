@@ -28,9 +28,8 @@ public class Ttl7400 extends AbstractTtlGate {
 
   private static class NandGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
-    @Override
-    public String getComponentStringIdentifier() {
-      return "TTL7400";
+    public NandGateHDLGeneratorFactory() {
+      super("TTL7400");
     }
 
     @Override

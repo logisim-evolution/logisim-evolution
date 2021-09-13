@@ -25,9 +25,8 @@ public class Ttl7402 extends AbstractTtlGate {
 
   private static class NorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
-    @Override
-    public String getComponentStringIdentifier() {
-      return "TTL7402";
+    public NorGateHDLGeneratorFactory() {
+      super("TTL7402");
     }
 
     @Override

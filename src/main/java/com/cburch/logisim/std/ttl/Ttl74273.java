@@ -25,9 +25,8 @@ public class Ttl74273 extends AbstractOctalFlops {
 
   public static class Ttl74273HDLGenerator extends AbstractOctalFlopsHDLGenerator {
 
-    @Override
-    public String getComponentStringIdentifier() {
-      return "TTL74273";
+    public Ttl74273HDLGenerator() {
+      super("TTL74273");
     }
 
     @Override

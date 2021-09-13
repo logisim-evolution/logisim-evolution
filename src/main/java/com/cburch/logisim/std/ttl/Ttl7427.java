@@ -22,6 +22,6 @@ public class Ttl7427 extends Ttl7410 {
   public static final String _ID = "7427";
 
   public Ttl7427() {
-    super(_ID, true, true);
+    super("TTL7427", _ID, true, true);
   }
 }

@@ -28,14 +28,8 @@ public class Ttl7404 extends AbstractTtlGate {
 
   private static class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
-    @Override
-    public boolean IsInverter() {
-      return true;
-    }
-
-    @Override
-    public String getComponentStringIdentifier() {
-      return "TTL7404";
+    public NotGateHDLGeneratorFactory() {
+      super("TTL7404", true);
     }
 
     @Override

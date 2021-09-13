@@ -23,19 +23,10 @@ public class Ttl7410HDLGenerator extends AbstractHDLGeneratorFactory {
   private boolean Inverted = true;
   private boolean andgate = true;
 
-  public Ttl7410HDLGenerator() {
-    super();
-  }
-
-  public Ttl7410HDLGenerator(boolean invert, boolean IsAnd) {
-    super();
+  public Ttl7410HDLGenerator(String id, boolean invert, boolean IsAnd) {
+    super(id);
     Inverted = invert;
     andgate = IsAnd;
-  }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "TTL";
   }
 
   @Override

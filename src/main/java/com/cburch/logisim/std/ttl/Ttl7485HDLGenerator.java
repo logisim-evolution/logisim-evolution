@@ -21,9 +21,8 @@ import java.util.TreeMap;
 
 public class Ttl7485HDLGenerator extends AbstractHDLGeneratorFactory {
 
-  @Override
-  public String getComponentStringIdentifier() {
-    return "TTL7485";
+  public Ttl7485HDLGenerator() {
+    super("TTL7485");
   }
 
   @Override

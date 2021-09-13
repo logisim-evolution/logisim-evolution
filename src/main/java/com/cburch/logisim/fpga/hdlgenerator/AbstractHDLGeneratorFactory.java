@@ -35,7 +35,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   private final String componentIdentifier;
 
   public AbstractHDLGeneratorFactory() {
-    throw new ExceptionInInitializerError("Cannot initialize HDLGeneratorFacotry without identifier");
+    throw new ExceptionInInitializerError("Cannot initialize HDLGeneratorFactory without identifier");
   }
   
   public AbstractHDLGeneratorFactory(String componentIdentifier) {

@@ -19,23 +19,25 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
+  
+  private final boolean isInverter;
 
-  public boolean IsInverter() {
-    return false;
+  public AbstractGateHDLGenerator(String id) {
+    this(id, false);
   }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "TTL";
+  
+  public AbstractGateHDLGenerator(String id, boolean isInverter) {
+    super(id);
+    this.isInverter = isInverter;
   }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    final var NrOfGates = (IsInverter()) ? 6 : 4;
+    final var NrOfGates = isInverter ? 6 : 4;
     for (var i = 0; i < NrOfGates; i++) {
       map.put("gate_" + i + "_A", 1);
-      if (!IsInverter()) map.put("gate_" + i + "_B", 1);
+      if (isInverter) map.put("gate_" + i + "_B", 1);
     }
     return map;
   }
@@ -43,7 +45,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    final var NrOfGates = (IsInverter()) ? 6 : 4;
+    final var NrOfGates = isInverter ? 6 : 4;
     for (var i = 0; i < NrOfGates; i++) {
       map.put("gate_" + i + "_O", 1);
     }
@@ -57,7 +59,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = new LineBuffer();
-    final var nrOfGates = (IsInverter()) ? 6 : 4;
+    final var nrOfGates = isInverter ? 6 : 4;
     for (var i = 0; i < nrOfGates; i++) {
       contents.addRemarkBlock("Here gate %d is described", i).add(GetLogicFunction(i));
     }
@@ -69,9 +71,9 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var comp = (NetlistComponent) mapInfo;
-    final var nrOfGates = (IsInverter()) ? 6 : 4;
+    final var nrOfGates = isInverter ? 6 : 4;
     for (var i = 0; i < nrOfGates; i++) {
-      if (IsInverter()) {
+      if (isInverter) {
         final var inindex = (i < 3) ? i * 2 : i * 2 + 1;
         final var outindex = (i < 3) ? i * 2 + 1 : i * 2;
         map.putAll(GetNetMap("gate_" + i + "_A", true, comp, inindex, nets));

@@ -23,6 +23,10 @@ import java.util.TreeMap;
 
 public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory {
 
+  public AbstractOctalFlopsHDLGenerator(String id) {
+    super(id);
+  }
+
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
@@ -100,7 +104,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
     if (!comp.isEndConnected(clockPinIndex)) {
       Reporter.Report.AddSevereWarning(
           "Component \""
-              + getComponentStringIdentifier()
+              + getComponentIdentifier()
               + "\" in circuit \""
               + nets.getCircuitName()
               + "\" has no clock connection");

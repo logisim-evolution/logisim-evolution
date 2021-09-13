@@ -42,19 +42,10 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
   private boolean IsExes3 = false;
   private boolean IsGray = false;
 
-  public Ttl7442HDLGenerator() {
-    super();
-  }
-
-  public Ttl7442HDLGenerator(boolean Exess3, boolean Gray) {
-    super();
+  public Ttl7442HDLGenerator(String id, boolean Exess3, boolean Gray) {
+    super(id);
     IsExes3 = Exess3;
     IsGray = Gray;
-  }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "TTL";
   }
 
   @Override

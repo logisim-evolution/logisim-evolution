@@ -30,11 +30,11 @@ public class Ttl7442 extends AbstractTtlGate {
   private static final String[] pinNames = {"O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", "D", "C", "B", "A"};
 
   public Ttl7442() {
-    super(_ID, pinCount, outPins, pinNames, new Ttl7442HDLGenerator(false, false));
+    super(_ID, pinCount, outPins, pinNames, new Ttl7442HDLGenerator("TTL7442", false, false));
   }
 
-  public Ttl7442(String name, int encoding) {
-    super(name, pinCount, outPins, pinNames, new Ttl7442HDLGenerator(encoding == 1, encoding == 2));
+  public Ttl7442(String id, String name, int encoding) {
+    super(name, pinCount, outPins, pinNames, new Ttl7442HDLGenerator(id, encoding == 1, encoding == 2));
     IsExec3 = encoding == 1;
     IsGray = encoding == 2;
   }
