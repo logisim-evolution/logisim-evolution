@@ -147,12 +147,12 @@ public class Startup implements AWTEventListener {
   private static final String ARG_GATES_LONG = "gates";
   private static final String ARG_HELP_SHORT = "h";
   private static final String ARG_HELP_LONG = "help";
-  private static final String ARG_TEST_CIRC_GEN_SHORT = "j";
-  private static final String ARG_TEST_CIRC_GEN_LONG = "test-circ-gen";
   private static final String ARG_LOAD_SHORT = "l";
   private static final String ARG_LOAD_LONG = "load";
   private static final String ARG_GEOMETRY_SHORT = "m";
   private static final String ARG_GEOMETRY_LONG = "geometry";
+  private static final String ARG_TEST_CIRC_GEN_SHORT = "n";
+  private static final String ARG_TEST_CIRC_GEN_LONG = "new-file-format";
   private static final String ARG_LOCALE_SHORT = "o";
   private static final String ARG_LOCALE_LONG = "locale";
   private static final String ARG_CLEAR_PREFS_SHORT = "r";
