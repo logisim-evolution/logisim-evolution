@@ -352,6 +352,7 @@ tasks.register("createMsi") {
         "--type", "msi",
         // we MUST use short version form (without any suffix like "-dev", as it is not allowed in MSI package:
         // https://docs.microsoft.com/en-us/windows/win32/msi/productversion?redirectedfrom=MSDN
+        // NOTE: any change to version **format** may require editing of .github/workflows/nightly.yml too!
         "--app-version", ext.get(APP_VERSION_SHORT) as String,
     )
     runCommand(params, "Error while creating the MSI package.")
