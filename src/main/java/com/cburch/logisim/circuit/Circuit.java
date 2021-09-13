@@ -973,9 +973,10 @@ public class Circuit {
 
   public void setTickFrequency(double value) {
     final var currentTickFrequency = staticAttrs.getValue(CircuitAttributes.SIMULATION_FREQUENCY); 
-    if (value == currentTickFrequency) return;
-    staticAttrs.setValue(CircuitAttributes.SIMULATION_FREQUENCY, value);
-    if ((proj != null) && (currentTickFrequency > 0)) proj.setForcedDirty();
+    if (value != currentTickFrequency) {
+      staticAttrs.setValue(CircuitAttributes.SIMULATION_FREQUENCY, value);
+      if ((proj != null) && (currentTickFrequency > 0)) proj.setForcedDirty();
+    }
   }
   
   public double getDownloadFrequency() {
@@ -983,9 +984,10 @@ public class Circuit {
   }
 
   public void setDownloadFrequency(double value) {
-    if (value == staticAttrs.getValue(CircuitAttributes.DOWNLOAD_FREQUENCY)) return;
-    staticAttrs.setValue(CircuitAttributes.DOWNLOAD_FREQUENCY, value);
-    if (proj != null) proj.setForcedDirty();
+    if (value != staticAttrs.getValue(CircuitAttributes.DOWNLOAD_FREQUENCY)) {
+      staticAttrs.setValue(CircuitAttributes.DOWNLOAD_FREQUENCY, value);
+      if (proj != null) proj.setForcedDirty();
+    }
   }
 
   public String getDownloadBoard() {
@@ -993,8 +995,9 @@ public class Circuit {
   }
 
   public void setDownloadBoard(String board) {
-    if (board.equals(staticAttrs.getValue(CircuitAttributes.DOWNLOAD_BOARD))) return;
-    staticAttrs.setValue(CircuitAttributes.DOWNLOAD_BOARD, board);
-    if (proj != null) proj.setForcedDirty();
+    if (!board.equals(staticAttrs.getValue(CircuitAttributes.DOWNLOAD_BOARD))) {
+      staticAttrs.setValue(CircuitAttributes.DOWNLOAD_BOARD, board);
+      if (proj != null) proj.setForcedDirty();
+    }
   }
 }
