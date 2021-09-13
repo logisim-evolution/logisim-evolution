@@ -987,4 +987,14 @@ public class Circuit {
     staticAttrs.setValue(CircuitAttributes.DOWNLOAD_FREQUENCY, value);
     if (proj != null) proj.setForcedDirty();
   }
+
+  public String getDownloadBoard() {
+    return staticAttrs.getValue(CircuitAttributes.DOWNLOAD_BOARD);
+  }
+
+  public void setDownloadBoard(String board) {
+    if (board.equals(staticAttrs.getValue(CircuitAttributes.DOWNLOAD_BOARD))) return;
+    staticAttrs.setValue(CircuitAttributes.DOWNLOAD_BOARD, board);
+    if (proj != null) proj.setForcedDirty();
+  }
 }
