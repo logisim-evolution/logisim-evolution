@@ -304,7 +304,7 @@ public class FPGACommander
     if (circuit != null && !AppPreferences.Boards.getSelectedBoardFileName().equals(circuit.getDownloadBoard())) {
       final var boardName = circuit.getDownloadBoard();
       final var boardIndex = AppPreferences.Boards.getBoardNames().indexOf(boardName);
-      if (boardIndex >= 0) AppPreferences.Boards.boardSelector().setSelectedIndex(boardIndex+1);
+      if (boardIndex >= 0) AppPreferences.Boards.boardSelector().setSelectedIndex(boardIndex + 1);
     }
   }
 
