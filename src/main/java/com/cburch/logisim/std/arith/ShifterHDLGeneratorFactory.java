@@ -26,11 +26,6 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int ShiftModeId = -1;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "Shifter";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
     inputs.put("DataA", attrs.getValue(StdAttr.WIDTH).getWidth());
@@ -267,11 +262,6 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    return "arithmetic";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     final var wires = new TreeMap<String, Integer>();
     int shift = getNrofShiftBits(attrs);
@@ -281,10 +271,5 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       wires.put("s_stage_" + loop + "_shiftin", 1 << loop);
     }
     return wires;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

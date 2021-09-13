@@ -15,6 +15,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -37,19 +38,18 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int PHASE_ID = -3;
   private static final String NR_OF_BITS_STR = "NrOfBits";
   private static final int NR_OF_BITS_ID = -4;
+  
+  public ClockHDLGeneratorFactory() {
+    super("base");
+  }
 
   private String GetClockNetName(Component comp, Netlist TheNets) {
     StringBuilder Contents = new StringBuilder();
     int ClockNetId = TheNets.getClockSourceId(comp);
     if (ClockNetId >= 0) {
-      Contents.append(ClockTreeName).append(ClockNetId);
+      Contents.append(HDLGeneratorFactory.CLOCK_TREE_NAME).append(ClockNetId);
     }
     return Contents.toString();
-  }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "CLOCKGEN";
   }
 
   @Override
@@ -245,24 +245,10 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
-    return "base";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     final var map = new TreeMap<String, Integer>();
     map.put("s_counter_next", NR_OF_BITS_ID);
     map.put("s_counter_is_zero", 1);
     return map;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

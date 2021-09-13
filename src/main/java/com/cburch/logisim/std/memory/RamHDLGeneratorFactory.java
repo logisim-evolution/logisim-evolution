@@ -34,11 +34,6 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int MemArrayId = -3;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "RAM";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
@@ -259,7 +254,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         map.put("Clock", HDL.zeroBit());
         map.put("Tick", HDL.zeroBit());
       } else {
-        final var clockNetName = GetClockNetName(comp, RamAppearance.getClkIndex(0, attrs), nets);
+        final var clockNetName = HDL.getClockNetName(comp, RamAppearance.getClkIndex(0, attrs), nets);
         if (clockNetName.isEmpty()) {
           map.putAll(GetNetMap("Clock", true, comp, RamAppearance.getClkIndex(0, attrs), nets));
           map.put("Tick", HDL.oneBit());
@@ -318,11 +313,6 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       map.put("s_ByteEnableReg", RamAppearance.getNrBEPorts(attrs));
     }
     return map;
-  }
-
-  @Override
-  public String GetSubDir() {
-    return "memory";
   }
 
   @Override
@@ -398,7 +388,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     if (attrs == null) return false;
     Object busVal = attrs.getValue(RamAttributes.ATTR_DBUS);
     final var separate = busVal != null && busVal.equals(RamAttributes.BUS_SEP);

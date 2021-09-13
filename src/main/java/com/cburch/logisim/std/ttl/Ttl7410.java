@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -33,16 +32,16 @@ public class Ttl7410 extends AbstractTtlGate {
   private static final byte[] outPorts = {6, 8, 12};
 
   public Ttl7410() {
-    super(_ID, pinCount, outPorts);
+    super(_ID, pinCount, outPorts, new Ttl7410HDLGenerator(true, true));
   }
 
   public Ttl7410(String val, boolean inverted) {
-    super(val, (byte) pinCount, outPorts);
+    super(val, (byte) pinCount, outPorts, new Ttl7410HDLGenerator(inverted, true));
     this.inverted = inverted;
   }
 
   public Ttl7410(String val, boolean inverted, boolean isOR) {
-    super(val, (byte) pinCount, outPorts);
+    super(val, (byte) pinCount, outPorts, new Ttl7410HDLGenerator(inverted, !isOR));
     this.inverted = inverted;
     isAND = !isOR;
   }
@@ -111,11 +110,5 @@ public class Ttl7410 extends AbstractTtlGate {
             ? state.getPortValue(7).and(state.getPortValue(8).and(state.getPortValue(9)))
             : state.getPortValue(7).or(state.getPortValue(8).or(state.getPortValue(9)));
     state.setPort(6, inverted ? val.not() : val, 2);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new Ttl7410HDLGenerator(inverted, isAND);
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

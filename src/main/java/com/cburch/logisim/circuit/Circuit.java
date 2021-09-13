@@ -347,7 +347,7 @@ public class Circuit {
         }
       }
       /* now we only process those that require a label */
-      if (comp.getFactory().RequiresNonZeroLabel()) {
+      if (comp.getFactory().requiresNonZeroLabel()) {
         if (clearExistingLabels) {
           /* in case of label cleaning, we clear first the old label */
           Reporter.Report.AddInfo(
@@ -973,9 +973,10 @@ public class Circuit {
 
   public void setTickFrequency(double value) {
     final var currentTickFrequency = staticAttrs.getValue(CircuitAttributes.SIMULATION_FREQUENCY); 
-    if (value == currentTickFrequency) return;
-    staticAttrs.setValue(CircuitAttributes.SIMULATION_FREQUENCY, value);
-    if ((proj != null) && (currentTickFrequency > 0)) proj.setForcedDirty();
+    if (value != currentTickFrequency) {
+      staticAttrs.setValue(CircuitAttributes.SIMULATION_FREQUENCY, value);
+      if ((proj != null) && (currentTickFrequency > 0)) proj.setForcedDirty();
+    }
   }
   
   public double getDownloadFrequency() {
@@ -983,8 +984,20 @@ public class Circuit {
   }
 
   public void setDownloadFrequency(double value) {
-    if (value == staticAttrs.getValue(CircuitAttributes.DOWNLOAD_FREQUENCY)) return;
-    staticAttrs.setValue(CircuitAttributes.DOWNLOAD_FREQUENCY, value);
-    if (proj != null) proj.setForcedDirty();
+    if (value != staticAttrs.getValue(CircuitAttributes.DOWNLOAD_FREQUENCY)) {
+      staticAttrs.setValue(CircuitAttributes.DOWNLOAD_FREQUENCY, value);
+      if (proj != null) proj.setForcedDirty();
+    }
+  }
+
+  public String getDownloadBoard() {
+    return staticAttrs.getValue(CircuitAttributes.DOWNLOAD_BOARD);
+  }
+
+  public void setDownloadBoard(String board) {
+    if (!board.equals(staticAttrs.getValue(CircuitAttributes.DOWNLOAD_BOARD))) {
+      staticAttrs.setValue(CircuitAttributes.DOWNLOAD_BOARD, board);
+      if (proj != null) proj.setForcedDirty();
+    }
   }
 }

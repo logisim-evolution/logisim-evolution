@@ -30,11 +30,6 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int SeedId = -2;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "RNG";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("GlobalClock", 1);
@@ -232,7 +227,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(comp, Random.CK, Nets);
+    final var clockNetName = HDL.getClockNetName(comp, Random.CK, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
       Reporter.Report.AddError(
@@ -307,11 +302,6 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    return "memory";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     final var map = new TreeMap<String, Integer>();
     map.put("s_InitSeed", 48);
@@ -327,10 +317,5 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put("s_mac_hi_in_2", 24);
     map.put("s_busy_pipe_next", 2);
     return map;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

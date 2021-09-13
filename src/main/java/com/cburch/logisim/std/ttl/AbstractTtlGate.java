@@ -17,6 +17,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -49,8 +50,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
    * @param outputports = an array with the indexes of the output ports (indexes are the same you
    *     can find on Google searching the TTL you want to add)
    */
-  protected AbstractTtlGate(String name, byte pins, byte[] outputports) {
-    super(name);
+  protected AbstractTtlGate(String name, byte pins, byte[] outputports, HDLGeneratorFactory generator) {
+    super(name, generator);
     setIconName("ttl.gif");
     setAttributes(
         new Attribute[] {StdAttr.FACING, TtlLibrary.VCC_GND, TtlLibrary.DRAW_INTERNAL_STRUCTURE, StdAttr.LABEL},
@@ -62,8 +63,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
       this.outputports.add(outputport);
   }
 
-  protected AbstractTtlGate(String name, byte pins, byte[] outputports, byte[] NotUsedPins) {
-    this(name, pins, outputports);
+  protected AbstractTtlGate(String name, byte pins, byte[] outputports, byte[] NotUsedPins, HDLGeneratorFactory generator) {
+    this(name, pins, outputports, generator);
     if (NotUsedPins == null) return;
     for (byte notUsedPin : NotUsedPins)
       unusedpins.add(notUsedPin);
@@ -77,8 +78,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
    * @param drawgates = if true, it calls the paintInternal method many times as the number of
    *     output ports passing the coordinates
    */
-  protected AbstractTtlGate(String name, byte pins, byte[] outputports, boolean drawgates) {
-    this(name, pins, outputports);
+  protected AbstractTtlGate(String name, byte pins, byte[] outputports, boolean drawgates, HDLGeneratorFactory generator) {
+    this(name, pins, outputports, generator);
     this.ngatestodraw = (byte) (drawgates ? outputports.length : 0);
   }
 
@@ -90,28 +91,27 @@ public abstract class AbstractTtlGate extends InstanceFactory {
    * @param Ttlportnames = an array of strings which will be tooltips of the corresponding port in
    *     the order you pass
    */
-  protected AbstractTtlGate(String name, byte pins, byte[] outputports, String[] Ttlportnames) {
+  protected AbstractTtlGate(String name, byte pins, byte[] outputports, String[] Ttlportnames, HDLGeneratorFactory generator) {
     // the ttl name, the total number of pins and an array with the indexes of
     // output ports (indexes are the one you can find on Google), an array of
     // strings which will be tooltips of the corresponding port in order
-    this(name, pins, outputports);
+    this(name, pins, outputports, generator);
     this.portnames = Ttlportnames;
   }
 
-  protected AbstractTtlGate(
-      String name, byte pins, byte[] outputports, byte[] NotUsedPins, String[] Ttlportnames) {
-    this(name, pins, outputports);
+  protected AbstractTtlGate(String name, byte pins, byte[] outputports, byte[] NotUsedPins, 
+      String[] Ttlportnames, HDLGeneratorFactory generator) {
+    this(name, pins, outputports, generator);
     portnames = Ttlportnames;
     if (NotUsedPins == null) return;
     for (final var notUsedPin : NotUsedPins) unusedpins.add(notUsedPin);
   }
 
-  protected AbstractTtlGate(
-      String name, byte pins, byte[] outputports, String[] Ttlportnames, int height) {
+  protected AbstractTtlGate(String name, byte pins, byte[] outputports, String[] Ttlportnames, int height, HDLGeneratorFactory generator) {
     // the ttl name, the total number of pins and an array with the indexes of
     // output ports (indexes are the one you can find on Google), an array of
     // strings which will be tooltips of the corresponding port in order
-    this(name, pins, outputports);
+    this(name, pins, outputports, generator);
     this.height = height;
     this.portnames = Ttlportnames;
   }

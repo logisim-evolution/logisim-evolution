@@ -34,11 +34,6 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int ModeId = -4;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "COUNTER";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("GlobalClock", 1);
@@ -228,7 +223,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put(NrOfBitsStr, attrs.getValue(StdAttr.WIDTH).getWidth());
     map.put(MaxValStr, attrs.getValue(Counter.ATTR_MAX).intValue());
     var clkEdge = 1;
-    if (GetClockNetName(componentInfo, Counter.CK, nets).isEmpty()
+    if (HDL.getClockNetName(componentInfo, Counter.CK, nets).isEmpty()
         && attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING) clkEdge = 0;
     map.put(activeEdgeStr, clkEdge);
     map.put(modeStr, mode);
@@ -249,7 +244,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       map.put("GlobalClock", HDL.zeroBit());
       map.put("ClockEnable", HDL.zeroBit());
     } else {
-      final var clockNetName = GetClockNetName(componentInfo, Counter.CK, nets);
+      final var clockNetName = HDL.getClockNetName(componentInfo, Counter.CK, nets);
       if (clockNetName.isEmpty()) {
         map.putAll(GetNetMap("GlobalClock", true, componentInfo, Counter.CK, nets));
         map.put("ClockEnable", HDL.oneBit());
@@ -305,23 +300,9 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
-    return "memory";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     final var map = new TreeMap<String, Integer>();
     map.put("s_real_enable", 1);
     return map;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

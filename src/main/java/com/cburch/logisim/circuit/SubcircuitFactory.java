@@ -18,7 +18,6 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.hdlgenerator.CircuitHDLGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -112,7 +111,7 @@ public class SubcircuitFactory extends InstanceFactory {
   private Circuit source;
 
   public SubcircuitFactory(Circuit source) {
-    super("", null);
+    super("", null, new CircuitHDLGeneratorFactory(source), true);
     this.source = source;
     setFacingAttribute(StdAttr.FACING);
     setDefaultToolTip(new CircuitFeature(null));
@@ -321,12 +320,6 @@ public class SubcircuitFactory extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new CircuitHDLGeneratorFactory(this.source);
-    return MyHDLGenerator.HDLTargetSupported(attrs);
-  }
-
-  @Override
   public void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.FACING) {
       computePorts(instance);
@@ -415,11 +408,6 @@ public class SubcircuitFactory extends InstanceFactory {
         superState.setPort(i, val, 1);
       }
     }
-  }
-
-  @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
   }
 
   @Override

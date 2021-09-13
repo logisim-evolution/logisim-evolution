@@ -60,7 +60,6 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
     @Override
     public Value getLogValue(InstanceState state, Object option) {
       final var data = (InstanceDataSingleton) state.getData();
-      int rgb = 0;
       if (data == null)
         return Value.createUnknown(BITWIDTH);
       else
@@ -87,7 +86,7 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   public static final int BLUE = 2;
 
   public RgbLed() {
-    super(_ID, S.getter("RGBledComponent"));
+    super(_ID, S.getter("RGBledComponent"), new AbstractSimpleIOHDLGeneratorFactory(false), true);
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -163,12 +162,6 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   }
 
   @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new AbstractLedHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
-  }
-
-  @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.FACING) {
       instance.recomputeBounds();
@@ -227,11 +220,6 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
     } else {
       data.setValue(value);
     }
-  }
-
-  @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
   }
 
   @Override

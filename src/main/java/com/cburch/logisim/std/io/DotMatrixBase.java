@@ -40,6 +40,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
+import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.gui.icons.LedMatrixIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
@@ -221,8 +222,8 @@ public abstract class DotMatrixBase extends InstanceFactory {
     scaleY = val;
   }
 
-  public DotMatrixBase(String name, StringGetter displayName, int cols, int rows) {
-    super(name, displayName);
+  public DotMatrixBase(String name, StringGetter displayName, int cols, int rows, HDLGeneratorFactory generator) {
+    super(name, displayName, generator, true);
     setAttributes(
         new Attribute<?>[] {
           getAttributeInputType(),
@@ -475,16 +476,5 @@ public abstract class DotMatrixBase extends InstanceFactory {
       }
     }
     instance.setPorts(ps);
-  }
-
-  @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new DotMatrixHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

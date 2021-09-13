@@ -55,7 +55,7 @@ public class Comparator extends InstanceFactory {
   private static final int LT = 4;
 
   public Comparator() {
-    super(_ID, S.getter("comparatorComponent"));
+    super(_ID, S.getter("comparatorComponent"), new ComparatorHDLGeneratorFactory());
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, MODE_ATTRIBUTE},
         new Object[] {BitWidth.create(8), SIGNED_OPTION});
@@ -91,12 +91,6 @@ public class Comparator extends InstanceFactory {
     if (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) CompleteName.append("BitComparator");
     else CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
     return CompleteName.toString();
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new ComparatorHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

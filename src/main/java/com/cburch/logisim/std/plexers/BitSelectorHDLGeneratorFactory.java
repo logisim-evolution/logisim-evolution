@@ -31,11 +31,6 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   private static final int ExtendedBitsId = -4;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "BITSELECTOR";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist theNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("DataIn", InputBitsId);
@@ -141,19 +136,9 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   }
 
   @Override
-  public String GetSubDir() {
-    return "plexers";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist nets) {
     final var map = new TreeMap<String, Integer>();
     map.put("s_extended_vector", ExtendedBitsId);
     return map;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

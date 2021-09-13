@@ -7,7 +7,7 @@
  * This is free software released under GNU GPLv3 license
  */
 
-package com.cburch.logisim.fpga.hdlgenerator;
+package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -16,10 +16,12 @@ import java.util.TreeMap;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 
 public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnScanningHDLGeneratorFactory {
 
-  public static String RGBArrayName = "RGBArrayColumnScanning";
+  public static final String HDL_IDENTIFIER =  "RGBArrayColumnScanning";
 
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
@@ -151,10 +153,4 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
     }
     return contents.getWithIndent();
   }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return RGBArrayName;
-  }
-
 }

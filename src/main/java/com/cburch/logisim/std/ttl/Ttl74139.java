@@ -62,7 +62,6 @@ public class Ttl74139 extends AbstractTtlGate {
     super(
         _ID,
         (byte) 16,
-
         new byte[] {
           L1_Y0, L1_Y1, L1_Y2, L1_Y3,
           L2_Y0, L2_Y1, L2_Y2, L2_Y3
@@ -70,7 +69,8 @@ public class Ttl74139 extends AbstractTtlGate {
         new String[] {
           "1nG Enable (active LOW)", "1A", "1B", "1Y0", "1Y1", "1Y2", "1Y3",
           "2Y3", "2Y2", "2Y1", "2Y0", "2B", "2A", "1nG Enable (active LOW)"
-        });
+        },
+        null);
   }
 
   @Override

@@ -28,11 +28,6 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int TwosComplementId = -2;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "Comparator";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     final var inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
@@ -140,11 +135,6 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    return "arithmetic";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     final var wires = new TreeMap<String, Integer>();
     int inputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
@@ -155,10 +145,5 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       wires.put("s_unsigned_greater", 1);
     }
     return wires;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

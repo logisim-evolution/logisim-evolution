@@ -46,6 +46,7 @@ import com.cburch.logisim.tools.TextTool;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.tools.WiringTool;
 import com.cburch.logisim.util.InputEventUtil;
+import com.cburch.logisim.util.LineBuffer;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
 import java.io.IOException;
@@ -537,12 +538,13 @@ class XmlReader {
   public static void applyValidLabels(
       Element root, String nodeType, String attrType, Map<String, String> validLabels)
       throws IllegalArgumentException {
-    assert (root != null);
-    assert (nodeType != null);
-    assert (attrType != null);
-    assert (nodeType.length() > 0);
-    assert (attrType.length() > 0);
-    assert (validLabels != null);
+
+    if (root == null) throw new RuntimeException("Value of 'root' cannot be null");
+    if (nodeType == null) throw new RuntimeException("Value of 'nodeType' cannot be null");
+    if (attrType == null) throw new RuntimeException("Value of 'attrType' cannot be null");
+    if (nodeType.length() == 0) throw new RuntimeException("Empty string is not a valid value of 'nodeType'.");
+    if (attrType.length() == 0) throw new RuntimeException("Empty string is not a valid value of 'attrType'.");
+    if (validLabels == null) throw new RuntimeException("Value of 'validLabels' cannot be null");
 
     switch (nodeType) {
       case "circuit":
@@ -562,7 +564,7 @@ class XmlReader {
    * @param root root node
    */
   private static void cleanupToolsLabel(Element root) {
-    assert (root != null);
+    if (root == null) throw new RuntimeException("Value of 'root' cannot be null");
 
     // Iterate on tools
     for (final var toolElt : XmlIterator.forChildElements(root, "tool")) {
@@ -615,11 +617,11 @@ class XmlReader {
    *     attribute values as the values
    */
   public static Map<String, String> findValidLabels(Element root, String nodeType, String attrType) {
-    assert (root != null);
-    assert (nodeType != null);
-    assert (attrType != null);
-    assert (nodeType.length() > 0);
-    assert (attrType.length() > 0);
+    if (root == null) throw new RuntimeException("Value of 'root' cannot be null");
+    if (nodeType == null) throw new RuntimeException("Value of 'nodeType' cannot be null");
+    if (attrType == null) throw new RuntimeException("Value of 'attrType' cannot be null");
+    if (nodeType.length() == 0) throw new RuntimeException("Empty string is not a valid value of 'nodeType'.");
+    if (attrType.length() == 0) throw new RuntimeException("Empty string is not a valid value of 'attrType'.");
 
     final var validLabels = new HashMap<String, String>();
 
@@ -647,7 +649,7 @@ class XmlReader {
    * @param root root element of the XML tree
    */
   private static void fixInvalidToolbarLib(Element root) {
-    assert (root != null);
+    if (root == null) throw new RuntimeException("Value of 'root' cannot be null");
 
     // Iterate on toolbars -- though there should be only one!
     for (Element toolbarElt : XmlIterator.forChildElements(root, "toolbar")) {
@@ -684,7 +686,7 @@ class XmlReader {
    * @return a valid VHDL label
    */
   public static String generateValidVHDLLabel(String initialLabel, String suffix) {
-    assert (initialLabel != null);
+    if (initialLabel == null) throw new RuntimeException("Value of 'initialLabel' cannot be null.");
 
     // As a default, trim whitespaces at the beginning and at the end
     // of a label (no risks with that potentially, therefore avoid
@@ -728,13 +730,12 @@ class XmlReader {
    * @param attrType type of attributes to consider
    * @return list of names for the considered node/attribute pairs
    */
-  public static List<String> getXMLLabels(Element root, String nodeType, String attrType)
-      throws IllegalArgumentException {
-    assert (root != null);
-    assert (nodeType != null);
-    assert (attrType != null);
-    assert (nodeType.length() > 0);
-    assert (attrType.length() > 0);
+  public static List<String> getXMLLabels(Element root, String nodeType, String attrType) throws IllegalArgumentException {
+    if (root == null) throw new RuntimeException("Value of 'root' cannot be null.");
+    if (nodeType == null) throw new RuntimeException("Value of 'nodeType' cannot be null.");
+    if (attrType == null) throw new RuntimeException("Value of 'attrType' cannot be null.");
+    if (nodeType.length() == 0) throw new RuntimeException("Empty string is not a valid value of 'nodeType'.");
+    if (attrType.length() == 0) throw new RuntimeException("Empty string is not a valid value of 'attrType'.");
 
     final var attrValuesList = new ArrayList<String>();
 
@@ -759,10 +760,9 @@ class XmlReader {
    * @param attrValuesList empty list that will contain the values found
    */
   private static void inspectCircuitNodes(Element root, String attrType, List<String> attrValuesList) throws IllegalArgumentException {
-    assert (root != null);
-    assert (attrType != null);
-    assert (attrValuesList != null);
-    assert (attrValuesList.isEmpty());
+    if (root == null) throw new RuntimeException("Value of 'root' cannot be null.");
+    if (attrType == null) throw new RuntimeException("Value of 'attrType' cannot be null.");
+    if (attrValuesList == null) throw new RuntimeException("Value of 'attrValuesList' cannot be null.");
 
     // Circuits are top-level in the XML file
     switch (attrType) {
@@ -791,7 +791,7 @@ class XmlReader {
         break;
       default:
         throw new IllegalArgumentException(
-            "Invalid attribute type requested: " + attrType + " for node type: circuit");
+            LineBuffer.format("Invalid attribute type requested: {{1}} for node type: circuit", attrType));
     }
   }
 
@@ -804,15 +804,13 @@ class XmlReader {
    * @param attrValuesList empty list that will contain the values found
    */
   private static void inspectCompNodes(Element root, List<String> attrValuesList) {
-    assert (root != null);
-    assert (attrValuesList != null);
-    assert (attrValuesList.isEmpty());
+    if (root == null) throw new RuntimeException("Value of 'root' cannot be null.");
+    if (attrValuesList == null) throw new RuntimeException("Value of 'attrValuesList' cannot be null.");
+    if (!attrValuesList.isEmpty()) throw new RuntimeException("The 'attrValuesList' must be empty.");
 
-    for (Element circElt : XmlIterator.forChildElements(root, "circuit")) {
-      // In circuits, we have to look for components, then take
-      // just those components that do have a lib attribute and look at
-      // their
-      // a child nodes
+    for (final var circElt : XmlIterator.forChildElements(root, "circuit")) {
+      // In circuits, we have to look for components, then take just those components
+      // that do have a lib attribute and look at their a child nodes.
       for (final var compElt : XmlIterator.forChildElements(circElt, "comp")) {
         if (compElt.hasAttribute("lib")) {
           for (final var attrElt : XmlIterator.forChildElements(compElt, "a")) {
@@ -849,12 +847,10 @@ class XmlReader {
    * @param attrType attribute type (either name or label)
    * @param validLabels map containing valid label values
    */
-  private static void replaceCircuitNodes(
-      Element root, String attrType, Map<String, String> validLabels)
-      throws IllegalArgumentException {
-    assert (root != null);
-    assert (attrType != null);
-    assert (validLabels != null);
+  private static void replaceCircuitNodes(Element root, String attrType, Map<String, String> validLabels) throws IllegalArgumentException {
+    if (root == null) throw new RuntimeException("Value of 'root' cannot be null.");
+    if (attrType == null) throw new RuntimeException("Value of 'attrType' cannot be null.");
+    if (validLabels == null) throw new RuntimeException("Value of 'validLabels' cannot be null.");
 
     if (validLabels.isEmpty()) {
       // Particular case, all the labels were good!
@@ -924,8 +920,8 @@ class XmlReader {
    * @param validLabels map containing valid label values
    */
   private static void replaceCompNodes(Element root, Map<String, String> validLabels) {
-    assert (root != null);
-    assert (validLabels != null);
+    if (root == null) throw new RuntimeException("Value of 'root' cannot be null.");
+    if (validLabels == null) throw new RuntimeException("Value of 'validLabels' cannot be null.");
 
     if (validLabels.isEmpty()) {
       // Particular case, all the labels were good!

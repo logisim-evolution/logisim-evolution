@@ -26,11 +26,6 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int NrOfBitsId = -1;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "NEGATOR2C";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var Inputs = new TreeMap<String, Integer>();
     int inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
@@ -85,15 +80,5 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     portMap.putAll(GetNetMap("DataX", true, ComponentInfo, 0, Nets));
     portMap.putAll(GetNetMap("MinDataX", true, ComponentInfo, 1, Nets));
     return portMap;
-  }
-
-  @Override
-  public String GetSubDir() {
-    return "arithmetic";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

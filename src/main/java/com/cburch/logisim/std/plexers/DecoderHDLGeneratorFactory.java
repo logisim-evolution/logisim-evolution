@@ -22,11 +22,6 @@ import java.util.TreeMap;
 public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "BINDECODER";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist theNetList, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("Enable", 1);
@@ -42,7 +37,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var space = " ";
     for (var i = 0; i < numOutputs; i++) {
       if (i == 7) space = "";
-      contents.pair("bin", IntToBin(i, nrOfSelectBits))
+      contents.pair("bin", HDL.getConstantVector(i, nrOfSelectBits))
               .pair("space", space)
               .pair("i", i);
       if (HDL.isVHDL()) {
@@ -87,15 +82,5 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       map.put("Enable", HDL.oneBit());
     }
     return map;
-  }
-
-  @Override
-  public String GetSubDir() {
-    return "plexers";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }
