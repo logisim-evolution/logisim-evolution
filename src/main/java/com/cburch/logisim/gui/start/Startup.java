@@ -313,7 +313,7 @@ public class Startup implements AWTEventListener {
     // It is assumed that evey option always has long-form switch. Short forms are optional.
     addOption(opts, "argTtyOption", ARG_TTY_LONG, ARG_TTY_SHORT, 1);
     addOption(opts, "argTestImplement", ARG_TEST_FGPA_LONG, ARG_TEST_FGPA_SHORT, Option.UNLIMITED_VALUES);  // We can have 3, 4 or 5 arguments here
-    addOption(opts, "argClearOption", ARG_CLEAR_PREFS_LONG, ARG_CLEAR_PREFS_SHORT);
+    addOption(opts, "argClearOption", ARG_CLEAR_PREFS_LONG);
     addOption(opts, "argSubOption", ARG_SUBSTITUTE_LONG, ARG_SUBSTITUTE_SHORT, 2);
     addOption(opts, "argLoadOption", ARG_LOAD_LONG, ARG_LOAD_SHORT, 1);
     addOption(opts, "argGatesOption", ARG_GATES_LONG, ARG_GATES_SHORT, 1);
