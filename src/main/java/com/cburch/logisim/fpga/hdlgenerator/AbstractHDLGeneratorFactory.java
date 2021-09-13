@@ -10,12 +10,12 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.data.IOComponentTypes;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.ConnectionPoint;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LineBuffer;
@@ -31,75 +31,30 @@ import java.util.TreeSet;
 
 public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
-  protected static String IntToBin(int value, int nr_of_bits) {
-    var mask = 1 << (nr_of_bits - 1);
-    var result = new StringBuilder();
-    var align = (7 - nr_of_bits) >> 1;
-    while ((result.length() < align) && HDL.isVHDL()) {
-      result.append(" ");
-    }
-    var VhdlQuotes = (nr_of_bits == 1) ? "'" : "\"";
-    result.append((HDL.isVHDL()) ? VhdlQuotes : nr_of_bits + "'b");
-    while (mask != 0) {
-      if ((value & mask) != 0) {
-        result.append("1");
-      } else {
-        result.append("0");
-      }
-      mask >>= 1;
-    }
-    if (HDL.isVHDL()) result.append(VhdlQuotes);
-    while ((result.length() < 7) && HDL.isVHDL()) {
-      result.append(" ");
-    }
-    return result.toString();
+  private final String subDirectoryName;
+
+  public AbstractHDLGeneratorFactory() {
+    final var className = getClass().toString().replace('.', ':').replace(' ', ':'); 
+    final var parts = className.split(":");
+    if (parts.length < 2) throw new ExceptionInInitializerError("Cannot read class path!");
+    subDirectoryName = parts[parts.length - 2];
   }
 
-  public static boolean WriteArchitecture(
-      String TargetDirectory,
-      ArrayList<String> Contents,
-      String ComponentName) {
-    if (Contents == null || Contents.isEmpty()) {
-      Reporter.Report.AddFatalError(
-          "INTERNAL ERROR: Empty behavior description for Component '"
-              + ComponentName
-              + "' received!");
-      return false;
-    }
-    var OutFile = FileWriter.GetFilePointer(TargetDirectory, ComponentName, false);
-    if (OutFile == null) {
-      return false;
-    }
-    return FileWriter.WriteContents(OutFile, Contents);
+  public AbstractHDLGeneratorFactory(String subDirectory) {
+    subDirectoryName = subDirectory;
   }
-
-  public static boolean WriteEntity(
-      String TargetDirectory,
-      ArrayList<String> Contents,
-      String ComponentName) {
-    if (!HDL.isVHDL()) return true;
-    if (Contents.isEmpty()) {
-      Reporter.Report.AddFatalError("INTERNAL ERROR: Empty entity description received!");
-      return false;
-    }
-    var OutFile = FileWriter.GetFilePointer(TargetDirectory, ComponentName, true);
-    if (OutFile == null) return false;
-    return FileWriter.WriteContents(OutFile, Contents);
-  }
-
-  public static final int MAX_LINE_LENGTH = 80;
 
   /* Here the common predefined methods are defined */
   @Override
-  public boolean GenerateAllHDLDescriptions(
-      Set<String> HandledComponents,
-      String WorkingDir,
-      ArrayList<String> Hierarchy) {
+  public boolean generateAllHDLDescriptions(
+      Set<String> handledComponents,
+      String workingDirectory,
+      ArrayList<String> hierarchy) {
     return true;
   }
 
   @Override
-  public ArrayList<String> GetArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
+  public ArrayList<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
     final var Contents = new LineBuffer();
     final var inputs = GetInputList(theNetlist, attrs);
     final var inOuts = GetInOutList(theNetlist, attrs);
@@ -134,7 +89,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Contents.addRemarkBlock("Here all used signals are defined");
       for (final var wire : wires.keySet()) {
         OneLine.append(wire);
-        while (OneLine.length() < SallignmentSize) OneLine.append(" ");
+        while (OneLine.length() < SIGNAL_ALLIGNMENT_SIZE) OneLine.append(" ");
         OneLine.append(": std_logic");
         if (wires.get(wire) == 1) {
           OneLine.append(";");
@@ -157,7 +112,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
       for (final var reg : regs.keySet()) {
         OneLine.append(reg);
-        while (OneLine.length() < SallignmentSize) OneLine.append(" ");
+        while (OneLine.length() < SIGNAL_ALLIGNMENT_SIZE) OneLine.append(" ");
         OneLine.append(": std_logic");
         if (regs.get(reg) == 1) {
           OneLine.append(";");
@@ -185,7 +140,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
       for (final var Mem : mems.keySet()) {
         OneLine.append(Mem);
-        while (OneLine.length() < SallignmentSize) OneLine.append(" ");
+        while (OneLine.length() < SIGNAL_ALLIGNMENT_SIZE) OneLine.append(" ");
         OneLine.append(": ").append(GetType(mems.get(Mem))).append(";");
         Contents.add("   SIGNAL " + OneLine);
         OneLine.setLength(0);
@@ -394,105 +349,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return Contents.get();
   }
 
-  public String GetBusEntryName(
-      NetlistComponent comp,
-      int endIndex,
-      boolean floatingNetTiedToGround,
-      int bitindex,
-      Netlist theNets) {
-
-    var contents = new StringBuilder();
-    if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
-      final var thisEnd = comp.getEnd(endIndex);
-      final var isOutput = thisEnd.isOutputEnd();
-      final var nrOfBits = thisEnd.getNrOfBits();
-      if ((nrOfBits > 1) && (bitindex >= 0) && (bitindex < nrOfBits)) {
-        if (thisEnd.get((byte) bitindex).getParentNet() == null) {
-          /* The net is not connected */
-          if (isOutput) {
-            contents.append(HDL.unconnected(false));
-          } else {
-            contents.append(HDL.GetZeroVector(1, floatingNetTiedToGround));
-          }
-        } else {
-          final var connectedNet = thisEnd.get((byte) bitindex).getParentNet();
-          final var connectedNetBitIndex = thisEnd.get((byte) bitindex).getParentNetBitIndex();
-          if (!connectedNet.isBus()) {
-            contents.append(NetName).append(theNets.getNetId(connectedNet));
-          } else {
-            contents
-                .append(BusName)
-                .append(theNets.getNetId(connectedNet))
-                .append(HDL.BracketOpen())
-                .append(connectedNetBitIndex)
-                .append(HDL.BracketClose());
-          }
-        }
-      }
-    }
-    return contents.toString();
-  }
-
-  public static String GetBusNameContinues(NetlistComponent comp, int EndIndex, Netlist TheNets) {
-    if ((EndIndex < 0) || (EndIndex >= comp.nrOfEnds())) {
-      return "";
-    }
-    final var ConnectionInformation = comp.getEnd(EndIndex);
-    final var NrOfBits = ConnectionInformation.getNrOfBits();
-    if (NrOfBits == 1) {
-      return "";
-    }
-    if (!TheNets.isContinuesBus(comp, EndIndex)) {
-      return "";
-    }
-    final var ConnectedNet = ConnectionInformation.get((byte) 0).getParentNet();
-    return BusName
-        + TheNets.getNetId(ConnectedNet)
-        + HDL.BracketOpen()
-        + ConnectionInformation.get((byte) (ConnectionInformation.getNrOfBits() - 1))
-            .getParentNetBitIndex()
-        + HDL.vectorLoopId()
-        + ConnectionInformation.get((byte) (0)).getParentNetBitIndex()
-        + HDL.BracketClose();
-  }
-
-  public static String GetBusName(NetlistComponent comp, int EndIndex, Netlist TheNets) {
-    if ((EndIndex < 0) || (EndIndex >= comp.nrOfEnds())) {
-      return "";
-    }
-    final var ConnectionInformation = comp.getEnd(EndIndex);
-    final var NrOfBits = ConnectionInformation.getNrOfBits();
-    if (NrOfBits == 1) {
-      return "";
-    }
-    if (!TheNets.isContinuesBus(comp, EndIndex)) {
-      return "";
-    }
-    final var ConnectedNet = ConnectionInformation.get((byte) 0).getParentNet();
-    if (ConnectedNet.getBitWidth() != NrOfBits) return GetBusNameContinues(comp, EndIndex, TheNets);
-    return BusName + TheNets.getNetId(ConnectedNet);
-  }
-
-  public static String GetClockNetName(NetlistComponent comp, int EndIndex, Netlist TheNets) {
-    var Contents = new StringBuilder();
-    if ((TheNets.getCurrentHierarchyLevel() != null)
-        && (EndIndex >= 0)
-        && (EndIndex < comp.nrOfEnds())) {
-      final var EndData = comp.getEnd(EndIndex);
-      if (EndData.getNrOfBits() == 1) {
-        final var ConnectedNet = EndData.get((byte) 0).getParentNet();
-        final var ConnectedNetBitIndex = EndData.get((byte) 0).getParentNetBitIndex();
-        /* Here we search for a clock net Match */
-        final var clocksourceid = TheNets.getClockSourceId(
-            TheNets.getCurrentHierarchyLevel(), ConnectedNet, ConnectedNetBitIndex);
-        if (clocksourceid >= 0) {
-          Contents.append(ClockTreeName).append(clocksourceid);
-        }
-      }
-    }
-    return Contents.toString();
-  }
-
   public ArrayList<String> GetComponentDeclarationSection(Netlist TheNetlist, AttributeSet attrs) {
     /*
      * This method returns all the component definitions used as component
@@ -503,29 +359,29 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetComponentInstantiation(Netlist TheNetlist, AttributeSet attrs, String ComponentName) {
+  public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
     var Contents = new LineBuffer();
-    if (HDL.isVHDL()) Contents.add(GetVHDLBlackBox(TheNetlist, attrs, ComponentName, false));
+    if (HDL.isVHDL()) Contents.add(GetVHDLBlackBox(theNetlist, attrs, componentName, false));
     return Contents.get();
   }
 
   @Override
-  public ArrayList<String> GetComponentMap(
-      Netlist Nets,
-      Long ComponentId,
-      NetlistComponent ComponentInfo,
-      MappableResourcesContainer MapInfo,
-      String Name) {
+  public ArrayList<String> getComponentMap(
+      Netlist nets,
+      Long componentId,
+      NetlistComponent componentInfo,
+      MappableResourcesContainer mapInfo,
+      String name) {
     final var Contents = new ArrayList<String>();
-    final var ParameterMap = GetParameterMap(Nets, ComponentInfo);
-    final var PortMap = GetPortMap(Nets, ComponentInfo == null ? MapInfo : ComponentInfo);
-    final var CompName = (Name != null && !Name.isEmpty()) ? Name :
-        (ComponentInfo == null)
+    final var ParameterMap = GetParameterMap(nets, componentInfo);
+    final var PortMap = GetPortMap(nets, componentInfo == null ? mapInfo : componentInfo);
+    final var CompName = (name != null && !name.isEmpty()) ? name :
+        (componentInfo == null)
             ? this.getComponentStringIdentifier()
-            : ComponentInfo.getComponent()
+            : componentInfo.getComponent()
                 .getFactory()
-                .getHDLName(ComponentInfo.getComponent().getAttributeSet());
-    final var ThisInstanceIdentifier = GetInstanceIdentifier(ComponentInfo, ComponentId);
+                .getHDLName(componentInfo.getComponent().getAttributeSet());
+    final var ThisInstanceIdentifier = GetInstanceIdentifier(componentInfo, componentId);
     final var OneLine = new StringBuilder();
     var TabLength = 0;
     var first = true;
@@ -547,7 +403,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             first = false;
           }
           OneLine.append(generic);
-          OneLine.append(" ".repeat(Math.max(0, SallignmentSize - generic.length())));
+          OneLine.append(" ".repeat(Math.max(0, SIGNAL_ALLIGNMENT_SIZE - generic.length())));
           OneLine.append("=> ").append(ParameterMap.get(generic));
         }
         OneLine.append(")");
@@ -570,7 +426,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             first = false;
           }
           OneLine.append(port);
-          OneLine.append(" ".repeat(Math.max(0, SallignmentSize - port.length())));
+          OneLine.append(" ".repeat(Math.max(0, SIGNAL_ALLIGNMENT_SIZE - port.length())));
           OneLine.append("=> ").append(PortMap.get(port));
         }
         OneLine.append(");");
@@ -659,15 +515,15 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetEntity(
-      Netlist TheNetlist,
+  public ArrayList<String> getEntity(
+      Netlist theNetlist,
       AttributeSet attrs,
-      String ComponentName) {
+      String componentName) {
     var Contents = new LineBuffer();
     if (HDL.isVHDL()) {
-      Contents.add(FileWriter.getGenerateRemark(ComponentName, TheNetlist.projName()))
+      Contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
           .add(FileWriter.getExtendedLibrary())
-          .add(GetVHDLBlackBox(TheNetlist, attrs, ComponentName, true /* , false */));
+          .add(GetVHDLBlackBox(theNetlist, attrs, componentName, true /* , false */));
     }
     return Contents.get();
   }
@@ -682,12 +538,12 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetInlinedCode(
-      Netlist Nets,
-      Long ComponentId,
-      NetlistComponent ComponentInfo,
-      String CircuitName) {
-    return new ArrayList<>();
+  public ArrayList<String> getInlinedCode(
+      Netlist nets,
+      Long componentId,
+      NetlistComponent componentInfo,
+      String circuitName) {
+    throw new IllegalAccessError("BUG: Inline code not supported");
   }
 
   public SortedMap<String, Integer> GetInOutList(Netlist TheNetlist, AttributeSet attrs) {
@@ -753,7 +609,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     final var NrOfBits = ConnectionInformation.getNrOfBits();
     if (NrOfBits == 1) {
       /* Here we have the easy case, just a single bit net */
-      NetMap.put(SourceName, GetNetName(comp, EndIndex, FloatingPinTiedToGround, TheNets));
+      NetMap.put(SourceName, HDL.getNetName(comp, EndIndex, FloatingPinTiedToGround, TheNets));
     } else {
       /*
        * Here we have the more difficult case, it is a bus that needs to
@@ -780,7 +636,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
          */
         if (TheNets.isContinuesBus(comp, EndIndex)) {
           /* Another easy case, the continues bus connection */
-          NetMap.put(SourceName, GetBusNameContinues(comp, EndIndex, TheNets));
+          NetMap.put(SourceName, HDL.getBusNameContinues(comp, EndIndex, TheNets));
         } else {
           /* The last case, we have to enumerate through each bit */
           if (HDL.isVHDL()) {
@@ -806,12 +662,12 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
                   /* The connection is to a Net */
                   NetMap.put(
                       SourceNetName.toString(),
-                      NetName + TheNets.getNetId(SolderPoint.getParentNet()));
+                      NET_NAME + TheNets.getNetId(SolderPoint.getParentNet()));
                 } else {
                   /* The connection is to an entry of a bus */
                   NetMap.put(
                       SourceNetName.toString(),
-                      BusName
+                      BUS_NAME
                           + TheNets.getNetId(SolderPoint.getParentNet())
                           + "("
                           + SolderPoint.getParentNetBitIndex()
@@ -841,11 +697,11 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
                  */
                 if (SolderPoint.getParentNet().getBitWidth() == 1) {
                   /* The connection is to a Net */
-                  SeperateSignals.add(NetName + TheNets.getNetId(SolderPoint.getParentNet()));
+                  SeperateSignals.add(NET_NAME + TheNets.getNetId(SolderPoint.getParentNet()));
                 } else {
                   /* The connection is to an entry of a bus */
                   SeperateSignals.add(
-                      BusName
+                      BUS_NAME
                           + TheNets.getNetId(SolderPoint.getParentNet())
                           + "["
                           + SolderPoint.getParentNetBitIndex()
@@ -869,47 +725,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       }
     }
     return NetMap;
-  }
-
-  public String GetNetName(
-      NetlistComponent comp,
-      int EndIndex,
-      boolean FloatingNetTiedToGround,
-      Netlist MyNetlist) {
-    var Contents = new StringBuilder();
-    final var FloatingValue = (FloatingNetTiedToGround) ? HDL.zeroBit() : HDL.oneBit();
-    if ((EndIndex >= 0) && (EndIndex < comp.nrOfEnds())) {
-      final var ThisEnd = comp.getEnd(EndIndex);
-      final var IsOutput = ThisEnd.isOutputEnd();
-      if (ThisEnd.getNrOfBits() == 1) {
-        final var SolderPoint = ThisEnd.get((byte) 0);
-        if (SolderPoint.getParentNet() == null) {
-          /* The net is not connected */
-          if (IsOutput) {
-            Contents.append(HDL.unconnected(true));
-          } else {
-            Contents.append(FloatingValue);
-          }
-        } else {
-          /*
-           * The net is connected, we have to find out if the
-           * connection is to a bus or to a normal net
-           */
-          if (SolderPoint.getParentNet().getBitWidth() == 1) {
-            /* The connection is to a Net */
-            Contents.append(NetName).append(MyNetlist.getNetId(SolderPoint.getParentNet()));
-          } else {
-            /* The connection is to an entry of a bus */
-            Contents.append(BusName)
-                .append(MyNetlist.getNetId(SolderPoint.getParentNet()))
-                .append(HDL.BracketOpen())
-                .append(SolderPoint.getParentNetBitIndex())
-                .append(HDL.BracketClose());
-          }
-        }
-      }
-    }
-    return Contents.toString();
   }
 
   public int GetNrOfTypes(Netlist TheNetlist, AttributeSet attrs) {
@@ -970,20 +785,16 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public String GetRelativeDirectory() {
-    var Subdir = GetSubDir();
-    if (!Subdir.endsWith(File.separator) & !Subdir.isEmpty()) {
-      Subdir += File.separatorChar;
+  public String getRelativeDirectory() {
+    final var mainDirectory = AppPreferences.HDL_Type.get().toLowerCase();
+    final var directoryName = new StringBuilder();
+    directoryName.append(mainDirectory);
+    if (!mainDirectory.endsWith(File.separator)) directoryName.append(File.separator);
+    if (!subDirectoryName.isEmpty()) {
+      directoryName.append(subDirectoryName);
+      if (!subDirectoryName.endsWith(File.separator)) directoryName.append(File.separator);
     }
-    return AppPreferences.HDL_Type.get().toLowerCase() + File.separatorChar + Subdir;
-  }
-
-  public String GetSubDir() {
-    /*
-     * this method returns the module sub-directory where the HDL code is
-     * placed
-     */
-    return "";
+    return directoryName.toString();
   }
 
   public String GetType(int TypeNr) {
@@ -1031,7 +842,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           first = false;
         }
         OneLine.append(ParameterList.get(generic));
-        OneLine.append(" ".repeat(Math.max(0, PallignmentSize - ParameterList.get(generic).length())));
+        OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - ParameterList.get(generic).length())));
         OneLine.append(": INTEGER");
       }
       OneLine.append(");");
@@ -1055,7 +866,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           first = false;
         }
         OneLine.append(input);
-        OneLine.append(" ".repeat(Math.max(0, PallignmentSize - input.length())));
+        OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - input.length())));
         OneLine.append(": IN  std_logic");
         nr_of_bits = InputsList.get(input);
         if (nr_of_bits < 0) {
@@ -1090,7 +901,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           first = false;
         }
         OneLine.append(inout);
-        OneLine.append(" ".repeat(Math.max(0, PallignmentSize - inout.length())));
+        OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - inout.length())));
         OneLine.append(": INOUT  std_logic");
         nr_of_bits = InOutsList.get(inout);
         if (nr_of_bits < 0) {
@@ -1125,7 +936,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           first = false;
         }
         OneLine.append(output);
-        OneLine.append(" ".repeat(Math.max(0, PallignmentSize - output.length())));
+        OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - output.length())));
         OneLine.append(": OUT std_logic");
         nr_of_bits = OutputsList.get(output);
         if (nr_of_bits < 0) {
@@ -1174,18 +985,13 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return false;
-  }
-
-  @Override
-  public boolean IsOnlyInlined() {
-    return false;
-  }
-
-  @Override
-  public boolean IsOnlyInlined(IOComponentTypes map) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     return true;
+  }
+
+  @Override
+  public boolean isOnlyInlined() {
+    return false;
   }
 
   public static ArrayList<String> GetToplevelCode(MapComponent Component) {

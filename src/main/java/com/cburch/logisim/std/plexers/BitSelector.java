@@ -45,7 +45,7 @@ public class BitSelector extends InstanceFactory {
       Attributes.forBitWidth("group", S.getter("bitSelectorGroupAttr"));
 
   public BitSelector() {
-    super(_ID, S.getter("bitSelectorComponent"));
+    super(_ID, S.getter("bitSelectorComponent"), new BitSelectorHDLGeneratorFactory());
     setAttributes(
         new Attribute[] {StdAttr.FACING, StdAttr.SELECT_LOC, StdAttr.WIDTH, GROUP_ATTR},
         new Object[] {Direction.EAST, StdAttr.SELECT_BOTTOM_LEFT, BitWidth.create(8), BitWidth.ONE});
@@ -77,12 +77,6 @@ public class BitSelector extends InstanceFactory {
     final var facing = attrs.getValue(StdAttr.FACING);
     final var base = Bounds.create(-30, -15, 30, 30);
     return base.rotate(Direction.EAST, facing, 0, 0);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new BitSelectorHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

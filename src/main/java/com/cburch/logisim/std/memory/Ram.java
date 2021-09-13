@@ -98,7 +98,7 @@ public class Ram extends Mem {
   private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
 
   public Ram() {
-    super(_ID, S.getter("ramComponent"), 3);
+    super(_ID, S.getter("ramComponent"), 3, new RamHDLGeneratorFactory(), true);
     setIcon(new ArithmeticIcon("RAM", 3));
     setInstanceLogger(Logger.class);
   }
@@ -204,14 +204,6 @@ public class Ram extends Mem {
       ret.setRam(state.getInstance());
     }
     return ret;
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) {
-      MyHDLGenerator = new RamHDLGeneratorFactory();
-    }
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -396,11 +388,6 @@ public class Ram extends Mem {
   public static boolean isSeparate(AttributeSet attrs) {
     Object bus = attrs.getValue(RamAttributes.ATTR_DBUS);
     return bus == null || bus.equals(RamAttributes.BUS_SEP);
-  }
-
-  @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
   }
 
   @Override

@@ -40,7 +40,7 @@ class XnorGate extends AbstractGate {
   public static final XnorGate FACTORY = new XnorGate();
 
   private XnorGate() {
-    super("XNOR Gate", S.getter("xnorGateComponent"), true);
+    super("XNOR Gate", S.getter("xnorGateComponent"), true, new XNorGateHDLGeneratorFactory());
     setNegateOutput(true);
     setAdditionalWidth(10);
     setPaintInputLines(true);
@@ -69,12 +69,6 @@ class XnorGate extends AbstractGate {
   @Override
   protected String getRectangularLabel(AttributeSet attrs) {
     return XorGate.FACTORY.getRectangularLabel(attrs);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new XNorGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

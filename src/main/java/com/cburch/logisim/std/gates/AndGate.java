@@ -13,14 +13,12 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Graphics2D;
-import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 
 class AndGate extends AbstractGate {
@@ -63,7 +61,7 @@ class AndGate extends AbstractGate {
   public static final AndGate FACTORY = new AndGate();
 
   private AndGate() {
-    super("AND Gate", S.getter("andGateComponent"));
+    super("AND Gate", S.getter("andGateComponent"), new AndGateHDLGeneratorFactory());
     setRectangularLabel("&");
   }
 
@@ -84,12 +82,6 @@ class AndGate extends AbstractGate {
   @Override
   protected Value getIdentity() {
     return Value.TRUE;
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new AndGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

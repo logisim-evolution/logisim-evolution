@@ -267,11 +267,6 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    return "arithmetic";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     final var wires = new TreeMap<String, Integer>();
     int shift = getNrofShiftBits(attrs);
@@ -281,10 +276,5 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       wires.put("s_stage_" + loop + "_shiftin", 1 << loop);
     }
     return wires;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

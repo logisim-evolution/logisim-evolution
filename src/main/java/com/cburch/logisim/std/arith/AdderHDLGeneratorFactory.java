@@ -108,21 +108,11 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    return "arithmetic";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     final var wires = new TreeMap<String, Integer>();
     wires.put("s_extended_dataA", ExtendedBitsId);
     wires.put("s_extended_dataB", ExtendedBitsId);
     wires.put("s_sum_result", ExtendedBitsId);
     return wires;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

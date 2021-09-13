@@ -13,7 +13,6 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
@@ -64,7 +63,7 @@ class NandGate extends AbstractGate {
   public static final NandGate FACTORY = new NandGate();
 
   private NandGate() {
-    super("NAND Gate", S.getter("nandGateComponent"));
+    super("NAND Gate", S.getter("nandGateComponent"), new NandGateHDLGeneratorFactory());
     setNegateOutput(true);
     setRectangularLabel(AndGate.FACTORY.getRectangularLabel(null));
   }
@@ -86,12 +85,6 @@ class NandGate extends AbstractGate {
   @Override
   protected Value getIdentity() {
     return Value.TRUE;
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new NandGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

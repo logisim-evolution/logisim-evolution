@@ -13,7 +13,6 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.Instance;
@@ -61,7 +60,7 @@ class NorGate extends AbstractGate {
   public static final NorGate FACTORY = new NorGate();
 
   private NorGate() {
-    super("NOR Gate", S.getter("norGateComponent"));
+    super("NOR Gate", S.getter("norGateComponent"), new NorGateHDLGeneratorFactory());
     setNegateOutput(true);
     setRectangularLabel(OrGate.FACTORY.getRectangularLabel(null));
     setPaintInputLines(true);
@@ -84,12 +83,6 @@ class NorGate extends AbstractGate {
   @Override
   protected Value getIdentity() {
     return Value.FALSE;
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new NorGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

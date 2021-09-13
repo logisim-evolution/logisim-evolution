@@ -297,15 +297,6 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
-    return "gates";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist nets) {
     final var wires = new TreeMap<String, Integer>();
     final var bitWidth = attrs.getValue(StdAttr.WIDTH).getWidth();
@@ -321,11 +312,6 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
       wires.put("s_signal_invert_mask", nrOfInputs);
     }
     return wires;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 
   private boolean is_bus(AttributeSet attrs) {

@@ -205,7 +205,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       Attributes.forBoolean("showInTab", S.getter("registerShowInTab"));
 
   public Register() {
-    super(_ID, S.getter("registerComponent"));
+    super(_ID, S.getter("registerComponent"), new RegisterHDLGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.WIDTH,
@@ -284,14 +284,6 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       CompleteName.append("_LATCH");
     }
     return CompleteName.toString();
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) {
-      MyHDLGenerator = new RegisterHDLGeneratorFactory();
-    }
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

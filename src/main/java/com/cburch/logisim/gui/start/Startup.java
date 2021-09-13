@@ -136,45 +136,35 @@ public class Startup implements AWTEventListener {
     }
   }
 
-  // Non-used args short keys
-  // --------------------------
-  //    d    i k         u w t
-  private static final String ARG_HELP_SHORT = "h";
-  private static final String ARG_HELP_LONG = "help";
-  private static final String ARG_VERSION_SHORT = "v";
-  private static final String ARG_VERSION_LONG = "version";
-
-  private static final String ARG_TTY_SHORT = "t";
-  private static final String ARG_TTY_LONG = "tty";
+  private static final String ARG_TEST_CIRCUIT_SHORT = "b";
+  private static final String ARG_TEST_CIRCUIT_LONG = "test-circuit";
   private static final String ARG_TEST_FGPA_SHORT = "f";
   private static final String ARG_TEST_FGPA_LONG = "test-fpga";
+  private static final String ARG_GATES_SHORT = "g";
+  private static final String ARG_GATES_LONG = "gates";
+  private static final String ARG_HELP_SHORT = "h";
+  private static final String ARG_HELP_LONG = "help";
+  private static final String ARG_LOAD_SHORT = "l";
+  private static final String ARG_LOAD_LONG = "load";
+  private static final String ARG_GEOMETRY_SHORT = "m";
+  private static final String ARG_GEOMETRY_LONG = "geometry";
+  private static final String ARG_TEST_CIRC_GEN_SHORT = "n";
+  private static final String ARG_TEST_CIRC_GEN_LONG = "new-file-format";
+  private static final String ARG_LOCALE_SHORT = "o";
+  private static final String ARG_LOCALE_LONG = "locale";
   private static final String ARG_CLEAR_PREFS_SHORT = "r";
   private static final String ARG_CLEAR_PREFS_LONG = "clear-prefs";
   private static final String ARG_SUBSTITUTE_SHORT = "s";
   private static final String ARG_SUBSTITUTE_LONG = "substitute";
-  private static final String ARG_LOAD_SHORT = "l";
-  private static final String ARG_LOAD_LONG = "load";
-  private static final String ARG_EMPTY_SHORT = "e";
-  private static final String ARG_EMPTY_LONG = "empty";
-  private static final String ARG_PLAIN_SHORT = "p";
-  private static final String ARG_PLAIN_LONG = "plain";
-  private static final String ARG_GATES_SHORT = "g";
-  private static final String ARG_GATES_LONG = "gates";
-  private static final String ARG_GEOMETRY_SHORT = "m";
-  private static final String ARG_GEOMETRY_LONG = "geometry";
-  private static final String ARG_LOCALE_SHORT = "o";
-  private static final String ARG_LOCALE_LONG = "locale";
-  private static final String ARG_TEMPLATE_SHORT = "z";
-  private static final String ARG_TEMPLATE_LONG = "template";
+  private static final String ARG_TTY_SHORT = "t";
+  private static final String ARG_TTY_LONG = "tty";
+  private static final String ARG_TEMPLATE_SHORT = "u";
+  private static final String ARG_TEMPLATE_LONG = "user-template";
+  private static final String ARG_VERSION_SHORT = "v";
+  private static final String ARG_VERSION_LONG = "version";
   private static final String ARG_NO_SPLASH_LONG = "no-splash";
   private static final String ARG_TEST_VECTOR_SHORT = "w";
   private static final String ARG_TEST_VECTOR_LONG = "test-vector";
-  private static final String ARG_TEST_CIRCUIT_SHORT = "b";
-  private static final String ARG_TEST_CIRCUIT_LONG = "test-circuit";
-  private static final String ARG_TEST_CIRC_GEN_SHORT = "j";
-  private static final String ARG_TEST_CIRC_GEN_LONG = "test-circ-gen";
-  private static final String ARG_CIRCUIT_SHORT = "c";
-  private static final String ARG_CIRCUIT_LONG = "circuit";
 
   /**
    * Parses provided string expecting it represent boolean option. Accepted values
@@ -272,7 +262,7 @@ public class Startup implements AWTEventListener {
    */
   protected static void addOption(Options opts, String stringBaseKey, String longKey, String shortKey, int expectedArgsCount) {
     final var builder = Option.builder(shortKey).longOpt(longKey).desc(S.get(stringBaseKey));
-    if (expectedArgsCount > 0) {
+    if (expectedArgsCount == Option.UNLIMITED_VALUES || expectedArgsCount > 0) {
       final var argNameKey = LineBuffer.format("{{1}}ArgName", stringBaseKey);
       builder.argName(S.get(argNameKey));
       builder.numberOfArgs(expectedArgsCount);
@@ -326,8 +316,6 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argClearOption", ARG_CLEAR_PREFS_LONG, ARG_CLEAR_PREFS_SHORT);
     addOption(opts, "argSubOption", ARG_SUBSTITUTE_LONG, ARG_SUBSTITUTE_SHORT, 2);
     addOption(opts, "argLoadOption", ARG_LOAD_LONG, ARG_LOAD_SHORT, 1);
-    addOption(opts, "argEmptyOption", ARG_EMPTY_LONG, ARG_EMPTY_SHORT);
-    addOption(opts, "argPlainOption", ARG_PLAIN_LONG, ARG_PLAIN_SHORT);
     addOption(opts, "argGatesOption", ARG_GATES_LONG, ARG_GATES_SHORT, 1);
     addOption(opts, "argGeometryOption", ARG_GEOMETRY_LONG, ARG_GEOMETRY_SHORT, 1);
     addOption(opts, "argLocaleOption", ARG_LOCALE_LONG, ARG_LOCALE_SHORT, 1);
@@ -392,8 +380,6 @@ public class Startup implements AWTEventListener {
         case ARG_TTY_LONG -> handleArgTty(startup, opt);
         case ARG_SUBSTITUTE_LONG -> handleArgSubstitute(startup, opt);
         case ARG_LOAD_LONG -> handleArgLoad(startup, opt);
-        case ARG_EMPTY_LONG -> handleArgEmpty(startup, opt);
-        case ARG_PLAIN_LONG -> handleArgPlain(startup, opt);
         case ARG_GATES_LONG -> handleArgGates(startup, opt);
         case ARG_GEOMETRY_LONG -> handleArgGeometry(startup, opt);
         case ARG_LOCALE_LONG -> handleArgLocale(startup, opt);
@@ -403,7 +389,6 @@ public class Startup implements AWTEventListener {
         case ARG_TEST_FGPA_LONG -> handleArgTestFpga(startup, opt);
         case ARG_TEST_CIRCUIT_LONG -> handleArgTestCircuit(startup, opt);
         case ARG_TEST_CIRC_GEN_LONG -> handleArgTestCircGen(startup, opt);
-        case ARG_CIRCUIT_LONG -> handleArgCircuit(startup, opt);
         default -> RC.OK; // should not really happen IRL.
       };
       lastHandlerRc = optHandlerRc;
@@ -514,24 +499,6 @@ public class Startup implements AWTEventListener {
     return RC.OK;
   }
 
-  private static RC handleArgEmpty(Startup startup, Option opt) {
-    if (startup.templFile != null || startup.templEmpty || startup.templPlain) {
-      logger.error(S.get("argOneTemplateError"));
-      return RC.QUIT;
-    }
-    startup.templEmpty = true;
-    return RC.OK;
-  }
-
-  private static RC handleArgPlain(Startup startup, Option opt) {
-    if (startup.templFile != null || startup.templEmpty || startup.templPlain) {
-      logger.error(S.get("argOneTemplateError"));
-      return RC.QUIT;
-    }
-    startup.templPlain = true;
-    return RC.OK;
-  }
-
   private static RC handleArgGates(Startup startup, Option opt) {
     final var gateShape = opt.getValue().toLowerCase();
     if ("ansi".equals(gateShape)) {
@@ -607,13 +574,29 @@ public class Startup implements AWTEventListener {
       logger.error(S.get("argOneTemplateError"));
       return RC.QUIT;
     }
-    final var file = opt.getValue();
-    startup.templFile = new File(file);
-    String errMsg = null;
-    if (!startup.templFile.exists()) errMsg = S.get("templateMissingError", file);
-    if (errMsg == null && !startup.templFile.canRead()) errMsg = S.get("templateCannotReadError", file);
-    if (errMsg != null) return RC.WARN;  // FIXME: shouldn't we quit in such case?
-    return RC.OK;
+    // first we get the option
+    final var option = opt.getValue();
+    // we look if it is a file
+    final var file = new File(option);
+    if (file.exists()) {
+      startup.templFile = file;
+      if (!startup.templFile.canRead()) {
+        logger.error(S.get("templateCannotReadError", file));
+        return RC.QUIT;
+      }
+      return RC.OK;
+    }
+    // okay, not a file, let's look for empty and plain
+    if (option.toLowerCase().equals("empty")) {
+      startup.templEmpty = true;
+      return RC.OK;
+    }
+    if (option.toLowerCase().equals("plain")) {
+      startup.templPlain = true;
+      return RC.OK;
+    }
+    logger.error(S.get("argOneTemplateError"));
+    return RC.QUIT;
   }
 
   private static RC handleArgNoSplash(Startup startup, Option opt) {
@@ -635,27 +618,47 @@ public class Startup implements AWTEventListener {
    * Handles 4th argument of `--test-fpga` argument which can be either string literal
    * or tick frequency.
    *
-   * Supported argument formats for `--test-fpga`:
-   * - `circ_input circuit_name board`
-   * - `circ_input circuit_name board [HDLONLY]`
-   * - `circ_input circuit_name board [HDLONLY] [tick frequency]`
-   * - `circ_input circuit_name board [tick frequency]`
-   * - `circ_input circuit_name board [tick frequency] [HDLONLY]`
-   *
+   * Supported argument formats for `--test-fpga`:<br /><br />
+   * * circ_file name board<br />
+   * * circ_file name board [HDLONLY]<br />
+   * * circ_file name board [HDLONLY] [tick frequency]<br />
+   * * circ_file name board [tick_freq]<br />
+   * * circ_file name board [tick_freq] [HDLONLY]<br />
+   * <br />
+   * where:
+   * <br /><br />
+   * * `circ_file` is *.circ project file to load.<br />
+   * * `name` is circuit name present in loaded project file.<br />
+   * * `board` is connected FPGA board name.<br />
+   * * `tick_freq` is optional tick frequency.<br />
+   * * `HDLONLY` (literal), uses HDL only.<br />
    */
   private static RC handleArgTestFpgaParseArg(Startup startup, String argVal) {
     if ("HDLONLY".equals(argVal)) {
-      startup.testCircuitHdlOnly = true;
+      if (!testFpgaFlagTickFreqSet) {
+        startup.testCircuitHdlOnly = true;
+      }
       return RC.OK;
     }
+
+    int freq;
     try {
-      startup.testTickFrequency = Integer.parseUnsignedInt(argVal);
+      freq = Integer.parseUnsignedInt(argVal);
+      if (!testFpgaFlagTickFreqSet) {
+        startup.testTickFrequency = freq;
+        testFpgaFlagTickFreqSet = true;
+      }
       return RC.OK;
     } catch (NumberFormatException ex) {
-      logger.error(S.get("argTestInvalidArguments"));
+      // Do nothing here, we fail later.
     }
+
+    logger.error(S.get("argTestUnknownFlagOrValue", String.valueOf(argVal)));
     return RC.QUIT;
   }
+
+  // Indicates if handleArgTestFpgaParseArg() successfuly parsed and set tick freq.
+  private static boolean testFpgaFlagTickFreqSet = false;
 
   private static RC handleArgTestFpga(Startup startup, Option opt) {
     final var optArgs = opt.getValues();
@@ -676,8 +679,15 @@ public class Startup implements AWTEventListener {
     startup.testCircuitImpName = optArgs[1];
     startup.testCircuitImpBoard = optArgs[2];
 
-    if (argsCnt >= 4) handleArgTestFpgaParseArg(startup, optArgs[3]);
-    if (argsCnt >= 5) handleArgTestFpgaParseArg(startup, optArgs[4]);
+    var handlerRc = RC.OK;
+    if (argsCnt >= 4) {
+      handlerRc = handleArgTestFpgaParseArg(startup, optArgs[3]);
+      if (handlerRc == RC.QUIT) return handlerRc;
+    }
+    if (argsCnt >= 5) {
+      handlerRc = handleArgTestFpgaParseArg(startup, optArgs[4]);
+      if (handlerRc == RC.QUIT) return handlerRc;
+    }
 
     startup.doFpgaDownload = true;
     startup.showSplash = false;
@@ -704,11 +714,6 @@ public class Startup implements AWTEventListener {
     startup.testCircPathOutput = optArgs[1];
     startup.showSplash = false;
     startup.exitAfterStartup = true;
-    return RC.OK;
-  }
-
-  private static RC handleArgCircuit(Startup startup, Option opt) {
-    startup.circuitToTest = opt.getValue();
     return RC.OK;
   }
 

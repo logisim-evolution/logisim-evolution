@@ -10,6 +10,7 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitHDLGeneratorFactory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.data.IOComponentTypes;
@@ -20,6 +21,7 @@ import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.std.io.LedArrayGenericHDLGeneratorFactory;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -39,6 +41,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public ToplevelHDLGeneratorFactory(long fpgaClock, double tickClock, Circuit topLevel,
       MappableResourcesContainer ioComponents) {
+    super("toplevel");
     fpgaClockFrequency = fpgaClock;
     tickFrequency = tickClock;
     myCircuit = topLevel;
@@ -84,7 +87,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           new TickComponentHDLGeneratorFactory(
               fpgaClockFrequency, tickFrequency);
       components.addAll(
-          ticker.GetComponentInstantiation(
+          ticker.getComponentInstantiation(
               theNetlist, null, ticker.getComponentStringIdentifier()));
       HDLGeneratorFactory clockWorker =
           theNetlist.getAllClockSources()
@@ -92,7 +95,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               .getFactory()
               .getHDLGenerator(theNetlist.getAllClockSources().get(0).getAttributeSet());
       components.addAll(
-          clockWorker.GetComponentInstantiation(
+          clockWorker.getComponentInstantiation(
               theNetlist,
               theNetlist.getAllClockSources().get(0).getAttributeSet(),
               theNetlist.getAllClockSources()
@@ -105,12 +108,12 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         final var worker = LedArrayGenericHDLGeneratorFactory.getSpecificHDLGenerator(type);
         final var name = LedArrayGenericHDLGeneratorFactory.getSpecificHDLName(type);
         if (worker != null && name != null)
-          components.addAll(worker.GetComponentInstantiation(theNetlist, null, name));
+          components.addAll(worker.getComponentInstantiation(theNetlist, null, name));
       }
     }
     final var worker = new CircuitHDLGeneratorFactory(myCircuit);
     components.addAll(
-        worker.GetComponentInstantiation(
+        worker.getComponentInstantiation(
             theNetlist,
             null,
             CorrectLabel.getCorrectLabel(myCircuit.getName())));
@@ -119,7 +122,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public String getComponentStringIdentifier() {
-    return FPGAToplevelName;
+    return FPGA_TOP_LEVEL_NAME;
   }
 
   @Override
@@ -175,14 +178,14 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (nrOfClockTrees > 0) {
       contents.addRemarkBlock("Here the clock tree components are defined");
       final var ticker = new TickComponentHDLGeneratorFactory(fpgaClockFrequency, tickFrequency);
-      contents.add(ticker.GetComponentMap(null, 0L, null, null, ""));
+      contents.add(ticker.getComponentMap(null, 0L, null, null, ""));
       var index = 0L;
       for (var clockGen : theNetlist.getAllClockSources()) {
         final var thisClock = new NetlistComponent(clockGen);
         contents.add(
             clockGen.getFactory()
                 .getHDLGenerator(thisClock.getComponent().getAttributeSet())
-                .GetComponentMap(theNetlist, index++, thisClock, null, ""));
+                .getComponentMap(theNetlist, index++, thisClock, null, ""));
       }
     }
     contents.add("");
@@ -191,7 +194,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     contents.addRemarkBlock("Here the toplevel component is connected");
     final var dut = new CircuitHDLGeneratorFactory(myCircuit);
     contents.add(
-        dut.GetComponentMap(
+        dut.getComponentMap(
             theNetlist,
             0L,
             null,
@@ -215,15 +218,6 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
-    return "toplevel";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist nets) {
     final var wires = new TreeMap<String, Integer>();
     final var nrOfClockTrees = nets.numberOfClockTrees();
@@ -235,9 +229,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (nrOfClockTrees > 0) {
       wires.put(TickComponentHDLGeneratorFactory.FPGA_TICK, 1);
       for (var clockBus = 0; clockBus < nrOfClockTrees; clockBus++) {
-        wires.put(
-            "s_" + ClockTreeName + clockBus,
-            ClockHDLGeneratorFactory.NR_OF_CLOCK_BITS);
+        wires.put("s_" + CLOCK_TREE_NAME + clockBus, ClockHDLGeneratorFactory.NR_OF_CLOCK_BITS);
       }
     }
     if (nrOfInputBubbles > 0) {
@@ -298,10 +290,5 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           myLedArrays.indexOf(ledArray)));
     }
     return wires;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

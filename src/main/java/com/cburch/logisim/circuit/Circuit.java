@@ -347,7 +347,7 @@ public class Circuit {
         }
       }
       /* now we only process those that require a label */
-      if (comp.getFactory().RequiresNonZeroLabel()) {
+      if (comp.getFactory().requiresNonZeroLabel()) {
         if (clearExistingLabels) {
           /* in case of label cleaning, we clear first the old label */
           Reporter.Report.AddInfo(

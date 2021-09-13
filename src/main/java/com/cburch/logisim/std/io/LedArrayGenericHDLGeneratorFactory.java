@@ -7,7 +7,7 @@
  * This is free software released under GNU GPLv3 license
  */
 
-package com.cburch.logisim.fpga.hdlgenerator;
+package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -16,8 +16,8 @@ import java.util.TreeMap;
 
 import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
 import com.cburch.logisim.fpga.data.LedArrayDriving;
-import com.cburch.logisim.std.io.IoLibrary;
-import com.cburch.logisim.std.io.RgbLed;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 
 public class LedArrayGenericHDLGeneratorFactory {
   public static String LedArrayOutputs = "externalLeds";
@@ -269,12 +269,12 @@ public class LedArrayGenericHDLGeneratorFactory {
   }
 
   public static ArrayList<String> getLedArrayConnections(FPGAIOInformationContainer info, int id) {
-    final var connections = (new LineBuffer()).addHdlPairs();
+    final var connections = LineBuffer.getHdlBuffer();
     connections.pair("id", id).pair("ins", LedArrayInputs);
     for (var pin = 0; pin < info.getNrOfPins(); pin++) {
       connections.pair("pin", pin);
       if (!info.pinIsMapped(pin)) {
-        connections.add("{{assign}} s_{{ins}}{{id}{{<}}{{pin}}{{>}} {{=}} {{0b}};");
+        connections.add("{{assign}} s_{{ins}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};");
       } else {
         connections.add("{{assign}} s_{{ins}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{1}};", info.getPinMap(pin).getHdlSignalName(info.getMapPin(pin)));
       }
@@ -284,12 +284,11 @@ public class LedArrayGenericHDLGeneratorFactory {
 
   public static ArrayList<String> getRGBArrayConnections(FPGAIOInformationContainer array, int id) {
     final var connections =
-        (new LineBuffer())
-            .addHdlPairs()
-            .pair("id", id)
-            .pair("insR", LedArrayRedInputs)
-            .pair("insG", LedArrayGreenInputs)
-            .pair("insB", LedArrayBlueInputs);
+        LineBuffer.getHdlBuffer()
+           .pair("id", id)
+           .pair("insR", LedArrayRedInputs)
+           .pair("insG", LedArrayGreenInputs)
+           .pair("insB", LedArrayBlueInputs);
 
     for (var pin = 0; pin < array.getNrOfPins(); pin++) {
       connections.pair("pin", pin);
