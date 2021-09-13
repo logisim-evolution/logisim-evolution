@@ -42,7 +42,7 @@ public class InlinedHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public String getComponentStringIdentifier() {
+  public String getComponentIdentifier() {
     return "Logisim_InLined";
   }
 

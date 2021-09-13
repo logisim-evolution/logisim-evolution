@@ -32,15 +32,22 @@ import java.util.TreeSet;
 public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   private final String subDirectoryName;
+  private final String componentIdentifier;
 
   public AbstractHDLGeneratorFactory() {
+    throw new ExceptionInInitializerError("Cannot initialize HDLGeneratorFactory without identifier");
+  }
+
+  public AbstractHDLGeneratorFactory(String componentIdentifier) {
     final var className = getClass().toString().replace('.', ':').replace(' ', ':'); 
     final var parts = className.split(":");
     if (parts.length < 2) throw new ExceptionInInitializerError("Cannot read class path!");
     subDirectoryName = parts[parts.length - 2];
+    this.componentIdentifier = componentIdentifier;
   }
 
-  public AbstractHDLGeneratorFactory(String subDirectory) {
+  public AbstractHDLGeneratorFactory(String componentIdentifier, String subDirectory) {
+    this.componentIdentifier = componentIdentifier;
     subDirectoryName = subDirectory;
   }
 
@@ -377,7 +384,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     final var PortMap = GetPortMap(nets, componentInfo == null ? mapInfo : componentInfo);
     final var CompName = (name != null && !name.isEmpty()) ? name :
         (componentInfo == null)
-            ? this.getComponentStringIdentifier()
+            ? this.getComponentIdentifier()
             : componentInfo.getComponent()
                 .getFactory()
                 .getHDLName(componentInfo.getComponent().getAttributeSet());
@@ -510,8 +517,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "AComponent";
+  public String getComponentIdentifier() {
+    return componentIdentifier;
   }
 
   @Override
@@ -573,7 +580,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
      * this method returns the Name of this instance of an used component,
      * e.g. "GATE_1"
      */
-    return getComponentStringIdentifier() + "_" + ComponentId.toString();
+    return getComponentIdentifier() + "_" + ComponentId.toString();
   }
 
   public SortedMap<String, Integer> GetMemList(AttributeSet attrs) {

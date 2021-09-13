@@ -35,10 +35,18 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
   public static String nrOfLedsString = "nrOfLeds";
   public static String nrOfRowAddressBitsString = "nrOfRowAddressBits";
   public static String activeLowString = "activeLow";
-  public static String LedArrayName = "LedArrayRowScanning";
   public static String scanningCounterBitsString = "nrOfScanningCounterBits";
   public static String scanningCounterValueString = "scanningCounterReloadValue";
   public static String maxNrLedsString = "maxNrLedsAddrColumns";
+  public static final String HDL_IDENTIFIER = "LedArrayRowScanning";
+
+  public LedArrayRowScanningHDLGeneratorFactory() {
+    super(HDL_IDENTIFIER);
+  }
+
+  public LedArrayRowScanningHDLGeneratorFactory(String id) {
+    super(id);
+  }
 
   public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long FpgaClockFrequency, boolean activeLow) {
     final var nrRowAddrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfRows);
@@ -273,8 +281,4 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
     return contents.getWithIndent();
   }
 
-  @Override
-  public String getComponentStringIdentifier() {
-    return LedArrayName;
-  }
 }

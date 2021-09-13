@@ -22,6 +22,12 @@ import java.util.TreeMap;
 
 public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
+  public static final String HDL_IDENTIFIER = "ReptarLB";
+
+  public ReptarLocalBusHDLGeneratorFactory() {
+    super(HDL_IDENTIFIER);
+  }
+
   @Override
   public ArrayList<String> getArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
     final var contents = new LineBuffer();
@@ -85,11 +91,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
             END COMPONENT;
             """)
         .getWithIndent();
-  }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "ReptarLB";
   }
 
   @Override

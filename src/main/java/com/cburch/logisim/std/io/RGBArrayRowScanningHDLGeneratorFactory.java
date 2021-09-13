@@ -20,7 +20,11 @@ import java.util.TreeMap;
 
 public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningHDLGeneratorFactory {
 
-  public static String RGBArrayName = "RGBArrayRowScanning";
+  public static final String HDL_IDENTIFIER = "RGBArrayRowScanning";
+
+  public RGBArrayRowScanningHDLGeneratorFactory() {
+    super(HDL_IDENTIFIER);
+  }
 
   static final LineBuffer.Pairs sharedPairs =
       new LineBuffer.Pairs()
@@ -150,10 +154,4 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
     }
     return contents.getWithIndent();
   }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return RGBArrayName;
-  }
-
 }

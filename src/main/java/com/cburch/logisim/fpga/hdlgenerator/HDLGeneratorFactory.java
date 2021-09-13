@@ -53,7 +53,7 @@ public interface HDLGeneratorFactory {
       MappableResourcesContainer mapInfo,
       String name);
 
-  String getComponentStringIdentifier();
+  String getComponentIdentifier();
 
   ArrayList<String> getEntity(
       Netlist theNetlist,
