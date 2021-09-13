@@ -53,11 +53,6 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "TTL";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("A", 1);

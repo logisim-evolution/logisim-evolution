@@ -28,11 +28,6 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int ExtendedBitsId = -2;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "ADDER2C";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var Inputs = new TreeMap<String, Integer>();
     int inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;

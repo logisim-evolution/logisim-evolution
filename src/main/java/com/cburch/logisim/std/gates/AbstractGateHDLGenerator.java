@@ -26,12 +26,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   private static final String BIT_WIDTH_STRING = "NrOfBits";
   private static final int BUBBLES_GENERIC = -2;
   private static final String BUBBLES_MASK = "BubblesMask";
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "GATE";
-  }
-
+  
   public boolean GetFloatingValue(boolean isInverted) {
     return !isInverted;
   }

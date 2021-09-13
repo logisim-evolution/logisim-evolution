@@ -28,11 +28,6 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int ExtendedBitsId = -2;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "SUBTRACTOR2C";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
     int inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;

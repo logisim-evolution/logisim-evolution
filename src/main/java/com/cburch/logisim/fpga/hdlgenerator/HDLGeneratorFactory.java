@@ -10,7 +10,6 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 
@@ -49,11 +48,8 @@ public interface HDLGeneratorFactory {
   ArrayList<String> getComponentMap(
       Netlist nets,
       Long componentId,
-      NetlistComponent componentInfo,
-      MappableResourcesContainer mapInfo,
+      Object componentInfo,
       String name);
-
-  String getComponentStringIdentifier();
 
   ArrayList<String> getEntity(
       Netlist theNetlist,

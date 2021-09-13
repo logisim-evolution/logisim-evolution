@@ -22,11 +22,6 @@ import java.util.TreeMap;
 public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "PLA_COMPONENT";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
     inputs.put("Index", attrs.getValue(PLA.ATTR_IN_WIDTH).getWidth());

@@ -157,11 +157,6 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "SHIFTER";
-  }
-
-  @Override
   public ArrayList<String> getEntity(Netlist nets, AttributeSet attrs, String componentName) {
 
     final var contents = new LineBuffer(sharedPairs);

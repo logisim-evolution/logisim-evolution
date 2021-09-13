@@ -31,11 +31,6 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   private static final int ExtendedBitsId = -4;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "BITSELECTOR";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist theNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("DataIn", InputBitsId);

@@ -30,11 +30,6 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int ActiveLevelId = -2;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "REGISTER_FILE";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("Reset", 1);

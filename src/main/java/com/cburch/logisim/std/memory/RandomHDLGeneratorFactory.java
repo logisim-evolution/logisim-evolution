@@ -30,11 +30,6 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int SeedId = -2;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "RNG";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("GlobalClock", 1);
