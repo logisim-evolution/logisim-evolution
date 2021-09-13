@@ -7,7 +7,7 @@
  * This is free software released under GNU GPLv3 license
  */
 
-package com.cburch.logisim.fpga.hdlgenerator;
+package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -16,6 +16,9 @@ import java.util.TreeMap;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 
 public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -35,7 +38,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
   public static String scanningCounterValueString = "scanningCounterReloadValue";
   public static String maxNrLedsString = "maxNrLedsAddrColumns";
   public static String activeLowString = "activeLow";
-  public static String LedArrayName = "LedArrayColumnScanning";
+  public static final String HDL_IDENTIFIER = "LedArrayColumnScanning";
 
   public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
     final var nrColAddrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
@@ -274,16 +277,4 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
     }
     return contents.getWithIndent();
   }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return LedArrayName;
-  }
-
-  @Override
-  public String GetSubDir() {
-    // This method returns the module directory where the HDL code needs to be placed
-    return "ledarrays";
-  }
-
 }

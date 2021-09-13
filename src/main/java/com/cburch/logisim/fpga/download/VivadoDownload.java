@@ -15,7 +15,7 @@ import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
+import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
@@ -67,7 +67,7 @@ public class VivadoDownload implements VendorDownload {
             + File.separator
             + "impl_1"
             + File.separator
-            + ToplevelHDLGeneratorFactory.FPGAToplevelName
+            + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME
             + ".bit";
     _bitStreamPath = _bitStreamPath.replace("\\", "/");
   }
@@ -122,10 +122,10 @@ public class VivadoDownload implements VendorDownload {
   @Override
   public boolean CreateDownloadScripts() {
     // create project files
-    var createProjectFile = FileWriter.GetFilePointer(ScriptPath, CREATE_PROJECT_TCL);
-    var xdcFile = FileWriter.GetFilePointer(xdcPath, XDC_FILE);
-    var generateBitstreamFile = FileWriter.GetFilePointer(ScriptPath, GENERATE_BITSTREAM_FILE);
-    var loadBitstreamFile = FileWriter.GetFilePointer(ScriptPath, LOAD_BITSTEAM_FILE);
+    var createProjectFile = FileWriter.getFilePointer(ScriptPath, CREATE_PROJECT_TCL);
+    var xdcFile = FileWriter.getFilePointer(xdcPath, XDC_FILE);
+    var generateBitstreamFile = FileWriter.getFilePointer(ScriptPath, GENERATE_BITSTREAM_FILE);
+    var loadBitstreamFile = FileWriter.getFilePointer(ScriptPath, LOAD_BITSTEAM_FILE);
     if (createProjectFile == null
         || xdcFile == null
         || generateBitstreamFile == null
@@ -165,7 +165,7 @@ public class VivadoDownload implements VendorDownload {
     // add xdc constraints
     contents.add("add_files -fileset constrs_1 \"" + xdcFile.getAbsolutePath().replace("\\", "/") + "\"");
     contents.add("exit");
-    if (!FileWriter.WriteContents(createProjectFile, contents)) return false;
+    if (!FileWriter.writeContents(createProjectFile, contents)) return false;
     contents.clear();
 
     // fill the xdc file
@@ -194,7 +194,7 @@ public class VivadoDownload implements VendorDownload {
     }
 
     contents.addAll(getPinLocStrings());
-    if (!FileWriter.WriteContents(xdcFile, contents)) return false;
+    if (!FileWriter.writeContents(xdcFile, contents)) return false;
     contents.clear();
 
     // generate bitstream
@@ -207,7 +207,7 @@ public class VivadoDownload implements VendorDownload {
     contents.add("launch_runs impl_1 -to_step write_bitstream -jobs 8");
     contents.add("wait_on_run impl_1");
     contents.add("exit");
-    if (!FileWriter.WriteContents(generateBitstreamFile, contents)) return false;
+    if (!FileWriter.writeContents(generateBitstreamFile, contents)) return false;
     contents.clear();
 
     // load bitstream
@@ -222,7 +222,7 @@ public class VivadoDownload implements VendorDownload {
     contents.add("program_hw_device " + lindex);
     contents.add("close_hw");
     contents.add("exit");
-    return FileWriter.WriteContents(loadBitstreamFile, contents);
+    return FileWriter.writeContents(loadBitstreamFile, contents);
   }
 
   private ArrayList<String> getPinLocStrings() {

@@ -84,7 +84,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
   static final int CARRY = 7;
 
   public Counter() {
-    super(_ID, S.getter("counterComponent"));
+    super(_ID, S.getter("counterComponent"), new CounterHDLGeneratorFactory());
     setOffsetBounds(Bounds.create(-30, -20, 30, 40));
     setIcon(new CounterIcon());
     setInstancePoker(CounterPoker.class);
@@ -421,12 +421,6 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     return (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC)
         ? Bounds.create(-30, -20, 30, 40)
         : Bounds.create(0, 0, SymbolWidth(width) + 40, 110 + 20 * width);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new CounterHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

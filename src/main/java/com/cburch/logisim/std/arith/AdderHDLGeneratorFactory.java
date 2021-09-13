@@ -28,11 +28,6 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int ExtendedBitsId = -2;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "ADDER2C";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var Inputs = new TreeMap<String, Integer>();
     int inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
@@ -108,21 +103,11 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    return "arithmetic";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     final var wires = new TreeMap<String, Integer>();
     wires.put("s_extended_dataA", ExtendedBitsId);
     wires.put("s_extended_dataB", ExtendedBitsId);
     wires.put("s_sum_result", ExtendedBitsId);
     return wires;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

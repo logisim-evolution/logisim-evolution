@@ -832,7 +832,7 @@ public class Pin extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
+  public boolean isHDLSupportedComponent(AttributeSet attrs) {
     return true;
   }
 
@@ -1258,7 +1258,7 @@ public class Pin extends InstanceFactory {
   }
 
   @Override
-  public boolean RequiresNonZeroLabel() {
+  public boolean requiresNonZeroLabel() {
     return true;
   }
 

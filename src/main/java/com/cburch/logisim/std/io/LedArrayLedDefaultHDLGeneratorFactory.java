@@ -7,7 +7,7 @@
  * This is free software released under GNU GPLv3 license
  */
 
-package com.cburch.logisim.fpga.hdlgenerator;
+package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -16,6 +16,8 @@ import java.util.TreeMap;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 
 public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -23,7 +25,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   public static final int activeLowGeneric = -2;
   public static final String nrOfLedsString = "nrOfLeds";
   public static final String activeLowString = "activeLow";
-  public static final String LedArrayName = "LedArrayLedDefault";
+  public static final String HDL_IDENTIFIER = "LedArrayLedDefault";
 
   public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
     final var contents =
@@ -117,16 +119,4 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
     }
     return contents.getWithIndent();
   }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return LedArrayName;
-  }
-
-  @Override
-  public String GetSubDir() {
-    // This method returns the module directory where the HDL code needs to be placed
-    return "ledarrays";
-  }
-
 }

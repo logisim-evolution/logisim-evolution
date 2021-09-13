@@ -66,12 +66,12 @@ public class Ttl74161 extends AbstractTtlGate {
   private static final byte[] OUTPUT_PORTS = {11, 12, 13, 14, 15};
 
   public Ttl74161() {
-    super(_ID, (byte) 16, OUTPUT_PORTS, PORT_NAMES);
+    super(_ID, (byte) 16, OUTPUT_PORTS, PORT_NAMES, null);
     super.setInstancePoker(Poker.class);
   }
 
   public Ttl74161(String name) {
-    super(name, (byte) 16, OUTPUT_PORTS, PORT_NAMES);
+    super(name, (byte) 16, OUTPUT_PORTS, PORT_NAMES, null);
     super.setInstancePoker(Poker.class);
   }
 

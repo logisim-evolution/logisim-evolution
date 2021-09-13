@@ -12,8 +12,8 @@ package com.cburch.logisim.std.io;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -23,7 +23,7 @@ import java.util.TreeMap;
 public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
-  public ArrayList<String> GetArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
+  public ArrayList<String> getArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
     final var contents = new LineBuffer();
     if (HDL.isVHDL()) {
       contents
@@ -65,7 +65,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   }
 
   @Override
-  public ArrayList<String> GetComponentInstantiation(Netlist TheNetlist, AttributeSet attrs, String ComponentName) {
+  public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
     return (new LineBuffer())
         .add("""
             COMPONENT LocalBus
@@ -88,12 +88,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   }
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "ReptarLB";
-  }
-
-  @Override
-  public ArrayList<String> GetEntity(Netlist nets, AttributeSet attrs, String componentName) {
+  public ArrayList<String> getEntity(Netlist nets, AttributeSet attrs, String componentName) {
     return (new LineBuffer())
         .pair("compName", componentName)
         .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
@@ -169,21 +164,21 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
         "Addr_Data_LB_io",
         String.format(
             "%s(%d DOWNTO %d)",
-            LocalInOutBubbleBusname,
+            LOCAL_INOUT_BUBBLE_BUS_NAME,
             ComponentInfo.getLocalBubbleInOutEndId(),
             ComponentInfo.getLocalBubbleInOutStartId()));
     map.put(
         "FPGA_in",
         String.format(
             "%s(%d DOWNTO %d)",
-            LocalInputBubbleBusname,
+            LOCAL_INPUT_BUBBLE_BUS_NAME,
             ComponentInfo.getLocalBubbleInputEndId(),
             ComponentInfo.getLocalBubbleInputStartId()));
     map.put(
         "FPGA_out",
         String.format(
             "%s(%d DOWNTO %d)",
-            LocalOutputBubbleBusname
+            LOCAL_OUTPUT_BUBBLE_BUS_NAME
                 + ComponentInfo.getLocalBubbleOutputEndId()
                 + ComponentInfo.getLocalBubbleOutputStartId()));
     map.putAll(
@@ -251,12 +246,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   }
 
   @Override
-  public String GetSubDir() {
-    return "io";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     return HDL.isVHDL();
   }
 }

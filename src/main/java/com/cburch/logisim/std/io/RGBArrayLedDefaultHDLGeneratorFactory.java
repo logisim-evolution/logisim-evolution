@@ -7,7 +7,7 @@
  * This is free software released under GNU GPLv3 license
  */
 
-package com.cburch.logisim.fpga.hdlgenerator;
+package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -16,10 +16,12 @@ import java.util.TreeMap;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 
 public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDLGeneratorFactory {
 
-  public static String RGBArrayName = "RGBArrayLedDefault";
+  public static final String HDL_IDENTIFIER = "RGBArrayLedDefault";
 
   private static final LineBuffer.Pairs sharedPairs =
       new LineBuffer.Pairs() {
@@ -105,10 +107,4 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
     }
     return contents.getWithIndent(3);
   }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return RGBArrayName;
-  }
-
 }

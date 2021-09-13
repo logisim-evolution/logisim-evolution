@@ -9,11 +9,9 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import java.awt.Graphics;
 import java.util.ArrayList;
 
 public class Ttl7432 extends AbstractTtlGate {
@@ -28,11 +26,6 @@ public class Ttl7432 extends AbstractTtlGate {
   private static class OrGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
     @Override
-    public String getComponentStringIdentifier() {
-      return "TTL7400";
-    }
-
-    @Override
     public ArrayList<String> GetLogicFunction(int index) {
       final var contents = new ArrayList<String>();
       contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
@@ -43,7 +36,7 @@ public class Ttl7432 extends AbstractTtlGate {
   }
 
   public Ttl7432() {
-    super(_ID, (byte) 14, new byte[] {3, 6, 8, 11}, true);
+    super(_ID, (byte) 14, new byte[] {3, 6, 8, 11}, true, new OrGateHDLGeneratorFactory());
   }
 
   @Override
@@ -68,11 +61,5 @@ public class Ttl7432 extends AbstractTtlGate {
     for (byte i = 6; i < 12; i += 3) {
       state.setPort(i, state.getPortValue(i + 1).or(state.getPortValue(i + 2)), 1);
     }
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new OrGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

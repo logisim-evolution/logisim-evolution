@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 
@@ -30,16 +29,16 @@ public class Ttl7413 extends AbstractTtlGate {
   private static final String[] portNames = {"A0", "B0", "C0", "D0", "Y0", "Y1", "D1", "C1", "B1", "A1"};
 
   public Ttl7413(String name, boolean inv) {
-    super(name, pinCount, outPorts, unusedPorts, portNames);
+    super(name, pinCount, outPorts, unusedPorts, portNames, new Ttl7413HDLGenerator(inv));
     inverted = inv;
   }
 
   public Ttl7413(String name) {
-    super(name, pinCount, outPorts, unusedPorts, portNames);
+    super(name, pinCount, outPorts, unusedPorts, portNames, new Ttl7413HDLGenerator(true));
   }
 
   public Ttl7413() {
-    super(_ID, pinCount, outPorts, unusedPorts, portNames);
+    super(_ID, pinCount, outPorts, unusedPorts, portNames, new Ttl7413HDLGenerator(true));
   }
 
   @Override
@@ -79,11 +78,5 @@ public class Ttl7413 extends AbstractTtlGate {
             .getPortValue(6)
             .and(state.getPortValue(7).and(state.getPortValue(8).and(state.getPortValue(9))));
     state.setPort(5, inverted ? val.not() : val, 4);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new Ttl7413HDLGenerator(inverted);
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

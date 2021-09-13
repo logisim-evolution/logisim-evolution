@@ -17,21 +17,21 @@ on:
   # Keep it disabled once it's merged into main branch as we only
   # want "schedule" to be the trigger.
   # NOTE: remove `if` condition marked with `HACK` once merged.
-  # pull_request:
-  #  branches: [ develop ]
-  #  types: [ closed ]
+  pull_request:
+    branches: [ develop ]
+    types: [ closed ]
   schedule:
     # every day at midnight
     - cron: "0 0 * * *"
 
 env:
   JDK_VERSION: 16
+  JDK_DISTRO: 'temurin'
 
 jobs:
   git_check:
     name: "Any changes since last run?"
     runs-on: ubuntu-latest
-
     # HACK: Temporary workaround for `schedule` not working outside main
     # branch and lack of `type: merged` for `pull_request` trigger.
     # if: github.event.pull_request.merged == true
@@ -88,11 +88,9 @@ jobs:
   build_linux:
     name: 'Linux build'
     runs-on: ubuntu-latest
-
     # Will run only if git_check determined it is needed.
     needs: git_check
     if: needs.git_check.outputs.run_build == 'true'
-
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
@@ -100,12 +98,11 @@ jobs:
         with:
           # We want develop branch only.
           ref: 'develop'
-
-      - name: "Set up JDK"
+      - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_VERSION }}
-          distribution: 'adopt'
+          distribution: ${{ env.JDK_DISTRO }}
 
       # ###########################################################################################
 
@@ -185,11 +182,9 @@ jobs:
   build_macos:
     name: 'macOS build'
     runs-on: macos-latest
-
     # Will run only if git_check determined it is needed.
     needs: git_check
     if: needs.git_check.outputs.run_build == 'true'
-
 
     steps:
       # https://github.com/marketplace/actions/checkout
@@ -198,12 +193,11 @@ jobs:
         with:
           # We want develop branch only.
           ref: 'develop'
-
-      - name: "Set up JDK"
+      - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_VERSION }}
-          distribution: 'adopt'
+          distribution: ${{ env.JDK_DISTRO }}
 
       - name: "Build DMG"
         run: |
@@ -226,7 +220,6 @@ jobs:
   build_windows:
     name: 'Windows build'
     runs-on: windows-latest
-
     # Will run only if git_check determined it is needed.
     needs: git_check
     if: needs.git_check.outputs.run_build == 'true'
@@ -235,12 +228,11 @@ jobs:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
         uses: actions/checkout@v2
-
-      - name: "Set up JDK"
+      - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
         uses: actions/setup-java@v2
         with:
           java-version: ${{ env.JDK_VERSION }}
-          distribution: 'adopt'
+          distribution: ${{ env.JDK_DISTRO }}
 
       - name: "Build MSI"
         run: .\gradlew.bat createMsi -x checkstyleMain -x checkstyleTest

@@ -29,11 +29,6 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int UnsignedId = -3;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "MULT";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
     inputs.put("INP_A", NrOfBitsId);
@@ -142,21 +137,11 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    return "arithmetic";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     final var wires = new TreeMap<String, Integer>();
     wires.put("s_mult_result", CalcBitsId);
     wires.put("s_extended_Cin", CalcBitsId);
     wires.put("s_new_result", CalcBitsId);
     return wires;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

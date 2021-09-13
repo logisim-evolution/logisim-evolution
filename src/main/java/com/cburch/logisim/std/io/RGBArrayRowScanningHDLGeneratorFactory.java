@@ -7,10 +7,12 @@
  * This is free software released under GNU GPLv3 license
  */
 
-package com.cburch.logisim.fpga.hdlgenerator;
+package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -18,7 +20,7 @@ import java.util.TreeMap;
 
 public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningHDLGeneratorFactory {
 
-  public static String RGBArrayName = "RGBArrayRowScanning";
+  public static final String HDL_IDENTIFIER = "RGBArrayRowScanning";
 
   static final LineBuffer.Pairs sharedPairs =
       new LineBuffer.Pairs()
@@ -148,10 +150,4 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
     }
     return contents.getWithIndent();
   }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return RGBArrayName;
-  }
-
 }

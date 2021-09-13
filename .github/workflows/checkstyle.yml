@@ -1,7 +1,7 @@
-# This workflow will build check Java sources using Checkstyle linter.
+# This workflow will check code style of the project files (mostly Java).
 #
-# By design, it is expected to only analyse files affected by given pull request,
-# and not the whole source tree.
+# By design, it is expected to only analyse files affected by given
+# pull request, and not the whole source tree.
 #
 # Marcin Orlowski
 
@@ -27,7 +27,7 @@ jobs:
 
     steps:
     - name: "Install packages..."
-      run: sudo apt-get install sysvbanner
+      run: sudo apt-get install -y sysvbanner
 
       # https://github.com/marketplace/actions/checkout
     - name: "Checkout sources"
@@ -69,13 +69,18 @@ jobs:
     - name: "Checkout sources"
       uses: actions/checkout@v2
 
+    - name: "Install packages..."
+      run: sudo apt-get install -y dos2unix
+
     - name: "Lint changed files"
       # We need bash here as java-wrappers.sh may not work with other shells.
       shell: bash
       run: |
-        VERSION="8.45.1"
-        JAR="checkstyle-${VERSION}-all.jar"
-        URL="https://github.com/checkstyle/checkstyle/releases/download/checkstyle-${VERSION}/${JAR}"
+        # Run CheckStyle
+        # https://github.com/checkstyle/checkstyle/releases/
+        CHECKSTYLE_VERSION="9.0"
+        JAR="checkstyle-${CHECKSTYLE_VERSION}-all.jar"
+        URL="https://github.com/checkstyle/checkstyle/releases/download/checkstyle-${CHECKSTYLE_VERSION}/${JAR}"
 
         echo "Downloading ${JAR}..."
         wget --quiet "${URL}"
@@ -104,6 +109,16 @@ jobs:
         # Plain output always contains "Starting audit..." and "Audit done." lines. Let's remove them.
         sed -i 's/^Starting audit...$//; s/^Audit done.$//' "${REPORT_FILE}"
 
+        # Now look for CRLFs
+        declare -r CRLF_REPORT_FILE="crlf-output.txt"
+        find . -type f -exec dos2unix -ic {} \; >> "${CRLF_REPORT_FILE}"
+        if [[ "$(strings "${REPORT_FILE}" | wc -l)" -gt 0 ]]; then
+          echo -e "\n\n" >> "${REPORT_FILE}"
+          echo -e "These files use disallowed CRLF line ends\n" >> "${REPORT_FILE}"
+          echo -e "-----------------------------------------" >> "${REPORT_FILE}"
+          cat "${CRLF_REPORT_FILE}" >> "${REPORT_FILE}"
+        fi
+
         # The `strings` tool is used to filter out empty lines.
         cnt="$(strings "${REPORT_FILE}" | wc -l)"
         if [[ "${cnt}" -gt 0 ]]; then
@@ -118,4 +133,3 @@ jobs:
         else
           echo "Looks good. No style guide violations found."
         fi
-

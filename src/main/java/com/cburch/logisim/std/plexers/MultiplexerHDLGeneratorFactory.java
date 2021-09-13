@@ -26,11 +26,6 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   private static final int NrOfBitsId = -1;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "MUX";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist theNetList, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
@@ -63,7 +58,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
                       CASE (Sel) IS
                 """);
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++)
-        contents.add("         WHEN {{1}} => MuxOut <= MuxIn_{{2}};", IntToBin(i, nrOfSelectBits), i);
+        contents.add("         WHEN {{1}} => MuxOut <= MuxIn_{{2}};", HDL.getConstantVector(i, nrOfSelectBits), i);
       contents.add("         WHEN OTHERS  => MuxOut <= MuxIn_{{1}};", (1 << nrOfSelectBits) - 1)
               .add("""
                          END CASE; 
@@ -81,7 +76,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
           """);
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++) {
         contents
-            .add("      {{1}}:", IntToBin(i, nrOfSelectBits))
+            .add("      {{1}}:", HDL.getConstantVector(i, nrOfSelectBits))
             .add("         s_selected_vector <= MuxIn_{{1}};", i);
       }
       contents
@@ -152,15 +147,5 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     final var nrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
     if (HDL.isVerilog()) map.put("s_selected_vector", nrOfBits);
     return map;
-  }
-
-  @Override
-  public String GetSubDir() {
-    return "plexers";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

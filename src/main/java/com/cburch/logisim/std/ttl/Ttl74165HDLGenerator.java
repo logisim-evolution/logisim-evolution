@@ -24,11 +24,6 @@ import java.util.TreeMap;
 public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "TTL74165";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("SHnLD", 1);
@@ -103,7 +98,7 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(comp, ClockPinIndex, nets);
+    final var clockNetName = HDL.getClockNetName(comp, ClockPinIndex, nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -112,7 +107,7 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
       map.put("Tick", "'0'");
     } else if (gatedClock) {
       map.put("Tick", "'1'");
-      map.put("CK", GetNetName(comp, ClockPinIndex, true, nets));
+      map.put("CK", HDL.getNetName(comp, ClockPinIndex, true, nets));
     } else {
       if (nets.requiresGlobalClockConnection()) {
         map.put("Tick", "'1'");
@@ -145,16 +140,7 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
-    return "ttl";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
     return (!attrs.getValue(TtlLibrary.VCC_GND) && HDL.isVHDL());

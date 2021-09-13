@@ -28,11 +28,6 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   private static final int NrOfInputBitsId = -2;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "PRIENC";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("enable", 1);
@@ -145,7 +140,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
         map.putAll(GetNetMap("input_vector(" + i + ")", true, comp, i, nets));
       else {
         if (vectorList.length() > 0) vectorList.append(",");
-        vectorList.append(GetNetName(comp, i, true, nets));
+        vectorList.append(HDL.getNetName(comp, i, true, nets));
       }
     }
     if (HDL.isVerilog()) map.put("input_vector", vectorList.toString());
@@ -153,11 +148,6 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
     map.putAll(GetNetMap("EnableOut", true, comp, nrOfBits + PriorityEncoder.EN_OUT, nets));
     map.putAll(GetNetMap("Address", true, comp, nrOfBits + PriorityEncoder.OUT, nets));
     return map;
-  }
-
-  @Override
-  public String GetSubDir() {
-    return "plexers";
   }
 
   @Override
@@ -170,10 +160,5 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
     map.put("v_select_3_vector", 8);
     map.put("v_select_4_vector", 4);
     return map;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

@@ -13,7 +13,6 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -33,7 +32,7 @@ class EvenParityGate extends AbstractGate {
   private static final String LABEL = "2k";
 
   private EvenParityGate() {
-    super("Even Parity", S.getter("evenParityComponent"));
+    super("Even Parity", S.getter("evenParityComponent"), new XNorGateHDLGeneratorFactory());
     setRectangularLabel(LABEL);
   }
 
@@ -54,12 +53,6 @@ class EvenParityGate extends AbstractGate {
   @Override
   protected Value getIdentity() {
     return Value.FALSE;
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new XNorGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

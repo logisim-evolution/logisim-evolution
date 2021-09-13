@@ -53,7 +53,7 @@ class XorGate extends AbstractGate {
   public static final XorGate FACTORY = new XorGate();
 
   private XorGate() {
-    super("XOR Gate", S.getter("xorGateComponent"), true);
+    super("XOR Gate", S.getter("xorGateComponent"), true, new XorGateHDLGeneratorFactory());
     setAdditionalWidth(10);
     setPaintInputLines(true);
   }
@@ -90,12 +90,6 @@ class XorGate extends AbstractGate {
       }
     }
     return isOdd ? "2k+1" : "=1";
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new XorGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

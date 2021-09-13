@@ -42,7 +42,7 @@ public class Demultiplexer extends InstanceFactory {
   public static final String _ID = "Demultiplexer";
 
   public Demultiplexer() {
-    super(_ID, S.getter("demultiplexerComponent"));
+    super(_ID, S.getter("demultiplexerComponent"), new DemultiplexerHDLGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -116,12 +116,6 @@ public class Demultiplexer extends InstanceFactory {
   public boolean HasThreeStateDrivers(AttributeSet attrs) {
     return (attrs.getValue(PlexersLibrary.ATTR_TRISTATE)
         || (attrs.getValue(PlexersLibrary.ATTR_DISABLED) == PlexersLibrary.DISABLED_FLOATING));
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new DemultiplexerHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

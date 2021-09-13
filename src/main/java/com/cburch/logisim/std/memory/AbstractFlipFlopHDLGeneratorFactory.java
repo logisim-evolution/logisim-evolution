@@ -33,11 +33,6 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
   }
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "FF_LATCH";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("Reset", 1);
@@ -58,11 +53,10 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getHdlBuffer();
     final var SelectOperator = (HDL.isVHDL()) ? "" : "[" + ACTIVITY_LEVEL_STR + "]";
     contents
         .pair("activityLevel", ACTIVITY_LEVEL_STR)
-        .addHdlPairs()
         .addRemarkBlock("Here the output signals are defined")
         .add("""
                  {{assign}}Q    {{=}}s_current_state_reg{{1}};
@@ -161,7 +155,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     var gatedClock = false;
     var activeLow = false;
     final var attrs = ComponentInfo.getComponent().getAttributeSet();
-    final var clockNetName = GetClockNetName(ComponentInfo, ComponentInfo.nrOfEnds() - 5, Nets);
+    final var clockNetName = HDL.getClockNetName(ComponentInfo, ComponentInfo.nrOfEnds() - 5, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -199,7 +193,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(comp, comp.nrOfEnds() - 5, Nets);
+    final var clockNetName = HDL.getClockNetName(comp, comp.nrOfEnds() - 5, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -264,7 +258,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
                   + ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX
                   + HDL.BracketClose());
       } else {
-        map.put("Clock", GetNetName(comp, comp.nrOfEnds() - 5, true, Nets));
+        map.put("Clock", HDL.getNetName(comp, comp.nrOfEnds() - 5, true, Nets));
       }
     }
     map.putAll(GetInputMaps(comp, Nets));
@@ -280,11 +274,6 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     return map;
   }
 
-  @Override
-  public String GetSubDir() {
-    return "memory";
-  }
-
   public ArrayList<String> GetUpdateLogic() {
     return new ArrayList<>();
   }
@@ -294,10 +283,5 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     final var map = new TreeMap<String, Integer>();
     map.put("s_next_state", 1);
     return map;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

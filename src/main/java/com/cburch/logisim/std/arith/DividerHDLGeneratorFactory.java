@@ -29,11 +29,6 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int UnsignedId = -3;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "DIV";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("INP_A", NrOfBitsId);
@@ -114,11 +109,6 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    return "arithmetic";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     final var wires = new TreeMap<String, Integer>();
     wires.put("s_div_result", CalcBitsId);
@@ -128,7 +118,7 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     return HDL.isVHDL();
   }
 }

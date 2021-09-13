@@ -111,7 +111,7 @@ public class Constant extends InstanceFactory {
 
   private static class ConstantHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
     @Override
-    public long GetConstant(AttributeSet attrs) {
+    public long getConstant(AttributeSet attrs) {
       return attrs.getValue(Constant.ATTR_VALUE);
     }
   }
@@ -124,11 +124,10 @@ public class Constant extends InstanceFactory {
   private static final Color BACKGROUND_COLOR = new Color(230, 230, 230);
   private static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
 
-  private static final List<Attribute<?>> ATTRIBUTES =
-      Arrays.asList(StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE);
+  private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE);
 
   public Constant() {
-    super(_ID, S.getter("constantComponent"));
+    super(_ID, S.getter("constantComponent"), new ConstantHDLGeneratorFactory());
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(
         JoinedConfigurator.create(
@@ -163,12 +162,6 @@ public class Constant extends InstanceFactory {
     else if (facing == Direction.SOUTH) return Bounds.create(-w / 2, -16, w, 16);
     else if (facing == Direction.NORTH) return Bounds.create(-w / 2, 0, w, 16);
     else throw new IllegalArgumentException("unrecognized arguments " + facing + " " + width);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new ConstantHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

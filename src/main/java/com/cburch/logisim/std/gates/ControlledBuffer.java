@@ -59,7 +59,8 @@ class ControlledBuffer extends InstanceFactory {
         isInverter ? "Controlled Inverter" : "Controlled Buffer",
         isInverter
             ? S.getter("controlledInverterComponent")
-            : S.getter("controlledBufferComponent"));
+            : S.getter("controlledBufferComponent"),
+        new ControlledBufferHDLGenerator());
     this.isInverter = isInverter;
     if (isInverter) {
       setAttributes(
@@ -268,9 +269,4 @@ class ControlledBuffer extends InstanceFactory {
     }
   }
 
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new ControlledBufferHDLGenerator();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
-  }
 }

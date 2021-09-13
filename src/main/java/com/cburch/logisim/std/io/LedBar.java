@@ -108,7 +108,7 @@ public class LedBar extends DotMatrixBase {
   /* ****************************************************************** */
 
   public LedBar() {
-    super(_ID, S.getter("ioLedBarComponent"), 8, 1);
+    super(_ID, S.getter("ioLedBarComponent"), 8, 1, new LedBarHDLGeneratorFactory());
     setIcon(new LedBarIcon());
 
     ATTR_DOT_SHAPE.setHidden(true);
@@ -119,10 +119,4 @@ public class LedBar extends DotMatrixBase {
   }
 
   /* ****************************************************************** */
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new LedBarHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
-  }
 }

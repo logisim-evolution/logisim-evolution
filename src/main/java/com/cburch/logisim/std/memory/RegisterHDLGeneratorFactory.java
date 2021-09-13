@@ -30,11 +30,6 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int ActiveLevelId = -2;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "REGISTER_FILE";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("Reset", 1);
@@ -146,7 +141,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var gatedclock = false;
     var activeLow = false;
     final var attrs = componentInfo.getComponent().getAttributeSet();
-    final var clockNetName = GetClockNetName(componentInfo, Register.CK, nets);
+    final var clockNetName = HDL.getClockNetName(componentInfo, Register.CK, nets);
     if (clockNetName.isEmpty()) {
       gatedclock = true;
       if (Netlist.isFlipFlop(attrs))
@@ -183,7 +178,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(comp, Register.CK, Nets);
+    final var clockNetName = HDL.getClockNetName(comp, Register.CK, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -239,7 +234,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   + ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX
                   + HDL.BracketClose());
       } else {
-        map.put("Clock", GetNetName(comp, Register.CK, true, Nets));
+        map.put("Clock", HDL.getNetName(comp, Register.CK, true, Nets));
       }
     }
     var input = "D";
@@ -262,15 +257,5 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (HDL.isVerilog() & Netlist.isFlipFlop(attrs))
       regs.put("s_state_reg_neg_edge", NrOfBitsId);
     return regs;
-  }
-
-  @Override
-  public String GetSubDir() {
-    return "memory";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }
