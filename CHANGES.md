@@ -17,6 +17,9 @@
     * `-testvector` is now `--test-vector` or `-w`,
     * `-test-fpga-implementation` is now `--test-fpga` or `-f`,
     * `-questa` is removed.
+  * PortIO HDL generator and component bug-fixed
+  * Cleanup of the HDL-generation
+  * Each circuit stores/restores the last board used for Download (handy for templates to give to students)
 
 * v3.6.0 (2021-09-05)
   * Introducing project logo.

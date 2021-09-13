@@ -124,15 +124,16 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     this.TopLevelSheet = TopLevelSheet;
     this.TickFrequency = TickFrequency;
     this.MapFileName = MapFileName;
-    final var RootSheet = MyProject.getLogisimFile().getCircuit(TopLevelSheet);
-    if (RootSheet == null) return;
+    final var rootSheet = MyProject.getLogisimFile().getCircuit(TopLevelSheet);
+    if (rootSheet == null) return;
     var steps = BasicSteps;
+    if (!HdlOnly && UseGui) rootSheet.setDownloadBoard(MyBoardInformation.getBoardName());
     switch (Vendor) {
       case VendorSoftware.VENDOR_ALTERA:
         Downloader =
             new AlteraDownload(
                 getProjDir(TopLevelSheet),
-                RootSheet.getNetList(),
+                rootSheet.getNetList(),
                 MyBoardInformation,
                 Entities,
                 Architectures,
@@ -143,7 +144,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
         Downloader =
             new XilinxDownload(
                 getProjDir(TopLevelSheet),
-                RootSheet.getNetList(),
+                rootSheet.getNetList(),
                 MyBoardInformation,
                 Entities,
                 Architectures,
@@ -154,7 +155,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
         Downloader =
             new VivadoDownload(
                 getProjDir(TopLevelSheet),
-                RootSheet.getNetList(),
+                rootSheet.getNetList(),
                 MyBoardInformation,
                 Entities,
                 Architectures);
