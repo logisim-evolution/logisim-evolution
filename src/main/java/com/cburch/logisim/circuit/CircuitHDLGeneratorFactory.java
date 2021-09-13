@@ -408,8 +408,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       var worker = comp.getComponent().getFactory().getHDLGenerator(comp.getComponent().getAttributeSet());
       if (worker != null) {
         if (worker.isOnlyInlined()) {
-          var inlinedName = comp.getComponent().getFactory().getHDLName(comp.getComponent().getAttributeSet());
-          var InlinedId = "InlinedComponent";
+          final var inlinedName = comp.getComponent().getFactory().getHDLName(comp.getComponent().getAttributeSet());
+          final var InlinedId = "InlinedComponent";
           var id = (compIds.containsKey(InlinedId)) ? compIds.get(InlinedId) : (long) 1;
           if (isFirstLine) {
             contents.add("");
@@ -427,8 +427,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       var worker = comp.getComponent().getFactory().getHDLGenerator(comp.getComponent().getAttributeSet());
       if (worker != null) {
         if (!worker.isOnlyInlined()) {
-          var compName = comp.getComponent().getFactory().getHDLName(comp.getComponent().getAttributeSet());
-          var compId = "NormalComponent";
+          final var compName = comp.getComponent().getFactory().getHDLName(comp.getComponent().getAttributeSet());
+          final var compId = "NormalComponent";
           var id = (compIds.containsKey(compId)) ? compIds.get(compId) : (long) 1;
           if (isFirstLine) {
             contents.add("").addRemarkBlock("Here all normal components are defined");

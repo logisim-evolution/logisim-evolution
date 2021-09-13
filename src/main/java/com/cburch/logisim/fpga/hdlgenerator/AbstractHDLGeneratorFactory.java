@@ -31,9 +31,7 @@ import java.util.TreeMap;
 import java.util.TreeSet;
 
 public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
-  /* each child of this class has to have this identifier
-   * as it is used as label and in most cases as filename
-   */
+
   private final String subDirectoryName;
 
   public AbstractHDLGeneratorFactory() {
@@ -525,7 +523,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   private String getInstanceIdentifier(Object componentInfo, Long componentId) {
-    if (componentInfo != null && componentInfo instanceof NetlistComponent) {
+    if (componentInfo instanceof NetlistComponent) {
       final var attrs = ((NetlistComponent) componentInfo).getComponent().getAttributeSet();
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         final var label = attrs.getValue(StdAttr.LABEL);

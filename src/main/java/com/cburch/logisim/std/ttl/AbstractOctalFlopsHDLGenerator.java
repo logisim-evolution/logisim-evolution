@@ -94,21 +94,21 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
   public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return map;
-    final var comp = (NetlistComponent) mapInfo;
+    final var netlistComp = (NetlistComponent) mapInfo;
     var gatedClock = false;
     var hasClock = true;
-    final var cmp = (InstanceFactory) comp.getComponent();
-    final var clockPinIndex = comp.getComponent().getFactory().ClockPinIndex(null)[0];
-    if (!comp.isEndConnected(clockPinIndex)) {
+    final var comp = (InstanceFactory) netlistComp.getComponent();
+    final var clockPinIndex = netlistComp.getComponent().getFactory().ClockPinIndex(null)[0];
+    if (!netlistComp.isEndConnected(clockPinIndex)) {
       Reporter.Report.AddSevereWarning(
           "Component \""
-              + cmp.getDisplayName()
+              + comp.getDisplayName()
               + "\" in circuit \""
               + nets.getCircuitName()
               + "\" has no clock connection");
       hasClock = false;
     }
-    String ClockNetName = HDL.getClockNetName(comp, clockPinIndex, nets);
+    String ClockNetName = HDL.getClockNetName(netlistComp, clockPinIndex, nets);
     if (ClockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -117,7 +117,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
       map.put("tick", "'0'");
     } else if (gatedClock) {
       map.put("tick", "'1'");
-      map.put("CLK", HDL.getNetName(comp, clockPinIndex, true, nets));
+      map.put("CLK", HDL.getNetName(netlistComp, clockPinIndex, true, nets));
     } else {
       if (nets.requiresGlobalClockConnection()) {
         map.put("tick", "'1'");
@@ -133,22 +133,22 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
           "CLK",
           ClockNetName + "(" + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX + ")");
     }
-    map.putAll(GetNetMap("D0", true, comp, 2, nets));
-    map.putAll(GetNetMap("D1", true, comp, 3, nets));
-    map.putAll(GetNetMap("D2", true, comp, 6, nets));
-    map.putAll(GetNetMap("D3", true, comp, 7, nets));
-    map.putAll(GetNetMap("D4", true, comp, 11, nets));
-    map.putAll(GetNetMap("D5", true, comp, 12, nets));
-    map.putAll(GetNetMap("D6", true, comp, 15, nets));
-    map.putAll(GetNetMap("D7", true, comp, 16, nets));
-    map.putAll(GetNetMap("Q0", true, comp, 1, nets));
-    map.putAll(GetNetMap("Q1", true, comp, 4, nets));
-    map.putAll(GetNetMap("Q2", true, comp, 5, nets));
-    map.putAll(GetNetMap("Q3", true, comp, 8, nets));
-    map.putAll(GetNetMap("Q4", true, comp, 10, nets));
-    map.putAll(GetNetMap("Q5", true, comp, 13, nets));
-    map.putAll(GetNetMap("Q6", true, comp, 14, nets));
-    map.putAll(GetNetMap("Q7", true, comp, 17, nets));
+    map.putAll(GetNetMap("D0", true, netlistComp, 2, nets));
+    map.putAll(GetNetMap("D1", true, netlistComp, 3, nets));
+    map.putAll(GetNetMap("D2", true, netlistComp, 6, nets));
+    map.putAll(GetNetMap("D3", true, netlistComp, 7, nets));
+    map.putAll(GetNetMap("D4", true, netlistComp, 11, nets));
+    map.putAll(GetNetMap("D5", true, netlistComp, 12, nets));
+    map.putAll(GetNetMap("D6", true, netlistComp, 15, nets));
+    map.putAll(GetNetMap("D7", true, netlistComp, 16, nets));
+    map.putAll(GetNetMap("Q0", true, netlistComp, 1, nets));
+    map.putAll(GetNetMap("Q1", true, netlistComp, 4, nets));
+    map.putAll(GetNetMap("Q2", true, netlistComp, 5, nets));
+    map.putAll(GetNetMap("Q3", true, netlistComp, 8, nets));
+    map.putAll(GetNetMap("Q4", true, netlistComp, 10, nets));
+    map.putAll(GetNetMap("Q5", true, netlistComp, 13, nets));
+    map.putAll(GetNetMap("Q6", true, netlistComp, 14, nets));
+    map.putAll(GetNetMap("Q7", true, netlistComp, 17, nets));
     return map;
   }
 
