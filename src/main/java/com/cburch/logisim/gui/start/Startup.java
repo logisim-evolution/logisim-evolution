@@ -136,9 +136,6 @@ public class Startup implements AWTEventListener {
     }
   }
 
-  // Non-used args short keys
-  // --------------------------
-  //    d    i k         u w t
   private static final String ARG_TEST_CIRCUIT_SHORT = "b";
   private static final String ARG_TEST_CIRCUIT_LONG = "test-circuit";
   private static final String ARG_TEST_FGPA_SHORT = "f";
@@ -583,9 +580,10 @@ public class Startup implements AWTEventListener {
     final var file = new File(option);
     if (file.exists()) {
       startup.templFile = file;
-      String errMsg = null;
-      if (errMsg == null && !startup.templFile.canRead()) errMsg = S.get("templateCannotReadError", file);
-      if (errMsg != null) return RC.QUIT;
+      if (!startup.templFile.canRead()) {
+        logger.error(S.get("templateCannotReadError", file));
+        return RC.QUIT;
+      }
       return RC.OK;
     }
     // okay, not a file, let's look for empty and plain
