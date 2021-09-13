@@ -139,10 +139,12 @@ extra.apply {
   // Platform-agnostic jpackage parameters shared across all the builds.
   var params = listOf(
       jpackage,
+      // NOTE: we cannot use --app-version as part of platform agnostic set as i.e. both macOS and
+      // Windows packages do not allow use of any suffixes like "-dev" etc, so --app-version is set
+      // in these builders separately.
       "--input", libsDir,
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", shadowJarFilename,
-      "--app-version", appVersion,
       "--copyright", copyrights,
       "--dest", targetDir,
       "--description", "Digital logic design tool and simulator",
@@ -156,6 +158,7 @@ extra.apply {
   // Linux (DEB/RPM) specific settings for jpackage.
   val linuxParams = params + listOf(
       "--name", project.name,
+      "--app-version", appVersion,
       "--file-associations", "${supportDir}/linux/file.jpackage",
       "--icon", "${supportDir}/linux/logisim-icon-128.png",
       "--install-dir", "/opt",
@@ -347,6 +350,9 @@ tasks.register("createMsi") {
         "--win-dir-chooser",
         "--win-menu",
         "--type", "msi",
+        // we MUST use short version form (without any suffix like "-dev", as it is not allowed in MSI package:
+        // https://docs.microsoft.com/en-us/windows/win32/msi/productversion?redirectedfrom=MSDN
+        "--app-version", ext.get(APP_VERSION_SHORT) as String,
     )
     runCommand(params, "Error while creating the MSI package.")
   }
@@ -477,7 +483,7 @@ fun genBuildInfo(buildInfoFilePath: String) {
     "    public static final String buildId = \"${branchName}/${branchLastCommitHash}\";",
     "",
     "    // Project build timestamp",
-    "    public static final long millis = ${currentMillis}L;", // keep traling `L`
+    "    public static final long millis = ${currentMillis}L;", // keep trailing `L`
     "    public static final String year = \"${buildYear}\";",
     "    public static final String dateIso8601 = \"${nowIso}\";",
     "    public static final Date date = new Date();",
