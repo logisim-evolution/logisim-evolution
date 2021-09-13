@@ -153,8 +153,9 @@ public abstract class HDL {
     if (nrOfBits == 0)
       return signal;
     if (arithmetic) {
-      // TODO
-      return "";
+      return isVHDL()
+        ? LineBuffer.format("({{1}} DOWNTO 0 => {{2}}({{1}})) & {{2}}{{3}}", with -1, signal, splitVector(with - 1, with - nrOfBits))
+        : LineBuffer.format("{{{{1}}{{{2}}[{{1}}-1]}},{{2}}{{3}}}", with, signal, splitVector(with - 1, with - nrOfBits));
     } else {
       return isVHDL()
         ? LineBuffer.format("{{1}}{{2}}{{1}} & {{3}}{{4}", nrOfBits == 1 ? "'" : "\"", "0".repeat(nrOfBits), signal, splitVector(with - 1, with - nrOfBits))
@@ -171,11 +172,11 @@ public abstract class HDL {
   }
 
   public static String srlOperator(String signal, int with, int nrOfBits) {
-    return shiftlOperator(signal, with, nrOfBits, false);
+    return shiftrOperator(signal, with, nrOfBits, false);
   }
   
   public static String sraOperator(String signal, int with, int nrOfBits) {
-    return shiftlOperator(signal, with, nrOfBits, true);
+    return shiftrOperator(signal, with, nrOfBits, true);
   }
 
   public static String rolOperator(String signal, int with, int nrOfBits) {
@@ -205,9 +206,11 @@ public abstract class HDL {
   }
 
   public static String splitVector(int start, int end) {
+    if (start == end)
+      return LineBuffer.format("{{1}}{{2}}{{3}}", BracketOpen(), start, BracketClose());
     return isVHDL()
-                ? LineBuffer.format("({{1}} DOWNTO {{2}})", start, end)
-                : LineBuffer.format("[{{1}}:{{2}}]", start, end);
+                ? LineBuffer.format("({{1}} DOWNTO {{2}}) ", start, end)
+                : LineBuffer.format("[{{1}}:{{2}}] ", start, end);
   }
 
   public static String GetZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
