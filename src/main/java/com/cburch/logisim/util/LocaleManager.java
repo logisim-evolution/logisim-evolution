@@ -207,7 +207,8 @@ public class LocaleManager {
 
   private static final ArrayList<LocaleManager> managers = new ArrayList<>();
 
-  private static final String DATE_FORMAT = S.get("dateFormat");
+  // FIXME: we should NOT use own format const, but utilise what platform provides!
+  private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:mm:sss";
 
   public static final SimpleDateFormat parserSDF = new SimpleDateFormat(LocaleManager.DATE_FORMAT);
 

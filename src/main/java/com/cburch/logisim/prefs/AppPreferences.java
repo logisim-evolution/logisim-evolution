@@ -63,7 +63,7 @@ public class AppPreferences {
       super("locale", "");
 
       String localeStr = this.get();
-      if (localeStr != null && !localeStr.equals("")) {
+      if (!("".equals(localeStr))) {
         LocaleManager.setLocale(new Locale(localeStr));
       }
       LocaleManager.addLocaleListener(myListener);
