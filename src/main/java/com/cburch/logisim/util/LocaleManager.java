@@ -207,8 +207,10 @@ public class LocaleManager {
 
   private static final ArrayList<LocaleManager> managers = new ArrayList<>();
 
-  // FIXME: we should NOT use own format const, but utilise what platform provides!
-  private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:mm:sss";
+  // FIXME: we should use predefined platform provided formats instead!
+  // https://docs.oracle.com/javase/8/docs/api/java/text/SimpleDateFormat.html
+  // https://docs.oracle.com/javase/tutorial/i18n/format/dateFormat.html
+  private static final String DATE_FORMAT = "yyyy-MM-dd HH:mm:sss";
 
   public static final SimpleDateFormat parserSDF = new SimpleDateFormat(LocaleManager.DATE_FORMAT);
 
