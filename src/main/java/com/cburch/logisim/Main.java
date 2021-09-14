@@ -33,8 +33,6 @@ public class Main {
    * @param args Optional arguments.
    */
   public static void main(String[] args) {
-    final String x = null;
-
     System.setProperty("apple.awt.application.name", APP_NAME);
     try {
       if (!GraphicsEnvironment.isHeadless()) {
