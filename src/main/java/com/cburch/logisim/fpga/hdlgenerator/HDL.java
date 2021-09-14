@@ -164,11 +164,11 @@ public abstract class HDL {
     if (arithmetic) {
       return isVHDL()
         ? LineBuffer.format("({{1}} DOWNTO 0 => {{2}}({{1}})) & {{2}}{{3}}", with - 1, signal, splitVector(with - 1, with - nrOfBits))
-        : LineBuffer.format("{{{{1}}{{{2}}[{{1}}-1]}},{{2}}{{3}}}", with, signal, splitVector(with - 1, with - nrOfBits));
+        : LineBuffer.format("{ {{{1}}{{{2}}[{{1}}-1]}},{{2}}{{3}}}", with, signal, splitVector(with - 1, with - nrOfBits));
     } else {
       return isVHDL()
         ? LineBuffer.format("{{1}}{{2}}{{1}} & {{3}}{{4}", nrOfBits == 1 ? "'" : "\"", "0".repeat(nrOfBits), signal, splitVector(with - 1, with - nrOfBits))
-        : LineBuffer.format("{{{{1}}{1'b0}},{{2}}{{3}}}", with, signal, splitVector(with - 1, with - nrOfBits));
+        : LineBuffer.format("{ {{{1}}{1'b0}},{{2}}{{3}}}", with, signal, splitVector(with - 1, with - nrOfBits));
     }
   }
 
