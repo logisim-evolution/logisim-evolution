@@ -207,7 +207,7 @@ public class LocaleManager {
 
   private static final ArrayList<LocaleManager> managers = new ArrayList<>();
 
-  public static final SimpleDateFormat parserSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+  public static final SimpleDateFormat parserSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
   private static final ArrayList<LocaleListener> listeners = new ArrayList<>();
 
