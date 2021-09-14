@@ -116,8 +116,7 @@ public class Ttl74161 extends AbstractTtlGate {
         var current = data.getValue().toLongValue();
         final long bitValue = 1 << index;
         current ^= bitValue;
-        data.setValue(Value.createKnown(4, current));
-        state.fireInvalidated();
+        updateState(state, current);
       }
       isPressed = false;
     }
@@ -203,12 +202,8 @@ public class Ttl74161 extends AbstractTtlGate {
           if (counter > 15) {
             counter = 0;
           }
-        } else {
-          return; // Nothing to do as no change
         }
       }
-    } else {
-      return; // Nothing to do as no change
     }
     updateState(state, counter);
   }
