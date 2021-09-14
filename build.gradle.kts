@@ -65,6 +65,7 @@ val SHARED_PARAMS = "sharedParameters"
 val SUPPORT_DIR = "supportDir"
 val TARGET_DIR = "targetDir"
 val TARGET_FILE_PATH_BASE = "targetFilePathBase"
+val TARGET_FILE_PATH_BASE_SHORT = "targetFilePathBaseShort"
 val UPPERCASE_PROJECT_NAME = "uppercaseProjectName"
 
 java {
@@ -122,6 +123,10 @@ extra.apply {
   val baseFilename = "${project.name}-${appVersion}"
   set(TARGET_FILE_PATH_BASE, "${targetDir}/${baseFilename}")
   logger.debug("targetFilePathBase: \"${targetDir}/${baseFilename}\"")
+
+  val baseFilenameShort = "${project.name}-${appVersionShort}"
+  set(TARGET_FILE_PATH_BASE_SHORT, "${targetDir}/${baseFilenameShort}")
+  logger.debug("targetFilePathBaseShort: \"${targetDir}/${baseFilenameShort}\"")
 
   // Name of application shadowJar file.
   val shadowJarFilename = "${baseFilename}-all.jar"
@@ -332,7 +337,7 @@ tasks.register("createMsi") {
 
   inputs.dir(ext.get(LIBS_DIR) as String)
   inputs.dir("${supportDir}/windows")
-  outputs.file("${ext.get(TARGET_FILE_PATH_BASE) as String}.msi")
+  outputs.file("${ext.get(TARGET_FILE_PATH_BASE_SHORT) as String}.msi")
 
   doFirst {
     if (!OperatingSystem.current().isWindows) {
