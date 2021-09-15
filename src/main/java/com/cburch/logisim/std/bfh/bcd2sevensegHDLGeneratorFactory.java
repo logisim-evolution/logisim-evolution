@@ -22,11 +22,6 @@ import java.util.TreeMap;
 public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "BCD2SEVENSEGMENT";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     SortedMap<String, Integer> Inputs = new TreeMap<>();
     Inputs.put("BCDin", 4);
@@ -56,31 +51,32 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     return (new LineBuffer())
-        .addLines(
-            "Segment_a <= s_output_value(0);",
-            "Segment_b <= s_output_value(1);",
-            "Segment_c <= s_output_value(2);",
-            "Segment_d <= s_output_value(3);",
-            "Segment_e <= s_output_value(4);",
-            "Segment_f <= s_output_value(5);",
-            "Segment_g <= s_output_value(6);",
-            "",
-            "MakeSegs : PROCESS( BCDin )",
-            "BEGIN",
-            "   CASE (BCDin) IS",
-            "      WHEN \"0000\" => s_output_value <= \"0111111\";",
-            "      WHEN \"0001\" => s_output_value <= \"0000110\";",
-            "      WHEN \"0010\" => s_output_value <= \"1011011\";",
-            "      WHEN \"0011\" => s_output_value <= \"1001111\";",
-            "      WHEN \"0100\" => s_output_value <= \"1100110\";",
-            "      WHEN \"0101\" => s_output_value <= \"1101101\";",
-            "      WHEN \"0110\" => s_output_value <= \"1111101\";",
-            "      WHEN \"0111\" => s_output_value <= \"0000111\";",
-            "      WHEN \"1000\" => s_output_value <= \"1111111\";",
-            "      WHEN \"1001\" => s_output_value <= \"1101111\";",
-            "      WHEN OTHERS => s_output_value <= \"-------\";",
-            "   END CASE;",
-            "END PROCESS MakeSegs;")
+        .add("""
+            Segment_a <= s_output_value(0);
+            Segment_b <= s_output_value(1);
+            Segment_c <= s_output_value(2);
+            Segment_d <= s_output_value(3);
+            Segment_e <= s_output_value(4);
+            Segment_f <= s_output_value(5);
+            Segment_g <= s_output_value(6);
+            
+            MakeSegs : PROCESS( BCDin )
+            BEGIN
+               CASE (BCDin) IS
+                  WHEN "0000" => s_output_value <= "0111111";
+                  WHEN "0001" => s_output_value <= "0000110";
+                  WHEN "0010" => s_output_value <= "1011011";
+                  WHEN "0011" => s_output_value <= "1001111";
+                  WHEN "0100" => s_output_value <= "1100110";
+                  WHEN "0101" => s_output_value <= "1101101";
+                  WHEN "0110" => s_output_value <= "1111101";
+                  WHEN "0111" => s_output_value <= "0000111";
+                  WHEN "1000" => s_output_value <= "1111111";
+                  WHEN "1001" => s_output_value <= "1101111";
+                  WHEN OTHERS => s_output_value <= "-------";
+               END CASE;
+            END PROCESS MakeSegs;
+            """)
         .getWithIndent();
   }
 
@@ -101,12 +97,7 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
   }
 
   @Override
-  public String GetSubDir() {
-    return "bfh";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     return HDL.isVHDL();
   }
 }

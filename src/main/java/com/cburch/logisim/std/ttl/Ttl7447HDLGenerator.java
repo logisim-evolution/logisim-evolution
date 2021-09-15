@@ -22,11 +22,6 @@ import java.util.TreeMap;
 public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "TTL7447";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("BCD0", 1);
@@ -64,42 +59,43 @@ public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = new LineBuffer();
     return contents
-        .addLines(
-            "Sega  <= segments(0,",
-            "Segb  <= segments(1,",
-            "Segc  <= segments(2,",
-            "Segd  <= segments(3,",
-            "Sege  <= segments(4,",
-            "Segf  <= segments(5,",
-            "Segg  <= segments(6,",
-            "",
-            "bcd   <= BCD3&BCD2&BCD1&BCD0;",
-            "",
-            "Decode : PROCESS ( bcd , LT , BI , RBI ) IS",
-            "   BEGIN",
-            "      CASE bcd IS",
-            "         WHEN \"0000\" => segments <= \"0111111\";",
-            "         WHEN \"0001\" => segments <= \"0000110\";",
-            "         WHEN \"0010\" => segments <= \"1011011\";",
-            "         WHEN \"0011\" => segments <= \"1001111\";",
-            "         WHEN \"0100\" => segments <= \"1100110\";",
-            "         WHEN \"0101\" => segments <= \"1101101\";",
-            "         WHEN \"0110\" => segments <= \"1111101\";",
-            "         WHEN \"0111\" => segments <= \"0000111\";",
-            "         WHEN \"1000\" => segments <= \"1111111\";",
-            "         WHEN \"1001\" => segments <= \"1100111\";",
-            "         WHEN \"1010\" => segments <= \"1110111\";",
-            "         WHEN \"1011\" => segments <= \"1111100\";",
-            "         WHEN \"1100\" => segments <= \"0111001\";",
-            "         WHEN \"1101\" => segments <= \"1011110\";",
-            "         WHEN \"1110\" => segments <= \"1111001\";",
-            "         WHEN OTHERS => segments <= \"1110001\";",
-            "      END CASE;",
-            "      IF (BI = '0') THEN segments <= \"0000000\";",
-            "      ELSIF (LT = '0') THEN segments <= \"1111111\";",
-            "      ELSIF ((RBI='0') AND (bcd=\"0000\")) THEN segments <= \"0000000\";",
-            "      END IF;",
-            "   END PROCESS Decode;")
+        .add("""
+            Sega  <= segments(0,
+            Segb  <= segments(1,
+            Segc  <= segments(2,
+            Segd  <= segments(3,
+            Sege  <= segments(4,
+            Segf  <= segments(5,
+            Segg  <= segments(6,
+            
+            bcd   <= BCD3&BCD2&BCD1&BCD0;
+            
+            Decode : PROCESS ( bcd , LT , BI , RBI ) IS
+               BEGIN
+                  CASE bcd IS
+                     WHEN "0000" => segments <= "0111111";
+                     WHEN "0001" => segments <= "0000110";
+                     WHEN "0010" => segments <= "1011011";
+                     WHEN "0011" => segments <= "1001111";
+                     WHEN "0100" => segments <= "1100110";
+                     WHEN "0101" => segments <= "1101101";
+                     WHEN "0110" => segments <= "1111101";
+                     WHEN "0111" => segments <= "0000111";
+                     WHEN "1000" => segments <= "1111111";
+                     WHEN "1001" => segments <= "1100111";
+                     WHEN "1010" => segments <= "1110111";
+                     WHEN "1011" => segments <= "1111100";
+                     WHEN "1100" => segments <= "0111001";
+                     WHEN "1101" => segments <= "1011110";
+                     WHEN "1110" => segments <= "1111001";
+                     WHEN OTHERS => segments <= "1110001";
+                  END CASE;
+                  IF (BI = '0') THEN segments <= "0000000";
+                  ELSIF (LT = '0') THEN segments <= "1111111";
+                  ELSIF ((RBI='0') AND (bcd="0000")) THEN segments <= "0000000";
+                  END IF;
+               END PROCESS Decode;
+            """)
         .getWithIndent();
   }
 
@@ -126,16 +122,7 @@ public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
-    return "ttl";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
     return (!attrs.getValue(TtlLibrary.VCC_GND) && HDL.isVHDL());

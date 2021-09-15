@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
@@ -37,7 +36,8 @@ public class Ttl7474 extends AbstractTtlGate {
         new byte[] {5, 6, 8, 9},
         new String[] {
           "nCLR1", "D1", "CLK1", "nPRE1", "Q1", "nQ1", "nQ2", "Q2", "nPRE2", "CLK2", "D2", "nCLR2"
-        });
+        },
+        new Ttl7474HDLGenerator());
     super.setInstancePoker(Poker.class);
   }
 
@@ -225,11 +225,5 @@ public class Ttl7474 extends AbstractTtlGate {
   @Override
   public int[] ClockPinIndex(NetlistComponent comp) {
     return new int[] {2, 9};
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new Ttl7474HDLGenerator();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

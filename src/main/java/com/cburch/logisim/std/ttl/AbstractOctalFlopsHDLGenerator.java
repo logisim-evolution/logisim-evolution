@@ -15,6 +15,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -67,24 +68,25 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     return (new LineBuffer())
-        .addLines(
-            "enable <= tick and NOT(nCLKen);",
-            "nexts  <= D7&D6&D5&D4&D3&D2&D1&D0 WHEN enable = '1' ELSE state;",
-            "Q0     <= state(0);",
-            "Q1     <= state(1);",
-            "Q2     <= state(2);",
-            "Q3     <= state(3);",
-            "Q4     <= state(4);",
-            "Q5     <= state(5);",
-            "Q6     <= state(6);",
-            "Q7     <= state(7);",
-            "",
-            "dffs : PROCESS( CLK , nCLR ) IS",
-            "   BEGIN",
-            "      IF (nCLR = '1') THEN state <= (OTHERS => '0');",
-            "      ELSIF (rising_edge(CLK)) THEN state <= nexts;",
-            "      END IF;",
-            "   END PROCESS dffs;")
+        .add("""
+            enable <= tick and NOT(nCLKen);
+            nexts  <= D7&D6&D5&D4&D3&D2&D1&D0 WHEN enable = '1' ELSE state;
+            Q0     <= state(0);
+            Q1     <= state(1);
+            Q2     <= state(2);
+            Q3     <= state(3);
+            Q4     <= state(4);
+            Q5     <= state(5);
+            Q6     <= state(6);
+            Q7     <= state(7);
+            
+            dffs : PROCESS( CLK , nCLR ) IS
+               BEGIN
+                  IF (nCLR = '1') THEN state <= (OTHERS => '0');
+                  ELSIF (rising_edge(CLK)) THEN state <= nexts;
+                  END IF;
+               END PROCESS dffs; 
+            """)
         .getWithIndent();
   }
 
@@ -92,20 +94,21 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
   public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return map;
-    final var comp = (NetlistComponent) mapInfo;
+    final var netlistComp = (NetlistComponent) mapInfo;
     var gatedClock = false;
     var hasClock = true;
-    final var clockPinIndex = comp.getComponent().getFactory().ClockPinIndex(null)[0];
-    if (!comp.isEndConnected(clockPinIndex)) {
+    final var comp = (InstanceFactory) netlistComp.getComponent();
+    final var clockPinIndex = netlistComp.getComponent().getFactory().ClockPinIndex(null)[0];
+    if (!netlistComp.isEndConnected(clockPinIndex)) {
       Reporter.Report.AddSevereWarning(
           "Component \""
-              + getComponentStringIdentifier()
+              + comp.getDisplayName()
               + "\" in circuit \""
               + nets.getCircuitName()
               + "\" has no clock connection");
       hasClock = false;
     }
-    String ClockNetName = GetClockNetName(comp, clockPinIndex, nets);
+    String ClockNetName = HDL.getClockNetName(netlistComp, clockPinIndex, nets);
     if (ClockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -114,7 +117,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
       map.put("tick", "'0'");
     } else if (gatedClock) {
       map.put("tick", "'1'");
-      map.put("CLK", GetNetName(comp, clockPinIndex, true, nets));
+      map.put("CLK", HDL.getNetName(netlistComp, clockPinIndex, true, nets));
     } else {
       if (nets.requiresGlobalClockConnection()) {
         map.put("tick", "'1'");
@@ -130,36 +133,27 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
           "CLK",
           ClockNetName + "(" + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX + ")");
     }
-    map.putAll(GetNetMap("D0", true, comp, 2, nets));
-    map.putAll(GetNetMap("D1", true, comp, 3, nets));
-    map.putAll(GetNetMap("D2", true, comp, 6, nets));
-    map.putAll(GetNetMap("D3", true, comp, 7, nets));
-    map.putAll(GetNetMap("D4", true, comp, 11, nets));
-    map.putAll(GetNetMap("D5", true, comp, 12, nets));
-    map.putAll(GetNetMap("D6", true, comp, 15, nets));
-    map.putAll(GetNetMap("D7", true, comp, 16, nets));
-    map.putAll(GetNetMap("Q0", true, comp, 1, nets));
-    map.putAll(GetNetMap("Q1", true, comp, 4, nets));
-    map.putAll(GetNetMap("Q2", true, comp, 5, nets));
-    map.putAll(GetNetMap("Q3", true, comp, 8, nets));
-    map.putAll(GetNetMap("Q4", true, comp, 10, nets));
-    map.putAll(GetNetMap("Q5", true, comp, 13, nets));
-    map.putAll(GetNetMap("Q6", true, comp, 14, nets));
-    map.putAll(GetNetMap("Q7", true, comp, 17, nets));
+    map.putAll(GetNetMap("D0", true, netlistComp, 2, nets));
+    map.putAll(GetNetMap("D1", true, netlistComp, 3, nets));
+    map.putAll(GetNetMap("D2", true, netlistComp, 6, nets));
+    map.putAll(GetNetMap("D3", true, netlistComp, 7, nets));
+    map.putAll(GetNetMap("D4", true, netlistComp, 11, nets));
+    map.putAll(GetNetMap("D5", true, netlistComp, 12, nets));
+    map.putAll(GetNetMap("D6", true, netlistComp, 15, nets));
+    map.putAll(GetNetMap("D7", true, netlistComp, 16, nets));
+    map.putAll(GetNetMap("Q0", true, netlistComp, 1, nets));
+    map.putAll(GetNetMap("Q1", true, netlistComp, 4, nets));
+    map.putAll(GetNetMap("Q2", true, netlistComp, 5, nets));
+    map.putAll(GetNetMap("Q3", true, netlistComp, 8, nets));
+    map.putAll(GetNetMap("Q4", true, netlistComp, 10, nets));
+    map.putAll(GetNetMap("Q5", true, netlistComp, 13, nets));
+    map.putAll(GetNetMap("Q6", true, netlistComp, 14, nets));
+    map.putAll(GetNetMap("Q7", true, netlistComp, 17, nets));
     return map;
   }
 
   @Override
-  public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
-    return "ttl";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
     return (!attrs.getValue(TtlLibrary.VCC_GND) && (HDL.isVHDL()));

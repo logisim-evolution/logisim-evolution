@@ -126,7 +126,7 @@ public class DipSwitch extends InstanceFactory {
       Attributes.forBitWidth("number", S.getter("nrOfSwitch"), MIN_SWITCH, MAX_SWITCH);
 
   public DipSwitch() {
-    super(_ID, S.getter("DipSwitchComponent"));
+    super(_ID, S.getter("DipSwitchComponent"), new AbstractSimpleIOHDLGeneratorFactory(true), true);
     var dipSize = 8;
     setAttributes(
         new Attribute[] {
@@ -196,14 +196,6 @@ public class DipSwitch extends InstanceFactory {
     final var facing = attrs.getValue(StdAttr.FACING);
     final var n = attrs.getValue(ATTR_SIZE).getWidth();
     return Bounds.create(0, 0, (n + 1) * 10, 40).rotate(Direction.NORTH, facing, 0, 0);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) {
-      MyHDLGenerator = new ButtonHDLGeneratorFactory();
-    }
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -300,10 +292,5 @@ public class DipSwitch extends InstanceFactory {
       Value pinstate = (pins.BitSet(i)) ? Value.TRUE : Value.FALSE;
       state.setPort(i, pinstate, 1);
     }
-  }
-
-  @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
   }
 }

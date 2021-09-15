@@ -2,9 +2,9 @@
 
 ---
 
-Branch [master](https://github.com/logisim-evolution/logisim-evolution/tree/master): [![Build](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/gradle.yml/badge.svg?branch=master)](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/gradle.yml)
+Branch [master](https://github.com/logisim-evolution/logisim-evolution/tree/master): [![Build](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/build.yml)
 
-Branch [develop](https://github.com/logisim-evolution/logisim-evolution/tree/develop): [![Java CI with Gradle](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/gradle.yml/badge.svg?branch=develop)](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/gradle.yml)
+Branch [develop](https://github.com/logisim-evolution/logisim-evolution/tree/develop): [![Build](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/build.yml)
 
 ---
 
@@ -49,7 +49,7 @@ Project highlights:
 ## Requirements ##
 
 `Logisim-evolution` is a Java application; therefore, it can run on any operating system supporting the Java runtime enviroment.
-It requires [Java 14 (or newer)](https://www.oracle.com/java/technologies/javase-downloads.html).
+It requires [Java 16 (or newer)](https://www.oracle.com/java/technologies/javase-downloads.html).
 
 ---
 

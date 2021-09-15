@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -13,7 +13,6 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -143,7 +142,7 @@ public class Multiplier extends InstanceFactory {
   public static final int C_OUT = 4;
 
   public Multiplier() {
-    super(_ID, S.getter("multiplierComponent"));
+    super(_ID, S.getter("multiplierComponent"), new MultiplierHDLGeneratorFactory());
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, MODE_ATTR},
         new Object[] {BitWidth.create(8), UNSIGNED_OPTION});
@@ -163,12 +162,6 @@ public class Multiplier extends InstanceFactory {
     ps[C_IN].setToolTip(S.getter("multiplierCarryInTip"));
     ps[C_OUT].setToolTip(S.getter("multiplierCarryOutTip"));
     setPorts(ps);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new MultiplierHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
@@ -51,7 +50,8 @@ public class Ttl74165 extends AbstractTtlGate {
           "P2",
           "P3",
           "Clock Inhibit"
-        });
+        },
+        new Ttl74165HDLGenerator());
     super.setInstancePoker(Poker.class);
   }
 
@@ -172,11 +172,5 @@ public class Ttl74165 extends AbstractTtlGate {
   @Override
   public int[] ClockPinIndex(NetlistComponent comp) {
     return new int[] {1};
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new Ttl74165HDLGenerator();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

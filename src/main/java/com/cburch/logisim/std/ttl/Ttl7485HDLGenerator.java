@@ -22,11 +22,6 @@ import java.util.TreeMap;
 public class Ttl7485HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "TTL7485";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("A0", 1);
@@ -69,24 +64,25 @@ public class Ttl7485HDLGenerator extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var contents = new LineBuffer();
     return contents
-        .addLines(
-            "oppA   <= A3&A2&A1&A0;",
-            "oppB   <= B3&B2&B1&B0;",
-            "gt     <= '1' WHEN unsigned(oppA) > unsigned(oppB) ELSE '0';",
-            "eq     <= '1' WHEN unsigned(oppA) = unsigned(oppB) ELSE '0';",
-            "lt     <= '1' WHEN unsigned(oppA) < unsigned(oppB) ELSE '0';",
-            "",
-            "CompIn <= AgtBin&AltBin&AeqBin;",
-            "WITH (CompIn) SELECT CompOut <= ",
-            "   \"100\" WHEN \"100\",",
-            "   \"010\" WHEN \"010\",",
-            "   \"000\" WHEN \"110\",",
-            "   \"110\" WHEN \"000\",",
-            "   \"001\" WHEN OTHERS;",
-            "",
-            "AgtBout <= '1' WHEN gt = '1' ELSE '0' WHEN lt = '1' ELSE CompOut(2,",
-            "AltBout <= '0' WHEN gt = '1' ELSE '1' WHEN lt = '1' ELSE CompOut(1,",
-            "AeqBout <= '0' WHEN (gt = '1') OR (lt = '1') ELSE CompOut(0);")
+        .add("""
+            oppA   <= A3&A2&A1&A0;
+            oppB   <= B3&B2&B1&B0;
+            gt     <= '1' WHEN unsigned(oppA) > unsigned(oppB) ELSE '0';
+            eq     <= '1' WHEN unsigned(oppA) = unsigned(oppB) ELSE '0';
+            lt     <= '1' WHEN unsigned(oppA) < unsigned(oppB) ELSE '0';
+            
+            CompIn <= AgtBin&AltBin&AeqBin;
+            WITH (CompIn) SELECT CompOut <= 
+               "100" WHEN "100",
+               "010" WHEN "010",
+               "000" WHEN "110",
+               "110" WHEN "000",
+               "001" WHEN OTHERS;
+            
+            AgtBout <= '1' WHEN gt = '1' ELSE '0' WHEN lt = '1' ELSE CompOut(2);
+            AltBout <= '0' WHEN gt = '1' ELSE '1' WHEN lt = '1' ELSE CompOut(1);
+            AeqBout <= '0' WHEN (gt = '1') OR (lt = '1') ELSE CompOut(0);
+            """)
         .getWithIndent();
   }
 
@@ -113,16 +109,7 @@ public class Ttl7485HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
-    return "ttl";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
     return (!attrs.getValue(TtlLibrary.VCC_GND) && HDL.isVHDL());

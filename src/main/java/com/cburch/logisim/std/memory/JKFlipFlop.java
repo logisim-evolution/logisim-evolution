@@ -11,7 +11,6 @@ package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
@@ -63,7 +62,7 @@ public class JKFlipFlop extends AbstractFlipFlop {
   }
 
   public JKFlipFlop() {
-    super(_ID, new FlipFlopIcon(FlipFlopIcon.JK_FLIPFLOP), S.getter("jkFlipFlopComponent"), 2, false);
+    super(_ID, new FlipFlopIcon(FlipFlopIcon.JK_FLIPFLOP), S.getter("jkFlipFlopComponent"), 2, false, new JKFFHDLGeneratorFactory());
   }
 
   @Override
@@ -87,11 +86,5 @@ public class JKFlipFlop extends AbstractFlipFlop {
   @Override
   protected String getInputName(int index) {
     return index == 0 ? "J" : "K";
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new JKFFHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

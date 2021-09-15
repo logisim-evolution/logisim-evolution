@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -478,6 +478,13 @@ public class Project {
       if (newCircuit != null) {
         for (final var l : circuitListeners) {
           newCircuit.addCircuitListener(l);
+        }
+        final var circTickFrequency = newCircuit.getTickFrequency();
+        final var simTickFrequency = simulator.getTickFrequency(); 
+        if (circTickFrequency < 0) {
+          newCircuit.setTickFrequency(simTickFrequency);
+        } else if (circTickFrequency != simTickFrequency) {
+          simulator.setTickFrequency(circTickFrequency);
         }
       }
       if (oldCircuit != null) oldCircuit.displayChanged();

@@ -306,7 +306,7 @@ public class Probe extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
+  public boolean isHDLSupportedComponent(AttributeSet attrs) {
     return true;
   }
 

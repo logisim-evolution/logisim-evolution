@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -28,11 +28,6 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int ExtendedBitsId = -2;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "SUBTRACTOR2C";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
     int inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
@@ -47,24 +42,26 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var Contents = new LineBuffer();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
-      Contents.addLines(
-          "s_inverted_dataB <= NOT(DataB);",
-          "s_extended_dataA <= \"0\"&DataA;",
-          "s_extended_dataB <= \"0\"&s_inverted_dataB;",
-          "s_carry          <= NOT(BorrowIn);",
-          "s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA)+",
-          "                    unsigned(s_extended_dataB)+",
-          "                    (\"\"&s_carry));",
-          "");
+      Contents.add("""
+          s_inverted_dataB <= NOT(DataB);
+          s_extended_dataA <= "0"&DataA;
+          s_extended_dataB <= "0"&s_inverted_dataB;
+          s_carry          <= NOT(BorrowIn);
+          s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA)+
+                              unsigned(s_extended_dataB)+
+                              (""&s_carry));
+          
+          """);
       Contents.add(
           (nrOfBits == 1)
               ? "Result <= s_sum_result(0);"
               : "Result <= s_sum_result( (" + NrOfBitsStr + "-1) DOWNTO 0 );");
       Contents.add("BorrowOut <= NOT(s_sum_result(" + ExtendedBitsStr + "-1));");
     } else {
-      Contents.addLines(
-          "assign   {s_carry,Result} = DataA + ~(DataB) + ~(BorrowIn);",
-          "assign   BorrowOut = ~s_carry;");
+      Contents.add("""
+          assign   {s_carry,Result} = DataA + ~(DataB) + ~(BorrowIn);
+          assign   BorrowOut = ~s_carry;
+          """);
     }
     return Contents.getWithIndent();
   }
@@ -110,11 +107,6 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    return "arithmetic";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     final var wires = new TreeMap<String, Integer>();
     int outputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
@@ -124,10 +116,5 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     wires.put("s_sum_result", ExtendedBitsId);
     wires.put("s_carry", 1);
     return wires;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

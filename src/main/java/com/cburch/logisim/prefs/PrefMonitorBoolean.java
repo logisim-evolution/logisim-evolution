@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -20,7 +20,7 @@ public class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> implements 
   protected boolean value;
   private JCheckBox box;
 
-  PrefMonitorBoolean(String name, boolean dflt) {
+  public PrefMonitorBoolean(String name, boolean dflt) {
     super(name);
     this.dflt = dflt;
     this.value = dflt;

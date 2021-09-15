@@ -31,11 +31,6 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   private static final int ExtendedBitsId = -4;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "BITSELECTOR";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist theNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("DataIn", InputBitsId);
@@ -53,35 +48,39 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     final var outputBits = attrs.getValue(BitSelector.GROUP_ATTR).getWidth();
     if (HDL.isVHDL()) {
       contents
-          .addLines(
-              "s_extended_vector(({{extBits}}-1) DOWNTO {{inBits}}) <= (OTHERS => '0');",
-              "s_extended_vector(({{inBits}}-1) DOWNTO 0) <= DataIn;")
+          .add("""
+              s_extended_vector(({{extBits}}-1) DOWNTO {{inBits}}) <= (OTHERS => '0');
+              s_extended_vector(({{inBits}}-1) DOWNTO 0) <= DataIn;
+              """)
           .add(
               outputBits > 1
-                  ? "DataOut <= s_extended_vector(((to_integer(unsigned(Sel))+1) * {{outBits}})-1 DOWNTO to_integer(unsigned(Sel))*{{outBits}});"
-                  : "DataOut <= s_extended_vector(to_integer(unsigned(Sel)));");
+                  ? "DataOut <= s_extended_vector( ((to_integer(unsigned(Sel))+1) * {{outBits}})-1 DOWNTO to_integer(unsigned(Sel))*{{outBits}} );"
+                  : "DataOut <= s_extended_vector( to_integer(unsigned(Sel)) );");
     } else {
-      contents.addLines(
-          "assign s_extended_vector[{{extBits}}-1:{{inBits}}] = 0;",
-          "assign s_extended_vector[{{inBits}}-1:0] = DataIn;");
+      contents.add("""
+          assign s_extended_vector[{{extBits}}-1:{{inBits}}] = 0;
+          assign s_extended_vector[{{inBits}}-1:0] = DataIn;
+          """);
       if (outputBits > 1) {
-        contents.addLines(
-            "wire[513:0] s_select_vector;",
-            "reg[{{outBits}}-1:0] s_selected_slice;",
-            "assign s_select_vector[513:{{extBits}}] = 0;",
-            "assign s_select_vector[{{extBits}}-1:0] = s_extended_vector;",
-            "assign DataOut = s_selected_slice;",
-            "",
-            "always @(*)",
-            "begin",
-            "   case (Sel)");
+        contents.add("""
+            wire[513:0] s_select_vector;
+            reg[{{outBits}}-1:0] s_selected_slice;
+            assign s_select_vector[513:{{extBits}}] = 0;
+            assign s_select_vector[{{extBits}}-1:0] = s_extended_vector;
+            assign DataOut = s_selected_slice;
+            
+            always @(*)
+            begin
+               case (Sel)
+            """);
         for (var i = 15; i > 0; i--) {
-          contents.add("      {{1}} : s_selected_slice <= s_select_vector[({{2}}*{{outBits}})-1:{{1}}*{{outBits}}];", i, (i + 1));
+          contents.add("{{1}}{{2}} : s_selected_slice <= s_select_vector[({{3}}*{{outBits}})-1:{{2}}*{{outBits}}];", LineBuffer.getIndent(2), i, (i + 1));
         }
-        contents.addLines(
-            "      default : s_selected_slice <= s_select_vector[{{outBits}}-1:0];",
-            "   endcase",
-            "end");
+        contents.add("""
+                  default : s_selected_slice <= s_select_vector[{{outBits}}-1:0];
+               endcase
+            end
+            """);
       } else {
         contents.add("assign DataOut = s_extended_vector[Sel];");
       }
@@ -137,19 +136,9 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   }
 
   @Override
-  public String GetSubDir() {
-    return "plexers";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist nets) {
     final var map = new TreeMap<String, Integer>();
     map.put("s_extended_vector", ExtendedBitsId);
     return map;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

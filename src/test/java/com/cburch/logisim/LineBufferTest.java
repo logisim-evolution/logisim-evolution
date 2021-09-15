@@ -16,9 +16,8 @@ import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.draw.shapes.Line;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
@@ -92,7 +91,6 @@ public class LineBufferTest extends TestBase {
     final var lb = (new LineBuffer())
             .pair("pair", pair)
             .add("{{pair}}-{{1}}-{{2}}", foo, bar);
-    System.out.println(lb.toString());
     assertEquals(1, lb.size());
     final var expected = String.format("%s-%s-%d", pair, foo, bar);
     assertEquals(expected, lb.get(0));
@@ -112,8 +110,8 @@ public class LineBufferTest extends TestBase {
     final var pairs =
         new LineBuffer.Pairs() {
           {
-            add("foo", "FOO");
-            add("bar", "BAR");
+            pair("foo", "FOO");
+            pair("bar", "BAR");
           }
         };
 
@@ -127,63 +125,49 @@ public class LineBufferTest extends TestBase {
 
   @Test
   public void testFormatterWithGlobalPairs() {
-    final Map<String, String> tests =
-        Map.of(
-            " {{foo}} ", " FOO ",
-            " {{bar}} ", " BAR ",
-            " {{foo}} {{bar}} ", " FOO BAR ",
-            " {{bar  }} ", " BAR ",
-            " {{   bar  }} ", " BAR ",
-            " {{   bar}} ", " BAR ");
+    final Map<String, String> tests = Map.of(
+        " {{foo}} ", " FOO ",
+        "{{bar}}", "BAR",
+        " {{foo}} {{bar}} ", " FOO BAR ",
+        " {{bar  }} ", " BAR ",
+        " {{   bar  }} ", " BAR ",
+        " {{   bar}} ", " BAR ");
 
-    final var pairs =
-        new LineBuffer.Pairs() {
-          {
-            add("foo", "FOO");
-            add("bar", "BAR");
-          }
-        };
+    final var globalPairs = (new LineBuffer.Pairs())
+        .pair("foo", "FOO")
+        .pair("bar", "BAR");
 
     for (final var test : tests.entrySet()) {
-      final var lb = new LineBuffer(pairs);
+      final var lb = new LineBuffer(globalPairs);
       lb.add(test.getKey());
-      final var expected = (new LineBuffer()).add(test.getValue(), pairs);
+      final var expected = (new LineBuffer()).add(test.getValue(), globalPairs);
       assertEquals(expected, lb);
     }
   }
 
   @Test
   public void testFormatterMixedPairs() {
-    final Map<String, String> tests =
-        Map.of(
-            " {{foo}} ", " FOO ",
-            " {{bar}} ", " BAR ",
-            " {{foo}} {{bar}} ", " FOO BAR ",
-            " {{bar  }} ", " BAR ",
-            " {{   bar  }} ", " BAR ",
-            " {{   bar}} ", " BAR ",
-            " {{bang}} ", " BANG ");
+    final Map<String, String> tests = Map.of(
+        " {{foo}} ", " FOO ",
+        " {{bar}} ", " BAR ",
+        " {{foo}} {{bar}} ", " FOO BAR ",
+        " {{bar  }} ", " BAR ",
+        " {{   bar  }} ", " BAR ",
+        " {{   bar}} ", " BAR ",
+        " {{bang}} ", " BANG ");
 
-    final var globalPairs =
-        new LineBuffer.Pairs() {
-          {
-            add("foo", "FOO");
-            add("bar", "BAR");
-          }
-        };
+    final var globalPairs = (new LineBuffer.Pairs())
+        .pair("foo", "FOO")
+        .pair("bar", "BAR");
 
     for (final var test : tests.entrySet()) {
       final var lb = new LineBuffer(globalPairs);
       lb.add(test.getKey(), new LineBuffer.Pairs("bang", "BANG"));
 
-      final var expPairs =
-          new LineBuffer.Pairs() {
-            {
-              add("foo", "FOO");
-              add("bar", "BAR");
-              add("bang", "BANG");
-            }
-          };
+      final var expPairs = new LineBuffer.Pairs();
+      expPairs.pair("foo", "FOO");
+      expPairs.pair("bar", "BAR");
+      expPairs.pair("bang", "BANG");
 
       final var expected = new LineBuffer(test.getValue(), expPairs);
       assertEquals(expected, lb);
@@ -193,26 +177,50 @@ public class LineBufferTest extends TestBase {
   @Test
   public void testMultiplePlaceholdersInLine() {
     final var arg1 = "ARG_1";
-    final var line = "{{assign}} s_{{ins}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{1}};";
+    final var fmt = "{{assign}}{{ins}}{{id}}{{<}}{{pin}}{{>}}{{=}}{{1}};";
 
     final var buffer = new LineBuffer();
-    // lb.addHdlPairs();  // FIXME: mock isVHDL()
+    // final var buffer = LineBuffer.getHdlBuffer();  // FIXME: mock isVHDL() first!
+
+    final var assign = getRandomString();
+    final var eq = getRandomString();
+    final var ob = getRandomString();
+    final var cb = getRandomString();
     buffer
-        .pair("assign", "assign")
-        .pair("=", "=")
-        .pair("<", "<")
-        .pair(">", ">");
+        .pair("assign", assign)
+        .pair("=", eq)
+        .pair("<", ob)
+        .pair(">", cb);
+
+    // do not merge with the above code.
+    final var id = getRandomInt(1, 1023);
+    final var pin = getRandomString();
+    final var ins = getRandomString();
 
     buffer
-        .pair("id", "ID")
-        .pair("pin", "PIN")
-        .pair("ins", "INS");
+        .pair("id", id)
+        .pair("pin", pin)
+        .pair("ins", ins);
 
-    buffer.add(line, arg1);
+    buffer.add(fmt, arg1);
 
-    final var exp = "assign s_INSID<PIN> = " + arg1 + ";";
+    final var exp = LineBuffer.format("{{1}}{{2}}{{3}}{{4}}{{5}}{{6}}{{7}}{{8}};", assign, ins, id, ob, pin, cb, eq, arg1);
     assertEquals(1, buffer.size());
     assertEquals(exp, buffer.get(0));
+  }
+
+  /**
+   * Ensures that we properly deal with special chars in replacement string as backslashes (\)
+   * and dollar signs ($) in the replacement string may cause the results to be different
+   * than if it were being treated as a literal replacement string.
+   */
+  @Test
+  public void testFormatWithSpecialCharsInReplacementString() {
+    final var tests = Map.of("$", "\\");
+    for (final var test : tests.entrySet()) {
+      final var result = LineBuffer.format("{{1}}", test.getValue());
+      assertEquals(test.getValue(), result);
+    }
   }
 
   /* ********************************************************************************************* */
@@ -227,6 +235,9 @@ public class LineBufferTest extends TestBase {
     });
   }
 
+  /**
+   * Ensures we properly fail when formatting string uses positional placeholders, but there's none provided.
+   */
   @Test
   public void testGetUsedPlaceholders() {
     assertThrows(RuntimeException.class, () -> {
@@ -236,6 +247,9 @@ public class LineBufferTest extends TestBase {
 
   /* ********************************************************************************************* */
 
+  /**
+   * Ensures getWithIndent() returns what it should.
+   */
   @Test
   public void testGetWithIndent() {
     final var indentSize = getRandomInt(2, 6);
@@ -246,5 +260,21 @@ public class LineBufferTest extends TestBase {
     final var result = this.lb.getWithIndent(indent).get(0);
     assertEquals(indentSize + line.length(), result.length());
     assertEquals(indent + line, result);
+  }
+
+  /**
+   * Ensures addUnique() will not add non-unique content to the buffer.
+   */
+  @Test
+  public void testAddUnique() {
+    final var line = getRandomString();
+
+    final var lb = new LineBuffer();
+    lb.addUnique(line);
+    assertEquals(1, lb.size());
+    lb.addUnique(line);
+    assertEquals(1, lb.size());
+
+    assertEquals(line, lb.get(0));
   }
 }

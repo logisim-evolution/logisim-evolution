@@ -102,7 +102,7 @@ public class Adder extends InstanceFactory {
   private static final int C_OUT = 4;
 
   public Adder() {
-    super(_ID, S.getter("adderComponent"));
+    super(_ID, S.getter("adderComponent"), new AdderHDLGeneratorFactory());
     setAttributes(new Attribute[] {StdAttr.WIDTH}, new Object[] {BitWidth.create(8)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
@@ -128,12 +128,6 @@ public class Adder extends InstanceFactory {
     if (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) CompleteName.append("FullAdder");
     else CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
     return CompleteName.toString();
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new AdderHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

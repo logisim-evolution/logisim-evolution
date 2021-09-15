@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -207,9 +207,7 @@ public class LocaleManager {
 
   private static final ArrayList<LocaleManager> managers = new ArrayList<>();
 
-  private static final String DATE_FORMAT = S.get("dateFormat");
-
-  public static final SimpleDateFormat parserSDF = new SimpleDateFormat(LocaleManager.DATE_FORMAT);
+  public static final SimpleDateFormat parserSDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
 
   private static final ArrayList<LocaleListener> listeners = new ArrayList<>();
 

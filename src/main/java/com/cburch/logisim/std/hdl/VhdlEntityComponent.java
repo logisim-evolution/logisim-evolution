@@ -30,7 +30,6 @@ import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlSimConstants;
 import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Window;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -107,7 +106,7 @@ public class VhdlEntityComponent extends InstanceFactory {
   private final WeakHashMap<Instance, VhdlEntityListener> contentListeners;
 
   public VhdlEntityComponent() {
-    super(_ID, S.getter("vhdlComponent"));
+    super(_ID, S.getter("vhdlComponent"), new VhdlHDLGeneratorFactory(), true);
 
     this.contentListeners = new WeakHashMap<>();
     this.setIcon(new ArithmeticIcon("VHDL"));
@@ -166,12 +165,6 @@ public class VhdlEntityComponent extends InstanceFactory {
     final var nbOutputs = content.getOutputsNumber();
 
     return Bounds.create(0, 0, WIDTH, Math.max(nbInputs, nbOutputs) * PORT_GAP + HEIGHT);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new VhdlHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -330,11 +323,6 @@ public class VhdlEntityComponent extends InstanceFactory {
       throw new UnsupportedOperationException(
           "VHDL component simulation is not supported. This could be because there is no Questasim/Modelsim simulation server running.");
     }
-  }
-
-  @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
   }
 
   /**

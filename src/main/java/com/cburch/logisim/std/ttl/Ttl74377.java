@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import java.util.SortedMap;
@@ -25,11 +24,6 @@ public class Ttl74377 extends AbstractOctalFlops {
   public static final String _ID = "74377";
 
   public static class Ttl74377HDLGenerator extends AbstractOctalFlopsHDLGenerator {
-
-    @Override
-    public String getComponentStringIdentifier() {
-      return "TTL" + _ID;
-    }
 
     @Override
     public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
@@ -51,13 +45,8 @@ public class Ttl74377 extends AbstractOctalFlops {
         new String[] {
           "nCLKen", "Q1", "D1", "D2", "Q2", "Q3", "D3", "D4", "Q4", "CLK", "Q5", "D5", "D6", "Q6",
           "Q7", "D7", "D8", "Q8"
-        });
+        },
+        new Ttl74377HDLGenerator());
     super.SetWe(true);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new Ttl74377HDLGenerator();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

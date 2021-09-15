@@ -28,17 +28,14 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   public static final String FPGA_CLOCK = "FPGA_GlobalClock";
   public static final String FPGA_TICK = "s_FPGA_Tick";
+  public static final String HDL_IDENTIFIER = "LogisimTickGenerator";
+  public static final String HDL_DIRECTORY = "base";
 
-  public TickComponentHDLGeneratorFactory(
-      long fpga_clock_frequency, double tick_frequency /* boolean useFPGAClock */) {
+  public TickComponentHDLGeneratorFactory(long fpga_clock_frequency, double tick_frequency) {
+    super(HDL_DIRECTORY);
     fpgaClockFrequency = fpga_clock_frequency;
     tickFrequency = tick_frequency;
     // this.useFPGAClock = useFPGAClock;
-  }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "LogisimTickGenerator";
   }
 
   @Override
@@ -51,8 +48,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents =
-        (new LineBuffer())
-            .addHdlPairs()
+        LineBuffer.getHdlBuffer()
             .pair("nrOfCounterBits", NrOfCounterBitsStr)
             .add("")
             .addRemarkBlock("Here the Output is defined")
@@ -64,49 +60,54 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             .addRemarkBlock("Here the update logic is defined");
 
     if (HDL.isVHDL()) {
-      Contents.addLines(
-          "s_tick_next   <= '1' WHEN s_count_reg = std_logic_vector(to_unsigned(0, {{nrOfCounterBits}})) ELSE '0';",
-          "s_count_next  <= (OTHERS => '0') WHEN s_tick_reg /= '0' AND s_tick_reg /= '1' ELSE -- For simulation only!",
-          "                 std_logic_vector(to_unsigned((ReloadValue-1), {{nrOfCounterBits}})) WHEN s_tick_next = '1' ELSE",
-          "                 std_logic_vector(unsigned(s_count_reg)-1);",
-          "");
+      Contents.add("""
+          s_tick_next   <= '1' WHEN s_count_reg = std_logic_vector(to_unsigned(0, {{nrOfCounterBits}})) ELSE '0';
+          s_count_next  <= (OTHERS => '0') WHEN s_tick_reg /= '0' AND s_tick_reg /= '1' ELSE -- For simulation only!
+                           std_logic_vector(to_unsigned((ReloadValue-1), {{nrOfCounterBits}})) WHEN s_tick_next = '1' ELSE
+                           std_logic_vector(unsigned(s_count_reg)-1);
+          
+          """);
     } else {
-      Contents.addLines(
-              "assign s_tick_next  = (s_count_reg == 0) ? 1'b1 : 1'b0;",
-              "assign s_count_next = (s_count_reg == 0) ? ReloadValue-1 : s_count_reg-1;",
-              "")
+      Contents.add("""
+              assign s_tick_next  = (s_count_reg == 0) ? 1'b1 : 1'b0;
+              assign s_count_next = (s_count_reg == 0) ? ReloadValue-1 : s_count_reg-1;
+              
+              """)
           .addRemarkBlock("Here the simulation only initial is defined")
-          .addLines(
-              "initial",
-              "begin",
-              "   s_count_reg = 0;",
-              "   s_tick_reg  = 1'b0;",
-              "end",
-              "");
+          .add("""
+              initial
+              begin
+                 s_count_reg = 0;
+                 s_tick_reg  = 1'b0;
+              end
+
+              """);
     }
     Contents.addRemarkBlock("Here the flipflops are defined");
     if (HDL.isVHDL()) {
-      Contents.addLines(
-          "make_tick : PROCESS( FPGAClock , s_tick_next )",
-          "BEGIN",
-          "   IF (FPGAClock'event AND (FPGAClock = '1')) THEN",
-          "      s_tick_reg <= s_tick_next;",
-          "   END IF;",
-          "END PROCESS make_tick;",
-          "",
-          "make_counter : PROCESS( FPGAClock , s_count_next )",
-          "BEGIN",
-          "   IF (FPGAClock'event AND (FPGAClock = '1')) THEN",
-          "      s_count_reg <= s_count_next;",
-          "   END IF;",
-          "END PROCESS make_counter;");
+      Contents.add("""
+          make_tick : PROCESS( FPGAClock , s_tick_next )
+          BEGIN
+             IF (FPGAClock'event AND (FPGAClock = '1')) THEN
+                s_tick_reg <= s_tick_next;
+             END IF;
+          END PROCESS make_tick;
+          
+          make_counter : PROCESS( FPGAClock , s_count_next )
+          BEGIN
+             IF (FPGAClock'event AND (FPGAClock = '1')) THEN
+                s_count_reg <= s_count_next;
+             END IF;
+          END PROCESS make_counter;
+          """);
     } else {
-      Contents.addLines(
-          "always @(posedge FPGAClock)",
-          "begin",
-          "    s_count_reg <= s_count_next;",
-          "    s_tick_reg  <= s_tick_next;",
-          "end");
+      Contents.add("""
+          always @(posedge FPGAClock)
+          begin
+              s_count_reg <= s_count_next;
+              s_tick_reg  <= s_tick_next;
+          end
+          """);
     }
     return Contents.getWithIndent();
   }
@@ -159,20 +160,10 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public String GetSubDir() {
-    return "base";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     SortedMap<String, Integer> Wires = new TreeMap<>();
     Wires.put("s_tick_next", 1);
     Wires.put("s_count_next", NrOfCounterBitsId);
     return Wires;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

@@ -15,7 +15,6 @@ import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
-import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.fpga.data.BoardInformation;
@@ -55,7 +54,6 @@ public class FPGACommander
     implements ActionListener,
         LibraryListener,
         ProjectListener,
-        Simulator.Listener,
         CircuitListener,
         BaseWindowListenerContract,
         LocaleListener,
@@ -88,9 +86,7 @@ public class FPGACommander
   public void preferenceChange(PreferenceChangeEvent pce) {
     String property = pce.getKey();
     if (property.equals(AppPreferences.SelectedBoard.getIdentifier())) {
-      MyBoardInformation =
-          new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName())
-              .GetBoardInformation();
+      MyBoardInformation = new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName()).GetBoardInformation();
       MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
       boardIcon = new BoardIcon(MyBoardInformation.GetImage());
       boardPic.setIcon(boardIcon);
@@ -120,16 +116,6 @@ public class FPGACommander
 
 
   @Override
-  public void simulatorReset(Simulator.Event e) {
-    // do nothing
-  }
-
-  @Override
-  public void simulatorStateChanged(Simulator.Event e) {
-    FrequencyPanel.setSelectedFrequency();
-  }
-
-  @Override
   public void circuitChanged(CircuitEvent event) {
     int act = event.getAction();
 
@@ -149,9 +135,7 @@ public class FPGACommander
     c.gridx = 0;
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
-    MyBoardInformation =
-        new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName())
-            .GetBoardInformation();
+    MyBoardInformation = new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName()).GetBoardInformation();
     MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
     boardIcon = new BoardIcon(MyBoardInformation.GetImage());
     JComboBox<String> selector = AppPreferences.Boards.boardSelector();
@@ -223,11 +207,10 @@ public class FPGACommander
     JPanel pan1 = new JPanel();
     pan1.setLayout(new BorderLayout());
     pan1.add(textMainCircuit, BorderLayout.WEST);
-    circuitsList.setActionCommand("mainCircuit");
     RebuildCircuitSelection();
     MyProject.addProjectListener(this);
     MyProject.getLogisimFile().addLibraryListener(this);
-    circuitsList.setActionCommand("Circuit");
+    circuitsList.setActionCommand("mainCircuit");
     circuitsList.addActionListener(this);
     pan1.add(circuitsList, BorderLayout.CENTER);
     pan.add(pan1, BorderLayout.NORTH);
@@ -247,12 +230,13 @@ public class FPGACommander
 
   public FPGACommander(Project Main) {
     MyProject = Main;
+    final var circuitName = Main.getCurrentCircuit().getName();
     FrequencyPanel = new FPGAClockPanel(Main);
-    rebuildBoardSelectionPanel();
     ToolPath.setActionCommand("ToolPath");
     ToolPath.addActionListener(this);
-    MyProject.getSimulator().addSimulatorListener(this);
     MyProject.getFrame().addWindowListener(this);
+    FrequencyPanel.updateFrequencyList(circuitName);
+    rebuildBoardSelectionPanel();
 
     panel = new JFrame();
     panel.setResizable(false);
@@ -308,10 +292,20 @@ public class FPGACommander
     Reporter.Report.setGuiLogger(ReporterGui);
     Reporter.Report.setProgressBar(Progress);
     localeChanged();
+    updateCircuitBoard(circuitName);
   }
 
   public FPGAReportTabbedPane getReporterGui() {
     return ReporterGui;
+  }
+
+  private void updateCircuitBoard(String circuitName) {
+    final var circuit = MyProject.getLogisimFile().getCircuit(circuitName);
+    if (circuit != null && !AppPreferences.Boards.getSelectedBoardFileName().equals(circuit.getDownloadBoard())) {
+      final var boardName = circuit.getDownloadBoard();
+      final var boardIndex = AppPreferences.Boards.getBoardNames().indexOf(boardName);
+      if (boardIndex >= 0) AppPreferences.Boards.boardSelector().setSelectedIndex(boardIndex + 1);
+    }
   }
 
   private void HandleHDLOnly() {
@@ -387,6 +381,10 @@ public class FPGACommander
       StopButton.setEnabled(false);
       Progress.setString(S.get("FpgaGuiIdle"));
       Progress.setValue(0);
+    } else if (e.getActionCommand().equals("mainCircuit")) {
+      final var circuitName = circuitsList.getSelectedItem().toString();
+      FrequencyPanel.updateFrequencyList(circuitName);
+      updateCircuitBoard(circuitName);
     }
   }
 
@@ -400,9 +398,8 @@ public class FPGACommander
       }
       root.Annotate(ClearExistingLabels, false);
       Reporter.Report.AddInfo(S.get("FpgaGuiAnnotationDone"));
-      /* TODO: Dirty hack, see Circuit.java function Annotate for details */
+      MyProject.setForcedDirty();
       MyProject.repaintCanvas();
-      MyProject.getLogisimFile().setDirty(true);
     }
   }
 

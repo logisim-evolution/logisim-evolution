@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -20,11 +20,6 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return "TTL74283";
-  }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
@@ -65,16 +60,17 @@ public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     return (new LineBuffer())
-        .addLines(
-            "oppA   <= \"0\"&A4&A3&A2&A1;",
-            "oppB   <= \"0\"&B4&B3&B2&B1;",
-            "oppC   <= \"0000\"&Cin;",
-            "Result <= std_logic_vector(unsigned(oppA)+unsigned(oppB)+unsigned(oppC));",
-            "S1     <= Result(0);",
-            "S2     <= Result(1);",
-            "S3     <= Result(2);",
-            "S4     <= Result(3);",
-            "Cout   <= Result(4);")
+        .add("""
+            oppA   <= "0"&A4&A3&A2&A1;
+            oppB   <= "0"&B4&B3&B2&B1;
+            oppC   <= "0000"&Cin;
+            Result <= std_logic_vector(unsigned(oppA)+unsigned(oppB)+unsigned(oppC));
+            S1     <= Result(0);
+            S2     <= Result(1);
+            S3     <= Result(2);
+            S4     <= Result(3);
+            Cout   <= Result(4);
+            """)
         .getWithIndent();
   }
 
@@ -101,16 +97,7 @@ public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
-    return "ttl";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
     return (!attrs.getValue(TtlLibrary.VCC_GND) && HDL.isVHDL());

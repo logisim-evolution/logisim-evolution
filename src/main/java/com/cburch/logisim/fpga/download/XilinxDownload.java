@@ -17,8 +17,8 @@ import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
@@ -128,7 +128,7 @@ public class XilinxDownload implements VendorDownload {
 
   @Override
   public boolean readyForDownload() {
-    return new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + "." + bitfileExt).exists();
+    return new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + "." + bitfileExt).exists();
   }
 
   @Override
@@ -149,7 +149,7 @@ public class XilinxDownload implements VendorDownload {
         Reporter.Report.AddFatalError(S.get("XilinxUsbTmc"));
         return null;
       }
-      var bitfile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + "." + bitfileExt);
+      var bitfile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + "." + bitfileExt);
       var bitfile_buffer = new byte[BUFFER_SIZE];
       var bitfile_buffer_size = 0;
       BufferedInputStream bitfile_in;
@@ -181,10 +181,10 @@ public class XilinxDownload implements VendorDownload {
   @Override
   public boolean CreateDownloadScripts() {
     final var JTAGPos = String.valueOf(boardInfo.fpga.getFpgaJTAGChainPosition());
-    var ScriptFile = FileWriter.GetFilePointer(ScriptPath, SCRIPT_FILE);
-    var VhdlListFile = FileWriter.GetFilePointer(ScriptPath, VHDL_LIST_FILE);
-    var UcfFile = FileWriter.GetFilePointer(UcfPath, UCF_FILE);
-    var DownloadFile = FileWriter.GetFilePointer(ScriptPath, DOWNLOAD_FILE);
+    var ScriptFile = FileWriter.getFilePointer(ScriptPath, SCRIPT_FILE);
+    var VhdlListFile = FileWriter.getFilePointer(ScriptPath, VHDL_LIST_FILE);
+    var UcfFile = FileWriter.getFilePointer(UcfPath, UCF_FILE);
+    var DownloadFile = FileWriter.getFilePointer(ScriptPath, DOWNLOAD_FILE);
     if (ScriptFile == null || VhdlListFile == null || UcfFile == null || DownloadFile == null) {
       ScriptFile = new File(ScriptPath + SCRIPT_FILE);
       VhdlListFile = new File(ScriptPath + VHDL_LIST_FILE);
@@ -195,56 +195,68 @@ public class XilinxDownload implements VendorDownload {
           && UcfFile.exists()
           && DownloadFile.exists();
     }
-    var contents = new LineBuffer();
-    for (var entity : Entities) contents.add("{{1}} work \"{{2}}\"", HDLType.toUpperCase(), entity);
-    for (var arch : architectures) contents.add("{{1}} work \"{{2}}\"", HDLType.toUpperCase(), arch);
-    if (!FileWriter.WriteContents(VhdlListFile, contents.get())) return false;
+    final var contents = (new LineBuffer())
+            .pair("JTAGPos", JTAGPos)
+            .pair("fileExt", bitfileExt)
+            .pair("fileBaseName", ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME)
+            .pair("mcsFile", ScriptPath + File.separator + MCS_FILE)
+            .pair("hdlType", HDLType.toUpperCase().toUpperCase());
 
-    contents.clear();
-    contents.add(
-        "run -top {{1}} -ofn logisim.ngc -ofmt NGC -ifn {{2}}{{3}} -ifmt mixed -p {{4}}",
-        ToplevelHDLGeneratorFactory.FPGAToplevelName,
-        ScriptPath.replace(ProjectPath, "../"),
-        VHDL_LIST_FILE,
-        GetFPGADeviceString(boardInfo));
+    for (var entity : Entities) contents.add("{{hdlType}} work \"{{1}}\"", entity);
+    for (var arch : architectures) contents.add("{{hdlType}} work \"{{1}}\"", arch);
+    if (!FileWriter.writeContents(VhdlListFile, contents.get())) return false;
 
-    if (!FileWriter.WriteContents(ScriptFile, contents.get())) return false;
+    contents
+          .clear()
+          .add(
+              "run -top {{1}} -ofn logisim.ngc -ofmt NGC -ifn {{2}}{{3}} -ifmt mixed -p {{4}}",
+              ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME,
+              ScriptPath.replace(ProjectPath, "../"),
+              VHDL_LIST_FILE,
+              GetFPGADeviceString(boardInfo));
+
+    if (!FileWriter.writeContents(ScriptFile, contents.get())) return false;
 
     contents.clear();
     contents.add("setmode -bscan");
+
     if (writeToFlash && boardInfo.fpga.isFlashDefined()) {
       if (boardInfo.fpga.getFlashName() == null) {
         Reporter.Report.AddFatalError(S.get("XilinxFlashMissing", boardInfo.getBoardName()));
       }
-      final var flashPos = String.valueOf(boardInfo.fpga.getFlashJTAGChainPosition());
-      final var mcsFile = ScriptPath + File.separator + MCS_FILE;
-      contents
-          .add("setmode -pff")
-          .add("setSubMode -pffserial")
-          .add("addPromDevice -p {{1}} -size 0 -name {{2}}", JTAGPos, boardInfo.fpga.getFlashName())
-          .add("addDesign -version 0 -name \"0\"")
-          .add("addDeviceChain -index 0")
-          .add("addDevice -p {{1}} -file {{2}}.{{3}}", JTAGPos, ToplevelHDLGeneratorFactory.FPGAToplevelName, bitfileExt)
-          .add("generate -format mcs -fillvalue FF -output {{1}}", mcsFile)
-          .add("setMode -bs")
-          .add("setCable -port auto")
-          .add("identify")
-          .add("assignFile -p {{1}} -file {{2}}", flashPos, mcsFile)
-          .add("program -p {{1}} -e -v", flashPos);
+
+      contents.pair("flashPos", String.valueOf(boardInfo.fpga.getFlashJTAGChainPosition()))
+              .pair("flashName", boardInfo.fpga.getFlashName())
+              .add("""
+                setmode -pff
+                setSubMode -pffserial
+                addPromDevice -p {{JTAGPos}} -size 0 -name {{flashName}}
+                addDesign -version 0 -name "0"
+                addDeviceChain -index 0
+                addDevice -p {{JTAGPos}} -file {{fileBaseName}}.{{fileExt}}
+                generate -format mcs -fillvalue FF -output {{mcsFile}}
+                setMode -bs
+                setCable -port auto
+                identify
+                assignFile -p {{flashPos}} -file {{mcsFile}}
+                program -p {{flashPos}} -e -v
+                """);
     } else {
       contents.add("setcable -p auto").add("identify");
       if (!IsCPLD) {
-        contents
-            .add("assignFile -p {{1}} -file {{2}}.{{3}}", JTAGPos, ToplevelHDLGeneratorFactory.FPGAToplevelName, bitfileExt)
-            .add("program -p {{1}} -onlyFpga", JTAGPos);
+        contents.add("""
+            assignFile -p {{JTAGPos}} -file {{fileBaseName}}.{{fileExt}}
+            program -p {{JTAGPos}} -onlyFpga
+            """);
       } else {
-        contents
-            .add("assignFile -p {{1}} -file logisim.{{2}}", JTAGPos, bitfileExt)
-            .add("program -p {{1}} -e", JTAGPos);
+        contents.add("""
+            assignFile -p {{JTAGPos}} -file logisim.{{fileExt}}
+            program -p {{JTAGPos}} -e
+            """);
       }
     }
     contents.add("quit");
-    if (!FileWriter.WriteContents(DownloadFile, contents.get())) return false;
+    if (!FileWriter.writeContents(DownloadFile, contents.get())) return false;
 
     contents.clear();
     if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
@@ -252,14 +264,14 @@ public class XilinxDownload implements VendorDownload {
           .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
           .pair("clockFreq", Download.GetClockFrequencyString(boardInfo))
           .pair("clockPin", GetXilinxClockPin(boardInfo))
-          .addLines(
-            "NET \"{{clock}}\" {{clockPin}} ;",
-            "NET \"{{clock}}\" TNM_NET = \"{{clock}}\" ;",
-            "TIMESPEC \"TS_{{clock}}\" = PERIOD \"{{clock}}\" {{clockFreq}} HIGH 50 % ;",
-            "");
+          .add("""
+            NET "{{clock}}" {{clockPin}} ;
+            NET "{{clock}}" TNM_NET = "{{clock}}" ;
+            TIMESPEC "TS_{{clock}}" = PERIOD "{{clock}}" {{clockFreq}} HIGH 50 % ;
+            """);
     }
     contents.add(getPinLocStrings());
-    return FileWriter.WriteContents(UcfFile, contents.get());
+    return FileWriter.writeContents(UcfFile, contents.get());
   }
 
   private ArrayList<String> getPinLocStrings() {
@@ -400,7 +412,7 @@ public class XilinxDownload implements VendorDownload {
       command.add(xilinxVendor.getBinaryPath(4)).add("-w");
       if (boardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PULL_UP) command.add("-g").add("UnusedPin:PULLUP");
       if (boardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PULL_DOWN) command.add("-g").add("UnusedPin:PULLDOWN");
-      command.add("-g").add("StartupClk:CCLK").add("logisim_par").add("{{1}}.bit", ToplevelHDLGeneratorFactory.FPGAToplevelName);
+      command.add("-g").add("StartupClk:CCLK").add("logisim_par").add("{{1}}.bit", ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME);
     } else {
       command.add(xilinxVendor.getBinaryPath(7)).add("-i").add("logisim.vm6");
     }
@@ -409,12 +421,9 @@ public class XilinxDownload implements VendorDownload {
     return stage4;
   }
 
-  private static String GetFPGADeviceString(BoardInformation CurrentBoard) {
-    return CurrentBoard.fpga.getPart()
-        + "-"
-        + CurrentBoard.fpga.getPackage()
-        + "-"
-        + CurrentBoard.fpga.getSpeedGrade();
+  private static String GetFPGADeviceString(BoardInformation currentBoard) {
+    final var fpga = currentBoard.fpga;
+    return String.format("%s-%s-%s", fpga.getPart(), fpga.getPackage(), fpga.getSpeedGrade());
   }
 
   private static String GetXilinxClockPin(BoardInformation CurrentBoard) {
@@ -436,8 +445,7 @@ public class XilinxDownload implements VendorDownload {
 
   @Override
   public boolean BoardConnected() {
-    // TODO Detect if a board is connected, and in case of multiple boards select the one that
-    // should be used
+    // TODO: Detect if a board is connected, and in case of multiple boards select the one that should be used
     return true;
   }
 

@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -548,8 +548,11 @@ public class Simulator {
     if (simThread.setAutoTicking(value))
       fireSimulatorStateChanged();
   }
-
+  
   public void setTickFrequency(double freq) {
+    final var circuitState = getCircuitState();
+    if (circuitState != null)
+      circuitState.getCircuit().setTickFrequency(freq);
     if (simThread.setTickFrequency(freq))
       fireSimulatorStateChanged();
   }
