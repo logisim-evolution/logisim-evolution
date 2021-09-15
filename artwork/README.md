@@ -1,4 +1,4 @@
-[![Logisim-evolution](logisim-evolution-logo.svg)](https://github.com/logisim-evolution/logisim-evolution)
+[![Logisim-evolution](logisim-evolution-logo.png)](https://github.com/logisim-evolution/logisim-evolution)
 
 ---
 
@@ -9,6 +9,7 @@ Designed by Marcin Orlowski <http://MarcinOrlowski.com>
 ## SVG files ##
 
 * `logisim-evolution-logo.svg` - main logo project file (with texts as editable strings),
+* `logisim-evolution-logo.png` - bitmap rendition of the the project logo to be used mainly in documentation files,
 * `logisim-evolution-icon.svg` - project icon.
 
 "NOTE: To properly render the `logisim-evolution-logo.svg` (be it in-app, on the web page, or elsewhere)
