@@ -73,22 +73,6 @@ java {
   targetCompatibility = JavaVersion.VERSION_16
 }
 
-java {
-  sourceSets["main"].java {
-    srcDir("${buildDir}/generated/logisim/java")
-    srcDir("${buildDir}/generated/sources/srcgen")
-  }
-}
-
-task<Jar>("sourcesJar") {
-  group = "build"
-  description = "Creates a JAR archive with project sources."
-  dependsOn.add("classes")
-  classifier = "src"
-
-  from(sourceSets.main.get().allSource)
-}
-
 /**
  * Setting up all shared vars and parameters.
  */
@@ -176,6 +160,25 @@ extra.apply {
   set(UPPERCASE_PROJECT_NAME, uppercaseProjectName)
   set(APP_DIR_NAME, "${targetDir}/${uppercaseProjectName}.app")
 }
+
+java {
+  sourceSets["main"].java {
+    srcDir("${buildDir}/generated/logisim/java")
+    srcDir("${buildDir}/generated/sources/srcgen")
+  }
+}
+
+task<Jar>("sourcesJar") {
+  group = "build"
+  description = "Creates a JAR archive with project sources."
+  dependsOn.add("classes")
+  classifier = "src"
+
+  from(sourceSets.main.get().allSource)
+  archiveVersion.set(ext.get(APP_VERSION) as String)
+}
+
+
 
 /**
  * Creates distribution directory and checks if source.

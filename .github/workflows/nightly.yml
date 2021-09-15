@@ -137,7 +137,7 @@ jobs:
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-all.jar
-          name: ${{ needs.git_check.outputs.base_name }}-all-jdk$${{ env.JDK_VERSION }}.jar
+          name: ${{ needs.git_check.outputs.base_name }}-all-jdk${{ env.JDK_VERSION }}.jar
 
       # ###########################################################################################
 
