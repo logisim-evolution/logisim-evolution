@@ -29,14 +29,15 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final String TWOS_COMPLEMENT_STRING = "TwosComplement";
   private static final int TWOS_COMPLEMENT_ID = -2;
   
- public ComparatorHDLGeneratorFactory() {
+  public ComparatorHDLGeneratorFactory() {
     super();
     myParametersList
         .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID)
         .add(TWOS_COMPLEMENT_STRING, TWOS_COMPLEMENT_ID, Comparator.MODE_ATTR, 
             new HashMap<AttributeOption, Integer>() {{ 
               put(Comparator.UNSIGNED_OPTION, 0); 
-              put(Comparator.SIGNED_OPTION, 1);}});
+              put(Comparator.SIGNED_OPTION, 1); 
+            }} );
   }
 
   @Override
