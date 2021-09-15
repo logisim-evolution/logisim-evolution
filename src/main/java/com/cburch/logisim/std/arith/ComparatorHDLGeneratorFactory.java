@@ -30,8 +30,8 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ComparatorHDLGeneratorFactory() {
     super();
     myParametersList
-      .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-      .add(TWOS_COMPLEMENT_STRING, TWOS_COMPLEMENT_ID);
+        .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID)
+        .add(TWOS_COMPLEMENT_STRING, TWOS_COMPLEMENT_ID);
   }
 
   @Override

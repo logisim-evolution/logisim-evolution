@@ -30,8 +30,8 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SubtractorHDLGeneratorFactory() {
     super();
     myParametersList
-      .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-      .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID);
+        .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID)
+        .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID);
   }
 
   @Override

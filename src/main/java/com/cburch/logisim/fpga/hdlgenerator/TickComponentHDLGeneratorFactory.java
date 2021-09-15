@@ -36,8 +36,8 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     fpgaClockFrequency = fpga_clock_frequency;
     tickFrequency = tick_frequency;
     myParametersList
-      .add(RELOAD_VALUE_STRING, RELOAD_VALUE_ID)
-      .add(NR_OF_COUNTER_BITS_STRING, NR_OF_COUNTER_BITS_ID);
+        .add(RELOAD_VALUE_STRING, RELOAD_VALUE_ID)
+        .add(NR_OF_COUNTER_BITS_STRING, NR_OF_COUNTER_BITS_ID);
   }
 
   @Override

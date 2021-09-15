@@ -31,9 +31,9 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public DividerHDLGeneratorFactory() {
     super();
     myParametersList
-      .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-      .add(CALC_BITS_STRING, CALC_BITS_ID)
-      .add(UNSIGNED_STRING, UNSIGNED_ID);
+        .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
+        .add(CALC_BITS_STRING, CALC_BITS_ID)
+        .add(UNSIGNED_STRING, UNSIGNED_ID);
   }
 
   @Override
