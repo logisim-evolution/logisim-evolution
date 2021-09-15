@@ -37,7 +37,8 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             new HashMap<AttributeOption, Integer>() {{ 
               put(Comparator.UNSIGNED_OPTION, 0); 
               put(Comparator.SIGNED_OPTION, 1); 
-            }});
+            }}
+          );
   }
 
   @Override
