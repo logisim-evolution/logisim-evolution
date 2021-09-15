@@ -26,7 +26,14 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   private static final String BIT_WIDTH_STRING = "NrOfBits";
   private static final int BUBBLES_GENERIC = -2;
   private static final String BUBBLES_MASK = "BubblesMask";
-  
+
+  public AbstractGateHDLGenerator() {
+    super();
+    myParametersList
+        .addBusOnly(BIT_WIDTH_STRING, BIT_WIDTH_GENERIC)
+        .add(BUBBLES_MASK, BUBBLES_GENERIC);
+  }
+
   public boolean GetFloatingValue(boolean isInverted) {
     return !isInverted;
   }
@@ -172,22 +179,6 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var params = new TreeMap<Integer, String>();
-    int nrOfInputs =
-        attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
-            ? attrs.getValue(GateAttributes.ATTR_INPUTS)
-            : 1;
-    if (is_bus(attrs)) {
-      params.put(BIT_WIDTH_GENERIC, BIT_WIDTH_STRING);
-    }
-    if (nrOfInputs > 1) {
-      params.put(BUBBLES_GENERIC, BUBBLES_MASK);
-    }
-    return params;
-  }
-
-  @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var parameterMap = new TreeMap<String, Integer>();
     final var isBus = is_bus(componentInfo.getComponent().getAttributeSet());
@@ -311,5 +302,13 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   private boolean is_bus(AttributeSet attrs) {
     return attrs.getValue(StdAttr.WIDTH).getWidth() != 1;
+  }
+
+  @Override
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+    var supported = true;
+    if (attrs.containsAttribute(GateAttributes.ATTR_OUTPUT))
+      supported = attrs.getValue(GateAttributes.ATTR_OUTPUT).equals(GateAttributes.OUTPUT_01);
+    return supported;
   }
 }

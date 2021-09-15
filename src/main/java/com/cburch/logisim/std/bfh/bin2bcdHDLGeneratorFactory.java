@@ -27,7 +27,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   
   public bin2bcdHDLGeneratorFactory() {
     super();
-    myParametersList.put(NR_OF_BITS_ID, NR_OF_BITS_STR);
+    myParametersList.add(NR_OF_BITS_STR, NR_OF_BITS_ID);
   }
 
   @Override

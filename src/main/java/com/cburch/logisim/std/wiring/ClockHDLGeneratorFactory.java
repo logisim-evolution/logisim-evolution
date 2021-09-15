@@ -41,6 +41,11 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   
   public ClockHDLGeneratorFactory() {
     super("base");
+    myParametersList
+        .add(HIGH_TICK_STR, HIGH_TICK_ID)
+        .add(LOW_TICK_STR, LOW_TICK_ID)
+        .add(PHASE_STR, PHASE_ID)
+        .add(NR_OF_BITS_STR, NR_OF_BITS_ID);
   }
 
   private String GetClockNetName(Component comp, Netlist TheNets) {
@@ -190,16 +195,6 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("ClockBus", NR_OF_CLOCK_BITS);
-    return map;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var map = new TreeMap<Integer, String>();
-    map.put(HIGH_TICK_ID, HIGH_TICK_STR);
-    map.put(LOW_TICK_ID, LOW_TICK_STR);
-    map.put(PHASE_ID, PHASE_STR);
-    map.put(NR_OF_BITS_ID, NR_OF_BITS_STR);
     return map;
   }
 

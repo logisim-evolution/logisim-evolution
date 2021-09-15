@@ -65,18 +65,18 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
     final var outputs = new TreeMap<String, Integer>();
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs, nrOfLedsGeneric);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs, nrOfLedsGeneric);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs, nrOfLedsGeneric);
+    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs, NR_OF_LEDS_ID);
+    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs, NR_OF_LEDS_ID);
+    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs, NR_OF_LEDS_ID);
     return outputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, nrOfLedsGeneric);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, nrOfLedsGeneric);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, nrOfLedsGeneric);
+    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, NR_OF_LEDS_ID);
+    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, NR_OF_LEDS_ID);
+    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, NR_OF_LEDS_ID);
     return inputs;
   }
 

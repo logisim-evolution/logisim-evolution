@@ -24,21 +24,30 @@ import java.util.TreeMap;
 
 public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private static final String NrOfBitsStr = "width";
-  private static final int NrOfBitsId = -1;
-  private static final String MaxValStr = "max_val";
-  private static final int MaxValId = -2;
-  private static final String activeEdgeStr = "ClkEdge";
-  private static final int ActiveEdgeId = -3;
-  private static final String modeStr = "mode";
-  private static final int ModeId = -4;
+  private static final String NR_OF_BITS_STRING = "width";
+  private static final int NR_OF_BITS_ID = -1;
+  private static final String MAX_VALUE_STRING = "max_val";
+  private static final int MAX_VALUE_ID = -2;
+  private static final String ACTIVE_EDGE_STRING = "ClkEdge";
+  private static final int ACTIVE_EDGE_ID = -3;
+  private static final String MODE_STRING = "mode";
+  private static final int MODE_ID = -4;
+
+  public CounterHDLGeneratorFactory() {
+    super();
+    myParametersList
+        .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
+        .add(MAX_VALUE_STRING, MAX_VALUE_ID)
+        .add(ACTIVE_EDGE_STRING, ACTIVE_EDGE_ID)
+        .add(MODE_STRING, MODE_ID);
+  }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("GlobalClock", 1);
     map.put("ClockEnable", 1);
-    map.put("LoadData", NrOfBitsId);
+    map.put("LoadData", NR_OF_BITS_ID);
     map.put("clear", 1);
     map.put("load", 1);
     map.put("Up_n_Down", 1);
@@ -48,7 +57,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = (new LineBuffer()).pair("activeEdge", activeEdgeStr);
+    final var contents = (new LineBuffer()).pair("activeEdge", ACTIVE_EDGE_STRING);
     contents.addRemarkBlock(
         "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
             + "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down");
@@ -193,18 +202,8 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    map.put("CountValue", NrOfBitsId);
+    map.put("CountValue", NR_OF_BITS_ID);
     map.put("CompareOut", 1);
-    return map;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var map = new TreeMap<Integer, String>();
-    map.put(NrOfBitsId, NrOfBitsStr);
-    map.put(MaxValId, MaxValStr);
-    map.put(ActiveEdgeId, activeEdgeStr);
-    map.put(ModeId, modeStr);
     return map;
   }
 
@@ -220,13 +219,13 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     } else {
       mode = 1;
     }
-    map.put(NrOfBitsStr, attrs.getValue(StdAttr.WIDTH).getWidth());
-    map.put(MaxValStr, attrs.getValue(Counter.ATTR_MAX).intValue());
+    map.put(NR_OF_BITS_STRING, attrs.getValue(StdAttr.WIDTH).getWidth());
+    map.put(MAX_VALUE_STRING, attrs.getValue(Counter.ATTR_MAX).intValue());
     var clkEdge = 1;
     if (HDL.getClockNetName(componentInfo, Counter.CK, nets).isEmpty()
         && attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING) clkEdge = 0;
-    map.put(activeEdgeStr, clkEdge);
-    map.put(modeStr, mode);
+    map.put(ACTIVE_EDGE_STRING, clkEdge);
+    map.put(MODE_STRING, mode);
     return map;
   }
 
@@ -291,11 +290,11 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    map.put("s_next_counter_value", NrOfBitsId); // for verilog generation
+    map.put("s_next_counter_value", NR_OF_BITS_ID); // for verilog generation
     // in explicite process
     map.put("s_carry", 1); // for verilog generation in explicite process
-    map.put("s_counter_value", NrOfBitsId);
-    if (HDL.isVerilog()) map.put("s_counter_value_neg_edge", NrOfBitsId);
+    map.put("s_counter_value", NR_OF_BITS_ID);
+    if (HDL.isVerilog()) map.put("s_counter_value_neg_edge", NR_OF_BITS_ID);
     return map;
   }
 

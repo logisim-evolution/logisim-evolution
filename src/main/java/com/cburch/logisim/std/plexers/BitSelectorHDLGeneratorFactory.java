@@ -21,20 +21,29 @@ import java.util.TreeMap;
 
 public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private static final String INPUT_BITS_STR = "NrOfInputBits";
-  private static final int InputBitsId = -1;
-  private static final String OUTPUTS_BITS_STR = "NrOfOutputBits";
-  private static final int OutputsBitsId = -2;
-  private static final String SelectBitsStr = "NrOfSelBits";
-  private static final int SelectBitsId = -3;
-  private static final String EXTENDED_BITS_STR = "NrOfExtendedBits";
-  private static final int ExtendedBitsId = -4;
+  private static final String INPUT_BITS_STRING = "NrOfInputBits";
+  private static final int INPUT_BITS_ID = -1;
+  private static final String OUTPUTS_BITS_STRING = "NrOfOutputBits";
+  private static final int OUTPUT_BITS_ID = -2;
+  private static final String SELECT_BITS_STRING = "NrOfSelBits";
+  private static final int SELECT_BITS_ID = -3;
+  private static final String EXTENDED_BITS_STRING = "NrOfExtendedBits";
+  private static final int EXTENDED_BITS_ID = -4;
+
+  public BitSelectorHDLGeneratorFactory() {
+    super();
+    myParametersList
+        .add(SELECT_BITS_STRING, SELECT_BITS_ID)
+        .add(INPUT_BITS_STRING, INPUT_BITS_ID)
+        .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID)
+        .addBusOnly(BitSelector.GROUP_ATTR, OUTPUTS_BITS_STRING, OUTPUT_BITS_ID);
+  }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist theNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    map.put("DataIn", InputBitsId);
-    map.put("Sel", SelectBitsId);
+    map.put("DataIn", INPUT_BITS_ID);
+    map.put("Sel", SELECT_BITS_ID);
     return map;
   }
 
@@ -42,9 +51,9 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents =
         (new LineBuffer())
-            .pair("extBits", EXTENDED_BITS_STR)
-            .pair("inBits", INPUT_BITS_STR)
-            .pair("outBits", OUTPUTS_BITS_STR);
+            .pair("extBits", EXTENDED_BITS_STRING)
+            .pair("inBits", INPUT_BITS_STRING)
+            .pair("outBits", OUTPUTS_BITS_STRING);
     final var outputBits = attrs.getValue(BitSelector.GROUP_ATTR).getWidth();
     if (HDL.isVHDL()) {
       contents
@@ -91,19 +100,8 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist theNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    int outputBits = (attrs.getValue(BitSelector.GROUP_ATTR).getWidth() == 1) ? 1 : OutputsBitsId;
+    int outputBits = (attrs.getValue(BitSelector.GROUP_ATTR).getWidth() == 1) ? 1 : OUTPUT_BITS_ID;
     map.put("DataOut", outputBits);
-    return map;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var map = new TreeMap<Integer, String>();
-    int outputBits = attrs.getValue(BitSelector.GROUP_ATTR).getWidth();
-    map.put(InputBitsId, INPUT_BITS_STR);
-    if (outputBits > 1) map.put(OutputsBitsId, OUTPUTS_BITS_STR);
-    map.put(SelectBitsId, SelectBitsStr);
-    map.put(ExtendedBitsId, EXTENDED_BITS_STR);
     return map;
   }
 
@@ -113,14 +111,14 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     int selBits = componentInfo.getComponent().getEnd(2).getWidth().getWidth();
     int inputBits = componentInfo.getComponent().getEnd(1).getWidth().getWidth();
     int outputBits = componentInfo.getComponent().getEnd(0).getWidth().getWidth();
-    map.put(INPUT_BITS_STR, inputBits);
-    map.put(SelectBitsStr, selBits);
-    if (outputBits > 1) map.put(OUTPUTS_BITS_STR, outputBits);
+    map.put(INPUT_BITS_STRING, inputBits);
+    map.put(SELECT_BITS_STRING, selBits);
+    if (outputBits > 1) map.put(SELECT_BITS_STRING, outputBits);
     var nrOfSlices = 1;
     for (var i = 0; i < selBits; i++) {
       nrOfSlices <<= 1;
     }
-    map.put(EXTENDED_BITS_STR, nrOfSlices * outputBits + 1);
+    map.put(EXTENDED_BITS_STRING, nrOfSlices * outputBits + 1);
     return map;
   }
 

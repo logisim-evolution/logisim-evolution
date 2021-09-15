@@ -26,13 +26,22 @@ import java.util.TreeMap;
 public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   private static final String ACTIVE_LEVEL_STR = "ActiveLevel";
-  private static final int ActiveLevelId = -1;
+  private static final int ACTIVE_LEVEL_ID = -1;
   private static final String NR_OF_BITS_STR = "NrOfBits";
-  private static final int NrOfBitsId = -2;
+  private static final int NR_OF_BITS_ID = -2;
   private static final String NR_OF_STAGES_STR = "NrOfStages";
-  private static final int NrOfStagesId = -3;
-  private static final String NrOfParBitsStr = "NrOfParBits";
-  private static final int NrOfParBitsId = -4;
+  private static final int NR_OF_STAGES_ID = -3;
+  private static final String NR_OF_PAR_BITS_STRING = "NrOfParBits";
+  private static final int NR_OF_PAR_BITS_ID = -4;
+
+  public ShiftRegisterHDLGeneratorFactory() {
+    super();
+    myParametersList
+        .add(ACTIVE_LEVEL_STR, ACTIVE_LEVEL_ID)
+        .add(NR_OF_BITS_STR, NR_OF_BITS_ID)
+        .add(NR_OF_PAR_BITS_STRING, NR_OF_PAR_BITS_ID)
+        .add(NR_OF_STAGES_STR, NR_OF_STAGES_ID);
+  }
 
   private LineBuffer.Pairs sharedPairs =
       new LineBuffer.Pairs() {
@@ -195,8 +204,8 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     map.put("Clock", 1);
     map.put("ShiftEnable", 1);
     map.put("ParLoad", 1);
-    map.put("ShiftIn", NrOfBitsId);
-    map.put("D", NrOfParBitsId);
+    map.put("ShiftIn", NR_OF_BITS_ID);
+    map.put("D", NR_OF_PAR_BITS_ID);
     return map;
   }
 
@@ -247,18 +256,8 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    map.put("ShiftOut", NrOfBitsId);
-    map.put("Q", NrOfParBitsId);
-    return map;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var map = new TreeMap<Integer, String>();
-    map.put(ActiveLevelId, ACTIVE_LEVEL_STR);
-    map.put(NrOfBitsId, NR_OF_BITS_STR);
-    map.put(NrOfStagesId, NR_OF_STAGES_STR);
-    map.put(NrOfParBitsId, NrOfParBitsStr);
+    map.put("ShiftOut", NR_OF_BITS_ID);
+    map.put("Q", NR_OF_PAR_BITS_ID);
     return map;
   }
 
@@ -282,7 +281,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     map.put(ACTIVE_LEVEL_STR, activeLevel);
     map.put(NR_OF_BITS_STR, nrOfBits);
     map.put(NR_OF_STAGES_STR, nrOfStages);
-    map.put(NrOfParBitsStr, nrOfBits * nrOfStages);
+    map.put(NR_OF_PAR_BITS_STRING, nrOfBits * nrOfStages);
     return map;
   }
 

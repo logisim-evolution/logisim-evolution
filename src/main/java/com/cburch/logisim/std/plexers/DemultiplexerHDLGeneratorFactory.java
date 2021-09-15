@@ -22,13 +22,18 @@ import java.util.TreeMap;
 
 public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private static final String NrOfBitsStr = "NrOfBits";
-  private static final int NrOfBitsId = -1;
+  private static final String NR_OF_BITS_STRING = "NrOfBits";
+  private static final int NR_OF_BITS_ID = -1;
+
+  public DemultiplexerHDLGeneratorFactory() {
+    super();
+    myParametersList.addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID);
+  }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
+    int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
     int nr_of_select_bits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     map.put("DemuxIn", NrOfBits);
     map.put("Enable", 1);
@@ -62,7 +67,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist theNetList, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    final var nrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
+    final var nrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
     final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     for (var i = 0; i < (1 << nrOfSelectBits); i++) {
       map.put("DemuxOut_" + i, nrOfBits);
@@ -71,19 +76,11 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var map = new TreeMap<Integer, String>();
-    final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (nrOfBits > 1) map.put(NrOfBitsId, NrOfBitsStr);
-    return map;
-  }
-
-  @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var map = new TreeMap<String, Integer>();
     final var nrOfBits =
         componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
-    if (nrOfBits > 1) map.put(NrOfBitsStr, nrOfBits);
+    if (nrOfBits > 1) map.put(NR_OF_BITS_STRING, nrOfBits);
     return map;
   }
 

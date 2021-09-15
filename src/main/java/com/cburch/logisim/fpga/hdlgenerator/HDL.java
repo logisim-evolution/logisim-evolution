@@ -12,10 +12,14 @@ package com.cburch.logisim.fpga.hdlgenerator;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeSet;
+import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LineBuffer;
 
@@ -30,27 +34,34 @@ public abstract class HDL {
       private final boolean isOnlyUsedForBusses;
       private final String parameterName;
       private final int parameterId;
+      private final Attribute<BitWidth> attributeToCheckForBus;
 
       public ParameterInfo(String name, int id) {
-        this(false, name, id);
+        this(false, null, name, id);
       }
 
       public ParameterInfo(boolean forBusOnly, String name, int id) {
+        this(forBusOnly, StdAttr.WIDTH, name, id);
+      }
+
+      public ParameterInfo(boolean forBusOnly, Attribute<BitWidth> checkAttr, String name, int id) {
         isOnlyUsedForBusses = forBusOnly;
         parameterName = name;
         parameterId = id;
+        attributeToCheckForBus = checkAttr;
       }
 
-      public boolean isUsed(int nrOfBits) {
+      public boolean isUsed(AttributeSet attrs) {
+        final var nrOfBits = (attrs != null) && attrs.containsAttribute(attributeToCheckForBus) ? attrs.getValue(attributeToCheckForBus).getWidth() : 0;
         return (!isOnlyUsedForBusses || (nrOfBits > 1));
       }
 
-      public int getParameterId(int nrOfBits) {
-        return isUsed(nrOfBits) ? parameterId : 0;
+      public int getParameterId(AttributeSet attrs) {
+        return isUsed(attrs) ? parameterId : 0;
       }
 
-      public String getParameterString(int nrOfBits) {
-        return isUsed(nrOfBits) ? parameterName : null;
+      public String getParameterString(AttributeSet attrs) {
+        return isUsed(attrs) ? parameterName : null;
       }
     }
 
@@ -66,28 +77,34 @@ public abstract class HDL {
       return this;
     }
 
-    public boolean containsKey(int id, int nrOfBits) {
-      for (var parameter : myParameters) {
-        if (id == parameter.getParameterId(nrOfBits)) return true;
-      }
+    public Parameters addBusOnly(Attribute<BitWidth> checkAttr, String name, int id) {
+      myParameters.add(new ParameterInfo(true, checkAttr, name, id));
+      return this;
+    }
+
+    public boolean containsKey(int id, AttributeSet attrs) {
+      for (var parameter : myParameters) 
+        if (id == parameter.getParameterId(attrs)) return true;
       return false;
     }
 
-    public String get(int id, int nrOfBits) {
-      for (var parameter : myParameters) {
-        if (id == parameter.getParameterId(nrOfBits)) return parameter.getParameterString(nrOfBits);
-      }
+    public String get(int id, AttributeSet attrs) {
+      for (var parameter : myParameters) 
+        if (id == parameter.getParameterId(attrs)) return parameter.getParameterString(attrs);
       return null;
     }
 
-    public boolean isEmpty(int nrOfBits) {
-      return myParameters.isEmpty();
+    public boolean isEmpty(AttributeSet attrs) {
+      var count = 0;
+      for (var parameter : myParameters)
+        if (parameter.isUsed(attrs)) count++;
+      return count == 0;
     }
 
-    public List<Integer> keySet(int nrOfBits) {
+    public List<Integer> keySet(AttributeSet attrs) {
       final var keySet = new ArrayList<Integer>();
       for (var parameter : myParameters) {
-        if (parameter.isUsed(nrOfBits)) keySet.add(parameter.getParameterId(nrOfBits));
+        if (parameter.isUsed(attrs)) keySet.add(parameter.getParameterId(attrs));
       }
       return keySet;
     }

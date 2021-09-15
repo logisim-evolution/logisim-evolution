@@ -25,9 +25,16 @@ import java.util.TreeMap;
 public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   private static final String NR_OF_BITS_STR = "NrOfBits";
-  private static final int NrOfBitsId = -1;
+  private static final int NR_OF_BITS_ID = -1;
   private static final String SEED_STR = "Seed";
-  private static final int SeedId = -2;
+  private static final int SEED_ID = -2;
+
+  public RandomHDLGeneratorFactory() {
+    super();
+    myParametersList
+        .add(NR_OF_BITS_STR, NR_OF_BITS_ID)
+        .add(SEED_STR, SEED_ID);
+  }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
@@ -188,15 +195,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    map.put("Q", NrOfBitsId);
-    return map;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var map = new TreeMap<Integer, String>();
-    map.put(NrOfBitsId, NR_OF_BITS_STR);
-    map.put(SeedId, SEED_STR);
+    map.put("Q", NR_OF_BITS_ID);
     return map;
   }
 
@@ -297,7 +296,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put("s_mac_hi_reg", 24);
     map.put("s_mac_hi_1_reg", 24);
     map.put("s_busy_pipe_reg", 2);
-    map.put("s_output_reg", NrOfBitsId);
+    map.put("s_output_reg", NR_OF_BITS_ID);
     return map;
   }
 

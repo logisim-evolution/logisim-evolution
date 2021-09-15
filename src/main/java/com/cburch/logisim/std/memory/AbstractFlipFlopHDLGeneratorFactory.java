@@ -26,7 +26,13 @@ import java.util.TreeMap;
 
 public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private static final String ACTIVITY_LEVEL_STR = "ActiveLevel";
+  private static final String ACTIVITY_LEVEL_STRING = "ActiveLevel";
+  private static final int ACTIVITY_LEVEL_ID = -1;
+
+  public AbstractFlipFlopHDLGeneratorFactory() {
+    super();
+    myParametersList.add(ACTIVITY_LEVEL_STRING, ACTIVITY_LEVEL_ID);
+  }
 
   public String ComponentName() {
     return "";
@@ -54,9 +60,9 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
-    final var SelectOperator = (HDL.isVHDL()) ? "" : "[" + ACTIVITY_LEVEL_STR + "]";
+    final var SelectOperator = (HDL.isVHDL()) ? "" : "[" + ACTIVITY_LEVEL_STRING + "]";
     contents
-        .pair("activityLevel", ACTIVITY_LEVEL_STR)
+        .pair("activityLevel", ACTIVITY_LEVEL_STRING)
         .addRemarkBlock("Here the output signals are defined")
         .add("""
                  {{assign}}Q    {{=}}s_current_state_reg{{1}};
@@ -142,13 +148,6 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
   }
 
   @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var map = new TreeMap<Integer, String>();
-    map.put(-1, ACTIVITY_LEVEL_STR);
-    return map;
-  }
-
-  @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var map = new TreeMap<String, Integer>();
     var activityLevel = 1;
@@ -170,7 +169,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     if (gatedClock && activeLow) {
       activityLevel = 0;
     }
-    map.put(ACTIVITY_LEVEL_STR, activityLevel);
+    map.put(ACTIVITY_LEVEL_STRING, activityLevel);
     return map;
   }
 

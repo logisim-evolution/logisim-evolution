@@ -24,10 +24,17 @@ import java.util.TreeMap;
 
 public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private static final String NrOfBitsStr = "NrOfBits";
-  private static final int NrOfBitsId = -1;
+  private static final String NR_OF_BITS_STRING = "NrOfBits";
+  private static final int NR_OF_BITS_ID = -1;
   private static final String ACTIVE_LEVEL_STR = "ActiveLevel";
-  private static final int ActiveLevelId = -2;
+  private static final int ACTIVE_LEVEL_ID = -2;
+
+  public RegisterHDLGeneratorFactory() {
+    super();
+    myParametersList
+        .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
+        .add(ACTIVE_LEVEL_STR, ACTIVE_LEVEL_ID);
+  }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
@@ -36,7 +43,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put("ClockEnable", 1);
     map.put("Tick", 1);
     map.put("Clock", 1);
-    map.put("D", NrOfBitsId);
+    map.put("D", NR_OF_BITS_ID);
     return map;
   }
 
@@ -122,15 +129,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    map.put("Q", NrOfBitsId);
-    return map;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var map = new TreeMap<Integer, String>();
-    map.put(ActiveLevelId, ACTIVE_LEVEL_STR);
-    map.put(NrOfBitsId, NrOfBitsStr);
+    map.put("Q", NR_OF_BITS_ID);
     return map;
   }
 
@@ -157,8 +156,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       activeLevel = 0;
     }
     map.put(ACTIVE_LEVEL_STR, activeLevel);
-    map.put(
-        NrOfBitsStr, componentInfo.getComponent().getEnd(Register.IN).getWidth().getWidth());
+    map.put(NR_OF_BITS_STRING, componentInfo.getComponent().getEnd(Register.IN).getWidth().getWidth());
     return map;
   }
 
@@ -253,9 +251,9 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
     final var regs = new TreeMap<String, Integer>();
-    regs.put("s_state_reg", NrOfBitsId);
+    regs.put("s_state_reg", NR_OF_BITS_ID);
     if (HDL.isVerilog() & Netlist.isFlipFlop(attrs))
-      regs.put("s_state_reg_neg_edge", NrOfBitsId);
+      regs.put("s_state_reg_neg_edge", NR_OF_BITS_ID);
     return regs;
   }
 }
