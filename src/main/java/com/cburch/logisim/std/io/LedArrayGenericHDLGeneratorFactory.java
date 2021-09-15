@@ -54,12 +54,12 @@ public class LedArrayGenericHDLGeneratorFactory {
 
   public static String getSpecificHDLName(char typeId) {
     return switch (typeId) {
-      case LedArrayDriving.LED_DEFAULT -> LedArrayLedDefaultHDLGeneratorFactory.LedArrayName;
-      case LedArrayDriving.LED_ROW_SCANNING -> LedArrayRowScanningHDLGeneratorFactory.LedArrayName;
-      case LedArrayDriving.LED_COLUMN_SCANNING -> LedArrayColumnScanningHDLGeneratorFactory.LedArrayName;
-      case LedArrayDriving.RGB_DEFAULT -> RGBArrayLedDefaultHDLGeneratorFactory.RGBArrayName;
-      case LedArrayDriving.RGB_ROW_SCANNING -> RGBArrayRowScanningHDLGeneratorFactory.RGBArrayName;
-      case LedArrayDriving.RGB_COLUMN_SCANNING -> RGBArrayColumnScanningHDLGeneratorFactory.RGBArrayName;
+      case LedArrayDriving.LED_DEFAULT -> LedArrayLedDefaultHDLGeneratorFactory.HDL_IDENTIFIER;
+      case LedArrayDriving.LED_ROW_SCANNING -> LedArrayRowScanningHDLGeneratorFactory.HDL_IDENTIFIER;
+      case LedArrayDriving.LED_COLUMN_SCANNING -> LedArrayColumnScanningHDLGeneratorFactory.HDL_IDENTIFIER;
+      case LedArrayDriving.RGB_DEFAULT -> RGBArrayLedDefaultHDLGeneratorFactory.HDL_IDENTIFIER;
+      case LedArrayDriving.RGB_ROW_SCANNING -> RGBArrayRowScanningHDLGeneratorFactory.HDL_IDENTIFIER;
+      case LedArrayDriving.RGB_COLUMN_SCANNING -> RGBArrayColumnScanningHDLGeneratorFactory.HDL_IDENTIFIER;
       default -> null;
     };
   }

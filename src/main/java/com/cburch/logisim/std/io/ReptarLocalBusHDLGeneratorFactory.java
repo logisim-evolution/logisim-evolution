@@ -88,11 +88,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   }
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "ReptarLB";
-  }
-
-  @Override
   public ArrayList<String> getEntity(Netlist nets, AttributeSet attrs, String componentName) {
     return (new LineBuffer())
         .pair("compName", componentName)

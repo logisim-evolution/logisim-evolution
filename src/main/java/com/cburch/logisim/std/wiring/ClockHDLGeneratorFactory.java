@@ -53,11 +53,6 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "CLOCKGEN";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("GlobalClock", 1);

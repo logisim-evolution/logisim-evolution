@@ -34,11 +34,6 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int ModeId = -4;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "COUNTER";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("GlobalClock", 1);

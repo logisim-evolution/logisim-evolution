@@ -157,6 +157,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
           new AttributeOption[] {APPEAR_CLASSIC, APPEAR_FPGA, APPEAR_EVOLUTION, APPEAR_CUSTOM});
   public static final Attribute<Double> SIMULATION_FREQUENCY = Attributes.forDouble("simulationFrequency");
   public static final Attribute<Double> DOWNLOAD_FREQUENCY = Attributes.forDouble("downloadFrequency");
+  public static final Attribute<String> DOWNLOAD_BOARD = Attributes.forString("downloadBoard");
 
   private static final Attribute<?>[] STATIC_ATTRS = {
     NAME_ATTR,
@@ -166,11 +167,12 @@ public class CircuitAttributes extends AbstractAttributeSet {
     APPEARANCE_ATTR,
     NAMED_CIRCUIT_BOX_FIXED_SIZE,
     SIMULATION_FREQUENCY,
-    DOWNLOAD_FREQUENCY
+    DOWNLOAD_FREQUENCY,
+    DOWNLOAD_BOARD
   };
 
   private static final Object[] STATIC_DEFAULTS = {
-    "", "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT, APPEAR_CLASSIC, false, -1d, -1d
+    "", "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT, APPEAR_CLASSIC, false, -1d, -1d, ""
   };
 
   private static final List<Attribute<?>> INSTANCE_ATTRS =
@@ -209,6 +211,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
     NameReadOnly = false;
     DOWNLOAD_FREQUENCY.setHidden(true);
     SIMULATION_FREQUENCY.setHidden(true);
+    DOWNLOAD_BOARD.setHidden(true);
   }
 
   @Override

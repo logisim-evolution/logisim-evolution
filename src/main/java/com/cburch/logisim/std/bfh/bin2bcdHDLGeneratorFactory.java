@@ -26,11 +26,6 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int NR_OF_BITS_ID = -1;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "BIN2BCD";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
     inputs.put("BinValue", NR_OF_BITS_ID);

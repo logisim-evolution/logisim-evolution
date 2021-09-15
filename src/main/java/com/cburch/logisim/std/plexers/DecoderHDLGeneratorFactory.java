@@ -22,11 +22,6 @@ import java.util.TreeMap;
 public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "BINDECODER";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist theNetList, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("Enable", 1);

@@ -209,6 +209,20 @@ public class LineBufferTest extends TestBase {
     assertEquals(exp, buffer.get(0));
   }
 
+  /**
+   * Ensures that we properly deal with special chars in replacement string as backslashes (\)
+   * and dollar signs ($) in the replacement string may cause the results to be different
+   * than if it were being treated as a literal replacement string.
+   */
+  @Test
+  public void testFormatWithSpecialCharsInReplacementString() {
+    final var tests = Map.of("$", "\\");
+    for (final var test : tests.entrySet()) {
+      final var result = LineBuffer.format("{{1}}", test.getValue());
+      assertEquals(test.getValue(), result);
+    }
+  }
+
   /* ********************************************************************************************* */
 
   /**

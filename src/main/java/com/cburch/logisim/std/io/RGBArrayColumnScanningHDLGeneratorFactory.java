@@ -21,7 +21,7 @@ import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 
 public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnScanningHDLGeneratorFactory {
 
-  public static String RGBArrayName = "RGBArrayColumnScanning";
+  public static final String HDL_IDENTIFIER =  "RGBArrayColumnScanning";
 
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
@@ -153,10 +153,4 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
     }
     return contents.getWithIndent();
   }
-
-  @Override
-  public String getComponentStringIdentifier() {
-    return RGBArrayName;
-  }
-
 }

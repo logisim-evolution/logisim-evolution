@@ -26,11 +26,6 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   private static final int NrOfBitsId = -1;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "DEMUX";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
