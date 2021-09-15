@@ -64,15 +64,15 @@ public class VhdlSimulatorTclComp {
         InstanceState state = vsim.getProject().getCircuitState().getInstanceState(comp);
         String componentName;
         ComponentFactory fact = comp.getFactory();
-        if (fact instanceof VhdlEntity)
-          componentName = ((VhdlEntity) fact).GetSimName(state.getInstance().getAttributeSet());
-        else
-          componentName =
-              ((VhdlEntityComponent) fact).GetSimName(state.getInstance().getAttributeSet());
+        componentName = (fact instanceof VhdlEntity)
+            ? ((VhdlEntity) fact).GetSimName(state.getInstance().getAttributeSet())
+            : ((VhdlEntityComponent) fact).GetSimName(state.getInstance().getAttributeSet());
 
-        comp_files.append("vcom -reportprogress 300 -work work ../src/").append(componentName)
-            .append(".vhdl");
-        comp_files.append(System.getProperty("line.separator"));
+        // FIXME: hardcoded path. The "../src/" asks for troubles!
+        comp_files.append("vcom -reportprogress 300 -work work ../src/")
+            .append(componentName)
+            .append(".vhdl")
+            .append(System.getProperty("line.separator"));
       }
     }
 
