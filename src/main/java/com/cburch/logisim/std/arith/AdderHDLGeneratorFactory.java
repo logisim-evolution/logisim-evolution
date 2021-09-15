@@ -30,7 +30,7 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public AdderHDLGeneratorFactory() {
     super();
     myParametersList
-        .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID)
+        .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID, -1)
         .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID);
   }
 
@@ -75,15 +75,6 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     int outputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
     map.put("Result", outputbits);
     map.put("CarryOut", 1);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    final var map = new TreeMap<String, Integer>();
-    int nrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
-    map.put(EXTENDED_BITS_STRING, nrOfBits + 1);
-    if (nrOfBits > 1) map.put(NR_OF_BITS_STRING, nrOfBits);
     return map;
   }
 

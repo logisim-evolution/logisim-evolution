@@ -62,14 +62,6 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    final var ParameterMap = new TreeMap<String, Integer>();
-    int nrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
-    if (nrOfBits > 1) ParameterMap.put(NR_OF_BITS_STRING, nrOfBits);
-    return ParameterMap;
-  }
-
-  @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     final var portMap = new TreeMap<String, String>();
     if (!(MapInfo instanceof NetlistComponent)) return portMap;

@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.std.arith;
 
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
@@ -17,6 +18,7 @@ import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -27,11 +29,14 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final String TWOS_COMPLEMENT_STRING = "TwosComplement";
   private static final int TWOS_COMPLEMENT_ID = -2;
   
-  public ComparatorHDLGeneratorFactory() {
+ public ComparatorHDLGeneratorFactory() {
     super();
     myParametersList
         .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-        .add(TWOS_COMPLEMENT_STRING, TWOS_COMPLEMENT_ID);
+        .add(TWOS_COMPLEMENT_STRING, TWOS_COMPLEMENT_ID, Comparator.MODE_ATTR, 
+            new HashMap<AttributeOption, Integer>() {{ 
+              put(Comparator.UNSIGNED_OPTION, 0); 
+              put(Comparator.SIGNED_OPTION, 1);}});
   }
 
   @Override
@@ -97,23 +102,6 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put("A_GT_B", 1);
     map.put("A_EQ_B", 1);
     map.put("A_LT_B", 1);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    final var map = new TreeMap<String, Integer>();
-    final var nrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
-    var isSigned = 0;
-    AttributeSet attrs = ComponentInfo.getComponent().getAttributeSet();
-    if (attrs.containsAttribute(Comparator.MODE_ATTRIBUTE)) {
-      if (attrs.getValue(Comparator.MODE_ATTRIBUTE).equals(Comparator.SIGNED_OPTION))
-        isSigned = 1;
-    }
-    if (nrOfBits > 1) {
-      map.put(NR_OF_BITS_STRING, nrOfBits);
-    }
-    map.put(TWOS_COMPLEMENT_STRING, isSigned);
     return map;
   }
 

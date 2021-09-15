@@ -12,7 +12,6 @@ package com.cburch.logisim.std.arith;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -36,10 +35,6 @@ public class IntToFP extends InstanceFactory {
    */
   public static final String _ID = "IntToFP";
 
-  public static final AttributeOption SIGNED_OPTION = Comparator.SIGNED_OPTION;
-  public static final AttributeOption UNSIGNED_OPTION = Comparator.UNSIGNED_OPTION;
-  public static final Attribute<AttributeOption> MODE_ATTR = Comparator.MODE_ATTRIBUTE;
-
   static final int PER_DELAY = 1;
   private static final int IN = 0;
   private static final int OUT = 1;
@@ -57,8 +52,8 @@ public class IntToFP extends InstanceFactory {
   public IntToFP() {
     super(_ID, S.getter("intToFPComponent"));
     setAttributes(
-        new Attribute[] {StdAttr.WIDTH, StdAttr.FP_WIDTH, MODE_ATTR},
-        new Object[] {BitWidth.create(8), BitWidth.create(32), SIGNED_OPTION});
+        new Attribute[] {StdAttr.WIDTH, StdAttr.FP_WIDTH, Comparator.MODE_ATTR},
+        new Object[] {BitWidth.create(8), BitWidth.create(32), Comparator.SIGNED_OPTION});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.FP_WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
     setIcon(new ArithmeticIcon("I\u2192FP", 2));
@@ -89,7 +84,7 @@ public class IntToFP extends InstanceFactory {
     // get attributes
     final var dataWidthIn = state.getAttributeValue(StdAttr.WIDTH);
     final var dataWidthOut = state.getAttributeValue(StdAttr.FP_WIDTH);
-    final var unsigned = state.getAttributeValue(MODE_ATTR).equals(UNSIGNED_OPTION);
+    final var unsigned = state.getAttributeValue(Comparator.MODE_ATTR).equals(Comparator.UNSIGNED_OPTION);
 
     // compute outputs
     final var a = state.getPortValue(IN);

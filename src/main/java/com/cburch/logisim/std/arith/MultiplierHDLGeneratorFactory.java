@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.std.arith;
 
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
@@ -17,6 +18,7 @@ import com.cburch.logisim.fpga.hdlgenerator.HDL;
 
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -33,8 +35,11 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     super();
     myParametersList
         .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-        .add(CALC_BITS_STRING, CALC_BITS_ID)
-        .add(UNSIGNED_STRING, UNSIGNED_ID);
+        .add(CALC_BITS_STRING, CALC_BITS_ID, -200) //multiply by 2
+        .add(UNSIGNED_STRING, UNSIGNED_ID, Comparator.MODE_ATTR, 
+            new HashMap<AttributeOption, Integer>() {{ 
+              put(Comparator.UNSIGNED_OPTION, 0); 
+              put(Comparator.SIGNED_OPTION, 1);}});
   }
 
   @Override
@@ -106,21 +111,6 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     outputs.put("Mult_lo", NR_OF_BITS_ID);
     outputs.put("Mult_hi", NR_OF_BITS_ID);
     return outputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    final var parameterMap = new TreeMap<String, Integer>();
-    final var nrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
-    boolean isUnsigned =
-        ComponentInfo.getComponent()
-            .getAttributeSet()
-            .getValue(Multiplier.MODE_ATTR)
-            .equals(Multiplier.UNSIGNED_OPTION);
-    parameterMap.put(NR_OF_BITS_STRING, nrOfBits);
-    parameterMap.put(CALC_BITS_STRING, 2 * nrOfBits);
-    parameterMap.put(UNSIGNED_STRING, isUnsigned ? 1 : 0);
-    return parameterMap;
   }
 
   @Override

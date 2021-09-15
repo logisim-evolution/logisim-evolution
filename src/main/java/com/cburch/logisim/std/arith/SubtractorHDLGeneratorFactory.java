@@ -31,7 +31,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     super();
     myParametersList
         .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-        .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID);
+        .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID, -1);
   }
 
   @Override
@@ -80,15 +80,6 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     outputs.put("Result", outputbits);
     outputs.put("BorrowOut", 1);
     return outputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    final var parameterMap = new TreeMap<String, Integer>();
-    int nrOfBits = componentInfo.getComponent().getEnd(0).getWidth().getWidth();
-    parameterMap.put(EXTENDED_BITS_STRING, nrOfBits + 1);
-    if (nrOfBits > 1) parameterMap.put(NR_OF_BITS_STRING, nrOfBits);
-    return parameterMap;
   }
 
   @Override

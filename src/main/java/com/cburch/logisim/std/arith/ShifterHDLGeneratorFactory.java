@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.std.arith;
 
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
@@ -17,6 +18,7 @@ import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -27,7 +29,14 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public ShifterHDLGeneratorFactory() {
     super();
-    myParametersList.add(SHIFT_MODE_STRING, SHIFT_MODE_ID);
+    myParametersList.add(SHIFT_MODE_STRING, SHIFT_MODE_ID, Shifter.ATTR_SHIFT, 
+        new HashMap<AttributeOption, Integer>() {{
+          put(Shifter.SHIFT_LOGICAL_LEFT, 0);
+          put(Shifter.SHIFT_ROLL_LEFT,1);
+          put(Shifter.SHIFT_LOGICAL_RIGHT,2);
+          put(Shifter.SHIFT_ARITHMETIC_RIGHT,3);
+          put(Shifter.SHIFT_ROLL_RIGHT,4);
+        }});
   }
 
   @Override
@@ -125,18 +134,6 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var inputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
     outputs.put("Result", inputbits);
     return outputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    final var parameterMap = new TreeMap<String, Integer>();
-    Object shift = ComponentInfo.getComponent().getAttributeSet().getValue(Shifter.ATTR_SHIFT);
-    if (shift == Shifter.SHIFT_LOGICAL_LEFT) parameterMap.put(SHIFT_MODE_STRING, 0);
-    else if (shift == Shifter.SHIFT_ROLL_LEFT) parameterMap.put(SHIFT_MODE_STRING, 1);
-    else if (shift == Shifter.SHIFT_LOGICAL_RIGHT) parameterMap.put(SHIFT_MODE_STRING, 2);
-    else if (shift == Shifter.SHIFT_ARITHMETIC_RIGHT) parameterMap.put(SHIFT_MODE_STRING, 3);
-    else parameterMap.put(SHIFT_MODE_STRING, 4);
-    return parameterMap;
   }
 
   @Override

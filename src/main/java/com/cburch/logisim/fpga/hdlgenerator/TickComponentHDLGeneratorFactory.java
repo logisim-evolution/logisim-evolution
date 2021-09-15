@@ -11,7 +11,6 @@ package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -35,9 +34,18 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     super(HDL_DIRECTORY);
     fpgaClockFrequency = fpga_clock_frequency;
     tickFrequency = tick_frequency;
+    final var reloadValueAcc = ((double) fpgaClockFrequency) / tickFrequency;
+    var reloadValue = (long) reloadValueAcc;
+    var nrOfBits = 0;
+    if ((reloadValue > 0x7FFFFFFFL) | (reloadValue < 0)) reloadValue = 0x7FFFFFFFL;
+    var calcValue = reloadValue;
+    while (calcValue != 0) {
+      nrOfBits++;
+      calcValue /= 2;
+    }
     myParametersList
-        .add(RELOAD_VALUE_STRING, RELOAD_VALUE_ID)
-        .add(NR_OF_COUNTER_BITS_STRING, NR_OF_COUNTER_BITS_ID);
+        .add(RELOAD_VALUE_STRING, RELOAD_VALUE_ID, (int) reloadValue)
+        .add(NR_OF_COUNTER_BITS_STRING, NR_OF_COUNTER_BITS_ID, nrOfBits);
   }
 
   @Override
@@ -119,22 +127,6 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     SortedMap<String, Integer> Outputs = new TreeMap<>();
     Outputs.put("FPGATick", 1);
     return Outputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    SortedMap<String, Integer> ParameterMap = new TreeMap<>();
-    double ReloadValueAcc = ((double) fpgaClockFrequency) / tickFrequency;
-    long ReloadValue = (long) ReloadValueAcc;
-    int nr_of_bits = 0;
-    if ((ReloadValue > (long) 0x7FFFFFFF) | (ReloadValue < 0)) ReloadValue = 0x7FFFFFFF;
-    ParameterMap.put(RELOAD_VALUE_STRING, (int) ReloadValue);
-    while (ReloadValue != 0) {
-      nr_of_bits++;
-      ReloadValue /= 2;
-    }
-    ParameterMap.put(NR_OF_COUNTER_BITS_STRING, nr_of_bits);
-    return ParameterMap;
   }
 
   @Override

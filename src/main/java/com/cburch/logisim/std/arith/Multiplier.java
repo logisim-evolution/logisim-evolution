@@ -12,7 +12,6 @@ package com.cburch.logisim.std.arith;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -39,10 +38,6 @@ public class Multiplier extends InstanceFactory {
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Multiplier";
-
-  public static final AttributeOption SIGNED_OPTION = Comparator.SIGNED_OPTION;
-  public static final AttributeOption UNSIGNED_OPTION = Comparator.UNSIGNED_OPTION;
-  public static final Attribute<AttributeOption> MODE_ATTR = Comparator.MODE_ATTRIBUTE;
 
   static BigInteger extend(int w, long v, boolean unsigned) {
     long mask = w == 64 ? 0 : (-1L) << w;
@@ -144,8 +139,8 @@ public class Multiplier extends InstanceFactory {
   public Multiplier() {
     super(_ID, S.getter("multiplierComponent"), new MultiplierHDLGeneratorFactory());
     setAttributes(
-        new Attribute[] {StdAttr.WIDTH, MODE_ATTR},
-        new Object[] {BitWidth.create(8), UNSIGNED_OPTION});
+        new Attribute[] {StdAttr.WIDTH, Comparator.MODE_ATTR},
+        new Object[] {BitWidth.create(8), Comparator.UNSIGNED_OPTION});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
     setIcon(new ArithmeticIcon("\u00d7"));
@@ -171,7 +166,7 @@ public class Multiplier extends InstanceFactory {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == MODE_ATTR) instance.fireInvalidated();
+    if (attr == Comparator.MODE_ATTR) instance.fireInvalidated();
   }
 
   @Override
@@ -200,7 +195,7 @@ public class Multiplier extends InstanceFactory {
   public void propagate(InstanceState state) {
     // get attributes
     BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
-    boolean unsigned = state.getAttributeValue(MODE_ATTR).equals(UNSIGNED_OPTION);
+    boolean unsigned = state.getAttributeValue(Comparator.MODE_ATTR).equals(Comparator.UNSIGNED_OPTION);
 
     // compute outputs
     Value a = state.getPortValue(IN0);

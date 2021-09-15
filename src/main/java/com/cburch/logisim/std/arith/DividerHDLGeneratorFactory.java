@@ -9,14 +9,15 @@
 
 package com.cburch.logisim.std.arith;
 
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -32,8 +33,11 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     super();
     myParametersList
         .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-        .add(CALC_BITS_STRING, CALC_BITS_ID)
-        .add(UNSIGNED_STRING, UNSIGNED_ID);
+        .add(CALC_BITS_STRING, CALC_BITS_ID, -200) // multiply by 2
+        .add(UNSIGNED_STRING, UNSIGNED_ID, Comparator.MODE_ATTR, 
+            new HashMap<AttributeOption, Integer>() {{ 
+              put(Comparator.UNSIGNED_OPTION, 0); 
+              put(Comparator.SIGNED_OPTION, 1);}});
   }
 
   @Override
@@ -74,23 +78,6 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var map = new TreeMap<String, Integer>();
     map.put("Quotient", NR_OF_BITS_ID);
     map.put("Remainder", NR_OF_BITS_ID);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    final var map = new TreeMap<String, Integer>();
-    final var nrOfBits =
-        ComponentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
-    final var isUnsigned = ComponentInfo.getComponent()
-            .getAttributeSet()
-            .getValue(Multiplier.MODE_ATTR)
-            .equals(Multiplier.UNSIGNED_OPTION);
-    // TODO(kwalsh) - null the upper if not connected, or add a parameter
-    final var CalcBits = 2 * nrOfBits;
-    map.put(NR_OF_BITS_STRING, nrOfBits);
-    map.put(CALC_BITS_STRING, CalcBits);
-    map.put(UNSIGNED_STRING, isUnsigned ? 1 : 0);
     return map;
   }
 

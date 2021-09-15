@@ -373,8 +373,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Object componentInfo,
       String name) {
     final var Contents = new ArrayList<String>();
-    final var ParameterMap = (componentInfo == null) | componentInfo instanceof NetlistComponent 
-        ? GetParameterMap(nets, (NetlistComponent) componentInfo) : null;
+    final var parameterMap = new TreeMap<String, Integer>(); 
     final var PortMap = GetPortMap(nets, componentInfo);
     final var componentHDLName = componentInfo instanceof NetlistComponent 
         ? ((NetlistComponent) componentInfo).getComponent().getFactory().getHDLName(((NetlistComponent) componentInfo).getComponent().getAttributeSet()) : 
@@ -382,15 +381,20 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     final var CompName = (name != null && !name.isEmpty()) ? name : componentHDLName;
     final var ThisInstanceIdentifier = getInstanceIdentifier(componentInfo, componentId);
     final var OneLine = new StringBuilder();
+    if (componentInfo == null) parameterMap.putAll(myParametersList.getMaps(null));
+    if (componentInfo instanceof NetlistComponent) {
+      final var attrs = ((NetlistComponent) componentInfo).getComponent().getAttributeSet();
+      parameterMap.putAll(myParametersList.getMaps(attrs));
+    }
     var TabLength = 0;
     var first = true;
     if (HDL.isVHDL()) {
       Contents.add("   " + ThisInstanceIdentifier + " : " + CompName);
-      if ((ParameterMap != null) && !ParameterMap.isEmpty()) {
+      if (!parameterMap.isEmpty()) {
         OneLine.append("      GENERIC MAP ( ");
         TabLength = OneLine.length();
         first = true;
-        for (var generic : ParameterMap.keySet()) {
+        for (var generic : parameterMap.keySet()) {
           if (!first) {
             OneLine.append(",");
             Contents.add(OneLine.toString());
@@ -403,7 +407,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           }
           OneLine.append(generic);
           OneLine.append(" ".repeat(Math.max(0, SIGNAL_ALLIGNMENT_SIZE - generic.length())));
-          OneLine.append("=> ").append(ParameterMap.get(generic));
+          OneLine.append("=> ").append(parameterMap.get(generic));
         }
         OneLine.append(")");
         Contents.add(OneLine.toString());
@@ -434,11 +438,11 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       }
     } else {
       OneLine.append("   ").append(CompName);
-      if ((ParameterMap != null) && !ParameterMap.isEmpty()) {
+      if (!parameterMap.isEmpty()) {
         OneLine.append(" #(");
         TabLength = OneLine.length();
         first = true;
-        for (var parameter : ParameterMap.keySet()) {
+        for (var parameter : parameterMap.keySet()) {
           if (!first) {
             OneLine.append(",");
             Contents.add(OneLine.toString());
@@ -449,7 +453,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           } else {
             first = false;
           }
-          OneLine.append(".").append(parameter).append("(").append(ParameterMap.get(parameter)).append(")");
+          OneLine.append(".").append(parameter).append("(").append(parameterMap.get(parameter)).append(")");
         }
         OneLine.append(")");
         Contents.add(OneLine.toString());
