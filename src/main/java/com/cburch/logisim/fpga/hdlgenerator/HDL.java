@@ -56,16 +56,16 @@ public abstract class HDL {
   }
 
   public static String startIf(String condition) {
-    return isVHDL() ? LineBuffer.format("IF ({{1}}) THEN", condition)
+    return isVHDL() ? LineBuffer.format("IF {{1}} THEN", condition)
                     : LineBuffer.format("if ({{1}}) begin", condition);
   }
 
   public static String elseStatement() {
-    return isVHDL() ? "ELSE " : "end else begin";
+    return isVHDL() ? "ELSE" : "end else begin";
   }
 
   public static String elseIf(String condition) {
-    return isVHDL() ? LineBuffer.format("ELSIF ({{1}}) THEN", condition)
+    return isVHDL() ? LineBuffer.format("ELSIF {{1}} THEN", condition)
                     : LineBuffer.format("end else if ({{1}}) begin", condition);
   }
 
@@ -148,51 +148,49 @@ public abstract class HDL {
             + (isVHDL() ? ")" : "");
   }
 
-  public static String shiftlOperator(String signal, int with, int nrOfBits, boolean arithmetic) {
-    if (nrOfBits == 0)
-      return signal;
-    return isVHDL() ? LineBuffer.format("{{1}}{{2}} & {{4}}{{3}}{{4}}", signal, splitVector(with - 1 - nrOfBits, 0), "0".repeat(nrOfBits), nrOfBits == 1 ? "'" : "\"")
-                    : LineBuffer.format("{{{1}}{{2}},{{{3}}{1'b0}}}", signal, splitVector(with - 1 - nrOfBits, 0), nrOfBits);
+  public static String shiftlOperator(String signal, int width, int distance, boolean arithmetic) {
+    if (distance == 0) return signal;
+    return isVHDL() ? LineBuffer.format("{{1}}{{2}} & {{4}}{{3}}{{4}}", signal, splitVector(width - 1 - distance, 0), "0".repeat(distance), distance == 1 ? "'" : "\"")
+                    : LineBuffer.format("{{{1}}{{2}},{{{3}}{1'b0}}}", signal, splitVector(width - 1 - distance, 0), distance);
   }
   
-  public static String shiftrOperator(String signal, int with, int nrOfBits, boolean arithmetic) {
-    if (nrOfBits == 0)
-      return signal;
+  public static String shiftrOperator(String signal, int width, int distance, boolean arithmetic) {
+    if (distance == 0) return signal;
     if (arithmetic) {
       return isVHDL()
-        ? LineBuffer.format("({{1}} DOWNTO 0 => {{2}}({{1}})) & {{2}}{{3}}", with - 1, signal, splitVector(with - 1, with - nrOfBits))
-        : LineBuffer.format("{ {{{1}}{{{2}}[{{1}}-1]}},{{2}}{{3}}}", with, signal, splitVector(with - 1, with - nrOfBits));
+        ? LineBuffer.format("({{1}} DOWNTO 0 => {{2}}({{1}})) & {{2}}{{3}}", width - 1, signal, splitVector(width - 1, width - distance))
+        : LineBuffer.format("{ {{{1}}{{{2}}[{{1}}-1]}},{{2}}{{3}}}", width, signal, splitVector(width - 1, width - distance));
     } else {
       return isVHDL()
-        ? LineBuffer.format("{{1}}{{2}}{{1}} & {{3}}{{4}", nrOfBits == 1 ? "'" : "\"", "0".repeat(nrOfBits), signal, splitVector(with - 1, with - nrOfBits))
-        : LineBuffer.format("{ {{{1}}{1'b0}},{{2}}{{3}}}", with, signal, splitVector(with - 1, with - nrOfBits));
+        ? LineBuffer.format("{{1}}{{2}}{{1}} & {{3}}{{4}", distance == 1 ? "'" : "\"", "0".repeat(distance), signal, splitVector(width - 1, width - distance))
+        : LineBuffer.format("{ {{{1}}{1'b0}},{{2}}{{3}}}", width, signal, splitVector(width - 1, width - distance));
     }
   }
 
-  public static String sllOperator(String signal, int with, int nrOfBits) {
-    return shiftlOperator(signal, with, nrOfBits, false);
+  public static String sllOperator(String signal, int width, int distance) {
+    return shiftlOperator(signal, width, distance, false);
   }
 
-  public static String slaOperator(String signal, int with, int nrOfBits) {
-    return shiftlOperator(signal, with, nrOfBits, true);
+  public static String slaOperator(String signal, int width, int distance) {
+    return shiftlOperator(signal, width, distance, true);
   }
 
-  public static String srlOperator(String signal, int with, int nrOfBits) {
-    return shiftrOperator(signal, with, nrOfBits, false);
+  public static String srlOperator(String signal, int width, int distance) {
+    return shiftrOperator(signal, width, distance, false);
   }
   
-  public static String sraOperator(String signal, int with, int nrOfBits) {
-    return shiftrOperator(signal, with, nrOfBits, true);
+  public static String sraOperator(String signal, int width, int distance) {
+    return shiftrOperator(signal, width, distance, true);
   }
 
-  public static String rolOperator(String signal, int with, int nrOfBits) {
-    return isVHDL() ? LineBuffer.format("{{1}}{{2}} & {{1}}{{3}}", signal, splitVector(with - 1 - nrOfBits, 0), splitVector(with - 1, with - nrOfBits))
-                    : LineBuffer.format("{{{1}}{{2}},{{1}}{{3}}}", signal, splitVector(with - 1 - nrOfBits, 0), splitVector(with - 1, with - nrOfBits));
+  public static String rolOperator(String signal, int width, int distance) {
+    return isVHDL() ? LineBuffer.format("{{1}}{{2}} & {{1}}{{3}}", signal, splitVector(width - 1 - distance, 0), splitVector(width - 1, width - distance))
+                    : LineBuffer.format("{{{1}}{{2}},{{1}}{{3}}}", signal, splitVector(width - 1 - distance, 0), splitVector(width - 1, width - distance));
   }
   
-  public static String rorOperator(String signal, int with, int nrOfBits) {
-    return isVHDL() ? LineBuffer.format("{{1}}{{2}} & {{1}}{{3}}", signal, splitVector(nrOfBits, 0), splitVector(with - 1, nrOfBits))
-                    : LineBuffer.format("{{{1}}{{2}},{{1}}{{3}}}", signal, splitVector(nrOfBits, 0), splitVector(with - 1, nrOfBits));
+  public static String rorOperator(String signal, int width, int distance) {
+    return isVHDL() ? LineBuffer.format("{{1}}{{2}} & {{1}}{{3}}", signal, splitVector(distance, 0), splitVector(width - 1, distance))
+                    : LineBuffer.format("{{{1}}{{2}},{{1}}{{3}}}", signal, splitVector(distance, 0), splitVector(width - 1, distance));
   }
 
   public static String zeroBit() {
@@ -212,11 +210,10 @@ public abstract class HDL {
   }
 
   public static String splitVector(int start, int end) {
-    if (start == end)
-      return LineBuffer.format("{{1}}{{2}}{{3}} ", BracketOpen(), start, BracketClose());
+    if (start == end) return LineBuffer.format("{{1}}{{2}}{{3}}", BracketOpen(), start, BracketClose());
     return isVHDL()
                 ? LineBuffer.format("({{1}} DOWNTO {{2}}) ", start, end)
-                : LineBuffer.format("[{{1}}:{{2}}] ", start, end);
+                : LineBuffer.format("[{{1}}:{{2}}]", start, end);
   }
 
   public static String GetZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
