@@ -741,15 +741,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return new TreeMap<>();
   }
 
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    /*
-     * This method returns the assigned parameter/generic values used for
-     * the given component, the key is the name of the parameter/generic,
-     * and the Integer its assigned value
-     */
-    return new TreeMap<>();
-  }
-
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     /*
      * This method returns the assigned input/outputs of the component, the
