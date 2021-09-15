@@ -39,7 +39,9 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .add(UNSIGNED_STRING, UNSIGNED_ID, Comparator.MODE_ATTR, 
             new HashMap<AttributeOption, Integer>() {{ 
               put(Comparator.UNSIGNED_OPTION, 0); 
-              put(Comparator.SIGNED_OPTION, 1);}});
+              put(Comparator.SIGNED_OPTION, 1);
+            }}
+        );
   }
 
   @Override

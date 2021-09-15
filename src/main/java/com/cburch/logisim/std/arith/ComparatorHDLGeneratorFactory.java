@@ -38,7 +38,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               put(Comparator.UNSIGNED_OPTION, 0); 
               put(Comparator.SIGNED_OPTION, 1); 
             }}
-          );
+        );
   }
 
   @Override

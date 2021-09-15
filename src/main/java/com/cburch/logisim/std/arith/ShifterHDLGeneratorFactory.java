@@ -32,11 +32,12 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     myParametersList.add(SHIFT_MODE_STRING, SHIFT_MODE_ID, Shifter.ATTR_SHIFT, 
         new HashMap<AttributeOption, Integer>() {{
           put(Shifter.SHIFT_LOGICAL_LEFT, 0);
-          put(Shifter.SHIFT_ROLL_LEFT,1);
-          put(Shifter.SHIFT_LOGICAL_RIGHT,2);
-          put(Shifter.SHIFT_ARITHMETIC_RIGHT,3);
-          put(Shifter.SHIFT_ROLL_RIGHT,4);
-        }});
+          put(Shifter.SHIFT_ROLL_LEFT, 1);
+          put(Shifter.SHIFT_LOGICAL_RIGHT, 2);
+          put(Shifter.SHIFT_ARITHMETIC_RIGHT, 3);
+          put(Shifter.SHIFT_ROLL_RIGHT, 4);
+        }}
+    );
   }
 
   @Override
