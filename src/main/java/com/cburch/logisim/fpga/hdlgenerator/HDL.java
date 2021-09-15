@@ -10,6 +10,7 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
@@ -22,6 +23,79 @@ public abstract class HDL {
 
   public static final String NET_NAME = "s_LOGISIM_NET_";
   public static final String BUS_NAME = "s_LOGISIM_BUS_";
+  
+  public static class Parameters {
+
+    private class ParameterInfo {
+      private final boolean isOnlyUsedForBusses;
+      private final String parameterName;
+      private final int parameterId;
+
+      public ParameterInfo(String name, int id) {
+        this(false, name, id);
+      }
+
+      public ParameterInfo(boolean forBusOnly, String name, int id) {
+        isOnlyUsedForBusses = forBusOnly;
+        parameterName = name;
+        parameterId = id;
+      }
+
+      public boolean isUsed(int nrOfBits) {
+        return (!isOnlyUsedForBusses || (nrOfBits > 1));
+      }
+
+      public int getParameterId(int nrOfBits) {
+        return isUsed(nrOfBits) ? parameterId : 0;
+      }
+
+      public String getParameterString(int nrOfBits) {
+        return isUsed(nrOfBits) ? parameterName : null;
+      }
+    }
+
+    private final List<ParameterInfo> myParameters = new ArrayList<>();
+
+    public Parameters add(String name, int id) {
+      myParameters.add(new ParameterInfo(name, id));
+      return this;
+    }
+
+    public Parameters addBusOnly(String name, int id) {
+      myParameters.add(new ParameterInfo(true, name, id));
+      return this;
+    }
+
+    public boolean containsKey(int id, int nrOfBits) {
+      for (var parameter : myParameters) {
+        if (id == parameter.getParameterId(nrOfBits)) return true;
+      }
+      return false;
+    }
+
+    public String get(int id, int nrOfBits) {
+      for (var parameter : myParameters) {
+        if (id == parameter.getParameterId(nrOfBits)) return parameter.getParameterString(nrOfBits);
+      }
+      return null;
+    }
+
+    public boolean isEmpty(int nrOfBits) {
+      return myParameters.isEmpty();
+    }
+
+    public List<Integer> keySet(int nrOfBits) {
+      final var keySet = new ArrayList<Integer>();
+      for (var parameter : myParameters) {
+        if (parameter.isUsed(nrOfBits)) keySet.add(parameter.getParameterId(nrOfBits));
+      }
+      return keySet;
+    }
+  }
+  
+  public static Parameters createParameters() {
+    return new Parameters();
+  }
 
   public static boolean isVHDL() {
     return AppPreferences.HDL_Type.get().equals(HDLGeneratorFactory.VHDL);

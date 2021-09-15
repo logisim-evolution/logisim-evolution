@@ -22,8 +22,13 @@ import java.util.TreeMap;
 
 public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private static final String shiftModeStr = "ShifterMode";
-  private static final int ShiftModeId = -1;
+  private static final String SHIFT_MODE_STRING = "ShifterMode";
+  private static final int SHIFT_MODE_ID = -1;
+
+  public ShifterHDLGeneratorFactory() {
+    super();
+    myParametersList.add(SHIFT_MODE_STRING, SHIFT_MODE_ID);
+  }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
@@ -36,7 +41,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = (new LineBuffer())
-            .pair("shiftMode", shiftModeStr);
+            .pair("shiftMode", SHIFT_MODE_STRING);
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
       contents.add("""
@@ -123,21 +128,14 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var parameters = new TreeMap<Integer, String>();
-    parameters.put(ShiftModeId, shiftModeStr);
-    return parameters;
-  }
-
-  @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var parameterMap = new TreeMap<String, Integer>();
     Object shift = ComponentInfo.getComponent().getAttributeSet().getValue(Shifter.ATTR_SHIFT);
-    if (shift == Shifter.SHIFT_LOGICAL_LEFT) parameterMap.put(shiftModeStr, 0);
-    else if (shift == Shifter.SHIFT_ROLL_LEFT) parameterMap.put(shiftModeStr, 1);
-    else if (shift == Shifter.SHIFT_LOGICAL_RIGHT) parameterMap.put(shiftModeStr, 2);
-    else if (shift == Shifter.SHIFT_ARITHMETIC_RIGHT) parameterMap.put(shiftModeStr, 3);
-    else parameterMap.put(shiftModeStr, 4);
+    if (shift == Shifter.SHIFT_LOGICAL_LEFT) parameterMap.put(SHIFT_MODE_STRING, 0);
+    else if (shift == Shifter.SHIFT_ROLL_LEFT) parameterMap.put(SHIFT_MODE_STRING, 1);
+    else if (shift == Shifter.SHIFT_LOGICAL_RIGHT) parameterMap.put(SHIFT_MODE_STRING, 2);
+    else if (shift == Shifter.SHIFT_ARITHMETIC_RIGHT) parameterMap.put(SHIFT_MODE_STRING, 3);
+    else parameterMap.put(SHIFT_MODE_STRING, 4);
     return parameterMap;
   }
 
@@ -154,7 +152,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   private ArrayList<String> GetStageFunctionalityVerilog(int stageNumber, int nrOfBits) {
     final var contents = (new LineBuffer())
-            .pair("shiftMode", shiftModeStr)
+            .pair("shiftMode", SHIFT_MODE_STRING)
             .pair("stageNumber", stageNumber)
             .pair("nrOfBits1", nrOfBits - 1)
             .pair("nrOfBits2", nrOfBits - 2);
@@ -208,7 +206,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var nrOfBitsToShift = (1 << stageNumber);
     final var contents =
         (new LineBuffer())
-          .pair("shiftMode", shiftModeStr)
+          .pair("shiftMode", SHIFT_MODE_STRING)
           .pair("stageNumber", stageNumber)
           .pair("stageNumber1", stageNumber - 1)
           .pair("nrOfBits1", nrOfBits - 1)

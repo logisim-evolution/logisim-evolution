@@ -22,15 +22,22 @@ import java.util.TreeMap;
 
 public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private static final String NrOfBitsStr = "NrOfBits";
-  private static final int NrOfBitsId = -1;
-  private static final String TwosComplementStr = "TwosComplement";
-  private static final int TwosComplementId = -2;
+  private static final String NR_OF_BITS_STRING = "NrOfBits";
+  private static final int NR_OF_BITS_ID = -1;
+  private static final String TWOS_COMPLEMENT_STRING = "TwosComplement";
+  private static final int TWOS_COMPLEMENT_ID = -2;
+  
+  public ComparatorHDLGeneratorFactory() {
+    super();
+    myParametersList
+      .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID)
+      .add(TWOS_COMPLEMENT_STRING, TWOS_COMPLEMENT_ID);
+  }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    final var inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
+    final var inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
     map.put("DataA", inputbits);
     map.put("DataB", inputbits);
     return map;
@@ -39,7 +46,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents = new LineBuffer();
-    Contents.pair("twosComplement", TwosComplementStr);
+    Contents.pair("twosComplement", TWOS_COMPLEMENT_STRING);
 
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
@@ -94,17 +101,6 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var map = new TreeMap<Integer, String>();
-    final var inputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (inputbits > 1) {
-      map.put(NrOfBitsId, NrOfBitsStr);
-    }
-    map.put(TwosComplementId, TwosComplementStr);
-    return map;
-  }
-
-  @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     final var map = new TreeMap<String, Integer>();
     final var nrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
@@ -115,9 +111,9 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         isSigned = 1;
     }
     if (nrOfBits > 1) {
-      map.put(NrOfBitsStr, nrOfBits);
+      map.put(NR_OF_BITS_STRING, nrOfBits);
     }
-    map.put(TwosComplementStr, isSigned);
+    map.put(TWOS_COMPLEMENT_STRING, isSigned);
     return map;
   }
 

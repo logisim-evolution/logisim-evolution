@@ -24,6 +24,11 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   private static final String NR_OF_BITS_STR = "NrOfBits";
   private static final int NR_OF_BITS_ID = -1;
+  
+  public bin2bcdHDLGeneratorFactory() {
+    super();
+    myParametersList.put(NR_OF_BITS_ID, NR_OF_BITS_STR);
+  }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
@@ -41,13 +46,6 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       outputs.put("BCD" + (int) (Math.pow(10, i - 1)), 4);
     }
     return outputs;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var parameterList = new TreeMap<Integer, String>();
-    parameterList.put(NR_OF_BITS_ID, NR_OF_BITS_STR);
-    return parameterList;
   }
 
   @Override
