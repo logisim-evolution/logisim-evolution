@@ -15,6 +15,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -27,7 +28,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   
   public bin2bcdHDLGeneratorFactory() {
     super();
-    myParametersList.add(NR_OF_BITS_STR, NR_OF_BITS_ID, bin2bcd.ATTR_BinBits);
+    myParametersList.add(NR_OF_BITS_STR, NR_OF_BITS_ID, HDLParameters.MAP_INT_ATTRIBUTE, bin2bcd.ATTR_BinBits);
   }
 
   @Override

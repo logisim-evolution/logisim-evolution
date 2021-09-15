@@ -21,7 +21,7 @@ import com.cburch.logisim.instance.StdAttr;
 import java.awt.Font;
 import java.util.List;
 
-class GateAttributes extends AbstractAttributeSet {
+public class GateAttributes extends AbstractAttributeSet {
   static final int MAX_INPUTS = 64;
   static final int DELAY = 1;
 

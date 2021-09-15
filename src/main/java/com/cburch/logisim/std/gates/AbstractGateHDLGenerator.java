@@ -14,6 +14,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     super();
     myParametersList
         .addBusOnly(BIT_WIDTH_STRING, BIT_WIDTH_GENERIC)
-        .add(BUBBLES_MASK, BUBBLES_GENERIC);
+        .add(BUBBLES_MASK, BUBBLES_GENERIC, HDLParameters.MAP_GATE_INPUT_BUBLE);
   }
 
   public boolean GetFloatingValue(boolean isInverted) {
@@ -176,30 +177,6 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     final var bitWidth = (is_bus(attrs)) ? BIT_WIDTH_GENERIC : 1;
     outputs.put("Result", bitWidth);
     return outputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    final var parameterMap = new TreeMap<String, Integer>();
-    final var isBus = is_bus(componentInfo.getComponent().getAttributeSet());
-    final var myAttrs = componentInfo.getComponent().getAttributeSet();
-    var nrOfInputs =
-        myAttrs.containsAttribute(GateAttributes.ATTR_INPUTS)
-            ? myAttrs.getValue(GateAttributes.ATTR_INPUTS)
-            : 1;
-    if (isBus) parameterMap.put(BIT_WIDTH_STRING, myAttrs.getValue(StdAttr.WIDTH).getWidth());
-    if (nrOfInputs > 1) {
-      var bubbleMask = 0;
-      var mask = 1;
-      for (var i = 0; i < nrOfInputs; i++) {
-        final var inputIsInverted = componentInfo.getComponent().getAttributeSet().getValue(new NegateAttribute(i, null));
-        if (inputIsInverted) bubbleMask |= mask;
-        mask <<= 1;
-      }
-      parameterMap.put(BUBBLES_MASK, bubbleMask);
-    }
-
-    return parameterMap;
   }
 
   public ArrayList<String> GetParity(boolean inverted, int nrOfInputs, boolean isBus) {

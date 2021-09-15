@@ -20,7 +20,8 @@ import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.wiring.Clock;
+import com.cburch.logisim.std.gates.GateAttributes;
+import com.cburch.logisim.std.gates.NegateAttribute;
 
 public class HDLParameters {
   
@@ -31,6 +32,7 @@ public class HDLParameters {
   public static final int MAP_ATTRIBUTE_OPTION = 4;
   public static final int MAP_BITS_REQUIRED = 5;
   public static final int MAP_INT_ATTRIBUTE = 6;
+  public static final int MAP_GATE_INPUT_BUBLE = 7;
   
   private class ParameterInfo {
     private final boolean isOnlyUsedForBusses;
@@ -113,7 +115,7 @@ public class HDLParameters {
       return isUsed(attrs) ? parameterName : null;
     }
 
-    public int getParameterValue(AttributeSet attrs) {
+    public long getParameterValue(AttributeSet attrs) {
       switch (myMapType) {
         case MAP_CONSTANT: 
           return parameterValue;
@@ -140,6 +142,17 @@ public class HDLParameters {
           if (intValue instanceof Integer)
             return (int) intValue;
           else throw new UnsupportedOperationException("Requested attribute is not an Integer");
+        case MAP_GATE_INPUT_BUBLE:
+          if (!attrs.containsAttribute(GateAttributes.ATTR_INPUTS)) throw new UnsupportedOperationException("Component has not the required attribute");
+          final var nrOfInputs = attrs.getValue(GateAttributes.ATTR_INPUTS);
+          var bubbleMask = 0;
+          var mask = 1;
+          for (var i = 0; i < nrOfInputs; i++) {
+            final var inputIsInverted = attrs.getValue(new NegateAttribute(i, null));
+            if (inputIsInverted) bubbleMask |= mask;
+            mask <<= 1;
+          }
+          return bubbleMask;
         default: 
           return attrs.getValue(attributeToCheckForBus).getWidth() * multiplyValue + offsetValue; 
       }
@@ -196,6 +209,8 @@ public class HDLParameters {
    *
    * intAttribute: Map an Attribute<Integer> to the generic, example:
    *               add(HIGH_TICK_STR, HIGH_TICK_ID, HDLParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_HIGH)
+   * 
+   * gateinputbubble: special case onl for the standard gates, see AbtractGateHDLGenerator for details.
    * 
    * @param name Name used for the parameter
    * @param id Identifier of the parameter (must be negative)
