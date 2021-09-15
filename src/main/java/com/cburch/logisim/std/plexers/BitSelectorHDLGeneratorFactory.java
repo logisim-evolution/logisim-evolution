@@ -136,7 +136,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist nets) {
     final var map = new TreeMap<String, Integer>();
-    map.put("s_extended_vector", ExtendedBitsId);
+    map.put("s_extended_vector", EXTENDED_BITS_ID);
     return map;
   }
 }

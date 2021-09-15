@@ -65,10 +65,10 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
     final var outputs = new TreeMap<String, Integer>();
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress, nrOfColumnAddressBitsGeneric);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs, nrOfRowsGeneric);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs, nrOfRowsGeneric);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs, nrOfRowsGeneric);
+    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress, NR_OF_COLUMN_ADDRESS_BITS_ID);
+    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs, NR_OF_ROWS_ID);
+    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs, NR_OF_ROWS_ID);
+    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs, NR_OF_ROWS_ID);
     return outputs;
   }
 
@@ -76,9 +76,9 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
     inputs.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, nrOfLedsGeneric);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, nrOfLedsGeneric);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, nrOfLedsGeneric);
+    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, NR_OF_LEDS_ID);
+    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, NR_OF_LEDS_ID);
+    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, NR_OF_LEDS_ID);
     return inputs;
   }
 
@@ -86,9 +86,9 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     final var wires = new TreeMap<String, Integer>();
     wires.putAll(super.GetWireList(attrs, Nets));
-    wires.put("s_maxRedLedInputs", maxNrLedsGeneric);
-    wires.put("s_maxBlueLedInputs", maxNrLedsGeneric);
-    wires.put("s_maxGreenLedInputs", maxNrLedsGeneric);
+    wires.put("s_maxRedLedInputs", MAX_NR_LEDS_ID);
+    wires.put("s_maxBlueLedInputs", MAX_NR_LEDS_ID);
+    wires.put("s_maxGreenLedInputs", MAX_NR_LEDS_ID);
     return wires;
   }
 
@@ -96,9 +96,9 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var contents =
         (new LineBuffer())
-            .pair("nrOfLeds", nrOfLedsString)
-            .pair("nrOfRows", nrOfRowsString)
-            .pair("activeLow", activeLowString)
+            .pair("nrOfLeds", NR_OF_LEDS_STRING)
+            .pair("nrOfRows", NR_OF_ROWS_STRING)
+            .pair("activeLow", ACTIVE_LOW_STRING)
             .pair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
             .pair("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
             .pair("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
