@@ -15,6 +15,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public ShifterHDLGeneratorFactory() {
     super();
-    myParametersList.add(SHIFT_MODE_STRING, SHIFT_MODE_ID, Shifter.ATTR_SHIFT, 
+    myParametersList.add(SHIFT_MODE_STRING, SHIFT_MODE_ID, HDLParameters.MAP_ATTRIBUTE_OPTION ,Shifter.ATTR_SHIFT, 
         new HashMap<AttributeOption, Integer>() {{
           put(Shifter.SHIFT_LOGICAL_LEFT, 0);
           put(Shifter.SHIFT_ROLL_LEFT, 1);

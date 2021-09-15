@@ -10,19 +10,11 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
-import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeOption;
-import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LineBuffer;
 
@@ -31,160 +23,6 @@ public abstract class HDL {
   public static final String NET_NAME = "s_LOGISIM_NET_";
   public static final String BUS_NAME = "s_LOGISIM_BUS_";
   
-  public static class Parameters {
-
-    private class ParameterInfo {
-      private final boolean isOnlyUsedForBusses;
-      private final String parameterName;
-      private final int parameterId;
-      private boolean useParameterValue = false;
-      private int parameterValue = 0;
-      private final Attribute<BitWidth> attributeToCheckForBus;
-      private Attribute<?> attributeToGetValueFrom = null;
-      private Map<AttributeOption, Integer> attributeOptionMap = null;
-
-      public ParameterInfo(String name, int id) {
-        this(false, StdAttr.WIDTH, name, id);
-      }
-
-      public ParameterInfo(String name, int id, int value) {
-        this(false, StdAttr.WIDTH, name, id);
-        parameterValue = value;
-        useParameterValue = parameterValue >= 0;
-      }
-
-      public ParameterInfo(String name, int id, Attribute<Integer> attrMap) {
-        this(false, StdAttr.WIDTH, name, id);
-        attributeToGetValueFrom = attrMap;
-      }
-
-      public ParameterInfo(String name, int id, Attribute<AttributeOption> attrMap, Map<AttributeOption, Integer> valueMap) {
-        this(false, StdAttr.WIDTH, name, id);
-        attributeToGetValueFrom = attrMap;
-        attributeOptionMap = valueMap;
-      }
-
-      public ParameterInfo(boolean forBusOnly, String name, int id) {
-        this(forBusOnly, StdAttr.WIDTH, name, id);
-      }
-
-      public ParameterInfo(boolean forBusOnly, Attribute<BitWidth> checkAttr, String name, int id) {
-        isOnlyUsedForBusses = forBusOnly;
-        parameterName = name;
-        parameterId = id;
-        attributeToCheckForBus = checkAttr;
-      }
-
-      public boolean isUsed(AttributeSet attrs) {
-        final var nrOfBits = (attrs != null) && attrs.containsAttribute(attributeToCheckForBus) ? attrs.getValue(attributeToCheckForBus).getWidth() : 0;
-        return (!isOnlyUsedForBusses || (nrOfBits > 1));
-      }
-
-      public int getParameterId(AttributeSet attrs) {
-        return isUsed(attrs) ? parameterId : 0;
-      }
-
-      public String getParameterString(AttributeSet attrs) {
-        return isUsed(attrs) ? parameterName : null;
-      }
-
-      public int getParameterValue(AttributeSet attrs) {
-        /* direct use of parameter value */
-        if (useParameterValue) return parameterValue;
-        /* most used case : */
-        if (attrs != null) {
-          if (attributeToGetValueFrom != null && attrs.containsAttribute(attributeToGetValueFrom)) {
-            final var attrValue = attrs.getValue(attributeToGetValueFrom);
-            if (attrValue instanceof Integer) return ((Integer) attrValue).intValue();
-            if (attrValue instanceof AttributeOption && attributeOptionMap != null 
-                && attributeOptionMap.containsKey(attrValue))
-              return attributeOptionMap.get(attrValue);
-          } else {
-            final var offset = (parameterValue < 0) ? (-parameterValue) % 100 : 0;
-            final var multiply = (parameterValue < 0) ? (-parameterValue) / 100 : 0; 
-            return attrs.getValue(attributeToCheckForBus).getWidth() * multiply + offset;
-          }
-        }
-        throw new IllegalArgumentException("Cannot determine parameter map");
-      }
-    }
-
-    private final List<ParameterInfo> myParameters = new ArrayList<>();
-
-    public Parameters add(String name, int id) {
-      myParameters.add(new ParameterInfo(name, id));
-      return this;
-    }
-
-    public Parameters add(String name, int id, int value) {
-      myParameters.add(new ParameterInfo(name, id, value));
-      return this;
-    }
-
-    public Parameters add(String name, int id, Attribute<Integer> attrMap) {
-      myParameters.add(new ParameterInfo(name, id, attrMap));
-      return this;
-    }
-
-    public Parameters add(String name, int id, Attribute<AttributeOption> attrMap, Map<AttributeOption, Integer> valueMap) {
-      myParameters.add(new ParameterInfo(name, id, attrMap, valueMap));
-      return this;
-    }
-
-    public Parameters addBusOnly(String name, int id) {
-      myParameters.add(new ParameterInfo(true, name, id));
-      return this;
-    }
-
-    public Parameters addBusOnly(Attribute<BitWidth> checkAttr, String name, int id) {
-      myParameters.add(new ParameterInfo(true, checkAttr, name, id));
-      return this;
-    }
-
-    public boolean containsKey(int id, AttributeSet attrs) {
-      for (var parameter : myParameters) 
-        if (id == parameter.getParameterId(attrs)) return true;
-      return false;
-    }
-
-    public String get(int id, AttributeSet attrs) {
-      for (var parameter : myParameters) 
-        if (id == parameter.getParameterId(attrs)) return parameter.getParameterString(attrs);
-      return null;
-    }
-
-    public Map<String, Integer> getMaps(AttributeSet attrs) {
-      final var contents = new TreeMap<String, Integer>();
-      for (var parameter : myParameters) {
-        if (parameter.isUsed(attrs)) {
-          final var value = parameter.getParameterValue(attrs);
-          if (value >= 0)
-            contents.put(parameter.getParameterString(attrs), value);
-        }
-      }
-      return contents;
-    }
-
-    public boolean isEmpty(AttributeSet attrs) {
-      var count = 0;
-      for (var parameter : myParameters)
-        if (parameter.isUsed(attrs)) count++;
-      return count == 0;
-    }
-
-    public List<Integer> keySet(AttributeSet attrs) {
-      final var keySet = new ArrayList<Integer>();
-      for (var parameter : myParameters) {
-        if (parameter.isUsed(attrs)) keySet.add(parameter.getParameterId(attrs));
-      }
-      return keySet;
-    }
-  }
-  
-  public static Parameters createParameters() {
-    return new Parameters();
-  }
-
   public static boolean isVHDL() {
     return AppPreferences.HDL_Type.get().equals(HDLGeneratorFactory.VHDL);
   }

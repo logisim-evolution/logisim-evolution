@@ -33,7 +33,7 @@ import java.util.TreeSet;
 public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   private final String subDirectoryName;
-  protected final HDL.Parameters myParametersList = HDL.createParameters();
+  protected final HDLParameters myParametersList = new HDLParameters();
 
   public AbstractHDLGeneratorFactory() {
     final var className = getClass().toString().replace('.', ':').replace(' ', ':'); 

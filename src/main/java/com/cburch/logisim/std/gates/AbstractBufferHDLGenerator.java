@@ -31,7 +31,7 @@ public class AbstractBufferHDLGenerator extends InlinedHDLGeneratorFactory {
   public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo,
       String circuitName) {
     final var nrOfBits = componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
-    return new ArrayList<String> () {{ add((nrOfBits == 1) 
+    return new ArrayList<String> () {{ add( (nrOfBits == 1) 
         ? LineBuffer.format("   {{1}}{{=}}{{2}}{{3}};", 
             HDL.getNetName(componentInfo, 0, false, nets),
             isInverter ? HDL.notOperator() : "",
@@ -40,7 +40,7 @@ public class AbstractBufferHDLGenerator extends InlinedHDLGeneratorFactory {
             HDL.getBusName(componentInfo, 0, nets),
             isInverter ? HDL.notOperator() : "",
             HDL.getBusName(componentInfo, 1, nets))); 
-    }};
+      }};
   }
 
   @Override

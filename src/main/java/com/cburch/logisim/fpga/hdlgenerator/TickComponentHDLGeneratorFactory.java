@@ -44,8 +44,8 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       calcValue /= 2;
     }
     myParametersList
-        .add(RELOAD_VALUE_STRING, RELOAD_VALUE_ID, (int) reloadValue)
-        .add(NR_OF_COUNTER_BITS_STRING, NR_OF_COUNTER_BITS_ID, nrOfBits);
+        .add(RELOAD_VALUE_STRING, RELOAD_VALUE_ID, HDLParameters.MAP_CONSTANT, (int) reloadValue)
+        .add(NR_OF_COUNTER_BITS_STRING, NR_OF_COUNTER_BITS_ID, HDLParameters.MAP_CONSTANT, nrOfBits);
   }
 
   @Override

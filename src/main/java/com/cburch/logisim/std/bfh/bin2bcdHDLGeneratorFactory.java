@@ -27,7 +27,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   
   public bin2bcdHDLGeneratorFactory() {
     super();
-    myParametersList.add(NR_OF_BITS_STR, NR_OF_BITS_ID);
+    myParametersList.add(NR_OF_BITS_STR, NR_OF_BITS_ID, bin2bcd.ATTR_BinBits);
   }
 
   @Override
@@ -51,14 +51,6 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public boolean isHDLSupportedTarget(AttributeSet attrs) {
     return HDL.isVHDL();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    final var parameterMap = new TreeMap<String, Integer>();
-    final var binBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
-    parameterMap.put(NR_OF_BITS_STR, binBits);
-    return parameterMap;
   }
 
   @Override

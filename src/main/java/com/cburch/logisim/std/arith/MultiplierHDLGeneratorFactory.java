@@ -15,7 +15,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-
+import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,8 +35,8 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     super();
     myParametersList
         .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-        .add(CALC_BITS_STRING, CALC_BITS_ID, -200) //multiply by 2
-        .add(UNSIGNED_STRING, UNSIGNED_ID, Comparator.MODE_ATTR, 
+        .add(CALC_BITS_STRING, CALC_BITS_ID, HDLParameters.MAP_MULTIPLY, 2)
+        .add(UNSIGNED_STRING, UNSIGNED_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, 
             new HashMap<AttributeOption, Integer>() {{ 
               put(Comparator.UNSIGNED_OPTION, 0); 
               put(Comparator.SIGNED_OPTION, 1);
