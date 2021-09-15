@@ -60,12 +60,9 @@ public abstract class HDL {
                     : LineBuffer.format("if ({{1}}) begin", condition);
   }
 
-  // TODO find good name
-  /* 
-  public static String else() {
+  public static String elseStatement() {
     return isVHDL() ? "ELSE " : "end else begin";
   }
-  */
 
   public static String elseIf(String condition) {
     return isVHDL() ? LineBuffer.format("ELSIF ({{1}}) THEN", condition)
