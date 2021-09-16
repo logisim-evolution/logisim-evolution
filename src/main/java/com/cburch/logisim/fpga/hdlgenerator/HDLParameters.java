@@ -30,18 +30,20 @@ public class HDLParameters {
   public static final int MAP_OFFSET = 2;
   public static final int MAP_MULTIPLY = 3;
   public static final int MAP_ATTRIBUTE_OPTION = 4;
-  public static final int MAP_BITS_REQUIRED = 5;
+  public static final int MAP_LN2 = 5;
   public static final int MAP_INT_ATTRIBUTE = 6;
   public static final int MAP_GATE_INPUT_BUBLE = 7;
+  public static final int MAP_POW2 = 8;
   
   private class ParameterInfo {
     private final boolean isOnlyUsedForBusses;
+    private boolean isIntParameter = true;
     private final String parameterName;
     private final int parameterId;
     private int myMapType = MAP_DEFAULT;
-    private int parameterValue = -1;
-    private int multiplyValue = 1;
-    private int offsetValue = 0;
+    private long parameterValue = -1;
+    private long multiplyValue = 1;
+    private long offsetValue = 0;
     private List<Attribute<?>> attributesList = new ArrayList<>();
     private Map<AttributeOption, Integer> attributeOptionMap = new HashMap<>();
     private final Attribute<BitWidth> attributeToCheckForBus;
@@ -78,11 +80,22 @@ public class HDLParameters {
           attributeOptionMap = (Map<AttributeOption, Integer>) args[1];
           break;
         case MAP_INT_ATTRIBUTE:
-          if (args.length != 1) throw new IllegalArgumentException("Attribute map Type requires only 1 argument");
+          if (args.length == 2) {
+            if (args[1] instanceof Integer) {
+              offsetValue = (int)args[1];
+              if (offsetValue < 0) throw new NumberFormatException("Integer value must be positive");
+            } else throw new IllegalArgumentException("Attribute map Type requires only 1 argument");
+          } else if (args.length != 1) throw new IllegalArgumentException("Attribute map Type requires only 1 argument");
           attributesList.add((Attribute<?>) args[0]);
           break;
-        case MAP_BITS_REQUIRED:
+        case MAP_POW2:
+        case MAP_LN2:
           for (var arg : args) {
+            if (arg instanceof Integer) {
+              offsetValue = (int)arg;
+              if (offsetValue < 0) throw new NumberFormatException("Integer value must be positive");
+              continue;
+            }
             if (!(arg instanceof Attribute<?>)) throw new IllegalArgumentException("Bits required map Type: argument needs to be an Attribute<?>");
             attributesList.add((Attribute<?>) arg);
           }
@@ -115,54 +128,103 @@ public class HDLParameters {
       return isUsed(attrs) ? parameterName : null;
     }
 
-    public long getParameterValue(AttributeSet attrs) {
+    public String getParameterValue(AttributeSet attrs) {
+      var totalValue = 0L;
+      var selectedValue = 0L;
       switch (myMapType) {
         case MAP_CONSTANT: 
-          return parameterValue;
+          selectedValue = parameterValue;
+          break;
         case MAP_ATTRIBUTE_OPTION: 
           if (!attrs.containsAttribute(attributesList.get(0))) throw new UnsupportedOperationException("Component has not the required attribute");
           final var value = attrs.getValue(attributesList.get(0));
           if (!(value instanceof AttributeOption)) throw new UnsupportedOperationException("Requested attribute is not an attributeOption");
           if (!attributeOptionMap.containsKey(value)) throw new UnsupportedOperationException("Map does not contain the requested attributeOption");
-          return attributeOptionMap.get(value);
-        case MAP_BITS_REQUIRED:
-          var totalValue = 0;
+          selectedValue = attributeOptionMap.get(value);
+          break;
+        case MAP_POW2:
           for (var attr :attributesList) {
             if (!attrs.containsAttribute(attr)) throw new UnsupportedOperationException("Component has not the required attribute");
             final var intValue = attrs.getValue(attr);
             if (intValue instanceof Integer) {
               totalValue += (int) intValue;
+            } else if (intValue instanceof BitWidth) {
+              totalValue += ((BitWidth) intValue).getWidth();
+            } else throw new UnsupportedOperationException("Requested attribute is not an Integer");
+          }
+          selectedValue = (long) Math.pow(totalValue, 2d);
+          break;
+        case MAP_LN2:
+          for (var attr :attributesList) {
+            if (!attrs.containsAttribute(attr)) throw new UnsupportedOperationException("Component has not the required attribute");
+            final var intValue = attrs.getValue(attr);
+            if (intValue instanceof Integer) {
+              totalValue += (int) intValue;
+            } else if (intValue instanceof BitWidth) {
+              totalValue += ((BitWidth) intValue).getWidth();
             } else throw new UnsupportedOperationException("Requested attribute is not an Integer");
           }
           final var logValue = Math.log(totalValue) / Math.log(2d);
-          return (int) Math.ceil(logValue);
+          selectedValue = (long) Math.ceil(logValue) + offsetValue;
+          break;
         case MAP_INT_ATTRIBUTE:
           if (!attrs.containsAttribute(attributesList.get(0))) throw new UnsupportedOperationException("Component has not the required attribute");
           final var intValue = attrs.getValue(attributesList.get(0));
-          if (intValue instanceof Integer)
-            return (int) intValue;
+          if (intValue instanceof Integer) selectedValue = (int) intValue + offsetValue;
+          else if (intValue instanceof Long) selectedValue = (long) intValue;
+          else if (intValue instanceof BitWidth) selectedValue = ((BitWidth) intValue).getWidth() + offsetValue;
           else throw new UnsupportedOperationException("Requested attribute is not an Integer");
+          break;
         case MAP_GATE_INPUT_BUBLE:
           if (!attrs.containsAttribute(GateAttributes.ATTR_INPUTS)) throw new UnsupportedOperationException("Component has not the required attribute");
           final var nrOfInputs = attrs.getValue(GateAttributes.ATTR_INPUTS);
-          var bubbleMask = 0;
-          var mask = 1;
+          var bubbleMask = 0L;
+          var mask = 1L;
           for (var i = 0; i < nrOfInputs; i++) {
             final var inputIsInverted = attrs.getValue(new NegateAttribute(i, null));
             if (inputIsInverted) bubbleMask |= mask;
-            mask <<= 1;
+            mask <<= 1L;
           }
-          return bubbleMask;
+          selectedValue = bubbleMask;
+          break;
         default: 
-          return attrs.getValue(attributeToCheckForBus).getWidth() * multiplyValue + offsetValue; 
+          selectedValue = attrs.getValue(attributeToCheckForBus).getWidth() * multiplyValue + offsetValue;
+          break;
       }
+      if (isIntParameter) return Integer.toString((int) selectedValue);
+      return HDL.getConstantVector(selectedValue, getNumberOfVectorBits(attrs));
     }
     
-    private int getCorrectIntValue(Object... args) {
+    public boolean isRepresentedByInteger() {
+      return isIntParameter;
+    }
+    
+    public void setVectorRepresentation() {
+      isIntParameter = false;
+    }
+    
+    public int getNumberOfVectorBits(AttributeSet attrs) {
+      if (isIntParameter) throw new UnsupportedOperationException("Parameter is not a bit vector!");
+      var nrOfVectorBits = -1;
+      if (myMapType == MAP_GATE_INPUT_BUBLE) {
+        if (!attrs.containsAttribute(GateAttributes.ATTR_INPUTS)) throw new UnsupportedOperationException("Component has not the required attribute");
+        nrOfVectorBits = attrs.getValue(GateAttributes.ATTR_INPUTS);
+      }
+      if (nrOfVectorBits < 0) {
+        if (attrs.containsAttribute(attributeToCheckForBus)) {
+          nrOfVectorBits = attrs.getValue(attributeToCheckForBus).getWidth();
+        } else new UnsupportedOperationException("Cannot determine the number of bits required for the vector");
+      }
+      return nrOfVectorBits;
+    }
+    
+    private long getCorrectIntValue(Object... args) {
       if (args.length != 1) throw new IllegalArgumentException("Map Type requires a single argument");
-      if (!(args[0] instanceof Integer)) throw new IllegalArgumentException("Map Type requires an Integer");
-      final int value = (int) args[0];
-      if (value < 0) throw new NumberFormatException("Integer value must be positive");
+      var value = 0L;
+      if (args[0] instanceof Integer) value = (int) args[0];
+      else if (args[0] instanceof Long) value = (long) args[0];
+      else throw new IllegalArgumentException("Map Type requires an Integer or long");
+      if (value < 0) throw new NumberFormatException("Integer/long value must be positive");
       return value;
     }
   }
@@ -206,9 +268,12 @@ public class HDLParameters {
    *                       put(Comparator.SIGNED_OPTION, 1); 
    *                     }}
    *                    );
+   *                    
+   * ln2: Map the log base 2 value of the addition of all args to the generic, example:
+   *      add("exampleln2", -1, MAP_LN2, Clock.ATTR_HIGH, Clock.ATTR_LOW)                    
    *
    * intAttribute: Map an Attribute<Integer> to the generic, example:
-   *               add(HIGH_TICK_STR, HIGH_TICK_ID, HDLParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_HIGH)
+   *               add(HIGH_TICK_STR, HIGH_TICK_ID, MAP_INT_ATTRIBUTE, Clock.ATTR_HIGH)
    * 
    * gateinputbubble: special case onl for the standard gates, see AbtractGateHDLGenerator for details.
    * 
@@ -219,6 +284,23 @@ public class HDLParameters {
    */
   public HDLParameters add(String name, int id, int type, Object... args) {
     myParameters.add(new ParameterInfo(name, id, type, args));
+    return this;
+  }
+
+  /**
+   * Constructs a module parameter where the map-value of the parameter is dependent
+   * on the type; furthermore this parameter is represented by a std_logic_vector
+   * instead of an Integer (for VHDL only and for values with more than 32 bits)
+   * 
+   * @param name Name used for the parameter
+   * @param id Identifier of the parameter (must be negative)
+   * @param type Type of the map value
+   * @param args Arguments required for the type
+   */
+  public HDLParameters addVector(String name, int id, int type, Object... args) {
+    final var newParameter = new ParameterInfo(name, id, type, args);
+    newParameter.setVectorRepresentation();
+    myParameters.add(newParameter);
     return this;
   }
 
@@ -245,7 +327,7 @@ public class HDLParameters {
     myParameters.add(new ParameterInfo(true, checkAttr, name, id));
     return this;
   }
-
+  
   public boolean containsKey(int id, AttributeSet attrs) {
     for (var parameter : myParameters) 
       if (id == parameter.getParameterId(attrs)) return true;
@@ -257,13 +339,25 @@ public class HDLParameters {
       if (id == parameter.getParameterId(attrs)) return parameter.getParameterString(attrs);
     return null;
   }
+  
+  public int getNumberOfVectorBits(int id, AttributeSet attrs) {
+    for (var parameter : myParameters) 
+      if (id == parameter.getParameterId(attrs)) return parameter.getNumberOfVectorBits(attrs);
+    throw new UnsupportedOperationException("Parameter not found");
+  }
+  
+  public boolean isPresentedByInteger(int id, AttributeSet attrs) {
+    for (var parameter : myParameters) 
+      if (id == parameter.getParameterId(attrs)) return parameter.isRepresentedByInteger();
+    return true;
+  }
 
-  public Map<String, Integer> getMaps(AttributeSet attrs) {
-    final var contents = new TreeMap<String, Integer>();
+  public Map<String, String> getMaps(AttributeSet attrs) {
+    final var contents = new TreeMap<String, String>();
     for (var parameter : myParameters) {
       if (parameter.isUsed(attrs)) {
         final var value = parameter.getParameterValue(attrs);
-        if (value >= 0)
+        if (!value.isEmpty())
           contents.put(parameter.getParameterString(attrs), value);
       }
     }

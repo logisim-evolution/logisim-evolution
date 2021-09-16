@@ -14,7 +14,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-
+import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -30,8 +30,8 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   public PriorityEncoderHDLGeneratorFactory() {
     super();
     myParametersList
-        .add(NR_OF_INPUT_BITS_STRING, NR_OF_INPUT_BITS_ID)
-        .add(NR_OF_SELECT_BITS_STRING, NR_OF_SELECT_BITS_ID);
+        .add(NR_OF_INPUT_BITS_STRING, NR_OF_INPUT_BITS_ID, HDLParameters.MAP_POW2, PlexersLibrary.ATTR_SELECT)
+        .add(NR_OF_SELECT_BITS_STRING, NR_OF_SELECT_BITS_ID, HDLParameters.MAP_INT_ATTRIBUTE, PlexersLibrary.ATTR_SELECT);
   }
 
   @Override
@@ -113,16 +113,6 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
     map.put("GroupSelect", 1);
     map.put("EnableOut", 1);
     map.put("Address", NR_OF_SELECT_BITS_ID);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    final var map = new TreeMap<String, Integer>();
-    final var nrOfBits = componentInfo.nrOfEnds() - 4;
-    final var nrOfSelectBits = componentInfo.getComponent().getEnd(nrOfBits + PriorityEncoder.OUT).getWidth().getWidth();
-    map.put(NR_OF_SELECT_BITS_STRING, nrOfSelectBits);
-    map.put(NR_OF_INPUT_BITS_STRING, 1 << nrOfSelectBits);
     return map;
   }
 

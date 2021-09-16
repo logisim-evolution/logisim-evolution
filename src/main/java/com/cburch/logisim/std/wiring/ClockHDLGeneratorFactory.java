@@ -40,14 +40,14 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final String NR_OF_BITS_STR = "NrOfBits";
   private static final int NR_OF_BITS_ID = -4;
   
-  // TODO: Get this part correct, phase, and behavior are too complex in the current implementation it does not work correctly 
+  // TODO: Get this part correct, phase, and behavior are too complex in the current implementation it does not work correctly
   public ClockHDLGeneratorFactory() {
     super("base");
     myParametersList
         .add(HIGH_TICK_STR, HIGH_TICK_ID, HDLParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_HIGH)
         .add(LOW_TICK_STR, LOW_TICK_ID, HDLParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_LOW)
-        .add(PHASE_STR, PHASE_ID, HDLParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_PHASE)
-        .add(NR_OF_BITS_STR, NR_OF_BITS_ID, HDLParameters.MAP_BITS_REQUIRED, Clock.ATTR_HIGH, Clock.ATTR_LOW);
+        .add(PHASE_STR, PHASE_ID, HDLParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_PHASE, 1)
+        .add(NR_OF_BITS_STR, NR_OF_BITS_ID, HDLParameters.MAP_LN2, Clock.ATTR_HIGH, Clock.ATTR_LOW);
   }
 
   private String GetClockNetName(Component comp, Netlist TheNets) {
@@ -83,12 +83,12 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           makeOutputs : PROCESS( GlobalClock )
           BEGIN
              IF (GlobalClock'event AND (GlobalClock = '1')) THEN
-                s_buf_regs(0)     <= s_derived_clock_reg(({{lowTick}} + {{highTick}}) - ({{phase}} MOD ({{lowTick}} + {{highTick}})) - 1);
-                s_buf_regs(1)     <= NOT(s_derived_clock_reg(({{lowTick}} + {{highTick}}) - ({{phase}} MOD ({{lowTick}} + {{highTick}})) - 1));
+                s_buf_regs(0)     <= s_derived_clock_reg({{phase}} - 1);
+                s_buf_regs(1)     <= NOT(s_derived_clock_reg({{phase}} - 1));
                 s_output_regs(0)  <= s_buf_regs(0);
                 s_output_regs(1)  <= s_buf_regs(1);
-                s_output_regs(2)  <= NOT(s_buf_regs(0)) AND s_derived_clock_reg(({{lowTick}} + {{highTick}}) - ({{phase}} MOD ({{lowTick}} + {{highTick}})) - 1);
-                s_output_regs(3)  <= s_buf_regs(0) AND NOT(s_derived_clock_reg(({{lowTick}} + {{highTick}}) - ({{phase}} MOD ({{lowTick}} + {{highTick}})) - 1));
+                s_output_regs(2)  <= NOT(s_buf_regs(0)) AND s_derived_clock_reg({{phase}} - 1);
+                s_output_regs(3)  <= s_buf_regs(0) AND NOT(s_derived_clock_reg({{phase}} - 1));
              END IF;
           END PROCESS makeOutputs;
           """);
@@ -97,12 +97,12 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           assign ClockBus = {GlobalClock,s_output_regs};
           always @(posedge GlobalClock)
           begin
-             s_buf_regs[0]    <= s_derived_clock_reg[({{lowTick}} + {{highTick}}) - ({{phase}} % ({{lowTick}} + {{highTick}})) - 1];
-             s_buf_regs[1]    <= ~s_derived_clock_reg[({{lowTick}} + {{highTick}}) - ({{phase}} % ({{lowTick}} + {{highTick}})) - 1];
+             s_buf_regs[0]    <= s_derived_clock_reg[{{phase}} - 1];
+             s_buf_regs[1]    <= ~s_derived_clock_reg[{{phase}} - 1];
              s_output_regs[0] <= s_buf_regs[0];
              s_output_regs[1] <= s_output_regs[1];
-             s_output_regs[2] <= ~s_buf_regs[0] & s_derived_clock_reg[({{lowTick}} + {{highTick}}) - ({{phase}} % ({{lowTick}} + {{highTick}})) - 1];
-             s_output_regs[3] <= ~s_derived_clock_reg[({{lowTick}} + {{highTick}}) - ({{phase}} % ({{lowTick}} + {{highTick}})) - 1] & s_buf_regs[0];
+             s_output_regs[2] <= ~s_buf_regs[0] & s_derived_clock_reg[{{phase}} - 1];
+             s_output_regs[3] <= ~s_derived_clock_reg[{{phase}} - 1] & s_buf_regs[0];
           end
           """);
     }

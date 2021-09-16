@@ -32,7 +32,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     super();
     myParametersList
         .addBusOnly(BIT_WIDTH_STRING, BIT_WIDTH_GENERIC)
-        .add(BUBBLES_MASK, BUBBLES_GENERIC, HDLParameters.MAP_GATE_INPUT_BUBLE);
+        .addVector(BUBBLES_MASK, BUBBLES_GENERIC, HDLParameters.MAP_GATE_INPUT_BUBLE);
   }
 
   public boolean GetFloatingValue(boolean isInverted) {
@@ -59,7 +59,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getHdlBuffer().pair("xor", HDL.xorOperator());
     final var bitWidth = attrs.getValue(StdAttr.WIDTH).getWidth();
     final var nrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
@@ -69,33 +69,11 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     if (nrOfInputs > 1) {
       contents.empty();
       contents.addRemarkBlock("Here the bubbles are processed");
-      if (HDL.isVHDL()) {
-        String allignmentSpaces;
-        if (nrOfInputs < 10) allignmentSpaces = " ";
-        else if (nrOfInputs < 100) allignmentSpaces = "  ";
-        else allignmentSpaces = "   ";
-        contents.add("   s_signal_invert_mask <= std_logic_vector(to_unsigned({{1}},{{2}}));", BUBBLES_MASK, nrOfInputs);
-        final var whenLineBegin = new StringBuilder();
-        whenLineBegin.append(" ".repeat(21 + allignmentSpaces.length()));
-        for (var i = 0; i < nrOfInputs; i++) {
-          var localSpaces = " ";
-          if (i < 10) localSpaces = allignmentSpaces;
-          // FIXME: why we need this code at all? What will happenif we remove these aligment spaces completely?
-          else if (i < 100)
-            localSpaces = allignmentSpaces.substring(0, allignmentSpaces.length() - 1);
-          else if (i < 1000)
-            localSpaces = allignmentSpaces.substring(0, allignmentSpaces.length() - 2);
-          contents
-              .add("   s_real_input_{{1}}{{2}} <= NOT( Input_{{3}} )", (i + 1), localSpaces, (i + 1))
-              .add("{{1}}   WHEN s_signal_invert_mask({{2}}) = '1' ELSE", whenLineBegin, i)
-              .add("{{1}}Input_{{2}};", whenLineBegin, (i + 1));
-        }
-      } else {
-        contents.add("   assign s_signal_invert_mask = {{1}};", BUBBLES_MASK);
-        for (var i = 0; i < nrOfInputs; i++) {
-          contents.add(
-              "   assign s_real_input_{{1}} = (s_signal_invert_mask[{{2}}]) ? ~Input_{{3}}: Input_{{4}};",
-              (i + 1), i, (i + 1), (i + 1));
+      for (var i = 0; i < nrOfInputs; i++) {
+        if (HDL.isVHDL()) {
+          contents.add("  s_real_input_{{1}} {{=}} Input_{{1}} WHEN {{2}}{{<}}{{3}}{{>}} = '0' ELSE NOT(Input_{{1}});", (i + 1), BUBBLES_MASK, i);
+        } else {
+          contents.add("  {{assign}} s_real_input_{{1}} {{=}} ({{2}}{{<}}{{3}}{{>}} == 1'b0) ? Input_{{1}} : ~Input_{{1}};", (i + 1), BUBBLES_MASK, i);
         }
       }
     }
@@ -272,7 +250,6 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
         if (bitWidth > 1) wires.put("s_real_input_" + (i + 1), BIT_WIDTH_GENERIC);
         else wires.put("s_real_input_" + (i + 1), 1);
       }
-      wires.put("s_signal_invert_mask", nrOfInputs);
     }
     return wires;
   }

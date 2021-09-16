@@ -9,16 +9,19 @@
 
 package com.cburch.logisim.std.memory;
 
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -33,13 +36,42 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final String MODE_STRING = "mode";
   private static final int MODE_ID = -4;
 
+  @Override
+  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
+    final var map = new TreeMap<String, Integer>();
+    final var attrs = componentInfo.getComponent().getAttributeSet();
+    var mode = 0;
+    if (attrs.containsAttribute(Counter.ATTR_ON_GOAL)) {
+      if (attrs.getValue(Counter.ATTR_ON_GOAL) == Counter.ON_GOAL_STAY) mode = 1;
+      else if (attrs.getValue(Counter.ATTR_ON_GOAL) == Counter.ON_GOAL_CONT) mode = 2;
+      else if (attrs.getValue(Counter.ATTR_ON_GOAL) == Counter.ON_GOAL_LOAD) mode = 3;
+    } else {
+      mode = 1;
+    }
+    map.put(NR_OF_BITS_STRING, attrs.getValue(StdAttr.WIDTH).getWidth());
+    map.put(MAX_VALUE_STRING, attrs.getValue(Counter.ATTR_MAX).intValue());
+    var clkEdge = 1;
+    if (HDL.getClockNetName(componentInfo, Counter.CK, nets).isEmpty()
+        && attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING) clkEdge = 0;
+    map.put(ACTIVE_EDGE_STRING, clkEdge);
+    map.put(MODE_STRING, mode);
+    return map;
+  }
+
   public CounterHDLGeneratorFactory() {
     super();
     myParametersList
         .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
         .add(MAX_VALUE_STRING, MAX_VALUE_ID)
         .add(ACTIVE_EDGE_STRING, ACTIVE_EDGE_ID)
-        .add(MODE_STRING, MODE_ID);
+        .add(MODE_STRING, MODE_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Counter.ATTR_ON_GOAL,
+            new HashMap<AttributeOption, Integer>() {{
+              put(Counter.ON_GOAL_WRAP,0);
+              put(Counter.ON_GOAL_STAY,1);
+              put(Counter.ON_GOAL_CONT,2);
+              put(Counter.ON_GOAL_LOAD,3);
+            }}
+          );
   }
 
   @Override
@@ -204,28 +236,6 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var map = new TreeMap<String, Integer>();
     map.put("CountValue", NR_OF_BITS_ID);
     map.put("CompareOut", 1);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    final var map = new TreeMap<String, Integer>();
-    final var attrs = componentInfo.getComponent().getAttributeSet();
-    var mode = 0;
-    if (attrs.containsAttribute(Counter.ATTR_ON_GOAL)) {
-      if (attrs.getValue(Counter.ATTR_ON_GOAL) == Counter.ON_GOAL_STAY) mode = 1;
-      else if (attrs.getValue(Counter.ATTR_ON_GOAL) == Counter.ON_GOAL_CONT) mode = 2;
-      else if (attrs.getValue(Counter.ATTR_ON_GOAL) == Counter.ON_GOAL_LOAD) mode = 3;
-    } else {
-      mode = 1;
-    }
-    map.put(NR_OF_BITS_STRING, attrs.getValue(StdAttr.WIDTH).getWidth());
-    map.put(MAX_VALUE_STRING, attrs.getValue(Counter.ATTR_MAX).intValue());
-    var clkEdge = 1;
-    if (HDL.getClockNetName(componentInfo, Counter.CK, nets).isEmpty()
-        && attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING) clkEdge = 0;
-    map.put(ACTIVE_EDGE_STRING, clkEdge);
-    map.put(MODE_STRING, mode);
     return map;
   }
 

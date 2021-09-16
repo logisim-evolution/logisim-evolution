@@ -76,15 +76,6 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    final var map = new TreeMap<String, Integer>();
-    final var nrOfBits =
-        componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
-    if (nrOfBits > 1) map.put(NR_OF_BITS_STRING, nrOfBits);
-    return map;
-  }
-
-  @Override
   public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return map;
