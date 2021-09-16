@@ -285,12 +285,12 @@ public class HDLParameters {
    *                   (1) An Attribute<AttributeOption>, the selected attribute
    *                   (2) A Map from AttributeOption to Integer values
    *                   Example:
-   *                   add("ExampleOption", -1, MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, 
+   *                <pre>add("ExampleOption", -1, MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, 
    *                     new HashMap<AttributeOption, Integer>() {{ 
    *                       put(Comparator.UNSIGNED_OPTION, 0); 
    *                       put(Comparator.SIGNED_OPTION, 1); 
    *                     }}
-   *                    );
+   *                    );</pre>
    *                    
    * ln2: Map the log base 2 value of the addition of all args to the generic, example:
    *      add("exampleln2", -1, MAP_LN2, Clock.ATTR_HIGH, Clock.ATTR_LOW)                    
