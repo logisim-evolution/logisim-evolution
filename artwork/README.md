@@ -45,7 +45,8 @@ Also update configuration of Github repo and organization:
 Use `update_assets.sh` shell script to regenerated all PNG icons and logos using SVG source files.
 
 IMPORTANT NOTES:
-* You must have Inkscape, icoutils and icnsutils installed first (`apt install -y inkscape icoutils icnsutils`) as script needs these tools.
+
+* You must have Inkscape, icoutils and icnsutils installed first as script needs these tools.
 * you **MUST** install logo fonts before running this script or output (mainly logo) will be broken.
 
 ## Fonts ##
