@@ -150,7 +150,7 @@ public class HDLParameters {
           selectedValue = attributeOptionMap.get(value);
           break;
         case MAP_POW2:
-          for (var attr: attributesList) {
+          for (var attr : attributesList) {
             if (!attrs.containsAttribute(attr)) throw new UnsupportedOperationException("Component has not the required attribute");
             final var intValue = attrs.getValue(attr);
             if (intValue instanceof Integer) {
@@ -162,7 +162,7 @@ public class HDLParameters {
           selectedValue = (long) Math.pow(totalValue, 2d);
           break;
         case MAP_LN2:
-          for (var attr: attributesList) {
+          for (var attr : attributesList) {
             if (!attrs.containsAttribute(attr)) throw new UnsupportedOperationException("Component has not the required attribute");
             final var intValue = attrs.getValue(attr);
             if (intValue instanceof Integer) {
