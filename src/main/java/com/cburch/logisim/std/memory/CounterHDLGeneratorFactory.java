@@ -45,12 +45,12 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             StdAttr.EDGE_TRIGGER, AbstractFlipFlopHDLGeneratorFactory.TRIGGER_MAP)
         .add(MODE_STRING, MODE_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Counter.ATTR_ON_GOAL,
             new HashMap<AttributeOption, Integer>() {{
-              put(Counter.ON_GOAL_WRAP,0);
-              put(Counter.ON_GOAL_STAY,1);
-              put(Counter.ON_GOAL_CONT,2);
-              put(Counter.ON_GOAL_LOAD,3);
+              put(Counter.ON_GOAL_WRAP, 0);
+              put(Counter.ON_GOAL_STAY, 1);
+              put(Counter.ON_GOAL_CONT, 2);
+              put(Counter.ON_GOAL_LOAD, 3);
             }}
-          );
+        );
   }
 
   @Override

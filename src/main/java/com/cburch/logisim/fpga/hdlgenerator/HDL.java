@@ -126,22 +126,22 @@ public abstract class HDL {
 
   public static String getConstantVector(long value, int nrOfBits) {
     final var nrHexDigits = nrOfBits / 4;
-    final var nrSingleBits = nrOfBits %4;
+    final var nrSingleBits = nrOfBits % 4;
     final var hexDigits = new String[nrHexDigits];
     final var singleBits = new StringBuffer();
     var shiftValue = value >> nrSingleBits;
-    for (var hexIndex = nrHexDigits - 1 ; hexIndex >= 0 ; hexIndex--) {
+    for (var hexIndex = nrHexDigits - 1; hexIndex >= 0; hexIndex--) {
       var hexValue = shiftValue & 0xFL;
       shiftValue >>= 4L;
       hexDigits[hexIndex] = String.format("%1X", hexValue);
     }
     final var hexValue = new StringBuffer();
-    for (var hexIndex = 0 ; hexIndex < nrHexDigits ; hexIndex++) {
+    for (var hexIndex = 0; hexIndex < nrHexDigits; hexIndex++) {
       hexValue.append(hexDigits[hexIndex]);
     }    
     var mask = (nrSingleBits == 0) ? 0 : 1L << (nrSingleBits - 1);
     while (mask > 0) {
-      singleBits.append((value & mask) == 0 ? "0" : "1" );
+      singleBits.append((value & mask) == 0 ? "0" : "1");
       mask >>= 1L;
     }
     // first case, we have to concatinate

@@ -30,7 +30,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public ShifterHDLGeneratorFactory() {
     super();
-    myParametersList.add(SHIFT_MODE_STRING, SHIFT_MODE_ID, HDLParameters.MAP_ATTRIBUTE_OPTION ,Shifter.ATTR_SHIFT, 
+    myParametersList.add(SHIFT_MODE_STRING, SHIFT_MODE_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Shifter.ATTR_SHIFT, 
         new HashMap<AttributeOption, Integer>() {{
           put(Shifter.SHIFT_LOGICAL_LEFT, 0);
           put(Shifter.SHIFT_ROLL_LEFT, 1);

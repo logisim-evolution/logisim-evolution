@@ -89,7 +89,7 @@ public class HDLParameters {
         case MAP_INT_ATTRIBUTE:
           if (args.length == 2) {
             if (args[1] instanceof Integer) {
-              offsetValue = (int)args[1];
+              offsetValue = (int) args[1];
               if (offsetValue < 0) throw new NumberFormatException("Integer value must be positive");
             } else throw new IllegalArgumentException("Attribute map Type requires only 1 argument");
           } else if (args.length != 1) throw new IllegalArgumentException("Attribute map Type requires only 1 argument");
@@ -99,7 +99,7 @@ public class HDLParameters {
         case MAP_LN2:
           for (var arg : args) {
             if (arg instanceof Integer) {
-              offsetValue = (int)arg;
+              offsetValue = (int) arg;
               if (offsetValue < 0) throw new NumberFormatException("Integer value must be positive");
               continue;
             }
@@ -150,7 +150,7 @@ public class HDLParameters {
           selectedValue = attributeOptionMap.get(value);
           break;
         case MAP_POW2:
-          for (var attr :attributesList) {
+          for (var attr: attributesList) {
             if (!attrs.containsAttribute(attr)) throw new UnsupportedOperationException("Component has not the required attribute");
             final var intValue = attrs.getValue(attr);
             if (intValue instanceof Integer) {
@@ -162,7 +162,7 @@ public class HDLParameters {
           selectedValue = (long) Math.pow(totalValue, 2d);
           break;
         case MAP_LN2:
-          for (var attr :attributesList) {
+          for (var attr: attributesList) {
             if (!attrs.containsAttribute(attr)) throw new UnsupportedOperationException("Component has not the required attribute");
             final var intValue = attrs.getValue(attr);
             if (intValue instanceof Integer) {
@@ -257,7 +257,7 @@ public class HDLParameters {
   /**
    * Constructs a module parameter where the map-value of the parameter is the Value stored in
    * the attribute StdAttr.BitWidth
-   * 
+   *
    * @param name Name used for the parameter
    * @param id Identifier of the parameter (must be negative)
    */
@@ -314,7 +314,7 @@ public class HDLParameters {
    * Constructs a module parameter where the map-value of the parameter is dependent
    * on the type; furthermore this parameter is represented by a std_logic_vector
    * instead of an Integer (for VHDL only and for values with more than 32 bits)
-   * 
+   *
    * @param name Name used for the parameter
    * @param id Identifier of the parameter (must be negative)
    * @param type Type of the map value
@@ -330,7 +330,7 @@ public class HDLParameters {
   /**
    * Constructs a conditional module parameter where the map-value of the parameter is the Value stored in
    * the attribute StdAttr.BitWidth. This parameter is only used if the StdAttr.BitWidth > 1 
-   * 
+   *
    * @param name Name used for the parameter
    * @param id Identifier of the parameter (must be negative)
    */
@@ -342,7 +342,7 @@ public class HDLParameters {
   /**
    * Constructs a conditional module parameter where the map-value of the parameter is the Value stored in
    * the attribute checkAttr. This parameter is only used if the checkAttr > 1 
-   * 
+   *
    * @param name Name used for the parameter
    * @param id Identifier of the parameter (must be negative)
    */
