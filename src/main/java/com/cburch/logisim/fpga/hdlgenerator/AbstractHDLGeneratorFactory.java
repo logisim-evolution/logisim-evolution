@@ -195,8 +195,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.empty();
         Contents.addRemarkBlock("Here all module parameters are defined with a dummy value");
         for (final var param : myParametersList.keySet(attrs)) {
-          final var vectorString = (myParametersList.isPresentedByInteger(param, attrs)) ? "" 
-              : LineBuffer.format("[{{1}}:0]", (myParametersList.getNumberOfVectorBits(param, attrs) - 1) );
+          // For verilog we specify a maximum vector, this seems the best way to do it
+          final var vectorString = (myParametersList.isPresentedByInteger(param, attrs)) ? "" : "[64:0]"; 
           Contents.add("   parameter {{1}} {{2}} = 1;", vectorString, myParametersList.get(param, attrs));
         }
         Contents.empty();
@@ -828,8 +828,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         final var parameterName = myParametersList.get(generic, attrs); 
         OneLine.append(parameterName);
         OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - parameterName.length())));
-        OneLine.append(myParametersList.isPresentedByInteger(generic, attrs) ? ": INTEGER" 
-            : LineBuffer.format(": std_logic_vector({{1}} DOWNTO 0)", (myParametersList.getNumberOfVectorBits(generic, attrs) - 1)));
+        OneLine.append(myParametersList.isPresentedByInteger(generic, attrs) ? ": INTEGER" : ": std_logic_vector");
       }
       OneLine.append(");");
       Contents.add(OneLine.toString());

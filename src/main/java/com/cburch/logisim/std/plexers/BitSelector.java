@@ -45,7 +45,8 @@ public class BitSelector extends InstanceFactory {
       Attributes.forBitWidth("group", S.getter("bitSelectorGroupAttr"));
 
   public BitSelector() {
-    super(_ID, S.getter("bitSelectorComponent"), new BitSelectorHDLGeneratorFactory());
+    // FIXME: For the moment the BitselectorHDL is broken, needs to be adapted
+    super(_ID, S.getter("bitSelectorComponent")); //, new BitSelectorHDLGeneratorFactory());
     setAttributes(
         new Attribute[] {StdAttr.FACING, StdAttr.SELECT_LOC, StdAttr.WIDTH, GROUP_ATTR},
         new Object[] {Direction.EAST, StdAttr.SELECT_BOTTOM_LEFT, BitWidth.create(8), BitWidth.ONE});

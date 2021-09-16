@@ -22,7 +22,7 @@ public abstract class HDL {
 
   public static final String NET_NAME = "s_LOGISIM_NET_";
   public static final String BUS_NAME = "s_LOGISIM_BUS_";
-  
+
   public static boolean isVHDL() {
     return AppPreferences.HDL_Type.get().equals(HDLGeneratorFactory.VHDL);
   }

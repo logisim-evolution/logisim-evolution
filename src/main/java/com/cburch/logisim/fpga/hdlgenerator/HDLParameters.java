@@ -63,8 +63,15 @@ public class HDLParameters {
           offsetValue = getCorrectIntValue(args);
           break;
         case MAP_MULTIPLY:
-          multiplyValue = getCorrectIntValue(args);
-          if (multiplyValue == 0) throw new NumberFormatException("multiply value cannot be zero");
+          if (args.length == 2) {
+            for (var arg = 0; arg < 2; arg++) {
+              if (!(args[arg] instanceof Attribute<?>)) throw new IllegalArgumentException("Mutliply map Type: argument needs to be an Attribute<?>");
+              attributesList.add((Attribute<?>) args[arg]);
+            }
+          } else {
+            multiplyValue = getCorrectIntValue(args);
+            if (multiplyValue == 0) throw new NumberFormatException("multiply value cannot be zero");
+          }
           break;
         case MAP_ATTRIBUTE_OPTION:
           if (args.length != 2) throw new IllegalArgumentException("Attribute map Type requires 2 argument");
@@ -171,7 +178,7 @@ public class HDLParameters {
           if (!attrs.containsAttribute(attributesList.get(0))) throw new UnsupportedOperationException("Component has not the required attribute");
           final var intValue = attrs.getValue(attributesList.get(0));
           if (intValue instanceof Integer) selectedValue = (int) intValue + offsetValue;
-          else if (intValue instanceof Long) selectedValue = (long) intValue;
+          else if (intValue instanceof Long) selectedValue = (long) intValue + offsetValue;
           else if (intValue instanceof BitWidth) selectedValue = ((BitWidth) intValue).getWidth() + offsetValue;
           else throw new UnsupportedOperationException("Requested attribute is not an Integer");
           break;
@@ -186,6 +193,21 @@ public class HDLParameters {
             mask <<= 1L;
           }
           selectedValue = bubbleMask;
+          break;
+        case MAP_MULTIPLY:
+          if (attributesList.isEmpty()) {
+            selectedValue = attrs.getValue(attributeToCheckForBus).getWidth() * multiplyValue + offsetValue;
+          } else {
+            selectedValue = 1;
+            for (Attribute<?> attr : attributesList) {
+              if (attrs.containsAttribute(attr)) {
+                final var attrValue = attrs.getValue(attr);
+                if (attrValue instanceof Integer) selectedValue *= (int) attrValue;
+                else if (attrValue instanceof Long) selectedValue *= (long) attrValue;
+                else throw new UnsupportedOperationException("Requested attribute is not an Integer or Long");
+              }
+            }
+          }
           break;
         default: 
           selectedValue = attrs.getValue(attributeToCheckForBus).getWidth() * multiplyValue + offsetValue;
@@ -210,6 +232,7 @@ public class HDLParameters {
         if (!attrs.containsAttribute(GateAttributes.ATTR_INPUTS)) throw new UnsupportedOperationException("Component has not the required attribute");
         nrOfVectorBits = attrs.getValue(GateAttributes.ATTR_INPUTS);
       }
+      if (offsetValue > 0) nrOfVectorBits = (int) offsetValue;
       if (nrOfVectorBits < 0) {
         if (attrs.containsAttribute(attributeToCheckForBus)) {
           nrOfVectorBits = attrs.getValue(attributeToCheckForBus).getWidth();
@@ -275,7 +298,7 @@ public class HDLParameters {
    * intAttribute: Map an Attribute<Integer> to the generic, example:
    *               add(HIGH_TICK_STR, HIGH_TICK_ID, MAP_INT_ATTRIBUTE, Clock.ATTR_HIGH)
    * 
-   * gateinputbubble: special case onl for the standard gates, see AbtractGateHDLGenerator for details.
+   * gateinputbubble: special case only for the standard gates, see AbtractGateHDLGenerator for details.
    * 
    * @param name Name used for the parameter
    * @param id Identifier of the parameter (must be negative)

@@ -31,39 +31,18 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int NR_OF_BITS_ID = -1;
   private static final String MAX_VALUE_STRING = "max_val";
   private static final int MAX_VALUE_ID = -2;
-  private static final String ACTIVE_EDGE_STRING = "ClkEdge";
-  private static final int ACTIVE_EDGE_ID = -3;
+  private static final String INVERT_CLOCK_STRING = "InvertClock";
+  private static final int INVERT_CLOCK_ID = -3;
   private static final String MODE_STRING = "mode";
   private static final int MODE_ID = -4;
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    final var map = new TreeMap<String, Integer>();
-    final var attrs = componentInfo.getComponent().getAttributeSet();
-    var mode = 0;
-    if (attrs.containsAttribute(Counter.ATTR_ON_GOAL)) {
-      if (attrs.getValue(Counter.ATTR_ON_GOAL) == Counter.ON_GOAL_STAY) mode = 1;
-      else if (attrs.getValue(Counter.ATTR_ON_GOAL) == Counter.ON_GOAL_CONT) mode = 2;
-      else if (attrs.getValue(Counter.ATTR_ON_GOAL) == Counter.ON_GOAL_LOAD) mode = 3;
-    } else {
-      mode = 1;
-    }
-    map.put(NR_OF_BITS_STRING, attrs.getValue(StdAttr.WIDTH).getWidth());
-    map.put(MAX_VALUE_STRING, attrs.getValue(Counter.ATTR_MAX).intValue());
-    var clkEdge = 1;
-    if (HDL.getClockNetName(componentInfo, Counter.CK, nets).isEmpty()
-        && attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING) clkEdge = 0;
-    map.put(ACTIVE_EDGE_STRING, clkEdge);
-    map.put(MODE_STRING, mode);
-    return map;
-  }
 
   public CounterHDLGeneratorFactory() {
     super();
     myParametersList
         .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-        .add(MAX_VALUE_STRING, MAX_VALUE_ID)
-        .add(ACTIVE_EDGE_STRING, ACTIVE_EDGE_ID)
+        .addVector(MAX_VALUE_STRING, MAX_VALUE_ID, HDLParameters.MAP_INT_ATTRIBUTE, Counter.ATTR_MAX)
+        .add(INVERT_CLOCK_STRING, INVERT_CLOCK_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, 
+            StdAttr.EDGE_TRIGGER, AbstractFlipFlopHDLGeneratorFactory.TRIGGER_MAP)
         .add(MODE_STRING, MODE_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Counter.ATTR_ON_GOAL,
             new HashMap<AttributeOption, Integer>() {{
               put(Counter.ON_GOAL_WRAP,0);
@@ -89,7 +68,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = (new LineBuffer()).pair("activeEdge", ACTIVE_EDGE_STRING);
+    final var contents = LineBuffer.getHdlBuffer().pair("invertClock", INVERT_CLOCK_STRING);
     contents.addRemarkBlock(
         "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
             + "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down");
@@ -98,6 +77,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           CompareOut   <= s_carry;
           CountValue   <= s_counter_value;
           
+          s_clock      <= GlobalClock WHEN {{invertClock}} = 0 ELSE NOT(GlobalClock); 
           make_carry : PROCESS( Up_n_Down,
                                 s_counter_value )
           BEGIN
@@ -108,7 +88,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                    s_carry <= '0';
                 END IF; -- Down counting
              ELSE
-                IF (s_counter_value = std_logic_vector(to_unsigned(max_val,width))) THEN
+                IF (s_counter_value = max_val) THEN
                    s_carry <= '1';
                 ELSE
                    s_carry <= '0';
@@ -132,7 +112,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 CASE (mode) IS
                    WHEN  0    => IF (s_carry = '1') THEN
                                     IF (v_downcount = '1') THEN
-                                       s_next_counter_value <= std_logic_vector(to_unsigned(max_val,width));
+                                       s_next_counter_value <= max_val;
                                     ELSE
                                        s_next_counter_value <= (OTHERS => '0');
                                     END IF;
@@ -152,12 +132,10 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
              END IF;
           END PROCESS make_next_value;
           
-          make_flops : PROCESS( GlobalClock , s_real_enable , clear , s_next_counter_value )
-             VARIABLE temp : std_logic_vector(0 DOWNTO 0);
+          make_flops : PROCESS( s_clock , s_real_enable , clear , s_next_counter_value )
           BEGIN
-             temp := std_logic_vector(to_unsigned({{activeEdge}}, 1));
              IF (clear = '1') THEN s_counter_value <= (OTHERS => '0');
-             ELSIF (GlobalClock'event AND (GlobalClock = temp(0))) THEN
+             ELSIF (rising_edge(s_clock)) THEN
                 IF (s_real_enable = '1') THEN s_counter_value <= s_next_counter_value;
                 END IF;
              END IF;
@@ -167,24 +145,15 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       contents.add("""
           
           assign CompareOut = s_carry;
-          assign CountValue = ({{activeEdge}}) ? s_counter_value : s_counter_value_neg_edge;
+          assign CountValue = s_counter_value;
+          assign s_clock = ({{invertClock}} == 0) ? GlobalClock : ~GlobalClock;
           
           always@(*)
           begin
           if (Up_n_Down)
-             begin
-                if ({{activeEdge}})
-                      s_carry = (s_counter_value == max_val) ? 1'b1 : 1'b0;
-                   else
-                      s_carry = (s_counter_value_neg_edge == max_val) ? 1'b1 : 1'b0;
-                end
-             else
-                begin
-                   if ({{activeEdge}})
-                      s_carry = (s_counter_value == 0) ? 1'b1 : 1'b0;
-                   else
-                      s_carry = (s_counter_value_neg_edge == 0) ? 1'b1 : 1'b0;
-                end
+             s_carry = (s_counter_value == max_val) ? 1'b1 : 1'b0;
+          else
+             s_carry = (s_counter_value == 0) ? 1'b1 : 1'b0;
           end
           
           assign s_real_enable = ((~(load)&~(Enable))|
@@ -199,31 +168,15 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
              else if ((mode==0)&s_carry)
                 s_next_counter_value = max_val;
              else if (Up_n_Down)
-                begin
-                   if ({{activeEdge}})
-                      s_next_counter_value = s_counter_value + 1;
-                   else
-                      s_next_counter_value = s_counter_value_neg_edge + 1;
-                end
+                s_next_counter_value = s_counter_value + 1;
              else
-                begin
-                   if ({{activeEdge}})
-                      s_next_counter_value = s_counter_value - 1;
-                   else
-                      s_next_counter_value = s_counter_value_neg_edge - 1;
-                end
+                s_next_counter_value = s_counter_value - 1;
           end
           
-          always @(posedge GlobalClock or posedge clear)
+          always @(posedge s_clock or posedge clear)
           begin
              if (clear) s_counter_value <= 0;
              else if (s_real_enable) s_counter_value <= s_next_counter_value;
-          end
-          
-          always @(negedge GlobalClock or posedge clear)
-          begin
-             if (clear) s_counter_value_neg_edge <= 0;
-             else if (s_real_enable) s_counter_value_neg_edge <= s_next_counter_value;
           end
           
           """);
@@ -300,17 +253,16 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    map.put("s_next_counter_value", NR_OF_BITS_ID); // for verilog generation
-    // in explicite process
-    map.put("s_carry", 1); // for verilog generation in explicite process
+    map.put("s_next_counter_value", NR_OF_BITS_ID);
+    map.put("s_carry", 1);
     map.put("s_counter_value", NR_OF_BITS_ID);
-    if (HDL.isVerilog()) map.put("s_counter_value_neg_edge", NR_OF_BITS_ID);
     return map;
   }
 
   @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     final var map = new TreeMap<String, Integer>();
+    map.put("s_clock", 1);
     map.put("s_real_enable", 1);
     return map;
   }

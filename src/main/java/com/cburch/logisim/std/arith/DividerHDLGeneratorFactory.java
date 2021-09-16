@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.std.arith;
 
-import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
@@ -18,7 +17,6 @@ import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -35,12 +33,7 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     myParametersList
         .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
         .add(CALC_BITS_STRING, CALC_BITS_ID, HDLParameters.MAP_MULTIPLY, 2)
-        .add(UNSIGNED_STRING, UNSIGNED_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR,
-            new HashMap<AttributeOption, Integer>() {{ 
-              put(Comparator.UNSIGNED_OPTION, 0); 
-              put(Comparator.SIGNED_OPTION, 1);
-            }}
-        );
+        .add(UNSIGNED_STRING, UNSIGNED_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, ComparatorHDLGeneratorFactory.SIGNED_MAP);
   }
 
   @Override

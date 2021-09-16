@@ -30,6 +30,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   private static final String EXTENDED_BITS_STRING = "NrOfExtendedBits";
   private static final int EXTENDED_BITS_ID = -4;
 
+  /* FIXME: get it working with the new parameter system
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
     final var map = new TreeMap<String, Integer>();
@@ -46,7 +47,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     map.put(EXTENDED_BITS_STRING, nrOfSlices * outputBits + 1);
     return map;
   }
-
+  */
   public BitSelectorHDLGeneratorFactory() {
     super();
     myParametersList
