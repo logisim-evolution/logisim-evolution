@@ -14,6 +14,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -30,29 +31,11 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   private static final String EXTENDED_BITS_STRING = "NrOfExtendedBits";
   private static final int EXTENDED_BITS_ID = -4;
 
-  /* FIXME: get it working with the new parameter system
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    final var map = new TreeMap<String, Integer>();
-    int selBits = componentInfo.getComponent().getEnd(2).getWidth().getWidth();
-    int inputBits = componentInfo.getComponent().getEnd(1).getWidth().getWidth();
-    int outputBits = componentInfo.getComponent().getEnd(0).getWidth().getWidth();
-    map.put(INPUT_BITS_STRING, inputBits);
-    map.put(SELECT_BITS_STRING, selBits);
-    if (outputBits > 1) map.put(SELECT_BITS_STRING, outputBits);
-    var nrOfSlices = 1;
-    for (var i = 0; i < selBits; i++) {
-      nrOfSlices <<= 1;
-    }
-    map.put(EXTENDED_BITS_STRING, nrOfSlices * outputBits + 1);
-    return map;
-  }
-  */
   public BitSelectorHDLGeneratorFactory() {
     super();
     myParametersList
-        .add(SELECT_BITS_STRING, SELECT_BITS_ID)
-        .add(INPUT_BITS_STRING, INPUT_BITS_ID)
+        .add(SELECT_BITS_STRING, SELECT_BITS_ID, HDLParameters.MAP_INT_ATTRIBUTE, BitSelector.SELECT_ATTR)
+        .add(INPUT_BITS_STRING, INPUT_BITS_ID, HDLParameters.MAP_INT_ATTRIBUTE, BitSelector.EXTENDED_ATTR)
         .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID)
         .addBusOnly(BitSelector.GROUP_ATTR, OUTPUTS_BITS_STRING, OUTPUT_BITS_ID);
   }
