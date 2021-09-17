@@ -52,12 +52,12 @@ public class BitSelector extends InstanceFactory {
     public boolean isToSave() {
       return false;
     }
- }
+  }
 
   public static final Attribute<BitWidth> GROUP_ATTR =
       Attributes.forBitWidth("group", S.getter("bitSelectorGroupAttr"));
   public static final Attribute<Integer> SELECT_ATTR = new NoSaveAttribute();
-  public static final Attribute<Integer> EXTENDED_ATTR =new NoSaveAttribute();
+  public static final Attribute<Integer> EXTENDED_ATTR = new NoSaveAttribute();
 
   public BitSelector() {
     super(_ID, S.getter("bitSelectorComponent"), new BitSelectorHDLGeneratorFactory());
