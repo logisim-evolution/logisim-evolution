@@ -48,7 +48,17 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .addWire("s_mac_lo_in_2", 25)
         .addWire("s_mac_hi_1_next", 24)
         .addWire("s_mac_hi_in_2", 24)
-        .addWire("s_busy_pipe_next", 2);
+        .addWire("s_busy_pipe_next", 2)
+        .addRegister("s_current_seed", 48)
+        .addRegister("s_reset_reg", 3)
+        .addRegister("s_mult_shift_reg", 36)
+        .addRegister("s_seed_shift_reg", 48)
+        .addRegister("s_start_reg", 1)
+        .addRegister("s_mac_lo_reg", 25)
+        .addRegister("s_mac_hi_reg", 24)
+        .addRegister("s_mac_hi_1_reg", 24)
+        .addRegister("s_busy_pipe_reg", 2)
+        .addRegister("s_output_reg", NR_OF_BITS_ID);
   }
 
   @Override
@@ -284,22 +294,6 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         & (comp.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
       output += "(0)";
     map.putAll(GetNetMap(output, true, comp, Random.OUT, Nets));
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("s_current_seed", 48);
-    map.put("s_reset_reg", 3);
-    map.put("s_mult_shift_reg", 36);
-    map.put("s_seed_shift_reg", 48);
-    map.put("s_start_reg", 1);
-    map.put("s_mac_lo_reg", 25);
-    map.put("s_mac_hi_reg", 24);
-    map.put("s_mac_hi_1_reg", 24);
-    map.put("s_busy_pipe_reg", 2);
-    map.put("s_output_reg", NR_OF_BITS_ID);
     return map;
   }
 }

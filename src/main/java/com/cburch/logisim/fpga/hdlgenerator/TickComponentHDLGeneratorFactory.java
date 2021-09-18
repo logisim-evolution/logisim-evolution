@@ -49,7 +49,9 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
         .add(NR_OF_COUNTER_BITS_STRING, NR_OF_COUNTER_BITS_ID, HDLParameters.MAP_CONSTANT, nrOfBits);
     myWires
         .addWire("s_tick_next", 1)
-        .addWire("s_count_next", NR_OF_COUNTER_BITS_ID);
+        .addWire("s_count_next", NR_OF_COUNTER_BITS_ID)
+        .addRegister("s_tick_reg", 1)
+        .addRegister("s_count_reg", NR_OF_COUNTER_BITS_ID);
   }
 
   @Override
@@ -139,13 +141,5 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     PortMap.put("FPGAClock", FPGA_CLOCK);
     PortMap.put("FPGATick", FPGA_TICK);
     return PortMap;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    SortedMap<String, Integer> Regs = new TreeMap<>();
-    Regs.put("s_tick_reg", 1);
-    Regs.put("s_count_reg", NR_OF_COUNTER_BITS_ID);
-    return Regs;
   }
 }

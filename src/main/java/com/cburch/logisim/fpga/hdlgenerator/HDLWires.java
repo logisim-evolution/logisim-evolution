@@ -50,6 +50,11 @@ public class HDLWires {
     return this;
   }
   
+  public HDLWires addRegister(String name, int nrOfBits) {
+    myWires.add(new Wire(REGISTER, name, nrOfBits));
+    return this;
+  }
+  
   public HDLWires addAllWires(Map<String, Integer> wires) {
     for (var wire : wires.keySet())
       myWires.add(new Wire(WIRE, wire, wires.get(wire)));
@@ -60,6 +65,13 @@ public class HDLWires {
     final var keys = new ArrayList<String>();
     for (var wire : myWires) 
       if (wire.isWire()) keys.add(wire.getName());
+    return keys;
+  }
+  
+  public List<String> registerKeySet() {
+    final var keys = new ArrayList<String>();
+    for (var wire : myWires) 
+      if (!wire.isWire()) keys.add(wire.getName());
     return keys;
   }
   

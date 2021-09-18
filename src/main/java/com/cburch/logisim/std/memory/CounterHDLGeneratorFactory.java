@@ -53,7 +53,10 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         );
     myWires
         .addWire("s_clock", 1)
-        .addWire("s_real_enable", 1);
+        .addWire("s_real_enable", 1)
+        .addRegister("s_next_counter_value", NR_OF_BITS_ID)
+        .addRegister("s_carry", 1)
+        .addRegister("s_counter_value", NR_OF_BITS_ID);
   }
 
   @Override
@@ -250,15 +253,6 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       output += "(0)";
     map.putAll(GetNetMap(output, true, componentInfo, Counter.OUT, nets));
     map.putAll(GetNetMap("CompareOut", true, componentInfo, Counter.CARRY, nets));
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("s_next_counter_value", NR_OF_BITS_ID);
-    map.put("s_carry", 1);
-    map.put("s_counter_value", NR_OF_BITS_ID);
     return map;
   }
 }

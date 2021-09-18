@@ -34,6 +34,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int MemArrayId = -3;
 
   public RamHDLGeneratorFactory() {
+    super();
     getWiresduringHDLWriting = true;
   }
 
@@ -42,9 +43,20 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
     final var be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
     final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-    myWires.addWire("s_ram_data_out", nrOfBits);
+    final var nrOfAddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
+    myWires
+        .addWire("s_ram_data_out", nrOfBits)
+        .addRegister("s_TickDelayLine", 3)
+        .addRegister("s_DataInReg", nrOfBits)
+        .addRegister("s_Address_reg", nrOfAddressLines)
+        .addRegister("s_WEReg", 1)
+        .addRegister("s_OEReg", 1)
+        .addRegister("s_DataOutReg", nrOfBits);
     if (byteEnables) {
-      for (var idx = 0; idx < RamAppearance.getNrBEPorts(attrs); idx++)
+      final var nrBePorts = RamAppearance.getNrBEPorts(attrs);
+      myWires
+          .addRegister("s_ByteEnableReg", nrBePorts);
+      for (var idx = 0; idx < nrBePorts; idx++)
         myWires
             .addWire(String.format("s_byte_enable_%d", idx), 1)
             .addWire(String.format("s_we_%d", idx), 1);
@@ -315,25 +327,6 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     }
     map.putAll(GetNetMap("DataOut", true, comp, RamAppearance.getDataOutIndex(0, attrs), nets));
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-    final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-    final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
-    final var nrOfAddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
-    map.put("s_TickDelayLine", 3);
-    map.put("s_DataInReg", nrOfBits);
-    map.put("s_Address_reg", nrOfAddressLines);
-    map.put("s_WEReg", 1);
-    map.put("s_OEReg", 1);
-    map.put("s_DataOutReg", nrOfBits);
-    if (byteEnables) {
-      map.put("s_ByteEnableReg", RamAppearance.getNrBEPorts(attrs));
-    }
     return map;
   }
 

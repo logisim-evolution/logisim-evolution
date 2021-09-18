@@ -24,6 +24,14 @@ import java.util.TreeMap;
 
 public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory {
 
+  public AbstractOctalFlopsHDLGenerator() {
+    super();
+    myWires
+        .addWire("state", 8)
+        .addWire("enable", 1)
+        .addWire("nexts", 8);
+  }
+
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
@@ -53,15 +61,6 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
     map.put("Q5", 1);
     map.put("Q6", 1);
     map.put("Q7", 1);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("state", 8);
-    map.put("enable", 1);
-    map.put("nexts", 8);
     return map;
   }
 
