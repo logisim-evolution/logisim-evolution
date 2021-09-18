@@ -33,6 +33,10 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     myParametersList
         .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID, HDLParameters.MAP_OFFSET, 1)
         .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID);
+    myWires
+        .addWire("s_extended_dataA", EXTENDED_BITS_ID)
+        .addWire("s_extended_dataB", EXTENDED_BITS_ID)
+        .addWire("s_sum_result", EXTENDED_BITS_ID);
   }
 
   @Override
@@ -90,14 +94,5 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     portMap.putAll(GetNetMap("CarryIn", true, ComponentInfo, 3, Nets));
     portMap.putAll(GetNetMap("CarryOut", true, ComponentInfo, 4, Nets));
     return portMap;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var wires = new TreeMap<String, Integer>();
-    wires.put("s_extended_dataA", EXTENDED_BITS_ID);
-    wires.put("s_extended_dataB", EXTENDED_BITS_ID);
-    wires.put("s_sum_result", EXTENDED_BITS_ID);
-    return wires;
   }
 }

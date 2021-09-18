@@ -39,7 +39,20 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public CircuitHDLGeneratorFactory(Circuit source) {
     MyCircuit = source;
+    getWiresduringHDLWriting = true;
   }
+  
+  @Override
+  public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {
+    // First we add the wires
+    for (final var wire : theNetlist.getAllNets())
+      if (!wire.isBus())
+        myWires.addWire(String.format("%s%d", NET_NAME, theNetlist.getNetId(wire)), 1);
+    // Now we add the busses
+    for (final var wire : theNetlist.getAllNets())
+      if (wire.isBus() && wire.isRootNet())
+        myWires.addWire(String.format("%s%d", BUS_NAME, theNetlist.getNetId(wire)), wire.getBitWidth());
+  };
 
   @Override
   public boolean generateAllHDLDescriptions(
@@ -792,25 +805,5 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     }
     return contents.toString();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist nets) {
-    final var signalMap = new TreeMap<String, Integer>();
-
-    /* First we define the nets */
-    for (final var thisNet : nets.getAllNets()) {
-      if (!thisNet.isBus() && thisNet.isRootNet()) {
-        signalMap.put(NET_NAME + nets.getNetId(thisNet), 1);
-      }
-    }
-    /* now we define the busses */
-    for (final var thisNet : nets.getAllNets()) {
-      if (thisNet.isBus() && thisNet.isRootNet()) {
-        final var nrOfBits = thisNet.getBitWidth();
-        signalMap.put(BUS_NAME + nets.getNetId(thisNet), nrOfBits);
-      }
-    }
-    return signalMap;
   }
 }

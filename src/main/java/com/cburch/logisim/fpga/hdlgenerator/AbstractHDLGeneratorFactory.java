@@ -35,6 +35,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   private final String subDirectoryName;
   protected final HDLParameters myParametersList = new HDLParameters();
   protected final HDLWires myWires = new HDLWires();
+  protected boolean getWiresduringHDLWriting = false;
 
   public AbstractHDLGeneratorFactory() {
     final var className = getClass().toString().replace('.', ':').replace(' ', ':'); 
@@ -46,6 +47,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   public AbstractHDLGeneratorFactory(String subDirectory) {
     subDirectoryName = subDirectory;
   }
+  
+  // Handle to get the wires during generation time
+  public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {};
 
   /* Here the common predefined methods are defined */
   @Override
@@ -65,6 +69,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     final var regs = GetRegList(attrs);
     final var mems = GetMemList(attrs);
     final var OneLine = new StringBuilder();
+    if (getWiresduringHDLWriting) {
+      myWires.removeWires();
+      getGenerationTimeWires(theNetlist, attrs);
+    }
     Contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
     if (HDL.isVHDL()) {
       final var libs = GetExtraLibraries();

@@ -39,7 +39,16 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           put(Shifter.SHIFT_ROLL_RIGHT, 4);
         }}
     );
+    getWiresduringHDLWriting = true;
   }
+
+  @Override
+  public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {
+    for (var stage = 0; stage < getNrofShiftBits(attrs); stage++)
+      myWires
+          .addWire(String.format("s_stage_%d_result", stage), attrs.getValue(StdAttr.WIDTH).getWidth())
+          .addWire(String.format("s_stage_%d_shiftin", stage), 1 << stage);
+  };
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
@@ -256,17 +265,5 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     contents.empty();
     return contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var wires = new TreeMap<String, Integer>();
-    int shift = getNrofShiftBits(attrs);
-    int loop;
-    for (loop = 0; loop < shift; loop++) {
-      wires.put("s_stage_" + loop + "_result", attrs.getValue(StdAttr.WIDTH).getWidth());
-      wires.put("s_stage_" + loop + "_shiftin", 1 << loop);
-    }
-    return wires;
   }
 }

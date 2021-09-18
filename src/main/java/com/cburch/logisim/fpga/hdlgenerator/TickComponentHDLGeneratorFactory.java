@@ -30,6 +30,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public static final String HDL_IDENTIFIER = "LogisimTickGenerator";
   public static final String HDL_DIRECTORY = "base";
 
+
   public TickComponentHDLGeneratorFactory(long fpga_clock_frequency, double tick_frequency) {
     super(HDL_DIRECTORY);
     fpgaClockFrequency = fpga_clock_frequency;
@@ -46,6 +47,9 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     myParametersList
         .add(RELOAD_VALUE_STRING, RELOAD_VALUE_ID, HDLParameters.MAP_CONSTANT, (int) reloadValue)
         .add(NR_OF_COUNTER_BITS_STRING, NR_OF_COUNTER_BITS_ID, HDLParameters.MAP_CONSTANT, nrOfBits);
+    myWires
+        .addWire("s_tick_next", 1)
+        .addWire("s_count_next", NR_OF_COUNTER_BITS_ID);
   }
 
   @Override
@@ -143,13 +147,5 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     Regs.put("s_tick_reg", 1);
     Regs.put("s_count_reg", NR_OF_COUNTER_BITS_ID);
     return Regs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
-    Wires.put("s_tick_next", 1);
-    Wires.put("s_count_next", NR_OF_COUNTER_BITS_ID);
-    return Wires;
   }
 }

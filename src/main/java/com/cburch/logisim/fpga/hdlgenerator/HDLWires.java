@@ -11,6 +11,7 @@ package com.cburch.logisim.fpga.hdlgenerator;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class HDLWires {
 
@@ -43,6 +44,17 @@ public class HDLWires {
   }
 
   private final List<Wire> myWires = new ArrayList<>();
+  
+  public HDLWires addWire(String name, int nrOfBits) {
+    myWires.add(new Wire(WIRE, name, nrOfBits));
+    return this;
+  }
+  
+  public HDLWires addAllWires(Map<String, Integer> wires) {
+    for (var wire : wires.keySet())
+      myWires.add(new Wire(WIRE, wire, wires.get(wire)));
+    return this;
+  }
 
   public List<String> wireKeySet() {
     final var keys = new ArrayList<String> ();
@@ -53,7 +65,13 @@ public class HDLWires {
   
   public int get(String wireName) {
     for (var wire : myWires)
-      if (wire.getName().equals(wireName)) return wire.myNrOfBits;
+      if (wire.getName().equals(wireName)) return wire.getNrOfBits();
     throw new ArrayStoreException("Wire or register not contained in structure");
+  }
+  
+  public void removeWires() {
+    final var iterator = myWires.iterator();
+    while (iterator.hasNext())
+      if (iterator.next().isWire()) iterator.remove();
   }
 }
