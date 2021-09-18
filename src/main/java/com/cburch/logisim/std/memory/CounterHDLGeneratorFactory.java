@@ -51,6 +51,9 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               put(Counter.ON_GOAL_LOAD, 3);
             }}
         );
+    myWires
+        .addWire("s_clock", 1)
+        .addWire("s_real_enable", 1);
   }
 
   @Override
@@ -256,14 +259,6 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put("s_next_counter_value", NR_OF_BITS_ID);
     map.put("s_carry", 1);
     map.put("s_counter_value", NR_OF_BITS_ID);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("s_clock", 1);
-    map.put("s_real_enable", 1);
     return map;
   }
 }

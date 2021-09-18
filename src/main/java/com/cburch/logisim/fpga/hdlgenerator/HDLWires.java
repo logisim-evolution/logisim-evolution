@@ -57,7 +57,7 @@ public class HDLWires {
   }
 
   public List<String> wireKeySet() {
-    final var keys = new ArrayList<String> ();
+    final var keys = new ArrayList<String>();
     for (var wire : myWires) 
       if (wire.isWire()) keys.add(wire.getName());
     return keys;

@@ -36,6 +36,19 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .add(NR_OF_BITS_STR, NR_OF_BITS_ID)
         // The seed parameter has 32 bits fixed
         .addVector(SEED_STR, SEED_ID, HDLParameters.MAP_INT_ATTRIBUTE, Random.ATTR_SEED, 32);
+    myWires
+        .addWire("s_InitSeed", 48)
+        .addWire("s_reset", 1)
+        .addWire("s_reset_next", 3)
+        .addWire("s_mult_shift_next", 36)
+        .addWire("s_seed_shift_next", 48)
+        .addWire("s_mult_busy", 1)
+        .addWire("s_start", 1)
+        .addWire("s_mac_lo_in_1", 25)
+        .addWire("s_mac_lo_in_2", 25)
+        .addWire("s_mac_hi_1_next", 24)
+        .addWire("s_mac_hi_in_2", 24)
+        .addWire("s_busy_pipe_next", 2);
   }
 
   @Override
@@ -287,24 +300,6 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put("s_mac_hi_1_reg", 24);
     map.put("s_busy_pipe_reg", 2);
     map.put("s_output_reg", NR_OF_BITS_ID);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("s_InitSeed", 48);
-    map.put("s_reset", 1);
-    map.put("s_reset_next", 3);
-    map.put("s_mult_shift_next", 36);
-    map.put("s_seed_shift_next", 48);
-    map.put("s_mult_busy", 1);
-    map.put("s_start", 1);
-    map.put("s_mac_lo_in_1", 25);
-    map.put("s_mac_lo_in_2", 25);
-    map.put("s_mac_hi_1_next", 24);
-    map.put("s_mac_hi_in_2", 24);
-    map.put("s_busy_pipe_next", 2);
     return map;
   }
 }

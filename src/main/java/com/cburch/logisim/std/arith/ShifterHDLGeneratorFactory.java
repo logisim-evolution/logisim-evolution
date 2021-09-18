@@ -48,7 +48,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       myWires
           .addWire(String.format("s_stage_%d_result", stage), attrs.getValue(StdAttr.WIDTH).getWidth())
           .addWire(String.format("s_stage_%d_shiftin", stage), 1 << stage);
-  };
+  }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {

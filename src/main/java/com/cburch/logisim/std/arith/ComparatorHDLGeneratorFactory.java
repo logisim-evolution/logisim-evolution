@@ -54,7 +54,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           .addWire("s_unsigned_less", 1)
           .addWire("s_signed_greater", 1)
           .addWire("s_unsigned_greater", 1);
-  };
+  }
 
 
   @Override

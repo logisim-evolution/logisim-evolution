@@ -49,7 +49,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
   
   // Handle to get the wires during generation time
-  public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {};
+  public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {}
 
   /* Here the common predefined methods are defined */
   @Override

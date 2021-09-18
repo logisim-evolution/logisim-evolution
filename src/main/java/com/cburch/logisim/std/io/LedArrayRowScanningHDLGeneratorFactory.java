@@ -51,6 +51,11 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
         .add(NR_OF_ROW_ADDRESS_BITS_STRING, NR_OF_ROW_ADDRESS_BITS_ID)
         .add(SCANNING_COUNTER_BITS_STRING, SCANNING_COUNTER_BITS_ID)
         .add(SCANNING_COUNTER_VALUE_STRING, SCANNING_COUNTER_VALUE_ID);
+    myWires
+        .addWire("s_rowCounterNext", NR_OF_ROW_ADDRESS_BITS_ID)
+        .addWire("s_scanningCounterNext", SCANNING_COUNTER_BITS_ID)
+        .addWire("s_tickNext", 1)
+        .addWire("s_maxLedInputs", MAX_NR_LEDS_ID);
   }
 
   public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long FpgaClockFrequency, boolean activeLow) {
@@ -144,16 +149,6 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
     inputs.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1);
     inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayInputs, NR_OF_LEDS_ID);
     return inputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var wires = new TreeMap<String, Integer>();
-    wires.put("s_rowCounterNext", NR_OF_ROW_ADDRESS_BITS_ID);
-    wires.put("s_scanningCounterNext", SCANNING_COUNTER_BITS_ID);
-    wires.put("s_tickNext", 1);
-    wires.put("s_maxLedInputs", MAX_NR_LEDS_ID);
-    return wires;
   }
 
   @Override

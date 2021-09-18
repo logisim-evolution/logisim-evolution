@@ -38,18 +38,18 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
     final var nrOfPorts = (int) (Math.log10(1 << nrOfBits.getWidth()) + 1.0);
     final var nrOfSignalBits = switch (nrOfPorts) {
-                                 case 2 -> 7;
-                                 case 3 -> 11;
-                                 default -> 16;
-                               };
+      case 2 -> 7;
+      case 3 -> 11;
+      default -> 16;
+    };
     final var nrOfSignals = switch (nrOfPorts) {
-                              case 2 -> 4;
-                              case 3 -> 7;
-                              default -> 11;
-                            };
+      case 2 -> 4;
+      case 3 -> 7;
+      default -> 11;
+    };
     for (var signal = 0; signal < nrOfSignals; signal++)
       myWires.addWire(String.format("s_level_%d", signal), nrOfSignalBits);
-  };
+  }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
