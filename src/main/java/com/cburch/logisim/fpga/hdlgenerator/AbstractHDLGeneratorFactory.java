@@ -62,7 +62,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     final var inputs = GetInputList(theNetlist, attrs);
     final var inOuts = GetInOutList(theNetlist, attrs);
     final var outputs = GetOutputList(theNetlist, attrs);
-    final var wires = GetWireList(attrs, theNetlist);
     final var regs = GetRegList(attrs);
     final var mems = GetMemList(attrs);
     final var OneLine = new StringBuilder();
@@ -89,22 +88,22 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       }
 
       Contents.addRemarkBlock("Here all used signals are defined");
-      for (final var wire : wires.keySet()) {
+      for (final var wire : myWires.wireKeySet()) {
         OneLine.append(wire);
         while (OneLine.length() < SIGNAL_ALLIGNMENT_SIZE) OneLine.append(" ");
         OneLine.append(": std_logic");
-        if (wires.get(wire) == 1) {
+        if (myWires.get(wire) == 1) {
           OneLine.append(";");
         } else {
           OneLine.append("_vector( ");
-          if (wires.get(wire) < 0) {
-            if (!myParametersList.containsKey(wires.get(wire), attrs)) {
+          if (myWires.get(wire) < 0) {
+            if (!myParametersList.containsKey(myWires.get(wire), attrs)) {
               Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
               return Contents.clear().get();
             }
-            OneLine.append("(").append(myParametersList.get(wires.get(wire), attrs)).append("-1)");
+            OneLine.append("(").append(myParametersList.get(myWires.get(wire), attrs)).append("-1)");
           } else {
-            OneLine.append((wires.get(wire) == 0) ? "0" : (wires.get(wire) - 1));
+            OneLine.append((myWires.get(wire) == 0) ? "0" : (myWires.get(wire) - 1));
           }
           OneLine.append(" DOWNTO 0 );");
         }
@@ -291,10 +290,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.add(OneLine.toString());
       }
       firstline = true;
-      for (final var wire : wires.keySet()) {
+      for (final var wire : myWires.wireKeySet()) {
         OneLine.setLength(0);
         OneLine.append("   wire");
-        nrOfPortBits = wires.get(wire);
+        nrOfPortBits = myWires.get(wire);
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
@@ -955,19 +954,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     }
     Contents.add("");
     return Contents;
-  }
-
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    /*
-     * This method returns a map list of all the wires/signals used in the
-     * black-box. The String Parameter represents the Name, and the Integer
-     * parameter represents: >0 The number of bits of the signal <0 A
-     * parameterized vector of bits where the value is the "key" of the
-     * parameter map 0 Is an invalid value and must not be used In VHDL a
-     * single bit "wire" is transformed to std_logic, all the others are
-     * std_logic_vectors
-     */
-    return new TreeMap<>();
   }
 
   @Override
