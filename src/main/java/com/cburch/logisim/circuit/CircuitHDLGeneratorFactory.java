@@ -52,7 +52,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     for (final var wire : theNetlist.getAllNets())
       if (wire.isBus() && wire.isRootNet())
         myWires.addWire(String.format("%s%d", BUS_NAME, theNetlist.getNetId(wire)), wire.getBitWidth());
-  };
+  }
 
   @Override
   public boolean generateAllHDLDescriptions(
