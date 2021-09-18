@@ -48,8 +48,9 @@ public class AppPreferences {
     private static Locale findLocale(String lang) {
       Locale[] check;
       for (int set = 0; set < 2; set++) {
-        if (set == 0) check = new Locale[] {Locale.getDefault(), Locale.ENGLISH};
-        else check = Locale.getAvailableLocales();
+        check = (set == 0)
+          ? new Locale[] {Locale.getDefault(), Locale.ENGLISH}
+          : Locale.getAvailableLocales();
         for (Locale loc : check) {
           if (loc != null && loc.getLanguage().equals(lang)) {
             return loc;
@@ -63,7 +64,7 @@ public class AppPreferences {
       super("locale", "");
 
       String localeStr = this.get();
-      if (localeStr != null && !localeStr.equals("")) {
+      if (!("".equals(localeStr))) {
         LocaleManager.setLocale(new Locale(localeStr));
       }
       LocaleManager.addLocaleListener(myListener);

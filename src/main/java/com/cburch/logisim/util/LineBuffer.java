@@ -17,6 +17,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.RandomAccess;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -342,7 +343,11 @@ public class LineBuffer implements RandomAccess {
     if (pairs != null) {
       for (final var set : pairs.getContainer().entrySet()) {
         final var searchRegExp = String.format("\\{\\{\\s*%s\\s*\\}\\}", set.getKey());
-        format = format.replaceAll(searchRegExp, set.getValue().toString());
+        // Both backslashes (\) and dollar signs ($) in the replacement string may cause the
+        // results to be different than if it were being treated as a literal replacement string
+        // so as we do not need to support i.e. group references etc, we just need to escape it.
+        final var replacement = Matcher.quoteReplacement(set.getValue().toString());
+        format = format.replaceAll(searchRegExp, replacement);
       }
     }
     return format;
