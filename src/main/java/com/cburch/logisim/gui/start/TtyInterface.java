@@ -266,13 +266,10 @@ public class TtyInterface {
       if (!args.FpgaDownload(proj)) System.exit(-1);
     }
 
-    Circuit circuit;
     final var circuitToTest = args.getCircuitToTest();
-    if (circuitToTest == null || circuitToTest.length() == 0) {
-      circuit = file.getMainCircuit();
-    } else {
-      circuit = file.getCircuit(circuitToTest);
-    }
+    final var circuit = (circuitToTest == null || circuitToTest.length() == 0)
+        ? file.getMainCircuit()
+        : file.getCircuit(circuitToTest);
 
     var format = args.getTtyFormat();
     if ((format & FORMAT_STATISTICS) != 0) {
