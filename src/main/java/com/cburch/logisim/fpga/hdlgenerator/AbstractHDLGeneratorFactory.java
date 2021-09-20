@@ -34,7 +34,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   private final String subDirectoryName;
   protected final HDLParameters myParametersList = new HDLParameters();
-  protected final HDLWires myWires = new HDLWires();
 
   public AbstractHDLGeneratorFactory() {
     final var className = getClass().toString().replace('.', ':').replace(' ', ':'); 
