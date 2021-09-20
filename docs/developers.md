@@ -42,14 +42,14 @@ How to import a Gradle project:
 
 To successfully import the project in Eclipse, the complete project structure must be present,
 including Java source files built by Gradle.
-You can do this by running Gradle task `genBuildInfo` before importing the project.
+You can do this by running Gradle task `genFiles` before importing the project.
 See [Building from sources](#building-from-sources) for how to run Gradle.
 
 To run the task within Eclipse after importing the Logisim-evolution project:
 
 * Bring up the `Gradle Tasks` view, if it is not already showing, by selecting the menu `Window/Show View/Other...`
   and selecting `Gradle Tasks` under Gradle.
-* In the `Gradle Tasks` view, double-click on `Logisim-evolution/build/genBuildInfo`.
+* In the `Gradle Tasks` view, double-click on `logisim-evolution/build/genFiles`.
   Check the `Console View` to see when it finishes.
 * Right click on the Logisim-evolution project in the Project Explorer and select `Gradle/Refresh Gradle Project`.
 * You may then need to right click on the Logisim-evolution project and select `Refresh`.

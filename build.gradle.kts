@@ -467,9 +467,9 @@ tasks.register("createDmg") {
 fun genBuildInfo(buildInfoFilePath: String) {
   val now = Date()
   val nowIso = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(now)
-  val branchName = runCommand(listOf("git", "-C", "${projectDir}", "rev-parse", "--abbrev-ref", "HEAD"),
+  val branchName = runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--abbrev-ref", "HEAD"),
       "Failed getting branch name.")
-  val branchLastCommitHash = runCommand(listOf("git", "-C", "${projectDir}", "rev-parse", "--short=8", "HEAD"),
+  val branchLastCommitHash = runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--short=8", "HEAD"),
       "Failed getting last commit hash.")
   val currentMillis = Date().time
   val buildYear = SimpleDateFormat("yyyy").format(now)
@@ -537,6 +537,17 @@ tasks.register("genBuildInfo") {
 }
 
 /**
+ * Task: genFiles
+ *
+ * Umbrella task to generate all generated files
+*/
+tasks.register("genFiles") {
+  group = "build"
+  description = "Generates all generated files."
+  dependsOn("genBuildInfo")
+}
+
+/**
  * Task: jpackage
  *
  * Umbrella task to create packages for all supported platforms.
@@ -575,11 +586,11 @@ val compilerOptions = listOf("-Xlint:deprecation", "-Xlint:unchecked")
 tasks {
   compileJava {
     options.compilerArgs = compilerOptions
-    dependsOn("genBuildInfo")
+    dependsOn("genFiles")
   }
   compileTestJava {
     options.compilerArgs = compilerOptions
-    dependsOn("genBuildInfo")
+    dependsOn("genFiles")
   }
 
   jar {
