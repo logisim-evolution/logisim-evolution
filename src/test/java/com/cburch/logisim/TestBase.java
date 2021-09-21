@@ -13,19 +13,20 @@ import java.util.Random;
 
 public class TestBase {
 
-  private static final int DEFAULT_RANDOM_STRING_LENGTH = 16;
+  public static final int DEFAULT_RANDOM_STRING_LENGTH = 16;
 
   /**
    * Function to generate a random string of specified length.
    *
    * @param length Numbers of characters to be generated.
    * @param includeDigits If True, returned string will also contain digits
+   *
    * @return Random string.
    */
   protected String getRandomString(int length, boolean includeDigits) {
     // chose a Character random from this String
-    final var allowedCharsBuilder =
-        new StringBuffer("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvxyz");
+    final var allowedCharsBuilder = new StringBuffer("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    allowedCharsBuilder.append(allowedCharsBuilder.toString().toLowerCase());
     if (includeDigits) allowedCharsBuilder.append("0123456789");
     final var allowedChars = allowedCharsBuilder.toString();
 
@@ -33,7 +34,7 @@ public class TestBase {
     final var sb = new StringBuilder(length);
 
     for (var i = 0; i < length; i++) {
-      int index = (int) (allowedChars.length() * Math.random());
+      final var index = (int) (allowedChars.length() * Math.random());
       sb.append(allowedChars.charAt(index));
     }
     return sb.toString();
@@ -53,7 +54,6 @@ public class TestBase {
 
   protected static int getRandomInt(int min, int max) {
     if (min >= max) throw new IllegalArgumentException("Max must be greater than Min.");
-
     return (new Random()).nextInt((max - min) + 1) + min;
   }
 }
