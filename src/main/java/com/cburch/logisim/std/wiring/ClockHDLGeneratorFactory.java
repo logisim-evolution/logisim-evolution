@@ -38,7 +38,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int PHASE_ID = -3;
   private static final String NR_OF_BITS_STR = "NrOfBits";
   private static final int NR_OF_BITS_ID = -4;
-  
+
   public ClockHDLGeneratorFactory() {
     super("base");
   }
@@ -63,7 +63,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("phase", PHASE_STR)
             .pair("nrOfBits", NR_OF_BITS_STR)
             .pair("lowTick", LOW_TICK_STR)
@@ -117,7 +117,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                                          : (s_derived_clock_reg[0] == 1'b1)
                                             ? {{lowTick}} - 1
                                             : {{highTick}} - 1;
-              
+
               """)
           .addRemarkBlock("Here the initial values are defined (for simulation only)")
           .add("""
@@ -146,7 +146,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 END IF;
              END IF;
           END PROCESS makeDerivedClock;
-          
+
           makeCounter : PROCESS( GlobalClock , ClockTick , s_counter_next ,
                                  s_derived_clock_reg )
           BEGIN
@@ -172,7 +172,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 end
              end
           end
-          
+
           always @(posedge GlobalClock)
           begin
              if (ClockTick)

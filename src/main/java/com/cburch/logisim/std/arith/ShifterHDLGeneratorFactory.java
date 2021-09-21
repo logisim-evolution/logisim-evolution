@@ -35,7 +35,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = (new LineBuffer())
+    final var contents = LineBuffer.getBuffer()
             .pair("shiftMode", shiftModeStr);
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
@@ -80,8 +80,8 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
              ** 3 : Arithmetic Shift Right                                            **
              ** 4 : Rotate Right                                                      **
              ***************************************************************************/
-             
-             
+
+
             """);
 
       if (nrOfBits == 1) {
@@ -98,9 +98,9 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             /***************************************************************************
              ** Here we assign the result                                             **
              ***************************************************************************/
-             
+
             assign Result = s_stage_{{1}}_result;
-            
+
             """, getNrofShiftBits(attrs) - 1);
       }
     }
@@ -153,7 +153,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   private ArrayList<String> GetStageFunctionalityVerilog(int stageNumber, int nrOfBits) {
-    final var contents = (new LineBuffer())
+    final var contents = LineBuffer.getBuffer()
             .pair("shiftMode", shiftModeStr)
             .pair("stageNumber", stageNumber)
             .pair("nrOfBits1", nrOfBits - 1)
@@ -163,19 +163,19 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           "/***************************************************************************
           ** Here stage {{stageNumber}} of the binary shift tree is defined
           ***************************************************************************/
-          
+
           """);
     if (stageNumber == 0) {
       contents.add("""
           assign s_stage_0_shiftin = (({{shiftMode}} == 1) || ({{shiftMode}} == 3))
                ? DataA[{{shiftMode}}] : ({{nrOfBits1}} == 4) ? DataA[0] : 0;
-          
+
           assign s_stage_0_result  = (ShiftAmount == 0)
                ? DataA
                : (({{shiftMode}} == 0) || ({{shiftMode}} == 1))
                   ? {DataA[{{nrOfBits2}}:0],s_stage_0_shiftin}
                   : {s_stage_0_shiftin,DataA[{{nrOfBits1}}:1]};
-          
+
           """);
     } else {
       final var pairs =
@@ -198,7 +198,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                                      (({{shiftMode}} == 0)||({{shiftMode}} == 1)) ?
                                      {s_stage_{{stageNumber1}}_result[{{bitsShiftDiff1}}:0],s_stage_{{stageNumber}}_shiftin} :
                                      {s_stage_{{stageNumber}}_shiftin,s_stage_{{stageNumber1}}_result[{{nrOfBits1}}:{{nrOfBitsToShift}}]};
-          
+
           """, pairs);
     }
     return contents.getWithIndent();
@@ -207,7 +207,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private ArrayList<String> GetStageFunctionalityVHDL(int stageNumber, int nrOfBits) {
     final var nrOfBitsToShift = (1 << stageNumber);
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
           .pair("shiftMode", shiftModeStr)
           .pair("stageNumber", stageNumber)
           .pair("stageNumber1", stageNumber - 1)
@@ -222,7 +222,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         -----------------------------------------------------------------------------
         --- Here stage {{stageNumber}} of the binary shift tree is defined
         -----------------------------------------------------------------------------
-          
+
         """);
 
     if (stageNumber == 0) {
@@ -230,7 +230,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           .add("""
             s_stage_0_shiftin <= DataA({{nrOfBits1}}) WHEN {{shiftMode}} = 1 OR {{shiftMode}} = 3 ELSE
                                  DataA(0) WHEN {{shiftMode}} = 4 ELSE '0';
- 
+
             s_stage_0_result  <= DataA
             """)
           .add(
@@ -249,7 +249,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                                  (OTHERS => s_stage_{{stageNumber1}}_result({{stageNumber1}})) WHEN {{shiftMode}} = 3 ELSE
                                  s_stage_{{stageNumber1}}_result( {{nrOfBitsToShift1}} DOWNTO 0 ) WHEN {{shiftMode}} = 4 ELSE
                                  (OTHERS => '0');
-            
+
             s_stage_{{stageNumber}}_result  <= s_stage_{{stageNumber1}}_result
                                     WHEN ShiftAmount({{stageNumber}}) = '0' ELSE
                                  s_stage_{{stageNumber1}}_result( {{bitsShiftDiff1}} DOWNTO 0 )&s_stage_{{stageNumber}}_shiftin

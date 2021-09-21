@@ -25,7 +25,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
 
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("addr", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
             .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
             .pair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
@@ -95,7 +95,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("nrOfLeds", nrOfLedsString)
             .pair("nrOfRows", nrOfRowsString)
             .pair("activeLow", activeLowString)
@@ -124,7 +124,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
                 s_maxBlueLedInputs({{nrOfLeds}}-1 DOWNTO 0)  <= {{insB}};
              END IF;
           END PROCESS makeVirtualInputs;
-          
+
           GenOutputs : FOR n IN {{nrOfRows}}-1 DOWNTO 0 GENERATE
              {{outsR}}(n) <= s_maxRedLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);
              {{outsG}}(n) <= s_maxGreenLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);

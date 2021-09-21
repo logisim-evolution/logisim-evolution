@@ -84,7 +84,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getBuffer();
     final var be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
     final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
     if (HDL.isVHDL()) {
@@ -208,7 +208,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                       END IF;
                    END IF;
                 END PROCESS Res;
-                
+
                 """);
       }
     }

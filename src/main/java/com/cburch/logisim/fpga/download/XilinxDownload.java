@@ -195,7 +195,7 @@ public class XilinxDownload implements VendorDownload {
           && UcfFile.exists()
           && DownloadFile.exists();
     }
-    final var contents = (new LineBuffer())
+    final var contents = LineBuffer.getBuffer()
             .pair("JTAGPos", JTAGPos)
             .pair("fileExt", bitfileExt)
             .pair("fileBaseName", ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME)
@@ -324,7 +324,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage0Synth() {
-    final var command = new LineBuffer();
+    final var command = LineBuffer.getBuffer();
     command
         .add(xilinxVendor.getBinaryPath(0))
         .add("-ifn")
@@ -337,7 +337,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage1Constraints() {
-    final var command = new LineBuffer();
+    final var command = LineBuffer.getBuffer();
     command
         .add(xilinxVendor.getBinaryPath(1))
         .add("-intstyle")
@@ -353,7 +353,7 @@ public class XilinxDownload implements VendorDownload {
 
   private ProcessBuilder Stage2Map() {
     if (IsCPLD) return null; /* mapping is skipped for the CPLD target*/
-    final var command = new LineBuffer();
+    final var command = LineBuffer.getBuffer();
     command
         .add(xilinxVendor.getBinaryPath(2))
         .add("-intstyle")
@@ -367,7 +367,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage3PAR() {
-    final var command = new LineBuffer();
+    final var command = LineBuffer.getBuffer();
     if (!IsCPLD) {
       command
           .add(xilinxVendor.getBinaryPath(3))
@@ -407,7 +407,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage4Bit() {
-    var command = new LineBuffer();
+    var command = LineBuffer.getBuffer();
     if (!IsCPLD) {
       command.add(xilinxVendor.getBinaryPath(4)).add("-w");
       if (boardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PULL_UP) command.add("-g").add("UnusedPin:PULLUP");

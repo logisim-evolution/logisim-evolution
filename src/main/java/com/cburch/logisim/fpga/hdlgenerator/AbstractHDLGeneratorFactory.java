@@ -35,7 +35,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   private final String subDirectoryName;
 
   public AbstractHDLGeneratorFactory() {
-    final var className = getClass().toString().replace('.', ':').replace(' ', ':'); 
+    final var className = getClass().toString().replace('.', ':').replace(' ', ':');
     final var parts = className.split(":");
     if (parts.length < 2) throw new ExceptionInInitializerError("Cannot read class path!");
     subDirectoryName = parts[parts.length - 2];
@@ -56,7 +56,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public ArrayList<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    final var Contents = new LineBuffer();
+    final var Contents = LineBuffer.getBuffer();
     final var inputs = GetInputList(theNetlist, attrs);
     final var inOuts = GetInOutList(theNetlist, attrs);
     final var outputs = GetOutputList(theNetlist, attrs);
@@ -361,7 +361,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    var Contents = new LineBuffer();
+    var Contents = LineBuffer.getBuffer();
     if (HDL.isVHDL()) Contents.add(GetVHDLBlackBox(theNetlist, attrs, componentName, false));
     return Contents.get();
   }
@@ -373,11 +373,11 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Object componentInfo,
       String name) {
     final var Contents = new ArrayList<String>();
-    final var ParameterMap = (componentInfo == null) | componentInfo instanceof NetlistComponent 
+    final var ParameterMap = (componentInfo == null) | componentInfo instanceof NetlistComponent
         ? GetParameterMap(nets, (NetlistComponent) componentInfo) : null;
     final var PortMap = GetPortMap(nets, componentInfo);
-    final var componentHDLName = componentInfo instanceof NetlistComponent 
-        ? ((NetlistComponent) componentInfo).getComponent().getFactory().getHDLName(((NetlistComponent) componentInfo).getComponent().getAttributeSet()) : 
+    final var componentHDLName = componentInfo instanceof NetlistComponent
+        ? ((NetlistComponent) componentInfo).getComponent().getFactory().getHDLName(((NetlistComponent) componentInfo).getComponent().getAttributeSet()) :
           name;
     final var CompName = (name != null && !name.isEmpty()) ? name : componentHDLName;
     final var ThisInstanceIdentifier = getInstanceIdentifier(componentInfo, componentId);
@@ -513,7 +513,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Netlist theNetlist,
       AttributeSet attrs,
       String componentName) {
-    var Contents = new LineBuffer();
+    var Contents = LineBuffer.getBuffer();
     if (HDL.isVHDL()) {
       Contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
           .add(FileWriter.getExtendedLibrary())

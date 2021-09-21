@@ -29,7 +29,7 @@ class XorGate extends AbstractGate {
   private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      return (new LineBuffer())
+      return LineBuffer.getBuffer()
           .add(
               isOneHot
                   ? GetOneHot(false, nrOfInputs, bitwidth > 1)

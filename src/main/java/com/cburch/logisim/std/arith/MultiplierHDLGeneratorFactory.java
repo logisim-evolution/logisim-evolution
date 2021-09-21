@@ -40,7 +40,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("nrOfBits", NrOfBitsStr)
             .pair("unsigned", UnsignedStr)
             .pair("calcBits", CalcBitsStr);
@@ -83,7 +83,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                    s_interm_result = $signed(s_mult_signed) + $signed(s_Cin);
                  end
           end
-          
+
           assign Mult_hi = s_interm_result[{{calcBits}}-1:{{nrOfBits}}];
           assign Mult_lo = s_interm_result[{{nrOfBits}}-1:0];
           """);

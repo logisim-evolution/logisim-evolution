@@ -26,7 +26,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   private static final String BIT_WIDTH_STRING = "NrOfBits";
   private static final int BUBBLES_GENERIC = -2;
   private static final String BUBBLES_MASK = "BubblesMask";
-  
+
   public boolean GetFloatingValue(boolean isInverted) {
     return !isInverted;
   }
@@ -51,7 +51,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getBuffer();
     final var bitWidth = attrs.getValue(StdAttr.WIDTH).getWidth();
     final var nrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)

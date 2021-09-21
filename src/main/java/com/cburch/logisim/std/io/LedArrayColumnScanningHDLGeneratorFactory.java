@@ -47,7 +47,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
     final var maxNrLeds = ((int) Math.pow(2.0, (double) nrColAddrBits)) * nrOfRows;
 
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("nrOfLeds", nrOfLedsString)
             .pair("ledsCount", nrOfRows * nrOfColumns)
             .pair("maxNrLeds", maxNrLedsString)
@@ -93,7 +93,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
 
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
             .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
             .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
@@ -169,7 +169,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
 
   public ArrayList<String> getColumnCounterCode() {
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
             .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
             .pair("counterBits", scanningCounterBitsString)
@@ -237,7 +237,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
             .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
             .pair("nrOfLeds", nrOfLedsString)

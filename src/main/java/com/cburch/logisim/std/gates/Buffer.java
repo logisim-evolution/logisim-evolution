@@ -48,7 +48,7 @@ class Buffer extends InstanceFactory {
   private static class BufferGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      return (new LineBuffer())
+      return LineBuffer.getBuffer()
           .add(HDL.isVHDL() ? "Result <= Input_1;" : "assign Result = Input_1;")
           .empty()
           .getWithIndent();

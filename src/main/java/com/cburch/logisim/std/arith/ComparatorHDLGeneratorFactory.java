@@ -38,7 +38,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents = new LineBuffer();
+    final var Contents = LineBuffer.getBuffer();
     Contents.pair("twosComplement", TwosComplementStr);
 
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
@@ -66,7 +66,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         Contents.add("""
             assign A_EQ_B = (DataA == DataB);
             assign A_LT_B = (DataA < DataB);
-            assign A_GT_B = (DataA > DataB); 
+            assign A_GT_B = (DataA > DataB);
             """);
       } else {
         Contents.add("""
@@ -74,7 +74,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             assign s_unsigned_less = (DataA < DataB);
             assign s_signed_greater = ($signed(DataA) > $signed(DataB));
             assign s_unsigned_greater = (DataA > DataB);
-            
+
             assign A_EQ_B = (DataA == DataB);
             assign A_GT_B = ({{twosComplement}}==1) ? s_signed_greater : s_unsigned_greater;
             assign A_LT_B = ({{twosComplement}}==1) ? s_signed_less : s_unsigned_less;

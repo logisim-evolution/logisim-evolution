@@ -29,16 +29,16 @@ public class RomHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
     final var dataWidth = attrs.getValue(Mem.DATA_ATTR).getWidth();
     final var romContents = attrs.getValue(Rom.CONTENTS_ATTR);
     final var generator = (new WithSelectHDLGenerator(componentInfo.getComponent().getAttributeSet().getValue(StdAttr.LABEL),
-        HDL.getBusName(componentInfo, RamAppearance.getAddrIndex(0, attrs), nets), addressWidth, 
+        HDL.getBusName(componentInfo, RamAppearance.getAddrIndex(0, attrs), nets), addressWidth,
         HDL.getBusName(componentInfo, RamAppearance.getDataOutIndex(0, attrs), nets), dataWidth))
         .setDefault(0L);
     for (var addr = 0L; addr < (1L << addressWidth); addr++) {
-      final var romValue = romContents.get(addr); 
+      final var romValue = romContents.get(addr);
       if (romValue != 0L) generator.add(addr, romValue);
     }
-    return (new LineBuffer()).add(generator.getHdlCode()).getWithIndent(3);
+    return LineBuffer.getBuffer().add(generator.getHdlCode()).getWithIndent(3);
   }
-  
+
   @Override
   public boolean isHDLSupportedTarget(AttributeSet attrs) {
     if (attrs == null) return false;

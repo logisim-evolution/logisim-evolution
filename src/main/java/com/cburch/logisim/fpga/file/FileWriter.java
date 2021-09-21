@@ -25,24 +25,24 @@ public class FileWriter {
   public static final String ARCHITECTURE_EXTENSION = "_behavior";
 
   public static ArrayList<String> getExtendedLibrary() {
-    final var lines = new LineBuffer();
+    final var lines = LineBuffer.getBuffer();
     lines.add("""
-           
+
                LIBRARY ieee;
                USE ieee.std_logic_1164.all;
                USE ieee.numeric_std.all;
-               
+
                """);
     return lines.get();
   }
 
   public static ArrayList<String> getStandardLibrary() {
-    final var lines = new LineBuffer();
+    final var lines = LineBuffer.getBuffer();
     lines.add("""
-      
+
               LIBRARY ieee;
               USE ieee.std_logic_1164.all;
-              
+
               """);
     return lines.get();
   }
@@ -51,7 +51,7 @@ public class FileWriter {
       String targetDirectory,
       String componentName,
       boolean isEntity) {
-    final var fileName = new StringBuffer(); 
+    final var fileName = new StringBuffer();
     try {
       final var outDir = new File(targetDirectory);
       if (!outDir.exists()) {

@@ -42,12 +42,12 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = (new LineBuffer())
+    final var contents = LineBuffer.getBuffer()
             .pair("activeLevel", ACTIVE_LEVEL_STR);
     if (HDL.isVHDL()) {
       contents.add("""
           Q <= s_state_reg;
-          
+
           make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )
           BEGIN
              IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');
@@ -91,7 +91,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       if (!Netlist.isFlipFlop(attrs)) {
         contents.add("""
             assign Q = s_state_reg;
-            
+
             always @(*)
             begin
                if (Reset) s_state_reg <= 0;
@@ -101,13 +101,13 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       } else {
         contents.add("""
             assign Q = ({{activeLevel}}) ? s_state_reg : s_state_reg_neg_edge;
-            
+
             always @(posedge Clock or posedge Reset)
             begin
                if (Reset) s_state_reg <= 0;
                else if (ClockEnable&Tick) s_state_reg <= D;
             end
-            
+
             always @(negedge Clock or posedge Reset)
             begin
                if (Reset) s_state_reg_neg_edge <= 0;

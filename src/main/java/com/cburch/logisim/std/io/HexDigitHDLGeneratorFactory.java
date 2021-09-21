@@ -26,7 +26,7 @@ public class HexDigitHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
     final var bubbleBusName = LOCAL_OUTPUT_BUBBLE_BUS_NAME;
     final var signalName = LineBuffer.format("{{1}}{{<}}{{2}}{{3}}{{4}}{{>}}", bubbleBusName, (startId + 6), HDL.vectorLoopId(), startId);
     final var contents =
-        (new LineBuffer()).addHdlPairs()
+        LineBuffer.getBuffer().addHdlPairs()
             .pair("bubbleBusName", bubbleBusName)
             .pair("sigName", signalName)
             .pair("dpName", HDL.getNetName(componentInfo, HexDigit.DP, true, nets));

@@ -21,7 +21,7 @@ public class ControlledBufferHDLGenerator extends InlinedHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getBuffer();
     final var triName = HDL.getNetName(componentInfo, 2, true, nets);
     var inpName = "";
     var outpName = "";

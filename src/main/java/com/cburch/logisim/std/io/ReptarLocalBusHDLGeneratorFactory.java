@@ -24,17 +24,17 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public ArrayList<String> getArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getBuffer();
     if (HDL.isVHDL()) {
       contents
           .pair("compName", componentName)
           .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
           .add("""
-              
-              ARCHITECTURE PlatformIndependent OF {{compName}} IS 
-              
+
+              ARCHITECTURE PlatformIndependent OF {{compName}} IS
+
               BEGIN
-              
+
               FPGA_out(0) <= NOT SP6_LB_WAIT3_i;
               FPGA_out(1) <= NOT IRQ_i;
               SP6_LB_nCS3_o       <= FPGA_in(0);
@@ -42,7 +42,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
               SP6_LB_RE_nOE_o     <= FPGA_in(2);
               SP6_LB_nWE_o        <= FPGA_in(3);
               Addr_LB_o           <= FPGA_in(11 DOWNTO 4);
-              
+
               IOBUF_Addresses_Datas : for i in 0 to Addr_Data_LB_io'length-1 generate
                 IOBUF_Addresse_Data : IOBUF
                 generic map (
@@ -57,7 +57,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
                   T => Addr_Data_LB_tris_i -- 3-state enable input, high=input, low=output
                 );
               end generate;
-              
+
               END PlatformIndependent;
               """);
     }
@@ -66,7 +66,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    return (new LineBuffer())
+    return LineBuffer.getBuffer()
         .add("""
             COMPONENT LocalBus
                PORT ( SP6_LB_WAIT3_i     : IN  std_logic;
@@ -89,14 +89,14 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public ArrayList<String> getEntity(Netlist nets, AttributeSet attrs, String componentName) {
-    return (new LineBuffer())
+    return LineBuffer.getBuffer()
         .pair("compName", componentName)
         .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
         .add(FileWriter.getExtendedLibrary())
         .add("""
             Library UNISIM;
             use UNISIM.vcomponents.all;
-            
+
             ENTITY {{compName}} IS
                PORT ( Addr_Data_LB_io     : INOUT std_logic_vector(15 downto 0);
                       SP6_LB_nCS3_o       : OUT std_logic;

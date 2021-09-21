@@ -28,7 +28,7 @@ public class LedBarHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> getInlinedCode(Netlist netlist, Long componentId, NetlistComponent componentInfo, String circuitName) {
-    final var contents = (new LineBuffer()).addHdlPairs();
+    final var contents = LineBuffer.getBuffer().addHdlPairs();
     final var isSingleBus = componentInfo.getComponent().getAttributeSet().getValue(LedBar.ATTR_INPUT_TYPE).equals(LedBar.INPUT_ONE_WIRE);
     final var nrOfSegments = componentInfo.getComponent().getAttributeSet().getValue(getAttributeColumns()).getWidth();
     for (var pin = 0; pin < nrOfSegments; pin++) {

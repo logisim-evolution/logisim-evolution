@@ -48,7 +48,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = (new LineBuffer()).pair("activeEdge", activeEdgeStr);
+    final var contents = LineBuffer.getBuffer().pair("activeEdge", activeEdgeStr);
     contents.addRemarkBlock(
         "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
             + "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down");
@@ -56,7 +56,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       contents.add("""
           CompareOut   <= s_carry;
           CountValue   <= s_counter_value;
-          
+
           make_carry : PROCESS( Up_n_Down,
                                 s_counter_value )
           BEGIN
@@ -74,11 +74,11 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 END IF; -- Up counting
              END IF;
           END PROCESS make_carry;
-          
+
           s_real_enable <= '0' WHEN (load = '0' AND enable = '0') -- Counter disabled
                                  OR (mode = 1 AND s_carry = '1' AND load = '0') -- Stay at value situation
                                ELSE ClockEnable;
-          
+
           make_next_value : PROCESS( load , Up_n_Down , s_counter_value ,
                                      LoadData , s_carry )
              VARIABLE v_downcount : std_logic;
@@ -110,7 +110,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 END CASE;
              END IF;
           END PROCESS make_next_value;
-          
+
           make_flops : PROCESS( GlobalClock , s_real_enable , clear , s_next_counter_value )
              VARIABLE temp : std_logic_vector(0 DOWNTO 0);
           BEGIN
@@ -124,10 +124,10 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           """);
     } else {
       contents.add("""
-          
+
           assign CompareOut = s_carry;
           assign CountValue = ({{activeEdge}}) ? s_counter_value : s_counter_value_neg_edge;
-          
+
           always@(*)
           begin
           if (Up_n_Down)
@@ -145,10 +145,10 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                       s_carry = (s_counter_value_neg_edge == 0) ? 1'b1 : 1'b0;
                 end
           end
-          
+
           assign s_real_enable = ((~(load)&~(Enable))|
                                   ((mode==1)&s_carry&~(load))) ? 1'b0 : ClockEnable;
-          
+
           always @(*)
           begin
              if ((load)|((mode==3)&s_carry))
@@ -172,19 +172,19 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                       s_next_counter_value = s_counter_value_neg_edge - 1;
                 end
           end
-          
+
           always @(posedge GlobalClock or posedge clear)
           begin
              if (clear) s_counter_value <= 0;
              else if (s_real_enable) s_counter_value <= s_next_counter_value;
           end
-          
+
           always @(negedge GlobalClock or posedge clear)
           begin
              if (clear) s_counter_value_neg_edge <= 0;
              else if (s_real_enable) s_counter_value_neg_edge <= s_next_counter_value;
           end
-          
+
           """);
     }
     return contents.getWithIndent();
