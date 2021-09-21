@@ -61,7 +61,8 @@ public class Shifter extends InstanceFactory {
             SHIFT_ROLL_LEFT,
             SHIFT_ROLL_RIGHT
           });
-
+  public static final Attribute<Integer> SHIFT_BITS_ATTR = Attributes.forNoSave();
+  
   static final int IN0 = 0;
   static final int IN1 = 1;
   static final int OUT = 2;
@@ -69,8 +70,8 @@ public class Shifter extends InstanceFactory {
   public Shifter() {
     super(_ID, S.getter("shifterComponent"), new ShifterHDLGeneratorFactory());
     setAttributes(
-        new Attribute[] {StdAttr.WIDTH, ATTR_SHIFT},
-        new Object[] {BitWidth.create(8), SHIFT_LOGICAL_LEFT});
+        new Attribute[] {StdAttr.WIDTH, ATTR_SHIFT, SHIFT_BITS_ATTR},
+        new Object[] {BitWidth.create(8), SHIFT_LOGICAL_LEFT, 4});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
     setIcon(new ArithmeticIcon("\u2b05"));
@@ -87,6 +88,7 @@ public class Shifter extends InstanceFactory {
     int data = dataWid == null ? 32 : dataWid.getWidth();
     int shift = 1;
     while ((1 << shift) < data) shift++;
+    instance.getAttributeSet().setValue(SHIFT_BITS_ATTR, shift);
 
     Port[] ps = new Port[3];
     ps[IN0] = new Port(-40, -10, Port.INPUT, data);

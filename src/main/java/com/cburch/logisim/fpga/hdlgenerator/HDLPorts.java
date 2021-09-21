@@ -61,7 +61,7 @@ public class HDLPorts {
         } else if (value instanceof Integer) {
           nrOfBits = (int) value;
         } else throw new IllegalArgumentException("No Bitwidth or Integer value");
-        return nrOfBits == 1 ? 1 : myNrOfBits;
+        return (nrOfBits == 1) ? 1 : (myNrOfBits > 0) ? myNrOfBits : nrOfBits;
       }
       return myNrOfBits;
     }

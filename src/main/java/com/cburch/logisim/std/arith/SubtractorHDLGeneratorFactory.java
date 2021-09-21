@@ -11,15 +11,13 @@ package com.cburch.logisim.std.arith;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -38,16 +36,12 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .addWire("s_extended_dataB", EXTENDED_BITS_ID)
         .addWire("s_sum_result", EXTENDED_BITS_ID)
         .addWire("s_carry", 1);
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var inputs = new TreeMap<String, Integer>();
-    int inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
-    inputs.put("DataA", inputbits);
-    inputs.put("DataB", inputbits);
-    inputs.put("BorrowIn", 1);
-    return inputs;
+    myPorts
+        .add(Port.INPUT, "DataA", NR_OF_BITS_ID, Subtractor.IN0, StdAttr.WIDTH)
+        .add(Port.INPUT, "DataB", NR_OF_BITS_ID, Subtractor.IN1, StdAttr.WIDTH)
+        .add(Port.INPUT, "BorrowIn", 1, Subtractor.B_IN)
+        .add(Port.OUTPUT, "Result", NR_OF_BITS_ID, Subtractor.OUT, StdAttr.WIDTH)
+        .add(Port.OUTPUT, "BorrowOut", 1, Subtractor.B_OUT);
   }
 
   @Override
@@ -76,27 +70,5 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           """);
     }
     return Contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    int outputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
-    outputs.put("Result", outputbits);
-    outputs.put("BorrowOut", 1);
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    final var portMap = new TreeMap<String, String>();
-    if (!(MapInfo instanceof NetlistComponent)) return portMap;
-    final var ComponentInfo = (NetlistComponent) MapInfo;
-    portMap.putAll(GetNetMap("DataA", true, ComponentInfo, 0, Nets));
-    portMap.putAll(GetNetMap("DataB", true, ComponentInfo, 1, Nets));
-    portMap.putAll(GetNetMap("Result", true, ComponentInfo, 2, Nets));
-    portMap.putAll(GetNetMap("BorrowIn", true, ComponentInfo, 3, Nets));
-    portMap.putAll(GetNetMap("BorrowOut", true, ComponentInfo, 4, Nets));
-    return portMap;
   }
 }

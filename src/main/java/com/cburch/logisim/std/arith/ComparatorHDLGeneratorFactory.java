@@ -12,17 +12,15 @@ package com.cburch.logisim.std.arith;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -44,10 +42,17 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .add(TWOS_COMPLEMENT_STRING, TWOS_COMPLEMENT_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, 
             SIGNED_MAP);
     getWiresduringHDLWriting = true;
+    myPorts
+        .add(Port.INPUT, "DataA", NR_OF_BITS_ID, Comparator.IN0, StdAttr.WIDTH)
+        .add(Port.INPUT, "DataB", NR_OF_BITS_ID, Comparator.IN1, StdAttr.WIDTH)
+        .add(Port.OUTPUT, "A_GT_B", 1, Comparator.GT)
+        .add(Port.OUTPUT, "A_EQ_B", 1, Comparator.EQ)
+        .add(Port.OUTPUT, "A_LT_B", 1, Comparator.LT);
   }
 
   @Override
   public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {
+    myWires.removeWires();
     if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1)
       myWires
           .addWire("s_signed_less", 1)
@@ -56,15 +61,6 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           .addWire("s_unsigned_greater", 1);
   }
 
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    final var inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
-    map.put("DataA", inputbits);
-    map.put("DataB", inputbits);
-    return map;
-  }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
@@ -112,27 +108,5 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     }
     return Contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("A_GT_B", 1);
-    map.put("A_EQ_B", 1);
-    map.put("A_LT_B", 1);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    final var portMap = new TreeMap<String, String>();
-    if (!(MapInfo instanceof NetlistComponent)) return portMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    portMap.putAll(GetNetMap("DataA", true, ComponentInfo, 0, Nets));
-    portMap.putAll(GetNetMap("DataB", true, ComponentInfo, 1, Nets));
-    portMap.putAll(GetNetMap("A_GT_B", true, ComponentInfo, 2, Nets));
-    portMap.putAll(GetNetMap("A_EQ_B", true, ComponentInfo, 3, Nets));
-    portMap.putAll(GetNetMap("A_LT_B", true, ComponentInfo, 4, Nets));
-    return portMap;
   }
 }
