@@ -19,21 +19,32 @@ public class TestBase {
    * Function to generate a random string of specified length.
    *
    * @param length Numbers of characters to be generated.
+   * @param includeDigits If True, returned string will also contain digits
    * @return Random string.
    */
-  protected String getRandomString(int length) {
+  protected String getRandomString(int length, boolean includeDigits) {
     // chose a Character random from this String
-    final var AlphaNumericString =
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ" + "0123456789" + "abcdefghijklmnopqrstuvxyz";
+    final var allowedCharsBuilder =
+        new StringBuffer("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvxyz");
+    if (includeDigits) allowedCharsBuilder.append("0123456789");
+    final var allowedChars = allowedCharsBuilder.toString();
 
     // create StringBuffer size of AlphaNumericString
     final var sb = new StringBuilder(length);
 
     for (var i = 0; i < length; i++) {
-      int index = (int) (AlphaNumericString.length() * Math.random());
-      sb.append(AlphaNumericString.charAt(index));
+      int index = (int) (allowedChars.length() * Math.random());
+      sb.append(allowedChars.charAt(index));
     }
     return sb.toString();
+  }
+
+  protected String getRandomString(boolean includeDigits) {
+    return getRandomString(DEFAULT_RANDOM_STRING_LENGTH, includeDigits);
+  }
+
+  protected String getRandomString(int length) {
+    return getRandomString(length, true);
   }
 
   protected String getRandomString() {
