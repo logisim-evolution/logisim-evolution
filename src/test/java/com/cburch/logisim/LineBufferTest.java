@@ -10,6 +10,7 @@
 package com.cburch.logisim;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
@@ -18,6 +19,10 @@ import static org.junit.Assert.assertTrue;
 
 import com.cburch.draw.shapes.Line;
 import com.cburch.logisim.util.LineBuffer;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Modifier;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +34,7 @@ public class LineBufferTest extends TestBase {
 
   @Before
   public void SetUp() {
-    lb = new LineBuffer();
+    lb = LineBuffer.getBuffer();
     assertEquals(0, lb.size());
   }
 
@@ -57,7 +62,7 @@ public class LineBufferTest extends TestBase {
   /** Tests is plain add(String) works as expected. */
   @Test
   public void testAdd() {
-    final var lb = new LineBuffer();
+    final var lb = LineBuffer.getBuffer();
     final var test = getRandomString();
     lb.add(test);
 
@@ -68,7 +73,7 @@ public class LineBufferTest extends TestBase {
   /** Tests is add(String, Object...) works as expected. */
   @Test
   public void testAddVarArgs() {
-    final var lb = new LineBuffer();
+    final var lb = LineBuffer.getBuffer();
     final var foo = getRandomString();
     final var bar = getRandomInt(0, 100);
 
@@ -88,7 +93,7 @@ public class LineBufferTest extends TestBase {
     final var foo = getRandomString();
     final var bar = getRandomInt(0, 100);
 
-    final var lb = (new LineBuffer())
+    final var lb = LineBuffer.getBuffer()
             .pair("pair", pair)
             .add("{{pair}}-{{1}}-{{2}}", foo, bar);
     assertEquals(1, lb.size());
@@ -116,9 +121,9 @@ public class LineBufferTest extends TestBase {
         };
 
     for (final var test : tests.entrySet()) {
-      final var lb = new LineBuffer();
+      final var lb = LineBuffer.getBuffer();
       lb.add(test.getKey(), pairs);
-      final var expected = new LineBuffer(test.getValue());
+      final var expected = LineBuffer.getBuffer().add(test.getValue());
       assertEquals(expected, lb);
     }
   }
@@ -140,7 +145,7 @@ public class LineBufferTest extends TestBase {
     for (final var test : tests.entrySet()) {
       final var lb = new LineBuffer(globalPairs);
       lb.add(test.getKey());
-      final var expected = (new LineBuffer()).add(test.getValue(), globalPairs);
+      final var expected = LineBuffer.getBuffer().add(test.getValue(), globalPairs);
       assertEquals(expected, lb);
     }
   }
@@ -179,7 +184,7 @@ public class LineBufferTest extends TestBase {
     final var arg1 = "ARG_1";
     final var fmt = "{{assign}}{{ins}}{{id}}{{<}}{{pin}}{{>}}{{=}}{{1}};";
 
-    final var buffer = new LineBuffer();
+    final var buffer = LineBuffer.getBuffer();
     // final var buffer = LineBuffer.getHdlBuffer();  // FIXME: mock isVHDL() first!
 
     final var assign = getRandomString();
@@ -269,7 +274,7 @@ public class LineBufferTest extends TestBase {
   public void testAddUnique() {
     final var line = getRandomString();
 
-    final var lb = new LineBuffer();
+    final var lb = LineBuffer.getBuffer();
     lb.addUnique(line);
     assertEquals(1, lb.size());
     lb.addUnique(line);
@@ -277,4 +282,35 @@ public class LineBufferTest extends TestBase {
 
     assertEquals(line, lb.get(0));
   }
-}
+
+  /* ********************************************************************************************* */
+
+  /**
+   * This tests ensures default constructor exists but is made protected to enforce users to
+   * call getBuffer() and getHdlBuffer().
+   */
+  @Test
+  public void testDefaultConstructorIsNotPublic()  {
+    final var lb = LineBuffer.getBuffer();
+
+    final var ctors = LineBuffer.class.getDeclaredConstructors();
+    assertTrue(ctors.length > 0);
+
+    var found = false;
+    for(final var ctor : ctors) {
+      // we care default, argumentless ctor only.
+      if (!ctor.getDeclaringClass().equals(LineBuffer.class)) continue;
+      if(ctor.getParameterCount() != 0) continue;
+      assertEquals(0, ctor.getParameterCount());
+
+      final var modifiers = ctor.getModifiers();
+      assertFalse(Modifier.isPrivate(modifiers));
+      assertTrue(Modifier.isProtected(modifiers));
+      found = true;
+      break;
+    }
+
+    assertTrue("Default ctor not found!", found);
+  }
+
+} // end of LineBufferTest

@@ -43,7 +43,7 @@ public class LineBuffer implements RandomAccess {
   /**
    * Default constructor.
    */
-  public LineBuffer() {
+  protected LineBuffer() {
     super();
     addDefaultPairs();
   }
@@ -85,12 +85,21 @@ public class LineBuffer implements RandomAccess {
   /* ********************************************************************************************* */
 
   /**
+   * Returns instance of LineBuffer with default settings.
+   *
+   * @return instance of LineBuffer
+   */
+  public static LineBuffer getBuffer() {
+    return new LineBuffer();
+  }
+
+  /**
    * Returns instance of LineBuffer preconfigured with HdlPairs.
    *
    * @return instance of LineBuffer
    */
   public static LineBuffer getHdlBuffer() {
-    return (new LineBuffer()).addHdlPairs();
+    return getBuffer().addHdlPairs();
   }
 
   /* ********************************************************************************************* */
