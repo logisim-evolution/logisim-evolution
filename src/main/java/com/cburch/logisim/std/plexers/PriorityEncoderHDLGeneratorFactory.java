@@ -14,7 +14,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
-
+import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -22,24 +22,31 @@ import java.util.TreeMap;
 
 public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private static final String NR_OF_SELECT_BITS_STR = "NrOfSelectBits";
-  private static final int NrOfSelectBitsId = -1;
-  private static final String NR_OF_INPUT_BITS_STR = "NrOfInputBits";
-  private static final int NrOfInputBitsId = -2;
+  private static final String NR_OF_SELECT_BITS_STRING = "NrOfSelectBits";
+  private static final int NR_OF_SELECT_BITS_ID = -1;
+  private static final String NR_OF_INPUT_BITS_STRING = "NrOfInputBits";
+  private static final int NR_OF_INPUT_BITS_ID = -2;
+
+  public PriorityEncoderHDLGeneratorFactory() {
+    super();
+    myParametersList
+        .add(NR_OF_INPUT_BITS_STRING, NR_OF_INPUT_BITS_ID, HDLParameters.MAP_POW2, PlexersLibrary.ATTR_SELECT)
+        .add(NR_OF_SELECT_BITS_STRING, NR_OF_SELECT_BITS_ID, HDLParameters.MAP_INT_ATTRIBUTE, PlexersLibrary.ATTR_SELECT);
+  }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("enable", 1);
-    map.put("input_vector", NrOfInputBitsId);
+    map.put("input_vector", NR_OF_INPUT_BITS_ID);
     return map;
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = (new LineBuffer())
-            .pair("selBits", NR_OF_SELECT_BITS_STR)
-            .pair("inBits", NR_OF_INPUT_BITS_STR);
+            .pair("selBits", NR_OF_SELECT_BITS_STRING)
+            .pair("inBits", NR_OF_INPUT_BITS_STRING);
     if (HDL.isVHDL()) {
       contents.add("""
           -- Output Signals
@@ -105,25 +112,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
     final var map = new TreeMap<String, Integer>();
     map.put("GroupSelect", 1);
     map.put("EnableOut", 1);
-    map.put("Address", NrOfSelectBitsId);
-    return map;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var map = new TreeMap<Integer, String>();
-    map.put(NrOfSelectBitsId, NR_OF_SELECT_BITS_STR);
-    map.put(NrOfInputBitsId, NR_OF_INPUT_BITS_STR);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    final var map = new TreeMap<String, Integer>();
-    final var nrOfBits = componentInfo.nrOfEnds() - 4;
-    final var nrOfSelectBits = componentInfo.getComponent().getEnd(nrOfBits + PriorityEncoder.OUT).getWidth().getWidth();
-    map.put(NR_OF_SELECT_BITS_STR, nrOfSelectBits);
-    map.put(NR_OF_INPUT_BITS_STR, 1 << nrOfSelectBits);
+    map.put("Address", NR_OF_SELECT_BITS_ID);
     return map;
   }
 

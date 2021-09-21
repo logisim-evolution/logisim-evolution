@@ -22,14 +22,19 @@ import java.util.TreeMap;
 
 public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private static final String NrOfBitsStr = "NrOfBits";
-  private static final int NrOfBitsId = -1;
+  private static final String NR_OF_BITS_STRING = "NrOfBits";
+  private static final int NR_OF_BITS_ID = -1;
+
+  public MultiplexerHDLGeneratorFactory() {
+    super();
+    myParametersList.addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID);
+  }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist theNetList, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
-    final var nrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
+    final var nrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
     for (var i = 0; i < (1 << nrOfSelectBits); i++)
       map.put("MuxIn_" + i, nrOfBits);
     map.put("Enable", 1);
@@ -91,25 +96,8 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
+    int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
     map.put("MuxOut", NrOfBits);
-    return map;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var map = new TreeMap<Integer, String>();
-    final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (nrOfBits > 1) map.put(NrOfBitsId, NrOfBitsStr);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    final var map = new TreeMap<String, Integer>();
-    final var nrOfBits =
-        componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
-    if (nrOfBits > 1) map.put(NrOfBitsStr, nrOfBits);
     return map;
   }
 
@@ -144,7 +132,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    final var nrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
+    final var nrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
     if (HDL.isVerilog()) map.put("s_selected_vector", nrOfBits);
     return map;
   }

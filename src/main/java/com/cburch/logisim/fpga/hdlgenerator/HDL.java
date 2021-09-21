@@ -125,20 +125,48 @@ public abstract class HDL {
   }
 
   public static String getConstantVector(long value, int nrOfBits) {
-    final var bitString = new StringBuffer();
-    var mask = 1L << (nrOfBits - 1);
-    if (HDL.isVHDL())
-      bitString.append(nrOfBits == 1 ? '\'' : '"');
-    else
-      bitString.append(LineBuffer.format("{{1}}'b", nrOfBits));
-    while (mask != 0) {
-      bitString.append(((value & mask) == 0) ? "0" : "1");
-      mask >>= 1L;
-      // fix in case of a 64-bit vector
-      if (mask < 0) mask &= Long.MAX_VALUE;
+    final var nrHexDigits = nrOfBits / 4;
+    final var nrSingleBits = nrOfBits % 4;
+    final var hexDigits = new String[nrHexDigits];
+    final var singleBits = new StringBuffer();
+    var shiftValue = value >> nrSingleBits;
+    for (var hexIndex = nrHexDigits - 1; hexIndex >= 0; hexIndex--) {
+      var hexValue = shiftValue & 0xFL;
+      shiftValue >>= 4L;
+      hexDigits[hexIndex] = String.format("%1X", hexValue);
     }
-    if (HDL.isVHDL()) bitString.append(nrOfBits == 1 ? '\'' : '"');
-    return bitString.toString();
+    final var hexValue = new StringBuffer();
+    for (var hexIndex = 0; hexIndex < nrHexDigits; hexIndex++) {
+      hexValue.append(hexDigits[hexIndex]);
+    }    
+    var mask = (nrSingleBits == 0) ? 0 : 1L << (nrSingleBits - 1);
+    while (mask > 0) {
+      singleBits.append((value & mask) == 0 ? "0" : "1");
+      mask >>= 1L;
+    }
+    // first case, we have to concatinate
+    if ((nrHexDigits > 0) && (nrSingleBits > 0)) {
+      if (HDL.isVHDL()) {
+        return LineBuffer.format("X\"{{1}}\"&\"{{2}}\"", hexValue.toString(), singleBits.toString());
+      } else {
+        return LineBuffer.format("{{{1}}'h{{2}}, {{3}}'b{{4}}}", nrHexDigits * 4, hexValue.toString(),
+            nrSingleBits, singleBits.toString());
+      }
+    }
+    // second case, we have only hex digits
+    if (nrHexDigits > 0) {
+      if (HDL.isVHDL()) {
+        return LineBuffer.format("X\"{{1}}\"", hexValue.toString());
+      } else {
+        return LineBuffer.format("{{1}}'h{{2}}", nrHexDigits * 4, hexValue.toString());
+      }
+    }
+    // final case, we have only single bits
+    if (HDL.isVHDL()) {
+      final var vhdlTicks = (nrOfBits == 1) ? "'" : "\"";
+      return LineBuffer.format("{{1}}{{2}}{{1}}", vhdlTicks, singleBits.toString());
+    }
+    return LineBuffer.format("{{1}}'b{{2}}", nrSingleBits, singleBits.toString());
   }
 
   public static String getNetName(NetlistComponent comp, int endIndex, boolean floatingNetTiedToGround, Netlist myNetlist) {

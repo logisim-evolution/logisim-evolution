@@ -15,6 +15,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
@@ -24,10 +25,17 @@ import java.util.TreeMap;
 
 public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private static final String NrOfBitsStr = "NrOfBits";
-  private static final int NrOfBitsId = -1;
-  private static final String ACTIVE_LEVEL_STR = "ActiveLevel";
-  private static final int ActiveLevelId = -2;
+  private static final String NR_OF_BITS_STRING = "NrOfBits";
+  private static final int NR_OF_BITS_ID = -1;
+  private static final String INVERT_CLOCK_STRING = "InvertClock";
+  private static final int INVERT_CLOCK_ID = -2;
+
+  public RegisterHDLGeneratorFactory() {
+    super();
+    myParametersList
+        .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
+        .add(INVERT_CLOCK_STRING, INVERT_CLOCK_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, StdAttr.TRIGGER, AbstractFlipFlopHDLGeneratorFactory.TRIGGER_MAP);
+  }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
@@ -36,51 +44,36 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put("ClockEnable", 1);
     map.put("Tick", 1);
     map.put("Clock", 1);
-    map.put("D", NrOfBitsId);
+    map.put("D", NR_OF_BITS_ID);
     return map;
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = (new LineBuffer())
-            .pair("activeLevel", ACTIVE_LEVEL_STR);
+            .pair("invertClock", INVERT_CLOCK_STRING);
     if (HDL.isVHDL()) {
       contents.add("""
-          Q <= s_state_reg;
+          Q       <= s_state_reg;
+          s_clock <= clock WHEN {{invertClock}} = 0 ELSE NOT(clock);
           
-          make_memory : PROCESS( clock , Reset , ClockEnable , Tick , D )
+          make_memory : PROCESS( s_clock , Reset , ClockEnable , Tick , D )
           BEGIN
              IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');
           """);
       if (Netlist.isFlipFlop(attrs)) {
         contents.add("""
-               ELSIF ({{activeLevel}} = 1) THEN
-                  IF (Clock'event AND (Clock = '1')) THEN
-                     IF (ClockEnable = '1' AND Tick = '1') THEN
-                        s_state_reg <= D;
-                     END IF;
-                  END IF;
-               ELSIF ({{activeLevel}} = 0) THEN
-                  IF (Clock'event AND (Clock = '0')) THEN
+               ELSIF (rising_Edge(s_clock)) THEN
                   IF (ClockEnable = '1' AND Tick = '1') THEN
                      s_state_reg <= D;
                   END IF;
-               END IF;
                """);
       } else {
         contents.add("""
-              ELSIF ({{activeLevel}} = 1) THEN
-                  IF (Clock = '1') THEN
-                     IF (ClockEnable = '1' AND Tick = '1') THEN
-                        s_state_reg <= D;
-                     END IF;
-                  END IF;
-              ELSIF ({{activeLevel}} = 0) THEN
-                  IF (Clock = '0') THEN
-                     IF (ClockEnable = '1' AND Tick = '1') THEN
-                        s_state_reg <= D;
-                     END IF;
-                  END IF;
+              ELSIF (s_clock = '1') THEN
+                 IF (ClockEnable = '1' AND Tick = '1') THEN
+                    s_state_reg <= D;
+                 END IF;
               """);
       }
       contents.add("""
@@ -91,27 +84,23 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       if (!Netlist.isFlipFlop(attrs)) {
         contents.add("""
             assign Q = s_state_reg;
+            assign s_clock = {{invertClock}} == 0 ? clock : ~clock;
             
             always @(*)
             begin
                if (Reset) s_state_reg <= 0;
-               else if ((Clock=={{activeLevel}})&ClockEnable&Tick) s_state_reg <= D;
+               else if (s_Clock&ClockEnable&Tick) s_state_reg <= D;
             end
             """);
       } else {
         contents.add("""
-            assign Q = ({{activeLevel}}) ? s_state_reg : s_state_reg_neg_edge;
+            assign Q = s_state_reg;
+            assign s_clock = {{invertClock}} == 0 ? clock : ~clock;
             
-            always @(posedge Clock or posedge Reset)
+            always @(posedge s_clock or posedge Reset)
             begin
                if (Reset) s_state_reg <= 0;
                else if (ClockEnable&Tick) s_state_reg <= D;
-            end
-            
-            always @(negedge Clock or posedge Reset)
-            begin
-               if (Reset) s_state_reg_neg_edge <= 0;
-               else if (ClockEnable&Tick) s_state_reg_neg_edge <= D;
             end
             """);
       }
@@ -122,43 +111,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    map.put("Q", NrOfBitsId);
-    return map;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var map = new TreeMap<Integer, String>();
-    map.put(ActiveLevelId, ACTIVE_LEVEL_STR);
-    map.put(NrOfBitsId, NrOfBitsStr);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    final var map = new TreeMap<String, Integer>();
-    var activeLevel = 1;
-    var gatedclock = false;
-    var activeLow = false;
-    final var attrs = componentInfo.getComponent().getAttributeSet();
-    final var clockNetName = HDL.getClockNetName(componentInfo, Register.CK, nets);
-    if (clockNetName.isEmpty()) {
-      gatedclock = true;
-      if (Netlist.isFlipFlop(attrs))
-        Reporter.Report.AddWarning(
-            "Found a gated clock for component \"Register\" in circuit \""
-                + nets.getCircuitName()
-                + "\"");
-    }
-    if (attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_FALLING
-        || attrs.getValue(StdAttr.TRIGGER) == StdAttr.TRIG_LOW) activeLow = true;
-
-    if (gatedclock && activeLow) {
-      activeLevel = 0;
-    }
-    map.put(ACTIVE_LEVEL_STR, activeLevel);
-    map.put(
-        NrOfBitsStr, componentInfo.getComponent().getEnd(Register.IN).getWidth().getWidth());
+    map.put("Q", NR_OF_BITS_ID);
     return map;
   }
 
@@ -253,9 +206,14 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
     final var regs = new TreeMap<String, Integer>();
-    regs.put("s_state_reg", NrOfBitsId);
-    if (HDL.isVerilog() & Netlist.isFlipFlop(attrs))
-      regs.put("s_state_reg_neg_edge", NrOfBitsId);
+    regs.put("s_state_reg", NR_OF_BITS_ID);
     return regs;
+  }
+
+  @Override
+  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
+    final var map = new TreeMap<String, Integer>();
+    map.put("s_clock", 1);
+    return map;
   }
 }

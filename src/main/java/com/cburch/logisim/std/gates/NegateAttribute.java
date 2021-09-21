@@ -14,9 +14,8 @@ import static com.cburch.logisim.std.Strings.S;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.util.StringUtil;
 
-class NegateAttribute extends Attribute<Boolean> {
+public class NegateAttribute extends Attribute<Boolean> {
   private static final Attribute<Boolean> BOOLEAN_ATTR = Attributes.forBoolean("negateDummy");
 
   final int index;

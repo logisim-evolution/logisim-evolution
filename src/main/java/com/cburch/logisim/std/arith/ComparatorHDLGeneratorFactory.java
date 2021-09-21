@@ -9,28 +9,46 @@
 
 package com.cburch.logisim.std.arith;
 
+import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private static final String NrOfBitsStr = "NrOfBits";
-  private static final int NrOfBitsId = -1;
-  private static final String TwosComplementStr = "TwosComplement";
-  private static final int TwosComplementId = -2;
+  private static final String NR_OF_BITS_STRING = "NrOfBits";
+  private static final int NR_OF_BITS_ID = -1;
+  private static final String TWOS_COMPLEMENT_STRING = "TwosComplement";
+  private static final int TWOS_COMPLEMENT_ID = -2;
+  
+  public static final Map<AttributeOption, Integer> SIGNED_MAP = new HashMap<>() {{ 
+      put(Comparator.UNSIGNED_OPTION, 0); 
+      put(Comparator.SIGNED_OPTION, 1); 
+    }};
+ 
+  
+  public ComparatorHDLGeneratorFactory() {
+    super();
+    myParametersList
+        .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID)
+        .add(TWOS_COMPLEMENT_STRING, TWOS_COMPLEMENT_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, 
+            SIGNED_MAP);
+  }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    final var inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
+    final var inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
     map.put("DataA", inputbits);
     map.put("DataB", inputbits);
     return map;
@@ -39,7 +57,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents = new LineBuffer();
-    Contents.pair("twosComplement", TwosComplementStr);
+    Contents.pair("twosComplement", TWOS_COMPLEMENT_STRING);
 
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
@@ -90,34 +108,6 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put("A_GT_B", 1);
     map.put("A_EQ_B", 1);
     map.put("A_LT_B", 1);
-    return map;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var map = new TreeMap<Integer, String>();
-    final var inputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (inputbits > 1) {
-      map.put(NrOfBitsId, NrOfBitsStr);
-    }
-    map.put(TwosComplementId, TwosComplementStr);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    final var map = new TreeMap<String, Integer>();
-    final var nrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
-    var isSigned = 0;
-    AttributeSet attrs = ComponentInfo.getComponent().getAttributeSet();
-    if (attrs.containsAttribute(Comparator.MODE_ATTRIBUTE)) {
-      if (attrs.getValue(Comparator.MODE_ATTRIBUTE).equals(Comparator.SIGNED_OPTION))
-        isSigned = 1;
-    }
-    if (nrOfBits > 1) {
-      map.put(NrOfBitsStr, nrOfBits);
-    }
-    map.put(TwosComplementStr, isSigned);
     return map;
   }
 

@@ -15,6 +15,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
@@ -25,9 +26,17 @@ import java.util.TreeMap;
 public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   private static final String NR_OF_BITS_STR = "NrOfBits";
-  private static final int NrOfBitsId = -1;
+  private static final int NR_OF_BITS_ID = -1;
   private static final String SEED_STR = "Seed";
-  private static final int SeedId = -2;
+  private static final int SEED_ID = -2;
+
+  public RandomHDLGeneratorFactory() {
+    super();
+    myParametersList
+        .add(NR_OF_BITS_STR, NR_OF_BITS_ID)
+        // The seed parameter has 32 bits fixed
+        .addVector(SEED_STR, SEED_ID, HDLParameters.MAP_INT_ATTRIBUTE, Random.ATTR_SEED, 32);
+  }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
@@ -51,8 +60,8 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     if (HDL.isVHDL()) {
       contents.add("""
           Q            <= s_output_reg;
-          s_InitSeed   <= X"0005DEECE66D" WHEN {{seed}} = 0 ELSE
-                          X"0000"&std_logic_vector(to_unsigned({{seed}}, 32));
+          s_InitSeed   <= X"0005DEECE66D" WHEN {{seed}} = X"00000000" ELSE
+                          X"0000"&seed;
           s_reset      <= '1' WHEN s_reset_reg /= "010" ELSE '0';
           s_reset_next <= "010" WHEN (s_reset_reg = "101" OR
                                       s_reset_reg = "010") AND
@@ -136,7 +145,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     } else {
       contents.add("""
           assign Q = s_output_reg;
-          assign s_InitSeed = ({{seed}}) ? {{seed}} : 48'h5DEECE66D;
+          assign s_InitSeed = ({{seed}} == 0) ? 48'h5DEECE66D : {{seed}};
           assign s_reset = (s_reset_reg==3'b010) ? 1'b1 : 1'b0;
           assign s_reset_next = (( (s_reset_reg == 3'b101) | (s_reset_reg == 3'b010)) & clear)
                                 ? 3'b010 
@@ -188,27 +197,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    map.put("Q", NrOfBitsId);
-    return map;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var map = new TreeMap<Integer, String>();
-    map.put(NrOfBitsId, NR_OF_BITS_STR);
-    map.put(SeedId, SEED_STR);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    final var map = new TreeMap<String, Integer>();
-    var seed = ComponentInfo.getComponent().getAttributeSet().getValue(Random.ATTR_SEED);
-    if (seed == 0) seed = (int) System.currentTimeMillis();
-    map.put(
-            NR_OF_BITS_STR,
-        ComponentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth());
-    map.put(SEED_STR, seed);
+    map.put("Q", NR_OF_BITS_ID);
     return map;
   }
 
@@ -297,7 +286,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put("s_mac_hi_reg", 24);
     map.put("s_mac_hi_1_reg", 24);
     map.put("s_busy_pipe_reg", 2);
-    map.put("s_output_reg", NrOfBitsId);
+    map.put("s_output_reg", NR_OF_BITS_ID);
     return map;
   }
 

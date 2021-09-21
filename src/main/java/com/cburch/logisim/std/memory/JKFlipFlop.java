@@ -16,6 +16,8 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
+import com.cburch.logisim.instance.StdAttr;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,6 +32,11 @@ public class JKFlipFlop extends AbstractFlipFlop {
   public static final String _ID = "J-K Flip-Flop";
 
   private static class JKFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
+
+    public JKFFHDLGeneratorFactory() {
+      super(StdAttr.EDGE_TRIGGER);
+    }
+
     @Override
     public String ComponentName() {
       return _ID;

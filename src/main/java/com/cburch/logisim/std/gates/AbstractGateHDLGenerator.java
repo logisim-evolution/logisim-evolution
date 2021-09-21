@@ -14,6 +14,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -26,7 +27,14 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
   private static final String BIT_WIDTH_STRING = "NrOfBits";
   private static final int BUBBLES_GENERIC = -2;
   private static final String BUBBLES_MASK = "BubblesMask";
-  
+
+  public AbstractGateHDLGenerator() {
+    super();
+    myParametersList
+        .addBusOnly(BIT_WIDTH_STRING, BIT_WIDTH_GENERIC)
+        .addVector(BUBBLES_MASK, BUBBLES_GENERIC, HDLParameters.MAP_GATE_INPUT_BUBLE);
+  }
+
   public boolean GetFloatingValue(boolean isInverted) {
     return !isInverted;
   }
@@ -51,7 +59,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getHdlBuffer();
     final var bitWidth = attrs.getValue(StdAttr.WIDTH).getWidth();
     final var nrOfInputs =
         attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
@@ -61,33 +69,11 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     if (nrOfInputs > 1) {
       contents.empty();
       contents.addRemarkBlock("Here the bubbles are processed");
-      if (HDL.isVHDL()) {
-        String allignmentSpaces;
-        if (nrOfInputs < 10) allignmentSpaces = " ";
-        else if (nrOfInputs < 100) allignmentSpaces = "  ";
-        else allignmentSpaces = "   ";
-        contents.add("   s_signal_invert_mask <= std_logic_vector(to_unsigned({{1}},{{2}}));", BUBBLES_MASK, nrOfInputs);
-        final var whenLineBegin = new StringBuilder();
-        whenLineBegin.append(" ".repeat(21 + allignmentSpaces.length()));
-        for (var i = 0; i < nrOfInputs; i++) {
-          var localSpaces = " ";
-          if (i < 10) localSpaces = allignmentSpaces;
-          // FIXME: why we need this code at all? What will happenif we remove these aligment spaces completely?
-          else if (i < 100)
-            localSpaces = allignmentSpaces.substring(0, allignmentSpaces.length() - 1);
-          else if (i < 1000)
-            localSpaces = allignmentSpaces.substring(0, allignmentSpaces.length() - 2);
-          contents
-              .add("   s_real_input_{{1}}{{2}} <= NOT( Input_{{3}} )", (i + 1), localSpaces, (i + 1))
-              .add("{{1}}   WHEN s_signal_invert_mask({{2}}) = '1' ELSE", whenLineBegin, i)
-              .add("{{1}}Input_{{2}};", whenLineBegin, (i + 1));
-        }
-      } else {
-        contents.add("   assign s_signal_invert_mask = {{1}};", BUBBLES_MASK);
-        for (var i = 0; i < nrOfInputs; i++) {
-          contents.add(
-              "   assign s_real_input_{{1}} = (s_signal_invert_mask[{{2}}]) ? ~Input_{{3}}: Input_{{4}};",
-              (i + 1), i, (i + 1), (i + 1));
+      for (var i = 0; i < nrOfInputs; i++) {
+        if (HDL.isVHDL()) {
+          contents.add("  s_real_input_{{1}} {{=}} Input_{{1}} WHEN {{2}}{{<}}{{3}}{{>}} = '0' ELSE NOT(Input_{{1}});", (i + 1), BUBBLES_MASK, i);
+        } else {
+          contents.add("  {{assign}} s_real_input_{{1}} {{=}} ({{2}}{{<}}{{3}}{{>}} == 1'b0) ? Input_{{1}} : ~Input_{{1}};", (i + 1), BUBBLES_MASK, i);
         }
       }
     }
@@ -169,46 +155,6 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     final var bitWidth = (is_bus(attrs)) ? BIT_WIDTH_GENERIC : 1;
     outputs.put("Result", bitWidth);
     return outputs;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var params = new TreeMap<Integer, String>();
-    int nrOfInputs =
-        attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
-            ? attrs.getValue(GateAttributes.ATTR_INPUTS)
-            : 1;
-    if (is_bus(attrs)) {
-      params.put(BIT_WIDTH_GENERIC, BIT_WIDTH_STRING);
-    }
-    if (nrOfInputs > 1) {
-      params.put(BUBBLES_GENERIC, BUBBLES_MASK);
-    }
-    return params;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    final var parameterMap = new TreeMap<String, Integer>();
-    final var isBus = is_bus(componentInfo.getComponent().getAttributeSet());
-    final var myAttrs = componentInfo.getComponent().getAttributeSet();
-    var nrOfInputs =
-        myAttrs.containsAttribute(GateAttributes.ATTR_INPUTS)
-            ? myAttrs.getValue(GateAttributes.ATTR_INPUTS)
-            : 1;
-    if (isBus) parameterMap.put(BIT_WIDTH_STRING, myAttrs.getValue(StdAttr.WIDTH).getWidth());
-    if (nrOfInputs > 1) {
-      var bubbleMask = 0;
-      var mask = 1;
-      for (var i = 0; i < nrOfInputs; i++) {
-        final var inputIsInverted = componentInfo.getComponent().getAttributeSet().getValue(new NegateAttribute(i, null));
-        if (inputIsInverted) bubbleMask |= mask;
-        mask <<= 1;
-      }
-      parameterMap.put(BUBBLES_MASK, bubbleMask);
-    }
-
-    return parameterMap;
   }
 
   public ArrayList<String> GetParity(boolean inverted, int nrOfInputs, boolean isBus) {
@@ -304,12 +250,19 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
         if (bitWidth > 1) wires.put("s_real_input_" + (i + 1), BIT_WIDTH_GENERIC);
         else wires.put("s_real_input_" + (i + 1), 1);
       }
-      wires.put("s_signal_invert_mask", nrOfInputs);
     }
     return wires;
   }
 
   private boolean is_bus(AttributeSet attrs) {
     return attrs.getValue(StdAttr.WIDTH).getWidth() != 1;
+  }
+
+  @Override
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+    var supported = true;
+    if (attrs.containsAttribute(GateAttributes.ATTR_OUTPUT))
+      supported = attrs.getValue(GateAttributes.ATTR_OUTPUT).equals(GateAttributes.OUTPUT_01);
+    return supported;
   }
 }

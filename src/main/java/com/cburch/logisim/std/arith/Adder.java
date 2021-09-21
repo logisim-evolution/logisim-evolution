@@ -124,10 +124,8 @@ public class Adder extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuilder CompleteName = new StringBuilder();
-    if (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) CompleteName.append("FullAdder");
-    else CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
-    return CompleteName.toString();
+    final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
+    return (nrOfBits == 1) ? "FullAdder" : CorrectLabel.getCorrectLabel(getName());
   }
 
   @Override
