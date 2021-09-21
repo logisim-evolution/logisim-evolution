@@ -37,7 +37,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   protected final HDLParameters myParametersList = new HDLParameters();
   protected final HDLWires myWires = new HDLWires();
   protected final HDLPorts myPorts = new HDLPorts();
-  protected boolean getWiresduringHDLWriting = false;
+  protected boolean getWiresPortsduringHDLWriting = false;
 
   public AbstractHDLGeneratorFactory() {
     final var className = getClass().toString().replace('.', ':').replace(' ', ':'); 
@@ -51,7 +51,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
   
   // Handle to get the wires during generation time
-  public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {}
+  public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {}
 
   /* Here the common predefined methods are defined */
   @Override
@@ -67,9 +67,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     final var Contents = new LineBuffer();
     final var mems = GetMemList(attrs);
     final var OneLine = new StringBuilder();
-    if (getWiresduringHDLWriting) {
+    if (getWiresPortsduringHDLWriting) {
       myWires.removeWires();
-      getGenerationTimeWires(theNetlist, attrs);
+      myPorts.removePorts();
+      getGenerationTimeWiresPorts(theNetlist, attrs);
     }
     Contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
     if (HDL.isVHDL()) {
@@ -529,7 +530,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     if (HDL.isVHDL()) {
       Contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
           .add(FileWriter.getExtendedLibrary())
-          .add(GetVHDLBlackBox(theNetlist, attrs, componentName, true /* , false */));
+          .add(GetVHDLBlackBox(theNetlist, attrs, componentName, true));
     }
     return Contents.get();
   }
@@ -720,15 +721,20 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return 0;
   }
 
-  public SortedMap<String, String> getPortMap(Netlist Nets, Object MapInfo) {
+  public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var result = new TreeMap<String,String>();
-    if (MapInfo instanceof NetlistComponent && !myPorts.isEmpty()) {
-      NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
+    if (mapInfo instanceof NetlistComponent && !myPorts.isEmpty()) {
+      NetlistComponent ComponentInfo = (NetlistComponent) mapInfo;
+      if (getWiresPortsduringHDLWriting) {
+        myWires.removeWires();
+        myPorts.removePorts();
+        getGenerationTimeWiresPorts(nets, ComponentInfo.getComponent().getAttributeSet());
+      }
       for (var port : myPorts.keySet()) {
         if (myPorts.isFixedMapped(port))
           result.put(port, myPorts.getFixedMap(port));
         else
-          result.putAll(GetNetMap(port, myPorts.doPullDownOnFloat(port), ComponentInfo, myPorts.getComponentPortId(port), Nets));
+          result.putAll(GetNetMap(port, myPorts.doPullDownOnFloat(port), ComponentInfo, myPorts.getComponentPortId(port), nets));
       }
     }
     return result;
@@ -767,6 +773,11 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     var IdentSize = 0;
     var CompTab = (IsEntity) ? "" : "   ";
     var first = true;
+    if (getWiresPortsduringHDLWriting) {
+      myWires.removeWires();
+      myPorts.removePorts();
+      getGenerationTimeWiresPorts(TheNetlist, attrs);
+    }
     if (IsEntity) {
       Contents.add("ENTITY " + ComponentName + " IS");
     } else {

@@ -41,7 +41,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID)
         .add(TWOS_COMPLEMENT_STRING, TWOS_COMPLEMENT_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, 
             SIGNED_MAP);
-    getWiresduringHDLWriting = true;
+    getWiresPortsduringHDLWriting = true;
     myPorts
         .add(Port.INPUT, "DataA", NR_OF_BITS_ID, Comparator.IN0, StdAttr.WIDTH)
         .add(Port.INPUT, "DataB", NR_OF_BITS_ID, Comparator.IN1, StdAttr.WIDTH)
@@ -51,8 +51,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {
-    myWires.removeWires();
+  public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
     if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1)
       myWires
           .addWire("s_signed_less", 1)

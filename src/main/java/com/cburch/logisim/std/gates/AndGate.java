@@ -24,12 +24,12 @@ import java.util.ArrayList;
 class AndGate extends AbstractGate {
   private static class AndGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public boolean GetFloatingValue(boolean isInverted) {
+    public boolean getFloatingValue(boolean isInverted) {
       return isInverted;
     }
 
     @Override
-    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+    public ArrayList<String> getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       var contents = new ArrayList<String>();
       var oneLine = new StringBuilder();
       oneLine.append("   ")

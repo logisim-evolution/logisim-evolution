@@ -11,15 +11,13 @@ package com.cburch.logisim.std.bfh;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -30,11 +28,11 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     super();
     myParametersList
         .add(NR_OF_BITS_STR, NR_OF_BITS_ID, HDLParameters.MAP_INT_ATTRIBUTE, bin2bcd.ATTR_BinBits);
-    getWiresduringHDLWriting = true;
+    getWiresPortsduringHDLWriting = true;
   }
 
   @Override
-  public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {
+  public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
     final var nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
     final var nrOfPorts = (int) (Math.log10(1 << nrOfBits.getWidth()) + 1.0);
     final var nrOfSignalBits = switch (nrOfPorts) {
@@ -49,42 +47,14 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     };
     for (var signal = 0; signal < nrOfSignals; signal++)
       myWires.addWire(String.format("s_level_%d", signal), nrOfSignalBits);
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var inputs = new TreeMap<String, Integer>();
-    inputs.put("BinValue", NR_OF_BITS_ID);
-    return inputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    final var nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
-    final var nrOfPorts = (int) (Math.log10(1 << nrOfBits.getWidth()) + 1.0);
-    for (var i = 1; i <= nrOfPorts; i++) {
-      outputs.put("BCD" + (int) (Math.pow(10, i - 1)), 4);
-    }
-    return outputs;
+    myPorts.add(Port.INPUT, "BinValue", NR_OF_BITS_ID, 0);
+    for (var i = 1; i <= nrOfPorts; i++)
+      myPorts.add(Port.OUTPUT, String.format("BCD%d", (int) (Math.pow(10, i - 1))), 4, i);
   }
 
   @Override
   public boolean isHDLSupportedTarget(AttributeSet attrs) {
     return HDL.isVHDL();
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    final var portMap = new TreeMap<String, String>();
-    if (!(mapInfo instanceof NetlistComponent)) return portMap;
-    final var componentInfo = (NetlistComponent) mapInfo;
-    final var binBits = componentInfo.getComponent().getEnd(0).getWidth().getWidth();
-    final var nrOfPorts = (int) (Math.log10(1 << binBits) + 1.0);
-    portMap.putAll(GetNetMap("BinValue", true, componentInfo, 0, nets));
-    for (var i = 1; i <= nrOfPorts; i++)
-      portMap.putAll(GetNetMap("BCD" + (int) (Math.pow(10, i - 1)), true, componentInfo, i, nets));
-    return portMap;
   }
 
   @Override

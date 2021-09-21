@@ -11,15 +11,13 @@ package com.cburch.logisim.std.gates;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
@@ -33,37 +31,27 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     myParametersList
         .addBusOnly(BIT_WIDTH_STRING, BIT_WIDTH_GENERIC)
         .addVector(BUBBLES_MASK, BUBBLES_GENERIC, HDLParameters.MAP_GATE_INPUT_BUBLE);
-    getWiresduringHDLWriting = true;
+    getWiresPortsduringHDLWriting = true;
   }
 
   @Override
-  public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {
+  public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
     if (!attrs.containsAttribute(GateAttributes.ATTR_INPUTS)) return;
     final var nrOfInputs = attrs.getValue(GateAttributes.ATTR_INPUTS);
     final var bitWidth = attrs.getValue(StdAttr.WIDTH).getWidth();
-    for (var input = 0; input < nrOfInputs; input++)
-      myWires.addWire(String.format("s_real_input_%d", input + 1), bitWidth == 1 ? 1 : BIT_WIDTH_GENERIC);
+    for (var input = 1; input <= nrOfInputs; input++) {
+      myWires.addWire(String.format("s_real_input_%d", input), bitWidth == 1 ? 1 : BIT_WIDTH_GENERIC);
+      final var floatingToZero = getFloatingValue(attrs.getValue(new NegateAttribute(input - 1, null)));
+      myPorts.add(Port.INPUT, String.format("Input_%d", input), BIT_WIDTH_GENERIC, input, floatingToZero);
+    }
+    myPorts.add(Port.OUTPUT, "Result", BIT_WIDTH_GENERIC, 0, StdAttr.WIDTH);
   }
 
-  public boolean GetFloatingValue(boolean isInverted) {
+  public boolean getFloatingValue(boolean isInverted) {
     return !isInverted;
   }
 
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
-    final var inputs = new TreeMap<String, Integer>();
-    final var Bitwidth = (is_bus(attrs)) ? BIT_WIDTH_GENERIC : 1;
-    final var NrOfInputs =
-        attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
-            ? attrs.getValue(GateAttributes.ATTR_INPUTS)
-            : 1;
-    for (var i = 0; i < NrOfInputs; i++) {
-      inputs.put("Input_" + (i + 1), Bitwidth);
-    }
-    return inputs;
-  }
-
-  public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+  public ArrayList<String> getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
     return new ArrayList<>();
   }
 
@@ -92,7 +80,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     if (attrs.containsAttribute(GateAttributes.ATTR_XOR)) {
       onehot = attrs.getValue(GateAttributes.ATTR_XOR) == GateAttributes.XOR_ONE;
     }
-    contents.add(GetLogicFunction(nrOfInputs, bitWidth, onehot));
+    contents.add(getLogicFunction(nrOfInputs, bitWidth, onehot));
     return contents.get();
   }
 
@@ -159,14 +147,6 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     return lines;
   }
 
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    final var bitWidth = (is_bus(attrs)) ? BIT_WIDTH_GENERIC : 1;
-    outputs.put("Result", bitWidth);
-    return outputs;
-  }
-
   public ArrayList<String> GetParity(boolean inverted, int nrOfInputs, boolean isBus) {
     final var lines = new ArrayList<String>();
     var spaces = "   ";
@@ -212,43 +192,6 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
       }
     }
     return lines;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    final var portMap = new TreeMap<String, String>();
-    if (!(mapInfo instanceof NetlistComponent)) return portMap;
-    final var componentInfo = (NetlistComponent) mapInfo;
-    final var attrs = componentInfo.getComponent().getAttributeSet();
-    final var nrOfInputs =
-        attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
-            ? attrs.getValue(GateAttributes.ATTR_INPUTS)
-            : 1;
-    final var inputFloatingValues = new boolean[nrOfInputs];
-    if (nrOfInputs == 1) {
-      inputFloatingValues[0] = true;
-    } else {
-      for (var i = 1; i <= nrOfInputs; i++) {
-        final var inputIsInverted = attrs.getValue(new NegateAttribute(i - 1, null));
-        inputFloatingValues[i - 1] = GetFloatingValue(inputIsInverted);
-      }
-    }
-    for (var i = 1; i <= nrOfInputs; i++) {
-      portMap.putAll(
-          GetNetMap(
-              "Input_" + i,
-              inputFloatingValues[i - 1],
-              componentInfo,
-              i,
-              nets));
-    }
-    portMap.putAll(GetNetMap("Result", true, componentInfo, 0, nets));
-
-    return portMap;
-  }
-
-  private boolean is_bus(AttributeSet attrs) {
-    return attrs.getValue(StdAttr.WIDTH).getWidth() != 1;
   }
 
   @Override

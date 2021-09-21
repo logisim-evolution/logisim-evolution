@@ -26,7 +26,7 @@ import java.util.ArrayList;
 class OrGate extends AbstractGate {
   private static class OrGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+    public ArrayList<String> getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       final var contents = new ArrayList<String>();
       final var oneLine = new StringBuilder();
       oneLine

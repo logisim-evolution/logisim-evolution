@@ -37,7 +37,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           put(Shifter.SHIFT_ROLL_RIGHT, 4);
         }}
     );
-    getWiresduringHDLWriting = true;
+    getWiresPortsduringHDLWriting = true;
     myPorts
         .add(Port.INPUT, "DataA", 0, Shifter.IN0, StdAttr.WIDTH)
         .add(Port.INPUT, "ShiftAmount", 0, Shifter.IN1, Shifter.SHIFT_BITS_ATTR)
@@ -45,8 +45,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {
-    myWires.removeWires();
+  public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
     for (var stage = 0; stage < attrs.getValue(Shifter.SHIFT_BITS_ATTR); stage++)
       myWires
           .addWire(String.format("s_stage_%d_result", stage), attrs.getValue(StdAttr.WIDTH).getWidth())

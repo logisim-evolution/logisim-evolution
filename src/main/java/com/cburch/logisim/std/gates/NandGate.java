@@ -24,12 +24,12 @@ class NandGate extends AbstractGate {
 
   private static class NandGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public boolean GetFloatingValue(boolean isInverted) {
+    public boolean getFloatingValue(boolean isInverted) {
       return isInverted;
     }
 
     @Override
-    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+    public ArrayList<String> getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       final var contents = new ArrayList<String>();
       final var oneLine = new StringBuilder();
       oneLine.append("   ")

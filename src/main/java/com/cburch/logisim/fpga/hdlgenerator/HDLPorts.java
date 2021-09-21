@@ -28,6 +28,7 @@ public class HDLPorts {
     private final String myFixedMap;
     private boolean mySinglePinException = false;
     private Attribute<?> myBitWidthAttribute = null;
+    private boolean myPullToZero = true;
 
     public PortInfo(String type, String name, int nrOfBits, String fixedMap) {
       myPortType = type;
@@ -36,9 +37,16 @@ public class HDLPorts {
       myComponentPinId = -1; // fixed map
       myFixedMap = fixedMap;
     }
+
     public PortInfo(String type, String name, int nrOfBits, int compPinId) {
       this(type, name, nrOfBits, compPinId, null);
       mySinglePinException = false;
+    }
+    
+    public PortInfo(String type, String name, int nrOfBits, int compPinId, boolean pullToZero) {
+      this(type, name, nrOfBits, compPinId, null);
+      mySinglePinException = false;
+      myPullToZero = pullToZero;
     }
     
     public PortInfo(String type, String name, int nrOfBits, int compPinId, Attribute<?> nrOfBitsAttr) {
@@ -76,6 +84,11 @@ public class HDLPorts {
 
   public HDLPorts add(String type, String name, int nrOfBits, int compPinId) {
     myPorts.add(new PortInfo(type, name, nrOfBits, compPinId));
+    return this;
+  }
+
+  public HDLPorts add(String type, String name, int nrOfBits, int compPinId, boolean pullToZero) {
+    myPorts.add(new PortInfo(type, name, nrOfBits, compPinId, pullToZero));
     return this;
   }
 
@@ -126,8 +139,13 @@ public class HDLPorts {
     throw new ArrayStoreException("port not contained in structure");
   }
   
+  public void removePorts() {
+    myPorts.clear();
+  }
+  
   public boolean doPullDownOnFloat(String name) {
-    // FIXME: correct
-    return true;
+    for (var port : myPorts)
+      if (port.myName.equals(name)) return port.myPullToZero;
+    throw new ArrayStoreException("port not contained in structure");
   }
 }
