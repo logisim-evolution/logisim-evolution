@@ -61,8 +61,6 @@ public class LogisimVersion {
     return new LogisimVersion().initFromVersionString(versionString);
   }
 
-//  private static final String fromStringErrorMsg = "Version segments must be non-negative integers, '%s' found.";
-
   private LogisimVersion initFromVersionString(String versionString) throws IllegalArgumentException {
     var major = 0;
     var minor = 0;
@@ -87,19 +85,21 @@ public class LogisimVersion {
 
       // suffix part
       if (sufStr != null) {
-        if(sufStr.length() == 1) {
+        if (sufStr.length() == 1) {
           pattern = "^[a-z]+$";
           m = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(sufStr);
           if (!m.matches()) {
-            throw new IllegalArgumentException(String.format("Suffix must start with a letter, '%s' found.", sufStr));
+            throw new IllegalArgumentException(
+                String.format("Suffix must start with a letter, '%s' found.", sufStr));
           }
           suffix = sufStr;
-        } else if(sufStr.length() > 1) {
+        } else if (sufStr.length() > 1) {
           // for single character suffix it can only be letter
           pattern = "^(-)?([a-z]+([a-z\\d])*)+$";
           m = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(sufStr);
           if (!m.matches()) {
-            throw new IllegalArgumentException(String.format("Invalid version suffix format. '%s' found.", sufStr));
+            throw new IllegalArgumentException(
+                String.format("Invalid version suffix format. '%s' found.", sufStr));
           }
           final var sep = m.group(1);
           separator = (sep != null) ? sep : "";
