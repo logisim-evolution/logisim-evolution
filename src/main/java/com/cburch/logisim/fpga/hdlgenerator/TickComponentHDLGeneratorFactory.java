@@ -11,10 +11,9 @@ package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -52,13 +51,9 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
         .addWire("s_count_next", NR_OF_COUNTER_BITS_ID)
         .addRegister("s_tick_reg", 1)
         .addRegister("s_count_reg", NR_OF_COUNTER_BITS_ID);
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    Inputs.put("FPGAClock", 1);
-    return Inputs;
+    myPorts
+         .add(Port.INPUT, "FPGAClock", 1, FPGA_CLOCK)
+         .add(Port.OUTPUT, "FPGATick", 1, FPGA_TICK);
   }
 
   @Override
@@ -126,20 +121,5 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           """);
     }
     return Contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    Outputs.put("FPGATick", 1);
-    return Outputs;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    PortMap.put("FPGAClock", FPGA_CLOCK);
-    PortMap.put("FPGATick", FPGA_TICK);
-    return PortMap;
   }
 }

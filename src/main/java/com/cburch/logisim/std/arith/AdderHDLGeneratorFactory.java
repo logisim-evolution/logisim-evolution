@@ -15,6 +15,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -37,16 +38,12 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .addWire("s_extended_dataA", EXTENDED_BITS_ID)
         .addWire("s_extended_dataB", EXTENDED_BITS_ID)
         .addWire("s_sum_result", EXTENDED_BITS_ID);
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var Inputs = new TreeMap<String, Integer>();
-    int inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
-    Inputs.put("DataA", inputbits);
-    Inputs.put("DataB", inputbits);
-    Inputs.put("CarryIn", 1);
-    return Inputs;
+    myPorts
+        .add(Port.INPUT, "DataA", NR_OF_BITS_ID, Adder.IN0, StdAttr.WIDTH)
+        .add(Port.INPUT, "DataB", NR_OF_BITS_ID, Adder.IN1, StdAttr.WIDTH)
+        .add(Port.INPUT, "CarryIn", 1, Adder.C_IN)
+        .add(Port.OUTPUT, "Result", NR_OF_BITS_ID, Adder.OUT, StdAttr.WIDTH)
+        .add(Port.OUTPUT, "CarryOut", 1, Adder.C_OUT);
   }
 
   @Override
@@ -72,27 +69,5 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Contents.add("assign   {CarryOut,Result} = DataA + DataB + CarryIn;");
     }
     return Contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    int outputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
-    map.put("Result", outputbits);
-    map.put("CarryOut", 1);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    final var  portMap = new TreeMap<String, String>();
-    if (!(MapInfo instanceof NetlistComponent)) return portMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    portMap.putAll(GetNetMap("DataA", true, ComponentInfo, 0, Nets));
-    portMap.putAll(GetNetMap("DataB", true, ComponentInfo, 1, Nets));
-    portMap.putAll(GetNetMap("Result", true, ComponentInfo, 2, Nets));
-    portMap.putAll(GetNetMap("CarryIn", true, ComponentInfo, 3, Nets));
-    portMap.putAll(GetNetMap("CarryOut", true, ComponentInfo, 4, Nets));
-    return portMap;
   }
 }

@@ -17,6 +17,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LineBuffer;
@@ -35,6 +36,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   private final String subDirectoryName;
   protected final HDLParameters myParametersList = new HDLParameters();
   protected final HDLWires myWires = new HDLWires();
+  protected final HDLPorts myPorts = new HDLPorts();
   protected boolean getWiresduringHDLWriting = false;
 
   public AbstractHDLGeneratorFactory() {
@@ -63,9 +65,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   @Override
   public ArrayList<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
     final var Contents = new LineBuffer();
-    final var inputs = GetInputList(theNetlist, attrs);
-    final var inOuts = GetInOutList(theNetlist, attrs);
-    final var outputs = GetOutputList(theNetlist, attrs);
     final var mems = GetMemList(attrs);
     final var OneLine = new StringBuilder();
     if (getWiresduringHDLWriting) {
@@ -161,11 +160,11 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       final var Preamble = String.format("module %s( ", componentName);
       final var Indenting = new StringBuilder();
       while (Indenting.length() < Preamble.length()) Indenting.append(" ");
-      if (inputs.isEmpty() && outputs.isEmpty() && inOuts.isEmpty()) {
+      if (myPorts.isEmpty()) {
         Contents.add(Preamble + " );");
       } else {
         final var ThisLine = new StringBuilder();
-        for (final var inp : inputs.keySet()) {
+        for (final var inp : myPorts.keySet(Port.INPUT)) {
           if (ThisLine.length() == 0) {
             ThisLine.append(Preamble).append(inp);
           } else {
@@ -174,7 +173,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             ThisLine.append(Indenting).append(inp);
           }
         }
-        for (final var outp : outputs.keySet()) {
+        for (final var outp : myPorts.keySet(Port.OUTPUT)) {
           if (ThisLine.length() == 0) {
             ThisLine.append(Preamble).append(outp);
           } else {
@@ -183,7 +182,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             ThisLine.append(Indenting).append(outp);
           }
         }
-        for (final var io : inOuts.keySet()) {
+        for (final var io : myPorts.keySet(Port.INOUT)) {
           if (ThisLine.length() == 0) {
             ThisLine.append(Preamble).append(io);
           } else {
@@ -210,10 +209,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       }
       var firstline = true;
       var nrOfPortBits = 0;
-      for (final var inp : inputs.keySet()) {
+      for (final var inp : myPorts.keySet(Port.INPUT)) {
         OneLine.setLength(0);
         OneLine.append("   input");
-        nrOfPortBits = inputs.get(inp);
+        nrOfPortBits = myPorts.get(inp, attrs);
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
@@ -239,10 +238,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.add(OneLine.toString());
       }
       firstline = true;
-      for (final var outp : outputs.keySet()) {
+      for (final var outp : myPorts.keySet(Port.OUTPUT)) {
         OneLine.setLength(0);
         OneLine.append("   output");
-        nrOfPortBits = outputs.get(outp);
+        nrOfPortBits = myPorts.get(outp, attrs);
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
@@ -268,10 +267,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.add(OneLine.toString());
       }
       firstline = true;
-      for (final var io : inOuts.keySet()) {
+      for (final var io : myPorts.keySet(Port.INOUT)) {
         OneLine.setLength(0);
         OneLine.append("   inout");
-        nrOfPortBits = inOuts.get(io);
+        nrOfPortBits = myPorts.get(io, attrs);
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
@@ -383,7 +382,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       String name) {
     final var Contents = new ArrayList<String>();
     final var parameterMap = new TreeMap<String, String>(); 
-    final var PortMap = GetPortMap(nets, componentInfo);
+    final var PortMap = getPortMap(nets, componentInfo);
     final var componentHDLName = componentInfo instanceof NetlistComponent 
         ? ((NetlistComponent) componentInfo).getComponent().getFactory().getHDLName(((NetlistComponent) componentInfo).getComponent().getAttributeSet()) : 
           name;
@@ -565,28 +564,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     throw new IllegalAccessError("BUG: Inline code not supported");
   }
 
-  public SortedMap<String, Integer> GetInOutList(Netlist TheNetlist, AttributeSet attrs) {
-    /*
-     * This method returns a map list of all the INOUT of a black-box. The
-     * String Parameter represents the Name, and the Integer parameter
-     * represents: >0 The number of bits of the signal <0 A parameterized
-     * vector of bits where the value is the "key" of the parameter map 0 Is
-     * an invalid value and must not be used
-     */
-    return new TreeMap<>();
-  }
-
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    /*
-     * This method returns a map list of all the inputs of a black-box. The
-     * String Parameter represents the Name, and the Integer parameter
-     * represents: >0 The number of bits of the signal <0 A parameterized
-     * vector of bits where the value is the "key" of the parameter map 0 Is
-     * an invalid value and must not be used
-     */
-    return new TreeMap<>();
-  }
-
   public SortedMap<String, Integer> GetMemList(AttributeSet attrs) {
     /*
      * This method returns a map list of all the memory contents signals
@@ -743,24 +720,18 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return 0;
   }
 
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    /*
-     * This method returns a map list of all the outputs of a black-box. The
-     * String Parameter represents the Name, and the Integer parameter
-     * represents: >0 The number of bits of the signal <0 A parameterized
-     * vector of bits where the value is the "key" of the parameter map 0 Is
-     * an invalid value and must not be used
-     */
-    return new TreeMap<>();
-  }
-
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    /*
-     * This method returns the assigned input/outputs of the component, the
-     * key is the name of the input/output (bit), and the value represent
-     * the connected net.
-     */
-    return new TreeMap<>();
+  public SortedMap<String, String> getPortMap(Netlist Nets, Object MapInfo) {
+    final var result = new TreeMap<String,String>();
+    if (MapInfo instanceof NetlistComponent && !myPorts.isEmpty()) {
+      NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
+      for (var port : myPorts.keySet()) {
+        if (myPorts.isFixedMapped(port))
+          result.put(port, myPorts.getFixedMap(port));
+        else
+          result.putAll(GetNetMap(port, myPorts.doPullDownOnFloat(port), ComponentInfo, myPorts.getComponentPortId(port), Nets));
+      }
+    }
+    return result;
   }
 
   @Override
@@ -792,9 +763,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   private ArrayList<String> GetVHDLBlackBox(Netlist TheNetlist, AttributeSet attrs,
       String ComponentName, Boolean IsEntity) {
     var Contents = new ArrayList<String>();
-    final var InputsList = GetInputList(TheNetlist, attrs);
-    final var InOutsList = GetInOutList(TheNetlist, attrs);
-    final var OutputsList = GetOutputList(TheNetlist, attrs);
     var OneLine = new StringBuilder();
     var IdentSize = 0;
     var CompTab = (IsEntity) ? "" : "   ";
@@ -828,12 +796,12 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Contents.add(OneLine.toString());
       OneLine.setLength(0);
     }
-    if (!InputsList.isEmpty() || !OutputsList.isEmpty() || !InOutsList.isEmpty()) {
+    if (!myPorts.isEmpty()) {
       var NrOfPortBits = 0;
       OneLine.append(CompTab).append("   PORT ( ");
       IdentSize = OneLine.length();
       first = true;
-      for (var input : InputsList.keySet()) {
+      for (var input : myPorts.keySet(Port.INPUT)) {
         if (!first) {
           OneLine.append(";");
           Contents.add(OneLine.toString());
@@ -847,7 +815,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         OneLine.append(input);
         OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - input.length())));
         OneLine.append(": IN  std_logic");
-        NrOfPortBits = InputsList.get(input);
+        NrOfPortBits = myPorts.get(input, attrs);
         if (NrOfPortBits < 0) {
           /* we have a parameterized input */
           if (!myParametersList.containsKey(NrOfPortBits, attrs)) {
@@ -868,7 +836,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           }
         }
       }
-      for (var inout : InOutsList.keySet()) {
+      for (var inout : myPorts.keySet(Port.INOUT)) {
         if (!first) {
           OneLine.append(";");
           Contents.add(OneLine.toString());
@@ -882,7 +850,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         OneLine.append(inout);
         OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - inout.length())));
         OneLine.append(": INOUT  std_logic");
-        NrOfPortBits = InOutsList.get(inout);
+        NrOfPortBits = myPorts.get(inout, attrs);
         if (NrOfPortBits < 0) {
           /* we have a parameterized input */
           if (!myParametersList.containsKey(NrOfPortBits, attrs)) {
@@ -903,7 +871,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           }
         }
       }
-      for (var output : OutputsList.keySet()) {
+      for (var output : myPorts.keySet(Port.OUTPUT)) {
         if (!first) {
           OneLine.append(";");
           Contents.add(OneLine.toString());
@@ -917,7 +885,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         OneLine.append(output);
         OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - output.length())));
         OneLine.append(": OUT std_logic");
-        NrOfPortBits = OutputsList.get(output);
+        NrOfPortBits = myPorts.get(output, attrs);
         if (NrOfPortBits < 0) {
           /* we have a parameterized output */
           if (!myParametersList.containsKey(NrOfPortBits, attrs)) {
