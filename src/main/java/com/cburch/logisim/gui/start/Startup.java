@@ -161,9 +161,10 @@ public class Startup implements AWTEventListener {
   private static final String ARG_TEMPLATE_LONG = "user-template";
   private static final String ARG_VERSION_SHORT = "v";
   private static final String ARG_VERSION_LONG = "version";
-  private static final String ARG_NO_SPLASH_LONG = "no-splash";
   private static final String ARG_TEST_VECTOR_SHORT = "w";
   private static final String ARG_TEST_VECTOR_LONG = "test-vector";
+  private static final String ARG_NO_SPLASH_LONG = "no-splash";
+  private static final String ARG_MAIN_CIRCUIT = "toplevel-circuit";
 
   /**
    * Parses provided string expecting it represent boolean option. Accepted values
@@ -320,6 +321,7 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argLocaleOption", ARG_LOCALE_LONG, ARG_LOCALE_SHORT, 1);
     addOption(opts, "argTemplateOption", ARG_TEMPLATE_LONG, ARG_TEMPLATE_SHORT, 1);
     addOption(opts, "argNoSplashOption", ARG_NO_SPLASH_LONG);
+    addOption(opts, "argMainCircuitOption", ARG_MAIN_CIRCUIT, 1);
     addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR_LONG, ARG_TEST_VECTOR_SHORT, 2);
     addOption(opts, "argTestCircuitOption", ARG_TEST_CIRCUIT_LONG, ARG_TEST_CIRCUIT_SHORT, 1);     // FIXME add "Option" suffix to key name
     addOption(opts, "argTestCircGenOption", ARG_TEST_CIRC_GEN_LONG, ARG_TEST_CIRC_GEN_SHORT, 2);   // FIXME add "Option" suffix to key name
@@ -388,6 +390,7 @@ public class Startup implements AWTEventListener {
         case ARG_TEST_FGPA_LONG -> handleArgTestFpga(startup, opt);
         case ARG_TEST_CIRCUIT_LONG -> handleArgTestCircuit(startup, opt);
         case ARG_TEST_CIRC_GEN_LONG -> handleArgTestCircGen(startup, opt);
+        case ARG_MAIN_CIRCUIT -> handleArgMainCircuit(startup, opt);
         default -> RC.OK; // should not really happen IRL.
       };
       lastHandlerRc = optHandlerRc;
@@ -609,6 +612,11 @@ public class Startup implements AWTEventListener {
     startup.showSplash = false;
     startup.exitAfterStartup = true;
     // This is to test a test bench. It will return 0 or 1 depending on if the tests pass or not.
+    return RC.OK;
+  }
+  
+  private static RC handleArgMainCircuit(Startup startup, Option opt) {
+    startup.circuitToTest = opt.getValues()[0];
     return RC.OK;
   }
 
