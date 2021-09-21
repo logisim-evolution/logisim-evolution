@@ -78,14 +78,14 @@ java {
  */
 extra.apply {
   // NOTE: optional suffix is prefixed with `-` (because of how LogisimVersion class parses it), which
-  // I remove here because `jpackage` tool do not like it when used to build RPM package.
+  // I remove here because `jpackage` tool does not like it when used to build the RPM package.
   // Do NOT use `project.version` instead.
   val appVersion = (project.version as String).replace("-", "")
   set(APP_VERSION, appVersion)
   logger.info("appVersion: ${appVersion}")
 
   // Short (with suffix removed) version string, i.e. for "3.6.0beta1", short form is "3.6.0".
-  // This is mostly used by createApp as version numbering rule is pretty strict on macOS.
+  // This is used by createApp and createMsi as version numbering is pretty strict on macOS and Windows.
   // Do NOT use `project.version` instead.
   val appVersionShort = (project.version as String).split('-')[0]
   set(APP_VERSION_SHORT, appVersionShort)
@@ -181,7 +181,8 @@ task<Jar>("sourcesJar") {
 
 
 /**
- * Creates distribution directory and checks if source.
+ * Creates the distribution directory and removes any extra files from the libs directory
+ * beyond the expected shadowJar file because jpackage puts everything from libs into the package.
  */
 tasks.register("createDistDir") {
   val libsDir = ext.get(LIBS_DIR) as String
@@ -548,9 +549,9 @@ tasks.register("genFiles") {
 }
 
 /**
- * Task: jpackage
+ * Task: createAll
  *
- * Umbrella task to create packages for all supported platforms.
+ * Umbrella task to create all packages for the current platform.
  */
 tasks.register("createAll") {
   group = "build"
