@@ -18,6 +18,7 @@ import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -54,6 +55,21 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .addRegister("s_buf_regs", 2)
         .addRegister("s_counter_reg", NR_OF_BITS_ID)
         .addRegister("s_derived_clock_reg", PHASE_ID);
+    myPorts
+        .add(Port.INPUT, "GlobalClock", 1, 0)
+        .add(Port.INPUT, "ClockTick", 1, 1)
+        .add(Port.OUTPUT, "ClockBus", NR_OF_CLOCK_BITS, 2);
+  }
+
+  @Override
+  public SortedMap<String, String> getPortMap(Netlist Nets, Object MapInfo) {
+    final var map = new TreeMap<String, String>();
+    if (!(MapInfo instanceof NetlistComponent)) return map;
+    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
+    map.put("GlobalClock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
+    map.put("ClockTick", TickComponentHDLGeneratorFactory.FPGA_TICK);
+    map.put("ClockBus", "s_" + GetClockNetName(ComponentInfo.getComponent(), Nets));
+    return map;
   }
 
   private String GetClockNetName(Component comp, Netlist TheNets) {
@@ -63,14 +79,6 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Contents.append(HDLGeneratorFactory.CLOCK_TREE_NAME).append(ClockNetId);
     }
     return Contents.toString();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("GlobalClock", 1);
-    map.put("ClockTick", 1);
-    return map;
   }
 
   @Override
@@ -197,23 +205,5 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     Contents.add("");
     return Contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("ClockBus", NR_OF_CLOCK_BITS);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    final var map = new TreeMap<String, String>();
-    if (!(MapInfo instanceof NetlistComponent)) return map;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    map.put("GlobalClock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
-    map.put("ClockTick", TickComponentHDLGeneratorFactory.FPGA_TICK);
-    map.put("ClockBus", "s_" + GetClockNetName(ComponentInfo.getComponent(), Nets));
-    return map;
   }
 }

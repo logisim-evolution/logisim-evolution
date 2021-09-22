@@ -20,6 +20,7 @@ import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.util.ArrayList;
@@ -173,6 +174,12 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             ThisLine.setLength(0);
             ThisLine.append(Indenting).append(inp);
           }
+          // Special case for the clocks we have to add the tick
+          if (myPorts.isClock(inp)) {
+            Contents.add(ThisLine + ",");
+            ThisLine.setLength(0);
+            ThisLine.append(Indenting).append(HDLPorts.TICK);
+          }
         }
         for (final var outp : myPorts.keySet(Port.OUTPUT)) {
           if (ThisLine.length() == 0) {
@@ -237,6 +244,12 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           Contents.addRemarkBlock("Here the inputs are defined");
         }
         Contents.add(OneLine.toString());
+        // special case for the clock, we have to add the tick
+        if (myPorts.isClock(inp)) {
+          OneLine.setLength(0);
+          OneLine.append("   input  ").append(HDLPorts.TICK).append(";");
+          Contents.add(OneLine.toString());
+        }
       }
       firstline = true;
       for (final var outp : myPorts.keySet(Port.OUTPUT)) {
@@ -725,16 +738,62 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     final var result = new TreeMap<String,String>();
     if (mapInfo instanceof NetlistComponent && !myPorts.isEmpty()) {
       NetlistComponent ComponentInfo = (NetlistComponent) mapInfo;
+      final var compName = ComponentInfo.getComponent().getFactory().getDisplayName();
+      final var attrs = ComponentInfo.getComponent().getAttributeSet();
       if (getWiresPortsduringHDLWriting) {
         myWires.removeWires();
         myPorts.removePorts();
         getGenerationTimeWiresPorts(nets, ComponentInfo.getComponent().getAttributeSet());
       }
       for (var port : myPorts.keySet()) {
-        if (myPorts.isFixedMapped(port))
+        if (myPorts.isClock(port)) {
+          var gatedClock = false;
+          var hasClock = true;
+          final var clockAttr = attrs.containsAttribute(StdAttr.EDGE_TRIGGER) 
+              ? attrs.getValue(StdAttr.EDGE_TRIGGER) : attrs.getValue(StdAttr.TRIGGER);
+          if (clockAttr == null) throw new IllegalArgumentException("BUG: clock attribute not found!");
+          final var activeLow = StdAttr.TRIG_LOW.equals(clockAttr) || StdAttr.TRIG_FALLING.equals(clockAttr);
+          final var compPinId = myPorts.getComponentPortId(port);
+          if (!ComponentInfo.isEndConnected(compPinId)) {
+            // FIXME hard coded string
+            Reporter.Report.AddSevereWarning(
+                String.format("Component \"%s\" in circuit \"%s\" has no clock connection!", compName, nets.getCircuitName()));
+            hasClock = false;
+          }
+          final var clockNetName = HDL.getClockNetName(ComponentInfo, compPinId, nets);
+          if (clockNetName == null || clockNetName.isEmpty()) {
+            // FIXME hard coded string
+            Reporter.Report.AddSevereWarning(
+                String.format("Component \"%s\" in circuit \"%s\" has a gated clock connection!", compName, nets.getCircuitName()));
+            gatedClock = true;
+          }
+          if (hasClock && !gatedClock && Netlist.isFlipFlop(attrs)) {
+            if (nets.requiresGlobalClockConnection()) {
+              result.put(HDLPorts.TICK, LineBuffer
+                  .formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX));
+            } else {
+              final var clockIndex = activeLow ? ClockHDLGeneratorFactory.NEGATIVE_EDGE_TICK_INDEX : ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX;
+              result.put(HDLPorts.TICK, LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, clockIndex));
+            }
+            result.put(HDLPorts.CLOCK, LineBuffer
+                .formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX));
+          } else if (!hasClock) {
+            result.put(HDLPorts.TICK, HDL.zeroBit());
+            result.put(HDLPorts.CLOCK, HDL.zeroBit());
+          } else {
+            result.put(HDLPorts.TICK, HDL.oneBit());
+            if (!gatedClock) {
+              final var clockIndex = activeLow ? ClockHDLGeneratorFactory.INVERTED_DERIVED_CLOCK_INDEX : ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX;
+              result.put(HDLPorts.CLOCK, LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, clockIndex));
+            } else {
+              result.put(HDLPorts.CLOCK, HDL.getNetName(ComponentInfo, compPinId, true, nets));
+            }
+          }
+        } else if (myPorts.isFixedMapped(port)) {
           result.put(port, myPorts.getFixedMap(port));
-        else
+        } else {
           result.putAll(GetNetMap(port, myPorts.doPullDownOnFloat(port), ComponentInfo, myPorts.getComponentPortId(port), nets));
+        }
       }
     }
     return result;
@@ -845,6 +904,16 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
               OneLine.append("_vector( 0 DOWNTO 0 )");
             }
           }
+        }
+        // special case of the clock, we have to add the tick
+        if (myPorts.isClock(input)) {
+          OneLine.append(";");
+          Contents.add(OneLine.toString());
+          OneLine.setLength(0);
+          OneLine.append(" ".repeat(IdentSize));
+          OneLine.append(HDLPorts.TICK);
+          OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - HDLPorts.TICK.length())));
+          OneLine.append(": IN  std_logic");
         }
       }
       for (var inout : myPorts.keySet(Port.INOUT)) {

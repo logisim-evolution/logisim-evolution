@@ -28,7 +28,7 @@ class CounterAttributes extends AbstractAttributeSet {
     base =
         AttributeSets.fixedSet(
             new Attribute<?>[] {
-              StdAttr.WIDTH,
+              Counter.ATTR_BITS,
               Counter.ATTR_MAX,
               Counter.ATTR_ON_GOAL,
               StdAttr.EDGE_TRIGGER,

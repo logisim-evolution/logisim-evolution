@@ -11,14 +11,13 @@ package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
+import com.cburch.logisim.instance.Port;
 
 public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -59,6 +58,11 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
         .addRegister("s_rowCounterReg", NR_OF_ROW_ADDRESS_BITS_ID)
         .addRegister("s_scanningCounterReg", SCANNING_COUNTER_BITS_ID)
         .addRegister("s_tickReg", 1);
+    myPorts
+        .add(Port.INPUT, TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1, 0)
+        .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayInputs, NR_OF_LEDS_ID, 1)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress, NR_OF_ROW_ADDRESS_BITS_ID, 2)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs, NR_OF_COLUMS_ID, 3);
   }
 
   public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long FpgaClockFrequency, boolean activeLow) {
@@ -136,22 +140,6 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
           """);
     }
     return map.getWithIndent(6);
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress, NR_OF_ROW_ADDRESS_BITS_ID);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs, NR_OF_COLUMS_ID);
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var inputs = new TreeMap<String, Integer>();
-    inputs.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayInputs, NR_OF_LEDS_ID);
-    return inputs;
   }
 
   public ArrayList<String> getRowCounterCode() {

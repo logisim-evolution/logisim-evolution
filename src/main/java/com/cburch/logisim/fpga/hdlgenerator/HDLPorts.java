@@ -15,9 +15,13 @@ import java.util.List;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
+import com.cburch.logisim.instance.Port;
 
 
 public class HDLPorts {
+ 
+  public static final String CLOCK = "clock";
+  public static final String TICK = "tick";
 
   private class PortInfo {
 
@@ -29,6 +33,7 @@ public class HDLPorts {
     private boolean mySinglePinException = false;
     private Attribute<?> myBitWidthAttribute = null;
     private boolean myPullToZero = true;
+    private boolean isClock = false;
 
     public PortInfo(String type, String name, int nrOfBits, String fixedMap) {
       myPortType = type;
@@ -78,29 +83,41 @@ public class HDLPorts {
   private final List<PortInfo> myPorts = new ArrayList<PortInfo>();
 
   public HDLPorts add(String type, String name, int nrOfBits, String fixedMap) {
-    myPorts.add(new PortInfo(type, name, nrOfBits, fixedMap));
+    final var realType = Port.CLOCK.equals(type) ? Port.INPUT : type;
+    final var newPort = new PortInfo(realType, name, nrOfBits, fixedMap);
+    newPort.isClock = Port.CLOCK.equals(type);
+    myPorts.add(newPort);
     return this;
   }
 
   public HDLPorts add(String type, String name, int nrOfBits, int compPinId) {
-    myPorts.add(new PortInfo(type, name, nrOfBits, compPinId));
+    final var realType = Port.CLOCK.equals(type) ? Port.INPUT : type;
+    final var newPort = new PortInfo(realType, name, nrOfBits, compPinId);
+    newPort.isClock = Port.CLOCK.equals(type);
+    myPorts.add(newPort);
     return this;
   }
 
   public HDLPorts add(String type, String name, int nrOfBits, int compPinId, boolean pullToZero) {
-    myPorts.add(new PortInfo(type, name, nrOfBits, compPinId, pullToZero));
+    final var realType = Port.CLOCK.equals(type) ? Port.INPUT : type;
+    final var newPort = new PortInfo(realType, name, nrOfBits, compPinId, pullToZero);
+    newPort.isClock = Port.CLOCK.equals(type);
+    myPorts.add(newPort);
     return this;
   }
 
   public HDLPorts add(String type, String name, int nrOfBits, int compPinId, Attribute<?> nrOfBitsAttr) {
-    myPorts.add(new PortInfo(type, name, nrOfBits, compPinId, nrOfBitsAttr));
+    final var realType = Port.CLOCK.equals(type) ? Port.INPUT : type;
+    final var newPort = new PortInfo(realType, name, nrOfBits, compPinId, nrOfBitsAttr);
+    newPort.isClock = Port.CLOCK.equals(type);
+    myPorts.add(newPort);
     return this;
   }
 
   public boolean isEmpty() {
     return myPorts.isEmpty();
   }
-
+  
   public ArrayList<String> keySet() {
     return keySet(null);
   }
@@ -146,6 +163,12 @@ public class HDLPorts {
   public boolean doPullDownOnFloat(String name) {
     for (var port : myPorts)
       if (port.myName.equals(name)) return port.myPullToZero;
+    throw new ArrayStoreException("port not contained in structure");
+  }
+  
+  public boolean isClock(String name) {
+    for (var port : myPorts)
+      if (port.myName.equals(name)) return port.isClock;
     throw new ArrayStoreException("port not contained in structure");
   }
 }
