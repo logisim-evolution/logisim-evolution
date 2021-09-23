@@ -9,6 +9,7 @@
     * [Editing built-in config](#editing-built-in-config)
     * [Using cloned config](#using-cloned-config)
   * [Using Gradle plugin](#using-gradle-plugin)
+  * [Using `pre-commit`](#using-pre-commit-hooks)
 
 ---
 
@@ -18,12 +19,13 @@
 static anaylyzer tool, with a few checks disabled as specified in the `suppressions.xml`
 config file.
 
+---
+
 # Checking code style with InteliJ IDEA #
 
-As we use a suppression config file, you can set up InteliJ's Checkstyle plugin in
-two ways - one adds our suppressions to the built-in "Google Checks" config, the other
-creates a completely new config using a copy from the Checkstyle source archive.
-
+-As we use a suppression config file, you can set up InteliJ's Checkstyle plugin in
+-two ways - one adds our suppressions to the built-in "Google Checks" config, the other
+-creates a completely new config using a copy from the Checkstyle source archive.
 Either way, you need to install the `CheckStyle-IDEA` plugin first:
 
 * Go to `Settings -> Plugins`.
@@ -37,8 +39,8 @@ Edit the existing Google Checks configuration:
 * Open the `Tools -> Checkstyle` plugin settings.
 * Activate the `Google Checks` configuration.
 * Highlight the `Google Checks` row and click the `Pen` icon above the list to edit it.
-* Look for the `org.checkstyle.google.suppressionfilter.config` named property and set its
-  value to `config/checkstyle/suppressions.xml`.
+* Look for the `org.checkstyle.google.suppressionfilter.config` named property and set its value
+  to `config/checkstyle/suppressions.xml`.
 * Click `Finish`.
 * You can now run CheckStyle using the `Checkstyle` command or directly from the CheckStyle tab.
 * Ensure `Rules:`, shown in the scan result window, reads `Google Checks`.
@@ -49,8 +51,8 @@ You can configure InteliJ's CheckStyle plugin to behave exactly as we configure 
 
 * Open the `Tools -> Checkstyle` plugin settings.
 * Set the `Checkstyle version` to your liking.
-* Go to the [Checkstyle GitHub page](https://github.com/checkstyle/checkstyle/releases) and look
-  for a release matching the selected `Checkstyle version` and download the source archive.
+* Go to the [Checkstyle GitHub page](https://github.com/checkstyle/checkstyle/releases) and look for a release matching the
+  selected `Checkstyle version` and download the source archive.
 * Unpack it and copy out the `src/main/resources/google_checks.xml` file to Logisim's `config/checkstyle/`.
 * Go back to the plugin configuration and add a new "Configuration file":
   * Click the `+` icon.
@@ -58,8 +60,8 @@ You can configure InteliJ's CheckStyle plugin to behave exactly as we configure 
   * Select `Use a local Checkstyle file`.
   * Click `Browse` and point to the `config/checkstyle/google_checks.xml` file.
   * Enable `Store relative to project location` and click `Next`.
-  * On the `Property` table, look for a property named `org.checkstyle.google.suppressionfilter.config`.
-    Set the value to `config/checkstyle/suppressions.xml` and click `Next.
+  * On the `Property` table, look for a property named `org.checkstyle.google.suppressionfilter.config`. Set the value
+    to `config/checkstyle/suppressions.xml` and click `Next.
   * Click "Finish".
 * You can now run CheckStyle using the `Checkstyle` command or directly from the CheckStyle tab.
 * Ensure `Rules:`, shown in the scan result window, reads `Logisim-evolution`.
@@ -73,3 +75,19 @@ CheckStyle is also plugged into the project's Gradle build system and provides t
 ```bash
 $ ./gradlew checkstyleMain
 ```
+
+---
+
+# Using pre-commit hooks #
+
+To improve quality of your commit, it's recommended to use [pre-commit](http://pre-commit.com) hooks, that will block your commits
+unless all pre-commit tests. `Logisim-evolution` comes with predefined `.pre-commit-config.yaml`
+config file.
+
+Installation instruction:
+
+* See `pre-commit` [official installation docs](https://pre-commit.com/#install) and follow
+* Clone provided config file: `cp .pre-commit-config.yaml.dist .pre-commit-config.yaml`
+* Download Checkstyle JAR: `wget https://github.com/checkstyle/checkstyle/releases/download/checkstyle-9.0/checkstyle-9.0-all.jar`
+  to your project's root folder
+* Install hook in Git pipeline: `pre-commit install`

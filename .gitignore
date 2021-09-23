@@ -283,3 +283,6 @@ gradle-app.setting
 
 # Include libraries
 !lib
+
+# default pre-commit config
+/.pre-commit-config.yaml
