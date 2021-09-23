@@ -40,7 +40,6 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final String NR_OF_BITS_STR = "NrOfBits";
   private static final int NR_OF_BITS_ID = -4;
   
-  // TODO: Get this part correct, phase, and behavior are too complex in the current implementation it does not work correctly
   public ClockHDLGeneratorFactory() {
     super("base");
     myParametersList
@@ -48,6 +47,13 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .add(LOW_TICK_STR, LOW_TICK_ID, HDLParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_LOW)
         .add(PHASE_STR, PHASE_ID, HDLParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_PHASE, 1)
         .add(NR_OF_BITS_STR, NR_OF_BITS_ID, HDLParameters.MAP_LN2, Clock.ATTR_HIGH, Clock.ATTR_LOW);
+    myWires
+        .addWire("s_counter_next", NR_OF_BITS_ID)
+        .addWire("s_counter_is_zero", 1)
+        .addRegister("s_output_regs", NR_OF_CLOCK_BITS - 1)
+        .addRegister("s_buf_regs", 2)
+        .addRegister("s_counter_reg", NR_OF_BITS_ID)
+        .addRegister("s_derived_clock_reg", PHASE_ID);
   }
 
   private String GetClockNetName(Component comp, Netlist TheNets) {
@@ -208,24 +214,6 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put("GlobalClock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
     map.put("ClockTick", TickComponentHDLGeneratorFactory.FPGA_TICK);
     map.put("ClockBus", "s_" + GetClockNetName(ComponentInfo.getComponent(), Nets));
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("s_output_regs", NR_OF_CLOCK_BITS - 1);
-    map.put("s_buf_regs", 2);
-    map.put("s_counter_reg", NR_OF_BITS_ID);
-    map.put("s_derived_clock_reg", PHASE_ID);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("s_counter_next", NR_OF_BITS_ID);
-    map.put("s_counter_is_zero", 1);
     return map;
   }
 }

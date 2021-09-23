@@ -72,13 +72,14 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
                    """);
     } else {
       contents.add("""
+          reg [{{1}}:0] s_selected_vector;
           assign MuxOut = s_selected_vector;
-          
+
           always @(*)
           begin
              if (~Enable) s_selected_vector <= 0;
              else case (Sel)
-          """);
+          """, NR_OF_BITS_STRING);
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++) {
         contents
             .add("      {{1}}:", HDL.getConstantVector(i, nrOfSelectBits))
@@ -126,14 +127,6 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     }
     // finally output
     map.putAll(GetNetMap("MuxOut", true, comp, selectInputIndex + 2, nets));
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    final var nrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
-    if (HDL.isVerilog()) map.put("s_selected_vector", nrOfBits);
     return map;
   }
 }

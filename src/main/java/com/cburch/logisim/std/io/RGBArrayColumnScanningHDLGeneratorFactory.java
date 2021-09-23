@@ -22,6 +22,14 @@ import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnScanningHDLGeneratorFactory {
 
   public static final String HDL_IDENTIFIER =  "RGBArrayColumnScanning";
+  
+  public RGBArrayColumnScanningHDLGeneratorFactory() {
+    super();
+    myWires
+        .addWire("s_maxRedLedInputs", MAX_NR_LEDS_ID)
+        .addWire("s_maxBlueLedInputs", MAX_NR_LEDS_ID)
+        .addWire("s_maxGreenLedInputs", MAX_NR_LEDS_ID);
+  }
 
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
@@ -80,16 +88,6 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
     inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, NR_OF_LEDS_ID);
     inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, NR_OF_LEDS_ID);
     return inputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var wires = new TreeMap<String, Integer>();
-    wires.putAll(super.GetWireList(attrs, Nets));
-    wires.put("s_maxRedLedInputs", MAX_NR_LEDS_ID);
-    wires.put("s_maxBlueLedInputs", MAX_NR_LEDS_ID);
-    wires.put("s_maxGreenLedInputs", MAX_NR_LEDS_ID);
-    return wires;
   }
 
   @Override

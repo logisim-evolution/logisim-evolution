@@ -35,6 +35,10 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
         .add(CALC_BITS_STRING, CALC_BITS_ID, HDLParameters.MAP_MULTIPLY, 2)
         .add(UNSIGNED_STRING, UNSIGNED_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, ComparatorHDLGeneratorFactory.SIGNED_MAP);
+    myWires
+        .addWire("s_mult_result", CALC_BITS_ID)
+        .addWire("s_extended_Cin", CALC_BITS_ID)
+        .addWire("s_new_result", CALC_BITS_ID);
   }
 
   @Override
@@ -119,14 +123,5 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     portMap.putAll(GetNetMap("Mult_lo", true, ComponentInfo, Multiplier.OUT, Nets));
     portMap.putAll(GetNetMap("Mult_hi", true, ComponentInfo, Multiplier.C_OUT, Nets));
     return portMap;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var wires = new TreeMap<String, Integer>();
-    wires.put("s_mult_result", CALC_BITS_ID);
-    wires.put("s_extended_Cin", CALC_BITS_ID);
-    wires.put("s_new_result", CALC_BITS_ID);
-    return wires;
   }
 }
