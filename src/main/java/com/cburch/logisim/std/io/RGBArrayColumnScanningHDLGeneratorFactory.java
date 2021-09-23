@@ -22,7 +22,7 @@ import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnScanningHDLGeneratorFactory {
 
   public static final String HDL_IDENTIFIER =  "RGBArrayColumnScanning";
-
+  
   public RGBArrayColumnScanningHDLGeneratorFactory() {
     super();
     myWires
@@ -33,7 +33,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
 
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
-        LineBuffer.getBuffer()
+        (new LineBuffer())
             .pair("addr", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
             .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
             .pair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
@@ -93,7 +93,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var contents =
-        LineBuffer.getBuffer()
+        (new LineBuffer())
             .pair("nrOfLeds", NR_OF_LEDS_STRING)
             .pair("nrOfRows", NR_OF_ROWS_STRING)
             .pair("activeLow", ACTIVE_LOW_STRING)
@@ -122,7 +122,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
                 s_maxBlueLedInputs({{nrOfLeds}}-1 DOWNTO 0)  <= {{insB}};
              END IF;
           END PROCESS makeVirtualInputs;
-
+          
           GenOutputs : FOR n IN {{nrOfRows}}-1 DOWNTO 0 GENERATE
              {{outsR}}(n) <= s_maxRedLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);
              {{outsG}}(n) <= s_maxGreenLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);

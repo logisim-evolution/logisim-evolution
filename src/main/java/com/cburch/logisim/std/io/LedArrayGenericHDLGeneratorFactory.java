@@ -195,7 +195,7 @@ public class LedArrayGenericHDLGeneratorFactory {
   }
 
   public static ArrayList<String> GetComponentMap(char typeId, int nrOfRows, int nrOfColumns, int identifier, long FpgaClockFrequency, boolean isActiveLow) {
-    final var componentMap = LineBuffer.getBuffer()
+    final var componentMap = (new LineBuffer())
             .add(HDL.isVHDL()
                 ? "   array" + identifier + " : " + getSpecificHDLName(typeId)
                 : "   " + getSpecificHDLName(typeId));

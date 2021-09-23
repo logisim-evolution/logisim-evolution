@@ -18,16 +18,16 @@ import com.cburch.logisim.fpga.hdlgenerator.InlinedHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 
 public class AbstractSimpleIOHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
-
+  
   private final boolean isInputComponent;
-
+  
   public AbstractSimpleIOHDLGeneratorFactory(boolean isInputComponent) {
     this.isInputComponent = isInputComponent;
   }
 
   @Override
   public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
-    final var contents = LineBuffer.getBuffer().addHdlPairs();
+    final var contents = (new LineBuffer()).addHdlPairs();
     for (int i = 0; i < componentInfo.nrOfEnds(); i++) {
       if (componentInfo.isEndConnected(i) && isInputComponent) {
         final var pressPassive = componentInfo.getComponent().getAttributeSet().getValue(Button.ATTR_PRESS) ==  Button.BUTTON_PRESS_PASSIVE;

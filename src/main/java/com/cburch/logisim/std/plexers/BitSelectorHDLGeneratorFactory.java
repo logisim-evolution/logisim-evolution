@@ -53,7 +53,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents =
-        LineBuffer.getBuffer()
+        (new LineBuffer())
             .pair("extBits", EXTENDED_BITS_STRING)
             .pair("inBits", INPUT_BITS_STRING)
             .pair("outBits", OUTPUTS_BITS_STRING);
@@ -80,7 +80,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
             assign s_select_vector[513:{{extBits}}] = 0;
             assign s_select_vector[{{extBits}}-1:0] = s_extended_vector;
             assign DataOut = s_selected_slice;
-
+            
             always @(*)
             begin
                case (Sel)

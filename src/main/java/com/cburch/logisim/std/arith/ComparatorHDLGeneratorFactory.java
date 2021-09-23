@@ -30,18 +30,18 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int NR_OF_BITS_ID = -1;
   private static final String TWOS_COMPLEMENT_STRING = "TwosComplement";
   private static final int TWOS_COMPLEMENT_ID = -2;
-
-  public static final Map<AttributeOption, Integer> SIGNED_MAP = new HashMap<>() {{
-      put(Comparator.UNSIGNED_OPTION, 0);
-      put(Comparator.SIGNED_OPTION, 1);
+  
+  public static final Map<AttributeOption, Integer> SIGNED_MAP = new HashMap<>() {{ 
+      put(Comparator.UNSIGNED_OPTION, 0); 
+      put(Comparator.SIGNED_OPTION, 1); 
     }};
-
-
+ 
+  
   public ComparatorHDLGeneratorFactory() {
     super();
     myParametersList
         .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-        .add(TWOS_COMPLEMENT_STRING, TWOS_COMPLEMENT_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR,
+        .add(TWOS_COMPLEMENT_STRING, TWOS_COMPLEMENT_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, 
             SIGNED_MAP);
     getWiresduringHDLWriting = true;
   }
@@ -68,7 +68,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents = LineBuffer.getBuffer();
+    final var Contents = new LineBuffer();
     Contents.pair("twosComplement", TWOS_COMPLEMENT_STRING);
 
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
@@ -96,7 +96,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         Contents.add("""
             assign A_EQ_B = (DataA == DataB);
             assign A_LT_B = (DataA < DataB);
-            assign A_GT_B = (DataA > DataB);
+            assign A_GT_B = (DataA > DataB); 
             """);
       } else {
         Contents.add("""
@@ -104,7 +104,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             assign s_unsigned_less = (DataA < DataB);
             assign s_signed_greater = ($signed(DataA) > $signed(DataB));
             assign s_unsigned_greater = (DataA > DataB);
-
+            
             assign A_EQ_B = (DataA == DataB);
             assign A_GT_B = ({{twosComplement}}==1) ? s_signed_greater : s_unsigned_greater;
             assign A_LT_B = ({{twosComplement}}==1) ? s_signed_less : s_unsigned_less;

@@ -281,8 +281,8 @@ public class LineBufferTest extends TestBase {
   }
 
   /**
-   * This tests ensures default constructor exists but is not public to enforce use of
-   * getBuffer() and getHdlBuffer() calls.
+   * This tests ensures default constructor exists but is made protected to enforce users to
+   * call getBuffer() and getHdlBuffer().
    */
   @Test
   public void testDefaultConstructorIsNotPublic()  {
@@ -297,7 +297,10 @@ public class LineBufferTest extends TestBase {
       if (!ctor.getDeclaringClass().equals(LineBuffer.class)) continue;
       if (ctor.getParameterCount() != 0) continue;
       assertEquals(0, ctor.getParameterCount());
-      assertFalse(Modifier.isPublic(ctor.getModifiers()));
+
+      final var modifiers = ctor.getModifiers();
+      assertFalse(Modifier.isPrivate(modifiers));
+      assertTrue(Modifier.isProtected(modifiers));
       found = true;
       break;
     }

@@ -24,7 +24,7 @@ class OddParityGate extends AbstractGate {
   private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      final var contents = LineBuffer.getBuffer();
+      final var contents = new LineBuffer();
       contents.add(GetParity(false, nrOfInputs, bitwidth > 1)).empty();
       return contents.get();
     }

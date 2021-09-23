@@ -76,7 +76,7 @@ public class WithSelectHDLGenerator {
   }
 
   public ArrayList<String> getHdlCode() {
-    final var contents = LineBuffer.getBuffer().addHdlPairs()
+    final var contents = (new LineBuffer()).addHdlPairs()
         .pair("sourceName", sourceSignal)
         .pair("destName", destinationSignal)
         .pair("regName", regName)
