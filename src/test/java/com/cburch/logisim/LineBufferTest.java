@@ -292,10 +292,10 @@ public class LineBufferTest extends TestBase {
     assertTrue(ctors.length > 0);
 
     var found = false;
-    for(final var ctor : ctors) {
+    for (final var ctor : ctors) {
       // we care default, argumentless ctor only.
       if (!ctor.getDeclaringClass().equals(LineBuffer.class)) continue;
-      if(ctor.getParameterCount() != 0) continue;
+      if (ctor.getParameterCount() != 0) continue;
       assertEquals(0, ctor.getParameterCount());
       assertFalse(Modifier.isPublic(ctor.getModifiers()));
       found = true;
