@@ -59,11 +59,11 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    return (new LineBuffer())
+    return LineBuffer.getBuffer()
         .add("""
             NextState <= CurState WHEN tick = '0' ELSE
                          D4&D3&D2&D1;
-            
+
             dffs : PROCESS( CLK , nCLR ) IS
                BEGIN
                   IF (nCLR = '0') THEN CurState <= "0000";
@@ -71,7 +71,7 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
                      CurState <= NextState;
                   END IF;
                END PROCESS dffs;
-            
+
             nQ1 <= NOT(CurState(0));
             Q1  <= CurState(0);
             nQ2 <= NOT(CurState(1));

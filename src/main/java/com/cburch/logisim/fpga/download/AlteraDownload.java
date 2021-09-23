@@ -183,7 +183,7 @@ public class AlteraDownload implements VendorDownload {
       return scriptFile.exists();
     }
     final var fileType = HDLType.equals(HDLGeneratorFactory.VHDL) ? "VHDL_FILE" : "VERILOG_FILE";
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getBuffer();
     contents
         .pair("topLevelName", ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME)
         .pair("fileType", fileType)
@@ -193,10 +193,10 @@ public class AlteraDownload implements VendorDownload {
         .add("""
             # Load Quartus II Tcl Project package
             package require ::quartus::project
-            
+
             set need_to_close_project 0
             set make_assignments 1
-            
+
             # Check that the right project is open
             if {[is_project_open]} {
                 if {[string compare $quartus(project) "{{topLevelName}}"]} {
@@ -237,7 +237,7 @@ public class AlteraDownload implements VendorDownload {
         .add("""
                 # Commit assignments
                 export_assignments
-            
+
                 # Close project
                 if {$need_to_close_project} {
                     project_close
@@ -248,7 +248,7 @@ public class AlteraDownload implements VendorDownload {
   }
 
   private ArrayList<String> getPinLocStrings() {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getBuffer();
 
     for (final var key : mapInfo.getMappableResources().keySet()) {
       final var map = mapInfo.getMappableResources().get(key);
@@ -281,7 +281,7 @@ public class AlteraDownload implements VendorDownload {
       default -> throw new IllegalStateException("Unexpected value: " + currentBehavior);
     };
 
-    return (new LineBuffer())
+    return LineBuffer.getBuffer()
         .pair("assignName", "set_global_assignment -name")
         .add("{{assignName}} FAMILY \"{{1}}\"", currentBoard.fpga.getTechnology())
         .add("{{assignName}} DEVICE {{1}}", currentBoard.fpga.getPart())
@@ -365,7 +365,7 @@ public class AlteraDownload implements VendorDownload {
       Reporter.Report.AddError(S.get("AlteraFlashError", jicFile));
       return false;
     }
-    final var command = new LineBuffer();
+    final var command = LineBuffer.getBuffer();
     command
         .add(alteraVendor.getBinaryPath(1))
         .add("-c")
@@ -409,7 +409,7 @@ public class AlteraDownload implements VendorDownload {
       Reporter.Report.AddError(S.get("AlteraProgSofError", ProgrammerSofFile));
       return false;
     }
-    final var command = new LineBuffer();
+    final var command = LineBuffer.getBuffer();
     command.add(alteraVendor.getBinaryPath(1))
             .add("-c")
             .add(cablename)

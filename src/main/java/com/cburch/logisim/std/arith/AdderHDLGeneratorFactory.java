@@ -27,7 +27,7 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int NR_OF_BITS_ID = -1;
   private static final String EXTENDED_BITS_STRING = "ExtendedBits";
   private static final int EXTENDED_BITS_ID = -2;
-  
+
   public AdderHDLGeneratorFactory() {
     super();
     myParametersList
@@ -51,7 +51,7 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents = new LineBuffer();
+    final var Contents = LineBuffer.getBuffer();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
       Contents.add("""
@@ -60,7 +60,7 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA) +
                                                unsigned(s_extended_dataB) +
                                                (""&CarryIn));
-          
+
           """);
       if (nrOfBits == 1) {
         Contents.add("Result <= s_sum_result(0);");

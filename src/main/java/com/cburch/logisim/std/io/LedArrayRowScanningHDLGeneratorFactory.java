@@ -68,7 +68,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
     final var maxNrLeds = ((int) Math.pow(2.0, (double) nrRowAddrBits)) * nrOfRows;
 
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("nrOfLeds", NR_OF_LEDS_STRING)
             .pair("nrOfLedsVal", nrOfRows * nrOfColumns)
             .pair("nrOfRows", NR_OF_ROWS_STRING)
@@ -114,7 +114,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
 
   public static ArrayList<String> getPortMap(int id) {
     final var map =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("rowAddr", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
             .pair("colOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs)
             .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
@@ -156,28 +156,28 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
 
   public ArrayList<String> getRowCounterCode() {
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("rowAddress", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
             .pair("bits", SCANNING_COUNTER_BITS_STRING)
             .pair("value", SCANNING_COUNTER_VALUE_STRING)
             .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
     if (HDL.isVHDL()) {
       contents.add("""
-          
+
           {{rowAddress}} <= s_rowCounterReg;
-          
+
           s_tickNext <= '1' WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{bits}})) ELSE '0';
-          
+
           s_scanningCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation
-                                   std_logic_vector(to_unsigned({{value}}-1, {{bits}})) WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{bits}})) ELSE 
+                                   std_logic_vector(to_unsigned({{value}}-1, {{bits}})) WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{bits}})) ELSE
                                    std_logic_vector(unsigned(s_scanningCounterReg)-1);
-          
+
           s_rowCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation
                               s_rowCounterReg WHEN s_tickReg = '0' ELSE
                               std_logic_vector(to_unsigned(nrOfRows-1,nrOfRowAddressBits))
                                  WHEN s_rowCounterReg = std_logic_vector(to_unsigned(0,nrOfRowAddressBits)) ELSE
                               std_logic_vector(unsigned(s_rowCounterReg)-1);
-          
+
           makeFlops : PROCESS ({{clock}}) IS
           BEGIN
              IF (rising_edge({{clock}})) THEN
@@ -189,12 +189,12 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
           """);
     } else {
       contents.add("""
-          
+
           assign rowAddress = s_rowCounterReg;
-          
+
           assign s_tickNext = (s_scanningCounterReg == 0) ? 1'b1 : 1'b0;
           assign s_scanningCounterNext = (s_scanningCounterReg == 0) ? {{value}} : s_scanningCounterReg - 1;
-          assign s_rowCounterNext = (s_tickReg == 1'b0) ? s_rowCounterReg : 
+          assign s_rowCounterNext = (s_tickReg == 1'b0) ? s_rowCounterReg :
                                     (s_rowCounterReg == 0) ? nrOfRows-1 : s_rowCounterReg-1;
           """)
           .addRemarkBlock("Here the simulation only initial is defined")
@@ -205,7 +205,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
                   s_scanningCounterReg = 0;
                   s_tickReg            = 1'b0;
                end
-     
+
                always @(posedge {{clock}})
                begin
                    s_rowCounterReg      = s_rowCounterNext;
@@ -220,7 +220,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
             .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs)
             .pair("activeLow", ACTIVE_LOW_STRING)
@@ -239,14 +239,14 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
                 s_maxLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{ins}};
              END IF;
           END PROCESS makeVirtualInputs;
-          
+
           GenOutputs : FOR n IN {{nrOfColumns}}-1 DOWNTO 0 GENERATE
              {{outs}}(n) <= s_maxLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);
           END GENERATE GenOutputs;
           """);
     } else {
       contents.add("""
-          
+
           genvar i;
           generate
              for (i = 0; i < {{nrOfColumns}}; i = i + 1)

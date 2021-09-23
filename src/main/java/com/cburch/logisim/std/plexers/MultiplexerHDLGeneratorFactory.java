@@ -44,7 +44,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getBuffer();
     int nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     if (HDL.isVHDL()) {
       contents.add("make_mux : PROCESS( Enable,");
@@ -66,7 +66,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
         contents.add("         WHEN {{1}} => MuxOut <= MuxIn_{{2}};", HDL.getConstantVector(i, nrOfSelectBits), i);
       contents.add("         WHEN OTHERS  => MuxOut <= MuxIn_{{1}};", (1 << nrOfSelectBits) - 1)
               .add("""
-                         END CASE; 
+                         END CASE;
                       END IF;
                    END PROCESS make_mux;
                    """);

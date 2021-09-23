@@ -52,7 +52,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents = new LineBuffer();
+    final var Contents = LineBuffer.getBuffer();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
       Contents.add("""
@@ -62,7 +62,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA)+
                               unsigned(s_extended_dataB)+
                               (""&s_carry));
-          
+
           """);
       Contents.add(
           (nrOfBits == 1)

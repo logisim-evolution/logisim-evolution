@@ -51,7 +51,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getBuffer();
     final var nrOfGates = (IsInverter()) ? 6 : 4;
     for (var i = 0; i < nrOfGates; i++) {
       contents.addRemarkBlock("Here gate %d is described", i).add(GetLogicFunction(i));

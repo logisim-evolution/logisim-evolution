@@ -31,7 +31,7 @@ public class DotMatrixHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> getInlinedCode(Netlist netlist, Long componentId, NetlistComponent componentInfo, String circuitName) {
-    final var contents = (new LineBuffer()).addHdlPairs();
+    final var contents = LineBuffer.getBuffer().addHdlPairs();
     final var colBased = componentInfo.getComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_COLUMN;
     final var rowBased = componentInfo.getComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_ROW;
     final var rows = componentInfo.getComponent().getAttributeSet().getValue(getAttributeRows()).getWidth();

@@ -56,7 +56,7 @@ public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getBuffer();
     return contents
         .add("""
             Sega  <= segments(0,
@@ -66,9 +66,9 @@ public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
             Sege  <= segments(4,
             Segf  <= segments(5,
             Segg  <= segments(6,
-            
+
             bcd   <= BCD3&BCD2&BCD1&BCD0;
-            
+
             Decode : PROCESS ( bcd , LT , BI , RBI ) IS
                BEGIN
                   CASE bcd IS

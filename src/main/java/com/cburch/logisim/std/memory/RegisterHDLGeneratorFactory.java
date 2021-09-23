@@ -53,13 +53,13 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = (new LineBuffer())
+    final var contents = LineBuffer.getBuffer()
             .pair("invertClock", INVERT_CLOCK_STRING);
     if (HDL.isVHDL()) {
       contents.add("""
           Q       <= s_state_reg;
           s_clock <= clock WHEN {{invertClock}} = 0 ELSE NOT(clock);
-          
+
           make_memory : PROCESS( s_clock , Reset , ClockEnable , Tick , D )
           BEGIN
              IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');
@@ -88,7 +88,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         contents.add("""
             assign Q = s_state_reg;
             assign s_clock = {{invertClock}} == 0 ? clock : ~clock;
-            
+
             always @(*)
             begin
                if (Reset) s_state_reg <= 0;
@@ -99,7 +99,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         contents.add("""
             assign Q = s_state_reg;
             assign s_clock = {{invertClock}} == 0 ? clock : ~clock;
-            
+
             always @(posedge s_clock or posedge Reset)
             begin
                if (Reset) s_state_reg <= 0;

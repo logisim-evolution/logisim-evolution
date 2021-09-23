@@ -226,7 +226,7 @@ public class VivadoDownload implements VendorDownload {
   }
 
   private ArrayList<String> getPinLocStrings() {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getBuffer();
     for (final var key : MapInfo.getMappableResources().keySet()) {
       final var map = MapInfo.getMappableResources().get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {

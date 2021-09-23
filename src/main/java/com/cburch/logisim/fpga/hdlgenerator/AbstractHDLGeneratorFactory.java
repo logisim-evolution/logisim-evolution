@@ -38,7 +38,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   protected boolean getWiresduringHDLWriting = false;
 
   public AbstractHDLGeneratorFactory() {
-    final var className = getClass().toString().replace('.', ':').replace(' ', ':'); 
+    final var className = getClass().toString().replace('.', ':').replace(' ', ':');
     final var parts = className.split(":");
     if (parts.length < 2) throw new ExceptionInInitializerError("Cannot read class path!");
     subDirectoryName = parts[parts.length - 2];
@@ -47,7 +47,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   public AbstractHDLGeneratorFactory(String subDirectory) {
     subDirectoryName = subDirectory;
   }
-  
+
   // Handle to get the wires during generation time
   public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {}
 
@@ -62,7 +62,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public ArrayList<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    final var Contents = new LineBuffer();
+    final var Contents = LineBuffer.getBuffer();
     final var inputs = GetInputList(theNetlist, attrs);
     final var inOuts = GetInOutList(theNetlist, attrs);
     final var outputs = GetOutputList(theNetlist, attrs);
@@ -203,7 +203,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.addRemarkBlock("Here all module parameters are defined with a dummy value");
         for (final var param : myParametersList.keySet(attrs)) {
           // For verilog we specify a maximum vector, this seems the best way to do it
-          final var vectorString = (myParametersList.isPresentedByInteger(param, attrs)) ? "" : "[64:0]"; 
+          final var vectorString = (myParametersList.isPresentedByInteger(param, attrs)) ? "" : "[64:0]";
           Contents.add("   parameter {{1}} {{2}} = 1;", vectorString, myParametersList.get(param, attrs));
         }
         Contents.empty();
@@ -370,7 +370,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    var Contents = new LineBuffer();
+    var Contents = LineBuffer.getBuffer();
     if (HDL.isVHDL()) Contents.add(GetVHDLBlackBox(theNetlist, attrs, componentName, false));
     return Contents.get();
   }
@@ -382,10 +382,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Object componentInfo,
       String name) {
     final var Contents = new ArrayList<String>();
-    final var parameterMap = new TreeMap<String, String>(); 
+    final var parameterMap = new TreeMap<String, String>();
     final var PortMap = GetPortMap(nets, componentInfo);
-    final var componentHDLName = componentInfo instanceof NetlistComponent 
-        ? ((NetlistComponent) componentInfo).getComponent().getFactory().getHDLName(((NetlistComponent) componentInfo).getComponent().getAttributeSet()) : 
+    final var componentHDLName = componentInfo instanceof NetlistComponent
+        ? ((NetlistComponent) componentInfo).getComponent().getFactory().getHDLName(((NetlistComponent) componentInfo).getComponent().getAttributeSet()) :
           name;
     final var CompName = (name != null && !name.isEmpty()) ? name : componentHDLName;
     final var ThisInstanceIdentifier = getInstanceIdentifier(componentInfo, componentId);
@@ -526,7 +526,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Netlist theNetlist,
       AttributeSet attrs,
       String componentName) {
-    var Contents = new LineBuffer();
+    var Contents = LineBuffer.getBuffer();
     if (HDL.isVHDL()) {
       Contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
           .add(FileWriter.getExtendedLibrary())
@@ -819,7 +819,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         } else {
           first = false;
         }
-        final var parameterName = myParametersList.get(generic, attrs); 
+        final var parameterName = myParametersList.get(generic, attrs);
         OneLine.append(parameterName);
         OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - parameterName.length())));
         OneLine.append(myParametersList.isPresentedByInteger(generic, attrs) ? ": INTEGER" : ": std_logic_vector");
