@@ -33,6 +33,16 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     myParametersList
         .addBusOnly(BIT_WIDTH_STRING, BIT_WIDTH_GENERIC)
         .addVector(BUBBLES_MASK, BUBBLES_GENERIC, HDLParameters.MAP_GATE_INPUT_BUBLE);
+    getWiresduringHDLWriting = true;
+  }
+
+  @Override
+  public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {
+    if (!attrs.containsAttribute(GateAttributes.ATTR_INPUTS)) return;
+    final var nrOfInputs = attrs.getValue(GateAttributes.ATTR_INPUTS);
+    final var bitWidth = attrs.getValue(StdAttr.WIDTH).getWidth();
+    for (var input = 0; input < nrOfInputs; input++)
+      myWires.addWire(String.format("s_real_input_%d", input + 1), bitWidth == 1 ? 1 : BIT_WIDTH_GENERIC);
   }
 
   public boolean GetFloatingValue(boolean isInverted) {
@@ -235,23 +245,6 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     portMap.putAll(GetNetMap("Result", true, componentInfo, 0, nets));
 
     return portMap;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist nets) {
-    final var wires = new TreeMap<String, Integer>();
-    final var bitWidth = attrs.getValue(StdAttr.WIDTH).getWidth();
-    final var nrOfInputs =
-        attrs.containsAttribute(GateAttributes.ATTR_INPUTS)
-            ? attrs.getValue(GateAttributes.ATTR_INPUTS)
-            : 1;
-    if (nrOfInputs > 1) {
-      for (var i = 0; i < nrOfInputs; i++) {
-        if (bitWidth > 1) wires.put("s_real_input_" + (i + 1), BIT_WIDTH_GENERIC);
-        else wires.put("s_real_input_" + (i + 1), 1);
-      }
-    }
-    return wires;
   }
 
   private boolean is_bus(AttributeSet attrs) {

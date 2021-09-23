@@ -43,6 +43,10 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     super();
     myParametersList
         .add(INVERT_CLOCK_STRING, INVERT_CLOCK_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, triggerAttr, TRIGGER_MAP);
+    myWires
+        .addWire("s_clock", 1)
+        .addWire("s_next_state", 1)
+        .addRegister("s_current_state_reg", 1);
   }
 
   public String ComponentName() {
@@ -243,22 +247,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     return map;
   }
 
-  @Override
-  public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("s_current_state_reg", 1);
-    return map;
-  }
-
   public ArrayList<String> GetUpdateLogic() {
     return new ArrayList<>();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("s_clock", 1);
-    map.put("s_next_state", 1);
-    return map;
   }
 }

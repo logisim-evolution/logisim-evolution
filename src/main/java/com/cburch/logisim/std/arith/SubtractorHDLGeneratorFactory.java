@@ -33,6 +33,11 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     myParametersList
         .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID)
         .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID, HDLParameters.MAP_OFFSET, 1);
+    myWires
+        .addWire("s_extended_dataA", EXTENDED_BITS_ID)
+        .addWire("s_extended_dataB", EXTENDED_BITS_ID)
+        .addWire("s_sum_result", EXTENDED_BITS_ID)
+        .addWire("s_carry", 1);
   }
 
   @Override
@@ -51,9 +56,8 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
       Contents.add("""
-          s_inverted_dataB <= NOT(DataB);
           s_extended_dataA <= "0"&DataA;
-          s_extended_dataB <= "0"&s_inverted_dataB;
+          s_extended_dataB <= "0"&(NOT(DataB));
           s_carry          <= NOT(BorrowIn);
           s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA)+
                               unsigned(s_extended_dataB)+
@@ -94,17 +98,5 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     portMap.putAll(GetNetMap("BorrowIn", true, ComponentInfo, 3, Nets));
     portMap.putAll(GetNetMap("BorrowOut", true, ComponentInfo, 4, Nets));
     return portMap;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var wires = new TreeMap<String, Integer>();
-    int outputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    wires.put("s_extended_dataA", EXTENDED_BITS_ID);
-    wires.put("s_extended_dataB", EXTENDED_BITS_ID);
-    wires.put("s_inverted_dataB", (outputbits > 1) ? NR_OF_BITS_ID : 1);
-    wires.put("s_sum_result", EXTENDED_BITS_ID);
-    wires.put("s_carry", 1);
-    return wires;
   }
 }

@@ -43,7 +43,19 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID)
         .add(TWOS_COMPLEMENT_STRING, TWOS_COMPLEMENT_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, 
             SIGNED_MAP);
+    getWiresduringHDLWriting = true;
   }
+
+  @Override
+  public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {
+    if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1)
+      myWires
+          .addWire("s_signed_less", 1)
+          .addWire("s_unsigned_less", 1)
+          .addWire("s_signed_greater", 1)
+          .addWire("s_unsigned_greater", 1);
+  }
+
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
@@ -122,18 +134,5 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     portMap.putAll(GetNetMap("A_EQ_B", true, ComponentInfo, 3, Nets));
     portMap.putAll(GetNetMap("A_LT_B", true, ComponentInfo, 4, Nets));
     return portMap;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var wires = new TreeMap<String, Integer>();
-    int inputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (inputbits > 1) {
-      wires.put("s_signed_less", 1);
-      wires.put("s_unsigned_less", 1);
-      wires.put("s_signed_greater", 1);
-      wires.put("s_unsigned_greater", 1);
-    }
-    return wires;
   }
 }

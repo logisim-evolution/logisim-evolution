@@ -35,6 +35,9 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     myParametersList
         .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
         .add(INVERT_CLOCK_STRING, INVERT_CLOCK_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, StdAttr.TRIGGER, AbstractFlipFlopHDLGeneratorFactory.TRIGGER_MAP);
+    myWires
+        .addWire("s_clock", 1)
+        .addRegister("s_state_reg", NR_OF_BITS_ID);
   }
 
   @Override
@@ -200,20 +203,6 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     map.putAll(GetNetMap(input, true, comp, Register.IN, Nets));
     map.putAll(GetNetMap(output, true, comp, Register.OUT, Nets));
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    final var regs = new TreeMap<String, Integer>();
-    regs.put("s_state_reg", NR_OF_BITS_ID);
-    return regs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("s_clock", 1);
     return map;
   }
 }

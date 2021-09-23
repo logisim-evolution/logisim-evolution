@@ -22,6 +22,14 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
 
   public static final String HDL_IDENTIFIER = "RGBArrayRowScanning";
 
+  public RGBArrayRowScanningHDLGeneratorFactory() {
+    super();
+    myWires
+        .addWire("s_maxRedLedInputs", MAX_NR_LEDS_ID)
+        .addWire("s_maxBlueLedInputs", MAX_NR_LEDS_ID)
+        .addWire("s_maxGreenLedInputs", MAX_NR_LEDS_ID);
+  }
+
   static final LineBuffer.Pairs sharedPairs =
       new LineBuffer.Pairs()
           .pair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
@@ -82,16 +90,6 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
     inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, NR_OF_LEDS_ID);
     inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, NR_OF_LEDS_ID);
     return inputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var wires = new TreeMap<String, Integer>();
-    wires.putAll(super.GetWireList(attrs, Nets));
-    wires.put("s_maxRedLedInputs", MAX_NR_LEDS_ID);
-    wires.put("s_maxBlueLedInputs", MAX_NR_LEDS_ID);
-    wires.put("s_maxGreenLedInputs", MAX_NR_LEDS_ID);
-    return wires;
   }
 
   @Override

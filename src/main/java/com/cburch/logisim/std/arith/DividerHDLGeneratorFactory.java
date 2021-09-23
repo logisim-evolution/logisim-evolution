@@ -34,6 +34,10 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
         .add(CALC_BITS_STRING, CALC_BITS_ID, HDLParameters.MAP_MULTIPLY, 2)
         .add(UNSIGNED_STRING, UNSIGNED_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, ComparatorHDLGeneratorFactory.SIGNED_MAP);
+    myWires
+        .addWire("s_div_result", CALC_BITS_ID)
+        .addWire("s_mod_result", NR_OF_BITS_ID)
+        .addWire("s_extended_dividend", CALC_BITS_ID);
   }
 
   @Override
@@ -88,15 +92,6 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     portMap.putAll(GetNetMap("Quotient", true, ComponentInfo, Divider.OUT, Nets));
     portMap.putAll(GetNetMap("Remainder", true, ComponentInfo, Divider.REM, Nets));
     return portMap;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var wires = new TreeMap<String, Integer>();
-    wires.put("s_div_result", CALC_BITS_ID);
-    wires.put("s_mod_result", NR_OF_BITS_ID);
-    wires.put("s_extended_dividend", CALC_BITS_ID);
-    return wires;
   }
 
   @Override

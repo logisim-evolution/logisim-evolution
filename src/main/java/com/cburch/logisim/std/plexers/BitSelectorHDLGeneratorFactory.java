@@ -38,6 +38,8 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
         .add(INPUT_BITS_STRING, INPUT_BITS_ID, HDLParameters.MAP_INT_ATTRIBUTE, BitSelector.EXTENDED_ATTR)
         .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID)
         .addBusOnly(BitSelector.GROUP_ATTR, OUTPUTS_BITS_STRING, OUTPUT_BITS_ID);
+    myWires
+        .addWire("s_extended_vector", EXTENDED_BITS_ID);
   }
 
   @Override
@@ -114,13 +116,6 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     map.putAll(GetNetMap("DataIn", true, comp, 1, nets));
     map.putAll(GetNetMap("Sel", true, comp, 2, nets));
     map.putAll(GetNetMap("DataOut", true, comp, 0, nets));
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist nets) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("s_extended_vector", EXTENDED_BITS_ID);
     return map;
   }
 }

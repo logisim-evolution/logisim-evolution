@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
  * with (optional) dash ("-") character.
  *
  * NOTE: toString() form uses no dash separator form by default, however
- * if object is obtaied via `fromString()` call, and version string contains
+ * if object is obtained via `fromString()` call, and version string contains
  * the "-" separator, output returned by `toString()` will also include
  * separator character.
  */
@@ -94,8 +94,7 @@ public class LogisimVersion {
           }
           suffix = sufStr;
         } else if (sufStr.length() > 1) {
-          // for single character suffix it can only be letter
-          pattern = "^(-)?([a-z]+([a-z\\d])*)+$";
+          pattern = "^(-)?([a-z][a-z\\d]*)$";
           m = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(sufStr);
           if (!m.matches()) {
             throw new IllegalArgumentException(

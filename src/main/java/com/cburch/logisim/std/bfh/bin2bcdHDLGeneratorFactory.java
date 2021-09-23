@@ -28,7 +28,27 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   
   public bin2bcdHDLGeneratorFactory() {
     super();
-    myParametersList.add(NR_OF_BITS_STR, NR_OF_BITS_ID, HDLParameters.MAP_INT_ATTRIBUTE, bin2bcd.ATTR_BinBits);
+    myParametersList
+        .add(NR_OF_BITS_STR, NR_OF_BITS_ID, HDLParameters.MAP_INT_ATTRIBUTE, bin2bcd.ATTR_BinBits);
+    getWiresduringHDLWriting = true;
+  }
+
+  @Override
+  public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {
+    final var nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
+    final var nrOfPorts = (int) (Math.log10(1 << nrOfBits.getWidth()) + 1.0);
+    final var nrOfSignalBits = switch (nrOfPorts) {
+      case 2 -> 7;
+      case 3 -> 11;
+      default -> 16;
+    };
+    final var nrOfSignals = switch (nrOfPorts) {
+      case 2 -> 4;
+      case 3 -> 7;
+      default -> 11;
+    };
+    for (var signal = 0; signal < nrOfSignals; signal++)
+      myWires.addWire(String.format("s_level_%d", signal), nrOfSignalBits);
   }
 
   @Override
@@ -65,44 +85,6 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     for (var i = 1; i <= nrOfPorts; i++)
       portMap.putAll(GetNetMap("BCD" + (int) (Math.pow(10, i - 1)), true, componentInfo, i, nets));
     return portMap;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var wires = new TreeMap<String, Integer>();
-    final var nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
-    final var nrOfPorts = (int) (Math.log10(1 << nrOfBits.getWidth()) + 1.0);
-    switch (nrOfPorts) {
-      case 2:
-        wires.put("s_level_0", 7);
-        wires.put("s_level_1", 7);
-        wires.put("s_level_2", 7);
-        wires.put("s_level_3", 7);
-        break;
-      case 3:
-        wires.put("s_level_0", 11);
-        wires.put("s_level_1", 11);
-        wires.put("s_level_2", 11);
-        wires.put("s_level_3", 11);
-        wires.put("s_level_4", 11);
-        wires.put("s_level_5", 11);
-        wires.put("s_level_6", 11);
-        break;
-      case 4:
-        wires.put("s_level_0", 16);
-        wires.put("s_level_1", 16);
-        wires.put("s_level_2", 16);
-        wires.put("s_level_3", 16);
-        wires.put("s_level_4", 16);
-        wires.put("s_level_5", 16);
-        wires.put("s_level_6", 16);
-        wires.put("s_level_7", 16);
-        wires.put("s_level_8", 16);
-        wires.put("s_level_9", 16);
-        wires.put("s_level_10", 16);
-        break;
-    }
-    return wires;
   }
 
   @Override

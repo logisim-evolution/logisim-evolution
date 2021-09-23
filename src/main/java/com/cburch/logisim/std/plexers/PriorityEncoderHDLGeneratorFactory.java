@@ -32,6 +32,13 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
     myParametersList
         .add(NR_OF_INPUT_BITS_STRING, NR_OF_INPUT_BITS_ID, HDLParameters.MAP_POW2, PlexersLibrary.ATTR_SELECT)
         .add(NR_OF_SELECT_BITS_STRING, NR_OF_SELECT_BITS_ID, HDLParameters.MAP_INT_ATTRIBUTE, PlexersLibrary.ATTR_SELECT);
+    myWires
+        .addWire("s_in_is_zero", 1)
+        .addWire("s_address", 5)
+        .addWire("v_select_1_vector", 33)
+        .addWire("v_select_2_vector", 16)
+        .addWire("v_select_3_vector", 8)
+        .addWire("v_select_4_vector", 4);
   }
 
   @Override
@@ -136,18 +143,6 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
     map.putAll(GetNetMap("GroupSelect", true, comp, nrOfBits + PriorityEncoder.GS, nets));
     map.putAll(GetNetMap("EnableOut", true, comp, nrOfBits + PriorityEncoder.EN_OUT, nets));
     map.putAll(GetNetMap("Address", true, comp, nrOfBits + PriorityEncoder.OUT, nets));
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist nets) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("s_in_is_zero", 1);
-    map.put("s_address", 5);
-    map.put("v_select_1_vector", 33);
-    map.put("v_select_2_vector", 16);
-    map.put("v_select_3_vector", 8);
-    map.put("v_select_4_vector", 4);
     return map;
   }
 }

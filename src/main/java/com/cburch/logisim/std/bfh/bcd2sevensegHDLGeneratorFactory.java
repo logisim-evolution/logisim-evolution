@@ -21,6 +21,10 @@ import java.util.TreeMap;
 
 public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
+  public bcd2sevensegHDLGeneratorFactory() {
+    myWires.addWire("s_output_value", 7);
+  }
+
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     SortedMap<String, Integer> Inputs = new TreeMap<>();
@@ -39,13 +43,6 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
     Outputs.put("Segment_f", 1);
     Outputs.put("Segment_g", 1);
     return Outputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    SortedMap<String, Integer> Wires = new TreeMap<>();
-    Wires.put("s_output_value", 7);
-    return Wires;
   }
 
   @Override
