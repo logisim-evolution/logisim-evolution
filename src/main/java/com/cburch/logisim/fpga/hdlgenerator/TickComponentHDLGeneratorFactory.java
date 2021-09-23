@@ -14,6 +14,8 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -54,6 +56,14 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     myPorts
          .add(Port.INPUT, "FPGAClock", 1, FPGA_CLOCK)
          .add(Port.OUTPUT, "FPGATick", 1, FPGA_TICK);
+  }
+
+  @Override
+  public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
+    final var res = new TreeMap<String, String>();
+    for (var port : myPorts.keySet())
+      res.put(port, myPorts.getFixedMap(port));
+    return res;
   }
 
   @Override

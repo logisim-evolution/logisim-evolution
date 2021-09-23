@@ -22,6 +22,8 @@ public class HDLPorts {
  
   public static final String CLOCK = "clock";
   public static final String TICK = "tick";
+  public static final String PULL_DOWN = "fixed_pull_down";
+  public static final String PULL_UP = "fixed_pull_up";
 
   private class PortInfo {
 
@@ -137,8 +139,11 @@ public class HDLPorts {
   }
   
   public boolean isFixedMapped(String name) {
-    for (var port : myPorts)
-      if (port.myName.equals(name)) return port.myComponentPinId < 0;
+    for (var port : myPorts) 
+      if (port.myName.equals(name)) {
+        System.out.println(" ====> " + name + port.myComponentPinId);
+        return port.myComponentPinId < 0;
+      }
     throw new ArrayStoreException("port not contained in structure");
   }
   

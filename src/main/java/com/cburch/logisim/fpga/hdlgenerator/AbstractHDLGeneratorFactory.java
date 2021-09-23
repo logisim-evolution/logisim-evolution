@@ -790,7 +790,13 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             }
           }
         } else if (myPorts.isFixedMapped(port)) {
-          result.put(port, myPorts.getFixedMap(port));
+          final var fixedMap = myPorts.getFixedMap(port);
+          if (HDLPorts.PULL_DOWN.equals(fixedMap))
+            result.put(port, HDL.getConstantVector(0, myPorts.get(port, attrs)));
+          else if (HDLPorts.PULL_UP.equals(fixedMap))
+            result.put(port, HDL.getConstantVector(0xFFFFFFFFFFFFFFFFL, myPorts.get(port, attrs)));
+          else
+            result.put(port, fixedMap);
         } else {
           result.putAll(GetNetMap(port, myPorts.doPullDownOnFloat(port), ComponentInfo, myPorts.getComponentPortId(port), nets));
         }

@@ -36,7 +36,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public CounterHDLGeneratorFactory() {
     super();
     myParametersList
-        .add(NR_OF_BITS_STRING, NR_OF_BITS_ID, HDLParameters.MAP_INT_ATTRIBUTE, Counter.ATTR_BITS)
+        .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
         .addVector(MAX_VALUE_STRING, MAX_VALUE_ID, HDLParameters.MAP_INT_ATTRIBUTE, Counter.ATTR_MAX)
         .add(INVERT_CLOCK_STRING, INVERT_CLOCK_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, 
             StdAttr.EDGE_TRIGGER, AbstractFlipFlopHDLGeneratorFactory.TRIGGER_MAP)
@@ -60,16 +60,21 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .add(Port.INPUT, "clear", 1, Counter.CLR)
         .add(Port.INPUT, "load", 1, Counter.LD)
         .add(Port.INPUT, "Up_n_Down", 1, Counter.UD)
-        .add(Port.INPUT, "Enable", 1, Counter.EN)
+        .add(Port.INPUT, "Enable", 1, Counter.EN, false)
         .add(Port.OUTPUT, "CountValue", NR_OF_BITS_ID, Counter.OUT)
         .add(Port.OUTPUT, "CompareOut", 1, Counter.CARRY);
+  }
+
+  @Override
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+    return attrs.getValue(StdAttr.WIDTH).getWidth() > 1;
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer()
         .pair("invertClock", INVERT_CLOCK_STRING)
-        .pair("Clock", HDLPorts.CLOCK)
+        .pair("clock", HDLPorts.CLOCK)
         .pair("Tick", HDLPorts.TICK);
     contents.addRemarkBlock(
         "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
