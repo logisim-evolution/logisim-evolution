@@ -67,7 +67,6 @@ public class Main {
     }
   }
 
-  // @deprecated use BuildInfo instead
   public static final String APP_NAME = BuildInfo.name;
   // @deprecated use BuildInfo instead
   public static final LogisimVersion VERSION = BuildInfo.version;
