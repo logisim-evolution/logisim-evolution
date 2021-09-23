@@ -15,6 +15,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
@@ -39,10 +40,16 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
         .addWire("v_select_2_vector", 16)
         .addWire("v_select_3_vector", 8)
         .addWire("v_select_4_vector", 4);
+    myPorts
+        .add(Port.INPUT, "enable", 1, 0)
+        .add(Port.INPUT, "input_vector", NR_OF_INPUT_BITS_ID, 0)
+        .add(Port.OUTPUT, "GroupSelect", 1, 0)
+        .add(Port.OUTPUT, "EnableOut", 1, 0)
+        .add(Port.OUTPUT, "Address", NR_OF_SELECT_BITS_ID, 0);
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+  public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof NetlistComponent)) return map;
     final var comp = (NetlistComponent) mapInfo;
@@ -61,14 +68,6 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
     map.putAll(GetNetMap("GroupSelect", true, comp, nrOfBits + PriorityEncoder.GS, nets));
     map.putAll(GetNetMap("EnableOut", true, comp, nrOfBits + PriorityEncoder.EN_OUT, nets));
     map.putAll(GetNetMap("Address", true, comp, nrOfBits + PriorityEncoder.OUT, nets));
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("enable", 1);
-    map.put("input_vector", NR_OF_INPUT_BITS_ID);
     return map;
   }
 
@@ -135,14 +134,5 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
           """);
     }
     return contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("GroupSelect", 1);
-    map.put("EnableOut", 1);
-    map.put("Address", NR_OF_SELECT_BITS_ID);
-    return map;
   }
 }

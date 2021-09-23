@@ -28,11 +28,10 @@ public class Ttl7404 extends AbstractTtlGate {
 
   private static class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
-    @Override
-    public boolean IsInverter() {
-      return true;
+    public NotGateHDLGeneratorFactory() {
+      super(true);
     }
-
+    
     @Override
     public ArrayList<String> GetLogicFunction(int index) {
       final var contents = new ArrayList<String>();

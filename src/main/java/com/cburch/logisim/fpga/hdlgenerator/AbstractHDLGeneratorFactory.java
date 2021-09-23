@@ -178,7 +178,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           if (myPorts.isClock(inp)) {
             Contents.add(ThisLine + ",");
             ThisLine.setLength(0);
-            ThisLine.append(Indenting).append(HDLPorts.TICK);
+            ThisLine.append(Indenting).append(myPorts.getTickName(inp));
           }
         }
         for (final var outp : myPorts.keySet(Port.OUTPUT)) {
@@ -247,7 +247,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         // special case for the clock, we have to add the tick
         if (myPorts.isClock(inp)) {
           OneLine.setLength(0);
-          OneLine.append("   input  ").append(HDLPorts.TICK).append(";");
+          OneLine.append("   input  ").append(myPorts.getTickName(inp)).append(";");
           Contents.add(OneLine.toString());
         }
       }
@@ -769,19 +769,19 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           }
           if (hasClock && !gatedClock && Netlist.isFlipFlop(attrs)) {
             if (nets.requiresGlobalClockConnection()) {
-              result.put(HDLPorts.TICK, LineBuffer
+              result.put(myPorts.getTickName(port), LineBuffer
                   .formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX));
             } else {
               final var clockIndex = activeLow ? ClockHDLGeneratorFactory.NEGATIVE_EDGE_TICK_INDEX : ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX;
-              result.put(HDLPorts.TICK, LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, clockIndex));
+              result.put(myPorts.getTickName(port), LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, clockIndex));
             }
             result.put(HDLPorts.CLOCK, LineBuffer
                 .formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX));
           } else if (!hasClock) {
-            result.put(HDLPorts.TICK, HDL.zeroBit());
+            result.put(myPorts.getTickName(port), HDL.zeroBit());
             result.put(HDLPorts.CLOCK, HDL.zeroBit());
           } else {
-            result.put(HDLPorts.TICK, HDL.oneBit());
+            result.put(myPorts.getTickName(port), HDL.oneBit());
             if (!gatedClock) {
               final var clockIndex = activeLow ? ClockHDLGeneratorFactory.INVERTED_DERIVED_CLOCK_INDEX : ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX;
               result.put(HDLPorts.CLOCK, LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, clockIndex));
@@ -917,8 +917,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           Contents.add(OneLine.toString());
           OneLine.setLength(0);
           OneLine.append(" ".repeat(IdentSize));
-          OneLine.append(HDLPorts.TICK);
-          OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - HDLPorts.TICK.length())));
+          OneLine.append(myPorts.getTickName(input));
+          OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - myPorts.getTickName(input).length())));
           OneLine.append(": IN  std_logic");
         }
       }

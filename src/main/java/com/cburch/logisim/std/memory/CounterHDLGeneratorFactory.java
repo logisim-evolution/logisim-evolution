@@ -12,6 +12,7 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
@@ -21,6 +22,8 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -32,6 +35,9 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int INVERT_CLOCK_ID = -3;
   private static final String MODE_STRING = "mode";
   private static final int MODE_ID = -4;
+  
+  private static final String LOAD_DATA_INPUT = "LoadData";
+  private static final String COUNT_DATA_OUTPUT = "CountValue";
 
   public CounterHDLGeneratorFactory() {
     super();
@@ -56,18 +62,32 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .addRegister("s_counter_value", NR_OF_BITS_ID);
     myPorts
         .add(Port.CLOCK, HDLPorts.CLOCK, 1, Counter.CK)
-        .add(Port.INPUT, "LoadData", NR_OF_BITS_ID, Counter.IN)
+        .add(Port.INPUT, LOAD_DATA_INPUT, NR_OF_BITS_ID, Counter.IN)
         .add(Port.INPUT, "clear", 1, Counter.CLR)
         .add(Port.INPUT, "load", 1, Counter.LD)
         .add(Port.INPUT, "Up_n_Down", 1, Counter.UD)
         .add(Port.INPUT, "Enable", 1, Counter.EN, false)
-        .add(Port.OUTPUT, "CountValue", NR_OF_BITS_ID, Counter.OUT)
+        .add(Port.OUTPUT, COUNT_DATA_OUTPUT, NR_OF_BITS_ID, Counter.OUT)
         .add(Port.OUTPUT, "CompareOut", 1, Counter.CARRY);
   }
 
   @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
-    return attrs.getValue(StdAttr.WIDTH).getWidth() > 1;
+  public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
+    final var result = new TreeMap<String,String>();
+    result.putAll(super.getPortMap(nets, mapInfo));
+    if (mapInfo instanceof NetlistComponent) {
+      final var compInfo = (NetlistComponent) mapInfo;
+      final var nrOfBits = compInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
+      if (nrOfBits == 1) {
+        final var mappedInputData = result.get(LOAD_DATA_INPUT);
+        final var mappedOutputData = result.get(COUNT_DATA_OUTPUT);
+        result.remove(LOAD_DATA_INPUT);
+        result.remove(COUNT_DATA_OUTPUT);
+        result.put(LineBuffer.formatHdl("{{1}}{{<}}0{{>}}", LOAD_DATA_INPUT), mappedInputData);
+        result.put(LineBuffer.formatHdl("{{1}}{{<}}0{{>}}", COUNT_DATA_OUTPUT), mappedOutputData);
+      }
+    }
+    return result;
   }
 
   @Override

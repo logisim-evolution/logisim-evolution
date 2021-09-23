@@ -176,4 +176,18 @@ public class HDLPorts {
       if (port.myName.equals(name)) return port.isClock;
     throw new ArrayStoreException("port not contained in structure");
   }
+  
+  public String getTickName(String name) {
+    for (var port : myPorts) 
+      if (port.myName.equals(name)) return getTickName(port.myNrOfBits);
+    throw new ArrayStoreException("port not contained in structure");
+  }
+
+  public static String getTickName(int id) {
+    return id == 1 ? TICK : String.format("%s%d", TICK, id);
+  }
+
+  public static String getClockName(int id) {
+    return id == 1 ? CLOCK : String.format("%s%d", CLOCK, id);
+  }
 }
