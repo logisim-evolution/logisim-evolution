@@ -749,9 +749,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (myPorts.isClock(port)) {
           var gatedClock = false;
           var hasClock = true;
-          final var clockAttr = attrs.containsAttribute(StdAttr.EDGE_TRIGGER) 
+          var clockAttr = attrs.containsAttribute(StdAttr.EDGE_TRIGGER) 
               ? attrs.getValue(StdAttr.EDGE_TRIGGER) : attrs.getValue(StdAttr.TRIGGER);
-          if (clockAttr == null) throw new IllegalArgumentException("BUG: clock attribute not found!");
+          if (clockAttr == null) clockAttr = StdAttr.TRIG_RISING; // default case if no other specified (for TTL library)
           final var activeLow = StdAttr.TRIG_LOW.equals(clockAttr) || StdAttr.TRIG_FALLING.equals(clockAttr);
           final var compPinId = myPorts.getComponentPortId(port);
           if (!ComponentInfo.isEndConnected(compPinId)) {

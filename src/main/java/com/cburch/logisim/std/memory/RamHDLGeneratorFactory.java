@@ -35,11 +35,11 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public RamHDLGeneratorFactory() {
     super();
-    getWiresduringHDLWriting = true;
+    getWiresPortsduringHDLWriting = true;
   }
 
   @Override
-  public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {
+  public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
     final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
     final var be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
     final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
