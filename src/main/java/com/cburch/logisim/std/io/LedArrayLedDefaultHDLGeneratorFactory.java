@@ -21,20 +21,27 @@ import com.cburch.logisim.fpga.hdlgenerator.HDL;
 
 public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  public static final int nrOfLedsGeneric = -1;
-  public static final int activeLowGeneric = -2;
-  public static final String nrOfLedsString = "nrOfLeds";
-  public static final String activeLowString = "activeLow";
+  public static final int NR_OF_LEDS_ID = -1;
+  public static final int ACTIVE_LOW_ID = -2;
+  public static final String NR_OF_LEDS_STRING = "nrOfLeds";
+  public static final String ACTIVE_LOW_STRING = "activeLow";
   public static final String HDL_IDENTIFIER = "LedArrayLedDefault";
+
+  public LedArrayLedDefaultHDLGeneratorFactory() {
+    super();
+    myParametersList
+        .add(NR_OF_LEDS_STRING, NR_OF_LEDS_ID)
+        .add(ACTIVE_LOW_STRING, ACTIVE_LOW_ID);
+  }
 
   public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
     final var contents =
         (new LineBuffer())
-            .pair("nrOfLeds", nrOfLedsString)
+            .pair("nrOfLeds", NR_OF_LEDS_STRING)
             .pair("ledsCount", nrOfRows * nrOfColumns)
             .pair("rows", nrOfRows)
             .pair("cols", nrOfColumns)
-            .pair("activeLow", activeLowString)
+            .pair("activeLow", ACTIVE_LOW_STRING)
             .pair("activeLowVal", activeLow ? "1" : "0");
 
     if (HDL.isVHDL()) {
@@ -74,23 +81,15 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
     final var outputs = new TreeMap<String, Integer>();
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayOutputs, nrOfLedsGeneric);
+    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayOutputs, NR_OF_LEDS_ID);
     return outputs;
   }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayInputs, nrOfLedsGeneric);
+    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayInputs, NR_OF_LEDS_ID);
     return inputs;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var generics = new TreeMap<Integer, String>();
-    generics.put(nrOfLedsGeneric, nrOfLedsString);
-    generics.put(activeLowGeneric, activeLowString);
-    return generics;
   }
 
   @Override

@@ -69,12 +69,7 @@ jobs:
     - name: "Checkout sources"
       uses: actions/checkout@v2
 
-    - name: "Install packages..."
-      run: sudo apt-get install -y dos2unix
-
     - name: "Lint changed files"
-      # We need bash here as java-wrappers.sh may not work with other shells.
-      shell: bash
       run: |
         # Run CheckStyle
         # https://github.com/checkstyle/checkstyle/releases/
@@ -108,16 +103,6 @@ jobs:
 
         # Plain output always contains "Starting audit..." and "Audit done." lines. Let's remove them.
         sed -i 's/^Starting audit...$//; s/^Audit done.$//' "${REPORT_FILE}"
-
-        # Now look for CRLFs
-        declare -r CRLF_REPORT_FILE="crlf-output.txt"
-        find . -type f -exec dos2unix -ic {} \; >> "${CRLF_REPORT_FILE}"
-        if [[ "$(strings "${REPORT_FILE}" | wc -l)" -gt 0 ]]; then
-          echo -e "\n\n" >> "${REPORT_FILE}"
-          echo -e "These files use disallowed CRLF line ends\n" >> "${REPORT_FILE}"
-          echo -e "-----------------------------------------" >> "${REPORT_FILE}"
-          cat "${CRLF_REPORT_FILE}" >> "${REPORT_FILE}"
-        fi
 
         # The `strings` tool is used to filter out empty lines.
         cnt="$(strings "${REPORT_FILE}" | wc -l)"

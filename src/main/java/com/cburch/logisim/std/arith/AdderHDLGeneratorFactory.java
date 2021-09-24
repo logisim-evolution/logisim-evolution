@@ -14,6 +14,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -22,15 +23,26 @@ import java.util.TreeMap;
 
 public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private static final String NrOfBitsStr = "NrOfBits";
-  private static final int NrOfBitsId = -1;
-  private static final String ExtendedBitsStr = "ExtendedBits";
-  private static final int ExtendedBitsId = -2;
+  private static final String NR_OF_BITS_STRING = "NrOfBits";
+  private static final int NR_OF_BITS_ID = -1;
+  private static final String EXTENDED_BITS_STRING = "ExtendedBits";
+  private static final int EXTENDED_BITS_ID = -2;
+  
+  public AdderHDLGeneratorFactory() {
+    super();
+    myParametersList
+        .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID, HDLParameters.MAP_OFFSET, 1)
+        .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID);
+    myWires
+        .addWire("s_extended_dataA", EXTENDED_BITS_ID)
+        .addWire("s_extended_dataB", EXTENDED_BITS_ID)
+        .addWire("s_sum_result", EXTENDED_BITS_ID);
+  }
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var Inputs = new TreeMap<String, Integer>();
-    int inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
+    int inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
     Inputs.put("DataA", inputbits);
     Inputs.put("DataB", inputbits);
     Inputs.put("CarryIn", 1);
@@ -53,9 +65,9 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       if (nrOfBits == 1) {
         Contents.add("Result <= s_sum_result(0);");
       } else {
-        Contents.add("Result <= s_sum_result( ({{1}}-1) DOWNTO 0 )", NrOfBitsStr);
+        Contents.add("Result <= s_sum_result( ({{1}}-1) DOWNTO 0 )", NR_OF_BITS_STRING);
       }
-      Contents.add("CarryOut <= s_sum_result({{1}}-1);", ExtendedBitsStr);
+      Contents.add("CarryOut <= s_sum_result({{1}}-1);", EXTENDED_BITS_STRING);
     } else {
       Contents.add("assign   {CarryOut,Result} = DataA + DataB + CarryIn;");
     }
@@ -65,27 +77,9 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    int outputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
+    int outputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
     map.put("Result", outputbits);
     map.put("CarryOut", 1);
-    return map;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var map = new TreeMap<Integer, String>();
-    int outputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (outputbits > 1) map.put(NrOfBitsId, NrOfBitsStr);
-    map.put(ExtendedBitsId, ExtendedBitsStr);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    final var map = new TreeMap<String, Integer>();
-    int nrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
-    map.put(ExtendedBitsStr, nrOfBits + 1);
-    if (nrOfBits > 1) map.put(NrOfBitsStr, nrOfBits);
     return map;
   }
 
@@ -100,14 +94,5 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     portMap.putAll(GetNetMap("CarryIn", true, ComponentInfo, 3, Nets));
     portMap.putAll(GetNetMap("CarryOut", true, ComponentInfo, 4, Nets));
     return portMap;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var wires = new TreeMap<String, Integer>();
-    wires.put("s_extended_dataA", ExtendedBitsId);
-    wires.put("s_extended_dataB", ExtendedBitsId);
-    wires.put("s_sum_result", ExtendedBitsId);
-    return wires;
   }
 }

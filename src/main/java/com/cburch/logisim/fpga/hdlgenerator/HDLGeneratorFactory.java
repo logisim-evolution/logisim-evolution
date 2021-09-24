@@ -35,6 +35,11 @@ public interface HDLGeneratorFactory {
       String workingDirectory,
       ArrayList<String> hierarchy);
 
+  ArrayList<String> getEntity(
+      Netlist theNetlist,
+      AttributeSet attrs,
+      String componentName);
+
   ArrayList<String> getArchitecture(
       Netlist theNetlist,
       AttributeSet attrs,
@@ -50,11 +55,6 @@ public interface HDLGeneratorFactory {
       Long componentId,
       Object componentInfo,
       String name);
-
-  ArrayList<String> getEntity(
-      Netlist theNetlist,
-      AttributeSet attrs,
-      String componentName);
 
   ArrayList<String> getInlinedCode(
       Netlist nets,

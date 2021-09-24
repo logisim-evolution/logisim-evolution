@@ -40,15 +40,30 @@ public class BitSelector extends InstanceFactory {
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "BitSelector";
+  
+  private static class NoSaveAttribute extends Attribute<Integer> {
+
+    @Override
+    public Integer parse(String value) {
+      return Integer.valueOf(value);
+    }
+    
+    @Override
+    public boolean isToSave() {
+      return false;
+    }
+  }
 
   public static final Attribute<BitWidth> GROUP_ATTR =
       Attributes.forBitWidth("group", S.getter("bitSelectorGroupAttr"));
+  public static final Attribute<Integer> SELECT_ATTR = new NoSaveAttribute();
+  public static final Attribute<Integer> EXTENDED_ATTR = new NoSaveAttribute();
 
   public BitSelector() {
     super(_ID, S.getter("bitSelectorComponent"), new BitSelectorHDLGeneratorFactory());
     setAttributes(
-        new Attribute[] {StdAttr.FACING, StdAttr.SELECT_LOC, StdAttr.WIDTH, GROUP_ATTR},
-        new Object[] {Direction.EAST, StdAttr.SELECT_BOTTOM_LEFT, BitWidth.create(8), BitWidth.ONE});
+        new Attribute[] {StdAttr.FACING, StdAttr.SELECT_LOC, StdAttr.WIDTH, GROUP_ATTR, SELECT_ATTR, EXTENDED_ATTR},
+        new Object[] {Direction.EAST, StdAttr.SELECT_BOTTOM_LEFT, BitWidth.create(8), BitWidth.ONE, 3, 9});
     setKeyConfigurator(
         JoinedConfigurator.create(
             new BitWidthConfigurator(GROUP_ATTR, 1, Value.MAX_WIDTH, 0),
@@ -151,6 +166,9 @@ public class BitSelector extends InstanceFactory {
       }
     }
     final var select = BitWidth.create(selectBits);
+    instance.getAttributeSet().setValue(SELECT_ATTR, select.getWidth());
+    final var maxGroups = (int) Math.pow(2d, select.getWidth());
+    instance.getAttributeSet().setValue(EXTENDED_ATTR, maxGroups * group.getWidth() + 1);
 
     Location inPt;
     Location selPt;

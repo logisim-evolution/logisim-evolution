@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.vhdl.base;
 
-import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
@@ -18,7 +17,6 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.Port;
 import java.util.ArrayList;
-import java.util.Objects;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -45,6 +43,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     return contents;
   }
 
+  /* FIXME: implement the generics in the VHDL class (keeping this code for reference)
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     AttributeSet attrs = ComponentInfo.getComponent().getAttributeSet();
@@ -69,6 +68,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     return Parameters;
   }
+  */
 
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {

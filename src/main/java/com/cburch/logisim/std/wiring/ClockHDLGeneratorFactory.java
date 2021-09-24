@@ -16,6 +16,7 @@ import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -41,6 +42,18 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   
   public ClockHDLGeneratorFactory() {
     super("base");
+    myParametersList
+        .add(HIGH_TICK_STR, HIGH_TICK_ID, HDLParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_HIGH)
+        .add(LOW_TICK_STR, LOW_TICK_ID, HDLParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_LOW)
+        .add(PHASE_STR, PHASE_ID, HDLParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_PHASE, 1)
+        .add(NR_OF_BITS_STR, NR_OF_BITS_ID, HDLParameters.MAP_LN2, Clock.ATTR_HIGH, Clock.ATTR_LOW);
+    myWires
+        .addWire("s_counter_next", NR_OF_BITS_ID)
+        .addWire("s_counter_is_zero", 1)
+        .addRegister("s_output_regs", NR_OF_CLOCK_BITS - 1)
+        .addRegister("s_buf_regs", 2)
+        .addRegister("s_counter_reg", NR_OF_BITS_ID)
+        .addRegister("s_derived_clock_reg", PHASE_ID);
   }
 
   private String GetClockNetName(Component comp, Netlist TheNets) {
@@ -76,12 +89,12 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           makeOutputs : PROCESS( GlobalClock )
           BEGIN
              IF (GlobalClock'event AND (GlobalClock = '1')) THEN
-                s_buf_regs(0)     <= s_derived_clock_reg({{phase}}-1);
-                s_buf_regs(1)     <= NOT(s_derived_clock_reg({{phase}}-1));
+                s_buf_regs(0)     <= s_derived_clock_reg({{phase}} - 1);
+                s_buf_regs(1)     <= NOT(s_derived_clock_reg({{phase}} - 1));
                 s_output_regs(0)  <= s_buf_regs(0);
                 s_output_regs(1)  <= s_buf_regs(1);
-                s_output_regs(2)  <= NOT(s_buf_regs(0)) AND s_derived_clock_reg({{phase}}-1);
-                s_output_regs(3)  <= s_buf_regs(0) AND NOT(s_derived_clock_reg({{phase}}-1));
+                s_output_regs(2)  <= NOT(s_buf_regs(0)) AND s_derived_clock_reg({{phase}} - 1);
+                s_output_regs(3)  <= s_buf_regs(0) AND NOT(s_derived_clock_reg({{phase}} - 1));
              END IF;
           END PROCESS makeOutputs;
           """);
@@ -90,12 +103,12 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           assign ClockBus = {GlobalClock,s_output_regs};
           always @(posedge GlobalClock)
           begin
-             s_buf_regs[0]    <= s_derived_clock_reg[{{phase}}-1];
-             s_buf_regs[1]    <= ~s_derived_clock_reg[{{phase}}-1];
+             s_buf_regs[0]    <= s_derived_clock_reg[{{phase}} - 1];
+             s_buf_regs[1]    <= ~s_derived_clock_reg[{{phase}} - 1];
              s_output_regs[0] <= s_buf_regs[0];
              s_output_regs[1] <= s_output_regs[1];
-             s_output_regs[2] <= ~s_buf_regs[0] & s_derived_clock_reg[{{phase}}-1];
-             s_output_regs[3] <= ~s_derived_clock_reg[{{phase}}-1] & s_buf_regs[0];
+             s_output_regs[2] <= ~s_buf_regs[0] & s_derived_clock_reg[{{phase}} - 1];
+             s_output_regs[3] <= ~s_derived_clock_reg[{{phase}} - 1] & s_buf_regs[0];
           end
           """);
     }
@@ -194,36 +207,6 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var map = new TreeMap<Integer, String>();
-    map.put(HIGH_TICK_ID, HIGH_TICK_STR);
-    map.put(LOW_TICK_ID, LOW_TICK_STR);
-    map.put(PHASE_ID, PHASE_STR);
-    map.put(NR_OF_BITS_ID, NR_OF_BITS_STR);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    final var map = new TreeMap<String, Integer>();
-    int HighTicks = ComponentInfo.getComponent().getAttributeSet().getValue(Clock.ATTR_HIGH);
-    int LowTicks = ComponentInfo.getComponent().getAttributeSet().getValue(Clock.ATTR_LOW);
-    int Phase = ComponentInfo.getComponent().getAttributeSet().getValue(Clock.ATTR_PHASE);
-    Phase = Phase % (HighTicks + LowTicks);
-    int MaxValue = Math.max(HighTicks, LowTicks);
-    int nr_of_bits = 0;
-    while (MaxValue != 0) {
-      nr_of_bits++;
-      MaxValue /= 2;
-    }
-    map.put(HIGH_TICK_STR, HighTicks);
-    map.put(LOW_TICK_STR, LowTicks);
-    map.put(PHASE_STR, (HighTicks + LowTicks) - Phase);
-    map.put(NR_OF_BITS_STR, nr_of_bits);
-    return map;
-  }
-
-  @Override
   public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
     final var map = new TreeMap<String, String>();
     if (!(MapInfo instanceof NetlistComponent)) return map;
@@ -231,24 +214,6 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     map.put("GlobalClock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
     map.put("ClockTick", TickComponentHDLGeneratorFactory.FPGA_TICK);
     map.put("ClockBus", "s_" + GetClockNetName(ComponentInfo.getComponent(), Nets));
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("s_output_regs", NR_OF_CLOCK_BITS - 1);
-    map.put("s_buf_regs", 2);
-    map.put("s_counter_reg", NR_OF_BITS_ID);
-    map.put("s_derived_clock_reg", PHASE_ID);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("s_counter_next", NR_OF_BITS_ID);
-    map.put("s_counter_is_zero", 1);
     return map;
   }
 }

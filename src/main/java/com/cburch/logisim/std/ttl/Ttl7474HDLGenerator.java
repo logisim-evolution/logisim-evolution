@@ -23,6 +23,15 @@ import java.util.TreeMap;
 
 public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
 
+  public Ttl7474HDLGenerator() {
+    super();
+    myWires
+        .addWire("state1", 1)
+        .addWire("state2", 1)
+        .addWire("next1", 1)
+        .addWire("next2", 1);
+  }
+
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
@@ -46,16 +55,6 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
     map.put("nQ1", 1);
     map.put("Q2", 1);
     map.put("nQ2", 1);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("state1", 1);
-    map.put("state2", 1);
-    map.put("next1", 1);
-    map.put("next2", 1);
     return map;
   }
 

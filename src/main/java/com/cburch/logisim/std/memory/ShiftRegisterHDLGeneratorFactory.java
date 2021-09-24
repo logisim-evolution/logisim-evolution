@@ -16,6 +16,7 @@ import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
@@ -25,20 +26,29 @@ import java.util.TreeMap;
 
 public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
-  private static final String ACTIVE_LEVEL_STR = "ActiveLevel";
-  private static final int ActiveLevelId = -1;
+  private static final String NEGATE_CLOCK_STRING = "negateClock";
+  private static final int NEGATE_CLOCK_ID = -1;
   private static final String NR_OF_BITS_STR = "NrOfBits";
-  private static final int NrOfBitsId = -2;
+  private static final int NR_OF_BITS_ID = -2;
   private static final String NR_OF_STAGES_STR = "NrOfStages";
-  private static final int NrOfStagesId = -3;
-  private static final String NrOfParBitsStr = "NrOfParBits";
-  private static final int NrOfParBitsId = -4;
+  private static final int NR_OF_STAGES_ID = -3;
+  private static final String NR_OF_PAR_BITS_STRING = "NrOfParBits";
+  private static final int NR_OF_PAR_BITS_ID = -4;
+
+  public ShiftRegisterHDLGeneratorFactory() {
+    super();
+    myParametersList
+        .add(NEGATE_CLOCK_STRING, NEGATE_CLOCK_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, StdAttr.EDGE_TRIGGER, AbstractFlipFlopHDLGeneratorFactory.TRIGGER_MAP)
+        .add(NR_OF_BITS_STR, NR_OF_BITS_ID)
+        .add(NR_OF_PAR_BITS_STRING, NR_OF_PAR_BITS_ID, HDLParameters.MAP_MULTIPLY, StdAttr.WIDTH, ShiftRegister.ATTR_LENGTH)
+        .add(NR_OF_STAGES_STR, NR_OF_STAGES_ID, HDLParameters.MAP_INT_ATTRIBUTE, ShiftRegister.ATTR_LENGTH);
+  }
 
   private LineBuffer.Pairs sharedPairs =
       new LineBuffer.Pairs() {
         {
           pair("nrOfStages", NR_OF_STAGES_STR);
-          pair("activeLevel", ACTIVE_LEVEL_STR);
+          pair("invertClock", NEGATE_CLOCK_STRING);
         }
       };
 
@@ -54,19 +64,19 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
               
                  SIGNAL s_state_reg  : std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 );
                  SIGNAL s_state_next : std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 );
+                 SIGNAL s_clock      : std_logic;
               
               BEGIN
                  Q        <= s_state_reg;
                  ShiftOut <= s_state_reg({{nrOfStages}}-1);
+                 s_clock  <= Clock WHEN {{invertClock}} = 0 ELSE NOT(Clock);
               
                  s_state_next <= D WHEN ParLoad = '1' ELSE s_state_reg(({{nrOfStages}}-2) DOWNTO 0)&ShiftIn;
               
-                 make_state : PROCESS(Clock, ShiftEnable, Tick, Reset, s_state_next, ParLoad)
-                    VARIABLE temp : std_logic_vector( 0 DOWNTO 0 );
+                 make_state : PROCESS(s_clock, ShiftEnable, Tick, Reset, s_state_next, ParLoad)
                  BEGIN
-                    temp := std_logic_vector(to_unsigned({{activeLevel}}, 1));
                     IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');
-                    ELSIF (Clock'event AND (Clock = temp(0) )) THEN
+                    ELSIF (rising_edge(s_clock)) THEN
                        IF (((ShiftEnable = '1') OR (ParLoad = '1')) AND (Tick = '1')) THEN
                           s_state_reg <= s_state_next;
                        END IF;
@@ -91,7 +101,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
                                          Q);
               
                  parameter {{nrOfStages}} = 1;
-                 parameter {{activeLevel}} = 1;
+                 parameter {{invertClock}} = 1;
               
                  input Reset;
                  input Tick;
@@ -104,25 +114,18 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
                  output[{{nrOfStages}}:0] Q;
               
                  wire[{{nrOfStages}}:0] s_state_next;
+                 wire s_clock;
                  reg[{{nrOfStages}}:0] s_state_reg;
-                 reg[{{nrOfStages}}:0] s_state_reg_neg_edge;
               
-                 assign Q        = ({{activeLevel}}) ? s_state_reg : s_state_reg_neg_edge;
-                 assign ShiftOut = ({{activeLevel}}) ? s_state_reg[{{activeLevel}}-1] : s_state_reg_neg_edge[{{activeLevel}}-1];
-                 assign s_state_next = (ParLoad) ? D :
-                                       ({{activeLevel}}) ? {s_state_reg[{{activeLevel}}-2:0],ShiftIn}
-                                                         : {s_state_reg_neg_edge[{{nrOfStages}}-2:0],ShiftIn};
+                 assign Q        = s_state_reg;
+                 assign ShiftOut = s_state_reg[{{nrOfStages}}-1];
+                 assign s_clock  = {{invertClock}} == 0 ? Clock : ~Clock;
+                 assign s_state_next = (ParLoad) ? D : {s_state_reg[{{nrOfStages}}-2:0],ShiftIn};
               
-                 always @(posedge Clock or posedge Reset)
+                 always @(posedge s_clock or posedge Reset)
                  begin
                     if (Reset) s_state_reg <= 0;
                     else if ((ShiftEnable|ParLoad)&Tick) s_state_reg <= s_state_next;
-                 end
-              
-                 always @(negedge Clock or posedge Reset)
-                 begin
-                    if (Reset) s_state_reg_neg_edge <= 0;
-                    else if ((ShiftEnable|ParLoad)&Tick) s_state_reg_neg_edge <= s_state_next;
                  end
               
               endmodule
@@ -140,7 +143,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     return (new LineBuffer(sharedPairs))
         .add("""
             COMPONENT SingleBitShiftReg
-               GENERIC ( {{activeLevel}} : INTEGER;
+               GENERIC ( {{invertClock}} : INTEGER;
                          {{nrOfStages}}  : INTEGER );
                PORT ( Reset       : IN  std_logic;
                       Tick        : IN  std_logic;
@@ -166,7 +169,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           .add(FileWriter.getExtendedLibrary())
           .add("""
               ENTITY SingleBitShiftReg IS
-                 GENERIC ( {{activeLevel}} : INTEGER;
+                 GENERIC ( {{invertClock}} : INTEGER;
                            {{nrOfStages}}  : INTEGER);
                  PORT ( Reset       : IN  std_logic;
                         Tick        : IN  std_logic;
@@ -195,8 +198,8 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     map.put("Clock", 1);
     map.put("ShiftEnable", 1);
     map.put("ParLoad", 1);
-    map.put("ShiftIn", NrOfBitsId);
-    map.put("D", NrOfParBitsId);
+    map.put("ShiftIn", NR_OF_BITS_ID);
+    map.put("D", NR_OF_PAR_BITS_ID);
     return map;
   }
 
@@ -207,7 +210,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       contents.add("""
           GenBits : FOR n IN ({{nrOfBits}}-1) DOWNTO 0 GENERATE
              OneBit : SingleBitShiftReg
-             GENERIC MAP ( {{activeLevel}} => {{activeLevel}},
+             GENERIC MAP ( {{invertClock}} => {{invertClock}},
                            {{nrOfStages}} => {{nrOfStages}} )
              PORT MAP ( Reset       => Reset,
                         Tick        => Tick,
@@ -226,7 +229,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           generate
              for (n = 0 ; n < {{nrOfBits}}; n=n+1)
              begin:Bit
-                SingleBitShiftReg #(.{{activeLevel}}({{activeLevel}}),
+                SingleBitShiftReg #(.{{invertClock}}({{invertClock}}),
                                     .{{nrOfStages}}({{nrOfStages}}))
                    OneBit (.Reset(Reset),
                            .Tick(Tick),
@@ -247,42 +250,8 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
-    map.put("ShiftOut", NrOfBitsId);
-    map.put("Q", NrOfParBitsId);
-    return map;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var map = new TreeMap<Integer, String>();
-    map.put(ActiveLevelId, ACTIVE_LEVEL_STR);
-    map.put(NrOfBitsId, NR_OF_BITS_STR);
-    map.put(NrOfStagesId, NR_OF_STAGES_STR);
-    map.put(NrOfParBitsId, NrOfParBitsStr);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    final var map = new TreeMap<String, Integer>();
-    final var attrs = componentInfo.getComponent().getAttributeSet();
-    var activeLevel = 1;
-    var gatedClock = false;
-    var activeLow = false;
-    final var clockNetName = HDL.getClockNetName(componentInfo, ShiftRegister.CK, nets);
-    if (clockNetName.isEmpty()) {
-      gatedClock = true;
-    }
-    activeLow = attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING;
-    if (gatedClock && activeLow) {
-      activeLevel = 0;
-    }
-    int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    int nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
-    map.put(ACTIVE_LEVEL_STR, activeLevel);
-    map.put(NR_OF_BITS_STR, nrOfBits);
-    map.put(NR_OF_STAGES_STR, nrOfStages);
-    map.put(NrOfParBitsStr, nrOfBits * nrOfStages);
+    map.put("ShiftOut", NR_OF_BITS_ID);
+    map.put("Q", NR_OF_PAR_BITS_ID);
     return map;
   }
 

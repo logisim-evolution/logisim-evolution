@@ -33,6 +33,40 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final String MemArrayStr = "MEMORY_ARRAY";
   private static final int MemArrayId = -3;
 
+  public RamHDLGeneratorFactory() {
+    super();
+    getWiresduringHDLWriting = true;
+  }
+
+  @Override
+  public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {
+    final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
+    final var be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
+    final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
+    final var nrOfAddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
+    myWires
+        .addWire("s_ram_data_out", nrOfBits)
+        .addRegister("s_TickDelayLine", 3)
+        .addRegister("s_DataInReg", nrOfBits)
+        .addRegister("s_Address_reg", nrOfAddressLines)
+        .addRegister("s_WEReg", 1)
+        .addRegister("s_OEReg", 1)
+        .addRegister("s_DataOutReg", nrOfBits);
+    if (byteEnables) {
+      final var nrBePorts = RamAppearance.getNrBEPorts(attrs);
+      myWires
+          .addRegister("s_ByteEnableReg", nrBePorts);
+      for (var idx = 0; idx < nrBePorts; idx++)
+        myWires
+            .addWire(String.format("s_byte_enable_%d", idx), 1)
+            .addWire(String.format("s_we_%d", idx), 1);
+    } else {
+      myWires
+          .addWire("s_we", 1)
+          .addWire("s_oe", 1);
+    }
+  }
+
   @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
@@ -297,25 +331,6 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetRegList(AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-    final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-    final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
-    final var nrOfAddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
-    map.put("s_TickDelayLine", 3);
-    map.put("s_DataInReg", nrOfBits);
-    map.put("s_Address_reg", nrOfAddressLines);
-    map.put("s_WEReg", 1);
-    map.put("s_OEReg", 1);
-    map.put("s_DataOutReg", nrOfBits);
-    if (byteEnables) {
-      map.put("s_ByteEnableReg", RamAppearance.getNrBEPorts(attrs));
-    }
-    return map;
-  }
-
-  @Override
   public String GetType(int TypeNr) {
     switch (TypeNr) {
       case MemArrayId:
@@ -366,25 +381,6 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     }
     return myTypes;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var map = new TreeMap<String, Integer>();
-    final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
-    Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-    final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-    map.put("s_ram_data_out", nrOfBits);
-    if (byteEnables) {
-      for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
-        map.put("s_byte_enable_" + i, 1);
-        map.put("s_we_" + i, 1);
-      }
-    } else {
-      map.put("s_we", 1);
-      map.put("s_oe", 1);
-    }
-    return map;
   }
 
   @Override
