@@ -80,14 +80,12 @@ $ ./gradlew checkstyleMain
 
 # Using pre-commit hooks #
 
-To improve quality of your commit, it's recommended to use [pre-commit](http://pre-commit.com) hooks, that will block your commits
-unless all pre-commit tests. `Logisim-evolution` comes with predefined `.pre-commit-config.yaml`
-config file.
+To improve quality of your commit, it's recommended to use [pre-commit](http://pre-commit.com) hooks, that will block
+your commits unless all pre-commit tests pass. `Logisim-evolution` comes with predefined `.pre-commit-config.yaml`
+config file for your convenience.
 
 Installation instruction:
 
-* See `pre-commit` [official installation docs](https://pre-commit.com/#install) and follow
-* Clone provided config file: `cp .pre-commit-config.yaml.dist .pre-commit-config.yaml`
-* Download Checkstyle JAR: `wget https://github.com/checkstyle/checkstyle/releases/download/checkstyle-9.0/checkstyle-9.0-all.jar`
-  to your project's root folder
+* See `pre-commit` [official installation docs](https://pre-commit.com/#install) and install it.
+* Copy provided config file: `cp .pre-commit-config.yaml.dist .pre-commit-config.yaml`
 * Install hook in Git pipeline: `pre-commit install`
