@@ -88,4 +88,4 @@ Installation instruction:
 
 * See `pre-commit` [official installation docs](https://pre-commit.com/#install) and install it.
 * Copy provided config file: `cp .pre-commit-config.yaml.dist .pre-commit-config.yaml`
-* Install hook in Git pipeline: `pre-commit install`
+* Plug `pre-commit` into Git pipeline: `pre-commit install`
