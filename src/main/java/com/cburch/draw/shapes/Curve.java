@@ -119,19 +119,15 @@ public class Curve extends FillableCanvasObject {
     var gy = g.getY() + gesture.getDeltaY();
     Handle[] ret = {new Handle(this, p0), new Handle(this, p1), new Handle(this, p2)};
     if (g.isAt(p0)) {
-      if (gesture.isShiftDown()) {
-        final var loc = LineUtil.snapTo8Cardinals(p2, gx, gy);
-        ret[0] = new Handle(this, loc);
-      } else {
-        ret[0] = new Handle(this, gx, gy);
-      }
+      ret[0] =
+          gesture.isShiftDown()
+              ? new Handle(this, LineUtil.snapTo8Cardinals(p2, gx, gy))
+              : new Handle(this, gx, gy);
     } else if (g.isAt(p2)) {
-      if (gesture.isShiftDown()) {
-        final var loc = LineUtil.snapTo8Cardinals(p0, gx, gy);
-        ret[2] = new Handle(this, loc);
-      } else {
-        ret[2] = new Handle(this, gx, gy);
-      }
+      ret[2] =
+          gesture.isShiftDown()
+              ? new Handle(this, LineUtil.snapTo8Cardinals(p0, gx, gy))
+              : new Handle(this, gx, gy);
     } else if (g.isAt(p1)) {
       if (gesture.isShiftDown()) {
         final var x0 = p0.getX();
@@ -147,10 +143,10 @@ public class Curve extends FillableCanvasObject {
         gy = (int) Math.round(p[1]);
       }
       if (gesture.isAltDown()) {
-        double[] e0 = {p0.getX(), p0.getY()};
-        double[] e1 = {p2.getX(), p2.getY()};
-        double[] mid = {gx, gy};
-        double[] ct = CurveUtil.interpolate(e0, e1, mid);
+        final double[] e0 = {p0.getX(), p0.getY()};
+        final double[] e1 = {p2.getX(), p2.getY()};
+        final double[] mid = {gx, gy};
+        final var ct = CurveUtil.interpolate(e0, e1, mid);
         gx = (int) Math.round(ct[0]);
         gy = (int) Math.round(ct[1]);
       }
@@ -183,7 +179,7 @@ public class Curve extends FillableCanvasObject {
 
   @Override
   public int matchesHashCode() {
-    int ret = p0.hashCode();
+    var ret = p0.hashCode();
     ret = ret * 31 * 31 + p1.hashCode();
     ret = ret * 31 * 31 + p2.hashCode();
     ret = ret * 31 + super.matchesHashCode();
