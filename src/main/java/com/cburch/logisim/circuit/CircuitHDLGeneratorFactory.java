@@ -74,7 +74,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     if (outputBubbles > 0)
       myPorts.add(Port.OUTPUT, LOCAL_OUTPUT_BUBBLE_BUS_NAME, outputBubbles > 1 ? outputBubbles : 0, 0);
-    for (var output = 0; output < theNetlist.getNumberOfInputPorts(); output++) {
+    for (var output = 0; output < theNetlist.numberOfOutputPorts(); output++) {
       final var selectedInput = theNetlist.getOutputPin(output);
       if (selectedInput != null)  {
         final var name = selectedInput.getComponent().getAttributeSet().getValue(StdAttr.LABEL);

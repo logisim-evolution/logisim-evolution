@@ -76,7 +76,7 @@ public class HDLPorts {
         } else if (value instanceof Integer) {
           nrOfBits = (int) value;
         } else throw new IllegalArgumentException("No Bitwidth or Integer value");
-        return (nrOfBits == 1) ? 1 : (myNrOfBits > 0) ? myNrOfBits : nrOfBits;
+        return (nrOfBits == 1) ? 1 : (myNrOfBits != 0) ? myNrOfBits : nrOfBits;
       }
       return myNrOfBits;
     }
@@ -141,7 +141,6 @@ public class HDLPorts {
   public boolean isFixedMapped(String name) {
     for (var port : myPorts) 
       if (port.myName.equals(name)) {
-        System.out.println(" ====> " + name + port.myComponentPinId);
         return port.myComponentPinId < 0;
       }
     throw new ArrayStoreException("port not contained in structure");

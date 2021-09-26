@@ -42,7 +42,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     for (var input = 1; input <= nrOfInputs; input++) {
       myWires.addWire(String.format("s_real_input_%d", input), bitWidth == 1 ? 1 : BIT_WIDTH_GENERIC);
       final var floatingToZero = getFloatingValue(attrs.getValue(new NegateAttribute(input - 1, null)));
-      myPorts.add(Port.INPUT, String.format("Input_%d", input), BIT_WIDTH_GENERIC, input, floatingToZero);
+      myPorts.add(Port.INPUT, String.format("Input_%d", input), bitWidth == 1 ? 1 : BIT_WIDTH_GENERIC, input, floatingToZero);
     }
     myPorts.add(Port.OUTPUT, "Result", BIT_WIDTH_GENERIC, 0, StdAttr.WIDTH);
   }

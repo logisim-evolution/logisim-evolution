@@ -39,7 +39,10 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     myPorts
         .add(Port.INPUT, "Sel", nrOfSelectBits, selectInputIndex)
         .add(Port.OUTPUT, "MuxOut", NR_OF_BITS_ID, hasEnable ? selectInputIndex + 2 : selectInputIndex + 1, StdAttr.WIDTH);
-    if (hasEnable) myPorts.add(Port.INPUT, "Enable", 1, selectInputIndex + 1);
+    if (hasEnable) 
+      myPorts.add(Port.INPUT, "Enable", 1, selectInputIndex + 1);
+    else
+      myPorts.add(Port.INPUT, "Enable", 1, HDL.oneBit());
   }
 
   @Override
