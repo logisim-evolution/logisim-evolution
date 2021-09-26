@@ -65,7 +65,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public ArrayList<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    final var Contents = new LineBuffer();
+    final var Contents = LineBuffer.getHdlBuffer();
     final var mems = GetMemList(attrs);
     final var OneLine = new StringBuilder();
     if (getWiresPortsduringHDLWriting) {
@@ -383,7 +383,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    var Contents = new LineBuffer();
+    var Contents = LineBuffer.getHdlBuffer();
     if (HDL.isVHDL()) Contents.add(GetVHDLBlackBox(theNetlist, attrs, componentName, false));
     return Contents.get();
   }
@@ -539,7 +539,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Netlist theNetlist,
       AttributeSet attrs,
       String componentName) {
-    var Contents = new LineBuffer();
+    var Contents = LineBuffer.getHdlBuffer();
     if (HDL.isVHDL()) {
       Contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
           .add(FileWriter.getExtendedLibrary())
@@ -735,7 +735,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
-    final var result = new TreeMap<String,String>();
+    final var result = new TreeMap<String, String>();
     if (mapInfo instanceof NetlistComponent && !myPorts.isEmpty()) {
       NetlistComponent ComponentInfo = (NetlistComponent) mapInfo;
       final var compName = ComponentInfo.getComponent().getFactory().getDisplayName();

@@ -73,7 +73,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
-    final var result = new TreeMap<String,String>();
+    final var result = new TreeMap<String, String>();
     result.putAll(super.getPortMap(nets, mapInfo));
     if (mapInfo instanceof NetlistComponent && HDL.isVHDL()) {
       final var compInfo = (NetlistComponent) mapInfo;

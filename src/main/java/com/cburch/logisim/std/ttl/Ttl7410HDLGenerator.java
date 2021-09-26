@@ -23,7 +23,7 @@ public class Ttl7410HDLGenerator extends AbstractHDLGeneratorFactory {
   private final boolean andgate;
 
   public Ttl7410HDLGenerator() {
-    this(true,true);
+    this(true, true);
   }
 
   public Ttl7410HDLGenerator(boolean invert, boolean IsAnd) {

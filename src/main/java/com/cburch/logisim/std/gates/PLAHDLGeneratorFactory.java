@@ -11,14 +11,11 @@ package com.cburch.logisim.std.gates;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -26,7 +23,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     super();
     myPorts
         .add(Port.INPUT, "index", 0, PLA.IN_PORT, PLA.ATTR_IN_WIDTH)
-        .add(Port.OUTPUT, "Result", 0 , PLA.OUT_PORT ,PLA.ATTR_OUT_WIDTH);
+        .add(Port.OUTPUT, "Result", 0, PLA.OUT_PORT, PLA.ATTR_OUT_WIDTH);
   }
 
   private static String bits(char[] b) {
@@ -45,7 +42,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getHdlBuffer();
     final var tt = attrs.getValue(PLA.ATTR_TABLE);
     final var outSz = attrs.getValue(PLA.ATTR_OUT_WIDTH).getWidth();
     if (HDL.isVHDL()) {
