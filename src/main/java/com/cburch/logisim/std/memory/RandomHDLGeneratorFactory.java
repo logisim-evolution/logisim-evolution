@@ -85,7 +85,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("seed", SEED_STR)
             .pair("nrOfBits", NR_OF_BITS_STR)
             .pair("GlobalClock", HDLPorts.getClockName(1))

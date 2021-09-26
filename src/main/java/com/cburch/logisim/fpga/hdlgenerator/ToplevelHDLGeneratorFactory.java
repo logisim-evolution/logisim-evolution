@@ -81,13 +81,13 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         myWires.addWire(String.format("s_%s%d", CLOCK_TREE_NAME, clockId), ClockHDLGeneratorFactory.NR_OF_CLOCK_BITS);
     }
     if (nrOfInputBubbles > 0)
-      myWires.addWire(String.format("s_%s", HDLGeneratorFactory.LOCAL_INPUT_BUBBLE_BUS_NAME), 
+      myWires.addWire(String.format("s_%s", HDLGeneratorFactory.LOCAL_INPUT_BUBBLE_BUS_NAME),
           nrOfInputBubbles > 1 ? nrOfInputBubbles : 0);
     if (nrOfInOutBubbles > 0)
-      myWires.addWire(String.format("s_%s", HDLGeneratorFactory.LOCAL_INOUT_BUBBLE_BUS_NAME), 
+      myWires.addWire(String.format("s_%s", HDLGeneratorFactory.LOCAL_INOUT_BUBBLE_BUS_NAME),
           nrOfInOutBubbles > 1 ? nrOfInOutBubbles : 0);
     if (nrOfOutputBubbles > 0)
-      myWires.addWire(String.format("s_%s", HDLGeneratorFactory.LOCAL_OUTPUT_BUBBLE_BUS_NAME), 
+      myWires.addWire(String.format("s_%s", HDLGeneratorFactory.LOCAL_OUTPUT_BUBBLE_BUS_NAME),
           nrOfOutputBubbles > 1 ? nrOfOutputBubbles : 0);
     if (nrOfInputPorts > 0) {
       for (var input = 0; input < nrOfInputPorts; input++) {
@@ -127,14 +127,14 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       for (final var port : ports.keySet())
         myPorts.add(Port.OUTPUT, port, ports.get(port), null);
     }
-    if (nrOfClockTrees > 0 || nets.requiresGlobalClockConnection() || requiresFPGAClock) 
+    if (nrOfClockTrees > 0 || nets.requiresGlobalClockConnection() || requiresFPGAClock)
       myPorts.add(Port.INPUT, TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1, null);
-    for (final var in : myIOComponents.GetMappedInputPinNames()) 
+    for (final var in : myIOComponents.GetMappedInputPinNames())
       myPorts.add(Port.INPUT, in, 1, null);
     for (final var io : myIOComponents.GetMappedOutputPinNames()) {
       myPorts.add(Port.OUTPUT, io, 1, null);
     }
-    for (final var io : myIOComponents.GetMappedIOPinNames()) 
+    for (final var io : myIOComponents.GetMappedIOPinNames())
       myPorts.add(Port.INOUT, io, 1, null);
   }
 

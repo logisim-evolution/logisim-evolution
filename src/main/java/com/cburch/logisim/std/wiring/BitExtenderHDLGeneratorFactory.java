@@ -25,7 +25,7 @@ public class BitExtenderHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
       Long componentId,
       NetlistComponent componentInfo,
       String circuitName) {
-    final var Contents = new LineBuffer();
+    final var Contents = LineBuffer.getBuffer();
     int NrOfPins = componentInfo.nrOfEnds();
     for (int i = 1; i < NrOfPins; i++) {
       if (!componentInfo.isEndConnected(i)) {

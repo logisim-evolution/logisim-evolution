@@ -46,7 +46,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getBuffer();
     var space = "  ";
     final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     var numOutputs = (1 << nrOfSelectBits);

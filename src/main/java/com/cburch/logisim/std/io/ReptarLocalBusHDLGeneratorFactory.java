@@ -38,7 +38,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public ArrayList<String> getArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getBuffer();
     if (HDL.isVHDL()) {
       contents
           .pair("compName", componentName)
@@ -80,7 +80,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    return (new LineBuffer())
+    return LineBuffer.getBuffer()
         .add("""
             COMPONENT LocalBus
                PORT ( SP6_LB_WAIT3_i     : IN  std_logic;
@@ -103,7 +103,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public ArrayList<String> getEntity(Netlist nets, AttributeSet attrs, String componentName) {
-    return (new LineBuffer())
+    return LineBuffer.getBuffer()
         .pair("compName", componentName)
         .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
         .add(FileWriter.getExtendedLibrary())

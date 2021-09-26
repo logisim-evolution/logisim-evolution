@@ -44,7 +44,7 @@ public class Ttl7474HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getBuffer();
     return contents
         .pair("CLK1", HDLPorts.getClockName(1))
         .pair("CLK2", HDLPorts.getClockName(2))

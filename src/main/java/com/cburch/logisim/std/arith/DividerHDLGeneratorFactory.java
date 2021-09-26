@@ -47,7 +47,7 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents = (new LineBuffer())
+    final var Contents = LineBuffer.getBuffer()
             .pair("nrOfBits", NR_OF_BITS_STRING)
             .pair("unsigned", UNSIGNED_STRING)
             .pair("calcBits", CALC_BITS_STRING);

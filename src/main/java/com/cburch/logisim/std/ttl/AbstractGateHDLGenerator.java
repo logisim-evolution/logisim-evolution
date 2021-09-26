@@ -19,11 +19,11 @@ import java.util.ArrayList;
 public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   private final boolean isInverter;
-  
+
   public AbstractGateHDLGenerator() {
     this(false);
   }
-  
+
   public AbstractGateHDLGenerator(boolean isInverter) {
     super();
     this.isInverter = isInverter;
@@ -50,7 +50,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getBuffer();
     final var nrOfGates = isInverter ? 6 : 4;
     for (var i = 0; i < nrOfGates; i++) {
       contents.addRemarkBlock("Here gate %d is described", i).add(GetLogicFunction(i));

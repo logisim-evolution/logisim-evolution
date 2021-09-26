@@ -63,6 +63,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     return contents.get();
   }
 
+  @Override
   public boolean isHDLSupportedTarget(AttributeSet attrs) {
     return HDL.isVHDL();
   }

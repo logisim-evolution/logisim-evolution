@@ -57,7 +57,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    return (new LineBuffer())
+    return LineBuffer.getBuffer()
         .pair("CLK", HDLPorts.CLOCK)
         .pair("tick", HDLPorts.TICK)
         .add("""

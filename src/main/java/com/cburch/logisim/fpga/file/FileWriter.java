@@ -25,7 +25,7 @@ public class FileWriter {
   public static final String ARCHITECTURE_EXTENSION = "_behavior";
 
   public static ArrayList<String> getExtendedLibrary() {
-    final var lines = new LineBuffer();
+    final var lines = LineBuffer.getBuffer();
     lines.add("""
            
                LIBRARY ieee;
@@ -37,7 +37,7 @@ public class FileWriter {
   }
 
   public static ArrayList<String> getStandardLibrary() {
-    final var lines = new LineBuffer();
+    final var lines = LineBuffer.getBuffer();
     lines.add("""
       
               LIBRARY ieee;
