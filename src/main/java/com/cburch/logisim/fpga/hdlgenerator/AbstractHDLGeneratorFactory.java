@@ -28,9 +28,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
-import java.util.SortedSet;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
@@ -38,6 +36,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   protected final HDLParameters myParametersList = new HDLParameters();
   protected final HDLWires myWires = new HDLWires();
   protected final HDLPorts myPorts = new HDLPorts();
+  protected final HDLTypes myTypedWires = new HDLTypes();
   protected boolean getWiresPortsDuringHDLWriting = false;
 
   public AbstractHDLGeneratorFactory() {
@@ -66,10 +65,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   @Override
   public ArrayList<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
     final var contents = LineBuffer.getHdlBuffer();
-    final var mems = GetMemList(attrs);
     final var oneLine = new StringBuilder();
     if (getWiresPortsDuringHDLWriting) {
       myWires.removeWires();
+      myTypedWires.clear();
       myPorts.removePorts();
       getGenerationTimeWiresPorts(theNetlist, attrs);
     }
@@ -82,13 +81,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       }
       contents.add("ARCHITECTURE PlatformIndependent OF {{1}} IS ", componentName);
       contents.add("");
-      final var nrOfTypes = GetNrOfTypes(theNetlist, attrs);
-      if (nrOfTypes > 0) {
-        contents.addRemarkBlock("Here all private types are defined");
-        for (final var thisType : GetTypeDefinitions(theNetlist, attrs)) {
-          contents.add("   {{1}};", thisType);
-        }
-        contents.empty();
+      if (myTypedWires.getNrOfTypes() > 0) {
+        contents.addRemarkBlock("Here all private types are defined")
+            .add(myTypedWires.getTypeDefinitions())
+            .empty();
       }
       final var components = GetComponentDeclarationSection(theNetlist, attrs);
       if (!components.isEmpty()) {
@@ -143,15 +139,16 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           }
           oneLine.append(" DOWNTO 0 );");
         }
-        contents.add("   SIGNAL {{1}}", oneLine);
+        contents.add("   SIGNAL {{1}}", oneLine.toString());
         oneLine.setLength(0);
       }
 
-      for (final var Mem : mems.keySet()) {
-        oneLine.append(Mem);
+      final var typedWires = myTypedWires.getTypedWires();
+      for (final var wire : typedWires.keySet()) {
+        oneLine.append(wire);
         while (oneLine.length() < SIGNAL_ALLIGNMENT_SIZE) oneLine.append(" ");
-        oneLine.append(": ").append(GetType(mems.get(Mem))).append(";");
-        contents.add("   SIGNAL " + oneLine);
+        oneLine.append(": ").append(typedWires.get(wire)).append(";");
+        contents.add("   SIGNAL {{1}}", oneLine.toString());
         oneLine.setLength(0);
       }
       contents.add("")
@@ -210,15 +207,15 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         contents.addRemarkBlock("Here all module parameters are defined with a dummy value");
         for (final var param : myParametersList.keySet(attrs)) {
           // For verilog we specify a maximum vector, this seems the best way to do it
-<<<<<<< HEAD
-          final var vectorString = (myParametersList.isPresentedByInteger(param, attrs)) ? "" : "[64:0]"; 
-          contents.add("   parameter {{1}} {{2}} = 1;", vectorString, myParametersList.get(param, attrs));
-=======
           final var vectorString = (myParametersList.isPresentedByInteger(param, attrs)) ? "" : "[64:0]";
-          Contents.add("   parameter {{1}} {{2}} = 1;", vectorString, myParametersList.get(param, attrs));
->>>>>>> 43b048d165f6af2adc3ee0841416b3de17cd9069
+          contents.add("   parameter {{1}} {{2}} = 1;", vectorString, myParametersList.get(param, attrs));
         }
         contents.empty();
+      }
+      if (myTypedWires.getNrOfTypes() > 0) {
+        contents.addRemarkBlock("Here all private types are defined")
+            .add(myTypedWires.getTypeDefinitions())
+            .empty();
       }
       var firstline = true;
       var nrOfPortBits = 0;
@@ -341,6 +338,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         }
         contents.add(oneLine.toString());
       }
+      firstline = true;
       for (final var reg : myWires.registerKeySet()) {
         oneLine.setLength(0);
         oneLine.append("   reg");
@@ -368,7 +366,23 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         }
         contents.add(oneLine.toString());
       }
-      /* TODO: Add memlist */
+      firstline = true;
+      final var typedWires = myTypedWires.getTypedWires();
+      for (final var wire : typedWires.keySet()) {
+        oneLine.setLength(0);
+        oneLine.append("   ")
+            .append(typedWires.get(wire))
+            .append(" ")
+            .append(wire)
+            .append(";");
+        if (firstline) {
+          firstline = false;
+          contents
+              .empty()
+              .addRemarkBlock("Here the type defined signals are defined");
+        }
+        contents.add("   {{1}}", oneLine.toString());
+      }
       if (!firstline) {
         contents.empty();
       }
@@ -399,13 +413,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Long componentId,
       Object componentInfo,
       String name) {
-<<<<<<< HEAD
     final var contents = new ArrayList<String>();
-    final var parameterMap = new TreeMap<String, String>(); 
-=======
-    final var Contents = new ArrayList<String>();
     final var parameterMap = new TreeMap<String, String>();
->>>>>>> 43b048d165f6af2adc3ee0841416b3de17cd9069
     final var PortMap = getPortMap(nets, componentInfo);
     final var componentHDLName = componentInfo instanceof NetlistComponent
         ? ((NetlistComponent) componentInfo).getComponent().getFactory().getHDLName(((NetlistComponent) componentInfo).getComponent().getAttributeSet()) :
@@ -545,14 +554,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-<<<<<<< HEAD
-  public ArrayList<String> getEntity(
-      Netlist theNetlist,
-      AttributeSet attrs,
-      String componentName) {
-=======
   public ArrayList<String> getEntity(Netlist theNetlist, AttributeSet attrs, String componentName) {
->>>>>>> 43b048d165f6af2adc3ee0841416b3de17cd9069
     var contents = LineBuffer.getHdlBuffer();
     if (HDL.isVHDL()) {
       contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
@@ -590,15 +592,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       NetlistComponent componentInfo,
       String circuitName) {
     throw new IllegalAccessError("BUG: Inline code not supported");
-  }
-
-  public SortedMap<String, Integer> GetMemList(AttributeSet attrs) {
-    /*
-     * This method returns a map list of all the memory contents signals
-     * used in the black-box. The String Parameter represents the Name, and
-     * the Integer parameter represents the type definition.
-     */
-    return new TreeMap<>();
   }
 
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
@@ -756,6 +749,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       final var attrs = ComponentInfo.getComponent().getAttributeSet();
       if (getWiresPortsDuringHDLWriting) {
         myWires.removeWires();
+        myTypedWires.clear();
         myPorts.removePorts();
         getGenerationTimeWiresPorts(nets, ComponentInfo.getComponent().getAttributeSet());
       }
@@ -832,19 +826,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return directoryName.toString();
   }
 
-  public String GetType(int TypeNr) {
-    /* This method returns the type name indicated by TypeNr */
-    return "";
-  }
-
-  public SortedSet<String> GetTypeDefinitions(Netlist TheNetlist, AttributeSet attrs) {
-    /*
-     * This method returns all the type definitions used without the ending
-     * ;
-     */
-    return new TreeSet<>();
-  }
-
   private ArrayList<String> GetVHDLBlackBox(Netlist TheNetlist, AttributeSet attrs,
       String ComponentName, Boolean IsEntity) {
     var contents = new ArrayList<String>();
@@ -854,6 +835,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     var first = true;
     if (getWiresPortsDuringHDLWriting) {
       myWires.removeWires();
+      myTypedWires.clear();
       myPorts.removePorts();
       getGenerationTimeWiresPorts(TheNetlist, attrs);
     }
@@ -877,17 +859,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         } else {
           first = false;
         }
-<<<<<<< HEAD
-        final var parameterName = myParametersList.get(generic, attrs); 
+        final var parameterName = myParametersList.get(generic, attrs);
         oneLine.append(parameterName);
         oneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - parameterName.length())));
         oneLine.append(myParametersList.isPresentedByInteger(generic, attrs) ? ": INTEGER" : ": std_logic_vector");
-=======
-        final var parameterName = myParametersList.get(generic, attrs);
-        OneLine.append(parameterName);
-        OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - parameterName.length())));
-        OneLine.append(myParametersList.isPresentedByInteger(generic, attrs) ? ": INTEGER" : ": std_logic_vector");
->>>>>>> 43b048d165f6af2adc3ee0841416b3de17cd9069
       }
       oneLine.append(");");
       contents.add(oneLine.toString());
