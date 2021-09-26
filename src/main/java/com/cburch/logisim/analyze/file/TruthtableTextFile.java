@@ -144,8 +144,7 @@ public class TruthtableTextFile {
       if (value.equals("|")) {
         if (cur != inputs) throw new IOException(String.format("Line %d: Separator '|' must appear only once.", lineno));
         cur = outputs;
-      }
-      if (value.matches("[a-zA-Z][a-zA-Z_0-9]*")) {
+      } else if (value.matches("[a-zA-Z][a-zA-Z_0-9]*")) {
         cur.add(new Var(value, 1));
       } else {
         var m = NAME_FORMAT.matcher(value);
