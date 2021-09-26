@@ -24,11 +24,7 @@ public class BasicZoomModel implements ZoomModel {
   private double zoomFactor;
   private boolean showGrid;
 
-  public BasicZoomModel(
-      PrefMonitor<Boolean> gridPref,
-      PrefMonitor<Double> zoomPref,
-      ArrayList<Double> zoomOpts,
-      CanvasPane pane) {
+  public BasicZoomModel(PrefMonitor<Boolean> gridPref, PrefMonitor<Double> zoomPref, ArrayList<Double> zoomOpts, CanvasPane pane) {
     zoomOptions = zoomOpts;
     support = new PropertyChangeSupport(this);
     zoomFactor = 1.0;
@@ -69,7 +65,7 @@ public class BasicZoomModel implements ZoomModel {
 
   @Override
   public void setZoomFactor(double value) {
-    double oldValue = zoomFactor;
+    final var oldValue = zoomFactor;
     if (value != oldValue) {
       zoomFactor = value;
       support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);
@@ -78,28 +74,28 @@ public class BasicZoomModel implements ZoomModel {
 
   @Override
   public void setZoomFactor(double value, MouseEvent e) {
-    double oldValue = zoomFactor;
+    final var oldValue = zoomFactor;
     if (value != oldValue) {
       if (canvas == null) setZoomFactor(value);
       // Attempt to maintain mouse position during zoom, using
       // [m]ax, [v]alue, [e]xtent, and [r]elative position within it,
       // to calculate target [n]ew[m]ax, [p]ercent and [n]ew[v]alue.
-      double mx = canvas.getHorizontalScrollBar().getMaximum();
-      int vx = canvas.getHorizontalScrollBar().getValue();
-      double ex = canvas.getHorizontalScrollBar().getVisibleAmount();
-      int rx = e.getX() - vx;
-      double my = canvas.getVerticalScrollBar().getMaximum();
-      int vy = canvas.getVerticalScrollBar().getValue();
-      double ey = canvas.getVerticalScrollBar().getVisibleAmount();
-      int ry = e.getY() - vy;
+      final var mx = canvas.getHorizontalScrollBar().getMaximum();
+      final var vx = canvas.getHorizontalScrollBar().getValue();
+      final var ex = canvas.getHorizontalScrollBar().getVisibleAmount();
+      final var rx = e.getX() - vx;
+      final var my = canvas.getVerticalScrollBar().getMaximum();
+      final var vy = canvas.getVerticalScrollBar().getValue();
+      final var ey = canvas.getVerticalScrollBar().getVisibleAmount();
+      final var ry = e.getY() - vy;
       zoomFactor = value;
       support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);
-      double nmx = mx * value / oldValue;
-      double px = (vx / mx) + (ex / mx - ex / nmx) * (rx / ex);
-      int nvx = (int) (nmx * px);
-      double nmy = my * value / oldValue;
-      double py = (vy / my) + (ey / my - ey / nmy) * (ry / ey);
-      int nvy = (int) (nmy * py);
+      final var nmx = mx * value / oldValue;
+      final var px = (vx / mx) + (ex / mx - ex / nmx) * (rx / ex);
+      final var nvx = (int) (nmx * px);
+      final var nmy = my * value / oldValue;
+      final var py = (vy / my) + (ey / my - ey / nmy) * (ry / ey);
+      final var nvy = (int) (nmy * py);
       canvas.getHorizontalScrollBar().setValue(nvx);
       canvas.getVerticalScrollBar().setValue(nvy);
     }
@@ -112,7 +108,7 @@ public class BasicZoomModel implements ZoomModel {
 
   @Override
   public void setZoomFactorCenter(double value) {
-    double oldValue = zoomFactor;
+    final var oldValue = zoomFactor;
     if (value != oldValue) {
       zoomFactor = value;
       support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);

@@ -91,24 +91,24 @@ public class InstancePainter implements InstanceState {
     context.drawRectangle(x, y, width, height, label);
   }
 
+  @Override
   public void fireInvalidated() {
     comp.fireInvalidated();
   }
 
+  @Override
   public AttributeSet getAttributeSet() {
-    InstanceComponent c = comp;
-    return c == null ? attrs : c.getAttributeSet();
+    return comp == null ? attrs : comp.getAttributeSet();
   }
 
+  @Override
   public <E> E getAttributeValue(Attribute<E> attr) {
-    InstanceComponent c = comp;
-    AttributeSet as = c == null ? attrs : c.getAttributeSet();
+    final var as = (comp == null) ? attrs : comp.getAttributeSet();
     return as.getValue(attr);
   }
 
   public Bounds getBounds() {
-    InstanceComponent c = comp;
-    return c == null ? factory.getOffsetBounds(attrs) : c.getBounds();
+    return comp == null ? factory.getOffsetBounds(attrs) : comp.getBounds();
   }
 
   public Circuit getCircuit() {
@@ -120,14 +120,13 @@ public class InstancePainter implements InstanceState {
    *
    * @pre it assumes that your circuit was instantiate before.
    */
+  @Override
   public InstanceData getData() {
-    CircuitState circState = context.getCircuitState();
+    final var circState = context.getCircuitState();
     if (circState == null || comp == null) {
       throw new UnsupportedOperationException("setData on InstancePainter");
-    } else {
-
-      return (InstanceData) circState.getData(comp);
     }
+    return (InstanceData) circState.getData(comp);
   }
 
   public CircuitState getCircuitState() {
@@ -138,6 +137,7 @@ public class InstancePainter implements InstanceState {
     return context.getDestination();
   }
 
+  @Override
   public InstanceFactory getFactory() {
     return comp == null ? factory : (InstanceFactory) comp.getFactory();
   }
@@ -160,43 +160,39 @@ public class InstancePainter implements InstanceState {
   //
   // methods related to the instance
   //
+  @Override
   public Instance getInstance() {
-    InstanceComponent c = comp;
-    return c == null ? null : c.getInstance();
+    return comp == null ? null : comp.getInstance();
   }
 
   public Location getLocation() {
-    InstanceComponent c = comp;
-    return c == null ? Location.create(0, 0) : c.getLocation();
+    return comp == null ? Location.create(0, 0) : comp.getLocation();
   }
 
   public Bounds getOffsetBounds() {
-    InstanceComponent c = comp;
-    if (c == null) {
-      return factory.getOffsetBounds(attrs);
-    } else {
-      Location loc = c.getLocation();
-      return c.getBounds().translate(-loc.getX(), -loc.getY());
-    }
+    if (comp == null) return factory.getOffsetBounds(attrs);
+
+    final var loc = comp.getLocation();
+    return comp.getBounds().translate(-loc.getX(), -loc.getY());
   }
 
+  @Override
   public int getPortIndex(Port port) {
     return this.getInstance().getPorts().indexOf(port);
   }
 
+  @Override
   public Value getPortValue(int portIndex) {
-    InstanceComponent c = comp;
-    CircuitState s = context.getCircuitState();
-    if (c != null && s != null) {
-      return s.getValue(c.getEnd(portIndex).getLocation());
-    } else {
-      return Value.UNKNOWN;
-    }
+    final var s = context.getCircuitState();
+    return (comp != null && s != null)
+        ? s.getValue(comp.getEnd(portIndex).getLocation())
+        : Value.UNKNOWN;
   }
 
   //
   // methods related to the circuit state
   //
+  @Override
   public Project getProject() {
     return context.getCircuitState().getProject();
   }
@@ -205,31 +201,33 @@ public class InstancePainter implements InstanceState {
     return context.getShowState();
   }
 
+  @Override
   public int getTickCount() {
     return context.getCircuitState().getPropagator().getTickCount();
   }
 
+  @Override
   public boolean isCircuitRoot() {
     return !context.getCircuitState().isSubstate();
   }
 
+  @Override
   public boolean isPortConnected(int index) {
-    Circuit circ = context.getCircuit();
-    Location loc = comp.getEnd(index).getLocation();
-    return circ.isConnected(loc, comp);
+    final var loc = comp.getEnd(index).getLocation();
+    return context.getCircuit().isConnected(loc, comp);
   }
 
   public boolean isPrintView() {
     return context.isPrintView();
   }
 
+  @Override
   public void setData(InstanceData value) {
-    CircuitState circState = context.getCircuitState();
+    final var circState = context.getCircuitState();
     if (circState == null || comp == null) {
       throw new UnsupportedOperationException("setData on InstancePainter");
-    } else {
-      circState.setData(comp, value);
     }
+    circState.setData(comp, value);
   }
 
   void setFactory(InstanceFactory factory, AttributeSet attrs) {
@@ -242,6 +240,7 @@ public class InstancePainter implements InstanceState {
     this.comp = value;
   }
 
+  @Override
   public void setPort(int portIndex, Value value, int delay) {
     throw new UnsupportedOperationException("setValue on InstancePainter");
   }

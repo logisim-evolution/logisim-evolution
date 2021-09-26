@@ -57,13 +57,13 @@ class SelectionAction extends Action {
 
   @Override
   public void doIt(Project proj) {
-    Selection sel = canvas.getSelection();
+    final var sel = canvas.getSelection();
     sel.clearSelected();
     if (toRemove != null) canvasModel.removeObjects(toRemove.keySet());
     int dest = AppearanceCanvas.getMaxIndex(canvasModel) + 1;
     if (toAdd != null) canvasModel.addObjects(dest, toAdd);
 
-    AppearanceAnchor anchor = findAnchor(canvasModel);
+    final var anchor = findAnchor(canvasModel);
     if (anchor != null && anchorNewLocation != null) {
       anchorOldLocation = anchor.getLocation();
       anchor.translate(
@@ -79,10 +79,8 @@ class SelectionAction extends Action {
   }
 
   private AppearanceAnchor findAnchor(CanvasModel canvasModel) {
-    for (Object o : canvasModel.getObjectsFromTop()) {
-      if (o instanceof AppearanceAnchor) {
-        return (AppearanceAnchor) o;
-      }
+    for (final Object obj : canvasModel.getObjectsFromTop()) {
+      if (obj instanceof AppearanceAnchor) return (AppearanceAnchor) obj;
     }
     return null;
   }
@@ -94,7 +92,7 @@ class SelectionAction extends Action {
 
   @Override
   public void undo(Project proj) {
-    AppearanceAnchor anchor = findAnchor(canvasModel);
+    final var anchor = findAnchor(canvasModel);
     if (anchor != null && anchorOldLocation != null) {
       anchor.translate(
           anchorOldLocation.getX() - anchorNewLocation.getX(),
@@ -103,7 +101,7 @@ class SelectionAction extends Action {
     if (anchor != null && anchorOldFacing != null) {
       anchor.setValue(AppearanceAnchor.FACING, anchorOldFacing);
     }
-    Selection sel = canvas.getSelection();
+    final var sel = canvas.getSelection();
     sel.clearSelected();
     if (toAdd != null) canvasModel.removeObjects(toAdd);
     if (toRemove != null) canvasModel.addObjects(toRemove);

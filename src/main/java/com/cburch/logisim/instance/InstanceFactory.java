@@ -29,7 +29,6 @@ import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.UnmodifiableList;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.util.Collections;
 import java.util.List;
 import javax.swing.Icon;
@@ -67,29 +66,29 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   }
 
   public InstanceFactory(String name, HDLGeneratorFactory generator) {
-    this(name, StringUtil.constantGetter(name), generator, false, false);  
+    this(name, StringUtil.constantGetter(name), generator, false, false);
   }
-  
+
   public InstanceFactory(String name, HDLGeneratorFactory generator, boolean requiresGlobalClock) {
-    this(name, StringUtil.constantGetter(name), generator, requiresGlobalClock, false);  
+    this(name, StringUtil.constantGetter(name), generator, requiresGlobalClock, false);
   }
   public InstanceFactory(String name, HDLGeneratorFactory generator, boolean requiresLabel, boolean requiresGlobalClock) {
-    this(name, StringUtil.constantGetter(name), generator, requiresGlobalClock, requiresGlobalClock);  
+    this(name, StringUtil.constantGetter(name), generator, requiresGlobalClock, requiresGlobalClock);
   }
-  
+
   public InstanceFactory(String name, StringGetter displayName) {
     this(name, displayName, null, false, false);
   }
 
   public InstanceFactory(String name, StringGetter displayName, HDLGeneratorFactory generator) {
-    this(name, displayName, generator, false, false);  
+    this(name, displayName, generator, false, false);
   }
-  
+
   public InstanceFactory(String name, StringGetter displayName, HDLGeneratorFactory generator, boolean requiresGlobalClock) {
-    this(name, displayName, generator, requiresGlobalClock, false);  
+    this(name, displayName, generator, requiresGlobalClock, false);
   }
-  
-  public InstanceFactory(String name, StringGetter displayName, HDLGeneratorFactory generator, 
+
+  public InstanceFactory(String name, StringGetter displayName, HDLGeneratorFactory generator,
       boolean requiresLabel, boolean requiresGlobalClock) {
     super(generator, requiresLabel, requiresGlobalClock);
     this.name = name;
@@ -123,13 +122,13 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 
   @Override
   public AttributeSet createAttributeSet() {
-    Attribute<?>[] as = attrs;
+    final var as = attrs;
     return as == null ? AttributeSets.EMPTY : AttributeSets.fixedSet(as, defaults);
   }
 
   @Override
   public Component createComponent(Location loc, AttributeSet attrs) {
-    InstanceComponent ret = new InstanceComponent(this, loc, attrs);
+    final var ret = new InstanceComponent(this, loc, attrs);
     configureNewInstance(ret.getInstance());
     return ret;
   }
@@ -144,13 +143,13 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 
   @Override
   public final void drawGhost(ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs) {
-    InstancePainter painter = context.getInstancePainter();
-    Graphics g = painter.getGraphics();
-    g.setColor(color);
-    g.translate(x, y);
+    final var painter = context.getInstancePainter();
+    final var gfx = painter.getGraphics();
+    gfx.setColor(color);
+    gfx.translate(x, y);
     painter.setFactory(this, attrs);
     paintGhost(painter);
-    g.translate(-x, -y);
+    gfx.translate(-x, -y);
     if (painter.getFactory() == null) {
       super.drawGhost(context, color, x, y, attrs);
     }
@@ -158,16 +157,16 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    Attribute<?>[] as = attrs;
+    final var as = attrs;
     if (as != null) {
-      for (int i = 0; i < as.length; i++) {
+      for (var i = 0; i < as.length; i++) {
         if (as[i] == attr) {
           return defaults[i];
         }
       }
       return null;
     } else {
-      AttributeSet dfltSet = defaultSet;
+      var dfltSet = defaultSet;
       if (dfltSet == null) {
         dfltSet = createAttributeSet();
         defaultSet = dfltSet;
@@ -230,12 +229,8 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    Bounds ret = bounds;
-    if (ret == null) {
-      throw new RuntimeException(
-          "offset bounds unknown: " + "use setOffsetBounds or override getOffsetBounds");
-    }
-    return ret;
+    if (bounds != null) return bounds;
+    throw new RuntimeException("offset bounds unknown: use setOffsetBounds() or override getOffsetBounds()");
   }
 
   public List<Port> getPorts() {
@@ -247,7 +242,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   }
 
   private boolean isClassOk(Class<?> sub, Class<?> sup) {
-    boolean isSub = sup.isAssignableFrom(sub);
+    final var isSub = sup.isAssignableFrom(sub);
     if (!isSub) {
       logger.error("{}  must be a subclass of {}", sub.getName(), sup.getName());
       return false;
@@ -269,17 +264,17 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
 
   @Override
   public final void paintIcon(ComponentDrawContext context, int x, int y, AttributeSet attrs) {
-    InstancePainter painter = context.getInstancePainter();
+    final var painter = context.getInstancePainter();
     painter.setFactory(this, attrs);
-    Graphics g = painter.getGraphics();
-    g.translate(x, y);
+    final var gfx = painter.getGraphics();
+    gfx.translate(x, y);
     paintIcon(painter);
-    g.translate(-x, -y);
+    gfx.translate(-x, -y);
 
     if (painter.getFactory() == null) {
-      Icon i = icon;
+      var i = icon;
       if (i == null) {
-        String n = iconName;
+        var n = iconName;
         if (n != null) {
           i = Icons.getIcon(n);
           if (i == null) {
@@ -288,7 +283,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
         }
       }
       if (i != null) {
-        i.paintIcon(context.getDestination(), g, x + 2, y + 2);
+        i.paintIcon(context.getDestination(), gfx, x + 2, y + 2);
       } else {
         super.paintIcon(context, x, y, attrs);
       }
