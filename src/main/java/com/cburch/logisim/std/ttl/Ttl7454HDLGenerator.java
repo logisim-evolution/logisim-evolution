@@ -34,7 +34,7 @@ public class Ttl7454HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = new ArrayList<String>();
     contents.add("   " + HDL.assignPreamble() + "Y" + HDL.assignOperator() + HDL.notOperator()
             + "((A" + HDL.andOperator() + "B)" + HDL.orOperator() + "(C" + HDL.andOperator() + "D)" + HDL.orOperator()
@@ -43,7 +43,7 @@ public class Ttl7454HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
     return (!attrs.getValue(TtlLibrary.VCC_GND));

@@ -28,6 +28,6 @@ public class Ttl74377 extends AbstractOctalFlops {
           "Q7", "D7", "D8", "Q8"
         },
         new AbstractOctalFlopsHDLGenerator(true));
-    super.SetWe(true);
+    super.setWe(true);
   }
 }

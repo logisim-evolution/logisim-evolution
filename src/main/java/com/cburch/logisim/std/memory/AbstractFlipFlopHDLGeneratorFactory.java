@@ -29,7 +29,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
   private static final String INVERT_CLOCK_STRING = "InvertClockEnable";
   private static final int INVERT_CLOCK_ID = -1;
   private final int nrOfInputs;
-  
+
   public static final Map<AttributeOption, Integer> TRIGGER_MAP = new HashMap<>() {{
         put(StdAttr.TRIG_HIGH, 0);
         put(StdAttr.TRIG_LOW, 1);
@@ -55,7 +55,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
     contents
         .pair("invertClock", INVERT_CLOCK_STRING)
@@ -66,7 +66,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
                  {{assign}}Q       {{=}}s_current_state_reg;
                  {{assign}}Q_bar   {{=}}{{not}}(s_current_state_reg);
              """)
-        .add(HDL.isVHDL() 
+        .add(HDL.isVHDL()
             ? "   s_clock {{=}} {{Clock}} WHEN {{invertClock}} = 0 ELSE NOT({{Clock}});"
             : "   assign s_clock {{=}} ({{invertClock}} == 0) ? {{Clock}} : ~{{Clock}};")
         .addRemarkBlock("Here the update logic is defined")

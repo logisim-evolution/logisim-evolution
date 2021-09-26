@@ -47,7 +47,7 @@ public class Ttl7485HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer();
     return contents
         .add("""
@@ -73,7 +73,7 @@ public class Ttl7485HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
     return (!attrs.getValue(TtlLibrary.VCC_GND) && HDL.isVHDL());

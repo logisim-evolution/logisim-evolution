@@ -41,7 +41,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
     final var tt = attrs.getValue(PLA.ATTR_TABLE);
     final var outSz = attrs.getValue(PLA.ATTR_OUT_WIDTH).getWidth();
@@ -64,7 +64,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
     return HDL.isVHDL();
   }
 }

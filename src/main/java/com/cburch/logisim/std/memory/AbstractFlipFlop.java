@@ -131,7 +131,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
   private final Attribute<AttributeOption> triggerAttribute;
 
-  protected AbstractFlipFlop(String name, String iconName, StringGetter desc, int numInputs, 
+  protected AbstractFlipFlop(String name, String iconName, StringGetter desc, int numInputs,
       boolean allowLevelTriggers, HDLGeneratorFactory generator) {
     super(name, desc, generator);
     this.numInputs = numInputs;
@@ -411,12 +411,12 @@ abstract class AbstractFlipFlop extends InstanceFactory {
   }
 
   @Override
-  public boolean CheckForGatedClocks(NetlistComponent comp) {
+  public boolean checkForGatedClocks(NetlistComponent comp) {
     return Netlist.isFlipFlop(comp.getComponent().getAttributeSet());
   }
 
   @Override
-  public int[] ClockPinIndex(NetlistComponent comp) {
+  public int[] clockPinIndex(NetlistComponent comp) {
     return new int[] {numInputs};
   }
 

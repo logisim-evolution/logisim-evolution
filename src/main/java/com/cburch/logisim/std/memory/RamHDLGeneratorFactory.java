@@ -93,7 +93,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer()
         .pair("clock", HDLPorts.getClockName(1))
         .pair("tick", HDLPorts.getTickName(1));
@@ -228,7 +228,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
     if (attrs == null) return false;
     Object busVal = attrs.getValue(RamAttributes.ATTR_DBUS);
     final var separate = busVal != null && busVal.equals(RamAttributes.BUS_SEP);

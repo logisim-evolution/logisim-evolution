@@ -25,7 +25,7 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int NR_OF_BITS_ID = -1;
   private static final String EXTENDED_BITS_STRING = "ExtendedBits";
   private static final int EXTENDED_BITS_ID = -2;
-  
+
   public AdderHDLGeneratorFactory() {
     super();
     myParametersList
@@ -44,7 +44,7 @@ public class AdderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents = LineBuffer.getBuffer();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {

@@ -56,7 +56,7 @@ public class InlinedHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
     return true;
   }
 

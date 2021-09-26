@@ -80,7 +80,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var contents =
         LineBuffer.getBuffer()
             .pair("nrOfLeds", NR_OF_LEDS_STRING)

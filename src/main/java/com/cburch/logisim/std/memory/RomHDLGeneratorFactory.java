@@ -40,7 +40,7 @@ public class RomHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
   }
 
   @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
     if (attrs == null) return false;
     if (attrs.getValue(Mem.LINE_ATTR) == null) return false;
     return attrs.getValue(Mem.LINE_ATTR).equals(Mem.SINGLE);

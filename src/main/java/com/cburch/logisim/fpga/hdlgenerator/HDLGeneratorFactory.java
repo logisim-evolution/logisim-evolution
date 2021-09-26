@@ -64,7 +64,7 @@ public interface HDLGeneratorFactory {
 
   String getRelativeDirectory();
 
-  boolean isHDLSupportedTarget(AttributeSet attrs);
+  boolean isHdlSupportedTarget(AttributeSet attrs);
 
   boolean isOnlyInlined();
 }

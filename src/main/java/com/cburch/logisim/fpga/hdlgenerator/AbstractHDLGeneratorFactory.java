@@ -153,7 +153,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       }
       contents.add("")
           .add("BEGIN")
-          .add(GetModuleFunctionality(theNetlist, attrs))
+          .add(getModuleFunctionality(theNetlist, attrs))
           .add("END PlatformIndependent;");
     } else {
       final var Preamble = String.format("module %s( ", componentName);
@@ -386,7 +386,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       if (!firstline) {
         contents.empty();
       }
-      contents.add(GetModuleFunctionality(theNetlist, attrs)).empty().add("endmodule");
+      contents.add(getModuleFunctionality(theNetlist, attrs)).empty().add("endmodule");
     }
     return contents.get();
   }
@@ -594,7 +594,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     throw new IllegalAccessError("BUG: Inline code not supported");
   }
 
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     /*
      * In this method the functionality of the black-box is described. It is
      * used for both VHDL and VERILOG.
@@ -1001,7 +1001,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
     return true;
   }
 

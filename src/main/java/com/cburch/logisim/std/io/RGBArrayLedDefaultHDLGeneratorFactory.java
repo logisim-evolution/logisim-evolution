@@ -21,7 +21,7 @@ import com.cburch.logisim.instance.Port;
 public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDLGeneratorFactory {
 
   public static final String HDL_IDENTIFIER = "RGBArrayLedDefault";
-  
+
   public RGBArrayLedDefaultHDLGeneratorFactory() {
     super();
     myPorts.removePorts(); // remove the ports from the super class
@@ -74,7 +74,7 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = new LineBuffer(sharedPairs);
 
     if (HDL.isVHDL()) {

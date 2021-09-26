@@ -56,7 +56,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     return LineBuffer.getBuffer()
         .pair("CLK", HDLPorts.CLOCK)
         .pair("tick", HDLPorts.TICK)
@@ -83,7 +83,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHDLGeneratorFactory 
   }
 
   @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
     return (!attrs.getValue(TtlLibrary.VCC_GND) && (HDL.isVHDL()));

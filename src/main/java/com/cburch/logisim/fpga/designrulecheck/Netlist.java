@@ -2079,8 +2079,8 @@ public class Netlist {
     final var nonPinGatedComponents = new ArrayList<Set<NetlistComponent>>();
     for (final var comp : myComponents) {
       final var fact = comp.getComponent().getFactory();
-      if (fact.CheckForGatedClocks(comp)) {
-        final var clockPins = fact.ClockPinIndex(comp);
+      if (fact.checkForGatedClocks(comp)) {
+        final var clockPins = fact.clockPinIndex(comp);
         for (final var clockPin : clockPins)
           gatedClock |=
               hasGatedClock(

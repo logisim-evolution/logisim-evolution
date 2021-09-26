@@ -42,7 +42,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     MyCircuit = source;
     getWiresPortsDuringHDLWriting = true;
   }
-  
+
   @Override
   public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
     final var inOutBubbles = theNetlist.numberOfInOutBubbles();
@@ -56,7 +56,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     for (final var wire : theNetlist.getAllNets())
       if (wire.isBus() && wire.isRootNet())
         myWires.addWire(String.format("%s%d", BUS_NAME, theNetlist.getNetId(wire)), wire.getBitWidth());
-    if (inOutBubbles > 0) 
+    if (inOutBubbles > 0)
       myPorts.add(Port.INOUT, LOCAL_INOUT_BUBBLE_BUS_NAME, inOutBubbles > 1 ? inOutBubbles : 0, 0);
     for (var clock = 0; clock < theNetlist.numberOfClockTrees(); clock++)
       myPorts.add(Port.INPUT, String.format("%s%d", CLOCK_TREE_NAME, clock), ClockHDLGeneratorFactory.NR_OF_CLOCK_BITS, 0);
@@ -321,7 +321,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
     var isFirstLine = true;
     final var temp = new StringBuilder();

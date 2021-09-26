@@ -39,14 +39,14 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     myPorts
         .add(Port.INPUT, "Sel", nrOfSelectBits, selectInputIndex)
         .add(Port.OUTPUT, "MuxOut", NR_OF_BITS_ID, hasEnable ? selectInputIndex + 2 : selectInputIndex + 1, StdAttr.WIDTH);
-    if (hasEnable) 
+    if (hasEnable)
       myPorts.add(Port.INPUT, "Enable", 1, selectInputIndex + 1);
     else
       myPorts.add(Port.INPUT, "Enable", 1, HDL.oneBit());
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer();
     int nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     if (HDL.isVHDL()) {

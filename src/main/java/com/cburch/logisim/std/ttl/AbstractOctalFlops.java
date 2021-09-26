@@ -81,7 +81,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
     }
   }
 
-  public void SetWe(boolean haswe) {
+  public void setWe(boolean haswe) {
     HasWe = haswe;
   }
 
@@ -222,8 +222,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
         g.setColor(state.getValue().get(i).getColor());
         g.fillOval(x - 44, y + 91 + i * 10, 8, 8);
         g.setColor(Color.WHITE);
-        GraphicsUtil.drawCenteredText(
-            g, state.getValue().get(i).toDisplayString(), x - 41, y + 94 + i * 10);
+        GraphicsUtil.drawCenteredText(g, state.getValue().get(i).toDisplayString(), x - 41, y + 94 + i * 10);
       }
       g.rotate(-Math.PI / 2, x, y);
       g.setColor(Color.BLACK);
@@ -231,12 +230,12 @@ public class AbstractOctalFlops extends AbstractTtlGate {
   }
 
   @Override
-  public boolean CheckForGatedClocks(NetlistComponent comp) {
+  public boolean checkForGatedClocks(NetlistComponent comp) {
     return true;
   }
 
   @Override
-  public int[] ClockPinIndex(NetlistComponent comp) {
+  public int[] clockPinIndex(NetlistComponent comp) {
     return new int[] {9};
   }
 
