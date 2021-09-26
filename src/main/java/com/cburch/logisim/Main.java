@@ -33,7 +33,7 @@ public class Main {
    * @param args Optional arguments.
    */
   public static void main(String[] args) {
-    System.setProperty("apple.awt.application.name", APP_NAME);
+    System.setProperty("apple.awt.application.name", BuildInfo.name);
     try {
       if (!GraphicsEnvironment.isHeadless()) {
         FlatLightLaf.installLafInfo();
@@ -78,7 +78,6 @@ public class Main {
   public static final String JVM_VENDOR = System.getProperty("java.vendor");
 
   public static boolean headless = false;
-  public static final boolean RUNNING_ON_MAC = MacCompatibility.isRunningOnMac();
 
   // FloppyDisk unicode character: https://charbase.com/1f4be-unicode-floppy-disk
   public static final String DIRTY_MARKER = "\ud83d\udcbe";

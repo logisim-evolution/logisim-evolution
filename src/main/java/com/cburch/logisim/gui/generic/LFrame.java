@@ -12,6 +12,7 @@ package com.cburch.logisim.gui.generic;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.util.MacCompatibility;
 import com.cburch.logisim.util.WindowClosable;
 import java.awt.Image;
 import java.awt.Window;
@@ -87,7 +88,7 @@ public class LFrame extends JFrame implements WindowClosable {
     if (type == MAIN_WINDOW) {
       menubar = new LogisimMenuBar(this, p, p, p);
       setJMenuBar(menubar);
-    } else if (type == SUB_WINDOW || Main.RUNNING_ON_MAC) {
+    } else if (type == SUB_WINDOW || MacCompatibility.isRunningOnMac()) {
       // use null project so there will be no Close, Save, etc.
       menubar = new LogisimMenuBar(this, null, p, enableSim ? p : null);
       setJMenuBar(menubar);
