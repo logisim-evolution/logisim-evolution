@@ -48,11 +48,11 @@ public class Comparator extends InstanceFactory {
           S.getter("comparatorType"),
           new AttributeOption[] {SIGNED_OPTION, UNSIGNED_OPTION});
 
-  private static final int IN0 = 0;
-  private static final int IN1 = 1;
-  private static final int GT = 2;
-  private static final int EQ = 3;
-  private static final int LT = 4;
+  public static final int IN0 = 0;
+  public static final int IN1 = 1;
+  public static final int GT = 2;
+  public static final int EQ = 3;
+  public static final int LT = 4;
 
   public Comparator() {
     super(_ID, S.getter("comparatorComponent"), new ComparatorHDLGeneratorFactory());

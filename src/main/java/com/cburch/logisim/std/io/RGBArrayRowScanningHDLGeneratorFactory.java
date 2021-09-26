@@ -13,10 +13,9 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningHDLGeneratorFactory {
 
@@ -28,6 +27,16 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
         .addWire("s_maxRedLedInputs", MAX_NR_LEDS_ID)
         .addWire("s_maxBlueLedInputs", MAX_NR_LEDS_ID)
         .addWire("s_maxGreenLedInputs", MAX_NR_LEDS_ID);
+    myPorts.removePorts(); // remove the ports of the super class
+    myPorts
+        .add(Port.INPUT, TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1, 0)
+        .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, NR_OF_LEDS_ID, 1)
+        .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, NR_OF_LEDS_ID, 2)
+        .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, NR_OF_LEDS_ID, 3)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress, NR_OF_ROW_ADDRESS_BITS_ID, 4)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs, NR_OF_COLUMS_ID, 5)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs, NR_OF_COLUMS_ID, 6)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs, NR_OF_COLUMS_ID, 7);
   }
 
   static final LineBuffer.Pairs sharedPairs =
@@ -70,26 +79,6 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
           """);
     }
     return contents.getWithIndent(6);
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress, NR_OF_ROW_ADDRESS_BITS_ID);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs, NR_OF_COLUMS_ID);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs, NR_OF_COLUMS_ID);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs, NR_OF_COLUMS_ID);
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var inputs = new TreeMap<String, Integer>();
-    inputs.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, NR_OF_LEDS_ID);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, NR_OF_LEDS_ID);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, NR_OF_LEDS_ID);
-    return inputs;
   }
 
   @Override

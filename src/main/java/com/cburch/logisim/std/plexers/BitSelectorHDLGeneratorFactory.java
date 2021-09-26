@@ -9,16 +9,15 @@
 
 package com.cburch.logisim.std.plexers;
 
+import java.util.ArrayList;
+
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -40,14 +39,10 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
         .addBusOnly(BitSelector.GROUP_ATTR, OUTPUTS_BITS_STRING, OUTPUT_BITS_ID);
     myWires
         .addWire("s_extended_vector", EXTENDED_BITS_ID);
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist theNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("DataIn", INPUT_BITS_ID);
-    map.put("Sel", SELECT_BITS_ID);
-    return map;
+    myPorts
+        .add(Port.INPUT, "DataIn", INPUT_BITS_ID, 1)
+        .add(Port.INPUT, "Sel", SELECT_BITS_ID, 2)
+        .add(Port.OUTPUT, "DataOut", OUTPUT_BITS_ID, 0, BitSelector.GROUP_ATTR);
   }
 
   @Override
@@ -98,24 +93,5 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
       }
     }
     return contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist theNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    int outputBits = (attrs.getValue(BitSelector.GROUP_ATTR).getWidth() == 1) ? 1 : OUTPUT_BITS_ID;
-    map.put("DataOut", outputBits);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    final var map = new TreeMap<String, String>();
-    if (!(mapInfo instanceof NetlistComponent)) return map;
-    final var comp = (NetlistComponent) mapInfo;
-    map.putAll(GetNetMap("DataIn", true, comp, 1, nets));
-    map.putAll(GetNetMap("Sel", true, comp, 2, nets));
-    map.putAll(GetNetMap("DataOut", true, comp, 0, nets));
-    return map;
   }
 }

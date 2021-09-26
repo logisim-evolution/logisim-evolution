@@ -11,14 +11,12 @@ package com.cburch.logisim.std.arith;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -39,15 +37,12 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .addWire("s_mult_result", CALC_BITS_ID)
         .addWire("s_extended_Cin", CALC_BITS_ID)
         .addWire("s_new_result", CALC_BITS_ID);
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var inputs = new TreeMap<String, Integer>();
-    inputs.put("INP_A", NR_OF_BITS_ID);
-    inputs.put("INP_B", NR_OF_BITS_ID);
-    inputs.put("Cin", NR_OF_BITS_ID);
-    return inputs;
+    myPorts
+        .add(Port.INPUT, "INP_A", NR_OF_BITS_ID, Multiplier.IN0)
+        .add(Port.INPUT, "INP_B", NR_OF_BITS_ID, Multiplier.IN1)
+        .add(Port.INPUT, "Cin", NR_OF_BITS_ID, Multiplier.C_IN)
+        .add(Port.OUTPUT, "Mult_lo", NR_OF_BITS_ID, Multiplier.OUT)
+        .add(Port.OUTPUT, "Mult_hi", NR_OF_BITS_ID, Multiplier.C_OUT);
   }
 
   @Override
@@ -102,26 +97,5 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           """);
     }
     return Contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    outputs.put("Mult_lo", NR_OF_BITS_ID);
-    outputs.put("Mult_hi", NR_OF_BITS_ID);
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    final var portMap = new TreeMap<String, String>();
-    if (!(MapInfo instanceof NetlistComponent)) return portMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    portMap.putAll(GetNetMap("INP_A", true, ComponentInfo, Multiplier.IN0, Nets));
-    portMap.putAll(GetNetMap("INP_B", true, ComponentInfo, Multiplier.IN1, Nets));
-    portMap.putAll(GetNetMap("Cin", true, ComponentInfo, Multiplier.C_IN, Nets));
-    portMap.putAll(GetNetMap("Mult_lo", true, ComponentInfo, Multiplier.OUT, Nets));
-    portMap.putAll(GetNetMap("Mult_hi", true, ComponentInfo, Multiplier.C_OUT, Nets));
-    return portMap;
   }
 }

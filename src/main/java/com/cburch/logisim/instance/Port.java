@@ -46,6 +46,7 @@ public class Port {
   public static final String INOUT = "inout";
   public static final String EXCLUSIVE = "exclusive";
   public static final String SHARED = "shared";
+  public static final String CLOCK = "clock"; // used for HDL-generation
   private final int dx;
   private final int dy;
   private final int type;

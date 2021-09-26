@@ -11,17 +11,28 @@ package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
+import com.cburch.logisim.instance.Port;
 
 public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDLGeneratorFactory {
 
   public static final String HDL_IDENTIFIER = "RGBArrayLedDefault";
+  
+  public RGBArrayLedDefaultHDLGeneratorFactory() {
+    super();
+    myPorts.removePorts(); // remove the ports from the super class
+    myPorts
+        .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, NR_OF_LEDS_ID, 0)
+        .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, NR_OF_LEDS_ID, 1)
+        .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, NR_OF_LEDS_ID, 2)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs, NR_OF_LEDS_ID, 3)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs, NR_OF_LEDS_ID, 4)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs, NR_OF_LEDS_ID, 5);
+  }
 
   private static final LineBuffer.Pairs sharedPairs =
       new LineBuffer.Pairs() {
@@ -60,24 +71,6 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
           """);
     }
     return contents.getWithIndent(6);
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedOutputs, NR_OF_LEDS_ID);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenOutputs, NR_OF_LEDS_ID);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueOutputs, NR_OF_LEDS_ID);
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var inputs = new TreeMap<String, Integer>();
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, NR_OF_LEDS_ID);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, NR_OF_LEDS_ID);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, NR_OF_LEDS_ID);
-    return inputs;
   }
 
   @Override
