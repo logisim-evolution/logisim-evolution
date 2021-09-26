@@ -17,8 +17,6 @@ one must have all the used fonts installed on the build machine. Otherwise, your
 the fonts using available ones, which yields an incorrect image. Alternatively, you can either render
 your image to a bitmap (PNG image format is recommended, due to its lossless compression and transparency support)
 or convert all texts to paths (in [Inkscape](https://inkscape.org/): "Object" menu -> "Object to Path").
-However, this will make the SVG file bigger (see logisim-evolution-logo.svg, which is exactly such
-a font-less version)."
 
 ## In-app logo ##
 
