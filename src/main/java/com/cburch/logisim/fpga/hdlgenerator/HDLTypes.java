@@ -21,7 +21,7 @@ public class HDLTypes {
     public String getTypeName();
   }
 
-  private class HDLEnum implements HDLType{
+  private class HDLEnum implements HDLType {
     private final List<String> myEntries = new ArrayList<>();
     private final String myTypeName;
 
