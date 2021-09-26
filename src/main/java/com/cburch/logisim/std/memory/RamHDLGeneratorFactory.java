@@ -18,10 +18,6 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.SortedSet;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -47,6 +43,8 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var nrOfAddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
     final var trigger = attrs.getValue(StdAttr.TRIGGER);
     final var async = StdAttr.TRIG_HIGH.equals(trigger) || StdAttr.TRIG_LOW.equals(trigger);
+    final var ramEntries = (1 << nrOfAddressLines);
+    final var truncated = (nrOfBits % 8) != 0;
     myWires
         .addWire("s_ram_data_out", nrOfBits)
         .addRegister("s_TickDelayLine", 3)
@@ -65,7 +63,22 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         myPorts
             .add(Port.INPUT, String.format("ByteEnable%d", idx), 1, byteEnableOffset + nrBePorts - idx - 1);
       }
+      var nrOfMems = nrBePorts;
+      if (truncated) {
+        myTypedWires
+            .addArray(RestArrayId, RestArrayStr, nrOfBits % 8, ramEntries)
+            .addWire("s_trunc_mem_contents", RestArrayId);
+        nrOfMems--;
+      }
+      myTypedWires
+          .addArray(ByteArrayId, ByteArrayStr, 8, ramEntries);
+      for (var mem = 0; mem < nrOfMems; mem++)
+        myTypedWires
+            .addWire(String.format("s_byte_mem_%d_contents", mem), ByteArrayId);
     } else {
+      myTypedWires
+          .addArray(MemArrayId, MemArrayStr, nrOfBits, ramEntries)
+          .addWire("s_mem_contents", MemArrayId);
       myWires
           .addWire("s_we", 1)
           .addWire("s_oe", 1);
@@ -77,30 +90,6 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .add(Port.INPUT, "OE", 1, RamAppearance.getOEIndex(0, attrs))
         .add(Port.OUTPUT, "DataOut", nrOfBits, RamAppearance.getDataOutIndex(0, attrs));
     if (!async) myPorts.add(Port.CLOCK, HDLPorts.getClockName(1), 1, ByteArrayId);
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetMemList(AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    if (HDL.isVHDL()) {
-      Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-      final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-      int nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
-      if (byteEnables) {
-        final var truncated = (nrOfBits % 8) != 0;
-        var nrOfByteEnables = RamAppearance.getNrBEPorts(attrs);
-        if (truncated) {
-          nrOfByteEnables--;
-          map.put("s_trunc_mem_contents", RestArrayId);
-        }
-        for (int i = 0; i < nrOfByteEnables; i++) {
-          map.put("s_byte_mem_" + i + "_contents", ByteArrayId);
-        }
-      } else {
-        map.put("s_mem_contents", MemArrayId);
-      }
-    }
-    return map;
   }
 
   @Override
@@ -236,67 +225,6 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     }
     return contents.getWithIndent();
-  }
-
-  @Override
-  public int GetNrOfTypes(Netlist nets, AttributeSet attrs) {
-    Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-    final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-    final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
-    return (byteEnables) ? ((nrOfBits % 8) == 0) ? 1 : 2 : 1;
-  }
-
-  @Override
-  public String GetType(int TypeNr) {
-    switch (TypeNr) {
-      case MemArrayId:
-        return MemArrayStr;
-      case ByteArrayId:
-        return ByteArrayStr;
-      case RestArrayId:
-        return RestArrayStr;
-    }
-    return "";
-  }
-
-  @Override
-  public SortedSet<String> GetTypeDefinitions(Netlist TheNetlist, AttributeSet attrs) {
-    SortedSet<String> myTypes = new TreeSet<>();
-    if (HDL.isVHDL()) {
-      Object be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
-      final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-      final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
-      final var nrOfAddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
-      final var ramEntries = (1 << nrOfAddressLines);
-      if (byteEnables) {
-        myTypes.add(
-            "TYPE "
-                + ByteArrayStr
-                + " IS ARRAY ("
-                + (ramEntries - 1)
-                + " DOWNTO 0) OF std_logic_vector(7 DOWNTO 0)");
-        if ((nrOfBits % 8) != 0) {
-          myTypes.add(
-              "TYPE "
-                  + RestArrayStr
-                  + " IS ARRAY ("
-                  + (ramEntries - 1)
-                  + " DOWNTO 0) OF std_logic_vector("
-                  + ((nrOfBits % 8) - 1)
-                  + " DOWNTO 0)");
-        }
-      } else {
-        myTypes.add(
-            "TYPE "
-                + MemArrayStr
-                + " IS ARRAY ("
-                + (ramEntries - 1)
-                + " DOWNTO 0) OF std_logic_vector("
-                + (nrOfBits - 1)
-                + " DOWNTO 0)");
-      }
-    }
-    return myTypes;
   }
 
   @Override
