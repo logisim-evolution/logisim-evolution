@@ -299,7 +299,7 @@ public class LineBufferTest extends TestBase {
       assertEquals(0, ctor.getParameterCount());
       // FIXME: temporary change!
       // assertTrue(Modifier.isPublic(ctor.getModifiers()));
-      assertTrue(Modifier.isPublic(ctor.getModifiers()));
+      assertFalse(Modifier.isPublic(ctor.getModifiers()));
       found = true;
       break;
     }

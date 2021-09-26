@@ -41,7 +41,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   protected boolean getWiresPortsDuringHDLWriting = false;
 
   public AbstractHDLGeneratorFactory() {
-    final var className = getClass().toString().replace('.', ':').replace(' ', ':'); 
+    final var className = getClass().toString().replace('.', ':').replace(' ', ':');
     final var parts = className.split(":");
     if (parts.length < 2) throw new ExceptionInInitializerError("Cannot read class path!");
     subDirectoryName = parts[parts.length - 2];
@@ -50,7 +50,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   public AbstractHDLGeneratorFactory(String subDirectory) {
     subDirectoryName = subDirectory;
   }
-  
+
   // Handle to get the wires during generation time
   public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {}
 
@@ -210,7 +210,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         Contents.addRemarkBlock("Here all module parameters are defined with a dummy value");
         for (final var param : myParametersList.keySet(attrs)) {
           // For verilog we specify a maximum vector, this seems the best way to do it
-          final var vectorString = (myParametersList.isPresentedByInteger(param, attrs)) ? "" : "[64:0]"; 
+          final var vectorString = (myParametersList.isPresentedByInteger(param, attrs)) ? "" : "[64:0]";
           Contents.add("   parameter {{1}} {{2}} = 1;", vectorString, myParametersList.get(param, attrs));
         }
         Contents.empty();
@@ -383,9 +383,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    var Contents = LineBuffer.getHdlBuffer();
-    if (HDL.isVHDL()) Contents.add(GetVHDLBlackBox(theNetlist, attrs, componentName, false));
-    return Contents.get();
+    var contents = LineBuffer.getHdlBuffer();
+    if (HDL.isVHDL()) contents.add(GetVHDLBlackBox(theNetlist, attrs, componentName, false));
+    return contents.get();
   }
 
   @Override
@@ -395,10 +395,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Object componentInfo,
       String name) {
     final var Contents = new ArrayList<String>();
-    final var parameterMap = new TreeMap<String, String>(); 
+    final var parameterMap = new TreeMap<String, String>();
     final var PortMap = getPortMap(nets, componentInfo);
-    final var componentHDLName = componentInfo instanceof NetlistComponent 
-        ? ((NetlistComponent) componentInfo).getComponent().getFactory().getHDLName(((NetlistComponent) componentInfo).getComponent().getAttributeSet()) : 
+    final var componentHDLName = componentInfo instanceof NetlistComponent
+        ? ((NetlistComponent) componentInfo).getComponent().getFactory().getHDLName(((NetlistComponent) componentInfo).getComponent().getAttributeSet()) :
           name;
     final var CompName = (name != null && !name.isEmpty()) ? name : componentHDLName;
     final var ThisInstanceIdentifier = getInstanceIdentifier(componentInfo, componentId);
@@ -535,17 +535,14 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getEntity(
-      Netlist theNetlist,
-      AttributeSet attrs,
-      String componentName) {
-    var Contents = LineBuffer.getHdlBuffer();
+  public ArrayList<String> getEntity(Netlist theNetlist, AttributeSet attrs, String componentName) {
+    var contents = LineBuffer.getHdlBuffer();
     if (HDL.isVHDL()) {
-      Contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
+      contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
           .add(FileWriter.getExtendedLibrary())
           .add(GetVHDLBlackBox(theNetlist, attrs, componentName, true));
     }
-    return Contents.get();
+    return contents.get();
   }
 
   private String getInstanceIdentifier(Object componentInfo, Long componentId) {
@@ -749,7 +746,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (myPorts.isClock(port)) {
           var gatedClock = false;
           var hasClock = true;
-          var clockAttr = attrs.containsAttribute(StdAttr.EDGE_TRIGGER) 
+          var clockAttr = attrs.containsAttribute(StdAttr.EDGE_TRIGGER)
               ? attrs.getValue(StdAttr.EDGE_TRIGGER) : attrs.getValue(StdAttr.TRIGGER);
           if (clockAttr == null) clockAttr = StdAttr.TRIG_RISING; // default case if no other specified (for TTL library)
           final var activeLow = StdAttr.TRIG_LOW.equals(clockAttr) || StdAttr.TRIG_FALLING.equals(clockAttr);
@@ -863,7 +860,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         } else {
           first = false;
         }
-        final var parameterName = myParametersList.get(generic, attrs); 
+        final var parameterName = myParametersList.get(generic, attrs);
         OneLine.append(parameterName);
         OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - parameterName.length())));
         OneLine.append(myParametersList.isPresentedByInteger(generic, attrs) ? ": INTEGER" : ": std_logic_vector");

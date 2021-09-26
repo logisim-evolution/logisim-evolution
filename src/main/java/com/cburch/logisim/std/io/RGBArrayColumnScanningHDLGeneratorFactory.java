@@ -21,7 +21,7 @@ import com.cburch.logisim.instance.Port;
 public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnScanningHDLGeneratorFactory {
 
   public static final String HDL_IDENTIFIER =  "RGBArrayColumnScanning";
-  
+
   public RGBArrayColumnScanningHDLGeneratorFactory() {
     super();
     myWires
@@ -42,7 +42,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
 
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("addr", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
             .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
             .pair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
@@ -82,7 +82,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("nrOfLeds", NR_OF_LEDS_STRING)
             .pair("nrOfRows", NR_OF_ROWS_STRING)
             .pair("activeLow", ACTIVE_LOW_STRING)

@@ -46,7 +46,7 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    return (new LineBuffer())
+    return LineBuffer.getBuffer()
         .pair("CK", HDLPorts.CLOCK)
         .pair("Tick", HDLPorts.TICK)
         .add("""

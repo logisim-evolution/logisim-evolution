@@ -48,7 +48,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("extBits", EXTENDED_BITS_STRING)
             .pair("inBits", INPUT_BITS_STRING)
             .pair("outBits", OUTPUTS_BITS_STRING);
