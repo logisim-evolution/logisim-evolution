@@ -54,7 +54,7 @@ public class Ttl7432 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     for (byte i = 2; i < 6; i += 3) {
       state.setPort(i, state.getPortValue(i - 1).or(state.getPortValue(i - 2)), 1);
     }

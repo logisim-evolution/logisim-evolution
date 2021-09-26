@@ -45,7 +45,7 @@ public class Ttl7474 extends AbstractTtlGate {
     boolean isPressed = true;
 
     private boolean isInside(InstanceState state, MouseEvent e) {
-      final var p = TTLGetTranslatedXY(state, e);
+      final var p = getTranslatedTtlXY(state, e);
       var dx = p.x - 37;
       var dy = p.y - 35;
       var d2 = dx * dx + dy * dy;
@@ -56,7 +56,7 @@ public class Ttl7474 extends AbstractTtlGate {
     }
 
     private int getIndex(InstanceState state, MouseEvent e) {
-      final var p = TTLGetTranslatedXY(state, e);
+      final var p = getTranslatedTtlXY(state, e);
       final var dx = p.x - 37;
       final var dy = p.y - 35;
       final var d2 = dx * dx + dy * dy;
@@ -101,7 +101,7 @@ public class Ttl7474 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     var data = (TtlRegisterData) state.getData();
     if (data == null) {
       data = new TtlRegisterData(BitWidth.create(2));

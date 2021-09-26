@@ -44,7 +44,7 @@ public class Ttl74175 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     var data = (TtlRegisterData) state.getData();
     if (data == null) {
       // changed = true;

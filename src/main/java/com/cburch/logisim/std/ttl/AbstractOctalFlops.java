@@ -35,7 +35,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
     boolean isPressed = true;
 
     private boolean isInside(InstanceState state, MouseEvent e) {
-      final var p = TTLGetTranslatedXY(state, e);
+      final var p = getTranslatedTtlXY(state, e);
       var inside = false;
       for (var i = 0; i < 8; i++) {
         final var dx = p.x - (95 + i * 10);
@@ -47,7 +47,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
     }
 
     private int getIndex(InstanceState state, MouseEvent e) {
-      final var p = TTLGetTranslatedXY(state, e);
+      final var p = getTranslatedTtlXY(state, e);
       for (var i = 0; i < 8; i++) {
         final var dx = p.x - (95 + i * 10);
         final var dy = p.y - 40;
@@ -165,7 +165,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     var data = (TtlRegisterData) state.getData();
     if (data == null) {
       data = new TtlRegisterData(BitWidth.create(8));

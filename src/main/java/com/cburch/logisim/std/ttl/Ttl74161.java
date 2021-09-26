@@ -79,7 +79,7 @@ public class Ttl74161 extends AbstractTtlGate {
     boolean isPressed = true;
 
     private boolean isInside(InstanceState state, MouseEvent e) {
-      final var p = TTLGetTranslatedXY(state, e);
+      final var p = getTranslatedTtlXY(state, e);
       var inside = false;
       for (var i = 0; i < 4; i++) {
         final var dx = p.x - (56 + i * 10);
@@ -91,7 +91,7 @@ public class Ttl74161 extends AbstractTtlGate {
     }
 
     private int getIndex(InstanceState state, MouseEvent e) {
-      final var p = TTLGetTranslatedXY(state, e);
+      final var p = getTranslatedTtlXY(state, e);
       for (var i = 0; i < 4; i++) {
         int dx = p.x - (56 + i * 10);
         int dy = p.y - 30;
@@ -180,7 +180,7 @@ public class Ttl74161 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     var data = getStateData(state);
     final var triggered = data.updateClock(state.getPortValue(PORT_INDEX_CLK), StdAttr.TRIG_RISING);
     final var nClear = state.getPortValue(PORT_INDEX_nCLR).toLongValue();

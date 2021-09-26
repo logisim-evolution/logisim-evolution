@@ -26,7 +26,7 @@ import java.util.HashSet;
 
 public abstract class AbstractAssembler implements AssemblerInterface {
 
-  private static final int NR_OF_BYTES_PER_LINE = 16;
+  private static final int nrOfBytesPerLine = 16;
   private final ArrayList<AssemblerExecutionInterface> exeUnits = new ArrayList<>();
   private final HashSet<Integer> acceptedParameterTypes;
 
@@ -229,12 +229,12 @@ public abstract class AbstractAssembler implements AssemblerInterface {
         }
       }
       if (!stringFound && !zerosFound) {
-        if (nrBytesWritten <= 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE) {
+        if (nrBytesWritten <= 0 || nrBytesWritten >= nrOfBytesPerLine) {
           StringBuilder label = new StringBuilder();
           while (label.length() < maxLabelSize) label.append(" ");
-          if (nrBytesWritten >= NR_OF_BYTES_PER_LINE)
+          if (nrBytesWritten >= nrOfBytesPerLine)
             newLineNum = addLine(lines, "\n", newLineNum, true);
-          if (nrBytesWritten == 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE)
+          if (nrBytesWritten == 0 || nrBytesWritten >= nrOfBytesPerLine)
             newLineNum = addLine(lines, label.toString(), newLineNum, false);
           newLineNum = addLine(lines, " .byte ", newLineNum, false);
           nrBytesWritten = 0;

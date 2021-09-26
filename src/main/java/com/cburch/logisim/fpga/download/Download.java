@@ -110,8 +110,8 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       boolean writeToFlash,
       boolean DownloadOnly,
       boolean gegerateHdlOnly) {
-    this.MyProject = MyProject;
-    this.MyBoardInformation = MyBoardInformation;
+    this.myProject = MyProject;
+    this.myBoardInformation = MyBoardInformation;
     this.DownloadOnly = DownloadOnly;
     this.HdlOnly = gegerateHdlOnly;
     if (MyBoardInformation == null) {
@@ -202,7 +202,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
 
   @Override
   public void run() {
-    if (PrepareDownLoad() && VendorSoftwarePresent() && !HdlOnly) {
+    if (PrepareDownLoad() && isVendorSoftwarePresent() && !HdlOnly) {
       try {
         var error = download();
         if (error != null) Reporter.Report.AddFatalError(error);
@@ -217,9 +217,9 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
   }
 
   public boolean runtty() {
-    final var root = MyProject.getLogisimFile().getCircuit(TopLevelSheet);
+    final var root = myProject.getLogisimFile().getCircuit(TopLevelSheet);
     if (root != null) {
-      root.Annotate(MyProject, false, false);
+      root.Annotate(myProject, false, false);
     } else {
       Reporter.Report.AddFatalError(
           "Toplevel sheet \"" + TopLevelSheet + "\" not found in project!");
@@ -227,7 +227,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     }
     if (!PrepareDownLoad()) return false;
     if (HdlOnly) return true;
-    if (!VendorSoftwarePresent()) return false;
+    if (!isVendorSoftwarePresent()) return false;
     try {
       var error = download();
       if (error != null) {
@@ -333,7 +333,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     if (!performDRC(TopLevelSheet, AppPreferences.HDL_Type.get())) {
       return false;
     }
-    final var Name = MyProject.getLogisimFile().getName();
+    final var Name = myProject.getLogisimFile().getName();
     if (Name.contains(" ")) {
       Reporter.Report.AddFatalError(S.get("FPGANameContainsSpaces", Name));
       return false;
@@ -343,7 +343,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       MyProgress.setValue(1);
       MyProgress.setString(S.get("FPGAState2"));
     }
-    if (!MapDesign(TopLevelSheet)) {
+    if (!mapDesign(TopLevelSheet)) {
       return false;
     }
     if (UseGui) {
@@ -351,12 +351,12 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       MyProgress.setValue(2);
       MyProgress.setString(S.get("FPGAState3"));
       ComponentMapDialog MapPannel;
-      if (MyProject.getLogisimFile().getLoader().getMainFile() != null) {
+      if (myProject.getLogisimFile().getLoader().getMainFile() != null) {
         MapPannel = new ComponentMapDialog(parent,
-                MyProject.getLogisimFile().getLoader().getMainFile().getAbsolutePath(),
-                MyBoardInformation, myMappableResources);
+                myProject.getLogisimFile().getLoader().getMainFile().getAbsolutePath(),
+                myBoardInformation, myMappableResources);
       } else {
-        MapPannel = new ComponentMapDialog(parent, "", MyBoardInformation, myMappableResources);
+        MapPannel = new ComponentMapDialog(parent, "", myBoardInformation, myMappableResources);
       }
       if (!MapPannel.run()) {
         Reporter.Report.AddError(S.get("FPGADownloadAborted"));
@@ -366,12 +366,12 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       if (MapFileName != null) {
         var MapFile = new File(MapFileName);
         if (!MapFile.exists()) return false;
-        var cmp = new ComponentMapParser(MapFile, myMappableResources, MyBoardInformation);
+        var cmp = new ComponentMapParser(MapFile, myMappableResources, myBoardInformation);
         cmp.parseFile();
       }
     }
     if (!mapDesignCheckIOs()) {
-      Reporter.Report.AddError(S.get("FPGAMapNotComplete", MyBoardInformation.getBoardName()));
+      Reporter.Report.AddError(S.get("FPGAMapNotComplete", myBoardInformation.getBoardName()));
       return false;
     }
     /* Stage 3 HDL generation */
@@ -380,8 +380,8 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       MyProgress.setString(S.get("FPGAState1"));
     }
     if (TickFrequency <= 0) TickFrequency = 1;
-    if (TickFrequency > (MyBoardInformation.fpga.getClockFrequency() / 4))
-      TickFrequency = MyBoardInformation.fpga.getClockFrequency() / 4;
+    if (TickFrequency > (myBoardInformation.fpga.getClockFrequency() / 4))
+      TickFrequency = myBoardInformation.fpga.getClockFrequency() / 4;
     if (!writeHDL(TopLevelSheet, TickFrequency)) {
       return false;
     }

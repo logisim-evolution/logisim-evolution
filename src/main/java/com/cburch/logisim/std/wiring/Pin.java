@@ -885,7 +885,7 @@ public class Pin extends InstanceFactory {
       g.setColor(Color.BLUE);
       g2.scale(0.7, 0.7);
       g2.drawString(
-          radix.GetIndexChar(),
+          radix.getIndexChar(),
           (int) ((double) LabelValueXOffset / 0.7),
           (int) ((double) labelYPos / 0.7));
       g2.scale(1.0 / 0.7, 1.0 / 0.7);

@@ -65,7 +65,7 @@ public class GraphicsUtil {
 
   public static void drawCenteredValue(Graphics2D gfx, Value value, RadixOption radix, int x, int y) {
     final var valueString = radix.toString(value);
-    final var radixIdentifier = radix.GetIndexChar();
+    final var radixIdentifier = radix.getIndexChar();
     final var fontMetrics = gfx.getFontMetrics();
     final var valueBounds = fontMetrics.getStringBounds(valueString, gfx);
     gfx.drawString(valueString, x - (int) (valueBounds.getWidth() / 2), y + (int) (valueBounds.getHeight() / 2));

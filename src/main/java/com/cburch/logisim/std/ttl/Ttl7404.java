@@ -31,7 +31,7 @@ public class Ttl7404 extends AbstractTtlGate {
     public NotGateHDLGeneratorFactory() {
       super(true);
     }
-    
+
     @Override
     public ArrayList<String> GetLogicFunction(int index) {
       final var contents = new ArrayList<String>();
@@ -65,7 +65,7 @@ public class Ttl7404 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     for (byte i = 1; i < 6; i += 2) {
       state.setPort(i, state.getPortValue(i - 1).not(), 1);
     }

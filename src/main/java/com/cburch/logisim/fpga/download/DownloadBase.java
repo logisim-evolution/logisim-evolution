@@ -36,8 +36,8 @@ import java.util.HashSet;
 
 public abstract class DownloadBase {
 
-  protected Project MyProject;
-  protected BoardInformation MyBoardInformation = null;
+  protected Project myProject;
+  protected BoardInformation myBoardInformation = null;
   protected MappableResourcesContainer myMappableResources;
   static final String[] HDLPaths = {
     HDLGeneratorFactory.VERILOG.toLowerCase(),
@@ -54,26 +54,26 @@ public abstract class DownloadBase {
   public static final Integer UCF_PATH = 4;
   public static final Integer XDC_PATH = 5;
 
-  protected boolean VendorSoftwarePresent() {
+  protected boolean isVendorSoftwarePresent() {
     return VendorSoftware.toolsPresent(
-        MyBoardInformation.fpga.getVendor(),
-        VendorSoftware.GetToolPath(MyBoardInformation.fpga.getVendor()));
+        myBoardInformation.fpga.getVendor(),
+        VendorSoftware.GetToolPath(myBoardInformation.fpga.getVendor()));
   }
 
-  protected boolean MapDesign(String CircuitName) {
-    final var myFile = MyProject.getLogisimFile();
-    final var rootSheet = myFile.getCircuit(CircuitName);
+  protected boolean mapDesign(String circuitName) {
+    final var myFile = myProject.getLogisimFile();
+    final var rootSheet = myFile.getCircuit(circuitName);
     if (rootSheet == null) {
       Reporter.Report.AddError("INTERNAL ERROR: Circuit not found ?!?");
       return false;
     }
-    if (MyBoardInformation == null) {
+    if (myBoardInformation == null) {
       Reporter.Report.AddError("INTERNAL ERROR: No board information available ?!?");
       return false;
     }
 
-    final var boardComponents = MyBoardInformation.GetComponents();
-    Reporter.Report.AddInfo("The Board " + MyBoardInformation.getBoardName() + " has:");
+    final var boardComponents = myBoardInformation.GetComponents();
+    Reporter.Report.AddInfo("The Board " + myBoardInformation.getBoardName() + " has:");
     for (final var key : boardComponents.keySet()) {
       Reporter.Report.AddInfo(boardComponents.get(key).size() + " " + key + "(s)");
     }
@@ -85,9 +85,9 @@ public abstract class DownloadBase {
      * mapped to PCB components. Identification can be done by a hierarchy
      * name plus component/sub-circuit name
      */
-    myMappableResources = rootSheet.getBoardMap(MyBoardInformation.getBoardName());
+    myMappableResources = rootSheet.getBoardMap(myBoardInformation.getBoardName());
     if (myMappableResources == null)
-      myMappableResources = new MappableResourcesContainer(MyBoardInformation, rootSheet);
+      myMappableResources = new MappableResourcesContainer(myBoardInformation, rootSheet);
     else
       myMappableResources.updateMapableComponents();
 
@@ -96,13 +96,13 @@ public abstract class DownloadBase {
 
   protected boolean mapDesignCheckIOs() {
     if (myMappableResources.isCompletelyMapped()) return true;
-    final var confirm = OptionPane.showConfirmDialog(MyProject.getFrame(), S.get("FpgaNotCompleteMap"),
+    final var confirm = OptionPane.showConfirmDialog(myProject.getFrame(), S.get("FpgaNotCompleteMap"),
         S.get("FpgaIncompleteMap"), OptionPane.YES_NO_OPTION);
     return confirm == OptionPane.YES_OPTION;
   }
 
-  protected boolean performDRC(String CircuitName, String HDLType) {
-    final var root = MyProject.getLogisimFile().getCircuit(CircuitName);
+  protected boolean performDRC(String circuitName, String HDLType) {
+    final var root = myProject.getLogisimFile().getCircuit(circuitName);
     final var sheetNames = new ArrayList<String>();
     var drcResult = Netlist.DRC_PASSED;
     if (root == null) {
@@ -115,7 +115,7 @@ public abstract class DownloadBase {
   }
 
   protected String getProjDir(String selectedCircuit) {
-    var projectDir = AppPreferences.FPGA_Workspace.get() + File.separator + MyProject.getLogisimFile().getName();
+    var projectDir = AppPreferences.FPGA_Workspace.get() + File.separator + myProject.getLogisimFile().getName();
     if (!projectDir.endsWith(File.separator)) {
       projectDir += File.separator;
     }
@@ -127,17 +127,17 @@ public abstract class DownloadBase {
     if (!genDirectory(
         AppPreferences.FPGA_Workspace.get()
             + File.separator
-            + MyProject.getLogisimFile().getName())) {
+            + myProject.getLogisimFile().getName())) {
       Reporter.Report.AddFatalError(
           "Unable to create directory: \""
               + AppPreferences.FPGA_Workspace.get()
               + File.separator
-              + MyProject.getLogisimFile().getName()
+              + myProject.getLogisimFile().getName()
               + "\"");
       return false;
     }
     final var projectDir = getProjDir(selectedCircuit);
-    final var rootSheet = MyProject.getLogisimFile().getCircuit(selectedCircuit);
+    final var rootSheet = myProject.getLogisimFile().getCircuit(selectedCircuit);
     if (!cleanDirectory(projectDir)) {
       Reporter.Report.AddFatalError(
           "Unable to cleanup old project files in directory: \"" + projectDir + "\"");
@@ -165,7 +165,7 @@ public abstract class DownloadBase {
     }
     /* Here we generate the top-level shell */
     if (rootSheet.getNetList().numberOfClockTrees() > 0) {
-      final var ticker = new TickComponentHDLGeneratorFactory(MyBoardInformation.fpga.getClockFrequency(), frequency /* , boardFreq.isSelected() */);
+      final var ticker = new TickComponentHDLGeneratorFactory(myBoardInformation.fpga.getClockFrequency(), frequency /* , boardFreq.isSelected() */);
       if (!HDL.writeEntity(
           projectDir + ticker.getRelativeDirectory(),
           ticker.getEntity(rootSheet.getNetList(), null, TickComponentHDLGeneratorFactory.HDL_IDENTIFIER),
@@ -174,7 +174,7 @@ public abstract class DownloadBase {
       }
       if (!HDL.writeArchitecture(
           projectDir + ticker.getRelativeDirectory(),
-          ticker.getArchitecture(rootSheet.getNetList(), null, TickComponentHDLGeneratorFactory.HDL_IDENTIFIER), 
+          ticker.getArchitecture(rootSheet.getNetList(), null, TickComponentHDLGeneratorFactory.HDL_IDENTIFIER),
           TickComponentHDLGeneratorFactory.HDL_IDENTIFIER)) {
         return false;
       }
@@ -198,7 +198,7 @@ public abstract class DownloadBase {
         return false;
       }
     }
-    final var top = new ToplevelHDLGeneratorFactory(MyBoardInformation.fpga.getClockFrequency(),
+    final var top = new ToplevelHDLGeneratorFactory(myBoardInformation.fpga.getClockFrequency(),
         frequency, rootSheet, myMappableResources);
     if (top.hasLedArray()) {
       for (var type : LedArrayDriving.DRIVING_STRINGS) {
