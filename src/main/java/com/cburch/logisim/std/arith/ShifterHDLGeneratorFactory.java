@@ -37,7 +37,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           put(Shifter.SHIFT_ROLL_RIGHT, 4);
         }}
     );
-    getWiresPortsduringHDLWriting = true;
+    getWiresPortsDuringHDLWriting = true;
     myPorts
         .add(Port.INPUT, "DataA", 0, Shifter.IN0, StdAttr.WIDTH)
         .add(Port.INPUT, "ShiftAmount", 0, Shifter.IN1, Shifter.SHIFT_BITS_ATTR)

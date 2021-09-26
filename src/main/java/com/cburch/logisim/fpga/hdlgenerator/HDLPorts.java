@@ -75,7 +75,7 @@ public class HDLPorts {
           nrOfBits = ((BitWidth) value).getWidth();
         } else if (value instanceof Integer) {
           nrOfBits = (int) value;
-        } else throw new IllegalArgumentException("No Bitwidth or Integer value");
+        } else throw new IllegalArgumentException("Attribute is not of type Bitwidth or Integer");
         return (nrOfBits == 1) ? 1 : (myNrOfBits != 0) ? myNrOfBits : nrOfBits;
       }
       return myNrOfBits;

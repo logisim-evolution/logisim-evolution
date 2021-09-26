@@ -26,7 +26,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   public MultiplexerHDLGeneratorFactory() {
     super();
     myParametersList.addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID);
-    getWiresPortsduringHDLWriting = true;
+    getWiresPortsDuringHDLWriting = true;
   }
 
   @Override

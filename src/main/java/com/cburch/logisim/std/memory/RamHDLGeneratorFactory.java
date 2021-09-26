@@ -34,7 +34,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public RamHDLGeneratorFactory() {
     super();
-    getWiresPortsduringHDLWriting = true;
+    getWiresPortsDuringHDLWriting = true;
   }
 
   @Override
@@ -105,7 +105,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    final var contents = (new LineBuffer())
+    final var contents = LineBuffer.getHdlBuffer()
         .pair("clock", HDLPorts.getClockName(1))
         .pair("tick", HDLPorts.getTickName(1));
     final var be = attrs.getValue(RamAttributes.ATTR_ByteEnables);

@@ -24,7 +24,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public VhdlHDLGeneratorFactory() {
     super(HDL_DIRECTORY);
-    getWiresPortsduringHDLWriting = true;
+    getWiresPortsDuringHDLWriting = true;
   }
 
   @Override
@@ -33,9 +33,9 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var inputs = contents.getInputs();
     final var outputs = contents.getOutputs();
     var portId = 0;
-    for (var input : inputs)
+    for (final var input : inputs)
       myPorts.add(Port.INPUT, input.getToolTip(), input.getFixedBitWidth().getWidth(), portId++);
-    for (var output : outputs)
+    for (final var output : outputs)
       myPorts.add(Port.OUTPUT, output.getToolTip(), output.getFixedBitWidth().getWidth(), portId++);
   }
   

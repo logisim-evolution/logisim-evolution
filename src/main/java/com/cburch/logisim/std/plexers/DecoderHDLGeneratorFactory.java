@@ -21,7 +21,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public DecoderHDLGeneratorFactory() {
     super();
-    getWiresPortsduringHDLWriting = true;
+    getWiresPortsDuringHDLWriting = true;
   }
 
   @Override

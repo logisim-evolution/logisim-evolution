@@ -65,10 +65,10 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, String> getPortMap(Netlist Nets, Object MapInfo) {
     final var map = new TreeMap<String, String>();
     if (!(MapInfo instanceof NetlistComponent)) return map;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
+    final var componentInfo = (NetlistComponent) MapInfo;
     map.put("GlobalClock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
     map.put("ClockTick", TickComponentHDLGeneratorFactory.FPGA_TICK);
-    map.put("ClockBus", "s_" + GetClockNetName(ComponentInfo.getComponent(), Nets));
+    map.put("ClockBus", "s_" + GetClockNetName(componentInfo.getComponent(), Nets));
     return map;
   }
 
@@ -83,8 +83,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents =
-        (new LineBuffer())
+    final var Contents = LineBuffer.getHdlBuffer()
             .pair("phase", PHASE_STR)
             .pair("nrOfBits", NR_OF_BITS_STR)
             .pair("lowTick", LOW_TICK_STR)

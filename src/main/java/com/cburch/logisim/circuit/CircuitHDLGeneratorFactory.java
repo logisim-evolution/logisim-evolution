@@ -40,7 +40,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public CircuitHDLGeneratorFactory(Circuit source) {
     MyCircuit = source;
-    getWiresPortsduringHDLWriting = true;
+    getWiresPortsDuringHDLWriting = true;
   }
   
   @Override
