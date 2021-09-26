@@ -14,7 +14,7 @@ import com.cburch.logisim.data.AttributeSet;
 import java.awt.event.KeyEvent;
 
 public abstract class NumericConfigurator<V> implements KeyConfigurator, Cloneable {
-  private static final int MAX_TIME_KEY_LASTS = 800;
+  private static final int maxTimeKeyLasts = 800;
 
   private final Attribute<V> attr;
   private final long minValue;
@@ -62,6 +62,7 @@ public abstract class NumericConfigurator<V> implements KeyConfigurator, Cloneab
     return minValue;
   }
 
+  @Override
   public KeyConfigurationResult keyEventReceived(KeyConfigurationEvent event) {
     if (event.getType() == KeyConfigurationEvent.KEY_TYPED) {
       KeyEvent e = event.getKeyEvent();
@@ -73,7 +74,7 @@ public abstract class NumericConfigurator<V> implements KeyConfigurator, Cloneab
         long min = getMinimumValue(attrs);
         long max = getMaximumValue(attrs);
         long val = 0;
-        if (sinceLast < MAX_TIME_KEY_LASTS) {
+        if (sinceLast < maxTimeKeyLasts) {
           val = radix * curValue;
           if (val > max) {
             val = 0;

@@ -66,7 +66,7 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
 
     if (IsExes3) {
@@ -113,7 +113,7 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
     return (!attrs.getValue(TtlLibrary.VCC_GND));

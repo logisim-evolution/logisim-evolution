@@ -53,12 +53,12 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
     return HDL.isVHDL();
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer()
             .pair("nrOfBits", NR_OF_BITS_STR);
     final var nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
@@ -168,7 +168,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           break;
       }
     } else {
-      Reporter.Report.AddFatalError("Strange, this should not happen as Verilog is not yet supported!\n");
+      Reporter.report.addFatalError("Strange, this should not happen as Verilog is not yet supported!\n");
     }
     return contents.getWithIndent();
   }

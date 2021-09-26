@@ -86,12 +86,12 @@ public class XilinxDownload implements VendorDownload {
   }
 
   @Override
-  public int GetNumberOfStages() {
+  public int getNumberOfStages() {
     return 5;
   }
 
   @Override
-  public String GetStageMessage(int stage) {
+  public String getStageMessage(int stage) {
     switch (stage) {
       case 0:
         return S.get("XilinxSynth");
@@ -109,7 +109,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   @Override
-  public ProcessBuilder PerformStep(int stage) {
+  public ProcessBuilder performStep(int stage) {
     switch (stage) {
       case 0:
         return Stage0Synth();
@@ -132,7 +132,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   @Override
-  public ProcessBuilder DownloadToBoard() {
+  public ProcessBuilder downloadToBoard() {
     if (!boardInfo.fpga.USBTMCDownloadRequired()) {
       var command = new ArrayList<String>();
       command.add(xilinxVendor.getBinaryPath(5));
@@ -142,11 +142,11 @@ public class XilinxDownload implements VendorDownload {
       Xilinx.directory(new File(SandboxPath));
       return Xilinx;
     } else {
-      Reporter.Report.ClsScr();
+      Reporter.report.clearConsole();
       /* Here we do the USBTMC Download */
       var usbtmcdevice = new File("/dev/usbtmc0").exists();
       if (!usbtmcdevice) {
-        Reporter.Report.AddFatalError(S.get("XilinxUsbTmc"));
+        Reporter.report.addFatalError(S.get("XilinxUsbTmc"));
         return null;
       }
       var bitfile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + "." + bitfileExt);
@@ -156,7 +156,7 @@ public class XilinxDownload implements VendorDownload {
       try {
         bitfile_in = new BufferedInputStream(new FileInputStream(bitfile));
       } catch (FileNotFoundException e) {
-        Reporter.Report.AddFatalError(S.get("XilinxOpenFailure", bitfile));
+        Reporter.report.addFatalError(S.get("XilinxOpenFailure", bitfile));
         return null;
       }
       var usbtmc = new File("/dev/usbtmc0");
@@ -172,14 +172,14 @@ public class XilinxDownload implements VendorDownload {
         usbtmc_out.close();
         bitfile_in.close();
       } catch (IOException e) {
-        Reporter.Report.AddFatalError(S.get("XilinxUsbTmcError"));
+        Reporter.report.addFatalError(S.get("XilinxUsbTmcError"));
       }
     }
     return null;
   }
 
   @Override
-  public boolean CreateDownloadScripts() {
+  public boolean createDownloadScripts() {
     final var JTAGPos = String.valueOf(boardInfo.fpga.getFpgaJTAGChainPosition());
     var ScriptFile = FileWriter.getFilePointer(ScriptPath, SCRIPT_FILE);
     var VhdlListFile = FileWriter.getFilePointer(ScriptPath, VHDL_LIST_FILE);
@@ -222,7 +222,7 @@ public class XilinxDownload implements VendorDownload {
 
     if (writeToFlash && boardInfo.fpga.isFlashDefined()) {
       if (boardInfo.fpga.getFlashName() == null) {
-        Reporter.Report.AddFatalError(S.get("XilinxFlashMissing", boardInfo.getBoardName()));
+        Reporter.report.addFatalError(S.get("XilinxFlashMissing", boardInfo.getBoardName()));
       }
 
       contents.pair("flashPos", String.valueOf(boardInfo.fpga.getFlashJTAGChainPosition()))
@@ -262,7 +262,7 @@ public class XilinxDownload implements VendorDownload {
     if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
       contents
           .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
-          .pair("clockFreq", Download.GetClockFrequencyString(boardInfo))
+          .pair("clockFreq", Download.getClockFrequencyString(boardInfo))
           .pair("clockPin", GetXilinxClockPin(boardInfo))
           .add("""
             NET "{{clock}}" {{clockPin}} ;
@@ -319,7 +319,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   @Override
-  public void SetMapableResources(MappableResourcesContainer resources) {
+  public void setMapableResources(MappableResourcesContainer resources) {
     MapInfo = resources;
   }
 
@@ -444,7 +444,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   @Override
-  public boolean BoardConnected() {
+  public boolean isBoardConnected() {
     // TODO: Detect if a board is connected, and in case of multiple boards select the one that should be used
     return true;
   }

@@ -356,12 +356,12 @@ public class Random extends InstanceFactory {
   }
 
   @Override
-  public boolean CheckForGatedClocks(NetlistComponent comp) {
+  public boolean checkForGatedClocks(NetlistComponent comp) {
     return true;
   }
 
   @Override
-  public int[] ClockPinIndex(NetlistComponent comp) {
+  public int[] clockPinIndex(NetlistComponent comp) {
     return new int[] {CK};
   }
 }

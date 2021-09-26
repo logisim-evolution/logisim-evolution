@@ -82,7 +82,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents =
         (new LineBuffer(sharedPairs))
             .pair("activeLow", ACTIVE_LOW_STRING)

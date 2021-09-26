@@ -29,7 +29,7 @@ public class BitExtenderHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
     int NrOfPins = componentInfo.nrOfEnds();
     for (int i = 1; i < NrOfPins; i++) {
       if (!componentInfo.isEndConnected(i)) {
-        Reporter.Report.AddError(
+        Reporter.report.addError(
             "Bit Extender component has floating input connection in circuit \""
                 + circuitName
                 + "\"!");

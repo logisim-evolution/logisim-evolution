@@ -35,7 +35,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int INVERT_CLOCK_ID = -3;
   private static final String MODE_STRING = "mode";
   private static final int MODE_ID = -4;
-  
+
   private static final String LOAD_DATA_INPUT = "LoadData";
   private static final String COUNT_DATA_OUTPUT = "CountValue";
 
@@ -44,7 +44,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     myParametersList
         .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
         .addVector(MAX_VALUE_STRING, MAX_VALUE_ID, HDLParameters.MAP_INT_ATTRIBUTE, Counter.ATTR_MAX)
-        .add(INVERT_CLOCK_STRING, INVERT_CLOCK_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, 
+        .add(INVERT_CLOCK_STRING, INVERT_CLOCK_ID, HDLParameters.MAP_ATTRIBUTE_OPTION,
             StdAttr.EDGE_TRIGGER, AbstractFlipFlopHDLGeneratorFactory.TRIGGER_MAP)
         .add(MODE_STRING, MODE_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Counter.ATTR_ON_GOAL,
             new HashMap<AttributeOption, Integer>() {{
@@ -91,7 +91,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer()
         .pair("invertClock", INVERT_CLOCK_STRING)
         .pair("clock", HDLPorts.CLOCK)

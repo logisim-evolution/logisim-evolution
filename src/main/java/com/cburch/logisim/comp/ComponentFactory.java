@@ -85,9 +85,9 @@ public interface ComponentFactory extends AttributeDefaultProvider {
   @Override
   boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver);
 
-  boolean CheckForGatedClocks(NetlistComponent comp);
+  boolean checkForGatedClocks(NetlistComponent comp);
 
-  int[] ClockPinIndex(NetlistComponent comp);
+  int[] clockPinIndex(NetlistComponent comp);
 
   void paintIcon(ComponentDrawContext context, int x, int y, AttributeSet attrs);
 

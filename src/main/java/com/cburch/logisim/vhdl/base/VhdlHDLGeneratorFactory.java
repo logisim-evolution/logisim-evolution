@@ -17,7 +17,7 @@ import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import java.util.ArrayList;
 
 public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
-  
+
   public static final String HDL_DIRECTORY = "circuit";
 
   public VhdlHDLGeneratorFactory() {
@@ -25,6 +25,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     getWiresPortsDuringHDLWriting = true;
   }
 
+  @Override
   public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
     VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
     var i = 0;
@@ -76,7 +77,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   */
 
   @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
     return HDL.isVHDL();
   }
 }

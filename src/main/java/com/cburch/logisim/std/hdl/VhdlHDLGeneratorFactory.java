@@ -38,7 +38,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     for (final var output : outputs)
       myPorts.add(Port.OUTPUT, output.getToolTip(), output.getFixedBitWidth().getWidth(), portId++);
   }
-  
+
   @Override
   public ArrayList<String> getArchitecture(
       Netlist theNetlist,
@@ -56,7 +56,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
     return HDL.isVHDL();
   }
 }

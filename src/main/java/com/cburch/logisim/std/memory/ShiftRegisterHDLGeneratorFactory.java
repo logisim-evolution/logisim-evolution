@@ -293,7 +293,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer()
         .pair("clock", HDLPorts.getClockName(1))
         .pair("tick", HDLPorts.getTickName(1))

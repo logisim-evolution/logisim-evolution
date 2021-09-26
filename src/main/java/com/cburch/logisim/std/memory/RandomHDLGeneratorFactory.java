@@ -70,7 +70,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, String> getPortMap(Netlist Nets, Object MapInfo) {
     final var map = new TreeMap<String, String>();
     map.putAll(super.getPortMap(Nets, MapInfo));
-    if (MapInfo instanceof NetlistComponent && HDL.isVHDL()) { 
+    if (MapInfo instanceof NetlistComponent && HDL.isVHDL()) {
       final var comp = (NetlistComponent) MapInfo;
       final var nrOfBits = comp.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
       if (nrOfBits == 1) {
@@ -83,7 +83,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents =
         LineBuffer.getBuffer()
             .pair("seed", SEED_STR)

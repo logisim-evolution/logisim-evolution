@@ -36,11 +36,11 @@ public class Ttl7485 extends AbstractTtlGate {
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     super.paintBase(painter, true, false);
-    Drawgates.paintPortNames(painter, x, y, height, super.portnames);
+    Drawgates.paintPortNames(painter, x, y, height, super.portNames);
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     final var A0 = state.getPortValue(8) == Value.TRUE ? (byte) 1 : 0;
     final var A1 = state.getPortValue(10) == Value.TRUE ? (byte) 2 : 0;
     final var A2 = state.getPortValue(11) == Value.TRUE ? (byte) 4 : 0;

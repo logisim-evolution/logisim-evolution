@@ -39,7 +39,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   protected AbstractComponentFactory() {
     this(null, false, false);
   }
-  
+
   protected AbstractComponentFactory(HDLGeneratorFactory generator, boolean requiresLabel, boolean requiresGlobalClock) {
     defaultSet = null;
     myHDLGenerator = generator;
@@ -119,12 +119,12 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   }
 
   @Override
-  public boolean CheckForGatedClocks(NetlistComponent comp) {
+  public boolean checkForGatedClocks(NetlistComponent comp) {
     return false;
   }
 
   @Override
-  public int[] ClockPinIndex(NetlistComponent comp) {
+  public int[] clockPinIndex(NetlistComponent comp) {
     return new int[] {0};
   }
 
@@ -141,7 +141,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 
   @Override
   public boolean isHDLSupportedComponent(AttributeSet attrs) {
-    if (myHDLGenerator != null) return myHDLGenerator.isHDLSupportedTarget(attrs);
+    if (myHDLGenerator != null) return myHDLGenerator.isHdlSupportedTarget(attrs);
     return false;
   }
 

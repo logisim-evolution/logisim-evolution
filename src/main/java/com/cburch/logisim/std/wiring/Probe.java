@@ -222,7 +222,7 @@ public class Probe extends InstanceFactory {
     g.setColor(Color.BLUE);
     g2.scale(0.7, 0.7);
     g2.drawString(
-        radix.GetIndexChar(),
+        radix.getIndexChar(),
         (int) ((bds.getX() + bds.getWidth() - LabelValueXOffset) / 0.7),
         (int) ((bds.getY() + bds.getHeight() - 2) / 0.7));
     g2.scale(1.0 / 0.7, 1.0 / 0.7);

@@ -29,7 +29,7 @@ public class Ttl7400 extends AbstractTtlGate {
   private static class NandGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
     @Override
-    public ArrayList<String> GetLogicFunction(int index) {
+    public ArrayList<String> getLogicFunction(int index) {
       final var contents = new ArrayList<String>();
       contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
               + HDL.notOperator() + "(gate_" + index + "_A" + HDL.andOperator() + "gate_" + index + "B);");
@@ -63,7 +63,7 @@ public class Ttl7400 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     for (byte i = 2; i < 6; i += 3) {
       state.setPort(i, (state.getPortValue(i - 1).and(state.getPortValue(i - 2)).not()), 1);
     }

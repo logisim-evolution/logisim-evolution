@@ -99,7 +99,7 @@ public class FPGAOptions extends OptionsPanel {
     WorkSpaceButton.addActionListener(myListener);
     HDL_Used =
         new PrefOptionList(
-            AppPreferences.HDL_Type,
+            AppPreferences.HdlType,
             S.getter("HDLLanguageUsed"),
             new PrefOption[] {
               new PrefOption(HDLGeneratorFactory.VHDL, S.getter("VHDL")),

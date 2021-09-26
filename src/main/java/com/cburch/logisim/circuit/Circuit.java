@@ -321,7 +321,7 @@ public class Circuit {
   public void Annotate(boolean clearExistingLabels, boolean insideLibrary) {
     /* If I am already completely annotated, return */
     if (isAnnotated) {
-      Reporter.Report.AddInfo("Nothing to do !");
+      Reporter.report.addInfo("Nothing to do !");
       return;
     }
     SortedSet<Component> comps = new TreeSet<>(Location.CompareVertical);
@@ -339,7 +339,7 @@ public class Circuit {
             final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
             act.set(comp, StdAttr.LABEL, "");
             proj.doAction(act);
-            Reporter.Report.AddSevereWarning(
+            Reporter.report.addSevereWarning(
                 "Removed duplicated label " + this.getName() + "/" + label);
           } else {
             labelNames.add(label.toUpperCase());
@@ -350,7 +350,7 @@ public class Circuit {
       if (comp.getFactory().requiresNonZeroLabel()) {
         if (clearExistingLabels) {
           /* in case of label cleaning, we clear first the old label */
-          Reporter.Report.AddInfo(
+          Reporter.report.addInfo(
               "Cleared " + this.getName() + "/" + comp.getAttributeSet().getValue(StdAttr.LABEL));
           final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
           act.set(comp, StdAttr.LABEL, "");
@@ -376,7 +376,7 @@ public class Circuit {
       final var componentName = GetAnnotationName(comp);
       if (!lablers.containsKey(componentName) || !lablers.get(componentName).hasNext(this)) {
         /* This should never happen! */
-        Reporter.Report.AddFatalError(
+        Reporter.report.addFatalError(
             "Annotate internal Error: Either there exists duplicate labels or the label syntax is incorrect!\nPlease try annotation on labeled components also\n");
         return;
       } else {
@@ -384,20 +384,20 @@ public class Circuit {
         final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
         act.set(comp, StdAttr.LABEL, newLabel);
         proj.doAction(act);
-        Reporter.Report.AddInfo("Labeled " + this.getName() + "/" + newLabel);
+        Reporter.report.addInfo("Labeled " + this.getName() + "/" + newLabel);
         if (comp.getFactory() instanceof Pin) {
           sizeMightHaveChanged = true;
         }
       }
     }
     if (!comps.isEmpty() & insideLibrary) {
-      Reporter.Report.AddSevereWarning(
+      Reporter.report.addSevereWarning(
           "Annotated the circuit \""
               + this.getName()
               + "\" which is inside a library these changes will not be saved!");
     }
     if (sizeMightHaveChanged)
-      Reporter.Report.AddSevereWarning(
+      Reporter.report.addSevereWarning(
           "Annotated one ore more pins in circuit \""
               + this.getName()
               + "\" this might have changed it's boxsize and might have impacted it's connections in circuits using this one!");
@@ -966,19 +966,19 @@ public class Circuit {
       timedOut = true;
     }
   }
-  
+
   public double getTickFrequency() {
     return staticAttrs.getValue(CircuitAttributes.SIMULATION_FREQUENCY);
   }
 
   public void setTickFrequency(double value) {
-    final var currentTickFrequency = staticAttrs.getValue(CircuitAttributes.SIMULATION_FREQUENCY); 
+    final var currentTickFrequency = staticAttrs.getValue(CircuitAttributes.SIMULATION_FREQUENCY);
     if (value != currentTickFrequency) {
       staticAttrs.setValue(CircuitAttributes.SIMULATION_FREQUENCY, value);
       if ((proj != null) && (currentTickFrequency > 0)) proj.setForcedDirty();
     }
   }
-  
+
   public double getDownloadFrequency() {
     return staticAttrs.getValue(CircuitAttributes.DOWNLOAD_FREQUENCY);
   }

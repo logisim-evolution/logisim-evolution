@@ -26,7 +26,7 @@ public class Ttl74266 extends AbstractTtlGate {
   private static class XNorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
     @Override
-    public ArrayList<String> GetLogicFunction(int index) {
+    public ArrayList<String> getLogicFunction(int index) {
       final var contents = new ArrayList<String>();
       contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator() + HDL.notOperator()
               + "(gate_" + index + "_A" + HDL.xorOperator() + "gate_" + index + "_B);");
@@ -54,7 +54,7 @@ public class Ttl74266 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     for (byte i = 2; i < 6; i += 3) {
       state.setPort(i, (state.getPortValue(i - 1).xor(state.getPortValue(i - 2)).not()), 1);
     }

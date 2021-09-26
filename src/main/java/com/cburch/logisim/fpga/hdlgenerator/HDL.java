@@ -24,11 +24,11 @@ public abstract class HDL {
   public static final String BUS_NAME = "s_LOGISIM_BUS_";
 
   public static boolean isVHDL() {
-    return AppPreferences.HDL_Type.get().equals(HDLGeneratorFactory.VHDL);
+    return AppPreferences.HdlType.get().equals(HDLGeneratorFactory.VHDL);
   }
 
   public static boolean isVerilog() {
-    return AppPreferences.HDL_Type.get().equals(HDLGeneratorFactory.VERILOG);
+    return AppPreferences.HdlType.get().equals(HDLGeneratorFactory.VERILOG);
   }
 
   public static String BracketOpen() {
@@ -138,7 +138,7 @@ public abstract class HDL {
     final var hexValue = new StringBuffer();
     for (var hexIndex = 0; hexIndex < nrHexDigits; hexIndex++) {
       hexValue.append(hexDigits[hexIndex]);
-    }    
+    }
     var mask = (nrSingleBits == 0) ? 0 : 1L << (nrSingleBits - 1);
     while (mask > 0) {
       singleBits.append((value & mask) == 0 ? "0" : "1");
@@ -267,7 +267,7 @@ public abstract class HDL {
     if (!HDL.isVHDL()) return true;
     if (contents.isEmpty()) {
       // FIXME: hardcoded string
-      Reporter.Report.AddFatalError("INTERNAL ERROR: Empty entity description received!");
+      Reporter.report.addFatalError("INTERNAL ERROR: Empty entity description received!");
       return false;
     }
     final var outFile = FileWriter.getFilePointer(targetDirectory, componentName, true);
@@ -278,7 +278,7 @@ public abstract class HDL {
   public static boolean writeArchitecture(String targetDirectory, ArrayList<String> contents, String componentName) {
     if (contents == null || contents.isEmpty()) {
       // FIXME: hardcoded string
-      Reporter.Report.AddFatalError(
+      Reporter.report.addFatalError(
           "INTERNAL ERROR: Empty behavior description for Component '"
               + componentName
               + "' received!");

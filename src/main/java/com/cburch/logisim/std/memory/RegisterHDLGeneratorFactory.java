@@ -66,7 +66,7 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer()
             .pair("invertClock", INVERT_CLOCK_STRING)
             .pair("clock", HDLPorts.getClockName(1))

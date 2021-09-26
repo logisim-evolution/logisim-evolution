@@ -34,7 +34,7 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     return LineBuffer.getBuffer()
         .add("""
             Segment_a <= s_output_value(0);
@@ -66,7 +66,7 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
   }
 
   @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
     return HDL.isVHDL();
   }
 }

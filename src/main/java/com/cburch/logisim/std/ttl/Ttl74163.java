@@ -26,7 +26,7 @@ public class Ttl74163 extends Ttl74161 {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     var data = getStateData(state);
 
     final var triggered = data.updateClock(state.getPortValue(PORT_INDEX_CLK), StdAttr.TRIG_RISING);
@@ -41,7 +41,7 @@ public class Ttl74163 extends Ttl74161 {
             + state.getPortValue(PORT_INDEX_B).toLongValue() << 1
             + state.getPortValue(PORT_INDEX_C).toLongValue() << 2
             + state.getPortValue(PORT_INDEX_D).toLongValue() << 3;
-      } else  if (state.getPortValue(PORT_INDEX_EnP).and(state.getPortValue(PORT_INDEX_EnT)).toLongValue() == 1) { 
+      } else  if (state.getPortValue(PORT_INDEX_EnP).and(state.getPortValue(PORT_INDEX_EnT)).toLongValue() == 1) {
         counter = (counter + 1) & 15;
       }
     }

@@ -44,22 +44,22 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     }
   }
 
-  public ArrayList<String> GetLogicFunction(int index) {
+  public ArrayList<String> getLogicFunction(int index) {
     return new ArrayList<>();
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer();
     final var nrOfGates = isInverter ? 6 : 4;
     for (var i = 0; i < nrOfGates; i++) {
-      contents.addRemarkBlock("Here gate %d is described", i).add(GetLogicFunction(i));
+      contents.addRemarkBlock("Here gate %d is described", i).add(getLogicFunction(i));
     }
     return contents.get();
   }
 
   @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
     return !attrs.getValue(TtlLibrary.VCC_GND);

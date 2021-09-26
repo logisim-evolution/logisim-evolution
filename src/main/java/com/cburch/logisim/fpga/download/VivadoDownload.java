@@ -73,12 +73,12 @@ public class VivadoDownload implements VendorDownload {
   }
 
   @Override
-  public int GetNumberOfStages() {
+  public int getNumberOfStages() {
     return 2;
   }
 
   @Override
-  public String GetStageMessage(int stage) {
+  public String getStageMessage(int stage) {
     switch (stage) {
       case 0:
         return S.get("VivadoProject");
@@ -90,7 +90,7 @@ public class VivadoDownload implements VendorDownload {
   }
 
   @Override
-  public ProcessBuilder PerformStep(int stage) {
+  public ProcessBuilder performStep(int stage) {
     switch (stage) {
       case 0:
         return Stage0Project();
@@ -107,7 +107,7 @@ public class VivadoDownload implements VendorDownload {
   }
 
   @Override
-  public ProcessBuilder DownloadToBoard() {
+  public ProcessBuilder downloadToBoard() {
     var command = new ArrayList<String>();
     command.add(vivadoVendor.getBinaryPath(0));
     command.add("-mode");
@@ -120,7 +120,7 @@ public class VivadoDownload implements VendorDownload {
   }
 
   @Override
-  public boolean CreateDownloadScripts() {
+  public boolean createDownloadScripts() {
     // create project files
     var createProjectFile = FileWriter.getFilePointer(ScriptPath, CREATE_PROJECT_TCL);
     var xdcFile = FileWriter.getFilePointer(xdcPath, XDC_FILE);
@@ -251,7 +251,7 @@ public class VivadoDownload implements VendorDownload {
   }
 
   @Override
-  public void SetMapableResources(MappableResourcesContainer resources) {
+  public void setMapableResources(MappableResourcesContainer resources) {
     MapInfo = resources;
   }
 
@@ -280,7 +280,7 @@ public class VivadoDownload implements VendorDownload {
   }
 
   @Override
-  public boolean BoardConnected() {
+  public boolean isBoardConnected() {
     // TODO Detect if a board is connected, and in case of multiple boards select the one that
     // should be used
     return true;

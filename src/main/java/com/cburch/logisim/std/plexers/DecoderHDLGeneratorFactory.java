@@ -32,12 +32,12 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       myPorts.add(Port.OUTPUT, String.format("DecoderOut_%d", outp), 1, outp);
     }
     myPorts.add(Port.INPUT, "Sel", nrOfSelectBits, selectInputIndex);
-    if (attrs.getValue(PlexersLibrary.ATTR_ENABLE).booleanValue()) 
+    if (attrs.getValue(PlexersLibrary.ATTR_ENABLE).booleanValue())
         myPorts.add(Port.INPUT, "Enable", 1, selectInputIndex + 1, false);
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer();
     final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     final var numOutputs = (1 << nrOfSelectBits);

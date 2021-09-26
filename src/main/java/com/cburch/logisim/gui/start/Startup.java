@@ -614,7 +614,7 @@ public class Startup implements AWTEventListener {
     // This is to test a test bench. It will return 0 or 1 depending on if the tests pass or not.
     return RC.OK;
   }
-  
+
   private static RC handleArgMainCircuit(Startup startup, Option opt) {
     startup.circuitToTest = opt.getValues()[0];
     return RC.OK;
@@ -793,7 +793,7 @@ public class Startup implements AWTEventListener {
     final var downTickFreq = mainCircuit.getDownloadFrequency();
     final var usedFrequency = (testTickFrequency > 0) ? testTickFrequency :
         (downTickFreq > 0) ? downTickFreq : simTickFreq;
-    Download Downloader =
+    Download downloader =
         new Download(
             proj,
             testCircuitImpName,
@@ -804,7 +804,7 @@ public class Startup implements AWTEventListener {
             false,
             false,
             testCircuitHdlOnly);
-    return Downloader.runtty();
+    return downloader.runTty();
   }
 
   private void loadTemplate(Loader loader, File templFile, boolean templEmpty) {
