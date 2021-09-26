@@ -160,7 +160,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
                     architectures);
         break;
       default:
-        Reporter.Report.AddFatalError("BUG: Tried to Download to an unknown target");
+        Reporter.report.addFatalError("BUG: Tried to Download to an unknown target");
         return;
     }
     if (progressBar == null) useGui = false;
@@ -204,12 +204,12 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     if (prepareDownLoad() && isVendorSoftwarePresent() && !generateHdlOnly) {
       try {
         var error = download();
-        if (error != null) Reporter.Report.AddFatalError(error);
+        if (error != null) Reporter.report.addFatalError(error);
       } catch (IOException e) {
-        Reporter.Report.AddFatalError(S.get("FPGAIOError", VendorSoftware.getVendorString(vendor)));
+        Reporter.report.addFatalError(S.get("FPGAIOError", VendorSoftware.getVendorString(vendor)));
         e.printStackTrace();
       } catch (InterruptedException e) {
-        Reporter.Report.AddError(S.get("FPGAInterruptedError", VendorSoftware.getVendorString(vendor)));
+        Reporter.report.addError(S.get("FPGAInterruptedError", VendorSoftware.getVendorString(vendor)));
       }
     }
     fireEvent(new ActionEvent(this, 1, "DownloadDone"));
@@ -220,7 +220,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     if (root != null) {
       root.Annotate(myProject, false, false);
     } else {
-      Reporter.Report.AddFatalError(
+      Reporter.report.addFatalError(
           "Toplevel sheet \"" + topLevelSheet + "\" not found in project!");
       return false;
     }
@@ -230,22 +230,22 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     try {
       var error = download();
       if (error != null) {
-        Reporter.Report.AddFatalError(error);
+        Reporter.report.addFatalError(error);
         return false;
       }
     } catch (IOException e) {
-      Reporter.Report.AddFatalError(S.get("FPGAIOError", VendorSoftware.getVendorString(vendor)));
+      Reporter.report.addFatalError(S.get("FPGAIOError", VendorSoftware.getVendorString(vendor)));
       e.printStackTrace();
       return false;
     } catch (InterruptedException e) {
-      Reporter.Report.AddError(S.get("FPGAInterruptedError", VendorSoftware.getVendorString(vendor)));
+      Reporter.report.addError(S.get("FPGAInterruptedError", VendorSoftware.getVendorString(vendor)));
       return false;
     }
     return true;
   }
 
   private String download() throws IOException, InterruptedException {
-    Reporter.Report.ClsScr();
+    Reporter.report.clearConsole();
     if (!downloadOnly || !downloader.readyForDownload()) {
       for (var stages = 0; stages < downloader.getNumberOfStages(); stages++) {
         if (stopRequested) return S.get("FPGAInterrupted");
@@ -289,7 +289,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     var br = new BufferedReader(isr);
     var line = "";
     while ((line = br.readLine()) != null) {
-      Reporter.Report.print(line);
+      Reporter.report.print(line);
       if (Report != null) Report.add(line);
     }
     Executable.waitFor();
@@ -302,10 +302,10 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
   private String execute(String StageName, ProcessBuilder process)
       throws IOException, InterruptedException {
     if (useGui) progressBar.setString(StageName);
-    Reporter.Report.print(" ");
-    Reporter.Report.print("==>");
-    Reporter.Report.print("==> " + StageName);
-    Reporter.Report.print("==>");
+    Reporter.report.print(" ");
+    Reporter.report.print("==>");
+    Reporter.report.print("==> " + StageName);
+    Reporter.report.print("==>");
     synchronized (lock) {
       executable = process.start();
     }
@@ -314,7 +314,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     var br = new BufferedReader(isr);
     var line = "";
     while ((line = br.readLine()) != null) {
-      Reporter.Report.print(line);
+      Reporter.report.print(line);
     }
     executable.waitFor();
     isr.close();
@@ -334,7 +334,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     }
     final var Name = myProject.getLogisimFile().getName();
     if (Name.contains(" ")) {
-      Reporter.Report.AddFatalError(S.get("FPGANameContainsSpaces", Name));
+      Reporter.report.addFatalError(S.get("FPGANameContainsSpaces", Name));
       return false;
     }
     /* Stage 1 Is design map able on Board */
@@ -358,7 +358,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
         mapPannel = new ComponentMapDialog(parent, "", myBoardInformation, myMappableResources);
       }
       if (!mapPannel.run()) {
-        Reporter.Report.AddError(S.get("FPGADownloadAborted"));
+        Reporter.report.addError(S.get("FPGADownloadAborted"));
         return false;
       }
     } else {
@@ -370,7 +370,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       }
     }
     if (!mapDesignCheckIOs()) {
-      Reporter.Report.AddError(S.get("FPGAMapNotComplete", myBoardInformation.getBoardName()));
+      Reporter.report.addError(S.get("FPGAMapNotComplete", myBoardInformation.getBoardName()));
       return false;
     }
     /* Stage 3 HDL generation */

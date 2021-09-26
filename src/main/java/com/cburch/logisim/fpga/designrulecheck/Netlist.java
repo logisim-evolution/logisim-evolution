@@ -242,13 +242,13 @@ public class Netlist {
     if (myCircuit.getName().isEmpty()) {
       // in the current implementation of logisim this should never
       // happen, but we leave it in
-      Reporter.Report.AddFatalError(S.get("EmptyNamedSheet"));
+      Reporter.report.addFatalError(S.get("EmptyNamedSheet"));
       drcStatus |= DRC_ERROR;
     }
     if (sheetNames.contains(myCircuit.getName())) {
       // in the current implementation of logisim this should never
       // happen, but we leave it in
-      Reporter.Report.AddFatalError(S.get("MultipleSheetSameName", myCircuit.getName()));
+      Reporter.report.addFatalError(S.get("MultipleSheetSameName", myCircuit.getName()));
       drcStatus |= DRC_ERROR;
     } else {
       sheetNames.add(myCircuit.getName());
@@ -365,7 +365,7 @@ public class Netlist {
       }
     }
     for (final var simpleDRCContainer : drc) {
-      if (simpleDRCContainer.isDrcInfoPresent()) Reporter.Report.AddError(simpleDRCContainer);
+      if (simpleDRCContainer.isDrcInfoPresent()) Reporter.report.addError(simpleDRCContainer);
     }
     drc.clear();
     /* Here we have to quit as the netlist generation needs a clean tree */
@@ -375,7 +375,7 @@ public class Netlist {
      * Okay we now know for sure that all elements are supported, lets build
      * the net list
      */
-    Reporter.Report.AddInfo(S.get("BuildingNetlistFor", myCircuit.getName()));
+    Reporter.report.addInfo(S.get("BuildingNetlistFor", myCircuit.getName()));
     if (!this.generateNetlist()) {
       this.clear();
       drcStatus = DRC_ERROR;
@@ -408,7 +408,7 @@ public class Netlist {
                     SimpleDRCContainer.LEVEL_NORMAL,
                     SimpleDRCContainer.MARK_INSTANCE);
         warn.addMarkComponent(comp.getComponent());
-        Reporter.Report.AddWarning(warn);
+        Reporter.report.addWarning(warn);
       }
     }
     /* Check for unconnected input pins on subcircuits and generate warnings */
@@ -425,7 +425,7 @@ public class Netlist {
                     SimpleDRCContainer.LEVEL_SEVERE,
                     SimpleDRCContainer.MARK_INSTANCE);
         warn.addMarkComponent(comp.getComponent());
-        Reporter.Report.AddWarning(warn);
+        Reporter.report.addWarning(warn);
       }
     }
     /* Check for unconnected input pins in my circuit and generate warnings */
@@ -442,7 +442,7 @@ public class Netlist {
                     SimpleDRCContainer.LEVEL_NORMAL,
                     SimpleDRCContainer.MARK_INSTANCE);
         warn.addMarkComponent(comp.getComponent());
-        Reporter.Report.AddWarning(warn);
+        Reporter.report.addWarning(warn);
       }
     }
     /* Check for unconnected output pins in my circuit and generate warnings */
@@ -459,7 +459,7 @@ public class Netlist {
                     SimpleDRCContainer.LEVEL_NORMAL,
                     SimpleDRCContainer.MARK_INSTANCE);
         warn.addMarkComponent(comp.getComponent());
-        Reporter.Report.AddWarning(warn);
+        Reporter.report.addWarning(warn);
       }
     }
 
@@ -477,7 +477,7 @@ public class Netlist {
               + localNrOfOutportBubbles
               + localNrOfInOutBubbles;
       if (ports == 0) {
-        Reporter.Report.AddFatalError(S.get("TopLevelNoIO", myCircuit.getName()));
+        Reporter.report.addFatalError(S.get("TopLevelNoIO", myCircuit.getName()));
         drcStatus = DRC_ERROR;
         return drcStatus;
       }
@@ -488,8 +488,8 @@ public class Netlist {
       }
     }
 
-    Reporter.Report.AddInfo(S.get("CircuitInfoString", myCircuit.getName(), numberOfNets(), numberOfBusses()));
-    Reporter.Report.AddInfo(S.get("DRCPassesString", myCircuit.getName()));
+    Reporter.report.addInfo(S.get("CircuitInfoString", myCircuit.getName(), numberOfNets(), numberOfBusses()));
+    Reporter.report.addInfo(S.get("DRCPassesString", myCircuit.getName()));
     drcStatus = DRC_PASSED;
     return drcStatus;
   }
@@ -552,7 +552,7 @@ public class Netlist {
     final var drc = new ArrayList<SimpleDRCContainer>();
     var errors = false;
     circuitName = myCircuit.getName();
-    final var progress = Reporter.Report.getProgressBar();
+    final var progress = Reporter.report.getProgressBar();
     var curMax = 0;
     var curVal = 0;
     var curStr = "";
@@ -641,7 +641,7 @@ public class Netlist {
     for (final var simpleDRCContainer : drc) {
       if (simpleDRCContainer.isDrcInfoPresent()) {
         errors = true;
-        Reporter.Report.AddError(simpleDRCContainer);
+        Reporter.report.addError(simpleDRCContainer);
       }
     }
     if (errors) return false;
@@ -681,7 +681,7 @@ public class Netlist {
       }
     }
     if (drc.get(0).isDrcInfoPresent()) {
-      Reporter.Report.AddError(drc.get(0));
+      Reporter.report.addError(drc.get(0));
       return false;
     }
 
@@ -731,7 +731,7 @@ public class Netlist {
       }
     }
     if (drc.get(0).isDrcInfoPresent()) {
-      Reporter.Report.AddError(drc.get(0));
+      Reporter.report.addError(drc.get(0));
       return false;
     }
     if (progress != null) {
@@ -770,7 +770,7 @@ public class Netlist {
                       SimpleDRCContainer.LEVEL_SEVERE,
                       SimpleDRCContainer.MARK_INSTANCE);
           warn.addMarkComponent(thisSplitter);
-          Reporter.Report.AddWarning(warn);
+          Reporter.report.addWarning(warn);
           mySplitIter.remove();
         }
       }
@@ -794,7 +794,7 @@ public class Netlist {
       }
     }
     if (drc.get(0).isDrcInfoPresent()) {
-      Reporter.Report.AddWarning(drc.get(0));
+      Reporter.report.addWarning(drc.get(0));
     }
     mySplitIter = mySplitters.iterator();
     // We also check quickly the splitters and remove the ones where input-bus is output-bus. We
@@ -831,7 +831,7 @@ public class Netlist {
         for (final var currentNet : myNets) {
           if (currentNet.contains(busLoc)) {
             if (busnet != null) {
-              Reporter.Report.addFatalErrorFmt(
+              Reporter.report.addFatalErrorFmt(
                   "BUG: Multiple bus nets found for a single splitter\n ==> %s:%d\n",
                   this.getClass().getName().replaceAll("\\.", "/"),
                   Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -842,7 +842,7 @@ public class Netlist {
           }
           if (currentNet.contains(connectedLoc)) {
             if (connectedNet != null) {
-              Reporter.Report.addFatalErrorFmt(
+              Reporter.report.addFatalErrorFmt(
                   "BUG: Multiple nets found for a single splitter split connection\n ==> %s:%d\n",
                   this.getClass().getName().replaceAll("\\.", "/"),
                   Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -856,7 +856,7 @@ public class Netlist {
           if (busnet != null) {
             /* we can merge both nets */
             if (!busnet.merge(connectedNet)) {
-              Reporter.Report.addFatalErrorFmt(
+              Reporter.report.addFatalErrorFmt(
                   "BUG: Splitter bus merge error\n ==> %s:%d\n",
                   this.getClass().getName().replaceAll("\\.", "/"),
                   Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -878,7 +878,7 @@ public class Netlist {
                       SimpleDRCContainer.LEVEL_SEVERE,
                       SimpleDRCContainer.MARK_INSTANCE);
           warn.addMarkComponent(mySplitter);
-          Reporter.Report.AddWarning(warn);
+          Reporter.report.addWarning(warn);
         }
         mySplitIter.remove(); /* Does not exist anymore */
       }
@@ -907,7 +907,7 @@ public class Netlist {
         }
       }
       if (rootNet < 0) {
-        Reporter.Report.addFatalErrorFmt(
+        Reporter.report.addFatalErrorFmt(
             "BUG: Splitter without a bus connection\n ==> %s:%d\n",
             this.getClass().getName().replaceAll("\\.", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -959,7 +959,7 @@ public class Netlist {
                     SimpleDRCContainer.LEVEL_NORMAL,
                     SimpleDRCContainer.MARK_INSTANCE);
         warn.addMarkComponent(comp);
-        Reporter.Report.AddWarning(warn);
+        Reporter.report.addWarning(warn);
       }
       if (connectedUnknownEnds) {
         final var warn =
@@ -969,7 +969,7 @@ public class Netlist {
                     SimpleDRCContainer.LEVEL_SEVERE,
                     SimpleDRCContainer.MARK_INSTANCE);
         warn.addMarkComponent(comp);
-        Reporter.Report.AddWarning(warn);
+        Reporter.report.addWarning(warn);
       }
     }
     if (progress != null) {
@@ -1036,7 +1036,7 @@ public class Netlist {
             }
             if (connectedBus < 0) {
               // This should never happen as we already checked in the first pass.
-              Reporter.Report.addFatalErrorFmt(
+              Reporter.report.addFatalErrorFmt(
                   "BUG: This is embarasing as this should never happen\n ==> %s:%d\n",
                   this.getClass().getName().replaceAll("\\.", "/"),
                   Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1393,7 +1393,7 @@ public class Netlist {
     if (thisNet.hasBitSource(bitIndex)) {
       List<ConnectionPoint> sources = thisNet.GetBitSources(bitIndex);
       if (sources.size() != 1) {
-        Reporter.Report.addFatalErrorFmt(
+        Reporter.report.addFatalErrorFmt(
             "BUG: Found multiple sources\n ==> %s:%d\n",
             this.getClass().getName().replaceAll("\\.", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1562,7 +1562,7 @@ public class Netlist {
     /* Second pass: We mark all clock sources */
     for (final var clockSource : myClockGenerators) {
       if (clockSource.nrOfEnds() != 1) {
-        Reporter.Report.addFatalErrorFmt(
+        Reporter.report.addFatalErrorFmt(
             "BUG: Found a clock source with more than 1 connection\n ==> %s:%d\n",
             this.getClass().getName().replaceAll("\\.", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1570,7 +1570,7 @@ public class Netlist {
       }
       final var clockConnection = clockSource.getEnd(0);
       if (clockConnection.getNrOfBits() != 1) {
-        Reporter.Report.addFatalErrorFmt(
+        Reporter.report.addFatalErrorFmt(
             "BUG: Found a clock source with a bus as output\n ==> %s:%d\n",
             this.getClass().getName().replaceAll("\\.", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1611,7 +1611,7 @@ public class Netlist {
                   SimpleDRCContainer.LEVEL_FATAL,
                   SimpleDRCContainer.MARK_WIRE);
           error.addMarkComponents(net.getWires());
-          Reporter.Report.AddError(error);
+          Reporter.report.addError(error);
           ret = true;
         } else if (net.getBitWidth() == 1 && net.getSourceNets(0).size() > 1) {
           // We have to check if the net is connected to multiple drivers
@@ -1636,7 +1636,7 @@ public class Netlist {
           }
           if (foundShortCrcuit) {
             ret = true;
-            Reporter.Report.AddError(error);
+            Reporter.report.addError(error);
           } else {
             net.cleanupSourceNets(0);
           }
@@ -1672,7 +1672,7 @@ public class Netlist {
                       SimpleDRCContainer.LEVEL_NORMAL,
                       SimpleDRCContainer.MARK_WIRE);
               warn.addMarkComponents(thisNet.getWires());
-              Reporter.Report.AddWarning(warn);
+              Reporter.report.addWarning(warn);
             }
           }
         }
@@ -1688,7 +1688,7 @@ public class Netlist {
                     SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_WIRE);
         warn.addMarkComponents(sink.getParentNet().getWires());
         if (sink.getComp() != null) warn.addMarkComponent(sink.getComp());
-        Reporter.Report.AddWarning(warn);
+        Reporter.report.addWarning(warn);
       }
     }
     return false;
@@ -1766,7 +1766,7 @@ public class Netlist {
         final var thisEnd = normalComponent.getEnd(pinId);
         final var rootNet = getRootNet(connection);
         if (rootNet == null) {
-          Reporter.Report.addFatalErrorFmt(
+          Reporter.report.addFatalErrorFmt(
               "BUG: Unable to find a root net for a normal component\n ==> %s:%d\n",
               this.getClass().getName().replaceAll("\\.", "/"),
               Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1775,7 +1775,7 @@ public class Netlist {
         for (var bitid = 0; bitid < thisPin.getWidth().getWidth(); bitid++) {
           final var rootNetBitIndex = getRootNetIndex(connection, (byte) bitid);
           if (rootNetBitIndex < 0) {
-            Reporter.Report.addFatalErrorFmt(
+            Reporter.report.addFatalErrorFmt(
                 // FIXME: Some "BUG:" have 2 spaces, other just 1. Is this intentional or all can have 1 (multiple places)?
                 "BUG:  Unable to find a root-net bit-index for a normal component\n ==> %s:%d\n",
                 this.getClass().getName().replaceAll("\\.", "/"),
@@ -1816,7 +1816,7 @@ public class Netlist {
       final var pinId = comp.getEnds().indexOf(thisPin);
       final var subPortIndex = subNetlist.getPortInfo(subPins[pinId].getAttributeValue(StdAttr.LABEL));
       if (subPortIndex < 0) {
-        Reporter.Report.addFatalErrorFmt(
+        Reporter.report.addFatalErrorFmt(
             "BUG:  Unable to find pin in sub-circuit\n ==> %s:%d\n",
             this.getClass().getName().replaceAll("\\.", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1826,7 +1826,7 @@ public class Netlist {
         var pinIsSink = thisPin.isInput();
         final var rootNet = getRootNet(connection);
         if (rootNet == null) {
-          Reporter.Report.addFatalErrorFmt(
+          Reporter.report.addFatalErrorFmt(
               "BUG:  Unable to find a root net for sub-circuit\n ==> %s:%d\n",
               this.getClass().getName().replaceAll("\\.", "/"),
               Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1835,7 +1835,7 @@ public class Netlist {
         for (byte bitid = 0; bitid < thisPin.getWidth().getWidth(); bitid++) {
           final var rootNetBitIndex = getRootNetIndex(connection, bitid);
           if (rootNetBitIndex < 0) {
-            Reporter.Report.addFatalErrorFmt(
+            Reporter.report.addFatalErrorFmt(
                 "BUG:  Unable to find a root-net bit-index for sub-circuit\n ==> %s:%d\n",
                 this.getClass().getName().replaceAll("\\.", "/"),
                 Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1876,7 +1876,7 @@ public class Netlist {
 
   private boolean TraceDownSubcircuit(ConnectionPoint point, int clockSourceId, ArrayList<String> hierarchyNames, ArrayList<Netlist> hierarchyNetlists) {
     if (point.getChildsPortIndex() < 0) {
-      Reporter.Report.addFatalErrorFmt(
+      Reporter.report.addFatalErrorFmt(
           "BUG: Subcircuit port is not annotated!\n ==> %s:%d\n",
           this.getClass().getName().replaceAll("\\.", "/"),
           Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1885,7 +1885,7 @@ public class Netlist {
     final var sub = (SubcircuitFactory) point.getComp().getFactory();
     final var inputPort = sub.getSubcircuit().getNetList().getInputPin(point.getChildsPortIndex());
     if (inputPort == null) {
-      Reporter.Report.addFatalErrorFmt(
+      Reporter.report.addFatalErrorFmt(
           "BUG: Unable to find Subcircuit input port!\n ==> %s:%d\n",
           this.getClass().getName().replaceAll("\\.", "/"),
           Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1893,7 +1893,7 @@ public class Netlist {
     }
     final var subCirc = getSubCirc(point.getComp());
     if (subCirc == null) {
-      Reporter.Report.addFatalErrorFmt(
+      Reporter.report.addFatalErrorFmt(
           "BUG: Unable to find Subcircuit!\n ==> %s:%d\n",
           this.getClass().getName().replaceAll("\\.", "/"),
           Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1901,7 +1901,7 @@ public class Netlist {
     }
     final var bitindex = subCirc.getConnectionBitIndex(point.getParentNet(), point.getParentNetBitIndex());
     if (bitindex < 0) {
-      Reporter.Report.addFatalErrorFmt(
+      Reporter.report.addFatalErrorFmt(
           "BUG: Unable to find the bit index of a Subcircuit input port!\n ==> %s:%d\n",
           this.getClass().getName().replaceAll("\\.", "/"),
           Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1944,7 +1944,7 @@ public class Netlist {
       if (point.getComp().getFactory() instanceof Pin) {
         final var outputPort = getOutPort(point.getComp());
         if (outputPort == null) {
-          Reporter.Report.addFatalErrorFmt(
+          Reporter.report.addFatalErrorFmt(
               "BUG: Could not find an output port!\n ==> %s:%d\n",
               this.getClass().getName().replaceAll("\\.", "/"),
               Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -1958,7 +1958,7 @@ public class Netlist {
                     myOutputPorts.indexOf(outputPort),
                     bitIndex);
         if (subClockNet == null) {
-          Reporter.Report.addFatalErrorFmt(
+          Reporter.report.addFatalErrorFmt(
               "BUG: Could not find a sub-circuit connection in overlying hierarchy level!\n ==> %s:%d\n",
               this.getClass().getName().replaceAll("\\.", "/"),
               Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -2015,8 +2015,8 @@ public class Netlist {
     for (final var key : notGatedSet.keySet()) {
       if (gatedSet.containsKey(key) && !suppress) {
         /* big Problem, we have a component that is used with and without gated clocks */
-        Reporter.Report.AddSevereWarning(S.get("NetList_CircuitGatedNotGated"));
-        Reporter.Report.AddWarningIncrement(S.get("NetList_TraceListBegin"));
+        Reporter.report.addSevereWarning(S.get("NetList_CircuitGatedNotGated"));
+        Reporter.report.addWarningIncrement(S.get("NetList_TraceListBegin"));
         Map<NetlistComponent, Circuit> instances = notGatedSet.get(key);
         for (final var comp : instances.keySet()) {
           final var warn =
@@ -2027,7 +2027,7 @@ public class Netlist {
                   SimpleDRCContainer.MARK_INSTANCE,
                   true);
           warn.addMarkComponent(comp.getComponent());
-          Reporter.Report.AddWarning(warn);
+          Reporter.report.addWarning(warn);
         }
         instances = gatedSet.get(key);
         for (final var comp : instances.keySet()) {
@@ -2040,9 +2040,9 @@ public class Netlist {
                       SimpleDRCContainer.MARK_INSTANCE,
                       true);
           warn.addMarkComponent(comp.getComponent());
-          Reporter.Report.AddWarning(warn);
+          Reporter.report.addWarning(warn);
         }
-        Reporter.Report.AddWarningIncrement(S.get("NetList_TraceListEnd"));
+        Reporter.report.addWarningIncrement(S.get("NetList_TraceListEnd"));
       }
     }
     return true;
@@ -2120,8 +2120,8 @@ public class Netlist {
 
       if (gatedClock && !pinSources.isEmpty() && !AppPreferences.SupressGatedClockWarnings.getBoolean()) {
         for (var i = 0; i < pinSources.size(); i++) {
-          Reporter.Report.AddSevereWarning(S.get("NetList_GatedClock"));
-          Reporter.Report.AddWarningIncrement(S.get("NetList_TraceListBegin"));
+          Reporter.report.addSevereWarning(S.get("NetList_GatedClock"));
+          Reporter.report.addWarningIncrement(S.get("NetList_TraceListBegin"));
           final var warn =
               new SimpleDRCContainer(
                       myCircuit,
@@ -2131,13 +2131,13 @@ public class Netlist {
                       true);
           warn.addMarkComponents(pinWires.get(i));
           for (final var comp : pinGatedComponents.get(i)) warn.addMarkComponent(comp.getComponent());
-          Reporter.Report.AddWarning(warn);
+          Reporter.report.addWarning(warn);
           warningTraceForGatedClock(
               pinSources.get(i).getSource(),
               pinSources.get(i).getIndex(),
               hierarchyNetlists,
               currentHierarchyLevel);
-          Reporter.Report.AddWarningIncrement(S.get("NetList_TraceListEnd"));
+          Reporter.report.addWarningIncrement(S.get("NetList_TraceListEnd"));
         }
       }
 
@@ -2222,7 +2222,7 @@ public class Netlist {
                   SimpleDRCContainer.LEVEL_SEVERE,
                   SimpleDRCContainer.MARK_INSTANCE);
           warn.addMarkComponent(comp.getComponent());
-          Reporter.Report.AddWarning(warn);
+          Reporter.report.addWarning(warn);
           warnedComponents.add(comp);
         }
       }
@@ -2251,7 +2251,7 @@ public class Netlist {
         if (myInputPorts.get(i).getComponent().equals(comp)) idx = i;
       }
       if (idx < 0) {
-        Reporter.Report.addFatalErrorFmt(
+        Reporter.report.addFatalErrorFmt(
             "BUG: Could not find port!\n ==> %s:%d\n",
             this.getClass().getName().replaceAll("\\.", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -2263,7 +2263,7 @@ public class Netlist {
               .getNetlistConnectionForSubCircuitInput(
                   hierarchyNames.get(hierarchyNames.size() - 1), idx, (byte) index);
       if (subNet == null) {
-        Reporter.Report.addFatalErrorFmt(
+        Reporter.report.addFatalErrorFmt(
             "BUG: Could not find a sub-circuit connection in overlying hierarchy level!\n ==> %s:%d\n",
             this.getClass().getName().replaceAll("\\.", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -2280,7 +2280,7 @@ public class Netlist {
         final var segments = new HashSet<Wire>();
         final var source = subNetList.getHiddenSource(null, (byte) 0, newNet, newNetIndex, subNetList.mySplitters, new HashSet<>(), segments, null);
         if (source == null) {
-          Reporter.Report.addFatalErrorFmt(
+          Reporter.report.addFatalErrorFmt(
               "BUG: Unable to find source in sub-circuit!\n ==> %s:%d\n",
               this.getClass().getName().replaceAll("\\.", "/"),
               Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -2296,7 +2296,7 @@ public class Netlist {
                       SimpleDRCContainer.MARK_WIRE,
                       true);
           warn.addMarkComponents(segments);
-          Reporter.Report.AddWarning(warn);
+          Reporter.report.addWarning(warn);
           subNetList.warningTraceForGatedClock(
               source.getSource(),
               source.getIndex(),
@@ -2311,14 +2311,14 @@ public class Netlist {
                       SimpleDRCContainer.MARK_WIRE,
                       true);
           warn.addMarkComponents(segments);
-          Reporter.Report.AddWarning(warn);
+          Reporter.report.addWarning(warn);
         }
       }
     }
     if (comp.getFactory() instanceof SubcircuitFactory) {
       final var sub = (SubcircuitFactory) comp.getFactory();
       if (sourcePoint.getChildsPortIndex() < 0) {
-        Reporter.Report.addFatalErrorFmt(
+        Reporter.report.addFatalErrorFmt(
             "BUG: Subcircuit port is not annotated!\n ==> %s:%d\n",
             this.getClass().getName().replaceAll("\\.", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -2326,7 +2326,7 @@ public class Netlist {
       }
       final var outputPort = sub.getSubcircuit().getNetList().getOutputPin(sourcePoint.getChildsPortIndex());
       if (outputPort == null) {
-        Reporter.Report.addFatalErrorFmt(
+        Reporter.report.addFatalErrorFmt(
             "BUG: Unable to find Subcircuit output port!\n ==> %s:%d\n",
             this.getClass().getName().replaceAll("\\.", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -2339,7 +2339,7 @@ public class Netlist {
         if (circ.getComponent().equals(sourcePoint.getComp())) subCirc = circ;
       }
       if (subCirc == null) {
-        Reporter.Report.addFatalErrorFmt(
+        Reporter.report.addFatalErrorFmt(
             "BUG: Unable to find Subcircuit!\n ==> %s:%d\n",
             this.getClass().getName().replaceAll("\\.", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -2348,7 +2348,7 @@ public class Netlist {
 
       final var bitIndex = subCirc.getConnectionBitIndex(connectedNet, (byte) index);
       if (bitIndex < 0) {
-        Reporter.Report.addFatalErrorFmt(
+        Reporter.report.addFatalErrorFmt(
             "BUG: Unable to find the bit index of a Subcircuit output port!\n ==> %s:%d\n",
             this.getClass().getName().replaceAll("\\.", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -2378,7 +2378,7 @@ public class Netlist {
                 segments,
                 null);
         if (source == null) {
-          Reporter.Report.addFatalErrorFmt(
+          Reporter.report.addFatalErrorFmt(
               "BUG: Unable to find source in sub-circuit!\n ==> %s:%d\n",
               this.getClass().getName().replaceAll("\\.", "/"),
               Thread.currentThread().getStackTrace()[2].getLineNumber());
@@ -2394,7 +2394,7 @@ public class Netlist {
                       SimpleDRCContainer.MARK_WIRE,
                       true);
           warn.addMarkComponents(segments);
-          Reporter.Report.AddWarning(warn);
+          Reporter.report.addWarning(warn);
           subNetList.warningTraceForGatedClock(
               source.getSource(),
               source.getIndex(),
@@ -2409,7 +2409,7 @@ public class Netlist {
                       SimpleDRCContainer.MARK_WIRE,
                       true);
           warn.addMarkComponents(segments);
-          Reporter.Report.AddWarning(warn);
+          Reporter.report.addWarning(warn);
         }
       }
     }
@@ -2429,8 +2429,8 @@ public class Netlist {
         alreadyWarned |= warnedComponents.contains(comp);
       if (!alreadyWarned) {
         if (sources.get(i).getSource().getComp().getFactory() instanceof SubcircuitFactory) {
-          Reporter.Report.AddSevereWarning(S.get("NetList_GatedClock"));
-          Reporter.Report.AddWarningIncrement(S.get("NetList_TraceListBegin"));
+          Reporter.report.addSevereWarning(S.get("NetList_GatedClock"));
+          Reporter.report.addWarningIncrement(S.get("NetList_TraceListBegin"));
           final var warn =
               new SimpleDRCContainer(
                       myCircuit,
@@ -2440,13 +2440,13 @@ public class Netlist {
                       true);
           warn.addMarkComponents(wires.get(i));
           for (final var comp : components.get(i)) warn.addMarkComponent(comp.getComponent());
-          Reporter.Report.AddWarning(warn);
+          Reporter.report.addWarning(warn);
           warningTraceForGatedClock(
               sources.get(i).getSource(),
               sources.get(i).getIndex(),
               hierarchyNetlists,
               currentHierarchyLevel);
-          Reporter.Report.AddWarningIncrement(S.get("NetList_TraceListEnd"));
+          Reporter.report.addWarningIncrement(S.get("NetList_TraceListEnd"));
         } else {
           final var warn =
               new SimpleDRCContainer(
@@ -2457,7 +2457,7 @@ public class Netlist {
           for (final var comp : components.get(i))
             warn.addMarkComponent(comp.getComponent());
           warn.addMarkComponents(wires.get(i));
-          Reporter.Report.AddWarning(warn);
+          Reporter.report.addWarning(warn);
         }
         warnedComponents.addAll(components.get(i));
       }

@@ -122,7 +122,7 @@ public class FPGACommander
     if (act == CircuitEvent.ACTION_SET_NAME) {
       RebuildCircuitSelection();
     }
-    ReporterGui.clearDRCTrace();
+    ReporterGui.clearDrcTrace();
   }
 
   private void rebuildBoardSelectionPanel() {
@@ -289,8 +289,8 @@ public class FPGACommander
     panel.setVisible(false);
 
     AppPreferences.getPrefs().addPreferenceChangeListener(this);
-    Reporter.Report.setGuiLogger(ReporterGui);
-    Reporter.Report.setProgressBar(Progress);
+    Reporter.report.setGuiLogger(ReporterGui);
+    Reporter.report.setProgressBar(Progress);
     localeChanged();
     updateCircuitBoard(circuitName);
   }
@@ -397,7 +397,7 @@ public class FPGACommander
         root.ClearAnnotationLevel();
       }
       root.Annotate(ClearExistingLabels, false);
-      Reporter.Report.AddInfo(S.get("FpgaGuiAnnotationDone"));
+      Reporter.report.addInfo(S.get("FpgaGuiAnnotationDone"));
       MyProject.setForcedDirty();
       MyProject.repaintCanvas();
     }
@@ -473,7 +473,7 @@ public class FPGACommander
 
   @Override
   public void windowClosing(WindowEvent e) {
-    ReporterGui.CloseOpenWindows();
+    ReporterGui.closeOpenWindows();
     if (e.getSource().equals(MyProject.getFrame()) && panel.isVisible()) {
       panel.setVisible(false);
     }

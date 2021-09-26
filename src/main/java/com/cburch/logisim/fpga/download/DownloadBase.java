@@ -64,18 +64,18 @@ public abstract class DownloadBase {
     final var myFile = myProject.getLogisimFile();
     final var rootSheet = myFile.getCircuit(circuitName);
     if (rootSheet == null) {
-      Reporter.Report.AddError("INTERNAL ERROR: Circuit not found ?!?");
+      Reporter.report.addError("INTERNAL ERROR: Circuit not found ?!?");
       return false;
     }
     if (myBoardInformation == null) {
-      Reporter.Report.AddError("INTERNAL ERROR: No board information available ?!?");
+      Reporter.report.addError("INTERNAL ERROR: No board information available ?!?");
       return false;
     }
 
     final var boardComponents = myBoardInformation.GetComponents();
-    Reporter.Report.AddInfo("The Board " + myBoardInformation.getBoardName() + " has:");
+    Reporter.report.addInfo("The Board " + myBoardInformation.getBoardName() + " has:");
     for (final var key : boardComponents.keySet()) {
-      Reporter.Report.AddInfo(boardComponents.get(key).size() + " " + key + "(s)");
+      Reporter.report.addInfo(boardComponents.get(key).size() + " " + key + "(s)");
     }
     /*
      * At this point I require 2 sorts of information: 1) A hierarchical
@@ -128,7 +128,7 @@ public abstract class DownloadBase {
         AppPreferences.FPGA_Workspace.get()
             + File.separator
             + myProject.getLogisimFile().getName())) {
-      Reporter.Report.AddFatalError(
+      Reporter.report.addFatalError(
           "Unable to create directory: \""
               + AppPreferences.FPGA_Workspace.get()
               + File.separator
@@ -139,17 +139,17 @@ public abstract class DownloadBase {
     final var projectDir = getProjDir(selectedCircuit);
     final var rootSheet = myProject.getLogisimFile().getCircuit(selectedCircuit);
     if (!cleanDirectory(projectDir)) {
-      Reporter.Report.AddFatalError(
+      Reporter.report.addFatalError(
           "Unable to cleanup old project files in directory: \"" + projectDir + "\"");
       return false;
     }
     if (!genDirectory(projectDir)) {
-      Reporter.Report.AddFatalError("Unable to create directory: \"" + projectDir + "\"");
+      Reporter.report.addFatalError("Unable to create directory: \"" + projectDir + "\"");
       return false;
     }
     for (final var hdlPath : HDLPaths) {
       if (!genDirectory(projectDir + hdlPath)) {
-        Reporter.Report.AddFatalError("Unable to create directory: \"" + projectDir + hdlPath + "\"");
+        Reporter.report.addFatalError("Unable to create directory: \"" + projectDir + hdlPath + "\"");
         return false;
       }
     }
@@ -157,7 +157,7 @@ public abstract class DownloadBase {
     final var generatedHDLComponents = new HashSet<String>();
     var worker = rootSheet.getSubcircuitFactory().getHDLGenerator(rootSheet.getStaticAttributes());
     if (worker == null) {
-      Reporter.Report.AddFatalError("Internal error on HDL generation, null pointer exception");
+      Reporter.report.addFatalError("Internal error on HDL generation, null pointer exception");
       return false;
     }
     if (!worker.generateAllHDLDescriptions(generatedHDLComponents, projectDir, null)) {
@@ -239,7 +239,7 @@ public abstract class DownloadBase {
       var dir = new File(dirPath);
       return dir.exists() ? true : dir.mkdirs();
     } catch (Exception e) {
-      Reporter.Report.AddFatalError("Could not check/create directory :" + dirPath);
+      Reporter.report.addFatalError("Could not check/create directory :" + dirPath);
       return false;
     }
   }
@@ -287,7 +287,7 @@ public abstract class DownloadBase {
       }
       return thisDir.delete();
     } catch (Exception e) {
-      Reporter.Report.AddFatalError("Could not remove directory tree :" + dir);
+      Reporter.report.addFatalError("Could not remove directory tree :" + dir);
       return false;
     }
   }

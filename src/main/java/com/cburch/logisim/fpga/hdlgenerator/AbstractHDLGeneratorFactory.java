@@ -102,7 +102,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           oneLine.append("_vector( ");
           if (myWires.get(wire) < 0) {
             if (!myParametersList.containsKey(myWires.get(wire), attrs)) {
-              Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+              Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
               return contents.clear().get();
             }
             oneLine.append("(").append(myParametersList.get(myWires.get(wire), attrs)).append("-1)");
@@ -125,7 +125,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           oneLine.append("_vector( ");
           if (myWires.get(reg) < 0) {
             if (!myParametersList.containsKey(myWires.get(reg), attrs)) {
-              Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+              Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
               contents.clear();
               return contents.get();
             }
@@ -199,7 +199,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (ThisLine.length() != 0) {
           contents.add(ThisLine + ");");
         } else {
-          Reporter.Report.AddError("Internale Error in Verilog Architecture generation!");
+          Reporter.report.addError("Internale Error in Verilog Architecture generation!");
         }
       }
       if (!myParametersList.isEmpty(attrs)) {
@@ -226,7 +226,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
-            Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+            Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             return contents.clear().get();
           }
           oneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
@@ -261,7 +261,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
-            Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+            Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             contents.clear();
             return contents.get();
           }
@@ -290,7 +290,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
-            Reporter.Report.AddFatalError(
+            Reporter.report.addFatalError(
                 "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             return contents.clear().get();
           }
@@ -319,7 +319,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
-            Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+            Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             return contents.clear().get();
           }
           oneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
@@ -346,7 +346,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
-            Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+            Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             return contents.clear().get();
           }
           oneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
@@ -610,7 +610,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Netlist TheNets) {
     var NetMap = new HashMap<String, String>();
     if ((EndIndex < 0) || (EndIndex >= comp.nrOfEnds())) {
-      Reporter.Report.AddFatalError("INTERNAL ERROR: Component tried to index non-existing SolderPoint");
+      Reporter.report.addFatalError("INTERNAL ERROR: Component tried to index non-existing SolderPoint");
       return NetMap;
     }
     final var ConnectionInformation = comp.getEnd(EndIndex);
@@ -764,14 +764,14 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           final var compPinId = myPorts.getComponentPortId(port);
           if (!ComponentInfo.isEndConnected(compPinId)) {
             // FIXME hard coded string
-            Reporter.Report.AddSevereWarning(
+            Reporter.report.addSevereWarning(
                 String.format("Component \"%s\" in circuit \"%s\" has no clock connection!", compName, nets.getCircuitName()));
             hasClock = false;
           }
           final var clockNetName = HDL.getClockNetName(ComponentInfo, compPinId, nets);
           if (clockNetName == null || clockNetName.isEmpty()) {
             // FIXME hard coded string
-            Reporter.Report.AddSevereWarning(
+            Reporter.report.addSevereWarning(
                 String.format("Component \"%s\" in circuit \"%s\" has a gated clock connection!", compName, nets.getCircuitName()));
             gatedClock = true;
           }
@@ -1014,7 +1014,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     var temp = new StringBuffer();
     var contents = new ArrayList<String>();
     if (Component.getNrOfPins() <= 0) {
-      Reporter.Report.AddError("BUG: Found a component with no pins");
+      Reporter.report.addError("BUG: Found a component with no pins");
       return contents;
     }
     for (var i = 0; i < Component.getNrOfPins(); i++) {

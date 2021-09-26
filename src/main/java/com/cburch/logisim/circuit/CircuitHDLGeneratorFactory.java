@@ -122,7 +122,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 .getFactory()
                 .getHDLGenerator(ThisComponent.getComponent().getAttributeSet());
         if (Worker == null) {
-          Reporter.Report.AddFatalError(
+          Reporter.report.addFatalError(
               "INTERNAL ERROR: Cannot find the VHDL generator factory for component "
                   + ComponentName);
           return false;
@@ -158,7 +158,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   .getFactory()
                   .getHDLGenerator(ThisCircuit.getComponent().getAttributeSet());
       if (Worker == null) {
-        Reporter.Report.AddFatalError(
+        Reporter.report.addFatalError(
             "INTERNAL ERROR: Unable to get a subcircuit VHDL generator for '"
                 + ThisCircuit.getComponent().getFactory().getName()
                 + "'");
@@ -338,16 +338,16 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         final var msg = String.format("Clock component found with no connection, skipping: '%s'",
                 clockSource.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
         if (clockSource.getComponent().getAttributeSet().getValue(StdAttr.LABEL).equals("sysclk")) {
-          Reporter.Report.AddInfo(msg);
+          Reporter.report.addInfo(msg);
         } else {
-          Reporter.Report.AddWarning(msg);
+          Reporter.report.addWarning(msg);
         }
         continue;
       }
       final var clockNet = HDL.getClockNetName(clockSource, 0, theNetlist);
       if (clockNet.isEmpty()) {
         // FIXME: hardcoded string
-        Reporter.Report.AddFatalError("INTERNAL ERROR: Cannot find clocknet!");
+        Reporter.report.addFatalError("INTERNAL ERROR: Cannot find clocknet!");
       }
       String ConnectedNet = HDL.getNetName(clockSource, 0, true, theNetlist);
       temp.setLength(0);
@@ -514,7 +514,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           }
           if (map == null || compPin < 0) {
             // FIXME: hardcoded string
-            Reporter.Report.AddError("BUG: did not find IOpin");
+            Reporter.report.addError("BUG: did not find IOpin");
             continue;
           }
           if (!map.isMapped(compPin) || map.IsOpenMapped(compPin)) {
@@ -557,7 +557,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             final var endId = nets.getEndIndex(componentInfo, pinLabel, false);
             if (endId < 0) {
               // FIXME: hardcoded string
-              Reporter.Report.AddFatalError(
+              Reporter.report.addFatalError(
                   String.format("INTERNAL ERROR! Could not find the end-index of a sub-circuit component: '%s'", pinLabel));
             } else {
               PortMap.putAll(GetNetMap(pinLabel, true, componentInfo, endId, nets));
@@ -580,7 +580,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             final var endId = nets.getEndIndex(componentInfo, pinLabel, false);
             if (endId < 0) {
               // FIXME: hardcoded string
-              Reporter.Report.AddFatalError(
+              Reporter.report.addFatalError(
                       String.format("INTERNAL ERROR! Could not find the end-index of a sub-circuit component: '%s'", pinLabel));
             } else {
               PortMap.putAll(GetNetMap(pinLabel, true, componentInfo, endId, nets));
@@ -602,7 +602,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             final var endid = nets.getEndIndex(componentInfo, pinLabel, true);
             if (endid < 0) {
               // FIXME: hardcoded string
-              Reporter.Report.AddFatalError(
+              Reporter.report.addFatalError(
                       String.format("INTERNAL ERROR! Could not find the end-index of a sub-circuit component: '%s'", pinLabel));
             } else {
               PortMap.putAll(GetNetMap(pinLabel, true, componentInfo, endid, nets));
@@ -621,7 +621,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var tab = new StringBuilder();
     if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) {
       // FIXME: hardcoded string
-      Reporter.Report.AddFatalError(
+      Reporter.report.addFatalError(
           String.format(
               "INTERNAL ERROR: Component tried to index non-existing SolderPoint: '%s'",
               comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
@@ -640,7 +640,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       } else {
         if (!comp.isEndConnected(endIndex)) {
           // FIXME: hardcoded string
-          Reporter.Report.AddSevereWarning(
+          Reporter.report.addSevereWarning(
               "Found an unconnected output pin, tied the pin to ground!");
         }
         source.append(HDL.getNetName(comp, endIndex, true, TheNets));
@@ -669,7 +669,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         /* Here is the easy case, the bus is unconnected */
         if (isOutput) return contents.toString();
         // FIXME: hardcoded string
-        Reporter.Report.AddSevereWarning("Found an unconnected output bus pin, tied all the pin bits to ground!");
+        Reporter.report.addSevereWarning("Found an unconnected output bus pin, tied all the pin bits to ground!");
         destination.append(portName);
         while (destination.length() < SIGNAL_ALLIGNMENT_SIZE) destination.append(" ");
         contents
@@ -726,7 +726,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               /* The net is not connected */
               if (isOutput) continue;
               // FIXME: hardcoded string
-              Reporter.Report.AddSevereWarning(String.format("Found an unconnected output bus pin, tied bit %d to ground!", bit));
+              Reporter.report.addSevereWarning(String.format("Found an unconnected output bus pin, tied bit %d to ground!", bit));
               source.append(HDL.GetZeroVector(1, true));
             } else {
               /*

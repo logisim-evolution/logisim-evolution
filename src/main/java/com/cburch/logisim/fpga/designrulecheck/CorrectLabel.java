@@ -30,7 +30,7 @@ public class CorrectLabel {
   public static boolean isCorrectLabel(String label, String errorIdentifierString) {
     final var err = nameErrors(label, errorIdentifierString);
     if (err != null) {
-      Reporter.Report.AddFatalError(err);
+      Reporter.report.addFatalError(err);
       return false;
     }
     return true;

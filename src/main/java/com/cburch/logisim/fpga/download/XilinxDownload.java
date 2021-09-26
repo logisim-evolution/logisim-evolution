@@ -142,11 +142,11 @@ public class XilinxDownload implements VendorDownload {
       Xilinx.directory(new File(SandboxPath));
       return Xilinx;
     } else {
-      Reporter.Report.ClsScr();
+      Reporter.report.clearConsole();
       /* Here we do the USBTMC Download */
       var usbtmcdevice = new File("/dev/usbtmc0").exists();
       if (!usbtmcdevice) {
-        Reporter.Report.AddFatalError(S.get("XilinxUsbTmc"));
+        Reporter.report.addFatalError(S.get("XilinxUsbTmc"));
         return null;
       }
       var bitfile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + "." + bitfileExt);
@@ -156,7 +156,7 @@ public class XilinxDownload implements VendorDownload {
       try {
         bitfile_in = new BufferedInputStream(new FileInputStream(bitfile));
       } catch (FileNotFoundException e) {
-        Reporter.Report.AddFatalError(S.get("XilinxOpenFailure", bitfile));
+        Reporter.report.addFatalError(S.get("XilinxOpenFailure", bitfile));
         return null;
       }
       var usbtmc = new File("/dev/usbtmc0");
@@ -172,7 +172,7 @@ public class XilinxDownload implements VendorDownload {
         usbtmc_out.close();
         bitfile_in.close();
       } catch (IOException e) {
-        Reporter.Report.AddFatalError(S.get("XilinxUsbTmcError"));
+        Reporter.report.addFatalError(S.get("XilinxUsbTmcError"));
       }
     }
     return null;
@@ -222,7 +222,7 @@ public class XilinxDownload implements VendorDownload {
 
     if (writeToFlash && boardInfo.fpga.isFlashDefined()) {
       if (boardInfo.fpga.getFlashName() == null) {
-        Reporter.Report.AddFatalError(S.get("XilinxFlashMissing", boardInfo.getBoardName()));
+        Reporter.report.addFatalError(S.get("XilinxFlashMissing", boardInfo.getBoardName()));
       }
 
       contents.pair("flashPos", String.valueOf(boardInfo.fpga.getFlashJTAGChainPosition()))

@@ -303,10 +303,10 @@ public class AlteraDownload implements VendorDownload {
     Detect.directory(new File(SandboxPath));
     var response = new ArrayList<String>();
     try {
-      Reporter.Report.print("");
-      Reporter.Report.print("===");
-      Reporter.Report.print("===> " + S.get("AlteraDetectDevice"));
-      Reporter.Report.print("===");
+      Reporter.report.print("");
+      Reporter.report.print("===");
+      Reporter.report.print("===> " + S.get("AlteraDetectDevice"));
+      Reporter.report.print("===");
       if (Download.execute(Detect, response) != null) return false;
     } catch (IOException | InterruptedException e) {
       return false;
@@ -338,19 +338,19 @@ public class AlteraDownload implements VendorDownload {
 
   private boolean DoFlashing() {
     if (!CreateCofFile()) {
-      Reporter.Report.AddError(S.get("AlteraFlashError"));
+      Reporter.report.addError(S.get("AlteraFlashError"));
       return false;
     }
     if (!CreateJicFile()) {
-      Reporter.Report.AddError(S.get("AlteraFlashError"));
+      Reporter.report.addError(S.get("AlteraFlashError"));
       return false;
     }
     if (!LoadProgrammerSof()) {
-      Reporter.Report.AddError(S.get("AlteraFlashError"));
+      Reporter.report.addError(S.get("AlteraFlashError"));
       return false;
     }
     if (!FlashDevice()) {
-      Reporter.Report.AddError(S.get("AlteraFlashError"));
+      Reporter.report.addError(S.get("AlteraFlashError"));
       return false;
     }
     return true;
@@ -358,11 +358,11 @@ public class AlteraDownload implements VendorDownload {
 
   private boolean FlashDevice() {
     final var jicFile = ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".jic";
-    Reporter.Report.print("==>");
-    Reporter.Report.print("==> " + S.get("AlteraFlash"));
-    Reporter.Report.print("==>");
+    Reporter.report.print("==>");
+    Reporter.report.print("==> " + S.get("AlteraFlash"));
+    Reporter.report.print("==>");
     if (!new File(SandboxPath + jicFile).exists()) {
-      Reporter.Report.AddError(S.get("AlteraFlashError", jicFile));
+      Reporter.report.addError(S.get("AlteraFlashError", jicFile));
       return false;
     }
     final var command = LineBuffer.getBuffer();
@@ -379,11 +379,11 @@ public class AlteraDownload implements VendorDownload {
     try {
       final var result = Download.execute(prog, null);
       if (result != null) {
-        Reporter.Report.AddFatalError(S.get("AlteraFlashFailure"));
+        Reporter.report.addFatalError(S.get("AlteraFlashFailure"));
         return false;
       }
     } catch (IOException | InterruptedException e) {
-      Reporter.Report.AddFatalError(S.get("AlteraFlashFailure"));
+      Reporter.report.addFatalError(S.get("AlteraFlashFailure"));
       return false;
     }
     return true;
@@ -402,11 +402,11 @@ public class AlteraDownload implements VendorDownload {
         + "sfl_"
         + FpgaDevice.toLowerCase()
         + ".sof";
-    Reporter.Report.print("==>");
-    Reporter.Report.print("==> " + S.get("AlteraProgSof"));
-    Reporter.Report.print("==>");
+    Reporter.report.print("==>");
+    Reporter.report.print("==> " + S.get("AlteraProgSof"));
+    Reporter.report.print("==>");
     if (!new File(ProgrammerSofFile).exists()) {
-      Reporter.Report.AddError(S.get("AlteraProgSofError", ProgrammerSofFile));
+      Reporter.report.addError(S.get("AlteraProgSofError", ProgrammerSofFile));
       return false;
     }
     final var command = LineBuffer.getBuffer();
@@ -422,11 +422,11 @@ public class AlteraDownload implements VendorDownload {
     try {
       final var result = Download.execute(prog, null);
       if (result != null) {
-        Reporter.Report.AddFatalError(S.get("AlteraProgSofFailure"));
+        Reporter.report.addFatalError(S.get("AlteraProgSofFailure"));
         return false;
       }
     } catch (IOException | InterruptedException e) {
-      Reporter.Report.AddFatalError(S.get("AlteraProgSofFailure"));
+      Reporter.report.addFatalError(S.get("AlteraProgSofFailure"));
       return false;
     }
     return true;
@@ -444,12 +444,12 @@ public class AlteraDownload implements VendorDownload {
 
   private boolean CreateJicFile() {
     if (!new File(ScriptPath + AlteraCofFile).exists()) {
-      Reporter.Report.AddError(S.get("AlteraNoCof"));
+      Reporter.report.addError(S.get("AlteraNoCof"));
       return false;
     }
-    Reporter.Report.print("==>");
-    Reporter.Report.print("==> " + S.get("AlteraJicFile"));
-    Reporter.Report.print("==>");
+    Reporter.report.print("==>");
+    Reporter.report.print("==> " + S.get("AlteraJicFile"));
+    Reporter.report.print("==>");
     var command = new ArrayList<String>();
     command.add(alteraVendor.getBinaryPath(3));
     command.add("-c");
@@ -459,11 +459,11 @@ public class AlteraDownload implements VendorDownload {
     try {
       final var result = Download.execute(Jic, null);
       if (result != null) {
-        Reporter.Report.AddFatalError(S.get("AlteraJicFileError"));
+        Reporter.report.addFatalError(S.get("AlteraJicFileError"));
         return false;
       }
     } catch (IOException | InterruptedException e) {
-      Reporter.Report.AddFatalError(S.get("AlteraJicFileError"));
+      Reporter.report.addFatalError(S.get("AlteraJicFileError"));
       return false;
     }
 
@@ -472,12 +472,12 @@ public class AlteraDownload implements VendorDownload {
 
   private boolean CreateCofFile() {
     if (!new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof").exists()) {
-      Reporter.Report.AddFatalError(S.get("AlteraNoSofFile"));
+      Reporter.report.addFatalError(S.get("AlteraNoSofFile"));
       return false;
     }
-    Reporter.Report.print("==>");
-    Reporter.Report.print("==> " + S.get("AlteraCofFile"));
-    Reporter.Report.print("==>");
+    Reporter.report.print("==>");
+    Reporter.report.print("==> " + S.get("AlteraCofFile"));
+    Reporter.report.print("==>");
     try {
       var docFactory = DocumentBuilderFactory.newInstance();
       var docBuilder = docFactory.newDocumentBuilder();
@@ -530,7 +530,7 @@ public class AlteraDownload implements VendorDownload {
       var result = new StreamResult(new File(ScriptPath + AlteraCofFile));
       transformer.transform(source, result);
     } catch (ParserConfigurationException | TransformerException e) {
-      Reporter.Report.AddError(S.get("AlteraErrorCof"));
+      Reporter.report.addError(S.get("AlteraErrorCof"));
       return false;
     }
     return true;

@@ -267,7 +267,7 @@ public abstract class HDL {
     if (!HDL.isVHDL()) return true;
     if (contents.isEmpty()) {
       // FIXME: hardcoded string
-      Reporter.Report.AddFatalError("INTERNAL ERROR: Empty entity description received!");
+      Reporter.report.addFatalError("INTERNAL ERROR: Empty entity description received!");
       return false;
     }
     final var outFile = FileWriter.getFilePointer(targetDirectory, componentName, true);
@@ -278,7 +278,7 @@ public abstract class HDL {
   public static boolean writeArchitecture(String targetDirectory, ArrayList<String> contents, String componentName) {
     if (contents == null || contents.isEmpty()) {
       // FIXME: hardcoded string
-      Reporter.Report.AddFatalError(
+      Reporter.report.addFatalError(
           "INTERNAL ERROR: Empty behavior description for Component '"
               + componentName
               + "' received!");

@@ -51,7 +51,7 @@ public class FileWriter {
       String targetDirectory,
       String componentName,
       boolean isEntity) {
-    final var fileName = new StringBuffer(); 
+    final var fileName = new StringBuffer();
     try {
       final var outDir = new File(targetDirectory);
       if (!outDir.exists()) {
@@ -66,14 +66,14 @@ public class FileWriter {
       if (!isEntity && HDL.isVHDL()) fileName.append(ARCHITECTURE_EXTENSION);
       fileName.append(HDL.isVHDL() ? ".vhd" : ".v");
       final var outFile = new File(fileName.toString());
-      Reporter.Report.AddInfo(S.fmt("fileCreateHDLFile", fileName.toString()));
+      Reporter.report.addInfo(S.fmt("fileCreateHDLFile", fileName.toString()));
       if (outFile.exists()) {
-        Reporter.Report.AddWarning(S.fmt("fileHDLFileExists", fileName.toString()));
+        Reporter.report.addWarning(S.fmt("fileHDLFileExists", fileName.toString()));
         return null;
       }
       return outFile;
     } catch (Exception e) {
-      Reporter.Report.AddFatalError(S.fmt("fileUnableToCreate", fileName.toString()));
+      Reporter.report.addFatalError(S.fmt("fileUnableToCreate", fileName.toString()));
       return null;
     }
   }
@@ -91,14 +91,14 @@ public class FileWriter {
       if (!targetDirectory.endsWith(File.separator)) fileName.append(File.separator);
       fileName.append(name);
       final var outFile = new File(fileName.toString());
-      Reporter.Report.AddInfo(S.fmt("fileCreateScriptFile", fileName.toString()));
+      Reporter.report.addInfo(S.fmt("fileCreateScriptFile", fileName.toString()));
       if (outFile.exists()) {
-        Reporter.Report.AddWarning(S.fmt("fileScriptFileExists", fileName.toString()));
+        Reporter.report.addWarning(S.fmt("fileScriptFileExists", fileName.toString()));
         return null;
       }
       return outFile;
     } catch (Exception e) {
-      Reporter.Report.AddFatalError(S.fmt("fileUnableToCreate", fileName.toString()));
+      Reporter.report.addFatalError(S.fmt("fileUnableToCreate", fileName.toString()));
       return null;
     }
   }
@@ -159,7 +159,7 @@ public class FileWriter {
       output.close();
       return true;
     } catch (Exception e) {
-      Reporter.Report.AddFatalError(S.fmt("fileUnableToWrite", outfile.getAbsolutePath()));
+      Reporter.report.addFatalError(S.fmt("fileUnableToWrite", outfile.getAbsolutePath()));
       return false;
     }
   }

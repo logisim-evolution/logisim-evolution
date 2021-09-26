@@ -168,7 +168,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           break;
       }
     } else {
-      Reporter.Report.AddFatalError("Strange, this should not happen as Verilog is not yet supported!\n");
+      Reporter.report.addFatalError("Strange, this should not happen as Verilog is not yet supported!\n");
     }
     return contents.getWithIndent();
   }
