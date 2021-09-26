@@ -70,15 +70,15 @@ public class Canvas extends JComponent {
     }
   }
 
+  // FIXME: if this is **must** be overriden (as per code comment), then we need to turn this into abstract class.
   public double getZoomFactor() {
     return 1.0; // subclass will have to override this
   }
 
   protected void paintBackground(Graphics g) {
     if (AppPreferences.AntiAliassing.getBoolean()) {
-      Graphics2D g2 = (Graphics2D) g;
-      g2.setRenderingHint(
-          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      final var g2 = (Graphics2D) g;
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
 
@@ -92,10 +92,10 @@ public class Canvas extends JComponent {
   }
 
   protected void paintForeground(Graphics g) {
-    var canvasModel = this.model;
-    var tool = listener.getTool();
+    final var canvasModel = this.model;
+    final var tool = listener.getTool();
     if (canvasModel != null) {
-      var dup = g.create();
+      final var dup = g.create();
       canvasModel.paint(g, selection);
       dup.dispose();
     }
@@ -111,7 +111,7 @@ public class Canvas extends JComponent {
   }
 
   public void setModel(CanvasModel value, ActionDispatcher dispatcher) {
-    CanvasModel oldValue = model;
+    final var oldValue = model;
     if (oldValue != null) {
       if (!oldValue.equals(value)) {
         oldValue.removeCanvasModelListener(listener);
@@ -132,10 +132,12 @@ public class Canvas extends JComponent {
     return null; // subclass will override if it supports popup menus
   }
 
+  // FIXME: if this is **must** be overriden (as per code comment), then we need to turn this into abstract class.
   public int snapX(int x) {
     return x; // subclass will have to override this
   }
 
+  // FIXME: if this is **must** be overriden (as per code comment), then we need to turn this into abstract class.
   public int snapY(int y) {
     return y; // subclass will have to override this
   }

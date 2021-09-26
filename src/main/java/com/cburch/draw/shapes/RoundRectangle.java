@@ -38,10 +38,10 @@ public class RoundRectangle extends Rectangular {
 
   @Override
   protected boolean contains(int x, int y, int w, int h, Location q) {
-    int qx = q.getX();
-    int qy = q.getY();
-    int rx = radius;
-    int ry = radius;
+    final var qx = q.getX();
+    final var qy = q.getY();
+    var rx = radius;
+    var ry = radius;
     if (2 * rx > w) rx = w / 2;
     if (2 * ry > h) ry = h / 2;
     if (!isInRect(qx, qy, x, y, w, h)) {
@@ -61,7 +61,7 @@ public class RoundRectangle extends Rectangular {
 
   @Override
   public void draw(Graphics g, int x, int y, int w, int h) {
-    int diam = 2 * radius;
+    final var diam = 2 * radius;
     if (setForFill(g)) g.fillRoundRect(x, y, w, h, diam, diam);
     if (setForStroke(g)) g.drawRoundRect(x, y, w, h, diam, diam);
   }
@@ -78,75 +78,71 @@ public class RoundRectangle extends Rectangular {
 
   @Override
   protected Location getRandomPoint(Bounds bds, Random rand) {
-    if (getPaintType() == DrawAttr.PAINT_STROKE) {
-      int w = getWidth();
-      int h = getHeight();
-      int r = radius;
-      int horz = Math.max(0, w - 2 * r); // length of horizontal segment
-      int vert = Math.max(0, h - 2 * r);
-      double len = 2 * horz + 2 * vert + 2 * Math.PI * r;
-      double u = len * rand.nextDouble();
-      int x = getX();
-      int y = getY();
-      if (u < horz) {
-        x += r + (int) u;
-      } else if (u < 2 * horz) {
-        x += r + (int) (u - horz);
-        y += h;
-      } else if (u < 2 * horz + vert) {
-        y += r + (int) (u - 2 * horz);
-      } else if (u < 2 * horz + 2 * vert) {
-        x += w;
-        y += (u - 2 * w - h);
-      } else {
-        int rx = radius;
-        int ry = radius;
-        if (2 * rx > w) rx = w / 2;
-        if (2 * ry > h) ry = h / 2;
-        u = 2 * Math.PI * rand.nextDouble();
-        int dx = (int) Math.round(rx * Math.cos(u));
-        int dy = (int) Math.round(ry * Math.sin(u));
-        if (dx < 0) {
-          x += r + dx;
-        } else {
-          x += r + horz + dx;
-        }
-        if (dy < 0) {
-          y += r + dy;
-        } else {
-          y += r + vert + dy;
-        }
-      }
-
-      int d = getStrokeWidth();
-      if (d > 1) {
-        x += rand.nextInt(d) - d / 2;
-        y += rand.nextInt(d) - d / 2;
-      }
-      return Location.create(x, y);
-    } else {
+    if (getPaintType() != DrawAttr.PAINT_STROKE) {
       return super.getRandomPoint(bds, rand);
     }
+
+    final var w = getWidth();
+    final var h = getHeight();
+    final var r = radius;
+    final var horz = Math.max(0, w - 2 * r); // length of horizontal segment
+    final var vert = Math.max(0, h - 2 * r);
+    final var len = 2 * horz + 2 * vert + 2 * Math.PI * r;
+    var u = len * rand.nextDouble();
+    var x = getX();
+    var y = getY();
+
+    if (u < horz) {
+      x += r + (int) u;
+    } else if (u < 2 * horz) {
+      x += r + (int) (u - horz);
+      y += h;
+    } else if (u < 2 * horz + vert) {
+      y += r + (int) (u - 2 * horz);
+    } else if (u < 2 * horz + 2 * vert) {
+      x += w;
+      y += (u - 2 * w - h);
+    } else {
+      int rx = radius;
+      int ry = radius;
+      if (2 * rx > w) rx = w / 2;
+      if (2 * ry > h) ry = h / 2;
+      u = 2 * Math.PI * rand.nextDouble();
+      int dx = (int) Math.round(rx * Math.cos(u));
+      int dy = (int) Math.round(ry * Math.sin(u));
+      if (dx < 0) {
+        x += r + dx;
+      } else {
+        x += r + horz + dx;
+      }
+      if (dy < 0) {
+        y += r + dy;
+      } else {
+        y += r + vert + dy;
+      }
+    }
+
+    final var d = getStrokeWidth();
+    if (d > 1) {
+      x += rand.nextInt(d) - d / 2;
+      y += rand.nextInt(d) - d / 2;
+    }
+    return Location.create(x, y);
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public <V> V getValue(Attribute<V> attr) {
-    if (attr == DrawAttr.CORNER_RADIUS) {
-      return (V) Integer.valueOf(radius);
-    } else {
-      return super.getValue(attr);
-    }
+    return (attr == DrawAttr.CORNER_RADIUS) ? (V) Integer.valueOf(radius) : super.getValue(attr);
   }
 
   @Override
   public boolean matches(CanvasObject other) {
     if (other instanceof RoundRectangle) {
-      RoundRectangle that = (RoundRectangle) other;
+      final var that = (RoundRectangle) other;
       return super.matches(other) && this.radius == that.radius;
-    } else {
-      return false;
     }
+    return false;
   }
 
   @Override

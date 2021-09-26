@@ -63,7 +63,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   @Override
   public CanvasObject clone() {
     try {
-      AbstractCanvasObject ret = (AbstractCanvasObject) super.clone();
+      final var ret = (AbstractCanvasObject) super.clone();
       ret.listeners = new EventSourceWeakSupport<>();
       return ret;
     } catch (CloneNotSupportedException e) {
@@ -85,15 +85,15 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   }
 
   protected void fireAttributeListChanged() {
-    AttributeEvent e = new AttributeEvent(this);
-    for (AttributeListener listener : listeners) {
+    final var e = new AttributeEvent(this);
+    for (final var listener : listeners) {
       listener.attributeListChanged(e);
     }
   }
 
   @Override
   public Attribute<?> getAttribute(String name) {
-    for (Attribute<?> attr : getAttributes()) {
+    for (final var attr : getAttributes()) {
       if (attr.getName().equals(name)) return attr;
     }
     return null;
@@ -178,7 +178,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
           final var loc = this.getRandomPoint(c, rand);
           if (loc != null && that.contains(loc, false)) return true;
         } else {
-          Location loc = that.getRandomPoint(c, rand);
+          final var loc = that.getRandomPoint(c, rand);
           if (loc != null && this.contains(loc, false)) return true;
         }
       }
@@ -203,7 +203,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   protected boolean setForFill(Graphics g) {
     final var attrs = getAttributes();
     if (attrs.contains(DrawAttr.PAINT_TYPE)) {
-      Object value = getValue(DrawAttr.PAINT_TYPE);
+      final var value = getValue(DrawAttr.PAINT_TYPE);
       if (value == DrawAttr.PAINT_STROKE) return false;
     }
 
@@ -219,7 +219,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   protected boolean setForStroke(Graphics g) {
     final var attrs = getAttributes();
     if (attrs.contains(DrawAttr.PAINT_TYPE)) {
-      Object value = getValue(DrawAttr.PAINT_TYPE);
+      final var value = getValue(DrawAttr.PAINT_TYPE);
       if (value == DrawAttr.PAINT_FILL) return false;
     }
 
@@ -245,7 +245,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 
   @Override
   public final <V> void setValue(Attribute<V> attr, V value) {
-    Object old = getValue(attr);
+    final var old = getValue(attr);
     final var same = Objects.equals(old, value);
     if (!same) {
       updateValue(attr, value);
