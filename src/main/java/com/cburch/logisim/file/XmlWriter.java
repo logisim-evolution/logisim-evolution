@@ -11,7 +11,6 @@ package com.cburch.logisim.file;
 
 import com.cburch.draw.model.AbstractCanvasObject;
 import com.cburch.logisim.LogisimVersion;
-import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
@@ -20,6 +19,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.MapComponent;
+import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.tools.Library;
@@ -84,7 +84,7 @@ class XmlWriter {
     if (stringB == null) return 1;
     return stringA.compareTo(stringB);
   }
-  
+
   private static final Comparator<Node> nodeComparator =
       (nodeA, nodeB) -> {
         var compareResult = stringCompare(nodeA.getNodeName(), nodeB.getNodeName());
@@ -112,15 +112,15 @@ class XmlWriter {
     //   - a(s)
     //   - comp(s)
     //   - wire(s)
-    if (name.equals("appear")) { 
+    if (name.equals("appear")) {
       // the appearance section only has to sort the circuit ports, the rest is static.
-      final var circuitPortIndexes = new ArrayList<Integer>(); 
-      for (var nodeIndex = 0; nodeIndex < childrenCount; nodeIndex++) 
+      final var circuitPortIndexes = new ArrayList<Integer>();
+      for (var nodeIndex = 0; nodeIndex < childrenCount; nodeIndex++)
         if (children.item(nodeIndex).getNodeName().equals("circ-port")) circuitPortIndexes.add(nodeIndex);
       if (circuitPortIndexes.isEmpty()) return;
       final var numberOfPorts = circuitPortIndexes.size();
       final var nodeSet = new Node[numberOfPorts];
-      for (var portIndex = 0; portIndex < numberOfPorts; portIndex++) 
+      for (var portIndex = 0; portIndex < numberOfPorts; portIndex++)
         nodeSet[portIndex] = children.item(circuitPortIndexes.get(portIndex));
       Arrays.sort(nodeSet, nodeComparator);
       for (var portIndex = 0; portIndex < numberOfPorts; portIndex++) top.insertBefore(nodeSet[portIndex], null);
@@ -196,7 +196,7 @@ class XmlWriter {
 
   void addAttributeSetContent(Element elt, AttributeSet attrs, AttributeDefaultProvider source) {
     if (attrs == null) return;
-    LogisimVersion ver = Main.VERSION;
+    LogisimVersion ver = BuildInfo.version;
     if (source != null && source.isAllDefaultValues(attrs, ver)) return;
     for (Attribute<?> attrBase : attrs.getAttributes()) {
       @SuppressWarnings("unchecked")
@@ -380,12 +380,12 @@ class XmlWriter {
         doc.createTextNode(
             "\nThis file is intended to be "
                 + "loaded by "
-                + Main.APP_NAME
+                + BuildInfo.displayName
                 + "("
-                + Main.APP_URL
+                + BuildInfo.url
                 + ").\n"));
     ret.setAttribute("version", "1.0");
-    ret.setAttribute("source", Main.VERSION.toString());
+    ret.setAttribute("source", BuildInfo.version.toString());
 
     for (final var lib : file.getLibraries()) {
       final var elt = fromLibrary(lib);
