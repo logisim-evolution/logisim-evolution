@@ -28,7 +28,7 @@ public abstract class ModelAction extends Action {
     if (coll.size() != 1) {
       return S.get("shapeMultiple");
     } else {
-      CanvasObject shape = coll.iterator().next();
+      final var shape = coll.iterator().next();
       return shape.getDisplayName();
     }
   }

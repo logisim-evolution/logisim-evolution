@@ -29,7 +29,7 @@ public class Handle {
   @Override
   public boolean equals(Object other) {
     if (other instanceof Handle) {
-      Handle that = (Handle) other;
+      final var that = (Handle) other;
       return this.object.equals(that.object) && this.x == that.x && this.y == that.y;
     } else {
       return false;
