@@ -14,7 +14,7 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
-import com.cburch.logisim.fpga.download.Download;
+import com.cburch.logisim.fpga.download.download;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.generic.CanvasPane;
@@ -614,7 +614,7 @@ public class Startup implements AWTEventListener {
     // This is to test a test bench. It will return 0 or 1 depending on if the tests pass or not.
     return RC.OK;
   }
-  
+
   private static RC handleArgMainCircuit(Startup startup, Option opt) {
     startup.circuitToTest = opt.getValues()[0];
     return RC.OK;
@@ -793,8 +793,8 @@ public class Startup implements AWTEventListener {
     final var downTickFreq = mainCircuit.getDownloadFrequency();
     final var usedFrequency = (testTickFrequency > 0) ? testTickFrequency :
         (downTickFreq > 0) ? downTickFreq : simTickFreq;
-    Download Downloader =
-        new Download(
+    download downloader =
+        new download(
             proj,
             testCircuitImpName,
             usedFrequency,
@@ -804,7 +804,7 @@ public class Startup implements AWTEventListener {
             false,
             false,
             testCircuitHdlOnly);
-    return Downloader.runtty();
+    return downloader.runTty();
   }
 
   private void loadTemplate(Loader loader, File templFile, boolean templEmpty) {

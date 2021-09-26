@@ -140,7 +140,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   @Override
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
-    updateports(instance);
+    updatePorts(instance);
     computeTextField(instance);
   }
 
@@ -154,10 +154,10 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.FACING) {
       instance.recomputeBounds();
-      updateports(instance);
+      updatePorts(instance);
       computeTextField(instance);
     } else if (attr == TtlLibrary.VCC_GND) {
-      updateports(instance);
+      updatePorts(instance);
     }
   }
 
@@ -417,7 +417,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
 
   public abstract void propagateTtl(InstanceState state);
 
-  private void updateports(Instance instance) {
+  private void updatePorts(Instance instance) {
     final var bds = instance.getBounds();
     final var dir = instance.getAttributeValue(StdAttr.FACING);
     var dx = 0;

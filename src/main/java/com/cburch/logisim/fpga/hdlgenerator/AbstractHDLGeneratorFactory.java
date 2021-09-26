@@ -815,7 +815,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public String getRelativeDirectory() {
-    final var mainDirectory = AppPreferences.HDL_Type.get().toLowerCase();
+    final var mainDirectory = AppPreferences.HdlType.get().toLowerCase();
     final var directoryName = new StringBuilder();
     directoryName.append(mainDirectory);
     if (!mainDirectory.endsWith(File.separator)) directoryName.append(File.separator);

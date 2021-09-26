@@ -18,7 +18,7 @@ import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.fpga.data.BoardInformation;
-import com.cburch.logisim.fpga.download.Download;
+import com.cburch.logisim.fpga.download.download;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.gui.generic.OptionPane;
@@ -74,7 +74,7 @@ public class FPGACommander
   private final JButton StopButton = new JButton();
   private final JProgressBar Progress = new JProgressBar();
   private final FPGAReportTabbedPane ReporterGui;
-  private Download Downloader;
+  private download downloader;
   public static final String STOP_REQUESTED = "stop";
   private final JPanel BoardSelectionPanel = new JPanel();
   private final FPGAClockPanel FrequencyPanel;
@@ -344,7 +344,7 @@ public class FPGACommander
       selectToolPath(MyBoardInformation.fpga.getVendor());
       HandleHDLOnly();
     } else if (e.getActionCommand().equals(STOP_REQUESTED)) {
-      if (Downloader != null) Downloader.stop();
+      if (downloader != null) downloader.stop();
       ((ProjectAddIcon) StopButton.getIcon()).setDeselect(true);
       StopButton.setEnabled(false);
     } else if (e.getActionCommand().equals("Download")) {
@@ -358,8 +358,8 @@ public class FPGACommander
       boolean writeFlash = actionCommands.getSelectedIndex() == 3;
       boolean HdlOnly = actionCommands.getSelectedIndex() == 0;
       boolean DownloadOnly = actionCommands.getSelectedIndex() >= 2;
-      Downloader =
-          new Download(
+      downloader =
+          new download(
               MyProject,
               circuitsList.getSelectedItem().toString(),
               FrequencyPanel.GetTickfrequency(),
@@ -370,9 +370,9 @@ public class FPGACommander
               HdlOnly,
               Progress,
               panel);
-      Downloader.AddListener(this);
-      Downloader.DoDownload();
-    } else if (e.getSource() instanceof Download) {
+      downloader.addListener(this);
+      downloader.doDownload();
+    } else if (e.getSource() instanceof download) {
       setExecuteWindowEnabled(true);
       setAnnotationWindowEnabled(true);
       setBoardSelectionEnabled(true);

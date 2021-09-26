@@ -75,17 +75,17 @@ public class AlteraDownload implements VendorDownload {
   }
 
   @Override
-  public void SetMapableResources(MappableResourcesContainer resources) {
+  public void setMapableResources(MappableResourcesContainer resources) {
     mapInfo = resources;
   }
 
   @Override
-  public int GetNumberOfStages() {
+  public int getNumberOfStages() {
     return 3;
   }
 
   @Override
-  public String GetStageMessage(int stage) {
+  public String getStageMessage(int stage) {
     switch (stage) {
       case 0:
         return S.get("AlteraProject");
@@ -99,7 +99,7 @@ public class AlteraDownload implements VendorDownload {
   }
 
   @Override
-  public ProcessBuilder PerformStep(int stage) {
+  public ProcessBuilder performStep(int stage) {
     switch (stage) {
       case 0:
         return Stage0Project();
@@ -120,7 +120,7 @@ public class AlteraDownload implements VendorDownload {
   }
 
   @Override
-  public ProcessBuilder DownloadToBoard() {
+  public ProcessBuilder downloadToBoard() {
     if (WriteToFlash) {
       if (!DoFlashing()) return null;
     }
@@ -176,7 +176,7 @@ public class AlteraDownload implements VendorDownload {
   }
 
   @Override
-  public boolean CreateDownloadScripts() {
+  public boolean createDownloadScripts() {
     var scriptFile = FileWriter.getFilePointer(ScriptPath, alteraTclFile);
     if (scriptFile == null) {
       scriptFile = new File(ScriptPath + alteraTclFile);
@@ -288,14 +288,14 @@ public class AlteraDownload implements VendorDownload {
         .add("{{assignName}} DEVICE_FILTER_PACKAGE {{1}}", pkg[0])
         .add("{{assignName}} DEVICE_FILTER_PIN_COUNT {{1}}", pkg[1])
         .add("{{assignName}} RESERVE_ALL_UNUSED_PINS \"AS INPUT {{1}}\"", behavior)
-        .add("{{assignName}} FMAX_REQUIREMENT \"{{1}}\"", Download.GetClockFrequencyString(currentBoard))
+        .add("{{assignName}} FMAX_REQUIREMENT \"{{1}}\"", download.getClockFrequencyString(currentBoard))
         .add("{{assignName}} RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
         .add("{{assignName}} CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
         .getWithIndent();
   }
 
   @Override
-  public boolean BoardConnected() {
+  public boolean isBoardConnected() {
     var command = new ArrayList<String>();
     command.add(alteraVendor.getBinaryPath(1));
     command.add("--list");
@@ -307,7 +307,7 @@ public class AlteraDownload implements VendorDownload {
       Reporter.Report.print("===");
       Reporter.Report.print("===> " + S.get("AlteraDetectDevice"));
       Reporter.Report.print("===");
-      if (Download.execute(Detect, response) != null) return false;
+      if (download.execute(Detect, response) != null) return false;
     } catch (IOException | InterruptedException e) {
       return false;
     }
@@ -317,7 +317,7 @@ public class AlteraDownload implements VendorDownload {
       cablename = Devices.get(0);
       return true;
     }
-    var selection = Download.ChooseBoard(Devices);
+    var selection = download.chooseBoard(Devices);
     if (selection == null) return false;
     cablename = selection;
     return true;
@@ -377,7 +377,7 @@ public class AlteraDownload implements VendorDownload {
     final var prog = new ProcessBuilder(command.get());
     prog.directory(new File(SandboxPath));
     try {
-      final var result = Download.execute(prog, null);
+      final var result = download.execute(prog, null);
       if (result != null) {
         Reporter.Report.AddFatalError(S.get("AlteraFlashFailure"));
         return false;
@@ -420,7 +420,7 @@ public class AlteraDownload implements VendorDownload {
     final var prog = new ProcessBuilder(command.get());
     prog.directory(new File(SandboxPath));
     try {
-      final var result = Download.execute(prog, null);
+      final var result = download.execute(prog, null);
       if (result != null) {
         Reporter.Report.AddFatalError(S.get("AlteraProgSofFailure"));
         return false;
@@ -457,7 +457,7 @@ public class AlteraDownload implements VendorDownload {
     final var Jic = new ProcessBuilder(command);
     Jic.directory(new File(SandboxPath));
     try {
-      final var result = Download.execute(Jic, null);
+      final var result = download.execute(Jic, null);
       if (result != null) {
         Reporter.Report.AddFatalError(S.get("AlteraJicFileError"));
         return false;
