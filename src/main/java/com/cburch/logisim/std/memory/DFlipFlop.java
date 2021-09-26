@@ -32,11 +32,11 @@ public class DFlipFlop extends AbstractFlipFlop {
   public static final String _ID = "D Flip-Flop";
 
   private static class DFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
-    
+
     public DFFHDLGeneratorFactory() {
       super(StdAttr.TRIGGER);
     }
-    
+
     @Override
     public String ComponentName() {
       return _ID;
