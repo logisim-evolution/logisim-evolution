@@ -262,7 +262,7 @@ public class XilinxDownload implements VendorDownload {
     if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
       contents
           .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
-          .pair("clockFreq", download.getClockFrequencyString(boardInfo))
+          .pair("clockFreq", Download.getClockFrequencyString(boardInfo))
           .pair("clockPin", GetXilinxClockPin(boardInfo))
           .add("""
             NET "{{clock}}" {{clockPin}} ;

@@ -288,7 +288,7 @@ public class AlteraDownload implements VendorDownload {
         .add("{{assignName}} DEVICE_FILTER_PACKAGE {{1}}", pkg[0])
         .add("{{assignName}} DEVICE_FILTER_PIN_COUNT {{1}}", pkg[1])
         .add("{{assignName}} RESERVE_ALL_UNUSED_PINS \"AS INPUT {{1}}\"", behavior)
-        .add("{{assignName}} FMAX_REQUIREMENT \"{{1}}\"", download.getClockFrequencyString(currentBoard))
+        .add("{{assignName}} FMAX_REQUIREMENT \"{{1}}\"", Download.getClockFrequencyString(currentBoard))
         .add("{{assignName}} RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
         .add("{{assignName}} CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
         .getWithIndent();
@@ -307,7 +307,7 @@ public class AlteraDownload implements VendorDownload {
       Reporter.Report.print("===");
       Reporter.Report.print("===> " + S.get("AlteraDetectDevice"));
       Reporter.Report.print("===");
-      if (download.execute(Detect, response) != null) return false;
+      if (Download.execute(Detect, response) != null) return false;
     } catch (IOException | InterruptedException e) {
       return false;
     }
@@ -317,7 +317,7 @@ public class AlteraDownload implements VendorDownload {
       cablename = Devices.get(0);
       return true;
     }
-    var selection = download.chooseBoard(Devices);
+    var selection = Download.chooseBoard(Devices);
     if (selection == null) return false;
     cablename = selection;
     return true;
@@ -377,7 +377,7 @@ public class AlteraDownload implements VendorDownload {
     final var prog = new ProcessBuilder(command.get());
     prog.directory(new File(SandboxPath));
     try {
-      final var result = download.execute(prog, null);
+      final var result = Download.execute(prog, null);
       if (result != null) {
         Reporter.Report.AddFatalError(S.get("AlteraFlashFailure"));
         return false;
@@ -420,7 +420,7 @@ public class AlteraDownload implements VendorDownload {
     final var prog = new ProcessBuilder(command.get());
     prog.directory(new File(SandboxPath));
     try {
-      final var result = download.execute(prog, null);
+      final var result = Download.execute(prog, null);
       if (result != null) {
         Reporter.Report.AddFatalError(S.get("AlteraProgSofFailure"));
         return false;
@@ -457,7 +457,7 @@ public class AlteraDownload implements VendorDownload {
     final var Jic = new ProcessBuilder(command);
     Jic.directory(new File(SandboxPath));
     try {
-      final var result = download.execute(Jic, null);
+      final var result = Download.execute(Jic, null);
       if (result != null) {
         Reporter.Report.AddFatalError(S.get("AlteraJicFileError"));
         return false;

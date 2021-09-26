@@ -33,7 +33,7 @@ import java.util.List;
 import javax.swing.JFrame;
 import javax.swing.JProgressBar;
 
-public class download extends DownloadBase implements Runnable, BaseWindowListenerContract {
+public class Download extends DownloadBase implements Runnable, BaseWindowListenerContract {
 
   private boolean stopRequested = false;
 
@@ -56,7 +56,7 @@ public class download extends DownloadBase implements Runnable, BaseWindowListen
 
   private final ArrayList<ActionListener> listeners = new ArrayList<>();
 
-  public download(
+  public Download(
       Project myProject,
       String topLevelSheet,
       double tickFrequency,
@@ -80,7 +80,7 @@ public class download extends DownloadBase implements Runnable, BaseWindowListen
         gegerateHdlOnly);
   }
 
-  public download(
+  public Download(
       Project myProject,
       String topLevelSheet,
       double tickFrequency,

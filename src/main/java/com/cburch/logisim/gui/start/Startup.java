@@ -14,7 +14,7 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.Main;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
-import com.cburch.logisim.fpga.download.download;
+import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.generic.CanvasPane;
@@ -793,8 +793,8 @@ public class Startup implements AWTEventListener {
     final var downTickFreq = mainCircuit.getDownloadFrequency();
     final var usedFrequency = (testTickFrequency > 0) ? testTickFrequency :
         (downTickFreq > 0) ? downTickFreq : simTickFreq;
-    download downloader =
-        new download(
+    Download downloader =
+        new Download(
             proj,
             testCircuitImpName,
             usedFrequency,

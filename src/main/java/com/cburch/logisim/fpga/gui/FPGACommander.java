@@ -18,7 +18,7 @@ import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.fpga.data.BoardInformation;
-import com.cburch.logisim.fpga.download.download;
+import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.gui.generic.OptionPane;
@@ -74,7 +74,7 @@ public class FPGACommander
   private final JButton StopButton = new JButton();
   private final JProgressBar Progress = new JProgressBar();
   private final FPGAReportTabbedPane ReporterGui;
-  private download downloader;
+  private Download downloader;
   public static final String STOP_REQUESTED = "stop";
   private final JPanel BoardSelectionPanel = new JPanel();
   private final FPGAClockPanel FrequencyPanel;
@@ -359,7 +359,7 @@ public class FPGACommander
       boolean HdlOnly = actionCommands.getSelectedIndex() == 0;
       boolean DownloadOnly = actionCommands.getSelectedIndex() >= 2;
       downloader =
-          new download(
+          new Download(
               MyProject,
               circuitsList.getSelectedItem().toString(),
               FrequencyPanel.GetTickfrequency(),
@@ -372,7 +372,7 @@ public class FPGACommander
               panel);
       downloader.addListener(this);
       downloader.doDownload();
-    } else if (e.getSource() instanceof download) {
+    } else if (e.getSource() instanceof Download) {
       setExecuteWindowEnabled(true);
       setAnnotationWindowEnabled(true);
       setBoardSelectionEnabled(true);
