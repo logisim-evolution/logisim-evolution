@@ -24,7 +24,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public VhdlHDLGeneratorFactory() {
     super(HDL_DIRECTORY);
-    getWiresPortsduringHDLWriting = true;
+    getWiresPortsDuringHDLWriting = true;
   }
 
   @Override

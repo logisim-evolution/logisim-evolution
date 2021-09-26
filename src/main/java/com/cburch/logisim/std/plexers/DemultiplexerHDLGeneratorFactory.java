@@ -26,7 +26,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public DemultiplexerHDLGeneratorFactory() {
     super();
     myParametersList.addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID);
-    getWiresPortsduringHDLWriting = true;
+    getWiresPortsDuringHDLWriting = true;
   }
 
   @Override

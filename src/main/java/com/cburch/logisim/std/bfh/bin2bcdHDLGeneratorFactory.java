@@ -28,7 +28,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     super();
     myParametersList
         .add(NR_OF_BITS_STR, NR_OF_BITS_ID, HDLParameters.MAP_INT_ATTRIBUTE, bin2bcd.ATTR_BinBits);
-    getWiresPortsduringHDLWriting = true;
+    getWiresPortsDuringHDLWriting = true;
   }
 
   @Override

@@ -22,13 +22,13 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public VhdlHDLGeneratorFactory() {
     super(HDL_DIRECTORY);
-    getWiresPortsduringHDLWriting = true;
+    getWiresPortsDuringHDLWriting = true;
   }
 
   public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
     VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
     var i = 0;
-    for (var port : content.getPorts()) {
+    for (final var port : content.getPorts()) {
       myPorts.add(port.getType(), port.getName(), port.getWidth().getWidth(), i++);
     }
   }

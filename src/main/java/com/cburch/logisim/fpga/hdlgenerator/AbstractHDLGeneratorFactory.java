@@ -38,7 +38,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   protected final HDLParameters myParametersList = new HDLParameters();
   protected final HDLWires myWires = new HDLWires();
   protected final HDLPorts myPorts = new HDLPorts();
-  protected boolean getWiresPortsduringHDLWriting = false;
+  protected boolean getWiresPortsDuringHDLWriting = false;
 
   public AbstractHDLGeneratorFactory() {
     final var className = getClass().toString().replace('.', ':').replace(' ', ':'); 
@@ -68,7 +68,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     final var Contents = LineBuffer.getHdlBuffer();
     final var mems = GetMemList(attrs);
     final var OneLine = new StringBuilder();
-    if (getWiresPortsduringHDLWriting) {
+    if (getWiresPortsDuringHDLWriting) {
       myWires.removeWires();
       myPorts.removePorts();
       getGenerationTimeWiresPorts(theNetlist, attrs);
@@ -740,7 +740,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       NetlistComponent ComponentInfo = (NetlistComponent) mapInfo;
       final var compName = ComponentInfo.getComponent().getFactory().getDisplayName();
       final var attrs = ComponentInfo.getComponent().getAttributeSet();
-      if (getWiresPortsduringHDLWriting) {
+      if (getWiresPortsDuringHDLWriting) {
         myWires.removeWires();
         myPorts.removePorts();
         getGenerationTimeWiresPorts(nets, ComponentInfo.getComponent().getAttributeSet());
@@ -838,7 +838,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     var IdentSize = 0;
     var CompTab = (IsEntity) ? "" : "   ";
     var first = true;
-    if (getWiresPortsduringHDLWriting) {
+    if (getWiresPortsDuringHDLWriting) {
       myWires.removeWires();
       myPorts.removePorts();
       getGenerationTimeWiresPorts(TheNetlist, attrs);

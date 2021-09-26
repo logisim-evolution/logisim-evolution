@@ -42,7 +42,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
         .add(NR_OF_BITS_STR, NR_OF_BITS_ID)
         .add(NR_OF_PAR_BITS_STRING, NR_OF_PAR_BITS_ID, HDLParameters.MAP_MULTIPLY, StdAttr.WIDTH, ShiftRegister.ATTR_LENGTH)
         .add(NR_OF_STAGES_STR, NR_OF_STAGES_ID, HDLParameters.MAP_INT_ATTRIBUTE, ShiftRegister.ATTR_LENGTH);
-    getWiresPortsduringHDLWriting = true;
+    getWiresPortsDuringHDLWriting = true;
   }
 
   @Override

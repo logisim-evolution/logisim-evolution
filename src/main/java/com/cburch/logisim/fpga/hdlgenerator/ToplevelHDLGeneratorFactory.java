@@ -124,17 +124,17 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           ledArray.getNrOfRows(),
           ledArray.getNrOfColumns(),
           myLedArrays.indexOf(ledArray));
-      for (var port : ports.keySet())
+      for (final var port : ports.keySet())
         myPorts.add(Port.OUTPUT, port, ports.get(port), null);
     }
     if (nrOfClockTrees > 0 || nets.requiresGlobalClockConnection() || requiresFPGAClock) 
       myPorts.add(Port.INPUT, TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1, null);
-    for (var in : myIOComponents.GetMappedInputPinNames()) 
+    for (final var in : myIOComponents.GetMappedInputPinNames()) 
       myPorts.add(Port.INPUT, in, 1, null);
-    for (var io : myIOComponents.GetMappedOutputPinNames()) {
+    for (final var io : myIOComponents.GetMappedOutputPinNames()) {
       myPorts.add(Port.OUTPUT, io, 1, null);
     }
-    for (var io : myIOComponents.GetMappedIOPinNames()) 
+    for (final var io : myIOComponents.GetMappedIOPinNames()) 
       myPorts.add(Port.INOUT, io, 1, null);
   }
 
@@ -187,7 +187,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getHdlBuffer();
     final var nrOfClockTrees = theNetlist.numberOfClockTrees();
     /* First we process all components */
     contents.addRemarkBlock("Here all signal adaptations are performed");
@@ -201,7 +201,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       var index = 0L;
       final var ticker = new TickComponentHDLGeneratorFactory(fpgaClockFrequency, tickFrequency);
       contents.add(ticker.getComponentMap(null, index++, null, TickComponentHDLGeneratorFactory.HDL_IDENTIFIER));
-      for (var clockGen : theNetlist.getAllClockSources()) {
+      for (final var clockGen : theNetlist.getAllClockSources()) {
         final var thisClock = new NetlistComponent(clockGen);
         contents.add(
             clockGen.getFactory()
@@ -218,7 +218,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     // Here the led arrays are connected
     if (hasLedArray) {
       contents.add("").addRemarkBlock("Here the Led arrays are connected");
-      for (var array : myLedArrays) {
+      for (final var array : myLedArrays) {
         contents.add(
             LedArrayGenericHDLGeneratorFactory.GetComponentMap(
                 array.getArrayDriveMode(),
