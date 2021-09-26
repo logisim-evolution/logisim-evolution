@@ -29,12 +29,12 @@ public class DFlipFlop extends AbstractFlipFlop {
   public static final String _ID = "D Flip-Flop";
 
   private static class DFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
-    
+
     public DFFHDLGeneratorFactory() {
       super(1, StdAttr.TRIGGER);
       myPorts.add(Port.INPUT, "D", 1, 0);
     }
-    
+
     @Override
     public ArrayList<String> GetUpdateLogic() {
       final var contents = new ArrayList<String>();
