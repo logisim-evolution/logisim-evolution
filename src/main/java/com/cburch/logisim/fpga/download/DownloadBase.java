@@ -101,7 +101,7 @@ public abstract class DownloadBase {
     return confirm == OptionPane.YES_OPTION;
   }
 
-  protected boolean performDRC(String circuitName, String HDLType) {
+  protected boolean performDrc(String circuitName, String HDLType) {
     final var root = myProject.getLogisimFile().getCircuit(circuitName);
     final var sheetNames = new ArrayList<String>();
     var drcResult = Netlist.DRC_PASSED;

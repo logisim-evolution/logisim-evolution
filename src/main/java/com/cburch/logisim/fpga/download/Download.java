@@ -201,7 +201,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
 
   @Override
   public void run() {
-    if (prepareDownLoad() && isVendorSoftwarePresent() && !generateHdlOnly) {
+    if (prepareDownload() && isVendorSoftwarePresent() && !generateHdlOnly) {
       try {
         var error = download();
         if (error != null) Reporter.report.addFatalError(error);
@@ -220,11 +220,10 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     if (root != null) {
       root.Annotate(myProject, false, false);
     } else {
-      Reporter.report.addFatalError(
-          "Toplevel sheet \"" + topLevelSheet + "\" not found in project!");
+      Reporter.report.addFatalError("Toplevel sheet \"" + topLevelSheet + "\" not found in project!");
       return false;
     }
-    if (!prepareDownLoad()) return false;
+    if (!prepareDownload()) return false;
     if (generateHdlOnly) return true;
     if (!isVendorSoftwarePresent()) return false;
     try {
@@ -249,9 +248,9 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     if (!downloadOnly || !downloader.readyForDownload()) {
       for (var stages = 0; stages < downloader.getNumberOfStages(); stages++) {
         if (stopRequested) return S.get("FPGAInterrupted");
-        var CurrentStage = downloader.performStep(stages);
-        if (CurrentStage != null) {
-          var result = execute(downloader.getStageMessage(stages), CurrentStage);
+        final var currentStage = downloader.performStep(stages);
+        if (currentStage != null) {
+          final var result = execute(downloader.getStageMessage(stages), currentStage);
           if (result != null) return result;
         }
         if (useGui) progressBar.setValue(stages + basicSteps);
@@ -280,27 +279,24 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     else return null;
   }
 
-  public static String execute(
-      ProcessBuilder process, ArrayList<String> Report)
-      throws IOException, InterruptedException {
-    var Executable = process.start();
-    var is = Executable.getInputStream();
+  public static String execute(ProcessBuilder process, ArrayList<String> report) throws IOException, InterruptedException {
+    var executable = process.start();
+    var is = executable.getInputStream();
     var isr = new InputStreamReader(is);
     var br = new BufferedReader(isr);
     var line = "";
     while ((line = br.readLine()) != null) {
       Reporter.report.print(line);
-      if (Report != null) Report.add(line);
+      if (report != null) report.add(line);
     }
-    Executable.waitFor();
+    executable.waitFor();
     isr.close();
     br.close();
-    if (Executable.exitValue() != 0) return S.get("FPGAStaticExecutionFailure");
+    if (executable.exitValue() != 0) return S.get("FPGAStaticExecutionFailure");
     return null;
   }
 
-  private String execute(String StageName, ProcessBuilder process)
-      throws IOException, InterruptedException {
+  private String execute(String StageName, ProcessBuilder process) throws IOException, InterruptedException {
     if (useGui) progressBar.setString(StageName);
     Reporter.report.print(" ");
     Reporter.report.print("==>");
@@ -325,16 +321,16 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     return null;
   }
 
-  private boolean prepareDownLoad() {
+  private boolean prepareDownload() {
     if (downloadOnly && downloader.readyForDownload()) return true;
     /* Stage 0 DRC */
     if (useGui) progressBar.setString(S.get("FPGAState0"));
-    if (!performDRC(topLevelSheet, AppPreferences.HdlType.get())) {
+    if (!performDrc(topLevelSheet, AppPreferences.HdlType.get())) {
       return false;
     }
-    final var Name = myProject.getLogisimFile().getName();
-    if (Name.contains(" ")) {
-      Reporter.report.addFatalError(S.get("FPGANameContainsSpaces", Name));
+    final var name = myProject.getLogisimFile().getName();
+    if (name.contains(" ")) {
+      Reporter.report.addFatalError(S.get("FPGANameContainsSpaces", name));
       return false;
     }
     /* Stage 1 Is design map able on Board */
@@ -349,15 +345,15 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       /* Stage 2 Map design on board */
       progressBar.setValue(2);
       progressBar.setString(S.get("FPGAState3"));
-      ComponentMapDialog mapPannel;
+      ComponentMapDialog mapPanel;
       if (myProject.getLogisimFile().getLoader().getMainFile() != null) {
-        mapPannel = new ComponentMapDialog(parent,
+        mapPanel = new ComponentMapDialog(parent,
                 myProject.getLogisimFile().getLoader().getMainFile().getAbsolutePath(),
                 myBoardInformation, myMappableResources);
       } else {
-        mapPannel = new ComponentMapDialog(parent, "", myBoardInformation, myMappableResources);
+        mapPanel = new ComponentMapDialog(parent, "", myBoardInformation, myMappableResources);
       }
-      if (!mapPannel.run()) {
+      if (!mapPanel.run()) {
         Reporter.report.addError(S.get("FPGADownloadAborted"));
         return false;
       }
@@ -407,8 +403,8 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     }
   }
 
-  public static String getClockFrequencyString(BoardInformation CurrentBoard) {
-    var clkfreq = CurrentBoard.fpga.getClockFrequency();
+  public static String getClockFrequencyString(BoardInformation currentBoard) {
+    var clkfreq = currentBoard.fpga.getClockFrequency();
     if (clkfreq % 1000000 == 0) {
       clkfreq /= 1000000;
       return clkfreq + " MHz ";
