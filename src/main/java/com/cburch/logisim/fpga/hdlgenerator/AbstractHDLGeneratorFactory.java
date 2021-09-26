@@ -51,7 +51,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     subDirectoryName = subDirectory;
   }
   
-  // Handle to get the wires during generation time
+  // Handle to get the wires and ports during generation time
   public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {}
 
   /* Here the common predefined methods are defined */
@@ -65,96 +65,96 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public ArrayList<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    final var Contents = LineBuffer.getHdlBuffer();
+    final var contents = LineBuffer.getHdlBuffer();
     final var mems = GetMemList(attrs);
-    final var OneLine = new StringBuilder();
+    final var oneLine = new StringBuilder();
     if (getWiresPortsduringHDLWriting) {
       myWires.removeWires();
       myPorts.removePorts();
       getGenerationTimeWiresPorts(theNetlist, attrs);
     }
-    Contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
+    contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
     if (HDL.isVHDL()) {
       final var libs = GetExtraLibraries();
       if (!libs.isEmpty()) {
-        Contents.add(libs);
-        Contents.empty();
+        contents.add(libs);
+        contents.empty();
       }
-      Contents.add("ARCHITECTURE PlatformIndependent OF {{1}} IS ", componentName);
-      Contents.add("");
+      contents.add("ARCHITECTURE PlatformIndependent OF {{1}} IS ", componentName);
+      contents.add("");
       final var nrOfTypes = GetNrOfTypes(theNetlist, attrs);
       if (nrOfTypes > 0) {
-        Contents.addRemarkBlock("Here all private types are defined");
+        contents.addRemarkBlock("Here all private types are defined");
         for (final var thisType : GetTypeDefinitions(theNetlist, attrs)) {
-          Contents.add("   {{1}};", thisType);
+          contents.add("   {{1}};", thisType);
         }
-        Contents.empty();
+        contents.empty();
       }
       final var components = GetComponentDeclarationSection(theNetlist, attrs);
       if (!components.isEmpty()) {
-        Contents.addRemarkBlock("Here all used components are defined").add(components).add("");
+        contents.addRemarkBlock("Here all used components are defined").add(components).add("");
       }
 
-      Contents.addRemarkBlock("Here all used signals are defined");
+      contents.addRemarkBlock("Here all used signals are defined");
       for (final var wire : myWires.wireKeySet()) {
-        OneLine.append(wire);
-        while (OneLine.length() < SIGNAL_ALLIGNMENT_SIZE) OneLine.append(" ");
-        OneLine.append(": std_logic");
+        oneLine.append(wire);
+        while (oneLine.length() < SIGNAL_ALLIGNMENT_SIZE) oneLine.append(" ");
+        oneLine.append(": std_logic");
         if (myWires.get(wire) == 1) {
-          OneLine.append(";");
+          oneLine.append(";");
         } else {
-          OneLine.append("_vector( ");
+          oneLine.append("_vector( ");
           if (myWires.get(wire) < 0) {
             if (!myParametersList.containsKey(myWires.get(wire), attrs)) {
               Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-              return Contents.clear().get();
+              return contents.clear().get();
             }
-            OneLine.append("(").append(myParametersList.get(myWires.get(wire), attrs)).append("-1)");
+            oneLine.append("(").append(myParametersList.get(myWires.get(wire), attrs)).append("-1)");
           } else {
-            OneLine.append((myWires.get(wire) == 0) ? "0" : (myWires.get(wire) - 1));
+            oneLine.append((myWires.get(wire) == 0) ? "0" : (myWires.get(wire) - 1));
           }
-          OneLine.append(" DOWNTO 0 );");
+          oneLine.append(" DOWNTO 0 );");
         }
-        Contents.add("   SIGNAL {{1}}", OneLine);
-        OneLine.setLength(0);
+        contents.add("   SIGNAL {{1}}", oneLine);
+        oneLine.setLength(0);
       }
 
       for (final var reg : myWires.registerKeySet()) {
-        OneLine.append(reg);
-        while (OneLine.length() < SIGNAL_ALLIGNMENT_SIZE) OneLine.append(" ");
-        OneLine.append(": std_logic");
+        oneLine.append(reg);
+        while (oneLine.length() < SIGNAL_ALLIGNMENT_SIZE) oneLine.append(" ");
+        oneLine.append(": std_logic");
         if (myWires.get(reg) == 1) {
-          OneLine.append(";");
+          oneLine.append(";");
         } else {
-          OneLine.append("_vector( ");
+          oneLine.append("_vector( ");
           if (myWires.get(reg) < 0) {
             if (!myParametersList.containsKey(myWires.get(reg), attrs)) {
               Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-              Contents.clear();
-              return Contents.get();
+              contents.clear();
+              return contents.get();
             }
-            OneLine.append("(").append(myParametersList.get(myWires.get(reg), attrs)).append("-1)");
+            oneLine.append("(").append(myParametersList.get(myWires.get(reg), attrs)).append("-1)");
           } else {
             if (myWires.get(reg) == 0) {
-              OneLine.append("0");
+              oneLine.append("0");
             } else {
-              OneLine.append((myWires.get(reg) - 1));
+              oneLine.append((myWires.get(reg) - 1));
             }
           }
-          OneLine.append(" DOWNTO 0 );");
+          oneLine.append(" DOWNTO 0 );");
         }
-        Contents.add("   SIGNAL {{1}}", OneLine);
-        OneLine.setLength(0);
+        contents.add("   SIGNAL {{1}}", oneLine);
+        oneLine.setLength(0);
       }
 
       for (final var Mem : mems.keySet()) {
-        OneLine.append(Mem);
-        while (OneLine.length() < SIGNAL_ALLIGNMENT_SIZE) OneLine.append(" ");
-        OneLine.append(": ").append(GetType(mems.get(Mem))).append(";");
-        Contents.add("   SIGNAL " + OneLine);
-        OneLine.setLength(0);
+        oneLine.append(Mem);
+        while (oneLine.length() < SIGNAL_ALLIGNMENT_SIZE) oneLine.append(" ");
+        oneLine.append(": ").append(GetType(mems.get(Mem))).append(";");
+        contents.add("   SIGNAL " + oneLine);
+        oneLine.setLength(0);
       }
-      Contents.add("")
+      contents.add("")
           .add("BEGIN")
           .add(GetModuleFunctionality(theNetlist, attrs))
           .add("END PlatformIndependent;");
@@ -163,20 +163,20 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       final var Indenting = new StringBuilder();
       while (Indenting.length() < Preamble.length()) Indenting.append(" ");
       if (myPorts.isEmpty()) {
-        Contents.add(Preamble + " );");
+        contents.add(Preamble + " );");
       } else {
         final var ThisLine = new StringBuilder();
         for (final var inp : myPorts.keySet(Port.INPUT)) {
           if (ThisLine.length() == 0) {
             ThisLine.append(Preamble).append(inp);
           } else {
-            Contents.add(ThisLine + ",");
+            contents.add(ThisLine + ",");
             ThisLine.setLength(0);
             ThisLine.append(Indenting).append(inp);
           }
           // Special case for the clocks we have to add the tick
           if (myPorts.isClock(inp)) {
-            Contents.add(ThisLine + ",");
+            contents.add(ThisLine + ",");
             ThisLine.setLength(0);
             ThisLine.append(Indenting).append(myPorts.getTickName(inp));
           }
@@ -185,7 +185,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           if (ThisLine.length() == 0) {
             ThisLine.append(Preamble).append(outp);
           } else {
-            Contents.add(ThisLine + ",");
+            contents.add(ThisLine + ",");
             ThisLine.setLength(0);
             ThisLine.append(Indenting).append(outp);
           }
@@ -194,182 +194,182 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           if (ThisLine.length() == 0) {
             ThisLine.append(Preamble).append(io);
           } else {
-            Contents.add(ThisLine + ",");
+            contents.add(ThisLine + ",");
             ThisLine.setLength(0);
             ThisLine.append(Indenting).append(io);
           }
         }
         if (ThisLine.length() != 0) {
-          Contents.add(ThisLine + ");");
+          contents.add(ThisLine + ");");
         } else {
           Reporter.Report.AddError("Internale Error in Verilog Architecture generation!");
         }
       }
       if (!myParametersList.isEmpty(attrs)) {
-        Contents.empty();
-        Contents.addRemarkBlock("Here all module parameters are defined with a dummy value");
+        contents.empty();
+        contents.addRemarkBlock("Here all module parameters are defined with a dummy value");
         for (final var param : myParametersList.keySet(attrs)) {
           // For verilog we specify a maximum vector, this seems the best way to do it
           final var vectorString = (myParametersList.isPresentedByInteger(param, attrs)) ? "" : "[64:0]"; 
-          Contents.add("   parameter {{1}} {{2}} = 1;", vectorString, myParametersList.get(param, attrs));
+          contents.add("   parameter {{1}} {{2}} = 1;", vectorString, myParametersList.get(param, attrs));
         }
-        Contents.empty();
+        contents.empty();
       }
       var firstline = true;
       var nrOfPortBits = 0;
       for (final var inp : myPorts.keySet(Port.INPUT)) {
-        OneLine.setLength(0);
-        OneLine.append("   input");
+        oneLine.setLength(0);
+        oneLine.append("   input");
         nrOfPortBits = myPorts.get(inp, attrs);
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
             Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            return Contents.clear().get();
+            return contents.clear().get();
           }
-          OneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
+          oneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
         } else {
           if (nrOfPortBits > 1) {
-            OneLine.append("[").append(nrOfPortBits - 1).append(":0]");
+            oneLine.append("[").append(nrOfPortBits - 1).append(":0]");
           } else {
             if (nrOfPortBits == 0) {
-              OneLine.append("[0:0]");
+              oneLine.append("[0:0]");
             }
           }
         }
-        OneLine.append("  ").append(inp).append(";");
+        oneLine.append("  ").append(inp).append(";");
         if (firstline) {
           firstline = false;
-          Contents.add("");
-          Contents.addRemarkBlock("Here the inputs are defined");
+          contents.add("");
+          contents.addRemarkBlock("Here the inputs are defined");
         }
-        Contents.add(OneLine.toString());
+        contents.add(oneLine.toString());
         // special case for the clock, we have to add the tick
         if (myPorts.isClock(inp)) {
-          OneLine.setLength(0);
-          OneLine.append("   input  ").append(myPorts.getTickName(inp)).append(";");
-          Contents.add(OneLine.toString());
+          oneLine.setLength(0);
+          oneLine.append("   input  ").append(myPorts.getTickName(inp)).append(";");
+          contents.add(oneLine.toString());
         }
       }
       firstline = true;
       for (final var outp : myPorts.keySet(Port.OUTPUT)) {
-        OneLine.setLength(0);
-        OneLine.append("   output");
+        oneLine.setLength(0);
+        oneLine.append("   output");
         nrOfPortBits = myPorts.get(outp, attrs);
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
             Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            Contents.clear();
-            return Contents.get();
+            contents.clear();
+            return contents.get();
           }
-          OneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
+          oneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
         } else {
           if (nrOfPortBits > 1) {
-            OneLine.append("[").append(nrOfPortBits - 1).append(":0]");
+            oneLine.append("[").append(nrOfPortBits - 1).append(":0]");
           } else {
             if (nrOfPortBits == 0) {
-              OneLine.append("[0:0]");
+              oneLine.append("[0:0]");
             }
           }
         }
-        OneLine.append(" ").append(outp).append(";");
+        oneLine.append(" ").append(outp).append(";");
         if (firstline) {
           firstline = false;
-          Contents.empty().addRemarkBlock("Here the outputs are defined");
+          contents.empty().addRemarkBlock("Here the outputs are defined");
         }
-        Contents.add(OneLine.toString());
+        contents.add(oneLine.toString());
       }
       firstline = true;
       for (final var io : myPorts.keySet(Port.INOUT)) {
-        OneLine.setLength(0);
-        OneLine.append("   inout");
+        oneLine.setLength(0);
+        oneLine.append("   inout");
         nrOfPortBits = myPorts.get(io, attrs);
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
             Reporter.Report.AddFatalError(
                 "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            return Contents.clear().get();
+            return contents.clear().get();
           }
-          OneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
+          oneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
         } else {
           if (nrOfPortBits > 1) {
-            OneLine.append("[").append(nrOfPortBits - 1).append(":0]");
+            oneLine.append("[").append(nrOfPortBits - 1).append(":0]");
           } else {
             if (nrOfPortBits == 0) {
-              OneLine.append("[0:0]");
+              oneLine.append("[0:0]");
             }
           }
         }
-        OneLine.append(" ").append(io).append(";");
+        oneLine.append(" ").append(io).append(";");
         if (firstline) {
           firstline = false;
-          Contents.empty().addRemarkBlock("Here the ios are defined");
+          contents.empty().addRemarkBlock("Here the ios are defined");
         }
-        Contents.add(OneLine.toString());
+        contents.add(oneLine.toString());
       }
       firstline = true;
       for (final var wire : myWires.wireKeySet()) {
-        OneLine.setLength(0);
-        OneLine.append("   wire");
+        oneLine.setLength(0);
+        oneLine.append("   wire");
         nrOfPortBits = myWires.get(wire);
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
             Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            return Contents.clear().get();
+            return contents.clear().get();
           }
-          OneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
+          oneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
         } else {
           if (nrOfPortBits > 1) {
-            OneLine.append("[").append(nrOfPortBits - 1).append(":0]");
+            oneLine.append("[").append(nrOfPortBits - 1).append(":0]");
           } else {
-            if (nrOfPortBits == 0) OneLine.append("[0:0]");
+            if (nrOfPortBits == 0) oneLine.append("[0:0]");
           }
         }
-        OneLine.append(" ").append(wire).append(";");
+        oneLine.append(" ").append(wire).append(";");
         if (firstline) {
           firstline = false;
-          Contents.empty();
-          Contents.addRemarkBlock("Here the internal wires are defined");
+          contents.empty();
+          contents.addRemarkBlock("Here the internal wires are defined");
         }
-        Contents.add(OneLine.toString());
+        contents.add(oneLine.toString());
       }
       for (final var reg : myWires.registerKeySet()) {
-        OneLine.setLength(0);
-        OneLine.append("   reg");
+        oneLine.setLength(0);
+        oneLine.append("   reg");
         nrOfPortBits = myWires.get(reg);
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
             Reporter.Report.AddFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            return Contents.clear().get();
+            return contents.clear().get();
           }
-          OneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
+          oneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
         } else {
           if (nrOfPortBits > 1) {
-            OneLine.append("[").append(nrOfPortBits - 1).append(":0]");
+            oneLine.append("[").append(nrOfPortBits - 1).append(":0]");
           } else {
-            if (nrOfPortBits == 0) OneLine.append("[0:0]");
+            if (nrOfPortBits == 0) oneLine.append("[0:0]");
           }
         }
-        OneLine.append(" ").append(reg).append(";");
+        oneLine.append(" ").append(reg).append(";");
         if (firstline) {
           firstline = false;
-          Contents
+          contents
               .empty()
               .addRemarkBlock("Here the internal registers are defined");
         }
-        Contents.add(OneLine.toString());
+        contents.add(oneLine.toString());
       }
       /* TODO: Add memlist */
       if (!firstline) {
-        Contents.empty();
+        contents.empty();
       }
-      Contents.add(GetModuleFunctionality(theNetlist, attrs)).empty().add("endmodule");
+      contents.add(GetModuleFunctionality(theNetlist, attrs)).empty().add("endmodule");
     }
-    return Contents.get();
+    return contents.get();
   }
 
   public ArrayList<String> GetComponentDeclarationSection(Netlist TheNetlist, AttributeSet attrs) {
@@ -383,9 +383,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    var Contents = LineBuffer.getHdlBuffer();
-    if (HDL.isVHDL()) Contents.add(GetVHDLBlackBox(theNetlist, attrs, componentName, false));
-    return Contents.get();
+    var contents = LineBuffer.getHdlBuffer();
+    if (HDL.isVHDL()) contents.add(GetVHDLBlackBox(theNetlist, attrs, componentName, false));
+    return contents.get();
   }
 
   @Override
@@ -394,7 +394,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Long componentId,
       Object componentInfo,
       String name) {
-    final var Contents = new ArrayList<String>();
+    final var contents = new ArrayList<String>();
     final var parameterMap = new TreeMap<String, String>(); 
     final var PortMap = getPortMap(nets, componentInfo);
     final var componentHDLName = componentInfo instanceof NetlistComponent 
@@ -402,7 +402,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           name;
     final var CompName = (name != null && !name.isEmpty()) ? name : componentHDLName;
     final var ThisInstanceIdentifier = getInstanceIdentifier(componentInfo, componentId);
-    final var OneLine = new StringBuilder();
+    final var oneLine = new StringBuilder();
     if (componentInfo == null) parameterMap.putAll(myParametersList.getMaps(null));
     if (componentInfo instanceof NetlistComponent) {
       final var attrs = ((NetlistComponent) componentInfo).getComponent().getAttributeSet();
@@ -411,99 +411,99 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     var TabLength = 0;
     var first = true;
     if (HDL.isVHDL()) {
-      Contents.add("   " + ThisInstanceIdentifier + " : " + CompName);
+      contents.add("   " + ThisInstanceIdentifier + " : " + CompName);
       if (!parameterMap.isEmpty()) {
-        OneLine.append("      GENERIC MAP ( ");
-        TabLength = OneLine.length();
+        oneLine.append("      GENERIC MAP ( ");
+        TabLength = oneLine.length();
         first = true;
         for (var generic : parameterMap.keySet()) {
           if (!first) {
-            OneLine.append(",");
-            Contents.add(OneLine.toString());
-            OneLine.setLength(0);
-            while (OneLine.length() < TabLength) {
-              OneLine.append(" ");
+            oneLine.append(",");
+            contents.add(oneLine.toString());
+            oneLine.setLength(0);
+            while (oneLine.length() < TabLength) {
+              oneLine.append(" ");
             }
           } else {
             first = false;
           }
-          OneLine.append(generic);
-          OneLine.append(" ".repeat(Math.max(0, SIGNAL_ALLIGNMENT_SIZE - generic.length())));
-          OneLine.append("=> ").append(parameterMap.get(generic));
+          oneLine.append(generic);
+          oneLine.append(" ".repeat(Math.max(0, SIGNAL_ALLIGNMENT_SIZE - generic.length())));
+          oneLine.append("=> ").append(parameterMap.get(generic));
         }
-        OneLine.append(")");
-        Contents.add(OneLine.toString());
-        OneLine.setLength(0);
+        oneLine.append(")");
+        contents.add(oneLine.toString());
+        oneLine.setLength(0);
       }
       if (!PortMap.isEmpty()) {
-        OneLine.append("      PORT MAP ( ");
-        TabLength = OneLine.length();
+        oneLine.append("      PORT MAP ( ");
+        TabLength = oneLine.length();
         first = true;
         for (var port : PortMap.keySet()) {
           if (!first) {
-            OneLine.append(",");
-            Contents.add(OneLine.toString());
-            OneLine.setLength(0);
-            while (OneLine.length() < TabLength) {
-              OneLine.append(" ");
+            oneLine.append(",");
+            contents.add(oneLine.toString());
+            oneLine.setLength(0);
+            while (oneLine.length() < TabLength) {
+              oneLine.append(" ");
             }
           } else {
             first = false;
           }
-          OneLine.append(port);
-          OneLine.append(" ".repeat(Math.max(0, SIGNAL_ALLIGNMENT_SIZE - port.length())));
-          OneLine.append("=> ").append(PortMap.get(port));
+          oneLine.append(port);
+          oneLine.append(" ".repeat(Math.max(0, SIGNAL_ALLIGNMENT_SIZE - port.length())));
+          oneLine.append("=> ").append(PortMap.get(port));
         }
-        OneLine.append(");");
-        Contents.add(OneLine.toString());
-        OneLine.setLength(0);
+        oneLine.append(");");
+        contents.add(oneLine.toString());
+        oneLine.setLength(0);
       }
     } else {
-      OneLine.append("   ").append(CompName);
+      oneLine.append("   ").append(CompName);
       if (!parameterMap.isEmpty()) {
-        OneLine.append(" #(");
-        TabLength = OneLine.length();
+        oneLine.append(" #(");
+        TabLength = oneLine.length();
         first = true;
         for (var parameter : parameterMap.keySet()) {
           if (!first) {
-            OneLine.append(",");
-            Contents.add(OneLine.toString());
-            OneLine.setLength(0);
-            while (OneLine.length() < TabLength) {
-              OneLine.append(" ");
+            oneLine.append(",");
+            contents.add(oneLine.toString());
+            oneLine.setLength(0);
+            while (oneLine.length() < TabLength) {
+              oneLine.append(" ");
             }
           } else {
             first = false;
           }
-          OneLine.append(".").append(parameter).append("(").append(parameterMap.get(parameter)).append(")");
+          oneLine.append(".").append(parameter).append("(").append(parameterMap.get(parameter)).append(")");
         }
-        OneLine.append(")");
-        Contents.add(OneLine.toString());
-        OneLine.setLength(0);
+        oneLine.append(")");
+        contents.add(oneLine.toString());
+        oneLine.setLength(0);
       }
-      OneLine.append("      ").append(ThisInstanceIdentifier).append(" (");
+      oneLine.append("      ").append(ThisInstanceIdentifier).append(" (");
       if (!PortMap.isEmpty()) {
-        TabLength = OneLine.length();
+        TabLength = oneLine.length();
         first = true;
         for (var port : PortMap.keySet()) {
           if (!first) {
-            OneLine.append(",");
-            Contents.add(OneLine.toString());
-            OneLine.setLength(0);
-            while (OneLine.length() < TabLength) {
-              OneLine.append(" ");
+            oneLine.append(",");
+            contents.add(oneLine.toString());
+            oneLine.setLength(0);
+            while (oneLine.length() < TabLength) {
+              oneLine.append(" ");
             }
           } else {
             first = false;
           }
-          OneLine.append(".").append(port).append("(");
+          oneLine.append(".").append(port).append("(");
           final var MappedSignal = PortMap.get(port);
           if (!MappedSignal.contains(",")) {
-            OneLine.append(MappedSignal);
+            oneLine.append(MappedSignal);
           } else {
             String[] VectorList = MappedSignal.split(",");
-            OneLine.append("{");
-            var TabSize = OneLine.length();
+            oneLine.append("{");
+            var TabSize = oneLine.length();
             for (var vectorentries = 0; vectorentries < VectorList.length; vectorentries++) {
               var Entry = VectorList[vectorentries];
               if (Entry.contains("{")) {
@@ -512,26 +512,26 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
               if (Entry.contains("}")) {
                 Entry = Entry.replace("}", "");
               }
-              OneLine.append(Entry);
+              oneLine.append(Entry);
               if (vectorentries < VectorList.length - 1) {
-                Contents.add(OneLine + ",");
-                OneLine.setLength(0);
-                while (OneLine.length() < TabSize) {
-                  OneLine.append(" ");
+                contents.add(oneLine + ",");
+                oneLine.setLength(0);
+                while (oneLine.length() < TabSize) {
+                  oneLine.append(" ");
                 }
               } else {
-                OneLine.append("}");
+                oneLine.append("}");
               }
             }
           }
-          OneLine.append(")");
+          oneLine.append(")");
         }
       }
-      OneLine.append(");");
-      Contents.add(OneLine.toString());
+      oneLine.append(");");
+      contents.add(oneLine.toString());
     }
-    Contents.add("");
-    return Contents;
+    contents.add("");
+    return contents;
   }
 
   @Override
@@ -539,13 +539,13 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Netlist theNetlist,
       AttributeSet attrs,
       String componentName) {
-    var Contents = LineBuffer.getHdlBuffer();
+    var contents = LineBuffer.getHdlBuffer();
     if (HDL.isVHDL()) {
-      Contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
+      contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
           .add(FileWriter.getExtendedLibrary())
           .add(GetVHDLBlackBox(theNetlist, attrs, componentName, true));
     }
-    return Contents.get();
+    return contents.get();
   }
 
   private String getInstanceIdentifier(Object componentInfo, Long componentId) {
@@ -729,7 +729,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return NetMap;
   }
 
-  public int GetNrOfTypes(Netlist TheNetlist, AttributeSet attrs) {
+  public int getNrOfTypes(Netlist TheNetlist, AttributeSet attrs) {
     /* In this method you can specify the number of own defined Types */
     return 0;
   }
@@ -833,8 +833,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   private ArrayList<String> GetVHDLBlackBox(Netlist TheNetlist, AttributeSet attrs,
       String ComponentName, Boolean IsEntity) {
-    var Contents = new ArrayList<String>();
-    var OneLine = new StringBuilder();
+    var contents = new ArrayList<String>();
+    var oneLine = new StringBuilder();
     var IdentSize = 0;
     var CompTab = (IsEntity) ? "" : "   ";
     var first = true;
@@ -844,164 +844,164 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       getGenerationTimeWiresPorts(TheNetlist, attrs);
     }
     if (IsEntity) {
-      Contents.add("ENTITY " + ComponentName + " IS");
+      contents.add("ENTITY " + ComponentName + " IS");
     } else {
-      Contents.add("   COMPONENT " + ComponentName);
+      contents.add("   COMPONENT " + ComponentName);
     }
     if (!myParametersList.isEmpty(attrs)) {
-      OneLine.append(CompTab).append("   GENERIC ( ");
-      IdentSize = OneLine.length();
+      oneLine.append(CompTab).append("   GENERIC ( ");
+      IdentSize = oneLine.length();
       first = true;
       for (var generic : myParametersList.keySet(attrs)) {
         if (!first) {
-          OneLine.append(";");
-          Contents.add(OneLine.toString());
-          OneLine.setLength(0);
-          while (OneLine.length() < IdentSize) {
-            OneLine.append(" ");
+          oneLine.append(";");
+          contents.add(oneLine.toString());
+          oneLine.setLength(0);
+          while (oneLine.length() < IdentSize) {
+            oneLine.append(" ");
           }
         } else {
           first = false;
         }
         final var parameterName = myParametersList.get(generic, attrs); 
-        OneLine.append(parameterName);
-        OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - parameterName.length())));
-        OneLine.append(myParametersList.isPresentedByInteger(generic, attrs) ? ": INTEGER" : ": std_logic_vector");
+        oneLine.append(parameterName);
+        oneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - parameterName.length())));
+        oneLine.append(myParametersList.isPresentedByInteger(generic, attrs) ? ": INTEGER" : ": std_logic_vector");
       }
-      OneLine.append(");");
-      Contents.add(OneLine.toString());
-      OneLine.setLength(0);
+      oneLine.append(");");
+      contents.add(oneLine.toString());
+      oneLine.setLength(0);
     }
     if (!myPorts.isEmpty()) {
       var NrOfPortBits = 0;
-      OneLine.append(CompTab).append("   PORT ( ");
-      IdentSize = OneLine.length();
+      oneLine.append(CompTab).append("   PORT ( ");
+      IdentSize = oneLine.length();
       first = true;
       for (var input : myPorts.keySet(Port.INPUT)) {
         if (!first) {
-          OneLine.append(";");
-          Contents.add(OneLine.toString());
-          OneLine.setLength(0);
-          while (OneLine.length() < IdentSize) {
-            OneLine.append(" ");
+          oneLine.append(";");
+          contents.add(oneLine.toString());
+          oneLine.setLength(0);
+          while (oneLine.length() < IdentSize) {
+            oneLine.append(" ");
           }
         } else {
           first = false;
         }
-        OneLine.append(input);
-        OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - input.length())));
-        OneLine.append(": IN  std_logic");
+        oneLine.append(input);
+        oneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - input.length())));
+        oneLine.append(": IN  std_logic");
         NrOfPortBits = myPorts.get(input, attrs);
         if (NrOfPortBits < 0) {
           /* we have a parameterized input */
           if (!myParametersList.containsKey(NrOfPortBits, attrs)) {
-            Contents.clear();
-            return Contents;
+            contents.clear();
+            return contents;
           }
-          OneLine.append("_vector( (")
+          oneLine.append("_vector( (")
               .append(myParametersList.get(NrOfPortBits, attrs))
               .append("-1) DOWNTO 0 )");
         } else {
           if (NrOfPortBits > 1) {
             /* we have a bus */
-            OneLine.append("_vector( ").append(NrOfPortBits - 1).append(" DOWNTO 0 )");
+            oneLine.append("_vector( ").append(NrOfPortBits - 1).append(" DOWNTO 0 )");
           } else {
             if (NrOfPortBits == 0) {
-              OneLine.append("_vector( 0 DOWNTO 0 )");
+              oneLine.append("_vector( 0 DOWNTO 0 )");
             }
           }
         }
         // special case of the clock, we have to add the tick
         if (myPorts.isClock(input)) {
-          OneLine.append(";");
-          Contents.add(OneLine.toString());
-          OneLine.setLength(0);
-          OneLine.append(" ".repeat(IdentSize));
-          OneLine.append(myPorts.getTickName(input));
-          OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - myPorts.getTickName(input).length())));
-          OneLine.append(": IN  std_logic");
+          oneLine.append(";");
+          contents.add(oneLine.toString());
+          oneLine.setLength(0);
+          oneLine.append(" ".repeat(IdentSize));
+          oneLine.append(myPorts.getTickName(input));
+          oneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - myPorts.getTickName(input).length())));
+          oneLine.append(": IN  std_logic");
         }
       }
       for (var inout : myPorts.keySet(Port.INOUT)) {
         if (!first) {
-          OneLine.append(";");
-          Contents.add(OneLine.toString());
-          OneLine.setLength(0);
-          while (OneLine.length() < IdentSize) {
-            OneLine.append(" ");
+          oneLine.append(";");
+          contents.add(oneLine.toString());
+          oneLine.setLength(0);
+          while (oneLine.length() < IdentSize) {
+            oneLine.append(" ");
           }
         } else {
           first = false;
         }
-        OneLine.append(inout);
-        OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - inout.length())));
-        OneLine.append(": INOUT  std_logic");
+        oneLine.append(inout);
+        oneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - inout.length())));
+        oneLine.append(": INOUT  std_logic");
         NrOfPortBits = myPorts.get(inout, attrs);
         if (NrOfPortBits < 0) {
           /* we have a parameterized input */
           if (!myParametersList.containsKey(NrOfPortBits, attrs)) {
-            Contents.clear();
-            return Contents;
+            contents.clear();
+            return contents;
           }
-          OneLine.append("_vector( (")
+          oneLine.append("_vector( (")
               .append(myParametersList.get(NrOfPortBits, attrs))
               .append("-1) DOWNTO 0 )");
         } else {
           if (NrOfPortBits > 1) {
             /* we have a bus */
-            OneLine.append("_vector( ").append(NrOfPortBits - 1).append(" DOWNTO 0 )");
+            oneLine.append("_vector( ").append(NrOfPortBits - 1).append(" DOWNTO 0 )");
           } else {
             if (NrOfPortBits == 0) {
-              OneLine.append("_vector( 0 DOWNTO 0 )");
+              oneLine.append("_vector( 0 DOWNTO 0 )");
             }
           }
         }
       }
       for (var output : myPorts.keySet(Port.OUTPUT)) {
         if (!first) {
-          OneLine.append(";");
-          Contents.add(OneLine.toString());
-          OneLine.setLength(0);
-          while (OneLine.length() < IdentSize) {
-            OneLine.append(" ");
+          oneLine.append(";");
+          contents.add(oneLine.toString());
+          oneLine.setLength(0);
+          while (oneLine.length() < IdentSize) {
+            oneLine.append(" ");
           }
         } else {
           first = false;
         }
-        OneLine.append(output);
-        OneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - output.length())));
-        OneLine.append(": OUT std_logic");
+        oneLine.append(output);
+        oneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - output.length())));
+        oneLine.append(": OUT std_logic");
         NrOfPortBits = myPorts.get(output, attrs);
         if (NrOfPortBits < 0) {
           /* we have a parameterized output */
           if (!myParametersList.containsKey(NrOfPortBits, attrs)) {
-            Contents.clear();
-            return Contents;
+            contents.clear();
+            return contents;
           }
-          OneLine.append("_vector( (")
+          oneLine.append("_vector( (")
               .append(myParametersList.get(NrOfPortBits, attrs))
               .append("-1) DOWNTO 0 )");
         } else {
           if (NrOfPortBits > 1) {
             /* we have a bus */
-            OneLine.append("_vector( ").append(NrOfPortBits - 1).append(" DOWNTO 0 )");
+            oneLine.append("_vector( ").append(NrOfPortBits - 1).append(" DOWNTO 0 )");
           } else {
             if (NrOfPortBits == 0) {
-              OneLine.append("_vector( 0 DOWNTO 0 )");
+              oneLine.append("_vector( 0 DOWNTO 0 )");
             }
           }
         }
       }
-      OneLine.append(");");
-      Contents.add(OneLine.toString());
+      oneLine.append(");");
+      contents.add(oneLine.toString());
     }
     if (IsEntity) {
-      Contents.add("END " + ComponentName + ";");
+      contents.add("END " + ComponentName + ";");
     } else {
-      Contents.add("   END COMPONENT;");
+      contents.add("   END COMPONENT;");
     }
-    Contents.add("");
-    return Contents;
+    contents.add("");
+    return contents;
   }
 
   @Override
