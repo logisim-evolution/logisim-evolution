@@ -37,9 +37,9 @@ public class Ttl7434 extends AbstractTtlGate {
   public static final String _ID = "7434";
 
   private static class BufferGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
-    @Override
-    public boolean IsInverter() {
-      return false;
+
+    public BufferGateHDLGeneratorFactory() {
+      super(true);
     }
 
     @Override

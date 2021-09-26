@@ -11,14 +11,12 @@ package com.cburch.logisim.std.arith;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final String NR_OF_BITS_STRING = "NrOfBits";
@@ -38,16 +36,14 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .addWire("s_div_result", CALC_BITS_ID)
         .addWire("s_mod_result", NR_OF_BITS_ID)
         .addWire("s_extended_dividend", CALC_BITS_ID);
+    myPorts
+        .add(Port.INPUT, "INP_A", NR_OF_BITS_ID, Divider.IN0)
+        .add(Port.INPUT, "INP_B", NR_OF_BITS_ID, Divider.IN1)
+        .add(Port.INPUT, "Upper", NR_OF_BITS_ID, Divider.UPPER)
+        .add(Port.OUTPUT, "Quotient", NR_OF_BITS_ID, Divider.OUT)
+        .add(Port.OUTPUT, "Remainder", NR_OF_BITS_ID, Divider.REM);
   }
 
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("INP_A", NR_OF_BITS_ID);
-    map.put("INP_B", NR_OF_BITS_ID);
-    map.put("Upper", NR_OF_BITS_ID);
-    return map;
-  }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
@@ -71,27 +67,6 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           """);
     }
     return Contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("Quotient", NR_OF_BITS_ID);
-    map.put("Remainder", NR_OF_BITS_ID);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    final var portMap = new TreeMap<String, String>();
-    if (!(MapInfo instanceof NetlistComponent)) return portMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    portMap.putAll(GetNetMap("INP_A", true, ComponentInfo, Divider.IN0, Nets));
-    portMap.putAll(GetNetMap("INP_B", true, ComponentInfo, Divider.IN1, Nets));
-    portMap.putAll(GetNetMap("Upper", true, ComponentInfo, Divider.UPPER, Nets));
-    portMap.putAll(GetNetMap("Quotient", true, ComponentInfo, Divider.OUT, Nets));
-    portMap.putAll(GetNetMap("Remainder", true, ComponentInfo, Divider.REM, Nets));
-    return portMap;
   }
 
   @Override

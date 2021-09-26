@@ -12,15 +12,12 @@ package com.cburch.logisim.std.memory;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TFlipFlop extends AbstractFlipFlop {
   /**
@@ -34,26 +31,8 @@ public class TFlipFlop extends AbstractFlipFlop {
   private static class TFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
 
     public TFFHDLGeneratorFactory() {
-      super(StdAttr.EDGE_TRIGGER);
-    }
-
-    @Override
-    public String ComponentName() {
-      return _ID;
-    }
-
-    @Override
-    public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist nets) {
-      Map<String, String> PortMap = new HashMap<>();
-      PortMap.putAll(GetNetMap("T", true, ComponentInfo, 0, nets));
-      return PortMap;
-    }
-
-    @Override
-    public Map<String, Integer> GetInputPorts() {
-      Map<String, Integer> Inputs = new HashMap<>();
-      Inputs.put("T", 1);
-      return Inputs;
+      super(1, StdAttr.EDGE_TRIGGER);
+      myPorts.add(Port.INPUT, "T", 1, 0);
     }
 
     @Override

@@ -11,13 +11,11 @@ package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
 
@@ -26,32 +24,21 @@ public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
     myWires
         .addWire("segments", 7)
         .addWire("bcd", 4);
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("BCD0", 1);
-    map.put("BCD1", 1);
-    map.put("BCD2", 1);
-    map.put("BCD3", 1);
-    map.put("LT", 1);
-    map.put("BI", 1);
-    map.put("RBI", 1);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("Sega", 1);
-    map.put("Segb", 1);
-    map.put("Segc", 1);
-    map.put("Segd", 1);
-    map.put("Sege", 1);
-    map.put("Segf", 1);
-    map.put("Segg", 1);
-    return map;
+    myPorts
+        .add(Port.INPUT, "BCD0", 1, 6)
+        .add(Port.INPUT, "BCD1", 1, 0)
+        .add(Port.INPUT, "BCD2", 1, 1)
+        .add(Port.INPUT, "BCD3", 1, 5)
+        .add(Port.INPUT, "LT", 1, 2, false)
+        .add(Port.INPUT, "BI", 1, 3, false)
+        .add(Port.INPUT, "RBI", 1, 4, false)
+        .add(Port.OUTPUT, "Sega", 1, 11)
+        .add(Port.OUTPUT, "Segb", 1, 10)
+        .add(Port.OUTPUT, "Segc", 1, 9)
+        .add(Port.OUTPUT, "Segd", 1, 8)
+        .add(Port.OUTPUT, "Sege", 1, 7)
+        .add(Port.OUTPUT, "Segf", 1, 13)
+        .add(Port.OUTPUT, "Segg", 1, 12);
   }
 
   @Override
@@ -59,13 +46,13 @@ public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
     final var contents = LineBuffer.getBuffer();
     return contents
         .add("""
-            Sega  <= segments(0,
-            Segb  <= segments(1,
-            Segc  <= segments(2,
-            Segd  <= segments(3,
-            Sege  <= segments(4,
-            Segf  <= segments(5,
-            Segg  <= segments(6,
+            Sega  <= segments(0);
+            Segb  <= segments(1);
+            Segc  <= segments(2);
+            Segd  <= segments(3);
+            Sege  <= segments(4);
+            Segf  <= segments(5);
+            Segg  <= segments(6);
             
             bcd   <= BCD3&BCD2&BCD1&BCD0;
             
@@ -96,28 +83,6 @@ public class Ttl7447HDLGenerator extends AbstractHDLGeneratorFactory {
                END PROCESS Decode;
             """)
         .getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    final var map = new TreeMap<String, String>();
-    if (!(mapInfo instanceof NetlistComponent)) return map;
-    final var comp = (NetlistComponent) mapInfo;
-    map.putAll(GetNetMap("BCD0", true, comp, 6, nets));
-    map.putAll(GetNetMap("BCD1", true, comp, 0, nets));
-    map.putAll(GetNetMap("BCD2", true, comp, 1, nets));
-    map.putAll(GetNetMap("BCD3", true, comp, 5, nets));
-    map.putAll(GetNetMap("LT", false, comp, 2, nets));
-    map.putAll(GetNetMap("BI", false, comp, 3, nets));
-    map.putAll(GetNetMap("RBI", false, comp, 4, nets));
-    map.putAll(GetNetMap("Sega", true, comp, 11, nets));
-    map.putAll(GetNetMap("Segb", true, comp, 10, nets));
-    map.putAll(GetNetMap("Segc", true, comp, 9, nets));
-    map.putAll(GetNetMap("Segd", true, comp, 8, nets));
-    map.putAll(GetNetMap("Sege", true, comp, 7, nets));
-    map.putAll(GetNetMap("Segf", true, comp, 13, nets));
-    map.putAll(GetNetMap("Segg", true, comp, 12, nets));
-    return map;
   }
 
   @Override

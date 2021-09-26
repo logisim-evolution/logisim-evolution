@@ -11,13 +11,11 @@ package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
 
@@ -28,32 +26,21 @@ public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
         .addWire("oppB", 5)
         .addWire("oppC", 5)
         .addWire("Result", 5);
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("A1", 1);
-    map.put("A2", 1);
-    map.put("A3", 1);
-    map.put("A4", 1);
-    map.put("B1", 1);
-    map.put("B2", 1);
-    map.put("B3", 1);
-    map.put("B4", 1);
-    map.put("Cin", 1);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("S1", 1);
-    map.put("S2", 1);
-    map.put("S3", 1);
-    map.put("S4", 1);
-    map.put("Cout", 1);
-    return map;
+    myPorts
+        .add(Port.INPUT, "A1", 1, 4)
+        .add(Port.INPUT, "A2", 1, 2)
+        .add(Port.INPUT, "A3", 1, 12)
+        .add(Port.INPUT, "A4", 1, 10)
+        .add(Port.INPUT, "B1", 1, 5)
+        .add(Port.INPUT, "B2", 1, 1)
+        .add(Port.INPUT, "B3", 1, 13)
+        .add(Port.INPUT, "B4", 1, 9)
+        .add(Port.INPUT, "Cin", 1, 6)
+        .add(Port.OUTPUT, "S1", 1, 3)
+        .add(Port.OUTPUT, "S2", 1, 0)
+        .add(Port.OUTPUT, "S3", 1, 11)
+        .add(Port.OUTPUT, "S4", 1, 8)
+        .add(Port.OUTPUT, "Cout", 1, 7);
   }
 
   @Override
@@ -71,28 +58,6 @@ public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
             Cout   <= Result(4);
             """)
         .getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    final var map = new TreeMap<String, String>();
-    if (!(mapInfo instanceof NetlistComponent)) return map;
-    final var comp = (NetlistComponent) mapInfo;
-    map.putAll(GetNetMap("A1", true, comp, 4, nets));
-    map.putAll(GetNetMap("A2", true, comp, 2, nets));
-    map.putAll(GetNetMap("A3", true, comp, 12, nets));
-    map.putAll(GetNetMap("A4", true, comp, 10, nets));
-    map.putAll(GetNetMap("B1", true, comp, 5, nets));
-    map.putAll(GetNetMap("B2", true, comp, 1, nets));
-    map.putAll(GetNetMap("B3", true, comp, 13, nets));
-    map.putAll(GetNetMap("B4", true, comp, 9, nets));
-    map.putAll(GetNetMap("Cin", true, comp, 6, nets));
-    map.putAll(GetNetMap("S1", true, comp, 3, nets));
-    map.putAll(GetNetMap("S2", true, comp, 0, nets));
-    map.putAll(GetNetMap("S3", true, comp, 11, nets));
-    map.putAll(GetNetMap("S4", true, comp, 8, nets));
-    map.putAll(GetNetMap("Cout", true, comp, 7, nets));
-    return map;
   }
 
   @Override

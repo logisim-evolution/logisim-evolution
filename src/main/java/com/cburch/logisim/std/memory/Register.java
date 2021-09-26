@@ -194,10 +194,10 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
 
   static final int DELAY = 8;
   public static final int OUT = 0;
-  static final int IN = 1;
+  public static final int IN = 1;
   public static final int CK = 2;
-  static final int CLR = 3;
-  static final int EN = 4;
+  public static final int CLR = 3;
+  public static final int EN = 4;
   static final int Xsize = 60;
   static final int Ysize = 90;
 

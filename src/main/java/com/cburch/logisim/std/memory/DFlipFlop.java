@@ -12,15 +12,12 @@ package com.cburch.logisim.std.memory;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class DFlipFlop extends AbstractFlipFlop {
   /**
@@ -34,26 +31,8 @@ public class DFlipFlop extends AbstractFlipFlop {
   private static class DFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
 
     public DFFHDLGeneratorFactory() {
-      super(StdAttr.TRIGGER);
-    }
-
-    @Override
-    public String ComponentName() {
-      return _ID;
-    }
-
-    @Override
-    public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist nets) {
-      final var portMap = new HashMap<String, String>();
-      portMap.putAll(GetNetMap("D", true, ComponentInfo, 0, nets));
-      return portMap;
-    }
-
-    @Override
-    public Map<String, Integer> GetInputPorts() {
-      final var inputs = new HashMap<String, Integer>();
-      inputs.put("D", 1);
-      return inputs;
+      super(1, StdAttr.TRIGGER);
+      myPorts.add(Port.INPUT, "D", 1, 0);
     }
 
     @Override

@@ -23,10 +23,8 @@ import java.util.ArrayList;
 class OddParityGate extends AbstractGate {
   private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      final var contents = LineBuffer.getBuffer();
-      contents.add(GetParity(false, nrOfInputs, bitwidth > 1)).empty();
-      return contents.get();
+    public ArrayList<String> getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+      return LineBuffer.getBuffer().add(GetParity(false, nrOfInputs, bitwidth > 1)).empty().get();
     }
   }
 

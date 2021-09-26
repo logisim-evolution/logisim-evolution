@@ -127,13 +127,9 @@ public class Multiplier extends InstanceFactory {
 
   static final int PER_DELAY = 1;
   public static final int IN0 = 0;
-
   public static final int IN1 = 1;
-
   public static final int OUT = 2;
-
   public static final int C_IN = 3;
-
   public static final int C_OUT = 4;
 
   public Multiplier() {

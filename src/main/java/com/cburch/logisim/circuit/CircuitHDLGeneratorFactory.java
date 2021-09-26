@@ -22,6 +22,7 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
@@ -39,11 +40,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public CircuitHDLGeneratorFactory(Circuit source) {
     MyCircuit = source;
-    getWiresduringHDLWriting = true;
+    getWiresPortsDuringHDLWriting = true;
   }
   
   @Override
-  public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {
+  public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
+    final var inOutBubbles = theNetlist.numberOfInOutBubbles();
+    final var inputBubbles = theNetlist.getNumberOfInputBubbles();
+    final var outputBubbles = theNetlist.numberOfOutputBubbles();
     // First we add the wires
     for (final var wire : theNetlist.getAllNets())
       if (!wire.isBus())
@@ -52,6 +56,32 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     for (final var wire : theNetlist.getAllNets())
       if (wire.isBus() && wire.isRootNet())
         myWires.addWire(String.format("%s%d", BUS_NAME, theNetlist.getNetId(wire)), wire.getBitWidth());
+    if (inOutBubbles > 0) 
+      myPorts.add(Port.INOUT, LOCAL_INOUT_BUBBLE_BUS_NAME, inOutBubbles > 1 ? inOutBubbles : 0, 0);
+    for (var clock = 0; clock < theNetlist.numberOfClockTrees(); clock++)
+      myPorts.add(Port.INPUT, String.format("%s%d", CLOCK_TREE_NAME, clock), ClockHDLGeneratorFactory.NR_OF_CLOCK_BITS, 0);
+    if (theNetlist.requiresGlobalClockConnection())
+      myPorts.add(Port.INPUT, TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1, 0);
+    if (inputBubbles > 0)
+      myPorts.add(Port.INPUT, LOCAL_INPUT_BUBBLE_BUS_NAME, inputBubbles > 1 ? inputBubbles : 0, 0);
+    for (var input = 0; input < theNetlist.getNumberOfInputPorts(); input++) {
+      final var selectedInput = theNetlist.getInputPin(input);
+      if (selectedInput != null)  {
+        final var name = selectedInput.getComponent().getAttributeSet().getValue(StdAttr.LABEL);
+        final var nrOfBits = selectedInput.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
+        myPorts.add(Port.INPUT, CorrectLabel.getCorrectLabel(name), nrOfBits, 0);
+      }
+    }
+    if (outputBubbles > 0)
+      myPorts.add(Port.OUTPUT, LOCAL_OUTPUT_BUBBLE_BUS_NAME, outputBubbles > 1 ? outputBubbles : 0, 0);
+    for (var output = 0; output < theNetlist.numberOfOutputPorts(); output++) {
+      final var selectedInput = theNetlist.getOutputPin(output);
+      if (selectedInput != null)  {
+        final var name = selectedInput.getComponent().getAttributeSet().getValue(StdAttr.LABEL);
+        final var nrOfBits = selectedInput.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
+        myPorts.add(Port.OUTPUT, CorrectLabel.getCorrectLabel(name), nrOfBits, 0);
+      }
+    }
   }
 
   @Override
@@ -291,49 +321,6 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetInOutList(Netlist MyNetList, AttributeSet attrs) {
-    final var InOuts = new TreeMap<String, Integer>();
-    int InOutBubbles = MyNetList.numberOfInOutBubbles();
-    if (InOutBubbles > 0) {
-      if (InOutBubbles > 1) {
-        InOuts.put(LOCAL_INOUT_BUBBLE_BUS_NAME, InOutBubbles);
-      } else {
-        InOuts.put(LOCAL_INOUT_BUBBLE_BUS_NAME, 0);
-      }
-    }
-    return InOuts;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist MyNetList, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    for (int i = 0; i < MyNetList.numberOfClockTrees(); i++) {
-      Inputs.put(CLOCK_TREE_NAME + i, ClockHDLGeneratorFactory.NR_OF_CLOCK_BITS);
-    }
-    if (MyNetList.requiresGlobalClockConnection()) {
-      Inputs.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1);
-    }
-    int InputBubbles = MyNetList.getNumberOfInputBubbles();
-    if (InputBubbles > 0) {
-      if (InputBubbles > 1) {
-        Inputs.put(LOCAL_INPUT_BUBBLE_BUS_NAME, InputBubbles);
-      } else {
-        Inputs.put(LOCAL_INPUT_BUBBLE_BUS_NAME, 0);
-      }
-    }
-    for (int i = 0; i < MyNetList.getNumberOfInputPorts(); i++) {
-      NetlistComponent selected = MyNetList.getInputPin(i);
-      if (selected != null) {
-        Inputs.put(
-            CorrectLabel.getCorrectLabel(
-                selected.getComponent().getAttributeSet().getValue(StdAttr.LABEL)),
-            selected.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth());
-      }
-    }
-    return Inputs;
-  }
-
-  @Override
   public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
     var isFirstLine = true;
@@ -478,26 +465,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist myNetList, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    final var outputBubbles = myNetList.numberOfOutputBubbles();
-    if (outputBubbles > 0) {
-      outputs.put(LOCAL_OUTPUT_BUBBLE_BUS_NAME, (outputBubbles == 1) ? 0 : outputBubbles);
-    }
-
-    for (var i = 0; i < myNetList.numberOfOutputPorts(); i++) {
-      final var selected = myNetList.getOutputPin(i);
-      if (selected != null) {
-        outputs.put(
-            CorrectLabel.getCorrectLabel(selected.getComponent().getAttributeSet().getValue(StdAttr.LABEL)),
-            selected.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth());
-      }
-    }
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist nets, Object MapInfo) {
+  public SortedMap<String, String> getPortMap(Netlist nets, Object MapInfo) {
     final var PortMap = new TreeMap<String, String>();
     if (MapInfo == null) return null;
     final var topLevel = MapInfo instanceof MappableResourcesContainer;

@@ -29,7 +29,7 @@ public interface StdAttr {
 
   Attribute<BitWidth> WIDTH =
       Attributes.forBitWidth("width", S.getter("stdDataWidthAttr"));
-
+  
   AttributeOption TRIG_RISING =
       new AttributeOption("rising", S.getter("stdTriggerRising"));
   AttributeOption TRIG_FALLING =

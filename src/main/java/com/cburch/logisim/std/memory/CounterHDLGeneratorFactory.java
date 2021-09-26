@@ -13,12 +13,12 @@ import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.fpga.hdlgenerator.HDLPorts;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,6 +35,9 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int INVERT_CLOCK_ID = -3;
   private static final String MODE_STRING = "mode";
   private static final int MODE_ID = -4;
+  
+  private static final String LOAD_DATA_INPUT = "LoadData";
+  private static final String COUNT_DATA_OUTPUT = "CountValue";
 
   public CounterHDLGeneratorFactory() {
     super();
@@ -57,24 +60,42 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .addRegister("s_next_counter_value", NR_OF_BITS_ID)
         .addRegister("s_carry", 1)
         .addRegister("s_counter_value", NR_OF_BITS_ID);
+    myPorts
+        .add(Port.CLOCK, HDLPorts.CLOCK, 1, Counter.CK)
+        .add(Port.INPUT, LOAD_DATA_INPUT, NR_OF_BITS_ID, Counter.IN)
+        .add(Port.INPUT, "clear", 1, Counter.CLR)
+        .add(Port.INPUT, "load", 1, Counter.LD)
+        .add(Port.INPUT, "Up_n_Down", 1, Counter.UD)
+        .add(Port.INPUT, "Enable", 1, Counter.EN, false)
+        .add(Port.OUTPUT, COUNT_DATA_OUTPUT, NR_OF_BITS_ID, Counter.OUT)
+        .add(Port.OUTPUT, "CompareOut", 1, Counter.CARRY);
   }
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("GlobalClock", 1);
-    map.put("ClockEnable", 1);
-    map.put("LoadData", NR_OF_BITS_ID);
-    map.put("clear", 1);
-    map.put("load", 1);
-    map.put("Up_n_Down", 1);
-    map.put("Enable", 1);
-    return map;
+  public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
+    final var result = new TreeMap<String, String>();
+    result.putAll(super.getPortMap(nets, mapInfo));
+    if (mapInfo instanceof NetlistComponent && HDL.isVHDL()) {
+      final var compInfo = (NetlistComponent) mapInfo;
+      final var nrOfBits = compInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
+      if (nrOfBits == 1) {
+        final var mappedInputData = result.get(LOAD_DATA_INPUT);
+        final var mappedOutputData = result.get(COUNT_DATA_OUTPUT);
+        result.remove(LOAD_DATA_INPUT);
+        result.remove(COUNT_DATA_OUTPUT);
+        result.put(LineBuffer.formatHdl("{{1}}{{<}}0{{>}}", LOAD_DATA_INPUT), mappedInputData);
+        result.put(LineBuffer.formatHdl("{{1}}{{<}}0{{>}}", COUNT_DATA_OUTPUT), mappedOutputData);
+      }
+    }
+    return result;
   }
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = LineBuffer.getHdlBuffer().pair("invertClock", INVERT_CLOCK_STRING);
+    final var contents = LineBuffer.getHdlBuffer()
+        .pair("invertClock", INVERT_CLOCK_STRING)
+        .pair("clock", HDLPorts.CLOCK)
+        .pair("Tick", HDLPorts.TICK);
     contents.addRemarkBlock(
         "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
             + "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down");
@@ -83,7 +104,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           CompareOut   <= s_carry;
           CountValue   <= s_counter_value;
           
-          s_clock      <= GlobalClock WHEN {{invertClock}} = 0 ELSE NOT(GlobalClock); 
+          s_clock      <= {{clock}} WHEN {{invertClock}} = 0 ELSE NOT({{clock}}); 
           make_carry : PROCESS( Up_n_Down,
                                 s_counter_value )
           BEGIN
@@ -104,7 +125,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           
           s_real_enable <= '0' WHEN (load = '0' AND enable = '0') -- Counter disabled
                                  OR (mode = 1 AND s_carry = '1' AND load = '0') -- Stay at value situation
-                               ELSE ClockEnable;
+                               ELSE {{Tick}};
           
           make_next_value : PROCESS( load , Up_n_Down , s_counter_value ,
                                      LoadData , s_carry )
@@ -152,7 +173,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           
           assign CompareOut = s_carry;
           assign CountValue = s_counter_value;
-          assign s_clock = ({{invertClock}} == 0) ? GlobalClock : ~GlobalClock;
+          assign s_clock = ({{invertClock}} == 0) ? {{clock}} : ~{{clock}};
           
           always@(*)
           begin
@@ -163,7 +184,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           end
           
           assign s_real_enable = ((~(load)&~(Enable))|
-                                  ((mode==1)&s_carry&~(load))) ? 1'b0 : ClockEnable;
+                                  ((mode==1)&s_carry&~(load))) ? 1'b0 : {{Tick}};
           
           always @(*)
           begin
@@ -188,71 +209,5 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           """);
     }
     return contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("CountValue", NR_OF_BITS_ID);
-    map.put("CompareOut", 1);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    final var map = new TreeMap<String, String>();
-    if (!(mapInfo instanceof NetlistComponent)) return map;
-    final var componentInfo = (NetlistComponent) mapInfo;
-    final var attrs = componentInfo.getComponent().getAttributeSet();
-    if (!componentInfo.isEndConnected(Counter.CK)) {
-      Reporter.Report.AddSevereWarning(
-          "Component \"Counter\" in circuit \""
-              + nets.getCircuitName()
-              + "\" has no clock connection");
-      map.put("GlobalClock", HDL.zeroBit());
-      map.put("ClockEnable", HDL.zeroBit());
-    } else {
-      final var clockNetName = HDL.getClockNetName(componentInfo, Counter.CK, nets);
-      if (clockNetName.isEmpty()) {
-        map.putAll(GetNetMap("GlobalClock", true, componentInfo, Counter.CK, nets));
-        map.put("ClockEnable", HDL.oneBit());
-      } else {
-        var clockBusIndex = ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX;
-        if (nets.requiresGlobalClockConnection()) {
-          clockBusIndex = ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX;
-        } else {
-          if (attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_LOW)
-            clockBusIndex = ClockHDLGeneratorFactory.INVERTED_DERIVED_CLOCK_INDEX;
-          else if (attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_RISING)
-            clockBusIndex = ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX;
-          else if (attrs.getValue(StdAttr.EDGE_TRIGGER) == StdAttr.TRIG_FALLING)
-            clockBusIndex = ClockHDLGeneratorFactory.INVERTED_DERIVED_CLOCK_INDEX;
-        }
-        map.put(
-            "GlobalClock",
-            clockNetName
-                + HDL.BracketOpen()
-                + ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX
-                + HDL.BracketClose());
-        map.put(
-            "ClockEnable", clockNetName + HDL.BracketOpen() + clockBusIndex + HDL.BracketClose());
-      }
-    }
-    var input = "LoadData";
-    if (HDL.isVHDL()
-        & (componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
-      input += "(0)";
-    map.putAll(GetNetMap(input, true, componentInfo, Counter.IN, nets));
-    map.putAll(GetNetMap("clear", true, componentInfo, Counter.CLR, nets));
-    map.putAll(GetNetMap("load", true, componentInfo, Counter.LD, nets));
-    map.putAll(GetNetMap("Enable", false, componentInfo, Counter.EN, nets));
-    map.putAll(GetNetMap("Up_n_Down", false, componentInfo, Counter.UD, nets));
-    var output = "CountValue";
-    if (HDL.isVHDL()
-        & (componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth() == 1))
-      output += "(0)";
-    map.putAll(GetNetMap(output, true, componentInfo, Counter.OUT, nets));
-    map.putAll(GetNetMap("CompareOut", true, componentInfo, Counter.CARRY, nets));
-    return map;
   }
 }

@@ -11,13 +11,12 @@ package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.instance.Port;
 
 public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
@@ -32,6 +31,9 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
     myParametersList
         .add(NR_OF_LEDS_STRING, NR_OF_LEDS_ID)
         .add(ACTIVE_LOW_STRING, ACTIVE_LOW_ID);
+    myPorts
+        .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayInputs, NR_OF_LEDS_ID, 0)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayOutputs, NR_OF_LEDS_ID, 1);
   }
 
   public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
@@ -76,20 +78,6 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
           """);
     }
     return map.getWithIndent(6);
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayOutputs, NR_OF_LEDS_ID);
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var inputs = new TreeMap<String, Integer>();
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayInputs, NR_OF_LEDS_ID);
-    return inputs;
   }
 
   @Override
