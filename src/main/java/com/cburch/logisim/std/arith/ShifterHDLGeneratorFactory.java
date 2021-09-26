@@ -30,7 +30,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   public ShifterHDLGeneratorFactory() {
     super();
-    myParametersList.add(SHIFT_MODE_STRING, SHIFT_MODE_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Shifter.ATTR_SHIFT, 
+    myParametersList.add(SHIFT_MODE_STRING, SHIFT_MODE_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Shifter.ATTR_SHIFT,
         new HashMap<AttributeOption, Integer>() {{
           put(Shifter.SHIFT_LOGICAL_LEFT, 0);
           put(Shifter.SHIFT_ROLL_LEFT, 1);
@@ -60,7 +60,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = (new LineBuffer())
+    final var contents = LineBuffer.getBuffer()
             .pair("shiftMode", SHIFT_MODE_STRING);
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (HDL.isVHDL()) {
@@ -159,7 +159,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   private ArrayList<String> GetStageFunctionalityVerilog(int stageNumber, int nrOfBits) {
-    final var contents = (new LineBuffer())
+    final var contents = LineBuffer.getBuffer()
             .pair("shiftMode", SHIFT_MODE_STRING)
             .pair("stageNumber", stageNumber)
             .pair("nrOfBits1", nrOfBits - 1)
@@ -213,7 +213,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private ArrayList<String> GetStageFunctionalityVHDL(int stageNumber, int nrOfBits) {
     final var nrOfBitsToShift = (1 << stageNumber);
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
           .pair("shiftMode", SHIFT_MODE_STRING)
           .pair("stageNumber", stageNumber)
           .pair("stageNumber1", stageNumber - 1)

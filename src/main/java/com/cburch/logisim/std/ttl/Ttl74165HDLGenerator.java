@@ -61,7 +61,7 @@ public class Ttl74165HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    return (new LineBuffer())
+    return LineBuffer.getBuffer()
         .add("""
             Q7  <= CurState(0);
             Q7n <= NOT(CurState(0));

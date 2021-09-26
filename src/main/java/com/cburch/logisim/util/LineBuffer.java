@@ -40,12 +40,7 @@ public class LineBuffer implements RandomAccess {
 
   /* ********************************************************************************************* */
 
-  /**
-   * Default constructor.
-   *
-   * @deprecated use getBuffer() instead
-   */
-  public LineBuffer() {
+  protected LineBuffer() {
     super();
     addDefaultPairs();
   }

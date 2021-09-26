@@ -39,7 +39,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int PHASE_ID = -3;
   private static final String NR_OF_BITS_STR = "NrOfBits";
   private static final int NR_OF_BITS_ID = -4;
-  
+
   public ClockHDLGeneratorFactory() {
     super("base");
     myParametersList
@@ -76,7 +76,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("phase", PHASE_STR)
             .pair("nrOfBits", NR_OF_BITS_STR)
             .pair("lowTick", LOW_TICK_STR)

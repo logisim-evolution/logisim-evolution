@@ -62,7 +62,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public ArrayList<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    final var Contents = new LineBuffer();
+    final var Contents = LineBuffer.getBuffer();
     final var inputs = GetInputList(theNetlist, attrs);
     final var inOuts = GetInOutList(theNetlist, attrs);
     final var outputs = GetOutputList(theNetlist, attrs);
@@ -370,7 +370,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   @Override
   public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    var Contents = new LineBuffer();
+    var Contents = LineBuffer.getBuffer();
     if (HDL.isVHDL()) Contents.add(GetVHDLBlackBox(theNetlist, attrs, componentName, false));
     return Contents.get();
   }
@@ -526,7 +526,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       Netlist theNetlist,
       AttributeSet attrs,
       String componentName) {
-    var Contents = new LineBuffer();
+    var Contents = LineBuffer.getBuffer();
     if (HDL.isVHDL()) {
       Contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
           .add(FileWriter.getExtendedLibrary())
