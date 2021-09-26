@@ -143,7 +143,7 @@ abstract class Rectangular extends FillableCanvasObject {
       new Handle(this, newX1, newY1),
       new Handle(this, newX0, newY1)
     };
-}
+  }
 
   @Override
   public List<Handle> getHandles(HandleGesture gesture) {
