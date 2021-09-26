@@ -49,7 +49,7 @@ public class Rectangle extends Rectangular {
 
   @Override
   protected Location getRandomPoint(Bounds bds, Random rand) {
-    if (getPaintType() == DrawAttr.PAINT_STROKE) {
+    if (getPaintType() != DrawAttr.PAINT_STROKE) {
       return super.getRandomPoint(bds, rand);
     }
 
