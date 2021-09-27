@@ -2,6 +2,9 @@
 
 # Changes #
 
+* v3.6.1 (2021-09-27)
+  * Fixed bug in LED-array
+
 * v3.6.0 (2021-09-05)
   * Introducing project logo.
   * Fixed project loader to correctly handle hex values with a 1 in bit 63rd.
