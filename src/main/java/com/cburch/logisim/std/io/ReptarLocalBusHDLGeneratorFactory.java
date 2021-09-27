@@ -131,7 +131,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = new ArrayList<String>();
     if (HDL.isVhdl()) {
       contents.add(" ");
