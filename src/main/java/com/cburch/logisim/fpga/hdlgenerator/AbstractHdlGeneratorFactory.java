@@ -30,23 +30,23 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
+public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
   private final String subDirectoryName;
-  protected final HDLParameters myParametersList = new HDLParameters();
-  protected final HDLWires myWires = new HDLWires();
-  protected final HDLPorts myPorts = new HDLPorts();
-  protected final HDLTypes myTypedWires = new HDLTypes();
+  protected final HdlParameters myParametersList = new HdlParameters();
+  protected final HdlWires myWires = new HdlWires();
+  protected final HdlPorts myPorts = new HdlPorts();
+  protected final HdlTypes myTypedWires = new HdlTypes();
   protected boolean getWiresPortsDuringHDLWriting = false;
 
-  public AbstractHDLGeneratorFactory() {
+  public AbstractHdlGeneratorFactory() {
     final var className = getClass().toString().replace('.', ':').replace(' ', ':');
     final var parts = className.split(":");
     if (parts.length < 2) throw new ExceptionInInitializerError("Cannot read class path!");
     subDirectoryName = parts[parts.length - 2];
   }
 
-  public AbstractHDLGeneratorFactory(String subDirectory) {
+  public AbstractHdlGeneratorFactory(String subDirectory) {
     subDirectoryName = subDirectory;
   }
 
@@ -73,7 +73,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       getGenerationTimeWiresPorts(theNetlist, attrs);
     }
     contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
-    if (HDL.isVhdl()) {
+    if (Hdl.isVhdl()) {
       final var libs = GetExtraLibraries();
       if (!libs.isEmpty()) {
         contents.add(libs);
@@ -403,7 +403,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   @Override
   public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
     var contents = LineBuffer.getHdlBuffer();
-    if (HDL.isVhdl()) contents.add(GetVHDLBlackBox(theNetlist, attrs, componentName, false));
+    if (Hdl.isVhdl()) contents.add(GetVHDLBlackBox(theNetlist, attrs, componentName, false));
     return contents.get();
   }
 
@@ -429,7 +429,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     }
     var TabLength = 0;
     var first = true;
-    if (HDL.isVhdl()) {
+    if (Hdl.isVhdl()) {
       contents.add("   " + ThisInstanceIdentifier + " : " + CompName);
       if (!parameterMap.isEmpty()) {
         oneLine.append("      GENERIC MAP ( ");
@@ -556,7 +556,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   @Override
   public ArrayList<String> getEntity(Netlist theNetlist, AttributeSet attrs, String componentName) {
     var contents = LineBuffer.getHdlBuffer();
-    if (HDL.isVhdl()) {
+    if (Hdl.isVhdl()) {
       contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
           .add(FileWriter.getExtendedLibrary())
           .add(GetVHDLBlackBox(theNetlist, attrs, componentName, true));
@@ -618,7 +618,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     final var NrOfBits = ConnectionInformation.getNrOfBits();
     if (NrOfBits == 1) {
       /* Here we have the easy case, just a single bit net */
-      NetMap.put(SourceName, HDL.getNetName(comp, EndIndex, FloatingPinTiedToGround, TheNets));
+      NetMap.put(SourceName, Hdl.getNetName(comp, EndIndex, FloatingPinTiedToGround, TheNets));
     } else {
       /*
        * Here we have the more difficult case, it is a bus that needs to
@@ -634,9 +634,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       if (!Connected) {
         /* Here is the easy case, the bus is unconnected */
         if (IsOutput) {
-          NetMap.put(SourceName, HDL.unconnected(true));
+          NetMap.put(SourceName, Hdl.unconnected(true));
         } else {
-          NetMap.put(SourceName, HDL.GetZeroVector(NrOfBits, FloatingPinTiedToGround));
+          NetMap.put(SourceName, Hdl.getZeroVector(NrOfBits, FloatingPinTiedToGround));
         }
       } else {
         /*
@@ -645,10 +645,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
          */
         if (TheNets.isContinuesBus(comp, EndIndex)) {
           /* Another easy case, the continues bus connection */
-          NetMap.put(SourceName, HDL.getBusNameContinues(comp, EndIndex, TheNets));
+          NetMap.put(SourceName, Hdl.getBusNameContinues(comp, EndIndex, TheNets));
         } else {
           /* The last case, we have to enumerate through each bit */
-          if (HDL.isVhdl()) {
+          if (Hdl.isVhdl()) {
             var SourceNetName = new StringBuilder();
             for (var i = 0; i < NrOfBits; i++) {
               /* First we build the Line information */
@@ -658,9 +658,9 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
               if (SolderPoint.getParentNet() == null) {
                 /* The net is not connected */
                 if (IsOutput) {
-                  NetMap.put(SourceNetName.toString(), HDL.unconnected(false));
+                  NetMap.put(SourceNetName.toString(), Hdl.unconnected(false));
                 } else {
-                  NetMap.put(SourceNetName.toString(), HDL.GetZeroVector(1, FloatingPinTiedToGround));
+                  NetMap.put(SourceNetName.toString(), Hdl.getZeroVector(1, FloatingPinTiedToGround));
                 }
               } else {
                 /*
@@ -697,7 +697,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
                 if (IsOutput) {
                   SeperateSignals.add("1'bZ");
                 } else {
-                  SeperateSignals.add(HDL.GetZeroVector(1, FloatingPinTiedToGround));
+                  SeperateSignals.add(Hdl.getZeroVector(1, FloatingPinTiedToGround));
                 }
               } else {
                 /*
@@ -768,7 +768,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
                 String.format("Component \"%s\" in circuit \"%s\" has no clock connection!", compName, nets.getCircuitName()));
             hasClock = false;
           }
-          final var clockNetName = HDL.getClockNetName(ComponentInfo, compPinId, nets);
+          final var clockNetName = Hdl.getClockNetName(ComponentInfo, compPinId, nets);
           if (clockNetName == null || clockNetName.isEmpty()) {
             // FIXME hard coded string
             Reporter.report.addSevereWarning(
@@ -783,26 +783,26 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
               final var clockIndex = activeLow ? ClockHDLGeneratorFactory.NEGATIVE_EDGE_TICK_INDEX : ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX;
               result.put(myPorts.getTickName(port), LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, clockIndex));
             }
-            result.put(HDLPorts.CLOCK, LineBuffer
+            result.put(HdlPorts.CLOCK, LineBuffer
                 .formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX));
           } else if (!hasClock) {
-            result.put(myPorts.getTickName(port), HDL.zeroBit());
-            result.put(HDLPorts.CLOCK, HDL.zeroBit());
+            result.put(myPorts.getTickName(port), Hdl.zeroBit());
+            result.put(HdlPorts.CLOCK, Hdl.zeroBit());
           } else {
-            result.put(myPorts.getTickName(port), HDL.oneBit());
+            result.put(myPorts.getTickName(port), Hdl.oneBit());
             if (!gatedClock) {
               final var clockIndex = activeLow ? ClockHDLGeneratorFactory.INVERTED_DERIVED_CLOCK_INDEX : ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX;
-              result.put(HDLPorts.CLOCK, LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, clockIndex));
+              result.put(HdlPorts.CLOCK, LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, clockIndex));
             } else {
-              result.put(HDLPorts.CLOCK, HDL.getNetName(ComponentInfo, compPinId, true, nets));
+              result.put(HdlPorts.CLOCK, Hdl.getNetName(ComponentInfo, compPinId, true, nets));
             }
           }
         } else if (myPorts.isFixedMapped(port)) {
           final var fixedMap = myPorts.getFixedMap(port);
-          if (HDLPorts.PULL_DOWN.equals(fixedMap))
-            result.put(port, HDL.getConstantVector(0, myPorts.get(port, attrs)));
-          else if (HDLPorts.PULL_UP.equals(fixedMap))
-            result.put(port, HDL.getConstantVector(0xFFFFFFFFFFFFFFFFL, myPorts.get(port, attrs)));
+          if (HdlPorts.PULL_DOWN.equals(fixedMap))
+            result.put(port, Hdl.getConstantVector(0, myPorts.get(port, attrs)));
+          else if (HdlPorts.PULL_UP.equals(fixedMap))
+            result.put(port, Hdl.getConstantVector(0xFFFFFFFFFFFFFFFFL, myPorts.get(port, attrs)));
           else
             result.put(port, fixedMap);
         } else {
@@ -1019,7 +1019,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     }
     for (var i = 0; i < Component.getNrOfPins(); i++) {
       temp.setLength(0);
-      temp.append("   ").append(HDL.assignPreamble());
+      temp.append("   ").append(Hdl.assignPreamble());
       /* the internal mapped signals are handled in the top-level HDL generator */
       if (Component.isInternalMapped(i)) continue;
       /* IO-pins need to be mapped directly to the top-level component and cannot be
@@ -1031,19 +1031,19 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (Component.isOutput(i)) continue;
         temp.append(Component.getHdlSignalName(i));
         allign(temp);
-        temp.append(HDL.assignOperator());
-        temp.append(HDL.zeroBit()).append(";");
+        temp.append(Hdl.assignOperator());
+        temp.append(Hdl.zeroBit()).append(";");
         contents.add(temp.toString());
         continue;
       }
       if (Component.isInput(i)) {
         temp.append(Component.getHdlSignalName(i));
         allign(temp);
-        temp.append(HDL.assignOperator());
+        temp.append(Hdl.assignOperator());
         if (Component.IsConstantMapped(i)) {
-          temp.append(Component.isZeroConstantMap(i) ? HDL.zeroBit() : HDL.oneBit());
+          temp.append(Component.isZeroConstantMap(i) ? Hdl.zeroBit() : Hdl.oneBit());
         } else {
-          if (Component.isExternalInverted(i)) temp.append(HDL.notOperator()).append("n_");
+          if (Component.isExternalInverted(i)) temp.append(Hdl.notOperator()).append("n_");
           temp.append(Component.getHdlString(i));
         }
         temp.append(";");
@@ -1054,8 +1054,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       if (Component.isExternalInverted(i)) temp.append("n_");
       temp.append(Component.getHdlString(i));
       allign(temp);
-      temp.append(HDL.assignOperator());
-      if (Component.isExternalInverted(i)) temp.append(HDL.notOperator());
+      temp.append(Hdl.assignOperator());
+      if (Component.isExternalInverted(i)) temp.append(Hdl.notOperator());
       temp.append(Component.getHdlSignalName(i)).append(";");
       contents.add(temp.toString());
     }

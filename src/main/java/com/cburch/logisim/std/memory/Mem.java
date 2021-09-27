@@ -20,7 +20,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -99,7 +99,7 @@ public abstract class Mem extends InstanceFactory {
 
   private final WeakHashMap<Instance, File> currentInstanceFiles;
 
-  Mem(String name, StringGetter desc, int extraPorts, HDLGeneratorFactory generator, boolean needsLabel) {
+  Mem(String name, StringGetter desc, int extraPorts, HdlGeneratorFactory generator, boolean needsLabel) {
     super(name, desc, generator, needsLabel);
     currentInstanceFiles = new WeakHashMap<>();
     setInstancePoker(MemPoker.class);

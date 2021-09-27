@@ -19,8 +19,8 @@ import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.ToplevelHdlGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.util.LineBuffer;
 import java.io.BufferedInputStream;
@@ -128,7 +128,7 @@ public class XilinxDownload implements VendorDownload {
 
   @Override
   public boolean readyForDownload() {
-    return new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + "." + bitfileExt).exists();
+    return new File(SandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + "." + bitfileExt).exists();
   }
 
   @Override
@@ -149,7 +149,7 @@ public class XilinxDownload implements VendorDownload {
         Reporter.report.addFatalError(S.get("XilinxUsbTmc"));
         return null;
       }
-      var bitfile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + "." + bitfileExt);
+      var bitfile = new File(SandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + "." + bitfileExt);
       var bitfile_buffer = new byte[BUFFER_SIZE];
       var bitfile_buffer_size = 0;
       BufferedInputStream bitfile_in;
@@ -198,7 +198,7 @@ public class XilinxDownload implements VendorDownload {
     final var contents = LineBuffer.getBuffer()
             .pair("JTAGPos", JTAGPos)
             .pair("fileExt", bitfileExt)
-            .pair("fileBaseName", ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME)
+            .pair("fileBaseName", ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME)
             .pair("mcsFile", ScriptPath + File.separator + MCS_FILE)
             .pair("hdlType", HDLType.toUpperCase().toUpperCase());
 
@@ -210,7 +210,7 @@ public class XilinxDownload implements VendorDownload {
           .clear()
           .add(
               "run -top {{1}} -ofn logisim.ngc -ofmt NGC -ifn {{2}}{{3}} -ifmt mixed -p {{4}}",
-              ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME,
+              ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME,
               ScriptPath.replace(ProjectPath, "../"),
               VHDL_LIST_FILE,
               GetFPGADeviceString(boardInfo));
@@ -261,7 +261,7 @@ public class XilinxDownload implements VendorDownload {
     contents.clear();
     if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
       contents
-          .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+          .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK)
           .pair("clockFreq", Download.getClockFrequencyString(boardInfo))
           .pair("clockPin", GetXilinxClockPin(boardInfo))
           .add("""
@@ -412,7 +412,7 @@ public class XilinxDownload implements VendorDownload {
       command.add(xilinxVendor.getBinaryPath(4)).add("-w");
       if (boardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PULL_UP) command.add("-g").add("UnusedPin:PULLUP");
       if (boardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PULL_DOWN) command.add("-g").add("UnusedPin:PULLDOWN");
-      command.add("-g").add("StartupClk:CCLK").add("logisim_par").add("{{1}}.bit", ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME);
+      command.add("-g").add("StartupClk:CCLK").add("logisim_par").add("{{1}}.bit", ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME);
     } else {
       command.add(xilinxVendor.getBinaryPath(7)).add("-i").add("logisim.vm6");
     }

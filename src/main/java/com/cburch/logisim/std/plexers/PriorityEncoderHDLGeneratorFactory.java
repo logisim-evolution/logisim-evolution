@@ -12,16 +12,16 @@ package com.cburch.logisim.std.plexers;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class PriorityEncoderHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String NR_OF_SELECT_BITS_STRING = "NrOfSelectBits";
   private static final int NR_OF_SELECT_BITS_ID = -1;
@@ -31,8 +31,8 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   public PriorityEncoderHDLGeneratorFactory() {
     super();
     myParametersList
-        .add(NR_OF_INPUT_BITS_STRING, NR_OF_INPUT_BITS_ID, HDLParameters.MAP_POW2, PlexersLibrary.ATTR_SELECT)
-        .add(NR_OF_SELECT_BITS_STRING, NR_OF_SELECT_BITS_ID, HDLParameters.MAP_INT_ATTRIBUTE, PlexersLibrary.ATTR_SELECT);
+        .add(NR_OF_INPUT_BITS_STRING, NR_OF_INPUT_BITS_ID, HdlParameters.MAP_POW2, PlexersLibrary.ATTR_SELECT)
+        .add(NR_OF_SELECT_BITS_STRING, NR_OF_SELECT_BITS_ID, HdlParameters.MAP_INT_ATTRIBUTE, PlexersLibrary.ATTR_SELECT);
     myWires
         .addWire("s_in_is_zero", 1)
         .addWire("s_address", 5)
@@ -57,14 +57,14 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
     map.putAll(GetNetMap("enable", false, comp, nrOfBits + PriorityEncoder.EN_IN, nets));
     final var vectorList = new StringBuilder();
     for (var i = nrOfBits - 1; i >= 0; i--) {
-      if (HDL.isVhdl())
+      if (Hdl.isVhdl())
         map.putAll(GetNetMap("input_vector(" + i + ")", true, comp, i, nets));
       else {
         if (vectorList.length() > 0) vectorList.append(",");
-        vectorList.append(HDL.getNetName(comp, i, true, nets));
+        vectorList.append(Hdl.getNetName(comp, i, true, nets));
       }
     }
-    if (HDL.isVerilog()) map.put("input_vector", vectorList.toString());
+    if (Hdl.isVerilog()) map.put("input_vector", vectorList.toString());
     map.putAll(GetNetMap("GroupSelect", true, comp, nrOfBits + PriorityEncoder.GS, nets));
     map.putAll(GetNetMap("EnableOut", true, comp, nrOfBits + PriorityEncoder.EN_OUT, nets));
     map.putAll(GetNetMap("Address", true, comp, nrOfBits + PriorityEncoder.OUT, nets));
@@ -76,7 +76,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
     final var contents = LineBuffer.getBuffer()
             .pair("selBits", NR_OF_SELECT_BITS_STRING)
             .pair("inBits", NR_OF_INPUT_BITS_STRING);
-    if (HDL.isVhdl()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           -- Output Signals
           GroupSelect <= NOT(s_in_is_zero) AND enable;

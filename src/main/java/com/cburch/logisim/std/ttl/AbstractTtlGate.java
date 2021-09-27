@@ -17,7 +17,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -50,7 +50,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
    * @param outputPorts = an array with the indexes of the output ports (indexes are the same you
    *     can find on Google searching the TTL you want to add)
    */
-  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, HDLGeneratorFactory generator) {
+  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, HdlGeneratorFactory generator) {
     super(name, generator);
     setIconName("ttl.gif");
     setAttributes(
@@ -63,7 +63,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
       this.outputPorts.add(outputport);
   }
 
-  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins, HDLGeneratorFactory generator) {
+  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins, HdlGeneratorFactory generator) {
     this(name, pins, outputPorts, generator);
     if (notUsedPins == null) return;
     for (byte notUsedPin : notUsedPins)
@@ -78,7 +78,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
    * @param drawgates = if true, it calls the paintInternal method many times as the number of
    *     output ports passing the coordinates
    */
-  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, boolean drawgates, HDLGeneratorFactory generator) {
+  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, boolean drawgates, HdlGeneratorFactory generator) {
     this(name, pins, outputPorts, generator);
     this.numberOfGatesToDraw = (byte) (drawgates ? outputPorts.length : 0);
   }
@@ -91,7 +91,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
    * @param ttlPortNames = an array of strings which will be tooltips of the corresponding port in
    *     the order you pass
    */
-  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, String[] ttlPortNames, HDLGeneratorFactory generator) {
+  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, String[] ttlPortNames, HdlGeneratorFactory generator) {
     // the ttl name, the total number of pins and an array with the indexes of
     // output ports (indexes are the one you can find on Google), an array of
     // strings which will be tooltips of the corresponding port in order
@@ -100,14 +100,14 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   }
 
   protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] NotUsedPins,
-                            String[] Ttlportnames, HDLGeneratorFactory generator) {
+                            String[] Ttlportnames, HdlGeneratorFactory generator) {
     this(name, pins, outputPorts, generator);
     portNames = Ttlportnames;
     if (NotUsedPins == null) return;
     for (final var notUsedPin : NotUsedPins) unusedPins.add(notUsedPin);
   }
 
-  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, String[] Ttlportnames, int height, HDLGeneratorFactory generator) {
+  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, String[] Ttlportnames, int height, HdlGeneratorFactory generator) {
     // the ttl name, the total number of pins and an array with the indexes of
     // output ports (indexes are the one you can find on Google), an array of
     // strings which will be tooltips of the corresponding port in order

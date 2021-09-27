@@ -18,24 +18,24 @@ import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LineBuffer;
 
-public abstract class HDL {
+public abstract class Hdl {
 
   public static final String NET_NAME = "s_LOGISIM_NET_";
   public static final String BUS_NAME = "s_LOGISIM_BUS_";
 
   public static boolean isVhdl() {
-    return AppPreferences.HdlType.get().equals(HDLGeneratorFactory.VHDL);
+    return AppPreferences.HdlType.get().equals(HdlGeneratorFactory.VHDL);
   }
 
   public static boolean isVerilog() {
-    return AppPreferences.HdlType.get().equals(HDLGeneratorFactory.VERILOG);
+    return AppPreferences.HdlType.get().equals(HdlGeneratorFactory.VERILOG);
   }
 
-  public static String BracketOpen() {
+  public static String bracketOpen() {
     return isVhdl() ? "(" : "[";
   }
 
-  public static String BracketClose() {
+  public static String bracketClose() {
     return isVhdl() ? ")" : "]";
   }
 
@@ -95,7 +95,7 @@ public abstract class HDL {
     return isVhdl() ? " DOWNTO " : ":";
   }
 
-  public static String GetZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
+  public static String getZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
     var contents = new StringBuilder();
     if (isVhdl()) {
       var fillValue = (floatingPinTiedToGround) ? "0" : "1";
@@ -146,7 +146,7 @@ public abstract class HDL {
     }
     // first case, we have to concatinate
     if ((nrHexDigits > 0) && (nrSingleBits > 0)) {
-      if (HDL.isVhdl()) {
+      if (Hdl.isVhdl()) {
         return LineBuffer.format("X\"{{1}}\"&\"{{2}}\"", hexValue.toString(), singleBits.toString());
       } else {
         return LineBuffer.format("{{{1}}'h{{2}}, {{3}}'b{{4}}}", nrHexDigits * 4, hexValue.toString(),
@@ -155,14 +155,14 @@ public abstract class HDL {
     }
     // second case, we have only hex digits
     if (nrHexDigits > 0) {
-      if (HDL.isVhdl()) {
+      if (Hdl.isVhdl()) {
         return LineBuffer.format("X\"{{1}}\"", hexValue.toString());
       } else {
         return LineBuffer.format("{{1}}'h{{2}}", nrHexDigits * 4, hexValue.toString());
       }
     }
     // final case, we have only single bits
-    if (HDL.isVhdl()) {
+    if (Hdl.isVhdl()) {
       final var vhdlTicks = (nrOfBits == 1) ? "'" : "\"";
       return LineBuffer.format("{{1}}{{2}}{{1}}", vhdlTicks, singleBits.toString());
     }
@@ -203,7 +203,7 @@ public abstract class HDL {
       if ((nrOfBits > 1) && (bitindex >= 0) && (bitindex < nrOfBits)) {
         if (thisEnd.get((byte) bitindex).getParentNet() == null) {
           // The net is not connected
-          busName = LineBuffer.formatHdl(isOutput ? unconnected(false) : GetZeroVector(1, floatingNetTiedToGround));
+          busName = LineBuffer.formatHdl(isOutput ? unconnected(false) : getZeroVector(1, floatingNetTiedToGround));
         } else {
           final var connectedNet = thisEnd.get((byte) bitindex).getParentNet();
           final var connectedNetBitIndex = thisEnd.get((byte) bitindex).getParentNetBitIndex();
@@ -230,7 +230,7 @@ public abstract class HDL {
         BUS_NAME,
         theNets.getNetId(connectedNet),
         connectionInformation.get((byte) (connectionInformation.getNrOfBits() - 1)).getParentNetBitIndex(),
-        HDL.vectorLoopId(),
+        Hdl.vectorLoopId(),
         connectionInformation.get((byte) (0)).getParentNetBitIndex());
   }
 
@@ -256,7 +256,7 @@ public abstract class HDL {
         final var clocksourceid = theNets.getClockSourceId(
             theNets.getCurrentHierarchyLevel(), ConnectedNet, ConnectedNetBitIndex);
         if (clocksourceid >= 0) {
-          contents.append(HDLGeneratorFactory.CLOCK_TREE_NAME).append(clocksourceid);
+          contents.append(HdlGeneratorFactory.CLOCK_TREE_NAME).append(clocksourceid);
         }
       }
     }
@@ -264,7 +264,7 @@ public abstract class HDL {
   }
 
   public static boolean writeEntity(String targetDirectory, ArrayList<String> contents, String componentName) {
-    if (!HDL.isVhdl()) return true;
+    if (!Hdl.isVhdl()) return true;
     if (contents.isEmpty()) {
       // FIXME: hardcoded string
       Reporter.report.addFatalError("INTERNAL ERROR: Empty entity description received!");

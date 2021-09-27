@@ -19,7 +19,7 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import java.util.ArrayList;
@@ -45,7 +45,7 @@ public class Ttl7434 extends AbstractTtlGate {
     @Override
     public ArrayList<String> getLogicFunction(int index) {
       final var contents = new ArrayList<String>();
-      contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
+      contents.add("   " + Hdl.assignPreamble() + "gate_" + index + "_O" + Hdl.assignOperator()
                   + "(gate_" + index + "_A);");
       contents.add("");
       return contents;

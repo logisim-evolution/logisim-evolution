@@ -12,10 +12,10 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
-import com.cburch.logisim.fpga.hdlgenerator.HDLPorts;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
+import com.cburch.logisim.fpga.hdlgenerator.HdlPorts;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class RandomHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String NR_OF_BITS_STR = "NrOfBits";
   private static final int NR_OF_BITS_ID = -1;
@@ -35,7 +35,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     myParametersList
         .add(NR_OF_BITS_STR, NR_OF_BITS_ID)
         // The seed parameter has 32 bits fixed
-        .addVector(SEED_STR, SEED_ID, HDLParameters.MAP_INT_ATTRIBUTE, Random.ATTR_SEED, 32);
+        .addVector(SEED_STR, SEED_ID, HdlParameters.MAP_INT_ATTRIBUTE, Random.ATTR_SEED, 32);
     myWires
         .addWire("s_InitSeed", 48)
         .addWire("s_reset", 1)
@@ -60,7 +60,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .addRegister("s_busy_pipe_reg", 2)
         .addRegister("s_output_reg", NR_OF_BITS_ID);
     myPorts
-        .add(Port.CLOCK, HDLPorts.getClockName(1), 1, Random.CK)
+        .add(Port.CLOCK, HdlPorts.getClockName(1), 1, Random.CK)
         .add(Port.INPUT, "clear", 1, Random.RST)
         .add(Port.INPUT, "enable", 1, Random.NXT, false)
         .add(Port.OUTPUT, "Q", NR_OF_BITS_ID, Random.OUT);
@@ -70,7 +70,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, String> getPortMap(Netlist Nets, Object MapInfo) {
     final var map = new TreeMap<String, String>();
     map.putAll(super.getPortMap(Nets, MapInfo));
-    if (MapInfo instanceof netlistComponent && HDL.isVhdl()) {
+    if (MapInfo instanceof netlistComponent && Hdl.isVhdl()) {
       final var comp = (netlistComponent) MapInfo;
       final var nrOfBits = comp.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
       if (nrOfBits == 1) {
@@ -88,12 +88,12 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         LineBuffer.getBuffer()
             .pair("seed", SEED_STR)
             .pair("nrOfBits", NR_OF_BITS_STR)
-            .pair("GlobalClock", HDLPorts.getClockName(1))
-            .pair("ClockEnable", HDLPorts.getTickName(1))
+            .pair("GlobalClock", HdlPorts.getClockName(1))
+            .pair("ClockEnable", HdlPorts.getTickName(1))
             .addRemarkBlock("This is a multicycle implementation of the Random Component")
             .empty();
 
-    if (HDL.isVhdl()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           Q            <= s_output_reg;
           s_InitSeed   <= X"0005DEECE66D" WHEN {{seed}} = X"00000000" ELSE

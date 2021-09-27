@@ -11,14 +11,14 @@ package com.cburch.logisim.std.plexers;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
-public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class MultiplexerHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String NR_OF_BITS_STRING = "NrOfBits";
   private static final int NR_OF_BITS_ID = -1;
@@ -42,14 +42,14 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
     if (hasEnable)
       myPorts.add(Port.INPUT, "Enable", 1, selectInputIndex + 1);
     else
-      myPorts.add(Port.INPUT, "Enable", 1, HDL.oneBit());
+      myPorts.add(Port.INPUT, "Enable", 1, Hdl.oneBit());
   }
 
   @Override
   public ArrayList<String> getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer();
     int nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
-    if (HDL.isVhdl()) {
+    if (Hdl.isVhdl()) {
       contents.add("make_mux : PROCESS( Enable,");
       for (var i = 0; i < (1 << nrOfSelectBits); i++)
         contents.add("                    MuxIn_{{1}},", i);
@@ -66,7 +66,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
                       CASE (Sel) IS
                 """);
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++)
-        contents.add("         WHEN {{1}} => MuxOut <= MuxIn_{{2}};", HDL.getConstantVector(i, nrOfSelectBits), i);
+        contents.add("         WHEN {{1}} => MuxOut <= MuxIn_{{2}};", Hdl.getConstantVector(i, nrOfSelectBits), i);
       contents.add("         WHEN OTHERS  => MuxOut <= MuxIn_{{1}};", (1 << nrOfSelectBits) - 1)
               .add("""
                          END CASE; 
@@ -85,7 +85,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
           """, NR_OF_BITS_STRING);
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++) {
         contents
-            .add("      {{1}}:", HDL.getConstantVector(i, nrOfSelectBits))
+            .add("      {{1}}:", Hdl.getConstantVector(i, nrOfSelectBits))
             .add("         s_selected_vector <= MuxIn_{{1}};", i);
       }
       contents

@@ -11,13 +11,13 @@ package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 
 import java.util.ArrayList;
 
-public class Ttl7410HDLGenerator extends AbstractHDLGeneratorFactory {
+public class Ttl7410HDLGenerator extends AbstractHdlGeneratorFactory {
 
   private final boolean Inverted;
   private final boolean andgate;
@@ -48,11 +48,11 @@ public class Ttl7410HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = new ArrayList<String>();
-    final var Inv = Inverted ? HDL.notOperator() : "";
-    final var Func = andgate ? HDL.andOperator() : HDL.orOperator();
-    contents.add("   " + HDL.assignPreamble() + "Y0" + HDL.assignOperator() + Inv + " (A0 " + Func + " B0 " + Func + " C0);");
-    contents.add("   " + HDL.assignPreamble() + "Y1" + HDL.assignOperator() + Inv + " (A1 " + Func + " B1 " + Func + " C1);");
-    contents.add("   " + HDL.assignPreamble() + "Y2" + HDL.assignOperator() + Inv + " (A2 " + Func + " B2 " + Func + " C2);");
+    final var Inv = Inverted ? Hdl.notOperator() : "";
+    final var Func = andgate ? Hdl.andOperator() : Hdl.orOperator();
+    contents.add("   " + Hdl.assignPreamble() + "Y0" + Hdl.assignOperator() + Inv + " (A0 " + Func + " B0 " + Func + " C0);");
+    contents.add("   " + Hdl.assignPreamble() + "Y1" + Hdl.assignOperator() + Inv + " (A1 " + Func + " B1 " + Func + " C1);");
+    contents.add("   " + Hdl.assignPreamble() + "Y2" + Hdl.assignOperator() + Inv + " (A2 " + Func + " B2 " + Func + " C2);");
     return contents;
   }
 

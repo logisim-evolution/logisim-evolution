@@ -62,7 +62,7 @@ public class PortIO extends InstanceFactory {
      * 2) The state of the poke value
      * 3) The state of the enable pin
      */
-    
+
     private final BitWidth BIT_WIDTH = BitWidth.create(1);
     private final ArrayList<Value> inputState;
     private final ArrayList<Value> pokeState;
@@ -109,7 +109,7 @@ public class PortIO extends InstanceFactory {
       else
         pokeState.set(pinIndex, Value.createUnknown(BIT_WIDTH));
     }
-    
+
     public void setInputValue(int pinIndex, Value value) {
       if ((pinIndex < 0) || (pinIndex > size)) return;
       final var newValue = new Value[1];
@@ -132,7 +132,7 @@ public class PortIO extends InstanceFactory {
       if (enableValue.equals(Value.UNKNOWN)) return Value.ERROR;
       return enableValue.equals(Value.TRUE) ? resultValue : pokeValue;
     }
-    
+
     public void setEnableValue(int pinIndex, Value value) {
       if ((pinIndex < 0) || (pinIndex > size)) return;
       enableState.set(pinIndex, value);
@@ -190,7 +190,7 @@ public class PortIO extends InstanceFactory {
   protected static final int DELAY = 1;
 
   public PortIO() {
-    super(_ID, S.getter("pioComponent"), new PortHDLGeneratorFactory(), true);
+    super(_ID, S.getter("pioComponent"), new PortHdlGeneratorFactory(), true);
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -483,7 +483,7 @@ public class PortIO extends InstanceFactory {
     final var stateData = getState(state);
 
     var currentPortIndex = 0;
-    // first we update the state data 
+    // first we update the state data
     if (portType.equals(INOUTSE) || portType.equals(INOUTME) || portType.equals(OUTPUT)) {
       var enableValue = state.getPortValue(currentPortIndex);
       if (portType.equals(INOUTSE) || portType.equals(INOUTME)) currentPortIndex++;
@@ -508,7 +508,7 @@ public class PortIO extends InstanceFactory {
       var nrOfRemainingPins = nrOfPins;
       var nrOfPinsInCurrentBus = Math.min(nrOfRemainingPins, BitWidth.MAXWIDTH);
       nrOfRemainingPins -= nrOfPinsInCurrentBus;
-      var outputValue = new Value[nrOfPinsInCurrentBus]; 
+      var outputValue = new Value[nrOfPinsInCurrentBus];
       var pinIndexCorrection = 0;
       for (var pinIndex = 0; pinIndex < nrOfPins; pinIndex++) {
         if ((pinIndex > 0) && ((pinIndex % BitWidth.MAXWIDTH) == 0)) {

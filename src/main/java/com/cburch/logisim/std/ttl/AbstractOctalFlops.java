@@ -12,7 +12,7 @@ package com.cburch.logisim.std.ttl;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
@@ -26,7 +26,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
 
   private boolean HasWe;
 
-  protected AbstractOctalFlops(String name, byte pins, byte[] outputports, String[] Ttlportnames, HDLGeneratorFactory generator) {
+  protected AbstractOctalFlops(String name, byte pins, byte[] outputports, String[] Ttlportnames, HdlGeneratorFactory generator) {
     super(name, pins, outputports, Ttlportnames, 80, generator);
     super.setInstancePoker(Poker.class);
   }

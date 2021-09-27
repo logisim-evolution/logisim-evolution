@@ -11,13 +11,13 @@ package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 
 import java.util.ArrayList;
 
-public class Ttl7430HDLGenerator extends AbstractHDLGeneratorFactory {
+public class Ttl7430HDLGenerator extends AbstractHdlGeneratorFactory {
 
   public Ttl7430HDLGenerator() {
     super();
@@ -36,9 +36,9 @@ public class Ttl7430HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = new ArrayList<String>();
-    contents.add("   " + HDL.assignPreamble() + "Y1" + HDL.assignOperator() + HDL.notOperator() + "(A"
-            + HDL.andOperator() + "B" + HDL.andOperator() + "C" + HDL.andOperator() + "D" + HDL.andOperator() + "E"
-            + HDL.andOperator() + "F" + HDL.andOperator() + "G" + HDL.andOperator() + "H);");
+    contents.add("   " + Hdl.assignPreamble() + "Y1" + Hdl.assignOperator() + Hdl.notOperator() + "(A"
+            + Hdl.andOperator() + "B" + Hdl.andOperator() + "C" + Hdl.andOperator() + "D" + Hdl.andOperator() + "E"
+            + Hdl.andOperator() + "F" + Hdl.andOperator() + "G" + Hdl.andOperator() + "H);");
     return contents;
   }
 

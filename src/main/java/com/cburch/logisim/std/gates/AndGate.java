@@ -14,7 +14,7 @@ import static com.cburch.logisim.std.Strings.S;
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.util.GraphicsUtil;
@@ -33,14 +33,14 @@ class AndGate extends AbstractGate {
       var contents = new ArrayList<String>();
       var oneLine = new StringBuilder();
       oneLine.append("   ")
-          .append(HDL.assignPreamble())
+          .append(Hdl.assignPreamble())
           .append("Result")
-          .append(HDL.assignOperator());
+          .append(Hdl.assignOperator());
       final var tabWidth = oneLine.length();
       var first = true;
       for (int i = 0; i < nrOfInputs; i++) {
         if (!first) {
-          oneLine.append(HDL.andOperator());
+          oneLine.append(Hdl.andOperator());
           contents.add(oneLine.toString());
           oneLine.setLength(0);
           while (oneLine.length() < tabWidth) {

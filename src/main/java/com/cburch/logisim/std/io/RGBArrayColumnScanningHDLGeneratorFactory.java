@@ -14,8 +14,8 @@ import java.util.ArrayList;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
 
 public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnScanningHDLGeneratorFactory {
@@ -30,7 +30,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
         .addWire("s_maxGreenLedInputs", MAX_NR_LEDS_ID);
     myPorts.removePorts(); // remove the ports from the super class
     myPorts
-        .add(Port.INPUT, TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1, 0)
+        .add(Port.INPUT, TickComponentHdlGeneratorFactory.FPGA_CLOCK, 1, 0)
         .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, NR_OF_LEDS_ID, 1)
         .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, NR_OF_LEDS_ID, 2)
         .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, NR_OF_LEDS_ID, 3)
@@ -44,7 +44,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
     final var contents =
         LineBuffer.getBuffer()
             .pair("addr", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
-            .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+            .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK)
             .pair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
             .pair("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
             .pair("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
@@ -53,7 +53,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
             .pair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs)
             .pair("id", id);
 
-    if (HDL.isVhdl()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           PORT MAP ( {{addr }} => {{addr}}{{id}},
                      {{clock}} => {{clock}},
@@ -94,7 +94,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
             .pair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs);
 
     contents.add(getColumnCounterCode());
-    if (HDL.isVhdl()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS
           BEGIN

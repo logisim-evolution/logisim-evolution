@@ -13,13 +13,13 @@ import java.util.ArrayList;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 
-public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class BitSelectorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String INPUT_BITS_STRING = "NrOfInputBits";
   private static final int INPUT_BITS_ID = -1;
@@ -33,8 +33,8 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   public BitSelectorHDLGeneratorFactory() {
     super();
     myParametersList
-        .add(SELECT_BITS_STRING, SELECT_BITS_ID, HDLParameters.MAP_INT_ATTRIBUTE, BitSelector.SELECT_ATTR)
-        .add(INPUT_BITS_STRING, INPUT_BITS_ID, HDLParameters.MAP_INT_ATTRIBUTE, BitSelector.EXTENDED_ATTR)
+        .add(SELECT_BITS_STRING, SELECT_BITS_ID, HdlParameters.MAP_INT_ATTRIBUTE, BitSelector.SELECT_ATTR)
+        .add(INPUT_BITS_STRING, INPUT_BITS_ID, HdlParameters.MAP_INT_ATTRIBUTE, BitSelector.EXTENDED_ATTR)
         .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID)
         .addBusOnly(BitSelector.GROUP_ATTR, OUTPUTS_BITS_STRING, OUTPUT_BITS_ID);
     myWires
@@ -53,7 +53,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
             .pair("inBits", INPUT_BITS_STRING)
             .pair("outBits", OUTPUTS_BITS_STRING);
     final var outputBits = attrs.getValue(BitSelector.GROUP_ATTR).getWidth();
-    if (HDL.isVhdl()) {
+    if (Hdl.isVhdl()) {
       contents
           .add("""
               s_extended_vector(({{extBits}}-1) DOWNTO {{inBits}}) <= (OTHERS => '0');

@@ -16,10 +16,10 @@ import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import java.util.ArrayList;
 import java.util.Set;
 
-public interface HDLGeneratorFactory {
+public interface HdlGeneratorFactory {
 
-  public static final String NET_NAME = HDL.NET_NAME;
-  public static final String BUS_NAME = HDL.BUS_NAME;
+  public static final String NET_NAME = Hdl.NET_NAME;
+  public static final String BUS_NAME = Hdl.BUS_NAME;
   public static final String CLOCK_TREE_NAME = "LOGISIM_CLOCK_TREE_";
   public static final String VHDL = "VHDL";
   public static final String VERILOG = "Verilog";

@@ -16,7 +16,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 
-public class InlinedHDLGeneratorFactory implements HDLGeneratorFactory {
+public class InlinedHdlGeneratorFactory implements HdlGeneratorFactory {
 
   @Override
   public boolean generateAllHDLDescriptions(Set<String> handledComponents, String workingDirectory,

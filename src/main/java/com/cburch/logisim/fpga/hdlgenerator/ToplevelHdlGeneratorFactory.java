@@ -28,7 +28,7 @@ import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   private final long fpgaClockFrequency;
   private final double tickFrequency;
   private final Circuit myCircuit;
@@ -39,8 +39,8 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private final HashMap<String, Boolean> ledArrayTypesUsed;
   public static final String HDL_DIRECTORY = "toplevel";
 
-  public ToplevelHDLGeneratorFactory(long fpgaClock, double tickClock, Circuit topLevel,
-      MappableResourcesContainer ioComponents) {
+  public ToplevelHdlGeneratorFactory(long fpgaClock, double tickClock, Circuit topLevel,
+                                     MappableResourcesContainer ioComponents) {
     super(HDL_DIRECTORY);
     fpgaClockFrequency = fpgaClock;
     tickFrequency = tickClock;
@@ -76,18 +76,18 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     this.ledArrayTypesUsed = ledArrayTypesUsed;
     myLedArrays = ledArrays;
     if (nrOfClockTrees > 0) {
-      myWires.addWire(TickComponentHDLGeneratorFactory.FPGA_TICK, 1);
+      myWires.addWire(TickComponentHdlGeneratorFactory.FPGA_TICK, 1);
       for (var clockId = 0; clockId < nrOfClockTrees; clockId++)
         myWires.addWire(String.format("s_%s%d", CLOCK_TREE_NAME, clockId), ClockHDLGeneratorFactory.NR_OF_CLOCK_BITS);
     }
     if (nrOfInputBubbles > 0)
-      myWires.addWire(String.format("s_%s", HDLGeneratorFactory.LOCAL_INPUT_BUBBLE_BUS_NAME),
+      myWires.addWire(String.format("s_%s", HdlGeneratorFactory.LOCAL_INPUT_BUBBLE_BUS_NAME),
           nrOfInputBubbles > 1 ? nrOfInputBubbles : 0);
     if (nrOfInOutBubbles > 0)
-      myWires.addWire(String.format("s_%s", HDLGeneratorFactory.LOCAL_INOUT_BUBBLE_BUS_NAME),
+      myWires.addWire(String.format("s_%s", HdlGeneratorFactory.LOCAL_INOUT_BUBBLE_BUS_NAME),
           nrOfInOutBubbles > 1 ? nrOfInOutBubbles : 0);
     if (nrOfOutputBubbles > 0)
-      myWires.addWire(String.format("s_%s", HDLGeneratorFactory.LOCAL_OUTPUT_BUBBLE_BUS_NAME),
+      myWires.addWire(String.format("s_%s", HdlGeneratorFactory.LOCAL_OUTPUT_BUBBLE_BUS_NAME),
           nrOfOutputBubbles > 1 ? nrOfOutputBubbles : 0);
     if (nrOfInputPorts > 0) {
       for (var input = 0; input < nrOfInputPorts; input++) {
@@ -128,7 +128,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         myPorts.add(Port.OUTPUT, port, ports.get(port), null);
     }
     if (nrOfClockTrees > 0 || nets.requiresGlobalClockConnection() || requiresFPGAClock)
-      myPorts.add(Port.INPUT, TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1, null);
+      myPorts.add(Port.INPUT, TickComponentHdlGeneratorFactory.FPGA_CLOCK, 1, null);
     for (final var in : myIOComponents.GetMappedInputPinNames())
       myPorts.add(Port.INPUT, in, 1, null);
     for (final var io : myIOComponents.GetMappedOutputPinNames()) {
@@ -152,9 +152,9 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var components = new ArrayList<String>();
     final var nrOfClockTrees = theNetlist.numberOfClockTrees();
     if (nrOfClockTrees > 0) {
-      final var ticker = new TickComponentHDLGeneratorFactory(fpgaClockFrequency, tickFrequency);
-      components.addAll(ticker.getComponentInstantiation(theNetlist, null, TickComponentHDLGeneratorFactory.HDL_IDENTIFIER));
-      HDLGeneratorFactory clockWorker =
+      final var ticker = new TickComponentHdlGeneratorFactory(fpgaClockFrequency, tickFrequency);
+      components.addAll(ticker.getComponentInstantiation(theNetlist, null, TickComponentHdlGeneratorFactory.HDL_IDENTIFIER));
+      HdlGeneratorFactory clockWorker =
           theNetlist.getAllClockSources()
               .get(0)
               .getFactory()
@@ -193,14 +193,14 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     contents.addRemarkBlock("Here all signal adaptations are performed");
     for (final var key : myIOComponents.getMappableResources().keySet()) {
       final var comp = myIOComponents.getMappableResources().get(key);
-      contents.add(AbstractHDLGeneratorFactory.GetToplevelCode(comp));
+      contents.add(AbstractHdlGeneratorFactory.GetToplevelCode(comp));
     }
     /* now we process the clock tree components */
     if (nrOfClockTrees > 0) {
       contents.addRemarkBlock("Here the clock tree components are defined");
       var index = 0L;
-      final var ticker = new TickComponentHDLGeneratorFactory(fpgaClockFrequency, tickFrequency);
-      contents.add(ticker.getComponentMap(null, index++, null, TickComponentHDLGeneratorFactory.HDL_IDENTIFIER));
+      final var ticker = new TickComponentHdlGeneratorFactory(fpgaClockFrequency, tickFrequency);
+      contents.add(ticker.getComponentMap(null, index++, null, TickComponentHdlGeneratorFactory.HDL_IDENTIFIER));
       for (final var clockGen : theNetlist.getAllClockSources()) {
         final var thisClock = new netlistComponent(clockGen);
         contents.add(

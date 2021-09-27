@@ -13,10 +13,10 @@ import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
-import com.cburch.logisim.fpga.hdlgenerator.HDLPorts;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
+import com.cburch.logisim.fpga.hdlgenerator.HdlPorts;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class CounterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String NR_OF_BITS_STRING = "width";
   private static final int NR_OF_BITS_ID = -1;
@@ -43,10 +43,10 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     super();
     myParametersList
         .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-        .addVector(MAX_VALUE_STRING, MAX_VALUE_ID, HDLParameters.MAP_INT_ATTRIBUTE, Counter.ATTR_MAX)
-        .add(INVERT_CLOCK_STRING, INVERT_CLOCK_ID, HDLParameters.MAP_ATTRIBUTE_OPTION,
+        .addVector(MAX_VALUE_STRING, MAX_VALUE_ID, HdlParameters.MAP_INT_ATTRIBUTE, Counter.ATTR_MAX)
+        .add(INVERT_CLOCK_STRING, INVERT_CLOCK_ID, HdlParameters.MAP_ATTRIBUTE_OPTION,
             StdAttr.EDGE_TRIGGER, AbstractFlipFlopHDLGeneratorFactory.TRIGGER_MAP)
-        .add(MODE_STRING, MODE_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Counter.ATTR_ON_GOAL,
+        .add(MODE_STRING, MODE_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, Counter.ATTR_ON_GOAL,
             new HashMap<AttributeOption, Integer>() {{
               put(Counter.ON_GOAL_WRAP, 0);
               put(Counter.ON_GOAL_STAY, 1);
@@ -61,7 +61,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .addRegister("s_carry", 1)
         .addRegister("s_counter_value", NR_OF_BITS_ID);
     myPorts
-        .add(Port.CLOCK, HDLPorts.CLOCK, 1, Counter.CK)
+        .add(Port.CLOCK, HdlPorts.CLOCK, 1, Counter.CK)
         .add(Port.INPUT, LOAD_DATA_INPUT, NR_OF_BITS_ID, Counter.IN)
         .add(Port.INPUT, "clear", 1, Counter.CLR)
         .add(Port.INPUT, "load", 1, Counter.LD)
@@ -75,7 +75,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var result = new TreeMap<String, String>();
     result.putAll(super.getPortMap(nets, mapInfo));
-    if (mapInfo instanceof netlistComponent && HDL.isVhdl()) {
+    if (mapInfo instanceof netlistComponent && Hdl.isVhdl()) {
       final var compInfo = (netlistComponent) mapInfo;
       final var nrOfBits = compInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
       if (nrOfBits == 1) {
@@ -94,12 +94,12 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer()
         .pair("invertClock", INVERT_CLOCK_STRING)
-        .pair("clock", HDLPorts.CLOCK)
-        .pair("Tick", HDLPorts.TICK);
+        .pair("clock", HdlPorts.CLOCK)
+        .pair("Tick", HdlPorts.TICK);
     contents.addRemarkBlock(
         "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
             + "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down");
-    if (HDL.isVhdl()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           CompareOut   <= s_carry;
           CountValue   <= s_counter_value;

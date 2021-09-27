@@ -19,10 +19,10 @@ import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.ToplevelHdlGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -40,12 +40,12 @@ public abstract class DownloadBase {
   protected BoardInformation myBoardInformation = null;
   protected MappableResourcesContainer myMappableResources;
   static final String[] HDLPaths = {
-    HDLGeneratorFactory.VERILOG.toLowerCase(),
-    HDLGeneratorFactory.VHDL.toLowerCase(),
-    "scripts",
-    "sandbox",
-    "ucf",
-    "xdc"
+          HdlGeneratorFactory.VERILOG.toLowerCase(),
+          HdlGeneratorFactory.VHDL.toLowerCase(),
+          "scripts",
+          "sandbox",
+          "ucf",
+          "xdc"
   };
   public static final Integer VERILOG_SOURCE_PATH = 0;
   public static final Integer VHDL_SOURCE_PATH = 1;
@@ -165,17 +165,17 @@ public abstract class DownloadBase {
     }
     /* Here we generate the top-level shell */
     if (rootSheet.getNetList().numberOfClockTrees() > 0) {
-      final var ticker = new TickComponentHDLGeneratorFactory(myBoardInformation.fpga.getClockFrequency(), frequency /* , boardFreq.isSelected() */);
-      if (!HDL.writeEntity(
+      final var ticker = new TickComponentHdlGeneratorFactory(myBoardInformation.fpga.getClockFrequency(), frequency /* , boardFreq.isSelected() */);
+      if (!Hdl.writeEntity(
           projectDir + ticker.getRelativeDirectory(),
-          ticker.getEntity(rootSheet.getNetList(), null, TickComponentHDLGeneratorFactory.HDL_IDENTIFIER),
-          TickComponentHDLGeneratorFactory.HDL_IDENTIFIER)) {
+          ticker.getEntity(rootSheet.getNetList(), null, TickComponentHdlGeneratorFactory.HDL_IDENTIFIER),
+          TickComponentHdlGeneratorFactory.HDL_IDENTIFIER)) {
         return false;
       }
-      if (!HDL.writeArchitecture(
+      if (!Hdl.writeArchitecture(
           projectDir + ticker.getRelativeDirectory(),
-          ticker.getArchitecture(rootSheet.getNetList(), null, TickComponentHDLGeneratorFactory.HDL_IDENTIFIER),
-          TickComponentHDLGeneratorFactory.HDL_IDENTIFIER)) {
+          ticker.getArchitecture(rootSheet.getNetList(), null, TickComponentHdlGeneratorFactory.HDL_IDENTIFIER),
+          TickComponentHdlGeneratorFactory.HDL_IDENTIFIER)) {
         return false;
       }
 
@@ -185,20 +185,20 @@ public abstract class DownloadBase {
           .getFactory()
           .getHDLGenerator(rootSheet.getNetList().getAllClockSources().get(0).getAttributeSet());
       final var compName = rootSheet.getNetList().getAllClockSources().get(0).getFactory().getHDLName(null);
-      if (!HDL.writeEntity(
+      if (!Hdl.writeEntity(
           projectDir + clockGen.getRelativeDirectory(),
           clockGen.getEntity(rootSheet.getNetList(), null, compName),
           compName)) {
         return false;
       }
-      if (!HDL.writeArchitecture(
+      if (!Hdl.writeArchitecture(
           projectDir + clockGen.getRelativeDirectory(),
           clockGen.getArchitecture(rootSheet.getNetList(), null, compName),
           compName)) {
         return false;
       }
     }
-    final var top = new ToplevelHDLGeneratorFactory(myBoardInformation.fpga.getClockFrequency(),
+    final var top = new ToplevelHdlGeneratorFactory(myBoardInformation.fpga.getClockFrequency(),
         frequency, rootSheet, myMappableResources);
     if (top.hasLedArray()) {
       for (var type : LedArrayDriving.DRIVING_STRINGS) {
@@ -206,13 +206,13 @@ public abstract class DownloadBase {
           worker = LedArrayGenericHDLGeneratorFactory.getSpecificHDLGenerator(type);
           final var name = LedArrayGenericHDLGeneratorFactory.getSpecificHDLName(type);
           if (worker != null && name != null) {
-            if (!HDL.writeEntity(
+            if (!Hdl.writeEntity(
                 projectDir + worker.getRelativeDirectory(),
                 worker.getEntity(rootSheet.getNetList(), null, name),
                 name)) {
               return false;
             }
-            if (!HDL.writeArchitecture(
+            if (!Hdl.writeArchitecture(
                 projectDir + worker.getRelativeDirectory(),
                 worker.getArchitecture(rootSheet.getNetList(), null, name),
                 name)) {
@@ -222,16 +222,16 @@ public abstract class DownloadBase {
         }
       }
     }
-    if (!HDL.writeEntity(
+    if (!Hdl.writeEntity(
         projectDir + top.getRelativeDirectory(),
-        top.getEntity(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME),
-        ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME)) {
+        top.getEntity(rootSheet.getNetList(), null, ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME),
+        ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME)) {
       return false;
     }
-    return HDL.writeArchitecture(
+    return Hdl.writeArchitecture(
         projectDir + top.getRelativeDirectory(),
-        top.getArchitecture(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME),
-        ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME);
+        top.getArchitecture(rootSheet.getNetList(), null, ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME),
+        ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME);
   }
 
   protected boolean genDirectory(String dirPath) {
@@ -255,8 +255,8 @@ public abstract class DownloadBase {
           getVhdlFiles(sourcePath, path + File.separator + thisFile.getName(), entities, behaviors, type);
         }
       } else {
-        final var entityMask = (type.equals(HDLGeneratorFactory.VHDL)) ? FileWriter.ENTITY_EXTENSION + ".vhd" : ".v";
-        final var architectureMask = (type.equals(HDLGeneratorFactory.VHDL))
+        final var entityMask = (type.equals(HdlGeneratorFactory.VHDL)) ? FileWriter.ENTITY_EXTENSION + ".vhd" : ".v";
+        final var architectureMask = (type.equals(HdlGeneratorFactory.VHDL))
             ? FileWriter.ARCHITECTURE_EXTENSION + ".vhd"
             : "#not_searched#";
         if (thisFile.getName().endsWith(entityMask)) {
@@ -311,7 +311,7 @@ public abstract class DownloadBase {
       }
     }
     if (hasMappedClockedArray && (nets.numberOfClockTrees() == 0) && !nets.requiresGlobalClockConnection()) {
-      ledArrayMaps.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, board.fpga.getClockPinLocation());
+      ledArrayMaps.put(TickComponentHdlGeneratorFactory.FPGA_CLOCK, board.fpga.getClockPinLocation());
     }
     return ledArrayMaps;
   }
