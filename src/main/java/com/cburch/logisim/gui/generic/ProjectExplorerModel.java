@@ -42,11 +42,11 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   }
 
   Node<Tool> findTool(Tool tool) {
-    final Node<?> root = (Node<?>) getRoot();
+    final var root = (Node<?>) getRoot();
     if (root == null || tool == null) return null;
-    Enumeration<TreeNode> en = root.depthFirstEnumeration();
+    final var en = root.depthFirstEnumeration();
     while (en.hasMoreElements()) {
-      final Node<?> node = (Node<?>) en.nextElement();
+      final var node = (Node<?>) en.nextElement();
       if (node.getValue() == tool) {
         @SuppressWarnings("unchecked")
         final Node<Tool> nodeTool = (Node<Tool>) node;
@@ -57,8 +57,8 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   }
 
   void fireStructureChanged() {
-    final ProjectExplorerModel model = this;
-    final Node<?> root = (Node<?>) getRoot();
+    final var model = this;
+    final var root = (Node<?>) getRoot();
     SwingUtilities.invokeLater(
         () -> {
           if (root != null) {
@@ -74,7 +74,7 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   // ProjectListener methods
   @Override
   public void projectChanged(ProjectEvent event) {
-    int act = event.getAction();
+    final var act = event.getAction();
     if (act == ProjectEvent.ACTION_SET_FILE) {
       setLogisimFile(proj.getLogisimFile());
       fireStructureChanged();
@@ -82,20 +82,16 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   }
 
   private void setLogisimFile(LogisimFile file) {
-    Node<?> oldRoot = (Node<?>) getRoot();
+    final var oldRoot = (Node<?>) getRoot();
     oldRoot.decommission();
-
-    if (file == null) {
-      setRoot(null);
-    } else {
-      setRoot(new ProjectExplorerLibraryNode(this, file, uiElement, showMouseTools));
-    }
-
+    setRoot((file == null)
+            ? null
+            : new ProjectExplorerLibraryNode(this, file, uiElement, showMouseTools));
     fireStructureChanged();
   }
 
   public void setProject(Project value) {
-    Project old = proj;
+    final var old = proj;
 
     if (old != null) {
       old.removeProjectListener(this);
@@ -132,13 +128,13 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
     abstract void decommission();
 
     public void fireNodeChanged() {
-      Node<?> parent = (Node<?>) this.getParent();
+      final var parent = (Node<?>) this.getParent();
 
       if (parent == null) {
         model.fireTreeNodesChanged(this, null, null, null);
       } else {
-        int[] indices = new int[] {parent.getIndex(this)};
-        Object[] items = new Object[] {this.getUserObject()};
+        final var indices = new int[] {parent.getIndex(this)};
+        final var items = new Object[] {this.getUserObject()};
         model.fireTreeNodesChanged(this, parent.getPath(), indices, items);
       }
     }
