@@ -238,17 +238,17 @@ public class BoardManipulator extends JPanel
   }
 
   public static Color getColor(int id) {
-    switch (id) {
-      case DEFINE_COLOR_ID            : return DEFINE_COLOR;
-      case HIGHLIGHT_COLOR_ID         : return HIGHLIGHT_COLOR;
-      case MOVE_COLOR_ID              : return MOVE_COLOR;
-      case RESIZE_COLOR_ID            : return RESIZE_COLOR;
-      case MAPPED_COLOR_ID            : return MAPPED_COLOR;
-      case SELECTED_MAPPED_COLOR_ID   : return SELECTED_MAP_COLOR;
-      case SELECTABLE_MAPPED_COLOR_ID : return SELECTABLE_MAP_COLOR;
-      case SELECTABLE_COLOR_ID        : return SELECTABLE_COLOR;
-      default                         : return null;
-    }
+    return switch (id) {
+      case DEFINE_COLOR_ID -> DEFINE_COLOR;
+      case HIGHLIGHT_COLOR_ID -> HIGHLIGHT_COLOR;
+      case MOVE_COLOR_ID -> MOVE_COLOR;
+      case RESIZE_COLOR_ID -> RESIZE_COLOR;
+      case MAPPED_COLOR_ID -> MAPPED_COLOR;
+      case SELECTED_MAPPED_COLOR_ID -> SELECTED_MAP_COLOR;
+      case SELECTABLE_MAPPED_COLOR_ID -> SELECTABLE_MAP_COLOR;
+      case SELECTABLE_COLOR_ID -> SELECTABLE_COLOR;
+      default -> null;
+    };
   }
 
   public Image getImage() {
