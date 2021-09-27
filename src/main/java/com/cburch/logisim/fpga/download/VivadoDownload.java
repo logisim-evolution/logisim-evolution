@@ -16,8 +16,8 @@ import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.file.FileWriter;
-import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.ToplevelHdlGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
@@ -67,7 +67,7 @@ public class VivadoDownload implements VendorDownload {
             + File.separator
             + "impl_1"
             + File.separator
-            + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME
+            + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME
             + ".bit";
     _bitStreamPath = _bitStreamPath.replace("\\", "/");
   }
@@ -171,7 +171,7 @@ public class VivadoDownload implements VendorDownload {
     // fill the xdc file
     if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
       final var clockPin = BoardInfo.fpga.getClockPinLocation();
-      final var clockSignal = TickComponentHDLGeneratorFactory.FPGA_CLOCK;
+      final var clockSignal = TickComponentHdlGeneratorFactory.FPGA_CLOCK;
       final var getPortsString = " [get_ports {" + clockSignal + "}]";
       contents.add("set_property PACKAGE_PIN " + clockPin + getPortsString);
 

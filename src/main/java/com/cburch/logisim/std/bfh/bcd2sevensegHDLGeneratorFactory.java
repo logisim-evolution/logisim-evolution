@@ -11,13 +11,13 @@ package com.cburch.logisim.std.bfh;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
-public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class bcd2sevensegHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   public bcd2sevensegHDLGeneratorFactory() {
     myWires
@@ -67,6 +67,6 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHDLGeneratorFactory
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
-    return HDL.isVhdl();
+    return Hdl.isVhdl();
   }
 }

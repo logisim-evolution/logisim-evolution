@@ -15,8 +15,8 @@ import com.cburch.logisim.circuit.CircuitMapInfo;
 import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.std.io.RgbLed;
 import com.cburch.logisim.std.io.SevenSegment;
 import java.util.ArrayList;
@@ -595,24 +595,24 @@ public class MapComponent {
     if (pin < 0 || pin >= nrOfPins) return null;
     if (myInputBubbles.containsKey(pin) && myInputBubbles.get(pin) >= 0) {
       return "s_"
-          + HDLGeneratorFactory.LOCAL_INPUT_BUBBLE_BUS_NAME
-          + HDL.BracketOpen()
+          + HdlGeneratorFactory.LOCAL_INPUT_BUBBLE_BUS_NAME
+          + Hdl.bracketOpen()
           + myInputBubbles.get(pin)
-          + HDL.BracketClose();
+          + Hdl.bracketClose();
     }
     if (myOutputBubbles.containsKey(pin) && myOutputBubbles.get(pin) >= 0) {
       return "s_"
-          + HDLGeneratorFactory.LOCAL_OUTPUT_BUBBLE_BUS_NAME
-          + HDL.BracketOpen()
+          + HdlGeneratorFactory.LOCAL_OUTPUT_BUBBLE_BUS_NAME
+          + Hdl.bracketOpen()
           + myOutputBubbles.get(pin)
-          + HDL.BracketClose();
+          + Hdl.bracketClose();
     }
     var s = new StringBuilder();
     s.append("s_");
     /* The first element is the BoardName, so we skip */
     for (var i = 1; i < myName.size(); i++) s.append(i == 1 ? "" : "_").append(myName.get(i));
     if (nrOfPins > 1) {
-      s.append(HDL.BracketOpen()).append(pin).append(HDL.BracketClose());
+      s.append(Hdl.bracketOpen()).append(pin).append(Hdl.bracketClose());
     }
     return s.toString();
   }

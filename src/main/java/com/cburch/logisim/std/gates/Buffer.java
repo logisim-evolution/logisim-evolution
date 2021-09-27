@@ -72,7 +72,7 @@ class Buffer extends InstanceFactory {
   public static final InstanceFactory FACTORY = new Buffer();
 
   private Buffer() {
-    super(_ID, S.getter("bufferComponent"), new AbstractBufferHDLGenerator(false));
+    super(_ID, S.getter("bufferComponent"), new AbstractBufferHdlGenerator(false));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,

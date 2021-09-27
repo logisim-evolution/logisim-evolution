@@ -20,7 +20,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.Icons;
 import com.cburch.logisim.util.StringGetter;
@@ -32,7 +32,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   private static final Icon toolIcon = Icons.getIcon("subcirc.gif");
 
   private AttributeSet defaultSet;
-  private final HDLGeneratorFactory myHDLGenerator;
+  private final HdlGeneratorFactory myHDLGenerator;
   private final boolean requiresLabel;
   private final boolean requiresGlobalClockConnection;
 
@@ -40,7 +40,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
     this(null, false, false);
   }
 
-  protected AbstractComponentFactory(HDLGeneratorFactory generator, boolean requiresLabel, boolean requiresGlobalClock) {
+  protected AbstractComponentFactory(HdlGeneratorFactory generator, boolean requiresLabel, boolean requiresGlobalClock) {
     defaultSet = null;
     myHDLGenerator = generator;
     this.requiresLabel = requiresLabel;
@@ -103,7 +103,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   }
 
   @Override
-  public HDLGeneratorFactory getHDLGenerator(AttributeSet attrs) {
+  public HdlGeneratorFactory getHDLGenerator(AttributeSet attrs) {
     if (isHDLSupportedComponent(attrs)) return myHDLGenerator;
     else return null;
   }

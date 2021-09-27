@@ -12,9 +12,9 @@ package com.cburch.logisim.std.arith;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class ComparatorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String NR_OF_BITS_STRING = "NrOfBits";
   private static final int NR_OF_BITS_ID = -1;
@@ -39,7 +39,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     super();
     myParametersList
         .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-        .add(TWOS_COMPLEMENT_STRING, TWOS_COMPLEMENT_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR,
+        .add(TWOS_COMPLEMENT_STRING, TWOS_COMPLEMENT_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR,
             SIGNED_MAP);
     getWiresPortsDuringHDLWriting = true;
     myPorts
@@ -67,7 +67,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     Contents.pair("twosComplement", TWOS_COMPLEMENT_STRING);
 
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (HDL.isVhdl()) {
+    if (Hdl.isVhdl()) {
       if (nrOfBits == 1) {
         Contents.add("""
             A_EQ_B <= DataA XNOR DataB;

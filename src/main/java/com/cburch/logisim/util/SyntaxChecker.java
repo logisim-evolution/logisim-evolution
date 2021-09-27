@@ -12,7 +12,7 @@ package com.cburch.logisim.util;
 import static com.cburch.logisim.util.Strings.S;
 
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.gui.generic.OptionPane;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -33,7 +33,7 @@ public class SyntaxChecker {
         message = message.concat(S.get("variableDoubleUnderscore"));
       }
       if (hdl != null) {
-        message = message.concat(hdl.equals(HDLGeneratorFactory.VHDL)
+        message = message.concat(hdl.equals(HdlGeneratorFactory.VHDL)
                                 ? S.get("variableVHDLKeyword")
                                 : S.get("variableVerilogKeyword"));
       }

@@ -11,15 +11,15 @@ package com.cburch.logisim.std.memory;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLPorts;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlPorts;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
-public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class RamHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String ByteArrayStr = "BYTE_ARRAY";
   private static final int ByteArrayId = -1;
@@ -89,17 +89,17 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .add(Port.INPUT, "WE", 1, RamAppearance.getWEIndex(0, attrs))
         .add(Port.INPUT, "OE", 1, RamAppearance.getOEIndex(0, attrs))
         .add(Port.OUTPUT, "DataOut", nrOfBits, RamAppearance.getDataOutIndex(0, attrs));
-    if (!async) myPorts.add(Port.CLOCK, HDLPorts.getClockName(1), 1, ByteArrayId);
+    if (!async) myPorts.add(Port.CLOCK, HdlPorts.getClockName(1), 1, ByteArrayId);
   }
 
   @Override
   public ArrayList<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer()
-        .pair("clock", HDLPorts.getClockName(1))
-        .pair("tick", HDLPorts.getTickName(1));
+        .pair("clock", HdlPorts.getClockName(1))
+        .pair("tick", HdlPorts.getTickName(1));
     final var be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
     final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-    if (HDL.isVhdl()) {
+    if (Hdl.isVhdl()) {
       contents.addRemarkBlock("Here the control signals are defined");
       if (byteEnables) {
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
@@ -238,6 +238,6 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var syncRead = !attrs.containsAttribute(Mem.ASYNC_READ) || !attrs.getValue(Mem.ASYNC_READ);
     final var clearPin = attrs.getValue(RamAttributes.CLEAR_PIN) == null ? false : attrs.getValue(RamAttributes.CLEAR_PIN);
     final var readAfterWrite = !attrs.containsAttribute(Mem.READ_ATTR) || attrs.getValue(Mem.READ_ATTR).equals(Mem.READAFTERWRITE);
-    return HDL.isVhdl() && separate && !asynch && byteEnabled && syncRead && !clearPin && readAfterWrite;
+    return Hdl.isVhdl() && separate && !asynch && byteEnabled && syncRead && !clearPin && readAfterWrite;
   }
 }

@@ -11,8 +11,8 @@ package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
@@ -29,7 +29,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
         .addWire("s_maxGreenLedInputs", MAX_NR_LEDS_ID);
     myPorts.removePorts(); // remove the ports of the super class
     myPorts
-        .add(Port.INPUT, TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1, 0)
+        .add(Port.INPUT, TickComponentHdlGeneratorFactory.FPGA_CLOCK, 1, 0)
         .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, NR_OF_LEDS_ID, 1)
         .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, NR_OF_LEDS_ID, 2)
         .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, NR_OF_LEDS_ID, 3)
@@ -52,10 +52,10 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
     final var contents =
         (new LineBuffer(sharedPairs))
             .pair("addr", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
-            .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+            .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK)
             .pair("id", id);
 
-    if (HDL.isVhdl()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           PORT MAP ( {{addr }} => {{addr}}{{id}}
                      {{clock}} => {{clock}},
@@ -90,7 +90,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
             .pair("nrOfColumns", NR_OF_COLUMS_STRING);
 
     contents.add(getRowCounterCode());
-    if (HDL.isVhdl()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           
           makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS

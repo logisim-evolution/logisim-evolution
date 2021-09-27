@@ -20,7 +20,7 @@ import com.cburch.logisim.data.AttributeSets;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.gui.log.LoggableContract;
 import com.cburch.logisim.tools.Pokable;
 import com.cburch.logisim.tools.key.KeyConfigurator;
@@ -65,14 +65,14 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
     this(name, StringUtil.constantGetter(name));
   }
 
-  public InstanceFactory(String name, HDLGeneratorFactory generator) {
+  public InstanceFactory(String name, HdlGeneratorFactory generator) {
     this(name, StringUtil.constantGetter(name), generator, false, false);
   }
 
-  public InstanceFactory(String name, HDLGeneratorFactory generator, boolean requiresGlobalClock) {
+  public InstanceFactory(String name, HdlGeneratorFactory generator, boolean requiresGlobalClock) {
     this(name, StringUtil.constantGetter(name), generator, requiresGlobalClock, false);
   }
-  public InstanceFactory(String name, HDLGeneratorFactory generator, boolean requiresLabel, boolean requiresGlobalClock) {
+  public InstanceFactory(String name, HdlGeneratorFactory generator, boolean requiresLabel, boolean requiresGlobalClock) {
     this(name, StringUtil.constantGetter(name), generator, requiresGlobalClock, requiresGlobalClock);
   }
 
@@ -80,15 +80,15 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
     this(name, displayName, null, false, false);
   }
 
-  public InstanceFactory(String name, StringGetter displayName, HDLGeneratorFactory generator) {
+  public InstanceFactory(String name, StringGetter displayName, HdlGeneratorFactory generator) {
     this(name, displayName, generator, false, false);
   }
 
-  public InstanceFactory(String name, StringGetter displayName, HDLGeneratorFactory generator, boolean requiresGlobalClock) {
+  public InstanceFactory(String name, StringGetter displayName, HdlGeneratorFactory generator, boolean requiresGlobalClock) {
     this(name, displayName, generator, requiresGlobalClock, false);
   }
 
-  public InstanceFactory(String name, StringGetter displayName, HDLGeneratorFactory generator,
+  public InstanceFactory(String name, StringGetter displayName, HdlGeneratorFactory generator,
       boolean requiresLabel, boolean requiresGlobalClock) {
     super(generator, requiresLabel, requiresGlobalClock);
     this.name = name;

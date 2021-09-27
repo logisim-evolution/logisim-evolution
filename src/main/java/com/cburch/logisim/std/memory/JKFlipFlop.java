@@ -12,7 +12,7 @@ package com.cburch.logisim.std.memory;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
@@ -40,9 +40,9 @@ public class JKFlipFlop extends AbstractFlipFlop {
     @Override
     public ArrayList<String> GetUpdateLogic() {
       final var contents = new ArrayList<String>();
-      contents.add("   " + HDL.assignPreamble() + "s_next_state" + HDL.assignOperator()
-              + "(" + HDL.notOperator() + "(s_current_state_reg)" + HDL.andOperator() + "J)" + HDL.orOperator());
-      contents.add("         (s_current_state_reg" + HDL.andOperator() + HDL.notOperator() + "(K));");
+      contents.add("   " + Hdl.assignPreamble() + "s_next_state" + Hdl.assignOperator()
+              + "(" + Hdl.notOperator() + "(s_current_state_reg)" + Hdl.andOperator() + "J)" + Hdl.orOperator());
+      contents.add("         (s_current_state_reg" + Hdl.andOperator() + Hdl.notOperator() + "(K));");
       return contents;
     }
   }

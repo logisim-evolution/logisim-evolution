@@ -14,7 +14,6 @@ import static com.cburch.logisim.std.Strings.S;
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -55,7 +54,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
   static final NoDataDisplayMode NO_DATA_DISPLAY = NoDataDisplayMode.BLANK;
 
   public HexDigit() {
-    super(_ID, S.getter("hexDigitComponent"), new HexDigitHDLGeneratorFactory(), true);
+    super(_ID, S.getter("hexDigitComponent"), new HexDigitHdlGeneratorFactory(), true);
     setAttributes(
         new Attribute[] {
           IoLibrary.ATTR_ON_COLOR,
