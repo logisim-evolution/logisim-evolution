@@ -40,12 +40,12 @@ public abstract class DownloadBase {
   protected BoardInformation myBoardInformation = null;
   protected MappableResourcesContainer myMappableResources;
   static final String[] HDLPaths = {
-          HdlGeneratorFactory.VERILOG.toLowerCase(),
-          HdlGeneratorFactory.VHDL.toLowerCase(),
-          "scripts",
-          "sandbox",
-          "ucf",
-          "xdc"
+    HdlGeneratorFactory.VERILOG.toLowerCase(),
+    HdlGeneratorFactory.VHDL.toLowerCase(),
+    "scripts",
+    "sandbox",
+    "ucf",
+    "xdc"
   };
   public static final Integer VERILOG_SOURCE_PATH = 0;
   public static final Integer VHDL_SOURCE_PATH = 1;
