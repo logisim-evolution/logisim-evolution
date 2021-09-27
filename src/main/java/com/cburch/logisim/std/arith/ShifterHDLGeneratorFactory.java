@@ -58,7 +58,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .pair("shiftMode", SHIFT_MODE_STRING);
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     final var nrOfShiftBits = attrs.getValue(Shifter.SHIFT_BITS_ATTR);
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
             -----------------------------------------------------------------------------
             --- ShifterMode represents when:                                          ---

@@ -139,7 +139,7 @@ public class MapComponent {
     return myOutputBubbles.keySet().size() != 0;
   }
 
-  public boolean hasIOs() {
+  public boolean hasIos() {
     return myIoBubbles.keySet().size() != 0;
   }
 

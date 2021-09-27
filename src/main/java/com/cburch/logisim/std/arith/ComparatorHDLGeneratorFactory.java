@@ -67,7 +67,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     Contents.pair("twosComplement", TWOS_COMPLEMENT_STRING);
 
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       if (nrOfBits == 1) {
         Contents.add("""
             A_EQ_B <= DataA XNOR DataB;

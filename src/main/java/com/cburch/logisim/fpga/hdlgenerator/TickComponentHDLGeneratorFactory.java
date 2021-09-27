@@ -80,7 +80,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             .add("")
             .addRemarkBlock("Here the update logic is defined");
 
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       Contents.add("""
           s_tick_next   <= '1' WHEN s_count_reg = std_logic_vector(to_unsigned(0, {{nrOfCounterBits}})) ELSE '0';
           s_count_next  <= (OTHERS => '0') WHEN s_tick_reg /= '0' AND s_tick_reg /= '1' ELSE -- For simulation only!
@@ -105,7 +105,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
               """);
     }
     Contents.addRemarkBlock("Here the flipflops are defined");
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       Contents.add("""
           make_tick : PROCESS( FPGAClock , s_tick_next )
           BEGIN

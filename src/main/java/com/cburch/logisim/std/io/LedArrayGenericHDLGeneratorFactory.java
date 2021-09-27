@@ -196,7 +196,7 @@ public class LedArrayGenericHDLGeneratorFactory {
 
   public static ArrayList<String> GetComponentMap(char typeId, int nrOfRows, int nrOfColumns, int identifier, long FpgaClockFrequency, boolean isActiveLow) {
     final var componentMap = LineBuffer.getBuffer()
-            .add(HDL.isVHDL()
+            .add(HDL.isVhdl()
                 ? "   array" + identifier + " : " + getSpecificHDLName(typeId)
                 : "   " + getSpecificHDLName(typeId));
     switch (typeId) {
@@ -343,7 +343,7 @@ public class LedArrayGenericHDLGeneratorFactory {
     final var onBit = (onColor > 128) ? HDL.oneBit() : HDL.zeroBit();
     final var offBit = (offColor > 128) ? HDL.oneBit() : HDL.zeroBit();
     return
-      HDL.isVHDL()
+      HDL.isVhdl()
         ?  dest + HDL.assignOperator() + onBit + " WHEN " + source + " = '1' ELSE " + offBit + ";"
         : "assign " + dest + " = (" + source + " == " + HDL.oneBit() + ") ? " + onBit + " : " + offBit + ";";
   }

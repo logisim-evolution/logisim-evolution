@@ -49,7 +49,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   public ArrayList<String> getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer();
     int nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("make_mux : PROCESS( Enable,");
       for (var i = 0; i < (1 << nrOfSelectBits); i++)
         contents.add("                    MuxIn_{{1}},", i);

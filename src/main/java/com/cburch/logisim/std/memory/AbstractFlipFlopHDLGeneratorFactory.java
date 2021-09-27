@@ -66,7 +66,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
                  {{assign}}Q       {{=}}s_current_state_reg;
                  {{assign}}Q_bar   {{=}}{{not}}(s_current_state_reg);
              """)
-        .add(HDL.isVHDL()
+        .add(HDL.isVhdl()
             ? "   s_clock {{=}} {{Clock}} WHEN {{invertClock}} = 0 ELSE NOT({{Clock}});"
             : "   assign s_clock {{=}} ({{invertClock}} == 0) ? {{Clock}} : ~{{Clock}};")
         .addRemarkBlock("Here the update logic is defined")
@@ -85,7 +85,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     }
 
     contents.addRemarkBlock("Here the actual state register is defined");
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           make_memory : PROCESS( s_clock , Reset , Preset , {{Tick}} , s_next_state )
           BEGIN

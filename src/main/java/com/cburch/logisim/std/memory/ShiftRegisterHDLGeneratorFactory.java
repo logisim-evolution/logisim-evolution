@@ -74,7 +74,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
       final var hasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD);
       final var vector = new StringBuilder();
-      if (HDL.isVHDL() && nrOfBits == 1) {
+      if (HDL.isVhdl() && nrOfBits == 1) {
         final var shiftMap = map.get("ShiftIn");
         final var outMap = map.get("ShiftOut");
         map.remove("ShiftIn");
@@ -86,7 +86,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       map.remove("Q");
       if (hasParallelLoad) {
         if (nrOfBits == 1) {
-          if (HDL.isVHDL()) {
+          if (HDL.isVhdl()) {
             for (var stage = 0; stage < nrOfStages; stage++)
               map.putAll(GetNetMap(String.format("D(%d)", stage), true, comp, 6 + 2 * stage, nets));
             final var nrOfOutStages = attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC
@@ -109,7 +109,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             map.put("Q", vector.toString());
           }
         } else {
-          if (HDL.isVHDL()) {
+          if (HDL.isVhdl()) {
             for (var bit = 0; bit < nrOfBits; bit++) {
               for (var stage = 0; stage < nrOfStages; stage++) {
                 final var index = bit * nrOfStages + stage;
@@ -157,7 +157,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             .pair("nrOfStages", NR_OF_STAGES_STR)
             .pair("invertClock", NEGATE_CLOCK_STRING)
             .add(FileWriter.getGenerateRemark(componentName, nets.projName()));
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents
           .add("""
               ARCHITECTURE NoPlatformSpecific OF SingleBitShiftReg IS
@@ -267,7 +267,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
         .pair("tick", HDLPorts.getTickName(1))
         .pair("nrOfStages", NR_OF_STAGES_STR)
         .pair("invertClock", NEGATE_CLOCK_STRING);
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents
           .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
           .add(FileWriter.getExtendedLibrary())
@@ -300,7 +300,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
         .pair("nrOfStages", NR_OF_STAGES_STR)
         .pair("invertClock", NEGATE_CLOCK_STRING)
         .pair("nrOfBits", NR_OF_BITS_STR);
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           GenBits : FOR n IN ({{nrOfBits}}-1) DOWNTO 0 GENERATE
              OneBit : SingleBitShiftReg

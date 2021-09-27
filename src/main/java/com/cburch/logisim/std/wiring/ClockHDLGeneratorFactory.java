@@ -90,7 +90,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .pair("highTick", HIGH_TICK_STR)
             .addRemarkBlock("Here the output signals are defines; we synchronize them all on the main clock");
 
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       Contents.add("""
           ClockBus <= GlobalClock&s_output_regs;
           makeOutputs : PROCESS( GlobalClock )
@@ -120,7 +120,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           """);
     }
     Contents.add("").addRemarkBlock("Here the control signals are defined");
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       Contents.add("""
           s_counter_is_zero <= '1' WHEN s_counter_reg = std_logic_vector(to_unsigned(0,{{nrOfBits}})) ELSE '0';
           s_counter_next    <= std_logic_vector(unsigned(s_counter_reg) - 1)
@@ -150,7 +150,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               """);
     }
     Contents.add("").addRemarkBlock("Here the state registers are defined");
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       Contents.add("""
           makeDerivedClock : PROCESS( GlobalClock , ClockTick , s_counter_is_zero ,
                                       s_derived_clock_reg)

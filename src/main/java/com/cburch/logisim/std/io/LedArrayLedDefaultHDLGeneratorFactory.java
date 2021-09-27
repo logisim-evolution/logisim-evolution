@@ -46,7 +46,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
             .pair("activeLow", ACTIVE_LOW_STRING)
             .pair("activeLowVal", activeLow ? "1" : "0");
 
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           GENERIC MAP ( {{nrOfLeds}} => {{ledsCount}},
                         {{activeLow}} => {{activeLowVal}} )
@@ -66,7 +66,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
             .pair("id", id)
             .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
             .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       map.add("""
           PORT MAP ( {{outs}} => {{outs}}{{id}},
                      {{ins }} => s_{{ins}}{{id}} );
@@ -87,7 +87,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
             .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
             .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
 
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE
              {{outs}}(n) <= NOT({{ins}}(n)) WHEN activeLow = 1 ELSE {{ins}}(n);

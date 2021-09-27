@@ -48,7 +48,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents = LineBuffer.getBuffer();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       Contents.add("""
           s_extended_dataA <= "0"&DataA;
           s_extended_dataB <= "0"&(NOT(DataB));

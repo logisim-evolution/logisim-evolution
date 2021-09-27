@@ -54,7 +54,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
-    return HDL.isVHDL();
+    return HDL.isVhdl();
   }
 
   @Override
@@ -63,7 +63,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .pair("nrOfBits", NR_OF_BITS_STR);
     final var nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
     final var nrOfPorts = (int) (Math.log10(1 << nrOfBits.getWidth()) + 1.0);
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       switch (nrOfPorts) {
         case 2:
           contents

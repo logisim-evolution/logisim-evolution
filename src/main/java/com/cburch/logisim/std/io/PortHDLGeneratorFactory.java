@@ -78,7 +78,7 @@ public class PortHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
         if ((portType != PortIO.INOUTSE) && (busIndex > 0)) enableIndex += 2;
         // simple case first, we have a single output enable
         if (portType == PortIO.INOUTSE) {
-          if (HDL.isVHDL()) {
+          if (HDL.isVhdl()) {
             contents.add("{{1}}({{2}} DOWNTO {{3}}) <= {{4}} WHEN {{5}} = '1' ELSE (OTHERS => 'Z');",
                 LOCAL_INOUT_BUBBLE_BUS_NAME,
                 endIndex,
@@ -97,7 +97,7 @@ public class PortHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
         } else {
           // we have to enumerate over each and every bit
           for (var busBitIndex = 0; busBitIndex < nrOfBitsInThisBus; busBitIndex++) {
-            if (HDL.isVHDL()) {
+            if (HDL.isVhdl()) {
               contents.add("{{1}}({{2}}) <= {{3}} WHEN {{4}} = '1' ELSE 'Z';",
                   LOCAL_INOUT_BUBBLE_BUS_NAME,
                   startIndex + busBitIndex,

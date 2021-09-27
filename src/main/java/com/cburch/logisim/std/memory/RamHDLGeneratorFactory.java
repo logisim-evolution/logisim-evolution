@@ -99,7 +99,7 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .pair("tick", HDLPorts.getTickName(1));
     final var be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
     final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.addRemarkBlock("Here the control signals are defined");
       if (byteEnables) {
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
@@ -238,6 +238,6 @@ public class RamHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var syncRead = !attrs.containsAttribute(Mem.ASYNC_READ) || !attrs.getValue(Mem.ASYNC_READ);
     final var clearPin = attrs.getValue(RamAttributes.CLEAR_PIN) == null ? false : attrs.getValue(RamAttributes.CLEAR_PIN);
     final var readAfterWrite = !attrs.containsAttribute(Mem.READ_ATTR) || attrs.getValue(Mem.READ_ATTR).equals(Mem.READAFTERWRITE);
-    return HDL.isVHDL() && separate && !asynch && byteEnabled && syncRead && !clearPin && readAfterWrite;
+    return HDL.isVhdl() && separate && !asynch && byteEnabled && syncRead && !clearPin && readAfterWrite;
   }
 }

@@ -251,7 +251,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
 
   private JPanel createIOPane() {
     final var map = mapInfo.getMap();
-    if (!map.hasIOs()) return null;
+    if (!map.hasIos()) return null;
     if (mapInfo.getPin() >= 0 && !map.isIo(mapInfo.getPin())) return null;
     if (IOMapSet == null)
       IOMapSet = new ArrayList<>();

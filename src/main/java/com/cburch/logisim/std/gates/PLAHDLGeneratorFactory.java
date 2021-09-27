@@ -45,7 +45,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var contents = LineBuffer.getHdlBuffer();
     final var tt = attrs.getValue(PLA.ATTR_TABLE);
     final var outSz = attrs.getValue(PLA.ATTR_OUT_WIDTH).getWidth();
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       var leader = "    Result <= ";
       final var indent = "              ";
       if (tt.rows().isEmpty()) {
@@ -65,6 +65,6 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
-    return HDL.isVHDL();
+    return HDL.isVhdl();
   }
 }

@@ -55,7 +55,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
             .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
             .pair("id", id);
 
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           PORT MAP ( {{addr }} => {{addr}}{{id}}
                      {{clock}} => {{clock}},
@@ -90,7 +90,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
             .pair("nrOfColumns", NR_OF_COLUMS_STRING);
 
     contents.add(getRowCounterCode());
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           
           makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS

@@ -57,7 +57,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
     map.putAll(GetNetMap("enable", false, comp, nrOfBits + PriorityEncoder.EN_IN, nets));
     final var vectorList = new StringBuilder();
     for (var i = nrOfBits - 1; i >= 0; i--) {
-      if (HDL.isVHDL())
+      if (HDL.isVhdl())
         map.putAll(GetNetMap("input_vector(" + i + ")", true, comp, i, nets));
       else {
         if (vectorList.length() > 0) vectorList.append(",");
@@ -76,7 +76,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
     final var contents = LineBuffer.getBuffer()
             .pair("selBits", NR_OF_SELECT_BITS_STRING)
             .pair("inBits", NR_OF_INPUT_BITS_STRING);
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           -- Output Signals
           GroupSelect <= NOT(s_in_is_zero) AND enable;

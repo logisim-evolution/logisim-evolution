@@ -39,7 +39,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   @Override
   public ArrayList<String> getArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
     final var contents = LineBuffer.getBuffer();
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents
           .pair("compName", componentName)
           .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
@@ -133,7 +133,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   @Override
   public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = new ArrayList<String>();
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add(" ");
     } else {
       // FIXME: hardcoded string
@@ -195,6 +195,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
-    return HDL.isVHDL();
+    return HDL.isVhdl();
   }
 }

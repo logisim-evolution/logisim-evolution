@@ -90,7 +90,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
             .pair("scanningCounter", SCANNING_COUNTER_VALUE_STRING)
             .pair("scanningValue", (scanningReload - 1));
 
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           GENERIC MAP ( {{nrOfLeds}} => {{ledsCount}},
                         {{nrOfRows}} => {{nrOfRowsCount}},
@@ -125,7 +125,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
             .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
             .pair("id", id);
 
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           PORT MAP ( {{columnAddress}} => {{columnAddress}}{{id}},
                      {{outs}} => {{outs}}{{id}},
@@ -151,7 +151,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
             .pair("counterBits", SCANNING_COUNTER_BITS_STRING)
             .pair("counterValue", SCANNING_COUNTER_VALUE_STRING);
 
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add(
           """
 
@@ -221,7 +221,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
             .pair("activeLow", ACTIVE_LOW_STRING)
             .add(getColumnCounterCode());
 
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           makeVirtualInputs : PROCESS ( internalLeds ) IS
           BEGIN

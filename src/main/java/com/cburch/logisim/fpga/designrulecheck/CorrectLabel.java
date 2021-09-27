@@ -47,7 +47,7 @@ public class CorrectLabel {
         return errorIdentifierString + S.get("IllegalChar", label.substring(i, i + 1));
       }
     }
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       if (VHDL_KEYWORDS.contains(label.toLowerCase())) {
         return errorIdentifierString + S.get("ReservedVHDLKeyword");
       }
@@ -87,7 +87,7 @@ public class CorrectLabel {
         return false;
       }
     }
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       return !VHDL_KEYWORDS.contains(Label.toLowerCase());
     } else {
       if (HDL.isVerilog()) {

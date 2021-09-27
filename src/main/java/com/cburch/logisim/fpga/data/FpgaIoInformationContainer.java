@@ -820,7 +820,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     if (connect < 0) {
       if (map.hasInputs() && (hasIOs() || hasInputs())) selectable = true;
       if (map.hasOutputs() && (hasIOs() || hasOutputs())) selectable = true;
-      if (map.hasIOs() && hasIOs()) selectable = true;
+      if (map.hasIos() && hasIOs()) selectable = true;
     } else {
       if (map.isInput(connect) && (hasIOs() || hasInputs())) selectable = true;
       if (map.isOutput(connect) && (hasIOs() || hasOutputs())) selectable = true;

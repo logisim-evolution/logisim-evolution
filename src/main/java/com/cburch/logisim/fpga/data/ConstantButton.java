@@ -99,7 +99,7 @@ public class ConstantButton extends FpgaIoInformationContainer {
           default -> throw new IllegalStateException("Unexpected value: " + myType);
         };
       }
-      if (map.hasOutputs() || map.hasIOs()) selectable = myType == LEAVE_OPEN;
+      if (map.hasOutputs() || map.hasIos()) selectable = myType == LEAVE_OPEN;
     } else {
       if (map.isInput(connect))
         selectable = myType == CONSTANT_ZERO || myType == CONSTANT_ONE;

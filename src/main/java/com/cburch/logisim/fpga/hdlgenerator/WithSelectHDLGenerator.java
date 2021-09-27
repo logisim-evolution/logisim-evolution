@@ -82,7 +82,7 @@ public class WithSelectHDLGenerator {
         .pair("regName", regName)
         .pair("regBits", nrOfDestinationBits - 1);
     contents.add("");
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("WITH ({{sourceName}}) SELECT {{destName}} <=");
     } else {
       contents.add("""
@@ -94,13 +94,13 @@ public class WithSelectHDLGenerator {
     }
     for (final var thisCase : myCases.keySet()) {
       final var value = myCases.get(thisCase);
-      if (HDL.isVHDL()) {
+      if (HDL.isVhdl()) {
         contents.add("   {{1}} WHEN {{2}},", HDL.getConstantVector(value, nrOfDestinationBits), HDL.getConstantVector(thisCase, nrOfSourceBits));
       } else {
         contents.add("      {{1}} : {{regName}} = {{2}};", HDL.getConstantVector(thisCase, nrOfSourceBits), HDL.getConstantVector(value, nrOfDestinationBits));
       }
     }
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("   {{1}} WHEN OTHERS;", HDL.getConstantVector(defaultValue, nrOfDestinationBits));
     } else {
       contents.add("      default : {{regName}} = {{1}};", HDL.getConstantVector(defaultValue, nrOfDestinationBits));

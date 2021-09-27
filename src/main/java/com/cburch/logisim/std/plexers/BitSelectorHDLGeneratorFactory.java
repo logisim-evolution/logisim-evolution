@@ -53,7 +53,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
             .pair("inBits", INPUT_BITS_STRING)
             .pair("outBits", OUTPUTS_BITS_STRING);
     final var outputBits = attrs.getValue(BitSelector.GROUP_ATTR).getWidth();
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents
           .add("""
               s_extended_vector(({{extBits}}-1) DOWNTO {{inBits}}) <= (OTHERS => '0');

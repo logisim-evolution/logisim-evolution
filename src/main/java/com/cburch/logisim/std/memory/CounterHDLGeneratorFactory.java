@@ -75,7 +75,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var result = new TreeMap<String, String>();
     result.putAll(super.getPortMap(nets, mapInfo));
-    if (mapInfo instanceof netlistComponent && HDL.isVHDL()) {
+    if (mapInfo instanceof netlistComponent && HDL.isVhdl()) {
       final var compInfo = (netlistComponent) mapInfo;
       final var nrOfBits = compInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
       if (nrOfBits == 1) {
@@ -99,7 +99,7 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     contents.addRemarkBlock(
         "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
             + "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down");
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           CompareOut   <= s_carry;
           CountValue   <= s_counter_value;

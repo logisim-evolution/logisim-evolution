@@ -30,17 +30,17 @@ public class ControlledBufferHDLGenerator extends InlinedHDLGeneratorFactory {
     if (nrBits > 1) {
       inpName = HDL.getBusName(componentInfo, 1, nets);
       outpName = HDL.getBusName(componentInfo, 0, nets);
-      triState = HDL.isVHDL() ? "(OTHERS => 'Z')" : nrBits + "'bZ";
+      triState = HDL.isVhdl() ? "(OTHERS => 'Z')" : nrBits + "'bZ";
     } else {
       inpName = HDL.getNetName(componentInfo, 1, true, nets);
       outpName = HDL.getNetName(componentInfo, 0, true, nets);
-      triState = HDL.isVHDL() ? "'Z'" : "1'bZ";
+      triState = HDL.isVhdl() ? "'Z'" : "1'bZ";
     }
     if (componentInfo.isEndConnected(2) && componentInfo.isEndConnected(0)) {
       final var invert = ((ControlledBuffer) componentInfo.getComponent().getFactory()).isInverter()
               ? HDL.notOperator()
               : "";
-      if (HDL.isVHDL()) {
+      if (HDL.isVhdl()) {
         contents.add("   {{1}}<= {{2}}{{3}} WHEN {{4}} = '1' ELSE {{5}};", outpName, invert, inpName, triName, triState);
       } else {
         contents.add("   assign {{1}} = ({{2}}) ? {{3}}{{4}} : {{5}};", outpName, triName, invert, inpName, triState);

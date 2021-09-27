@@ -53,7 +53,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
             .pair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs)
             .pair("id", id);
 
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           PORT MAP ( {{addr }} => {{addr}}{{id}},
                      {{clock}} => {{clock}},
@@ -94,7 +94,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
             .pair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs);
 
     contents.add(getColumnCounterCode());
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS
           BEGIN

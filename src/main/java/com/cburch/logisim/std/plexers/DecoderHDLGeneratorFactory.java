@@ -47,7 +47,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       contents.pair("bin", HDL.getConstantVector(i, nrOfSelectBits))
               .pair("space", space)
               .pair("i", i);
-      if (HDL.isVHDL()) {
+      if (HDL.isVhdl()) {
         contents.add("""
             DecoderOut_{{i}}{{space}}<= '1' WHEN sel = {{bin}} AND
             {{space}}                             Enable = '1' ELSE '0';

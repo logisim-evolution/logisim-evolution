@@ -51,7 +51,7 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
     final var contents = new LineBuffer(sharedPairs);
     contents.add("id", id);
 
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           PORT MAP ( {{outsR}} => {{outsR}}{{id}},
                      {{outsG}} => {{outsG}}{{id}},
@@ -77,7 +77,7 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
   public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = new LineBuffer(sharedPairs);
 
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE
              {{outsR}}(n) <= NOT({{insR}}(n)) WHEN activeLow = 1 ELSE {{insR}}(n);

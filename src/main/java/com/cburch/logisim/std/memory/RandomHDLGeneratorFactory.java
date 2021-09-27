@@ -70,7 +70,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, String> getPortMap(Netlist Nets, Object MapInfo) {
     final var map = new TreeMap<String, String>();
     map.putAll(super.getPortMap(Nets, MapInfo));
-    if (MapInfo instanceof netlistComponent && HDL.isVHDL()) {
+    if (MapInfo instanceof netlistComponent && HDL.isVhdl()) {
       final var comp = (netlistComponent) MapInfo;
       final var nrOfBits = comp.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
       if (nrOfBits == 1) {
@@ -93,7 +93,7 @@ public class RandomHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .addRemarkBlock("This is a multicycle implementation of the Random Component")
             .empty();
 
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           Q            <= s_output_reg;
           s_InitSeed   <= X"0005DEECE66D" WHEN {{seed}} = X"00000000" ELSE

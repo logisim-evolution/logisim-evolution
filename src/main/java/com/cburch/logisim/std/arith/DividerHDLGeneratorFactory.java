@@ -52,7 +52,7 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .pair("unsigned", UNSIGNED_STRING)
             .pair("calcBits", CALC_BITS_STRING);
 
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       Contents.add("""
           s_extended_dividend({{calcBits}}-1 DOWNTO {{nrOfBits}}) <= Upper;
           s_extended_dividend({{nrOfBits}}-1 DOWNTO 0) <= INP_A;
@@ -71,6 +71,6 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
-    return HDL.isVHDL();
+    return HDL.isVhdl();
   }
 }

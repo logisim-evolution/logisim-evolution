@@ -23,7 +23,7 @@ public abstract class HDL {
   public static final String NET_NAME = "s_LOGISIM_NET_";
   public static final String BUS_NAME = "s_LOGISIM_BUS_";
 
-  public static boolean isVHDL() {
+  public static boolean isVhdl() {
     return AppPreferences.HdlType.get().equals(HDLGeneratorFactory.VHDL);
   }
 
@@ -32,72 +32,72 @@ public abstract class HDL {
   }
 
   public static String BracketOpen() {
-    return isVHDL() ? "(" : "[";
+    return isVhdl() ? "(" : "[";
   }
 
   public static String BracketClose() {
-    return isVHDL() ? ")" : "]";
+    return isVhdl() ? ")" : "]";
   }
 
   public static int remarkOverhead() {
-    return isVHDL() ? 3 : 4;
+    return isVhdl() ? 3 : 4;
   }
 
   public static String getRemakrChar(boolean first, boolean last) {
-    if (isVHDL()) return "-";
+    if (isVhdl()) return "-";
     if (first) return "/";
     if (last) return " ";
     return "*";
   }
 
   public static String getRemarkStart() {
-    if (isVHDL()) return "-- ";
+    if (isVhdl()) return "-- ";
     return " ** ";
   }
 
   public static String assignPreamble() {
-    return isVHDL() ? "" : "assign ";
+    return isVhdl() ? "" : "assign ";
   }
 
   public static String assignOperator() {
-    return isVHDL() ? " <= " : " = ";
+    return isVhdl() ? " <= " : " = ";
   }
 
   public static String notOperator() {
-    return isVHDL() ? " NOT " : "~";
+    return isVhdl() ? " NOT " : "~";
   }
 
   public static String andOperator() {
-    return isVHDL() ? " AND " : "&";
+    return isVhdl() ? " AND " : "&";
   }
 
   public static String orOperator() {
-    return isVHDL() ? " OR " : "|";
+    return isVhdl() ? " OR " : "|";
   }
 
   public static String xorOperator() {
-    return isVHDL() ? " XOR " : "^";
+    return isVhdl() ? " XOR " : "^";
   }
 
   public static String zeroBit() {
-    return isVHDL() ? "'0'" : "1'b0";
+    return isVhdl() ? "'0'" : "1'b0";
   }
 
   public static String oneBit() {
-    return isVHDL() ? "'1'" : "1'b1";
+    return isVhdl() ? "'1'" : "1'b1";
   }
 
   public static String unconnected(boolean empty) {
-    return isVHDL() ? "OPEN" : empty ? "" : "'bz";
+    return isVhdl() ? "OPEN" : empty ? "" : "'bz";
   }
 
   public static String vectorLoopId() {
-    return isVHDL() ? " DOWNTO " : ":";
+    return isVhdl() ? " DOWNTO " : ":";
   }
 
   public static String GetZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
     var contents = new StringBuilder();
-    if (isVHDL()) {
+    if (isVhdl()) {
       var fillValue = (floatingPinTiedToGround) ? "0" : "1";
       var hexFillValue = (floatingPinTiedToGround) ? "0" : "F";
       if (nrOfBits == 1) {
@@ -146,7 +146,7 @@ public abstract class HDL {
     }
     // first case, we have to concatinate
     if ((nrHexDigits > 0) && (nrSingleBits > 0)) {
-      if (HDL.isVHDL()) {
+      if (HDL.isVhdl()) {
         return LineBuffer.format("X\"{{1}}\"&\"{{2}}\"", hexValue.toString(), singleBits.toString());
       } else {
         return LineBuffer.format("{{{1}}'h{{2}}, {{3}}'b{{4}}}", nrHexDigits * 4, hexValue.toString(),
@@ -155,14 +155,14 @@ public abstract class HDL {
     }
     // second case, we have only hex digits
     if (nrHexDigits > 0) {
-      if (HDL.isVHDL()) {
+      if (HDL.isVhdl()) {
         return LineBuffer.format("X\"{{1}}\"", hexValue.toString());
       } else {
         return LineBuffer.format("{{1}}'h{{2}}", nrHexDigits * 4, hexValue.toString());
       }
     }
     // final case, we have only single bits
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       final var vhdlTicks = (nrOfBits == 1) ? "'" : "\"";
       return LineBuffer.format("{{1}}{{2}}{{1}}", vhdlTicks, singleBits.toString());
     }
@@ -264,7 +264,7 @@ public abstract class HDL {
   }
 
   public static boolean writeEntity(String targetDirectory, ArrayList<String> contents, String componentName) {
-    if (!HDL.isVHDL()) return true;
+    if (!HDL.isVhdl()) return true;
     if (contents.isEmpty()) {
       // FIXME: hardcoded string
       Reporter.report.addFatalError("INTERNAL ERROR: Empty entity description received!");

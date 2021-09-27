@@ -22,7 +22,7 @@ public class MappableResourcesContainer {
 
   private final Circuit myCircuit;
   private final BoardInformation currentUsedBoard;
-  private IoComponentsInformation IOcomps;
+  private IoComponentsInformation ioComps;
   private Map<ArrayList<String>, MapComponent> myMappableResources;
   private final List<FpgaIoInformationContainer> myIOComponents;
 
@@ -60,12 +60,14 @@ public class MappableResourcesContainer {
    * and has less complexity; being compatible with the old version
    */
   public IoComponentsInformation getIoComponentInformation() {
-    if (IOcomps == null) {
-      IOcomps = new IoComponentsInformation(null, true);
-      for (var io : myIOComponents) IOcomps.addComponent(io, 1);
+    if (ioComps == null) {
+      ioComps = new IoComponentsInformation(null, true);
+      for (final var io : myIOComponents) {
+        ioComps.addComponent(io, 1);
+      }
       /* TODO: build-up info */
     }
-    return IOcomps;
+    return ioComps;
   }
 
   public Map<ArrayList<String>, MapComponent> getMappableResources() {
@@ -73,8 +75,8 @@ public class MappableResourcesContainer {
   }
 
   public void destroyIOComponentInformation() {
-    IOcomps.clear();
-    IOcomps = null;
+    ioComps.clear();
+    ioComps = null;
   }
 
   public String getToplevelName() {

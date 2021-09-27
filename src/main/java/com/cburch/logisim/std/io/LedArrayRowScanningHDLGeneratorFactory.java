@@ -90,7 +90,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .pair("activeLow", ACTIVE_LOW_STRING)
             .pair("activeLowVal", activeLow ? "1" : "0");
 
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           GENERIC MAP ( {{nrOfLeds}} => {{nrOfLedsVal}},
                         {{nrOfRows}} => {{nrOfRowsVal}},
@@ -124,7 +124,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
             .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
                 .pair("id", id);
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       map.add("""
           PORT MAP ( {{rowAddr}} => {{rowAddr}}{{id}},
                      {{outs}} => {{outs}}{{id}},
@@ -149,7 +149,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .pair("bits", SCANNING_COUNTER_BITS_STRING)
             .pair("value", SCANNING_COUNTER_VALUE_STRING)
             .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           
           {{rowAddress}} <= s_rowCounterReg;
@@ -216,7 +216,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .pair("nrOfColumns", NR_OF_COLUMS_STRING)
             .add(getRowCounterCode());
 
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("""
           makeVirtualInputs : PROCESS ( internalLeds ) IS
           BEGIN

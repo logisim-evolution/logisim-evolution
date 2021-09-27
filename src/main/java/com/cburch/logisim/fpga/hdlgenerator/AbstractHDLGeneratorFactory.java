@@ -73,7 +73,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       getGenerationTimeWiresPorts(theNetlist, attrs);
     }
     contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       final var libs = GetExtraLibraries();
       if (!libs.isEmpty()) {
         contents.add(libs);
@@ -403,7 +403,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   @Override
   public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
     var contents = LineBuffer.getHdlBuffer();
-    if (HDL.isVHDL()) contents.add(GetVHDLBlackBox(theNetlist, attrs, componentName, false));
+    if (HDL.isVhdl()) contents.add(GetVHDLBlackBox(theNetlist, attrs, componentName, false));
     return contents.get();
   }
 
@@ -429,7 +429,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     }
     var TabLength = 0;
     var first = true;
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add("   " + ThisInstanceIdentifier + " : " + CompName);
       if (!parameterMap.isEmpty()) {
         oneLine.append("      GENERIC MAP ( ");
@@ -556,7 +556,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   @Override
   public ArrayList<String> getEntity(Netlist theNetlist, AttributeSet attrs, String componentName) {
     var contents = LineBuffer.getHdlBuffer();
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
           .add(FileWriter.getExtendedLibrary())
           .add(GetVHDLBlackBox(theNetlist, attrs, componentName, true));
@@ -648,7 +648,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           NetMap.put(SourceName, HDL.getBusNameContinues(comp, EndIndex, TheNets));
         } else {
           /* The last case, we have to enumerate through each bit */
-          if (HDL.isVHDL()) {
+          if (HDL.isVhdl()) {
             var SourceNetName = new StringBuilder();
             for (var i = 0; i < NrOfBits; i++) {
               /* First we build the Line information */

@@ -63,9 +63,9 @@ public class FileWriter {
       fileName.append(targetDirectory);
       if (!targetDirectory.endsWith(File.separator)) fileName.append(File.separator);
       fileName.append(componentName);
-      if (isEntity && HDL.isVHDL()) fileName.append(ENTITY_EXTENSION);
-      if (!isEntity && HDL.isVHDL()) fileName.append(ARCHITECTURE_EXTENSION);
-      fileName.append(HDL.isVHDL() ? ".vhd" : ".v");
+      if (isEntity && HDL.isVhdl()) fileName.append(ENTITY_EXTENSION);
+      if (!isEntity && HDL.isVhdl()) fileName.append(ARCHITECTURE_EXTENSION);
+      fileName.append(HDL.isVhdl() ? ".vhd" : ".v");
       final var outFile = new File(fileName.toString());
       Reporter.report.addInfo(S.fmt("fileCreateHDLFile", fileName.toString()));
       if (outFile.exists()) {
@@ -110,12 +110,12 @@ public class FileWriter {
     final String headOpen;
     final String headClose;
 
-    final var headText = " " + BuildInfo.name + " goes FPGA automatic generated " + (HDL.isVHDL() ? "VHDL" : "Verilog") + " code";
+    final var headText = " " + BuildInfo.name + " goes FPGA automatic generated " + (HDL.isVhdl() ? "VHDL" : "Verilog") + " code";
     final var headUrl  = " " + BuildInfo.url;
     final var headProj = " Project   : " + projName;
     final var headComp = " Component : " + compName;
 
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       headWidth = 74;
       headOpen = "--==";
       headClose = "==";

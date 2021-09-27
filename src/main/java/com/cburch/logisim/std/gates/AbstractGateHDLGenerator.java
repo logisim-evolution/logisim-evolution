@@ -68,7 +68,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
       contents.empty();
       contents.addRemarkBlock("Here the bubbles are processed");
       for (var i = 0; i < nrOfInputs; i++) {
-        if (HDL.isVHDL()) {
+        if (HDL.isVhdl()) {
           contents.add("  s_real_input_{{1}} {{=}} Input_{{1}} WHEN {{2}}{{<}}{{3}}{{>}} = '0' ELSE NOT(Input_{{1}});", (i + 1), BUBBLES_MASK, i);
         } else {
           contents.add("  {{assign}} s_real_input_{{1}} {{=}} ({{2}}{{<}}{{3}}{{>}} == 1'b0) ? Input_{{1}} : ~Input_{{1}};", (i + 1), BUBBLES_MASK, i);
@@ -89,7 +89,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     var spaces = "   ";
     var indexString = "";
     if (isBus) {
-      if (HDL.isVHDL()) {
+      if (HDL.isVhdl()) {
         lines.add(spaces + "GenBits : FOR n IN (" + BIT_WIDTH_STRING + "-1) DOWNTO 0 GENERATE");
         spaces += "   ";
         indexString = "(n)";
@@ -137,7 +137,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
       oneLine.setLength(0);
     }
     if (isBus) {
-      if (HDL.isVHDL()) {
+      if (HDL.isVhdl()) {
         lines.add("   END GENERATE GenBits;");
       } else {
         lines.add("         end");
@@ -152,7 +152,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
     var spaces = "   ";
     var indexString = "";
     if (isBus) {
-      if (HDL.isVHDL()) {
+      if (HDL.isVhdl()) {
         lines.add(spaces + "GenBits : FOR n IN (" + BIT_WIDTH_STRING + "-1) DOWNTO 0 GENERATE");
         spaces += "   ";
         indexString = "(n)";
@@ -184,7 +184,7 @@ public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
       oneLine.setLength(0);
     }
     if (isBus) {
-      if (HDL.isVHDL()) {
+      if (HDL.isVhdl()) {
         lines.add("   END GENERATE GenBits;");
       } else {
         lines.add("         end");

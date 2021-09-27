@@ -503,7 +503,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           MapComponent map = null;
           for (final var key : mapInfo.getMappableResources().keySet()) {
             final var comp = mapInfo.getMappableResources().get(key);
-            if (comp.hasIOs()) {
+            if (comp.hasIos()) {
               final var id = comp.getIoBubblePinId(i);
               if (id >= 0) {
                 compPin = id;
@@ -519,14 +519,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           }
           if (!map.isMapped(compPin) || map.isOpenMapped(compPin)) {
             // FIXME: rewrite using LineBuffer
-            if (HDL.isVHDL())
+            if (HDL.isVhdl())
               PortMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME + "(" + i + ")", "OPEN");
             else {
               if (vector.length() != 0) vector.append(",");
               vector.append("OPEN"); // still not found the correct method but this seems to work
             }
           } else {
-            if (HDL.isVHDL())
+            if (HDL.isVhdl())
               PortMap.put(
                   LOCAL_INOUT_BUBBLE_BUS_NAME + "(" + i + ")",
                   (map.isExternalInverted(compPin) ? "n_" : "") + map.getHdlString(compPin));

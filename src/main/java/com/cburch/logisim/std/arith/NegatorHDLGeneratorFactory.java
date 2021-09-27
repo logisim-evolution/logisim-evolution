@@ -35,7 +35,7 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents = LineBuffer.getBuffer();
-    if (HDL.isVHDL()) {
+    if (HDL.isVhdl()) {
       int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
       Contents.add(
           (nrOfBits == 1)
