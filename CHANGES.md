@@ -1,6 +1,7 @@
 [![Logisim-evolution](artwork/logisim-evolution-logo.svg)](https://github.com/logisim-evolution/logisim-evolution)
 
 # Changes #
+
 * v3.6.1 (2021-09-27)
   * Fixed bug in LED-array
 
