@@ -585,11 +585,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return new ArrayList<>();
   }
 
-  public int getNrOfTypes(Netlist TheNetlist, AttributeSet attrs) {
-    /* In this method you can specify the number of own defined Types */
-    return 0;
-  }
-
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var result = new TreeMap<String, String>();
     if (mapInfo instanceof NetlistComponent && !myPorts.isEmpty()) {

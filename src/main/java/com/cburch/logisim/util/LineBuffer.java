@@ -153,10 +153,10 @@ public class LineBuffer implements RandomAccess {
         .pair("or", HDL.orOperator())
         .pair("and", HDL.andOperator())
         .pair("not", HDL.notOperator())
-        .pair("bracketOpen", HDL.BracketOpen())
-        .pair("bracketClose", HDL.BracketClose())
-        .pair("<", HDL.BracketOpen())
-        .pair(">", HDL.BracketClose())
+        .pair("bracketOpen", HDL.bracketOpen())
+        .pair("bracketClose", HDL.bracketClose())
+        .pair("<", HDL.bracketOpen())
+        .pair(">", HDL.bracketClose())
         .pair("0b", HDL.zeroBit())
         .pair("1b", HDL.oneBit());
   }
@@ -681,7 +681,6 @@ public class LineBuffer implements RandomAccess {
   }
 
   public void validateLineNoPositionals(String fmt) {
-    final var empty = new Object[] {};
     validateLine(fmt, null);
   }
 

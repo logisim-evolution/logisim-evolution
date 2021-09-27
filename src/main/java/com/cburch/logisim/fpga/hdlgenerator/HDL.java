@@ -34,11 +34,11 @@ public abstract class HDL {
     return AppPreferences.HdlType.get().equals(HDLGeneratorFactory.VERILOG);
   }
 
-  public static String BracketOpen() {
+  public static String bracketOpen() {
     return isVHDL() ? "(" : "[";
   }
 
-  public static String BracketClose() {
+  public static String bracketClose() {
     return isVHDL() ? ")" : "]";
   }
 
@@ -312,8 +312,8 @@ public abstract class HDL {
        */
       /* First we check if the bus has a connection */
       var connected = false;
-      for (var i = 0; i < nrOfBits; i++) {
-        if (connectionInformation.get((byte) i).getParentNet() != null) 
+      for (var bit = 0; bit < nrOfBits; bit++) {
+        if (connectionInformation.get((byte) bit).getParentNet() != null) 
           connected = true;
       }
       if (!connected) {
@@ -331,11 +331,11 @@ public abstract class HDL {
           /* The last case, we have to enumerate through each bit */
           if (isVHDL()) {
             final var sourceNetName = new StringBuilder();
-            for (var i = 0; i < nrOfBits; i++) {
+            for (var bit = 0; bit < nrOfBits; bit++) {
               /* First we build the Line information */
               sourceNetName.setLength(0);
-              sourceNetName.append(String.format("%s(%d) ", sourceName, i));
-              ConnectionPoint solderPoint = connectionInformation.get((byte) i);
+              sourceNetName.append(String.format("%s(%d) ", sourceName, bit));
+              ConnectionPoint solderPoint = connectionInformation.get((byte) bit);
               if (solderPoint.getParentNet() == null) {
                 /* The net is not connected */
                 netMap.put(sourceNetName.toString(), isOutput ? unconnected(false) : getZeroVector(1, floatingPinTiedToGround));
@@ -361,8 +361,8 @@ public abstract class HDL {
              * First we build an array with all the signals that
              * need to be concatenated
              */
-            for (var i = 0; i < nrOfBits; i++) {
-              final var solderPoint = connectionInformation.get((byte) i);
+            for (var bit = 0; bit < nrOfBits; bit++) {
+              final var solderPoint = connectionInformation.get((byte) bit);
               if (solderPoint.getParentNet() == null) {
                 /* this entry is not connected */
                 seperateSignals.add(isOutput ? "1'bZ" : getZeroVector(1, floatingPinTiedToGround));
@@ -385,9 +385,9 @@ public abstract class HDL {
             /* Finally we can put all together */
             final var vector = new StringBuilder();
             vector.append("{");
-            for (var i = nrOfBits; i > 0; i--) {
-              vector.append(seperateSignals.get(i - 1));
-              if (i != 1) {
+            for (var bit = nrOfBits; bit > 0; bit--) {
+              vector.append(seperateSignals.get(bit - 1));
+              if (bit != 1) {
                 vector.append(",");
               }
             }
