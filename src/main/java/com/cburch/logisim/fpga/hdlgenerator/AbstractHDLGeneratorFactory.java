@@ -10,8 +10,6 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.data.MapComponent;
-import com.cburch.logisim.fpga.designrulecheck.ConnectionPoint;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
@@ -24,8 +22,6 @@ import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -74,11 +70,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     }
     contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
     if (HDL.isVHDL()) {
-      final var libs = GetExtraLibraries();
-      if (!libs.isEmpty()) {
-        contents.add(libs);
-        contents.empty();
-      }
       contents.add("ARCHITECTURE PlatformIndependent OF {{1}} IS ", componentName);
       contents.add("");
       if (myTypedWires.getNrOfTypes() > 0) {
@@ -86,7 +77,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             .add(myTypedWires.getTypeDefinitions())
             .empty();
       }
-      final var components = GetComponentDeclarationSection(theNetlist, attrs);
+      final var components = getComponentDeclarationSection(theNetlist, attrs);
       if (!components.isEmpty()) {
         contents.addRemarkBlock("Here all used components are defined").add(components).add("");
       }
@@ -391,7 +382,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return contents.get();
   }
 
-  public ArrayList<String> GetComponentDeclarationSection(Netlist TheNetlist, AttributeSet attrs) {
+  public ArrayList<String> getComponentDeclarationSection(Netlist TheNetlist, AttributeSet attrs) {
     /*
      * This method returns all the component definitions used as component
      * in the circuit. This method is only called in case of VHDL-code
@@ -577,14 +568,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   /* Here all public entries for HDL generation are defined */
-  public ArrayList<String> GetExtraLibraries() {
-    /*
-     * this method returns extra VHDL libraries required for simulation
-     * and/or synthesis
-     */
-    return new ArrayList<>();
-  }
-
   @Override
   public ArrayList<String> getInlinedCode(
       Netlist nets,
@@ -600,140 +583,6 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
      * used for both VHDL and VERILOG.
      */
     return new ArrayList<>();
-  }
-
-  public Map<String, String> GetNetMap(
-      String SourceName,
-      boolean FloatingPinTiedToGround,
-      NetlistComponent comp,
-      int EndIndex,
-      Netlist TheNets) {
-    var NetMap = new HashMap<String, String>();
-    if ((EndIndex < 0) || (EndIndex >= comp.nrOfEnds())) {
-      Reporter.report.addFatalError("INTERNAL ERROR: Component tried to index non-existing SolderPoint");
-      return NetMap;
-    }
-    final var ConnectionInformation = comp.getEnd(EndIndex);
-    final var IsOutput = ConnectionInformation.isOutputEnd();
-    final var NrOfBits = ConnectionInformation.getNrOfBits();
-    if (NrOfBits == 1) {
-      /* Here we have the easy case, just a single bit net */
-      NetMap.put(SourceName, HDL.getNetName(comp, EndIndex, FloatingPinTiedToGround, TheNets));
-    } else {
-      /*
-       * Here we have the more difficult case, it is a bus that needs to
-       * be mapped
-       */
-      /* First we check if the bus has a connection */
-      var Connected = false;
-      for (var i = 0; i < NrOfBits; i++) {
-        if (ConnectionInformation.get((byte) i).getParentNet() != null) {
-          Connected = true;
-        }
-      }
-      if (!Connected) {
-        /* Here is the easy case, the bus is unconnected */
-        if (IsOutput) {
-          NetMap.put(SourceName, HDL.unconnected(true));
-        } else {
-          NetMap.put(SourceName, HDL.GetZeroVector(NrOfBits, FloatingPinTiedToGround));
-        }
-      } else {
-        /*
-         * There are connections, we detect if it is a continues bus
-         * connection
-         */
-        if (TheNets.isContinuesBus(comp, EndIndex)) {
-          /* Another easy case, the continues bus connection */
-          NetMap.put(SourceName, HDL.getBusNameContinues(comp, EndIndex, TheNets));
-        } else {
-          /* The last case, we have to enumerate through each bit */
-          if (HDL.isVHDL()) {
-            var SourceNetName = new StringBuilder();
-            for (var i = 0; i < NrOfBits; i++) {
-              /* First we build the Line information */
-              SourceNetName.setLength(0);
-              SourceNetName.append(SourceName).append("(").append(i).append(") ");
-              ConnectionPoint SolderPoint = ConnectionInformation.get((byte) i);
-              if (SolderPoint.getParentNet() == null) {
-                /* The net is not connected */
-                if (IsOutput) {
-                  NetMap.put(SourceNetName.toString(), HDL.unconnected(false));
-                } else {
-                  NetMap.put(SourceNetName.toString(), HDL.GetZeroVector(1, FloatingPinTiedToGround));
-                }
-              } else {
-                /*
-                 * The net is connected, we have to find out if
-                 * the connection is to a bus or to a normal net
-                 */
-                if (SolderPoint.getParentNet().getBitWidth() == 1) {
-                  /* The connection is to a Net */
-                  NetMap.put(
-                      SourceNetName.toString(),
-                      NET_NAME + TheNets.getNetId(SolderPoint.getParentNet()));
-                } else {
-                  /* The connection is to an entry of a bus */
-                  NetMap.put(
-                      SourceNetName.toString(),
-                      BUS_NAME
-                          + TheNets.getNetId(SolderPoint.getParentNet())
-                          + "("
-                          + SolderPoint.getParentNetBitIndex()
-                          + ")");
-                }
-              }
-            }
-          } else {
-            var SeperateSignals = new ArrayList<String>();
-            /*
-             * First we build an array with all the signals that
-             * need to be concatenated
-             */
-            for (var i = 0; i < NrOfBits; i++) {
-              final var SolderPoint = ConnectionInformation.get((byte) i);
-              if (SolderPoint.getParentNet() == null) {
-                /* this entry is not connected */
-                if (IsOutput) {
-                  SeperateSignals.add("1'bZ");
-                } else {
-                  SeperateSignals.add(HDL.GetZeroVector(1, FloatingPinTiedToGround));
-                }
-              } else {
-                /*
-                 * The net is connected, we have to find out if
-                 * the connection is to a bus or to a normal net
-                 */
-                if (SolderPoint.getParentNet().getBitWidth() == 1) {
-                  /* The connection is to a Net */
-                  SeperateSignals.add(NET_NAME + TheNets.getNetId(SolderPoint.getParentNet()));
-                } else {
-                  /* The connection is to an entry of a bus */
-                  SeperateSignals.add(
-                      BUS_NAME
-                          + TheNets.getNetId(SolderPoint.getParentNet())
-                          + "["
-                          + SolderPoint.getParentNetBitIndex()
-                          + "]");
-                }
-              }
-            }
-            /* Finally we can put all together */
-            var Vector = new StringBuilder();
-            Vector.append("{");
-            for (var i = NrOfBits; i > 0; i--) {
-              Vector.append(SeperateSignals.get(i - 1));
-              if (i != 1) {
-                Vector.append(",");
-              }
-            }
-            Vector.append("}");
-            NetMap.put(SourceName, Vector.toString());
-          }
-        }
-      }
-    }
-    return NetMap;
   }
 
   public int getNrOfTypes(Netlist TheNetlist, AttributeSet attrs) {
@@ -806,7 +655,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           else
             result.put(port, fixedMap);
         } else {
-          result.putAll(GetNetMap(port, myPorts.doPullDownOnFloat(port), ComponentInfo, myPorts.getComponentPortId(port), nets));
+          result.putAll(HDL.getNetMap(port, myPorts.doPullDownOnFloat(port), ComponentInfo, myPorts.getComponentPortId(port), nets));
         }
       }
     }
@@ -1008,62 +857,5 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   @Override
   public boolean isOnlyInlined() {
     return false;
-  }
-
-  public static ArrayList<String> GetToplevelCode(MapComponent Component) {
-    var temp = new StringBuffer();
-    var contents = new ArrayList<String>();
-    if (Component.getNrOfPins() <= 0) {
-      Reporter.report.addError("BUG: Found a component with no pins");
-      return contents;
-    }
-    for (var i = 0; i < Component.getNrOfPins(); i++) {
-      temp.setLength(0);
-      temp.append("   ").append(HDL.assignPreamble());
-      /* the internal mapped signals are handled in the top-level HDL generator */
-      if (Component.isInternalMapped(i)) continue;
-      /* IO-pins need to be mapped directly to the top-level component and cannot be
-       * passed by signals, so we skip them.
-       */
-      if (Component.isIO(i)) continue;
-      if (!Component.isMapped(i)) {
-        /* unmapped output pins we leave unconnected */
-        if (Component.isOutput(i)) continue;
-        temp.append(Component.getHdlSignalName(i));
-        allign(temp);
-        temp.append(HDL.assignOperator());
-        temp.append(HDL.zeroBit()).append(";");
-        contents.add(temp.toString());
-        continue;
-      }
-      if (Component.isInput(i)) {
-        temp.append(Component.getHdlSignalName(i));
-        allign(temp);
-        temp.append(HDL.assignOperator());
-        if (Component.IsConstantMapped(i)) {
-          temp.append(Component.isZeroConstantMap(i) ? HDL.zeroBit() : HDL.oneBit());
-        } else {
-          if (Component.isExternalInverted(i)) temp.append(HDL.notOperator()).append("n_");
-          temp.append(Component.getHdlString(i));
-        }
-        temp.append(";");
-        contents.add(temp.toString());
-        continue;
-      }
-      if (Component.IsOpenMapped(i)) continue;
-      if (Component.isExternalInverted(i)) temp.append("n_");
-      temp.append(Component.getHdlString(i));
-      allign(temp);
-      temp.append(HDL.assignOperator());
-      if (Component.isExternalInverted(i)) temp.append(HDL.notOperator());
-      temp.append(Component.getHdlSignalName(i)).append(";");
-      contents.add(temp.toString());
-    }
-    contents.add(" ");
-    return contents;
-  }
-
-  private static void allign(StringBuffer s) {
-    while (s.length() < 40) s.append(" ");
   }
 }

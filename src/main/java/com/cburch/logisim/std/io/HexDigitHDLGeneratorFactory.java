@@ -52,7 +52,7 @@ public class HexDigitHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
           .setDefault("1110001");
       contents.add(generator.getHdlCode());
     } else {
-      contents.add("{{assign}} {{sigName}} {{=}} {{1}};", HDL.GetZeroVector(7, true));
+      contents.add("{{assign}} {{sigName}} {{=}} {{1}};", HDL.getZeroVector(7, true));
     }
     if (componentInfo.getComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP))
       contents.add("{{assign}} {{bubbleBusName}}{{<}}{{1}}{{>}} {{=}} {{dpName}};", (startId + 7));

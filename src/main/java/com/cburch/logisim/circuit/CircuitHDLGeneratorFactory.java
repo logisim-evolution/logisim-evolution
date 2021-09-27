@@ -221,7 +221,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetComponentDeclarationSection(Netlist TheNetlist, AttributeSet attrs) {
+  public ArrayList<String> getComponentDeclarationSection(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Components = new ArrayList<>();
     Set<String> InstantiatedComponents = new HashSet<>();
     for (NetlistComponent Gate : TheNetlist.getNormalComponents()) {
@@ -560,7 +560,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               Reporter.report.addFatalError(
                   String.format("INTERNAL ERROR! Could not find the end-index of a sub-circuit component: '%s'", pinLabel));
             } else {
-              PortMap.putAll(GetNetMap(pinLabel, true, componentInfo, endId, nets));
+              PortMap.putAll(HDL.getNetMap(pinLabel, true, componentInfo, endId, nets));
             }
           }
         }
@@ -583,7 +583,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               Reporter.report.addFatalError(
                       String.format("INTERNAL ERROR! Could not find the end-index of a sub-circuit component: '%s'", pinLabel));
             } else {
-              PortMap.putAll(GetNetMap(pinLabel, true, componentInfo, endId, nets));
+              PortMap.putAll(HDL.getNetMap(pinLabel, true, componentInfo, endId, nets));
             }
           }
         }
@@ -605,7 +605,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               Reporter.report.addFatalError(
                       String.format("INTERNAL ERROR! Could not find the end-index of a sub-circuit component: '%s'", pinLabel));
             } else {
-              PortMap.putAll(GetNetMap(pinLabel, true, componentInfo, endid, nets));
+              PortMap.putAll(HDL.getNetMap(pinLabel, true, componentInfo, endid, nets));
             }
           }
         }
@@ -677,7 +677,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .append(HDL.assignPreamble())
             .append(destination)
             .append(HDL.assignOperator())
-            .append(HDL.GetZeroVector(nrOfBits, true))
+            .append(HDL.getZeroVector(nrOfBits, true))
             .append(";");
       } else {
         /*
@@ -727,7 +727,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               if (isOutput) continue;
               // FIXME: hardcoded string
               Reporter.report.addSevereWarning(String.format("Found an unconnected output bus pin, tied bit %d to ground!", bit));
-              source.append(HDL.GetZeroVector(1, true));
+              source.append(HDL.getZeroVector(1, true));
             } else {
               /*
                * The net is connected, we have to find out if the

@@ -170,21 +170,21 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
                 + ComponentInfo.getLocalBubbleOutputEndId()
                 + ComponentInfo.getLocalBubbleOutputStartId()));
     map.putAll(
-        GetNetMap(
+        HDL.getNetMap(
             "Addr_Data_LB_o",
             true,
             ComponentInfo,
             ReptarLocalBus.Addr_Data_LB_o,
             nets));
     map.putAll(
-        GetNetMap(
+        HDL.getNetMap(
             "Addr_Data_LB_i",
             true,
             ComponentInfo,
             ReptarLocalBus.Addr_Data_LB_i,
             nets));
     map.putAll(
-        GetNetMap(
+        HDL.getNetMap(
             "Addr_Data_LB_tris_i",
             true,
             ComponentInfo,

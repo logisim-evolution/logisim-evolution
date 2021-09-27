@@ -10,7 +10,10 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import com.cburch.logisim.fpga.designrulecheck.ConnectionPoint;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
@@ -95,7 +98,7 @@ public abstract class HDL {
     return isVHDL() ? " DOWNTO " : ":";
   }
 
-  public static String GetZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
+  public static String getZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
     var contents = new StringBuilder();
     if (isVHDL()) {
       var fillValue = (floatingPinTiedToGround) ? "0" : "1";
@@ -203,7 +206,7 @@ public abstract class HDL {
       if ((nrOfBits > 1) && (bitindex >= 0) && (bitindex < nrOfBits)) {
         if (thisEnd.get((byte) bitindex).getParentNet() == null) {
           // The net is not connected
-          busName = LineBuffer.formatHdl(isOutput ? unconnected(false) : GetZeroVector(1, floatingNetTiedToGround));
+          busName = LineBuffer.formatHdl(isOutput ? unconnected(false) : getZeroVector(1, floatingNetTiedToGround));
         } else {
           final var connectedNet = thisEnd.get((byte) bitindex).getParentNet();
           final var connectedNetBitIndex = thisEnd.get((byte) bitindex).getParentNetBitIndex();
@@ -289,4 +292,111 @@ public abstract class HDL {
     return FileWriter.writeContents(outFile, contents);
   }
 
+  public static Map<String, String> getNetMap(String sourceName, boolean floatingPinTiedToGround,
+      NetlistComponent comp, int endIndex, Netlist theNets) {
+    var netMap = new HashMap<String, String>();
+    if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) {
+      Reporter.report.addFatalError("INTERNAL ERROR: Component tried to index non-existing SolderPoint");
+      return netMap;
+    }
+    final var connectionInformation = comp.getEnd(endIndex);
+    final var isOutput = connectionInformation.isOutputEnd();
+    final var nrOfBits = connectionInformation.getNrOfBits();
+    if (nrOfBits == 1) {
+      /* Here we have the easy case, just a single bit net */
+      netMap.put(sourceName, getNetName(comp, endIndex, floatingPinTiedToGround, theNets));
+    } else {
+      /*
+       * Here we have the more difficult case, it is a bus that needs to
+       * be mapped
+       */
+      /* First we check if the bus has a connection */
+      var connected = false;
+      for (var i = 0; i < nrOfBits; i++) {
+        if (connectionInformation.get((byte) i).getParentNet() != null) 
+          connected = true;
+      }
+      if (!connected) {
+        /* Here is the easy case, the bus is unconnected */
+        netMap.put(sourceName, isOutput ? unconnected(true) : getZeroVector(nrOfBits, floatingPinTiedToGround));
+      } else {
+        /*
+         * There are connections, we detect if it is a continues bus
+         * connection
+         */
+        if (theNets.isContinuesBus(comp, endIndex)) {
+          /* Another easy case, the continues bus connection */
+          netMap.put(sourceName, getBusNameContinues(comp, endIndex, theNets));
+        } else {
+          /* The last case, we have to enumerate through each bit */
+          if (isVHDL()) {
+            final var sourceNetName = new StringBuilder();
+            for (var i = 0; i < nrOfBits; i++) {
+              /* First we build the Line information */
+              sourceNetName.setLength(0);
+              sourceNetName.append(String.format("%s(%d) ", sourceName, i));
+              ConnectionPoint solderPoint = connectionInformation.get((byte) i);
+              if (solderPoint.getParentNet() == null) {
+                /* The net is not connected */
+                netMap.put(sourceNetName.toString(), isOutput ? unconnected(false) : getZeroVector(1, floatingPinTiedToGround));
+              } else {
+                /*
+                 * The net is connected, we have to find out if
+                 * the connection is to a bus or to a normal net
+                 */
+                if (solderPoint.getParentNet().getBitWidth() == 1) {
+                  /* The connection is to a Net */
+                  netMap.put(sourceNetName.toString(), String.format("%s%d", NET_NAME, 
+                      theNets.getNetId(solderPoint.getParentNet())));
+                } else {
+                  /* The connection is to an entry of a bus */
+                  netMap.put(sourceNetName.toString(), String.format("%s%d(%d)", BUS_NAME,
+                      theNets.getNetId(solderPoint.getParentNet()), solderPoint.getParentNetBitIndex()));
+                }
+              }
+            }
+          } else {
+            final var seperateSignals = new ArrayList<String>();
+            /*
+             * First we build an array with all the signals that
+             * need to be concatenated
+             */
+            for (var i = 0; i < nrOfBits; i++) {
+              final var solderPoint = connectionInformation.get((byte) i);
+              if (solderPoint.getParentNet() == null) {
+                /* this entry is not connected */
+                seperateSignals.add(isOutput ? "1'bZ" : getZeroVector(1, floatingPinTiedToGround));
+              } else {
+                /*
+                 * The net is connected, we have to find out if
+                 * the connection is to a bus or to a normal net
+                 */
+                if (solderPoint.getParentNet().getBitWidth() == 1) {
+                  /* The connection is to a Net */
+                  seperateSignals.add(String.format("%s%d", NET_NAME, 
+                      theNets.getNetId(solderPoint.getParentNet())));
+                } else {
+                  /* The connection is to an entry of a bus */
+                  seperateSignals.add(String.format("%s%d[%d]", BUS_NAME,
+                      theNets.getNetId(solderPoint.getParentNet()), solderPoint.getParentNetBitIndex()));
+                }
+              }
+            }
+            /* Finally we can put all together */
+            final var vector = new StringBuilder();
+            vector.append("{");
+            for (var i = nrOfBits; i > 0; i--) {
+              vector.append(seperateSignals.get(i - 1));
+              if (i != 1) {
+                vector.append(",");
+              }
+            }
+            vector.append("}");
+            netMap.put(sourceName, vector.toString());
+          }
+        }
+      }
+    }
+    return netMap;
+  }
 }

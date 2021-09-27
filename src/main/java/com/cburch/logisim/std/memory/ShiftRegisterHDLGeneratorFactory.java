@@ -88,11 +88,11 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
         if (nrOfBits == 1) {
           if (HDL.isVHDL()) {
             for (var stage = 0; stage < nrOfStages; stage++)
-              map.putAll(GetNetMap(String.format("D(%d)", stage), true, comp, 6 + 2 * stage, nets));
+              map.putAll(HDL.getNetMap(String.format("D(%d)", stage), true, comp, 6 + 2 * stage, nets));
             final var nrOfOutStages = attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC
                 ? nrOfStages : nrOfStages - 1;
             for (var stage = 0; stage < nrOfOutStages; stage++)
-              map.putAll(GetNetMap(String.format("Q(%d)", stage), true, comp, 7 + 2 * stage, nets));
+              map.putAll(HDL.getNetMap(String.format("Q(%d)", stage), true, comp, 7 + 2 * stage, nets));
             map.put(String.format("Q(%d)", nrOfStages - 1), "OPEN");
           } else {
             for (var stage = nrOfStages - 1; stage >= 0; stage--) {
@@ -235,7 +235,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   }
 
   @Override
-  public ArrayList<String> GetComponentDeclarationSection(Netlist nets, AttributeSet attrs) {
+  public ArrayList<String> getComponentDeclarationSection(Netlist nets, AttributeSet attrs) {
     return LineBuffer.getHdlBuffer()
         .pair("clock", HDLPorts.getClockName(1))
         .pair("tick", HDLPorts.getTickName(1))
