@@ -13,7 +13,6 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.appear.AppearancePort;
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.comp.ComponentDrawContext;
-import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.io.Led;
@@ -49,38 +48,37 @@ public class LayoutThumbnail extends JComponent {
   @Override
   protected void paintComponent(Graphics g) {
     if (AppPreferences.AntiAliassing.getBoolean()) {
-      Graphics2D g2 = (Graphics2D) g;
-      g2.setRenderingHint(
-          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      final var g2 = (Graphics2D) g;
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
     if (circuitState != null) {
-      var circuit = circuitState.getCircuit();
-      var bounds = circuit.getBounds(g);
-      var size = getSize();
-      double scaleX = (double) (size.width - 2 * BORDER) / bounds.getWidth();
-      double scaleY = (double) (size.height - 2 * BORDER) / bounds.getHeight();
-      double scale = Math.min(1.0, Math.min(scaleX, scaleY));
+      final var circuit = circuitState.getCircuit();
+      final var bounds = circuit.getBounds(g);
+      final var size = getSize();
+      final var scaleX = (double) (size.width - 2 * BORDER) / bounds.getWidth();
+      final var scaleY = (double) (size.height - 2 * BORDER) / bounds.getHeight();
+      final var scale = Math.min(1.0, Math.min(scaleX, scaleY));
 
-      var gfxCopy = g.create();
-      int borderX = (int) ((size.width - bounds.getWidth() * scale) / 2);
-      int borderY = (int) ((size.height - bounds.getHeight() * scale) / 2);
+      final var gfxCopy = g.create();
+      final var borderX = (int) ((size.width - bounds.getWidth() * scale) / 2);
+      final var borderY = (int) ((size.height - bounds.getHeight() * scale) / 2);
       gfxCopy.translate(borderX, borderY);
       if (scale != 1.0 && g instanceof Graphics2D) {
         ((Graphics2D) gfxCopy).scale(scale, scale);
       }
       gfxCopy.translate(-bounds.getX(), -bounds.getY());
 
-      var context = new ComponentDrawContext(this, circuit, circuitState, g, gfxCopy);
+      final var context = new ComponentDrawContext(this, circuit, circuitState, g, gfxCopy);
       context.setShowState(false);
       context.setShowColor(false);
       circuit.draw(context, Collections.emptySet());
       if (ports != null && ports.size() > 0) {
         gfxCopy.setColor(AppearancePort.COLOR);
-        int width = Math.max(4, (int) ((2 / scale) + 0.5));
+        final var width = Math.max(4, (int) ((2 / scale) + 0.5));
         GraphicsUtil.switchToWidth(gfxCopy, width);
-        for (Instance port : ports) {
-          Bounds b = port.getBounds();
+        for (final var port : ports) {
+          final var b = port.getBounds();
           int x = b.getX();
           int y = b.getY();
           int w = b.getWidth();
@@ -98,14 +96,14 @@ public class LayoutThumbnail extends JComponent {
       }
       if (elts != null && elts.size() > 0) {
         gfxCopy.setColor(DynamicElement.COLOR);
-        int width = Math.max(4, (int) ((2 / scale) + 0.5));
+        final var width = Math.max(4, (int) ((2 / scale) + 0.5));
         GraphicsUtil.switchToWidth(gfxCopy, width);
-        for (Instance elt : elts) {
-          Bounds b = elt.getBounds();
-          int x = b.getX();
-          int y = b.getY();
-          int w = b.getWidth();
-          int h = b.getHeight();
+        for (final var elt : elts) {
+          final var b = elt.getBounds();
+          final var x = b.getX();
+          final var y = b.getY();
+          final var w = b.getWidth();
+          final var h = b.getHeight();
           if (elt.getFactory() instanceof Led || elt.getFactory() instanceof RgbLed) {
             gfxCopy.drawOval(x, y, w, h);
           } else {
@@ -121,8 +119,7 @@ public class LayoutThumbnail extends JComponent {
     }
   }
 
-  public void setCircuit(
-      CircuitState circuitState, Collection<Instance> ports, Collection<Instance> elts) {
+  public void setCircuit(CircuitState circuitState, Collection<Instance> ports, Collection<Instance> elts) {
     this.circuitState = circuitState;
     this.ports = ports;
     this.elts = elts;

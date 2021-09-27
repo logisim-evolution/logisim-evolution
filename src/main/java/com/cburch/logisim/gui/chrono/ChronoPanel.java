@@ -25,7 +25,6 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -78,9 +77,8 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
 
   private void configure() {
     setLayout(new BorderLayout());
-    var logFrame = getLogFrame();
-    SimulationToolbarModel simTools;
-    simTools = new SimulationToolbarModel(getProject(), logFrame.getMenuListener());
+    final var logFrame = getLogFrame();
+    final var simTools = new SimulationToolbarModel(getProject(), logFrame.getMenuListener());
     final var toolbar = new Toolbar(simTools);
     final var toolpanel = new JPanel();
     final var gb = new GridBagLayout();
@@ -92,7 +90,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
     gb.setConstraints(toolbar, gc);
     toolpanel.add(toolbar);
 
-    var b = logFrame.makeSelectionButton();
+    final var b = logFrame.makeSelectionButton();
     b.setFont(b.getFont().deriveFont(10.0f));
     Insets insets = gc.insets;
     gc.insets = new Insets(2, 0, 2, 0);
@@ -114,8 +112,8 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
     splitPane.setDividerSize(5);
     splitPane.setResizeWeight(0.0);
     add(BorderLayout.CENTER, splitPane);
-    var inputMap = getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
-    var actionMap = getActionMap();
+    final var inputMap = getInputMap(WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
+    final var actionMap = getActionMap();
     inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0), "ClearSelection");
     actionMap.put(
         "ClearSelection",
@@ -138,7 +136,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
             ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,
             ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
 
-    final int p = rightScroll == null ? 0 : rightScroll.getHorizontalScrollBar().getValue();
+    final var p = rightScroll == null ? 0 : rightScroll.getHorizontalScrollBar().getValue();
     if (rightPanel == null) rightPanel = new RightPanel(this, leftPanel.getSelectionModel());
     rightScroll =
         new JScrollPane(
@@ -151,7 +149,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
     leftScroll.getVerticalScrollBar().setModel(rightScroll.getVerticalScrollBar().getModel());
 
     // zoom on control+scrollwheel
-    var zoomer =
+    final var zoomer =
         new MouseAdapter() {
           @Override
           public void mouseWheelMoved(MouseWheelEvent e) {
@@ -227,7 +225,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
   }
 
   public void changeSpotlight(Signal s) {
-    Signal old = model.setSpotlight(s);
+    final var old = model.setSpotlight(s);
     if (old == s) return;
     rightPanel.changeSpotlight(old, s);
     leftPanel.changeSpotlight(old, s);
@@ -306,16 +304,17 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
 
   public Color[] rowColors(SignalInfo item, boolean isSelected) {
     if (isSelected) return selectColors;
-    Signal spotlight = model.getSpotlight();
+    final var spotlight = model.getSpotlight();
     if (spotlight != null && spotlight.info == item) return SPOT;
     return PLAIN;
   }
 
   private static Color darker(Color c) {
-    float[] hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
-    float s = 0.8f;
-    if (hsb[1] == 0.0) return Color.getHSBColor(hsb[0], hsb[1] + hsb[1], hsb[2] * s);
-    else return Color.getHSBColor(hsb[0], 1.0f - (1.0f - hsb[1]) * s, hsb[2]);
+    final var hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
+    final var s = 0.8f;
+    return (hsb[1] == 0.0)
+        ? Color.getHSBColor(hsb[0], hsb[1] + hsb[1], hsb[2] * s)
+        : Color.getHSBColor(hsb[0], 1.0f - (1.0f - hsb[1]) * s, hsb[2]);
   }
 
   @Override
@@ -346,7 +345,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-          Object action = e.getSource();
+          final var action = e.getSource();
           leftPanel.getActionMap().get(action).actionPerformed(e);
         }
       };
@@ -360,17 +359,17 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
       new PrintHandler() {
         @Override
         public Dimension getExportImageSize() {
-          Dimension l = leftPanel.getPreferredSize();
-          Dimension r = rightPanel.getPreferredSize();
-          int width = l.width + 3 + r.width;
-          int height = HEADER_HEIGHT + l.height;
+          final var l = leftPanel.getPreferredSize();
+          final var r = rightPanel.getPreferredSize();
+          final var width = l.width + 3 + r.width;
+          final var height = HEADER_HEIGHT + l.height;
           return new Dimension(width, height);
         }
 
         @Override
         public void paintExportImage(BufferedImage img, Graphics2D g) {
-          Dimension l = leftPanel.getPreferredSize();
-          Dimension r = rightPanel.getPreferredSize();
+          final var l = leftPanel.getPreferredSize();
+          final var r = rightPanel.getPreferredSize();
 
           g.setClip(0, 0, l.width, HEADER_HEIGHT);
           leftPanel.getTableHeader().print(g);
@@ -396,10 +395,10 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
           if (pageNum != 0) return Printable.NO_SUCH_PAGE;
 
           // shrink horizontally to fit
-          FontMetrics fm = g.getFontMetrics();
-          Dimension d = getExportImageSize();
-          double headerHeight = fm.getHeight() * 1.5;
-          double scale = 1.0;
+          final var fm = g.getFontMetrics();
+          final var d = getExportImageSize();
+          final var headerHeight = fm.getHeight() * 1.5;
+          var scale = 1.0D;
           if (d.width > w || d.height > (h - headerHeight))
             scale = Math.min(w / d.width, (h - headerHeight) / d.height);
 

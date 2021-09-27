@@ -10,13 +10,14 @@
 package com.cburch.logisim.fpga.file;
 
 import static com.cburch.logisim.fpga.Strings.S;
+
+import com.cburch.logisim.fpga.gui.Reporter;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.generated.BuildInfo;
+import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import com.cburch.logisim.Main;
-import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.util.LineBuffer;
 
 public class FileWriter {
 
@@ -109,8 +110,8 @@ public class FileWriter {
     final String headOpen;
     final String headClose;
 
-    final var headText = " " + Main.APP_NAME + " goes FPGA automatic generated " + (HDL.isVHDL() ? "VHDL" : "Verilog") + " code";
-    final var headUrl  = " " + Main.APP_URL;
+    final var headText = " " + BuildInfo.name + " goes FPGA automatic generated " + (HDL.isVHDL() ? "VHDL" : "Verilog") + " code";
+    final var headUrl  = " " + BuildInfo.url;
     final var headProj = " Project   : " + projName;
     final var headComp = " Component : " + compName;
 

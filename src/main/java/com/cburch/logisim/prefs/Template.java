@@ -11,7 +11,7 @@ package com.cburch.logisim.prefs;
 
 import static com.cburch.logisim.proj.Strings.S;
 
-import com.cburch.logisim.Main;
+import com.cburch.logisim.generated.BuildInfo;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -39,7 +39,7 @@ public class Template {
   public static Template createEmpty() {
     final var circName = S.get("newCircuitName");
     final var buf = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-        + "<project source=\"" + Main.VERSION
+        + "<project source=\"" + BuildInfo.version
         + "\" version=\"1.0\">"
         + " <circuit name=\"" + circName + "\" />"
         + "</project>";
