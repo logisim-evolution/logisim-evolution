@@ -11,14 +11,10 @@ package com.cburch.logisim.gui.start;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.Main;
+import com.cburch.logisim.generated.BuildInfo;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Dimension;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
 import javax.swing.JWindow;
@@ -59,7 +55,7 @@ public class SplashScreen extends JWindow {
   final JProgressBar progress = new JProgressBar(0, PROGRESS_MAX);
   final long startTime = System.currentTimeMillis();
   public SplashScreen() {
-    setName(Main.APP_DISPLAY_NAME);
+    setName(BuildInfo.displayName);
     JPanel imagePanel = About.getImagePanel();
     imagePanel.setBorder(null);
 

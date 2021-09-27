@@ -13,7 +13,6 @@ import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.MacCompatibility;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
 import com.formdev.flatlaf.FlatIntelliJLaf;
@@ -42,8 +41,7 @@ public class Main {
         FlatIntelliJLaf.installLafInfo();
 
         UIManager.setLookAndFeel(AppPreferences.LookAndFeel.get());
-        UIManager.put("ToolTip.font",
-                new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
+        UIManager.put("ToolTip.font", new FontUIResource("SansSerif", Font.BOLD, AppPreferences.getScaled(12)));
       }
     } catch (ClassNotFoundException
         | UnsupportedLookAndFeelException
@@ -66,16 +64,6 @@ public class Main {
       System.exit(100);
     }
   }
-
-  // @deprecated use BuildInfo instead
-  public static final String APP_NAME = BuildInfo.name;
-  // @deprecated use BuildInfo instead
-  public static final LogisimVersion VERSION = BuildInfo.version;
-  public static final String APP_DISPLAY_NAME = APP_NAME + " v" + VERSION;
-  public static final String APP_URL = "https://github.com/logisim-evolution/";
-
-  public static final String JVM_VERSION = System.getProperty("java.vm.name") + " v" + System.getProperty("java.version");
-  public static final String JVM_VENDOR = System.getProperty("java.vendor");
 
   public static boolean headless = false;
 
