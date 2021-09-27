@@ -794,7 +794,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     return myOutputPins;
   }
 
-  public HashSet<Integer> getIOs() {
+  public HashSet<Integer> getIos() {
     return myIoPins;
   }
 
@@ -806,7 +806,7 @@ public class FpgaIoInformationContainer implements Cloneable {
       return IoComponentTypes.getOutputLabel(nrOfPins, nrOfRows, nrOfColumns, index, myType);
     }
     if (myIoPins != null && myIoPins.contains(index)) {
-      return IoComponentTypes.getIOLabel(nrOfPins, index, myType);
+      return IoComponentTypes.getIoLabel(nrOfPins, index, myType);
     }
     return "" + index;
   }

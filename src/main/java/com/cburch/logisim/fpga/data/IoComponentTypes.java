@@ -176,9 +176,9 @@ public enum IoComponentTypes {
     }
   }
 
-  public static String getIOLabel(int nrPins, int id, IoComponentTypes comp) {
+  public static String getIoLabel(int nrPins, int id, IoComponentTypes comp) {
     return comp == IoComponentTypes.LocalBus
-           ? ReptarLocalBus.getIOLabel(id)
+           ? ReptarLocalBus.getIoLabel(id)
            : (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
     }
 

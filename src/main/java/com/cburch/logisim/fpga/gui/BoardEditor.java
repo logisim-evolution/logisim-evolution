@@ -158,7 +158,7 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
         TheBoard.setBoardName(BoardNameInput.getText());
         String filename = getDirName("", S.get("FpgaBoardSaveDir"));
         filename += TheBoard.getBoardName() + ".xml";
-        TheBoard.setComponents(picturepanel.getIOComponents());
+        TheBoard.setComponents(picturepanel.getIoComponents());
         BoardWriterClass xmlwriter = new BoardWriterClass(TheBoard, picturepanel.getImage());
         xmlwriter.PrintXml(filename);
         this.clear();

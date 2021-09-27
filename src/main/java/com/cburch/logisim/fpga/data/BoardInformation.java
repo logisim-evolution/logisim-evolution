@@ -120,7 +120,7 @@ public class BoardInformation {
     return result;
   }
 
-  public String getIOStandard(BoardRectangle rect) {
+  public String getIoStandard(BoardRectangle rect) {
     for (final var comp : MyComponents) {
       if (comp.getRectangle().equals(rect)) {
         return IoStandards.getConstraintedIoStandard(comp.getIoStandard());

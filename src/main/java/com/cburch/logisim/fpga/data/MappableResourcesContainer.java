@@ -59,7 +59,7 @@ public class MappableResourcesContainer {
    * Here we define the new structure of MappableResourcesContainer that allows for more features
    * and has less complexity; being compatible with the old version
    */
-  public IoComponentsInformation getIOComponentInformation() {
+  public IoComponentsInformation getIoComponentInformation() {
     if (IOcomps == null) {
       IOcomps = new IoComponentsInformation(null, true);
       for (var io : myIOComponents) IOcomps.addComponent(io, 1);

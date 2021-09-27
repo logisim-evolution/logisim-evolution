@@ -112,7 +112,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
     if (InputMapSet == null)
       InputMapSet = new ArrayList<>();
     if (ioComp.hasInputs()) InputMapSet.addAll(ioComp.getInputs());
-    if (ioComp.hasIOs()) InputMapSet.addAll(ioComp.getIOs());
+    if (ioComp.hasIOs()) InputMapSet.addAll(ioComp.getIos());
     if (InputMapSet.isEmpty()) return null;
     final var panel = new JPanel();
     panel.setBorder(BorderFactory.createTitledBorder(S.get("FpgaInputsMap")));
@@ -184,7 +184,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
     if (OutputMapSet == null)
       OutputMapSet = new ArrayList<>();
     if (ioComp.hasOutputs()) OutputMapSet.addAll(ioComp.getOutputs());
-    if (ioComp.hasIOs()) OutputMapSet.addAll(ioComp.getIOs());
+    if (ioComp.hasIOs()) OutputMapSet.addAll(ioComp.getIos());
     if (OutputMapSet.isEmpty()) return null;
     final var panel = new JPanel();
     panel.setBorder(BorderFactory.createTitledBorder(S.get("FpgaOutputsMap")));
@@ -255,7 +255,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
     if (mapInfo.getPin() >= 0 && !map.isIo(mapInfo.getPin())) return null;
     if (IOMapSet == null)
       IOMapSet = new ArrayList<>();
-    if (ioComp.hasIOs()) IOMapSet.addAll(ioComp.getIOs());
+    if (ioComp.hasIOs()) IOMapSet.addAll(ioComp.getIos());
     if (IOMapSet.isEmpty()) return null;
     final var panel = new JPanel();
     panel.setBorder(BorderFactory.createTitledBorder(S.get("FpgaIOsMap")));

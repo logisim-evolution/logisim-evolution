@@ -123,7 +123,7 @@ public class BoardManipulator extends JPanel
   public BoardManipulator(JDialog manip, Frame parentFrame, MappableResourcesContainer mapInfo) {
     mapMode = true;
     setup(true);
-    IOcomps = mapInfo.getIOComponentInformation();
+    IOcomps = mapInfo.getIoComponentInformation();
     IOcomps.addListener(this);
     IOcomps.addComponent(ConstantButton.ONE_BUTTON, 1);
     IOcomps.addComponent(ConstantButton.OPEN_BUTTON, 1);
@@ -261,7 +261,7 @@ public class BoardManipulator extends JPanel
     return image.getScaledInstance(width, height, 4);
   }
 
-  public ArrayList<FpgaIoInformationContainer> getIOComponents() {
+  public ArrayList<FpgaIoInformationContainer> getIoComponents() {
     return IOcomps.getComponents();
   }
 

@@ -51,11 +51,11 @@ public class MapComponent {
       return IOcomp.updateMap(pin, comp);
     }
 
-    public FpgaIoInformationContainer getIOComp() {
+    public FpgaIoInformationContainer getIoComp() {
       return IOcomp;
     }
 
-    public int getIOPin() {
+    public int getIoPin() {
       return pin;
     }
 
@@ -176,8 +176,8 @@ public class MapComponent {
   public String getPinLocation(int pin) {
     if (pin < 0 || pin >= nrOfPins) return null;
     if (maps.get(pin) == null) return null;
-    var iopin = maps.get(pin).getIOPin();
-    return maps.get(pin).getIOComp().getPinLocation(iopin);
+    var iopin = maps.get(pin).getIoPin();
+    return maps.get(pin).getIoComp().getPinLocation(iopin);
   }
 
   public boolean isMapped(int pin) {
@@ -189,7 +189,7 @@ public class MapComponent {
 
   public boolean isInternalMapped(int pin) {
     if (pin < 0 || pin >= nrOfPins) return false;
-    return isMapped(pin) && maps.get(pin).getIOComp().getType().equals(IoComponentTypes.LedArray);
+    return isMapped(pin) && maps.get(pin).getIoComp().getType().equals(IoComponentTypes.LedArray);
   }
 
   public boolean isBoardMapped(int pin) {
@@ -200,19 +200,19 @@ public class MapComponent {
   public boolean isExternalInverted(int pin) {
     if (pin < 0 || pin >= nrOfPins) return false;
     if (maps.get(pin) == null) return false;
-    return maps.get(pin).getIOComp().getActivityLevel() == PinActivity.ACTIVE_LOW;
+    return maps.get(pin).getIoComp().getActivityLevel() == PinActivity.ACTIVE_LOW;
   }
 
   public boolean requiresPullup(int pin) {
     if (pin < 0 || pin >= nrOfPins) return false;
     if (maps.get(pin) == null) return false;
-    return maps.get(pin).getIOComp().getPullBehavior() == PullBehaviors.PULL_UP;
+    return maps.get(pin).getIoComp().getPullBehavior() == PullBehaviors.PULL_UP;
   }
 
   public FpgaIoInformationContainer getFpgaInfo(int pin) {
     if (pin < 0 || pin >= nrOfPins) return null;
     if (maps.get(pin) == null) return null;
-    return maps.get(pin).getIOComp();
+    return maps.get(pin).getIoComp();
   }
 
   public boolean equalsType(netlistComponent comp) {
@@ -227,8 +227,8 @@ public class MapComponent {
       final var map2 = maps.get(1);
       final var map3 = maps.get(2);
       if (map1 != null && map2 != null && map3 != null
-          && map1.getIOComp().equals(map2.getIOComp()) && (map2.getIOComp().equals(map3.getIOComp()))) {
-        if ((maps.get(0).getIOPin() == maps.get(1).getIOPin()) && (maps.get(1).getIOPin() == maps.get(2).getIOPin())) {
+          && map1.getIoComp().equals(map2.getIoComp()) && (map2.getIoComp().equals(map3.getIoComp()))) {
+        if ((maps.get(0).getIoPin() == maps.get(1).getIoPin()) && (maps.get(1).getIoPin() == maps.get(2).getIoPin())) {
           /* we have a tripple map, unmap all */
           map1.unmap();
           map2.unmap();
@@ -315,7 +315,7 @@ public class MapComponent {
       for (var comp : IOcomps) {
         if (comp.getRectangle().PointInside(rect.getXpos(), rect.getYpos())) {
           if (cmap.isSinglePin()) {
-            tryMap(cmap.getPinId(), comp, cmap.getIOId());
+            tryMap(cmap.getPinId(), comp, cmap.getIoId());
           } else {
             tryMap(comp);
           }
@@ -336,9 +336,9 @@ public class MapComponent {
           final var rect2 = pmaps.get(1).getRectangle();
           final var rect3 = pmaps.get(2).getRectangle();
           if (rect1.equals(rect2) && rect2.equals(rect3)) {
-            final var iomap1 = pmaps.get(0).getIOId();
-            final var iomap2 = pmaps.get(1).getIOId();
-            final var iomap3 = pmaps.get(2).getIOId();
+            final var iomap1 = pmaps.get(0).getIoId();
+            final var iomap2 = pmaps.get(1).getIoId();
+            final var iomap3 = pmaps.get(2).getIoId();
             if (iomap1 == iomap2 && iomap2 == iomap3) {
               /* we have a triple map on a LEDArray, so do it */
               for (var comp : IOcomps) {
@@ -469,7 +469,7 @@ public class MapComponent {
         if (maps != null && maps.get(i) != null) maps.get(i).unmap();
         var map = oldmaps.get(i);
         if (map != null) {
-          if (tryMap(i, map.getIOComp(), map.getIOPin())) maps.set(i, map);
+          if (tryMap(i, map.getIoComp(), map.getIoPin())) maps.set(i, map);
         }
         opens.set(i, oldOpens.get(i));
         constants.set(i, oldConstants.get(i));
@@ -728,7 +728,7 @@ public class MapComponent {
           else if (pinmap.isSinglePin())
             s.append(pinmap.getRectangle().getXpos()).append("_")
                 .append(pinmap.getRectangle().getYpos()).append("_").append(pinmap
-                .getIOId());
+                .getIoId());
           else
             s.append(NO_MAP);
         }

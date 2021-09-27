@@ -58,7 +58,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var nrOfInputPorts = nets.getNumberOfInputPorts();
     final var nrOfInOutPorts = nets.numberOfInOutPorts();
     final var nrOfOutputPorts = nets.numberOfOutputPorts();
-    for (final var comp : myIOComponents.getIOComponentInformation().getComponents()) {
+    for (final var comp : myIOComponents.getIoComponentInformation().getComponents()) {
       if (comp.getType().equals(IoComponentTypes.LedArray)) {
         if (comp.hasMap()) {
           ledArrayTypesUsed.put(LedArrayDriving.getStrings().get(comp.getArrayDriveMode()), true);

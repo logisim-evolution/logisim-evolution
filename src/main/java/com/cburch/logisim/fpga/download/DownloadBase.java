@@ -295,7 +295,7 @@ public abstract class DownloadBase {
   public static HashMap<String, String> getLedArrayMaps(MappableResourcesContainer maps, Netlist nets, BoardInformation board) {
     final var ledArrayMaps = new HashMap<String, String>();
     var hasMappedClockedArray = false;
-    for (final var comp : maps.getIOComponentInformation().getComponents()) {
+    for (final var comp : maps.getIoComponentInformation().getComponents()) {
       if (comp.getType().equals(IoComponentTypes.LedArray)) {
         if (comp.hasMap()) {
           hasMappedClockedArray |= LedArrayGenericHDLGeneratorFactory.requiresClock(comp.getArrayDriveMode());

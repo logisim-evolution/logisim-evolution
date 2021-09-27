@@ -331,7 +331,7 @@ public class FpgaIoInformationSettingsDialog {
               nrOfPins.put(IO_ID, nr);
               pinLabels.clear();
               for (var i = 0; i < nr; i++)
-                pinLabels.add(IoComponentTypes.getIOLabel(nr, i, myType));
+                pinLabels.add(IoComponentTypes.getIoLabel(nr, i, myType));
               buildPinTable(nr, myType, ioPanel, locIos, pinLabels, oldIoLocations);
               selWindow.pack();
               return;
@@ -530,7 +530,7 @@ public class FpgaIoInformationSettingsDialog {
       }
       pinLabels.clear();
       final var nr = nrOfPins.get(IO_ID);
-      for (var i = 0; i < nr; i++) pinLabels.add(IoComponentTypes.getIOLabel(nr, i, myType));
+      for (var i = 0; i < nr; i++) pinLabels.add(IoComponentTypes.getIoLabel(nr, i, myType));
       buildPinTable(nrOfPins.get(IO_ID), myType, ioPanel, locIos, pinLabels, oldIoLocations);
       panel.add(ioPanel, BorderLayout.CENTER);
       c.gridy++;
@@ -659,7 +659,7 @@ public class FpgaIoInformationSettingsDialog {
                 IOcomps.getParentFrame(),
                 "Error",
                 S.get("FpgaIoPinLoc",
-                    IoComponentTypes.getIOLabel(nrOfPins.get(INPUT_ID), i, myType)));
+                    IoComponentTypes.getIoLabel(nrOfPins.get(INPUT_ID), i, myType)));
             break;
           }
         }
