@@ -12,7 +12,7 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
@@ -75,8 +75,8 @@ public class CounterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var result = new TreeMap<String, String>();
     result.putAll(super.getPortMap(nets, mapInfo));
-    if (mapInfo instanceof NetlistComponent && HDL.isVHDL()) {
-      final var compInfo = (NetlistComponent) mapInfo;
+    if (mapInfo instanceof netlistComponent && HDL.isVHDL()) {
+      final var compInfo = (netlistComponent) mapInfo;
       final var nrOfBits = compInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
       if (nrOfBits == 1) {
         final var mappedInputData = result.get(LOAD_DATA_INPUT);

@@ -54,12 +54,12 @@ public class ErrorIcon implements Icon {
 
   @Override
   public void paintIcon(Component c, Graphics g, int x, int y) {
-    Graphics2D g2 = (Graphics2D) g.create();
+    final var g2 = (Graphics2D) g.create();
     g2.translate(x, y);
-    int mywh = !forwardArrow && !backwardArrow ? wh : (3 * wh) >> 2;
-    int xoff = !forwardArrow && !backwardArrow ? 0 : wh >> 3;
-    double trd = mywh / 3;
-    int[] xpos = {
+    final var mywh = !forwardArrow && !backwardArrow ? wh : (3 * wh) >> 2;
+    final var xoff = !forwardArrow && !backwardArrow ? 0 : wh >> 3;
+    final var trd = mywh / 3;
+    int[] xPos = {
       xoff,
       xoff + (int) trd,
       xoff + (int) (2 * trd),
@@ -71,35 +71,35 @@ public class ErrorIcon implements Icon {
     };
     int[] ypos = {(int) trd, 0, 0, (int) trd, (int) (2 * trd), mywh - 1, mywh - 1, (int) (2 * trd)};
     g2.setColor(Color.RED.brighter().brighter());
-    g2.fillPolygon(xpos, ypos, 8);
+    g2.fillPolygon(xPos, ypos, 8);
     g2.setStroke(new BasicStroke(scale(1)));
     g2.setColor(Color.RED.darker().darker());
-    g2.drawPolygon(xpos, ypos, 8);
+    g2.drawPolygon(xPos, ypos, 8);
     g2.setColor(Color.WHITE);
-    Font f = g2.getFont().deriveFont((float) mywh / (float) 1.3).deriveFont(Font.BOLD);
-    TextLayout t = new TextLayout("X", f, g2.getFontRenderContext());
-    float xc = (float) mywh / (float) 2 - (float) t.getBounds().getCenterX() + (float) xoff;
-    float yc = (float) mywh / (float) 2 - (float) t.getBounds().getCenterY();
+    final var f = g2.getFont().deriveFont((float) mywh / (float) 1.3).deriveFont(Font.BOLD);
+    final var t = new TextLayout("X", f, g2.getFontRenderContext());
+    final var xc = (float) mywh / (float) 2 - (float) t.getBounds().getCenterX() + (float) xoff;
+    final var yc = (float) mywh / (float) 2 - (float) t.getBounds().getCenterY();
     t.draw(g2, xc, yc);
     if (forwardArrow) {
       g2.setColor(Color.BLACK);
-      int five = (5 * wh) >> 3;
-      int six = (6 * wh) >> 3;
-      int seven = (7 * wh) >> 3;
-      int[] axpos = {xoff, five, five, seven, five, five, xoff};
-      int yoff = AppPreferences.getScaled(1);
-      int[] aypos = {seven - yoff, seven - yoff, six, seven, wh - 1, seven + yoff, seven + yoff};
-      g2.fillPolygon(axpos, aypos, 7);
+      final var five = (5 * wh) >> 3;
+      final var six = (6 * wh) >> 3;
+      final var seven = (7 * wh) >> 3;
+      final int[] axPos = {xoff, five, five, seven, five, five, xoff};
+      final var yOff = AppPreferences.getScaled(1);
+      final int[] ayPos = {seven - yOff, seven - yOff, six, seven, wh - 1, seven + yOff, seven + yOff};
+      g2.fillPolygon(axPos, ayPos, 7);
     }
     if (backwardArrow) {
       g2.setColor(Color.BLACK);
-      int three = (3 * wh) >> 3;
-      int six = (6 * wh) >> 3;
-      int seven = (7 * wh) >> 3;
-      int[] axpos = {seven, three, three, xoff, three, three, seven};
-      int yoff = AppPreferences.getScaled(1);
-      int[] aypos = {seven - yoff, seven - yoff, six, seven, wh - 1, seven + yoff, seven + yoff};
-      g2.fillPolygon(axpos, aypos, 7);
+      final var three = (3 * wh) >> 3;
+      final var six = (6 * wh) >> 3;
+      final var seven = (7 * wh) >> 3;
+      final int[] axPos = {seven, three, three, xoff, three, three, seven};
+      final var yOff = AppPreferences.getScaled(1);
+      final int[] ayPos = {seven - yOff, seven - yOff, six, seven, wh - 1, seven + yOff, seven + yOff};
+      g2.fillPolygon(axPos, ayPos, 7);
     }
     g2.dispose();
   }

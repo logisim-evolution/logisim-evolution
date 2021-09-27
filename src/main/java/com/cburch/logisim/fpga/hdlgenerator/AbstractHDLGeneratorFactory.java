@@ -14,7 +14,7 @@ import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.designrulecheck.ConnectionPoint;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.instance.Port;
@@ -416,15 +416,15 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     final var contents = new ArrayList<String>();
     final var parameterMap = new TreeMap<String, String>();
     final var PortMap = getPortMap(nets, componentInfo);
-    final var componentHDLName = componentInfo instanceof NetlistComponent
-        ? ((NetlistComponent) componentInfo).getComponent().getFactory().getHDLName(((NetlistComponent) componentInfo).getComponent().getAttributeSet()) :
+    final var componentHDLName = componentInfo instanceof netlistComponent
+                                 ? ((netlistComponent) componentInfo).getComponent().getFactory().getHDLName(((netlistComponent) componentInfo).getComponent().getAttributeSet()) :
           name;
     final var CompName = (name != null && !name.isEmpty()) ? name : componentHDLName;
     final var ThisInstanceIdentifier = getInstanceIdentifier(componentInfo, componentId);
     final var oneLine = new StringBuilder();
     if (componentInfo == null) parameterMap.putAll(myParametersList.getMaps(null));
-    if (componentInfo instanceof NetlistComponent) {
-      final var attrs = ((NetlistComponent) componentInfo).getComponent().getAttributeSet();
+    if (componentInfo instanceof netlistComponent) {
+      final var attrs = ((netlistComponent) componentInfo).getComponent().getAttributeSet();
       parameterMap.putAll(myParametersList.getMaps(attrs));
     }
     var TabLength = 0;
@@ -565,8 +565,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   private String getInstanceIdentifier(Object componentInfo, Long componentId) {
-    if (componentInfo instanceof NetlistComponent) {
-      final var attrs = ((NetlistComponent) componentInfo).getComponent().getAttributeSet();
+    if (componentInfo instanceof netlistComponent) {
+      final var attrs = ((netlistComponent) componentInfo).getComponent().getAttributeSet();
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         final var label = attrs.getValue(StdAttr.LABEL);
         if ((label != null) && !label.isEmpty())
@@ -589,7 +589,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   public ArrayList<String> getInlinedCode(
       Netlist nets,
       Long componentId,
-      NetlistComponent componentInfo,
+      netlistComponent componentInfo,
       String circuitName) {
     throw new IllegalAccessError("BUG: Inline code not supported");
   }
@@ -605,7 +605,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   public Map<String, String> GetNetMap(
       String SourceName,
       boolean FloatingPinTiedToGround,
-      NetlistComponent comp,
+      netlistComponent comp,
       int EndIndex,
       Netlist TheNets) {
     var NetMap = new HashMap<String, String>();
@@ -743,8 +743,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var result = new TreeMap<String, String>();
-    if (mapInfo instanceof NetlistComponent && !myPorts.isEmpty()) {
-      NetlistComponent ComponentInfo = (NetlistComponent) mapInfo;
+    if (mapInfo instanceof netlistComponent && !myPorts.isEmpty()) {
+      netlistComponent ComponentInfo = (netlistComponent) mapInfo;
       final var compName = ComponentInfo.getComponent().getFactory().getDisplayName();
       final var attrs = ComponentInfo.getComponent().getAttributeSet();
       if (getWiresPortsDuringHDLWriting) {
@@ -1025,7 +1025,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       /* IO-pins need to be mapped directly to the top-level component and cannot be
        * passed by signals, so we skip them.
        */
-      if (Component.isIO(i)) continue;
+      if (Component.isIo(i)) continue;
       if (!Component.isMapped(i)) {
         /* unmapped output pins we leave unconnected */
         if (Component.isOutput(i)) continue;
@@ -1050,7 +1050,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         contents.add(temp.toString());
         continue;
       }
-      if (Component.IsOpenMapped(i)) continue;
+      if (Component.isOpenMapped(i)) continue;
       if (Component.isExternalInverted(i)) temp.append("n_");
       temp.append(Component.getHdlString(i));
       allign(temp);

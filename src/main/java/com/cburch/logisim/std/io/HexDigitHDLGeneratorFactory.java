@@ -10,7 +10,7 @@
 package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.InlinedHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.WithSelectHDLGenerator;
@@ -21,7 +21,7 @@ import java.util.ArrayList;
 public class HexDigitHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
 
   @Override
-  public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
+  public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
     final var startId = componentInfo.getLocalBubbleOutputStartId();
     final var bubbleBusName = LOCAL_OUTPUT_BUBBLE_BUS_NAME;
     final var signalName = LineBuffer.format("{{1}}{{<}}{{2}}{{3}}{{4}}{{>}}", bubbleBusName, (startId + 6), HDL.vectorLoopId(), startId);

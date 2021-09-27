@@ -31,23 +31,22 @@ package com.cburch.logisim.fpga.data;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.std.io.DipSwitch;
-import com.cburch.logisim.std.io.RgbLed;
 import com.cburch.logisim.std.io.ReptarLocalBus;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.EnumSet;
 
-public enum IOComponentTypes {
-  LED,
+public enum IoComponentTypes {
+  Led,
   Button,
   Pin,
   SevenSegment,
   SevenSegmentNoDp,
   DIPSwitch,
-  RGBLED,
-  LEDArray,
-  PortIO,
+  RgbLed,
+  LedArray,
+  PortIo,
   LocalBus,
   Bus,
   Open,
@@ -71,71 +70,57 @@ public enum IOComponentTypes {
   public static final int ROTATION_CW_90 = -90;
   public static final int ROTATION_CCW_90 = 90;
 
-  public static IOComponentTypes getEnumFromString(String str) {
-    for (var elem : KnownComponentSet) {
+  public static IoComponentTypes getEnumFromString(String str) {
+    for (var elem : KNOWN_COMPONENT_SET) {
       if (elem.name().equalsIgnoreCase(str)) {
         return elem;
       }
     }
-    return IOComponentTypes.Unknown;
+    return IoComponentTypes.Unknown;
   }
 
-  public static int GetFPGAInOutRequirement(IOComponentTypes comp) {
-    switch (comp) {
-      case PortIO:
-        return 8;
-      case LocalBus:
-        return 16;
-      default:
-        return 0;
-    }
+  public static int getFpgaInOutRequirement(IoComponentTypes comp) {
+    return switch (comp) {
+      case PortIo -> 8;
+      case LocalBus -> 16;
+      default -> 0;
+    };
   }
 
-  public static int GetFPGAInputRequirement(IOComponentTypes comp) {
-    switch (comp) {
-      case Button:
-        return 1;
-      case DIPSwitch:
-        return 8;
-      case LocalBus:
-        return 13;
-      default:
-        return 0;
-    }
+  public static int getFpgaInputRequirement(IoComponentTypes comp) {
+    return switch (comp) {
+      case Button -> 1;
+      case DIPSwitch -> 8;
+      case LocalBus -> 13;
+      default -> 0;
+    };
   }
 
-  public static int GetFPGAOutputRequirement(IOComponentTypes comp) {
-    switch (comp) {
-      case LED:
-        return 1;
-      case SevenSegment:
-        return 8;
-      case SevenSegmentNoDp:
-        return 7;
-      case RGBLED:
-        return 3;
-      case LocalBus:
-        return 2;
-      case LEDArray:
-        return 16;
-      default:
-        return 0;
-    }
+  public static int getFpgaOutputRequirement(IoComponentTypes comp) {
+    return switch (comp) {
+      case Led -> 1;
+      case SevenSegment -> 8;
+      case SevenSegmentNoDp -> 7;
+      case RgbLed -> 3;
+      case LocalBus -> 2;
+      case LedArray -> 16;
+      default -> 0;
+    };
   }
 
-  public static boolean nrOfInputPinsConfigurable(IOComponentTypes comp) {
+  public static boolean nrOfInputPinsConfigurable(IoComponentTypes comp) {
     return comp.equals(DIPSwitch);
   }
 
-  public static boolean nrOfOutputPinsConfigurable(IOComponentTypes comp) {
+  public static boolean nrOfOutputPinsConfigurable(IoComponentTypes comp) {
     return false;
   }
 
-  public static boolean nrOfIOPinsConfigurable(IOComponentTypes comp) {
-    return comp.equals(PortIO);
+  public static boolean nrOfIoPinsConfigurable(IoComponentTypes comp) {
+    return comp.equals(PortIo);
   }
 
-  public static String getInputLabel(int nrPins, int id, IOComponentTypes comp) {
+  public static String getInputLabel(int nrPins, int id, IoComponentTypes comp) {
     return switch (comp) {
       case DIPSwitch -> DipSwitch.getInputLabel(id);
       case LocalBus -> ReptarLocalBus.getInputLabel(id);
@@ -143,14 +128,14 @@ public enum IOComponentTypes {
     };
   }
 
-  public static Boolean hasRotationAttribute(IOComponentTypes comp) {
+  public static Boolean hasRotationAttribute(IoComponentTypes comp) {
     return switch (comp) {
-      case DIPSwitch, SevenSegment, LEDArray -> true;
+      case DIPSwitch, SevenSegment, LedArray -> true;
       default -> false;
     };
   }
 
-  public static String getRotationString(IOComponentTypes comp, int rotation) {
+  public static String getRotationString(IoComponentTypes comp, int rotation) {
     return switch (comp) {
       case DIPSwitch -> switch (rotation) {
         case ROTATION_CW_90 -> S.get("DipSwitchCW90");
@@ -162,7 +147,7 @@ public enum IOComponentTypes {
         case ROTATION_CCW_90 -> S.get("SevenSegmentCCW90");
         default -> S.get("SevenSegmentZero");
       };
-      case LEDArray -> switch (rotation) {
+      case LedArray -> switch (rotation) {
         case ROTATION_CW_90 -> S.get("LEDArrayCW90");
         case ROTATION_CCW_90 -> S.get("LEDArrayCCW90");
         default -> S.get("LEDArrayZero");
@@ -171,16 +156,16 @@ public enum IOComponentTypes {
     };
   }
 
-  public static String getOutputLabel(int nrPins, int nrOfRows, int nrOfColumns, int id, IOComponentTypes comp) {
+  public static String getOutputLabel(int nrPins, int nrOfRows, int nrOfColumns, int id, IoComponentTypes comp) {
     switch (comp) {
       case SevenSegmentNoDp:
       case SevenSegment:
         return com.cburch.logisim.std.io.SevenSegment.getOutputLabel(id);
-      case RGBLED:
-        return RgbLed.getLabel(id);
+      case RgbLed:
+        return com.cburch.logisim.std.io.RgbLed.getLabel(id);
       case LocalBus:
         return ReptarLocalBus.getOutputLabel(id);
-      case LEDArray:
+      case LedArray:
         if (nrOfRows != 0 && nrOfColumns != 0 && id >= 0 && id < nrPins) {
           final var row = id / nrOfColumns;
           final var col = id % nrOfColumns;
@@ -191,17 +176,16 @@ public enum IOComponentTypes {
     }
   }
 
-  public static String getIOLabel(int nrPins, int id, IOComponentTypes comp) {
-    if (comp == IOComponentTypes.LocalBus) {
-      return ReptarLocalBus.getIOLabel(id);
+  public static String getIOLabel(int nrPins, int id, IoComponentTypes comp) {
+    return comp == IoComponentTypes.LocalBus
+           ? ReptarLocalBus.getIOLabel(id)
+           : (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
     }
-    return (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
-  }
 
-  public static int GetNrOfFPGAPins(IOComponentTypes comp) {
-    return GetFPGAInOutRequirement(comp)
-        + GetFPGAInputRequirement(comp)
-        + GetFPGAOutputRequirement(comp);
+  public static int GetNrOfFPGAPins(IoComponentTypes comp) {
+    return getFpgaInOutRequirement(comp)
+        + getFpgaInputRequirement(comp)
+        + getFpgaOutputRequirement(comp);
   }
 
   private static int[][] getSevenSegmentDisplayArray(boolean hasDp) {
@@ -212,7 +196,7 @@ public enum IOComponentTypes {
     final var se = com.cburch.logisim.std.io.SevenSegment.Segment_E;
     final var sf = com.cburch.logisim.std.io.SevenSegment.Segment_F;
     final var sg = com.cburch.logisim.std.io.SevenSegment.Segment_G;
-    int[][] indexes = {
+    final int[][] indexes = {
         {-1, sa, sa, -1, -1},
         {sf, -1, -1, sb, -1},
         {sf, -1, -1, sb, -1},
@@ -225,14 +209,14 @@ public enum IOComponentTypes {
     return indexes;
   }
 
-  public static void getPartialMapInfo(Integer[][] PartialMap,
+  public static void getPartialMapInfo(Integer[][] partialMap,
       int width,
       int height,
       int nrOfPins,
       int nrOfRows,
       int nrOfColumns,
       int mapRotation,
-      IOComponentTypes type) {
+      IoComponentTypes type) {
     var hasDp = false;
     var part = 0f;
     var partX = 0f;
@@ -251,25 +235,19 @@ public enum IOComponentTypes {
         for (var widthIndex = 0; widthIndex < width; widthIndex++)
           for (var heightIndex = 0; heightIndex < height; heightIndex++) {
             var pinIndex = 0;
-            switch (mapRotation) {
-              case ROTATION_CCW_90:
-                pinIndex = (int) ((height - heightIndex - 1) / part);
-                break;
-              case ROTATION_CW_90:
-                pinIndex = (int) (height / part);
-                break;
-              default:
-                pinIndex = (int) (widthIndex / part);
-                break;
-            }
-            PartialMap[widthIndex][heightIndex] = pinIndex;
+            pinIndex = switch (mapRotation) {
+              case ROTATION_CCW_90 -> (int) ((height - heightIndex - 1) / part);
+              case ROTATION_CW_90 -> (int) (height / part);
+              default -> (int) (widthIndex / part);
+            };
+            partialMap[widthIndex][heightIndex] = pinIndex;
           }
         break;
-      case RGBLED:
+      case RgbLed:
         part = (float) height / (float) 3;
         for (var w = 0; w < width; w++)
           for (var h = 0; h < height; h++)
-            PartialMap[w][h] = (int) ((float) h / part);
+            partialMap[w][h] = (int) ((float) h / part);
         break;
       case SevenSegment: hasDp = true;
       case SevenSegmentNoDp:
@@ -303,10 +281,10 @@ public enum IOComponentTypes {
                 yIndex = (int) ((float) h / partY);
                 break;
             }
-            PartialMap[w][h] = indexes[yIndex][xIndex];
+            partialMap[w][h] = indexes[yIndex][xIndex];
           }
         break;
-      case LEDArray:
+      case LedArray:
         switch (mapRotation) {
           case ROTATION_CCW_90:
           case ROTATION_CW_90:
@@ -336,13 +314,13 @@ public enum IOComponentTypes {
                 realColumn = (int) ((float) w / partX);
                 break;
             }
-            PartialMap[w][h] = (realRow * nrOfColumns) + realColumn;
+            partialMap[w][h] = (realRow * nrOfColumns) + realColumn;
           }
         break;
       default:
         for (var w = 0; w < width; w++)
           for (var h = 0; h < height; h++)
-            PartialMap[w][h] = -1;
+            partialMap[w][h] = -1;
         break;
     }
   }
@@ -359,7 +337,7 @@ public enum IOComponentTypes {
       int y,
       Color col,
       int alpha,
-      IOComponentTypes type) {
+      IoComponentTypes type) {
     g.setColor(new Color(col.getRed(), col.getGreen(), col.getBlue(), alpha));
     var hasDp = false;
     var part = 0f;
@@ -393,7 +371,7 @@ public enum IOComponentTypes {
         }
         g.fillRect(boxXpos, boxYpos, boxWidth, boxHeight);
         break;
-      case RGBLED:
+      case RgbLed:
         part = (float) height / (float) 3;
         final var by = y + (int) ((float) pinNr * part);
         final var bh = (int) ((float) (pinNr + 1) * part) - (int) ((float) pinNr * part);
@@ -452,7 +430,7 @@ public enum IOComponentTypes {
           }
         }
         break;
-      case LEDArray:
+      case LedArray:
         final var selectedColumn = pinNr % nrOfColumns;
         final var selectedRow = pinNr / nrOfColumns;
         switch (mapRotation) {
@@ -508,24 +486,24 @@ public enum IOComponentTypes {
     }
   }
 
-  public static final EnumSet<IOComponentTypes> KnownComponentSet =
-      EnumSet.range(IOComponentTypes.LED, IOComponentTypes.LocalBus);
+  public static final EnumSet<IoComponentTypes> KNOWN_COMPONENT_SET =
+      EnumSet.range(IoComponentTypes.Led, IoComponentTypes.LocalBus);
 
-  public static final EnumSet<IOComponentTypes> SimpleInputSet =
-      EnumSet.range(IOComponentTypes.LED, IOComponentTypes.LocalBus);
+  public static final EnumSet<IoComponentTypes> SIMPLE_INPUT_SET =
+      EnumSet.range(IoComponentTypes.Led, IoComponentTypes.LocalBus);
 
-  public static final EnumSet<IOComponentTypes> InputComponentSet =
-      EnumSet.of(IOComponentTypes.Button, IOComponentTypes.Pin, IOComponentTypes.DIPSwitch);
+  public static final EnumSet<IoComponentTypes> INPUT_COMPONENT_SET =
+      EnumSet.of(IoComponentTypes.Button, IoComponentTypes.Pin, IoComponentTypes.DIPSwitch);
 
-  public static final EnumSet<IOComponentTypes> OutputComponentSet =
+  public static final EnumSet<IoComponentTypes> OUTPUT_COMPONENT_SET =
       EnumSet.of(
-          IOComponentTypes.LED,
-          IOComponentTypes.Pin,
-          IOComponentTypes.RGBLED,
-          IOComponentTypes.SevenSegment,
-          IOComponentTypes.LEDArray,
-          IOComponentTypes.SevenSegmentNoDp);
+          IoComponentTypes.Led,
+          IoComponentTypes.Pin,
+          IoComponentTypes.RgbLed,
+          IoComponentTypes.SevenSegment,
+          IoComponentTypes.LedArray,
+          IoComponentTypes.SevenSegmentNoDp);
 
-  public static final EnumSet<IOComponentTypes> InOutComponentSet =
-      EnumSet.of(IOComponentTypes.Pin, IOComponentTypes.PortIO);
+  public static final EnumSet<IoComponentTypes> IN_OUT_COMPONENT_SET =
+      EnumSet.of(IoComponentTypes.Pin, IoComponentTypes.PortIo);
 }

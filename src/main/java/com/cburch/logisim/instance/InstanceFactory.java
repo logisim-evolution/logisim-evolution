@@ -21,7 +21,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-import com.cburch.logisim.gui.log.Loggable;
+import com.cburch.logisim.gui.log.LoggableContract;
 import com.cburch.logisim.tools.Pokable;
 import com.cburch.logisim.tools.key.KeyConfigurator;
 import com.cburch.logisim.util.Icons;
@@ -211,7 +211,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   protected Object getInstanceFeature(Instance instance, Object key) {
     if (key == Pokable.class && pokerClass != null) {
       return new InstancePokerAdapter(instance.getComponent(), pokerClass);
-    } else if (key == Loggable.class && loggerClass != null) {
+    } else if (key == LoggableContract.class && loggerClass != null) {
       return new InstanceLoggerAdapter(instance.getComponent(), loggerClass);
     } else {
       return null;

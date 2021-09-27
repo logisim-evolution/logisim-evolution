@@ -11,7 +11,7 @@ package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
@@ -145,8 +145,8 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   @Override
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
-    if (!(mapInfo instanceof NetlistComponent)) return map;
-    final var ComponentInfo = (NetlistComponent) mapInfo;
+    if (!(mapInfo instanceof netlistComponent)) return map;
+    final var ComponentInfo = (netlistComponent) mapInfo;
     map.putAll(super.getPortMap(nets, mapInfo));
     map.put(
         "Addr_Data_LB_io",

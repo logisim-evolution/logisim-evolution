@@ -10,7 +10,7 @@
 package com.cburch.logisim.std.wiring;
 
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.InlinedHDLGeneratorFactory;
@@ -23,7 +23,7 @@ public class BitExtenderHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
   public ArrayList<String> getInlinedCode(
       Netlist nets,
       Long componentId,
-      NetlistComponent componentInfo,
+      netlistComponent componentInfo,
       String circuitName) {
     final var Contents = LineBuffer.getBuffer();
     int NrOfPins = componentInfo.nrOfEnds();

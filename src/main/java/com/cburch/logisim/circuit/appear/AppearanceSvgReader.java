@@ -19,7 +19,7 @@ import com.cburch.logisim.soc.gui.SocCPUShape;
 import com.cburch.logisim.soc.vga.SocVgaShape;
 import com.cburch.logisim.std.io.HexDigitShape;
 import com.cburch.logisim.std.io.LedShape;
-import com.cburch.logisim.std.io.RGBLedShape;
+import com.cburch.logisim.std.io.RgbLedShape;
 import com.cburch.logisim.std.io.SevenSegmentShape;
 import com.cburch.logisim.std.io.TtyShape;
 import com.cburch.logisim.std.memory.CounterShape;
@@ -34,34 +34,34 @@ public class AppearanceSvgReader {
     private final Location myLocation;
     private final Instance myInstance;
     private Boolean pinIsUsed;
-    
+
     public pinInfo(Location loc, Instance inst) {
       myLocation = loc;
       myInstance = inst;
       pinIsUsed = false;
     }
-    
+
     public Boolean pinIsAlreadyUsed() {
       return pinIsUsed;
     }
-    
+
     public Location getPinLocation() {
       return myLocation;
     }
-    
+
     public Instance getPinInstance() {
       return myInstance;
     }
-    
+
     public void setPinIsUsed() {
       pinIsUsed = true;
     }
   }
-  
+
   public static pinInfo getPinInfo(Location loc, Instance inst) {
     return new pinInfo(loc, inst);
   }
-  
+
   public static AbstractCanvasObject createShape(Element elt, List<pinInfo> pins, Circuit circuit) {
     final var name = elt.getTagName();
     if (name.equals("circ-anchor") || name.equals("circ-origin")) {
@@ -83,11 +83,11 @@ public class AppearanceSvgReader {
           final var isInputRef = isInputPinReference(elt);
           if (isInputPin == isInputRef) {
             pin.setPinIsUsed();
-            return new AppearancePort(loc, pin.getPinInstance()); 
+            return new AppearancePort(loc, pin.getPinInstance());
           }
         }
       }
-      return null; 
+      return null;
     } else if (name.startsWith("visible-")) {
       final var pathstr = elt.getAttribute("path");
       if (pathstr == null || pathstr.length() == 0) return null;
@@ -121,7 +121,7 @@ public class AppearanceSvgReader {
       case "visible-led":
         return new LedShape(x, y, path);
       case "visible-rgbled":
-        return new RGBLedShape(x, y, path);
+        return new RgbLedShape(x, y, path);
       case "visible-hexdigit":
         return new HexDigitShape(x, y, path);
       case "visible-sevensegment":
@@ -140,7 +140,7 @@ public class AppearanceSvgReader {
         return null;
     }
   }
-  
+
   private static Boolean isInputPinReference(Element elt) {
     final var width = Double.parseDouble(elt.getAttribute("width"));
     final var radius = (int) Math.round(width / 2.0);

@@ -11,7 +11,7 @@ package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 
 import java.util.ArrayList;
 import java.util.Set;
@@ -59,7 +59,7 @@ public interface HDLGeneratorFactory {
   ArrayList<String> getInlinedCode(
       Netlist nets,
       Long componentId,
-      NetlistComponent componentInfo,
+      netlistComponent componentInfo,
       String circuitName);
 
   String getRelativeDirectory();

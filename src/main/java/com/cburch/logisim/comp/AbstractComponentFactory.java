@@ -19,7 +19,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.Icons;
@@ -48,7 +48,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   }
 
   @Override
-  public boolean ActiveOnHigh(AttributeSet attrs) {
+  public boolean activeOnHigh(AttributeSet attrs) {
     return true;
   }
 
@@ -119,12 +119,12 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   }
 
   @Override
-  public boolean checkForGatedClocks(NetlistComponent comp) {
+  public boolean checkForGatedClocks(netlistComponent comp) {
     return false;
   }
 
   @Override
-  public int[] clockPinIndex(NetlistComponent comp) {
+  public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {0};
   }
 

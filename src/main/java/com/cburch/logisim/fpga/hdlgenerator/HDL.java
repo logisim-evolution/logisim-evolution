@@ -12,7 +12,7 @@ package com.cburch.logisim.fpga.hdlgenerator;
 import java.util.ArrayList;
 
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -169,7 +169,7 @@ public abstract class HDL {
     return LineBuffer.format("{{1}}'b{{2}}", nrSingleBits, singleBits.toString());
   }
 
-  public static String getNetName(NetlistComponent comp, int endIndex, boolean floatingNetTiedToGround, Netlist myNetlist) {
+  public static String getNetName(netlistComponent comp, int endIndex, boolean floatingNetTiedToGround, Netlist myNetlist) {
     var netName = "";
     if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
       final var floatingValue = floatingNetTiedToGround ? zeroBit() : oneBit();
@@ -194,7 +194,7 @@ public abstract class HDL {
     return netName;
   }
 
-  public static String getBusEntryName(NetlistComponent comp, int endIndex, boolean floatingNetTiedToGround, int bitindex, Netlist theNets) {
+  public static String getBusEntryName(netlistComponent comp, int endIndex, boolean floatingNetTiedToGround, int bitindex, Netlist theNets) {
     var busName = "";
     if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
       final var thisEnd = comp.getEnd(endIndex);
@@ -219,7 +219,7 @@ public abstract class HDL {
     return busName;
   }
 
-  public static String getBusNameContinues(NetlistComponent comp, int endIndex, Netlist theNets) {
+  public static String getBusNameContinues(netlistComponent comp, int endIndex, Netlist theNets) {
     if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) return null;
     final var connectionInformation = comp.getEnd(endIndex);
     final var nrOfBits = connectionInformation.getNrOfBits();
@@ -234,7 +234,7 @@ public abstract class HDL {
         connectionInformation.get((byte) (0)).getParentNetBitIndex());
   }
 
-  public static String getBusName(NetlistComponent comp, int endIndex, Netlist theNets) {
+  public static String getBusName(netlistComponent comp, int endIndex, Netlist theNets) {
     if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) return null;
     final var connectionInformation = comp.getEnd(endIndex);
     final var nrOfBits = connectionInformation.getNrOfBits();
@@ -245,7 +245,7 @@ public abstract class HDL {
     return LineBuffer.format("{{1}}{{2}}", BUS_NAME, theNets.getNetId(ConnectedNet));
   }
 
-  public static String getClockNetName(NetlistComponent comp, int endIndex, Netlist theNets) {
+  public static String getClockNetName(netlistComponent comp, int endIndex, Netlist theNets) {
     var contents = new StringBuilder();
     if ((theNets.getCurrentHierarchyLevel() != null) && (endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
       final var endData = comp.getEnd(endIndex);

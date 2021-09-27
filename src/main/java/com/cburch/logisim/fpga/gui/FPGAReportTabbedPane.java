@@ -11,7 +11,7 @@ package com.cburch.logisim.fpga.gui;
 
 import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.contracts.BaseWindowListenerContract;
-import com.cburch.logisim.fpga.data.FPGACommanderListModel;
+import com.cburch.logisim.fpga.data.FpgaCommanderListModel;
 import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
 import com.cburch.logisim.proj.Project;
 import java.awt.Color;
@@ -53,12 +53,12 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
 
   private final JList<Object> warnings;
   private final JComponent panelWarnings;
-  private final FPGACommanderListModel warningsList;
+  private final FpgaCommanderListModel warningsList;
   private final FPGACommanderListWindow warningsWindow;
 
   private final JList<Object> errors;
   private final JComponent panelErrors;
-  private final FPGACommanderListModel errorsList;
+  private final FpgaCommanderListModel errorsList;
   private final FPGACommanderListWindow errorsWindow;
 
   private FPGACommanderTextWindow consoleWindow;
@@ -94,7 +94,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
     add(panelInfos, infoTabIndex);
 
     /* now we setup the Warning window */
-    warningsList = new FPGACommanderListModel(true);
+    warningsList = new FpgaCommanderListModel(true);
     warnings = new JList<>();
     warnings.setBackground(Color.BLACK);
     warnings.setForeground(Color.ORANGE);
@@ -119,7 +119,7 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
     warningsWindow.getListObject().addMouseListener(this);
 
     /* here we setup the Error window */
-    errorsList = new FPGACommanderListModel(false);
+    errorsList = new FpgaCommanderListModel(false);
     errors = new JList<>();
     errors.setBackground(Color.BLACK);
     errors.setForeground(Color.RED);

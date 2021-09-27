@@ -10,8 +10,8 @@
 package com.cburch.logisim.fpga.file;
 
 import com.cburch.logisim.fpga.data.BoardInformation;
-import com.cburch.logisim.fpga.data.FPGAClass;
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.FpgaClass;
+import com.cburch.logisim.fpga.data.FpgaIoInformationContainer;
 import com.cburch.logisim.fpga.gui.DialogNotification;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -122,8 +122,8 @@ public class BoardReaderClass {
       result.setBoardName(BoardDoc.getDocumentElement().getNodeName());
       BufferedImage Picture = CreateImage(PictureWidth, PictureHeight, CodeTable, PixelData);
       if (Picture == null) return null;
-      result.SetImage(Picture);
-      FPGAClass FPGA = GetFPGAInfo();
+      result.setImage(Picture);
+      FpgaClass FPGA = GetFPGAInfo();
       if (FPGA == null) return null;
       result.fpga = FPGA;
       NodeList CompList = BoardDoc.getElementsByTagName("PinsInformation"); // for backward
@@ -150,7 +150,7 @@ public class BoardReaderClass {
     }
   }
 
-  private FPGAClass GetFPGAInfo() {
+  private FpgaClass GetFPGAInfo() {
     NodeList FPGAList = BoardDoc.getElementsByTagName(BoardWriterClass.BOARD_INFORMATION_SECTION_STRING);
     long frequency = -1;
     String clockpin = null;
@@ -234,7 +234,7 @@ public class BoardReaderClass {
     if (UsbTmc == null) UsbTmc = Boolean.toString(false);
     if (JTAGPos == null) JTAGPos = "1";
     if (FlashPos == null) FlashPos = "2";
-    FPGAClass result = new FPGAClass();
+    FpgaClass result = new FpgaClass();
     result.Set(
         frequency,
         clockpin,
@@ -259,8 +259,8 @@ public class BoardReaderClass {
       tempNode = CompList.item(0);
       CompList = tempNode.getChildNodes();
       for (int i = 0; i < CompList.getLength(); i++) {
-        FPGAIOInformationContainer NewComp = new FPGAIOInformationContainer(CompList.item(i));
-        if (NewComp.IsKnownComponent()) {
+        FpgaIoInformationContainer NewComp = new FpgaIoInformationContainer(CompList.item(i));
+        if (NewComp.isKnownComponent()) {
           board.AddComponent(NewComp);
         }
       }

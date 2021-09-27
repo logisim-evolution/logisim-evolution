@@ -79,12 +79,12 @@ public class Netlist {
 
   private String circuitName;
   private final ArrayList<Net> myNets = new ArrayList<>();
-  private final ArrayList<NetlistComponent> mySubCircuits = new ArrayList<>();
-  private final ArrayList<NetlistComponent> myComponents = new ArrayList<>();
-  private final ArrayList<NetlistComponent> myClockGenerators = new ArrayList<>();
-  private final ArrayList<NetlistComponent> myInOutPorts = new ArrayList<>();
-  private final ArrayList<NetlistComponent> myInputPorts = new ArrayList<>();
-  private final ArrayList<NetlistComponent> myOutputPorts = new ArrayList<>();
+  private final ArrayList<netlistComponent> mySubCircuits = new ArrayList<>();
+  private final ArrayList<netlistComponent> myComponents = new ArrayList<>();
+  private final ArrayList<netlistComponent> myClockGenerators = new ArrayList<>();
+  private final ArrayList<netlistComponent> myInOutPorts = new ArrayList<>();
+  private final ArrayList<netlistComponent> myInputPorts = new ArrayList<>();
+  private final ArrayList<netlistComponent> myOutputPorts = new ArrayList<>();
   private final ArrayList<Component> mySplitters = new ArrayList<>();
   private Integer localNrOfInportBubbles;
   private Integer localNrOfOutportBubbles;
@@ -208,9 +208,9 @@ public class Netlist {
         myHierarchyName.add(
             CorrectLabel.getCorrectLabel(
                 comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-        final var subInputBubbles = comp.getMapInformationContainer().GetNrOfInports();
-        final var subInOutBubbles = comp.getMapInformationContainer().GetNrOfInOutports();
-        final var subOutputBubbles = comp.getMapInformationContainer().GetNrOfOutports();
+        final var subInputBubbles = comp.getMapInformationContainer().getNrOfInPorts();
+        final var subInOutBubbles = comp.getMapInformationContainer().getNrOfInOutPorts();
+        final var subOutputBubbles = comp.getMapInformationContainer().getNrOfOutPorts();
         comp.setLocalBubbleID(localNrOfInportBubbles, subInputBubbles, localNrOfOutportBubbles, subOutputBubbles, localNrOfInOutBubbles, subInOutBubbles);
         localNrOfInportBubbles += subInputBubbles;
         localNrOfInOutBubbles += subInOutBubbles;
@@ -526,9 +526,9 @@ public class Netlist {
         myHierarchyName.add(
             CorrectLabel.getCorrectLabel(
                 comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-        int subInputBubbles = comp.getMapInformationContainer().GetNrOfInports();
-        int subInOutBubbles = comp.getMapInformationContainer().GetNrOfInOutports();
-        int subOutputBubbles = comp.getMapInformationContainer().GetNrOfOutports();
+        int subInputBubbles = comp.getMapInformationContainer().getNrOfInPorts();
+        int subInOutBubbles = comp.getMapInformationContainer().getNrOfInOutPorts();
+        int subOutputBubbles = comp.getMapInformationContainer().getNrOfOutPorts();
         comp.addGlobalBubbleId(
             myHierarchyName,
             startInputID + comp.getLocalBubbleInputStartId(),
@@ -1114,7 +1114,7 @@ public class Netlist {
     return myClockInformation.getClockSourceId(comp);
   }
 
-  public ArrayList<NetlistComponent> getClockSources() {
+  public ArrayList<netlistComponent> getClockSources() {
     return myClockGenerators;
   }
 
@@ -1122,7 +1122,7 @@ public class Netlist {
     return currentHierarchyLevel;
   }
 
-  public int getEndIndex(NetlistComponent comp, String pinLabel, boolean isOutputPort) {
+  public int getEndIndex(netlistComponent comp, String pinLabel, boolean isOutputPort) {
     final var label = CorrectLabel.getCorrectLabel(pinLabel);
     final var subFactory = (SubcircuitFactory) comp.getComponent().getFactory();
     for (var end = 0; end < comp.nrOfEnds(); end++) {
@@ -1187,24 +1187,24 @@ public class Netlist {
     return result;
   }
 
-  public NetlistComponent getInOutPin(int index) {
+  public netlistComponent getInOutPin(int index) {
     return ((index < 0) || (index >= myInOutPorts.size())) ? null : myInOutPorts.get(index);
   }
 
-  public NetlistComponent getInOutPort(int Index) {
+  public netlistComponent getInOutPort(int Index) {
     return ((Index < 0) || (Index >= myInOutPorts.size())) ? null : myInOutPorts.get(Index);
   }
 
-  public NetlistComponent getInputPin(int index) {
+  public netlistComponent getInputPin(int index) {
     return ((index < 0) || (index >= myInputPorts.size())) ? null : myInputPorts.get(index);
   }
 
-  public NetlistComponent getInputPort(int Index) {
+  public netlistComponent getInputPort(int Index) {
     return ((Index < 0) || (Index >= myInputPorts.size())) ? null : myInputPorts.get(Index);
   }
 
-  public Map<ArrayList<String>, NetlistComponent> getMappableResources(ArrayList<String> hierarchy, boolean toplevel) {
-    final var components = new HashMap<ArrayList<String>, NetlistComponent>();
+  public Map<ArrayList<String>, netlistComponent> getMappableResources(ArrayList<String> hierarchy, boolean toplevel) {
+    final var components = new HashMap<ArrayList<String>, netlistComponent>();
     /* First we search through my sub-circuits and add those IO components */
     for (final var comp : mySubCircuits) {
       final var sub = (SubcircuitFactory) comp.getComponent().getFactory();
@@ -1310,11 +1310,11 @@ public class Netlist {
     return null;
   }
 
-  public ArrayList<NetlistComponent> getNormalComponents() {
+  public ArrayList<netlistComponent> getNormalComponents() {
     return myComponents;
   }
 
-  public NetlistComponent getOutputPin(int index) {
+  public netlistComponent getOutputPin(int index) {
     return ((index < 0) || (index >= myOutputPorts.size())) ? null : myOutputPorts.get(index);
   }
 
@@ -1364,7 +1364,7 @@ public class Netlist {
     return splitters;
   }
 
-  public ArrayList<NetlistComponent> getSubCircuits() {
+  public ArrayList<netlistComponent> getSubCircuits() {
     return mySubCircuits;
   }
 
@@ -1510,7 +1510,7 @@ public class Netlist {
   }
 
   // FIXME: This method name is very unfortunate.
-  public boolean isContinuesBus(NetlistComponent comp, int endIndex) {
+  public boolean isContinuesBus(netlistComponent comp, int endIndex) {
     var continuesBus = true;
     if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) return true;
 
@@ -1757,7 +1757,7 @@ public class Netlist {
   }
 
   private boolean processNormalComponent(Component comp) {
-    final var normalComponent = new NetlistComponent(comp);
+    final var normalComponent = new netlistComponent(comp);
     for (final var thisPin : comp.getEnds()) {
       final var connection = findConnectedNet(thisPin.getLocation());
       if (connection != null) {
@@ -1807,7 +1807,7 @@ public class Netlist {
   }
 
   private boolean processSubcircuit(Component comp) {
-    final var subCircuit = new NetlistComponent(comp);
+    final var subCircuit = new netlistComponent(comp);
     final var subFactory = (SubcircuitFactory) comp.getFactory();
     final var subPins = ((CircuitAttributes) comp.getAttributeSet()).getPinInstances();
     final var subNetlist = subFactory.getSubcircuit().getNetList();
@@ -1987,14 +1987,14 @@ public class Netlist {
     return true;
   }
 
-  private NetlistComponent getSubCirc(Component comp) {
+  private netlistComponent getSubCirc(Component comp) {
     for (final var current : mySubCircuits) {
       if (current.getComponent().equals(comp)) return current;
     }
     return null;
   }
 
-  private NetlistComponent getOutPort(Component comp) {
+  private netlistComponent getOutPort(Component comp) {
     for (final var current : myOutputPorts) {
       if (current.getComponent().equals(comp)) return current;
     }
@@ -2008,8 +2008,8 @@ public class Netlist {
     final var root = new ArrayList<Netlist>();
     var suppress = AppPreferences.SupressGatedClockWarnings.getBoolean();
     root.add(this);
-    final var notGatedSet = new HashMap<String, Map<NetlistComponent, Circuit>>();
-    final var gatedSet = new HashMap<String, Map<NetlistComponent, Circuit>>();
+    final var notGatedSet = new HashMap<String, Map<netlistComponent, Circuit>>();
+    final var gatedSet = new HashMap<String, Map<netlistComponent, Circuit>>();
     setCurrentHierarchyLevel(new ArrayList<>());
     getGatedClockComponents(root, null, notGatedSet, gatedSet, new HashSet<>());
     for (final var key : notGatedSet.keySet()) {
@@ -2017,7 +2017,7 @@ public class Netlist {
         /* big Problem, we have a component that is used with and without gated clocks */
         Reporter.report.addSevereWarning(S.get("NetList_CircuitGatedNotGated"));
         Reporter.report.addWarningIncrement(S.get("NetList_TraceListBegin"));
-        Map<NetlistComponent, Circuit> instances = notGatedSet.get(key);
+        Map<netlistComponent, Circuit> instances = notGatedSet.get(key);
         for (final var comp : instances.keySet()) {
           final var warn =
               new SimpleDRCContainer(
@@ -2050,10 +2050,10 @@ public class Netlist {
 
   public void getGatedClockComponents(
       ArrayList<Netlist> hierarchyNetlists,
-      NetlistComponent subCircuit,
-      Map<String, Map<NetlistComponent, Circuit>> notGatedSet,
-      Map<String, Map<NetlistComponent, Circuit>> gatedSet,
-      Set<NetlistComponent> warnedComponents) {
+      netlistComponent subCircuit,
+      Map<String, Map<netlistComponent, Circuit>> notGatedSet,
+      Map<String, Map<netlistComponent, Circuit>> gatedSet,
+      Set<netlistComponent> warnedComponents) {
     /* First pass: we go down the tree */
     for (final var subCirc : mySubCircuits) {
       final var sub = (SubcircuitFactory) subCirc.getComponent().getFactory();
@@ -2073,10 +2073,10 @@ public class Netlist {
     var gatedClock = false;
     final var pinSources = new ArrayList<SourceInfo>();
     final var pinWires = new ArrayList<Set<Wire>>();
-    final var pinGatedComponents = new ArrayList<Set<NetlistComponent>>();
+    final var pinGatedComponents = new ArrayList<Set<netlistComponent>>();
     final var nonPinSources = new ArrayList<SourceInfo>();
     final var nonPinWires = new ArrayList<Set<Wire>>();
-    final var nonPinGatedComponents = new ArrayList<Set<NetlistComponent>>();
+    final var nonPinGatedComponents = new ArrayList<Set<netlistComponent>>();
     for (final var comp : myComponents) {
       final var fact = comp.getComponent().getFactory();
       if (fact.checkForGatedClocks(comp)) {
@@ -2146,7 +2146,7 @@ public class Netlist {
         if (gatedSet.containsKey(myName))
           gatedSet.get(myName).put(subCircuit, hierarchyNetlists.get(hierarchyNetlists.size() - 2).getCircuit());
         else {
-          final var newList = new HashMap<NetlistComponent, Circuit>();
+          final var newList = new HashMap<netlistComponent, Circuit>();
           newList.put(subCircuit, hierarchyNetlists.get(hierarchyNetlists.size() - 2).getCircuit());
           gatedSet.put(myName, newList);
         }
@@ -2154,7 +2154,7 @@ public class Netlist {
         if (notGatedSet.containsKey(myName))
           notGatedSet.get(myName).put(subCircuit, hierarchyNetlists.get(hierarchyNetlists.size() - 2).getCircuit());
         else {
-          final var newList = new HashMap<NetlistComponent, Circuit>();
+          final var newList = new HashMap<netlistComponent, Circuit>();
           newList.put(subCircuit, hierarchyNetlists.get(hierarchyNetlists.size() - 2).getCircuit());
           notGatedSet.put(myName, newList);
         }
@@ -2167,15 +2167,15 @@ public class Netlist {
   }
 
   private boolean hasGatedClock(
-      NetlistComponent comp,
+      netlistComponent comp,
       int clockPinIndex,
       List<SourceInfo> pinSources,
       List<Set<Wire>> pinWires,
-      List<Set<NetlistComponent>> pinGatedComponents,
+      List<Set<netlistComponent>> pinGatedComponents,
       List<SourceInfo> nonPinSources,
       List<Set<Wire>> nonPinWires,
-      List<Set<NetlistComponent>> nonPinGatedComponents,
-      Set<NetlistComponent> warnedComponents) {
+      List<Set<netlistComponent>> nonPinGatedComponents,
+      Set<netlistComponent> warnedComponents) {
     var isGatedClock = false;
     final var clockNetName = HDL.getClockNetName(comp, clockPinIndex, this);
     if (clockNetName.isEmpty()) {
@@ -2193,9 +2193,9 @@ public class Netlist {
           if (index < 0) {
             pinSources.add(source);
             pinWires.add(segments);
-            final var comps = new HashSet<NetlistComponent>();
+            final var comps = new HashSet<netlistComponent>();
             comps.add(comp);
-            comps.add(new NetlistComponent(sourceCon.getComp()));
+            comps.add(new netlistComponent(sourceCon.getComp()));
             pinGatedComponents.add(comps);
           } else {
             pinGatedComponents.get(index).add(comp);
@@ -2205,7 +2205,7 @@ public class Netlist {
           if (index < 0) {
             nonPinSources.add(source);
             nonPinWires.add(segments);
-            final var comps = new HashSet<NetlistComponent>();
+            final var comps = new HashSet<netlistComponent>();
             comps.add(comp);
             nonPinGatedComponents.add(comps);
           } else {
@@ -2334,7 +2334,7 @@ public class Netlist {
       }
       final var connectedNet = sourcePoint.getParentNet();
       /* Find the correct subcircuit */
-      NetlistComponent subCirc = null;
+      netlistComponent subCirc = null;
       for (final var circ : mySubCircuits) {
         if (circ.getComponent().equals(sourcePoint.getComp())) subCirc = circ;
       }
@@ -2417,9 +2417,9 @@ public class Netlist {
 
   private void warningForGatedClock(
       List<SourceInfo> sources,
-      List<Set<NetlistComponent>> components,
+      List<Set<netlistComponent>> components,
       List<Set<Wire>> wires,
-      Set<NetlistComponent> warnedComponents,
+      Set<netlistComponent> warnedComponents,
       ArrayList<Netlist> hierarchyNetlists,
       String warning) {
     if (AppPreferences.SupressGatedClockWarnings.getBoolean()) return;

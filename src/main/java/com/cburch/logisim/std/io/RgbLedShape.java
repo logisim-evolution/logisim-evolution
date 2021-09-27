@@ -20,9 +20,9 @@ import java.awt.Graphics;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class RGBLedShape extends LedShape {
+public class RgbLedShape extends LedShape {
 
-  public RGBLedShape(int x, int y, DynamicElement.Path p) {
+  public RgbLedShape(int x, int y, DynamicElement.Path p) {
     super(x, y, p);
   }
 
@@ -66,6 +66,6 @@ public class RGBLedShape extends LedShape {
 
   @Override
   public String toString() {
-    return "RGBLed:" + getBounds();
+    return "RgbLed:" + getBounds();
   }
 }

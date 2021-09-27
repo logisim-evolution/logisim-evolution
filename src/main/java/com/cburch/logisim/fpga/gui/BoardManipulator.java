@@ -18,10 +18,10 @@ import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.BoardManipulatorListener;
 import com.cburch.logisim.fpga.data.BoardRectangle;
 import com.cburch.logisim.fpga.data.ConstantButton;
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.data.IOComponentTypes;
-import com.cburch.logisim.fpga.data.IOComponentsInformation;
-import com.cburch.logisim.fpga.data.IOComponentsListener;
+import com.cburch.logisim.fpga.data.FpgaIoInformationContainer;
+import com.cburch.logisim.fpga.data.IoComponentTypes;
+import com.cburch.logisim.fpga.data.IoComponentsInformation;
+import com.cburch.logisim.fpga.data.IoComponentsListener;
 import com.cburch.logisim.fpga.data.MapListModel;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.SimpleRectangle;
@@ -64,7 +64,7 @@ public class BoardManipulator extends JPanel
         BaseMouseMotionListenerContract,
         ChangeListener,
         PropertyChangeListener,
-        IOComponentsListener,
+               IoComponentsListener,
         ListSelectionListener,
         BaseWindowListenerContract,
         LocaleListener,
@@ -105,7 +105,7 @@ public class BoardManipulator extends JPanel
   private String BoardName;
   private SimpleRectangle defineRectangle; /* note this one is in real coordinates */
   private ArrayList<BoardManipulatorListener> listeners;
-  private final IOComponentsInformation IOcomps;
+  private final IoComponentsInformation IOcomps;
   private MappableResourcesContainer MapInfo;
   private JList<MapListModel.MapInfo> unmappedList;
   private JList<MapListModel.MapInfo> mappedList;
@@ -115,7 +115,7 @@ public class BoardManipulator extends JPanel
 
   public BoardManipulator(Frame parentFrame) {
     mapMode = false;
-    IOcomps = new IOComponentsInformation(parentFrame, false);
+    IOcomps = new IoComponentsInformation(parentFrame, false);
     IOcomps.addListener(this);
     setup(false);
   }
@@ -129,7 +129,7 @@ public class BoardManipulator extends JPanel
     IOcomps.addComponent(ConstantButton.OPEN_BUTTON, 1);
     IOcomps.addComponent(ConstantButton.VALUE_BUTTON, 1);
     IOcomps.addComponent(ConstantButton.ZERO_BUTTON, 1);
-    image = mapInfo.getBoardInformation().GetImage();
+    image = mapInfo.getBoardInformation().getImage();
     IOcomps.setParentFrame(parentFrame);
     MapInfo = mapInfo;
     manip.addWindowListener(this);
@@ -261,7 +261,7 @@ public class BoardManipulator extends JPanel
     return image.getScaledInstance(width, height, 4);
   }
 
-  public ArrayList<FPGAIOInformationContainer> getIOComponents() {
+  public ArrayList<FpgaIoInformationContainer> getIOComponents() {
     return IOcomps.getComponents();
   }
 
@@ -274,9 +274,9 @@ public class BoardManipulator extends JPanel
 
   public void setBoard(BoardInformation board) {
     clear();
-    image = board.GetImage();
+    image = board.getImage();
     BoardName = board.getBoardName();
-    for (FPGAIOInformationContainer l : board.GetAllComponents())
+    for (FpgaIoInformationContainer l : board.GetAllComponents())
       IOcomps.addComponent(l, scale);
     for (BoardManipulatorListener l : listeners)
         l.boardNameChanged(BoardName);
@@ -302,7 +302,7 @@ public class BoardManipulator extends JPanel
 
   private void defineIOComponent() {
     BoardRectangle rect = defineRectangle.getBoardRectangle(scale);
-    FPGAIOInformationContainer comp = defineRectangle.getIoInfo();
+    FpgaIoInformationContainer comp = defineRectangle.getIoInfo();
     /*
      * Before doing anything we have to check that this region does not
      * overlap with an already defined region. If we detect an overlap we
@@ -317,10 +317,10 @@ public class BoardManipulator extends JPanel
     if (comp == null) {
       String result = (new IOComponentSelector(IOcomps.getParentFrame())).run();
       if (result == null) return;
-      comp = new FPGAIOInformationContainer(IOComponentTypes.valueOf(result), rect, IOcomps);
+      comp = new FpgaIoInformationContainer(IoComponentTypes.valueOf(result), rect, IOcomps);
     } else
-      comp.GetRectangle().updateRectangle(rect);
-    if (comp.IsKnownComponent()) {
+      comp.getRectangle().updateRectangle(rect);
+    if (comp.isKnownComponent()) {
       IOcomps.addComponent(comp, scale);
       for (BoardManipulatorListener l : listeners) l.componentsChanged(IOcomps);
     }
@@ -364,7 +364,7 @@ public class BoardManipulator extends JPanel
       repaint(defineRectangle.resizeAndGetUpdate(e));
     } else if (IOcomps.hasHighlighted()) {
       /* resize or move the current highlighted component */
-      FPGAIOInformationContainer edit = IOcomps.getHighligted();
+      FpgaIoInformationContainer edit = IOcomps.getHighligted();
       IOcomps.removeComponent(edit, scale);
       defineRectangle = new SimpleRectangle(e, edit, scale);
       repaint(defineRectangle.resizeAndGetUpdate(e));
@@ -423,11 +423,11 @@ public class BoardManipulator extends JPanel
         /* Edit the current highligted component */
         if (e.getClickCount() > 1) {
           try {
-            FPGAIOInformationContainer clone =
-                (FPGAIOInformationContainer) IOcomps.getHighligted().clone();
+            FpgaIoInformationContainer clone =
+                (FpgaIoInformationContainer) IOcomps.getHighligted().clone();
             clone.edit(true, IOcomps);
             if (clone.isToBeDeleted()) IOcomps.removeComponent(IOcomps.getHighligted(), scale);
-            else if (clone.IsKnownComponent())
+            else if (clone.isKnownComponent())
               IOcomps.replaceComponent(IOcomps.getHighligted(), clone, e, scale);
           } catch (CloneNotSupportedException err) {
             OptionPane.showMessageDialog(

@@ -280,7 +280,7 @@ public class XilinxDownload implements VendorDownload {
     for (var key : MapInfo.getMappableResources().keySet()) {
       var map = MapInfo.getMappableResources().get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {
-        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
+        if (map.isMapped(i) && !map.isOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
           Temp.setLength(0);
           Temp.append("NET \"");
           if (map.isExternalInverted(i)) Temp.append("n_");
@@ -288,21 +288,21 @@ public class XilinxDownload implements VendorDownload {
           Temp.append("LOC = \"").append(map.getPinLocation(i)).append("\" ");
           final var info = map.getFpgaInfo(i);
           if (info != null) {
-            if (info.GetPullBehavior() != PullBehaviors.UNKNOWN
-                && info.GetPullBehavior() != PullBehaviors.FLOAT) {
+            if (info.getPullBehavior() != PullBehaviors.UNKNOWN
+                && info.getPullBehavior() != PullBehaviors.FLOAT) {
               Temp.append("| ")
-                  .append(PullBehaviors.getContraintedPullString(info.GetPullBehavior()))
+                  .append(PullBehaviors.getContraintedPullString(info.getPullBehavior()))
                   .append(" ");
             }
-            if (info.GetDrive() != DriveStrength.UNKNOWN
-                && info.GetDrive() != DriveStrength.DEFAULT_STENGTH) {
+            if (info.getDrive() != DriveStrength.UNKNOWN
+                && info.getDrive() != DriveStrength.DEFAULT_STENGTH) {
               Temp.append("| DRIVE = ")
-                  .append(DriveStrength.GetContraintedDriveStrength(info.GetDrive())).append(" ");
+                  .append(DriveStrength.GetContraintedDriveStrength(info.getDrive())).append(" ");
             }
-            if (info.GetIOStandard() != IoStandards.UNKNOWN
-                && info.GetIOStandard() != IoStandards.DEFAULT_STANDARD) {
+            if (info.getIoStandard() != IoStandards.UNKNOWN
+                && info.getIoStandard() != IoStandards.DEFAULT_STANDARD) {
               Temp.append("| IOSTANDARD = ")
-                  .append(IoStandards.GetConstraintedIoStandard(info.GetIOStandard()))
+                  .append(IoStandards.getConstraintedIoStandard(info.getIoStandard()))
                   .append(" ");
             }
           }
@@ -438,7 +438,7 @@ public class XilinxDownload implements VendorDownload {
     if (CurrentBoard.fpga.getClockStandard() != IoStandards.DEFAULT_STANDARD
         && CurrentBoard.fpga.getClockStandard() != IoStandards.UNKNOWN) {
       result.append(" | IOSTANDARD = ")
-          .append(IoStandards.Behavior_strings[CurrentBoard.fpga.getClockStandard()]);
+          .append(IoStandards.BEHAVIOR_STRINGS[CurrentBoard.fpga.getClockStandard()]);
     }
     return result.toString();
   }

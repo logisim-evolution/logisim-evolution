@@ -14,7 +14,7 @@ import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.FpgaIoInformationContainer;
 import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
@@ -256,7 +256,7 @@ public class LedArrayGenericHDLGeneratorFactory {
     return componentMap.get();
   }
 
-  public static ArrayList<String> getArrayConnections(FPGAIOInformationContainer array, int id) {
+  public static ArrayList<String> getArrayConnections(FpgaIoInformationContainer array, int id) {
     final var connections = new ArrayList<String>();
     connections.addAll(
         switch (array.getArrayDriveMode()) {
@@ -268,7 +268,7 @@ public class LedArrayGenericHDLGeneratorFactory {
     return connections;
   }
 
-  public static ArrayList<String> getLedArrayConnections(FPGAIOInformationContainer info, int id) {
+  public static ArrayList<String> getLedArrayConnections(FpgaIoInformationContainer info, int id) {
     final var connections = LineBuffer.getHdlBuffer();
     connections.pair("id", id).pair("ins", LedArrayInputs);
     for (var pin = 0; pin < info.getNrOfPins(); pin++) {
@@ -282,7 +282,7 @@ public class LedArrayGenericHDLGeneratorFactory {
     return connections.getWithIndent();
   }
 
-  public static ArrayList<String> getRGBArrayConnections(FPGAIOInformationContainer array, int id) {
+  public static ArrayList<String> getRGBArrayConnections(FpgaIoInformationContainer array, int id) {
     final var connections =
         LineBuffer.getHdlBuffer()
            .pair("id", id)

@@ -22,9 +22,9 @@ public class MappableResourcesContainer {
 
   private final Circuit myCircuit;
   private final BoardInformation currentUsedBoard;
-  private IOComponentsInformation IOcomps;
+  private IoComponentsInformation IOcomps;
   private Map<ArrayList<String>, MapComponent> myMappableResources;
-  private final List<FPGAIOInformationContainer> myIOComponents;
+  private final List<FpgaIoInformationContainer> myIOComponents;
 
   /*
    * We differentiate two notation for each component, namely: 1) The display
@@ -45,7 +45,7 @@ public class MappableResourcesContainer {
     myIOComponents = new ArrayList<>();
     for (var io : currentUsedBoard.GetAllComponents()) {
       try {
-        var clone = (FPGAIOInformationContainer) io.clone();
+        var clone = (FpgaIoInformationContainer) io.clone();
         clone.setMapMode();
         myIOComponents.add(clone);
       } catch (CloneNotSupportedException e) {
@@ -59,9 +59,9 @@ public class MappableResourcesContainer {
    * Here we define the new structure of MappableResourcesContainer that allows for more features
    * and has less complexity; being compatible with the old version
    */
-  public IOComponentsInformation getIOComponentInformation() {
+  public IoComponentsInformation getIOComponentInformation() {
     if (IOcomps == null) {
-      IOcomps = new IOComponentsInformation(null, true);
+      IOcomps = new IoComponentsInformation(null, true);
       for (var io : myIOComponents) IOcomps.addComponent(io, 1);
       /* TODO: build-up info */
     }
@@ -175,7 +175,7 @@ public class MappableResourcesContainer {
     for (var key : myMappableResources.keySet()) {
       var map = myMappableResources.get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {
-        if (!map.isIO(i) || map.isInternalMapped(i)) continue;
+        if (!map.isIo(i) || map.isInternalMapped(i)) continue;
         if (map.isBoardMapped(i)) {
           var sb = new StringBuilder();
           if (map.isExternalInverted(i)) sb.append("n_");

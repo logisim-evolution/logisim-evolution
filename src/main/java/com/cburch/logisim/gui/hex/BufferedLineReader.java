@@ -26,9 +26,9 @@ import java.nio.charset.StandardCharsets;
  */
 abstract class BufferedLineReader {
 
-  protected long bsize;
-  protected int bpos;
-  protected int cpos;
+  protected long bufSize;
+  protected int bPos;
+  protected int charPos;
   protected char[] buf = new char[4096];
   protected int bufCount = 0; // how much of buf is full
   protected int bufPos = 0; // read position in buf
@@ -45,23 +45,23 @@ abstract class BufferedLineReader {
   }
 
   public void reset() throws IOException {
-    bpos = 0;
-    cpos = 0;
+    bPos = 0;
+    charPos = 0;
     bufPos = 0;
     bufCount = 0;
     skipNextNewline = false;
   }
 
   public int bytePosition() {
-    return bpos;
+    return bPos;
   }
 
   public int charPosition() {
-    return cpos;
+    return charPos;
   }
 
   public long byteLength() {
-    return bsize;
+    return bufSize;
   }
 
   abstract int underlyingReadUtf8(char[] cbuf, int off, int len) throws IOException;
@@ -77,8 +77,8 @@ abstract class BufferedLineReader {
       throw new IOException("raw byte read after unicode I/O");
     int total = underlyingReadBytes(bbuf, off, len);
     if (total <= 0) return total;
-    bpos += total;
-    while (total < len && bpos < bsize) {
+    bPos += total;
+    while (total < len && bPos < bufSize) {
       int n = underlyingReadBytes(bbuf, off + total, len - total);
       if (n <= 0) break;
       total += n;
@@ -94,7 +94,7 @@ abstract class BufferedLineReader {
 
     // skip old leftover linefeed
     if (skipNextNewline && buf[bufPos] == '\n') {
-      cpos++;
+      charPos++;
       bufPos++;
 
       // refill buffer, if necessary and possible
@@ -109,7 +109,7 @@ abstract class BufferedLineReader {
       while (bufPos < bufCount) {
         // consume one
         char c = buf[bufPos];
-        cpos++;
+        charPos++;
         bufPos++;
         // check for end of line
         if (c == '\n' || c == '\r') {
@@ -135,7 +135,7 @@ abstract class BufferedLineReader {
     // zero-copy read, like BufferedReader does
     if (!skipNextNewline && bufPos >= bufCount && len >= buf.length) {
       int n = underlyingReadUtf8(cbuf, off, len);
-      if (n > 0) cpos += n;
+      if (n > 0) charPos += n;
       return n;
     }
 
@@ -144,7 +144,7 @@ abstract class BufferedLineReader {
 
     // skip old leftover linefeed
     if (skipNextNewline && buf[bufPos] == '\n') {
-      cpos++;
+      charPos++;
       bufPos++;
 
       // refill buffer, if necessary and possible
@@ -154,7 +154,7 @@ abstract class BufferedLineReader {
 
     int n = Math.min(len, bufCount - bufPos);
     System.arraycopy(buf, bufPos, cbuf, off, n);
-    cpos += n;
+    charPos += n;
     bufPos += n;
     return n;
   }
@@ -178,21 +178,23 @@ abstract class BufferedLineReader {
     StringReader cin;
     ByteArrayInputStream bin;
 
-    ReaderForString(String s) {
+    public ReaderForString(String s) {
       cin = new StringReader(s);
       byte[] b = s.getBytes(StandardCharsets.UTF_8);
       bin = new ByteArrayInputStream(b);
-      bsize = b.length;
-      bpos = 0;
-      cpos = 0;
+      bufSize = b.length;
+      bPos = 0;
+      charPos = 0;
     }
 
+    @Override
     public void reset() throws IOException {
       cin.reset();
       bin.reset();
       super.reset();
     }
 
+    @Override
     public void close() throws IOException {
       try {
         bin.close();
@@ -203,10 +205,12 @@ abstract class BufferedLineReader {
       }
     }
 
+    @Override
     int underlyingReadUtf8(char[] cbuf, int off, int len) throws IOException {
       return cin.read(cbuf, off, len);
     }
 
+    @Override
     int underlyingReadBytes(byte[] bbuf, int off, int len) {
       return bin.read(bbuf, off, len);
     }
@@ -219,14 +223,17 @@ abstract class BufferedLineReader {
       randAccessFile = in;
     }
 
+    @Override
     public int read() throws IOException {
       return randAccessFile.read();
     }
 
+    @Override
     public int read(byte[] b) throws IOException {
       return randAccessFile.read(b);
     }
 
+    @Override
     public int read(byte[] b, int off, int len) throws IOException {
       return randAccessFile.read(b, off, len);
     }
@@ -239,11 +246,12 @@ abstract class BufferedLineReader {
     ReaderForFile(File f) throws IOException {
       bin = new RandomAccessFile(f, "r");
       cin = new InputStreamReader(new Adapter(bin), StandardCharsets.UTF_8);
-      bsize = bin.length();
-      bpos = 0;
-      cpos = 0;
+      bufSize = bin.length();
+      bPos = 0;
+      charPos = 0;
     }
 
+    @Override
     public void reset() throws IOException {
       bin.seek(0);
       // ISR buffers internally
@@ -251,6 +259,7 @@ abstract class BufferedLineReader {
       super.reset();
     }
 
+    @Override
     public void close() throws IOException {
       try {
         bin.close();
@@ -261,10 +270,12 @@ abstract class BufferedLineReader {
       }
     }
 
+    @Override
     int underlyingReadUtf8(char[] cbuf, int off, int len) throws IOException {
       return cin.read(cbuf, off, len);
     }
 
+    @Override
     int underlyingReadBytes(byte[] bbuf, int off, int len) throws IOException {
       return bin.read(bbuf, off, len);
     }

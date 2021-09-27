@@ -16,7 +16,7 @@ import com.cburch.logisim.fpga.designrulecheck.ConnectionPoint;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Net;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
@@ -111,7 +111,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     MyNetList.setCurrentHierarchyLevel(Hierarchy);
     /* First we handle the normal components */
-    for (NetlistComponent ThisComponent : MyNetList.getNormalComponents()) {
+    for (netlistComponent ThisComponent : MyNetList.getNormalComponents()) {
       String ComponentName =
           ThisComponent.getComponent()
               .getFactory()
@@ -151,7 +151,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     }
     /* Now we go down the hierarchy to get all other components */
-    for (NetlistComponent ThisCircuit : MyNetList.getSubCircuits()) {
+    for (netlistComponent ThisCircuit : MyNetList.getSubCircuits()) {
       CircuitHDLGeneratorFactory Worker =
           (CircuitHDLGeneratorFactory)
               ThisCircuit.getComponent()
@@ -196,7 +196,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   /* here the private handles are defined */
-  private String GetBubbleIndex(NetlistComponent comp, int type) {
+  private String GetBubbleIndex(netlistComponent comp, int type) {
     switch (type) {
       case 0:
         return HDL.BracketOpen()
@@ -224,7 +224,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ArrayList<String> GetComponentDeclarationSection(Netlist TheNetlist, AttributeSet attrs) {
     ArrayList<String> Components = new ArrayList<>();
     Set<String> InstantiatedComponents = new HashSet<>();
-    for (NetlistComponent Gate : TheNetlist.getNormalComponents()) {
+    for (netlistComponent Gate : TheNetlist.getNormalComponents()) {
       String CompName =
           Gate.getComponent().getFactory().getHDLName(Gate.getComponent().getAttributeSet());
       if (!InstantiatedComponents.contains(CompName)) {
@@ -245,7 +245,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       }
     }
     InstantiatedComponents.clear();
-    for (NetlistComponent Gate : TheNetlist.getSubCircuits()) {
+    for (netlistComponent Gate : TheNetlist.getSubCircuits()) {
       String CompName =
           Gate.getComponent().getFactory().getHDLName(Gate.getComponent().getAttributeSet());
       if (Gate.isGatedInstance()) CompName = CompName.concat("_gated");
@@ -393,7 +393,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         contents.addRemarkBlock("Here all output connections are defined");
         isFirstLine = false;
       }
-      NetlistComponent MyOutput = theNetlist.getOutputPin(i);
+      netlistComponent MyOutput = theNetlist.getOutputPin(i);
       contents.add(
           getSignalMap(
               CorrectLabel.getCorrectLabel(MyOutput.getComponent().getAttributeSet().getValue(StdAttr.LABEL)),
@@ -469,7 +469,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var PortMap = new TreeMap<String, String>();
     if (MapInfo == null) return null;
     final var topLevel = MapInfo instanceof MappableResourcesContainer;
-    final var componentInfo = topLevel ? null : (NetlistComponent) MapInfo;
+    final var componentInfo = topLevel ? null : (netlistComponent) MapInfo;
     var mapInfo = topLevel ? (MappableResourcesContainer) MapInfo : null;
     final var Preamble = topLevel ? "s_" : "";
     final var sub = topLevel ? null : (SubcircuitFactory) componentInfo.getComponent().getFactory();
@@ -517,7 +517,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             Reporter.report.addError("BUG: did not find IOpin");
             continue;
           }
-          if (!map.isMapped(compPin) || map.IsOpenMapped(compPin)) {
+          if (!map.isMapped(compPin) || map.isOpenMapped(compPin)) {
             // FIXME: rewrite using LineBuffer
             if (HDL.isVHDL())
               PortMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME + "(" + i + ")", "OPEN");
@@ -548,7 +548,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var nrOfInputPorts = myNetList.getNumberOfInputPorts();
     if (nrOfInputPorts > 0) {
       for (var i = 0; i < nrOfInputPorts; i++) {
-        NetlistComponent selected = myNetList.getInputPin(i);
+        netlistComponent selected = myNetList.getInputPin(i);
         if (selected != null) {
           final var pinLabel = CorrectLabel.getCorrectLabel(selected.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
           if (topLevel) {
@@ -614,7 +614,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     return PortMap;
   }
 
-  private String getSignalMap(String portName, NetlistComponent comp, int endIndex, int tabSize, Netlist TheNets) {
+  private String getSignalMap(String portName, netlistComponent comp, int endIndex, int tabSize, Netlist TheNets) {
     final var contents = new StringBuilder();
     final var source = new StringBuilder();
     final var destination = new StringBuilder();

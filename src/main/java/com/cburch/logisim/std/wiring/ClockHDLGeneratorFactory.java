@@ -12,7 +12,7 @@ package com.cburch.logisim.std.wiring;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
@@ -64,8 +64,8 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> getPortMap(Netlist Nets, Object MapInfo) {
     final var map = new TreeMap<String, String>();
-    if (!(MapInfo instanceof NetlistComponent)) return map;
-    final var componentInfo = (NetlistComponent) MapInfo;
+    if (!(MapInfo instanceof netlistComponent)) return map;
+    final var componentInfo = (netlistComponent) MapInfo;
     map.put("GlobalClock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
     map.put("ClockTick", TickComponentHDLGeneratorFactory.FPGA_TICK);
     map.put("ClockBus", "s_" + GetClockNetName(componentInfo.getComponent(), Nets));

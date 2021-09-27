@@ -11,7 +11,7 @@ package com.cburch.logisim.std.wiring;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.InlinedHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
@@ -27,7 +27,7 @@ public class AbstractConstantHDLGeneratorFactory extends InlinedHDLGeneratorFact
   public ArrayList<String> getInlinedCode(
       Netlist nets,
       Long componentId,
-      NetlistComponent componentInfo,
+      netlistComponent componentInfo,
       String circuitName) {
     final var Contents = LineBuffer.getHdlBuffer();
     int NrOfBits = componentInfo.getComponent().getEnd(0).getWidth().getWidth();

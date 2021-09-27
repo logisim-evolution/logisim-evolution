@@ -12,14 +12,14 @@ package com.cburch.logisim.fpga.hdlgenerator;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitHDLGeneratorFactory;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.data.IOComponentTypes;
+import com.cburch.logisim.fpga.data.FpgaIoInformationContainer;
+import com.cburch.logisim.fpga.data.IoComponentTypes;
 import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PinActivity;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.io.LedArrayGenericHDLGeneratorFactory;
@@ -35,7 +35,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private final MappableResourcesContainer myIOComponents;
   private final boolean requiresFPGAClock;
   private final boolean hasLedArray;
-  private final ArrayList<FPGAIOInformationContainer> myLedArrays;
+  private final ArrayList<FpgaIoInformationContainer> myLedArrays;
   private final HashMap<String, Boolean> ledArrayTypesUsed;
   public static final String HDL_DIRECTORY = "toplevel";
 
@@ -50,7 +50,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var hasLedArray = false;
     final var nets = topLevel.getNetList();
     final var ledArrayTypesUsed = new HashMap<String, Boolean>();
-    final var ledArrays = new ArrayList<FPGAIOInformationContainer>();
+    final var ledArrays = new ArrayList<FpgaIoInformationContainer>();
     final var nrOfClockTrees = nets.numberOfClockTrees();
     final var nrOfInputBubbles = nets.getNumberOfInputBubbles();
     final var nrOfInOutBubbles = nets.numberOfInOutBubbles();
@@ -59,7 +59,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var nrOfInOutPorts = nets.numberOfInOutPorts();
     final var nrOfOutputPorts = nets.numberOfOutputPorts();
     for (final var comp : myIOComponents.getIOComponentInformation().getComponents()) {
-      if (comp.GetType().equals(IOComponentTypes.LEDArray)) {
+      if (comp.getType().equals(IoComponentTypes.LedArray)) {
         if (comp.hasMap()) {
           ledArrayTypesUsed.put(LedArrayDriving.getStrings().get(comp.getArrayDriveMode()), true);
           ledArrays.add(comp);
@@ -202,7 +202,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       final var ticker = new TickComponentHDLGeneratorFactory(fpgaClockFrequency, tickFrequency);
       contents.add(ticker.getComponentMap(null, index++, null, TickComponentHDLGeneratorFactory.HDL_IDENTIFIER));
       for (final var clockGen : theNetlist.getAllClockSources()) {
-        final var thisClock = new NetlistComponent(clockGen);
+        final var thisClock = new netlistComponent(clockGen);
         contents.add(
             clockGen.getFactory()
                 .getHDLGenerator(thisClock.getComponent().getAttributeSet())
@@ -226,7 +226,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 array.getNrOfColumns(),
                 myLedArrays.indexOf(array),
                 fpgaClockFrequency,
-                array.GetActivityLevel() == PinActivity.ACTIVE_LOW));
+                array.getActivityLevel() == PinActivity.ACTIVE_LOW));
         contents.add(LedArrayGenericHDLGeneratorFactory.getArrayConnections(array, myLedArrays.indexOf(array)));
       }
     }

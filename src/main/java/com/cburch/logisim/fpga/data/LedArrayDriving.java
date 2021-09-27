@@ -17,15 +17,12 @@ import java.util.LinkedList;
 public class LedArrayDriving {
 
   public static String GetContraintedDriveMode(char id) {
-    if ((id >= LED_DEFAULT) && (id <= RGB_COLUMN_SCANNING)) {
-      return DRIVING_STRINGS[id];
-    }
-    return "Unknown";
+    return ((id >= LED_DEFAULT) && (id <= RGB_COLUMN_SCANNING)) ? DRIVING_STRINGS[id] : "Unknown";
   }
 
   public static char getId(String identifier) {
     char result = 0;
-    LinkedList<String> thelist = LedArrayDriving.getStrings();
+    final var thelist = LedArrayDriving.getStrings();
     Iterator<String> iter = thelist.iterator();
     while (iter.hasNext()) {
       if (iter.next().equals(identifier)) return result;

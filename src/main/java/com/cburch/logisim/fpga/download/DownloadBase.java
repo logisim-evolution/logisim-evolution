@@ -12,7 +12,7 @@ package com.cburch.logisim.fpga.download;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.fpga.data.BoardInformation;
-import com.cburch.logisim.fpga.data.IOComponentTypes;
+import com.cburch.logisim.fpga.data.IoComponentTypes;
 import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
@@ -72,7 +72,7 @@ public abstract class DownloadBase {
       return false;
     }
 
-    final var boardComponents = myBoardInformation.GetComponents();
+    final var boardComponents = myBoardInformation.getComponents();
     Reporter.report.addInfo("The Board " + myBoardInformation.getBoardName() + " has:");
     for (final var key : boardComponents.keySet()) {
       Reporter.report.addInfo(boardComponents.get(key).size() + " " + key + "(s)");
@@ -296,7 +296,7 @@ public abstract class DownloadBase {
     final var ledArrayMaps = new HashMap<String, String>();
     var hasMappedClockedArray = false;
     for (final var comp : maps.getIOComponentInformation().getComponents()) {
-      if (comp.GetType().equals(IOComponentTypes.LEDArray)) {
+      if (comp.getType().equals(IoComponentTypes.LedArray)) {
         if (comp.hasMap()) {
           hasMappedClockedArray |= LedArrayGenericHDLGeneratorFactory.requiresClock(comp.getArrayDriveMode());
           for (var pin = 0; pin < comp.getExternalPinCount(); pin++) {

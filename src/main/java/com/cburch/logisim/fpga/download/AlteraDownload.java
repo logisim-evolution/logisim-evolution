@@ -254,7 +254,7 @@ public class AlteraDownload implements VendorDownload {
       final var map = mapInfo.getMappableResources().get(key);
 
       for (var i = 0; i < map.getNrOfPins(); i++) {
-        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
+        if (map.isMapped(i) && !map.isOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
           final var pairs = new LineBuffer.Pairs()
                   .pair("pinLoc", map.getPinLocation(i))
                   .pair("inv", map.isExternalInverted(i) ? "n_" : "")
