@@ -42,22 +42,16 @@ public class HdlTypes {
     @Override
     public String getTypeDefinition() {
       final var contents = new StringBuffer();
-      if (Hdl.isVhdl())
-        contents.append(String.format("TYPE %s IS ( ", myTypeName));
-      else
-        contents.append("typedef enum { ");
+      if (Hdl.isVhdl()) contents.append(String.format("TYPE %s IS ( ", myTypeName));
+      else contents.append("typedef enum { ");
       var first = true;
       for (final var entry : myEntries) {
-        if (first)
-          first = false;
-        else
-          contents.append(", ");
+        if (first) first = false;
+        else contents.append(", ");
         contents.append(entry);
       }
-      if (Hdl.isVhdl())
-        contents.append(");");
-      else
-        contents.append(String.format("} %s;", myTypeName));
+      if (Hdl.isVhdl()) contents.append(");");
+      else contents.append(String.format("} %s;", myTypeName));
       return contents.toString();
     }
 
