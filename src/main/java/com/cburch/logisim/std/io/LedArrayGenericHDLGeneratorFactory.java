@@ -323,13 +323,13 @@ public class LedArrayGenericHDLGeneratorFactory {
           final var bOff = offColor.getBlue();
           final var pinName = map.getHdlSignalName(array.getMapPin(pin));
 
-          final var idPin = id + HDL.BracketOpen() + pin + HDL.BracketClose();
+          final var idPin = id + HDL.bracketOpen() + pin + HDL.bracketClose();
           connections.add(getColorMap("s_" + LedArrayRedInputs + idPin, rOn, rOff, pinName));
           connections.add(getColorMap("s_" + LedArrayGreenInputs + idPin, gOn, gOff, pinName));
           connections.add(getColorMap("s_" + LedArrayBlueInputs + idPin, bOn, bOff, pinName));
         } else {
           final var pinName = map.getHdlSignalName(array.getMapPin(pin));
-          final var idPinName = id + HDL.BracketOpen() + pin + HDL.BracketClose() + HDL.assignOperator() + pinName + ";";
+          final var idPinName = id + HDL.bracketOpen() + pin + HDL.bracketClose() + HDL.assignOperator() + pinName + ";";
           connections.add("   " + HDL.assignPreamble() + "s_" + LedArrayRedInputs + idPinName);
           connections.add("   " + HDL.assignPreamble() + "s_" + LedArrayGreenInputs + idPinName);
           connections.add("   " + HDL.assignPreamble() + "s_" + LedArrayBlueInputs + idPinName);

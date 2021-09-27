@@ -596,23 +596,23 @@ public class MapComponent {
     if (myInputBubbles.containsKey(pin) && myInputBubbles.get(pin) >= 0) {
       return "s_"
           + HDLGeneratorFactory.LOCAL_INPUT_BUBBLE_BUS_NAME
-          + HDL.BracketOpen()
+          + HDL.bracketOpen()
           + myInputBubbles.get(pin)
-          + HDL.BracketClose();
+          + HDL.bracketClose();
     }
     if (MyOutputBubbles.containsKey(pin) && MyOutputBubbles.get(pin) >= 0) {
       return "s_"
           + HDLGeneratorFactory.LOCAL_OUTPUT_BUBBLE_BUS_NAME
-          + HDL.BracketOpen()
+          + HDL.bracketOpen()
           + MyOutputBubbles.get(pin)
-          + HDL.BracketClose();
+          + HDL.bracketClose();
     }
     var s = new StringBuilder();
     s.append("s_");
     /* The first element is the BoardName, so we skip */
     for (var i = 1; i < myName.size(); i++) s.append(i == 1 ? "" : "_").append(myName.get(i));
     if (nrOfPins > 1) {
-      s.append(HDL.BracketOpen()).append(pin).append(HDL.BracketClose());
+      s.append(HDL.bracketOpen()).append(pin).append(HDL.bracketClose());
     }
     return s.toString();
   }

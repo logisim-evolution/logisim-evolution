@@ -93,6 +93,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           oneLine.append("_vector( ");
           if (myWires.get(wire) < 0) {
             if (!myParametersList.containsKey(myWires.get(wire), attrs)) {
+              // FIXME: hard coded String
               Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
               return contents.clear().get();
             }
@@ -116,6 +117,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           oneLine.append("_vector( ");
           if (myWires.get(reg) < 0) {
             if (!myParametersList.containsKey(myWires.get(reg), attrs)) {
+              // FIXME: hard coded String
               Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
               contents.clear();
               return contents.get();
@@ -147,49 +149,50 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           .add(getModuleFunctionality(theNetlist, attrs))
           .add("END PlatformIndependent;");
     } else {
-      final var Preamble = String.format("module %s( ", componentName);
-      final var Indenting = new StringBuilder();
-      while (Indenting.length() < Preamble.length()) Indenting.append(" ");
+      final var preamble = String.format("module %s( ", componentName);
+      final var indenting = new StringBuilder();
+      while (indenting.length() < preamble.length()) indenting.append(" ");
       if (myPorts.isEmpty()) {
-        contents.add(Preamble + " );");
+        contents.add(preamble + " );");
       } else {
-        final var ThisLine = new StringBuilder();
+        final var thisLine = new StringBuilder();
         for (final var inp : myPorts.keySet(Port.INPUT)) {
-          if (ThisLine.length() == 0) {
-            ThisLine.append(Preamble).append(inp);
+          if (thisLine.length() == 0) {
+            thisLine.append(preamble).append(inp);
           } else {
-            contents.add(ThisLine + ",");
-            ThisLine.setLength(0);
-            ThisLine.append(Indenting).append(inp);
+            contents.add(thisLine + ",");
+            thisLine.setLength(0);
+            thisLine.append(indenting).append(inp);
           }
           // Special case for the clocks we have to add the tick
           if (myPorts.isClock(inp)) {
-            contents.add(ThisLine + ",");
-            ThisLine.setLength(0);
-            ThisLine.append(Indenting).append(myPorts.getTickName(inp));
+            contents.add(thisLine + ",");
+            thisLine.setLength(0);
+            thisLine.append(indenting).append(myPorts.getTickName(inp));
           }
         }
         for (final var outp : myPorts.keySet(Port.OUTPUT)) {
-          if (ThisLine.length() == 0) {
-            ThisLine.append(Preamble).append(outp);
+          if (thisLine.length() == 0) {
+            thisLine.append(preamble).append(outp);
           } else {
-            contents.add(ThisLine + ",");
-            ThisLine.setLength(0);
-            ThisLine.append(Indenting).append(outp);
+            contents.add(thisLine + ",");
+            thisLine.setLength(0);
+            thisLine.append(indenting).append(outp);
           }
         }
         for (final var io : myPorts.keySet(Port.INOUT)) {
-          if (ThisLine.length() == 0) {
-            ThisLine.append(Preamble).append(io);
+          if (thisLine.length() == 0) {
+            thisLine.append(preamble).append(io);
           } else {
-            contents.add(ThisLine + ",");
-            ThisLine.setLength(0);
-            ThisLine.append(Indenting).append(io);
+            contents.add(thisLine + ",");
+            thisLine.setLength(0);
+            thisLine.append(indenting).append(io);
           }
         }
-        if (ThisLine.length() != 0) {
-          contents.add(ThisLine + ");");
+        if (thisLine.length() != 0) {
+          contents.add(thisLine + ");");
         } else {
+          // FIXME: hard coded String
           Reporter.report.addError("Internale Error in Verilog Architecture generation!");
         }
       }
@@ -217,6 +220,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
+            // FIXME: hard coded String
             Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             return contents.clear().get();
           }
@@ -252,6 +256,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
+            // FIXME: hard coded String
             Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             contents.clear();
             return contents.get();
@@ -281,8 +286,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
-            Reporter.report.addFatalError(
-                "Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+            // FIXME: hard coded String
+            Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             return contents.clear().get();
           }
           oneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
@@ -310,6 +315,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
+            // FIXME: hard coded String
             Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             return contents.clear().get();
           }
@@ -337,6 +343,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         if (nrOfPortBits < 0) {
           /* we have a parameterized array */
           if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
+            // FIXME: hard coded String
             Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
             return contents.clear().get();
           }
@@ -351,9 +358,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         oneLine.append(" ").append(reg).append(";");
         if (firstline) {
           firstline = false;
-          contents
-              .empty()
-              .addRemarkBlock("Here the internal registers are defined");
+          contents.empty().addRemarkBlock("Here the internal registers are defined");
         }
         contents.add(oneLine.toString());
       }
@@ -361,16 +366,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       final var typedWires = myTypedWires.getTypedWires();
       for (final var wire : typedWires.keySet()) {
         oneLine.setLength(0);
-        oneLine.append("   ")
-            .append(typedWires.get(wire))
-            .append(" ")
-            .append(wire)
-            .append(";");
+        oneLine.append("   ").append(typedWires.get(wire)).append(" ").append(wire).append(";");
         if (firstline) {
           firstline = false;
-          contents
-              .empty()
-              .addRemarkBlock("Here the type defined signals are defined");
+          contents.empty().addRemarkBlock("Here the type defined signals are defined");
         }
         contents.add("   {{1}}", oneLine.toString());
       }
@@ -382,7 +381,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     return contents.get();
   }
 
-  public ArrayList<String> getComponentDeclarationSection(Netlist TheNetlist, AttributeSet attrs) {
+  public ArrayList<String> getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
     /*
      * This method returns all the component definitions used as component
      * in the circuit. This method is only called in case of VHDL-code
@@ -399,18 +398,14 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getComponentMap(
-      Netlist nets,
-      Long componentId,
-      Object componentInfo,
-      String name) {
+  public ArrayList<String> getComponentMap(Netlist nets, Long componentId, Object componentInfo, String name) {
     final var contents = new ArrayList<String>();
     final var parameterMap = new TreeMap<String, String>();
-    final var PortMap = getPortMap(nets, componentInfo);
+    final var portMap = getPortMap(nets, componentInfo);
     final var componentHDLName = componentInfo instanceof NetlistComponent
         ? ((NetlistComponent) componentInfo).getComponent().getFactory().getHDLName(((NetlistComponent) componentInfo).getComponent().getAttributeSet()) :
           name;
-    final var CompName = (name != null && !name.isEmpty()) ? name : componentHDLName;
+    final var compName = (name != null && !name.isEmpty()) ? name : componentHDLName;
     final var ThisInstanceIdentifier = getInstanceIdentifier(componentInfo, componentId);
     final var oneLine = new StringBuilder();
     if (componentInfo == null) parameterMap.putAll(myParametersList.getMaps(null));
@@ -421,7 +416,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     var TabLength = 0;
     var first = true;
     if (HDL.isVHDL()) {
-      contents.add("   " + ThisInstanceIdentifier + " : " + CompName);
+      contents.add("   " + ThisInstanceIdentifier + " : " + compName);
       if (!parameterMap.isEmpty()) {
         oneLine.append("      GENERIC MAP ( ");
         TabLength = oneLine.length();
@@ -445,11 +440,11 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         contents.add(oneLine.toString());
         oneLine.setLength(0);
       }
-      if (!PortMap.isEmpty()) {
+      if (!portMap.isEmpty()) {
         oneLine.append("      PORT MAP ( ");
         TabLength = oneLine.length();
         first = true;
-        for (var port : PortMap.keySet()) {
+        for (var port : portMap.keySet()) {
           if (!first) {
             oneLine.append(",");
             contents.add(oneLine.toString());
@@ -462,14 +457,14 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
           }
           oneLine.append(port);
           oneLine.append(" ".repeat(Math.max(0, SIGNAL_ALLIGNMENT_SIZE - port.length())));
-          oneLine.append("=> ").append(PortMap.get(port));
+          oneLine.append("=> ").append(portMap.get(port));
         }
         oneLine.append(");");
         contents.add(oneLine.toString());
         oneLine.setLength(0);
       }
     } else {
-      oneLine.append("   ").append(CompName);
+      oneLine.append("   ").append(compName);
       if (!parameterMap.isEmpty()) {
         oneLine.append(" #(");
         TabLength = oneLine.length();
@@ -492,10 +487,10 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
         oneLine.setLength(0);
       }
       oneLine.append("      ").append(ThisInstanceIdentifier).append(" (");
-      if (!PortMap.isEmpty()) {
+      if (!portMap.isEmpty()) {
         TabLength = oneLine.length();
         first = true;
-        for (var port : PortMap.keySet()) {
+        for (var port : portMap.keySet()) {
           if (!first) {
             oneLine.append(",");
             contents.add(oneLine.toString());
@@ -507,7 +502,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
             first = false;
           }
           oneLine.append(".").append(port).append("(");
-          final var MappedSignal = PortMap.get(port);
+          final var MappedSignal = portMap.get(port);
           if (!MappedSignal.contains(",")) {
             oneLine.append(MappedSignal);
           } else {

@@ -199,23 +199,23 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private String GetBubbleIndex(NetlistComponent comp, int type) {
     switch (type) {
       case 0:
-        return HDL.BracketOpen()
+        return HDL.bracketOpen()
             + comp.getLocalBubbleInputEndId()
             + HDL.vectorLoopId()
             + comp.getLocalBubbleInputStartId()
-            + HDL.BracketClose();
+            + HDL.bracketClose();
       case 1:
-        return HDL.BracketOpen()
+        return HDL.bracketOpen()
             + comp.getLocalBubbleOutputEndId()
             + HDL.vectorLoopId()
             + comp.getLocalBubbleOutputStartId()
-            + HDL.BracketClose();
+            + HDL.bracketClose();
       case 2:
-        return HDL.BracketOpen()
+        return HDL.bracketOpen()
             + comp.getLocalBubbleInOutEndId()
             + HDL.vectorLoopId()
             + comp.getLocalBubbleInOutStartId()
-            + HDL.BracketClose();
+            + HDL.bracketClose();
     }
     return "";
   }
@@ -282,9 +282,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             if (ThisNet.isBus()) {
               OneLine.append(BUS_NAME)
                   .append(TheNets.getNetId(ThisNet))
-                  .append(HDL.BracketOpen())
+                  .append(HDL.bracketOpen())
                   .append(bit)
-                  .append(HDL.BracketClose());
+                  .append(HDL.bracketClose());
             } else {
               OneLine.append(NET_NAME).append(TheNets.getNetId(ThisNet));
             }
@@ -298,17 +298,17 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             OneLine.setLength(0);
             OneLine.append(BUS_NAME)
                 .append(TheNets.getNetId(Source.getParentNet()))
-                .append(HDL.BracketOpen())
+                .append(HDL.bracketOpen())
                 .append(Source.getParentNetBitIndex())
-                .append(HDL.BracketClose());
+                .append(HDL.bracketClose());
             while (OneLine.length() < SIGNAL_ALLIGNMENT_SIZE) OneLine.append(" ");
             OneLine.append(HDL.assignOperator());
             if (ThisNet.isBus()) {
               OneLine.append(BUS_NAME)
                   .append(TheNets.getNetId(ThisNet))
-                  .append(HDL.BracketOpen())
+                  .append(HDL.bracketOpen())
                   .append(bit)
-                  .append(HDL.BracketClose());
+                  .append(HDL.bracketClose());
             } else {
               OneLine.append(NET_NAME).append(TheNets.getNetId(ThisNet));
             }
@@ -711,15 +711,15 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             if (isOutput) {
               source
                   .append(portName)
-                  .append(HDL.BracketOpen())
+                  .append(HDL.bracketOpen())
                   .append(bit)
-                  .append(HDL.BracketClose());
+                  .append(HDL.bracketClose());
             } else {
               destination
                   .append(portName)
-                  .append(HDL.BracketOpen())
+                  .append(HDL.bracketOpen())
                   .append(bit)
-                  .append(HDL.BracketClose());
+                  .append(HDL.bracketClose());
             }
             final var solderPoint = connectionInformation.get((byte) bit);
             if (solderPoint.getParentNet() == null) {
@@ -746,16 +746,16 @@ public class CircuitHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                   destination
                       .append(BUS_NAME)
                       .append(TheNets.getNetId(solderPoint.getParentNet()))
-                      .append(HDL.BracketOpen())
+                      .append(HDL.bracketOpen())
                       .append(solderPoint.getParentNetBitIndex())
-                      .append(HDL.BracketClose());
+                      .append(HDL.bracketClose());
                 } else {
                   source
                       .append(BUS_NAME)
                       .append(TheNets.getNetId(solderPoint.getParentNet()))
-                      .append(HDL.BracketOpen())
+                      .append(HDL.bracketOpen())
                       .append(solderPoint.getParentNetBitIndex())
-                      .append(HDL.BracketClose());
+                      .append(HDL.bracketClose());
                 }
               }
             }
