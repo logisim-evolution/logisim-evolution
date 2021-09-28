@@ -729,7 +729,6 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       }
     }
     contents.add("{{1}} {{2}};", isEntity ? "END ENTITY" : "END", isEntity ? componentName : "COMPONENT").empty();
-    contents.empty();
     return contents.getWithIndent(isEntity ? 0 : 1);
   }
   
