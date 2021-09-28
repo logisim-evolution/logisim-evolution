@@ -54,20 +54,20 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHdlGeneratorFact
     if (!(mapInfo instanceof netlistComponent)) return map;
     final var comp = (netlistComponent) mapInfo;
     final var nrOfBits = comp.nrOfEnds() - 4;
-    map.putAll(GetNetMap("enable", false, comp, nrOfBits + PriorityEncoder.EN_IN, nets));
+    map.putAll(Hdl.getNetMap("enable", false, comp, nrOfBits + PriorityEncoder.EN_IN, nets));
     final var vectorList = new StringBuilder();
     for (var i = nrOfBits - 1; i >= 0; i--) {
       if (Hdl.isVhdl())
-        map.putAll(GetNetMap("input_vector(" + i + ")", true, comp, i, nets));
+        map.putAll(Hdl.getNetMap("input_vector(" + i + ")", true, comp, i, nets));
       else {
         if (vectorList.length() > 0) vectorList.append(",");
         vectorList.append(Hdl.getNetName(comp, i, true, nets));
       }
     }
     if (Hdl.isVerilog()) map.put("input_vector", vectorList.toString());
-    map.putAll(GetNetMap("GroupSelect", true, comp, nrOfBits + PriorityEncoder.GS, nets));
-    map.putAll(GetNetMap("EnableOut", true, comp, nrOfBits + PriorityEncoder.EN_OUT, nets));
-    map.putAll(GetNetMap("Address", true, comp, nrOfBits + PriorityEncoder.OUT, nets));
+    map.putAll(Hdl.getNetMap("GroupSelect", true, comp, nrOfBits + PriorityEncoder.GS, nets));
+    map.putAll(Hdl.getNetMap("EnableOut", true, comp, nrOfBits + PriorityEncoder.EN_OUT, nets));
+    map.putAll(Hdl.getNetMap("Address", true, comp, nrOfBits + PriorityEncoder.OUT, nets));
     return map;
   }
 

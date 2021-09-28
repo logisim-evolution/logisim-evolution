@@ -88,23 +88,23 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactor
         if (nrOfBits == 1) {
           if (Hdl.isVhdl()) {
             for (var stage = 0; stage < nrOfStages; stage++)
-              map.putAll(GetNetMap(String.format("D(%d)", stage), true, comp, 6 + 2 * stage, nets));
+              map.putAll(Hdl.getNetMap(String.format("D(%d)", stage), true, comp, 6 + (2 * stage), nets));
             final var nrOfOutStages = attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC
                 ? nrOfStages : nrOfStages - 1;
             for (var stage = 0; stage < nrOfOutStages; stage++)
-              map.putAll(GetNetMap(String.format("Q(%d)", stage), true, comp, 7 + 2 * stage, nets));
+              map.putAll(Hdl.getNetMap(String.format("Q(%d)", stage), true, comp, 7 + (2 * stage), nets));
             map.put(String.format("Q(%d)", nrOfStages - 1), "OPEN");
           } else {
             for (var stage = nrOfStages - 1; stage >= 0; stage--) {
               if (vector.length() != 0) vector.append(",");
-              vector.append(Hdl.getNetName(comp, 6 + 2 * stage, true, nets));
+              vector.append(Hdl.getNetName(comp, 6 + (2 * stage), true, nets));
             }
             map.put("D", vector.toString());
             vector.setLength(0);
             vector.append("open");
             for (var stage = nrOfStages - 2; stage >= 0; stage--) {
               if (vector.length() != 0) vector.append(",");
-              vector.append(Hdl.getNetName(comp, 7 + 2 * stage, true, nets));
+              vector.append(Hdl.getNetName(comp, 7 + (2 * stage), true, nets));
             }
             map.put("Q", vector.toString());
           }
@@ -112,20 +112,20 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactor
           if (Hdl.isVhdl()) {
             for (var bit = 0; bit < nrOfBits; bit++) {
               for (var stage = 0; stage < nrOfStages; stage++) {
-                final var index = bit * nrOfStages + stage;
-                final var id = 6 + 2 * stage;
+                final var index = (bit * nrOfStages) + stage;
+                final var id = 6 + (2 * stage);
                 map.put(String.format("D(%d)", index), Hdl.getBusEntryName(comp, id, true, bit, nets));
                 if (stage == nrOfStages - 1) continue;
                 map.put(String.format("Q(%d)", index), Hdl.getBusEntryName(comp, id + 1, true, bit, nets));
               }
-              map.put(String.format("Q(%d)", (bit + 1) * nrOfStages - 1), "OPEN");
+              map.put(String.format("Q(%d)", ((bit + 1) * nrOfStages) - 1), "OPEN");
             }
           } else {
             vector.setLength(0);
             for (var bit = nrOfBits - 1; bit >= 0; bit--) {
               for (var stage = nrOfStages - 1; stage >= 0; stage--) {
                 if (vector.length() != 0) vector.append(",");
-                vector.append(Hdl.getBusEntryName(comp, 6 + 2 * stage, true, bit, nets));
+                vector.append(Hdl.getBusEntryName(comp, 6 + (2 * stage), true, bit, nets));
               }
             }
             map.put("D", vector.toString());
@@ -135,7 +135,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactor
               vector.append("open");
               for (var stage = nrOfStages - 2; stage >= 0; stage--) {
                 if (vector.length() != 0) vector.append(",");
-                vector.append(Hdl.getBusEntryName(comp, 7 + 2 * stage, true, bit, nets));
+                vector.append(Hdl.getBusEntryName(comp, 7 + (2 * stage), true, bit, nets));
               }
             }
             map.put("Q", vector.toString());
@@ -235,7 +235,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactor
   }
 
   @Override
-  public ArrayList<String> GetComponentDeclarationSection(Netlist nets, AttributeSet attrs) {
+  public ArrayList<String> getComponentDeclarationSection(Netlist nets, AttributeSet attrs) {
     return LineBuffer.getHdlBuffer()
         .pair("clock", HdlPorts.getClockName(1))
         .pair("tick", HdlPorts.getTickName(1))
