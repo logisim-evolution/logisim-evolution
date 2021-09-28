@@ -702,7 +702,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       var firstEntry = true;
       var currentEntry = 0;
       // now we process in order
-      var direction = (myPorts.keySet(Port.INOUT).size() > 0 ) ? "IN   ": "IN ";
+      var direction = (myPorts.keySet(Port.INOUT).size() > 0) ? "IN   " : "IN ";
       final var myInputs = new TreeSet<String>(myPorts.keySet(Port.INPUT));
       myInputs.addAll(tickers);
       for (final var input : myInputs) {
@@ -719,7 +719,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         firstEntry = getPortEntry(contents, firstEntry, nrOfEntries, currentEntry, inout, direction, type, maxNameLength);
         currentEntry++;
       }
-      direction = (myPorts.keySet(Port.INOUT).size() > 0 ) ? "OUT  ": "OUT";
+      direction = (myPorts.keySet(Port.INOUT).size() > 0) ? "OUT  " : "OUT";
       final var myOutputs = new TreeSet<String>(myPorts.keySet(Port.OUTPUT));
       for (final var output : myOutputs) {
         nrOfPortBits = myPorts.get(output, attrs);
@@ -730,7 +730,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     }
     contents.add("{{1}} {{2}};", isEntity ? "END ENTITY" : "END", isEntity ? componentName : "COMPONENT").empty();
     contents.empty();
-    return contents.get();
+    return contents.getWithIndent(isEntity ? 0 : 1);
   }
   
   private boolean getPortEntry(LineBuffer contents, boolean firstEntry, int nrOfEntries, int currentEntry,
