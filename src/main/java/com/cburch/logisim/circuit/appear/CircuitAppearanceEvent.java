@@ -11,25 +11,18 @@ package com.cburch.logisim.circuit.appear;
 
 import com.cburch.logisim.circuit.Circuit;
 
-public class CircuitAppearanceEvent {
+// NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
+// getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
+// that in future, but for now it looks stupid in this file only.
+public record CircuitAppearanceEvent(Circuit getCircuit, int getAffects) {
+
   public static final int APPEARANCE = 1;
   public static final int BOUNDS = 2;
   public static final int PORTS = 4;
   public static final int ALL_TYPES = 7;
 
-  private final Circuit circuit;
-  private final int affects;
-
-  CircuitAppearanceEvent(Circuit circuit, int affects) {
-    this.circuit = circuit;
-    this.affects = affects;
-  }
-
-  public Circuit getSource() {
-    return circuit;
-  }
-
   public boolean isConcerning(int type) {
-    return (affects & type) != 0;
+    return (getAffects() & type) != 0;
   }
+
 }

@@ -9,28 +9,17 @@
 
 package com.cburch.logisim.gui.generic;
 
-public class AttrTableModelEvent {
-  private final AttrTableModel model;
-  private final int index;
+// NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
+// getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
+// that in future, but for now it looks stupid in this file only.
+public record AttrTableModelEvent(AttrTableModel getModel, int getRowIndex) {
 
   public AttrTableModelEvent(AttrTableModel model) {
     this(model, -1);
   }
 
-  public AttrTableModelEvent(AttrTableModel model, int index) {
-    this.model = model;
-    this.index = index;
+  public AttrTableModel getSource() {
+    return getModel;
   }
 
-  public AttrTableModel getModel() {
-    return model;
-  }
-
-  public int getRowIndex() {
-    return index;
-  }
-
-  public Object getSource() {
-    return model;
-  }
 }
