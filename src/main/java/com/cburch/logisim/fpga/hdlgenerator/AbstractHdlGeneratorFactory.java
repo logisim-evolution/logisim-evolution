@@ -510,7 +510,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       contents.add(oneLine.toString());
     }
     contents.add("");
-    return contents.getWithIndent(1);
+    return contents.getWithIndent();
   }
 
   @Override
