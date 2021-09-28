@@ -239,7 +239,8 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var temp = new StringBuffer();
     final var contents = new ArrayList<String>();
     if (component.getNrOfPins() <= 0) {
-      Reporter.report.addError("BUG: Found a component with no pins");
+      // FIXME: hardcoded string
+      Reporter.report.addError("BUG: Found a component with no pins. Please report this occurance!");
       return contents;
     }
     for (var i = 0; i < component.getNrOfPins(); i++) {
