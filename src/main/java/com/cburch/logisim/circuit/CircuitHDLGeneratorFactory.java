@@ -36,10 +36,10 @@ import java.util.TreeMap;
 
 public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
-  private final Circuit MyCircuit;
+  private final Circuit myCircuit;
 
   public CircuitHDLGeneratorFactory(Circuit source) {
-    MyCircuit = source;
+    myCircuit = source;
     getWiresPortsDuringHDLWriting = true;
   }
 
@@ -92,242 +92,241 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   public boolean generateAllHDLDescriptions(
       Set<String> HandledComponents,
-      String WorkingDir,
-      ArrayList<String> Hierarchy,
+      String workingDir,
+      ArrayList<String> hierarchy,
       boolean gatedInstance) {
-    if (MyCircuit == null) {
+    if (myCircuit == null) {
       return false;
     }
-    if (Hierarchy == null) {
-      Hierarchy = new ArrayList<>();
+    if (hierarchy == null) {
+      hierarchy = new ArrayList<>();
     }
-    Netlist MyNetList = MyCircuit.getNetList();
-    if (MyNetList == null) {
+    final var myNetList = myCircuit.getNetList();
+    if (myNetList == null) {
       return false;
     }
-    String WorkPath = WorkingDir;
-    if (!WorkPath.endsWith(File.separator)) {
-      WorkPath += File.separator;
+    var workPath = workingDir;
+    if (!workPath.endsWith(File.separator)) {
+      workPath += File.separator;
     }
-    MyNetList.setCurrentHierarchyLevel(Hierarchy);
+    myNetList.setCurrentHierarchyLevel(hierarchy);
     /* First we handle the normal components */
-    for (netlistComponent ThisComponent : MyNetList.getNormalComponents()) {
-      String ComponentName =
-          ThisComponent.getComponent()
+    for (final var thisComponent : myNetList.getNormalComponents()) {
+      final var componentName =
+          thisComponent.getComponent()
               .getFactory()
-              .getHDLName(ThisComponent.getComponent().getAttributeSet());
-      if (!HandledComponents.contains(ComponentName)) {
-        HdlGeneratorFactory Worker =
-            ThisComponent.getComponent()
+              .getHDLName(thisComponent.getComponent().getAttributeSet());
+      if (!HandledComponents.contains(componentName)) {
+        final var worker =
+            thisComponent.getComponent()
                 .getFactory()
-                .getHDLGenerator(ThisComponent.getComponent().getAttributeSet());
-        if (Worker == null) {
+                .getHDLGenerator(thisComponent.getComponent().getAttributeSet());
+        if (worker == null) {
+          // FIXME: hardcoded string
           Reporter.report.addFatalError(
               "INTERNAL ERROR: Cannot find the VHDL generator factory for component "
-                  + ComponentName);
+                  + componentName);
           return false;
         }
-        if (!Worker.isOnlyInlined()) {
+        if (!worker.isOnlyInlined()) {
           if (!Hdl.writeEntity(
-              WorkPath + Worker.getRelativeDirectory(),
-              Worker.getEntity(
-                  MyNetList,
-                  ThisComponent.getComponent().getAttributeSet(),
-                  ComponentName),
-              ComponentName)) {
+              workPath + worker.getRelativeDirectory(),
+              worker.getEntity(
+                  myNetList,
+                  thisComponent.getComponent().getAttributeSet(),
+                  componentName),
+              componentName)) {
             return false;
           }
           if (!Hdl.writeArchitecture(
-              WorkPath + Worker.getRelativeDirectory(),
-              Worker.getArchitecture(
-                  MyNetList,
-                  ThisComponent.getComponent().getAttributeSet(),
-                  ComponentName),
-              ComponentName)) {
+              workPath + worker.getRelativeDirectory(),
+              worker.getArchitecture(
+                  myNetList,
+                  thisComponent.getComponent().getAttributeSet(),
+                  componentName),
+              componentName)) {
             return false;
           }
         }
-        HandledComponents.add(ComponentName);
+        HandledComponents.add(componentName);
       }
     }
     /* Now we go down the hierarchy to get all other components */
-    for (netlistComponent ThisCircuit : MyNetList.getSubCircuits()) {
-      CircuitHDLGeneratorFactory Worker =
+    for (final var thisCircuit : myNetList.getSubCircuits()) {
+      final var worker =
           (CircuitHDLGeneratorFactory)
-              ThisCircuit.getComponent()
+              thisCircuit.getComponent()
                   .getFactory()
-                  .getHDLGenerator(ThisCircuit.getComponent().getAttributeSet());
-      if (Worker == null) {
+                  .getHDLGenerator(thisCircuit.getComponent().getAttributeSet());
+      if (worker == null) {
+        // FIXME: hardcoded string
         Reporter.report.addFatalError(
             "INTERNAL ERROR: Unable to get a subcircuit VHDL generator for '"
-                + ThisCircuit.getComponent().getFactory().getName()
+                + thisCircuit.getComponent().getFactory().getName()
                 + "'");
         return false;
       }
-      Hierarchy.add(
+      hierarchy.add(
           CorrectLabel.getCorrectLabel(
-              ThisCircuit.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
-      if (!Worker.generateAllHDLDescriptions(
-          HandledComponents, WorkingDir, Hierarchy, ThisCircuit.isGatedInstance())) {
+              thisCircuit.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
+      if (!worker.generateAllHDLDescriptions(
+          HandledComponents, workingDir, hierarchy, thisCircuit.isGatedInstance())) {
         return false;
       }
-      Hierarchy.remove(Hierarchy.size() - 1);
+      hierarchy.remove(hierarchy.size() - 1);
     }
     /* I also have to generate myself */
-    String ComponentName = CorrectLabel.getCorrectLabel(MyCircuit.getName());
-    if (gatedInstance) ComponentName = ComponentName.concat("_gated");
-    if (!HandledComponents.contains(ComponentName)) {
+    var componentName = CorrectLabel.getCorrectLabel(myCircuit.getName());
+    if (gatedInstance) componentName = componentName.concat("_gated");
+    if (!HandledComponents.contains(componentName)) {
       if (!Hdl.writeEntity(
-          WorkPath + getRelativeDirectory(),
-          getEntity(MyNetList, null, ComponentName),
-          ComponentName)) {
+          workPath + getRelativeDirectory(),
+          getEntity(myNetList, null, componentName),
+          componentName)) {
         return false;
       }
 
       if (!Hdl.writeArchitecture(
-          WorkPath + getRelativeDirectory(),
-          getArchitecture(MyNetList, null, ComponentName),
-          ComponentName)) {
+          workPath + getRelativeDirectory(),
+          getArchitecture(myNetList, null, componentName),
+          componentName)) {
         return false;
       }
     }
-    HandledComponents.add(ComponentName);
+    HandledComponents.add(componentName);
     return true;
   }
 
   /* here the private handles are defined */
   private String GetBubbleIndex(netlistComponent comp, int type) {
-    switch (type) {
-      case 0:
-        return Hdl.bracketOpen()
+    return switch (type) {
+      case 0 -> Hdl.bracketOpen()
             + comp.getLocalBubbleInputEndId()
             + Hdl.vectorLoopId()
             + comp.getLocalBubbleInputStartId()
             + Hdl.bracketClose();
-      case 1:
-        return Hdl.bracketOpen()
+      case 1 -> Hdl.bracketOpen()
             + comp.getLocalBubbleOutputEndId()
             + Hdl.vectorLoopId()
             + comp.getLocalBubbleOutputStartId()
             + Hdl.bracketClose();
-      case 2:
-        return Hdl.bracketOpen()
+      case 2 -> Hdl.bracketOpen()
             + comp.getLocalBubbleInOutEndId()
             + Hdl.vectorLoopId()
             + comp.getLocalBubbleInOutStartId()
             + Hdl.bracketClose();
-    }
-    return "";
+      default -> "";
+    };
   }
 
   @Override
-  public ArrayList<String> getComponentDeclarationSection(Netlist TheNetlist, AttributeSet attrs) {
-    ArrayList<String> Components = new ArrayList<>();
-    Set<String> InstantiatedComponents = new HashSet<>();
-    for (netlistComponent Gate : TheNetlist.getNormalComponents()) {
-      String CompName =
-          Gate.getComponent().getFactory().getHDLName(Gate.getComponent().getAttributeSet());
-      if (!InstantiatedComponents.contains(CompName)) {
-        InstantiatedComponents.add(CompName);
-        HdlGeneratorFactory Worker =
-            Gate.getComponent()
+  public ArrayList<String> getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
+    final var components = new ArrayList<String>();
+    final var instantiatedComponents = new HashSet<String>();
+    for (final var gate : theNetlist.getNormalComponents()) {
+      final var compName =
+          gate.getComponent().getFactory().getHDLName(gate.getComponent().getAttributeSet());
+      if (!instantiatedComponents.contains(compName)) {
+        instantiatedComponents.add(compName);
+        final var worker =
+            gate.getComponent()
                 .getFactory()
-                .getHDLGenerator(Gate.getComponent().getAttributeSet());
-        if (Worker != null) {
-          if (!Worker.isOnlyInlined()) {
-            Components.addAll(
-                Worker.getComponentInstantiation(
-                    TheNetlist,
-                    Gate.getComponent().getAttributeSet(),
-                    CompName));
+                .getHDLGenerator(gate.getComponent().getAttributeSet());
+        if (worker != null) {
+          if (!worker.isOnlyInlined()) {
+            components.addAll(
+                worker.getComponentInstantiation(
+                    theNetlist,
+                    gate.getComponent().getAttributeSet(),
+                    compName));
           }
         }
       }
     }
-    InstantiatedComponents.clear();
-    for (netlistComponent Gate : TheNetlist.getSubCircuits()) {
-      String CompName =
-          Gate.getComponent().getFactory().getHDLName(Gate.getComponent().getAttributeSet());
-      if (Gate.isGatedInstance()) CompName = CompName.concat("_gated");
-      if (!InstantiatedComponents.contains(CompName)) {
-        InstantiatedComponents.add(CompName);
-        HdlGeneratorFactory Worker =
-            Gate.getComponent()
+    instantiatedComponents.clear();
+    for (final var gate : theNetlist.getSubCircuits()) {
+      var compName =
+          gate.getComponent().getFactory().getHDLName(gate.getComponent().getAttributeSet());
+      if (gate.isGatedInstance()) compName = compName.concat("_gated");
+      if (!instantiatedComponents.contains(compName)) {
+        instantiatedComponents.add(compName);
+        final var worker =
+            gate.getComponent()
                 .getFactory()
-                .getHDLGenerator(Gate.getComponent().getAttributeSet());
-        SubcircuitFactory sub = (SubcircuitFactory) Gate.getComponent().getFactory();
-        if (Worker != null) {
-          Components.addAll(
-              Worker.getComponentInstantiation(
+                .getHDLGenerator(gate.getComponent().getAttributeSet());
+        SubcircuitFactory sub = (SubcircuitFactory) gate.getComponent().getFactory();
+        if (worker != null) {
+          components.addAll(
+              worker.getComponentInstantiation(
                   sub.getSubcircuit().getNetList(),
-                  Gate.getComponent().getAttributeSet(),
-                  CompName));
+                  gate.getComponent().getAttributeSet(),
+                  compName));
         }
       }
     }
-    return Components;
+    return components;
   }
 
-  public ArrayList<String> GetHDLWiring(Netlist TheNets) {
-    final var Contents = LineBuffer.getHdlBuffer();
-    final StringBuilder OneLine = new StringBuilder();
+  public ArrayList<String> GetHDLWiring(Netlist theNets) {
+    final var contents = LineBuffer.getHdlBuffer();
+    final var oneLine = new StringBuilder();
     /* we cycle through all nets with a forcedrootnet annotation */
-    for (Net ThisNet : TheNets.getAllNets()) {
-      if (ThisNet.isForcedRootNet()) {
+    for (final var thisNet : theNets.getAllNets()) {
+      if (thisNet.isForcedRootNet()) {
         /* now we cycle through all the bits */
-        for (int bit = 0; bit < ThisNet.getBitWidth(); bit++) {
+        for (var bit = 0; bit < thisNet.getBitWidth(); bit++) {
           /* First we perform all source connections */
-          for (ConnectionPoint Source : ThisNet.getSourceNets(bit)) {
-            OneLine.setLength(0);
-            if (ThisNet.isBus()) {
-              OneLine.append(BUS_NAME)
-                  .append(TheNets.getNetId(ThisNet))
+          for (final var source : thisNet.getSourceNets(bit)) {
+            oneLine.setLength(0);
+            if (thisNet.isBus()) {
+              oneLine.append(BUS_NAME)
+                  .append(theNets.getNetId(thisNet))
                   .append(Hdl.bracketOpen())
                   .append(bit)
                   .append(Hdl.bracketClose());
             } else {
-              OneLine.append(NET_NAME).append(TheNets.getNetId(ThisNet));
+              oneLine.append(NET_NAME).append(theNets.getNetId(thisNet));
             }
-            while (OneLine.length() < SIGNAL_ALLIGNMENT_SIZE) OneLine.append(" ");
+            while (oneLine.length() < SIGNAL_ALLIGNMENT_SIZE) oneLine.append(" ");
 
-            Contents.addUnique(LineBuffer.format("   {{assign}} {{1}} {{=}} {{2}}{{3}}{{<}}{{4}}{{>}};",
-                OneLine, BUS_NAME, TheNets.getNetId(Source.getParentNet()), Source.getParentNetBitIndex()));
+            contents.addUnique(LineBuffer.format("   {{assign}} {{1}} {{=}} {{2}}{{3}}{{<}}{{4}}{{>}};",
+                oneLine, BUS_NAME, theNets.getNetId(source.getParentNet()), source.getParentNetBitIndex()));
           }
           /* Next we perform all sink connections */
-          for (ConnectionPoint Source : ThisNet.getSinkNets(bit)) {
-            OneLine.setLength(0);
-            OneLine.append(BUS_NAME)
-                .append(TheNets.getNetId(Source.getParentNet()))
+          for (final var source : thisNet.getSinkNets(bit)) {
+            oneLine.setLength(0);
+            oneLine.append(BUS_NAME)
+                .append(theNets.getNetId(source.getParentNet()))
                 .append(Hdl.bracketOpen())
-                .append(Source.getParentNetBitIndex())
+                .append(source.getParentNetBitIndex())
                 .append(Hdl.bracketClose());
-            while (OneLine.length() < SIGNAL_ALLIGNMENT_SIZE) OneLine.append(" ");
-            OneLine.append(Hdl.assignOperator());
-            if (ThisNet.isBus()) {
-              OneLine.append(BUS_NAME)
-                  .append(TheNets.getNetId(ThisNet))
+            while (oneLine.length() < SIGNAL_ALLIGNMENT_SIZE) oneLine.append(" ");
+            oneLine.append(Hdl.assignOperator());
+            if (thisNet.isBus()) {
+              oneLine.append(BUS_NAME)
+                  .append(theNets.getNetId(thisNet))
                   .append(Hdl.bracketOpen())
                   .append(bit)
                   .append(Hdl.bracketClose());
             } else {
-              OneLine.append(NET_NAME).append(TheNets.getNetId(ThisNet));
+              oneLine.append(NET_NAME).append(theNets.getNetId(thisNet));
             }
-            Contents.addUnique(LineBuffer.format("   {{1}}{{2}};", Hdl.assignPreamble(), OneLine));
+            contents.addUnique(LineBuffer.format("   {{1}}{{2}};", Hdl.assignPreamble(), oneLine));
           }
         }
       }
     }
-    return Contents.get();
+    return contents.get();
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
     var isFirstLine = true;
     final var temp = new StringBuilder();
     final var compIds = new HashMap<String, Long>();
     /* we start with the connection of the clock sources */
-    for (final var clockSource : theNetlist.getClockSources()) {
+    for (final var clockSource : theNetList.getClockSources()) {
       if (isFirstLine) {
         contents.add("");
         contents.addRemarkBlock("Here all clock generator connections are defined");
@@ -344,26 +343,26 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
         }
         continue;
       }
-      final var clockNet = Hdl.getClockNetName(clockSource, 0, theNetlist);
+      final var clockNet = Hdl.getClockNetName(clockSource, 0, theNetList);
       if (clockNet.isEmpty()) {
         // FIXME: hardcoded string
         Reporter.report.addFatalError("INTERNAL ERROR: Cannot find clocknet!");
       }
-      String ConnectedNet = Hdl.getNetName(clockSource, 0, true, theNetlist);
+      String ConnectedNet = Hdl.getNetName(clockSource, 0, true, theNetList);
       temp.setLength(0);
       temp.append(ConnectedNet);
       // Padding
       while (temp.length() < SIGNAL_ALLIGNMENT_SIZE) {
         temp.append(" ");
       }
-      if (!theNetlist.requiresGlobalClockConnection()) {
+      if (!theNetList.requiresGlobalClockConnection()) {
         contents.add("   {{assign}} {{1}} {{=}} {{2}}{{<}}{{3}}{{>}};", temp, clockNet, ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX);
       } else {
         contents.add("   {{assign}} {{1}} {{=}} {{2}};", temp, TickComponentHdlGeneratorFactory.FPGA_CLOCK);
       }
     }
     /* Here we define all wiring; hence all complex splitter connections */
-    final var wiring = GetHDLWiring(theNetlist);
+    final var wiring = GetHDLWiring(theNetList);
     if (!wiring.isEmpty()) {
       contents.add("");
       contents.addRemarkBlock("Here all wiring is defined");
@@ -371,40 +370,40 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     }
     /* Now we define all input signals; hence Input port -> Internal Net */
     isFirstLine = true;
-    for (var i = 0; i < theNetlist.getNumberOfInputPorts(); i++) {
+    for (var i = 0; i < theNetList.getNumberOfInputPorts(); i++) {
       if (isFirstLine) {
         contents.add("").addRemarkBlock("Here all input connections are defined");
         isFirstLine = false;
       }
-      final var myInput = theNetlist.getInputPin(i);
+      final var myInput = theNetList.getInputPin(i);
       contents.add(
           getSignalMap(
               CorrectLabel.getCorrectLabel(myInput.getComponent().getAttributeSet().getValue(StdAttr.LABEL)),
               myInput,
               0,
               3,
-              theNetlist));
+              theNetList));
     }
     /* Now we define all output signals; hence Internal Net -> Input port */
     isFirstLine = true;
-    for (var i = 0; i < theNetlist.numberOfOutputPorts(); i++) {
+    for (var i = 0; i < theNetList.numberOfOutputPorts(); i++) {
       if (isFirstLine) {
         contents.add("");
         contents.addRemarkBlock("Here all output connections are defined");
         isFirstLine = false;
       }
-      netlistComponent MyOutput = theNetlist.getOutputPin(i);
+      netlistComponent myOutput = theNetList.getOutputPin(i);
       contents.add(
           getSignalMap(
-              CorrectLabel.getCorrectLabel(MyOutput.getComponent().getAttributeSet().getValue(StdAttr.LABEL)),
-              MyOutput,
+              CorrectLabel.getCorrectLabel(myOutput.getComponent().getAttributeSet().getValue(StdAttr.LABEL)),
+              myOutput,
               0,
               3,
-              theNetlist));
+              theNetList));
     }
     /* Here all in-lined components are generated */
     isFirstLine = true;
-    for (final var comp : theNetlist.getNormalComponents()) {
+    for (final var comp : theNetList.getNormalComponents()) {
       var worker = comp.getComponent().getFactory().getHDLGenerator(comp.getComponent().getAttributeSet());
       if (worker != null) {
         if (worker.isOnlyInlined()) {
@@ -416,14 +415,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
             contents.addRemarkBlock("Here all in-lined components are defined");
             isFirstLine = false;
           }
-          contents.add(worker.getInlinedCode(theNetlist, id++, comp, inlinedName));
+          contents.add(worker.getInlinedCode(theNetList, id++, comp, inlinedName));
           compIds.put(InlinedId, id);
         }
       }
     }
     /* Here all "normal" components are generated */
     isFirstLine = true;
-    for (final var comp : theNetlist.getNormalComponents()) {
+    for (final var comp : theNetList.getNormalComponents()) {
       var worker = comp.getComponent().getFactory().getHDLGenerator(comp.getComponent().getAttributeSet());
       if (worker != null) {
         if (!worker.isOnlyInlined()) {
@@ -434,21 +433,21 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
             contents.add("").addRemarkBlock("Here all normal components are defined");
             isFirstLine = false;
           }
-          contents.add(worker.getComponentMap(theNetlist, id++, comp, compName));
+          contents.add(worker.getComponentMap(theNetList, id++, comp, compName));
           compIds.put(compId, id);
         }
       }
     }
     /* Finally we instantiate all sub-circuits */
     isFirstLine = true;
-    for (final var comp : theNetlist.getSubCircuits()) {
+    for (final var comp : theNetList.getSubCircuits()) {
       final var worker = comp.getComponent().getFactory().getHDLGenerator(comp.getComponent().getAttributeSet());
       if (worker != null) {
         var compName = comp.getComponent().getFactory().getHDLName(comp.getComponent().getAttributeSet());
         if (comp.isGatedInstance())  compName = compName.concat("_gated");
         final var CompId = "SubCircuits";
         var id = (compIds.containsKey(CompId)) ? compIds.get(CompId) : (long) 1;
-        final var compMap = worker.getComponentMap(theNetlist, id++, comp, compName);
+        final var compMap = worker.getComponentMap(theNetList, id++, comp, compName);
         if (!compMap.isEmpty()) {
           if (isFirstLine) {
             contents.add("").addRemarkBlock("Here all sub-circuits are defined");
@@ -465,31 +464,31 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> getPortMap(Netlist nets, Object MapInfo) {
-    final var PortMap = new TreeMap<String, String>();
-    if (MapInfo == null) return null;
-    final var topLevel = MapInfo instanceof MappableResourcesContainer;
-    final var componentInfo = topLevel ? null : (netlistComponent) MapInfo;
-    var mapInfo = topLevel ? (MappableResourcesContainer) MapInfo : null;
+  public SortedMap<String, String> getPortMap(Netlist nets, Object theMapInfo) {
+    final var portMap = new TreeMap<String, String>();
+    if (theMapInfo == null) return null;
+    final var topLevel = theMapInfo instanceof MappableResourcesContainer;
+    final var componentInfo = topLevel ? null : (netlistComponent) theMapInfo;
+    var mapInfo = topLevel ? (MappableResourcesContainer) theMapInfo : null;
     final var Preamble = topLevel ? "s_" : "";
     final var sub = topLevel ? null : (SubcircuitFactory) componentInfo.getComponent().getFactory();
     final var myNetList = topLevel ? nets : sub.getSubcircuit().getNetList();
 
     /* First we instantiate the Clock tree busses when present */
     for (var i = 0; i < myNetList.numberOfClockTrees(); i++) {
-      PortMap.put(CLOCK_TREE_NAME + i, Preamble + CLOCK_TREE_NAME + i);
+      portMap.put(CLOCK_TREE_NAME + i, Preamble + CLOCK_TREE_NAME + i);
     }
     if (myNetList.requiresGlobalClockConnection()) {
-      PortMap.put(TickComponentHdlGeneratorFactory.FPGA_CLOCK, TickComponentHdlGeneratorFactory.FPGA_CLOCK);
+      portMap.put(TickComponentHdlGeneratorFactory.FPGA_CLOCK, TickComponentHdlGeneratorFactory.FPGA_CLOCK);
     }
     if (myNetList.getNumberOfInputBubbles() > 0) {
       // FIXME: remove + by concatination.
-      PortMap.put(LOCAL_INPUT_BUBBLE_BUS_NAME,
+      portMap.put(LOCAL_INPUT_BUBBLE_BUS_NAME,
           topLevel ? Preamble + LOCAL_INPUT_BUBBLE_BUS_NAME : LOCAL_INPUT_BUBBLE_BUS_NAME + GetBubbleIndex(componentInfo, 0));
     }
     if (myNetList.numberOfOutputBubbles() > 0) {
       // FIXME: remove + by concatination.
-      PortMap.put(LOCAL_OUTPUT_BUBBLE_BUS_NAME,
+      portMap.put(LOCAL_OUTPUT_BUBBLE_BUS_NAME,
           topLevel ? Preamble + LOCAL_OUTPUT_BUBBLE_BUS_NAME : LOCAL_OUTPUT_BUBBLE_BUS_NAME + GetBubbleIndex(componentInfo, 1));
     }
 
@@ -520,14 +519,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
           if (!map.isMapped(compPin) || map.isOpenMapped(compPin)) {
             // FIXME: rewrite using LineBuffer
             if (Hdl.isVhdl())
-              PortMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME + "(" + i + ")", "OPEN");
+              portMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME + "(" + i + ")", "OPEN");
             else {
               if (vector.length() != 0) vector.append(",");
               vector.append("OPEN"); // still not found the correct method but this seems to work
             }
           } else {
             if (Hdl.isVhdl())
-              PortMap.put(
+              portMap.put(
                   LOCAL_INOUT_BUBBLE_BUS_NAME + "(" + i + ")",
                   (map.isExternalInverted(compPin) ? "n_" : "") + map.getHdlString(compPin));
             else {
@@ -539,9 +538,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
           }
         }
         if (Hdl.isVerilog())
-          PortMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME, vector.toString());
+          portMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME, vector.toString());
       } else {
-        PortMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME, LOCAL_INOUT_BUBBLE_BUS_NAME + GetBubbleIndex(componentInfo, 2));
+        portMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME, LOCAL_INOUT_BUBBLE_BUS_NAME + GetBubbleIndex(componentInfo, 2));
       }
     }
 
@@ -552,7 +551,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
         if (selected != null) {
           final var pinLabel = CorrectLabel.getCorrectLabel(selected.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
           if (topLevel) {
-            PortMap.put(pinLabel, Preamble + pinLabel);
+            portMap.put(pinLabel, Preamble + pinLabel);
           } else {
             final var endId = nets.getEndIndex(componentInfo, pinLabel, false);
             if (endId < 0) {
@@ -560,7 +559,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
               Reporter.report.addFatalError(
                   String.format("INTERNAL ERROR! Could not find the end-index of a sub-circuit component: '%s'", pinLabel));
             } else {
-              PortMap.putAll(Hdl.getNetMap(pinLabel, true, componentInfo, endId, nets));
+              portMap.putAll(Hdl.getNetMap(pinLabel, true, componentInfo, endId, nets));
             }
           }
         }
@@ -583,7 +582,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
               Reporter.report.addFatalError(
                       String.format("INTERNAL ERROR! Could not find the end-index of a sub-circuit component: '%s'", pinLabel));
             } else {
-              PortMap.putAll(Hdl.getNetMap(pinLabel, true, componentInfo, endId, nets));
+              portMap.putAll(Hdl.getNetMap(pinLabel, true, componentInfo, endId, nets));
             }
           }
         }
@@ -597,7 +596,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
         if (selected != null) {
           final var pinLabel = CorrectLabel.getCorrectLabel(selected.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
           if (topLevel) {
-            PortMap.put(pinLabel, Preamble + pinLabel);
+            portMap.put(pinLabel, Preamble + pinLabel);
           } else {
             final var endid = nets.getEndIndex(componentInfo, pinLabel, true);
             if (endid < 0) {
@@ -605,26 +604,25 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
               Reporter.report.addFatalError(
                       String.format("INTERNAL ERROR! Could not find the end-index of a sub-circuit component: '%s'", pinLabel));
             } else {
-              PortMap.putAll(Hdl.getNetMap(pinLabel, true, componentInfo, endid, nets));
+              portMap.putAll(Hdl.getNetMap(pinLabel, true, componentInfo, endid, nets));
             }
           }
         }
       }
     }
-    return PortMap;
+    return portMap;
   }
 
-  private String getSignalMap(String portName, netlistComponent comp, int endIndex, int tabSize, Netlist TheNets) {
+  private String getSignalMap(String portName, netlistComponent comp, int endIndex, int tabSize, Netlist theNets) {
     final var contents = new StringBuilder();
     final var source = new StringBuilder();
     final var destination = new StringBuilder();
     final var tab = new StringBuilder();
     if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) {
       // FIXME: hardcoded string
-      Reporter.report.addFatalError(
-          String.format(
+      Reporter.report.addFatalErrorFmt(
               "INTERNAL ERROR: Component tried to index non-existing SolderPoint: '%s'",
-              comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
+              comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
       return "";
     }
     tab.append(" ".repeat(tabSize));
@@ -636,14 +634,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
       if (isOutput) {
         if (!comp.isEndConnected(endIndex)) return " ";
         source.append(portName);
-        destination.append(Hdl.getNetName(comp, endIndex, true, TheNets));
+        destination.append(Hdl.getNetName(comp, endIndex, true, theNets));
       } else {
         if (!comp.isEndConnected(endIndex)) {
           // FIXME: hardcoded string
           Reporter.report.addSevereWarning(
               "Found an unconnected output pin, tied the pin to ground!");
         }
-        source.append(Hdl.getNetName(comp, endIndex, true, TheNets));
+        source.append(Hdl.getNetName(comp, endIndex, true, theNets));
         destination.append(portName);
         if (!comp.isEndConnected(endIndex)) return contents.toString();
       }
@@ -684,16 +682,16 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
          * There are connections, we detect if it is a continues bus
          * connection
          */
-        if (TheNets.isContinuesBus(comp, endIndex)) {
+        if (theNets.isContinuesBus(comp, endIndex)) {
           destination.setLength(0);
           source.setLength(0);
           /* Another easy case, the continues bus connection */
           if (isOutput) {
             source.append(portName);
-            destination.append(Hdl.getBusNameContinues(comp, endIndex, TheNets));
+            destination.append(Hdl.getBusNameContinues(comp, endIndex, theNets));
           } else {
             destination.append(portName);
-            source.append(Hdl.getBusNameContinues(comp, endIndex, TheNets));
+            source.append(Hdl.getBusNameContinues(comp, endIndex, theNets));
           }
           while (destination.length() < SIGNAL_ALLIGNMENT_SIZE) destination.append(" ");
           contents
@@ -705,7 +703,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
               .append(";");
         } else {
           /* The last case, we have to enumerate through each bit */
-          for (int bit = 0; bit < nrOfBits; bit++) {
+          for (var bit = 0; bit < nrOfBits; bit++) {
             source.setLength(0);
             destination.setLength(0);
             if (isOutput) {
@@ -736,23 +734,23 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
               if (solderPoint.getParentNet().getBitWidth() == 1) {
                 /* The connection is to a Net */
                 if (isOutput) {
-                  destination.append(NET_NAME).append(TheNets.getNetId(solderPoint.getParentNet()));
+                  destination.append(NET_NAME).append(theNets.getNetId(solderPoint.getParentNet()));
                 } else {
-                  source.append(NET_NAME).append(TheNets.getNetId(solderPoint.getParentNet()));
+                  source.append(NET_NAME).append(theNets.getNetId(solderPoint.getParentNet()));
                 }
               } else {
                 /* The connection is to an entry of a bus */
                 if (isOutput) {
                   destination
                       .append(BUS_NAME)
-                      .append(TheNets.getNetId(solderPoint.getParentNet()))
+                      .append(theNets.getNetId(solderPoint.getParentNet()))
                       .append(Hdl.bracketOpen())
                       .append(solderPoint.getParentNetBitIndex())
                       .append(Hdl.bracketClose());
                 } else {
                   source
                       .append(BUS_NAME)
-                      .append(TheNets.getNetId(solderPoint.getParentNet()))
+                      .append(theNets.getNetId(solderPoint.getParentNet()))
                       .append(Hdl.bracketOpen())
                       .append(solderPoint.getParentNetBitIndex())
                       .append(Hdl.bracketClose());

@@ -189,7 +189,7 @@ public class HdlParameters {
           var mask = 1L;
           for (var i = 0; i < nrOfInputs; i++) {
             final var inputIsInverted = attrs.getValue(new NegateAttribute(i, null));
-            if (inputIsInverted) bubbleMask |= mask;
+            if (Boolean.TRUE.equals(inputIsInverted)) bubbleMask |= mask;
             mask <<= 1L;
           }
           selectedValue = bubbleMask;
@@ -236,7 +236,9 @@ public class HdlParameters {
       if (nrOfVectorBits < 0) {
         if (attrs.containsAttribute(attributeToCheckForBus)) {
           nrOfVectorBits = attrs.getValue(attributeToCheckForBus).getWidth();
-        } else new UnsupportedOperationException("Cannot determine the number of bits required for the vector");
+        } else {
+          throw new UnsupportedOperationException("Cannot determine the number of bits required for the vector");
+        }
       }
       return nrOfVectorBits;
     }

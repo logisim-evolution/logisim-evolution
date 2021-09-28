@@ -113,7 +113,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
             || e.getValue() == APPEAR_FPGA
             || e.getValue() == APPEAR_EVOLUTION) {
           source.getAppearance().setDefaultAppearance(true);
-          source.RecalcDefaultShape();
+          source.recalcDefaultShape();
         }
       }
     }
@@ -126,7 +126,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
     ret.addAttributeListener(new StaticListener(source));
     return ret;
   }
-  
+
   public static final Attribute<String> NAME_ATTR =
       Attributes.forString("circuit", S.getter("circuitName"));
 

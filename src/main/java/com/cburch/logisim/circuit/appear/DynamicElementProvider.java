@@ -19,19 +19,19 @@ public interface DynamicElementProvider {
 
   DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path);
 
-  static void removeDynamicElements(Circuit circuit, Component c) {
-    if (!(c instanceof InstanceComponent)) return;
-    HashSet<Circuit> allAffected = new HashSet<>();
-    LinkedList<Circuit> todo = new LinkedList<>();
+  static void removeDynamicElements(Circuit circuit, Component comp) {
+    if (!(comp instanceof InstanceComponent)) return;
+    final var allAffected = new HashSet<Circuit>();
+    final var todo = new LinkedList<Circuit>();
     todo.add(circuit);
     while (!todo.isEmpty()) {
-      Circuit circ = todo.remove();
+      final var circ = todo.remove();
       if (allAffected.contains(circ)) continue;
       allAffected.add(circ);
-      for (Circuit other : circ.getCircuitsUsingThis())
+      for (final var other : circ.getCircuitsUsingThis())
         if (!allAffected.contains(other)) todo.add(other);
     }
-    for (Circuit circ : allAffected)
-      circ.getAppearance().removeDynamicElement((InstanceComponent) c);
+    for (final var circ : allAffected)
+      circ.getAppearance().removeDynamicElement((InstanceComponent) comp);
   }
 }
