@@ -53,7 +53,9 @@ public class Propagator {
     }
 
     @Override
-    public void attributeListChanged(AttributeEvent e) {}
+    public void attributeListChanged(AttributeEvent e) {
+      // do nothing
+    }
 
     @Override
     public void attributeValueChanged(AttributeEvent e) {
@@ -116,7 +118,7 @@ public class Propagator {
   static Value computeValue(SetData causes) {
     if (causes == null) return Value.NIL;
     var ret = causes.val;
-    for (SetData n = causes.next; n != null; n = n.next) {
+    for (var n = causes.next; n != null; n = n.next) {
       ret = ret.combine(n.val);
     }
     return ret;
@@ -163,8 +165,8 @@ public class Propagator {
     final var causes = state.causes;
 
     // first check whether this is change of previous info.
-    boolean replaced = false;
-    for (SetData n = head; n != null; n = n.next) {
+    var replaced = false;
+    for (var n = head; n != null; n = n.next) {
       if (n.cause == data.cause) {
         n.val = data.val;
         replaced = true;
@@ -430,8 +432,8 @@ public class Propagator {
 
   private void updateRandomness() {
     final var opts = root.getProject().getOptions();
-    Object rand = opts.getAttributeSet().getValue(Options.ATTR_SIM_RAND);
-    final var val = (Integer) rand;
+    final var rand = opts.getAttributeSet().getValue(Options.ATTR_SIM_RAND);
+    final var val = rand;
     var logVal = 0;
     while ((1 << logVal) < val) logVal++;
     simRandomShift = logVal;

@@ -134,12 +134,12 @@ public class SimpleDRCContainer {
       if (obj instanceof Wire) {
         final var wire = (Wire) obj;
         if ((markType & MARK_WIRE) != 0) {
-          wire.SetDRCHighlight(true);
+          wire.setDrcHighlight(true);
         }
       } else if (obj instanceof Splitter) {
         final var split = (Splitter) obj;
         if ((markType & MARK_INSTANCE) != 0) {
-          split.SetMarked(true);
+          split.setMarked(true);
         }
       } else if (obj instanceof InstanceComponent) {
         final var comp = (InstanceComponent) obj;
@@ -156,12 +156,12 @@ public class SimpleDRCContainer {
       if (obj instanceof Wire) {
         final var wire = (Wire) obj;
         if ((markType & MARK_WIRE) != 0) {
-          wire.SetDRCHighlight(false);
+          wire.setDrcHighlight(false);
         }
       } else if (obj instanceof Splitter) {
         final var split = (Splitter) obj;
         if ((markType & MARK_INSTANCE) != 0) {
-          split.SetMarked(false);
+          split.setMarked(false);
         }
       } else if (obj instanceof InstanceComponent) {
         final var comp = (InstanceComponent) obj;

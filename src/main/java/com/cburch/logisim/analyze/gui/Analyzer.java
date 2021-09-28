@@ -30,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -38,6 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
+import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -143,7 +143,7 @@ public class Analyzer extends LFrame.SubWindow {
         Parser.parse(s, model); // for testing Parser.parse
       }
     }
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     frame.pack();
     frame.setVisible(true);
   }
@@ -252,15 +252,15 @@ public class Analyzer extends LFrame.SubWindow {
     private static final long serialVersionUID = 1L;
 
     private final SwingWorker<T, Void> worker;
-    private final java.awt.Component parent;
+    private final java.awt.Component parentComponent;
 
     public abstract T doInBackground();
 
     private boolean alreadyFinished = false;
 
-    public PleaseWait(String title, java.awt.Component parent) {
+    public PleaseWait(String title, java.awt.Component parentComponent) {
       super(null, title, ModalityType.APPLICATION_MODAL);
-      this.parent = parent;
+      this.parentComponent = parentComponent;
       worker =
           new SwingWorker<>() {
             @Override
@@ -290,7 +290,7 @@ public class Analyzer extends LFrame.SubWindow {
       setPreferredSize(new Dimension(300, 70));
       setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
       pack();
-      setLocationRelativeTo(parent);
+      setLocationRelativeTo(parentComponent);
       try {
         try {
           return worker.get(300, TimeUnit.MILLISECONDS);

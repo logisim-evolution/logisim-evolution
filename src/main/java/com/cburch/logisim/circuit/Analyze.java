@@ -58,8 +58,7 @@ public class Analyze {
     }
   }
 
-  private static class ExpressionMap extends HashMap<LocationBit, Expression>
-      implements ExpressionComputer.Map {
+  private static class ExpressionMap extends HashMap<LocationBit, Expression> implements ExpressionComputer.Map {
     private static final long serialVersionUID = 1L;
     private final Circuit circuit;
     private final Set<LocationBit> dirtyPoints = new HashSet<>();
@@ -135,8 +134,9 @@ public class Analyze {
 
     propagateComponents(expressionMap, circuit.getNonWires());
 
+    final var maxIterations = 100;
     for (var iterations = 0; !expressionMap.dirtyPoints.isEmpty(); iterations++) {
-      if (iterations > MAX_ITERATIONS) {
+      if (iterations > maxIterations) {
         throw new AnalyzeException.Circular();
       }
 
@@ -411,8 +411,6 @@ public class Analyze {
     if (ret.length() == 0) return null;
     return ret.toString();
   }
-
-  private static final int MAX_ITERATIONS = 100;
 
   private Analyze() {
     // dummy

@@ -33,14 +33,11 @@ class WireFactory extends AbstractComponentFactory {
 
   @Override
   public Component createComponent(Location loc, AttributeSet attrs) {
-    Object dir = attrs.getValue(Wire.DIR_ATTR);
+    final var dir = attrs.getValue(Wire.DIR_ATTR);
     final var len = attrs.getValue(Wire.LEN_ATTR);
-
-    if (dir == Wire.VALUE_HORZ) {
-      return Wire.create(loc, loc.translate(len, 0));
-    } else {
-      return Wire.create(loc, loc.translate(0, len));
-    }
+    return (dir == Wire.VALUE_HORZ)
+        ? Wire.create(loc, loc.translate(len, 0))
+        : Wire.create(loc, loc.translate(0, len));
   }
 
   //
@@ -49,7 +46,7 @@ class WireFactory extends AbstractComponentFactory {
   @Override
   public void drawGhost(ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs) {
     final var g = context.getGraphics();
-    Object dir = attrs.getValue(Wire.DIR_ATTR);
+    final var dir = attrs.getValue(Wire.DIR_ATTR);
     final var len = attrs.getValue(Wire.LEN_ATTR);
 
     g.setColor(color);
@@ -73,14 +70,10 @@ class WireFactory extends AbstractComponentFactory {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    Object dir = attrs.getValue(Wire.DIR_ATTR);
+    final var dir = attrs.getValue(Wire.DIR_ATTR);
     final var len = attrs.getValue(Wire.LEN_ATTR);
 
-    if (dir == Wire.VALUE_HORZ) {
-      return Bounds.create(0, -2, len, 5);
-    } else {
-      return Bounds.create(-2, 0, 5, len);
-    }
+    return (dir == Wire.VALUE_HORZ) ? Bounds.create(0, -2, len, 5) : Bounds.create(-2, 0, 5, len);
   }
 
   @Override

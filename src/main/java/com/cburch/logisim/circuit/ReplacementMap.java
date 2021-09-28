@@ -56,7 +56,7 @@ public class ReplacementMap {
   }
 
   void append(ReplacementMap next) {
-    for (Map.Entry<Component, HashSet<Component>> e : next.map.entrySet()) {
+    for (final var e : next.map.entrySet()) {
       final var b = e.getKey();
       final var cs = e.getValue(); // what b is replaced by
       var as = this.inverse.remove(b); // what was replaced
@@ -66,14 +66,14 @@ public class ReplacementMap {
         as.add(b);
       }
 
-      for (Component a : as) {
+      for (final var a : as) {
         final var aDst = this.map.computeIfAbsent(a, k -> new HashSet<>(cs.size()));
         // should happen when b pre-existed only
         aDst.remove(b);
         aDst.addAll(cs);
       }
 
-      for (Component c : cs) {
+      for (final var c : cs) {
         var cSrc = this.inverse.get(c); // should always
         // be null
         if (cSrc == null) {
@@ -84,7 +84,7 @@ public class ReplacementMap {
       }
     }
 
-    for (Map.Entry<Component, HashSet<Component>> e : next.inverse.entrySet()) {
+    for (final var e : next.inverse.entrySet()) {
       final var c = e.getKey();
       if (!inverse.containsKey(c)) {
         final var bs = e.getValue();

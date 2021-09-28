@@ -28,9 +28,8 @@ class SplitterParameters {
   private final int valign;
 
   SplitterParameters(SplitterAttributes attrs) {
-
-    Object appear = attrs.appear;
-    int fanout = attrs.fanout;
+    final var appear = attrs.appear;
+    final var fanout = attrs.fanout;
     final var facing = attrs.facing;
 
     int justify;
@@ -46,7 +45,7 @@ class SplitterParameters {
     final var gap = attrs.spacing * 10;
     final var offs = 6;
     if (facing == Direction.NORTH || facing == Direction.SOUTH) { // ^ or V
-      int m = facing == Direction.NORTH ? 1 : -1;
+      final var m = facing == Direction.NORTH ? 1 : -1;
       dxEnd0 =
           justify == 0
               ? gap * ((fanout + 1) / 2 - 1)
@@ -66,8 +65,7 @@ class SplitterParameters {
     } else { // > or <
       final var m = facing == Direction.WEST ? -1 : 1;
       dxEnd0 = m * width;
-      dyEnd0 =
-          justify == 0 ? -gap * (fanout / 2) : m * justify > 0 ? 10 : -(10 + gap * (fanout - 1));
+      dyEnd0 = justify == 0 ? -gap * (fanout / 2) : m * justify > 0 ? 10 : -(10 + gap * (fanout - 1));
       ddxEnd = 0;
       ddyEnd = gap;
       dxEndSpine = -m * (width - offs);

@@ -941,7 +941,7 @@ public class Netlist {
             myNets.get(connectedNet).ForceRootNet();
           }
           /* Here we have to process the inherited bits of the parent */
-          final var busBitConnection = ((Splitter) comp).GetEndpoints();
+          final var busBitConnection = ((Splitter) comp).getEndpoints();
           for (byte b = 0; b < busBitConnection.length; b++) {
             if (busBitConnection[b] == i) {
               myNets.get(connectedNet).AddParentBit(b);
@@ -1051,7 +1051,7 @@ public class Netlist {
               if (thisNet.contains(ends.get(endId).getLocation())) {
                 // first we have to get the bitindices of the rootbus
                 // Here we have to process the inherited bits of the parent
-                final var busBitConnection = ((Splitter) comp).GetEndpoints();
+                final var busBitConnection = ((Splitter) comp).getEndpoints();
                 final var indexBits = new ArrayList<Byte>();
                 for (byte b = 0; b < busBitConnection.length; b++) {
                   if (busBitConnection[b] == endId) indexBits.add(b);
@@ -1153,7 +1153,7 @@ public class Netlist {
         if (end > 0 && splitterAttrs.isNoConnect(end)) continue;
         if (thisNet.contains(ends.get(end).getLocation())) {
           // Here we have to process the inherited bits of the parent.
-          final var busBitConnection = ((Splitter) currentSplitter).GetEndpoints();
+          final var busBitConnection = ((Splitter) currentSplitter).getEndpoints();
           if (end == 0) {
             // This is a main net, find the connected end.
             final var splitterEnd = busBitConnection[bitIndex];
@@ -1408,7 +1408,7 @@ public class Netlist {
       for (var end = 0; end < ends.size(); end++) {
         if (thisNet.contains(ends.get(end).getLocation())) {
           /* Here we have to process the inherited bits of the parent */
-          final var busBitConnection = ((Splitter) splitter).GetEndpoints();
+          final var busBitConnection = ((Splitter) splitter).getEndpoints();
           if (end == 0) {
             /* this is a main net, find the connected end */
             final var splitterEnd = busBitConnection[bitIndex];
@@ -1473,7 +1473,7 @@ public class Netlist {
       for (var end = 0; end < ends.size(); end++) {
         if (combinedNet.contains(ends.get(end).getLocation())) {
           /* Here we have to process the inherited bits of the parent */
-          final var busBitConnection = ((Splitter) currentSplitter).GetEndpoints();
+          final var busBitConnection = ((Splitter) currentSplitter).getEndpoints();
           if (end == 0) {
             // This is a main net, find the connected end.
             var splitterEnd = busBitConnection[combinedBitIndex];
