@@ -47,16 +47,14 @@ public class Analyzer extends LFrame.SubWindow {
   private class MyChangeListener implements ChangeListener {
     @Override
     public void stateChanged(ChangeEvent e) {
-
       Object selected = tabbedPane.getSelectedComponent();
-      if (selected instanceof JScrollPane) {
-        selected = ((JScrollPane) selected).getViewport().getView();
+      if (selected instanceof JScrollPane selScrollPane) {
+        selected = selScrollPane.getViewport().getView();
       }
-      if (selected instanceof JPanel) {
-        ((JPanel) selected).requestFocus();
+      if (selected instanceof JPanel selPanel) {
+        selPanel.requestFocus();
       }
-      if (selected instanceof AnalyzerTab) {
-        final var tab = (AnalyzerTab) selected;
+      if (selected instanceof AnalyzerTab tab) {
         menuListener.setEditHandler(tab.getEditHandler());
         menuListener.setPrintHandler(tab.getPrintHandler());
         model.getOutputExpressions().enableUpdates();
@@ -238,10 +236,9 @@ public class Analyzer extends LFrame.SubWindow {
   }
 
   public void setSelectedTab(int index) {
-    Object found = tabbedPane.getComponentAt(index);
-    if (found instanceof AnalyzerTab) {
+    if (tabbedPane.getComponentAt(index) instanceof AnalyzerTab found) {
       model.getOutputExpressions().enableUpdates();
-      ((AnalyzerTab) found).updateTab();
+      found.updateTab();
     } else {
       model.getOutputExpressions().disableUpdates();
     }

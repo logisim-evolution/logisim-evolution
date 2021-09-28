@@ -12,8 +12,7 @@ package com.cburch.logisim.fpga.hdlgenerator;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
-
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 public interface HdlGeneratorFactory {
@@ -33,30 +32,30 @@ public interface HdlGeneratorFactory {
   boolean generateAllHDLDescriptions(
       Set<String> handledComponents,
       String workingDirectory,
-      ArrayList<String> hierarchy);
+      List<String> hierarchy);
 
-  ArrayList<String> getEntity(
+  List<String> getEntity(
       Netlist theNetlist,
       AttributeSet attrs,
       String componentName);
 
-  ArrayList<String> getArchitecture(
+  List<String> getArchitecture(
       Netlist theNetlist,
       AttributeSet attrs,
       String componentName);
 
-  ArrayList<String> getComponentInstantiation(
+  List<String> getComponentInstantiation(
       Netlist theNetlist,
       AttributeSet attrs,
       String componentName);
 
-  ArrayList<String> getComponentMap(
+  List<String> getComponentMap(
       Netlist nets,
       Long componentId,
       Object componentInfo,
       String name);
 
-  ArrayList<String> getInlinedCode(
+  List<String> getInlinedCode(
       Netlist nets,
       Long componentId,
       netlistComponent componentInfo,

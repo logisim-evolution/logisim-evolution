@@ -216,7 +216,6 @@ public class DefaultHolyCrossAppearance {
         ldx = -LABEL_OUTSIDE;
         hAlign = EditableLabel.RIGHT;
       }
-      Font pinFont = null;
       if (pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
         final var text = pin.getAttributeValue(StdAttr.LABEL);
         if (text != null && text.length() > 0) {
@@ -224,9 +223,7 @@ public class DefaultHolyCrossAppearance {
           label.getLabel().setHorizontalAlignment(hAlign);
           label.getLabel().setVerticalAlignment(EditableLabel.MIDDLE);
           label.getLabel().setColor(color);
-          if (pinFont == null) {
-            pinFont = label.getLabel().getFont().deriveFont((float) 10);
-          }
+          final var pinFont = label.getLabel().getFont().deriveFont((float) 10);
           label.getLabel().setFont(pinFont);
           dest.add(label);
         }

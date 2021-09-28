@@ -112,11 +112,9 @@ public class CircuitChange {
     switch (type) {
       case CLEAR:
         return true;
-      case ADD:
-      case REMOVE:
+      case ADD, REMOVE:
         return comp.getFactory() instanceof Pin;
-      case ADD_ALL:
-      case REMOVE_ALL:
+      case ADD_ALL, REMOVE_ALL:
         for (final var comp : comps) {
           if (comp.getFactory() instanceof Pin) return true;
         }

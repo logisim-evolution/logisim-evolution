@@ -9,8 +9,6 @@
 
 package com.cburch.logisim.circuit.appear;
 
-import com.cburch.draw.model.CanvasObject;
-import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
@@ -20,7 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -41,7 +38,7 @@ class PortManager {
     }
 
     // if at least one faces the same way, place pin relative to that
-    if (sameWay.size() > 0) {
+    if (!sameWay.isEmpty()) {
       sameWay.add(pin);
       DefaultAppearance.sortPinList(sameWay, facing);
       var isFirst = false;
@@ -128,11 +125,11 @@ class PortManager {
     final var oldObjects = new HashMap<Instance, AppearancePort>();
     AppearanceAnchor anchor = null;
     for (final var obj : appearance.getObjectsFromBottom()) {
-      if (obj instanceof AppearancePort) {
-        final var port = (AppearancePort) obj;
+      if (obj instanceof AppearancePort appPort) {
+        final var port = appPort;
         oldObjects.put(port.getPin(), port);
-      } else if (obj instanceof AppearanceAnchor) {
-        anchor = (AppearanceAnchor) obj;
+      } else if (obj instanceof AppearanceAnchor appAnchor) {
+        anchor = appAnchor;
       }
     }
 
@@ -144,8 +141,8 @@ class PortManager {
               appearance.getCircuitAppearance(),
               appearance.isNamedBoxShapedFixedSize(),
               appearance.getName())) {
-        if (obj instanceof AppearanceAnchor) {
-          anchor = (AppearanceAnchor) obj;
+        if (obj instanceof AppearanceAnchor appAnchor) {
+          anchor = appAnchor;
         }
       }
       if (anchor == null) {

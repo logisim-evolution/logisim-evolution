@@ -15,13 +15,13 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class VariableList {
-  private final ArrayList<VariableListListener> listeners = new ArrayList<>();
+  private final List<VariableListListener> listeners = new ArrayList<>();
   private final int maxSize;
-  private final ArrayList<Var> data;
-  private final ArrayList<String> names;
+  private final List<Var> data;
+  private final List<String> names;
   public final List<Var> vars;
   public final List<String> bits;
-  private final ArrayList<VariableList> others;
+  private final List<VariableList> others;
 
   public VariableList(int maxSize) {
     this.maxSize = maxSize;
@@ -32,11 +32,11 @@ public class VariableList {
     others = new ArrayList<>();
   }
 
-  public void addCompanion(VariableList var) {
-    others.add(var);
+  public void addCompanion(VariableList varList) {
+    others.add(varList);
   }
 
-  public ArrayList<String> getNames() {
+  public List<String> getNames() {
     return names;
   }
 
@@ -77,7 +77,7 @@ public class VariableList {
   }
 
   private void fireEvent(int type, Var variable, Integer index, Integer bitIndex) {
-    if (listeners.size() == 0) return;
+    if (listeners.isEmpty()) return;
     final var event = new VariableListEvent(this, type, variable, index, bitIndex);
     for (VariableListListener l : listeners) {
       l.listChanged(event);
@@ -88,37 +88,36 @@ public class VariableList {
     return maxSize;
   }
 
-  public void move(Var var, int delta) {
-    final var index = data.indexOf(var);
-    if (index < 0) throw new NoSuchElementException(var.toString());
-    final var bitIndex = names.indexOf(var.bitName(0));
-    if (bitIndex < 0) throw new NoSuchElementException(var.toString());
+  public void move(Var variable, int delta) {
+    final var index = data.indexOf(variable);
+    if (index < 0) throw new NoSuchElementException(variable.toString());
+    final var bitIndex = names.indexOf(variable.bitName(0));
+    if (bitIndex < 0) throw new NoSuchElementException(variable.toString());
     final var newIndex = index + delta;
     if (newIndex < 0) {
       throw new IllegalArgumentException("cannot move index " + index + " by " + delta);
     }
     if (newIndex > data.size() - 1) {
-      throw new IllegalArgumentException(
-          "cannot move index " + index + " by " + delta + ": size " + data.size());
+      throw new IllegalArgumentException("Cannot move index " + index + " by " + delta + ": size " + data.size());
     }
     if (index == newIndex) return;
     data.remove(index);
-    data.add(newIndex, var);
-    names.subList(bitIndex + 1 - var.width, bitIndex + 1).clear();
+    data.add(newIndex, variable);
+    names.subList(bitIndex + 1 - variable.width, bitIndex + 1).clear();
     var i = (newIndex == 0 ? 0 : (1 + names.indexOf(data.get(newIndex - 1).bitName(0))));
-    for (final var bit : var) names.add(i++, bit);
-    final var bitDelta = names.indexOf(var.bitName(0)) - bitIndex;
-    fireEvent(VariableListEvent.MOVE, var, delta, bitDelta);
+    for (final var bit : variable) names.add(i++, bit);
+    final var bitDelta = names.indexOf(variable.bitName(0)) - bitIndex;
+    fireEvent(VariableListEvent.MOVE, variable, delta, bitDelta);
   }
 
-  public void remove(Var var) {
-    final var index = data.indexOf(var);
-    if (index < 0) throw new NoSuchElementException(var.toString());
-    final var bitIndex = names.indexOf(var.bitName(0));
-    if (bitIndex < 0) throw new NoSuchElementException(var.toString());
+  public void remove(Var variable) {
+    final var index = data.indexOf(variable);
+    if (index < 0) throw new NoSuchElementException(variable.toString());
+    final var bitIndex = names.indexOf(variable.bitName(0));
+    if (bitIndex < 0) throw new NoSuchElementException(variable.toString());
     data.remove(index);
-    names.subList(bitIndex + 1 - var.width, bitIndex + 1).clear();
-    fireEvent(VariableListEvent.REMOVE, var, index, bitIndex);
+    names.subList(bitIndex + 1 - variable.width, bitIndex + 1).clear();
+    fireEvent(VariableListEvent.REMOVE, variable, index, bitIndex);
   }
 
   public void removeVariableListListener(VariableListListener l) {
@@ -147,8 +146,8 @@ public class VariableList {
     data.clear();
     data.addAll(values);
     names.clear();
-    for (final var var : values) {
-      for (final var bit : var) names.add(bit);
+    for (final var variable : values) {
+      for (final var bit : variable) names.add(bit);
     }
     fireEvent(VariableListEvent.ALL_REPLACED);
   }

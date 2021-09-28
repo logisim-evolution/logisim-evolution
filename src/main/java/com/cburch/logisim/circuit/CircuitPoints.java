@@ -31,7 +31,9 @@ class CircuitPoints {
   private final HashMap<Location, LocationData> map = new HashMap<>();
   private final HashMap<Location, WidthIncompatibilityData> incompatibilityData = new HashMap<>();
 
-  public CircuitPoints() {}
+  public CircuitPoints() {
+    // Do nothing.
+  }
 
   //
   // update methods

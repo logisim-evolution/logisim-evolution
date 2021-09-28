@@ -218,7 +218,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
   public boolean runTty() {
     final var root = myProject.getLogisimFile().getCircuit(topLevelSheet);
     if (root != null) {
-      root.Annotate(myProject, false, false);
+      root.annotate(myProject, false, false);
     } else {
       Reporter.report.addFatalError("Toplevel sheet \"" + topLevelSheet + "\" not found in project!");
       return false;

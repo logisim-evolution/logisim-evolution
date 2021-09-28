@@ -179,6 +179,7 @@ public class ReplacementMap {
     try (final var p = new PrintStream(out, true, StandardCharsets.UTF_8)) {
       print(p);
     } catch (Exception ignored) {
+      // Do nothing.
     }
     return out.toString(StandardCharsets.UTF_8);
   }

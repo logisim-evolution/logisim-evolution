@@ -28,6 +28,7 @@ import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.text.AttributedString;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ExpressionRenderData {
 
@@ -98,7 +99,7 @@ public class ExpressionRenderData {
     lineStyled = null;
   }
 
-  private ArrayList<ArrayList<Range>> computeLineAttribs(ArrayList<Range> attribs) {
+  private ArrayList<ArrayList<Range>> computeLineAttribs(List<Range> attribs) {
     final var attrs = new ArrayList<ArrayList<Range>>();
     for (int i = 0; i < lineText.length; i++) {
       attrs.add(new ArrayList<>());
@@ -161,8 +162,7 @@ public class ExpressionRenderData {
     var i = bestBreakPositions.size() - 1;
     var breakPosition = 0;
     while (i >= 0 && text.length() > 0 && (bestBreakPositions.get(i) - breakPosition) > 0) {
-      if (getWidth(
-              ctx, text, bestBreakPositions.get(i) - breakPosition, expr.subscripts, expr.marks)
+      if (getWidth(ctx, text, bestBreakPositions.get(i) - breakPosition, expr.subscripts, expr.marks)
           <= parentWidth) {
         String addedLine = text.substring(0, bestBreakPositions.get(i) - breakPosition);
         lines.add(addedLine);
@@ -237,15 +237,14 @@ public class ExpressionRenderData {
     return new Dimension(prefWidth, height);
   }
 
-  private AttributedString style(
-      String s, int end, ArrayList<Range> subs, ArrayList<Range> marks, boolean replaceSpaces) {
+  private AttributedString style(String s, int end, List<Range> subs, List<Range> marks, boolean replaceSpaces) {
     /* This is a hack to get TextLayout to correctly format and calculate the width
      * of this substring (see remark in getWidth(...) below. As we have a mono spaced
      * font the size of all chars is equal.
      */
     var sub = s.substring(0, end);
     if (replaceSpaces) {
-      sub = sub.replaceAll(" ", "_");
+      sub = sub.replace(" ", "_");
     }
     AttributedString as = new AttributedString(sub);
     as.addAttribute(TextAttribute.FAMILY, expressionBaseFont.getFamily());
@@ -299,7 +298,7 @@ public class ExpressionRenderData {
     return width;
   }
 
-  private int getWidth(FontRenderContext ctx, String s, int end, ArrayList<Range> subs, ArrayList<Range> marks) {
+  private int getWidth(FontRenderContext ctx, String s, int end, List<Range> subs, List<Range> marks) {
     if (end == 0) return 0;
     final var as = style(s, end, subs, marks, true);
     /* The TextLayout class will omit trailing spaces,

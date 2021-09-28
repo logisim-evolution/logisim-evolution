@@ -322,7 +322,7 @@ class XmlReader {
     }
 
     void loadAppearance(Element appearElt, XmlReader.CircuitData circData, String context) {
-      final var pins = new ArrayList<AppearanceSvgReader.pinInfo>();
+      final var pins = new ArrayList<AppearanceSvgReader.PinInfo>();
       for (final var comp : circData.knownComponents.values()) {
         if (comp.getFactory() == Pin.FACTORY) {
           pins.add(AppearanceSvgReader.getPinInfo(comp.getLocation(), Instance.getInstanceFor(comp)));

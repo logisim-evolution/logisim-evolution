@@ -313,8 +313,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
       return (V) appear;
     } else if (attr == ATTR_SPACING) {
       return (V) Integer.valueOf(spacing);
-    } else if (attr instanceof BitOutAttribute) {
-      final var bitOut = (BitOutAttribute) attr;
+    } else if (attr instanceof BitOutAttribute bitOut) {
       return (V) Integer.valueOf(bitEnd[bitOut.which]);
     } else {
       return null;

@@ -128,8 +128,7 @@ public class Circuit {
         for (final var end : valList) {
           if (end != null) map.put(end.getLocation(), end);
         }
-      } else if (val instanceof EndData) {
-        final var end = (EndData) val;
+      } else if (val instanceof EndData end) {
         map.put(end.getLocation(), end);
       }
       return map;
@@ -160,20 +159,20 @@ public class Circuit {
       Set<Component> components,
       AttributeSet me,
       ComponentFactory myFactory,
-      Boolean ShowDialog) {
+      Boolean showDialog) {
     if (myFactory instanceof Tunnel) return true;
     if (circuitName != null
         && !circuitName.isEmpty()
         && circuitName.equalsIgnoreCase(name)
         && myFactory instanceof Pin) {
-      if (ShowDialog) {
+      if (showDialog) {
         final var msg = S.get("ComponentLabelEqualCircuitName");
         OptionPane.showMessageDialog(null, "\"" + name + "\" : " + msg);
       }
       return false;
     }
-    return !(isExistingLabel(name, me, components, ShowDialog)
-        || isComponentName(name, components, ShowDialog));
+    return !(isExistingLabel(name, me, components, showDialog)
+        || isComponentName(name, components, showDialog));
   }
 
   private static boolean isComponentName(String name, Set<Component> comps, Boolean showDialog) {
@@ -229,13 +228,13 @@ public class Circuit {
   private final EventSourceWeakSupport<CircuitListener> listeners = new EventSourceWeakSupport<>();
   private LinkedHashSet<Component> comps = new LinkedHashSet<>(); // doesn't include wires
   CircuitWires wires = new CircuitWires();
-  private final ArrayList<Component> clocks = new ArrayList<>();
+  private final List<Component> clocks = new ArrayList<>();
   private final CircuitLocker locker;
 
   private final WeakHashMap<Component, Circuit> circuitsUsingThis;
   private final Netlist myNetList;
-  private final HashMap<String, MappableResourcesContainer> myMappableResources;
-  private final HashMap<String, HashMap<String, CircuitMapInfo>> loadedMaps;
+  private final Map<String, MappableResourcesContainer> myMappableResources;
+  private final Map<String, Map<String, CircuitMapInfo>> loadedMaps;
   private boolean isAnnotated;
   private Project proj;
   private final SocSimulationManager socSim = new SocSimulationManager();
@@ -307,19 +306,19 @@ public class Circuit {
     return componentName;
   }
 
-  public void Annotate(Project proj, boolean clearExistingLabels, boolean insideLibrary) {
+  public void annotate(Project proj, boolean clearExistingLabels, boolean insideLibrary) {
     if (this.proj == null) this.proj = proj;
-    this.Annotate(clearExistingLabels, insideLibrary);
+    this.annotate(clearExistingLabels, insideLibrary);
   }
 
-  public void Annotate(boolean clearExistingLabels, boolean insideLibrary) {
+  public void annotate(boolean clearExistingLabels, boolean insideLibrary) {
     /* If I am already completely annotated, return */
     if (isAnnotated) {
       // FIXME: hardcoded string
-      Reporter.report.addInfo("Nothing to do !");
+      Reporter.report.addInfo("Nothing to do!");
       return;
     }
-    SortedSet<Component> comps = new TreeSet<>(Location.CompareVertical);
+    final var comps = new TreeSet<Component>(Location.CompareVertical);
     final var lablers = new HashMap<String, AutoLabel>();
     final var labelNames = new LinkedHashSet<String>();
     final var subCircuits = new LinkedHashSet<String>();
@@ -360,8 +359,7 @@ public class Circuit {
         }
       }
       /* if the current component is a sub-circuit, recurse into it */
-      if (comp.getFactory() instanceof SubcircuitFactory) {
-        final var sub = (SubcircuitFactory) comp.getFactory();
+      if (comp.getFactory() instanceof SubcircuitFactory sub) {
         subCircuits.add(sub.getName());
       }
     }
@@ -386,7 +384,7 @@ public class Circuit {
         }
       }
     }
-    if (!comps.isEmpty() & insideLibrary) {
+    if (!comps.isEmpty() && insideLibrary) {
       // FIXME: hardcoded string
       Reporter.report.addSevereWarning(
           "Annotated the circuit \""
@@ -404,7 +402,7 @@ public class Circuit {
     for (final var subs : subCircuits) {
       final var circ = LibraryTools.getCircuitFromLibs(proj.getLogisimFile(), subs.toUpperCase());
       final var inLibrary = !proj.getLogisimFile().getCircuits().contains(circ);
-      circ.Annotate(proj, clearExistingLabels, inLibrary);
+      circ.annotate(proj, clearExistingLabels, inLibrary);
     }
   }
 
@@ -414,8 +412,7 @@ public class Circuit {
     isAnnotated = false;
     myNetList.clear();
     for (final var comp : this.getNonWires()) {
-      if (comp.getFactory() instanceof SubcircuitFactory) {
-        final var sub = (SubcircuitFactory) comp.getFactory();
+      if (comp.getFactory() instanceof SubcircuitFactory sub) {
         sub.getSubcircuit().clearAnnotationLevel();
       }
     }
@@ -519,7 +516,7 @@ public class Circuit {
     context.setGraphics(gCopy);
     wires.draw(context, hidden);
 
-    if (hidden == null || hidden.size() == 0) {
+    if (hidden == null || hidden.isEmpty()) {
       for (final var c : comps) {
         final var gNew = g.create();
         context.setGraphics(gNew);
@@ -665,7 +662,7 @@ public class Circuit {
     circuitsUsingThis.remove(c);
   }
 
-  public ArrayList<Component> getClocks() {
+  public List<Component> getClocks() {
     return clocks;
   }
 
@@ -696,7 +693,7 @@ public class Circuit {
     return myNetList;
   }
 
-  public void addLoadedMap(String boardName, HashMap<String, CircuitMapInfo> map) {
+  public void addLoadedMap(String boardName, Map<String, CircuitMapInfo> map) {
     loadedMaps.put(boardName, map);
   }
 
@@ -822,10 +819,9 @@ public class Circuit {
 
     isAnnotated = false;
     myNetList.clear();
-    if (c instanceof Wire) {
-      final var w = (Wire) c;
-      if (w.getEnd0().equals(w.getEnd1())) return;
-      var added = wires.add(w);
+    if (c instanceof Wire wire) {
+      if (wire.getEnd0().equals(wire.getEnd1())) return;
+      var added = wires.add(wire);
       if (!added) return;
     } else {
       // add it into the circuit
@@ -856,11 +852,11 @@ public class Circuit {
         clocks.add(c);
       } else if (factory instanceof Rom) {
         Rom.closeHexFrame(c);
-      } else if (factory instanceof SubcircuitFactory) {
-        final var subcirc = (SubcircuitFactory) factory;
+      } else if (factory instanceof SubcircuitFactory subFactory) {
+        final var subcirc = subFactory;
         subcirc.getSubcircuit().circuitsUsingThis.put(c, this);
-      } else if (factory instanceof VhdlEntity) {
-        final var vhdl = (VhdlEntity) factory;
+      } else if (factory instanceof VhdlEntity vhdlEntity) {
+        final var vhdl = vhdlEntity;
         vhdl.addCircuitUsing(c, this);
       }
       c.addComponentListener(myComponentListener);

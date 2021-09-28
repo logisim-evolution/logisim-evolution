@@ -63,8 +63,7 @@ public abstract class AppearanceElement extends AbstractCanvasObject {
 
   @Override
   public boolean matches(CanvasObject other) {
-    if (other instanceof AppearanceElement) {
-      final var that = (AppearanceElement) other;
+    if (other instanceof AppearanceElement that) {
       return this.location.equals(that.location);
     }
     return false;

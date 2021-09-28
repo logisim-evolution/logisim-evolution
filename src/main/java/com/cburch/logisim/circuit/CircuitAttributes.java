@@ -42,7 +42,9 @@ public class CircuitAttributes extends AbstractAttributeSet {
     }
 
     @Override
-    public void attributeListChanged(AttributeEvent e) {}
+    public void attributeListChanged(AttributeEvent e) {
+      // Do nothing
+    }
 
     @Override
     public void attributeValueChanged(AttributeEvent e) {
@@ -61,7 +63,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
         subcircInstance.recomputeBounds();
       }
       subcircInstance.fireInvalidated();
-      if (source != null & !source.getAppearance().isDefaultAppearance())
+      if (source != null && !source.getAppearance().isDefaultAppearance())
         source.getStaticAttributes().setValue(APPEARANCE_ATTR, APPEAR_CUSTOM);
     }
   }
@@ -74,7 +76,9 @@ public class CircuitAttributes extends AbstractAttributeSet {
     }
 
     @Override
-    public void attributeListChanged(AttributeEvent e) {}
+    public void attributeListChanged(AttributeEvent e) {
+      // Do nothing
+    }
 
     @Override
     public void attributeValueChanged(AttributeEvent e) {
@@ -194,10 +198,10 @@ public class CircuitAttributes extends AbstractAttributeSet {
   private String label;
   private Direction labelLocation;
   private Font labelFont;
-  private Boolean LabelVisible;
+  private Boolean labelVisible;
   private MyListener listener;
   private Instance[] pinInstances;
-  private boolean NameReadOnly;
+  private boolean nameReadOnly;
 
   public CircuitAttributes(Circuit source) {
     this.source = source;
@@ -206,9 +210,9 @@ public class CircuitAttributes extends AbstractAttributeSet {
     label = "";
     labelLocation = Direction.NORTH;
     labelFont = StdAttr.DEFAULT_LABEL_FONT;
-    LabelVisible = true;
+    labelVisible = true;
     pinInstances = new Instance[0];
-    NameReadOnly = false;
+    nameReadOnly = false;
     DOWNLOAD_FREQUENCY.setHidden(true);
     SIMULATION_FREQUENCY.setHidden(true);
     DOWNLOAD_BOARD.setHidden(true);
@@ -240,7 +244,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
     if (attr == StdAttr.FACING) return (E) facing;
     if (attr == StdAttr.LABEL) return (E) label;
     if (attr == StdAttr.LABEL_FONT) return (E) labelFont;
-    if (attr == StdAttr.LABEL_VISIBILITY) return (E) LabelVisible;
+    if (attr == StdAttr.LABEL_VISIBILITY) return (E) labelVisible;
     if (attr == LABEL_LOCATION_ATTR) return (E) labelLocation;
     else return source.getStaticAttributes().getValue(attr);
   }
@@ -270,14 +274,14 @@ public class CircuitAttributes extends AbstractAttributeSet {
   @Override
   public void setReadOnly(Attribute<?> attr, boolean value) {
     if (attr == NAME_ATTR) {
-      NameReadOnly = value;
+      nameReadOnly = value;
     }
   }
 
   @Override
   public boolean isReadOnly(Attribute<?> attr) {
     if (attr == NAME_ATTR) {
-      return NameReadOnly;
+      return nameReadOnly;
     }
     return false;
   }
@@ -303,8 +307,8 @@ public class CircuitAttributes extends AbstractAttributeSet {
       fireAttributeValueChanged(StdAttr.LABEL_FONT, val, null);
     } else if (attr == StdAttr.LABEL_VISIBILITY) {
       final var val = (Boolean) value;
-      if (LabelVisible == value) return;
-      LabelVisible = val;
+      if (labelVisible == value) return;
+      labelVisible = val;
       fireAttributeValueChanged(StdAttr.LABEL_VISIBILITY, val, null);
     } else if (attr == LABEL_LOCATION_ATTR) {
       final var val = (Direction) value;

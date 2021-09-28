@@ -29,12 +29,12 @@ import java.util.List;
 import org.w3c.dom.Element;
 
 public class AppearanceSvgReader {
-  public static class pinInfo {
+  public static class PinInfo {
     private final Location myLocation;
     private final Instance myInstance;
     private Boolean pinIsUsed;
 
-    public pinInfo(Location loc, Instance inst) {
+    public PinInfo(Location loc, Instance inst) {
       myLocation = loc;
       myInstance = inst;
       pinIsUsed = false;
@@ -57,11 +57,11 @@ public class AppearanceSvgReader {
     }
   }
 
-  public static pinInfo getPinInfo(Location loc, Instance inst) {
-    return new pinInfo(loc, inst);
+  public static PinInfo getPinInfo(Location loc, Instance inst) {
+    return new PinInfo(loc, inst);
   }
 
-  public static AbstractCanvasObject createShape(Element elt, List<pinInfo> pins, Circuit circuit) {
+  public static AbstractCanvasObject createShape(Element elt, List<PinInfo> pins, Circuit circuit) {
     final var name = elt.getTagName();
     if (name.equals("circ-anchor") || name.equals("circ-origin")) {
       final var loc = getLocation(elt);

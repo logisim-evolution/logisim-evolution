@@ -290,12 +290,12 @@ public class Simulator {
           }
 
           if (!ready) {
-            // LockSupport.parkNanos(delta);
             try {
               if (delta > 0) wait(delta / 1000000, (int) (delta % 1000000));
               else wait();
             } catch (InterruptedException ignored) {
-            } // yes, we swallow the interrupt
+              // yes, we swallow the interrupt
+            }
           }
         } while (!ready);
 

@@ -46,7 +46,7 @@ public class ClipboardActions extends Action {
         contents.add(obj.clone());
       } else if (obj instanceof AppearanceAnchor) {
         final var anch = (AppearanceAnchor) obj;
-        anchorFacing = anch.getFacing();
+        anchorFacing = anch.getFacingDirection();
         anchorLocation = anch.getLocation();
       }
     }
