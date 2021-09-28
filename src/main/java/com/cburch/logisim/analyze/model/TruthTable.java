@@ -79,12 +79,11 @@ public class TruthTable {
     }
 
     public String toBitString(List<Var> vars) {
-      StringBuilder s = null;
+      final var s = new StringBuilder();
       var i = 0;
-      for (final var var : vars) {
-        if (s == null) s = new StringBuilder();
-        else s.append(" ");
-        for (int j = 0; j < var.width; j++) s.append(inputs[i++].toBitString());
+      for (final var variable : vars) {
+        s.append(" ");
+        for (var j = 0; j < variable.width; j++) s.append(inputs[i++].toBitString());
       }
       return s.toString();
     }

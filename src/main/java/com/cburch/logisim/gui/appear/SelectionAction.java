@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.gui.appear;
 
-import com.cburch.draw.canvas.Selection;
 import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.util.ZOrder;
@@ -71,7 +70,7 @@ class SelectionAction extends Action {
           anchorNewLocation.getY() - anchorOldLocation.getY());
     }
     if (anchor != null && anchorNewFacing != null) {
-      anchorOldFacing = anchor.getFacing();
+      anchorOldFacing = anchor.getFacingDirection();
       anchor.setValue(AppearanceAnchor.FACING, anchorNewFacing);
     }
     sel.setSelected(newSelection, true);

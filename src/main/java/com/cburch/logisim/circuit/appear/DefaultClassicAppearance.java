@@ -117,8 +117,7 @@ public class DefaultClassicAppearance {
     final var maxThis = Math.max(numFacing, numOpposite);
     int maxOffs;
     switch (maxThis) {
-      case 0:
-      case 1:
+      case 0, 1:
         maxOffs = (maxOthers == 0 ? 15 : 10);
         break;
       case 2:

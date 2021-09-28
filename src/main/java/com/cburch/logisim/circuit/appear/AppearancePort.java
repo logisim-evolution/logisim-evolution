@@ -92,8 +92,7 @@ public class AppearancePort extends AppearanceElement {
 
   @Override
   public boolean matches(CanvasObject other) {
-    if (other instanceof AppearancePort) {
-      final var that = (AppearancePort) other;
+    if (other instanceof AppearancePort that) {
       return this.matches(that) && this.pin == that.pin;
     }
     return false;

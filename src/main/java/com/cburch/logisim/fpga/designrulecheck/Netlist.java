@@ -833,7 +833,7 @@ public class Netlist {
             if (busnet != null) {
               Reporter.report.addFatalErrorFmt(
                   "BUG: Multiple bus nets found for a single splitter\n ==> %s:%d\n",
-                  this.getClass().getName().replaceAll("\\.", "/"),
+                  this.getClass().getName().replace(".", "/"),
                   Thread.currentThread().getStackTrace()[2].getLineNumber());
               return false;
             } else {
@@ -844,7 +844,7 @@ public class Netlist {
             if (connectedNet != null) {
               Reporter.report.addFatalErrorFmt(
                   "BUG: Multiple nets found for a single splitter split connection\n ==> %s:%d\n",
-                  this.getClass().getName().replaceAll("\\.", "/"),
+                  this.getClass().getName().replace(".", "/"),
                   Thread.currentThread().getStackTrace()[2].getLineNumber());
               return false;
             } else {
@@ -858,7 +858,7 @@ public class Netlist {
             if (!busnet.merge(connectedNet)) {
               Reporter.report.addFatalErrorFmt(
                   "BUG: Splitter bus merge error\n ==> %s:%d\n",
-                  this.getClass().getName().replaceAll("\\.", "/"),
+                  this.getClass().getName().replace(".", "/"),
                   Thread.currentThread().getStackTrace()[2].getLineNumber());
               return false;
             } else {
@@ -909,7 +909,7 @@ public class Netlist {
       if (rootNet < 0) {
         Reporter.report.addFatalErrorFmt(
             "BUG: Splitter without a bus connection\n ==> %s:%d\n",
-            this.getClass().getName().replaceAll("\\.", "/"),
+            this.getClass().getName().replace(".", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
         this.clear();
         return false;
@@ -1038,7 +1038,7 @@ public class Netlist {
               // This should never happen as we already checked in the first pass.
               Reporter.report.addFatalErrorFmt(
                   "BUG: This is embarasing as this should never happen\n ==> %s:%d\n",
-                  this.getClass().getName().replaceAll("\\.", "/"),
+                  this.getClass().getName().replace(".", "/"),
                   Thread.currentThread().getStackTrace()[2].getLineNumber());
               this.clear();
               return false;
@@ -1395,7 +1395,7 @@ public class Netlist {
       if (sources.size() != 1) {
         Reporter.report.addFatalErrorFmt(
             "BUG: Found multiple sources\n ==> %s:%d\n",
-            this.getClass().getName().replaceAll("\\.", "/"),
+            this.getClass().getName().replace(".", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
         return null;
       }
@@ -1535,11 +1535,11 @@ public class Netlist {
     return drcStatus == DRC_PASSED;
   }
 
-  public void markClockNet(ArrayList<String> HierarchyNames, int clocksourceid, ConnectionPoint connection, boolean isPinClockSource) {
-    myClockInformation.addClockNet(HierarchyNames, clocksourceid, connection, isPinClockSource);
+  public void markClockNet(List<String> hierarchyNames, int clockSourceId, ConnectionPoint connection, boolean isPinClockSource) {
+    myClockInformation.addClockNet(hierarchyNames, clockSourceId, connection, isPinClockSource);
   }
 
-  public boolean markClockSourceComponents(ArrayList<String> hierarchyNames, ArrayList<Netlist> hierarchyNetlists, ClockSourceContainer clockSources) {
+  public boolean markClockSourceComponents(List<String> hierarchyNames, List<Netlist> hierarchyNetlists, ClockSourceContainer clockSources) {
     //First pass: we go down the hierarchy till the leaves
     for (final var sub : mySubCircuits) {
       final var subFact = (SubcircuitFactory) sub.getComponent().getFactory();
@@ -1564,7 +1564,7 @@ public class Netlist {
       if (clockSource.nrOfEnds() != 1) {
         Reporter.report.addFatalErrorFmt(
             "BUG: Found a clock source with more than 1 connection\n ==> %s:%d\n",
-            this.getClass().getName().replaceAll("\\.", "/"),
+            this.getClass().getName().replace(".", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
         return false;
       }
@@ -1572,7 +1572,7 @@ public class Netlist {
       if (clockConnection.getNrOfBits() != 1) {
         Reporter.report.addFatalErrorFmt(
             "BUG: Found a clock source with a bus as output\n ==> %s:%d\n",
-            this.getClass().getName().replaceAll("\\.", "/"),
+            this.getClass().getName().replace(".", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
         return false;
       }
@@ -1768,7 +1768,7 @@ public class Netlist {
         if (rootNet == null) {
           Reporter.report.addFatalErrorFmt(
               "BUG: Unable to find a root net for a normal component\n ==> %s:%d\n",
-              this.getClass().getName().replaceAll("\\.", "/"),
+              this.getClass().getName().replace(".", "/"),
               Thread.currentThread().getStackTrace()[2].getLineNumber());
           return false;
         }
@@ -1778,7 +1778,7 @@ public class Netlist {
             Reporter.report.addFatalErrorFmt(
                 // FIXME: Some "BUG:" have 2 spaces, other just 1. Is this intentional or all can have 1 (multiple places)?
                 "BUG:  Unable to find a root-net bit-index for a normal component\n ==> %s:%d\n",
-                this.getClass().getName().replaceAll("\\.", "/"),
+                this.getClass().getName().replace(".", "/"),
                 Thread.currentThread().getStackTrace()[2].getLineNumber());
             return false;
           }
@@ -1818,7 +1818,7 @@ public class Netlist {
       if (subPortIndex < 0) {
         Reporter.report.addFatalErrorFmt(
             "BUG:  Unable to find pin in sub-circuit\n ==> %s:%d\n",
-            this.getClass().getName().replaceAll("\\.", "/"),
+            this.getClass().getName().replace(".", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
         return false;
       }
@@ -1828,7 +1828,7 @@ public class Netlist {
         if (rootNet == null) {
           Reporter.report.addFatalErrorFmt(
               "BUG:  Unable to find a root net for sub-circuit\n ==> %s:%d\n",
-              this.getClass().getName().replaceAll("\\.", "/"),
+              this.getClass().getName().replace(".", "/"),
               Thread.currentThread().getStackTrace()[2].getLineNumber());
           return false;
         }
@@ -1837,7 +1837,7 @@ public class Netlist {
           if (rootNetBitIndex < 0) {
             Reporter.report.addFatalErrorFmt(
                 "BUG:  Unable to find a root-net bit-index for sub-circuit\n ==> %s:%d\n",
-                this.getClass().getName().replaceAll("\\.", "/"),
+                this.getClass().getName().replace(".", "/"),
                 Thread.currentThread().getStackTrace()[2].getLineNumber());
             return false;
           }
@@ -1869,16 +1869,16 @@ public class Netlist {
     return myClockInformation.getSourceContainer().getRequiresFpgaGlobalClock();
   }
 
-  public void setCurrentHierarchyLevel(ArrayList<String> level) {
+  public void setCurrentHierarchyLevel(List<String> level) {
     currentHierarchyLevel.clear();
     currentHierarchyLevel.addAll(level);
   }
 
-  private boolean TraceDownSubcircuit(ConnectionPoint point, int clockSourceId, ArrayList<String> hierarchyNames, ArrayList<Netlist> hierarchyNetlists) {
+  private boolean TraceDownSubcircuit(ConnectionPoint point, int clockSourceId, List<String> hierarchyNames, List<Netlist> hierarchyNetlists) {
     if (point.getChildsPortIndex() < 0) {
       Reporter.report.addFatalErrorFmt(
           "BUG: Subcircuit port is not annotated!\n ==> %s:%d\n",
-          this.getClass().getName().replaceAll("\\.", "/"),
+          this.getClass().getName().replace(".", "/"),
           Thread.currentThread().getStackTrace()[2].getLineNumber());
       return false;
     }
@@ -1887,7 +1887,7 @@ public class Netlist {
     if (inputPort == null) {
       Reporter.report.addFatalErrorFmt(
           "BUG: Unable to find Subcircuit input port!\n ==> %s:%d\n",
-          this.getClass().getName().replaceAll("\\.", "/"),
+          this.getClass().getName().replace(".", "/"),
           Thread.currentThread().getStackTrace()[2].getLineNumber());
       return false;
     }
@@ -1895,7 +1895,7 @@ public class Netlist {
     if (subCirc == null) {
       Reporter.report.addFatalErrorFmt(
           "BUG: Unable to find Subcircuit!\n ==> %s:%d\n",
-          this.getClass().getName().replaceAll("\\.", "/"),
+          this.getClass().getName().replace(".", "/"),
           Thread.currentThread().getStackTrace()[2].getLineNumber());
       return false;
     }
@@ -1903,7 +1903,7 @@ public class Netlist {
     if (bitindex < 0) {
       Reporter.report.addFatalErrorFmt(
           "BUG: Unable to find the bit index of a Subcircuit input port!\n ==> %s:%d\n",
-          this.getClass().getName().replaceAll("\\.", "/"),
+          this.getClass().getName().replace(".", "/"),
           Thread.currentThread().getStackTrace()[2].getLineNumber());
       return false;
     }
@@ -1933,7 +1933,7 @@ public class Netlist {
     return true;
   }
 
-  public boolean traceClockNet(Net clockNet, byte clockNetBitIndex, int clockSourceId, boolean isPinSource, ArrayList<String> hierarchyNames, ArrayList<Netlist> hierarchyNetlists) {
+  public boolean traceClockNet(Net clockNet, byte clockNetBitIndex, int clockSourceId, boolean isPinSource, List<String> hierarchyNames, List<Netlist> hierarchyNetlists) {
     final var hiddenComps = GetHiddenSinks(clockNet, clockNetBitIndex, mySplitters, new HashSet<>(), false);
     for (final var point : hiddenComps) {
       markClockNet(hierarchyNames, clockSourceId, point, isPinSource);
@@ -1946,7 +1946,7 @@ public class Netlist {
         if (outputPort == null) {
           Reporter.report.addFatalErrorFmt(
               "BUG: Could not find an output port!\n ==> %s:%d\n",
-              this.getClass().getName().replaceAll("\\.", "/"),
+              this.getClass().getName().replace(".", "/"),
               Thread.currentThread().getStackTrace()[2].getLineNumber());
           return false;
         }
@@ -1960,7 +1960,7 @@ public class Netlist {
         if (subClockNet == null) {
           Reporter.report.addFatalErrorFmt(
               "BUG: Could not find a sub-circuit connection in overlying hierarchy level!\n ==> %s:%d\n",
-              this.getClass().getName().replaceAll("\\.", "/"),
+              this.getClass().getName().replace(".", "/"),
               Thread.currentThread().getStackTrace()[2].getLineNumber());
           return false;
         }
@@ -2240,7 +2240,7 @@ public class Netlist {
     return result;
   }
 
-  private void warningTraceForGatedClock(ConnectionPoint sourcePoint, int index, ArrayList<Netlist> hierarchyNetlists, ArrayList<String> hierarchyNames) {
+  private void warningTraceForGatedClock(ConnectionPoint sourcePoint, int index, List<Netlist> hierarchyNetlists, List<String> hierarchyNames) {
     final var comp = sourcePoint.getComp();
     if (comp.getFactory() instanceof Pin) {
       if (hierarchyNames.isEmpty())
@@ -2253,7 +2253,7 @@ public class Netlist {
       if (idx < 0) {
         Reporter.report.addFatalErrorFmt(
             "BUG: Could not find port!\n ==> %s:%d\n",
-            this.getClass().getName().replaceAll("\\.", "/"),
+            this.getClass().getName().replace(".", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
         return;
       }
@@ -2265,7 +2265,7 @@ public class Netlist {
       if (subNet == null) {
         Reporter.report.addFatalErrorFmt(
             "BUG: Could not find a sub-circuit connection in overlying hierarchy level!\n ==> %s:%d\n",
-            this.getClass().getName().replaceAll("\\.", "/"),
+            this.getClass().getName().replace(".", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
         return;
       }
@@ -2282,7 +2282,7 @@ public class Netlist {
         if (source == null) {
           Reporter.report.addFatalErrorFmt(
               "BUG: Unable to find source in sub-circuit!\n ==> %s:%d\n",
-              this.getClass().getName().replaceAll("\\.", "/"),
+              this.getClass().getName().replace(".", "/"),
               Thread.currentThread().getStackTrace()[2].getLineNumber());
           return;
         }
@@ -2320,7 +2320,7 @@ public class Netlist {
       if (sourcePoint.getChildsPortIndex() < 0) {
         Reporter.report.addFatalErrorFmt(
             "BUG: Subcircuit port is not annotated!\n ==> %s:%d\n",
-            this.getClass().getName().replaceAll("\\.", "/"),
+            this.getClass().getName().replace(".", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
         return;
       }
@@ -2328,7 +2328,7 @@ public class Netlist {
       if (outputPort == null) {
         Reporter.report.addFatalErrorFmt(
             "BUG: Unable to find Subcircuit output port!\n ==> %s:%d\n",
-            this.getClass().getName().replaceAll("\\.", "/"),
+            this.getClass().getName().replace(".", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
         return;
       }
@@ -2341,7 +2341,7 @@ public class Netlist {
       if (subCirc == null) {
         Reporter.report.addFatalErrorFmt(
             "BUG: Unable to find Subcircuit!\n ==> %s:%d\n",
-            this.getClass().getName().replaceAll("\\.", "/"),
+            this.getClass().getName().replace(".", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
         return;
       }
@@ -2350,7 +2350,7 @@ public class Netlist {
       if (bitIndex < 0) {
         Reporter.report.addFatalErrorFmt(
             "BUG: Unable to find the bit index of a Subcircuit output port!\n ==> %s:%d\n",
-            this.getClass().getName().replaceAll("\\.", "/"),
+            this.getClass().getName().replace(".", "/"),
             Thread.currentThread().getStackTrace()[2].getLineNumber());
         return;
       }
@@ -2380,7 +2380,7 @@ public class Netlist {
         if (source == null) {
           Reporter.report.addFatalErrorFmt(
               "BUG: Unable to find source in sub-circuit!\n ==> %s:%d\n",
-              this.getClass().getName().replaceAll("\\.", "/"),
+              this.getClass().getName().replace(".", "/"),
               Thread.currentThread().getStackTrace()[2].getLineNumber());
           return;
         }

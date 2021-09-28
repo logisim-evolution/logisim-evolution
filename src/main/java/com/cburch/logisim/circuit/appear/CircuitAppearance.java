@@ -71,7 +71,7 @@ public class CircuitAppearance extends Drawing {
         : circuit.getStaticAttributes().getValue(CircuitAttributes.NAME_ATTR);
   }
 
-  public CircuitPins GetCircuitPin() {
+  public CircuitPins getCircuitPin() {
     return circuitPins;
   }
 
@@ -131,7 +131,7 @@ public class CircuitAppearance extends Drawing {
 
   private AppearanceAnchor findAnchor() {
     for (CanvasObject shape : getObjectsFromBottom()) {
-      if (shape instanceof AppearanceAnchor) return (AppearanceAnchor) shape;
+      if (shape instanceof AppearanceAnchor appAnchor) return appAnchor;
     }
     return null;
   }
@@ -156,8 +156,8 @@ public class CircuitAppearance extends Drawing {
     Bounds ret = null;
     Location offset = null;
     for (final var obj : getObjectsFromBottom()) {
-      if (obj instanceof AppearanceElement) {
-        final var loc = ((AppearanceElement) obj).getLocation();
+      if (obj instanceof AppearanceElement appEl) {
+        final var loc = appEl.getLocation();
         if (obj instanceof AppearanceAnchor) offset = loc;
         ret = (ret == null) ? Bounds.create(loc) : ret.add(loc);
       } else {
@@ -185,7 +185,7 @@ public class CircuitAppearance extends Drawing {
 
   public Direction getFacing() {
     final var anchor = findAnchor();
-    return (anchor == null) ? Direction.EAST : anchor.getFacing();
+    return (anchor == null) ? Direction.EAST : anchor.getFacingDirection();
   }
 
   public Bounds getOffsetBounds() {
@@ -197,12 +197,12 @@ public class CircuitAppearance extends Drawing {
     var defaultFacing = Direction.EAST;
     final var ports = new ArrayList<AppearancePort>();
     for (final var shape : getObjectsFromBottom()) {
-      if (shape instanceof AppearancePort) {
-        ports.add((AppearancePort) shape);
-      } else if (shape instanceof AppearanceAnchor) {
-        final var o = (AppearanceAnchor) shape;
+      if (shape instanceof AppearancePort appPort) {
+        ports.add(appPort);
+      } else if (shape instanceof AppearanceAnchor appAnchor) {
+        final var o = appAnchor;
         anchor = o.getLocation();
-        defaultFacing = o.getFacing();
+        defaultFacing = o.getFacingDirection();
       }
     }
 
@@ -227,9 +227,9 @@ public class CircuitAppearance extends Drawing {
   public void paintSubcircuit(InstancePainter painter, Graphics g, Direction facing) {
     final var defaultFacing = getFacing();
     var rotate = 0.0D;
-    if (facing != defaultFacing && g instanceof Graphics2D) {
+    if (facing != defaultFacing && g instanceof Graphics2D g2d) {
       rotate = defaultFacing.toRadians() - facing.toRadians();
-      ((Graphics2D) g).rotate(rotate);
+      g2d.rotate(rotate);
     }
     final var offset = findAnchorLocation();
     g.translate(-offset.getX(), -offset.getY());
@@ -238,15 +238,16 @@ public class CircuitAppearance extends Drawing {
       try {
         state = (CircuitState) painter.getData();
       } catch (UnsupportedOperationException ignored) {
+        // Do nothing.
       }
     }
     for (final var shape : getObjectsFromBottom()) {
       if (!(shape instanceof AppearanceElement)) {
         final var dup = g.create();
-        if (shape instanceof DynamicElement) {
-          ((DynamicElement) shape).paintDynamic(dup, state);
-          if (shape instanceof DynamicElementWithPoker)
-            ((DynamicElementWithPoker) shape).setAnchor(offset);
+        if (shape instanceof DynamicElement dynEl) {
+          dynEl.paintDynamic(dup, state);
+          if (shape instanceof DynamicElementWithPoker dynElWithPoker)
+            dynElWithPoker.setAnchor(offset);
         } else shape.paint(dup, null);
         dup.dispose();
       }
@@ -299,8 +300,8 @@ public class CircuitAppearance extends Drawing {
   public void removeDynamicElement(InstanceComponent c) {
     final var toRemove = new ArrayList<CanvasObject>();
     for (final var obj : getObjectsFromBottom()) {
-      if (obj instanceof DynamicElement) {
-        if (((DynamicElement) obj).getPath().contains(c)) toRemove.add(obj);
+      if (obj instanceof DynamicElement el && el.getPath().contains(c)) {
+        toRemove.add(obj);
       }
     }
     if (toRemove.isEmpty()) return;

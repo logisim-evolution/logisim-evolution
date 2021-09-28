@@ -107,14 +107,13 @@ public class DefaultEvolutionAppearance {
     rect = new Rectangle(rx + 10, ry, width - 20, height);
     rect.setValue(DrawAttr.STROKE_WIDTH, 2);
     ret.add(rect);
-    var Label = circuitName == null ? "VHDL Component" : circuitName;
-    if (fixedSize) {
-      if (Label.length() > 23) {
-        Label = Label.substring(0, 20);
-        Label = Label.concat("...");
-      }
+    var label = circuitName == null ? "VHDL Component" : circuitName;
+    final var maxLength = 23;
+    final var ellipsis = "...";
+    if (fixedSize && label.length() > maxLength) {
+      label = label.substring(0, maxLength - ellipsis.length()).concat(ellipsis);
     }
-    final var textLabel = new Text(rx + (width >> 1), ry + (height - DrawAttr.FIXED_FONT_DESCENT - 5), Label);
+    final var textLabel = new Text(rx + (width >> 1), ry + (height - DrawAttr.FIXED_FONT_DESCENT - 5), label);
     textLabel.getLabel().setHorizontalAlignment(EditableLabel.CENTER);
     textLabel.getLabel().setColor(Color.WHITE);
     textLabel.getLabel().setFont(DrawAttr.DEFAULT_NAME_FONT);
@@ -159,11 +158,10 @@ public class DefaultEvolutionAppearance {
       dest.add(new AppearancePort(Location.create(x, y), pin));
       if (pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
         var label = pin.getAttributeValue(StdAttr.LABEL);
-        if (isFixedSize) {
-          if (label.length() > 12) {
-            label = label.substring(0, 9);
-            label = label.concat("..");
-          }
+        final var maxLength = 12;
+        final var ellipsis = "...";
+        if (isFixedSize && label.length() > maxLength) {
+          label = label.substring(0, maxLength - ellipsis.length()).concat(ellipsis);
         }
         final var textLabel = new Text(x + ldX, y + ldy, label);
         textLabel.getLabel().setHorizontalAlignment(hAlign);

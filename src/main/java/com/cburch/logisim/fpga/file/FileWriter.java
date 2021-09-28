@@ -18,6 +18,7 @@ import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.List;
 
 public class FileWriter {
 
@@ -147,7 +148,7 @@ public class FileWriter {
     return lines;
   }
 
-  public static boolean writeContents(File outfile, ArrayList<String> contents) {
+  public static boolean writeContents(File outfile, List<String> contents) {
     try {
       final var output = new FileOutputStream(outfile);
       for (var thisLine : contents) {

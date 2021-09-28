@@ -9,14 +9,14 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LineBuffer;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Hdl {
 
@@ -263,7 +263,7 @@ public abstract class Hdl {
     return contents.toString();
   }
 
-  public static boolean writeEntity(String targetDirectory, ArrayList<String> contents, String componentName) {
+  public static boolean writeEntity(String targetDirectory, List<String> contents, String componentName) {
     if (!Hdl.isVhdl()) return true;
     if (contents.isEmpty()) {
       // FIXME: hardcoded string
@@ -275,7 +275,7 @@ public abstract class Hdl {
     return FileWriter.writeContents(outFile, contents);
   }
 
-  public static boolean writeArchitecture(String targetDirectory, ArrayList<String> contents, String componentName) {
+  public static boolean writeArchitecture(String targetDirectory, List<String> contents, String componentName) {
     if (contents == null || contents.isEmpty()) {
       // FIXME: hardcoded string
       Reporter.report.addFatalError(

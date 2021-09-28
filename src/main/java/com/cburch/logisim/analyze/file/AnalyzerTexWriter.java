@@ -487,13 +487,13 @@ public class AnalyzerTexWriter {
             if (outp.width == 1) {
               final var exp = Expressions.eq(Expressions.variable(outp.name),
                   model.getOutputExpressions().getMinimalExpression(outp.name));
-              out.println(exp.toString(Notation.LaTeX) + "~\\\\");
+              out.println(exp.toString(Notation.LATEX) + "~\\\\");
             } else {
               for (var idx = outp.width - 1; idx >= 0; idx--) {
                 final var name = outp.bitName(idx);
                 final var exp = Expressions.eq(Expressions.variable(name),
                     model.getOutputExpressions().getMinimalExpression(name));
-                out.println(exp.toString(Notation.LaTeX) + "~\\\\");
+                out.println(exp.toString(Notation.LATEX) + "~\\\\");
               }
             }
           }

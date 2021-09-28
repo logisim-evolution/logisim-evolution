@@ -233,8 +233,7 @@ public class SubcircuitFactory extends InstanceFactory {
       var y = bds.getY() + bds.getHeight() / 2;
       final var g = painter.getGraphics().create();
       final var angle = Math.PI / 2 - (up.toRadians() - defaultFacing.toRadians()) - facing.toRadians();
-      if (g instanceof Graphics2D && Math.abs(angle) > 0.01) {
-        final var g2 = (Graphics2D) g;
+      if (g instanceof Graphics2D g2 && Math.abs(angle) > 0.01) {
         g2.rotate(angle, x, y);
       }
       g.setFont(font);
@@ -370,8 +369,8 @@ public class SubcircuitFactory extends InstanceFactory {
     final var fg = g.getColor();
     int v = fg.getRed() + fg.getGreen() + fg.getBlue();
     Composite oldComposite = null;
-    if (g instanceof Graphics2D && v > 50) {
-      oldComposite = ((Graphics2D) g).getComposite();
+    if (g instanceof Graphics2D g2d && v > 50) {
+      oldComposite = g2d.getComposite();
       Composite c = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
       ((Graphics2D) g).setComposite(c);
     }

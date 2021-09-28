@@ -30,6 +30,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -85,15 +86,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public boolean generateAllHDLDescriptions(
-      Set<String> HandledComponents, String WorkingDir, ArrayList<String> Hierarchy) {
-    return generateAllHDLDescriptions(HandledComponents, WorkingDir, Hierarchy, false);
+  public boolean generateAllHDLDescriptions(Set<String> handledComponents, String workingDir, List<String> hierarchy) {
+    return generateAllHDLDescriptions(handledComponents, workingDir, hierarchy, false);
   }
 
   public boolean generateAllHDLDescriptions(
-      Set<String> HandledComponents,
+      Set<String> handledComponents,
       String workingDir,
-      ArrayList<String> hierarchy,
+      List<String> hierarchy,
       boolean gatedInstance) {
     if (myCircuit == null) {
       return false;
@@ -116,7 +116,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
           thisComponent.getComponent()
               .getFactory()
               .getHDLName(thisComponent.getComponent().getAttributeSet());
-      if (!HandledComponents.contains(componentName)) {
+      if (!handledComponents.contains(componentName)) {
         final var worker =
             thisComponent.getComponent()
                 .getFactory()
@@ -148,7 +148,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
             return false;
           }
         }
-        HandledComponents.add(componentName);
+        handledComponents.add(componentName);
       }
     }
     /* Now we go down the hierarchy to get all other components */
@@ -170,7 +170,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
           CorrectLabel.getCorrectLabel(
               thisCircuit.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
       if (!worker.generateAllHDLDescriptions(
-          HandledComponents, workingDir, hierarchy, thisCircuit.isGatedInstance())) {
+          handledComponents, workingDir, hierarchy, thisCircuit.isGatedInstance())) {
         return false;
       }
       hierarchy.remove(hierarchy.size() - 1);
@@ -178,7 +178,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     /* I also have to generate myself */
     var componentName = CorrectLabel.getCorrectLabel(myCircuit.getName());
     if (gatedInstance) componentName = componentName.concat("_gated");
-    if (!HandledComponents.contains(componentName)) {
+    if (!handledComponents.contains(componentName)) {
       if (!Hdl.writeEntity(
           workPath + getRelativeDirectory(),
           getEntity(myNetList, null, componentName),
@@ -193,7 +193,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
         return false;
       }
     }
-    HandledComponents.add(componentName);
+    handledComponents.add(componentName);
     return true;
   }
 
@@ -348,9 +348,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
         // FIXME: hardcoded string
         Reporter.report.addFatalError("INTERNAL ERROR: Cannot find clocknet!");
       }
-      String ConnectedNet = Hdl.getNetName(clockSource, 0, true, theNetList);
+      final var connectedNet = Hdl.getNetName(clockSource, 0, true, theNetList);
       temp.setLength(0);
-      temp.append(ConnectedNet);
+      temp.append(connectedNet);
       // Padding
       while (temp.length() < SIGNAL_ALLIGNMENT_SIZE) {
         temp.append(" ");

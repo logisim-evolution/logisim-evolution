@@ -25,6 +25,7 @@ import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -58,7 +59,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
   public boolean generateAllHDLDescriptions(
       Set<String> handledComponents,
       String workingDirectory,
-      ArrayList<String> hierarchy) {
+      List<String> hierarchy) {
     return true;
   }
 

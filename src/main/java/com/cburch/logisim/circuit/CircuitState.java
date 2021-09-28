@@ -67,7 +67,7 @@ public class CircuitState implements InstanceData {
             subState.parentComp = null;
             subState.reset();
           }
-        } else if (getData(comp) != null && getData(comp) instanceof ComponentDataGuiProvider)
+        } else if (getData(comp) instanceof ComponentDataGuiProvider)
           ((ComponentDataGuiProvider) getData(comp)).destroy();
         if (comp instanceof Wire) {
           final var w = (Wire) comp;
@@ -84,7 +84,7 @@ public class CircuitState implements InstanceData {
         subStates.clear();
         wireData = null;
         for (final var comp : componentData.keySet()) {
-          if (componentData.get(comp) != null && componentData.get(comp) instanceof ComponentDataGuiProvider)
+          if (componentData.get(comp) instanceof ComponentDataGuiProvider)
             ((ComponentDataGuiProvider) componentData.get(comp)).destroy();
           else if (componentData.get(comp) instanceof CircuitState) {
             ((CircuitState) componentData.get(comp)).reset();
@@ -102,8 +102,7 @@ public class CircuitState implements InstanceData {
         // invalidated components (which are likely Pins, Buttons, or other
         // inputs), so pass this component to the simulator for display.
         proj.getSimulator().addPendingInput(CircuitState.this, comp);
-        // TODO detemine if this should really be missing if (base !=
-        // null) base.checkComponentEnds(CircuitState.this, comp);
+        // TODO detemine if this should really be missing if (base != null) base.checkComponentEnds(CircuitState.this, comp);
       } else if (action == CircuitEvent.TRANSACTION_DONE) {
         final var map = event.getResult().getReplacementMap(circuit);
         if (map == null) return;
@@ -120,8 +119,7 @@ public class CircuitState implements InstanceData {
             }
           }
           if (!found && compState instanceof RamState) Ram.closeHexFrame((RamState) compState);
-          if (!found && compState instanceof CircuitState) {
-            final var sub = (CircuitState) compState;
+          if (!found && compState instanceof CircuitState sub) {
             sub.parentState = null;
             subStates.remove(sub);
           }
@@ -416,9 +414,9 @@ public class CircuitState implements InstanceData {
   }
 
   public void setData(Component comp, Object data) {
-    if (data instanceof CircuitState) {
-      final var oldState = (CircuitState) componentData.get(comp);
+    if (data instanceof CircuitState oldState) {
       final var newState = (CircuitState) data;
+      // FIXME: What's the purpose of this block? The condition always false here.
       if (oldState != newState) {
         // There's something new going on with this subcircuit.
         // Maybe the subcircuit is new, or perhaps it's being
@@ -440,7 +438,7 @@ public class CircuitState implements InstanceData {
         }
       }
     } else {
-      if (componentData.get(comp) != null && componentData.get(comp) instanceof ComponentDataGuiProvider)
+      if (componentData.get(comp) instanceof ComponentDataGuiProvider)
         ((ComponentDataGuiProvider) componentData.get(comp)).destroy();
 
     }
@@ -505,7 +503,6 @@ public class CircuitState implements InstanceData {
       }
       if (ticks >= 0) {
         final var state = getInstanceState(instance);
-        // Value v = pin.getValue(state);
         pin.setValue(state, ticks % 2 == 0 ? Value.FALSE : Value.TRUE);
         state.fireInvalidated();
       }

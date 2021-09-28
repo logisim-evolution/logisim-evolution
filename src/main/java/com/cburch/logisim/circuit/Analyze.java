@@ -176,15 +176,15 @@ public class Analyze {
     for (final var entry : pinLabels.entrySet()) {
       final var pin = entry.getKey();
       final var width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
-      final var var = new Var(entry.getValue(), width);
+      final var variable = new Var(entry.getValue(), width);
       if (Pin.FACTORY.isInputPin(pin)) {
         inputPins.add(pin);
-        for (final var name : var) inputNames.add(name);
-        inputVars.add(var);
+        for (final var name : variable) inputNames.add(name);
+        inputVars.add(variable);
       } else {
         outputPins.add(pin);
-        for (final var name : var) outputNames.add(name);
-        outputVars.add(var);
+        for (final var name : variable) outputNames.add(name);
+        outputVars.add(variable);
       }
     }
 

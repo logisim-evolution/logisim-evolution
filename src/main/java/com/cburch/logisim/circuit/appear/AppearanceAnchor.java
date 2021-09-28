@@ -34,11 +34,11 @@ public class AppearanceAnchor extends AppearanceElement {
   private static final int INDICATOR_LENGTH = 8;
   private static final Color SYMBOL_COLOR = new Color(0, 128, 0);
 
-  private Direction facing;
+  private Direction factingDirection;
 
   public AppearanceAnchor(Location location) {
     super(location);
-    facing = Direction.EAST;
+    factingDirection = Direction.EAST;
   }
 
   @Override
@@ -48,8 +48,8 @@ public class AppearanceAnchor extends AppearanceElement {
     }
 
     final var center = getLocation();
-    final var end = center.translate(facing, RADIUS + INDICATOR_LENGTH);
-    return (facing == Direction.EAST || facing == Direction.WEST)
+    final var end = center.translate(factingDirection, RADIUS + INDICATOR_LENGTH);
+    return (factingDirection == Direction.EAST || factingDirection == Direction.WEST)
         ? Math.abs(loc.getY() - center.getY()) < 2
             && (loc.getX() < center.getX()) != (loc.getX() < end.getX())
         : Math.abs(loc.getX() - center.getX()) < 2
@@ -65,7 +65,7 @@ public class AppearanceAnchor extends AppearanceElement {
   public Bounds getBounds() {
     final var bds = super.getBounds(RADIUS);
     final var center = getLocation();
-    final var end = center.translate(facing, RADIUS + INDICATOR_LENGTH);
+    final var end = center.translate(factingDirection, RADIUS + INDICATOR_LENGTH);
     return bds.add(end);
   }
 
@@ -74,35 +74,34 @@ public class AppearanceAnchor extends AppearanceElement {
     return S.get("circuitAnchor");
   }
 
-  public Direction getFacing() {
-    return facing;
+  public Direction getFacingDirection() {
+    return factingDirection;
   }
 
   @Override
   public List<Handle> getHandles(HandleGesture gesture) {
     final var c = getLocation();
-    final var end = c.translate(facing, RADIUS + INDICATOR_LENGTH);
+    final var end = c.translate(factingDirection, RADIUS + INDICATOR_LENGTH);
     return UnmodifiableList.create(new Handle[] {new Handle(this, c), new Handle(this, end)});
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public <V> V getValue(Attribute<V> attr) {
-    return (attr == FACING) ? (V) facing : super.getValue(attr);
+    return (attr == FACING) ? (V) factingDirection : super.getValue(attr);
   }
 
   @Override
   public boolean matches(CanvasObject other) {
-    if (other instanceof AppearanceAnchor) {
-      final var that = (AppearanceAnchor) other;
-      return super.matches(that) && this.facing.equals(that.facing);
+    if (other instanceof AppearanceAnchor that) {
+      return super.matches(that) && this.factingDirection.equals(that.factingDirection);
     }
     return false;
   }
 
   @Override
   public int matchesHashCode() {
-    return super.matchesHashCode() * 31 + facing.hashCode();
+    return super.matchesHashCode() * 31 + factingDirection.hashCode();
   }
 
   @Override
@@ -112,8 +111,8 @@ public class AppearanceAnchor extends AppearanceElement {
     final var y = location.getY();
     g.setColor(SYMBOL_COLOR);
     g.drawOval(x - RADIUS, y - RADIUS, 2 * RADIUS, 2 * RADIUS);
-    final var e0 = location.translate(facing, RADIUS);
-    final var e1 = location.translate(facing, RADIUS + INDICATOR_LENGTH);
+    final var e0 = location.translate(factingDirection, RADIUS);
+    final var e1 = location.translate(factingDirection, RADIUS + INDICATOR_LENGTH);
     g.drawLine(e0.getX(), e0.getY(), e1.getX(), e1.getY());
   }
 
@@ -125,14 +124,14 @@ public class AppearanceAnchor extends AppearanceElement {
     ret.setAttribute("y", "" + (loc.getY() - RADIUS));
     ret.setAttribute("width", "" + 2 * RADIUS);
     ret.setAttribute("height", "" + 2 * RADIUS);
-    ret.setAttribute("facing", facing.toString());
+    ret.setAttribute("facing", factingDirection.toString());
     return ret;
   }
 
   @Override
   protected void updateValue(Attribute<?> attr, Object value) {
     if (attr == FACING) {
-      facing = (Direction) value;
+      factingDirection = (Direction) value;
     } else {
       super.updateValue(attr, value);
     }

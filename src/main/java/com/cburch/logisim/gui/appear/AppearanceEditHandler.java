@@ -146,7 +146,7 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
         if (obj instanceof AppearanceAnchor) {
           final var anchor = (AppearanceAnchor) obj;
           anchorLocation = anchor.getLocation();
-          anchorFacing = anchor.getFacing();
+          anchorFacing = anchor.getFacingDirection();
         }
       }
     }

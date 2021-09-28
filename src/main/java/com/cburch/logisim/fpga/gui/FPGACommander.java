@@ -396,7 +396,7 @@ public class FPGACommander
       if (ClearExistingLabels) {
         root.clearAnnotationLevel();
       }
-      root.Annotate(ClearExistingLabels, false);
+      root.annotate(ClearExistingLabels, false);
       Reporter.report.addInfo(S.get("FpgaGuiAnnotationDone"));
       MyProject.setForcedDirty();
       MyProject.repaintCanvas();
