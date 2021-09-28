@@ -171,11 +171,11 @@ public class TruthtableTextFile {
         }
       }
     }
-    if (inputs.vars.size() == 0) throw new IOException(String.format("Line %d: Truth table has no inputs.", lineno));
-    if (outputs.vars.size() == 0) throw new IOException(String.format("Line %d: Truth table has no outputs.", lineno));
+    if (inputs.vars.isEmpty()) throw new IOException(String.format("Line %d: Truth table has no inputs.", lineno));
+    if (outputs.vars.isEmpty()) throw new IOException(String.format("Line %d: Truth table has no outputs.", lineno));
   }
 
-  static Entry parseBit(char c, String sval, Var var, int lineno) throws IOException {
+  static Entry parseBit(char c, String val, int lineNumber) throws IOException {
     if (c == 'x' || c == 'X' || c == '-') {
       return Entry.DONT_CARE;
     } else if (c == '0') {
@@ -184,7 +184,7 @@ public class TruthtableTextFile {
       return Entry.ONE;
     }
 
-    throw new IOException(String.format("Line %d: Bit value '%c' in \"%s\" must be one of '0', '1', 'x', or '-'.", lineno, c, sval));
+    throw new IOException(String.format("Line %d: Bit value '%c' in \"%s\" must be one of '0', '1', 'x', or '-'.", lineNumber, c, val));
   }
 
   static Entry parseHex(char c, int bit, int nbits, String sval, Var var, int lineno) throws IOException {
@@ -211,7 +211,7 @@ public class TruthtableTextFile {
   static int parseVal(Entry[] row, int col, String sval, Var var, int lineno) throws IOException {
     if (sval.length() == var.width) {
       // must be binary
-      for (var i = 0; i < var.width; i++) row[col++] = parseBit(sval.charAt(i), sval, var, lineno);
+      for (var i = 0; i < var.width; i++) row[col++] = parseBit(sval.charAt(i), sval, lineno);
     } else if (sval.length() == (var.width + 3) / 4) {
       // try hex
       for (var i = 0; i < var.width; i++) {
@@ -275,13 +275,13 @@ public class TruthtableTextFile {
         line = line.trim();
         if (line.equals("") || (line.matches("\\s*[~_=-][ ~_=-|]*"))) {
           continue;
-        } else if (inputs.vars.size() == 0) {
+        } else if (inputs.vars.isEmpty()) {
           validateHeader(line, inputs, outputs, lineno);
         } else {
           validateRow(line, inputs, outputs, rows, lineno);
         }
       }
-      if (rows.size() == 0) throw new IOException("End of file: Truth table has no rows.");
+      if (rows.isEmpty()) throw new IOException("End of file: Truth table has no rows.");
       try {
         model.setVariables(inputs.vars, outputs.vars);
       } catch (IllegalArgumentException e) {

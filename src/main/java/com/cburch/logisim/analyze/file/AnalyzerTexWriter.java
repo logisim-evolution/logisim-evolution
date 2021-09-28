@@ -148,22 +148,15 @@ public class AnalyzerTexWriter {
    */
 
   private static int[] reordered(int nrOfInputs) {
-    switch (nrOfInputs) {
-      case 1:
-        return new int[]{0};
-      case 2:
-        return new int[]{0, 1};
-      case 3:
-        return new int[]{1, 0, 2};
-      case 4:
-        return new int[]{0, 2, 1, 3};
-      case 5:
-        return new int[]{2, 0, 3, 1, 4};
-      case 6:
-        return new int[]{0, 3, 1, 4, 2, 5};
-      default:
-        return null;
-    }
+    return switch (nrOfInputs) {
+      case 1 -> new int[]{0};
+      case 2 -> new int[]{0, 1};
+      case 3 -> new int[]{1, 0, 2};
+      case 4 -> new int[]{0, 2, 1, 3};
+      case 5 -> new int[]{2, 0, 3, 1, 4};
+      case 6 -> new int[]{0, 3, 1, 4, 2, 5};
+      default -> new int[0];
+    };
   }
 
   private static int reorderedIndex(int nrOfInputs, int row) {
@@ -189,7 +182,7 @@ public class AnalyzerTexWriter {
         if (inp.bitIndex >= 0) content.append("_").append(inp.bitIndex);
         content.append("$}");
       } catch (ParserException e) {
-        // TODO Auto-generated catch block
+        // Do nothing.
       }
     }
     return content.toString();
@@ -216,23 +209,23 @@ public class AnalyzerTexWriter {
     final var topVars = new StringBuilder();
     final var nrLeftVars = KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
     var count = 0;
-    for (final var var : table.getInputVariables()) {
-      if (var.width == 1) {
+    for (final var variable : table.getInputVariables()) {
+      if (variable.width == 1) {
         if (count++ < nrLeftVars) {
           if (leftVars.length() != 0) leftVars.append(", ");
-          leftVars.append("$").append(var.name).append("$");
+          leftVars.append("$").append(variable.name).append("$");
         } else {
           if (topVars.length() != 0) topVars.append(", ");
-          topVars.append("$").append(var.name).append("$");
+          topVars.append("$").append(variable.name).append("$");
         }
       } else {
-        for (int idx = var.width; idx >= 0; idx--) {
+        for (int idx = variable.width; idx >= 0; idx--) {
           if (count++ < nrLeftVars) {
             if (leftVars.length() != 0) leftVars.append(", ");
-            leftVars.append("$").append(var.name).append("_{").append(idx).append("}$");
+            leftVars.append("$").append(variable.name).append("_{").append(idx).append("}$");
           } else {
             if (topVars.length() != 0) topVars.append(", ");
-            topVars.append("$").append(var.name).append("_{").append(idx).append("}$");
+            topVars.append("$").append(variable.name).append("_{").append(idx).append("}$");
           }
         }
       }
@@ -401,7 +394,7 @@ public class AnalyzerTexWriter {
        */
       out.println("\\section{" + S.get("latexIntroduction") + "}");
       out.println(S.get("latexIntroductionText"));
-      if (model.getInputs().vars.size() == 0 || model.getOutputs().vars.size() == 0) {
+      if (model.getInputs().vars.isEmpty() || model.getOutputs().vars.isEmpty()) {
         out.println(SECTION_SEP);
         out.println("\\section{" + S.get("latexEmpty") + "}");
         out.println(S.get("latexEmptyText"));

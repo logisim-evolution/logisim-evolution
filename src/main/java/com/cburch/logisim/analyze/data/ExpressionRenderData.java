@@ -245,7 +245,7 @@ public class ExpressionRenderData {
      */
     var sub = s.substring(0, end);
     if (replaceSpaces) {
-      sub = sub.replaceAll(" ", "_");
+      sub = sub.replace(" ", "_");
     }
     AttributedString as = new AttributedString(sub);
     as.addAttribute(TextAttribute.FAMILY, expressionBaseFont.getFamily());
