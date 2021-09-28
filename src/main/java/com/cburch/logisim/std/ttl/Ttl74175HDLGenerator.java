@@ -11,14 +11,14 @@ package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLPorts;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlPorts;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
-public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
+public class Ttl74175HDLGenerator extends AbstractHdlGeneratorFactory {
 
   public Ttl74175HDLGenerator() {
     super();
@@ -26,7 +26,7 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
         .addWire("CurState", 4)
         .addWire("NextState", 4);
     myPorts
-        .add(Port.CLOCK, HDLPorts.CLOCK, 1, 7)
+        .add(Port.CLOCK, HdlPorts.CLOCK, 1, 7)
         .add(Port.INPUT, "nCLR", 1, 0)
         .add(Port.INPUT, "D1", 1, 3)
         .add(Port.INPUT, "D2", 1, 4)
@@ -45,8 +45,8 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     return LineBuffer.getBuffer()
-        .pair("CLK", HDLPorts.CLOCK)
-        .pair("tick", HDLPorts.TICK)
+        .pair("CLK", HdlPorts.CLOCK)
+        .pair("tick", HdlPorts.TICK)
         .add("""
             NextState <= CurState WHEN {{tick}} = '0' ELSE
                          D4&D3&D2&D1;
@@ -75,6 +75,6 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
-    return (!attrs.getValue(TtlLibrary.VCC_GND) && HDL.isVHDL());
+    return (!attrs.getValue(TtlLibrary.VCC_GND) && Hdl.isVhdl());
   }
 }

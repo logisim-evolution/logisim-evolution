@@ -11,14 +11,14 @@ package com.cburch.logisim.std.arith;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
-public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class MultiplierHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String NR_OF_BITS_STRING = "NrOfBits";
   private static final int NR_OF_BITS_ID = -1;
@@ -31,8 +31,8 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     super();
     myParametersList
         .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-        .add(CALC_BITS_STRING, CALC_BITS_ID, HDLParameters.MAP_MULTIPLY, 2)
-        .add(UNSIGNED_STRING, UNSIGNED_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, ComparatorHDLGeneratorFactory.SIGNED_MAP);
+        .add(CALC_BITS_STRING, CALC_BITS_ID, HdlParameters.MAP_MULTIPLY, 2)
+        .add(UNSIGNED_STRING, UNSIGNED_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, ComparatorHDLGeneratorFactory.SIGNED_MAP);
     myWires
         .addWire("s_mult_result", CALC_BITS_ID)
         .addWire("s_extended_Cin", CALC_BITS_ID)
@@ -53,7 +53,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .pair("unsigned", UNSIGNED_STRING)
             .pair("calcBits", CALC_BITS_STRING);
 
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       Contents.add("""
           s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B))
                               WHEN {{unsigned}}= 1 ELSE

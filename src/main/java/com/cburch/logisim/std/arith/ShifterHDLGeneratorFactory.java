@@ -12,23 +12,23 @@ package com.cburch.logisim.std.arith;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class ShifterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String SHIFT_MODE_STRING = "ShifterMode";
   private static final int SHIFT_MODE_ID = -1;
 
   public ShifterHDLGeneratorFactory() {
     super();
-    myParametersList.add(SHIFT_MODE_STRING, SHIFT_MODE_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Shifter.ATTR_SHIFT,
+    myParametersList.add(SHIFT_MODE_STRING, SHIFT_MODE_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, Shifter.ATTR_SHIFT,
         new HashMap<AttributeOption, Integer>() {{
           put(Shifter.SHIFT_LOGICAL_LEFT, 0);
           put(Shifter.SHIFT_ROLL_LEFT, 1);
@@ -58,7 +58,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .pair("shiftMode", SHIFT_MODE_STRING);
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     final var nrOfShiftBits = attrs.getValue(Shifter.SHIFT_BITS_ATTR);
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
             -----------------------------------------------------------------------------
             --- ShifterMode represents when:                                          ---

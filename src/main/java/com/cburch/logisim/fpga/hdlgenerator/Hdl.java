@@ -12,92 +12,92 @@ package com.cburch.logisim.fpga.hdlgenerator;
 import java.util.ArrayList;
 
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LineBuffer;
 
-public abstract class HDL {
+public abstract class Hdl {
 
   public static final String NET_NAME = "s_LOGISIM_NET_";
   public static final String BUS_NAME = "s_LOGISIM_BUS_";
 
-  public static boolean isVHDL() {
-    return AppPreferences.HdlType.get().equals(HDLGeneratorFactory.VHDL);
+  public static boolean isVhdl() {
+    return AppPreferences.HdlType.get().equals(HdlGeneratorFactory.VHDL);
   }
 
   public static boolean isVerilog() {
-    return AppPreferences.HdlType.get().equals(HDLGeneratorFactory.VERILOG);
+    return AppPreferences.HdlType.get().equals(HdlGeneratorFactory.VERILOG);
   }
 
-  public static String BracketOpen() {
-    return isVHDL() ? "(" : "[";
+  public static String bracketOpen() {
+    return isVhdl() ? "(" : "[";
   }
 
-  public static String BracketClose() {
-    return isVHDL() ? ")" : "]";
+  public static String bracketClose() {
+    return isVhdl() ? ")" : "]";
   }
 
   public static int remarkOverhead() {
-    return isVHDL() ? 3 : 4;
+    return isVhdl() ? 3 : 4;
   }
 
   public static String getRemakrChar(boolean first, boolean last) {
-    if (isVHDL()) return "-";
+    if (isVhdl()) return "-";
     if (first) return "/";
     if (last) return " ";
     return "*";
   }
 
   public static String getRemarkStart() {
-    if (isVHDL()) return "-- ";
+    if (isVhdl()) return "-- ";
     return " ** ";
   }
 
   public static String assignPreamble() {
-    return isVHDL() ? "" : "assign ";
+    return isVhdl() ? "" : "assign ";
   }
 
   public static String assignOperator() {
-    return isVHDL() ? " <= " : " = ";
+    return isVhdl() ? " <= " : " = ";
   }
 
   public static String notOperator() {
-    return isVHDL() ? " NOT " : "~";
+    return isVhdl() ? " NOT " : "~";
   }
 
   public static String andOperator() {
-    return isVHDL() ? " AND " : "&";
+    return isVhdl() ? " AND " : "&";
   }
 
   public static String orOperator() {
-    return isVHDL() ? " OR " : "|";
+    return isVhdl() ? " OR " : "|";
   }
 
   public static String xorOperator() {
-    return isVHDL() ? " XOR " : "^";
+    return isVhdl() ? " XOR " : "^";
   }
 
   public static String zeroBit() {
-    return isVHDL() ? "'0'" : "1'b0";
+    return isVhdl() ? "'0'" : "1'b0";
   }
 
   public static String oneBit() {
-    return isVHDL() ? "'1'" : "1'b1";
+    return isVhdl() ? "'1'" : "1'b1";
   }
 
   public static String unconnected(boolean empty) {
-    return isVHDL() ? "OPEN" : empty ? "" : "'bz";
+    return isVhdl() ? "OPEN" : empty ? "" : "'bz";
   }
 
   public static String vectorLoopId() {
-    return isVHDL() ? " DOWNTO " : ":";
+    return isVhdl() ? " DOWNTO " : ":";
   }
 
-  public static String GetZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
+  public static String getZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
     var contents = new StringBuilder();
-    if (isVHDL()) {
+    if (isVhdl()) {
       var fillValue = (floatingPinTiedToGround) ? "0" : "1";
       var hexFillValue = (floatingPinTiedToGround) ? "0" : "F";
       if (nrOfBits == 1) {
@@ -146,7 +146,7 @@ public abstract class HDL {
     }
     // first case, we have to concatinate
     if ((nrHexDigits > 0) && (nrSingleBits > 0)) {
-      if (HDL.isVHDL()) {
+      if (Hdl.isVhdl()) {
         return LineBuffer.format("X\"{{1}}\"&\"{{2}}\"", hexValue.toString(), singleBits.toString());
       } else {
         return LineBuffer.format("{{{1}}'h{{2}}, {{3}}'b{{4}}}", nrHexDigits * 4, hexValue.toString(),
@@ -155,21 +155,21 @@ public abstract class HDL {
     }
     // second case, we have only hex digits
     if (nrHexDigits > 0) {
-      if (HDL.isVHDL()) {
+      if (Hdl.isVhdl()) {
         return LineBuffer.format("X\"{{1}}\"", hexValue.toString());
       } else {
         return LineBuffer.format("{{1}}'h{{2}}", nrHexDigits * 4, hexValue.toString());
       }
     }
     // final case, we have only single bits
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       final var vhdlTicks = (nrOfBits == 1) ? "'" : "\"";
       return LineBuffer.format("{{1}}{{2}}{{1}}", vhdlTicks, singleBits.toString());
     }
     return LineBuffer.format("{{1}}'b{{2}}", nrSingleBits, singleBits.toString());
   }
 
-  public static String getNetName(NetlistComponent comp, int endIndex, boolean floatingNetTiedToGround, Netlist myNetlist) {
+  public static String getNetName(netlistComponent comp, int endIndex, boolean floatingNetTiedToGround, Netlist myNetlist) {
     var netName = "";
     if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
       final var floatingValue = floatingNetTiedToGround ? zeroBit() : oneBit();
@@ -194,7 +194,7 @@ public abstract class HDL {
     return netName;
   }
 
-  public static String getBusEntryName(NetlistComponent comp, int endIndex, boolean floatingNetTiedToGround, int bitindex, Netlist theNets) {
+  public static String getBusEntryName(netlistComponent comp, int endIndex, boolean floatingNetTiedToGround, int bitindex, Netlist theNets) {
     var busName = "";
     if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
       final var thisEnd = comp.getEnd(endIndex);
@@ -203,7 +203,7 @@ public abstract class HDL {
       if ((nrOfBits > 1) && (bitindex >= 0) && (bitindex < nrOfBits)) {
         if (thisEnd.get((byte) bitindex).getParentNet() == null) {
           // The net is not connected
-          busName = LineBuffer.formatHdl(isOutput ? unconnected(false) : GetZeroVector(1, floatingNetTiedToGround));
+          busName = LineBuffer.formatHdl(isOutput ? unconnected(false) : getZeroVector(1, floatingNetTiedToGround));
         } else {
           final var connectedNet = thisEnd.get((byte) bitindex).getParentNet();
           final var connectedNetBitIndex = thisEnd.get((byte) bitindex).getParentNetBitIndex();
@@ -219,7 +219,7 @@ public abstract class HDL {
     return busName;
   }
 
-  public static String getBusNameContinues(NetlistComponent comp, int endIndex, Netlist theNets) {
+  public static String getBusNameContinues(netlistComponent comp, int endIndex, Netlist theNets) {
     if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) return null;
     final var connectionInformation = comp.getEnd(endIndex);
     final var nrOfBits = connectionInformation.getNrOfBits();
@@ -230,11 +230,11 @@ public abstract class HDL {
         BUS_NAME,
         theNets.getNetId(connectedNet),
         connectionInformation.get((byte) (connectionInformation.getNrOfBits() - 1)).getParentNetBitIndex(),
-        HDL.vectorLoopId(),
+        Hdl.vectorLoopId(),
         connectionInformation.get((byte) (0)).getParentNetBitIndex());
   }
 
-  public static String getBusName(NetlistComponent comp, int endIndex, Netlist theNets) {
+  public static String getBusName(netlistComponent comp, int endIndex, Netlist theNets) {
     if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) return null;
     final var connectionInformation = comp.getEnd(endIndex);
     final var nrOfBits = connectionInformation.getNrOfBits();
@@ -245,7 +245,7 @@ public abstract class HDL {
     return LineBuffer.format("{{1}}{{2}}", BUS_NAME, theNets.getNetId(ConnectedNet));
   }
 
-  public static String getClockNetName(NetlistComponent comp, int endIndex, Netlist theNets) {
+  public static String getClockNetName(netlistComponent comp, int endIndex, Netlist theNets) {
     var contents = new StringBuilder();
     if ((theNets.getCurrentHierarchyLevel() != null) && (endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
       final var endData = comp.getEnd(endIndex);
@@ -256,7 +256,7 @@ public abstract class HDL {
         final var clocksourceid = theNets.getClockSourceId(
             theNets.getCurrentHierarchyLevel(), ConnectedNet, ConnectedNetBitIndex);
         if (clocksourceid >= 0) {
-          contents.append(HDLGeneratorFactory.CLOCK_TREE_NAME).append(clocksourceid);
+          contents.append(HdlGeneratorFactory.CLOCK_TREE_NAME).append(clocksourceid);
         }
       }
     }
@@ -264,7 +264,7 @@ public abstract class HDL {
   }
 
   public static boolean writeEntity(String targetDirectory, ArrayList<String> contents, String componentName) {
-    if (!HDL.isVHDL()) return true;
+    if (!Hdl.isVhdl()) return true;
     if (contents.isEmpty()) {
       // FIXME: hardcoded string
       Reporter.report.addFatalError("INTERNAL ERROR: Empty entity description received!");

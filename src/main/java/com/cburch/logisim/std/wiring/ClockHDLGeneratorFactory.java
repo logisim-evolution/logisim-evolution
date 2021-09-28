@@ -12,19 +12,19 @@ package com.cburch.logisim.std.wiring;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
-import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class ClockHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   public static final int NR_OF_CLOCK_BITS = 5;
   public static final int DERIVED_CLOCK_INDEX = 0;
@@ -44,10 +44,10 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ClockHDLGeneratorFactory() {
     super("base");
     myParametersList
-        .add(HIGH_TICK_STR, HIGH_TICK_ID, HDLParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_HIGH)
-        .add(LOW_TICK_STR, LOW_TICK_ID, HDLParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_LOW)
-        .add(PHASE_STR, PHASE_ID, HDLParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_PHASE, 1)
-        .add(NR_OF_BITS_STR, NR_OF_BITS_ID, HDLParameters.MAP_LN2, Clock.ATTR_HIGH, Clock.ATTR_LOW);
+        .add(HIGH_TICK_STR, HIGH_TICK_ID, HdlParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_HIGH)
+        .add(LOW_TICK_STR, LOW_TICK_ID, HdlParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_LOW)
+        .add(PHASE_STR, PHASE_ID, HdlParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_PHASE, 1)
+        .add(NR_OF_BITS_STR, NR_OF_BITS_ID, HdlParameters.MAP_LN2, Clock.ATTR_HIGH, Clock.ATTR_LOW);
     myWires
         .addWire("s_counter_next", NR_OF_BITS_ID)
         .addWire("s_counter_is_zero", 1)
@@ -64,10 +64,10 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   @Override
   public SortedMap<String, String> getPortMap(Netlist Nets, Object MapInfo) {
     final var map = new TreeMap<String, String>();
-    if (!(MapInfo instanceof NetlistComponent)) return map;
-    final var componentInfo = (NetlistComponent) MapInfo;
-    map.put("GlobalClock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
-    map.put("ClockTick", TickComponentHDLGeneratorFactory.FPGA_TICK);
+    if (!(MapInfo instanceof netlistComponent)) return map;
+    final var componentInfo = (netlistComponent) MapInfo;
+    map.put("GlobalClock", TickComponentHdlGeneratorFactory.FPGA_CLOCK);
+    map.put("ClockTick", TickComponentHdlGeneratorFactory.FPGA_TICK);
     map.put("ClockBus", "s_" + GetClockNetName(componentInfo.getComponent(), Nets));
     return map;
   }
@@ -76,7 +76,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     StringBuilder Contents = new StringBuilder();
     int ClockNetId = TheNets.getClockSourceId(comp);
     if (ClockNetId >= 0) {
-      Contents.append(HDLGeneratorFactory.CLOCK_TREE_NAME).append(ClockNetId);
+      Contents.append(HdlGeneratorFactory.CLOCK_TREE_NAME).append(ClockNetId);
     }
     return Contents.toString();
   }
@@ -90,7 +90,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .pair("highTick", HIGH_TICK_STR)
             .addRemarkBlock("Here the output signals are defines; we synchronize them all on the main clock");
 
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       Contents.add("""
           ClockBus <= GlobalClock&s_output_regs;
           makeOutputs : PROCESS( GlobalClock )
@@ -120,7 +120,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           """);
     }
     Contents.add("").addRemarkBlock("Here the control signals are defined");
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       Contents.add("""
           s_counter_is_zero <= '1' WHEN s_counter_reg = std_logic_vector(to_unsigned(0,{{nrOfBits}})) ELSE '0';
           s_counter_next    <= std_logic_vector(unsigned(s_counter_reg) - 1)
@@ -150,7 +150,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               """);
     }
     Contents.add("").addRemarkBlock("Here the state registers are defined");
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       Contents.add("""
           makeDerivedClock : PROCESS( GlobalClock , ClockTick , s_counter_is_zero ,
                                       s_derived_clock_reg)

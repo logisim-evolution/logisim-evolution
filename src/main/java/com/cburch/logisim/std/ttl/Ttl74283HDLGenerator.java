@@ -11,13 +11,13 @@ package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
-public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
+public class Ttl74283HDLGenerator extends AbstractHdlGeneratorFactory {
 
   public Ttl74283HDLGenerator() {
     super();
@@ -64,6 +64,6 @@ public class Ttl74283HDLGenerator extends AbstractHDLGeneratorFactory {
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
-    return (!attrs.getValue(TtlLibrary.VCC_GND) && HDL.isVHDL());
+    return (!attrs.getValue(TtlLibrary.VCC_GND) && Hdl.isVhdl());
   }
 }

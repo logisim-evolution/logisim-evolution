@@ -11,17 +11,17 @@ package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class ReptarLocalBusHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   public ReptarLocalBusHDLGeneratorFactory() {
     super();
@@ -39,7 +39,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   @Override
   public ArrayList<String> getArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
     final var contents = LineBuffer.getBuffer();
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents
           .pair("compName", componentName)
           .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
@@ -131,9 +131,9 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = new ArrayList<String>();
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add(" ");
     } else {
       // FIXME: hardcoded string
@@ -145,8 +145,8 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   @Override
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
-    if (!(mapInfo instanceof NetlistComponent)) return map;
-    final var ComponentInfo = (NetlistComponent) mapInfo;
+    if (!(mapInfo instanceof netlistComponent)) return map;
+    final var ComponentInfo = (netlistComponent) mapInfo;
     map.putAll(super.getPortMap(nets, mapInfo));
     map.put(
         "Addr_Data_LB_io",
@@ -195,6 +195,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
-    return HDL.isVHDL();
+    return Hdl.isVhdl();
   }
 }

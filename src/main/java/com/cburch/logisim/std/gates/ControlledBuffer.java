@@ -60,7 +60,7 @@ class ControlledBuffer extends InstanceFactory {
         isInverter
             ? S.getter("controlledInverterComponent")
             : S.getter("controlledBufferComponent"),
-        new ControlledBufferHDLGenerator());
+        new ControlledBufferHdlGenerator());
     this.isInverter = isInverter;
     if (isInverter) {
       setAttributes(

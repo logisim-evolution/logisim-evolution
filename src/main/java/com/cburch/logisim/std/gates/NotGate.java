@@ -84,7 +84,7 @@ class NotGate extends InstanceFactory {
   public static final InstanceFactory FACTORY = new NotGate();
 
   private NotGate() {
-    super(_ID, S.getter("notGateComponent"), new AbstractBufferHDLGenerator(true));
+    super(_ID, S.getter("notGateComponent"), new AbstractBufferHdlGenerator(true));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,

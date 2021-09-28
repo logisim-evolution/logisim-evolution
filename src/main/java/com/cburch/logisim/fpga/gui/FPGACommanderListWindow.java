@@ -11,7 +11,7 @@ package com.cburch.logisim.fpga.gui;
 
 import com.cburch.contracts.BaseListDataListenerContract;
 import com.cburch.contracts.BaseWindowListenerContract;
-import com.cburch.logisim.fpga.data.FPGACommanderListModel;
+import com.cburch.logisim.fpga.data.FpgaCommanderListModel;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.WindowEvent;
@@ -28,11 +28,11 @@ public class FPGACommanderListWindow extends JFrame implements BaseWindowListene
   private final JList<Object> textArea = new JList<>();
   private boolean IsActive = false;
   private final boolean count;
-  private final FPGACommanderListModel model;
+  private final FpgaCommanderListModel model;
   private final JScrollPane textMessages;
 
   public FPGACommanderListWindow(
-      String Title, Color fg, boolean count, FPGACommanderListModel model) {
+      String Title, Color fg, boolean count, FpgaCommanderListModel model) {
     super((count) ? Title + " (" + model.getCountNr() + ")" : Title);
     this.Title = Title;
     setResizable(true);

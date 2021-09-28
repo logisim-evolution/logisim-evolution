@@ -79,7 +79,7 @@ public class CircuitMapInfo {
     return pinid;
   }
 
-  public int getIOId() {
+  public int getIoId() {
     return ioid;
   }
 

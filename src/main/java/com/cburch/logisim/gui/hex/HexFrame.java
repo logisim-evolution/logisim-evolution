@@ -54,7 +54,7 @@ public class HexFrame extends LFrame.SubWindow {
     this.editor = new HexEditor(model);
     this.instance = instance;
 
-    JPanel buttonPanel = new JPanel();
+    final var buttonPanel = new JPanel();
     buttonPanel.add(open);
     buttonPanel.add(save);
     buttonPanel.add(close);
@@ -62,10 +62,8 @@ public class HexFrame extends LFrame.SubWindow {
     save.addActionListener(myListener);
     close.addActionListener(myListener);
 
-    Dimension pref = editor.getPreferredSize();
-    JScrollPane scroll =
-        new JScrollPane(
-            editor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    final var pref = editor.getPreferredSize();
+    final var scroll = new JScrollPane(editor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     pref.height = Math.min(pref.height, pref.width * 3 / 2);
     scroll.setPreferredSize(pref);
     scroll.getViewport().setBackground(editor.getBackground());
@@ -127,8 +125,8 @@ public class HexFrame extends LFrame.SubWindow {
     }
 
     private void enableItems(LogisimMenuBar menubar) {
-      boolean sel = editor.selectionExists();
-      boolean clip = true; // TODO editor.clipboardExists();
+      final var sel = editor.selectionExists();
+      final var clip = true; // TODO editor.clipboardExists();
       menubar.setEnabled(LogisimMenuBar.CUT, sel);
       menubar.setEnabled(LogisimMenuBar.COPY, sel);
       menubar.setEnabled(LogisimMenuBar.PASTE, clip);
@@ -159,7 +157,7 @@ public class HexFrame extends LFrame.SubWindow {
   private class MyListener implements ActionListener, LocaleListener {
     @Override
     public void actionPerformed(ActionEvent event) {
-      Object src = event.getSource();
+      final var src = event.getSource();
       if (src == open) {
         HexFile.open((MemContents) model, HexFrame.this, project, instance);
       } else if (src == save) {

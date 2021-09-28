@@ -15,16 +15,15 @@ import com.cburch.draw.shapes.Rectangle;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.BoardRectangle;
 import com.cburch.logisim.fpga.data.DriveStrength;
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.data.IOComponentTypes;
-import com.cburch.logisim.fpga.data.IOComponentsInformation;
+import com.cburch.logisim.fpga.data.FpgaIoInformationContainer;
+import com.cburch.logisim.fpga.data.IoComponentTypes;
+import com.cburch.logisim.fpga.data.IoComponentsInformation;
 import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.PinActivity;
 import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.std.io.LedArrayGenericHDLGeneratorFactory;
-
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Frame;
@@ -43,11 +42,11 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
-public class FPGAIOInformationSettingsDialog {
+public class FpgaIoInformationSettingsDialog {
 
   private static void buildPinTable(
       int nr,
-      IOComponentTypes type,
+      IoComponentTypes type,
       JPanel pinPanel,
       ArrayList<JTextField> LocInputs,
       ArrayList<String> PinLabels,
@@ -224,7 +223,7 @@ public class FPGAIOInformationSettingsDialog {
     }
     NrOfPins.put(OUTPUT_ID, nrOfPins);
     buildPinTable(nrOfPins,
-        IOComponentTypes.LEDArray,
+        IoComponentTypes.LedArray,
         pinPanel,
         LocInputs,
         pinLabels,
@@ -258,102 +257,101 @@ public class FPGAIOInformationSettingsDialog {
   private static final int OUTPUT_ID = 1;
   private static final int IO_ID = 2;
 
-  public static void GetSimpleInformationDialog(Boolean deleteButton,
-        IOComponentsInformation IOcomps, FPGAIOInformationContainer info) {
-    HashMap<Integer, Integer> NrOfPins = new HashMap<>();
-    final var selWindow = new JDialog(IOcomps.getParentFrame(), info.GetType() + " " + S.get("FpgaIoProperties"));
+  public static void getSimpleInformationDialog(Boolean deleteButton, IoComponentsInformation IOcomps, FpgaIoInformationContainer info) {
+    final var nrOfPins = new HashMap<Integer, Integer>();
+    final var selWindow = new JDialog(IOcomps.getParentFrame(), info.getType() + " " + S.get("FpgaIoProperties"));
     final var contents = new JPanel();
-    final var DriveInput = new JComboBox<String>(DriveStrength.BEHAVIOR_STRINGS);
-    final var PullInput = new JComboBox<String>(PullBehaviors.BEHAVIOR_STRINGS);
-    final var ActiveInput = new JComboBox<String>(PinActivity.BEHAVIOR_STRINGS);
-    final var Inputsize = new JComboBox<Integer>();
-    final var Outputsize = new JComboBox<Integer>();
-    final var IOsize = new JComboBox<Integer>();
-    final var RowSize = new JComboBox<Integer>();
-    final var ColSize = new JComboBox<Integer>();
-    final var Encoding = new JComboBox<String>();
+    final var driveInput = new JComboBox<String>(DriveStrength.BEHAVIOR_STRINGS);
+    final var pullInput = new JComboBox<String>(PullBehaviors.BEHAVIOR_STRINGS);
+    final var activeInput = new JComboBox<String>(PinActivity.BEHAVIOR_STRINGS);
+    final var inputSize = new JComboBox<Integer>();
+    final var outputSize = new JComboBox<Integer>();
+    final var ioSize = new JComboBox<Integer>();
+    final var rowSize = new JComboBox<Integer>();
+    final var colSize = new JComboBox<Integer>();
+    final var eEncoding = new JComboBox<String>();
     final var mapRotation = new JComboBox<String>();
-    final var LocInputs = new ArrayList<JTextField>();
-    final var LocOutputs = new ArrayList<JTextField>();
-    final var LocIOs = new ArrayList<JTextField>();
-    final var PinLabels = new ArrayList<String>();
-    final var ArrayPanel = new JPanel();
-    final var InputsPanel = new JPanel();
-    final var OutputsPanel = new JPanel();
-    final var IOPanel = new JPanel();
+    final var locInputs = new ArrayList<JTextField>();
+    final var locOutputs = new ArrayList<JTextField>();
+    final var locIos = new ArrayList<JTextField>();
+    final var pinLabels = new ArrayList<String>();
+    final var arrayPanel = new JPanel();
+    final var inputsPanel = new JPanel();
+    final var outputsPanel = new JPanel();
+    final var ioPanel = new JPanel();
     var abort = false;
     final var rectLocations = new ArrayList<JTextField>();
     final var oldInputLocations = new ArrayList<String>();
     final var oldOutputLocations = new ArrayList<String>();
-    final var oldIOLocations = new ArrayList<String>();
-    final var myType = info.GetType();
+    final var oldIoLocations = new ArrayList<String>();
+    final var myType = info.getType();
     final var myRotation = info.getMapRotation();
-    final var MyRectangle = info.GetRectangle();
+    final var MyRectangle = info.getRectangle();
     if (info.getNrOfPins() == 0) {
-      NrOfPins.put(INPUT_ID, IOComponentTypes.GetFPGAInputRequirement(myType));
-      NrOfPins.put(OUTPUT_ID, IOComponentTypes.GetFPGAOutputRequirement(myType));
-      NrOfPins.put(IO_ID, IOComponentTypes.GetFPGAInOutRequirement(myType));
+      nrOfPins.put(INPUT_ID, IoComponentTypes.getFpgaInputRequirement(myType));
+      nrOfPins.put(OUTPUT_ID, IoComponentTypes.getFpgaOutputRequirement(myType));
+      nrOfPins.put(IO_ID, IoComponentTypes.getFpgaInOutRequirement(myType));
     } else {
-      NrOfPins.put(INPUT_ID, info.getNrOfInputPins());
-      NrOfPins.put(OUTPUT_ID, info.getNrOfOutputPins());
-      NrOfPins.put(IO_ID, info.getNrOfIOPins());
+      nrOfPins.put(INPUT_ID, info.getNrOfInputPins());
+      nrOfPins.put(OUTPUT_ID, info.getNrOfOutputPins());
+      nrOfPins.put(IO_ID, info.getNrOfIOPins());
     }
     for (var cnt = 0; cnt < info.getNrOfPins(); cnt++) {
-      if (cnt < NrOfPins.get(INPUT_ID)) oldInputLocations.add(info.getPinLocation(cnt));
-      else if (cnt < NrOfPins.get(INPUT_ID) + NrOfPins.get(OUTPUT_ID))
+      if (cnt < nrOfPins.get(INPUT_ID)) oldInputLocations.add(info.getPinLocation(cnt));
+      else if (cnt < nrOfPins.get(INPUT_ID) + nrOfPins.get(OUTPUT_ID))
         oldOutputLocations.add(info.getPinLocation(cnt));
       else
-        oldIOLocations.add(info.getPinLocation(cnt));
+        oldIoLocations.add(info.getPinLocation(cnt));
     }
     ActionListener actionListener =
         e -> {
           switch (e.getActionCommand()) {
             case "inputSize": {
-              var nr = (int) Inputsize.getSelectedItem();
-              NrOfPins.put(INPUT_ID, nr);
-              PinLabels.clear();
+              var nr = (int) inputSize.getSelectedItem();
+              nrOfPins.put(INPUT_ID, nr);
+              pinLabels.clear();
               for (var i = 0; i < nr; i++)
-                PinLabels.add(IOComponentTypes.getInputLabel(nr, i, myType));
-              buildPinTable(nr, myType, InputsPanel, LocInputs, PinLabels, oldInputLocations);
+                pinLabels.add(IoComponentTypes.getInputLabel(nr, i, myType));
+              buildPinTable(nr, myType, inputsPanel, locInputs, pinLabels, oldInputLocations);
               selWindow.pack();
               return;
             }
             case "outputSize": {
-              var nr = (int) Outputsize.getSelectedItem();
-              NrOfPins.put(OUTPUT_ID, nr);
-              PinLabels.clear();
+              var nr = (int) outputSize.getSelectedItem();
+              nrOfPins.put(OUTPUT_ID, nr);
+              pinLabels.clear();
               for (var i = 0; i < nr; i++)
-                PinLabels.add(IOComponentTypes.getOutputLabel(nr, 0, 0, i, myType));
-              buildPinTable(nr, myType, OutputsPanel, LocOutputs, PinLabels, oldOutputLocations);
+                pinLabels.add(IoComponentTypes.getOutputLabel(nr, 0, 0, i, myType));
+              buildPinTable(nr, myType, outputsPanel, locOutputs, pinLabels, oldOutputLocations);
               selWindow.pack();
               return;
             }
             case "ioSize": {
-              var nr = (int) IOsize.getSelectedItem();
-              NrOfPins.put(IO_ID, nr);
-              PinLabels.clear();
+              var nr = (int) ioSize.getSelectedItem();
+              nrOfPins.put(IO_ID, nr);
+              pinLabels.clear();
               for (var i = 0; i < nr; i++)
-                PinLabels.add(IOComponentTypes.getIOLabel(nr, i, myType));
-              buildPinTable(nr, myType, IOPanel, LocIOs, PinLabels, oldIOLocations);
+                pinLabels.add(IoComponentTypes.getIoLabel(nr, i, myType));
+              buildPinTable(nr, myType, ioPanel, locIos, pinLabels, oldIoLocations);
               selWindow.pack();
               return;
             }
             case "LedArray": {
-              info.setNrOfRows(RowSize.getSelectedIndex() + 1);
-              info.setNrOfColumns(ColSize.getSelectedIndex() + 1);
-              info.setArrayDriveMode((char) Encoding.getSelectedIndex());
+              info.setNrOfRows(rowSize.getSelectedIndex() + 1);
+              info.setNrOfColumns(colSize.getSelectedIndex() + 1);
+              info.setArrayDriveMode((char) eEncoding.getSelectedIndex());
               updateLedArrayRequirements(info.getNrOfRows(),
                   info.getNrOfColumns(),
                   info.getArrayDriveMode(),
-                  OutputsPanel,
-                  LocOutputs,
+                  outputsPanel,
+                  locOutputs,
                   oldOutputLocations,
-                  NrOfPins);
+                  nrOfPins);
               selWindow.pack();
               return;
             }
             case "cancel":
-              info.setType(IOComponentTypes.Unknown);
+              info.setType(IoComponentTypes.Unknown);
               break;
             case "delete":
               info.setToBeDeleted();
@@ -385,21 +383,21 @@ public class FPGAIOInformationSettingsDialog {
       c.gridwidth = 1;
     }
     c.fill = GridBagConstraints.HORIZONTAL;
-    if (IOComponentTypes.hasRotationAttribute(myType)) {
+    if (IoComponentTypes.hasRotationAttribute(myType)) {
       final var panel = new JPanel();
       panel.setLayout(new BorderLayout());
       panel.setBorder(BorderFactory.createTitledBorder(
           BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaRotationDefinition")));
-      mapRotation.addItem(S.get(IOComponentTypes.getRotationString(myType, IOComponentTypes.ROTATION_ZERO)));
-      mapRotation.addItem(S.get(IOComponentTypes.getRotationString(myType, IOComponentTypes.ROTATION_CW_90)));
-      mapRotation.addItem(S.get(IOComponentTypes.getRotationString(myType, IOComponentTypes.ROTATION_CCW_90)));
+      mapRotation.addItem(S.get(IoComponentTypes.getRotationString(myType, IoComponentTypes.ROTATION_ZERO)));
+      mapRotation.addItem(S.get(IoComponentTypes.getRotationString(myType, IoComponentTypes.ROTATION_CW_90)));
+      mapRotation.addItem(S.get(IoComponentTypes.getRotationString(myType, IoComponentTypes.ROTATION_CCW_90)));
       panel.add(mapRotation, BorderLayout.CENTER);
       switch (myRotation) {
-        case IOComponentTypes.ROTATION_CW_90: {
+        case IoComponentTypes.ROTATION_CW_90: {
           mapRotation.setSelectedIndex(1);
           break;
         }
-        case IOComponentTypes.ROTATION_CCW_90: {
+        case IoComponentTypes.ROTATION_CCW_90: {
           mapRotation.setSelectedIndex(2);
           break;
         }
@@ -413,44 +411,44 @@ public class FPGAIOInformationSettingsDialog {
       contents.add(panel, c);
       c.gridwidth = 1;
     }
-    if (myType.equals(IOComponentTypes.LEDArray)) {
+    if (myType.equals(IoComponentTypes.LedArray)) {
       final var panel = new JPanel();
       panel.setLayout(new GridBagLayout());
       panel.setBorder(BorderFactory.createTitledBorder(
               BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaArrayDefinition")));
-      ArrayPanel.setLayout(new GridBagLayout());
-      RowSize.removeAll();
-      ColSize.removeAll();
+      arrayPanel.setLayout(new GridBagLayout());
+      rowSize.removeAll();
+      colSize.removeAll();
       for (var i = 1; i < 33; i++) {
-        RowSize.addItem(i);
-        ColSize.addItem(i);
+        rowSize.addItem(i);
+        colSize.addItem(i);
       }
-      RowSize.setSelectedIndex(info.getNrOfRows() - 1);
-      ColSize.setSelectedIndex(info.getNrOfColumns() - 1);
-      Encoding.removeAll();
+      rowSize.setSelectedIndex(info.getNrOfRows() - 1);
+      colSize.setSelectedIndex(info.getNrOfColumns() - 1);
+      eEncoding.removeAll();
       for (var val : LedArrayDriving.getDisplayStrings())
-        Encoding.addItem(val);
-      Encoding.setSelectedIndex(info.getArrayDriveMode());
-      RowSize.setActionCommand("LedArray");
-      RowSize.addActionListener(actionListener);
-      ColSize.setActionCommand("LedArray");
-      ColSize.addActionListener(actionListener);
-      Encoding.setActionCommand("LedArray");
-      Encoding.addActionListener(actionListener);
+        eEncoding.addItem(val);
+      eEncoding.setSelectedIndex(info.getArrayDriveMode());
+      rowSize.setActionCommand("LedArray");
+      rowSize.addActionListener(actionListener);
+      colSize.setActionCommand("LedArray");
+      colSize.addActionListener(actionListener);
+      eEncoding.setActionCommand("LedArray");
+      eEncoding.addActionListener(actionListener);
       final var arr = new GridBagConstraints();
       arr.gridx = 0;
       arr.gridy = 0;
       arr.gridwidth = 2;
       panel.add(new JLabel(S.get("FpgaArrayDriving")), arr);
       arr.gridy++;
-      panel.add(Encoding, arr);
+      panel.add(eEncoding, arr);
       arr.gridwidth = 1;
       arr.gridy++;
       panel.add(new JLabel(S.get("FpgaArrayRows")), arr);
       arr.gridx++;
-      panel.add(RowSize, arr);
+      panel.add(rowSize, arr);
       arr.gridy++;
-      panel.add(ColSize, arr);
+      panel.add(colSize, arr);
       arr.gridx--;
       panel.add(new JLabel(S.get("FpgaArrayCols")), arr);
       c.gridy++;
@@ -458,84 +456,83 @@ public class FPGAIOInformationSettingsDialog {
       contents.add(panel, c);
       c.gridwidth = 1;
     }
-    if (NrOfPins.get(INPUT_ID) > 0) {
+    if (nrOfPins.get(INPUT_ID) > 0) {
       final var panel = new JPanel();
       panel.setLayout(new BorderLayout());
       panel.setBorder(BorderFactory.createTitledBorder(
               BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaIoInpPins")));
-      InputsPanel.setLayout(new GridBagLayout());
-      if (IOComponentTypes.nrOfInputPinsConfigurable(myType)) {
-        Inputsize.removeAllItems();
-        for (var i = 1; i < 129; i++) Inputsize.addItem(i);
-        Inputsize.setSelectedItem(NrOfPins.get(INPUT_ID));
-        Inputsize.addActionListener(actionListener);
-        Inputsize.setActionCommand("inputSize");
-        panel.add(Inputsize, BorderLayout.NORTH);
+      inputsPanel.setLayout(new GridBagLayout());
+      if (IoComponentTypes.nrOfInputPinsConfigurable(myType)) {
+        inputSize.removeAllItems();
+        for (var i = 1; i < 129; i++) inputSize.addItem(i);
+        inputSize.setSelectedItem(nrOfPins.get(INPUT_ID));
+        inputSize.addActionListener(actionListener);
+        inputSize.setActionCommand("inputSize");
+        panel.add(inputSize, BorderLayout.NORTH);
       }
-      PinLabels.clear();
-      var nr = NrOfPins.get(INPUT_ID);
-      for (var i = 0; i < nr; i++) PinLabels.add(IOComponentTypes.getOutputLabel(nr, 0, 0, i, myType));
-      buildPinTable(NrOfPins.get(INPUT_ID), myType, InputsPanel, LocInputs, PinLabels, oldInputLocations);
-      panel.add(InputsPanel, BorderLayout.CENTER);
+      pinLabels.clear();
+      var nr = nrOfPins.get(INPUT_ID);
+      for (var i = 0; i < nr; i++) pinLabels.add(IoComponentTypes.getOutputLabel(nr, 0, 0, i, myType));
+      buildPinTable(nrOfPins.get(INPUT_ID), myType, inputsPanel, locInputs, pinLabels, oldInputLocations);
+      panel.add(inputsPanel, BorderLayout.CENTER);
       c.gridy++;
       c.gridwidth = 2;
       contents.add(panel, c);
       c.gridwidth = 1;
     }
-    if (NrOfPins.get(OUTPUT_ID) > 0) {
+    if (nrOfPins.get(OUTPUT_ID) > 0) {
       final var panel = new JPanel();
       panel.setLayout(new BorderLayout());
       panel.setBorder(BorderFactory.createTitledBorder(
               BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaIoOutpPins")));
-      OutputsPanel.setLayout(new GridBagLayout());
-      if (IOComponentTypes.nrOfOutputPinsConfigurable(myType)) {
-        Outputsize.removeAllItems();
-        for (var i = 1; i < 129; i++) Outputsize.addItem(i);
-        Outputsize.setSelectedItem(NrOfPins.get(OUTPUT_ID));
-        Outputsize.addActionListener(actionListener);
-        Outputsize.setActionCommand("outputSize");
-        panel.add(Outputsize, BorderLayout.NORTH);
+      outputsPanel.setLayout(new GridBagLayout());
+      if (IoComponentTypes.nrOfOutputPinsConfigurable(myType)) {
+        outputSize.removeAllItems();
+        for (var i = 1; i < 129; i++) outputSize.addItem(i);
+        outputSize.setSelectedItem(nrOfPins.get(OUTPUT_ID));
+        outputSize.addActionListener(actionListener);
+        outputSize.setActionCommand("outputSize");
+        panel.add(outputSize, BorderLayout.NORTH);
       }
-      if (myType != IOComponentTypes.LEDArray) {
-        PinLabels.clear();
-        final var nr = NrOfPins.get(OUTPUT_ID);
-        for (var i = 0; i < nr; i++) PinLabels.add(IOComponentTypes.getOutputLabel(nr, 0, 0, i, myType));
-        buildPinTable(NrOfPins.get(OUTPUT_ID), myType, OutputsPanel, LocOutputs, PinLabels, oldOutputLocations);
+      if (myType != IoComponentTypes.LedArray) {
+        pinLabels.clear();
+        final var nr = nrOfPins.get(OUTPUT_ID);
+        for (var i = 0; i < nr; i++) pinLabels.add(IoComponentTypes.getOutputLabel(nr, 0, 0, i, myType));
+        buildPinTable(nrOfPins.get(OUTPUT_ID), myType, outputsPanel, locOutputs, pinLabels, oldOutputLocations);
       } else {
         updateLedArrayRequirements(
             info.getNrOfRows(),
             info.getNrOfColumns(),
             info.getArrayDriveMode(),
-            OutputsPanel,
-            LocOutputs,
+            outputsPanel,
+            locOutputs,
             oldOutputLocations,
-            NrOfPins);
+            nrOfPins);
       }
-      panel.add(OutputsPanel, BorderLayout.CENTER);
+      panel.add(outputsPanel, BorderLayout.CENTER);
       c.gridy++;
       c.gridwidth = 2;
       contents.add(panel, c);
       c.gridwidth = 1;
     }
-    if (NrOfPins.get(IO_ID) > 0) {
+    if (nrOfPins.get(IO_ID) > 0) {
       final var panel = new JPanel();
       panel.setLayout(new BorderLayout());
-      panel.setBorder(BorderFactory.createTitledBorder(
-          BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaIoIOPins")));
-      IOPanel.setLayout(new GridBagLayout());
-      if (IOComponentTypes.nrOfIOPinsConfigurable(myType)) {
-        IOsize.removeAllItems();
-        for (var i = 1; i < 129; i++) IOsize.addItem(i);
-        IOsize.setSelectedItem(NrOfPins.get(IO_ID));
-        IOsize.addActionListener(actionListener);
-        IOsize.setActionCommand("ioSize");
-        panel.add(IOsize, BorderLayout.NORTH);
+      panel.setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaIoIOPins")));
+      ioPanel.setLayout(new GridBagLayout());
+      if (IoComponentTypes.nrOfIoPinsConfigurable(myType)) {
+        ioSize.removeAllItems();
+        for (var i = 1; i < 129; i++) ioSize.addItem(i);
+        ioSize.setSelectedItem(nrOfPins.get(IO_ID));
+        ioSize.addActionListener(actionListener);
+        ioSize.setActionCommand("ioSize");
+        panel.add(ioSize, BorderLayout.NORTH);
       }
-      PinLabels.clear();
-      final var nr = NrOfPins.get(IO_ID);
-      for (var i = 0; i < nr; i++) PinLabels.add(IOComponentTypes.getIOLabel(nr, i, myType));
-      buildPinTable(NrOfPins.get(IO_ID), myType, IOPanel, LocIOs, PinLabels, oldIOLocations);
-      panel.add(IOPanel, BorderLayout.CENTER);
+      pinLabels.clear();
+      final var nr = nrOfPins.get(IO_ID);
+      for (var i = 0; i < nr; i++) pinLabels.add(IoComponentTypes.getIoLabel(nr, i, myType));
+      buildPinTable(nrOfPins.get(IO_ID), myType, ioPanel, locIos, pinLabels, oldIoLocations);
+      panel.add(ioPanel, BorderLayout.CENTER);
       c.gridy++;
       c.gridwidth = 2;
       contents.add(panel, c);
@@ -547,7 +544,7 @@ public class FPGAIOInformationSettingsDialog {
     c.gridx = 0;
     contents.add(LabText, c);
     var LabelInput = new JTextField(6);
-    LabelInput.setText(info.GetLabel());
+    LabelInput.setText(info.getLabel());
     c.gridx = 1;
     contents.add(LabelInput, c);
 
@@ -555,46 +552,46 @@ public class FPGAIOInformationSettingsDialog {
     c.gridy++;
     c.gridx = 0;
     contents.add(StandardText, c);
-    final var StandardInput = new JComboBox<String>(IoStandards.Behavior_strings);
-    if (info.GetIOStandard() != IoStandards.UNKNOWN)
-      StandardInput.setSelectedIndex(info.GetIOStandard());
-    else StandardInput.setSelectedIndex(IOcomps.GetDefaultStandard());
+    final var StandardInput = new JComboBox<String>(IoStandards.BEHAVIOR_STRINGS);
+    if (info.getIoStandard() != IoStandards.UNKNOWN)
+      StandardInput.setSelectedIndex(info.getIoStandard());
+    else StandardInput.setSelectedIndex(IOcomps.getDefaultStandard());
     c.gridx = 1;
     contents.add(StandardInput, c);
 
-    if (IOComponentTypes.OutputComponentSet.contains(myType)) {
+    if (IoComponentTypes.OUTPUT_COMPONENT_SET.contains(myType)) {
       final var DriveText = new JLabel(S.get("FpgaIoStrength"));
       c.gridy++;
       c.gridx = 0;
       contents.add(DriveText, c);
-      if (info.GetDrive() != DriveStrength.UNKNOWN) DriveInput.setSelectedIndex(info.GetDrive());
-      else DriveInput.setSelectedIndex(IOcomps.GetDefaultDriveStrength());
+      if (info.getDrive() != DriveStrength.UNKNOWN) driveInput.setSelectedIndex(info.getDrive());
+      else driveInput.setSelectedIndex(IOcomps.getDefaultDriveStrength());
       c.gridx = 1;
-      contents.add(DriveInput, c);
+      contents.add(driveInput, c);
     }
 
-    if (IOComponentTypes.InputComponentSet.contains(myType)) {
+    if (IoComponentTypes.INPUT_COMPONENT_SET.contains(myType)) {
       final var PullText = new JLabel(S.get("FpgaIoPull"));
       c.gridy++;
       c.gridx = 0;
       contents.add(PullText, c);
-      if (info.GetPullBehavior() != PullBehaviors.UNKNOWN)
-        PullInput.setSelectedIndex(info.GetPullBehavior());
-      else PullInput.setSelectedIndex(IOcomps.GetDefaultPullSelection());
+      if (info.getPullBehavior() != PullBehaviors.UNKNOWN)
+        pullInput.setSelectedIndex(info.getPullBehavior());
+      else pullInput.setSelectedIndex(IOcomps.getDefaultPullSelection());
       c.gridx = 1;
-      contents.add(PullInput, c);
+      contents.add(pullInput, c);
     }
 
-    if (!IOComponentTypes.InOutComponentSet.contains(myType)) {
+    if (!IoComponentTypes.IN_OUT_COMPONENT_SET.contains(myType)) {
       final var ActiveText = new JLabel(S.get("FpgaIoActivity", myType));
       c.gridy++;
       c.gridx = 0;
       contents.add(ActiveText, c);
-      if (info.GetActivityLevel() != PinActivity.Unknown)
-        ActiveInput.setSelectedIndex(info.GetActivityLevel());
-      else ActiveInput.setSelectedIndex(IOcomps.GetDefaultActivity());
+      if (info.getActivityLevel() != PinActivity.Unknown)
+        activeInput.setSelectedIndex(info.getActivityLevel());
+      else activeInput.setSelectedIndex(IOcomps.getDefaultActivity());
       c.gridx = 1;
-      contents.add(ActiveInput, c);
+      contents.add(activeInput, c);
     }
     if (deleteButton) {
       final var delButton = new JButton();
@@ -628,41 +625,41 @@ public class FPGAIOInformationSettingsDialog {
     abort = false;
     while (!abort) {
       selWindow.setVisible(true);
-      abort |= info.GetType().equals(IOComponentTypes.Unknown);
+      abort |= info.getType().equals(IoComponentTypes.Unknown);
       if (!abort) {
-        final var NrPins = NrOfPins.get(INPUT_ID) + NrOfPins.get(OUTPUT_ID) + NrOfPins.get(IO_ID);
+        final var NrPins = nrOfPins.get(INPUT_ID) + nrOfPins.get(OUTPUT_ID) + nrOfPins.get(IO_ID);
         var correct = true;
-        for (var i = 0; i < NrOfPins.get(INPUT_ID); i++) {
-          if (LocInputs.get(i).getText().isEmpty()) {
+        for (var i = 0; i < nrOfPins.get(INPUT_ID); i++) {
+          if (locInputs.get(i).getText().isEmpty()) {
             correct = false;
             DialogNotification.showDialogNotification(
                 IOcomps.getParentFrame(),
                 "Error",
-                S.get("FpgaIoPinLoc", IOComponentTypes.getInputLabel(NrOfPins.get(INPUT_ID), i, myType)));
+                S.get("FpgaIoPinLoc", IoComponentTypes.getInputLabel(nrOfPins.get(INPUT_ID), i, myType)));
             break;
           }
         }
         if (!correct) continue;
-        for (var i = 0; i < NrOfPins.get(OUTPUT_ID); i++) {
-          if (LocOutputs.get(i).getText().isEmpty()) {
+        for (var i = 0; i < nrOfPins.get(OUTPUT_ID); i++) {
+          if (locOutputs.get(i).getText().isEmpty()) {
             correct = false;
             DialogNotification.showDialogNotification(
                 IOcomps.getParentFrame(),
                 "Error",
                 S.get("FpgaIoPinLoc",
-                    IOComponentTypes.getOutputLabel(NrOfPins.get(INPUT_ID), 0, 0, i, myType)));
+                    IoComponentTypes.getOutputLabel(nrOfPins.get(INPUT_ID), 0, 0, i, myType)));
             break;
           }
         }
         if (!correct) continue;
-        for (var i = 0; i < NrOfPins.get(IO_ID); i++) {
-          if (LocIOs.get(i).getText().isEmpty()) {
+        for (var i = 0; i < nrOfPins.get(IO_ID); i++) {
+          if (locIos.get(i).getText().isEmpty()) {
             correct = false;
             DialogNotification.showDialogNotification(
                 IOcomps.getParentFrame(),
                 "Error",
                 S.get("FpgaIoPinLoc",
-                    IOComponentTypes.getIOLabel(NrOfPins.get(INPUT_ID), i, myType)));
+                    IoComponentTypes.getIoLabel(nrOfPins.get(INPUT_ID), i, myType)));
             break;
           }
         }
@@ -721,35 +718,35 @@ public class FPGAIOInformationSettingsDialog {
               }
             }
           }
-          IOcomps.SetDefaultStandard(StandardInput.getSelectedIndex());
+          IOcomps.setDefaultStandard(StandardInput.getSelectedIndex());
           info.setNrOfPins(NrPins);
           var idx = 0;
-          for (var i = 0; i < NrOfPins.get(INPUT_ID); i++)
-            info.setInputPinLocation(idx++, LocInputs.get(i).getText());
-          for (var i = 0; i < NrOfPins.get(OUTPUT_ID); i++)
-            info.setOutputPinLocation(idx++, LocOutputs.get(i).getText());
-          for (var i = 0; i < NrOfPins.get(IO_ID); i++)
-            info.setIOPinLocation(idx++, LocIOs.get(i).getText());
+          for (var i = 0; i < nrOfPins.get(INPUT_ID); i++)
+            info.setInputPinLocation(idx++, locInputs.get(i).getText());
+          for (var i = 0; i < nrOfPins.get(OUTPUT_ID); i++)
+            info.setOutputPinLocation(idx++, locOutputs.get(i).getText());
+          for (var i = 0; i < nrOfPins.get(IO_ID); i++)
+            info.setIOPinLocation(idx++, locIos.get(i).getText());
           if (LabelInput.getText() != null && LabelInput.getText().length() != 0)
             info.setLabel(LabelInput.getText());
           else info.setLabel(null);
           info.setIOStandard(IoStandards.getId(StandardInput.getSelectedItem().toString()));
-          if (IOComponentTypes.OutputComponentSet.contains(myType)) {
-            IOcomps.SetDefaultDriveStrength(DriveInput.getSelectedIndex());
-            info.setDrive(DriveStrength.getId(DriveInput.getSelectedItem().toString()));
+          if (IoComponentTypes.OUTPUT_COMPONENT_SET.contains(myType)) {
+            IOcomps.setDefaultDriveStrength(driveInput.getSelectedIndex());
+            info.setDrive(DriveStrength.getId(driveInput.getSelectedItem().toString()));
           }
-          if (IOComponentTypes.InputComponentSet.contains(myType)) {
-            IOcomps.SetDefaultPullSelection(PullInput.getSelectedIndex());
-            info.setPullBehavior(PullBehaviors.getId(PullInput.getSelectedItem().toString()));
+          if (IoComponentTypes.INPUT_COMPONENT_SET.contains(myType)) {
+            IOcomps.setDefaultPullSelection(pullInput.getSelectedIndex());
+            info.setPullBehavior(PullBehaviors.getId(pullInput.getSelectedItem().toString()));
           }
-          if (!IOComponentTypes.InOutComponentSet.contains(myType)) {
-            IOcomps.SetDefaultActivity(ActiveInput.getSelectedIndex());
-            info.setActivityLevel(PinActivity.getId(ActiveInput.getSelectedItem().toString()));
+          if (!IoComponentTypes.IN_OUT_COMPONENT_SET.contains(myType)) {
+            IOcomps.setDefaultActivity(activeInput.getSelectedIndex());
+            info.setActivityLevel(PinActivity.getId(activeInput.getSelectedItem().toString()));
           }
           final var rotation = switch (mapRotation.getSelectedIndex()) {
-            case 1 -> IOComponentTypes.ROTATION_CW_90;
-            case 2 -> IOComponentTypes.ROTATION_CCW_90;
-            default -> IOComponentTypes.ROTATION_ZERO;
+            case 1 -> IoComponentTypes.ROTATION_CW_90;
+            case 2 -> IoComponentTypes.ROTATION_CCW_90;
+            default -> IoComponentTypes.ROTATION_ZERO;
           };
           info.setMapRotation(rotation);
           abort = true;
@@ -835,7 +832,7 @@ public class FPGAIOInformationSettingsDialog {
     c.gridx = 0;
     ClockPanel.add(StandardText, c);
 
-    final var StdInput = new JComboBox<String>(IoStandards.Behavior_strings);
+    final var StdInput = new JComboBox<String>(IoStandards.BEHAVIOR_STRINGS);
     if (TheBoard.fpga.FpgaInfoPresent()) {
       StdInput.setSelectedIndex(TheBoard.fpga.getClockStandard());
     } else StdInput.setSelectedIndex(0);
@@ -843,9 +840,9 @@ public class FPGAIOInformationSettingsDialog {
     ClockPanel.add(StdInput, c);
 
     /* Here the FPGA related settings are defined */
-    final var FPGAPanel = new JPanel();
-    FPGAPanel.setLayout(new GridBagLayout());
-    FPGAPanel.setBorder(
+    final var fpgaPanel = new JPanel();
+    fpgaPanel.setLayout(new GridBagLayout());
+    fpgaPanel.setBorder(
         BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaBoardFpgaProp")));
 
@@ -853,125 +850,125 @@ public class FPGAIOInformationSettingsDialog {
     c.gridx = 0;
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
-    FPGAPanel.add(VendorText, c);
+    fpgaPanel.add(VendorText, c);
 
-    final var VendorInput = new JComboBox<String>(VendorSoftware.VENDORS);
+    final var vendorInput = new JComboBox<String>(VendorSoftware.VENDORS);
     if (TheBoard.fpga.FpgaInfoPresent()) {
-      VendorInput.setSelectedIndex(TheBoard.fpga.getVendor());
-    } else VendorInput.setSelectedIndex(0);
+      vendorInput.setSelectedIndex(TheBoard.fpga.getVendor());
+    } else vendorInput.setSelectedIndex(0);
     c.gridx = 1;
-    FPGAPanel.add(VendorInput, c);
+    fpgaPanel.add(vendorInput, c);
 
-    final var FamilyText = new JLabel(S.get("FpgaBoardFpgaFam"));
+    final var familyText = new JLabel(S.get("FpgaBoardFpgaFam"));
     c.gridy = 1;
     c.gridx = 0;
-    FPGAPanel.add(FamilyText, c);
+    fpgaPanel.add(familyText, c);
 
-    final var FamilyInput = new JTextField();
-    if (TheBoard.fpga.FpgaInfoPresent()) FamilyInput.setText(TheBoard.fpga.getTechnology());
+    final var familyInput = new JTextField();
+    if (TheBoard.fpga.FpgaInfoPresent()) familyInput.setText(TheBoard.fpga.getTechnology());
     c.gridx = 1;
-    FPGAPanel.add(FamilyInput, c);
+    fpgaPanel.add(familyInput, c);
 
     final var PartText = new JLabel(S.get("FpgaBoardFpgaPart"));
     c.gridy = 2;
     c.gridx = 0;
-    FPGAPanel.add(PartText, c);
+    fpgaPanel.add(PartText, c);
 
-    final var PartInput = new JTextField();
-    if (TheBoard.fpga.FpgaInfoPresent()) PartInput.setText(TheBoard.fpga.getPart());
+    final var partInput = new JTextField();
+    if (TheBoard.fpga.FpgaInfoPresent()) partInput.setText(TheBoard.fpga.getPart());
     c.gridx = 1;
-    FPGAPanel.add(PartInput, c);
+    fpgaPanel.add(partInput, c);
 
     final var BoxText = new JLabel(S.get("FpgaBoardFpgaPack"));
     c.gridy = 3;
     c.gridx = 0;
-    FPGAPanel.add(BoxText, c);
+    fpgaPanel.add(BoxText, c);
 
-    final var BoxInput = new JTextField();
-    if (TheBoard.fpga.FpgaInfoPresent()) BoxInput.setText(TheBoard.fpga.getPackage());
+    final var boxInput = new JTextField();
+    if (TheBoard.fpga.FpgaInfoPresent()) boxInput.setText(TheBoard.fpga.getPackage());
     c.gridx = 1;
-    FPGAPanel.add(BoxInput, c);
+    fpgaPanel.add(boxInput, c);
 
-    final var SpeedText = new JLabel(S.get("FpgaBoardFpgaSG"));
+    final var speedText = new JLabel(S.get("FpgaBoardFpgaSG"));
     c.gridy = 4;
     c.gridx = 0;
-    FPGAPanel.add(SpeedText, c);
+    fpgaPanel.add(speedText, c);
 
-    final var SpeedInput = new JTextField();
-    if (TheBoard.fpga.FpgaInfoPresent()) SpeedInput.setText(TheBoard.fpga.getSpeedGrade());
+    final var speedInput = new JTextField();
+    if (TheBoard.fpga.FpgaInfoPresent()) speedInput.setText(TheBoard.fpga.getSpeedGrade());
     c.gridx = 1;
-    FPGAPanel.add(SpeedInput, c);
+    fpgaPanel.add(speedInput, c);
 
-    final var UnusedPinsText = new JLabel(S.get("FpgaBoardPinUnused"));
+    final var unusedPinsText = new JLabel(S.get("FpgaBoardPinUnused"));
     c.gridy = 5;
     c.gridx = 0;
-    FPGAPanel.add(UnusedPinsText, c);
+    fpgaPanel.add(unusedPinsText, c);
 
-    final var UnusedPinsInput = new JComboBox<String>(PullBehaviors.BEHAVIOR_STRINGS);
+    final var unusedPinsInput = new JComboBox<String>(PullBehaviors.BEHAVIOR_STRINGS);
     if (TheBoard.fpga.FpgaInfoPresent()) {
-      UnusedPinsInput.setSelectedIndex(TheBoard.fpga.getUnusedPinsBehavior());
-    } else UnusedPinsInput.setSelectedIndex(0);
+      unusedPinsInput.setSelectedIndex(TheBoard.fpga.getUnusedPinsBehavior());
+    } else unusedPinsInput.setSelectedIndex(0);
     c.gridx = 1;
-    FPGAPanel.add(UnusedPinsInput, c);
+    fpgaPanel.add(unusedPinsInput, c);
 
     /* JTAG related Settings */
-    final var JTAGPanel = new JPanel();
-    JTAGPanel.setLayout(new GridBagLayout());
-    JTAGPanel.setBorder(
+    final var jtagPanel = new JPanel();
+    jtagPanel.setLayout(new GridBagLayout());
+    jtagPanel.setBorder(
         BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaBoardJtagProp")));
 
-    final var PosText = new JLabel(S.get("FpgaBoardJtagLoc"));
+    final var posText = new JLabel(S.get("FpgaBoardJtagLoc"));
     c.gridy = 0;
     c.gridx = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
-    JTAGPanel.add(PosText, c);
+    jtagPanel.add(posText, c);
 
     final var PosInput = new JTextField(5);
     PosInput.setText("1");
     if (TheBoard.fpga.FpgaInfoPresent())
       PosInput.setText(Integer.toString(TheBoard.fpga.getFpgaJTAGChainPosition()));
     c.gridx = 1;
-    JTAGPanel.add(PosInput, c);
+    jtagPanel.add(PosInput, c);
 
     final var FlashPosText = new JLabel(S.get("FpgaBoardFlashLoc"));
     c.gridy = 1;
     c.gridx = 0;
-    JTAGPanel.add(FlashPosText, c);
+    jtagPanel.add(FlashPosText, c);
 
-    final var FlashPosInput = new JTextField(5);
-    FlashPosInput.setText("2");
+    final var flashPosInput = new JTextField(5);
+    flashPosInput.setText("2");
     if (TheBoard.fpga.FpgaInfoPresent())
-      FlashPosInput.setText(Integer.toString(TheBoard.fpga.getFlashJTAGChainPosition()));
+      flashPosInput.setText(Integer.toString(TheBoard.fpga.getFlashJTAGChainPosition()));
     c.gridx = 1;
     c.fill = GridBagConstraints.HORIZONTAL;
-    JTAGPanel.add(FlashPosInput, c);
+    jtagPanel.add(flashPosInput, c);
 
     /* misc settings */
-    final var MiscPanel = new JPanel();
-    MiscPanel.setLayout(new GridBagLayout());
-    MiscPanel.setBorder(
+    final var miscPanel = new JPanel();
+    miscPanel.setLayout(new GridBagLayout());
+    miscPanel.setBorder(
         BorderFactory.createTitledBorder(
             BorderFactory.createLineBorder(Color.BLACK, 2, true), S.get("FpgaBoardMiscProp")));
 
-    final var FlashName = new JLabel(S.get("FpgaBoardFlashType"));
+    final var flashName = new JLabel(S.get("FpgaBoardFlashType"));
     c.gridx = 0;
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
-    MiscPanel.add(FlashName, c);
+    miscPanel.add(flashName, c);
 
-    final var FlashNameInput = new JTextField("");
-    if (TheBoard.fpga.FpgaInfoPresent()) FlashNameInput.setText(TheBoard.fpga.getFlashName());
+    final var flashNameInput = new JTextField("");
+    if (TheBoard.fpga.FpgaInfoPresent()) flashNameInput.setText(TheBoard.fpga.getFlashName());
     c.gridx = 1;
-    MiscPanel.add(FlashNameInput, c);
+    miscPanel.add(flashNameInput, c);
 
-    final var UsbTmc = new JCheckBox(S.get("FpgaBoardUSBTMC"));
-    UsbTmc.setSelected(false);
-    if (TheBoard.fpga.FpgaInfoPresent()) UsbTmc.setSelected(TheBoard.fpga.USBTMCDownloadRequired());
+    final var usbTmc = new JCheckBox(S.get("FpgaBoardUSBTMC"));
+    usbTmc.setSelected(false);
+    if (TheBoard.fpga.FpgaInfoPresent()) usbTmc.setSelected(TheBoard.fpga.USBTMCDownloadRequired());
     c.gridx = 0;
     c.gridy = 1;
     c.gridwidth = 2;
-    MiscPanel.add(UsbTmc, c);
+    miscPanel.add(usbTmc, c);
 
     final var dialogLayout = new GridBagLayout();
     selWindow.setLayout(dialogLayout);
@@ -982,28 +979,28 @@ public class FPGAIOInformationSettingsDialog {
     c.fill = GridBagConstraints.HORIZONTAL;
     selWindow.add(ClockPanel, c);
     c.gridx = 1;
-    selWindow.add(FPGAPanel, c);
+    selWindow.add(fpgaPanel, c);
     c.gridx = 0;
     c.gridy = 1;
-    selWindow.add(JTAGPanel, c);
+    selWindow.add(jtagPanel, c);
     c.gridx = 1;
-    selWindow.add(MiscPanel, c);
+    selWindow.add(miscPanel, c);
 
-    final var CancelButton = new JButton(S.get("FpgaBoardCancel"));
-    CancelButton.addActionListener(actionListener);
-    CancelButton.setActionCommand("cancel");
+    final var cancelButton = new JButton(S.get("FpgaBoardCancel"));
+    cancelButton.addActionListener(actionListener);
+    cancelButton.setActionCommand("cancel");
     c.gridx = 0;
     c.gridy = 2;
     c.fill = GridBagConstraints.HORIZONTAL;
-    selWindow.add(CancelButton, c);
+    selWindow.add(cancelButton, c);
 
-    final var SaveButton = new JButton(S.get("FpgaBoardDone"));
-    SaveButton.addActionListener(actionListener);
-    SaveButton.setActionCommand("save");
+    final var saveButton = new JButton(S.get("FpgaBoardDone"));
+    saveButton.addActionListener(actionListener);
+    saveButton.setActionCommand("save");
     c.gridx = 1;
     c.gridy = 2;
     c.fill = GridBagConstraints.HORIZONTAL;
-    selWindow.add(SaveButton, c);
+    selWindow.add(saveButton, c);
 
     selWindow.pack();
     selWindow.setModal(true);
@@ -1011,64 +1008,64 @@ public class FPGAIOInformationSettingsDialog {
     selWindow.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
     selWindow.setAlwaysOnTop(true);
     selWindow.setLocationRelativeTo(panel);
-    var save_settings = false;
-    while ((!abort) && (!save_settings)) {
+    var saveSettings = false;
+    while ((!abort) && (!saveSettings)) {
       selWindow.setVisible(true);
       if (!abort) {
-        save_settings = true;
+        saveSettings = true;
         switch ((int)
             getFrequency(FreqInput.getText(), StandardInput.getSelectedItem().toString())) {
           case -2:
-            save_settings = false;
+            saveSettings = false;
             DialogNotification.showDialogNotification(panel, "Error", S.get("FpgaBoardFreqError"));
             break;
           case -1:
-            save_settings = false;
+            saveSettings = false;
             DialogNotification.showDialogNotification(panel, "Error", S.get("FpgaBoardFracError"));
             break;
           case 0:
-            save_settings = false;
+            saveSettings = false;
             DialogNotification.showDialogNotification(panel, "Error", S.get("FpgaBoardClkReq"));
             break;
           default:
             break;
         }
-        if (save_settings && LocInput.getText().isEmpty()) {
-          save_settings = false;
+        if (saveSettings && LocInput.getText().isEmpty()) {
+          saveSettings = false;
           DialogNotification.showDialogNotification(panel, "Error", S.get("FpgaBoardClkPin"));
         }
-        if (save_settings && FamilyInput.getText().isEmpty()) {
-          save_settings = false;
+        if (saveSettings && familyInput.getText().isEmpty()) {
+          saveSettings = false;
           DialogNotification.showDialogNotification(panel, "Error", S.get("FpgaBoardFpgaFamMis"));
         }
-        if (save_settings && PartInput.getText().isEmpty()) {
-          save_settings = false;
+        if (saveSettings && partInput.getText().isEmpty()) {
+          saveSettings = false;
           DialogNotification.showDialogNotification(panel, "Error", S.get("FpgaBoardFpgaPartMis"));
         }
-        if (save_settings && BoxInput.getText().isEmpty()) {
-          save_settings = false;
+        if (saveSettings && boxInput.getText().isEmpty()) {
+          saveSettings = false;
           DialogNotification.showDialogNotification(panel, "Error", S.get("FpgaBoardFpgaPacMis"));
         }
-        if (save_settings && SpeedInput.getText().isEmpty()) {
-          save_settings = false;
+        if (saveSettings && speedInput.getText().isEmpty()) {
+          saveSettings = false;
           DialogNotification.showDialogNotification(panel, "Error", S.get("FpgaBoardFpgaSpeedMis"));
         }
-        if (save_settings) {
+        if (saveSettings) {
           TheBoard.fpga.Set(
               getFrequency(FreqInput.getText(), StandardInput.getSelectedItem().toString()),
               LocInput.getText(),
               PullInput.getSelectedItem().toString(),
               StdInput.getSelectedItem().toString(),
-              FamilyInput.getText(),
-              PartInput.getText(),
-              BoxInput.getText(),
-              SpeedInput.getText(),
-              VendorInput.getSelectedItem().toString(),
-              UnusedPinsInput.getSelectedItem().toString(),
-              UsbTmc.isSelected(),
+              familyInput.getText(),
+              partInput.getText(),
+              boxInput.getText(),
+              speedInput.getText(),
+              vendorInput.getSelectedItem().toString(),
+              unusedPinsInput.getSelectedItem().toString(),
+              usbTmc.isSelected(),
               PosInput.getText(),
-              FlashNameInput.getText(),
-              FlashPosInput.getText());
+              flashNameInput.getText(),
+              flashPosInput.getText());
         }
       }
     }

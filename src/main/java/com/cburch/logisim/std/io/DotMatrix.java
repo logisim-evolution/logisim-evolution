@@ -29,7 +29,7 @@ public class DotMatrix extends DotMatrixBase {
   public static final String _ID = "DotMatrix";
 
   public DotMatrix() {
-    super(_ID, S.getter("dotMatrixComponent"), 5, 7, new DotMatrixHDLGeneratorFactory());
+    super(_ID, S.getter("dotMatrixComponent"), 5, 7, new DotMatrixHdlGeneratorFactory());
   }
 
   public static final Attribute<BitWidth> ATTR_MATRIX_COLS =

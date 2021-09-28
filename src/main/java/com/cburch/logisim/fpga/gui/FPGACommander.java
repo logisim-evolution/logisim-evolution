@@ -88,7 +88,7 @@ public class FPGACommander
     if (property.equals(AppPreferences.SelectedBoard.getIdentifier())) {
       MyBoardInformation = new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName()).GetBoardInformation();
       MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
-      boardIcon = new BoardIcon(MyBoardInformation.GetImage());
+      boardIcon = new BoardIcon(MyBoardInformation.getImage());
       boardPic.setIcon(boardIcon);
       boardPic.repaint();
       FrequencyPanel.setFpgaClockFrequency(MyBoardInformation.fpga.getClockFrequency());
@@ -137,7 +137,7 @@ public class FPGACommander
     c.fill = GridBagConstraints.HORIZONTAL;
     MyBoardInformation = new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName()).GetBoardInformation();
     MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
-    boardIcon = new BoardIcon(MyBoardInformation.GetImage());
+    boardIcon = new BoardIcon(MyBoardInformation.getImage());
     JComboBox<String> selector = AppPreferences.Boards.boardSelector();
     selector.setPreferredSize(
         new Dimension(boardIcon.getIconWidth(), AppPreferences.getScaled(20)));

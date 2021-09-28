@@ -20,31 +20,31 @@ import javax.swing.Icon;
 
 public class InfoIcon implements Icon {
 
-  final int wh = AppPreferences.getIconSize();
+  final int iconWidth = AppPreferences.getIconSize();
 
   @Override
   public void paintIcon(Component c, Graphics g, int x, int y) {
-    Graphics2D g2 = (Graphics2D) g.create();
+    final var g2 = (Graphics2D) g.create();
     g2.translate(x, y);
     g2.setColor(Color.CYAN.darker());
-    g2.fillOval(0, 0, wh - 1, wh - 1);
-    g2.drawOval(0, 0, wh - 1, wh - 1);
+    g2.fillOval(0, 0, iconWidth - 1, iconWidth - 1);
+    g2.drawOval(0, 0, iconWidth - 1, iconWidth - 1);
     g2.setColor(Color.BLUE.darker().darker().darker().darker());
-    Font f = g2.getFont().deriveFont((float) wh / (float) 1.3).deriveFont(Font.BOLD);
-    TextLayout t = new TextLayout("i", f, g2.getFontRenderContext());
-    float xc = (float) wh / (float) 2 - (float) t.getBounds().getCenterX();
-    float yc = (float) wh / (float) 2 - (float) t.getBounds().getCenterY();
+    final var f = g2.getFont().deriveFont((float) iconWidth / (float) 1.3).deriveFont(Font.BOLD);
+    final var t = new TextLayout("i", f, g2.getFontRenderContext());
+    final var xc = (float) iconWidth / (float) 2 - (float) t.getBounds().getCenterX();
+    final var yc = (float) iconWidth / (float) 2 - (float) t.getBounds().getCenterY();
     t.draw(g2, xc, yc);
     g2.dispose();
   }
 
   @Override
   public int getIconWidth() {
-    return wh;
+    return iconWidth;
   }
 
   @Override
   public int getIconHeight() {
-    return wh;
+    return iconWidth;
   }
 }

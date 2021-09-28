@@ -14,7 +14,6 @@ import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
@@ -42,9 +41,9 @@ public class ComponentSelector extends JTable {
 
   static final Comparator<Component> compareComponents =
       (a, b) -> {
-        var nameA = a.getFactory().getDisplayName();
-        var nameB = b.getFactory().getDisplayName();
-        int ret = nameA.compareToIgnoreCase(nameB);
+        final var nameA = a.getFactory().getDisplayName();
+        final var nameB = b.getFactory().getDisplayName();
+        final var ret = nameA.compareToIgnoreCase(nameB);
         if (ret != 0) return ret;
         return a.getLocation().toString().compareTo(b.getLocation().toString());
       };
@@ -90,11 +89,11 @@ public class ComponentSelector extends JTable {
 
     void toggleExpand(int row) {
       if (row < 0 || row >= rows.size()) return;
-      TreeNode<?> o = rows.get(row);
-      int n = o.children.size();
+      final var o = rows.get(row);
+      final var n = o.children.size();
       if (n == 0) return;
       if (o.expanded) {
-        for (int i = 0; i < n; i++) removeAll(row + 1);
+        for (var i = 0; i < n; i++) removeAll(row + 1);
         o.expanded = false;
       } else {
         for (int i = n - 1; i >= 0; i--) insertAll(row + 1, o.children.get(i));
@@ -104,18 +103,18 @@ public class ComponentSelector extends JTable {
     }
 
     void removeAll(int row) {
-      TreeNode<?> item = rows.remove(row);
+      final var item = rows.remove(row);
       if (item.expanded) {
-        int n = item.children.size();
-        for (int i = 0; i < n; i++) removeAll(row);
+        final var n = item.children.size();
+        for (var i = 0; i < n; i++) removeAll(row);
       }
     }
 
     void insertAll(int row, TreeNode<?> item) {
       rows.add(row, item);
       if (item.expanded) {
-        int n = item.children.size();
-        for (int i = n - 1; i >= 0; i--) insertAll(row + 1, item.children.get(i));
+        final var n = item.children.size();
+        for (var i = n - 1; i >= 0; i--) insertAll(row + 1, item.children.get(i));
       }
     }
 
@@ -127,8 +126,8 @@ public class ComponentSelector extends JTable {
     void setRoot(TreeNode<CircuitNode> r) {
       root = r;
       rows.clear();
-      int n = root == null ? 0 : root.children.size();
-      for (int i = n - 1; i >= 0; i--) insertAll(0, root.children.get(i));
+      final var n = root == null ? 0 : root.children.size();
+      for (var i = n - 1; i >= 0; i--) insertAll(0, root.children.get(i));
       super.fireTableDataChanged();
     }
   }
@@ -162,18 +161,18 @@ public class ComponentSelector extends JTable {
       super(p);
       comp = c;
 
-      Loggable log = (Loggable) comp.getFeature(Loggable.class);
+      final var log = (LoggableContract) comp.getFeature(LoggableContract.class);
       if (log == null) return;
-      Object[] opts = log.getLogOptions();
+      final var opts = log.getLogOptions();
       if (opts == null) return;
       for (Object opt : opts) addChild(new OptionNode(this, opt));
     }
 
     @Override
     public String toString() {
-      Loggable log = (Loggable) comp.getFeature(Loggable.class);
+      final var log = (LoggableContract) comp.getFeature(LoggableContract.class);
       if (log != null) {
-        String ret = log.getLogName(null);
+        final var ret = log.getLogName(null);
         if (ret != null && !ret.equals("")) return ret;
       }
       return comp.getFactory().getDisplayName() + " " + comp.getLocation();
@@ -204,9 +203,9 @@ public class ComponentSelector extends JTable {
     }
 
     private ComponentNode findChildFor(Component c) {
-      for (TreeNode<?> o : children) {
+      for (final var o : children) {
         if (o instanceof ComponentNode) {
-          ComponentNode child = (ComponentNode) o;
+          final var child = (ComponentNode) o;
           if (child.comp == c) return child;
         }
       }
@@ -224,21 +223,21 @@ public class ComponentSelector extends JTable {
     }
 
     private boolean computeChildren() { // returns true if changed
-      ArrayList<TreeNode<?>> newChildren = new ArrayList<>();
-      ArrayList<Component> subcircs = new ArrayList<>();
-      boolean changed = false;
+      final var newChildren = new ArrayList<TreeNode<?>>();
+      final var subcircs = new ArrayList<Component>();
+      var changed = false;
       // todo: hide from display any unselectable things that also have no children
-      for (Component c : circ.getNonWires()) {
+      for (final var c : circ.getNonWires()) {
         // For DRIVEABLE_CLOCKS do not recurse into subcircuits
         if (c.getFactory() instanceof SubcircuitFactory && mode != DRIVEABLE_CLOCKS) {
           subcircs.add(c);
           continue;
         }
-        Loggable log = (Loggable) c.getFeature(Loggable.class);
+        final var log = (LoggableContract) c.getFeature(LoggableContract.class);
         if (log == null) continue;
-        BitWidth bw = log.getBitWidth(null);
-        if (bw == null) bw = c.getAttributeSet().getValue(StdAttr.WIDTH);
-        int w = bw.getWidth();
+        var bitWidth = log.getBitWidth(null);
+        if (bitWidth == null) bitWidth = c.getAttributeSet().getValue(StdAttr.WIDTH);
+        final var w = bitWidth.getWidth();
         if (mode != ANY_SIGNAL && w != 1) continue; // signal is too wide to be a used as a clock
         if (mode == DRIVEABLE_CLOCKS) {
           // For now, we only allow input Pins. In principle, we could allow
@@ -249,7 +248,7 @@ public class ComponentSelector extends JTable {
         } else if (mode == ACTUAL_CLOCKS) {
           if (!(c.getFactory() instanceof Clock)) continue;
         }
-        ComponentNode toAdd = findChildFor(c);
+        var toAdd = findChildFor(c);
         if (toAdd == null) {
           toAdd = new ComponentNode(this, c);
           changed = true;
@@ -258,13 +257,13 @@ public class ComponentSelector extends JTable {
       }
       newChildren.sort(compareNames);
       subcircs.sort(compareComponents);
-      for (Component c : subcircs) {
-        SubcircuitFactory factory = (SubcircuitFactory) c.getFactory();
-        Circuit subcirc = factory.getSubcircuit();
-        CircuitNode toAdd = findChildFor(subcirc);
+      for (final var c : subcircs) {
+        final var factory = (SubcircuitFactory) c.getFactory();
+        final var subCircuit = factory.getSubcircuit();
+        var toAdd = findChildFor(subCircuit);
         if (toAdd == null) {
           changed = true;
-          toAdd = new CircuitNode(this, subcirc, c);
+          toAdd = new CircuitNode(this, subCircuit, c);
         }
         newChildren.add(toAdd);
       }
@@ -277,10 +276,10 @@ public class ComponentSelector extends JTable {
     @Override
     public String toString() {
       if (comp != null) {
-        String label = comp.getAttributeSet().getValue(StdAttr.LABEL);
+        final var label = comp.getAttributeSet().getValue(StdAttr.LABEL);
         if (label != null && !label.equals("")) return label;
       }
-      String ret = circ.getName();
+      var ret = circ.getName();
       if (comp != null) ret += comp.getLocation();
       return ret;
     }
@@ -312,11 +311,9 @@ public class ComponentSelector extends JTable {
     private TreeNode<?> node;
 
     @Override
-    public java.awt.Component getTableCellRendererComponent(
-        JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       if (value instanceof CircuitNode) isSelected = false;
-      java.awt.Component ret =
-          super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      final java.awt.Component ret = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
       if (ret instanceof JLabel && value instanceof TreeNode) {
         node = (TreeNode) value;
         ((JLabel) ret).setIcon(this);
@@ -418,11 +415,11 @@ public class ComponentSelector extends JTable {
   }
 
   public SignalInfo.List getSelectedItems() {
-    SignalInfo.List items = new SignalInfo.List();
-    int[] sel = getSelectedRows();
-    for (int i : sel) {
-      TreeNode<?> node = tableModel.rows.get(i);
-      SignalInfo item = makeSignalInfo(node);
+    final var items = new SignalInfo.List();
+    final var sel = getSelectedRows();
+    for (final var i : sel) {
+      final var node = tableModel.rows.get(i);
+      final var item = makeSignalInfo(node);
       if (item != null) items.add(item);
     }
 
@@ -441,12 +438,12 @@ public class ComponentSelector extends JTable {
     } else {
       return null;
     }
-    int count = 0;
-    for (CircuitNode cur = n.parent; cur != null; cur = cur.parent) count++;
-    Component[] paths = new Component[count];
+    var count = 0;
+    for (var cur = n.parent; cur != null; cur = cur.parent) count++;
+    final var paths = new Component[count];
     paths[paths.length - 1] = n.comp;
-    CircuitNode cur = n.parent;
-    for (int j = paths.length - 2; j >= 0; j--) {
+    var cur = n.parent;
+    for (var j = paths.length - 2; j >= 0; j--) {
       paths[j] = cur.comp;
       cur = cur.parent;
     }
@@ -480,8 +477,8 @@ public class ComponentSelector extends JTable {
     @Override
     protected Transferable createTransferable(JComponent c) {
       sending = true;
-      ComponentSelector tree = (ComponentSelector) c;
-      SignalInfo.List items = tree.getSelectedItems();
+      final var tree = (ComponentSelector) c;
+      final var items = tree.getSelectedItems();
       return items == null || items.isEmpty() ? null : items;
     }
 
@@ -503,8 +500,8 @@ public class ComponentSelector extends JTable {
   }
 
   private void enumerate(ArrayList<SignalInfo> result, TreeNode<?> node) {
-    for (TreeNode<?> child : node.children) {
-      SignalInfo item = makeSignalInfo(child);
+    for (final var child : node.children) {
+      final var item = makeSignalInfo(child);
       if (item != null) result.add(item);
       enumerate(result, child);
     }
@@ -514,8 +511,8 @@ public class ComponentSelector extends JTable {
   // observable clocks. Returns null if there are no clocks and nothing suitable
   // as an observable clock.
   public static ArrayList<SignalInfo> findClocks(Circuit circ) {
-    ComponentSelector sel = new ComponentSelector(circ, ACTUAL_CLOCKS);
-    ArrayList<SignalInfo> clocks = new ArrayList<>();
+    var sel = new ComponentSelector(circ, ACTUAL_CLOCKS);
+    var clocks = new ArrayList<SignalInfo>();
     sel.enumerate(clocks, sel.tableModel.root);
     if (clocks.size() > 0) return clocks;
     sel = new ComponentSelector(circ, OBSERVEABLE_CLOCKS);

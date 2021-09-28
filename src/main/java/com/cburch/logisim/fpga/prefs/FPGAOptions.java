@@ -11,7 +11,7 @@ package com.cburch.logisim.fpga.prefs;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.prefs.ColorChooserButton;
 import com.cburch.logisim.gui.prefs.OptionsPanel;
@@ -102,8 +102,8 @@ public class FPGAOptions extends OptionsPanel {
             AppPreferences.HdlType,
             S.getter("HDLLanguageUsed"),
             new PrefOption[] {
-              new PrefOption(HDLGeneratorFactory.VHDL, S.getter("VHDL")),
-              new PrefOption(HDLGeneratorFactory.VERILOG, S.getter("Verilog"))
+              new PrefOption(HdlGeneratorFactory.VHDL, S.getter("VHDL")),
+              new PrefOption(HdlGeneratorFactory.VERILOG, S.getter("Verilog"))
             });
 
     GridBagLayout layout = new GridBagLayout();
