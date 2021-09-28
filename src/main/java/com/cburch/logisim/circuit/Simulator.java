@@ -379,7 +379,7 @@ public class Simulator {
 
     @Override
     public void run() {
-      while(true) {
+      while (true) {
         try {
           if (!loop()) return;
         } catch (Throwable e) {
