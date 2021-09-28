@@ -394,7 +394,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
   @Override
   public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    var contents = LineBuffer.getHdlBuffer();
+    final var contents = LineBuffer.getHdlBuffer();
     if (Hdl.isVhdl()) contents.add(getVHDLBlackBox(theNetlist, attrs, componentName, false));
     return contents.get();
   }
@@ -515,7 +515,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
   @Override
   public ArrayList<String> getEntity(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    var contents = LineBuffer.getHdlBuffer();
+    final var contents = LineBuffer.getHdlBuffer();
     if (Hdl.isVhdl()) {
       contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
           .add(FileWriter.getExtendedLibrary())
@@ -638,7 +638,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
   private ArrayList<String> getVHDLBlackBox(Netlist theNetlist, AttributeSet attrs,
       String componentName, Boolean isEntity) {
-    var contents = LineBuffer.getHdlBuffer();
+    final var contents = LineBuffer.getHdlBuffer();
     var maxNameLength = 0;
     if (getWiresPortsDuringHDLWriting) {
       myWires.removeWires();
@@ -650,7 +650,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     if (!myParametersList.isEmpty(attrs)) {
       // first we build a list with parameters to determine the max. string length
       final var myParameters = new HashMap<String, Boolean>();
-      for (var generic : myParametersList.keySet(attrs)) {
+      for (final var generic : myParametersList.keySet(attrs)) {
         final var parameterName = myParametersList.get(generic, attrs);
         maxNameLength = Math.max(maxNameLength, parameterName.length());
         myParameters.put(parameterName, myParametersList.isPresentedByInteger(generic, attrs));
@@ -678,7 +678,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       maxNameLength = 0;
       var nrOfEntries = myPorts.keySet().size();
       final var tickers = new TreeSet<String>();
-      for (var portName : myPorts.keySet()) {
+      for (final var portName : myPorts.keySet()) {
         maxNameLength = Math.max(maxNameLength, portName.length());
         if (myPorts.isClock(portName)) {
           final var tickerName = myPorts.getTickName(portName);

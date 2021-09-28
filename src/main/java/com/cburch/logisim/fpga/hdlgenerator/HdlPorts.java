@@ -126,20 +126,20 @@ public class HdlPorts {
 
   public ArrayList<String> keySet(String type) {
     final var keySet = new ArrayList<String>();
-    for (var port : myPorts)
+    for (final var port : myPorts)
       if (type == null || port.myPortType.equals(type))
         keySet.add(port.myName);
     return keySet;
   }
 
   public int get(String name, AttributeSet attrs) {
-    for (var port : myPorts)
+    for (final var port : myPorts)
       if (port.myName.equals(name)) return port.getNrOfBits(attrs);
     throw new ArrayStoreException("port not contained in structure");
   }
 
   public boolean isFixedMapped(String name) {
-    for (var port : myPorts)
+    for (final var port : myPorts)
       if (port.myName.equals(name)) {
         return port.myComponentPinId < 0;
       }
@@ -148,14 +148,14 @@ public class HdlPorts {
 
   public String getFixedMap(String name) {
     if (isFixedMapped(name)) {
-      for (var port : myPorts)
+      for (final var port : myPorts)
         if (port.myName.equals(name)) return port.myFixedMap;
     }
     throw new ArrayStoreException("port not contained in structure or not fixed mapped");
   }
 
   public int getComponentPortId(String name) {
-    for (var port : myPorts)
+    for (final var port : myPorts)
       if (port.myName.equals(name)) return port.myComponentPinId;
     throw new ArrayStoreException("port not contained in structure");
   }
@@ -165,25 +165,25 @@ public class HdlPorts {
   }
 
   public boolean doPullDownOnFloat(String name) {
-    for (var port : myPorts)
+    for (final var port : myPorts)
       if (port.myName.equals(name)) return port.myPullToZero;
     throw new ArrayStoreException("port not contained in structure");
   }
 
   public boolean contains(String name) {
-    for (var port : myPorts)
+    for (final var port : myPorts)
       if (port.myName.equals(name)) return true;
     return false;
   }
 
   public boolean isClock(String name) {
-    for (var port : myPorts)
+    for (final var port : myPorts)
       if (port.myName.equals(name)) return port.isClock;
     throw new ArrayStoreException("port not contained in structure");
   }
 
   public String getTickName(String name) {
-    for (var port : myPorts)
+    for (final var port : myPorts)
       if (port.myName.equals(name)) return getTickName(port.myNrOfBits);
     throw new ArrayStoreException("port not contained in structure");
   }
