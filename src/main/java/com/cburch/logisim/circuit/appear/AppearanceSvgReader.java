@@ -25,7 +25,6 @@ import com.cburch.logisim.std.io.TtyShape;
 import com.cburch.logisim.std.memory.CounterShape;
 import com.cburch.logisim.std.memory.RegisterShape;
 import com.cburch.logisim.std.wiring.Pin;
-
 import java.util.List;
 import org.w3c.dom.Element;
 
@@ -72,7 +71,9 @@ public class AppearanceSvgReader {
         ret.setValue(AppearanceAnchor.FACING, facing);
       }
       return ret;
-    } else if (name.equals("circ-port")) {
+    }
+
+    if (name.equals("circ-port")) {
       final var loc = getLocation(elt);
       final var pinStr = elt.getAttribute("pin").split(",");
       final var pinLoc = Location.create(Integer.parseInt(pinStr[0].trim()), Integer.parseInt(pinStr[1].trim()));
@@ -88,57 +89,46 @@ public class AppearanceSvgReader {
         }
       }
       return null;
-    } else if (name.startsWith("visible-")) {
-      final var pathstr = elt.getAttribute("path");
-      if (pathstr == null || pathstr.length() == 0) return null;
-      DynamicElement.Path path;
+    }
+
+    if (name.startsWith("visible-")) {
+      final var pathStr = elt.getAttribute("path");
+      if (pathStr == null || pathStr.length() == 0) return null;
       try {
-        path = DynamicElement.Path.fromSvgString(pathstr, circuit);
+        final var path = DynamicElement.Path.fromSvgString(pathStr, circuit);
+        final var x = (int) Double.parseDouble(elt.getAttribute("x").trim());
+        final var y = (int) Double.parseDouble(elt.getAttribute("y").trim());
+        final var shape = getDynamicElement(name, path, x, y);
+        if (shape == null) return null;
+        try {
+          shape.parseSvgElement(elt);
+        } catch (Exception e) {
+          e.printStackTrace();
+          throw e;
+        }
+        return shape;
       } catch (IllegalArgumentException e) {
         System.out.println(e.getMessage());
         return null;
       }
-      final var x = (int) Double.parseDouble(elt.getAttribute("x").trim());
-      final var y = (int) Double.parseDouble(elt.getAttribute("y").trim());
-      final var shape = getDynamicElement(name, path, x, y);
-      if (shape == null) {
-        return null;
-      }
-      try {
-        shape.parseSvgElement(elt);
-      } catch (Exception e) {
-        e.printStackTrace();
-        throw e;
-      }
-      return shape;
     }
+
     return SvgReader.createShape(elt);
   }
 
-  private static DynamicElement getDynamicElement(String name, DynamicElement.Path path, int x,
-      int y) {
-    switch (name) {
-      case "visible-led":
-        return new LedShape(x, y, path);
-      case "visible-rgbled":
-        return new RgbLedShape(x, y, path);
-      case "visible-hexdigit":
-        return new HexDigitShape(x, y, path);
-      case "visible-sevensegment":
-        return new SevenSegmentShape(x, y, path);
-      case "visible-register":
-        return new RegisterShape(x, y, path);
-      case "visible-counter":
-        return new CounterShape(x, y, path);
-      case "visible-vga":
-        return new SocVgaShape(x, y, path);
-      case "visible-soc-cpu":
-        return new SocCPUShape(x, y, path);
-      case "visible-tty":
-        return new TtyShape(x, y, path);
-      default:
-        return null;
-    }
+  private static DynamicElement getDynamicElement(String name, DynamicElement.Path path, int x, int y) {
+    return switch (name) {
+      case "visible-led" -> new LedShape(x, y, path);
+      case "visible-rgbled" -> new RgbLedShape(x, y, path);
+      case "visible-hexdigit" -> new HexDigitShape(x, y, path);
+      case "visible-sevensegment" -> new SevenSegmentShape(x, y, path);
+      case "visible-register" -> new RegisterShape(x, y, path);
+      case "visible-counter" -> new CounterShape(x, y, path);
+      case "visible-vga" -> new SocVgaShape(x, y, path);
+      case "visible-soc-cpu" -> new SocCPUShape(x, y, path);
+      case "visible-tty" -> new TtyShape(x, y, path);
+      default -> null;
+    };
   }
 
   private static Boolean isInputPinReference(Element elt) {
@@ -148,12 +138,12 @@ public class AppearanceSvgReader {
   }
 
   private static Location getLocation(Element elt) {
-    double x = Double.parseDouble(elt.getAttribute("x"));
-    double y = Double.parseDouble(elt.getAttribute("y"));
-    double w = Double.parseDouble(elt.getAttribute("width"));
-    double h = Double.parseDouble(elt.getAttribute("height"));
-    int px = (int) Math.round(x + w / 2);
-    int py = (int) Math.round(y + h / 2);
+    final var x = Double.parseDouble(elt.getAttribute("x"));
+    final var y = Double.parseDouble(elt.getAttribute("y"));
+    final var w = Double.parseDouble(elt.getAttribute("width"));
+    final var h = Double.parseDouble(elt.getAttribute("height"));
+    final var px = (int) Math.round(x + w / 2);
+    final var py = (int) Math.round(y + h / 2);
     return Location.create(px, py);
   }
 }

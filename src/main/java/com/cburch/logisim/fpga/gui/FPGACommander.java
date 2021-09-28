@@ -394,7 +394,7 @@ public class FPGACommander
     Circuit root = MyProject.getLogisimFile().getCircuit(CircuitName);
     if (root != null) {
       if (ClearExistingLabels) {
-        root.ClearAnnotationLevel();
+        root.clearAnnotationLevel();
       }
       root.Annotate(ClearExistingLabels, false);
       Reporter.report.addInfo(S.get("FpgaGuiAnnotationDone"));

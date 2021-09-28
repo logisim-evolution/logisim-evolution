@@ -44,9 +44,9 @@ public class CircuitState implements InstanceData {
         /* Component was added */
         final var comp = (Component) event.getData();
         if (comp instanceof Wire) {
-          final var w = (Wire) comp;
-          markPointAsDirty(w.getEnd0());
-          markPointAsDirty(w.getEnd1());
+          final var wire = (Wire) comp;
+          markPointAsDirty(wire.getEnd0());
+          markPointAsDirty(wire.getEnd1());
         } else {
           markComponentAsDirty(comp);
         }
@@ -186,19 +186,14 @@ public class CircuitState implements InstanceData {
       this.subStates.add(newSub);
       substateData.put(oldSub, newSub);
     }
-    for (Component key : src.componentData.keySet()) {
-      Object oldValue = src.componentData.get(key);
+    for (final var key : src.componentData.keySet()) {
+      final var oldValue = src.componentData.get(key);
       if (oldValue instanceof CircuitState) {
-        Object newValue = substateData.get(oldValue);
+        final var newValue = substateData.get(oldValue);
         if (newValue != null) this.componentData.put(key, newValue);
         else this.componentData.remove(key);
       } else {
-        Object newValue;
-        if (oldValue instanceof ComponentState) {
-          newValue = ((ComponentState) oldValue).clone();
-        } else {
-          newValue = oldValue;
-        }
+        final var newValue = (oldValue instanceof ComponentState) ? ((ComponentState) oldValue).clone() : oldValue;
         this.componentData.put(key, newValue);
       }
     }
@@ -228,8 +223,8 @@ public class CircuitState implements InstanceData {
 
   Value getComponentOutputAt(Location p) {
     // for CircuitWires - to get values, ignoring wires' contributions
-    final var cause_list = causes.get(p);
-    return Propagator.computeValue(cause_list);
+    final var causeList = causes.get(p);
+    return Propagator.computeValue(causeList);
   }
 
   public Object getData(Component comp) {
@@ -237,21 +232,19 @@ public class CircuitState implements InstanceData {
   }
 
   public InstanceState getInstanceState(Component comp) {
-    Object factory = comp.getFactory();
+    final var factory = comp.getFactory();
     if (factory instanceof InstanceFactory) {
       return ((InstanceFactory) factory).createInstanceState(this, comp);
-    } else {
-      throw new RuntimeException("getInstanceState requires instance component");
     }
+    throw new RuntimeException("getInstanceState requires instance component");
   }
 
   public InstanceState getInstanceState(Instance instance) {
-    Object factory = instance.getFactory();
+    final var factory = instance.getFactory();
     if (factory instanceof InstanceFactory) {
       return ((InstanceFactory) factory).createInstanceState(this, instance);
-    } else {
-      throw new RuntimeException("getInstanceState requires instance component");
     }
+    throw new RuntimeException("getInstanceState requires instance component");
   }
 
   public CircuitState getParentState() {
@@ -346,7 +339,7 @@ public class CircuitState implements InstanceData {
         }
       }
       dirtyComponents.clear();
-      for (Object compObj : toProcess) {
+      for (final var compObj : toProcess) {
         if (compObj instanceof Component) {
           final var comp = (Component) compObj;
           comp.propagate(this);
@@ -462,10 +455,10 @@ public class CircuitState implements InstanceData {
     // for CircuitWires - to set value at point
     boolean changed;
     if (v == Value.NIL) {
-      Object old = values.remove(p);
+      final var old = values.remove(p);
       changed = (old != null && old != Value.NIL);
     } else {
-      Object old = values.put(p, v);
+      final var old = values.put(p, v);
       changed = !v.equals(old);
     }
     if (changed) {
@@ -492,7 +485,7 @@ public class CircuitState implements InstanceData {
     if (temporaryClock != null)
       ret |= temporaryClockValidateOrTick(ticks);
 
-    for (Component clock : circuit.getClocks())
+    for (final var clock : circuit.getClocks())
       ret |= Clock.tick(this, ticks, clock);
 
     final var subs = new CircuitState[subStates.size()];

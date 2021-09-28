@@ -72,13 +72,13 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
 
   final Location e0;
   final Location e1;
-  final boolean is_x_equal;
-  private boolean DRCHighlighted = false;
-  private Color DRCHighlightColor = Netlist.DRC_WIRE_MARK_COLOR;
+  final boolean isXEqual;
+  private boolean isDrcHighlighted = false;
+  private Color drcWireMarkColor = Netlist.DRC_WIRE_MARK_COLOR;
 
   private Wire(Location e0, Location e1) {
-    this.is_x_equal = e0.getX() == e1.getX();
-    if (is_x_equal) {
+    this.isXEqual = e0.getX() == e1.getX();
+    if (isXEqual) {
       if (e0.getY() > e1.getY()) {
         this.e0 = e1;
         this.e1 = e0;
@@ -117,7 +117,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   public boolean contains(Location q) {
     int qx = q.getX();
     int qy = q.getY();
-    if (is_x_equal) {
+    if (isXEqual) {
       int wx = e0.getX();
       return qx >= wx - 2 && qx <= wx + 2 && e0.getY() <= qy && qy <= e1.getY();
     } else {
@@ -258,7 +258,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   @SuppressWarnings("unchecked")
   public <V> V getValue(Attribute<V> attr) {
     if (attr == DIR_ATTR) {
-      return (V) (is_x_equal ? VALUE_VERT : VALUE_HORZ);
+      return (V) (isXEqual ? VALUE_VERT : VALUE_HORZ);
     } else if (attr == LEN_ATTR) {
       return (V) Integer.valueOf(getLength());
     } else {
@@ -272,7 +272,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   }
 
   public boolean isParallel(Wire other) {
-    return this.is_x_equal == other.is_x_equal;
+    return this.isXEqual == other.isXEqual;
   }
 
   @Override
@@ -289,7 +289,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   // other methods
   //
   public boolean isVertical() {
-    return is_x_equal;
+    return isXEqual;
   }
 
   @Override
@@ -298,7 +298,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
   }
 
   private boolean overlaps(Location q0, Location q1, boolean includeEnds) {
-    if (is_x_equal) {
+    if (isXEqual) {
       int x0 = q0.getX();
       if (x0 != q1.getX() || x0 != e0.getX()) return false;
       if (includeEnds) {
@@ -351,19 +351,19 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
     return "Wire[" + e0 + "-" + e1 + "]";
   }
 
-  public void SetDRCHighlight(boolean Highlight) {
-    DRCHighlighted = Highlight;
+  public void setDrcHighlight(boolean highlight) {
+    isDrcHighlighted = highlight;
   }
 
-  public boolean IsDRCHighlighted() {
-    return DRCHighlighted;
+  public boolean isDrcHighlighted() {
+    return isDrcHighlighted;
   }
 
-  public void SetDRCHighlightColor(Color col) {
-    DRCHighlightColor = col;
+  public void setDrcHighlightColor(Color col) {
+    drcWireMarkColor = col;
   }
 
-  public Color GetDRCHighlightColor() {
-    return DRCHighlightColor;
+  public Color getDrcHighlightColor() {
+    return drcWireMarkColor;
   }
 }

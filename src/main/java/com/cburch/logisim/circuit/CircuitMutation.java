@@ -80,15 +80,15 @@ public final class CircuitMutation extends CircuitTransaction {
             final var sibling = ((SubcircuitFactory) factory).getSubcircuit();
             final var isFirstForCirc = supercircsDone.add(sibling);
             if (isFirstForCirc) {
-              for (Circuit supercirc : sibling.getCircuitsUsingThis()) {
+              for (final var supercirc : sibling.getCircuitsUsingThis()) {
                 accessMap.put(supercirc, READ_WRITE);
               }
             }
           } else if (factory instanceof VhdlEntity) {
             final var sibling = (VhdlEntity) factory;
-            boolean isFirstForVhdl = vhdlDone.add(sibling);
+            final var isFirstForVhdl = vhdlDone.add(sibling);
             if (isFirstForVhdl) {
-              for (Circuit supercirc : sibling.getCircuitsUsingThis()) {
+              for (final var supercirc : sibling.getCircuitsUsingThis()) {
                 accessMap.put(supercirc, READ_WRITE);
               }
             }

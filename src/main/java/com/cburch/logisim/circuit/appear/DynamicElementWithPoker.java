@@ -40,30 +40,30 @@ public abstract class DynamicElementWithPoker extends DynamicElement {
   }
 
   public Bounds getScreenBounds(InstanceState state) {
-    Direction dir = state.getAttributeValue(StdAttr.FACING);
-    Location loc = state.getInstance().getLocation();
+    final var dir = state.getAttributeValue(StdAttr.FACING);
+    final var loc = state.getInstance().getLocation();
     if (dir == Direction.EAST) {
-      int xpos = bounds.getX() - anchorPosition.getX() + loc.getX();
-      int ypos = bounds.getY() - anchorPosition.getY() + loc.getY();
-      return Bounds.create(xpos, ypos, bounds.getWidth(), bounds.getHeight());
+      final var posX = bounds.getX() - anchorPosition.getX() + loc.getX();
+      final var posY = bounds.getY() - anchorPosition.getY() + loc.getY();
+      return Bounds.create(posX, posY, bounds.getWidth(), bounds.getHeight());
     }
     if (dir == Direction.WEST) {
-      int xpos = anchorPosition.getX() - bounds.getX() - bounds.getWidth() + loc.getX();
-      int ypos = anchorPosition.getY() - bounds.getY() - bounds.getHeight() + loc.getY();
-      return Bounds.create(xpos, ypos, bounds.getWidth(), bounds.getHeight());
+      final var posX = anchorPosition.getX() - bounds.getX() - bounds.getWidth() + loc.getX();
+      final var posY = anchorPosition.getY() - bounds.getY() - bounds.getHeight() + loc.getY();
+      return Bounds.create(posX, posY, bounds.getWidth(), bounds.getHeight());
     }
     if (dir == Direction.NORTH) {
-      int xpos = bounds.getY() - anchorPosition.getY() + loc.getX();
-      int ypos = bounds.getX() - anchorPosition.getX() - bounds.getWidth() + loc.getY();
-      return Bounds.create(xpos, ypos, bounds.getHeight(), bounds.getWidth());
+      final var posX = bounds.getY() - anchorPosition.getY() + loc.getX();
+      final var posY = bounds.getX() - anchorPosition.getX() - bounds.getWidth() + loc.getY();
+      return Bounds.create(posX, posY, bounds.getHeight(), bounds.getWidth());
     }
-    int xpos = anchorPosition.getY() - bounds.getY() - bounds.getHeight() + loc.getX();
-    int ypos = bounds.getX() - anchorPosition.getX() + loc.getY();
-    return Bounds.create(xpos, ypos, bounds.getHeight(), bounds.getWidth());
+    final var posX = anchorPosition.getY() - bounds.getY() - bounds.getHeight() + loc.getX();
+    final var posY = bounds.getX() - anchorPosition.getX() + loc.getY();
+    return Bounds.create(posX, posY, bounds.getHeight(), bounds.getWidth());
   }
 
   public Boolean mouseInside(InstanceState state, MouseEvent e) {
-    Bounds b = getScreenBounds(state);
+    final var b = getScreenBounds(state);
     return b.contains(e.getX(), e.getY());
   }
 

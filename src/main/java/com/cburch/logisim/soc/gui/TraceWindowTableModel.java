@@ -182,7 +182,7 @@ public class TraceWindowTableModel extends AbstractTableModel
   }
 
   @Override
-  public void LabelChanged(ComponentEvent e) {
+  public void labelChanged(ComponentEvent e) {
     rebuild();
   }
 

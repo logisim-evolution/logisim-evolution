@@ -18,7 +18,7 @@ public interface ComponentListener {
     // no-op implementation
   }
 
-  default void LabelChanged(ComponentEvent e) {
+  default void labelChanged(ComponentEvent e) {
     // no-op implementation
   }
 }

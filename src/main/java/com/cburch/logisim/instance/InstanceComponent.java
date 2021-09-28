@@ -33,7 +33,6 @@ import com.cburch.logisim.tools.TextEditable;
 import com.cburch.logisim.tools.ToolTipMaker;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.SyntaxChecker;
 import com.cburch.logisim.util.UnmodifiableList;
 import java.awt.Font;
@@ -286,7 +285,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
       ComponentEvent e = null;
       for (final var listener : listeners) {
         if (e == null) e = new ComponentEvent(this, null, attre);
-        listener.LabelChanged(e);
+        listener.labelChanged(e);
       }
     }
   }

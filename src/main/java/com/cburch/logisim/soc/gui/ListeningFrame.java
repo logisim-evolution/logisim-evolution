@@ -66,7 +66,7 @@ public class ListeningFrame extends JFrame implements BaseWindowListenerContract
   }
 
   @Override
-  public void LabelChanged(ComponentEvent e) {
+  public void labelChanged(ComponentEvent e) {
     updateTitle();
   }
 }
