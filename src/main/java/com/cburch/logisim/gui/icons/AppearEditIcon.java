@@ -24,36 +24,40 @@ public class AppearEditIcon extends BaseIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {
-    Graphics2D g = (Graphics2D) g2.create();
+    final var g = (Graphics2D) g2.create();
     SubcircuitFactory.paintClasicIcon(g);
     g.dispose();
     g2.setColor(Color.MAGENTA);
-    GeneralPath path = new GeneralPath();
+    var path = new GeneralPath();
     path.moveTo(AppPreferences.getScaled(tip[0]), AppPreferences.getScaled(tip[1]));
-    for (int i = 2; i < tip.length; i += 2)
+    for (int i = 2; i < tip.length; i += 2) {
       path.lineTo(AppPreferences.getScaled(tip[i]), AppPreferences.getScaled(tip[i + 1]));
+    }
     path.closePath();
     g2.fill(path);
     g2.setColor(new Color(139, 69, 19));
     path = new GeneralPath();
     path.moveTo(AppPreferences.getScaled(body[0]), AppPreferences.getScaled(body[1]));
-    for (int i = 2; i < body.length; i += 2)
+    for (int i = 2; i < body.length; i += 2) {
       path.lineTo(AppPreferences.getScaled(body[i]), AppPreferences.getScaled(body[i + 1]));
+    }
     path.closePath();
     g2.fill(path);
     g2.setColor(new Color(210, 180, 140));
     path = new GeneralPath();
     path.moveTo(AppPreferences.getScaled(extendedtip[0]), AppPreferences.getScaled(extendedtip[1]));
-    for (int i = 2; i < extendedtip.length; i += 2)
+    for (int i = 2; i < extendedtip.length; i += 2) {
       path.lineTo(
           AppPreferences.getScaled(extendedtip[i]), AppPreferences.getScaled(extendedtip[i + 1]));
+    }
     path.closePath();
     g2.fill(path);
     g2.setColor(Color.GRAY);
     path = new GeneralPath();
     path.moveTo(AppPreferences.getScaled(cleantip[0]), AppPreferences.getScaled(cleantip[1]));
-    for (int i = 2; i < cleantip.length; i += 2)
+    for (int i = 2; i < cleantip.length; i += 2) {
       path.lineTo(AppPreferences.getScaled(cleantip[i]), AppPreferences.getScaled(cleantip[i + 1]));
+    }
     path.closePath();
     g2.fill(path);
   }

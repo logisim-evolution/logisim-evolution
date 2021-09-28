@@ -12,14 +12,14 @@ package com.cburch.logisim.std.bfh;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
-public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class bin2bcdHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String NR_OF_BITS_STR = "NrOfBits";
   private static final int NR_OF_BITS_ID = -1;
@@ -27,7 +27,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public bin2bcdHDLGeneratorFactory() {
     super();
     myParametersList
-        .add(NR_OF_BITS_STR, NR_OF_BITS_ID, HDLParameters.MAP_INT_ATTRIBUTE, bin2bcd.ATTR_BinBits);
+        .add(NR_OF_BITS_STR, NR_OF_BITS_ID, HdlParameters.MAP_INT_ATTRIBUTE, bin2bcd.ATTR_BinBits);
     getWiresPortsDuringHDLWriting = true;
   }
 
@@ -54,7 +54,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
-    return HDL.isVHDL();
+    return Hdl.isVhdl();
   }
 
   @Override
@@ -63,7 +63,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .pair("nrOfBits", NR_OF_BITS_STR);
     final var nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
     final var nrOfPorts = (int) (Math.log10(1 << nrOfBits.getWidth()) + 1.0);
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       switch (nrOfPorts) {
         case 2:
           contents

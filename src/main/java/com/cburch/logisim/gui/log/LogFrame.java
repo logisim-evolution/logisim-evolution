@@ -51,7 +51,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
 
     @Override
     public void libraryChanged(LibraryEvent event) {
-      int action = event.getAction();
+      final var action = event.getAction();
       if (action == LibraryEvent.SET_NAME) {
         setTitle(computeTitle(curModel, project));
       }
@@ -60,7 +60,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     @Override
     public void localeChanged() {
       setTitle(computeTitle(curModel, project));
-      for (int i = 0; i < panels.length; i++) {
+      for (var i = 0; i < panels.length; i++) {
         tabbedPane.setTitleAt(i, panels[i].getTitle());
         tabbedPane.setToolTipTextAt(i, panels[i].getToolTipText());
         panels[i].localeChanged();
@@ -70,7 +70,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
 
     @Override
     public void projectChanged(ProjectEvent event) {
-      int action = event.getAction();
+      final var action = event.getAction();
       if (action == ProjectEvent.ACTION_SET_STATE) {
         setSimulator(event.getProject().getSimulator(), event.getProject().getCircuitState());
       } else if (action == ProjectEvent.ACTION_SET_FILE) {
@@ -107,8 +107,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
 
   // TODO should automatically repaint icons when component attr change
   // TODO ? moving a component using Select tool removes it from selection
-  private class WindowMenuManager extends WindowMenuItemManager
-      implements LocaleListener, ProjectListener, LibraryListener {
+  private class WindowMenuManager extends WindowMenuItemManager implements LocaleListener, ProjectListener, LibraryListener {
     final Project proj;
 
     WindowMenuManager(Project p) {
@@ -132,7 +131,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
 
     @Override
     public void localeChanged() {
-      String title = proj.getLogisimFile().getDisplayName();
+      final var title = proj.getLogisimFile().getDisplayName();
       setText(S.get("logFrameMenuItem", title));
     }
 
@@ -145,7 +144,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   }
 
   private static String computeTitle(Model data, Project proj) {
-    String name = data == null ? "???" : data.getCircuitState().getCircuit().getName();
+    final var name = data == null ? "???" : data.getCircuitState().getCircuit().getName();
     return S.get("logFrameTitle", name, proj.getLogisimFile().getDisplayName());
   }
 
@@ -186,7 +185,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   }
 
   public JButton makeSelectionButton() {
-    JButton button = new JButton(S.get("addRemoveSignals"));
+    final var button = new JButton(S.get("addRemoveSignals"));
     button.addActionListener(event -> SelectionPanel.doDialog(LogFrame.this));
     return button;
   }
@@ -211,9 +210,9 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     tabbedPane.addChangeListener(myChangeListener);
     myChangeListener.stateChanged(null);
 
-    Container contents = getContentPane();
-    int w = Math.max(550, project.getFrame().getWidth());
-    int h = 300;
+    final var contents = getContentPane();
+    final var w = Math.max(550, project.getFrame().getWidth());
+    var h = 300;
     tabbedPane.setPreferredSize(new Dimension(w, h));
     contents.add(tabbedPane, BorderLayout.CENTER);
 
@@ -224,8 +223,8 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
 
     // Try to place below circuit window, or at least near bottom of screen,
     // using same width as circuit window.
-    Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-    Rectangle r = project.getFrame().getBounds();
+    final var d = Toolkit.getDefaultToolkit().getScreenSize();
+    final var r = project.getFrame().getBounds();
     int x = r.x;
     int y = r.y + r.height;
     if (y + h > d.height) { // too small below circuit
@@ -279,7 +278,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     if (curSimulator != null) curSimulator.removeSimulatorListener(myListener);
     if (curModel != null) curModel.setSelected(false);
 
-    Model oldModel = curModel;
+    final var oldModel = curModel;
     Model data = null;
     if (value != null) {
       data = modelMap.get(value.getCircuitState());

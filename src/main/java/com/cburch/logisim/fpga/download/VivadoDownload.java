@@ -16,8 +16,8 @@ import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.file.FileWriter;
-import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.ToplevelHdlGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
@@ -67,7 +67,7 @@ public class VivadoDownload implements VendorDownload {
             + File.separator
             + "impl_1"
             + File.separator
-            + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME
+            + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME
             + ".bit";
     _bitStreamPath = _bitStreamPath.replace("\\", "/");
   }
@@ -171,13 +171,13 @@ public class VivadoDownload implements VendorDownload {
     // fill the xdc file
     if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
       final var clockPin = BoardInfo.fpga.getClockPinLocation();
-      final var clockSignal = TickComponentHDLGeneratorFactory.FPGA_CLOCK;
+      final var clockSignal = TickComponentHdlGeneratorFactory.FPGA_CLOCK;
       final var getPortsString = " [get_ports {" + clockSignal + "}]";
       contents.add("set_property PACKAGE_PIN " + clockPin + getPortsString);
 
       if (BoardInfo.fpga.getClockStandard() != IoStandards.DEFAULT_STANDARD
           && BoardInfo.fpga.getClockStandard() != IoStandards.UNKNOWN) {
-        final var clockIoStandard = IoStandards.Behavior_strings[BoardInfo.fpga.getClockStandard()];
+        final var clockIoStandard = IoStandards.BEHAVIOR_STRINGS[BoardInfo.fpga.getClockStandard()];
         contents.add("    set_property IOSTANDARD " + clockIoStandard + getPortsString);
       }
 
@@ -230,15 +230,15 @@ public class VivadoDownload implements VendorDownload {
     for (final var key : MapInfo.getMappableResources().keySet()) {
       final var map = MapInfo.getMappableResources().get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {
-        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
+        if (map.isMapped(i) && !map.isOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
           final var netName = (map.isExternalInverted(i) ? "n_" : "") + map.getHdlString(i);
           // Note {{2}} is wrapped in additional {}!
           contents.add("set_property PACKAGE_PIN {{1}} [get_ports {{{2}}}]", map.getPinLocation(i), netName);
           final var info = map.getFpgaInfo(i);
           if (info != null) {
-            final var ioStandard = info.GetIOStandard();
+            final var ioStandard = info.getIoStandard();
             if (ioStandard != IoStandards.UNKNOWN && ioStandard != IoStandards.DEFAULT_STANDARD)
-              contents.add("    set_property IOSTANDARD {{1}} [get_ports {{{2}}}]", IoStandards.GetConstraintedIoStandard(info.GetIOStandard()), netName);
+              contents.add("    set_property IOSTANDARD {{1}} [get_ports {{{2}}}]", IoStandards.getConstraintedIoStandard(info.getIoStandard()), netName);
           }
         }
       }

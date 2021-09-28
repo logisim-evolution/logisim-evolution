@@ -14,7 +14,7 @@ import static com.cburch.logisim.fpga.Strings.S;
 import com.cburch.contracts.BaseComponentListenerContract;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.BoardManipulatorListener;
-import com.cburch.logisim.fpga.data.IOComponentsInformation;
+import com.cburch.logisim.fpga.data.IoComponentsInformation;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.fpga.file.BoardWriterClass;
 import com.cburch.logisim.fpga.file.XMLFileFilter;
@@ -158,7 +158,7 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
         TheBoard.setBoardName(BoardNameInput.getText());
         String filename = getDirName("", S.get("FpgaBoardSaveDir"));
         filename += TheBoard.getBoardName() + ".xml";
-        TheBoard.setComponents(picturepanel.getIOComponents());
+        TheBoard.setComponents(picturepanel.getIoComponents());
         BoardWriterClass xmlwriter = new BoardWriterClass(TheBoard, picturepanel.getImage());
         xmlwriter.PrintXml(filename);
         this.clear();
@@ -177,7 +177,7 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
         }
         break;
       case FPGAStr:
-        FPGAIOInformationSettingsDialog.getFpgaInformation(panel, TheBoard);
+        FpgaIoInformationSettingsDialog.getFpgaInformation(panel, TheBoard);
         if (picturepanel.hasIOComponents() && TheBoard.fpga.FpgaInfoPresent())
           saveButton.setEnabled(true);
         break;
@@ -283,7 +283,7 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
   }
 
   @Override
-  public void componentsChanged(IOComponentsInformation IOcomps) {
+  public void componentsChanged(IoComponentsInformation IOcomps) {
     saveButton.setEnabled(IOcomps.hasComponents() && TheBoard.fpga.FpgaInfoPresent());
   }
 }

@@ -14,7 +14,7 @@ import java.util.Map;
 
 import com.cburch.logisim.util.LineBuffer;
 
-public class WithSelectHDLGenerator {
+public class WithSelectHdlGenerator {
 
   private final Map<Long, Long> myCases;
   private final String regName;
@@ -24,8 +24,8 @@ public class WithSelectHDLGenerator {
   private final int nrOfDestinationBits;
   private Long defaultValue = 0L;
 
-  public WithSelectHDLGenerator(String componentName, String sourceSignal, int nrOfSourceBits,
-      String destinationSignal, int nrOfDestinationBits) {
+  public WithSelectHdlGenerator(String componentName, String sourceSignal, int nrOfSourceBits,
+                                String destinationSignal, int nrOfDestinationBits) {
     myCases = new HashMap<>();
     regName = LineBuffer.format("s_{{1}}_reg", componentName);
     this.sourceSignal = sourceSignal;
@@ -45,32 +45,32 @@ public class WithSelectHDLGenerator {
     return result;
   }
 
-  public WithSelectHDLGenerator add(Long selectValue, Long assignValue) {
+  public WithSelectHdlGenerator add(Long selectValue, Long assignValue) {
     myCases.put(selectValue, assignValue);
     return this;
   }
 
-  public WithSelectHDLGenerator add(Long selectValue, String binairyAssignValue) {
+  public WithSelectHdlGenerator add(Long selectValue, String binairyAssignValue) {
     myCases.put(selectValue, binairyStringToInt(binairyAssignValue));
     return this;
   }
 
-  public WithSelectHDLGenerator add(String binairySelectValue, String binairyAssignValue) {
+  public WithSelectHdlGenerator add(String binairySelectValue, String binairyAssignValue) {
     myCases.put(binairyStringToInt(binairySelectValue), binairyStringToInt(binairyAssignValue));
     return this;
   }
 
-  public WithSelectHDLGenerator add(String binairySelectValue, Long assignValue) {
+  public WithSelectHdlGenerator add(String binairySelectValue, Long assignValue) {
     myCases.put(binairyStringToInt(binairySelectValue), assignValue);
     return this;
   }
 
-  public WithSelectHDLGenerator setDefault(Long assignValue) {
+  public WithSelectHdlGenerator setDefault(Long assignValue) {
     defaultValue = assignValue;
     return this;
   }
 
-  public WithSelectHDLGenerator setDefault(String binairyAssignValue) {
+  public WithSelectHdlGenerator setDefault(String binairyAssignValue) {
     defaultValue = binairyStringToInt(binairyAssignValue);
     return this;
   }
@@ -82,7 +82,7 @@ public class WithSelectHDLGenerator {
         .pair("regName", regName)
         .pair("regBits", nrOfDestinationBits - 1);
     contents.add("");
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("WITH ({{sourceName}}) SELECT {{destName}} <=");
     } else {
       contents.add("""
@@ -94,18 +94,18 @@ public class WithSelectHDLGenerator {
     }
     for (final var thisCase : myCases.keySet()) {
       final var value = myCases.get(thisCase);
-      if (HDL.isVHDL()) {
-        contents.add("   {{1}} WHEN {{2}},", HDL.getConstantVector(value, nrOfDestinationBits), HDL.getConstantVector(thisCase, nrOfSourceBits));
+      if (Hdl.isVhdl()) {
+        contents.add("   {{1}} WHEN {{2}},", Hdl.getConstantVector(value, nrOfDestinationBits), Hdl.getConstantVector(thisCase, nrOfSourceBits));
       } else {
-        contents.add("      {{1}} : {{regName}} = {{2}};", HDL.getConstantVector(thisCase, nrOfSourceBits), HDL.getConstantVector(value, nrOfDestinationBits));
+        contents.add("      {{1}} : {{regName}} = {{2}};", Hdl.getConstantVector(thisCase, nrOfSourceBits), Hdl.getConstantVector(value, nrOfDestinationBits));
       }
     }
-    if (HDL.isVHDL()) {
-      contents.add("   {{1}} WHEN OTHERS;", HDL.getConstantVector(defaultValue, nrOfDestinationBits));
+    if (Hdl.isVhdl()) {
+      contents.add("   {{1}} WHEN OTHERS;", Hdl.getConstantVector(defaultValue, nrOfDestinationBits));
     } else {
-      contents.add("      default : {{regName}} = {{1}};", HDL.getConstantVector(defaultValue, nrOfDestinationBits));
+      contents.add("      default : {{regName}} = {{1}};", Hdl.getConstantVector(defaultValue, nrOfDestinationBits));
     }
-    if (HDL.isVerilog())
+    if (Hdl.isVerilog())
       contents.add("""
              endcase
           end

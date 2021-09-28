@@ -11,14 +11,14 @@ package com.cburch.logisim.std.arith;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
-public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class DividerHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   private static final String NR_OF_BITS_STRING = "NrOfBits";
   private static final int NR_OF_BITS_ID = -1;
   private static final String CALC_BITS_STRING = "CalcBits";
@@ -30,8 +30,8 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     super();
     myParametersList
         .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-        .add(CALC_BITS_STRING, CALC_BITS_ID, HDLParameters.MAP_MULTIPLY, 2)
-        .add(UNSIGNED_STRING, UNSIGNED_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, ComparatorHDLGeneratorFactory.SIGNED_MAP);
+        .add(CALC_BITS_STRING, CALC_BITS_ID, HdlParameters.MAP_MULTIPLY, 2)
+        .add(UNSIGNED_STRING, UNSIGNED_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, ComparatorHDLGeneratorFactory.SIGNED_MAP);
     myWires
         .addWire("s_div_result", CALC_BITS_ID)
         .addWire("s_mod_result", NR_OF_BITS_ID)
@@ -52,7 +52,7 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .pair("unsigned", UNSIGNED_STRING)
             .pair("calcBits", CALC_BITS_STRING);
 
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       Contents.add("""
           s_extended_dividend({{calcBits}}-1 DOWNTO {{nrOfBits}}) <= Upper;
           s_extended_dividend({{nrOfBits}}-1 DOWNTO 0) <= INP_A;
@@ -71,6 +71,6 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
-    return HDL.isVHDL();
+    return Hdl.isVhdl();
   }
 }

@@ -14,8 +14,8 @@ import java.util.ArrayList;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
 
 public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDLGeneratorFactory {
@@ -43,7 +43,7 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
           pair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs);
           pair("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs);
           pair("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs);
-          pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
+          pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK);
         }
       };
 
@@ -51,7 +51,7 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
     final var contents = new LineBuffer(sharedPairs);
     contents.add("id", id);
 
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           PORT MAP ( {{outsR}} => {{outsR}}{{id}},
                      {{outsG}} => {{outsG}}{{id}},
@@ -77,7 +77,7 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
   public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = new LineBuffer(sharedPairs);
 
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE
              {{outsR}}(n) <= NOT({{insR}}(n)) WHEN activeLow = 1 ELSE {{insR}}(n);

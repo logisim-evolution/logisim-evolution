@@ -11,13 +11,13 @@ package com.cburch.logisim.std.plexers;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
-public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class DecoderHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   public DecoderHDLGeneratorFactory() {
     super();
@@ -44,10 +44,10 @@ public class DecoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var space = " ";
     for (var i = 0; i < numOutputs; i++) {
       if (i == 7) space = "";
-      contents.pair("bin", HDL.getConstantVector(i, nrOfSelectBits))
+      contents.pair("bin", Hdl.getConstantVector(i, nrOfSelectBits))
               .pair("space", space)
               .pair("i", i);
-      if (HDL.isVHDL()) {
+      if (Hdl.isVhdl()) {
         contents.add("""
             DecoderOut_{{i}}{{space}}<= '1' WHEN sel = {{bin}} AND
             {{space}}                             Enable = '1' ELSE '0';

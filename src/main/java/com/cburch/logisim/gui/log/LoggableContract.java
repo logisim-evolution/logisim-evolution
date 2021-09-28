@@ -13,7 +13,7 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 
-public interface Loggable {
+public interface LoggableContract {
   String getLogName(Object option);
 
   BitWidth getBitWidth(Object option);

@@ -9,21 +9,17 @@
 
 package com.cburch.logisim.fpga.data;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 
 public class IoStandards {
-  public static String GetConstraintedIoStandard(char id) {
-    if ((id > DEFAULT_STANDARD) && (id <= LVTTL)) {
-      return Behavior_strings[id];
-    }
-    return "";
+  public static String getConstraintedIoStandard(char id) {
+    return ((id > DEFAULT_STANDARD) && (id <= LVTTL)) ? BEHAVIOR_STRINGS[id] : "";
   }
 
   public static char getId(String identifier) {
     char result = 0;
-    LinkedList<String> thelist = IoStandards.getStrings();
-    Iterator<String> iter = thelist.iterator();
+    final var thelist = IoStandards.getStrings();
+    final var iter = thelist.iterator();
     result = 0;
     while (iter.hasNext()) {
       if (iter.next().equals(identifier)) return result;
@@ -35,13 +31,13 @@ public class IoStandards {
   public static LinkedList<String> getStrings() {
     LinkedList<String> result = new LinkedList<>();
 
-    result.add(Behavior_strings[0]);
-    result.add(Behavior_strings[1]);
-    result.add(Behavior_strings[2]);
-    result.add(Behavior_strings[3]);
-    result.add(Behavior_strings[4]);
-    result.add(Behavior_strings[5]);
-    result.add(Behavior_strings[6]);
+    result.add(BEHAVIOR_STRINGS[0]);
+    result.add(BEHAVIOR_STRINGS[1]);
+    result.add(BEHAVIOR_STRINGS[2]);
+    result.add(BEHAVIOR_STRINGS[3]);
+    result.add(BEHAVIOR_STRINGS[4]);
+    result.add(BEHAVIOR_STRINGS[5]);
+    result.add(BEHAVIOR_STRINGS[6]);
 
     return result;
   }
@@ -58,7 +54,7 @@ public class IoStandards {
 
   public static final char UNKNOWN = 255;
 
-  public static final String[] Behavior_strings = {
+  public static final String[] BEHAVIOR_STRINGS = {
     "Default", "LVCMOS12", "LVCMOS15", "LVCMOS18", "LVCMOS25", "LVCMOS33", "LVTTL"
   };
 }

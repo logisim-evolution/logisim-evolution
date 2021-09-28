@@ -11,6 +11,6 @@ package com.cburch.logisim.fpga.data;
 
 import java.awt.Rectangle;
 
-public interface IOComponentsListener {
+public interface IoComponentsListener {
   void repaintRequest(Rectangle rect);
 }

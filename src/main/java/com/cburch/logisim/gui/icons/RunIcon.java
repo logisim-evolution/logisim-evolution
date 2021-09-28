@@ -23,15 +23,15 @@ public class RunIcon extends BaseIcon {
         AppPreferences.getScaled(2),
         AppPreferences.getScaled(13),
         AppPreferences.getScaled(13));
-    int[] xpos =
+    final int[] posX =
         new int[] {
           AppPreferences.getScaled(6), AppPreferences.getScaled(11), AppPreferences.getScaled(6)
         };
-    int[] ypos =
+    final int[] posY =
         new int[] {
           AppPreferences.getScaled(5), AppPreferences.getScaled(8), AppPreferences.getScaled(11)
         };
     g2.setColor(Color.WHITE);
-    g2.fillPolygon(xpos, ypos, 3);
+    g2.fillPolygon(posX, posY, 3);
   }
 }

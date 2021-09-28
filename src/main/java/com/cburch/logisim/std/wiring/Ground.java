@@ -39,7 +39,7 @@ public class Ground extends InstanceFactory {
   public static final String _ID = "Ground";
 
   public Ground() {
-    super(_ID, S.getter("groundComponent"), new AbstractConstantHDLGeneratorFactory());
+    super(_ID, S.getter("groundComponent"), new AbstractConstantHdlGeneratorFactory());
     setIconName("ground.gif");
     setAttributes(
         new Attribute[] {StdAttr.FACING, StdAttr.WIDTH},

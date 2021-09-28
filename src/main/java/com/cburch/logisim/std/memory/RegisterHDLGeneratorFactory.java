@@ -11,11 +11,11 @@ package com.cburch.logisim.std.memory;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
-import com.cburch.logisim.fpga.hdlgenerator.HDLPorts;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
+import com.cburch.logisim.fpga.hdlgenerator.HdlPorts;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
@@ -23,7 +23,7 @@ import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class RegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String NR_OF_BITS_STRING = "NrOfBits";
   private static final int NR_OF_BITS_ID = -1;
@@ -34,12 +34,12 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     super();
     myParametersList
         .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-        .add(INVERT_CLOCK_STRING, INVERT_CLOCK_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, StdAttr.TRIGGER, AbstractFlipFlopHDLGeneratorFactory.TRIGGER_MAP);
+        .add(INVERT_CLOCK_STRING, INVERT_CLOCK_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, StdAttr.TRIGGER, AbstractFlipFlopHDLGeneratorFactory.TRIGGER_MAP);
     myWires
         .addWire("s_clock", 1)
         .addRegister("s_state_reg", NR_OF_BITS_ID);
     myPorts
-        .add(Port.CLOCK, HDLPorts.getClockName(1), 1, Register.CK)
+        .add(Port.CLOCK, HdlPorts.getClockName(1), 1, Register.CK)
         .add(Port.INPUT, "Reset", 1, Register.CLR)
         .add(Port.INPUT, "ClockEnable", 1, Register.EN, false)
         .add(Port.INPUT, "D", NR_OF_BITS_ID, Register.IN)
@@ -50,8 +50,8 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public SortedMap<String, String> getPortMap(Netlist Nets, Object MapInfo) {
     final var map = new TreeMap<String, String>();
     map.putAll(super.getPortMap(Nets, MapInfo));
-    if (MapInfo instanceof NetlistComponent && HDL.isVHDL()) {
-      final var comp = (NetlistComponent) MapInfo;
+    if (MapInfo instanceof netlistComponent && Hdl.isVhdl()) {
+      final var comp = (netlistComponent) MapInfo;
       final var nrOfBits = comp.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
       if (nrOfBits == 1) {
         final var inMap = map.get("D");
@@ -69,9 +69,9 @@ public class RegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer()
             .pair("invertClock", INVERT_CLOCK_STRING)
-            .pair("clock", HDLPorts.getClockName(1))
-            .pair("Tick", HDLPorts.getTickName(1));
-    if (HDL.isVHDL()) {
+            .pair("clock", HdlPorts.getClockName(1))
+            .pair("Tick", HdlPorts.getTickName(1));
+    if (Hdl.isVhdl()) {
       contents.add("""
           Q       <= s_state_reg;
           s_clock <= {{clock}} WHEN {{invertClock}} = 0 ELSE NOT({{clock}});

@@ -11,12 +11,12 @@ package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
-public class AbstractGateHDLGenerator extends AbstractHDLGeneratorFactory {
+public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
 
   private final boolean isInverter;
 

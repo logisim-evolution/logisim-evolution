@@ -35,8 +35,8 @@ public class ZoomIcon extends BaseIcon {
   protected void paintIcon(Graphics2D g2) {
     g2.setStroke(new BasicStroke((int) AppPreferences.getScaled(1.5)));
     g2.setColor(g2.getBackground().darker());
-    int scaledOne = AppPreferences.getScaled(1);
-    int scaledEleven = AppPreferences.getScaled(10);
+    final var scaledOne = AppPreferences.getScaled(1);
+    final var scaledEleven = AppPreferences.getScaled(10);
     g2.fillOval(scaledOne, scaledOne, scaledEleven, scaledEleven);
     g2.setColor(g2.getBackground().darker().darker().darker());
     if (zoomType != NOZOOM) {
@@ -54,7 +54,7 @@ public class ZoomIcon extends BaseIcon {
     }
     g2.setColor(Color.BLACK);
     g2.drawOval(scaledOne, scaledOne, scaledEleven, scaledEleven);
-    double xyPoint = AppPreferences.getScaled(6.0 + Math.sqrt(12.5));
+    final var xyPoint = AppPreferences.getScaled(6.0 + Math.sqrt(12.5));
     GeneralPath path = new GeneralPath();
     path.moveTo(xyPoint, xyPoint);
     path.lineTo(AppPreferences.getScaled(15), AppPreferences.getScaled(13));

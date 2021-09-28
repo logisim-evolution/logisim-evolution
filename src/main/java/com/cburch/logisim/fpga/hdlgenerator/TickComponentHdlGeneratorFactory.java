@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class TickComponentHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private final long fpgaClockFrequency;
   private final double tickFrequency;
@@ -32,7 +32,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public static final String HDL_DIRECTORY = "base";
 
 
-  public TickComponentHDLGeneratorFactory(long fpga_clock_frequency, double tick_frequency) {
+  public TickComponentHdlGeneratorFactory(long fpga_clock_frequency, double tick_frequency) {
     super(HDL_DIRECTORY);
     fpgaClockFrequency = fpga_clock_frequency;
     tickFrequency = tick_frequency;
@@ -46,8 +46,8 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       calcValue /= 2;
     }
     myParametersList
-        .add(RELOAD_VALUE_STRING, RELOAD_VALUE_ID, HDLParameters.MAP_CONSTANT, (int) reloadValue)
-        .add(NR_OF_COUNTER_BITS_STRING, NR_OF_COUNTER_BITS_ID, HDLParameters.MAP_CONSTANT, nrOfBits);
+        .add(RELOAD_VALUE_STRING, RELOAD_VALUE_ID, HdlParameters.MAP_CONSTANT, (int) reloadValue)
+        .add(NR_OF_COUNTER_BITS_STRING, NR_OF_COUNTER_BITS_ID, HdlParameters.MAP_CONSTANT, nrOfBits);
     myWires
         .addWire("s_tick_next", 1)
         .addWire("s_count_next", NR_OF_COUNTER_BITS_ID)
@@ -80,7 +80,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             .add("")
             .addRemarkBlock("Here the update logic is defined");
 
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       Contents.add("""
           s_tick_next   <= '1' WHEN s_count_reg = std_logic_vector(to_unsigned(0, {{nrOfCounterBits}})) ELSE '0';
           s_count_next  <= (OTHERS => '0') WHEN s_tick_reg /= '0' AND s_tick_reg /= '1' ELSE -- For simulation only!
@@ -105,7 +105,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
               """);
     }
     Contents.addRemarkBlock("Here the flipflops are defined");
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       Contents.add("""
           make_tick : PROCESS( FPGAClock , s_tick_next )
           BEGIN

@@ -20,10 +20,10 @@ public class JoystickIcon extends BaseIcon {
   @Override
   protected void paintIcon(Graphics2D g2) {
     g2.setColor(Color.BLUE.darker().darker());
-    int[] xpos = {0, scale(6), scale(4), scale(2)};
-    int[] ypos = {scale(13), scale(13), scale(15), scale(15)};
+    final int[] xpos = {0, scale(6), scale(4), scale(2)};
+    final int[] ypos = {scale(13), scale(13), scale(15), scale(15)};
     g2.fillPolygon(xpos, ypos, 4);
-    for (int i = 0; i < 4; i++) {
+    for (var i = 0; i < 4; i++) {
       xpos[i] += scale(10);
     }
     g2.fillPolygon(xpos, ypos, 4);

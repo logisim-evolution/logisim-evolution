@@ -21,33 +21,33 @@ import javax.swing.Icon;
 
 public class QuestionIcon implements Icon {
 
-  final int wh = AppPreferences.getIconSize();
+  final int width = AppPreferences.getIconSize();
 
   @Override
   public void paintIcon(Component c, Graphics g, int x, int y) {
-    Graphics2D g2 = (Graphics2D) g.create();
+    final var g2 = (Graphics2D) g.create();
     g2.translate(x, y);
     g2.setColor(Color.GREEN);
-    g2.fillRect(0, 0, wh - 1, wh - 1);
+    g2.fillRect(0, 0, width - 1, width - 1);
     g2.setColor(Color.BLACK);
     g2.setStroke(new BasicStroke(AppPreferences.getScaled((float) 1)));
-    g2.drawRect(0, 0, wh - 1, wh - 1);
+    g2.drawRect(0, 0, width - 1, width - 1);
     g2.setColor(Color.GREEN.darker().darker().darker().darker());
-    Font f = g2.getFont().deriveFont((float) wh / (float) 1.3).deriveFont(Font.BOLD);
-    TextLayout t = new TextLayout("?", f, g2.getFontRenderContext());
-    float xc = (float) wh / (float) 2 - (float) t.getBounds().getCenterX();
-    float yc = (float) wh / (float) 2 - (float) t.getBounds().getCenterY();
-    t.draw(g2, xc, yc);
+    final var f = g2.getFont().deriveFont((float) width / (float) 1.3).deriveFont(Font.BOLD);
+    final var t = new TextLayout("?", f, g2.getFontRenderContext());
+    final var centerX = (float) width / (float) 2 - (float) t.getBounds().getCenterX();
+    final var centerY = (float) width / (float) 2 - (float) t.getBounds().getCenterY();
+    t.draw(g2, centerX, centerY);
     g2.dispose();
   }
 
   @Override
   public int getIconWidth() {
-    return wh;
+    return width;
   }
 
   @Override
   public int getIconHeight() {
-    return wh;
+    return width;
   }
 }

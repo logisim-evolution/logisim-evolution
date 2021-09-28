@@ -93,7 +93,7 @@ public class BoardWriterClass {
       pull.setValue(PullBehaviors.BEHAVIOR_STRINGS[BoardInfo.fpga.getClockPull()]);
       clkinfo.setAttributeNode(pull);
       final var IOS = boardInfo.createAttribute(CLOCK_SECTION_STRINGS[3]);
-      IOS.setValue(IoStandards.Behavior_strings[BoardInfo.fpga.getClockStandard()]);
+      IOS.setValue(IoStandards.BEHAVIOR_STRINGS[BoardInfo.fpga.getClockStandard()]);
       clkinfo.setAttributeNode(IOS);
       fpgainfo.appendChild(clkinfo);
       final var FPGA = boardInfo.createElement(FPGA_INFORMATION_SECTION_STRING);
@@ -131,7 +131,7 @@ public class BoardWriterClass {
       Comment Compcmd = boardInfo.createComment("This section describes all Components present on the boards");
       Components.appendChild(Compcmd);
       for (var comp : BoardInfo.GetAllComponents()) {
-        Components.appendChild(comp.GetDocumentElement(boardInfo));
+        Components.appendChild(comp.getDocumentElement(boardInfo));
       }
       final var writer = new ImageXmlFactory();
       writer.CreateStream(BoardImage);

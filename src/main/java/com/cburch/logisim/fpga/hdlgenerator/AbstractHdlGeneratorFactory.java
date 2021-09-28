@@ -12,7 +12,7 @@ package com.cburch.logisim.fpga.hdlgenerator;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.instance.Port;
@@ -26,23 +26,23 @@ import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
+public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
   private final String subDirectoryName;
-  protected final HDLParameters myParametersList = new HDLParameters();
-  protected final HDLWires myWires = new HDLWires();
-  protected final HDLPorts myPorts = new HDLPorts();
-  protected final HDLTypes myTypedWires = new HDLTypes();
+  protected final HdlParameters myParametersList = new HdlParameters();
+  protected final HdlWires myWires = new HdlWires();
+  protected final HdlPorts myPorts = new HdlPorts();
+  protected final HdlTypes myTypedWires = new HdlTypes();
   protected boolean getWiresPortsDuringHDLWriting = false;
 
-  public AbstractHDLGeneratorFactory() {
+  public AbstractHdlGeneratorFactory() {
     final var className = getClass().toString().replace('.', ':').replace(' ', ':');
     final var parts = className.split(":");
     if (parts.length < 2) throw new ExceptionInInitializerError("Cannot read class path!");
     subDirectoryName = parts[parts.length - 2];
   }
 
-  public AbstractHDLGeneratorFactory(String subDirectory) {
+  public AbstractHdlGeneratorFactory(String subDirectory) {
     subDirectoryName = subDirectory;
   }
 
@@ -69,7 +69,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
       getGenerationTimeWiresPorts(theNetlist, attrs);
     }
     contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("ARCHITECTURE PlatformIndependent OF {{1}} IS ", componentName);
       contents.add("");
       if (myTypedWires.getNrOfTypes() > 0) {
@@ -393,7 +393,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   @Override
   public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
     var contents = LineBuffer.getHdlBuffer();
-    if (HDL.isVHDL()) contents.add(getVHDLBlackBox(theNetlist, attrs, componentName, false));
+    if (Hdl.isVhdl()) contents.add(getVHDLBlackBox(theNetlist, attrs, componentName, false));
     return contents.get();
   }
 
@@ -402,20 +402,20 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
     final var contents = LineBuffer.getHdlBuffer();
     final var parameterMap = new TreeMap<String, String>();
     final var portMap = getPortMap(nets, componentInfo);
-    final var componentHDLName = componentInfo instanceof NetlistComponent
-        ? ((NetlistComponent) componentInfo).getComponent().getFactory().getHDLName(((NetlistComponent) componentInfo).getComponent().getAttributeSet()) :
+    final var componentHDLName = componentInfo instanceof netlistComponent
+        ? ((netlistComponent) componentInfo).getComponent().getFactory().getHDLName(((netlistComponent) componentInfo).getComponent().getAttributeSet()) :
           name;
     final var compName = (name != null && !name.isEmpty()) ? name : componentHDLName;
     final var thisInstanceIdentifier = getInstanceIdentifier(componentInfo, componentId);
     final var oneLine = new StringBuilder();
     if (componentInfo == null) parameterMap.putAll(myParametersList.getMaps(null));
-    else if (componentInfo instanceof NetlistComponent) {
-      final var attrs = ((NetlistComponent) componentInfo).getComponent().getAttributeSet();
+    else if (componentInfo instanceof netlistComponent) {
+      final var attrs = ((netlistComponent) componentInfo).getComponent().getAttributeSet();
       parameterMap.putAll(myParametersList.getMaps(attrs));
     }
     var tabLength = 0;
     var first = true;
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("{{1}} : {{2}}", thisInstanceIdentifier, compName);
       if (!parameterMap.isEmpty()) {
         oneLine.append("   GENERIC MAP ( ");
@@ -517,7 +517,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   @Override
   public ArrayList<String> getEntity(Netlist theNetlist, AttributeSet attrs, String componentName) {
     var contents = LineBuffer.getHdlBuffer();
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
           .add(FileWriter.getExtendedLibrary())
           .add(getVHDLBlackBox(theNetlist, attrs, componentName, true));
@@ -526,8 +526,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   private String getInstanceIdentifier(Object componentInfo, Long componentId) {
-    if (componentInfo instanceof NetlistComponent) {
-      final var attrs = ((NetlistComponent) componentInfo).getComponent().getAttributeSet();
+    if (componentInfo instanceof netlistComponent) {
+      final var attrs = ((netlistComponent) componentInfo).getComponent().getAttributeSet();
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         final var label = attrs.getValue(StdAttr.LABEL);
         if ((label != null) && !label.isEmpty())
@@ -539,7 +539,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   /* Here all public entries for HDL generation are defined */
   @Override
-  public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo,
+  public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo,
       String circuitName) {
     throw new IllegalAccessError("BUG: Inline code not supported");
   }
@@ -554,8 +554,8 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
 
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var result = new TreeMap<String, String>();
-    if (mapInfo instanceof NetlistComponent && !myPorts.isEmpty()) {
-      NetlistComponent componentInfo = (NetlistComponent) mapInfo;
+    if (mapInfo instanceof netlistComponent && !myPorts.isEmpty()) {
+      netlistComponent componentInfo = (netlistComponent) mapInfo;
       final var compName = componentInfo.getComponent().getFactory().getDisplayName();
       final var attrs = componentInfo.getComponent().getAttributeSet();
       if (getWiresPortsDuringHDLWriting) {
@@ -579,7 +579,7 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
                 String.format("Component \"%s\" in circuit \"%s\" has no clock connection!", compName, nets.getCircuitName()));
             hasClock = false;
           }
-          final var clockNetName = HDL.getClockNetName(componentInfo, compPinId, nets);
+          final var clockNetName = Hdl.getClockNetName(componentInfo, compPinId, nets);
           if (clockNetName == null || clockNetName.isEmpty()) {
             // FIXME hard coded string
             Reporter.report.addSevereWarning(
@@ -594,30 +594,30 @@ public class AbstractHDLGeneratorFactory implements HDLGeneratorFactory {
               final var clockIndex = activeLow ? ClockHDLGeneratorFactory.NEGATIVE_EDGE_TICK_INDEX : ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX;
               result.put(myPorts.getTickName(port), LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, clockIndex));
             }
-            result.put(HDLPorts.CLOCK, LineBuffer
+            result.put(HdlPorts.CLOCK, LineBuffer
                 .formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX));
           } else if (!hasClock) {
-            result.put(myPorts.getTickName(port), HDL.zeroBit());
-            result.put(HDLPorts.CLOCK, HDL.zeroBit());
+            result.put(myPorts.getTickName(port), Hdl.zeroBit());
+            result.put(HdlPorts.CLOCK, Hdl.zeroBit());
           } else {
-            result.put(myPorts.getTickName(port), HDL.oneBit());
+            result.put(myPorts.getTickName(port), Hdl.oneBit());
             if (!gatedClock) {
               final var clockIndex = activeLow ? ClockHDLGeneratorFactory.INVERTED_DERIVED_CLOCK_INDEX : ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX;
-              result.put(HDLPorts.CLOCK, LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, clockIndex));
+              result.put(HdlPorts.CLOCK, LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, clockIndex));
             } else {
-              result.put(HDLPorts.CLOCK, HDL.getNetName(componentInfo, compPinId, true, nets));
+              result.put(HdlPorts.CLOCK, Hdl.getNetName(componentInfo, compPinId, true, nets));
             }
           }
         } else if (myPorts.isFixedMapped(port)) {
           final var fixedMap = myPorts.getFixedMap(port);
-          if (HDLPorts.PULL_DOWN.equals(fixedMap))
-            result.put(port, HDL.getConstantVector(0, myPorts.get(port, attrs)));
-          else if (HDLPorts.PULL_UP.equals(fixedMap))
-            result.put(port, HDL.getConstantVector(0xFFFFFFFFFFFFFFFFL, myPorts.get(port, attrs)));
+          if (HdlPorts.PULL_DOWN.equals(fixedMap))
+            result.put(port, Hdl.getConstantVector(0, myPorts.get(port, attrs)));
+          else if (HdlPorts.PULL_UP.equals(fixedMap))
+            result.put(port, Hdl.getConstantVector(0xFFFFFFFFFFFFFFFFL, myPorts.get(port, attrs)));
           else
             result.put(port, fixedMap);
         } else {
-          result.putAll(HDL.getNetMap(port, myPorts.doPullDownOnFloat(port), componentInfo, myPorts.getComponentPortId(port), nets));
+          result.putAll(Hdl.getNetMap(port, myPorts.doPullDownOnFloat(port), componentInfo, myPorts.getComponentPortId(port), nets));
         }
       }
     }

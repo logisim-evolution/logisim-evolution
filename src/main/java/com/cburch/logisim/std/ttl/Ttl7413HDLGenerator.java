@@ -11,13 +11,13 @@ package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 
 import java.util.ArrayList;
 
-public class Ttl7413HDLGenerator extends AbstractHDLGeneratorFactory {
+public class Ttl7413HDLGenerator extends AbstractHdlGeneratorFactory {
 
   private final boolean inverted;
 
@@ -44,11 +44,11 @@ public class Ttl7413HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = new ArrayList<String>();
-    final var Inv = inverted ? HDL.notOperator() : "";
-    contents.add("   " + HDL.assignPreamble() + "Y0" + HDL.assignOperator() + Inv
-            + " (A0" + HDL.andOperator() + "B0" + HDL.andOperator() + "C0" + HDL.andOperator() + "D0);");
-    contents.add("   " + HDL.assignPreamble() + "Y1" + HDL.assignOperator() + Inv
-            + " (A1" + HDL.andOperator() + "B1" + HDL.andOperator() + "C1" + HDL.andOperator() + "D1);");
+    final var Inv = inverted ? Hdl.notOperator() : "";
+    contents.add("   " + Hdl.assignPreamble() + "Y0" + Hdl.assignOperator() + Inv
+            + " (A0" + Hdl.andOperator() + "B0" + Hdl.andOperator() + "C0" + Hdl.andOperator() + "D0);");
+    contents.add("   " + Hdl.assignPreamble() + "Y1" + Hdl.assignOperator() + Inv
+            + " (A1" + Hdl.andOperator() + "B1" + Hdl.andOperator() + "C1" + Hdl.andOperator() + "D1);");
     return contents;
   }
 

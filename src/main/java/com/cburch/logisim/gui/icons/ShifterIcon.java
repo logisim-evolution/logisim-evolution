@@ -22,9 +22,9 @@ public class ShifterIcon extends BaseIcon {
   protected void paintIcon(Graphics2D g2) {
     final var s = new StringBuilder();
     if (state < 0) {
-      s.append("\u25b6" + "\u25b6" + "\u25b6");
+      s.append("\u25b6".repeat(3));
     } else {
-      int mask = 4;
+      var mask = 4;
       while (mask > 0) {
         s.append((state & mask) == 0 ? "0" : "1");
         mask >>= 1;

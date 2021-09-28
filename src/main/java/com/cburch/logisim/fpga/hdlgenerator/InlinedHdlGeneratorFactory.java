@@ -14,9 +14,9 @@ import java.util.Set;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 
-public class InlinedHDLGeneratorFactory implements HDLGeneratorFactory {
+public class InlinedHdlGeneratorFactory implements HdlGeneratorFactory {
 
   @Override
   public boolean generateAllHDLDescriptions(Set<String> handledComponents, String workingDirectory,
@@ -45,7 +45,7 @@ public class InlinedHDLGeneratorFactory implements HDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo,
+  public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo,
       String circuitName) {
     return new ArrayList<String>();
   }
