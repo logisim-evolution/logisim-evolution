@@ -121,17 +121,16 @@ public class Buzzer extends InstanceFactory {
 
   public static void StopBuzzerSound(Component comp, CircuitState circState) {
     // static method, have to check if the comp parameter is a Buzzer or contains it
-    ComponentFactory compFact = comp.getFactory();
+    final var compFact = comp.getFactory();
     // if it is a buzzer, stop its sound thread
     if (compFact instanceof Buzzer) {
-      Data d = (Data) circState.getData(comp);
+      final var d = (Data) circState.getData(comp);
       if (d != null && d.thread.isAlive()) {
         d.is_on.set(false);
       }
     } else if (compFact instanceof SubcircuitFactory) {
       // if it's a subcircuit search other buzzer's instances inside it and stop all sound threads
-      for (Component subComponent :
-          ((SubcircuitFactory) comp.getFactory()).getSubcircuit().getComponents()) {
+      for (final var subComponent : ((SubcircuitFactory) comp.getFactory()).getSubcircuit().getComponents()) {
         // recursive if there are other subcircuits
         StopBuzzerSound(subComponent, ((SubcircuitFactory) compFact).getSubstate(circState, comp));
       }

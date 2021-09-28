@@ -43,11 +43,10 @@ public class OptionPane {
   public static void showMessageDialog(Component parentComponent, Object message) {
     if (Main.hasGui()) {
       JOptionPane.showMessageDialog(parentComponent, message);
-    } else if (message instanceof String) logger.info((String) message);
+    } else if (message instanceof String msg) logger.info(msg);
   }
 
-  public static void showMessageDialog(
-      Component parentComponent, Object message, String title, int messageType) {
+  public static void showMessageDialog(Component parentComponent, Object message, String title, int messageType) {
     if (Main.hasGui()) {
       JOptionPane.showMessageDialog(parentComponent, message, title, messageType);
     } else if (message instanceof String) {

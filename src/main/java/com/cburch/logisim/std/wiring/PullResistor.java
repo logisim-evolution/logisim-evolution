@@ -129,9 +129,9 @@ public class PullResistor extends InstanceFactory {
     }
 
     double rotate = 0.0;
-    if (g instanceof Graphics2D) {
+    if (g instanceof Graphics2D g2d) {
       rotate = Direction.SOUTH.toRadians() - facing.toRadians();
-      if (rotate != 0.0) ((Graphics2D) g).rotate(rotate);
+      if (rotate != 0.0) g2d.rotate(rotate);
     }
     g.drawLine(0, -30, 0, -26);
     g.drawLine(-6, -30, 6, -30);

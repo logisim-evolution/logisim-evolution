@@ -418,9 +418,8 @@ public class TextLineNumber extends JPanel
   //
   @Override
   public void propertyChange(PropertyChangeEvent evt) {
-    if (evt.getNewValue() instanceof Font) {
+    if (evt.getNewValue() instanceof Font newFont) {
       if (updateFont) {
-        final var newFont = (Font) evt.getNewValue();
         setFont(newFont);
         lastDigits = 0;
         setPreferredWidth();

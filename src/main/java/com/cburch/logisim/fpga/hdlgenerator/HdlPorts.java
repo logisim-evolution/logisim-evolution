@@ -71,10 +71,10 @@ public class HdlPorts {
         if (!attrs.containsAttribute(myBitWidthAttribute)) throw new IllegalArgumentException("Bitwidth attribute not found");
         final var value = attrs.getValue(myBitWidthAttribute);
         var nrOfBits = 0;
-        if (value instanceof BitWidth) {
-          nrOfBits = ((BitWidth) value).getWidth();
-        } else if (value instanceof Integer) {
-          nrOfBits = (int) value;
+        if (value instanceof BitWidth bw) {
+          nrOfBits = bw.getWidth();
+        } else if (value instanceof Integer i) {
+          nrOfBits = i;
         } else throw new IllegalArgumentException("Attribute is not of type Bitwidth or Integer");
         return (nrOfBits == 1) ? 1 : (myNrOfBits != 0) ? myNrOfBits : nrOfBits;
       }

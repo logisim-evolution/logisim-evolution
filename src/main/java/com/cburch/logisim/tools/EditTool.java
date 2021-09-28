@@ -50,6 +50,7 @@ public class EditTool extends Tool {
   public static final String _ID = "Edit Tool";
 
   private class Listener implements CircuitListener, Selection.Listener {
+    @Override
     public void circuitChanged(CircuitEvent event) {
       if (event.getAction() != CircuitEvent.ACTION_INVALIDATE) {
         lastX = -1;
@@ -58,6 +59,7 @@ public class EditTool extends Tool {
       }
     }
 
+    @Override
     public void selectionChanged(Event event) {
       lastX = -1;
       cache.clear();
@@ -107,7 +109,7 @@ public class EditTool extends Tool {
     for (final var comp : sel.getComponents()) {
       if (!(comp instanceof Wire)) {
         final var attr = getFacingAttribute(comp);
-        var d = comp.getAttributeSet().getValue(StdAttr.FACING);
+        final var d = comp.getAttributeSet().getValue(StdAttr.FACING);
         if (d != null) {
           d = d.getRight();
           if (attr != null) {
@@ -246,8 +248,7 @@ public class EditTool extends Tool {
       Collection<Component> sel = canvas.getSelection().getComponents();
       if (sel != null) {
         for (final var c : sel) {
-          if (c instanceof Wire) {
-            final var w = (Wire) c;
+          if (c instanceof Wire w) {
             if (w.contains(loc) && !w.endsAt(loc)) return select;
           }
         }

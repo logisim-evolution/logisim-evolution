@@ -962,12 +962,12 @@ public class Startup implements AWTEventListener {
 
   private boolean HasIcon(Component comp) {
     var result = false;
-    if (comp instanceof JOptionPane) {
-      for (Component comp1 : ((JOptionPane) comp).getComponents()) result |= HasIcon(comp1);
-    } else if (comp instanceof JPanel) {
-      for (Component comp1 : ((JPanel) comp).getComponents()) result |= HasIcon(comp1);
-    } else if (comp instanceof JLabel) {
-      return ((JLabel) comp).getIcon() != null;
+    if (comp instanceof JOptionPane pane) {
+      for (Component comp1 : pane.getComponents()) result |= HasIcon(comp1);
+    } else if (comp instanceof JPanel panel) {
+      for (Component comp1 : panel.getComponents()) result |= HasIcon(comp1);
+    } else if (comp instanceof JLabel label) {
+      return label.getIcon() != null;
     }
     return result;
   }
@@ -1005,8 +1005,7 @@ public class Startup implements AWTEventListener {
           } catch (Exception ignored) {
           }
         }
-        if (container instanceof JOptionPane) {
-          final var pane = (JOptionPane) container;
+        if (container instanceof JOptionPane pane) {
           if (HasIcon(pane)) {
             switch (pane.getMessageType()) {
               case OptionPane.ERROR_MESSAGE:

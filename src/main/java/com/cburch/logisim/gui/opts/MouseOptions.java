@@ -304,8 +304,8 @@ class MouseOptions extends OptionsPanel {
     @Override
     public void selectionChanged(ProjectExplorer.Event event) {
       final var target = event.getTarget();
-      if (target instanceof ProjectExplorerToolNode) {
-        final var tool = ((ProjectExplorerToolNode) target).getValue();
+      if (target instanceof ProjectExplorerToolNode toolNode) {
+        final var tool = toolNode.getValue();
         setCurrentTool(tool);
       } else {
         setCurrentTool(null);

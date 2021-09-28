@@ -130,11 +130,9 @@ public class RoundRectangle extends Rectangular {
 
   @Override
   public boolean matches(CanvasObject other) {
-    if (other instanceof RoundRectangle) {
-      final var that = (RoundRectangle) other;
-      return super.matches(other) && this.radius == that.radius;
-    }
-    return false;
+    return (other instanceof RoundRectangle that)
+         ? super.matches(other) && this.radius == that.radius
+         : false;
   }
 
   @Override

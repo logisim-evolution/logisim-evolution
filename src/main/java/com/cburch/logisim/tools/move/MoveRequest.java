@@ -22,12 +22,9 @@ class MoveRequest {
 
   @Override
   public boolean equals(Object other) {
-    if (other instanceof MoveRequest) {
-      MoveRequest o = (MoveRequest) other;
-      return this.gesture == o.gesture && this.dx == o.dx && this.dy == o.dy;
-    } else {
-      return false;
-    }
+    return (other instanceof MoveRequest o)
+        ? this.gesture == o.gesture && this.dx == o.dx && this.dy == o.dy
+        : false;
   }
 
   public int getDeltaX() {

@@ -234,16 +234,14 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       fireAttributeValueChanged(attr, value, null);
       return;
     }
-    if (attr == StdAttr.LABEL && value instanceof String) {
-      String newLabel = (String) value;
+    if (attr == StdAttr.LABEL && value instanceof String newLabel) {
       String oldlabel = label;
       if (label.equals(newLabel)) return;
       label = newLabel;
       fireAttributeValueChanged(attr, value, (V) oldlabel);
       return;
     }
-    if (attr == StdAttr.LABEL_FONT && value instanceof Font) {
-      Font newFont = (Font) value;
+    if (attr == StdAttr.LABEL_FONT && value instanceof Font newFont) {
       if (labelFont.equals(newFont)) return;
       labelFont = newFont;
       fireAttributeValueChanged(attr, value, null);

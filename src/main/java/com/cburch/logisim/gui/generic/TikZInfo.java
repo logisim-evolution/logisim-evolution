@@ -159,8 +159,8 @@ public class TikZInfo implements Cloneable {
     return curStroke;
   }
 
-  public void setStroke(Stroke s) {
-    if (s instanceof BasicStroke) curStroke = (BasicStroke) s;
+  public void setStroke(Stroke stroke) {
+    if (stroke instanceof BasicStroke bs) curStroke = bs;
     else System.out.println("TikZWriter: Unsupported Stroke set");
   }
 

@@ -30,8 +30,8 @@ public class ImageXmlFactory {
 
   static final Logger logger = LoggerFactory.getLogger(ImageXmlFactory.class);
 
-  private String[] CodeTable;
-  private StringBuffer AsciiStream;
+  private String[] codeTable;
+  private StringBuffer asciiStream;
   private final String[] InitialCodeTable = {
     "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
     "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
@@ -97,30 +97,29 @@ public class ImageXmlFactory {
       logger.error("PixelGrabber exception: {}", e.getMessage());
     }
     ColorModel color_model = pixelGrabber.getColorModel();
-    if (pixelGrabber.getPixels() instanceof byte[]) {
-      byte[] the_pixels = (byte[]) pixelGrabber.getPixels();
+    if (pixelGrabber.getPixels() instanceof byte[] thePixels) {
       int index = 0;
       for (int y = 0; y < hight; y++) {
         for (int x = 0; x < width; x++) {
           Color PixCol =
               new Color(
-                  color_model.getRed(the_pixels[index]),
-                  color_model.getGreen(the_pixels[index]),
-                  color_model.getBlue(the_pixels[index++]));
+                  color_model.getRed(thePixels[index]),
+                  color_model.getGreen(thePixels[index]),
+                  color_model.getBlue(thePixels[index++]));
           g2.setColor(PixCol);
           g2.fillRect(x, y, 1, 1);
         }
       }
     } else {
-      int[] the_pixels = (int[]) pixelGrabber.getPixels();
-      int index = 0;
-      for (int y = 0; y < hight; y++) {
-        for (int x = 0; x < width; x++) {
-          Color PixCol =
+      final var thePixels = (int[]) pixelGrabber.getPixels();
+      var index = 0;
+      for (var y = 0; y < hight; y++) {
+        for (var x = 0; x < width; x++) {
+          final var PixCol =
               new Color(
-                  color_model.getRed(the_pixels[index]),
-                  color_model.getGreen(the_pixels[index]),
-                  color_model.getBlue(the_pixels[index++]));
+                  color_model.getRed(thePixels[index]),
+                  color_model.getGreen(thePixels[index]),
+                  color_model.getBlue(thePixels[index++]));
           g2.setColor(PixCol);
           g2.fillRect(x, y, 1, 1);
         }
@@ -133,55 +132,55 @@ public class ImageXmlFactory {
       // TODO Auto-generated catch block
       logger.error("JPEG Writer exception: {}", e.getMessage());
     }
-    byte[] data = blaat.toByteArray();
-    CodeTable = CreateCodeTable(data);
-    AsciiStream = new StringBuffer();
-    AsciiStream.append(V2_Identifier);
+    final var data = blaat.toByteArray();
+    codeTable = CreateCodeTable(data);
+    asciiStream = new StringBuffer();
+    asciiStream.append(V2_Identifier);
     for (byte datum : data) {
-      String code = CodeTable[datum + 128];
-      AsciiStream.append(code);
+      final var code = codeTable[datum + 128];
+      asciiStream.append(code);
     }
   }
 
-  public String GetCodeTable() {
+  public String getCodeTable() {
     StringBuilder result = new StringBuilder();
-    for (int i = 0; i < CodeTable.length; i++) {
+    for (int i = 0; i < codeTable.length; i++) {
       if (i != 0) {
         result.append(" ");
       }
-      result.append(CodeTable[i]);
+      result.append(codeTable[i]);
     }
     return result.toString();
   }
 
-  public String GetCompressedString() {
-    return AsciiStream.toString();
+  public String getCompressedString() {
+    return asciiStream.toString();
   }
 
-  public BufferedImage GetPicture(int width, int height) {
-    if (AsciiStream == null) return null;
-    if (CodeTable == null) return null;
-    if (CodeTable.length != 256) return null;
+  public BufferedImage getPicture(int width, int height) {
+    if (asciiStream == null) return null;
+    if (codeTable == null) return null;
+    if (codeTable.length != 256) return null;
     BufferedImage result = null;
     Map<String, Integer> CodeLookupTable = new HashMap<>();
-    for (int i = 0; i < CodeTable.length; i++) CodeLookupTable.put(CodeTable[i], i);
+    for (int i = 0; i < codeTable.length; i++) CodeLookupTable.put(codeTable[i], i);
     int index = 0;
     Set<String> TwoCodes = new HashSet<>();
     TwoCodes.add("-");
     TwoCodes.add("+");
     TwoCodes.add("=");
-    boolean jpegCompressed = AsciiStream.charAt(0) == V2_Identifier;
+    boolean jpegCompressed = asciiStream.charAt(0) == V2_Identifier;
     if (jpegCompressed) {
       index++;
       ByteArrayOutputStream bytestream = new ByteArrayOutputStream();
-      while (index < AsciiStream.length()) {
-        if (TwoCodes.contains(AsciiStream.substring(index, index + 1))) {
+      while (index < asciiStream.length()) {
+        if (TwoCodes.contains(asciiStream.substring(index, index + 1))) {
           bytestream.write(
-              (byte) (CodeLookupTable.get(AsciiStream.substring(index, index + 2)) - 128));
+              (byte) (CodeLookupTable.get(asciiStream.substring(index, index + 2)) - 128));
           index += 2;
         } else {
           bytestream.write(
-              (byte) (CodeLookupTable.get(AsciiStream.substring(index, index + 1)) - 128));
+              (byte) (CodeLookupTable.get(asciiStream.substring(index, index + 1)) - 128));
           index++;
         }
       }
@@ -205,25 +204,25 @@ public class ImageXmlFactory {
       String CurRedComp, CurGreenComp, CurBlueComp;
       for (int y = 0; y < height; y++) {
         for (int x = 0; x < width; x++) {
-          if (TwoCodes.contains(AsciiStream.substring(index, index + 1))) {
-            CurRedComp = AsciiStream.substring(index, index + 2);
+          if (TwoCodes.contains(asciiStream.substring(index, index + 1))) {
+            CurRedComp = asciiStream.substring(index, index + 2);
             index += 2;
           } else {
-            CurRedComp = AsciiStream.substring(index, index + 1);
+            CurRedComp = asciiStream.substring(index, index + 1);
             index++;
           }
-          if (TwoCodes.contains(AsciiStream.substring(index, index + 1))) {
-            CurGreenComp = AsciiStream.substring(index, index + 2);
+          if (TwoCodes.contains(asciiStream.substring(index, index + 1))) {
+            CurGreenComp = asciiStream.substring(index, index + 2);
             index += 2;
           } else {
-            CurGreenComp = AsciiStream.substring(index, index + 1);
+            CurGreenComp = asciiStream.substring(index, index + 1);
             index++;
           }
-          if (TwoCodes.contains(AsciiStream.substring(index, index + 1))) {
-            CurBlueComp = AsciiStream.substring(index, index + 2);
+          if (TwoCodes.contains(asciiStream.substring(index, index + 1))) {
+            CurBlueComp = asciiStream.substring(index, index + 2);
             index += 2;
           } else {
-            CurBlueComp = AsciiStream.substring(index, index + 1);
+            CurBlueComp = asciiStream.substring(index, index + 1);
             index++;
           }
           if (!CodeLookupTable.containsKey(CurRedComp)
@@ -244,12 +243,12 @@ public class ImageXmlFactory {
     return result;
   }
 
-  public void SetCodeTable(String[] Table) {
-    CodeTable = Table.clone();
+  public void setCodeTable(String[] table) {
+    codeTable = table.clone();
   }
 
-  public void SetCompressedString(String stream) {
-    AsciiStream = new StringBuffer();
-    AsciiStream.append(stream);
+  public void setCompressedString(String stream) {
+    asciiStream = new StringBuffer();
+    asciiStream.append(stream);
   }
 }

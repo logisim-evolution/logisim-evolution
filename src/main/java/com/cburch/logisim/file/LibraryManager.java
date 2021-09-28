@@ -37,9 +37,9 @@ class LibraryManager {
 
     @Override
     public boolean equals(Object other) {
-      if (!(other instanceof JarDescriptor)) return false;
-      final var o = (JarDescriptor) other;
-      return this.file.equals(o.file) && this.className.equals(o.className);
+      return (other instanceof JarDescriptor o)
+          ? this.file.equals(o.file) && this.className.equals(o.className)
+          : false;
     }
 
     @Override
@@ -80,9 +80,9 @@ class LibraryManager {
 
     @Override
     public boolean equals(Object other) {
-      if (!(other instanceof LogisimProjectDescriptor)) return false;
-      final var o = (LogisimProjectDescriptor) other;
-      return this.file.equals(o.file);
+      return (other instanceof LogisimProjectDescriptor o)
+          ? this.file.equals(o.file)
+          : false;
     }
 
     @Override
@@ -177,10 +177,8 @@ class LibraryManager {
       if (desc != null && desc.concernsFile(query)) {
         return lib;
       }
-      if (lib instanceof LoadedLibrary) {
-        final var loadedLib = (LoadedLibrary) lib;
-        if (loadedLib.getBase() instanceof LogisimFile) {
-          final var loadedProj = (LogisimFile) loadedLib.getBase();
+      if (lib instanceof LoadedLibrary loadedLib) {
+        if (loadedLib.getBase() instanceof LogisimFile loadedProj) {
           final var ret = findReference(loadedProj, query);
           if (ret != null) return lib;
         }

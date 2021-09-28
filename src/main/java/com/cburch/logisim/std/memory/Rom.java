@@ -54,10 +54,7 @@ public class Rom extends Mem {
 
     @Override
     public java.awt.Component getCellEditor(Window source, MemContents value) {
-      if (source instanceof Frame) {
-        final var proj = ((Frame) source).getProject();
-        RomAttributes.register(value, proj);
-      }
+      if (source instanceof Frame frameSrc) RomAttributes.register(value, frameSrc.getProject());
       final var ret = new ContentsCell(source, value);
       ret.mouseClicked(null);
       return ret;
@@ -109,7 +106,7 @@ public class Rom extends Mem {
     @Override
     public void mouseClicked(MouseEvent e) {
       if (contents == null) return;
-      final var proj = source instanceof Frame ? ((Frame) source).getProject() : null;
+      final var proj = source instanceof Frame frameSrc ? frameSrc.getProject() : null;
       final var frame = RomAttributes.getHexFrame(contents, proj, null);
       frame.setVisible(true);
       frame.toFront();
@@ -165,8 +162,8 @@ public class Rom extends Mem {
   }
 
   public static void closeHexFrame(Component c) {
-    if (!(c instanceof InstanceComponent)) return;
-    final var inst = ((InstanceComponent) c).getInstance();
+    if (!(c instanceof InstanceComponent comp)) return;
+    final var inst = comp.getInstance();
     RomAttributes.closeHexFrame(getMemContents(inst));
   }
 

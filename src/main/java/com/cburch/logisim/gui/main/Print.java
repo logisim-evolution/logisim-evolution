@@ -142,13 +142,14 @@ public class Print {
       this.printerView = printerView;
     }
 
+    @Override
     public int print(Graphics base, PageFormat format, int pageIndex) {
       if (pageIndex >= circuits.size()) return Printable.NO_SUCH_PAGE;
 
       var circ = circuits.get(pageIndex);
       final var circState = proj.getCircuitState(circ);
       var g = base.create();
-      var g2 = g instanceof Graphics2D ? (Graphics2D) g : null;
+      var g2 = g instanceof Graphics2D g2d ? g2d : null;
       var fm = g.getFontMetrics();
       var head =
           (header != null && !header.equals(""))

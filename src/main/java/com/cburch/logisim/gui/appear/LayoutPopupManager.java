@@ -49,8 +49,8 @@ class LayoutPopupManager implements SelectionListener, BaseMouseListenerContract
   // returns all the ports in the current selection
   private Set<AppearancePort> getSelectedPorts() {
     final var ports = new HashSet<AppearancePort>();
-    for (final var o : canvas.getSelection().getSelected()) {
-      if (o instanceof AppearancePort) ports.add((AppearancePort) o);
+    for (final var obj : canvas.getSelection().getSelected()) {
+      if (obj instanceof AppearancePort port) ports.add(port);
     }
     return ports;
   }
@@ -150,7 +150,7 @@ class LayoutPopupManager implements SelectionListener, BaseMouseListenerContract
     final var pins = new ArrayList<Instance>();
     final var elts = new ArrayList<Instance>();
     for (final var shape : shapes) {
-      if (shape instanceof AppearancePort) pins.add(((AppearancePort) shape).getPin());
+      if (shape instanceof AppearancePort port) pins.add(port.getPin());
       else elts.add(((DynamicElement) shape).getFirstInstance().getInstance());
     }
     hideCurrentPopup();

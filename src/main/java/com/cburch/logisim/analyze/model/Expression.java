@@ -649,20 +649,17 @@ public abstract class Expression {
   }
 
   public static boolean isAssignment(Expression expr) {
-    if (!(expr instanceof Expressions.Eq)) return false;
-    final var eq = (Expressions.Eq) expr;
+    if (!(expr instanceof Expressions.Eq eq)) return false;
     return (eq.exprA instanceof Expressions.Variable);
   }
 
   public static String getAssignmentVariable(Expression expr) {
-    if (!(expr instanceof Expressions.Eq)) return null;
-    final var eq = (Expressions.Eq) expr;
+    if (!(expr instanceof Expressions.Eq eq)) return null;
     return (eq.exprA instanceof Expressions.Variable) ? eq.exprA.toString() : null;
   }
 
   public static Expression getAssignmentExpression(Expression expr) {
-    if (!(expr instanceof Expressions.Eq)) return null;
-    final var eq = (Expressions.Eq) expr;
+    if (!(expr instanceof Expressions.Eq eq)) return null;
     return (eq.exprA instanceof Expressions.Variable) ? eq.exprB : null;
   }
 

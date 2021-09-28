@@ -82,8 +82,7 @@ public class SubcircuitFactory extends InstanceFactory {
     public void getSubMenuItems(JPopupMenu menu, Project proj, CircuitState state,
                                 CircuitStateHolder.HierarchyInfo hi) {
       for (final var comp : source.getNonWires()) {
-        if (comp instanceof InstanceComponent) {
-          final var c = (InstanceComponent) comp;
+        if (comp instanceof InstanceComponent c) {
           if (c.getFactory() instanceof SubcircuitFactory) {
             final var m = (CircuitFeature) c.getFeature(MenuExtender.class);
             final var newhi = hi.getCopy();
@@ -91,8 +90,7 @@ public class SubcircuitFactory extends InstanceFactory {
             m.getSubMenuItems(menu, proj, (CircuitState) c.getInstance().getData(state), newhi);
           } else if (c.getInstance().getFactory().providesSubCircuitMenu()) {
             final var m = (MenuExtender) c.getFeature(MenuExtender.class);
-            if (m instanceof CircuitStateHolder) {
-              final var csh = (CircuitStateHolder) m;
+            if (m instanceof CircuitStateHolder csh) {
               csh.setCircuitState(state);
               csh.setHierarchyName(hi);
             }

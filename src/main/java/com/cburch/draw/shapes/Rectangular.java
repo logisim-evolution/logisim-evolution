@@ -172,12 +172,9 @@ abstract class Rectangular extends FillableCanvasObject {
 
   @Override
   public boolean matches(CanvasObject other) {
-    if (other instanceof Rectangular) {
-      final var that = (Rectangular) other;
-      return this.bounds.equals(that.bounds) && super.matches(that);
-    }
-
-    return false;
+    return (other instanceof Rectangular that)
+           ? this.bounds.equals(that.bounds) && super.matches(that)
+           : false;
   }
 
   @Override

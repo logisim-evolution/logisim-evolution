@@ -107,10 +107,9 @@ public class Selection extends SelectionBase {
 
   @Override
   public boolean equals(Object other) {
-    if (!(other instanceof Selection)) return false;
-    Selection otherSelection = (Selection) other;
-    return this.selected.equals(otherSelection.selected)
-        && this.lifted.equals(otherSelection.lifted);
+    return (other instanceof Selection otherSelection)
+        ? this.selected.equals(otherSelection.selected) && this.lifted.equals(otherSelection.lifted)
+        : false;
   }
 
   public Collection<Component> getAnchoredComponents() {
@@ -197,6 +196,7 @@ public class Selection extends SelectionBase {
       savedSelections = new WeakHashMap<>();
     }
 
+    @Override
     public void circuitChanged(CircuitEvent event) {
       if (event.getAction() == CircuitEvent.TRANSACTION_DONE) {
         Circuit circuit = event.getCircuit();
@@ -227,6 +227,7 @@ public class Selection extends SelectionBase {
       }
     }
 
+    @Override
     public void projectChanged(ProjectEvent event) {
       int type = event.getAction();
       if (type == ProjectEvent.ACTION_START) {

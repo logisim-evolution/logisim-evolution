@@ -25,16 +25,12 @@ public class InstanceStateImpl implements InstanceState {
     this.circuitState = circuitState;
     this.component = component;
 
-    if (component instanceof InstanceComponent) {
-      ((InstanceComponent) component).setInstanceStateImpl(this);
-    }
+    if (component instanceof InstanceComponent instComp) instComp.setInstanceStateImpl(this);
   }
 
   @Override
   public void fireInvalidated() {
-    if (component instanceof InstanceComponent) {
-      ((InstanceComponent) component).fireInvalidated();
-    }
+    if (component instanceof InstanceComponent instComp) instComp.fireInvalidated();
   }
 
   @Override
@@ -58,19 +54,16 @@ public class InstanceStateImpl implements InstanceState {
 
   @Override
   public InstanceFactory getFactory() {
-    if (component instanceof InstanceComponent) {
-      final var comp = (InstanceComponent) component;
-      return (InstanceFactory) comp.getFactory();
-    }
-    return null;
+    return (component instanceof InstanceComponent comp)
+        ? (InstanceFactory) comp.getFactory()
+        : null;
   }
 
   @Override
   public Instance getInstance() {
-    if (component instanceof InstanceComponent) {
-      return ((InstanceComponent) component).getInstance();
-    }
-    return null;
+    return (component instanceof InstanceComponent comp)
+        ? comp.getInstance()
+        : null;
   }
 
   @Override

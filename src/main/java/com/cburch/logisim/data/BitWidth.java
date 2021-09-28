@@ -99,14 +99,14 @@ public class BitWidth implements Comparable<BitWidth> {
     this.width = width;
   }
 
+  @Override
   public int compareTo(BitWidth other) {
     return this.width - other.width;
   }
 
   @Override
-  public boolean equals(Object other_obj) {
-    if (!(other_obj instanceof BitWidth)) return false;
-    final var other = (BitWidth) other_obj;
+  public boolean equals(Object otherObj) {
+    if (!(otherObj instanceof BitWidth other)) return false;
     return this.width == other.width;
   }
 

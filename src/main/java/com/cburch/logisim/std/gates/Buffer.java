@@ -171,9 +171,9 @@ class Buffer extends InstanceFactory {
     final var g = painter.getGraphics();
     g.translate(x, y);
     double rotate = 0.0;
-    if (facing != Direction.EAST && g instanceof Graphics2D) {
+    if (facing != Direction.EAST && g instanceof Graphics2D g2d) {
       rotate = -facing.toRadians();
-      ((Graphics2D) g).rotate(rotate);
+      g2d.rotate(rotate);
     }
 
     GraphicsUtil.switchToWidth(g, 2);

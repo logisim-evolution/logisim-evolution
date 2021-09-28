@@ -223,8 +223,8 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   protected void paintForeground(Graphics g) {
     final var zoom = grid.getZoomFactor();
     final var gfxScaled = g.create();
-    if (zoom != 1.0 && zoom != 0.0 && gfxScaled instanceof Graphics2D) {
-      ((Graphics2D) gfxScaled).scale(zoom, zoom);
+    if (zoom != 1.0 && zoom != 0.0 && gfxScaled instanceof Graphics2D g2d) {
+      g2d.scale(zoom, zoom);
     }
     super.paintForeground(gfxScaled);
     gfxScaled.dispose();

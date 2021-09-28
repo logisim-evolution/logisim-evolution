@@ -72,8 +72,7 @@ public class Expressions {
 
     @Override
     public boolean equals(Object other) {
-      if (!(other instanceof Constant)) return false;
-      final var o = (Constant) other;
+      if (!(other instanceof Constant o)) return false;
       return this.value == o.value;
     }
 
@@ -112,8 +111,7 @@ public class Expressions {
 
     @Override
     public boolean equals(Object other) {
-      if (!(other instanceof Not)) return false;
-      final var o = (Not) other;
+      if (!(other instanceof Not o)) return false;
       return this.expr.equals(o.expr);
     }
 
@@ -178,8 +176,7 @@ public class Expressions {
 
     @Override
     public boolean equals(Object other) {
-      if (!(other instanceof Variable)) return false;
-      final var o = (Variable) other;
+      if (!(other instanceof Variable o)) return false;
       return this.name.equals(o.name);
     }
 

@@ -60,8 +60,8 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 
   private static ToolbarItem findItem(List<ToolbarItem> items, Tool tool) {
     for (final var item : items) {
-      if (item instanceof ToolItem) {
-        if (tool == ((ToolItem) item).tool) {
+      if (item instanceof ToolItem toolItem) {
+        if (tool == toolItem.tool) {
           return item;
         }
       }
@@ -92,8 +92,8 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 
   @Override
   public boolean isSelected(ToolbarItem item) {
-    if (item instanceof ToolItem) {
-      final var tool = ((ToolItem) item).tool;
+    if (item instanceof ToolItem toolItem) {
+      final var tool = toolItem.tool;
       return tool == proj.getTool();
     } else {
       return false;
@@ -102,8 +102,8 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 
   @Override
   public void itemSelected(ToolbarItem item) {
-    if (item instanceof ToolItem) {
-      final var tool = ((ToolItem) item).tool;
+    if (item instanceof ToolItem toolItem) {
+      final var tool = toolItem.tool;
       proj.setTool(tool);
     }
   }

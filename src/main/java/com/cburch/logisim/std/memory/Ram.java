@@ -84,13 +84,11 @@ public class Ram extends Mem {
 
     @Override
     public Value getLogValue(InstanceState state, Object option) {
-      if (option instanceof Long) {
+      if (option instanceof Long addr) {
         final var s = (MemState) state.getData();
-        long addr = (Long) option;
         return Value.createKnown(BitWidth.create(s.getDataBits()), s.getContents().get(addr));
-      } else {
-        return Value.NIL;
       }
+      return Value.NIL;
     }
   }
 

@@ -78,8 +78,8 @@ class SelectionAction extends Action {
   }
 
   private AppearanceAnchor findAnchor(CanvasModel canvasModel) {
-    for (final Object obj : canvasModel.getObjectsFromTop()) {
-      if (obj instanceof AppearanceAnchor) return (AppearanceAnchor) obj;
+    for (final var obj : canvasModel.getObjectsFromTop()) {
+      if (obj instanceof AppearanceAnchor anchor) return anchor;
     }
     return null;
   }

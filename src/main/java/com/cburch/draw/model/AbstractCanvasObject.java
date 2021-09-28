@@ -171,8 +171,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
     final var rand = new Random();
     if (c.getWidth() == 0 || c.getHeight() == 0) {
       return false;
-    } else if (other instanceof AbstractCanvasObject) {
-      AbstractCanvasObject that = (AbstractCanvasObject) other;
+    } else if (other instanceof AbstractCanvasObject that) {
       for (var i = 0; i < OVERLAP_TRIES; i++) {
         if (i % 2 == 0) {
           final var loc = this.getRandomPoint(c, rand);

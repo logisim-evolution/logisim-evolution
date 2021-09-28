@@ -320,9 +320,9 @@ public class ValueTable extends JPanel {
 
           if (cell.value != null) {
             final var label =
-                (cell.value instanceof Value
+                cell.value instanceof Value
                     ? ((Value) cell.value).toDisplayString(radix)
-                    : (String) cell.value);
+                    : (String) cell.value;
             final var width = bodyMetric.stringWidth(label);
 
             if (cell.fg != null) g.setColor(cell.fg);

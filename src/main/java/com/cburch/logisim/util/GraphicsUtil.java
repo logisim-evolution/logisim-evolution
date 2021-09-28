@@ -142,10 +142,10 @@ public class GraphicsUtil {
     if (text.length() == 0) return;
     final var bd = getTextBounds(g, text, x, y, halign, valign);
     final var tm = new TextMetrics(g, text);
-    if (g instanceof Graphics2D) {
-      ((Graphics2D) g).setPaint(bg);
+    if (g instanceof Graphics2D g2d) {
+      g2d.setPaint(bg);
       g.fillRect(bd.x, bd.y, bd.width, bd.height);
-      ((Graphics2D) g).setPaint(fg);
+      g2d.setPaint(fg);
     }
     g.drawString(text, bd.x, bd.y + tm.ascent);
   }
@@ -211,8 +211,8 @@ public class GraphicsUtil {
   }
 
   public static void switchToWidth(Graphics g, int width) {
-    if (g instanceof Graphics2D) {
-      ((Graphics2D) g).setStroke(new BasicStroke((float) width));
+    if (g instanceof Graphics2D g2d) {
+      g2d.setStroke(new BasicStroke((float) width));
     }
   }
 

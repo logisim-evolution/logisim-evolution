@@ -43,8 +43,7 @@ public class CircuitState implements InstanceData {
       if (action == CircuitEvent.ACTION_ADD) {
         /* Component was added */
         final var comp = (Component) event.getData();
-        if (comp instanceof Wire) {
-          final var wire = (Wire) comp;
+        if (comp instanceof Wire wire) {
           markPointAsDirty(wire.getEnd0());
           markPointAsDirty(wire.getEnd1());
         } else {
@@ -67,10 +66,10 @@ public class CircuitState implements InstanceData {
             subState.parentComp = null;
             subState.reset();
           }
-        } else if (getData(comp) instanceof ComponentDataGuiProvider)
-          ((ComponentDataGuiProvider) getData(comp)).destroy();
-        if (comp instanceof Wire) {
-          final var w = (Wire) comp;
+        } else if (getData(comp) instanceof ComponentDataGuiProvider cdgp) {
+          cdgp.destroy();
+        }
+        if (comp instanceof Wire w) {
           markPointAsDirty(w.getEnd0());
           markPointAsDirty(w.getEnd1());
         } else {
@@ -84,10 +83,10 @@ public class CircuitState implements InstanceData {
         subStates.clear();
         wireData = null;
         for (final var comp : componentData.keySet()) {
-          if (componentData.get(comp) instanceof ComponentDataGuiProvider)
-            ((ComponentDataGuiProvider) componentData.get(comp)).destroy();
-          else if (componentData.get(comp) instanceof CircuitState) {
-            ((CircuitState) componentData.get(comp)).reset();
+          if (componentData.get(comp) instanceof ComponentDataGuiProvider cdgp) {
+            cdgp.destroy();
+          } else if (componentData.get(comp) instanceof CircuitState circState) {
+            circState.reset();
           }
         }
         componentData.clear();
@@ -191,7 +190,7 @@ public class CircuitState implements InstanceData {
         if (newValue != null) this.componentData.put(key, newValue);
         else this.componentData.remove(key);
       } else {
-        final var newValue = (oldValue instanceof ComponentState) ? ((ComponentState) oldValue).clone() : oldValue;
+        final var newValue = (oldValue instanceof ComponentState cs) ? cs.clone() : oldValue;
         this.componentData.put(key, newValue);
       }
     }
@@ -231,18 +230,14 @@ public class CircuitState implements InstanceData {
 
   public InstanceState getInstanceState(Component comp) {
     final var factory = comp.getFactory();
-    if (factory instanceof InstanceFactory) {
-      return ((InstanceFactory) factory).createInstanceState(this, comp);
+    if (factory instanceof InstanceFactory f) {
+      return f.createInstanceState(this, comp);
     }
     throw new RuntimeException("getInstanceState requires instance component");
   }
 
   public InstanceState getInstanceState(Instance instance) {
-    final var factory = instance.getFactory();
-    if (factory instanceof InstanceFactory) {
-      return ((InstanceFactory) factory).createInstanceState(this, instance);
-    }
-    throw new RuntimeException("getInstanceState requires instance component");
+    return instance.getFactory().createInstanceState(this, instance);
   }
 
   public CircuitState getParentState() {
@@ -388,15 +383,14 @@ public class CircuitState implements InstanceData {
     temporaryClock = null;
     wireData = null;
     for (final var comp : componentData.keySet()) {
-      if (comp.getFactory() instanceof Ram) {
-        final var ram = (Ram) comp.getFactory();
+      if (comp.getFactory() instanceof Ram ram) {
         final var remove = ram.reset(this, Instance.getInstanceFor(comp));
         if (remove) componentData.put(comp, null);
       } else if (comp.getFactory() instanceof Buzzer) {
         Buzzer.StopBuzzerSound(comp, this);
       } else if (!(comp.getFactory() instanceof SubcircuitFactory)) {
-        if (componentData.get(comp) instanceof ComponentDataGuiProvider)
-          ((ComponentDataGuiProvider) componentData.get(comp)).destroy();
+        if (componentData.get(comp) instanceof ComponentDataGuiProvider cdgp)
+          cdgp.destroy();
         // it.remove(); ktt1: clear out the state instead of removing the key to
         // prevent concurrent modification error
         componentData.put(comp, null);
@@ -438,9 +432,7 @@ public class CircuitState implements InstanceData {
         }
       }
     } else {
-      if (componentData.get(comp) instanceof ComponentDataGuiProvider)
-        ((ComponentDataGuiProvider) componentData.get(comp)).destroy();
-
+      if (componentData.get(comp) instanceof ComponentDataGuiProvider cdgp) cdgp.destroy();
     }
     componentData.put(comp, data);
   }

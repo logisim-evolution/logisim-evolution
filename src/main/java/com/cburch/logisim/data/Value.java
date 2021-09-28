@@ -297,13 +297,13 @@ public class Value {
   }
 
   @Override
-  public boolean equals(Object other_obj) {
-    if (!(other_obj instanceof Value)) return false;
-    final var other = (Value) other_obj;
-    return this.width == other.width
-        && this.error == other.error
-        && this.unknown == other.unknown
-        && this.value == other.value;
+  public boolean equals(Object otherObj) {
+    return (otherObj instanceof Value other)
+       ? this.width == other.width
+          && this.error == other.error
+          && this.unknown == other.unknown
+          && this.value == other.value
+       : false;
   }
 
   public Value extendWidth(int newWidth, Value others) {

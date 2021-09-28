@@ -40,9 +40,9 @@ public class BoardReaderClass {
 
   private BufferedImage CreateImage(int width, int height, String[] CodeTable, String PixelData) {
     ImageXmlFactory reader = new ImageXmlFactory();
-    reader.SetCodeTable(CodeTable);
-    reader.SetCompressedString(PixelData);
-    return reader.GetPicture(width, height);
+    reader.setCodeTable(CodeTable);
+    reader.setCompressedString(PixelData);
+    return reader.getPicture(width, height);
   }
 
   public BoardInformation GetBoardInformation() {

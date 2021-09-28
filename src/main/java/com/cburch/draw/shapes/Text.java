@@ -143,8 +143,7 @@ public class Text extends AbstractCanvasObject {
 
   @Override
   public boolean matches(CanvasObject other) {
-    if (other instanceof Text) {
-      final var that = (Text) other;
+    if (other instanceof Text that) {
       return this.label.equals(that.label);
     } else {
       return false;

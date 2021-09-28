@@ -92,8 +92,7 @@ public class SelectTool extends Tool {
 
   private static void clearCanvasMessage(Canvas canvas, int dx, int dy) {
     Object getter = canvas.getErrorMessage();
-    if (getter instanceof ComputingMessage) {
-      ComputingMessage msg = (ComputingMessage) getter;
+    if (getter instanceof ComputingMessage msg) {
       if (msg.dx == dx && msg.dy == dy) {
         canvas.setErrorMessage(null);
         canvas.repaint();

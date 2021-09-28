@@ -99,8 +99,7 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
       CircuitState state = factory.getSubstate(circuitState, comp);
       SimulationTreeCircuitNode toAdd = null;
       for (TreeNode o : children) {
-        if (o instanceof SimulationTreeCircuitNode) {
-          SimulationTreeCircuitNode n = (SimulationTreeCircuitNode) o;
+        if (o instanceof SimulationTreeCircuitNode n) {
           if (n.circuitState == state) {
             toAdd = n;
             break;

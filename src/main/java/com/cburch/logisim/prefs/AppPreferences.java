@@ -316,9 +316,9 @@ public class AppPreferences {
     }
   }
 
-  public static void setScaledFonts(Component[] comp) {
-    for (final var component : comp) {
-      if (component instanceof Container) setScaledFonts(((Container) component).getComponents());
+  public static void setScaledFonts(Component[] components) {
+    for (final var component : components) {
+      if (component instanceof Container cont) setScaledFonts(cont.getComponents());
       try {
         component.setFont(getScaledFont(component.getFont()));
         component.revalidate();

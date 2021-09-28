@@ -77,8 +77,8 @@ public class ToolAttributeAction extends Action {
 
   boolean affectsAppearance() {
     AttributeSet attrs = config.getEvent().getAttributeSet();
-    if (attrs instanceof FactoryAttributes) {
-      ComponentFactory factory = ((FactoryAttributes) attrs).getFactory();
+    if (attrs instanceof FactoryAttributes factAttrs) {
+      ComponentFactory factory = factAttrs.getFactory();
       if (factory instanceof SubcircuitFactory) {
         for (Attribute<?> attr : config.getAttributeValues().keySet()) {
           if (attr == CircuitAttributes.APPEARANCE_ATTR) return true;
@@ -126,15 +126,14 @@ public class ToolAttributeAction extends Action {
     protected Map<Circuit, Integer> getAccessedCircuits() {
       Map<Circuit, Integer> accessMap = new HashMap<>();
       AttributeSet attrs = config.getEvent().getAttributeSet();
-      if (attrs instanceof FactoryAttributes) {
-        ComponentFactory factory = ((FactoryAttributes) attrs).getFactory();
-        if (factory instanceof SubcircuitFactory) {
-          Circuit circuit = ((SubcircuitFactory) factory).getSubcircuit();
+      if (attrs instanceof FactoryAttributes factAttrs) {
+        ComponentFactory factory = factAttrs.getFactory();
+        if (factory instanceof SubcircuitFactory sub) {
+          Circuit circuit = sub.getSubcircuit();
           for (Circuit supercirc : circuit.getCircuitsUsingThis()) {
             accessMap.put(supercirc, READ_WRITE);
           }
-        } else if (factory instanceof VhdlEntity) {
-          VhdlEntity vhdl = (VhdlEntity) factory;
+        } else if (factory instanceof VhdlEntity vhdl) {
           for (Circuit supercirc : vhdl.getCircuitsUsingThis()) {
             accessMap.put(supercirc, READ_WRITE);
           }

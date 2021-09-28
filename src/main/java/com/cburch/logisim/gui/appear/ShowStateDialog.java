@@ -140,8 +140,8 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     final var root = (RefTreeNode) tree.getModel().getRoot();
     final var paths = new ArrayList<TreePath>();
     for (final var shape : canvas.getModel().getObjectsFromBottom()) {
-      if (!(shape instanceof DynamicElement)) continue;
-      final var path = toTreePath(root, ((DynamicElement) shape).getPath());
+      if (!(shape instanceof DynamicElement dynEl)) continue;
+      final var path = toTreePath(root, dynEl.getPath());
       paths.add(path);
     }
     return paths.toArray(new TreePath[0]);
@@ -164,8 +164,8 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     // Remove existing dynamic objects that are no longer checked.
     final var toRemove = new ArrayList<CanvasObject>();
     for (final var shape : model.getObjectsFromBottom()) {
-      if (!(shape instanceof DynamicElement)) continue;
-      final var path = toTreePath(root, ((DynamicElement) shape).getPath());
+      if (!(shape instanceof DynamicElement dynEl)) continue;
+      final var path = toTreePath(root, dynEl.getPath());
       if (path != null && tree.isPathChecked(path)) {
         toAdd.remove(path); // already present, don't need to add it again
       } else {
@@ -193,11 +193,11 @@ public class ShowStateDialog extends JDialog implements ActionListener {
       final var ref = node.refData;
       if (ref instanceof CircuitRef) continue;
       final var factory = ref.ic.getFactory();
-      if (factory instanceof DynamicElementProvider) {
+      if (factory instanceof DynamicElementProvider provider) {
         final var x = loc.getX();
         final var y = loc.getY();
         final var p = toComponentPath(path);
-        final var shape = ((DynamicElementProvider) factory).createDynamicElement(x, y, p);
+        final var shape = provider.createDynamicElement(x, y, p);
         pickPlacement(avoid, shape, boundingBox);
         loc = shape.getLocation();
         avoid.add(shape);
@@ -223,13 +223,12 @@ public class ShowStateDialog extends JDialog implements ActionListener {
   private RefTreeNode enumerate(Circuit circuit, InstanceComponent ic) {
     final var root = new RefTreeNode(new CircuitRef(circuit, ic));
     for (final var c : circuit.getNonWires()) {
-      if (c instanceof InstanceComponent) {
-        final var child = (InstanceComponent) c;
+      if (c instanceof InstanceComponent child) {
         final var factory = child.getFactory();
         if (factory instanceof DynamicElementProvider) {
           root.add(new RefTreeNode(new Ref(child)));
-        } else if (factory instanceof SubcircuitFactory) {
-          final var node = enumerate(((SubcircuitFactory) factory).getSubcircuit(), child);
+        } else if (factory instanceof SubcircuitFactory sub) {
+          final var node = enumerate(sub.getSubcircuit(), child);
           if (node != null) root.add(node);
         }
       }
@@ -293,7 +292,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
 
     RefTreeNode(Object data) {
       super(new CheckBoxNodeData(data.toString(), false));
-      refData = (data instanceof Ref) ? (Ref) data : null;
+      refData = (data instanceof Ref ref) ? ref : null;
     }
   }
 }

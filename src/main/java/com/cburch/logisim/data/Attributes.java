@@ -51,7 +51,7 @@ public class Attributes {
     public ComponentMapInformationContainer parse(String value) {
       return null;
     }
-    
+
     @Override
     public boolean isToSave() {
       return false;
@@ -401,11 +401,9 @@ public class Attributes {
 
     @Override
     public String toDisplayString(V value) {
-      if (value instanceof AttributeOptionInterface) {
-        return ((AttributeOptionInterface) value).toDisplayString();
-      } else {
-        return value.toString();
-      }
+      return (value instanceof AttributeOptionInterface attr)
+        ? attr.toDisplayString()
+        : value.toString();
     }
   }
 
@@ -459,13 +457,13 @@ public class Attributes {
     public Integer parse(String value) {
       return Integer.valueOf(value);
     }
-    
+
     @Override
     public boolean isToSave() {
       return false;
     }
   }
-  
+
   public static Attribute<Integer> forNoSave() {
     return new NoSaveAttribute();
   }

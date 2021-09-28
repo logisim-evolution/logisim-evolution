@@ -156,8 +156,8 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
 
     @Override
     public void paintIcon(Component destination, Graphics gfx) {
-      if (!isSelectable() && gfx instanceof Graphics2D) {
-        ((Graphics2D) gfx).setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
+      if (!isSelectable() && gfx instanceof Graphics2D g2d) {
+        g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.3f));
       }
 
       if (icon == null) {

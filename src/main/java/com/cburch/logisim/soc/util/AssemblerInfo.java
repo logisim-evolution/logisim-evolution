@@ -221,8 +221,8 @@ public class AssemblerInfo {
     public ArrayList<AssemblerSectionInfo> getAll() {
       ArrayList<AssemblerSectionInfo> ret = new ArrayList<>();
       for (SectionHeader hdr : super.getHeaders())
-        if (hdr instanceof AssemblerSectionInfo)
-          ret.add((AssemblerSectionInfo) hdr);
+        if (hdr instanceof AssemblerSectionInfo secInfo)
+          ret.add(secInfo);
       return ret;
     }
 

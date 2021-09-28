@@ -64,15 +64,13 @@ public class LibraryTools {
 
   public static Circuit getCircuitFromLibs(Library lib, String UpperCaseName) {
     Circuit ret = null;
-    if (lib instanceof LogisimFile) {
-      LogisimFile llib = (LogisimFile) lib;
+    if (lib instanceof LogisimFile llib) {
       for (final var circ : llib.getCircuits()) {
         if (circ.getName().toUpperCase().equals(UpperCaseName)) return circ;
       }
     }
     for (Library libs : lib.getLibraries()) {
-      if (libs instanceof LoadedLibrary) {
-        LoadedLibrary lib1 = (LoadedLibrary) libs;
+      if (libs instanceof LoadedLibrary lib1) {
         ret = getCircuitFromLibs(lib1.getBase(), UpperCaseName);
       } else ret = getCircuitFromLibs(libs, UpperCaseName);
       if (ret != null) return ret;

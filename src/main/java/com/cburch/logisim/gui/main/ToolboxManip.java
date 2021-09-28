@@ -72,15 +72,14 @@ class ToolboxManip implements ProjectExplorer.Listener {
   @Override
   public void deleteRequested(ProjectExplorer.Event event) {
     Object request = event.getTarget();
-    if (request instanceof ProjectExplorerLibraryNode) {
-      Library lib = ((ProjectExplorerLibraryNode) request).getValue();
+    if (request instanceof ProjectExplorerLibraryNode libNode) {
+      Library lib = libNode.getValue();
       ProjectLibraryActions.doUnloadLibrary(proj, lib);
-    } else if (request instanceof ProjectExplorerToolNode) {
-      Tool tool = ((ProjectExplorerToolNode) request).getValue();
+    } else if (request instanceof ProjectExplorerToolNode toolNode) {
+      Tool tool = toolNode.getValue();
       if (tool instanceof AddTool) {
         ComponentFactory factory = ((AddTool) tool).getFactory();
-        if (factory instanceof SubcircuitFactory) {
-          SubcircuitFactory circFact = (SubcircuitFactory) factory;
+        if (factory instanceof SubcircuitFactory circFact) {
           ProjectCircuitActions.doRemoveCircuit(proj, circFact.getSubcircuit());
         }
       }
@@ -90,19 +89,16 @@ class ToolboxManip implements ProjectExplorer.Listener {
   @Override
   public void doubleClicked(ProjectExplorer.Event event) {
     Object clicked = event.getTarget();
-    if (clicked instanceof ProjectExplorerToolNode) {
-      ((ProjectExplorerToolNode) clicked).fireNodeChanged();
-      Tool baseTool = ((ProjectExplorerToolNode) clicked).getValue();
-      if (baseTool instanceof AddTool) {
-        AddTool tool = (AddTool) baseTool;
+    if (clicked instanceof ProjectExplorerToolNode toolNode) {
+      toolNode.fireNodeChanged();
+      Tool baseTool = tooNode.getValue();
+      if (baseTool instanceof AddTool tool) {
         ComponentFactory source = tool.getFactory();
-        if (source instanceof SubcircuitFactory) {
-          SubcircuitFactory circFact = (SubcircuitFactory) source;
+        if (source instanceof SubcircuitFactory circFact) {
           proj.setCurrentCircuit(circFact.getSubcircuit());
           proj.getFrame().setEditorView(Frame.EDIT_LAYOUT);
           setDefaultTool(lastSelected, proj);
-        } else if (source instanceof VhdlEntity) {
-          VhdlEntity vhdl = (VhdlEntity) source;
+        } else if (source instanceof VhdlEntity vhdl) {
           proj.setCurrentHdlModel(vhdl.getContent());
         }
       }
@@ -112,16 +108,15 @@ class ToolboxManip implements ProjectExplorer.Listener {
   @Override
   public JPopupMenu menuRequested(ProjectExplorer.Event event) {
     Object clicked = event.getTarget();
-    if (clicked instanceof ProjectExplorerToolNode) {
-      Tool baseTool = ((ProjectExplorerToolNode) clicked).getValue();
-      if (baseTool instanceof AddTool) {
-        AddTool tool = (AddTool) baseTool;
+    if (clicked instanceof ProjectExplorerToolNode toolNode) {
+      Tool baseTool = toolNode.getValue();
+      if (baseTool instanceof AddTool tool) {
         ComponentFactory source = tool.getFactory();
-        if (source instanceof SubcircuitFactory) {
-          Circuit circ = ((SubcircuitFactory) source).getSubcircuit();
+        if (source instanceof SubcircuitFactory sub) {
+          Circuit circ = sub.getSubcircuit();
           return Popups.forCircuit(proj, tool, circ);
-        } else if (source instanceof VhdlEntity) {
-          VhdlContent vhdl = ((VhdlEntity) source).getContent();
+        } else if (source instanceof VhdlEntity vhdlEntity) {
+          VhdlContent vhdl = vhdlEntity.getContent();
           return Popups.forVhdl(proj, tool, vhdl);
         } else {
           return null;
@@ -157,14 +152,12 @@ class ToolboxManip implements ProjectExplorer.Listener {
       lastSelected = proj.getTool();
     }
     Object selected = event.getTarget();
-    if (selected instanceof ProjectExplorerToolNode) {
-      ((ProjectExplorerToolNode) selected).fireNodeChanged();
-      Tool tool = ((ProjectExplorerToolNode) selected).getValue();
-      if (tool instanceof AddTool) {
-        AddTool addTool = (AddTool) tool;
+    if (selected instanceof ProjectExplorerToolNode toolNode) {
+      toolNode.fireNodeChanged();
+      Tool tool = toolNode.getValue();
+      if (tool instanceof AddTool addTool) {
         ComponentFactory source = addTool.getFactory();
-        if (source instanceof SubcircuitFactory) {
-          SubcircuitFactory circFact = (SubcircuitFactory) source;
+        if (source instanceof SubcircuitFactory circFact) {
           Circuit circ = circFact.getSubcircuit();
           if (proj.getCurrentCircuit() == circ) {
             AttrTableModel m = new AttrTableCircuitModel(proj, circ);
@@ -183,8 +176,8 @@ class ToolboxManip implements ProjectExplorer.Listener {
     private LogisimFile curFile = null;
 
     private void addLibrary(Library lib) {
-      if (lib instanceof LibraryEventSource) {
-        ((LibraryEventSource) lib).addLibraryListener(this);
+      if (lib instanceof LibraryEventSource src) {
+        src.addLibraryListener(this);
       }
       for (Tool tool : lib.getTools()) {
         AttributeSet attrs = tool.getAttributeSet();
@@ -230,8 +223,8 @@ class ToolboxManip implements ProjectExplorer.Listener {
     }
 
     private void removeLibrary(Library lib) {
-      if (lib instanceof LibraryEventSource) {
-        ((LibraryEventSource) lib).removeLibraryListener(this);
+      if (lib instanceof LibraryEventSource src) {
+        src.removeLibraryListener(this);
       }
       for (Tool tool : lib.getTools()) {
         AttributeSet attrs = tool.getAttributeSet();

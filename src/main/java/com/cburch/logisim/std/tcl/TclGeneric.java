@@ -50,9 +50,8 @@ public class TclGeneric extends TclComponent {
 
     @Override
     public java.awt.Component getCellEditor(Window source, VhdlContentComponent value) {
-      Project proj =
-          source instanceof com.cburch.logisim.gui.main.Frame
-              ? ((com.cburch.logisim.gui.main.Frame) source).getProject()
+      final var proj = source instanceof com.cburch.logisim.gui.main.Frame srcFrame
+              ? srcFrame.getProject()
               : null;
       return TclGenericAttributes.getContentEditor(source, value, proj);
     }

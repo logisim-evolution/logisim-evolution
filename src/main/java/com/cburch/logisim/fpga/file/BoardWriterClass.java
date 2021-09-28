@@ -147,10 +147,10 @@ public class BoardWriterClass {
       BoardPicture.appendChild(pictsize);
       final var CodeTable = boardInfo.createElement("CompressionCodeTable");
       BoardPicture.appendChild(CodeTable);
-      CodeTable.setAttribute("TableData", writer.GetCodeTable());
+      CodeTable.setAttribute("TableData", writer.getCodeTable());
       final var PixelData = boardInfo.createElement("PixelData");
       BoardPicture.appendChild(PixelData);
-      PixelData.setAttribute("PixelRGB", writer.GetCompressedString());
+      PixelData.setAttribute("PixelRGB", writer.getCompressedString());
     } catch (Exception e) {
       /* TODO: handle exceptions */
       logger.error(

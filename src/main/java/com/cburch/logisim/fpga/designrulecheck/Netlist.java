@@ -256,8 +256,7 @@ public class Netlist {
     // we have to go down the tree to build first all subcircuits
     final var handledCircuits = new ArrayList<Circuit>();
     for (final var comp : myCircuit.getNonWires()) {
-      if (comp.getFactory() instanceof SubcircuitFactory) {
-        final var factory = (SubcircuitFactory) comp.getFactory();
+      if (comp.getFactory() instanceof SubcircuitFactory factory) {
         final var subCircuit = factory.getSubcircuit();
         if (handledCircuits.contains(subCircuit)) continue;
         handledCircuits.add(subCircuit);
@@ -2315,8 +2314,7 @@ public class Netlist {
         }
       }
     }
-    if (comp.getFactory() instanceof SubcircuitFactory) {
-      final var sub = (SubcircuitFactory) comp.getFactory();
+    if (comp.getFactory() instanceof SubcircuitFactory sub) {
       if (sourcePoint.getChildsPortIndex() < 0) {
         Reporter.report.addFatalErrorFmt(
             "BUG: Subcircuit port is not annotated!\n ==> %s:%d\n",

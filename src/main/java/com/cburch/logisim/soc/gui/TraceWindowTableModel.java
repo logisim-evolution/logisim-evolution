@@ -121,7 +121,7 @@ public class TraceWindowTableModel extends AbstractTableModel
     if (info != null && info.getTransaction() != null) {
       SocBusTransaction trans = info.getTransaction();
       Object master = trans.getTransactionInitiator();
-      if (master instanceof Component) ((Component) master).addComponentListener(this);
+      if (master instanceof Component comp) comp.addComponentListener(this);
       if (trans.getTransactionResponder() != null)
         trans.getTransactionResponder().addComponentListener(this);
     }

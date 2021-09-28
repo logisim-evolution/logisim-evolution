@@ -180,12 +180,10 @@ public class MainMenuListener extends MenuListener {
     public void projectChanged(ProjectEvent event) {
       final var action = event.getAction();
       if (action == ProjectEvent.ACTION_SET_CURRENT) {
-        if (event.getOldData() instanceof Circuit) {
-          Circuit old = (Circuit) event.getOldData();
+        if (event.getOldData() instanceof Circuit old) {
           old.getAppearance().removeCanvasModelListener(this);
         }
-        if (event.getData() instanceof Circuit) {
-          Circuit circ = (Circuit) event.getData();
+        if (event.getData() instanceof Circuit circ) {
           circ.getAppearance().addCanvasModelListener(this);
         }
         computeEnabled();

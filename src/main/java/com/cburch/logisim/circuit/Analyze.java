@@ -47,8 +47,7 @@ public class Analyze {
 
     @Override
     public boolean equals(Object other) {
-      if (!(other instanceof LocationBit)) return false;
-      final var that = (LocationBit) other;
+      if (!(other instanceof LocationBit that)) return false;
       return (that.loc.equals(this.loc) && that.bit == this.bit);
     }
 
@@ -339,8 +338,10 @@ public class Analyze {
         } catch (UnsupportedOperationException e) {
           throw new AnalyzeException.CannotHandle(comp.getFactory().getDisplayName());
         }
-      } else if (comp.getFactory() instanceof Pin) { // pins are handled elsewhere
-      } else if (comp.getFactory() instanceof SplitterFactory) { // splitters are handled elsewhere
+      } else if (comp.getFactory() instanceof Pin) {
+        // pins are handled elsewhere
+      } else if (comp.getFactory() instanceof SplitterFactory) {
+        // splitters are handled elsewhere
       } else {
         throw new AnalyzeException.CannotHandle(comp.getFactory().getDisplayName());
       }

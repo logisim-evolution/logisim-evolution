@@ -34,19 +34,17 @@ public interface CircuitStateHolder {
     public void registerCircuitListener(CircuitListener l) {
       if (mainCircuit != null) mainCircuit.addCircuitListener(l);
       for (final var c : components) {
-        if (c.getFactory() instanceof SubcircuitFactory) {
-          final var f = (SubcircuitFactory) c.getFactory();
-          f.getSubcircuit().addCircuitListener(l);
+        if (c.getFactory() instanceof SubcircuitFactory factory) {
+          factory.getSubcircuit().addCircuitListener(l);
         }
       }
     }
 
-    public void deregisterCircuitListener(CircuitListener l) {
-      if (mainCircuit != null) mainCircuit.addCircuitListener(l);
+    public void deregisterCircuitListener(CircuitListener listener) {
+      if (mainCircuit != null) mainCircuit.addCircuitListener(listener);
       for (final var c : components) {
-        if (c.getFactory() instanceof SubcircuitFactory) {
-          final var f = (SubcircuitFactory) c.getFactory();
-          f.getSubcircuit().removeCircuitListener(l);
+        if (c.getFactory() instanceof SubcircuitFactory factory) {
+          factory.getSubcircuit().removeCircuitListener(listener);
         }
       }
     }

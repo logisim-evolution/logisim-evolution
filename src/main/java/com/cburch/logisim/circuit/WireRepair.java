@@ -74,17 +74,13 @@ class WireRepair extends CircuitTransaction {
   private void doMerges(CircuitMutator mutator) {
     final var sets = new MergeSets();
     for (final var loc : circuit.wires.points.getSplitLocations()) {
-      Collection<?> at = circuit.getComponents(loc);
+      final var at = circuit.getComponents(loc);
       if (at.size() == 2) {
-        Iterator<?> atit = at.iterator();
-        Object at0 = atit.next();
-        Object at1 = atit.next();
-        if (at0 instanceof Wire && at1 instanceof Wire) {
-          final var w0 = (Wire) at0;
-          final var w1 = (Wire) at1;
-          if (w0.isParallel(w1)) {
-            sets.merge(w0, w1);
-          }
+        final var atit = at.iterator();
+        final var at0 = atit.next();
+        final var at1 = atit.next();
+        if (at0 instanceof Wire w0 && at1 instanceof Wire w1) {
+          if (w0.isParallel(w1)) sets.merge(w0, w1);
         }
       }
     }

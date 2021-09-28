@@ -89,9 +89,7 @@ class ToolboxToolbarModel extends AbstractToolbarModel implements MenuListener.E
 
   @Override
   public void itemSelected(ToolbarItem item) {
-    if (item instanceof LogisimToolbarItem) {
-      ((LogisimToolbarItem) item).doAction();
-    }
+    if (item instanceof LogisimToolbarItem toolbarItem) toolbarItem.doAction();
   }
 
   @Override

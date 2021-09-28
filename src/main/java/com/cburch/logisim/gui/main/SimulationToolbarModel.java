@@ -86,9 +86,7 @@ public class SimulationToolbarModel extends AbstractToolbarModel implements Chan
 
   @Override
   public void itemSelected(ToolbarItem item) {
-    if (item instanceof LogisimToolbarItem) {
-      ((LogisimToolbarItem) item).doAction();
-    }
+    if (item instanceof LogisimToolbarItem toolbarItem) toolbarItem.doAction();
   }
 
   @Override

@@ -264,9 +264,8 @@ public class ZipClassLoader extends ClassLoader {
       final var resourceName = className.replace('.', '/') + ".class";
       result = request(REQUEST_LOAD, resourceName);
 
-      if (result instanceof byte[]) {
+      if (result instanceof byte[] data) {
         if (DEBUG >= 3) logger.debug("  define class");
-        final var data = (byte[]) result;
         result = defineClass(className, data, 0, data.length);
         if (result != null) {
           if (DEBUG >= 3) logger.debug("  class defined");
@@ -297,11 +296,7 @@ public class ZipClassLoader extends ClassLoader {
   public URL findResource(String resourceName) {
     if (DEBUG >= 3) logger.debug("findResource " + resourceName);
     final var ret = request(REQUEST_FIND, resourceName);
-    if (ret instanceof URL) {
-      return (URL) ret;
-    } else {
-      return super.findResource(resourceName);
-    }
+    return (ret instanceof URL url) ? url : super.findResource(resourceName);
   }
 
   private Object request(int action, String resourceName) {

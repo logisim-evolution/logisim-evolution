@@ -45,8 +45,7 @@ public class FpgaCommanderListModel extends AbstractListModel<Object> {
 
   public void add(Object toAdd) {
     count++;
-    if (toAdd instanceof SimpleDRCContainer) {
-      SimpleDRCContainer add = (SimpleDRCContainer) toAdd;
+    if (toAdd instanceof SimpleDRCContainer add) {
       if (add.getSupressCount()) count--;
       else add.setListNumber(count);
     }

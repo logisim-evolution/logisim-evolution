@@ -28,7 +28,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     synchronized (windowRegistry) {
       HdlContentEditor ret = windowRegistry.get(value);
       if (ret == null) {
-        if (source instanceof Frame) ret = new HdlContentEditor((Frame) source, proj, value);
+        if (source instanceof Frame frame) ret = new HdlContentEditor(frame, proj, value);
         else ret = new HdlContentEditor((Dialog) source, proj, value);
         windowRegistry.put(value, ret);
       }

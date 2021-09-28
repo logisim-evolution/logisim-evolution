@@ -49,8 +49,7 @@ public class SubcircuitPoker extends InstancePoker {
             .getSubcircuit()
             .getAppearance()
             .getObjectsFromTop()) {
-      if (c instanceof DynamicElementWithPoker)
-        ((DynamicElementWithPoker) c).mousePressed(state, e);
+      if (c instanceof DynamicElementWithPoker dynEl) dynEl.mousePressed(state, e);
     }
     if (isWithin(state, e)) {
       mouseDown = true;
@@ -65,8 +64,7 @@ public class SubcircuitPoker extends InstancePoker {
             .getSubcircuit()
             .getAppearance()
             .getObjectsFromTop()) {
-      if (c instanceof DynamicElementWithPoker)
-        ((DynamicElementWithPoker) c).mouseReleased(state, e);
+      if (c instanceof DynamicElementWithPoker dynEl) dynEl.mouseReleased(state, e);
     }
     if (mouseDown) {
       mouseDown = false;

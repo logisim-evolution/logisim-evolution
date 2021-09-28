@@ -55,7 +55,7 @@ public class VhdlEntityComponent extends InstanceFactory {
 
     @Override
     public java.awt.Component getCellEditor(Window source, VhdlContentComponent value) {
-      Project proj = source instanceof Frame ? ((Frame) source).getProject() : null;
+      final var proj = (source instanceof Frame frame) ? frame.getProject() : null;
       return VhdlEntityAttributes.getContentEditor(source, value, proj);
     }
 

@@ -185,9 +185,9 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
       file.removeLibraryListener(this);
     }
     for (Enumeration<?> en = children(); en.hasMoreElements(); ) {
-      final var n = en.nextElement();
-      if (n instanceof ProjectExplorerModel.Node<?>) {
-        ((ProjectExplorerModel.Node<?>) n).decommission();
+      final var element = en.nextElement();
+      if (element instanceof ProjectExplorerModel.Node<?> expModel) {
+        expModel.decommission();
       }
     }
   }

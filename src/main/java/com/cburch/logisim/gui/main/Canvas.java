@@ -447,8 +447,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       ComponentUserEvent e = null;
       for (Component comp : getCircuit().getAllContaining(loc)) {
         Object makerObj = comp.getFeature(ToolTipMaker.class);
-        if (makerObj instanceof ToolTipMaker) {
-          ToolTipMaker maker = (ToolTipMaker) makerObj;
+        if (makerObj instanceof ToolTipMaker maker) {
           if (e == null) {
             e = new ComponentUserEvent(this, loc.getX(), loc.getY());
           }
@@ -907,7 +906,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
           final var min = opts.get(0) / 100.0;
           zoomModel.setZoomFactor(Math.max(zoom, min), mwe);
         }
-      } else if (tool instanceof PokeTool && ((PokeTool) tool).isScrollable()) {
+      } else if (tool instanceof PokeTool pokeTool && pokeTool.isScrollable()) {
         final var id = (mwe.getWheelRotation() < 0) ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;
         final var e = new KeyEvent(mwe.getComponent(), KeyEvent.KEY_PRESSED, mwe.getWhen(), 0, id, '\0');
         tool.keyPressed(Canvas.this, e);
@@ -1019,10 +1018,10 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       if (event.getAction() == LibraryEvent.REMOVE_TOOL) {
         Object t = event.getData();
         Circuit circ = null;
-        if (t instanceof AddTool) {
-          t = ((AddTool) t).getFactory();
-          if (t instanceof SubcircuitFactory) {
-            circ = ((SubcircuitFactory) t).getSubcircuit();
+        if (t instanceof AddTool at) {
+          t = at.getFactory();
+          if (t instanceof SubcircuitFactory sub) {
+            circ = sub.getSubcircuit();
           }
         }
 

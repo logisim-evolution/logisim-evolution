@@ -129,8 +129,7 @@ public class EditableLabel implements Cloneable {
 
   @Override
   public boolean equals(Object other) {
-    if (other instanceof EditableLabel) {
-      EditableLabel that = (EditableLabel) other;
+    if (other instanceof EditableLabel that) {
       return this.x == that.x
           && this.y == that.y
           && this.text.equals(that.text)

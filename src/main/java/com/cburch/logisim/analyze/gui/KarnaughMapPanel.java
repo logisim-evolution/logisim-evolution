@@ -479,8 +479,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   }
 
   public void paintKmap(Graphics gfx, boolean selectionBlock) {
-    if (!(gfx instanceof Graphics2D)) return;
-    Graphics2D g2 = (Graphics2D) gfx;
+    if (!(gfx instanceof Graphics2D g2)) return;
     if (AppPreferences.AntiAliassing.getBoolean()) {
       g2.setRenderingHint(
           RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);

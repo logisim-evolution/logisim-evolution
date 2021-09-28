@@ -165,8 +165,8 @@ class ToolbarOptions extends OptionsPanel {
     @Override
     public void doubleClicked(ProjectExplorer.Event event) {
       final var target = event.getTarget();
-      if (target instanceof ProjectExplorerToolNode) {
-        final var tool = ((ProjectExplorerToolNode) target).getValue();
+      if (target instanceof ProjectExplorerToolNode toolNode) {
+        final var tool = toolNode.getValue();
         doAddTool(tool);
       }
     }

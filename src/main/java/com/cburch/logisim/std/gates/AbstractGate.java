@@ -397,10 +397,9 @@ abstract class AbstractGate extends InstanceFactory {
     g.setColor(baseColor);
     g.translate(loc.getX(), loc.getY());
     var rotate = 0.0;
-    if (facing != Direction.EAST && g instanceof Graphics2D) {
+    if (facing != Direction.EAST && g instanceof Graphics2D g2d) {
       rotate = -facing.toRadians();
-      final var g2 = (Graphics2D) g;
-      g2.rotate(rotate);
+      g2d.rotate(rotate);
     }
 
     if (shape == AppPreferences.SHAPE_RECTANGULAR) {

@@ -32,10 +32,8 @@ public class WidthIncompatibilityData {
 
   @Override
   public boolean equals(Object other) {
-    if (!(other instanceof WidthIncompatibilityData)) return false;
+    if (!(other instanceof WidthIncompatibilityData o)) return false;
     if (this == other) return true;
-
-    final var o = (WidthIncompatibilityData) other;
     if (this.size() != o.size()) return false;
     for (var i = 0; i < this.size(); i++) {
       final var p = o.getPoint(i);

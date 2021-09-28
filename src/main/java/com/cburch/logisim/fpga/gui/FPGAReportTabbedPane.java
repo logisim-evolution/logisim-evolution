@@ -401,19 +401,13 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
       var idx = -1;
       if (e.getSource().equals(errors)) idx = errors.getSelectedIndex();
       else if (sourceIsErrorsWindow) idx = errorsWindow.getListObject().getSelectedIndex();
-      if (idx >= 0) {
-        if (errorsList.getElementAt(idx) instanceof SimpleDRCContainer) {
-          generateDrcTrace((SimpleDRCContainer) errorsList.getElementAt(idx));
-        }
-      }
+      if (idx >= 0 && errorsList.getElementAt(idx) instanceof SimpleDRCContainer cont) generateDrcTrace(cont);
     } else if (e.getSource().equals(warnings) || sourceIsWarningsWindow) {
       clearDrcTrace();
       var idx = -1;
       if (e.getSource().equals(warnings)) idx = warnings.getSelectedIndex();
       else if (sourceIsWarningsWindow) idx = warningsWindow.getListObject().getSelectedIndex();
-      if (idx >= 0)
-        if (warningsList.getElementAt(idx) instanceof SimpleDRCContainer)
-          generateDrcTrace((SimpleDRCContainer) warningsList.getElementAt(idx));
+      if (idx >= 0 && warningsList.getElementAt(idx) instanceof SimpleDRCContainer cont) generateDrcTrace(cont);
     }
   }
 

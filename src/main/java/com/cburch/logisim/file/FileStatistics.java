@@ -135,8 +135,8 @@ public class FileStatistics {
     for (final var count : counts) {
       final var factory = count.getFactory();
       Circuit factoryCirc = null;
-      if (factory instanceof SubcircuitFactory) {
-        factoryCirc = ((SubcircuitFactory) factory).getSubcircuit();
+      if (factory instanceof SubcircuitFactory sf) {
+        factoryCirc = sf.getSubcircuit();
       }
       if (exclude == null || !exclude.contains(factoryCirc)) {
         ret.simpleCount += count.simpleCount;
@@ -159,8 +159,8 @@ public class FileStatistics {
     }
     for (final var lib : file.getLibraries()) {
       for (final var tool : lib.getTools()) {
-        if (tool instanceof AddTool) {
-          final var factory = ((AddTool) tool).getFactory();
+        if (tool instanceof AddTool at) {
+          final var factory = at.getFactory();
           final var count = counts.get(factory);
           if (count != null) {
             count.library = lib;

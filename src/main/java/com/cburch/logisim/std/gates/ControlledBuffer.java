@@ -220,9 +220,9 @@ class ControlledBuffer extends InstanceFactory {
     var rotate = 0.0;
     final var g = painter.getGraphics();
     g.translate(x, y);
-    if (facing != Direction.EAST && g instanceof Graphics2D) {
+    if (facing != Direction.EAST && g instanceof Graphics2D g2d) {
       rotate = -facing.toRadians();
-      ((Graphics2D) g).rotate(rotate);
+      g2d.rotate(rotate);
     }
 
     if (isInverter) {

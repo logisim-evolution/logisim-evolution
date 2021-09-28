@@ -31,12 +31,12 @@ public class BoardRectangle {
 
   @Override
   public boolean equals(Object rect) {
-    if (!(rect instanceof BoardRectangle)) return false;
-    BoardRectangle Rect = (BoardRectangle) rect;
-    return ((Rect.getHeight() == height)
-        && (Rect.getWidth() == width)
-        && (Rect.getXpos() == xPosition)
-        && (Rect.getYpos() == yPosition));
+    return (rect instanceof BoardRectangle r)
+           ? ((r.getHeight() == height)
+             && (r.getWidth() == width)
+             && (r.getXpos() == xPosition)
+             && (r.getYpos() == yPosition))
+           : false;
   }
 
   public int getHeight() {

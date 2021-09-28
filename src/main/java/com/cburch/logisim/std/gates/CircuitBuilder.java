@@ -295,11 +295,9 @@ public class CircuitBuilder {
   }
 
   private static Layout layoutGatesSub(CircuitDetermination det) {
-    if (det instanceof CircuitDetermination.Input) {
-      final var input = (CircuitDetermination.Input) det;
+    if (det instanceof CircuitDetermination.Input input) {
       return new Layout(input.getName(), input.IsInvertedVersion());
-    } else if (det instanceof CircuitDetermination.Value) {
-      final var value = (CircuitDetermination.Value) det;
+    } else if (det instanceof CircuitDetermination.Value value) {
       if ((value.getValue() == 1) || (value.getValue() == 0)) {
         return new Layout(Integer.toString(value.getValue()), false);
       }
@@ -475,8 +473,8 @@ public class CircuitBuilder {
     if (layout.subLayouts.length == parent.getEnds().size() - 2) {
       int index = layout.subLayouts.length / 2 + 1;
       Object factory = parent.getFactory();
-      if (factory instanceof AbstractGate) {
-        final var val = ((AbstractGate) factory).getIdentity();
+      if (factory instanceof AbstractGate gate) {
+        final var val = gate.getIdentity();
         Long valLong = val.toLongValue();
         final var loc = parent.getEnd(index).getLocation();
         final var attrs = Constant.FACTORY.createAttributeSet();

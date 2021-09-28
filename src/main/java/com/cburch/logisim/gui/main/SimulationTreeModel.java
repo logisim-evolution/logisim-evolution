@@ -39,13 +39,11 @@ public class SimulationTreeModel implements TreeModel {
   private TreePath findPath(Object node) {
     ArrayList<Object> path = new ArrayList<>();
     Object current = node;
-    while (current instanceof TreeNode) {
+    while (current instanceof TreeNode treeNode) {
       path.add(0, current);
-      current = ((TreeNode) current).getParent();
+      current = treeNode.getParent();
     }
-    if (current != null) {
-      path.add(0, current);
-    }
+    if (current != null) path.add(0, current);
     return new TreePath(path.toArray());
   }
 
@@ -65,20 +63,14 @@ public class SimulationTreeModel implements TreeModel {
 
   @Override
   public Object getChild(Object parent, int index) {
-    if (parent instanceof TreeNode) {
-      return ((TreeNode) parent).getChildAt(index);
-    } else {
-      return null;
-    }
+    return (parent instanceof TreeNode treeNode)
+        ? treeNode.getChildAt(index)
+        : null;
   }
 
   @Override
   public int getChildCount(Object parent) {
-    if (parent instanceof TreeNode) {
-      return ((TreeNode) parent).getChildCount();
-    } else {
-      return 0;
-    }
+    return (parent instanceof TreeNode treeNode) ? treeNode.getChildCount() : 0;
   }
 
   public CircuitState getCurrentView() {
@@ -100,11 +92,9 @@ public class SimulationTreeModel implements TreeModel {
 
   @Override
   public int getIndexOfChild(Object parent, Object child) {
-    if (parent instanceof TreeNode && child instanceof TreeNode) {
-      return ((TreeNode) parent).getIndex((TreeNode) child);
-    } else {
-      return -1;
-    }
+    return ((parent instanceof TreeNode parentNode) && (child instanceof TreeNode childNode))
+        ? (parentNode).getIndex(childNode)
+        : -1;
   }
 
   @Override
@@ -114,11 +104,9 @@ public class SimulationTreeModel implements TreeModel {
 
   @Override
   public boolean isLeaf(Object node) {
-    if (node instanceof TreeNode) {
-      return ((TreeNode) node).getChildCount() == 0;
-    } else {
-      return true;
-    }
+    return (node instanceof TreeNode treeNode)
+        ? treeNode.getChildCount() == 0
+        : true;
   }
 
   public void updateSimulationList(List<CircuitState> allRootStates) {
@@ -158,8 +146,7 @@ public class SimulationTreeModel implements TreeModel {
       current = path.get(i);
       SimulationTreeNode oldNode = node;
       for (TreeNode child : Collections.list(node.children())) {
-        if (child instanceof SimulationTreeCircuitNode) {
-          SimulationTreeCircuitNode circNode = (SimulationTreeCircuitNode) child;
+        if (child instanceof SimulationTreeCircuitNode circNode) {
           if (circNode.getCircuitState() == current) {
             node = circNode;
             break;

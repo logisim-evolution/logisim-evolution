@@ -85,12 +85,12 @@ public class LeftPanel extends JTable {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
-      if (!(value instanceof SignalInfo)) return null;
+      if (!(value instanceof SignalInfo signalInfo)) return null;
       final var ret = super.getTableCellRendererComponent(table, value, false, false, row, col);
-      if (ret instanceof JLabel && value instanceof SignalInfo) {
+      if (ret instanceof JLabel) {
         final var label = (JLabel) ret;
         label.setBorder(rowInsets);
-        final var item = (SignalInfo) value;
+        final var item = signalInfo;
         label.setBackground(chronoPanel.rowColors(item, isSelected)[0]);
         label.setIcon(item.icon);
       }
@@ -103,12 +103,10 @@ public class LeftPanel extends JTable {
 
     @Override
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
-      if (!(value instanceof Signal)) return null;
-      final var s = (Signal) value;
+      if (!(value instanceof Signal s)) return null;
       final var txt = s.getFormattedValue(chronoPanel.getRightPanel().getCurrentTime());
       final var ret = super.getTableCellRendererComponent(table, txt, false, false, row, col);
-      if (ret instanceof JLabel) {
-        final var label = (JLabel) ret;
+      if (ret instanceof JLabel label) {
         label.setBorder(rowInsets);
         label.setIcon(null);
         label.setBackground(chronoPanel.rowColors(s.info, isSelected)[0]);

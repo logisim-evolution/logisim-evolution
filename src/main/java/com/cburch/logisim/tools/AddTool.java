@@ -220,13 +220,10 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   @Override
   public boolean equals(Object other) {
-    if (!(other instanceof AddTool)) return false;
-    final var o = (AddTool) other;
-    if (this.description != null) {
-      return this.descriptionBase == o.descriptionBase && this.description.equals(o.description);
-    } else {
-      return this.factory.equals(o.factory);
-    }
+    if (!(other instanceof AddTool o)) return false;
+    return (this.description != null)
+      ? this.descriptionBase == o.descriptionBase && this.description.equals(o.description)
+      : this.factory.equals(o.factory);
   }
 
   private void expose(java.awt.Component c, int x, int y) {
@@ -680,8 +677,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   @Override
   public boolean sharesSource(Tool other) {
-    if (!(other instanceof AddTool)) return false;
-    final var o = (AddTool) other;
+    if (!(other instanceof AddTool o)) return false;
     if (this.sourceLoadAttempted && o.sourceLoadAttempted) {
       return this.factory.equals(o.factory);
     } else if (this.description == null) {

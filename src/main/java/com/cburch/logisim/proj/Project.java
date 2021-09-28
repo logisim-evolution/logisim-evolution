@@ -52,6 +52,7 @@ public class Project {
   }
 
   private class MyListener implements Selection.Listener, LibraryListener {
+    @Override
     public void libraryChanged(LibraryEvent event) {
       int action = event.getAction();
       if (action == LibraryEvent.REMOVE_LIBRARY) {
@@ -61,10 +62,9 @@ public class Project {
         }
       } else if (action == LibraryEvent.REMOVE_TOOL) {
         Object data = event.getData();
-        if (data instanceof AddTool) {
-          Object factory = ((AddTool) data).getFactory();
-          if (factory instanceof SubcircuitFactory) {
-            final var fact = (SubcircuitFactory) factory;
+        if (data instanceof AddTool tool) {
+          Object factory = tool.getFactory();
+          if (factory instanceof SubcircuitFactory fact) {
             if (fact.getSubcircuit() == getCurrentCircuit()) {
               setCurrentCircuit(file.getMainCircuit());
             }
@@ -73,6 +73,7 @@ public class Project {
       }
     }
 
+    @Override
     public void selectionChanged(Selection.Event e) {
       fireEvent(ProjectEvent.ACTION_SELECTION, e.getSource());
     }
@@ -480,7 +481,7 @@ public class Project {
           newCircuit.addCircuitListener(l);
         }
         final var circTickFrequency = newCircuit.getTickFrequency();
-        final var simTickFrequency = simulator.getTickFrequency(); 
+        final var simTickFrequency = simulator.getTickFrequency();
         if (circTickFrequency < 0) {
           newCircuit.setTickFrequency(simTickFrequency);
         } else if (circTickFrequency != simTickFrequency) {

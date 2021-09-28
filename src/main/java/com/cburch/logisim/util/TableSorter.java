@@ -145,6 +145,7 @@ public class TableSorter extends AbstractTableModel {
   }
 
   private class MouseHandler extends MouseAdapter {
+    @Override
     public void mouseClicked(MouseEvent e) {
       final var h = (JTableHeader) e.getSource();
       final var columnModel = h.getColumnModel();
@@ -214,8 +215,7 @@ public class TableSorter extends AbstractTableModel {
       final var c =
           tableCellRenderer.getTableCellRendererComponent(
               table, value, isSelected, hasFocus, row, column);
-      if (c instanceof JLabel) {
-        final var l = (JLabel) c;
+      if (c instanceof JLabel l) {
         l.setHorizontalTextPosition(JLabel.LEFT);
         final var modelColumn = table.convertColumnIndexToModel(column);
         l.setIcon(getHeaderRendererIcon(modelColumn, l.getFont().getSize()));
@@ -369,6 +369,7 @@ public class TableSorter extends AbstractTableModel {
     modelToView = null;
   }
 
+  @Override
   public Class<?> getColumnClass(int column) {
     return tableModel.getColumnClass(column);
   }
@@ -378,6 +379,7 @@ public class TableSorter extends AbstractTableModel {
     return (tableModel == null) ? 0 : tableModel.getColumnCount();
   }
 
+  @Override
   public String getColumnName(int column) {
     return tableModel.getColumnName(column);
   }
@@ -461,6 +463,7 @@ public class TableSorter extends AbstractTableModel {
     return viewToModel;
   }
 
+  @Override
   public boolean isCellEditable(int row, int column) {
     return tableModel.isCellEditable(modelIndex(row), column);
   }
@@ -527,6 +530,7 @@ public class TableSorter extends AbstractTableModel {
     fireTableStructureChanged();
   }
 
+  @Override
   public void setValueAt(Object aValue, int row, int column) {
     tableModel.setValueAt(aValue, modelIndex(row), column);
   }

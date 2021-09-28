@@ -189,7 +189,7 @@ public abstract class DynamicElement extends AbstractCanvasObject {
 
   @Override
   public boolean matches(CanvasObject other) {
-    return (other instanceof DynamicElement) && this.bounds.equals(((DynamicElement) other).bounds);
+    return (other instanceof DynamicElement dynEl) && this.bounds.equals(dynEl.bounds);
   }
 
   @Override

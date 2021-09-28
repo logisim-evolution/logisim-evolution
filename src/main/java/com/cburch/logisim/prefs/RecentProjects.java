@@ -31,8 +31,7 @@ class RecentProjects implements PreferenceChangeListener {
 
     @Override
     public boolean equals(Object other) {
-      if (other instanceof FileTime) {
-        final var o = (FileTime) other;
+      if (other instanceof FileTime o) {
         return this.time == o.time && isSame(this.file, o.file);
       } else {
         return false;
@@ -134,6 +133,7 @@ class RecentProjects implements PreferenceChangeListener {
     }
   }
 
+  @Override
   public void preferenceChange(PreferenceChangeEvent event) {
     final var prefs = event.getNode();
     final var prop = event.getKey();

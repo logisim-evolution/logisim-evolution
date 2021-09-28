@@ -41,13 +41,11 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
   public static final String _ID = "TTY";
 
   private static int getColumnCount(Object val) {
-    if (val instanceof Integer) return (Integer) val;
-    else return 16;
+    return (val instanceof Integer) ? (Integer) val : 16;
   }
 
   private static int getRowCount(Object val) {
-    if (val instanceof Integer) return (Integer) val;
-    else return 4;
+    return (val instanceof Integer) ? (Integer) val : 4;
   }
 
   private static final int CLR = 0;

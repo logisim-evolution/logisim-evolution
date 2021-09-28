@@ -48,6 +48,7 @@ class SearchNode implements Comparable<SearchNode> {
     this.prev = prev;
   }
 
+  @Override
   public int compareTo(SearchNode o) {
     int ret = this.heur - o.heur;
 
@@ -60,9 +61,7 @@ class SearchNode implements Comparable<SearchNode> {
 
   @Override
   public boolean equals(Object other) {
-    if (other instanceof SearchNode) {
-      SearchNode o = (SearchNode) other;
-
+    if (other instanceof SearchNode o) {
       return (this.loc.equals(o.loc)
           && (this.dir == null ? o.dir == null : (o.dir != null && this.dir.equals(o.dir)))
           && this.dest.equals(o.dest));

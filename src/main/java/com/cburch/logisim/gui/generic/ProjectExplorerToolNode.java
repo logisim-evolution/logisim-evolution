@@ -31,14 +31,14 @@ public class ProjectExplorerToolNode extends ProjectExplorerModel.Node<Tool> imp
 
   public ProjectExplorerToolNode(ProjectExplorerModel model, Tool tool) {
     super(model, tool);
-    if (tool instanceof AddTool) {
-      final var factory = ((AddTool) tool).getFactory();
+    if (tool instanceof AddTool addTool) {
+      final var factory = addTool.getFactory();
 
-      if (factory instanceof SubcircuitFactory) {
-        circuit = ((SubcircuitFactory) factory).getSubcircuit();
+      if (factory instanceof SubcircuitFactory sub) {
+        circuit = sub.getSubcircuit();
         circuit.addCircuitListener(this);
-      } else if (factory instanceof VhdlEntity) {
-        vhdl = ((VhdlEntity) factory).getContent();
+      } else if (factory instanceof VhdlEntity ent) {
+        vhdl = ent.getContent();
         vhdl.addHdlModelListener(this);
       }
     }

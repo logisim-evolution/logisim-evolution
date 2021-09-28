@@ -241,12 +241,9 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 
     @Override
     public boolean multiEditCompatible(AttrTableModelRow other) {
-      if (!(other instanceof AttrRow)) return false;
-      final var o = (AttrRow) other;
-      if (!(((Object) attr) instanceof SplitterAttributes.BitOutAttribute)) return false;
-      if (!(((Object) o.attr) instanceof SplitterAttributes.BitOutAttribute)) return false;
-      final var a = (SplitterAttributes.BitOutAttribute) (Object) attr;
-      final var b = (SplitterAttributes.BitOutAttribute) (Object) o.attr;
+      if (!(other instanceof AttrRow o)) return false;
+      if (!(((Object) attr) instanceof SplitterAttributes.BitOutAttribute a)) return false;
+      if (!(((Object) o.attr) instanceof SplitterAttributes.BitOutAttribute b)) return false;
       return a.sameOptions(b);
     }
 
@@ -256,8 +253,8 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
       if (attr == null || value == null) return;
 
       try {
-        if (value instanceof String) {
-          value = attr.parse((String) value);
+        if (value instanceof String str) {
+          value = attr.parse(str);
         }
         setValueRequested(attr, value);
       } catch (ClassCastException e) {

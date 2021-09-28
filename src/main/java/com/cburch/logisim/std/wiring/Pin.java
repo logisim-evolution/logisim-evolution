@@ -483,10 +483,9 @@ public class Pin extends InstanceFactory {
       if (!attrs.isInput()) {
         return false;
       }
-      if (src instanceof Canvas && !state.isCircuitRoot()) {
-        Canvas canvas = (Canvas) src;
-        CircuitState circState = canvas.getCircuitState();
-        java.awt.Component frame = SwingUtilities.getRoot(canvas);
+      if ((src instanceof Canvas canvas) && !state.isCircuitRoot()) {
+        var circState = canvas.getCircuitState();
+        final var frame = SwingUtilities.getRoot(canvas);
         int choice =
             OptionPane.showConfirmDialog(
                 frame,
