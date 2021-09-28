@@ -294,7 +294,7 @@ public abstract class Hdl {
 
   public static Map<String, String> getNetMap(String sourceName, boolean floatingPinTiedToGround,
       netlistComponent comp, int endIndex, Netlist theNets) {
-    var netMap = new HashMap<String, String>();
+    final var netMap = new HashMap<String, String>();
     if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) {
       Reporter.report.addFatalError("INTERNAL ERROR: Component tried to index non-existing SolderPoint");
       return netMap;
@@ -335,7 +335,7 @@ public abstract class Hdl {
               /* First we build the Line information */
               sourceNetName.setLength(0);
               sourceNetName.append(String.format("%s(%d) ", sourceName, bit));
-              ConnectionPoint solderPoint = connectionInformation.get((byte) bit);
+              final var solderPoint = connectionInformation.get((byte) bit);
               if (solderPoint.getParentNet() == null) {
                 /* The net is not connected */
                 netMap.put(sourceNetName.toString(), isOutput ? unconnected(false) : getZeroVector(1, floatingPinTiedToGround));

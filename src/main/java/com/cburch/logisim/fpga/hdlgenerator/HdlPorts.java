@@ -170,6 +170,12 @@ public class HdlPorts {
     throw new ArrayStoreException("port not contained in structure");
   }
 
+  public boolean contains(String name) {
+    for (var port : myPorts)
+      if (port.myName.equals(name)) return true;
+    return false;
+  }
+
   public boolean isClock(String name) {
     for (var port : myPorts)
       if (port.myName.equals(name)) return port.isClock;

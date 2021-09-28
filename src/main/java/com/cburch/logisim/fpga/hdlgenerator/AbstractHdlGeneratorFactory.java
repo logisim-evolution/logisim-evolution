@@ -22,9 +22,11 @@ import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
@@ -639,176 +641,127 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
   private ArrayList<String> getVHDLBlackBox(Netlist theNetlist, AttributeSet attrs,
       String componentName, Boolean isEntity) {
-    var contents = new ArrayList<String>();
-    var oneLine = new StringBuilder();
-    var identSize = 0;
-    var compTab = (isEntity) ? "" : "   ";
-    var first = true;
+    var contents = LineBuffer.getHdlBuffer();
+    var maxNameLength = 0;
     if (getWiresPortsDuringHDLWriting) {
       myWires.removeWires();
       myTypedWires.clear();
       myPorts.removePorts();
       getGenerationTimeWiresPorts(theNetlist, attrs);
     }
-    if (isEntity) {
-      contents.add("ENTITY " + componentName + " IS");
-    } else {
-      contents.add("   COMPONENT " + componentName);
-    }
+    contents.add("{{1}} {{2}}{{3}}", isEntity ? "ENTITY" : "COMPONENT", componentName, isEntity ? " IS" : "");
     if (!myParametersList.isEmpty(attrs)) {
-      oneLine.append(compTab).append("   GENERIC ( ");
-      identSize = oneLine.length();
-      first = true;
+      // first we build a list with parameters to determine the max. string length
+      final var myParameters = new HashMap<String, Boolean>();
       for (var generic : myParametersList.keySet(attrs)) {
-        if (!first) {
-          oneLine.append(";");
-          contents.add(oneLine.toString());
-          oneLine.setLength(0);
-          while (oneLine.length() < identSize) {
-            oneLine.append(" ");
-          }
-        } else {
-          first = false;
-        }
         final var parameterName = myParametersList.get(generic, attrs);
-        oneLine.append(parameterName);
-        oneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - parameterName.length())));
-        oneLine.append(myParametersList.isPresentedByInteger(generic, attrs) ? ": INTEGER" : ": std_logic_vector");
+        maxNameLength = Math.max(maxNameLength, parameterName.length());
+        myParameters.put(parameterName, myParametersList.isPresentedByInteger(generic, attrs));
       }
-      oneLine.append(");");
-      contents.add(oneLine.toString());
-      oneLine.setLength(0);
+      maxNameLength += 1; // add one space after the longest one
+      final var myGenerics = new TreeSet<String>(myParameters.keySet());
+      var currentGenericId = 0;
+      for (final var thisGeneric : myGenerics) {
+        if (currentGenericId == 0) {
+          if (currentGenericId == (myGenerics.size() - 1))
+            contents.add("   GENERIC ( {{1}}{{2}}: {{3}});", thisGeneric, 
+                " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
+                myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector");
+          else
+            contents.add("   GENERIC ( {{1}}{{2}}: {{3}};", thisGeneric, 
+                " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
+                myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector");
+        } else if (currentGenericId == (myGenerics.size() - 1)) {
+          contents.add("             {{1}}{{2}}: {{3}});", thisGeneric, 
+              " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
+              myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector");
+        } else {
+          contents.add("             {{1}}{{2}}: {{3}};", thisGeneric, 
+              " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
+              myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector");
+        }
+        currentGenericId++;
+      }
     }
     if (!myPorts.isEmpty()) {
-      var NrOfPortBits = 0;
-      oneLine.append(compTab).append("   PORT ( ");
-      identSize = oneLine.length();
-      first = true;
-      for (var input : myPorts.keySet(Port.INPUT)) {
-        if (!first) {
-          oneLine.append(";");
-          contents.add(oneLine.toString());
-          oneLine.setLength(0);
-          while (oneLine.length() < identSize) {
-            oneLine.append(" ");
-          }
-        } else {
-          first = false;
-        }
-        oneLine.append(input);
-        oneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - input.length())));
-        oneLine.append(": IN  std_logic");
-        NrOfPortBits = myPorts.get(input, attrs);
-        if (NrOfPortBits < 0) {
-          /* we have a parameterized input */
-          if (!myParametersList.containsKey(NrOfPortBits, attrs)) {
-            contents.clear();
-            return contents;
-          }
-          oneLine.append("_vector( (")
-              .append(myParametersList.get(NrOfPortBits, attrs))
-              .append("-1) DOWNTO 0 )");
-        } else {
-          if (NrOfPortBits > 1) {
-            /* we have a bus */
-            oneLine.append("_vector( ").append(NrOfPortBits - 1).append(" DOWNTO 0 )");
-          } else {
-            if (NrOfPortBits == 0) {
-              oneLine.append("_vector( 0 DOWNTO 0 )");
-            }
-          }
-        }
-        // special case of the clock, we have to add the tick
-        if (myPorts.isClock(input)) {
-          oneLine.append(";");
-          contents.add(oneLine.toString());
-          oneLine.setLength(0);
-          oneLine.append(" ".repeat(identSize));
-          oneLine.append(myPorts.getTickName(input));
-          oneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - myPorts.getTickName(input).length())));
-          oneLine.append(": IN  std_logic");
+      // now we gather information on the in/out and inout ports
+      maxNameLength = 0;
+      var nrOfEntries = myPorts.keySet().size();
+      final var tickers = new TreeSet<String>();
+      for (var portName : myPorts.keySet()) {
+        maxNameLength = Math.max(maxNameLength, portName.length());
+        if (myPorts.isClock(portName)) {
+          final var tickerName = myPorts.getTickName(portName);
+          maxNameLength = Math.max(maxNameLength, tickerName.length());
+          tickers.add(tickerName);
+          nrOfEntries++;
         }
       }
-      for (var inout : myPorts.keySet(Port.INOUT)) {
-        if (!first) {
-          oneLine.append(";");
-          contents.add(oneLine.toString());
-          oneLine.setLength(0);
-          while (oneLine.length() < identSize) {
-            oneLine.append(" ");
-          }
-        } else {
-          first = false;
-        }
-        oneLine.append(inout);
-        oneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - inout.length())));
-        oneLine.append(": INOUT  std_logic");
-        NrOfPortBits = myPorts.get(inout, attrs);
-        if (NrOfPortBits < 0) {
-          /* we have a parameterized input */
-          if (!myParametersList.containsKey(NrOfPortBits, attrs)) {
-            contents.clear();
-            return contents;
-          }
-          oneLine.append("_vector( (")
-              .append(myParametersList.get(NrOfPortBits, attrs))
-              .append("-1) DOWNTO 0 )");
-        } else {
-          if (NrOfPortBits > 1) {
-            /* we have a bus */
-            oneLine.append("_vector( ").append(NrOfPortBits - 1).append(" DOWNTO 0 )");
-          } else {
-            if (NrOfPortBits == 0) {
-              oneLine.append("_vector( 0 DOWNTO 0 )");
-            }
-          }
-        }
+      maxNameLength += 1; // add a space after the longest name
+      var nrOfPortBits = 0;
+      var firstEntry = true;
+      var currentEntry = 0;
+      // now we process in order
+      var direction = (myPorts.keySet(Port.INOUT).size() > 0 ) ? "IN   ": "IN ";
+      final var myInputs = new TreeSet<String>(myPorts.keySet(Port.INPUT));
+      myInputs.addAll(tickers);
+      for (final var input : myInputs) {
+        nrOfPortBits = myPorts.contains(input) ? myPorts.get(input, attrs) : 1;
+        final var type = getTypeIdentifier(nrOfPortBits, attrs);
+        firstEntry = getPortEntry(contents, firstEntry, nrOfEntries, currentEntry, input, direction, type, maxNameLength);
+        currentEntry++;
       }
-      for (var output : myPorts.keySet(Port.OUTPUT)) {
-        if (!first) {
-          oneLine.append(";");
-          contents.add(oneLine.toString());
-          oneLine.setLength(0);
-          while (oneLine.length() < identSize) {
-            oneLine.append(" ");
-          }
-        } else {
-          first = false;
-        }
-        oneLine.append(output);
-        oneLine.append(" ".repeat(Math.max(0, PORT_ALLIGNMENT_SIZE - output.length())));
-        oneLine.append(": OUT std_logic");
-        NrOfPortBits = myPorts.get(output, attrs);
-        if (NrOfPortBits < 0) {
-          /* we have a parameterized output */
-          if (!myParametersList.containsKey(NrOfPortBits, attrs)) {
-            contents.clear();
-            return contents;
-          }
-          oneLine.append("_vector( (")
-              .append(myParametersList.get(NrOfPortBits, attrs))
-              .append("-1) DOWNTO 0 )");
-        } else {
-          if (NrOfPortBits > 1) {
-            /* we have a bus */
-            oneLine.append("_vector( ").append(NrOfPortBits - 1).append(" DOWNTO 0 )");
-          } else {
-            if (NrOfPortBits == 0) {
-              oneLine.append("_vector( 0 DOWNTO 0 )");
-            }
-          }
-        }
+      direction = "INOUT";
+      final var myInOuts = new TreeSet<String>(myPorts.keySet(Port.INOUT));
+      for (final var inout : myInOuts) {
+        nrOfPortBits = myPorts.get(inout, attrs);
+        final var type = getTypeIdentifier(nrOfPortBits, attrs);
+        firstEntry = getPortEntry(contents, firstEntry, nrOfEntries, currentEntry, inout, direction, type, maxNameLength);
+        currentEntry++;
       }
-      oneLine.append(");");
-      contents.add(oneLine.toString());
+      direction = (myPorts.keySet(Port.INOUT).size() > 0 ) ? "OUT  ": "OUT";
+      final var myOutputs = new TreeSet<String>(myPorts.keySet(Port.OUTPUT));
+      for (final var output : myOutputs) {
+        nrOfPortBits = myPorts.get(output, attrs);
+        final var type = getTypeIdentifier(nrOfPortBits, attrs);
+        firstEntry = getPortEntry(contents, firstEntry, nrOfEntries, currentEntry, output, direction, type, maxNameLength);
+        currentEntry++;
+      }
     }
-    if (isEntity) {
-      contents.add("END " + componentName + ";");
+    contents.add("{{1}} {{2}};", isEntity ? "END ENTITY" : "END", isEntity ? componentName : "COMPONENT").empty();
+    contents.empty();
+    return contents.get();
+  }
+  
+  private boolean getPortEntry(LineBuffer contents, boolean firstEntry, int nrOfEntries, int currentEntry,
+      String name, String direction, String type, int maxLength) {
+    boolean result = firstEntry;
+    if (firstEntry) {
+      if (currentEntry == (nrOfEntries - 1))
+        contents.add("   PORT ( {{1}}{{2}}: {{3}} {{4}} );", name, " ".repeat(maxLength - name.length()), direction, type);
+      else
+        contents.add("   PORT ( {{1}}{{2}}: {{3}} {{4}};", name, " ".repeat(maxLength - name.length()), direction, type);
+      result = false;
+    } else if (currentEntry == (nrOfEntries - 1)) {
+      contents.add("          {{1}}{{2}}: {{3}} {{4}} );", name, " ".repeat(maxLength - name.length()), direction, type);
     } else {
-      contents.add("   END COMPONENT;");
+      contents.add("          {{1}}{{2}}: {{3}} {{4}};", name, " ".repeat(maxLength - name.length()), direction, type);
     }
-    contents.add("");
-    return contents;
+    return result;
+  }
+  
+  private String getTypeIdentifier(int nrOfBits, AttributeSet attrs) {
+    if (nrOfBits < 0) {
+      // we have generic based vector
+      if (!myParametersList.containsKey(nrOfBits, attrs)) 
+        throw new IllegalArgumentException("Generic parameter not specified in the parameters list");
+      return String.format("std_logic_vector( (%s - 1) DOWNTO 0 )", myParametersList.get(nrOfBits, attrs));
+    } else if (nrOfBits == 0) {
+      return "std_logic_vector( 0 DOWNTO 0 )";
+    } else if (nrOfBits > 1) {
+      return String.format("std_logic_vector( %d DOWNTO 0 )", nrOfBits - 1);
+    }
+    return "std_logic";
   }
 
   @Override
