@@ -9,17 +9,30 @@
 
 package com.cburch.logisim.analyze.model;
 
-// NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
-// getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
-// that in future, but for now it looks stupid in this file only.
-public record TruthTableEvent(TruthTable getSource, int getColumn, VariableListEvent getData) {
+public class TruthTableEvent {
+  private final TruthTable source;
+  private int column;
+  private Object data;
 
   public TruthTableEvent(TruthTable source, int column) {
-    this(source, column, null);
+    this.source = source;
+    this.column = column;
   }
 
-  public TruthTableEvent(TruthTable source, VariableListEvent data) {
-    this(source, 0, data);
+  public TruthTableEvent(TruthTable source, VariableListEvent event) {
+    this.source = source;
+    this.data = event;
   }
 
+  public int getColumn() {
+    return column;
+  }
+
+  public Object getData() {
+    return data;
+  }
+
+  public TruthTable getSource() {
+    return source;
+  }
 }

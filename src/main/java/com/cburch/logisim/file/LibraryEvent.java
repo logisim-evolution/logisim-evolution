@@ -11,11 +11,7 @@ package com.cburch.logisim.file;
 
 import com.cburch.logisim.tools.Library;
 
-// NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
-// getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
-// that in future, but for now it looks stupid in this file only.
-public record LibraryEvent(Library getSource, int getAction, Object getData) {
-
+public class LibraryEvent {
   public static final int ADD_TOOL = 0;
   public static final int REMOVE_TOOL = 1;
   public static final int MOVE_TOOL = 2;
@@ -25,4 +21,25 @@ public record LibraryEvent(Library getSource, int getAction, Object getData) {
   public static final int SET_NAME = 6;
   public static final int DIRTY_STATE = 7;
 
+  private final Library source;
+  private final int action;
+  private final Object data;
+
+  LibraryEvent(Library source, int action, Object data) {
+    this.source = source;
+    this.action = action;
+    this.data = data;
+  }
+
+  public int getAction() {
+    return action;
+  }
+
+  public Object getData() {
+    return data;
+  }
+
+  public Library getSource() {
+    return source;
+  }
 }

@@ -9,13 +9,36 @@
 
 package com.cburch.logisim.data;
 
-// NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
-// getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
-// that in future, but for now it looks stupid in this file only.
-public record AttributeEvent(AttributeSet getSource, Attribute<?> getAttribute, Object getValue, Object getOldValue) {
+public class AttributeEvent {
+  private final AttributeSet source;
+  private final Attribute<?> attr;
+  private final Object value;
+  private final Object oldvalue;
 
   public AttributeEvent(AttributeSet source) {
     this(source, null, null, null);
   }
 
+  public AttributeEvent(AttributeSet source, Attribute<?> attr, Object value, Object oldvalue) {
+    this.source = source;
+    this.attr = attr;
+    this.value = value;
+    this.oldvalue = oldvalue;
+  }
+
+  public Attribute<?> getAttribute() {
+    return attr;
+  }
+
+  public AttributeSet getSource() {
+    return source;
+  }
+
+  public Object getValue() {
+    return value;
+  }
+
+  public Object getOldValue() {
+    return oldvalue;
+  }
 }

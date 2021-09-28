@@ -11,7 +11,14 @@ package com.cburch.logisim.prefs;
 
 import com.cburch.logisim.data.AttributeOption;
 
-// NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
-// getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
-// that in future, but for now it looks stupid in this file only.
-public record ConvertEvent(AttributeOption getValue) {}
+public class ConvertEvent {
+  private final AttributeOption value;
+
+  public ConvertEvent(AttributeOption value) {
+    this.value = value;
+  }
+
+  public AttributeOption getValue() {
+    return value;
+  }
+}

@@ -12,17 +12,34 @@ package com.cburch.logisim.comp;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.gui.main.Canvas;
 
-// NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
-// getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
-// that in future, but for now it looks stupid in this file only.
-public record ComponentUserEvent(Canvas getCanvas, int getX, int getY) {
+public class ComponentUserEvent {
+  private final Canvas canvas;
+  private int x = 0;
+  private int y = 0;
 
   ComponentUserEvent(Canvas canvas) {
-    this(canvas, 0, 0);
+    this.canvas = canvas;
+  }
+
+  public ComponentUserEvent(Canvas canvas, int x, int y) {
+    this.canvas = canvas;
+    this.x = x;
+    this.y = y;
+  }
+
+  public Canvas getCanvas() {
+    return canvas;
   }
 
   public CircuitState getCircuitState() {
-    return getCanvas.getCircuitState();
+    return canvas.getCircuitState();
   }
 
+  public int getX() {
+    return x;
+  }
+
+  public int getY() {
+    return y;
+  }
 }

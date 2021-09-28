@@ -9,7 +9,26 @@
 
 package com.cburch.logisim.tools;
 
-// NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
-// getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
-// that in future, but for now it looks stupid in this file only.
-public record CaretEvent(Caret getCaret, String getOldText, String getText) {}
+public class CaretEvent {
+  private final Caret caret;
+  private final String oldtext;
+  private final String newtext;
+
+  public CaretEvent(Caret caret, String oldtext, String newtext) {
+    this.caret = caret;
+    this.oldtext = oldtext;
+    this.newtext = newtext;
+  }
+
+  public Caret getCaret() {
+    return caret;
+  }
+
+  public String getOldText() {
+    return oldtext;
+  }
+
+  public String getText() {
+    return newtext;
+  }
+}

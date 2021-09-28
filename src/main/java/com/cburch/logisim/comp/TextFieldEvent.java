@@ -9,7 +9,26 @@
 
 package com.cburch.logisim.comp;
 
-// NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
-// getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
-// that in future, but for now it looks stupid in this file only.
-public record TextFieldEvent(TextField getTextField, String getOldText, String getText) {}
+public class TextFieldEvent {
+  private final TextField field;
+  private final String oldval;
+  private final String newval;
+
+  public TextFieldEvent(TextField field, String old, String val) {
+    this.field = field;
+    this.oldval = old;
+    this.newval = val;
+  }
+
+  public String getOldText() {
+    return oldval;
+  }
+
+  public String getText() {
+    return newval;
+  }
+
+  public TextField getTextField() {
+    return field;
+  }
+}

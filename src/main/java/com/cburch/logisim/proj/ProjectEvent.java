@@ -13,11 +13,7 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.tools.Tool;
 
-// NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
-// getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
-// that in future, but for now it looks stupid in this file only.
-public record ProjectEvent(int getAction, Project getProject, Object getOldData, Object getData) {
-
+public class ProjectEvent {
   public static final int ACTION_SET_FILE = 0; // change file
   public static final int ACTION_SET_CURRENT = 1; // change current
   public static final int ACTION_SET_TOOL = 2; // change tool
@@ -33,27 +29,57 @@ public record ProjectEvent(int getAction, Project getProject, Object getOldData,
   public static final int REDO_START = 11;
   public static final int REDO_COMPLETE = 12;
 
-  public ProjectEvent(int action, Project project) {
-    this(action, project, null, null);
+  private final int action;
+  private final Project proj;
+  private Object oldData;
+  private final Object data;
+
+  public ProjectEvent(int action, Project proj) {
+    this.action = action;
+    this.proj = proj;
+    this.data = null;
   }
 
-  public ProjectEvent(int action, Project project, Object data) {
-    // FIXME: I'd move oldData to the end of argument list, so all the constructors
-    // would retain the same argument order, just adding new fields at the end.
-    this(action, project, null, data);
+  public ProjectEvent(int action, Project proj, Object data) {
+    this.action = action;
+    this.proj = proj;
+    this.data = data;
+  }
+
+  public ProjectEvent(int action, Project proj, Object old, Object data) {
+    this.action = action;
+    this.proj = proj;
+    this.oldData = old;
+    this.data = data;
+  }
+
+  // access methods
+  public int getAction() {
+    return action;
+  }
+
+  public Circuit getCircuit() {
+    return proj.getCurrentCircuit();
+  }
+
+  public Object getData() {
+    return data;
   }
 
   // convenience methods
   public LogisimFile getLogisimFile() {
-    return getProject.getLogisimFile();
+    return proj.getLogisimFile();
   }
 
-  public Circuit getCircuit() {
-    return getProject.getCurrentCircuit();
+  public Object getOldData() {
+    return oldData;
+  }
+
+  public Project getProject() {
+    return proj;
   }
 
   public Tool getTool() {
-    return getProject.getTool();
+    return proj.getTool();
   }
-
 }
