@@ -16,10 +16,10 @@ import com.cburch.logisim.circuit.Circuit;
 // that in future, but for now it looks stupid in this file only.
 public record CircuitAppearanceEvent(Circuit getCircuit, int getAffects) {
 
-  public static final int APPEARANCE = 1;
-  public static final int BOUNDS = 2;
-  public static final int PORTS = 4;
-  public static final int ALL_TYPES = 7;
+  public static final int APPEARANCE = 0b001;
+  public static final int BOUNDS = 0b010;
+  public static final int PORTS = 0b100;
+  public static final int ALL_TYPES = APPEARANCE | BOUNDS | PORTS;
 
   public boolean isConcerning(int type) {
     return (getAffects() & type) != 0;
