@@ -442,7 +442,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
 
   private SignalInfo makeIfDefaultComponent(Component comp) {
     if (comp.getFactory() instanceof SubcircuitFactory) return null;
-    Loggable log = (Loggable) comp.getFeature(Loggable.class);
+    LoggableContract log = (LoggableContract) comp.getFeature(LoggableContract.class);
     if (log == null) return null;
     Object[] opts = log.getLogOptions();
     if (opts != null && opts.length > 0) return null;

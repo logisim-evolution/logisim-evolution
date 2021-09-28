@@ -12,11 +12,11 @@ package com.cburch.logisim.vhdl.base;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.file.FileWriter;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import java.util.ArrayList;
 
-public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class VhdlHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   public static final String HDL_DIRECTORY = "circuit";
 
@@ -78,6 +78,6 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
-    return HDL.isVHDL();
+    return Hdl.isVhdl();
   }
 }

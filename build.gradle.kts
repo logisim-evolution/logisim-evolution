@@ -57,6 +57,7 @@ dependencies {
 val APP_DIR_NAME = "appDirName"
 val APP_VERSION = "appVersion"
 val APP_VERSION_SHORT = "appVersionShort"
+val APP_URL = "appUrl"
 val JPACKAGE = "jpackage"
 val LIBS_DIR = "libsDir"
 val LINUX_PARAMS = "linuxParameters"
@@ -83,6 +84,10 @@ extra.apply {
   val appVersion = (project.version as String).replace("-", "")
   set(APP_VERSION, appVersion)
   logger.info("appVersion: ${appVersion}")
+
+  val appUrl = findProperty("url")
+  set(APP_URL, appUrl)
+  logger.info("appUrl: ${appUrl}")
 
   // Short (with suffix removed) version string, i.e. for "3.6.0beta1", short form is "3.6.0".
   // This is used by createApp and createMsi as version numbering is pretty strict on macOS and Windows.
@@ -502,6 +507,13 @@ fun genBuildInfo(buildInfoFilePath: String) {
     "    // Project version",
     "    public static final LogisimVersion version = LogisimVersion.fromString(\"${ext.get(APP_VERSION) as String}\");",
     "    public static final String name = \"${project.name.capitalize().trim()}\";",
+    "    public static final String displayName = \"${project.name.capitalize().trim()} v${ext.get(APP_VERSION) as String}\";",
+    "    public static final String url = \"${ext.get(APP_URL) as String}\";",
+    "",
+    "    // JRE info",
+    "    public static final String jvm_version = String.format(\"%s v%s\", System.getProperty(\"java.vm.name\"), System.getProperty(\"java.version\"));",
+    "    public static final String jvm_vendor = System.getProperty(\"java.vendor\");",
+    "",
     "} // End of generated BuildInfo",
     "",
   )

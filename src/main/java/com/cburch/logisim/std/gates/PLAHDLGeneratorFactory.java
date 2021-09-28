@@ -11,13 +11,13 @@ package com.cburch.logisim.std.gates;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
-public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class PLAHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   public PLAHDLGeneratorFactory() {
     super();
@@ -45,7 +45,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var contents = LineBuffer.getHdlBuffer();
     final var tt = attrs.getValue(PLA.ATTR_TABLE);
     final var outSz = attrs.getValue(PLA.ATTR_OUT_WIDTH).getWidth();
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       var leader = "    Result <= ";
       final var indent = "              ";
       if (tt.rows().isEmpty()) {
@@ -65,6 +65,6 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
-    return HDL.isVHDL();
+    return Hdl.isVhdl();
   }
 }

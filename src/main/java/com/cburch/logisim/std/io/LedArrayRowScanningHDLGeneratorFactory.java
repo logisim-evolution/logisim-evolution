@@ -14,12 +14,12 @@ import java.util.ArrayList;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
 
-public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   public static final int NR_OF_LEDS_ID = -1;
   public static final int NR_OF_ROWS_ID = -2;
@@ -59,7 +59,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
         .addRegister("s_scanningCounterReg", SCANNING_COUNTER_BITS_ID)
         .addRegister("s_tickReg", 1);
     myPorts
-        .add(Port.INPUT, TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1, 0)
+        .add(Port.INPUT, TickComponentHdlGeneratorFactory.FPGA_CLOCK, 1, 0)
         .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayInputs, NR_OF_LEDS_ID, 1)
         .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress, NR_OF_ROW_ADDRESS_BITS_ID, 2)
         .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs, NR_OF_COLUMS_ID, 3);
@@ -90,7 +90,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .pair("activeLow", ACTIVE_LOW_STRING)
             .pair("activeLowVal", activeLow ? "1" : "0");
 
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           GENERIC MAP ( {{nrOfLeds}} => {{nrOfLedsVal}},
                         {{nrOfRows}} => {{nrOfRowsVal}},
@@ -121,10 +121,10 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
         LineBuffer.getBuffer()
             .pair("rowAddr", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
             .pair("colOuts", LedArrayGenericHDLGeneratorFactory.LedArrayColumnOutputs)
-            .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+            .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK)
             .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
                 .pair("id", id);
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       map.add("""
           PORT MAP ( {{rowAddr}} => {{rowAddr}}{{id}},
                      {{outs}} => {{outs}}{{id}},
@@ -148,8 +148,8 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .pair("rowAddress", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
             .pair("bits", SCANNING_COUNTER_BITS_STRING)
             .pair("value", SCANNING_COUNTER_VALUE_STRING)
-            .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
-    if (HDL.isVHDL()) {
+            .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK);
+    if (Hdl.isVhdl()) {
       contents.add("""
           
           {{rowAddress}} <= s_rowCounterReg;
@@ -216,7 +216,7 @@ public class LedArrayRowScanningHDLGeneratorFactory extends AbstractHDLGenerator
             .pair("nrOfColumns", NR_OF_COLUMS_STRING)
             .add(getRowCounterCode());
 
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           makeVirtualInputs : PROCESS ( internalLeds ) IS
           BEGIN

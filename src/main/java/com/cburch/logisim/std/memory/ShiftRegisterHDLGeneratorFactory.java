@@ -11,12 +11,12 @@ package com.cburch.logisim.std.memory;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
-import com.cburch.logisim.fpga.hdlgenerator.HDLPorts;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
+import com.cburch.logisim.fpga.hdlgenerator.HdlPorts;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class ShiftRegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String NEGATE_CLOCK_STRING = "negateClock";
   private static final int NEGATE_CLOCK_ID = -1;
@@ -38,10 +38,10 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public ShiftRegisterHDLGeneratorFactory() {
     super();
     myParametersList
-        .add(NEGATE_CLOCK_STRING, NEGATE_CLOCK_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, StdAttr.EDGE_TRIGGER, AbstractFlipFlopHDLGeneratorFactory.TRIGGER_MAP)
+        .add(NEGATE_CLOCK_STRING, NEGATE_CLOCK_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, StdAttr.EDGE_TRIGGER, AbstractFlipFlopHDLGeneratorFactory.TRIGGER_MAP)
         .add(NR_OF_BITS_STR, NR_OF_BITS_ID)
-        .add(NR_OF_PAR_BITS_STRING, NR_OF_PAR_BITS_ID, HDLParameters.MAP_MULTIPLY, StdAttr.WIDTH, ShiftRegister.ATTR_LENGTH)
-        .add(NR_OF_STAGES_STR, NR_OF_STAGES_ID, HDLParameters.MAP_INT_ATTRIBUTE, ShiftRegister.ATTR_LENGTH);
+        .add(NR_OF_PAR_BITS_STRING, NR_OF_PAR_BITS_ID, HdlParameters.MAP_MULTIPLY, StdAttr.WIDTH, ShiftRegister.ATTR_LENGTH)
+        .add(NR_OF_STAGES_STR, NR_OF_STAGES_ID, HdlParameters.MAP_INT_ATTRIBUTE, ShiftRegister.ATTR_LENGTH);
     getWiresPortsDuringHDLWriting = true;
   }
 
@@ -49,7 +49,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
     final var hasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD);
     myPorts
-        .add(Port.CLOCK, HDLPorts.getClockName(1), 1, ShiftRegister.CK)
+        .add(Port.CLOCK, HdlPorts.getClockName(1), 1, ShiftRegister.CK)
         .add(Port.INPUT, "Reset", 1, ShiftRegister.CLR)
         .add(Port.INPUT, "ShiftEnable", 1, ShiftRegister.SH)
         .add(Port.INPUT, "ShiftIn", NR_OF_BITS_ID, ShiftRegister.IN)
@@ -59,7 +59,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     if (hasParallelLoad) {
       myPorts.add(Port.INPUT, "ParLoad", 1, ShiftRegister.LD);
     } else {
-      myPorts.add(Port.INPUT, "ParLoad", 1, HDL.zeroBit());
+      myPorts.add(Port.INPUT, "ParLoad", 1, Hdl.zeroBit());
     }
   }
 
@@ -67,14 +67,14 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
     map.putAll(super.getPortMap(nets, mapInfo));
-    if (mapInfo instanceof NetlistComponent) {
-      final var comp = ((NetlistComponent) mapInfo);
+    if (mapInfo instanceof netlistComponent) {
+      final var comp = ((netlistComponent) mapInfo);
       final var attrs = comp.getComponent().getAttributeSet();
       final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
       final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
       final var hasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD);
       final var vector = new StringBuilder();
-      if (HDL.isVHDL() && nrOfBits == 1) {
+      if (Hdl.isVhdl() && nrOfBits == 1) {
         final var shiftMap = map.get("ShiftIn");
         final var outMap = map.get("ShiftOut");
         map.remove("ShiftIn");
@@ -86,7 +86,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       map.remove("Q");
       if (hasParallelLoad) {
         if (nrOfBits == 1) {
-          if (HDL.isVHDL()) {
+          if (Hdl.isVhdl()) {
             for (var stage = 0; stage < nrOfStages; stage++)
               map.putAll(GetNetMap(String.format("D(%d)", stage), true, comp, 6 + 2 * stage, nets));
             final var nrOfOutStages = attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC
@@ -97,26 +97,26 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           } else {
             for (var stage = nrOfStages - 1; stage >= 0; stage--) {
               if (vector.length() != 0) vector.append(",");
-              vector.append(HDL.getNetName(comp, 6 + 2 * stage, true, nets));
+              vector.append(Hdl.getNetName(comp, 6 + 2 * stage, true, nets));
             }
             map.put("D", vector.toString());
             vector.setLength(0);
             vector.append("open");
             for (var stage = nrOfStages - 2; stage >= 0; stage--) {
               if (vector.length() != 0) vector.append(",");
-              vector.append(HDL.getNetName(comp, 7 + 2 * stage, true, nets));
+              vector.append(Hdl.getNetName(comp, 7 + 2 * stage, true, nets));
             }
             map.put("Q", vector.toString());
           }
         } else {
-          if (HDL.isVHDL()) {
+          if (Hdl.isVhdl()) {
             for (var bit = 0; bit < nrOfBits; bit++) {
               for (var stage = 0; stage < nrOfStages; stage++) {
                 final var index = bit * nrOfStages + stage;
                 final var id = 6 + 2 * stage;
-                map.put(String.format("D(%d)", index), HDL.getBusEntryName(comp, id, true, bit, nets));
+                map.put(String.format("D(%d)", index), Hdl.getBusEntryName(comp, id, true, bit, nets));
                 if (stage == nrOfStages - 1) continue;
-                map.put(String.format("Q(%d)", index), HDL.getBusEntryName(comp, id + 1, true, bit, nets));
+                map.put(String.format("Q(%d)", index), Hdl.getBusEntryName(comp, id + 1, true, bit, nets));
               }
               map.put(String.format("Q(%d)", (bit + 1) * nrOfStages - 1), "OPEN");
             }
@@ -125,7 +125,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             for (var bit = nrOfBits - 1; bit >= 0; bit--) {
               for (var stage = nrOfStages - 1; stage >= 0; stage--) {
                 if (vector.length() != 0) vector.append(",");
-                vector.append(HDL.getBusEntryName(comp, 6 + 2 * stage, true, bit, nets));
+                vector.append(Hdl.getBusEntryName(comp, 6 + 2 * stage, true, bit, nets));
               }
             }
             map.put("D", vector.toString());
@@ -135,15 +135,15 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
               vector.append("open");
               for (var stage = nrOfStages - 2; stage >= 0; stage--) {
                 if (vector.length() != 0) vector.append(",");
-                vector.append(HDL.getBusEntryName(comp, 7 + 2 * stage, true, bit, nets));
+                vector.append(Hdl.getBusEntryName(comp, 7 + 2 * stage, true, bit, nets));
               }
             }
             map.put("Q", vector.toString());
           }
         }
       } else {
-        map.put("D", HDL.getConstantVector(0, nrOfBits * nrOfStages));
-        map.put("Q", HDL.unconnected(true));
+        map.put("D", Hdl.getConstantVector(0, nrOfBits * nrOfStages));
+        map.put("Q", Hdl.unconnected(true));
       }
     }
     return map;
@@ -152,12 +152,12 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public ArrayList<String> getArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
     final var contents = LineBuffer.getHdlBuffer()
-            .pair("clock", HDLPorts.getClockName(1))
-            .pair("tick", HDLPorts.getTickName(1))
+            .pair("clock", HdlPorts.getClockName(1))
+            .pair("tick", HdlPorts.getTickName(1))
             .pair("nrOfStages", NR_OF_STAGES_STR)
             .pair("invertClock", NEGATE_CLOCK_STRING)
             .add(FileWriter.getGenerateRemark(componentName, nets.projName()));
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents
           .add("""
               ARCHITECTURE NoPlatformSpecific OF SingleBitShiftReg IS
@@ -237,8 +237,8 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public ArrayList<String> GetComponentDeclarationSection(Netlist nets, AttributeSet attrs) {
     return LineBuffer.getHdlBuffer()
-        .pair("clock", HDLPorts.getClockName(1))
-        .pair("tick", HDLPorts.getTickName(1))
+        .pair("clock", HdlPorts.getClockName(1))
+        .pair("tick", HdlPorts.getTickName(1))
         .pair("nrOfStages", NR_OF_STAGES_STR)
         .pair("invertClock", NEGATE_CLOCK_STRING)
         .add("""
@@ -263,11 +263,11 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public ArrayList<String> getEntity(Netlist nets, AttributeSet attrs, String componentName) {
 
     final var contents = LineBuffer.getHdlBuffer()
-        .pair("clock", HDLPorts.getClockName(1))
-        .pair("tick", HDLPorts.getTickName(1))
+        .pair("clock", HdlPorts.getClockName(1))
+        .pair("tick", HdlPorts.getTickName(1))
         .pair("nrOfStages", NR_OF_STAGES_STR)
         .pair("invertClock", NEGATE_CLOCK_STRING);
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents
           .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
           .add(FileWriter.getExtendedLibrary())
@@ -295,12 +295,12 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   @Override
   public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer()
-        .pair("clock", HDLPorts.getClockName(1))
-        .pair("tick", HDLPorts.getTickName(1))
+        .pair("clock", HdlPorts.getClockName(1))
+        .pair("tick", HdlPorts.getTickName(1))
         .pair("nrOfStages", NR_OF_STAGES_STR)
         .pair("invertClock", NEGATE_CLOCK_STRING)
         .pair("nrOfBits", NR_OF_BITS_STR);
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           GenBits : FOR n IN ({{nrOfBits}}-1) DOWNTO 0 GENERATE
              OneBit : SingleBitShiftReg

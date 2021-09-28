@@ -26,15 +26,17 @@ public class ComboBox<T> extends JComboBox<T> {
     long last;
 
     static int currentIndex(ComboBoxModel<?> model) {
-      Object item = model.getSelectedItem();
-      for (int i = 0; item != null && i < model.getSize(); i++)
+      final var item = model.getSelectedItem();
+      for (var i = 0; item != null && i < model.getSize(); i++) {
         if (item.equals(model.getElementAt(i))) return i;
+      }
       return -1;
     }
 
+    @Override
     public int selectionForKey(char ch, ComboBoxModel<?> model) {
-      int idx = currentIndex(model);
-      long now = System.currentTimeMillis();
+      var idx = currentIndex(model);
+      final var now = System.currentTimeMillis();
       if (now > last + 500) {
         prefix = "";
         idx = 0;
@@ -43,10 +45,10 @@ public class ComboBox<T> extends JComboBox<T> {
 
       prefix += Character.toLowerCase(ch);
 
-      int n = model.getSize();
-      for (int offset = 0; offset < n; offset++) {
-        int i = (idx + offset) % n;
-        Object item = model.getElementAt(i);
+      final var n = model.getSize();
+      for (var offset = 0; offset < n; offset++) {
+        final var i = (idx + offset) % n;
+        final var item = model.getElementAt(i);
         if (item != null && item.toString().toLowerCase().startsWith(prefix)) return i;
       }
 

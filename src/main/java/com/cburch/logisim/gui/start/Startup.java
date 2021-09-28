@@ -201,7 +201,7 @@ public class Startup implements AWTEventListener {
     System.out.println();
     final var formatter = new HelpFormatter();
     formatter.setWidth(100);  // Arbitrary chosen value.
-    formatter.printHelp(Main.APP_NAME, null, opts, null, true);
+    formatter.printHelp(BuildInfo.name, null, opts, null, true);
     return RC.QUIT;
   }
 
@@ -211,10 +211,10 @@ public class Startup implements AWTEventListener {
    * @return Handler return code enum (RC.xxx)
    */
   protected static RC printVersion() {
-    System.out.println(Main.APP_DISPLAY_NAME);
-    System.out.println(Main.APP_URL);
+    System.out.println(BuildInfo.displayName);
+    System.out.println(BuildInfo.url);
     System.out.println(LineBuffer.format("{{1}} ({{2}})", BuildInfo.buildId, BuildInfo.dateIso8601));
-    System.out.println(LineBuffer.format("{{1}} ({{2}})", Main.JVM_VERSION, Main.JVM_VENDOR));
+    System.out.println(LineBuffer.format("{{1}} ({{2}})", BuildInfo.jvm_version, BuildInfo.jvm_vendor));
     return RC.QUIT;
   }
 

@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class HDLWires {
+public class HdlWires {
 
   public static final int WIRE = 0;
   public static final int REGISTER = 1;
@@ -23,7 +23,7 @@ public class HDLWires {
     private final int myType;
     private final String myName;
     private final int myNrOfBits;
-    
+
     public Wire(int type, String name, int nrOfBits) {
       myType = type;
       myName = name;
@@ -44,18 +44,18 @@ public class HDLWires {
   }
 
   private final List<Wire> myWires = new ArrayList<>();
-  
-  public HDLWires addWire(String name, int nrOfBits) {
+
+  public HdlWires addWire(String name, int nrOfBits) {
     myWires.add(new Wire(WIRE, name, nrOfBits));
     return this;
   }
-  
-  public HDLWires addRegister(String name, int nrOfBits) {
+
+  public HdlWires addRegister(String name, int nrOfBits) {
     myWires.add(new Wire(REGISTER, name, nrOfBits));
     return this;
   }
-  
-  public HDLWires addAllWires(Map<String, Integer> wires) {
+
+  public HdlWires addAllWires(Map<String, Integer> wires) {
     for (var wire : wires.keySet())
       myWires.add(new Wire(WIRE, wire, wires.get(wire)));
     return this;
@@ -63,24 +63,24 @@ public class HDLWires {
 
   public List<String> wireKeySet() {
     final var keys = new ArrayList<String>();
-    for (var wire : myWires) 
+    for (var wire : myWires)
       if (wire.isWire()) keys.add(wire.getName());
     return keys;
   }
-  
+
   public List<String> registerKeySet() {
     final var keys = new ArrayList<String>();
-    for (var wire : myWires) 
+    for (var wire : myWires)
       if (!wire.isWire()) keys.add(wire.getName());
     return keys;
   }
-  
+
   public int get(String wireName) {
     for (var wire : myWires)
       if (wire.getName().equals(wireName)) return wire.getNrOfBits();
     throw new ArrayStoreException("Wire or register not contained in structure");
   }
-  
+
   public void removeWires() {
     final var iterator = myWires.iterator();
     while (iterator.hasNext())

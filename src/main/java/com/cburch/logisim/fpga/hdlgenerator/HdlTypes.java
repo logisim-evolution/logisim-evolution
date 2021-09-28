@@ -14,23 +14,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class HDLTypes {
+public class HdlTypes {
 
-  private interface HDLType {
+  private interface HdlType {
     public String getTypeDefinition();
     public String getTypeName();
   }
 
-  private class HDLEnum implements HDLType {
+  private class HdlEnum implements HdlType {
     private final List<String> myEntries = new ArrayList<>();
     private final String myTypeName;
 
-    public HDLEnum(String name) {
+    public HdlEnum(String name) {
       myTypeName = name;
     }
 
-    public HDLEnum add(String entry) {
-      for (var item = 0; item < myEntries.size(); item++) 
+    public HdlEnum add(String entry) {
+      for (var item = 0; item < myEntries.size(); item++)
         if (myEntries.get(item).compareTo(entry) > 0) {
           myEntries.add(item, entry);
           return this;
@@ -39,55 +39,52 @@ public class HDLTypes {
       return this;
     }
 
+    @Override
     public String getTypeDefinition() {
       final var contents = new StringBuffer();
-      if (HDL.isVHDL())
-        contents.append(String.format("TYPE %s IS ( ", myTypeName));
-      else
-        contents.append("typedef enum { ");
+      if (Hdl.isVhdl()) contents.append(String.format("TYPE %s IS ( ", myTypeName));
+      else contents.append("typedef enum { ");
       var first = true;
       for (final var entry : myEntries) {
-        if (first)
-          first = false;
-        else
-          contents.append(", ");
+        if (first) first = false;
+        else contents.append(", ");
         contents.append(entry);
       }
-      if (HDL.isVHDL())
-        contents.append(");");
-      else
-        contents.append(String.format("} %s;", myTypeName));
+      if (Hdl.isVhdl()) contents.append(");");
+      else contents.append(String.format("} %s;", myTypeName));
       return contents.toString();
     }
-    
+
+    @Override
     public String getTypeName() {
       return myTypeName;
     }
   }
 
-  private class HDLArray implements HDLType {
+  private class HdlArray implements HdlType {
     private final String myTypeName;
     private final String myGenericBitWidth;
     private final int myBitWidth;
     private final int myNrOfEntries;
-    
-    public HDLArray(String name, String genericBitWidth, int nrOfEntries) {
+
+    public HdlArray(String name, String genericBitWidth, int nrOfEntries) {
       myTypeName = name;
       myGenericBitWidth = genericBitWidth;
       myBitWidth = -1;
       myNrOfEntries = nrOfEntries;
     }
 
-    public HDLArray(String name, int nrOfBits, int nrOfEntries) {
+    public HdlArray(String name, int nrOfBits, int nrOfEntries) {
       myTypeName = name;
       myGenericBitWidth = null;
       myBitWidth = nrOfBits;
       myNrOfEntries = nrOfEntries;
     }
 
+    @Override
     public String getTypeDefinition() {
       final var contents = new StringBuffer();
-      if (HDL.isVHDL()) {
+      if (Hdl.isVhdl()) {
         contents.append(String.format("Type %s IS ARRAY( %d DOWNTO 0 ) OF std_logic_vector( ", myTypeName, myNrOfEntries))
             .append(myGenericBitWidth == null ? Integer.toString(myBitWidth - 1) : String.format("%s - 1", myGenericBitWidth))
             .append(" DOWNTO 0);");
@@ -99,37 +96,38 @@ public class HDLTypes {
       return contents.toString();
     }
 
+    @Override
     public String getTypeName() {
       return myTypeName;
     }
   }
-  
-  private final Map<Integer, HDLType> myTypes = new HashMap<>();
+
+  private final Map<Integer, HdlType> myTypes = new HashMap<>();
   private final Map<String, Integer> myWires = new HashMap<>();
 
-  public HDLTypes addEnum(int identifier, String name) {
-    myTypes.put(identifier, new HDLEnum(name));
+  public HdlTypes addEnum(int identifier, String name) {
+    myTypes.put(identifier, new HdlEnum(name));
     return this;
   }
-  
-  public HDLTypes addEnumEntry(int identifier, String entry) {
+
+  public HdlTypes addEnumEntry(int identifier, String entry) {
     if (!myTypes.containsKey(identifier)) throw new IllegalArgumentException("Enum type not contained in array");
-    final var myEnum = (HDLEnum) myTypes.get(identifier);
+    final var myEnum = (HdlEnum) myTypes.get(identifier);
     myEnum.add(entry);
     return this;
   }
 
-  public HDLTypes addArray(int identifier, String name, String genericBitWidth, int nrOfEntries) {
-    myTypes.put(identifier, new HDLArray(name, genericBitWidth, nrOfEntries));
+  public HdlTypes addArray(int identifier, String name, String genericBitWidth, int nrOfEntries) {
+    myTypes.put(identifier, new HdlArray(name, genericBitWidth, nrOfEntries));
     return this;
   }
 
-  public HDLTypes addArray(int identifier, String name, int nrOfBits, int nrOfEntries) {
-    myTypes.put(identifier, new HDLArray(name, nrOfBits, nrOfEntries));
+  public HdlTypes addArray(int identifier, String name, int nrOfBits, int nrOfEntries) {
+    myTypes.put(identifier, new HdlArray(name, nrOfBits, nrOfEntries));
     return this;
   }
-  
-  public HDLTypes addWire(String name, int typeIdentifier) {
+
+  public HdlTypes addWire(String name, int typeIdentifier) {
     myWires.put(name, typeIdentifier);
     return this;
   }

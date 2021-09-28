@@ -34,10 +34,8 @@ public class AppearanceSelection extends Selection {
   }
 
   private boolean shouldSnap(Collection<? extends CanvasObject> shapes) {
-    for (CanvasObject o : shapes) {
-      if (o instanceof AppearanceElement) {
-        return true;
-      }
+    for (final var obj : shapes) {
+      if (obj instanceof AppearanceElement) return true;
     }
     return false;
   }

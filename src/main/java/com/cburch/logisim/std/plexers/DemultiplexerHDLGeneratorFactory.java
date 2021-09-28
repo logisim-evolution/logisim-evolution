@@ -11,14 +11,14 @@ package com.cburch.logisim.std.plexers;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
-public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class DemultiplexerHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String NR_OF_BITS_STRING = "NrOfBits";
   private static final int NR_OF_BITS_ID = -1;
@@ -52,8 +52,8 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     var numOutputs = (1 << nrOfSelectBits);
     for (var i = 0; i < numOutputs; i++) {
       if (i == 10) space = " ";
-      final var binValue = HDL.getConstantVector(i, nrOfSelectBits);
-      if (HDL.isVHDL()) {
+      final var binValue = Hdl.getConstantVector(i, nrOfSelectBits);
+      if (Hdl.isVhdl()) {
         contents.add("DemuxOut_{{1}}{{2}}<= DemuxIn WHEN sel = {{3}} AND", i, space, binValue);
         if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) {
           contents.add("                            Enable = '1' ELSE (OTHERS => '0');");

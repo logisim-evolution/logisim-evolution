@@ -41,12 +41,12 @@ public class CardPanel extends JPanel {
 
   public void setView(String choice) {
     if (choice == null) choice = "";
-    String oldChoice = current;
+    final var oldChoice = current;
     if (!oldChoice.equals(choice)) {
       current = choice;
       ((CardLayout) getLayout()).show(this, choice);
-      ChangeEvent e = new ChangeEvent(this);
-      for (ChangeListener listener : listeners) {
+      final var e = new ChangeEvent(this);
+      for (final var listener : listeners) {
         listener.stateChanged(e);
       }
     }

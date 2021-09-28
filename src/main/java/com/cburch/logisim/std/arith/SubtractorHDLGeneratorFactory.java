@@ -11,15 +11,15 @@ package com.cburch.logisim.std.arith;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 
-public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class SubtractorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String NR_OF_BITS_STRING = "NrOfBits";
   private static final int NR_OF_BITS_ID = -1;
@@ -30,7 +30,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     super();
     myParametersList
         .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-        .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID, HDLParameters.MAP_OFFSET, 1);
+        .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID, HdlParameters.MAP_OFFSET, 1);
     myWires
         .addWire("s_extended_dataA", EXTENDED_BITS_ID)
         .addWire("s_extended_dataB", EXTENDED_BITS_ID)
@@ -48,7 +48,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents = LineBuffer.getBuffer();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       Contents.add("""
           s_extended_dataA <= "0"&DataA;
           s_extended_dataB <= "0"&(NOT(DataB));

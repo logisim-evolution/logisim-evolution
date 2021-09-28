@@ -10,13 +10,14 @@
 package com.cburch.logisim.fpga.file;
 
 import static com.cburch.logisim.fpga.Strings.S;
+
+import com.cburch.logisim.fpga.gui.Reporter;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.generated.BuildInfo;
+import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
-import com.cburch.logisim.Main;
-import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.util.LineBuffer;
 
 public class FileWriter {
 
@@ -62,9 +63,9 @@ public class FileWriter {
       fileName.append(targetDirectory);
       if (!targetDirectory.endsWith(File.separator)) fileName.append(File.separator);
       fileName.append(componentName);
-      if (isEntity && HDL.isVHDL()) fileName.append(ENTITY_EXTENSION);
-      if (!isEntity && HDL.isVHDL()) fileName.append(ARCHITECTURE_EXTENSION);
-      fileName.append(HDL.isVHDL() ? ".vhd" : ".v");
+      if (isEntity && Hdl.isVhdl()) fileName.append(ENTITY_EXTENSION);
+      if (!isEntity && Hdl.isVhdl()) fileName.append(ARCHITECTURE_EXTENSION);
+      fileName.append(Hdl.isVhdl() ? ".vhd" : ".v");
       final var outFile = new File(fileName.toString());
       Reporter.report.addInfo(S.fmt("fileCreateHDLFile", fileName.toString()));
       if (outFile.exists()) {
@@ -109,12 +110,12 @@ public class FileWriter {
     final String headOpen;
     final String headClose;
 
-    final var headText = " " + Main.APP_NAME + " goes FPGA automatic generated " + (HDL.isVHDL() ? "VHDL" : "Verilog") + " code";
-    final var headUrl  = " " + Main.APP_URL;
+    final var headText = " " + BuildInfo.name + " goes FPGA automatic generated " + (Hdl.isVhdl() ? "VHDL" : "Verilog") + " code";
+    final var headUrl  = " " + BuildInfo.url;
     final var headProj = " Project   : " + projName;
     final var headComp = " Component : " + compName;
 
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       headWidth = 74;
       headOpen = "--==";
       headClose = "==";
@@ -129,7 +130,7 @@ public class FileWriter {
       lines.add(headOpen + " ".repeat(headWidth) + headClose);
       lines.add(headOpen + "=".repeat(headWidth) + headClose);
       lines.add("");
-    } else if (HDL.isVerilog()) {
+    } else if (Hdl.isVerilog()) {
       headWidth = 74;
       headOpen = " **";
       headClose = "**";

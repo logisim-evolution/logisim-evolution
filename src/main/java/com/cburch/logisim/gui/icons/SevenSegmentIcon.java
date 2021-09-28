@@ -25,7 +25,7 @@ public class SevenSegmentIcon extends BaseIcon {
   @Override
   protected void paintIcon(Graphics2D g2) {
     // see HexDigit.getSegs()
-    int segson = HexDigit.getSegs(isHexDisplay ? 10 : 7);
+    final var segson = HexDigit.getSegs(isHexDisplay ? 10 : 7);
     g2.setStroke(new BasicStroke(scale(2)));
     g2.setColor(Color.WHITE);
     g2.fillRect(scale(2), 0, scale(10), scale(16));

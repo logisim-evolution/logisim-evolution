@@ -11,7 +11,7 @@ package com.cburch.logisim.gui.menu;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.Main;
+import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.start.About;
@@ -136,7 +136,7 @@ class MenuHelp extends JMenu implements ActionListener {
     if (!browserIntegrationSupported()) return;
     try {
       if (Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE)) {
-        Desktop.getDesktop().browse(new URI(Main.APP_URL));
+        Desktop.getDesktop().browse(new URI(BuildInfo.url));
       }
     } catch (Exception e) {
       e.printStackTrace();

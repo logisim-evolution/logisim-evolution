@@ -14,7 +14,6 @@ import com.cburch.draw.tools.DrawingAttributeSet;
 import com.cburch.logisim.gui.icons.ShowStateIcon;
 import java.awt.Dimension;
 import java.awt.Graphics;
-import java.awt.Point;
 import javax.swing.Icon;
 
 public class ShowStateTool implements ToolbarClickableItem {
@@ -50,8 +49,8 @@ public class ShowStateTool implements ToolbarClickableItem {
 
   @Override
   public void clicked() {
-    ShowStateDialog w = new ShowStateDialog(view.getFrame(), canvas);
-    Point p = view.getFrame().getLocation();
+    final var w = new ShowStateDialog(view.getFrame(), canvas);
+    final var p = view.getFrame().getLocation();
     p.translate(80, 50);
     w.setLocation(p);
     w.setVisible(true);

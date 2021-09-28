@@ -9,7 +9,7 @@
 
 package com.cburch.logisim.gui.start;
 
-import com.cburch.logisim.Main;
+import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.awt.BorderLayout;
@@ -43,7 +43,7 @@ public class About {
     panel.add(imgPanel);
     panel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
-    OptionPane.showMessageDialog(owner, panel, Main.APP_DISPLAY_NAME, OptionPane.PLAIN_MESSAGE);
+    OptionPane.showMessageDialog(owner, panel, BuildInfo.displayName, OptionPane.PLAIN_MESSAGE);
   }
 
   private static class AboutPanel extends JPanel implements AncestorListener {

@@ -189,7 +189,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   }
 
   @Override
-  public boolean ActiveOnHigh(AttributeSet attrs) {
+  public boolean activeOnHigh(AttributeSet attrs) {
     return attrs.getValue(IoLibrary.ATTR_ACTIVE);
   }
 

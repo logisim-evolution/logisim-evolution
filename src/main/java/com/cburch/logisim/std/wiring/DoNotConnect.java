@@ -16,7 +16,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.fpga.hdlgenerator.InlinedHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -36,7 +36,7 @@ public class DoNotConnect extends InstanceFactory {
   public static final String _ID = "NoConnect";
 
   public DoNotConnect() {
-    super(_ID, S.getter("noConnectionComponent"), new InlinedHDLGeneratorFactory());
+    super(_ID, S.getter("noConnectionComponent"), new InlinedHdlGeneratorFactory());
     setIconName("noconnect.gif");
     setAttributes(new Attribute[] {StdAttr.WIDTH}, new Object[] {BitWidth.ONE});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));

@@ -36,7 +36,6 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.List;
 import javax.swing.JPopupMenu;
 
 public class AppearanceCanvas extends Canvas implements CanvasPaneContents, ActionDispatcher {
@@ -68,8 +67,8 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   }
 
   static int getMaxIndex(CanvasModel model) {
-    List<CanvasObject> objects = model.getObjectsFromBottom();
-    for (int i = objects.size() - 1; i >= 0; i--) {
+    final var objects = model.getObjectsFromBottom();
+    for (var i = objects.size() - 1; i >= 0; i--) {
       if (!(objects.get(i) instanceof AppearanceElement)) {
         return i;
       }
@@ -84,23 +83,20 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
   private void computeSize(boolean immediate) {
     hidePopup();
-    Bounds bounds;
-    CircuitState circState = circuitState;
-    if (circState == null) {
-      bounds = Bounds.create(0, 0, 50, 50);
-    } else {
-      bounds = circState.getCircuit().getAppearance().getAbsoluteBounds();
-    }
-    int width = bounds.getX() + bounds.getWidth() + BOUNDS_BUFFER;
-    int height = bounds.getY() + bounds.getHeight() + BOUNDS_BUFFER;
-    Dimension dim;
-    if (canvasPane == null) {
-      dim = new Dimension(width, height);
-    } else {
-      dim = canvasPane.supportPreferredSize(width, height);
-    }
+
+    final var circState = circuitState;
+    Bounds bounds =
+        (circState == null)
+            ? Bounds.create(0, 0, 50, 50)
+            : circState.getCircuit().getAppearance().getAbsoluteBounds();
+    final var width = bounds.getX() + bounds.getWidth() + BOUNDS_BUFFER;
+    final var height = bounds.getY() + bounds.getHeight() + BOUNDS_BUFFER;
+    Dimension dim =
+        (canvasPane == null)
+            ? new Dimension(width, height)
+            : canvasPane.supportPreferredSize(width, height);
     if (!immediate) {
-      Bounds old = oldPreferredSize;
+      final var old = oldPreferredSize;
       if (old != null
           && Math.abs(old.getWidth() - dim.width) < THRESH_SIZE_UPDATE
           && Math.abs(old.getHeight() - dim.height) < THRESH_SIZE_UPDATE) {
@@ -114,50 +110,48 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
   @Override
   public void doAction(Action canvasAction) {
-    Circuit circuit = circuitState.getCircuit();
+    final var circuit = circuitState.getCircuit();
     if (!proj.getLogisimFile().contains(circuit)) {
       return;
     }
 
     if (canvasAction instanceof ModelReorderAction) {
-      int max = getMaxIndex(getModel());
-      ModelReorderAction reorder = (ModelReorderAction) canvasAction;
-      List<ReorderRequest> rs = reorder.getReorderRequests();
-      List<ReorderRequest> mod = new ArrayList<>(rs.size());
-      boolean changed = false;
-      boolean movedToMax = false;
-      for (ReorderRequest r : rs) {
-        CanvasObject o = r.getObject();
-        if (o instanceof AppearanceElement) {
+      final var max = getMaxIndex(getModel());
+      final var reorder = (ModelReorderAction) canvasAction;
+      final var requests = reorder.getReorderRequests();
+      final var mod = new ArrayList<ReorderRequest>(requests.size());
+      var changed = false;
+      var movedToMax = false;
+      for (final var singleRequest : requests) {
+        final var obj = singleRequest.getObject();
+        if (obj instanceof AppearanceElement) {
           changed = true;
         } else {
-          if (r.getToIndex() > max) {
-            int from = r.getFromIndex();
+          if (singleRequest.getToIndex() > max) {
+            final var from = singleRequest.getFromIndex();
             changed = true;
             movedToMax = true;
             if (from == max && !movedToMax) {
               // this change is ineffective - don't add it
             } else {
-              mod.add(new ReorderRequest(o, from, max));
+              mod.add(new ReorderRequest(obj, from, max));
             }
           } else {
-            if (r.getToIndex() == max) movedToMax = true;
-            mod.add(r);
+            if (singleRequest.getToIndex() == max) movedToMax = true;
+            mod.add(singleRequest);
           }
         }
       }
       if (changed) {
-        if (mod.isEmpty()) {
-          return;
-        }
+        if (mod.isEmpty()) return;
         canvasAction = new ModelReorderAction(getModel(), mod);
       }
     }
 
     if (canvasAction instanceof ModelAddAction) {
-      ModelAddAction addAction = (ModelAddAction) canvasAction;
-      int cur = addAction.getDestinationIndex();
-      int max = getMaxIndex(getModel());
+      var addAction = (ModelAddAction) canvasAction;
+      final var cur = addAction.getDestinationIndex();
+      final var max = getMaxIndex(getModel());
       if (cur > max) {
         canvasAction = new ModelAddAction(getModel(), addAction.getObjects(), max + 1);
       }
@@ -213,7 +207,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   }
 
   private void hidePopup() {
-    LayoutPopupManager man = popupManager;
+    final var man = popupManager;
     if (man != null) {
       man.hideCurrentPopup();
     }
@@ -227,8 +221,8 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
   @Override
   protected void paintForeground(Graphics g) {
-    double zoom = grid.getZoomFactor();
-    var gfxScaled = g.create();
+    final var zoom = grid.getZoomFactor();
+    final var gfxScaled = g.create();
     if (zoom != 1.0 && zoom != 0.0 && gfxScaled instanceof Graphics2D) {
       ((Graphics2D) gfxScaled).scale(zoom, zoom);
     }
@@ -256,7 +250,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
   @Override
   public void repaintCanvasCoords(int x, int y, int width, int height) {
-    double zoom = grid.getZoomFactor();
+    final var zoom = grid.getZoomFactor();
     if (zoom != 1.0) {
       x = (int) (x * zoom - 1);
       y = (int) (y * zoom - 1);
@@ -268,10 +262,10 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
   private void repairEvent(MouseEvent e, double zoom) {
     if (zoom != 1.0) {
-      int oldx = e.getX();
-      int oldy = e.getY();
-      int newx = (int) Math.round(e.getX() / zoom);
-      int newy = (int) Math.round(e.getY() / zoom);
+      final var oldx = e.getX();
+      final var oldy = e.getY();
+      final var newx = (int) Math.round(e.getX() / zoom);
+      final var newy = (int) Math.round(e.getY() / zoom);
       e.translatePoint(newx - oldx, newy - oldy);
     }
   }
@@ -289,13 +283,13 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   public void setCircuit(Project proj, CircuitState circuitState) {
     this.proj = proj;
     this.circuitState = circuitState;
-    Circuit circuit = circuitState.getCircuit();
+    final var circuit = circuitState.getCircuit();
     setModel(circuit.getAppearance(), this);
   }
 
   @Override
   public void setModel(CanvasModel value, ActionDispatcher dispatcher) {
-    CanvasModel oldModel = super.getModel();
+    final var oldModel = super.getModel();
     if (oldModel != null) {
       oldModel.removeCanvasModelListener(listener);
     }
@@ -326,20 +320,16 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
   @Override
   public int snapX(int x) {
-    if (x < 0) {
-      return -((-x + 5) / 10 * 10);
-    } else {
-      return (x + 5) / 10 * 10;
-    }
+    return (x < 0)
+       ? -((-x + 5) / 10 * 10)
+       : (x + 5) / 10 * 10;
   }
 
   @Override
   public int snapY(int y) {
-    if (y < 0) {
-      return -((-y + 5) / 10 * 10);
-    } else {
-      return (y + 5) / 10 * 10;
-    }
+    return (y < 0)
+       ? -((-y + 5) / 10 * 10)
+       : (y + 5) / 10 * 10;
   }
 
   @Override
@@ -361,9 +351,9 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
     @Override
     public void propertyChange(PropertyChangeEvent evt) {
-      String prop = evt.getPropertyName();
+      final var prop = evt.getPropertyName();
       if (prop.equals(GridPainter.ZOOM_PROPERTY)) {
-        CanvasTool t = getTool();
+        final var t = getTool();
         if (t != null) {
           t.zoomFactorChanged(AppearanceCanvas.this);
         }

@@ -13,10 +13,10 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
-import com.cburch.logisim.fpga.hdlgenerator.HDLPorts;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
+import com.cburch.logisim.fpga.hdlgenerator.HdlPorts;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String INVERT_CLOCK_STRING = "InvertClockEnable";
   private static final int INVERT_CLOCK_ID = -1;
@@ -41,7 +41,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     super();
     nrOfInputs = numInputs;
     myParametersList
-        .add(INVERT_CLOCK_STRING, INVERT_CLOCK_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, triggerAttr, TRIGGER_MAP);
+        .add(INVERT_CLOCK_STRING, INVERT_CLOCK_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, triggerAttr, TRIGGER_MAP);
     myWires
         .addWire("s_clock", 1)
         .addWire("s_next_state", 1)
@@ -49,7 +49,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     myPorts
         .add(Port.INPUT, "Reset", 1, nrOfInputs + 3)
         .add(Port.INPUT, "Preset", 1, nrOfInputs + 4)
-        .add(Port.CLOCK, HDLPorts.CLOCK, 1, nrOfInputs)
+        .add(Port.CLOCK, HdlPorts.CLOCK, 1, nrOfInputs)
         .add(Port.OUTPUT, "Q", 1, nrOfInputs + 1)
         .add(Port.OUTPUT, "Q_bar", 1, nrOfInputs + 2);
   }
@@ -59,20 +59,20 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     final var contents = LineBuffer.getHdlBuffer();
     contents
         .pair("invertClock", INVERT_CLOCK_STRING)
-        .pair("Clock", HDLPorts.CLOCK)
-        .pair("Tick", HDLPorts.TICK)
+        .pair("Clock", HdlPorts.CLOCK)
+        .pair("Tick", HdlPorts.TICK)
         .addRemarkBlock("Here the output signals are defined")
         .add("""
                  {{assign}}Q       {{=}}s_current_state_reg;
                  {{assign}}Q_bar   {{=}}{{not}}(s_current_state_reg);
              """)
-        .add(HDL.isVHDL()
+        .add(Hdl.isVhdl()
             ? "   s_clock {{=}} {{Clock}} WHEN {{invertClock}} = 0 ELSE NOT({{Clock}});"
             : "   assign s_clock {{=}} ({{invertClock}} == 0) ? {{Clock}} : ~{{Clock}};")
         .addRemarkBlock("Here the update logic is defined")
         .add(GetUpdateLogic())
         .add("");
-    if (HDL.isVerilog()) {
+    if (Hdl.isVerilog()) {
       contents
           .addRemarkBlock("Here the initial register value is defined; for simulation only")
           .add("""
@@ -85,7 +85,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     }
 
     contents.addRemarkBlock("Here the actual state register is defined");
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           make_memory : PROCESS( s_clock , Reset , Preset , {{Tick}} , s_next_state )
           BEGIN

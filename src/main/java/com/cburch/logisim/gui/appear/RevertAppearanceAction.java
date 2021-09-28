@@ -15,7 +15,6 @@ import com.cburch.draw.model.CanvasObject;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMutator;
 import com.cburch.logisim.circuit.CircuitTransaction;
-import com.cburch.logisim.circuit.appear.CircuitAppearance;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import java.util.ArrayList;
@@ -33,7 +32,7 @@ public class RevertAppearanceAction extends Action {
 
   @Override
   public void doIt(Project proj) {
-    ActionTransaction xn = new ActionTransaction(true);
+    final var xn = new ActionTransaction(true);
     xn.execute();
   }
 
@@ -44,7 +43,7 @@ public class RevertAppearanceAction extends Action {
 
   @Override
   public void undo(Project proj) {
-    ActionTransaction xn = new ActionTransaction(false);
+    final var xn = new ActionTransaction(false);
     xn.execute();
   }
 
@@ -57,22 +56,21 @@ public class RevertAppearanceAction extends Action {
 
     @Override
     protected Map<Circuit, Integer> getAccessedCircuits() {
-      Map<Circuit, Integer> accessMap = new HashMap<>();
-      for (Circuit supercirc : circuit.getCircuitsUsingThis()) {
-        accessMap.put(supercirc, READ_WRITE);
+      final var accessMap = new HashMap<Circuit, Integer>();
+      for (final var superCircuit : circuit.getCircuitsUsingThis()) {
+        accessMap.put(superCircuit, READ_WRITE);
       }
       return accessMap;
     }
 
     @Override
     protected void run(CircuitMutator mutator) {
+      final var appear = circuit.getAppearance();
       if (forward) {
-        CircuitAppearance appear = circuit.getAppearance();
         wasDefault = appear.isDefaultAppearance();
         old = new ArrayList<>(appear.getObjectsFromBottom());
         appear.setDefaultAppearance(true);
       } else {
-        CircuitAppearance appear = circuit.getAppearance();
         appear.setObjectsForce(old);
         appear.setDefaultAppearance(wasDefault);
       }

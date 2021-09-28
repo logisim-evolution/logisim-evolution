@@ -32,6 +32,7 @@ public class AppearanceEditPopup extends EditPopup implements EditHandler.Listen
     initialize();
   }
 
+  @Override
   public void enableChanged(EditHandler handler, LogisimMenuItem action, boolean value) {
     enabled.put(action, value);
   }
@@ -63,16 +64,14 @@ public class AppearanceEditPopup extends EditPopup implements EditHandler.Listen
 
   @Override
   protected boolean isEnabled(LogisimMenuItem item) {
-    Boolean value = enabled.get(item);
+    final var value = enabled.get(item);
     return value != null && value;
   }
 
   @Override
   protected boolean shouldShow(LogisimMenuItem item) {
-    if (item == LogisimMenuBar.ADD_CONTROL || item == LogisimMenuBar.REMOVE_CONTROL) {
-      return canvas.getSelection().getSelectedHandle() != null;
-    } else {
-      return true;
-    }
+    return (item == LogisimMenuBar.ADD_CONTROL || item == LogisimMenuBar.REMOVE_CONTROL)
+        ? canvas.getSelection().getSelectedHandle() != null
+        : true;
   }
 }

@@ -14,20 +14,17 @@ import com.cburch.contracts.BaseMouseMotionListenerContract;
 import com.cburch.draw.canvas.SelectionEvent;
 import com.cburch.draw.canvas.SelectionListener;
 import com.cburch.draw.model.CanvasObject;
-import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.appear.AppearancePort;
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.instance.Instance;
 import java.awt.Dimension;
-import java.awt.Point;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import javax.swing.JViewport;
 import javax.swing.Popup;
 import javax.swing.PopupFactory;
 
@@ -51,24 +48,22 @@ class LayoutPopupManager implements SelectionListener, BaseMouseListenerContract
 
   // returns all the ports in the current selection
   private Set<AppearancePort> getSelectedPorts() {
-    HashSet<AppearancePort> ports = new HashSet<>();
-    for (CanvasObject o : canvas.getSelection().getSelected()) {
-      if (o instanceof AppearancePort) {
-        ports.add((AppearancePort) o);
-      }
+    final var ports = new HashSet<AppearancePort>();
+    for (final var o : canvas.getSelection().getSelected()) {
+      if (o instanceof AppearancePort) ports.add((AppearancePort) o);
     }
     return ports;
   }
 
   // adds all the dynamic elements in the current selection to hilight set
   private void addSelectedDynamicElements(HashSet<CanvasObject> hilight) {
-    for (CanvasObject o : canvas.getSelection().getSelected()) {
-      if (o instanceof DynamicElement) hilight.add(o);
+    for (final var obj : canvas.getSelection().getSelected()) {
+      if (obj instanceof DynamicElement) hilight.add(obj);
     }
   }
 
   public void hideCurrentPopup() {
-    Popup cur = curPopup;
+    final var cur = curPopup;
     if (cur != null) {
       curPopup = null;
       dragStart = null;
@@ -78,11 +73,9 @@ class LayoutPopupManager implements SelectionListener, BaseMouseListenerContract
 
   // returns true if the canvas contains any port not in the given set
   private boolean isPortUnselected(Set<AppearancePort> selected) {
-    for (CanvasObject o : canvas.getModel().getObjectsFromBottom()) {
-      if (o instanceof AppearancePort) {
-        if (!selected.contains(o)) {
-          return true;
-        }
+    for (final var obj : canvas.getModel().getObjectsFromBottom()) {
+      if (obj instanceof AppearancePort) {
+        if (!selected.contains(obj)) return true;
       }
     }
     return false;
@@ -90,7 +83,7 @@ class LayoutPopupManager implements SelectionListener, BaseMouseListenerContract
 
   @Override
   public void mouseDragged(MouseEvent e) {
-    Location start = dragStart;
+    final var start = dragStart;
     if (start != null && start.manhattanDistanceTo(e.getX(), e.getY()) > 4) {
       hideCurrentPopup();
     }
@@ -103,7 +96,7 @@ class LayoutPopupManager implements SelectionListener, BaseMouseListenerContract
 
   @Override
   public void mouseExited(MouseEvent e) {
-    long sincePopup = System.currentTimeMillis() - curPopupTime;
+    final var sincePopup = System.currentTimeMillis() - curPopupTime;
     if (sincePopup > 50) hideCurrentPopup();
   }
 
@@ -114,16 +107,16 @@ class LayoutPopupManager implements SelectionListener, BaseMouseListenerContract
 
   @Override
   public void mousePressed(MouseEvent e) {
-    long sincePopup = System.currentTimeMillis() - curPopupTime;
+    final var sincePopup = System.currentTimeMillis() - curPopupTime;
     if (sincePopup > 50) hideCurrentPopup();
     dragStart = Location.create(e.getX(), e.getY());
   }
 
   @Override
   public void selectionChanged(SelectionEvent e) {
-    int act = e.getAction();
+    final var act = e.getAction();
     if (act == SelectionEvent.ACTION_ADDED) {
-      Set<CanvasObject> shapes = shouldShowPopup(e.getAffected());
+      final var shapes = shouldShowPopup(e.getAffected());
       if (shapes == null) {
         hideCurrentPopup();
       } else {
@@ -133,16 +126,16 @@ class LayoutPopupManager implements SelectionListener, BaseMouseListenerContract
   }
 
   private Set<CanvasObject> shouldShowPopup(Collection<CanvasObject> add) {
-    boolean found = false;
-    for (CanvasObject o : add) {
-      if (o instanceof AppearancePort || o instanceof DynamicElement) {
+    var found = false;
+    for (final var obj : add) {
+      if (obj instanceof AppearancePort || obj instanceof DynamicElement) {
         found = true;
         break;
       }
     }
     if (found) {
-      HashSet<CanvasObject> hilight = new HashSet<>();
-      Set<AppearancePort> ports = getSelectedPorts();
+      final var hilight = new HashSet<CanvasObject>();
+      final var ports = getSelectedPorts();
       if (!ports.isEmpty() && isPortUnselected(ports)) hilight.addAll(ports);
       addSelectedDynamicElements(hilight);
       if (hilight.size() > 0) return hilight;
@@ -152,28 +145,25 @@ class LayoutPopupManager implements SelectionListener, BaseMouseListenerContract
 
   private void showPopup(Set<CanvasObject> shapes) {
     dragStart = null;
-    CircuitState circuitState = canvas.getCircuitState();
-    if (circuitState == null) {
-      return;
-    }
-    ArrayList<Instance> pins = new ArrayList<>();
-    ArrayList<Instance> elts = new ArrayList<>();
-    for (CanvasObject shape : shapes) {
+    final var circuitState = canvas.getCircuitState();
+    if (circuitState == null) return;
+    final var pins = new ArrayList<Instance>();
+    final var elts = new ArrayList<Instance>();
+    for (final var shape : shapes) {
       if (shape instanceof AppearancePort) pins.add(((AppearancePort) shape).getPin());
       else elts.add(((DynamicElement) shape).getFirstInstance().getInstance());
     }
     hideCurrentPopup();
-    JViewport owner = canvasPane.getViewport();
-    Point ownerLoc = owner.getLocationOnScreen();
-    Dimension ownerDim = owner.getSize();
-    Dimension layoutDim =
-        new Dimension((int) (ownerDim.getWidth() - 10.0), (int) (ownerDim.getHeight() / 2));
-    LayoutThumbnail layout = new LayoutThumbnail(layoutDim);
+    final var owner = canvasPane.getViewport();
+    final var ownerLoc = owner.getLocationOnScreen();
+    final var ownerDim = owner.getSize();
+    final var layoutDim = new Dimension((int) (ownerDim.getWidth() - 10.0), (int) (ownerDim.getHeight() / 2));
+    final var layout = new LayoutThumbnail(layoutDim);
     layout.setCircuit(circuitState, pins, elts);
-    int x = ownerLoc.x + Math.max(0, ownerDim.width - layoutDim.width - 5);
-    int y = ownerLoc.y + Math.max(0, ownerDim.height - layoutDim.height - 5);
-    PopupFactory factory = PopupFactory.getSharedInstance();
-    Popup popup = factory.getPopup(canvasPane.getViewport(), layout, x, y);
+    final var x = ownerLoc.x + Math.max(0, ownerDim.width - layoutDim.width - 5);
+    final var y = ownerLoc.y + Math.max(0, ownerDim.height - layoutDim.height - 5);
+    final var factory = PopupFactory.getSharedInstance();
+    final var popup = factory.getPopup(canvasPane.getViewport(), layout, x, y);
     popup.show();
     curPopup = popup;
     curPopupTime = System.currentTimeMillis();
