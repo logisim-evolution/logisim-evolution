@@ -734,19 +734,17 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
   
   private boolean getPortEntry(LineBuffer contents, boolean firstEntry, int nrOfEntries, int currentEntry,
       String name, String direction, String type, int maxLength) {
-    boolean result = firstEntry;
     if (firstEntry) {
       if (currentEntry == (nrOfEntries - 1))
         contents.add("   PORT ( {{1}}{{2}}: {{3}} {{4}} );", name, " ".repeat(maxLength - name.length()), direction, type);
       else
         contents.add("   PORT ( {{1}}{{2}}: {{3}} {{4}};", name, " ".repeat(maxLength - name.length()), direction, type);
-      result = false;
     } else if (currentEntry == (nrOfEntries - 1)) {
       contents.add("          {{1}}{{2}}: {{3}} {{4}} );", name, " ".repeat(maxLength - name.length()), direction, type);
     } else {
       contents.add("          {{1}}{{2}}: {{3}} {{4}};", name, " ".repeat(maxLength - name.length()), direction, type);
     }
-    return result;
+    return false;
   }
   
   private String getTypeIdentifier(int nrOfBits, AttributeSet attrs) {
