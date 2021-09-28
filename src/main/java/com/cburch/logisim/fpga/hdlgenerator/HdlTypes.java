@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.cburch.logisim.util.LineBuffer;
+
 public class HdlTypes {
 
   private interface HdlType {
@@ -137,10 +139,10 @@ public class HdlTypes {
   }
 
   public List<String> getTypeDefinitions() {
-    final var defs = new ArrayList<String>();
+    final var defs = LineBuffer.getHdlBuffer();
     for (final var entry : myTypes.keySet())
       defs.add(myTypes.get(entry).getTypeDefinition());
-    return defs;
+    return defs.getWithIndent();
   }
 
   public Map<String, String> getTypedWires() {
