@@ -9,44 +9,42 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
-import java.util.ArrayList;
-import java.util.Set;
-
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class InlinedHdlGeneratorFactory implements HdlGeneratorFactory {
 
   @Override
-  public boolean generateAllHDLDescriptions(Set<String> handledComponents, String workingDirectory,
-      ArrayList<String> hierarchy) {
+  public boolean generateAllHDLDescriptions(Set<String> handledComponents, String workingDirectory, List<String> hierarchy) {
     throw new IllegalAccessError("BUG: generateAllHDLDescriptions not supported");
   }
 
   @Override
-  public ArrayList<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
+  public List<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
     throw new IllegalAccessError("BUG: getArchitecture not supported");
   }
 
   @Override
-  public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
+  public List<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
     throw new IllegalAccessError("BUG: getComponentInstantiation not supported");
   }
 
   @Override
-  public ArrayList<String> getComponentMap(Netlist nets, Long componentId, Object componentInfo, String name) {
+  public List<String> getComponentMap(Netlist nets, Long componentId, Object componentInfo, String name) {
     throw new IllegalAccessError("BUG: getComponentMap not supported");
   }
 
   @Override
-  public ArrayList<String> getEntity(Netlist theNetlist, AttributeSet attrs, String componentName) {
+  public List<String> getEntity(Netlist theNetlist, AttributeSet attrs, String componentName) {
     throw new IllegalAccessError("BUG: getEntity not supported");
   }
 
   @Override
-  public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo,
-      String circuitName) {
+  public List<String> getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
     return new ArrayList<String>();
   }
 
