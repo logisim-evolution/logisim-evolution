@@ -15,11 +15,13 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.FpgaIoInformationContainer;
 import com.cburch.logisim.fpga.data.IoComponentTypes;
 import com.cburch.logisim.fpga.data.LedArrayDriving;
+import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PinActivity;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.io.LedArrayGenericHDLGeneratorFactory;
@@ -148,7 +150,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
+  public ArrayList<String> getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
     final var components = new ArrayList<String>();
     final var nrOfClockTrees = theNetlist.numberOfClockTrees();
     if (nrOfClockTrees > 0) {
@@ -193,7 +195,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     contents.addRemarkBlock("Here all signal adaptations are performed");
     for (final var key : myIOComponents.getMappableResources().keySet()) {
       final var comp = myIOComponents.getMappableResources().get(key);
-      contents.add(AbstractHdlGeneratorFactory.GetToplevelCode(comp));
+      contents.add(getToplevelCode(comp));
     }
     /* now we process the clock tree components */
     if (nrOfClockTrees > 0) {
@@ -231,5 +233,63 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       }
     }
     return contents.get();
+  }
+
+  private static ArrayList<String> getToplevelCode(MapComponent component) {
+    final var temp = new StringBuffer();
+    final var contents = new ArrayList<String>();
+    if (component.getNrOfPins() <= 0) {
+      // FIXME: hardcoded string
+      Reporter.report.addError("BUG: Found a component with no pins. Please report this occurance!");
+      return contents;
+    }
+    for (var i = 0; i < component.getNrOfPins(); i++) {
+      temp.setLength(0);
+      temp.append("   ").append(Hdl.assignPreamble());
+      /* the internal mapped signals are handled in the top-level HDL generator */
+      if (component.isInternalMapped(i)) continue;
+      /* IO-pins need to be mapped directly to the top-level component and cannot be
+       * passed by signals, so we skip them.
+       */
+      if (component.isIo(i)) continue;
+      if (!component.isMapped(i)) {
+        /* unmapped output pins we leave unconnected */
+        if (component.isOutput(i)) continue;
+        temp.append(component.getHdlSignalName(i));
+        allign(temp);
+        temp.append(Hdl.assignOperator());
+        temp.append(Hdl.zeroBit()).append(";");
+        contents.add(temp.toString());
+        continue;
+      }
+      if (component.isInput(i)) {
+        temp.append(component.getHdlSignalName(i));
+        allign(temp);
+        temp.append(Hdl.assignOperator());
+        if (component.IsConstantMapped(i)) {
+          temp.append(component.isZeroConstantMap(i) ? Hdl.zeroBit() : Hdl.oneBit());
+        } else {
+          if (component.isExternalInverted(i)) temp.append(Hdl.notOperator()).append("n_");
+          temp.append(component.getHdlString(i));
+        }
+        temp.append(";");
+        contents.add(temp.toString());
+        continue;
+      }
+      if (component.isOpenMapped(i)) continue;
+      if (component.isExternalInverted(i)) temp.append("n_");
+      temp.append(component.getHdlString(i));
+      allign(temp);
+      temp.append(Hdl.assignOperator());
+      if (component.isExternalInverted(i)) temp.append(Hdl.notOperator());
+      temp.append(component.getHdlSignalName(i)).append(";");
+      contents.add(temp.toString());
+    }
+    contents.add(" ");
+    return contents;
+  }
+
+  private static void allign(StringBuffer s) {
+    while (s.length() < 40) s.append(" ");
   }
 }

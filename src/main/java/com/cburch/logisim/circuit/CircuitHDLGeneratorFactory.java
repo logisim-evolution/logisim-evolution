@@ -12,15 +12,12 @@ package com.cburch.logisim.circuit;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
-import com.cburch.logisim.fpga.designrulecheck.ConnectionPoint;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
-import com.cburch.logisim.fpga.designrulecheck.Net;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
-import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
@@ -220,7 +217,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
+  public ArrayList<String> getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
     final var components = new ArrayList<String>();
     final var instantiatedComponents = new HashSet<String>();
     for (final var gate : theNetlist.getNormalComponents()) {
@@ -559,7 +556,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
               Reporter.report.addFatalError(
                   String.format("INTERNAL ERROR! Could not find the end-index of a sub-circuit component: '%s'", pinLabel));
             } else {
-              portMap.putAll(GetNetMap(pinLabel, true, componentInfo, endId, nets));
+              portMap.putAll(Hdl.getNetMap(pinLabel, true, componentInfo, endId, nets));
             }
           }
         }
@@ -582,7 +579,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
               Reporter.report.addFatalError(
                       String.format("INTERNAL ERROR! Could not find the end-index of a sub-circuit component: '%s'", pinLabel));
             } else {
-              portMap.putAll(GetNetMap(pinLabel, true, componentInfo, endId, nets));
+              portMap.putAll(Hdl.getNetMap(pinLabel, true, componentInfo, endId, nets));
             }
           }
         }
@@ -604,7 +601,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
               Reporter.report.addFatalError(
                       String.format("INTERNAL ERROR! Could not find the end-index of a sub-circuit component: '%s'", pinLabel));
             } else {
-              portMap.putAll(GetNetMap(pinLabel, true, componentInfo, endid, nets));
+              portMap.putAll(Hdl.getNetMap(pinLabel, true, componentInfo, endid, nets));
             }
           }
         }

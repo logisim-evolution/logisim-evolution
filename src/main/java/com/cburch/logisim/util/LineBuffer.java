@@ -681,7 +681,6 @@ public class LineBuffer implements RandomAccess {
   }
 
   public void validateLineNoPositionals(String fmt) {
-    final var empty = new Object[] {};
     validateLine(fmt, null);
   }
 
