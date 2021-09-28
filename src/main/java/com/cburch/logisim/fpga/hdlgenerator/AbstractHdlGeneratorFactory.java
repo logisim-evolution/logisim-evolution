@@ -420,42 +420,39 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     if (Hdl.isVhdl()) {
       contents.add("{{1}} : {{2}}", thisInstanceIdentifier, compName);
       if (!parameterMap.isEmpty()) {
-        oneLine.append("   GENERIC MAP ( ");
-        tabLength = oneLine.length();
-        first = true;
-        for (var generic : parameterMap.keySet()) {
-          if (!first) {
-            oneLine.append(",");
-            contents.add(oneLine.toString());
-            oneLine.setLength(0);
-            oneLine.append(" ".repeat(tabLength));
-          } else first = false;
-          oneLine.append(generic);
-          oneLine.append(" ".repeat(Math.max(0, SIGNAL_ALLIGNMENT_SIZE - generic.length())));
-          oneLine.append("=> ").append(parameterMap.get(generic));
+        // first we gather information on the generic string lengths
+        var maxNameLength = 0;
+        for (final var generic : parameterMap.keySet())
+          maxNameLength = Math.max(maxNameLength, generic.length());
+        var currentGeneric = 0;
+        final var genericNames = new TreeSet<String>(parameterMap.keySet());
+        final var nrOfGenerics = genericNames.size();
+        // now we add them
+        for (final var generic : genericNames) {
+          final var preamble = currentGeneric == 0 ? "GENERIC MAP (" : " ".repeat(13); 
+          contents.add("   {{1}} {{2}}{{3}} => {{4}}{{5}}", preamble, generic,
+              " ".repeat(Math.max(0, maxNameLength - generic.length())),
+              parameterMap.get(generic),
+              currentGeneric == (nrOfGenerics - 1) ? " )" : ",");
+          currentGeneric++;
         }
-        oneLine.append(")");
-        contents.add(oneLine.toString());
-        oneLine.setLength(0);
       }
       if (!portMap.isEmpty()) {
-        oneLine.append("   PORT MAP ( ");
-        tabLength = oneLine.length();
-        first = true;
-        for (var port : portMap.keySet()) {
-          if (!first) {
-            oneLine.append(",");
-            contents.add(oneLine.toString());
-            oneLine.setLength(0);
-            oneLine.append(" ".repeat(tabLength));
-          } else first = false;
-          oneLine.append(port);
-          oneLine.append(" ".repeat(Math.max(0, SIGNAL_ALLIGNMENT_SIZE - port.length())));
-          oneLine.append("=> ").append(portMap.get(port));
+        // first we gather information on the port string lengths
+        var maxNameLength = 0;
+        for (final var port : portMap.keySet())
+          maxNameLength = Math.max(maxNameLength, port.length());
+        var currentPort = 0;
+        final var portNames = new TreeSet<String>(portMap.keySet());
+        final var nrOfPorts = portNames.size();
+        for (final var port : portNames) {
+          final var preamble = currentPort == 0 ? "PORT MAP (" : " ".repeat(10); 
+          contents.add("   {{1}} {{2}}{{3}} => {{4}}{{5}}", preamble, port,
+              " ".repeat(Math.max(0, maxNameLength - port.length())),
+              portMap.get(port),
+              currentPort == (nrOfPorts - 1) ? " );" : ",");
+          currentPort++;
         }
-        oneLine.append(");");
-        contents.add(oneLine.toString());
-        oneLine.setLength(0);
       }
     } else {
       oneLine.append(compName);
@@ -513,7 +510,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       contents.add(oneLine.toString());
     }
     contents.add("");
-    return contents.getWithIndent(3);
+    return contents.getWithIndent(1);
   }
 
   @Override
@@ -663,22 +660,15 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       var currentGenericId = 0;
       for (final var thisGeneric : myGenerics) {
         if (currentGenericId == 0) {
-          if (currentGenericId == (myGenerics.size() - 1))
-            contents.add("   GENERIC ( {{1}}{{2}}: {{3}});", thisGeneric, 
-                " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
-                myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector");
-          else
-            contents.add("   GENERIC ( {{1}}{{2}}: {{3}};", thisGeneric, 
-                " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
-                myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector");
-        } else if (currentGenericId == (myGenerics.size() - 1)) {
-          contents.add("             {{1}}{{2}}: {{3}});", thisGeneric, 
+          contents.add("   GENERIC ( {{1}}{{2}}: {{3}}{{4}};", thisGeneric, 
               " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
-              myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector");
+              myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector",
+              currentGenericId == (myGenerics.size() - 1) ? ")" : "");
         } else {
-          contents.add("             {{1}}{{2}}: {{3}};", thisGeneric, 
+          contents.add("             {{1}}{{2}}: {{3}}{{4}};", thisGeneric, 
               " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
-              myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector");
+              myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector",
+              currentGenericId == (myGenerics.size() - 1) ? ")" : "");
         }
         currentGenericId++;
       }
@@ -735,14 +725,11 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
   private boolean getPortEntry(LineBuffer contents, boolean firstEntry, int nrOfEntries, int currentEntry,
       String name, String direction, String type, int maxLength) {
     if (firstEntry) {
-      if (currentEntry == (nrOfEntries - 1))
-        contents.add("   PORT ( {{1}}{{2}}: {{3}} {{4}} );", name, " ".repeat(maxLength - name.length()), direction, type);
-      else
-        contents.add("   PORT ( {{1}}{{2}}: {{3}} {{4}};", name, " ".repeat(maxLength - name.length()), direction, type);
-    } else if (currentEntry == (nrOfEntries - 1)) {
-      contents.add("          {{1}}{{2}}: {{3}} {{4}} );", name, " ".repeat(maxLength - name.length()), direction, type);
+      contents.add("   PORT ( {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction, 
+          type, currentEntry == (nrOfEntries - 1) ? " )" : "");
     } else {
-      contents.add("          {{1}}{{2}}: {{3}} {{4}};", name, " ".repeat(maxLength - name.length()), direction, type);
+      contents.add("          {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction, 
+          type, currentEntry == (nrOfEntries - 1) ? " )" : "");
     }
     return false;
   }
