@@ -9,36 +9,13 @@
 
 package com.cburch.logisim.analyze.model;
 
-public class OutputExpressionsEvent {
+// NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
+// getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
+// that in future, but for now it looks stupid in this file only.
+public record OutputExpressionsEvent(AnalyzerModel getModel, int getType, String getVariable, Object getData) {
+
   public static final int ALL_VARIABLES_REPLACED = 0;
   public static final int OUTPUT_EXPRESSION = 1;
   public static final int OUTPUT_MINIMAL = 2;
 
-  private final AnalyzerModel model;
-  private final int type;
-  private final String variable;
-  private final Object data;
-
-  public OutputExpressionsEvent(AnalyzerModel model, int type, String variable, Object data) {
-    this.model = model;
-    this.type = type;
-    this.variable = variable;
-    this.data = data;
-  }
-
-  public Object getData() {
-    return data;
-  }
-
-  public AnalyzerModel getModel() {
-    return model;
-  }
-
-  public int getType() {
-    return type;
-  }
-
-  public String getVariable() {
-    return variable;
-  }
 }

@@ -9,30 +9,13 @@
 
 package com.cburch.logisim.comp;
 
-public class ComponentEvent {
-  private final Component source;
-  private final Object oldData;
-  private final Object newData;
+// NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
+// getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
+// that in future, but for now it looks stupid in this file only.
+public record ComponentEvent(Component getSource, Object getOldData, Object getData) {
 
   public ComponentEvent(Component source) {
     this(source, null, null);
   }
 
-  public ComponentEvent(Component source, Object oldData, Object newData) {
-    this.source = source;
-    this.oldData = oldData;
-    this.newData = newData;
-  }
-
-  public Object getData() {
-    return newData;
-  }
-
-  public Object getOldData() {
-    return oldData;
-  }
-
-  public Component getSource() {
-    return source;
-  }
 }
