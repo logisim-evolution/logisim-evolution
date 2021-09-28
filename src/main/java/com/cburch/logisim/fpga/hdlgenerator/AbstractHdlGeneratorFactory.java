@@ -89,14 +89,12 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       // first we gather some info on the wire names
       var maxNameLength = 0;
       for (final var wire : myWires.wireKeySet()) {
-        final var type = getTypeIdentifier(myWires.get(wire), attrs);
         maxNameLength = Math.max(maxNameLength, wire.length());
-        mySignals.put(wire, type);
+        mySignals.put(wire, getTypeIdentifier(myWires.get(wire), attrs));
       }
       for (final var reg : myWires.registerKeySet()) {
-        final var type = getTypeIdentifier(myWires.get(reg), attrs);
         maxNameLength = Math.max(maxNameLength, reg.length());
-        mySignals.put(reg, type);
+        mySignals.put(reg, getTypeIdentifier(myWires.get(reg), attrs));
       }
       for (final var wire : typedWires.keySet()) {
         maxNameLength = Math.max(maxNameLength, wire.length());
@@ -104,7 +102,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       }
       // now we add them
       if (maxNameLength > 0) contents.addRemarkBlock("Here all used signals are defined");
-      final var sortedSignals = new TreeSet<String> (mySignals.keySet());
+      final var sortedSignals = new TreeSet<String>(mySignals.keySet());
       for (final var signal : sortedSignals) 
         contents.add("   SIGNAL {{1}}{{2}} : {{3}};", signal, " ".repeat(maxNameLength - signal.length()), 
             mySignals.get(signal));
