@@ -166,9 +166,9 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHdlGeneratorFacto
         "FPGA_out",
         String.format(
             "%s(%d DOWNTO %d)",
-            LOCAL_OUTPUT_BUBBLE_BUS_NAME
-                + ComponentInfo.getLocalBubbleOutputEndId()
-                + ComponentInfo.getLocalBubbleOutputStartId()));
+            LOCAL_OUTPUT_BUBBLE_BUS_NAME,
+            ComponentInfo.getLocalBubbleOutputEndId(),
+            ComponentInfo.getLocalBubbleOutputStartId()));
     map.putAll(
         Hdl.getNetMap(
             "Addr_Data_LB_o",
