@@ -63,8 +63,7 @@ public class Project {
         Object data = event.getData();
         if (data instanceof AddTool) {
           Object factory = ((AddTool) data).getFactory();
-          if (factory instanceof SubcircuitFactory) {
-            final var fact = (SubcircuitFactory) factory;
+          if (factory instanceof SubcircuitFactory fact) {
             if (fact.getSubcircuit() == getCurrentCircuit()) {
               setCurrentCircuit(file.getMainCircuit());
             }
@@ -480,7 +479,7 @@ public class Project {
           newCircuit.addCircuitListener(l);
         }
         final var circTickFrequency = newCircuit.getTickFrequency();
-        final var simTickFrequency = simulator.getTickFrequency(); 
+        final var simTickFrequency = simulator.getTickFrequency();
         if (circTickFrequency < 0) {
           newCircuit.setTickFrequency(simTickFrequency);
         } else if (circTickFrequency != simTickFrequency) {

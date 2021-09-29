@@ -39,9 +39,9 @@ public class SimulationTreeModel implements TreeModel {
   private TreePath findPath(Object node) {
     ArrayList<Object> path = new ArrayList<>();
     Object current = node;
-    while (current instanceof TreeNode node) {
+    while (current instanceof TreeNode treeNode) {
       path.add(0, current);
-      current = node.getParent();
+      current = treeNode.getParent();
     }
     if (current != null) {
       path.add(0, current);

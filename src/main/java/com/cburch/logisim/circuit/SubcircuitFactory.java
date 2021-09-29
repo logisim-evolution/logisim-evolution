@@ -82,8 +82,7 @@ public class SubcircuitFactory extends InstanceFactory {
     public void getSubMenuItems(JPopupMenu menu, Project proj, CircuitState state,
                                 CircuitStateHolder.HierarchyInfo hi) {
       for (final var comp : source.getNonWires()) {
-        if (comp instanceof InstanceComponent) {
-          final var c = (InstanceComponent) comp;
+        if (comp instanceof InstanceComponent c) {
           if (c.getFactory() instanceof SubcircuitFactory) {
             final var m = (CircuitFeature) c.getFeature(MenuExtender.class);
             final var newhi = hi.getCopy();

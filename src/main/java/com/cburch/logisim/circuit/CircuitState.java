@@ -238,10 +238,10 @@ public class CircuitState implements InstanceData {
 
   public InstanceState getInstanceState(Instance instance) {
     final var factory = instance.getFactory();
-    if (factory instanceof InstanceFactory instanceFactory) {
-      return instanceFactory.createInstanceState(this, instance);
+    if (factory instanceof InstanceFactory) {
+      return factory.createInstanceState(this, instance);
     }
-    throw new RuntimeException("getInstanceState requires instance component");
+    throw new RuntimeException("getInstanceState() requires instance component");
   }
 
   public CircuitState getParentState() {

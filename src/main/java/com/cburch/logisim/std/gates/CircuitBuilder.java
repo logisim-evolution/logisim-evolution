@@ -295,20 +295,17 @@ public class CircuitBuilder {
   }
 
   private static Layout layoutGatesSub(CircuitDetermination det) {
-    if (det instanceof CircuitDetermination.Input) {
-      final var input = (CircuitDetermination.Input) det;
+    if (det instanceof CircuitDetermination.Input input) {
       return new Layout(input.getName(), input.IsInvertedVersion());
-    } else if (det instanceof CircuitDetermination.Value) {
-      final var value = (CircuitDetermination.Value) det;
+    } else if (det instanceof CircuitDetermination.Value value) {
       if ((value.getValue() == 1) || (value.getValue() == 0)) {
         return new Layout(Integer.toString(value.getValue()), false);
       }
-      ComponentFactory factory = Constant.FACTORY;
+      final var factory = Constant.FACTORY;
       final var attrs = factory.createAttributeSet();
       attrs.setValue(Constant.ATTR_VALUE, (long) value.getValue());
       final var bds = factory.getOffsetBounds(attrs);
-      return new Layout(
-          bds.getWidth(), bds.getHeight(), -bds.getY(), factory, attrs, new Layout[0], 0);
+      return new Layout(bds.getWidth(), bds.getHeight(), -bds.getY(), factory, attrs, new Layout[0], 0);
     }
 
     // We know det is a Gate. Determine sublayouts.
@@ -475,9 +472,9 @@ public class CircuitBuilder {
     if (layout.subLayouts.length == parent.getEnds().size() - 2) {
       int index = layout.subLayouts.length / 2 + 1;
       Object factory = parent.getFactory();
-      if (factory instanceof AbstractGate) {
-        final var val = ((AbstractGate) factory).getIdentity();
-        Long valLong = val.toLongValue();
+      if (factory instanceof AbstractGate gate) {
+        final var val = gate.getIdentity();
+        final var valLong = val.toLongValue();
         final var loc = parent.getEnd(index).getLocation();
         final var attrs = Constant.FACTORY.createAttributeSet();
         attrs.setValue(Constant.ATTR_VALUE, valLong);

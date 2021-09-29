@@ -172,11 +172,11 @@ class ToolboxManip implements ProjectExplorer.Listener {
     private LogisimFile curFile = null;
 
     private void addLibrary(Library lib) {
-      if (lib instanceof LibraryEventSource) {
-        ((LibraryEventSource) lib).addLibraryListener(this);
+      if (lib instanceof LibraryEventSource src) {
+        src.addLibraryListener(this);
       }
-      for (Tool tool : lib.getTools()) {
-        AttributeSet attrs = tool.getAttributeSet();
+      for (final var tool : lib.getTools()) {
+        final var attrs = tool.getAttributeSet();
         if (attrs != null) attrs.addAttributeListener(this);
       }
     }
@@ -219,11 +219,11 @@ class ToolboxManip implements ProjectExplorer.Listener {
     }
 
     private void removeLibrary(Library lib) {
-      if (lib instanceof LibraryEventSource) {
-        ((LibraryEventSource) lib).removeLibraryListener(this);
+      if (lib instanceof LibraryEventSource src) {
+        src.removeLibraryListener(this);
       }
-      for (Tool tool : lib.getTools()) {
-        AttributeSet attrs = tool.getAttributeSet();
+      for (final var tool : lib.getTools()) {
+        final var attrs = tool.getAttributeSet();
         if (attrs != null) attrs.removeAttributeListener(this);
       }
     }

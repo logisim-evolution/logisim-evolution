@@ -278,15 +278,13 @@ public class TikZInfo implements Cloneable {
     final var l = contents.listIterator();
     while (l.hasNext()) {
       final var obj = l.next();
-      if (obj instanceof TikZLine) {
+      if (obj instanceof TikZLine lineA) {
         var merged = false;
-        final var line = (TikZLine) obj;
         for (var i = contents.indexOf(obj) + 1; i < contents.size(); i++) {
           final var n = contents.get(i);
-          if (n instanceof TikZLine) {
-            final var mLine = (TikZLine) n;
-            if (mLine.canMerge(line)) {
-              merged = mLine.merge(line);
+          if (n instanceof TikZLine lineB) {
+            if (lineB.canMerge(lineA)) {
+              merged = lineB.merge(lineA);
               if (merged) break;
             }
           }

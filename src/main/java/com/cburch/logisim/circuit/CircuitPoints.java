@@ -193,8 +193,7 @@ class CircuitPoints {
   }
 
   void remove(Component comp) {
-    if (comp instanceof Wire) {
-      final var wire = (Wire) comp;
+    if (comp instanceof Wire wire) {
       removeSub(wire.getEnd0(), wire);
       removeSub(wire.getEnd1(), wire);
     } else {

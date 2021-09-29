@@ -237,10 +237,9 @@ public class ProjectActions {
       circ.setProject(proj);
     }
     for (final var libs : lib.getLibraries()) {
-      if (libs instanceof LoadedLibrary) {
-        LoadedLibrary test = (LoadedLibrary) libs;
-        if (test.getBase() instanceof LogisimFile) {
-          updatecircs((LogisimFile) test.getBase(), proj);
+      if (libs instanceof LoadedLibrary test) {
+        if (test.getBase() instanceof LogisimFile lsFile) {
+          updatecircs(lsFile, proj);
         }
       }
     }

@@ -323,8 +323,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
           for (int pc = 0; pc < (size >> 2); pc++) {
             decode(contents[pc]);
             AssemblerExecutionInterface exe = getExeUnit();
-            if (exe instanceof AbstractExecutionUnitWithLabelSupport) {
-              AbstractExecutionUnitWithLabelSupport jump = (AbstractExecutionUnitWithLabelSupport) exe;
+            if (exe instanceof AbstractExecutionUnitWithLabelSupport jump) {
               if (jump.isLabelSupported()) {
                 long addr = startAddress + ((long) pc << 2);
                 long target = jump.getLabelAddress(addr);
@@ -381,8 +380,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             line.append(label).append(" ");
             decode(contents[pc]);
             AssemblerExecutionInterface exe = getExeUnit();
-            if (exe instanceof AbstractExecutionUnitWithLabelSupport) {
-              AbstractExecutionUnitWithLabelSupport jump = (AbstractExecutionUnitWithLabelSupport) exe;
+            if (exe instanceof AbstractExecutionUnitWithLabelSupport jump) {
               if (jump.isLabelSupported()) {
                 long target = jump.getLabelAddress(addr);
                 if (labels.containsKey(SocSupport.convUnsignedLong(target)))
