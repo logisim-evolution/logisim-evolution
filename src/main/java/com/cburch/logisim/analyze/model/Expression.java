@@ -649,21 +649,21 @@ public abstract class Expression {
   }
 
   public static boolean isAssignment(Expression expr) {
-    if (!(expr instanceof Expressions.Eq)) return false;
-    final var eq = (Expressions.Eq) expr;
-    return (eq.exprA instanceof Expressions.Variable);
+    return (expr instanceof Expressions.Eq eq)
+           ? (eq.exprA instanceof Expressions.Variable)
+           : false;
   }
 
   public static String getAssignmentVariable(Expression expr) {
-    if (!(expr instanceof Expressions.Eq)) return null;
-    final var eq = (Expressions.Eq) expr;
-    return (eq.exprA instanceof Expressions.Variable) ? eq.exprA.toString() : null;
+    return (expr instanceof Expressions.Eq eq)
+           ? (eq.exprA instanceof Expressions.Variable) ? eq.exprA.toString() : null
+           : null;
   }
 
   public static Expression getAssignmentExpression(Expression expr) {
-    if (!(expr instanceof Expressions.Eq)) return null;
-    final var eq = (Expressions.Eq) expr;
-    return (eq.exprA instanceof Expressions.Variable) ? eq.exprB : null;
+    return (expr instanceof Expressions.Eq eq)
+           ? (eq.exprA instanceof Expressions.Variable) ? eq.exprB : null
+           : null;
   }
 
   public abstract <T> T visit(Visitor<T> visitor);

@@ -156,24 +156,21 @@ public class ProjectExplorer extends JTree implements LocaleListener {
       final var plainFont = AppPreferences.getScaledFont(ret.getFont());
       final var boldFont = new Font(plainFont.getFontName(), Font.BOLD, plainFont.getSize());
       ret.setFont(plainFont);
-      if (ret instanceof JComponent) {
-        final var comp = (JComponent) ret;
+      if (ret instanceof JComponent comp) {
         comp.setToolTipText(null);
       }
-      if (value instanceof ProjectExplorerToolNode) {
-        final var toolNode = (ProjectExplorerToolNode) value;
+      if (value instanceof ProjectExplorerToolNode toolNode) {
         final var tool = toolNode.getValue();
-        if (ret instanceof JLabel) {
-          final var label = (JLabel) ret;
+        if (ret instanceof JLabel label) {
           var viewed = false;
           if (tool instanceof AddTool && proj != null && proj.getFrame() != null) {
             Circuit circ = null;
             VhdlContent vhdl = null;
             final var fact = ((AddTool) tool).getFactory(false);
-            if (fact instanceof SubcircuitFactory) {
-              circ = ((SubcircuitFactory) fact).getSubcircuit();
-            } else if (fact instanceof VhdlEntity) {
-              vhdl = ((VhdlEntity) fact).getContent();
+            if (fact instanceof SubcircuitFactory sub) {
+              circ = sub.getSubcircuit();
+            } else if (fact instanceof VhdlEntity vhdlEntity) {
+              vhdl = vhdlEntity.getContent();
             }
             viewed =
                 (proj.getFrame().getHdlEditorView() == null)
@@ -185,8 +182,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
           label.setIcon(new ToolIcon(tool));
           label.setToolTipText(tool.getDescription());
         }
-      } else if (value instanceof ProjectExplorerLibraryNode) {
-        final var libNode = (ProjectExplorerLibraryNode) value;
+      } else if (value instanceof ProjectExplorerLibraryNode libNode) {
         final var lib = libNode.getValue();
 
         if (ret instanceof JLabel) {
@@ -355,12 +351,12 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
     ToolIcon(Tool tool) {
       this.tool = tool;
-      if (tool instanceof AddTool) {
-        final var fact = ((AddTool) tool).getFactory(false);
-        if (fact instanceof SubcircuitFactory) {
-          circ = ((SubcircuitFactory) fact).getSubcircuit();
-        } else if (fact instanceof VhdlEntity) {
-          vhdl = ((VhdlEntity) fact).getContent();
+      if (tool instanceof AddTool addTool) {
+        final var fact = addTool.getFactory(false);
+        if (fact instanceof SubcircuitFactory sub) {
+          circ = sub.getSubcircuit();
+        } else if (fact instanceof VhdlEntity vhdlEntity) {
+          vhdl = vhdlEntity.getContent();
         }
       }
     }

@@ -69,8 +69,7 @@ class SelectionSave {
 
   @Override
   public boolean equals(Object other) {
-    if (other instanceof SelectionSave) {
-      SelectionSave o = (SelectionSave) other;
+    if (other instanceof SelectionSave o) {
       return isSame(this.floating, o.floating) && isSame(this.anchored, o.anchored);
     } else {
       return false;

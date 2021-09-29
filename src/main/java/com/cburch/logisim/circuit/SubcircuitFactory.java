@@ -91,8 +91,7 @@ public class SubcircuitFactory extends InstanceFactory {
             m.getSubMenuItems(menu, proj, (CircuitState) c.getInstance().getData(state), newhi);
           } else if (c.getInstance().getFactory().providesSubCircuitMenu()) {
             final var m = (MenuExtender) c.getFeature(MenuExtender.class);
-            if (m instanceof CircuitStateHolder) {
-              final var csh = (CircuitStateHolder) m;
+            if (m instanceof CircuitStateHolder csh) {
               csh.setCircuitState(state);
               csh.setHierarchyName(hi);
             }

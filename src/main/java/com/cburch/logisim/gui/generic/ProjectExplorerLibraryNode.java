@@ -184,10 +184,10 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
     if (file != null) {
       file.removeLibraryListener(this);
     }
-    for (Enumeration<?> en = children(); en.hasMoreElements(); ) {
+    for (final var en = children(); en.hasMoreElements(); ) {
       final var n = en.nextElement();
-      if (n instanceof ProjectExplorerModel.Node<?>) {
-        ((ProjectExplorerModel.Node<?>) n).decommission();
+      if (n instanceof ProjectExplorerModel.Node<?> node) {
+        node.decommission();
       }
     }
   }

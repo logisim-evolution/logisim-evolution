@@ -522,17 +522,17 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
   void setAttrTableModel(AttrTableModel value) {
     attrTable.setAttrTableModel(value);
-    if (value instanceof AttrTableToolModel) {
-      final var tool = ((AttrTableToolModel) value).getTool();
+    if (value instanceof AttrTableToolModel model) {
+      final var tool = model.getTool();
       toolbox.setHaloedTool(tool);
       layoutToolbarModel.setHaloedTool(tool);
     } else {
       toolbox.setHaloedTool(null);
       layoutToolbarModel.setHaloedTool(null);
     }
-    if (value instanceof AttrTableComponentModel) {
-      final var circ = ((AttrTableComponentModel) value).getCircuit();
-      final var comp = ((AttrTableComponentModel) value).getComponent();
+    if (value instanceof AttrTableComponentModel model) {
+      final var circ = model.getCircuit();
+      final var comp = model.getComponent();
       layoutCanvas.setHaloedComponent(circ, comp);
     } else {
       layoutCanvas.setHaloedComponent(null, null);
@@ -579,8 +579,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     }
     if (newAttrs == null) {
       final var oldModel = attrTable.getAttrTableModel();
-      final var same = oldModel instanceof AttrTableToolModel
-              && ((AttrTableToolModel) oldModel).getTool() == oldTool;
+      final var same = (oldModel instanceof AttrTableToolModel model) && model.getTool() == oldTool;
       if (!force && !same && !(oldModel instanceof AttrTableCircuitModel)) {
         return;
       }
@@ -641,8 +640,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         project.setTool(project.getOptions().getToolbarData().getFirstTool());
         placeToolbar();
       } else if (action == ProjectEvent.ACTION_SET_STATE) {
-        if (event.getData() instanceof CircuitState) {
-          CircuitState state = (CircuitState) event.getData();
+        if (event.getData() instanceof CircuitState state) {
           if (state.getParentState() != null) topTab.setSelectedIndex(1); // sim explorer view
         }
       } else if (action == ProjectEvent.ACTION_SET_CURRENT) {
@@ -651,8 +649,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
           if (appearance != null) {
             appearance.setCircuit(project, project.getCircuitState());
           }
-        } else if (event.getData() instanceof HdlModel) {
-          setHdlEditorView((HdlModel) event.getData());
+        } else if (event.getData() instanceof HdlModel model) {
+          setHdlEditorView(model);
         }
         viewAttributes(project.getTool());
         buildTitleString();

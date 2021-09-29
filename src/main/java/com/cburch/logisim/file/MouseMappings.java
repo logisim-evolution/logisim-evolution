@@ -122,7 +122,7 @@ public class MouseMappings {
     for (final var entry : map.entrySet()) {
       final var key = entry.getKey();
       final var tool = entry.getValue();
-      final var searchFor = (tool instanceof AddTool) ? ((AddTool) tool).getFactory() : tool;
+      final var searchFor = (tool instanceof AddTool addTool) ? addTool.getFactory() : tool;
       changed |= replaceInMap(toolMap, tool, searchFor, key);
     }
     if (changed) fireMouseMappingsChanged();

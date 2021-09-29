@@ -191,10 +191,10 @@ class CircuitWires {
   // avoid voiding the bundle map.
   /*synchronized*/ boolean add(Component comp) {
     var added = true;
-    if (comp instanceof Wire) {
-      added = addWire((Wire) comp);
-    } else if (comp instanceof Splitter) {
-      splitters.add((Splitter) comp);
+    if (comp instanceof Wire wire) {
+      added = addWire(wire);
+    } else if (comp instanceof Splitter splitter) {
+      splitters.add(splitter);
     } else {
       final var factory = comp.getFactory();
       if (factory instanceof Tunnel) {
@@ -781,8 +781,8 @@ class CircuitWires {
   }
 
   /*synchronized*/ void remove(Component comp) {
-    if (comp instanceof Wire) {
-      removeWire((Wire) comp);
+    if (comp instanceof Wire wire) {
+      removeWire(wire);
     } else if (comp instanceof Splitter) {
       splitters.remove(comp);
     } else {

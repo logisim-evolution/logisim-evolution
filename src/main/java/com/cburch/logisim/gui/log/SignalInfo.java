@@ -340,8 +340,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   @Override
   public boolean equals(Object other) {
     if (other == this) return true;
-    if (!(other instanceof SignalInfo)) return false;
-    final var o = (SignalInfo) other;
+    if (!(other instanceof SignalInfo o)) return false;
     return Arrays.equals(path, o.path) && Objects.equals(option, o.option);
   }
 

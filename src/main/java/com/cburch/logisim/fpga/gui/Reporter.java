@@ -42,7 +42,7 @@ public class Reporter {
 
   public void addError(Object message) {
     if (myCommander == null) {
-      if (message instanceof String) logger.error((String) message);
+      if (message instanceof String msg) logger.error(msg);
     } else {
       if (message instanceof String)
         myCommander.addErrors(new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_NORMAL));

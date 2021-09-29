@@ -97,8 +97,7 @@ public class SelectionList extends JTable {
     @Override
     public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       final java.awt.Component ret = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-      if (ret instanceof JLabel && value instanceof SignalInfo) {
-        final var label = (JLabel) ret;
+      if ((ret instanceof JLabel label) && value instanceof SignalInfo) {
         final var item = (SignalInfo) value;
         label.setIcon(item.icon);
         label.setText(item + " [" + item.getRadix().toDisplayString() + "]");

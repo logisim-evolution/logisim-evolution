@@ -304,8 +304,7 @@ public class Poly extends FillableCanvasObject {
 
   @Override
   public boolean matches(CanvasObject other) {
-    if (other instanceof Poly) {
-      final var that = (Poly) other;
+    if (other instanceof Poly that) {
       final var a = this.handles;
       final var b = that.handles;
       if (this.closed != that.closed || a.length != b.length) {

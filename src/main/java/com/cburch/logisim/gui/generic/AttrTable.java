@@ -292,10 +292,10 @@ public class AttrTable extends JPanel implements LocaleListener {
     public Object getCellEditorValue() {
       // Returns the value contained in the editor.
       final var comp = currentEditor;
-      if (comp instanceof JTextField) {
-        return ((JTextField) comp).getText();
-      } else if (comp instanceof JComboBox) {
-        return ((JComboBox) comp).getSelectedItem();
+      if (comp instanceof JTextField field) {
+        return field.getText();
+      } else if (comp instanceof JComboBox box) {
+        return box.getSelectedItem();
       } else {
         return null;
       }
@@ -319,8 +319,8 @@ public class AttrTable extends JPanel implements LocaleListener {
       }
 
       var editor = row.getEditor(parent);
-      if (editor instanceof JComboBox) {
-        ((JComboBox) editor).addActionListener(this);
+      if (editor instanceof JComboBox box) {
+        box.addActionListener(this);
         editor.addFocusListener(this);
         rowIndexes = table.getSelectedRows();
         if (isSelected && rowIndexes.length > 1) {
@@ -338,8 +338,7 @@ public class AttrTable extends JPanel implements LocaleListener {
         } else {
           rowIndexes = null;
         }
-      } else if (editor instanceof JInputDialog) {
-        final var dlog = (JInputDialog) editor;
+      } else if (editor instanceof JInputDialog dlog) {
         dlog.setVisible(true);
         final var retVal = dlog.getValue();
         try {
@@ -352,8 +351,7 @@ public class AttrTable extends JPanel implements LocaleListener {
               OptionPane.WARNING_MESSAGE);
         }
         editor = null;
-      } else if (editor instanceof JInputComponent) {
-        final var input = (JInputComponent) editor;
+      } else if (editor instanceof JInputComponent input) {
         final var dialog = new MyDialog(input);
         dialog.setVisible(true);
         final var retVal = dialog.getValue();
@@ -465,8 +463,8 @@ public class AttrTable extends JPanel implements LocaleListener {
 
       final var ed = table.getCellEditor();
       if (row >= 0
-          && ed instanceof CellEditor
-          && ((CellEditor) ed).isEditing(attrModel.getRow(row))) {
+          && ed instanceof CellEditor cellEd
+          && cellEd.isEditing(attrModel.getRow(row))) {
         ed.cancelCellEditing();
       }
 

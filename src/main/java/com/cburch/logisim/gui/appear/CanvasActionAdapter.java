@@ -30,8 +30,8 @@ public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
   }
 
   private boolean affectsPorts() {
-    if (canvasAction instanceof ModelAction) {
-      for (final var obj : ((ModelAction) canvasAction).getObjects()) {
+    if (canvasAction instanceof ModelAction action) {
+      for (final var obj : action.getObjects()) {
         if (obj instanceof AppearanceElement) return true;
       }
     }

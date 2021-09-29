@@ -39,8 +39,7 @@ class CircuitPoints {
   // update methods
   //
   void add(Component comp) {
-    if (comp instanceof Wire) {
-      final var w = (Wire) comp;
+    if (comp instanceof Wire w) {
       addSub(w.getEnd0(), w, null);
       addSub(w.getEnd1(), w, null);
     } else {

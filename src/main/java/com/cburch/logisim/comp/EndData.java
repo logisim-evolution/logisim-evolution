@@ -35,9 +35,8 @@ public class EndData {
 
   @Override
   public boolean equals(Object other) {
-    if (!(other instanceof EndData)) return false;
+    if (!(other instanceof EndData o)) return false;
     if (other == this) return true;
-    final var o = (EndData) other;
     return o.loc.equals(this.loc)
         && o.width.equals(this.width)
         && o.i_o == this.i_o

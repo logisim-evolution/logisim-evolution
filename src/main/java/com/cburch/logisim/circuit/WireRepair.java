@@ -79,9 +79,7 @@ class WireRepair extends CircuitTransaction {
         Iterator<?> atit = at.iterator();
         Object at0 = atit.next();
         Object at1 = atit.next();
-        if (at0 instanceof Wire && at1 instanceof Wire) {
-          final var w0 = (Wire) at0;
-          final var w1 = (Wire) at1;
+        if (at0 instanceof Wire w0 && at1 instanceof Wire w1) {
           if (w0.isParallel(w1)) {
             sets.merge(w0, w1);
           }

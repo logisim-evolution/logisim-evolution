@@ -166,15 +166,9 @@ public class Curve extends FillableCanvasObject {
 
   @Override
   public boolean matches(CanvasObject other) {
-    if (other instanceof Curve) {
-      final var that = (Curve) other;
-      return this.p0.equals(that.p0)
-          && this.p1.equals(that.p1)
-          && this.p2.equals(that.p2)
-          && super.matches(that);
-    } else {
-      return false;
-    }
+    return (other instanceof Curve that)
+           ? this.p0.equals(that.p0) && this.p1.equals(that.p1) && this.p2.equals(that.p2) && super.matches(that)
+           : false;
   }
 
   @Override
