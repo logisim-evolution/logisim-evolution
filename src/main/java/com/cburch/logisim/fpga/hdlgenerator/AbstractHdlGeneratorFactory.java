@@ -498,7 +498,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
   /* Here all public entries for HDL generation are defined */
   @Override
-  public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo,
+  public LineBuffer getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo,
       String circuitName) {
     throw new IllegalAccessError("BUG: Inline code not supported");
   }
