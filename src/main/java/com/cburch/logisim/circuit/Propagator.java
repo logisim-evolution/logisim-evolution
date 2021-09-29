@@ -34,9 +34,9 @@ public class Propagator {
 
     @Override
     public boolean equals(Object other) {
-      if (!(other instanceof ComponentPoint)) return false;
-      final var o = (ComponentPoint) other;
-      return this.cause.equals(o.cause) && this.loc.equals(o.loc);
+      return (other instanceof ComponentPoint o)
+             ? this.cause.equals(o.cause) && this.loc.equals(o.loc)
+             : false;
     }
 
     @Override

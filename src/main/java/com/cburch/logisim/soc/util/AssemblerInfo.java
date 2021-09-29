@@ -219,10 +219,11 @@ public class AssemblerInfo {
     }
 
     public ArrayList<AssemblerSectionInfo> getAll() {
-      ArrayList<AssemblerSectionInfo> ret = new ArrayList<>();
-      for (SectionHeader hdr : super.getHeaders())
-        if (hdr instanceof AssemblerSectionInfo)
-          ret.add((AssemblerSectionInfo) hdr);
+      final var ret = new ArrayList<AssemblerSectionInfo>();
+      for (final var hdr : super.getHeaders()) {
+        if (hdr instanceof AssemblerSectionInfo sectionInfo)
+          ret.add(sectionInfo);
+      }
       return ret;
     }
 

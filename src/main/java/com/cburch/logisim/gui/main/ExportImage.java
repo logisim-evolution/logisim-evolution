@@ -221,8 +221,8 @@ public class ExportImage {
         g.fillRect(0, 0, width, height);
         g.setColor(Color.black);
       }
-      if (g instanceof Graphics2D) {
-        ((Graphics2D) g).scale(scale, scale);
+      if (g instanceof Graphics2D g2d) {
+        g2d.scale(scale, scale);
         g.translate(-bds.getX(), -bds.getY());
       } else {
         OptionPane.showMessageDialog(frame, S.get("couldNotCreateImage"));

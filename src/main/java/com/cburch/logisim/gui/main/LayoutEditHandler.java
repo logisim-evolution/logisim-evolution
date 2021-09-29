@@ -177,10 +177,9 @@ public class LayoutEditHandler extends EditHandler
   }
 
   private void selectSelectTool(Project proj) {
-    for (Library sub : proj.getLogisimFile().getLibraries()) {
-      if (sub instanceof BaseLibrary) {
-        BaseLibrary baseLibrary = (BaseLibrary) sub;
-        Tool tool = baseLibrary.getTool(EditTool._ID);
+    for (final var sub : proj.getLogisimFile().getLibraries()) {
+      if (sub instanceof BaseLibrary baseLibrary) {
+        final var tool = baseLibrary.getTool(EditTool._ID);
         if (tool != null) proj.setTool(tool);
       }
     }

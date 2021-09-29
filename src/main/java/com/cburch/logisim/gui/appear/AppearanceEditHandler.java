@@ -143,8 +143,7 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
         remove.add(obj);
       } else {
         select.add(obj);
-        if (obj instanceof AppearanceAnchor) {
-          final var anchor = (AppearanceAnchor) obj;
+        if (obj instanceof AppearanceAnchor anchor) {
           anchorLocation = anchor.getLocation();
           anchorFacing = anchor.getFacingDirection();
         }

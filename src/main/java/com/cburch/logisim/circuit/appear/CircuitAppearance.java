@@ -200,9 +200,8 @@ public class CircuitAppearance extends Drawing {
       if (shape instanceof AppearancePort appPort) {
         ports.add(appPort);
       } else if (shape instanceof AppearanceAnchor appAnchor) {
-        final var o = appAnchor;
-        anchor = o.getLocation();
-        defaultFacing = o.getFacingDirection();
+        anchor = appAnchor.getLocation();
+        defaultFacing = appAnchor.getFacingDirection();
       }
     }
 

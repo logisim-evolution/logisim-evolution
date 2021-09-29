@@ -28,7 +28,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     synchronized (windowRegistry) {
       HdlContentEditor ret = windowRegistry.get(value);
       if (ret == null) {
-        if (source instanceof Frame) ret = new HdlContentEditor((Frame) source, proj, value);
+        if (source instanceof Frame frame) ret = new HdlContentEditor(frame, proj, value);
         else ret = new HdlContentEditor((Dialog) source, proj, value);
         windowRegistry.put(value, ret);
       }
@@ -98,29 +98,27 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       if (!content.equals(newContent)) content = newContent;
       fireAttributeValueChanged(attr, value, null);
     }
-    if (attr == StdAttr.LABEL && value instanceof String) {
-      final var newLabel = (String) value;
+    if (attr == StdAttr.LABEL && value instanceof String newLabel) {
       final var oldlabel = label;
       if (label.equals(newLabel)) return;
       label = newLabel;
       fireAttributeValueChanged(attr, value, (V) oldlabel);
     }
-    if (attr == StdAttr.LABEL_FONT && value instanceof Font) {
-      final var newFont = (Font) value;
+    if (attr == StdAttr.LABEL_FONT && value instanceof Font newFont) {
       if (labelFont.equals(newFont)) return;
       labelFont = newFont;
       fireAttributeValueChanged(attr, value, null);
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
-      final var newvis = (Boolean) value;
-      if (labelVisible.equals(newvis)) return;
-      labelVisible = newvis;
+      final var newVis = (Boolean) value;
+      if (labelVisible.equals(newVis)) return;
+      labelVisible = newVis;
       fireAttributeValueChanged(attr, value, null);
     }
     if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
-      final var Name = (String) value;
+      final var name = (String) value;
       if (value.equals(simName)) return;
-      simName = Name;
+      simName = name;
       fireAttributeValueChanged(attr, value, null);
     }
   }

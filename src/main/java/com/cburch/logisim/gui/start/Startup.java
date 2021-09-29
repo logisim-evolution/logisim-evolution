@@ -962,20 +962,19 @@ public class Startup implements AWTEventListener {
 
   private boolean HasIcon(Component comp) {
     var result = false;
-    if (comp instanceof JOptionPane) {
-      for (Component comp1 : ((JOptionPane) comp).getComponents()) result |= HasIcon(comp1);
-    } else if (comp instanceof JPanel) {
-      for (Component comp1 : ((JPanel) comp).getComponents()) result |= HasIcon(comp1);
-    } else if (comp instanceof JLabel) {
-      return ((JLabel) comp).getIcon() != null;
+    if (comp instanceof JOptionPane pane) {
+      for (final var comp1 : pane.getComponents()) result |= HasIcon(comp1);
+    } else if (comp instanceof JPanel panel) {
+      for (final var comp1 : panel.getComponents()) result |= HasIcon(comp1);
+    } else if (comp instanceof JLabel label) {
+      return label.getIcon() != null;
     }
     return result;
   }
 
   @Override
   public void eventDispatched(AWTEvent event) {
-    if (event instanceof ContainerEvent) {
-      final var containerEvent = (ContainerEvent) event;
+    if (event instanceof ContainerEvent containerEvent) {
       if (containerEvent.getID() == ContainerEvent.COMPONENT_ADDED) {
         final var container = containerEvent.getChild();
         if ((container instanceof JButton)

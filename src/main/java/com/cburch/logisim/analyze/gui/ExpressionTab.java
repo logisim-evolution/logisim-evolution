@@ -101,9 +101,7 @@ class ExpressionTab extends AnalyzerTab {
     @Override
     public void setValueAt(Object obj, int row, int column) {
       final var ne = listCopy[row];
-      if (!(obj instanceof NamedExpression))
-        return;
-      final var e = (NamedExpression) obj;
+      if (!(obj instanceof NamedExpression e)) return;
       if (ne != e && !ne.name.equals(e.name)) return;
       listCopy[row] = e;
       if (e.expr != null) model.getOutputExpressions().setExpression(e.name, e.expr, e.exprString);

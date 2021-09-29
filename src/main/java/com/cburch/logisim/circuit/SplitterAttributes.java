@@ -355,8 +355,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
       if (appear.equals(appearance)) return;
       appear = appearance;
       parameters = null;
-    } else if (attr instanceof BitOutAttribute) {
-      final var bitOutAttr = (BitOutAttribute) attr;
+    } else if (attr instanceof BitOutAttribute bitOutAttr) {
       int val = (value instanceof Integer) ? (Integer) value : ((BitOutOption) value).value + 1;
       if (val >= 0 && val <= fanout) {
         if (bitEnd[bitOutAttr.which] == (byte) val) return;

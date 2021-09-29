@@ -29,6 +29,7 @@ import java.util.Map;
 
 public class LoadedLibrary extends Library implements LibraryEventSource {
   private class MyListener implements LibraryListener {
+    @Override
     public void libraryChanged(LibraryEvent event) {
       fireLibraryEvent(event);
     }
@@ -113,13 +114,14 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     myListener = new MyListener();
     listeners = new EventSourceWeakSupport<>();
 
-    while (base instanceof LoadedLibrary) base = ((LoadedLibrary) base).base;
+    while (base instanceof LoadedLibrary lib) base = lib.base;
     this.base = base;
-    if (base instanceof LibraryEventSource) {
-      ((LibraryEventSource) base).addLibraryListener(myListener);
+    if (base instanceof LibraryEventSource src) {
+      src.addLibraryListener(myListener);
     }
   }
 
+  @Override
   public void addLibraryListener(LibraryListener l) {
     listeners.add(l);
   }
@@ -151,6 +153,7 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     return base.getLibraries();
   }
 
+  @Override
   public boolean removeLibrary(String Name) {
     return base.removeLibrary(Name);
   }
@@ -170,6 +173,7 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     return dirty || base.isDirty();
   }
 
+  @Override
   public void removeLibraryListener(LibraryListener l) {
     listeners.remove(l);
   }
@@ -199,10 +203,10 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     for (final var oldTool : old.getTools()) {
       final var newTool = base.getTool(oldTool.getName());
       toolMap.put(oldTool, newTool);
-      if (oldTool instanceof AddTool) {
-        final var oldFactory = ((AddTool) oldTool).getFactory();
+      if (oldTool instanceof AddTool tool) {
+        final var oldFactory = tool.getFactory();
         if (newTool instanceof AddTool) {
-          final var newFactory = ((AddTool) newTool).getFactory();
+          final var newFactory = tool.getFactory();
           componentMap.put(oldFactory, newFactory);
         } else {
           componentMap.put(oldFactory, null);
@@ -225,14 +229,14 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
   }
 
   void setBase(Library value) {
-    if (base instanceof LibraryEventSource) {
-      ((LibraryEventSource) base).removeLibraryListener(myListener);
+    if (base instanceof LibraryEventSource src) {
+      src.removeLibraryListener(myListener);
     }
     final var old = base;
     base = value;
     resolveChanges(old);
-    if (base instanceof LibraryEventSource) {
-      ((LibraryEventSource) base).addLibraryListener(myListener);
+    if (base instanceof LibraryEventSource src) {
+      src.addLibraryListener(myListener);
     }
   }
 

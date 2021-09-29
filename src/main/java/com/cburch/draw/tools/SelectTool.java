@@ -116,10 +116,10 @@ public class SelectTool extends AbstractTool {
       // unscale the coordinate system so that the stroke width isn't scaled
       var zoom = 1.0;
       final var gfxCopy = gfx.create();
-      if (gfxCopy instanceof Graphics2D) {
+      if (gfxCopy instanceof Graphics2D g2d) {
         zoom = canvas.getZoomFactor();
         if (zoom != 1.0) {
-          ((Graphics2D) gfxCopy).scale(1.0 / zoom, 1.0 / zoom);
+          g2d.scale(1.0 / zoom, 1.0 / zoom);
         }
       }
       GraphicsUtil.switchToWidth(gfxCopy, 1);

@@ -241,8 +241,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 
     @Override
     public boolean multiEditCompatible(AttrTableModelRow other) {
-      if (!(other instanceof AttrRow)) return false;
-      final var o = (AttrRow) other;
+      if (!(other instanceof AttrRow o)) return false;
       if (!(((Object) attr) instanceof SplitterAttributes.BitOutAttribute)) return false;
       if (!(((Object) o.attr) instanceof SplitterAttributes.BitOutAttribute)) return false;
       final var a = (SplitterAttributes.BitOutAttribute) (Object) attr;

@@ -364,15 +364,16 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     final var contents = LineBuffer.getHdlBuffer();
     final var parameterMap = new TreeMap<String, String>();
     final var portMap = getPortMap(nets, componentInfo);
-    final var componentHDLName = componentInfo instanceof netlistComponent
-        ? ((netlistComponent) componentInfo).getComponent().getFactory().getHDLName(((netlistComponent) componentInfo).getComponent().getAttributeSet()) :
-          name;
+    final var componentHDLName =
+            (componentInfo instanceof netlistComponent comp)
+              ? comp.getComponent().getFactory().getHDLName(((netlistComponent) componentInfo).getComponent().getAttributeSet())
+              : name;
     final var compName = (name != null && !name.isEmpty()) ? name : componentHDLName;
     final var thisInstanceIdentifier = getInstanceIdentifier(componentInfo, componentId);
     final var oneLine = new StringBuilder();
     if (componentInfo == null) parameterMap.putAll(myParametersList.getMaps(null));
-    else if (componentInfo instanceof netlistComponent) {
-      final var attrs = ((netlistComponent) componentInfo).getComponent().getAttributeSet();
+    else if (componentInfo instanceof netlistComponent comp) {
+      final var attrs = comp.getComponent().getAttributeSet();
       parameterMap.putAll(myParametersList.getMaps(attrs));
     }
     var tabLength = 0;
@@ -389,7 +390,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         final var nrOfGenerics = genericNames.size();
         // now we add them
         for (final var generic : genericNames) {
-          final var preamble = currentGeneric == 0 ? "GENERIC MAP (" : " ".repeat(13); 
+          final var preamble = currentGeneric == 0 ? "GENERIC MAP (" : " ".repeat(13);
           contents.add("   {{1}} {{2}}{{3}} => {{4}}{{5}}", preamble, generic,
               " ".repeat(Math.max(0, maxNameLength - generic.length())),
               parameterMap.get(generic),
@@ -406,7 +407,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         final var portNames = new TreeSet<String>(portMap.keySet());
         final var nrOfPorts = portNames.size();
         for (final var port : portNames) {
-          final var preamble = currentPort == 0 ? "PORT MAP (" : " ".repeat(10); 
+          final var preamble = currentPort == 0 ? "PORT MAP (" : " ".repeat(10);
           contents.add("   {{1}} {{2}}{{3}} => {{4}}{{5}}", preamble, port,
               " ".repeat(Math.max(0, maxNameLength - port.length())),
               portMap.get(port),
@@ -485,8 +486,8 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
   }
 
   private String getInstanceIdentifier(Object componentInfo, Long componentId) {
-    if (componentInfo instanceof netlistComponent) {
-      final var attrs = ((netlistComponent) componentInfo).getComponent().getAttributeSet();
+    if (componentInfo instanceof netlistComponent comp) {
+      final var attrs = comp.getComponent().getAttributeSet();
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         final var label = attrs.getValue(StdAttr.LABEL);
         if ((label != null) && !label.isEmpty())
@@ -513,8 +514,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var result = new TreeMap<String, String>();
-    if (mapInfo instanceof netlistComponent && !myPorts.isEmpty()) {
-      netlistComponent componentInfo = (netlistComponent) mapInfo;
+    if ((mapInfo instanceof netlistComponent componentInfo) && !myPorts.isEmpty()) {
       final var compName = componentInfo.getComponent().getFactory().getDisplayName();
       final var attrs = componentInfo.getComponent().getAttributeSet();
       if (getWiresPortsDuringHDLWriting) {
@@ -620,12 +620,12 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       var currentGenericId = 0;
       for (final var thisGeneric : myGenerics) {
         if (currentGenericId == 0) {
-          contents.add("   GENERIC ( {{1}}{{2}}: {{3}}{{4}};", thisGeneric, 
+          contents.add("   GENERIC ( {{1}}{{2}}: {{3}}{{4}};", thisGeneric,
               " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
               myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector",
               currentGenericId == (myGenerics.size() - 1) ? " )" : "");
         } else {
-          contents.add("             {{1}}{{2}}: {{3}}{{4}};", thisGeneric, 
+          contents.add("             {{1}}{{2}}: {{3}}{{4}};", thisGeneric,
               " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
               myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector",
               currentGenericId == (myGenerics.size() - 1) ? " )" : "");
@@ -681,23 +681,23 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     contents.add("{{1}} {{2}};", isEntity ? "END ENTITY" : "END", isEntity ? componentName : "COMPONENT").empty();
     return contents.getWithIndent(isEntity ? 0 : 1);
   }
-  
+
   private boolean getPortEntry(LineBuffer contents, boolean firstEntry, int nrOfEntries, int currentEntry,
       String name, String direction, String type, int maxLength) {
     if (firstEntry) {
-      contents.add("   PORT ( {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction, 
+      contents.add("   PORT ( {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction,
           type, currentEntry == (nrOfEntries - 1) ? " )" : "");
     } else {
-      contents.add("          {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction, 
+      contents.add("          {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction,
           type, currentEntry == (nrOfEntries - 1) ? " )" : "");
     }
     return false;
   }
-  
+
   private String getTypeIdentifier(int nrOfBits, AttributeSet attrs) {
     if (nrOfBits < 0) {
       // we have generic based vector
-      if (!myParametersList.containsKey(nrOfBits, attrs)) 
+      if (!myParametersList.containsKey(nrOfBits, attrs))
         throw new IllegalArgumentException("Generic parameter not specified in the parameters list");
       return String.format("std_logic_vector( (%s - 1) DOWNTO 0 )", myParametersList.get(nrOfBits, attrs));
     } else if (nrOfBits == 0) {

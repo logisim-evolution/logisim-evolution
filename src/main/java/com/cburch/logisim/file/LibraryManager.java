@@ -37,9 +37,9 @@ class LibraryManager {
 
     @Override
     public boolean equals(Object other) {
-      if (!(other instanceof JarDescriptor)) return false;
-      final var o = (JarDescriptor) other;
-      return this.file.equals(o.file) && this.className.equals(o.className);
+      return (other instanceof JarDescriptor o)
+             ? this.file.equals(o.file) && this.className.equals(o.className)
+             : false;
     }
 
     @Override
@@ -80,9 +80,9 @@ class LibraryManager {
 
     @Override
     public boolean equals(Object other) {
-      if (!(other instanceof LogisimProjectDescriptor)) return false;
-      final var o = (LogisimProjectDescriptor) other;
-      return this.file.equals(o.file);
+      return (other instanceof LogisimProjectDescriptor o)
+             ? this.file.equals(o.file)
+             : false;
     }
 
     @Override
@@ -179,8 +179,7 @@ class LibraryManager {
       }
       if (lib instanceof LoadedLibrary) {
         final var loadedLib = (LoadedLibrary) lib;
-        if (loadedLib.getBase() instanceof LogisimFile) {
-          final var loadedProj = (LogisimFile) loadedLib.getBase();
+        if (loadedLib.getBase() instanceof LogisimFile loadedProj) {
           final var ret = findReference(loadedProj, query);
           if (ret != null) return lib;
         }
@@ -206,8 +205,8 @@ class LibraryManager {
   Collection<LogisimFile> getLogisimLibraries() {
     final var ret = new ArrayList<LogisimFile>();
     for (final var lib : invMap.keySet()) {
-      if (lib.getBase() instanceof LogisimFile) {
-        ret.add((LogisimFile) lib.getBase());
+      if (lib.getBase() instanceof LogisimFile lsFile) {
+        ret.add(lsFile);
       }
     }
     return ret;

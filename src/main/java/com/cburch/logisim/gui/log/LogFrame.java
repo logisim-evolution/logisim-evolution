@@ -319,14 +319,13 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     @Override
     public void stateChanged(ChangeEvent e) {
       Object selected = tabbedPane.getSelectedComponent();
-      if (selected instanceof JScrollPane) {
-        selected = ((JScrollPane) selected).getViewport().getView();
+      if (selected instanceof JScrollPane scrollPane) {
+        selected = scrollPane.getViewport().getView();
       }
-      if (selected instanceof JPanel) {
-        ((JPanel) selected).requestFocus();
+      if (selected instanceof JPanel panel) {
+        panel.requestFocus();
       }
-      if (selected instanceof LogPanel) {
-        LogPanel tab = (LogPanel) selected;
+      if (selected instanceof LogPanel tab) {
         menuListener.setEditHandler(tab.getEditHandler());
         menuListener.setPrintHandler(tab.getPrintHandler());
         // menuListener.setSimulationHandler(tab.getSimulationHandler());

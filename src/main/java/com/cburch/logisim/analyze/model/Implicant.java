@@ -281,9 +281,9 @@ public class Implicant implements Comparable<Implicant> {
 
   @Override
   public boolean equals(Object other) {
-    if (!(other instanceof Implicant)) return false;
-    final var o = (Implicant) other;
-    return this.unknowns == o.unknowns && this.values == o.values;
+    return (other instanceof Implicant o)
+           ? this.unknowns == o.unknowns && this.values == o.values
+           : false;
   }
 
   public int getRow() {

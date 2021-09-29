@@ -214,8 +214,7 @@ public class TtyInterface {
 
     var found = false;
     for (final var comp : circState.getCircuit().getNonWires()) {
-      if (comp.getFactory() instanceof Ram) {
-        final var ramFactory = (Ram) comp.getFactory();
+      if (comp.getFactory() instanceof Ram ramFactory) {
         final var ramState = circState.getInstanceState(comp);
         final var m = ramFactory.getContents(ramState);
         HexFile.open(m, loadFile);
@@ -233,8 +232,7 @@ public class TtyInterface {
     var found = false;
     for (final var comp : circState.getCircuit().getNonWires()) {
       final Object factory = comp.getFactory();
-      if (factory instanceof Tty) {
-        final var ttyFactory = (Tty) factory;
+      if (factory instanceof Tty ttyFactory) {
         final var ttyState = circState.getInstanceState(comp);
         ttyFactory.sendToStdout(ttyState);
         found = true;
