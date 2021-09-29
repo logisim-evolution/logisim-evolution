@@ -60,8 +60,7 @@ public class SocBusMenuProvider implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
     Object source = e.getSource();
-    if (source instanceof InstanceMenuItem) {
-      InstanceMenuItem info = (InstanceMenuItem) source;
+    if (source instanceof InstanceMenuItem info) {
       Instance inst = info.getInstance();
       if (myInfo.containsKey(inst)) {
         switch (info.getFunction()) {

@@ -313,8 +313,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
   public boolean contains(Circuit circ) {
     for (final var tool : tools) {
-      if (tool.getFactory() instanceof SubcircuitFactory) {
-        final var factory = (SubcircuitFactory) tool.getFactory();
+      if (tool.getFactory() instanceof SubcircuitFactory factory) {
         if (factory.getSubcircuit() == circ) return true;
       }
     }
@@ -323,8 +322,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
   public boolean contains(VhdlContent content) {
     for (final var tool : tools) {
-      if (tool.getFactory() instanceof VhdlEntity) {
-        final var factory = (VhdlEntity) tool.getFactory();
+      if (tool.getFactory() instanceof VhdlEntity factory) {
         if (factory.getContent() == content) return true;
       }
     }
@@ -333,11 +331,9 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
   public boolean containsFactory(String name) {
     for (final var tool : tools) {
-      if (tool.getFactory() instanceof VhdlEntity) {
-        final var factory = (VhdlEntity) tool.getFactory();
+      if (tool.getFactory() instanceof VhdlEntity factory) {
         if (factory.getContent().getName().equals(name)) return true;
-      } else if (tool.getFactory() instanceof SubcircuitFactory) {
-        final var factory = (SubcircuitFactory) tool.getFactory();
+      } else if (tool.getFactory() instanceof SubcircuitFactory factory) {
         if (factory.getSubcircuit().getName().equals(name)) return true;
       }
     }
@@ -368,8 +364,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
   public AddTool getAddTool(Circuit circ) {
     for (final var tool : tools) {
-      if (tool.getFactory() instanceof SubcircuitFactory) {
-        final var factory = (SubcircuitFactory) tool.getFactory();
+      if (tool.getFactory() instanceof SubcircuitFactory factory) {
         if (factory.getSubcircuit() == circ) {
           return tool;
         }
@@ -380,8 +375,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
   public AddTool getAddTool(VhdlContent content) {
     for (final var tool : tools) {
-      if (tool.getFactory() instanceof VhdlEntity) {
-        final var factory = (VhdlEntity) tool.getFactory();
+      if (tool.getFactory() instanceof VhdlEntity factory) {
         if (factory.getContent() == content) {
           return tool;
         }
@@ -393,8 +387,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   public Circuit getCircuit(String name) {
     if (name == null) return null;
     for (final var tool : tools) {
-      if (tool.getFactory() instanceof SubcircuitFactory) {
-        final var factory = (SubcircuitFactory) tool.getFactory();
+      if (tool.getFactory() instanceof SubcircuitFactory factory) {
         if (name.equals(factory.getName())) return factory.getSubcircuit();
       }
     }
@@ -404,8 +397,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   public VhdlContent getVhdlContent(String name) {
     if (name == null) return null;
     for (final var tool : tools) {
-      if (tool.getFactory() instanceof VhdlEntity) {
-        final var factory = (VhdlEntity) tool.getFactory();
+      if (tool.getFactory() instanceof VhdlEntity factory) {
         if (name.equals(factory.getName())) return factory.getContent();
       }
     }
@@ -419,8 +411,8 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   public List<Circuit> getCircuits() {
     final var ret = new ArrayList<Circuit>(tools.size());
     for (final var tool : tools) {
-      if (tool.getFactory() instanceof SubcircuitFactory) {
-        ret.add(((SubcircuitFactory) tool.getFactory()).getSubcircuit());
+      if (tool.getFactory() instanceof SubcircuitFactory factory) {
+        ret.add(factory.getSubcircuit());
       }
     }
     return ret;
@@ -429,8 +421,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   public int indexOfCircuit(Circuit circ) {
     for (var i = 0; i < tools.size(); i++) {
       final var tool = tools.get(i);
-      if (tool.getFactory() instanceof SubcircuitFactory) {
-        final var factory = (SubcircuitFactory) tool.getFactory();
+      if (tool.getFactory() instanceof SubcircuitFactory factory) {
         if (factory.getSubcircuit() == circ) {
           return i;
         }
@@ -442,8 +433,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   public List<VhdlContent> getVhdlContents() {
     final var ret = new ArrayList<VhdlContent>(tools.size());
     for (final var tool : tools) {
-      if (tool.getFactory() instanceof VhdlEntity) {
-        final var factory = (VhdlEntity) tool.getFactory();
+      if (tool.getFactory() instanceof VhdlEntity factory) {
         ret.add(factory.getContent());
       }
     }
@@ -453,8 +443,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   public int indexOfVhdl(VhdlContent vhdl) {
     for (var i = 0; i < tools.size(); i++) {
       final var tool = tools.get(i);
-      if (tool.getFactory() instanceof VhdlEntity) {
-        final var factory = (VhdlEntity) tool.getFactory();
+      if (tool.getFactory() instanceof VhdlEntity factory) {
         if (factory.getContent() == vhdl) {
           return i;
         }
@@ -500,8 +489,8 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   public String getUnloadLibraryMessage(Library lib) {
     final var factories = new HashSet<ComponentFactory>();
     for (final var tool : lib.getTools()) {
-      if (tool instanceof AddTool) {
-        factories.add(((AddTool) tool).getFactory());
+      if (tool instanceof AddTool addTool) {
+        factories.add(addTool.getFactory());
       }
     }
 

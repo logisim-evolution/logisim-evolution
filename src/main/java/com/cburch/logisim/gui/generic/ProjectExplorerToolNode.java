@@ -34,11 +34,11 @@ public class ProjectExplorerToolNode extends ProjectExplorerModel.Node<Tool> imp
     if (tool instanceof AddTool) {
       final var factory = ((AddTool) tool).getFactory();
 
-      if (factory instanceof SubcircuitFactory) {
-        circuit = ((SubcircuitFactory) factory).getSubcircuit();
+      if (factory instanceof SubcircuitFactory sub) {
+        circuit = sub.getSubcircuit();
         circuit.addCircuitListener(this);
-      } else if (factory instanceof VhdlEntity) {
-        vhdl = ((VhdlEntity) factory).getContent();
+      } else if (factory instanceof VhdlEntity vhdlEntity) {
+        vhdl = vhdlEntity.getContent();
         vhdl.addHdlModelListener(this);
       }
     }

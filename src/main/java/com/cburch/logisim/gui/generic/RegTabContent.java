@@ -62,9 +62,9 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
     for (final var circ : proj.getLogisimFile().getCircuits()) {
       getAllRegisters(circ);
     }
-    if (proj.getLogisimFile().getLibrary("prodis_v1.3") instanceof LoadedLibrary) {
-      if (((LoadedLibrary) proj.getLogisimFile().getLibrary("prodis_v1.3")).getBase() instanceof LogisimFile) {
-        for (final var circ : ((LogisimFile) ((LoadedLibrary) proj.getLogisimFile().getLibrary("prodis_v1.3")).getBase()).getCircuits()) {
+    if (proj.getLogisimFile().getLibrary("prodis_v1.3") instanceof LoadedLibrary loadedLib) {
+      if (loadedLib.getBase() instanceof LogisimFile lsFile) {
+        for (final var circ : lsFile.getCircuits()) {
           getAllRegisters(circ);
         }
       }

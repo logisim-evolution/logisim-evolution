@@ -404,10 +404,10 @@ class TableTabCaret {
 
     @Override
     public boolean equals(Object o) {
-      if (!(o instanceof Pt)) return false;
-      final var other = (Pt) o;
-      return (other.row == this.row && other.col == this.col)
-          || (!other.isValid() && !this.isValid());
+      return (o instanceof Pt other)
+             ? (other.row == this.row && other.col == this.col)
+                     || (!other.isValid() && !this.isValid())
+             : false;
     }
 
     @Override

@@ -23,7 +23,9 @@ import java.util.List;
 public final class Instance implements Location.At {
 
   public static Instance getInstanceFor(Component comp) {
-    return (comp instanceof InstanceComponent) ? ((InstanceComponent) comp).getInstance() : null;
+    return (comp instanceof InstanceComponent instComp)
+           ? instComp.getInstance()
+           : null;
   }
 
   public static InstanceComponent getComponentFor(Instance instance) {

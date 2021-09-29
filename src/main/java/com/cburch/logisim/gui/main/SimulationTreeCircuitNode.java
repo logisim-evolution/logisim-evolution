@@ -95,14 +95,13 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
     newChildren.sort(new CompareByName());
     subcircs.sort(this);
     for (Component comp : subcircs) {
-      SubcircuitFactory factory = (SubcircuitFactory) comp.getFactory();
-      CircuitState state = factory.getSubstate(circuitState, comp);
+      final var factory = (SubcircuitFactory) comp.getFactory();
+      final var state = factory.getSubstate(circuitState, comp);
       SimulationTreeCircuitNode toAdd = null;
-      for (TreeNode o : children) {
-        if (o instanceof SimulationTreeCircuitNode) {
-          SimulationTreeCircuitNode n = (SimulationTreeCircuitNode) o;
-          if (n.circuitState == state) {
-            toAdd = n;
+      for (final var treeNode : children) {
+        if (treeNode instanceof SimulationTreeCircuitNode node) {
+          if (node.circuitState == state) {
+            toAdd = node;
             break;
           }
         }

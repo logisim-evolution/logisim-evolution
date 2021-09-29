@@ -107,8 +107,7 @@ public class SelectionActions {
     String name = factory.getName();
     for (Library lib : libs) {
       for (Tool tool : lib.getTools()) {
-        if (tool instanceof AddTool) {
-          AddTool addTool = (AddTool) tool;
+        if (tool instanceof AddTool addTool) {
           if (name.equals(addTool.getName())) {
             ComponentFactory fact = addTool.getFactory(true);
             if (acceptNameMatch) {
@@ -277,10 +276,10 @@ public class SelectionActions {
       else last = other;
 
       SelectionSave otherAfter = null;
-      if (last instanceof Paste) {
-        otherAfter = ((Paste) last).after;
-      } else if (last instanceof Duplicate) {
-        otherAfter = ((Duplicate) last).after;
+      if (last instanceof Paste paste) {
+        otherAfter = paste.after;
+      } else if (last instanceof Duplicate dupe) {
+        otherAfter = dupe.after;
       }
       return otherAfter != null && otherAfter.equals(this.before);
     }
@@ -418,15 +417,14 @@ public class SelectionActions {
     @Override
     public boolean shouldAppendTo(Action other) {
       Action last;
-      if (other instanceof JoinedAction) last = ((JoinedAction) other).getLastAction();
-      else last = other;
+      last = (other instanceof JoinedAction action) ? action.getLastAction() : other;
 
       SelectionSave otherAfter = null;
 
-      if (last instanceof Paste) {
-        otherAfter = ((Paste) last).after;
-      } else if (last instanceof Duplicate) {
-        otherAfter = ((Duplicate) last).after;
+      if (last instanceof Paste paste) {
+        otherAfter = paste.after;
+      } else if (last instanceof Duplicate dupe) {
+        otherAfter = dupe.after;
       }
 
       return otherAfter != null && otherAfter.equals(this.before);
@@ -510,8 +508,7 @@ public class SelectionActions {
       /* Check if instantiated circuits are one of the parent circuits */
       for (Component c : comps) {
         ComponentFactory factory = c.getFactory();
-        if (factory instanceof SubcircuitFactory) {
-          SubcircuitFactory circFact = (SubcircuitFactory) factory;
+        if (factory instanceof SubcircuitFactory circFact) {
           Dependencies depends = canvas.getProject().getDependencies();
           if (!depends.canAdd(circ, circFact.getSubcircuit())) {
             canvas.setErrorMessage(com.cburch.logisim.tools.Strings.S.getter("circularError"));
@@ -581,14 +578,13 @@ public class SelectionActions {
     @Override
     public boolean shouldAppendTo(Action other) {
       Action last;
-      if (other instanceof JoinedAction) last = ((JoinedAction) other).getLastAction();
-      else last = other;
+      last = (other instanceof JoinedAction action) ? action.getLastAction() : other;
 
       SelectionSave otherAfter = null;
-      if (last instanceof Paste) {
-        otherAfter = ((Paste) last).after;
-      } else if (last instanceof Duplicate) {
-        otherAfter = ((Duplicate) last).after;
+      if (last instanceof Paste paste) {
+        otherAfter = paste.after;
+      } else if (last instanceof Duplicate dupe) {
+        otherAfter = dupe.after;
       }
       return otherAfter != null && otherAfter.equals(this.before);
     }

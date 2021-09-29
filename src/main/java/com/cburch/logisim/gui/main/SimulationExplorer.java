@@ -60,9 +60,7 @@ class SimulationExplorer extends JPanel implements ProjectListener, BaseMouseLis
       TreePath path = tree.getPathForLocation(e.getX(), e.getY());
       if (path != null) {
         Object last = path.getLastPathComponent();
-        if (last instanceof SimulationTreeCircuitNode) {
-          SimulationTreeCircuitNode node;
-          node = (SimulationTreeCircuitNode) last;
+        if (last instanceof SimulationTreeCircuitNode node) {
           project.setCircuitState(node.getCircuitState());
         }
       }

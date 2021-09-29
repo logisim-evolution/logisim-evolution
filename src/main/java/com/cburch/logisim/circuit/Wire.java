@@ -158,8 +158,7 @@ public final class Wire implements Component, AttributeSet, CustomHandles, Itera
 
   @Override
   public boolean equals(Object other) {
-    if (!(other instanceof Wire)) return false;
-    final var w = (Wire) other;
+    if (!(other instanceof Wire w)) return false;
     return w.e0.equals(this.e0) && w.e1.equals(this.e1);
   }
 

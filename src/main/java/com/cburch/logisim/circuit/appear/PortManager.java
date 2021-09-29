@@ -126,8 +126,7 @@ class PortManager {
     AppearanceAnchor anchor = null;
     for (final var obj : appearance.getObjectsFromBottom()) {
       if (obj instanceof AppearancePort appPort) {
-        final var port = appPort;
-        oldObjects.put(port.getPin(), port);
+        oldObjects.put(appPort.getPin(), appPort);
       } else if (obj instanceof AppearanceAnchor appAnchor) {
         anchor = appAnchor;
       }

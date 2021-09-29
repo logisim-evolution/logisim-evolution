@@ -416,8 +416,8 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
       }
       return;
     }
-    if (e.getSource() instanceof JComboBox) {
-      update((JComboBox<String>) e.getSource());
+    if (e.getSource() instanceof JComboBox box) {
+      update(box);
       return;
     }
     if (e.getActionCommand().equals("Ok")) {

@@ -252,9 +252,9 @@ class XmlWriter {
     addAttributeSetContent(ret, circuit.getStaticAttributes(), null);
     if (!circuit.getAppearance().isDefaultAppearance()) {
       final var appear = doc.createElement("appear");
-      for (Object o : circuit.getAppearance().getObjectsFromBottom()) {
-        if (o instanceof AbstractCanvasObject) {
-          final var elt = ((AbstractCanvasObject) o).toSvgElement(doc);
+      for (Object obj : circuit.getAppearance().getObjectsFromBottom()) {
+        if (obj instanceof AbstractCanvasObject canvasObject) {
+          final var elt = canvasObject.toSvgElement(doc);
           if (elt != null) {
             appear.appendChild(elt);
           }

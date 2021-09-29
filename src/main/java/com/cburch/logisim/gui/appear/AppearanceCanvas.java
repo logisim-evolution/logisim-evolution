@@ -115,9 +115,8 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
       return;
     }
 
-    if (canvasAction instanceof ModelReorderAction) {
+    if (canvasAction instanceof ModelReorderAction reorder) {
       final var max = getMaxIndex(getModel());
-      final var reorder = (ModelReorderAction) canvasAction;
       final var requests = reorder.getReorderRequests();
       final var mod = new ArrayList<ReorderRequest>(requests.size());
       var changed = false;
@@ -148,8 +147,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
       }
     }
 
-    if (canvasAction instanceof ModelAddAction) {
-      var addAction = (ModelAddAction) canvasAction;
+    if (canvasAction instanceof ModelAddAction addAction) {
       final var cur = addAction.getDestinationIndex();
       final var max = getMaxIndex(getModel());
       if (cur > max) {
@@ -223,8 +221,8 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   protected void paintForeground(Graphics g) {
     final var zoom = grid.getZoomFactor();
     final var gfxScaled = g.create();
-    if (zoom != 1.0 && zoom != 0.0 && gfxScaled instanceof Graphics2D) {
-      ((Graphics2D) gfxScaled).scale(zoom, zoom);
+    if (zoom != 1.0 && zoom != 0.0 && gfxScaled instanceof Graphics2D g2d) {
+      g2d.scale(zoom, zoom);
     }
     super.paintForeground(gfxScaled);
     gfxScaled.dispose();

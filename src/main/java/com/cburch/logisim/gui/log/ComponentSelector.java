@@ -204,8 +204,7 @@ public class ComponentSelector extends JTable {
 
     private ComponentNode findChildFor(Component c) {
       for (final var o : children) {
-        if (o instanceof ComponentNode) {
-          final var child = (ComponentNode) o;
+        if (o instanceof ComponentNode child) {
           if (child.comp == c) return child;
         }
       }
@@ -214,8 +213,7 @@ public class ComponentSelector extends JTable {
 
     private CircuitNode findChildFor(Circuit c) {
       for (TreeNode<?> o : children) {
-        if (o instanceof CircuitNode) {
-          CircuitNode child = (CircuitNode) o;
+        if (o instanceof CircuitNode child) {
           if (child.circ == c) return child;
         }
       }
@@ -346,13 +344,13 @@ public class ComponentSelector extends JTable {
 
       Component comp;
       Object opt = null;
-      if (node instanceof ComponentNode) {
-        comp = ((ComponentNode) node).comp;
-      } else if (node instanceof CircuitNode) {
-        comp = ((CircuitNode) node).comp;
-      } else if (node instanceof OptionNode) {
-        comp = ((OptionNode) node).parent.comp;
-        opt = ((OptionNode) node).option;
+      if (node instanceof ComponentNode compNode) {
+        comp = compNode.comp;
+      } else if (node instanceof CircuitNode circNode) {
+        comp = circNode.comp;
+      } else if (node instanceof OptionNode optNode) {
+        comp = optNode.parent.comp;
+        opt = optNode.option;
       } else {
         return; // null node?
       }
@@ -429,11 +427,11 @@ public class ComponentSelector extends JTable {
   private SignalInfo makeSignalInfo(TreeNode<?> node) {
     ComponentNode n = null;
     Object opt = null;
-    if (node instanceof OptionNode) {
-      n = ((OptionNode) node).parent;
-      opt = ((OptionNode) node).option;
-    } else if (node instanceof ComponentNode) {
-      n = (ComponentNode) node;
+    if (node instanceof OptionNode optNode) {
+      n = optNode.parent;
+      opt = optNode.option;
+    } else if (node instanceof ComponentNode compNode) {
+      n = compNode;
       if (n.children.size() > 0) return null;
     } else {
       return null;

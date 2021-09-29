@@ -113,9 +113,9 @@ class TestPanel extends JPanel implements ValueTable.Model {
       var failed = false;
       if (row < numPass + numFail) {
         final var err = results[row];
-        if (err instanceof FailException) {
+        if (err instanceof FailException failEx) {
           failed = true;
-          for (final var e : ((FailException) err).getAll()) {
+          for (final var e : failEx.getAll()) {
             var col = e.getColumn();
             msg[col] = S.get("expectedValueMessage", e.getExpected().toDisplayString(getColumnValueRadix(col + 1)));
             altdata[col] = e.getComputed();

@@ -30,13 +30,13 @@ public class BoardRectangle {
   }
 
   @Override
-  public boolean equals(Object rect) {
-    if (!(rect instanceof BoardRectangle)) return false;
-    BoardRectangle Rect = (BoardRectangle) rect;
-    return ((Rect.getHeight() == height)
-        && (Rect.getWidth() == width)
-        && (Rect.getXpos() == xPosition)
-        && (Rect.getYpos() == yPosition));
+  public boolean equals(Object rectangle) {
+    return (rectangle instanceof BoardRectangle rect)
+           ? ((rect.getHeight() == height)
+              && (rect.getWidth() == width)
+              && (rect.getXpos() == xPosition)
+              && (rect.getYpos() == yPosition))
+           : false;
   }
 
   public int getHeight() {
