@@ -101,14 +101,14 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         mySignals.put(wire, typedWires.get(wire));
       }
       // now we add them
-      if (maxNameLength > 0) contents.addRemarkBlock("Here all used signals are defined");
+      if (maxNameLength > 0) contents.addRemarkBlock("All used signals are defined here");
       final var sortedSignals = new TreeSet<String>(mySignals.keySet());
       for (final var signal : sortedSignals) 
         contents.add("   SIGNAL {{1}}{{2}} : {{3}};", signal, " ".repeat(maxNameLength - signal.length()), 
             mySignals.get(signal));
       if (maxNameLength > 0) contents.empty();
       contents.add("BEGIN")
-          .add(getModuleFunctionality(theNetlist, attrs))
+          .add(getModuleFunctionality(theNetlist, attrs).getWithIndent())
           .add("END PlatformIndependent;");
     } else {
       final var preamble = String.format("module %s( ", componentName);
@@ -155,7 +155,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
           contents.add(thisLine + ");");
         } else {
           // FIXME: hard coded String
-          Reporter.report.addError("Internale Error in Verilog Architecture generation!");
+          Reporter.report.addError("Internal Error in Verilog Architecture generation!");
         }
       }
       if (!myParametersList.isEmpty(attrs)) {
@@ -338,7 +338,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       if (!firstline) {
         contents.empty();
       }
-      contents.add(getModuleFunctionality(theNetlist, attrs)).empty().add("endmodule");
+      contents.add(getModuleFunctionality(theNetlist, attrs).getWithIndent()).empty().add("endmodule");
     }
     return contents.get();
   }
@@ -504,12 +504,12 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     throw new IllegalAccessError("BUG: Inline code not supported");
   }
 
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     /*
      * In this method the functionality of the black-box is described. It is
      * used for both VHDL and VERILOG.
      */
-    return new ArrayList<>();
+    return LineBuffer.getHdlBuffer();
   }
 
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {

@@ -26,7 +26,7 @@ public class BitExtenderHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
       if (!componentInfo.isEndConnected(i)) {
         // FIXME: hardcoded string
         Reporter.report.addError(String.format(
-            "Bit Extender component has floating input connection in circuit: %s" , circuitName ));
+            "Bit Extender component has floating input connection in circuit: %s", circuitName));
         // return empty buffer.
         return contents;
       }
