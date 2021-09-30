@@ -52,8 +52,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
 
   @Override
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
-    return opcodes;
+    return new ArrayList<>(Arrays.asList(AsmOpcodes));
   }
 
   @Override
