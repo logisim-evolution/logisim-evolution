@@ -51,12 +51,12 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
     return !isInverted;
   }
 
-  public ArrayList<String> getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-    return new ArrayList<>();
+  public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+    return LineBuffer.getHdlBuffer();
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
     final var bitWidth = attrs.getValue(StdAttr.WIDTH).getWidth();
     final var nrOfInputs =
@@ -69,9 +69,9 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
       contents.addRemarkBlock("Here the bubbles are processed");
       for (var i = 0; i < nrOfInputs; i++) {
         if (Hdl.isVhdl()) {
-          contents.add("  s_real_input_{{1}} {{=}} Input_{{1}} WHEN {{2}}{{<}}{{3}}{{>}} = '0' ELSE NOT(Input_{{1}});", (i + 1), BUBBLES_MASK, i);
+          contents.add("s_real_input_{{1}} {{=}} Input_{{1}} WHEN {{2}}{{<}}{{3}}{{>}} = '0' ELSE NOT(Input_{{1}});", (i + 1), BUBBLES_MASK, i);
         } else {
-          contents.add("  {{assign}} s_real_input_{{1}} {{=}} ({{2}}{{<}}{{3}}{{>}} == 1'b0) ? Input_{{1}} : ~Input_{{1}};", (i + 1), BUBBLES_MASK, i);
+          contents.add("{{assign}} s_real_input_{{1}} {{=}} ({{2}}{{<}}{{3}}{{>}} == 1'b0) ? Input_{{1}} : ~Input_{{1}};", (i + 1), BUBBLES_MASK, i);
         }
       }
     }
@@ -80,8 +80,8 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
     if (attrs.containsAttribute(GateAttributes.ATTR_XOR)) {
       onehot = attrs.getValue(GateAttributes.ATTR_XOR) == GateAttributes.XOR_ONE;
     }
-    contents.add(getLogicFunction(nrOfInputs, bitWidth, onehot));
-    return contents.get();
+    contents.add(getLogicFunction(nrOfInputs, bitWidth, onehot).get());
+    return contents;
   }
 
   public ArrayList<String> GetOneHot(boolean inverted, int nrOfInputs, boolean isBus) {
@@ -147,8 +147,9 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
     return lines;
   }
 
-  public ArrayList<String> GetParity(boolean inverted, int nrOfInputs, boolean isBus) {
-    final var lines = new ArrayList<String>();
+  public static LineBuffer getParity(boolean inverted, int nrOfInputs, boolean isBus) {
+    // FIXME!
+    final var lines = LineBuffer.getHdlBuffer();
     var spaces = "   ";
     var indexString = "";
     if (isBus) {

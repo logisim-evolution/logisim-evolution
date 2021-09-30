@@ -58,7 +58,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer()
             .pair("nrOfBits", NR_OF_BITS_STR);
     final var nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
@@ -170,7 +170,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     } else {
       Reporter.report.addFatalError("Strange, this should not happen as Verilog is not yet supported!\n");
     }
-    return contents.getWithIndent();
+    return contents;
   }
 
   private ArrayList<String> getAdd3Block(String srcName, int srcStartId, String destName, int destStartId, String processName) {

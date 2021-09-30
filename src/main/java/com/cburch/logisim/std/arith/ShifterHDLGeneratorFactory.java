@@ -53,7 +53,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer()
             .pair("shiftMode", SHIFT_MODE_STRING);
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
@@ -80,7 +80,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
             """);
       } else {
         for (var stage = 0; stage < nrOfShiftBits; stage++)
-          contents.add(GetStageFunctionalityVHDL(stage, nrOfBits));
+          contents.add(getStageFunctionalityVhdl(stage, nrOfBits));
         contents
             .add("""
                 -----------------------------------------------------------------------------
@@ -112,7 +112,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
             """);
       } else {
         for (var stage = 0; stage < nrOfShiftBits; stage++) {
-          contents.add(GetStageFunctionalityVerilog(stage, nrOfBits));
+          contents.add(getStageFunctionalityVerilog(stage, nrOfBits));
         }
         contents.add("""
             /***************************************************************************
@@ -124,10 +124,10 @@ public class ShifterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
             """, nrOfShiftBits - 1);
       }
     }
-    return contents.getWithIndent();
+    return contents;
   }
 
-  private ArrayList<String> GetStageFunctionalityVerilog(int stageNumber, int nrOfBits) {
+  private ArrayList<String> getStageFunctionalityVerilog(int stageNumber, int nrOfBits) {
     final var contents = LineBuffer.getBuffer()
             .pair("shiftMode", SHIFT_MODE_STRING)
             .pair("stageNumber", stageNumber)
@@ -179,7 +179,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     return contents.getWithIndent();
   }
 
-  private ArrayList<String> GetStageFunctionalityVHDL(int stageNumber, int nrOfBits) {
+  private ArrayList<String> getStageFunctionalityVhdl(int stageNumber, int nrOfBits) {
     final var nrOfBitsToShift = (1 << stageNumber);
     final var contents =
         LineBuffer.getBuffer()
