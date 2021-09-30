@@ -12,6 +12,7 @@ package com.cburch.logisim.fpga.hdlgenerator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeSet;
 
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
@@ -19,7 +20,6 @@ import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Hdl {
@@ -132,14 +132,14 @@ public abstract class Hdl {
     final var nrHexDigits = nrOfBits / 4;
     final var nrSingleBits = nrOfBits % 4;
     final var hexDigits = new String[nrHexDigits];
-    final var singleBits = new StringBuffer();
+    final var singleBits = new StringBuilder();
     var shiftValue = value >> nrSingleBits;
     for (var hexIndex = nrHexDigits - 1; hexIndex >= 0; hexIndex--) {
       var hexValue = shiftValue & 0xFL;
       shiftValue >>= 4L;
       hexDigits[hexIndex] = String.format("%1X", hexValue);
     }
-    final var hexValue = new StringBuffer();
+    final var hexValue = new StringBuilder();
     for (var hexIndex = 0; hexIndex < nrHexDigits; hexIndex++) {
       hexValue.append(hexDigits[hexIndex]);
     }
@@ -314,7 +314,7 @@ public abstract class Hdl {
       /* First we check if the bus has a connection */
       var connected = false;
       for (var bit = 0; bit < nrOfBits; bit++) {
-        if (connectionInformation.get((byte) bit).getParentNet() != null) 
+        if (connectionInformation.get((byte) bit).getParentNet() != null)
           connected = true;
       }
       if (!connected) {
@@ -347,7 +347,7 @@ public abstract class Hdl {
                  */
                 if (solderPoint.getParentNet().getBitWidth() == 1) {
                   /* The connection is to a Net */
-                  netMap.put(sourceNetName.toString(), String.format("%s%d", NET_NAME, 
+                  netMap.put(sourceNetName.toString(), String.format("%s%d", NET_NAME,
                       theNets.getNetId(solderPoint.getParentNet())));
                 } else {
                   /* The connection is to an entry of a bus */
@@ -374,7 +374,7 @@ public abstract class Hdl {
                  */
                 if (solderPoint.getParentNet().getBitWidth() == 1) {
                   /* The connection is to a Net */
-                  seperateSignals.add(String.format("%s%d", NET_NAME, 
+                  seperateSignals.add(String.format("%s%d", NET_NAME,
                       theNets.getNetId(solderPoint.getParentNet())));
                 } else {
                   /* The connection is to an entry of a bus */
@@ -399,5 +399,15 @@ public abstract class Hdl {
       }
     }
     return netMap;
+  }
+
+  public static void addAllWiresSorted(LineBuffer contents, Map<String, String> wires) {
+    var maxNameLength = 0;
+    for (var wire : wires.keySet())
+      maxNameLength = Math.max(maxNameLength, wire.length());
+    final var sortedWires = new TreeSet<String>(wires.keySet());
+    for (var wire : sortedWires) 
+      contents.add("   {{assign}}{{1}}{{2}} {{=}} {{3}};", wire, " ".repeat(maxNameLength - wire.length()), wires.get(wire));
+    wires.clear();
   }
 }

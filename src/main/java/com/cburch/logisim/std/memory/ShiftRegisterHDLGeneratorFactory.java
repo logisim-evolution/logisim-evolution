@@ -293,7 +293,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactor
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer()
         .pair("clock", HdlPorts.getClockName(1))
         .pair("tick", HdlPorts.getTickName(1))
@@ -338,6 +338,6 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactor
           endgenerate
           """);
     }
-    return contents.getWithIndent();
+    return contents;
   }
 }

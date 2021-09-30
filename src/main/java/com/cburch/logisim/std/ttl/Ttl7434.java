@@ -19,10 +19,9 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import java.util.ArrayList;
+import com.cburch.logisim.util.LineBuffer;
 
 /**
  * TTL 74x34: hex buffer gate
@@ -43,12 +42,8 @@ public class Ttl7434 extends AbstractTtlGate {
     }
 
     @Override
-    public ArrayList<String> getLogicFunction(int index) {
-      final var contents = new ArrayList<String>();
-      contents.add("   " + Hdl.assignPreamble() + "gate_" + index + "_O" + Hdl.assignOperator()
-                  + "(gate_" + index + "_A);");
-      contents.add("");
-      return contents;
+    public LineBuffer getLogicFunction(int index) {
+      return LineBuffer.getHdlBuffer().add("{{assign}}gate_{{1}}_O{{=}}gate_{{1}}_A;", index);
     }
   }
 

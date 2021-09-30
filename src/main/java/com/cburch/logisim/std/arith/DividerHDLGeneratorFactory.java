@@ -16,7 +16,6 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 
 public class DividerHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   private static final String NR_OF_BITS_STRING = "NrOfBits";
@@ -46,14 +45,14 @@ public class DividerHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents = LineBuffer.getBuffer()
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    final var contents = LineBuffer.getBuffer()
             .pair("nrOfBits", NR_OF_BITS_STRING)
             .pair("unsigned", UNSIGNED_STRING)
             .pair("calcBits", CALC_BITS_STRING);
 
     if (Hdl.isVhdl()) {
-      Contents.add("""
+      contents.add("""
           s_extended_dividend({{calcBits}}-1 DOWNTO {{nrOfBits}}) <= Upper;
           s_extended_dividend({{nrOfBits}}-1 DOWNTO 0) <= INP_A;
           s_div_result <= std_logic_vector(unsigned(s_extended_dividend) / unsigned(INP_B))
@@ -66,7 +65,7 @@ public class DividerHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
           Remainder <= s_mod_result({{nrOfBits}}-1 DOWNTO 0);
           """);
     }
-    return Contents.getWithIndent();
+    return contents;
   }
 
   @Override

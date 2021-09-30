@@ -16,7 +16,6 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 
 public class NegatorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -33,17 +32,17 @@ public class NegatorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents = LineBuffer.getBuffer();
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    final var contents = LineBuffer.getBuffer();
     if (Hdl.isVhdl()) {
       int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-      Contents.add(
+      contents.add(
           (nrOfBits == 1)
               ? "MinDataX <= DataX;"
               : "MinDataX <= std_logic_vector(unsigned(NOT(DataX)) + 1);");
     } else {
-      Contents.add("assign   MinDataX = -DataX;");
+      contents.add("assign   MinDataX = -DataX;");
     }
-    return Contents.getWithIndent();
+    return contents;
   }
 }

@@ -31,7 +31,7 @@ public class ImageXmlFactory {
   static final Logger logger = LoggerFactory.getLogger(ImageXmlFactory.class);
 
   private String[] CodeTable;
-  private StringBuffer AsciiStream;
+  private StringBuilder AsciiStream;
   private final String[] InitialCodeTable = {
     "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
     "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
@@ -135,7 +135,7 @@ public class ImageXmlFactory {
     }
     byte[] data = blaat.toByteArray();
     CodeTable = createCodeTable(data);
-    AsciiStream = new StringBuffer();
+    AsciiStream = new StringBuilder();
     AsciiStream.append(V2_Identifier);
     for (byte datum : data) {
       String code = CodeTable[datum + 128];
@@ -249,7 +249,7 @@ public class ImageXmlFactory {
   }
 
   public void setCompressedString(String stream) {
-    AsciiStream = new StringBuffer();
+    AsciiStream = new StringBuilder();
     AsciiStream.append(stream);
   }
 }

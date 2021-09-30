@@ -211,7 +211,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHdlGenera
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents =
         LineBuffer.getBuffer()
             .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
@@ -239,7 +239,6 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHdlGenera
           """);
     } else {
       contents.add("""
-
           genvar i;
           generate
              for (i = 0; i < {{nrOfRows}}; i = i + 1)
@@ -251,6 +250,6 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHdlGenera
           endgenerate
           """);
     }
-    return contents.getWithIndent();
+    return contents;
   }
 }

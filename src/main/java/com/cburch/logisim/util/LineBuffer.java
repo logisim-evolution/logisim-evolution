@@ -153,6 +153,7 @@ public class LineBuffer implements RandomAccess {
         .pair("or", Hdl.orOperator())
         .pair("and", Hdl.andOperator())
         .pair("not", Hdl.notOperator())
+        .pair("xor", Hdl.xorOperator())
         .pair("bracketOpen", Hdl.bracketOpen())
         .pair("bracketClose", Hdl.bracketClose())
         .pair("<", Hdl.bracketOpen())
@@ -306,6 +307,7 @@ public class LineBuffer implements RandomAccess {
    * are processed too.
    *
    * @param lines
+   * @return Instance of self for easy chaining.
    */
   public LineBuffer add(Collection<String> lines) {
     for (final var line : lines) add(line);
@@ -324,6 +326,17 @@ public class LineBuffer implements RandomAccess {
    */
   public LineBuffer addLines(String... lines) {
     return add(Arrays.asList(lines));
+  }
+
+
+  /**
+   * Appends content of another buffer
+   *
+   * @param otherBuffer Another LineBuffer to append content from.
+   * @return Instance of self for easy chaining.
+   */
+  public LineBuffer add(LineBuffer otherBuffer) {
+    return add(otherBuffer.get());
   }
 
   /* ********************************************************************************************* */

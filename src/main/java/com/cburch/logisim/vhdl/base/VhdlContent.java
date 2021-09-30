@@ -86,7 +86,7 @@ public class VhdlContent extends HdlContent {
   private static final String TEMPLATE = loadTemplate();
 
   protected AttributeSet staticAttrs;
-  protected StringBuffer content;
+  protected StringBuilder content;
   protected boolean valid;
   protected final List<VhdlParser.PortDescription> ports;
   protected Generic[] generics;
@@ -107,7 +107,7 @@ public class VhdlContent extends HdlContent {
   public VhdlContent clone() {
     try {
       VhdlContent ret = (VhdlContent) super.clone();
-      ret.content = new StringBuffer(this.content);
+      ret.content = new StringBuilder(this.content);
       ret.valid = this.valid;
       return ret;
     } catch (CloneNotSupportedException ex) {
@@ -241,8 +241,8 @@ public class VhdlContent extends HdlContent {
     return setContent(s);
   }
 
-  private final StringBuffer errTitle = new StringBuffer();
-  private final StringBuffer errMessage = new StringBuffer();
+  private final StringBuilder errTitle = new StringBuilder();
+  private final StringBuilder errMessage = new StringBuilder();
   private int errCode = 0;
   private Exception errException;
 
@@ -281,7 +281,7 @@ public class VhdlContent extends HdlContent {
   @Override
   public boolean setContent(String vhdl) {
     if (valid && content.toString().equals(vhdl)) return true;
-    content = new StringBuffer(vhdl);
+    content = new StringBuilder(vhdl);
     valid = false;
     try {
       errTitle.setLength(0);

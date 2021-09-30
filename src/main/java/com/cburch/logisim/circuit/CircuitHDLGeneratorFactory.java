@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
@@ -264,80 +265,49 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     return components;
   }
 
-  public ArrayList<String> getHdlWiring(Netlist theNets) {
-    final var contents = LineBuffer.getHdlBuffer();
-    final var oneLine = new StringBuilder();
-    /* we cycle through all nets with a forcedrootnet annotation */
+  public Map<String, String> getHdlWiring(Netlist theNets) {
+    final var contents = new HashMap<String, String>();
+    // we cycle through all nets with a forced root net annotation
     for (final var thisNet : theNets.getAllNets()) {
       if (thisNet.isForcedRootNet()) {
-        /* now we cycle through all the bits */
+        // now we cycle through all the bits
+        final var wireId = theNets.getNetId(thisNet);
         for (var bit = 0; bit < thisNet.getBitWidth(); bit++) {
-          /* First we perform all source connections */
+          // First we perform all source connections
           for (final var source : thisNet.getSourceNets(bit)) {
-            oneLine.setLength(0);
-            if (thisNet.isBus()) {
-              oneLine.append(BUS_NAME)
-                  .append(theNets.getNetId(thisNet))
-                  .append(Hdl.bracketOpen())
-                  .append(bit)
-                  .append(Hdl.bracketClose());
-            } else {
-              oneLine.append(NET_NAME).append(theNets.getNetId(thisNet));
-            }
-            while (oneLine.length() < SIGNAL_ALLIGNMENT_SIZE) oneLine.append(" ");
-
-            contents.addUnique(LineBuffer.format("   {{assign}} {{1}} {{=}} {{2}}{{3}}{{<}}{{4}}{{>}};",
-                oneLine, BUS_NAME, theNets.getNetId(source.getParentNet()), source.getParentNetBitIndex()));
+            final var destination = thisNet.isBus() ? LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME, wireId, bit)
+                :  LineBuffer.formatHdl("{{1}}{{2}}", NET_NAME, wireId);
+            final var sourceWire = LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME,
+                theNets.getNetId(source.getParentNet()), source.getParentNetBitIndex());
+            contents.put(destination, sourceWire);
           }
-          /* Next we perform all sink connections */
+          // Next we perform all sink connections
           for (final var source : thisNet.getSinkNets(bit)) {
-            oneLine.setLength(0);
-            oneLine.append(BUS_NAME)
-                .append(theNets.getNetId(source.getParentNet()))
-                .append(Hdl.bracketOpen())
-                .append(source.getParentNetBitIndex())
-                .append(Hdl.bracketClose());
-            while (oneLine.length() < SIGNAL_ALLIGNMENT_SIZE) oneLine.append(" ");
-            oneLine.append(Hdl.assignOperator());
-            if (thisNet.isBus()) {
-              oneLine.append(BUS_NAME)
-                  .append(theNets.getNetId(thisNet))
-                  .append(Hdl.bracketOpen())
-                  .append(bit)
-                  .append(Hdl.bracketClose());
-            } else {
-              oneLine.append(NET_NAME).append(theNets.getNetId(thisNet));
-            }
-            contents.addUnique(LineBuffer.format("   {{1}}{{2}};", Hdl.assignPreamble(), oneLine));
+            final var destination = LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME,
+                theNets.getNetId(source.getParentNet()), source.getParentNetBitIndex());
+            final var sourceWire = thisNet.isBus() ? LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME, wireId, bit)
+                :  LineBuffer.formatHdl("{{1}}{{2}}", NET_NAME, wireId);
+            contents.put(destination, sourceWire);
           }
         }
       }
     }
-    return contents.get();
+    return contents;
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
     var isFirstLine = true;
-    final var temp = new StringBuilder();
     final var compIds = new HashMap<String, Long>();
+    final var wires = new HashMap<String, String>();
     /* we start with the connection of the clock sources */
     for (final var clockSource : theNetList.getClockSources()) {
-      if (isFirstLine) {
-        contents.add("");
-        contents.addRemarkBlock("Here all clock generator connections are defined");
-        isFirstLine = false;
-      }
       if (!clockSource.isEndConnected(0)) {
         // FIXME: hardcoded string
         final var msg = String.format("Clock component found with no connection, skipping: '%s'",
                 clockSource.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
-        if (clockSource.getComponent().getAttributeSet().getValue(StdAttr.LABEL).equals("sysclk")) {
-          Reporter.report.addInfo(msg);
-        } else {
-          Reporter.report.addWarning(msg);
-        }
+        Reporter.report.addWarning(msg);
         continue;
       }
       final var clockNet = Hdl.getClockNetName(clockSource, 0, theNetList);
@@ -345,58 +315,40 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
         // FIXME: hardcoded string
         Reporter.report.addFatalError("INTERNAL ERROR: Cannot find clocknet!");
       }
-      final var connectedNet = Hdl.getNetName(clockSource, 0, true, theNetList);
-      temp.setLength(0);
-      temp.append(connectedNet);
-      // Padding
-      while (temp.length() < SIGNAL_ALLIGNMENT_SIZE) {
-        temp.append(" ");
-      }
-      if (!theNetList.requiresGlobalClockConnection()) {
-        contents.add("   {{assign}} {{1}} {{=}} {{2}}{{<}}{{3}}{{>}};", temp, clockNet, ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX);
-      } else {
-        contents.add("   {{assign}} {{1}} {{=}} {{2}};", temp, TickComponentHdlGeneratorFactory.FPGA_CLOCK);
-      }
+      final var destination = Hdl.getNetName(clockSource, 0, true, theNetList);
+      final var source = theNetList.requiresGlobalClockConnection() ? TickComponentHdlGeneratorFactory.FPGA_CLOCK
+          :  LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNet, ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX);
+      wires.put(destination, source);
+    }
+    if (!wires.isEmpty()) {
+      contents.empty().addRemarkBlock("All clock generator connections are defined here");
+      Hdl.addAllWiresSorted(contents, wires);
     }
     /* Here we define all wiring; hence all complex splitter connections */
-    final var wiring = getHdlWiring(theNetList);
-    if (!wiring.isEmpty()) {
-      contents.add("");
-      contents.addRemarkBlock("Here all wiring is defined");
-      contents.add(wiring);
+    wires.putAll(getHdlWiring(theNetList));
+    if (!wires.isEmpty()) {
+      contents.empty().addRemarkBlock("Here all wiring is defined");
+      Hdl.addAllWiresSorted(contents, wires);
     }
     /* Now we define all input signals; hence Input port -> Internal Net */
-    isFirstLine = true;
     for (var i = 0; i < theNetList.getNumberOfInputPorts(); i++) {
-      if (isFirstLine) {
-        contents.add("").addRemarkBlock("Here all input connections are defined");
-        isFirstLine = false;
-      }
       final var myInput = theNetList.getInputPin(i);
-      contents.add(
-          getSignalMap(
-              CorrectLabel.getCorrectLabel(myInput.getComponent().getAttributeSet().getValue(StdAttr.LABEL)),
-              myInput,
-              0,
-              3,
-              theNetList));
+      final var pinName = CorrectLabel.getCorrectLabel(myInput.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
+      wires.putAll(getSignalMap(pinName, myInput, 0, theNetList));
+    }
+    if (!wires.isEmpty()) {
+      contents.empty().addRemarkBlock("Here all input connections are defined");
+      Hdl.addAllWiresSorted(contents, wires);
     }
     /* Now we define all output signals; hence Internal Net -> Input port */
-    isFirstLine = true;
     for (var i = 0; i < theNetList.numberOfOutputPorts(); i++) {
-      if (isFirstLine) {
-        contents.add("");
-        contents.addRemarkBlock("Here all output connections are defined");
-        isFirstLine = false;
-      }
       netlistComponent myOutput = theNetList.getOutputPin(i);
-      contents.add(
-          getSignalMap(
-              CorrectLabel.getCorrectLabel(myOutput.getComponent().getAttributeSet().getValue(StdAttr.LABEL)),
-              myOutput,
-              0,
-              3,
-              theNetList));
+      final var pinName = CorrectLabel.getCorrectLabel(myOutput.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
+      wires.putAll(getSignalMap(pinName, myOutput, 0, theNetList));
+    }
+    if (!wires.isEmpty()) {
+      contents.empty().addRemarkBlock("Here all output connections are defined");
+      Hdl.addAllWiresSorted(contents, wires);
     }
     /* Here all in-lined components are generated */
     isFirstLine = true;
@@ -412,7 +364,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
             contents.addRemarkBlock("Here all in-lined components are defined");
             isFirstLine = false;
           }
-          contents.add(worker.getInlinedCode(theNetList, id++, comp, inlinedName));
+          contents.add(worker.getInlinedCode(theNetList, id++, comp, inlinedName).getWithIndent());
           compIds.put(InlinedId, id);
         }
       }
@@ -456,8 +408,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
         }
       }
     }
-    contents.add("");
-    return contents.get();
+    contents.empty();
+    return contents;
   }
 
   @Override
@@ -610,46 +562,31 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     return portMap;
   }
 
-  private String getSignalMap(String portName, netlistComponent comp, int endIndex, int tabSize, Netlist theNets) {
-    final var contents = new StringBuilder();
-    final var source = new StringBuilder();
-    final var destination = new StringBuilder();
-    final var tab = new StringBuilder();
+  private static Map<String, String> getSignalMap(String portName, netlistComponent comp, int endIndex, Netlist theNets) {
+    final var signal = new HashMap<String, String>();
     if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) {
       // FIXME: hardcoded string
       Reporter.report.addFatalErrorFmt(
               "INTERNAL ERROR: Component tried to index non-existing SolderPoint: '%s'",
               comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
-      return "";
+      return signal;
     }
-    tab.append(" ".repeat(tabSize));
     final var connectionInformation = comp.getEnd(endIndex);
-    final var isOutput = connectionInformation.isOutputEnd();
+    final var isInputConnection = connectionInformation.isOutputEnd();
     final var nrOfBits = connectionInformation.getNrOfBits();
     if (nrOfBits == 1) {
       /* Here we have the easy case, just a single bit net */
-      if (isOutput) {
-        if (!comp.isEndConnected(endIndex)) return " ";
-        source.append(portName);
-        destination.append(Hdl.getNetName(comp, endIndex, true, theNets));
+      if (isInputConnection) {
+        if (comp.isEndConnected(endIndex)) signal.put(Hdl.getNetName(comp, endIndex, true, theNets), portName);
       } else {
-        if (!comp.isEndConnected(endIndex)) {
+        if (comp.isEndConnected(endIndex)) {
+          signal.put(portName, Hdl.getNetName(comp, endIndex, true, theNets));
+        } else {
           // FIXME: hardcoded string
-          Reporter.report.addSevereWarning(
-              "Found an unconnected output pin, tied the pin to ground!");
+          Reporter.report.addSevereWarning("Found an unconnected output pin, tied the pin to ground!");
+          signal.put(portName, Hdl.zeroBit());
         }
-        source.append(Hdl.getNetName(comp, endIndex, true, theNets));
-        destination.append(portName);
-        if (!comp.isEndConnected(endIndex)) return contents.toString();
       }
-      while (destination.length() < SIGNAL_ALLIGNMENT_SIZE) destination.append(" ");
-      contents
-          .append(tab)
-          .append(Hdl.assignPreamble())
-          .append(destination)
-          .append(Hdl.assignOperator())
-          .append(source)
-          .append(";");
     } else {
       /*
        * Here we have the more difficult case, it is a bus that needs to
@@ -662,111 +599,52 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
       }
       if (!connected) {
         /* Here is the easy case, the bus is unconnected */
-        if (isOutput) return contents.toString();
-        // FIXME: hardcoded string
-        Reporter.report.addSevereWarning("Found an unconnected output bus pin, tied all the pin bits to ground!");
-        destination.append(portName);
-        while (destination.length() < SIGNAL_ALLIGNMENT_SIZE) destination.append(" ");
-        contents
-            .append(tab)
-            .append(Hdl.assignPreamble())
-            .append(destination)
-            .append(Hdl.assignOperator())
-            .append(Hdl.getZeroVector(nrOfBits, true))
-            .append(";");
+        if (!isInputConnection) {
+          Reporter.report.addSevereWarning("Found an unconnected output bus pin, tied all the pin bits to ground!");
+          signal.put(portName, Hdl.getZeroVector(nrOfBits, true));
+        }
       } else {
         /*
          * There are connections, we detect if it is a continues bus
          * connection
          */
         if (theNets.isContinuesBus(comp, endIndex)) {
-          destination.setLength(0);
-          source.setLength(0);
           /* Another easy case, the continues bus connection */
-          if (isOutput) {
-            source.append(portName);
-            destination.append(Hdl.getBusNameContinues(comp, endIndex, theNets));
+          if (isInputConnection) {
+            signal.put(Hdl.getBusNameContinues(comp, endIndex, theNets), portName);
           } else {
-            destination.append(portName);
-            source.append(Hdl.getBusNameContinues(comp, endIndex, theNets));
+            signal.put(portName, Hdl.getBusNameContinues(comp, endIndex, theNets));
           }
-          while (destination.length() < SIGNAL_ALLIGNMENT_SIZE) destination.append(" ");
-          contents
-              .append(tab)
-              .append(Hdl.assignPreamble())
-              .append(destination)
-              .append(Hdl.assignOperator())
-              .append(source)
-              .append(";");
         } else {
           /* The last case, we have to enumerate through each bit */
           for (var bit = 0; bit < nrOfBits; bit++) {
-            source.setLength(0);
-            destination.setLength(0);
-            if (isOutput) {
-              source
-                  .append(portName)
-                  .append(Hdl.bracketOpen())
-                  .append(bit)
-                  .append(Hdl.bracketClose());
-            } else {
-              destination
-                  .append(portName)
-                  .append(Hdl.bracketOpen())
-                  .append(bit)
-                  .append(Hdl.bracketClose());
-            }
+            final var bitConnection = LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", portName, bit);
             final var solderPoint = connectionInformation.get((byte) bit);
             if (solderPoint.getParentNet() == null) {
               /* The net is not connected */
-              if (isOutput) continue;
+              if (isInputConnection) continue;
               // FIXME: hardcoded string
               Reporter.report.addSevereWarning(String.format("Found an unconnected output bus pin, tied bit %d to ground!", bit));
-              source.append(Hdl.getZeroVector(1, true));
+              signal.put(bitConnection, Hdl.zeroBit());
             } else {
               /*
                * The net is connected, we have to find out if the
                * connection is to a bus or to a normal net
                */
-              if (solderPoint.getParentNet().getBitWidth() == 1) {
-                /* The connection is to a Net */
-                if (isOutput) {
-                  destination.append(NET_NAME).append(theNets.getNetId(solderPoint.getParentNet()));
-                } else {
-                  source.append(NET_NAME).append(theNets.getNetId(solderPoint.getParentNet()));
-                }
+              final var connectedNet = solderPoint.getParentNet().getBitWidth() == 1
+                    ? LineBuffer.format("{{1}}{{2}}", NET_NAME, theNets.getNetId(solderPoint.getParentNet()))
+                    : LineBuffer.format("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME,
+                        theNets.getNetId(solderPoint.getParentNet()), solderPoint.getParentNetBitIndex());
+              if (isInputConnection) {
+                signal.put(connectedNet, bitConnection);
               } else {
-                /* The connection is to an entry of a bus */
-                if (isOutput) {
-                  destination
-                      .append(BUS_NAME)
-                      .append(theNets.getNetId(solderPoint.getParentNet()))
-                      .append(Hdl.bracketOpen())
-                      .append(solderPoint.getParentNetBitIndex())
-                      .append(Hdl.bracketClose());
-                } else {
-                  source
-                      .append(BUS_NAME)
-                      .append(theNets.getNetId(solderPoint.getParentNet()))
-                      .append(Hdl.bracketOpen())
-                      .append(solderPoint.getParentNetBitIndex())
-                      .append(Hdl.bracketClose());
-                }
+                signal.put(bitConnection, connectedNet);
               }
             }
-            while (destination.length() < SIGNAL_ALLIGNMENT_SIZE) destination.append(" ");
-            if (bit != 0) contents.append("\n");
-            contents
-                .append(tab)
-                .append(Hdl.assignPreamble())
-                .append(destination)
-                .append(Hdl.assignOperator())
-                .append(source)
-                .append(";");
           }
         }
       }
     }
-    return contents.toString();
+    return signal;
   }
 }

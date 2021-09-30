@@ -42,28 +42,12 @@ public class VhdlParser {
     }
   }
 
-  public static class PortDescription {
-
-    private final String name;
-    private final String type;
-    private final BitWidth width;
-
+  // NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
+  // getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
+  // that in future, but for now it looks stupid in this file only.
+  public record PortDescription(String getName, String getType, int getWidthInt, BitWidth getWidth) {
     public PortDescription(String name, String type, int width) {
-      this.name = name;
-      this.type = type;
-      this.width = BitWidth.create(width);
-    }
-
-    public String getName() {
-      return this.name;
-    }
-
-    public String getType() {
-      return this.type;
-    }
-
-    public BitWidth getWidth() {
-      return this.width;
+      this(name, type, width, BitWidth.create(width));
     }
   }
 

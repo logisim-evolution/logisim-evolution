@@ -53,7 +53,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer()
             .pair("shiftMode", SHIFT_MODE_STRING);
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
@@ -124,7 +124,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
             """, nrOfShiftBits - 1);
       }
     }
-    return contents.getWithIndent();
+    return contents;
   }
 
   private ArrayList<String> getStageFunctionalityVerilog(int stageNumber, int nrOfBits) {

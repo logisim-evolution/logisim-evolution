@@ -18,13 +18,12 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.util.LineBuffer;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 
 class OddParityGate extends AbstractGate {
   private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      return LineBuffer.getBuffer().add(getParity(false, nrOfInputs, bitwidth > 1)).empty().get();
+    public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+      return LineBuffer.getBuffer().add(getParity(false, nrOfInputs, bitwidth > 1)).empty();
     }
   }
 

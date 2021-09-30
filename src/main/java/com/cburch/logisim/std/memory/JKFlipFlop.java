@@ -12,12 +12,10 @@ package com.cburch.logisim.std.memory;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
-
-import java.util.ArrayList;
+import com.cburch.logisim.util.LineBuffer;
 
 public class JKFlipFlop extends AbstractFlipFlop {
   /**
@@ -38,11 +36,11 @@ public class JKFlipFlop extends AbstractFlipFlop {
     }
 
     @Override
-    public ArrayList<String> getUpdateLogic() {
-      final var contents = new ArrayList<String>();
-      contents.add("   " + Hdl.assignPreamble() + "s_next_state" + Hdl.assignOperator()
-              + "(" + Hdl.notOperator() + "(s_current_state_reg)" + Hdl.andOperator() + "J)" + Hdl.orOperator());
-      contents.add("         (s_current_state_reg" + Hdl.andOperator() + Hdl.notOperator() + "(K));");
+    public LineBuffer getUpdateLogic() {
+      final var contents = LineBuffer.getHdlBuffer();
+      final var preamble = LineBuffer.formatHdl("{{assign}}s_next_state{{=}}");
+      contents.add("{{1}}({{not}}(s_current_state_reg){{and}}J){{or}}", preamble)
+          .add("{{1}}(s_current_state_reg{{and}}{{not}}(K));", " ".repeat(preamble.length()));
       return contents;
     }
   }
