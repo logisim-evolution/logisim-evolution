@@ -36,7 +36,7 @@ public class DFlipFlop extends AbstractFlipFlop {
     }
 
     @Override
-    public ArrayList<String> GetUpdateLogic() {
+    public ArrayList<String> getUpdateLogic() {
       final var contents = new ArrayList<String>();
       contents.add("   " + Hdl.assignPreamble() + "s_next_state" + Hdl.assignOperator() + "D;");
       return contents;
