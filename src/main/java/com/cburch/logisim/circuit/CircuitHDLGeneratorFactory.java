@@ -334,7 +334,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     for (var i = 0; i < theNetList.getNumberOfInputPorts(); i++) {
       final var myInput = theNetList.getInputPin(i);
       final var pinName = CorrectLabel.getCorrectLabel(myInput.getComponent().getAttributeSet().getValue(StdAttr.LABEL)); 
-      wires.putAll(getSignalMap(pinName, myInput, 0,theNetList));
+      wires.putAll(getSignalMap(pinName, myInput, 0, theNetList));
     }
     if (!wires.isEmpty()) {
       contents.empty().addRemarkBlock("Here all input connections are defined");
@@ -344,7 +344,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     for (var i = 0; i < theNetList.numberOfOutputPorts(); i++) {
       netlistComponent myOutput = theNetList.getOutputPin(i);
       final var pinName = CorrectLabel.getCorrectLabel(myOutput.getComponent().getAttributeSet().getValue(StdAttr.LABEL)); 
-      wires.putAll(getSignalMap(pinName, myOutput, 0,theNetList));
+      wires.putAll(getSignalMap(pinName, myOutput, 0, theNetList));
     }
     if (!wires.isEmpty()) {
       contents.empty().addRemarkBlock("Here all output connections are defined");

@@ -12,12 +12,10 @@ package com.cburch.logisim.std.memory;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
-
-import java.util.ArrayList;
+import com.cburch.logisim.util.LineBuffer;
 
 public class DFlipFlop extends AbstractFlipFlop {
   /**
@@ -36,10 +34,8 @@ public class DFlipFlop extends AbstractFlipFlop {
     }
 
     @Override
-    public ArrayList<String> GetUpdateLogic() {
-      final var contents = new ArrayList<String>();
-      contents.add("   " + Hdl.assignPreamble() + "s_next_state" + Hdl.assignOperator() + "D;");
-      return contents;
+    public LineBuffer getUpdateLogic() {
+      return LineBuffer.getHdlBuffer().add("{{assign}}s_next_state {{=}} D;");
     }
   }
 

@@ -17,7 +17,6 @@ import com.cburch.logisim.gui.icons.FlipFlopIcon;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 
 public class TFlipFlop extends AbstractFlipFlop {
   /**
@@ -36,10 +35,10 @@ public class TFlipFlop extends AbstractFlipFlop {
     }
 
     @Override
-    public ArrayList<String> GetUpdateLogic() {
-      return LineBuffer.getBuffer()
-          .add("{{1}} s_next_state {{2}} s_current_state_reg {{3}} T;", Hdl.assignPreamble(), Hdl.assignOperator(), Hdl.xorOperator())
-          .getWithIndent();
+    public LineBuffer getUpdateLogic() {
+      return LineBuffer.getHdlBuffer()
+          .pair("xor", Hdl.xorOperator())
+          .add("{{assign}}s_next_state{{=}}s_current_state_reg{{xor}}T;");
     }
   }
 
