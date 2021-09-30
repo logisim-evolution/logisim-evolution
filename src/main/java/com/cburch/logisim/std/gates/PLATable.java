@@ -42,6 +42,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.BoundedRangeModel;
 import javax.swing.Box;
@@ -80,7 +81,7 @@ public class PLATable {
     label = l;
   }
 
-  public ArrayList<Row> rows() {
+  public List<Row> rows() {
     return rows;
   }
 
