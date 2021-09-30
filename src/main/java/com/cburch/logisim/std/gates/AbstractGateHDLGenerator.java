@@ -18,6 +18,7 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
 
@@ -51,12 +52,12 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
     return !isInverted;
   }
 
-  public ArrayList<String> getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+  public List<String> getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
     return new ArrayList<>();
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
     final var bitWidth = attrs.getValue(StdAttr.WIDTH).getWidth();
     final var nrOfInputs =

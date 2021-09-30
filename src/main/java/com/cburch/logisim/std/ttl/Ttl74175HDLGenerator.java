@@ -17,6 +17,7 @@ import com.cburch.logisim.fpga.hdlgenerator.HdlPorts;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Ttl74175HDLGenerator extends AbstractHdlGeneratorFactory {
 
@@ -43,14 +44,14 @@ public class Ttl74175HDLGenerator extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     return LineBuffer.getBuffer()
         .pair("CLK", HdlPorts.CLOCK)
         .pair("tick", HdlPorts.TICK)
         .add("""
             NextState <= CurState WHEN {{tick}} = '0' ELSE
                          D4&D3&D2&D1;
-            
+
             dffs : PROCESS( {{CLK}} , nCLR ) IS
                BEGIN
                   IF (nCLR = '0') THEN CurState <= "0000";
@@ -58,7 +59,7 @@ public class Ttl74175HDLGenerator extends AbstractHdlGeneratorFactory {
                      CurState <= NextState;
                   END IF;
                END PROCESS dffs;
-            
+
             nQ1 <= NOT(CurState(0));
             Q1  <= CurState(0);
             nQ2 <= NOT(CurState(1));

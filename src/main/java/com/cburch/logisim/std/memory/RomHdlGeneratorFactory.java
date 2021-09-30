@@ -19,11 +19,12 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class RomHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
 
   @Override
-  public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
+  public List<String> getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
     AttributeSet attrs = componentInfo.getComponent().getAttributeSet();
     final var addressWidth = attrs.getValue(Mem.ADDR_ATTR).getWidth();
     final var dataWidth = attrs.getValue(Mem.DATA_ATTR).getWidth();

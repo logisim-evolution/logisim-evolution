@@ -18,6 +18,7 @@ import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 public class bin2bcdHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -58,7 +59,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer()
             .pair("nrOfBits", NR_OF_BITS_STR);
     final var nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
@@ -75,7 +76,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                   s_level_2(6)          <= s_level_1(6);
                   s_level_3(6 DOWNTO 5) <= s_level_2(6 DOWNTO 5);
                   s_level_3(0)          <= s_level_2(0);
-                  
+
                   BCD1  <= s_level_3( 3 DOWNTO 0);
                   BCD10 <= \"0\"&s_level_3(6 DOWNTO 4);
                   """)
@@ -99,7 +100,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                   s_level_5( 1 DOWNTO 0) <= s_level_4( 1 DOWNTO 0);
                   s_level_6(10 DOWNTO 9) <= s_level_5(10 DOWNTO 9);
                   s_level_6(0)           <= s_level_5(0);
-                  
+
                   BCD1   <= s_level_6( 3 DOWNTO 0 );
                   BCD10  <= s_level_6( 7 DOWNTO 4 );
                   BCD100 <= "0"&s_level_6(10 DOWNTO 8);
@@ -138,7 +139,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                   s_level_9( 1 DOWNTO  0)  <= s_level_8( 1 DOWNTO  0);
                   s_level_10(15 DOWNTO 13) <= s_level_9(15 DOWNTO 13);
                   s_level_10(0)            <= s_level_9(0);
-                  
+
                   BCD1    <= s_level_10( 3 DOWNTO  0);
                   BCD10   <= s_level_10( 7 DOWNTO  4);
                   BCD100  <= s_level_10(11 DOWNTO  8);
@@ -173,7 +174,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     return contents.getWithIndent();
   }
 
-  private ArrayList<String> getAdd3Block(String srcName, int srcStartId, String destName, int destStartId, String processName) {
+  private List<String> getAdd3Block(String srcName, int srcStartId, String destName, int destStartId, String processName) {
     return LineBuffer.getBuffer()
         .pair("srcName", srcName)
         .pair("srcStartId", srcStartId)
@@ -183,7 +184,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
         .pair("destDownTo", (destStartId - 3))
         .pair("proc", processName)
         .add("""
-            
+
             ADD3_{{proc}} : PROCESS({{srcName}})
             BEGIN
                CASE ( {{srcName}}( {{srcStartId}} DOWNTO {{srcDownTo}}) ) IS

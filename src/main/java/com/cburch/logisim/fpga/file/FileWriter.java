@@ -26,25 +26,25 @@ public class FileWriter {
   public static final String ENTITY_EXTENSION = "_entity";
   public static final String ARCHITECTURE_EXTENSION = "_behavior";
 
-  public static ArrayList<String> getExtendedLibrary() {
+  public static List<String> getExtendedLibrary() {
     final var lines = LineBuffer.getBuffer();
     lines.add("""
-           
+
                LIBRARY ieee;
                USE ieee.std_logic_1164.all;
                USE ieee.numeric_std.all;
-               
+
                """);
     return lines.get();
   }
 
-  public static ArrayList<String> getStandardLibrary() {
+  public static List<String> getStandardLibrary() {
     final var lines = LineBuffer.getBuffer();
     lines.add("""
-      
+
               LIBRARY ieee;
               USE ieee.std_logic_1164.all;
-              
+
               """);
     return lines.get();
   }
@@ -105,7 +105,7 @@ public class FileWriter {
     }
   }
 
-  public static ArrayList<String> getGenerateRemark(String compName, String projName) {
+  public static List<String> getGenerateRemark(String compName, String projName) {
     ArrayList<String> lines = new ArrayList<>();
     final int headWidth;
     final String headOpen;

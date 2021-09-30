@@ -17,6 +17,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
+import java.util.List;
 
 public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnScanningHDLGeneratorFactory {
 
@@ -40,7 +41,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
         .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs, NR_OF_ROWS_ID, 7);
   }
 
-  public static ArrayList<String> getPortMap(int id) {
+  public static List<String> getPortMap(int id) {
     final var contents =
         LineBuffer.getBuffer()
             .pair("addr", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
@@ -80,7 +81,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var contents =
         LineBuffer.getBuffer()
             .pair("nrOfLeds", NR_OF_LEDS_STRING)
@@ -111,7 +112,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
                 s_maxBlueLedInputs({{nrOfLeds}}-1 DOWNTO 0)  <= {{insB}};
              END IF;
           END PROCESS makeVirtualInputs;
-          
+
           GenOutputs : FOR n IN {{nrOfRows}}-1 DOWNTO 0 GENERATE
              {{outsR}}(n) <= s_maxRedLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);
              {{outsG}}(n) <= s_maxGreenLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);

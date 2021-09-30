@@ -56,7 +56,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHdlGeneratorFac
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
     contents
         .pair("invertClock", INVERT_CLOCK_STRING)

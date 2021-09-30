@@ -13,6 +13,7 @@ import static com.cburch.logisim.fpga.Strings.S;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 public class LedArrayDriving {
 
@@ -31,7 +32,7 @@ public class LedArrayDriving {
     return UNKNOWN;
   }
 
-  public static LinkedList<String> getStrings() {
+  public static List<String> getStrings() {
     var result = new LinkedList<String>();
     result.add(DRIVING_STRINGS[0]);
     result.add(DRIVING_STRINGS[1]);
@@ -42,7 +43,7 @@ public class LedArrayDriving {
     return result;
   }
 
-  public static LinkedList<String> getDisplayStrings() {
+  public static List<String> getDisplayStrings() {
     var result = new LinkedList<String>();
     result.add(S.get(DRIVING_STRINGS[0]));
     result.add(S.get(DRIVING_STRINGS[1]));

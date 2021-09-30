@@ -13,6 +13,7 @@ import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.Location;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Net {
@@ -132,12 +133,12 @@ public class Net {
     return this.myPoints;
   }
 
-  public ArrayList<ConnectionPoint> getSinkNets(int bitIndex) {
+  public List<ConnectionPoint> getSinkNets(int bitIndex) {
     if ((bitIndex < 0) || (bitIndex >= sinkNetsList.size())) return new ArrayList<>();
     return sinkNetsList.get(bitIndex).getAll();
   }
 
-  public ArrayList<ConnectionPoint> getSourceNets(int bitIndex) {
+  public List<ConnectionPoint> getSourceNets(int bitIndex) {
     if ((bitIndex < 0) || (bitIndex >= sourceNetsList.size())) return new ArrayList<>();
     return sourceNetsList.get(bitIndex).getAll();
   }
@@ -157,13 +158,13 @@ public class Net {
     return sinkList.get(bitid).size() > 0;
   }
 
-  public ArrayList<ConnectionPoint> getBitSinks(int bitIndex) {
+  public List<ConnectionPoint> getBitSinks(int bitIndex) {
     if ((bitIndex < 0) || (bitIndex >= sourceNetsList.size()))
       return new ArrayList<>();
     return new ArrayList<>(sinkList.get(bitIndex).getAll());
   }
 
-  public ArrayList<ConnectionPoint> GetBitSources(int bitIndex) {
+  public List<ConnectionPoint> GetBitSources(int bitIndex) {
     if ((bitIndex < 0) || (bitIndex >= sourceNetsList.size())) return null;
     return sourceList.get(bitIndex).getAll();
   }

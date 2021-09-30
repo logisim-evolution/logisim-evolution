@@ -18,6 +18,7 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RamHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -93,7 +94,7 @@ public class RamHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer()
         .pair("clock", HdlPorts.getClockName(1))
         .pair("tick", HdlPorts.getTickName(1));
@@ -220,7 +221,7 @@ public class RamHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                       END IF;
                    END IF;
                 END PROCESS Res;
-                
+
                 """);
       }
     }

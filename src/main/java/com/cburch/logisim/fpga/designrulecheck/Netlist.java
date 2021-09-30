@@ -1089,11 +1089,11 @@ public class Netlist {
     return true;
   }
 
-  public ArrayList<Component> getAllClockSources() {
+  public List<Component> getAllClockSources() {
     return myClockInformation.getSourceContainer().getSources();
   }
 
-  public ArrayList<Net> getAllNets() {
+  public List<Net> getAllNets() {
     return myNets;
   }
 
@@ -1105,7 +1105,7 @@ public class Netlist {
     return circuitName;
   }
 
-  public int getClockSourceId(ArrayList<String> hierarchyLevel, Net whichNet, Byte bitId) {
+  public int getClockSourceId(List<String> hierarchyLevel, Net whichNet, Byte bitId) {
     return myClockInformation.getClockSourceId(hierarchyLevel, whichNet, bitId);
   }
 
@@ -1113,11 +1113,11 @@ public class Netlist {
     return myClockInformation.getClockSourceId(comp);
   }
 
-  public ArrayList<netlistComponent> getClockSources() {
+  public List<netlistComponent> getClockSources() {
     return myClockGenerators;
   }
 
-  public ArrayList<String> getCurrentHierarchyLevel() {
+  public List<String> getCurrentHierarchyLevel() {
     return currentHierarchyLevel;
   }
 
@@ -1133,7 +1133,7 @@ public class Netlist {
     return -1;
   }
 
-  private ArrayList<ConnectionPoint> GetHiddenSinks(Net thisNet, Byte bitIndex, ArrayList<Component> splitters, Set<String> handledNets, Boolean isSourceNet) {
+  private List<ConnectionPoint> GetHiddenSinks(Net thisNet, Byte bitIndex, List<Component> splitters, Set<String> handledNets, Boolean isSourceNet) {
     final var result = new ArrayList<ConnectionPoint>();
     // to prevent deadlock situations we check if we already looked at this net
     final var netId = myNets.indexOf(thisNet) + "-" + bitIndex;
@@ -1202,7 +1202,7 @@ public class Netlist {
     return ((Index < 0) || (Index >= myInputPorts.size())) ? null : myInputPorts.get(Index);
   }
 
-  public Map<ArrayList<String>, netlistComponent> getMappableResources(ArrayList<String> hierarchy, boolean toplevel) {
+  public Map<ArrayList<String>, netlistComponent> getMappableResources(List<String> hierarchy, boolean toplevel) {
     final var components = new HashMap<ArrayList<String>, netlistComponent>();
     /* First we search through my sub-circuits and add those IO components */
     for (final var comp : mySubCircuits) {
@@ -1309,7 +1309,7 @@ public class Netlist {
     return null;
   }
 
-  public ArrayList<netlistComponent> getNormalComponents() {
+  public List<netlistComponent> getNormalComponents() {
     return myComponents;
   }
 
@@ -2048,7 +2048,7 @@ public class Netlist {
   }
 
   public void getGatedClockComponents(
-      ArrayList<Netlist> hierarchyNetlists,
+      List<Netlist> hierarchyNetlists,
       netlistComponent subCircuit,
       Map<String, Map<netlistComponent, Circuit>> notGatedSet,
       Map<String, Map<netlistComponent, Circuit>> gatedSet,
@@ -2419,7 +2419,7 @@ public class Netlist {
       List<Set<netlistComponent>> components,
       List<Set<Wire>> wires,
       Set<netlistComponent> warnedComponents,
-      ArrayList<Netlist> hierarchyNetlists,
+      List<Netlist> hierarchyNetlists,
       String warning) {
     if (AppPreferences.SupressGatedClockWarnings.getBoolean()) return;
     for (var i = 0; i < sources.size(); i++) {

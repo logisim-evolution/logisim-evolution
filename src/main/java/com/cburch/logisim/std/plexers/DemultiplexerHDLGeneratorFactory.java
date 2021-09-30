@@ -17,6 +17,7 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DemultiplexerHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -45,7 +46,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHdlGeneratorFactor
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer();
     var space = "  ";
     final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();

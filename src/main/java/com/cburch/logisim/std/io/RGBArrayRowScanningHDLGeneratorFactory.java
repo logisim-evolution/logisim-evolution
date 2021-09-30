@@ -16,6 +16,7 @@ import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningHDLGeneratorFactory {
 
@@ -48,7 +49,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
           .pair("outsG", LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs)
           .pair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs);
 
-  public static ArrayList<String> getPortMap(int id) {
+  public static List<String> getPortMap(int id) {
     final var contents =
         (new LineBuffer(sharedPairs))
             .pair("addr", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
@@ -82,7 +83,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents =
         (new LineBuffer(sharedPairs))
             .pair("activeLow", ACTIVE_LOW_STRING)
@@ -92,7 +93,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
     contents.add(getRowCounterCode());
     if (Hdl.isVhdl()) {
       contents.add("""
-          
+
           makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS
           BEGIN
              s_maxRedLedInputs <= (OTHERS => '0');
@@ -108,7 +109,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
                 s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{insB}};
              END IF;
           END PROCESS makeVirtualInputs;
-          
+
           GenOutputs : FOR n IN {{nrOfColumns}}-1 DOWNTO 0 GENERATE
              {{outsR}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);
              {{outsG}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);
@@ -117,7 +118,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
           """);
     } else {
       contents.add("""
-          
+
           genvar i;
           generate
              for (i = 0; i < {{nrOfColumns}}; i = i + 1)

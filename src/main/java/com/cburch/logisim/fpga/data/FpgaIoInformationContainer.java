@@ -26,7 +26,9 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import javax.swing.JPanel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -63,7 +65,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     public int pinId;
   }
 
-  public static LinkedList<String> getComponentTypes() {
+  public static List<String> getComponentTypes() {
     final var result = new LinkedList<String>();
     for (final var comp : IoComponentTypes.KNOWN_COMPONENT_SET) {
       result.add(comp.toString());
@@ -77,9 +79,9 @@ public class FpgaIoInformationContainer implements Cloneable {
   protected BoardRectangle myRectangle;
   protected int myRotation = IoComponentTypes.ROTATION_ZERO;
   private Map<Integer, String> myPinLocations;
-  private HashSet<Integer> myInputPins;
-  private HashSet<Integer> myOutputPins;
-  private HashSet<Integer> myIoPins;
+  private Set<Integer> myInputPins;
+  private Set<Integer> myOutputPins;
+  private Set<Integer> myIoPins;
   private Integer[][] partialMapArray;
   private Integer nrOfPins;
   private Integer nrOfExternalPins = 0;
@@ -786,15 +788,15 @@ public class FpgaIoInformationContainer implements Cloneable {
     return myIoPins == null ? 0 : myIoPins.size();
   }
 
-  public HashSet<Integer> getInputs() {
+  public Set<Integer> getInputs() {
     return myInputPins;
   }
 
-  public HashSet<Integer> getOutputs() {
+  public Set<Integer> getOutputs() {
     return myOutputPins;
   }
 
-  public HashSet<Integer> getIos() {
+  public Set<Integer> getIos() {
     return myIoPins;
   }
 

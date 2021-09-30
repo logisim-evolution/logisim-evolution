@@ -16,6 +16,7 @@ import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
+import java.util.List;
 
 public class AbstractSimpleIOHDLGeneratorFactory extends InlinedHdlGeneratorFactory {
 
@@ -26,7 +27,7 @@ public class AbstractSimpleIOHDLGeneratorFactory extends InlinedHdlGeneratorFact
   }
 
   @Override
-  public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
+  public List<String> getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
     final var contents = LineBuffer.getHdlBuffer();
     for (int i = 0; i < componentInfo.nrOfEnds(); i++) {
       if (componentInfo.isEndConnected(i) && isInputComponent) {

@@ -18,6 +18,7 @@ import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -72,7 +73,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHdlGeneratorFact
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer()
             .pair("selBits", NR_OF_SELECT_BITS_STRING)
             .pair("inBits", NR_OF_INPUT_BITS_STRING);
@@ -83,10 +84,10 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHdlGeneratorFact
           EnableOut   <= s_in_is_zero AND enable;
           Address     <= (OTHERS => '0') WHEN enable = '0' ELSE
                          s_address({{selBits}}-1 DOWNTO 0);
-       
-          -- Control Signals 
+
+          -- Control Signals
           s_in_is_zero  <= '1' WHEN input_vector = std_logic_vector(to_unsigned(0,{{inBits}})) ELSE '0';
-       
+
           -- Processes
           make_addr : PROCESS( input_vector , v_select_1_vector , v_select_2_vector , v_select_3_vector , v_select_4_vector )
           BEGIN
@@ -120,7 +121,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHdlGeneratorFact
           assign EnableOut = s_in_is_zero&enable;
           assign Address = (~enable) ? 0 : s_address[{{selBits}}-1:0];
           assign s_in_is_zero = (input_vector == 0) ? 1'b1 : 1'b0;
-          
+
           assign v_select_1_vector[32:{{selBits}}] = 0;
           assign v_select_1_vector[{{selBits}}-1:0] = input_vector;
           assign s_address[4] = (v_select_1_vector[31:16] == 0) ? 1'b0 : 1'b1;

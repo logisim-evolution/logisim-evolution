@@ -21,6 +21,7 @@ import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -82,7 +83,7 @@ public class ClockHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents = LineBuffer.getHdlBuffer()
             .pair("phase", PHASE_STR)
             .pair("nrOfBits", NR_OF_BITS_STR)
@@ -137,7 +138,7 @@ public class ClockHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                                          : (s_derived_clock_reg[0] == 1'b1)
                                             ? {{lowTick}} - 1
                                             : {{highTick}} - 1;
-              
+
               """)
           .addRemarkBlock("Here the initial values are defined (for simulation only)")
           .add("""
@@ -166,7 +167,7 @@ public class ClockHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                 END IF;
              END IF;
           END PROCESS makeDerivedClock;
-          
+
           makeCounter : PROCESS( GlobalClock , ClockTick , s_counter_next ,
                                  s_derived_clock_reg )
           BEGIN
@@ -192,7 +193,7 @@ public class ClockHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                 end
              end
           end
-          
+
           always @(posedge GlobalClock)
           begin
              if (ClockTick)

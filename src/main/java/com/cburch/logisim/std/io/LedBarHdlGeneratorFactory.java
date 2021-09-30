@@ -19,6 +19,7 @@ import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
+import java.util.List;
 
 public class LedBarHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
 
@@ -27,7 +28,7 @@ public class LedBarHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getInlinedCode(Netlist netlist, Long componentId, netlistComponent componentInfo, String circuitName) {
+  public List<String> getInlinedCode(Netlist netlist, Long componentId, netlistComponent componentInfo, String circuitName) {
     final var contents = LineBuffer.getHdlBuffer();
     final var isSingleBus = componentInfo.getComponent().getAttributeSet().getValue(LedBar.ATTR_INPUT_TYPE).equals(LedBar.INPUT_ONE_WIRE);
     final var nrOfSegments = componentInfo.getComponent().getAttributeSet().getValue(getAttributeColumns()).getWidth();

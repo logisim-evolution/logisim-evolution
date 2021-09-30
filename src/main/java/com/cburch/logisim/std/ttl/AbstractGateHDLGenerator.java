@@ -15,6 +15,7 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
 
@@ -44,12 +45,12 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
     }
   }
 
-  public ArrayList<String> getLogicFunction(int index) {
+  public List<String> getLogicFunction(int index) {
     return new ArrayList<>();
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer();
     final var nrOfGates = isInverter ? 6 : 4;
     for (var i = 0; i < nrOfGates; i++) {

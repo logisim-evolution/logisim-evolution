@@ -11,6 +11,8 @@ package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -175,7 +177,7 @@ public class LedArrayGenericHDLGeneratorFactory {
     return externals;
   }
 
-  public static SortedMap<String, Integer> getInternalSignals(char typeId, int nrOfRows, int nrOfColumns, int identifier) {
+  public static Map<String, Integer> getInternalSignals(char typeId, int nrOfRows, int nrOfColumns, int identifier) {
     final var wires = new TreeMap<String, Integer>();
     switch (typeId) {
       case LedArrayDriving.LED_DEFAULT:
@@ -194,7 +196,7 @@ public class LedArrayGenericHDLGeneratorFactory {
     return wires;
   }
 
-  public static ArrayList<String> GetComponentMap(char typeId, int nrOfRows, int nrOfColumns, int identifier, long FpgaClockFrequency, boolean isActiveLow) {
+  public static List<String> GetComponentMap(char typeId, int nrOfRows, int nrOfColumns, int identifier, long FpgaClockFrequency, boolean isActiveLow) {
     final var componentMap = LineBuffer.getBuffer()
             .add(Hdl.isVhdl()
                 ? "   array" + identifier + " : " + getSpecificHDLName(typeId)
@@ -256,7 +258,7 @@ public class LedArrayGenericHDLGeneratorFactory {
     return componentMap.get();
   }
 
-  public static ArrayList<String> getArrayConnections(FpgaIoInformationContainer array, int id) {
+  public static List<String> getArrayConnections(FpgaIoInformationContainer array, int id) {
     final var connections = new ArrayList<String>();
     connections.addAll(
         switch (array.getArrayDriveMode()) {
@@ -268,7 +270,7 @@ public class LedArrayGenericHDLGeneratorFactory {
     return connections;
   }
 
-  public static ArrayList<String> getLedArrayConnections(FpgaIoInformationContainer info, int id) {
+  public static List<String> getLedArrayConnections(FpgaIoInformationContainer info, int id) {
     final var connections = LineBuffer.getHdlBuffer();
     connections.pair("id", id).pair("ins", LedArrayInputs);
     for (var pin = 0; pin < info.getNrOfPins(); pin++) {
@@ -282,7 +284,7 @@ public class LedArrayGenericHDLGeneratorFactory {
     return connections.getWithIndent();
   }
 
-  public static ArrayList<String> getRGBArrayConnections(FpgaIoInformationContainer array, int id) {
+  public static List<String> getRGBArrayConnections(FpgaIoInformationContainer array, int id) {
     final var connections =
         LineBuffer.getHdlBuffer()
            .pair("id", id)

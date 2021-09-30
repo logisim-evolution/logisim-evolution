@@ -20,6 +20,7 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -83,7 +84,7 @@ public class RandomHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents =
         LineBuffer.getBuffer()
             .pair("seed", SEED_STR)
@@ -113,23 +114,23 @@ public class RandomHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                                s_current_seed WHEN s_start_reg = '1' ELSE
                                s_seed_shift_reg(46 DOWNTO 0)&'0';
           s_mult_busy       <= '0' WHEN s_mult_shift_reg = X"000000000" ELSE '1';
-          
+
           s_mac_lo_in_1     <= (OTHERS => '0') WHEN s_start_reg = '1' OR
                                                     s_reset = '1' ELSE
                                '0'&s_mac_lo_reg(23 DOWNTO 0);
           s_mac_lo_in_2     <= '0'&X"00000B"
                                   WHEN s_start_reg = '1' ELSE
-                               '0'&s_seed_shift_reg(23 DOWNTO 0) 
+                               '0'&s_seed_shift_reg(23 DOWNTO 0)
                                   WHEN s_mult_shift_reg(0) = '1' ELSE
                                (OTHERS => '0');
           s_mac_hi_in_2     <= (OTHERS => '0') WHEN s_start_reg = '1' ELSE
                                s_mac_hi_reg;
-          s_mac_hi_1_next   <= s_seed_shift_reg(47 DOWNTO 24) 
+          s_mac_hi_1_next   <= s_seed_shift_reg(47 DOWNTO 24)
                                   WHEN s_mult_shift_reg(0) = '1' ELSE
                                (OTHERS => '0');
           s_busy_pipe_next  <= "00" WHEN s_reset = '1' ELSE
                                s_busy_pipe_reg(0)&s_mult_busy;
-          
+
           make_current_seed : PROCESS( {{GlobalClock}} , s_busy_pipe_reg , s_reset )
           BEGIN
              IF ({{GlobalClock}}'event AND ({{GlobalClock}} = '1')) THEN
@@ -139,7 +140,7 @@ public class RandomHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                 END IF;
              END IF;
           END PROCESS make_current_seed;
-          
+
           make_shift_regs : PROCESS({{GlobalClock}},s_mult_shift_next,s_seed_shift_next,
                                     s_mac_lo_in_1,s_mac_lo_in_2)
           BEGIN
@@ -153,21 +154,21 @@ public class RandomHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                 s_busy_pipe_reg  <= s_busy_pipe_next;
              END IF;
           END PROCESS make_shift_regs;
-          
+
           make_start_reg : PROCESS({{GlobalClock}},s_start)
           BEGIN
              IF ({{GlobalClock}}'event AND ({{GlobalClock}} = '1')) THEN
                 s_start_reg <= s_start;
              END IF;
           END PROCESS make_start_reg;
-          
+
           make_reset_reg : PROCESS({{GlobalClock}},s_reset_next)
           BEGIN
              IF ({{GlobalClock}}'event AND ({{GlobalClock}} = '1')) THEN
                 s_reset_reg <= s_reset_next;
              END IF;
           END PROCESS make_reset_reg;
-          
+
           make_output : PROCESS( {{GlobalClock}} , s_reset , s_InitSeed )
           BEGIN
              IF ({{GlobalClock}}'event AND ({{GlobalClock}} = '1')) THEN
@@ -184,10 +185,10 @@ public class RandomHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
           assign s_InitSeed = ({{seed}} == 0) ? 48'h5DEECE66D : {{seed}};
           assign s_reset = (s_reset_reg==3'b010) ? 1'b1 : 1'b0;
           assign s_reset_next = (( (s_reset_reg == 3'b101) | (s_reset_reg == 3'b010)) & clear)
-                                ? 3'b010 
+                                ? 3'b010
                                 : (s_reset_reg==3'b001) ? 3'b101 : 3'b001;
           assign s_start = (({{ClockEnable}}&enable)|((s_reset_reg == 3'b101)&clear)) ? 1'b1 : 1'b0;
-          assign s_mult_shift_next = (s_reset) 
+          assign s_mult_shift_next = (s_reset)
                                      ? 36'd0
                                      : (s_start_reg) ? 36'h5DEECE66D : {1'b0,s_mult_shift_reg[35:1]};
           assign s_seed_shift_next = (s_reset)
@@ -201,13 +202,13 @@ public class RandomHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
           assign s_mac_hi_in_2 = (s_start_reg) ? 0 : s_mac_hi_reg;
           assign s_mac_hi_1_next = (s_mult_shift_reg[0]) ? s_seed_shift_reg[47:24] : 0;
           assign s_busy_pipe_next = (s_reset) ? 2'd0 : {s_busy_pipe_reg[0],s_mult_busy};
-          
+
           always @(posedge {{GlobalClock}})
           begin
              if (s_reset) s_current_seed <= s_InitSeed;
              else if (s_busy_pipe_reg == 2'b10) s_current_seed <= {s_mac_hi_reg,s_mac_lo_reg[23:0]};
           end
-          
+
           always @(posedge {{GlobalClock}})
           begin
                 s_mult_shift_reg <= s_mult_shift_next;
@@ -219,7 +220,7 @@ public class RandomHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                 s_start_reg      <= s_start;
                 s_reset_reg      <= s_reset_next;
           end
-          
+
           always @(posedge {{GlobalClock}})
           begin
              if (s_reset) s_output_reg <= s_InitSeed[({{nrOfBits}}-1):0];

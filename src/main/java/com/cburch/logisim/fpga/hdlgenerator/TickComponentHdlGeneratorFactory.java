@@ -14,6 +14,7 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -67,7 +68,7 @@ public class TickComponentHdlGeneratorFactory extends AbstractHdlGeneratorFactor
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents =
         LineBuffer.getHdlBuffer()
             .pair("nrOfCounterBits", NR_OF_COUNTER_BITS_STRING)
@@ -86,13 +87,13 @@ public class TickComponentHdlGeneratorFactory extends AbstractHdlGeneratorFactor
           s_count_next  <= (OTHERS => '0') WHEN s_tick_reg /= '0' AND s_tick_reg /= '1' ELSE -- For simulation only!
                            std_logic_vector(to_unsigned((ReloadValue-1), {{nrOfCounterBits}})) WHEN s_tick_next = '1' ELSE
                            std_logic_vector(unsigned(s_count_reg)-1);
-          
+
           """);
     } else {
       Contents.add("""
               assign s_tick_next  = (s_count_reg == 0) ? 1'b1 : 1'b0;
               assign s_count_next = (s_count_reg == 0) ? ReloadValue-1 : s_count_reg-1;
-              
+
               """)
           .addRemarkBlock("Here the simulation only initial is defined")
           .add("""
@@ -113,7 +114,7 @@ public class TickComponentHdlGeneratorFactory extends AbstractHdlGeneratorFactor
                 s_tick_reg <= s_tick_next;
              END IF;
           END PROCESS make_tick;
-          
+
           make_counter : PROCESS( FPGAClock , s_count_next )
           BEGIN
              IF (FPGAClock'event AND (FPGAClock = '1')) THEN

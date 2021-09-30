@@ -16,6 +16,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JPanel;
 
 public class IoComponentsInformation {
@@ -77,7 +78,7 @@ public class IoComponentsInformation {
     return !ioComps.isEmpty();
   }
 
-  public ArrayList<FpgaIoInformationContainer> getComponents() {
+  public List<FpgaIoInformationContainer> getComponents() {
     return ioComps;
   }
 

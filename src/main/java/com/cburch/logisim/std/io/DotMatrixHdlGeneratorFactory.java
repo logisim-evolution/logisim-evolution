@@ -19,6 +19,7 @@ import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DotMatrixHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
 
@@ -30,7 +31,7 @@ public class DotMatrixHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getInlinedCode(Netlist netlist, Long componentId, netlistComponent componentInfo, String circuitName) {
+  public List<String> getInlinedCode(Netlist netlist, Long componentId, netlistComponent componentInfo, String circuitName) {
     final var contents = LineBuffer.getHdlBuffer();
     final var colBased = componentInfo.getComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_COLUMN;
     final var rowBased = componentInfo.getComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_ROW;

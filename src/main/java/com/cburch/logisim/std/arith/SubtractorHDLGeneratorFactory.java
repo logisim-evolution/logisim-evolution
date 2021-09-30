@@ -18,6 +18,7 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SubtractorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -45,7 +46,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents = LineBuffer.getBuffer();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (Hdl.isVhdl()) {
@@ -56,7 +57,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
           s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA)+
                               unsigned(s_extended_dataB)+
                               (""&s_carry));
-          
+
           """);
       Contents.add(
           (nrOfBits == 1)

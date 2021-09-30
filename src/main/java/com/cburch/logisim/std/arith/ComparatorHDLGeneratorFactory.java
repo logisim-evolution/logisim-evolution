@@ -20,6 +20,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ComparatorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
@@ -62,7 +63,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents = LineBuffer.getBuffer();
     Contents.pair("twosComplement", TWOS_COMPLEMENT_STRING);
 
@@ -91,7 +92,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
         Contents.add("""
             assign A_EQ_B = (DataA == DataB);
             assign A_LT_B = (DataA < DataB);
-            assign A_GT_B = (DataA > DataB); 
+            assign A_GT_B = (DataA > DataB);
             """);
       } else {
         Contents.add("""
@@ -99,7 +100,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
             assign s_unsigned_less = (DataA < DataB);
             assign s_signed_greater = ($signed(DataA) > $signed(DataB));
             assign s_unsigned_greater = (DataA > DataB);
-            
+
             assign A_EQ_B = (DataA == DataB);
             assign A_GT_B = ({{twosComplement}}==1) ? s_signed_greater : s_unsigned_greater;
             assign A_LT_B = ({{twosComplement}}==1) ? s_signed_less : s_unsigned_less;

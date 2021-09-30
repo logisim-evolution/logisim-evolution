@@ -554,7 +554,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     return new ArrayList<>();
   }
 
-  public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
+  public Map<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var result = new TreeMap<String, String>();
     if ((mapInfo instanceof netlistComponent componentInfo) && !myPorts.isEmpty()) {
       final var compName = componentInfo.getComponent().getFactory().getDisplayName();

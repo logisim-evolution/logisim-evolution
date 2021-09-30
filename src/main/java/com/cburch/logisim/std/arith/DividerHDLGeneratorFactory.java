@@ -17,6 +17,7 @@ import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 public class DividerHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   private static final String NR_OF_BITS_STRING = "NrOfBits";
@@ -46,7 +47,7 @@ public class DividerHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents = LineBuffer.getBuffer()
             .pair("nrOfBits", NR_OF_BITS_STRING)
             .pair("unsigned", UNSIGNED_STRING)

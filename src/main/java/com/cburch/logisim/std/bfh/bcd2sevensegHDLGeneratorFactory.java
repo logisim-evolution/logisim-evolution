@@ -16,6 +16,7 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 public class bcd2sevensegHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -34,7 +35,7 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHdlGeneratorFactory
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     return LineBuffer.getBuffer()
         .add("""
             Segment_a <= s_output_value(0);
@@ -44,7 +45,7 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHdlGeneratorFactory
             Segment_e <= s_output_value(4);
             Segment_f <= s_output_value(5);
             Segment_g <= s_output_value(6);
-            
+
             MakeSegs : PROCESS( BCDin )
             BEGIN
                CASE (BCDin) IS

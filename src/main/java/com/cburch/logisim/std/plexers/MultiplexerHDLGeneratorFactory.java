@@ -17,6 +17,7 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MultiplexerHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -46,7 +47,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHdlGeneratorFactory 
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer();
     int nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     if (Hdl.isVhdl()) {
@@ -69,7 +70,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHdlGeneratorFactory 
         contents.add("         WHEN {{1}} => MuxOut <= MuxIn_{{2}};", Hdl.getConstantVector(i, nrOfSelectBits), i);
       contents.add("         WHEN OTHERS  => MuxOut <= MuxIn_{{1}};", (1 << nrOfSelectBits) - 1)
               .add("""
-                         END CASE; 
+                         END CASE;
                       END IF;
                    END PROCESS make_mux;
                    """);

@@ -18,6 +18,7 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 public class AdderHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -44,7 +45,7 @@ public class AdderHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents = LineBuffer.getBuffer();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (Hdl.isVhdl()) {
@@ -54,7 +55,7 @@ public class AdderHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
           s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA) +
                                                unsigned(s_extended_dataB) +
                                                (""&CarryIn));
-          
+
           """);
       if (nrOfBits == 1) {
         Contents.add("Result <= s_sum_result(0);");

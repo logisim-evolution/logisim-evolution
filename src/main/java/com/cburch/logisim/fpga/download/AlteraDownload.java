@@ -25,6 +25,7 @@ import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -193,10 +194,10 @@ public class AlteraDownload implements VendorDownload {
         .add("""
             # Load Quartus II Tcl Project package
             package require ::quartus::project
-            
+
             set need_to_close_project 0
             set make_assignments 1
-            
+
             # Check that the right project is open
             if {[is_project_open]} {
                 if {[string compare $quartus(project) "{{topLevelName}}"]} {
@@ -237,7 +238,7 @@ public class AlteraDownload implements VendorDownload {
         .add("""
                 # Commit assignments
                 export_assignments
-            
+
                 # Close project
                 if {$need_to_close_project} {
                     project_close
@@ -247,7 +248,7 @@ public class AlteraDownload implements VendorDownload {
     return FileWriter.writeContents(scriptFile, contents.get());
   }
 
-  private ArrayList<String> getPinLocStrings() {
+  private List<String> getPinLocStrings() {
     final var contents = LineBuffer.getBuffer();
 
     for (final var key : mapInfo.getMappableResources().keySet()) {
@@ -271,7 +272,7 @@ public class AlteraDownload implements VendorDownload {
     return contents.getWithIndent(4);
   }
 
-  private static ArrayList<String> getAlteraAssignments(BoardInformation currentBoard) {
+  private static List<String> getAlteraAssignments(BoardInformation currentBoard) {
     final var pkg = currentBoard.fpga.getPackage().split(" ");
     final var currentBehavior = currentBoard.fpga.getUnusedPinsBehavior();
     final var behavior = switch (currentBehavior) {
@@ -323,7 +324,7 @@ public class AlteraDownload implements VendorDownload {
     return true;
   }
 
-  private ArrayList<String> Devices(ArrayList<String> lines) {
+  private List<String> Devices(ArrayList<String> lines) {
     /* This code originates from Kevin Walsh */
     var dev = new ArrayList<String>();
     for (var line : lines) {

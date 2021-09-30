@@ -17,6 +17,7 @@ import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MultiplierHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -46,7 +47,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var Contents =
           LineBuffer.getBuffer()
             .pair("nrOfBits", NR_OF_BITS_STRING)
@@ -91,7 +92,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                    s_interm_result = $signed(s_mult_signed) + $signed(s_Cin);
                  end
           end
-          
+
           assign Mult_hi = s_interm_result[{{calcBits}}-1:{{nrOfBits}}];
           assign Mult_lo = s_interm_result[{{nrOfBits}}-1:0];
           """);

@@ -21,6 +21,7 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -150,7 +151,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactor
   }
 
   @Override
-  public ArrayList<String> getArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
+  public List<String> getArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
     final var contents = LineBuffer.getHdlBuffer()
             .pair("clock", HdlPorts.getClockName(1))
             .pair("tick", HdlPorts.getTickName(1))
@@ -161,18 +162,18 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactor
       contents
           .add("""
               ARCHITECTURE NoPlatformSpecific OF SingleBitShiftReg IS
-              
+
                  SIGNAL s_state_reg  : std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 );
                  SIGNAL s_state_next : std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 );
                  SIGNAL s_clock      : std_logic;
-              
+
               BEGIN
                  Q        <= s_state_reg;
                  ShiftOut <= s_state_reg({{nrOfStages}}-1);
                  s_clock  <= {{clock}} WHEN {{invertClock}} = 0 ELSE NOT({{clock}});
-              
+
                  s_state_next <= D WHEN ParLoad = '1' ELSE s_state_reg(({{nrOfStages}}-2) DOWNTO 0)&ShiftIn;
-              
+
                  make_state : PROCESS(s_clock, ShiftEnable, {{tick}}, Reset, s_state_next, ParLoad)
                  BEGIN
                     IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');
@@ -183,7 +184,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactor
                     END IF;
                  END PROCESS make_state;
               END NoPlatformSpecific;
-              
+
               """);
     } else {
       contents
@@ -197,10 +198,10 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactor
                                          D,
                                          ShiftOut,
                                          Q);
-              
+
                  parameter {{nrOfStages}} = 1;
                  parameter {{invertClock}} = 1;
-              
+
                  input Reset;
                  input {{tick}};
                  input {{clock}};
@@ -210,24 +211,24 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactor
                  input[{{nrOfStages}}:0] D;
                  output ShiftOut;
                  output[{{nrOfStages}}:0] Q;
-              
+
                  wire[{{nrOfStages}}:0] s_state_next;
                  wire s_clock;
                  reg[{{nrOfStages}}:0] s_state_reg;
-              
+
                  assign Q        = s_state_reg;
                  assign ShiftOut = s_state_reg[{{nrOfStages}}-1];
                  assign s_clock  = {{invertClock}} == 0 ? {{clock}} : ~{{clock}};
                  assign s_state_next = (ParLoad) ? D : {s_state_reg[{{nrOfStages}}-2:0],ShiftIn};
-              
+
                  always @(posedge s_clock or posedge Reset)
                  begin
                     if (Reset) s_state_reg <= 0;
                     else if ((ShiftEnable|ParLoad)&{{tick}}) s_state_reg <= s_state_next;
                  end
-              
+
               endmodule
-              
+
               """);
     }
     contents.add(super.getArchitecture(nets, attrs, componentName));
@@ -235,7 +236,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactor
   }
 
   @Override
-  public ArrayList<String> getComponentDeclarationSection(Netlist nets, AttributeSet attrs) {
+  public List<String> getComponentDeclarationSection(Netlist nets, AttributeSet attrs) {
     return LineBuffer.getHdlBuffer()
         .pair("clock", HdlPorts.getClockName(1))
         .pair("tick", HdlPorts.getTickName(1))
@@ -260,7 +261,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactor
   }
 
   @Override
-  public ArrayList<String> getEntity(Netlist nets, AttributeSet attrs, String componentName) {
+  public List<String> getEntity(Netlist nets, AttributeSet attrs, String componentName) {
 
     final var contents = LineBuffer.getHdlBuffer()
         .pair("clock", HdlPorts.getClockName(1))
@@ -285,7 +286,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactor
                         ShiftOut    : OUT std_logic;
                         Q           : OUT std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 ));
               END SingleBitShiftReg;
-              
+
               """);
     }
     contents.add(super.getEntity(nets, attrs, componentName));
@@ -293,7 +294,7 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactor
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public List<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer()
         .pair("clock", HdlPorts.getClockName(1))
         .pair("tick", HdlPorts.getTickName(1))
