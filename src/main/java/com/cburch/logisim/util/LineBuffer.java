@@ -148,20 +148,20 @@ public class LineBuffer implements RandomAccess {
    * @return Instance of self for easy chaining.
    */
   public LineBuffer addHdlPairs() {
-    return pair("assign", HDL.assignPreamble())
-        .pair("=", HDL.assignOperator())
-        .pair("==", HDL.equalOperator())
-        .pair("!=", HDL.notEqualOperator())
-        .pair("or", HDL.orOperator())
-        .pair("and", HDL.andOperator())
-        .pair("xor", HDL.xorOperator())
-        .pair("not", HDL.notOperator())
-        .pair("<", HDL.BracketOpen())
-        .pair(">", HDL.BracketClose())
-        .pair("else", HDL.elseStatement())
-        .pair("endif", HDL.endIf())
-        .pair("0b", HDL.zeroBit())
-        .pair("1b", HDL.oneBit());
+    return pair("assign", Hdl.assignPreamble())
+        .pair("=", Hdl.assignOperator())
+        .pair("==", Hdl.equalOperator())
+        .pair("!=", Hdl.notEqualOperator())
+        .pair("or", Hdl.orOperator())
+        .pair("and", Hdl.andOperator())
+        .pair("xor", Hdl.xorOperator())
+        .pair("not", Hdl.notOperator())
+        .pair("<", Hdl.bracketOpen())
+        .pair(">", Hdl.bracketClose())
+        .pair("else", Hdl.elseStatement())
+        .pair("endif", Hdl.endIf())
+        .pair("0b", Hdl.zeroBit())
+        .pair("1b", Hdl.oneBit());
   }
 
   /**

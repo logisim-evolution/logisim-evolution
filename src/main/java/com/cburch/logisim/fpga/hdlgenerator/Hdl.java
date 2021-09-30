@@ -11,6 +11,7 @@ package com.cburch.logisim.fpga.hdlgenerator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
@@ -19,8 +20,6 @@ import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 public abstract class Hdl {
 
@@ -60,21 +59,21 @@ public abstract class Hdl {
   }
 
   public static String startIf(String condition) {
-    return isVHDL() ? LineBuffer.format("IF {{1}} THEN", condition)
+    return isVhdl() ? LineBuffer.format("IF {{1}} THEN", condition)
                     : LineBuffer.format("if ({{1}}) begin", condition);
   }
 
   public static String elseStatement() {
-    return isVHDL() ? "ELSE" : "end else begin";
+    return isVhdl() ? "ELSE" : "end else begin";
   }
 
   public static String elseIf(String condition) {
-    return isVHDL() ? LineBuffer.format("ELSIF {{1}} THEN", condition)
+    return isVhdl() ? LineBuffer.format("ELSIF {{1}} THEN", condition)
                     : LineBuffer.format("end else if ({{1}}) begin", condition);
   }
 
   public static String endIf() {
-    return isVHDL() ? "END IF;" : "end";
+    return isVhdl() ? "END IF;" : "end";
   }
 
   public static String assignPreamble() {
@@ -118,6 +117,7 @@ public abstract class Hdl {
   public static String risingEdge(String signal) {
     return isVhdl() ? "rising_edge(" + signal + ")"
                     : "posedge " + signal;
+  }
 
   public static String notOperator() {
     return isVhdl() ? " NOT " : "~";
@@ -194,6 +194,7 @@ public abstract class Hdl {
   public static String rorOperator(String signal, int width, int distance) {
     return isVhdl() ? LineBuffer.format("{{1}}{{2}} & {{1}}{{3}}", signal, splitVector(distance, 0), splitVector(width - 1, distance))
                     : LineBuffer.format("{{{1}}{{2}},{{1}}{{3}}}", signal, splitVector(distance, 0), splitVector(width - 1, distance));
+  }
 
   public static String zeroBit() {
     return isVhdl() ? "'0'" : "1'b0";
@@ -212,10 +213,11 @@ public abstract class Hdl {
   }
 
   public static String splitVector(int start, int end) {
-    if (start == end) return LineBuffer.format("{{1}}{{2}}{{3}}", BracketOpen(), start, BracketClose());
+    if (start == end) return LineBuffer.format("{{1}}{{2}}{{3}}", bracketOpen(), start, bracketClose());
     return isVhdl()
                 ? LineBuffer.format("({{1}} DOWNTO {{2}}) ", start, end)
                 : LineBuffer.format("[{{1}}:{{2}}]", start, end);
+  }
 
   public static String getZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
     var contents = new StringBuilder();
@@ -348,12 +350,11 @@ public abstract class Hdl {
     if (nrOfBits == 1) return getNetName(comp, endIndex, true, theNets);
     if (!theNets.isContinuesBus(comp, endIndex)) return null;
     final var connectedNet = connectionInformation.get((byte) 0).getParentNet();
-    return LineBuffer.format("{{1}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}}",
+    return LineBuffer.format("{{1}}{{2}}{{3}}",
         BUS_NAME,
         theNets.getNetId(connectedNet),
-        connectionInformation.get((byte) (connectionInformation.getNrOfBits() - 1)).getParentNetBitIndex(),
-        Hdl.vectorLoopId(),
-        connectionInformation.get((byte) (0)).getParentNetBitIndex());
+        splitVector(connectionInformation.get((byte) (connectionInformation.getNrOfBits() - 1)).getParentNetBitIndex(),
+                    connectionInformation.get((byte) (0)).getParentNetBitIndex()));
   }
 
   public static String getBusName(netlistComponent comp, int endIndex, Netlist theNets) {
