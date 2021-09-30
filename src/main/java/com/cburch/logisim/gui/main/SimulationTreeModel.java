@@ -74,7 +74,7 @@ public class SimulationTreeModel implements TreeModel {
   public int getChildCount(Object parent) {
     return (parent instanceof TreeNode node)
            ? node.getChildCount()
-           : null;
+           : 0;
   }
 
   public CircuitState getCurrentView() {
