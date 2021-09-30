@@ -133,7 +133,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHdlGeneratorFacto
   }
 
   @Override
-  public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
+  public Map<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof netlistComponent)) return map;
     final var ComponentInfo = (netlistComponent) mapInfo;
