@@ -15,7 +15,6 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 
 public class DecoderHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -37,7 +36,7 @@ public class DecoderHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer();
     final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     final var numOutputs = (1 << nrOfSelectBits);
@@ -56,6 +55,6 @@ public class DecoderHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
         contents.add("assign DecoderOut_{{i}}{{space}} = (Enable&(sel == {{bin}})) ? 1'b1 : 1'b0;");
       }
     }
-    return contents.getWithIndent();
+    return contents;
   }
 }
