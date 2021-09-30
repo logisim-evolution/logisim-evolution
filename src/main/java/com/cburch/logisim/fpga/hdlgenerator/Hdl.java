@@ -19,7 +19,6 @@ import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Hdl {
