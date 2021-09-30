@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.util.LineBuffer;
@@ -28,7 +27,6 @@ public class Ttl74266 extends AbstractTtlGate {
     @Override
     public LineBuffer getLogicFunction(int index) {
       return LineBuffer.getHdlBuffer()
-          .pair("xor", Hdl.xorOperator())
           .add("{{assign}}gate{{1}}_O{{=}}{{not}}(gate_{{1}}_A{{xor}}gate_{{1}}_B);", index);
     }
   }

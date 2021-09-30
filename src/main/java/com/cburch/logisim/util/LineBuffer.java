@@ -153,6 +153,7 @@ public class LineBuffer implements RandomAccess {
         .pair("or", Hdl.orOperator())
         .pair("and", Hdl.andOperator())
         .pair("not", Hdl.notOperator())
+        .pair("xor", Hdl.xorOperator())
         .pair("bracketOpen", Hdl.bracketOpen())
         .pair("bracketClose", Hdl.bracketClose())
         .pair("<", Hdl.bracketOpen())

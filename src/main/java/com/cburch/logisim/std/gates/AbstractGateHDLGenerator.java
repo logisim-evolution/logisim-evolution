@@ -84,7 +84,7 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
   }
 
   public LineBuffer getOneHot(boolean inverted, int nrOfInputs, boolean isBus) {
-    var lines = LineBuffer.getHdlBuffer();
+    final var lines = LineBuffer.getHdlBuffer();
     var spaces = "";
     var indexString = "";
     if (isBus) {
