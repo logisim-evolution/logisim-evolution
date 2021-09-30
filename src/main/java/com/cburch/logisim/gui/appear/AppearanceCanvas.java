@@ -19,7 +19,7 @@ import com.cburch.draw.model.CanvasModelEvent;
 import com.cburch.draw.model.CanvasModelListener;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.model.ReorderRequest;
-import com.cburch.draw.undo.Action;
+import com.cburch.draw.undo.UndoAction;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.appear.AppearanceElement;
@@ -109,7 +109,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   }
 
   @Override
-  public void doAction(Action canvasAction) {
+  public void doAction(UndoAction canvasAction) {
     final var circuit = circuitState.getCircuit();
     if (!proj.getLogisimFile().contains(circuit)) {
       return;

@@ -9,11 +9,11 @@
 
 package com.cburch.draw.undo;
 
-public abstract class Action {
+public interface UndoAction {
 
-  public abstract void doIt();
+  public void doIt();
 
-  public abstract String getName();
+  public String getName();
 
-  public abstract void undo();
+  public void undo();
 }
