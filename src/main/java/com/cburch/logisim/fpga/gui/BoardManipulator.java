@@ -261,7 +261,7 @@ public class BoardManipulator extends JPanel
     return image.getScaledInstance(width, height, 4);
   }
 
-  public ArrayList<FpgaIoInformationContainer> getIoComponents() {
+  public List<FpgaIoInformationContainer> getIoComponents() {
     return IOcomps.getComponents();
   }
 

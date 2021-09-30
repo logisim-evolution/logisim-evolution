@@ -44,7 +44,7 @@ public class BoardInformation {
     MyComponents.addAll(comps);
   }
 
-  public LinkedList<FpgaIoInformationContainer> GetAllComponents() {
+  public List<FpgaIoInformationContainer> GetAllComponents() {
     return MyComponents;
   }
 
@@ -106,7 +106,7 @@ public class BoardInformation {
     return BoardPicture;
   }
 
-  public ArrayList<BoardRectangle> getIoComponentsOfType(IoComponentTypes type, int nrOfPins) {
+  public List<BoardRectangle> getIoComponentsOfType(IoComponentTypes type, int nrOfPins) {
     final var result = new ArrayList<BoardRectangle>();
     for (final var comp : MyComponents) {
       if (comp.getType().equals(type)) {
