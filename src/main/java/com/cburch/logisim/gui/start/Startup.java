@@ -589,11 +589,11 @@ public class Startup implements AWTEventListener {
       return RC.OK;
     }
     // okay, not a file, let's look for empty and plain
-    if (option.toLowerCase().equals("empty")) {
+    if (option.equalsIgnoreCase("empty")) {
       startup.templEmpty = true;
       return RC.OK;
     }
-    if (option.toLowerCase().equals("plain")) {
+    if (option.equalsIgnoreCase("plain")) {
       startup.templPlain = true;
       return RC.OK;
     }
