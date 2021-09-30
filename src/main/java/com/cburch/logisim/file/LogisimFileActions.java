@@ -378,8 +378,7 @@ public class LogisimFileActions {
     @Override
     public void doIt(Project proj) {
       for (final var lib : mergedLibs) {
-        if (lib instanceof LoadedLibrary) {
-          final var lib1 = (LoadedLibrary) lib;
+        if (lib instanceof LoadedLibrary lib1) {
           if (lib1.getBase() instanceof LogisimFile) {
             repair(proj, lib1.getBase());
           }
@@ -393,8 +392,7 @@ public class LogisimFileActions {
     private void repair(Project proj, Library lib) {
       final var availableTools = new HashMap<String, AddTool>();
       LibraryTools.BuildToolList(proj.getLogisimFile(), availableTools);
-      if (lib instanceof LogisimFile) {
-        final var thisLib = (LogisimFile) lib;
+      if (lib instanceof LogisimFile thisLib) {
         for (final var circ : thisLib.getCircuits()) {
           for (final var tool : circ.getNonWires()) {
             if (availableTools.containsKey(tool.getFactory().getName().toUpperCase())) {
@@ -461,7 +459,7 @@ public class LogisimFileActions {
 
     @Override
     public boolean shouldAppendTo(Action other) {
-      return other instanceof MoveCircuit && ((MoveCircuit) other).tool == this.tool;
+      return other instanceof MoveCircuit circ && circ.tool == this.tool;
     }
 
     @Override

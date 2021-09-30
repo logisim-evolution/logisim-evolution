@@ -38,23 +38,19 @@ public class AppearancePort extends AppearanceElement {
     super(location);
     this.pin = pin;
   }
-  
+
   public static boolean isInputAppearance(int radius) {
     return radius == INPUT_RADIUS;
   }
 
   @Override
   public boolean contains(Location loc, boolean assumeFilled) {
-    if (isInput()) {
-      return getBounds().contains(loc);
-    } else {
-      return super.isInCircle(loc, OUTPUT_RADIUS);
-    }
+    return (isInput()) ? getBounds().contains(loc) : super.isInCircle(loc, OUTPUT_RADIUS);
   }
 
   @Override
   public Bounds getBounds() {
-    int r = isInput() ? INPUT_RADIUS : OUTPUT_RADIUS;
+    final var r = isInput() ? INPUT_RADIUS : OUTPUT_RADIUS;
     return super.getBounds(r);
   }
 
@@ -65,9 +61,10 @@ public class AppearancePort extends AppearanceElement {
 
   @Override
   public String getDisplayNameAndLabel() {
-    String label = pin.getAttributeValue(StdAttr.LABEL);
-    if (label != null && label.length() > 0) return getDisplayName() + " \"" + label + "\"";
-    else return getDisplayName();
+    final var label = pin.getAttributeValue(StdAttr.LABEL);
+    return (label != null && label.length() > 0)
+        ? String.format("%s \"%s\"", getDisplayName(), label)
+        : getDisplayName();
   }
 
   @Override
@@ -89,18 +86,16 @@ public class AppearancePort extends AppearanceElement {
   }
 
   private boolean isInput() {
-    Instance p = pin;
+    final var p = pin;
     return p == null || Pin.FACTORY.isInputPin(p);
   }
 
   @Override
   public boolean matches(CanvasObject other) {
-    if (other instanceof AppearancePort) {
-      AppearancePort that = (AppearancePort) other;
+    if (other instanceof AppearancePort that) {
       return this.matches(that) && this.pin == that.pin;
-    } else {
-      return false;
     }
+    return false;
   }
 
   @Override
@@ -110,15 +105,15 @@ public class AppearancePort extends AppearanceElement {
 
   @Override
   public void paint(Graphics g, HandleGesture gesture) {
-    Location location = getLocation();
-    int x = location.getX();
-    int y = location.getY();
+    final var location = getLocation();
+    final var x = location.getX();
+    final var y = location.getY();
     g.setColor(COLOR);
     if (isInput()) {
-      int r = INPUT_RADIUS;
+      final var r = INPUT_RADIUS;
       g.drawRect(x - r, y - r, 2 * r, 2 * r);
     } else {
-      int r = OUTPUT_RADIUS;
+      final var r = OUTPUT_RADIUS;
       g.drawOval(x - r, y - r, 2 * r, 2 * r);
     }
     g.fillOval(x - MINOR_RADIUS, y - MINOR_RADIUS, 2 * MINOR_RADIUS, 2 * MINOR_RADIUS);
@@ -130,10 +125,10 @@ public class AppearancePort extends AppearanceElement {
 
   @Override
   public Element toSvgElement(Document doc) {
-    Location loc = getLocation();
-    Location pinLoc = pin.getLocation();
-    Element ret = doc.createElement("circ-port");
-    int r = isInput() ? INPUT_RADIUS : OUTPUT_RADIUS;
+    final var loc = getLocation();
+    final var pinLoc = pin.getLocation();
+    final var ret = doc.createElement("circ-port");
+    final var r = isInput() ? INPUT_RADIUS : OUTPUT_RADIUS;
     ret.setAttribute("x", "" + (loc.getX() - r));
     ret.setAttribute("y", "" + (loc.getY() - r));
     ret.setAttribute("width", "" + 2 * r);

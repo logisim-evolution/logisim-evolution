@@ -54,22 +54,18 @@ abstract class FillableCanvasObject extends AbstractCanvasObject {
 
   @Override
   public boolean matches(CanvasObject other) {
-    if (other instanceof FillableCanvasObject) {
-      FillableCanvasObject that = (FillableCanvasObject) other;
-      boolean ret = this.paintType == that.paintType;
-      if (ret && this.paintType != DrawAttr.PAINT_FILL) {
-        ret =
-            ret
-                && this.strokeWidth == that.strokeWidth
-                && this.strokeColor.equals(that.strokeColor);
-      }
-      if (ret && this.paintType != DrawAttr.PAINT_STROKE) {
-        ret = ret && this.fillColor.equals(that.fillColor);
-      }
-      return ret;
-    } else {
-      return false;
+    if (!(other instanceof FillableCanvasObject that)) return false;
+    var ret = this.paintType == that.paintType;
+    if (ret && this.paintType != DrawAttr.PAINT_FILL) {
+      ret =
+          ret
+              && this.strokeWidth == that.strokeWidth
+              && this.strokeColor.equals(that.strokeColor);
     }
+    if (ret && this.paintType != DrawAttr.PAINT_STROKE) {
+      ret = ret && this.fillColor.equals(that.fillColor);
+    }
+    return ret;
   }
 
   @Override

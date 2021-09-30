@@ -92,19 +92,15 @@ class LayoutToolbarModel extends AbstractToolbarModel {
 
   @Override
   public boolean isSelected(ToolbarItem item) {
-    if (item instanceof ToolItem) {
-      final var tool = ((ToolItem) item).tool;
-      return tool == proj.getTool();
-    } else {
-      return false;
-    }
+    return (item instanceof ToolItem toolItem)
+           ? toolItem.tool == proj.getTool()
+           : false;
   }
 
   @Override
   public void itemSelected(ToolbarItem item) {
-    if (item instanceof ToolItem) {
-      final var tool = ((ToolItem) item).tool;
-      proj.setTool(tool);
+    if (item instanceof ToolItem toolItem) {
+      proj.setTool(toolItem.tool);
     }
   }
 

@@ -28,6 +28,7 @@ class CircuitMutatorImpl implements CircuitMutator {
     modified = new HashSet<>();
   }
 
+  @Override
   public void add(Circuit circuit, Component comp) {
     modified.add(circuit);
     log.add(CircuitChange.add(circuit, comp));
@@ -39,6 +40,7 @@ class CircuitMutatorImpl implements CircuitMutator {
     circuit.mutatorAdd(comp);
   }
 
+  @Override
   public void clear(Circuit circuit) {
     final var comps = new HashSet<Component>(circuit.getNonWires());
     comps.addAll(circuit.getWires());
@@ -72,7 +74,7 @@ class CircuitMutatorImpl implements CircuitMutator {
   CircuitTransaction getReverseTransaction() {
     final var ret = new CircuitMutation();
     final var log = this.log;
-    for (int i = log.size() - 1; i >= 0; i--) {
+    for (var i = log.size() - 1; i >= 0; i--) {
       ret.change(log.get(i).getReverseChange());
     }
     return ret;
@@ -140,8 +142,7 @@ class CircuitMutatorImpl implements CircuitMutator {
     final var oldValue = attrs.getValue(a);
     log.add(CircuitChange.setForCircuit(circuit, attr, oldValue, newValue));
     attrs.setValue(a, newValue);
-    if (attr == CircuitAttributes.NAME_ATTR
-        || attr == CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE) {
+    if (attr == CircuitAttributes.NAME_ATTR || attr == CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE) {
       circuit.getAppearance().recomputeDefaultAppearance();
     }
   }

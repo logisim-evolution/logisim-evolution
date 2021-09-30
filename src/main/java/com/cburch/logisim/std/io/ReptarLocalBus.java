@@ -58,7 +58,7 @@ public class ReptarLocalBus extends InstanceFactory {
     }
   }
 
-  public static String getIOLabel(int id) {
+  public static String getIoLabel(int id) {
     if (id < 16) return "Addr_Data_LB_io_" + id;
     return "Undefined";
   }
@@ -86,7 +86,7 @@ public class ReptarLocalBus extends InstanceFactory {
     for (var i = 0; i < 16; i++) {
       if (i < 13) inpLabels.add(getInputLabel(i));
       if (i < 2) outpLabels.add(getOutputLabel(i));
-      ioLabels.add(getIOLabel(i));
+      ioLabels.add(getIoLabel(i));
     }
 
     setAttributes(

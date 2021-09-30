@@ -20,39 +20,38 @@ import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
 
 @SuppressWarnings("serial")
-public class FPGACommanderListModel extends AbstractListModel<Object> {
+public class FpgaCommanderListModel extends AbstractListModel<Object> {
 
   private final ArrayList<Object> myData;
   private final Set<ListDataListener> myListeners;
   private int count = 0;
-  private final ListModelCellRenderer MyRender;
+  private final ListModelCellRenderer myRender;
 
-  public FPGACommanderListModel(boolean CountLines) {
+  public FpgaCommanderListModel(boolean CountLines) {
     myData = new ArrayList<>();
     myListeners = new HashSet<>();
-    MyRender = new ListModelCellRenderer(CountLines);
+    myRender = new ListModelCellRenderer(CountLines);
   }
 
   public ListCellRenderer<Object> getMyRenderer() {
-    return MyRender;
+    return myRender;
   }
 
   public void clear() {
     myData.clear();
     count = 0;
-    FireEvent(null);
+    fireEvent(null);
   }
 
   public void add(Object toAdd) {
     count++;
-    if (toAdd instanceof SimpleDRCContainer) {
-      SimpleDRCContainer add = (SimpleDRCContainer) toAdd;
+    if (toAdd instanceof SimpleDRCContainer add) {
       if (add.getSupressCount()) count--;
       else add.setListNumber(count);
     }
     myData.add(toAdd);
     ListDataEvent e = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, myData.size());
-    FireEvent(e);
+    fireEvent(e);
   }
 
   public int getCountNr() {
@@ -80,7 +79,7 @@ public class FPGACommanderListModel extends AbstractListModel<Object> {
     myListeners.remove(l);
   }
 
-  private void FireEvent(ListDataEvent e) {
+  private void fireEvent(ListDataEvent e) {
     for (ListDataListener l : myListeners) l.contentsChanged(e);
   }
 }

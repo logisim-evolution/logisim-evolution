@@ -30,9 +30,9 @@ class PropagationPoints {
 
     @Override
     public boolean equals(Object other) {
-      if (!(other instanceof Entry)) return false;
-      final var o = (Entry) other;
-      return state.equals(o.state) && item.equals(o.item);
+      return (other instanceof Entry o)
+             ? state.equals(o.state) && item.equals(o.item)
+             : false;
     }
 
     @Override

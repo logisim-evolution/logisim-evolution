@@ -22,12 +22,10 @@ import com.cburch.logisim.std.wiring.Pin;
 import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DefaultHolyCrossAppearance {
   // Precise font dimensions vary based on the platform. We need component
@@ -76,14 +74,14 @@ public class DefaultHolyCrossAppearance {
   };
 
   public static void calculateTextDimensions(float fontsize) {
-    Text label = new Text(0, 0, "a");
-    Font f = label.getLabel().getFont().deriveFont(fontsize);
-    Canvas canvas = new Canvas();
-    FontMetrics fm = canvas.getFontMetrics(f);
+    final var label = new Text(0, 0, "a");
+    final var f = label.getLabel().getFont().deriveFont(fontsize);
+    final var canvas = new Canvas();
+    final var fm = canvas.getFontMetrics(f);
     System.out.println("private static int[] asciiWidths = {");
     for (char row = ' '; row <= '~'; row += 8) {
-      StringBuilder comment = new StringBuilder("//");
-      StringBuilder chars = new StringBuilder("    ");
+      final var comment = new StringBuilder("//");
+      final var chars = new StringBuilder("    ");
       for (char c = row; c < row + 8; c++) {
         if (c >= '~') {
           chars.append("    ");
@@ -92,7 +90,7 @@ public class DefaultHolyCrossAppearance {
           // label = new Text(0, 0, "" + c);
           // label.getLabel().setFont(f);
           // int w = label.getLabel().getWidth();
-          int w = fm.stringWidth("" + c);
+          final var w = fm.stringWidth("" + c);
           chars.append(String.format(" %2d,", w));
         }
       }
@@ -103,8 +101,8 @@ public class DefaultHolyCrossAppearance {
   }
 
   private static int textWidth(String s) {
-    int w = 0;
-    for (int i = 0; i < s.length(); i++) {
+    var w = 0;
+    for (var i = 0; i < s.length(); i++) {
       char c = s.charAt(i);
       if (c >= ' ' && c <= '~') {
         w += asciiWidths[c - ' '];
@@ -116,68 +114,67 @@ public class DefaultHolyCrossAppearance {
   }
 
   public static List<CanvasObject> build(Collection<Instance> pins, String name) {
-    Map<Direction, List<Instance>> edge;
-    edge = new HashMap<>();
+    final var edge = new HashMap<Direction, List<Instance>>();
     edge.put(Direction.EAST, new ArrayList<>());
     edge.put(Direction.WEST, new ArrayList<>());
     var maxLeftLabelLength = 0;
     var maxRightLabelLength = 0;
-    for (Instance pin : pins) {
+    for (final var pin : pins) {
       Direction pinEdge;
       final var labelString = pin.getAttributeValue(StdAttr.LABEL);
-      final var LabelWidth = textWidth(labelString);
+      final var labelWidth = textWidth(labelString);
       if (pin.getAttributeValue(Pin.ATTR_TYPE)) {
         pinEdge = Direction.EAST;
-        if (LabelWidth > maxRightLabelLength) {
-          maxRightLabelLength = LabelWidth;
+        if (labelWidth > maxRightLabelLength) {
+          maxRightLabelLength = labelWidth;
         }
       } else {
         pinEdge = Direction.WEST;
-        if (LabelWidth > maxLeftLabelLength) {
-          maxLeftLabelLength = LabelWidth;
+        if (labelWidth > maxLeftLabelLength) {
+          maxLeftLabelLength = labelWidth;
         }
       }
-      List<Instance> e = edge.get(pinEdge);
+      final var e = edge.get(pinEdge);
       e.add(pin);
     }
-    for (Map.Entry<Direction, List<Instance>> entry : edge.entrySet()) {
+    for (final var entry : edge.entrySet()) {
       DefaultAppearance.sortPinList(entry.getValue(), entry.getKey());
     }
 
-    int numEast = edge.get(Direction.EAST).size();
-    int numWest = edge.get(Direction.WEST).size();
-    int maxHorz = Math.max(numEast, numWest);
+    final var numEast = edge.get(Direction.EAST).size();
+    final var numWest = edge.get(Direction.WEST).size();
+    final var maxHorz = Math.max(numEast, numWest);
 
-    int offsEast = computeOffset(numEast, numWest);
-    int offsWest = computeOffset(numWest, numEast);
+    final var offsEast = computeOffset(numEast, numWest);
+    final var offsWest = computeOffset(numWest, numEast);
 
-    int width = 2 * LABEL_OUTSIDE + maxLeftLabelLength + maxRightLabelLength + LABEL_GAP;
+    var width = 2 * LABEL_OUTSIDE + maxLeftLabelLength + maxRightLabelLength + LABEL_GAP;
     width = Math.max(MIN_WIDTH, (width + 9) / 10 * 10);
 
-    int height = PORT_GAP * maxHorz + TOP_MARGIN + BOTTOM_MARGIN;
+    var height = PORT_GAP * maxHorz + TOP_MARGIN + BOTTOM_MARGIN;
     height = Math.max(MIN_HEIGHT, height);
 
     // compute position of anchor relative to top left corner of box
-    int ax;
-    int ay;
+    int aX;
+    int aY;
     if (numEast > 0) { // anchor is on east side
-      ax = width;
-      ay = offsEast;
+      aX = width;
+      aY = offsEast;
     } else if (numWest > 0) { // anchor is on west side
-      ax = 0;
-      ay = offsWest;
+      aX = 0;
+      aY = offsWest;
     } else { // anchor is top left corner
-      ax = 0;
-      ay = 0;
+      aX = 0;
+      aY = 0;
     }
 
     // place rectangle so anchor is on the grid
-    int rx = OFFS + (9 - (ax + 9) % 10);
-    int ry = OFFS + (9 - (ay + 9) % 10);
+    int rx = OFFS + (9 - (aX + 9) % 10);
+    int ry = OFFS + (9 - (aY + 9) % 10);
 
     final var rect = new Rectangle(rx, ry, width, height);
     rect.setValue(DrawAttr.STROKE_WIDTH, 2);
-    List<CanvasObject> ret = new ArrayList<>();
+    final var ret = new ArrayList<CanvasObject>();
     ret.add(rect);
 
     placePins(ret, edge.get(Direction.WEST), rx, ry + offsWest, 0, PORT_GAP, true);
@@ -191,7 +188,7 @@ public class DefaultHolyCrossAppearance {
       ret.add(label);
     }
 
-    ret.add(new AppearanceAnchor(Location.create(rx + ax, ry + ay)));
+    ret.add(new AppearanceAnchor(Location.create(rx + aX, ry + aY)));
     return ret;
   }
 
@@ -206,30 +203,27 @@ public class DefaultHolyCrossAppearance {
       int y,
       int dx,
       int dy,
-      boolean leftSide) {
-    int halign;
+      boolean isLeftSide) {
+    int hAlign;
     final var color = Color.DARK_GRAY; // maybe GRAY instead?
     int ldx;
-    for (Instance pin : pins) {
+    for (final var pin : pins) {
       dest.add(new AppearancePort(Location.create(x, y), pin));
-      if (leftSide) {
+      if (isLeftSide) {
         ldx = LABEL_OUTSIDE;
-        halign = EditableLabel.LEFT;
+        hAlign = EditableLabel.LEFT;
       } else {
         ldx = -LABEL_OUTSIDE;
-        halign = EditableLabel.RIGHT;
+        hAlign = EditableLabel.RIGHT;
       }
-      Font pinFont = null;
       if (pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
         final var text = pin.getAttributeValue(StdAttr.LABEL);
         if (text != null && text.length() > 0) {
           final var label = new Text(x + ldx, y, text);
-          label.getLabel().setHorizontalAlignment(halign);
+          label.getLabel().setHorizontalAlignment(hAlign);
           label.getLabel().setVerticalAlignment(EditableLabel.MIDDLE);
           label.getLabel().setColor(color);
-          if (pinFont == null) {
-            pinFont = label.getLabel().getFont().deriveFont((float) 10);
-          }
+          final var pinFont = label.getLabel().getFont().deriveFont((float) 10);
           label.getLabel().setFont(pinFont);
           dest.add(label);
         }

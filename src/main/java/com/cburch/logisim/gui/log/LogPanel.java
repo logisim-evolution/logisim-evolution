@@ -33,7 +33,7 @@ public abstract class LogPanel extends JPanel {
   public abstract String getHelpText();
 
   void updateTab() {
-    EditHandler h = getEditHandler();
+    final var h = getEditHandler();
     if (h != null) h.computeEnabled();
   }
 

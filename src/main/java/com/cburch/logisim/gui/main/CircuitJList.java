@@ -46,7 +46,7 @@ class CircuitJList extends JList {
     if (selected.length > 0) {
       ArrayList<Circuit> ret = new ArrayList<>(selected.length);
       for (Object sel : selected) {
-        if (sel instanceof Circuit) ret.add((Circuit) sel);
+        if (sel instanceof Circuit circ) ret.add(circ);
       }
       return ret;
     } else {

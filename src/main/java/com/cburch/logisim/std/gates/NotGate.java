@@ -32,11 +32,9 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.LineBuffer;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 
 class NotGate extends InstanceFactory {
   /**
@@ -46,16 +44,6 @@ class NotGate extends InstanceFactory {
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "NOT Gate";
-
-  private static class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
-    @Override
-    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      return LineBuffer.getHdlBuffer()
-          .add("{{assign}} Result {{=}} {{not}}Input_1;")
-          .add("")
-          .getWithIndent();
-    }
-  }
 
   static void configureLabel(Instance instance, boolean isRectangular, Location control) {
     Object facing = instance.getAttributeValue(StdAttr.FACING);
@@ -96,7 +84,7 @@ class NotGate extends InstanceFactory {
   public static final InstanceFactory FACTORY = new NotGate();
 
   private NotGate() {
-    super(_ID, S.getter("notGateComponent"), new NotGateHDLGeneratorFactory());
+    super(_ID, S.getter("notGateComponent"), new AbstractBufferHdlGenerator(true));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,

@@ -11,41 +11,47 @@ package com.cburch.logisim.std.arith;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class SubtractorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
-  private static final String NrOfBitsStr = "NrOfBits";
-  private static final int NrOfBitsId = -1;
-  private static final String ExtendedBitsStr = "ExtendedBits";
-  private static final int ExtendedBitsId = -2;
+  private static final String NR_OF_BITS_STRING = "NrOfBits";
+  private static final int NR_OF_BITS_ID = -1;
+  private static final String EXTENDED_BITS_STRING = "ExtendedBits";
+  private static final int EXTENDED_BITS_ID = -2;
 
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var inputs = new TreeMap<String, Integer>();
-    int inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    inputs.put("DataA", inputbits);
-    inputs.put("DataB", inputbits);
-    inputs.put("BorrowIn", 1);
-    return inputs;
+  public SubtractorHDLGeneratorFactory() {
+    super();
+    myParametersList
+        .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID)
+        .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID, HdlParameters.MAP_OFFSET, 1);
+    myWires
+        .addWire("s_extended_dataA", EXTENDED_BITS_ID)
+        .addWire("s_extended_dataB", EXTENDED_BITS_ID)
+        .addWire("s_sum_result", EXTENDED_BITS_ID)
+        .addWire("s_carry", 1);
+    myPorts
+        .add(Port.INPUT, "DataA", NR_OF_BITS_ID, Subtractor.IN0, StdAttr.WIDTH)
+        .add(Port.INPUT, "DataB", NR_OF_BITS_ID, Subtractor.IN1, StdAttr.WIDTH)
+        .add(Port.INPUT, "BorrowIn", 1, Subtractor.B_IN)
+        .add(Port.OUTPUT, "Result", NR_OF_BITS_ID, Subtractor.OUT, StdAttr.WIDTH)
+        .add(Port.OUTPUT, "BorrowOut", 1, Subtractor.B_OUT);
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents = new LineBuffer();
+  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    final var Contents = LineBuffer.getBuffer();
     int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       Contents.add("""
-          s_inverted_dataB <= NOT(DataB);
           s_extended_dataA <= "0"&DataA;
-          s_extended_dataB <= "0"&s_inverted_dataB;
+          s_extended_dataB <= "0"&(NOT(DataB));
           s_carry          <= NOT(BorrowIn);
           s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA)+
                               unsigned(s_extended_dataB)+
@@ -55,8 +61,8 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Contents.add(
           (nrOfBits == 1)
               ? "Result <= s_sum_result(0);"
-              : "Result <= s_sum_result( (" + NrOfBitsStr + "-1) DOWNTO 0 );");
-      Contents.add("BorrowOut <= NOT(s_sum_result(" + ExtendedBitsStr + "-1));");
+              : "Result <= s_sum_result( (" + NR_OF_BITS_STRING + "-1) DOWNTO 0 );");
+      Contents.add("BorrowOut <= NOT(s_sum_result(" + EXTENDED_BITS_STRING + "-1));");
     } else {
       Contents.add("""
           assign   {s_carry,Result} = DataA + ~(DataB) + ~(BorrowIn);
@@ -64,57 +70,5 @@ public class SubtractorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           """);
     }
     return Contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    int outputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    outputs.put("Result", outputbits);
-    outputs.put("BorrowOut", 1);
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var params = new TreeMap<Integer, String>();
-    int outputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (outputbits > 1) params.put(NrOfBitsId, NrOfBitsStr);
-    params.put(ExtendedBitsId, ExtendedBitsStr);
-    return params;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist nets, NetlistComponent componentInfo) {
-    final var parameterMap = new TreeMap<String, Integer>();
-    int nrOfBits = componentInfo.getComponent().getEnd(0).getWidth().getWidth();
-    parameterMap.put(ExtendedBitsStr, nrOfBits + 1);
-    if (nrOfBits > 1) parameterMap.put(NrOfBitsStr, nrOfBits);
-    return parameterMap;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    final var portMap = new TreeMap<String, String>();
-    if (!(MapInfo instanceof NetlistComponent)) return portMap;
-    final var ComponentInfo = (NetlistComponent) MapInfo;
-    portMap.putAll(GetNetMap("DataA", true, ComponentInfo, 0, Nets));
-    portMap.putAll(GetNetMap("DataB", true, ComponentInfo, 1, Nets));
-    portMap.putAll(GetNetMap("Result", true, ComponentInfo, 2, Nets));
-    portMap.putAll(GetNetMap("BorrowIn", true, ComponentInfo, 3, Nets));
-    portMap.putAll(GetNetMap("BorrowOut", true, ComponentInfo, 4, Nets));
-    return portMap;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var wires = new TreeMap<String, Integer>();
-    int outputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    wires.put("s_extended_dataA", ExtendedBitsId);
-    wires.put("s_extended_dataB", ExtendedBitsId);
-    wires.put("s_inverted_dataB", (outputbits > 1) ? NrOfBitsId : 1);
-    wires.put("s_sum_result", ExtendedBitsId);
-    wires.put("s_carry", 1);
-    return wires;
   }
 }

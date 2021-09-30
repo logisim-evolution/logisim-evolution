@@ -49,41 +49,37 @@ public class Rectangle extends Rectangular {
 
   @Override
   protected Location getRandomPoint(Bounds bds, Random rand) {
-    if (getPaintType() == DrawAttr.PAINT_STROKE) {
-      int w = getWidth();
-      int h = getHeight();
-      int u = rand.nextInt(2 * w + 2 * h);
-      int x = getX();
-      int y = getY();
-      if (u < w) {
-        x += u;
-      } else if (u < 2 * w) {
-        x += (u - w);
-        y += h;
-      } else if (u < 2 * w + h) {
-        y += (u - 2 * w);
-      } else {
-        x += w;
-        y += (u - 2 * w - h);
-      }
-      int d = getStrokeWidth();
-      if (d > 1) {
-        x += rand.nextInt(d) - d / 2;
-        y += rand.nextInt(d) - d / 2;
-      }
-      return Location.create(x, y);
-    } else {
+    if (getPaintType() != DrawAttr.PAINT_STROKE) {
       return super.getRandomPoint(bds, rand);
     }
+
+    final var w = getWidth();
+    final var h = getHeight();
+    final var u = rand.nextInt(2 * w + 2 * h);
+    var x = getX();
+    var y = getY();
+    if (u < w) {
+      x += u;
+    } else if (u < 2 * w) {
+      x += (u - w);
+      y += h;
+    } else if (u < 2 * w + h) {
+      y += (u - 2 * w);
+    } else {
+      x += w;
+      y += (u - 2 * w - h);
+    }
+    final var d = getStrokeWidth();
+    if (d > 1) {
+      x += rand.nextInt(d) - d / 2;
+      y += rand.nextInt(d) - d / 2;
+    }
+    return Location.create(x, y);
   }
 
   @Override
   public boolean matches(CanvasObject other) {
-    if (other instanceof Rectangle) {
-      return super.matches(other);
-    } else {
-      return false;
-    }
+    return (other instanceof Rectangle) ? super.matches(other) : false;
   }
 
   @Override

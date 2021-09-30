@@ -26,8 +26,8 @@ import java.util.ArrayList;
 class XnorGate extends AbstractGate {
   private static class XNorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      return (new LineBuffer())
+    public ArrayList<String> getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+      return LineBuffer.getBuffer()
           .add(
               isOneHot
                   ? GetOneHot(true, nrOfInputs, bitwidth > 1)

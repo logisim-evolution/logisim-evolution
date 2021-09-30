@@ -19,7 +19,7 @@ import java.awt.event.MouseEvent;
 public class SimpleRectangle {
 
   private int x, y, width, height;
-  private final FPGAIOInformationContainer toBeModified;
+  private final FpgaIoInformationContainer toBeModified;
   private final boolean movemode;
   private boolean show;
   private final boolean fill;
@@ -35,9 +35,9 @@ public class SimpleRectangle {
     movemode = false;
   }
 
-  public SimpleRectangle(MouseEvent e, FPGAIOInformationContainer IOinfo, float scale) {
+  public SimpleRectangle(MouseEvent e, FpgaIoInformationContainer IOinfo, float scale) {
     toBeModified = IOinfo;
-    BoardRectangle rect = IOinfo.GetRectangle();
+    BoardRectangle rect = IOinfo.getRectangle();
     x = AppPreferences.getScaled(rect.getXpos(), scale);
     y = AppPreferences.getScaled(rect.getYpos(), scale);
     width = AppPreferences.getScaled(rect.getWidth(), scale);
@@ -72,7 +72,7 @@ public class SimpleRectangle {
     return new Rectangle(xmin - off, ymin - off, off2 + xmax - xmin, off2 + ymax - ymin);
   }
 
-  public FPGAIOInformationContainer getIoInfo() {
+  public FpgaIoInformationContainer getIoInfo() {
     return toBeModified;
   }
 

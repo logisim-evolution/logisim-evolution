@@ -15,30 +15,23 @@ import com.cburch.draw.actions.ModelDeleteHandleAction;
 import com.cburch.draw.actions.ModelInsertHandleAction;
 import com.cburch.draw.actions.ModelReorderAction;
 import com.cburch.draw.canvas.Canvas;
-import com.cburch.draw.canvas.Selection;
 import com.cburch.draw.canvas.SelectionEvent;
 import com.cburch.draw.canvas.SelectionListener;
 import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasModelEvent;
 import com.cburch.draw.model.CanvasModelListener;
 import com.cburch.draw.model.CanvasObject;
-import com.cburch.draw.model.Handle;
 import com.cburch.draw.util.MatchingSet;
 import com.cburch.draw.util.ZOrder;
-import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.appear.AppearanceAnchor;
 import com.cburch.logisim.circuit.appear.AppearanceElement;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
-import com.cburch.logisim.proj.Project;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
 
 public class AppearanceEditHandler extends EditHandler implements SelectionListener, PropertyChangeListener, CanvasModelListener {
   private final AppearanceCanvas canvas;
@@ -46,28 +39,28 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
   AppearanceEditHandler(AppearanceCanvas canvas) {
     this.canvas = canvas;
     canvas.getSelection().addSelectionListener(this);
-    CanvasModel model = canvas.getModel();
+    final var model = canvas.getModel();
     if (model != null) model.addCanvasModelListener(this);
     canvas.addPropertyChangeListener(Canvas.MODEL_PROPERTY, this);
   }
 
   @Override
   public void addControlPoint() {
-    Selection sel = canvas.getSelection();
-    Handle handle = sel.getSelectedHandle();
+    final var sel = canvas.getSelection();
+    final var handle = sel.getSelectedHandle();
     canvas.doAction(new ModelInsertHandleAction(canvas.getModel(), handle));
   }
 
   @Override
   public void computeEnabled() {
-    Project proj = canvas.getProject();
-    Circuit circ = canvas.getCircuit();
-    Selection sel = canvas.getSelection();
-    boolean selEmpty = sel.isEmpty();
-    boolean canChange = proj.getLogisimFile().contains(circ);
-    final boolean clipExists = !Clipboard.isEmpty();
-    boolean selHasRemovable = false;
-    for (CanvasObject o : sel.getSelected()) {
+    final var proj = canvas.getProject();
+    final var circ = canvas.getCircuit();
+    final var sel = canvas.getSelection();
+    final var selEmpty = sel.isEmpty();
+    final var canChange = proj.getLogisimFile().contains(circ);
+    final var clipExists = !Clipboard.isEmpty();
+    var selHasRemovable = false;
+    for (final var o : sel.getSelected()) {
       if (!(o instanceof AppearanceElement)) {
         selHasRemovable = true;
         break;
@@ -76,22 +69,22 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
     boolean canRaise;
     boolean canLower;
     if (!selEmpty && canChange) {
-      Map<CanvasObject, Integer> zs = ZOrder.getZIndex(sel.getSelected(), canvas.getModel());
-      int zmin = Integer.MAX_VALUE;
-      int zmax = Integer.MIN_VALUE;
-      int count = 0;
-      for (Map.Entry<CanvasObject, Integer> entry : zs.entrySet()) {
+      final var zs = ZOrder.getZIndex(sel.getSelected(), canvas.getModel());
+      var zMin = Integer.MAX_VALUE;
+      var zMax = Integer.MIN_VALUE;
+      var count = 0;
+      for (final var entry : zs.entrySet()) {
         if (!(entry.getKey() instanceof AppearanceElement)) {
           count++;
           int z = entry.getValue();
-          if (z < zmin) zmin = z;
-          if (z > zmax) zmax = z;
+          if (z < zMin) zMin = z;
+          if (z > zMax) zMax = z;
         }
       }
-      int maxPoss = AppearanceCanvas.getMaxIndex(canvas.getModel());
+      final var maxPoss = AppearanceCanvas.getMaxIndex(canvas.getModel());
       if (count > 0 && count <= maxPoss) {
-        canRaise = zmin <= maxPoss - count;
-        canLower = zmax >= count;
+        canRaise = zMin <= maxPoss - count;
+        canLower = zMax >= count;
       } else {
         canRaise = false;
         canLower = false;
@@ -100,11 +93,11 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
       canRaise = false;
       canLower = false;
     }
-    boolean canAddCtrl = false;
-    boolean canRemCtrl = false;
-    Handle handle = sel.getSelectedHandle();
+    var canAddCtrl = false;
+    var canRemCtrl = false;
+    final var handle = sel.getSelectedHandle();
     if (handle != null && canChange) {
-      CanvasObject o = handle.getObject();
+      final var o = handle.getObject();
       canAddCtrl = o.canInsertHandle(handle.getLocation()) != null;
       canRemCtrl = o.canDeleteHandle(handle.getLocation()) != null;
     }
@@ -139,21 +132,20 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
 
   @Override
   public void delete() {
-    Selection sel = canvas.getSelection();
-    int n = sel.getSelected().size();
-    List<CanvasObject> select = new ArrayList<>(n);
-    List<CanvasObject> remove = new ArrayList<>(n);
+    final var sel = canvas.getSelection();
+    final var n = sel.getSelected().size();
+    final var select = new ArrayList<CanvasObject>(n);
+    final var remove = new ArrayList<CanvasObject>(n);
     Location anchorLocation = null;
     Direction anchorFacing = null;
-    for (CanvasObject o : sel.getSelected()) {
-      if (o.canRemove()) {
-        remove.add(o);
+    for (final var obj : sel.getSelected()) {
+      if (obj.canRemove()) {
+        remove.add(obj);
       } else {
-        select.add(o);
-        if (o instanceof AppearanceAnchor) {
-          AppearanceAnchor anchor = (AppearanceAnchor) o;
+        select.add(obj);
+        if (obj instanceof AppearanceAnchor anchor) {
           anchorLocation = anchor.getLocation();
-          anchorFacing = anchor.getFacing();
+          anchorFacing = anchor.getFacingDirection();
         }
       }
     }
@@ -175,18 +167,18 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
 
   @Override
   public void duplicate() {
-    Selection sel = canvas.getSelection();
-    int n = sel.getSelected().size();
-    List<CanvasObject> select = new ArrayList<>(n);
-    List<CanvasObject> clones = new ArrayList<>(n);
-    for (CanvasObject o : sel.getSelected()) {
-      if (o.canRemove()) {
-        CanvasObject copy = o.clone();
+    final var sel = canvas.getSelection();
+    final var n = sel.getSelected().size();
+    final var select = new ArrayList<CanvasObject>(n);
+    final var clones = new ArrayList<CanvasObject>(n);
+    for (final var obj : sel.getSelected()) {
+      if (obj.canRemove()) {
+        final var copy = obj.clone();
         copy.translate(10, 10);
         clones.add(copy);
         select.add(copy);
       } else {
-        select.add(o);
+        select.add(obj);
       }
     }
 
@@ -201,7 +193,7 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
 
   @Override
   public void lower() {
-    ModelReorderAction act = ModelReorderAction.createLower(canvas.getModel(), canvas.getSelection().getSelected());
+    final var act = ModelReorderAction.createLower(canvas.getModel(), canvas.getSelection().getSelected());
     if (act != null) {
       canvas.doAction(act);
     }
@@ -209,7 +201,7 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
 
   @Override
   public void lowerBottom() {
-    ModelReorderAction act = ModelReorderAction.createLowerBottom(canvas.getModel(), canvas.getSelection().getSelected());
+    final var act = ModelReorderAction.createLowerBottom(canvas.getModel(), canvas.getSelection().getSelected());
     if (act != null) {
       canvas.doAction(act);
     }
@@ -222,24 +214,24 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
 
   @Override
   public void paste() {
-    ClipboardContents clip = Clipboard.get();
-    Collection<CanvasObject> contents = clip.getElements();
-    List<CanvasObject> add = new ArrayList<>(contents.size());
-    for (CanvasObject o : contents) {
-      add.add(o.clone());
+    final var clip = Clipboard.get();
+    final var contents = clip.getElements();
+    final var add = new ArrayList<CanvasObject>(contents.size());
+    for (final var obj : contents) {
+      add.add(obj.clone());
     }
     if (add.isEmpty()) return;
 
     // find how far we have to translate shapes so that at least one of the
     // pasted shapes doesn't match what's already in the model
-    Collection<CanvasObject> raw = canvas.getModel().getObjectsFromBottom();
-    MatchingSet<CanvasObject> cur = new MatchingSet<>(raw);
+    final var raw = canvas.getModel().getObjectsFromBottom();
+    final var cur = new MatchingSet<CanvasObject>(raw);
     int dx = 0;
     while (true) {
       // if any shapes in "add" aren't in canvas, we are done
       boolean allMatch = true;
-      for (CanvasObject o : add) {
-        if (!cur.contains(o)) {
+      for (final var obj : add) {
+        if (!cur.contains(obj)) {
           allMatch = false;
           break;
         }
@@ -247,13 +239,13 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
       if (!allMatch) break;
 
       // otherwise translate everything by 10 pixels and repeat test
-      for (CanvasObject o : add) {
-        o.translate(10, 10);
+      for (final var obj : add) {
+        obj.translate(10, 10);
       }
       dx += 10;
     }
 
-    Location anchorLocation = clip.getAnchorLocation();
+    var anchorLocation = clip.getAnchorLocation();
     if (anchorLocation != null && dx != 0) {
       anchorLocation = anchorLocation.translate(dx, dx);
     }
@@ -273,13 +265,13 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
 
   @Override
   public void propertyChange(PropertyChangeEvent e) {
-    String prop = e.getPropertyName();
+    final var prop = e.getPropertyName();
     if (prop.equals(Canvas.MODEL_PROPERTY)) {
-      CanvasModel oldModel = (CanvasModel) e.getOldValue();
+      final var oldModel = (CanvasModel) e.getOldValue();
       if (oldModel != null) {
         oldModel.removeCanvasModelListener(this);
       }
-      CanvasModel newModel = (CanvasModel) e.getNewValue();
+      final var newModel = (CanvasModel) e.getNewValue();
       if (newModel != null) {
         newModel.addCanvasModelListener(this);
       }
@@ -288,8 +280,7 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
 
   @Override
   public void raise() {
-    ModelReorderAction act =
-        ModelReorderAction.createRaise(canvas.getModel(), canvas.getSelection().getSelected());
+    final var act = ModelReorderAction.createRaise(canvas.getModel(), canvas.getSelection().getSelected());
     if (act != null) {
       canvas.doAction(act);
     }
@@ -297,8 +288,7 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
 
   @Override
   public void raiseTop() {
-    ModelReorderAction act =
-        ModelReorderAction.createRaiseTop(canvas.getModel(), canvas.getSelection().getSelected());
+    final var act = ModelReorderAction.createRaiseTop(canvas.getModel(), canvas.getSelection().getSelected());
     if (act != null) {
       canvas.doAction(act);
     }
@@ -306,14 +296,14 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
 
   @Override
   public void removeControlPoint() {
-    Selection sel = canvas.getSelection();
-    Handle handle = sel.getSelectedHandle();
+    final var sel = canvas.getSelection();
+    final var handle = sel.getSelectedHandle();
     canvas.doAction(new ModelDeleteHandleAction(canvas.getModel(), handle));
   }
 
   @Override
   public void selectAll() {
-    Selection sel = canvas.getSelection();
+    final var sel = canvas.getSelection();
     sel.setSelected(canvas.getModel().getObjectsFromBottom(), true);
     canvas.repaint();
   }

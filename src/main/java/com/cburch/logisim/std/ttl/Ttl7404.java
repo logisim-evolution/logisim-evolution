@@ -9,7 +9,7 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import java.util.ArrayList;
@@ -28,16 +28,15 @@ public class Ttl7404 extends AbstractTtlGate {
 
   private static class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
-    @Override
-    public boolean IsInverter() {
-      return true;
+    public NotGateHDLGeneratorFactory() {
+      super(true);
     }
 
     @Override
-    public ArrayList<String> GetLogicFunction(int index) {
+    public ArrayList<String> getLogicFunction(int index) {
       final var contents = new ArrayList<String>();
-      contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
-              + HDL.notOperator() + "(gate_" + index + "_A);");
+      contents.add("   " + Hdl.assignPreamble() + "gate_" + index + "_O" + Hdl.assignOperator()
+              + Hdl.notOperator() + "(gate_" + index + "_A);");
       contents.add("");
       return contents;
     }
@@ -66,7 +65,7 @@ public class Ttl7404 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     for (byte i = 1; i < 6; i += 2) {
       state.setPort(i, state.getPortValue(i - 1).not(), 1);
     }

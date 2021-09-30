@@ -12,5 +12,7 @@ package com.cburch.logisim.analyze;
 import com.cburch.logisim.util.LocaleManager;
 
 public class Strings {
+  protected Strings() {}
+
   public static final LocaleManager S = new LocaleManager("resources/logisim", "analyze");
 }

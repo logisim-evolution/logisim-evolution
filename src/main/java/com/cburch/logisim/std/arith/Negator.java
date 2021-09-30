@@ -35,8 +35,8 @@ public class Negator extends InstanceFactory {
    */
   public static final String _ID = "Negator";
 
-  private static final int IN = 0;
-  private static final int OUT = 1;
+  public static final int IN = 0;
+  public static final int OUT = 1;
 
   public Negator() {
     super(_ID, S.getter("negatorComponent"), new NegatorHDLGeneratorFactory());

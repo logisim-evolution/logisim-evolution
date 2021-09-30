@@ -20,8 +20,8 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -131,8 +131,8 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
   private final Attribute<AttributeOption> triggerAttribute;
 
-  protected AbstractFlipFlop(String name, String iconName, StringGetter desc, int numInputs, 
-      boolean allowLevelTriggers, HDLGeneratorFactory generator) {
+  protected AbstractFlipFlop(String name, String iconName, StringGetter desc, int numInputs,
+      boolean allowLevelTriggers, HdlGeneratorFactory generator) {
     super(name, desc, generator);
     this.numInputs = numInputs;
     setIconName(iconName);
@@ -147,7 +147,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
   }
 
   protected AbstractFlipFlop(
-      String name, Icon icon, StringGetter desc, int numInputs, boolean allowLevelTriggers, HDLGeneratorFactory generator) {
+      String name, Icon icon, StringGetter desc, int numInputs, boolean allowLevelTriggers, HdlGeneratorFactory generator) {
     super(name, desc, generator);
     this.numInputs = numInputs;
     setIcon(icon);
@@ -411,12 +411,12 @@ abstract class AbstractFlipFlop extends InstanceFactory {
   }
 
   @Override
-  public boolean CheckForGatedClocks(NetlistComponent comp) {
+  public boolean checkForGatedClocks(netlistComponent comp) {
     return Netlist.isFlipFlop(comp.getComponent().getAttributeSet());
   }
 
   @Override
-  public int[] ClockPinIndex(NetlistComponent comp) {
+  public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {numInputs};
   }
 

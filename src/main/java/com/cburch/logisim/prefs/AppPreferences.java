@@ -13,7 +13,7 @@ import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LocaleListener;
@@ -459,12 +459,12 @@ public class AppPreferences {
       create(
           new PrefMonitorString(
               "FPGAWorkspace", System.getProperty("user.home") + "/logisim_evolution_workspace"));
-  public static final PrefMonitor<String> HDL_Type =
+  public static final PrefMonitor<String> HdlType =
       create(
           new PrefMonitorStringOpts(
               "afterAdd",
-              new String[] {HDLGeneratorFactory.VHDL, HDLGeneratorFactory.VERILOG},
-              HDLGeneratorFactory.VHDL));
+              new String[] {HdlGeneratorFactory.VHDL, HdlGeneratorFactory.VERILOG},
+              HdlGeneratorFactory.VHDL));
   public static final PrefMonitor<String> SelectedBoard =
       create(new PrefMonitorString("SelectedBoard", null));
 

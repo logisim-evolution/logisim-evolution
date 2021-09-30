@@ -86,7 +86,7 @@ public class Ttl7442 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     int decode = -1;
     if (!(state.getPortValue(13).isErrorValue() | state.getPortValue(13).isUnknown())) {
       decode = state.getPortValue(13) == Value.TRUE ? 1 : 0;

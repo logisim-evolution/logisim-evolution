@@ -138,7 +138,7 @@ public class ToolbarData {
 
   public Object remove(int pos) {
     Object ret = contents.remove(pos);
-    if (ret instanceof Tool) removeAttributeListeners((Tool) ret);
+    if (ret instanceof Tool tool) removeAttributeListeners(tool);
     fireToolbarChanged();
     return ret;
   }

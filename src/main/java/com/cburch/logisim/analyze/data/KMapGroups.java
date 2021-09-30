@@ -104,7 +104,7 @@ public class KMapGroups {
       build(imp);
     }
 
-    public ArrayList<CoverInfo> getAreas() {
+    public List<CoverInfo> getAreas() {
       return areas;
     }
 
@@ -240,7 +240,7 @@ public class KMapGroups {
     update();
   }
 
-  public ArrayList<KMapGroupInfo> getCovers() {
+  public List<KMapGroupInfo> getCovers() {
     return covers;
   }
 

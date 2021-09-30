@@ -51,7 +51,7 @@ public class Attributes {
     public ComponentMapInformationContainer parse(String value) {
       return null;
     }
-    
+
     @Override
     public boolean isToSave() {
       return false;
@@ -334,7 +334,6 @@ public class Attributes {
       this.end = end;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public java.awt.Component getCellEditor(Integer value) {
       if (end - start > 31) {
@@ -381,7 +380,6 @@ public class Attributes {
       this.vals = vals;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public Component getCellEditor(Object value) {
       final var combo = new ComboBox<>(vals);
@@ -403,11 +401,9 @@ public class Attributes {
 
     @Override
     public String toDisplayString(V value) {
-      if (value instanceof AttributeOptionInterface) {
-        return ((AttributeOptionInterface) value).toDisplayString();
-      } else {
-        return value.toString();
-      }
+      return (value instanceof AttributeOptionInterface iface)
+             ? iface.toDisplayString()
+             : value.toString();
     }
   }
 
@@ -453,6 +449,23 @@ public class Attributes {
     public String parse(String value) {
       return value;
     }
+  }
+
+  private static class NoSaveAttribute extends Attribute<Integer> {
+
+    @Override
+    public Integer parse(String value) {
+      return Integer.valueOf(value);
+    }
+
+    @Override
+    public boolean isToSave() {
+      return false;
+    }
+  }
+
+  public static Attribute<Integer> forNoSave() {
+    return new NoSaveAttribute();
   }
 
   public static Attribute<String> forHidden() {

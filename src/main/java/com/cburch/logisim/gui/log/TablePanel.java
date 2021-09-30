@@ -58,10 +58,10 @@ class TablePanel extends LogPanel {
   }
 
   public int getColumn(MouseEvent event) {
-    Model model = getModel();
-    int x = event.getX() - (getWidth() - tableWidth) / 2;
+    final var model = getModel();
+    final var x = event.getX() - (getWidth() - tableWidth) / 2;
     if (x < 0) return -1;
-    int ret = (x + COLUMN_SEP / 2) / (cellWidth + COLUMN_SEP);
+    final var ret = (x + COLUMN_SEP / 2) / (cellWidth + COLUMN_SEP);
     return ret >= 0 && ret < model.getSignalCount() ? ret : -1;
   }
 
@@ -71,9 +71,9 @@ class TablePanel extends LogPanel {
   }
 
   public int getRow(MouseEvent event) {
-    int y = event.getY() - (getHeight() - tableHeight) / 2;
+    final var y = event.getY() - (getHeight() - tableHeight) / 2;
     if (y < cellHeight + HEADER_SEP) return -1;
-    int ret = (y - cellHeight - HEADER_SEP) / cellHeight;
+    final var ret = (y - cellHeight - HEADER_SEP) / cellHeight;
     return ret >= 0 && ret < rowCount ? ret : -1;
   }
 
@@ -99,19 +99,19 @@ class TablePanel extends LogPanel {
 
     private void computePreferredSize() {
       // todo: sizing is terrible
-      Model model = getModel();
-      int columns = model.getSignalCount();
+      final var model = getModel();
+      final var columns = model.getSignalCount();
       if (columns == 0) {
         setPreferredSize(new Dimension(0, 0));
         return;
       }
 
-      Graphics g = getGraphics();
+      final var g = getGraphics();
       if (g == null) {
         cellHeight = 16;
         cellWidth = 24;
       } else {
-        FontMetrics fm = g.getFontMetrics(HEAD_FONT);
+        final var fm = g.getFontMetrics(HEAD_FONT);
         cellHeight = fm.getHeight();
         cellWidth = 24;
         for (int i = 0; i < columns; i++) {
@@ -131,10 +131,10 @@ class TablePanel extends LogPanel {
     public void paintComponent(Graphics g) {
       super.paintComponent(g);
 
-      Dimension sz = getSize();
+      final var sz = getSize();
       final int top = Math.max(0, (sz.height - tableHeight) / 2);
       final int left = Math.max(0, (sz.width - tableWidth) / 2);
-      Model model = getModel();
+      final var model = getModel();
       if (model == null) return;
       int columns = model.getSignalCount();
       if (columns == 0) {
@@ -144,23 +144,23 @@ class TablePanel extends LogPanel {
       }
 
       g.setColor(Color.GRAY);
-      int lineY = top + cellHeight + HEADER_SEP / 2;
+      final var lineY = top + cellHeight + HEADER_SEP / 2;
       g.drawLine(left, lineY, left + tableWidth, lineY);
 
       g.setColor(Color.BLACK);
       g.setFont(HEAD_FONT);
-      FontMetrics headerMetric = g.getFontMetrics();
-      int x = left;
-      int y = top + headerMetric.getAscent() + 1;
-      for (int i = 0; i < columns; i++) {
+      final var headerMetric = g.getFontMetrics();
+      var x = left;
+      final var y = top + headerMetric.getAscent() + 1;
+      for (var i = 0; i < columns; i++) {
         x = paintHeader(model.getItem(i).getShortName(), x, y, g, headerMetric);
       }
       g.setFont(BODY_FONT);
-      FontMetrics bodyMetric = g.getFontMetrics();
-      Rectangle clip = g.getClipBounds();
-      int firstRow = Math.max(0, (clip.y - y) / cellHeight - 1);
-      int lastRow = Math.min(rowCount, 2 + (clip.y + clip.height - y) / cellHeight);
-      int y0 = top + cellHeight + HEADER_SEP;
+      final var bodyMetric = g.getFontMetrics();
+      final var clip = g.getClipBounds();
+      final var firstRow = Math.max(0, (clip.y - y) / cellHeight - 1);
+      final var lastRow = Math.min(rowCount, 2 + (clip.y + clip.height - y) / cellHeight);
+      final var y0 = top + cellHeight + HEADER_SEP;
       x = left;
       // for (int col = 0; col < columns; col++) {
       //   SignalInfo item = sel.get(col);
@@ -180,7 +180,7 @@ class TablePanel extends LogPanel {
     }
 
     private int paintHeader(String header, int x, int y, Graphics g, FontMetrics fm) {
-      int width = fm.stringWidth(header);
+      final var width = fm.stringWidth(header);
       g.drawString(header, x + (cellWidth - width) / 2, y);
       return x + cellWidth + COLUMN_SEP;
     }
@@ -233,33 +233,29 @@ class TablePanel extends LogPanel {
 
     @Override
     public int getBlockIncrement(int direction) {
-      int curY = getValue();
-      int curHeight = getVisibleAmount();
-      int numCells = curHeight / cellHeight - 1;
+      final var curY = getValue();
+      final var curHeight = getVisibleAmount();
+      var numCells = curHeight / cellHeight - 1;
       if (numCells <= 0) numCells = 1;
-      if (direction > 0) {
-        return curY > 0 ? numCells * cellHeight : numCells * cellHeight + HEADER_SEP;
-      } else {
-        return curY > cellHeight + HEADER_SEP
-            ? numCells * cellHeight
-            : numCells * cellHeight + HEADER_SEP;
-      }
+      return (direction > 0)
+          ? curY > 0 ? numCells * cellHeight : numCells * cellHeight + HEADER_SEP
+          : curY > cellHeight + HEADER_SEP
+              ? numCells * cellHeight
+              : numCells * cellHeight + HEADER_SEP;
     }
 
     @Override
     public int getUnitIncrement(int direction) {
-      int curY = getValue();
-      if (direction > 0) {
-        return curY > 0 ? cellHeight : cellHeight + HEADER_SEP;
-      } else {
-        return curY > cellHeight + HEADER_SEP ? cellHeight : cellHeight + HEADER_SEP;
-      }
+      final var curY = getValue();
+      return (direction > 0)
+          ? curY > 0 ? cellHeight : cellHeight + HEADER_SEP
+          : curY > cellHeight + HEADER_SEP ? cellHeight : cellHeight + HEADER_SEP;
     }
 
     @Override
     public void stateChanged(ChangeEvent event) {
-      int newMaximum = getMaximum();
-      int newExtent = getVisibleAmount();
+      final var newMaximum = getMaximum();
+      final var newExtent = getVisibleAmount();
       if (oldMaximum != newMaximum || oldExtent != newExtent) {
         if (getValue() + oldExtent >= oldMaximum) {
           setValue(newMaximum - newExtent);

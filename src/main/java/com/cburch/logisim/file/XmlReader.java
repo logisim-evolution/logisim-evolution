@@ -13,7 +13,6 @@ import static com.cburch.logisim.file.Strings.S;
 
 import com.cburch.draw.model.AbstractCanvasObject;
 import com.cburch.logisim.LogisimVersion;
-import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMapInfo;
 import com.cburch.logisim.circuit.Splitter;
@@ -24,6 +23,7 @@ import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.BoardRectangle;
 import com.cburch.logisim.fpga.data.MapComponent;
+import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
@@ -322,7 +322,7 @@ class XmlReader {
     }
 
     void loadAppearance(Element appearElt, XmlReader.CircuitData circData, String context) {
-      final var pins = new ArrayList<AppearanceSvgReader.pinInfo>();
+      final var pins = new ArrayList<AppearanceSvgReader.PinInfo>();
       for (final var comp : circData.knownComponents.values()) {
         if (comp.getFactory() == Pin.FACTORY) {
           pins.add(AppearanceSvgReader.getPinInfo(comp.getLocation(), Instance.getInstanceFor(comp)));
@@ -393,7 +393,7 @@ class XmlReader {
       var isHolyCrossFile = false;
       var isEvolutionFile = true;
       if (versionString.equals("")) {
-        sourceVersion = Main.VERSION;
+        sourceVersion = BuildInfo.version;
       } else {
         sourceVersion = LogisimVersion.fromString(versionString);
         isHolyCrossFile = versionString.endsWith("-HC");

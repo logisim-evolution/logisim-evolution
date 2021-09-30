@@ -56,8 +56,7 @@ class ToolbarList extends JList {
         JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
       Component ret;
       Icon icon;
-      if (value instanceof Tool) {
-        final var t = (Tool) value;
+      if (value instanceof Tool t) {
         ret = super.getListCellRendererComponent(list, t.getDisplayName(), index, isSelected, cellHasFocus);
         icon = new ToolIcon(t);
       } else if (value == null) {
@@ -67,8 +66,8 @@ class ToolbarList extends JList {
         ret = super.getListCellRendererComponent(list, value.toString(), index, isSelected, cellHasFocus);
         icon = null;
       }
-      if (ret instanceof JLabel) {
-        ((JLabel) ret).setIcon(icon);
+      if (ret instanceof JLabel label) {
+        label.setIcon(icon);
       }
       return ret;
     }

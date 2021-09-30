@@ -11,8 +11,8 @@ package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
@@ -26,7 +26,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
 
   private boolean HasWe;
 
-  protected AbstractOctalFlops(String name, byte pins, byte[] outputports, String[] Ttlportnames, HDLGeneratorFactory generator) {
+  protected AbstractOctalFlops(String name, byte pins, byte[] outputports, String[] Ttlportnames, HdlGeneratorFactory generator) {
     super(name, pins, outputports, Ttlportnames, 80, generator);
     super.setInstancePoker(Poker.class);
   }
@@ -35,7 +35,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
     boolean isPressed = true;
 
     private boolean isInside(InstanceState state, MouseEvent e) {
-      final var p = TTLGetTranslatedXY(state, e);
+      final var p = getTranslatedTtlXY(state, e);
       var inside = false;
       for (var i = 0; i < 8; i++) {
         final var dx = p.x - (95 + i * 10);
@@ -47,7 +47,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
     }
 
     private int getIndex(InstanceState state, MouseEvent e) {
-      final var p = TTLGetTranslatedXY(state, e);
+      final var p = getTranslatedTtlXY(state, e);
       for (var i = 0; i < 8; i++) {
         final var dx = p.x - (95 + i * 10);
         final var dy = p.y - 40;
@@ -81,7 +81,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
     }
   }
 
-  public void SetWe(boolean haswe) {
+  public void setWe(boolean haswe) {
     HasWe = haswe;
   }
 
@@ -165,7 +165,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     var data = (TtlRegisterData) state.getData();
     if (data == null) {
       data = new TtlRegisterData(BitWidth.create(8));
@@ -222,8 +222,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
         g.setColor(state.getValue().get(i).getColor());
         g.fillOval(x - 44, y + 91 + i * 10, 8, 8);
         g.setColor(Color.WHITE);
-        GraphicsUtil.drawCenteredText(
-            g, state.getValue().get(i).toDisplayString(), x - 41, y + 94 + i * 10);
+        GraphicsUtil.drawCenteredText(g, state.getValue().get(i).toDisplayString(), x - 41, y + 94 + i * 10);
       }
       g.rotate(-Math.PI / 2, x, y);
       g.setColor(Color.BLACK);
@@ -231,12 +230,12 @@ public class AbstractOctalFlops extends AbstractTtlGate {
   }
 
   @Override
-  public boolean CheckForGatedClocks(NetlistComponent comp) {
+  public boolean checkForGatedClocks(netlistComponent comp) {
     return true;
   }
 
   @Override
-  public int[] ClockPinIndex(NetlistComponent comp) {
+  public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {9};
   }
 

@@ -23,14 +23,13 @@ class DefaultAppearance {
     // dummy, private
   }
 
-  public static List<CanvasObject> build(Collection<Instance> pins, AttributeOption style, boolean Fixed, String CircuitName) {
+  public static List<CanvasObject> build(Collection<Instance> pins, AttributeOption style, boolean isFixed, String circuitName) {
     if (style == CircuitAttributes.APPEAR_CLASSIC) {
       return DefaultClassicAppearance.build(pins);
     } else if (style == CircuitAttributes.APPEAR_FPGA) {
-      return DefaultHolyCrossAppearance.build(pins, CircuitName);
-    } else {
-      return DefaultEvolutionAppearance.build(pins, CircuitName, Fixed);
+      return DefaultHolyCrossAppearance.build(pins, circuitName);
     }
+    return DefaultEvolutionAppearance.build(pins, circuitName, isFixed);
   }
 
   static void sortPinList(List<Instance> pins, Direction facing) {

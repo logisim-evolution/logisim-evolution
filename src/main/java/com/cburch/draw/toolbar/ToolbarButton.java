@@ -83,8 +83,8 @@ class ToolbarButton extends JComponent implements BaseMouseListenerContract {
       toolbar.setPressed(null);
       if (item != null && item.isSelectable()) {
         toolbar.getToolbarModel().itemSelected(item);
-      } else if (item != null && item instanceof ToolbarClickableItem) {
-        ((ToolbarClickableItem) item).clicked();
+      } else if (item != null && item instanceof ToolbarClickableItem clickableItem) {
+        clickableItem.clicked();
       }
     }
   }
@@ -92,10 +92,10 @@ class ToolbarButton extends JComponent implements BaseMouseListenerContract {
   @Override
   public void paintComponent(Graphics g) {
     if (toolbar.getPressed() == this) {
-      if (item instanceof ToolbarClickableItem) {
+      if (item instanceof ToolbarClickableItem clickableItem) {
         final var g2 = g.create();
         g2.translate(BORDER, BORDER);
-        ((ToolbarClickableItem) item).paintPressedIcon(ToolbarButton.this, g2);
+        clickableItem.paintPressedIcon(ToolbarButton.this, g2);
         g2.dispose();
         return;
       }

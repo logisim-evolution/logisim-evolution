@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 public class Reporter {
 
-  public static final Reporter Report = new Reporter();
+  public static final Reporter report = new Reporter();
   private static final Logger logger = LoggerFactory.getLogger(Reporter.class);
   private FPGAReportTabbedPane myCommander = null;
   private JProgressBar progress = null;
@@ -29,86 +29,86 @@ public class Reporter {
     myCommander = gui;
   }
 
-  public void setProgressBar(JProgressBar prog) {
-    progress = prog;
+  public void setProgressBar(JProgressBar progressBar) {
+    progress = progressBar;
   }
 
-  public void AddErrorIncrement(String Message) {
+  public void addErrorIncrement(String message) {
     if (myCommander == null)
-      logger.error(Message);
+      logger.error(message);
     else
-      myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL, true));
+      myCommander.addErrors(new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_NORMAL, true));
   }
 
-  public void AddError(Object Message) {
+  public void addError(Object message) {
     if (myCommander == null) {
-      if (Message instanceof String) logger.error((String) Message);
+      if (message instanceof String msg) logger.error(msg);
     } else {
-      if (Message instanceof String)
-        myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL));
-      else myCommander.AddErrors(Message);
+      if (message instanceof String)
+        myCommander.addErrors(new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_NORMAL));
+      else myCommander.addErrors(message);
     }
   }
 
   public void addFatalErrorFmt(String fmt, Object... args) {
-    AddFatalError(String.format(fmt, args));
+    addFatalError(String.format(fmt, args));
   }
 
-  public void AddFatalError(String Message) {
+  public void addFatalError(String message) {
     if (myCommander == null)
-      logger.error(Message);
+      logger.error(message);
     else
-      myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_FATAL));
+      myCommander.addErrors(new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_FATAL));
   }
 
-  public void AddSevereError(String Message) {
+  public void addSevereError(String message) {
     if (myCommander == null)
-      logger.error(Message);
+      logger.error(message);
     else
-      myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_SEVERE));
+      myCommander.addErrors(new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_SEVERE));
   }
 
-  public void AddInfo(String Message) {
+  public void addInfo(String message) {
     if (myCommander == null)
-      logger.info(Message);
+      logger.info(message);
     else
-      myCommander.AddInfo(Message);
+      myCommander.addInfo(message);
   }
 
-  public void AddSevereWarning(String Message) {
+  public void addSevereWarning(String message) {
     if (myCommander == null)
-      logger.warn(Message);
+      logger.warn(message);
     else
-      myCommander.AddWarning(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_SEVERE));
+      myCommander.addWarning(new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_SEVERE));
   }
 
-  public void AddWarningIncrement(String Message) {
+  public void addWarningIncrement(String message) {
     if (myCommander == null)
-      logger.warn(Message);
+      logger.warn(message);
     else
-      myCommander.AddWarning(
-          new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL, true));
+      myCommander.addWarning(
+          new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_NORMAL, true));
   }
 
-  public void AddWarning(Object Message) {
+  public void addWarning(Object message) {
     if (myCommander == null) {
-      if (Message instanceof String) logger.warn((String) Message);
+      if (message instanceof String) logger.warn((String) message);
     } else {
-      if (Message instanceof String)
-        myCommander.AddWarning(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL));
-      else myCommander.AddWarning(Message);
+      if (message instanceof String)
+        myCommander.addWarning(new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_NORMAL));
+      else myCommander.addWarning(message);
     }
   }
 
-  public void ClsScr() {
+  public void clearConsole() {
     if (myCommander != null)
-      myCommander.ClearConsole();
+      myCommander.clearConsole();
   }
 
-  public void print(String Message) {
+  public void print(String message) {
     if (myCommander == null)
-      logger.info(Message);
+      logger.info(message);
     else
-      myCommander.AddConsole(Message);
+      myCommander.addConsole(message);
   }
 }

@@ -9,7 +9,13 @@
 
 package com.cburch.logisim.circuit;
 
-public class CircuitEvent {
+import com.cburch.logisim.util.LineBuffer;
+
+// NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
+// getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
+// that in future, but for now it looks stupid in this file only.
+public record CircuitEvent(int getAction, Circuit getCircuit, Object getData) {
+
   public static final int ACTION_SET_NAME = 0; // name changed
   public static final int ACTION_ADD = 1; // component added
   public static final int ACTION_REMOVE = 2; // component removed
@@ -21,67 +27,25 @@ public class CircuitEvent {
   public static final int ACTION_CHECK_NAME = 8;
   public static final int ACTION_DISPLAY_CHANGE = 9; // viewed/haloed status change
 
-  private final int action;
-  private final Circuit circuit;
-  private final Object data;
-
-  CircuitEvent(int action, Circuit circuit, Object data) {
-    this.action = action;
-    this.circuit = circuit;
-    this.data = data;
-  }
-
-  // access methods
-  public int getAction() {
-    return action;
-  }
-
-  public Circuit getCircuit() {
-    return circuit;
-  }
-
-  public Object getData() {
-    return data;
-  }
-
   public CircuitTransactionResult getResult() {
-    return (CircuitTransactionResult) data;
+    return (CircuitTransactionResult) getData;
   }
 
+  @Override
   public String toString() {
-    String s;
-    switch (action) {
-      case ACTION_SET_NAME:
-        s = "ACTION_SET_NAME";
-        break;
-      case ACTION_ADD:
-        s = "ACTION_ADD";
-        break;
-      case ACTION_REMOVE:
-        s = "ACTION_REMOVE";
-        break;
-      case ACTION_INVALIDATE:
-        s = "ACTION_INVALIDATE";
-        break;
-      case ACTION_CLEAR:
-        s = "ACTION_CLEAR";
-        break;
-      case TRANSACTION_DONE:
-        s = "TRANSACTION_DONE";
-        break;
-      case CHANGE_DEFAULT_BOX_APPEARANCE:
-        s = "DEFAULT_BOX_APPEARANCE";
-        break;
-      case ACTION_CHECK_NAME:
-        s = "CHECK_NAME";
-        break;
-      case ACTION_DISPLAY_CHANGE:
-        s = "ACTION_DISPLAY_CHANGE";
-        break;
-      default:
-        s = "UNKNOWN_ACTION(" + action + ")";
-        break;
-    }
-    return s + "{\n  circuit=" + circuit + "\n  data=" + data + "\n}";
+    final var s = switch (getAction) {
+      case ACTION_SET_NAME -> "ACTION_SET_NAME";
+      case ACTION_ADD -> "ACTION_ADD";
+      case ACTION_REMOVE -> "ACTION_REMOVE";
+      case ACTION_INVALIDATE -> "ACTION_INVALIDATE";
+      case ACTION_CLEAR -> "ACTION_CLEAR";
+      case TRANSACTION_DONE -> "TRANSACTION_DONE";
+      case CHANGE_DEFAULT_BOX_APPEARANCE -> "DEFAULT_BOX_APPEARANCE";
+      case ACTION_CHECK_NAME -> "CHECK_NAME";
+      case ACTION_DISPLAY_CHANGE -> "ACTION_DISPLAY_CHANGE";
+      default -> "UNKNOWN_ACTION(" + getAction + ")";
+    };
+    return LineBuffer.format("{{1}}{\n  circuit={{2}}\n  data={{3}}\n}", s, getCircuit, getData);
   }
+
 }

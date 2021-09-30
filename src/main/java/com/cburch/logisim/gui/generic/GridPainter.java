@@ -13,7 +13,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Component;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Rectangle;
 import java.awt.image.MemoryImageSource;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -63,7 +62,7 @@ public class GridPainter implements PropertyChangeListener {
   }
 
   public void setZoomFactor(double value) {
-    double oldValue = zoomFactor;
+    final var oldValue = zoomFactor;
     if (oldValue != value) {
       zoomFactor = value;
       createGridImage(gridSize, value);
@@ -76,7 +75,7 @@ public class GridPainter implements PropertyChangeListener {
   }
 
   public void setZoomModel(ZoomModel model) {
-    ZoomModel old = zoomModel;
+    final var old = zoomModel;
     if (model != old) {
       if (listener == null) {
         listener = new Listener();
@@ -99,11 +98,11 @@ public class GridPainter implements PropertyChangeListener {
   public void paintGrid(Graphics g) {
     if (!showGrid) return;
 
-    Rectangle clip = g.getClipBounds();
-    int x0 = (clip.x / gridImageWidth) * gridImageWidth; // round down to multiple of w
-    int y0 = (clip.y / gridImageWidth) * gridImageWidth;
-    for (int x = 0; x < clip.width + gridImageWidth; x += gridImageWidth) {
-      for (int y = 0; y < clip.height + gridImageWidth; y += gridImageWidth) {
+    final var clip = g.getClipBounds();
+    final var x0 = (clip.x / gridImageWidth) * gridImageWidth; // round down to multiple of w
+    final var y0 = (clip.y / gridImageWidth) * gridImageWidth;
+    for (var x = 0; x < clip.width + gridImageWidth; x += gridImageWidth) {
+      for (var y = 0; y < clip.height + gridImageWidth; y += gridImageWidth) {
         g.drawImage(gridImage, x0 + x, y0 + y, destination);
       }
     }
@@ -114,16 +113,16 @@ public class GridPainter implements PropertyChangeListener {
   }
 
   private void createGridImage(int size, double f) {
-    double ww = f * size * 5;
+    var ww = f * size * 5;
     while (2 * ww < 150) ww *= 2;
-    int w = (int) Math.round(ww);
-    int[] pix = new int[w * w];
+    final var w = (int) Math.round(ww);
+    final var pix = new int[w * w];
     Arrays.fill(pix, AppPreferences.GRID_BG_COLOR.get());
 
     if (f == 1.0) {
-      int lineStep = size * w;
-      for (int j = 0; j < pix.length; j += lineStep) {
-        for (int i = 0; i < w; i += size) {
+      final var lineStep = size * w;
+      for (var j = 0; j < pix.length; j += lineStep) {
+        for (var i = 0; i < w; i += size) {
           pix[i + j] = AppPreferences.GRID_DOT_COLOR.get();
         }
       }
@@ -136,7 +135,7 @@ public class GridPainter implements PropertyChangeListener {
         off1 = off0 + num;
       }
 
-      int dotColor =
+      final var dotColor =
           f <= 0.5
               ? AppPreferences.GRID_ZOOMED_DOT_COLOR.get()
               : AppPreferences.GRID_DOT_COLOR.get();
@@ -190,8 +189,8 @@ public class GridPainter implements PropertyChangeListener {
   private class Listener implements PropertyChangeListener {
     @Override
     public void propertyChange(PropertyChangeEvent event) {
-      String prop = event.getPropertyName();
-      Object val = event.getNewValue();
+      final var prop = event.getPropertyName();
+      final var val = event.getNewValue();
       if (prop.equals(ZoomModel.ZOOM)) {
         setZoomFactor((Double) val);
         destination.repaint();

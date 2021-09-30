@@ -35,10 +35,8 @@ public class SimulationTreeRenderer extends DefaultTreeCellRenderer {
     Component ret =
         super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
     SimulationTreeModel model = (SimulationTreeModel) tree.getModel();
-    if (ret instanceof JLabel) {
-      JLabel label = (JLabel) ret;
-      if (value instanceof SimulationTreeNode) {
-        SimulationTreeNode node = (SimulationTreeNode) value;
+    if (ret instanceof JLabel label) {
+      if (value instanceof SimulationTreeNode node) {
         ComponentFactory factory = node.getComponentFactory();
         if (factory != null) {
           label.setIcon(new RendererIcon(factory, node.isCurrentView(model)));

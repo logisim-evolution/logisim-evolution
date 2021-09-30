@@ -11,32 +11,31 @@ package com.cburch.logisim.std.arith;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class NegatorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
-  private static final String NrOfBitsStr = "NrOfBits";
-  private static final int NrOfBitsId = -1;
+  private static final String NR_OF_BITS_STRING = "NrOfBits";
+  private static final int NR_OF_BITS_ID = -1;
 
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var Inputs = new TreeMap<String, Integer>();
-    int inputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    Inputs.put("DataX", inputbits);
-    return Inputs;
+  public NegatorHDLGeneratorFactory() {
+    super();
+    myParametersList
+        .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID);
+    myPorts
+        .add(Port.INPUT, "DataX", NR_OF_BITS_ID, Negator.IN, StdAttr.WIDTH)
+        .add(Port.OUTPUT, "MinDataX", NR_OF_BITS_ID, Negator.OUT, StdAttr.WIDTH);
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents = new LineBuffer();
-    if (HDL.isVHDL()) {
+  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    final var Contents = LineBuffer.getBuffer();
+    if (Hdl.isVhdl()) {
       int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
       Contents.add(
           (nrOfBits == 1)
@@ -46,39 +45,5 @@ public class NegatorHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       Contents.add("assign   MinDataX = -DataX;");
     }
     return Contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var Outputs = new TreeMap<String, Integer>();
-    int outputbits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
-    Outputs.put("MinDataX", outputbits);
-    return Outputs;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var Parameters = new TreeMap<Integer, String>();
-    int outputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (outputbits > 1) Parameters.put(NrOfBitsId, NrOfBitsStr);
-    return Parameters;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
-    final var ParameterMap = new TreeMap<String, Integer>();
-    int nrOfBits = ComponentInfo.getComponent().getEnd(0).getWidth().getWidth();
-    if (nrOfBits > 1) ParameterMap.put(NrOfBitsStr, nrOfBits);
-    return ParameterMap;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    final var portMap = new TreeMap<String, String>();
-    if (!(MapInfo instanceof NetlistComponent)) return portMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    portMap.putAll(GetNetMap("DataX", true, ComponentInfo, 0, Nets));
-    portMap.putAll(GetNetMap("MinDataX", true, ComponentInfo, 1, Nets));
-    return portMap;
   }
 }

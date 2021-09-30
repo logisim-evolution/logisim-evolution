@@ -112,21 +112,19 @@ public class CircuitChange {
     switch (type) {
       case CLEAR:
         return true;
-      case ADD:
-      case REMOVE:
+      case ADD, REMOVE:
         return comp.getFactory() instanceof Pin;
-      case ADD_ALL:
-      case REMOVE_ALL:
-        for (Component comp : comps) {
+      case ADD_ALL, REMOVE_ALL:
+        for (final var comp : comps) {
           if (comp.getFactory() instanceof Pin) return true;
         }
         return false;
       case REPLACE:
-        ReplacementMap repl = (ReplacementMap) newValue;
-        for (Component comp : repl.getRemovals()) {
+        final var repl = (ReplacementMap) newValue;
+        for (final var comp : repl.getRemovals()) {
           if (comp.getFactory() instanceof Pin) return true;
         }
-        for (Component comp : repl.getAdditions()) {
+        for (final var comp : repl.getAdditions()) {
           if (comp.getFactory() instanceof Pin) return true;
         }
         return false;
@@ -161,13 +159,13 @@ public class CircuitChange {
         prevReplacements.add(comp);
         break;
       case ADD_ALL:
-        for (Component comp : comps) prevReplacements.add(comp);
+        for (final var comp : comps) prevReplacements.add(comp);
         break;
       case REMOVE:
         prevReplacements.remove(comp);
         break;
       case REMOVE_ALL:
-        for (Component comp : comps) prevReplacements.remove(comp);
+        for (final var comp : comps) prevReplacements.remove(comp);
         break;
       case REPLACE:
         prevReplacements.append((ReplacementMap) newValue);
@@ -208,26 +206,17 @@ public class CircuitChange {
   }
 
   CircuitChange getReverseChange() {
-    switch (type) {
-      case CLEAR:
-        return CircuitChange.addAll(circuit, comps);
-      case ADD:
-        return CircuitChange.remove(circuit, comp);
-      case ADD_ALL:
-        return CircuitChange.removeAll(circuit, comps);
-      case REMOVE:
-        return CircuitChange.add(circuit, comp);
-      case REMOVE_ALL:
-        return CircuitChange.addAll(circuit, comps);
-      case SET:
-        return CircuitChange.set(circuit, comp, attr, newValue, oldValue);
-      case SET_FOR_CIRCUIT:
-        return CircuitChange.setForCircuit(circuit, attr, newValue, oldValue);
-      case REPLACE:
-        return CircuitChange.replace(circuit, ((ReplacementMap) newValue).getInverseMap());
-      default:
-        throw new IllegalArgumentException("unknown change type " + type);
-    }
+    return switch (type) {
+      case CLEAR -> CircuitChange.addAll(circuit, comps);
+      case ADD -> CircuitChange.remove(circuit, comp);
+      case ADD_ALL -> CircuitChange.removeAll(circuit, comps);
+      case REMOVE -> CircuitChange.add(circuit, comp);
+      case REMOVE_ALL -> CircuitChange.addAll(circuit, comps);
+      case SET -> CircuitChange.set(circuit, comp, attr, newValue, oldValue);
+      case SET_FOR_CIRCUIT -> CircuitChange.setForCircuit(circuit, attr, newValue, oldValue);
+      case REPLACE -> CircuitChange.replace(circuit, ((ReplacementMap) newValue).getInverseMap());
+      default -> throw new IllegalArgumentException("unknown change type " + type);
+    };
   }
 
   public int getType() {

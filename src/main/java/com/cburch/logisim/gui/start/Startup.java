@@ -161,9 +161,10 @@ public class Startup implements AWTEventListener {
   private static final String ARG_TEMPLATE_LONG = "user-template";
   private static final String ARG_VERSION_SHORT = "v";
   private static final String ARG_VERSION_LONG = "version";
-  private static final String ARG_NO_SPLASH_LONG = "no-splash";
   private static final String ARG_TEST_VECTOR_SHORT = "w";
   private static final String ARG_TEST_VECTOR_LONG = "test-vector";
+  private static final String ARG_NO_SPLASH_LONG = "no-splash";
+  private static final String ARG_MAIN_CIRCUIT = "toplevel-circuit";
 
   /**
    * Parses provided string expecting it represent boolean option. Accepted values
@@ -200,7 +201,7 @@ public class Startup implements AWTEventListener {
     System.out.println();
     final var formatter = new HelpFormatter();
     formatter.setWidth(100);  // Arbitrary chosen value.
-    formatter.printHelp(Main.APP_NAME, null, opts, null, true);
+    formatter.printHelp(BuildInfo.name, null, opts, null, true);
     return RC.QUIT;
   }
 
@@ -210,10 +211,10 @@ public class Startup implements AWTEventListener {
    * @return Handler return code enum (RC.xxx)
    */
   protected static RC printVersion() {
-    System.out.println(Main.APP_DISPLAY_NAME);
-    System.out.println(Main.APP_URL);
+    System.out.println(BuildInfo.displayName);
+    System.out.println(BuildInfo.url);
     System.out.println(LineBuffer.format("{{1}} ({{2}})", BuildInfo.buildId, BuildInfo.dateIso8601));
-    System.out.println(LineBuffer.format("{{1}} ({{2}})", Main.JVM_VERSION, Main.JVM_VENDOR));
+    System.out.println(LineBuffer.format("{{1}} ({{2}})", BuildInfo.jvm_version, BuildInfo.jvm_vendor));
     return RC.QUIT;
   }
 
@@ -320,6 +321,7 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argLocaleOption", ARG_LOCALE_LONG, ARG_LOCALE_SHORT, 1);
     addOption(opts, "argTemplateOption", ARG_TEMPLATE_LONG, ARG_TEMPLATE_SHORT, 1);
     addOption(opts, "argNoSplashOption", ARG_NO_SPLASH_LONG);
+    addOption(opts, "argMainCircuitOption", ARG_MAIN_CIRCUIT, 1);
     addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR_LONG, ARG_TEST_VECTOR_SHORT, 2);
     addOption(opts, "argTestCircuitOption", ARG_TEST_CIRCUIT_LONG, ARG_TEST_CIRCUIT_SHORT, 1);     // FIXME add "Option" suffix to key name
     addOption(opts, "argTestCircGenOption", ARG_TEST_CIRC_GEN_LONG, ARG_TEST_CIRC_GEN_SHORT, 2);   // FIXME add "Option" suffix to key name
@@ -388,6 +390,7 @@ public class Startup implements AWTEventListener {
         case ARG_TEST_FGPA_LONG -> handleArgTestFpga(startup, opt);
         case ARG_TEST_CIRCUIT_LONG -> handleArgTestCircuit(startup, opt);
         case ARG_TEST_CIRC_GEN_LONG -> handleArgTestCircGen(startup, opt);
+        case ARG_MAIN_CIRCUIT -> handleArgMainCircuit(startup, opt);
         default -> RC.OK; // should not really happen IRL.
       };
       lastHandlerRc = optHandlerRc;
@@ -586,11 +589,11 @@ public class Startup implements AWTEventListener {
       return RC.OK;
     }
     // okay, not a file, let's look for empty and plain
-    if (option.toLowerCase().equals("empty")) {
+    if (option.equalsIgnoreCase("empty")) {
       startup.templEmpty = true;
       return RC.OK;
     }
-    if (option.toLowerCase().equals("plain")) {
+    if (option.equalsIgnoreCase("plain")) {
       startup.templPlain = true;
       return RC.OK;
     }
@@ -609,6 +612,11 @@ public class Startup implements AWTEventListener {
     startup.showSplash = false;
     startup.exitAfterStartup = true;
     // This is to test a test bench. It will return 0 or 1 depending on if the tests pass or not.
+    return RC.OK;
+  }
+
+  private static RC handleArgMainCircuit(Startup startup, Option opt) {
+    startup.circuitToTest = opt.getValues()[0];
     return RC.OK;
   }
 
@@ -785,7 +793,7 @@ public class Startup implements AWTEventListener {
     final var downTickFreq = mainCircuit.getDownloadFrequency();
     final var usedFrequency = (testTickFrequency > 0) ? testTickFrequency :
         (downTickFreq > 0) ? downTickFreq : simTickFreq;
-    Download Downloader =
+    Download downloader =
         new Download(
             proj,
             testCircuitImpName,
@@ -796,7 +804,7 @@ public class Startup implements AWTEventListener {
             false,
             false,
             testCircuitHdlOnly);
-    return Downloader.runtty();
+    return downloader.runTty();
   }
 
   private void loadTemplate(Loader loader, File templFile, boolean templEmpty) {
@@ -954,20 +962,19 @@ public class Startup implements AWTEventListener {
 
   private boolean HasIcon(Component comp) {
     var result = false;
-    if (comp instanceof JOptionPane) {
-      for (Component comp1 : ((JOptionPane) comp).getComponents()) result |= HasIcon(comp1);
-    } else if (comp instanceof JPanel) {
-      for (Component comp1 : ((JPanel) comp).getComponents()) result |= HasIcon(comp1);
-    } else if (comp instanceof JLabel) {
-      return ((JLabel) comp).getIcon() != null;
+    if (comp instanceof JOptionPane pane) {
+      for (final var comp1 : pane.getComponents()) result |= HasIcon(comp1);
+    } else if (comp instanceof JPanel panel) {
+      for (final var comp1 : panel.getComponents()) result |= HasIcon(comp1);
+    } else if (comp instanceof JLabel label) {
+      return label.getIcon() != null;
     }
     return result;
   }
 
   @Override
   public void eventDispatched(AWTEvent event) {
-    if (event instanceof ContainerEvent) {
-      final var containerEvent = (ContainerEvent) event;
+    if (event instanceof ContainerEvent containerEvent) {
       if (containerEvent.getID() == ContainerEvent.COMPONENT_ADDED) {
         final var container = containerEvent.getChild();
         if ((container instanceof JButton)

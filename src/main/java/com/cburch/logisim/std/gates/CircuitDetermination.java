@@ -20,13 +20,10 @@ import java.util.ArrayList;
  */
 abstract class CircuitDetermination {
   private static class Determine implements Expression.Visitor<CircuitDetermination> {
-    private Gate binary(
-        CircuitDetermination aret, CircuitDetermination bret, ComponentFactory factory) {
-      if (aret instanceof Gate) {
-        final var a = (Gate) aret;
+    private Gate binary(CircuitDetermination aret, CircuitDetermination bret, ComponentFactory factory) {
+      if (aret instanceof Gate a) {
         if (a.factory == factory) {
-          if (bret instanceof Gate) {
-            final var b = (Gate) bret;
+          if (bret instanceof Gate b) {
             if (b.factory == factory) {
               a.inputs.addAll(b.inputs);
               return a;
@@ -37,8 +34,7 @@ abstract class CircuitDetermination {
         }
       }
 
-      if (bret instanceof Gate) {
-        final var b = (Gate) bret;
+      if (bret instanceof Gate b) {
         if (b.factory == factory) {
           b.inputs.add(aret);
           return b;
@@ -64,8 +60,7 @@ abstract class CircuitDetermination {
     @Override
     public CircuitDetermination visitNot(Expression aBase) {
       final var aret = aBase.visit(this);
-      if (aret instanceof Gate) {
-        final var a = (Gate) aret;
+      if (aret instanceof Gate a) {
         if (a.factory == AndGate.FACTORY) {
           a.factory = NandGate.FACTORY;
           return a;
@@ -78,8 +73,7 @@ abstract class CircuitDetermination {
         }
       }
 
-      if (aret instanceof Input) {
-        final var a = (Input) aret;
+      if (aret instanceof Input a) {
         a.TogleInversion();
         return a;
       }
@@ -204,11 +198,9 @@ abstract class CircuitDetermination {
     private void notAllInputs() {
       for (int i = 0; i < inputs.size(); i++) {
         final var old = inputs.get(i);
-        if (inputs.get(i) instanceof CircuitDetermination.Value) {
-          final var inp = (Value) inputs.get(i);
+        if (inputs.get(i) instanceof CircuitDetermination.Value inp) {
           inp.value ^= 1;
-        } else if (inputs.get(i) instanceof CircuitDetermination.Input) {
-          final var inp = (Input) inputs.get(i);
+        } else if (inputs.get(i) instanceof CircuitDetermination.Input inp) {
           inp.TogleInversion();
         } else if (old.isNandNot()) {
           inputs.set(i, ((Gate) old).inputs.get(0));

@@ -58,7 +58,7 @@ public class Ttl7430 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     var val1 =
         state
             .getPortValue(0)

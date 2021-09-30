@@ -101,9 +101,7 @@ class ExpressionTab extends AnalyzerTab {
     @Override
     public void setValueAt(Object obj, int row, int column) {
       final var ne = listCopy[row];
-      if (!(obj instanceof NamedExpression))
-        return;
-      final var e = (NamedExpression) obj;
+      if (!(obj instanceof NamedExpression e)) return;
       if (ne != e && !ne.name.equals(e.name)) return;
       listCopy[row] = e;
       if (e.expr != null) model.getOutputExpressions().setExpression(e.name, e.expr, e.exprString);
@@ -290,12 +288,10 @@ class ExpressionTab extends AnalyzerTab {
 
     @Override
     public boolean isCellEditable(EventObject e) {
-      if (e instanceof MouseEvent) {
-        final var me = (MouseEvent) e;
+      if (e instanceof MouseEvent me) {
         return me.getClickCount() >= 2;
       }
-      if (e instanceof KeyEvent) {
-        final var ke = (KeyEvent) e;
+      if (e instanceof KeyEvent ke) {
         return (ke.getKeyCode() == KeyEvent.VK_F2
             || ke.getKeyCode() == KeyEvent.VK_ENTER);
       }

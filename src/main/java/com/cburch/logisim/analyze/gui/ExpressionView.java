@@ -27,6 +27,7 @@ class ExpressionView extends JPanel {
 
   private class MyListener extends ComponentAdapter {
 
+    @Override
     public void componentResized(ComponentEvent arg0) {
       final var width = getWidth();
       if (renderData != null && Math.abs(renderData.getParentWidth() - width) > 2) {
@@ -124,8 +125,8 @@ class ExpressionView extends JPanel {
   }
 
   public int getExpressionHeight() {
-    // FIXME replace hardcoded value by constant
-    if (renderData == null) return 25;
+    final var defaultHeight = 25;
+    if (renderData == null) return defaultHeight;
     return (int) renderData.getPreferredSize().getHeight();
   }
 

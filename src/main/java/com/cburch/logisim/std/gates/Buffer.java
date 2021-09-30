@@ -21,7 +21,6 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.Options;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -31,10 +30,8 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.LineBuffer;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 
 class Buffer extends InstanceFactory {
   /**
@@ -44,16 +41,6 @@ class Buffer extends InstanceFactory {
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Buffer";
-
-  private static class BufferGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
-    @Override
-    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      return (new LineBuffer())
-          .add(HDL.isVHDL() ? "Result <= Input_1;" : "assign Result = Input_1;")
-          .empty()
-          .getWithIndent();
-    }
-  }
 
   //
   // static methods - shared with other classes
@@ -85,7 +72,7 @@ class Buffer extends InstanceFactory {
   public static final InstanceFactory FACTORY = new Buffer();
 
   private Buffer() {
-    super(_ID, S.getter("bufferComponent"), new BufferGateHDLGeneratorFactory());
+    super(_ID, S.getter("bufferComponent"), new AbstractBufferHdlGenerator(false));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,

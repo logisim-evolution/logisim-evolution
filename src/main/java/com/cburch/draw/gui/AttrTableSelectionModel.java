@@ -13,17 +13,13 @@ import static com.cburch.draw.Strings.S;
 
 import com.cburch.draw.actions.ModelChangeAttributeAction;
 import com.cburch.draw.canvas.Canvas;
-import com.cburch.draw.canvas.Selection;
 import com.cburch.draw.canvas.SelectionEvent;
 import com.cburch.draw.canvas.SelectionListener;
 import com.cburch.draw.model.AttributeMapKey;
-import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import java.util.HashMap;
-import java.util.Map;
 
 class AttrTableSelectionModel extends AttributeSetTableModel implements SelectionListener {
   private final Canvas canvas;
@@ -36,12 +32,12 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
 
   @Override
   public String getTitle() {
-    Selection sel = canvas.getSelection();
+    final var sel = canvas.getSelection();
     Class<? extends CanvasObject> commonClass = null;
-    int commonCount = 0;
+    var commonCount = 0;
     CanvasObject firstObject = null;
-    int totalCount = 0;
-    for (CanvasObject obj : sel.getSelected()) {
+    var totalCount = 0;
+    for (final var obj : sel.getSelected()) {
       if (firstObject == null) {
         firstObject = obj;
         commonClass = obj.getClass();
@@ -75,17 +71,15 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
 
   @Override
   public void setValueRequested(Attribute<Object> attr, Object value) {
-    SelectionAttributes attrs = (SelectionAttributes) getAttributeSet();
-    Map<AttributeMapKey, Object> oldVals;
-    oldVals = new HashMap<>();
-    Map<AttributeMapKey, Object> newVals;
-    newVals = new HashMap<>();
-    for (Map.Entry<AttributeSet, CanvasObject> ent : attrs.entries()) {
-      AttributeMapKey key = new AttributeMapKey(attr, ent.getValue());
+    final var attrs = (SelectionAttributes) getAttributeSet();
+    final var oldVals = new HashMap<AttributeMapKey, Object>();
+    final var newVals = new HashMap<AttributeMapKey, Object>();
+    for (final var ent : attrs.entries()) {
+      final var key = new AttributeMapKey(attr, ent.getValue());
       oldVals.put(key, ent.getKey().getValue(attr));
       newVals.put(key, value);
     }
-    CanvasModel model = canvas.getModel();
+    final var model = canvas.getModel();
     canvas.doAction(new ModelChangeAttributeAction(model, oldVals, newVals));
     fireTitleChanged();
   }

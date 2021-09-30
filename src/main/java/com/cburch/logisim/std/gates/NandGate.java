@@ -14,7 +14,7 @@ import static com.cburch.logisim.std.Strings.S;
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import java.awt.Graphics2D;
@@ -24,25 +24,25 @@ class NandGate extends AbstractGate {
 
   private static class NandGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public boolean GetFloatingValue(boolean isInverted) {
+    public boolean getFloatingValue(boolean isInverted) {
       return isInverted;
     }
 
     @Override
-    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+    public ArrayList<String> getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       final var contents = new ArrayList<String>();
       final var oneLine = new StringBuilder();
       oneLine.append("   ")
-          .append(HDL.assignPreamble())
+          .append(Hdl.assignPreamble())
           .append("Result")
-          .append(HDL.assignOperator())
-          .append(HDL.notOperator())
+          .append(Hdl.assignOperator())
+          .append(Hdl.notOperator())
           .append("(");
       final var tabWidth = oneLine.length();
       var first = true;
       for (var i = 0; i < nrOfInputs; i++) {
         if (!first) {
-          oneLine.append(HDL.andOperator());
+          oneLine.append(Hdl.andOperator());
           contents.add(oneLine.toString());
           oneLine.setLength(0);
           while (oneLine.length() < tabWidth) {

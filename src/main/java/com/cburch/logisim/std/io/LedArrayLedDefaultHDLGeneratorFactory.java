@@ -11,33 +11,42 @@ package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.instance.Port;
 
-public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
-  public static final int nrOfLedsGeneric = -1;
-  public static final int activeLowGeneric = -2;
-  public static final String nrOfLedsString = "nrOfLeds";
-  public static final String activeLowString = "activeLow";
+  public static final int NR_OF_LEDS_ID = -1;
+  public static final int ACTIVE_LOW_ID = -2;
+  public static final String NR_OF_LEDS_STRING = "nrOfLeds";
+  public static final String ACTIVE_LOW_STRING = "activeLow";
   public static final String HDL_IDENTIFIER = "LedArrayLedDefault";
+
+  public LedArrayLedDefaultHDLGeneratorFactory() {
+    super();
+    myParametersList
+        .add(NR_OF_LEDS_STRING, NR_OF_LEDS_ID)
+        .add(ACTIVE_LOW_STRING, ACTIVE_LOW_ID);
+    myPorts
+        .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayInputs, NR_OF_LEDS_ID, 0)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayOutputs, NR_OF_LEDS_ID, 1);
+  }
 
   public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
     final var contents =
-        (new LineBuffer())
-            .pair("nrOfLeds", nrOfLedsString)
+        LineBuffer.getBuffer()
+            .pair("nrOfLeds", NR_OF_LEDS_STRING)
             .pair("ledsCount", nrOfRows * nrOfColumns)
             .pair("rows", nrOfRows)
             .pair("cols", nrOfColumns)
-            .pair("activeLow", activeLowString)
+            .pair("activeLow", ACTIVE_LOW_STRING)
             .pair("activeLowVal", activeLow ? "1" : "0");
 
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           GENERIC MAP ( {{nrOfLeds}} => {{ledsCount}},
                         {{activeLow}} => {{activeLowVal}} )
@@ -53,11 +62,11 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
 
   public static ArrayList<String> getPortMap(int id) {
     final var map =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("id", id)
             .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
             .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       map.add("""
           PORT MAP ( {{outs}} => {{outs}}{{id}},
                      {{ins }} => s_{{ins}}{{id}} );
@@ -72,35 +81,13 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHDLGeneratorF
   }
 
   @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayOutputs, nrOfLedsGeneric);
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var inputs = new TreeMap<String, Integer>();
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayInputs, nrOfLedsGeneric);
-    return inputs;
-  }
-
-  @Override
-  public SortedMap<Integer, String> GetParameterList(AttributeSet attrs) {
-    final var generics = new TreeMap<Integer, String>();
-    generics.put(nrOfLedsGeneric, nrOfLedsString);
-    generics.put(activeLowGeneric, activeLowString);
-    return generics;
-  }
-
-  @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
             .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayOutputs);
 
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE
              {{outs}}(n) <= NOT({{ins}}(n)) WHEN activeLow = 1 ELSE {{ins}}(n);
