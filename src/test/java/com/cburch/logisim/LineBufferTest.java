@@ -91,7 +91,7 @@ public class LineBufferTest extends TestBase {
 
     lb1.add(lb2);
 
-    assertEquals(lb1Strings.size() + lb2Strings.size(), lb1.size());
+    assertEquals(lb1Cnt + lb2Cnt, lb1.size());
     var idx = 0;
     for (final var line : lb1Strings) {
       assertEquals(line, lb1.get(idx++));
