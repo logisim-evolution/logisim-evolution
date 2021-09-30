@@ -37,6 +37,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PortIO extends InstanceFactory {
   /**
@@ -47,7 +48,7 @@ public class PortIO extends InstanceFactory {
    */
   public static final String _ID = "PortIO";
 
-  public static ArrayList<String> GetLabels(int size) {
+  public static List<String> GetLabels(int size) {
     ArrayList<String> LabelNames = new ArrayList<>();
     for (var i = 0; i < size; i++) {
       LabelNames.add("pin_" + (i + 1));
