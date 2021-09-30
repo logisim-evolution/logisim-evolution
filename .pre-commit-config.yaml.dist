@@ -13,11 +13,9 @@ repos:
     hooks:
       # Prevent giant files from being committed
       - id: check-added-large-files
-        args: ['--maxkb=1555550']
+        args: ['--maxkb=100']
       # This hook checks yaml files for parseable syntax
       - id: check-yaml
-      # forbid files which have a UTF-8 byte-order marker
-      - id: check-byte-order-marker
       # Check for files that would conflict in case-insensitive filesystems
       - id: check-case-conflict
       # Ensures that (non-binary) executables have a shebang.
@@ -49,7 +47,7 @@ repos:
       - id: forbid-crlf
 
   - repo: https://github.com/MarcinOrlowski/pre-commit-hooks
-    rev: 1.2.1
+    rev: 1.3.0
     hooks:
       # Checks modified Java files with Checkstyle linter.
       - id: checkstyle-jar
