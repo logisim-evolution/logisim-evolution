@@ -17,7 +17,6 @@ import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 
 public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
 
@@ -84,9 +83,9 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
     return contents;
   }
 
-  public ArrayList<String> GetOneHot(boolean inverted, int nrOfInputs, boolean isBus) {
-    var lines = new ArrayList<String>();
-    var spaces = "   ";
+  public LineBuffer getOneHot(boolean inverted, int nrOfInputs, boolean isBus) {
+    var lines = LineBuffer.getHdlBuffer();
+    var spaces = "";
     var indexString = "";
     if (isBus) {
       if (Hdl.isVhdl()) {
@@ -94,11 +93,11 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
         spaces += "   ";
         indexString = "(n)";
       } else {
-        lines.add("   genvar n;");
-        lines.add("   generate");
-        lines.add("      for (n = 0 ; n < " + BIT_WIDTH_STRING + " ; n = n + 1)");
-        lines.add("         begin: bit");
-        spaces += "         ";
+        lines.add("genvar n;");
+        lines.add("generate");
+        lines.add("   for (n = 0 ; n < " + BIT_WIDTH_STRING + " ; n = n + 1)");
+        lines.add("      begin: bit");
+        spaces += "      ";
         indexString = "[n]";
       }
     }
@@ -123,12 +122,12 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
           oneLine.append(Hdl.notOperator()).append("(s_real_input_").append(i + 1).append(indexString).append(")");
         }
         if (i < (nrOfInputs - 1)) {
-          oneLine.append(" ").append(Hdl.andOperator()).append(" ");
+          oneLine.append(Hdl.andOperator());
         }
       }
       oneLine.append(")");
       if (termloop < (nrOfInputs - 1)) {
-        oneLine.append(" ").append(Hdl.orOperator()).append(" ");
+        oneLine.append(Hdl.orOperator());
       } else {
         if (inverted) oneLine.append(")");
         oneLine.append(";");
@@ -148,7 +147,6 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
   }
 
   public static LineBuffer getParity(boolean inverted, int nrOfInputs, boolean isBus) {
-    // FIXME!
     final var lines = LineBuffer.getHdlBuffer();
     var spaces = "   ";
     var indexString = "";
@@ -158,11 +156,11 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
         spaces += "   ";
         indexString = "(n)";
       } else {
-        lines.add("   genvar n;");
-        lines.add("   generate");
-        lines.add("      for (n = 0 ; n < " + BIT_WIDTH_STRING + " ; n = n + 1)");
-        lines.add("         begin: bit");
-        spaces += "         ";
+        lines.add("genvar n;");
+        lines.add("generate");
+        lines.add("   for (n = 0 ; n < " + BIT_WIDTH_STRING + " ; n = n + 1)");
+        lines.add("      begin: bit");
+        spaces += "      ";
         indexString = "[n]";
       }
     }

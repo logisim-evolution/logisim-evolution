@@ -17,8 +17,9 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.util.LineBuffer;
+
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 
 class NandGate extends AbstractGate {
 
@@ -29,11 +30,10 @@ class NandGate extends AbstractGate {
     }
 
     @Override
-    public ArrayList<String> getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      final var contents = new ArrayList<String>();
+    public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+      final var contents = LineBuffer.getHdlBuffer();
       final var oneLine = new StringBuilder();
-      oneLine.append("   ")
-          .append(Hdl.assignPreamble())
+      oneLine.append(Hdl.assignPreamble())
           .append("Result")
           .append(Hdl.assignOperator())
           .append(Hdl.notOperator())
@@ -45,17 +45,14 @@ class NandGate extends AbstractGate {
           oneLine.append(Hdl.andOperator());
           contents.add(oneLine.toString());
           oneLine.setLength(0);
-          while (oneLine.length() < tabWidth) {
-            oneLine.append(" ");
-          }
+          oneLine.append(" ".repeat(tabWidth));
         } else {
           first = false;
         }
         oneLine.append("s_real_input_").append(i + 1);
       }
       oneLine.append(");");
-      contents.add(oneLine.toString());
-      contents.add("");
+      contents.add(oneLine.toString()).empty();
       return contents;
     }
   }
