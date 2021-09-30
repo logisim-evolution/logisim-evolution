@@ -44,8 +44,8 @@ public class XilinxDownload implements VendorDownload {
   private final Netlist RootNetList;
   private MappableResourcesContainer MapInfo;
   private final BoardInformation boardInfo;
-  private final ArrayList<String> Entities;
-  private final ArrayList<String> architectures;
+  private final List<String> Entities;
+  private final List<String> architectures;
   private final String HDLType;
   private final String bitfileExt;
   private final boolean IsCPLD;

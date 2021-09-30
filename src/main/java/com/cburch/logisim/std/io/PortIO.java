@@ -49,7 +49,7 @@ public class PortIO extends InstanceFactory {
   public static final String _ID = "PortIO";
 
   public static List<String> GetLabels(int size) {
-    ArrayList<String> LabelNames = new ArrayList<>();
+    final var LabelNames = new ArrayList<String>();
     for (var i = 0; i < size; i++) {
       LabelNames.add("pin_" + (i + 1));
     }

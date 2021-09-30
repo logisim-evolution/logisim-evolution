@@ -269,7 +269,7 @@ public class SocBusStateInfo extends JDialog
   public void initializeTransaction(SocBusTransaction trans, String busId) {
     int nrOfReponders = 0;
     int reponder = -1;
-    ArrayList<SocBusSlaveInterface> slaves = memMap.getSlaves();
+    final var slaves = memMap.getSlaves();
     if (slaves.isEmpty()) trans.setError(SocBusTransaction.NO_SLAVES_ERROR);
     else if (trans.isReadTransaction()
         && trans.isWriteTransaction()
@@ -293,7 +293,7 @@ public class SocBusStateInfo extends JDialog
         sniffer.sniffTransaction(trans);
     }
     if (!trans.isHidden()) {
-      SocBusState data = getRegPropagateState();
+      final var data = getRegPropagateState();
       if (data != null) {
         data.addTransaction(trans);
         if (myComp.getAttributeSet().getValue(SocBusAttributes.SOC_TRACE_VISIBLE))

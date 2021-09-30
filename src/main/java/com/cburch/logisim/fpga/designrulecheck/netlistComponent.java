@@ -24,7 +24,7 @@ public class netlistComponent {
   private final Component compReference;
   private final ArrayList<ConnectionEnd> endEnds;
   final ComponentMapInformationContainer myMapInformation;
-  private Map<ArrayList<String>, BubbleInformationContainer> globalIds;
+  private Map<List<String>, BubbleInformationContainer> globalIds;
   private BubbleInformationContainer localId;
   private boolean isGatedInstance;
 
