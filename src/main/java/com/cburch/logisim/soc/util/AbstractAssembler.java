@@ -137,7 +137,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
 
   private int getData(boolean lookForStrings, Integer[] contents, long sizeInBytes,
                       long startAddress, HashMap<Integer, String> labels, int maxLabelSize,
-                      StringBuffer lines, int lineNum) {
+                      StringBuilder lines, int lineNum) {
     int nrBytesWritten = 0;
     int size = (int) sizeInBytes;
     int i = 0;
@@ -241,8 +241,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
         }
         if (nrBytesWritten > 0)
           newLineNum = addLine(lines, ", ", newLineNum, false);
-        newLineNum =
-            addLine(lines, String.format("0x%02X", getByte(contents, i)), newLineNum, false);
+        newLineNum = addLine(lines, String.format("0x%02X", getByte(contents, i)), newLineNum, false);
         nrBytesWritten++;
         i++;
       }
@@ -251,8 +250,8 @@ public abstract class AbstractAssembler implements AssemblerInterface {
     return newLineNum;
   }
 
-  private int addLine(StringBuffer s, String val, int lineNum, boolean completedLine) {
-    s.append(val);
+  private int addLine(StringBuilder str, String val, int lineNum, boolean completedLine) {
+    str.append(val);
     return completedLine ? lineNum + 1 : lineNum;
   }
 
@@ -261,7 +260,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
                            ElfProgramHeader elfHeader, ElfSectionHeader elfSections,
                            HashMap<Integer, Integer> validDebugLines) {
 
-    StringBuffer lines = new StringBuffer();
+    final var lines = new StringBuilder();
     int lineNum = 1;
     if (elfSections != null && elfSections.isValid()) {
       /* The section header gives more information on the program, so we prefer this one over the

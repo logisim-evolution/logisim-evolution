@@ -29,7 +29,6 @@ import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   private final long fpgaClockFrequency;
@@ -189,7 +188,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public List<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
     final var nrOfClockTrees = theNetlist.numberOfClockTrees();
     /* First we process all components */
@@ -233,11 +232,11 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         contents.add(LedArrayGenericHDLGeneratorFactory.getArrayConnections(array, myLedArrays.indexOf(array)));
       }
     }
-    return contents.get();
+    return contents;
   }
 
   private static ArrayList<String> getToplevelCode(MapComponent component) {
-    final var temp = new StringBuffer();
+    final var temp = new StringBuilder();
     final var contents = new ArrayList<String>();
     if (component.getNrOfPins() <= 0) {
       // FIXME: hardcoded string
@@ -290,7 +289,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     return contents;
   }
 
-  private static void allign(StringBuffer s) {
-    while (s.length() < 40) s.append(" ");
+  private static void allign(StringBuilder str) {
+    while (str.length() < 40) str.append(" ");
   }
 }

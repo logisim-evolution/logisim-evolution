@@ -9,14 +9,12 @@
 
 package com.cburch.logisim.std.io;
 
-import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.List;
 
 public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
@@ -82,7 +80,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHdlGeneratorF
   }
 
   @Override
-  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents =
         LineBuffer.getBuffer()
             .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
@@ -105,6 +103,6 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHdlGeneratorF
           endgenerate
           """);
     }
-    return contents.getWithIndent();
+    return contents;
   }
 }

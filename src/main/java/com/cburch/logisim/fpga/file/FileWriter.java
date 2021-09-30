@@ -53,7 +53,7 @@ public class FileWriter {
       String targetDirectory,
       String componentName,
       boolean isEntity) {
-    final var fileName = new StringBuffer();
+    final var fileName = new StringBuilder();
     try {
       final var outDir = new File(targetDirectory);
       if (!outDir.exists()) {
@@ -81,7 +81,7 @@ public class FileWriter {
   }
 
   public static File getFilePointer(String targetDirectory, String name) {
-    final var fileName = new StringBuffer();
+    final var fileName = new StringBuilder();
     try {
       final var outDir = new File(targetDirectory);
       if (!outDir.exists()) {

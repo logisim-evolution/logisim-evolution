@@ -17,8 +17,6 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -73,7 +71,7 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHdlGeneratorFact
   }
 
   @Override
-  public List<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer()
             .pair("selBits", NR_OF_SELECT_BITS_STRING)
             .pair("inBits", NR_OF_INPUT_BITS_STRING);
@@ -134,6 +132,6 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHdlGeneratorFact
           assign s_address[0] = (v_select_4_vector[3:2] == 0) ? v_select_4_vector[1] : v_select_4_vector[3];
           """);
     }
-    return contents.getWithIndent();
+    return contents;
   }
 }

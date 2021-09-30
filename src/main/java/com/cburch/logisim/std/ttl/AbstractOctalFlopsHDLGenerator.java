@@ -9,8 +9,6 @@
 
 package com.cburch.logisim.std.ttl;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
@@ -27,7 +25,7 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHdlGeneratorFactory 
     myWires
         .addWire("state", 8)
         .addWire("enable", 1)
-        .addWire("nexts", 8);
+        .addWire("next", 8);
     if (hasClockEnable)
       myPorts
           .add(Port.INPUT, "nCLR", 1, HdlPorts.PULL_UP)
@@ -57,13 +55,13 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHdlGeneratorFactory 
   }
 
   @Override
-  public List<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     return LineBuffer.getBuffer()
         .pair("CLK", HdlPorts.CLOCK)
         .pair("tick", HdlPorts.TICK)
         .add("""
             enable <= {{tick}} and NOT(nCLKen);
-            nexts  <= D7&D6&D5&D4&D3&D2&D1&D0 WHEN enable = '1' ELSE state;
+            next   <= D7&D6&D5&D4&D3&D2&D1&D0 WHEN enable = '1' ELSE state;
             Q0     <= state(0);
             Q1     <= state(1);
             Q2     <= state(2);
@@ -76,11 +74,10 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHdlGeneratorFactory 
             dffs : PROCESS( {{CLK}} , nCLR ) IS
                BEGIN
                   IF (nCLR = '1') THEN state <= (OTHERS => '0');
-                  ELSIF (rising_edge({{CLK}})) THEN state <= nexts;
+                  ELSIF (rising_edge({{CLK}})) THEN state <= next;
                   END IF;
                END PROCESS dffs;
-            """)
-        .getWithIndent();
+            """);
   }
 
   @Override

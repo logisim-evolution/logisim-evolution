@@ -18,9 +18,7 @@ import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class ComparatorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
@@ -63,25 +61,23 @@ public class ComparatorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
 
   @Override
-  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents = LineBuffer.getBuffer();
-    Contents.pair("twosComplement", TWOS_COMPLEMENT_STRING);
-
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    final var contents = LineBuffer.getBuffer().pair("twosComplement", TWOS_COMPLEMENT_STRING);
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (Hdl.isVhdl()) {
       if (nrOfBits == 1) {
-        Contents.add("""
+        contents.add("""
             A_EQ_B <= DataA XNOR DataB;
             A_LT_B <= DataA AND NOT(DataB) WHEN {{twosComplement}} = 1 ELSE NOT(DataA) AND DataB;
             A_GT_B <= NOT(DataA) AND DataB WHEN {{twosComplement}} = 1 ELSE DataA AND NOT(DataB);
             """);
       } else {
-        Contents.add("""
+        contents.add("""
             s_signed_less <= '1' WHEN signed(DataA) < signed(DataB) ELSE '0';
             s_unsigned_less <= '1' WHEN unsigned(DataA) < unsigned(DataB) ELSE '0';
             s_signed_greater <= '1' WHEN signed(DataA) > signed(DataB) ELSE '0';
             s_unsigned_greater <= '1' WHEN unsigned(DataA) > unsigned(DataB) ELSE '0';
-            "
+
             A_EQ_B <= '1' WHEN DataA = DataB ELSE '0';
             A_GT_B <= s_signed_greater WHEN {{twosComplement}} = 1 ELSE s_unsigned_greater;
             A_LT_B <= s_signed_less    WHEN {{TwosComplement}} = 1 ELSE s_unsigned_less;
@@ -89,13 +85,13 @@ public class ComparatorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
       }
     } else {
       if (nrOfBits == 1) {
-        Contents.add("""
+        contents.add("""
             assign A_EQ_B = (DataA == DataB);
             assign A_LT_B = (DataA < DataB);
             assign A_GT_B = (DataA > DataB);
             """);
       } else {
-        Contents.add("""
+        contents.add("""
             assign s_signed_less = ($signed(DataA) < $signed(DataB));
             assign s_unsigned_less = (DataA < DataB);
             assign s_signed_greater = ($signed(DataA) > $signed(DataB));
@@ -107,6 +103,6 @@ public class ComparatorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
             """);
       }
     }
-    return Contents.getWithIndent();
+    return contents;
   }
 }

@@ -14,6 +14,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.cburch.logisim.util.LineBuffer;
+
 public class HdlTypes {
 
   private interface HdlType {
@@ -41,7 +43,7 @@ public class HdlTypes {
 
     @Override
     public String getTypeDefinition() {
-      final var contents = new StringBuffer();
+      final var contents = new StringBuilder();
       if (Hdl.isVhdl()) contents.append(String.format("TYPE %s IS ( ", myTypeName));
       else contents.append("typedef enum { ");
       var first = true;
@@ -83,7 +85,7 @@ public class HdlTypes {
 
     @Override
     public String getTypeDefinition() {
-      final var contents = new StringBuffer();
+      final var contents = new StringBuilder();
       if (Hdl.isVhdl()) {
         contents.append(String.format("Type %s IS ARRAY( %d DOWNTO 0 ) OF std_logic_vector( ", myTypeName, myNrOfEntries))
             .append(myGenericBitWidth == null ? Integer.toString(myBitWidth - 1) : String.format("%s - 1", myGenericBitWidth))
@@ -137,10 +139,10 @@ public class HdlTypes {
   }
 
   public List<String> getTypeDefinitions() {
-    final var defs = new ArrayList<String>();
+    final var defs = LineBuffer.getHdlBuffer();
     for (final var entry : myTypes.keySet())
       defs.add(myTypes.get(entry).getTypeDefinition());
-    return defs;
+    return defs.getWithIndent();
   }
 
   public Map<String, String> getTypedWires() {

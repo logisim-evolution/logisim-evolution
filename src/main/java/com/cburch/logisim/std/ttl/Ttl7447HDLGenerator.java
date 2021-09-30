@@ -15,8 +15,6 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Ttl7447HDLGenerator extends AbstractHdlGeneratorFactory {
 
@@ -43,9 +41,8 @@ public class Ttl7447HDLGenerator extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = LineBuffer.getBuffer();
-    return contents
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    return LineBuffer.getBuffer()
         .add("""
             Sega  <= segments(0);
             Segb  <= segments(1);
@@ -82,8 +79,7 @@ public class Ttl7447HDLGenerator extends AbstractHdlGeneratorFactory {
                   ELSIF ((RBI='0') AND (bcd="0000")) THEN segments <= "0000000";
                   END IF;
                END PROCESS Decode;
-            """)
-        .getWithIndent();
+            """);
   }
 
   @Override

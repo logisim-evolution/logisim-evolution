@@ -20,9 +20,7 @@ import com.cburch.logisim.fpga.hdlgenerator.HdlPorts;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -92,14 +90,14 @@ public class CounterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer()
         .pair("invertClock", INVERT_CLOCK_STRING)
         .pair("clock", HdlPorts.CLOCK)
         .pair("Tick", HdlPorts.TICK);
     contents.addRemarkBlock(
         "Functionality of the counter:\\ __Load_Count_|_mode\\ ____0____0___|_halt\\ "
-            + "____0____1___|_count_up_(default)\\ ____1____0___|load\\ ____1____1___|_count_down");
+            + "____0____1___|_count_up_(default)\\ ____1____0___|_load\\ ____1____1___|_count_down");
     if (Hdl.isVhdl()) {
       contents.add("""
           CompareOut   <= s_carry;
@@ -168,10 +166,10 @@ public class CounterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                 END IF;
              END IF;
           END PROCESS make_flops;
+
           """);
     } else {
       contents.add("""
-
           assign CompareOut = s_carry;
           assign CountValue = s_counter_value;
           assign s_clock = ({{invertClock}} == 0) ? {{clock}} : ~{{clock}};
@@ -209,6 +207,6 @@ public class CounterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
           """);
     }
-    return contents.getWithIndent();
+    return contents;
   }
 }

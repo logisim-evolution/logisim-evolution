@@ -15,8 +15,6 @@ import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AbstractConstantHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
 
@@ -25,39 +23,35 @@ public class AbstractConstantHdlGeneratorFactory extends InlinedHdlGeneratorFact
   }
 
   @Override
-  public List<String> getInlinedCode(
-      Netlist nets,
-      Long componentId,
-      netlistComponent componentInfo,
-      String circuitName) {
-    final var Contents = LineBuffer.getHdlBuffer();
-    int NrOfBits = componentInfo.getComponent().getEnd(0).getWidth().getWidth();
+  public LineBuffer getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
+    final var contents = LineBuffer.getHdlBuffer();
+    int nrOfBits = componentInfo.getComponent().getEnd(0).getWidth().getWidth();
     if (componentInfo.isEndConnected(0)) {
-      long ConstantValue = getConstant(componentInfo.getComponent().getAttributeSet());
+      final var constantValue = getConstant(componentInfo.getComponent().getAttributeSet());
       if (componentInfo.getComponent().getEnd(0).getWidth().getWidth() == 1) {
         /* Single Port net */
-        Contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getNetName(componentInfo, 0, true, nets), Hdl.getConstantVector(ConstantValue, 1))
+        contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getNetName(componentInfo, 0, true, nets), Hdl.getConstantVector(constantValue, 1))
             .add("");
       } else {
         if (nets.isContinuesBus(componentInfo, 0)) {
           /* easy case */
-          Contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getBusNameContinues(componentInfo, 0, nets), Hdl.getConstantVector(ConstantValue, NrOfBits));
-          Contents.add("");
+          contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getBusNameContinues(componentInfo, 0, nets), Hdl.getConstantVector(constantValue, nrOfBits));
+          contents.add("");
         } else {
           /* we have to enumerate all bits */
-          long mask = 1;
-          String ConstValue = Hdl.zeroBit();
-          for (byte bit = 0; bit < NrOfBits; bit++) {
-            if ((mask & ConstantValue) != 0) ConstValue = Hdl.oneBit();
-            else ConstValue = Hdl.zeroBit();
+          var mask = 1L;
+          var constValue = Hdl.zeroBit();
+          for (var bit = 0; bit < nrOfBits; bit++) {
+            if ((mask & constantValue) != 0) constValue = Hdl.oneBit();
+            else constValue = Hdl.zeroBit();
             mask <<= 1;
-            Contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getBusEntryName(componentInfo, 0, true, bit, nets), ConstValue);
+            contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getBusEntryName(componentInfo, 0, true, bit, nets), constValue);
           }
-          Contents.add("");
+          contents.add("");
         }
       }
     }
-    return Contents.getWithIndent();
+    return contents;
   }
 
 }

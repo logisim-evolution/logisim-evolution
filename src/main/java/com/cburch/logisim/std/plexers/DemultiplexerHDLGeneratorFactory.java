@@ -16,8 +16,6 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DemultiplexerHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -46,7 +44,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHdlGeneratorFactor
   }
 
   @Override
-  public List<String> getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer();
     var space = "  ";
     final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
@@ -65,6 +63,6 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHdlGeneratorFactor
         contents.add("assign DemuxOut_{{1}}{{2}} = (Enable&(sel == {{3}} )) ? DemuxIn : 0;", i, space, binValue);
       }
     }
-    return contents.getWithIndent();
+    return contents;
   }
 }

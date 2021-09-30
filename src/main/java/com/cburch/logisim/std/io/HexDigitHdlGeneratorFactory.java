@@ -16,13 +16,11 @@ import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.WithSelectHdlGenerator;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 public class HexDigitHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
 
   @Override
-  public List<String> getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
+  public LineBuffer getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
     final var startId = componentInfo.getLocalBubbleOutputStartId();
     final var bubbleBusName = LOCAL_OUTPUT_BUBBLE_BUS_NAME;
     final var signalName = LineBuffer.format("{{1}}{{<}}{{2}}{{3}}{{4}}{{>}}", bubbleBusName, (startId + 6), Hdl.vectorLoopId(), startId);
@@ -57,7 +55,7 @@ public class HexDigitHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
     }
     if (componentInfo.getComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP))
       contents.add("{{assign}} {{bubbleBusName}}{{<}}{{1}}{{>}} {{=}} {{dpName}};", (startId + 7));
-    return contents.getWithIndent();
+    return contents;
   }
 
 }

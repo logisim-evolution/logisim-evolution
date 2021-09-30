@@ -9,10 +9,9 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import java.util.ArrayList;
+import com.cburch.logisim.util.LineBuffer;
 
 public class Ttl7402 extends AbstractTtlGate {
   /**
@@ -24,14 +23,10 @@ public class Ttl7402 extends AbstractTtlGate {
   public static final String _ID = "7402";
 
   private static class NorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
-
     @Override
-    public ArrayList<String> getLogicFunction(int index) {
-      final var contents = new ArrayList<String>();
-      contents.add("   " + Hdl.assignPreamble() + "gate_" + index + "_O" + Hdl.assignOperator()
-              + Hdl.notOperator() + "(gate_" + index + "_A" + Hdl.orOperator() + "gate_" + index + "B);");
-      contents.add("");
-      return contents;
+    public LineBuffer getLogicFunction(int index) {
+      return LineBuffer.getHdlBuffer()
+          .add("{{assign}}gate_{{1}}_O{{=}}{{not}}(gate_{{1}}_A{{or}}gate_{{1}}_B);", index);
     }
   }
 

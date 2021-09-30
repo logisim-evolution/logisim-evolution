@@ -12,13 +12,10 @@ package com.cburch.logisim.std.memory;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 public class TFlipFlop extends AbstractFlipFlop {
   /**
@@ -37,10 +34,9 @@ public class TFlipFlop extends AbstractFlipFlop {
     }
 
     @Override
-    public List<String> getUpdateLogic() {
-      return LineBuffer.getBuffer()
-          .add("{{1}} s_next_state {{2}} s_current_state_reg {{3}} T;", Hdl.assignPreamble(), Hdl.assignOperator(), Hdl.xorOperator())
-          .getWithIndent();
+    public LineBuffer getUpdateLogic() {
+      return LineBuffer.getHdlBuffer()
+          .add("{{assign}}s_next_state{{=}}s_current_state_reg{{xor}}T;");
     }
   }
 

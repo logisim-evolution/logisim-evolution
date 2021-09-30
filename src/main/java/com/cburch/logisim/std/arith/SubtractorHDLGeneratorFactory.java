@@ -17,8 +17,6 @@ import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 public class SubtractorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -46,11 +44,11 @@ public class SubtractorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents = LineBuffer.getBuffer();
-    int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    final var contents = LineBuffer.getBuffer();
+    final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (Hdl.isVhdl()) {
-      Contents.add("""
+      contents.add("""
           s_extended_dataA <= "0"&DataA;
           s_extended_dataB <= "0"&(NOT(DataB));
           s_carry          <= NOT(BorrowIn);
@@ -59,17 +57,17 @@ public class SubtractorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                               (""&s_carry));
 
           """);
-      Contents.add(
+      contents.add(
           (nrOfBits == 1)
               ? "Result <= s_sum_result(0);"
               : "Result <= s_sum_result( (" + NR_OF_BITS_STRING + "-1) DOWNTO 0 );");
-      Contents.add("BorrowOut <= NOT(s_sum_result(" + EXTENDED_BITS_STRING + "-1));");
+      contents.add("BorrowOut <= NOT(s_sum_result(" + EXTENDED_BITS_STRING + "-1));");
     } else {
-      Contents.add("""
+      contents.add("""
           assign   {s_carry,Result} = DataA + ~(DataB) + ~(BorrowIn);
           assign   BorrowOut = ~s_carry;
           """);
     }
-    return Contents.getWithIndent();
+    return contents;
   }
 }

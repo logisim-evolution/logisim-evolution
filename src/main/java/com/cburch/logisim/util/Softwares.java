@@ -26,7 +26,7 @@ import javax.swing.JFileChooser;
 
 public final class Softwares {
 
-  private static boolean createWorkLibrary(File tmpDir, String questaPath, StringBuffer result)
+  private static boolean createWorkLibrary(File tmpDir, String questaPath, StringBuilder result)
       throws IOException, InterruptedException {
     BufferedReader reader = null;
 
@@ -142,7 +142,7 @@ public final class Softwares {
     return true;
   }
 
-  public static int validateVhdl(String vhdl, StringBuffer title, StringBuffer result) {
+  public static int validateVhdl(String vhdl, StringBuilder title, StringBuilder result) {
     if (!AppPreferences.QUESTA_VALIDATION.get()) return SUCCESS;
 
     final var questaPath = getQuestaPath();

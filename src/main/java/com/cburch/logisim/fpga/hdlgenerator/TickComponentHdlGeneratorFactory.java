@@ -13,8 +13,6 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -68,8 +66,8 @@ public class TickComponentHdlGeneratorFactory extends AbstractHdlGeneratorFactor
   }
 
   @Override
-  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents =
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    final var contents =
         LineBuffer.getHdlBuffer()
             .pair("nrOfCounterBits", NR_OF_COUNTER_BITS_STRING)
             .add("")
@@ -82,7 +80,7 @@ public class TickComponentHdlGeneratorFactory extends AbstractHdlGeneratorFactor
             .addRemarkBlock("Here the update logic is defined");
 
     if (Hdl.isVhdl()) {
-      Contents.add("""
+      contents.add("""
           s_tick_next   <= '1' WHEN s_count_reg = std_logic_vector(to_unsigned(0, {{nrOfCounterBits}})) ELSE '0';
           s_count_next  <= (OTHERS => '0') WHEN s_tick_reg /= '0' AND s_tick_reg /= '1' ELSE -- For simulation only!
                            std_logic_vector(to_unsigned((ReloadValue-1), {{nrOfCounterBits}})) WHEN s_tick_next = '1' ELSE
@@ -90,7 +88,7 @@ public class TickComponentHdlGeneratorFactory extends AbstractHdlGeneratorFactor
 
           """);
     } else {
-      Contents.add("""
+      contents.add("""
               assign s_tick_next  = (s_count_reg == 0) ? 1'b1 : 1'b0;
               assign s_count_next = (s_count_reg == 0) ? ReloadValue-1 : s_count_reg-1;
 
@@ -105,9 +103,9 @@ public class TickComponentHdlGeneratorFactory extends AbstractHdlGeneratorFactor
 
               """);
     }
-    Contents.addRemarkBlock("Here the flipflops are defined");
+    contents.addRemarkBlock("Here the flipflops are defined");
     if (Hdl.isVhdl()) {
-      Contents.add("""
+      contents.add("""
           make_tick : PROCESS( FPGAClock , s_tick_next )
           BEGIN
              IF (FPGAClock'event AND (FPGAClock = '1')) THEN
@@ -123,7 +121,7 @@ public class TickComponentHdlGeneratorFactory extends AbstractHdlGeneratorFactor
           END PROCESS make_counter;
           """);
     } else {
-      Contents.add("""
+      contents.add("""
           always @(posedge FPGAClock)
           begin
               s_count_reg <= s_count_next;
@@ -131,6 +129,6 @@ public class TickComponentHdlGeneratorFactory extends AbstractHdlGeneratorFactor
           end
           """);
     }
-    return Contents.getWithIndent();
+    return contents;
   }
 }

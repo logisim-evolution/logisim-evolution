@@ -12,8 +12,6 @@ package com.cburch.logisim.std.ttl;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Ttl7408 extends AbstractTtlGate {
   /**
@@ -25,13 +23,10 @@ public class Ttl7408 extends AbstractTtlGate {
   public static final String _ID = "7408";
 
   private static class AndGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
-
     @Override
-    public List<String> getLogicFunction(int index) {
+    public LineBuffer getLogicFunction(int index) {
       return LineBuffer.getHdlBuffer()
-          .add("{{assign}} gate_{{1}}_O {{=}} gate_{{1}}_A {{and}} gate_{{1}}_B;", index)
-          .add("")
-          .getWithIndent();
+          .add("{{assign}}gate_{{1}}_O{{=}}gate_{{1}}_A{{and}}gate_{{1}}_B;", index);
     }
   }
 

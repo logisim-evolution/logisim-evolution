@@ -17,8 +17,6 @@ import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 public class AdderHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -45,11 +43,11 @@ public class AdderHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents = LineBuffer.getBuffer();
-    int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    final var contents = LineBuffer.getBuffer();
+    final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (Hdl.isVhdl()) {
-      Contents.add("""
+      contents.add("""
           s_extended_dataA <= "0"&DataA;
           s_extended_dataB <= "0"&DataB;
           s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA) +
@@ -58,14 +56,14 @@ public class AdderHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
           """);
       if (nrOfBits == 1) {
-        Contents.add("Result <= s_sum_result(0);");
+        contents.add("Result <= s_sum_result(0);");
       } else {
-        Contents.add("Result <= s_sum_result( ({{1}}-1) DOWNTO 0 )", NR_OF_BITS_STRING);
+        contents.add("Result <= s_sum_result( ({{1}}-1) DOWNTO 0 )", NR_OF_BITS_STRING);
       }
-      Contents.add("CarryOut <= s_sum_result({{1}}-1);", EXTENDED_BITS_STRING);
+      contents.add("CarryOut <= s_sum_result({{1}}-1);", EXTENDED_BITS_STRING);
     } else {
-      Contents.add("assign   {CarryOut,Result} = DataA + DataB + CarryIn;");
+      contents.add("assign   {CarryOut,Result} = DataA + DataB + CarryIn;");
     }
-    return Contents.getWithIndent();
+    return contents;
   }
 }

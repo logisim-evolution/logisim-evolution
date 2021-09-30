@@ -15,8 +15,6 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 public class PLAHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -42,13 +40,13 @@ public class PLAHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public List<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
     final var tt = attrs.getValue(PLA.ATTR_TABLE);
     final var outSz = attrs.getValue(PLA.ATTR_OUT_WIDTH).getWidth();
     if (Hdl.isVhdl()) {
-      var leader = "    Result <= ";
-      final var indent = "              ";
+      var leader = "Result <= ";
+      final var indent = "          ";
       if (tt.rows().isEmpty()) {
         contents.add("{{1}}{{2}};", leader, zeros(outSz));
       } else {
@@ -61,7 +59,7 @@ public class PLAHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     } else {
       // TODO
     }
-    return contents.get();
+    return contents;
   }
 
   @Override

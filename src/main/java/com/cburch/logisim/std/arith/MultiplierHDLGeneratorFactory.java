@@ -16,8 +16,6 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.List;
 
 public class MultiplierHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -47,15 +45,15 @@ public class MultiplierHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public List<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents =
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    final var contents =
           LineBuffer.getBuffer()
             .pair("nrOfBits", NR_OF_BITS_STRING)
             .pair("unsigned", UNSIGNED_STRING)
             .pair("calcBits", CALC_BITS_STRING);
 
     if (Hdl.isVhdl()) {
-      Contents.add("""
+      contents.add("""
           s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B))
                               WHEN {{unsigned}}= 1 ELSE
                            std_logic_vector(signed(INP_A)*signed(INP_B));
@@ -68,7 +66,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
           Mult_lo       <= s_new_result({{nrOfBits}}-1 DOWNTO 0);
           """);
     } else {
-      Contents.add("""
+      contents.add("""
           reg[{{calcBits}}-1:0] s_Cin;
           reg[{{calcBits}}-1:0] s_mult_unsigned;
           reg[{{calcBits}}-1:0] s_interm_result;
@@ -97,6 +95,6 @@ public class MultiplierHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
           assign Mult_lo = s_interm_result[{{nrOfBits}}-1:0];
           """);
     }
-    return Contents.getWithIndent();
+    return contents;
   }
 }

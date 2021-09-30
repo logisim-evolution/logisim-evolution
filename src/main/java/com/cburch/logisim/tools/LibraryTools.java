@@ -65,19 +65,18 @@ public class LibraryTools {
     return ret;
   }
 
-  public static Circuit getCircuitFromLibs(Library lib, String UpperCaseName) {
+  // FIXME: why `upperCaseName` even matters here if we do case insensitive comparision?
+  public static Circuit getCircuitFromLibs(Library lib, String upperCaseName) {
     Circuit ret = null;
-    if (lib instanceof LogisimFile) {
-      LogisimFile llib = (LogisimFile) lib;
+    if (lib instanceof LogisimFile llib) {
       for (final var circ : llib.getCircuits()) {
-        if (circ.getName().toUpperCase().equals(UpperCaseName)) return circ;
+        if (circ.getName().equalsIgnoreCase(upperCaseName)) return circ;
       }
     }
-    for (Library libs : lib.getLibraries()) {
-      if (libs instanceof LoadedLibrary) {
-        LoadedLibrary lib1 = (LoadedLibrary) libs;
-        ret = getCircuitFromLibs(lib1.getBase(), UpperCaseName);
-      } else ret = getCircuitFromLibs(libs, UpperCaseName);
+    for (final var libs : lib.getLibraries()) {
+      if (libs instanceof LoadedLibrary lib1) {
+        ret = getCircuitFromLibs(lib1.getBase(), upperCaseName);
+      } else ret = getCircuitFromLibs(libs, upperCaseName);
       if (ret != null) return ret;
     }
     return null;
