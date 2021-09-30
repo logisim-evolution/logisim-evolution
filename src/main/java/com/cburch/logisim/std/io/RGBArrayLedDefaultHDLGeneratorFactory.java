@@ -74,7 +74,7 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents = new LineBuffer(sharedPairs);
 
     if (Hdl.isVhdl()) {
@@ -98,6 +98,6 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
           endgenerate
           """);
     }
-    return contents.getWithIndent(3);
+    return contents;
   }
 }
