@@ -47,9 +47,9 @@ class AboutCredits extends JComponent {
 
     lines = new Lines();
     lines
-        .title(Main.APP_DISPLAY_NAME)
-        .h2(StringUtil.format("Copyright \u00A92001-%s %s developers", BuildInfo.year, Main.APP_NAME))
-        .url(Main.APP_URL)
+        .title(BuildInfo.displayName)
+        .h2(StringUtil.format("Copyright \u00A92001-%s %s developers", BuildInfo.year, BuildInfo.name))
+        .url(BuildInfo.url)
         .space()
         .h1(S.get("creditsRoleFork"))
         .text("College of the Holy Cross")
@@ -75,8 +75,8 @@ class AboutCredits extends JComponent {
         .text(S.get("creditsCompiled", BuildInfo.dateIso8601))
         .text(BuildInfo.buildId)
         .space()
-        .text(Main.JVM_VERSION)
-        .text(Main.JVM_VENDOR);
+        .text(BuildInfo.jvm_version)
+        .text(BuildInfo.jvm_vendor);
   }
 
   private long startMillis = 0;

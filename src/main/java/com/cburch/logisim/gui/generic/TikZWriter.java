@@ -292,10 +292,10 @@ public class TikZWriter extends Graphics2D {
   @Override
   public FontMetrics getFontMetrics(Font f) {
     /* TODO: just stubs, not related to LaTeX */
-    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    GraphicsDevice gd = ge.getDefaultScreenDevice();
-    GraphicsConfiguration config = gd.getDefaultConfiguration();
-    Canvas c = new Canvas(config);
+    final var ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    final var gd = ge.getDefaultScreenDevice();
+    final var config = gd.getDefaultConfiguration();
+    final var c = new Canvas(config);
     return c.getFontMetrics(f);
   }
 
@@ -412,8 +412,7 @@ public class TikZWriter extends Graphics2D {
   }
 
   @Override
-  public boolean drawImage(
-      Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer) {
+  public boolean drawImage(Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer) {
     System.out.println(
         "TikZ not yet supported : drawImage(Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer)");
     return false;
@@ -463,8 +462,7 @@ public class TikZWriter extends Graphics2D {
     MyInfo.writeFile(outfile);
   }
 
-  public void WriteSvg(int width, int height, File outfile)
-      throws ParserConfigurationException, TransformerException {
+  public void WriteSvg(int width, int height, File outfile) throws ParserConfigurationException, TransformerException {
     MyInfo.writeSvg(width, height, outfile);
   }
 }

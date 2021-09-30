@@ -23,8 +23,7 @@ import com.cburch.logisim.vhdl.base.VhdlEntity;
 /**
  * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
-public class ProjectExplorerToolNode extends ProjectExplorerModel.Node<Tool>
-    implements CircuitListener, HdlModelListener {
+public class ProjectExplorerToolNode extends ProjectExplorerModel.Node<Tool> implements CircuitListener, HdlModelListener {
 
   private static final long serialVersionUID = 1L;
   private Circuit circuit;
@@ -33,13 +32,13 @@ public class ProjectExplorerToolNode extends ProjectExplorerModel.Node<Tool>
   public ProjectExplorerToolNode(ProjectExplorerModel model, Tool tool) {
     super(model, tool);
     if (tool instanceof AddTool) {
-      Object factory = ((AddTool) tool).getFactory();
+      final var factory = ((AddTool) tool).getFactory();
 
-      if (factory instanceof SubcircuitFactory) {
-        circuit = ((SubcircuitFactory) factory).getSubcircuit();
+      if (factory instanceof SubcircuitFactory sub) {
+        circuit = sub.getSubcircuit();
         circuit.addCircuitListener(this);
-      } else if (factory instanceof VhdlEntity) {
-        vhdl = ((VhdlEntity) factory).getContent();
+      } else if (factory instanceof VhdlEntity vhdlEntity) {
+        vhdl = vhdlEntity.getContent();
         vhdl.addHdlModelListener(this);
       }
     }
@@ -64,8 +63,7 @@ public class ProjectExplorerToolNode extends ProjectExplorerModel.Node<Tool>
 
   @Override
   public void circuitChanged(CircuitEvent event) {
-    int act = event.getAction();
-
+    final var act = event.getAction();
     if (act == CircuitEvent.ACTION_SET_NAME || act == CircuitEvent.ACTION_DISPLAY_CHANGE) {
       fireNodeChanged();
     }

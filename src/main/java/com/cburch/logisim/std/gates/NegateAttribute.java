@@ -29,12 +29,9 @@ public class NegateAttribute extends Attribute<Boolean> {
 
   @Override
   public boolean equals(Object other) {
-    if (other instanceof NegateAttribute) {
-      final var o = (NegateAttribute) other;
-      return this.index == o.index && this.side == o.side;
-    } else {
-      return false;
-    }
+    return (other instanceof NegateAttribute o)
+           ? this.index == o.index && this.side == o.side
+           : false;
   }
 
   @Override

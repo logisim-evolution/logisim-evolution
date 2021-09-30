@@ -22,8 +22,8 @@ class SplitterPainter {
     final var ends = new String[attrs.fanout + 1];
     var curEnd = -1;
     var cur0 = 0;
-    for (int i = 0, n = attrs.bit_end.length; i <= n; i++) {
-      final var bit = i == n ? -1 : attrs.bit_end[i];
+    for (int i = 0, n = attrs.bitEnd.length; i <= n; i++) {
+      final var bit = i == n ? -1 : attrs.bitEnd[i];
       if (bit != curEnd) {
         int cur1 = i - 1;
         String toAdd;

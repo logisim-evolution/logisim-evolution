@@ -41,23 +41,10 @@ public class BitSelector extends InstanceFactory {
    */
   public static final String _ID = "BitSelector";
   
-  private static class NoSaveAttribute extends Attribute<Integer> {
-
-    @Override
-    public Integer parse(String value) {
-      return Integer.valueOf(value);
-    }
-    
-    @Override
-    public boolean isToSave() {
-      return false;
-    }
-  }
-
   public static final Attribute<BitWidth> GROUP_ATTR =
       Attributes.forBitWidth("group", S.getter("bitSelectorGroupAttr"));
-  public static final Attribute<Integer> SELECT_ATTR = new NoSaveAttribute();
-  public static final Attribute<Integer> EXTENDED_ATTR = new NoSaveAttribute();
+  public static final Attribute<Integer> SELECT_ATTR = Attributes.forNoSave();
+  public static final Attribute<Integer> EXTENDED_ATTR = Attributes.forNoSave();
 
   public BitSelector() {
     super(_ID, S.getter("bitSelectorComponent"), new BitSelectorHDLGeneratorFactory());

@@ -33,33 +33,31 @@ public class PopupMenu extends MouseAdapter {
       RadixOption radix = null;
       if (signals.size() > 0) {
         radix = signals.get(0).info.getRadix();
-        for (int i = 1; i < signals.size(); i++)
+        for (var i = 1; i < signals.size(); i++)
           if (signals.get(i).info.getRadix() != radix) {
             radix = null;
             break;
           }
       }
-      ButtonGroup g = new ButtonGroup();
-      for (RadixOption r : RadixOption.OPTIONS) {
-        JRadioButtonMenuItem m = new JRadioButtonMenuItem(r.toDisplayString());
+      final var g = new ButtonGroup();
+      for (final var r : RadixOption.OPTIONS) {
+        final var m = new JRadioButtonMenuItem(r.toDisplayString());
         add(m);
         m.setEnabled(signals.size() > 0);
         g.add(m);
-        if (r == radix)
-          m.setSelected(true);
+        if (r == radix) m.setSelected(true);
         m.addActionListener(e -> {
-          for (Signal s : signals)
+          for (final var s : signals)
             s.info.setRadix(r);
         });
       }
-      JMenuItem m;
       addSeparator();
-      m = new JMenuItem(S.get("editClearItem"));
+      var m = new JMenuItem(S.get("editClearItem"));
       add(m);
       m.setEnabled(signals.size() > 0);
       m.addActionListener(e -> {
-        SignalInfo.List items = new SignalInfo.List();
-        for (Signal s : signals)
+        final var items = new SignalInfo.List();
+        for (final var s : signals)
           items.add(s.info);
         chronoPanel.getModel().remove(items);
       });
@@ -80,7 +78,7 @@ public class PopupMenu extends MouseAdapter {
   }
 
   public void doPop(MouseEvent e) {
-    PopupContents menu = new PopupContents();
+    final var menu = new PopupContents();
     menu.show(e.getComponent(), e.getX(), e.getY());
   }
 

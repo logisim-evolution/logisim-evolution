@@ -148,8 +148,7 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
       comps.addAll(selection.getComponents());
       for (Component comp : comps) {
         if (!(comp instanceof Wire)) {
-          if (comp.getFactory() instanceof SubcircuitFactory) {
-            SubcircuitFactory fac = (SubcircuitFactory) comp.getFactory();
+          if (comp.getFactory() instanceof SubcircuitFactory fac) {
             if (attr.equals(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE)
                 || attr.equals(CircuitAttributes.NAME_ATTR)) {
               try {

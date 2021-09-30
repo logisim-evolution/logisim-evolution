@@ -12,25 +12,23 @@ package com.cburch.logisim.std.arith;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class ShifterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String SHIFT_MODE_STRING = "ShifterMode";
   private static final int SHIFT_MODE_ID = -1;
 
   public ShifterHDLGeneratorFactory() {
     super();
-    myParametersList.add(SHIFT_MODE_STRING, SHIFT_MODE_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Shifter.ATTR_SHIFT, 
+    myParametersList.add(SHIFT_MODE_STRING, SHIFT_MODE_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, Shifter.ATTR_SHIFT,
         new HashMap<AttributeOption, Integer>() {{
           put(Shifter.SHIFT_LOGICAL_LEFT, 0);
           put(Shifter.SHIFT_ROLL_LEFT, 1);
@@ -39,31 +37,28 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           put(Shifter.SHIFT_ROLL_RIGHT, 4);
         }}
     );
-    getWiresduringHDLWriting = true;
+    getWiresPortsDuringHDLWriting = true;
+    myPorts
+        .add(Port.INPUT, "DataA", 0, Shifter.IN0, StdAttr.WIDTH)
+        .add(Port.INPUT, "ShiftAmount", 0, Shifter.IN1, Shifter.SHIFT_BITS_ATTR)
+        .add(Port.OUTPUT, "Result", 0, Shifter.OUT, StdAttr.WIDTH);
   }
 
   @Override
-  public void getGenerationTimeWires(Netlist theNetlist, AttributeSet attrs) {
-    for (var stage = 0; stage < getNrofShiftBits(attrs); stage++)
+  public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
+    for (var stage = 0; stage < attrs.getValue(Shifter.SHIFT_BITS_ATTR); stage++)
       myWires
           .addWire(String.format("s_stage_%d_result", stage), attrs.getValue(StdAttr.WIDTH).getWidth())
           .addWire(String.format("s_stage_%d_shiftin", stage), 1 << stage);
   }
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var inputs = new TreeMap<String, Integer>();
-    inputs.put("DataA", attrs.getValue(StdAttr.WIDTH).getWidth());
-    inputs.put("ShiftAmount", getNrofShiftBits(attrs));
-    return inputs;
-  }
-
-  @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = (new LineBuffer())
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    final var contents = LineBuffer.getBuffer()
             .pair("shiftMode", SHIFT_MODE_STRING);
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    if (HDL.isVHDL()) {
+    final var nrOfShiftBits = attrs.getValue(Shifter.SHIFT_BITS_ATTR);
+    if (Hdl.isVhdl()) {
       contents.add("""
             -----------------------------------------------------------------------------
             --- ShifterMode represents when:                                          ---
@@ -84,15 +79,15 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                                  {{shiftMode}} = 4 ELSE DataA AND NOT(ShiftAmount);
             """);
       } else {
-        for (var stage = 0; stage < getNrofShiftBits(attrs); stage++)
-          contents.add(GetStageFunctionalityVHDL(stage, nrOfBits));
+        for (var stage = 0; stage < nrOfShiftBits; stage++)
+          contents.add(getStageFunctionalityVhdl(stage, nrOfBits));
         contents
             .add("""
                 -----------------------------------------------------------------------------
                 --- Here we assign the result                                             ---
                 -----------------------------------------------------------------------------
                 """)
-            .add("Result <= s_stage_{{1}}_result;", (getNrofShiftBits(attrs) - 1))
+            .add("Result <= s_stage_{{1}}_result;", (nrOfShiftBits - 1))
             .add("");
       }
     } else {
@@ -116,8 +111,8 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                               ({{shiftMode}} == 4) ) ? DataA : DataA&(~ShiftAmount);
             """);
       } else {
-        for (var stage = 0; stage < getNrofShiftBits(attrs); stage++) {
-          contents.add(GetStageFunctionalityVerilog(stage, nrOfBits));
+        for (var stage = 0; stage < nrOfShiftBits; stage++) {
+          contents.add(getStageFunctionalityVerilog(stage, nrOfBits));
         }
         contents.add("""
             /***************************************************************************
@@ -126,40 +121,14 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
              
             assign Result = s_stage_{{1}}_result;
             
-            """, getNrofShiftBits(attrs) - 1);
+            """, nrOfShiftBits - 1);
       }
     }
-    return contents.getWithIndent();
+    return contents;
   }
 
-  private int getNrofShiftBits(AttributeSet attrs) {
-    final var inputBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    var shift = 1;
-    while ((1 << shift) < inputBits) shift++;
-    return shift;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    final var inputbits = attrs.getValue(StdAttr.WIDTH).getWidth();
-    outputs.put("Result", inputbits);
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    final var portMap = new TreeMap<String, String>();
-    if (!(MapInfo instanceof NetlistComponent)) return portMap;
-    final var componentInfo = (NetlistComponent) MapInfo;
-    portMap.putAll(GetNetMap("DataA", true, componentInfo, Shifter.IN0, Nets));
-    portMap.putAll(GetNetMap("ShiftAmount", true, componentInfo, Shifter.IN1, Nets));
-    portMap.putAll(GetNetMap("Result", true, componentInfo, Shifter.OUT, Nets));
-    return portMap;
-  }
-
-  private ArrayList<String> GetStageFunctionalityVerilog(int stageNumber, int nrOfBits) {
-    final var contents = (new LineBuffer())
+  private ArrayList<String> getStageFunctionalityVerilog(int stageNumber, int nrOfBits) {
+    final var contents = LineBuffer.getBuffer()
             .pair("shiftMode", SHIFT_MODE_STRING)
             .pair("stageNumber", stageNumber)
             .pair("nrOfBits1", nrOfBits - 1)
@@ -210,10 +179,10 @@ public class ShifterHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     return contents.getWithIndent();
   }
 
-  private ArrayList<String> GetStageFunctionalityVHDL(int stageNumber, int nrOfBits) {
+  private ArrayList<String> getStageFunctionalityVhdl(int stageNumber, int nrOfBits) {
     final var nrOfBitsToShift = (1 << stageNumber);
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
           .pair("shiftMode", SHIFT_MODE_STRING)
           .pair("stageNumber", stageNumber)
           .pair("stageNumber1", stageNumber - 1)

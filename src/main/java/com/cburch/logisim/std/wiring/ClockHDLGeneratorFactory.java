@@ -12,18 +12,18 @@ package com.cburch.logisim.std.wiring;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
-import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class ClockHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   public static final int NR_OF_CLOCK_BITS = 5;
   public static final int DERIVED_CLOCK_INDEX = 0;
@@ -39,14 +39,14 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int PHASE_ID = -3;
   private static final String NR_OF_BITS_STR = "NrOfBits";
   private static final int NR_OF_BITS_ID = -4;
-  
+
   public ClockHDLGeneratorFactory() {
     super("base");
     myParametersList
-        .add(HIGH_TICK_STR, HIGH_TICK_ID, HDLParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_HIGH)
-        .add(LOW_TICK_STR, LOW_TICK_ID, HDLParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_LOW)
-        .add(PHASE_STR, PHASE_ID, HDLParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_PHASE, 1)
-        .add(NR_OF_BITS_STR, NR_OF_BITS_ID, HDLParameters.MAP_LN2, Clock.ATTR_HIGH, Clock.ATTR_LOW);
+        .add(HIGH_TICK_STR, HIGH_TICK_ID, HdlParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_HIGH)
+        .add(LOW_TICK_STR, LOW_TICK_ID, HdlParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_LOW)
+        .add(PHASE_STR, PHASE_ID, HdlParameters.MAP_INT_ATTRIBUTE, Clock.ATTR_PHASE, 1)
+        .add(NR_OF_BITS_STR, NR_OF_BITS_ID, HdlParameters.MAP_LN2, Clock.ATTR_HIGH, Clock.ATTR_LOW);
     myWires
         .addWire("s_counter_next", NR_OF_BITS_ID)
         .addWire("s_counter_is_zero", 1)
@@ -54,41 +54,47 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .addRegister("s_buf_regs", 2)
         .addRegister("s_counter_reg", NR_OF_BITS_ID)
         .addRegister("s_derived_clock_reg", PHASE_ID);
-  }
-
-  private String GetClockNetName(Component comp, Netlist TheNets) {
-    StringBuilder Contents = new StringBuilder();
-    int ClockNetId = TheNets.getClockSourceId(comp);
-    if (ClockNetId >= 0) {
-      Contents.append(HDLGeneratorFactory.CLOCK_TREE_NAME).append(ClockNetId);
-    }
-    return Contents.toString();
+    myPorts
+        .add(Port.INPUT, "GlobalClock", 1, 0)
+        .add(Port.INPUT, "ClockTick", 1, 1)
+        .add(Port.OUTPUT, "ClockBus", NR_OF_CLOCK_BITS, 2);
   }
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("GlobalClock", 1);
-    map.put("ClockTick", 1);
+  public SortedMap<String, String> getPortMap(Netlist Nets, Object MapInfo) {
+    final var map = new TreeMap<String, String>();
+    if (!(MapInfo instanceof netlistComponent)) return map;
+    final var componentInfo = (netlistComponent) MapInfo;
+    map.put("GlobalClock", TickComponentHdlGeneratorFactory.FPGA_CLOCK);
+    map.put("ClockTick", TickComponentHdlGeneratorFactory.FPGA_TICK);
+    map.put("ClockBus", getClockNetName(componentInfo.getComponent(), Nets));
     return map;
   }
 
+  private static String getClockNetName(Component comp, Netlist TheNets) {
+    StringBuilder contents = new StringBuilder();
+    int ClockNetId = TheNets.getClockSourceId(comp);
+    if (ClockNetId >= 0) {
+      contents.append("s_").append(HdlGeneratorFactory.CLOCK_TREE_NAME).append(ClockNetId);
+    }
+    return contents.toString();
+  }
+
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents =
-        (new LineBuffer())
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    final var contents = LineBuffer.getHdlBuffer()
             .pair("phase", PHASE_STR)
             .pair("nrOfBits", NR_OF_BITS_STR)
             .pair("lowTick", LOW_TICK_STR)
             .pair("highTick", HIGH_TICK_STR)
             .addRemarkBlock("Here the output signals are defines; we synchronize them all on the main clock");
 
-    if (HDL.isVHDL()) {
-      Contents.add("""
+    if (Hdl.isVhdl()) {
+      contents.add("""
           ClockBus <= GlobalClock&s_output_regs;
           makeOutputs : PROCESS( GlobalClock )
           BEGIN
-             IF (GlobalClock'event AND (GlobalClock = '1')) THEN
+             IF (rising_edge(GlobalClock)) THEN
                 s_buf_regs(0)     <= s_derived_clock_reg({{phase}} - 1);
                 s_buf_regs(1)     <= NOT(s_derived_clock_reg({{phase}} - 1));
                 s_output_regs(0)  <= s_buf_regs(0);
@@ -99,7 +105,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           END PROCESS makeOutputs;
           """);
     } else {
-      Contents.add("""
+      contents.add("""
           assign ClockBus = {GlobalClock,s_output_regs};
           always @(posedge GlobalClock)
           begin
@@ -112,9 +118,9 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           end
           """);
     }
-    Contents.add("").addRemarkBlock("Here the control signals are defined");
-    if (HDL.isVHDL()) {
-      Contents.add("""
+    contents.add("").addRemarkBlock("Here the control signals are defined");
+    if (Hdl.isVhdl()) {
+      contents.add("""
           s_counter_is_zero <= '1' WHEN s_counter_reg = std_logic_vector(to_unsigned(0,{{nrOfBits}})) ELSE '0';
           s_counter_next    <= std_logic_vector(unsigned(s_counter_reg) - 1)
                                  WHEN s_counter_is_zero = '0' ELSE
@@ -123,7 +129,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                               std_logic_vector(to_unsigned(({{highTick}}-1), {{nrOfBits}}));
           """);
     } else {
-      Contents.add("""
+      contents.add("""
               assign s_counter_is_zero = (s_counter_reg == 0) ? 1'b1 : 1'b0;
               assign s_counter_next = (s_counter_is_zero == 1'b0)
                                          ? s_counter_reg - 1
@@ -142,13 +148,13 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
               end
               """);
     }
-    Contents.add("").addRemarkBlock("Here the state registers are defined");
-    if (HDL.isVHDL()) {
-      Contents.add("""
+    contents.add("").addRemarkBlock("Here the state registers are defined");
+    if (Hdl.isVhdl()) {
+      contents.add("""
           makeDerivedClock : PROCESS( GlobalClock , ClockTick , s_counter_is_zero ,
                                       s_derived_clock_reg)
           BEGIN
-             IF (GlobalClock'event AND (GlobalClock = '1')) THEN
+             IF (rising_edge(GlobalClock)) THEN
                 IF (s_derived_clock_reg(0) /= '0' AND s_derived_clock_reg(0) /= '1') THEN --For simulation only
                    s_derived_clock_reg <= (OTHERS => '1');
                 ELSIF (ClockTick = '1') THEN
@@ -163,7 +169,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           makeCounter : PROCESS( GlobalClock , ClockTick , s_counter_next ,
                                  s_derived_clock_reg )
           BEGIN
-             IF (GlobalClock'event AND (GlobalClock = '1')) THEN
+             IF (rising_edge(GlobalClock)) THEN
                 IF (s_derived_clock_reg(0) /= '0' AND s_derived_clock_reg(0) /= '1') THEN --For simulation only
                    s_counter_reg <= (OTHERS => '0');
                 ELSIF (ClockTick = '1') THEN
@@ -173,7 +179,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           END PROCESS makeCounter;
           """);
     } else {
-      Contents.add("""
+      contents.add("""
           integer n;
           always @(posedge GlobalClock)
           begin
@@ -195,25 +201,7 @@ public class ClockHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           end
           """);
     }
-    Contents.add("");
-    return Contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("ClockBus", NR_OF_CLOCK_BITS);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    final var map = new TreeMap<String, String>();
-    if (!(MapInfo instanceof NetlistComponent)) return map;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    map.put("GlobalClock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
-    map.put("ClockTick", TickComponentHDLGeneratorFactory.FPGA_TICK);
-    map.put("ClockBus", "s_" + GetClockNetName(ComponentInfo.getComponent(), Nets));
-    return map;
+    contents.add("");
+    return contents;
   }
 }

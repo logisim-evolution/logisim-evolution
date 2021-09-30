@@ -9,7 +9,7 @@
 
 package com.cburch.logisim.util;
 
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -40,10 +40,7 @@ public class LineBuffer implements RandomAccess {
 
   /* ********************************************************************************************* */
 
-  /**
-   * Default constructor.
-   */
-  public LineBuffer() {
+  protected LineBuffer() {
     super();
     addDefaultPairs();
   }
@@ -85,12 +82,21 @@ public class LineBuffer implements RandomAccess {
   /* ********************************************************************************************* */
 
   /**
+   * Returns instance of LineBuffer with default settings.
+   *
+   * @return instance of LineBuffer
+   */
+  public static LineBuffer getBuffer() {
+    return new LineBuffer();
+  }
+
+  /**
    * Returns instance of LineBuffer preconfigured with HdlPairs.
    *
    * @return instance of LineBuffer
    */
   public static LineBuffer getHdlBuffer() {
-    return (new LineBuffer()).addHdlPairs();
+    return getBuffer().addHdlPairs();
   }
 
   /* ********************************************************************************************* */
@@ -142,17 +148,18 @@ public class LineBuffer implements RandomAccess {
    * @return Instance of self for easy chaining.
    */
   public LineBuffer addHdlPairs() {
-    return pair("assign", HDL.assignPreamble())
-        .pair("=", HDL.assignOperator())
-        .pair("or", HDL.orOperator())
-        .pair("and", HDL.andOperator())
-        .pair("not", HDL.notOperator())
-        .pair("bracketOpen", HDL.BracketOpen())
-        .pair("bracketClose", HDL.BracketClose())
-        .pair("<", HDL.BracketOpen())
-        .pair(">", HDL.BracketClose())
-        .pair("0b", HDL.zeroBit())
-        .pair("1b", HDL.oneBit());
+    return pair("assign", Hdl.assignPreamble())
+        .pair("=", Hdl.assignOperator())
+        .pair("or", Hdl.orOperator())
+        .pair("and", Hdl.andOperator())
+        .pair("not", Hdl.notOperator())
+        .pair("xor", Hdl.xorOperator())
+        .pair("bracketOpen", Hdl.bracketOpen())
+        .pair("bracketClose", Hdl.bracketClose())
+        .pair("<", Hdl.bracketOpen())
+        .pair(">", Hdl.bracketClose())
+        .pair("0b", Hdl.zeroBit())
+        .pair("1b", Hdl.oneBit());
   }
 
   /**
@@ -300,6 +307,7 @@ public class LineBuffer implements RandomAccess {
    * are processed too.
    *
    * @param lines
+   * @return Instance of self for easy chaining.
    */
   public LineBuffer add(Collection<String> lines) {
     for (final var line : lines) add(line);
@@ -318,6 +326,17 @@ public class LineBuffer implements RandomAccess {
    */
   public LineBuffer addLines(String... lines) {
     return add(Arrays.asList(lines));
+  }
+
+
+  /**
+   * Appends content of another buffer
+   *
+   * @param otherBuffer Another LineBuffer to append content from.
+   * @return Instance of self for easy chaining.
+   */
+  public LineBuffer add(LineBuffer otherBuffer) {
+    return add(otherBuffer.get());
   }
 
   /* ********************************************************************************************* */
@@ -526,7 +545,7 @@ public class LineBuffer implements RandomAccess {
    * @return Constructed lines of remark block.
    */
   protected ArrayList<String> buildRemarkBlock(String remarkText, Integer nrOfIndentSpaces) {
-    final var maxRemarkLength = MAX_LINE_LENGTH - 2 * HDL.remarkOverhead() - nrOfIndentSpaces;
+    final var maxRemarkLength = MAX_LINE_LENGTH - 2 * Hdl.remarkOverhead() - nrOfIndentSpaces;
     final var remarkWords = remarkText.split(" ");
     final var oneLine = new StringBuilder();
     final var contents = new ArrayList<String>();
@@ -538,47 +557,47 @@ public class LineBuffer implements RandomAccess {
     /* we start with generating the first remark line */
     while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
     for (var i = 0; i < MAX_LINE_LENGTH - nrOfIndentSpaces; i++) {
-      oneLine.append(HDL.getRemakrChar(i == 0, i == MAX_LINE_LENGTH - nrOfIndentSpaces - 1));
+      oneLine.append(Hdl.getRemakrChar(i == 0, i == MAX_LINE_LENGTH - nrOfIndentSpaces - 1));
     }
     contents.add(oneLine.toString());
     oneLine.setLength(0);
     /* Next we put the remark text block in 1 or multiple lines */
     for (final var remarkWord : remarkWords) {
-      if ((oneLine.length() + remarkWord.length() + HDL.remarkOverhead()) > (MAX_LINE_LENGTH - 1)) {
+      if ((oneLine.length() + remarkWord.length() + Hdl.remarkOverhead()) > (MAX_LINE_LENGTH - 1)) {
         /* Next word does not fit, we end this line and create a new one */
-        while (oneLine.length() < (MAX_LINE_LENGTH - HDL.remarkOverhead())) oneLine.append(" ");
+        while (oneLine.length() < (MAX_LINE_LENGTH - Hdl.remarkOverhead())) oneLine.append(" ");
         oneLine
             .append(" ")
-            .append(HDL.getRemakrChar(false, false))
-            .append(HDL.getRemakrChar(false, false));
+            .append(Hdl.getRemakrChar(false, false))
+            .append(Hdl.getRemakrChar(false, false));
         contents.add(oneLine.toString());
         oneLine.setLength(0);
       }
       while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
       if (oneLine.length() == nrOfIndentSpaces)
-        oneLine.append(HDL.getRemarkStart()); // we put the preamble
+        oneLine.append(Hdl.getRemarkStart()); // we put the preamble
       if (remarkWord.endsWith("\\")) {
         // Forced new line
         oneLine.append(remarkWord, 0, remarkWord.length() - 1);
-        while (oneLine.length() < (MAX_LINE_LENGTH - HDL.remarkOverhead())) oneLine.append(" ");
+        while (oneLine.length() < (MAX_LINE_LENGTH - Hdl.remarkOverhead())) oneLine.append(" ");
       } else {
         oneLine.append(remarkWord).append(" ");
       }
     }
-    if (oneLine.length() > (nrOfIndentSpaces + HDL.remarkOverhead())) {
+    if (oneLine.length() > (nrOfIndentSpaces + Hdl.remarkOverhead())) {
       // We have an unfinished remark line
-      while (oneLine.length() < (MAX_LINE_LENGTH - HDL.remarkOverhead())) oneLine.append(" ");
+      while (oneLine.length() < (MAX_LINE_LENGTH - Hdl.remarkOverhead())) oneLine.append(" ");
       oneLine
           .append(" ")
-          .append(HDL.getRemakrChar(false, false))
-          .append(HDL.getRemakrChar(false, false));
+          .append(Hdl.getRemakrChar(false, false))
+          .append(Hdl.getRemakrChar(false, false));
       contents.add(oneLine.toString());
       oneLine.setLength(0);
     }
     // We end with generating the last remark line.
     while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
     for (var i = 0; i < MAX_LINE_LENGTH - nrOfIndentSpaces; i++)
-      oneLine.append(HDL.getRemakrChar(i == MAX_LINE_LENGTH - nrOfIndentSpaces - 1, i == 0));
+      oneLine.append(Hdl.getRemakrChar(i == MAX_LINE_LENGTH - nrOfIndentSpaces - 1, i == 0));
     contents.add(oneLine.toString());
 
     return contents;
@@ -675,7 +694,6 @@ public class LineBuffer implements RandomAccess {
   }
 
   public void validateLineNoPositionals(String fmt) {
-    final var empty = new Object[] {};
     validateLine(fmt, null);
   }
 

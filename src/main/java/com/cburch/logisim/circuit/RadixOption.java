@@ -123,7 +123,7 @@ public abstract class RadixOption extends AttributeOption {
     }
 
     @Override
-    public String GetIndexChar() {
+    public String getIndexChar() {
       return "s";
     }
   }
@@ -232,7 +232,7 @@ public abstract class RadixOption extends AttributeOption {
     }
 
     @Override
-    public String GetIndexChar() {
+    public String getIndexChar() {
       return "u";
     }
   }
@@ -253,7 +253,7 @@ public abstract class RadixOption extends AttributeOption {
     }
 
     @Override
-    public String GetIndexChar() {
+    public String getIndexChar() {
       return "h";
     }
   }
@@ -280,7 +280,7 @@ public abstract class RadixOption extends AttributeOption {
     }
 
     @Override
-    public String GetIndexChar() {
+    public String getIndexChar() {
       return "b";
     }
   }
@@ -306,7 +306,7 @@ public abstract class RadixOption extends AttributeOption {
     }
 
     @Override
-    public String GetIndexChar() {
+    public String getIndexChar() {
       return "o";
     }
   }
@@ -327,7 +327,7 @@ public abstract class RadixOption extends AttributeOption {
     }
 
     @Override
-    public String GetIndexChar() {
+    public String getIndexChar() {
       return "f";
     }
   }
@@ -388,7 +388,7 @@ public abstract class RadixOption extends AttributeOption {
     return displayGetter.toString();
   }
 
-  public String GetIndexChar() {
+  public String getIndexChar() {
     return "";
   }
 

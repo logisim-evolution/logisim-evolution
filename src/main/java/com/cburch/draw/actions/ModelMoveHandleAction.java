@@ -48,10 +48,10 @@ public class ModelMoveHandleAction extends ModelAction {
 
   @Override
   void undoSub(CanvasModel model) {
-    Handle oldHandle = gesture.getHandle();
-    int dx = oldHandle.getX() - newHandle.getX();
-    int dy = oldHandle.getY() - newHandle.getY();
-    HandleGesture reverse = new HandleGesture(newHandle, dx, dy, 0);
+    final var oldHandle = gesture.getHandle();
+    final var dx = oldHandle.getX() - newHandle.getX();
+    final var dy = oldHandle.getY() - newHandle.getY();
+    final var reverse = new HandleGesture(newHandle, dx, dy, 0);
     model.moveHandle(reverse);
   }
 }

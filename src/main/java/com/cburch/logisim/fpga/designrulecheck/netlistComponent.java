@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class NetlistComponent {
+public class netlistComponent {
 
   private final int nrOfEnds;
   private final Component compReference;
@@ -27,7 +27,7 @@ public class NetlistComponent {
   private BubbleInformationContainer localId;
   private boolean isGatedInstance;
 
-  public NetlistComponent(Component ref) {
+  public netlistComponent(Component ref) {
     isGatedInstance = false;
     nrOfEnds = ref.getEnds().size();
     compReference = ref;

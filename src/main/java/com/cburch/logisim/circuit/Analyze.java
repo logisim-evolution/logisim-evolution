@@ -47,9 +47,9 @@ public class Analyze {
 
     @Override
     public boolean equals(Object other) {
-      if (!(other instanceof LocationBit)) return false;
-      final var that = (LocationBit) other;
-      return (that.loc.equals(this.loc) && that.bit == this.bit);
+      return (other instanceof LocationBit that)
+             ? (that.loc.equals(this.loc) && that.bit == this.bit)
+             : false;
     }
 
     @Override
@@ -58,8 +58,7 @@ public class Analyze {
     }
   }
 
-  private static class ExpressionMap extends HashMap<LocationBit, Expression>
-      implements ExpressionComputer.Map {
+  private static class ExpressionMap extends HashMap<LocationBit, Expression> implements ExpressionComputer.Map {
     private static final long serialVersionUID = 1L;
     private final Circuit circuit;
     private final Set<LocationBit> dirtyPoints = new HashSet<>();
@@ -135,8 +134,9 @@ public class Analyze {
 
     propagateComponents(expressionMap, circuit.getNonWires());
 
+    final var maxIterations = 100;
     for (var iterations = 0; !expressionMap.dirtyPoints.isEmpty(); iterations++) {
-      if (iterations > MAX_ITERATIONS) {
+      if (iterations > maxIterations) {
         throw new AnalyzeException.Circular();
       }
 
@@ -176,15 +176,15 @@ public class Analyze {
     for (final var entry : pinLabels.entrySet()) {
       final var pin = entry.getKey();
       final var width = pin.getAttributeValue(StdAttr.WIDTH).getWidth();
-      final var var = new Var(entry.getValue(), width);
+      final var variable = new Var(entry.getValue(), width);
       if (Pin.FACTORY.isInputPin(pin)) {
         inputPins.add(pin);
-        for (final var name : var) inputNames.add(name);
-        inputVars.add(var);
+        for (final var name : variable) inputNames.add(name);
+        inputVars.add(variable);
       } else {
         outputPins.add(pin);
-        for (final var name : var) outputNames.add(name);
-        outputVars.add(var);
+        for (final var name : variable) outputNames.add(name);
+        outputVars.add(variable);
       }
     }
 
@@ -411,8 +411,6 @@ public class Analyze {
     if (ret.length() == 0) return null;
     return ret.toString();
   }
-
-  private static final int MAX_ITERATIONS = 100;
 
   private Analyze() {
     // dummy

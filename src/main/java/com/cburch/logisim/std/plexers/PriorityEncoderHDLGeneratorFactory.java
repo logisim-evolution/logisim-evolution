@@ -11,16 +11,16 @@ package com.cburch.logisim.std.plexers;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class PriorityEncoderHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String NR_OF_SELECT_BITS_STRING = "NrOfSelectBits";
   private static final int NR_OF_SELECT_BITS_ID = -1;
@@ -30,8 +30,8 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
   public PriorityEncoderHDLGeneratorFactory() {
     super();
     myParametersList
-        .add(NR_OF_INPUT_BITS_STRING, NR_OF_INPUT_BITS_ID, HDLParameters.MAP_POW2, PlexersLibrary.ATTR_SELECT)
-        .add(NR_OF_SELECT_BITS_STRING, NR_OF_SELECT_BITS_ID, HDLParameters.MAP_INT_ATTRIBUTE, PlexersLibrary.ATTR_SELECT);
+        .add(NR_OF_INPUT_BITS_STRING, NR_OF_INPUT_BITS_ID, HdlParameters.MAP_POW2, PlexersLibrary.ATTR_SELECT)
+        .add(NR_OF_SELECT_BITS_STRING, NR_OF_SELECT_BITS_ID, HdlParameters.MAP_INT_ATTRIBUTE, PlexersLibrary.ATTR_SELECT);
     myWires
         .addWire("s_in_is_zero", 1)
         .addWire("s_address", 5)
@@ -39,22 +39,43 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
         .addWire("v_select_2_vector", 16)
         .addWire("v_select_3_vector", 8)
         .addWire("v_select_4_vector", 4);
+    myPorts
+        .add(Port.INPUT, "enable", 1, 0)
+        .add(Port.INPUT, "input_vector", NR_OF_INPUT_BITS_ID, 0)
+        .add(Port.OUTPUT, "GroupSelect", 1, 0)
+        .add(Port.OUTPUT, "EnableOut", 1, 0)
+        .add(Port.OUTPUT, "Address", NR_OF_SELECT_BITS_ID, 0);
   }
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("enable", 1);
-    map.put("input_vector", NR_OF_INPUT_BITS_ID);
+  public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
+    final var map = new TreeMap<String, String>();
+    if (!(mapInfo instanceof netlistComponent)) return map;
+    final var comp = (netlistComponent) mapInfo;
+    final var nrOfBits = comp.nrOfEnds() - 4;
+    map.putAll(Hdl.getNetMap("enable", false, comp, nrOfBits + PriorityEncoder.EN_IN, nets));
+    final var vectorList = new StringBuilder();
+    for (var i = nrOfBits - 1; i >= 0; i--) {
+      if (Hdl.isVhdl())
+        map.putAll(Hdl.getNetMap("input_vector(" + i + ")", true, comp, i, nets));
+      else {
+        if (vectorList.length() > 0) vectorList.append(",");
+        vectorList.append(Hdl.getNetName(comp, i, true, nets));
+      }
+    }
+    if (Hdl.isVerilog()) map.put("input_vector", vectorList.toString());
+    map.putAll(Hdl.getNetMap("GroupSelect", true, comp, nrOfBits + PriorityEncoder.GS, nets));
+    map.putAll(Hdl.getNetMap("EnableOut", true, comp, nrOfBits + PriorityEncoder.EN_OUT, nets));
+    map.putAll(Hdl.getNetMap("Address", true, comp, nrOfBits + PriorityEncoder.OUT, nets));
     return map;
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = (new LineBuffer())
+  public LineBuffer getModuleFunctionality(Netlist nets, AttributeSet attrs) {
+    final var contents = LineBuffer.getBuffer()
             .pair("selBits", NR_OF_SELECT_BITS_STRING)
             .pair("inBits", NR_OF_INPUT_BITS_STRING);
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           -- Output Signals
           GroupSelect <= NOT(s_in_is_zero) AND enable;
@@ -111,38 +132,6 @@ public class PriorityEncoderHDLGeneratorFactory extends AbstractHDLGeneratorFact
           assign s_address[0] = (v_select_4_vector[3:2] == 0) ? v_select_4_vector[1] : v_select_4_vector[3];
           """);
     }
-    return contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("GroupSelect", 1);
-    map.put("EnableOut", 1);
-    map.put("Address", NR_OF_SELECT_BITS_ID);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    final var map = new TreeMap<String, String>();
-    if (!(mapInfo instanceof NetlistComponent)) return map;
-    final var comp = (NetlistComponent) mapInfo;
-    final var nrOfBits = comp.nrOfEnds() - 4;
-    map.putAll(GetNetMap("enable", false, comp, nrOfBits + PriorityEncoder.EN_IN, nets));
-    final var vectorList = new StringBuilder();
-    for (var i = nrOfBits - 1; i >= 0; i--) {
-      if (HDL.isVHDL())
-        map.putAll(GetNetMap("input_vector(" + i + ")", true, comp, i, nets));
-      else {
-        if (vectorList.length() > 0) vectorList.append(",");
-        vectorList.append(HDL.getNetName(comp, i, true, nets));
-      }
-    }
-    if (HDL.isVerilog()) map.put("input_vector", vectorList.toString());
-    map.putAll(GetNetMap("GroupSelect", true, comp, nrOfBits + PriorityEncoder.GS, nets));
-    map.putAll(GetNetMap("EnableOut", true, comp, nrOfBits + PriorityEncoder.EN_OUT, nets));
-    map.putAll(GetNetMap("Address", true, comp, nrOfBits + PriorityEncoder.OUT, nets));
-    return map;
+    return contents;
   }
 }

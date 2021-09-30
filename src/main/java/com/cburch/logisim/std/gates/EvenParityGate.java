@@ -18,13 +18,12 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.util.LineBuffer;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 
 class EvenParityGate extends AbstractGate {
   private static class XNorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      return (new LineBuffer()).add(GetParity(true, nrOfInputs, bitwidth > 1)).empty().get();
+    public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+      return LineBuffer.getBuffer().add(getParity(true, nrOfInputs, bitwidth > 1)).empty();
     }
   }
 

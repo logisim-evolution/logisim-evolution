@@ -45,8 +45,7 @@ public class ColorChooserButton extends JButton implements PropertyChangeListene
   @Override
   public void actionPerformed(ActionEvent e) {
     final var but = (JButton) e.getSource();
-    if (but.getIcon() instanceof ColorIcon) {
-      final var i = (ColorIcon) but.getIcon();
+    if (but.getIcon() instanceof ColorIcon i) {
       i.update(frame);
     }
   }

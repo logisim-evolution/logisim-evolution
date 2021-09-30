@@ -18,34 +18,34 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import javax.swing.JPanel;
 
-public class IOComponentsInformation {
+public class IoComponentsInformation {
 
   private Frame parent;
-  private final ArrayList<FPGAIOInformationContainer> IOcomps;
-  private int DefaultStandard = 0;
-  private int DefaultDriveStrength = 0;
-  private int DefaultPullSelection = 0;
-  private int DefaultActivity = 1;
+  private final ArrayList<FpgaIoInformationContainer> ioComps;
+  private int defaultStandard = 0;
+  private int defaultDriveStrength = 0;
+  private int defaultPullSelection = 0;
+  private int defaultActivity = 1;
   private final boolean mapMode;
   private final int imageHeight;
-  private final FPGAIOInformationContainer[][] lookup;
-  private FPGAIOInformationContainer highlighted;
-  private ArrayList<IOComponentsListener> listeners;
+  private final FpgaIoInformationContainer[][] lookup;
+  private FpgaIoInformationContainer highlighted;
+  private ArrayList<IoComponentsListener> listeners;
 
-  public IOComponentsInformation(Frame parentFrame, boolean mapMode) {
+  public IoComponentsInformation(Frame parentFrame, boolean mapMode) {
     parent = parentFrame;
     imageHeight =
         mapMode
             ? BoardManipulator.IMAGE_HEIGHT + BoardManipulator.CONSTANT_BAR_HEIGHT
             : BoardManipulator.IMAGE_HEIGHT;
-    IOcomps = new ArrayList<>();
-    lookup = new FPGAIOInformationContainer[BoardManipulator.IMAGE_WIDTH][imageHeight];
+    ioComps = new ArrayList<>();
+    lookup = new FpgaIoInformationContainer[BoardManipulator.IMAGE_WIDTH][imageHeight];
     this.mapMode = mapMode;
     clear();
   }
 
   public void clear() {
-    IOcomps.clear();
+    ioComps.clear();
     for (var x = 0; x < BoardManipulator.IMAGE_WIDTH; x++)
       for (var y = 0; y < imageHeight; y++) lookup[x][y] = null;
     highlighted = null;
@@ -61,31 +61,31 @@ public class IOComponentsInformation {
 
   public boolean hasOverlap(BoardRectangle rect) {
     var overlap = false;
-    for (var io : IOcomps)
-      overlap |= io.GetRectangle().Overlap(rect);
+    for (var io : ioComps)
+      overlap |= io.getRectangle().overlap(rect);
     return overlap;
   }
 
   public boolean hasOverlap(BoardRectangle orig, BoardRectangle update) {
     var overlap = false;
-    for (var io : IOcomps)
-      if (!io.GetRectangle().equals(orig)) overlap |= io.GetRectangle().Overlap(update);
+    for (var io : ioComps)
+      if (!io.getRectangle().equals(orig)) overlap |= io.getRectangle().overlap(update);
     return overlap;
   }
 
   public boolean hasComponents() {
-    return !IOcomps.isEmpty();
+    return !ioComps.isEmpty();
   }
 
-  public ArrayList<FPGAIOInformationContainer> getComponents() {
-    return IOcomps;
+  public ArrayList<FpgaIoInformationContainer> getComponents() {
+    return ioComps;
   }
 
   public boolean hasHighlighted() {
     return highlighted != null;
   }
 
-  public FPGAIOInformationContainer getHighligted() {
+  public FpgaIoInformationContainer getHighligted() {
     return highlighted;
   }
 
@@ -96,45 +96,45 @@ public class IOComponentsInformation {
   }
 
   public void setSelectable(MapListModel.MapInfo comp, float scale) {
-    for (var io : IOcomps) {
-      if (io.setSelectable(comp)) this.fireRedraw(io.GetRectangle(), scale);
+    for (var io : ioComps) {
+      if (io.setSelectable(comp)) this.fireRedraw(io.getRectangle(), scale);
     }
   }
 
   public void removeSelectable(float scale) {
-    for (var compId = 0; compId < IOcomps.size(); compId++) {
-      final var io = IOcomps.get(compId);
-      if (io.removeSelectable()) this.fireRedraw(io.GetRectangle(), scale);
+    for (var compId = 0; compId < ioComps.size(); compId++) {
+      final var io = ioComps.get(compId);
+      if (io.removeSelectable()) this.fireRedraw(io.getRectangle(), scale);
     }
   }
 
-  public void addComponent(FPGAIOInformationContainer comp, float scale) {
-    if (!IOcomps.contains(comp)) {
-      IOcomps.add(comp);
-      var rect = comp.GetRectangle();
+  public void addComponent(FpgaIoInformationContainer comp, float scale) {
+    if (!ioComps.contains(comp)) {
+      ioComps.add(comp);
+      var rect = comp.getRectangle();
       for (var x = rect.getXpos(); x < rect.getXpos() + rect.getWidth(); x++)
         for (var y = rect.getYpos(); y < rect.getYpos() + rect.getHeight(); y++)
           if (x < BoardManipulator.IMAGE_WIDTH && y < imageHeight) lookup[x][y] = comp;
       if (mapMode) return;
-      fireRedraw(comp.GetRectangle(), scale);
+      fireRedraw(comp.getRectangle(), scale);
     }
   }
 
-  public void removeComponent(FPGAIOInformationContainer comp, float scale) {
-    if (IOcomps.contains(comp)) {
+  public void removeComponent(FpgaIoInformationContainer comp, float scale) {
+    if (ioComps.contains(comp)) {
       if (highlighted == comp) highlighted = null;
-      IOcomps.remove(comp);
-      var rect = comp.GetRectangle();
+      ioComps.remove(comp);
+      var rect = comp.getRectangle();
       for (var x = rect.getXpos(); x < rect.getXpos() + rect.getWidth(); x++)
         for (var y = rect.getYpos(); y < rect.getYpos() + rect.getHeight(); y++)
           lookup[x][y] = null;
-      fireRedraw(comp.GetRectangle(), scale);
+      fireRedraw(comp.getRectangle(), scale);
     }
   }
 
-  public void replaceComponent(FPGAIOInformationContainer oldI, FPGAIOInformationContainer newI,
-      MouseEvent e, float scale) {
-    if (!IOcomps.contains(oldI)) return;
+  public void replaceComponent(FpgaIoInformationContainer oldI, FpgaIoInformationContainer newI,
+                               MouseEvent e, float scale) {
+    if (!ioComps.contains(oldI)) return;
     removeComponent(oldI, scale);
     addComponent(newI, scale);
     mouseMoved(e, scale);
@@ -150,16 +150,16 @@ public class IOComponentsInformation {
     var selected = lookup[xpos][ypos];
     if (selected == highlighted) {
       if (highlighted != null && highlighted.selectedPinChanged(xpos, ypos))
-        fireRedraw(highlighted.GetRectangle(), scale);
+        fireRedraw(highlighted.getRectangle(), scale);
       return;
     }
     if (highlighted != null) {
       highlighted.unsetHighlighted();
-      fireRedraw(highlighted.GetRectangle(), scale);
+      fireRedraw(highlighted.getRectangle(), scale);
     }
     if (selected != null) {
       selected.setHighlighted();
-      fireRedraw(selected.GetRectangle(), scale);
+      fireRedraw(selected.getRectangle(), scale);
     }
     highlighted = selected;
   }
@@ -167,57 +167,57 @@ public class IOComponentsInformation {
   public void mouseExited(float scale) {
     if (highlighted != null) {
       highlighted.unsetHighlighted();
-      fireRedraw(highlighted.GetRectangle(), scale);
+      fireRedraw(highlighted.getRectangle(), scale);
       highlighted = null;
     }
   }
 
-  public void addListener(IOComponentsListener l) {
+  public void addListener(IoComponentsListener l) {
     if (listeners == null) {
       listeners = new ArrayList<>();
       listeners.add(l);
     } else if (!listeners.contains(l)) listeners.add(l);
   }
 
-  public void removeListener(IOComponentsListener l) {
+  public void removeListener(IoComponentsListener l) {
     if (listeners != null)
       listeners.remove(l);
   }
 
-  public int GetDefaultActivity() {
-    return DefaultActivity;
+  public int getDefaultActivity() {
+    return defaultActivity;
   }
 
-  public int GetDefaultDriveStrength() {
-    return DefaultDriveStrength;
+  public int getDefaultDriveStrength() {
+    return defaultDriveStrength;
   }
 
-  public int GetDefaultPullSelection() {
-    return DefaultPullSelection;
+  public int getDefaultPullSelection() {
+    return defaultPullSelection;
   }
 
-  public int GetDefaultStandard() {
-    return DefaultStandard;
+  public int getDefaultStandard() {
+    return defaultStandard;
   }
 
-  public void SetDefaultActivity(int value) {
-    DefaultActivity = value;
+  public void setDefaultActivity(int value) {
+    defaultActivity = value;
   }
 
-  public void SetDefaultDriveStrength(int value) {
-    DefaultDriveStrength = value;
+  public void setDefaultDriveStrength(int value) {
+    defaultDriveStrength = value;
   }
 
-  public void SetDefaultPullSelection(int value) {
-    DefaultPullSelection = value;
+  public void setDefaultPullSelection(int value) {
+    defaultPullSelection = value;
   }
 
-  public void SetDefaultStandard(int value) {
-    DefaultStandard = value;
+  public void setDefaultStandard(int value) {
+    defaultStandard = value;
   }
 
   public void paint(Graphics2D g, float scale) {
-    for (var c : IOcomps)
+    for (var c : ioComps)
       c.paint(g, scale);
   }
 

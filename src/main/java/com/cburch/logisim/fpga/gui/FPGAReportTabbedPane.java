@@ -11,7 +11,7 @@ package com.cburch.logisim.fpga.gui;
 
 import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.contracts.BaseWindowListenerContract;
-import com.cburch.logisim.fpga.data.FPGACommanderListModel;
+import com.cburch.logisim.fpga.data.FpgaCommanderListModel;
 import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
 import com.cburch.logisim.proj.Project;
 import java.awt.Color;
@@ -20,7 +20,6 @@ import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.GridLayout;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
@@ -40,136 +39,134 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
   /** */
   private static final long serialVersionUID = 1L;
 
-  private static final int FONT_SIZE = 12;
+  private static final int fontSize = 12;
   private static final GridLayout consolesLayout = new GridLayout(1, 1);
-  private static final int InfoTabIndex = 0;
-  private static final int WarningsTabIndex = 1;
-  private static final int ErrorsTabIndex = 2;
-  private static final int ConsoleTabIndex = 3;
+  private static final int infoTabIndex = 0;
+  private static final int warningsTabIndex = 1;
+  private static final int errorsTabIndex = 2;
+  private static final int consoleTabIndex = 3;
 
   private final JTextArea textAreaInfo;
   private final JComponent panelInfos;
-  private final ArrayList<String> InfoMessages;
-  private FPGACommanderTextWindow InfoWindow;
+  private final ArrayList<String> infoMessages;
+  private FPGACommanderTextWindow infoWindow;
 
-  private final JList<Object> Warnings;
+  private final JList<Object> warnings;
   private final JComponent panelWarnings;
-  private final FPGACommanderListModel WarningsList;
-  private final FPGACommanderListWindow WarningsWindow;
+  private final FpgaCommanderListModel warningsList;
+  private final FPGACommanderListWindow warningsWindow;
 
-  private final JList<Object> Errors;
+  private final JList<Object> errors;
   private final JComponent panelErrors;
-  private final FPGACommanderListModel ErrorsList;
-  private final FPGACommanderListWindow ErrorsWindow;
+  private final FpgaCommanderListModel errorsList;
+  private final FPGACommanderListWindow errorsWindow;
 
-  private FPGACommanderTextWindow ConsoleWindow;
+  private FPGACommanderTextWindow consoleWindow;
   private final JTextArea textAreaConsole;
   private final JComponent panelConsole;
-  private final ArrayList<String> ConsoleMessages;
+  private final ArrayList<String> consoleMessages;
 
-  private boolean DRCTraceActive = false;
-  private SimpleDRCContainer ActiveDRCContainer;
+  private boolean drcTraceActive = false;
+  private SimpleDRCContainer activeDrcContainer;
 
-  private final Project MyProject;
+  private final Project myProject;
 
-  public FPGAReportTabbedPane(Project MyProject) {
+  public FPGAReportTabbedPane(Project myProject) {
     super();
-    this.MyProject = MyProject;
+    this.myProject = myProject;
     /* first we setup all info for the first tab, the Information window */
-    InfoMessages = new ArrayList<>();
+    infoMessages = new ArrayList<>();
     textAreaInfo = new JTextArea(10, 50);
     textAreaInfo.setForeground(Color.GRAY);
     textAreaInfo.setBackground(Color.BLACK);
-    textAreaInfo.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
+    textAreaInfo.setFont(new Font("monospaced", Font.PLAIN, fontSize));
     textAreaInfo.setEditable(false);
     textAreaInfo.setText(null);
-    DefaultCaret caret = (DefaultCaret) textAreaInfo.getCaret();
+    var caret = (DefaultCaret) textAreaInfo.getCaret();
     caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-    JScrollPane textMessages = new JScrollPane(textAreaInfo);
+    final var textMessages = new JScrollPane(textAreaInfo);
     textMessages.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     textMessages.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     panelInfos = new JPanel();
     panelInfos.setLayout(consolesLayout);
     panelInfos.add(textMessages);
     panelInfos.setName("Infos (0)");
-    add(panelInfos, InfoTabIndex);
+    add(panelInfos, infoTabIndex);
 
     /* now we setup the Warning window */
-    WarningsList = new FPGACommanderListModel(true);
-    Warnings = new JList<>();
-    Warnings.setBackground(Color.BLACK);
-    Warnings.setForeground(Color.ORANGE);
-    Warnings.setSelectionBackground(Color.ORANGE);
-    Warnings.setSelectionForeground(Color.BLACK);
-    Warnings.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
-    Warnings.setModel(WarningsList);
-    Warnings.setCellRenderer(WarningsList.getMyRenderer());
-    Warnings.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    Warnings.addMouseListener(this);
-    JScrollPane textWarnings = new JScrollPane(Warnings);
+    warningsList = new FpgaCommanderListModel(true);
+    warnings = new JList<>();
+    warnings.setBackground(Color.BLACK);
+    warnings.setForeground(Color.ORANGE);
+    warnings.setSelectionBackground(Color.ORANGE);
+    warnings.setSelectionForeground(Color.BLACK);
+    warnings.setFont(new Font("monospaced", Font.PLAIN, fontSize));
+    warnings.setModel(warningsList);
+    warnings.setCellRenderer(warningsList.getMyRenderer());
+    warnings.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    warnings.addMouseListener(this);
+    final var textWarnings = new JScrollPane(warnings);
     textWarnings.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     textWarnings.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     panelWarnings = new JPanel();
     panelWarnings.setLayout(consolesLayout);
     panelWarnings.add(textWarnings);
     panelWarnings.setName("Warnings (0)");
-    add(panelWarnings, WarningsTabIndex);
-    WarningsWindow =
-        new FPGACommanderListWindow("FPGACommander: Warnings", Color.ORANGE, true, WarningsList);
-    WarningsWindow.setSize(new Dimension(740, 400));
-    WarningsWindow.addWindowListener(this);
-    WarningsWindow.getListObject().addMouseListener(this);
+    add(panelWarnings, warningsTabIndex);
+    warningsWindow = new FPGACommanderListWindow("FPGACommander: Warnings", Color.ORANGE, true, warningsList);
+    warningsWindow.setSize(new Dimension(740, 400));
+    warningsWindow.addWindowListener(this);
+    warningsWindow.getListObject().addMouseListener(this);
 
     /* here we setup the Error window */
-    ErrorsList = new FPGACommanderListModel(false);
-    Errors = new JList<>();
-    Errors.setBackground(Color.BLACK);
-    Errors.setForeground(Color.RED);
-    Errors.setSelectionBackground(Color.RED);
-    Errors.setSelectionForeground(Color.BLACK);
-    Errors.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
-    Errors.setModel(ErrorsList);
-    Errors.setCellRenderer(ErrorsList.getMyRenderer());
-    Errors.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    Errors.addMouseListener(this);
-    JScrollPane textErrors = new JScrollPane(Errors);
+    errorsList = new FpgaCommanderListModel(false);
+    errors = new JList<>();
+    errors.setBackground(Color.BLACK);
+    errors.setForeground(Color.RED);
+    errors.setSelectionBackground(Color.RED);
+    errors.setSelectionForeground(Color.BLACK);
+    errors.setFont(new Font("monospaced", Font.PLAIN, fontSize));
+    errors.setModel(errorsList);
+    errors.setCellRenderer(errorsList.getMyRenderer());
+    errors.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    errors.addMouseListener(this);
+    final var textErrors = new JScrollPane(errors);
     textErrors.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     textErrors.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     panelErrors = new JPanel();
     panelErrors.setLayout(consolesLayout);
     panelErrors.add(textErrors);
     panelErrors.setName("Errors (0)");
-    add(panelErrors, ErrorsTabIndex);
-    ErrorsWindow =
-        new FPGACommanderListWindow("FPGACommander: Errors", Color.RED, true, ErrorsList);
-    ErrorsWindow.addWindowListener(this);
-    ErrorsWindow.setSize(new Dimension(740, 400));
-    ErrorsWindow.getListObject().addMouseListener(this);
+    add(panelErrors, errorsTabIndex);
+    errorsWindow = new FPGACommanderListWindow("FPGACommander: Errors", Color.RED, true, errorsList);
+    errorsWindow.addWindowListener(this);
+    errorsWindow.setSize(new Dimension(740, 400));
+    errorsWindow.getListObject().addMouseListener(this);
 
     /* finally we define the console window */
-    ConsoleMessages = new ArrayList<>();
+    consoleMessages = new ArrayList<>();
     textAreaConsole = new JTextArea(10, 50);
     textAreaConsole.setForeground(Color.LIGHT_GRAY);
     textAreaConsole.setBackground(Color.BLACK);
-    textAreaConsole.setFont(new Font("monospaced", Font.PLAIN, FONT_SIZE));
+    textAreaConsole.setFont(new Font("monospaced", Font.PLAIN, fontSize));
     textAreaConsole.setEditable(false);
     textAreaConsole.setText(null);
     caret = (DefaultCaret) textAreaConsole.getCaret();
     caret.setUpdatePolicy(DefaultCaret.ALWAYS_UPDATE);
-    JScrollPane textConsole = new JScrollPane(textAreaConsole);
+    final var textConsole = new JScrollPane(textAreaConsole);
     textConsole.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     textConsole.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     panelConsole = new JPanel();
     panelConsole.setLayout(consolesLayout);
     panelConsole.add(textConsole);
     panelConsole.setName("Console");
-    add(panelConsole, ConsoleTabIndex);
+    add(panelConsole, consoleTabIndex);
 
     addMouseListener(this);
-    setPreferredSize(new Dimension(700, 20 * FONT_SIZE));
+    setPreferredSize(new Dimension(700, 20 * fontSize));
   }
 
-  private String GetAllignmentSpaces(int index) {
+  private String getAllignmentSpaces(int index) {
     if (index < 9) {
       return "    " + index;
     } else if (index < 99) {
@@ -182,87 +179,87 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
     return Integer.toString(index);
   }
 
-  public void AddInfo(Object Message) {
-    int NrOfInfos = InfoMessages.size() + 1;
-    InfoMessages.add(GetAllignmentSpaces(NrOfInfos) + "> " + Message.toString() + "\n");
-    if (InfoWindow != null) {
-      if (InfoWindow.isVisible()) {
-        UpdateInfoWindow();
+  public void addInfo(Object message) {
+    int nrOfInfos = infoMessages.size() + 1;
+    infoMessages.add(getAllignmentSpaces(nrOfInfos) + "> " + message.toString() + "\n");
+    if (infoWindow != null) {
+      if (infoWindow.isVisible()) {
+        updateInfoWindow();
         return;
       }
     }
-    UpdateInfoTab();
+    updateInfoTab();
   }
 
-  private void UpdateInfoWindow() {
-    StringBuilder Line = new StringBuilder();
-    for (String mes : InfoMessages) {
-      Line.append(mes);
+  private void updateInfoWindow() {
+    final var line = new StringBuilder();
+    for (final var mes : infoMessages) {
+      line.append(mes);
     }
-    InfoWindow.set(Line.toString(), InfoMessages.size());
+    infoWindow.set(line.toString(), infoMessages.size());
   }
 
-  private void UpdateInfoTab() {
-    StringBuilder Line = new StringBuilder();
-    for (String mes : InfoMessages) {
-      Line.append(mes);
+  private void updateInfoTab() {
+    final var line = new StringBuilder();
+    for (final var mes : infoMessages) {
+      line.append(mes);
     }
-    textAreaInfo.setText(Line.toString());
-    int idx = indexOfComponent(panelInfos);
+    textAreaInfo.setText(line.toString());
+    final var idx = indexOfComponent(panelInfos);
     if (idx >= 0) {
       setSelectedIndex(idx);
-      setTitleAt(idx, "Infos (" + InfoMessages.size() + ")");
+      setTitleAt(idx, "Infos (" + infoMessages.size() + ")");
       panelInfos.revalidate();
       panelInfos.repaint();
     }
   }
 
-  public void AddWarning(Object Message) {
-    WarningsList.add(Message);
-    int idx = indexOfComponent(panelWarnings);
+  public void addWarning(Object message) {
+    warningsList.add(message);
+    final var idx = indexOfComponent(panelWarnings);
     if (idx >= 0) {
       setSelectedIndex(idx);
-      setTitleAt(idx, "Warnings (" + WarningsList.getCountNr() + ")");
+      setTitleAt(idx, "Warnings (" + warningsList.getCountNr() + ")");
       panelWarnings.revalidate();
       panelWarnings.repaint();
     }
   }
 
-  public void AddErrors(Object Message) {
-    ErrorsList.add(Message);
-    int idx = indexOfComponent(panelErrors);
+  public void addErrors(Object message) {
+    errorsList.add(message);
+    final var idx = indexOfComponent(panelErrors);
     if (idx >= 0) {
       setSelectedIndex(idx);
-      setTitleAt(idx, "Errors (" + ErrorsList.getCountNr() + ")");
+      setTitleAt(idx, "Errors (" + errorsList.getCountNr() + ")");
       panelErrors.revalidate();
       panelErrors.repaint();
     }
   }
 
-  public void AddConsole(String Message) {
-    ConsoleMessages.add(Message + "\n");
-    if (ConsoleWindow != null)
-      if (ConsoleWindow.isVisible()) {
-        UpdateConsoleWindow();
+  public void addConsole(String Message) {
+    consoleMessages.add(Message + "\n");
+    if (consoleWindow != null)
+      if (consoleWindow.isVisible()) {
+        updateConsoleWindow();
       }
-    UpdateConsoleTab();
+    updateConsoleTab();
   }
 
-  private void UpdateConsoleWindow() {
-    StringBuilder Lines = new StringBuilder();
-    for (String mes : ConsoleMessages) {
-      Lines.append(mes);
+  private void updateConsoleWindow() {
+    final var lines = new StringBuilder();
+    for (final var mes : consoleMessages) {
+      lines.append(mes);
     }
-    ConsoleWindow.set(Lines.toString(), 0);
+    consoleWindow.set(lines.toString(), 0);
   }
 
-  private void UpdateConsoleTab() {
-    StringBuilder Lines = new StringBuilder();
-    for (String mes : ConsoleMessages) {
-      Lines.append(mes);
+  private void updateConsoleTab() {
+    final var lines = new StringBuilder();
+    for (final var mes : consoleMessages) {
+      lines.append(mes);
     }
-    textAreaConsole.setText(Lines.toString());
-    int idx = indexOfComponent(panelConsole);
+    textAreaConsole.setText(lines.toString());
+    final var idx = indexOfComponent(panelConsole);
     if (idx >= 0) {
       setSelectedIndex(idx);
       panelConsole.revalidate();
@@ -270,79 +267,79 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
     }
   }
 
-  public void ClearConsole() {
-    ConsoleMessages.clear();
+  public void clearConsole() {
+    consoleMessages.clear();
   }
 
-  public void clearDRCTrace() {
-    if (DRCTraceActive) {
-      ActiveDRCContainer.clearMarks();
-      DRCTraceActive = false;
-      if (MyProject != null) MyProject.repaintCanvas();
+  public void clearDrcTrace() {
+    if (drcTraceActive) {
+      activeDrcContainer.clearMarks();
+      drcTraceActive = false;
+      if (myProject != null) myProject.repaintCanvas();
     }
   }
 
   public void clearAllMessages() {
-    clearDRCTrace();
+    clearDrcTrace();
     textAreaInfo.setText(null);
-    InfoMessages.clear();
+    infoMessages.clear();
     int idx = indexOfComponent(panelInfos);
     if (idx >= 0) {
-      setTitleAt(idx, "Infos (" + InfoMessages.size() + ")");
+      setTitleAt(idx, "Infos (" + infoMessages.size() + ")");
       setSelectedIndex(idx);
     }
-    WarningsList.clear();
+    warningsList.clear();
     idx = indexOfComponent(panelWarnings);
-    if (idx >= 0) setTitleAt(idx, "Warnings (" + WarningsList.getCountNr() + ")");
-    ErrorsList.clear();
+    if (idx >= 0) setTitleAt(idx, "Warnings (" + warningsList.getCountNr() + ")");
+    errorsList.clear();
     idx = indexOfComponent(panelErrors);
-    if (idx >= 0) setTitleAt(idx, "Errors (" + ErrorsList.getCountNr() + ")");
-    Rectangle rect = getBounds();
+    if (idx >= 0) setTitleAt(idx, "Errors (" + errorsList.getCountNr() + ")");
+    final var rect = getBounds();
     rect.x = 0;
     rect.y = 0;
     if (EventQueue.isDispatchThread()) paintImmediately(rect);
     else repaint(rect);
   }
 
-  public void CloseOpenWindows() {
-    if (InfoWindow != null) {
-      if (InfoWindow.isVisible()) {
-        InfoWindow.setVisible(false);
-        add(panelInfos, InfoTabIndex);
-        UpdateInfoTab();
+  public void closeOpenWindows() {
+    if (infoWindow != null) {
+      if (infoWindow.isVisible()) {
+        infoWindow.setVisible(false);
+        add(panelInfos, infoTabIndex);
+        updateInfoTab();
       }
     }
-    if (WarningsWindow != null) {
-      if (WarningsWindow.isVisible()) {
-        WarningsWindow.setVisible(false);
-        add(panelWarnings, WarningsTabIndex);
-        setTitleAt(WarningsTabIndex, "Warnings (" + WarningsList.getCountNr() + ")");
-        clearDRCTrace();
+    if (warningsWindow != null) {
+      if (warningsWindow.isVisible()) {
+        warningsWindow.setVisible(false);
+        add(panelWarnings, warningsTabIndex);
+        setTitleAt(warningsTabIndex, "Warnings (" + warningsList.getCountNr() + ")");
+        clearDrcTrace();
       }
     }
-    if (ErrorsWindow != null)
-      if (ErrorsWindow.isVisible()) {
-        ErrorsWindow.setVisible(false);
-        add(panelErrors, ErrorsTabIndex);
-        setTitleAt(ErrorsTabIndex, "Errors (" + ErrorsList.getCountNr() + ")");
-        clearDRCTrace();
+    if (errorsWindow != null)
+      if (errorsWindow.isVisible()) {
+        errorsWindow.setVisible(false);
+        add(panelErrors, errorsTabIndex);
+        setTitleAt(errorsTabIndex, "Errors (" + errorsList.getCountNr() + ")");
+        clearDrcTrace();
       }
-    if (ConsoleWindow != null)
-      if (ConsoleWindow.isVisible()) {
-        ConsoleWindow.setVisible(false);
-        add(panelConsole, ConsoleTabIndex);
-        UpdateConsoleTab();
+    if (consoleWindow != null)
+      if (consoleWindow.isVisible()) {
+        consoleWindow.setVisible(false);
+        add(panelConsole, consoleTabIndex);
+        updateConsoleTab();
       }
   }
 
-  private void GenerateDRCTrace(SimpleDRCContainer dc) {
-    DRCTraceActive = true;
-    ActiveDRCContainer = dc;
+  private void generateDrcTrace(SimpleDRCContainer dc) {
+    drcTraceActive = true;
+    activeDrcContainer = dc;
     if (dc.hasCircuit())
-      if (MyProject != null && !MyProject.getCurrentCircuit().equals(dc.getCircuit()))
-        MyProject.setCurrentCircuit(dc.getCircuit());
+      if (myProject != null && !myProject.getCurrentCircuit().equals(dc.getCircuit()))
+        myProject.setCurrentCircuit(dc.getCircuit());
     dc.markComponents();
-    if (MyProject != null) MyProject.repaintCanvas();
+    if (myProject != null) myProject.repaintCanvas();
   }
 
   @Override
@@ -358,36 +355,35 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
       if (e.getSource().equals(this)) {
         if (getComponentCount() > 0) {
           if (getSelectedComponent().equals(panelInfos)) {
-            if (InfoWindow != null) {
-              InfoWindow.setVisible(true);
-              UpdateInfoWindow();
+            if (infoWindow != null) {
+              infoWindow.setVisible(true);
+              updateInfoWindow();
             } else {
-              InfoWindow = new FPGACommanderTextWindow("FPGACommander: Infos", Color.GRAY, true);
-              InfoWindow.setVisible(true);
-              UpdateInfoWindow();
-              InfoWindow.addWindowListener(this);
+              infoWindow = new FPGACommanderTextWindow("FPGACommander: Infos", Color.GRAY, true);
+              infoWindow.setVisible(true);
+              updateInfoWindow();
+              infoWindow.addWindowListener(this);
             }
             remove(getSelectedIndex());
           } else if (getSelectedComponent().equals(panelConsole)) {
-            if (ConsoleWindow != null) {
-              ConsoleWindow.setVisible(true);
-              UpdateConsoleWindow();
+            if (consoleWindow != null) {
+              consoleWindow.setVisible(true);
+              updateConsoleWindow();
             } else {
-              ConsoleWindow =
-                  new FPGACommanderTextWindow("FPGACommander: Console", Color.LIGHT_GRAY, false);
-              ConsoleWindow.setVisible(true);
-              UpdateConsoleWindow();
-              ConsoleWindow.addWindowListener(this);
+              consoleWindow = new FPGACommanderTextWindow("FPGACommander: Console", Color.LIGHT_GRAY, false);
+              consoleWindow.setVisible(true);
+              updateConsoleWindow();
+              consoleWindow.addWindowListener(this);
             }
             remove(getSelectedIndex());
           } else if (getSelectedComponent().equals(panelWarnings)) {
-            if (WarningsWindow != null) {
-              WarningsWindow.setVisible(true);
+            if (warningsWindow != null) {
+              warningsWindow.setVisible(true);
               remove(getSelectedIndex());
             }
           } else if (getSelectedComponent().equals(panelErrors)) {
-            if (ErrorsWindow != null) {
-              ErrorsWindow.setVisible(true);
+            if (errorsWindow != null) {
+              errorsWindow.setVisible(true);
               remove(getSelectedIndex());
             }
           }
@@ -398,59 +394,57 @@ public class FPGAReportTabbedPane extends JTabbedPane implements BaseMouseListen
 
   @Override
   public void mouseReleased(MouseEvent e) {
-    boolean SourceIsWarningsWindow =
-        WarningsWindow != null && e.getSource().equals(WarningsWindow.getListObject());
-    boolean SourceIsErrorsWindow =
-        ErrorsWindow != null && e.getSource().equals(ErrorsWindow.getListObject());
-    if (e.getSource().equals(Errors) || SourceIsErrorsWindow) {
-      clearDRCTrace();
-      int idx = -1;
-      if (e.getSource().equals(Errors)) idx = Errors.getSelectedIndex();
-      else if (SourceIsErrorsWindow) idx = ErrorsWindow.getListObject().getSelectedIndex();
+    final var sourceIsWarningsWindow = warningsWindow != null && e.getSource().equals(warningsWindow.getListObject());
+    final var sourceIsErrorsWindow = errorsWindow != null && e.getSource().equals(errorsWindow.getListObject());
+    if (e.getSource().equals(errors) || sourceIsErrorsWindow) {
+      clearDrcTrace();
+      var idx = -1;
+      if (e.getSource().equals(errors)) idx = errors.getSelectedIndex();
+      else if (sourceIsErrorsWindow) idx = errorsWindow.getListObject().getSelectedIndex();
       if (idx >= 0) {
-        if (ErrorsList.getElementAt(idx) instanceof SimpleDRCContainer) {
-          GenerateDRCTrace((SimpleDRCContainer) ErrorsList.getElementAt(idx));
+        if (errorsList.getElementAt(idx) instanceof SimpleDRCContainer) {
+          generateDrcTrace((SimpleDRCContainer) errorsList.getElementAt(idx));
         }
       }
-    } else if (e.getSource().equals(Warnings) || SourceIsWarningsWindow) {
-      clearDRCTrace();
-      int idx = -1;
-      if (e.getSource().equals(Warnings)) idx = Warnings.getSelectedIndex();
-      else if (SourceIsWarningsWindow) idx = WarningsWindow.getListObject().getSelectedIndex();
+    } else if (e.getSource().equals(warnings) || sourceIsWarningsWindow) {
+      clearDrcTrace();
+      var idx = -1;
+      if (e.getSource().equals(warnings)) idx = warnings.getSelectedIndex();
+      else if (sourceIsWarningsWindow) idx = warningsWindow.getListObject().getSelectedIndex();
       if (idx >= 0)
-        if (WarningsList.getElementAt(idx) instanceof SimpleDRCContainer)
-          GenerateDRCTrace((SimpleDRCContainer) WarningsList.getElementAt(idx));
+        if (warningsList.getElementAt(idx) instanceof SimpleDRCContainer)
+          generateDrcTrace((SimpleDRCContainer) warningsList.getElementAt(idx));
     }
   }
 
   @Override
   public void windowClosing(WindowEvent e) {
-    if (e.getSource().equals(InfoWindow)) {
-      add(panelInfos, InfoTabIndex);
-      UpdateInfoTab();
+    if (e.getSource().equals(infoWindow)) {
+      add(panelInfos, infoTabIndex);
+      updateInfoTab();
     }
-    if (e.getSource().equals(ConsoleWindow)) {
+    if (e.getSource().equals(consoleWindow)) {
       add(panelConsole, getComponentCount());
-      UpdateConsoleTab();
+      updateConsoleTab();
     }
-    if (e.getSource().equals(WarningsWindow)) {
-      int idx = getComponentCount();
+    if (e.getSource().equals(warningsWindow)) {
+      var idx = getComponentCount();
       HashSet<Component> comps = new HashSet<>(Arrays.asList(getComponents()));
       if (comps.contains(panelConsole)) idx = indexOfComponent(panelConsole);
       if (comps.contains(panelErrors)) idx = indexOfComponent(panelErrors);
       add(panelWarnings, idx);
-      setTitleAt(idx, "Warnings (" + WarningsList.getCountNr() + ")");
+      setTitleAt(idx, "Warnings (" + warningsList.getCountNr() + ")");
       setSelectedIndex(idx);
-      clearDRCTrace();
+      clearDrcTrace();
     }
-    if (e.getSource().equals(ErrorsWindow)) {
-      int idx = getComponentCount();
-      HashSet<Component> comps = new HashSet<>(Arrays.asList(getComponents()));
+    if (e.getSource().equals(errorsWindow)) {
+      var idx = getComponentCount();
+      final var comps = new HashSet<>(Arrays.asList(getComponents()));
       if (comps.contains(panelConsole)) idx = indexOfComponent(panelConsole);
       add(panelErrors, idx);
-      setTitleAt(idx, "Errors (" + ErrorsList.getCountNr() + ")");
+      setTitleAt(idx, "Errors (" + errorsList.getCountNr() + ")");
       setSelectedIndex(idx);
-      clearDRCTrace();
+      clearDrcTrace();
     }
   }
 }

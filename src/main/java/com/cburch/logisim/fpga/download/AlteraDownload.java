@@ -17,9 +17,9 @@ import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.ToplevelHdlGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
@@ -75,17 +75,17 @@ public class AlteraDownload implements VendorDownload {
   }
 
   @Override
-  public void SetMapableResources(MappableResourcesContainer resources) {
+  public void setMapableResources(MappableResourcesContainer resources) {
     mapInfo = resources;
   }
 
   @Override
-  public int GetNumberOfStages() {
+  public int getNumberOfStages() {
     return 3;
   }
 
   @Override
-  public String GetStageMessage(int stage) {
+  public String getStageMessage(int stage) {
     switch (stage) {
       case 0:
         return S.get("AlteraProject");
@@ -99,7 +99,7 @@ public class AlteraDownload implements VendorDownload {
   }
 
   @Override
-  public ProcessBuilder PerformStep(int stage) {
+  public ProcessBuilder performStep(int stage) {
     switch (stage) {
       case 0:
         return Stage0Project();
@@ -114,13 +114,13 @@ public class AlteraDownload implements VendorDownload {
 
   @Override
   public boolean readyForDownload() {
-    final var SofFile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof").exists();
-    final var PofFile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".pof").exists();
+    final var SofFile = new File(SandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof").exists();
+    final var PofFile = new File(SandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".pof").exists();
     return SofFile || PofFile;
   }
 
   @Override
-  public ProcessBuilder DownloadToBoard() {
+  public ProcessBuilder downloadToBoard() {
     if (WriteToFlash) {
       if (!DoFlashing()) return null;
     }
@@ -132,11 +132,11 @@ public class AlteraDownload implements VendorDownload {
     command.add("jtag");
     command.add("-o");
     // if there is no .sof generated, try with the .pof
-    if (new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof").exists()) {
-      command.add("P;" + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof"
+    if (new File(SandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof").exists()) {
+      command.add("P;" + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof"
                   + "@" + boardInfo.fpga.getFpgaJTAGChainPosition());
     } else {
-      command.add("P;" + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".pof"
+      command.add("P;" + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".pof"
                   + "@" + boardInfo.fpga.getFpgaJTAGChainPosition());
     }
     var Down = new ProcessBuilder(command);
@@ -157,7 +157,7 @@ public class AlteraDownload implements VendorDownload {
   private ProcessBuilder Stage1Optimize() {
     var command = new ArrayList<String>();
     command.add(alteraVendor.getBinaryPath(2));
-    command.add(ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME);
+    command.add(ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME);
     command.add("--optimize=area");
     final var stage1 = new ProcessBuilder(command);
     stage1.directory(new File(SandboxPath));
@@ -169,25 +169,25 @@ public class AlteraDownload implements VendorDownload {
     command.add(alteraVendor.getBinaryPath(0));
     command.add("--flow");
     command.add("compile");
-    command.add(ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME);
+    command.add(ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME);
     final var stage2 = new ProcessBuilder(command);
     stage2.directory(new File(SandboxPath));
     return stage2;
   }
 
   @Override
-  public boolean CreateDownloadScripts() {
+  public boolean createDownloadScripts() {
     var scriptFile = FileWriter.getFilePointer(ScriptPath, alteraTclFile);
     if (scriptFile == null) {
       scriptFile = new File(ScriptPath + alteraTclFile);
       return scriptFile.exists();
     }
-    final var fileType = HDLType.equals(HDLGeneratorFactory.VHDL) ? "VHDL_FILE" : "VERILOG_FILE";
-    final var contents = new LineBuffer();
+    final var fileType = HDLType.equals(HdlGeneratorFactory.VHDL) ? "VHDL_FILE" : "VERILOG_FILE";
+    final var contents = LineBuffer.getBuffer();
     contents
-        .pair("topLevelName", ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME)
+        .pair("topLevelName", ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME)
         .pair("fileType", fileType)
-        .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
+        .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK);
 
     contents
         .add("""
@@ -248,13 +248,13 @@ public class AlteraDownload implements VendorDownload {
   }
 
   private ArrayList<String> getPinLocStrings() {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getBuffer();
 
     for (final var key : mapInfo.getMappableResources().keySet()) {
       final var map = mapInfo.getMappableResources().get(key);
 
       for (var i = 0; i < map.getNrOfPins(); i++) {
-        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
+        if (map.isMapped(i) && !map.isOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
           final var pairs = new LineBuffer.Pairs()
                   .pair("pinLoc", map.getPinLocation(i))
                   .pair("inv", map.isExternalInverted(i) ? "n_" : "")
@@ -281,21 +281,21 @@ public class AlteraDownload implements VendorDownload {
       default -> throw new IllegalStateException("Unexpected value: " + currentBehavior);
     };
 
-    return (new LineBuffer())
+    return LineBuffer.getBuffer()
         .pair("assignName", "set_global_assignment -name")
         .add("{{assignName}} FAMILY \"{{1}}\"", currentBoard.fpga.getTechnology())
         .add("{{assignName}} DEVICE {{1}}", currentBoard.fpga.getPart())
         .add("{{assignName}} DEVICE_FILTER_PACKAGE {{1}}", pkg[0])
         .add("{{assignName}} DEVICE_FILTER_PIN_COUNT {{1}}", pkg[1])
         .add("{{assignName}} RESERVE_ALL_UNUSED_PINS \"AS INPUT {{1}}\"", behavior)
-        .add("{{assignName}} FMAX_REQUIREMENT \"{{1}}\"", Download.GetClockFrequencyString(currentBoard))
+        .add("{{assignName}} FMAX_REQUIREMENT \"{{1}}\"", Download.getClockFrequencyString(currentBoard))
         .add("{{assignName}} RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
         .add("{{assignName}} CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
         .getWithIndent();
   }
 
   @Override
-  public boolean BoardConnected() {
+  public boolean isBoardConnected() {
     var command = new ArrayList<String>();
     command.add(alteraVendor.getBinaryPath(1));
     command.add("--list");
@@ -303,10 +303,10 @@ public class AlteraDownload implements VendorDownload {
     Detect.directory(new File(SandboxPath));
     var response = new ArrayList<String>();
     try {
-      Reporter.Report.print("");
-      Reporter.Report.print("===");
-      Reporter.Report.print("===> " + S.get("AlteraDetectDevice"));
-      Reporter.Report.print("===");
+      Reporter.report.print("");
+      Reporter.report.print("===");
+      Reporter.report.print("===> " + S.get("AlteraDetectDevice"));
+      Reporter.report.print("===");
       if (Download.execute(Detect, response) != null) return false;
     } catch (IOException | InterruptedException e) {
       return false;
@@ -317,7 +317,7 @@ public class AlteraDownload implements VendorDownload {
       cablename = Devices.get(0);
       return true;
     }
-    var selection = Download.ChooseBoard(Devices);
+    var selection = Download.chooseBoard(Devices);
     if (selection == null) return false;
     cablename = selection;
     return true;
@@ -338,34 +338,34 @@ public class AlteraDownload implements VendorDownload {
 
   private boolean DoFlashing() {
     if (!CreateCofFile()) {
-      Reporter.Report.AddError(S.get("AlteraFlashError"));
+      Reporter.report.addError(S.get("AlteraFlashError"));
       return false;
     }
     if (!CreateJicFile()) {
-      Reporter.Report.AddError(S.get("AlteraFlashError"));
+      Reporter.report.addError(S.get("AlteraFlashError"));
       return false;
     }
     if (!LoadProgrammerSof()) {
-      Reporter.Report.AddError(S.get("AlteraFlashError"));
+      Reporter.report.addError(S.get("AlteraFlashError"));
       return false;
     }
     if (!FlashDevice()) {
-      Reporter.Report.AddError(S.get("AlteraFlashError"));
+      Reporter.report.addError(S.get("AlteraFlashError"));
       return false;
     }
     return true;
   }
 
   private boolean FlashDevice() {
-    final var jicFile = ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".jic";
-    Reporter.Report.print("==>");
-    Reporter.Report.print("==> " + S.get("AlteraFlash"));
-    Reporter.Report.print("==>");
+    final var jicFile = ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".jic";
+    Reporter.report.print("==>");
+    Reporter.report.print("==> " + S.get("AlteraFlash"));
+    Reporter.report.print("==>");
     if (!new File(SandboxPath + jicFile).exists()) {
-      Reporter.Report.AddError(S.get("AlteraFlashError", jicFile));
+      Reporter.report.addError(S.get("AlteraFlashError", jicFile));
       return false;
     }
-    final var command = new LineBuffer();
+    final var command = LineBuffer.getBuffer();
     command
         .add(alteraVendor.getBinaryPath(1))
         .add("-c")
@@ -379,11 +379,11 @@ public class AlteraDownload implements VendorDownload {
     try {
       final var result = Download.execute(prog, null);
       if (result != null) {
-        Reporter.Report.AddFatalError(S.get("AlteraFlashFailure"));
+        Reporter.report.addFatalError(S.get("AlteraFlashFailure"));
         return false;
       }
     } catch (IOException | InterruptedException e) {
-      Reporter.Report.AddFatalError(S.get("AlteraFlashFailure"));
+      Reporter.report.addFatalError(S.get("AlteraFlashFailure"));
       return false;
     }
     return true;
@@ -402,14 +402,14 @@ public class AlteraDownload implements VendorDownload {
         + "sfl_"
         + FpgaDevice.toLowerCase()
         + ".sof";
-    Reporter.Report.print("==>");
-    Reporter.Report.print("==> " + S.get("AlteraProgSof"));
-    Reporter.Report.print("==>");
+    Reporter.report.print("==>");
+    Reporter.report.print("==> " + S.get("AlteraProgSof"));
+    Reporter.report.print("==>");
     if (!new File(ProgrammerSofFile).exists()) {
-      Reporter.Report.AddError(S.get("AlteraProgSofError", ProgrammerSofFile));
+      Reporter.report.addError(S.get("AlteraProgSofError", ProgrammerSofFile));
       return false;
     }
-    final var command = new LineBuffer();
+    final var command = LineBuffer.getBuffer();
     command.add(alteraVendor.getBinaryPath(1))
             .add("-c")
             .add(cablename)
@@ -422,11 +422,11 @@ public class AlteraDownload implements VendorDownload {
     try {
       final var result = Download.execute(prog, null);
       if (result != null) {
-        Reporter.Report.AddFatalError(S.get("AlteraProgSofFailure"));
+        Reporter.report.addFatalError(S.get("AlteraProgSofFailure"));
         return false;
       }
     } catch (IOException | InterruptedException e) {
-      Reporter.Report.AddFatalError(S.get("AlteraProgSofFailure"));
+      Reporter.report.addFatalError(S.get("AlteraProgSofFailure"));
       return false;
     }
     return true;
@@ -444,12 +444,12 @@ public class AlteraDownload implements VendorDownload {
 
   private boolean CreateJicFile() {
     if (!new File(ScriptPath + AlteraCofFile).exists()) {
-      Reporter.Report.AddError(S.get("AlteraNoCof"));
+      Reporter.report.addError(S.get("AlteraNoCof"));
       return false;
     }
-    Reporter.Report.print("==>");
-    Reporter.Report.print("==> " + S.get("AlteraJicFile"));
-    Reporter.Report.print("==>");
+    Reporter.report.print("==>");
+    Reporter.report.print("==> " + S.get("AlteraJicFile"));
+    Reporter.report.print("==>");
     var command = new ArrayList<String>();
     command.add(alteraVendor.getBinaryPath(3));
     command.add("-c");
@@ -459,11 +459,11 @@ public class AlteraDownload implements VendorDownload {
     try {
       final var result = Download.execute(Jic, null);
       if (result != null) {
-        Reporter.Report.AddFatalError(S.get("AlteraJicFileError"));
+        Reporter.report.addFatalError(S.get("AlteraJicFileError"));
         return false;
       }
     } catch (IOException | InterruptedException e) {
-      Reporter.Report.AddFatalError(S.get("AlteraJicFileError"));
+      Reporter.report.addFatalError(S.get("AlteraJicFileError"));
       return false;
     }
 
@@ -471,13 +471,13 @@ public class AlteraDownload implements VendorDownload {
   }
 
   private boolean CreateCofFile() {
-    if (!new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof").exists()) {
-      Reporter.Report.AddFatalError(S.get("AlteraNoSofFile"));
+    if (!new File(SandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof").exists()) {
+      Reporter.report.addFatalError(S.get("AlteraNoSofFile"));
       return false;
     }
-    Reporter.Report.print("==>");
-    Reporter.Report.print("==> " + S.get("AlteraCofFile"));
-    Reporter.Report.print("==>");
+    Reporter.report.print("==>");
+    Reporter.report.print("==> " + S.get("AlteraCofFile"));
+    Reporter.report.print("==>");
     try {
       var docFactory = DocumentBuilderFactory.newInstance();
       var docBuilder = docFactory.newDocumentBuilder();
@@ -488,7 +488,7 @@ public class AlteraDownload implements VendorDownload {
       AddElement("eprom_name", boardInfo.fpga.getFlashName(), rootElement, CofFile);
       AddElement("flash_loader_device", StripPackageSpeed(), rootElement, CofFile);
       AddElement("output_filename",
-          SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".jic",
+          SandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".jic",
           rootElement,
           CofFile);
       AddElement("n_pages", "1", rootElement, CofFile);
@@ -501,7 +501,7 @@ public class AlteraDownload implements VendorDownload {
       var BitFile = CofFile.createElement("bit0");
       SofData.appendChild(BitFile);
       AddElement("sof_filename",
-          SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof",
+          SandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof",
           BitFile,
           CofFile);
       AddElement("version", "10", rootElement, CofFile);
@@ -530,7 +530,7 @@ public class AlteraDownload implements VendorDownload {
       var result = new StreamResult(new File(ScriptPath + AlteraCofFile));
       transformer.transform(source, result);
     } catch (ParserConfigurationException | TransformerException e) {
-      Reporter.Report.AddError(S.get("AlteraErrorCof"));
+      Reporter.report.addError(S.get("AlteraErrorCof"));
       return false;
     }
     return true;

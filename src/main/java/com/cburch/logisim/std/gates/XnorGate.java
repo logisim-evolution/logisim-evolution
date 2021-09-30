@@ -21,19 +21,17 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.tools.WireRepairData;
 import com.cburch.logisim.util.LineBuffer;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 
 class XnorGate extends AbstractGate {
   private static class XNorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      return (new LineBuffer())
+    public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+      return LineBuffer.getBuffer()
           .add(
               isOneHot
-                  ? GetOneHot(true, nrOfInputs, bitwidth > 1)
-                  : GetParity(true, nrOfInputs, bitwidth > 1))
-          .add("")
-          .get();
+                  ? getOneHot(true, nrOfInputs, bitwidth > 1)
+                  : getParity(true, nrOfInputs, bitwidth > 1))
+          .empty();
     }
   }
 

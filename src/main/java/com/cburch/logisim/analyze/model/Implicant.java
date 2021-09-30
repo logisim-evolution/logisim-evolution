@@ -52,7 +52,9 @@ public class Implicant implements Comparable<Implicant> {
     }
 
     @Override
-    public void remove() {}
+    public void remove() {
+      // Do nothing.
+    }
   }
 
   static List<Implicant> computeMinimal(int format, AnalyzerModel model, String variable) {
@@ -279,9 +281,9 @@ public class Implicant implements Comparable<Implicant> {
 
   @Override
   public boolean equals(Object other) {
-    if (!(other instanceof Implicant)) return false;
-    final var o = (Implicant) other;
-    return this.unknowns == o.unknowns && this.values == o.values;
+    return (other instanceof Implicant o)
+           ? this.unknowns == o.unknowns && this.values == o.values
+           : false;
   }
 
   public int getRow() {
@@ -366,7 +368,7 @@ public class Implicant implements Comparable<Implicant> {
       // Work up to more general implicants.
       final var all = new HashSet<Implicant>();
       var current = base;
-      while (current.size() > 0) {
+      while (!current.isEmpty()) {
         final var next = new HashSet<Implicant>();
         for (final var implicant : current) {
           all.add(implicant);

@@ -28,12 +28,9 @@ public class Handle {
 
   @Override
   public boolean equals(Object other) {
-    if (other instanceof Handle) {
-      Handle that = (Handle) other;
-      return this.object.equals(that.object) && this.x == that.x && this.y == that.y;
-    } else {
-      return false;
-    }
+    return (other instanceof Handle that)
+           ? this.object.equals(that.object) && this.x == that.x && this.y == that.y
+           : false;
   }
 
   public Location getLocation() {

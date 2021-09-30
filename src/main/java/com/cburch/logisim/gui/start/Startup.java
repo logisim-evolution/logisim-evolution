@@ -201,7 +201,7 @@ public class Startup implements AWTEventListener {
     System.out.println();
     final var formatter = new HelpFormatter();
     formatter.setWidth(100);  // Arbitrary chosen value.
-    formatter.printHelp(Main.APP_NAME, null, opts, null, true);
+    formatter.printHelp(BuildInfo.name, null, opts, null, true);
     return RC.QUIT;
   }
 
@@ -211,10 +211,10 @@ public class Startup implements AWTEventListener {
    * @return Handler return code enum (RC.xxx)
    */
   protected static RC printVersion() {
-    System.out.println(Main.APP_DISPLAY_NAME);
-    System.out.println(Main.APP_URL);
+    System.out.println(BuildInfo.displayName);
+    System.out.println(BuildInfo.url);
     System.out.println(LineBuffer.format("{{1}} ({{2}})", BuildInfo.buildId, BuildInfo.dateIso8601));
-    System.out.println(LineBuffer.format("{{1}} ({{2}})", Main.JVM_VERSION, Main.JVM_VENDOR));
+    System.out.println(LineBuffer.format("{{1}} ({{2}})", BuildInfo.jvm_version, BuildInfo.jvm_vendor));
     return RC.QUIT;
   }
 
@@ -589,11 +589,11 @@ public class Startup implements AWTEventListener {
       return RC.OK;
     }
     // okay, not a file, let's look for empty and plain
-    if (option.toLowerCase().equals("empty")) {
+    if (option.equalsIgnoreCase("empty")) {
       startup.templEmpty = true;
       return RC.OK;
     }
-    if (option.toLowerCase().equals("plain")) {
+    if (option.equalsIgnoreCase("plain")) {
       startup.templPlain = true;
       return RC.OK;
     }
@@ -614,7 +614,7 @@ public class Startup implements AWTEventListener {
     // This is to test a test bench. It will return 0 or 1 depending on if the tests pass or not.
     return RC.OK;
   }
-  
+
   private static RC handleArgMainCircuit(Startup startup, Option opt) {
     startup.circuitToTest = opt.getValues()[0];
     return RC.OK;
@@ -793,7 +793,7 @@ public class Startup implements AWTEventListener {
     final var downTickFreq = mainCircuit.getDownloadFrequency();
     final var usedFrequency = (testTickFrequency > 0) ? testTickFrequency :
         (downTickFreq > 0) ? downTickFreq : simTickFreq;
-    Download Downloader =
+    Download downloader =
         new Download(
             proj,
             testCircuitImpName,
@@ -804,7 +804,7 @@ public class Startup implements AWTEventListener {
             false,
             false,
             testCircuitHdlOnly);
-    return Downloader.runtty();
+    return downloader.runTty();
   }
 
   private void loadTemplate(Loader loader, File templFile, boolean templEmpty) {
@@ -962,20 +962,19 @@ public class Startup implements AWTEventListener {
 
   private boolean HasIcon(Component comp) {
     var result = false;
-    if (comp instanceof JOptionPane) {
-      for (Component comp1 : ((JOptionPane) comp).getComponents()) result |= HasIcon(comp1);
-    } else if (comp instanceof JPanel) {
-      for (Component comp1 : ((JPanel) comp).getComponents()) result |= HasIcon(comp1);
-    } else if (comp instanceof JLabel) {
-      return ((JLabel) comp).getIcon() != null;
+    if (comp instanceof JOptionPane pane) {
+      for (final var comp1 : pane.getComponents()) result |= HasIcon(comp1);
+    } else if (comp instanceof JPanel panel) {
+      for (final var comp1 : panel.getComponents()) result |= HasIcon(comp1);
+    } else if (comp instanceof JLabel label) {
+      return label.getIcon() != null;
     }
     return result;
   }
 
   @Override
   public void eventDispatched(AWTEvent event) {
-    if (event instanceof ContainerEvent) {
-      final var containerEvent = (ContainerEvent) event;
+    if (event instanceof ContainerEvent containerEvent) {
       if (containerEvent.getID() == ContainerEvent.COMPONENT_ADDED) {
         final var container = containerEvent.getChild();
         if ((container instanceof JButton)

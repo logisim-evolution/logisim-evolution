@@ -11,16 +11,15 @@ package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
+import com.cburch.logisim.instance.Port;
 
-public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   public static final int NR_OF_LEDS_ID = -1;
   public static final int NR_OF_ROWS_ID = -2;
@@ -59,6 +58,11 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
         .addRegister("s_columnCounterReg", NR_OF_COLUMN_ADDRESS_BITS_ID)
         .addRegister("s_scanningCounterReg", SCANNING_COUNTER_BITS_ID)
         .addRegister("s_tickReg", 1);
+    myPorts
+        .add(Port.INPUT, TickComponentHdlGeneratorFactory.FPGA_CLOCK, 1, 0)
+        .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayInputs, NR_OF_LEDS_ID, 1)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress, NR_OF_COLUMN_ADDRESS_BITS_ID, 2)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs, NR_OF_ROWS_ID, 3);
   }
 
   public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
@@ -68,7 +72,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
     final var maxNrLeds = ((int) Math.pow(2.0, (double) nrColAddrBits)) * nrOfRows;
 
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("nrOfLeds", NR_OF_LEDS_STRING)
             .pair("ledsCount", nrOfRows * nrOfColumns)
             .pair("maxNrLeds", MAX_NR_LEDS_STRING)
@@ -86,7 +90,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
             .pair("scanningCounter", SCANNING_COUNTER_VALUE_STRING)
             .pair("scanningValue", (scanningReload - 1));
 
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           GENERIC MAP ( {{nrOfLeds}} => {{ledsCount}},
                         {{nrOfRows}} => {{nrOfRowsCount}},
@@ -114,14 +118,14 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
 
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
             .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
-            .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+            .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK)
             .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
             .pair("id", id);
 
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           PORT MAP ( {{columnAddress}} => {{columnAddress}}{{id}},
                      {{outs}} => {{outs}}{{id}},
@@ -139,31 +143,15 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
     return contents.getWithIndent(6);
   }
 
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress, NR_OF_COLUMN_ADDRESS_BITS_ID);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs, NR_OF_ROWS_ID);
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var inputs = new TreeMap<String, Integer>();
-    inputs.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayInputs, NR_OF_LEDS_ID);
-    return inputs;
-  }
-
   public ArrayList<String> getColumnCounterCode() {
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
-            .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+            .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK)
             .pair("counterBits", SCANNING_COUNTER_BITS_STRING)
             .pair("counterValue", SCANNING_COUNTER_VALUE_STRING);
 
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add(
           """
 
@@ -223,9 +211,9 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
             .pair("outs", LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs)
             .pair("nrOfLeds", NR_OF_LEDS_STRING)
@@ -233,7 +221,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
             .pair("activeLow", ACTIVE_LOW_STRING)
             .add(getColumnCounterCode());
 
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           makeVirtualInputs : PROCESS ( internalLeds ) IS
           BEGIN
@@ -251,7 +239,6 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
           """);
     } else {
       contents.add("""
-
           genvar i;
           generate
              for (i = 0; i < {{nrOfRows}}; i = i + 1)
@@ -263,6 +250,6 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHDLGenera
           endgenerate
           """);
     }
-    return contents.getWithIndent();
+    return contents;
   }
 }

@@ -28,7 +28,6 @@ import java.awt.Font;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.util.HashMap;
-import java.util.List;
 import java.util.stream.Collectors;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -60,24 +59,21 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
   private void fillArray() {
     registers.clear();
     panel.removeAll();
-    for (Circuit circ : proj.getLogisimFile().getCircuits()) {
+    for (final var circ : proj.getLogisimFile().getCircuits()) {
       getAllRegisters(circ);
     }
-    if (proj.getLogisimFile().getLibrary("prodis_v1.3") instanceof LoadedLibrary) {
-      if (((LoadedLibrary) proj.getLogisimFile().getLibrary("prodis_v1.3")).getBase()
-          instanceof LogisimFile) {
-        for (Circuit circ :
-            ((LogisimFile)
-                    ((LoadedLibrary) proj.getLogisimFile().getLibrary("prodis_v1.3")).getBase())
-                .getCircuits()) {
+    if (proj.getLogisimFile().getLibrary("prodis_v1.3") instanceof LoadedLibrary loadedLib) {
+      if (loadedLib.getBase() instanceof LogisimFile lsFile) {
+        for (final var circ : lsFile.getCircuits()) {
           getAllRegisters(circ);
         }
       }
     }
 
-    var col1 = new MyLabel("Circuit", Font.ITALIC | Font.BOLD);
-    var col2 = new MyLabel("Reg name", Font.BOLD);
-    var col3 = new MyLabel("Value", Font.BOLD);
+    // FIXME: hardcoded strings
+    final var col1 = new MyLabel("Circuit", Font.ITALIC | Font.BOLD);
+    final var col2 = new MyLabel("Reg name", Font.BOLD);
+    final var col3 = new MyLabel("Value", Font.BOLD);
 
     col1.setColor(Color.LIGHT_GRAY);
     col2.setColor(Color.LIGHT_GRAY);
@@ -88,7 +84,7 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
     constraints.ipady = 2;
     constraints.weighty = 0;
 
-    int y = 0;
+    var y = 0;
     constraints.gridy = y;
     constraints.gridx = 0;
     constraints.weightx = 0.3;
@@ -102,29 +98,25 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
     y++;
 
     if (!registers.isEmpty()) {
-      List<String> keys =
-          registers.keySet().stream().sorted(new AlphanumComparator()).collect(Collectors.toList());
-      for (String key : keys) {
+      final var keys = registers.keySet().stream().sorted(new AlphanumComparator()).collect(Collectors.toList());
+      for (final var key : keys) {
         constraints.gridy = y;
         constraints.gridx = 0;
-        String circuitName = key.split("/")[0];
+        final var circuitName = key.split("/")[0];
         panel.add(new MyLabel(circuitName, Font.ITALIC, true), constraints);
         constraints.gridx++;
-        String registerName = key.split("/")[1];
+        final var registerName = key.split("/")[1];
         panel.add(new MyLabel(registerName), constraints);
         constraints.gridx++;
-        Component selReg = registers.get(key);
-        CircuitState mainCircState = proj.getCircuitState();
-        while (mainCircState.getParentState() != null) { // Get the main
-          // circuit
+        final var selReg = registers.get(key);
+        var mainCircState = proj.getCircuitState();
+        while (mainCircState.getParentState() != null) { // Get the main circuit
           mainCircState = mainCircState.getParentState();
         }
-        Value val =
-            findVal(
-                mainCircState, circuitName, selReg.getEnd(0).getLocation()); // Get Q port location
+        final var val = findVal(mainCircState, circuitName, selReg.getEnd(0).getLocation()); // Get Q port location
 
         if (val != null) {
-          MyLabel hexLabel = new MyLabel(val.toHexString());
+          final var hexLabel = new MyLabel(val.toHexString());
           hexLabel.setFont(new Font(Font.MONOSPACED, Font.PLAIN, hexLabel.getFont().getSize()));
           panel.add(hexLabel, constraints);
         } else {
@@ -154,17 +146,15 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
   private synchronized Value findVal(CircuitState cs, String cn, Location loc) {
     if (cs.containsKey(loc) && cs.getCircuit().getName().equals(cn)) {
       return cs.getValue(loc);
-    } else {
-      if (cs.getSubStates() != null && cs.getSubStates().size() > 0) {
-        for (CircuitState cst : cs.getSubStates()) {
-          Value ret;
-          if ((ret = findVal(cst, cn, loc)) != null) {
-            return ret;
-          }
-        }
-      }
-      return null;
     }
+
+    if (cs.getSubStates() != null && cs.getSubStates().size() > 0) {
+      for (final var cst : cs.getSubStates()) {
+        final var ret = findVal(cst, cn, loc);
+        if (ret != null) return ret;
+      }
+    }
+    return null;
   }
 
   /**
@@ -175,12 +165,10 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
    * @param circuit The circuit in which the registers are searched.
    */
   private synchronized void getAllRegisters(Circuit circuit) {
-    for (Component comp : circuit.getNonWires()) {
+    for (final var comp : circuit.getNonWires()) {
       if (comp.getFactory().getName().equals("Register")) {
-        if (comp.getAttributeSet().getValue(Register.ATTR_SHOW_IN_TAB)
-            && !comp.getAttributeSet().getValue(StdAttr.LABEL).equals("")) {
-          registers.put(
-              circuit.getName() + "/" + comp.getAttributeSet().getValue(StdAttr.LABEL), comp);
+        if (comp.getAttributeSet().getValue(Register.ATTR_SHOW_IN_TAB) && !comp.getAttributeSet().getValue(StdAttr.LABEL).equals("")) {
+          registers.put(circuit.getName() + "/" + comp.getAttributeSet().getValue(StdAttr.LABEL), comp);
         }
       }
     }

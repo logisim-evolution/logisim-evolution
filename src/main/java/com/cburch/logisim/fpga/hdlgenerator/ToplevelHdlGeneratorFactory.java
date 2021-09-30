@@ -12,36 +12,37 @@ package com.cburch.logisim.fpga.hdlgenerator;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitHDLGeneratorFactory;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
-import com.cburch.logisim.fpga.data.IOComponentTypes;
+import com.cburch.logisim.fpga.data.FpgaIoInformationContainer;
+import com.cburch.logisim.fpga.data.IoComponentTypes;
 import com.cburch.logisim.fpga.data.LedArrayDriving;
+import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PinActivity;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.gui.Reporter;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.io.LedArrayGenericHDLGeneratorFactory;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   private final long fpgaClockFrequency;
   private final double tickFrequency;
   private final Circuit myCircuit;
   private final MappableResourcesContainer myIOComponents;
   private final boolean requiresFPGAClock;
   private final boolean hasLedArray;
-  private final ArrayList<FPGAIOInformationContainer> myLedArrays;
+  private final ArrayList<FpgaIoInformationContainer> myLedArrays;
   private final HashMap<String, Boolean> ledArrayTypesUsed;
   public static final String HDL_DIRECTORY = "toplevel";
 
-  public ToplevelHDLGeneratorFactory(long fpgaClock, double tickClock, Circuit topLevel,
-      MappableResourcesContainer ioComponents) {
+  public ToplevelHdlGeneratorFactory(long fpgaClock, double tickClock, Circuit topLevel,
+                                     MappableResourcesContainer ioComponents) {
     super(HDL_DIRECTORY);
     fpgaClockFrequency = fpgaClock;
     tickFrequency = tickClock;
@@ -51,7 +52,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     var hasLedArray = false;
     final var nets = topLevel.getNetList();
     final var ledArrayTypesUsed = new HashMap<String, Boolean>();
-    final var ledArrays = new ArrayList<FPGAIOInformationContainer>();
+    final var ledArrays = new ArrayList<FpgaIoInformationContainer>();
     final var nrOfClockTrees = nets.numberOfClockTrees();
     final var nrOfInputBubbles = nets.getNumberOfInputBubbles();
     final var nrOfInOutBubbles = nets.numberOfInOutBubbles();
@@ -59,8 +60,8 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     final var nrOfInputPorts = nets.getNumberOfInputPorts();
     final var nrOfInOutPorts = nets.numberOfInOutPorts();
     final var nrOfOutputPorts = nets.numberOfOutputPorts();
-    for (final var comp : myIOComponents.getIOComponentInformation().getComponents()) {
-      if (comp.GetType().equals(IOComponentTypes.LEDArray)) {
+    for (final var comp : myIOComponents.getIoComponentInformation().getComponents()) {
+      if (comp.getType().equals(IoComponentTypes.LedArray)) {
         if (comp.hasMap()) {
           ledArrayTypesUsed.put(LedArrayDriving.getStrings().get(comp.getArrayDriveMode()), true);
           ledArrays.add(comp);
@@ -77,18 +78,18 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     this.ledArrayTypesUsed = ledArrayTypesUsed;
     myLedArrays = ledArrays;
     if (nrOfClockTrees > 0) {
-      myWires.addWire(TickComponentHDLGeneratorFactory.FPGA_TICK, 1);
+      myWires.addWire(TickComponentHdlGeneratorFactory.FPGA_TICK, 1);
       for (var clockId = 0; clockId < nrOfClockTrees; clockId++)
         myWires.addWire(String.format("s_%s%d", CLOCK_TREE_NAME, clockId), ClockHDLGeneratorFactory.NR_OF_CLOCK_BITS);
     }
     if (nrOfInputBubbles > 0)
-      myWires.addWire(String.format("s_%s", HDLGeneratorFactory.LOCAL_INPUT_BUBBLE_BUS_NAME), 
+      myWires.addWire(String.format("s_%s", HdlGeneratorFactory.LOCAL_INPUT_BUBBLE_BUS_NAME),
           nrOfInputBubbles > 1 ? nrOfInputBubbles : 0);
     if (nrOfInOutBubbles > 0)
-      myWires.addWire(String.format("s_%s", HDLGeneratorFactory.LOCAL_INOUT_BUBBLE_BUS_NAME), 
+      myWires.addWire(String.format("s_%s", HdlGeneratorFactory.LOCAL_INOUT_BUBBLE_BUS_NAME),
           nrOfInOutBubbles > 1 ? nrOfInOutBubbles : 0);
     if (nrOfOutputBubbles > 0)
-      myWires.addWire(String.format("s_%s", HDLGeneratorFactory.LOCAL_OUTPUT_BUBBLE_BUS_NAME), 
+      myWires.addWire(String.format("s_%s", HdlGeneratorFactory.LOCAL_OUTPUT_BUBBLE_BUS_NAME),
           nrOfOutputBubbles > 1 ? nrOfOutputBubbles : 0);
     if (nrOfInputPorts > 0) {
       for (var input = 0; input < nrOfInputPorts; input++) {
@@ -120,7 +121,23 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           ledArray.getNrOfRows(),
           ledArray.getNrOfColumns(),
           myLedArrays.indexOf(ledArray)));
+      final var ports = LedArrayGenericHDLGeneratorFactory.getExternalSignals(
+          ledArray.getArrayDriveMode(),
+          ledArray.getNrOfRows(),
+          ledArray.getNrOfColumns(),
+          myLedArrays.indexOf(ledArray));
+      for (final var port : ports.keySet())
+        myPorts.add(Port.OUTPUT, port, ports.get(port), null);
     }
+    if (nrOfClockTrees > 0 || nets.requiresGlobalClockConnection() || requiresFPGAClock)
+      myPorts.add(Port.INPUT, TickComponentHdlGeneratorFactory.FPGA_CLOCK, 1, null);
+    for (final var in : myIOComponents.GetMappedInputPinNames())
+      myPorts.add(Port.INPUT, in, 1, null);
+    for (final var io : myIOComponents.GetMappedOutputPinNames()) {
+      myPorts.add(Port.OUTPUT, io, 1, null);
+    }
+    for (final var io : myIOComponents.GetMappedIOPinNames())
+      myPorts.add(Port.INOUT, io, 1, null);
   }
 
   public boolean hasLedArray() {
@@ -133,13 +150,13 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
+  public ArrayList<String> getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
     final var components = new ArrayList<String>();
     final var nrOfClockTrees = theNetlist.numberOfClockTrees();
     if (nrOfClockTrees > 0) {
-      final var ticker = new TickComponentHDLGeneratorFactory(fpgaClockFrequency, tickFrequency);
-      components.addAll(ticker.getComponentInstantiation(theNetlist, null, TickComponentHDLGeneratorFactory.HDL_IDENTIFIER));
-      HDLGeneratorFactory clockWorker =
+      final var ticker = new TickComponentHdlGeneratorFactory(fpgaClockFrequency, tickFrequency);
+      components.addAll(ticker.getComponentInstantiation(theNetlist, null, TickComponentHdlGeneratorFactory.HDL_IDENTIFIER));
+      HdlGeneratorFactory clockWorker =
           theNetlist.getAllClockSources()
               .get(0)
               .getFactory()
@@ -171,62 +188,23 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetInOutList(Netlist theNetlist, AttributeSet attrs) {
-    final var inOut = new TreeMap<String, Integer>();
-    for (var io : myIOComponents.GetMappedIOPinNames()) {
-      inOut.put(io, 1);
-    }
-    return inOut;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist theNetlist, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    for (var io : myIOComponents.GetMappedOutputPinNames()) {
-      outputs.put(io, 1);
-    }
-    for (var ledArray : myLedArrays) {
-      outputs.putAll(LedArrayGenericHDLGeneratorFactory.getExternalSignals(
-          ledArray.getArrayDriveMode(),
-          ledArray.getNrOfRows(),
-          ledArray.getNrOfColumns(),
-          myLedArrays.indexOf(ledArray)));
-    }
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist theNetlist, AttributeSet attrs) {
-    final var inputs = new TreeMap<String, Integer>();
-    final var nrOfClockTrees = theNetlist.numberOfClockTrees();
-    /* First we instantiate the Clock tree busses when present */
-    if (nrOfClockTrees > 0 || theNetlist.requiresGlobalClockConnection() || requiresFPGAClock) {
-      inputs.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1);
-    }
-    for (var in : myIOComponents.GetMappedInputPinNames()) {
-      inputs.put(in, 1);
-    }
-    return inputs;
-  }
-
-  @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+  public LineBuffer getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+    final var contents = LineBuffer.getHdlBuffer();
     final var nrOfClockTrees = theNetlist.numberOfClockTrees();
     /* First we process all components */
     contents.addRemarkBlock("Here all signal adaptations are performed");
     for (final var key : myIOComponents.getMappableResources().keySet()) {
       final var comp = myIOComponents.getMappableResources().get(key);
-      contents.add(AbstractHDLGeneratorFactory.GetToplevelCode(comp));
+      contents.add(getToplevelCode(comp));
     }
     /* now we process the clock tree components */
     if (nrOfClockTrees > 0) {
       contents.addRemarkBlock("Here the clock tree components are defined");
       var index = 0L;
-      final var ticker = new TickComponentHDLGeneratorFactory(fpgaClockFrequency, tickFrequency);
-      contents.add(ticker.getComponentMap(null, index++, null, TickComponentHDLGeneratorFactory.HDL_IDENTIFIER));
-      for (var clockGen : theNetlist.getAllClockSources()) {
-        final var thisClock = new NetlistComponent(clockGen);
+      final var ticker = new TickComponentHdlGeneratorFactory(fpgaClockFrequency, tickFrequency);
+      contents.add(ticker.getComponentMap(null, index++, null, TickComponentHdlGeneratorFactory.HDL_IDENTIFIER));
+      for (final var clockGen : theNetlist.getAllClockSources()) {
+        final var thisClock = new netlistComponent(clockGen);
         contents.add(
             clockGen.getFactory()
                 .getHDLGenerator(thisClock.getComponent().getAttributeSet())
@@ -242,7 +220,7 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     // Here the led arrays are connected
     if (hasLedArray) {
       contents.add("").addRemarkBlock("Here the Led arrays are connected");
-      for (var array : myLedArrays) {
+      for (final var array : myLedArrays) {
         contents.add(
             LedArrayGenericHDLGeneratorFactory.GetComponentMap(
                 array.getArrayDriveMode(),
@@ -250,10 +228,68 @@ public class ToplevelHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
                 array.getNrOfColumns(),
                 myLedArrays.indexOf(array),
                 fpgaClockFrequency,
-                array.GetActivityLevel() == PinActivity.ACTIVE_LOW));
+                array.getActivityLevel() == PinActivity.ACTIVE_LOW));
         contents.add(LedArrayGenericHDLGeneratorFactory.getArrayConnections(array, myLedArrays.indexOf(array)));
       }
     }
-    return contents.get();
+    return contents;
+  }
+
+  private static ArrayList<String> getToplevelCode(MapComponent component) {
+    final var temp = new StringBuilder();
+    final var contents = new ArrayList<String>();
+    if (component.getNrOfPins() <= 0) {
+      // FIXME: hardcoded string
+      Reporter.report.addError("BUG: Found a component with no pins. Please report this occurance!");
+      return contents;
+    }
+    for (var i = 0; i < component.getNrOfPins(); i++) {
+      temp.setLength(0);
+      temp.append("   ").append(Hdl.assignPreamble());
+      /* the internal mapped signals are handled in the top-level HDL generator */
+      if (component.isInternalMapped(i)) continue;
+      /* IO-pins need to be mapped directly to the top-level component and cannot be
+       * passed by signals, so we skip them.
+       */
+      if (component.isIo(i)) continue;
+      if (!component.isMapped(i)) {
+        /* unmapped output pins we leave unconnected */
+        if (component.isOutput(i)) continue;
+        temp.append(component.getHdlSignalName(i));
+        allign(temp);
+        temp.append(Hdl.assignOperator());
+        temp.append(Hdl.zeroBit()).append(";");
+        contents.add(temp.toString());
+        continue;
+      }
+      if (component.isInput(i)) {
+        temp.append(component.getHdlSignalName(i));
+        allign(temp);
+        temp.append(Hdl.assignOperator());
+        if (component.IsConstantMapped(i)) {
+          temp.append(component.isZeroConstantMap(i) ? Hdl.zeroBit() : Hdl.oneBit());
+        } else {
+          if (component.isExternalInverted(i)) temp.append(Hdl.notOperator()).append("n_");
+          temp.append(component.getHdlString(i));
+        }
+        temp.append(";");
+        contents.add(temp.toString());
+        continue;
+      }
+      if (component.isOpenMapped(i)) continue;
+      if (component.isExternalInverted(i)) temp.append("n_");
+      temp.append(component.getHdlString(i));
+      allign(temp);
+      temp.append(Hdl.assignOperator());
+      if (component.isExternalInverted(i)) temp.append(Hdl.notOperator());
+      temp.append(component.getHdlSignalName(i)).append(";");
+      contents.add(temp.toString());
+    }
+    contents.add(" ");
+    return contents;
+  }
+
+  private static void allign(StringBuilder str) {
+    while (str.length() < 40) str.append(" ");
   }
 }

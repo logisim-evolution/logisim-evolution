@@ -39,11 +39,13 @@ public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInter
   private int fm;
   private int operation;
 
+  @Override
   public ArrayList<String> getInstructions() {
     ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
   }
 
+  @Override
   public boolean execute(Object state, CircuitState cState) {
     if (!valid)
       return false;
@@ -51,10 +53,10 @@ public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInter
     return true;
   }
 
+  @Override
   public String getAsmInstruction() {
-    if (!valid)
-      return null;
-    StringBuffer s = new StringBuffer();
+    if (!valid) return null;
+    final var s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
     if (operation != INSTR_FENCE_TSO) {
       while (s.length() < RV32imSupport.ASM_FIELD_SIZE)
@@ -66,20 +68,24 @@ public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInter
     return s.toString();
   }
 
+  @Override
   public int getBinInstruction() {
     return instruction;
   }
 
+  @Override
   public boolean setBinInstruction(int instr) {
     instruction = instr;
     valid = decodeBin();
     return valid;
   }
 
+  @Override
   public boolean performedJump() {
     return false;
   }
 
+  @Override
   public boolean isValid() {
     return valid;
   }
@@ -101,22 +107,25 @@ public class Rv32imMemoryOrderingInstructions implements AssemblerExecutionInter
     return false;
   }
 
-  private void addMasks(StringBuffer s, int value) {
-    if ((value & I_FLAG) != 0) s.append("i");
-    if ((value & O_FLAG) != 0) s.append("o");
-    if ((value & R_FLAG) != 0) s.append("r");
-    if ((value & W_FLAG) != 0) s.append("w");
+  private void addMasks(StringBuilder buffer, int value) {
+    if ((value & I_FLAG) != 0) buffer.append("i");
+    if ((value & O_FLAG) != 0) buffer.append("o");
+    if ((value & R_FLAG) != 0) buffer.append("r");
+    if ((value & W_FLAG) != 0) buffer.append("w");
   }
 
+  @Override
   public String getErrorMessage() {
     return null;
   }
 
+  @Override
   public int getInstructionSizeInBytes(String instruction) {
     if (getInstructions().contains(instruction.toUpperCase())) return 4;
     return -1;
   }
 
+  @Override
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
     for (int i = 0; i < AsmOpcodes.length; i++)

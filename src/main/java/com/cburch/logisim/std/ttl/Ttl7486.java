@@ -9,10 +9,9 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import java.util.ArrayList;
+import com.cburch.logisim.util.LineBuffer;
 
 public class Ttl7486 extends AbstractTtlGate {
   /**
@@ -26,12 +25,9 @@ public class Ttl7486 extends AbstractTtlGate {
   private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
 
     @Override
-    public ArrayList<String> GetLogicFunction(int index) {
-      final var contents = new ArrayList<String>();
-      contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
-              + "gate_" + index + "_A" + HDL.xorOperator() + "gate_" + index + "_B;");
-      contents.add("");
-      return contents;
+    public LineBuffer getLogicFunction(int index) {
+      return LineBuffer.getHdlBuffer()
+          .add("{{assign}}gate_{{1}}_O{{=}}gate_{{1}}_A{{xor}}gate_{{1}}_B;", index);
     }
   }
 
@@ -54,7 +50,7 @@ public class Ttl7486 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     for (byte i = 2; i < 6; i += 3) {
       state.setPort(i, state.getPortValue(i - 1).xor(state.getPortValue(i - 2)), 1);
     }

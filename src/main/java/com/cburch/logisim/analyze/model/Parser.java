@@ -150,7 +150,7 @@ public class Parser {
       throws ParserException {
     final var tokens = toTokens(in, false);
 
-    if (tokens.size() == 0) return null;
+    if (tokens.isEmpty()) return null;
 
     var i = -1;
     for (final var token : tokens) {

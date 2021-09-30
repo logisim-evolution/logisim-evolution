@@ -12,6 +12,7 @@ package com.cburch.logisim.gui.main;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.draw.toolbar.Toolbar;
+import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
@@ -35,7 +36,6 @@ import com.cburch.logisim.gui.generic.RegTabContent;
 import com.cburch.logisim.gui.generic.ZoomControl;
 import com.cburch.logisim.gui.generic.ZoomModel;
 import com.cburch.logisim.gui.menu.MainMenuListener;
-import com.cburch.logisim.Main;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
@@ -55,25 +55,23 @@ import com.cburch.logisim.vhdl.gui.VhdlSimState;
 import com.cburch.logisim.vhdl.gui.VhdlSimulatorConsole;
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
 import java.awt.Font;
-import java.awt.GraphicsConfiguration;
-import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.IllegalComponentStateException;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Timer;
-import javax.swing.event.ChangeEvent;
-import javax.swing.event.ChangeListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 
 public class Frame extends LFrame.MainWindow implements LocaleListener {
   public static final String EDITOR_VIEW = "editorView";
@@ -351,7 +349,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
                 ? S.get("titleCircFileKnown", circuit.getName(), name)
                 : S.get("titleFileKnown", name))
         .append(" · ")
-        .append(Main.APP_DISPLAY_NAME);
+        .append(BuildInfo.displayName);
 
     if (!BuildInfo.version.isStable()) {
       // Keep leading space!
@@ -524,17 +522,17 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
   void setAttrTableModel(AttrTableModel value) {
     attrTable.setAttrTableModel(value);
-    if (value instanceof AttrTableToolModel) {
-      final var tool = ((AttrTableToolModel) value).getTool();
+    if (value instanceof AttrTableToolModel model) {
+      final var tool = model.getTool();
       toolbox.setHaloedTool(tool);
       layoutToolbarModel.setHaloedTool(tool);
     } else {
       toolbox.setHaloedTool(null);
       layoutToolbarModel.setHaloedTool(null);
     }
-    if (value instanceof AttrTableComponentModel) {
-      final var circ = ((AttrTableComponentModel) value).getCircuit();
-      final var comp = ((AttrTableComponentModel) value).getComponent();
+    if (value instanceof AttrTableComponentModel model) {
+      final var circ = model.getCircuit();
+      final var comp = model.getComponent();
       layoutCanvas.setHaloedComponent(circ, comp);
     } else {
       layoutCanvas.setHaloedComponent(null, null);
@@ -581,8 +579,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     }
     if (newAttrs == null) {
       final var oldModel = attrTable.getAttrTableModel();
-      final var same = oldModel instanceof AttrTableToolModel
-              && ((AttrTableToolModel) oldModel).getTool() == oldTool;
+      final var same = (oldModel instanceof AttrTableToolModel model) && model.getTool() == oldTool;
       if (!force && !same && !(oldModel instanceof AttrTableCircuitModel)) {
         return;
       }
@@ -643,8 +640,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         project.setTool(project.getOptions().getToolbarData().getFirstTool());
         placeToolbar();
       } else if (action == ProjectEvent.ACTION_SET_STATE) {
-        if (event.getData() instanceof CircuitState) {
-          CircuitState state = (CircuitState) event.getData();
+        if (event.getData() instanceof CircuitState state) {
           if (state.getParentState() != null) topTab.setSelectedIndex(1); // sim explorer view
         }
       } else if (action == ProjectEvent.ACTION_SET_CURRENT) {
@@ -653,8 +649,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
           if (appearance != null) {
             appearance.setCircuit(project, project.getCircuitState());
           }
-        } else if (event.getData() instanceof HdlModel) {
-          setHdlEditorView((HdlModel) event.getData());
+        } else if (event.getData() instanceof HdlModel model) {
+          setHdlEditorView(model);
         }
         viewAttributes(project.getTool());
         buildTitleString();

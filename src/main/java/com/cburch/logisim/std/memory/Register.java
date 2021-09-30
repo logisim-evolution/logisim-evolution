@@ -22,7 +22,7 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -194,10 +194,10 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
 
   static final int DELAY = 8;
   public static final int OUT = 0;
-  static final int IN = 1;
+  public static final int IN = 1;
   public static final int CK = 2;
-  static final int CLR = 3;
-  static final int EN = 4;
+  public static final int CLR = 3;
+  public static final int EN = 4;
   static final int Xsize = 60;
   static final int Ysize = 90;
 
@@ -339,12 +339,12 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
   }
 
   @Override
-  public boolean CheckForGatedClocks(NetlistComponent comp) {
+  public boolean checkForGatedClocks(netlistComponent comp) {
     return Netlist.isFlipFlop(comp.getComponent().getAttributeSet());
   }
 
   @Override
-  public int[] ClockPinIndex(NetlistComponent comp) {
+  public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {CK};
   }
 

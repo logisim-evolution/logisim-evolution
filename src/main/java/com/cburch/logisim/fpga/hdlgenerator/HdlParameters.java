@@ -23,8 +23,8 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.gates.GateAttributes;
 import com.cburch.logisim.std.gates.NegateAttribute;
 
-public class HDLParameters {
-  
+public class HdlParameters {
+
   public static final int MAP_DEFAULT = 0;
   public static final int MAP_CONSTANT = 1;
   public static final int MAP_OFFSET = 2;
@@ -34,7 +34,7 @@ public class HDLParameters {
   public static final int MAP_INT_ATTRIBUTE = 6;
   public static final int MAP_GATE_INPUT_BUBLE = 7;
   public static final int MAP_POW2 = 8;
-  
+
   private class ParameterInfo {
     private final boolean isOnlyUsedForBusses;
     private boolean isIntParameter = true;
@@ -139,10 +139,10 @@ public class HDLParameters {
       var totalValue = 0L;
       var selectedValue = 0L;
       switch (myMapType) {
-        case MAP_CONSTANT: 
+        case MAP_CONSTANT:
           selectedValue = parameterValue;
           break;
-        case MAP_ATTRIBUTE_OPTION: 
+        case MAP_ATTRIBUTE_OPTION:
           if (!attrs.containsAttribute(attributesList.get(0))) throw new UnsupportedOperationException("Component has not the required attribute");
           final var value = attrs.getValue(attributesList.get(0));
           if (!(value instanceof AttributeOption)) throw new UnsupportedOperationException("Requested attribute is not an attributeOption");
@@ -189,7 +189,7 @@ public class HDLParameters {
           var mask = 1L;
           for (var i = 0; i < nrOfInputs; i++) {
             final var inputIsInverted = attrs.getValue(new NegateAttribute(i, null));
-            if (inputIsInverted) bubbleMask |= mask;
+            if (Boolean.TRUE.equals(inputIsInverted)) bubbleMask |= mask;
             mask <<= 1L;
           }
           selectedValue = bubbleMask;
@@ -209,22 +209,22 @@ public class HDLParameters {
             }
           }
           break;
-        default: 
+        default:
           selectedValue = attrs.getValue(attributeToCheckForBus).getWidth() * multiplyValue + offsetValue;
           break;
       }
       if (isIntParameter) return Integer.toString((int) selectedValue);
-      return HDL.getConstantVector(selectedValue, getNumberOfVectorBits(attrs));
+      return Hdl.getConstantVector(selectedValue, getNumberOfVectorBits(attrs));
     }
-    
+
     public boolean isRepresentedByInteger() {
       return isIntParameter;
     }
-    
+
     public void setVectorRepresentation() {
       isIntParameter = false;
     }
-    
+
     public int getNumberOfVectorBits(AttributeSet attrs) {
       if (isIntParameter) throw new UnsupportedOperationException("Parameter is not a bit vector!");
       var nrOfVectorBits = -1;
@@ -236,11 +236,13 @@ public class HDLParameters {
       if (nrOfVectorBits < 0) {
         if (attrs.containsAttribute(attributeToCheckForBus)) {
           nrOfVectorBits = attrs.getValue(attributeToCheckForBus).getWidth();
-        } else new UnsupportedOperationException("Cannot determine the number of bits required for the vector");
+        } else {
+          throw new UnsupportedOperationException("Cannot determine the number of bits required for the vector");
+        }
       }
       return nrOfVectorBits;
     }
-    
+
     private long getCorrectIntValue(Object... args) {
       if (args.length != 1) throw new IllegalArgumentException("Map Type requires a single argument");
       var value = 0L;
@@ -261,7 +263,7 @@ public class HDLParameters {
    * @param name Name used for the parameter
    * @param id Identifier of the parameter (must be negative)
    */
-  public HDLParameters add(String name, int id) {
+  public HdlParameters add(String name, int id) {
     myParameters.add(new ParameterInfo(name, id));
     return this;
   }
@@ -269,43 +271,36 @@ public class HDLParameters {
   /**
    * Constructs a module parameter where the map-value of the parameter is dependent
    * on the type
-   * 
+   *
    * Current supported types:
-   * 
+   *
    * Constant: Map a constant args[0], example:
    *           add("ExampleConstant", -1 , MAP_CONSTANT , 5);
-   * 
+   *
    * Offset: Map a StdAttr.BitWidth + args[0] to the generic, example:
    *         add("ExampleOffset", -1 , MAP_OFFSET , 1);
-   * 
+   *
    * Multiply: Map a StdAttr.BitWidth * args[0] to the generic, example:
    *           add("ExampleMultiply", -1 , MAP_OFFSET , 2);
-   * 
-   * Attribute_Option: Map an AttributeOption to the generic, requires 2 parameters, namely
-   *                   (1) An Attribute<AttributeOption>, the selected attribute
-   *                   (2) A Map from AttributeOption to Integer values
-   *                   Example:
-   *                    add("ExampleOption", -1, MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, 
-   *                     new HashMap<AttributeOption, Integer>() {{ 
-   *                       put(Comparator.UNSIGNED_OPTION, 0); 
-   *                       put(Comparator.SIGNED_OPTION, 1); 
-   *                     }}
-   *                    );
-   *                    
-   * ln2: Map the log base 2 value of the addition of all args to the generic, example:
-   *      add("exampleln2", -1, MAP_LN2, Clock.ATTR_HIGH, Clock.ATTR_LOW)                    
    *
-   * intAttribute: Map an Attribute<Integer> to the generic, example:
+   * Attribute_Option: Map an AttributeOption to the generic, requires 2 parameters, namely
+   *                   (1) An Attribute (AttributeOption), the selected attribute
+   *                   (2) A Map from AttributeOption to Integer values
+   *
+   * ln2: Map the log base 2 value of the addition of all args to the generic, example:
+   *      add("exampleln2", -1, MAP_LN2, Clock.ATTR_HIGH, Clock.ATTR_LOW)
+   *
+   * intAttribute: Map an Attribute (Integer) to the generic, example:
    *               add(HIGH_TICK_STR, HIGH_TICK_ID, MAP_INT_ATTRIBUTE, Clock.ATTR_HIGH)
-   * 
+   *
    * gateinputbubble: special case only for the standard gates, see AbtractGateHDLGenerator for details.
-   * 
+   *
    * @param name Name used for the parameter
    * @param id Identifier of the parameter (must be negative)
    * @param type Type of the map value
    * @param args Arguments required for the type
    */
-  public HDLParameters add(String name, int id, int type, Object... args) {
+  public HdlParameters add(String name, int id, int type, Object... args) {
     myParameters.add(new ParameterInfo(name, id, type, args));
     return this;
   }
@@ -320,7 +315,7 @@ public class HDLParameters {
    * @param type Type of the map value
    * @param args Arguments required for the type
    */
-  public HDLParameters addVector(String name, int id, int type, Object... args) {
+  public HdlParameters addVector(String name, int id, int type, Object... args) {
     final var newParameter = new ParameterInfo(name, id, type, args);
     newParameter.setVectorRepresentation();
     myParameters.add(newParameter);
@@ -329,48 +324,48 @@ public class HDLParameters {
 
   /**
    * Constructs a conditional module parameter where the map-value of the parameter is the Value stored in
-   * the attribute StdAttr.BitWidth. This parameter is only used if the StdAttr.BitWidth > 1 
+   * the attribute StdAttr.BitWidth. This parameter is only used if the StdAttr.BitWidth > 1
    *
    * @param name Name used for the parameter
    * @param id Identifier of the parameter (must be negative)
    */
-  public HDLParameters addBusOnly(String name, int id) {
+  public HdlParameters addBusOnly(String name, int id) {
     myParameters.add(new ParameterInfo(true, name, id));
     return this;
   }
 
   /**
    * Constructs a conditional module parameter where the map-value of the parameter is the Value stored in
-   * the attribute checkAttr. This parameter is only used if the checkAttr > 1 
+   * the attribute checkAttr. This parameter is only used if the checkAttr > 1
    *
    * @param name Name used for the parameter
    * @param id Identifier of the parameter (must be negative)
    */
-  public HDLParameters addBusOnly(Attribute<BitWidth> checkAttr, String name, int id) {
+  public HdlParameters addBusOnly(Attribute<BitWidth> checkAttr, String name, int id) {
     myParameters.add(new ParameterInfo(true, checkAttr, name, id));
     return this;
   }
-  
+
   public boolean containsKey(int id, AttributeSet attrs) {
-    for (var parameter : myParameters) 
+    for (var parameter : myParameters)
       if (id == parameter.getParameterId(attrs)) return true;
     return false;
   }
 
   public String get(int id, AttributeSet attrs) {
-    for (var parameter : myParameters) 
+    for (var parameter : myParameters)
       if (id == parameter.getParameterId(attrs)) return parameter.getParameterString(attrs);
     return null;
   }
-  
+
   public int getNumberOfVectorBits(int id, AttributeSet attrs) {
-    for (var parameter : myParameters) 
+    for (var parameter : myParameters)
       if (id == parameter.getParameterId(attrs)) return parameter.getNumberOfVectorBits(attrs);
     throw new UnsupportedOperationException("Parameter not found");
   }
-  
+
   public boolean isPresentedByInteger(int id, AttributeSet attrs) {
-    for (var parameter : myParameters) 
+    for (var parameter : myParameters)
       if (id == parameter.getParameterId(attrs)) return parameter.isRepresentedByInteger();
     return true;
   }

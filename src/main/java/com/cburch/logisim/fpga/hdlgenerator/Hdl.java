@@ -10,94 +10,98 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeSet;
 
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LineBuffer;
+import java.util.List;
 
-public abstract class HDL {
+public abstract class Hdl {
 
   public static final String NET_NAME = "s_LOGISIM_NET_";
   public static final String BUS_NAME = "s_LOGISIM_BUS_";
 
-  public static boolean isVHDL() {
-    return AppPreferences.HDL_Type.get().equals(HDLGeneratorFactory.VHDL);
+  public static boolean isVhdl() {
+    return AppPreferences.HdlType.get().equals(HdlGeneratorFactory.VHDL);
   }
 
   public static boolean isVerilog() {
-    return AppPreferences.HDL_Type.get().equals(HDLGeneratorFactory.VERILOG);
+    return AppPreferences.HdlType.get().equals(HdlGeneratorFactory.VERILOG);
   }
 
-  public static String BracketOpen() {
-    return isVHDL() ? "(" : "[";
+  public static String bracketOpen() {
+    return isVhdl() ? "(" : "[";
   }
 
-  public static String BracketClose() {
-    return isVHDL() ? ")" : "]";
+  public static String bracketClose() {
+    return isVhdl() ? ")" : "]";
   }
 
   public static int remarkOverhead() {
-    return isVHDL() ? 3 : 4;
+    return isVhdl() ? 3 : 4;
   }
 
   public static String getRemakrChar(boolean first, boolean last) {
-    if (isVHDL()) return "-";
+    if (isVhdl()) return "-";
     if (first) return "/";
     if (last) return " ";
     return "*";
   }
 
   public static String getRemarkStart() {
-    if (isVHDL()) return "-- ";
+    if (isVhdl()) return "-- ";
     return " ** ";
   }
 
   public static String assignPreamble() {
-    return isVHDL() ? "" : "assign ";
+    return isVhdl() ? "" : "assign ";
   }
 
   public static String assignOperator() {
-    return isVHDL() ? " <= " : " = ";
+    return isVhdl() ? " <= " : " = ";
   }
 
   public static String notOperator() {
-    return isVHDL() ? " NOT " : "~";
+    return isVhdl() ? " NOT " : "~";
   }
 
   public static String andOperator() {
-    return isVHDL() ? " AND " : "&";
+    return isVhdl() ? " AND " : "&";
   }
 
   public static String orOperator() {
-    return isVHDL() ? " OR " : "|";
+    return isVhdl() ? " OR " : "|";
   }
 
   public static String xorOperator() {
-    return isVHDL() ? " XOR " : "^";
+    return isVhdl() ? " XOR " : "^";
   }
 
   public static String zeroBit() {
-    return isVHDL() ? "'0'" : "1'b0";
+    return isVhdl() ? "'0'" : "1'b0";
   }
 
   public static String oneBit() {
-    return isVHDL() ? "'1'" : "1'b1";
+    return isVhdl() ? "'1'" : "1'b1";
   }
 
   public static String unconnected(boolean empty) {
-    return isVHDL() ? "OPEN" : empty ? "" : "'bz";
+    return isVhdl() ? "OPEN" : empty ? "" : "'bz";
   }
 
   public static String vectorLoopId() {
-    return isVHDL() ? " DOWNTO " : ":";
+    return isVhdl() ? " DOWNTO " : ":";
   }
 
-  public static String GetZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
+  public static String getZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
     var contents = new StringBuilder();
-    if (isVHDL()) {
+    if (isVhdl()) {
       var fillValue = (floatingPinTiedToGround) ? "0" : "1";
       var hexFillValue = (floatingPinTiedToGround) ? "0" : "F";
       if (nrOfBits == 1) {
@@ -128,17 +132,17 @@ public abstract class HDL {
     final var nrHexDigits = nrOfBits / 4;
     final var nrSingleBits = nrOfBits % 4;
     final var hexDigits = new String[nrHexDigits];
-    final var singleBits = new StringBuffer();
+    final var singleBits = new StringBuilder();
     var shiftValue = value >> nrSingleBits;
     for (var hexIndex = nrHexDigits - 1; hexIndex >= 0; hexIndex--) {
       var hexValue = shiftValue & 0xFL;
       shiftValue >>= 4L;
       hexDigits[hexIndex] = String.format("%1X", hexValue);
     }
-    final var hexValue = new StringBuffer();
+    final var hexValue = new StringBuilder();
     for (var hexIndex = 0; hexIndex < nrHexDigits; hexIndex++) {
       hexValue.append(hexDigits[hexIndex]);
-    }    
+    }
     var mask = (nrSingleBits == 0) ? 0 : 1L << (nrSingleBits - 1);
     while (mask > 0) {
       singleBits.append((value & mask) == 0 ? "0" : "1");
@@ -146,7 +150,7 @@ public abstract class HDL {
     }
     // first case, we have to concatinate
     if ((nrHexDigits > 0) && (nrSingleBits > 0)) {
-      if (HDL.isVHDL()) {
+      if (Hdl.isVhdl()) {
         return LineBuffer.format("X\"{{1}}\"&\"{{2}}\"", hexValue.toString(), singleBits.toString());
       } else {
         return LineBuffer.format("{{{1}}'h{{2}}, {{3}}'b{{4}}}", nrHexDigits * 4, hexValue.toString(),
@@ -155,21 +159,21 @@ public abstract class HDL {
     }
     // second case, we have only hex digits
     if (nrHexDigits > 0) {
-      if (HDL.isVHDL()) {
+      if (Hdl.isVhdl()) {
         return LineBuffer.format("X\"{{1}}\"", hexValue.toString());
       } else {
         return LineBuffer.format("{{1}}'h{{2}}", nrHexDigits * 4, hexValue.toString());
       }
     }
     // final case, we have only single bits
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       final var vhdlTicks = (nrOfBits == 1) ? "'" : "\"";
       return LineBuffer.format("{{1}}{{2}}{{1}}", vhdlTicks, singleBits.toString());
     }
     return LineBuffer.format("{{1}}'b{{2}}", nrSingleBits, singleBits.toString());
   }
 
-  public static String getNetName(NetlistComponent comp, int endIndex, boolean floatingNetTiedToGround, Netlist myNetlist) {
+  public static String getNetName(netlistComponent comp, int endIndex, boolean floatingNetTiedToGround, Netlist myNetlist) {
     var netName = "";
     if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
       final var floatingValue = floatingNetTiedToGround ? zeroBit() : oneBit();
@@ -194,7 +198,7 @@ public abstract class HDL {
     return netName;
   }
 
-  public static String getBusEntryName(NetlistComponent comp, int endIndex, boolean floatingNetTiedToGround, int bitindex, Netlist theNets) {
+  public static String getBusEntryName(netlistComponent comp, int endIndex, boolean floatingNetTiedToGround, int bitindex, Netlist theNets) {
     var busName = "";
     if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
       final var thisEnd = comp.getEnd(endIndex);
@@ -203,7 +207,7 @@ public abstract class HDL {
       if ((nrOfBits > 1) && (bitindex >= 0) && (bitindex < nrOfBits)) {
         if (thisEnd.get((byte) bitindex).getParentNet() == null) {
           // The net is not connected
-          busName = LineBuffer.formatHdl(isOutput ? unconnected(false) : GetZeroVector(1, floatingNetTiedToGround));
+          busName = LineBuffer.formatHdl(isOutput ? unconnected(false) : getZeroVector(1, floatingNetTiedToGround));
         } else {
           final var connectedNet = thisEnd.get((byte) bitindex).getParentNet();
           final var connectedNetBitIndex = thisEnd.get((byte) bitindex).getParentNetBitIndex();
@@ -219,7 +223,7 @@ public abstract class HDL {
     return busName;
   }
 
-  public static String getBusNameContinues(NetlistComponent comp, int endIndex, Netlist theNets) {
+  public static String getBusNameContinues(netlistComponent comp, int endIndex, Netlist theNets) {
     if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) return null;
     final var connectionInformation = comp.getEnd(endIndex);
     final var nrOfBits = connectionInformation.getNrOfBits();
@@ -230,11 +234,11 @@ public abstract class HDL {
         BUS_NAME,
         theNets.getNetId(connectedNet),
         connectionInformation.get((byte) (connectionInformation.getNrOfBits() - 1)).getParentNetBitIndex(),
-        HDL.vectorLoopId(),
+        Hdl.vectorLoopId(),
         connectionInformation.get((byte) (0)).getParentNetBitIndex());
   }
 
-  public static String getBusName(NetlistComponent comp, int endIndex, Netlist theNets) {
+  public static String getBusName(netlistComponent comp, int endIndex, Netlist theNets) {
     if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) return null;
     final var connectionInformation = comp.getEnd(endIndex);
     final var nrOfBits = connectionInformation.getNrOfBits();
@@ -245,7 +249,7 @@ public abstract class HDL {
     return LineBuffer.format("{{1}}{{2}}", BUS_NAME, theNets.getNetId(ConnectedNet));
   }
 
-  public static String getClockNetName(NetlistComponent comp, int endIndex, Netlist theNets) {
+  public static String getClockNetName(netlistComponent comp, int endIndex, Netlist theNets) {
     var contents = new StringBuilder();
     if ((theNets.getCurrentHierarchyLevel() != null) && (endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
       final var endData = comp.getEnd(endIndex);
@@ -256,18 +260,18 @@ public abstract class HDL {
         final var clocksourceid = theNets.getClockSourceId(
             theNets.getCurrentHierarchyLevel(), ConnectedNet, ConnectedNetBitIndex);
         if (clocksourceid >= 0) {
-          contents.append(HDLGeneratorFactory.CLOCK_TREE_NAME).append(clocksourceid);
+          contents.append(HdlGeneratorFactory.CLOCK_TREE_NAME).append(clocksourceid);
         }
       }
     }
     return contents.toString();
   }
 
-  public static boolean writeEntity(String targetDirectory, ArrayList<String> contents, String componentName) {
-    if (!HDL.isVHDL()) return true;
+  public static boolean writeEntity(String targetDirectory, List<String> contents, String componentName) {
+    if (!Hdl.isVhdl()) return true;
     if (contents.isEmpty()) {
       // FIXME: hardcoded string
-      Reporter.Report.AddFatalError("INTERNAL ERROR: Empty entity description received!");
+      Reporter.report.addFatalError("INTERNAL ERROR: Empty entity description received!");
       return false;
     }
     final var outFile = FileWriter.getFilePointer(targetDirectory, componentName, true);
@@ -275,10 +279,10 @@ public abstract class HDL {
     return FileWriter.writeContents(outFile, contents);
   }
 
-  public static boolean writeArchitecture(String targetDirectory, ArrayList<String> contents, String componentName) {
+  public static boolean writeArchitecture(String targetDirectory, List<String> contents, String componentName) {
     if (contents == null || contents.isEmpty()) {
       // FIXME: hardcoded string
-      Reporter.Report.AddFatalError(
+      Reporter.report.addFatalError(
           "INTERNAL ERROR: Empty behavior description for Component '"
               + componentName
               + "' received!");
@@ -289,4 +293,121 @@ public abstract class HDL {
     return FileWriter.writeContents(outFile, contents);
   }
 
+  public static Map<String, String> getNetMap(String sourceName, boolean floatingPinTiedToGround,
+      netlistComponent comp, int endIndex, Netlist theNets) {
+    final var netMap = new HashMap<String, String>();
+    if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) {
+      Reporter.report.addFatalError("INTERNAL ERROR: Component tried to index non-existing SolderPoint");
+      return netMap;
+    }
+    final var connectionInformation = comp.getEnd(endIndex);
+    final var isOutput = connectionInformation.isOutputEnd();
+    final var nrOfBits = connectionInformation.getNrOfBits();
+    if (nrOfBits == 1) {
+      /* Here we have the easy case, just a single bit net */
+      netMap.put(sourceName, getNetName(comp, endIndex, floatingPinTiedToGround, theNets));
+    } else {
+      /*
+       * Here we have the more difficult case, it is a bus that needs to
+       * be mapped
+       */
+      /* First we check if the bus has a connection */
+      var connected = false;
+      for (var bit = 0; bit < nrOfBits; bit++) {
+        if (connectionInformation.get((byte) bit).getParentNet() != null)
+          connected = true;
+      }
+      if (!connected) {
+        /* Here is the easy case, the bus is unconnected */
+        netMap.put(sourceName, isOutput ? unconnected(true) : getZeroVector(nrOfBits, floatingPinTiedToGround));
+      } else {
+        /*
+         * There are connections, we detect if it is a continues bus
+         * connection
+         */
+        if (theNets.isContinuesBus(comp, endIndex)) {
+          /* Another easy case, the continues bus connection */
+          netMap.put(sourceName, getBusNameContinues(comp, endIndex, theNets));
+        } else {
+          /* The last case, we have to enumerate through each bit */
+          if (isVhdl()) {
+            final var sourceNetName = new StringBuilder();
+            for (var bit = 0; bit < nrOfBits; bit++) {
+              /* First we build the Line information */
+              sourceNetName.setLength(0);
+              sourceNetName.append(String.format("%s(%d) ", sourceName, bit));
+              final var solderPoint = connectionInformation.get((byte) bit);
+              if (solderPoint.getParentNet() == null) {
+                /* The net is not connected */
+                netMap.put(sourceNetName.toString(), isOutput ? unconnected(false) : getZeroVector(1, floatingPinTiedToGround));
+              } else {
+                /*
+                 * The net is connected, we have to find out if
+                 * the connection is to a bus or to a normal net
+                 */
+                if (solderPoint.getParentNet().getBitWidth() == 1) {
+                  /* The connection is to a Net */
+                  netMap.put(sourceNetName.toString(), String.format("%s%d", NET_NAME,
+                      theNets.getNetId(solderPoint.getParentNet())));
+                } else {
+                  /* The connection is to an entry of a bus */
+                  netMap.put(sourceNetName.toString(), String.format("%s%d(%d)", BUS_NAME,
+                      theNets.getNetId(solderPoint.getParentNet()), solderPoint.getParentNetBitIndex()));
+                }
+              }
+            }
+          } else {
+            final var seperateSignals = new ArrayList<String>();
+            /*
+             * First we build an array with all the signals that
+             * need to be concatenated
+             */
+            for (var bit = 0; bit < nrOfBits; bit++) {
+              final var solderPoint = connectionInformation.get((byte) bit);
+              if (solderPoint.getParentNet() == null) {
+                /* this entry is not connected */
+                seperateSignals.add(isOutput ? "1'bZ" : getZeroVector(1, floatingPinTiedToGround));
+              } else {
+                /*
+                 * The net is connected, we have to find out if
+                 * the connection is to a bus or to a normal net
+                 */
+                if (solderPoint.getParentNet().getBitWidth() == 1) {
+                  /* The connection is to a Net */
+                  seperateSignals.add(String.format("%s%d", NET_NAME,
+                      theNets.getNetId(solderPoint.getParentNet())));
+                } else {
+                  /* The connection is to an entry of a bus */
+                  seperateSignals.add(String.format("%s%d[%d]", BUS_NAME,
+                      theNets.getNetId(solderPoint.getParentNet()), solderPoint.getParentNetBitIndex()));
+                }
+              }
+            }
+            /* Finally we can put all together */
+            final var vector = new StringBuilder();
+            vector.append("{");
+            for (var bit = nrOfBits; bit > 0; bit--) {
+              vector.append(seperateSignals.get(bit - 1));
+              if (bit != 1) {
+                vector.append(",");
+              }
+            }
+            vector.append("}");
+            netMap.put(sourceName, vector.toString());
+          }
+        }
+      }
+    }
+    return netMap;
+  }
+
+  public static void addAllWiresSorted(LineBuffer contents, Map<String, String> wires) {
+    var maxNameLength = 0;
+    for (var wire : wires.keySet())
+      maxNameLength = Math.max(maxNameLength, wire.length());
+    final var sortedWires = new TreeSet<String>(wires.keySet());
+    for (var wire : sortedWires) 
+      contents.add("   {{assign}}{{1}}{{2}} {{=}} {{3}};", wire, " ".repeat(maxNameLength - wire.length()), wires.get(wire));
+    wires.clear();
+  }
 }

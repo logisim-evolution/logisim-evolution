@@ -64,11 +64,11 @@ public class Divider extends InstanceFactory {
   }
 
   static final int PER_DELAY = 1;
-  static final int IN0 = 0;
-  static final int IN1 = 1;
-  static final int OUT = 2;
-  static final int UPPER = 3;
-  static final int REM = 4;
+  public static final int IN0 = 0;
+  public static final int IN1 = 1;
+  public static final int OUT = 2;
+  public static final int UPPER = 3;
+  public static final int REM = 4;
 
   public Divider() {
     super(_ID, S.getter("dividerComponent"));

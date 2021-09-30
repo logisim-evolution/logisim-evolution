@@ -12,14 +12,10 @@ package com.cburch.logisim.std.memory;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class SRFlipFlop extends AbstractFlipFlop {
   /**
@@ -33,35 +29,16 @@ public class SRFlipFlop extends AbstractFlipFlop {
   private static class SRFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
 
     public SRFFHDLGeneratorFactory() {
-      super(StdAttr.TRIGGER);
+      super(2, StdAttr.TRIGGER);
+      myPorts
+          .add(Port.INPUT, "S", 1, 0)
+          .add(Port.INPUT, "R", 1, 1);
     }
 
     @Override
-    public String ComponentName() {
-      return _ID;
-    }
-
-    @Override
-    public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist nets) {
-      Map<String, String> PortMap = new HashMap<>();
-      PortMap.putAll(GetNetMap("S", true, ComponentInfo, 0, nets));
-      PortMap.putAll(GetNetMap("R", true, ComponentInfo, 1, nets));
-      return PortMap;
-    }
-
-    @Override
-    public Map<String, Integer> GetInputPorts() {
-      Map<String, Integer> Inputs = new HashMap<>();
-      Inputs.put("S", 1);
-      Inputs.put("R", 1);
-      return Inputs;
-    }
-
-    @Override
-    public ArrayList<String> GetUpdateLogic() {
+    public LineBuffer getUpdateLogic() {
       return LineBuffer.getHdlBuffer()
-          .add("{{assign}} s_next_state {{=}} (s_current_state_reg {{or}} S) {{and}} {{not}}(R);")
-          .getWithIndent();
+          .add("{{assign}} s_next_state {{=}} (s_current_state_reg {{or}} S) {{and}} {{not}}(R);");
     }
   }
 

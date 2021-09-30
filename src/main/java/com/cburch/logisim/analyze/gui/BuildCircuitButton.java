@@ -20,7 +20,6 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.proj.Projects;
 import com.cburch.logisim.std.gates.CircuitBuilder;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.SyntaxChecker;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

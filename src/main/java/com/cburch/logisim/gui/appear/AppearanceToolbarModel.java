@@ -68,8 +68,8 @@ class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyCha
 
   @Override
   public boolean isSelected(ToolbarItem item) {
-    if (item instanceof ToolbarToolItem) {
-      final var tool = ((ToolbarToolItem) item).getTool();
+    if (item instanceof ToolbarToolItem toolItem) {
+      final var tool = toolItem.getTool();
       return canvas != null && tool == canvas.getTool();
     } else {
       return false;
@@ -78,8 +78,8 @@ class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyCha
 
   @Override
   public void itemSelected(ToolbarItem item) {
-    if (item instanceof ToolbarToolItem) {
-      final var tool = ((ToolbarToolItem) item).getTool();
+    if (item instanceof ToolbarToolItem toolItem) {
+      final var tool = toolItem.getTool();
       canvas.setTool(tool);
       fireToolbarAppearanceChanged();
     }

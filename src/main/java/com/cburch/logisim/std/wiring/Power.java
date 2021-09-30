@@ -38,7 +38,7 @@ public class Power extends InstanceFactory {
    */
   public static final String _ID = "Power";
 
-  private static class PowerHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
+  private static class PowerHdlGeneratorFactory extends AbstractConstantHdlGeneratorFactory {
     @Override
     public long getConstant(AttributeSet attrs) {
       long ConstantValue = 0;
@@ -51,7 +51,7 @@ public class Power extends InstanceFactory {
   }
 
   public Power() {
-    super(_ID, S.getter("powerComponent"), new PowerHDLGeneratorFactory());
+    super(_ID, S.getter("powerComponent"), new PowerHdlGeneratorFactory());
     setIconName("power.gif");
     setAttributes(
         new Attribute[] {StdAttr.FACING, StdAttr.WIDTH},

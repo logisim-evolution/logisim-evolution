@@ -18,7 +18,7 @@ class TtyState implements InstanceData, Cloneable {
   private Value lastClock;
   private String[] rowData;
   private int colCount;
-  private final StringBuffer lastRow;
+  private final StringBuilder lastRow;
   private int row;
   private boolean sendStdout;
 
@@ -26,7 +26,7 @@ class TtyState implements InstanceData, Cloneable {
     lastClock = Value.UNKNOWN;
     rowData = new String[rows - 1];
     colCount = cols;
-    lastRow = new StringBuffer(cols);
+    lastRow = new StringBuilder(cols);
     sendStdout = false;
     clear();
   }

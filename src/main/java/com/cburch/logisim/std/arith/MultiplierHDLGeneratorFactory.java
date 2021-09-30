@@ -11,16 +11,13 @@ package com.cburch.logisim.std.arith;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLParameters;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class MultiplierHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String NR_OF_BITS_STRING = "NrOfBits";
   private static final int NR_OF_BITS_ID = -1;
@@ -33,33 +30,30 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     super();
     myParametersList
         .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-        .add(CALC_BITS_STRING, CALC_BITS_ID, HDLParameters.MAP_MULTIPLY, 2)
-        .add(UNSIGNED_STRING, UNSIGNED_ID, HDLParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, ComparatorHDLGeneratorFactory.SIGNED_MAP);
+        .add(CALC_BITS_STRING, CALC_BITS_ID, HdlParameters.MAP_MULTIPLY, 2)
+        .add(UNSIGNED_STRING, UNSIGNED_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, ComparatorHDLGeneratorFactory.SIGNED_MAP);
     myWires
         .addWire("s_mult_result", CALC_BITS_ID)
         .addWire("s_extended_Cin", CALC_BITS_ID)
         .addWire("s_new_result", CALC_BITS_ID);
+    myPorts
+        .add(Port.INPUT, "INP_A", NR_OF_BITS_ID, Multiplier.IN0)
+        .add(Port.INPUT, "INP_B", NR_OF_BITS_ID, Multiplier.IN1)
+        .add(Port.INPUT, "Cin", NR_OF_BITS_ID, Multiplier.C_IN)
+        .add(Port.OUTPUT, "Mult_lo", NR_OF_BITS_ID, Multiplier.OUT)
+        .add(Port.OUTPUT, "Mult_hi", NR_OF_BITS_ID, Multiplier.C_OUT);
   }
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var inputs = new TreeMap<String, Integer>();
-    inputs.put("INP_A", NR_OF_BITS_ID);
-    inputs.put("INP_B", NR_OF_BITS_ID);
-    inputs.put("Cin", NR_OF_BITS_ID);
-    return inputs;
-  }
-
-  @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents =
-        (new LineBuffer())
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    final var contents =
+          LineBuffer.getBuffer()
             .pair("nrOfBits", NR_OF_BITS_STRING)
             .pair("unsigned", UNSIGNED_STRING)
             .pair("calcBits", CALC_BITS_STRING);
 
-    if (HDL.isVHDL()) {
-      Contents.add("""
+    if (Hdl.isVhdl()) {
+      contents.add("""
           s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B))
                               WHEN {{unsigned}}= 1 ELSE
                            std_logic_vector(signed(INP_A)*signed(INP_B));
@@ -72,7 +66,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           Mult_lo       <= s_new_result({{nrOfBits}}-1 DOWNTO 0);
           """);
     } else {
-      Contents.add("""
+      contents.add("""
           reg[{{calcBits}}-1:0] s_Cin;
           reg[{{calcBits}}-1:0] s_mult_unsigned;
           reg[{{calcBits}}-1:0] s_interm_result;
@@ -101,27 +95,6 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           assign Mult_lo = s_interm_result[{{nrOfBits}}-1:0];
           """);
     }
-    return Contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    outputs.put("Mult_lo", NR_OF_BITS_ID);
-    outputs.put("Mult_hi", NR_OF_BITS_ID);
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    final var portMap = new TreeMap<String, String>();
-    if (!(MapInfo instanceof NetlistComponent)) return portMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-    portMap.putAll(GetNetMap("INP_A", true, ComponentInfo, Multiplier.IN0, Nets));
-    portMap.putAll(GetNetMap("INP_B", true, ComponentInfo, Multiplier.IN1, Nets));
-    portMap.putAll(GetNetMap("Cin", true, ComponentInfo, Multiplier.C_IN, Nets));
-    portMap.putAll(GetNetMap("Mult_lo", true, ComponentInfo, Multiplier.OUT, Nets));
-    portMap.putAll(GetNetMap("Mult_hi", true, ComponentInfo, Multiplier.C_OUT, Nets));
-    return portMap;
+    return contents;
   }
 }

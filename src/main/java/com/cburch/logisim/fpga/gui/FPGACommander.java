@@ -74,7 +74,7 @@ public class FPGACommander
   private final JButton StopButton = new JButton();
   private final JProgressBar Progress = new JProgressBar();
   private final FPGAReportTabbedPane ReporterGui;
-  private Download Downloader;
+  private Download downloader;
   public static final String STOP_REQUESTED = "stop";
   private final JPanel BoardSelectionPanel = new JPanel();
   private final FPGAClockPanel FrequencyPanel;
@@ -88,7 +88,7 @@ public class FPGACommander
     if (property.equals(AppPreferences.SelectedBoard.getIdentifier())) {
       MyBoardInformation = new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName()).GetBoardInformation();
       MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
-      boardIcon = new BoardIcon(MyBoardInformation.GetImage());
+      boardIcon = new BoardIcon(MyBoardInformation.getImage());
       boardPic.setIcon(boardIcon);
       boardPic.repaint();
       FrequencyPanel.setFpgaClockFrequency(MyBoardInformation.fpga.getClockFrequency());
@@ -122,7 +122,7 @@ public class FPGACommander
     if (act == CircuitEvent.ACTION_SET_NAME) {
       RebuildCircuitSelection();
     }
-    ReporterGui.clearDRCTrace();
+    ReporterGui.clearDrcTrace();
   }
 
   private void rebuildBoardSelectionPanel() {
@@ -137,7 +137,7 @@ public class FPGACommander
     c.fill = GridBagConstraints.HORIZONTAL;
     MyBoardInformation = new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName()).GetBoardInformation();
     MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
-    boardIcon = new BoardIcon(MyBoardInformation.GetImage());
+    boardIcon = new BoardIcon(MyBoardInformation.getImage());
     JComboBox<String> selector = AppPreferences.Boards.boardSelector();
     selector.setPreferredSize(
         new Dimension(boardIcon.getIconWidth(), AppPreferences.getScaled(20)));
@@ -289,8 +289,8 @@ public class FPGACommander
     panel.setVisible(false);
 
     AppPreferences.getPrefs().addPreferenceChangeListener(this);
-    Reporter.Report.setGuiLogger(ReporterGui);
-    Reporter.Report.setProgressBar(Progress);
+    Reporter.report.setGuiLogger(ReporterGui);
+    Reporter.report.setProgressBar(Progress);
     localeChanged();
     updateCircuitBoard(circuitName);
   }
@@ -344,7 +344,7 @@ public class FPGACommander
       selectToolPath(MyBoardInformation.fpga.getVendor());
       HandleHDLOnly();
     } else if (e.getActionCommand().equals(STOP_REQUESTED)) {
-      if (Downloader != null) Downloader.stop();
+      if (downloader != null) downloader.stop();
       ((ProjectAddIcon) StopButton.getIcon()).setDeselect(true);
       StopButton.setEnabled(false);
     } else if (e.getActionCommand().equals("Download")) {
@@ -358,7 +358,7 @@ public class FPGACommander
       boolean writeFlash = actionCommands.getSelectedIndex() == 3;
       boolean HdlOnly = actionCommands.getSelectedIndex() == 0;
       boolean DownloadOnly = actionCommands.getSelectedIndex() >= 2;
-      Downloader =
+      downloader =
           new Download(
               MyProject,
               circuitsList.getSelectedItem().toString(),
@@ -370,8 +370,8 @@ public class FPGACommander
               HdlOnly,
               Progress,
               panel);
-      Downloader.AddListener(this);
-      Downloader.DoDownload();
+      downloader.addListener(this);
+      downloader.doDownload();
     } else if (e.getSource() instanceof Download) {
       setExecuteWindowEnabled(true);
       setAnnotationWindowEnabled(true);
@@ -394,10 +394,10 @@ public class FPGACommander
     Circuit root = MyProject.getLogisimFile().getCircuit(CircuitName);
     if (root != null) {
       if (ClearExistingLabels) {
-        root.ClearAnnotationLevel();
+        root.clearAnnotationLevel();
       }
-      root.Annotate(ClearExistingLabels, false);
-      Reporter.Report.AddInfo(S.get("FpgaGuiAnnotationDone"));
+      root.annotate(ClearExistingLabels, false);
+      Reporter.report.addInfo(S.get("FpgaGuiAnnotationDone"));
       MyProject.setForcedDirty();
       MyProject.repaintCanvas();
     }
@@ -473,7 +473,7 @@ public class FPGACommander
 
   @Override
   public void windowClosing(WindowEvent e) {
-    ReporterGui.CloseOpenWindows();
+    ReporterGui.closeOpenWindows();
     if (e.getSource().equals(MyProject.getFrame()) && panel.isVisible()) {
       panel.setVisible(false);
     }

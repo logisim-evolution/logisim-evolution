@@ -11,16 +11,13 @@ package com.cburch.logisim.std.plexers;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class MultiplexerHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private static final String NR_OF_BITS_STRING = "NrOfBits";
   private static final int NR_OF_BITS_ID = -1;
@@ -28,25 +25,30 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
   public MultiplexerHDLGeneratorFactory() {
     super();
     myParametersList.addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID);
+    getWiresPortsDuringHDLWriting = true;
   }
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist theNetList, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
+  public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
     final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
-    final var nrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
-    for (var i = 0; i < (1 << nrOfSelectBits); i++)
-      map.put("MuxIn_" + i, nrOfBits);
-    map.put("Enable", 1);
-    map.put("Sel", nrOfSelectBits);
-    return map;
+    final var selectInputIndex = (1 << nrOfSelectBits);
+    final var hasEnable = attrs.getValue(PlexersLibrary.ATTR_ENABLE);
+    for (var inp = 0; inp < selectInputIndex; inp++)
+      myPorts.add(Port.INPUT, String.format("MuxIn_%d", inp), NR_OF_BITS_ID, inp, StdAttr.WIDTH);
+    myPorts
+        .add(Port.INPUT, "Sel", nrOfSelectBits, selectInputIndex)
+        .add(Port.OUTPUT, "MuxOut", NR_OF_BITS_ID, hasEnable ? selectInputIndex + 2 : selectInputIndex + 1, StdAttr.WIDTH);
+    if (hasEnable)
+      myPorts.add(Port.INPUT, "Enable", 1, selectInputIndex + 1);
+    else
+      myPorts.add(Port.INPUT, "Enable", 1, Hdl.oneBit());
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+  public LineBuffer getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
+    final var contents = LineBuffer.getBuffer();
     int nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("make_mux : PROCESS( Enable,");
       for (var i = 0; i < (1 << nrOfSelectBits); i++)
         contents.add("                    MuxIn_{{1}},", i);
@@ -63,7 +65,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
                       CASE (Sel) IS
                 """);
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++)
-        contents.add("         WHEN {{1}} => MuxOut <= MuxIn_{{2}};", HDL.getConstantVector(i, nrOfSelectBits), i);
+        contents.add("         WHEN {{1}} => MuxOut <= MuxIn_{{2}};", Hdl.getConstantVector(i, nrOfSelectBits), i);
       contents.add("         WHEN OTHERS  => MuxOut <= MuxIn_{{1}};", (1 << nrOfSelectBits) - 1)
               .add("""
                          END CASE; 
@@ -82,7 +84,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
           """, NR_OF_BITS_STRING);
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++) {
         contents
-            .add("      {{1}}:", HDL.getConstantVector(i, nrOfSelectBits))
+            .add("      {{1}}:", Hdl.getConstantVector(i, nrOfSelectBits))
             .add("         s_selected_vector <= MuxIn_{{1}};", i);
       }
       contents
@@ -91,42 +93,6 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactory 
           .add("   endcase")
           .add("end");
     }
-    return contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NR_OF_BITS_ID;
-    map.put("MuxOut", NrOfBits);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    final var map = new TreeMap<String, String>();
-    if (!(mapInfo instanceof NetlistComponent)) return map;
-    final var comp = (NetlistComponent) mapInfo;
-    final var nrOfSelectBits = comp.getComponent().getAttributeSet().getValue(PlexersLibrary.ATTR_SELECT).getWidth();
-    var selectInputIndex = (1 << nrOfSelectBits);
-    // begin with connecting all inputs of multiplexer
-    for (var i = 0; i < selectInputIndex; i++)
-      map.putAll(GetNetMap("MuxIn_" + i, true, comp, i, nets));
-    // now select..
-    map.putAll(GetNetMap("Sel", true, comp, selectInputIndex, nets));
-    // now connect enable input...
-    if (comp.getComponent()
-        .getAttributeSet()
-        .getValue(PlexersLibrary.ATTR_ENABLE)) {
-      map.putAll(
-          GetNetMap(
-              "Enable", false, comp, selectInputIndex + 1, nets));
-    } else {
-      map.put("Enable", HDL.oneBit());
-      selectInputIndex--; // decrement pin index because enable doesn't exist...
-    }
-    // finally output
-    map.putAll(GetNetMap("MuxOut", true, comp, selectInputIndex + 2, nets));
-    return map;
+    return contents;
   }
 }

@@ -109,7 +109,7 @@ public class Constant extends InstanceFactory {
     }
   }
 
-  private static class ConstantHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
+  private static class ConstantHdlGeneratorFactory extends AbstractConstantHdlGeneratorFactory {
     @Override
     public long getConstant(AttributeSet attrs) {
       return attrs.getValue(Constant.ATTR_VALUE);
@@ -127,7 +127,7 @@ public class Constant extends InstanceFactory {
   private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE);
 
   public Constant() {
-    super(_ID, S.getter("constantComponent"), new ConstantHDLGeneratorFactory());
+    super(_ID, S.getter("constantComponent"), new ConstantHdlGeneratorFactory());
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(
         JoinedConfigurator.create(

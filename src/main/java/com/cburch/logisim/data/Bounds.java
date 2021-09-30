@@ -168,9 +168,9 @@ public class Bounds {
 
   @Override
   public boolean equals(Object otherObj) {
-    if (!(otherObj instanceof Bounds)) return false;
-    final var other = (Bounds) otherObj;
-    return x == other.x && y == other.y && wid == other.wid && ht == other.ht;
+    return (otherObj instanceof Bounds other)
+           ? x == other.x && y == other.y && wid == other.wid && ht == other.ht
+           : false;
   }
 
   public Bounds expand(int d) { // d pixels in each direction

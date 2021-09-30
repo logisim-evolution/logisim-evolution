@@ -27,12 +27,10 @@ import java.util.EventObject;
 import java.util.HashMap;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
-import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
 import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
 import javax.swing.DropMode;
-import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -97,13 +95,10 @@ public class SelectionList extends JTable {
 
   private static class SignalInfoRenderer extends DefaultTableCellRenderer {
     @Override
-    public java.awt.Component getTableCellRendererComponent(
-        JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-      java.awt.Component ret =
-          super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-      if (ret instanceof JLabel && value instanceof SignalInfo) {
-        JLabel label = (JLabel) ret;
-        SignalInfo item = (SignalInfo) value;
+    public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+      final java.awt.Component ret = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      if ((ret instanceof JLabel label) && value instanceof SignalInfo) {
+        final var item = (SignalInfo) value;
         label.setIcon(item.icon);
         label.setText(item + " [" + item.getRadix().toDisplayString() + "]");
       }
@@ -126,9 +121,9 @@ public class SelectionList extends JTable {
       label.setFont(label.getFont().deriveFont(Font.PLAIN));
       button.setFont(button.getFont().deriveFont(9.0f));
 
-      ButtonGroup g = new ButtonGroup();
-      for (RadixOption r : RadixOption.OPTIONS) {
-        JRadioButtonMenuItem m = new JRadioButtonMenuItem(r.toDisplayString());
+      final var g = new ButtonGroup();
+      for (final var r : RadixOption.OPTIONS) {
+        final var m = new JRadioButtonMenuItem(r.toDisplayString());
         radixMenuItems.put(r, m);
         popup.add(m);
         g.add(m);
@@ -142,7 +137,7 @@ public class SelectionList extends JTable {
       }
 
       popup.addSeparator();
-      JMenuItem m = new JMenuItem("Delete");
+      final var m = new JMenuItem("Delete");
       popup.add(m);
       m.addActionListener(
           e -> {
@@ -153,8 +148,7 @@ public class SelectionList extends JTable {
       button.setMargin(new Insets(0, 0, 0, 0));
       button.setHorizontalTextPosition(SwingConstants.LEFT);
       button.setText("Options");
-      button.addActionListener(
-          e -> popup.show(panel, button.getX(), button.getY() + button.getHeight()));
+      button.addActionListener(e -> popup.show(panel, button.getX(), button.getY() + button.getHeight()));
       button.setMinimumSize(button.getPreferredSize());
 
       label.setHorizontalAlignment(SwingConstants.LEFT);
@@ -172,12 +166,11 @@ public class SelectionList extends JTable {
     }
 
     @Override
-    public java.awt.Component getTableCellEditorComponent(
-        JTable table, Object value, boolean isSelected, int row, int column) {
-      int margin = getColumnModel().getColumnMargin();
+    public java.awt.Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+      final var margin = getColumnModel().getColumnMargin();
       label.setBorder(BorderFactory.createEmptyBorder(0, margin, 0, margin));
 
-      Dimension d = new Dimension(getColumnModel().getTotalColumnWidth(), getRowHeight());
+      final var d = new Dimension(getColumnModel().getTotalColumnWidth(), getRowHeight());
       label.setMinimumSize(new Dimension(10, d.height));
       label.setPreferredSize(new Dimension(d.width - button.getWidth(), d.height));
       label.setMaximumSize(new Dimension(d.width - button.getWidth(), d.height));
@@ -228,9 +221,9 @@ public class SelectionList extends JTable {
     putClientProperty("terminateEditOnFocusLost", Boolean.TRUE);
     setTransferHandler(new SelectionTransferHandler());
 
-    InputMap inputMap = getInputMap();
+    final var inputMap = getInputMap();
     inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), "Delete");
-    ActionMap actionMap = getActionMap();
+    final var actionMap = getActionMap();
     actionMap.put(
         "Delete",
         new AbstractAction() {
@@ -242,12 +235,12 @@ public class SelectionList extends JTable {
   }
 
   void removeSelected() {
-    int idx = 0;
-    SignalInfo.List items = getSelectedValuesList();
-    for (SignalInfo item : items) {
+    var idx = 0;
+    final var items = getSelectedValuesList();
+    for (final var item : items) {
       idx = Math.max(idx, logModel.indexOf(item));
     }
-    int count = logModel.remove(items);
+    final var count = logModel.remove(items);
     if (count > 0 && logModel.getSignalCount() > 0) {
       idx = Math.min(idx + 1 - count, logModel.getSignalCount() - 1);
       setRowSelectionInterval(idx, idx);
@@ -261,7 +254,7 @@ public class SelectionList extends JTable {
 
   public void setLogModel(Model m) {
     if (logModel != m) {
-      SelectionListModel listModel = (SelectionListModel) getModel();
+      final var listModel = (SelectionListModel) getModel();
       if (logModel != null) logModel.removeModelListener(listModel);
       logModel = m;
       if (logModel != null) logModel.addModelListener(listModel);
@@ -270,9 +263,9 @@ public class SelectionList extends JTable {
   }
 
   SignalInfo.List getSelectedValuesList() {
-    SignalInfo.List items = new SignalInfo.List();
-    int[] sel = getSelectedRows();
-    for (int i : sel) items.add(logModel.getItem(i));
+    final var items = new SignalInfo.List();
+    final var sel = getSelectedRows();
+    for (final var i : sel) items.add(logModel.getItem(i));
     return items;
   }
 
@@ -287,7 +280,7 @@ public class SelectionList extends JTable {
     @Override
     public Transferable createTransferable(JComponent comp) {
       removing = true;
-      SignalInfo.List items = new SignalInfo.List();
+      final var items = new SignalInfo.List();
       items.addAll(getSelectedValuesList());
       return items.isEmpty() ? null : items;
     }
@@ -307,9 +300,8 @@ public class SelectionList extends JTable {
     public boolean importData(TransferHandler.TransferSupport support) {
       removing = false;
       try {
-        SignalInfo.List items =
-            (SignalInfo.List) support.getTransferable().getTransferData(SignalInfo.List.dataFlavor);
-        int newIdx = logModel.getSignalCount();
+        final var items = (SignalInfo.List) support.getTransferable().getTransferData(SignalInfo.List.dataFlavor);
+        var newIdx = logModel.getSignalCount();
         if (support.isDrop()) {
           try {
             JTable.DropLocation dl = (JTable.DropLocation) support.getDropLocation();
@@ -330,8 +322,8 @@ public class SelectionList extends JTable {
     if (items == null || items.size() == 0) return;
     logModel.addOrMove(items, idx);
     clearSelection();
-    for (SignalInfo item : items) {
-      int i = logModel.indexOf(item);
+    for (final var item : items) {
+      final var i = logModel.indexOf(item);
       addRowSelectionInterval(i, i);
     }
   }
@@ -347,13 +339,12 @@ public class SelectionList extends JTable {
     super.paintComponent(g);
 
     /* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
-    Graphics2D g2 = (Graphics2D) g;
-    g2.setRenderingHint(
-        RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    final var g2 = (Graphics2D) g;
+    g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-    Font f = g.getFont();
-    Color c = g.getColor();
+    final var f = g.getFont();
+    final var c = g.getColor();
     g.setColor(Color.GRAY);
     g.setFont(MSG_FONT);
     g.drawString("drag here to add", 10, getRowHeight() * getRowCount() + 20);

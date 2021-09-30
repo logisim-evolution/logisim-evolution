@@ -82,8 +82,7 @@ public class SubcircuitFactory extends InstanceFactory {
     public void getSubMenuItems(JPopupMenu menu, Project proj, CircuitState state,
                                 CircuitStateHolder.HierarchyInfo hi) {
       for (final var comp : source.getNonWires()) {
-        if (comp instanceof InstanceComponent) {
-          final var c = (InstanceComponent) comp;
+        if (comp instanceof InstanceComponent c) {
           if (c.getFactory() instanceof SubcircuitFactory) {
             final var m = (CircuitFeature) c.getFeature(MenuExtender.class);
             final var newhi = hi.getCopy();
@@ -91,8 +90,7 @@ public class SubcircuitFactory extends InstanceFactory {
             m.getSubMenuItems(menu, proj, (CircuitState) c.getInstance().getData(state), newhi);
           } else if (c.getInstance().getFactory().providesSubCircuitMenu()) {
             final var m = (MenuExtender) c.getFeature(MenuExtender.class);
-            if (m instanceof CircuitStateHolder) {
-              final var csh = (CircuitStateHolder) m;
+            if (m instanceof CircuitStateHolder csh) {
               csh.setCircuitState(state);
               csh.setHierarchyName(hi);
             }
@@ -233,8 +231,7 @@ public class SubcircuitFactory extends InstanceFactory {
       var y = bds.getY() + bds.getHeight() / 2;
       final var g = painter.getGraphics().create();
       final var angle = Math.PI / 2 - (up.toRadians() - defaultFacing.toRadians()) - facing.toRadians();
-      if (g instanceof Graphics2D && Math.abs(angle) > 0.01) {
-        final var g2 = (Graphics2D) g;
+      if (g instanceof Graphics2D g2 && Math.abs(angle) > 0.01) {
         g2.rotate(angle, x, y);
       }
       g.setFont(font);
@@ -370,8 +367,8 @@ public class SubcircuitFactory extends InstanceFactory {
     final var fg = g.getColor();
     int v = fg.getRed() + fg.getGreen() + fg.getBlue();
     Composite oldComposite = null;
-    if (g instanceof Graphics2D && v > 50) {
-      oldComposite = ((Graphics2D) g).getComposite();
+    if (g instanceof Graphics2D g2d && v > 50) {
+      oldComposite = g2d.getComposite();
       Composite c = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
       ((Graphics2D) g).setComposite(c);
     }

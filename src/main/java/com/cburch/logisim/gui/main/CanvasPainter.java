@@ -202,8 +202,8 @@ class CanvasPainter implements PropertyChangeListener {
     g.setColor(Color.black);
 
     var gfxScaled = g.create();
-    if (zoomFactor != 1.0 && gfxScaled instanceof Graphics2D) {
-      ((Graphics2D) gfxScaled).scale(zoomFactor, zoomFactor);
+    if (zoomFactor != 1.0 && gfxScaled instanceof Graphics2D g2d) {
+      g2d.scale(zoomFactor, zoomFactor);
     }
     drawWithUserState(g, gfxScaled, proj);
     drawWidthIncompatibilityData(g, gfxScaled, proj);

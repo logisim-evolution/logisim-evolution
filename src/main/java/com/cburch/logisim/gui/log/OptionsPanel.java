@@ -323,7 +323,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
 
   @Override
   public void stateChanged(ChangeEvent e) {
-    Model m = getLogFrame().getModel();
+    final var m = getLogFrame().getModel();
     limit.setEnabled(!unlimited.isSelected());
     if (unlimited.isSelected()) {
       m.setHistoryLimit(0);
@@ -332,7 +332,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
         limit.commitEdit();
       } catch (ParseException ex) {
         // revert to last valid value
-        JComponent editor = limit.getEditor();
+        final var editor = limit.getEditor();
         ((JSpinner.NumberEditor) editor).getTextField().setValue(limit.getValue());
       }
       m.setHistoryLimit((Integer) limit.getValue());
@@ -340,15 +340,15 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
   }
 
   private void doClockSourceDialog() {
-    Model m = getLogFrame().getModel();
-    SignalInfo item = ClockSource.doClockObserverDialog(m.getCircuit());
+    final var m = getLogFrame().getModel();
+    final var item = ClockSource.doClockObserverDialog(m.getCircuit());
     if (item == null) return;
     m.setClockSourceInfo(item);
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    Model m = getLogFrame().getModel();
+    final var m = getLogFrame().getModel();
     if (e.getSource() == unlimited) {
       stateChanged(null);
     } else if (e.getSource() == clockSrcButton) {
@@ -359,10 +359,9 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       } else if (realTime.isSelected()) {
         m.setRealMode(realScale.getValue(), realFine.isSelected());
       } else {
-        String d = clockDiscipline.getValue();
-        int discipline = clockDisciplines[Arrays.asList(clockDisciplineNames).indexOf(d)];
-        m.setClockMode(
-            clockFine.isSelected(), discipline, clockScale.getValue(), clockGate.getValue());
+        final var d = clockDiscipline.getValue();
+        final var discipline = clockDisciplines[Arrays.asList(clockDisciplineNames).indexOf(d)];
+        m.setClockMode(clockFine.isSelected(), discipline, clockScale.getValue(), clockGate.getValue());
       }
       updateDescription();
     }
@@ -484,8 +483,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       private static final long serialVersionUID = 1L;
 
       @Override
-      public java.awt.Component getListCellRendererComponent(
-          JList<?> list, Object w, int index, boolean isSelected, boolean cellHasFocus) {
+      public java.awt.Component getListCellRendererComponent(JList<?> list, Object w, int index, boolean isSelected, boolean cellHasFocus) {
         @SuppressWarnings("unchecked")
         final String s = renderAsText((E) w);
         return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
@@ -540,7 +538,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
 
     @Override
     String renderAsText(Long v) {
-      String s = Model.formatDuration(v);
+      var s = Model.formatDuration(v);
       if (suffix != null) s = s + " " + S.get(suffix);
       return s;
     }
@@ -590,7 +588,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     String d;
     if (stepTime.isSelected()) {
       mode = "stepTime";
-      boolean fine = stepFine.isSelected();
+      final var fine = stepFine.isSelected();
       stepGate.setEnabled(fine);
       if (fine) d = S.get("stepFineDescription", stepGate.getText(), stepScale.getText());
       else d = S.get("stepCoarseDescription", stepScale.getText());
@@ -602,7 +600,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       clockGate.setSelectedItem(stepGate.getValue());
     } else if (realTime.isSelected()) {
       mode = "realTime";
-      boolean fine = realFine.isSelected();
+      final var fine = realFine.isSelected();
       if (fine) d = S.get("realFineDescription", realScale.getText());
       else d = S.get("realCoarseDescription", realScale.getText());
       stepFine.setSelected(fine);
@@ -612,15 +610,14 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     } else {
       mode = "clockTime";
       boolean fine = clockFine.isSelected();
-      String disciplineName = clockDiscipline.getValue();
-      int discipline =
-          clockDisciplines[Arrays.asList(clockDisciplineNames).indexOf(disciplineName)];
+      final var disciplineName = clockDiscipline.getValue();
+      final var discipline = clockDisciplines[Arrays.asList(clockDisciplineNames).indexOf(disciplineName)];
       boolean levelSensitive = (discipline == Model.CLOCK_HIGH || discipline == Model.CLOCK_LOW);
       clockGate.setEnabled(fine || levelSensitive);
       int ticks = 2;
 
-      Model m = getLogFrame().getModel();
-      SignalInfo clockSource = m.getClockSourceInfo();
+      final var m = getLogFrame().getModel();
+      final var clockSource = m.getClockSourceInfo();
       if (clockSource == null) {
         clockSrcButton.setIcon(null);
         clockSrcButton.setText(S.get("clockSourceNone"));
@@ -631,20 +628,20 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       }
       clockTicks.setText(S.get("cycleLength", ticks));
 
-      String dgate = clockGate.getText();
-      long t = clockScale.getValue();
-      String dcycle = clockScale.renderAsText(t * ticks);
-      String dtick = clockScale.renderAsText(t);
-      if (fine) d = S.get("clockFineDescription", dgate, dcycle, dtick);
+      final var dgate = clockGate.getText();
+      final var t = clockScale.getValue();
+      final var dCycle = clockScale.renderAsText(t * ticks);
+      final var dTick = clockScale.renderAsText(t);
+      if (fine) d = S.get("clockFineDescription", dgate, dCycle, dTick);
       else if (discipline == Model.CLOCK_DUAL)
-        d = S.get("clockCoarseDescriptionDual", dcycle, dtick);
+        d = S.get("clockCoarseDescriptionDual", dCycle, dTick);
       else if (discipline == Model.CLOCK_RISING)
-        d = S.get("clockCoarseDescriptionRising", dcycle, dtick);
+        d = S.get("clockCoarseDescriptionRising", dCycle, dTick);
       else if (discipline == Model.CLOCK_FALLING)
-        d = S.get("clockCoarseDescriptionFalling", dcycle, dtick);
+        d = S.get("clockCoarseDescriptionFalling", dCycle, dTick);
       else if (discipline == Model.CLOCK_HIGH)
-        d = S.get("clockCoarseDescriptionHigh", dgate, dcycle, dtick);
-      else d = S.get("clockCoarseDescriptionLow", dgate, dcycle, dtick);
+        d = S.get("clockCoarseDescriptionHigh", dgate, dCycle, dTick);
+      else d = S.get("clockCoarseDescriptionLow", dgate, dCycle, dTick);
       stepFine.setSelected(fine);
       realFine.setSelected(fine);
       stepScale.setSelectedItem(clockScale.getValue());
@@ -652,8 +649,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       stepGate.setSelectedItem(clockGate.getValue());
     }
     ((CardLayout) optionsPanel.getLayout()).show(optionsPanel, mode);
-    optionsPanel.setBorder(
-        BorderFactory.createTitledBorder(S.get("timingLabel") + ": " + S.get(mode)));
+    optionsPanel.setBorder(BorderFactory.createTitledBorder(S.get("timingLabel") + ": " + S.get(mode)));
     description.setText("<html>" + d + "</html>"); // html to enable line wrapping
   }
 
@@ -671,10 +667,10 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     realFine.setSelected(newModel.isFine());
     clockFine.setSelected(newModel.isFine());
     updateDescription();
-    int n = newModel.getHistoryLimit();
+    final var n = newModel.getHistoryLimit();
     unlimited.setSelected(n == 0);
     if (n > 0) limit.setValue(n);
-    SignalInfo clockSource = newModel.getClockSourceInfo();
+    final var clockSource = newModel.getClockSourceInfo();
     if (clockSource == null) {
       clockSrcButton.setIcon(null);
       clockSrcButton.setText(S.get("clockSourceNone"));
@@ -689,12 +685,12 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
 
   @Override
   public void modeChanged(Model.Event event) {
-    Model m = getLogFrame().getModel();
+    final var m = getLogFrame().getModel();
     if (m.isStepMode()) stepTime.setSelected(true);
     else if (m.isRealMode()) realTime.setSelected(true);
     else clockTime.setSelected(true);
     int discipline = m.getClockDiscipline();
-    for (int i = 0; i < clockDisciplines.length; i++)
+    for (var i = 0; i < clockDisciplines.length; i++)
       if (discipline == clockDisciplines[i])
         clockDiscipline.setSelectedItem(clockDisciplineNames[i]);
   }

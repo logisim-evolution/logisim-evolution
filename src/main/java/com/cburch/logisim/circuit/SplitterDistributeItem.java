@@ -30,7 +30,7 @@ class SplitterDistributeItem extends JMenuItem implements ActionListener {
     addActionListener(this);
 
     final var attrs = (SplitterAttributes) splitter.getAttributeSet();
-    final var actual = attrs.bit_end;
+    final var actual = attrs.bitEnd;
     final var desired = SplitterAttributes.computeDistribution(attrs.fanout, actual.length, order);
     var same = actual.length == desired.length;
     for (var i = 0; same && i < desired.length; i++) {
@@ -46,7 +46,7 @@ class SplitterDistributeItem extends JMenuItem implements ActionListener {
   @Override
   public void actionPerformed(ActionEvent e) {
     final var attrs = (SplitterAttributes) splitter.getAttributeSet();
-    final var actual = attrs.bit_end;
+    final var actual = attrs.bitEnd;
     final var desired = SplitterAttributes.computeDistribution(attrs.fanout, actual.length, order);
     final var xn = new CircuitMutation(proj.getCircuitState().getCircuit());
     for (int i = 0, n = Math.min(actual.length, desired.length); i < n; i++) {

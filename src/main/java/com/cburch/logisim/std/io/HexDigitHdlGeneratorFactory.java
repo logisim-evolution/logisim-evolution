@@ -10,30 +10,29 @@
 package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.InlinedHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.WithSelectHDLGenerator;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.WithSelectHdlGenerator;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 
-public class HexDigitHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
+public class HexDigitHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
 
   @Override
-  public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, NetlistComponent componentInfo, String circuitName) {
+  public LineBuffer getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
     final var startId = componentInfo.getLocalBubbleOutputStartId();
     final var bubbleBusName = LOCAL_OUTPUT_BUBBLE_BUS_NAME;
-    final var signalName = LineBuffer.format("{{1}}{{<}}{{2}}{{3}}{{4}}{{>}}", bubbleBusName, (startId + 6), HDL.vectorLoopId(), startId);
+    final var signalName = LineBuffer.format("{{1}}{{<}}{{2}}{{3}}{{4}}{{>}}", bubbleBusName, (startId + 6), Hdl.vectorLoopId(), startId);
     final var contents =
-        (new LineBuffer()).addHdlPairs()
+        LineBuffer.getHdlBuffer()
             .pair("bubbleBusName", bubbleBusName)
             .pair("sigName", signalName)
-            .pair("dpName", HDL.getNetName(componentInfo, HexDigit.DP, true, nets));
+            .pair("dpName", Hdl.getNetName(componentInfo, HexDigit.DP, true, nets));
     contents.add("");
     if (componentInfo.isEndConnected(HexDigit.HEX)) {
-      final var generator = (new WithSelectHDLGenerator(componentInfo.getComponent().getAttributeSet().getValue(StdAttr.LABEL),
-          HDL.getBusName(componentInfo, HexDigit.HEX, nets), 4, signalName, 7))
+      final var generator = (new WithSelectHdlGenerator(componentInfo.getComponent().getAttributeSet().getValue(StdAttr.LABEL),
+          Hdl.getBusName(componentInfo, HexDigit.HEX, nets), 4, signalName, 7))
           .add(0L, "0111111")
           .add(1L, "0000110")
           .add(2L, "1011011")
@@ -52,11 +51,11 @@ public class HexDigitHDLGeneratorFactory extends InlinedHDLGeneratorFactory {
           .setDefault("1110001");
       contents.add(generator.getHdlCode());
     } else {
-      contents.add("{{assign}} {{sigName}} {{=}} {{1}};", HDL.GetZeroVector(7, true));
+      contents.add("{{assign}} {{sigName}} {{=}} {{1}};", Hdl.getZeroVector(7, true));
     }
     if (componentInfo.getComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP))
       contents.add("{{assign}} {{bubbleBusName}}{{<}}{{1}}{{>}} {{=}} {{dpName}};", (startId + 7));
-    return contents.getWithIndent();
+    return contents;
   }
 
 }

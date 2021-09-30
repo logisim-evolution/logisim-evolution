@@ -132,20 +132,20 @@ public class SplitterAttributes extends AbstractAttributeSet {
         for (var i = 0; i < bits; i++) ret[i] = (byte) (i + 1);
       } else {
         final var threads_per_end = bits / fanout;
-        var ends_with_extra = bits % fanout;
-        var cur_end = -1; // immediately increments
-        var left_in_end = 0;
+        var endsWithExtra = bits % fanout;
+        var curEnd = -1; // immediately increments
+        var leftInEnd = 0;
         for (var i = 0; i < bits; i++) {
-          if (left_in_end == 0) {
-            ++cur_end;
-            left_in_end = threads_per_end;
-            if (ends_with_extra > 0) {
-              ++left_in_end;
-              --ends_with_extra;
+          if (leftInEnd == 0) {
+            ++curEnd;
+            leftInEnd = threads_per_end;
+            if (endsWithExtra > 0) {
+              ++leftInEnd;
+              --endsWithExtra;
             }
           }
-          ret[i] = (byte) (1 + cur_end);
-          --left_in_end;
+          ret[i] = (byte) (1 + curEnd);
+          --leftInEnd;
         }
       }
     } else {
@@ -153,20 +153,20 @@ public class SplitterAttributes extends AbstractAttributeSet {
         for (int i = 0; i < bits; i++) ret[i] = (byte) (fanout - i);
       } else {
         final var threads_per_end = bits / fanout;
-        var ends_with_extra = bits % fanout;
-        var cur_end = -1;
-        var left_in_end = 0;
+        var endsWithExtra = bits % fanout;
+        var curEnd = -1;
+        var leftInEnd = 0;
         for (int i = bits - 1; i >= 0; i--) {
-          if (left_in_end == 0) {
-            ++cur_end;
-            left_in_end = threads_per_end;
-            if (ends_with_extra > 0) {
-              ++left_in_end;
-              --ends_with_extra;
+          if (leftInEnd == 0) {
+            ++curEnd;
+            leftInEnd = threads_per_end;
+            if (endsWithExtra > 0) {
+              ++leftInEnd;
+              --endsWithExtra;
             }
           }
-          ret[i] = (byte) (1 + cur_end);
-          --left_in_end;
+          ret[i] = (byte) (1 + curEnd);
+          --leftInEnd;
         }
       }
     }
@@ -197,7 +197,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
   Direction facing = Direction.EAST;
   int spacing = 1;
   byte fanout = 2; // number of ends this splits into
-  byte[] bit_end = new byte[2]; // how each bit maps to an end (0 if nowhere);
+  byte[] bitEnd = new byte[2]; // how each bit maps to an end (0 if nowhere);
 
   // other values will be between 1 and fanout
   BitOutOption[] options = null;
@@ -209,7 +209,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
   }
 
   public boolean isNoConnect(int index) {
-    for (final var b : bit_end) {
+    for (final var b : bitEnd) {
       if (b == index)
         return false;
     }
@@ -221,29 +221,29 @@ public class SplitterAttributes extends AbstractAttributeSet {
     var curNum = attrs.size() - offs;
 
     // compute default values
-    final var dflt = computeDistribution(fanout, bit_end.length, 1);
+    final var dflt = computeDistribution(fanout, bitEnd.length, 1);
 
-    var changed = curNum != bit_end.length;
+    var changed = curNum != bitEnd.length;
 
     // remove excess attributes
-    while (curNum > bit_end.length) {
+    while (curNum > bitEnd.length) {
       curNum--;
       attrs.remove(offs + curNum);
     }
 
     // set existing attributes
     for (var i = 0; i < curNum; i++) {
-      if (bit_end[i] != dflt[i]) {
+      if (bitEnd[i] != dflt[i]) {
         final var attr = (BitOutAttribute) attrs.get(offs + i);
-        bit_end[i] = dflt[i];
-        fireAttributeValueChanged(attr, (int) bit_end[i], null);
+        bitEnd[i] = dflt[i];
+        fireAttributeValueChanged(attr, (int) bitEnd[i], null);
       }
     }
 
     // add new attributes
-    for (var i = curNum; i < bit_end.length; i++) {
+    for (var i = curNum; i < bitEnd.length; i++) {
       final var attr = new BitOutAttribute(i, options);
-      bit_end[i] = dflt[i];
+      bitEnd[i] = dflt[i];
       attrs.add(attr);
     }
 
@@ -282,7 +282,7 @@ public class SplitterAttributes extends AbstractAttributeSet {
     dest.fanout = this.fanout;
     dest.appear = this.appear;
     dest.spacing = this.spacing;
-    dest.bit_end = this.bit_end.clone();
+    dest.bitEnd = this.bitEnd.clone();
     dest.options = this.options;
   }
 
@@ -308,14 +308,13 @@ public class SplitterAttributes extends AbstractAttributeSet {
     } else if (attr == ATTR_FANOUT) {
       return (V) Integer.valueOf(fanout);
     } else if (attr == ATTR_WIDTH) {
-      return (V) BitWidth.create(bit_end.length);
+      return (V) BitWidth.create(bitEnd.length);
     } else if (attr == ATTR_APPEARANCE) {
       return (V) appear;
     } else if (attr == ATTR_SPACING) {
       return (V) Integer.valueOf(spacing);
-    } else if (attr instanceof BitOutAttribute) {
-      final var bitOut = (BitOutAttribute) attr;
-      return (V) Integer.valueOf(bit_end[bitOut.which]);
+    } else if (attr instanceof BitOutAttribute bitOut) {
+      return (V) Integer.valueOf(bitEnd[bitOut.which]);
     } else {
       return null;
     }
@@ -324,14 +323,14 @@ public class SplitterAttributes extends AbstractAttributeSet {
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
     if (attr == StdAttr.FACING) {
-      final var NewFacing = (Direction) value;
-      if (facing.equals(NewFacing)) return;
+      final var newFacing = (Direction) value;
+      if (facing.equals(newFacing)) return;
       facing = (Direction) value;
       configureOptions();
       parameters = null;
     } else if (attr == ATTR_FANOUT) {
       int newValue = (Integer) value;
-      final var bits = bit_end;
+      final var bits = bitEnd;
       for (var i = 0; i < bits.length; i++) {
         if (bits[i] > newValue) bits[i] = (byte) newValue;
       }
@@ -342,8 +341,8 @@ public class SplitterAttributes extends AbstractAttributeSet {
       parameters = null;
     } else if (attr == ATTR_WIDTH) {
       final var width = (BitWidth) value;
-      if (bit_end.length == width.getWidth()) return;
-      bit_end = new byte[width.getWidth()];
+      if (bitEnd.length == width.getWidth()) return;
+      bitEnd = new byte[width.getWidth()];
       configureOptions();
       configureDefaults();
     } else if (attr == ATTR_SPACING) {
@@ -356,12 +355,11 @@ public class SplitterAttributes extends AbstractAttributeSet {
       if (appear.equals(appearance)) return;
       appear = appearance;
       parameters = null;
-    } else if (attr instanceof BitOutAttribute) {
-      final var bitOutAttr = (BitOutAttribute) attr;
+    } else if (attr instanceof BitOutAttribute bitOutAttr) {
       int val = (value instanceof Integer) ? (Integer) value : ((BitOutOption) value).value + 1;
       if (val >= 0 && val <= fanout) {
-        if (bit_end[bitOutAttr.which] == (byte) val) return;
-        bit_end[bitOutAttr.which] = (byte) val;
+        if (bitEnd[bitOutAttr.which] == (byte) val) return;
+        bitEnd[bitOutAttr.which] = (byte) val;
       } else return;
     } else {
       throw new IllegalArgumentException("unknown attribute " + attr);

@@ -11,31 +11,40 @@ package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
+import com.cburch.logisim.instance.Port;
 
 public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnScanningHDLGeneratorFactory {
 
   public static final String HDL_IDENTIFIER =  "RGBArrayColumnScanning";
-  
+
   public RGBArrayColumnScanningHDLGeneratorFactory() {
     super();
     myWires
         .addWire("s_maxRedLedInputs", MAX_NR_LEDS_ID)
         .addWire("s_maxBlueLedInputs", MAX_NR_LEDS_ID)
         .addWire("s_maxGreenLedInputs", MAX_NR_LEDS_ID);
+    myPorts.removePorts(); // remove the ports from the super class
+    myPorts
+        .add(Port.INPUT, TickComponentHdlGeneratorFactory.FPGA_CLOCK, 1, 0)
+        .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, NR_OF_LEDS_ID, 1)
+        .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, NR_OF_LEDS_ID, 2)
+        .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, NR_OF_LEDS_ID, 3)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress, NR_OF_COLUMN_ADDRESS_BITS_ID, 4)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs, NR_OF_ROWS_ID, 5)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs, NR_OF_ROWS_ID, 6)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs, NR_OF_ROWS_ID, 7);
   }
 
   public static ArrayList<String> getPortMap(int id) {
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("addr", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
-            .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+            .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK)
             .pair("insR", LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs)
             .pair("insG", LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs)
             .pair("insB", LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs)
@@ -44,7 +53,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
             .pair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs)
             .pair("id", id);
 
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           PORT MAP ( {{addr }} => {{addr}}{{id}},
                      {{clock}} => {{clock}},
@@ -71,29 +80,9 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   }
 
   @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress, NR_OF_COLUMN_ADDRESS_BITS_ID);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowRedOutputs, NR_OF_ROWS_ID);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowGreenOutputs, NR_OF_ROWS_ID);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs, NR_OF_ROWS_ID);
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var inputs = new TreeMap<String, Integer>();
-    inputs.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, NR_OF_LEDS_ID);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, NR_OF_LEDS_ID);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, NR_OF_LEDS_ID);
-    return inputs;
-  }
-
-  @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var contents =
-        (new LineBuffer())
+        LineBuffer.getBuffer()
             .pair("nrOfLeds", NR_OF_LEDS_STRING)
             .pair("nrOfRows", NR_OF_ROWS_STRING)
             .pair("activeLow", ACTIVE_LOW_STRING)
@@ -105,7 +94,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
             .pair("outsB", LedArrayGenericHDLGeneratorFactory.LedArrayRowBlueOutputs);
 
     contents.add(getColumnCounterCode());
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS
           BEGIN
@@ -131,7 +120,6 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
           """);
     } else {
       contents.add("""
-
           genvar i;
           generate
              for (i = 0; i < {{nrOfRows}}; i = i + 1)
@@ -149,6 +137,6 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
           endgenerate
           """);
     }
-    return contents.getWithIndent();
+    return contents;
   }
 }

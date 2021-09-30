@@ -131,10 +131,10 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   public static final int MAX_VARS = 6;
   public static final int[] ROW_VARS = {0, 0, 1, 1, 2, 2, 3};
   public static final int[] COL_VARS = {0, 1, 1, 2, 2, 3, 3};
-  private static final int[] BigCOL_Index = {0, 1, 3, 2, 6, 7, 5, 4};
-  private static final int[] BigCOL_Place = {0, 1, 3, 2, 7, 6, 4, 5};
-  private static final int CELL_HORZ_SEP = 10;
-  private static final int CELL_VERT_SEP = 10;
+  private static final int[] bigColIndex = {0, 1, 3, 2, 6, 7, 5, 4};
+  private static final int[] bigColPlace = {0, 1, 3, 2, 7, 6, 4, 5};
+  private static final int cellHorizontalSeparator = 10;
+  private static final int cellVerticalSeparator = 10;
 
   private final MyListener myListener = new MyListener();
   private final ExpressionView completeExpression;
@@ -298,8 +298,8 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
       cellWidth = 24;
     } else {
       final var fm = gfx.getFontMetrics(entryFont);
-      cellHeight = fm.getAscent() + CELL_VERT_SEP;
-      cellWidth = fm.stringWidth("00") + CELL_HORZ_SEP;
+      cellHeight = fm.getAscent() + cellVerticalSeparator;
+      cellWidth = fm.stringWidth("00") + cellHorizontalSeparator;
     }
     final var rows = 1 << rowVars;
     final var cols = 1 << colVars;
@@ -352,8 +352,8 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
       headHeight = styledHeight(styled("E:2", headerFont), ctx) + (fm.getAscent() - singleheight);
 
       fm = gfx.getFontMetrics(entryFont);
-      cellHeight = fm.getAscent() + CELL_VERT_SEP;
-      cellWidth = fm.stringWidth("00") + CELL_HORZ_SEP;
+      cellHeight = fm.getAscent() + cellVerticalSeparator;
+      cellWidth = fm.stringWidth("00") + cellHorizontalSeparator;
     }
 
     final var rows = 1 << ROW_VARS[table.getInputColumnCount()];
@@ -379,7 +379,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   public static int getCol(int tableRow, int rows, int cols) {
     int ret = tableRow % cols;
     if (cols > 4) {
-      return BigCOL_Place[ret];
+      return bigColPlace[ret];
     }
     switch (ret) {
       case 2:
@@ -410,7 +410,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   public static int getRow(int tableRow, int rows, int cols) {
     int ret = tableRow / cols;
     if (rows > 4) {
-      return BigCOL_Place[ret];
+      return bigColPlace[ret];
     }
     switch (ret) {
       case 2:
@@ -455,7 +455,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
             : entry.getErrorMessage() + "<br>");
     s.append(output).append(" = ").append(entry.getDescription());
     final var inputs = model.getInputs().bits;
-    if (inputs.size() == 0) return "<html>" + s + "</html>";
+    if (inputs.isEmpty()) return "<html>" + s + "</html>";
     s.append("<br>When:");
     final var n = inputs.size();
     for (var i = 0; i < MAX_VARS && i < inputs.size(); i++) {
@@ -479,8 +479,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   }
 
   public void paintKmap(Graphics gfx, boolean selectionBlock) {
-    if (!(gfx instanceof Graphics2D)) return;
-    Graphics2D g2 = (Graphics2D) gfx;
+    if (!(gfx instanceof Graphics2D g2)) return;
     if (AppPreferences.AntiAliassing.getBoolean()) {
       g2.setRenderingHint(
           RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -527,7 +526,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
       x += numberedKMapInfo.getHeaderWidth() + cellWidth;
       y += numberedKMapInfo.getHeaderHeight() + cellHeight;
     }
-    paintKMap(g2, x, y, table);
+    doPaintKMap(g2, x, y, table);
     if (!selectionBlock) return;
 
     final var expr = kMapGroups.getHighlightedExpression();
@@ -882,7 +881,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     }
   }
 
-  private void paintKMap(Graphics2D gfx, int x, int y, TruthTable table) {
+  private void doPaintKMap(Graphics2D gfx, int x, int y, TruthTable table) {
     final var inputCount = table.getInputColumnCount();
     final var rowVars = ROW_VARS[inputCount];
     final var colVars = COL_VARS[inputCount];
@@ -969,7 +968,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
 
   private int toRow(int row, int rows) {
     if (rows > 4) {
-      return BigCOL_Index[row];
+      return bigColIndex[row];
     }
     if (rows == 4) {
       switch (row) {
@@ -987,7 +986,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
 
   private int toCol(int col, int cols) {
     if (cols > 4) {
-      return BigCOL_Index[col];
+      return bigColIndex[col];
     }
     if (cols == 4) {
       switch (col) {

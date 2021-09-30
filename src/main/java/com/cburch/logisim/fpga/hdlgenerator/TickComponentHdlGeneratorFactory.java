@@ -11,12 +11,12 @@ package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class TickComponentHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   private final long fpgaClockFrequency;
   private final double tickFrequency;
@@ -31,7 +31,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   public static final String HDL_DIRECTORY = "base";
 
 
-  public TickComponentHDLGeneratorFactory(long fpga_clock_frequency, double tick_frequency) {
+  public TickComponentHdlGeneratorFactory(long fpga_clock_frequency, double tick_frequency) {
     super(HDL_DIRECTORY);
     fpgaClockFrequency = fpga_clock_frequency;
     tickFrequency = tick_frequency;
@@ -45,25 +45,29 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
       calcValue /= 2;
     }
     myParametersList
-        .add(RELOAD_VALUE_STRING, RELOAD_VALUE_ID, HDLParameters.MAP_CONSTANT, (int) reloadValue)
-        .add(NR_OF_COUNTER_BITS_STRING, NR_OF_COUNTER_BITS_ID, HDLParameters.MAP_CONSTANT, nrOfBits);
+        .add(RELOAD_VALUE_STRING, RELOAD_VALUE_ID, HdlParameters.MAP_CONSTANT, (int) reloadValue)
+        .add(NR_OF_COUNTER_BITS_STRING, NR_OF_COUNTER_BITS_ID, HdlParameters.MAP_CONSTANT, nrOfBits);
     myWires
         .addWire("s_tick_next", 1)
         .addWire("s_count_next", NR_OF_COUNTER_BITS_ID)
         .addRegister("s_tick_reg", 1)
         .addRegister("s_count_reg", NR_OF_COUNTER_BITS_ID);
+    myPorts
+         .add(Port.INPUT, "FPGAClock", 1, FPGA_CLOCK)
+         .add(Port.OUTPUT, "FPGATick", 1, FPGA_TICK);
   }
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Inputs = new TreeMap<>();
-    Inputs.put("FPGAClock", 1);
-    return Inputs;
+  public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
+    final var res = new TreeMap<String, String>();
+    for (var port : myPorts.keySet())
+      res.put(port, myPorts.getFixedMap(port));
+    return res;
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var Contents =
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+    final var contents =
         LineBuffer.getHdlBuffer()
             .pair("nrOfCounterBits", NR_OF_COUNTER_BITS_STRING)
             .add("")
@@ -75,8 +79,8 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
             .add("")
             .addRemarkBlock("Here the update logic is defined");
 
-    if (HDL.isVHDL()) {
-      Contents.add("""
+    if (Hdl.isVhdl()) {
+      contents.add("""
           s_tick_next   <= '1' WHEN s_count_reg = std_logic_vector(to_unsigned(0, {{nrOfCounterBits}})) ELSE '0';
           s_count_next  <= (OTHERS => '0') WHEN s_tick_reg /= '0' AND s_tick_reg /= '1' ELSE -- For simulation only!
                            std_logic_vector(to_unsigned((ReloadValue-1), {{nrOfCounterBits}})) WHEN s_tick_next = '1' ELSE
@@ -84,7 +88,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           
           """);
     } else {
-      Contents.add("""
+      contents.add("""
               assign s_tick_next  = (s_count_reg == 0) ? 1'b1 : 1'b0;
               assign s_count_next = (s_count_reg == 0) ? ReloadValue-1 : s_count_reg-1;
               
@@ -99,9 +103,9 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
 
               """);
     }
-    Contents.addRemarkBlock("Here the flipflops are defined");
-    if (HDL.isVHDL()) {
-      Contents.add("""
+    contents.addRemarkBlock("Here the flipflops are defined");
+    if (Hdl.isVhdl()) {
+      contents.add("""
           make_tick : PROCESS( FPGAClock , s_tick_next )
           BEGIN
              IF (FPGAClock'event AND (FPGAClock = '1')) THEN
@@ -117,7 +121,7 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           END PROCESS make_counter;
           """);
     } else {
-      Contents.add("""
+      contents.add("""
           always @(posedge FPGAClock)
           begin
               s_count_reg <= s_count_next;
@@ -125,21 +129,6 @@ public class TickComponentHDLGeneratorFactory extends AbstractHDLGeneratorFactor
           end
           """);
     }
-    return Contents.getWithIndent();
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> Outputs = new TreeMap<>();
-    Outputs.put("FPGATick", 1);
-    return Outputs;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    PortMap.put("FPGAClock", FPGA_CLOCK);
-    PortMap.put("FPGATick", FPGA_TICK);
-    return PortMap;
+    return contents;
   }
 }

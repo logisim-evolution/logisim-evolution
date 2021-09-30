@@ -72,8 +72,8 @@ public class SplitterFactory extends AbstractComponentFactory {
       } else {
         return SplitterAttributes.APPEAR_LEFT;
       }
-    } else if (attr instanceof SplitterAttributes.BitOutAttribute) {
-      return ((SplitterAttributes.BitOutAttribute) attr).getDefault();
+    } else if (attr instanceof SplitterAttributes.BitOutAttribute bitOutAttr) {
+      return bitOutAttr.getDefault();
     } else {
       return super.getDefaultAttributeValue(attr, ver);
     }

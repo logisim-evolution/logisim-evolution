@@ -61,7 +61,7 @@ public class AutoLabel {
   public String getCurrent(Circuit circ, ComponentFactory me) {
     if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty())
       return "";
-    if (Circuit.IsCorrectLabel(circ.getName(), currentLabel.get(circ), circ.getNonWires(), null, me, false))
+    if (Circuit.isCorrectLabel(circ.getName(), currentLabel.get(circ), circ.getNonWires(), null, me, false))
       return currentLabel.get(circ);
     else if (hasNext(circ)) {
       return getNext(circ, me);
@@ -89,7 +89,7 @@ public class AutoLabel {
     if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty())
       return "";
     label = common.concat("_X" + x + "_Y" + y);
-    if (Circuit.IsCorrectLabel(circ.getName(), label, circ.getNonWires(), null, me, false)
+    if (Circuit.isCorrectLabel(circ.getName(), label, circ.getNonWires(), null, me, false)
         & SyntaxChecker.isVariableNameAcceptable(label, false)) return label;
     return "";
   }
@@ -109,7 +109,7 @@ public class AutoLabel {
       newLabel = baseLabel;
       if (undescore) newLabel = newLabel.concat("_");
       newLabel = newLabel.concat(Integer.toString(curIdx));
-    } while (!Circuit.IsCorrectLabel(circ.getName(), newLabel, circ.getNonWires(), null, me, false));
+    } while (!Circuit.isCorrectLabel(circ.getName(), newLabel, circ.getNonWires(), null, me, false));
     currentIndex.put(circ, curIdx);
     currentLabel.put(circ, newLabel);
     return newLabel;
@@ -193,7 +193,7 @@ public class AutoLabel {
               OptionPane.showInputDialog(null, S.get("editLabelQuestion") + " " + componentName,
                   S.get("editLabelDialog"), OptionPane.QUESTION_MESSAGE, null, null, oldLabel);
       if (newLabel != null) {
-        if (Circuit.IsCorrectLabel(circ.getName(), newLabel, circ.getNonWires(), attrs, compFactory, true)
+        if (Circuit.isCorrectLabel(circ.getName(), newLabel, circ.getNonWires(), attrs, compFactory, true)
             && SyntaxChecker.isVariableNameAcceptable(newLabel, true)
             && !CorrectLabel.isKeyword(newLabel, true)) {
           if (createAction) act.set(comp, StdAttr.LABEL, newLabel);

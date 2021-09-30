@@ -22,44 +22,42 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DefaultClassicAppearance {
 
   private static final int OFFS = 50;
 
   public static List<CanvasObject> build(Collection<Instance> pins) {
-    Map<Direction, List<Instance>> edge;
-    edge = new HashMap<>();
+    final var edge = new HashMap<Direction, List<Instance>>();
     edge.put(Direction.NORTH, new ArrayList<>());
     edge.put(Direction.SOUTH, new ArrayList<>());
     edge.put(Direction.EAST, new ArrayList<>());
     edge.put(Direction.WEST, new ArrayList<>());
-    for (Instance pin : pins) {
-      Direction pinFacing = pin.getAttributeValue(StdAttr.FACING);
-      Direction pinEdge = pinFacing.reverse();
-      List<Instance> e = edge.get(pinEdge);
+    for (final var pin : pins) {
+      final var pinFacing = pin.getAttributeValue(StdAttr.FACING);
+      final var pinEdge = pinFacing.reverse();
+      final var e = edge.get(pinEdge);
       e.add(pin);
     }
 
-    for (Map.Entry<Direction, List<Instance>> entry : edge.entrySet()) {
+    for (final var entry : edge.entrySet()) {
       DefaultAppearance.sortPinList(entry.getValue(), entry.getKey());
     }
 
-    int numNorth = edge.get(Direction.NORTH).size();
-    int numSouth = edge.get(Direction.SOUTH).size();
-    int numEast = edge.get(Direction.EAST).size();
-    int numWest = edge.get(Direction.WEST).size();
-    int maxVert = Math.max(numNorth, numSouth);
-    int maxHorz = Math.max(numEast, numWest);
+    final var numNorth = edge.get(Direction.NORTH).size();
+    final var numSouth = edge.get(Direction.SOUTH).size();
+    final var numEast = edge.get(Direction.EAST).size();
+    final var numWest = edge.get(Direction.WEST).size();
+    final var maxVert = Math.max(numNorth, numSouth);
+    final var maxHorz = Math.max(numEast, numWest);
 
-    int offsNorth = computeOffset(numNorth, numSouth, maxHorz);
-    int offsSouth = computeOffset(numSouth, numNorth, maxHorz);
-    int offsEast = computeOffset(numEast, numWest, maxVert);
-    int offsWest = computeOffset(numWest, numEast, maxVert);
+    final var offsNorth = computeOffset(numNorth, numSouth, maxHorz);
+    final var offsSouth = computeOffset(numSouth, numNorth, maxHorz);
+    final var offsEast = computeOffset(numEast, numWest, maxVert);
+    final var offsWest = computeOffset(numWest, numEast, maxVert);
 
-    int width = computeDimension(maxVert, maxHorz);
-    int height = computeDimension(maxHorz, maxVert);
+    final var width = computeDimension(maxVert, maxHorz);
+    final var height = computeDimension(maxHorz, maxVert);
 
     // compute position of anchor relative to top left corner of box
     int ax;
@@ -82,26 +80,26 @@ public class DefaultClassicAppearance {
     }
 
     // place rectangle so anchor is on the grid
-    int rx = OFFS + (9 - (ax + 9) % 10);
-    int ry = OFFS + (9 - (ay + 9) % 10);
+    final var rX = OFFS + (9 - (ax + 9) % 10);
+    final var rY = OFFS + (9 - (ay + 9) % 10);
 
-    Location e0 = Location.create(rx + (width - 8) / 2, ry + 1);
-    Location e1 = Location.create(rx + (width + 8) / 2, ry + 1);
-    Location ct = Location.create(rx + width / 2, ry + 11);
-    Curve notch = new Curve(e0, e1, ct);
+    final var e0 = Location.create(rX + (width - 8) / 2, rY + 1);
+    final var e1 = Location.create(rX + (width + 8) / 2, rY + 1);
+    final var ct = Location.create(rX + width / 2, rY + 11);
+    final var notch = new Curve(e0, e1, ct);
     notch.setValue(DrawAttr.STROKE_WIDTH, 2);
     notch.setValue(DrawAttr.STROKE_COLOR, Color.GRAY);
-    Rectangle rect = new Rectangle(rx, ry, width, height);
+    final var rect = new Rectangle(rX, rY, width, height);
     rect.setValue(DrawAttr.STROKE_WIDTH, 2);
 
-    List<CanvasObject> ret = new ArrayList<>();
+    final var ret = new ArrayList<CanvasObject>();
     ret.add(notch);
     ret.add(rect);
-    placePins(ret, edge.get(Direction.WEST), rx, ry + offsWest, 0, 10);
-    placePins(ret, edge.get(Direction.EAST), rx + width, ry + offsEast, 0, 10);
-    placePins(ret, edge.get(Direction.NORTH), rx + offsNorth, ry, 10, 0);
-    placePins(ret, edge.get(Direction.SOUTH), rx + offsSouth, ry + height, 10, 0);
-    ret.add(new AppearanceAnchor(Location.create(rx + ax, ry + ay)));
+    placePins(ret, edge.get(Direction.WEST), rX, rY + offsWest, 0, 10);
+    placePins(ret, edge.get(Direction.EAST), rX + width, rY + offsEast, 0, 10);
+    placePins(ret, edge.get(Direction.NORTH), rX + offsNorth, rY, 10, 0);
+    placePins(ret, edge.get(Direction.SOUTH), rX + offsSouth, rY + height, 10, 0);
+    ret.add(new AppearanceAnchor(Location.create(rX + ax, rY + ay)));
     return ret;
   }
 
@@ -116,11 +114,10 @@ public class DefaultClassicAppearance {
   }
 
   private static int computeOffset(int numFacing, int numOpposite, int maxOthers) {
-    int maxThis = Math.max(numFacing, numOpposite);
+    final var maxThis = Math.max(numFacing, numOpposite);
     int maxOffs;
     switch (maxThis) {
-      case 0:
-      case 1:
+      case 0, 1:
         maxOffs = (maxOthers == 0 ? 15 : 10);
         break;
       case 2:
@@ -133,7 +130,7 @@ public class DefaultClassicAppearance {
   }
 
   private static void placePins(List<CanvasObject> dest, List<Instance> pins, int x, int y, int dx, int dy) {
-    for (Instance pin : pins) {
+    for (final var pin : pins) {
       dest.add(new AppearancePort(Location.create(x, y), pin));
       x += dx;
       y += dy;

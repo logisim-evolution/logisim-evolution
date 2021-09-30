@@ -39,11 +39,11 @@ public class Subtractor extends InstanceFactory {
    */
   public static final String _ID = "Subtractor";
 
-  private static final int IN0 = 0;
-  private static final int IN1 = 1;
-  private static final int OUT = 2;
-  private static final int B_IN = 3;
-  private static final int B_OUT = 4;
+  public static final int IN0 = 0;
+  public static final int IN1 = 1;
+  public static final int OUT = 2;
+  public static final int B_IN = 3;
+  public static final int B_OUT = 4;
 
   public Subtractor() {
     super(_ID, S.getter("subtractorComponent"), new SubtractorHDLGeneratorFactory());

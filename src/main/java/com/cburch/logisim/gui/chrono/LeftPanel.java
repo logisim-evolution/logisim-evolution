@@ -18,7 +18,6 @@ import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Dimension;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.awt.event.ActionEvent;
@@ -28,10 +27,8 @@ import java.awt.event.MouseMotionAdapter;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.AbstractAction;
-import javax.swing.ActionMap;
 import javax.swing.BorderFactory;
 import javax.swing.DropMode;
-import javax.swing.InputMap;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -41,9 +38,6 @@ import javax.swing.TransferHandler;
 import javax.swing.border.Border;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableCellRenderer;
-import javax.swing.table.TableColumn;
 
 // Left panel containing signal names
 public class LeftPanel extends JTable {
@@ -84,21 +78,19 @@ public class LeftPanel extends JTable {
     }
   }
 
-  private static final Border rowInsets =
-      BorderFactory.createMatteBorder(ChronoPanel.GAP, 0, ChronoPanel.GAP, 0, Color.WHITE);
+  private static final Border rowInsets = BorderFactory.createMatteBorder(ChronoPanel.GAP, 0, ChronoPanel.GAP, 0, Color.WHITE);
 
   private class SignalRenderer extends DefaultTableCellRenderer {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public Component getTableCellRendererComponent(
-        JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
       if (!(value instanceof SignalInfo)) return null;
-      Component ret = super.getTableCellRendererComponent(table, value, false, false, row, col);
+      final var ret = super.getTableCellRendererComponent(table, value, false, false, row, col);
       if (ret instanceof JLabel && value instanceof SignalInfo) {
-        JLabel label = (JLabel) ret;
+        final var label = (JLabel) ret;
         label.setBorder(rowInsets);
-        SignalInfo item = (SignalInfo) value;
+        final var item = (SignalInfo) value;
         label.setBackground(chronoPanel.rowColors(item, isSelected)[0]);
         label.setIcon(item.icon);
       }
@@ -110,14 +102,11 @@ public class LeftPanel extends JTable {
     private static final long serialVersionUID = 1L;
 
     @Override
-    public Component getTableCellRendererComponent(
-        JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
-      if (!(value instanceof Signal)) return null;
-      Signal s = (Signal) value;
-      String txt = s.getFormattedValue(chronoPanel.getRightPanel().getCurrentTime());
-      Component ret = super.getTableCellRendererComponent(table, txt, false, false, row, col);
-      if (ret instanceof JLabel) {
-        JLabel label = (JLabel) ret;
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
+      if (!(value instanceof Signal s)) return null;
+      final var txt = s.getFormattedValue(chronoPanel.getRightPanel().getCurrentTime());
+      final var ret = super.getTableCellRendererComponent(table, txt, false, false, row, col);
+      if (ret instanceof JLabel label) {
         label.setBorder(rowInsets);
         label.setIcon(null);
         label.setBackground(chronoPanel.rowColors(s.info, isSelected)[0]);
@@ -187,14 +176,11 @@ public class LeftPanel extends JTable {
             });
     setDragEnabled(true);
     setDropMode(DropMode.INSERT_ROWS);
-    TransferHandler ccp = new SignalTransferHandler();
-    setTransferHandler(ccp);
+    setTransferHandler(new SignalTransferHandler());
 
-    InputMap inputMap = getInputMap();
-    ActionMap actionMap = getActionMap();
-    actionMap.put(
-        "ClearSelection",
-        new AbstractAction() {
+    final var inputMap = getInputMap();
+    final var actionMap = getActionMap();
+    actionMap.put("ClearSelection", new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
           @Override
@@ -202,9 +188,7 @@ public class LeftPanel extends JTable {
             clearSelection();
           }
         });
-    actionMap.put(
-        LogisimMenuBar.DELETE,
-        new AbstractAction() {
+    actionMap.put(LogisimMenuBar.DELETE, new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
           @Override
@@ -212,9 +196,7 @@ public class LeftPanel extends JTable {
             removeSelected();
           }
         });
-    actionMap.put(
-        LogisimMenuBar.SELECT_ALL,
-        new AbstractAction() {
+    actionMap.put(LogisimMenuBar.SELECT_ALL, new AbstractAction() {
           private static final long serialVersionUID = 1L;
 
           @Override
@@ -225,33 +207,25 @@ public class LeftPanel extends JTable {
     actionMap.put(LogisimMenuBar.CUT, TransferHandler.getCutAction());
     actionMap.put(LogisimMenuBar.COPY, TransferHandler.getCopyAction());
     actionMap.put(LogisimMenuBar.PASTE, TransferHandler.getPasteAction());
-    actionMap.put(
-        LogisimMenuBar.RAISE,
-        new AbstractAction() {
+    actionMap.put(LogisimMenuBar.RAISE, new AbstractAction() {
           @Override
           public void actionPerformed(ActionEvent e) {
             raiseOrLower(-1);
           }
         });
-    actionMap.put(
-        LogisimMenuBar.LOWER,
-        new AbstractAction() {
+    actionMap.put(LogisimMenuBar.LOWER, new AbstractAction() {
           @Override
           public void actionPerformed(ActionEvent e) {
             raiseOrLower(+1);
           }
         });
-    actionMap.put(
-        LogisimMenuBar.RAISE_TOP,
-        new AbstractAction() {
+    actionMap.put(LogisimMenuBar.RAISE_TOP, new AbstractAction() {
           @Override
           public void actionPerformed(ActionEvent e) {
             raiseOrLower(-2);
           }
         });
-    actionMap.put(
-        LogisimMenuBar.LOWER_BOTTOM,
-        new AbstractAction() {
+    actionMap.put(LogisimMenuBar.LOWER_BOTTOM, new AbstractAction() {
           @Override
           public void actionPerformed(ActionEvent e) {
             raiseOrLower(+2);
@@ -259,23 +233,22 @@ public class LeftPanel extends JTable {
         });
 
     // calculate default sizes
-    int nameWidth = 0;
-    int valueWidth = 0;
-    TableCellRenderer render = getDefaultRenderer(String.class);
-    int n = model.getSignalCount();
-    for (int i = -1; i < n; i++) {
+    var nameWidth = 0;
+    var valueWidth = 0;
+    final var render = getDefaultRenderer(String.class);
+    final var n = model.getSignalCount();
+    for (var i = -1; i < n; i++) {
       String name;
       String val;
       if (i < 0) {
         name = tableModel.getColumnName(0);
         val = tableModel.getColumnName(1);
       } else {
-        Signal s = model.getSignal(i);
+        final var s = model.getSignal(i);
         name = s.getName();
         val = s.getFormattedMaxValue();
       }
-      Component c;
-      c = render.getTableCellRendererComponent(this, name, false, false, i, 0);
+      var c = render.getTableCellRendererComponent(this, name, false, false, i, 0);
       nameWidth = Math.max(nameWidth, c.getPreferredSize().width);
       c = render.getTableCellRendererComponent(this, val, false, false, i, 1);
       valueWidth = Math.max(valueWidth, c.getPreferredSize().width);
@@ -283,9 +256,7 @@ public class LeftPanel extends JTable {
 
     setRowHeight(ChronoPanel.SIGNAL_HEIGHT);
     // table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
-    TableColumn col;
-
-    col = getColumnModel().getColumn(0);
+    var col = getColumnModel().getColumn(0);
     col.setMinWidth(20);
     col.setPreferredWidth(nameWidth + 10);
 
@@ -296,8 +267,8 @@ public class LeftPanel extends JTable {
     setFillsViewportHeight(true);
     setPreferredScrollableViewportSize(getPreferredSize());
 
-    JTableHeader header = getTableHeader();
-    Dimension d = header.getPreferredSize();
+    final var header = getTableHeader();
+    final var d = header.getPreferredSize();
     d.height = ChronoPanel.HEADER_HEIGHT;
     header.setPreferredSize(d);
     requestFocusInWindow();
@@ -323,24 +294,24 @@ public class LeftPanel extends JTable {
 
   Signal.List getSelectedValuesList() {
     Signal.List signals = new Signal.List();
-    int[] sel = getSelectedRows();
-    for (int i : sel) signals.add(model.getSignal(i));
+    final var sel = getSelectedRows();
+    for (final var i : sel) signals.add(model.getSignal(i));
     return signals;
   }
 
   void setSelectedRows(Signal.List signals) {
     clearSelection();
-    for (Signal s : signals) {
-      int i = model.indexOf(s.info);
+    for (final var s : signals) {
+      final var i = model.indexOf(s.info);
       if (i >= 0) addRowSelectionInterval(i, i);
     }
   }
 
   void raiseOrLower(int d) {
-    Signal.List sel = getSelectedValuesList();
-    int first = Integer.MAX_VALUE;
-    int last = -1;
-    for (Signal s : sel) {
+    final var sel = getSelectedValuesList();
+    var first = Integer.MAX_VALUE;
+    var last = -1;
+    for (final var s : sel) {
       first = Math.min(first, s.idx);
       last = Math.max(last, s.idx);
     }
@@ -365,14 +336,14 @@ public class LeftPanel extends JTable {
   }
 
   void removeSelected() {
-    int idx = 0;
-    Signal.List signals = getSelectedValuesList();
-    SignalInfo.List items = new SignalInfo.List();
-    for (Signal s : signals) {
+    var idx = 0;
+    final var signals = getSelectedValuesList();
+    final var items = new SignalInfo.List();
+    for (final var s : signals) {
       items.add(s.info);
       idx = Math.max(idx, s.idx);
     }
-    int count = model.remove(items);
+    final var count = model.remove(items);
     if (count > 0 && model.getSignalCount() > 0) {
       idx = Math.min(idx + 1 - count, model.getSignalCount() - 1);
       setRowSelectionInterval(idx, idx);
@@ -400,8 +371,8 @@ public class LeftPanel extends JTable {
     @Override
     public void exportDone(JComponent comp, Transferable trans, int action) {
       if (removing == null) return;
-      ArrayList<SignalInfo> items = new ArrayList<>();
-      for (Signal s : removing) items.add(s.info);
+      final var items = new ArrayList<SignalInfo>();
+      for (final var s : removing) items.add(s.info);
       removing = null;
       model.remove(items);
     }
@@ -415,23 +386,22 @@ public class LeftPanel extends JTable {
     public boolean importData(TransferHandler.TransferSupport support) {
       removing = null;
       try {
-        Signal.List incoming;
-        incoming = (Signal.List) support.getTransferable().getTransferData(Signal.List.dataFlavor);
-        int newIdx = model.getSignalCount();
+        final var incoming = (Signal.List) support.getTransferable().getTransferData(Signal.List.dataFlavor);
+        var newIdx = model.getSignalCount();
         if (support.isDrop()) {
           try {
-            JTable.DropLocation dl = (JTable.DropLocation) support.getDropLocation();
+            final var dl = (JTable.DropLocation) support.getDropLocation();
             newIdx = Math.min(newIdx, dl.getRow());
           } catch (ClassCastException ignored) {
           }
         } else {
-          int[] sel = getSelectedRows();
+          final var sel = getSelectedRows();
           if (sel != null && sel.length > 0) {
             newIdx = 0;
             for (int i : sel) newIdx = Math.max(newIdx, i + 1);
           }
         }
-        boolean change = model.addOrMoveSignals(incoming, newIdx);
+        final var change = model.addOrMoveSignals(incoming, newIdx);
         if (change) setSelectedRows(incoming);
         return change;
       } catch (UnsupportedFlavorException | IOException e) {

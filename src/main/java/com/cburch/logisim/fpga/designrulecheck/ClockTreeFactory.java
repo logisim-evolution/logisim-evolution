@@ -11,6 +11,7 @@ package com.cburch.logisim.fpga.designrulecheck;
 
 import com.cburch.logisim.comp.Component;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClockTreeFactory {
 
@@ -21,7 +22,7 @@ public class ClockTreeFactory {
     sourceTrees = new ArrayList<>();
   }
 
-  public void addClockNet(ArrayList<String> hierarchyNames, int clocksourceid, ConnectionPoint connection, boolean isPinClock) {
+  public void addClockNet(List<String> hierarchyNames, int clocksourceid, ConnectionPoint connection, boolean isPinClock) {
     ClockTreeContainer destination = null;
     for (final var search : sourceTrees) {
       if (search.equals(hierarchyNames, clocksourceid)) {
@@ -31,19 +32,19 @@ public class ClockTreeFactory {
     if (destination == null) {
       destination = new ClockTreeContainer(hierarchyNames, clocksourceid, isPinClock);
       sourceTrees.add(destination);
-    } else if (!destination.IsPinClockSource() && isPinClock) destination.setPinClock();
+    } else if (!destination.isPinClockSource() && isPinClock) destination.setPinClock();
     destination.addNet(connection);
   }
 
-  public void addClockSource(ArrayList<String> HierarchyNames, int clocksourceid, ConnectionPoint connection) {
+  public void addClockSource(List<String> hierarchyNames, int clockSourceId, ConnectionPoint connection) {
     ClockTreeContainer destination = null;
     for (final var search : sourceTrees) {
-      if (search.equals(HierarchyNames, clocksourceid)) {
+      if (search.equals(hierarchyNames, clockSourceId)) {
         destination = search;
       }
     }
     if (destination == null) {
-      destination = new ClockTreeContainer(HierarchyNames, clocksourceid, false);
+      destination = new ClockTreeContainer(hierarchyNames, clockSourceId, false);
       sourceTrees.add(destination);
     }
     destination.addSource(connection);
@@ -55,7 +56,7 @@ public class ClockTreeFactory {
     if (sources != null) sources.clear();
   }
 
-  public int getClockSourceId(ArrayList<String> hierarchy, Net selectedNet, byte selectedNetBitIndex) {
+  public int getClockSourceId(List<String> hierarchy, Net selectedNet, byte selectedNetBitIndex) {
     for (var i = 0; i < sources.getNrofSources(); i++) {
       for (final var ThisClockNet : sourceTrees) {
         if (ThisClockNet.equals(hierarchy, i)) {
@@ -63,7 +64,7 @@ public class ClockTreeFactory {
            * we found a clock net corresponding the Hierarchy and
            * clock source id
            */
-          for (final var clockEntry : ThisClockNet.GetClockEntries(selectedNet)) {
+          for (final var clockEntry : ThisClockNet.getClockEntries(selectedNet)) {
             if (clockEntry == selectedNetBitIndex) return i;
           }
         }

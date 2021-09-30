@@ -9,10 +9,9 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import java.util.ArrayList;
+import com.cburch.logisim.util.LineBuffer;
 
 /**
  * TTL 74x00: quad 2-input NAND gate
@@ -27,14 +26,10 @@ public class Ttl7400 extends AbstractTtlGate {
   public static final String _ID = "7400";
 
   private static class NandGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
-
     @Override
-    public ArrayList<String> GetLogicFunction(int index) {
-      final var contents = new ArrayList<String>();
-      contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
-              + HDL.notOperator() + "(gate_" + index + "_A" + HDL.andOperator() + "gate_" + index + "B);");
-      contents.add("");
-      return contents;
+    public LineBuffer getLogicFunction(int index) {
+      return LineBuffer.getHdlBuffer()
+          .add("{{assign}}gate_{{1}}_O{{=}}{{not}}(gate_{{1}}_A{{and}}gate_{{1}}_B);", index);
     }
   }
 
@@ -63,7 +58,7 @@ public class Ttl7400 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     for (byte i = 2; i < 6; i += 3) {
       state.setPort(i, (state.getPortValue(i - 1).and(state.getPortValue(i - 2)).not()), 1);
     }

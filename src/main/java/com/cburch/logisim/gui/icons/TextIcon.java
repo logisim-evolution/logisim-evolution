@@ -19,8 +19,8 @@ public class TextIcon extends BaseIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {
-    Font f = StdAttr.DEFAULT_LABEL_FONT.deriveFont((float) AppPreferences.getIconSize());
-    TextLayout l = new TextLayout("A", f, g2.getFontRenderContext());
+    final var f = StdAttr.DEFAULT_LABEL_FONT.deriveFont((float) AppPreferences.getIconSize());
+    final var l = new TextLayout("A", f, g2.getFontRenderContext());
     l.draw(
         g2,
         (float) (AppPreferences.getIconSize() / 2 - l.getBounds().getCenterX()),

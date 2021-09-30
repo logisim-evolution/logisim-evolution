@@ -10,7 +10,6 @@
 package com.cburch.logisim.gui.appear;
 
 import com.cburch.draw.actions.ModelAction;
-import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.undo.Action;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMutator;
@@ -31,11 +30,9 @@ public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
   }
 
   private boolean affectsPorts() {
-    if (canvasAction instanceof ModelAction) {
-      for (CanvasObject o : ((ModelAction) canvasAction).getObjects()) {
-        if (o instanceof AppearanceElement) {
-          return true;
-        }
+    if (canvasAction instanceof ModelAction action) {
+      for (final var obj : action.getObjects()) {
+        if (obj instanceof AppearanceElement) return true;
       }
     }
     return false;
@@ -45,7 +42,7 @@ public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
   public void doIt(Project proj) {
     wasDefault = circuit.getAppearance().isDefaultAppearance();
     if (affectsPorts()) {
-      ActionTransaction xn = new ActionTransaction(true);
+      final var xn = new ActionTransaction(true);
       xn.execute();
     } else {
       canvasAction.doIt();
@@ -60,7 +57,7 @@ public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
   @Override
   public void undo(Project proj) {
     if (affectsPorts()) {
-      ActionTransaction xn = new ActionTransaction(false);
+      final var xn = new ActionTransaction(false);
       xn.execute();
     } else {
       canvasAction.undo();
@@ -77,8 +74,8 @@ public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
 
     @Override
     protected Map<Circuit, Integer> getAccessedCircuits() {
-      Map<Circuit, Integer> accessMap = new HashMap<>();
-      for (Circuit supercirc : circuit.getCircuitsUsingThis()) {
+      final var accessMap = new HashMap<Circuit, Integer>();
+      for (final var supercirc : circuit.getCircuitsUsingThis()) {
         accessMap.put(supercirc, READ_WRITE);
       }
       return accessMap;
