@@ -12,7 +12,6 @@
 
     <suppress checks="LocalVariableName"/>
     <suppress checks="ParameterName"/>
-    <suppress checks="MethodName"/>
     <suppress checks="MemberName"/>
     <suppress checks="TypeName"/>
     <suppress checks="VariableDeclarationUsageDistance"/>
