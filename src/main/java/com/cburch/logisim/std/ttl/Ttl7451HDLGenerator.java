@@ -12,10 +12,8 @@ package com.cburch.logisim.std.ttl;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
-
-import java.util.ArrayList;
+import com.cburch.logisim.util.LineBuffer;
 
 public class Ttl7451HDLGenerator extends AbstractHdlGeneratorFactory {
 
@@ -35,13 +33,10 @@ public class Ttl7451HDLGenerator extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
-    contents.add("   " + Hdl.assignPreamble() + "Y1" + Hdl.assignOperator() + Hdl.notOperator()
-            + "((A1" + Hdl.andOperator() + "B1)" + Hdl.orOperator() + "(C1" + Hdl.andOperator() + "D1));");
-    contents.add("   " + Hdl.assignPreamble() + "Y2" + Hdl.assignOperator() + Hdl.notOperator()
-            + "((A2" + Hdl.andOperator() + "B2)" + Hdl.orOperator() + "(C2" + Hdl.andOperator() + "D2));");
-    return contents;
+  public LineBuffer getModuleFunctionality(Netlist nets, AttributeSet attrs) {
+    return LineBuffer.getHdlBuffer()
+        .add("{{assign}}Y1{{=}}{{not}}((A1{{and}}B1){{or}}(C1{{and}}D1));")
+        .add("{{assign}}Y2{{=}}{{not}}((A2{{and}}B2){{or}}(C2{{and}}D2));");
   }
 
   @Override

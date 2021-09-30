@@ -69,7 +69,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHdlGeneratorFac
             ? "s_clock {{=}} {{Clock}} WHEN {{invertClock}} = 0 ELSE NOT({{Clock}});"
             : "assign s_clock {{=}} ({{invertClock}} == 0) ? {{Clock}} : ~{{Clock}};")
         .addRemarkBlock("Here the update logic is defined")
-        .add(getUpdateLogic().get())
+        .add(getUpdateLogic())
         .add("");
     if (Hdl.isVerilog()) {
       contents

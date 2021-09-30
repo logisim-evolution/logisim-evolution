@@ -577,7 +577,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     if (nrOfBits == 1) {
       /* Here we have the easy case, just a single bit net */
       if (isInputConnection) {
-        signal.put(Hdl.getNetName(comp, endIndex, true, theNets), portName);
+        if (comp.isEndConnected(endIndex)) signal.put(Hdl.getNetName(comp, endIndex, true, theNets), portName);
       } else {
         if (comp.isEndConnected(endIndex)) {
           signal.put(portName, Hdl.getNetName(comp, endIndex, true, theNets));

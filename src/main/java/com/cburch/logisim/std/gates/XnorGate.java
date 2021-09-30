@@ -29,8 +29,8 @@ class XnorGate extends AbstractGate {
       return LineBuffer.getBuffer()
           .add(
               isOneHot
-                  ? getOneHot(true, nrOfInputs, bitwidth > 1).get()
-                  : getParity(true, nrOfInputs, bitwidth > 1).get())
+                  ? getOneHot(true, nrOfInputs, bitwidth > 1)
+                  : getParity(true, nrOfInputs, bitwidth > 1))
           .empty();
     }
   }

@@ -79,7 +79,7 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
     if (attrs.containsAttribute(GateAttributes.ATTR_XOR)) {
       onehot = attrs.getValue(GateAttributes.ATTR_XOR) == GateAttributes.XOR_ONE;
     }
-    contents.add(getLogicFunction(nrOfInputs, bitWidth, onehot).get());
+    contents.add(getLogicFunction(nrOfInputs, bitWidth, onehot));
     return contents;
   }
 

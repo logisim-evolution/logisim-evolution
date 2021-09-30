@@ -52,7 +52,7 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
     final var contents = LineBuffer.getBuffer();
     final var nrOfGates = isInverter ? 6 : 4;
     for (var i = 0; i < nrOfGates; i++) {
-      contents.addRemarkBlock("Here gate %d is described", i).add(getLogicFunction(i).get());
+      contents.addRemarkBlock("Here gate %d is described", i).add(getLogicFunction(i));
     }
     return contents;
   }

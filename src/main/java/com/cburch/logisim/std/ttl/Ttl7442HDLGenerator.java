@@ -33,7 +33,6 @@ import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 
 public class Ttl7442HDLGenerator extends AbstractHdlGeneratorFactory {
 
@@ -66,9 +65,8 @@ public class Ttl7442HDLGenerator extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
-
     if (IsExes3) {
       contents.add("""
           {{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} A );
@@ -109,7 +107,7 @@ public class Ttl7442HDLGenerator extends AbstractHdlGeneratorFactory {
           {{assign}} O9 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} A );"
           """);
     }
-    return contents.get();
+    return contents;
   }
 
   @Override

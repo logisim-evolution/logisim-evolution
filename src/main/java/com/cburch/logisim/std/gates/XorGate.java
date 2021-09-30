@@ -31,8 +31,8 @@ class XorGate extends AbstractGate {
       return LineBuffer.getBuffer()
           .add(
               isOneHot
-                  ? getOneHot(false, nrOfInputs, bitwidth > 1).get()
-                  : getParity(false, nrOfInputs, bitwidth > 1).get())
+                  ? getOneHot(false, nrOfInputs, bitwidth > 1)
+                  : getParity(false, nrOfInputs, bitwidth > 1))
           .empty();
     }
   }
