@@ -227,7 +227,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
           if (str.isEmpty()
               && attr.getName().equals("label")
               && compInst != null
-              && compInst.RequiresNonZeroLabel()) return HDLColorRenderer.REQUIRED_FIELD_STRING;
+              && compInst.requiresNonZeroLabel()) return HDLColorRenderer.REQUIRED_FIELD_STRING;
           return str;
         } catch (Exception e) {
           return "???";
@@ -288,7 +288,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     @Override
     public String getValue() {
       if (compInst == null) return HDLColorRenderer.UNKNOWN_STRING;
-      if (compInst.HDLSupportedComponent(attrs))
+      if (compInst.isHDLSupportedComponent(attrs))
         return HDLColorRenderer.SUPPORT_STRING;
       return HDLColorRenderer.NO_SUPPORT_STRING;
     }

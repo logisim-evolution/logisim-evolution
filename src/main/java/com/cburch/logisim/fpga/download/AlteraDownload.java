@@ -15,8 +15,8 @@ import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
@@ -114,8 +114,8 @@ public class AlteraDownload implements VendorDownload {
 
   @Override
   public boolean readyForDownload() {
-    final var SofFile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof").exists();
-    final var PofFile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".pof").exists();
+    final var SofFile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof").exists();
+    final var PofFile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".pof").exists();
     return SofFile || PofFile;
   }
 
@@ -132,11 +132,11 @@ public class AlteraDownload implements VendorDownload {
     command.add("jtag");
     command.add("-o");
     // if there is no .sof generated, try with the .pof
-    if (new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof").exists()) {
-      command.add("P;" + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof"
+    if (new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof").exists()) {
+      command.add("P;" + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof"
                   + "@" + boardInfo.fpga.getFpgaJTAGChainPosition());
     } else {
-      command.add("P;" + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".pof"
+      command.add("P;" + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".pof"
                   + "@" + boardInfo.fpga.getFpgaJTAGChainPosition());
     }
     var Down = new ProcessBuilder(command);
@@ -157,7 +157,7 @@ public class AlteraDownload implements VendorDownload {
   private ProcessBuilder Stage1Optimize() {
     var command = new ArrayList<String>();
     command.add(alteraVendor.getBinaryPath(2));
-    command.add(ToplevelHDLGeneratorFactory.FPGAToplevelName);
+    command.add(ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME);
     command.add("--optimize=area");
     final var stage1 = new ProcessBuilder(command);
     stage1.directory(new File(SandboxPath));
@@ -169,7 +169,7 @@ public class AlteraDownload implements VendorDownload {
     command.add(alteraVendor.getBinaryPath(0));
     command.add("--flow");
     command.add("compile");
-    command.add(ToplevelHDLGeneratorFactory.FPGAToplevelName);
+    command.add(ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME);
     final var stage2 = new ProcessBuilder(command);
     stage2.directory(new File(SandboxPath));
     return stage2;
@@ -177,7 +177,7 @@ public class AlteraDownload implements VendorDownload {
 
   @Override
   public boolean CreateDownloadScripts() {
-    var scriptFile = FileWriter.GetFilePointer(ScriptPath, alteraTclFile);
+    var scriptFile = FileWriter.getFilePointer(ScriptPath, alteraTclFile);
     if (scriptFile == null) {
       scriptFile = new File(ScriptPath + alteraTclFile);
       return scriptFile.exists();
@@ -185,40 +185,42 @@ public class AlteraDownload implements VendorDownload {
     final var fileType = HDLType.equals(HDLGeneratorFactory.VHDL) ? "VHDL_FILE" : "VERILOG_FILE";
     final var contents = new LineBuffer();
     contents
-        .pair("topLevelName", ToplevelHDLGeneratorFactory.FPGAToplevelName)
+        .pair("topLevelName", ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME)
         .pair("fileType", fileType)
         .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
 
     contents
-        .addLines(
-            "# Load Quartus II Tcl Project package",
-            "package require ::quartus::project",
-            "",
-            "set need_to_close_project 0",
-            "set make_assignments 1",
-            "",
-            "# Check that the right project is open",
-            "if {[is_project_open]} {",
-            "    if {[string compare $quartus(project) \"{{topLevelName}}\"]} {",
-            "        puts \"Project {{topLevelName}} is not open\"",
-            "        set make_assignments 0",
-            "    }",
-            "} else {",
-            "    # Only open if not already open",
-            "    if {[project_exists {{topLevelName}}]} {",
-            "        project_open -revision {{topLevelName}} {{topLevelName}}",
-            "    } else {",
-            "        project_new -revision {{topLevelName}} {{topLevelName}}",
-            "    }",
-            "    set need_to_close_project 1",
-            "}",
-            "# Make assignments",
-            "if {$make_assignments} {")
+        .add("""
+            # Load Quartus II Tcl Project package
+            package require ::quartus::project
+            
+            set need_to_close_project 0
+            set make_assignments 1
+            
+            # Check that the right project is open
+            if {[is_project_open]} {
+                if {[string compare $quartus(project) "{{topLevelName}}"]} {
+                    puts "Project {{topLevelName}} is not open"
+                    set make_assignments 0
+                }
+            } else {
+                # Only open if not already open
+                if {[project_exists {{topLevelName}}]} {
+                    project_open -revision {{topLevelName}} {{topLevelName}}
+                } else {
+                    project_new -revision {{topLevelName}} {{topLevelName}}
+                }
+                set need_to_close_project 1
+            }
+            # Make assignments
+            if {$make_assignments} {
+            """)
         .add(getAlteraAssignments(boardInfo))
-        .addLines(
-            "",
-            "    # Include all entities and gates",
-            "");
+        .add("""
+
+                # Include all entities and gates
+
+            """);
     for (var entity : entities) {
       contents.add("    set_global_assignment -name {{fileType}} \"{{1}}\"", entity);
     }
@@ -232,16 +234,17 @@ public class AlteraDownload implements VendorDownload {
     }
     contents
         .add(getPinLocStrings())
-        .addLines(
-            "    # Commit assignments",
-            "    export_assignments",
-            "",
-            "    # Close project",
-            "    if {$need_to_close_project} {",
-            "        project_close",
-            "    }",
-            "}");
-    return FileWriter.WriteContents(scriptFile, contents.get());
+        .add("""
+                # Commit assignments
+                export_assignments
+            
+                # Close project
+                if {$need_to_close_project} {
+                    project_close
+                }
+            }
+            """);
+    return FileWriter.writeContents(scriptFile, contents.get());
   }
 
   private ArrayList<String> getPinLocStrings() {
@@ -253,9 +256,9 @@ public class AlteraDownload implements VendorDownload {
       for (var i = 0; i < map.getNrOfPins(); i++) {
         if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
           final var pairs = new LineBuffer.Pairs()
-                  .add("pinLoc", map.getPinLocation(i))
-                  .add("inv", map.isExternalInverted(i) ? "n_" : "")
-                  .add("hdlStr", map.getHdlString(i));
+                  .pair("pinLoc", map.getPinLocation(i))
+                  .pair("inv", map.isExternalInverted(i) ? "n_" : "")
+                  .pair("hdlStr", map.getHdlString(i));
           contents.add("set_location_assignment {{pinLoc}} -to {{inv}}{{hdlStr}}", pairs);
           if (map.requiresPullup(i))
             contents.add("set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to {{inv}}{{hdlStr}}", pairs);
@@ -354,7 +357,7 @@ public class AlteraDownload implements VendorDownload {
   }
 
   private boolean FlashDevice() {
-    final var jicFile = ToplevelHDLGeneratorFactory.FPGAToplevelName + ".jic";
+    final var jicFile = ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".jic";
     Reporter.Report.print("==>");
     Reporter.Report.print("==> " + S.get("AlteraFlash"));
     Reporter.Report.print("==>");
@@ -468,7 +471,7 @@ public class AlteraDownload implements VendorDownload {
   }
 
   private boolean CreateCofFile() {
-    if (!new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof").exists()) {
+    if (!new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof").exists()) {
       Reporter.Report.AddFatalError(S.get("AlteraNoSofFile"));
       return false;
     }
@@ -485,7 +488,7 @@ public class AlteraDownload implements VendorDownload {
       AddElement("eprom_name", boardInfo.fpga.getFlashName(), rootElement, CofFile);
       AddElement("flash_loader_device", StripPackageSpeed(), rootElement, CofFile);
       AddElement("output_filename",
-          SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".jic",
+          SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".jic",
           rootElement,
           CofFile);
       AddElement("n_pages", "1", rootElement, CofFile);
@@ -498,7 +501,7 @@ public class AlteraDownload implements VendorDownload {
       var BitFile = CofFile.createElement("bit0");
       SofData.appendChild(BitFile);
       AddElement("sof_filename",
-          SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof",
+          SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof",
           BitFile,
           CofFile);
       AddElement("version", "10", rootElement, CofFile);

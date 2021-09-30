@@ -33,11 +33,6 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
   }
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "FF_LATCH";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("Reset", 1);
@@ -58,72 +53,80 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getHdlBuffer();
     final var SelectOperator = (HDL.isVHDL()) ? "" : "[" + ACTIVITY_LEVEL_STR + "]";
     contents
+        .pair("activityLevel", ACTIVITY_LEVEL_STR)
         .addRemarkBlock("Here the output signals are defined")
-        .add("   {{1}}Q    {{2}}s_current_state_reg{{3}};", HDL.assignPreamble(), HDL.assignOperator(), SelectOperator)
-        .add("   {{1}}Q_bar{{2}}{{3}}(s_current_state_reg{{4}});", HDL.assignPreamble(), HDL.assignOperator(), HDL.notOperator(), SelectOperator)
-        .add("")
+        .add("""
+                 {{assign}}Q    {{=}}s_current_state_reg{{1}};
+                 {{assign}}Q_bar{{=}}{{not}}(s_current_state_reg{{1}});
+                 
+             """, SelectOperator)
         .addRemarkBlock("Here the update logic is defined")
         .add(GetUpdateLogic())
         .add("");
     if (HDL.isVerilog()) {
       contents
           .addRemarkBlock("Here the initial register value is defined; for simulation only")
-          .add("   initial")
-          .add("   begin")
-          .add("      s_current_state_reg = 0;")
-          .add("   end")
-          .add("");
+          .add("""
+                   initial
+                   begin
+                      s_current_state_reg = 0;
+                   end
+                
+                """);
     }
 
     contents.addRemarkBlock("Here the actual state register is defined");
     if (HDL.isVHDL()) {
-      contents
-          .add("make_memory : PROCESS( clock , Reset , Preset , Tick , s_next_state )")
-          .add("   VARIABLE temp : std_logic_vector(0 DOWNTO 0);")
-          .add("BEGIN")
-          .add("   temp := std_logic_vector(to_unsigned({{1}}, 1));", ACTIVITY_LEVEL_STR)
-          .add("   IF (Reset = '1') THEN s_current_state_reg <= '0';")
-          .add("   ELSIF (Preset = '1') THEN s_current_state_reg <= '1';");
+      contents.add("""
+          make_memory : PROCESS( clock , Reset , Preset , Tick , s_next_state )
+             VARIABLE temp : std_logic_vector(0 DOWNTO 0);
+          BEGIN
+             temp := std_logic_vector(to_unsigned({{activityLevel}}, 1));
+             IF (Reset = '1') THEN s_current_state_reg <= '0';
+             ELSIF (Preset = '1') THEN s_current_state_reg <= '1';
+          """);
       if (Netlist.isFlipFlop(attrs)) {
         contents.add("   ELSIF (Clock'event AND (Clock = temp(0))) THEN");
       } else {
         contents.add("   ELSIF (Clock = temp(0)) THEN");
       }
-      contents
-          .add("       IF (Tick = '1') THEN")
-          .add("         s_current_state_reg <= s_next_state;")
-          .add("      END IF;")
-          .add("   END IF;")
-          .add("END PROCESS make_memory;");
+      contents.add("""
+                 IF (Tick = '1') THEN
+                   s_current_state_reg <= s_next_state;
+                END IF;
+             END IF;
+          END PROCESS make_memory;
+          """);
     } else {
       if (Netlist.isFlipFlop(attrs)) {
-        contents.addLines(
-            "always @(posedge Reset or posedge Preset or negedge Clock)",
-            "begin",
-            "   if (Reset) s_current_state_reg[0] <= 1'b0;",
-            "   else if (Preset) s_current_state_reg[0] <= 1'b1;",
-            "   else if (Tick) s_current_state_reg[0] <= s_next_state;",
-            "end",
-            "",
-            "always @(posedge Reset or posedge Preset or posedge Clock)",
-            "begin",
-            "   if (Reset) s_current_state_reg[1] <= 1'b0;",
-            "   else if (Preset) s_current_state_reg[1] <= 1'b1;",
-            "   else if (Tick) s_current_state_reg[1] <= s_next_state;",
-            "end");
+        contents.add("""
+            always @(posedge Reset or posedge Preset or negedge Clock)
+            begin
+               if (Reset) s_current_state_reg[0] <= 1'b0;
+               else if (Preset) s_current_state_reg[0] <= 1'b1;
+               else if (Tick) s_current_state_reg[0] <= s_next_state;
+            end
+            
+            always @(posedge Reset or posedge Preset or posedge Clock)
+            begin
+               if (Reset) s_current_state_reg[1] <= 1'b0;
+               else if (Preset) s_current_state_reg[1] <= 1'b1;
+               else if (Tick) s_current_state_reg[1] <= s_next_state;
+            end
+            """);
       } else {
         contents
-            .pair("activityLevel", ACTIVITY_LEVEL_STR)
-            .addLines(
-                "always @(*)",
-                "begin",
-                "   if (Reset) s_current_state_reg <= 2'b0;",
-                "   else if (Preset) s_current_state_reg <= 2'b1;",
-                "   else if (Tick & (Clock == {{activityLevel}})) s_current_state_reg <= {s_next_state,s_next_state};",
-                "end");
+            .add("""
+                always @(*)
+                begin
+                   if (Reset) s_current_state_reg <= 2'b0;
+                   else if (Preset) s_current_state_reg <= 2'b1;
+                   else if (Tick & (Clock == {{activityLevel}})) s_current_state_reg <= {s_next_state,s_next_state};
+                end
+                """);
       }
     }
     contents.empty();
@@ -152,7 +155,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     var gatedClock = false;
     var activeLow = false;
     final var attrs = ComponentInfo.getComponent().getAttributeSet();
-    final var clockNetName = GetClockNetName(ComponentInfo, ComponentInfo.nrOfEnds() - 5, Nets);
+    final var clockNetName = HDL.getClockNetName(ComponentInfo, ComponentInfo.nrOfEnds() - 5, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -190,7 +193,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(comp, comp.nrOfEnds() - 5, Nets);
+    final var clockNetName = HDL.getClockNetName(comp, comp.nrOfEnds() - 5, Nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -255,7 +258,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
                   + ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX
                   + HDL.BracketClose());
       } else {
-        map.put("Clock", GetNetName(comp, comp.nrOfEnds() - 5, true, Nets));
+        map.put("Clock", HDL.getNetName(comp, comp.nrOfEnds() - 5, true, Nets));
       }
     }
     map.putAll(GetInputMaps(comp, Nets));
@@ -271,11 +274,6 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     return map;
   }
 
-  @Override
-  public String GetSubDir() {
-    return "memory";
-  }
-
   public ArrayList<String> GetUpdateLogic() {
     return new ArrayList<>();
   }
@@ -285,10 +283,5 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHDLGeneratorFac
     final var map = new TreeMap<String, Integer>();
     map.put("s_next_state", 1);
     return map;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

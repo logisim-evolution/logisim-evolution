@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -13,16 +13,16 @@ import java.util.Arrays;
 import java.util.List;
 
 public class JoinedAction extends Action {
-  Action[] todo;
+  private Action[] todo;
 
-  JoinedAction(Action... actions) {
+  public JoinedAction(Action... actions) {
     todo = actions;
   }
 
   @Override
   public Action append(Action other) {
     final var oldLen = todo.length;
-    Action[] newToDo = new Action[oldLen + 1];
+    final var newToDo = new Action[oldLen + 1];
     System.arraycopy(todo, 0, newToDo, 0, oldLen);
     newToDo[oldLen] = other;
     todo = newToDo;

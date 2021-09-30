@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -278,10 +278,10 @@ public class KMapGroups {
   public void update() {
     final var implicants = model.getOutputExpressions().getMinimalImplicants(output);
     covers = new ArrayList<>();
-    CoverColor.COVERCOLOR.reset();
+    CoverColor.COVER_COLOR.reset();
     if (implicants != null) {
       for (Implicant imp : implicants) {
-        covers.add(new KMapGroupInfo(imp, CoverColor.COVERCOLOR.getNext()));
+        covers.add(new KMapGroupInfo(imp, CoverColor.COVER_COLOR.getNext()));
       }
     }
     highlighted = -1;

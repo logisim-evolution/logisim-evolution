@@ -24,11 +24,6 @@ import java.util.TreeMap;
 public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "TTL74175";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("nCLR", 1);
@@ -66,26 +61,27 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     return (new LineBuffer())
-        .addLines(
-            "NextState <= CurState WHEN tick = '0' ELSE",
-            "             D4&D3&D2&D1;",
-            "",
-            "dffs : PROCESS( CLK , nCLR ) IS",
-            "   BEGIN",
-            "      IF (nCLR = '0') THEN CurState <= \"0000\";",
-            "      ELSIF (rising_edge(CLK)) THEN",
-            "         CurState <= NextState;",
-            "      END IF;",
-            "   END PROCESS dffs;",
-            "",
-            "nQ1 <= NOT(CurState(0));",
-            "Q1  <= CurState(0);",
-            "nQ2 <= NOT(CurState(1));",
-            "Q2  <= CurState(1);",
-            "nQ3 <= NOT(CurState(2));",
-            "Q3  <= CurState(2);",
-            "nQ4 <= NOT(CurState(3));",
-            "Q4  <= CurState(3);")
+        .add("""
+            NextState <= CurState WHEN tick = '0' ELSE
+                         D4&D3&D2&D1;
+            
+            dffs : PROCESS( CLK , nCLR ) IS
+               BEGIN
+                  IF (nCLR = '0') THEN CurState <= "0000";
+                  ELSIF (rising_edge(CLK)) THEN
+                     CurState <= NextState;
+                  END IF;
+               END PROCESS dffs;
+            
+            nQ1 <= NOT(CurState(0));
+            Q1  <= CurState(0);
+            nQ2 <= NOT(CurState(1));
+            Q2  <= CurState(1);
+            nQ3 <= NOT(CurState(2));
+            Q3  <= CurState(2);
+            nQ4 <= NOT(CurState(3));
+            Q4  <= CurState(3);")
+            """)
         .getWithIndent();
   }
 
@@ -102,7 +98,7 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
               + "\" has no clock connection");
       hasClock = false;
     }
-    final var clockNetName = GetClockNetName(comp, clockPinIndex, nets);
+    final var clockNetName = HDL.getClockNetName(comp, clockPinIndex, nets);
     if (clockNetName.isEmpty()) {
       gatedClock = true;
     }
@@ -111,7 +107,7 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
       map.put("Tick", "'0'");
     } else if (gatedClock) {
       map.put("Tick", "'1'");
-      map.put("CLK", GetNetName(comp, clockPinIndex, true, nets));
+      map.put("CLK", HDL.getNetName(comp, clockPinIndex, true, nets));
     } else {
       if (nets.requiresGlobalClockConnection()) {
         map.put("Tick", "'1'");
@@ -144,16 +140,7 @@ public class Ttl74175HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
-    return "ttl";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
     return (!attrs.getValue(TtlLibrary.VCC_GND) && HDL.isVHDL());

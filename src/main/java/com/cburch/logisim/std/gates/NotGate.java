@@ -50,8 +50,7 @@ class NotGate extends InstanceFactory {
   private static class NotGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
     public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      return (new LineBuffer())
-          .addHdlPairs()
+      return LineBuffer.getHdlBuffer()
           .add("{{assign}} Result {{=}} {{not}}Input_1;")
           .add("")
           .getWithIndent();
@@ -97,7 +96,7 @@ class NotGate extends InstanceFactory {
   public static final InstanceFactory FACTORY = new NotGate();
 
   private NotGate() {
-    super(_ID, S.getter("notGateComponent"));
+    super(_ID, S.getter("notGateComponent"), new NotGateHDLGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -190,12 +189,6 @@ class NotGate extends InstanceFactory {
     if (attrs.containsAttribute(GateAttributes.ATTR_OUTPUT))
       return !(attrs.getValue(GateAttributes.ATTR_OUTPUT) == GateAttributes.OUTPUT_01);
     else return false;
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new NotGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

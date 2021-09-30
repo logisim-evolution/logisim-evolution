@@ -26,11 +26,6 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
   private static final int NrOfBitsId = -1;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "DEMUX";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     int NrOfBits = (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) ? 1 : NrOfBitsId;
@@ -49,7 +44,7 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     var numOutputs = (1 << nrOfSelectBits);
     for (var i = 0; i < numOutputs; i++) {
       if (i == 10) space = " ";
-      final var binValue = IntToBin(i, nrOfSelectBits);
+      final var binValue = HDL.getConstantVector(i, nrOfSelectBits);
       if (HDL.isVHDL()) {
         contents.add("DemuxOut_{{1}}{{2}}<= DemuxIn WHEN sel = {{3}} AND", i, space, binValue);
         if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) {
@@ -115,15 +110,5 @@ public class DemultiplexerHDLGeneratorFactory extends AbstractHDLGeneratorFactor
     // finally input
     map.putAll(GetNetMap("DemuxIn", true, comp, selectInputIndex + 2, nets));
     return map;
-  }
-
-  @Override
-  public String GetSubDir() {
-    return "plexers";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }

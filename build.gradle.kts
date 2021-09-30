@@ -65,27 +65,12 @@ val SHARED_PARAMS = "sharedParameters"
 val SUPPORT_DIR = "supportDir"
 val TARGET_DIR = "targetDir"
 val TARGET_FILE_PATH_BASE = "targetFilePathBase"
+val TARGET_FILE_PATH_BASE_SHORT = "targetFilePathBaseShort"
 val UPPERCASE_PROJECT_NAME = "uppercaseProjectName"
 
 java {
   sourceCompatibility = JavaVersion.VERSION_16
   targetCompatibility = JavaVersion.VERSION_16
-}
-
-java {
-  sourceSets["main"].java {
-    srcDir("${buildDir}/generated/logisim/java")
-    srcDir("${buildDir}/generated/sources/srcgen")
-  }
-}
-
-task<Jar>("sourcesJar") {
-  group = "build"
-  description = "Creates a JAR archive with project sources."
-  dependsOn.add("classes")
-  classifier = "src"
-
-  from(sourceSets.main.get().allSource)
 }
 
 /**
@@ -123,6 +108,10 @@ extra.apply {
   set(TARGET_FILE_PATH_BASE, "${targetDir}/${baseFilename}")
   logger.debug("targetFilePathBase: \"${targetDir}/${baseFilename}\"")
 
+  val baseFilenameShort = "${project.name}-${appVersionShort}"
+  set(TARGET_FILE_PATH_BASE_SHORT, "${targetDir}/${baseFilenameShort}")
+  logger.debug("targetFilePathBaseShort: \"${targetDir}/${baseFilenameShort}\"")
+
   // Name of application shadowJar file.
   val shadowJarFilename = "${baseFilename}-all.jar"
   set(SHADOW_JAR_FILE_NAME, shadowJarFilename)
@@ -139,10 +128,12 @@ extra.apply {
   // Platform-agnostic jpackage parameters shared across all the builds.
   var params = listOf(
       jpackage,
+      // NOTE: we cannot use --app-version as part of platform agnostic set as i.e. both macOS and
+      // Windows packages do not allow use of any suffixes like "-dev" etc, so --app-version is set
+      // in these builders separately.
       "--input", libsDir,
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", shadowJarFilename,
-      "--app-version", appVersion,
       "--copyright", copyrights,
       "--dest", targetDir,
       "--description", "Digital logic design tool and simulator",
@@ -156,6 +147,7 @@ extra.apply {
   // Linux (DEB/RPM) specific settings for jpackage.
   val linuxParams = params + listOf(
       "--name", project.name,
+      "--app-version", appVersion,
       "--file-associations", "${supportDir}/linux/file.jpackage",
       "--icon", "${supportDir}/linux/logisim-icon-128.png",
       "--install-dir", "/opt",
@@ -168,6 +160,25 @@ extra.apply {
   set(UPPERCASE_PROJECT_NAME, uppercaseProjectName)
   set(APP_DIR_NAME, "${targetDir}/${uppercaseProjectName}.app")
 }
+
+java {
+  sourceSets["main"].java {
+    srcDir("${buildDir}/generated/logisim/java")
+    srcDir("${buildDir}/generated/sources/srcgen")
+  }
+}
+
+task<Jar>("sourcesJar") {
+  group = "build"
+  description = "Creates a JAR archive with project sources."
+  dependsOn.add("classes")
+  classifier = "src"
+
+  from(sourceSets.main.get().allSource)
+  archiveVersion.set(ext.get(APP_VERSION) as String)
+}
+
+
 
 /**
  * Creates distribution directory and checks if source.
@@ -329,7 +340,7 @@ tasks.register("createMsi") {
 
   inputs.dir(ext.get(LIBS_DIR) as String)
   inputs.dir("${supportDir}/windows")
-  outputs.file("${ext.get(TARGET_FILE_PATH_BASE) as String}.msi")
+  outputs.file("${ext.get(TARGET_FILE_PATH_BASE_SHORT) as String}.msi")
 
   doFirst {
     if (!OperatingSystem.current().isWindows) {
@@ -347,6 +358,10 @@ tasks.register("createMsi") {
         "--win-dir-chooser",
         "--win-menu",
         "--type", "msi",
+        // we MUST use short version form (without any suffix like "-dev", as it is not allowed in MSI package:
+        // https://docs.microsoft.com/en-us/windows/win32/msi/productversion?redirectedfrom=MSDN
+        // NOTE: any change to version **format** may require editing of .github/workflows/nightly.yml too!
+        "--app-version", ext.get(APP_VERSION_SHORT) as String,
     )
     runCommand(params, "Error while creating the MSI package.")
   }
@@ -477,7 +492,7 @@ fun genBuildInfo(buildInfoFilePath: String) {
     "    public static final String buildId = \"${branchName}/${branchLastCommitHash}\";",
     "",
     "    // Project build timestamp",
-    "    public static final long millis = ${currentMillis}L;", // keep traling `L`
+    "    public static final long millis = ${currentMillis}L;", // keep trailing `L`
     "    public static final String year = \"${buildYear}\";",
     "    public static final String dateIso8601 = \"${nowIso}\";",
     "    public static final Date date = new Date();",

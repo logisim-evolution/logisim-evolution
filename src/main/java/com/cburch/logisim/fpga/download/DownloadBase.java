@@ -17,17 +17,18 @@ import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
+import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.LedArrayGenericHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.io.LedArrayGenericHDLGeneratorFactory;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -159,21 +160,22 @@ public abstract class DownloadBase {
       Reporter.Report.AddFatalError("Internal error on HDL generation, null pointer exception");
       return false;
     }
-    if (!worker.GenerateAllHDLDescriptions(generatedHDLComponents, projectDir, null)) {
+    if (!worker.generateAllHDLDescriptions(generatedHDLComponents, projectDir, null)) {
       return false;
     }
     /* Here we generate the top-level shell */
     if (rootSheet.getNetList().numberOfClockTrees() > 0) {
       final var ticker = new TickComponentHDLGeneratorFactory(MyBoardInformation.fpga.getClockFrequency(), frequency /* , boardFreq.isSelected() */);
-      if (!AbstractHDLGeneratorFactory.WriteEntity(
-          projectDir + ticker.GetRelativeDirectory(),
-          ticker.GetEntity(rootSheet.getNetList(), null, ticker.getComponentStringIdentifier()),
-          ticker.getComponentStringIdentifier())) {
+      if (!HDL.writeEntity(
+          projectDir + ticker.getRelativeDirectory(),
+          ticker.getEntity(rootSheet.getNetList(), null, TickComponentHDLGeneratorFactory.HDL_IDENTIFIER),
+          TickComponentHDLGeneratorFactory.HDL_IDENTIFIER)) {
         return false;
       }
-      if (!AbstractHDLGeneratorFactory.WriteArchitecture(
-          projectDir + ticker.GetRelativeDirectory(),
-          ticker.GetArchitecture(rootSheet.getNetList(), null, ticker.getComponentStringIdentifier()), ticker.getComponentStringIdentifier())) {
+      if (!HDL.writeArchitecture(
+          projectDir + ticker.getRelativeDirectory(),
+          ticker.getArchitecture(rootSheet.getNetList(), null, TickComponentHDLGeneratorFactory.HDL_IDENTIFIER), 
+          TickComponentHDLGeneratorFactory.HDL_IDENTIFIER)) {
         return false;
       }
 
@@ -183,15 +185,15 @@ public abstract class DownloadBase {
           .getFactory()
           .getHDLGenerator(rootSheet.getNetList().getAllClockSources().get(0).getAttributeSet());
       final var compName = rootSheet.getNetList().getAllClockSources().get(0).getFactory().getHDLName(null);
-      if (!AbstractHDLGeneratorFactory.WriteEntity(
-          projectDir + clockGen.GetRelativeDirectory(),
-          clockGen.GetEntity(rootSheet.getNetList(), null, compName),
+      if (!HDL.writeEntity(
+          projectDir + clockGen.getRelativeDirectory(),
+          clockGen.getEntity(rootSheet.getNetList(), null, compName),
           compName)) {
         return false;
       }
-      if (!AbstractHDLGeneratorFactory.WriteArchitecture(
-          projectDir + clockGen.GetRelativeDirectory(),
-          clockGen.GetArchitecture(rootSheet.getNetList(), null, compName),
+      if (!HDL.writeArchitecture(
+          projectDir + clockGen.getRelativeDirectory(),
+          clockGen.getArchitecture(rootSheet.getNetList(), null, compName),
           compName)) {
         return false;
       }
@@ -204,32 +206,32 @@ public abstract class DownloadBase {
           worker = LedArrayGenericHDLGeneratorFactory.getSpecificHDLGenerator(type);
           final var name = LedArrayGenericHDLGeneratorFactory.getSpecificHDLName(type);
           if (worker != null && name != null) {
-            if (!AbstractHDLGeneratorFactory.WriteEntity(
-                projectDir + worker.GetRelativeDirectory(),
-                worker.GetEntity(rootSheet.getNetList(), null, name),
-                worker.getComponentStringIdentifier())) {
+            if (!HDL.writeEntity(
+                projectDir + worker.getRelativeDirectory(),
+                worker.getEntity(rootSheet.getNetList(), null, name),
+                name)) {
               return false;
             }
-            if (!AbstractHDLGeneratorFactory.WriteArchitecture(
-                projectDir + worker.GetRelativeDirectory(),
-                worker.GetArchitecture(rootSheet.getNetList(), null, name),
-                worker.getComponentStringIdentifier())) {
+            if (!HDL.writeArchitecture(
+                projectDir + worker.getRelativeDirectory(),
+                worker.getArchitecture(rootSheet.getNetList(), null, name),
+                name)) {
               return false;
             }
           }
         }
       }
     }
-    if (!AbstractHDLGeneratorFactory.WriteEntity(
-        projectDir + top.GetRelativeDirectory(),
-        top.GetEntity(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGAToplevelName),
-        top.getComponentStringIdentifier())) {
+    if (!HDL.writeEntity(
+        projectDir + top.getRelativeDirectory(),
+        top.getEntity(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME),
+        ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME)) {
       return false;
     }
-    return AbstractHDLGeneratorFactory.WriteArchitecture(
-        projectDir + top.GetRelativeDirectory(),
-        top.GetArchitecture(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGAToplevelName),
-        top.getComponentStringIdentifier());
+    return HDL.writeArchitecture(
+        projectDir + top.getRelativeDirectory(),
+        top.getArchitecture(rootSheet.getNetList(), null, ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME),
+        ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME);
   }
 
   protected boolean genDirectory(String dirPath) {

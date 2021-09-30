@@ -29,11 +29,6 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int UnsignedId = -3;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "DIV";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("INP_A", NrOfBitsId);
@@ -50,17 +45,18 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .pair("calcBits", CalcBitsStr);
 
     if (HDL.isVHDL()) {
-      Contents.addLines(
-          "s_extended_dividend({{calcBits}}-1 DOWNTO {{nrOfBits}}) <= Upper;",
-          "s_extended_dividend({{nrOfBits}}-1 DOWNTO 0) <= INP_A;",
-          "s_div_result <= std_logic_vector(unsigned(s_extended_dividend) / unsigned(INP_B))",
-          "                   WHEN {{unsigned}} = 1 ELSE",
-          "                std_logic_vector(signed(s_extended_dividend) / signed(INP_B));",
-          "s_mod_result <= std_logic_vector(unsigned(s_extended_dividend) mod unsigned(INP_B))",
-          "                   WHEN {{unsigned}} = 1 ELSE",
-          "                std_logic_vector(signed(s_extended_dividend) mod signed(INP_B));",
-          "Quotient  <= s_div_result({{nrOfBits}}-1 DOWNTO 0);",
-          "Remainder <= s_mod_result({{nrOfBits}}-1 DOWNTO 0);");
+      Contents.add("""
+          s_extended_dividend({{calcBits}}-1 DOWNTO {{nrOfBits}}) <= Upper;
+          s_extended_dividend({{nrOfBits}}-1 DOWNTO 0) <= INP_A;
+          s_div_result <= std_logic_vector(unsigned(s_extended_dividend) / unsigned(INP_B))
+                             WHEN {{unsigned}} = 1 ELSE
+                          std_logic_vector(signed(s_extended_dividend) / signed(INP_B));
+          s_mod_result <= std_logic_vector(unsigned(s_extended_dividend) mod unsigned(INP_B))
+                             WHEN {{unsigned}} = 1 ELSE
+                          std_logic_vector(signed(s_extended_dividend) mod signed(INP_B));
+          Quotient  <= s_div_result({{nrOfBits}}-1 DOWNTO 0);
+          Remainder <= s_mod_result({{nrOfBits}}-1 DOWNTO 0);
+          """);
     }
     return Contents.getWithIndent();
   }
@@ -113,11 +109,6 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    return "arithmetic";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     final var wires = new TreeMap<String, Integer>();
     wires.put("s_div_result", CalcBitsId);
@@ -127,7 +118,7 @@ public class DividerHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     return HDL.isVHDL();
   }
 }

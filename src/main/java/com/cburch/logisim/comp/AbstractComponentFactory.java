@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -32,11 +32,19 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   private static final Icon toolIcon = Icons.getIcon("subcirc.gif");
 
   private AttributeSet defaultSet;
-  protected HDLGeneratorFactory MyHDLGenerator;
+  private final HDLGeneratorFactory myHDLGenerator;
+  private final boolean requiresLabel;
+  private final boolean requiresGlobalClockConnection;
 
   protected AbstractComponentFactory() {
+    this(null, false, false);
+  }
+  
+  protected AbstractComponentFactory(HDLGeneratorFactory generator, boolean requiresLabel, boolean requiresGlobalClock) {
     defaultSet = null;
-    MyHDLGenerator = null;
+    myHDLGenerator = generator;
+    this.requiresLabel = requiresLabel;
+    requiresGlobalClockConnection = requiresGlobalClock;
   }
 
   @Override
@@ -96,7 +104,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 
   @Override
   public HDLGeneratorFactory getHDLGenerator(AttributeSet attrs) {
-    if (HDLSupportedComponent(attrs)) return MyHDLGenerator;
+    if (isHDLSupportedComponent(attrs)) return myHDLGenerator;
     else return null;
   }
 
@@ -132,7 +140,8 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
+  public boolean isHDLSupportedComponent(AttributeSet attrs) {
+    if (myHDLGenerator != null) return myHDLGenerator.isHDLSupportedTarget(attrs);
     return false;
   }
 
@@ -160,8 +169,8 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   }
 
   @Override
-  public boolean RequiresGlobalClock() {
-    return false;
+  public boolean requiresGlobalClock() {
+    return requiresGlobalClockConnection;
   }
 
   @Override
@@ -171,8 +180,8 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 
   /* HDL Methods */
   @Override
-  public boolean RequiresNonZeroLabel() {
-    return false;
+  public boolean requiresNonZeroLabel() {
+    return requiresLabel;
   }
 
   @Override

@@ -58,7 +58,7 @@ public class BitExtender extends InstanceFactory {
   public static final BitExtender FACTORY = new BitExtender();
 
   public BitExtender() {
-    super(_ID, S.getter("extenderComponent"));
+    super(_ID, S.getter("extenderComponent"), new BitExtenderHDLGeneratorFactory());
     setIconName("extender.gif");
     setAttributes(
         new Attribute[] {ATTR_IN_WIDTH, ATTR_OUT_WIDTH, ATTR_TYPE},
@@ -94,12 +94,6 @@ public class BitExtender extends InstanceFactory {
   private String getType(AttributeSet attrs) {
     AttributeOption topt = attrs.getValue(ATTR_TYPE);
     return (String) topt.getValue();
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new BitExtenderHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

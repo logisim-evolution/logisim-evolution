@@ -43,7 +43,7 @@ public class PriorityEncoder extends InstanceFactory {
   static final int GS = 3;
 
   public PriorityEncoder() {
-    super(_ID, S.getter("priorityEncoderComponent"));
+    super(_ID, S.getter("priorityEncoderComponent"), new PriorityEncoderHDLGeneratorFactory());
     setAttributes(
         new Attribute[] {StdAttr.FACING, PlexersLibrary.ATTR_SELECT, PlexersLibrary.ATTR_DISABLED},
         new Object[] {Direction.EAST, BitWidth.create(3), PlexersLibrary.DISABLED_ZERO});
@@ -79,12 +79,6 @@ public class PriorityEncoder extends InstanceFactory {
   @Override
   public boolean HasThreeStateDrivers(AttributeSet attrs) {
     return (attrs.getValue(PlexersLibrary.ATTR_DISABLED) == PlexersLibrary.DISABLED_FLOATING);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new PriorityEncoderHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

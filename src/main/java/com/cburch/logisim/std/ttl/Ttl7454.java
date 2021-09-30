@@ -1,15 +1,14 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -29,7 +28,8 @@ public class Ttl7454 extends AbstractTtlGate {
         (byte) 14,
         new byte[] {8},
         new byte[] {6, 11, 12},
-        new String[] {"A", "C", "D", "E", "F", "Y", "G", "H", "B"});
+        new String[] {"A", "C", "D", "E", "F", "Y", "G", "H", "B"},
+        new Ttl7454HDLGenerator());
   }
 
   @Override
@@ -90,11 +90,5 @@ public class Ttl7454 extends AbstractTtlGate {
     final var val3 = state.getPortValue(3).and(state.getPortValue(4));
     final var val4 = state.getPortValue(6).and(state.getPortValue(7));
     state.setPort(5, val1.or(val2.or(val3.or(val4))).not(), 3);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new Ttl7454HDLGenerator();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

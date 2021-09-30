@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -28,6 +28,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.LineBuffer;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -559,50 +560,31 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   }
 
   private String label(int row, int rows) {
-    assert row >= 0 && row < rows : "Row " + row + " is outside range of " + rows + " rows.";
-    switch (rows) {
-      case 2:
-        return "" + row;
-      case 4:
-        switch (row) {
-          case 0:
-            return "00";
-          case 1:
-            return "01";
-          case 2:
-            return "11";
-          case 3:
-            return "10";
-          default:
-            assert false;
-        }
-        break;
-      case 8:
-        switch (row) {
-          case 0:
-            return "000";
-          case 1:
-            return "001";
-          case 2:
-            return "011";
-          case 3:
-            return "010";
-          case 4:
-            return "110";
-          case 5:
-            return "111";
-          case 6:
-            return "101";
-          case 7:
-            return "100";
-          default:
-            assert false;
-        }
-        break;
-      default:
-        assert false : "unhandled number of rows " + rows;
+    if (row >= 0 && row < rows) {
+      throw new RuntimeException(LineBuffer.format("Row {{1}} is outside range of {{2}} rows.", row, rows));
     }
-    return "";
+    return switch (rows) {
+      case 2 -> String.valueOf(row);
+      case 4 -> switch (row) {
+        case 0 -> "00";
+        case 1 -> "01";
+        case 2 -> "11";
+        case 3 -> "10";
+        default -> throw new IllegalStateException(LineBuffer.format("Unexpected value: {{1}} for rows={{2}}", row, rows));
+      };
+      case 8 -> switch (row) {
+        case 0 -> "000";
+        case 1 -> "001";
+        case 2 -> "011";
+        case 3 -> "010";
+        case 4 -> "110";
+        case 5 -> "111";
+        case 6 -> "101";
+        case 7 -> "100";
+        default -> throw new IllegalStateException(LineBuffer.format("Unexpected value: {{1}} for rows={{2}}", row, rows));
+      };
+      default -> throw new IllegalStateException(LineBuffer.format("Unhandled number of rows: {{1}}", rows));
+    };
   }
 
   private void drawNumberedHeader(Graphics2D gfx, int x, int y) {

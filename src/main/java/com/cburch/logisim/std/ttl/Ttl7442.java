@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -31,11 +30,11 @@ public class Ttl7442 extends AbstractTtlGate {
   private static final String[] pinNames = {"O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", "D", "C", "B", "A"};
 
   public Ttl7442() {
-    super(_ID, pinCount, outPins, pinNames);
+    super(_ID, pinCount, outPins, pinNames, new Ttl7442HDLGenerator(false, false));
   }
 
   public Ttl7442(String name, int encoding) {
-    super(name, pinCount, outPins, pinNames);
+    super(name, pinCount, outPins, pinNames, new Ttl7442HDLGenerator(encoding == 1, encoding == 2));
     IsExec3 = encoding == 1;
     IsGray = encoding == 2;
   }
@@ -136,11 +135,5 @@ public class Ttl7442 extends AbstractTtlGate {
       state.setPort(8, decode == 8 ? Value.FALSE : Value.TRUE, 1);
       state.setPort(9, decode == 9 ? Value.FALSE : Value.TRUE, 1);
     }
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new Ttl7442HDLGenerator(IsExec3, IsGray);
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

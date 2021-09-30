@@ -53,11 +53,6 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "TTL";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var map = new TreeMap<String, Integer>();
     map.put("A", 1);
@@ -85,44 +80,47 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
 
   @Override
   public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = (new LineBuffer()).addHdlPairs();
+    final var contents = LineBuffer.getHdlBuffer();
 
     if (IsExes3) {
-      contents.addLines(
-          "{{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} A );",
-          "{{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );",
-          "{{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} A );",
-          "{{assign}} O3 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} {{not}}(A) );",
-          "{{assign}} O4 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} A );",
-          "{{assign}} O5 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} {{not}}(A) );",
-          "{{assign}} O6 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} A );",
-          "{{assign}} O7 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} B {{and}} {{not}}(A) );",
-          "{{assign}} O8 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} B {{and}} A );",
-          "{{assign}} O9 {{=}} {{not}}( D {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );");
+      contents.add("""
+          {{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} A );
+          {{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );
+          {{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} A );
+          {{assign}} O3 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} {{not}}(A) );
+          {{assign}} O4 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} A );
+          {{assign}} O5 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} {{not}}(A) );
+          {{assign}} O6 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} A );
+          {{assign}} O7 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} B {{and}} {{not}}(A) );
+          {{assign}} O8 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} B {{and}} A );
+          {{assign}} O9 {{=}} {{not}}( D {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );");
+          """);
     } else if (IsGray) {
-      contents.addLines(
-          "{{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} {{not}}(A) );",
-          "{{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} {{not}}(A) );",
-          "{{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} A );",
-          "{{assign}} O3 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} A );",
-          "{{assign}} O4 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} {{not}(A) );",
-          "{{assign}} O5 {{=}} {{not}}( D {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );",
-          "{{assign}} O6 {{=}} {{not}}( D {{and}} C {{and}} {{not}}(B) {{and}} A );",
-          "{{assign}} O7 {{=}} {{not}}( D {{and}} C {{and}} B {{and}} A );",
-          "{{assign}} O8 {{=}} {{not}}( D {{and}} C {{and}} B {{and}} {{not}}(A) );",
-          "{{assign}} O9 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} B {{and}} {not}}(A) );");
+      contents.add("""
+          {{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} {{not}}(A) );
+          {{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} {{not}}(A) );
+          {{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} A );
+          {{assign}} O3 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} A );
+          {{assign}} O4 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} {{not}(A) );
+          {{assign}} O5 {{=}} {{not}}( D {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );
+          {{assign}} O6 {{=}} {{not}}( D {{and}} C {{and}} {{not}}(B) {{and}} A );
+          {{assign}} O7 {{=}} {{not}}( D {{and}} C {{and}} B {{and}} A );
+          {{assign}} O8 {{=}} {{not}}( D {{and}} C {{and}} B {{and}} {{not}}(A) );
+          {{assign}} O9 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} B {{and}} {not}}(A) );");
+          """);
     } else {
-      contents.addLines(
-          "{{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} {{not}}(A) );",
-          "{{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} A );",
-          "{{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} {{not}}(A) );",
-          "{{assign}} O3 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} A );",
-          "{{assign}} O4 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );",
-          "{{assign}} O5 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} A );",
-          "{{assign}} O6 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} {{not}}(A) );",
-          "{{assign}} O7 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} A );",
-          "{{assign}} O8 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} {{not}}(A) );",
-          "{{assign}} O9 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} A );");
+      contents.add("""
+          {{assign}} O0 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} {{not}}(A) );
+          {{assign}} O1 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} A );
+          {{assign}} O2 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} {{not}}(A) );
+          {{assign}} O3 {{=}} {{not}}( {{not}}(D) {{and}} {{not}}(C) {{and}} B {{and}} A );
+          {{assign}} O4 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} {{not}}(A) );
+          {{assign}} O5 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} {{not}}(B) {{and}} A );
+          {{assign}} O6 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} {{not}}(A) );
+          {{assign}} O7 {{=}} {{not}}( {{not}}(D) {{and}} C {{and}} B {{and}} A );
+          {{assign}} O8 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} {{not}}(A) );
+          {{assign}} O9 {{=}} {{not}}( D {{and}} {{not}}(C) {{and}} {{not}}(B) {{and}} A );"
+          """);
     }
     return contents.get();
   }
@@ -150,16 +148,7 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    /*
-     * this method returns the module directory where the HDL code needs to
-     * be placed
-     */
-    return "ttl";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
     return (!attrs.getValue(TtlLibrary.VCC_GND));

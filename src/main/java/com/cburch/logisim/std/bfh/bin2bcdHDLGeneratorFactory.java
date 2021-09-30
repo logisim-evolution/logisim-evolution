@@ -26,11 +26,6 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int NR_OF_BITS_ID = -1;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "BIN2BCD";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
     inputs.put("BinValue", NR_OF_BITS_ID);
@@ -56,12 +51,7 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    return "bfh";
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
+  public boolean isHDLSupportedTarget(AttributeSet attrs) {
     return HDL.isVHDL();
   }
 
@@ -134,41 +124,43 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
       switch (nrOfPorts) {
         case 2:
           contents
-              .addLines(
-                  "s_level_0(6 DOWNTO {{nrOfBits}}) <= (OTHERS => '0');",
-                  "s_level_0({{nrOfBits}}-1 DOWNTO 0) <= BinValue;",
-                  "s_level_1(2 DOWNTO 0) <= s_level_0(2 DOWNTO 0);",
-                  "s_level_2(1 DOWNTO 0) <= s_level_1(1 DOWNTO 0);",
-                  "s_level_2(6)          <= s_level_1(6);",
-                  "s_level_3(6 DOWNTO 5) <= s_level_2(6 DOWNTO 5);",
-                  "s_level_3(0)          <= s_level_2(0);",
-                  "",
-                  "BCD1  <= s_level_3( 3 DOWNTO 0);",
-                  "BCD10 <= \"0\"&s_level_3(6 DOWNTO 4);")
+              .add("""
+                  s_level_0(6 DOWNTO {{nrOfBits}}) <= (OTHERS => '0');
+                  s_level_0({{nrOfBits}}-1 DOWNTO 0) <= BinValue;
+                  s_level_1(2 DOWNTO 0) <= s_level_0(2 DOWNTO 0);
+                  s_level_2(1 DOWNTO 0) <= s_level_1(1 DOWNTO 0);
+                  s_level_2(6)          <= s_level_1(6);
+                  s_level_3(6 DOWNTO 5) <= s_level_2(6 DOWNTO 5);
+                  s_level_3(0)          <= s_level_2(0);
+                  
+                  BCD1  <= s_level_3( 3 DOWNTO 0);
+                  BCD10 <= \"0\"&s_level_3(6 DOWNTO 4);
+                  """)
               .add(getAdd3Block("s_level_0", 6, "s_level_1", 6, "C1"))
               .add(getAdd3Block("s_level_1", 5, "s_level_2", 5, "C2"))
               .add(getAdd3Block("s_level_2", 4, "s_level_3", 4, "C3"));
           break;
         case 3:
           contents
-              .addLines(
-                  "s_level_0(10 DOWNTO {{nrOfBits}}) <= (OTHERS => '0');",
-                  "s_level_0({{nrOfBits}}-1 DOWNTO 0) <= BinValue;",
-                  "s_level_1(10)          <= s_level_0(10);",
-                  "s_level_1( 5 DOWNTO 0) <= s_level_0( 5 DOWNTO 0);",
-                  "s_level_2(10 DOWNTO 9) <= s_level_1(10 DOWNTO 9);",
-                  "s_level_2( 4 DOWNTO 0) <= s_level_1( 4 DOWNTO 0);",
-                  "s_level_3(10 DOWNTO 8) <= s_level_2(10 DOWNTO 8);",
-                  "s_level_3( 3 DOWNTO 0) <= s_level_2( 3 DOWNTO 0);",
-                  "s_level_4( 2 DOWNTO 0) <= s_level_3( 2 DOWNTO 0);",
-                  "s_level_5(10)          <= s_level_4(10);",
-                  "s_level_5( 1 DOWNTO 0) <= s_level_4( 1 DOWNTO 0);",
-                  "s_level_6(10 DOWNTO 9) <= s_level_5(10 DOWNTO 9);",
-                  "s_level_6(0)           <= s_level_5(0);",
-                  "",
-                  "BCD1   <= s_level_6( 3 DOWNTO 0 );",
-                  "BCD10  <= s_level_6( 7 DOWNTO 4 );",
-                  "BCD100 <= \"0\"&s_level_6(10 DOWNTO 8);")
+              .add("""
+                  s_level_0(10 DOWNTO {{nrOfBits}}) <= (OTHERS => '0');
+                  s_level_0({{nrOfBits}}-1 DOWNTO 0) <= BinValue;
+                  s_level_1(10)          <= s_level_0(10);
+                  s_level_1( 5 DOWNTO 0) <= s_level_0( 5 DOWNTO 0);
+                  s_level_2(10 DOWNTO 9) <= s_level_1(10 DOWNTO 9);
+                  s_level_2( 4 DOWNTO 0) <= s_level_1( 4 DOWNTO 0);
+                  s_level_3(10 DOWNTO 8) <= s_level_2(10 DOWNTO 8);
+                  s_level_3( 3 DOWNTO 0) <= s_level_2( 3 DOWNTO 0);
+                  s_level_4( 2 DOWNTO 0) <= s_level_3( 2 DOWNTO 0);
+                  s_level_5(10)          <= s_level_4(10);
+                  s_level_5( 1 DOWNTO 0) <= s_level_4( 1 DOWNTO 0);
+                  s_level_6(10 DOWNTO 9) <= s_level_5(10 DOWNTO 9);
+                  s_level_6(0)           <= s_level_5(0);
+                  
+                  BCD1   <= s_level_6( 3 DOWNTO 0 );
+                  BCD10  <= s_level_6( 7 DOWNTO 4 );
+                  BCD100 <= "0"&s_level_6(10 DOWNTO 8);
+                  """)
               .add(getAdd3Block("s_level_0", 9, "s_level_1", 9, "C0"))
               .add(getAdd3Block("s_level_1", 8, "s_level_2", 8, "C1"))
               .add(getAdd3Block("s_level_2", 7, "s_level_3", 7, "C2"))
@@ -181,33 +173,34 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
           break;
         case 4:
           contents
-              .addLines(
-                  "s_level_0(15 DOWNTO {{nrOfBits}}) <= (OTHERS => '0');",
-                  "s_level_0({{nrOfBits}}-1 DOWNTO 0) <= BinValue;",
-                  "s_level_1(15 DOWNTO 14)  <= s_level_0(15 DOWNTO 14);",
-                  "s_level_1( 9 DOWNTO  0)  <= s_level_0( 9 DOWNTO  0);",
-                  "s_level_2(15 DOWNTO 13)  <= s_level_1(15 DOWNTO 13);",
-                  "s_level_2( 8 DOWNTO  0)  <= s_level_1( 8 DOWNTO  0);",
-                  "s_level_3(15 DOWNTO 12)  <= s_level_2(15 DOWNTO 12);",
-                  "s_level_3( 7 DOWNTO  0)  <= s_level_2( 7 DOWNTO  0);",
-                  "s_level_4(15)            <= s_level_3(15);",
-                  "s_level_4( 6 DOWNTO  0)  <= s_level_3( 6 DOWNTO  0);",
-                  "s_level_5(15 DOWNTO 14)  <= s_level_4(15 DOWNTO 14);",
-                  "s_level_5( 5 DOWNTO  0)  <= s_level_4( 5 DOWNTO  0);",
-                  "s_level_6(15 DOWNTO 13)  <= s_level_5(15 DOWNTO 13);",
-                  "s_level_6( 4 DOWNTO  0)  <= s_level_5( 4 DOWNTO  0);",
-                  "s_level_7( 3 DOWNTO  0)  <= s_level_6( 3 DOWNTO  0);",
-                  "s_level_8(15)            <= s_level_7(15);",
-                  "s_level_8( 2 DOWNTO  0)  <= s_level_7( 2 DOWNTO  0);",
-                  "s_level_9(15 DOWNTO 14)  <= s_level_8(15 DOWNTO 14);",
-                  "s_level_9( 1 DOWNTO  0)  <= s_level_8( 1 DOWNTO  0);",
-                  "s_level_10(15 DOWNTO 13) <= s_level_9(15 DOWNTO 13);",
-                  "s_level_10(0)            <= s_level_9(0);",
-                  "",
-                  "BCD1    <= s_level_10( 3 DOWNTO  0 );",
-                  "BCD10   <= s_level_10( 7 DOWNTO  4 );",
-                  "BCD100  <= s_level_10(11 DOWNTO  8);",
-                  "BCD1000 <= s_level_10(15 DOWNTO 12);")
+              .add("""
+                  s_level_0(15 DOWNTO {{nrOfBits}}) <= (OTHERS => '0');
+                  s_level_0({{nrOfBits}}-1 DOWNTO 0) <= BinValue;
+                  s_level_1(15 DOWNTO 14)  <= s_level_0(15 DOWNTO 14);
+                  s_level_1( 9 DOWNTO  0)  <= s_level_0( 9 DOWNTO  0);
+                  s_level_2(15 DOWNTO 13)  <= s_level_1(15 DOWNTO 13);
+                  s_level_2( 8 DOWNTO  0)  <= s_level_1( 8 DOWNTO  0);
+                  s_level_3(15 DOWNTO 12)  <= s_level_2(15 DOWNTO 12);
+                  s_level_3( 7 DOWNTO  0)  <= s_level_2( 7 DOWNTO  0);
+                  s_level_4(15)            <= s_level_3(15);
+                  s_level_4( 6 DOWNTO  0)  <= s_level_3( 6 DOWNTO  0);
+                  s_level_5(15 DOWNTO 14)  <= s_level_4(15 DOWNTO 14);
+                  s_level_5( 5 DOWNTO  0)  <= s_level_4( 5 DOWNTO  0);
+                  s_level_6(15 DOWNTO 13)  <= s_level_5(15 DOWNTO 13);
+                  s_level_6( 4 DOWNTO  0)  <= s_level_5( 4 DOWNTO  0);
+                  s_level_7( 3 DOWNTO  0)  <= s_level_6( 3 DOWNTO  0);
+                  s_level_8(15)            <= s_level_7(15);
+                  s_level_8( 2 DOWNTO  0)  <= s_level_7( 2 DOWNTO  0);
+                  s_level_9(15 DOWNTO 14)  <= s_level_8(15 DOWNTO 14);
+                  s_level_9( 1 DOWNTO  0)  <= s_level_8( 1 DOWNTO  0);
+                  s_level_10(15 DOWNTO 13) <= s_level_9(15 DOWNTO 13);
+                  s_level_10(0)            <= s_level_9(0);
+                  
+                  BCD1    <= s_level_10( 3 DOWNTO  0);
+                  BCD10   <= s_level_10( 7 DOWNTO  4);
+                  BCD100  <= s_level_10(11 DOWNTO  8);
+                  BCD1000 <= s_level_10(15 DOWNTO 12);
+                  """)
               .add(getAdd3Block("s_level_0", 13, "s_level_1", 13, "C0"))
               .add(getAdd3Block("s_level_1", 12, "s_level_2", 12, "C1"))
               .add(getAdd3Block("s_level_2", 11, "s_level_3", 11, "C2"))
@@ -246,24 +239,25 @@ public class bin2bcdHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
         .pair("destStartId", destStartId)
         .pair("destDownTo", (destStartId - 3))
         .pair("proc", processName)
-        .addLines(
-            "",
-            "ADD3_{{proc}} : PROCESS({{srcName}})",
-            "BEGIN",
-            "   CASE ( {{srcName}}( {{srcStartId}} DOWNTO {{srcDownTo}}) ) IS",
-            "      WHEN \"0000\" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= \"0000\";",
-            "      WHEN \"0001\" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= \"0001\";",
-            "      WHEN \"0010\" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= \"0010\";",
-            "      WHEN \"0011\" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= \"0011\";",
-            "      WHEN \"0100\" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= \"0100\";",
-            "      WHEN \"0101\" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= \"1000\";",
-            "      WHEN \"0110\" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= \"1001\";",
-            "      WHEN \"0111\" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= \"1010\";",
-            "      WHEN \"1000\" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= \"1011\";",
-            "      WHEN \"1001\" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= \"1100\";",
-            "      WHEN \"0000\" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= \"0000\";",
-            "   END CASE;",
-            "END PROCESS ADD3_{{proc}};")
+        .add("""
+            
+            ADD3_{{proc}} : PROCESS({{srcName}})
+            BEGIN
+               CASE ( {{srcName}}( {{srcStartId}} DOWNTO {{srcDownTo}}) ) IS
+                  WHEN "0000" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= "0000";
+                  WHEN "0001" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= "0001";
+                  WHEN "0010" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= "0010";
+                  WHEN "0011" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= "0011";
+                  WHEN "0100" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= "0100";
+                  WHEN "0101" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= "1000";
+                  WHEN "0110" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= "1001";
+                  WHEN "0111" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= "1010";
+                  WHEN "1000" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= "1011";
+                  WHEN "1001" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= "1100";
+                  WHEN "0000" => {{destName}}( {{destStartId}} DOWNTO {{destDownTo}} ) <= "0000";
+               END CASE;
+            END PROCESS ADD3_{{proc}};
+            """)
         .get();
   }
 }

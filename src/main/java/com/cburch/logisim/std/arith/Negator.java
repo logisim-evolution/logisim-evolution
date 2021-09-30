@@ -39,7 +39,7 @@ public class Negator extends InstanceFactory {
   private static final int OUT = 1;
 
   public Negator() {
-    super(_ID, S.getter("negatorComponent"));
+    super(_ID, S.getter("negatorComponent"), new NegatorHDLGeneratorFactory());
     setAttributes(new Attribute[] {StdAttr.WIDTH}, new Object[] {BitWidth.create(8)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
@@ -59,12 +59,6 @@ public class Negator extends InstanceFactory {
     if (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) CompleteName.append("BitNegator");
     else CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
     return CompleteName.toString();
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new NegatorHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

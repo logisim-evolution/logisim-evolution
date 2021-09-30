@@ -40,7 +40,7 @@ public class Power extends InstanceFactory {
 
   private static class PowerHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
     @Override
-    public long GetConstant(AttributeSet attrs) {
+    public long getConstant(AttributeSet attrs) {
       long ConstantValue = 0;
       for (int bit = 0; bit < attrs.getValue(StdAttr.WIDTH).getWidth(); bit++) {
         ConstantValue <<= 1;
@@ -51,7 +51,7 @@ public class Power extends InstanceFactory {
   }
 
   public Power() {
-    super(_ID, S.getter("powerComponent"));
+    super(_ID, S.getter("powerComponent"), new PowerHDLGeneratorFactory());
     setIconName("power.gif");
     setAttributes(
         new Attribute[] {StdAttr.FACING, StdAttr.WIDTH},
@@ -96,12 +96,6 @@ public class Power extends InstanceFactory {
   public Bounds getOffsetBounds(AttributeSet attrs) {
     return Bounds.create(0, -8, 15, 16)
         .rotate(Direction.EAST, attrs.getValue(StdAttr.FACING), 0, 0);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new PowerHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

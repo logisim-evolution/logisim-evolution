@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -257,7 +257,6 @@ public class Circuit {
     myNetList = new Netlist(this);
     myMappableResources = new HashMap<>();
     loadedMaps = new HashMap<>();
-    addCircuitListener(myNetList);
     isAnnotated = false;
     logiFile = file;
     staticAttrs.setValue(
@@ -348,7 +347,7 @@ public class Circuit {
         }
       }
       /* now we only process those that require a label */
-      if (comp.getFactory().RequiresNonZeroLabel()) {
+      if (comp.getFactory().requiresNonZeroLabel()) {
         if (clearExistingLabels) {
           /* in case of label cleaning, we clear first the old label */
           Reporter.Report.AddInfo(
@@ -965,6 +964,40 @@ public class Circuit {
     @Override
     public void run() {
       timedOut = true;
+    }
+  }
+  
+  public double getTickFrequency() {
+    return staticAttrs.getValue(CircuitAttributes.SIMULATION_FREQUENCY);
+  }
+
+  public void setTickFrequency(double value) {
+    final var currentTickFrequency = staticAttrs.getValue(CircuitAttributes.SIMULATION_FREQUENCY); 
+    if (value != currentTickFrequency) {
+      staticAttrs.setValue(CircuitAttributes.SIMULATION_FREQUENCY, value);
+      if ((proj != null) && (currentTickFrequency > 0)) proj.setForcedDirty();
+    }
+  }
+  
+  public double getDownloadFrequency() {
+    return staticAttrs.getValue(CircuitAttributes.DOWNLOAD_FREQUENCY);
+  }
+
+  public void setDownloadFrequency(double value) {
+    if (value != staticAttrs.getValue(CircuitAttributes.DOWNLOAD_FREQUENCY)) {
+      staticAttrs.setValue(CircuitAttributes.DOWNLOAD_FREQUENCY, value);
+      if (proj != null) proj.setForcedDirty();
+    }
+  }
+
+  public String getDownloadBoard() {
+    return staticAttrs.getValue(CircuitAttributes.DOWNLOAD_BOARD);
+  }
+
+  public void setDownloadBoard(String board) {
+    if (!board.equals(staticAttrs.getValue(CircuitAttributes.DOWNLOAD_BOARD))) {
+      staticAttrs.setValue(CircuitAttributes.DOWNLOAD_BOARD, board);
+      if (proj != null) proj.setForcedDirty();
     }
   }
 }

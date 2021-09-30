@@ -1,9 +1,9 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
  * Copyright by the Logisim-evolution developers
- * 
+ *
  * https://github.com/logisim-evolution/
- * 
+ *
  * This is free software released under GNU GPLv3 license
  */
 
@@ -34,19 +34,19 @@ public class ProjectEvent {
   private Object oldData;
   private final Object data;
 
-  ProjectEvent(int action, Project proj) {
+  public ProjectEvent(int action, Project proj) {
     this.action = action;
     this.proj = proj;
     this.data = null;
   }
 
-  ProjectEvent(int action, Project proj, Object data) {
+  public ProjectEvent(int action, Project proj, Object data) {
     this.action = action;
     this.proj = proj;
     this.data = data;
   }
 
-  ProjectEvent(int action, Project proj, Object old, Object data) {
+  public ProjectEvent(int action, Project proj, Object old, Object data) {
     this.action = action;
     this.proj = proj;
     this.oldData = old;

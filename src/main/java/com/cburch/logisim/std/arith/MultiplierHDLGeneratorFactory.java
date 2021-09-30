@@ -29,11 +29,6 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   private static final int UnsignedId = -3;
 
   @Override
-  public String getComponentStringIdentifier() {
-    return "MULT";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
     final var inputs = new TreeMap<String, Integer>();
     inputs.put("INP_A", NrOfBitsId);
@@ -51,45 +46,47 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
             .pair("calcBits", CalcBitsStr);
 
     if (HDL.isVHDL()) {
-      Contents.addLines(
-          "s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B))",
-          "                    WHEN {{unsigned}}= 1 ELSE",
-          "                 std_logic_vector(signed(INP_A)*signed(INP_B));",
-          "s_extended_Cin({{calcBits}}-1 DOWNTO {{nrOfBits}}) <= (OTHERS => '0') WHEN {{unsigned}} = 1 ELSE (OTHERS => Cin({{nrOfBits}}-1));",
-          "s_extended_Cin({{nrOfBits}}-1 DOWNTO 0) <= Cin;",
-          "s_new_result  <= std_logic_vector(unsigned(s_mult_result) + unsigned(s_extended_Cin))",
-          "                    WHEN {{unsigned}}= 1 ELSE",
-          "                 std_logic_vector(signed(s_mult_result) + signed(s_extended_Cin));",
-          "Mult_hi       <= s_new_result({{calcBits}}-1 DOWNTO {{nrOfBits}});",
-          "Mult_lo       <= s_new_result({{nrOfBits}}-1 DOWNTO 0);");
+      Contents.add("""
+          s_mult_result <= std_logic_vector(unsigned(INP_A)*unsigned(INP_B))
+                              WHEN {{unsigned}}= 1 ELSE
+                           std_logic_vector(signed(INP_A)*signed(INP_B));
+          s_extended_Cin({{calcBits}}-1 DOWNTO {{nrOfBits}}) <= (OTHERS => '0') WHEN {{unsigned}} = 1 ELSE (OTHERS => Cin({{nrOfBits}}-1));
+          s_extended_Cin({{nrOfBits}}-1 DOWNTO 0) <= Cin;
+          s_new_result  <= std_logic_vector(unsigned(s_mult_result) + unsigned(s_extended_Cin))
+                              WHEN {{unsigned}}= 1 ELSE
+                           std_logic_vector(signed(s_mult_result) + signed(s_extended_Cin));
+          Mult_hi       <= s_new_result({{calcBits}}-1 DOWNTO {{nrOfBits}});
+          Mult_lo       <= s_new_result({{nrOfBits}}-1 DOWNTO 0);
+          """);
     } else {
-      Contents.addLines(
-          "reg[{{calcBits}}-1:0] s_Cin;",
-          "reg[{{calcBits}}-1:0] s_mult_unsigned;",
-          "reg[{{calcBits}}-1:0] s_interm_result;",
-          "reg signed[{{calcBits}}-1:0] s_mult_signed;",
-          "always @(*)",
-          "begin",
-          "   s_Cin[{{nrOfBits}}-1:0] = Cin;",
-          "   if ({{unsigned}}== 1)",
-          "      begin",
-          "         s_Cin[{{calcBits}}-1:{{nrOfBits}}] = 0;",
-          "         s_mult_unsigned = $unsigned(INP_A) * $unsigned(INP_B);",
-          "         s_interm_result = $unsigned(s_mult_unsigned) + $unsigned(s_Cin);",
-          "       end",
-          "    else",
-          "      begin",
-          "         if (Cin[{{nrOfBits}}-1] == 1)",
-          "            s_Cin[{{calcBits}}-1:{{nrOfBits}}] = -1;",
-          "         else",
-          "            s_Cin[{{calcBits}}-1:{{nrOfBits}}] = 0;",
-          "         s_mult_signed = $signed(INP_A) * $signed(INP_B);",
-          "         s_interm_result = $signed(s_mult_signed) + $signed(s_Cin);",
-          "       end",
-          "end",
-          "",
-          "assign Mult_hi = s_interm_result[{{calcBits}}-1:{{nrOfBits}}];",
-          "assign Mult_lo = s_interm_result[{{nrOfBits}}-1:0];");
+      Contents.add("""
+          reg[{{calcBits}}-1:0] s_Cin;
+          reg[{{calcBits}}-1:0] s_mult_unsigned;
+          reg[{{calcBits}}-1:0] s_interm_result;
+          reg signed[{{calcBits}}-1:0] s_mult_signed;
+          always @(*)
+          begin
+             s_Cin[{{nrOfBits}}-1:0] = Cin;
+             if ({{unsigned}}== 1)
+                begin
+                   s_Cin[{{calcBits}}-1:{{nrOfBits}}] = 0;
+                   s_mult_unsigned = $unsigned(INP_A) * $unsigned(INP_B);
+                   s_interm_result = $unsigned(s_mult_unsigned) + $unsigned(s_Cin);
+                 end
+              else
+                begin
+                   if (Cin[{{nrOfBits}}-1] == 1)
+                      s_Cin[{{calcBits}}-1:{{nrOfBits}}] = -1;
+                   else
+                      s_Cin[{{calcBits}}-1:{{nrOfBits}}] = 0;
+                   s_mult_signed = $signed(INP_A) * $signed(INP_B);
+                   s_interm_result = $signed(s_mult_signed) + $signed(s_Cin);
+                 end
+          end
+          
+          assign Mult_hi = s_interm_result[{{calcBits}}-1:{{nrOfBits}}];
+          assign Mult_lo = s_interm_result[{{nrOfBits}}-1:0];
+          """);
     }
     return Contents.getWithIndent();
   }
@@ -140,21 +137,11 @@ public class MultiplierHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public String GetSubDir() {
-    return "arithmetic";
-  }
-
-  @Override
   public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
     final var wires = new TreeMap<String, Integer>();
     wires.put("s_mult_result", CalcBitsId);
     wires.put("s_extended_Cin", CalcBitsId);
     wires.put("s_new_result", CalcBitsId);
     return wires;
-  }
-
-  @Override
-  public boolean HDLTargetSupported(AttributeSet attrs) {
-    return true;
   }
 }
