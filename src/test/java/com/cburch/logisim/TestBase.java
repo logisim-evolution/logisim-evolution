@@ -25,12 +25,12 @@ public class TestBase {
    */
   protected String getRandomString(int length, boolean includeDigits) {
     // chose a Character random from this String
-    final var allowedCharsBuilder = new StringBuffer("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+    final var allowedCharsBuilder = new StringBuilder("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
     allowedCharsBuilder.append(allowedCharsBuilder.toString().toLowerCase());
     if (includeDigits) allowedCharsBuilder.append("0123456789");
     final var allowedChars = allowedCharsBuilder.toString();
 
-    // create StringBuffer size of AlphaNumericString
+    // create StringBuilder size of AlphaNumericString
     final var sb = new StringBuilder(length);
 
     for (var i = 0; i < length; i++) {

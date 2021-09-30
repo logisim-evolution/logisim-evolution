@@ -61,7 +61,7 @@ public class VhdlContentComponent extends HdlContent {
 
   private static final String TEMPLATE = loadTemplate();
 
-  protected StringBuffer content;
+  protected StringBuilder content;
   protected Port[] inputs;
   protected Port[] outputs;
   protected String name;
@@ -76,7 +76,7 @@ public class VhdlContentComponent extends HdlContent {
   public VhdlContentComponent clone() {
     try {
       VhdlContentComponent ret = (VhdlContentComponent) super.clone();
-      ret.content = new StringBuffer(this.content);
+      ret.content = new StringBuilder(this.content);
       return ret;
     } catch (CloneNotSupportedException ex) {
       return this;
@@ -197,7 +197,7 @@ public class VhdlContentComponent extends HdlContent {
       outputs[i].setToolTip(S.getter(desc.getName()));
     }
 
-    this.content = new StringBuffer(content);
+    this.content = new StringBuilder(content);
     fireContentSet();
 
     return true;
@@ -205,8 +205,8 @@ public class VhdlContentComponent extends HdlContent {
 
   @Override
   public boolean setContent(String content) {
-    final var title = new StringBuffer();
-    final var result = new StringBuffer();
+    final var title = new StringBuilder();
+    final var result = new StringBuilder();
 
     switch (Softwares.validateVhdl(content, title, result)) {
       case Softwares.ERROR:
