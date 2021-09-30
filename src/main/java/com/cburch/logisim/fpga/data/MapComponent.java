@@ -711,7 +711,7 @@ public class MapComponent {
   }
 
   public static void getComplexMap(Element Map, CircuitMapInfo cmap) throws DOMException {
-    ArrayList<CircuitMapInfo> pinmaps = cmap.getPinMaps();
+    List<CircuitMapInfo> pinmaps = cmap.getPinMaps();
     if (pinmaps != null) {
       var s = new StringBuilder();
       var first = true;
