@@ -28,7 +28,6 @@ public interface HdlGeneratorFactory {
   public static final String LOCAL_OUTPUT_BUBBLE_BUS_NAME = "LOGISIM_OUTPUT_BUBBLES";
   public static final String LOCAL_INOUT_BUBBLE_BUS_NAME = "LOGISIM_INOUT_BUBBLES";
   public static final String FPGA_TOP_LEVEL_NAME = "LogisimToplevelShell";
-  public static final int SIGNAL_ALLIGNMENT_SIZE = 35; // FIXME: remove
 
   boolean generateAllHDLDescriptions(
       Set<String> handledComponents,

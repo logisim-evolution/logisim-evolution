@@ -32,7 +32,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -296,16 +295,6 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     return contents;
   }
   
-  private static void addAllWiresSorted(LineBuffer contents, Map<String, String> wires) {
-    var maxNameLength = 0;
-    for (var wire : wires.keySet())
-      maxNameLength = Math.max(maxNameLength, wire.length());
-    final var sortedWires = new TreeSet<String>(wires.keySet());
-    for (var wire : sortedWires) 
-      contents.add("   {{assign}}{{1}}{{2}} {{=}} {{3}};", wire, " ".repeat(maxNameLength - wire.length()), wires.get(wire));
-    wires.clear();
-  }
-
   @Override
   public LineBuffer getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
@@ -333,13 +322,13 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     }
     if (!wires.isEmpty()) {
       contents.empty().addRemarkBlock("All clock generator connections are defined here");
-      addAllWiresSorted(contents, wires);
+      Hdl.addAllWiresSorted(contents, wires);
     }
     /* Here we define all wiring; hence all complex splitter connections */
     wires.putAll(getHdlWiring(theNetList));
     if (!wires.isEmpty()) {
       contents.empty().addRemarkBlock("Here all wiring is defined");
-      addAllWiresSorted(contents, wires);
+      Hdl.addAllWiresSorted(contents, wires);
     }
     /* Now we define all input signals; hence Input port -> Internal Net */
     for (var i = 0; i < theNetList.getNumberOfInputPorts(); i++) {
@@ -349,7 +338,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     }
     if (!wires.isEmpty()) {
       contents.empty().addRemarkBlock("Here all input connections are defined");
-      addAllWiresSorted(contents, wires);
+      Hdl.addAllWiresSorted(contents, wires);
     }
     /* Now we define all output signals; hence Internal Net -> Input port */
     for (var i = 0; i < theNetList.numberOfOutputPorts(); i++) {
@@ -359,7 +348,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     }
     if (!wires.isEmpty()) {
       contents.empty().addRemarkBlock("Here all output connections are defined");
-      addAllWiresSorted(contents, wires);
+      Hdl.addAllWiresSorted(contents, wires);
     }
     /* Here all in-lined components are generated */
     isFirstLine = true;
