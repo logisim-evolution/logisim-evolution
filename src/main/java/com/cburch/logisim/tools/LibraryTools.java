@@ -21,7 +21,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 public class LibraryTools {
-  public static void ShowErrors(String LibName, HashMap<String, String> Messages) {
+  public static void showErrors(String LibName, HashMap<String, String> Messages) {
     OptionPane.showMessageDialog(
         null,
         Message(LibName, Messages),
@@ -39,14 +39,14 @@ public class LibraryTools {
     return Message;
   }
 
-  public static void BuildToolList(Library lib, HashSet<String> Tools) {
+  public static void buildToolList(Library lib, HashSet<String> Tools) {
     for (Tool tool : lib.getTools()) {
       Tools.add(tool.getName().toUpperCase());
     }
-    for (Library sublib : lib.getLibraries()) BuildToolList(sublib, Tools);
+    for (Library sublib : lib.getLibraries()) buildToolList(sublib, Tools);
   }
 
-  public static boolean BuildToolList(Library lib, HashMap<String, AddTool> Tools) {
+  public static boolean buildToolList(Library lib, HashMap<String, AddTool> Tools) {
     var ret = true;
     if (!lib.getName().equals("Base")) {
       for (final var tool1 : lib.getTools()) {
@@ -57,7 +57,7 @@ public class LibraryTools {
       }
     }
     for (final var sublib : lib.getLibraries()) {
-      ret &= BuildToolList(sublib, Tools);
+      ret &= buildToolList(sublib, Tools);
     }
     return ret;
   }
@@ -80,7 +80,8 @@ public class LibraryTools {
     return null;
   }
 
-  public static ArrayList<String> LibraryCanBeMerged(HashSet<String> SourceTools, HashSet<String> NewTools) {
+  // FIXME: method name is odd.
+  public static ArrayList<String> libraryCanBeMerged(HashSet<String> SourceTools, HashSet<String> NewTools) {
     final var ret = new ArrayList<String>();
     for (final var This : NewTools) {
       if (SourceTools.contains(This)) {
@@ -90,7 +91,7 @@ public class LibraryTools {
     return ret;
   }
 
-  public static HashMap<String, String> GetToolLocation(
+  public static HashMap<String, String> getToolLocation(
       Library lib, String Location, ArrayList<String> UpercaseNames) {
     Iterator<? extends Tool> tooliter = lib.getTools().iterator();
     String MyLocation;
@@ -104,12 +105,12 @@ public class LibraryTools {
       }
     }
     for (final var sublib : lib.getLibraries()) {
-      ret.putAll(GetToolLocation(sublib, MyLocation, UpercaseNames));
+      ret.putAll(getToolLocation(sublib, MyLocation, UpercaseNames));
     }
     return ret;
   }
 
-  public static boolean LibraryIsConform(
+  public static boolean isLibraryConform(
       Library lib, HashSet<String> Names, HashSet<String> Tools, HashMap<String, String> Error) {
     Iterator<? extends Tool> tooliter = lib.getTools().iterator();
     boolean HasErrors = false;
@@ -131,19 +132,19 @@ public class LibraryTools {
         }
       }
       Names.add(sublib.getName().toUpperCase());
-      HasErrors |= !LibraryIsConform(sublib, Names, Tools, Error);
+      HasErrors |= !isLibraryConform(sublib, Names, Tools, Error);
     }
     return !HasErrors;
   }
 
-  public static void BuildLibraryList(Library lib, HashMap<String, Library> Names) {
+  public static void buildLibraryList(Library lib, HashMap<String, Library> Names) {
     Names.put(lib.getName().toUpperCase(), lib);
     for (final var sublib : lib.getLibraries()) {
-      BuildLibraryList(sublib, Names);
+      buildLibraryList(sublib, Names);
     }
   }
 
-  public static void RemovePresentLibraries(
+  public static void removePresentLibraries(
       Library lib, HashMap<String, Library> KnownLibs, boolean AddToSet) {
     /* we work top -> down */
     final var ToBeRemoved = new HashSet<String>();
@@ -158,6 +159,6 @@ public class LibraryTools {
       lib.removeLibrary(remove);
     }
     for (final var sublib : lib.getLibraries())
-      RemovePresentLibraries(sublib, KnownLibs, AddToSet);
+      removePresentLibraries(sublib, KnownLibs, AddToSet);
   }
 }

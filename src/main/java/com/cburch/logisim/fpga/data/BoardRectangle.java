@@ -98,16 +98,16 @@ public class BoardRectangle {
     yb = yt + rect.getHeight();
 
     /* first check for the other corner points inside myself */
-    result = this.PointInside(xl, yt);
-    result |= this.PointInside(xl, yb);
-    result |= this.PointInside(xr, yt);
-    result |= this.PointInside(xr, yb);
+    result = this.isPointInside(xl, yt);
+    result |= this.isPointInside(xl, yb);
+    result |= this.isPointInside(xr, yt);
+    result |= this.isPointInside(xr, yb);
 
     /* check for my corner points inside him */
-    result |= rect.PointInside(xPosition, yPosition);
-    result |= rect.PointInside(xPosition + width, yPosition);
-    result |= rect.PointInside(xPosition, yPosition + height);
-    result |= rect.PointInside(xPosition + width, yPosition + height);
+    result |= rect.isPointInside(xPosition, yPosition);
+    result |= rect.isPointInside(xPosition + width, yPosition);
+    result |= rect.isPointInside(xPosition, yPosition + height);
+    result |= rect.isPointInside(xPosition + width, yPosition + height);
 
     /*
      * if result=false: for sure the corner points are not inside one of
@@ -160,7 +160,7 @@ public class BoardRectangle {
     return result;
   }
 
-  public Boolean PointInside(int x, int y) {
+  public Boolean isPointInside(int x, int y) {
     return ((x >= xPosition)
         && (x <= (xPosition + width))
         && (y >= yPosition)

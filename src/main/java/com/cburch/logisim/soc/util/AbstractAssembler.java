@@ -43,7 +43,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
     acceptedParameterTypes.addAll(AssemblerToken.MATH_OPERATORS);
   }
 
-  public void AddAcceptedParameterType(int type) {
+  public void addAcceptedParameterType(int type) {
     acceptedParameterTypes.add(type);
   }
 

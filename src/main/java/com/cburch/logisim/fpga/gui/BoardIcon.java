@@ -30,14 +30,17 @@ public class BoardIcon implements Icon {
               this.getIconWidth(), this.getIconHeight(), BufferedImage.SCALE_SMOOTH);
   }
 
+  @Override
   public int getIconHeight() {
     return AppPreferences.getScaled(ICON_HEIGHT);
   }
 
+  @Override
   public int getIconWidth() {
     return AppPreferences.getScaled(ICON_WIDTH);
   }
 
+  @Override
   public void paintIcon(Component c, Graphics g, int x, int y) {
     if (image != null) g.drawImage(image, x, y, null);
     else {
@@ -46,7 +49,7 @@ public class BoardIcon implements Icon {
     }
   }
 
-  public void SetImage(BufferedImage BoardImage) {
+  public void setImage(BufferedImage BoardImage) {
     if (BoardImage == null) image = null;
     else
       image =

@@ -145,7 +145,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     if (AppPreferences.DefaultAppearance.isSource(evt))
       attrs.setValue(StdAttr.APPEARANCE, AppPreferences.getDefaultAppearance());
     else if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.isSource(evt))
-      attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.GetDefaultProbeAppearance());
+      attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.getDefaultProbeAppearance());
   }
 
   @Override
@@ -345,7 +345,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     if (!event.isConsumed() && event.getModifiersEx() == 0) {
       int KeybEvent = event.getKeyCode();
       final var Component = getFactory().getDisplayName();
-      if (!GateKeyboardModifier.TookKeyboardStrokes(KeybEvent, null, attrs, canvas, null, false))
+      if (!GateKeyboardModifier.tookKeyboardStrokes(KeybEvent, null, attrs, canvas, null, false))
         if (AutoLabler.labelKeyboardHandler(
             KeybEvent,
             getAttributeSet(),
@@ -501,20 +501,20 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
       if (MatrixPlace) {
         final var base = getBaseAttributes();
         final var bds = source.getOffsetBounds(base).expand(5);
-        matrix.SetBounds(bds);
+        matrix.setBounds(bds);
         final var diag =
             new MatrixPlacerDialog(
                 matrix, source.getName(), AutoLabler.isActive(canvas.getCircuit()));
         var okay = false;
         while (!okay) {
           if (!diag.execute()) return;
-          if (SyntaxChecker.isVariableNameAcceptable(matrix.GetLabel(), true)) {
-            AutoLabler.setLabel(matrix.GetLabel(), canvas.getCircuit(), source);
+          if (SyntaxChecker.isVariableNameAcceptable(matrix.getLabel(), true)) {
+            AutoLabler.setLabel(matrix.getLabel(), canvas.getCircuit(), source);
             okay =
                 AutoLabler.correctMatrixBaseLabel(
                     canvas.getCircuit(),
                     source,
-                    matrix.GetLabel(),
+                    matrix.getLabel(),
                     matrix.getNrOfXCopies(),
                     matrix.getNrOfYCopies());
             AutoLabler.setLabel(Label, canvas.getCircuit(), source);
@@ -524,9 +524,9 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
                   "Base label either has wrong syntax or is contained in circuit",  // FIXME: hardcoded string
                   "Matrixplacer",
                   OptionPane.ERROR_MESSAGE);
-              matrix.UndoLabel();
+              matrix.undoLabel();
             }
-          } else matrix.UndoLabel();
+          } else matrix.undoLabel();
         }
       }
 
@@ -535,15 +535,15 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
         for (var x = 0; x < matrix.getNrOfXCopies(); x++) {
           for (var y = 0; y < matrix.getNrOfYCopies(); y++) {
-            final var loc = Location.create(e.getX() + (matrix.GetDeltaX() * x),
-                e.getY() + (matrix.GetDeltaY() * y));
+            final var loc = Location.create(e.getX() + (matrix.getDeltaX() * x),
+                e.getY() + (matrix.getDeltaY() * y));
             final var attrsCopy = (AttributeSet) attrs.clone();
-            if (matrix.GetLabel() != null) {
+            if (matrix.getLabel() != null) {
               if (MatrixPlace)
                 attrsCopy.setValue(StdAttr.LABEL, AutoLabler.getMatrixLabel(canvas.getCircuit(),
-                    source, matrix.GetLabel(), x, y));
+                    source, matrix.getLabel(), x, y));
               else {
-                attrsCopy.setValue(StdAttr.LABEL, matrix.GetLabel());
+                attrsCopy.setValue(StdAttr.LABEL, matrix.getLabel());
               }
             }
             final var comp = source.createComponent(loc, attrsCopy);

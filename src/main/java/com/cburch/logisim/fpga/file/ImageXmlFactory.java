@@ -52,7 +52,7 @@ public class ImageXmlFactory {
   };
   private final char V2_Identifier = '@';
 
-  private String[] CreateCodeTable(byte[] stream) {
+  private String[] createCodeTable(byte[] stream) {
     String[] result = new String[256];
     Long[] ocurances = new Long[256];
     int[] index = new int[256];
@@ -84,7 +84,7 @@ public class ImageXmlFactory {
     return result;
   }
 
-  public void CreateStream(Image BoardPicture) {
+  public void createStream(Image BoardPicture) {
     BufferedImage result = new BufferedImage(740, 400, BufferedImage.TYPE_3BYTE_BGR);
     Graphics2D g2 = result.createGraphics();
     int width = BoardPicture.getWidth(null);
@@ -134,7 +134,7 @@ public class ImageXmlFactory {
       logger.error("JPEG Writer exception: {}", e.getMessage());
     }
     byte[] data = blaat.toByteArray();
-    CodeTable = CreateCodeTable(data);
+    CodeTable = createCodeTable(data);
     AsciiStream = new StringBuffer();
     AsciiStream.append(V2_Identifier);
     for (byte datum : data) {
@@ -143,7 +143,7 @@ public class ImageXmlFactory {
     }
   }
 
-  public String GetCodeTable() {
+  public String getCodeTable() {
     StringBuilder result = new StringBuilder();
     for (int i = 0; i < CodeTable.length; i++) {
       if (i != 0) {
@@ -154,11 +154,11 @@ public class ImageXmlFactory {
     return result.toString();
   }
 
-  public String GetCompressedString() {
+  public String getCompressedString() {
     return AsciiStream.toString();
   }
 
-  public BufferedImage GetPicture(int width, int height) {
+  public BufferedImage getPicture(int width, int height) {
     if (AsciiStream == null) return null;
     if (CodeTable == null) return null;
     if (CodeTable.length != 256) return null;
@@ -244,11 +244,11 @@ public class ImageXmlFactory {
     return result;
   }
 
-  public void SetCodeTable(String[] Table) {
+  public void setCodeTable(String[] Table) {
     CodeTable = Table.clone();
   }
 
-  public void SetCompressedString(String stream) {
+  public void setCompressedString(String stream) {
     AsciiStream = new StringBuffer();
     AsciiStream.append(stream);
   }

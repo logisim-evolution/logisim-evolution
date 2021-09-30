@@ -29,9 +29,9 @@ class XnorGate extends AbstractGate {
     public ArrayList<String> getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       return LineBuffer.getBuffer()
           .add(
-              isOneHot
-                  ? GetOneHot(true, nrOfInputs, bitwidth > 1)
-                  : GetParity(true, nrOfInputs, bitwidth > 1))
+                  isOneHot
+                  ? getOneHot(true, nrOfInputs, bitwidth > 1)
+                  : getParity(true, nrOfInputs, bitwidth > 1))
           .add("")
           .get();
     }

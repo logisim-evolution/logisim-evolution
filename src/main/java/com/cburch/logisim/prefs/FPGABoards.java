@@ -80,7 +80,7 @@ public class FPGABoards implements ActionListener {
         final var file = iter.next();
         final var f = new File(file);
         if (!f.exists() || f.isDirectory()) {
-          buildInBoards.RemoveExternalBoard(file);
+          buildInBoards.removeExternalBoard(file);
           removeFromPrefs(file);
           iter.remove();
           removed = true;
@@ -199,8 +199,8 @@ public class FPGABoards implements ActionListener {
       if (encoding != null) addExternalBoard(encoding, i, prefs);
     }
     final var selectedBoard = AppPreferences.SelectedBoard.get();
-    if (!buildInBoards.GetBoardNames().contains(selectedBoard)) {
-      AppPreferences.SelectedBoard.set(buildInBoards.GetBoardNames().get(0));
+    if (!buildInBoards.getBoardNames().contains(selectedBoard)) {
+      AppPreferences.SelectedBoard.set(buildInBoards.getBoardNames().get(0));
     }
   }
 
@@ -219,7 +219,7 @@ public class FPGABoards implements ActionListener {
       return false;
     }
     extBoardModel.insert(filename);
-    buildInBoards.AddExternalBoard(filename);
+    buildInBoards.addExternalBoard(filename);
     final var index = extBoardModel.indexOf(filename);
     if ((index != oldindex) && (oldindex != MaxBoards)) {
       prefs.remove(ExtBoard + oldindex);
@@ -236,15 +236,15 @@ public class FPGABoards implements ActionListener {
   }
 
   public String getBoardFilePath(String boardName) {
-    return buildInBoards.GetBoardFilePath(boardName);
+    return buildInBoards.getBoardFilePath(boardName);
   }
 
   public ArrayList<String> getBoardNames() {
-    return buildInBoards.GetBoardNames();
+    return buildInBoards.getBoardNames();
   }
 
   public String getSelectedBoardFileName() {
-    return buildInBoards.GetBoardFilePath(AppPreferences.SelectedBoard.get());
+    return buildInBoards.getBoardFilePath(AppPreferences.SelectedBoard.get());
   }
 
   public JComboBox<String> boardSelector() {
@@ -312,7 +312,7 @@ public class FPGABoards implements ActionListener {
     var index = 1;
     var found = false;
     if (update) AppPreferences.SelectedBoard.set(board);
-    for (String item : buildInBoards.GetBoardNames()) {
+    for (String item : buildInBoards.getBoardNames()) {
       boardSelector.addItem(item);
       if (item.equals(AppPreferences.SelectedBoard.get())) {
         boardSelector.setSelectedIndex(index);
@@ -338,11 +338,11 @@ public class FPGABoards implements ActionListener {
 
   private boolean removeBoard(String name) {
     if (name == null) return false;
-    final var qualifier = buildInBoards.GetBoardFilePath(name);
+    final var qualifier = buildInBoards.getBoardFilePath(name);
     if (extBoardModel.contains(qualifier)) {
       extBoardModel.remove(qualifier);
     } else return false;
-    if (!buildInBoards.RemoveExternalBoard(qualifier)) return false;
+    if (!buildInBoards.removeExternalBoard(qualifier)) return false;
     removeFromPrefs(qualifier);
     return true;
   }
@@ -366,12 +366,12 @@ public class FPGABoards implements ActionListener {
     var boardFileName = getBoardFile();
     if (boardFileName == null) return false;
     var test = new BoardReaderClass(boardFileName);
-    if (test.GetBoardInformation() == null) {
+    if (test.getBoardInformation() == null) {
       OptionPane.showMessageDialog(
           null, S.get("InvalidFileFormat"), S.get("AddExternalBoards"), OptionPane.ERROR_MESSAGE);
       return false;
     }
-    if (buildInBoards.GetBoardNames().contains(BoardList.getBoardName(boardFileName))) {
+    if (buildInBoards.getBoardNames().contains(BoardList.getBoardName(boardFileName))) {
       OptionPane.showMessageDialog(
           null,
           S.get("BoardPreset") + "\"" + BoardList.getBoardName(boardFileName) + "\"",

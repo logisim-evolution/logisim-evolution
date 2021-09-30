@@ -84,8 +84,8 @@ public class ProjectActions {
     var isOk = true;
     var tempSet = new HashMap<String, Library>();
     var forbiddenNames = new HashSet<String>();
-    LibraryTools.BuildLibraryList(proj.getLogisimFile(), tempSet);
-    LibraryTools.BuildToolList(proj.getLogisimFile(), forbiddenNames);
+    LibraryTools.buildLibraryList(proj.getLogisimFile(), tempSet);
+    LibraryTools.buildToolList(proj.getLogisimFile(), forbiddenNames);
     forbiddenNames.addAll(tempSet.keySet());
     var pattern = Pattern.compile("[^a-z0-9_.]", Pattern.CASE_INSENSITIVE);
     var matcher = pattern.matcher(filename);
@@ -229,7 +229,7 @@ public class ProjectActions {
       }
       return;
     }
-    baseProject.doAction(LogisimFileActions.MergeFile(mergelib, baseProject.getLogisimFile()));
+    baseProject.doAction(LogisimFileActions.mergeFile(mergelib, baseProject.getLogisimFile()));
   }
 
   private static void updatecircs(LogisimFile lib, Project proj) {
@@ -310,7 +310,7 @@ public class ProjectActions {
       final var lib = loader.openLogisimFile(f);
       AppPreferences.updateRecentFile(f);
       if (lib == null) return null;
-      LibraryTools.RemovePresentLibraries(lib, new HashMap<>(), true);
+      LibraryTools.removePresentLibraries(lib, new HashMap<>(), true);
       if (proj == null) {
         proj = new Project(lib);
         updatecircs(lib, proj);

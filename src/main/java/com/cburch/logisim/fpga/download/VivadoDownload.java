@@ -230,7 +230,7 @@ public class VivadoDownload implements VendorDownload {
     for (final var key : MapInfo.getMappableResources().keySet()) {
       final var map = MapInfo.getMappableResources().get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {
-        if (map.isMapped(i) && !map.isOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
+        if (map.isMapped(i) && !map.isOpenMapped(i) && !map.isConstantMapped(i) && !map.isInternalMapped(i)) {
           final var netName = (map.isExternalInverted(i) ? "n_" : "") + map.getHdlString(i);
           // Note {{2}} is wrapped in additional {}!
           contents.add("set_property PACKAGE_PIN {{1}} [get_ports {{{2}}}]", map.getPinLocation(i), netName);

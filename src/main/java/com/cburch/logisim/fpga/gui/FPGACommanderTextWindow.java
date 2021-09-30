@@ -59,7 +59,7 @@ public class FPGACommanderTextWindow extends JFrame implements BaseKeyListenerCo
     FontSize = textMessages.getFont().getSize();
   }
 
-  public boolean IsActivated() {
+  public boolean isActivated() {
     return IsActive;
   }
 

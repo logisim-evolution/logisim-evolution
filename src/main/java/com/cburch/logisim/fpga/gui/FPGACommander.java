@@ -86,13 +86,13 @@ public class FPGACommander
   public void preferenceChange(PreferenceChangeEvent pce) {
     String property = pce.getKey();
     if (property.equals(AppPreferences.SelectedBoard.getIdentifier())) {
-      MyBoardInformation = new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName()).GetBoardInformation();
+      MyBoardInformation = new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName()).getBoardInformation();
       MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
       boardIcon = new BoardIcon(MyBoardInformation.getImage());
       boardPic.setIcon(boardIcon);
       boardPic.repaint();
       FrequencyPanel.setFpgaClockFrequency(MyBoardInformation.fpga.getClockFrequency());
-      HandleHDLOnly();
+      handleHdlOnly();
     }
   }
 
@@ -100,7 +100,7 @@ public class FPGACommander
   public void libraryChanged(LibraryEvent event) {
     if (event.getAction() == LibraryEvent.ADD_TOOL
         || event.getAction() == LibraryEvent.REMOVE_TOOL) {
-      RebuildCircuitSelection();
+      rebuildCircuitSelection();
     }
   }
 
@@ -108,9 +108,9 @@ public class FPGACommander
   public void projectChanged(ProjectEvent event) {
     if (event.getAction() == ProjectEvent.ACTION_SET_CURRENT) {
       Circuit circ = event.getCircuit();
-      if (circ != null) SetCurrentSheet(circ.getName());
+      if (circ != null) setCurrentSheet(circ.getName());
     } else if (event.getAction() == ProjectEvent.ACTION_SET_FILE) {
-      RebuildCircuitSelection();
+      rebuildCircuitSelection();
     }
   }
 
@@ -120,7 +120,7 @@ public class FPGACommander
     int act = event.getAction();
 
     if (act == CircuitEvent.ACTION_SET_NAME) {
-      RebuildCircuitSelection();
+      rebuildCircuitSelection();
     }
     ReporterGui.clearDrcTrace();
   }
@@ -135,7 +135,7 @@ public class FPGACommander
     c.gridx = 0;
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
-    MyBoardInformation = new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName()).GetBoardInformation();
+    MyBoardInformation = new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName()).getBoardInformation();
     MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
     boardIcon = new BoardIcon(MyBoardInformation.getImage());
     JComboBox<String> selector = AppPreferences.Boards.boardSelector();
@@ -149,7 +149,7 @@ public class FPGACommander
     if (MyBoardInformation != null
         && !VendorSoftware.toolsPresent(
             MyBoardInformation.fpga.getVendor(),
-            VendorSoftware.GetToolPath(MyBoardInformation.fpga.getVendor()))) {
+            VendorSoftware.getToolPath(MyBoardInformation.fpga.getVendor()))) {
       /* add the select toolpath button */
       c.gridy++;
       BoardSelectionPanel.add(ToolPath, c);
@@ -207,7 +207,7 @@ public class FPGACommander
     JPanel pan1 = new JPanel();
     pan1.setLayout(new BorderLayout());
     pan1.add(textMainCircuit, BorderLayout.WEST);
-    RebuildCircuitSelection();
+    rebuildCircuitSelection();
     MyProject.addProjectListener(this);
     MyProject.getLogisimFile().addLibraryListener(this);
     circuitsList.setActionCommand("mainCircuit");
@@ -308,7 +308,7 @@ public class FPGACommander
     }
   }
 
-  private void HandleHDLOnly() {
+  private void handleHdlOnly() {
     rebuildBoardSelectionPanel();
     int sel = actionCommands.getItemCount() == 0 ? 1 : actionCommands.getSelectedIndex();
     int nrItems = 1;
@@ -319,7 +319,7 @@ public class FPGACommander
     if (MyBoardInformation != null
         && VendorSoftware.toolsPresent(
             MyBoardInformation.fpga.getVendor(),
-            VendorSoftware.GetToolPath(MyBoardInformation.fpga.getVendor()))) {
+            VendorSoftware.getToolPath(MyBoardInformation.fpga.getVendor()))) {
       actionCommands.addItem(S.getter("FpgaGuiSyntAndD"));
       nrItems++;
       actionCommands.addItem(S.getter("FpgaGuiDownload"));
@@ -337,12 +337,12 @@ public class FPGACommander
   @Override
   public void actionPerformed(ActionEvent e) {
     if (e.getActionCommand().equals("annotate")) {
-      Annotate(annotationList.getSelectedIndex() == 0);
+      annotate(annotationList.getSelectedIndex() == 0);
     } else if (e.getActionCommand().equals("Settings")) {
       PreferencesFrame.showFPGAPreferences();
     } else if (e.getActionCommand().equals("ToolPath")) {
       selectToolPath(MyBoardInformation.fpga.getVendor());
-      HandleHDLOnly();
+      handleHdlOnly();
     } else if (e.getActionCommand().equals(STOP_REQUESTED)) {
       if (downloader != null) downloader.stop();
       ((ProjectAddIcon) StopButton.getIcon()).setDeselect(true);
@@ -362,7 +362,7 @@ public class FPGACommander
           new Download(
               MyProject,
               circuitsList.getSelectedItem().toString(),
-              FrequencyPanel.GetTickfrequency(),
+              FrequencyPanel.getTickFrequency(),
               MyBoardInformation,
               "",
               writeFlash,
@@ -388,7 +388,7 @@ public class FPGACommander
     }
   }
 
-  private void Annotate(boolean ClearExistingLabels) {
+  private void annotate(boolean ClearExistingLabels) {
     ReporterGui.clearAllMessages();
     String CircuitName = circuitsList.getSelectedItem().toString();
     Circuit root = MyProject.getLogisimFile().getCircuit(CircuitName);
@@ -403,7 +403,7 @@ public class FPGACommander
     }
   }
 
-  private void RebuildCircuitSelection() {
+  private void rebuildCircuitSelection() {
     circuitsList.removeAllItems();
     localeChanged();
     int i = 0;
@@ -420,7 +420,7 @@ public class FPGACommander
   }
 
   public static void selectToolPath(char vendor) {
-    String ToolPath = VendorSoftware.GetToolPath(vendor);
+    String ToolPath = VendorSoftware.getToolPath(vendor);
     if (ToolPath == null) return;
     JFileChooser fc = new JFileChooser(ToolPath);
     fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
@@ -452,7 +452,7 @@ public class FPGACommander
     } while (!ok);
   }
 
-  private void SetCurrentSheet(String Name) {
+  private void setCurrentSheet(String Name) {
     for (int i = 0; i < circuitsList.getItemCount(); i++) {
       if (circuitsList.getItemAt(i).equals(Name)) {
         circuitsList.setSelectedIndex(i);
@@ -462,7 +462,7 @@ public class FPGACommander
     }
   }
 
-  public void ShowGui() {
+  public void showGui() {
     if (!panel.isVisible()) {
       panel.setVisible(true);
     } else {
@@ -488,6 +488,6 @@ public class FPGACommander
     annotateButton.setText(S.get("FpgaGuiAnnotate"));
     Settings.setText(S.get("FpgaGuiSettings"));
     Progress.setString(S.get("FpgaGuiIdle"));
-    HandleHDLOnly();
+    handleHdlOnly();
   }
 }

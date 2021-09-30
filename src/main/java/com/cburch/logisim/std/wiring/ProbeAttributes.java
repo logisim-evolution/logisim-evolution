@@ -47,7 +47,7 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
           StdAttr.LABEL_FONT,
           PROBEAPPEARANCE);
 
-  public static AttributeOption GetDefaultProbeAppearance() {
+  public static AttributeOption getDefaultProbeAppearance() {
     if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean()) return APPEAR_EVOLUTION_NEW;
     else return StdAttr.APPEAR_CLASSIC;
   }

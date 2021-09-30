@@ -41,6 +41,7 @@ public class MenuFPGA extends JMenu implements ActionListener {
     setEnabled(parent instanceof Frame);
   }
 
+  @Override
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
     if (src == BoardEditor) {
@@ -53,7 +54,7 @@ public class MenuFPGA extends JMenu implements ActionListener {
       }
     } else if (src == FPGACommander) {
       if (Commander == null) Commander = new FPGACommander(ThisCircuit);
-      Commander.ShowGui();
+      Commander.showGui();
     }
   }
 

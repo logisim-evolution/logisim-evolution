@@ -31,9 +31,9 @@ class XorGate extends AbstractGate {
     public ArrayList<String> getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       return LineBuffer.getBuffer()
           .add(
-              isOneHot
-                  ? GetOneHot(false, nrOfInputs, bitwidth > 1)
-                  : GetParity(false, nrOfInputs, bitwidth > 1))
+                  isOneHot
+                  ? getOneHot(false, nrOfInputs, bitwidth > 1)
+                  : getParity(false, nrOfInputs, bitwidth > 1))
           .add("")
           .get();
     }

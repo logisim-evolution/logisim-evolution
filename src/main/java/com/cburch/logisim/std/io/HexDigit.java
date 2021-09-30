@@ -76,7 +76,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
           Direction.EAST,
           StdAttr.DEFAULT_LABEL_FONT,
           false,
-          new ComponentMapInformationContainer(0, 8, 0, null, SevenSegment.GetLabels(), null)
+          new ComponentMapInformationContainer(0, 8, 0, null, SevenSegment.getLabels(), null)
         });
     setOffsetBounds(Bounds.create(-15, -60, 40, 60));
     setIcon(new SevenSegmentIcon(true));
@@ -95,7 +95,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
     instance.setPorts(ps);
     instance
         .getAttributeValue(StdAttr.MAPINFO)
-        .setNrOfOutports(6 + nrPorts, SevenSegment.GetLabels());
+        .setNrOfOutports(6 + nrPorts, SevenSegment.getLabels());
   }
 
   @Override
@@ -104,7 +104,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
         .getAttributeSet()
         .setValue(
             StdAttr.MAPINFO,
-            new ComponentMapInformationContainer(0, 8, 0, null, SevenSegment.GetLabels(), null));
+            new ComponentMapInformationContainer(0, 8, 0, null, SevenSegment.getLabels(), null));
     instance.addAttributeListener();
     updatePorts(instance);
     SevenSegment.computeTextField(instance);

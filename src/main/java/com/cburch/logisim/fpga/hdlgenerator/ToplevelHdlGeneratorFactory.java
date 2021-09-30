@@ -131,12 +131,12 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     }
     if (nrOfClockTrees > 0 || nets.requiresGlobalClockConnection() || requiresFPGAClock)
       myPorts.add(Port.INPUT, TickComponentHdlGeneratorFactory.FPGA_CLOCK, 1, null);
-    for (final var in : myIOComponents.GetMappedInputPinNames())
+    for (final var in : myIOComponents.getMappedInputPinNames())
       myPorts.add(Port.INPUT, in, 1, null);
-    for (final var io : myIOComponents.GetMappedOutputPinNames()) {
+    for (final var io : myIOComponents.getMappedOutputPinNames()) {
       myPorts.add(Port.OUTPUT, io, 1, null);
     }
-    for (final var io : myIOComponents.GetMappedIOPinNames())
+    for (final var io : myIOComponents.GetMappedIoPinNames())
       myPorts.add(Port.INOUT, io, 1, null);
   }
 
@@ -266,7 +266,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         temp.append(component.getHdlSignalName(i));
         allign(temp);
         temp.append(Hdl.assignOperator());
-        if (component.IsConstantMapped(i)) {
+        if (component.isConstantMapped(i)) {
           temp.append(component.isZeroConstantMap(i) ? Hdl.zeroBit() : Hdl.oneBit());
         } else {
           if (component.isExternalInverted(i)) temp.append(Hdl.notOperator()).append("n_");

@@ -36,7 +36,7 @@ public class TFlipFlop extends AbstractFlipFlop {
     }
 
     @Override
-    public ArrayList<String> GetUpdateLogic() {
+    public ArrayList<String> getUpdateLogic() {
       return LineBuffer.getBuffer()
           .add("{{1}} s_next_state {{2}} s_current_state_reg {{3}} T;", Hdl.assignPreamble(), Hdl.assignOperator(), Hdl.xorOperator())
           .getWithIndent();

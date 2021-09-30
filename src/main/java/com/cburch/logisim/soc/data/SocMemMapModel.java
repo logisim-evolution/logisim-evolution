@@ -32,10 +32,10 @@ public class SocMemMapModel extends AbstractTableModel
   private static final long serialVersionUID = 1L;
   private static final long longMask = Long.parseUnsignedLong("FFFFFFFF", 16);
 
-  public static class memMapHeaderRenderer extends JLabel implements TableCellRenderer {
+  public static class MemoryMapHeaderRenderer extends JLabel implements TableCellRenderer {
     private static final long serialVersionUID = 1L;
 
-    public memMapHeaderRenderer() {
+    public MemoryMapHeaderRenderer() {
       setForeground(Color.BLUE);
       setBorder(BorderFactory.createEtchedBorder());
     }
@@ -199,7 +199,7 @@ public class SocMemMapModel extends AbstractTableModel
   private final ArrayList<SocBusSlaveInterface> slaves;
   private final SlaveMap slaveMap;
   private final SlaveInfoRenderer slaveRenderer;
-  private final memMapHeaderRenderer headRenderer;
+  private final MemoryMapHeaderRenderer headRenderer;
   private InstanceComponent marked;
 
   public SocMemMapModel() {
@@ -208,7 +208,7 @@ public class SocMemMapModel extends AbstractTableModel
     slaveMap = new SlaveMap();
     slaves = new ArrayList<>();
     slaveRenderer = new SlaveInfoRenderer();
-    headRenderer = new memMapHeaderRenderer();
+    headRenderer = new MemoryMapHeaderRenderer();
     marked = null;
     rebuild();
   }
@@ -237,7 +237,7 @@ public class SocMemMapModel extends AbstractTableModel
     return slaveRenderer;
   }
 
-  public memMapHeaderRenderer getHeaderRenderer() {
+  public MemoryMapHeaderRenderer getHeaderRenderer() {
     return headRenderer;
   }
 

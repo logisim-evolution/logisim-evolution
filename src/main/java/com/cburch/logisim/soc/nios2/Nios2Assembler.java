@@ -20,8 +20,8 @@ public class Nios2Assembler extends AbstractAssembler {
 
   public Nios2Assembler() {
     super();
-    super.AddAcceptedParameterType(CUSTOM_REGISTER);
-    super.AddAcceptedParameterType(CONTROL_REGISTER);
+    super.addAcceptedParameterType(CUSTOM_REGISTER);
+    super.addAcceptedParameterType(CONTROL_REGISTER);
     /* Add the custom instructions */
     super.addAssemblerExecutionUnit(new Nios2CustomInstructions());
     /* Add all other instructions */
@@ -33,14 +33,17 @@ public class Nios2Assembler extends AbstractAssembler {
     super.addAssemblerExecutionUnit(new Nios2OtherControlInstructions());
   }
 
+  @Override
   public boolean usesRoundedBrackets() {
     return true;
   }
 
+  @Override
   public String getHighlightStringIdentifier() {
     return "asm/nios2";
   }
 
+  @Override
   public void performUpSpecificOperationsOnTokens(LinkedList<AssemblerToken> tokens) {
     for (AssemblerToken token : tokens) {
       if (token.getType() == AssemblerToken.REGISTER) {

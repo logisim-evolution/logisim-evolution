@@ -242,7 +242,7 @@ public class CpuDrawSupport {
               simStateBounds.getHeight());
       Bounds bloc = SocUpSimulationState.getButtonLocation(loc.getX(), loc.getY(), simButton);
       if (bloc.contains(e.getX(), e.getY())) {
-        ((SocUpStateInterface) state.getData()).SimButtonPressed();
+        ((SocUpStateInterface) state.getData()).simButtonPressed();
       }
     }
   }

@@ -337,7 +337,7 @@ public class SelectTool extends Tool {
       for (final var comp : comps) {
         final var act = new SetAttributeAction(canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
         KeyTaken |=
-            GateKeyboardModifier.TookKeyboardStrokes(
+            GateKeyboardModifier.tookKeyboardStrokes(
                 KeybEvent, comp, comp.getAttributeSet(), canvas, act, true);
         if (!act.isEmpty()) canvas.getProject().doAction(act);
       }

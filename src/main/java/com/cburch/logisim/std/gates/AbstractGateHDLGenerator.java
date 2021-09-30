@@ -84,7 +84,7 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
     return contents.get();
   }
 
-  public ArrayList<String> GetOneHot(boolean inverted, int nrOfInputs, boolean isBus) {
+  public ArrayList<String> getOneHot(boolean inverted, int nrOfInputs, boolean isBus) {
     var lines = new ArrayList<String>();
     var spaces = "   ";
     var indexString = "";
@@ -147,7 +147,7 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
     return lines;
   }
 
-  public ArrayList<String> GetParity(boolean inverted, int nrOfInputs, boolean isBus) {
+  public ArrayList<String> getParity(boolean inverted, int nrOfInputs, boolean isBus) {
     final var lines = new ArrayList<String>();
     var spaces = "   ";
     var indexString = "";

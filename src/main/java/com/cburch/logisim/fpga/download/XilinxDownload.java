@@ -133,7 +133,7 @@ public class XilinxDownload implements VendorDownload {
 
   @Override
   public ProcessBuilder downloadToBoard() {
-    if (!boardInfo.fpga.USBTMCDownloadRequired()) {
+    if (!boardInfo.fpga.isUsbTmcDownloadRequired()) {
       var command = new ArrayList<String>();
       command.add(xilinxVendor.getBinaryPath(5));
       command.add("-batch");
@@ -280,7 +280,7 @@ public class XilinxDownload implements VendorDownload {
     for (var key : MapInfo.getMappableResources().keySet()) {
       var map = MapInfo.getMappableResources().get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {
-        if (map.isMapped(i) && !map.isOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
+        if (map.isMapped(i) && !map.isOpenMapped(i) && !map.isConstantMapped(i) && !map.isInternalMapped(i)) {
           Temp.setLength(0);
           Temp.append("NET \"");
           if (map.isExternalInverted(i)) Temp.append("n_");

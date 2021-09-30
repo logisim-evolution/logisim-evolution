@@ -213,9 +213,9 @@ public class Rom extends Mem {
   @Override
   public void paintInstance(InstancePainter painter) {
     if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
-      RamAppearance.DrawRamClassic(painter);
+      RamAppearance.drawRamClassic(painter);
     } else {
-      RamAppearance.DrawRamEvolution(painter);
+      RamAppearance.drawRamEvolution(painter);
     }
   }
 

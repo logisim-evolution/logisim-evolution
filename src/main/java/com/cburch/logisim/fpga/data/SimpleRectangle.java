@@ -47,7 +47,7 @@ public class SimpleRectangle {
         new BoardRectangle(x + width - offset, y + height - offset, offset, offset);
     show = true;
     fill = true;
-    movemode = !test.PointInside(e.getX(), e.getY());
+    movemode = !test.isPointInside(e.getX(), e.getY());
   }
 
   public Rectangle resizeAndGetUpdate(MouseEvent e) {

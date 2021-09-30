@@ -100,7 +100,7 @@ public class VendorSoftware {
     }
   }
 
-  public static String GetToolPath(char vendor) {
+  public static String getToolPath(char vendor) {
     switch (vendor) {
       case VENDOR_ALTERA:
         return AppPreferences.QuartusToolPath.get();
@@ -130,7 +130,7 @@ public class VendorSoftware {
     }
   }
 
-  private static String CorrectPath(String path) {
+  private static String correctPath(String path) {
     if (path.endsWith(File.separator)) return path;
     else return path + File.separator;
   }
@@ -173,7 +173,7 @@ public class VendorSoftware {
   public static boolean toolsPresent(char vendor, String path) {
     String[] tools = load(vendor);
     for (String tool : tools) {
-      File test = new File(CorrectPath(path + tool));
+      File test = new File(correctPath(path + tool));
       if (!test.exists())
         return false;
     }

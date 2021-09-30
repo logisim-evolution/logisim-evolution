@@ -247,7 +247,7 @@ public class Buzzer extends InstanceFactory {
     }
     d.updateRequired = true;
     if (active && !d.thread.isAlive()) {
-      d.StartThread();
+      d.startThread();
     }
   }
 
@@ -319,7 +319,7 @@ public class Buzzer extends InstanceFactory {
     private Thread thread;
 
     public Data() {
-      StartThread();
+      startThread();
     }
 
     @Override
@@ -327,7 +327,7 @@ public class Buzzer extends InstanceFactory {
       return new Data();
     }
 
-    public void ThreadFunc() {
+    public void threadFunc() {
       AudioFormat af = null;
       Clip clip = null;
       AudioInputStream ais = null;
@@ -423,12 +423,12 @@ public class Buzzer extends InstanceFactory {
       }
     }
 
-    public void StartThread() {
+    public void startThread() {
       // avoid crash (for example if you connect a clock at 4KHz to the enable pin)
       if (Thread.activeCount() > 100) {
         return;
       }
-      thread = new Thread(this::ThreadFunc);
+      thread = new Thread(this::threadFunc);
       thread.start();
       thread.setName("Sound Thread");
     }

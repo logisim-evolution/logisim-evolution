@@ -72,7 +72,7 @@ public class FPGAClockPanel extends JPanel implements ActionListener, LocaleList
     frequenciesList.setEnabled(enabled);
     divider.setEnabled(enabled);
   }
-  
+
   public void updateFrequencyList(String circuitName) {
     final var newTopCircuit = myProject.getLogisimFile().getCircuit(circuitName);
     if ((newTopCircuit == null) || (newTopCircuit == rootSheet)) return;
@@ -128,7 +128,7 @@ public class FPGAClockPanel extends JPanel implements ActionListener, LocaleList
     recalculateFrequency();
   }
 
-  public double GetTickfrequency() {
+  public double getTickFrequency() {
     String TickIndex = frequenciesList.getSelectedItem().toString().trim().toUpperCase();
     int i = 0;
     /* first pass, find the number */
@@ -151,7 +151,7 @@ public class FPGAClockPanel extends JPanel implements ActionListener, LocaleList
   }
 
   private void recalculateFrequency() {
-    double freq = GetTickfrequency();
+    double freq = getTickFrequency();
     double divider = FPGAClockFrequency / freq;
     long longDivider = (long) divider;
     if (longDivider <= 1) longDivider = 2;

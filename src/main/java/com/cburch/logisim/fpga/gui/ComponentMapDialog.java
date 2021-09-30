@@ -219,10 +219,10 @@ public class ComponentMapDialog implements ActionListener, BaseWindowListenerCon
         }
         break;
       case "Save":
-        Save();
+        save();
         break;
       case "Load":
-        Load();
+        load();
         MappableComponents.markChanged();
         break;
       case "Cancel":
@@ -233,7 +233,7 @@ public class ComponentMapDialog implements ActionListener, BaseWindowListenerCon
     }
   }
 
-  private void Load() {
+  private void load() {
     JFileChooser fc = new JFileChooser(OldDirectory);
     fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
     fc.setDialogTitle("Choose XML board description file to use");
@@ -259,7 +259,7 @@ public class ComponentMapDialog implements ActionListener, BaseWindowListenerCon
     }
   }
 
-  private void Save() {
+  private void save() {
     panel.setVisible(false);
     MappableComponents.save();
     OptionPane.showMessageDialog(

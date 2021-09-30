@@ -47,7 +47,7 @@ public class PortIO extends InstanceFactory {
    */
   public static final String _ID = "PortIO";
 
-  public static ArrayList<String> GetLabels(int size) {
+  public static ArrayList<String> getLabels(int size) {
     ArrayList<String> LabelNames = new ArrayList<>();
     for (var i = 0; i < size; i++) {
       LabelNames.add("pin_" + (i + 1));
@@ -212,7 +212,7 @@ public class PortIO extends InstanceFactory {
           false,
           BitWidth.create(INITPORTSIZE),
           INOUTSE,
-          new ComponentMapInformationContainer(0, 0, INITPORTSIZE, null, null, GetLabels(INITPORTSIZE))
+          new ComponentMapInformationContainer(0, 0, INITPORTSIZE, null, null, getLabels(INITPORTSIZE))
         });
     setFacingAttribute(StdAttr.FACING);
     setIconName("pio.gif");
@@ -229,7 +229,7 @@ public class PortIO extends InstanceFactory {
     instance.computeLabelTextField(Instance.AVOID_BOTTOM);
     ComponentMapInformationContainer map = instance.getAttributeSet().getValue(StdAttr.MAPINFO);
     if (map == null) {
-      map = new ComponentMapInformationContainer(0, 0, INITPORTSIZE, null, null, GetLabels(INITPORTSIZE));
+      map = new ComponentMapInformationContainer(0, 0, INITPORTSIZE, null, null, getLabels(INITPORTSIZE));
       instance.getAttributeSet().setValue(ATTR_SIZE, BitWidth.create(INITPORTSIZE));
       instance.getAttributeSet().setValue(ATTR_DIR, INOUTSE);
     }
@@ -342,7 +342,7 @@ public class PortIO extends InstanceFactory {
         var inputs = 0;
         var outputs = 0;
         var ios = 0;
-        final var labels = GetLabels(nrPins);
+        final var labels = getLabels(nrPins);
         if (instance.getAttributeValue(ATTR_DIR) == INPUT) {
           inputs = nrPins;
         } else if (instance.getAttributeValue(ATTR_DIR) == OUTPUT) {

@@ -43,7 +43,7 @@ public class MappableResourcesContainer {
     var BoardId = new ArrayList<String>();
     BoardId.add(CurrentBoard.getBoardName());
     myIOComponents = new ArrayList<>();
-    for (var io : currentUsedBoard.GetAllComponents()) {
+    for (var io : currentUsedBoard.getAllComponents()) {
       try {
         var clone = (FpgaIoInformationContainer) io.clone();
         clone.setMapMode();
@@ -172,7 +172,7 @@ public class MappableResourcesContainer {
     return result;
   }
 
-  public ArrayList<String> GetMappedIOPinNames() {
+  public ArrayList<String> GetMappedIoPinNames() {
     var result = new ArrayList<String>();
     for (var key : myMappableResources.keySet()) {
       var map = myMappableResources.get(key);
@@ -189,7 +189,7 @@ public class MappableResourcesContainer {
     return result;
   }
 
-  public ArrayList<String> GetMappedInputPinNames() {
+  public ArrayList<String> getMappedInputPinNames() {
     var result = new ArrayList<String>();
     for (var key : myMappableResources.keySet()) {
       var map = myMappableResources.get(key);
@@ -206,7 +206,7 @@ public class MappableResourcesContainer {
     return result;
   }
 
-  public ArrayList<String> GetMappedOutputPinNames() {
+  public ArrayList<String> getMappedOutputPinNames() {
     var result = new ArrayList<String>();
     for (var key : myMappableResources.keySet()) {
       var map = myMappableResources.get(key);

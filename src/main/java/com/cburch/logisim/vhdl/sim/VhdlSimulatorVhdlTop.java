@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.vhdl.sim;
 
-import com.cburch.logisim.Main;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.instance.Port;
@@ -84,10 +83,10 @@ public class VhdlSimulatorVhdlTop {
       String vhdlEntityName;
       final var myPorts = new ArrayList<VhdlParser.PortDescription>();
       if (fac instanceof VhdlEntity) {
-        vhdlEntityName = ((VhdlEntity) fac).GetSimName(state.getInstance().getAttributeSet());
+        vhdlEntityName = ((VhdlEntity) fac).getSimName(state.getInstance().getAttributeSet());
         myPorts.addAll(((VhdlEntityAttributes) state.getAttributeSet()).getContent().getPorts());
       } else {
-        vhdlEntityName = ((VhdlEntityComponent) fac).GetSimName(state.getInstance().getAttributeSet());
+        vhdlEntityName = ((VhdlEntityComponent) fac).getSimName(state.getInstance().getAttributeSet());
         for (final var port : state.getAttributeValue(VhdlEntityComponent.CONTENT_ATTR).getPorts()) {
           VhdlParser.PortDescription nport = new VhdlParser.PortDescription(port.getToolTip(), type[port.getType()], port.getFixedBitWidth().getWidth());
           myPorts.add(nport);

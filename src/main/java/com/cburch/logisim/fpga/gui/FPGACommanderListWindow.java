@@ -61,7 +61,7 @@ public class FPGACommanderListWindow extends JFrame implements BaseWindowListene
     this.model = model;
   }
 
-  public boolean IsActivated() {
+  public boolean isActivated() {
     return IsActive;
   }
 

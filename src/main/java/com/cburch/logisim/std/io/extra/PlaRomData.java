@@ -47,7 +47,7 @@ public class PlaRomData implements InstanceData {
     InputValue = new Value[getInputs()];
     AndValue = new Value[getAnd()];
     OutputValue = new Value[getOutputs()];
-    InitializeInputValue();
+    initializeInputValue();
     setAndValue();
     setOutputValue();
   }
@@ -126,7 +126,7 @@ public class PlaRomData implements InstanceData {
             null,
             this.options,
             null);
-    SaveData();
+    saveData();
     return ret;
   }
 
@@ -178,11 +178,11 @@ public class PlaRomData implements InstanceData {
     return this.getInputs() + 'x' + this.getAnd() + "x" + this.getOutputs();
   }
 
-  private void InitializeInputValue() {
+  private void initializeInputValue() {
     for (byte i = 0; i < getInputs(); i++) InputValue[i] = Value.UNKNOWN;
   }
 
-  private void SaveData() {
+  private void saveData() {
     // string to write inside the .circ to not lose data
     int row, column, size1 = getInputs() * getAnd(), size2 = getOutputs() * getAnd(), count = 0;
     char val, last = 'x';
@@ -330,11 +330,11 @@ public class PlaRomData implements InstanceData {
         System.arraycopy(oldInputAnd[i], 0, InputAnd[i], 0, mininputs * 2);
         System.arraycopy(oldAndOutput[i], 0, AndOutput[i], 0, minoutputs);
       }
-      InitializeInputValue();
+      initializeInputValue();
       setAndValue();
       setOutputValue();
       // data to save in the .circ
-      SaveData();
+      saveData();
       return true;
     }
     return false;

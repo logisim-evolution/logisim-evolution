@@ -16,20 +16,36 @@ import javax.swing.JPanel;
 
 public interface SocUpStateInterface {
   int getLastRegisterWritten();
+
   String getRegisterValueHex(int index);
+
   String getRegisterAbiName(int index);
+
   String getRegisterNormalName(int index);
+
   int getProgramCounter();
+
   LinkedList<TraceInfo> getTraces();
-  void SimButtonPressed();
+
+  void simButtonPressed();
+
   SocUpSimulationState getSimState();
+
   boolean programLoaded();
+
   WindowListener getWindowListener();
+
   JPanel getAsmWindow();
+
   JPanel getStatePanel();
+
   AssemblerInterface getAssembler();
+
   SocProcessorInterface getProcessorInterface();
+
   String getProcessorType();
+
   int getElfType();
+
   void repaint();
 }
