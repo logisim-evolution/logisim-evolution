@@ -21,7 +21,7 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.gui.icons.CounterIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -73,13 +73,13 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
           S.getter("counterGoalAttr"),
           new AttributeOption[] {ON_GOAL_WRAP, ON_GOAL_STAY, ON_GOAL_CONT, ON_GOAL_LOAD});
   static final int DELAY = 8;
-  static final int OUT = 0;
-  static final int IN = 1;
+  public static final int OUT = 0;
+  public static final int IN = 1;
   public static final int CK = 2;
-  static final int CLR = 3;
-  static final int LD = 4;
-  static final int UD = 5;
-  static final int EN = 6;
+  public static final int CLR = 3;
+  public static final int LD = 4;
+  public static final int UD = 5;
+  public static final int EN = 6;
 
   static final int CARRY = 7;
 
@@ -583,12 +583,12 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
   }
 
   @Override
-  public boolean CheckForGatedClocks(NetlistComponent comp) {
+  public boolean checkForGatedClocks(netlistComponent comp) {
     return true;
   }
 
   @Override
-  public int[] ClockPinIndex(NetlistComponent comp) {
+  public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {CK};
   }
 

@@ -447,8 +447,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       ComponentUserEvent e = null;
       for (Component comp : getCircuit().getAllContaining(loc)) {
         Object makerObj = comp.getFeature(ToolTipMaker.class);
-        if (makerObj instanceof ToolTipMaker) {
-          ToolTipMaker maker = (ToolTipMaker) makerObj;
+        if (makerObj instanceof ToolTipMaker maker) {
           if (e == null) {
             e = new ComponentUserEvent(this, loc.getX(), loc.getY());
           }

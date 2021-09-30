@@ -18,12 +18,10 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
-import javax.swing.JComponent;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -47,9 +45,9 @@ class FilePanel extends LogPanel {
     chooser.addChoosableFileFilter(TestVector.FILE_FILTER);
     chooser.setFileFilter(TestVector.FILE_FILTER);
 
-    JPanel filePanel = new JPanel(new GridBagLayout());
-    GridBagLayout gb = (GridBagLayout) filePanel.getLayout();
-    GridBagConstraints gc = new GridBagConstraints();
+    final var filePanel = new JPanel(new GridBagLayout());
+    var gb = (GridBagLayout) filePanel.getLayout();
+    var gc = new GridBagConstraints();
     gc.fill = GridBagConstraints.HORIZONTAL;
     gb.setConstraints(fileLabel, gc);
     filePanel.add(fileLabel);
@@ -68,8 +66,7 @@ class FilePanel extends LogPanel {
     gc.gridx = 0;
     gc.weightx = 1.0;
     gc.gridy = GridBagConstraints.RELATIVE;
-    JComponent glue;
-    glue = new JPanel();
+    var glue = new JPanel();
     gc.weighty = 1.0;
     gb.setConstraints(glue, gc);
     add(glue);
@@ -137,13 +134,13 @@ class FilePanel extends LogPanel {
   private class Listener implements ActionListener, Model.Listener {
     @Override
     public void actionPerformed(ActionEvent event) {
-      Object src = event.getSource();
+      final var src = event.getSource();
       if (src == enableButton) {
         getModel().setFileEnabled(!getModel().isFileEnabled());
       } else if (src == selectButton) {
-        int result = chooser.showSaveDialog(getLogFrame());
+        final var result = chooser.showSaveDialog(getLogFrame());
         if (result != JFileChooser.APPROVE_OPTION) return;
-        File file = chooser.getSelectedFile();
+        final var file = chooser.getSelectedFile();
         if (file.exists() && (!file.canWrite() || file.isDirectory())) {
           OptionPane.showMessageDialog(
               getLogFrame(),
@@ -153,10 +150,10 @@ class FilePanel extends LogPanel {
           return;
         }
         if (file.exists() && file.length() > 0) {
-          String[] options = {
+          final String[] options = {
             S.get("fileOverwriteOption"), S.get("fileAppendOption"), S.get("fileCancelOption"),
           };
-          int option =
+          final var option =
               OptionPane.showOptionDialog(
                   getLogFrame(),
                   S.get("fileExistsMessage", file.getName()),
@@ -196,10 +193,10 @@ class FilePanel extends LogPanel {
 
     @Override
     public void filePropertyChanged(Model.Event event) {
-      Model model = getModel();
+      final var model = getModel();
       computeEnableItems(model);
 
-      File file = model.getFile();
+      final var file = model.getFile();
       fileField.setText(file == null ? "" : file.getPath());
       enableButton.setEnabled(file != null);
 

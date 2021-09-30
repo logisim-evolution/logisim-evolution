@@ -32,7 +32,6 @@ import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.border.Border;
 
 public class CsvReadParameterDialog extends JDialog implements ActionListener {
 
@@ -53,13 +52,13 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
     setVisible = true;
     this.file = file;
     sepSpace = S.get("seperatorSpace");
-    final String[] PossibleSeperators = {",", ";", ":", sepSpace, S.get("SeperatorTab")};
-    final String[] PossibleQuotes = {"\"", "'"};
+    final String[] possibleSeperators = {",", ";", ":", sepSpace, S.get("SeperatorTab")};
+    final String[] possibleQuotes = {"\"", "'"};
     okButton = new JButton(S.get("ConfirmCsvParameters"));
     okButton.addActionListener(this);
-    quotes = new JComboBox<>(PossibleQuotes);
+    quotes = new JComboBox<>(possibleQuotes);
     quotes.addActionListener(this);
-    seperators = new JComboBox<>(PossibleSeperators);
+    seperators = new JComboBox<>(possibleSeperators);
     seperators.addActionListener(this);
     setLocationRelativeTo(parentFrame);
     this.param = sel;

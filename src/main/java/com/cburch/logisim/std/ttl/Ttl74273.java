@@ -9,11 +9,6 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import java.util.SortedMap;
-import java.util.TreeMap;
-
 public class Ttl74273 extends AbstractOctalFlops {
   /**
    * Unique identifier of the tool, used as reference in project files.
@@ -22,20 +17,6 @@ public class Ttl74273 extends AbstractOctalFlops {
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "74273";
-
-  public static class Ttl74273HDLGenerator extends AbstractOctalFlopsHDLGenerator {
-
-    @Override
-    public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-      final var map = new TreeMap<String, String>();
-      if (!(mapInfo instanceof NetlistComponent)) return map;
-      final var comp = (NetlistComponent) mapInfo;
-      map.putAll(super.GetPortMap(nets, comp));
-      map.put("nCLKEN", "'0'");
-      map.putAll(GetNetMap("nCLR", false, comp, 0, nets));
-      return map;
-    }
-  }
 
   public Ttl74273() {
     super(
@@ -46,7 +27,7 @@ public class Ttl74273 extends AbstractOctalFlops {
           "nCLR", "Q1", "D1", "D2", "Q2", "Q3", "D3", "D4", "Q4", "CLK", "Q5", "D5", "D6", "Q6",
           "Q7", "D7", "D8", "Q8"
         },
-        new Ttl74273HDLGenerator());
-    super.SetWe(false);
+        new AbstractOctalFlopsHDLGenerator(false));
+    super.setWe(false);
   }
 }

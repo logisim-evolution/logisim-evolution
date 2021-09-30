@@ -244,12 +244,12 @@ public class SocMemMapModel extends AbstractTableModel
 
   @Override
   public String getColumnName(int col) {
-    switch (col) {
-      case 0 : return S.get("SocMemMapStartAddress");
-      case 1 : return S.get("SocMemMapEndAddress");
-      case 2 : return S.get("SocMemMapSlaveName");
-    }
-    return "";
+    return switch (col) {
+      case 0 -> S.get("SocMemMapStartAddress");
+      case 1 -> S.get("SocMemMapEndAddress");
+      case 2 -> S.get("SocMemMapSlaveName");
+      default -> "";
+    };
   }
 
   @Override
@@ -314,13 +314,11 @@ public class SocMemMapModel extends AbstractTableModel
 
   @Override
   public void mouseClicked(MouseEvent e) {
-    if (e.getComponent() instanceof JTable) {
-      JTable t = (JTable) e.getComponent();
-      int row = t.rowAtPoint(e.getPoint());
+    if (e.getComponent() instanceof JTable table) {
+      final var row = table.rowAtPoint(e.getPoint());
       if (row >= 0 && row < slaveMap.size()) {
-        InstanceComponent comp = slaveMap.getSlave(row).getComponent();
-        if (marked != null)
-          marked.clearMarks();
+        final var comp = slaveMap.getSlave(row).getComponent();
+        if (marked != null) marked.clearMarks();
         comp.markInstance();
         comp.getInstance().fireInvalidated();
         marked = comp;

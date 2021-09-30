@@ -19,8 +19,8 @@ import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.ToplevelHdlGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.util.LineBuffer;
 import java.io.BufferedInputStream;
@@ -86,12 +86,12 @@ public class XilinxDownload implements VendorDownload {
   }
 
   @Override
-  public int GetNumberOfStages() {
+  public int getNumberOfStages() {
     return 5;
   }
 
   @Override
-  public String GetStageMessage(int stage) {
+  public String getStageMessage(int stage) {
     switch (stage) {
       case 0:
         return S.get("XilinxSynth");
@@ -109,7 +109,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   @Override
-  public ProcessBuilder PerformStep(int stage) {
+  public ProcessBuilder performStep(int stage) {
     switch (stage) {
       case 0:
         return Stage0Synth();
@@ -128,11 +128,11 @@ public class XilinxDownload implements VendorDownload {
 
   @Override
   public boolean readyForDownload() {
-    return new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + "." + bitfileExt).exists();
+    return new File(SandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + "." + bitfileExt).exists();
   }
 
   @Override
-  public ProcessBuilder DownloadToBoard() {
+  public ProcessBuilder downloadToBoard() {
     if (!boardInfo.fpga.USBTMCDownloadRequired()) {
       var command = new ArrayList<String>();
       command.add(xilinxVendor.getBinaryPath(5));
@@ -142,21 +142,21 @@ public class XilinxDownload implements VendorDownload {
       Xilinx.directory(new File(SandboxPath));
       return Xilinx;
     } else {
-      Reporter.Report.ClsScr();
+      Reporter.report.clearConsole();
       /* Here we do the USBTMC Download */
       var usbtmcdevice = new File("/dev/usbtmc0").exists();
       if (!usbtmcdevice) {
-        Reporter.Report.AddFatalError(S.get("XilinxUsbTmc"));
+        Reporter.report.addFatalError(S.get("XilinxUsbTmc"));
         return null;
       }
-      var bitfile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME + "." + bitfileExt);
+      var bitfile = new File(SandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + "." + bitfileExt);
       var bitfile_buffer = new byte[BUFFER_SIZE];
       var bitfile_buffer_size = 0;
       BufferedInputStream bitfile_in;
       try {
         bitfile_in = new BufferedInputStream(new FileInputStream(bitfile));
       } catch (FileNotFoundException e) {
-        Reporter.Report.AddFatalError(S.get("XilinxOpenFailure", bitfile));
+        Reporter.report.addFatalError(S.get("XilinxOpenFailure", bitfile));
         return null;
       }
       var usbtmc = new File("/dev/usbtmc0");
@@ -172,14 +172,14 @@ public class XilinxDownload implements VendorDownload {
         usbtmc_out.close();
         bitfile_in.close();
       } catch (IOException e) {
-        Reporter.Report.AddFatalError(S.get("XilinxUsbTmcError"));
+        Reporter.report.addFatalError(S.get("XilinxUsbTmcError"));
       }
     }
     return null;
   }
 
   @Override
-  public boolean CreateDownloadScripts() {
+  public boolean createDownloadScripts() {
     final var JTAGPos = String.valueOf(boardInfo.fpga.getFpgaJTAGChainPosition());
     var ScriptFile = FileWriter.getFilePointer(ScriptPath, SCRIPT_FILE);
     var VhdlListFile = FileWriter.getFilePointer(ScriptPath, VHDL_LIST_FILE);
@@ -195,10 +195,10 @@ public class XilinxDownload implements VendorDownload {
           && UcfFile.exists()
           && DownloadFile.exists();
     }
-    final var contents = (new LineBuffer())
+    final var contents = LineBuffer.getBuffer()
             .pair("JTAGPos", JTAGPos)
             .pair("fileExt", bitfileExt)
-            .pair("fileBaseName", ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME)
+            .pair("fileBaseName", ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME)
             .pair("mcsFile", ScriptPath + File.separator + MCS_FILE)
             .pair("hdlType", HDLType.toUpperCase().toUpperCase());
 
@@ -210,7 +210,7 @@ public class XilinxDownload implements VendorDownload {
           .clear()
           .add(
               "run -top {{1}} -ofn logisim.ngc -ofmt NGC -ifn {{2}}{{3}} -ifmt mixed -p {{4}}",
-              ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME,
+              ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME,
               ScriptPath.replace(ProjectPath, "../"),
               VHDL_LIST_FILE,
               GetFPGADeviceString(boardInfo));
@@ -222,7 +222,7 @@ public class XilinxDownload implements VendorDownload {
 
     if (writeToFlash && boardInfo.fpga.isFlashDefined()) {
       if (boardInfo.fpga.getFlashName() == null) {
-        Reporter.Report.AddFatalError(S.get("XilinxFlashMissing", boardInfo.getBoardName()));
+        Reporter.report.addFatalError(S.get("XilinxFlashMissing", boardInfo.getBoardName()));
       }
 
       contents.pair("flashPos", String.valueOf(boardInfo.fpga.getFlashJTAGChainPosition()))
@@ -261,8 +261,8 @@ public class XilinxDownload implements VendorDownload {
     contents.clear();
     if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
       contents
-          .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
-          .pair("clockFreq", Download.GetClockFrequencyString(boardInfo))
+          .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK)
+          .pair("clockFreq", Download.getClockFrequencyString(boardInfo))
           .pair("clockPin", GetXilinxClockPin(boardInfo))
           .add("""
             NET "{{clock}}" {{clockPin}} ;
@@ -280,7 +280,7 @@ public class XilinxDownload implements VendorDownload {
     for (var key : MapInfo.getMappableResources().keySet()) {
       var map = MapInfo.getMappableResources().get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {
-        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
+        if (map.isMapped(i) && !map.isOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
           Temp.setLength(0);
           Temp.append("NET \"");
           if (map.isExternalInverted(i)) Temp.append("n_");
@@ -288,21 +288,21 @@ public class XilinxDownload implements VendorDownload {
           Temp.append("LOC = \"").append(map.getPinLocation(i)).append("\" ");
           final var info = map.getFpgaInfo(i);
           if (info != null) {
-            if (info.GetPullBehavior() != PullBehaviors.UNKNOWN
-                && info.GetPullBehavior() != PullBehaviors.FLOAT) {
+            if (info.getPullBehavior() != PullBehaviors.UNKNOWN
+                && info.getPullBehavior() != PullBehaviors.FLOAT) {
               Temp.append("| ")
-                  .append(PullBehaviors.getContraintedPullString(info.GetPullBehavior()))
+                  .append(PullBehaviors.getContraintedPullString(info.getPullBehavior()))
                   .append(" ");
             }
-            if (info.GetDrive() != DriveStrength.UNKNOWN
-                && info.GetDrive() != DriveStrength.DEFAULT_STENGTH) {
+            if (info.getDrive() != DriveStrength.UNKNOWN
+                && info.getDrive() != DriveStrength.DEFAULT_STENGTH) {
               Temp.append("| DRIVE = ")
-                  .append(DriveStrength.GetContraintedDriveStrength(info.GetDrive())).append(" ");
+                  .append(DriveStrength.GetContraintedDriveStrength(info.getDrive())).append(" ");
             }
-            if (info.GetIOStandard() != IoStandards.UNKNOWN
-                && info.GetIOStandard() != IoStandards.DEFAULT_STANDARD) {
+            if (info.getIoStandard() != IoStandards.UNKNOWN
+                && info.getIoStandard() != IoStandards.DEFAULT_STANDARD) {
               Temp.append("| IOSTANDARD = ")
-                  .append(IoStandards.GetConstraintedIoStandard(info.GetIOStandard()))
+                  .append(IoStandards.getConstraintedIoStandard(info.getIoStandard()))
                   .append(" ");
             }
           }
@@ -319,12 +319,12 @@ public class XilinxDownload implements VendorDownload {
   }
 
   @Override
-  public void SetMapableResources(MappableResourcesContainer resources) {
+  public void setMapableResources(MappableResourcesContainer resources) {
     MapInfo = resources;
   }
 
   private ProcessBuilder Stage0Synth() {
-    final var command = new LineBuffer();
+    final var command = LineBuffer.getBuffer();
     command
         .add(xilinxVendor.getBinaryPath(0))
         .add("-ifn")
@@ -337,7 +337,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage1Constraints() {
-    final var command = new LineBuffer();
+    final var command = LineBuffer.getBuffer();
     command
         .add(xilinxVendor.getBinaryPath(1))
         .add("-intstyle")
@@ -353,7 +353,7 @@ public class XilinxDownload implements VendorDownload {
 
   private ProcessBuilder Stage2Map() {
     if (IsCPLD) return null; /* mapping is skipped for the CPLD target*/
-    final var command = new LineBuffer();
+    final var command = LineBuffer.getBuffer();
     command
         .add(xilinxVendor.getBinaryPath(2))
         .add("-intstyle")
@@ -367,7 +367,7 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage3PAR() {
-    final var command = new LineBuffer();
+    final var command = LineBuffer.getBuffer();
     if (!IsCPLD) {
       command
           .add(xilinxVendor.getBinaryPath(3))
@@ -407,12 +407,12 @@ public class XilinxDownload implements VendorDownload {
   }
 
   private ProcessBuilder Stage4Bit() {
-    var command = new LineBuffer();
+    var command = LineBuffer.getBuffer();
     if (!IsCPLD) {
       command.add(xilinxVendor.getBinaryPath(4)).add("-w");
       if (boardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PULL_UP) command.add("-g").add("UnusedPin:PULLUP");
       if (boardInfo.fpga.getUnusedPinsBehavior() == PullBehaviors.PULL_DOWN) command.add("-g").add("UnusedPin:PULLDOWN");
-      command.add("-g").add("StartupClk:CCLK").add("logisim_par").add("{{1}}.bit", ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME);
+      command.add("-g").add("StartupClk:CCLK").add("logisim_par").add("{{1}}.bit", ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME);
     } else {
       command.add(xilinxVendor.getBinaryPath(7)).add("-i").add("logisim.vm6");
     }
@@ -438,13 +438,13 @@ public class XilinxDownload implements VendorDownload {
     if (CurrentBoard.fpga.getClockStandard() != IoStandards.DEFAULT_STANDARD
         && CurrentBoard.fpga.getClockStandard() != IoStandards.UNKNOWN) {
       result.append(" | IOSTANDARD = ")
-          .append(IoStandards.Behavior_strings[CurrentBoard.fpga.getClockStandard()]);
+          .append(IoStandards.BEHAVIOR_STRINGS[CurrentBoard.fpga.getClockStandard()]);
     }
     return result.toString();
   }
 
   @Override
-  public boolean BoardConnected() {
+  public boolean isBoardConnected() {
     // TODO: Detect if a board is connected, and in case of multiple boards select the one that should be used
     return true;
   }

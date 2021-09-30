@@ -42,22 +42,22 @@ public class Comparator extends InstanceFactory {
       new AttributeOption("twosComplement", "twosComplement", S.getter("twosComplementOption"));
   public static final AttributeOption UNSIGNED_OPTION =
       new AttributeOption("unsigned", "unsigned", S.getter("unsignedOption"));
-  public static final Attribute<AttributeOption> MODE_ATTRIBUTE =
+  public static final Attribute<AttributeOption> MODE_ATTR =
       Attributes.forOption(
           "mode",
           S.getter("comparatorType"),
           new AttributeOption[] {SIGNED_OPTION, UNSIGNED_OPTION});
 
-  private static final int IN0 = 0;
-  private static final int IN1 = 1;
-  private static final int GT = 2;
-  private static final int EQ = 3;
-  private static final int LT = 4;
+  public static final int IN0 = 0;
+  public static final int IN1 = 1;
+  public static final int GT = 2;
+  public static final int EQ = 3;
+  public static final int LT = 4;
 
   public Comparator() {
     super(_ID, S.getter("comparatorComponent"), new ComparatorHDLGeneratorFactory());
     setAttributes(
-        new Attribute[] {StdAttr.WIDTH, MODE_ATTRIBUTE},
+        new Attribute[] {StdAttr.WIDTH, MODE_ATTR},
         new Object[] {BitWidth.create(8), SIGNED_OPTION});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
@@ -127,7 +127,7 @@ public class Comparator extends InstanceFactory {
       Value ab = pos < ax.length ? ax[pos] : Value.ERROR;
       Value bb = pos < bx.length ? bx[pos] : Value.ERROR;
       if (pos == ax.length - 1 && ab != bb) {
-        Object mode = state.getAttributeValue(MODE_ATTRIBUTE);
+        Object mode = state.getAttributeValue(MODE_ATTR);
         if (mode != UNSIGNED_OPTION) {
           Value t = ab;
           ab = bb;

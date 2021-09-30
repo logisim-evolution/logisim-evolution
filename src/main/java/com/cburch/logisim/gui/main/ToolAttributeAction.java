@@ -77,14 +77,14 @@ public class ToolAttributeAction extends Action {
 
   boolean affectsAppearance() {
     AttributeSet attrs = config.getEvent().getAttributeSet();
-    if (attrs instanceof FactoryAttributes) {
-      ComponentFactory factory = ((FactoryAttributes) attrs).getFactory();
+    if (attrs instanceof FactoryAttributes factoryAttributes) {
+      final var factory = factoryAttributes.getFactory();
       if (factory instanceof SubcircuitFactory) {
-        for (Attribute<?> attr : config.getAttributeValues().keySet()) {
+        for (final var attr : config.getAttributeValues().keySet()) {
           if (attr == CircuitAttributes.APPEARANCE_ATTR) return true;
         }
       } else if (factory instanceof VhdlEntity) {
-        for (Attribute<?> attr : config.getAttributeValues().keySet()) {
+        for (final var attr : config.getAttributeValues().keySet()) {
           if (attr == StdAttr.APPEARANCE) return true;
         }
       }
@@ -126,16 +126,15 @@ public class ToolAttributeAction extends Action {
     protected Map<Circuit, Integer> getAccessedCircuits() {
       Map<Circuit, Integer> accessMap = new HashMap<>();
       AttributeSet attrs = config.getEvent().getAttributeSet();
-      if (attrs instanceof FactoryAttributes) {
-        ComponentFactory factory = ((FactoryAttributes) attrs).getFactory();
-        if (factory instanceof SubcircuitFactory) {
-          Circuit circuit = ((SubcircuitFactory) factory).getSubcircuit();
-          for (Circuit supercirc : circuit.getCircuitsUsingThis()) {
+      if (attrs instanceof FactoryAttributes factoryAttributes) {
+        final var factory = factoryAttributes.getFactory();
+        if (factory instanceof SubcircuitFactory sub) {
+          final var circuit = sub.getSubcircuit();
+          for (final var supercirc : circuit.getCircuitsUsingThis()) {
             accessMap.put(supercirc, READ_WRITE);
           }
-        } else if (factory instanceof VhdlEntity) {
-          VhdlEntity vhdl = (VhdlEntity) factory;
-          for (Circuit supercirc : vhdl.getCircuitsUsingThis()) {
+        } else if (factory instanceof VhdlEntity vhdl) {
+          for (final var supercirc : vhdl.getCircuitsUsingThis()) {
             accessMap.put(supercirc, READ_WRITE);
           }
         }

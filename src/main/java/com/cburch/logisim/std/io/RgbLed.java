@@ -144,7 +144,7 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   }
 
   @Override
-  public boolean ActiveOnHigh(AttributeSet attrs) {
+  public boolean activeOnHigh(AttributeSet attrs) {
     return attrs.getValue(IoLibrary.ATTR_ACTIVE);
   }
 
@@ -224,6 +224,6 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
 
   @Override
   public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {
-    return new RGBLedShape(x, y, path);
+    return new RgbLedShape(x, y, path);
   }
 }

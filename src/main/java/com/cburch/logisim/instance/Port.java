@@ -46,6 +46,7 @@ public class Port {
   public static final String INOUT = "inout";
   public static final String EXCLUSIVE = "exclusive";
   public static final String SHARED = "shared";
+  public static final String CLOCK = "clock"; // used for HDL-generation
   private final int dx;
   private final int dy;
   private final int type;
@@ -109,21 +110,16 @@ public class Port {
   public Attribute<BitWidth> getWidthAttribute() {
     return widthAttr;
   }
-  
+
   public void setToolTip(StringGetter value) {
     toolTip = value;
   }
 
   public EndData toEnd(Location loc, AttributeSet attrs) {
-    Location pt = loc.translate(dx, dy);
-    if (widthFixed != null) {
-      return new EndData(pt, widthFixed, type, exclude);
-    } else {
-      Object val = attrs.getValue(widthAttr);
-      if (!(val instanceof BitWidth)) {
-        throw new IllegalArgumentException("Width attribute not set");
-      }
-      return new EndData(pt, (BitWidth) val, type, exclude);
-    }
+    final var pt = loc.translate(dx, dy);
+    if (widthFixed != null) return new EndData(pt, widthFixed, type, exclude);
+    final Object val = attrs.getValue(widthAttr);
+    if (val instanceof BitWidth) return new EndData(pt, (BitWidth) val, type, exclude);
+    throw new IllegalArgumentException("Width attribute not set");
   }
 }

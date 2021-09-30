@@ -97,7 +97,7 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
   }
 
   @Override
-  public boolean ActiveOnHigh(AttributeSet attrs) {
+  public boolean activeOnHigh(AttributeSet attrs) {
     return attrs.getValue(IoLibrary.ATTR_ACTIVE);
   }
 

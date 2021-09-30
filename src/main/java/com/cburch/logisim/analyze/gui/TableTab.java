@@ -379,22 +379,25 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     expand.addActionListener(caret.getListener());
     clip = new TableTabClip(this);
     computePreferredSize();
-    this.addComponentListener(new ComponentAdapter() {
-      boolean done;
-      public void componentShown(ComponentEvent e) {
-        TableTab.this.removeComponentListener(this);
-        if (done) return;
-        done = true;
-        // account for missing scrollbar on header portion
-        final var pad = bodyPane.getVerticalScrollBar().getWidth();
-        GridBagConstraints gc = layout.getConstraints(headerPane);
-        Insets i = gc.insets;
-        gc.insets.set(i.top, i.left, i.bottom, i.right + pad);
-        layout.setConstraints(headerPane, gc);
-        invalidate();
-        repaint();
-      }
-    });
+    this.addComponentListener(
+        new ComponentAdapter() {
+          boolean done;
+
+          @Override
+          public void componentShown(ComponentEvent e) {
+            TableTab.this.removeComponentListener(this);
+            if (done) return;
+            done = true;
+            // account for missing scrollbar on header portion
+            final var pad = bodyPane.getVerticalScrollBar().getWidth();
+            GridBagConstraints gc = layout.getConstraints(headerPane);
+            Insets i = gc.insets;
+            gc.insets.set(i.top, i.left, i.bottom, i.right + pad);
+            layout.setConstraints(headerPane, gc);
+            invalidate();
+            repaint();
+          }
+        });
     editHandler.computeEnabled();
     LocaleManager.addLocaleListener(myListener);
   }

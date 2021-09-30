@@ -36,8 +36,7 @@ public abstract class AppearanceElement extends AbstractCanvasObject {
   }
 
   protected Bounds getBounds(int radius) {
-    return Bounds.create(
-        location.getX() - radius, location.getY() - radius, 2 * radius, 2 * radius);
+    return Bounds.create(location.getX() - radius, location.getY() - radius, 2 * radius, 2 * radius);
   }
 
   public Location getLocation() {
@@ -46,8 +45,9 @@ public abstract class AppearanceElement extends AbstractCanvasObject {
 
   @Override
   public Location getRandomPoint(Bounds bds, Random rand) {
-    return null; // this is only used to determine what lies on top of what
-    // - but the elements will always be on top anyway
+    // this is only used to determine what lies on top of what but the elements will always be on
+    // top anyway
+    return null;
   }
 
   @Override
@@ -56,19 +56,17 @@ public abstract class AppearanceElement extends AbstractCanvasObject {
   }
 
   protected boolean isInCircle(Location loc, int radius) {
-    int dx = loc.getX() - location.getX();
-    int dy = loc.getY() - location.getY();
+    final var dx = loc.getX() - location.getX();
+    final var dy = loc.getY() - location.getY();
     return dx * dx + dy * dy < radius * radius;
   }
 
   @Override
   public boolean matches(CanvasObject other) {
-    if (other instanceof AppearanceElement) {
-      AppearanceElement that = (AppearanceElement) other;
+    if (other instanceof AppearanceElement that) {
       return this.location.equals(that.location);
-    } else {
-      return false;
     }
+    return false;
   }
 
   @Override

@@ -29,9 +29,8 @@ public class AttrTableToolModel extends AttributeSetTableModel {
 
   public AttrTableToolModel(Project proj, Tool tool) {
     super(tool.getAttributeSet());
-    if (tool instanceof AddTool) {
-      AddTool mytool = (AddTool) tool;
-      setInstance(mytool.getFactory());
+    if (tool instanceof AddTool addTool) {
+      setInstance(addTool.getFactory());
       setIsTool();
     }
     this.proj = proj;
@@ -49,10 +48,8 @@ public class AttrTableToolModel extends AttributeSetTableModel {
 
   @Override
   public void setValueRequested(Attribute<Object> attr, Object value) {
-    if (tool instanceof AddTool) {
-      AddTool mytool = (AddTool) tool;
-      if (mytool.getFactory() instanceof SubcircuitFactory) {
-        SubcircuitFactory fac = (SubcircuitFactory) mytool.getFactory();
+    if (tool instanceof AddTool addTool) {
+      if (addTool.getFactory() instanceof SubcircuitFactory fac) {
         if (attr.equals(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE)
             || attr.equals(CircuitAttributes.NAME_ATTR)) {
           try {

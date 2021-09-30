@@ -10,6 +10,7 @@
 package com.cburch.logisim.fpga.designrulecheck;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClockTreeContainer {
 
@@ -19,7 +20,7 @@ public class ClockTreeContainer {
   private final ArrayList<String> hierarchyId;
   private boolean isPinClockSource;
 
-  public ClockTreeContainer(ArrayList<String> hierarchy, int sourceId, boolean pinClockSource) {
+  public ClockTreeContainer(List<String> hierarchy, int sourceId, boolean pinClockSource) {
     clockSources = new ArrayList<>();
     clockNets = new ArrayList<>();
     clockSourceId = sourceId;
@@ -28,12 +29,12 @@ public class ClockTreeContainer {
     isPinClockSource = pinClockSource;
   }
 
-  public void addNet(ConnectionPoint NetInfo) {
-    clockNets.add(NetInfo);
+  public void addNet(ConnectionPoint netInfo) {
+    clockNets.add(netInfo);
   }
 
-  public void addSource(ConnectionPoint NetInfo) {
-    clockSources.add(NetInfo);
+  public void addSource(ConnectionPoint netInfo) {
+    clockSources.add(netInfo);
   }
 
   public void clear() {
@@ -45,40 +46,40 @@ public class ClockTreeContainer {
     isPinClockSource = true;
   }
 
-  public boolean IsPinClockSource() {
+  public boolean isPinClockSource() {
     return isPinClockSource;
   }
 
-  public boolean equals(ArrayList<String> Hierarchy, int sourceId) {
-    return ((sourceId == clockSourceId) && hierarchyId.equals(Hierarchy));
+  public boolean equals(List<String> hierarchy, int sourceId) {
+    return ((sourceId == clockSourceId) && hierarchyId.equals(hierarchy));
   }
 
-  public ArrayList<Byte> GetClockEntries(Net NetInfo) {
+  public List<Byte> getClockEntries(Net netInfo) {
     final var result = new ArrayList<Byte>();
-    for (final var SolderPoint : clockSources) {
-      if (SolderPoint.getParentNet().equals(NetInfo))
-        result.add(SolderPoint.getParentNetBitIndex());
+    for (final var solderPoint : clockSources) {
+      if (solderPoint.getParentNet().equals(netInfo))
+        result.add(solderPoint.getParentNetBitIndex());
     }
-    for (final var SolderPoint : clockNets) {
-      if (SolderPoint.getParentNet().equals(NetInfo))
-        result.add(SolderPoint.getParentNetBitIndex());
+    for (final var solderPoint : clockNets) {
+      if (solderPoint.getParentNet().equals(netInfo))
+        result.add(solderPoint.getParentNetBitIndex());
     }
     return result;
   }
 
-  public boolean NetContainsClockConnection(Net NetInfo) {
-    for (final var SolderPoint : clockSources) {
-      if (SolderPoint.getParentNet().equals(NetInfo)) return true;
+  public boolean NetContainsClockConnection(Net netInfo) {
+    for (final var solderPoint : clockSources) {
+      if (solderPoint.getParentNet().equals(netInfo)) return true;
     }
-    for (final var SolderPoint : clockNets) {
-      if (SolderPoint.getParentNet().equals(NetInfo)) return true;
+    for (final var solderPoint : clockNets) {
+      if (solderPoint.getParentNet().equals(netInfo)) return true;
     }
     return false;
   }
 
-  public boolean NetContainsClockSource(Net NetInfo) {
-    for (final var SolderPoint : clockSources) {
-      if (SolderPoint.getParentNet().equals(NetInfo)) return true;
+  public boolean NetContainsClockSource(Net netInfo) {
+    for (final var solderPoint : clockSources) {
+      if (solderPoint.getParentNet().equals(netInfo)) return true;
     }
     return false;
   }

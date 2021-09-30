@@ -19,7 +19,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.gui.icons.RandomIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
@@ -125,12 +125,10 @@ public class Random extends InstanceFactory {
 
   static final Attribute<Integer> ATTR_SEED =
       Attributes.forInteger("seed", S.getter("randomSeedAttr"));
-  static final int OUT = 0;
+  public static final int OUT = 0;
   public static final int CK = 1;
-
-  static final int NXT = 2;
-
-  static final int RST = 3;
+  public static final int NXT = 2;
+  public static final int RST = 3;
 
   public Random() {
     super(_ID, S.getter("randomComponent"), new RandomHDLGeneratorFactory());
@@ -358,12 +356,12 @@ public class Random extends InstanceFactory {
   }
 
   @Override
-  public boolean CheckForGatedClocks(NetlistComponent comp) {
+  public boolean checkForGatedClocks(netlistComponent comp) {
     return true;
   }
 
   @Override
-  public int[] ClockPinIndex(NetlistComponent comp) {
+  public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {CK};
   }
 }

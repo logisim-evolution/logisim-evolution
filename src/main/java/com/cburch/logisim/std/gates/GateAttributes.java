@@ -21,7 +21,7 @@ import com.cburch.logisim.instance.StdAttr;
 import java.awt.Font;
 import java.util.List;
 
-class GateAttributes extends AbstractAttributeSet {
+public class GateAttributes extends AbstractAttributeSet {
   static final int MAX_INPUTS = 64;
   static final int DELAY = 1;
 
@@ -90,9 +90,9 @@ class GateAttributes extends AbstractAttributeSet {
     if (attr == ATTR_INPUTS) return (V) Integer.valueOf(inputs);
     if (attr == ATTR_OUTPUT) return (V) out;
     if (attr == ATTR_XOR) return (V) xorBehave;
-    if (attr instanceof NegateAttribute) {
-      int index = ((NegateAttribute) attr).index;
-      int bit = (int) (negated >> index) & 1;
+    if (attr instanceof NegateAttribute negAttr) {
+      final var index = negAttr.index;
+      final var bit = (int) (negated >> index) & 1;
       return (V) Boolean.valueOf(bit == 1);
     }
     return null;
@@ -124,8 +124,8 @@ class GateAttributes extends AbstractAttributeSet {
       xorBehave = (AttributeOption) value;
     } else if (attr == ATTR_OUTPUT) {
       out = (AttributeOption) value;
-    } else if (attr instanceof NegateAttribute) {
-      int index = ((NegateAttribute) attr).index;
+    } else if (attr instanceof NegateAttribute negAttr) {
+      final var index = negAttr.index;
       if ((Boolean) value) {
         negated |= 1 << index;
       } else {

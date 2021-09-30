@@ -49,7 +49,7 @@ public class CanvasPane extends JScrollPane {
   }
 
   public double getZoomFactor() {
-    ZoomModel model = zoomModel;
+    final var model = zoomModel;
     return model == null ? 1.0 : model.getZoomFactor();
   }
 

@@ -11,16 +11,33 @@ package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningHDLGeneratorFactory {
 
   public static final String HDL_IDENTIFIER = "RGBArrayRowScanning";
+
+  public RGBArrayRowScanningHDLGeneratorFactory() {
+    super();
+    myWires
+        .addWire("s_maxRedLedInputs", MAX_NR_LEDS_ID)
+        .addWire("s_maxBlueLedInputs", MAX_NR_LEDS_ID)
+        .addWire("s_maxGreenLedInputs", MAX_NR_LEDS_ID);
+    myPorts.removePorts(); // remove the ports of the super class
+    myPorts
+        .add(Port.INPUT, TickComponentHdlGeneratorFactory.FPGA_CLOCK, 1, 0)
+        .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, NR_OF_LEDS_ID, 1)
+        .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, NR_OF_LEDS_ID, 2)
+        .add(Port.INPUT, LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, NR_OF_LEDS_ID, 3)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress, NR_OF_ROW_ADDRESS_BITS_ID, 4)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs, NR_OF_COLUMS_ID, 5)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs, NR_OF_COLUMS_ID, 6)
+        .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs, NR_OF_COLUMS_ID, 7);
+  }
 
   static final LineBuffer.Pairs sharedPairs =
       new LineBuffer.Pairs()
@@ -35,10 +52,10 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
     final var contents =
         (new LineBuffer(sharedPairs))
             .pair("addr", LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress)
-            .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK)
+            .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK)
             .pair("id", id);
 
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           PORT MAP ( {{addr }} => {{addr}}{{id}}
                      {{clock}} => {{clock}},
@@ -65,45 +82,15 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
   }
 
   @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRowAddress, nrOfRowAddressBitsGeneric);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayColumnRedOutputs, nrOfColumsGeneric);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayColumnGreenOutputs, nrOfColumsGeneric);
-    outputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayColumnBlueOutputs, nrOfColumsGeneric);
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var inputs = new TreeMap<String, Integer>();
-    inputs.put(TickComponentHDLGeneratorFactory.FPGA_CLOCK, 1);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayRedInputs, nrOfLedsGeneric);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayGreenInputs, nrOfLedsGeneric);
-    inputs.put(LedArrayGenericHDLGeneratorFactory.LedArrayBlueInputs, nrOfLedsGeneric);
-    return inputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var wires = new TreeMap<String, Integer>();
-    wires.putAll(super.GetWireList(attrs, Nets));
-    wires.put("s_maxRedLedInputs", maxNrLedsGeneric);
-    wires.put("s_maxBlueLedInputs", maxNrLedsGeneric);
-    wires.put("s_maxGreenLedInputs", maxNrLedsGeneric);
-    return wires;
-  }
-
-  @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents =
         (new LineBuffer(sharedPairs))
-            .pair("activeLow", activeLowString)
-            .pair("nrOfLeds", nrOfLedsString)
-            .pair("nrOfColumns", nrOfColumnsString);
+            .pair("activeLow", ACTIVE_LOW_STRING)
+            .pair("nrOfLeds", NR_OF_LEDS_STRING)
+            .pair("nrOfColumns", NR_OF_COLUMS_STRING);
 
     contents.add(getRowCounterCode());
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add("""
           
           makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS

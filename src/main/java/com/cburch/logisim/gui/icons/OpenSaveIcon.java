@@ -19,8 +19,8 @@ public class OpenSaveIcon extends BaseIcon {
   public static final int FILE_OPEN = 0;
   public static final int FILE_SAVE = 1;
   public static final int FILE_SAVE_AS = 2;
-  private static final int[] Arrowup = new int[] {4, 3, 7, 0, 10, 3, 8, 3, 8, 6, 6, 6, 6, 3};
-  private static final int[] Arrowdown = new int[] {6, 0, 8, 0, 8, 3, 10, 3, 7, 6, 4, 3, 6, 3};
+  private static final int[] arrowUp = new int[] {4, 3, 7, 0, 10, 3, 8, 3, 8, 6, 6, 6, 6, 3};
+  private static final int[] arrowDown = new int[] {6, 0, 8, 0, 8, 3, 10, 3, 7, 6, 4, 3, 6, 3};
   private final int myType;
 
   public OpenSaveIcon(int type) {
@@ -51,27 +51,27 @@ public class OpenSaveIcon extends BaseIcon {
     bds = getScaled(8, 11, 1, 2);
     g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     g2.setColor(Color.MAGENTA);
-    int[] xpoints;
-    int[] ypoints;
+    final int[] xPoints;
+    final int[] yPoints;
     switch (myType) {
       case FILE_OPEN:
-        xpoints = new int[7];
-        ypoints = new int[7];
-        for (int i = 0; i < 7; i++) {
-          xpoints[i] = AppPreferences.getScaled(Arrowup[i * 2]);
-          ypoints[i] = AppPreferences.getScaled(Arrowup[i * 2 + 1]);
+        xPoints = new int[7];
+        yPoints = new int[7];
+        for (var i = 0; i < 7; i++) {
+          xPoints[i] = AppPreferences.getScaled(arrowUp[i * 2]);
+          yPoints[i] = AppPreferences.getScaled(arrowUp[i * 2 + 1]);
         }
-        g2.fillPolygon(xpoints, ypoints, 7);
+        g2.fillPolygon(xPoints, yPoints, 7);
         break;
       case FILE_SAVE_AS:
       case FILE_SAVE:
-        xpoints = new int[7];
-        ypoints = new int[7];
-        for (int i = 0; i < 7; i++) {
-          xpoints[i] = AppPreferences.getScaled(Arrowdown[i * 2]);
-          ypoints[i] = AppPreferences.getScaled(Arrowdown[i * 2 + 1]);
+        xPoints = new int[7];
+        yPoints = new int[7];
+        for (var i = 0; i < 7; i++) {
+          xPoints[i] = AppPreferences.getScaled(arrowDown[i * 2]);
+          yPoints[i] = AppPreferences.getScaled(arrowDown[i * 2 + 1]);
         }
-        g2.fillPolygon(xpoints, ypoints, 7);
+        g2.fillPolygon(xPoints, yPoints, 7);
         break;
       default:
         // do nothing. should not really happen.

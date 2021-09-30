@@ -11,21 +11,35 @@ package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class ReptarLocalBusHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
+
+  public ReptarLocalBusHDLGeneratorFactory() {
+    super();
+    myPorts
+        .add(Port.INOUT, "Addr_Data_LB_io", 16, 0)
+        .add(Port.INPUT, "SP6_LB_WAIT3_i", 1, ReptarLocalBus.SP6_LB_WAIT3_i)
+        .add(Port.INPUT, "IRQ_i", 1, ReptarLocalBus.IRQ_i)
+        .add(Port.OUTPUT, "SP6_LB_nCS3_o", 1, ReptarLocalBus.SP6_LB_nCS3_o)
+        .add(Port.OUTPUT, "SP6_LB_nADV_ALE_o", 1, ReptarLocalBus.SP6_LB_nADV_ALE_o)
+        .add(Port.OUTPUT, "SP6_LB_RE_nOE_o", 1, ReptarLocalBus.SP6_LB_RE_nOE_o)
+        .add(Port.OUTPUT, "SP6_LB_nWE_o", 1, ReptarLocalBus.SP6_LB_nWE_o)
+        .add(Port.OUTPUT, "Addr_LB_o", 9, ReptarLocalBus.Addr_LB_o);
+  }
 
   @Override
   public ArrayList<String> getArchitecture(Netlist nets, AttributeSet attrs, String componentName) {
-    final var contents = new LineBuffer();
-    if (HDL.isVHDL()) {
+    final var contents = LineBuffer.getBuffer();
+    if (Hdl.isVhdl()) {
       contents
           .pair("compName", componentName)
           .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
@@ -66,7 +80,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
-    return (new LineBuffer())
+    return LineBuffer.getBuffer()
         .add("""
             COMPONENT LocalBus
                PORT ( SP6_LB_WAIT3_i     : IN  std_logic;
@@ -89,7 +103,7 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
 
   @Override
   public ArrayList<String> getEntity(Netlist nets, AttributeSet attrs, String componentName) {
-    return (new LineBuffer())
+    return LineBuffer.getBuffer()
         .pair("compName", componentName)
         .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
         .add(FileWriter.getExtendedLibrary())
@@ -117,24 +131,9 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   }
 
   @Override
-  public SortedMap<String, Integer> GetInOutList(Netlist TheNetlist, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    outputs.put("Addr_Data_LB_io", 16);
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("SP6_LB_WAIT3_i", 1);
-    map.put("IRQ_i", 1);
-    return map;
-  }
-
-  @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = new ArrayList<String>();
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       contents.add(" ");
     } else {
       // FIXME: hardcoded string
@@ -144,22 +143,11 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
   }
 
   @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist theNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("SP6_LB_nCS3_o", 1);
-    map.put("SP6_LB_nADV_ALE_o", 1);
-    map.put("SP6_LB_RE_nOE_o", 1);
-    map.put("SP6_LB_nWE_o", 1);
-    map.put("Addr_LB_o", 9);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
+  public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
-    if (!(mapInfo instanceof NetlistComponent)) return map;
-    final var ComponentInfo = (NetlistComponent) mapInfo;
-
+    if (!(mapInfo instanceof netlistComponent)) return map;
+    final var ComponentInfo = (netlistComponent) mapInfo;
+    map.putAll(super.getPortMap(nets, mapInfo));
     map.put(
         "Addr_Data_LB_io",
         String.format(
@@ -178,75 +166,35 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHDLGeneratorFacto
         "FPGA_out",
         String.format(
             "%s(%d DOWNTO %d)",
-            LOCAL_OUTPUT_BUBBLE_BUS_NAME
-                + ComponentInfo.getLocalBubbleOutputEndId()
-                + ComponentInfo.getLocalBubbleOutputStartId()));
+            LOCAL_OUTPUT_BUBBLE_BUS_NAME,
+            ComponentInfo.getLocalBubbleOutputEndId(),
+            ComponentInfo.getLocalBubbleOutputStartId()));
     map.putAll(
-        GetNetMap(
-            "SP6_LB_nCS3_o",
-            true,
-            ComponentInfo,
-            ReptarLocalBus.SP6_LB_nCS3_o,
-            nets));
-    map.putAll(
-        GetNetMap(
-            "SP6_LB_nADV_ALE_o",
-            true,
-            ComponentInfo,
-            ReptarLocalBus.SP6_LB_nADV_ALE_o,
-            nets));
-    map.putAll(
-        GetNetMap(
-            "SP6_LB_RE_nOE_o",
-            true,
-            ComponentInfo,
-            ReptarLocalBus.SP6_LB_RE_nOE_o,
-            nets));
-    map.putAll(
-        GetNetMap(
-            "SP6_LB_nWE_o",
-            true,
-            ComponentInfo,
-            ReptarLocalBus.SP6_LB_nWE_o,
-            nets));
-    map.putAll(
-        GetNetMap(
-            "SP6_LB_WAIT3_i",
-            true,
-            ComponentInfo,
-            ReptarLocalBus.SP6_LB_WAIT3_i,
-            nets));
-    map.putAll(
-        GetNetMap(
+        Hdl.getNetMap(
             "Addr_Data_LB_o",
             true,
             ComponentInfo,
             ReptarLocalBus.Addr_Data_LB_o,
             nets));
     map.putAll(
-        GetNetMap(
+        Hdl.getNetMap(
             "Addr_Data_LB_i",
             true,
             ComponentInfo,
             ReptarLocalBus.Addr_Data_LB_i,
             nets));
     map.putAll(
-        GetNetMap(
+        Hdl.getNetMap(
             "Addr_Data_LB_tris_i",
             true,
             ComponentInfo,
             ReptarLocalBus.Addr_Data_LB_tris_i,
             nets));
-    map.putAll(
-        GetNetMap(
-            "Addr_LB_o", true, ComponentInfo, ReptarLocalBus.Addr_LB_o, nets));
-    map.putAll(
-        GetNetMap("IRQ_i", true, ComponentInfo, ReptarLocalBus.IRQ_i, nets));
     return map;
   }
 
   @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
-    return HDL.isVHDL();
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
+    return Hdl.isVhdl();
   }
 }

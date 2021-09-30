@@ -17,8 +17,8 @@ import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
 
@@ -33,7 +33,7 @@ public interface ComponentFactory extends AttributeDefaultProvider {
   Object TOOL_TIP = new Object();
   Object FACING_ATTRIBUTE_KEY = new Object();
 
-  boolean ActiveOnHigh(AttributeSet attrs);
+  boolean activeOnHigh(AttributeSet attrs);
 
   AttributeSet createAttributeSet();
 
@@ -68,7 +68,7 @@ public interface ComponentFactory extends AttributeDefaultProvider {
    */
   Object getFeature(Object key, AttributeSet attrs);
 
-  HDLGeneratorFactory getHDLGenerator(AttributeSet attrs);
+  HdlGeneratorFactory getHDLGenerator(AttributeSet attrs);
 
   String getHDLName(AttributeSet attrs);
 
@@ -85,9 +85,9 @@ public interface ComponentFactory extends AttributeDefaultProvider {
   @Override
   boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver);
 
-  boolean CheckForGatedClocks(NetlistComponent comp);
+  boolean checkForGatedClocks(netlistComponent comp);
 
-  int[] ClockPinIndex(NetlistComponent comp);
+  int[] clockPinIndex(netlistComponent comp);
 
   void paintIcon(ComponentDrawContext context, int x, int y, AttributeSet attrs);
 

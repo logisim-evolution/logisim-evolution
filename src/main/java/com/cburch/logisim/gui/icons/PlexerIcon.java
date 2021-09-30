@@ -28,27 +28,27 @@ public class PlexerIcon extends BaseIcon {
   @Override
   protected void paintIcon(Graphics2D g2) {
     g2.setStroke(new BasicStroke(scale(2)));
-    int[] realXpos = new int[4];
-    int[] realYpos = new int[4];
-    int xoff = inverted ? 2 : 0;
-    for (int i = 0; i < 4; i++) {
-      realXpos[i] = scale(xpos[(i + xoff) & 3]);
-      realYpos[i] = scale(ypos[i]);
+    final var realPosX = new int[4];
+    final var realPosY = new int[4];
+    var xOffset = inverted ? 2 : 0;
+    for (var i = 0; i < 4; i++) {
+      realPosX[i] = scale(xpos[(i + xOffset) & 3]);
+      realPosY[i] = scale(ypos[i]);
     }
-    g2.drawPolygon(realXpos, realYpos, 4);
-    xoff = inverted ? scale(7) : scale(8);
-    g2.drawLine(xoff, scale(11), xoff, scale(15));
+    g2.drawPolygon(realPosX, realPosY, 4);
+    xOffset = inverted ? scale(7) : scale(8);
+    g2.drawLine(xOffset, scale(11), xOffset, scale(15));
     /* draw output */
-    xoff = inverted ? scale(xpos[0] - 1) : scale(xpos[2] - 1);
-    int yoff = scale(ypos[3] + 1);
+    xOffset = inverted ? scale(xpos[0] - 1) : scale(xpos[2] - 1);
+    var yOffset = scale(ypos[3] + 1);
     g2.setColor(Value.TRUE_COLOR);
-    g2.fillOval(xoff, yoff, scale(3), scale(3));
-    xoff = inverted ? scale(xpos[2] - 1) : scale(xpos[0] - 1);
+    g2.fillOval(xOffset, yOffset, scale(3), scale(3));
+    xOffset = inverted ? scale(xpos[2] - 1) : scale(xpos[0] - 1);
     if (singleInput) {
-      g2.fillOval(xoff, yoff, scale(3), scale(3));
+      g2.fillOval(xOffset, yOffset, scale(3), scale(3));
     } else {
-      g2.fillOval(xoff, scale(1), scale(3), scale(3));
-      g2.fillOval(xoff, scale(11), scale(3), scale(3));
+      g2.fillOval(xOffset, scale(1), scale(3), scale(3));
+      g2.fillOval(xOffset, scale(11), scale(3), scale(3));
     }
   }
 }

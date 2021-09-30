@@ -40,7 +40,7 @@ function svg_to_png {
 
 # Generates all required size PNG icons.
 function generate_png_icons {
-	local -r svg="${SRC_DIR}/logisim-evolution-icon-src.svg"
+	local -r svg="${SRC_DIR}/logisim-evolution-icon.svg"
 	mkdir -p "${DEST_DIR}"
 	for width in ${SIZES[*]}; do
 		svg_to_png "${svg}" "${DEST_DIR}/logisim-icon-${width}.png" "${width}"
@@ -50,10 +50,10 @@ function generate_png_icons {
 # ##############################################################################
 
 # Update logo PNG
-declare -r logo_src="${SRC_DIR}/logisim-evolution-logo-src.svg"
+declare -r logo_src="${SRC_DIR}/logisim-evolution-logo.svg"
 declare -r logo_width=550
 declare -r logo_dest="${IMG_DIR}/logisim-evolution-logo.png"
-svg_to_png "${logo_src}" "${logo_dest}" "${logo_width}" 
+svg_to_png "${logo_src}" "${logo_dest}" "${logo_width}"
 
 # Update icon PNGs
 generate_png_icons
@@ -84,4 +84,3 @@ done
 # macOS: ???
 # Windows: http://www.telegraphics.com.au/sw/product/ICOBundle (???)
 icotool -c -o "${SUPPORT_DIR}/windows/Logisim-evolution.ico" ${src_pngs[*]}
-

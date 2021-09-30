@@ -18,12 +18,14 @@ public class OutputExpressions {
   private class MyListener implements VariableListListener, TruthTableListener {
 
     @Override
-    public void rowsChanged(TruthTableEvent event) {}
+    public void rowsChanged(TruthTableEvent event) {
+      // Do nothing
+    }
 
     @Override
     public void cellsChanged(TruthTableEvent event) {
       final var output = model.getOutputs().bits.get(event.getColumn());
-      invalidate(output, false);
+      invalidate(output);
     }
 
     private void inputsChanged(VariableListEvent event) {
@@ -95,7 +97,9 @@ public class OutputExpressions {
     }
 
     @Override
-    public void structureChanged(TruthTableEvent event) {}
+    public void structureChanged(TruthTableEvent event) {
+      // Dp nothing.
+    }
   }
 
   private class OutputData {
@@ -283,21 +287,16 @@ public class OutputExpressions {
   }
 
   private static boolean implicantsSame(List<Implicant> a, List<Implicant> b) {
-    if (a == null) {
-      return b == null || b.size() == 0;
-    } else if (b == null) {
-      return a == null || a.size() == 0;
-    } else if (a.size() != b.size()) {
-      return false;
-    } else {
-      final var ait = a.iterator();
-      for (final var bImplicant : b) {
-        if (!ait.hasNext()) return false; // should never happen
-        final var ai = ait.next();
-        if (!ai.equals(bImplicant)) return false;
-      }
-      return true;
+    if (a == null) return b == null || b.isEmpty();
+    if (b == null) return a.isEmpty();
+    if (a.size() != b.size()) return false;
+    final var ait = a.iterator();
+    for (final var bImplicant : b) {
+      if (!ait.hasNext()) return false; // should never happen
+      final var ai = ait.next();
+      if (!ai.equals(bImplicant)) return false;
     }
+    return true;
   }
 
   private static boolean isAllUndefined(Entry[] a) {
@@ -314,8 +313,7 @@ public class OutputExpressions {
 
   private final HashMap<String, OutputData> outputData = new HashMap<>();
 
-  private final ArrayList<OutputExpressionsListener> listeners =
-      new ArrayList<>();
+  private final ArrayList<OutputExpressionsListener> listeners = new ArrayList<>();
 
   private boolean updatingTable = false;
 
@@ -409,7 +407,7 @@ public class OutputExpressions {
     return ret;
   }
 
-  private void invalidate(String output, boolean formatChanged) {
+  private void invalidate(String output) {
     final var data = getOutputData(output, false);
     if (data != null) {
       if (!allowUpdates) {
@@ -442,7 +440,7 @@ public class OutputExpressions {
     final var oldFormat = getMinimizedFormat(output);
     if (format != oldFormat) {
       getOutputData(output, true).setMinimizedFormat(format);
-      invalidate(output, true);
+      invalidate(output);
     }
   }
 

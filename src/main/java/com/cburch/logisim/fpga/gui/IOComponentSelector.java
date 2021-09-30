@@ -11,7 +11,7 @@ package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.FpgaIoInformationContainer;
 import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -34,7 +34,7 @@ public class IOComponentSelector implements ActionListener {
     c.gridx = 0;
     diag.setLayout(new GridBagLayout());
     JButton button;
-    for (String comp : FPGAIOInformationContainer.GetComponentTypes()) {
+    for (String comp : FpgaIoInformationContainer.getComponentTypes()) {
       button = new JButton(S.get("FpgaBoardDefine", comp));
       button.setActionCommand(comp);
       button.addActionListener(this);

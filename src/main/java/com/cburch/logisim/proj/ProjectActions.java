@@ -24,7 +24,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.LibraryTools;
 import com.cburch.logisim.util.JFileChoosers;
-import com.cburch.logisim.util.StringUtil;
 import java.awt.Component;
 import java.io.File;
 import java.io.IOException;
@@ -235,13 +234,12 @@ public class ProjectActions {
 
   private static void updatecircs(LogisimFile lib, Project proj) {
     for (final var circ : lib.getCircuits()) {
-      circ.SetProject(proj);
+      circ.setProject(proj);
     }
     for (final var libs : lib.getLibraries()) {
-      if (libs instanceof LoadedLibrary) {
-        LoadedLibrary test = (LoadedLibrary) libs;
-        if (test.getBase() instanceof LogisimFile) {
-          updatecircs((LogisimFile) test.getBase(), proj);
+      if (libs instanceof LoadedLibrary test) {
+        if (test.getBase() instanceof LogisimFile lsFile) {
+          updatecircs(lsFile, proj);
         }
       }
     }

@@ -26,7 +26,7 @@ import java.util.HashSet;
 
 public abstract class AbstractAssembler implements AssemblerInterface {
 
-  private static final int NR_OF_BYTES_PER_LINE = 16;
+  private static final int nrOfBytesPerLine = 16;
   private final ArrayList<AssemblerExecutionInterface> exeUnits = new ArrayList<>();
   private final HashSet<Integer> acceptedParameterTypes;
 
@@ -137,7 +137,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
 
   private int getData(boolean lookForStrings, Integer[] contents, long sizeInBytes,
                       long startAddress, HashMap<Integer, String> labels, int maxLabelSize,
-                      StringBuffer lines, int lineNum) {
+                      StringBuilder lines, int lineNum) {
     int nrBytesWritten = 0;
     int size = (int) sizeInBytes;
     int i = 0;
@@ -229,20 +229,19 @@ public abstract class AbstractAssembler implements AssemblerInterface {
         }
       }
       if (!stringFound && !zerosFound) {
-        if (nrBytesWritten <= 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE) {
+        if (nrBytesWritten <= 0 || nrBytesWritten >= nrOfBytesPerLine) {
           StringBuilder label = new StringBuilder();
           while (label.length() < maxLabelSize) label.append(" ");
-          if (nrBytesWritten >= NR_OF_BYTES_PER_LINE)
+          if (nrBytesWritten >= nrOfBytesPerLine)
             newLineNum = addLine(lines, "\n", newLineNum, true);
-          if (nrBytesWritten == 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE)
+          if (nrBytesWritten == 0 || nrBytesWritten >= nrOfBytesPerLine)
             newLineNum = addLine(lines, label.toString(), newLineNum, false);
           newLineNum = addLine(lines, " .byte ", newLineNum, false);
           nrBytesWritten = 0;
         }
         if (nrBytesWritten > 0)
           newLineNum = addLine(lines, ", ", newLineNum, false);
-        newLineNum =
-            addLine(lines, String.format("0x%02X", getByte(contents, i)), newLineNum, false);
+        newLineNum = addLine(lines, String.format("0x%02X", getByte(contents, i)), newLineNum, false);
         nrBytesWritten++;
         i++;
       }
@@ -251,8 +250,8 @@ public abstract class AbstractAssembler implements AssemblerInterface {
     return newLineNum;
   }
 
-  private int addLine(StringBuffer s, String val, int lineNum, boolean completedLine) {
-    s.append(val);
+  private int addLine(StringBuilder str, String val, int lineNum, boolean completedLine) {
+    str.append(val);
     return completedLine ? lineNum + 1 : lineNum;
   }
 
@@ -261,7 +260,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
                            ElfProgramHeader elfHeader, ElfSectionHeader elfSections,
                            HashMap<Integer, Integer> validDebugLines) {
 
-    StringBuffer lines = new StringBuffer();
+    final var lines = new StringBuilder();
     int lineNum = 1;
     if (elfSections != null && elfSections.isValid()) {
       /* The section header gives more information on the program, so we prefer this one over the
@@ -323,8 +322,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
           for (int pc = 0; pc < (size >> 2); pc++) {
             decode(contents[pc]);
             AssemblerExecutionInterface exe = getExeUnit();
-            if (exe instanceof AbstractExecutionUnitWithLabelSupport) {
-              AbstractExecutionUnitWithLabelSupport jump = (AbstractExecutionUnitWithLabelSupport) exe;
+            if (exe instanceof AbstractExecutionUnitWithLabelSupport jump) {
               if (jump.isLabelSupported()) {
                 long addr = startAddress + ((long) pc << 2);
                 long target = jump.getLabelAddress(addr);
@@ -381,8 +379,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             line.append(label).append(" ");
             decode(contents[pc]);
             AssemblerExecutionInterface exe = getExeUnit();
-            if (exe instanceof AbstractExecutionUnitWithLabelSupport) {
-              AbstractExecutionUnitWithLabelSupport jump = (AbstractExecutionUnitWithLabelSupport) exe;
+            if (exe instanceof AbstractExecutionUnitWithLabelSupport jump) {
               if (jump.isLabelSupported()) {
                 long target = jump.getLabelAddress(addr);
                 if (labels.containsKey(SocSupport.convUnsignedLong(target)))

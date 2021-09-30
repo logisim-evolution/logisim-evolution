@@ -66,7 +66,7 @@ public class CircuitLocker {
 
   static void releaseLocks(Map<Circuit, Lock> locks) {
     final var curThread = Thread.currentThread();
-    for (Map.Entry<Circuit, Lock> entry : locks.entrySet()) {
+    for (final var entry : locks.entrySet()) {
       final var circ = entry.getKey();
       final var lock = entry.getValue();
       final var locker = circ.getLocker();
@@ -78,17 +78,17 @@ public class CircuitLocker {
     }
   }
 
-  private static final AtomicInteger NEXT_SERIAL_NUMBER = new AtomicInteger(0);
+  private static final AtomicInteger nextSerialNumber = new AtomicInteger(0);
   private final int serialNumber;
 
   private final ReadWriteLock circuitLock;
 
-  private transient Thread mutatingThread;
+  private Thread mutatingThread;
 
   private CircuitMutatorImpl mutatingMutator;
 
   CircuitLocker() {
-    serialNumber = NEXT_SERIAL_NUMBER.getAndIncrement();
+    serialNumber = nextSerialNumber.getAndIncrement();
     circuitLock = new ReentrantReadWriteLock();
     mutatingThread = null;
     mutatingMutator = null;
@@ -132,8 +132,7 @@ public class CircuitLocker {
     private final transient Thread mutatingThread;
     private final CircuitMutatorImpl mutatingMutator;
 
-    public LockException(
-        String msg, Circuit circ, int serial, Thread thread, CircuitMutatorImpl mutator) {
+    public LockException(String msg, Circuit circ, int serial, Thread thread, CircuitMutatorImpl mutator) {
       super(msg);
       circuit = circ;
       serialNumber = serial;

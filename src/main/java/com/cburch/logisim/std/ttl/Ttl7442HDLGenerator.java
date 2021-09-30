@@ -30,56 +30,43 @@ package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
+public class Ttl7442HDLGenerator extends AbstractHdlGeneratorFactory {
 
-  private boolean IsExes3 = false;
-  private boolean IsGray = false;
+  private final boolean IsExes3;
+  private final boolean IsGray;
 
   public Ttl7442HDLGenerator() {
-    super();
+    this(false, false);
   }
 
   public Ttl7442HDLGenerator(boolean Exess3, boolean Gray) {
     super();
     IsExes3 = Exess3;
     IsGray = Gray;
+    myPorts
+        .add(Port.INPUT, "A", 1, 13)
+        .add(Port.INPUT, "B", 1, 12)
+        .add(Port.INPUT, "C", 1, 11)
+        .add(Port.INPUT, "D", 1, 10)
+        .add(Port.OUTPUT, "O0", 1, 0)
+        .add(Port.OUTPUT, "O1", 1, 1)
+        .add(Port.OUTPUT, "O2", 1, 2)
+        .add(Port.OUTPUT, "O3", 1, 3)
+        .add(Port.OUTPUT, "O4", 1, 4)
+        .add(Port.OUTPUT, "O5", 1, 5)
+        .add(Port.OUTPUT, "O6", 1, 6)
+        .add(Port.OUTPUT, "O7", 1, 7)
+        .add(Port.OUTPUT, "O8", 1, 8)
+        .add(Port.OUTPUT, "O9", 1, 9);
   }
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("A", 1);
-    map.put("B", 1);
-    map.put("C", 1);
-    map.put("D", 1);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("O0", 1);
-    map.put("O1", 1);
-    map.put("O2", 1);
-    map.put("O3", 1);
-    map.put("O4", 1);
-    map.put("O5", 1);
-    map.put("O6", 1);
-    map.put("O7", 1);
-    map.put("O8", 1);
-    map.put("O9", 1);
-    return map;
-  }
-
-  @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
 
     if (IsExes3) {
@@ -126,29 +113,7 @@ public class Ttl7442HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    final var map = new TreeMap<String, String>();
-    if (!(mapInfo instanceof NetlistComponent)) return map;
-    final var comp = (NetlistComponent) mapInfo;
-    map.putAll(GetNetMap("A", true, comp, 13, nets));
-    map.putAll(GetNetMap("B", true, comp, 12, nets));
-    map.putAll(GetNetMap("C", true, comp, 11, nets));
-    map.putAll(GetNetMap("D", true, comp, 10, nets));
-    map.putAll(GetNetMap("O0", true, comp, 0, nets));
-    map.putAll(GetNetMap("O1", true, comp, 1, nets));
-    map.putAll(GetNetMap("O2", true, comp, 2, nets));
-    map.putAll(GetNetMap("O3", true, comp, 3, nets));
-    map.putAll(GetNetMap("O4", true, comp, 4, nets));
-    map.putAll(GetNetMap("O5", true, comp, 5, nets));
-    map.putAll(GetNetMap("O6", true, comp, 6, nets));
-    map.putAll(GetNetMap("O7", true, comp, 7, nets));
-    map.putAll(GetNetMap("O8", true, comp, 8, nets));
-    map.putAll(GetNetMap("O9", true, comp, 9, nets));
-    return map;
-  }
-
-  @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
     return (!attrs.getValue(TtlLibrary.VCC_GND));

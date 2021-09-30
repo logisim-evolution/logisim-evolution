@@ -20,14 +20,14 @@ import java.awt.font.TextLayout;
 import javax.swing.Icon;
 
 public class WarningIcon implements Icon {
-  private final int wh;
+  private final int wixth;
 
   public WarningIcon() {
-    wh = AppPreferences.getIconSize();
+    wixth = AppPreferences.getIconSize();
   }
 
   public WarningIcon(double scale) {
-    wh = (int) AppPreferences.getScaled(scale * AppPreferences.getIconSize());
+    wixth = (int) AppPreferences.getScaled(scale * AppPreferences.getIconSize());
   }
 
   public static int scale(int v) {
@@ -38,28 +38,28 @@ public class WarningIcon implements Icon {
   public void paintIcon(Component c, Graphics g, int x, int y) {
     Graphics2D g2 = (Graphics2D) g.create();
     g2.translate(x, y);
-    int[] xpos = {0, wh / 2 - 1, wh - 1};
-    int[] ypos = {wh - 1, 0, wh - 1};
+    final int[] xpos = {0, wixth / 2 - 1, wixth - 1};
+    final int[] ypos = {wixth - 1, 0, wixth - 1};
     g2.setColor(Color.YELLOW.brighter().brighter());
     g2.fillPolygon(xpos, ypos, 3);
     g2.setStroke(new BasicStroke(scale(1)));
     g2.setColor(Color.BLACK);
     g2.drawPolygon(xpos, ypos, 3);
-    Font f = g2.getFont().deriveFont((float) wh / (float) 1.3).deriveFont(Font.BOLD);
-    TextLayout t = new TextLayout("!", f, g2.getFontRenderContext());
-    float xc = (float) wh / (float) 2 - (float) t.getBounds().getCenterX();
-    float yc = (float) (5 * wh) / (float) 8 - (float) t.getBounds().getCenterY();
+    final var f = g2.getFont().deriveFont((float) wixth / (float) 1.3).deriveFont(Font.BOLD);
+    final var t = new TextLayout("!", f, g2.getFontRenderContext());
+    final var xc = (float) wixth / (float) 2 - (float) t.getBounds().getCenterX();
+    final var yc = (float) (5 * wixth) / (float) 8 - (float) t.getBounds().getCenterY();
     t.draw(g2, xc, yc);
     g2.dispose();
   }
 
   @Override
   public int getIconWidth() {
-    return wh;
+    return wixth;
   }
 
   @Override
   public int getIconHeight() {
-    return wh;
+    return wixth;
   }
 }

@@ -57,7 +57,7 @@ public abstract class BaseIcon implements javax.swing.Icon {
    */
   @Override
   public void paintIcon(Component comp, Graphics gfx, int x, int y) {
-    Graphics2D g2 = (Graphics2D) gfx.create();
+    final var g2 = (Graphics2D) gfx.create();
     g2.setStroke(new BasicStroke(AppPreferences.getScaled(1)));
     g2.translate(x, y);
     paintIcon(g2);

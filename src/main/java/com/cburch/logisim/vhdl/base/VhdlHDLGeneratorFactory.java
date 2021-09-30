@@ -9,25 +9,29 @@
 
 package com.cburch.logisim.vhdl.base;
 
-import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import java.util.ArrayList;
-import java.util.Objects;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
-  
+public class VhdlHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
+
   public static final String HDL_DIRECTORY = "circuit";
 
   public VhdlHDLGeneratorFactory() {
     super(HDL_DIRECTORY);
+    getWiresPortsDuringHDLWriting = true;
+  }
+
+  @Override
+  public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
+    VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
+    var i = 0;
+    for (final var port : content.getPorts()) {
+      myPorts.add(port.getType(), port.getName(), port.getWidth().getWidth(), i++);
+    }
   }
 
   @Override
@@ -45,6 +49,7 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     return contents;
   }
 
+  /* FIXME: implement the generics in the VHDL class (keeping this code for reference)
   @Override
   public SortedMap<String, Integer> GetParameterMap(Netlist Nets, NetlistComponent ComponentInfo) {
     AttributeSet attrs = ComponentInfo.getComponent().getAttributeSet();
@@ -69,49 +74,10 @@ public class VhdlHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
     }
     return Parameters;
   }
+  */
 
   @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> inputs = new TreeMap<>();
-
-    VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
-    for (VhdlParser.PortDescription p : content.getPorts()) {
-      if (p.getType().equals(Port.INPUT)) inputs.put(p.getName(), p.getWidth().getWidth());
-    }
-
-    return inputs;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    SortedMap<String, Integer> outputs = new TreeMap<>();
-
-    VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
-    for (VhdlParser.PortDescription p : content.getPorts()) {
-      if (p.getType().equals(Port.OUTPUT)) outputs.put(p.getName(), p.getWidth().getWidth());
-    }
-
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    SortedMap<String, String> PortMap = new TreeMap<>();
-    if (!(MapInfo instanceof NetlistComponent)) return PortMap;
-    NetlistComponent ComponentInfo = (NetlistComponent) MapInfo;
-
-    AttributeSet attrs = ComponentInfo.getComponent().getAttributeSet();
-    VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
-
-    int i = 0;
-    for (VhdlParser.PortDescription p : content.getPorts()) {
-      PortMap.putAll(GetNetMap(p.getName(), true, ComponentInfo, i++, Nets));
-    }
-    return PortMap;
-  }
-
-  @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
-    return HDL.isVHDL();
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
+    return Hdl.isVhdl();
   }
 }

@@ -16,8 +16,8 @@ import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.file.FileWriter;
-import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.ToplevelHdlGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
@@ -67,18 +67,18 @@ public class VivadoDownload implements VendorDownload {
             + File.separator
             + "impl_1"
             + File.separator
-            + ToplevelHDLGeneratorFactory.FPGA_TOP_LEVEL_NAME
+            + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME
             + ".bit";
     _bitStreamPath = _bitStreamPath.replace("\\", "/");
   }
 
   @Override
-  public int GetNumberOfStages() {
+  public int getNumberOfStages() {
     return 2;
   }
 
   @Override
-  public String GetStageMessage(int stage) {
+  public String getStageMessage(int stage) {
     switch (stage) {
       case 0:
         return S.get("VivadoProject");
@@ -90,7 +90,7 @@ public class VivadoDownload implements VendorDownload {
   }
 
   @Override
-  public ProcessBuilder PerformStep(int stage) {
+  public ProcessBuilder performStep(int stage) {
     switch (stage) {
       case 0:
         return Stage0Project();
@@ -107,7 +107,7 @@ public class VivadoDownload implements VendorDownload {
   }
 
   @Override
-  public ProcessBuilder DownloadToBoard() {
+  public ProcessBuilder downloadToBoard() {
     var command = new ArrayList<String>();
     command.add(vivadoVendor.getBinaryPath(0));
     command.add("-mode");
@@ -120,7 +120,7 @@ public class VivadoDownload implements VendorDownload {
   }
 
   @Override
-  public boolean CreateDownloadScripts() {
+  public boolean createDownloadScripts() {
     // create project files
     var createProjectFile = FileWriter.getFilePointer(ScriptPath, CREATE_PROJECT_TCL);
     var xdcFile = FileWriter.getFilePointer(xdcPath, XDC_FILE);
@@ -171,13 +171,13 @@ public class VivadoDownload implements VendorDownload {
     // fill the xdc file
     if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
       final var clockPin = BoardInfo.fpga.getClockPinLocation();
-      final var clockSignal = TickComponentHDLGeneratorFactory.FPGA_CLOCK;
+      final var clockSignal = TickComponentHdlGeneratorFactory.FPGA_CLOCK;
       final var getPortsString = " [get_ports {" + clockSignal + "}]";
       contents.add("set_property PACKAGE_PIN " + clockPin + getPortsString);
 
       if (BoardInfo.fpga.getClockStandard() != IoStandards.DEFAULT_STANDARD
           && BoardInfo.fpga.getClockStandard() != IoStandards.UNKNOWN) {
-        final var clockIoStandard = IoStandards.Behavior_strings[BoardInfo.fpga.getClockStandard()];
+        final var clockIoStandard = IoStandards.BEHAVIOR_STRINGS[BoardInfo.fpga.getClockStandard()];
         contents.add("    set_property IOSTANDARD " + clockIoStandard + getPortsString);
       }
 
@@ -226,19 +226,19 @@ public class VivadoDownload implements VendorDownload {
   }
 
   private ArrayList<String> getPinLocStrings() {
-    final var contents = new LineBuffer();
+    final var contents = LineBuffer.getBuffer();
     for (final var key : MapInfo.getMappableResources().keySet()) {
       final var map = MapInfo.getMappableResources().get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {
-        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
+        if (map.isMapped(i) && !map.isOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
           final var netName = (map.isExternalInverted(i) ? "n_" : "") + map.getHdlString(i);
           // Note {{2}} is wrapped in additional {}!
           contents.add("set_property PACKAGE_PIN {{1}} [get_ports {{{2}}}]", map.getPinLocation(i), netName);
           final var info = map.getFpgaInfo(i);
           if (info != null) {
-            final var ioStandard = info.GetIOStandard();
+            final var ioStandard = info.getIoStandard();
             if (ioStandard != IoStandards.UNKNOWN && ioStandard != IoStandards.DEFAULT_STANDARD)
-              contents.add("    set_property IOSTANDARD {{1}} [get_ports {{{2}}}]", IoStandards.GetConstraintedIoStandard(info.GetIOStandard()), netName);
+              contents.add("    set_property IOSTANDARD {{1}} [get_ports {{{2}}}]", IoStandards.getConstraintedIoStandard(info.getIoStandard()), netName);
           }
         }
       }
@@ -251,7 +251,7 @@ public class VivadoDownload implements VendorDownload {
   }
 
   @Override
-  public void SetMapableResources(MappableResourcesContainer resources) {
+  public void setMapableResources(MappableResourcesContainer resources) {
     MapInfo = resources;
   }
 
@@ -280,7 +280,7 @@ public class VivadoDownload implements VendorDownload {
   }
 
   @Override
-  public boolean BoardConnected() {
+  public boolean isBoardConnected() {
     // TODO Detect if a board is connected, and in case of multiple boards select the one that
     // should be used
     return true;

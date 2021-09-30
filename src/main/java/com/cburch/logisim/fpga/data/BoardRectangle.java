@@ -14,12 +14,12 @@ import com.cburch.draw.shapes.Rectangle;
 public class BoardRectangle {
   private int xPosition;
   private int yPosition;
-  private int Width;
-  private int Height;
-  private boolean IsActiveHigh = true;
-  private int NrBits = 0;
+  private int width;
+  private int height;
+  private boolean isActiveHigh = true;
+  private int nrBits = 0;
   private Long value = null;
-  private String Label;
+  private String label;
 
   public BoardRectangle(int x, int y, int w, int h) {
     this.set(x, y, w, h);
@@ -30,21 +30,21 @@ public class BoardRectangle {
   }
 
   @Override
-  public boolean equals(Object rect) {
-    if (!(rect instanceof BoardRectangle)) return false;
-    BoardRectangle Rect = (BoardRectangle) rect;
-    return ((Rect.getHeight() == Height)
-        && (Rect.getWidth() == Width)
-        && (Rect.getXpos() == xPosition)
-        && (Rect.getYpos() == yPosition));
+  public boolean equals(Object rectangle) {
+    return (rectangle instanceof BoardRectangle rect)
+           ? ((rect.getHeight() == height)
+              && (rect.getWidth() == width)
+              && (rect.getXpos() == xPosition)
+              && (rect.getYpos() == yPosition))
+           : false;
   }
 
   public int getHeight() {
-    return Height;
+    return height;
   }
 
   public int getWidth() {
-    return Width;
+    return width;
   }
 
   public int getXpos() {
@@ -55,41 +55,41 @@ public class BoardRectangle {
     return yPosition;
   }
 
-  public boolean IsActiveOnHigh() {
-    return IsActiveHigh;
+  public boolean isActiveOnHigh() {
+    return isActiveHigh;
   }
 
-  public String GetLabel() {
-    return Label;
+  public String getLabel() {
+    return label;
   }
 
   public int getNrBits() {
-    return NrBits;
+    return nrBits;
   }
 
   public void setNrBits(int nr) {
-    NrBits = nr;
+    nrBits = nr;
   }
 
   public void updateRectangle(BoardRectangle other) {
     xPosition = other.getXpos();
     yPosition = other.getYpos();
-    Width = other.getWidth();
-    Height = other.getHeight();
+    width = other.getWidth();
+    height = other.getHeight();
   }
 
   public void updateRectangle(Rectangle other) {
     xPosition = other.getX();
     yPosition = other.getY();
-    Width = other.getWidth();
-    Height = other.getHeight();
+    width = other.getWidth();
+    height = other.getHeight();
   }
 
-  public Boolean Overlap(Rectangle rect) {
-    return Overlap(new BoardRectangle(rect));
+  public Boolean overlap(Rectangle rect) {
+    return overlap(new BoardRectangle(rect));
   }
 
-  public Boolean Overlap(BoardRectangle rect) {
+  public Boolean overlap(BoardRectangle rect) {
     Boolean result;
     int xl, xr, yt, yb;
     xl = rect.getXpos();
@@ -105,9 +105,9 @@ public class BoardRectangle {
 
     /* check for my corner points inside him */
     result |= rect.PointInside(xPosition, yPosition);
-    result |= rect.PointInside(xPosition + Width, yPosition);
-    result |= rect.PointInside(xPosition, yPosition + Height);
-    result |= rect.PointInside(xPosition + Width, yPosition + Height);
+    result |= rect.PointInside(xPosition + width, yPosition);
+    result |= rect.PointInside(xPosition, yPosition + height);
+    result |= rect.PointInside(xPosition + width, yPosition + height);
 
     /*
      * if result=false: for sure the corner points are not inside one of
@@ -116,45 +116,45 @@ public class BoardRectangle {
     /* we now have to check for partial overlap */
     if (!result) {
       result = ((xl >= xPosition)
-          && (xl <= (xPosition + Width))
+          && (xl <= (xPosition + width))
           && (yt <= yPosition)
-          && (yb >= (yPosition + Height)));
+          && (yb >= (yPosition + height)));
       result |=
           ((xr >= xPosition)
-              && (xr <= (xPosition + Width))
+              && (xr <= (xPosition + width))
               && (yt <= yPosition)
-              && (yb >= (yPosition + Height)));
+              && (yb >= (yPosition + height)));
       result |=
           ((xl <= xPosition)
-              && (xr >= (xPosition + Width))
+              && (xr >= (xPosition + width))
               && (yt >= yPosition)
-              && (yt <= (yPosition + Height)));
+              && (yt <= (yPosition + height)));
       result |=
           ((xl <= xPosition)
-              && (xr >= (xPosition + Width))
+              && (xr >= (xPosition + width))
               && (yb >= yPosition)
-              && (yb <= (yPosition + Height)));
+              && (yb <= (yPosition + height)));
     }
     if (!result) {
       result = ((xPosition >= xl)
           && (xPosition <= xr)
           && (yPosition <= yt)
-          && ((yPosition + Height) >= yb));
+          && ((yPosition + height) >= yb));
       result |=
-          (((xPosition + Width) >= xl)
-              && ((xPosition + Width) <= xr)
+          (((xPosition + width) >= xl)
+              && ((xPosition + width) <= xr)
               && (yPosition <= yt)
-              && ((yPosition + Height) >= yb));
+              && ((yPosition + height) >= yb));
       result |=
           ((xPosition <= xl)
-              && ((xPosition + Width) >= xr)
+              && ((xPosition + width) >= xr)
               && (yPosition >= yt)
               && (yPosition <= yb));
       result |=
           ((xPosition <= xl)
-              && ((xPosition + Width) >= xr)
-              && ((yPosition + Height) >= yt)
-              && ((yPosition + Height) <= yb));
+              && ((xPosition + width) >= xr)
+              && ((yPosition + height) >= yt)
+              && ((yPosition + height) <= yb));
     }
 
     return result;
@@ -162,34 +162,34 @@ public class BoardRectangle {
 
   public Boolean PointInside(int x, int y) {
     return ((x >= xPosition)
-        && (x <= (xPosition + Width))
+        && (x <= (xPosition + width))
         && (y >= yPosition)
-        && (y <= (yPosition + Height)));
+        && (y <= (yPosition + height)));
   }
 
   private void set(int x, int y, int w, int h) {
     if (w < 0) {
       xPosition = x + w;
-      Width = -w;
+      width = -w;
     } else {
       xPosition = x;
-      Width = w;
+      width = w;
     }
     if (h < 0) {
       yPosition = y + h;
-      Height = -h;
+      height = -h;
     } else {
       yPosition = y;
-      Height = h;
+      height = h;
     }
   }
 
-  public void SetActiveOnHigh(boolean IsActiveHigh) {
-    this.IsActiveHigh = IsActiveHigh;
+  public void setActiveOnHigh(boolean IsActiveHigh) {
+    this.isActiveHigh = IsActiveHigh;
   }
 
-  public void SetLabel(String Label) {
-    this.Label = Label;
+  public void setLabel(String Label) {
+    this.label = Label;
   }
 
   public void setValue(Long val) {

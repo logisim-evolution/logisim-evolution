@@ -96,7 +96,8 @@ class WireBundle {
         incompatibilityData.add(widthDeterminant, this.width);
         incompatibilityData.add(det, width);
       }
-      return; // the widths match, and the bundle is already set;
+      // the widths match, and the bundle is already set
+      return;
     }
     this.width = width;
     this.widthDeterminant = det;

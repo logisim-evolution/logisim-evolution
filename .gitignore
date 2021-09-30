@@ -283,3 +283,10 @@ gradle-app.setting
 
 # Include libraries
 !lib
+
+# Default Checkstyle suppresion file. Currently excluded as we have 2 different
+# in config/ folder. Once we end up with just one, this exclusion will be removed
+# and suppresion file moved to checkstyle-suppressions.xml
+/checkstyle-suppressions.xml
+# If pre-commit is used, this entry will prevent from commiting checkstyle.jar by accident.
+/checkstyle-*-all.jar

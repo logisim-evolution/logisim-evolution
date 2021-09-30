@@ -29,17 +29,17 @@ class CircuitPoints {
   }
 
   private final HashMap<Location, LocationData> map = new HashMap<>();
-  private final HashMap<Location, WidthIncompatibilityData> incompatibilityData =
-      new HashMap<>();
+  private final HashMap<Location, WidthIncompatibilityData> incompatibilityData = new HashMap<>();
 
-  public CircuitPoints() {}
+  public CircuitPoints() {
+    // Do nothing.
+  }
 
   //
   // update methods
   //
   void add(Component comp) {
-    if (comp instanceof Wire) {
-      final var w = (Wire) comp;
+    if (comp instanceof Wire w) {
       addSub(w.getEnd0(), w, null);
       addSub(w.getEnd1(), w, null);
     } else {
@@ -193,10 +193,9 @@ class CircuitPoints {
   }
 
   void remove(Component comp) {
-    if (comp instanceof Wire) {
-      final var w = (Wire) comp;
-      removeSub(w.getEnd0(), w);
-      removeSub(w.getEnd1(), w);
+    if (comp instanceof Wire wire) {
+      removeSub(wire.getEnd0(), wire);
+      removeSub(wire.getEnd1(), wire);
     } else {
       for (EndData endData : comp.getEnds()) {
         if (endData != null) {

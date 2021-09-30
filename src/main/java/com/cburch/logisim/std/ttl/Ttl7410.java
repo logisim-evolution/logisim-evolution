@@ -94,7 +94,7 @@ public class Ttl7410 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     var val =
         (isAND)
             ? state.getPortValue(2).and(state.getPortValue(3).and(state.getPortValue(4)))

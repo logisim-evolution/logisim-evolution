@@ -404,10 +404,10 @@ class TableTabCaret {
 
     @Override
     public boolean equals(Object o) {
-      if (!(o instanceof Pt)) return false;
-      final var other = (Pt) o;
-      return (other.row == this.row && other.col == this.col)
-          || (!other.isValid() && !this.isValid());
+      return (o instanceof Pt other)
+             ? (other.row == this.row && other.col == this.col)
+                     || (!other.isValid() && !this.isValid())
+             : false;
     }
 
     @Override
@@ -658,6 +658,8 @@ class TableTabCaret {
   private boolean isContiguous(int[] rows) {
     if (rows.length <= 1) return true;
     for (var i = 1; i < rows.length; i++) {
+      // FIXME: this condition is always false. It most likely was meant to read:
+      // if (Math.abs(rows[i] - rows[i+1]) > 1) return false;
       if (Math.abs(rows[i] - rows[i]) > 1) return false;
     }
     return true;

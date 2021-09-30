@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 public class ModelChangeAttributeAction extends ModelAction {
   private final Map<AttributeMapKey, Object> oldValues;
@@ -44,9 +43,9 @@ public class ModelChangeAttributeAction extends ModelAction {
   public String getName() {
     Attribute<?> a = attr;
     if (a == null) {
-      boolean found = false;
-      for (AttributeMapKey key : newValues.keySet()) {
-        Attribute<?> at = key.getAttribute();
+      var found = false;
+      for (final var key : newValues.keySet()) {
+        final var at = key.getAttribute();
         if (found) {
           if (!Objects.equals(a, at)) {
             a = null;
@@ -59,17 +58,15 @@ public class ModelChangeAttributeAction extends ModelAction {
       }
       attr = a;
     }
-    if (a == null) {
-      return S.get("actionChangeAttributes");
-    } else {
-      return S.get("actionChangeAttribute", a.getDisplayName());
-    }
+    return (a == null)
+        ? S.get("actionChangeAttributes")
+        : S.get("actionChangeAttribute", a.getDisplayName());
   }
 
   @Override
   public Collection<CanvasObject> getObjects() {
-    Set<CanvasObject> ret = new HashSet<>();
-    for (AttributeMapKey key : newValues.keySet()) {
+    final var ret = new HashSet<CanvasObject>();
+    for (final var key : newValues.keySet()) {
       ret.add(key.getObject());
     }
     return ret;

@@ -43,8 +43,8 @@ public class SocSimulationManager implements SocBusMasterInterface {
       super(S.get("SocBusSelectAttrClick"));
       myCirc = null;
       this.repaint();
-      if (source instanceof Frame) {
-        myCirc = ((Frame) source).getProject().getCurrentCircuit();
+      if (source instanceof Frame frame) {
+        myCirc = frame.getProject().getCurrentCircuit();
       }
       myValue = value;
       addMouseListener(this);

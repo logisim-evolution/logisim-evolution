@@ -20,7 +20,6 @@ import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.LogisimMenuItem;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.SyntaxChecker;
 import java.awt.Color;
 import java.awt.Component;
@@ -549,6 +548,7 @@ public class VariableTab extends AnalyzerTab {
     private static final long serialVersionUID = 1L;
 
     public BitWidthRenderer() {
+      // Do nothing.
     }
 
     @Override
@@ -667,12 +667,10 @@ public class VariableTab extends AnalyzerTab {
     @Override
     public boolean isCellEditable(EventObject e) {
       if (super.isCellEditable(e)) {
-        if (e instanceof MouseEvent) {
-          final var me = (MouseEvent) e;
+        if (e instanceof MouseEvent me) {
           return me.getClickCount() >= 2;
         }
-        if (e instanceof KeyEvent) {
-          final var ke = (KeyEvent) e;
+        if (e instanceof KeyEvent ke) {
           return (ke.getKeyCode() == KeyEvent.VK_F2 || ke.getKeyCode() == KeyEvent.VK_ENTER);
         }
       }

@@ -11,58 +11,44 @@ package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-public class Ttl7485HDLGenerator extends AbstractHDLGeneratorFactory {
+public class Ttl7485HDLGenerator extends AbstractHdlGeneratorFactory {
 
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("A0", 1);
-    map.put("A1", 1);
-    map.put("A2", 1);
-    map.put("A3", 1);
-    map.put("B0", 1);
-    map.put("B1", 1);
-    map.put("B2", 1);
-    map.put("B3", 1);
-    map.put("AltBin", 1);
-    map.put("AeqBin", 1);
-    map.put("AgtBin", 1);
-    return map;
+  public Ttl7485HDLGenerator() {
+    super();
+    myWires
+        .addWire("oppA", 4)
+        .addWire("oppB", 4)
+        .addWire("gt", 1)
+        .addWire("eq", 1)
+        .addWire("lt", 1)
+        .addWire("CompIn", 3)
+        .addWire("CompOut", 3);
+    myPorts
+        .add(Port.INPUT, "A0", 1, 8)
+        .add(Port.INPUT, "A1", 1, 10)
+        .add(Port.INPUT, "A2", 1, 11)
+        .add(Port.INPUT, "A3", 1, 13)
+        .add(Port.INPUT, "B0", 1, 7)
+        .add(Port.INPUT, "B1", 1, 9)
+        .add(Port.INPUT, "B2", 1, 12)
+        .add(Port.INPUT, "B3", 1, 0)
+        .add(Port.INPUT, "AltBin", 1, 1)
+        .add(Port.INPUT, "AeqBin", 1, 2)
+        .add(Port.INPUT, "AgtBin", 1, 3)
+        .add(Port.OUTPUT, "AltBout", 1, 6)
+        .add(Port.OUTPUT, "AeqBout", 1, 5)
+        .add(Port.OUTPUT, "AgtBout", 1, 4);
   }
 
   @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist TheNetlist, AttributeSet attrs) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("AltBout", 1);
-    map.put("AeqBout", 1);
-    map.put("AgtBout", 1);
-    return map;
-  }
-
-  @Override
-  public SortedMap<String, Integer> GetWireList(AttributeSet attrs, Netlist Nets) {
-    final var map = new TreeMap<String, Integer>();
-    map.put("oppA", 4);
-    map.put("oppB", 4);
-    map.put("gt", 1);
-    map.put("eq", 1);
-    map.put("lt", 1);
-    map.put("CompIn", 3);
-    map.put("CompOut", 3);
-    return map;
-  }
-
-  @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist netlist, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+  public ArrayList<String> getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
+    final var contents = LineBuffer.getBuffer();
     return contents
         .add("""
             oppA   <= A3&A2&A1&A0;
@@ -87,31 +73,9 @@ public class Ttl7485HDLGenerator extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> GetPortMap(Netlist Nets, Object MapInfo) {
-    final var map = new TreeMap<String, String>();
-    if (!(MapInfo instanceof NetlistComponent)) return map;
-    final var ComponentInfo = (NetlistComponent) MapInfo;
-    map.putAll(GetNetMap("A0", true, ComponentInfo, 8, Nets));
-    map.putAll(GetNetMap("A1", true, ComponentInfo, 10, Nets));
-    map.putAll(GetNetMap("A2", true, ComponentInfo, 11, Nets));
-    map.putAll(GetNetMap("A3", true, ComponentInfo, 13, Nets));
-    map.putAll(GetNetMap("B0", true, ComponentInfo, 7, Nets));
-    map.putAll(GetNetMap("B1", true, ComponentInfo, 9, Nets));
-    map.putAll(GetNetMap("B2", true, ComponentInfo, 12, Nets));
-    map.putAll(GetNetMap("B3", true, ComponentInfo, 0, Nets));
-    map.putAll(GetNetMap("AltBin", true, ComponentInfo, 1, Nets));
-    map.putAll(GetNetMap("AeqBin", true, ComponentInfo, 2, Nets));
-    map.putAll(GetNetMap("AgtBin", true, ComponentInfo, 3, Nets));
-    map.putAll(GetNetMap("AltBout", true, ComponentInfo, 6, Nets));
-    map.putAll(GetNetMap("AeqBout", true, ComponentInfo, 5, Nets));
-    map.putAll(GetNetMap("AgtBout", true, ComponentInfo, 4, Nets));
-    return map;
-  }
-
-  @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
-    return (!attrs.getValue(TtlLibrary.VCC_GND) && HDL.isVHDL());
+    return (!attrs.getValue(TtlLibrary.VCC_GND) && Hdl.isVhdl());
   }
 }

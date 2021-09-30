@@ -11,21 +11,19 @@ package com.cburch.logisim.std.gates;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.AbstractHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
-public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
+public class PLAHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
-  @Override
-  public SortedMap<String, Integer> GetInputList(Netlist nets, AttributeSet attrs) {
-    final var inputs = new TreeMap<String, Integer>();
-    inputs.put("Index", attrs.getValue(PLA.ATTR_IN_WIDTH).getWidth());
-    return inputs;
+  public PLAHDLGeneratorFactory() {
+    super();
+    myPorts
+        .add(Port.INPUT, "index", 0, PLA.IN_PORT, PLA.ATTR_IN_WIDTH)
+        .add(Port.OUTPUT, "Result", 0, PLA.OUT_PORT, PLA.ATTR_OUT_WIDTH);
   }
 
   private static String bits(char[] b) {
@@ -43,11 +41,11 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> GetModuleFunctionality(Netlist nets, AttributeSet attrs) {
-    final var contents = new LineBuffer();
+  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
+    final var contents = LineBuffer.getHdlBuffer();
     final var tt = attrs.getValue(PLA.ATTR_TABLE);
     final var outSz = attrs.getValue(PLA.ATTR_OUT_WIDTH).getWidth();
-    if (HDL.isVHDL()) {
+    if (Hdl.isVhdl()) {
       var leader = "    Result <= ";
       final var indent = "              ";
       if (tt.rows().isEmpty()) {
@@ -66,24 +64,7 @@ public class PLAHDLGeneratorFactory extends AbstractHDLGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, Integer> GetOutputList(Netlist nets, AttributeSet attrs) {
-    final var outputs = new TreeMap<String, Integer>();
-    outputs.put("Result", attrs.getValue(PLA.ATTR_OUT_WIDTH).getWidth());
-    return outputs;
-  }
-
-  @Override
-  public SortedMap<String, String> GetPortMap(Netlist nets, Object mapInfo) {
-    final var portMap = new TreeMap<String, String>();
-    if (!(mapInfo instanceof NetlistComponent)) return portMap;
-    final var componentInfo = (NetlistComponent) mapInfo;
-    portMap.putAll(GetNetMap("Index", true, componentInfo, PLA.IN_PORT, nets));
-    portMap.putAll(GetNetMap("Result", true, componentInfo, PLA.OUT_PORT, nets));
-    return portMap;
-  }
-
-  @Override
-  public boolean isHDLSupportedTarget(AttributeSet attrs) {
-    return HDL.isVHDL();
+  public boolean isHdlSupportedTarget(AttributeSet attrs) {
+    return Hdl.isVhdl();
   }
 }

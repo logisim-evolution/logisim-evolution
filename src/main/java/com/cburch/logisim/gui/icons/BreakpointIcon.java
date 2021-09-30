@@ -28,7 +28,7 @@ public class BreakpointIcon implements Icon {
     g.setColor(Color.DARK_GRAY);
     g.drawOval(x, y, wh, wh);
     g.setColor(Color.YELLOW);
-    Font f = g.getFont();
+    final var f = g.getFont();
     g.setFont(f.deriveFont(Font.BOLD, (f.getSize() * 6) / 10));
     GraphicsUtil.drawCenteredText(g, "B", x + wh / 2, y + wh / 2);
     g.setFont(f);

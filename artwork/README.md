@@ -1,4 +1,4 @@
-[![Logisim-evolution](logisim-evolution-logo.svg)](https://github.com/logisim-evolution/logisim-evolution)
+[![Logisim-evolution](logisim-evolution-logo.png)](https://github.com/logisim-evolution/logisim-evolution)
 
 ---
 
@@ -8,17 +8,15 @@ Designed by Marcin Orlowski <http://MarcinOrlowski.com>
 
 ## SVG files ##
 
-* `logisim-evolution-logo-src.svg` - main logo project file (with texts as editable strings),
-* `logisim-evolution-logo.svg` - derived from main project file with all texts converted to paths,
+* `logisim-evolution-logo.svg` - main logo project file (with texts as editable strings),
+* `logisim-evolution-logo.png` - bitmap rendition of the the project logo to be used mainly in documentation files,
 * `logisim-evolution-icon.svg` - project icon.
 
-"NOTE: To properly render the `logisim-evolution-logo-src.svg` (be it in-app, on the web page, or elsewhere)
+"NOTE: To properly render the `logisim-evolution-logo.svg` (be it in-app, on the web page, or elsewhere)
 one must have all the used fonts installed on the build machine. Otherwise, your renderer/browser will substitute
 the fonts using available ones, which yields an incorrect image. Alternatively, you can either render
 your image to a bitmap (PNG image format is recommended, due to its lossless compression and transparency support)
 or convert all texts to paths (in [Inkscape](https://inkscape.org/): "Object" menu -> "Object to Path").
-However, this will make the SVG file bigger (see logisim-evolution-logo.svg, which is exactly such
-a font-less version)."
 
 ## In-app logo ##
 
@@ -43,7 +41,11 @@ Also update configuration of Github repo and organization:
 ## Tools ##
 
 Use `update_assets.sh` shell script to regenerated all PNG icons and logos using SVG source files.
-NOTE: please see script header for list of required external utilties you need to install first!
+
+IMPORTANT NOTES:
+
+* You must have Inkscape, icoutils and icnsutils installed first as script needs these tools.
+* you **MUST** install logo fonts before running this script or output (mainly logo) will be broken.
 
 ## Fonts ##
 

@@ -11,15 +11,14 @@ package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-
-import java.util.ArrayList;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import java.util.List;
 import java.util.Set;
 
-public interface HDLGeneratorFactory {
+public interface HdlGeneratorFactory {
 
-  public static final String NET_NAME = HDL.NET_NAME;
-  public static final String BUS_NAME = HDL.BUS_NAME;
+  public static final String NET_NAME = Hdl.NET_NAME;
+  public static final String BUS_NAME = Hdl.BUS_NAME;
   public static final String CLOCK_TREE_NAME = "LOGISIM_CLOCK_TREE_";
   public static final String VHDL = "VHDL";
   public static final String VERILOG = "Verilog";
@@ -33,38 +32,38 @@ public interface HDLGeneratorFactory {
   boolean generateAllHDLDescriptions(
       Set<String> handledComponents,
       String workingDirectory,
-      ArrayList<String> hierarchy);
+      List<String> hierarchy);
 
-  ArrayList<String> getArchitecture(
+  List<String> getEntity(
       Netlist theNetlist,
       AttributeSet attrs,
       String componentName);
 
-  ArrayList<String> getComponentInstantiation(
+  List<String> getArchitecture(
       Netlist theNetlist,
       AttributeSet attrs,
       String componentName);
 
-  ArrayList<String> getComponentMap(
+  List<String> getComponentInstantiation(
+      Netlist theNetlist,
+      AttributeSet attrs,
+      String componentName);
+
+  List<String> getComponentMap(
       Netlist nets,
       Long componentId,
       Object componentInfo,
       String name);
 
-  ArrayList<String> getEntity(
-      Netlist theNetlist,
-      AttributeSet attrs,
-      String componentName);
-
-  ArrayList<String> getInlinedCode(
+  List<String> getInlinedCode(
       Netlist nets,
       Long componentId,
-      NetlistComponent componentInfo,
+      netlistComponent componentInfo,
       String circuitName);
 
   String getRelativeDirectory();
 
-  boolean isHDLSupportedTarget(AttributeSet attrs);
+  boolean isHdlSupportedTarget(AttributeSet attrs);
 
   boolean isOnlyInlined();
 }

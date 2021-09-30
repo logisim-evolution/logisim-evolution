@@ -79,7 +79,7 @@ public class Ttl74139 extends AbstractTtlGate {
     // we need to shorten it first to up to 4 characters to keep the diagram readable.
     final var label_len_max = 4;
     final var names = new ArrayList<String>();
-    for (final var name : portnames) {
+    for (final var name : portNames) {
       final var tmp = name.split("\\s+");
       names.add((tmp[0].length() <= label_len_max) ? tmp[0] : tmp[0].substring(0, label_len_max));
     }
@@ -112,7 +112,7 @@ public class Ttl74139 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     byte[] out1 = {L1_Y0, L1_Y1, L1_Y2, L1_Y3};
     computeState(state, L1_nEN, L1_A, L1_B, out1);
     byte[] out2 = {L2_Y0, L2_Y1, L2_Y2, L2_Y3};

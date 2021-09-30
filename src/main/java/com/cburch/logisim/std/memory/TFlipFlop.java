@@ -12,14 +12,12 @@ package com.cburch.logisim.std.memory;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
+import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TFlipFlop extends AbstractFlipFlop {
   /**
@@ -31,29 +29,16 @@ public class TFlipFlop extends AbstractFlipFlop {
   public static final String _ID = "T Flip-Flop";
 
   private static class TFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
-    @Override
-    public String ComponentName() {
-      return _ID;
-    }
 
-    @Override
-    public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist nets) {
-      Map<String, String> PortMap = new HashMap<>();
-      PortMap.putAll(GetNetMap("T", true, ComponentInfo, 0, nets));
-      return PortMap;
-    }
-
-    @Override
-    public Map<String, Integer> GetInputPorts() {
-      Map<String, Integer> Inputs = new HashMap<>();
-      Inputs.put("T", 1);
-      return Inputs;
+    public TFFHDLGeneratorFactory() {
+      super(1, StdAttr.EDGE_TRIGGER);
+      myPorts.add(Port.INPUT, "T", 1, 0);
     }
 
     @Override
     public ArrayList<String> GetUpdateLogic() {
-      return (new LineBuffer())
-          .add("{{1}} s_next_state {{2}} s_current_state_reg {{3}} T;", HDL.assignPreamble(), HDL.assignOperator(), HDL.xorOperator())
+      return LineBuffer.getBuffer()
+          .add("{{1}} s_next_state {{2}} s_current_state_reg {{3}} T;", Hdl.assignPreamble(), Hdl.assignOperator(), Hdl.xorOperator())
           .getWithIndent();
     }
   }
