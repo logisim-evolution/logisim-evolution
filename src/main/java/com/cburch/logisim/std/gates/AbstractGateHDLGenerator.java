@@ -17,7 +17,6 @@ import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 
 public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
 
@@ -51,12 +50,12 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
     return !isInverted;
   }
 
-  public ArrayList<String> getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-    return new ArrayList<>();
+  public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+    return LineBuffer.getHdlBuffer();
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
     final var bitWidth = attrs.getValue(StdAttr.WIDTH).getWidth();
     final var nrOfInputs =
@@ -69,9 +68,9 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
       contents.addRemarkBlock("Here the bubbles are processed");
       for (var i = 0; i < nrOfInputs; i++) {
         if (Hdl.isVhdl()) {
-          contents.add("  s_real_input_{{1}} {{=}} Input_{{1}} WHEN {{2}}{{<}}{{3}}{{>}} = '0' ELSE NOT(Input_{{1}});", (i + 1), BUBBLES_MASK, i);
+          contents.add("s_real_input_{{1}} {{=}} Input_{{1}} WHEN {{2}}{{<}}{{3}}{{>}} = '0' ELSE NOT(Input_{{1}});", (i + 1), BUBBLES_MASK, i);
         } else {
-          contents.add("  {{assign}} s_real_input_{{1}} {{=}} ({{2}}{{<}}{{3}}{{>}} == 1'b0) ? Input_{{1}} : ~Input_{{1}};", (i + 1), BUBBLES_MASK, i);
+          contents.add("{{assign}} s_real_input_{{1}} {{=}} ({{2}}{{<}}{{3}}{{>}} == 1'b0) ? Input_{{1}} : ~Input_{{1}};", (i + 1), BUBBLES_MASK, i);
         }
       }
     }
@@ -81,12 +80,12 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
       onehot = attrs.getValue(GateAttributes.ATTR_XOR) == GateAttributes.XOR_ONE;
     }
     contents.add(getLogicFunction(nrOfInputs, bitWidth, onehot));
-    return contents.get();
+    return contents;
   }
 
-  public ArrayList<String> GetOneHot(boolean inverted, int nrOfInputs, boolean isBus) {
-    var lines = new ArrayList<String>();
-    var spaces = "   ";
+  public LineBuffer getOneHot(boolean inverted, int nrOfInputs, boolean isBus) {
+    final var lines = LineBuffer.getHdlBuffer();
+    var spaces = "";
     var indexString = "";
     if (isBus) {
       if (Hdl.isVhdl()) {
@@ -94,11 +93,11 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
         spaces += "   ";
         indexString = "(n)";
       } else {
-        lines.add("   genvar n;");
-        lines.add("   generate");
-        lines.add("      for (n = 0 ; n < " + BIT_WIDTH_STRING + " ; n = n + 1)");
-        lines.add("         begin: bit");
-        spaces += "         ";
+        lines.add("genvar n;");
+        lines.add("generate");
+        lines.add("   for (n = 0 ; n < " + BIT_WIDTH_STRING + " ; n = n + 1)");
+        lines.add("      begin: bit");
+        spaces += "      ";
         indexString = "[n]";
       }
     }
@@ -123,12 +122,12 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
           oneLine.append(Hdl.notOperator()).append("(s_real_input_").append(i + 1).append(indexString).append(")");
         }
         if (i < (nrOfInputs - 1)) {
-          oneLine.append(" ").append(Hdl.andOperator()).append(" ");
+          oneLine.append(Hdl.andOperator());
         }
       }
       oneLine.append(")");
       if (termloop < (nrOfInputs - 1)) {
-        oneLine.append(" ").append(Hdl.orOperator()).append(" ");
+        oneLine.append(Hdl.orOperator());
       } else {
         if (inverted) oneLine.append(")");
         oneLine.append(";");
@@ -147,8 +146,8 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
     return lines;
   }
 
-  public ArrayList<String> GetParity(boolean inverted, int nrOfInputs, boolean isBus) {
-    final var lines = new ArrayList<String>();
+  public static LineBuffer getParity(boolean inverted, int nrOfInputs, boolean isBus) {
+    final var lines = LineBuffer.getHdlBuffer();
     var spaces = "   ";
     var indexString = "";
     if (isBus) {
@@ -157,11 +156,11 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
         spaces += "   ";
         indexString = "(n)";
       } else {
-        lines.add("   genvar n;");
-        lines.add("   generate");
-        lines.add("      for (n = 0 ; n < " + BIT_WIDTH_STRING + " ; n = n + 1)");
-        lines.add("         begin: bit");
-        spaces += "         ";
+        lines.add("genvar n;");
+        lines.add("generate");
+        lines.add("   for (n = 0 ; n < " + BIT_WIDTH_STRING + " ; n = n + 1)");
+        lines.add("      begin: bit");
+        spaces += "      ";
         indexString = "[n]";
       }
     }

@@ -9,8 +9,6 @@
 
 package com.cburch.logisim.std.plexers;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
@@ -46,7 +44,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHdlGeneratorFactory 
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents =
         LineBuffer.getBuffer()
             .pair("extBits", EXTENDED_BITS_STRING)
@@ -92,6 +90,6 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHdlGeneratorFactory 
         contents.add("assign DataOut = s_extended_vector[Sel];");
       }
     }
-    return contents.getWithIndent();
+    return contents;
   }
 }

@@ -188,7 +188,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
     final var nrOfClockTrees = theNetlist.numberOfClockTrees();
     /* First we process all components */
@@ -232,7 +232,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         contents.add(LedArrayGenericHDLGeneratorFactory.getArrayConnections(array, myLedArrays.indexOf(array)));
       }
     }
-    return contents.get();
+    return contents;
   }
 
   private static ArrayList<String> getToplevelCode(MapComponent component) {

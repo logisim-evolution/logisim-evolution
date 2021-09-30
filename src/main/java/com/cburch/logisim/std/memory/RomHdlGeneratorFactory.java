@@ -18,12 +18,10 @@ import com.cburch.logisim.fpga.hdlgenerator.WithSelectHdlGenerator;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
 
-import java.util.ArrayList;
-
 public class RomHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
 
   @Override
-  public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
+  public LineBuffer getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
     AttributeSet attrs = componentInfo.getComponent().getAttributeSet();
     final var addressWidth = attrs.getValue(Mem.ADDR_ATTR).getWidth();
     final var dataWidth = attrs.getValue(Mem.DATA_ATTR).getWidth();
@@ -36,7 +34,7 @@ public class RomHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
       final var romValue = romContents.get(addr);
       if (romValue != 0L) generator.add(addr, romValue);
     }
-    return LineBuffer.getBuffer().add(generator.getHdlCode()).getWithIndent(3);
+    return LineBuffer.getBuffer().add(generator.getHdlCode());
   }
 
   @Override

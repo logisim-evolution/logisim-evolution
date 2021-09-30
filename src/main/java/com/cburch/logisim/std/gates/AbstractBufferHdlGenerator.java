@@ -9,8 +9,6 @@
 
 package com.cburch.logisim.std.gates;
 
-import java.util.ArrayList;
-
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
@@ -28,20 +26,12 @@ public class AbstractBufferHdlGenerator extends InlinedHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo,
+  public LineBuffer getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo,
       String circuitName) {
     final var nrOfBits = componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
-    return new ArrayList<String>() {{
-        add((nrOfBits == 1)
-            ? LineBuffer.format("   {{1}}{{=}}{{2}}{{3}};",
-                Hdl.getNetName(componentInfo, 0, false, nets),
-                isInverter ? Hdl.notOperator() : "",
-                Hdl.getNetName(componentInfo, 1, false, nets))
-            : LineBuffer.format("   {{1}}{{=}}{{2}}{{3}};",
-                Hdl.getBusName(componentInfo, 0, nets),
-                isInverter ? Hdl.notOperator() : "",
-                Hdl.getBusName(componentInfo, 1, nets)));
-      }};
+    final var dest = (nrOfBits == 1) ? Hdl.getNetName(componentInfo, 0, false, nets) : Hdl.getBusName(componentInfo, 0, nets);
+    final var source = (nrOfBits == 1) ? Hdl.getNetName(componentInfo, 1, false, nets) : Hdl.getBusName(componentInfo, 1, nets);
+    return LineBuffer.getHdlBuffer().add("{{1}}{{=}}{{2}}{{3}};", dest, isInverter ? Hdl.notOperator() : "", source);
   }
 
   @Override

@@ -131,18 +131,6 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHdlGeneratorFacto
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    final var contents = new ArrayList<String>();
-    if (Hdl.isVhdl()) {
-      contents.add(" ");
-    } else {
-      // FIXME: hardcoded string
-      throw new UnsupportedOperationException("Reptar Local Bus doesn't support Verilog yet.");
-    }
-    return contents;
-  }
-
-  @Override
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof netlistComponent)) return map;

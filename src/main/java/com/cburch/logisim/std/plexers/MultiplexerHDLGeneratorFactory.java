@@ -16,7 +16,6 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 
 public class MultiplexerHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -46,7 +45,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHdlGeneratorFactory 
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer();
     int nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
     if (Hdl.isVhdl()) {
@@ -94,6 +93,6 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHdlGeneratorFactory 
           .add("   endcase")
           .add("end");
     }
-    return contents.getWithIndent();
+    return contents;
   }
 }

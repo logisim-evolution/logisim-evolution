@@ -19,17 +19,17 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.tools.WireRepairData;
+import com.cburch.logisim.util.LineBuffer;
+
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 
 class NorGate extends AbstractGate {
   private static class NorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
     @Override
-    public ArrayList<String> getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      final var contents = new ArrayList<String>();
+    public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
+      final var contents = LineBuffer.getHdlBuffer();
       final var oneLine = new StringBuilder();
       oneLine
-          .append("   ")
           .append(Hdl.assignPreamble())
           .append("Result")
           .append(Hdl.assignOperator())
@@ -42,9 +42,7 @@ class NorGate extends AbstractGate {
           oneLine.append(Hdl.orOperator());
           contents.add(oneLine.toString());
           oneLine.setLength(0);
-          while (oneLine.length() < tabWidth) {
-            oneLine.append(" ");
-          }
+          oneLine.append(" ".repeat(tabWidth));
         } else {
           first = false;
         }

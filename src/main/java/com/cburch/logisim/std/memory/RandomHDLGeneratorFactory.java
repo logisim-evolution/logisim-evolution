@@ -19,7 +19,6 @@ import com.cburch.logisim.fpga.hdlgenerator.HdlPorts;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
@@ -83,7 +82,7 @@ public class RandomHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents =
         LineBuffer.getBuffer()
             .pair("seed", SEED_STR)
@@ -227,6 +226,6 @@ public class RandomHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
           end
           """);
     }
-    return contents.getWithIndent();
+    return contents;
   }
 }

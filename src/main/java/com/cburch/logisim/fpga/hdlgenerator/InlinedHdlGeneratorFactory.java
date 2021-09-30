@@ -12,7 +12,8 @@ package com.cburch.logisim.fpga.hdlgenerator;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
-import java.util.ArrayList;
+import com.cburch.logisim.util.LineBuffer;
+
 import java.util.List;
 import java.util.Set;
 
@@ -44,8 +45,8 @@ public class InlinedHdlGeneratorFactory implements HdlGeneratorFactory {
   }
 
   @Override
-  public List<String> getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
-    return new ArrayList<String>();
+  public LineBuffer getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
+    return LineBuffer.getHdlBuffer();
   }
 
   @Override

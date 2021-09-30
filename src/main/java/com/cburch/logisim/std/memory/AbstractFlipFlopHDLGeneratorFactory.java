@@ -20,7 +20,6 @@ import com.cburch.logisim.fpga.hdlgenerator.HdlPorts;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,7 +54,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHdlGeneratorFac
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist nets, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
     contents
         .pair("invertClock", INVERT_CLOCK_STRING)
@@ -63,25 +62,25 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHdlGeneratorFac
         .pair("Tick", HdlPorts.TICK)
         .addRemarkBlock("Here the output signals are defined")
         .add("""
-                 {{assign}}Q       {{=}}s_current_state_reg;
-                 {{assign}}Q_bar   {{=}}{{not}}(s_current_state_reg);
+             {{assign}}Q       {{=}}s_current_state_reg;
+             {{assign}}Q_bar   {{=}}{{not}}(s_current_state_reg);
              """)
         .add(Hdl.isVhdl()
-            ? "   s_clock {{=}} {{Clock}} WHEN {{invertClock}} = 0 ELSE NOT({{Clock}});"
-            : "   assign s_clock {{=}} ({{invertClock}} == 0) ? {{Clock}} : ~{{Clock}};")
+            ? "s_clock {{=}} {{Clock}} WHEN {{invertClock}} = 0 ELSE NOT({{Clock}});"
+            : "assign s_clock {{=}} ({{invertClock}} == 0) ? {{Clock}} : ~{{Clock}};")
         .addRemarkBlock("Here the update logic is defined")
-        .add(GetUpdateLogic())
+        .add(getUpdateLogic())
         .add("");
     if (Hdl.isVerilog()) {
       contents
           .addRemarkBlock("Here the initial register value is defined; for simulation only")
           .add("""
-                   initial
-                   begin
-                      s_current_state_reg = 0;
-                   end
+               initial
+               begin
+                  s_current_state_reg = 0;
+               end
                 
-                """);
+               """);
     }
 
     contents.addRemarkBlock("Here the actual state register is defined");
@@ -127,10 +126,10 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHdlGeneratorFac
       }
     }
     contents.empty();
-    return contents.getWithIndent();
+    return contents;
   }
 
-  public ArrayList<String> GetUpdateLogic() {
-    return new ArrayList<>();
+  public LineBuffer getUpdateLogic() {
+    return LineBuffer.getHdlBuffer();
   }
 }
