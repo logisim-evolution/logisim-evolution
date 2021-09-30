@@ -236,7 +236,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   private static ArrayList<String> getToplevelCode(MapComponent component) {
-    final var temp = new StringBuffer();
+    final var temp = new StringBuilder();
     final var contents = new ArrayList<String>();
     if (component.getNrOfPins() <= 0) {
       // FIXME: hardcoded string
@@ -289,7 +289,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     return contents;
   }
 
-  private static void allign(StringBuffer s) {
-    while (s.length() < 40) s.append(" ");
+  private static void allign(StringBuilder str) {
+    while (str.length() < 40) str.append(" ");
   }
 }
