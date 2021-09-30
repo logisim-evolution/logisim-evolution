@@ -279,7 +279,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     else return null;
   }
 
-  public static String execute(ProcessBuilder process, ArrayList<String> report) throws IOException, InterruptedException {
+  public static String execute(ProcessBuilder process, List<String> report) throws IOException, InterruptedException {
     var executable = process.start();
     var is = executable.getInputStream();
     var isr = new InputStreamReader(is);
