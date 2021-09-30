@@ -66,14 +66,17 @@ public class MatchingSet<E extends CanvasObject> extends AbstractSet<E> {
       this.it = it;
     }
 
+    @Override
     public boolean hasNext() {
       return it.hasNext();
     }
 
+    @Override
     public E next() {
       return it.next().value;
     }
 
+    @Override
     public void remove() {
       it.remove();
     }
