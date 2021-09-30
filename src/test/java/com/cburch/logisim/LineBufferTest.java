@@ -20,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 import com.cburch.draw.shapes.Line;
 import com.cburch.logisim.util.LineBuffer;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
@@ -65,6 +66,39 @@ public class LineBufferTest extends TestBase {
 
     assertEquals(1, lb.size());
     assertEquals(test, lb.get(0));
+  }
+
+  /** Tests if appending other LB works. */
+  @Test
+  public void testAddContentFromAnotherLineBuffer() {
+    final var lb1 = LineBuffer.getBuffer();
+    final var lb1Strings = new ArrayList<String>();
+    final var lb1Cnt = getRandomInt(1, 10);
+    for (var i = 0; i < lb1Cnt; i++) {
+      final var str = getRandomString();
+      lb1Strings.add(str);
+      lb1.add(str);
+    }
+
+    final var lb2 = LineBuffer.getBuffer();
+    final var lb2Strings = new ArrayList<String>();
+    final var lb2Cnt = getRandomInt(1, 10);
+    for (var i = 0; i < lb2Cnt; i++) {
+      final var str = getRandomString();
+      lb2Strings.add(str);
+      lb2.add(str);
+    }
+
+    lb1.add(lb2);
+
+    assertEquals(lb1Strings.size() + lb2Strings.size(), lb1.size());
+    var idx = 0;
+    for (final var line : lb1Strings) {
+      assertEquals(line, lb1.get(idx++));
+    }
+    for (final var line : lb2Strings) {
+      assertEquals(line, lb1.get(idx++));
+    }
   }
 
   /** Tests is add(String, Object...) works as expected. */
