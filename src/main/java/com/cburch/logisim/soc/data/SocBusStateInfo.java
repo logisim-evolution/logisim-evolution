@@ -37,6 +37,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
@@ -239,7 +240,7 @@ public class SocBusStateInfo extends JDialog
     sniffers.remove(sniffer);
   }
 
-  public ArrayList<SocBusSlaveInterface> getSlaves() {
+  public List<SocBusSlaveInterface> getSlaves() {
     return memMap.getSlaves();
   }
 
