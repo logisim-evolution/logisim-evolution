@@ -80,7 +80,7 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     final var contents =
         LineBuffer.getBuffer()
             .pair("nrOfLeds", NR_OF_LEDS_STRING)
@@ -120,7 +120,6 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
           """);
     } else {
       contents.add("""
-
           genvar i;
           generate
              for (i = 0; i < {{nrOfRows}}; i = i + 1)
@@ -138,6 +137,6 @@ public class RGBArrayColumnScanningHDLGeneratorFactory extends LedArrayColumnSca
           endgenerate
           """);
     }
-    return contents.getWithIndent();
+    return contents;
   }
 }

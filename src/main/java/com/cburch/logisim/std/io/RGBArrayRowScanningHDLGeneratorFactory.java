@@ -82,7 +82,7 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents =
         (new LineBuffer(sharedPairs))
             .pair("activeLow", ACTIVE_LOW_STRING)
@@ -117,7 +117,6 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
           """);
     } else {
       contents.add("""
-          
           genvar i;
           generate
              for (i = 0; i < {{nrOfColumns}}; i = i + 1)
@@ -135,6 +134,6 @@ public class RGBArrayRowScanningHDLGeneratorFactory extends LedArrayRowScanningH
           endgenerate" +
           """);
     }
-    return contents.getWithIndent();
+    return contents;
   }
 }

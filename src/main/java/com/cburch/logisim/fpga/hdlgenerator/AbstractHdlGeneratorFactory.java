@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.List;
-import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -74,83 +73,42 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     }
     contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
     if (Hdl.isVhdl()) {
-      contents.add("ARCHITECTURE PlatformIndependent OF {{1}} IS ", componentName);
-      contents.add("");
+      contents.add("ARCHITECTURE PlatformIndependent OF {{1}} IS ", componentName).empty();
       if (myTypedWires.getNrOfTypes() > 0) {
         contents.addRemarkBlock("Here all private types are defined")
             .add(myTypedWires.getTypeDefinitions())
             .empty();
       }
+
       final var components = getComponentDeclarationSection(theNetlist, attrs);
-      if (!components.isEmpty()) {
-        contents.addRemarkBlock("Here all used components are defined").add(components).add("");
-      }
-
-      contents.addRemarkBlock("Here all used signals are defined");
-      for (final var wire : myWires.wireKeySet()) {
-        oneLine.append(wire);
-        while (oneLine.length() < SIGNAL_ALLIGNMENT_SIZE) oneLine.append(" ");
-        oneLine.append(": std_logic");
-        if (myWires.get(wire) == 1) {
-          oneLine.append(";");
-        } else {
-          oneLine.append("_vector( ");
-          if (myWires.get(wire) < 0) {
-            if (!myParametersList.containsKey(myWires.get(wire), attrs)) {
-              // FIXME: hard coded String
-              Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-              return contents.clear().get();
-            }
-            oneLine.append("(").append(myParametersList.get(myWires.get(wire), attrs)).append("-1)");
-          } else {
-            oneLine.append((myWires.get(wire) == 0) ? "0" : (myWires.get(wire) - 1));
-          }
-          oneLine.append(" DOWNTO 0 );");
-        }
-        contents.add("   SIGNAL {{1}}", oneLine);
-        oneLine.setLength(0);
-      }
-
-      for (final var reg : myWires.registerKeySet()) {
-        oneLine.append(reg);
-        while (oneLine.length() < SIGNAL_ALLIGNMENT_SIZE) oneLine.append(" ");
-        oneLine.append(": std_logic");
-        if (myWires.get(reg) == 1) {
-          oneLine.append(";");
-        } else {
-          oneLine.append("_vector( ");
-          if (myWires.get(reg) < 0) {
-            if (!myParametersList.containsKey(myWires.get(reg), attrs)) {
-              // FIXME: hard coded String
-              Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-              contents.clear();
-              return contents.get();
-            }
-            oneLine.append("(").append(myParametersList.get(myWires.get(reg), attrs)).append("-1)");
-          } else {
-            if (myWires.get(reg) == 0) {
-              oneLine.append("0");
-            } else {
-              oneLine.append((myWires.get(reg) - 1));
-            }
-          }
-          oneLine.append(" DOWNTO 0 );");
-        }
-        contents.add("   SIGNAL {{1}}", oneLine.toString());
-        oneLine.setLength(0);
-      }
+      if (!components.isEmpty()) 
+        contents.addRemarkBlock("Here all used components are defined").add(components).empty();
 
       final var typedWires = myTypedWires.getTypedWires();
-      for (final var wire : typedWires.keySet()) {
-        oneLine.append(wire);
-        while (oneLine.length() < SIGNAL_ALLIGNMENT_SIZE) oneLine.append(" ");
-        oneLine.append(": ").append(typedWires.get(wire)).append(";");
-        contents.add("   SIGNAL {{1}}", oneLine.toString());
-        oneLine.setLength(0);
+      final var mySignals = new HashMap<String, String>();
+      // first we gather some info on the wire names
+      var maxNameLength = 0;
+      for (final var wire : myWires.wireKeySet()) {
+        maxNameLength = Math.max(maxNameLength, wire.length());
+        mySignals.put(wire, getTypeIdentifier(myWires.get(wire), attrs));
       }
-      contents.add("")
-          .add("BEGIN")
-          .add(getModuleFunctionality(theNetlist, attrs))
+      for (final var reg : myWires.registerKeySet()) {
+        maxNameLength = Math.max(maxNameLength, reg.length());
+        mySignals.put(reg, getTypeIdentifier(myWires.get(reg), attrs));
+      }
+      for (final var wire : typedWires.keySet()) {
+        maxNameLength = Math.max(maxNameLength, wire.length());
+        mySignals.put(wire, typedWires.get(wire));
+      }
+      // now we add them
+      if (maxNameLength > 0) contents.addRemarkBlock("All used signals are defined here");
+      final var sortedSignals = new TreeSet<String>(mySignals.keySet());
+      for (final var signal : sortedSignals) 
+        contents.add("   SIGNAL {{1}}{{2}} : {{3}};", signal, " ".repeat(maxNameLength - signal.length()), 
+            mySignals.get(signal));
+      if (maxNameLength > 0) contents.empty();
+      contents.add("BEGIN")
+          .add(getModuleFunctionality(theNetlist, attrs).getWithIndent())
           .add("END PlatformIndependent;");
     } else {
       final var preamble = String.format("module %s( ", componentName);
@@ -197,7 +155,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
           contents.add(thisLine + ");");
         } else {
           // FIXME: hard coded String
-          Reporter.report.addError("Internale Error in Verilog Architecture generation!");
+          Reporter.report.addError("Internal Error in Verilog Architecture generation!");
         }
       }
       if (!myParametersList.isEmpty(attrs)) {
@@ -380,7 +338,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       if (!firstline) {
         contents.empty();
       }
-      contents.add(getModuleFunctionality(theNetlist, attrs)).empty().add("endmodule");
+      contents.add(getModuleFunctionality(theNetlist, attrs).getWithIndent()).empty().add("endmodule");
     }
     return contents.get();
   }
@@ -541,17 +499,17 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
   /* Here all public entries for HDL generation are defined */
   @Override
-  public ArrayList<String> getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo,
+  public LineBuffer getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo,
       String circuitName) {
     throw new IllegalAccessError("BUG: Inline code not supported");
   }
 
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
     /*
      * In this method the functionality of the black-box is described. It is
      * used for both VHDL and VERILOG.
      */
-    return new ArrayList<>();
+    return LineBuffer.getHdlBuffer();
   }
 
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
@@ -665,12 +623,12 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
           contents.add("   GENERIC ( {{1}}{{2}}: {{3}}{{4}};", thisGeneric,
               " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
               myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector",
-              currentGenericId == (myGenerics.size() - 1) ? ")" : "");
+              currentGenericId == (myGenerics.size() - 1) ? " )" : "");
         } else {
           contents.add("             {{1}}{{2}}: {{3}}{{4}};", thisGeneric,
               " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
               myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector",
-              currentGenericId == (myGenerics.size() - 1) ? ")" : "");
+              currentGenericId == (myGenerics.size() - 1) ? " )" : "");
         }
         currentGenericId++;
       }

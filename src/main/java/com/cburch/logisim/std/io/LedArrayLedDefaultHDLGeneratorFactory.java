@@ -81,7 +81,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHdlGeneratorF
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents =
         LineBuffer.getBuffer()
             .pair("ins", LedArrayGenericHDLGeneratorFactory.LedArrayInputs)
@@ -104,6 +104,6 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHdlGeneratorF
           endgenerate
           """);
     }
-    return contents.getWithIndent();
+    return contents;
   }
 }

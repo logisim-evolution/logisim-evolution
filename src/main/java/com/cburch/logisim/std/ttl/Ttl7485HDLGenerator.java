@@ -15,7 +15,6 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 
 public class Ttl7485HDLGenerator extends AbstractHdlGeneratorFactory {
 
@@ -47,9 +46,8 @@ public class Ttl7485HDLGenerator extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
-    final var contents = LineBuffer.getBuffer();
-    return contents
+  public LineBuffer getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
+    return LineBuffer.getBuffer()
         .add("""
             oppA   <= A3&A2&A1&A0;
             oppB   <= B3&B2&B1&B0;
@@ -68,8 +66,7 @@ public class Ttl7485HDLGenerator extends AbstractHdlGeneratorFactory {
             AgtBout <= '1' WHEN gt = '1' ELSE '0' WHEN lt = '1' ELSE CompOut(2);
             AltBout <= '0' WHEN gt = '1' ELSE '1' WHEN lt = '1' ELSE CompOut(1);
             AeqBout <= '0' WHEN (gt = '1') OR (lt = '1') ELSE CompOut(0);
-            """)
-        .getWithIndent();
+            """);
   }
 
   @Override

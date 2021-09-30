@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeSet;
 
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
@@ -518,5 +519,15 @@ public abstract class Hdl {
       }
     }
     return netMap;
+  }
+
+  public static void addAllWiresSorted(LineBuffer contents, Map<String, String> wires) {
+    var maxNameLength = 0;
+    for (var wire : wires.keySet())
+      maxNameLength = Math.max(maxNameLength, wire.length());
+    final var sortedWires = new TreeSet<String>(wires.keySet());
+    for (var wire : sortedWires) 
+      contents.add("   {{assign}}{{1}}{{2}} {{=}} {{3}};", wire, " ".repeat(maxNameLength - wire.length()), wires.get(wire));
+    wires.clear();
   }
 }

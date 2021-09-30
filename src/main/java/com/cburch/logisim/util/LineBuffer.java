@@ -309,6 +309,7 @@ public class LineBuffer implements RandomAccess {
    * are processed too.
    *
    * @param lines
+   * @return Instance of self for easy chaining.
    */
   public LineBuffer add(Collection<String> lines) {
     for (final var line : lines) add(line);
@@ -327,6 +328,17 @@ public class LineBuffer implements RandomAccess {
    */
   public LineBuffer addLines(String... lines) {
     return add(Arrays.asList(lines));
+  }
+
+
+  /**
+   * Appends content of another buffer
+   *
+   * @param otherBuffer Another LineBuffer to append content from.
+   * @return Instance of self for easy chaining.
+   */
+  public LineBuffer add(LineBuffer otherBuffer) {
+    return add(otherBuffer.get());
   }
 
   /* ********************************************************************************************* */

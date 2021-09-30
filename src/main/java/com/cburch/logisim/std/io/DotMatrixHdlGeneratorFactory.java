@@ -9,35 +9,23 @@
 
 package com.cburch.logisim.std.io;
 
-import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 
-import java.util.ArrayList;
-
 public class DotMatrixHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
 
-  protected Attribute<BitWidth> getAttributeRows() {
-    return DotMatrix.ATTR_MATRIX_ROWS;
-  }
-  protected Attribute<BitWidth> getAttributeColumns() {
-    return DotMatrix.ATTR_MATRIX_COLS;
-  }
-
   @Override
-  public ArrayList<String> getInlinedCode(Netlist netlist, Long componentId, netlistComponent componentInfo, String circuitName) {
+  public LineBuffer getInlinedCode(Netlist netlist, Long componentId, netlistComponent componentInfo, String circuitName) {
     final var contents = LineBuffer.getHdlBuffer();
     final var colBased = componentInfo.getComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_COLUMN;
     final var rowBased = componentInfo.getComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_ROW;
-    final var rows = componentInfo.getComponent().getAttributeSet().getValue(getAttributeRows()).getWidth();
-    final var cols = componentInfo.getComponent().getAttributeSet().getValue(getAttributeColumns()).getWidth();
+    final var rows = componentInfo.getComponent().getAttributeSet().getValue(DotMatrix.ATTR_MATRIX_ROWS).getWidth();
+    final var cols = componentInfo.getComponent().getAttributeSet().getValue(DotMatrix.ATTR_MATRIX_COLS).getWidth();
 
-    contents.add("  ");
     if (colBased) {
       /* The simulator uses here following addressing scheme (2x2):
        *  r1,c0 r1,c1
@@ -100,7 +88,7 @@ public class DotMatrixHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
     }
     contents.add("");
 
-    return contents.getWithIndent(3);
+    return contents;
   }
 
   @Override

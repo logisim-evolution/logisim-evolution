@@ -12,6 +12,8 @@ package com.cburch.logisim.fpga.hdlgenerator;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.util.LineBuffer;
+
 import java.util.List;
 import java.util.Set;
 
@@ -26,8 +28,6 @@ public interface HdlGeneratorFactory {
   public static final String LOCAL_OUTPUT_BUBBLE_BUS_NAME = "LOGISIM_OUTPUT_BUBBLES";
   public static final String LOCAL_INOUT_BUBBLE_BUS_NAME = "LOGISIM_INOUT_BUBBLES";
   public static final String FPGA_TOP_LEVEL_NAME = "LogisimToplevelShell";
-  public static final int PORT_ALLIGNMENT_SIZE = 26;
-  public static final int SIGNAL_ALLIGNMENT_SIZE = 35;
 
   boolean generateAllHDLDescriptions(
       Set<String> handledComponents,
@@ -55,7 +55,7 @@ public interface HdlGeneratorFactory {
       Object componentInfo,
       String name);
 
-  List<String> getInlinedCode(
+  LineBuffer getInlinedCode(
       Netlist nets,
       Long componentId,
       netlistComponent componentInfo,
