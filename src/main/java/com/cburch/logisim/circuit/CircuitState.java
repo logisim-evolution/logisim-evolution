@@ -411,9 +411,8 @@ public class CircuitState implements InstanceData {
   }
 
   public void setData(Component comp, Object data) {
-    if (data instanceof CircuitState oldState) {
-      final var newState = (CircuitState) data;
-      // FIXME: What's the purpose of this block? The condition always false here.
+    if (data instanceof CircuitState newState) {
+      final var oldState = (CircuitState) componentData.get(comp);
       if (oldState != newState) {
         // There's something new going on with this subcircuit.
         // Maybe the subcircuit is new, or perhaps it's being
