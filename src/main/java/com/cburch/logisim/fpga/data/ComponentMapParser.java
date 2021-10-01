@@ -127,7 +127,7 @@ public class ComponentMapParser {
         }
         if (!key.isEmpty() && (x > 0) && (y > 0) && (width > 0) && (height > 0)) {
           BoardRectangle rect = null;
-          for (final var comp : boardInfo.GetAllComponents()) {
+          for (final var comp : boardInfo.getAllComponents()) {
             if ((comp.getRectangle().getXpos() == x)
                 && (comp.getRectangle().getYpos() == y)
                 && (comp.getRectangle().getWidth() == width)

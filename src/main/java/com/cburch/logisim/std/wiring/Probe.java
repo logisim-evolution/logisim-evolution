@@ -290,7 +290,7 @@ public class Probe extends InstanceFactory {
   @Override
   public AttributeSet createAttributeSet() {
     AttributeSet attrs = new ProbeAttributes();
-    attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.GetDefaultProbeAppearance());
+    attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.getDefaultProbeAppearance());
     return attrs;
   }
 

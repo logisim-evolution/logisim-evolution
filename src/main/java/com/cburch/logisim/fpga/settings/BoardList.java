@@ -102,7 +102,7 @@ public class BoardList {
     }
   }
 
-  public boolean AddExternalBoard(String Filename) {
+  public boolean addExternalBoard(String Filename) {
     if (!DefinedBoards.contains(Filename)) {
       DefinedBoards.add(Filename);
       return true;
@@ -110,7 +110,7 @@ public class BoardList {
     return false;
   }
 
-  public boolean RemoveExternalBoard(String Filename) {
+  public boolean removeExternalBoard(String Filename) {
     if (DefinedBoards.contains(Filename)) {
       DefinedBoards.remove(Filename);
       return true;
@@ -118,7 +118,7 @@ public class BoardList {
     return false;
   }
 
-  public String GetBoardFilePath(String BoardName) {
+  public String getBoardFilePath(String BoardName) {
     if (BoardName == null) return null;
     for (String board : DefinedBoards) {
       if (getBoardName(board).equals(BoardName)) {
@@ -140,7 +140,7 @@ public class BoardList {
     }
   }
 
-  public List<String> GetBoardNames() {
+  public List<String> getBoardNames() {
     SortedArrayList<String> ret = new SortedArrayList<>();
     for (String board : DefinedBoards) {
       ret.insertSorted(getBoardName(board));

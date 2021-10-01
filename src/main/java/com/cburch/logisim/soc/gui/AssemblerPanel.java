@@ -52,7 +52,6 @@ import javax.swing.JPopupMenu;
 import javax.swing.event.CaretEvent;
 import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
-import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
@@ -242,7 +241,7 @@ public class AssemblerPanel extends JPanel
     updateLineNumber();
   }
 
-  private boolean Assemble(boolean showWindow) {
+  private boolean assemble(boolean showWindow) {
     boolean result = assembler.assemble();
     if (!result) asmWindow.setCaretPosition(assembler.getErrorPositions().get(0));
     else if (showWindow) OptionPane.showMessageDialog(parent, S.get("AssemblerAssembleSuccess"));
@@ -250,7 +249,7 @@ public class AssemblerPanel extends JPanel
   }
 
   private void runProgram() {
-    if (!Assemble(false)) return;
+    if (!assemble(false)) return;
     long entryPoint = assembler.getEntryPoint();
     if (entryPoint < 0) return;
     if (!assembler.download(cpu, circuitState)) {
@@ -295,7 +294,7 @@ public class AssemblerPanel extends JPanel
     if (source == Open) openFile();
     else if (source == Save) saveFile(false);
     else if (source == SaveAs) saveFile(true);
-    else if (source == Compile) Assemble(true);
+    else if (source == Compile) assemble(true);
     else if (source == NextError) nextError(true);
     else if (source == PrevError) nextError(false);
     else if (source == Run) runProgram();
@@ -313,7 +312,7 @@ public class AssemblerPanel extends JPanel
   public void keyPressed(KeyEvent e) {
     if (!e.isAltDown() && e.isControlDown() && e.getKeyCode() == KeyEvent.VK_S) saveFile(false);
     else if (!e.isAltDown() && e.isControlDown() && e.getKeyCode() == KeyEvent.VK_L) openFile();
-    else if (e.isAltDown() && !e.isControlDown() && e.getKeyCode() == KeyEvent.VK_A) Assemble(true);
+    else if (e.isAltDown() && !e.isControlDown() && e.getKeyCode() == KeyEvent.VK_A) assemble(true);
     else if (e.isAltDown() && !e.isControlDown() && e.getKeyCode() == KeyEvent.VK_R) runProgram();
     else if (!e.isAltDown() && e.isControlDown() && e.getKeyCode() == KeyEvent.VK_N)
       nextError(true);

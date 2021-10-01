@@ -27,7 +27,7 @@ public class MatrixPlacerInfo {
     OldLabel = Label;
   }
 
-  void SetBounds(Bounds bds) {
+  void setBounds(Bounds bds) {
     XDisplacement = XDmin = (bds.getWidth() + 9) / 10;
     YDisplacement = YDmin = (bds.getHeight() + 9) / 10;
   }
@@ -40,15 +40,15 @@ public class MatrixPlacerInfo {
     return YDmin;
   }
 
-  String GetLabel() {
+  String getLabel() {
     return SharedLabel;
   }
 
-  void UndoLabel() {
+  void undoLabel() {
     SharedLabel = OldLabel;
   }
 
-  void SetLabel(String Lab) {
+  void setLabel(String Lab) {
     SharedLabel = Lab;
   }
 
@@ -68,11 +68,11 @@ public class MatrixPlacerInfo {
     NrOfYCopies = val;
   }
 
-  int GetDeltaX() {
+  int getDeltaX() {
     return XDisplacement * 10;
   }
 
-  void SetDeltaX(int value) {
+  void setDeltaX(int value) {
     if (value > 0) XDisplacement = (value + 9) / 10;
   }
 
@@ -84,15 +84,15 @@ public class MatrixPlacerInfo {
     return XDisplacement;
   }
 
-  int GetDeltaY() {
+  int getDeltaY() {
     return YDisplacement * 10;
   }
 
-  void SetDeltaY(int value) {
+  void setDeltaY(int value) {
     if (value > 0) YDisplacement = (value + 9) / 10;
   }
 
-  void setYisplacement(int value) {
+  void setYDisplacement(int value) {
     if (value > 0) YDisplacement = value;
   }
 

@@ -49,7 +49,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
    */
   public static final String _ID = "Register";
 
-  public static void DrawRegisterClassic(
+  public static void drawRegisterClassic(
       InstancePainter painter,
       int x,
       int y,
@@ -59,7 +59,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       boolean has_we,
       String value) {}
 
-  public static void DrawRegisterEvolution(
+  public static void drawRegisterEvolution(
       InstancePainter painter,
       int x,
       int y,
@@ -136,7 +136,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     GraphicsUtil.switchToWidth(g, 1);
   }
 
-  public void DrawRegisterClassic(InstancePainter painter) {
+  public void drawRegisterClassic(InstancePainter painter) {
     Graphics g = painter.getGraphics();
     Bounds bds = painter.getBounds();
     RegisterData state = (RegisterData) painter.getData();
@@ -289,7 +289,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
   @Override
   public void paintInstance(InstancePainter painter) {
     if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
-      DrawRegisterClassic(painter);
+      drawRegisterClassic(painter);
     } else {
       final var state = (RegisterData) painter.getData();
       final var widthVal = painter.getAttributeValue(StdAttr.WIDTH);
@@ -303,7 +303,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       final var IsLatch = Trigger.equals(StdAttr.TRIG_HIGH) || Trigger.equals(StdAttr.TRIG_LOW);
       final var NegActive = Trigger.equals(StdAttr.TRIG_FALLING) || Trigger.equals(StdAttr.TRIG_LOW);
 
-      DrawRegisterEvolution(
+      drawRegisterEvolution(
           painter, x, y, width, IsLatch, NegActive, true, (state == null) ? null : state.value);
       painter.drawLabel();
 

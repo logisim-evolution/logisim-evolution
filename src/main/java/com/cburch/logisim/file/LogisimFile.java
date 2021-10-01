@@ -26,7 +26,6 @@ import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.EventSourceWeakSupport;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
@@ -57,7 +56,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     if (act == CircuitEvent.ACTION_CHECK_NAME) {
       final var oldname = (String) event.getData();
       final var newname = event.getCircuit().getName();
-      if (NameIsInUse(newname, event.getCircuit())) {
+      if (isNameInUse(newname, event.getCircuit())) {
         OptionPane.showMessageDialog(
             null,
             "\"" + newname + "\": " + S.get("circuitNameExists"),
@@ -69,10 +68,10 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   // Name check Methods
-  private boolean NameIsInUse(String Name, Circuit changed) {
+  private boolean isNameInUse(String Name, Circuit changed) {
     if (Name.isEmpty()) return false;
     for (final var mylib : getLibraries()) {
-      if (NameIsInLibraries(mylib, Name)) return true;
+      if (isNameInLibraries(mylib, Name)) return true;
     }
     for (final var mytool : this.getCircuits()) {
       if (Name.equalsIgnoreCase(mytool.getName()) && !mytool.equals(changed))
@@ -81,10 +80,10 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     return false;
   }
 
-  private boolean NameIsInLibraries(Library lib, String Name) {
+  private boolean isNameInLibraries(Library lib, String Name) {
     if (Name.isEmpty()) return false;
     for (final var mylib : lib.getLibraries()) {
-      if (NameIsInLibraries(mylib, Name)) return true;
+      if (isNameInLibraries(mylib, Name)) return true;
     }
     for (final var mytool : lib.getTools()) {
       if (Name.equalsIgnoreCase(mytool.getName())) return true;

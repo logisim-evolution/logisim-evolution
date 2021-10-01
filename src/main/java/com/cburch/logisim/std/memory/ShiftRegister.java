@@ -162,7 +162,7 @@ public class ShiftRegister extends InstanceFactory {
         GraphicsUtil.V_BASELINE);
   }
 
-  private void DrawControl(
+  private void drawControl(
       InstancePainter painter,
       int xpos,
       int ypos,
@@ -218,7 +218,7 @@ public class ShiftRegister extends InstanceFactory {
     GraphicsUtil.switchToWidth(g, 1);
   }
 
-  private void DrawDataBlock(
+  private void drawDataBlock(
       InstancePainter painter,
       int xpos,
       int ypos,
@@ -420,18 +420,18 @@ public class ShiftRegister extends InstanceFactory {
     final var len = lenObj == null ? 8 : lenObj;
     final var parallelObj = painter.getAttributeValue(ATTR_LOAD);
     final var negEdge = painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
-    DrawControl(painter, xpos, ypos, len, wid, parallelObj, negEdge);
+    drawControl(painter, xpos, ypos, len, wid, parallelObj, negEdge);
     final var data = (ShiftRegisterData) painter.getData();
 
     // In the case data is null we assume that the different value are null. This allow the user to
     // instantiate the shift register without simulation mode
     if (data == null) {
       for (var stage = 0; stage < len; stage++) {
-        DrawDataBlock(painter, xpos, ypos, len, wid, stage, null, parallelObj);
+        drawDataBlock(painter, xpos, ypos, len, wid, stage, null, parallelObj);
       }
     } else {
       for (var stage = 0; stage < len; stage++)
-        DrawDataBlock(painter, xpos, ypos, len, wid, stage, data.get(len - stage - 1), parallelObj);
+        drawDataBlock(painter, xpos, ypos, len, wid, stage, data.get(len - stage - 1), parallelObj);
     }
   }
 

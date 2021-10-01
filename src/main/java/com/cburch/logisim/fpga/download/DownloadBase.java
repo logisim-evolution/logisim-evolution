@@ -58,7 +58,7 @@ public abstract class DownloadBase {
   protected boolean isVendorSoftwarePresent() {
     return VendorSoftware.toolsPresent(
         myBoardInformation.fpga.getVendor(),
-        VendorSoftware.GetToolPath(myBoardInformation.fpga.getVendor()));
+        VendorSoftware.getToolPath(myBoardInformation.fpga.getVendor()));
   }
 
   protected boolean mapDesign(String circuitName) {

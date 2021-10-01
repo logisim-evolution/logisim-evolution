@@ -339,7 +339,7 @@ abstract class AbstractGate extends InstanceFactory {
   }
 
   @Override
-  public boolean HasThreeStateDrivers(AttributeSet attrs) {
+  public boolean hasThreeStateDrivers(AttributeSet attrs) {
     return (attrs.containsAttribute(GateAttributes.ATTR_OUTPUT))
         ? (attrs.getValue(GateAttributes.ATTR_OUTPUT) != GateAttributes.OUTPUT_01)
         : false;

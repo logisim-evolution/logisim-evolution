@@ -226,9 +226,9 @@ public class Ram extends Mem {
   @Override
   public void paintInstance(InstancePainter painter) {
     if (RamAppearance.classicAppearance(painter.getAttributeSet())) {
-      RamAppearance.DrawRamClassic(painter);
+      RamAppearance.drawRamClassic(painter);
     } else {
-      RamAppearance.DrawRamEvolution(painter);
+      RamAppearance.drawRamEvolution(painter);
     }
   }
 

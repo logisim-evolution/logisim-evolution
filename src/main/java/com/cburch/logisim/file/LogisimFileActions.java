@@ -93,20 +93,20 @@ public class LogisimFileActions {
       final var errors = new HashMap<String, String>();
       var canContinue = true;
       for (final var lib : source.getLibraries()) {
-        LibraryTools.BuildLibraryList(lib, libNames);
+        LibraryTools.buildLibraryList(lib, libNames);
       }
-      LibraryTools.BuildToolList(source, toolList);
-      LibraryTools.RemovePresentLibraries(mergelib, libNames, false);
-      if (LibraryTools.LibraryIsConform(
+      LibraryTools.buildToolList(source, toolList);
+      LibraryTools.removePresentLibraries(mergelib, libNames, false);
+      if (LibraryTools.isLibraryConform(
           mergelib, new HashSet<>(), new HashSet<>(), errors)) {
         /* Okay the library is now ready for merge */
         for (final var lib : mergelib.getLibraries()) {
           final var newToolList = new HashSet<String>();
-          LibraryTools.BuildToolList(lib, newToolList);
-          final var ret = LibraryTools.LibraryCanBeMerged(toolList, newToolList);
+          LibraryTools.buildToolList(lib, newToolList);
+          final var ret = LibraryTools.libraryCanBeMerged(toolList, newToolList);
           if (!ret.isEmpty()) {
             final var Location = "";
-            final var toolNames = LibraryTools.GetToolLocation(source, Location, ret);
+            final var toolNames = LibraryTools.getToolLocation(source, Location, ret);
             for (final var key : toolNames.keySet()) {
               var solStr = S.get("LibMergeFailure2") + " a) ";
               final var errLoc = toolNames.get(key);
@@ -130,7 +130,7 @@ public class LogisimFileActions {
             jarLibs.add(TheFile);
         }
         if (!canContinue) {
-          LibraryTools.ShowErrors(mergelib.getName(), errors);
+          LibraryTools.showErrors(mergelib.getName(), errors);
           logiLibs.clear();
           jarLibs.clear();
           return;
@@ -141,7 +141,7 @@ public class LogisimFileActions {
           if (toolList.contains(circName)) {
             final var ret = new ArrayList<String>();
             ret.add(circName);
-            final var toolNames = LibraryTools.GetToolLocation(source, "", ret);
+            final var toolNames = LibraryTools.getToolLocation(source, "", ret);
             for (final var key : toolNames.keySet()) {
               final var errLoc = toolNames.get(key);
               final var errParts = errLoc.split("->");
@@ -163,7 +163,7 @@ public class LogisimFileActions {
                     "LogosimFileAction:",
                     OptionPane.ERROR_MESSAGE);
                 canContinue = false;
-              } else if (!CircuitsAreEqual(circ1, circ)) {
+              } else if (!areCircuitsEqual(circ1, circ)) {
                 final var Reponse =
                     OptionPane.showConfirmDialog(
                         null,
@@ -180,16 +180,16 @@ public class LogisimFileActions {
           }
         }
         if (!canContinue) {
-          LibraryTools.ShowErrors(mergelib.getName(), errors);
+          LibraryTools.showErrors(mergelib.getName(), errors);
           logiLibs.clear();
           jarLibs.clear();
           mergedCircuits.clear();
           return;
         }
-      } else LibraryTools.ShowErrors(mergelib.getName(), errors);
+      } else LibraryTools.showErrors(mergelib.getName(), errors);
     }
 
-    private boolean CircuitsAreEqual(Circuit orig, Circuit newone) {
+    private boolean areCircuitsEqual(Circuit orig, Circuit newone) {
       final var origComps = new HashMap<Location, Component>();
       final var newComps = new HashMap<Location, Component>();
       for (final var comp : orig.getWires()) {
@@ -301,7 +301,7 @@ public class LogisimFileActions {
         } else proj.doAction(result.toAction(S.getter("replaceCircuitAction")));
       }
       final var availableTools = new HashMap<String, AddTool>();
-      LibraryTools.BuildToolList(proj.getLogisimFile(), availableTools);
+      LibraryTools.buildToolList(proj.getLogisimFile(), availableTools);
       /* in the second step we are going to add the rest of the contents */
       for (final var circ : mergedCircuits) {
         final var newCirc = proj.getLogisimFile().getCircuit(circ.getName());
@@ -345,9 +345,9 @@ public class LogisimFileActions {
       final var ToolList = new HashSet<String>();
       final var errors = new HashMap<String, String>();
       for (final var lib : source.getLibraries()) {
-        LibraryTools.BuildLibraryList(lib, libNames);
+        LibraryTools.buildLibraryList(lib, libNames);
       }
-      LibraryTools.BuildToolList(source, ToolList);
+      LibraryTools.buildToolList(source, ToolList);
       for (final var lib : libs) {
         if (libNames.containsKey(lib.getName().toUpperCase())) {
           OptionPane.showMessageDialog(
@@ -356,21 +356,21 @@ public class LogisimFileActions {
               S.get("LibLoadErrors") + " " + lib.getName() + " !",
               OptionPane.WARNING_MESSAGE);
         } else {
-          LibraryTools.RemovePresentLibraries(lib, libNames, false);
-          if (LibraryTools.LibraryIsConform(lib, new HashSet<>(), new HashSet<>(), errors)) {
+          LibraryTools.removePresentLibraries(lib, libNames, false);
+          if (LibraryTools.isLibraryConform(lib, new HashSet<>(), new HashSet<>(), errors)) {
             final var addedToolList = new HashSet<String>();
-            LibraryTools.BuildToolList(lib, addedToolList);
+            LibraryTools.buildToolList(lib, addedToolList);
             for (final var tool : addedToolList)
               if (ToolList.contains(tool))
                 errors.put(tool, S.get("LibraryMultipleToolError"));
             if (errors.keySet().isEmpty()) {
-              LibraryTools.BuildLibraryList(lib, libNames);
+              LibraryTools.buildLibraryList(lib, libNames);
               ToolList.addAll(addedToolList);
               mergedLibs.add(lib);
             } else
-              LibraryTools.ShowErrors(lib.getName(), errors);
+              LibraryTools.showErrors(lib.getName(), errors);
           } else
-            LibraryTools.ShowErrors(lib.getName(), errors);
+            LibraryTools.showErrors(lib.getName(), errors);
         }
       }
     }
@@ -391,7 +391,7 @@ public class LogisimFileActions {
 
     private void repair(Project proj, Library lib) {
       final var availableTools = new HashMap<String, AddTool>();
-      LibraryTools.BuildToolList(proj.getLogisimFile(), availableTools);
+      LibraryTools.buildToolList(proj.getLogisimFile(), availableTools);
       if (lib instanceof LogisimFile thisLib) {
         for (final var circ : thisLib.getCircuits()) {
           for (final var tool : circ.getNonWires()) {
@@ -665,7 +665,7 @@ public class LogisimFileActions {
     return new AddCircuit(circuit);
   }
 
-  public static Action MergeFile(LogisimFile mergelib, LogisimFile source) {
+  public static Action mergeFile(LogisimFile mergelib, LogisimFile source) {
     return new MergeFile(mergelib, source);
   }
 

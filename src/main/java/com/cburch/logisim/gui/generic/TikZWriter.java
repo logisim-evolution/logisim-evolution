@@ -458,11 +458,11 @@ public class TikZWriter extends Graphics2D {
   @Override
   public void dispose() {}
 
-  public void WriteFile(File outfile) throws IOException {
+  public void writeFile(File outfile) throws IOException {
     MyInfo.writeFile(outfile);
   }
 
-  public void WriteSvg(int width, int height, File outfile) throws ParserConfigurationException, TransformerException {
+  public void writeSvg(int width, int height, File outfile) throws ParserConfigurationException, TransformerException {
     MyInfo.writeSvg(width, height, outfile);
   }
 }

@@ -75,7 +75,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
     MyInstances = new ArrayList<>();
   }
 
-  public void SetSimName(AttributeSet attrs, String SName) {
+  public void setSimName(AttributeSet attrs, String SName) {
     if (attrs == null) return;
     VhdlEntityAttributes atrs = (VhdlEntityAttributes) attrs;
     String Label = (!attrs.getValue(StdAttr.LABEL).equals("")) ? getHDLTopName(attrs) : SName;
@@ -83,7 +83,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
       atrs.setValue(VhdlSimConstants.SIM_NAME_ATTR, Label);
   }
 
-  public String GetSimName(AttributeSet attrs) {
+  public String getSimName(AttributeSet attrs) {
     if (attrs == null) return null;
     VhdlEntityAttributes atrs = (VhdlEntityAttributes) attrs;
     return atrs.getValue(VhdlSimConstants.SIM_NAME_ATTR);
@@ -200,7 +200,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
         int index = state.getPortIndex(p);
         Value val = state.getPortValue(index);
 
-        String vhdlEntityName = GetSimName(state.getAttributeSet());
+        String vhdlEntityName = getSimName(state.getAttributeSet());
 
         String message =
             p.getType()
@@ -285,12 +285,12 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
     PrintWriter writer;
     try {
       writer =
-          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + GetSimName(attrs) + ".vhdl",
+          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + getSimName(attrs) + ".vhdl",
               StandardCharsets.UTF_8);
 
       String content = this.content.getContent();
 
-      content = content.replaceAll("(?i)" + getHDLName(attrs), GetSimName(attrs));
+      content = content.replaceAll("(?i)" + getHDLName(attrs), getSimName(attrs));
 
       writer.print(content);
       writer.close();

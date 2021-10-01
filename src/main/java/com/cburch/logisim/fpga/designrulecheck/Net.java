@@ -54,7 +54,7 @@ public class Net {
     return segments;
   }
 
-  public boolean AddParentBit(byte bitId) {
+  public boolean addParentBit(byte bitId) {
     if (bitId < 0) return false;
     inheritedBits.add(bitId);
     return true;
@@ -110,11 +110,11 @@ public class Net {
     return myPoints.contains(point);
   }
 
-  public boolean ContainsTunnel(String tunnelName) {
+  public boolean containsTunnel(String tunnelName) {
     return tunnelNames.contains(tunnelName);
   }
 
-  public void ForceRootNet() {
+  public void forceRootNet() {
     myParent = null;
     requiresToBeRoot = true;
     inheritedBits.clear();
@@ -164,7 +164,7 @@ public class Net {
     return new ArrayList<>(sinkList.get(bitIndex).getAll());
   }
 
-  public List<ConnectionPoint> GetBitSources(int bitIndex) {
+  public List<ConnectionPoint> getBitSources(int bitIndex) {
     if ((bitIndex < 0) || (bitIndex >= sourceNetsList.size())) return null;
     return sourceList.get(bitIndex).getAll();
   }
@@ -202,7 +202,7 @@ public class Net {
     return tunnelNames.size() != 0;
   }
 
-  public void InitializeSourceSinks() {
+  public void initializeSourceSinks() {
     sourceList.clear();
     sinkList.clear();
     sourceNetsList.clear();

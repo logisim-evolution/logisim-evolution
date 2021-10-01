@@ -132,6 +132,6 @@ public class SocUpSimulationState {
 
   private void fireChange() {
     for (SocUpSimulationStateListener l : listeners)
-      l.SimulationStateChanged();
+      l.simulationStateChanged();
   }
 }

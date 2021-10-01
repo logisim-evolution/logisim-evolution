@@ -257,7 +257,7 @@ class XmlReader {
                 tool.getAttributeSet()
                     .setValue(
                         ProbeAttributes.PROBEAPPEARANCE,
-                        ProbeAttributes.GetDefaultProbeAppearance());
+                        ProbeAttributes.getDefaultProbeAppearance());
               if (tool.getAttributeSet().containsAttribute(StdAttr.APPEARANCE))
                 tool.getAttributeSet()
                     .setValue(StdAttr.APPEARANCE, AppPreferences.getDefaultAppearance());

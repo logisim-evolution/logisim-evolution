@@ -38,7 +38,7 @@ public class Ttl7447 extends AbstractTtlGate {
 
   @Override
   public void propagateTtl(InstanceState state) {
-    DisplayDecoder.ComputeDisplayDecoderOutputs(
+    DisplayDecoder.computeDisplayDecoderOutputs(
         state,
         DisplayDecoder.getdecval(state, false, 0, 6, 0, 1, 5),
         11,

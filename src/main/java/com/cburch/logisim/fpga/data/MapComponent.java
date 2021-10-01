@@ -314,7 +314,7 @@ public class MapComponent {
     if (cmap.getPinMaps() == null) {
       final var rect = cmap.getRectangle();
       for (var comp : IOcomps) {
-        if (comp.getRectangle().PointInside(rect.getXpos(), rect.getYpos())) {
+        if (comp.getRectangle().isPointInside(rect.getXpos(), rect.getYpos())) {
           if (cmap.isSinglePin()) {
             tryMap(cmap.getPinId(), comp, cmap.getIoId());
           } else {
@@ -343,7 +343,7 @@ public class MapComponent {
             if (iomap1 == iomap2 && iomap2 == iomap3) {
               /* we have a triple map on a LEDArray, so do it */
               for (var comp : IOcomps) {
-                if (comp.getRectangle().PointInside(rect1.getXpos(), rect1.getYpos())) {
+                if (comp.getRectangle().isPointInside(rect1.getXpos(), rect1.getYpos())) {
                   tryCompleteMap(comp, iomap1);
                   return;
                 }
@@ -404,7 +404,7 @@ public class MapComponent {
       number = parts[1].substring(6);
     } else {
       int id = 0;
-      for (var key : SevenSegment.GetLabels()) {
+      for (var key : SevenSegment.getLabels()) {
         if (parts[1].equals(key)) number = Integer.toString(id);
         id++;
       }
@@ -413,7 +413,7 @@ public class MapComponent {
       try {
         final var pinId = Integer.parseUnsignedInt(number);
         for (var comp : IOcomps) {
-          if (comp.getRectangle().PointInside(cmap.getRectangle().getXpos(), cmap.getRectangle().getYpos())) {
+          if (comp.getRectangle().isPointInside(cmap.getRectangle().getXpos(), cmap.getRectangle().getYpos())) {
             return tryMap(pinId, comp, 0);
           }
         }
@@ -552,7 +552,7 @@ public class MapComponent {
     return opens.get(pin);
   }
 
-  public boolean IsConstantMapped(int pin) {
+  public boolean isConstantMapped(int pin) {
     if (pin < 0 || pin >= nrOfPins) return false;
     return (constants.get(pin) >= 0);
   }

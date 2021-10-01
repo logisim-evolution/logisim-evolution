@@ -43,7 +43,7 @@ public class MappableResourcesContainer {
     var BoardId = new ArrayList<String>();
     BoardId.add(CurrentBoard.getBoardName());
     myIOComponents = new ArrayList<>();
-    for (var io : currentUsedBoard.GetAllComponents()) {
+    for (var io : currentUsedBoard.getAllComponents()) {
       try {
         var clone = (FpgaIoInformationContainer) io.clone();
         clone.setMapMode();
@@ -172,14 +172,14 @@ public class MappableResourcesContainer {
     return result;
   }
 
-  public List<String> GetMappedIOPinNames() {
-    var result = new ArrayList<String>();
-    for (var key : myMappableResources.keySet()) {
-      var map = myMappableResources.get(key);
+  public List<String> getMappedIoPinNames() {
+    final var result = new ArrayList<String>();
+    for (final var key : myMappableResources.keySet()) {
+      final var map = myMappableResources.get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {
         if (!map.isIo(i) || map.isInternalMapped(i)) continue;
         if (map.isBoardMapped(i)) {
-          var sb = new StringBuilder();
+          final var sb = new StringBuilder();
           if (map.isExternalInverted(i)) sb.append("n_");
           sb.append(map.getHdlString(i));
           result.add(sb.toString());
@@ -189,14 +189,14 @@ public class MappableResourcesContainer {
     return result;
   }
 
-  public List<String> GetMappedInputPinNames() {
-    var result = new ArrayList<String>();
-    for (var key : myMappableResources.keySet()) {
-      var map = myMappableResources.get(key);
+  public List<String> getMappedInputPinNames() {
+    final var result = new ArrayList<String>();
+    for (final var key : myMappableResources.keySet()) {
+      final var map = myMappableResources.get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {
         if (!map.isInput(i) || map.isInternalMapped(i)) continue;
         if (map.isBoardMapped(i)) {
-          var sb = new StringBuilder();
+          final var sb = new StringBuilder();
           if (map.isExternalInverted(i)) sb.append("n_");
           sb.append(map.getHdlString(i));
           result.add(sb.toString());
@@ -206,14 +206,14 @@ public class MappableResourcesContainer {
     return result;
   }
 
-  public List<String> GetMappedOutputPinNames() {
-    var result = new ArrayList<String>();
-    for (var key : myMappableResources.keySet()) {
-      var map = myMappableResources.get(key);
+  public List<String> getMappedOutputPinNames() {
+    final var result = new ArrayList<String>();
+    for (final var key : myMappableResources.keySet()) {
+      final var map = myMappableResources.get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {
         if (!map.isOutput(i) || map.isInternalMapped(i)) continue;
         if (map.isBoardMapped(i)) {
-          var sb = new StringBuilder();
+          final var sb = new StringBuilder();
           if (map.isExternalInverted(i)) sb.append("n_");
           sb.append(map.getHdlString(i));
           result.add(sb.toString());

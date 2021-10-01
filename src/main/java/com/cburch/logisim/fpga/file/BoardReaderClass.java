@@ -38,14 +38,14 @@ public class BoardReaderClass {
     myfilename = filename;
   }
 
-  private BufferedImage CreateImage(int width, int height, String[] CodeTable, String PixelData) {
+  private BufferedImage createImage(int width, int height, String[] CodeTable, String PixelData) {
     ImageXmlFactory reader = new ImageXmlFactory();
-    reader.SetCodeTable(CodeTable);
-    reader.SetCompressedString(PixelData);
-    return reader.GetPicture(width, height);
+    reader.setCodeTable(CodeTable);
+    reader.setCompressedString(PixelData);
+    return reader.getPicture(width, height);
   }
 
-  public BoardInformation GetBoardInformation() {
+  public BoardInformation getBoardInformation() {
     try {
       // Create instance of DocumentBuilderFactory
       factory = DocumentBuilderFactory.newInstance();
@@ -120,26 +120,26 @@ public class BoardReaderClass {
 
       BoardInformation result = new BoardInformation();
       result.setBoardName(BoardDoc.getDocumentElement().getNodeName());
-      BufferedImage Picture = CreateImage(PictureWidth, PictureHeight, CodeTable, PixelData);
+      BufferedImage Picture = createImage(PictureWidth, PictureHeight, CodeTable, PixelData);
       if (Picture == null) return null;
       result.setImage(Picture);
-      FpgaClass FPGA = GetFPGAInfo();
+      FpgaClass FPGA = getFpgaInfo();
       if (FPGA == null) return null;
       result.fpga = FPGA;
       NodeList CompList = BoardDoc.getElementsByTagName("PinsInformation"); // for backward
       // compatibility
-      ProcessComponentList(CompList, result);
+      processComponentList(CompList, result);
       CompList = BoardDoc.getElementsByTagName("ButtonsInformation"); // for
       // backward
       // compatibility
-      ProcessComponentList(CompList, result);
+      processComponentList(CompList, result);
       CompList = BoardDoc.getElementsByTagName("LEDsInformation"); // for
       // backward
       // compatibility
-      ProcessComponentList(CompList, result);
+      processComponentList(CompList, result);
       CompList = BoardDoc.getElementsByTagName(BoardWriterClass.COMPONENTS_SECTION_STRING); // new
       // format
-      ProcessComponentList(CompList, result);
+      processComponentList(CompList, result);
       return result;
     } catch (Exception e) {
       logger.error(
@@ -150,7 +150,7 @@ public class BoardReaderClass {
     }
   }
 
-  private FpgaClass GetFPGAInfo() {
+  private FpgaClass getFpgaInfo() {
     NodeList FPGAList = BoardDoc.getElementsByTagName(BoardWriterClass.BOARD_INFORMATION_SECTION_STRING);
     long frequency = -1;
     String clockpin = null;
@@ -235,7 +235,7 @@ public class BoardReaderClass {
     if (JTAGPos == null) JTAGPos = "1";
     if (FlashPos == null) FlashPos = "2";
     FpgaClass result = new FpgaClass();
-    result.Set(
+    result.set(
         frequency,
         clockpin,
         clockpull,
@@ -253,7 +253,7 @@ public class BoardReaderClass {
     return result;
   }
 
-  private void ProcessComponentList(NodeList CompList, BoardInformation board) {
+  private void processComponentList(NodeList CompList, BoardInformation board) {
     Node tempNode = null;
     if (CompList.getLength() == 1) {
       tempNode = CompList.item(0);
@@ -261,7 +261,7 @@ public class BoardReaderClass {
       for (int i = 0; i < CompList.getLength(); i++) {
         FpgaIoInformationContainer NewComp = new FpgaIoInformationContainer(CompList.item(i));
         if (NewComp.isKnownComponent()) {
-          board.AddComponent(NewComp);
+          board.addComponent(NewComp);
         }
       }
     }

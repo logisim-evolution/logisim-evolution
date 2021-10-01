@@ -182,7 +182,7 @@ public class AssemblerInfo {
       return errors;
     }
 
-    public boolean Download(SocProcessorInterface cpu, CircuitState state) {
+    public boolean download(SocProcessorInterface cpu, CircuitState state) {
       for (long i = sectionStart; i < sectionEnd; i++) {
         byte datab = data.containsKey(i) ? data.get(i) : 0;
         SocBusTransaction trans =
@@ -317,7 +317,7 @@ public class AssemblerInfo {
 
   public boolean download(SocProcessorInterface cpu, CircuitState state) {
     for (AssemblerSectionInfo section : sections.getAll())
-      if (!section.Download(cpu, state)) return false;
+      if (!section.download(cpu, state)) return false;
     return true;
   }
 

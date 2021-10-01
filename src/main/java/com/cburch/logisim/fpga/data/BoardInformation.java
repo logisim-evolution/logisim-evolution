@@ -27,7 +27,7 @@ public class BoardInformation {
     this.clear();
   }
 
-  public void AddComponent(FpgaIoInformationContainer comp) {
+  public void addComponent(FpgaIoInformationContainer comp) {
     MyComponents.add(comp);
   }
 
@@ -44,7 +44,7 @@ public class BoardInformation {
     MyComponents.addAll(comps);
   }
 
-  public List<FpgaIoInformationContainer> GetAllComponents() {
+  public List<FpgaIoInformationContainer> getAllComponents() {
     return MyComponents;
   }
 
@@ -52,7 +52,7 @@ public class BoardInformation {
     return boardName;
   }
 
-  public FpgaIoInformationContainer GetComponent(BoardRectangle rect) {
+  public FpgaIoInformationContainer getComponent(BoardRectangle rect) {
     for (final var comp : MyComponents) {
       if (comp.getRectangle().equals(rect)) {
         return comp;

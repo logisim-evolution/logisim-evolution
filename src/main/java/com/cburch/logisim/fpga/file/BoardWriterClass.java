@@ -111,7 +111,7 @@ public class BoardWriterClass {
       speed.setValue(BoardInfo.fpga.getSpeedGrade());
       FPGA.setAttributeNode(speed);
       final var usbtmc = boardInfo.createAttribute(FPGA_SECTION_STRINGS[5]);
-      usbtmc.setValue(BoardInfo.fpga.USBTMCDownloadRequired().toString());
+      usbtmc.setValue(BoardInfo.fpga.isUsbTmcDownloadRequired().toString());
       FPGA.setAttributeNode(usbtmc);
       final var jtagPos = boardInfo.createAttribute(FPGA_SECTION_STRINGS[6]);
       jtagPos.setValue(String.valueOf(BoardInfo.fpga.getFpgaJTAGChainPosition()));
@@ -130,11 +130,11 @@ public class BoardWriterClass {
       root.appendChild(Components);
       Comment Compcmd = boardInfo.createComment("This section describes all Components present on the boards");
       Components.appendChild(Compcmd);
-      for (var comp : BoardInfo.GetAllComponents()) {
+      for (var comp : BoardInfo.getAllComponents()) {
         Components.appendChild(comp.getDocumentElement(boardInfo));
       }
       final var writer = new ImageXmlFactory();
-      writer.CreateStream(BoardImage);
+      writer.createStream(BoardImage);
       final var BoardPicture = boardInfo.createElement(IMAGE_INFORMATION_STRING);
       root.appendChild(BoardPicture);
       final var Pictcmd = boardInfo.createComment("This section hold the board picture");
@@ -147,10 +147,10 @@ public class BoardWriterClass {
       BoardPicture.appendChild(pictsize);
       final var CodeTable = boardInfo.createElement("CompressionCodeTable");
       BoardPicture.appendChild(CodeTable);
-      CodeTable.setAttribute("TableData", writer.GetCodeTable());
+      CodeTable.setAttribute("TableData", writer.getCodeTable());
       final var PixelData = boardInfo.createElement("PixelData");
       BoardPicture.appendChild(PixelData);
-      PixelData.setAttribute("PixelRGB", writer.GetCompressedString());
+      PixelData.setAttribute("PixelRGB", writer.getCompressedString());
     } catch (Exception e) {
       /* TODO: handle exceptions */
       logger.error(
@@ -159,7 +159,7 @@ public class BoardWriterClass {
     }
   }
 
-  public void PrintXml() {
+  public void printXml() {
     try {
       final var tranFactory = TransformerFactory.newInstance();
       final var aTransformer = tranFactory.newTransformer();
@@ -175,7 +175,7 @@ public class BoardWriterClass {
     }
   }
 
-  public void PrintXml(String filename) {
+  public void printXml(String filename) {
     try {
       final var tranFactory = TransformerFactory.newInstance();
       tranFactory.setAttribute("indent-number", 3);

@@ -32,7 +32,7 @@ public class CounterPoker extends RegisterPoker {
         g.drawRect(bds.getX() + (bds.getWidth() - wid) / 2, bds.getY() + 4, wid, 15);
       }
     } else {
-      int xcenter = Counter.SymbolWidth(width) - 25;
+      int xcenter = Counter.getSymbolWidth(width) - 25;
       g.drawRect(bds.getX() + xcenter - len * 4, bds.getY() + 22, len * 8, 16);
     }
     g.setColor(Color.BLACK);

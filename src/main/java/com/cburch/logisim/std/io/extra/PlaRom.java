@@ -125,7 +125,7 @@ public class PlaRom extends InstanceFactory {
     @Override
     public void mouseClicked(MouseEvent e) {
       if (data == null) return;
-      if (data.editWindow() == 1) data.ClearMatrixValues();
+      if (data.editWindow() == 1) data.clearMatrixValues();
     }
   }
 
@@ -160,8 +160,8 @@ public class PlaRom extends InstanceFactory {
     public void actionPerformed(ActionEvent evt) {
       PlaRomData data = PlaRom.getPlaRomData(instance, circState);
       if (evt.getSource() == edit) {
-        if (data.editWindow() == 1) data.ClearMatrixValues();
-      } else if (evt.getSource() == clear) data.ClearMatrixValues();
+        if (data.editWindow() == 1) data.clearMatrixValues();
+      } else if (evt.getSource() == clear) data.clearMatrixValues();
       // if something changed
       if (!data.getSavedData().equals(instance.getAttributeValue(CONTENTS_ATTR))) {
         instance.fireInvalidated();

@@ -195,7 +195,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   /* here the private handles are defined */
-  private String GetBubbleIndex(netlistComponent comp, int type) {
+  private String getBubbleIndex(netlistComponent comp, int type) {
     return switch (type) {
       case 0 -> Hdl.bracketOpen()
             + comp.getLocalBubbleInputEndId()
@@ -432,12 +432,12 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     if (myNetList.getNumberOfInputBubbles() > 0) {
       // FIXME: remove + by concatination.
       portMap.put(LOCAL_INPUT_BUBBLE_BUS_NAME,
-          topLevel ? Preamble + LOCAL_INPUT_BUBBLE_BUS_NAME : LOCAL_INPUT_BUBBLE_BUS_NAME + GetBubbleIndex(componentInfo, 0));
+          topLevel ? Preamble + LOCAL_INPUT_BUBBLE_BUS_NAME : LOCAL_INPUT_BUBBLE_BUS_NAME + getBubbleIndex(componentInfo, 0));
     }
     if (myNetList.numberOfOutputBubbles() > 0) {
       // FIXME: remove + by concatination.
       portMap.put(LOCAL_OUTPUT_BUBBLE_BUS_NAME,
-          topLevel ? Preamble + LOCAL_OUTPUT_BUBBLE_BUS_NAME : LOCAL_OUTPUT_BUBBLE_BUS_NAME + GetBubbleIndex(componentInfo, 1));
+          topLevel ? Preamble + LOCAL_OUTPUT_BUBBLE_BUS_NAME : LOCAL_OUTPUT_BUBBLE_BUS_NAME + getBubbleIndex(componentInfo, 1));
     }
 
     final var nrOfIOBubbles = myNetList.numberOfInOutBubbles();
@@ -488,7 +488,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
         if (Hdl.isVerilog())
           portMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME, vector.toString());
       } else {
-        portMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME, LOCAL_INOUT_BUBBLE_BUS_NAME + GetBubbleIndex(componentInfo, 2));
+        portMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME, LOCAL_INOUT_BUBBLE_BUS_NAME + getBubbleIndex(componentInfo, 2));
       }
     }
 

@@ -358,7 +358,7 @@ public class Netlist {
         }
       }
       /* Now we check that no tri-state are present */
-      if (comp.getFactory().HasThreeStateDrivers(comp.getAttributeSet())) {
+      if (comp.getFactory().hasThreeStateDrivers(comp.getAttributeSet())) {
         drc.get(4).addMarkComponent(comp);
         drcStatus |= DRC_ERROR;
       }
@@ -716,7 +716,7 @@ public class Netlist {
           while (searchIterator.hasNext() && !merged) {
             final var searchNet = searchIterator.next();
             for (final var name : thisNet.getTunnelNames()) {
-              if (searchNet.ContainsTunnel(name) && !merged) {
+              if (searchNet.containsTunnel(name) && !merged) {
                 merged = true;
                 if (!searchNet.merge(thisNet)) {
                   drc.get(0).addMarkComponents(searchNet.getWires());
@@ -937,13 +937,13 @@ public class Netlist {
           connectedUnknownEnds |= sattrs.isNoConnect(i);
           /* There is a net connected to this splitter's end point */
           if (!myNets.get(connectedNet).setParent(myNets.get(rootNet))) {
-            myNets.get(connectedNet).ForceRootNet();
+            myNets.get(connectedNet).forceRootNet();
           }
           /* Here we have to process the inherited bits of the parent */
           final var busBitConnection = ((Splitter) comp).getEndpoints();
           for (byte b = 0; b < busBitConnection.length; b++) {
             if (busBitConnection[b] == i) {
-              myNets.get(connectedNet).AddParentBit(b);
+              myNets.get(connectedNet).addParentBit(b);
             }
           }
         } else {
@@ -983,7 +983,7 @@ public class Netlist {
      */
     for (final var thisNet : myNets) {
       if (thisNet.isRootNet()) {
-        thisNet.InitializeSourceSinks();
+        thisNet.initializeSourceSinks();
       }
     }
     /*
@@ -1133,7 +1133,7 @@ public class Netlist {
     return -1;
   }
 
-  private List<ConnectionPoint> GetHiddenSinks(Net thisNet, Byte bitIndex, List<Component> splitters, Set<String> handledNets, Boolean isSourceNet) {
+  private List<ConnectionPoint> getHiddenSinks(Net thisNet, Byte bitIndex, List<Component> splitters, Set<String> handledNets, Boolean isSourceNet) {
     final var result = new ArrayList<ConnectionPoint>();
     // to prevent deadlock situations we check if we already looked at this net
     final var netId = myNets.indexOf(thisNet) + "-" + bitIndex;
@@ -1167,7 +1167,7 @@ public class Netlist {
               if (thisnet.contains(ends.get(splitterEnd).getLocation())) slaveNet = thisnet;
             }
             if (slaveNet != null)
-              result.addAll(GetHiddenSinks(slaveNet, netIndex, splitters, handledNets, false));
+              result.addAll(getHiddenSinks(slaveNet, netIndex, splitters, handledNets, false));
           } else {
             final var rootIndices = new ArrayList<Byte>();
             for (byte b = 0; b < busBitConnection.length; b++) {
@@ -1178,7 +1178,7 @@ public class Netlist {
               if (thisnet.contains(currentSplitter.getEnd(0).getLocation())) rootNet = thisnet;
             }
             if (rootNet != null)
-              result.addAll(GetHiddenSinks(rootNet, rootIndices.get(bitIndex), splitters, handledNets, false));
+              result.addAll(getHiddenSinks(rootNet, rootIndices.get(bitIndex), splitters, handledNets, false));
           }
         }
       }
@@ -1390,7 +1390,7 @@ public class Netlist {
     segments.addAll(thisNet.getWires());
 
     if (thisNet.hasBitSource(bitIndex)) {
-      List<ConnectionPoint> sources = thisNet.GetBitSources(bitIndex);
+      List<ConnectionPoint> sources = thisNet.getBitSources(bitIndex);
       if (sources.size() != 1) {
         Reporter.report.addFatalErrorFmt(
             "BUG: Found multiple sources\n ==> %s:%d\n",
@@ -1660,7 +1660,7 @@ public class Netlist {
             final var sinks = thisNet.getBitSinks(i);
             hasSink |= !sinks.isEmpty();
             sinks.forEach(mySinks::remove);
-            final var hiddenSinkNets = GetHiddenSinks(thisNet, (byte) i, mySplitters, new HashSet<>(), true);
+            final var hiddenSinkNets = getHiddenSinks(thisNet, (byte) i, mySplitters, new HashSet<>(), true);
             hasSink |= !hiddenSinkNets.isEmpty();
             hiddenSinkNets.forEach(mySinks::remove);
             if (!hasSink) {
@@ -1873,7 +1873,7 @@ public class Netlist {
     currentHierarchyLevel.addAll(level);
   }
 
-  private boolean TraceDownSubcircuit(ConnectionPoint point, int clockSourceId, List<String> hierarchyNames, List<Netlist> hierarchyNetlists) {
+  private boolean traceDownSubcircuit(ConnectionPoint point, int clockSourceId, List<String> hierarchyNames, List<Netlist> hierarchyNetlists) {
     if (point.getChildsPortIndex() < 0) {
       Reporter.report.addFatalErrorFmt(
           "BUG: Subcircuit port is not annotated!\n ==> %s:%d\n",
@@ -1933,11 +1933,11 @@ public class Netlist {
   }
 
   public boolean traceClockNet(Net clockNet, byte clockNetBitIndex, int clockSourceId, boolean isPinSource, List<String> hierarchyNames, List<Netlist> hierarchyNetlists) {
-    final var hiddenComps = GetHiddenSinks(clockNet, clockNetBitIndex, mySplitters, new HashSet<>(), false);
+    final var hiddenComps = getHiddenSinks(clockNet, clockNetBitIndex, mySplitters, new HashSet<>(), false);
     for (final var point : hiddenComps) {
       markClockNet(hierarchyNames, clockSourceId, point, isPinSource);
       if (point.getComp().getFactory() instanceof SubcircuitFactory)
-        if (!TraceDownSubcircuit(point, clockSourceId, hierarchyNames, hierarchyNetlists)) return false;
+        if (!traceDownSubcircuit(point, clockSourceId, hierarchyNames, hierarchyNetlists)) return false;
       /* On top level we do not have to go up */
       if (hierarchyNames.isEmpty()) continue;
       if (point.getComp().getFactory() instanceof Pin) {

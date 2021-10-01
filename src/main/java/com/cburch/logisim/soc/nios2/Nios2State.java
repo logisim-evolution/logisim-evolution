@@ -217,7 +217,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
     }
 
     @Override
-    public void SimButtonPressed() {
+    public void simButtonPressed() {
       simState.buttonPressed();
     }
 
@@ -234,10 +234,10 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
 
     @Override
     public String getRegisterValueHex(int index) {
-      return RegisterIsValid(index) ? String.format("0x%08X", getRegisterValue(index)) : "??????????";
+      return isRegisterValid(index) ? String.format("0x%08X", getRegisterValue(index)) : "??????????";
     }
 
-    public Boolean RegisterIsValid(int index) {
+    public Boolean isRegisterValid(int index) {
       if (index == 0) return true;
       if (index > 31) return false;
       return registers_valid[index - 1];
@@ -652,7 +652,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
   }
 
   @Override
-  public void SimulationStateChanged() {
+  public void simulationStateChanged() {
     if (attachedBus != null && attachedBus.getComponent() != null)
       ((InstanceComponent) attachedBus.getComponent()).getInstance().fireInvalidated();
   }

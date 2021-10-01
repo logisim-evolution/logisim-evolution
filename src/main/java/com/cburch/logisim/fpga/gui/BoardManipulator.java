@@ -277,7 +277,7 @@ public class BoardManipulator extends JPanel
     clear();
     image = board.getImage();
     BoardName = board.getBoardName();
-    for (FpgaIoInformationContainer l : board.GetAllComponents())
+    for (FpgaIoInformationContainer l : board.getAllComponents())
       IOcomps.addComponent(l, scale);
     for (BoardManipulatorListener l : listeners)
         l.boardNameChanged(BoardName);

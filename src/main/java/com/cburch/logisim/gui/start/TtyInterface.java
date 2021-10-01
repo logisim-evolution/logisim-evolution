@@ -261,7 +261,7 @@ public class TtyInterface {
     }
     final var proj = new Project(file);
     if (args.isFpgaDownload()) {
-      if (!args.FpgaDownload(proj)) System.exit(-1);
+      if (!args.fpgaDownload(proj)) System.exit(-1);
     }
 
     final var circuitToTest = args.getCircuitToTest();

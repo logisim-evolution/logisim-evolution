@@ -157,7 +157,7 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
     }
 
     @Override
-    public void SimButtonPressed() {
+    public void simButtonPressed() {
       simState.buttonPressed();
     }
 
@@ -175,12 +175,12 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
 
     @Override
     public String getRegisterValueHex(int index) {
-      if (RegisterIsValid(index))
+      if (isRegisterValid(index))
         return String.format("0x%08X", getRegisterValue(index));
       return "??????????";
     }
 
-    public Boolean RegisterIsValid(int index) {
+    public Boolean isRegisterValid(int index) {
       if (index == 0)
         return true;
       if (index > 31)
@@ -535,7 +535,7 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
   }
 
   @Override
-  public void SimulationStateChanged() {
+  public void simulationStateChanged() {
     if (attachedBus != null && attachedBus.getComponent() != null)
       ((InstanceComponent) attachedBus.getComponent()).getInstance().fireInvalidated();
   }

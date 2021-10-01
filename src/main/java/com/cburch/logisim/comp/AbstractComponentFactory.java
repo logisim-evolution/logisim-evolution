@@ -135,7 +135,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   public abstract Bounds getOffsetBounds(AttributeSet attrs);
 
   @Override
-  public boolean HasThreeStateDrivers(AttributeSet attrs) {
+  public boolean hasThreeStateDrivers(AttributeSet attrs) {
     return false;
   }
 

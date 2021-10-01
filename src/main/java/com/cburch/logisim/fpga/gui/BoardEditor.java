@@ -161,7 +161,7 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
         filename += TheBoard.getBoardName() + ".xml";
         TheBoard.setComponents(picturepanel.getIoComponents());
         BoardWriterClass xmlwriter = new BoardWriterClass(TheBoard, picturepanel.getImage());
-        xmlwriter.PrintXml(filename);
+        xmlwriter.printXml(filename);
         this.clear();
         break;
       case "load":
@@ -174,12 +174,12 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
           File file = fc.getSelectedFile();
           String FileName = file.getPath();
           BoardReaderClass reader = new BoardReaderClass(FileName);
-          UpdateInfo(reader);
+          updateInfo(reader);
         }
         break;
       case FPGAStr:
         FpgaIoInformationSettingsDialog.getFpgaInformation(panel, TheBoard);
-        if (picturepanel.hasIOComponents() && TheBoard.fpga.FpgaInfoPresent())
+        if (picturepanel.hasIOComponents() && TheBoard.fpga.isFpgaInfoPresent())
           saveButton.setEnabled(true);
         break;
       case "internal":
@@ -187,14 +187,14 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
         if (Board != null) {
           BoardReaderClass reader = new BoardReaderClass(
               AppPreferences.Boards.getBoardFilePath(Board));
-          UpdateInfo(reader);
+          updateInfo(reader);
         }
         break;
     }
   }
 
-  private void UpdateInfo(BoardReaderClass reader) {
-    TheBoard = reader.GetBoardInformation();
+  private void updateInfo(BoardReaderClass reader) {
+    TheBoard = reader.getBoardInformation();
     picturepanel.setBoard(TheBoard);
     picturepanel.repaint();
   }
@@ -247,7 +247,7 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
     return old;
   }
 
-  public JFrame GetPanel() {
+  public JFrame getPanel() {
     return panel;
   }
 
@@ -280,11 +280,11 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
     loadButton.setEnabled(false);
     importButton.setEnabled(false);
     fpgaButton.setEnabled(true);
-    saveButton.setEnabled(picturepanel.hasIOComponents() && TheBoard.fpga.FpgaInfoPresent());
+    saveButton.setEnabled(picturepanel.hasIOComponents() && TheBoard.fpga.isFpgaInfoPresent());
   }
 
   @Override
   public void componentsChanged(IoComponentsInformation IOcomps) {
-    saveButton.setEnabled(IOcomps.hasComponents() && TheBoard.fpga.FpgaInfoPresent());
+    saveButton.setEnabled(IOcomps.hasComponents() && TheBoard.fpga.isFpgaInfoPresent());
   }
 }
