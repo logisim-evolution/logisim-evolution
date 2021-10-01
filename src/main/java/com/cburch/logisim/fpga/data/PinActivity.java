@@ -11,11 +11,12 @@ package com.cburch.logisim.fpga.data;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 public class PinActivity {
   public static char getId(String identifier) {
     char result = 0;
-    LinkedList<String> thelist = PinActivity.getStrings();
+    final var thelist = PinActivity.getStrings();
     Iterator<String> iter = thelist.iterator();
     result = 0;
     while (iter.hasNext()) {
@@ -25,7 +26,7 @@ public class PinActivity {
     return Unknown;
   }
 
-  public static LinkedList<String> getStrings() {
+  public static List<String> getStrings() {
     LinkedList<String> result = new LinkedList<>();
 
     result.add(BEHAVIOR_STRINGS[0]);

@@ -43,11 +43,12 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
   private int source1;
   private int source2;
 
+  @Override
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
-    return opcodes;
+    return new ArrayList<>(Arrays.asList(AsmOpcodes));
   }
 
+  @Override
   public boolean execute(Object state, CircuitState cState) {
     if (!valid) return false;
     RV32im_state.ProcessorState cpuState = (RV32im_state.ProcessorState) state;
@@ -98,6 +99,7 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
     return true;
   }
 
+  @Override
   public String getAsmInstruction() {
     if (!valid) return null;
     StringBuilder s = new StringBuilder();
@@ -110,20 +112,24 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
     return s.toString();
   }
 
+  @Override
   public int getBinInstruction() {
     return instruction;
   }
 
+  @Override
   public boolean setBinInstruction(int instr) {
     instruction = instr;
     valid = decodeBin();
     return valid;
   }
 
+  @Override
   public boolean performedJump() {
     return false;
   }
 
+  @Override
   public boolean isValid() {
     return valid;
   }
@@ -141,15 +147,18 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
     return false;
   }
 
+  @Override
   public String getErrorMessage() {
     return null;
   }
 
+  @Override
   public int getInstructionSizeInBytes(String instruction) {
     if (getInstructions().contains(instruction.toUpperCase())) return 4;
     return -1;
   }
 
+  @Override
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
     valid = true;

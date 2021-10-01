@@ -102,8 +102,8 @@ public class CounterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
       contents.add("""
           CompareOut   <= s_carry;
           CountValue   <= s_counter_value;
-          
-          s_clock      <= {{clock}} WHEN {{invertClock}} = 0 ELSE NOT({{clock}}); 
+
+          s_clock      <= {{clock}} WHEN {{invertClock}} = 0 ELSE NOT({{clock}});
           make_carry : PROCESS( Up_n_Down,
                                 s_counter_value )
           BEGIN
@@ -121,11 +121,11 @@ public class CounterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                 END IF; -- Up counting
              END IF;
           END PROCESS make_carry;
-          
+
           s_real_enable <= '0' WHEN (load = '0' AND enable = '0') -- Counter disabled
                                  OR (mode = 1 AND s_carry = '1' AND load = '0') -- Stay at value situation
                                ELSE {{Tick}};
-          
+
           make_next_value : PROCESS( load , Up_n_Down , s_counter_value ,
                                      LoadData , s_carry )
              VARIABLE v_downcount : std_logic;
@@ -157,7 +157,7 @@ public class CounterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                 END CASE;
              END IF;
           END PROCESS make_next_value;
-          
+
           make_flops : PROCESS( s_clock , s_real_enable , clear , s_next_counter_value )
           BEGIN
              IF (clear = '1') THEN s_counter_value <= (OTHERS => '0');
@@ -173,7 +173,7 @@ public class CounterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
           assign CompareOut = s_carry;
           assign CountValue = s_counter_value;
           assign s_clock = ({{invertClock}} == 0) ? {{clock}} : ~{{clock}};
-          
+
           always@(*)
           begin
           if (Up_n_Down)
@@ -181,10 +181,10 @@ public class CounterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
           else
              s_carry = (s_counter_value == 0) ? 1'b1 : 1'b0;
           end
-          
+
           assign s_real_enable = ((~(load)&~(Enable))|
                                   ((mode==1)&s_carry&~(load))) ? 1'b0 : {{Tick}};
-          
+
           always @(*)
           begin
              if ((load)|((mode==3)&s_carry))
@@ -198,13 +198,13 @@ public class CounterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
              else
                 s_next_counter_value = s_counter_value - 1;
           end
-          
+
           always @(posedge s_clock or posedge clear)
           begin
              if (clear) s_counter_value <= 0;
              else if (s_real_enable) s_counter_value <= s_next_counter_value;
           end
-          
+
           """);
     }
     return contents;

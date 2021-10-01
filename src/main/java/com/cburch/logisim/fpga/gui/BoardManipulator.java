@@ -46,6 +46,7 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import javax.imageio.ImageIO;
 import javax.swing.JButton;
 import javax.swing.JDialog;
@@ -261,7 +262,7 @@ public class BoardManipulator extends JPanel
     return image.getScaledInstance(width, height, 4);
   }
 
-  public ArrayList<FpgaIoInformationContainer> getIoComponents() {
+  public List<FpgaIoInformationContainer> getIoComponents() {
     return IOcomps.getComponents();
   }
 

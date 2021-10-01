@@ -15,6 +15,7 @@ import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.InlinedHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
+import java.util.List;
 
 public class LedBarHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
 

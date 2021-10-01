@@ -13,11 +13,11 @@ import static com.cburch.draw.Strings.S;
 
 import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasObject;
-import com.cburch.draw.undo.Action;
+import com.cburch.draw.undo.UndoAction;
 import java.util.Collection;
 import java.util.Collections;
 
-public abstract class ModelAction extends Action {
+public abstract class ModelAction implements UndoAction {
   private final CanvasModel model;
 
   public ModelAction(CanvasModel model) {

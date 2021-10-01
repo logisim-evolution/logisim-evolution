@@ -9,14 +9,13 @@
 
 package com.cburch.logisim.std.io;
 
-import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.util.LineBuffer;
+import java.util.List;
 
 public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDLGeneratorFactory {
 
@@ -47,7 +46,7 @@ public class RGBArrayLedDefaultHDLGeneratorFactory extends LedArrayLedDefaultHDL
         }
       };
 
-  public static ArrayList<String> getPortMap(int id) {
+  public static List<String> getPortMap(int id) {
     final var contents = new LineBuffer(sharedPairs);
     contents.add("id", id);
 

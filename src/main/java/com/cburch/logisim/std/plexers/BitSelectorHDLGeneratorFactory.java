@@ -16,6 +16,7 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
+import java.util.List;
 
 public class BitSelectorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -73,7 +74,7 @@ public class BitSelectorHDLGeneratorFactory extends AbstractHdlGeneratorFactory 
             assign s_select_vector[513:{{extBits}}] = 0;
             assign s_select_vector[{{extBits}}-1:0] = s_extended_vector;
             assign DataOut = s_selected_slice;
-            
+
             always @(*)
             begin
                case (Sel)

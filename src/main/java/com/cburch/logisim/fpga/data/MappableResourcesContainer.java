@@ -172,7 +172,7 @@ public class MappableResourcesContainer {
     return result;
   }
 
-  public ArrayList<String> GetMappedIOPinNames() {
+  public List<String> GetMappedIOPinNames() {
     var result = new ArrayList<String>();
     for (var key : myMappableResources.keySet()) {
       var map = myMappableResources.get(key);
@@ -189,7 +189,7 @@ public class MappableResourcesContainer {
     return result;
   }
 
-  public ArrayList<String> GetMappedInputPinNames() {
+  public List<String> GetMappedInputPinNames() {
     var result = new ArrayList<String>();
     for (var key : myMappableResources.keySet()) {
       var map = myMappableResources.get(key);
@@ -206,7 +206,7 @@ public class MappableResourcesContainer {
     return result;
   }
 
-  public ArrayList<String> GetMappedOutputPinNames() {
+  public List<String> GetMappedOutputPinNames() {
     var result = new ArrayList<String>();
     for (var key : myMappableResources.keySet()) {
       var map = myMappableResources.get(key);

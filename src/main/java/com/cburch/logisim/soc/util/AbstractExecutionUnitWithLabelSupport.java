@@ -9,7 +9,7 @@
 
 package com.cburch.logisim.soc.util;
 
-public abstract class AbstractExecutionUnitWithLabelSupport implements AssemblerExecutionInterface {
+public interface AbstractExecutionUnitWithLabelSupport extends AssemblerExecutionInterface {
 
   public abstract boolean isLabelSupported();
   public abstract long getLabelAddress(long pc);

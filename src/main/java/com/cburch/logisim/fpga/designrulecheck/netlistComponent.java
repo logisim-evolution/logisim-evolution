@@ -15,6 +15,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.Pin;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class netlistComponent {
@@ -23,7 +24,7 @@ public class netlistComponent {
   private final Component compReference;
   private final ArrayList<ConnectionEnd> endEnds;
   final ComponentMapInformationContainer myMapInformation;
-  private Map<ArrayList<String>, BubbleInformationContainer> globalIds;
+  private Map<List<String>, BubbleInformationContainer> globalIds;
   private BubbleInformationContainer localId;
   private boolean isGatedInstance;
 
@@ -56,7 +57,7 @@ public class netlistComponent {
   }
 
   public void addGlobalBubbleId(
-      ArrayList<String> hierarchyName,
+      List<String> hierarchyName,
       int inputBubblesStartId,
       int nrOfInputBubbles,
       int outputBubblesStartId,
@@ -117,7 +118,7 @@ public class netlistComponent {
     return -1;
   }
 
-  public ArrayList<ConnectionPoint> getConnections(Net rootNet, byte bitIndex, boolean isOutput) {
+  public List<ConnectionPoint> getConnections(Net rootNet, byte bitIndex, boolean isOutput) {
     final var connections = new ArrayList<ConnectionPoint>();
     for (final var search : endEnds) {
       for (byte bit = 0; bit < search.getNrOfBits(); bit++) {
@@ -139,7 +140,7 @@ public class netlistComponent {
     return endEnds.get(index);
   }
 
-  public BubbleInformationContainer getGlobalBubbleId(ArrayList<String> hierarchyName) {
+  public BubbleInformationContainer getGlobalBubbleId(List<String> hierarchyName) {
     return (globalIds == null) ? null : globalIds.getOrDefault(hierarchyName, null);
   }
 

@@ -22,6 +22,7 @@ import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 
 public class VivadoDownload implements VendorDownload {
@@ -225,7 +226,7 @@ public class VivadoDownload implements VendorDownload {
     return FileWriter.writeContents(loadBitstreamFile, contents);
   }
 
-  private ArrayList<String> getPinLocStrings() {
+  private List<String> getPinLocStrings() {
     final var contents = LineBuffer.getBuffer();
     for (final var key : MapInfo.getMappableResources().keySet()) {
       final var map = MapInfo.getMappableResources().get(key);

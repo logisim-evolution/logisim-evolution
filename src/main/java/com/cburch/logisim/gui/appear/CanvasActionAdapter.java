@@ -10,7 +10,7 @@
 package com.cburch.logisim.gui.appear;
 
 import com.cburch.draw.actions.ModelAction;
-import com.cburch.draw.undo.Action;
+import com.cburch.draw.undo.UndoAction;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMutator;
 import com.cburch.logisim.circuit.CircuitTransaction;
@@ -21,10 +21,10 @@ import java.util.Map;
 
 public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
   private final Circuit circuit;
-  private final Action canvasAction;
+  private final UndoAction canvasAction;
   private boolean wasDefault;
 
-  public CanvasActionAdapter(Circuit circuit, Action action) {
+  public CanvasActionAdapter(Circuit circuit, UndoAction action) {
     this.circuit = circuit;
     this.canvasAction = action;
   }

@@ -25,6 +25,7 @@ import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -40,12 +41,11 @@ public class TraceWindowTableModel extends AbstractTableModel
 
   private static final long serialVersionUID = 1L;
   private final SocBusMenuProvider.InstanceInformation parent;
-  private final HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> myTraceList;
+  private final Map<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> myTraceList;
   private JTable table;
   private int BoxWidth = SocBusStateInfo.BLOCK_WIDTH;
-  public TraceWindowTableModel(
-      HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> traceList,
-      SocBusMenuProvider.InstanceInformation p) {
+  public TraceWindowTableModel(Map<SocBusState, CircuitStateHolder.HierarchyInfo> traceList,
+                               SocBusMenuProvider.InstanceInformation p) {
     myTraceList = traceList;
     parent = p;
     rebuild();

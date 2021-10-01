@@ -34,6 +34,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   /**
@@ -67,7 +68,7 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
     }
   }
 
-  public static ArrayList<String> getLabels() {
+  public static List<String> getLabels() {
     final var labelNames = new ArrayList<String>();
     for (var i = 0; i < 3; i++) labelNames.add("");
     labelNames.set(RED, "RED");

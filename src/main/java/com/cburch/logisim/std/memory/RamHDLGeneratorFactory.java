@@ -219,7 +219,7 @@ public class RamHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                       END IF;
                    END IF;
                 END PROCESS Res;
-                
+
                 """);
       }
     }

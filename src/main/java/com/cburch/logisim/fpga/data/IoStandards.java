@@ -10,6 +10,7 @@
 package com.cburch.logisim.fpga.data;
 
 import java.util.LinkedList;
+import java.util.List;
 
 public class IoStandards {
   public static String getConstraintedIoStandard(char id) {
@@ -28,7 +29,7 @@ public class IoStandards {
     return UNKNOWN;
   }
 
-  public static LinkedList<String> getStrings() {
+  public static List<String> getStrings() {
     LinkedList<String> result = new LinkedList<>();
 
     result.add(BEHAVIOR_STRINGS[0]);

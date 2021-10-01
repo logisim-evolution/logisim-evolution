@@ -10,11 +10,8 @@
 package com.cburch.logisim.std.gates;
 
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.data.Location;
-import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.util.GraphicsUtil;
-import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;

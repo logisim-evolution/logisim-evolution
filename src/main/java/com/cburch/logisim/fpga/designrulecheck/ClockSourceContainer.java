@@ -12,6 +12,7 @@ package com.cburch.logisim.fpga.designrulecheck;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.std.wiring.Clock;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClockSourceContainer {
 
@@ -56,7 +57,7 @@ public class ClockSourceContainer {
     return sources.size();
   }
 
-  public ArrayList<Component> getSources() {
+  public List<Component> getSources() {
     return sources;
   }
 

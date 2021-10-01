@@ -136,7 +136,7 @@ public class ClockHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                                          : (s_derived_clock_reg[0] == 1'b1)
                                             ? {{lowTick}} - 1
                                             : {{highTick}} - 1;
-              
+
               """)
           .addRemarkBlock("Here the initial values are defined (for simulation only)")
           .add("""
@@ -165,7 +165,7 @@ public class ClockHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                 END IF;
              END IF;
           END PROCESS makeDerivedClock;
-          
+
           makeCounter : PROCESS( GlobalClock , ClockTick , s_counter_next ,
                                  s_derived_clock_reg )
           BEGIN
@@ -191,7 +191,7 @@ public class ClockHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                 end
              end
           end
-          
+
           always @(posedge GlobalClock)
           begin
              if (ClockTick)

@@ -20,6 +20,7 @@ import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -229,7 +230,7 @@ public class SocMemMapModel extends AbstractTableModel
     }
   }
 
-  public ArrayList<SocBusSlaveInterface> getSlaves() {
+  public List<SocBusSlaveInterface> getSlaves() {
     return slaves;
   }
 

@@ -23,9 +23,9 @@ import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
 import java.util.List;
-import java.util.SortedMap;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -62,7 +62,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
+  public List<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
     final var contents = LineBuffer.getHdlBuffer();
     final var oneLine = new StringBuilder();
     if (getWiresPortsDuringHDLWriting) {
@@ -81,7 +81,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       }
 
       final var components = getComponentDeclarationSection(theNetlist, attrs);
-      if (!components.isEmpty()) 
+      if (!components.isEmpty())
         contents.addRemarkBlock("Here all used components are defined").add(components).empty();
 
       final var typedWires = myTypedWires.getTypedWires();
@@ -103,8 +103,8 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       // now we add them
       if (maxNameLength > 0) contents.addRemarkBlock("All used signals are defined here");
       final var sortedSignals = new TreeSet<String>(mySignals.keySet());
-      for (final var signal : sortedSignals) 
-        contents.add("   SIGNAL {{1}}{{2}} : {{3}};", signal, " ".repeat(maxNameLength - signal.length()), 
+      for (final var signal : sortedSignals)
+        contents.add("   SIGNAL {{1}}{{2}} : {{3}};", signal, " ".repeat(maxNameLength - signal.length()),
             mySignals.get(signal));
       if (maxNameLength > 0) contents.empty();
       contents.add("BEGIN")
@@ -343,7 +343,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     return contents.get();
   }
 
-  public ArrayList<String> getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
+  public List<String> getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
     /*
      * This method returns all the component definitions used as component
      * in the circuit. This method is only called in case of VHDL-code
@@ -353,14 +353,14 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
+  public List<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
     final var contents = LineBuffer.getHdlBuffer();
     if (Hdl.isVhdl()) contents.add(getVHDLBlackBox(theNetlist, attrs, componentName, false));
     return contents.get();
   }
 
   @Override
-  public ArrayList<String> getComponentMap(Netlist nets, Long componentId, Object componentInfo, String name) {
+  public List<String> getComponentMap(Netlist nets, Long componentId, Object componentInfo, String name) {
     final var contents = LineBuffer.getHdlBuffer();
     final var parameterMap = new TreeMap<String, String>();
     final var portMap = getPortMap(nets, componentInfo);
@@ -475,7 +475,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getEntity(Netlist theNetlist, AttributeSet attrs, String componentName) {
+  public List<String> getEntity(Netlist theNetlist, AttributeSet attrs, String componentName) {
     final var contents = LineBuffer.getHdlBuffer();
     if (Hdl.isVhdl()) {
       contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
@@ -499,8 +499,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
   /* Here all public entries for HDL generation are defined */
   @Override
-  public LineBuffer getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo,
-      String circuitName) {
+  public LineBuffer getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
     throw new IllegalAccessError("BUG: Inline code not supported");
   }
 
@@ -512,7 +511,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     return LineBuffer.getHdlBuffer();
   }
 
-  public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
+  public Map<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var result = new TreeMap<String, String>();
     if ((mapInfo instanceof netlistComponent componentInfo) && !myPorts.isEmpty()) {
       final var compName = componentInfo.getComponent().getFactory().getDisplayName();
@@ -596,7 +595,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     return directoryName.toString();
   }
 
-  private ArrayList<String> getVHDLBlackBox(Netlist theNetlist, AttributeSet attrs,
+  private List<String> getVHDLBlackBox(Netlist theNetlist, AttributeSet attrs,
       String componentName, Boolean isEntity) {
     final var contents = LineBuffer.getHdlBuffer();
     var maxNameLength = 0;

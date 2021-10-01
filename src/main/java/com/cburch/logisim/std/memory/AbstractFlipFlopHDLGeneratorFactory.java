@@ -79,7 +79,7 @@ public class AbstractFlipFlopHDLGeneratorFactory extends AbstractHdlGeneratorFac
                begin
                   s_current_state_reg = 0;
                end
-                
+
                """);
     }
 

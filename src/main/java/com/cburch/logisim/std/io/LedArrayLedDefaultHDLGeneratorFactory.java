@@ -9,14 +9,13 @@
 
 package com.cburch.logisim.std.io;
 
-import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.util.LineBuffer;
+import java.util.List;
 
 public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -36,7 +35,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHdlGeneratorF
         .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayOutputs, NR_OF_LEDS_ID, 1);
   }
 
-  public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
+  public static List<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
     final var contents =
         LineBuffer.getBuffer()
             .pair("nrOfLeds", NR_OF_LEDS_STRING)
@@ -60,7 +59,7 @@ public class LedArrayLedDefaultHDLGeneratorFactory extends AbstractHdlGeneratorF
     return contents.getWithIndent(6);
   }
 
-  public static ArrayList<String> getPortMap(int id) {
+  public static List<String> getPortMap(int id) {
     final var map =
         LineBuffer.getBuffer()
             .pair("id", id)

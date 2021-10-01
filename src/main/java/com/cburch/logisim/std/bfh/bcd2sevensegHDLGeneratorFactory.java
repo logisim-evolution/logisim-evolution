@@ -43,7 +43,7 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHdlGeneratorFactory
             Segment_e <= s_output_value(4);
             Segment_f <= s_output_value(5);
             Segment_g <= s_output_value(6);
-            
+
             MakeSegs : PROCESS( BCDin )
             BEGIN
                CASE (BCDin) IS

@@ -13,7 +13,6 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.util.StringGetter;
-import com.cburch.logisim.util.StringUtil;
 import javax.swing.JTextField;
 
 public class DurationAttribute extends Attribute<Integer> {

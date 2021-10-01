@@ -9,15 +9,14 @@
 
 package com.cburch.logisim.std.io;
 
-import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.util.LineBuffer;
+import java.util.List;
 
 public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -65,9 +64,9 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHdlGenera
         .add(Port.OUTPUT, LedArrayGenericHDLGeneratorFactory.LedArrayRowOutputs, NR_OF_ROWS_ID, 3);
   }
 
-  public static ArrayList<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
+  public static List<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
     final var nrColAddrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
-    final var scanningReload = (int) (fpgaClockFrequency / (long) 1000);
+    final var scanningReload = (int) (fpgaClockFrequency / 1000);
     final var nrOfScanningBitsCount = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(scanningReload);
     final var maxNrLeds = ((int) Math.pow(2.0, (double) nrColAddrBits)) * nrOfRows;
 
@@ -116,7 +115,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHdlGenera
     return contents.getWithIndent(6);
   }
 
-  public static ArrayList<String> getPortMap(int id) {
+  public static List<String> getPortMap(int id) {
     final var contents =
         LineBuffer.getBuffer()
             .pair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)
@@ -143,7 +142,7 @@ public class LedArrayColumnScanningHDLGeneratorFactory extends AbstractHdlGenera
     return contents.getWithIndent(6);
   }
 
-  public ArrayList<String> getColumnCounterCode() {
+  public List<String> getColumnCounterCode() {
     final var contents =
         LineBuffer.getBuffer()
             .pair("columnAddress", LedArrayGenericHDLGeneratorFactory.LedArrayColumnAddress)

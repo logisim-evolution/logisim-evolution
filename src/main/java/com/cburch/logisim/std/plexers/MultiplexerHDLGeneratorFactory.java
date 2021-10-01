@@ -68,7 +68,7 @@ public class MultiplexerHDLGeneratorFactory extends AbstractHdlGeneratorFactory 
         contents.add("         WHEN {{1}} => MuxOut <= MuxIn_{{2}};", Hdl.getConstantVector(i, nrOfSelectBits), i);
       contents.add("         WHEN OTHERS  => MuxOut <= MuxIn_{{1}};", (1 << nrOfSelectBits) - 1)
               .add("""
-                         END CASE; 
+                         END CASE;
                       END IF;
                    END PROCESS make_mux;
                    """);

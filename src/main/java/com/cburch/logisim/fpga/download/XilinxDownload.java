@@ -31,6 +31,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class XilinxDownload implements VendorDownload {
 
@@ -43,8 +44,8 @@ public class XilinxDownload implements VendorDownload {
   private final Netlist RootNetList;
   private MappableResourcesContainer MapInfo;
   private final BoardInformation boardInfo;
-  private final ArrayList<String> Entities;
-  private final ArrayList<String> architectures;
+  private final List<String> Entities;
+  private final List<String> architectures;
   private final String HDLType;
   private final String bitfileExt;
   private final boolean IsCPLD;
@@ -62,8 +63,8 @@ public class XilinxDownload implements VendorDownload {
       String ProjectPath,
       Netlist RootNetList,
       BoardInformation BoardInfo,
-      ArrayList<String> Entities,
-      ArrayList<String> Architectures,
+      List<String> Entities,
+      List<String> Architectures,
       String HDLType,
       boolean WriteToFlash) {
     this.ProjectPath = ProjectPath;

@@ -43,11 +43,13 @@ public class VhdlSimulatorConsole extends JPanel {
       this.setBorder(new EmptyBorder(margin, margin, margin, margin));
     }
 
+    @Override
     public Dimension getPreferredSize() {
       Rectangle bounds = circle.getBounds();
       return new Dimension(bounds.width + 2 * margin, bounds.height + 2 * margin);
     }
 
+    @Override
     public void paintComponent(Graphics g) {
       super.paintComponent(g);
       Graphics2D g2 = (Graphics2D) g;

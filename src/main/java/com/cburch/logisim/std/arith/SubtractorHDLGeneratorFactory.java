@@ -55,7 +55,7 @@ public class SubtractorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
           s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA)+
                               unsigned(s_extended_dataB)+
                               (""&s_carry));
-          
+
           """);
       contents.add(
           (nrOfBits == 1)

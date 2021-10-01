@@ -30,7 +30,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
@@ -218,7 +217,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
+  public List<String> getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
     final var components = new ArrayList<String>();
     final var instantiatedComponents = new HashSet<String>();
     for (final var gate : theNetlist.getNormalComponents()) {
@@ -270,10 +269,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     // we cycle through all nets with a forced root net annotation
     for (final var thisNet : theNets.getAllNets()) {
       if (thisNet.isForcedRootNet()) {
-        // now we cycle through all the bits 
+        // now we cycle through all the bits
         final var wireId = theNets.getNetId(thisNet);
         for (var bit = 0; bit < thisNet.getBitWidth(); bit++) {
-          // First we perform all source connections 
+          // First we perform all source connections
           for (final var source : thisNet.getSourceNets(bit)) {
             final var destination = thisNet.isBus() ? LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME, wireId, bit)
                 :  LineBuffer.formatHdl("{{1}}{{2}}", NET_NAME, wireId);
@@ -281,9 +280,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                 theNets.getNetId(source.getParentNet()), source.getParentNetBitIndex());
             contents.put(destination, sourceWire);
           }
-          // Next we perform all sink connections 
+          // Next we perform all sink connections
           for (final var source : thisNet.getSinkNets(bit)) {
-            final var destination = LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME, 
+            final var destination = LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME,
                 theNets.getNetId(source.getParentNet()), source.getParentNetBitIndex());
             final var sourceWire = thisNet.isBus() ? LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME, wireId, bit)
                 :  LineBuffer.formatHdl("{{1}}{{2}}", NET_NAME, wireId);
@@ -294,7 +293,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     }
     return contents;
   }
-  
+
   @Override
   public LineBuffer getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer();
@@ -316,7 +315,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
         Reporter.report.addFatalError("INTERNAL ERROR: Cannot find clocknet!");
       }
       final var destination = Hdl.getNetName(clockSource, 0, true, theNetList);
-      final var source = theNetList.requiresGlobalClockConnection() ? TickComponentHdlGeneratorFactory.FPGA_CLOCK 
+      final var source = theNetList.requiresGlobalClockConnection() ? TickComponentHdlGeneratorFactory.FPGA_CLOCK
           :  LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNet, ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX);
       wires.put(destination, source);
     }
@@ -333,7 +332,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     /* Now we define all input signals; hence Input port -> Internal Net */
     for (var i = 0; i < theNetList.getNumberOfInputPorts(); i++) {
       final var myInput = theNetList.getInputPin(i);
-      final var pinName = CorrectLabel.getCorrectLabel(myInput.getComponent().getAttributeSet().getValue(StdAttr.LABEL)); 
+      final var pinName = CorrectLabel.getCorrectLabel(myInput.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
       wires.putAll(getSignalMap(pinName, myInput, 0, theNetList));
     }
     if (!wires.isEmpty()) {
@@ -343,7 +342,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     /* Now we define all output signals; hence Internal Net -> Input port */
     for (var i = 0; i < theNetList.numberOfOutputPorts(); i++) {
       netlistComponent myOutput = theNetList.getOutputPin(i);
-      final var pinName = CorrectLabel.getCorrectLabel(myOutput.getComponent().getAttributeSet().getValue(StdAttr.LABEL)); 
+      final var pinName = CorrectLabel.getCorrectLabel(myOutput.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
       wires.putAll(getSignalMap(pinName, myOutput, 0, theNetList));
     }
     if (!wires.isEmpty()) {
@@ -413,7 +412,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> getPortMap(Netlist nets, Object theMapInfo) {
+  public Map<String, String> getPortMap(Netlist nets, Object theMapInfo) {
     final var portMap = new TreeMap<String, String>();
     if (theMapInfo == null) return null;
     final var topLevel = theMapInfo instanceof MappableResourcesContainer;
@@ -599,7 +598,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
       }
       if (!connected) {
         /* Here is the easy case, the bus is unconnected */
-        if (!isInputConnection) { 
+        if (!isInputConnection) {
           Reporter.report.addSevereWarning("Found an unconnected output bus pin, tied all the pin bits to ground!");
           signal.put(portName, Hdl.getZeroVector(nrOfBits, true));
         }
@@ -631,9 +630,9 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                * The net is connected, we have to find out if the
                * connection is to a bus or to a normal net
                */
-              final var connectedNet = solderPoint.getParentNet().getBitWidth() == 1 
+              final var connectedNet = solderPoint.getParentNet().getBitWidth() == 1
                     ? LineBuffer.format("{{1}}{{2}}", NET_NAME, theNets.getNetId(solderPoint.getParentNet()))
-                    : LineBuffer.format("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME, 
+                    : LineBuffer.format("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME,
                         theNets.getNetId(solderPoint.getParentNet()), solderPoint.getParentNetBitIndex());
               if (isInputConnection) {
                 signal.put(connectedNet, bitConnection);
