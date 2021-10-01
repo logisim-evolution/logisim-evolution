@@ -15,8 +15,6 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.AttributeSets;
-import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
@@ -61,9 +59,6 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   public void removeComponent(Circuit circ, Component c, CircuitState state) {
     // dummy factory
   }
-
-  @Override
-  public abstract Component createComponent(Location loc, AttributeSet attrs);
 
   //
   // user interface methods
@@ -127,12 +122,6 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {0};
   }
-
-  @Override
-  public abstract String getName();
-
-  @Override
-  public abstract Bounds getOffsetBounds(AttributeSet attrs);
 
   @Override
   public boolean hasThreeStateDrivers(AttributeSet attrs) {
