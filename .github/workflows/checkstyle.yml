@@ -80,20 +80,9 @@ jobs:
         echo "Downloading ${JAR}..."
         wget --quiet "${URL}"
 
-        # Extracting config file for possible manipulations.
+        # Using built-in config.
+        declare -r CHECKS_FILE="/google_checks.xml"
         declare -r REPORT_FILE="output.txt"
-        declare -r CHECKS_FILE="google_checks.xml"
-
-        # Extract built-in config file.
-        unzip -qq -d . "${JAR}" "${CHECKS_FILE}"
-
-        # Starting from 8.28, default checkstyle config looks for optional checkstyle-suppressions.xml
-        # (See https://github.com/checkstyle/checkstyle/issues/6946) so we just need to link ours
-        # (as it looks for it in CWD) and that should be sufficient.
-        supp_file="config/checkstyle/suppressions-dev.xml"
-        # safe fall back to non-dev file if -dev version is removed
-        [[ -f "${supp_file}" ]] || supp_file="config/checkstyle/suppressions.xml"
-        ln -s "${supp_file}" checkstyle-suppressions.xml
 
         # Let's lint eventually...
         echo "*********************************************************"
