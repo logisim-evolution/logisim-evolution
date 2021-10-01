@@ -35,8 +35,8 @@ public class VivadoDownload implements VendorDownload {
   private final Netlist rootNetList;
   private MappableResourcesContainer mapInfo;
   private final BoardInformation boardInfo;
-  private final ArrayList<String> entities;
-  private final ArrayList<String> architectures;
+  private final List<String> entities;
+  private final List<String> architectures;
 
   private static String bitStreamPath;
   private static final String CREATE_PROJECT_TCL = "vivadoCreateProject.tcl";
@@ -49,8 +49,8 @@ public class VivadoDownload implements VendorDownload {
       String projectPath,
       Netlist rootNetList,
       BoardInformation boardInfo,
-      ArrayList<String> entities,
-      ArrayList<String> architectures) {
+      List<String> entities,
+      List<String> architectures) {
     this.sandboxPath = DownloadBase.getDirectoryLocation(projectPath, DownloadBase.SANDBOX_PATH);
     this.scriptPath = DownloadBase.getDirectoryLocation(projectPath, DownloadBase.SCRIPT_PATH);
     this.xdcPath = DownloadBase.getDirectoryLocation(projectPath, DownloadBase.XDC_PATH);

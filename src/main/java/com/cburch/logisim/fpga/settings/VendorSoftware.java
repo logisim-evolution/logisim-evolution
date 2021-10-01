@@ -13,6 +13,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 
 public class VendorSoftware {
   public static final char VENDOR_ALTERA = 0;
@@ -64,7 +65,7 @@ public class VendorSoftware {
     return getToolPath() + File.separator + bin[binPos];
   }
 
-  public static LinkedList<String> getVendorStrings() {
+  public static List<String> getVendorStrings() {
     LinkedList<String> result = new LinkedList<>();
 
     result.add(VendorSoftware.VENDORS[0]);
