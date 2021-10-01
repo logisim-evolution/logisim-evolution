@@ -10,6 +10,8 @@
     * [Using cloned config](#using-cloned-config)
   * [Using Gradle plugin](#using-gradle-plugin)
   * [Using `pre-commit`](#using-pre-commit-hooks)
+    * [Disabling hooks for a commit](#disabling-hooks-for-a-commit)
+    * [Updating hooks](#updating-hooks)
 
 ---
 
@@ -84,8 +86,32 @@ To improve quality of your commit, it's recommended to use [pre-commit](http://p
 your commits unless all pre-commit tests pass. `Logisim-evolution` comes with predefined `.pre-commit-config.yaml`
 config file for your convenience.
 
-Installation instruction:
+Brief installation instruction (see `pre-commit` [official installation docs](https://pre-commit.com/#install) too):
 
-* See `pre-commit` [official installation docs](https://pre-commit.com/#install) and install it.
-* Copy provided config file: `cp .pre-commit-config.yaml.dist .pre-commit-config.yaml`
-* Plug `pre-commit` into Git pipeline: `pre-commit install`
+* Ensure you got Python installed
+* Install pre-commit: `pip install pre-commit`
+* Go to your Logisim-evolution source code root directory
+* Copy provided config file template: `cp .pre-commit-config.yaml.dist .pre-commit-config.yaml`
+* Plug hooks into Git pipeline: `pre-commit install`
+
+## Disabling hooks for a commit ##
+
+Not all hooks are perfect so sometimes you may need to skip execution of one or more (or even all) hooks.
+`pre-commit` solves this in two ways. To disable `pre-commit` completely, pass `--no-verify` to `git`:
+
+```bash
+$ git commit -a --no-verify
+```
+
+Alternatively, you may disable specific hooks only by using a `SKIP` environment variable, that is holds a comma separated
+list of hook IDs to be ommited:
+
+$ SKIP=checkstyle-jar git commit -a -m "Some changes"
+
+## Updating hooks ##
+
+Please remember to keep used hooks up to date, by periodically running
+
+```bash
+$ pre-commit autoupdate
+```
