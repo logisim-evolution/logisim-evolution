@@ -125,7 +125,7 @@ public class SelectTool extends Tool {
   private static final SelectIcon ICON = new SelectIcon();
 
   private final HashSet<Selection> selectionsAdded;
-  private final AutoLabel AutoLabler = new AutoLabel();
+  private final AutoLabel autoLabler = new AutoLabel();
 
   private final Listener selListener;
 
@@ -332,23 +332,23 @@ public class SelectTool extends Tool {
       handleMoveDrag(canvas, curDx, curDy, e.getModifiersEx());
     } else {
       final var comps = AutoLabel.sort(canvas.getProject().getSelection().getComponents());
-      final var KeybEvent = e.getKeyCode();
-      var KeyTaken = false;
+      final var keybEvent = e.getKeyCode();
+      var keyTaken = false;
       for (final var comp : comps) {
         final var act = new SetAttributeAction(canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
-        KeyTaken |=
+        keyTaken |=
             GateKeyboardModifier.tookKeyboardStrokes(
-                KeybEvent, comp, comp.getAttributeSet(), canvas, act, true);
+                keybEvent, comp, comp.getAttributeSet(), canvas, act, true);
         if (!act.isEmpty()) canvas.getProject().doAction(act);
       }
-      if (!KeyTaken) {
+      if (!keyTaken) {
         for (Component comp : comps) {
           final var act =
               new SetAttributeAction(
                   canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
-          KeyTaken |=
-              AutoLabler.labelKeyboardHandler(
-                  KeybEvent,
+          keyTaken |=
+              autoLabler.labelKeyboardHandler(
+                  keybEvent,
                   comp.getAttributeSet(),
                   comp.getFactory().getDisplayName(),
                   comp,
@@ -359,8 +359,8 @@ public class SelectTool extends Tool {
           if (!act.isEmpty()) canvas.getProject().doAction(act);
         }
       }
-      if (!KeyTaken)
-        switch (KeybEvent) {
+      if (!keyTaken)
+        switch (keybEvent) {
           case KeyEvent.VK_BACK_SPACE:
           case KeyEvent.VK_DELETE:
             if (!canvas.getSelection().isEmpty()) {
@@ -417,14 +417,14 @@ public class SelectTool extends Tool {
 
     // if the user clicks into the selection,
     // selection is being modified
-    final var in_sel = sel.getComponentsContaining(start, g);
-    if (!in_sel.isEmpty()) {
+    final var inSel = sel.getComponentsContaining(start, g);
+    if (!inSel.isEmpty()) {
       if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
         setState(proj, MOVING);
         proj.repaintCanvas();
         return;
       } else {
-        final var act = SelectionActions.drop(sel, in_sel);
+        final var act = SelectionActions.drop(sel, inSel);
         if (act != null) {
           proj.doAction(act);
         }
@@ -444,7 +444,7 @@ public class SelectTool extends Tool {
         }
       }
       for (final var comp : clicked) {
-        if (!in_sel.contains(comp)) {
+        if (!inSel.contains(comp)) {
           sel.add(comp);
         }
       }
@@ -508,11 +508,11 @@ public class SelectTool extends Tool {
       final var bds = Bounds.create(start).add(start.getX() + curDx, start.getY() + curDy);
       final var circuit = canvas.getCircuit();
       final var sel = proj.getSelection();
-      final var in_sel = sel.getComponentsWithin(bds, g);
+      final var inSel = sel.getComponentsWithin(bds, g);
       for (final var comp : circuit.getAllWithin(bds, g)) {
-        if (!in_sel.contains(comp)) sel.add(comp);
+        if (!inSel.contains(comp)) sel.add(comp);
       }
-      final var act = SelectionActions.drop(sel, in_sel);
+      final var act = SelectionActions.drop(sel, inSel);
       if (act != null) {
         proj.doAction(act);
       }
@@ -528,7 +528,7 @@ public class SelectTool extends Tool {
             final var act =
                 new SetAttributeAction(
                     canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
-            AutoLabler.askAndSetLabel(
+            autoLabler.askAndSetLabel(
                 comp.getFactory().getDisplayName(),
                 OldLabel,
                 canvas.getCircuit(),
@@ -607,10 +607,10 @@ public class SelectTool extends Tool {
     }
   }
 
-  private void setState(Project proj, int new_state) {
-    if (state == new_state) return; // do nothing if state not new
+  private void setState(Project proj, int newState) {
+    if (state == newState) return; // do nothing if state not new
 
-    state = new_state;
+    state = newState;
     proj.getFrame().getCanvas().setCursor(getCursor());
   }
 

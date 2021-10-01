@@ -112,7 +112,6 @@ public class Signal {
     if (last == null || curSize == 0)
       throw new IllegalStateException("signal should have at least " + duration + " ns of data");
     final var i = (firstIndex + curSize - 1) % curSize;
-    var checkMerge = true;
     if (dur[i / CHUNK][i % CHUNK] == duration) {
       val[i / CHUNK][i % CHUNK] = v;
       last = v;

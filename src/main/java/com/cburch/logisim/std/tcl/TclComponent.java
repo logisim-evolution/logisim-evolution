@@ -218,23 +218,23 @@ public abstract class TclComponent extends InstanceFactory {
         getPortsFromServer(state, tclComponentData);
       } else {
         tclComponentData.send("sync_examine");
-        String server_response;
+        String serverResponse;
 
         /* Ignore all messages until "sync" is recieved */
-        while ((server_response = tclComponentData.receive()) != null
-            && server_response.length() > 0
-            && !server_response.equals("sync")) ;
+        while ((serverResponse = tclComponentData.receive()) != null
+            && serverResponse.length() > 0
+            && !serverResponse.equals("sync")) ;
       }
     }
   }
 
   void getPortsFromServer(InstanceState state, TclComponentData tclComponentData) {
-    String server_response;
-    while ((server_response = tclComponentData.receive()) != null
-        && server_response.length() > 0
-        && !server_response.equals("sync")) {
+    String serverResponse;
+    while ((serverResponse = tclComponentData.receive()) != null
+        && serverResponse.length() > 0
+        && !serverResponse.equals("sync")) {
 
-      final var parameters = server_response.split(":");
+      final var parameters = serverResponse.split(":");
 
       /* Skip if we receive crap, still better than an out of range */
       if (parameters.length < 2) continue;
@@ -255,35 +255,29 @@ public abstract class TclComponent extends InstanceFactory {
        * If the received value is not wide enough, complete with X on
        * the MSB
        */
-      final var vector_values = new Value[width];
+      final var vectorValues = new Value[width];
       for (var i = width - 1; i >= busValue.length(); i--) {
-        vector_values[i] = Value.UNKNOWN;
+        vectorValues[i] = Value.UNKNOWN;
       }
 
       /* Transform char to Logisim Value */
-      var k = busValue.length() - 1;
+      var idx = busValue.length() - 1;
       for (final var bit : busValue.toCharArray()) {
 
         try {
-          switch (Character.getNumericValue(bit)) {
-            case 0:
-              vector_values[k] = Value.FALSE;
-              break;
-            case 1:
-              vector_values[k] = Value.TRUE;
-              break;
-            default:
-              vector_values[k] = Value.UNKNOWN;
-              break;
-          }
+          vectorValues[idx] = switch (Character.getNumericValue(bit)) {
+            case 0 -> Value.FALSE;
+            case 1 -> Value.TRUE;
+            default -> Value.UNKNOWN;
+          };
         } catch (NumberFormatException e) {
-          vector_values[k] = Value.ERROR;
+          vectorValues[idx] = Value.ERROR;
         }
-        k--;
+        idx--;
       }
 
       /* Affect the value to the port */
-      state.setPort(portId, Value.create(vector_values), 1);
+      state.setPort(portId, Value.create(vectorValues), 1);
     }
   }
 

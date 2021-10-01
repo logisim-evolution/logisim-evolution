@@ -30,7 +30,6 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Objects;
 import javax.swing.Icon;
 
@@ -107,8 +106,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   }
 
   public void setListener(Listener l) {
-    if (listener != null && l != null && l != listener)
-      throw new IllegalStateException("already have a different listener");
+    if (listener != null && l != null && l != listener) throw new IllegalStateException("already have a different listener");
     listener = l;
   }
 

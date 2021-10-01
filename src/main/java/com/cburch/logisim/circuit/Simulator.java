@@ -581,7 +581,7 @@ public class Simulator {
     if (cs.hasKnownClocks()) return true;
     final var circ = cs.getCircuit();
     final var clocks = ComponentSelector.findClocks(circ);
-    if (clocks != null && clocks.size() >= 1) {
+    if (clocks != null && !clocks.isEmpty()) {
       cs.markKnownClocks();
       return true;
     }

@@ -12,6 +12,7 @@ package com.cburch.logisim.gui.log;
 import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.util.Icons;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -25,6 +26,7 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.util.EventObject;
 import java.util.HashMap;
+import java.util.Map;
 import javax.swing.AbstractAction;
 import javax.swing.AbstractCellEditor;
 import javax.swing.BorderFactory;
@@ -95,10 +97,9 @@ public class SelectionList extends JTable {
 
   private static class SignalInfoRenderer extends DefaultTableCellRenderer {
     @Override
-    public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-      final java.awt.Component ret = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
-      if ((ret instanceof JLabel label) && value instanceof SignalInfo) {
-        final var item = (SignalInfo) value;
+    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+      final var ret = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+      if ((ret instanceof JLabel label) && value instanceof SignalInfo item) {
         label.setIcon(item.icon);
         label.setText(item + " [" + item.getRadix().toDisplayString() + "]");
       }
@@ -113,7 +114,7 @@ public class SelectionList extends JTable {
     final JPopupMenu popup = new JPopupMenu("Options");
     SignalInfo item;
     SignalInfo.List items;
-    final HashMap<RadixOption, JRadioButtonMenuItem> radixMenuItems = new HashMap<>();
+    final Map<RadixOption, JRadioButtonMenuItem> radixMenuItems = new HashMap<>();
 
     public SignalInfoEditor() {
       panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
@@ -304,7 +305,7 @@ public class SelectionList extends JTable {
         var newIdx = logModel.getSignalCount();
         if (support.isDrop()) {
           try {
-            JTable.DropLocation dl = (JTable.DropLocation) support.getDropLocation();
+            final var dl = (JTable.DropLocation) support.getDropLocation();
             newIdx = Math.min(dl.getRow(), logModel.getSignalCount());
           } catch (ClassCastException ignored) {
           }
@@ -319,7 +320,7 @@ public class SelectionList extends JTable {
   }
 
   private void addOrMove(SignalInfo.List items, int idx) {
-    if (items == null || items.size() == 0) return;
+    if (items == null || items.isEmpty()) return;
     logModel.addOrMove(items, idx);
     clearSelection();
     for (final var item : items) {

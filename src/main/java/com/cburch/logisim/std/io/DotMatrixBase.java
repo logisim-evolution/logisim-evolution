@@ -56,6 +56,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 // TODO repropagate when rows/cols change
 
@@ -199,7 +200,7 @@ public abstract class DotMatrixBase extends InstanceFactory {
       new DurationAttribute(
           "persist", S.getter("ioMatrixPersistenceAttr"), 0, Integer.MAX_VALUE, true);
 
-  protected static ArrayList<String> GetLabels(int rows, int cols) {
+  protected static List<String> getLabels(int rows, int cols) {
     final var result = new ArrayList<String>();
     for (var r = 0; r < rows; r++) for (int c = 0; c < cols; c++) result.add("Row" + r + "Col" + c);
     return result;
@@ -255,7 +256,7 @@ public abstract class DotMatrixBase extends InstanceFactory {
           StdAttr.DEFAULT_LABEL_FONT,
           StdAttr.DEFAULT_LABEL_COLOR,
           true,
-          new ComponentMapInformationContainer(0, cols * rows, 0, null, GetLabels(rows, cols), null)
+          new ComponentMapInformationContainer(0, cols * rows, 0, null, getLabels(rows, cols), null)
         });
     setIcon(new LedMatrixIcon());
   }
@@ -288,7 +289,7 @@ public abstract class DotMatrixBase extends InstanceFactory {
         .setValue(
             StdAttr.MAPINFO,
             new ComponentMapInformationContainer(
-                0, rows * cols, 0, null, GetLabels(rows, cols), null));
+                0, rows * cols, 0, null, getLabels(rows, cols), null));
   }
 
   @Override
@@ -341,7 +342,7 @@ public abstract class DotMatrixBase extends InstanceFactory {
         final var rows = instance.getAttributeValue(getAttributeRows()).getWidth();
         final var cols = instance.getAttributeValue(getAttributeColumns()).getWidth();
         ComponentMapInformationContainer cm = instance.getAttributeValue(StdAttr.MAPINFO);
-        cm.setNrOfOutports(rows * cols, GetLabels(rows, cols));
+        cm.setNrOfOutports(rows * cols, getLabels(rows, cols));
       }
     }
   }
@@ -404,7 +405,7 @@ public abstract class DotMatrixBase extends InstanceFactory {
         } else if (val == Value.FALSE) {
           c = offColor;
         } else {
-          c = Value.ERROR_COLOR;
+          c = Value.errorColor;
         }
         g.setColor(c);
         if (SHAPE_SQUARE.equals(shape)) {

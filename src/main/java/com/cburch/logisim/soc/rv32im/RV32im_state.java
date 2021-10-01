@@ -16,7 +16,6 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.ComponentDataGuiProvider;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
@@ -38,7 +37,6 @@ import com.cburch.logisim.soc.file.ElfProgramHeader;
 import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.soc.gui.BreakpointPanel;
 import com.cburch.logisim.soc.gui.CpuDrawSupport;
-import com.cburch.logisim.soc.util.AssemblerExecutionInterface;
 import com.cburch.logisim.soc.util.AssemblerInterface;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
@@ -46,9 +44,7 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map;
 import javax.swing.JPanel;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
@@ -88,8 +84,7 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
       visible = false;
       entryPoint = null;
       programLoaded = false;
-      AbstractTokenMakerFactory atmf =
-          (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
+      final var atmf = (AbstractTokenMakerFactory) TokenMakerFactory.getDefaultInstance();
       atmf.putMapping(
           ASSEMBLER.getHighlightStringIdentifier(),
           "com.cburch.logisim.soc.rv32im.RV32imSyntaxHighlighter");
@@ -106,8 +101,7 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
       reset(null, null, null, null);
     }
 
-    public void reset(
-        CircuitState state, Integer entry, ElfProgramHeader progInfo, ElfSectionHeader sectInfo) {
+    public void reset(CircuitState state, Integer entry, ElfProgramHeader progInfo, ElfSectionHeader sectInfo) {
       if (entry != null) entryPoint = entry;
       if (progInfo != null || sectInfo != null) {
         programLoaded = true;
@@ -119,8 +113,9 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
             ASSEMBLER);
       }
       pc = entryPoint != null ? entryPoint : resetVector;
-      for (int i = 0; i < 31; i++)
+      for (int i = 0; i < 31; i++) {
         registers_valid[i] = false;
+      }
       lastRegisterWritten = -1;
       instrTrace.clear();
       if (visible) repaint();
@@ -167,31 +162,27 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
     }
 
     public int getRegisterValue(int index) {
-      if (index == 0 || index > 31)
-        return 0;
-      /* TODO: handle correctly undefined registers instead of returning 0 */
-      return registers[index - 1];
+      return (index == 0 || index > 31)
+              ? 0
+              : registers[index - 1]; // TODO: handle correctly undefined registers instead of returning 0
     }
 
     @Override
     public String getRegisterValueHex(int index) {
-      if (isRegisterValid(index))
-        return String.format("0x%08X", getRegisterValue(index));
-      return "??????????";
+      return isRegisterValid(index)
+        ? String.format("0x%08X", getRegisterValue(index))
+        : "??????????";
     }
 
     public Boolean isRegisterValid(int index) {
-      if (index == 0)
-        return true;
-      if (index > 31)
-        return false;
+      if (index == 0) return true;
+      if (index > 31) return false;
       return registers_valid[index - 1];
     }
 
     public void writeRegister(int index, int value) {
       lastRegisterWritten = -1;
-      if (index == 0 || index > 31)
-        return;
+      if (index == 0 || index > 31) return;
       registers_valid[index - 1] = true;
       registers[index - 1] = value;
       lastRegisterWritten = index;
@@ -207,9 +198,8 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
 
     public void execute(CircuitState cState) {
       /* check the simulation state */
-      if (!simState.canExecute())
-        return;
-      Map<Integer, Integer> breakPoints = bPanel.getBreakPoints();
+      if (!simState.canExecute()) return;
+      final var breakPoints = bPanel.getBreakPoints();
       if (breakPoints.containsKey(pc)) {
         if (simState.breakPointReached()) {
           bPanel.gotoLine(breakPoints.get(pc) - 1);
@@ -223,7 +213,7 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
       }
       /* TODO: check interrupts */
       /* fetch an instruction */
-      SocBusTransaction trans =
+      final var trans =
           new SocBusTransaction(
               SocBusTransaction.READ_TRANSACTION,
               pc,
@@ -247,7 +237,7 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
       int instruction = trans.getReadData();
       ASSEMBLER.decode(instruction);
       /* execute instruction */
-      AssemblerExecutionInterface exe = ASSEMBLER.getExeUnit();
+      final var exe = ASSEMBLER.getExeUnit();
       lastRegisterWritten = -1;
       while (instrTrace.size() >= CpuDrawSupport.NR_OF_TRACES)
         instrTrace.removeLast();
@@ -264,9 +254,9 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
         if (visible) repaint();
         return;
       }
-      TraceInfo trace = new TraceInfo(pc, instruction, exe.getAsmInstruction(), false);
+      final var trace = new TraceInfo(pc, instruction, exe.getAsmInstruction(), false);
       if (!exe.execute(this, cState)) {
-        StringBuilder s = new StringBuilder();
+        final var s = new StringBuilder();
         s.append(S.get("RV32imFetchExecutionError"));
         if (exe.getErrorMessage() != null)
           s.append("\n").append(exe.getErrorMessage());
@@ -408,7 +398,7 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
       "s10", "s11", "t3", "t4", "t5", "t6"};
 
   public static int getRegisterIndex(String name) {
-    String regName = name.toLowerCase();
+    final var regName = name.toLowerCase();
     for (int i = 0; i < registerABINames.length; i++)
       if (registerABINames[i].equals(regName)) return i;
     if (regName.startsWith("x") && regName.length() < 4) {
@@ -440,9 +430,9 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
   }
 
   public String getName() {
-    String name = label;
+    var name = label;
     if (name == null || name.isEmpty()) {
-      Location loc = attachedBus.getComponent().getLocation();
+      final var loc = attachedBus.getComponent().getLocation();
       name =
           attachedBus.getComponent().getFactory().getDisplayName()
               + "@"
@@ -454,8 +444,7 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
   }
 
   public boolean setResetVector(int value) {
-    if (resetVector == value)
-      return false;
+    if (resetVector == value) return false;
     resetVector = value;
     return true;
   }
@@ -465,8 +454,7 @@ public class RV32im_state implements SocUpSimulationStateListener, SocProcessorI
   }
 
   public boolean setExceptionVector(int value) {
-    if (exceptionVector == value)
-      return false;
+    if (exceptionVector == value) return false;
     exceptionVector = value;
     return true;
   }

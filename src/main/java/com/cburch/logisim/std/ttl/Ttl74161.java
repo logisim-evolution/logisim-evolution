@@ -9,8 +9,8 @@
 
 package com.cburch.logisim.std.ttl;
 
-import static com.cburch.logisim.data.Value.FALSE_COLOR;
-import static com.cburch.logisim.data.Value.TRUE_COLOR;
+import static com.cburch.logisim.data.Value.falseColor;
+import static com.cburch.logisim.data.Value.trueColor;
 
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
@@ -143,7 +143,7 @@ public class Ttl74161 extends AbstractTtlGate {
       long value = state.getValue().toLongValue();
       for (var i = 0; i < 4; i++) {
         final var isSetBitValue = (value & (1 << (3 - i))) != 0;
-        gfx.setColor(isSetBitValue ? TRUE_COLOR : FALSE_COLOR);
+        gfx.setColor(isSetBitValue ? trueColor : falseColor);
         gfx.fillOval(x + 52 + i * 10, y + height / 2 - 4, 8, 8);
         gfx.setColor(Color.WHITE);
         GraphicsUtil.drawCenteredText(gfx, isSetBitValue ? "1" : "0", x + 56 + i * 10, y + height / 2);

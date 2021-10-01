@@ -42,8 +42,7 @@ public class XmlCircuitReader extends CircuitTransaction {
    * @return the component built from its XML description
    * @throws XmlReaderException
    */
-  static Component getComponent(
-      Element elt, XmlReader.ReadContext reader, boolean IsHolyCross, boolean IsEvolution)
+  static Component getComponent(Element elt, XmlReader.ReadContext reader, boolean isHolyCross, boolean isEvolution)
       throws XmlReaderException {
 
     // Determine the factory that creates this element
@@ -71,12 +70,12 @@ public class XmlCircuitReader extends CircuitTransaction {
     // Determine attributes
     final var locStr = elt.getAttribute("loc");
     final var attrs = source.createAttributeSet();
-    if (source instanceof Ram && IsHolyCross) {
+    if (source instanceof Ram && isHolyCross) {
       RamAttributes rattrs = (RamAttributes) attrs;
       rattrs.setValue(Mem.ENABLES_ATTR, Mem.USELINEENABLES);
       rattrs.updateAttributes();
-      reader.initAttributeSet(elt, attrs, null, IsHolyCross, IsEvolution);
-    } else reader.initAttributeSet(elt, attrs, source, IsHolyCross, IsEvolution);
+      reader.initAttributeSet(elt, attrs, null, isHolyCross, isEvolution);
+    } else reader.initAttributeSet(elt, attrs, source, isHolyCross, isEvolution);
 
     // Create component if location known
     if (locStr == null || locStr.equals("")) {
@@ -94,18 +93,14 @@ public class XmlCircuitReader extends CircuitTransaction {
   private final XmlReader.ReadContext reader;
 
   private final List<XmlReader.CircuitData> circuitsData;
-  private boolean IsHolyCross = false;
-  private boolean IsEvolution = false;
+  private boolean isHolyCross = false;
+  private boolean isEvolution = false;
 
-  public XmlCircuitReader(
-      XmlReader.ReadContext reader,
-      List<XmlReader.CircuitData> circDatas,
-      boolean HolyCrossFile,
-      boolean EvolutionFile) {
+  public XmlCircuitReader(XmlReader.ReadContext reader, List<XmlReader.CircuitData> circDatas, boolean isThisHolyCrossFile, boolean isThisEvolutionFile) {
     this.reader = reader;
     this.circuitsData = circDatas;
-    this.IsHolyCross = HolyCrossFile;
-    this.IsEvolution = EvolutionFile;
+    this.isHolyCross = isThisHolyCrossFile;
+    this.isEvolution = isThisEvolutionFile;
   }
 
   void addWire(Circuit dest, CircuitMutator mutator, Element elt) throws XmlReaderException {
@@ -152,7 +147,7 @@ public class XmlCircuitReader extends CircuitTransaction {
           hasNamedBoxFixedSize |= name.equals("circuitnamedboxfixedsize");
         }
       }
-      reader.initAttributeSet(circData.circuitElement, dest.getStaticAttributes(), null, IsHolyCross, IsEvolution);
+      reader.initAttributeSet(circData.circuitElement, dest.getStaticAttributes(), null, isHolyCross, isEvolution);
       if (circData.circuitElement.hasChildNodes()) {
         if (hasNamedBox) {
           /* This situation is clear, it is an older logisim-evolution file */
@@ -162,7 +157,7 @@ public class XmlCircuitReader extends CircuitTransaction {
             /* Here we have 2 possibilities, either a Holycross file or a logisim-evolution file
              * before the introduction of the named circuit boxes. So let's ask the user.
              */
-            if (IsHolyCross)
+            if (isHolyCross)
               dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_FPGA);
             else
               dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CLASSIC);
@@ -183,7 +178,7 @@ public class XmlCircuitReader extends CircuitTransaction {
         try {
           var comp = knownComponents.get(sub_elt);
           if (comp == null) {
-            comp = getComponent(sub_elt, reader, IsHolyCross, IsEvolution);
+            comp = getComponent(sub_elt, reader, isHolyCross, isEvolution);
           }
           if (comp != null) {
             /* filter out empty text boxes */

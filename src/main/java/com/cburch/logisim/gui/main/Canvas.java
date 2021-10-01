@@ -176,7 +176,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
         sz.height - ZOOM_BUTTON_SIZE - 30,
         ZOOM_BUTTON_SIZE,
         ZOOM_BUTTON_SIZE);
-    g.setColor(Value.UNKNOWN_COLOR);
+    g.setColor(Value.unknownColor);
     GraphicsUtil.switchToWidth(g, 3);
     int width = sz.width - ZOOM_BUTTON_MARGIN;
     int height = sz.height - ZOOM_BUTTON_MARGIN;
@@ -1208,7 +1208,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       Dimension sz = getSize();
 
       if (widthMessage != null) {
-        g.setColor(Value.WIDTH_ERROR_COLOR);
+        g.setColor(Value.widthErrorColor);
         msgY = paintString(g, msgY, widthMessage);
       } else g.setColor(TICK_RATE_COLOR);
 

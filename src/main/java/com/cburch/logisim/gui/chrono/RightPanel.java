@@ -261,15 +261,15 @@ public class RightPanel extends JPanel {
   }
 
   @Override
-  public void paintComponent(Graphics gr) {
-    final var gfx = (Graphics2D) gr;
+  public void paintComponent(Graphics graphics) {
+    final var gfx = (Graphics2D) graphics;
     /* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
     gfx.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     gfx.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     gfx.setColor(Color.WHITE);
     gfx.fillRect(0, 0, getWidth(), getHeight()); // entire viewport, not just (width, height)
     gfx.setColor(Color.BLACK);
-    if (rows.size() == 0) {
+    if (rows.isEmpty()) {
       final var f = gfx.getFont();
       gfx.setFont(MSG_FONT);
       final var lines = S.get("NoSignalsSelected");
@@ -387,7 +387,7 @@ public class RightPanel extends JPanel {
     public void mouseClicked(MouseEvent e) {
       if (!SwingUtilities.isRightMouseButton(e)) return;
       final var signals = chronoPanel.getLeftPanel().getSelectedValuesList();
-      if (signals.size() == 0) {
+      if (signals.isEmpty()) {
         final var signal = getSignal(e.getY(), false);
         if (signal != null) signals.add(signal);
       }
@@ -667,8 +667,6 @@ public class RightPanel extends JPanel {
     void paintCursorWithLabel(Graphics2D g) {
       final var x = getSignalCursorX();
       final var t = getCurrentTime();
-
-      final var f = g.getFont();
       g.setFont(TIME_FONT);
 
       final var s = Model.formatDuration(t);
@@ -689,7 +687,6 @@ public class RightPanel extends JPanel {
 
     void paintScale(Graphics2D g) {
       final var timeScale = model.getTimeScale();
-      final var timePerPixel = timeScale / tickWidth;
       final var pixelPerTime = tickWidth / timeScale;
 
       // Pick the smallest unit among:

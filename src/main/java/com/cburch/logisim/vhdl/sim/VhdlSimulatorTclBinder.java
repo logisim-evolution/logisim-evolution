@@ -52,14 +52,13 @@ public class VhdlSimulatorTclBinder {
 
   public VhdlSimulatorTclBinder(VhdlSimulatorTop vs) {
     vsim = vs;
-    Init(vs.getSocketClient().getServerPort());
+    init(vs.getSocketClient().getServerPort());
   }
 
-  private void Init(int serverPort) {
-    List<String> command = new ArrayList<>();
+  private void init(int serverPort) {
+    final var command = new ArrayList<String>();
 
-    command.add(
-        FileUtil.correctPath(Softwares.getQuestaPath()) + Softwares.QUESTA_BIN[Softwares.VSIM]);
+    command.add(FileUtil.correctPath(Softwares.getQuestaPath()) + Softwares.QUESTA_BIN[Softwares.VSIM]);
 
     command.add("-c");
     command.add("-do");
@@ -88,7 +87,8 @@ public class VhdlSimulatorTclBinder {
       process = builder.start();
     } catch (IOException e) {
       e.printStackTrace();
-      logger.error("Cannot run TCL binder to Questasim : {}", e.getMessage());
+      // FIXME: hardcoded string
+      logger.error("Cannot run TCL binder to QuestaSim: {}", e.getMessage());
 
       running = false;
       return;
@@ -102,8 +102,8 @@ public class VhdlSimulatorTclBinder {
               new BufferedReader(new InputStreamReader(process.getInputStream()));
           String line;
           try {
-            StringBuilder errorMessage =
-                new StringBuilder(
+            // FIXME: hardcoded string
+            final var errorMessage = new StringBuilder(
                     "You may disable VHDL simulation in the simulation menu if this occurs again\n\n");
 
             /* Here we check that the binder has correctly started */

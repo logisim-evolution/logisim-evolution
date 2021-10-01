@@ -118,31 +118,30 @@ public class SocUpMenuProvider implements ActionListener {
     @Override
     public void configureMenu(JPopupMenu menu, Project proj) {
       setParentFrame(instance, proj.getFrame());
-      String instName = instance.getAttributeValue(StdAttr.LABEL);
+      var instName = instance.getAttributeValue(StdAttr.LABEL);
       if (instName == null || instName.isEmpty()) {
-        Location loc = instance.getLocation();
+        final var loc = instance.getLocation();
         instName = instance.getFactory().getHDLName(instance.getAttributeSet()) + "@" + loc.getX() + "," + loc.getY();
       }
-      String name = circuitState != null ? instName + " : " + S.get("SocUpMenuAsmWindow") : S.get("SocUpMenuAsmWindow");
-      CircuitState state = circuitState == null ? proj.getCircuitState() : circuitState;
+      var name = circuitState != null ? instName + " : " + S.get("SocUpMenuAsmWindow") : S.get("SocUpMenuAsmWindow");
+      final var state = circuitState == null ? proj.getCircuitState() : circuitState;
       menu.addSeparator();
       HierarchyInfo hinfo;
       if (circuitState == null) {
         hinfo = new HierarchyInfo(proj.getCurrentCircuit());
         hinfo.addComponent(instance.getComponent());
       } else hinfo = hierarchy;
-      InstanceMenuItem Asm = new InstanceMenuItem(instance, name, SHOW_ASM,
-          instance.getData(state), state, hinfo);
-      Asm.addActionListener(parent);
-      Asm.setEnabled(true);
-      menu.add(Asm);
+      final var asm = new InstanceMenuItem(instance, name, SHOW_ASM, instance.getData(state), state, hinfo);
+      asm.addActionListener(parent);
+      asm.setEnabled(true);
+      menu.add(asm);
       name = circuitState != null ? instName + " : " + S.get("SocUpMenuReadElf") : S.get("SocUpMenuReadElf");
-      InstanceMenuItem ReadElf = new InstanceMenuItem(instance, name, LOAD_ELF_FUNCTION, state);
-      ReadElf.addActionListener(parent);
-      ReadElf.setEnabled(true);
-      menu.add(ReadElf);
+      final var readElf = new InstanceMenuItem(instance, name, LOAD_ELF_FUNCTION, state);
+      readElf.addActionListener(parent);
+      readElf.setEnabled(true);
+      menu.add(readElf);
       if (circuitState != null) {
-        InstanceMenuItem showState = new InstanceMenuItem(instance,
+        final var showState = new InstanceMenuItem(instance,
             instName + " : " + S.get("SocUpMenuShowState"),
             SHOW_STATE_FUNCTION, data, hierarchy);
         showState.addActionListener(parent);
@@ -152,8 +151,7 @@ public class SocUpMenuProvider implements ActionListener {
       name = circuitState != null ? instName + " : " + S.get("SocUpMenuShowProgram") : S.get("SocUpMenuShowProgram");
       if (state != null)
         if (((SocUpStateInterface) instance.getData(state)).programLoaded()) {
-          InstanceMenuItem showProg = new InstanceMenuItem(instance, name, SHOW_PROGRAM,
-              instance.getData(state), state, hinfo);
+          final var showProg = new InstanceMenuItem(instance, name, SHOW_PROGRAM, instance.getData(state), state, hinfo);
           showProg.addActionListener(parent);
           showProg.setEnabled(true);
           menu.add(showProg);
@@ -162,8 +160,7 @@ public class SocUpMenuProvider implements ActionListener {
 
     @Override
     public void setCircuitState(CircuitState state) {
-      if (state == null)
-        return;
+      if (state == null) return;
       circuitState = state;
       data = (SocUpStateInterface) state.getData(instance.getComponent());
     }
@@ -189,13 +186,12 @@ public class SocUpMenuProvider implements ActionListener {
     }
 
     public void readElf(Instance instance, CircuitState circuitState) {
-      JFileChooser fc = new JFileChooser();
+      final var fc = new JFileChooser();
       fc.setDialogTitle(S.get("SocUpMenuSelectElfFile"));
       int retVal = fc.showOpenDialog(parentFrame);
-      if (retVal != JFileChooser.APPROVE_OPTION)
-        return;
-      SocUpStateInterface data = (SocUpStateInterface) circuitState.getData(instance.getComponent());
-      ProcessorReadElf reader = new ProcessorReadElf(fc.getSelectedFile(), instance, data.getElfType(), true);
+      if (retVal != JFileChooser.APPROVE_OPTION) return;
+      final var data = (SocUpStateInterface) circuitState.getData(instance.getComponent());
+      final var reader = new ProcessorReadElf(fc.getSelectedFile(), instance, data.getElfType(), true);
       if (!reader.canExecute() || !reader.execute(circuitState)) {
         OptionPane.showMessageDialog(parentFrame, reader.getErrorMessage(), S.get("SocUpMenuErrorReadingElfTitle"), OptionPane.ERROR_MESSAGE);
         return;
@@ -236,19 +232,18 @@ public class SocUpMenuProvider implements ActionListener {
     }
 
     public void showState(SocUpStateInterface data, CircuitStateHolder.HierarchyInfo csh) {
-      if (parentFrame == null || data == null)
-        return;
+      if (parentFrame == null || data == null) return;
       if (myStates.containsKey(data))
         if (myStates.get(data) != null) {
-          JFrame frame = myStates.get(data);
+          final var frame = myStates.get(data);
           frame.setVisible(true);
-          int state = frame.getExtendedState();
+          var state = frame.getExtendedState();
           state &= ~Frame.ICONIFIED;
           frame.setExtendedState(state);
           return;
         }
-      ListeningFrame frame = new ListeningFrame(data.getProcessorType(), S.getter("SocUpMenuCpuStateWindowTitle"), csh);
-      JPanel statePanel = data.getStatePanel();
+      final var frame = new ListeningFrame(data.getProcessorType(), S.getter("SocUpMenuCpuStateWindowTitle"), csh);
+      final var statePanel = data.getStatePanel();
       frame.setSize(statePanel.getSize());
       frame.setResizable(false);
       parentFrame.addWindowListener(frame);
@@ -259,20 +254,19 @@ public class SocUpMenuProvider implements ActionListener {
     }
 
     public void showProgram(SocUpStateInterface data, CircuitStateHolder.HierarchyInfo csh, CircuitState state) {
-      if (parentFrame == null || data == null)
-        return;
+      if (parentFrame == null || data == null) return;
       if (myPrograms.containsKey(data))
         if (myPrograms.get(data) != null) {
-          JFrame frame = myPrograms.get(data);
+          final var frame = myPrograms.get(data);
           frame.setVisible(true);
-          int fstate = frame.getExtendedState();
-          fstate &= ~Frame.ICONIFIED;
-          frame.setExtendedState(fstate);
+          var frameState = frame.getExtendedState();
+          frameState &= ~Frame.ICONIFIED;
+          frame.setExtendedState(frameState);
           return;
         }
-      ListeningFrame frame = new ListeningFrame(data.getProcessorType(), S.getter("SocUpMenuCpuProgramWindowTitle"), csh);
+      final var frame = new ListeningFrame(data.getProcessorType(), S.getter("SocUpMenuCpuProgramWindowTitle"), csh);
       parentFrame.addWindowListener(frame);
-      JPanel pan = data.getAsmWindow();
+      final var pan = data.getAsmWindow();
       frame.add(pan);
       frame.setVisible(true);
       frame.pack();
@@ -281,21 +275,20 @@ public class SocUpMenuProvider implements ActionListener {
     }
 
     public void showAsmWindow(Instance inst, SocUpStateInterface data, CircuitStateHolder.HierarchyInfo csh, CircuitState state) {
-      if (parentFrame == null || data == null)
-        return;
+      if (parentFrame == null || data == null) return;
       if (myAsmWindows.containsKey(data))
         if (myAsmWindows.get(data) != null) {
-          JFrame frame = myAsmWindows.get(data);
+          final var frame = myAsmWindows.get(data);
           frame.setVisible(true);
-          int fstate = frame.getExtendedState();
+          var fstate = frame.getExtendedState();
           fstate &= ~Frame.ICONIFIED;
           frame.setExtendedState(fstate);
           return;
         }
-      ListeningFrame frame = new ListeningFrame(data.getProcessorType(), S.getter("SocUpMenuCpuAsmWindowTitle"), csh);
+      final var frame = new ListeningFrame(data.getProcessorType(), S.getter("SocUpMenuCpuAsmWindowTitle"), csh);
       parentFrame.addWindowListener(frame);
-      AssemblerInterface assembler = data.getAssembler();
-      JPanel pan = new AssemblerPanel(frame, assembler.getHighlightStringIdentifier(), assembler, data.getProcessorInterface(), state);
+      final var assembler = data.getAssembler();
+      final var pan = new AssemblerPanel(frame, assembler.getHighlightStringIdentifier(), assembler, data.getProcessorInterface(), state);
       frame.add(pan);
       frame.setVisible(true);
       frame.pack();
@@ -321,7 +314,7 @@ public class SocUpMenuProvider implements ActionListener {
 
   public MenuExtender getMenu(Instance inst) {
     if (!myInfo.containsKey(inst)) {
-      InstanceInformation instInfo = new InstanceInformation(inst, this);
+      final var instInfo = new InstanceInformation(inst, this);
       myInfo.put(inst, instInfo);
     }
     return new MenuProvider(inst, this);
@@ -329,7 +322,7 @@ public class SocUpMenuProvider implements ActionListener {
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    Object source = e.getSource();
+    final var source = e.getSource();
     if (source instanceof InstanceMenuItem info) {
       final var inst = info.getInstance();
       if (myInfo.containsKey(inst)) {
@@ -352,19 +345,16 @@ public class SocUpMenuProvider implements ActionListener {
   }
 
   private void setParentFrame(Instance inst, Frame frame) {
-    if (myInfo.containsKey(inst))
-      myInfo.get(inst).setParentFrame(frame);
+    if (myInfo.containsKey(inst)) myInfo.get(inst).setParentFrame(frame);
   }
 
   public void registerCpuState(SocUpStateInterface data, Instance inst) {
-    if (!myInfo.containsKey(inst))
-      myInfo.put(inst, new InstanceInformation(inst, this));
+    if (!myInfo.containsKey(inst)) myInfo.put(inst, new InstanceInformation(inst, this));
     myInfo.get(inst).registerCpuState(data);
   }
 
   public void deregisterCpuState(SocUpStateInterface data, Instance inst) {
-    if (myInfo.containsKey(inst))
-      myInfo.get(inst).destroyCpuState(data);
+    if (myInfo.containsKey(inst)) myInfo.get(inst).destroyCpuState(data);
   }
 
   public void repaintStates(Instance inst) {

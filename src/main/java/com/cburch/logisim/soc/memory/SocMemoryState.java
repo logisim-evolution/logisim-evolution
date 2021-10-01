@@ -10,7 +10,6 @@
 package com.cburch.logisim.soc.memory;
 
 import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.soc.data.SocBusInfo;
@@ -104,8 +103,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
 
     public int getWord(int address) {
       for (final var info : memInfo)
-        if (info.contains(address))
-          return info.getValue(address);
+        if (info.contains(address)) return info.getValue(address);
       return rand.nextInt();
     }
 
@@ -116,8 +114,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
           info.addInfo(address, wdata);
           return;
         }
-        if (info.canAdd(address))
-          adders.add(info);
+        if (info.canAdd(address)) adders.add(info);
       }
       if (adders.isEmpty()) {
         /* we have to create a new set */
@@ -130,22 +127,25 @@ public class SocMemoryState implements SocBusSlaveInterface {
         return;
       }
       if (adders.size() > 2) {
+        // FIXME: hardcoded string
         System.out.println("BUG! Memory management does not function corectly for the SocMemory component!");
         return;
       }
-      final var addbefore = adders.get(0).canAddBefore(address) ? adders.get(0) :
-          adders.get(1).canAddBefore(address) ? adders.get(1) : null;
-      final var addAfter = adders.get(0).canAddAfter(address) ? adders.get(0) :
-          adders.get(1).canAddAfter(address) ? adders.get(1) : null;
-      if (addbefore == null || addAfter == null) {
+      final var addBefore = adders.get(0).canAddBefore(address)
+                            ? adders.get(0)
+                            : adders.get(1).canAddBefore(address) ? adders.get(1) : null;
+      final var addAfter = adders.get(0).canAddAfter(address)
+                           ? adders.get(0)
+                           : adders.get(1).canAddAfter(address) ? adders.get(1) : null;
+      if (addBefore == null || addAfter == null) {
         System.out.println("BUG! Memory management does not function corectly for the SocMemory component!");
         return;
       }
       addAfter.addInfo(address, wdata);
-      for (var i = addbefore.getStartAddress(); i < addbefore.getEndAddress(); i += 4) {
-        addAfter.addInfo(i, addbefore.getValue(i));
+      for (var i = addBefore.getStartAddress(); i < addBefore.getEndAddress(); i += 4) {
+        addAfter.addInfo(i, addBefore.getValue(i));
       }
-      memInfo.remove(addbefore);
+      memInfo.remove(addBefore);
     }
   }
 
@@ -175,7 +175,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
   }
 
   public boolean setStartAddress(int address) {
-    int addr = (address >> 2) << 2;
+    final var addr = (address >> 2) << 2;
     if (addr == startAddress) return false;
     startAddress = addr;
     firememMapChanged();
@@ -292,7 +292,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
   }
 
   private void performWriteAction(int address, int data, int type) {
-    int wdata = data;
+    int wData = data;
     if (type != SocBusTransaction.WORD_ACCESS) {
       var oldData = performReadAction(address, SocBusTransaction.WORD_ACCESS);
       if (type == SocBusTransaction.HALF_WORD_ACCESS) {
@@ -304,7 +304,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
         } else {
           oldData = ((oldData >> 16) & 0xFFFF) << 16;
         }
-        wdata = oldData | mdata;
+        wData = oldData | mdata;
       } else {
         final var byte0 = oldData & 0xFF;
         final var byte1 = ((oldData >> 8) & 0xFF) << 8;
@@ -312,7 +312,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
         final var byte3 = ((oldData >> 24) & 0xFF) << 24;
         final var mdata = data & 0xFF;
         final var bit10 = address & 3;
-        wdata = switch (bit10) {
+        wData = switch (bit10) {
           case 0 -> byte3 | byte2 | byte1 | mdata;
           case 1 -> byte3 | byte2 | byte0 | (mdata << 8);
           case 2 -> byte3 | byte1 | byte0 | (mdata << 16);
@@ -320,15 +320,19 @@ public class SocMemoryState implements SocBusSlaveInterface {
         };
       }
     }
-    getRegPropagateState().writeWord(address, wdata);
+    getRegPropagateState().writeWord(address, wData);
   }
 
   private void fireNameChanged() {
-    for (final var l : listeners) l.labelChanged();
+    for (final var listener : listeners) {
+      listener.labelChanged();
+    }
   }
 
   private void firememMapChanged() {
-    for (final var l : listeners) l.memoryMapChanged();
+    for (final var listener : listeners) {
+      listener.memoryMapChanged();
+    }
   }
 
 }

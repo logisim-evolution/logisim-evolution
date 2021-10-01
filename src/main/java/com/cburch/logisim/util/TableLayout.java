@@ -34,8 +34,7 @@ public class TableLayout implements LayoutManager2 {
 
   @Override
   public void addLayoutComponent(Component comp, Object constraints) {
-    if (constraints instanceof TableConstraints) {
-      final var con = (TableConstraints) constraints;
+    if (constraints instanceof TableConstraints con) {
       if (con.getRow() >= 0) curRow = con.getRow();
       if (con.getCol() >= 0) curCol = con.getCol();
     }

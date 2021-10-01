@@ -117,16 +117,16 @@ class XmlReader {
     }
 
     void initAttributeSet(
-        Element parentElt,
+        Element parent,
         AttributeSet attrs,
         AttributeDefaultProvider defaults,
-        boolean IsHolyCross,
-        boolean IsEvolution)
+        boolean isHolyCross,
+        boolean isEvolution)
         throws XmlReaderException {
       ArrayList<String> messages = null;
 
       final var attrsDefined = new HashMap<String, String>();
-      for (final var attrElt : XmlIterator.forChildElements(parentElt, "a")) {
+      for (final var attrElt : XmlIterator.forChildElements(parent, "a")) {
         if (!attrElt.hasAttribute("name")) {
           if (messages == null) messages = new ArrayList<>();
           messages.add(S.get("attrNameMissingError"));
@@ -168,8 +168,8 @@ class XmlReader {
           if (attr.equals(ProbeAttributes.PROBEAPPEARANCE)) {
             attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, StdAttr.APPEAR_CLASSIC);
           } else if (attr.equals(StdAttr.APPEARANCE)) {
-            if (IsHolyCross) attrs.setValue(StdAttr.APPEARANCE, StdAttr.APPEAR_CLASSIC);
-            else if (IsEvolution) attrs.setValue(StdAttr.APPEARANCE, StdAttr.APPEAR_EVOLUTION);
+            if (isHolyCross) attrs.setValue(StdAttr.APPEARANCE, StdAttr.APPEAR_CLASSIC);
+            else if (isEvolution) attrs.setValue(StdAttr.APPEARANCE, StdAttr.APPEAR_EVOLUTION);
             else {
               Object val = defaults.getDefaultAttributeValue(attr, ver);
               if (val != null) {
@@ -197,7 +197,7 @@ class XmlReader {
       }
     }
 
-    private void initMouseMappings(Element elt, boolean IsHolyCross, boolean IsEvolution) {
+    private void initMouseMappings(Element elt, boolean isHolyCross, boolean isEvolution) {
       final var map = file.getOptions().getMouseMappings();
       for (final var sub_elt : XmlIterator.forChildElements(elt, "tool")) {
         Tool tool;
@@ -223,7 +223,7 @@ class XmlReader {
 
         tool = tool.cloneTool();
         try {
-          initAttributeSet(sub_elt, tool.getAttributeSet(), tool, IsHolyCross, IsEvolution);
+          initAttributeSet(sub_elt, tool.getAttributeSet(), tool, isHolyCross, isEvolution);
         } catch (XmlReaderException e) {
           addErrors(e, "mapping." + tool.getName());
         }
@@ -232,7 +232,7 @@ class XmlReader {
       }
     }
 
-    private void initToolbarData(Element elt, boolean IsHolyCross, boolean IsEvolution) {
+    private void initToolbarData(Element elt, boolean isHolyCross, boolean isEvolution) {
       final var toolbar = file.getOptions().getToolbarData();
       for (final var sub_elt : XmlIterator.forChildElements(elt)) {
         if (sub_elt.getTagName().equals("sep")) {
@@ -248,7 +248,7 @@ class XmlReader {
           if (tool != null) {
             tool = tool.cloneTool();
             try {
-              initAttributeSet(sub_elt, tool.getAttributeSet(), tool, IsHolyCross, IsEvolution);
+              initAttributeSet(sub_elt, tool.getAttributeSet(), tool, isHolyCross, isEvolution);
             } catch (XmlReaderException e) {
               addErrors(e, "toolbar." + tool.getName());
             }
