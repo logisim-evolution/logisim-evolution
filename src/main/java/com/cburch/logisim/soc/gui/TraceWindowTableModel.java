@@ -24,7 +24,6 @@ import com.cburch.logisim.tools.CircuitStateHolder;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;

@@ -11,7 +11,6 @@ package com.cburch.logisim.gui.generic;
 
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
-import java.util.ArrayList;
 import java.util.List;
 
 public interface ZoomModel {
