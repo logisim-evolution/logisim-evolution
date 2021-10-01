@@ -14,6 +14,9 @@
   * [Building from sources](#building-from-sources)
   * [Testing development code](#testing-development-code)
   * [Code style](style.md)
+    * [Checking code style with InteliJ IDEA](style.md#checking-code-style-with-intelij-idea)
+    * [Using Gradle plugin](style.md#using-gradle-plugin)
+    * [Using `pre-commit`](style.md#using-pre-commit-hooks)
   * [How to contribute](#how-to-contribute)
 
 ---
