@@ -47,7 +47,7 @@ public abstract class Hdl {
     return isVhdl() ? 3 : 4;
   }
 
-  public static String getRemakrChar(boolean first, boolean last) {
+  public static String getRemarkChar(boolean first, boolean last) {
     if (isVhdl()) return "-";
     if (first) return "/";
     if (last) return " ";
@@ -95,7 +95,7 @@ public abstract class Hdl {
 
   private static String typecast(String signal, boolean signed) {
     return isVhdl()
-                ? LineBuffer.format("{{1}}signed({{2}})", signed ? "" : "un", signal)
+                ? LineBuffer.format("{{1}}({{2}})", signed ? "signed" : "unsigned", signal)
                 : (signed ? "$signed(" + signal + ")" : signal);
   }
 
