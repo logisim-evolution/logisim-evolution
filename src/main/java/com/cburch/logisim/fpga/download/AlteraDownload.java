@@ -25,6 +25,7 @@ import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -247,7 +248,7 @@ public class AlteraDownload implements VendorDownload {
     return FileWriter.writeContents(scriptFile, contents.get());
   }
 
-  private ArrayList<String> getPinLocStrings() {
+  private List<String> getPinLocStrings() {
     final var contents = LineBuffer.getBuffer();
 
     for (final var key : mapInfo.getMappableResources().keySet()) {
@@ -271,7 +272,7 @@ public class AlteraDownload implements VendorDownload {
     return contents.getWithIndent(4);
   }
 
-  private static ArrayList<String> getAlteraAssignments(BoardInformation currentBoard) {
+  private static List<String> getAlteraAssignments(BoardInformation currentBoard) {
     final var pkg = currentBoard.fpga.getPackage().split(" ");
     final var currentBehavior = currentBoard.fpga.getUnusedPinsBehavior();
     final var behavior = switch (currentBehavior) {
@@ -323,8 +324,8 @@ public class AlteraDownload implements VendorDownload {
     return true;
   }
 
-  private ArrayList<String> getDevices(ArrayList<String> lines) {
-    var dev = new ArrayList<String>();
+  private List<String> getDevices(ArrayList<String> lines) {
+    final var dev = new ArrayList<String>();
     for (var line : lines) {
       var n = dev.size() + 1;
       if (!line.matches("^" + n + "\\) .*")) continue;

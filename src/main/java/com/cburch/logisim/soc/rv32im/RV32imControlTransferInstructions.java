@@ -20,7 +20,7 @@ import com.cburch.logisim.soc.util.AssemblerToken;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class RV32imControlTransferInstructions extends AbstractExecutionUnitWithLabelSupport {
+public class RV32imControlTransferInstructions implements AbstractExecutionUnitWithLabelSupport {
 
   private static final int JAL = 0x6F;
   private static final int JALR = 0x67;
@@ -63,12 +63,14 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
   private int source2;
   public boolean isPcRelative;
 
+  @Override
   public ArrayList<String> getInstructions() {
     ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
   }
 
-  public boolean execute(Object state,  CircuitState cState) {
+  @Override
+  public boolean execute(Object state, CircuitState cState) {
     if (!valid)
       return false;
     RV32im_state.ProcessorState cpuState = (RV32im_state.ProcessorState) state;
@@ -135,6 +137,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     return false;
   }
 
+  @Override
   @SuppressWarnings("fallthrough")
   public String getAsmInstruction() {
     if (!valid)
@@ -175,6 +178,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     return s.toString();
   }
 
+  @Override
   @SuppressWarnings("fallthrough")
   public String getAsmInstruction(String label) {
     if (!valid)
@@ -214,10 +218,12 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     return s.toString();
   }
 
+  @Override
   public int getBinInstruction() {
     return instruction;
   }
 
+  @Override
   public boolean setBinInstruction(int instr) {
     instruction = instr;
     jumped = false;
@@ -225,10 +231,12 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     return valid;
   }
 
+  @Override
   public boolean performedJump() {
     return valid & jumped;
   }
 
+  @Override
   public boolean isValid() {
     return valid;
   }
@@ -264,15 +272,18 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     return false;
   }
 
+  @Override
   public String getErrorMessage() {
     return null;
   }
 
+  @Override
   public int getInstructionSizeInBytes(String instruction) {
     if (getInstructions().contains(instruction.toUpperCase())) return 4;
     return -1;
   }
 
+  @Override
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
     for (int i = 0; i < AsmOpcodes.length; i++)
@@ -458,10 +469,12 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     return true;
   }
 
+  @Override
   public boolean isLabelSupported() {
     return isPcRelative;
   }
 
+  @Override
   public long getLabelAddress(long pc) {
     return pc + immediate;
   }

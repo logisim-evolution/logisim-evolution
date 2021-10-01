@@ -48,11 +48,13 @@ public class OutputStreamEscaper extends OutputStream {
     textWidth = cols;
   }
 
+  @Override
   public void close() throws IOException {
     flush();
     out.close();
   }
 
+  @Override
   public void flush() throws IOException {
     if (textWidth > 0 && lastChar != '\n') {
       out.write(sep);

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.RandomAccess;
 import java.util.Set;
@@ -423,7 +424,7 @@ public class LineBuffer implements RandomAccess {
    *
    * @return unindented content of the buffer.
    */
-  public ArrayList<String> get() {
+  public List<String> get() {
     return contents;
   }
 
@@ -433,7 +434,7 @@ public class LineBuffer implements RandomAccess {
    *
    * @return indented content of the buffer.
    */
-  public ArrayList<String> getWithIndent() {
+  public List<String> getWithIndent() {
     return getWithIndent(getDefaultIndent());
   }
 
@@ -444,7 +445,7 @@ public class LineBuffer implements RandomAccess {
    * @param howMany Number of spaces to prefix each line with.
    * @return indented content of the buffer.
    */
-  public ArrayList<String> getWithIndent(int howMany) {
+  public List<String> getWithIndent(int howMany) {
     return getWithIndent(getIndent(howMany));
   }
 
@@ -457,7 +458,7 @@ public class LineBuffer implements RandomAccess {
    * @param indent Indent string.
    * @return indented content of the buffer.
    */
-  public ArrayList<String> getWithIndent(int howMany, String indent) {
+  public List<String> getWithIndent(int howMany, String indent) {
     return getWithIndent(indent.repeat(howMany));
   }
 
@@ -467,7 +468,7 @@ public class LineBuffer implements RandomAccess {
    * @param indent Indent string.
    * @return indented content of the buffer.
    */
-  public ArrayList<String> getWithIndent(String indent) {
+  public List<String> getWithIndent(String indent) {
     final var result = new ArrayList<String>();
     for (final var line : contents) {
       // We do not indent empty lines, just ones with content.
@@ -663,9 +664,9 @@ public class LineBuffer implements RandomAccess {
 
   /* ********************************************************************************************* */
 
-  private ArrayList<String> placeholders = new ArrayList<>();
-  private ArrayList<String> positionalPlaceholders = new ArrayList<>();
-  private ArrayList<String> pairedPlaceholders = new ArrayList<>();
+  private List<String> placeholders = new ArrayList<>();
+  private List<String> positionalPlaceholders = new ArrayList<>();
+  private List<String> pairedPlaceholders = new ArrayList<>();
 
   // check if we have positional args and/or paired
   // if positional: check if we have args given, then check all the rest
@@ -795,7 +796,7 @@ public class LineBuffer implements RandomAccess {
    * @param fmt String to analyze.
    * @return Returns list of found placeholders. If no placeholder is found, returnes empty list.
    */
-  public ArrayList<String> extractPlaceholders(String fmt) {
+  public List<String> extractPlaceholders(String fmt) {
     final var keys = new ArrayList<String>();
 
     final var regex = "(\\{\\{.+?\\}\\})+";

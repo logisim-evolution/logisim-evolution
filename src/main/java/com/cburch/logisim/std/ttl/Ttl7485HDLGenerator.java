@@ -54,15 +54,15 @@ public class Ttl7485HDLGenerator extends AbstractHdlGeneratorFactory {
             gt     <= '1' WHEN unsigned(oppA) > unsigned(oppB) ELSE '0';
             eq     <= '1' WHEN unsigned(oppA) = unsigned(oppB) ELSE '0';
             lt     <= '1' WHEN unsigned(oppA) < unsigned(oppB) ELSE '0';
-            
+
             CompIn <= AgtBin&AltBin&AeqBin;
-            WITH (CompIn) SELECT CompOut <= 
+            WITH (CompIn) SELECT CompOut <=
                "100" WHEN "100",
                "010" WHEN "010",
                "000" WHEN "110",
                "110" WHEN "000",
                "001" WHEN OTHERS;
-            
+
             AgtBout <= '1' WHEN gt = '1' ELSE '0' WHEN lt = '1' ELSE CompOut(2);
             AltBout <= '0' WHEN gt = '1' ELSE '1' WHEN lt = '1' ELSE CompOut(1);
             AeqBout <= '0' WHEN (gt = '1') OR (lt = '1') ELSE CompOut(0);

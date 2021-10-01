@@ -51,9 +51,9 @@ public class Ttl7447HDLGenerator extends AbstractHdlGeneratorFactory {
             Sege  <= segments(4);
             Segf  <= segments(5);
             Segg  <= segments(6);
-            
+
             bcd   <= BCD3&BCD2&BCD1&BCD0;
-            
+
             Decode : PROCESS ( bcd , LT , BI , RBI ) IS
                BEGIN
                   CASE bcd IS

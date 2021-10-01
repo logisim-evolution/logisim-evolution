@@ -37,6 +37,7 @@ import java.awt.Graphics2D;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 public class PortIO extends InstanceFactory {
   /**
@@ -47,12 +48,12 @@ public class PortIO extends InstanceFactory {
    */
   public static final String _ID = "PortIO";
 
-  public static ArrayList<String> getLabels(int size) {
-    ArrayList<String> LabelNames = new ArrayList<>();
+  public static List<String> getLabels(int size) {
+    List<String> labelNames = new ArrayList<>();
     for (var i = 0; i < size; i++) {
-      LabelNames.add("pin_" + (i + 1));
+      labelNames.add("pin_" + (i + 1));
     }
-    return LabelNames;
+    return labelNames;
   }
 
   private static class PortState implements InstanceData, Cloneable {

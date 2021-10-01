@@ -33,6 +33,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public abstract class DownloadBase {
 
@@ -292,7 +293,7 @@ public abstract class DownloadBase {
     }
   }
 
-  public static HashMap<String, String> getLedArrayMaps(MappableResourcesContainer maps, Netlist nets, BoardInformation board) {
+  public static Map<String, String> getLedArrayMaps(MappableResourcesContainer maps, Netlist nets, BoardInformation board) {
     final var ledArrayMaps = new HashMap<String, String>();
     var hasMappedClockedArray = false;
     for (final var comp : maps.getIoComponentInformation().getComponents()) {

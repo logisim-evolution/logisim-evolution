@@ -22,6 +22,7 @@ import com.cburch.logisim.std.io.SevenSegment;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 
@@ -66,25 +67,25 @@ public class MapComponent {
 
   // In the below structure the first Integer is the pin identifier,
   // the second is the global bubble id
-  private final HashMap<Integer, Integer> myInputBubbles = new HashMap<>();
-  private final HashMap<Integer, Integer> myOutputBubbles = new HashMap<>();
-  private final HashMap<Integer, Integer> myIoBubbles = new HashMap<>();
+  private final Map<Integer, Integer> myInputBubbles = new HashMap<>();
+  private final Map<Integer, Integer> myOutputBubbles = new HashMap<>();
+  private final Map<Integer, Integer> myIoBubbles = new HashMap<>();
   /*
    * The following structure defines if the pin is mapped
    */
   private final ComponentFactory myFactory;
   private final AttributeSet myAttributes;
 
-  private final ArrayList<String> myName;
+  private final List<String> myName;
 
-  private ArrayList<MapClass> maps = new ArrayList<>();
-  private ArrayList<Boolean> opens = new ArrayList<>();
-  private ArrayList<Integer> constants = new ArrayList<>();
-  private final ArrayList<String> pinLabels = new ArrayList<>();
+  private List<MapClass> maps = new ArrayList<>();
+  private List<Boolean> opens = new ArrayList<>();
+  private List<Integer> constants = new ArrayList<>();
+  private final List<String> pinLabels = new ArrayList<>();
 
   private int nrOfPins;
 
-  public MapComponent(ArrayList<String> name, netlistComponent comp) {
+  public MapComponent(List<String> name, netlistComponent comp) {
     myFactory = comp.getComponent().getFactory();
     myAttributes = comp.getComponent().getAttributeSet();
     myName = name;
@@ -711,7 +712,7 @@ public class MapComponent {
   }
 
   public static void getComplexMap(Element Map, CircuitMapInfo cmap) throws DOMException {
-    ArrayList<CircuitMapInfo> pinmaps = cmap.getPinMaps();
+    List<CircuitMapInfo> pinmaps = cmap.getPinMaps();
     if (pinmaps != null) {
       var s = new StringBuilder();
       var first = true;

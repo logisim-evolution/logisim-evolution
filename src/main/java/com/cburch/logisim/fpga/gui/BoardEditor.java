@@ -29,6 +29,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -199,7 +200,7 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
   }
 
   private String getInternalBoardName() {
-    ArrayList<String> boards = AppPreferences.Boards.getBoardNames();
+    List<String> boards = AppPreferences.Boards.getBoardNames();
     return (String)
         OptionPane.showInputDialog(
             panel,

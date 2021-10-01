@@ -16,6 +16,7 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.HdlPorts;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
+import java.util.List;
 
 public class AbstractOctalFlopsHDLGenerator extends AbstractHdlGeneratorFactory {
 
@@ -69,13 +70,13 @@ public class AbstractOctalFlopsHDLGenerator extends AbstractHdlGeneratorFactory 
             Q5     <= state(5);
             Q6     <= state(6);
             Q7     <= state(7);
-            
+
             dffs : PROCESS( {{CLK}} , nCLR ) IS
                BEGIN
                   IF (nCLR = '1') THEN state <= (OTHERS => '0');
                   ELSIF (rising_edge({{CLK}})) THEN state <= next;
                   END IF;
-               END PROCESS dffs; 
+               END PROCESS dffs;
             """);
   }
 

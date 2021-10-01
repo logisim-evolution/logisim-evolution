@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.prefs.Preferences;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -239,7 +240,7 @@ public class FPGABoards implements ActionListener {
     return buildInBoards.getBoardFilePath(boardName);
   }
 
-  public ArrayList<String> getBoardNames() {
+  public List<String> getBoardNames() {
     return buildInBoards.getBoardNames();
   }
 

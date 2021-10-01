@@ -26,6 +26,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -102,7 +103,7 @@ public class BreakpointPanel extends JPanel
     asmWindow.setCaretPosition(curetPos);
   }
 
-  public HashMap<Integer, Integer> getBreakPoints() {
+  public Map<Integer, Integer> getBreakPoints() {
     HashMap<Integer, Integer> breakPoints = new HashMap<>();
     for (int i : getBreakpointLines()) breakPoints.put(debugLines.get(i), i);
     return breakPoints;

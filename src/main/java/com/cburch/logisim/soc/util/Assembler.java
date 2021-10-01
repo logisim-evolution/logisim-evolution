@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.Set;
 import javax.swing.text.BadLocationException;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
@@ -556,7 +557,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
   @Override
   public ParseResult parse(RSyntaxDocument doc, String style) {
     DefaultParseResult result = new DefaultParseResult(this);
-    HashMap<Integer, String> offsets = new HashMap<>();
+    Map<Integer, String> offsets = new HashMap<>();
     for (GutterIconInfo x : errorMarkers.keySet())
       offsets.put(x.getMarkedOffset(), errorMarkers.get(x).toString());
     for (Token t : doc) {

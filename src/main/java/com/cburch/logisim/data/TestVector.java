@@ -14,6 +14,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 import javax.swing.filechooser.FileFilter;
 
@@ -24,6 +25,7 @@ public class TestVector {
 
   private static class TestVectorFilter extends FileFilter {
 
+    @Override
     public boolean accept(File f) {
       if (!f.isFile()) return true;
 
@@ -32,6 +34,7 @@ public class TestVector {
       return (i > 0 && name.substring(i).equalsIgnoreCase(".txt"));
     }
 
+    @Override
     public String getDescription() {
       return "Logisim-evolution Test Vector (*.txt)";
     }
@@ -130,7 +133,7 @@ public class TestVector {
   public BitWidth[] columnWidth;
   public int[] columnRadix;
 
-  public ArrayList<Value[]> data;
+  public List<Value[]> data;
 
   public TestVector(File src) throws IOException {
     try (final var in = new BufferedReader(new FileReader(src))) {

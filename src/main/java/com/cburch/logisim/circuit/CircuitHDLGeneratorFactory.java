@@ -30,7 +30,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
@@ -218,7 +217,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
+  public List<String> getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
     final var components = new ArrayList<String>();
     final var instantiatedComponents = new HashSet<String>();
     for (final var gate : theNetlist.getNormalComponents()) {
@@ -413,7 +412,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> getPortMap(Netlist nets, Object theMapInfo) {
+  public Map<String, String> getPortMap(Netlist nets, Object theMapInfo) {
     final var portMap = new TreeMap<String, String>();
     if (theMapInfo == null) return null;
     final var topLevel = theMapInfo instanceof MappableResourcesContainer;

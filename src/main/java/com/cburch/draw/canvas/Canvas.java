@@ -11,7 +11,7 @@ package com.cburch.draw.canvas;
 
 import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasObject;
-import com.cburch.draw.undo.Action;
+import com.cburch.draw.undo.UndoAction;
 import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -41,7 +41,7 @@ public class Canvas extends JComponent {
     setPreferredSize(new Dimension(200, 200));
   }
 
-  public void doAction(Action action) {
+  public void doAction(UndoAction action) {
     dispatcher.doAction(action);
   }
 

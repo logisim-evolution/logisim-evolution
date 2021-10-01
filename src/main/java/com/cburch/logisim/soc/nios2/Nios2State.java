@@ -45,6 +45,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import javax.swing.JPanel;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
@@ -291,7 +292,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
         Nios2CustomInstructions cust = (Nios2CustomInstructions) ASSEMBLER.getExeUnit();
         if (cust.isValid() && cust.waitingOnReady(this, cState)) return;
       }
-      HashMap<Integer, Integer> breakPoints = bPanel.getBreakPoints();
+      Map<Integer, Integer> breakPoints = bPanel.getBreakPoints();
       if (breakPoints.containsKey(pc)) {
         if (simState.breakPointReached()) {
           bPanel.gotoLine(breakPoints.get(pc) - 1);

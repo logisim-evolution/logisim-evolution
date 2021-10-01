@@ -10,6 +10,7 @@
 package com.cburch.logisim.fpga.designrulecheck;
 
 import java.util.ArrayList;
+import java.util.List;
 
 class ConnectionPointArray {
 
@@ -27,7 +28,7 @@ class ConnectionPointArray {
     myConnections.clear();
   }
 
-  public ArrayList<ConnectionPoint> getAll() {
+  public List<ConnectionPoint> getAll() {
     return myConnections;
   }
 

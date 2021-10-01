@@ -116,7 +116,7 @@ public class ZoomControl extends JPanel {
    */
   public String zoomString() {
     DecimalFormat df = new DecimalFormat("###.##");
-    return "\u00D7" + df.format(model.getZoomFactor()).toString();
+    return "\u00D7" + df.format(model.getZoomFactor());
   }
 
   public void zoomIn() {

@@ -53,7 +53,7 @@ public class AdderHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
           s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA) +
                                                unsigned(s_extended_dataB) +
                                                (""&CarryIn));
-          
+
           """);
       if (nrOfBits == 1) {
         contents.add("Result <= s_sum_result(0);");

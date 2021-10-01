@@ -90,7 +90,7 @@ public class MultiplierHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                    s_interm_result = $signed(s_mult_signed) + $signed(s_Cin);
                  end
           end
-          
+
           assign Mult_hi = s_interm_result[{{calcBits}}-1:{{nrOfBits}}];
           assign Mult_lo = s_interm_result[{{nrOfBits}}-1:0];
           """);

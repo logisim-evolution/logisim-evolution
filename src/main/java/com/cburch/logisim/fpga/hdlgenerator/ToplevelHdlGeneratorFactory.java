@@ -136,7 +136,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     for (final var io : myIOComponents.getMappedOutputPinNames()) {
       myPorts.add(Port.OUTPUT, io, 1, null);
     }
-    for (final var io : myIOComponents.GetMappedIoPinNames())
+    for (final var io : myIOComponents.getMappedIoPinNames())
       myPorts.add(Port.INOUT, io, 1, null);
   }
 

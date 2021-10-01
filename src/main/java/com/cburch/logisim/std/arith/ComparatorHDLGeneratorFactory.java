@@ -88,7 +88,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
         contents.add("""
             assign A_EQ_B = (DataA == DataB);
             assign A_LT_B = (DataA < DataB);
-            assign A_GT_B = (DataA > DataB); 
+            assign A_GT_B = (DataA > DataB);
             """);
       } else {
         contents.add("""
@@ -96,7 +96,7 @@ public class ComparatorHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
             assign s_unsigned_less = (DataA < DataB);
             assign s_signed_greater = ($signed(DataA) > $signed(DataB));
             assign s_unsigned_greater = (DataA > DataB);
-            
+
             assign A_EQ_B = (DataA == DataB);
             assign A_GT_B = ({{twosComplement}}==1) ? s_signed_greater : s_unsigned_greater;
             assign A_LT_B = ({{twosComplement}}==1) ? s_signed_less : s_unsigned_less;

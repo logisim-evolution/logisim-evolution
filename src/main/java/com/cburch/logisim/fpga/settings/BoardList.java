@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
@@ -139,7 +140,7 @@ public class BoardList {
     }
   }
 
-  public ArrayList<String> getBoardNames() {
+  public List<String> getBoardNames() {
     SortedArrayList<String> ret = new SortedArrayList<>();
     for (String board : DefinedBoards) {
       ret.insertSorted(getBoardName(board));

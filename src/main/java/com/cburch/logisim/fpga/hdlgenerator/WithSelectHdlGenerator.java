@@ -10,6 +10,7 @@ package com.cburch.logisim.fpga.hdlgenerator;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.cburch.logisim.util.LineBuffer;
@@ -75,7 +76,7 @@ public class WithSelectHdlGenerator {
     return this;
   }
 
-  public ArrayList<String> getHdlCode() {
+  public List<String> getHdlCode() {
     final var contents = LineBuffer.getHdlBuffer()
         .pair("sourceName", sourceSignal)
         .pair("destName", destinationSignal)

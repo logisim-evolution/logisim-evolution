@@ -18,8 +18,8 @@ import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class ShifterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -127,7 +127,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     return contents;
   }
 
-  private ArrayList<String> getStageFunctionalityVerilog(int stageNumber, int nrOfBits) {
+  private List<String> getStageFunctionalityVerilog(int stageNumber, int nrOfBits) {
     final var contents = LineBuffer.getBuffer()
             .pair("shiftMode", SHIFT_MODE_STRING)
             .pair("stageNumber", stageNumber)
@@ -179,7 +179,7 @@ public class ShifterHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
     return contents.getWithIndent();
   }
 
-  private ArrayList<String> getStageFunctionalityVhdl(int stageNumber, int nrOfBits) {
+  private List<String> getStageFunctionalityVhdl(int stageNumber, int nrOfBits) {
     final var nrOfBitsToShift = (1 << stageNumber);
     final var contents =
         LineBuffer.getBuffer()
