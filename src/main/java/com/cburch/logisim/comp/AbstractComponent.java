@@ -9,27 +9,28 @@
 
 package com.cburch.logisim.comp;
 
-import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
 import java.awt.Graphics;
-import java.util.List;
 
 public abstract class AbstractComponent implements Component {
   protected AbstractComponent() {}
 
+  @Override
   public boolean contains(Location pt) {
     final var bds = getBounds();
     if (bds == null) return false;
     return bds.contains(pt, 1);
   }
 
+  @Override
   public boolean contains(Location pt, Graphics g) {
     final var bds = getBounds(g);
     if (bds == null) return false;
     return bds.contains(pt, 1);
   }
 
+  @Override
   public boolean endsAt(Location pt) {
     for (final var data : getEnds()) {
       if (data.getLocation().equals(pt)) return true;
@@ -37,30 +38,14 @@ public abstract class AbstractComponent implements Component {
     return false;
   }
 
-  public abstract Bounds getBounds();
-
+  @Override
   public Bounds getBounds(Graphics g) {
     return getBounds();
   }
 
+  @Override
   public EndData getEnd(int index) {
     return getEnds().get(index);
   }
 
-  //
-  // propagation methods
-  //
-  public abstract List<EndData> getEnds();
-
-  //
-  // basic information methods
-  //
-  public abstract ComponentFactory getFactory();
-
-  //
-  // location/extent methods
-  //
-  public abstract Location getLocation();
-
-  public abstract void propagate(CircuitState state);
 }

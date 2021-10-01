@@ -39,15 +39,6 @@ public abstract class AbstractToolbarModel implements ToolbarModel {
   }
 
   @Override
-  public abstract List<ToolbarItem> getItems();
-
-  @Override
-  public abstract boolean isSelected(ToolbarItem item);
-
-  @Override
-  public abstract void itemSelected(ToolbarItem item);
-
-  @Override
   public void removeToolbarModelListener(ToolbarModelListener listener) {
     listeners.remove(listener);
   }

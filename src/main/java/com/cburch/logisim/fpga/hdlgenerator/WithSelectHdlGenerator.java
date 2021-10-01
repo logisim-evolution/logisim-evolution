@@ -8,12 +8,10 @@
  */
 package com.cburch.logisim.fpga.hdlgenerator;
 
-import java.util.ArrayList;
+import com.cburch.logisim.util.LineBuffer;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.cburch.logisim.util.LineBuffer;
 
 public class WithSelectHdlGenerator {
 

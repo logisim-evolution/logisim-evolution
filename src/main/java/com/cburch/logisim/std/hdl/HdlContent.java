@@ -43,12 +43,6 @@ public abstract class HdlContent implements HdlModel, Cloneable {
     return ret;
   }
 
-  @Override
-  public abstract boolean compare(HdlModel model);
-
-  @Override
-  public abstract boolean compare(String value);
-
   protected void fireContentSet() {
     if (listeners == null) {
       return;
@@ -66,12 +60,6 @@ public abstract class HdlContent implements HdlModel, Cloneable {
   }
 
   @Override
-  public abstract String getContent();
-
-  @Override
-  public abstract String getName();
-
-  @Override
   public void removeHdlModelListener(HdlModelListener l) {
     if (listeners == null) {
       return;
@@ -82,6 +70,4 @@ public abstract class HdlContent implements HdlModel, Cloneable {
     }
   }
 
-  @Override
-  public abstract boolean setContent(String content);
 }
