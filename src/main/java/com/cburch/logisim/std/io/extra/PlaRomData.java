@@ -28,7 +28,8 @@ public class PlaRomData implements InstanceData {
   private String savedData = "";
   private boolean[][] inputAnd;
   private boolean[][] andOutput;
-  public int rowhovered = -1, columnHovered = 0;
+  public int rowHovered = -1;
+  public int columnHovered = 0;
   private Value[] inputValue;
   private Value[] andValue;
   private Value[] outputValue;
@@ -75,20 +76,21 @@ public class PlaRomData implements InstanceData {
     }
   }
 
-  public void decodeSavedData(String s) {
+  public void decodeSavedData(String str) {
     // if empty, all to false so don't do anything
-    if (s == null || s.equals("")) return;
+    if (str == null || str.equals("")) return;
     // split the attribute content string in an array of strings with a single
     // information each one
-    String[] datas = s.split(" "), tmp;
+    final var datas = str.split(" ");
+    String[] tmp;
     byte value;
-    int cnt = 0;
-    for (String data : datas) {
+    var cnt = 0;
+    for (final var data : datas) {
       // if contains a '*' it has to fill the array with the first value for x (second
       // number) cycles
       if (data.contains("*")) {
         tmp = data.split("\\*");
-        for (int j = 0; j < Integer.parseInt(tmp[1]); j++) {
+        for (var j = 0; j < Integer.parseInt(tmp[1]); j++) {
           value = (byte) Integer.parseInt(tmp[0]);
           writeData(value, cnt);
           cnt++;
@@ -165,10 +167,12 @@ public class PlaRomData implements InstanceData {
   }
 
   public Value[] getOutputValues() {
-    Value[] OutputValuecopy = new Value[getOutputs()];
-    for (byte i = (byte) (getOutputs() - 1); i >= 0; i--) // reverse array
-      OutputValuecopy[i] = outputValue[outputValue.length - i - 1];
-    return OutputValuecopy;
+    final var outputValueCopy = new Value[getOutputs()];
+    // reverse array
+    for (byte i = (byte) (getOutputs() - 1); i >= 0; i--) {
+      outputValueCopy[i] = outputValue[outputValue.length - i - 1];
+    }
+    return outputValueCopy;
   }
 
   public String getSavedData() {
@@ -181,17 +185,19 @@ public class PlaRomData implements InstanceData {
   }
 
   private void initializeInputValue() {
-    for (byte i = 0; i < getInputs(); i++) inputValue[i] = Value.UNKNOWN;
+    for (byte i = 0; i < getInputs(); i++) {
+      inputValue[i] = Value.UNKNOWN;
+    }
   }
 
   private void saveData() {
     // string to write inside the .circ to not lose data
     int row, column, size1 = getInputs() * getAnd(), size2 = getOutputs() * getAnd(), count = 0;
     char val, last = 'x';
-    boolean dirty = false;
-    StringBuilder data = new StringBuilder();
+    var dirty = false;
+    var data = new StringBuilder();
     // input-and matrix
-    for (int i = 0; i < size1; i++) {
+    for (var i = 0; i < size1; i++) {
       row = i / getInputs();
       column = i - row * getInputs();
       // 1= not line selected, 2 = input line selected, 0 = nothing selected in that
@@ -245,7 +251,7 @@ public class PlaRomData implements InstanceData {
   }
 
   public void setAndOutputValue(int row, int column, boolean b) {
-    this.andOutput[row][column] = b;
+    andOutput[row][column] = b;
     // update all values
     setAndValue();
     setOutputValue();
@@ -279,7 +285,7 @@ public class PlaRomData implements InstanceData {
   }
 
   public void setHovered(int row, int column) {
-    rowhovered = row;
+    rowHovered = row;
     columnHovered = column;
   }
 
@@ -292,14 +298,13 @@ public class PlaRomData implements InstanceData {
 
   public void setInputsValue(Value[] inputs) {
     int mininputs = getInputs() < inputs.length ? getInputs() : inputs.length;
-    System.arraycopy(inputs, inputs.length - mininputs, this.inputValue,
-        getInputs() - mininputs, mininputs);
+    System.arraycopy(inputs, inputs.length - mininputs, this.inputValue, getInputs() - mininputs, mininputs);
     setAndValue();
     setOutputValue();
   }
 
   private void setOutputValue() {
-    boolean thereisadot = false;
+    var thereisadot = false;
     for (byte i = 0; i < getOutputs(); i++) {
       outputValue[i] = Value.FALSE;
       for (byte j = 0; j < getAnd(); j++) {
@@ -321,8 +326,8 @@ public class PlaRomData implements InstanceData {
       this.inputs = inputs;
       this.outputs = outputs;
       this.and = and;
-      boolean[][] oldInputAnd = Arrays.copyOf(inputAnd, inputAnd.length);
-      boolean[][] oldAndOutput = Arrays.copyOf(andOutput, andOutput.length);
+      final var oldInputAnd = Arrays.copyOf(inputAnd, inputAnd.length);
+      final var oldAndOutput = Arrays.copyOf(andOutput, andOutput.length);
       inputAnd = new boolean[getAnd()][getInputs() * 2];
       andOutput = new boolean[getAnd()][getOutputs()];
       inputValue = new Value[getInputs()];
@@ -343,7 +348,8 @@ public class PlaRomData implements InstanceData {
   }
 
   private void writeData(byte value, int node) {
-    int row, column;
+    int row;
+    int column;
     // first matrix
     if (node < getInputs() * getAnd()) {
       row = node / getInputs();
