@@ -390,7 +390,7 @@ public class CircuitState implements InstanceData {
         final var remove = ram.reset(this, Instance.getInstanceFor(comp));
         if (remove) componentData.put(comp, null);
       } else if (comp.getFactory() instanceof Buzzer) {
-        Buzzer.StopBuzzerSound(comp, this);
+        Buzzer.stopBuzzerSound(comp, this);
       } else if (!(comp.getFactory() instanceof SubcircuitFactory)) {
         if (componentData.get(comp) instanceof ComponentDataGuiProvider guiProvider)
           guiProvider.destroy();
