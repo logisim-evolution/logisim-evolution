@@ -57,7 +57,6 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -1020,8 +1019,8 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
         Circuit circ = null;
         if (t instanceof AddTool) {
           t = ((AddTool) t).getFactory();
-          if (t instanceof SubcircuitFactory) {
-            circ = ((SubcircuitFactory) t).getSubcircuit();
+          if (t instanceof SubcircuitFactory subFact) {
+            circ = subFact.getSubcircuit();
           }
         }
 

@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -117,7 +118,7 @@ public class ArgonXML {
     return child;
   }
 
-  public ArrayList<ArgonXML> children(String name) {
+  public List<ArgonXML> children(String name) {
     final var children = nameChildren.get(name);
     return children == null ? new ArrayList<>() : children;
   }

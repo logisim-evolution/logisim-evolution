@@ -234,7 +234,7 @@ class NotGate extends InstanceFactory {
     if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR)
       AbstractGate.paintIconIEC(g, RECT_LABEL, true, true);
     else
-      AbstractGate.paintIconBufferANSI(g, true, false);
+      AbstractGate.paintIconBufferAnsi(g, true, false);
   }
 
   @Override

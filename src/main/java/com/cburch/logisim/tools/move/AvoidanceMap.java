@@ -45,8 +45,8 @@ class AvoidanceMap {
     // first we go through the components, saying that we should not
     // intersect with any point that lies within a component
     for (Component el : elements) {
-      if (el instanceof Wire) {
-        markWire((Wire) el, dx, dy);
+      if (el instanceof Wire wire) {
+        markWire(wire, dx, dy);
       } else {
         markComponent(el, dx, dy);
       }

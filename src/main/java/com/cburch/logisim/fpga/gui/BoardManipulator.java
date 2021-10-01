@@ -16,7 +16,6 @@ import com.cburch.contracts.BaseMouseMotionListenerContract;
 import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.BoardManipulatorListener;
-import com.cburch.logisim.fpga.data.BoardRectangle;
 import com.cburch.logisim.fpga.data.ConstantButton;
 import com.cburch.logisim.fpga.data.FpgaIoInformationContainer;
 import com.cburch.logisim.fpga.data.IoComponentTypes;
@@ -60,16 +59,15 @@ import javax.swing.event.ChangeListener;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
-public class BoardManipulator extends JPanel
-    implements BaseMouseListenerContract,
-        BaseMouseMotionListenerContract,
-        ChangeListener,
-        PropertyChangeListener,
-               IoComponentsListener,
-        ListSelectionListener,
-        BaseWindowListenerContract,
-        LocaleListener,
-        ActionListener {
+public class BoardManipulator extends JPanel implements BaseMouseListenerContract,
+                                                        BaseMouseMotionListenerContract,
+                                                        ChangeListener,
+                                                        PropertyChangeListener,
+                                                        IoComponentsListener,
+                                                        ListSelectionListener,
+                                                        BaseWindowListenerContract,
+                                                        LocaleListener,
+                                                        ActionListener {
   private static final long serialVersionUID = 1L;
 
   public static final int IMAGE_WIDTH = 740;
@@ -87,59 +85,57 @@ public class BoardManipulator extends JPanel
   public static final int SELECTABLE_MAPPED_COLOR_ID = 7;
   public static final int SELECTABLE_COLOR_ID = 8;
 
-  public static Color DEFINE_COLOR = new Color(AppPreferences.FPGA_DEFINE_COLOR.get());
-  public static Color HIGHLIGHT_COLOR = new Color(AppPreferences.FPGA_DEFINE_HIGHLIGHT_COLOR.get());
-  public static Color MOVE_COLOR = new Color(AppPreferences.FPGA_DEFINE_MOVE_COLOR.get());
-  public static Color RESIZE_COLOR = new Color(AppPreferences.FPGA_DEFINE_RESIZE_COLOR.get());
-  public static Color MAPPED_COLOR = new Color(AppPreferences.FPGA_MAPPED_COLOR.get());
-  public static Color SELECTED_MAP_COLOR =
-      new Color(AppPreferences.FPGA_SELECTED_MAPPED_COLOR.get());
-  public static Color SELECTABLE_MAP_COLOR =
-      new Color(AppPreferences.FPGA_SELECTABLE_MAPPED_COLOR.get());
-  public static Color SELECTABLE_COLOR = new Color(AppPreferences.FPGA_SELECT_COLOR.get());
+  public static Color defineColor = new Color(AppPreferences.FPGA_DEFINE_COLOR.get());
+  public static Color highlightColor = new Color(AppPreferences.FPGA_DEFINE_HIGHLIGHT_COLOR.get());
+  public static Color moveColor = new Color(AppPreferences.FPGA_DEFINE_MOVE_COLOR.get());
+  public static Color resizeColor = new Color(AppPreferences.FPGA_DEFINE_RESIZE_COLOR.get());
+  public static Color mappedColor = new Color(AppPreferences.FPGA_MAPPED_COLOR.get());
+  public static Color selectedMapColor = new Color(AppPreferences.FPGA_SELECTED_MAPPED_COLOR.get());
+  public static Color selectableMapColor = new Color(AppPreferences.FPGA_SELECTABLE_MAPPED_COLOR.get());
+  public static Color selectableColor = new Color(AppPreferences.FPGA_SELECT_COLOR.get());
 
   private ZoomSlider zoom;
-  private int MaxZoom;
+  private int maxZoom;
   private float scale;
   private BufferedImage image;
   private final boolean mapMode;
-  private String BoardName;
+  private String boardName;
   private SimpleRectangle defineRectangle; /* note this one is in real coordinates */
   private ArrayList<BoardManipulatorListener> listeners;
-  private final IoComponentsInformation IOcomps;
-  private MappableResourcesContainer MapInfo;
+  private final IoComponentsInformation ioComps;
+  private MappableResourcesContainer mapInfo;
   private JList<MapListModel.MapInfo> unmappedList;
   private JList<MapListModel.MapInfo> mappedList;
-  private JButton UnMapButton;
-  private JButton UnMapAllButton;
+  private JButton unmapButton;
+  private JButton unmapAllButton;
 
 
   public BoardManipulator(Frame parentFrame) {
     mapMode = false;
-    IOcomps = new IoComponentsInformation(parentFrame, false);
-    IOcomps.addListener(this);
+    ioComps = new IoComponentsInformation(parentFrame, false);
+    ioComps.addListener(this);
     setup(false);
   }
 
   public BoardManipulator(JDialog manip, Frame parentFrame, MappableResourcesContainer mapInfo) {
     mapMode = true;
     setup(true);
-    IOcomps = mapInfo.getIoComponentInformation();
-    IOcomps.addListener(this);
-    IOcomps.addComponent(ConstantButton.ONE_BUTTON, 1);
-    IOcomps.addComponent(ConstantButton.OPEN_BUTTON, 1);
-    IOcomps.addComponent(ConstantButton.VALUE_BUTTON, 1);
-    IOcomps.addComponent(ConstantButton.ZERO_BUTTON, 1);
+    ioComps = mapInfo.getIoComponentInformation();
+    ioComps.addListener(this);
+    ioComps.addComponent(ConstantButton.ONE_BUTTON, 1);
+    ioComps.addComponent(ConstantButton.OPEN_BUTTON, 1);
+    ioComps.addComponent(ConstantButton.VALUE_BUTTON, 1);
+    ioComps.addComponent(ConstantButton.ZERO_BUTTON, 1);
     image = mapInfo.getBoardInformation().getImage();
-    IOcomps.setParentFrame(parentFrame);
-    MapInfo = mapInfo;
+    ioComps.setParentFrame(parentFrame);
+    this.mapInfo = mapInfo;
     manip.addWindowListener(this);
   }
 
   private void setup(boolean MapMode) {
     zoom = new ZoomSlider();
     zoom.addChangeListener(this);
-    MaxZoom = zoom.getMaxZoom();
+    maxZoom = zoom.getMaxZoom();
     scale = (float) 1.0;
     image = null;
     setPreferredSize(new Dimension(getWidth(), getHeight()));
@@ -157,32 +153,32 @@ public class BoardManipulator extends JPanel
   }
 
   public JList<MapListModel.MapInfo> getUnmappedList() {
-    if (MapInfo == null) return null;
+    if (mapInfo == null) return null;
     unmappedList = new JList<>();
-    unmappedList.setModel(new MapListModel(false, MapInfo.getMappableResources()));
+    unmappedList.setModel(new MapListModel(false, mapInfo.getMappableResources()));
     unmappedList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     unmappedList.addListSelectionListener(this);
     return unmappedList;
   }
 
   public JList<MapListModel.MapInfo> getMappedList() {
-    if (MapInfo == null) return null;
+    if (mapInfo == null) return null;
     mappedList = new JList<>();
-    mappedList.setModel(new MapListModel(true, MapInfo.getMappableResources()));
+    mappedList.setModel(new MapListModel(true, mapInfo.getMappableResources()));
     mappedList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     mappedList.addListSelectionListener(this);
     return mappedList;
   }
 
   public void cleanup() {
-    if (MapInfo != null) {
-      MapInfo.destroyIOComponentInformation();
-      MapInfo = null;
+    if (mapInfo != null) {
+      mapInfo.destroyIOComponentInformation();
+      mapInfo = null;
     }
     if (unmappedList != null) unmappedList = null;
     if (mappedList != null) mappedList = null;
-    if (UnMapButton != null) UnMapButton = null;
-    if (UnMapAllButton != null) UnMapAllButton = null;
+    if (unmapButton != null) unmapButton = null;
+    if (unmapAllButton != null) unmapAllButton = null;
   }
 
   public ZoomSlider getZoomSlider() {
@@ -203,8 +199,8 @@ public class BoardManipulator extends JPanel
       ((MapListModel) mappedList.getModel()).rebuild();
       mappedList.clearSelection();
     }
-    if (UnMapButton != null) UnMapButton.setEnabled(false);
-    if (UnMapAllButton != null) UnMapAllButton.setEnabled(false);
+    if (unmapButton != null) unmapButton.setEnabled(false);
+    if (unmapAllButton != null) unmapAllButton.setEnabled(false);
   }
 
   @Override
@@ -213,21 +209,21 @@ public class BoardManipulator extends JPanel
   }
 
   public JButton getUnmapOneButton() {
-    if (UnMapButton == null) UnMapButton = new JButton();
-    UnMapButton.setEnabled(false);
-    UnMapButton.setActionCommand("unmapone");
-    UnMapButton.addActionListener(this);
+    if (unmapButton == null) unmapButton = new JButton();
+    unmapButton.setEnabled(false);
+    unmapButton.setActionCommand("unmapone");
+    unmapButton.addActionListener(this);
     localeChanged();
-    return UnMapButton;
+    return unmapButton;
   }
 
   public JButton getUnmapAllButton() {
-    if (UnMapAllButton == null) UnMapAllButton = new JButton();
-    UnMapAllButton.setActionCommand("unmapall");
-    UnMapAllButton.addActionListener(this);
-    UnMapAllButton.setEnabled(false);
+    if (unmapAllButton == null) unmapAllButton = new JButton();
+    unmapAllButton.setActionCommand("unmapall");
+    unmapAllButton.addActionListener(this);
+    unmapAllButton.setEnabled(false);
     localeChanged();
-    return UnMapAllButton;
+    return unmapAllButton;
   }
 
   private int getPictureHeight() {
@@ -235,19 +231,19 @@ public class BoardManipulator extends JPanel
   }
 
   public boolean hasIOComponents() {
-    return IOcomps.hasComponents();
+    return ioComps.hasComponents();
   }
 
   public static Color getColor(int id) {
     return switch (id) {
-      case DEFINE_COLOR_ID -> DEFINE_COLOR;
-      case HIGHLIGHT_COLOR_ID -> HIGHLIGHT_COLOR;
-      case MOVE_COLOR_ID -> MOVE_COLOR;
-      case RESIZE_COLOR_ID -> RESIZE_COLOR;
-      case MAPPED_COLOR_ID -> MAPPED_COLOR;
-      case SELECTED_MAPPED_COLOR_ID -> SELECTED_MAP_COLOR;
-      case SELECTABLE_MAPPED_COLOR_ID -> SELECTABLE_MAP_COLOR;
-      case SELECTABLE_COLOR_ID -> SELECTABLE_COLOR;
+      case DEFINE_COLOR_ID -> defineColor;
+      case HIGHLIGHT_COLOR_ID -> highlightColor;
+      case MOVE_COLOR_ID -> moveColor;
+      case RESIZE_COLOR_ID -> resizeColor;
+      case MAPPED_COLOR_ID -> mappedColor;
+      case SELECTED_MAPPED_COLOR_ID -> selectedMapColor;
+      case SELECTABLE_MAPPED_COLOR_ID -> selectableMapColor;
+      case SELECTABLE_COLOR_ID -> selectableColor;
       default -> null;
     };
   }
@@ -263,7 +259,7 @@ public class BoardManipulator extends JPanel
   }
 
   public List<FpgaIoInformationContainer> getIoComponents() {
-    return IOcomps.getComponents();
+    return ioComps.getComponents();
   }
 
   public void addBoardManipulatorListener(BoardManipulatorListener l) {
@@ -276,54 +272,55 @@ public class BoardManipulator extends JPanel
   public void setBoard(BoardInformation board) {
     clear();
     image = board.getImage();
-    BoardName = board.getBoardName();
-    for (FpgaIoInformationContainer l : board.getAllComponents())
-      IOcomps.addComponent(l, scale);
-    for (BoardManipulatorListener l : listeners)
-        l.boardNameChanged(BoardName);
+    boardName = board.getBoardName();
+    for (final var comp : board.getAllComponents()) {
+      ioComps.addComponent(comp, scale);
+    }
+    for (final var listener : listeners) {
+      listener.boardNameChanged(boardName);
+    }
   }
 
   public void clear() {
     image = null;
-    IOcomps.clear();
+    ioComps.clear();
     defineRectangle = null;
   }
 
   public void removeBoardManipulatorListener(BoardManipulatorListener l) {
-    if (listeners != null)
-      listeners.remove(l);
+    if (listeners != null) listeners.remove(l);
   }
 
   public void setMaxZoom(int value) {
-    if (value < zoom.getMinZoom()) {
-      MaxZoom = zoom.getMinZoom();
-    } else
-      MaxZoom = Math.min(value, zoom.getMaxZoom());
+    maxZoom = (value < zoom.getMinZoom())
+              ? zoom.getMinZoom()
+              : Math.min(value, zoom.getMaxZoom());
   }
 
   private void defineIOComponent() {
-    BoardRectangle rect = defineRectangle.getBoardRectangle(scale);
-    FpgaIoInformationContainer comp = defineRectangle.getIoInfo();
+    final var rect = defineRectangle.getBoardRectangle(scale);
+    var comp = defineRectangle.getIoInfo();
     /*
      * Before doing anything we have to check that this region does not
      * overlap with an already defined region. If we detect an overlap we
      * abort the action.
      */
-    if (IOcomps.hasOverlap(rect)) {
-      DialogNotification.showDialogNotification(
-          IOcomps.getParentFrame(), "Error", S.get("FpgaBoardOverlap"));
-      if (comp != null) IOcomps.addComponent(comp, scale);
+    if (ioComps.hasOverlap(rect)) {
+      DialogNotification.showDialogNotification(ioComps.getParentFrame(), "Error", S.get("FpgaBoardOverlap"));
+      if (comp != null) ioComps.addComponent(comp, scale);
       return;
     }
     if (comp == null) {
-      String result = (new IOComponentSelector(IOcomps.getParentFrame())).run();
+      final var result = (new IOComponentSelector(ioComps.getParentFrame())).run();
       if (result == null) return;
-      comp = new FpgaIoInformationContainer(IoComponentTypes.valueOf(result), rect, IOcomps);
+      comp = new FpgaIoInformationContainer(IoComponentTypes.valueOf(result), rect, ioComps);
     } else
       comp.getRectangle().updateRectangle(rect);
     if (comp.isKnownComponent()) {
-      IOcomps.addComponent(comp, scale);
-      for (BoardManipulatorListener l : listeners) l.componentsChanged(IOcomps);
+      ioComps.addComponent(comp, scale);
+      for (final var listener : listeners) {
+        listener.componentsChanged(ioComps);
+      }
     }
   }
 
@@ -331,28 +328,28 @@ public class BoardManipulator extends JPanel
   @Override
   public void paint(Graphics g) {
     super.paint(g);
-    Graphics2D g2 = (Graphics2D) g;
+    final var g2 = (Graphics2D) g;
     if (!mapMode && image == null) BoardPainter.newBoardpainter(this, g2);
     else if (image == null) BoardPainter.errorBoardPainter(this, g2);
     else {
       g2.drawImage(image.getScaledInstance(getWidth(), getPictureHeight(), 4), 0, 0, null);
       if (mapMode) BoardPainter.paintConstantOpenBar(g2, scale);
-      IOcomps.paint(g2, scale);
+      ioComps.paint(g2, scale);
       if (!mapMode && defineRectangle != null) defineRectangle.paint(g2);
     }
   }
 
   @Override
-  public void stateChanged(ChangeEvent e) {
-    JSlider source = (JSlider) e.getSource();
+  public void stateChanged(ChangeEvent event) {
+    final var source = (JSlider) event.getSource();
     if (!source.getValueIsAdjusting()) {
       int value = source.getValue();
-      if (value > MaxZoom) {
-        source.setValue(MaxZoom);
-        value = MaxZoom;
+      if (value > maxZoom) {
+        source.setValue(maxZoom);
+        value = maxZoom;
       }
       scale = (float) value / (float) 100.0;
-      Dimension mySize = new Dimension(getWidth(), getHeight());
+      final var mySize = new Dimension(getWidth(), getHeight());
       setPreferredSize(mySize);
       setSize(mySize);
     }
@@ -363,10 +360,10 @@ public class BoardManipulator extends JPanel
     if (mapMode) return;
     if (defineRectangle != null) {
       repaint(defineRectangle.resizeAndGetUpdate(e));
-    } else if (IOcomps.hasHighlighted()) {
+    } else if (ioComps.hasHighlighted()) {
       /* resize or move the current highlighted component */
-      FpgaIoInformationContainer edit = IOcomps.getHighligted();
-      IOcomps.removeComponent(edit, scale);
+      final var edit = ioComps.getHighligted();
+      ioComps.removeComponent(edit, scale);
       defineRectangle = new SimpleRectangle(e, edit, scale);
       repaint(defineRectangle.resizeAndGetUpdate(e));
     }
@@ -374,27 +371,27 @@ public class BoardManipulator extends JPanel
 
   @Override
   public void mouseMoved(MouseEvent e) {
-    IOcomps.mouseMoved(e, scale);
+    ioComps.mouseMoved(e, scale);
   }
 
   @Override
   public void mouseClicked(MouseEvent e) {
     if (!mapMode && image == null) {
-      JFileChooser fc = new JFileChooser();
+      final var fc = new JFileChooser();
       fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
       fc.setDialogTitle(S.get("BoardManipLoadPng"));
       fc.setFileFilter(PNGFileFilter.PNG_FILTER);
       fc.setAcceptAllFileFilterUsed(false);
-      int retval = fc.showOpenDialog(this);
-      if (retval == JFileChooser.APPROVE_OPTION) {
-        File file = fc.getSelectedFile();
+      final var retVal = fc.showOpenDialog(this);
+      if (retVal == JFileChooser.APPROVE_OPTION) {
+        final var file = fc.getSelectedFile();
         try {
           image = ImageIO.read(file);
           repaint();
-          BoardName = file.getName().toUpperCase().replaceAll(".PNG", "")
-                        .replaceAll(".XML", "");
+          boardName = file.getName().toUpperCase().replaceAll(".PNG", "")
+                          .replaceAll(".XML", "");
           for (BoardManipulatorListener l : listeners)
-            l.boardNameChanged(BoardName);
+            l.boardNameChanged(boardName);
         } catch (IOException ex) {
           image = null;
           OptionPane.showMessageDialog(
@@ -404,15 +401,13 @@ public class BoardManipulator extends JPanel
               OptionPane.ERROR_MESSAGE);
         }
       }
-    } else if (mapMode && IOcomps.tryMap(this)) {
+    } else if (mapMode && ioComps.tryMap(this)) {
       this.repaint();
-      int sel = unmappedList.getSelectedIndex();
+      var sel = unmappedList.getSelectedIndex();
       update();
       while (sel > unmappedList.getModel().getSize()) sel--;
-      if (sel >= 0) {
-        unmappedList.setSelectedIndex(sel);
-      }
-      MapInfo.markChanged();
+      if (sel >= 0) unmappedList.setSelectedIndex(sel);
+      mapInfo.markChanged();
     }
   }
 
@@ -420,19 +415,18 @@ public class BoardManipulator extends JPanel
   public void mousePressed(MouseEvent e) {
     if (mapMode) return;
     if (image != null) {
-      if (IOcomps.hasHighlighted()) {
+      if (ioComps.hasHighlighted()) {
         /* Edit the current highligted component */
         if (e.getClickCount() > 1) {
           try {
-            FpgaIoInformationContainer clone =
-                (FpgaIoInformationContainer) IOcomps.getHighligted().clone();
-            clone.edit(true, IOcomps);
-            if (clone.isToBeDeleted()) IOcomps.removeComponent(IOcomps.getHighligted(), scale);
+            final var clone = (FpgaIoInformationContainer) ioComps.getHighligted().clone();
+            clone.edit(true, ioComps);
+            if (clone.isToBeDeleted()) ioComps.removeComponent(ioComps.getHighligted(), scale);
             else if (clone.isKnownComponent())
-              IOcomps.replaceComponent(IOcomps.getHighligted(), clone, e, scale);
+              ioComps.replaceComponent(ioComps.getHighligted(), clone, e, scale);
           } catch (CloneNotSupportedException err) {
             OptionPane.showMessageDialog(
-                IOcomps.getParentFrame(),
+                ioComps.getParentFrame(),
                 "INTERNAL BUG: Unable to clone!",
                 "FATAL!",
                 OptionPane.ERROR_MESSAGE);
@@ -449,7 +443,7 @@ public class BoardManipulator extends JPanel
   @Override
   public void mouseReleased(MouseEvent e) {
     if (defineRectangle != null && !mapMode) {
-      Rectangle toBeRepainted = defineRectangle.resizeRemoveAndgetUpdate(e);
+      final var toBeRepainted = defineRectangle.resizeRemoveAndgetUpdate(e);
       defineIOComponent();
       defineRectangle = null;
       repaint(toBeRepainted);
@@ -458,19 +452,19 @@ public class BoardManipulator extends JPanel
 
   @Override
   public void mouseExited(MouseEvent e) {
-    IOcomps.mouseExited(scale);
+    ioComps.mouseExited(scale);
   }
 
   @Override
   public void propertyChange(PropertyChangeEvent evt) {
-    DEFINE_COLOR = new Color(AppPreferences.FPGA_DEFINE_COLOR.get());
-    HIGHLIGHT_COLOR = new Color(AppPreferences.FPGA_DEFINE_HIGHLIGHT_COLOR.get());
-    MOVE_COLOR = new Color(AppPreferences.FPGA_DEFINE_MOVE_COLOR.get());
-    RESIZE_COLOR = new Color(AppPreferences.FPGA_DEFINE_RESIZE_COLOR.get());
-    MAPPED_COLOR = new Color(AppPreferences.FPGA_MAPPED_COLOR.get());
-    SELECTED_MAP_COLOR = new Color(AppPreferences.FPGA_SELECTED_MAPPED_COLOR.get());
-    SELECTABLE_MAP_COLOR = new Color(AppPreferences.FPGA_SELECTABLE_MAPPED_COLOR.get());
-    SELECTABLE_COLOR = new Color(AppPreferences.FPGA_SELECT_COLOR.get());
+    defineColor = new Color(AppPreferences.FPGA_DEFINE_COLOR.get());
+    highlightColor = new Color(AppPreferences.FPGA_DEFINE_HIGHLIGHT_COLOR.get());
+    moveColor = new Color(AppPreferences.FPGA_DEFINE_MOVE_COLOR.get());
+    resizeColor = new Color(AppPreferences.FPGA_DEFINE_RESIZE_COLOR.get());
+    mappedColor = new Color(AppPreferences.FPGA_MAPPED_COLOR.get());
+    selectedMapColor = new Color(AppPreferences.FPGA_SELECTED_MAPPED_COLOR.get());
+    selectableMapColor = new Color(AppPreferences.FPGA_SELECTABLE_MAPPED_COLOR.get());
+    selectableColor = new Color(AppPreferences.FPGA_SELECT_COLOR.get());
     this.repaint();
   }
 
@@ -480,56 +474,56 @@ public class BoardManipulator extends JPanel
   }
 
   @Override
-  public void valueChanged(ListSelectionEvent e) {
-    if (e.getSource().equals(unmappedList)) {
+  public void valueChanged(ListSelectionEvent event) {
+    if (event.getSource().equals(unmappedList)) {
       if (unmappedList.getSelectedIndex() >= 0) {
         mappedList.clearSelection();
-        if (UnMapButton != null) UnMapButton.setEnabled(false);
-        IOcomps.setSelectable(unmappedList.getSelectedValue(), scale);
-      } else IOcomps.removeSelectable(scale);
-    } else if (e.getSource().equals(mappedList)) {
+        if (unmapButton != null) unmapButton.setEnabled(false);
+        ioComps.setSelectable(unmappedList.getSelectedValue(), scale);
+      } else ioComps.removeSelectable(scale);
+    } else if (event.getSource().equals(mappedList)) {
       if (mappedList.getSelectedIndex() >= 0) {
         unmappedList.clearSelection();
-        if (UnMapButton != null) UnMapButton.setEnabled(true);
-        IOcomps.setSelectable(mappedList.getSelectedValue(), scale);
-      } else IOcomps.removeSelectable(scale);
+        if (unmapButton != null) unmapButton.setEnabled(true);
+        ioComps.setSelectable(mappedList.getSelectedValue(), scale);
+      } else ioComps.removeSelectable(scale);
       if (mappedList.getModel().getSize() > 0) {
-        if (UnMapAllButton != null) UnMapAllButton.setEnabled(true);
+        if (unmapAllButton != null) unmapAllButton.setEnabled(true);
       } else {
-        if (UnMapAllButton != null) UnMapAllButton.setEnabled(false);
+        if (unmapAllButton != null) unmapAllButton.setEnabled(false);
       }
     }
   }
 
   @Override
-  public void windowDeactivated(WindowEvent e) {
-    IOcomps.removeSelectable(scale);
-    if (UnMapButton != null) UnMapButton.setEnabled(false);
+  public void windowDeactivated(WindowEvent event) {
+    ioComps.removeSelectable(scale);
+    if (unmapButton != null) unmapButton.setEnabled(false);
   }
 
   @Override
   public void localeChanged() {
-    if (UnMapButton != null) UnMapButton.setText(S.get("BoardMapRelease"));
-    if (UnMapAllButton != null) UnMapAllButton.setText(S.get("BoardMapRelAll"));
+    if (unmapButton != null) unmapButton.setText(S.get("BoardMapRelease"));
+    if (unmapAllButton != null) unmapAllButton.setText(S.get("BoardMapRelAll"));
   }
 
   @Override
-  public void actionPerformed(ActionEvent e) {
-    if (e.getActionCommand().equals("unmapone")) {
+  public void actionPerformed(ActionEvent event) {
+    if (event.getActionCommand().equals("unmapone")) {
       if (mappedList.getSelectedIndex() >= 0) {
-        MapListModel.MapInfo map = mappedList.getSelectedValue();
+        final var map = mappedList.getSelectedValue();
         if (map.getPin() < 0) map.getMap().unmap();
         else map.getMap().unmap(map.getPin());
-        IOcomps.removeSelectable(scale);
+        ioComps.removeSelectable(scale);
         update();
-        MapInfo.markChanged();
+        mapInfo.markChanged();
       }
-    } else if (e.getActionCommand().contentEquals("unmapall")) {
-      IOcomps.removeSelectable(scale);
-      MapInfo.unMapAll();
+    } else if (event.getActionCommand().contentEquals("unmapall")) {
+      ioComps.removeSelectable(scale);
+      mapInfo.unMapAll();
       update();
       repaint();
-      MapInfo.markChanged();
+      mapInfo.markChanged();
     }
   }
 }

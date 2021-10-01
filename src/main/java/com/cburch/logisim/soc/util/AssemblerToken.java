@@ -10,6 +10,7 @@
 package com.cburch.logisim.soc.util;
 
 import java.util.HashSet;
+import java.util.Set;
 
 public class AssemblerToken {
   public static final int LABEL = 1;
@@ -40,7 +41,7 @@ public class AssemblerToken {
    * be used for custom purposes.
    */
 
-  public static final HashSet<Integer> MATH_OPERATORS = new HashSet<>() {
+  public static final Set<Integer> MATH_OPERATORS = new HashSet<>() {
     private static final long serialVersionUID = 1L;
 
     {

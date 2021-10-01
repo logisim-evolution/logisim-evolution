@@ -42,7 +42,6 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.ArrayList;
 import javax.swing.Box;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
@@ -70,18 +69,18 @@ public class AssemblerPanel extends JPanel
   private final Assembler assembler;
   private final RSyntaxTextArea asmWindow;
   private final RTextScrollPane debugScrollPane;
-  private final JLabel Compile = new JLabel();
-  private final JLabel Open = new JLabel();
-  private final JLabel Save = new JLabel();
-  private final JLabel SaveAs = new JLabel();
-  private final JLabel Run = new JLabel();
-  private final JLabel Help = new JLabel();
-  private final JLabel NextError = new JLabel();
-  private final JLabel PrevError = new JLabel();
-  private final JLabel Line = new JLabel();
-  private final JMenuItem MOpen = new JMenuItem();
-  private final JMenuItem MSave = new JMenuItem();
-  private final JMenuItem MSaveAs = new JMenuItem();
+  private final JLabel compileLabel = new JLabel();
+  private final JLabel openLabel = new JLabel();
+  private final JLabel saveLabel = new JLabel();
+  private final JLabel saveAsLabel = new JLabel();
+  private final JLabel runLabel = new JLabel();
+  private final JLabel helpLabel = new JLabel();
+  private final JLabel nextErrorLabel = new JLabel();
+  private final JLabel prevErrorLabel = new JLabel();
+  private final JLabel lineLabel = new JLabel();
+  private final JMenuItem openMenuItem = new JMenuItem();
+  private final JMenuItem saveMenuItem = new JMenuItem();
+  private final JMenuItem saveAsMenuItem = new JMenuItem();
   private final ListeningFrame parent;
   private final SocProcessorInterface cpu;
   private final CircuitState circuitState;
@@ -109,52 +108,52 @@ public class AssemblerPanel extends JPanel
     asmWindow.addCaretListener(this);
     JPopupMenu popUp = asmWindow.getPopupMenu();
     popUp.remove(popUp.getComponentCount() - 1);
-    popUp.add(MOpen);
-    MOpen.addActionListener(this);
-    popUp.add(MSave);
-    MSave.addActionListener(this);
-    popUp.add(MSaveAs);
-    MSaveAs.addActionListener(this);
+    popUp.add(openMenuItem);
+    openMenuItem.addActionListener(this);
+    popUp.add(saveMenuItem);
+    saveMenuItem.addActionListener(this);
+    popUp.add(saveAsMenuItem);
+    saveAsMenuItem.addActionListener(this);
     asmWindow.setPopupMenu(popUp);
     debugScrollPane = new RTextScrollPane(asmWindow);
     debugScrollPane.setLineNumbersEnabled(true);
     debugScrollPane.setIconRowHeaderEnabled(true);
     debugScrollPane.getGutter().setBookmarkingEnabled(false);
     Box info = Box.createHorizontalBox();
-    Open.setIcon(new OpenSaveIcon(OpenSaveIcon.FILE_OPEN));
-    Open.addMouseListener(this);
-    info.add(Open);
-    Save.setIcon(new OpenSaveIcon(OpenSaveIcon.FILE_SAVE));
-    Save.addMouseListener(this);
+    openLabel.setIcon(new OpenSaveIcon(OpenSaveIcon.FILE_OPEN));
+    openLabel.addMouseListener(this);
+    info.add(openLabel);
+    saveLabel.setIcon(new OpenSaveIcon(OpenSaveIcon.FILE_SAVE));
+    saveLabel.addMouseListener(this);
     info.add(Box.createHorizontalStrut(5));
-    info.add(Save);
-    SaveAs.setIcon(new OpenSaveIcon(OpenSaveIcon.FILE_SAVE_AS));
-    SaveAs.addMouseListener(this);
+    info.add(saveLabel);
+    saveAsLabel.setIcon(new OpenSaveIcon(OpenSaveIcon.FILE_SAVE_AS));
+    saveAsLabel.addMouseListener(this);
     info.add(Box.createHorizontalStrut(5));
-    info.add(SaveAs);
-    Compile.setIcon(new CompileIcon());
-    Compile.addMouseListener(this);
+    info.add(saveAsLabel);
+    compileLabel.setIcon(new CompileIcon());
+    compileLabel.addMouseListener(this);
     info.add(Box.createHorizontalStrut(5));
-    info.add(Compile);
-    PrevError.setIcon(new ErrorIcon(false, true));
-    PrevError.addMouseListener(this);
+    info.add(compileLabel);
+    prevErrorLabel.setIcon(new ErrorIcon(false, true));
+    prevErrorLabel.addMouseListener(this);
     info.add(Box.createHorizontalStrut(5));
-    info.add(PrevError);
-    NextError.setIcon(new ErrorIcon(true, false));
-    NextError.addMouseListener(this);
+    info.add(prevErrorLabel);
+    nextErrorLabel.setIcon(new ErrorIcon(true, false));
+    nextErrorLabel.addMouseListener(this);
     info.add(Box.createHorizontalStrut(5));
-    info.add(NextError);
-    Run.setIcon(new RunIcon());
-    Run.addMouseListener(this);
+    info.add(nextErrorLabel);
+    runLabel.setIcon(new RunIcon());
+    runLabel.addMouseListener(this);
     info.add(Box.createHorizontalStrut(5));
-    info.add(Run);
-    Help.setIcon(new InfoIcon());
-    Help.addMouseListener(this);
+    info.add(runLabel);
+    helpLabel.setIcon(new InfoIcon());
+    helpLabel.addMouseListener(this);
     info.add(Box.createHorizontalStrut(5));
-    info.add(Help);
+    info.add(helpLabel);
     info.add(Box.createHorizontalGlue());
-    Line.setOpaque(true);
-    info.add(Line);
+    lineLabel.setOpaque(true);
+    info.add(lineLabel);
     info.setPreferredSize(new Dimension(40, AppPreferences.getScaled(20)));
     setLayout(new BorderLayout());
     info.add(Box.createHorizontalStrut(5));
@@ -263,14 +262,14 @@ public class AssemblerPanel extends JPanel
   }
 
   private void updateLineNumber() {
-    Line.setBackground(documentChanged ? Color.YELLOW : Color.WHITE);
-    Line.setText(S.get("RV32imAsmLineIndicator", lineNumber, numberOfLines));
-    Line.repaint();
+    lineLabel.setBackground(documentChanged ? Color.YELLOW : Color.WHITE);
+    lineLabel.setText(S.get("RV32imAsmLineIndicator", lineNumber, numberOfLines));
+    lineLabel.repaint();
   }
 
   private void nextError(boolean after) {
-    int carretPos = asmWindow.getCaretPosition();
-    ArrayList<Integer> errorPositions = assembler.getErrorPositions();
+    final var carretPos = asmWindow.getCaretPosition();
+    final var errorPositions = assembler.getErrorPositions();
     if (errorPositions.isEmpty()) return;
     int findex = -1;
     int index = 0;
@@ -281,31 +280,34 @@ public class AssemblerPanel extends JPanel
     if (after) {
       if (findex < 0 || findex == (errorPositions.size() - 1))
         asmWindow.setCaretPosition(errorPositions.get(0));
-      else asmWindow.setCaretPosition(errorPositions.get(findex + 1));
+      else
+        asmWindow.setCaretPosition(errorPositions.get(findex + 1));
     } else {
-      if (findex <= 0) asmWindow.setCaretPosition(errorPositions.get(errorPositions.size() - 1));
-      else asmWindow.setCaretPosition(errorPositions.get(findex - 1));
+      if (findex <= 0)
+        asmWindow.setCaretPosition(errorPositions.get(errorPositions.size() - 1));
+      else
+        asmWindow.setCaretPosition(errorPositions.get(findex - 1));
     }
   }
 
   @Override
   public void mouseClicked(MouseEvent e) {
-    Object source = e.getSource();
-    if (source == Open) openFile();
-    else if (source == Save) saveFile(false);
-    else if (source == SaveAs) saveFile(true);
-    else if (source == Compile) assemble(true);
-    else if (source == NextError) nextError(true);
-    else if (source == PrevError) nextError(false);
-    else if (source == Run) runProgram();
+    final var source = e.getSource();
+    if (source == openLabel) openFile();
+    else if (source == saveLabel) saveFile(false);
+    else if (source == saveAsLabel) saveFile(true);
+    else if (source == compileLabel) assemble(true);
+    else if (source == nextErrorLabel) nextError(true);
+    else if (source == prevErrorLabel) nextError(false);
+    else if (source == runLabel) runProgram();
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
     Object source = e.getSource();
-    if (source == MOpen) openFile();
-    else if (source == MSave) saveFile(false);
-    else if (source == MSaveAs) saveFile(true);
+    if (source == openMenuItem) openFile();
+    else if (source == saveMenuItem) saveFile(false);
+    else if (source == saveAsMenuItem) saveFile(true);
   }
 
   @Override
@@ -322,16 +324,16 @@ public class AssemblerPanel extends JPanel
 
   @Override
   public void localeChanged() {
-    Open.setToolTipText(S.get("AsmPanOpenFile"));
-    Save.setToolTipText(S.get("AsmPanSaveFile"));
-    SaveAs.setToolTipText(S.get("AsmPanSaveFileAs"));
-    Compile.setToolTipText(S.get("AsmPanAssemble"));
-    NextError.setToolTipText(S.get("AsmPanNextError"));
-    PrevError.setToolTipText(S.get("AsmPanPreviousError"));
-    Run.setToolTipText(S.get("AsmPanRun"));
-    MOpen.setText(S.get("AsmPanOpenFile"));
-    MSave.setText(S.get("AsmPanSaveFile"));
-    MSaveAs.setText(S.get("AsmPanSaveFileAs"));
+    openLabel.setToolTipText(S.get("AsmPanOpenFile"));
+    saveLabel.setToolTipText(S.get("AsmPanSaveFile"));
+    saveAsLabel.setToolTipText(S.get("AsmPanSaveFileAs"));
+    compileLabel.setToolTipText(S.get("AsmPanAssemble"));
+    nextErrorLabel.setToolTipText(S.get("AsmPanNextError"));
+    prevErrorLabel.setToolTipText(S.get("AsmPanPreviousError"));
+    runLabel.setToolTipText(S.get("AsmPanRun"));
+    openMenuItem.setText(S.get("AsmPanOpenFile"));
+    saveMenuItem.setText(S.get("AsmPanSaveFile"));
+    saveAsMenuItem.setText(S.get("AsmPanSaveFileAs"));
     updateLineNumber();
   }
 

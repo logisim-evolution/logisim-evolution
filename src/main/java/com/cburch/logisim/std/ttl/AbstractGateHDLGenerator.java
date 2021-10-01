@@ -48,7 +48,7 @@ public class AbstractGateHDLGenerator extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer();
     final var nrOfGates = isInverter ? 6 : 4;
     for (var i = 0; i < nrOfGates; i++) {

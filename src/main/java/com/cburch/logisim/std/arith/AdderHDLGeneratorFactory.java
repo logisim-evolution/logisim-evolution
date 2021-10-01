@@ -43,7 +43,7 @@ public class AdderHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer();
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (Hdl.isVhdl()) {

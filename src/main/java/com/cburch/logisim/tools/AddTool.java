@@ -86,9 +86,9 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   private int state = SHOW_GHOST;
   private Action lastAddition;
   private boolean keyHandlerTried;
-  private boolean MatrixPlace = false;
+  private boolean matrixPlace = false;
   private KeyConfigurator keyHandler;
-  private final AutoLabel AutoLabler = new AutoLabel();
+  private final AutoLabel autoLabler = new AutoLabel();
 
   private AddTool(AddTool base) {
     this.descriptionBase = base.descriptionBase;
@@ -159,7 +159,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     moveTo(canvas, canvas.getGraphics(), INVALID_COORD, INVALID_COORD);
     bounds = null;
     lastAddition = null;
-    MatrixPlace = false;
+    matrixPlace = false;
   }
 
   private Tool determineNext(Project proj) {
@@ -190,9 +190,9 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     Color DrawColor;
     /* take care of coloring the components differently that require a label */
     if (state == SHOW_GHOST) {
-      DrawColor = AutoLabler.isActive(canvas.getCircuit()) ? Color.MAGENTA : Color.GRAY;
+      DrawColor = autoLabler.isActive(canvas.getCircuit()) ? Color.MAGENTA : Color.GRAY;
       source.drawGhost(context, DrawColor, x, y, getBaseAttributes());
-      if (MatrixPlace) {
+      if (matrixPlace) {
         source.drawGhost(context, DrawColor, x + bds.getWidth() + 3, y, getBaseAttributes());
         source.drawGhost(context, DrawColor, x, y + bds.getHeight() + 3, getBaseAttributes());
         source.drawGhost(
@@ -203,9 +203,9 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
             getBaseAttributes());
       }
     } else if (state == SHOW_ADD) {
-      DrawColor = AutoLabler.isActive(canvas.getCircuit()) ? Color.BLUE : Color.BLACK;
+      DrawColor = autoLabler.isActive(canvas.getCircuit()) ? Color.BLUE : Color.BLACK;
       source.drawGhost(context, DrawColor, x, y, getBaseAttributes());
-      if (MatrixPlace) {
+      if (matrixPlace) {
         source.drawGhost(context, DrawColor, x + bds.getWidth() + 3, y, getBaseAttributes());
         source.drawGhost(context, DrawColor, x, y + bds.getHeight() + 3, getBaseAttributes());
         source.drawGhost(
@@ -332,10 +332,10 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   }
 
   @Override
-  public boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver) {
-    return this.attrs == attrs
-        && attrs instanceof FactoryAttributes
-        && !((FactoryAttributes) attrs).isFactoryInstantiated();
+  public boolean isAllDefaultValues(AttributeSet attributeSet, LogisimVersion ver) {
+    return attrs == attributeSet
+        && attributeSet instanceof FactoryAttributes factAttrs
+        && !factAttrs.isFactoryInstantiated();
   }
 
   @Override
@@ -343,23 +343,22 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     processKeyEvent(canvas, event, KeyConfigurationEvent.KEY_PRESSED);
 
     if (!event.isConsumed() && event.getModifiersEx() == 0) {
-      int KeybEvent = event.getKeyCode();
-      final var Component = getFactory().getDisplayName();
-      if (!GateKeyboardModifier.tookKeyboardStrokes(KeybEvent, null, attrs, canvas, null, false))
-        if (AutoLabler.labelKeyboardHandler(
-            KeybEvent,
+      final var keyEventB = event.getKeyCode();
+      final var component = getFactory().getDisplayName();
+      if (!GateKeyboardModifier.tookKeyboardStrokes(keyEventB, null, attrs, canvas, null, false))
+        if (autoLabler.labelKeyboardHandler(keyEventB,
             getAttributeSet(),
-            Component,
+            component,
             null,
             getFactory(),
             canvas.getCircuit(),
             null,
             false)) {
           canvas.repaint();
-        } else
-          switch (KeybEvent) {
+        } else {
+          switch (keyEventB) {
             case KeyEvent.VK_X:
-              MatrixPlace = !MatrixPlace;
+              matrixPlace = !matrixPlace;
               canvas.repaint();
               break;
             case KeyEvent.VK_UP:
@@ -375,7 +374,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
               setFacing(canvas, Direction.EAST);
               break;
             case KeyEvent.VK_R:
-              Direction current = getFacing();
+              final var current = getFacing();
               if (current == Direction.NORTH) setFacing(canvas, Direction.EAST);
               else if (current == Direction.EAST) setFacing(canvas, Direction.SOUTH);
               else if (current == Direction.SOUTH) setFacing(canvas, Direction.WEST);
@@ -399,6 +398,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
                 lastAddition = null;
               }
           }
+        }
     }
   }
 
@@ -413,15 +413,15 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   }
 
   @Override
-  public void mouseDragged(Canvas canvas, Graphics g, MouseEvent e) {
+  public void mouseDragged(Canvas canvas, Graphics gfx, MouseEvent event) {
     if (state != SHOW_NONE) {
-      if (shouldSnap) Canvas.snapToGrid(e);
-      moveTo(canvas, g, e.getX(), e.getY());
+      if (shouldSnap) Canvas.snapToGrid(event);
+      moveTo(canvas, gfx, event.getX(), event.getY());
     }
   }
 
   @Override
-  public void mouseEntered(Canvas canvas, Graphics g, MouseEvent e) {
+  public void mouseEntered(Canvas canvas, Graphics gfx, MouseEvent event) {
     if (state == SHOW_GHOST || state == SHOW_NONE) {
       setState(canvas, SHOW_GHOST);
       canvas.requestFocusInWindow();
@@ -432,7 +432,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   }
 
   @Override
-  public void mouseExited(Canvas canvas, Graphics g, MouseEvent e) {
+  public void mouseExited(Canvas canvas, Graphics gfx, MouseEvent event) {
     if (state == SHOW_GHOST) {
       moveTo(canvas, canvas.getGraphics(), INVALID_COORD, INVALID_COORD);
       setState(canvas, SHOW_NONE);
@@ -443,10 +443,10 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   }
 
   @Override
-  public void mouseMoved(Canvas canvas, Graphics g, MouseEvent e) {
+  public void mouseMoved(Canvas canvas, Graphics gfx, MouseEvent event) {
     if (state != SHOW_NONE) {
-      if (shouldSnap) Canvas.snapToGrid(e);
-      moveTo(canvas, g, e.getX(), e.getY());
+      if (shouldSnap) Canvas.snapToGrid(event);
+      moveTo(canvas, gfx, event.getX(), event.getY());
     }
   }
 
@@ -458,8 +458,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
       canvas.setErrorMessage(S.getter("cannotModifyError"));
       return;
     }
-    if (factory instanceof SubcircuitFactory) {
-      final var circFact = (SubcircuitFactory) factory;
+    if (factory instanceof SubcircuitFactory circFact) {
       final var depends = canvas.getProject().getDependencies();
       if (!depends.canAdd(circ, circFact.getSubcircuit())) {
         canvas.setErrorMessage(S.getter("circularError"));
@@ -473,51 +472,49 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   }
 
   @Override
-  public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {
+  public void mouseReleased(Canvas canvas, Graphics gfx, MouseEvent event) {
     final var added = new ArrayList<Component>();
     if (state == SHOW_ADD) {
       final var circ = canvas.getCircuit();
       if (!canvas.getProject().getLogisimFile().contains(circ)) return;
-      if (shouldSnap) Canvas.snapToGrid(e);
-      moveTo(canvas, g, e.getX(), e.getY());
+      if (shouldSnap) Canvas.snapToGrid(event);
+      moveTo(canvas, gfx, event.getX(), event.getY());
 
       final var source = getFactory();
       if (source == null) return;
-      String Label = null;
+      String label = null;
       if (attrs.containsAttribute(StdAttr.LABEL)) {
-        Label = attrs.getValue(StdAttr.LABEL);
+        label = attrs.getValue(StdAttr.LABEL);
         /* Here we make sure to not overrride labels that have default value */
-        if (AutoLabler.isActive(canvas.getCircuit()) && ((Label == null) || Label.isEmpty())) {
-          Label = AutoLabler.getCurrent(canvas.getCircuit(), source);
-          if (AutoLabler.hasNext(canvas.getCircuit()))
-            AutoLabler.getNext(canvas.getCircuit(), source);
-          else AutoLabler.stop(canvas.getCircuit());
+        if (autoLabler.isActive(canvas.getCircuit()) && ((label == null) || label.isEmpty())) {
+          label = autoLabler.getCurrent(canvas.getCircuit(), source);
+          if (autoLabler.hasNext(canvas.getCircuit()))
+            autoLabler.getNext(canvas.getCircuit(), source);
+          else autoLabler.stop(canvas.getCircuit());
         }
-        if (!AutoLabler.isActive(canvas.getCircuit()))
-          AutoLabler.setLabel("", canvas.getCircuit(), source);
+        if (!autoLabler.isActive(canvas.getCircuit()))
+          autoLabler.setLabel("", canvas.getCircuit(), source);
       }
 
-      final var matrix = new MatrixPlacerInfo(Label);
-      if (MatrixPlace) {
+      final var matrix = new MatrixPlacerInfo(label);
+      if (matrixPlace) {
         final var base = getBaseAttributes();
         final var bds = source.getOffsetBounds(base).expand(5);
         matrix.setBounds(bds);
-        final var diag =
-            new MatrixPlacerDialog(
-                matrix, source.getName(), AutoLabler.isActive(canvas.getCircuit()));
+        final var dialog = new MatrixPlacerDialog(matrix, source.getName(), autoLabler.isActive(canvas.getCircuit()));
         var okay = false;
         while (!okay) {
-          if (!diag.execute()) return;
+          if (!dialog.execute()) return;
           if (SyntaxChecker.isVariableNameAcceptable(matrix.getLabel(), true)) {
-            AutoLabler.setLabel(matrix.getLabel(), canvas.getCircuit(), source);
+            autoLabler.setLabel(matrix.getLabel(), canvas.getCircuit(), source);
             okay =
-                AutoLabler.correctMatrixBaseLabel(
+                autoLabler.correctMatrixBaseLabel(
                     canvas.getCircuit(),
                     source,
                     matrix.getLabel(),
                     matrix.getNrOfXCopies(),
                     matrix.getNrOfYCopies());
-            AutoLabler.setLabel(Label, canvas.getCircuit(), source);
+            autoLabler.setLabel(label, canvas.getCircuit(), source);
             if (!okay) {
               OptionPane.showMessageDialog(
                   null,
@@ -535,12 +532,12 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
         for (var x = 0; x < matrix.getNrOfXCopies(); x++) {
           for (var y = 0; y < matrix.getNrOfYCopies(); y++) {
-            final var loc = Location.create(e.getX() + (matrix.getDeltaX() * x),
-                e.getY() + (matrix.getDeltaY() * y));
+            final var loc = Location.create(event.getX() + (matrix.getDeltaX() * x),
+                event.getY() + (matrix.getDeltaY() * y));
             final var attrsCopy = (AttributeSet) attrs.clone();
             if (matrix.getLabel() != null) {
-              if (MatrixPlace)
-                attrsCopy.setValue(StdAttr.LABEL, AutoLabler.getMatrixLabel(canvas.getCircuit(),
+              if (matrixPlace)
+                attrsCopy.setValue(StdAttr.LABEL, autoLabler.getMatrixLabel(canvas.getCircuit(),
                     source, matrix.getLabel(), x, y));
               else {
                 attrsCopy.setValue(StdAttr.LABEL, matrix.getLabel());
@@ -553,7 +550,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
               return;
             }
 
-            final var bds = comp.getBounds(g);
+            final var bds = comp.getBounds(gfx);
             if (bds.getX() < 0 || bds.getY() < 0) {
               canvas.setErrorMessage(S.getter("negativeCoordError"));
               return;
@@ -572,7 +569,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
         added.clear();
       }
       setState(canvas, SHOW_GHOST);
-      MatrixPlace = false;
+      matrixPlace = false;
     } else if (state == SHOW_ADD_NO) {
       setState(canvas, SHOW_NONE);
     }

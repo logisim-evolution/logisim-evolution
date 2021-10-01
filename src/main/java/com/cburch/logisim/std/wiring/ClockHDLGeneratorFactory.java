@@ -61,27 +61,27 @@ public class ClockHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public SortedMap<String, String> getPortMap(Netlist Nets, Object MapInfo) {
+  public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
-    if (!(MapInfo instanceof netlistComponent)) return map;
-    final var componentInfo = (netlistComponent) MapInfo;
+    if (!(mapInfo instanceof netlistComponent)) return map;
+    final var componentInfo = (netlistComponent) mapInfo;
     map.put("GlobalClock", TickComponentHdlGeneratorFactory.FPGA_CLOCK);
     map.put("ClockTick", TickComponentHdlGeneratorFactory.FPGA_TICK);
-    map.put("ClockBus", getClockNetName(componentInfo.getComponent(), Nets));
+    map.put("ClockBus", getClockNetName(componentInfo.getComponent(), nets));
     return map;
   }
 
-  private static String getClockNetName(Component comp, Netlist TheNets) {
-    StringBuilder contents = new StringBuilder();
-    int ClockNetId = TheNets.getClockSourceId(comp);
-    if (ClockNetId >= 0) {
-      contents.append("s_").append(HdlGeneratorFactory.CLOCK_TREE_NAME).append(ClockNetId);
+  private static String getClockNetName(Component comp, Netlist theNets) {
+    final var contents = new StringBuilder();
+    int clockNetId = theNets.getClockSourceId(comp);
+    if (clockNetId >= 0) {
+      contents.append("s_").append(HdlGeneratorFactory.CLOCK_TREE_NAME).append(clockNetId);
     }
     return contents.toString();
   }
 
   @Override
-  public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
+  public LineBuffer getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
     final var contents = LineBuffer.getHdlBuffer()
             .pair("phase", PHASE_STR)
             .pair("nrOfBits", NR_OF_BITS_STR)
