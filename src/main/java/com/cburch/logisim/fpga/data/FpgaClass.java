@@ -12,11 +12,12 @@ package com.cburch.logisim.fpga.data;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 public class FpgaClass {
   public static char getId(String identifier) {
     char result = 0;
-    LinkedList<String> thelist = VendorSoftware.getVendorStrings();
+    List<String> thelist = VendorSoftware.getVendorStrings();
     Iterator<String> iter = thelist.iterator();
     result = 0;
     while (iter.hasNext()) {
