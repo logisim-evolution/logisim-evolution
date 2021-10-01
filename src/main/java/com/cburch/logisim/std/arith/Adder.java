@@ -39,40 +39,40 @@ public class Adder extends InstanceFactory {
    */
   public static final String _ID = "Adder";
 
-  static Value[] computeSum(BitWidth width, Value a, Value b, Value c_in) {
-    int w = width.getWidth();
-    if (c_in == Value.UNKNOWN || c_in == Value.NIL) c_in = Value.FALSE;
-    if (a.isFullyDefined() && b.isFullyDefined() && c_in.isFullyDefined()) {
+  static Value[] computeSum(BitWidth width, Value valueA, Value valueB, Value cIn) {
+    final var w = width.getWidth();
+    if (cIn == Value.UNKNOWN || cIn == Value.NIL) cIn = Value.FALSE;
+    if (valueA.isFullyDefined() && valueB.isFullyDefined() && cIn.isFullyDefined()) {
       if (w == 64) {
-        long ax = a.toLongValue();
-        long bx = b.toLongValue();
-        long cx = c_in.toLongValue();
-        long mask = ~(1L << 63);
-        boolean a_last = (ax < 0);
-        boolean b_last = (bx < 0);
-        boolean cin_last = (((ax & mask) + (bx & mask) + cx) < 0);
-        boolean cout = (a_last && b_last) || (a_last && cin_last) || (b_last && cin_last);
-        long sum = a.toLongValue() + b.toLongValue() + c_in.toLongValue();
+        final var ax = valueA.toLongValue();
+        final var bx = valueB.toLongValue();
+        final var cx = cIn.toLongValue();
+        final var mask = ~(1L << 63);
+        final var aLast = (ax < 0);
+        final var bLast = (bx < 0);
+        final var cInLast = (((ax & mask) + (bx & mask) + cx) < 0);
+        final var cOut = (aLast && bLast) || (aLast && cInLast) || (bLast && cInLast);
+        final var sum = valueA.toLongValue() + valueB.toLongValue() + cIn.toLongValue();
         return new Value[] {
-          Value.createKnown(width, sum), cout ? Value.TRUE : Value.FALSE
+          Value.createKnown(width, sum), cOut ? Value.TRUE : Value.FALSE
         };
       } else {
-        long sum = a.toLongValue() + b.toLongValue() + c_in.toLongValue();
+        final var sum = valueA.toLongValue() + valueB.toLongValue() + cIn.toLongValue();
         return new Value[] {
           Value.createKnown(width, sum), ((sum >> w) & 1) == 0 ? Value.FALSE : Value.TRUE
         };
       }
     } else {
-      Value[] bits = new Value[w];
-      Value carry = c_in;
+      final var bits = new Value[w];
+      var carry = cIn;
       for (int i = 0; i < w; i++) {
         if (carry == Value.ERROR) {
           bits[i] = Value.ERROR;
         } else if (carry == Value.UNKNOWN) {
           bits[i] = Value.UNKNOWN;
         } else {
-          Value ab = a.get(i);
-          Value bb = b.get(i);
+          Value ab = valueA.get(i);
+          Value bb = valueB.get(i);
           if (ab == Value.ERROR || bb == Value.ERROR) {
             bits[i] = Value.ERROR;
             carry = Value.ERROR;
@@ -108,7 +108,7 @@ public class Adder extends InstanceFactory {
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
     setIcon(new ArithmeticIcon("+"));
 
-    Port[] ps = new Port[5];
+    final var ps = new Port[5];
     ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.WIDTH);
     ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.WIDTH);
     ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
@@ -158,8 +158,8 @@ public class Adder extends InstanceFactory {
     // compute outputs
     Value a = state.getPortValue(IN0);
     Value b = state.getPortValue(IN1);
-    Value c_in = state.getPortValue(C_IN);
-    Value[] outs = Adder.computeSum(dataWidth, a, b, c_in);
+    Value cIn = state.getPortValue(C_IN);
+    Value[] outs = Adder.computeSum(dataWidth, a, b, cIn);
 
     // propagate them
     int delay = (dataWidth.getWidth() + 2) * PER_DELAY;

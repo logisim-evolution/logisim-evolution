@@ -13,5 +13,5 @@ public interface BoardManipulatorListener {
 
   void boardNameChanged(String newBoardName);
 
-  void componentsChanged(IoComponentsInformation IOcomps);
+  void componentsChanged(IoComponentsInformation ioComps);
 }

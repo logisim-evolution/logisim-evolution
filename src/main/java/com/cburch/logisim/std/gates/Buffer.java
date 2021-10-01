@@ -114,12 +114,12 @@ class Buffer extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    final var CompleteName = new StringBuilder();
-    CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
-    CompleteName.append("_COMPONENT");
+    final var completeName = new StringBuilder();
+    completeName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
+    completeName.append("_COMPONENT");
     final var width = attrs.getValue(StdAttr.WIDTH);
-    if (width.getWidth() > 1) CompleteName.append("_BUS");
-    return CompleteName.toString();
+    if (width.getWidth() > 1) completeName.append("_BUS");
+    return completeName.toString();
   }
 
   @Override
@@ -149,9 +149,9 @@ class Buffer extends InstanceFactory {
 
   @Override
   public boolean hasThreeStateDrivers(AttributeSet attrs) {
-    if (attrs.containsAttribute(GateAttributes.ATTR_OUTPUT))
-      return !(attrs.getValue(GateAttributes.ATTR_OUTPUT) == GateAttributes.OUTPUT_01);
-    else return false;
+    return attrs.containsAttribute(GateAttributes.ATTR_OUTPUT)
+        ? attrs.getValue(GateAttributes.ATTR_OUTPUT) != GateAttributes.OUTPUT_01
+        : false;
   }
 
   @Override
@@ -166,18 +166,18 @@ class Buffer extends InstanceFactory {
   private void paintBase(InstancePainter painter) {
     final var facing = painter.getAttributeValue(StdAttr.FACING);
     final var loc = painter.getLocation();
-    int x = loc.getX();
-    int y = loc.getY();
+    final var x = loc.getX();
+    final var y = loc.getY();
     final var g = painter.getGraphics();
     g.translate(x, y);
-    double rotate = 0.0;
-    if (facing != Direction.EAST && g instanceof Graphics2D) {
+    var rotate = 0.0d;
+    if (facing != Direction.EAST && g instanceof Graphics2D g2d) {
       rotate = -facing.toRadians();
-      ((Graphics2D) g).rotate(rotate);
+      g2d.rotate(rotate);
     }
 
     GraphicsUtil.switchToWidth(g, 2);
-    Object shape = painter.getGateShape();
+    final var shape = painter.getGateShape();
     if (shape == AppPreferences.SHAPE_RECTANGULAR) {
       g.drawRect(-19, -9, 18, 18);
       GraphicsUtil.drawCenteredText(g, "1", -10, 0);
@@ -219,8 +219,7 @@ class Buffer extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    var in = state.getPortValue(1);
-    in = Buffer.repair(state, in);
+    final var in = Buffer.repair(state, state.getPortValue(1));
     state.setPort(0, in.not().not(), GateAttributes.DELAY);
   }
 
@@ -230,6 +229,6 @@ class Buffer extends InstanceFactory {
     if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR)
       AbstractGate.paintIconIEC(g, "1", false, true);
     else
-      AbstractGate.paintIconBufferANSI(g, false, false);
+      AbstractGate.paintIconBufferAnsi(g, false, false);
   }
 }

@@ -24,10 +24,10 @@ import java.awt.event.MouseEvent;
 
 public class AbstractOctalFlops extends AbstractTtlGate {
 
-  private boolean HasWe;
+  private boolean hasWe;
 
-  protected AbstractOctalFlops(String name, byte pins, byte[] outputports, String[] Ttlportnames, HdlGeneratorFactory generator) {
-    super(name, pins, outputports, Ttlportnames, 80, generator);
+  protected AbstractOctalFlops(String name, byte pins, byte[] outputPorts, String[] ttlPortNames, HdlGeneratorFactory generator) {
+    super(name, pins, outputPorts, ttlPortNames, 80, generator);
     super.setInstancePoker(Poker.class);
   }
 
@@ -82,7 +82,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
   }
 
   public void setWe(boolean haswe) {
-    HasWe = haswe;
+    hasWe = haswe;
   }
 
   @Override
@@ -113,7 +113,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
     g.drawLine(x + 70, y + 59, x + 70, y + 60);
 
     g.rotate(-Math.PI / 2, x, y);
-    if (HasWe) {
+    if (hasWe) {
       g.drawString("1C2", x - 49, y + 83);
       g.drawString("G1", x - 54, y + 73);
       g.drawString("2D", x - 54, y + 98);
@@ -174,7 +174,7 @@ public class AbstractOctalFlops extends AbstractTtlGate {
     var changed = false;
     final var triggered = data.updateClock(state.getPortValue(9));
     var values = data.getValue().getAll();
-    if (HasWe) {
+    if (hasWe) {
       if (triggered && (state.getPortValue(0).equals(Value.FALSE))) {
         changed = true;
         values[0] = state.getPortValue(2);

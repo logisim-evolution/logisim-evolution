@@ -16,7 +16,6 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.HdlPorts;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.List;
 
 public class AbstractOctalFlopsHDLGenerator extends AbstractHdlGeneratorFactory {
 

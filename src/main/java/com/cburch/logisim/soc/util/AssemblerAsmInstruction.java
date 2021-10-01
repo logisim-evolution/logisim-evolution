@@ -15,6 +15,7 @@ import com.cburch.logisim.util.StringGetter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
 public class AssemblerAsmInstruction {
   private final AssemblerToken instruction;
@@ -61,7 +62,7 @@ public class AssemblerAsmInstruction {
     errors.put(token, error);
   }
 
-  public HashMap<AssemblerToken, StringGetter> getErrors() {
+  public Map<AssemblerToken, StringGetter> getErrors() {
     return errors;
   }
 
@@ -97,47 +98,45 @@ public class AssemblerAsmInstruction {
     return parameters.get(index);
   }
 
-  public boolean replaceLabels(
-      HashMap<String, Long> labels, HashMap<AssemblerToken, StringGetter> errors) {
-    for (AssemblerToken[] parameter : parameters) {
-      for (AssemblerToken assemblerToken : parameter) {
+  public boolean replaceLabels(Map<String, Long> labels, Map<AssemblerToken, StringGetter> errors) {
+    for (final var parameter : parameters) {
+      for (final var assemblerToken : parameter) {
         if (assemblerToken.getType() == AssemblerToken.PARAMETER_LABEL) {
-          String Name = assemblerToken.getValue();
-          if (!labels.containsKey(Name)) {
+          final var name = assemblerToken.getValue();
+          if (!labels.containsKey(name)) {
             errors.put(assemblerToken, S.getter("AssemblerCouldNotFindAddressForLabel"));
             return false;
           }
           assemblerToken.setType(AssemblerToken.HEX_NUMBER);
-          assemblerToken.setValue(String.format("0x%08X", labels.get(Name)));
+          assemblerToken.setValue(String.format("0x%08X", labels.get(name)));
         }
       }
     }
     return true;
   }
 
-  public boolean replaceDefines(
-      HashMap<String, Integer> defines, HashMap<AssemblerToken, StringGetter> errors) {
-    for (AssemblerToken[] parameter : parameters) {
-      for (AssemblerToken assemblerToken : parameter) {
+  public boolean replaceDefines(Map<String, Integer> defines, Map<AssemblerToken, StringGetter> errors) {
+    for (final var parameter : parameters) {
+      for (final var assemblerToken : parameter) {
         if (assemblerToken.getType() == AssemblerToken.MAYBE_LABEL) {
-          String Name = assemblerToken.getValue();
-          if (!defines.containsKey(Name)) {
+          final var name = assemblerToken.getValue();
+          if (!defines.containsKey(name)) {
             errors.put(assemblerToken, S.getter("AssemblerCouldNotFindValueForDefine"));
             return false;
           }
           assemblerToken.setType(AssemblerToken.HEX_NUMBER);
-          assemblerToken.setValue(String.format("0x%08X", defines.get(Name)));
+          assemblerToken.setValue(String.format("0x%08X", defines.get(name)));
         }
       }
     }
     return true;
   }
 
-  public void replacePcAndDoCalc(long pc, HashMap<AssemblerToken, StringGetter> errors) {
-    for (int idx = 0; idx < parameters.size(); idx++) {
-      AssemblerToken[] parameter = parameters.get(idx);
-      boolean found = false;
-      for (AssemblerToken assemblerToken : parameter) {
+  public void replacePcAndDoCalc(long pc, Map<AssemblerToken, StringGetter> errors) {
+    for (var idx = 0; idx < parameters.size(); idx++) {
+      final var parameter = parameters.get(idx);
+      var found = false;
+      for (final var assemblerToken : parameter) {
         if (assemblerToken.getType() == AssemblerToken.PROGRAM_COUNTER) {
           found = true;
           assemblerToken.setType(AssemblerToken.HEX_NUMBER);
@@ -146,10 +145,10 @@ public class AssemblerAsmInstruction {
       }
       if (found && parameter.length > 1) {
         int i = 0;
-        HashSet<Integer> toBeRemoved = new HashSet<>();
+        final var toBeRemoved = new HashSet<Integer>();
         while (i < parameter.length) {
           if (AssemblerToken.MATH_OPERATORS.contains(parameter[i].getType())) {
-            long beforeValue = -1;
+            var beforeValue = -1L;
             if (i == 0 || !parameter[i - 1].isNumber()) {
               beforeValue = 0L;
             } else if (i + 1 >= parameter.length || !parameter[i + 1].isNumber()) {
@@ -159,7 +158,7 @@ public class AssemblerAsmInstruction {
                 toBeRemoved.add(i - 1);
                 beforeValue = parameter[i - 1].getLongValue();
               }
-              long afterValue = parameter[i + 1].getLongValue();
+              final var afterValue = parameter[i + 1].getLongValue();
               toBeRemoved.add(i);
               long result = 0;
               switch (parameter[i].getType()) {
@@ -193,8 +192,8 @@ public class AssemblerAsmInstruction {
           }
           i++;
         }
-        int newNrOfParameters = parameter.length - toBeRemoved.size();
-        AssemblerToken[] newParameter = new AssemblerToken[newNrOfParameters];
+        final var newNrOfParameters = parameter.length - toBeRemoved.size();
+        final var newParameter = new AssemblerToken[newNrOfParameters];
         int j = 0;
         for (i = 0; i < parameter.length; i++) {
           if (!toBeRemoved.contains(i)) {

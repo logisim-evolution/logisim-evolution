@@ -78,8 +78,8 @@ public class BubbleInformationContainer {
     myInBubblesEndIndex = endIndex;
   }
 
-  public void setOutputBubblesInformation(int startIndex, int EndIndex) {
+  public void setOutputBubblesInformation(int startIndex, int endIndex) {
     myOutBubblesStartIndex = startIndex;
-    myOutBubblesEndIndex = EndIndex;
+    myOutBubblesEndIndex = endIndex;
   }
 }

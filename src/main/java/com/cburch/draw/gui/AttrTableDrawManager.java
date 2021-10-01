@@ -52,8 +52,8 @@ public class AttrTableDrawManager implements PropertyChangeListener {
     final var tool = canvas.getTool();
     if (tool instanceof SelectTool) {
       table.setAttrTableModel(selectionModel);
-    } else if (tool instanceof AbstractTool) {
-      toolModel.setTool((AbstractTool) tool);
+    } else if (tool instanceof AbstractTool absTool) {
+      toolModel.setTool(absTool);
       table.setAttrTableModel(toolModel);
     } else {
       table.setAttrTableModel(null);

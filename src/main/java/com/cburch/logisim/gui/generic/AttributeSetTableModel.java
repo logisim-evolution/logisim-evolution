@@ -179,9 +179,6 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
   }
 
   @Override
-  public abstract String getTitle();
-
-  @Override
   public void removeAttrTableModelListener(AttrTableModelListener listener) {
     listeners.remove(listener);
     if (listeners.isEmpty() && attrs != null) {

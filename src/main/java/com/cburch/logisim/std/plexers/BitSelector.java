@@ -40,7 +40,7 @@ public class BitSelector extends InstanceFactory {
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "BitSelector";
-  
+
   public static final Attribute<BitWidth> GROUP_ATTR =
       Attributes.forBitWidth("group", S.getter("bitSelectorGroupAttr"));
   public static final Attribute<Integer> SELECT_ATTR = Attributes.forNoSave();
@@ -68,10 +68,10 @@ public class BitSelector extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    final var CompleteName = new StringBuilder();
-    CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
-    if (attrs.getValue(GROUP_ATTR).getWidth() > 1) CompleteName.append("_bus");
-    return CompleteName.toString();
+    final var completeName = new StringBuilder();
+    completeName.append(CorrectLabel.getCorrectLabel(this.getName()));
+    if (attrs.getValue(GROUP_ATTR).getWidth() > 1) completeName.append("_bus");
+    return completeName.toString();
   }
 
   @Override

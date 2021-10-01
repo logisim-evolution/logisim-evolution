@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
-import java.util.Map;
+import java.util.List;
 import java.util.Set;
 import javax.swing.text.BadLocationException;
 import org.fife.ui.rsyntaxtextarea.RSyntaxDocument;
@@ -44,7 +44,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
   private final HashMap<GutterIconInfo, StringGetter> errorMarkers;
   private final RTextScrollPane pane;
   private AssemblerInfo assemblerInfo;
-  private long EntryPoint;
+  private long entryPoint;
 
   public Assembler(AssemblerInterface assembler, RTextScrollPane pane) {
     this.assembler = assembler;
@@ -57,16 +57,17 @@ public class Assembler extends AbstractParser implements LocaleListener {
   public void reset() {
     errorMarkers.clear();
     pane.getGutter().removeAllTrackingIcons();
-    EntryPoint = -1;
+    entryPoint = -1;
   }
 
-  public ArrayList<Integer> getErrorPositions() {
-    ArrayList<Integer> positions = new ArrayList<>();
-    for (GutterIconInfo info : errorMarkers.keySet()) {
-      int pos = info.getMarkedOffset();
-      if (positions.isEmpty()) positions.add(pos);
-      else {
-        boolean found = false;
+  public List<Integer> getErrorPositions() {
+    final var positions = new ArrayList<Integer>();
+    for (final var info : errorMarkers.keySet()) {
+      final var pos = info.getMarkedOffset();
+      if (positions.isEmpty()) {
+        positions.add(pos);
+      } else {
+        var found = false;
         for (int i = 0; i < positions.size() && !found; i++) {
           if (pos < positions.get(i)) {
             found = true;
@@ -81,18 +82,18 @@ public class Assembler extends AbstractParser implements LocaleListener {
 
   public boolean assemble() {
     reset();
-    LinkedList<AssemblerToken> assemblerTokens = new LinkedList<>();
+    final var assemblerTokens = new LinkedList<AssemblerToken>();
     assemblerInfo = new AssemblerInfo(assembler);
     /* first pass: we build a list of AssemblerTokens from the token
      * list provided by the AssemblerHighlighter */
-    RTextArea text = pane.getTextArea();
-    for (int i = 0; i < text.getLineCount(); i++) {
+    final var text = pane.getTextArea();
+    for (var i = 0; i < text.getLineCount(); i++) {
       assemblerTokens.addAll(checkAndBuildTokens(i));
     }
     /* second pass, we are going to collect all labels */
-    HashMap<String, Long> labels = new HashMap<>();
-    HashMap<String, AssemblerToken> labelToken = new HashMap<>();
-    for (AssemblerToken asm : assemblerTokens) {
+    final var labels = new HashMap<String, Long>();
+    final var labelToken = new HashMap<String, AssemblerToken>();
+    for (final var asm : assemblerTokens) {
       if (asm.getType() == AssemblerToken.LABEL)
         if (labels.containsKey(asm.getValue())) {
           addError(
@@ -110,7 +111,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
     }
     labelToken.clear();
     /* Third pass, we are going to mark all known labels and references to the pc*/
-    for (AssemblerToken asm : assemblerTokens) {
+    for (final var asm : assemblerTokens) {
       if (asm.getType() == AssemblerToken.MAYBE_LABEL) {
         if (labels.containsKey(asm.getValue()))
           asm.setType(AssemblerToken.PARAMETER_LABEL);
@@ -123,26 +124,24 @@ public class Assembler extends AbstractParser implements LocaleListener {
      * 5+10*2 => (5+10)*2 = 30
      * 10*2+5 => (10*2)+5 = 25
      */
-    ArrayList<AssemblerToken> toBeRemoved = new ArrayList<>();
-    for (int i = 0; i < assemblerTokens.size(); i++) {
-      AssemblerToken asm = assemblerTokens.get(i);
+    final var toBeRemoved = new ArrayList<AssemblerToken>();
+    for (var i = 0; i < assemblerTokens.size(); i++) {
+      final var asm = assemblerTokens.get(i);
       if (AssemblerToken.MATH_OPERATORS.contains(asm.getType())) {
         if ((i + 1) >= assemblerTokens.size()) {
-          addError(
-              asm.getoffset(), S.getter("AssemblerReguiresNumberAfterMath"), errorMarkers.keySet());
+          addError(asm.getoffset(), S.getter("AssemblerReguiresNumberAfterMath"), errorMarkers.keySet());
           continue;
         }
-        AssemblerToken before = (i == 0) ? null : assemblerTokens.get(i - 1);
-        AssemblerToken after = assemblerTokens.get(i + 1);
+        var before = (i == 0) ? null : assemblerTokens.get(i - 1);
+        final var after = assemblerTokens.get(i + 1);
         if (before == null
             || (!before.isNumber() && before.getType() != AssemblerToken.PROGRAM_COUNTER))
           before = null;
         if (!after.isNumber() && after.getType() != AssemblerToken.PROGRAM_COUNTER) {
-          addError(
-              asm.getoffset(), S.getter("AssemblerReguiresNumberAfterMath"), errorMarkers.keySet());
+          addError(asm.getoffset(), S.getter("AssemblerReguiresNumberAfterMath"), errorMarkers.keySet());
           continue;
         }
-        int beforeValue = before == null ? 0 : before.getNumberValue();
+        final var beforeValue = before == null ? 0 : before.getNumberValue();
         if (after.getType() == AssemblerToken.PROGRAM_COUNTER
             || (before != null && before.getType() == AssemblerToken.PROGRAM_COUNTER)) {
           i++;
@@ -211,10 +210,9 @@ public class Assembler extends AbstractParser implements LocaleListener {
           }
         } while (next.getType() == AssemblerToken.STRING && (i + 1) < assemblerTokens.size());
       } else if (asm.getType() == AssemblerToken.BRACKET_OPEN && (i + 2) < assemblerTokens.size()) {
-        AssemblerToken second = assemblerTokens.get(i + 1);
-        AssemblerToken third = assemblerTokens.get(i + 2);
-        if (second.getType() == AssemblerToken.REGISTER
-            && third.getType() == AssemblerToken.BRACKET_CLOSE) {
+        final var second = assemblerTokens.get(i + 1);
+        final var third = assemblerTokens.get(i + 2);
+        if (second.getType() == AssemblerToken.REGISTER && third.getType() == AssemblerToken.BRACKET_CLOSE) {
           second.setType(AssemblerToken.BRACKETED_REGISTER);
           toBeRemoved.add(asm);
           toBeRemoved.add(third);
@@ -223,24 +221,25 @@ public class Assembler extends AbstractParser implements LocaleListener {
       }
     }
     assemblerTokens.removeAll(toBeRemoved);
-    for (AssemblerToken error : assemblerInfo.getErrors().keySet())
+    for (final var error : assemblerInfo.getErrors().keySet()) {
       addError(error.getoffset(), assemblerInfo.getErrors().get(error), errorMarkers.keySet());
+    }
     /* fifth pass: perform cpu specific operations */
     assembler.performUpSpecificOperationsOnTokens(assemblerTokens);
     /* sixth pass: We are going to detect and remove the macros */
     toBeRemoved.clear();
-    boolean errors = false;
-    Iterator<AssemblerToken> iter = assemblerTokens.iterator();
-    HashMap<String, AssemblerMacro> macros = new HashMap<>();
+    var errors = false;
+    final var iter = assemblerTokens.iterator();
+    final var macros = new HashMap<String, AssemblerMacro>();
     while (iter.hasNext()) {
-      AssemblerToken asm = iter.next();
+      final var asm = iter.next();
       if (asm.getType() == AssemblerToken.ASM_INSTRUCTION && asm.getValue().equals(".macro")) {
         toBeRemoved.add(asm);
         if (!iter.hasNext()) {
           addError(asm.getoffset(), S.getter("AssemblerExpectedMacroName"), errorMarkers.keySet());
           break;
         }
-        AssemblerToken name = iter.next();
+        final var name = iter.next();
         toBeRemoved.add(name);
         if (name.getType() != AssemblerToken.MAYBE_LABEL) {
           addError(asm.getoffset(), S.getter("AssemblerExpectedMacroName"), errorMarkers.keySet());
@@ -253,7 +252,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
               errorMarkers.keySet());
           break;
         }
-        AssemblerToken nrParameters = iter.next();
+        final var nrParameters = iter.next();
         toBeRemoved.add(nrParameters);
         if (!nrParameters.isNumber()) {
           addError(
@@ -262,18 +261,15 @@ public class Assembler extends AbstractParser implements LocaleListener {
               errorMarkers.keySet());
           break;
         }
-        AssemblerMacro macro = new AssemblerMacro(name.getValue(), nrParameters.getNumberValue());
-        boolean endOfMacro = false;
+        final var macro = new AssemblerMacro(name.getValue(), nrParameters.getNumberValue());
+        var endOfMacro = false;
         while (!endOfMacro && iter.hasNext()) {
-          AssemblerToken macroAsm = iter.next();
+          final var macroAsm = iter.next();
           if (macroAsm.getType() == AssemblerToken.ASM_INSTRUCTION) {
             if (macroAsm.getValue().equals(".endm"))
               endOfMacro = true;
             else {
-              addError(
-                  macroAsm.getoffset(),
-                  S.getter("AssemblerCannotUseInsideMacro"),
-                  errorMarkers.keySet());
+              addError(macroAsm.getoffset(), S.getter("AssemblerCannotUseInsideMacro"), errorMarkers.keySet());
               errors = true;
             }
           } else {
@@ -290,12 +286,13 @@ public class Assembler extends AbstractParser implements LocaleListener {
           addError(asm.getoffset(), S.getter("AssemblerEndOfMacroNotFound"), errorMarkers.keySet());
           errors = true;
         } else {
-          HashMap<AssemblerToken, StringGetter> markers = new HashMap<>();
+          final var markers = new HashMap<AssemblerToken, StringGetter>();
           if (macro.checkParameters(markers))
             macros.put(macro.getName(), macro);
           else {
-            for (AssemblerToken marker : markers.keySet())
+            for (final var marker : markers.keySet()) {
               addError(marker.getoffset(), markers.get(marker), errorMarkers.keySet());
+            }
             errors = true;
           }
         }
@@ -304,37 +301,38 @@ public class Assembler extends AbstractParser implements LocaleListener {
     if (errors) return errorMarkers.isEmpty();
     assemblerTokens.removeAll(toBeRemoved);
     /* go trough the remaining tokens and the macros and mark the macros */
-    for (AssemblerToken asm : assemblerTokens)
+    for (final var asm : assemblerTokens)
       if (asm.getType() == AssemblerToken.MAYBE_LABEL)
         if (macros.containsKey(asm.getValue())) {
           asm.setType(AssemblerToken.MACRO);
         }
-    HashMap<AssemblerToken, StringGetter> markers = new HashMap<>();
-    for (String name : macros.keySet()) {
+    final var markers = new HashMap<AssemblerToken, StringGetter>();
+    for (final var name : macros.keySet()) {
       macros.get(name).checkForMacros(markers, macros.keySet());
     }
     // finally replace the local labels; this has to be done at this point as before the macros
     // inside a macro were not yet marked as being macro
-    for (String name : macros.keySet()) {
+    for (final var name : macros.keySet()) {
       macros.get(name).replaceLabels(labels, markers, assembler, macros);
     }
     if (!markers.isEmpty()) {
-      for (AssemblerToken marker : markers.keySet())
+      for (final var marker : markers.keySet()) {
         addError(marker.getoffset(), markers.get(marker), errorMarkers.keySet());
+      }
       return errorMarkers.isEmpty();
     }
     /* here the real work starts */
     assemblerInfo.assemble(assemblerTokens, labels, macros);
-    for (AssemblerToken error : assemblerInfo.getErrors().keySet())
+    for (final var error : assemblerInfo.getErrors().keySet()) {
       addError(error.getoffset(), assemblerInfo.getErrors().get(error), errorMarkers.keySet());
-    if (labels.containsKey("_start"))
-      EntryPoint = labels.get("_start");
+    }
+    if (labels.containsKey("_start")) entryPoint = labels.get("_start");
     return errorMarkers.isEmpty();
   }
 
   public void addError(int location, StringGetter sg, Set<GutterIconInfo> known) {
     /* first search for the known icons */
-    for (GutterIconInfo knownError : known) {
+    for (final var knownError : known) {
       if (knownError.getMarkedOffset() == location) {
         return;
       }
@@ -352,24 +350,25 @@ public class Assembler extends AbstractParser implements LocaleListener {
   }
 
   public LinkedList<AssemblerToken> checkAndBuildTokens(int lineNumber) {
-    LinkedList<AssemblerToken> lineTokens = new LinkedList<>();
-    int startoffset, endoffset;
-    RSyntaxTextArea text = (RSyntaxTextArea) pane.getTextArea();
+    final var lineTokens = new LinkedList<AssemblerToken>();
+    int startOffset;
+    int endOffset;
+    final var text = (RSyntaxTextArea) pane.getTextArea();
     try {
-      startoffset = text.getLineStartOffset(lineNumber);
+      startOffset = text.getLineStartOffset(lineNumber);
     } catch (BadLocationException e1) {
       return null;
     }
     try {
-      endoffset = text.getLineEndOffset(lineNumber);
+      endOffset = text.getLineEndOffset(lineNumber);
     } catch (BadLocationException e1) {
       return null;
     }
-    Token first = text.getTokenListForLine(lineNumber);
+    var first = text.getTokenListForLine(lineNumber);
     /* search for all error markers on this line */
-    HashSet<GutterIconInfo> lineErrorMarkers = new HashSet<>();
-    for (GutterIconInfo error : errorMarkers.keySet()) {
-      if (error.getMarkedOffset() >= startoffset && error.getMarkedOffset() <= endoffset)
+    final var lineErrorMarkers = new HashSet<GutterIconInfo>();
+    for (final var error : errorMarkers.keySet()) {
+      if (error.getMarkedOffset() >= startOffset && error.getMarkedOffset() <= endOffset)
         lineErrorMarkers.add(error);
     }
     /* first pass: check all highlighted tokens and convert them to assembler tokens */
@@ -377,9 +376,9 @@ public class Assembler extends AbstractParser implements LocaleListener {
       if (first.getType() != Token.NULL
           && first.getType() != Token.COMMENT_EOL
           && first.getType() != Token.WHITESPACE) {
-        String name = first.getLexeme();
-        int type = first.getType();
-        int offset = first.getOffset();
+        final var name = first.getLexeme();
+        final var type = first.getType();
+        final var offset = first.getOffset();
         if (type == Token.LITERAL_CHAR) {
           switch (name) {
             case ",":
@@ -478,14 +477,14 @@ public class Assembler extends AbstractParser implements LocaleListener {
       first = first.getNextToken();
     }
     /* second pass, detect the labels */
-    ArrayList<AssemblerToken> toBeRemoved = new ArrayList<>();
-    for (int i = 0; i < lineTokens.size(); i++) {
-      AssemblerToken asm = lineTokens.get(i);
+    final var toBeRemoved = new ArrayList<AssemblerToken>();
+    for (var i = 0; i < lineTokens.size(); i++) {
+      final var asm = lineTokens.get(i);
       if (asm.getType() == AssemblerToken.LABEL_IDENTIFIER) {
         if (i == 0)
           addError(asm.getoffset(), S.getter("AssemblerMissingLabelBefore"), lineErrorMarkers);
         else {
-          AssemblerToken before = lineTokens.get(i - 1);
+          final var before = lineTokens.get(i - 1);
           if (before.getType() == AssemblerToken.MAYBE_LABEL) {
             before.setType(AssemblerToken.LABEL);
           } else
@@ -497,9 +496,9 @@ public class Assembler extends AbstractParser implements LocaleListener {
         toBeRemoved.add(asm);
       }
     }
-    for (AssemblerToken del : toBeRemoved) lineTokens.remove(del);
+    for (final var del : toBeRemoved) lineTokens.remove(del);
     /* all errors left are old ones, so clean up */
-    for (GutterIconInfo olderr : lineErrorMarkers) {
+    for (final var olderr : lineErrorMarkers) {
       pane.getGutter().removeTrackingIcon(olderr);
       errorMarkers.remove(olderr);
     }
@@ -508,7 +507,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
 
   public long getEntryPoint() {
     long result = -1;
-    if (EntryPoint >= 0) return EntryPoint;
+    if (entryPoint >= 0) return entryPoint;
     result = assemblerInfo.getEntryPoint();
     if (result < 0)
       OptionPane.showMessageDialog(
@@ -535,9 +534,9 @@ public class Assembler extends AbstractParser implements LocaleListener {
 
   @Override
   public void localeChanged() {
-    HashMap<GutterIconInfo, StringGetter> oldSet = new HashMap<>(errorMarkers);
+    final var oldSet = new HashMap<GutterIconInfo, StringGetter>(errorMarkers);
     errorMarkers.clear();
-    for (GutterIconInfo error : oldSet.keySet()) {
+    for (final var error : oldSet.keySet()) {
       pane.getGutter().removeTrackingIcon(error);
       GutterIconInfo newError;
       try {
@@ -556,15 +555,16 @@ public class Assembler extends AbstractParser implements LocaleListener {
 
   @Override
   public ParseResult parse(RSyntaxDocument doc, String style) {
-    DefaultParseResult result = new DefaultParseResult(this);
-    Map<Integer, String> offsets = new HashMap<>();
-    for (GutterIconInfo x : errorMarkers.keySet())
-      offsets.put(x.getMarkedOffset(), errorMarkers.get(x).toString());
-    for (Token t : doc) {
-      int offs = t.getOffset();
+    final var result = new DefaultParseResult(this);
+    final var offsets = new HashMap<Integer, String>();
+    for (final var gutterIconInfo : errorMarkers.keySet()) {
+      offsets.put(gutterIconInfo.getMarkedOffset(), errorMarkers.get(gutterIconInfo).toString());
+    }
+    for (final var token : doc) {
+      int offs = token.getOffset();
       if (offsets.containsKey(offs)) {
-        int len = t.length();
-        int line = doc.getDefaultRootElement().getElementIndex(offs);
+        final var len = token.length();
+        final var line = doc.getDefaultRootElement().getElementIndex(offs);
         result.addNotice(new DefaultParserNotice(this, offsets.get(offs), line, offs, len));
       }
     }

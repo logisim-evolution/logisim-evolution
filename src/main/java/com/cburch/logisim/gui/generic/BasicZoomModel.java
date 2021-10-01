@@ -13,7 +13,6 @@ import com.cburch.logisim.prefs.PrefMonitor;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
 import java.util.List;
 import javax.swing.SwingUtilities;
 

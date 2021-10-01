@@ -91,7 +91,10 @@ public class BoardRectangle {
 
   public Boolean overlap(BoardRectangle rect) {
     Boolean result;
-    int xl, xr, yt, yb;
+    int xl;
+    int xr;
+    int yt;
+    int yb;
     xl = rect.getXpos();
     xr = xl + rect.getWidth();
     yt = rect.getYpos();
@@ -184,12 +187,12 @@ public class BoardRectangle {
     }
   }
 
-  public void setActiveOnHigh(boolean IsActiveHigh) {
-    this.isActiveHigh = IsActiveHigh;
+  public void setActiveOnHigh(boolean isActiveHigh) {
+    this.isActiveHigh = isActiveHigh;
   }
 
-  public void setLabel(String Label) {
-    this.label = Label;
+  public void setLabel(String label) {
+    this.label = label;
   }
 
   public void setValue(Long val) {

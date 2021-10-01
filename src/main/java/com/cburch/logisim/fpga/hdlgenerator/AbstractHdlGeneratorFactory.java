@@ -450,12 +450,12 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
           if (!MappedSignal.contains(",")) {
             oneLine.append(MappedSignal);
           } else {
-            String[] VectorList = MappedSignal.split(",");
+            final var vectorList = MappedSignal.split(",");
             oneLine.append("{");
             var tabSize = oneLine.length();
-            for (var vectorentries = 0; vectorentries < VectorList.length; vectorentries++) {
-              oneLine.append(VectorList[vectorentries].replace("}", "").replace("{", ""));
-              if (vectorentries < VectorList.length - 1) {
+            for (var vectorEntries = 0; vectorEntries < vectorList.length; vectorEntries++) {
+              oneLine.append(vectorList[vectorEntries].replace("}", "").replace("{", ""));
+              if (vectorEntries < vectorList.length - 1) {
                 contents.add(oneLine + ",");
                 oneLine.setLength(0);
                 oneLine.append(" ".repeat(tabSize));
@@ -651,7 +651,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       var firstEntry = true;
       var currentEntry = 0;
       // now we process in order
-      var direction = (myPorts.keySet(Port.INOUT).size() > 0) ? "IN   " : "IN ";
+      var direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? "IN   " : "IN ";
       final var myInputs = new TreeSet<String>(myPorts.keySet(Port.INPUT));
       myInputs.addAll(tickers);
       for (final var input : myInputs) {
@@ -668,7 +668,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         firstEntry = getPortEntry(contents, firstEntry, nrOfEntries, currentEntry, inout, direction, type, maxNameLength);
         currentEntry++;
       }
-      direction = (myPorts.keySet(Port.INOUT).size() > 0) ? "OUT  " : "OUT";
+      direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? "OUT  " : "OUT";
       final var myOutputs = new TreeSet<String>(myPorts.keySet(Port.OUTPUT));
       for (final var output : myOutputs) {
         nrOfPortBits = myPorts.get(output, attrs);
