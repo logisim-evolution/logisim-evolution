@@ -88,8 +88,8 @@ public class bcd2sevenseg extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     if (state.getPortValue(BCDin).isFullyDefined()
-        & !state.getPortValue(BCDin).isErrorValue()
-        & !state.getPortValue(BCDin).isUnknown()) {
+        && !state.getPortValue(BCDin).isErrorValue()
+        && !state.getPortValue(BCDin).isUnknown()) {
       int value = (int) state.getPortValue(BCDin).toLongValue();
       switch (value) {
         case 0:
