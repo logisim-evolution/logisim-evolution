@@ -17,6 +17,10 @@
     * [Checking code style with InteliJ IDEA](style.md#checking-code-style-with-intelij-idea)
     * [Using Gradle plugin](style.md#using-gradle-plugin)
     * [Using `pre-commit`](style.md#using-pre-commit-hooks)
+  * [Translations](localization.md)
+    * [Updating existing translation](localization.md#updating-existing-translation)
+    * [Adding new translation](localization.md#adding-new-translation)
+    * [Using trans-tool](localization.md#using-trans-tool)
   * [How to contribute](#how-to-contribute)
 
 ---
