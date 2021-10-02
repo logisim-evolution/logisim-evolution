@@ -358,24 +358,20 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
   // returns true if user is OK with proceeding
   public boolean confirmClose(String title) {
-    String message = S.get("confirmDiscardMessage", project.getLogisimFile().getName());
+    if (!project.isFileDirty()) return true;
 
-    if (!project.isFileDirty()) {
-      return true;
-    }
+    final var message = S.get("confirmDiscardMessage", project.getLogisimFile().getName());
 
     toFront();
     final String[] options = {S.get("saveOption"), S.get("discardOption"), S.get("cancelOption")};
-    var result = OptionPane.showOptionDialog(this, message, title, 0, OptionPane.QUESTION_MESSAGE, null, options, options[0]);
-    boolean ret;
+    final var result = OptionPane.showOptionDialog(this, message, title, 0, OptionPane.QUESTION_MESSAGE, null, options, options[0]);
+    var ret = false;
     if (result == 0) {
       ret = ProjectActions.doSave(project);
     } else if (result == 1) {
       // Close the current project
       dispose();
       ret = true;
-    } else {
-      ret = false;
     }
 
     return ret;
