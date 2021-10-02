@@ -40,7 +40,7 @@ public class Ttl74175 extends AbstractTtlGate {
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     final var g = painter.getGraphics();
     super.paintBase(painter, false, false);
-    DrawFlops(g, x, y, height);
+    drawFlops(g, x, y, height);
   }
 
   @Override
@@ -72,7 +72,7 @@ public class Ttl74175 extends AbstractTtlGate {
     state.setPort(12, data.getValue().get(3).not(), 8);
   }
 
-  private void DrawFlops(Graphics g, int x, int y, int height) {
+  private void drawFlops(Graphics g, int x, int y, int height) {
     // Reset line
     g.drawLine(x + 10, y + height - 10, x + 10, y + height - AbstractTtlGate.PIN_HEIGHT);
     g.drawLine(x + 10, y + height - 10, x + 140, y + height - 10);

@@ -222,7 +222,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       contents.add("").addRemarkBlock("Here the Led arrays are connected");
       for (final var array : myLedArrays) {
         contents.add(
-            LedArrayGenericHdlGeneratorFactory.GetComponentMap(
+            LedArrayGenericHdlGeneratorFactory.getComponentMap(
                 array.getArrayDriveMode(),
                 array.getNrOfRows(),
                 array.getNrOfColumns(),
