@@ -36,7 +36,7 @@ public class bin2bcd extends InstanceFactory {
    */
   public static final String _ID = "Binary_to_BCD_converter";
 
-  static final int PER_DELAY = 1;
+  public static final int PER_DELAY = 1;
   private static final int BINin = 0;
   private static final int InnerDistance = 60;
 
