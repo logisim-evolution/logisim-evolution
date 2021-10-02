@@ -430,9 +430,9 @@ class CircuitWires {
         final var wb = bmap.getBundleAt(s);
         var width = 5;
         if (!wb.isValid()) {
-          g.setColor(Value.WIDTH_ERROR_COLOR);
+          g.setColor(Value.widthErrorColor);
         } else if (showState) {
-          g.setColor(!isValid ? Value.NIL_COLOR : state.getValue(s).getColor());
+          g.setColor(!isValid ? Value.nilColor : state.getValue(s).getColor());
         } else {
           g.setColor(Color.BLACK);
         }
@@ -443,7 +443,7 @@ class CircuitWires {
 
           final var oldStroke = g.getStroke();
           g.setStroke(Wire.HIGHLIGHTED_STROKE);
-          g.setColor(Value.STROKE_COLOR);
+          g.setColor(Value.strokeColor);
           g.drawLine(s.getX(), s.getY(), t.getX(), t.getY());
           g.setStroke(oldStroke);
         } else {
@@ -474,9 +474,9 @@ class CircuitWires {
           if (wb != null) {
             var color = Color.BLACK;
             if (!wb.isValid()) {
-              color = Value.WIDTH_ERROR_COLOR;
+              color = Value.widthErrorColor;
             } else if (showState) {
-              color = !isValid ? Value.NIL_COLOR : state.getValue(loc).getColor();
+              color = !isValid ? Value.nilColor : state.getValue(loc).getColor();
             }
             g.setColor(color);
 
@@ -500,9 +500,9 @@ class CircuitWires {
           final var t = wire.e1;
           final var wb = bmap.getBundleAt(s);
           if (!wb.isValid()) {
-            g.setColor(Value.WIDTH_ERROR_COLOR);
+            g.setColor(Value.widthErrorColor);
           } else if (showState) {
-            g.setColor(!isValid ? Value.NIL_COLOR : state.getValue(s).getColor());
+            g.setColor(!isValid ? Value.nilColor : state.getValue(s).getColor());
           } else {
             g.setColor(Color.BLACK);
           }
@@ -530,9 +530,9 @@ class CircuitWires {
             final var wireBundle = bmap.getBundleAt(loc);
             if (wireBundle != null) {
               if (!wireBundle.isValid()) {
-                g.setColor(Value.WIDTH_ERROR_COLOR);
+                g.setColor(Value.widthErrorColor);
               } else if (showState) {
-                g.setColor(!isValid ? Value.NIL_COLOR : state.getValue(loc).getColor());
+                g.setColor(!isValid ? Value.nilColor : state.getValue(loc).getColor());
               } else {
                 g.setColor(Color.BLACK);
               }

@@ -35,12 +35,9 @@ public class TclComponentAttributes extends AbstractAttributeSet {
 
     @Override
     public java.awt.Component getCellEditor(Window source, File file) {
-
       if (chooser == null) chooser = new ContentFileCell(file);
-
       chooser.setFileFilter(Loader.TCL_FILTER);
       chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
-
       return chooser;
     }
 
@@ -130,9 +127,9 @@ public class TclComponentAttributes extends AbstractAttributeSet {
       final var newLabel = (String) value;
       if (label.equals(newLabel)) return;
       @SuppressWarnings("unchecked")
-      V Oldlabel = (V) label;
+      final V oldLabel = (V) label;
       label = newLabel;
-      fireAttributeValueChanged(attr, value, Oldlabel);
+      fireAttributeValueChanged(attr, value, oldLabel);
     }
     if (attr == StdAttr.LABEL_FONT) {
       final var newFont = (Font) value;

@@ -79,12 +79,7 @@ public class Rectangle extends Rectangular {
 
   @Override
   public boolean matches(CanvasObject other) {
-    return (other instanceof Rectangle) ? super.matches(other) : false;
-  }
-
-  @Override
-  public int matchesHashCode() {
-    return super.matchesHashCode();
+    return (other instanceof Rectangle) && super.matches(other);
   }
 
   @Override

@@ -356,10 +356,10 @@ public class WiringTool extends Tool {
           AppPreferences.getScaled(points[i + 1]),
           AppPreferences.getScaled(points[i + 2]),
           AppPreferences.getScaled(points[i + 3]));
-    g2.setColor(Value.TRUE_COLOR);
+    g2.setColor(Value.trueColor);
     final var wh = AppPreferences.getScaled(5);
     g2.fillOval(AppPreferences.getScaled(1), AppPreferences.getScaled(11), wh, wh);
-    g2.setColor(Value.UNKNOWN_COLOR);
+    g2.setColor(Value.unknownColor);
     g2.fillOval(AppPreferences.getScaled(11), AppPreferences.getScaled(1), wh, wh);
     g2.dispose();
   }

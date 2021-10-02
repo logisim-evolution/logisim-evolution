@@ -26,7 +26,6 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import java.awt.Color;
-import java.awt.Graphics;
 
 public class bin2bcd extends InstanceFactory {
   /**
@@ -41,8 +40,7 @@ public class bin2bcd extends InstanceFactory {
   private static final int BINin = 0;
   private static final int InnerDistance = 60;
 
-  public static final Attribute<BitWidth> ATTR_BinBits =
-      Attributes.forBitWidth("binvalue", S.getter("BinaryDataBits"), 4, 13);
+  public static final Attribute<BitWidth> ATTR_BinBits = Attributes.forBitWidth("binvalue", S.getter("BinaryDataBits"), 4, 13);
 
   public bin2bcd() {
     super(_ID, S.getter("Bin2BCD"), new bin2bcdHDLGeneratorFactory());
@@ -50,18 +48,19 @@ public class bin2bcd extends InstanceFactory {
     setKeyConfigurator(new BitWidthConfigurator(bin2bcd.ATTR_BinBits, 4, 13, 0));
   }
 
+  @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    BitWidth nrofbits = painter.getAttributeValue(bin2bcd.ATTR_BinBits);
-    int NrOfPorts = (int) (Math.log10(Math.pow(2.0, nrofbits.getWidth())) + 1.0);
+    final var gfx = painter.getGraphics();
+    final var nrOfBits = painter.getAttributeValue(bin2bcd.ATTR_BinBits);
+    final var nrOfPorts = (int) (Math.log10(Math.pow(2.0, nrOfBits.getWidth())) + 1.0);
 
-    g.setColor(Color.GRAY);
+    gfx.setColor(Color.GRAY);
     painter.drawBounds();
     painter.drawPort(BINin, "Bin", Direction.EAST);
-    for (int i = NrOfPorts; i > 0; i--)
+    for (var i = nrOfPorts; i > 0; i--)
       painter.drawPort(
-          (NrOfPorts - i) + 1,
-          Integer.toString((int) Math.pow(10.0, NrOfPorts - i)),
+          (nrOfPorts - i) + 1,
+          Integer.toString((int) Math.pow(10.0, nrOfPorts - i)),
           Direction.NORTH);
   }
 
@@ -81,38 +80,38 @@ public class bin2bcd extends InstanceFactory {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    BitWidth nrofbits = attrs.getValue(bin2bcd.ATTR_BinBits);
-    int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
-    return Bounds.create((int) (-0.5 * InnerDistance), -20, NrOfPorts * InnerDistance, 40);
+    final var nrOfBits = attrs.getValue(bin2bcd.ATTR_BinBits);
+    final var nrOfPorts = (int) (Math.log10(1 << nrOfBits.getWidth()) + 1.0);
+    return Bounds.create((int) (-0.5 * InnerDistance), -20, nrOfPorts * InnerDistance, 40);
   }
 
   @Override
   public void propagate(InstanceState state) {
-    int bin_value =
+    int binValue =
         (state.getPortValue(BINin).isFullyDefined()
                 & !state.getPortValue(BINin).isUnknown()
                 & !state.getPortValue(BINin).isErrorValue()
             ? (int) state.getPortValue(BINin).toLongValue()
             : -1);
-    BitWidth NrOfBits = state.getAttributeValue(bin2bcd.ATTR_BinBits);
-    int NrOfPorts = (int) (Math.log10(Math.pow(2.0, NrOfBits.getWidth())) + 1.0);
-    for (int i = NrOfPorts; i > 0; i--) {
-      int value = (int) (Math.pow(10, i - 1));
-      int number = bin_value / value;
+    final var nrOfBits = state.getAttributeValue(bin2bcd.ATTR_BinBits);
+    final var nrOfPorts = (int) (Math.log10(Math.pow(2.0, nrOfBits.getWidth())) + 1.0);
+    for (var i = nrOfPorts; i > 0; i--) {
+      final var value = (int) (Math.pow(10, i - 1));
+      final var number = binValue / value;
       state.setPort(i, Value.createKnown(BitWidth.create(4), number), PER_DELAY);
-      bin_value -= number * value;
+      binValue -= number * value;
     }
   }
 
   private void updatePorts(Instance instance) {
-    BitWidth nrofbits = instance.getAttributeValue(bin2bcd.ATTR_BinBits);
-    int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
-    Port[] ps = new Port[NrOfPorts + 1];
+    final var nrOfbits = instance.getAttributeValue(bin2bcd.ATTR_BinBits);
+    final var nrOfPorts = (int) (Math.log10(1 << nrOfbits.getWidth()) + 1.0);
+    final var ps = new Port[nrOfPorts + 1];
     ps[BINin] = new Port((int) (-0.5 * InnerDistance), 0, Port.INPUT, bin2bcd.ATTR_BinBits);
     ps[BINin].setToolTip(S.getter("BinaryInputTip"));
-    for (int i = NrOfPorts; i > 0; i--) {
-      ps[i] = new Port((NrOfPorts - i) * InnerDistance, -20, Port.OUTPUT, 4);
-      int value = (int) Math.pow(10.0, i - 1);
+    for (int i = nrOfPorts; i > 0; i--) {
+      ps[i] = new Port((nrOfPorts - i) * InnerDistance, -20, Port.OUTPUT, 4);
+      final var value = (int) Math.pow(10.0, i - 1);
       ps[i].setToolTip(S.getter(Integer.toString(value)));
     }
     instance.setPorts(ps);
@@ -120,11 +119,11 @@ public class bin2bcd extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuilder CompleteName = new StringBuilder();
-    BitWidth nrofbits = attrs.getValue(bin2bcd.ATTR_BinBits);
-    int NrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
-    CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
-    CompleteName.append("_").append(NrOfPorts).append("_bcd_ports");
-    return CompleteName.toString();
+    final var completeName = new StringBuilder();
+    final var nrofbits = attrs.getValue(bin2bcd.ATTR_BinBits);
+    final var nrOfPorts = (int) (Math.log10(1 << nrofbits.getWidth()) + 1.0);
+    completeName.append(CorrectLabel.getCorrectLabel(this.getName()));
+    completeName.append("_").append(nrOfPorts).append("_bcd_ports");
+    return completeName.toString();
   }
 }
