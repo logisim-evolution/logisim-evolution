@@ -179,11 +179,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       }
     }
     final var worker = new CircuitHdlGeneratorFactory(myCircuit);
-    components.add(
-        worker.getComponentInstantiation(
-            theNetlist,
-            null,
-            CorrectLabel.getCorrectLabel(myCircuit.getName())));
+    components.add(worker.getComponentInstantiation(theNetlist, null, CorrectLabel.getCorrectLabel(myCircuit.getName())));
     return components;
   }
 

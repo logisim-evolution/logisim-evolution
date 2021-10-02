@@ -133,7 +133,7 @@ public abstract class Hdl {
     final var nrSingleBits = nrOfBits % 4;
     final var hexDigits = new String[nrHexDigits];
     final var singleBits = new StringBuilder();
-    var shiftValue = value >> nrSingleBits;
+    var shiftValue = value;
     for (var hexIndex = nrHexDigits - 1; hexIndex >= 0; hexIndex--) {
       var hexValue = shiftValue & 0xFL;
       shiftValue >>= 4L;
@@ -145,15 +145,15 @@ public abstract class Hdl {
     }
     var mask = (nrSingleBits == 0) ? 0 : 1L << (nrSingleBits - 1);
     while (mask > 0) {
-      singleBits.append((value & mask) == 0 ? "0" : "1");
+      singleBits.append((shiftValue & mask) == 0 ? "0" : "1");
       mask >>= 1L;
     }
     // first case, we have to concatinate
     if ((nrHexDigits > 0) && (nrSingleBits > 0)) {
       if (Hdl.isVhdl()) {
-        return LineBuffer.format("X\"{{1}}\"&\"{{2}}\"", hexValue.toString(), singleBits.toString());
+        return LineBuffer.format("\"{{2}}\"&X\"{{1}}\"", hexValue.toString(), singleBits.toString());
       } else {
-        return LineBuffer.format("{{{1}}'h{{2}}, {{3}}'b{{4}}}", nrHexDigits * 4, hexValue.toString(),
+        return LineBuffer.format("{{{3}}'b{{4}}, {{1}}'h{{2}}}", nrHexDigits * 4, hexValue.toString(),
             nrSingleBits, singleBits.toString());
       }
     }
