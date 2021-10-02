@@ -58,7 +58,6 @@ public class LocaleManager {
     }
   }
 
-  /* kwalsh  >> */
   private static class LocaleFormatterWithString extends LocaleGetter {
     final String arg;
 
@@ -86,8 +85,6 @@ public class LocaleManager {
       return source.fmt(key, arg.toString());
     }
   }
-  /* << kwalsh */
-
 
   private static final String SETTINGS_NAME = "settings";
   private static final ArrayList<LocaleManager> managers = new ArrayList<>();
