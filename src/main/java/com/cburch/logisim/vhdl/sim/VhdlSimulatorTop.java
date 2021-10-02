@@ -147,7 +147,7 @@ public class VhdlSimulatorTop implements CircuitListener {
     }
 
     if (i != 10) {
-      getProject().getFrame().setVhdlSimulatorConsoleStatusVisible;
+      getProject().getFrame().setVhdlSimulatorConsoleStatusVisible();
     }
 
     setState(State.ENABLED);
