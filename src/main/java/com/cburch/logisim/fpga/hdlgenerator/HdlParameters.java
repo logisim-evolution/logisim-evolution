@@ -52,6 +52,7 @@ public class HdlParameters {
       this(false, StdAttr.WIDTH, name, id);
     }
 
+    @SuppressWarnings("unchecked")
     public ParameterInfo(String name, int id, int type, Object... args) {
       this(false, StdAttr.WIDTH, name, id);
       myMapType = type;
@@ -65,8 +66,8 @@ public class HdlParameters {
         case MAP_MULTIPLY:
           if (args.length == 2) {
             for (var arg = 0; arg < 2; arg++) {
-              if (!(args[arg] instanceof Attribute<?>)) throw new IllegalArgumentException("Mutliply map Type: argument needs to be an Attribute<?>");
-              attributesList.add((Attribute<?>) args[arg]);
+              if (!(args[arg] instanceof Attribute<?> attr)) throw new IllegalArgumentException("Mutliply map Type: argument needs to be an Attribute<?>");
+              attributesList.add(attr);
             }
           } else {
             multiplyValue = getCorrectIntValue(args);
@@ -75,15 +76,14 @@ public class HdlParameters {
           break;
         case MAP_ATTRIBUTE_OPTION:
           if (args.length != 2) throw new IllegalArgumentException("Attribute map Type requires 2 argument");
-          if (!(args[0] instanceof Attribute<?>)) throw new IllegalArgumentException("Attribute map Type: first argument needs to be an Attribute<?>");
-          if (!(args[1] instanceof Map<?, ?>)) throw new IllegalArgumentException("Attribute map Type: second argument needs to be an Map<?,?>");
-          final var map = (Map<?, ?>) args[1];
+          if (!(args[0] instanceof Attribute<?> arg0)) throw new IllegalArgumentException("Attribute map Type: first argument needs to be an Attribute<?>");
+          if (!(args[1] instanceof Map<?, ?> map)) throw new IllegalArgumentException("Attribute map Type: second argument needs to be an Map<?,?>");
           if (map.isEmpty()) throw new IllegalArgumentException("Attribute map Type: Map<?,?> cannot be empty");
           for (var key : map.keySet()) {
             if (!(key instanceof AttributeOption)) throw new IllegalArgumentException("Attribute map Type: Map<?,?> keys need to be an AttributeOption");
             if (!(map.get(key) instanceof Integer))throw new IllegalArgumentException("Attribute map Type: Map<?,?> value need to be an Integer");
           }
-          attributesList.add((Attribute<?>) args[0]);
+          attributesList.add(arg0);
           attributeOptionMap = (Map<AttributeOption, Integer>) args[1];
           break;
         case MAP_INT_ATTRIBUTE:
@@ -138,12 +138,15 @@ public class HdlParameters {
     public String getParameterValue(AttributeSet attrs) {
       var totalValue = 0L;
       var selectedValue = 0L;
+
+      final var exMsg = "Component has not the required attribute";
+
       switch (myMapType) {
         case MAP_CONSTANT:
           selectedValue = parameterValue;
           break;
         case MAP_ATTRIBUTE_OPTION:
-          if (!attrs.containsAttribute(attributesList.get(0))) throw new UnsupportedOperationException("Component has not the required attribute");
+          if (!attrs.containsAttribute(attributesList.get(0))) throw new UnsupportedOperationException(exMsg);
           final var value = attrs.getValue(attributesList.get(0));
           if (!(value instanceof AttributeOption)) throw new UnsupportedOperationException("Requested attribute is not an attributeOption");
           if (!attributeOptionMap.containsKey(value)) throw new UnsupportedOperationException("Map does not contain the requested attributeOption");
@@ -151,7 +154,7 @@ public class HdlParameters {
           break;
         case MAP_POW2:
           for (var attr : attributesList) {
-            if (!attrs.containsAttribute(attr)) throw new UnsupportedOperationException("Component has not the required attribute");
+            if (!attrs.containsAttribute(attr)) throw new UnsupportedOperationException(exMsg);
             final var intValue = attrs.getValue(attr);
             if (intValue instanceof Integer) {
               totalValue += (int) intValue;
@@ -163,7 +166,7 @@ public class HdlParameters {
           break;
         case MAP_LN2:
           for (var attr : attributesList) {
-            if (!attrs.containsAttribute(attr)) throw new UnsupportedOperationException("Component has not the required attribute");
+            if (!attrs.containsAttribute(attr)) throw new UnsupportedOperationException(exMsg);
             final var intValue = attrs.getValue(attr);
             if (intValue instanceof Integer) {
               totalValue += (int) intValue;
@@ -175,7 +178,7 @@ public class HdlParameters {
           selectedValue = (long) Math.ceil(logValue) + offsetValue;
           break;
         case MAP_INT_ATTRIBUTE:
-          if (!attrs.containsAttribute(attributesList.get(0))) throw new UnsupportedOperationException("Component has not the required attribute");
+          if (!attrs.containsAttribute(attributesList.get(0))) throw new UnsupportedOperationException(exMsg);
           final var intValue = attrs.getValue(attributesList.get(0));
           if (intValue instanceof Integer) selectedValue = (int) intValue + offsetValue;
           else if (intValue instanceof Long) selectedValue = (long) intValue + offsetValue;
@@ -183,7 +186,7 @@ public class HdlParameters {
           else throw new UnsupportedOperationException("Requested attribute is not an Integer");
           break;
         case MAP_GATE_INPUT_BUBLE:
-          if (!attrs.containsAttribute(GateAttributes.ATTR_INPUTS)) throw new UnsupportedOperationException("Component has not the required attribute");
+          if (!attrs.containsAttribute(GateAttributes.ATTR_INPUTS)) throw new UnsupportedOperationException(exMsg);
           final var nrOfInputs = attrs.getValue(GateAttributes.ATTR_INPUTS);
           var bubbleMask = 0L;
           var mask = 1L;
