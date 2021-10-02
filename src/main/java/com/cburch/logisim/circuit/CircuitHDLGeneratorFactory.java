@@ -363,8 +363,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
             contents.addRemarkBlock("Here all in-lined components are defined");
             isFirstLine = false;
           }
-          final var hasLabel = comp.getComponent().getAttributeSet().containsAttribute(StdAttr.LABEL) &&
-              !comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL).isEmpty();
+          final var hasLabel = comp.getComponent().getAttributeSet().containsAttribute(StdAttr.LABEL) 
+              && !comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL).isEmpty();
           final var compName = hasLabel ? CorrectLabel.getCorrectLabel(comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)) 
                 : "";
           final var remarkLine = LineBuffer.format("{{1}}{{2}}{{3}}", comp.getComponent().getFactory().getDisplayName(),

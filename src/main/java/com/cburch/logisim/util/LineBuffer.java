@@ -10,6 +10,8 @@
 package com.cburch.logisim.util;
 
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.Vhdl;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -117,7 +119,7 @@ public class LineBuffer implements RandomAccess {
    * @return the buffer is empty
    */
   public boolean isEmpty() {
-    return size() == 0;
+    return contents.isEmpty();
   }
 
   /**
@@ -170,6 +172,17 @@ public class LineBuffer implements RandomAccess {
         .pair(">", Hdl.bracketClose())
         .pair("0b", Hdl.zeroBit())
         .pair("1b", Hdl.oneBit());
+  }
+
+  /**
+   * Injects the VHDL keywords making them enabled for placeholders
+   *
+   * @return Instance of self for easy chaining.
+   */
+  public LineBuffer addVhdlKeywords() {
+    for (var keyword : Vhdl.getVhdlKeywords())
+      pair(keyword.toLowerCase(), keyword);
+    return this;
   }
 
   /**
@@ -618,7 +631,6 @@ public class LineBuffer implements RandomAccess {
    *
    * @param remarkText text to put in the line
    */
-  
   public LineBuffer addRemarkLine(String remarkText) {
     add("{{1}}{{1}} {{2}}", Hdl.getRemarkChar(true, false), remarkText);
     return this;

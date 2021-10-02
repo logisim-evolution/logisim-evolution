@@ -55,6 +55,10 @@ public class FPGAOptions extends OptionsPanel {
       String property = pce.getKey();
       if (property.equals(AppPreferences.FPGA_Workspace.getIdentifier())) {
         WorkSpacePath.setText(AppPreferences.FPGA_Workspace.get());
+      } else if (property.equals(AppPreferences.HdlType.getIdentifier())) {
+        final var isVhdl = AppPreferences.HdlType.get().equals(HdlGeneratorFactory.VHDL);
+        vhdlPan.setEnabled(isVhdl);
+        vhdlKeywordUpperCase.setEnabled(isVhdl);
       }
     }
   }
@@ -82,8 +86,10 @@ public class FPGAOptions extends OptionsPanel {
   private JPanel editPan;
   private JPanel mapPan;
   private JPanel ReportPan;
+  private JPanel vhdlPan;
   private JCheckBox SupressGated;
   private JCheckBox SupressOpen;
+  private JCheckBox vhdlKeywordUpperCase;
   private final PreferencesFrame frame;
   private final PrefOptionList HDL_Used;
 
@@ -136,6 +142,8 @@ public class FPGAOptions extends OptionsPanel {
     c.gridx = 0;
     c.gridy = 3;
     c.gridwidth = 3;
+    add(getVhdlOptions(), c);
+    c.gridy++;
     add(AppPreferences.Boards.addRemovePanel(), c);
     c.gridy++;
     add(getReporterOptions(), c);
@@ -144,6 +152,21 @@ public class FPGAOptions extends OptionsPanel {
     c.gridy++;
     add(getMapCols(), c);
     localeChanged();
+  }
+  
+  private JPanel getVhdlOptions() {
+    final var isVhdl = AppPreferences.HdlType.get().equals(HdlGeneratorFactory.VHDL);
+    vhdlPan = new JPanel();
+    vhdlPan.setLayout(new GridBagLayout());
+    GridBagConstraints gbc = new GridBagConstraints();
+    gbc.gridx = 0;
+    gbc.gridy = 0;
+    gbc.fill = GridBagConstraints.HORIZONTAL;
+    vhdlKeywordUpperCase = ((PrefMonitorBoolean) AppPreferences.VhdlKeywordsUpperCase).getCheckBox();
+    vhdlPan.add(vhdlKeywordUpperCase, gbc);
+    vhdlPan.setEnabled(isVhdl);
+    vhdlKeywordUpperCase.setEnabled(isVhdl);
+    return vhdlPan;
   }
 
   private JPanel getReporterOptions() {
@@ -245,9 +268,11 @@ public class FPGAOptions extends OptionsPanel {
     SelectLabel.setText(S.get("SelectCol"));
     SupressGated.setText(S.get("SupressGatedClock"));
     SupressOpen.setText(S.get("SupressOpenInput"));
+    vhdlKeywordUpperCase.setText(S.get("VhdlKeywordUpperCase"));
     editPan.setBorder(BorderFactory.createTitledBorder(S.get("EditColors")));
     mapPan.setBorder(BorderFactory.createTitledBorder(S.get("MapColors")));
     ReportPan.setBorder(BorderFactory.createTitledBorder(S.get("ReporterOptions")));
+    vhdlPan.setBorder(BorderFactory.createTitledBorder(S.get("VhdlOptions")));
   }
 
   private void selectWorkSpace(Component parentComponent) {

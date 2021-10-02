@@ -44,7 +44,7 @@ public class DotMatrixHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
           final var wire = (rows == 1) ? Hdl.getNetName(componentInfo, ledMatrixCol, true, netlist)
               : Hdl.getBusEntryName(componentInfo, ledMatrixCol, true, dotMatrixRow, netlist);
           final var idx = (ledMatrixRow * cols) + ledMatrixCol + componentInfo.getLocalBubbleOutputStartId();
-          wires.put(LineBuffer.format("{{1}}{{<}}{{2}}{{>}}", LOCAL_OUTPUT_BUBBLE_BUS_NAME, idx), wire);
+          wires.put(LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", LOCAL_OUTPUT_BUBBLE_BUS_NAME, idx), wire);
         }
       }
     } else if (rowBased) {
@@ -62,7 +62,7 @@ public class DotMatrixHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
           final var wire = (cols == 1) ? Hdl.getNetName(componentInfo, ledMatrixRow, true, netlist)
               : Hdl.getBusEntryName(componentInfo, ledMatrixRow, true, ledMatrixCol, netlist);
           final var idx = (ledMatrixRow * cols) + dotMatrixCol + componentInfo.getLocalBubbleOutputStartId();
-          wires.put(LineBuffer.format("{{1}}{{<}}{{2}}{{>}}", LOCAL_OUTPUT_BUBBLE_BUS_NAME, idx), wire);
+          wires.put(LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", LOCAL_OUTPUT_BUBBLE_BUS_NAME, idx), wire);
         }
       }
     } else {
@@ -82,8 +82,8 @@ public class DotMatrixHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
           final var colWire = (cols == 1) ? Hdl.getNetName(componentInfo, 0, true, netlist)
               : Hdl.getBusEntryName(componentInfo, 0, true, ledMatrixCol, netlist);
           final var idx = (ledMatrixRow * cols) + ledMatrixCol + componentInfo.getLocalBubbleOutputStartId();
-          wires.put(LineBuffer.format("{{1}}{{<}}{{2}}{{>}}", LOCAL_OUTPUT_BUBBLE_BUS_NAME, idx), 
-              LineBuffer.format("{{1}}{{and}}{{2}}", rowWire, colWire));
+          wires.put(LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", LOCAL_OUTPUT_BUBBLE_BUS_NAME, idx), 
+              LineBuffer.formatHdl("{{1}}{{and}}{{2}}", rowWire, colWire));
         }
       }
     }

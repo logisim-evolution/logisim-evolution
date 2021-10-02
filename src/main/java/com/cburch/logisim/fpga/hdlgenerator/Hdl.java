@@ -68,19 +68,19 @@ public abstract class Hdl {
   }
 
   public static String notOperator() {
-    return isVhdl() ? " NOT " : "~";
+    return isVhdl() ? Vhdl.getVhdlKeyword(" NOT ") : "~";
   }
 
   public static String andOperator() {
-    return isVhdl() ? " AND " : "&";
+    return isVhdl() ? Vhdl.getVhdlKeyword(" AND ") : "&";
   }
 
   public static String orOperator() {
-    return isVhdl() ? " OR " : "|";
+    return isVhdl() ? Vhdl.getVhdlKeyword(" OR ") : "|";
   }
 
   public static String xorOperator() {
-    return isVhdl() ? " XOR " : "^";
+    return isVhdl() ? Vhdl.getVhdlKeyword(" XOR ") : "^";
   }
 
   public static String zeroBit() {
@@ -92,11 +92,11 @@ public abstract class Hdl {
   }
 
   public static String unconnected(boolean empty) {
-    return isVhdl() ? "OPEN" : empty ? "" : "'bz";
+    return isVhdl() ? Vhdl.getVhdlKeyword("OPEN") : empty ? "" : "'bz";
   }
 
   public static String vectorLoopId() {
-    return isVhdl() ? " DOWNTO " : ":";
+    return isVhdl() ? Vhdl.getVhdlKeyword(" DOWNTO ") : ":";
   }
 
   public static String getZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {

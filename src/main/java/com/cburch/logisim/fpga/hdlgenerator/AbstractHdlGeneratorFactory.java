@@ -73,7 +73,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     }
     contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
     if (Hdl.isVhdl()) {
-      contents.add("ARCHITECTURE PlatformIndependent OF {{1}} IS ", componentName).empty();
+      contents.addVhdlKeywords().add("{{architecture}} PlatformIndependent {{of}} {{1}} {{is}} ", componentName).empty();
       if (myTypedWires.getNrOfTypes() > 0) {
         contents.addRemarkBlock("Here all private types are defined")
             .add(myTypedWires.getTypeDefinitions())
@@ -104,12 +104,12 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       if (maxNameLength > 0) contents.addRemarkBlock("All used signals are defined here");
       final var sortedSignals = new TreeSet<String>(mySignals.keySet());
       for (final var signal : sortedSignals)
-        contents.add("   SIGNAL {{1}}{{2}} : {{3}};", signal, " ".repeat(maxNameLength - signal.length()),
+        contents.add("   {{signal}} {{1}}{{2}} : {{3}};", signal, " ".repeat(maxNameLength - signal.length()),
             mySignals.get(signal));
       if (maxNameLength > 0) contents.empty();
-      contents.add("BEGIN")
+      contents.add("{{begin}}")
           .add(getModuleFunctionality(theNetlist, attrs).getWithIndent())
-          .add("END PlatformIndependent;");
+          .add("{{end}} PlatformIndependent;");
     } else {
       final var preamble = String.format("module %s( ", componentName);
       final var indenting = new StringBuilder();
@@ -379,7 +379,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     var tabLength = 0;
     var first = true;
     if (Hdl.isVhdl()) {
-      contents.add("{{1}} : {{2}}", thisInstanceIdentifier, compName);
+      contents.addVhdlKeywords().add("{{1}} : {{2}}", thisInstanceIdentifier, compName);
       if (!parameterMap.isEmpty()) {
         // first we gather information on the generic string lengths
         var maxNameLength = 0;
@@ -390,7 +390,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         final var nrOfGenerics = genericNames.size();
         // now we add them
         for (final var generic : genericNames) {
-          final var preamble = currentGeneric == 0 ? "GENERIC MAP (" : " ".repeat(13);
+          final var preamble = currentGeneric == 0 ? "{{generic}} {{map}} (" : " ".repeat(13);
           contents.add("   {{1}} {{2}}{{3}} => {{4}}{{5}}", preamble, generic,
               " ".repeat(Math.max(0, maxNameLength - generic.length())),
               parameterMap.get(generic),
@@ -407,7 +407,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         final var portNames = new TreeSet<String>(portMap.keySet());
         final var nrOfPorts = portNames.size();
         for (final var port : portNames) {
-          final var preamble = currentPort == 0 ? "PORT MAP (" : " ".repeat(10);
+          final var preamble = currentPort == 0 ? "{{port}} {{map}} (" : " ".repeat(10);
           contents.add("   {{1}} {{2}}{{3}} => {{4}}{{5}}", preamble, port,
               " ".repeat(Math.max(0, maxNameLength - port.length())),
               portMap.get(port),
@@ -596,7 +596,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
   private List<String> getVHDLBlackBox(Netlist theNetlist, AttributeSet attrs,
       String componentName, Boolean isEntity) {
-    final var contents = LineBuffer.getHdlBuffer();
+    final var contents = LineBuffer.getHdlBuffer().addVhdlKeywords();
     var maxNameLength = 0;
     if (getWiresPortsDuringHDLWriting) {
       myWires.removeWires();
@@ -604,7 +604,8 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       myPorts.removePorts();
       getGenerationTimeWiresPorts(theNetlist, attrs);
     }
-    contents.add("{{1}} {{2}}{{3}}", isEntity ? "ENTITY" : "COMPONENT", componentName, isEntity ? " IS" : "");
+    contents.add("{{1}} {{2}}{{3}}", isEntity ? Vhdl.getVhdlKeyword("ENTITY") : Vhdl.getVhdlKeyword("COMPONENT"), 
+        componentName, isEntity ? Vhdl.getVhdlKeyword(" IS") : "");
     if (!myParametersList.isEmpty(attrs)) {
       // first we build a list with parameters to determine the max. string length
       final var myParameters = new HashMap<String, Boolean>();
@@ -618,14 +619,14 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       var currentGenericId = 0;
       for (final var thisGeneric : myGenerics) {
         if (currentGenericId == 0) {
-          contents.add("   GENERIC ( {{1}}{{2}}: {{3}}{{4}};", thisGeneric,
+          contents.add("   {{generic}} ( {{1}}{{2}}: {{3}}{{4}};", thisGeneric,
               " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
-              myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector",
+              myParameters.get(thisGeneric) ? "{{integer}}" : "std_logic_vector",
               currentGenericId == (myGenerics.size() - 1) ? " )" : "");
         } else {
           contents.add("             {{1}}{{2}}: {{3}}{{4}};", thisGeneric,
               " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
-              myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector",
+              myParameters.get(thisGeneric) ? "{{integer}}" : "std_logic_vector",
               currentGenericId == (myGenerics.size() - 1) ? " )" : "");
         }
         currentGenericId++;
@@ -650,7 +651,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       var firstEntry = true;
       var currentEntry = 0;
       // now we process in order
-      var direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? "IN   " : "IN ";
+      var direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? Vhdl.getVhdlKeyword("IN   ") : Vhdl.getVhdlKeyword("IN ");
       final var myInputs = new TreeSet<String>(myPorts.keySet(Port.INPUT));
       myInputs.addAll(tickers);
       for (final var input : myInputs) {
@@ -659,7 +660,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         firstEntry = getPortEntry(contents, firstEntry, nrOfEntries, currentEntry, input, direction, type, maxNameLength);
         currentEntry++;
       }
-      direction = "INOUT";
+      direction = Vhdl.getVhdlKeyword("INOUT");
       final var myInOuts = new TreeSet<String>(myPorts.keySet(Port.INOUT));
       for (final var inout : myInOuts) {
         nrOfPortBits = myPorts.get(inout, attrs);
@@ -667,7 +668,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         firstEntry = getPortEntry(contents, firstEntry, nrOfEntries, currentEntry, inout, direction, type, maxNameLength);
         currentEntry++;
       }
-      direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? "OUT  " : "OUT";
+      direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? Vhdl.getVhdlKeyword("OUT  ") : Vhdl.getVhdlKeyword("OUT");
       final var myOutputs = new TreeSet<String>(myPorts.keySet(Port.OUTPUT));
       for (final var output : myOutputs) {
         nrOfPortBits = myPorts.get(output, attrs);
@@ -676,14 +677,15 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         currentEntry++;
       }
     }
-    contents.add("{{1}} {{2}};", isEntity ? "END ENTITY" : "END", isEntity ? componentName : "COMPONENT").empty();
+    contents.add("{{1}} {{2}};", isEntity ? Vhdl.getVhdlKeyword("END ENTITY") : Vhdl.getVhdlKeyword("END"), 
+        isEntity ? componentName : Vhdl.getVhdlKeyword("COMPONENT")).empty();
     return contents.getWithIndent(isEntity ? 0 : 1);
   }
 
   private boolean getPortEntry(LineBuffer contents, boolean firstEntry, int nrOfEntries, int currentEntry,
       String name, String direction, String type, int maxLength) {
     if (firstEntry) {
-      contents.add("   PORT ( {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction,
+      contents.add("   {{port}} ( {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction,
           type, currentEntry == (nrOfEntries - 1) ? " )" : "");
     } else {
       contents.add("          {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction,
@@ -693,17 +695,20 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
   }
 
   private String getTypeIdentifier(int nrOfBits, AttributeSet attrs) {
+    final var contents = LineBuffer.getHdlBuffer().addVhdlKeywords();
     if (nrOfBits < 0) {
       // we have generic based vector
       if (!myParametersList.containsKey(nrOfBits, attrs))
         throw new IllegalArgumentException("Generic parameter not specified in the parameters list");
-      return String.format("std_logic_vector( (%s - 1) DOWNTO 0 )", myParametersList.get(nrOfBits, attrs));
+      contents.add("std_logic_vector( ({{1}} - 1) {{downto}} 0 )", myParametersList.get(nrOfBits, attrs));
     } else if (nrOfBits == 0) {
-      return "std_logic_vector( 0 DOWNTO 0 )";
+      contents.add("std_logic_vector( 0 {{downto}} 0 )");
     } else if (nrOfBits > 1) {
-      return String.format("std_logic_vector( %d DOWNTO 0 )", nrOfBits - 1);
+      contents.add("std_logic_vector( {{1}} {{downto}} 0 )", nrOfBits - 1);
+    } else {
+      contents.add("std_logic");
     }
-    return "std_logic";
+    return contents.get(0);
   }
 
   @Override
