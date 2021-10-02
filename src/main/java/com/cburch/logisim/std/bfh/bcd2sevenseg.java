@@ -118,16 +118,16 @@ public class bcd2sevenseg extends InstanceFactory {
         & !state.getPortValue(BCDin).isUnknown()) {
 
       switch ((int) state.getPortValue(BCDin).toLongValue()) {
-        case 0 -> setKnown(state, 0b1111110);
-        case 1 -> setKnown(state, 0b0110000);
-        case 2 -> setKnown(state, 0b1101101);
-        case 3 -> setKnown(state, 0b1111001);
-        case 4 -> setKnown(state, 0b0110011);
-        case 5 -> setKnown(state, 0b1011011);
-        case 6 -> setKnown(state, 0b1011111);
-        case 7 -> setKnown(state, 0b1110000);
+        case 0 -> setKnown(state, 0b0111111);
+        case 1 -> setKnown(state, 0b0000110);
+        case 2 -> setKnown(state, 0b1011011);
+        case 3 -> setKnown(state, 0b1001111);
+        case 4 -> setKnown(state, 0b1100110);
+        case 5 -> setKnown(state, 0b1101101);
+        case 6 -> setKnown(state, 0b1111101);
+        case 7 -> setKnown(state, 0b0000111);
         case 8 -> setKnown(state, 0b1111111);
-        case 9 -> setKnown(state, 0b1111011);
+        case 9 -> setKnown(state, 0b1101111);
         default -> setUnknown(state);
       }
     } else {
