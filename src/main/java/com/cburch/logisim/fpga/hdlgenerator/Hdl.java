@@ -24,8 +24,8 @@ import java.util.List;
 
 public abstract class Hdl {
 
-  public static final String NET_NAME = "s_LOGISIM_NET_";
-  public static final String BUS_NAME = "s_LOGISIM_BUS_";
+  public static final String NET_NAME = "s_logisimNet";
+  public static final String BUS_NAME = "s_logisimBus";
 
   public static boolean isVhdl() {
     return AppPreferences.HdlType.get().equals(HdlGeneratorFactory.VHDL);

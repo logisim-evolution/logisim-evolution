@@ -81,7 +81,7 @@ public class WithSelectHdlGenerator {
         .pair("regName", regName)
         .pair("regBits", nrOfDestinationBits - 1);
     if (Hdl.isVhdl()) {
-      contents.add("WITH ({{sourceName}}) SELECT {{destName}} <=");
+      contents.addVhdlKeywords().add("{{with}} ({{sourceName}}) {{select}} {{destName}} <=");
     } else {
       contents.add("""
           reg[{{regBits}}:0] {{regName}};
@@ -93,13 +93,13 @@ public class WithSelectHdlGenerator {
     for (final var thisCase : myCases.keySet()) {
       final var value = myCases.get(thisCase);
       if (Hdl.isVhdl()) {
-        contents.add("   {{1}} WHEN {{2}},", Hdl.getConstantVector(value, nrOfDestinationBits), Hdl.getConstantVector(thisCase, nrOfSourceBits));
+        contents.add("   {{1}} {{when}} {{2}},", Hdl.getConstantVector(value, nrOfDestinationBits), Hdl.getConstantVector(thisCase, nrOfSourceBits));
       } else {
         contents.add("      {{1}} : {{regName}} = {{2}};", Hdl.getConstantVector(thisCase, nrOfSourceBits), Hdl.getConstantVector(value, nrOfDestinationBits));
       }
     }
     if (Hdl.isVhdl()) {
-      contents.add("   {{1}} WHEN OTHERS;", Hdl.getConstantVector(defaultValue, nrOfDestinationBits));
+      contents.add("   {{1}} {{when}} {{others}};", Hdl.getConstantVector(defaultValue, nrOfDestinationBits));
     } else {
       contents.add("      default : {{regName}} = {{1}};", Hdl.getConstantVector(defaultValue, nrOfDestinationBits));
     }

@@ -44,7 +44,7 @@ public class HdlTypes {
     @Override
     public String getTypeDefinition() {
       final var contents = new StringBuilder();
-      if (Hdl.isVhdl()) contents.append(String.format("TYPE %s IS ( ", myTypeName));
+      if (Hdl.isVhdl()) contents.append(LineBuffer.formatVhdl("{{type}} {{1}} {{is}} (", myTypeName));
       else contents.append("typedef enum { ");
       var first = true;
       for (final var entry : myEntries) {
@@ -87,9 +87,11 @@ public class HdlTypes {
     public String getTypeDefinition() {
       final var contents = new StringBuilder();
       if (Hdl.isVhdl()) {
-        contents.append(String.format("Type %s IS ARRAY( %d DOWNTO 0 ) OF std_logic_vector( ", myTypeName, myNrOfEntries))
+        contents.append(
+            LineBuffer.formatVhdl("{{type}} {{1}} {{is}} {{array}} ( {{2}} {{downto}} 0 ) {{of}}std_logic_vector( ", 
+                myTypeName, myNrOfEntries))
             .append(myGenericBitWidth == null ? Integer.toString(myBitWidth - 1) : String.format("%s - 1", myGenericBitWidth))
-            .append(" DOWNTO 0);");
+            .append(LineBuffer.formatVhdl("{{downto}} 0);"));
       } else {
         contents.append("typedef logic [")
             .append(myGenericBitWidth == null ? Integer.toString(myBitWidth - 1) : String.format("%s - 1", myGenericBitWidth))

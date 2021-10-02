@@ -72,7 +72,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     }
     contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
     if (Hdl.isVhdl()) {
-      contents.addVhdlKeywords().add("{{architecture}} PlatformIndependent {{of}} {{1}} {{is}} ", componentName).empty();
+      contents.addVhdlKeywords().add("{{architecture}} platformIndependent {{of}} {{1}} {{is}} ", componentName).empty();
       if (myTypedWires.getNrOfTypes() > 0) {
         contents.addRemarkBlock("Here all private types are defined")
             .add(myTypedWires.getTypeDefinitions())
@@ -108,7 +108,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       if (maxNameLength > 0) contents.empty();
       contents.add("{{begin}}")
           .add(getModuleFunctionality(theNetlist, attrs).getWithIndent())
-          .add("{{end}} PlatformIndependent;");
+          .add("{{end}} platformIndependent;");
     } else {
       final var preamble = String.format("module %s( ", componentName);
       final var indenting = new StringBuilder();
@@ -603,7 +603,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       myPorts.removePorts();
       getGenerationTimeWiresPorts(theNetlist, attrs);
     }
-    contents.add(isEntity ? "{{entity}} {{1}} {{is}}" : "{{component}} {{1}}" , componentName);
+    contents.add(isEntity ? "{{entity}} {{1}} {{is}}" : "{{component}} {{1}}", componentName);
     if (!myParametersList.isEmpty(attrs)) {
       // first we build a list with parameters to determine the max. string length
       final var myParameters = new HashMap<String, Boolean>();

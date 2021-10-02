@@ -661,6 +661,18 @@ public class LineBuffer implements RandomAccess {
     return getHdlBuffer().add(fmt, args).get(0);
   }
 
+  /**
+   * Formats provided fmt string using given arguments for positional placeholders but also includes
+   * HDL placeholders and VHDL keywords.
+   *
+   * @param fmt Formattting string.
+   * @param args Positional placeholders.
+   * @return Formatted string.
+   */
+  public static String formatVhdl(String fmt, Object... args) {
+    return getHdlBuffer().addVhdlKeywords().add(fmt, args).get(0);
+  }
+
   /* ********************************************************************************************* */
 
   /**
