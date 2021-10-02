@@ -47,7 +47,7 @@ public abstract class Hdl {
     return isVhdl() ? 3 : 4;
   }
 
-  public static String getRemakrChar(boolean first, boolean last) {
+  public static String getRemarkChar(boolean first, boolean last) {
     if (isVhdl()) return "-";
     if (first) return "/";
     if (last) return " ";

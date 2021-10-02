@@ -363,7 +363,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
             contents.addRemarkBlock("Here all in-lined components are defined");
             isFirstLine = false;
           }
-          contents.add(worker.getInlinedCode(theNetList, id++, comp, inlinedName).getWithIndent());
+          contents.empty().addRemarkLine(comp.getComponent().getFactory().getDisplayName());
+          contents.add(worker.getInlinedCode(theNetList, id++, comp, inlinedName));
           compIds.put(InlinedId, id);
         }
       }

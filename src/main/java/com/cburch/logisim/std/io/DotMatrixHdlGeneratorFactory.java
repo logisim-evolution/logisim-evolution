@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.std.io;
 
+import java.util.HashMap;
+
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
@@ -25,6 +27,7 @@ public class DotMatrixHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
     final var rowBased = componentInfo.getComponent().getAttributeSet().getValue(DotMatrixBase.ATTR_INPUT_TYPE) == DotMatrixBase.INPUT_ROW;
     final var rows = componentInfo.getComponent().getAttributeSet().getValue(DotMatrix.ATTR_MATRIX_ROWS).getWidth();
     final var cols = componentInfo.getComponent().getAttributeSet().getValue(DotMatrix.ATTR_MATRIX_COLS).getWidth();
+    final var wires = new HashMap<String, String>();
 
     if (colBased) {
       /* The simulator uses here following addressing scheme (2x2):
@@ -41,8 +44,7 @@ public class DotMatrixHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
           final var wire = (rows == 1) ? Hdl.getNetName(componentInfo, ledMatrixCol, true, netlist)
               : Hdl.getBusEntryName(componentInfo, ledMatrixCol, true, dotMatrixRow, netlist);
           final var idx = (ledMatrixRow * cols) + ledMatrixCol + componentInfo.getLocalBubbleOutputStartId();
-          contents.add("{{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}};", LOCAL_OUTPUT_BUBBLE_BUS_NAME,
-              idx, wire);
+          wires.put(LineBuffer.format("{{1}}{{<}}{{2}}{{>}}", LOCAL_OUTPUT_BUBBLE_BUS_NAME, idx), wire);
         }
       }
     } else if (rowBased) {
@@ -60,8 +62,7 @@ public class DotMatrixHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
           final var wire = (cols == 1) ? Hdl.getNetName(componentInfo, ledMatrixRow, true, netlist)
               : Hdl.getBusEntryName(componentInfo, ledMatrixRow, true, ledMatrixCol, netlist);
           final var idx = (ledMatrixRow * cols) + dotMatrixCol + componentInfo.getLocalBubbleOutputStartId();
-          contents.add("{{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}};", LOCAL_OUTPUT_BUBBLE_BUS_NAME,
-              idx, wire);
+          wires.put(LineBuffer.format("{{1}}{{<}}{{2}}{{>}}", LOCAL_OUTPUT_BUBBLE_BUS_NAME, idx), wire);
         }
       }
     } else {
@@ -81,13 +82,12 @@ public class DotMatrixHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
           final var colWire = (cols == 1) ? Hdl.getNetName(componentInfo, 0, true, netlist)
               : Hdl.getBusEntryName(componentInfo, 0, true, ledMatrixCol, netlist);
           final var idx = (ledMatrixRow * cols) + ledMatrixCol + componentInfo.getLocalBubbleOutputStartId();
-          contents.add("{{assign}} {{1}}{{<}}{{2}}{{>}} {{=}} {{3}} {{and}} {{4}};", LOCAL_OUTPUT_BUBBLE_BUS_NAME,
-              idx, rowWire, colWire);
+          wires.put(LineBuffer.format("{{1}}{{<}}{{2}}{{>}}", LOCAL_OUTPUT_BUBBLE_BUS_NAME, idx), 
+              LineBuffer.format("{{1}}{{and}}{{2}}", rowWire, colWire));
         }
       }
     }
-    contents.add("");
-
+    Hdl.addAllWiresSorted(contents, wires);
     return contents;
   }
 

@@ -80,7 +80,6 @@ public class WithSelectHdlGenerator {
         .pair("destName", destinationSignal)
         .pair("regName", regName)
         .pair("regBits", nrOfDestinationBits - 1);
-    contents.add("");
     if (Hdl.isVhdl()) {
       contents.add("WITH ({{sourceName}}) SELECT {{destName}} <=");
     } else {

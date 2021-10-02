@@ -558,7 +558,7 @@ public class LineBuffer implements RandomAccess {
     /* we start with generating the first remark line */
     while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
     for (var i = 0; i < MAX_LINE_LENGTH - nrOfIndentSpaces; i++) {
-      oneLine.append(Hdl.getRemakrChar(i == 0, i == MAX_LINE_LENGTH - nrOfIndentSpaces - 1));
+      oneLine.append(Hdl.getRemarkChar(i == 0, i == MAX_LINE_LENGTH - nrOfIndentSpaces - 1));
     }
     contents.add(oneLine.toString());
     oneLine.setLength(0);
@@ -569,8 +569,8 @@ public class LineBuffer implements RandomAccess {
         while (oneLine.length() < (MAX_LINE_LENGTH - Hdl.remarkOverhead())) oneLine.append(" ");
         oneLine
             .append(" ")
-            .append(Hdl.getRemakrChar(false, false))
-            .append(Hdl.getRemakrChar(false, false));
+            .append(Hdl.getRemarkChar(false, false))
+            .append(Hdl.getRemarkChar(false, false));
         contents.add(oneLine.toString());
         oneLine.setLength(0);
       }
@@ -590,18 +590,29 @@ public class LineBuffer implements RandomAccess {
       while (oneLine.length() < (MAX_LINE_LENGTH - Hdl.remarkOverhead())) oneLine.append(" ");
       oneLine
           .append(" ")
-          .append(Hdl.getRemakrChar(false, false))
-          .append(Hdl.getRemakrChar(false, false));
+          .append(Hdl.getRemarkChar(false, false))
+          .append(Hdl.getRemarkChar(false, false));
       contents.add(oneLine.toString());
       oneLine.setLength(0);
     }
     // We end with generating the last remark line.
     while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
     for (var i = 0; i < MAX_LINE_LENGTH - nrOfIndentSpaces; i++)
-      oneLine.append(Hdl.getRemakrChar(i == MAX_LINE_LENGTH - nrOfIndentSpaces - 1, i == 0));
+      oneLine.append(Hdl.getRemarkChar(i == MAX_LINE_LENGTH - nrOfIndentSpaces - 1, i == 0));
     contents.add(oneLine.toString());
 
     return contents;
+  }
+  
+  /**
+   * Builds a single remark line
+   * 
+   * @param remarkText text to put in the line
+   */
+  
+  public LineBuffer addRemarkLine(String remarkText) {
+    add("{{1}}{{1}} {{2}}", Hdl.getRemarkChar(true, false), remarkText);
+    return this;
   }
 
   /* ********************************************************************************************* */
