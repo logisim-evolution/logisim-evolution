@@ -15,12 +15,12 @@ public class MatrixPlacerInfo {
 
   private final String oldLabel;
   private String sharedLabel;
-  private int xCopiesCount = 1;
-  private int yCopiesCount = 1;
+  private int copiesCountX = 1;
+  private int copiesCountY = 1;
   private int displacementX = 1;
   private int displacementY = 1;
-  private int xDispMin = 1;
-  private int yDispMin = 1;
+  private int minimalDisplacementX = 1;
+  private int minilamDisplacementY = 1;
 
   public MatrixPlacerInfo(String label) {
     sharedLabel = label;
@@ -28,16 +28,16 @@ public class MatrixPlacerInfo {
   }
 
   void setBounds(Bounds bds) {
-    displacementX = xDispMin = (bds.getWidth() + 9) / 10;
-    displacementY = yDispMin = (bds.getHeight() + 9) / 10;
+    displacementX = minimalDisplacementX = (bds.getWidth() + 9) / 10;
+    displacementY = minilamDisplacementY = (bds.getHeight() + 9) / 10;
   }
 
-  int getMinimalXDisplacement() {
-    return xDispMin;
+  int getMinimalDisplacementX() {
+    return minimalDisplacementX;
   }
 
-  int getMinimalYDisplacement() {
-    return yDispMin;
+  int getMinimalDisplacementY() {
+    return minilamDisplacementY;
   }
 
   String getLabel() {
@@ -52,20 +52,20 @@ public class MatrixPlacerInfo {
     sharedLabel = lab;
   }
 
-  int getxCopiesCount() {
-    return xCopiesCount;
+  int getCopiesCountX() {
+    return copiesCountX;
   }
 
-  void setxCopiesCount(int val) {
-    xCopiesCount = val;
+  void setCopiesCountX(int val) {
+    copiesCountX = val;
   }
 
-  int getyCopiesCount() {
-    return yCopiesCount;
+  int getCopiesCountY() {
+    return copiesCountY;
   }
 
-  void setyCopiesCount(int val) {
-    yCopiesCount = val;
+  void setCopiesCountY(int val) {
+    copiesCountY = val;
   }
 
   int getDeltaX() {

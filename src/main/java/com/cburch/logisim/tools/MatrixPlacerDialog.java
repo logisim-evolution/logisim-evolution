@@ -91,7 +91,7 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
     c.gridx = 5;
     add(new JLabel("dx:"), c);
     c.gridx = 6;
-    for (var i = matrixInfo.getMinimalXDisplacement(); i < 100; i++) {
+    for (var i = matrixInfo.getMinimalDisplacementX(); i < 100; i++) {
       distanceX.addItem(i);
     }
     distanceX.setSelectedIndex(0);
@@ -134,7 +134,7 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
     c.gridy = 6;
     add(new JLabel("dy:"), c);
     c.gridx = 1;
-    for (var i = matrixInfo.getMinimalYDisplacement(); i < 100; i++) {
+    for (var i = matrixInfo.getMinimalDisplacementY(); i < 100; i++) {
       distanceY.addItem(i);
     }
     distanceY.setSelectedIndex(0);
@@ -147,11 +147,11 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
     if (matrixInfo == null) return;
 
     if (e.getSource() == copiesX) {
-      matrixInfo.setxCopiesCount((int) copiesX.getSelectedItem());
+      matrixInfo.setCopiesCountX((int) copiesX.getSelectedItem());
     } else if (e.getSource() == distanceX) {
       matrixInfo.setDisplacementX((int) distanceX.getSelectedItem());
     } else if (e.getSource() == copiesY) {
-      matrixInfo.setyCopiesCount((int) copiesY.getSelectedItem());
+      matrixInfo.setCopiesCountY((int) copiesY.getSelectedItem());
     } else if (e.getSource() == distanceY) {
       matrixInfo.setDisplacementY((int) distanceY.getSelectedItem());
     }
