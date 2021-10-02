@@ -79,7 +79,7 @@ public class ReptarLocalBus extends InstanceFactory {
   private static final String defaultLocalBusName = "LocalBus";
 
   public ReptarLocalBus() {
-    super(_ID, S.getter("repLBComponent"), new ReptarLocalBusHDLGeneratorFactory(), false, true);
+    super(_ID, S.getter("repLBComponent"), new ReptarLocalBusHdlGeneratorFactory(), false, true);
 
     final var inpLabels = new ArrayList<String>();
     final var outpLabels = new ArrayList<String>();

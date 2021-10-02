@@ -22,7 +22,7 @@ public class Ttl74266 extends AbstractTtlGate {
    */
   public static final String _ID = "74266";
 
-  private static class XNorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class XNorGateHdlGeneratorFactory extends AbstractGateHdlGenerator {
 
     @Override
     public LineBuffer getLogicFunction(int index) {
@@ -32,7 +32,7 @@ public class Ttl74266 extends AbstractTtlGate {
   }
 
   public Ttl74266() {
-    super(_ID, (byte) 14, new byte[] {3, 6, 8, 11}, true, new XNorGateHDLGeneratorFactory());
+    super(_ID, (byte) 14, new byte[] {3, 6, 8, 11}, true, new XNorGateHdlGeneratorFactory());
   }
 
   @Override

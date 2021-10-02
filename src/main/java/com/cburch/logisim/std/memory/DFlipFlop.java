@@ -26,7 +26,7 @@ public class DFlipFlop extends AbstractFlipFlop {
    */
   public static final String _ID = "D Flip-Flop";
 
-  private static class DFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
+  private static class DFFHDLGeneratorFactory extends AbstractFlipFlopHdlGeneratorFactory {
 
     public DFFHDLGeneratorFactory() {
       super(1, StdAttr.TRIGGER);

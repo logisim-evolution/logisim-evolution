@@ -97,7 +97,7 @@ public class Ram extends Mem {
   private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
 
   public Ram() {
-    super(_ID, S.getter("ramComponent"), 3, new RamHDLGeneratorFactory(), true);
+    super(_ID, S.getter("ramComponent"), 3, new RamHdlGeneratorFactory(), true);
     setIcon(new ArithmeticIcon("RAM", 3));
     setInstanceLogger(Logger.class);
   }

@@ -10,7 +10,7 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.CircuitHDLGeneratorFactory;
+import com.cburch.logisim.circuit.CircuitHdlGeneratorFactory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.FpgaIoInformationContainer;
 import com.cburch.logisim.fpga.data.IoComponentTypes;
@@ -24,8 +24,8 @@ import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.std.io.LedArrayGenericHDLGeneratorFactory;
-import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
+import com.cburch.logisim.std.io.LedArrayGenericHdlGeneratorFactory;
+import com.cburch.logisim.std.wiring.ClockHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -80,7 +80,7 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     if (nrOfClockTrees > 0) {
       myWires.addWire(TickComponentHdlGeneratorFactory.FPGA_TICK, 1);
       for (var clockId = 0; clockId < nrOfClockTrees; clockId++)
-        myWires.addWire(String.format("s_%s%d", CLOCK_TREE_NAME, clockId), ClockHDLGeneratorFactory.NR_OF_CLOCK_BITS);
+        myWires.addWire(String.format("s_%s%d", CLOCK_TREE_NAME, clockId), ClockHdlGeneratorFactory.NR_OF_CLOCK_BITS);
     }
     if (nrOfInputBubbles > 0)
       myWires.addWire(String.format("s_%s", HdlGeneratorFactory.LOCAL_INPUT_BUBBLE_BUS_NAME),
@@ -116,12 +116,12 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       }
     }
     for (final var ledArray : myLedArrays) {
-      myWires.addAllWires(LedArrayGenericHDLGeneratorFactory.getInternalSignals(
+      myWires.addAllWires(LedArrayGenericHdlGeneratorFactory.getInternalSignals(
           ledArray.getArrayDriveMode(),
           ledArray.getNrOfRows(),
           ledArray.getNrOfColumns(),
           myLedArrays.indexOf(ledArray)));
-      final var ports = LedArrayGenericHDLGeneratorFactory.getExternalSignals(
+      final var ports = LedArrayGenericHdlGeneratorFactory.getExternalSignals(
           ledArray.getArrayDriveMode(),
           ledArray.getNrOfRows(),
           ledArray.getNrOfColumns(),
@@ -172,13 +172,13 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     }
     for (final var type : LedArrayDriving.DRIVING_STRINGS) {
       if (hasLedArrayType(type)) {
-        final var worker = LedArrayGenericHDLGeneratorFactory.getSpecificHDLGenerator(type);
-        final var name = LedArrayGenericHDLGeneratorFactory.getSpecificHDLName(type);
+        final var worker = LedArrayGenericHdlGeneratorFactory.getSpecificHDLGenerator(type);
+        final var name = LedArrayGenericHdlGeneratorFactory.getSpecificHDLName(type);
         if (worker != null && name != null)
           components.addAll(worker.getComponentInstantiation(theNetlist, null, name));
       }
     }
-    final var worker = new CircuitHDLGeneratorFactory(myCircuit);
+    final var worker = new CircuitHdlGeneratorFactory(myCircuit);
     components.addAll(
         worker.getComponentInstantiation(
             theNetlist,
@@ -215,21 +215,21 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
     /* Here the map is performed */
     contents.addRemarkBlock("Here the toplevel component is connected");
-    final var dut = new CircuitHDLGeneratorFactory(myCircuit);
+    final var dut = new CircuitHdlGeneratorFactory(myCircuit);
     contents.add(dut.getComponentMap(theNetlist, 0L, myIOComponents, CorrectLabel.getCorrectLabel(myCircuit.getName())));
     // Here the led arrays are connected
     if (hasLedArray) {
       contents.add("").addRemarkBlock("Here the Led arrays are connected");
       for (final var array : myLedArrays) {
         contents.add(
-            LedArrayGenericHDLGeneratorFactory.GetComponentMap(
+            LedArrayGenericHdlGeneratorFactory.GetComponentMap(
                 array.getArrayDriveMode(),
                 array.getNrOfRows(),
                 array.getNrOfColumns(),
                 myLedArrays.indexOf(array),
                 fpgaClockFrequency,
                 array.getActivityLevel() == PinActivity.ACTIVE_LOW));
-        contents.add(LedArrayGenericHDLGeneratorFactory.getArrayConnections(array, myLedArrays.indexOf(array)));
+        contents.add(LedArrayGenericHdlGeneratorFactory.getArrayConnections(array, myLedArrays.indexOf(array)));
       }
     }
     return contents;

@@ -20,7 +20,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
-import com.cburch.logisim.gui.icons.DipswitchIcon;
+import com.cburch.logisim.gui.icons.DipSwitchIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -126,7 +126,7 @@ public class DipSwitch extends InstanceFactory {
       Attributes.forBitWidth("number", S.getter("nrOfSwitch"), MIN_SWITCH, MAX_SWITCH);
 
   public DipSwitch() {
-    super(_ID, S.getter("DipSwitchComponent"), new AbstractSimpleIOHDLGeneratorFactory(true), true);
+    super(_ID, S.getter("DipSwitchComponent"), new AbstractSimpleIoHdlGeneratorFactory(true), true);
     var dipSize = 8;
     setAttributes(
         new Attribute[] {
@@ -150,7 +150,7 @@ public class DipSwitch extends InstanceFactory {
           new ComponentMapInformationContainer(dipSize, 0, 0, getLabels(dipSize), null, null)
         });
     setFacingAttribute(StdAttr.FACING);
-    setIcon(new DipswitchIcon());
+    setIcon(new DipSwitchIcon());
     setKeyConfigurator(
         JoinedConfigurator.create(
             new BitWidthConfigurator(ATTR_SIZE),

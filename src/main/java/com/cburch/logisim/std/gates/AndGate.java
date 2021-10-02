@@ -23,7 +23,7 @@ import com.cburch.logisim.util.LineBuffer;
 import java.awt.Graphics2D;
 
 class AndGate extends AbstractGate {
-  private static class AndGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class AndGateHdlGeneratorFactory extends AbstractGateHdlGenerator {
     @Override
     public boolean getFloatingValue(boolean isInverted) {
       return isInverted;
@@ -58,7 +58,7 @@ class AndGate extends AbstractGate {
   public static final AndGate FACTORY = new AndGate();
 
   private AndGate() {
-    super("AND Gate", S.getter("andGateComponent"), new AndGateHDLGeneratorFactory());
+    super("AND Gate", S.getter("andGateComponent"), new AndGateHdlGeneratorFactory());
     setRectangularLabel("&");
   }
 

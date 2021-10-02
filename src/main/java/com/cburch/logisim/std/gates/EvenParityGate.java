@@ -20,7 +20,7 @@ import com.cburch.logisim.util.LineBuffer;
 import java.awt.Graphics2D;
 
 class EvenParityGate extends AbstractGate {
-  private static class XNorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class XNorGateHdlGeneratorFactory extends AbstractGateHdlGenerator {
     @Override
     public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       return LineBuffer.getBuffer().add(getParity(true, nrOfInputs, bitwidth > 1)).empty();
@@ -31,7 +31,7 @@ class EvenParityGate extends AbstractGate {
   private static final String LABEL = "2k";
 
   private EvenParityGate() {
-    super("Even Parity", S.getter("evenParityComponent"), new XNorGateHDLGeneratorFactory());
+    super("Even Parity", S.getter("evenParityComponent"), new XNorGateHdlGeneratorFactory());
     setRectangularLabel(LABEL);
   }
 

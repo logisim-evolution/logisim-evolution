@@ -102,7 +102,7 @@ public class Adder extends InstanceFactory {
   public static final int C_OUT = 4;
 
   public Adder() {
-    super(_ID, S.getter("adderComponent"), new AdderHDLGeneratorFactory());
+    super(_ID, S.getter("adderComponent"), new AdderHdlGeneratorFactory());
     setAttributes(new Attribute[] {StdAttr.WIDTH}, new Object[] {BitWidth.create(8)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));

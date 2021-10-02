@@ -24,7 +24,7 @@ import com.cburch.logisim.fpga.data.IoComponentsListener;
 import com.cburch.logisim.fpga.data.MapListModel;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.SimpleRectangle;
-import com.cburch.logisim.fpga.file.PNGFileFilter;
+import com.cburch.logisim.fpga.file.PngFileFilter;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LocaleListener;
@@ -42,7 +42,6 @@ import java.awt.event.WindowEvent;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -311,7 +310,7 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
       return;
     }
     if (comp == null) {
-      final var result = (new IOComponentSelector(ioComps.getParentFrame())).run();
+      final var result = (new IoComponentSelector(ioComps.getParentFrame())).run();
       if (result == null) return;
       comp = new FpgaIoInformationContainer(IoComponentTypes.valueOf(result), rect, ioComps);
     } else
@@ -380,7 +379,7 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
       final var fc = new JFileChooser();
       fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
       fc.setDialogTitle(S.get("BoardManipLoadPng"));
-      fc.setFileFilter(PNGFileFilter.PNG_FILTER);
+      fc.setFileFilter(PngFileFilter.PNG_FILTER);
       fc.setAcceptAllFileFilterUsed(false);
       final var retVal = fc.showOpenDialog(this);
       if (retVal == JFileChooser.APPROVE_OPTION) {

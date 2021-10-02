@@ -226,7 +226,7 @@ public class Netlist {
   public int designRuleCheckResult(boolean isTopLevel, ArrayList<String> sheetNames) {
     final var compNames = new ArrayList<String>();
     final var labels = new HashMap<String, Component>();
-    final var drc = new ArrayList<SimpleDRCContainer>();
+    final var drc = new ArrayList<SimpleDrcContainer>();
 
     // if we are the toplevel component we clear the complete netlist
     if (isTopLevel) clear();
@@ -273,41 +273,41 @@ public class Netlist {
       if (!compNames.contains(compName)) compNames.add(compName);
     }
     drc.add(
-        new SimpleDRCContainer(
+        new SimpleDrcContainer(
             myCircuit,
             S.get("HDL_noLabel"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_INSTANCE));
+            SimpleDrcContainer.LEVEL_FATAL,
+            SimpleDrcContainer.MARK_INSTANCE));
     drc.add(
-        new SimpleDRCContainer(
+        new SimpleDrcContainer(
             myCircuit,
             S.get("HDL_CompNameIsLabel"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_LABEL));
+            SimpleDrcContainer.LEVEL_FATAL,
+            SimpleDrcContainer.MARK_INSTANCE | SimpleDrcContainer.MARK_LABEL));
     drc.add(
-        new SimpleDRCContainer(
+        new SimpleDrcContainer(
             myCircuit,
             S.get("HDL_LabelInvalid"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_LABEL));
+            SimpleDrcContainer.LEVEL_FATAL,
+            SimpleDrcContainer.MARK_INSTANCE | SimpleDrcContainer.MARK_LABEL));
     drc.add(
-        new SimpleDRCContainer(
+        new SimpleDrcContainer(
             myCircuit,
             S.get("HDL_DuplicatedLabels"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_LABEL));
+            SimpleDrcContainer.LEVEL_FATAL,
+            SimpleDrcContainer.MARK_INSTANCE | SimpleDrcContainer.MARK_LABEL));
     drc.add(
-        new SimpleDRCContainer(
+        new SimpleDrcContainer(
             myCircuit,
             S.get("HDL_Tristate"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_INSTANCE));
+            SimpleDrcContainer.LEVEL_FATAL,
+            SimpleDrcContainer.MARK_INSTANCE));
     drc.add(
-        new SimpleDRCContainer(
+        new SimpleDrcContainer(
             myCircuit,
             S.get("HDL_unsupported"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_INSTANCE));
+            SimpleDrcContainer.LEVEL_FATAL,
+            SimpleDrcContainer.MARK_INSTANCE));
 
     for (final var comp : myCircuit.getNonWires()) {
       // Here we check if the components are supported for the HDL generation
@@ -401,11 +401,11 @@ public class Netlist {
       }
       if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
         final var warn =
-            new SimpleDRCContainer(
+            new SimpleDrcContainer(
                     myCircuit,
                     S.get("NetList_UnconnectedInputs"),
-                    SimpleDRCContainer.LEVEL_NORMAL,
-                    SimpleDRCContainer.MARK_INSTANCE);
+                    SimpleDrcContainer.LEVEL_NORMAL,
+                    SimpleDrcContainer.MARK_INSTANCE);
         warn.addMarkComponent(comp.getComponent());
         Reporter.report.addWarning(warn);
       }
@@ -418,11 +418,11 @@ public class Netlist {
       }
       if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
         final var warn =
-            new SimpleDRCContainer(
+            new SimpleDrcContainer(
                     myCircuit,
                     S.get("NetList_UnconnectedInputs"),
-                    SimpleDRCContainer.LEVEL_SEVERE,
-                    SimpleDRCContainer.MARK_INSTANCE);
+                    SimpleDrcContainer.LEVEL_SEVERE,
+                    SimpleDrcContainer.MARK_INSTANCE);
         warn.addMarkComponent(comp.getComponent());
         Reporter.report.addWarning(warn);
       }
@@ -435,11 +435,11 @@ public class Netlist {
       }
       if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
         final var warn =
-            new SimpleDRCContainer(
+            new SimpleDrcContainer(
                     myCircuit,
                     S.get("NetList_UnconnectedInput"),
-                    SimpleDRCContainer.LEVEL_NORMAL,
-                    SimpleDRCContainer.MARK_INSTANCE);
+                    SimpleDrcContainer.LEVEL_NORMAL,
+                    SimpleDrcContainer.MARK_INSTANCE);
         warn.addMarkComponent(comp.getComponent());
         Reporter.report.addWarning(warn);
       }
@@ -452,11 +452,11 @@ public class Netlist {
       }
       if (openOutputs && !AppPreferences.SupressOpenPinWarnings.get()) {
         final var warn =
-            new SimpleDRCContainer(
+            new SimpleDrcContainer(
                     myCircuit,
                     S.get("NetList_UnconnectedOutput"),
-                    SimpleDRCContainer.LEVEL_NORMAL,
-                    SimpleDRCContainer.MARK_INSTANCE);
+                    SimpleDrcContainer.LEVEL_NORMAL,
+                    SimpleDrcContainer.MARK_INSTANCE);
         warn.addMarkComponent(comp.getComponent());
         Reporter.report.addWarning(warn);
       }
@@ -548,7 +548,7 @@ public class Netlist {
   }
 
   private boolean generateNetlist() {
-    final var drc = new ArrayList<SimpleDRCContainer>();
+    final var drc = new ArrayList<SimpleDrcContainer>();
     var errors = false;
     circuitName = myCircuit.getName();
     final var progress = Reporter.report.getProgressBar();
@@ -581,17 +581,17 @@ public class Netlist {
     final var tunnelList = new HashSet<Component>();
     mySplitters.clear();
     drc.add(
-        new SimpleDRCContainer(
+        new SimpleDrcContainer(
             myCircuit,
             S.get("NetList_IOError"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_INSTANCE));
+            SimpleDrcContainer.LEVEL_FATAL,
+            SimpleDrcContainer.MARK_INSTANCE));
     drc.add(
-        new SimpleDRCContainer(
+        new SimpleDrcContainer(
             myCircuit,
             S.get("NetList_BitwidthError"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_WIRE));
+            SimpleDrcContainer.LEVEL_FATAL,
+            SimpleDrcContainer.MARK_WIRE));
 
     for (final var comp : components) {
       // We do not process the splitter and tunnel, they are processed later on
@@ -651,11 +651,11 @@ public class Netlist {
     // Now we check if an input pin is connected to an output and in case of
     // a Splitter if it is connected to either of them
     drc.add(
-        new SimpleDRCContainer(
+        new SimpleDrcContainer(
             myCircuit,
             S.get("NetAdd_ComponentWidthMismatch"),
-            SimpleDRCContainer.LEVEL_FATAL,
-            SimpleDRCContainer.MARK_INSTANCE));
+            SimpleDrcContainer.LEVEL_FATAL,
+            SimpleDrcContainer.MARK_INSTANCE));
     final var points = new HashMap<Location, Integer>();
     for (final var comp : components) {
       for (final var end : comp.getEnds()) {
@@ -705,7 +705,7 @@ public class Netlist {
       }
     }
     drc.clear();
-    drc.add(new SimpleDRCContainer(myCircuit, S.get("NetMerge_BitWidthError"), SimpleDRCContainer.LEVEL_FATAL, SimpleDRCContainer.MARK_WIRE));
+    drc.add(new SimpleDrcContainer(myCircuit, S.get("NetMerge_BitWidthError"), SimpleDrcContainer.LEVEL_FATAL, SimpleDrcContainer.MARK_WIRE));
     if (areTunnelsPresent) {
       final var netIterator = myNets.listIterator();
       while (netIterator.hasNext()) {
@@ -763,11 +763,11 @@ public class Netlist {
         }
         if (dupeFound) {
           final var warn =
-              new SimpleDRCContainer(
+              new SimpleDrcContainer(
                       myCircuit,
                       S.get("NetList_duplicatedSplitter"),
-                      SimpleDRCContainer.LEVEL_SEVERE,
-                      SimpleDRCContainer.MARK_INSTANCE);
+                      SimpleDrcContainer.LEVEL_SEVERE,
+                      SimpleDrcContainer.MARK_INSTANCE);
           warn.addMarkComponent(thisSplitter);
           Reporter.report.addWarning(warn);
           mySplitIter.remove();
@@ -780,11 +780,11 @@ public class Netlist {
     drc.clear();
     final Iterator<Net> netIterator = myNets.listIterator();
     drc.add(
-        new SimpleDRCContainer(
+        new SimpleDrcContainer(
                 myCircuit,
                 S.get("NetList_emptynets"),
-                SimpleDRCContainer.LEVEL_NORMAL,
-                SimpleDRCContainer.MARK_WIRE));
+                SimpleDrcContainer.LEVEL_NORMAL,
+                SimpleDrcContainer.MARK_WIRE));
     while (netIterator.hasNext()) {
       final var wire = netIterator.next();
       if (wire.getBitWidth() == 0) {
@@ -800,11 +800,11 @@ public class Netlist {
     // mark those who are not correctly connected and remove both versions from the set.
     drc.clear();
     drc.add(
-        new SimpleDRCContainer(
+        new SimpleDrcContainer(
                 myCircuit,
                 S.get("NetList_ShortCircuit"),
-                SimpleDRCContainer.LEVEL_FATAL,
-                SimpleDRCContainer.MARK_WIRE));
+                SimpleDrcContainer.LEVEL_FATAL,
+                SimpleDrcContainer.MARK_WIRE));
     errors = false;
     while (mySplitIter.hasNext()) {
       final var mySplitter = mySplitIter.next();
@@ -871,11 +871,11 @@ public class Netlist {
         }
         if (issueWarning) {
           final var warn =
-              new SimpleDRCContainer(
+              new SimpleDrcContainer(
                       myCircuit,
                       S.get("NetList_NoSplitterConnection"),
-                      SimpleDRCContainer.LEVEL_SEVERE,
-                      SimpleDRCContainer.MARK_INSTANCE);
+                      SimpleDrcContainer.LEVEL_SEVERE,
+                      SimpleDrcContainer.MARK_INSTANCE);
           warn.addMarkComponent(mySplitter);
           Reporter.report.addWarning(warn);
         }
@@ -952,21 +952,21 @@ public class Netlist {
       }
       if (unconnectedEnds) {
         final var warn =
-            new SimpleDRCContainer(
+            new SimpleDrcContainer(
                     myCircuit,
                     S.get("NetList_NoSplitterEndConnections"),
-                    SimpleDRCContainer.LEVEL_NORMAL,
-                    SimpleDRCContainer.MARK_INSTANCE);
+                    SimpleDrcContainer.LEVEL_NORMAL,
+                    SimpleDrcContainer.MARK_INSTANCE);
         warn.addMarkComponent(comp);
         Reporter.report.addWarning(warn);
       }
       if (connectedUnknownEnds) {
         final var warn =
-            new SimpleDRCContainer(
+            new SimpleDrcContainer(
                     myCircuit,
                     S.get("NetList_NoEndSplitterConnections"),
-                    SimpleDRCContainer.LEVEL_SEVERE,
-                    SimpleDRCContainer.MARK_INSTANCE);
+                    SimpleDrcContainer.LEVEL_SEVERE,
+                    SimpleDrcContainer.MARK_INSTANCE);
         warn.addMarkComponent(comp);
         Reporter.report.addWarning(warn);
       }
@@ -1604,11 +1604,11 @@ public class Netlist {
       if (net.isRootNet()) {
         if (net.hasShortCircuit()) {
           final var error =
-              new SimpleDRCContainer(
+              new SimpleDrcContainer(
                   myCircuit,
                   S.get("NetList_ShortCircuit"),
-                  SimpleDRCContainer.LEVEL_FATAL,
-                  SimpleDRCContainer.MARK_WIRE);
+                  SimpleDrcContainer.LEVEL_FATAL,
+                  SimpleDrcContainer.MARK_WIRE);
           error.addMarkComponents(net.getWires());
           Reporter.report.addError(error);
           ret = true;
@@ -1618,7 +1618,7 @@ public class Netlist {
           final var sourceConnections = new HashMap<Component, Integer>();
           final var segments = new HashSet<Wire>(net.getWires());
           var foundShortCrcuit = false;
-          final var error = new SimpleDRCContainer(myCircuit, S.get("NetList_ShortCircuit"), SimpleDRCContainer.LEVEL_FATAL, SimpleDRCContainer.MARK_WIRE | SimpleDRCContainer.MARK_INSTANCE);
+          final var error = new SimpleDrcContainer(myCircuit, S.get("NetList_ShortCircuit"), SimpleDrcContainer.LEVEL_FATAL, SimpleDrcContainer.MARK_WIRE | SimpleDrcContainer.MARK_INSTANCE);
           for (ConnectionPoint sourceNet : sourceNets) {
             final var connectedNet = sourceNet.getParentNet();
             final byte bitIndex = sourceNet.getParentNetBitIndex();
@@ -1665,11 +1665,11 @@ public class Netlist {
             hiddenSinkNets.forEach(mySinks::remove);
             if (!hasSink) {
               final var warn =
-                  new SimpleDRCContainer(
+                  new SimpleDrcContainer(
                       myCircuit,
                       S.get("NetList_SourceWithoutSink"),
-                      SimpleDRCContainer.LEVEL_NORMAL,
-                      SimpleDRCContainer.MARK_WIRE);
+                      SimpleDrcContainer.LEVEL_NORMAL,
+                      SimpleDrcContainer.MARK_WIRE);
               warn.addMarkComponents(thisNet.getWires());
               Reporter.report.addWarning(warn);
             }
@@ -1680,11 +1680,11 @@ public class Netlist {
     if (mySinks.size() != 0) {
       for (final var sink : mySinks) {
         final var warn =
-            new SimpleDRCContainer(
+            new SimpleDrcContainer(
                     myCircuit,
                     S.get("NetList_UnsourcedSink"),
-                    SimpleDRCContainer.LEVEL_SEVERE,
-                    SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_WIRE);
+                    SimpleDrcContainer.LEVEL_SEVERE,
+                    SimpleDrcContainer.MARK_INSTANCE | SimpleDrcContainer.MARK_WIRE);
         warn.addMarkComponents(sink.getParentNet().getWires());
         if (sink.getComp() != null) warn.addMarkComponent(sink.getComp());
         Reporter.report.addWarning(warn);
@@ -2019,11 +2019,11 @@ public class Netlist {
         Map<netlistComponent, Circuit> instances = notGatedSet.get(key);
         for (final var comp : instances.keySet()) {
           final var warn =
-              new SimpleDRCContainer(
+              new SimpleDrcContainer(
                   instances.get(comp),
                   S.get("NetList_CircuitNotGated"),
-                  SimpleDRCContainer.LEVEL_NORMAL,
-                  SimpleDRCContainer.MARK_INSTANCE,
+                  SimpleDrcContainer.LEVEL_NORMAL,
+                  SimpleDrcContainer.MARK_INSTANCE,
                   true);
           warn.addMarkComponent(comp.getComponent());
           Reporter.report.addWarning(warn);
@@ -2032,11 +2032,11 @@ public class Netlist {
         for (final var comp : instances.keySet()) {
           comp.setIsGatedInstance();
           final var warn =
-              new SimpleDRCContainer(
+              new SimpleDrcContainer(
                       instances.get(comp),
                       S.get("NetList_CircuitGated"),
-                      SimpleDRCContainer.LEVEL_NORMAL,
-                      SimpleDRCContainer.MARK_INSTANCE,
+                      SimpleDrcContainer.LEVEL_NORMAL,
+                      SimpleDrcContainer.MARK_INSTANCE,
                       true);
           warn.addMarkComponent(comp.getComponent());
           Reporter.report.addWarning(warn);
@@ -2122,11 +2122,11 @@ public class Netlist {
           Reporter.report.addSevereWarning(S.get("NetList_GatedClock"));
           Reporter.report.addWarningIncrement(S.get("NetList_TraceListBegin"));
           final var warn =
-              new SimpleDRCContainer(
+              new SimpleDrcContainer(
                       myCircuit,
                       S.get("NetList_GatedClockSink"),
-                      SimpleDRCContainer.LEVEL_NORMAL,
-                      SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_WIRE,
+                      SimpleDrcContainer.LEVEL_NORMAL,
+                      SimpleDrcContainer.MARK_INSTANCE | SimpleDrcContainer.MARK_WIRE,
                       true);
           warn.addMarkComponents(pinWires.get(i));
           for (final var comp : pinGatedComponents.get(i)) warn.addMarkComponent(comp.getComponent());
@@ -2215,11 +2215,11 @@ public class Netlist {
         /* Add severe warning, we found a sequential element with an unconnected clock input */
         if (!warnedComponents.contains(comp)) {
           final var warn =
-              new SimpleDRCContainer(
+              new SimpleDrcContainer(
                   myCircuit,
                   S.get("NetList_NoClockConnection"),
-                  SimpleDRCContainer.LEVEL_SEVERE,
-                  SimpleDRCContainer.MARK_INSTANCE);
+                  SimpleDrcContainer.LEVEL_SEVERE,
+                  SimpleDrcContainer.MARK_INSTANCE);
           warn.addMarkComponent(comp.getComponent());
           Reporter.report.addWarning(warn);
           warnedComponents.add(comp);
@@ -2288,11 +2288,11 @@ public class Netlist {
         final var sfac = source.getSource().getComp().getFactory();
         if (sfac instanceof Pin || sfac instanceof SubcircuitFactory) {
           final var warn =
-              new SimpleDRCContainer(
+              new SimpleDrcContainer(
                       subNetList.getCircuit(),
                       S.get("NetList_GatedClockInt"),
-                      SimpleDRCContainer.LEVEL_NORMAL,
-                      SimpleDRCContainer.MARK_WIRE,
+                      SimpleDrcContainer.LEVEL_NORMAL,
+                      SimpleDrcContainer.MARK_WIRE,
                       true);
           warn.addMarkComponents(segments);
           Reporter.report.addWarning(warn);
@@ -2303,11 +2303,11 @@ public class Netlist {
               newHierarchyNames);
         } else {
           final var warn =
-              new SimpleDRCContainer(
+              new SimpleDrcContainer(
                       subNetList.getCircuit(),
                       S.get("NetList_GatedClockSource"),
-                      SimpleDRCContainer.LEVEL_NORMAL,
-                      SimpleDRCContainer.MARK_WIRE,
+                      SimpleDrcContainer.LEVEL_NORMAL,
+                      SimpleDrcContainer.MARK_WIRE,
                       true);
           warn.addMarkComponents(segments);
           Reporter.report.addWarning(warn);
@@ -2386,11 +2386,11 @@ public class Netlist {
         final var sfac = source.getSource().getComp().getFactory();
         if (sfac instanceof Pin || sfac instanceof SubcircuitFactory) {
           final var warn =
-              new SimpleDRCContainer(
+              new SimpleDrcContainer(
                       subNetList.getCircuit(),
                       S.get("NetList_GatedClockInt"),
-                      SimpleDRCContainer.LEVEL_NORMAL,
-                      SimpleDRCContainer.MARK_WIRE,
+                      SimpleDrcContainer.LEVEL_NORMAL,
+                      SimpleDrcContainer.MARK_WIRE,
                       true);
           warn.addMarkComponents(segments);
           Reporter.report.addWarning(warn);
@@ -2401,11 +2401,11 @@ public class Netlist {
               newHierarchyNames);
         } else {
           final var warn =
-              new SimpleDRCContainer(
+              new SimpleDrcContainer(
                       subNetList.getCircuit(),
                       S.get("NetList_GatedClockSource"),
-                      SimpleDRCContainer.LEVEL_NORMAL,
-                      SimpleDRCContainer.MARK_WIRE,
+                      SimpleDrcContainer.LEVEL_NORMAL,
+                      SimpleDrcContainer.MARK_WIRE,
                       true);
           warn.addMarkComponents(segments);
           Reporter.report.addWarning(warn);
@@ -2431,11 +2431,11 @@ public class Netlist {
           Reporter.report.addSevereWarning(S.get("NetList_GatedClock"));
           Reporter.report.addWarningIncrement(S.get("NetList_TraceListBegin"));
           final var warn =
-              new SimpleDRCContainer(
+              new SimpleDrcContainer(
                       myCircuit,
                       S.get("NetList_GatedClockSink"),
-                      SimpleDRCContainer.LEVEL_NORMAL,
-                      SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_WIRE,
+                      SimpleDrcContainer.LEVEL_NORMAL,
+                      SimpleDrcContainer.MARK_INSTANCE | SimpleDrcContainer.MARK_WIRE,
                       true);
           warn.addMarkComponents(wires.get(i));
           for (final var comp : components.get(i)) warn.addMarkComponent(comp.getComponent());
@@ -2448,11 +2448,11 @@ public class Netlist {
           Reporter.report.addWarningIncrement(S.get("NetList_TraceListEnd"));
         } else {
           final var warn =
-              new SimpleDRCContainer(
+              new SimpleDrcContainer(
                   myCircuit,
                   warning,
-                  SimpleDRCContainer.LEVEL_SEVERE,
-                  SimpleDRCContainer.MARK_INSTANCE | SimpleDRCContainer.MARK_WIRE);
+                  SimpleDrcContainer.LEVEL_SEVERE,
+                  SimpleDrcContainer.MARK_INSTANCE | SimpleDrcContainer.MARK_WIRE);
           for (final var comp : components.get(i))
             warn.addMarkComponent(comp.getComponent());
           warn.addMarkComponents(wires.get(i));

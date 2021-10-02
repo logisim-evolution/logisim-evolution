@@ -25,7 +25,7 @@ import java.awt.Graphics2D;
 import java.awt.geom.GeneralPath;
 
 class OrGate extends AbstractGate {
-  private static class OrGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class OrGateHdlGeneratorFactory extends AbstractGateHdlGenerator {
     @Override
     public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       final var contents = LineBuffer.getHdlBuffer();
@@ -57,7 +57,7 @@ class OrGate extends AbstractGate {
   public static final OrGate FACTORY = new OrGate();
 
   private OrGate() {
-    super("OR Gate", S.getter("orGateComponent"), new OrGateHDLGeneratorFactory());
+    super("OR Gate", S.getter("orGateComponent"), new OrGateHdlGeneratorFactory());
     setRectangularLabel("\u2265" + "1");
     setPaintInputLines(true);
   }

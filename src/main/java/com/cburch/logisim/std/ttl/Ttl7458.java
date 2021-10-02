@@ -28,7 +28,7 @@ public class Ttl7458 extends AbstractTtlGate {
         (byte) 14,
         new byte[] {6, 8},
         new String[] {"A0", "A1", "B1", "C1", "D1", "Y1", "Y0", "D0", "E0", "F0", "B0", "C0"},
-        new Ttl7458HDLGenerator());
+        new Ttl7458HdlGenerator());
   }
 
   @Override

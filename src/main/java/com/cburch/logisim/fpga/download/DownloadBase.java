@@ -27,7 +27,7 @@ import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.std.io.LedArrayGenericHDLGeneratorFactory;
+import com.cburch.logisim.std.io.LedArrayGenericHdlGeneratorFactory;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -204,8 +204,8 @@ public abstract class DownloadBase {
     if (top.hasLedArray()) {
       for (var type : LedArrayDriving.DRIVING_STRINGS) {
         if (top.hasLedArrayType(type)) {
-          worker = LedArrayGenericHDLGeneratorFactory.getSpecificHDLGenerator(type);
-          final var name = LedArrayGenericHDLGeneratorFactory.getSpecificHDLName(type);
+          worker = LedArrayGenericHdlGeneratorFactory.getSpecificHDLGenerator(type);
+          final var name = LedArrayGenericHdlGeneratorFactory.getSpecificHDLName(type);
           if (worker != null && name != null) {
             if (!Hdl.writeEntity(
                 projectDir + worker.getRelativeDirectory(),
@@ -299,9 +299,9 @@ public abstract class DownloadBase {
     for (final var comp : maps.getIoComponentInformation().getComponents()) {
       if (comp.getType().equals(IoComponentTypes.LedArray)) {
         if (comp.hasMap()) {
-          hasMappedClockedArray |= LedArrayGenericHDLGeneratorFactory.requiresClock(comp.getArrayDriveMode());
+          hasMappedClockedArray |= LedArrayGenericHdlGeneratorFactory.requiresClock(comp.getArrayDriveMode());
           for (var pin = 0; pin < comp.getExternalPinCount(); pin++) {
-            ledArrayMaps.put(LedArrayGenericHDLGeneratorFactory.getExternalSignalName(
+            ledArrayMaps.put(LedArrayGenericHdlGeneratorFactory.getExternalSignalName(
                 comp.getArrayDriveMode(),
                 comp.getNrOfRows(),
                 comp.getNrOfColumns(),

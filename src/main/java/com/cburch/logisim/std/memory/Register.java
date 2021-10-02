@@ -205,7 +205,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       Attributes.forBoolean("showInTab", S.getter("registerShowInTab"));
 
   public Register() {
-    super(_ID, S.getter("registerComponent"), new RegisterHDLGeneratorFactory());
+    super(_ID, S.getter("registerComponent"), new RegisterHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.WIDTH,

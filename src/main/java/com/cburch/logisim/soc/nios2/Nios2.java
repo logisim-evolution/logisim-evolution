@@ -34,7 +34,7 @@ import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.data.SocSimulationManager;
 import com.cburch.logisim.soc.data.SocUpMenuProvider;
 import com.cburch.logisim.soc.gui.CpuDrawSupport;
-import com.cburch.logisim.soc.gui.SocCPUShape;
+import com.cburch.logisim.soc.gui.SocCpuShape;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Font;
@@ -218,7 +218,7 @@ public class Nios2 extends SocInstanceFactory implements DynamicElementProvider 
 
   @Override
   public DynamicElement createDynamicElement(int x, int y, Path path) {
-    return new SocCPUShape(x, y, path);
+    return new SocCpuShape(x, y, path);
   }
 
   @Override

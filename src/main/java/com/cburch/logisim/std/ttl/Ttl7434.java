@@ -35,9 +35,9 @@ public class Ttl7434 extends AbstractTtlGate {
    */
   public static final String _ID = "7434";
 
-  private static class BufferGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class BufferGateHdlGeneratorFactory extends AbstractGateHdlGenerator {
 
-    public BufferGateHDLGeneratorFactory() {
+    public BufferGateHdlGeneratorFactory() {
       super(true);
     }
 
@@ -51,11 +51,11 @@ public class Ttl7434 extends AbstractTtlGate {
   private static final byte[] outPins = {2, 4, 6, 8, 10, 12};
 
   public Ttl7434() {
-    super(_ID, pinCount, outPins, true, new BufferGateHDLGeneratorFactory());
+    super(_ID, pinCount, outPins, true, new BufferGateHdlGeneratorFactory());
   }
 
   public Ttl7434(String name) {
-    super(name, pinCount, outPins, true, new BufferGateHDLGeneratorFactory());
+    super(name, pinCount, outPins, true, new BufferGateHdlGeneratorFactory());
   }
 
   @Override

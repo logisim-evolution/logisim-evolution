@@ -55,7 +55,7 @@ public class Comparator extends InstanceFactory {
   public static final int LT = 4;
 
   public Comparator() {
-    super(_ID, S.getter("comparatorComponent"), new ComparatorHDLGeneratorFactory());
+    super(_ID, S.getter("comparatorComponent"), new ComparatorHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, MODE_ATTR},
         new Object[] {BitWidth.create(8), SIGNED_OPTION});

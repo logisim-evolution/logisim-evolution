@@ -62,13 +62,13 @@ public class Shifter extends InstanceFactory {
             SHIFT_ROLL_RIGHT
           });
   public static final Attribute<Integer> SHIFT_BITS_ATTR = Attributes.forNoSave();
-  
+
   static final int IN0 = 0;
   static final int IN1 = 1;
   static final int OUT = 2;
 
   public Shifter() {
-    super(_ID, S.getter("shifterComponent"), new ShifterHDLGeneratorFactory());
+    super(_ID, S.getter("shifterComponent"), new ShifterHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, ATTR_SHIFT, SHIFT_BITS_ATTR},
         new Object[] {BitWidth.create(8), SHIFT_LOGICAL_LEFT, 4});

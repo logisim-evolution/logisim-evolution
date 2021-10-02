@@ -133,7 +133,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   public static final Attribute<Boolean> ATTR_DP = Attributes.forBoolean("decimalPoint", S.getter("SevenSegDP"));
 
   public SevenSegment() {
-    super(_ID, S.getter("sevenSegmentComponent"), new AbstractSimpleIOHDLGeneratorFactory(false), true);
+    super(_ID, S.getter("sevenSegmentComponent"), new AbstractSimpleIoHdlGeneratorFactory(false), true);
     setAttributes(
         new Attribute[] {
           IoLibrary.ATTR_ON_COLOR,

@@ -16,7 +16,7 @@ import com.cburch.logisim.soc.jtaguart.JtagUart;
 import com.cburch.logisim.soc.memory.SocMemory;
 import com.cburch.logisim.soc.nios2.Nios2;
 import com.cburch.logisim.soc.pio.SocPio;
-import com.cburch.logisim.soc.rv32im.Rv32im_riscv;
+import com.cburch.logisim.soc.rv32im.Rv32imRiscV;
 import com.cburch.logisim.soc.vga.SocVga;
 import com.cburch.logisim.tools.FactoryDescription;
 import com.cburch.logisim.tools.Library;
@@ -34,7 +34,7 @@ public class Soc  extends Library {
   public static final String _ID = "Soc";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(Rv32im_riscv.class, S.getter("Rv32imComponent"), "Rv32im.gif"),
+    new FactoryDescription(Rv32imRiscV.class, S.getter("Rv32imComponent"), "Rv32im.gif"),
     new FactoryDescription(Nios2.class, S.getter("Nios2Component"), "Nios2.gif"),
     new FactoryDescription(SocBus.class, S.getter("SocBusComponent")),
     new FactoryDescription(SocMemory.class, S.getter("SocMemoryComponent")),

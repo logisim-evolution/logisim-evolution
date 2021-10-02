@@ -131,7 +131,7 @@ public class Random extends InstanceFactory {
   public static final int RST = 3;
 
   public Random() {
-    super(_ID, S.getter("randomComponent"), new RandomHDLGeneratorFactory());
+    super(_ID, S.getter("randomComponent"), new RandomHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.WIDTH,

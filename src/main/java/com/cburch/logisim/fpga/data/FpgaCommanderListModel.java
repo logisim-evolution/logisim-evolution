@@ -9,7 +9,7 @@
 
 package com.cburch.logisim.fpga.data;
 
-import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
+import com.cburch.logisim.fpga.designrulecheck.SimpleDrcContainer;
 import com.cburch.logisim.fpga.gui.ListModelCellRenderer;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -45,7 +45,7 @@ public class FpgaCommanderListModel extends AbstractListModel<Object> {
 
   public void add(Object toAdd) {
     count++;
-    if (toAdd instanceof SimpleDRCContainer add) {
+    if (toAdd instanceof SimpleDrcContainer add) {
       if (add.getSupressCount()) count--;
       else add.setListNumber(count);
     }

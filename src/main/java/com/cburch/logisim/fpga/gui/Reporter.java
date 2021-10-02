@@ -9,7 +9,7 @@
 
 package com.cburch.logisim.fpga.gui;
 
-import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
+import com.cburch.logisim.fpga.designrulecheck.SimpleDrcContainer;
 import javax.swing.JProgressBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,14 +18,14 @@ public class Reporter {
 
   public static final Reporter report = new Reporter();
   private static final Logger logger = LoggerFactory.getLogger(Reporter.class);
-  private FPGAReportTabbedPane myCommander = null;
+  private FpgaReportTabbedPane myCommander = null;
   private JProgressBar progress = null;
 
   public JProgressBar getProgressBar() {
     return progress;
   }
 
-  public void setGuiLogger(FPGAReportTabbedPane gui) {
+  public void setGuiLogger(FpgaReportTabbedPane gui) {
     myCommander = gui;
   }
 
@@ -37,7 +37,7 @@ public class Reporter {
     if (myCommander == null)
       logger.error(message);
     else
-      myCommander.addErrors(new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_NORMAL, true));
+      myCommander.addErrors(new SimpleDrcContainer(message, SimpleDrcContainer.LEVEL_NORMAL, true));
   }
 
   public void addError(Object message) {
@@ -45,7 +45,7 @@ public class Reporter {
       if (message instanceof String msg) logger.error(msg);
     } else {
       myCommander.addErrors((message instanceof String)
-          ? new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_NORMAL)
+          ? new SimpleDrcContainer(message, SimpleDrcContainer.LEVEL_NORMAL)
           : message);
     }
   }
@@ -58,14 +58,14 @@ public class Reporter {
     if (myCommander == null)
       logger.error(message);
     else
-      myCommander.addErrors(new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_FATAL));
+      myCommander.addErrors(new SimpleDrcContainer(message, SimpleDrcContainer.LEVEL_FATAL));
   }
 
   public void addSevereError(String message) {
     if (myCommander == null)
       logger.error(message);
     else
-      myCommander.addErrors(new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_SEVERE));
+      myCommander.addErrors(new SimpleDrcContainer(message, SimpleDrcContainer.LEVEL_SEVERE));
   }
 
   public void addInfo(String message) {
@@ -79,14 +79,14 @@ public class Reporter {
     if (myCommander == null)
       logger.warn(message);
     else
-      myCommander.addWarning(new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_SEVERE));
+      myCommander.addWarning(new SimpleDrcContainer(message, SimpleDrcContainer.LEVEL_SEVERE));
   }
 
   public void addWarningIncrement(String message) {
     if (myCommander == null)
       logger.warn(message);
     else
-      myCommander.addWarning(new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_NORMAL, true));
+      myCommander.addWarning(new SimpleDrcContainer(message, SimpleDrcContainer.LEVEL_NORMAL, true));
   }
 
   public void addWarning(Object message) {
@@ -94,7 +94,7 @@ public class Reporter {
       if (message instanceof String msg) logger.warn(msg);
     } else {
       myCommander.addWarning(message instanceof String
-          ? new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_NORMAL)
+          ? new SimpleDrcContainer(message, SimpleDrcContainer.LEVEL_NORMAL)
           : message);
     }
   }

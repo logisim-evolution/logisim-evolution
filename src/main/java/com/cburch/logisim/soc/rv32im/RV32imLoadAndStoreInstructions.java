@@ -60,7 +60,7 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
   public boolean execute(Object state, CircuitState cState) {
     if (!valid)
       return false;
-    RV32im_state.ProcessorState cpuState = (RV32im_state.ProcessorState) state;
+    RV32imState.ProcessorState cpuState = (RV32imState.ProcessorState) state;
     errorMessage = null;
     int toBeStored = cpuState.getRegisterValue(destination);
     long address = ElfHeader.getLongValue(cpuState.getRegisterValue(base)) + immediate;
@@ -148,9 +148,9 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length() < RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
-    s.append(RV32im_state.registerABINames[destination]).append(",");
+    s.append(RV32imState.registerABINames[destination]).append(",");
     s.append(immediate);
-    s.append("(").append(RV32im_state.registerABINames[base]).append(")");
+    s.append("(").append(RV32imState.registerABINames[base]).append(")");
     return s.toString();
   }
 
@@ -257,12 +257,12 @@ public class RV32imLoadAndStoreInstructions implements AssemblerExecutionInterfa
       valid = false;
     }
     if (!valid) return true;
-    destination = RV32im_state.getRegisterIndex(param1[0].getValue());
+    destination = RV32imState.getRegisterIndex(param1[0].getValue());
     if (destination < 0 || destination > 31) {
       instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));
       valid = false;
     }
-    base = RV32im_state.getRegisterIndex(param2[1].getValue());
+    base = RV32imState.getRegisterIndex(param2[1].getValue());
     if (base < 0 || base > 31) {
       instr.setError(param2[1], S.getter("AssemblerUnknownRegister"));
       valid = false;
