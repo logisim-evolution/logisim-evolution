@@ -43,8 +43,7 @@ import javax.swing.text.Utilities;
  *
  * <p>This class was designed to be used as a component added to the row header of a JScrollPane.
  */
-public class TextLineNumber extends JPanel
-    implements CaretListener, DocumentListener, PropertyChangeListener {
+public class TextLineNumber extends JPanel implements CaretListener, DocumentListener, PropertyChangeListener {
   private static final long serialVersionUID = 1L;
   public static final float LEFT = 0.0f;
   public static final float CENTER = 0.5f;
@@ -52,7 +51,7 @@ public class TextLineNumber extends JPanel
 
   private static final Border OUTER = new MatteBorder(0, 0, 0, 2, Color.GRAY);
 
-  private static final int HEIGHT = Integer.MAX_VALUE - 1000000;
+  private static final int HEIGHT = Integer.MAX_VALUE - 1_000_000;
 
   //  Text component this TextTextLineNumber component is in sync with
 
@@ -418,9 +417,8 @@ public class TextLineNumber extends JPanel
   //
   @Override
   public void propertyChange(PropertyChangeEvent evt) {
-    if (evt.getNewValue() instanceof Font) {
+    if (evt.getNewValue() instanceof Font newFont) {
       if (updateFont) {
-        final var newFont = (Font) evt.getNewValue();
         setFont(newFont);
         lastDigits = 0;
         setPreferredWidth();

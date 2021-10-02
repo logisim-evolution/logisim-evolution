@@ -10,7 +10,7 @@
 package com.cburch.logisim.tools;
 
 import com.cburch.logisim.comp.ComponentFactory;
-import com.cburch.logisim.util.Icons;
+import com.cburch.logisim.util.IconsUtil;
 import com.cburch.logisim.util.LibraryUtil;
 import com.cburch.logisim.util.StringGetter;
 import java.util.Arrays;
@@ -109,7 +109,7 @@ public class FactoryDescription {
   public Icon getIcon() {
     var ret = icon;
     if (ret == null && !iconLoadAttempted) {
-      ret = Icons.getIcon(iconName);
+      ret = IconsUtil.getIcon(iconName);
       icon = ret;
       iconLoadAttempted = true;
     }

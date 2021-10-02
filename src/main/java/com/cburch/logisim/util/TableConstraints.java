@@ -9,24 +9,11 @@
 
 package com.cburch.logisim.util;
 
-public class TableConstraints {
+// NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
+// getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`). We may change
+// that in future, but for now it looks stupid in this file only.
+public record TableConstraints(int getRow, int getCol) {
   public static TableConstraints at(int row, int col) {
     return new TableConstraints(row, col);
-  }
-
-  private final int col;
-  private final int row;
-
-  private TableConstraints(int row, int col) {
-    this.col = col;
-    this.row = row;
-  }
-
-  int getCol() {
-    return col;
-  }
-
-  int getRow() {
-    return row;
   }
 }

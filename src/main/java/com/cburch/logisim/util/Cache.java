@@ -35,7 +35,7 @@ public class Cache {
   public Object get(Object value) {
     if (value == null) return null;
     int code = value.hashCode() & mask;
-    Object ret = data[code];
+    final var ret = data[code];
     if (ret != null && ret.equals(value)) {
       return ret;
     } else {
@@ -45,8 +45,6 @@ public class Cache {
   }
 
   public void put(int hashCode, Object value) {
-    if (value != null) {
-      data[hashCode & mask] = value;
-    }
+    if (value != null) data[hashCode & mask] = value;
   }
 }

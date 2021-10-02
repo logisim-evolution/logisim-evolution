@@ -20,7 +20,30 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 
-public class GraphicsUtil {
+public final class GraphicsUtil {
+
+  public static final int H_LEFT = -1;
+
+  public static final int H_CENTER = 0;
+
+  public static final int H_RIGHT = 1;
+  public static final int V_TOP = -1;
+
+  public static final int V_CENTER = 0;
+  public static final int V_BASELINE = 1;
+  public static final int V_BOTTOM = 2;
+
+  public static final int V_CENTER_OVERALL = 3;
+
+  public static final int CONTROL_WIDTH = 2;
+  public static final int NEGATED_WIDTH = 2;
+  public static final int DATA_SINGLE_WIDTH = 3;
+  public static final int DATA_MULTI_WIDTH = 4;
+
+  private GraphicsUtil() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
+
   public static void drawArrow(Graphics g, int x0, int y0, int x1, int y1, int headLength, int headAngle) {
     final var offs = headAngle * Math.PI / 180.0;
     final var angle = Math.atan2(y0 - y1, x0 - x1);
@@ -142,10 +165,10 @@ public class GraphicsUtil {
     if (text.length() == 0) return;
     final var bd = getTextBounds(g, text, x, y, halign, valign);
     final var tm = new TextMetrics(g, text);
-    if (g instanceof Graphics2D) {
-      ((Graphics2D) g).setPaint(bg);
+    if (g instanceof Graphics2D g2d) {
+      g2d.setPaint(bg);
       g.fillRect(bd.x, bd.y, bd.width, bd.height);
-      ((Graphics2D) g).setPaint(fg);
+      g2d.setPaint(fg);
     }
     g.drawString(text, bd.x, bd.y + tm.ascent);
   }
@@ -211,26 +234,9 @@ public class GraphicsUtil {
   }
 
   public static void switchToWidth(Graphics g, int width) {
-    if (g instanceof Graphics2D) {
-      ((Graphics2D) g).setStroke(new BasicStroke((float) width));
+    if (g instanceof Graphics2D g2d) {
+      g2d.setStroke(new BasicStroke((float) width));
     }
   }
 
-  public static final int H_LEFT = -1;
-
-  public static final int H_CENTER = 0;
-
-  public static final int H_RIGHT = 1;
-  public static final int V_TOP = -1;
-
-  public static final int V_CENTER = 0;
-  public static final int V_BASELINE = 1;
-  public static final int V_BOTTOM = 2;
-
-  public static final int V_CENTER_OVERALL = 3;
-
-  public static final int CONTROL_WIDTH = 2;
-  public static final int NEGATED_WIDTH = 2;
-  public static final int DATA_SINGLE_WIDTH = 3;
-  public static final int DATA_MULTI_WIDTH = 4;
 }

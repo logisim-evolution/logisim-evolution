@@ -13,12 +13,11 @@ import com.cburch.draw.toolbar.ToolbarItem;
 import com.cburch.logisim.gui.menu.LogisimMenuItem;
 import com.cburch.logisim.gui.menu.MenuListener;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.Icons;
+import com.cburch.logisim.util.IconsUtil;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Composite;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -33,7 +32,7 @@ public class LogisimToolbarItem implements ToolbarItem {
   public LogisimToolbarItem(
       MenuListener menu, String iconName, LogisimMenuItem action, StringGetter toolTip) {
     this.menu = menu;
-    this.icon = Icons.getIcon(iconName);
+    this.icon = IconsUtil.getIcon(iconName);
     this.action = action;
     this.toolTip = toolTip;
   }
@@ -103,6 +102,6 @@ public class LogisimToolbarItem implements ToolbarItem {
   }
 
   public void setIcon(String iconName) {
-    this.icon = Icons.getIcon(iconName);
+    this.icon = IconsUtil.getIcon(iconName);
   }
 }

@@ -10,7 +10,7 @@
 package com.cburch.logisim.gui.log;
 
 import com.cburch.logisim.circuit.RadixOption;
-import com.cburch.logisim.util.Icons;
+import com.cburch.logisim.util.IconsUtil;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
@@ -110,7 +110,7 @@ public class SelectionList extends JTable {
   class SignalInfoEditor extends AbstractCellEditor implements TableCellEditor {
     final JPanel panel = new JPanel();
     final JLabel label = new JLabel();
-    final JButton button = new JButton(Icons.getIcon("dropdown.png"));
+    final JButton button = new JButton(IconsUtil.getIcon("dropdown.png"));
     final JPopupMenu popup = new JPopupMenu("Options");
     SignalInfo item;
     SignalInfo.List items;
