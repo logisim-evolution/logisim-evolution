@@ -493,8 +493,11 @@ public class LineBuffer implements RandomAccess {
   public List<String> getWithIndent(String indent) {
     final var result = new ArrayList<String>();
     for (final var line : contents) {
-      // We do not indent empty lines, just ones with content.
-      result.add((line.length() == 0) ? line : indent + line);
+      final var lines = line.split("\n");
+      for (var idx = 0; idx < lines.length; idx++) {
+        // We do not indent empty lines, just ones with content.
+        result.add((lines[idx].length() == 0) ? lines[idx] : indent + lines[idx]);
+      }
     }
     return result;
   }

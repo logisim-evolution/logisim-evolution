@@ -83,16 +83,15 @@ public class TickComponentHdlGeneratorFactory extends AbstractHdlGeneratorFactor
       contents.addVhdlKeywords().add("""
           s_tickNext   <= '1' {{when}} s_countReg = std_logic_vector(to_unsigned(0, {{nrOfCounterBits}})) {{else}} '0';
           s_countNext  <= ({{others}} => '0') {{when}} s_tickReg /= '0' {{and}} s_tickReg /= '1' {{else}} -- For simulation only!
-                           std_logic_vector(to_unsigned((reloadValue-1), {{nrOfCounterBits}})) {{when}} s_tickNext = '1' {{else}}
-                           std_logic_vector(unsigned(s_countReg)-1);
-
-          """);
+                          std_logic_vector(to_unsigned((reloadValue-1), {{nrOfCounterBits}})) {{when}} s_tickNext = '1' {{else}}
+                          std_logic_vector(unsigned(s_countReg)-1);
+          """).empty();
     } else {
       contents.add("""
               assign s_tickNext  = (s_countReg == 0) ? 1'b1 : 1'b0;
               assign s_countNext = (s_countReg == 0) ? reloadValue-1 : s_countReg-1;
-
               """)
+          .empty()
           .addRemarkBlock("Here the simulation only initial is defined")
           .add("""
               initial
@@ -100,8 +99,7 @@ public class TickComponentHdlGeneratorFactory extends AbstractHdlGeneratorFactor
                  s_countReg = 0;
                  s_tickReg  = 1'b0;
               end
-
-              """);
+              """).empty();
     }
     contents.addRemarkBlock("Here the flipflops are defined");
     if (Hdl.isVhdl()) {
@@ -113,7 +111,7 @@ public class TickComponentHdlGeneratorFactory extends AbstractHdlGeneratorFactor
                 s_countReg <= s_countNext;
              {{end}} {{if}};
           {{end}} {{process}} makeFlipFlops;
-          """);
+          """).empty();
     } else {
       contents.add("""
           always @(posedge FPGAClock)
@@ -121,7 +119,7 @@ public class TickComponentHdlGeneratorFactory extends AbstractHdlGeneratorFactor
               s_countReg <= s_countNext;
               s_tickReg  <= s_tickNext;
           end
-          """);
+          """).empty();
     }
     return contents;
   }
