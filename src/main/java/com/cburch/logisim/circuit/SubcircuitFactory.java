@@ -109,7 +109,7 @@ public class SubcircuitFactory extends InstanceFactory {
   private Circuit source;
 
   public SubcircuitFactory(Circuit source) {
-    super("", null, new CircuitHDLGeneratorFactory(source), true);
+    super("", null, new CircuitHdlGeneratorFactory(source), true);
     this.source = source;
     setFacingAttribute(StdAttr.FACING);
     setDefaultToolTip(new CircuitFeature(null));

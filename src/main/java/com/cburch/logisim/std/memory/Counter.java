@@ -84,7 +84,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
   static final int CARRY = 7;
 
   public Counter() {
-    super(_ID, S.getter("counterComponent"), new CounterHDLGeneratorFactory());
+    super(_ID, S.getter("counterComponent"), new CounterHdlGeneratorFactory());
     setOffsetBounds(Bounds.create(-30, -20, 30, 40));
     setIcon(new CounterIcon());
     setInstancePoker(CounterPoker.class);

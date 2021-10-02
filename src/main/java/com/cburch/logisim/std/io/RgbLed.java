@@ -87,7 +87,7 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   public static final int BLUE = 2;
 
   public RgbLed() {
-    super(_ID, S.getter("RGBledComponent"), new AbstractSimpleIOHDLGeneratorFactory(false), true);
+    super(_ID, S.getter("RGBledComponent"), new AbstractSimpleIoHdlGeneratorFactory(false), true);
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,

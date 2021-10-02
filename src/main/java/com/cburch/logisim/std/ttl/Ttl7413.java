@@ -29,16 +29,16 @@ public class Ttl7413 extends AbstractTtlGate {
   private static final String[] portNames = {"A0", "B0", "C0", "D0", "Y0", "Y1", "D1", "C1", "B1", "A1"};
 
   public Ttl7413(String name, boolean inv) {
-    super(name, pinCount, outPorts, unusedPorts, portNames, new Ttl7413HDLGenerator(inv));
+    super(name, pinCount, outPorts, unusedPorts, portNames, new Ttl7413HdlGenerator(inv));
     inverted = inv;
   }
 
   public Ttl7413(String name) {
-    super(name, pinCount, outPorts, unusedPorts, portNames, new Ttl7413HDLGenerator(true));
+    super(name, pinCount, outPorts, unusedPorts, portNames, new Ttl7413HdlGenerator(true));
   }
 
   public Ttl7413() {
-    super(_ID, pinCount, outPorts, unusedPorts, portNames, new Ttl7413HDLGenerator(true));
+    super(_ID, pinCount, outPorts, unusedPorts, portNames, new Ttl7413HdlGenerator(true));
   }
 
   @Override

@@ -24,7 +24,7 @@ import com.cburch.logisim.util.LineBuffer;
 import java.awt.Graphics2D;
 
 class NorGate extends AbstractGate {
-  private static class NorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class NorGateHdlGeneratorFactory extends AbstractGateHdlGenerator {
     @Override
     public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       final var contents = LineBuffer.getHdlBuffer();
@@ -58,7 +58,7 @@ class NorGate extends AbstractGate {
   public static final NorGate FACTORY = new NorGate();
 
   private NorGate() {
-    super("NOR Gate", S.getter("norGateComponent"), new NorGateHDLGeneratorFactory());
+    super("NOR Gate", S.getter("norGateComponent"), new NorGateHdlGeneratorFactory());
     setNegateOutput(true);
     setRectangularLabel(OrGate.FACTORY.getRectangularLabel(null));
     setPaintInputLines(true);

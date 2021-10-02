@@ -23,7 +23,7 @@ import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.PinActivity;
 import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
-import com.cburch.logisim.std.io.LedArrayGenericHDLGeneratorFactory;
+import com.cburch.logisim.std.io.LedArrayGenericHdlGeneratorFactory;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Frame;
@@ -109,7 +109,7 @@ public class FpgaIoInformationSettingsDialog {
         break;
       }
       case LedArrayDriving.LED_ROW_SCANNING: {
-        final var nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfRows);
+        final var nrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfRows);
         nrOfPins = nrBits + nrOfColumns;
         for (var i = 0; i < nrOfPins; i++) {
           if (i < nrBits) {
@@ -121,7 +121,7 @@ public class FpgaIoInformationSettingsDialog {
         break;
       }
       case LedArrayDriving.LED_COLUMN_SCANNING: {
-        final var nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
+        final var nrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
         nrOfPins = nrBits + nrOfRows;
         for (var i = 0; i < nrOfPins; i++) {
           if (i < nrBits) {
@@ -158,7 +158,7 @@ public class FpgaIoInformationSettingsDialog {
         break;
       }
       case LedArrayDriving.RGB_ROW_SCANNING: {
-        final var nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfRows);
+        final var nrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfRows);
         nrOfPins = nrBits + 3 * nrOfColumns;
         var preamble = "";
         for (var i = 0; i < nrOfPins; i++) {
@@ -188,7 +188,7 @@ public class FpgaIoInformationSettingsDialog {
         break;
       }
       case LedArrayDriving.RGB_COLUMN_SCANNING: {
-        final var nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
+        final var nrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
         nrOfPins = nrBits + 3 * nrOfRows;
         var preamble = "";
         for (var i = 0; i < nrOfPins; i++) {

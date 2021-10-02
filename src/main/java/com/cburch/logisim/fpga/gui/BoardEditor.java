@@ -17,7 +17,7 @@ import com.cburch.logisim.fpga.data.BoardManipulatorListener;
 import com.cburch.logisim.fpga.data.IoComponentsInformation;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.fpga.file.BoardWriterClass;
-import com.cburch.logisim.fpga.file.XMLFileFilter;
+import com.cburch.logisim.fpga.file.XmlFileFilter;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LocaleListener;
@@ -167,7 +167,7 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
       case "load":
         JFileChooser fc = new JFileChooser(S.get("FpgaBoardLoadFile"));
         fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        fc.setFileFilter(XMLFileFilter.XML_FILTER);
+        fc.setFileFilter(XmlFileFilter.XML_FILTER);
         fc.setAcceptAllFileFilterUsed(false);
         int retval = fc.showOpenDialog(null);
         if (retval == JFileChooser.APPROVE_OPTION) {

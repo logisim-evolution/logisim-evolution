@@ -469,7 +469,7 @@ public class AppPreferences {
       create(new PrefMonitorString("SelectedBoard", null));
 
   public static final String EXTERNAL_BOARDS = "ExternalBoards";
-  public static final FPGABoards Boards = new FPGABoards();
+  public static final FpgaBoards Boards = new FpgaBoards();
   public static final PrefMonitor<Boolean> SupressGatedClockWarnings =
       create(new PrefMonitorBoolean("NoGatedClockWarnings", false));
   public static final PrefMonitor<Boolean> SupressOpenPinWarnings =

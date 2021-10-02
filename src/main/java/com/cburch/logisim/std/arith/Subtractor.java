@@ -44,7 +44,7 @@ public class Subtractor extends InstanceFactory {
   public static final int B_OUT = 4;
 
   public Subtractor() {
-    super(_ID, S.getter("subtractorComponent"), new SubtractorHDLGeneratorFactory());
+    super(_ID, S.getter("subtractorComponent"), new SubtractorHdlGeneratorFactory());
     setAttributes(new Attribute[] {StdAttr.WIDTH}, new Object[] {BitWidth.create(8)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));

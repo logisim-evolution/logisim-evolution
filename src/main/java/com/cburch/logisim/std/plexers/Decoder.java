@@ -41,7 +41,7 @@ public class Decoder extends InstanceFactory {
   public static final String _ID = "Decoder";
 
   public Decoder() {
-    super(_ID, S.getter("decoderComponent"), new DecoderHDLGeneratorFactory());
+    super(_ID, S.getter("decoderComponent"), new DecoderHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,

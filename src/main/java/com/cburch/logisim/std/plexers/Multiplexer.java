@@ -68,7 +68,7 @@ public class Multiplexer extends InstanceFactory {
   }
 
   public Multiplexer() {
-    super(_ID, S.getter("multiplexerComponent"), new MultiplexerHDLGeneratorFactory());
+    super(_ID, S.getter("multiplexerComponent"), new MultiplexerHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,

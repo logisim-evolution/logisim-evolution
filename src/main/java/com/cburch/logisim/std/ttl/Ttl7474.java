@@ -37,7 +37,7 @@ public class Ttl7474 extends AbstractTtlGate {
         new String[] {
           "nCLR1", "D1", "CLK1", "nPRE1", "Q1", "nQ1", "nQ2", "Q2", "nPRE2", "CLK2", "D2", "nCLR2"
         },
-        new Ttl7474HDLGenerator());
+        new Ttl7474HdlGenerator());
     super.setInstancePoker(Poker.class);
   }
 
