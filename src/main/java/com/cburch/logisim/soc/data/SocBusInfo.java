@@ -49,12 +49,11 @@ public class SocBusInfo {
   }
 
   public void paint(Graphics g, Bounds b) {
-    String Ident = socManager == null ? null : socManager.getSocBusDisplayString(busId);
-    Color c = Ident == null ? Color.RED : Color.GREEN;
-    g.setColor(c);
+    final var ident = socManager == null ? null : socManager.getSocBusDisplayString(busId);
+    final var color = (ident == null) ? Color.RED : Color.GREEN;
+    g.setColor(color);
     g.fillRect(b.getX(), b.getY(), b.getWidth(), b.getHeight());
     g.setColor(Color.BLACK);
-    GraphicsUtil.drawCenteredText(
-        g, Ident == null ? S.get("SocBusNotConnected") : Ident, b.getCenterX(), b.getCenterY());
+    GraphicsUtil.drawCenteredText(g, ident == null ? S.get("SocBusNotConnected") : ident, b.getCenterX(), b.getCenterY());
   }
 }

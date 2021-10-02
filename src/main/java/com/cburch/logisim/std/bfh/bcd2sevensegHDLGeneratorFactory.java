@@ -22,14 +22,14 @@ public class bcd2sevensegHDLGeneratorFactory extends AbstractHdlGeneratorFactory
     myWires
         .addWire("s_output_value", 7);
     myPorts
-        .add(Port.INPUT, "BCDin", 4, bcd2sevenseg.BCDin)
-        .add(Port.OUTPUT, "Segment_a", 1, bcd2sevenseg.Segment_A)
-        .add(Port.OUTPUT, "Segment_b", 1, bcd2sevenseg.Segment_B)
-        .add(Port.OUTPUT, "Segment_c", 1, bcd2sevenseg.Segment_C)
-        .add(Port.OUTPUT, "Segment_d", 1, bcd2sevenseg.Segment_D)
-        .add(Port.OUTPUT, "Segment_e", 1, bcd2sevenseg.Segment_E)
-        .add(Port.OUTPUT, "Segment_f", 1, bcd2sevenseg.Segment_F)
-        .add(Port.OUTPUT, "Segment_g", 1, bcd2sevenseg.Segment_G);
+        .add(Port.INPUT, "BCDin", 4, bcd2sevenseg.BCD_IN)
+        .add(Port.OUTPUT, "Segment_a", 1, bcd2sevenseg.SEGMENT_A)
+        .add(Port.OUTPUT, "Segment_b", 1, bcd2sevenseg.SEGMENT_B)
+        .add(Port.OUTPUT, "Segment_c", 1, bcd2sevenseg.SEGMENT_C)
+        .add(Port.OUTPUT, "Segment_d", 1, bcd2sevenseg.SEGMENT_D)
+        .add(Port.OUTPUT, "Segment_e", 1, bcd2sevenseg.SEGMENT_E)
+        .add(Port.OUTPUT, "Segment_f", 1, bcd2sevenseg.SEGMENT_F)
+        .add(Port.OUTPUT, "Segment_g", 1, bcd2sevenseg.SEGMENT_G);
   }
 
   @Override

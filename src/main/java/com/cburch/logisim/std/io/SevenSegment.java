@@ -33,6 +33,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SevenSegment extends InstanceFactory implements DynamicElementProvider {
   /**
@@ -43,7 +44,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
    */
   public static final String _ID = "7-Segment Display";
 
-  static void drawBase(InstancePainter painter, boolean DrawPoint) {
+  static void drawBase(InstancePainter painter, boolean drawPoint) {
     ensureSegments();
     final var data = (InstanceDataSingleton) painter.getData();
     int summ = (data == null ? 0 : (Integer) data.getValue());
@@ -73,7 +74,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
         Bounds seg = SEGMENTS[i];
         g.fillRect(x + seg.getX(), y + seg.getY(), seg.getWidth(), seg.getHeight());
       } else {
-        if (DrawPoint) g.fillOval(x + 28, y + 48, 5, 5); // draw decimal point
+        if (drawPoint) g.fillOval(x + 28, y + 48, 5, 5); // draw decimal point
       }
     }
     g.setColor(Color.BLACK);
@@ -96,7 +97,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     }
   }
 
-  public static ArrayList<String> getLabels() {
+  public static List<String> getLabels() {
     final var labelNames = new ArrayList<String>();
     for (int i = 0; i < 8; i++) labelNames.add("");
     labelNames.set(Segment_A, "Segment_A");

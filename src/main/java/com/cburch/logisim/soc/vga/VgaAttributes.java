@@ -71,7 +71,7 @@ public class VgaAttributes extends AbstractAttributeSet {
   private VgaState state = new VgaState();
 
   @SuppressWarnings("serial")
-  public static final ArrayList<AttributeOption> MODES = new ArrayList<>() {{
+  public static final List<AttributeOption> MODES = new ArrayList<>() {{
       this.addAll(Arrays.asList(MODE_ARRAY));
     }
   };
@@ -94,7 +94,7 @@ public class VgaAttributes extends AbstractAttributeSet {
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {
-    VgaAttributes d = (VgaAttributes) dest;
+    final var d = (VgaAttributes) dest;
     d.labelFont = labelFont;
     d.labelVisible = labelVisible;
     d.state = new VgaState();
@@ -144,7 +144,7 @@ public class VgaAttributes extends AbstractAttributeSet {
 
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
-    V oldValue = getValue(attr);
+    final V oldValue = getValue(attr);
     if (attr == START_ADDRESS) {
       if (state.setStartAddress((Integer) value))
         fireAttributeValueChanged(attr, value, oldValue);
@@ -174,7 +174,7 @@ public class VgaAttributes extends AbstractAttributeSet {
       return;
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
-      Boolean b = (Boolean) value;
+      final var b = (Boolean) value;
       if (b != labelVisible) {
         labelVisible = b;
         fireAttributeValueChanged(attr, value, oldValue);

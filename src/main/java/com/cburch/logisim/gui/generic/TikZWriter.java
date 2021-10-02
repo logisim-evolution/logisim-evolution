@@ -183,8 +183,8 @@ public class TikZWriter extends Graphics2D {
   }
 
   @Override
-  public void transform(AffineTransform Tx) {
-    MyInfo.getAffineTransform().concatenate(Tx);
+  public void transform(AffineTransform tx) {
+    MyInfo.getAffineTransform().concatenate(tx);
   }
 
   @Override
@@ -193,8 +193,8 @@ public class TikZWriter extends Graphics2D {
   }
 
   @Override
-  public void setTransform(AffineTransform Tx) {
-    MyInfo.setAffineTransform(Tx);
+  public void setTransform(AffineTransform tx) {
+    MyInfo.setAffineTransform(tx);
   }
 
   @Override

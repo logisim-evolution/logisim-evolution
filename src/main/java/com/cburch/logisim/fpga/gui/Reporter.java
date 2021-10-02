@@ -44,9 +44,9 @@ public class Reporter {
     if (myCommander == null) {
       if (message instanceof String msg) logger.error(msg);
     } else {
-      if (message instanceof String)
-        myCommander.addErrors(new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_NORMAL));
-      else myCommander.addErrors(message);
+      myCommander.addErrors((message instanceof String)
+          ? new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_NORMAL)
+          : message);
     }
   }
 
@@ -86,17 +86,16 @@ public class Reporter {
     if (myCommander == null)
       logger.warn(message);
     else
-      myCommander.addWarning(
-          new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_NORMAL, true));
+      myCommander.addWarning(new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_NORMAL, true));
   }
 
   public void addWarning(Object message) {
     if (myCommander == null) {
-      if (message instanceof String) logger.warn((String) message);
+      if (message instanceof String msg) logger.warn(msg);
     } else {
-      if (message instanceof String)
-        myCommander.addWarning(new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_NORMAL));
-      else myCommander.addWarning(message);
+      myCommander.addWarning(message instanceof String
+          ? new SimpleDRCContainer(message, SimpleDRCContainer.LEVEL_NORMAL)
+          : message);
     }
   }
 

@@ -41,7 +41,7 @@ public class PlexerIcon extends BaseIcon {
     /* draw output */
     xOffset = inverted ? scale(xpos[0] - 1) : scale(xpos[2] - 1);
     var yOffset = scale(ypos[3] + 1);
-    g2.setColor(Value.TRUE_COLOR);
+    g2.setColor(Value.trueColor);
     g2.fillOval(xOffset, yOffset, scale(3), scale(3));
     xOffset = inverted ? scale(xpos[2] - 1) : scale(xpos[0] - 1);
     if (singleInput) {

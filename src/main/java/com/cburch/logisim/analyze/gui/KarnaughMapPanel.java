@@ -904,7 +904,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
         if (provisionalValue != null && row == provisionalY && outputColumn == provisionalX)
           entry = provisionalValue;
         if (entry.isError()) {
-          gfx.setColor(Value.ERROR_COLOR);
+          gfx.setColor(Value.errorColor);
           gfx.fillRect(x + j * cellWidth, y + i * cellHeight, cellWidth, cellHeight);
           gfx.setColor(Color.BLACK);
         } else if (hover.x == j && hover.y == i) {

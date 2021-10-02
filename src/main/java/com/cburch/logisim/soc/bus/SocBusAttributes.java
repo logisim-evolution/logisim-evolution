@@ -37,22 +37,22 @@ public class SocBusAttributes extends AbstractAttributeSet {
           StdAttr.LABEL_FONT,
           StdAttr.LABEL_VISIBILITY,
           SOC_BUS_ID);
-  private Font LabelFont = StdAttr.DEFAULT_LABEL_FONT;
-  private Boolean LabelVisible = true;
-  private BitWidth TraceSize = BitWidth.create(5);
-  private String Label = "";
-  private SocBusInfo ID = new SocBusInfo(null);
+  private Font labelfont = StdAttr.DEFAULT_LABEL_FONT;
+  private Boolean labelVisible = true;
+  private BitWidth traceSize = BitWidth.create(5);
+  private String label = "";
+  private SocBusInfo id = new SocBusInfo(null);
   private Boolean traceVisible = true;
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {
-    SocBusAttributes d = (SocBusAttributes) dest;
-    d.LabelFont = LabelFont;
-    d.LabelVisible = LabelVisible;
-    d.TraceSize = TraceSize;
-    d.Label = Label;
+    final var d = (SocBusAttributes) dest;
+    d.labelfont = labelfont;
+    d.labelVisible = labelVisible;
+    d.traceSize = traceSize;
+    d.label = label;
     d.traceVisible = traceVisible;
-    d.ID = new SocBusInfo(null);
+    d.id = new SocBusInfo(null);
   }
 
   @Override
@@ -63,17 +63,17 @@ public class SocBusAttributes extends AbstractAttributeSet {
   @SuppressWarnings("unchecked")
   @Override
   public <V> V getValue(Attribute<V> attr) {
-    if (attr == NrOfTracesAttr) return (V) TraceSize;
-    if (attr == StdAttr.LABEL) return (V) Label;
-    if (attr == StdAttr.LABEL_FONT) return (V) LabelFont;
-    if (attr == StdAttr.LABEL_VISIBILITY) return (V) LabelVisible;
+    if (attr == NrOfTracesAttr) return (V) traceSize;
+    if (attr == StdAttr.LABEL) return (V) label;
+    if (attr == StdAttr.LABEL_FONT) return (V) labelfont;
+    if (attr == StdAttr.LABEL_VISIBILITY) return (V) labelVisible;
     if (attr == SOC_BUS_ID) {
-      if (ID.getBusId() == null || ID.getBusId().isEmpty()) {
-        Date date = new Date();
-        String[] names = this.toString().split("@");
-        ID.setBusId(String.format("0x%016X%s", date.getTime(), names[names.length - 1]));
+      if (id.getBusId() == null || id.getBusId().isEmpty()) {
+        final var date = new Date();
+        final var names = this.toString().split("@");
+        id.setBusId(String.format("0x%016X%s", date.getTime(), names[names.length - 1]));
       }
-      return (V) ID;
+      return (V) id;
     }
     if (attr == SOC_TRACE_VISIBLE) return (V) traceVisible;
     return null;
@@ -86,45 +86,45 @@ public class SocBusAttributes extends AbstractAttributeSet {
 
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
-    V oldValue = getValue(attr);
+    final V oldValue = getValue(attr);
     if (attr == NrOfTracesAttr) {
-      BitWidth v = (BitWidth) value;
-      if (!TraceSize.equals(v)) {
-        TraceSize = v;
+      final var v = (BitWidth) value;
+      if (!traceSize.equals(v)) {
+        traceSize = v;
         fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
     if (attr == StdAttr.LABEL) {
-      String v = (String) value;
-      if (!Label.equals(v)) {
-        Label = v;
+      final var v = (String) value;
+      if (!label.equals(v)) {
+        label = v;
         fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
     if (attr == StdAttr.LABEL_FONT) {
-      Font f = (Font) value;
-      if (!LabelFont.equals(f)) {
-        LabelFont = f;
+      final var f = (Font) value;
+      if (!labelfont.equals(f)) {
+        labelfont = f;
         fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
-      Boolean v = (Boolean) value;
-      if (LabelVisible != v) {
-        LabelVisible = v;
+      final var v = (Boolean) value;
+      if (labelVisible != v) {
+        labelVisible = v;
         fireAttributeValueChanged(attr, value, oldValue);
       }
       return;
     }
     if (attr == SOC_BUS_ID) {
-      ID.setBusId(((SocBusInfo) value).getBusId());
+      id.setBusId(((SocBusInfo) value).getBusId());
       return;
     }
     if (attr == SOC_TRACE_VISIBLE) {
-      Boolean v = (Boolean) value;
+      final var v = (Boolean) value;
       if (traceVisible != v) {
         traceVisible = v;
         fireAttributeValueChanged(attr, value, oldValue);
