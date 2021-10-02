@@ -343,7 +343,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     final var title = new StringBuilder();
 
     title
-        .append(project.isFileDirty() ? (Main.DIRTY_MARKER + "\u0020") : "") // keep the space
+        .append(project.isFileDirty() ? (Main.DIRTY_MARKER + "\u0020") : "")
         .append(
             (circuit != null)
                 ? S.get("titleCircFileKnown", circuit.getName(), name)
@@ -351,20 +351,14 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         .append(" · ")
         .append(BuildInfo.displayName);
 
-    if (!BuildInfo.version.isStable()) {
-      // Keep leading space!
-      title
-          .append(" ")
-          .append(StringUtil.format("(ID:%s, BUILT:%s)", BuildInfo.buildId, BuildInfo.dateIso8601));
+    // The icon alone may sometimes be missed so we add additional "[UNSAVED]" to the title too.
+    if (project.isFileDirty()) {
+      title.append(StringUtil.format("\u0020[%s]", S.get("titleUnsavedProjectState").toUpperCase()));
     }
 
-    // The icon alone may sometimes be missed so we add additional "[UNSAVED]" to the title too.
-    title
-        .append(" ")
-        .append(
-            project.isFileDirty()
-                ? StringUtil.format("[%s]", S.get("titleUnsavedProjectState").toUpperCase())
-                : "");
+    if (!BuildInfo.version.isStable()) {
+      title.append(StringUtil.format("\u0020(ID:%s, BUILT:%s)", BuildInfo.buildId, BuildInfo.dateIso8601));
+    }
 
     this.setTitle(title.toString().trim());
     myProjectListener.enableSave();
