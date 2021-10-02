@@ -25,7 +25,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.GeneralPath;
 
 class XorGate extends AbstractGate {
-  private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class XorGateHdlGeneratorFactory extends AbstractGateHdlGenerator {
     @Override
     public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       return LineBuffer.getBuffer()
@@ -51,7 +51,7 @@ class XorGate extends AbstractGate {
   public static final XorGate FACTORY = new XorGate();
 
   private XorGate() {
-    super("XOR Gate", S.getter("xorGateComponent"), true, new XorGateHDLGeneratorFactory());
+    super("XOR Gate", S.getter("xorGateComponent"), true, new XorGateHdlGeneratorFactory());
     setAdditionalWidth(10);
     setPaintInputLines(true);
   }

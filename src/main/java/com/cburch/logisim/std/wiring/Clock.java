@@ -160,7 +160,7 @@ public class Clock extends InstanceFactory {
   private static final Icon toolIcon = IconsUtil.getIcon("clock.gif");
 
   public Clock() {
-    super(_ID, S.getter("clockComponent"), new ClockHDLGeneratorFactory());
+    super(_ID, S.getter("clockComponent"), new ClockHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.FACING, ATTR_HIGH, ATTR_LOW, ATTR_PHASE, StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT

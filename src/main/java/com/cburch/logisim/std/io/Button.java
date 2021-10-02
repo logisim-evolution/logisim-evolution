@@ -105,7 +105,7 @@ public class Button extends InstanceFactory {
   private static final int DEPTH = 3;
 
   public Button() {
-    super(_ID, S.getter("buttonComponent"), new AbstractSimpleIOHDLGeneratorFactory(true), true);
+    super(_ID, S.getter("buttonComponent"), new AbstractSimpleIoHdlGeneratorFactory(true), true);
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,

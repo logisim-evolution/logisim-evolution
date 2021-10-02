@@ -24,7 +24,6 @@ import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlSimConstants;
@@ -106,7 +105,7 @@ public class VhdlEntityComponent extends InstanceFactory {
   private final WeakHashMap<Instance, VhdlEntityListener> contentListeners;
 
   public VhdlEntityComponent() {
-    super(_ID, S.getter("vhdlComponent"), new VhdlHDLGeneratorFactory(), true);
+    super(_ID, S.getter("vhdlComponent"), new VhdlHdlGeneratorFactory(), true);
 
     this.contentListeners = new WeakHashMap<>();
     this.setIcon(new ArithmeticIcon("VHDL"));

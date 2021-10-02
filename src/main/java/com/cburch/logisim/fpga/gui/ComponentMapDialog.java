@@ -16,7 +16,7 @@ import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.ComponentMapParser;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
-import com.cburch.logisim.fpga.file.XMLFileFilter;
+import com.cburch.logisim.fpga.file.XmlFileFilter;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LocaleListener;
@@ -235,7 +235,7 @@ public class ComponentMapDialog implements ActionListener, BaseWindowListenerCon
     fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
     // FIXME: hardcoded string
     fc.setDialogTitle("Choose XML board description file to use");
-    fc.setFileFilter(XMLFileFilter.XML_FILTER);
+    fc.setFileFilter(XmlFileFilter.XML_FILTER);
     fc.setAcceptAllFileFilterUsed(false);
     panel.setVisible(false);
     final var retVal = fc.showOpenDialog(null);

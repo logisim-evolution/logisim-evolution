@@ -26,8 +26,8 @@ public class BfhLibrary extends Library {
   public static final String _ID = "BFH-Praktika";
 
   private static final FactoryDescription[] DESCRIPTIONS = {
-    new FactoryDescription(bin2bcd.class, S.getter("Bin2BCD")),
-    new FactoryDescription(bcd2sevenseg.class, S.getter("BCD2SevenSegment")),
+    new FactoryDescription(BinToBcd.class, S.getter("Bin2BCD")),
+    new FactoryDescription(BcdToSevenSegmentDisplay.class, S.getter("BCD2SevenSegment")),
   };
 
   private List<Tool> tools = null;

@@ -43,7 +43,7 @@ public class PriorityEncoder extends InstanceFactory {
   static final int GS = 3;
 
   public PriorityEncoder() {
-    super(_ID, S.getter("priorityEncoderComponent"), new PriorityEncoderHDLGeneratorFactory());
+    super(_ID, S.getter("priorityEncoderComponent"), new PriorityEncoderHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {StdAttr.FACING, PlexersLibrary.ATTR_SELECT, PlexersLibrary.ATTR_DISABLED},
         new Object[] {Direction.EAST, BitWidth.create(3), PlexersLibrary.DISABLED_ZERO});

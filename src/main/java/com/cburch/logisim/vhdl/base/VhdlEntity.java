@@ -61,7 +61,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
   private final ArrayList<Instance> myInstances;
 
   public VhdlEntity(VhdlContent content) {
-    super("", null, new VhdlHDLGeneratorFactory(), true);
+    super("", null, new VhdlHdlGeneratorFactory(), true);
     this.content = content;
     this.content.addHdlModelListener(this);
     this.setIcon(icon);

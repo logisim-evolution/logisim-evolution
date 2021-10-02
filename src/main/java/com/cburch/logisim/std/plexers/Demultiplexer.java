@@ -42,7 +42,7 @@ public class Demultiplexer extends InstanceFactory {
   public static final String _ID = "Demultiplexer";
 
   public Demultiplexer() {
-    super(_ID, S.getter("demultiplexerComponent"), new DemultiplexerHDLGeneratorFactory());
+    super(_ID, S.getter("demultiplexerComponent"), new DemultiplexerHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,

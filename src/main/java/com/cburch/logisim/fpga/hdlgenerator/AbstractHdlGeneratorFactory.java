@@ -18,7 +18,7 @@ import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
+import com.cburch.logisim.std.wiring.ClockHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.util.ArrayList;
@@ -547,20 +547,20 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
           if (hasClock && !gatedClock && Netlist.isFlipFlop(attrs)) {
             if (nets.requiresGlobalClockConnection()) {
               result.put(myPorts.getTickName(port), LineBuffer
-                  .formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX));
+                  .formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, ClockHdlGeneratorFactory.GLOBAL_CLOCK_INDEX));
             } else {
-              final var clockIndex = activeLow ? ClockHDLGeneratorFactory.NEGATIVE_EDGE_TICK_INDEX : ClockHDLGeneratorFactory.POSITIVE_EDGE_TICK_INDEX;
+              final var clockIndex = activeLow ? ClockHdlGeneratorFactory.NEGATIVE_EDGE_TICK_INDEX : ClockHdlGeneratorFactory.POSITIVE_EDGE_TICK_INDEX;
               result.put(myPorts.getTickName(port), LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, clockIndex));
             }
             result.put(HdlPorts.CLOCK, LineBuffer
-                .formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, ClockHDLGeneratorFactory.GLOBAL_CLOCK_INDEX));
+                .formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, ClockHdlGeneratorFactory.GLOBAL_CLOCK_INDEX));
           } else if (!hasClock) {
             result.put(myPorts.getTickName(port), Hdl.zeroBit());
             result.put(HdlPorts.CLOCK, Hdl.zeroBit());
           } else {
             result.put(myPorts.getTickName(port), Hdl.oneBit());
             if (!gatedClock) {
-              final var clockIndex = activeLow ? ClockHDLGeneratorFactory.INVERTED_DERIVED_CLOCK_INDEX : ClockHDLGeneratorFactory.DERIVED_CLOCK_INDEX;
+              final var clockIndex = activeLow ? ClockHdlGeneratorFactory.INVERTED_DERIVED_CLOCK_INDEX : ClockHdlGeneratorFactory.DERIVED_CLOCK_INDEX;
               result.put(HdlPorts.CLOCK, LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", clockNetName, clockIndex));
             } else {
               result.put(HdlPorts.CLOCK, Hdl.getNetName(componentInfo, compPinId, true, nets));

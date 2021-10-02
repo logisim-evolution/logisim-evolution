@@ -11,7 +11,7 @@ package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
+import com.cburch.logisim.fpga.designrulecheck.SimpleDrcContainer;
 import com.cburch.logisim.gui.icons.DrcIcon;
 import java.awt.Color;
 import java.awt.Component;
@@ -41,20 +41,20 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
   @Override
   public Component getListCellRendererComponent(
       JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
-    SimpleDRCContainer msg = null;
+    SimpleDrcContainer msg = null;
     setBackground(list.getBackground());
     setForeground(list.getForeground());
     StringBuilder Line = new StringBuilder();
-    if (value instanceof SimpleDRCContainer cont) {
+    if (value instanceof SimpleDrcContainer cont) {
       msg = cont;
     }
     setIcon((msg != null && msg.isDrcInfoPresent()) ? DRCError : NoDRC);
     if (msg != null) {
       switch (msg.getSeverity()) {
-        case SimpleDRCContainer.LEVEL_SEVERE:
+        case SimpleDrcContainer.LEVEL_SEVERE:
           setForeground(SEVERE);
           break;
-        case SimpleDRCContainer.LEVEL_FATAL:
+        case SimpleDrcContainer.LEVEL_FATAL:
           setBackground(FATAL);
           setForeground(list.getBackground());
           break;
@@ -99,10 +99,10 @@ public class ListModelCellRenderer extends JLabel implements ListCellRenderer<Ob
     }
     if (msg != null) {
       switch (msg.getSeverity()) {
-        case SimpleDRCContainer.LEVEL_SEVERE:
+        case SimpleDrcContainer.LEVEL_SEVERE:
           Line.append(S.get("SEVERE_MSG")).append(" ");
           break;
-        case SimpleDRCContainer.LEVEL_FATAL:
+        case SimpleDrcContainer.LEVEL_FATAL:
           Line.append(S.get("FATAL_MSG")).append(" ");
           break;
       }

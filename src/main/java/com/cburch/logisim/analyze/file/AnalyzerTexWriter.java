@@ -12,7 +12,7 @@ package com.cburch.logisim.analyze.file;
 import static com.cburch.logisim.analyze.Strings.S;
 
 import com.cburch.logisim.analyze.data.CoverColor;
-import com.cburch.logisim.analyze.data.KMapGroups;
+import com.cburch.logisim.analyze.data.KarnaughMapGroups;
 import com.cburch.logisim.analyze.gui.KarnaughMapPanel;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Expression.Notation;
@@ -289,7 +289,7 @@ public class AnalyzerTexWriter {
     final var content = new StringBuilder();
     final var table = model.getTruthTable();
     if (table.getInputColumnCount() > KarnaughMapPanel.MAX_VARS) return content.toString();
-    final var groups = new KMapGroups(model);
+    final var groups = new KarnaughMapGroups(model);
     groups.setOutput(name);
     final var df = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
     var idx = 0;

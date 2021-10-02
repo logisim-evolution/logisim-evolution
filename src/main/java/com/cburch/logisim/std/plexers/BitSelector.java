@@ -47,7 +47,7 @@ public class BitSelector extends InstanceFactory {
   public static final Attribute<Integer> EXTENDED_ATTR = Attributes.forNoSave();
 
   public BitSelector() {
-    super(_ID, S.getter("bitSelectorComponent"), new BitSelectorHDLGeneratorFactory());
+    super(_ID, S.getter("bitSelectorComponent"), new BitSelectorHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {StdAttr.FACING, StdAttr.SELECT_LOC, StdAttr.WIDTH, GROUP_ATTR, SELECT_ATTR, EXTENDED_ATTR},
         new Object[] {Direction.EAST, StdAttr.SELECT_BOTTOM_LEFT, BitWidth.create(8), BitWidth.ONE, 3, 9});

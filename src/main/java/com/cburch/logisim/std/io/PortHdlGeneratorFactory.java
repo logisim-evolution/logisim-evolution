@@ -21,9 +21,9 @@ public class PortHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
   @Override
   public LineBuffer getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
     final var contents = LineBuffer.getHdlBuffer();
-    final var portType = componentInfo.getComponent().getAttributeSet().getValue(PortIO.ATTR_DIR);
-    var nrOfPins = componentInfo.getComponent().getAttributeSet().getValue(PortIO.ATTR_SIZE).getWidth();
-    if (portType == PortIO.INPUT) {
+    final var portType = componentInfo.getComponent().getAttributeSet().getValue(PortIo.ATTR_DIR);
+    var nrOfPins = componentInfo.getComponent().getAttributeSet().getValue(PortIo.ATTR_SIZE).getWidth();
+    if (portType == PortIo.INPUT) {
       for (var busIndex = 0; nrOfPins > 0; busIndex++) {
         final var startIndex = componentInfo.getLocalBubbleInputStartId() + busIndex * BitWidth.MAXWIDTH;
         final var nrOfBitsInThisBus = Math.min(nrOfPins, BitWidth.MAXWIDTH);
@@ -36,7 +36,7 @@ public class PortHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
             Hdl.vectorLoopId(),
             startIndex);
       }
-    } else if (portType == PortIO.OUTPUT) {
+    } else if (portType == PortIo.OUTPUT) {
       for (var busIndex = 0; nrOfPins > 0; busIndex++) {
         final var startIndex = componentInfo.getLocalBubbleOutputStartId() + busIndex * BitWidth.MAXWIDTH;
         final var nrOfBitsInThisBus = Math.min(nrOfPins, BitWidth.MAXWIDTH);
@@ -57,7 +57,7 @@ public class PortHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
         final var nrOfBitsInThisBus = Math.min(nrOfPins, BitWidth.MAXWIDTH);
         nrOfPins -= nrOfBitsInThisBus;
         final var endIndex = startIndex + nrOfBitsInThisBus - 1;
-        final var inputIndex = (portType == PortIO.INOUTSE) ? (busIndex + 1) : (busIndex * 2 + 1);
+        final var inputIndex = (portType == PortIo.INOUTSE) ? (busIndex + 1) : (busIndex * 2 + 1);
         outputIndex = inputIndex + 1;
         contents.add("{{assign}} {{1}}{{=}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}};",
             Hdl.getBusName(componentInfo, inputIndex, nets),
@@ -67,15 +67,15 @@ public class PortHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
             startIndex);
       }
       var enableIndex = 0;
-      nrOfPins = componentInfo.getComponent().getAttributeSet().getValue(PortIO.ATTR_SIZE).getWidth();
+      nrOfPins = componentInfo.getComponent().getAttributeSet().getValue(PortIo.ATTR_SIZE).getWidth();
       for (var busIndex = 0; nrOfPins > 0; busIndex++) {
         final var startIndex = componentInfo.getLocalBubbleInOutStartId() + busIndex * BitWidth.MAXWIDTH;
         final var nrOfBitsInThisBus = Math.min(nrOfPins, BitWidth.MAXWIDTH);
         nrOfPins -= nrOfBitsInThisBus;
         final var endIndex = startIndex + nrOfBitsInThisBus - 1;
-        if ((portType != PortIO.INOUTSE) && (busIndex > 0)) enableIndex += 2;
+        if ((portType != PortIo.INOUTSE) && (busIndex > 0)) enableIndex += 2;
         // simple case first, we have a single output enable
-        if (portType == PortIO.INOUTSE) {
+        if (portType == PortIo.INOUTSE) {
           if (Hdl.isVhdl()) {
             contents.add("{{1}}({{2}} DOWNTO {{3}}) <= {{4}} WHEN {{5}} = '1' ELSE (OTHERS => 'Z');",
                 LOCAL_INOUT_BUBBLE_BUS_NAME,

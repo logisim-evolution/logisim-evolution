@@ -58,7 +58,7 @@ public class ShiftRegister extends InstanceFactory {
   static final int symbolWidth = 100;
 
   public ShiftRegister() {
-    super(_ID, S.getter("shiftRegisterComponent"), new ShiftRegisterHDLGeneratorFactory());
+    super(_ID, S.getter("shiftRegisterComponent"), new ShiftRegisterHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.WIDTH,
