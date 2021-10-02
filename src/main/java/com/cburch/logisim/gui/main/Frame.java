@@ -74,12 +74,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class Frame extends LFrame.MainWindow implements LocaleListener {
+  private static final long serialVersionUID = 1L;
+
   public static final String EDITOR_VIEW = "editorView";
   public static final String EXPLORER_VIEW = "explorerView";
   public static final String EDIT_LAYOUT = "layout";
   public static final String EDIT_APPEARANCE = "appearance";
   public static final String EDIT_HDL = "hdl";
-  private static final long serialVersionUID = 1L;
   private final Timer timer = new Timer();
   private final Project project;
   private final MyProjectListener myProjectListener = new MyProjectListener();
@@ -166,11 +167,10 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     // set up the contents, split down the middle, with the canvas
     // on the right and a split pane on the left containing the
     // explorer and attribute values.
-    JPanel explPanel = new JPanel(new BorderLayout());
+    final var explPanel = new JPanel(new BorderLayout());
     explPanel.add(toolbox, BorderLayout.CENTER);
 
-    JPanel simPanel = new JPanel(new BorderLayout());
-    // simPanel.add(new JButton("stuff"), BorderLayout.NORTH);
+    final var simPanel = new JPanel(new BorderLayout());
     simPanel.add(simExplorer, BorderLayout.CENTER);
 
     topTab = new JTabbedPane();
@@ -198,18 +198,14 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     state.stateChanged();
     project.getVhdlSimulator().addVhdlSimStateListener(state);
 
-    mainRegion =
-        new VerticalSplitPane(
-            leftRegion, rightPanel, AppPreferences.WINDOW_MAIN_SPLIT.get());
+    mainRegion = new VerticalSplitPane(leftRegion, rightPanel, AppPreferences.WINDOW_MAIN_SPLIT.get());
 
     getContentPane().add(mainRegion, BorderLayout.CENTER);
 
     localeChanged();
 
-    this.setSize(
-        AppPreferences.WINDOW_WIDTH.get(),
-        AppPreferences.WINDOW_HEIGHT.get());
-    Point prefPoint = getInitialLocation();
+    this.setSize(AppPreferences.WINDOW_WIDTH.get(), AppPreferences.WINDOW_HEIGHT.get());
+    final var prefPoint = getInitialLocation();
     if (prefPoint != null) {
       this.setLocation(prefPoint);
     }
@@ -236,40 +232,29 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
    * @return
    */
   private ArrayList<Double> buildZoomSteps() {
-    class Pair {
-      int maxZoom;
-      int singleStep;
-
-      Pair(int maxZoom, int step) {
-        this.maxZoom = maxZoom;
-        this.singleStep = step;
-      }
-    }
     // Pairs must be in acending order (sorted by maxZoom value).
-    final var config = new Pair[] {new Pair(50, 5), new Pair(200, 10), new Pair(1000, 20)};
+    final var config = new ZoomStepPair[] {new ZoomStepPair(50, 5), new ZoomStepPair(200, 10), new ZoomStepPair(1000, 20)};
 
     // Result zoomsteps.
     final var steps = new ArrayList<Double>();
-
-    double zoom = 0;
+    var zoom = 0D;
     for (final var pair : config) {
-      while (zoom < pair.maxZoom) {
-        zoom += pair.singleStep;
+      while (zoom < pair.maxZoom()) {
+        zoom += pair.step();
         steps.add(zoom);
       }
     }
     return steps;
   }
 
+  private record ZoomStepPair(int maxZoom, int step) {}
+
+
   private static Point getInitialLocation() {
     final var s = AppPreferences.WINDOW_LOCATION.get();
-    if (s == null) {
-      return null;
-    }
+    if (s == null) return null;
     final var comma = s.indexOf(',');
-    if (comma < 0) {
-      return null;
-    }
+    if (comma < 0) return null;
     try {
       var x = Integer.parseInt(s.substring(0, comma));
       var y = Integer.parseInt(s.substring(comma + 1));
@@ -277,12 +262,11 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         x += 20;
         y += 20;
       }
-      Rectangle desired = new Rectangle(x, y, 50, 50);
+      final var desired = new Rectangle(x, y, 50, 50);
 
       var gcBestSize = 0;
       Point gcBestPoint = null;
-      GraphicsEnvironment ge;
-      ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+      final var ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
       for (final var gd : ge.getScreenDevices()) {
         for (final var gc : gd.getConfigurations()) {
           final var gcBounds = gc.getBounds();
@@ -343,7 +327,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     final var title = new StringBuilder();
 
     title
-        .append(project.isFileDirty() ? (Main.DIRTY_MARKER + "\u0020") : "") // keep the space
+        .append(project.isFileDirty() ? (Main.DIRTY_MARKER + "\u0020") : "")
         .append(
             (circuit != null)
                 ? S.get("titleCircFileKnown", circuit.getName(), name)
@@ -351,20 +335,14 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         .append(" · ")
         .append(BuildInfo.displayName);
 
-    if (!BuildInfo.version.isStable()) {
-      // Keep leading space!
-      title
-          .append(" ")
-          .append(StringUtil.format("(ID:%s, BUILT:%s)", BuildInfo.buildId, BuildInfo.dateIso8601));
+    // The icon alone may sometimes be missed so we add additional "[UNSAVED]" to the title too.
+    if (project.isFileDirty()) {
+      title.append(StringUtil.format("\u0020[%s]", S.get("titleUnsavedProjectState").toUpperCase()));
     }
 
-    // The icon alone may sometimes be missed so we add additional "[UNSAVED]" to the title too.
-    title
-        .append(" ")
-        .append(
-            project.isFileDirty()
-                ? StringUtil.format("[%s]", S.get("titleUnsavedProjectState").toUpperCase())
-                : "");
+    if (!BuildInfo.version.isStable()) {
+      title.append(StringUtil.format("\u0020(ID:%s, BUILT:%s)", BuildInfo.buildId, BuildInfo.dateIso8601));
+    }
 
     this.setTitle(title.toString().trim());
     myProjectListener.enableSave();
@@ -376,25 +354,20 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
   // returns true if user is OK with proceeding
   public boolean confirmClose(String title) {
-    String message = S.get("confirmDiscardMessage", project.getLogisimFile().getName());
+    if (!project.isFileDirty()) return true;
 
-    if (!project.isFileDirty()) {
-      return true;
-    }
+    final var message = S.get("confirmDiscardMessage", project.getLogisimFile().getName());
 
     toFront();
-    String[] options = {S.get("saveOption"), S.get("discardOption"), S.get("cancelOption")};
-    var result =
-        OptionPane.showOptionDialog(this, message, title, 0, OptionPane.QUESTION_MESSAGE, null, options, options[0]);
-    boolean ret;
+    final String[] options = {S.get("saveOption"), S.get("discardOption"), S.get("cancelOption")};
+    final var result = OptionPane.showOptionDialog(this, message, title, 0, OptionPane.QUESTION_MESSAGE, null, options, options[0]);
+    var ret = false;
     if (result == 0) {
       ret = ProjectActions.doSave(project);
     } else if (result == 1) {
       // Close the current project
       dispose();
       ret = true;
-    } else {
-      ret = false;
     }
 
     return ret;
@@ -410,14 +383,13 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
   public void setEditorView(String view) {
     final var curView = mainPanel.getView();
-    if (hdlEditor.getHdlModel() == null && curView.equals(view)) {
-      return;
-    }
+    if (hdlEditor.getHdlModel() == null && curView.equals(view)) return;
     editRegion.setFraction(1.0);
     hdlEditor.setHdlModel(null);
 
-    if (view.equals(EDIT_APPEARANCE)) { // appearance view
-      AppearanceView app = appearance;
+    if (view.equals(EDIT_APPEARANCE)) {
+      // appearance view
+      var app = appearance;
       if (app == null) {
         app = new AppearanceView();
         app.setCircuit(project, project.getCircuitState());
@@ -431,7 +403,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
       menuListener.setEditHandler(app.getEditHandler());
       mainPanel.setView(view);
       app.getCanvas().requestFocus();
-    } else { // layout view
+    } else {
+      // layout view
       toolbar.setToolbarModel(layoutToolbarModel);
       zoom.setZoomModel(layoutZoomModel);
       zoom.setAutoZoomButtonEnabled(true);
@@ -482,7 +455,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         }
       }
       rightPanel.add(toolbar, value);
-      final var vertical = value == BorderLayout.WEST || value == BorderLayout.EAST;
+      final var vertical = BorderLayout.WEST.equals(value) || BorderLayout.EAST.equals(value);
       toolbar.setOrientation(vertical ? Toolbar.VERTICAL : Toolbar.HORIZONTAL);
     }
     getContentPane().validate();
@@ -508,15 +481,10 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     } catch (IllegalComponentStateException e) {
       loc = Projects.getLocation(this);
     }
-    if (loc != null) {
-      AppPreferences.WINDOW_LOCATION.set(loc.x + "," + loc.y);
-    }
-    if (leftRegion.getFraction() > 0)
-      AppPreferences.WINDOW_LEFT_SPLIT.set(leftRegion.getFraction());
-    if (rightRegion.getFraction() < 1.0)
-      AppPreferences.WINDOW_RIGHT_SPLIT.set(rightRegion.getFraction());
-    if (mainRegion.getFraction() > 0)
-      AppPreferences.WINDOW_MAIN_SPLIT.set(mainRegion.getFraction());
+    if (loc != null) AppPreferences.WINDOW_LOCATION.set(loc.x + "," + loc.y);
+    if (leftRegion.getFraction() > 0) AppPreferences.WINDOW_LEFT_SPLIT.set(leftRegion.getFraction());
+    if (rightRegion.getFraction() < 1.0) AppPreferences.WINDOW_RIGHT_SPLIT.set(rightRegion.getFraction());
+    if (mainRegion.getFraction() > 0) AppPreferences.WINDOW_MAIN_SPLIT.set(mainRegion.getFraction());
     AppPreferences.DIALOG_DIRECTORY.set(JFileChoosers.getCurrentDirectory());
   }
 
@@ -539,13 +507,13 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     }
   }
 
-  public void setVhdlSimulatorConsoleStatus(boolean visible) {
-    if (visible) {
-      rightRegion.setFraction(lastFraction);
-    } else {
-      lastFraction = rightRegion.getFraction();
-      rightRegion.setFraction(1);
-    }
+  public void setVhdlSimulatorConsoleStatusVisible() {
+    rightRegion.setFraction(lastFraction);
+  }
+
+  public void setVhdlSimulatorConsoleStatusInvisible() {
+    lastFraction = rightRegion.getFraction();
+    rightRegion.setFraction(1);
   }
 
   public HdlModel getHdlEditorView() {
@@ -580,12 +548,10 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     if (newAttrs == null) {
       final var oldModel = attrTable.getAttrTableModel();
       final var same = (oldModel instanceof AttrTableToolModel model) && model.getTool() == oldTool;
-      if (!force && !same && !(oldModel instanceof AttrTableCircuitModel)) {
-        return;
-      }
+      if (!force && !same && !(oldModel instanceof AttrTableCircuitModel)) return;
     }
     if (newAttrs == null) {
-      Circuit circ = project.getCurrentCircuit();
+      final var circ = project.getCurrentCircuit();
       if (circ != null) {
         setAttrTableModel(new AttrTableCircuitModel(project, circ));
       } else if (force) {
@@ -607,7 +573,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   }
 
   class MyProjectListener implements ProjectListener, LibraryListener, CircuitListener, PropertyChangeListener, ChangeListener {
-    public void attributeListChanged(AttributeEvent e) {}
+    public void attributeListChanged(AttributeEvent e) {
+      // Do nothing.
+    }
 
     @Override
     public void circuitChanged(CircuitEvent event) {
@@ -641,7 +609,10 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         placeToolbar();
       } else if (action == ProjectEvent.ACTION_SET_STATE) {
         if (event.getData() instanceof CircuitState state) {
-          if (state.getParentState() != null) topTab.setSelectedIndex(1); // sim explorer view
+          if (state.getParentState() != null) {
+            // sim explorer view
+            topTab.setSelectedIndex(1);
+          }
         }
       } else if (action == ProjectEvent.ACTION_SET_CURRENT) {
         if (event.getData() instanceof Circuit) {
@@ -656,7 +627,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         buildTitleString();
       } else if (action == ProjectEvent.ACTION_SET_TOOL) {
         if (attrTable == null) {
-          return; // for startup
+          // for startup
+          return;
         }
         final var oldTool = (Tool) event.getOldData();
         final var newTool = (Tool) event.getData();
