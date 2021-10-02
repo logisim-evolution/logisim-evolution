@@ -54,7 +54,7 @@ public class bcd2sevenseg extends InstanceFactory {
     ps[SEGMENT_E] = new Port(0, 60, Port.OUTPUT, 1);
     ps[SEGMENT_F] = new Port(10, 0, Port.OUTPUT, 1);
     ps[SEGMENT_G] = new Port(0, 0, Port.OUTPUT, 1);
-    ps[BCD_IN] = new Port(10, 80, Port.INPUT, 4);
+    ps[BCD_IN] = new Port(30, 80, Port.INPUT, 4);
     ps[SEGMENT_A].setToolTip(S.getter("Segment_A"));
     ps[SEGMENT_B].setToolTip(S.getter("Segment_B"));
     ps[SEGMENT_C].setToolTip(S.getter("Segment_C"));
