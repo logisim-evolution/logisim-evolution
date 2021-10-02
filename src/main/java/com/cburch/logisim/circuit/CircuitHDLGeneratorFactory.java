@@ -422,14 +422,14 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
       portMap.put(TickComponentHdlGeneratorFactory.FPGA_CLOCK, TickComponentHdlGeneratorFactory.FPGA_CLOCK);
     }
     if (myNetList.getNumberOfInputBubbles() > 0) {
-      // FIXME: remove + by concatination.
       portMap.put(LOCAL_INPUT_BUBBLE_BUS_NAME,
-          topLevel ? Preamble + LOCAL_INPUT_BUBBLE_BUS_NAME : LOCAL_INPUT_BUBBLE_BUS_NAME + getBubbleIndex(componentInfo, 0));
+          LineBuffer.format("{{1}}{{2}}", topLevel ? Preamble : LOCAL_INPUT_BUBBLE_BUS_NAME,
+              topLevel ? LOCAL_INPUT_BUBBLE_BUS_NAME : getBubbleIndex(componentInfo, 0)));
     }
     if (myNetList.numberOfOutputBubbles() > 0) {
-      // FIXME: remove + by concatination.
       portMap.put(LOCAL_OUTPUT_BUBBLE_BUS_NAME,
-          topLevel ? Preamble + LOCAL_OUTPUT_BUBBLE_BUS_NAME : LOCAL_OUTPUT_BUBBLE_BUS_NAME + getBubbleIndex(componentInfo, 1));
+          LineBuffer.format("{{1}}{{2}}", topLevel ? Preamble : LOCAL_OUTPUT_BUBBLE_BUS_NAME,
+              topLevel ? LOCAL_OUTPUT_BUBBLE_BUS_NAME : getBubbleIndex(componentInfo, 0)));
     }
 
     final var nrOfIOBubbles = myNetList.numberOfInOutBubbles();
@@ -457,17 +457,15 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
             continue;
           }
           if (!map.isMapped(compPin) || map.isOpenMapped(compPin)) {
-            // FIXME: rewrite using LineBuffer
             if (Hdl.isVhdl())
-              portMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME + "(" + i + ")", "OPEN");
+              portMap.put(LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", LOCAL_INOUT_BUBBLE_BUS_NAME, i), "OPEN");
             else {
               if (vector.length() != 0) vector.append(",");
               vector.append("OPEN"); // still not found the correct method but this seems to work
             }
           } else {
             if (Hdl.isVhdl())
-              portMap.put(
-                  LOCAL_INOUT_BUBBLE_BUS_NAME + "(" + i + ")",
+              portMap.put(LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", LOCAL_INOUT_BUBBLE_BUS_NAME, i),
                   (map.isExternalInverted(compPin) ? "n_" : "") + map.getHdlString(compPin));
             else {
               if (vector.length() != 0) vector.append(",");
@@ -591,6 +589,7 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
       if (!connected) {
         /* Here is the easy case, the bus is unconnected */
         if (!isInputConnection) {
+          // FIXME: hardcoded string
           Reporter.report.addSevereWarning("Found an unconnected output bus pin, tied all the pin bits to ground!");
           signal.put(portName, Hdl.getZeroVector(nrOfBits, true));
         }
