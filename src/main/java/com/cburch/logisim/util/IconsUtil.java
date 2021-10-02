@@ -18,9 +18,16 @@ import java.awt.Image;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
-public class Icons {
+public final class IconsUtil {
+
+  private static final String PATH = "resources/logisim/icons";
+
+  private IconsUtil() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
+
   public static ImageIcon getIcon(String name) {
-    final var url = Icons.class.getClassLoader().getResource(PATH + "/" + name);
+    final var url = IconsUtil.class.getClassLoader().getResource(PATH + "/" + name);
     if (url == null) return null;
     final var icon = new ImageIcon(url);
     icon.setImage(
@@ -32,8 +39,7 @@ public class Icons {
     return icon;
   }
 
-  public static void paintRotated(
-      Graphics g, int x, int y, Direction dir, Icon icon, Component dest) {
+  public static void paintRotated(Graphics g, int x, int y, Direction dir, Icon icon, Component dest) {
     if (!(g instanceof Graphics2D) || dir == Direction.EAST) {
       icon.paintIcon(dest, g, x, y);
       return;
@@ -54,8 +60,4 @@ public class Icons {
     icon.paintIcon(dest, g2, x, y);
     g2.dispose();
   }
-
-  private static final String PATH = "resources/logisim/icons";
-
-  private Icons() {}
 }

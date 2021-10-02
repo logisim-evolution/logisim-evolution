@@ -12,9 +12,14 @@ package com.cburch.logisim.util;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class IteratorUtil {
+public final class IteratorUtil {
 
-  private static class EmptyIterator<E> implements Iterator<E> {
+  private IteratorUtil() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
+
+
+  private static final class EmptyIterator<E> implements Iterator<E> {
     private EmptyIterator() {}
 
     @Override
@@ -27,12 +32,13 @@ public class IteratorUtil {
       throw new NoSuchElementException();
     }
 
+    @Override
     public void remove() {
       throw new UnsupportedOperationException("EmptyIterator.remove");
     }
   }
 
-  private static class IteratorUnion<E> implements Iterator<E> {
+  private static final class IteratorUnion<E> implements Iterator<E> {
     Iterator<? extends E> cur;
     final Iterator<? extends E> next;
 
@@ -56,6 +62,7 @@ public class IteratorUtil {
       return cur.next();
     }
 
+    @Override
     public void remove() {
       cur.remove();
     }
@@ -80,5 +87,4 @@ public class IteratorUtil {
     return new EmptyIterator<>();
   }
 
-  public static Iterator<?> EMPTY_ITERATOR = new EmptyIterator<>();
 }

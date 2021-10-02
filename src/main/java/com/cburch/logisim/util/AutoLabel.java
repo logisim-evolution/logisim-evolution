@@ -30,8 +30,8 @@ import java.util.TreeSet;
 
 public class AutoLabel {
 
-  static final Integer[] UsedKeyStrokes = new Integer[] {KeyEvent.VK_L, KeyEvent.VK_T, KeyEvent.VK_V, KeyEvent.VK_H, KeyEvent.VK_A};
-  public static final Set<Integer> KeyStrokes = new HashSet<>(Arrays.asList(UsedKeyStrokes));
+  public static final Integer[] USED_KEY_STROKES = new Integer[] {KeyEvent.VK_L, KeyEvent.VK_T, KeyEvent.VK_V, KeyEvent.VK_H, KeyEvent.VK_A};
+  public static final Set<Integer> KEY_STROKES = new HashSet<>(Arrays.asList(USED_KEY_STROKES));
 
   private final HashMap<Circuit, String> labelBase = new HashMap<>();
   private final HashMap<Circuit, Integer> currentIndex = new HashMap<>();
@@ -84,13 +84,11 @@ public class AutoLabel {
   }
 
   public String getMatrixLabel(Circuit circ, ComponentFactory me, String common, int x, int y) {
-    String label;
     if ((common == null) || (common.isEmpty()) || (x < 0) || (y < 0)) return "";
-    if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty())
-      return "";
-    label = common.concat("_X" + x + "_Y" + y);
+    if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty()) return "";
+    final var label = common.concat("_X" + x + "_Y" + y);
     if (Circuit.isCorrectLabel(circ.getName(), label, circ.getNonWires(), null, me, false)
-        & SyntaxChecker.isVariableNameAcceptable(label, false)) return label;
+        && SyntaxChecker.isVariableNameAcceptable(label, false)) return label;
     return "";
   }
 

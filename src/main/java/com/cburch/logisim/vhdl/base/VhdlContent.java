@@ -269,7 +269,7 @@ public class VhdlContent extends HdlContent {
           null,
           new String[] {S.get("validationErrorButton")},
           S.get("validationErrorButton"));
-    } else if (errCode == Softwares.ABORD) {
+    } else if (errCode == Softwares.ABORT) {
       OptionPane.showMessageDialog(
           null, errMessage.toString(), errTitle.toString(), OptionPane.INFORMATION_MESSAGE);
     } else {

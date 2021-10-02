@@ -17,7 +17,17 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SyntaxChecker {
+public final class SyntaxChecker {
+
+  private static final Pattern variablePattern = Pattern.compile("^([a-zA-Z]+\\w*)");
+  private static final Pattern forbiddenPattern = Pattern.compile("__");
+
+  private static Matcher forbiddenMatcher;
+  private static Matcher variableMatcher;
+
+  private SyntaxChecker() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
 
   public static String getErrorMessage(String val) {
     if (val.length() == 0) return null;
@@ -33,17 +43,16 @@ public class SyntaxChecker {
         message = message.concat(S.get("variableDoubleUnderscore"));
       }
       if (hdl != null) {
-        message = message.concat(hdl.equals(HdlGeneratorFactory.VHDL)
-                                ? S.get("variableVHDLKeyword")
-                                : S.get("variableVerilogKeyword"));
+        message =
+            message.concat(
+                hdl.equals(HdlGeneratorFactory.VHDL)
+                    ? S.get("variableVHDLKeyword")
+                    : S.get("variableVerilogKeyword"));
       }
       if (val.endsWith("_")) {
         message = message.concat(S.get("variableEndsWithUndescore"));
       }
-      if (message.length() == 0)
-        return null;
-      else
-        return message;
+      return (message.length() == 0) ? null : message;
     }
     return null;
   }
@@ -56,9 +65,4 @@ public class SyntaxChecker {
     return message == null;
   }
 
-  private static final Pattern variablePattern = Pattern.compile("^([a-zA-Z]+\\w*)");
-  private static final Pattern forbiddenPattern = Pattern.compile("__");
-
-  private static Matcher forbiddenMatcher;
-  private static Matcher variableMatcher;
 }

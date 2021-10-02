@@ -84,7 +84,7 @@ public class VhdlSimulatorTclComp {
                   this.getClass()
                       .getResourceAsStream((VhdlSimConstants.SIM_RESOURCES_PATH + "comp.templ"))));
 
-      template = template.replaceAll("%date%", LocaleManager.parserSDF.format(new Date()));
+      template = template.replaceAll("%date%", LocaleManager.PARSER_SDF.format(new Date()));
       template = template.replaceAll("%comp_files%", compFiles.toString());
 
     } catch (IOException e) {
