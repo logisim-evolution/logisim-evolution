@@ -39,7 +39,6 @@ public class ZoomSlider extends JSlider {
     zoomMin = min;
     zoomMax = max;
     final var midValue = min + ((max - min) >> 1);
-    JLabel label;
     super.setOrientation(orientation);
     super.setMinimum(min);
     super.setMaximum(max);
@@ -52,7 +51,7 @@ public class ZoomSlider extends JSlider {
     setMinorTickSpacing(10);
     setPaintTicks(true);
     final var labelTable = new Hashtable<Integer, JLabel>();
-    label = new JLabel(getId(min));
+    var label = new JLabel(getId(min));
     label.setFont(AppPreferences.getScaledFont(label.getFont()));
     labelTable.put(min, label);
     label = new JLabel(getId(midValue));

@@ -172,11 +172,11 @@ public class netlistComponent {
     return (localId == null) ? 0 : localId.getOutputStartIndex();
   }
 
-  public boolean hasConnection(Net RootNet, byte BitIndex) {
+  public boolean hasConnection(Net rootNet, byte bitIndex) {
     for (final var search : endEnds) {
       for (byte bit = 0; bit < search.getNrOfBits(); bit++) {
         final var connection = search.get(bit);
-        if (connection.getParentNet() == RootNet && connection.getParentNetBitIndex() == BitIndex) {
+        if (connection.getParentNet() == rootNet && connection.getParentNetBitIndex() == bitIndex) {
           return true;
         }
       }

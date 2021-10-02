@@ -225,11 +225,11 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
                                     ? table.getVisibleInputEntry(row, col++)
                                     : table.getVisibleOutputEntry(row, col++);
           if (entry.isError()) {
-            g.setColor(Value.ERROR_COLOR);
+            g.setColor(Value.errorColor);
             g.fillRect(x, y, cellWidth, cellHeight);
             g.setColor(Color.BLACK);
           }
-          g.setColor(entry == Entry.BUS_ERROR ? Value.ERROR_COLOR : Color.BLACK);
+          g.setColor(entry == Entry.BUS_ERROR ? Value.errorColor : Color.BLACK);
           final var label = entry.getDescription();
           final var width = fm.stringWidth(label);
           g.drawString(label, x + (cellWidth - width) / 2, cy);
@@ -411,12 +411,12 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
   private void computePreferredSize() {
     inputVars = table.getInputVariables();
     outputVars = table.getOutputVariables();
-    if (inputVars.size() == 0) {
+    if (inputVars.isEmpty()) {
       inputVars = new ArrayList<>();
       inputVars.add(new Var(S.get("tableNoInputs"), 0));
     }
 
-    if (outputVars.size() == 0) {
+    if (outputVars.isEmpty()) {
       outputVars = new ArrayList<>();
       outputVars.add(new Var(S.get("tableNoOutputs"), 0));
     }
@@ -424,8 +424,8 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
     cellHeight = defaultCellHeight;
     inDim.reset(inputVars);
     outDim.reset(outputVars);
-    final var g = getGraphics();
-    final var fm = (g != null ? g.getFontMetrics(headFont) : canvas.getFontMetrics(headFont));
+    final var gfx = getGraphics();
+    final var fm = (gfx != null ? gfx.getFontMetrics(headFont) : canvas.getFontMetrics(headFont));
     cellHeight = fm.getHeight();
     inDim.calculate(fm);
     outDim.calculate(fm);

@@ -17,7 +17,6 @@ import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.util.TableSorter;
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
