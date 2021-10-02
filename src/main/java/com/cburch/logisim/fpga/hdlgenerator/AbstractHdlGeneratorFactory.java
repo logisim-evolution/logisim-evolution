@@ -677,8 +677,10 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         currentEntry++;
       }
     }
-    contents.add("{{1}} {{2}};", isEntity ? Vhdl.getVhdlKeyword("END ENTITY") : Vhdl.getVhdlKeyword("END"), 
-        isEntity ? componentName : Vhdl.getVhdlKeyword("COMPONENT")).empty();
+    if (isEntity)
+      contents.add("{{end}} {{entity}} {{1}};", componentName);
+    else
+      contents.add("{{end}} {{component}};");
     return contents.getWithIndent(isEntity ? 0 : 1);
   }
 

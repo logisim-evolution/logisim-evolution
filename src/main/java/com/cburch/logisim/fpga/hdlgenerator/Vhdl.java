@@ -108,7 +108,7 @@ public class Vhdl {
       "with",
       "xnor",
       "xor"
-    };
+  };
 
   public static final List<String> VHDL_KEYWORDS = Arrays.asList(RESERVED_VHDL_WORDS);
   
@@ -120,6 +120,9 @@ public class Vhdl {
   }
   
   public static String getVhdlKeyword(String keyword) {
-    return AppPreferences.VhdlKeywordsUpperCase.get() ? keyword.toUpperCase() : keyword.toLowerCase(); 
+    final var spaceStrippedKeyword = keyword.replace(" ", "").toLowerCase();
+    if (VHDL_KEYWORDS.contains(spaceStrippedKeyword))
+      return AppPreferences.VhdlKeywordsUpperCase.get() ? keyword.toUpperCase() : keyword.toLowerCase();
+    throw new IllegalArgumentException("An unknown VHDL keyword was passed!");
   }
 }
