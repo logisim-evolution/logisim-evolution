@@ -13,8 +13,8 @@ import com.cburch.logisim.data.Bounds;
 
 public class MatrixPlacerInfo {
 
-  private final String OldLabel;
-  private String SharedLabel;
+  private final String oldLabel;
+  private String sharedLabel;
   private int NrOfXCopies = 1;
   private int NrOfYCopies = 1;
   private int XDisplacement = 1;
@@ -22,9 +22,9 @@ public class MatrixPlacerInfo {
   private int XDmin = 1;
   private int YDmin = 1;
 
-  public MatrixPlacerInfo(String Label) {
-    SharedLabel = Label;
-    OldLabel = Label;
+  public MatrixPlacerInfo(String label) {
+    sharedLabel = label;
+    oldLabel = label;
   }
 
   void setBounds(Bounds bds) {
@@ -41,15 +41,15 @@ public class MatrixPlacerInfo {
   }
 
   String getLabel() {
-    return SharedLabel;
+    return sharedLabel;
   }
 
   void undoLabel() {
-    SharedLabel = OldLabel;
+    sharedLabel = oldLabel;
   }
 
-  void setLabel(String Lab) {
-    SharedLabel = Lab;
+  void setLabel(String lab) {
+    sharedLabel = lab;
   }
 
   int getNrOfXCopies() {

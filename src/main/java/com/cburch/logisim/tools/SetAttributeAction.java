@@ -41,12 +41,12 @@ public class SetAttributeAction extends Action {
   @Override
   public void doIt(Project proj) {
     final var xn = new CircuitMutation(circuit);
-    int len = values.size();
+    final var len = values.size();
     oldValues.clear();
     for (var i = 0; i < len; i++) {
       final var comp = comps.get(i);
       final var attr = attrs.get(i);
-      Object value = values.get(i);
+      final var value = values.get(i);
       if (circuit.contains(comp)) {
         oldValues.add(null);
         xn.set(comp, attr, value);
@@ -83,10 +83,10 @@ public class SetAttributeAction extends Action {
   @Override
   public void undo(Project proj) {
     if (xnReverse != null) xnReverse.execute();
-    for (int i = oldValues.size() - 1; i >= 0; i--) {
+    for (var i = oldValues.size() - 1; i >= 0; i--) {
       final var comp = comps.get(i);
       final var attr = attrs.get(i);
-      Object value = oldValues.get(i);
+      final var value = oldValues.get(i);
       if (value != null) {
         comp.getAttributeSet().setValue(attr, value);
       }

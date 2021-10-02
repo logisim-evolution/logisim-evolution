@@ -12,20 +12,7 @@ package com.cburch.logisim.tools;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.Location;
 
-public class WireRepairData {
-  private final Wire wire;
-  private final Location point;
-
-  public WireRepairData(Wire wire, Location point) {
-    this.wire = wire;
-    this.point = point;
-  }
-
-  public Location getPoint() {
-    return point;
-  }
-
-  public Wire getWire() {
-    return wire;
-  }
-}
+// NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
+// getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`). We may change
+// that in future, but for now it looks stupid in this file only.
+public record WireRepairData(Wire getWire, Location getPoint) {}
