@@ -54,10 +54,10 @@ public class MenuTool extends Tool {
       boolean canChange = proj.getLogisimFile().contains(circ);
 
       if (comp.getAttributeSet().containsAttribute(StdAttr.FACING)) {
-        add(rotateRight);
-        rotateRight.addActionListener(this);
         add(rotateLeft);
         rotateLeft.addActionListener(this);
+        add(rotateRight);
+        rotateRight.addActionListener(this);
       }
 
       add(del);
