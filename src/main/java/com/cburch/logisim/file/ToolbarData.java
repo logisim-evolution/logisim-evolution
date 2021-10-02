@@ -93,7 +93,7 @@ public class ToolbarData {
       if (srcTool == null) {
         this.addSeparator();
       } else {
-        Tool toolCopy = file.findTool(srcTool);
+        final var toolCopy = file.findTool(srcTool);
         if (toolCopy != null) {
           final var dstTool = toolCopy.cloneTool();
           AttributeSets.copy(srcTool.getAttributeSet(), dstTool.getAttributeSet());

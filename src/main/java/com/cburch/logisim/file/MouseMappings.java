@@ -16,6 +16,7 @@ import com.cburch.logisim.tools.Tool;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -24,10 +25,10 @@ public class MouseMappings {
     void mouseMappingsChanged();
   }
 
-  private final ArrayList<MouseMappingsListener> listeners;
+  private final List<MouseMappingsListener> listeners;
   private final HashMap<Integer, Tool> map;
-  private int cache_mods;
-  private Tool cache_tool;
+  private int cacheMods;
+  private Tool cacheTool;
 
   public MouseMappings() {
     listeners = new ArrayList<>();
@@ -53,7 +54,7 @@ public class MouseMappings {
   //
   public void copyFrom(MouseMappings other, LogisimFile file) {
     if (this == other) return;
-    cache_mods = -1;
+    cacheMods = -1;
     this.map.clear();
     for (Integer mods : other.map.keySet()) {
       final var srcTool = other.map.get(mods);
@@ -85,23 +86,23 @@ public class MouseMappings {
   }
 
   public Tool getToolFor(int mods) {
-    if (mods == cache_mods) {
-      return cache_tool;
+    if (mods == cacheMods) {
+      return cacheTool;
     } else {
       Tool ret = map.get(mods);
-      cache_mods = mods;
-      cache_tool = ret;
+      cacheMods = mods;
+      cacheTool = ret;
       return ret;
     }
   }
 
   public Tool getToolFor(Integer mods) {
-    if (mods == cache_mods) {
-      return cache_tool;
+    if (mods == cacheMods) {
+      return cacheTool;
     } else {
       Tool ret = map.get(mods);
-      cache_mods = mods;
-      cache_tool = ret;
+      cacheMods = mods;
+      cacheTool = ret;
       return ret;
     }
   }
@@ -146,7 +147,7 @@ public class MouseMappings {
   }
 
   public void setToolFor(int mods, Tool tool) {
-    if (mods == cache_mods) cache_mods = -1;
+    if (mods == cacheMods) cacheMods = -1;
 
     if (tool == null) {
       Object old = map.remove(mods);
@@ -158,7 +159,7 @@ public class MouseMappings {
   }
 
   public void setToolFor(Integer mods, Tool tool) {
-    if (mods == cache_mods) cache_mods = -1;
+    if (mods == cacheMods) cacheMods = -1;
 
     if (tool == null) {
       Object old = map.remove(mods);

@@ -59,17 +59,9 @@ public class ReaderInputStream extends InputStream {
    */
   @Override
   public synchronized int available() throws IOException {
-    if (in == null) {
-      throw new IOException("Stream Closed");
-    }
-    if (slack != null) {
-      return slack.length - begin;
-    }
-    if (in.ready()) {
-      return 1;
-    } else {
-      return 0;
-    }
+    if (in == null) throw new IOException("Stream Closed");
+    if (slack != null) return slack.length - begin;
+    return in.ready() ? 1 : 0;
   }
 
   /**
@@ -116,9 +108,7 @@ public class ReaderInputStream extends InputStream {
    */
   @Override
   public synchronized int read() throws IOException {
-    if (in == null) {
-      throw new IOException("Stream Closed");
-    }
+    if (in == null) throw new IOException("Stream Closed");
 
     byte result;
     if (slack != null && begin < slack.length) {
@@ -128,10 +118,7 @@ public class ReaderInputStream extends InputStream {
       }
     } else {
       final var buf = new byte[1];
-      if (read(buf, 0, 1) <= 0) {
-        result = -1;
-      }
-      result = buf[0];
+      result = (read(buf, 0, 1) <= 0) ? -1 : buf[0];
     }
 
     if (result < -1) {
