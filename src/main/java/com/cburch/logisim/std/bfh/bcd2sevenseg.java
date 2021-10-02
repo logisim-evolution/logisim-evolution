@@ -93,7 +93,7 @@ public class bcd2sevenseg extends InstanceFactory {
    */
   private void setKnown(InstanceState state, int portValues) {
     final var mask = 0b00000001;
-    for (var idx = Segment_A; idx <= Segment_G; idx++) {
+    for (var idx = SEGMENT_A; idx <= SEGMENT_G; idx++) {
       final var value = (portValues & mask) == 0 ? 0 : 1;
       state.setPort(idx, Value.createKnown(BitWidth.create(1), value), PER_DELAY);
       portValues >>= 1;
@@ -106,7 +106,7 @@ public class bcd2sevenseg extends InstanceFactory {
    * @param state Instance state.
    */
   private void setUnknown(InstanceState state) {
-    for (var idx = Segment_A; idx <= Segment_G; idx++) {
+    for (var idx = SEGMENT_A; idx <= SEGMENT_G; idx++) {
       state.setPort(idx, Value.createUnknown(BitWidth.create(1)), PER_DELAY);
     }
   }
