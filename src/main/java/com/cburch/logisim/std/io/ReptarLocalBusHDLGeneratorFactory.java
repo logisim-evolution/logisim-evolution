@@ -17,10 +17,8 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 public class ReptarLocalBusHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
@@ -29,13 +27,13 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHdlGeneratorFacto
     super();
     myPorts
         .add(Port.INOUT, "Addr_Data_LB_io", 16, 0)
-        .add(Port.INPUT, "SP6_LB_WAIT3_i", 1, ReptarLocalBus.SP6_LB_WAIT3_i)
-        .add(Port.INPUT, "IRQ_i", 1, ReptarLocalBus.IRQ_i)
-        .add(Port.OUTPUT, "SP6_LB_nCS3_o", 1, ReptarLocalBus.SP6_LB_nCS3_o)
-        .add(Port.OUTPUT, "SP6_LB_nADV_ALE_o", 1, ReptarLocalBus.SP6_LB_nADV_ALE_o)
-        .add(Port.OUTPUT, "SP6_LB_RE_nOE_o", 1, ReptarLocalBus.SP6_LB_RE_nOE_o)
-        .add(Port.OUTPUT, "SP6_LB_nWE_o", 1, ReptarLocalBus.SP6_LB_nWE_o)
-        .add(Port.OUTPUT, "Addr_LB_o", 9, ReptarLocalBus.Addr_LB_o);
+        .add(Port.INPUT, "SP6_LB_WAIT3_i", 1, ReptarLocalBus.SP_6_LB_WAIT_3_I)
+        .add(Port.INPUT, "IRQ_i", 1, ReptarLocalBus.IRQ_I)
+        .add(Port.OUTPUT, "SP6_LB_nCS3_o", 1, ReptarLocalBus.SP6_LB_nCS3_O)
+        .add(Port.OUTPUT, "SP6_LB_nADV_ALE_o", 1, ReptarLocalBus.SP6_LB_nADV_ALE_O)
+        .add(Port.OUTPUT, "SP6_LB_RE_nOE_o", 1, ReptarLocalBus.SP6_LB_RE_nOE_O)
+        .add(Port.OUTPUT, "SP6_LB_nWE_o", 1, ReptarLocalBus.SP6_LB_nWE_O)
+        .add(Port.OUTPUT, "Addr_LB_o", 9, ReptarLocalBus.ADDR_LB_O);
   }
 
   @Override
@@ -164,21 +162,21 @@ public class ReptarLocalBusHDLGeneratorFactory extends AbstractHdlGeneratorFacto
             "Addr_Data_LB_o",
             true,
             ComponentInfo,
-            ReptarLocalBus.Addr_Data_LB_o,
+            ReptarLocalBus.ADDR_DATA_LB_O,
             nets));
     map.putAll(
         Hdl.getNetMap(
             "Addr_Data_LB_i",
             true,
             ComponentInfo,
-            ReptarLocalBus.Addr_Data_LB_i,
+            ReptarLocalBus.ADDR_DATA_LB_I,
             nets));
     map.putAll(
         Hdl.getNetMap(
             "Addr_Data_LB_tris_i",
             true,
             ComponentInfo,
-            ReptarLocalBus.Addr_Data_LB_tris_i,
+            ReptarLocalBus.ADDR_DATA_LB_TRIS_I,
             nets));
     return map;
   }

@@ -189,14 +189,14 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
 
     final var g = painter.getGraphics();
     if (painter.getShowState()) {
-      Boolean activ = painter.getAttributeValue(IoLibrary.ATTR_ACTIVE);
+      final var activ = painter.getAttributeValue(IoLibrary.ATTR_ACTIVE);
       final var mask = activ ? 0 : 7;
       summ ^= mask;
       final var red = ((summ >> RED) & 1) * 0xFF;
       final var green = ((summ >> GREEN) & 1) * 0xFF;
       final var blue = ((summ >> BLUE) & 1) * 0xFF;
-      final var LedColor = new Color(red, green, blue);
-      g.setColor(LedColor);
+      final var ledColor = new Color(red, green, blue);
+      g.setColor(ledColor);
       g.fillOval(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     }
     g.setColor(Color.BLACK);

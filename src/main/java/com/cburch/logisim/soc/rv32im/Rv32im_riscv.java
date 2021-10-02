@@ -18,7 +18,6 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
@@ -37,7 +36,6 @@ import com.cburch.logisim.soc.gui.CpuDrawSupport;
 import com.cburch.logisim.soc.gui.SocCPUShape;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
-import java.awt.Font;
 import java.awt.Graphics2D;
 
 public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementProvider {
@@ -75,13 +73,13 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
   }
 
   private void updatePorts(Instance instance) {
-    int NrOfIrqs = instance.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNrOfIrqs();
-    Port[] ps = new Port[NrOfIrqs + 2];
+    int nrOfIrqs = instance.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNrOfIrqs();
+    final var ps = new Port[nrOfIrqs + 2];
     ps[0] = new Port(0, 610, Port.INPUT, 1);
     ps[0].setToolTip(S.getter("Rv32imResetInput"));
     ps[1] = new Port(0, 630, Port.INPUT, 1);
     ps[1].setToolTip(S.getter("Rv32imClockInput"));
-    for (int i = 0; i < NrOfIrqs; i++) {
+    for (int i = 0; i < nrOfIrqs; i++) {
       ps[i + 2] = new Port(0, 10 + i * 10, Port.INPUT, 1);
       ps[i + 2].setToolTip(S.getter("Rv32imIrqInput", Integer.toString(i)));
     }
@@ -92,7 +90,7 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
     updatePorts(instance);
-    Bounds bds = instance.getBounds();
+    final var bds = instance.getBounds();
     instance.setTextField(
             StdAttr.LABEL,
             StdAttr.LABEL_FONT,
@@ -115,8 +113,8 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Location loc = painter.getLocation();
-    Graphics2D g2 = (Graphics2D) painter.getGraphics();
+    final var loc = painter.getLocation();
+    final var g2 = (Graphics2D) painter.getGraphics();
     painter.drawBounds();
     painter.drawLabel();
     painter.drawClock(1, Direction.EAST);
@@ -124,7 +122,7 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
     for (int i = 0; i < painter.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNrOfIrqs(); i++) {
       painter.drawPort(i + 2, "IRQ" + i, Direction.EAST);
     }
-    Font f = g2.getFont();
+    final var f = g2.getFont();
     g2.setFont(StdAttr.DEFAULT_LABEL_FONT);
     GraphicsUtil.drawCenteredText(g2, "RISC V IM simulator", loc.getX() + 320, loc.getY() + 630);
     g2.setFont(f);
@@ -138,7 +136,7 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
                 loc.getY() + CpuDrawSupport.busConBounds.getY(),
                 CpuDrawSupport.busConBounds.getWidth(),
                 CpuDrawSupport.busConBounds.getHeight()));
-    RV32im_state state = painter.getAttributeValue(RV32imAttributes.RV32IM_STATE);
+    final var state = painter.getAttributeValue(RV32imAttributes.RV32IM_STATE);
     state.paint(
         loc.getX(),
         loc.getY(),
@@ -152,8 +150,7 @@ public class Rv32im_riscv extends SocInstanceFactory implements DynamicElementPr
   public void propagate(InstanceState state) {
     RV32im_state.ProcessorState data = (RV32im_state.ProcessorState) state.getData();
     if (data == null) {
-      data =
-          state.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNewState(state.getInstance());
+      data = state.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNewState(state.getInstance());
       state.setData(data);
     }
     if (state.getPortValue(0) == Value.TRUE)

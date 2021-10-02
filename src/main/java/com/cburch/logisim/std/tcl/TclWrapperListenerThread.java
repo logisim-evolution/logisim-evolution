@@ -20,7 +20,7 @@ public class TclWrapperListenerThread extends UniquelyNamedThread {
   final LinkedList<String> messages;
   final Simulator sim;
 
-  Boolean socket_open = true;
+  Boolean socketOpen = true;
 
   TclWrapperListenerThread(SocketClient socket, Simulator simulator) {
     super("TclWrapperListenerThread");
@@ -37,7 +37,7 @@ public class TclWrapperListenerThread extends UniquelyNamedThread {
    */
   public String receive() {
 
-    while (socket_open && messages.size() < 1) {
+    while (socketOpen && messages.size() < 1) {
       try {
         sleep(100, 0);
       } catch (InterruptedException e) {
@@ -45,8 +45,7 @@ public class TclWrapperListenerThread extends UniquelyNamedThread {
       }
     }
 
-    if (messages.size() > 0) return messages.pop();
-    else return null;
+    return messages.isEmpty() ? null : messages.pop();
   }
 
   @Override
@@ -64,6 +63,6 @@ public class TclWrapperListenerThread extends UniquelyNamedThread {
       }
     }
 
-    socket_open = false;
+    socketOpen = false;
   }
 }

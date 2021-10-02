@@ -320,15 +320,15 @@ class XmlWriter {
   Element fromComponent(Component comp) {
     final var source = comp.getFactory();
     final var lib = findLibrary(source);
-    String lib_name;
+    String libName;
     if (lib == null) {
       loader.showError(source.getName() + " component not found");
       return null;
     } else if (lib == file) {
-      lib_name = null;
+      libName = null;
     } else {
-      lib_name = libs.get(lib);
-      if (lib_name == null) {
+      libName = libs.get(lib);
+      if (libName == null) {
         loader.showError("unknown library within file");
         return null;
       }
@@ -340,7 +340,7 @@ class XmlWriter {
     }
 
     final var ret = doc.createElement("comp");
-    if (lib_name != null) ret.setAttribute("lib", lib_name);
+    if (libName != null) ret.setAttribute("lib", libName);
     ret.setAttribute("name", source.getName());
     ret.setAttribute("loc", comp.getLocation().toString());
     addAttributeSetContent(ret, comp.getAttributeSet(), comp.getFactory());
@@ -433,22 +433,22 @@ class XmlWriter {
 
   Element fromTool(Tool tool) {
     final var lib = findLibrary(tool);
-    String lib_name;
+    String libName;
     if (lib == null) {
       loader.showError(StringUtil.format("tool `%s' not found", tool.getDisplayName()));
       return null;
     } else if (lib == file) {
-      lib_name = null;
+      libName = null;
     } else {
-      lib_name = libs.get(lib);
-      if (lib_name == null) {
+      libName = libs.get(lib);
+      if (libName == null) {
         loader.showError("unknown library within file");
         return null;
       }
     }
 
     final var elt = doc.createElement("tool");
-    if (lib_name != null) elt.setAttribute("lib", lib_name);
+    if (libName != null) elt.setAttribute("lib", libName);
     elt.setAttribute("name", tool.getName());
     addAttributeSetContent(elt, tool.getAttributeSet(), tool);
     return elt;

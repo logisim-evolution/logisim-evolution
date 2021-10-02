@@ -32,8 +32,8 @@ public class RamAttributes extends AbstractAttributeSet {
   static final AttributeOption BUS_SEP = new AttributeOption("bibus", S.getter("ramSeparateDataBus"));
   static final Attribute<AttributeOption> ATTR_DBUS = Attributes.forOption("databus", S.getter("ramDataAttr"), new AttributeOption[] {BUS_BIDIR, BUS_SEP});
   static final AttributeOption BUS_WITH_BYTEENABLES = new AttributeOption("byteEnables", S.getter("ramWithByteEnables"));
-  static final AttributeOption BUS_WITHOUT_BYTEENABLES = new AttributeOption("NobyteEnables", S.getter("ramNoByteEnables"));
-  static final Attribute<AttributeOption> ATTR_ByteEnables = Attributes.forOption("byteenables", S.getter("ramByteEnables"), new AttributeOption[] {BUS_WITH_BYTEENABLES, BUS_WITHOUT_BYTEENABLES});
+  static final AttributeOption BUS_WITHOUT_BYTE_ENABLES = new AttributeOption("NobyteEnables", S.getter("ramNoByteEnables"));
+  static final Attribute<AttributeOption> ATTR_ByteEnables = Attributes.forOption("byteenables", S.getter("ramByteEnables"), new AttributeOption[] {BUS_WITH_BYTEENABLES, BUS_WITHOUT_BYTE_ENABLES});
   static final Attribute<Boolean> CLEAR_PIN = Attributes.forBoolean("clearpin", S.getter("RamClearPin"));
   private final ArrayList<Attribute<?>> myAttributes = new ArrayList<>();
 
@@ -41,15 +41,15 @@ public class RamAttributes extends AbstractAttributeSet {
   private BitWidth addrBits = BitWidth.create(8);
   private BitWidth dataBits = BitWidth.create(8);
   private String label = "";
-  private AttributeOption Trigger = StdAttr.TRIG_RISING;
-  private AttributeOption BusStyle = BUS_SEP;
+  private AttributeOption trigger = StdAttr.TRIG_RISING;
+  private AttributeOption busStyle = BUS_SEP;
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean labelVisible = false;
-  private AttributeOption ByteEnables = BUS_WITHOUT_BYTEENABLES;
+  private AttributeOption byteEnables = BUS_WITHOUT_BYTE_ENABLES;
   private Boolean asynchronousRead = false;
-  private AttributeOption Appearance = AppPreferences.getDefaultAppearance();
-  private AttributeOption RWBehavior = Mem.READAFTERWRITE;
-  private Boolean ClearPin = false;
+  private AttributeOption appearance = AppPreferences.getDefaultAppearance();
+  private AttributeOption readWriteBehavior = Mem.READAFTERWRITE;
+  private Boolean clearPin = false;
   private AttributeOption lineSize = Mem.SINGLE;
   private Boolean allowMisaligned = false;
   private AttributeOption typeOfEnables = Mem.USEBYTEENABLES;
@@ -69,7 +69,7 @@ public class RamAttributes extends AbstractAttributeSet {
     newList.add(CLEAR_PIN);
     if (typeOfEnables.equals(Mem.USEBYTEENABLES)) {
       newList.add(StdAttr.TRIGGER);
-      if (Trigger.equals(StdAttr.TRIG_RISING) || Trigger.equals(StdAttr.TRIG_FALLING)) {
+      if (trigger.equals(StdAttr.TRIG_RISING) || trigger.equals(StdAttr.TRIG_FALLING)) {
         changes |= !myAttributes.contains(Mem.ASYNC_READ);
         newList.add(Mem.ASYNC_READ);
         if (!asynchronousRead) {
@@ -108,14 +108,14 @@ public class RamAttributes extends AbstractAttributeSet {
     final var d = (RamAttributes) dest;
     d.addrBits = addrBits;
     d.dataBits = dataBits;
-    d.Trigger = Trigger;
-    d.BusStyle = BusStyle;
+    d.trigger = trigger;
+    d.busStyle = busStyle;
     d.labelFont = labelFont;
-    d.Appearance = Appearance;
-    d.ByteEnables = ByteEnables;
+    d.appearance = appearance;
+    d.byteEnables = byteEnables;
     d.asynchronousRead = asynchronousRead;
-    d.RWBehavior = RWBehavior;
-    d.ClearPin = ClearPin;
+    d.readWriteBehavior = readWriteBehavior;
+    d.clearPin = clearPin;
     d.lineSize = lineSize;
     d.allowMisaligned = allowMisaligned;
     d.typeOfEnables = typeOfEnables;
@@ -143,16 +143,16 @@ public class RamAttributes extends AbstractAttributeSet {
       return (V) label;
     }
     if (attr == StdAttr.TRIGGER) {
-      return (V) Trigger;
+      return (V) trigger;
     }
     if (attr == Mem.ASYNC_READ) {
       return (V) asynchronousRead;
     }
     if (attr == Mem.READ_ATTR) {
-      return (V) RWBehavior;
+      return (V) readWriteBehavior;
     }
     if (attr == ATTR_DBUS) {
-      return (V) BusStyle;
+      return (V) busStyle;
     }
     if (attr == StdAttr.LABEL_FONT) {
       return (V) labelFont;
@@ -161,10 +161,10 @@ public class RamAttributes extends AbstractAttributeSet {
       return (V) labelVisible;
     }
     if (attr == ATTR_ByteEnables) {
-      return (V) ByteEnables;
+      return (V) byteEnables;
     }
     if (attr == StdAttr.APPEARANCE) {
-      return (V) Appearance;
+      return (V) appearance;
     }
     if (attr == Mem.LINE_ATTR) {
       return (V) lineSize;
@@ -173,7 +173,7 @@ public class RamAttributes extends AbstractAttributeSet {
       return (V) allowMisaligned;
     }
     if (attr == CLEAR_PIN) {
-      return (V) ClearPin;
+      return (V) clearPin;
     }
     if (attr == Mem.ENABLES_ATTR) {
       return (V) typeOfEnables;
@@ -185,19 +185,14 @@ public class RamAttributes extends AbstractAttributeSet {
   public <V> void setValue(Attribute<V> attr, V value) {
     if (attr == Mem.ADDR_ATTR) {
       final var newAddr = (BitWidth) value;
-      if (addrBits == newAddr) {
-        return;
-      }
+      if (addrBits == newAddr) return;
       addrBits = newAddr;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == Mem.DATA_ATTR) {
       final var newData = (BitWidth) value;
-      if (dataBits == newData) {
-        return;
-      }
+      if (dataBits == newData) return;
       dataBits = newData;
-      if (typeOfEnables.equals(Mem.USEBYTEENABLES) && updateAttributes())
-        fireAttributeListChanged();
+      if (typeOfEnables.equals(Mem.USEBYTEENABLES) && updateAttributes()) fireAttributeListChanged();
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == Mem.ENABLES_ATTR) {
       final var val = (AttributeOption) value;
@@ -214,19 +209,15 @@ public class RamAttributes extends AbstractAttributeSet {
       }
     } else if (attr == StdAttr.LABEL) {
       final var newLabel = (String) value;
-      if (label.equals(newLabel)) {
-        return;
-      }
+      if (label.equals(newLabel)) return;
       @SuppressWarnings("unchecked")
-      V Oldlabel = (V) label;
+      V oldlabel = (V) label;
       label = newLabel;
-      fireAttributeValueChanged(attr, value, Oldlabel);
+      fireAttributeValueChanged(attr, value, oldlabel);
     } else if (attr == StdAttr.TRIGGER) {
       final var newTrigger = (AttributeOption) value;
-      if (Trigger.equals(newTrigger)) {
-        return;
-      }
-      Trigger = newTrigger;
+      if (trigger.equals(newTrigger)) return;
+      trigger = newTrigger;
       if (typeOfEnables.equals(Mem.USEBYTEENABLES) && updateAttributes())
         fireAttributeListChanged();
       fireAttributeValueChanged(attr, value, null);
@@ -239,16 +230,14 @@ public class RamAttributes extends AbstractAttributeSet {
       }
     } else if (attr == Mem.READ_ATTR) {
       final var val = (AttributeOption) value;
-      if (!RWBehavior.equals(val)) {
-        RWBehavior = val;
+      if (!readWriteBehavior.equals(val)) {
+        readWriteBehavior = val;
         fireAttributeValueChanged(attr, value, null);
       }
     } else if (attr == ATTR_DBUS) {
-      final var NewStyle = (AttributeOption) value;
-      if (BusStyle.equals(NewStyle)) {
-        return;
-      }
-      BusStyle = NewStyle;
+      final var newStyle = (AttributeOption) value;
+      if (busStyle.equals(newStyle)) return;
+      busStyle = newStyle;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == StdAttr.LABEL_FONT) {
       final var newFont = (Font) value;
@@ -264,18 +253,14 @@ public class RamAttributes extends AbstractAttributeSet {
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == ATTR_ByteEnables) {
       var newBE = (AttributeOption) value;
-      if (ByteEnables.equals(newBE)) {
-        return;
-      }
-      if (dataBits.getWidth() < 9) {
-        newBE = BUS_WITHOUT_BYTEENABLES;
-      }
-      ByteEnables = newBE;
+      if (byteEnables.equals(newBE)) return;
+      if (dataBits.getWidth() < 9) newBE = BUS_WITHOUT_BYTE_ENABLES;
+      byteEnables = newBE;
       fireAttributeValueChanged(attr, value, null);
     } else if (attr == CLEAR_PIN) {
-      Boolean val = (Boolean) value;
-      if (ClearPin != val) {
-        ClearPin = val;
+      final var val = (Boolean) value;
+      if (clearPin != val) {
+        clearPin = val;
         fireAttributeValueChanged(attr, value, null);
       }
     } else if (attr == Mem.LINE_ATTR) {
@@ -291,9 +276,9 @@ public class RamAttributes extends AbstractAttributeSet {
         fireAttributeValueChanged(attr, value, null);
       }
     } else if (attr == StdAttr.APPEARANCE) {
-      final var NewAppearance = (AttributeOption) value;
-      if (Appearance.equals(NewAppearance)) return;
-      Appearance = NewAppearance;
+      final var option = (AttributeOption) value;
+      if (appearance.equals(option)) return;
+      appearance = option;
       fireAttributeValueChanged(attr, value, null);
     }
   }

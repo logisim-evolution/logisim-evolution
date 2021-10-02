@@ -57,7 +57,7 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
     c.anchor = GridBagConstraints.CENTER;
     c.weightx = 1;
     c.weighty = 1;
-    if ((MatrixInfo.getLabel() != null) & AutoLablerActive) {
+    if ((MatrixInfo.getLabel() != null) && AutoLablerActive) {
       c.gridx = 0;
       c.gridy = 0;
       c.gridwidth = 4;
@@ -73,7 +73,7 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
       for (var y = 5; y < 12; y++) {
         c.gridx = x;
         c.gridy = y;
-        if (((x == 4) | (x == 7) | (x == 10)) & ((y == 5) | (y == 8) | (y == 11))) {
+        if (((x == 4) || (x == 7) || (x == 10)) && ((y == 5) || (y == 8) || (y == 11))) {
           final var CompText = new JLabel("   O   ");
           this.add(CompText, c);
         } else {
