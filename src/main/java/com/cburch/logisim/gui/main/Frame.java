@@ -74,12 +74,13 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 public class Frame extends LFrame.MainWindow implements LocaleListener {
+  private static final long serialVersionUID = 1L;
+
   public static final String EDITOR_VIEW = "editorView";
   public static final String EXPLORER_VIEW = "explorerView";
   public static final String EDIT_LAYOUT = "layout";
   public static final String EDIT_APPEARANCE = "appearance";
   public static final String EDIT_HDL = "hdl";
-  private static final long serialVersionUID = 1L;
   private final Timer timer = new Timer();
   private final Project project;
   private final MyProjectListener myProjectListener = new MyProjectListener();
@@ -166,11 +167,10 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     // set up the contents, split down the middle, with the canvas
     // on the right and a split pane on the left containing the
     // explorer and attribute values.
-    JPanel explPanel = new JPanel(new BorderLayout());
+    final var explPanel = new JPanel(new BorderLayout());
     explPanel.add(toolbox, BorderLayout.CENTER);
 
-    JPanel simPanel = new JPanel(new BorderLayout());
-    // simPanel.add(new JButton("stuff"), BorderLayout.NORTH);
+    final var simPanel = new JPanel(new BorderLayout());
     simPanel.add(simExplorer, BorderLayout.CENTER);
 
     topTab = new JTabbedPane();
@@ -198,18 +198,14 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     state.stateChanged();
     project.getVhdlSimulator().addVhdlSimStateListener(state);
 
-    mainRegion =
-        new VerticalSplitPane(
-            leftRegion, rightPanel, AppPreferences.WINDOW_MAIN_SPLIT.get());
+    mainRegion = new VerticalSplitPane(leftRegion, rightPanel, AppPreferences.WINDOW_MAIN_SPLIT.get());
 
     getContentPane().add(mainRegion, BorderLayout.CENTER);
 
     localeChanged();
 
-    this.setSize(
-        AppPreferences.WINDOW_WIDTH.get(),
-        AppPreferences.WINDOW_HEIGHT.get());
-    Point prefPoint = getInitialLocation();
+    this.setSize(AppPreferences.WINDOW_WIDTH.get(), AppPreferences.WINDOW_HEIGHT.get());
+    final var prefPoint = getInitialLocation();
     if (prefPoint != null) {
       this.setLocation(prefPoint);
     }
@@ -391,7 +387,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     editRegion.setFraction(1.0);
     hdlEditor.setHdlModel(null);
 
-    if (view.equals(EDIT_APPEARANCE)) { // appearance view
+    if (view.equals(EDIT_APPEARANCE)) {
+      // appearance view
       var app = appearance;
       if (app == null) {
         app = new AppearanceView();
@@ -406,7 +403,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
       menuListener.setEditHandler(app.getEditHandler());
       mainPanel.setView(view);
       app.getCanvas().requestFocus();
-    } else { // layout view
+    } else {
+      // layout view
       toolbar.setToolbarModel(layoutToolbarModel);
       zoom.setZoomModel(layoutZoomModel);
       zoom.setAutoZoomButtonEnabled(true);
@@ -509,13 +507,13 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     }
   }
 
-  public void setVhdlSimulatorConsoleStatus(boolean visible) {
-    if (visible) {
-      rightRegion.setFraction(lastFraction);
-    } else {
-      lastFraction = rightRegion.getFraction();
-      rightRegion.setFraction(1);
-    }
+  public void setVhdlSimulatorConsoleStatusVisible() {
+    rightRegion.setFraction(lastFraction);
+  }
+
+  public void setVhdlSimulatorConsoleStatusInvisible() {
+    lastFraction = rightRegion.getFraction();
+    rightRegion.setFraction(1);
   }
 
   public HdlModel getHdlEditorView() {
@@ -575,7 +573,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   }
 
   class MyProjectListener implements ProjectListener, LibraryListener, CircuitListener, PropertyChangeListener, ChangeListener {
-    public void attributeListChanged(AttributeEvent e) {}
+    public void attributeListChanged(AttributeEvent e) {
+      // Do nothing.
+    }
 
     @Override
     public void circuitChanged(CircuitEvent event) {
@@ -609,7 +609,10 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         placeToolbar();
       } else if (action == ProjectEvent.ACTION_SET_STATE) {
         if (event.getData() instanceof CircuitState state) {
-          if (state.getParentState() != null) topTab.setSelectedIndex(1); // sim explorer view
+          if (state.getParentState() != null) {
+            // sim explorer view
+            topTab.setSelectedIndex(1);
+          }
         }
       } else if (action == ProjectEvent.ACTION_SET_CURRENT) {
         if (event.getData() instanceof Circuit) {
@@ -624,7 +627,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         buildTitleString();
       } else if (action == ProjectEvent.ACTION_SET_TOOL) {
         if (attrTable == null) {
-          return; // for startup
+          // for startup
+          return;
         }
         final var oldTool = (Tool) event.getOldData();
         final var newTool = (Tool) event.getData();
