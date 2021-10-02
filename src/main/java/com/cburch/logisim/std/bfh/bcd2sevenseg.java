@@ -85,116 +85,53 @@ public class bcd2sevenseg extends InstanceFactory {
         "");
   }
 
+  /**
+   * Sets all segments' ports to known value.
+   *
+   * @param state Instance state.
+   * @param portValues Binary encoded port values (0/1). Segment A is bit 0, segment G is bit 6.
+   */
+  private void setKnown(InstanceState state, int portValues) {
+    final var mask = 0b00000001;
+    for (var idx = Segment_A; idx <= Segment_G; idx++) {
+      final var value = (portValues & mask) == 0 ? 0 : 1;
+      state.setPort(idx, Value.createKnown(BitWidth.create(1), value), PER_DELAY);
+      portValues >>= 1;
+    }
+  }
+
+  /**
+   * Sets all segments' ports to unknown.
+   *
+   * @param state Instance state.
+   */
+  private void setUnknown(InstanceState state) {
+    for (var idx = Segment_A; idx <= Segment_G; idx++) {
+      state.setPort(idx, Value.createUnknown(BitWidth.create(1)), PER_DELAY);
+    }
+  }
+
   @Override
   public void propagate(InstanceState state) {
     if (state.getPortValue(BCDin).isFullyDefined()
         & !state.getPortValue(BCDin).isErrorValue()
         & !state.getPortValue(BCDin).isUnknown()) {
-      int value = (int) state.getPortValue(BCDin).toLongValue();
-      switch (value) {
-        case 0:
-          state.setPort(Segment_A, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_B, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_C, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_D, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_E, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_F, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_G, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          break;
-        case 1:
-          state.setPort(Segment_A, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_B, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_C, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_D, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_E, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_F, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_G, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          break;
-        case 2:
-          state.setPort(Segment_A, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_B, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_C, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_D, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_E, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_F, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_G, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          break;
-        case 3:
-          state.setPort(Segment_A, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_B, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_C, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_D, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_E, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_F, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_G, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          break;
-        case 4:
-          state.setPort(Segment_A, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_B, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_C, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_D, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_E, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_F, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_G, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          break;
-        case 5:
-          state.setPort(Segment_A, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_B, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_C, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_D, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_E, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_F, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_G, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          break;
-        case 6:
-          state.setPort(Segment_A, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_B, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_C, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_D, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_E, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_F, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_G, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          break;
-        case 7:
-          state.setPort(Segment_A, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_B, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_C, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_D, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_E, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_F, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_G, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          break;
-        case 8:
-          state.setPort(Segment_A, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_B, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_C, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_D, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_E, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_F, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_G, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          break;
-        case 9:
-          state.setPort(Segment_A, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_B, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_C, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_D, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_E, Value.createKnown(BitWidth.create(1), 0), PER_DELAY);
-          state.setPort(Segment_F, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          state.setPort(Segment_G, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
-          break;
-        default:
-          state.setPort(Segment_A, Value.createUnknown(BitWidth.create(1)), PER_DELAY);
-          state.setPort(Segment_B, Value.createUnknown(BitWidth.create(1)), PER_DELAY);
-          state.setPort(Segment_C, Value.createUnknown(BitWidth.create(1)), PER_DELAY);
-          state.setPort(Segment_D, Value.createUnknown(BitWidth.create(1)), PER_DELAY);
-          state.setPort(Segment_E, Value.createUnknown(BitWidth.create(1)), PER_DELAY);
-          state.setPort(Segment_F, Value.createUnknown(BitWidth.create(1)), PER_DELAY);
-          state.setPort(Segment_G, Value.createUnknown(BitWidth.create(1)), PER_DELAY);
-          break;
+
+      switch ((int) state.getPortValue(BCDin).toLongValue()) {
+        case 0 -> setKnown(state, 0b1111110);
+        case 1 -> setKnown(state, 0b0110000);
+        case 2 -> setKnown(state, 0b1101101);
+        case 3 -> setKnown(state, 0b1111001);
+        case 4 -> setKnown(state, 0b0110011);
+        case 5 -> setKnown(state, 0b1011011);
+        case 6 -> setKnown(state, 0b1011111);
+        case 7 -> setKnown(state, 0b1110000);
+        case 8 -> setKnown(state, 0b1111111);
+        case 9 -> setKnown(state, 0b1111011);
+        default -> setUnknown(state);
       }
     } else {
-      for (int i = 0; i < 7; i++)
-        state.setPort(i, Value.createUnknown(BitWidth.create(1)), PER_DELAY);
+      setUnknown(state);
     }
   }
 }
