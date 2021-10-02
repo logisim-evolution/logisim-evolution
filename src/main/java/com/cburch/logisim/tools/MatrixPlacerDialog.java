@@ -147,13 +147,13 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
     if (matrixInfo == null) return;
 
     if (e.getSource() == copiesX) {
-      matrixInfo.setNrOfXCopies((int) copiesX.getSelectedItem());
+      matrixInfo.setxCopiesCount((int) copiesX.getSelectedItem());
     } else if (e.getSource() == distanceX) {
-      matrixInfo.setXDisplacement((int) distanceX.getSelectedItem());
+      matrixInfo.setDisplacementX((int) distanceX.getSelectedItem());
     } else if (e.getSource() == copiesY) {
-      matrixInfo.setNrOfYCopies((int) copiesY.getSelectedItem());
+      matrixInfo.setyCopiesCount((int) copiesY.getSelectedItem());
     } else if (e.getSource() == distanceY) {
-      matrixInfo.setYDisplacement((int) distanceY.getSelectedItem());
+      matrixInfo.setDisplacementY((int) distanceY.getSelectedItem());
     }
   }
 

@@ -15,12 +15,12 @@ public class MatrixPlacerInfo {
 
   private final String oldLabel;
   private String sharedLabel;
-  private int NrOfXCopies = 1;
-  private int NrOfYCopies = 1;
-  private int XDisplacement = 1;
-  private int YDisplacement = 1;
-  private int XDmin = 1;
-  private int YDmin = 1;
+  private int xCopiesCount = 1;
+  private int yCopiesCount = 1;
+  private int displacementX = 1;
+  private int displacementY = 1;
+  private int xDispMin = 1;
+  private int yDispMin = 1;
 
   public MatrixPlacerInfo(String label) {
     sharedLabel = label;
@@ -28,16 +28,16 @@ public class MatrixPlacerInfo {
   }
 
   void setBounds(Bounds bds) {
-    XDisplacement = XDmin = (bds.getWidth() + 9) / 10;
-    YDisplacement = YDmin = (bds.getHeight() + 9) / 10;
+    displacementX = xDispMin = (bds.getWidth() + 9) / 10;
+    displacementY = yDispMin = (bds.getHeight() + 9) / 10;
   }
 
   int getMinimalXDisplacement() {
-    return XDmin;
+    return xDispMin;
   }
 
   int getMinimalYDisplacement() {
-    return YDmin;
+    return yDispMin;
   }
 
   String getLabel() {
@@ -52,51 +52,51 @@ public class MatrixPlacerInfo {
     sharedLabel = lab;
   }
 
-  int getNrOfXCopies() {
-    return NrOfXCopies;
+  int getxCopiesCount() {
+    return xCopiesCount;
   }
 
-  void setNrOfXCopies(int val) {
-    NrOfXCopies = val;
+  void setxCopiesCount(int val) {
+    xCopiesCount = val;
   }
 
-  int getNrOfYCopies() {
-    return NrOfYCopies;
+  int getyCopiesCount() {
+    return yCopiesCount;
   }
 
-  void setNrOfYCopies(int val) {
-    NrOfYCopies = val;
+  void setyCopiesCount(int val) {
+    yCopiesCount = val;
   }
 
   int getDeltaX() {
-    return XDisplacement * 10;
+    return displacementX * 10;
   }
 
   void setDeltaX(int value) {
-    if (value > 0) XDisplacement = (value + 9) / 10;
+    if (value > 0) displacementX = (value + 9) / 10;
   }
 
-  void setXDisplacement(int value) {
-    if (value > 0) XDisplacement = value;
+  void setDisplacementX(int value) {
+    if (value > 0) displacementX = value;
   }
 
-  int getXDisplacement() {
-    return XDisplacement;
+  int getDisplacementX() {
+    return displacementX;
   }
 
   int getDeltaY() {
-    return YDisplacement * 10;
+    return displacementY * 10;
   }
 
   void setDeltaY(int value) {
-    if (value > 0) YDisplacement = (value + 9) / 10;
+    if (value > 0) displacementY = (value + 9) / 10;
   }
 
-  void setYDisplacement(int value) {
-    if (value > 0) YDisplacement = value;
+  void setDisplacementY(int value) {
+    if (value > 0) displacementY = value;
   }
 
-  int getYDisplacement() {
-    return YDisplacement;
+  int getDisplacementY() {
+    return displacementY;
   }
 }
