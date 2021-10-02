@@ -21,7 +21,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.wiring.ClockHDLGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -343,20 +342,20 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     return contents.get();
   }
 
-  public List<String> getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
+  public LineBuffer getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
     /*
      * This method returns all the component definitions used as component
      * in the circuit. This method is only called in case of VHDL-code
      * generation.
      */
-    return new ArrayList<>();
+    return LineBuffer.getHdlBuffer();
   }
 
   @Override
-  public List<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
+  public LineBuffer getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
     final var contents = LineBuffer.getHdlBuffer();
     if (Hdl.isVhdl()) contents.add(getVHDLBlackBox(theNetlist, attrs, componentName, false));
-    return contents.get();
+    return contents;
   }
 
   @Override
@@ -604,8 +603,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       myPorts.removePorts();
       getGenerationTimeWiresPorts(theNetlist, attrs);
     }
-    contents.add("{{1}} {{2}}{{3}}", isEntity ? Vhdl.getVhdlKeyword("ENTITY") : Vhdl.getVhdlKeyword("COMPONENT"), 
-        componentName, isEntity ? Vhdl.getVhdlKeyword(" IS") : "");
+    contents.add(isEntity ? "{{entity}} {{1}} {{is}}" : "{{component}} {{1}}" , componentName);
     if (!myParametersList.isEmpty(attrs)) {
       // first we build a list with parameters to determine the max. string length
       final var myParameters = new HashMap<String, Boolean>();

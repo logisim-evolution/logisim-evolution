@@ -235,58 +235,43 @@ public class ShiftRegisterHDLGeneratorFactory extends AbstractHdlGeneratorFactor
   }
 
   @Override
-  public List<String> getComponentDeclarationSection(Netlist nets, AttributeSet attrs) {
-    return LineBuffer.getHdlBuffer()
+  public LineBuffer getComponentDeclarationSection(Netlist nets, AttributeSet attrs) {
+    return getExtraComp(false);
+  }
+  
+  private LineBuffer getExtraComp(boolean isEntity) {
+    return LineBuffer.getHdlBuffer().addVhdlKeywords()
         .pair("clock", HdlPorts.getClockName(1))
         .pair("tick", HdlPorts.getTickName(1))
         .pair("nrOfStages", NR_OF_STAGES_STR)
         .pair("invertClock", NEGATE_CLOCK_STRING)
+        .add(isEntity ? "{{entity}} SingleBitShiftReg {{is}}" : "{{component}} SingleBitShiftReg")
         .add("""
-            COMPONENT SingleBitShiftReg
-               GENERIC ( {{invertClock}} : INTEGER;
-                         {{nrOfStages}}  : INTEGER );
-               PORT ( Reset       : IN  std_logic;
-                      {{tick}}        : IN  std_logic;
-                      {{clock}}       : IN  std_logic;
-                      ShiftEnable : IN  std_logic;
-                      ParLoad     : IN  std_logic;
-                      ShiftIn     : IN  std_logic;
-                      D           : IN  std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 );
-                      ShiftOut    : OUT std_logic;
-                      Q           : OUT std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 ) );
-            END COMPONENT;
+               {{generic}} ( {{invertClock}} : {{integer}};
+                         {{nrOfStages}}  : {{integer}} );
+               {{port}} ( Reset       : {{in}}  std_logic;
+                      {{tick}}        : {{in}}  std_logic;
+                      {{clock}}       : {{in}}  std_logic;
+                      ShiftEnable : {{in}}  std_logic;
+                      ParLoad     : {{in}}  std_logic;
+                      ShiftIn     : {{in}}  std_logic;
+                      D           : {{in}}  std_logic_vector( ({{nrOfStages}}-1) {{downto}} 0 );
+                      ShiftOut    : {{out}} std_logic;
+                      Q           : {{out}} std_logic_vector( ({{nrOfStages}}-1) {{downto}} 0 ) );
             """)
-        .getWithIndent();
+        .add(isEntity ? "{{end}} {{entity}} SingleBitShiftReg;" : "{{end}} {{component}};");
   }
 
   @Override
   public List<String> getEntity(Netlist nets, AttributeSet attrs, String componentName) {
 
-    final var contents = LineBuffer.getHdlBuffer()
-        .pair("clock", HdlPorts.getClockName(1))
-        .pair("tick", HdlPorts.getTickName(1))
-        .pair("nrOfStages", NR_OF_STAGES_STR)
-        .pair("invertClock", NEGATE_CLOCK_STRING);
+    final var contents = LineBuffer.getHdlBuffer();
     if (Hdl.isVhdl()) {
       contents
           .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
           .add(FileWriter.getExtendedLibrary())
-          .add("""
-              ENTITY SingleBitShiftReg IS
-                 GENERIC ( {{invertClock}} : INTEGER;
-                           {{nrOfStages}}  : INTEGER);
-                 PORT ( Reset       : IN  std_logic;
-                        {{tick}}        : IN  std_logic;
-                        {{clock}}       : IN  std_logic;
-                        ShiftEnable : IN  std_logic;
-                        ParLoad     : IN  std_logic;
-                        ShiftIn     : IN  std_logic;
-                        D           : IN  std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 );
-                        ShiftOut    : OUT std_logic;
-                        Q           : OUT std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 ));
-              END SingleBitShiftReg;
-
-              """);
+          .add(getExtraComp(true))
+          .empty();
     }
     contents.add(super.getEntity(nets, attrs, componentName));
     return contents.get();

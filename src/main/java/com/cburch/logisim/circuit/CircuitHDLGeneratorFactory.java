@@ -217,47 +217,33 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public List<String> getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
-    final var components = new ArrayList<String>();
+  public LineBuffer getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
+    final var components = LineBuffer.getBuffer();
     final var instantiatedComponents = new HashSet<String>();
     for (final var gate : theNetlist.getNormalComponents()) {
-      final var compName =
-          gate.getComponent().getFactory().getHDLName(gate.getComponent().getAttributeSet());
+      final var compName = gate.getComponent().getFactory().getHDLName(gate.getComponent().getAttributeSet());
       if (!instantiatedComponents.contains(compName)) {
         instantiatedComponents.add(compName);
-        final var worker =
-            gate.getComponent()
-                .getFactory()
-                .getHDLGenerator(gate.getComponent().getAttributeSet());
+        final var worker = gate.getComponent().getFactory().getHDLGenerator(gate.getComponent().getAttributeSet());
         if (worker != null) {
           if (!worker.isOnlyInlined()) {
-            components.addAll(
-                worker.getComponentInstantiation(
-                    theNetlist,
-                    gate.getComponent().getAttributeSet(),
-                    compName));
+            components.empty().add(worker.getComponentInstantiation(theNetlist, 
+                gate.getComponent().getAttributeSet(), compName));
           }
         }
       }
     }
     instantiatedComponents.clear();
     for (final var gate : theNetlist.getSubCircuits()) {
-      var compName =
-          gate.getComponent().getFactory().getHDLName(gate.getComponent().getAttributeSet());
+      var compName = gate.getComponent().getFactory().getHDLName(gate.getComponent().getAttributeSet());
       if (gate.isGatedInstance()) compName = compName.concat("_gated");
       if (!instantiatedComponents.contains(compName)) {
         instantiatedComponents.add(compName);
-        final var worker =
-            gate.getComponent()
-                .getFactory()
-                .getHDLGenerator(gate.getComponent().getAttributeSet());
+        final var worker = gate.getComponent().getFactory().getHDLGenerator(gate.getComponent().getAttributeSet());
         SubcircuitFactory sub = (SubcircuitFactory) gate.getComponent().getFactory();
         if (worker != null) {
-          components.addAll(
-              worker.getComponentInstantiation(
-                  sub.getSubcircuit().getNetList(),
-                  gate.getComponent().getAttributeSet(),
-                  compName));
+          components.empty().add(worker.getComponentInstantiation(sub.getSubcircuit().getNetList(),
+              gate.getComponent().getAttributeSet(), compName));
         }
       }
     }

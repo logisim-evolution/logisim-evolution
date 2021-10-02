@@ -150,18 +150,18 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public ArrayList<String> getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
-    final var components = new ArrayList<String>();
+  public LineBuffer getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
+    final var components = LineBuffer.getHdlBuffer();
     final var nrOfClockTrees = theNetlist.numberOfClockTrees();
     if (nrOfClockTrees > 0) {
       final var ticker = new TickComponentHdlGeneratorFactory(fpgaClockFrequency, tickFrequency);
-      components.addAll(ticker.getComponentInstantiation(theNetlist, null, TickComponentHdlGeneratorFactory.HDL_IDENTIFIER));
+      components.add(ticker.getComponentInstantiation(theNetlist, null, TickComponentHdlGeneratorFactory.HDL_IDENTIFIER));
       HdlGeneratorFactory clockWorker =
           theNetlist.getAllClockSources()
               .get(0)
               .getFactory()
               .getHDLGenerator(theNetlist.getAllClockSources().get(0).getAttributeSet());
-      components.addAll(
+      components.add(
           clockWorker.getComponentInstantiation(
               theNetlist,
               theNetlist.getAllClockSources().get(0).getAttributeSet(),
@@ -175,11 +175,11 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         final var worker = LedArrayGenericHDLGeneratorFactory.getSpecificHDLGenerator(type);
         final var name = LedArrayGenericHDLGeneratorFactory.getSpecificHDLName(type);
         if (worker != null && name != null)
-          components.addAll(worker.getComponentInstantiation(theNetlist, null, name));
+          components.add(worker.getComponentInstantiation(theNetlist, null, name));
       }
     }
     final var worker = new CircuitHDLGeneratorFactory(myCircuit);
-    components.addAll(
+    components.add(
         worker.getComponentInstantiation(
             theNetlist,
             null,

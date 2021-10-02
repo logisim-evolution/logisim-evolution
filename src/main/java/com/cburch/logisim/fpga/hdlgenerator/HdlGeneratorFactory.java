@@ -44,7 +44,7 @@ public interface HdlGeneratorFactory {
       AttributeSet attrs,
       String componentName);
 
-  List<String> getComponentInstantiation(
+  LineBuffer getComponentInstantiation(
       Netlist theNetlist,
       AttributeSet attrs,
       String componentName);
