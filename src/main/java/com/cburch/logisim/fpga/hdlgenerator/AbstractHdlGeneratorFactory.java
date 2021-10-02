@@ -360,7 +360,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
   }
 
   @Override
-  public List<String> getComponentMap(Netlist nets, Long componentId, Object componentInfo, String name) {
+  public LineBuffer getComponentMap(Netlist nets, Long componentId, Object componentInfo, String name) {
     final var contents = LineBuffer.getHdlBuffer();
     final var parameterMap = new TreeMap<String, String>();
     final var portMap = getPortMap(nets, componentInfo);
@@ -470,8 +470,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       oneLine.append(");");
       contents.add(oneLine.toString());
     }
-    contents.add("");
-    return contents.getWithIndent();
+    return contents;
   }
 
   @Override

@@ -230,7 +230,7 @@ public abstract class Hdl {
     if (nrOfBits == 1) return getNetName(comp, endIndex, true, theNets);
     if (!theNets.isContinuesBus(comp, endIndex)) return null;
     final var connectedNet = connectionInformation.get((byte) 0).getParentNet();
-    return LineBuffer.format("{{1}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}}",
+    return LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}}",
         BUS_NAME,
         theNets.getNetId(connectedNet),
         connectionInformation.get((byte) (connectionInformation.getNrOfBits() - 1)).getParentNetBitIndex(),
@@ -246,7 +246,7 @@ public abstract class Hdl {
     if (!theNets.isContinuesBus(comp, endIndex)) return null;
     final var ConnectedNet = connectionInformation.get((byte) 0).getParentNet();
     if (ConnectedNet.getBitWidth() != nrOfBits) return getBusNameContinues(comp, endIndex, theNets);
-    return LineBuffer.format("{{1}}{{2}}", BUS_NAME, theNets.getNetId(ConnectedNet));
+    return LineBuffer.formatHdl("{{1}}{{2}}", BUS_NAME, theNets.getNetId(ConnectedNet));
   }
 
   public static String getClockNetName(netlistComponent comp, int endIndex, Netlist theNets) {

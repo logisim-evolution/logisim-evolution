@@ -49,7 +49,7 @@ public interface HdlGeneratorFactory {
       AttributeSet attrs,
       String componentName);
 
-  List<String> getComponentMap(
+  LineBuffer getComponentMap(
       Netlist nets,
       Long componentId,
       Object componentInfo,

@@ -110,6 +110,15 @@ public class LineBuffer implements RandomAccess {
   public int size() {
     return contents.size();
   }
+  
+  /**
+   * Returns true in case the buffer is empty otherwise false
+   *
+   * @return the buffer is empty
+   */
+  public boolean isEmpty() {
+    return size() == 0;
+  }
 
   /**
    * Checks if given entry exists in content buffer.
@@ -606,7 +615,7 @@ public class LineBuffer implements RandomAccess {
   
   /**
    * Builds a single remark line
-   * 
+   *
    * @param remarkText text to put in the line
    */
   

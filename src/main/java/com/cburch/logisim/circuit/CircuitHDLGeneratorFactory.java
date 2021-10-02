@@ -363,7 +363,13 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
             contents.addRemarkBlock("Here all in-lined components are defined");
             isFirstLine = false;
           }
-          contents.empty().addRemarkLine(comp.getComponent().getFactory().getDisplayName());
+          final var hasLabel = comp.getComponent().getAttributeSet().containsAttribute(StdAttr.LABEL) &&
+              !comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL).isEmpty();
+          final var compName = hasLabel ? CorrectLabel.getCorrectLabel(comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)) 
+                : "";
+          final var remarkLine = LineBuffer.format("{{1}}{{2}}{{3}}", comp.getComponent().getFactory().getDisplayName(),
+              hasLabel ? ": " : "", compName);
+          contents.empty().addRemarkLine(remarkLine);
           contents.add(worker.getInlinedCode(theNetList, id++, comp, inlinedName));
           compIds.put(InlinedId, id);
         }
@@ -379,10 +385,10 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
           final var compId = "NormalComponent";
           var id = (compIds.containsKey(compId)) ? compIds.get(compId) : (long) 1;
           if (isFirstLine) {
-            contents.add("").addRemarkBlock("Here all normal components are defined");
+            contents.empty().addRemarkBlock("Here all normal components are defined");
             isFirstLine = false;
           }
-          contents.add(worker.getComponentMap(theNetList, id++, comp, compName));
+          contents.add(worker.getComponentMap(theNetList, id++, comp, compName)).empty();
           compIds.put(compId, id);
         }
       }
@@ -399,12 +405,11 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
         final var compMap = worker.getComponentMap(theNetList, id++, comp, compName);
         if (!compMap.isEmpty()) {
           if (isFirstLine) {
-            contents.add("").addRemarkBlock("Here all sub-circuits are defined");
+            contents.empty().addRemarkBlock("Here all sub-circuits are defined");
             isFirstLine = false;
           }
-          compIds.remove(CompId);
           compIds.put(CompId, id);
-          contents.add(compMap);
+          contents.empty().add(compMap);
         }
       }
     }
@@ -632,8 +637,8 @@ public class CircuitHDLGeneratorFactory extends AbstractHdlGeneratorFactory {
                * connection is to a bus or to a normal net
                */
               final var connectedNet = solderPoint.getParentNet().getBitWidth() == 1
-                    ? LineBuffer.format("{{1}}{{2}}", NET_NAME, theNets.getNetId(solderPoint.getParentNet()))
-                    : LineBuffer.format("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME,
+                    ? LineBuffer.formatHdl("{{1}}{{2}}", NET_NAME, theNets.getNetId(solderPoint.getParentNet()))
+                    : LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME,
                         theNets.getNetId(solderPoint.getParentNet()), solderPoint.getParentNetBitIndex());
               if (isInputConnection) {
                 signal.put(connectedNet, bitConnection);
