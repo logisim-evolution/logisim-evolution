@@ -117,7 +117,7 @@ public class JtagUartState  implements SocBusSlaveInterface {
     }
 
     public boolean isIrqPending() {
-      return readIrqPending() | writeIrqPending();
+      return readIrqPending() || writeIrqPending();
     }
 
     public boolean isWriteFifoEmpty() {
