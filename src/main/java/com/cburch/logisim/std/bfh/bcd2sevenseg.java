@@ -87,10 +87,10 @@ public class bcd2sevenseg extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    if (state.getPortValue(BCDin).isFullyDefined()
-        && !state.getPortValue(BCDin).isErrorValue()
-        && !state.getPortValue(BCDin).isUnknown()) {
-      int value = (int) state.getPortValue(BCDin).toLongValue();
+    if (state.getPortValue(BCD_IN).isFullyDefined()
+        && !state.getPortValue(BCD_IN).isErrorValue()
+        && !state.getPortValue(BCD_IN).isUnknown()) {
+      int value = (int) state.getPortValue(BCD_IN).toLongValue();
       switch (value) {
         case 0:
           state.setPort(SEGMENT_A, Value.createKnown(BitWidth.create(1), 1), PER_DELAY);
