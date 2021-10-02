@@ -26,14 +26,30 @@ import javax.swing.JFileChooser;
 
 public final class Softwares {
 
+  public static final String QUESTA = "questaSim";
+  public static final String[] QUESTA_BIN = loadQuesta();
+  public static final int SUCCESS = 0;
+  public static final int ERROR = 1;
+  public static final int ABORT = 2;
+  public static final int VCOM = 0;
+  public static final int VSIM = 1;
+  public static final int VMAP = 2;
+  public static final int VLIB = 3;
+
+  private Softwares() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
+
   private static boolean createWorkLibrary(File tmpDir, String questaPath, StringBuilder result)
       throws IOException, InterruptedException {
     BufferedReader reader = null;
 
-    if (new File(FileUtil.correctPath(tmpDir.getCanonicalPath()) + "work").exists()) return true;
+    if (new File(FileUtil.correctPath(tmpDir.getCanonicalPath()) + "work").exists()) {
+      return true;
+    }
 
     try {
-      List<String> command = new ArrayList<>();
+      final var command = new ArrayList<String>();
       command.add(FileUtil.correctPath(questaPath) + QUESTA_BIN[VLIB]);
       command.add("work");
 
@@ -67,9 +83,7 @@ public final class Softwares {
 
   public static String getQuestaPath(Component parent) {
     var prefPath = AppPreferences.QUESTA_PATH.get();
-    if (!validatePath(prefPath, QUESTA))
-      if ((prefPath = setQuestaPath()) == null)
-        return null;
+    if (!validatePath(prefPath, QUESTA)) if ((prefPath = setQuestaPath()) == null) return null;
 
     return prefPath;
   }
@@ -80,8 +94,7 @@ public final class Softwares {
     final var osname = System.getProperty("os.name");
     if (osname == null) throw new IllegalArgumentException("no os.name");
     else if (osname.toLowerCase().contains("windows"))
-      for (var i = 0; i < questaProgs.length; i++)
-        questaProgs[i] += ".exe";
+      for (var i = 0; i < questaProgs.length; i++) questaProgs[i] += ".exe";
 
     return questaProgs;
   }
@@ -135,8 +148,7 @@ public final class Softwares {
 
     for (final var program : programs) {
       final var test = new File(FileUtil.correctPath(path) + program);
-      if (!test.exists())
-        return false;
+      if (!test.exists()) return false;
     }
 
     return true;
@@ -146,14 +158,15 @@ public final class Softwares {
     if (!AppPreferences.QUESTA_VALIDATION.get()) return SUCCESS;
 
     final var questaPath = getQuestaPath();
-    BufferedReader reader = null;
-    File tmp = null;
 
     if (questaPath == null) {
       result.append(S.get("questaValidationAbordedMessage"));
       title.append(S.get("questaValidationAbordedTitle"));
-      return ABORD;
+      return ABORT;
     }
+
+    BufferedReader reader = null;
+    File tmp = null;
 
     try {
       tmp = FileUtil.createTmpFile(vhdl, "tmp", ".vhd");
@@ -218,24 +231,4 @@ public final class Softwares {
 
     return SUCCESS;
   }
-
-  public static final String QUESTA = "questaSim";
-
-  public static final String[] QUESTA_BIN = loadQuesta();
-
-  public static final int SUCCESS = 0;
-
-  public static final int ERROR = 1;
-
-  public static final int ABORD = 2;
-
-  public static final int VCOM = 0;
-
-  public static final int VSIM = 1;
-
-  public static final int VMAP = 2;
-
-  public static final int VLIB = 3;
-
-  private Softwares() {}
 }

@@ -13,9 +13,15 @@ import com.cburch.logisim.data.Bounds;
 import java.awt.Font;
 import java.awt.FontMetrics;
 
-public class StringUtil {
+public final class StringUtil {
+
+  private StringUtil() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
+
   public static StringGetter constantGetter(final String value) {
     return new StringGetter() {
+      @Override
       public String toString() {
         return value;
       }
@@ -28,6 +34,7 @@ public class StringUtil {
 
   public static StringGetter formatter(final StringGetter base, final String arg) {
     return new StringGetter() {
+      @Override
       public String toString() {
         return format(base.toString(), arg);
       }
@@ -36,6 +43,7 @@ public class StringUtil {
 
   public static StringGetter formatter(final StringGetter base, final StringGetter arg) {
     return new StringGetter() {
+      @Override
       public String toString() {
         return format(base.toString(), arg.toString());
       }
@@ -74,10 +82,10 @@ public class StringUtil {
   public static Bounds estimateBounds(String text, Font font, int hAlign, int vAlign) {
     // TODO - you can imagine being more clever here
     if (text == null || text.length() == 0) text = "X"; // return Bounds.EMPTY_BOUNDS;
-    int n = 0;
-    int c = 0;
-    int lines = 0;
-    for (int i = 0; i < text.length(); i++) {
+    var n = 0;
+    var c = 0;
+    var lines = 0;
+    for (var i = 0; i < text.length(); i++) {
       if (text.charAt(i) == '\n') {
         n = (Math.max(c, n));
         c = 0;
@@ -113,5 +121,4 @@ public class StringUtil {
     }
     return Bounds.create(x, y, w, h);
   }
-
 }

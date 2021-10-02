@@ -194,7 +194,7 @@ public class VhdlSimulatorVhdlTop {
       return;
     }
 
-    template = template.replaceAll("%date%", LocaleManager.parserSDF.format(new Date()));
+    template = template.replaceAll("%date%", LocaleManager.PARSER_SDF.format(new Date()));
     template = template.replaceAll("%ports%", ports.toString());
     template = template.replaceAll("%components%", components.toString());
     template = template.replaceAll("%map%", map.toString());

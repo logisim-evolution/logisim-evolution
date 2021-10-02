@@ -229,7 +229,7 @@ public class VhdlContentComponent extends HdlContent {
             new String[] {S.get("validationErrorButton")},
             S.get("validationErrorButton"));
         return false;
-      case Softwares.ABORD:
+      case Softwares.ABORT:
         OptionPane.showMessageDialog(
             null, result.toString(), title.toString(), OptionPane.INFORMATION_MESSAGE);
         return false;

@@ -31,7 +31,7 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.Icons;
+import com.cburch.logisim.util.IconsUtil;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
@@ -157,7 +157,7 @@ public class Clock extends InstanceFactory {
 
   public static final Clock FACTORY = new Clock();
 
-  private static final Icon toolIcon = Icons.getIcon("clock.gif");
+  private static final Icon toolIcon = IconsUtil.getIcon("clock.gif");
 
   public Clock() {
     super(_ID, S.getter("clockComponent"), new ClockHDLGeneratorFactory());
