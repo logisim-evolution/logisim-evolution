@@ -34,7 +34,7 @@ class AndGate extends AbstractGate {
       final var contents = LineBuffer.getHdlBuffer();
       var oneLine = new StringBuilder();
       oneLine.append(Hdl.assignPreamble())
-          .append("Result")
+          .append("result")
           .append(Hdl.assignOperator());
       final var tabWidth = oneLine.length();
       var first = true;
@@ -47,10 +47,10 @@ class AndGate extends AbstractGate {
         } else {
           first = false;
         }
-        oneLine.append(String.format("s_real_input_%d", i + 1));
+        oneLine.append(String.format("s_realInput%d", i + 1));
       }
       oneLine.append(";");
-      contents.add(oneLine.toString()).empty();
+      contents.add(oneLine.toString());
       return contents;
     }
   }

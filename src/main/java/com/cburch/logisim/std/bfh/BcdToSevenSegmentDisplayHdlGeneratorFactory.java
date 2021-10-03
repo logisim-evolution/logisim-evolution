@@ -20,47 +20,50 @@ public class BcdToSevenSegmentDisplayHdlGeneratorFactory extends AbstractHdlGene
 
   public BcdToSevenSegmentDisplayHdlGeneratorFactory() {
     myWires
-        .addWire("s_output_value", 7);
+        .addWire("s_outputValue", 7);
     myPorts
-        .add(Port.INPUT, "BCDin", 4, BcdToSevenSegmentDisplay.BCD_IN)
-        .add(Port.OUTPUT, "Segment_a", 1, BcdToSevenSegmentDisplay.SEGMENT_A)
-        .add(Port.OUTPUT, "Segment_b", 1, BcdToSevenSegmentDisplay.SEGMENT_B)
-        .add(Port.OUTPUT, "Segment_c", 1, BcdToSevenSegmentDisplay.SEGMENT_C)
-        .add(Port.OUTPUT, "Segment_d", 1, BcdToSevenSegmentDisplay.SEGMENT_D)
-        .add(Port.OUTPUT, "Segment_e", 1, BcdToSevenSegmentDisplay.SEGMENT_E)
-        .add(Port.OUTPUT, "Segment_f", 1, BcdToSevenSegmentDisplay.SEGMENT_F)
-        .add(Port.OUTPUT, "Segment_g", 1, BcdToSevenSegmentDisplay.SEGMENT_G);
+        .add(Port.INPUT, "bcdIn", 4, BcdToSevenSegmentDisplay.BCD_IN)
+        .add(Port.OUTPUT, "segmentA", 1, BcdToSevenSegmentDisplay.SEGMENT_A)
+        .add(Port.OUTPUT, "segmentB", 1, BcdToSevenSegmentDisplay.SEGMENT_B)
+        .add(Port.OUTPUT, "segmentC", 1, BcdToSevenSegmentDisplay.SEGMENT_C)
+        .add(Port.OUTPUT, "segmentD", 1, BcdToSevenSegmentDisplay.SEGMENT_D)
+        .add(Port.OUTPUT, "segmentE", 1, BcdToSevenSegmentDisplay.SEGMENT_E)
+        .add(Port.OUTPUT, "segmentF", 1, BcdToSevenSegmentDisplay.SEGMENT_F)
+        .add(Port.OUTPUT, "segmentG", 1, BcdToSevenSegmentDisplay.SEGMENT_G);
   }
 
   @Override
   public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     return LineBuffer.getBuffer()
+        .addVhdlKeywords()
+        .empty()
         .add("""
-            Segment_a <= s_output_value(0);
-            Segment_b <= s_output_value(1);
-            Segment_c <= s_output_value(2);
-            Segment_d <= s_output_value(3);
-            Segment_e <= s_output_value(4);
-            Segment_f <= s_output_value(5);
-            Segment_g <= s_output_value(6);
+            segmentA <= s_outputValue(0);
+            segmentB <= s_outputValue(1);
+            segmentC <= s_outputValue(2);
+            segmentD <= s_outputValue(3);
+            segmentE <= s_outputValue(4);
+            segmentF <= s_outputValue(5);
+            segmentG <= s_outputValue(6);
 
-            MakeSegs : PROCESS( BCDin )
-            BEGIN
-               CASE (BCDin) IS
-                  WHEN "0000" => s_output_value <= "0111111";
-                  WHEN "0001" => s_output_value <= "0000110";
-                  WHEN "0010" => s_output_value <= "1011011";
-                  WHEN "0011" => s_output_value <= "1001111";
-                  WHEN "0100" => s_output_value <= "1100110";
-                  WHEN "0101" => s_output_value <= "1101101";
-                  WHEN "0110" => s_output_value <= "1111101";
-                  WHEN "0111" => s_output_value <= "0000111";
-                  WHEN "1000" => s_output_value <= "1111111";
-                  WHEN "1001" => s_output_value <= "1101111";
-                  WHEN OTHERS => s_output_value <= "-------";
-               END CASE;
-            END PROCESS MakeSegs;
-            """);
+            makeSegs : {{process}} ( bcdIn ) {{is}}
+            {{begin}}
+               {{case}} (bcdIn) {{is}}
+                  {{when}} "0000" => s_outputValue <= "0111111";
+                  {{when}} "0001" => s_outputValue <= "0000110";
+                  {{when}} "0010" => s_outputValue <= "1011011";
+                  {{when}} "0011" => s_outputValue <= "1001111";
+                  {{when}} "0100" => s_outputValue <= "1100110";
+                  {{when}} "0101" => s_outputValue <= "1101101";
+                  {{when}} "0110" => s_outputValue <= "1111101";
+                  {{when}} "0111" => s_outputValue <= "0000111";
+                  {{when}} "1000" => s_outputValue <= "1111111";
+                  {{when}} "1001" => s_outputValue <= "1101111";
+                  {{when}} {{others}} => s_outputValue <= "-------";
+               {{end}} {{case}};
+            {{end}} {{process}} makeSegs;
+            """)
+        .empty();
   }
 
   @Override

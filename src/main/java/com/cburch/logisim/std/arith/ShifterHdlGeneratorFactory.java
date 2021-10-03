@@ -141,7 +141,7 @@ public class ShifterHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
                                      {s_stage{{stageNumber1}}Result[{{bitsShiftDiff1}}:0],s_stage{{stageNumber}}ShiftIn} :
                                      {s_stage{{stageNumber}}ShiftIn,s_stage{{stageNumber1}}Result[{{nrOfBits1}}:{{nrOfBitsToShift}}]};
 
-          """);
+            """);
     }
     return contents;
   }

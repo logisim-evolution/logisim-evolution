@@ -39,11 +39,11 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
     final var nrOfInputs = attrs.getValue(GateAttributes.ATTR_INPUTS);
     final var bitWidth = attrs.getValue(StdAttr.WIDTH).getWidth();
     for (var input = 1; input <= nrOfInputs; input++) {
-      myWires.addWire(String.format("s_real_input_%d", input), bitWidth == 1 ? 1 : BIT_WIDTH_GENERIC);
+      myWires.addWire(String.format("s_realInput%d", input), bitWidth == 1 ? 1 : BIT_WIDTH_GENERIC);
       final var floatingToZero = getFloatingValue(attrs.getValue(new NegateAttribute(input - 1, null)));
-      myPorts.add(Port.INPUT, String.format("Input_%d", input), bitWidth == 1 ? 1 : BIT_WIDTH_GENERIC, input, floatingToZero);
+      myPorts.add(Port.INPUT, String.format("input%d", input), bitWidth == 1 ? 1 : BIT_WIDTH_GENERIC, input, floatingToZero);
     }
-    myPorts.add(Port.OUTPUT, "Result", BIT_WIDTH_GENERIC, 0, StdAttr.WIDTH);
+    myPorts.add(Port.OUTPUT, "result", BIT_WIDTH_GENERIC, 0, StdAttr.WIDTH);
   }
 
   public boolean getFloatingValue(boolean isInverted) {
@@ -68,9 +68,9 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
       contents.addRemarkBlock("Here the bubbles are processed");
       for (var i = 0; i < nrOfInputs; i++) {
         if (Hdl.isVhdl()) {
-          contents.add("s_real_input_{{1}} {{=}} Input_{{1}} WHEN {{2}}{{<}}{{3}}{{>}} = '0' ELSE NOT(Input_{{1}});", (i + 1), BUBBLES_MASK, i);
+          contents.addVhdlKeywords().add("s_realInput{{1}} <= input{{1}} {{when}} {{2}}{{<}}{{3}}{{>}} = '0' {{else}} {{not}}(input{{1}});", (i + 1), BUBBLES_MASK, i);
         } else {
-          contents.add("{{assign}} s_real_input_{{1}} {{=}} ({{2}}{{<}}{{3}}{{>}} == 1'b0) ? Input_{{1}} : ~Input_{{1}};", (i + 1), BUBBLES_MASK, i);
+          contents.add("{{assign}} s_realInput{{1}} = ({{2}}{{<}}{{3}}{{>}} == 1'b0) ? input{{1}} : ~input{{1}};", (i + 1), BUBBLES_MASK, i);
         }
       }
     }
@@ -80,7 +80,7 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
       onehot = attrs.getValue(GateAttributes.ATTR_XOR) == GateAttributes.XOR_ONE;
     }
     contents.add(getLogicFunction(nrOfInputs, bitWidth, onehot));
-    return contents;
+    return contents.empty();
   }
 
   public LineBuffer getOneHot(boolean inverted, int nrOfInputs, boolean isBus) {
@@ -89,7 +89,7 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
     var indexString = "";
     if (isBus) {
       if (Hdl.isVhdl()) {
-        lines.add(spaces + "GenBits : FOR n IN (" + BIT_WIDTH_STRING + "-1) DOWNTO 0 GENERATE");
+        lines.addVhdlKeywords().add(spaces + "genBits : {{for}} n {{in}} (" + BIT_WIDTH_STRING + "-1) {{downto}} 0 {{generate}}");
         spaces += "   ";
         indexString = "(n)";
       } else {
@@ -105,7 +105,7 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
     oneLine
         .append(spaces)
         .append(Hdl.assignPreamble())
-        .append("Result")
+        .append("result")
         .append(indexString)
         .append(Hdl.assignOperator());
     if (inverted) oneLine.append(Hdl.notOperator()).append("(");
@@ -117,9 +117,9 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
       oneLine.append("(");
       for (var i = 0; i < nrOfInputs; i++) {
         if (i == termloop) {
-          oneLine.append("s_real_input_").append(i + 1).append(indexString);
+          oneLine.append("s_realInput").append(i + 1).append(indexString);
         } else {
-          oneLine.append(Hdl.notOperator()).append("(s_real_input_").append(i + 1).append(indexString).append(")");
+          oneLine.append(Hdl.notOperator()).append("(s_realInput").append(i + 1).append(indexString).append(")");
         }
         if (i < (nrOfInputs - 1)) {
           oneLine.append(Hdl.andOperator());
@@ -137,13 +137,13 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
     }
     if (isBus) {
       if (Hdl.isVhdl()) {
-        lines.add("   END GENERATE GenBits;");
+        lines.add("{{end}} {{generate}} GenBits;");
       } else {
-        lines.add("         end");
-        lines.add("   endgenerate");
+        lines.add("      end");
+        lines.add("endgenerate");
       }
     }
-    return lines;
+    return lines.empty();
   }
 
   public static LineBuffer getParity(boolean inverted, int nrOfInputs, boolean isBus) {
@@ -152,7 +152,7 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
     var indexString = "";
     if (isBus) {
       if (Hdl.isVhdl()) {
-        lines.add(spaces + "GenBits : FOR n IN (" + BIT_WIDTH_STRING + "-1) DOWNTO 0 GENERATE");
+        lines.addVhdlKeywords().add(spaces + "genBits : {{for}} n {{in}} (" + BIT_WIDTH_STRING + "-1) {{downto}} 0 {{generate}}");
         spaces += "   ";
         indexString = "(n)";
       } else {
@@ -165,14 +165,14 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
       }
     }
     final var oneLine = new StringBuilder();
-    oneLine.append(spaces).append(Hdl.assignPreamble()).append("Result").append(indexString).append(Hdl.assignOperator());
+    oneLine.append(spaces).append(Hdl.assignPreamble()).append("result").append(indexString).append(Hdl.assignOperator());
     if (inverted) oneLine.append(Hdl.notOperator()).append("(");
     final var spacesLen = oneLine.length();
     for (var i = 0; i < nrOfInputs; i++) {
       while (oneLine.length() < spacesLen) {
         oneLine.append(" ");
       }
-      oneLine.append("s_real_input_").append(i + 1).append(indexString);
+      oneLine.append("s_realInput").append(i + 1).append(indexString);
       if (i < (nrOfInputs - 1)) {
         oneLine.append(Hdl.xorOperator());
       } else {
@@ -184,13 +184,13 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
     }
     if (isBus) {
       if (Hdl.isVhdl()) {
-        lines.add("   END GENERATE GenBits;");
+        lines.add("{{end}} {{generate}} genBits;");
       } else {
-        lines.add("         end");
-        lines.add("   endgenerate");
+        lines.add("      end");
+        lines.add("endgenerate");
       }
     }
-    return lines;
+    return lines.empty();
   }
 
   @Override

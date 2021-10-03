@@ -29,7 +29,7 @@ public class ControlledBufferHdlGenerator extends InlinedHdlGeneratorFactory {
     if (nrBits > 1) {
       inpName = Hdl.getBusName(componentInfo, 1, nets);
       outpName = Hdl.getBusName(componentInfo, 0, nets);
-      triState = Hdl.isVhdl() ? "(OTHERS => 'Z')" : nrBits + "'bZ";
+      triState = Hdl.isVhdl() ? "({{others}} => 'Z')" : nrBits + "'bZ";
     } else {
       inpName = Hdl.getNetName(componentInfo, 1, true, nets);
       outpName = Hdl.getNetName(componentInfo, 0, true, nets);
@@ -40,7 +40,8 @@ public class ControlledBufferHdlGenerator extends InlinedHdlGeneratorFactory {
               ? Hdl.notOperator()
               : "";
       if (Hdl.isVhdl()) {
-        contents.add("{{1}}<= {{2}}{{3}} WHEN {{4}} = '1' ELSE {{5}};", outpName, invert, inpName, triName, triState);
+        contents.addVhdlKeywords()
+            .add("{{1}}<= {{2}}{{3}} {{when}} {{4}} = '1' {{else}} {{5}};", outpName, invert, inpName, triName, triState);
       } else {
         contents.add("assign {{1}} = ({{2}}) ? {{3}}{{4}} : {{5}};", outpName, triName, invert, inpName, triState);
       }

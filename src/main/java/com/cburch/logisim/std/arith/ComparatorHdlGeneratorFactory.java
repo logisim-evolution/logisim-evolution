@@ -50,7 +50,7 @@ public class ComparatorHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         .add(Port.INPUT, "dataB", NR_OF_BITS_ID, Comparator.IN1, StdAttr.WIDTH)
         .add(Port.OUTPUT, "aGreaterThanB", 1, Comparator.GT)
         .add(Port.OUTPUT, "aEqualsB", 1, Comparator.EQ)
-    .add(Port.OUTPUT, "aLessThanB", 1, Comparator.LT);
+        .add(Port.OUTPUT, "aLessThanB", 1, Comparator.LT);
     if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1)
       myWires
           .addWire("s_signedLess", 1)

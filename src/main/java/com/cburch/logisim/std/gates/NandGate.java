@@ -34,7 +34,7 @@ class NandGate extends AbstractGate {
       final var contents = LineBuffer.getHdlBuffer();
       final var oneLine = new StringBuilder();
       oneLine.append(Hdl.assignPreamble())
-          .append("Result")
+          .append("result")
           .append(Hdl.assignOperator())
           .append(Hdl.notOperator())
           .append("(");
@@ -49,10 +49,10 @@ class NandGate extends AbstractGate {
         } else {
           first = false;
         }
-        oneLine.append("s_real_input_").append(i + 1);
+        oneLine.append("s_realInput").append(i + 1);
       }
       oneLine.append(");");
-      contents.add(oneLine.toString()).empty();
+      contents.add(oneLine.toString());
       return contents;
     }
   }
