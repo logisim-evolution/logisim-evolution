@@ -22,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class FileStatistics {
-  public static class Count {
+public final class FileStatistics {
+  public static final class Count {
     private Library library;
     private final ComponentFactory factory;
     private int simpleCount;
@@ -59,6 +59,16 @@ public class FileStatistics {
     }
   }
 
+  private final List<Count> counts;
+  private final Count totalWithout;
+  private final Count totalWith;
+
+  private FileStatistics(List<Count> counts, Count totalWithout, Count totalWith) {
+    this.counts = Collections.unmodifiableList(counts);
+    this.totalWithout = totalWithout;
+    this.totalWith = totalWith;
+  }
+
   public static FileStatistics compute(LogisimFile file, Circuit circuit) {
     final var include = new HashSet<Circuit>(file.getCircuits());
     final var countMap = new HashMap<Circuit, Map<ComponentFactory, Count>>();
@@ -68,8 +78,7 @@ public class FileStatistics {
     return new FileStatistics(countList, getTotal(countList, include), getTotal(countList, null));
   }
 
-  private static Map<ComponentFactory, Count> doRecursiveCount(
-      Circuit circuit, Set<Circuit> include, Map<Circuit, Map<ComponentFactory, Count>> countMap) {
+  private static Map<ComponentFactory, Count> doRecursiveCount(Circuit circuit, Set<Circuit> include, Map<Circuit, Map<ComponentFactory, Count>> countMap) {
     if (countMap.containsKey(circuit)) {
       return countMap.get(circuit);
     }
@@ -159,8 +168,8 @@ public class FileStatistics {
     }
     for (final var lib : file.getLibraries()) {
       for (final var tool : lib.getTools()) {
-        if (tool instanceof AddTool) {
-          final var factory = ((AddTool) tool).getFactory();
+        if (tool instanceof AddTool addTool) {
+          final var factory = addTool.getFactory();
           final var count = counts.get(factory);
           if (count != null) {
             count.library = lib;
@@ -170,16 +179,6 @@ public class FileStatistics {
       }
     }
     return ret;
-  }
-
-  private final List<Count> counts;
-  private final Count totalWithout;
-  private final Count totalWith;
-
-  private FileStatistics(List<Count> counts, Count totalWithout, Count totalWith) {
-    this.counts = Collections.unmodifiableList(counts);
-    this.totalWithout = totalWithout;
-    this.totalWith = totalWith;
   }
 
   public List<Count> getCounts() {

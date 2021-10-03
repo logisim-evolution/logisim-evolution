@@ -50,47 +50,6 @@ import org.xml.sax.SAXException;
 
 public class LogisimFile extends Library implements LibraryEventSource, CircuitListener {
 
-  @Override
-  public void circuitChanged(CircuitEvent event) {
-    final var act = event.getAction();
-    if (act == CircuitEvent.ACTION_CHECK_NAME) {
-      final var oldname = (String) event.getData();
-      final var newname = event.getCircuit().getName();
-      if (isNameInUse(newname, event.getCircuit())) {
-        OptionPane.showMessageDialog(
-            null,
-            "\"" + newname + "\": " + S.get("circuitNameExists"),
-            "",
-            OptionPane.ERROR_MESSAGE);
-        event.getCircuit().getStaticAttributes().setValue(CircuitAttributes.NAME_ATTR, oldname);
-      }
-    }
-  }
-
-  // Name check Methods
-  private boolean isNameInUse(String Name, Circuit changed) {
-    if (Name.isEmpty()) return false;
-    for (final var mylib : getLibraries()) {
-      if (isNameInLibraries(mylib, Name)) return true;
-    }
-    for (final var mytool : this.getCircuits()) {
-      if (Name.equalsIgnoreCase(mytool.getName()) && !mytool.equals(changed))
-        return true;
-    }
-    return false;
-  }
-
-  private boolean isNameInLibraries(Library lib, String Name) {
-    if (Name.isEmpty()) return false;
-    for (final var mylib : lib.getLibraries()) {
-      if (isNameInLibraries(mylib, Name)) return true;
-    }
-    for (final var mytool : lib.getTools()) {
-      if (Name.equalsIgnoreCase(mytool.getName())) return true;
-    }
-    return false;
-  }
-
   private static class WritingThread extends UniquelyNamedThread {
     final OutputStream out;
     final LogisimFile file;
@@ -110,6 +69,72 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
         file.loader.showError(S.get("fileDuplicateError", e.toString()));
       }
     }
+  }
+
+  private final EventSourceWeakSupport<LibraryListener> listeners = new EventSourceWeakSupport<>();
+  private final LinkedList<String> messages = new LinkedList<>();
+  private final Options options = new Options();
+  private final List<AddTool> tools = new LinkedList<>();
+  private final List<Library> libraries = new LinkedList<>();
+  private Loader loader;
+  private Circuit main = null;
+  private String name;
+  private boolean isDirty = false;
+
+  LogisimFile(Loader loader) {
+    this.loader = loader;
+
+    // Creates the default project name, adding an underscore if needed
+    name = S.get("defaultProjectName");
+    if (Projects.windowNamed(name)) {
+      for (var i = 2; true; i++) {
+        if (!Projects.windowNamed(name + "_" + i)) {
+          name += "_" + i;
+          break;
+        }
+      }
+    }
+  }
+
+  @Override
+  public void circuitChanged(CircuitEvent event) {
+    final var act = event.getAction();
+    if (act == CircuitEvent.ACTION_CHECK_NAME) {
+      final var oldname = (String) event.getData();
+      final var newname = event.getCircuit().getName();
+      if (isNameInUse(newname, event.getCircuit())) {
+        OptionPane.showMessageDialog(
+                null,
+                "\"" + newname + "\": " + S.get("circuitNameExists"),
+                "",
+                OptionPane.ERROR_MESSAGE);
+        event.getCircuit().getStaticAttributes().setValue(CircuitAttributes.NAME_ATTR, oldname);
+      }
+    }
+  }
+
+  // Name check Methods
+  private boolean isNameInUse(String name, Circuit changed) {
+    if (name.isEmpty()) return false;
+    for (final var mylib : getLibraries()) {
+      if (isNameInLibraries(mylib, name)) return true;
+    }
+    for (final var mytool : this.getCircuits()) {
+      if (name.equalsIgnoreCase(mytool.getName()) && !mytool.equals(changed))
+        return true;
+    }
+    return false;
+  }
+
+  private boolean isNameInLibraries(Library lib, String name) {
+    if (name.isEmpty()) return false;
+    for (final var mylib : lib.getLibraries()) {
+      if (isNameInLibraries(mylib, name)) return true;
+    }
+    for (final var mytool : lib.getTools()) {
+      if (name.equalsIgnoreCase(mytool.getName())) return true;
+    }
+    return false;
   }
 
   //
@@ -139,31 +164,30 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public static LogisimFile load(File file, Loader loader) throws IOException {
-    InputStream in = new FileInputStream(file);
+    final var inputStream = new FileInputStream(file);
     Throwable firstExcept = null;
     try {
-      return loadSub(in, loader, file);
+      return loadSub(inputStream, loader, file);
     } catch (Throwable t) {
       firstExcept = t;
     } finally {
-      in.close();
+      inputStream.close();
     }
 
-    if (firstExcept != null) {
-      // We'll now try to do it using a reader. This is to work around
-      // Logisim versions prior to 2.5.1, when files were not saved using
-      // UTF-8 as the encoding (though the XML file reported otherwise).
+    // We'll now try to do it using a reader. This is to work around
+    // Logisim versions prior to 2.5.1, when files were not saved using
+    // UTF-8 as the encoding (though the XML file reported otherwise).
+    try {
+      final var readerInputStream = new ReaderInputStream(new FileReader(file), "UTF8");
+      return loadSub(readerInputStream, loader, file);
+    } catch (Exception t) {
+      firstExcept.printStackTrace();
+      loader.showError(S.get("xmlFormatError", firstExcept.toString()));
+    } finally {
       try {
-        in = new ReaderInputStream(new FileReader(file), "UTF8");
-        return loadSub(in, loader, file);
-      } catch (Exception t) {
-        firstExcept.printStackTrace();
-        loader.showError(S.get("xmlFormatError", firstExcept.toString()));
-      } finally {
-        try {
-          in.close();
-        } catch (Exception ignored) {
-        }
+        inputStream.close();
+      } catch (Exception ignored) {
+        // Do nothing.
       }
     }
 
@@ -180,13 +204,11 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     }
   }
 
-  public static LogisimFile loadSub(InputStream in, Loader loader)
-      throws IOException, SAXException {
+  public static LogisimFile loadSub(InputStream in, Loader loader) throws IOException, SAXException {
     return (loadSub(in, loader, null));
   }
 
-  public static LogisimFile loadSub(InputStream in, Loader loader, File file)
-      throws IOException, SAXException {
+  public static LogisimFile loadSub(InputStream in, Loader loader, File file) throws IOException, SAXException {
     // fetch first line and then reset
     final var inBuffered = new BufferedInputStream(in);
     final var firstLine = getFirstLine(inBuffered);
@@ -204,36 +226,6 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     final var ret = xmlReader.readLibrary(inBuffered, null);
     ret.loader = loader;
     return ret;
-  }
-
-  private final EventSourceWeakSupport<LibraryListener> listeners = new EventSourceWeakSupport<>();
-  private Loader loader;
-  private final LinkedList<String> messages = new LinkedList<>();
-  private final Options options = new Options();
-
-  private final LinkedList<AddTool> tools = new LinkedList<>();
-
-  private final LinkedList<Library> libraries = new LinkedList<>();
-
-  private Circuit main = null;
-
-  private String name;
-
-  private boolean dirty = false;
-
-  LogisimFile(Loader loader) {
-    this.loader = loader;
-
-    // Creates the default project name, adding an underscore if needed
-    name = S.get("defaultProjectName");
-    if (Projects.windowNamed(name)) {
-      for (var i = 2; true; i++) {
-        if (!Projects.windowNamed(name + "_" + i)) {
-          name += "_" + i;
-          break;
-        }
-      }
-    }
   }
 
   public void addCircuit(Circuit circuit) {
@@ -517,7 +509,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
   @Override
   public boolean isDirty() {
-    return dirty;
+    return isDirty;
   }
 
   public void moveCircuit(AddTool tool, int index) {
@@ -578,8 +570,8 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   }
 
   public void setDirty(boolean value) {
-    if (dirty != value) {
-      dirty = value;
+    if (isDirty != value) {
+      isDirty = value;
       fireEvent(LibraryEvent.DIRTY_STATE, value ? Boolean.TRUE : Boolean.FALSE);
     }
   }

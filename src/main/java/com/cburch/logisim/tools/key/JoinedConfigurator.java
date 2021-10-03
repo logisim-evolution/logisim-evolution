@@ -9,7 +9,7 @@
 
 package com.cburch.logisim.tools.key;
 
-public class JoinedConfigurator implements KeyConfigurator, Cloneable {
+public final class JoinedConfigurator implements KeyConfigurator, Cloneable {
   public static JoinedConfigurator create(KeyConfigurator a, KeyConfigurator b) {
     return new JoinedConfigurator(new KeyConfigurator[] {a, b});
   }
@@ -33,7 +33,7 @@ public class JoinedConfigurator implements KeyConfigurator, Cloneable {
       e.printStackTrace();
       return null;
     }
-    int len = this.handlers.length;
+    final var len = this.handlers.length;
     ret.handlers = new KeyConfigurator[len];
     for (var i = 0; i < len; i++) {
       ret.handlers[i] = this.handlers[i].clone();
@@ -41,13 +41,11 @@ public class JoinedConfigurator implements KeyConfigurator, Cloneable {
     return ret;
   }
 
+  @Override
   public KeyConfigurationResult keyEventReceived(KeyConfigurationEvent event) {
-    final var hs = handlers;
-    if (event.isConsumed()) {
-      return null;
-    }
-    for (KeyConfigurator h : hs) {
-      final var result = h.keyEventReceived(event);
+    if (event.isConsumed()) return null;
+    for (final var handler : handlers) {
+      final var result = handler.keyEventReceived(event);
       if (result != null || event.isConsumed()) {
         return result;
       }

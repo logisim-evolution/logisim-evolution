@@ -12,19 +12,19 @@ package com.cburch.logisim.tools.key;
 import com.cburch.logisim.data.Attribute;
 import java.util.HashMap;
 
-public class ParallelConfigurator implements KeyConfigurator, Cloneable {
+public final class ParallelConfigurator implements KeyConfigurator, Cloneable {
+  private KeyConfigurator[] handlers;
+
+  private ParallelConfigurator(KeyConfigurator[] handlers) {
+    this.handlers = handlers;
+  }
+
   public static ParallelConfigurator create(KeyConfigurator a, KeyConfigurator b) {
     return new ParallelConfigurator(new KeyConfigurator[] {a, b});
   }
 
   public static ParallelConfigurator create(KeyConfigurator[] configs) {
     return new ParallelConfigurator(configs);
-  }
-
-  private KeyConfigurator[] handlers;
-
-  private ParallelConfigurator(KeyConfigurator[] handlers) {
-    this.handlers = handlers;
   }
 
   @Override
@@ -36,23 +36,21 @@ public class ParallelConfigurator implements KeyConfigurator, Cloneable {
       e.printStackTrace();
       return null;
     }
-    int len = this.handlers.length;
+    final var len = this.handlers.length;
     ret.handlers = new KeyConfigurator[len];
-    for (int i = 0; i < len; i++) {
+    for (var i = 0; i < len; i++) {
       ret.handlers[i] = this.handlers[i].clone();
     }
     return ret;
   }
 
+  @Override
   public KeyConfigurationResult keyEventReceived(KeyConfigurationEvent event) {
-    KeyConfigurator[] hs = handlers;
-    if (event.isConsumed()) {
-      return null;
-    }
+    if (event.isConsumed()) return null;
     KeyConfigurationResult first = null;
     HashMap<Attribute<?>, Object> map = null;
-    for (KeyConfigurator h : hs) {
-      KeyConfigurationResult result = h.keyEventReceived(event);
+    for (final var handler : handlers) {
+      final var result = handler.keyEventReceived(event);
       if (result != null) {
         if (first == null) {
           first = result;
@@ -64,10 +62,6 @@ public class ParallelConfigurator implements KeyConfigurator, Cloneable {
         }
       }
     }
-    if (map != null) {
-      return new KeyConfigurationResult(event, map);
-    } else {
-      return first;
-    }
+    return (map != null) ? new KeyConfigurationResult(event, map) : first;
   }
 }

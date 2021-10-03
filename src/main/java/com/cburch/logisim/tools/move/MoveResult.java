@@ -22,17 +22,13 @@ public class MoveResult {
   private final Collection<Location> unconnectedLocations;
   private final int totalDistance;
 
-  public MoveResult(
-      MoveRequest request,
-      ReplacementMap replacements,
-      Collection<ConnectionData> unsatisfiedConnections,
-      int totalDistance) {
+  public MoveResult(MoveRequest request, ReplacementMap replacements, Collection<ConnectionData> unsatisfiedConnections, int totalDistance) {
     this.replacements = replacements;
     this.unsatisfiedConnections = unsatisfiedConnections;
     this.totalDistance = totalDistance;
 
-    ArrayList<Location> unconnected = new ArrayList<>();
-    for (ConnectionData conn : unsatisfiedConnections) {
+    final var unconnected = new ArrayList<Location>();
+    for (final var conn : unsatisfiedConnections) {
       unconnected.add(conn.getLocation());
     }
     unconnectedLocations = unconnected;
@@ -40,7 +36,7 @@ public class MoveResult {
 
   void addUnsatisfiedConnections(Collection<ConnectionData> toAdd) {
     unsatisfiedConnections.addAll(toAdd);
-    for (ConnectionData conn : toAdd) {
+    for (final var conn : toAdd) {
       unconnectedLocations.add(conn.getLocation());
     }
   }
@@ -61,17 +57,17 @@ public class MoveResult {
     return unsatisfiedConnections;
   }
 
+  @SuppressWarnings("unchecked")
   public Collection<Wire> getWiresToAdd() {
-    @SuppressWarnings("unchecked")
-    Collection<Wire> ret = (Collection<Wire>) replacements.getAdditions();
-    return ret;
+    return (Collection<Wire>) replacements.getAdditions();
   }
 
   public void print(PrintStream out) {
     out.print("MoveResult: ");
     replacements.print(out);
   }
-  
+
+  @Override
   public String toString() {
     return "MoveResult: " + replacements.toString();
   }

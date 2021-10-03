@@ -23,31 +23,18 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
 
   private static final long serialVersionUID = 1L;
 
-  @Override
-  public void actionPerformed(ActionEvent e) {
-    if (e.getSource() == Xcopies) {
-      MatrixInfo.setNrOfXCopies((int) Xcopies.getSelectedItem());
-    } else if (e.getSource() == Xdistance) {
-      MatrixInfo.setXDisplacement((int) Xdistance.getSelectedItem());
-    } else if (e.getSource() == Ycopies) {
-      MatrixInfo.setNrOfYCopies((int) Ycopies.getSelectedItem());
-    } else if (e.getSource() == Ydistance) {
-      MatrixInfo.setYDisplacement((int) Ydistance.getSelectedItem());
-    }
-  }
-
-  private final MatrixPlacerInfo MatrixInfo;
-  private final JComboBox<Integer> Xcopies = new JComboBox<>();
-  private final JComboBox<Integer> Ycopies = new JComboBox<>();
-  private final JComboBox<Integer> Xdistance = new JComboBox<>();
-  private final JComboBox<Integer> Ydistance = new JComboBox<>();
-  private final JTextField Label = new JTextField();
+  private final MatrixPlacerInfo matrixInfo;
+  private final JComboBox<Integer> copiesX = new JComboBox<>();
+  private final JComboBox<Integer> copiesY = new JComboBox<>();
+  private final JComboBox<Integer> distanceX = new JComboBox<>();
+  private final JComboBox<Integer> distanceY = new JComboBox<>();
+  private final JTextField labelField = new JTextField();
   private final String compName;
 
-  public MatrixPlacerDialog(MatrixPlacerInfo value, String name, boolean AutoLablerActive) {
+  public MatrixPlacerDialog(MatrixPlacerInfo value, String name, boolean isAutoLablerActive) {
     super();
     compName = name;
-    MatrixInfo = value;
+    matrixInfo = value;
 
     final var thisLayout = new GridBagLayout();
     final var c = new GridBagConstraints();
@@ -57,29 +44,26 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
     c.anchor = GridBagConstraints.CENTER;
     c.weightx = 1;
     c.weighty = 1;
-    if ((MatrixInfo.getLabel() != null) && AutoLablerActive) {
+    if ((matrixInfo.getLabel() != null) && isAutoLablerActive) {
       c.gridx = 0;
       c.gridy = 0;
       c.gridwidth = 4;
       add(new JLabel("Base Label:"), c);
       c.gridx = 4;
       c.gridwidth = 7;
-      Label.setText(MatrixInfo.getLabel());
-      Label.setEditable(true);
-      add(Label, c);
+      labelField.setText(matrixInfo.getLabel());
+      labelField.setEditable(true);
+      add(labelField, c);
       c.gridwidth = 1;
     }
     for (var x = 4; x < 11; x++)
       for (var y = 5; y < 12; y++) {
         c.gridx = x;
         c.gridy = y;
-        if (((x == 4) || (x == 7) || (x == 10)) && ((y == 5) || (y == 8) || (y == 11))) {
-          final var CompText = new JLabel("   O   ");
-          this.add(CompText, c);
-        } else {
-          final var CompText = new JLabel("   .   ");
-          this.add(CompText, c);
-        }
+        final var symbol = (((x == 4) || (x == 7) || (x == 10)) && ((y == 5) || (y == 8) || (y == 11))) ? "O" : ".";
+        final var spacer = " ".repeat(3);
+        final var compText = new JLabel(spacer + symbol + spacer);
+        this.add(compText, c);
       }
     c.gridy = 1;
     c.gridx = 4;
@@ -93,11 +77,11 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
     c.gridy = 1;
     c.gridwidth = 2;
     for (var i = 1; i < 50; i++) {
-      Xcopies.addItem(i);
+      copiesX.addItem(i);
     }
-    Xcopies.setSelectedItem(1);
-    Xcopies.addActionListener(this);
-    add(Xcopies, c);
+    copiesX.setSelectedItem(1);
+    copiesX.addActionListener(this);
+    add(copiesX, c);
     c.gridy = 2;
     c.gridwidth = 1;
     c.gridx = 4;
@@ -107,12 +91,12 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
     c.gridx = 5;
     add(new JLabel("dx:"), c);
     c.gridx = 6;
-    for (var i = MatrixInfo.getMinimalXDisplacement(); i < 100; i++) {
-      Xdistance.addItem(i);
+    for (var i = matrixInfo.getMinimalDisplacementX(); i < 100; i++) {
+      distanceX.addItem(i);
     }
-    Xdistance.setSelectedIndex(0);
-    Xdistance.addActionListener(this);
-    add(Xdistance, c);
+    distanceX.setSelectedIndex(0);
+    distanceX.addActionListener(this);
+    add(distanceX, c);
 
     for (var y = 5; y < 12; y++) {
       c.gridy = y;
@@ -138,10 +122,10 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
     }
     c.gridx = 2;
     c.gridy = 10;
-    for (var i = 1; i < 50; i++) Ycopies.addItem(i);
-    Ycopies.setSelectedIndex(0);
-    Ycopies.addActionListener(this);
-    add(Ycopies, c);
+    for (var i = 1; i < 50; i++) copiesY.addItem(i);
+    copiesY.setSelectedIndex(0);
+    copiesY.addActionListener(this);
+    add(copiesY, c);
     c.gridx = 0;
     c.gridwidth = 2;
     add(new JLabel("NrOfRows:"), c);
@@ -150,16 +134,31 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
     c.gridy = 6;
     add(new JLabel("dy:"), c);
     c.gridx = 1;
-    for (var i = MatrixInfo.getMinimalYDisplacement(); i < 100; i++) {
-      Ydistance.addItem(i);
+    for (var i = matrixInfo.getMinimalDisplacementY(); i < 100; i++) {
+      distanceY.addItem(i);
     }
-    Ydistance.setSelectedIndex(0);
-    Ydistance.addActionListener(this);
-    add(Ydistance, c);
+    distanceY.setSelectedIndex(0);
+    distanceY.addActionListener(this);
+    add(distanceY, c);
+  }
+
+  @Override
+  public void actionPerformed(ActionEvent e) {
+    if (matrixInfo == null) return;
+
+    if (e.getSource() == copiesX) {
+      matrixInfo.setCopiesCountX((int) copiesX.getSelectedItem());
+    } else if (e.getSource() == distanceX) {
+      matrixInfo.setDisplacementX((int) distanceX.getSelectedItem());
+    } else if (e.getSource() == copiesY) {
+      matrixInfo.setCopiesCountY((int) copiesY.getSelectedItem());
+    } else if (e.getSource() == distanceY) {
+      matrixInfo.setDisplacementY((int) distanceY.getSelectedItem());
+    }
   }
 
   public boolean execute() {
-    Label.setText(MatrixInfo.getLabel());
+    labelField.setText(matrixInfo.getLabel());
     boolean ret =
         OptionPane.showOptionDialog(
                 null,
@@ -171,7 +170,7 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
                 null,
                 null)
             == OptionPane.OK_OPTION;
-    MatrixInfo.setLabel(Label.getText());
+    matrixInfo.setLabel(labelField.getText());
     return ret;
   }
 }

@@ -27,15 +27,6 @@ import org.slf4j.LoggerFactory;
  */
 public class FactoryDescription {
 
-  public static List<Tool> getTools(
-      Class<? extends Library> base, FactoryDescription[] descriptions) {
-    var tools = new Tool[descriptions.length];
-    for (var i = 0; i < tools.length; i++) {
-      tools[i] = new AddTool(base, descriptions[i]);
-    }
-    return Arrays.asList(tools);
-  }
-
   static final Logger logger = LoggerFactory.getLogger(FactoryDescription.class);
 
   private final StringGetter displayName;
@@ -46,7 +37,6 @@ public class FactoryDescription {
   private boolean factoryLoadAttempted;
   private ComponentFactory factory;
   private StringGetter toolTip;
-
 
   public FactoryDescription(Class<? extends ComponentFactory> factoryClass, StringGetter displayName, Icon icon) {
     this(factoryClass, displayName);
@@ -68,6 +58,14 @@ public class FactoryDescription {
     this.factoryLoadAttempted = false;
     this.factory = null;
     this.toolTip = null;
+  }
+
+  public static List<Tool> getTools(Class<? extends Library> base, FactoryDescription[] descriptions) {
+    var tools = new Tool[descriptions.length];
+    for (var i = 0; i < tools.length; i++) {
+      tools[i] = new AddTool(base, descriptions[i]);
+    }
+    return Arrays.asList(tools);
   }
 
   public String getDisplayName() {

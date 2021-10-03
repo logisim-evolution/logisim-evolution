@@ -94,6 +94,25 @@ public class Loader implements LibraryLoader {
     }
   }
 
+  public static final String LOGISIM_EXTENSION = ".circ";
+  public static final FileFilter LOGISIM_FILTER = new LogisimFileFilter();
+  public static final FileFilter JAR_FILTER = new JarFileFilter();
+  public static final FileFilter TXT_FILTER = new TxtFileFilter();
+  public static final FileFilter TCL_FILTER = new TclFileFilter();
+  public static final FileFilter VHDL_FILTER = new VhdlFileFilter();
+
+  private Component parent;
+  private final Builtin builtin = new Builtin();
+  // to be cleared with each new file
+  private File mainFile = null;
+  private final Stack<File> filesOpening = new Stack<>();
+  private Map<File, File> substitutions = new HashMap<>();
+
+  public Loader(Component parent) {
+    this.parent = parent;
+    clear();
+  }
+
   private static File determineBackupName(File base) {
     final var dir = base.getParentFile();
     var name = base.getName();
@@ -110,33 +129,11 @@ public class Loader implements LibraryLoader {
 
   private static void recoverBackup(File backup, File dest) {
     if (backup != null && backup.exists()) {
+      // FIXME: recovery will fail if delete() failed
       if (dest.exists()) dest.delete();
+      // FIXME: renameTo() can fail. We need to tell the user if so
       backup.renameTo(dest);
     }
-  }
-
-  public static final String LOGISIM_EXTENSION = ".circ";
-
-  public static final FileFilter LOGISIM_FILTER = new LogisimFileFilter();
-
-  public static final FileFilter JAR_FILTER = new JarFileFilter();
-  public static final FileFilter TXT_FILTER = new TxtFileFilter();
-  public static final FileFilter TCL_FILTER = new TclFileFilter();
-  public static final FileFilter VHDL_FILTER = new VhdlFileFilter();
-
-  // fixed
-  private Component parent;
-  private final Builtin builtin = new Builtin();
-  // to be cleared with each new file
-  private File mainFile = null;
-
-  private final Stack<File> filesOpening = new Stack<>();
-
-  private Map<File, File> substitutions = new HashMap<>();
-
-  public Loader(Component parent) {
-    this.parent = parent;
-    clear();
   }
 
   //
@@ -326,7 +323,7 @@ public class Loader implements LibraryLoader {
     }
 
     final var backup = determineBackupName(dest);
-    final var backupCreated = backup != null && dest.renameTo(backup);
+    final var backupCreated = (backup != null) && dest.renameTo(backup);
 
     FileOutputStream fwrite = null;
     try {
@@ -339,7 +336,10 @@ public class Loader implements LibraryLoader {
       LibraryManager.instance.fileSaved(this, dest, oldFile, file);
     } catch (IOException e) {
       if (backupCreated) recoverBackup(backup, dest);
-      if (dest.exists() && dest.length() == 0) dest.delete();
+      if (dest.exists() && dest.length() == 0) {
+        // FIXME: delete can fail. Ensure we will not have snowball effect here!
+        dest.delete();
+      }
       OptionPane.showMessageDialog(
           parent,
           S.get("fileSaveError", e.toString()),
@@ -352,7 +352,10 @@ public class Loader implements LibraryLoader {
           fwrite.close();
         } catch (IOException e) {
           if (backupCreated) recoverBackup(backup, dest);
-          if (dest.exists() && dest.length() == 0) dest.delete();
+          if (dest.exists() && dest.length() == 0) {
+            // FIXME: delete can fail. Ensure we will not have snowball effect here!
+            dest.delete();
+          }
           OptionPane.showMessageDialog(
               parent,
               S.get("fileSaveCloseError", e.toString()),
@@ -364,9 +367,10 @@ public class Loader implements LibraryLoader {
     }
 
     if (!dest.exists() || dest.length() == 0) {
-      if (backupCreated && backup != null && backup.exists()) {
+      if (backupCreated && backup.exists()) {
         recoverBackup(backup, dest);
       } else {
+        // FIXME: delete can fail. Ensure we will not have snowball effect here!
         dest.delete();
       }
       OptionPane.showMessageDialog(
@@ -378,6 +382,7 @@ public class Loader implements LibraryLoader {
     }
 
     if (backupCreated && backup.exists()) {
+      // FIXME: delete can fail. Ensure we will not have snowball effect here!
       backup.delete();
     }
     return true;

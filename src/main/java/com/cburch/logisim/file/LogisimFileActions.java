@@ -33,9 +33,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.jar.JarFile;
 
-public class LogisimFileActions {
+public final class LogisimFileActions {
   private static class AddCircuit extends Action {
     private final Circuit circuit;
 
@@ -123,11 +124,11 @@ public class LogisimFileActions {
             canContinue = false;
           }
           final var splits = mergelib.getLoader().getDescriptor(lib).split("#");
-          final var TheFile = mergelib.getLoader().getFileFor(splits[1], null);
-          if (splits[0].equals("file"))
-            logiLibs.add(TheFile);
-          else if (splits[0].equals("jar"))
-            jarLibs.add(TheFile);
+          final var theFile = mergelib.getLoader().getFileFor(splits[1], null);
+          if ("file".equals(splits[0]))
+            logiLibs.add(theFile);
+          else if ("jar".equals(splits[0]))
+            jarLibs.add(theFile);
         }
         if (!canContinue) {
           LibraryTools.showErrors(mergelib.getName(), errors);
@@ -211,10 +212,10 @@ public class LogisimFileActions {
           final var comp1 = newComps.get(loc);
           final var comp2 = newComps.get(loc);
           if (comp1.getFactory().getName().equals(comp2.getFactory().getName())) {
-            if (comp1.getFactory().getName().equals("Wire")) {
-              final var wir1 = (Wire) comp1;
-              final var wir2 = (Wire) comp2;
-              if (wir1.overlaps(wir2, true)) {
+            if ("Wire".equals(comp1.getFactory().getName())) {
+              final var wire1 = (Wire) comp1;
+              final var wire2 = (Wire) comp2;
+              if (wire1.overlaps(wire2, true)) {
                 it.remove();
                 origComps.remove(loc);
               } else {
@@ -231,7 +232,7 @@ public class LogisimFileActions {
           }
         }
       }
-      return origComps.isEmpty() & newComps.isEmpty();
+      return origComps.isEmpty() && newComps.isEmpty();
     }
 
     @Override
@@ -277,11 +278,12 @@ public class LogisimFileActions {
       for (final var circ : mergedCircuits) {
         Circuit newCircuit = null;
         var replace = false;
-        for (final var circs : proj.getLogisimFile().getCircuits())
+        for (final var circs : proj.getLogisimFile().getCircuits()) {
           if (circs.getName().equalsIgnoreCase(circ.getName())) {
             newCircuit = circs;
             replace = true;
           }
+        }
         if (newCircuit == null) newCircuit = new Circuit(circ.getName(), proj.getLogisimFile(), proj);
         final var result = new CircuitMutation(newCircuit);
         if (replace) result.clear();
@@ -312,7 +314,7 @@ public class LogisimFileActions {
               final var current = availableTools.get(comp.getFactory().getName().toUpperCase());
               if (current != null) {
                 result.add(current.getFactory().createComponent(comp.getLocation(), (AttributeSet) comp.getAttributeSet().clone()));
-              } else if (comp.getFactory().getName().equals("Text")) {
+              } else if ("Text".equals(comp.getFactory().getName())) {
                 result.add(Text.FACTORY.createComponent(comp.getLocation(), (AttributeSet) comp.getAttributeSet().clone()));
               } else System.out.println("Not found:" + comp.getFactory().getName());
             }
@@ -334,20 +336,23 @@ public class LogisimFileActions {
     }
 
     @Override
-    public void undo(Project proj) {}
+    public void undo(Project proj) {
+      // If it does nothing, then we should never call it, so let's throw some meat.
+      throw new UnsupportedOperationException();
+    }
   }
 
   private static class LoadLibraries extends Action {
-    private final ArrayList<Library> mergedLibs = new ArrayList<>();
+    private final List<Library> mergedLibs = new ArrayList<>();
 
     LoadLibraries(Library[] libs, LogisimFile source) {
       final var libNames = new HashMap<String, Library>();
-      final var ToolList = new HashSet<String>();
+      final var toolList = new HashSet<String>();
       final var errors = new HashMap<String, String>();
       for (final var lib : source.getLibraries()) {
         LibraryTools.buildLibraryList(lib, libNames);
       }
-      LibraryTools.buildToolList(source, ToolList);
+      LibraryTools.buildToolList(source, toolList);
       for (final var lib : libs) {
         if (libNames.containsKey(lib.getName().toUpperCase())) {
           OptionPane.showMessageDialog(
@@ -361,11 +366,11 @@ public class LogisimFileActions {
             final var addedToolList = new HashSet<String>();
             LibraryTools.buildToolList(lib, addedToolList);
             for (final var tool : addedToolList)
-              if (ToolList.contains(tool))
+              if (toolList.contains(tool))
                 errors.put(tool, S.get("LibraryMultipleToolError"));
             if (errors.keySet().isEmpty()) {
               LibraryTools.buildLibraryList(lib, libNames);
-              ToolList.addAll(addedToolList);
+              toolList.addAll(addedToolList);
               mergedLibs.add(lib);
             } else
               LibraryTools.showErrors(lib.getName(), errors);
@@ -399,7 +404,7 @@ public class LogisimFileActions {
               final var current = availableTools.get(tool.getFactory().getName().toUpperCase());
               if (current != null) {
                 tool.setFactory(current.getFactory());
-              } else if (tool.getFactory().getName().equals("Text")) {
+              } else if ("Text".equals(tool.getFactory().getName())) {
                 final var newComp = Text.FACTORY.createComponent(tool.getLocation(), (AttributeSet) tool.getAttributeSet().clone());
                 tool.setFactory(newComp.getFactory());
               } else
@@ -530,10 +535,6 @@ public class LogisimFileActions {
     }
   }
 
-  public static Action addVhdl(VhdlContent vhdl) {
-    return new AddVhdl(vhdl);
-  }
-
   private static class RevertDefaults extends Action {
     private Options oldOpts;
     private ArrayList<Library> libraries = null;
@@ -661,6 +662,12 @@ public class LogisimFileActions {
     }
   }
 
+  private LogisimFileActions() {}
+
+  public static Action addVhdl(VhdlContent vhdl) {
+    return new AddVhdl(vhdl);
+  }
+
   public static Action addCircuit(Circuit circuit) {
     return new AddCircuit(circuit);
   }
@@ -704,6 +711,4 @@ public class LogisimFileActions {
   public static Action unloadLibrary(Library lib) {
     return new UnloadLibraries(new Library[] {lib});
   }
-
-  private LogisimFileActions() {}
 }
