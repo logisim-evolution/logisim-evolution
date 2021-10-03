@@ -512,8 +512,8 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
                     canvas.getCircuit(),
                     source,
                     matrix.getLabel(),
-                    matrix.getNrOfXCopies(),
-                    matrix.getNrOfYCopies());
+                    matrix.getCopiesCountX(),
+                    matrix.getCopiesCountY());
             autoLabler.setLabel(label, canvas.getCircuit(), source);
             if (!okay) {
               OptionPane.showMessageDialog(
@@ -530,8 +530,8 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
       try {
         final var mutation = new CircuitMutation(circ);
 
-        for (var x = 0; x < matrix.getNrOfXCopies(); x++) {
-          for (var y = 0; y < matrix.getNrOfYCopies(); y++) {
+        for (var x = 0; x < matrix.getCopiesCountX(); x++) {
+          for (var y = 0; y < matrix.getCopiesCountY(); y++) {
             final var loc = Location.create(event.getX() + (matrix.getDeltaX() * x),
                 event.getY() + (matrix.getDeltaY() * y));
             final var attrsCopy = (AttributeSet) attrs.clone();

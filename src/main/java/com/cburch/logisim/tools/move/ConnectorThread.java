@@ -12,7 +12,22 @@ package com.cburch.logisim.tools.move;
 import com.cburch.logisim.circuit.ReplacementMap;
 import com.cburch.logisim.util.UniquelyNamedThread;
 
-class ConnectorThread extends UniquelyNamedThread {
+public final class ConnectorThread extends UniquelyNamedThread {
+
+  private static final ConnectorThread INSTANCE = new ConnectorThread();
+
+  private final Object lock;
+  private transient boolean overrideRequest;
+  private MoveRequest nextRequest;
+  private MoveRequest processingRequest;
+
+  private ConnectorThread() {
+    super("tools-move-ConnectorThread");
+    lock = new Object();
+    overrideRequest = false;
+    nextRequest = null;
+  }
+
   public static void enqueueRequest(MoveRequest req, boolean priority) {
     synchronized (INSTANCE.lock) {
       if (!req.equals(INSTANCE.processingRequest)) {
@@ -27,22 +42,8 @@ class ConnectorThread extends UniquelyNamedThread {
     return INSTANCE.overrideRequest;
   }
 
-  private static final ConnectorThread INSTANCE = new ConnectorThread();
-
   static {
     INSTANCE.start();
-  }
-
-  private final Object lock;
-  private transient boolean overrideRequest;
-  private MoveRequest nextRequest;
-  private MoveRequest processingRequest;
-
-  private ConnectorThread() {
-    super("tools-move-ConnectorThread");
-    lock = new Object();
-    overrideRequest = false;
-    nextRequest = null;
   }
 
   public boolean isAbortRequested() {
@@ -72,16 +73,15 @@ class ConnectorThread extends UniquelyNamedThread {
       }
 
       try {
-        MoveResult result = Connector.computeWires(req);
+        final var result = Connector.computeWires(req);
         if (result != null) {
-          MoveGesture gesture = req.getMoveGesture();
+          final var gesture = req.getMoveGesture();
           gesture.notifyResult(req, result);
         }
       } catch (Exception t) {
         t.printStackTrace();
         if (wasOverride) {
-          MoveResult result =
-              new MoveResult(req, new ReplacementMap(), req.getMoveGesture().getConnections(), 0);
+          final var result = new MoveResult(req, new ReplacementMap(), req.getMoveGesture().getConnections(), 0);
           req.getMoveGesture().notifyResult(req, result);
         }
       }

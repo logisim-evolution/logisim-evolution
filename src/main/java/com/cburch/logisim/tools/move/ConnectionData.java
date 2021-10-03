@@ -35,8 +35,7 @@ class ConnectionData {
 
   @Override
   public boolean equals(Object other) {
-    if (other instanceof ConnectionData) {
-      ConnectionData o = (ConnectionData) other;
+    if (other instanceof ConnectionData o) {
       return this.loc.equals(o.loc) && this.dir.equals(o.dir);
     } else {
       return false;

@@ -73,8 +73,7 @@ public abstract class Library {
     int index = -1;
     for (final var obj : getTools()) {
       index++;
-      if (obj instanceof AddTool) {
-        AddTool tool = (AddTool) obj;
+      if (obj instanceof AddTool tool) {
         if (tool.getFactory() == query) return index;
       }
     }

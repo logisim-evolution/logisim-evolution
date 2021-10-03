@@ -166,9 +166,9 @@ public class MenuTool extends Tool {
     JPopupMenu menu;
     final var proj = canvas.getProject();
     final var sel = proj.getSelection();
-    final var in_sel = sel.getComponentsContaining(pt, g);
-    if (!in_sel.isEmpty()) {
-      final var comp = in_sel.iterator().next();
+    final var inSel = sel.getComponentsContaining(pt, g);
+    if (!inSel.isEmpty()) {
+      final var comp = inSel.iterator().next();
       if (sel.getComponents().size() > 1) {
         menu = new MenuSelection(proj);
       } else {

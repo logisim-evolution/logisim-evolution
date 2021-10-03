@@ -22,58 +22,64 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class LibraryTools {
-  public static void showErrors(String LibName, Map<String, String> Messages) {
+public final class LibraryTools {
+
+  private LibraryTools() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
+
+  public static void showErrors(String libName, Map<String, String> messages) {
     OptionPane.showMessageDialog(
         null,
-        message(LibName, Messages),
-        S.get("LibLoadErrors") + " " + LibName + " !",
+        message(libName, messages),
+        S.get("LibLoadErrors") + " " + libName + " !",
         OptionPane.ERROR_MESSAGE);
   }
 
-  private static String message(String LibName, Map<String, String> Messages) {
-    var Message = "";
+  private static String message(String libName, Map<String, String> messages) {
+    var message = "";
     var item = 0;
-    for (final var myerror : Messages.keySet()) {
+    for (final var myerror : messages.keySet()) {
       item++;
-      Message = Message.concat(item + ") " + Messages.get(myerror) + " \"" + myerror + "\".\n");
+      message = message.concat(item + ") " + messages.get(myerror) + " \"" + myerror + "\".\n");
     }
-    return Message;
+    return message;
   }
 
-  public static void buildToolList(Library lib, Set<String> Tools) {
+  public static void buildToolList(Library lib, Set<String> tools) {
     for (final var tool : lib.getTools()) {
-      Tools.add(tool.getName().toUpperCase());
+      tools.add(tool.getName().toUpperCase());
     }
     for (final var sublib : lib.getLibraries()) {
-      buildToolList(sublib, Tools);
+      buildToolList(sublib, tools);
     }
   }
 
-  public static boolean buildToolList(Library lib, Map<String, AddTool> Tools) {
+  public static boolean buildToolList(Library lib, Map<String, AddTool> tools) {
     var ret = true;
-    if (!lib.getName().equals("Base")) {
+    if (!"Base".equals(lib.getName())) {
       for (final var tool1 : lib.getTools()) {
-        if (Tools.containsKey(tool1.getName().toUpperCase()))
+        if (tools.containsKey(tool1.getName().toUpperCase()))
           ret = false;
         else
-          Tools.put(tool1.getName().toUpperCase(), (AddTool) tool1);
+          tools.put(tool1.getName().toUpperCase(), (AddTool) tool1);
       }
     }
     for (final var sublib : lib.getLibraries()) {
-      ret &= buildToolList(sublib, Tools);
+      ret &= buildToolList(sublib, tools);
     }
     return ret;
   }
 
   // FIXME: why `upperCaseName` even matters here if we do case insensitive comparision?
   public static Circuit getCircuitFromLibs(Library lib, String upperCaseName) {
-    Circuit ret = null;
     if (lib instanceof LogisimFile llib) {
       for (final var circ : llib.getCircuits()) {
         if (circ.getName().equalsIgnoreCase(upperCaseName)) return circ;
       }
     }
+
+    Circuit ret = null;
     for (final var libs : lib.getLibraries()) {
       if (libs instanceof LoadedLibrary lib1) {
         ret = getCircuitFromLibs(lib1.getBase(), upperCaseName);
@@ -84,10 +90,10 @@ public class LibraryTools {
   }
 
   // FIXME: method name is odd.
-  public static List<String> libraryCanBeMerged(Set<String> SourceTools, Set<String> NewTools) {
+  public static List<String> libraryCanBeMerged(Set<String> sourceTools, Set<String> newTools) {
     final var ret = new ArrayList<String>();
-    for (final var This : NewTools) {
-      if (SourceTools.contains(This)) {
+    for (final var This : newTools) {
+      if (sourceTools.contains(This)) {
         ret.add(This);
       }
     }
@@ -137,10 +143,10 @@ public class LibraryTools {
     return !hasErrors;
   }
 
-  public static void buildLibraryList(Library lib, Map<String, Library> Names) {
-    Names.put(lib.getName().toUpperCase(), lib);
+  public static void buildLibraryList(Library lib, Map<String, Library> names) {
+    names.put(lib.getName().toUpperCase(), lib);
     for (final var sublib : lib.getLibraries()) {
-      buildLibraryList(sublib, Names);
+      buildLibraryList(sublib, names);
     }
   }
 
