@@ -36,6 +36,19 @@ import org.w3c.dom.Element;
 
 public class XmlCircuitReader extends CircuitTransaction {
 
+  private final XmlReader.ReadContext reader;
+
+  private final List<XmlReader.CircuitData> circuitsData;
+  private boolean isHolyCross = false;
+  private boolean isEvolution = false;
+
+  public XmlCircuitReader(XmlReader.ReadContext reader, List<XmlReader.CircuitData> circDatas, boolean isThisHolyCrossFile, boolean isThisEvolutionFile) {
+    this.reader = reader;
+    this.circuitsData = circDatas;
+    this.isHolyCross = isThisHolyCrossFile;
+    this.isEvolution = isThisEvolutionFile;
+  }
+
   /**
    * @param elt XML element to parse
    * @param reader XML file reader
@@ -47,7 +60,7 @@ public class XmlCircuitReader extends CircuitTransaction {
 
     // Determine the factory that creates this element
     final var name = elt.getAttribute("name");
-    if (name == null || name.equals("")) {
+    if (name == null || "".equals(name)) {
       throw new XmlReaderException(S.get("compNameMissingError"));
     }
 
@@ -59,7 +72,7 @@ public class XmlCircuitReader extends CircuitTransaction {
 
     final var tool = lib.getTool(name);
     if (!(tool instanceof AddTool)) {
-      if (libName == null || libName.equals("")) {
+      if (libName == null || "".equals(libName)) {
         throw new XmlReaderException(S.get("compUnknownError", name));
       } else {
         throw new XmlReaderException(S.get("compAbsentError", name, libName));
@@ -78,36 +91,22 @@ public class XmlCircuitReader extends CircuitTransaction {
     } else reader.initAttributeSet(elt, attrs, source, isHolyCross, isEvolution);
 
     // Create component if location known
-    if (locStr == null || locStr.equals("")) {
+    if (locStr == null || "".equals(locStr)) {
       throw new XmlReaderException(S.get("compLocMissingError", source.getName()));
     } else {
       try {
-        final var loc = Location.parse(locStr);
-        return source.createComponent(loc, attrs);
+        return source.createComponent(Location.parse(locStr), attrs);
       } catch (NumberFormatException e) {
         throw new XmlReaderException(S.get("compLocInvalidError", source.getName(), locStr));
       }
     }
   }
 
-  private final XmlReader.ReadContext reader;
-
-  private final List<XmlReader.CircuitData> circuitsData;
-  private boolean isHolyCross = false;
-  private boolean isEvolution = false;
-
-  public XmlCircuitReader(XmlReader.ReadContext reader, List<XmlReader.CircuitData> circDatas, boolean isThisHolyCrossFile, boolean isThisEvolutionFile) {
-    this.reader = reader;
-    this.circuitsData = circDatas;
-    this.isHolyCross = isThisHolyCrossFile;
-    this.isEvolution = isThisEvolutionFile;
-  }
-
   void addWire(Circuit dest, CircuitMutator mutator, Element elt) throws XmlReaderException {
     Location pt0;
     try {
       final var str = elt.getAttribute("from");
-      if (str == null || str.equals("")) {
+      if (str == null || "".equals(str)) {
         throw new XmlReaderException(S.get("wireStartMissingError"));
       }
       pt0 = Location.parse(str);
@@ -118,7 +117,7 @@ public class XmlCircuitReader extends CircuitTransaction {
     Location pt1;
     try {
       final var str = elt.getAttribute("to");
-      if (str == null || str.equals("")) {
+      if (str == null || "".equals(str)) {
         throw new XmlReaderException(S.get("wireEndMissingError"));
       }
       pt1 = Location.parse(str);
@@ -126,7 +125,10 @@ public class XmlCircuitReader extends CircuitTransaction {
       throw new XmlReaderException(S.get("wireEndInvalidError"));
     }
 
-    if (!pt0.equals(pt1)) mutator.add(dest, Wire.create(pt0, pt1)); // Avoid zero length wires
+    if (!pt0.equals(pt1)) {
+      // Avoid zero length wires
+      mutator.add(dest, Wire.create(pt0, pt1));
+    }
   }
 
   private void buildCircuit(XmlReader.CircuitData circData, CircuitMutator mutator) {
@@ -142,9 +144,9 @@ public class XmlCircuitReader extends CircuitTransaction {
       for (final var attrElt : XmlIterator.forChildElements(circData.circuitElement, "a")) {
         if (attrElt.hasAttribute("name")) {
           final var name = attrElt.getAttribute("name");
-          hasNamedBox |= name.equals("circuitnamedbox");
-          hasAppearAttr |= name.equals("appearance");
-          hasNamedBoxFixedSize |= name.equals("circuitnamedboxfixedsize");
+          hasNamedBox |= "circuitnamedbox".equals(name);
+          hasAppearAttr |= "appearance".equals(name);
+          hasNamedBoxFixedSize |= "circuitnamedboxfixedsize".equals(name);
         }
       }
       reader.initAttributeSet(circData.circuitElement, dest.getStaticAttributes(), null, isHolyCross, isEvolution);
@@ -173,13 +175,11 @@ public class XmlCircuitReader extends CircuitTransaction {
     final var componentsAt = new HashMap<Bounds, Component>();
     final var overlapComponents = new ArrayList<Component>();
     for (Element sub_elt : XmlIterator.forChildElements(elt)) {
-      final var sub_elt_name = sub_elt.getTagName();
-      if (sub_elt_name.equals("comp")) {
+      final var subEltName = sub_elt.getTagName();
+      if ("comp".equals(subEltName)) {
         try {
           var comp = knownComponents.get(sub_elt);
-          if (comp == null) {
-            comp = getComponent(sub_elt, reader, isHolyCross, isEvolution);
-          }
+          if (comp == null) getComponent(sub_elt, reader, isHolyCross, isEvolution);
           if (comp != null) {
             /* filter out empty text boxes */
             if (comp.getFactory() instanceof Text) {
@@ -205,7 +205,7 @@ public class XmlCircuitReader extends CircuitTransaction {
         } catch (XmlReaderException e) {
           reader.addErrors(e, circData.circuit.getName() + "." + toComponentString(sub_elt));
         }
-      } else if (sub_elt_name.equals("wire")) {
+      } else if ("wire".equals(subEltName)) {
         try {
           addWire(dest, mutator, sub_elt);
         } catch (XmlReaderException e) {
@@ -215,11 +215,14 @@ public class XmlCircuitReader extends CircuitTransaction {
     }
     for (var comp : overlapComponents) {
       final var bds = comp.getBounds();
-      if (bds.getHeight() == 0 || bds.getWidth() == 0) continue; // ignore empty boxes
-      int d = 0;
+      if (bds.getHeight() == 0 || bds.getWidth() == 0) {
+        // ignore empty boxes
+        continue;
+      }
+      var d = 0;
       do {
         d += 10;
-      } while ((componentsAt.get(bds.translate(d, d))) != null && (d < 100000));
+      } while ((componentsAt.get(bds.translate(d, d))) != null && (d < 100_000));
       final var loc = comp.getLocation().translate(d, d);
       final var attrs = (AttributeSet) comp.getAttributeSet().clone();
       comp = comp.getFactory().createComponent(loc, attrs);
@@ -228,7 +231,7 @@ public class XmlCircuitReader extends CircuitTransaction {
     }
   }
 
-  private void buildDynamicAppearance(XmlReader.CircuitData circData, CircuitMutator mutator) {
+  private void buildDynamicAppearance(XmlReader.CircuitData circData) {
     final var dest = circData.circuit;
     final var shapes = new ArrayList<AbstractCanvasObject>();
     for (final var appearElt : XmlIterator.forChildElements(circData.circuitElement, "appear")) {
@@ -279,7 +282,7 @@ public class XmlCircuitReader extends CircuitTransaction {
       buildCircuit(circuitData, mutator);
     }
     for (final var circuitData : circuitsData) {
-      buildDynamicAppearance(circuitData, mutator);
+      buildDynamicAppearance(circuitData);
     }
   }
 

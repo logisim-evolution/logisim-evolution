@@ -14,8 +14,9 @@ import com.cburch.logisim.proj.Projects;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
+import java.util.List;
 
-class ProjectsDirty {
+public final class ProjectsDirty {
   private static class DirtyListener implements LibraryListener {
     final Project proj;
 
@@ -36,8 +37,8 @@ class ProjectsDirty {
   private static class ProjectListListener implements PropertyChangeListener {
     @Override
     public synchronized void propertyChange(PropertyChangeEvent event) {
-      for (final var l : listeners) {
-        l.proj.removeLibraryListener(l);
+      for (final var listener : listeners) {
+        listener.proj.removeLibraryListener(listener);
       }
       listeners.clear();
       for (final var proj : Projects.getOpenProjects()) {
@@ -51,12 +52,12 @@ class ProjectsDirty {
     }
   }
 
+  private static final ProjectListListener projectListListener = new ProjectListListener();
+  private static final List<DirtyListener> listeners = new ArrayList<>();
+
+  private ProjectsDirty() {}
+
   public static void initialize() {
     Projects.addPropertyChangeListener(Projects.PROJECT_LIST_PROPERTY, projectListListener);
   }
-
-  private static final ProjectListListener projectListListener = new ProjectListListener();
-  private static final ArrayList<DirtyListener> listeners = new ArrayList<>();
-
-  private ProjectsDirty() {}
 }

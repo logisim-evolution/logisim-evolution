@@ -50,7 +50,29 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-class XmlWriter {
+final class XmlWriter {
+
+  private final LogisimFile file;
+  private final Document doc;
+  /**
+   * Path of the file which is being written on disk -- used to relativize components stored in it.
+   */
+  private final String outFilepath;
+
+  private final LibraryLoader loader;
+  private final HashMap<Library, String> libs = new HashMap<>();
+
+  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader) {
+    this(file, doc, loader, null);
+  }
+
+  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilepath) {
+    this.file = file;
+    this.doc = doc;
+    this.loader = loader;
+    this.outFilepath = outFilepath;
+  }
+
 
   /* We sort some parts of the xml tree, to help with reproducibility and to
    * ease testing (e.g. diff a circuit file). Attribute name=value pairs seem
@@ -68,18 +90,18 @@ class XmlWriter {
   }
 
   static String attrsToString(NamedNodeMap a) {
-    int n = a.getLength();
+    final var n = a.getLength();
     if (n == 0) return "";
     else if (n == 1) return attrToString((Attr) a.item(0));
-    ArrayList<String> lst = new ArrayList<>();
-    for (int i = 0; i < n; i++) {
+    final var lst = new ArrayList<String>();
+    for (var i = 0; i < n; i++) {
       lst.add(attrToString((Attr) a.item(i)));
     }
     Collections.sort(lst);
     return String.join(" ", lst);
   }
 
-  private static final int stringCompare(String stringA, String stringB) {
+  private static int stringCompare(String stringA, String stringB) {
     if (stringA == null) return -1;
     if (stringB == null) return 1;
     return stringA.compareTo(stringB);
@@ -112,11 +134,11 @@ class XmlWriter {
     //   - a(s)
     //   - comp(s)
     //   - wire(s)
-    if (name.equals("appear")) {
+    if ("appear".equals(name)) {
       // the appearance section only has to sort the circuit ports, the rest is static.
       final var circuitPortIndexes = new ArrayList<Integer>();
       for (var nodeIndex = 0; nodeIndex < childrenCount; nodeIndex++)
-        if (children.item(nodeIndex).getNodeName().equals("circ-port")) circuitPortIndexes.add(nodeIndex);
+        if ("circ-port".equals(children.item(nodeIndex).getNodeName())) circuitPortIndexes.add(nodeIndex);
       if (circuitPortIndexes.isEmpty()) return;
       final var numberOfPorts = circuitPortIndexes.size();
       final var nodeSet = new Node[numberOfPorts];
@@ -173,27 +195,6 @@ class XmlWriter {
     tf.transform(src, dest);
   }
 
-  private final LogisimFile file;
-  private final Document doc;
-  /**
-   * Path of the file which is being written on disk -- used to relativize components stored in it.
-   */
-  private final String outFilepath;
-
-  private final LibraryLoader loader;
-  private final HashMap<Library, String> libs = new HashMap<>();
-
-  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader) {
-    this(file, doc, loader, null);
-  }
-
-  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilepath) {
-    this.file = file;
-    this.doc = doc;
-    this.loader = loader;
-    this.outFilepath = outFilepath;
-  }
-
   void addAttributeSetContent(Element elt, AttributeSet attrs, AttributeDefaultProvider source) {
     if (attrs == null) return;
     LogisimVersion ver = BuildInfo.version;
@@ -208,7 +209,7 @@ class XmlWriter {
           final var a = doc.createElement("a");
           a.setAttribute("name", attr.getName());
           var value = attr.toStandardString(val);
-          if (attr.getName().equals("filePath") && outFilepath != null) {
+          if ("filePath".equals(attr.getName()) && outFilepath != null) {
             final var outFP = Paths.get(outFilepath);
             final var attrValP = Paths.get(value);
             value = (outFP.relativize(attrValP)).toString();
@@ -285,7 +286,7 @@ class XmlWriter {
   }
 
   Element fromMap(Circuit circ, String boardName) {
-    Element ret = doc.createElement("boardmap");
+    final var ret = doc.createElement("boardmap");
     ret.setAttribute("boardname", boardName);
     for (String key : circ.getMapInfo(boardName).keySet()) {
       final var map = doc.createElement("mc");
@@ -333,7 +334,7 @@ class XmlWriter {
         return null;
       }
     }
-    if (source.getName().equals("Text")) {
+    if ("Text".equals(source.getName())) {
       /* check if the text element is empty, in this case we do not save */
       final var value = comp.getAttributeSet().getValue(Text.ATTR_TEXT);
       if (value.isEmpty()) return null;

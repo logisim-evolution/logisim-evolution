@@ -35,6 +35,24 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     }
   }
 
+  private Library base;
+  private boolean dirty;
+  private final MyListener myListener;
+  private final EventSourceWeakSupport<LibraryListener> listeners;
+
+  LoadedLibrary(Library base) {
+    dirty = false;
+    myListener = new MyListener();
+    listeners = new EventSourceWeakSupport<>();
+
+    while (base instanceof LoadedLibrary lib) base = lib.base;
+    this.base = base;
+    if (base instanceof LibraryEventSource src) {
+      src.addLibraryListener(myListener);
+    }
+  }
+
+
   static void copyAttributes(AttributeSet dest, AttributeSet src) {
     for (Attribute<?> destAttr : dest.getAttributes()) {
       Attribute<?> srcAttr = src.getAttribute(destAttr.getName());
@@ -101,26 +119,6 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     }
   }
 
-  private Library base;
-
-  private boolean dirty;
-
-  private final MyListener myListener;
-
-  private final EventSourceWeakSupport<LibraryListener> listeners;
-
-  LoadedLibrary(Library base) {
-    dirty = false;
-    myListener = new MyListener();
-    listeners = new EventSourceWeakSupport<>();
-
-    while (base instanceof LoadedLibrary lib) base = lib.base;
-    this.base = base;
-    if (base instanceof LibraryEventSource src) {
-      src.addLibraryListener(myListener);
-    }
-  }
-
   @Override
   public void addLibraryListener(LibraryListener l) {
     listeners.add(l);
@@ -154,8 +152,8 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
   }
 
   @Override
-  public boolean removeLibrary(String Name) {
-    return base.removeLibrary(Name);
+  public boolean removeLibrary(String name) {
+    return base.removeLibrary(name);
   }
 
   @Override

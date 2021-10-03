@@ -20,8 +20,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.WeakHashMap;
 
-class LibraryManager {
-  private static class JarDescriptor extends LibraryDescriptor {
+public final class LibraryManager {
+
+  public static final LibraryManager instance = new LibraryManager();
+
+  private static final char DESC_SEP = '#';
+  private final HashMap<LibraryDescriptor, WeakReference<LoadedLibrary>> fileMap;
+  private final WeakHashMap<LoadedLibrary, LibraryDescriptor> invMap;
+
+  private static class JarDescriptor implements LibraryDescriptor {
     private final File file;
     private final String className;
 
@@ -31,7 +38,7 @@ class LibraryManager {
     }
 
     @Override
-    boolean concernsFile(File query) {
+    public boolean concernsFile(File query) {
       return file.equals(query);
     }
 
@@ -48,33 +55,33 @@ class LibraryManager {
     }
 
     @Override
-    void setBase(Loader loader, LoadedLibrary lib) throws LoadFailedException {
+    public void setBase(Loader loader, LoadedLibrary lib) throws LoadFailedException {
       lib.setBase(loader.loadJarFile(file, className));
     }
 
     @Override
-    String toDescriptor(Loader loader) {
+    public String toDescriptor(Loader loader) {
       return "jar#" + toRelative(loader, file) + DESC_SEP + className;
     }
   }
 
-  private abstract static class LibraryDescriptor {
-    abstract boolean concernsFile(File query);
+  private interface LibraryDescriptor {
+    boolean concernsFile(File query);
 
-    abstract void setBase(Loader loader, LoadedLibrary lib) throws LoadFailedException;
+    void setBase(Loader loader, LoadedLibrary lib) throws LoadFailedException;
 
-    abstract String toDescriptor(Loader loader);
+    String toDescriptor(Loader loader);
   }
 
-  private static class LogisimProjectDescriptor extends LibraryDescriptor {
+  private static class LogisimProjectDescriptor implements LibraryDescriptor {
     private final File file;
 
-    LogisimProjectDescriptor(File file) {
+    public LogisimProjectDescriptor(File file) {
       this.file = file;
     }
 
     @Override
-    boolean concernsFile(File query) {
+    public boolean concernsFile(File query) {
       return file.equals(query);
     }
 
@@ -91,14 +98,20 @@ class LibraryManager {
     }
 
     @Override
-    void setBase(Loader loader, LoadedLibrary lib) throws LoadFailedException {
+    public void setBase(Loader loader, LoadedLibrary lib) throws LoadFailedException {
       lib.setBase(loader.loadLogisimFile(file));
     }
 
     @Override
-    String toDescriptor(Loader loader) {
+    public String toDescriptor(Loader loader) {
       return "file#" + toRelative(loader, file);
     }
+  }
+
+  private LibraryManager() {
+    fileMap = new HashMap<>();
+    invMap = new WeakHashMap<>();
+    ProjectsDirty.initialize();
   }
 
   private static String toRelative(Loader loader, File file) {
@@ -128,18 +141,6 @@ class LibraryManager {
     }
   }
 
-  public static final LibraryManager instance = new LibraryManager();
-
-  private static final char DESC_SEP = '#';
-  private final HashMap<LibraryDescriptor, WeakReference<LoadedLibrary>> fileMap;
-
-  private final WeakHashMap<LoadedLibrary, LibraryDescriptor> invMap;
-
-  private LibraryManager() {
-    fileMap = new HashMap<>();
-    invMap = new WeakHashMap<>();
-    ProjectsDirty.initialize();
-  }
 
   public void fileSaved(Loader loader, File dest, File oldFile, LogisimFile file) {
     final var old = findKnown(oldFile);
@@ -177,8 +178,7 @@ class LibraryManager {
       if (desc != null && desc.concernsFile(query)) {
         return lib;
       }
-      if (lib instanceof LoadedLibrary) {
-        final var loadedLib = (LoadedLibrary) lib;
+      if (lib instanceof LoadedLibrary loadedLib) {
         if (loadedLib.getBase() instanceof LogisimFile loadedProj) {
           final var ret = findReference(loadedProj, query);
           if (ret != null) return lib;
