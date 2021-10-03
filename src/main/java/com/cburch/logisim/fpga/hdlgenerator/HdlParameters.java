@@ -225,6 +225,7 @@ public class HdlParameters {
                 final var attrValue = attrs.getValue(attr);
                 if (attrValue instanceof Integer intVal) selectedValue *= intVal;
                 else if (attrValue instanceof Long longVal) selectedValue *= longVal;
+                else if (attrValue instanceof BitWidth width) selectedValue *= width.getWidth();
                 else throw new UnsupportedOperationException("Requested attribute is not an Integer or Long");
               }
             }

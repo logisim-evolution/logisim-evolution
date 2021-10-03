@@ -80,7 +80,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
       final var components = getComponentDeclarationSection(theNetlist, attrs);
       if (!components.isEmpty())
-        contents.addRemarkBlock("Here all used components are defined").add(components).empty();
+        contents.addRemarkBlock("Here all used components are defined", 3).add(components.getWithIndent()).empty();
 
       final var typedWires = myTypedWires.getTypedWires();
       final var mySignals = new HashMap<String, String>();
