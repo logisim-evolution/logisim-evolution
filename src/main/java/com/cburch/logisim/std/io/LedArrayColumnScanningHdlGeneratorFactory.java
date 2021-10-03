@@ -16,6 +16,8 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
+
+import java.util.HashMap;
 import java.util.List;
 
 public class LedArrayColumnScanningHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
@@ -64,82 +66,30 @@ public class LedArrayColumnScanningHdlGeneratorFactory extends AbstractHdlGenera
         .add(Port.OUTPUT, LedArrayGenericHdlGeneratorFactory.LedArrayRowOutputs, NR_OF_ROWS_ID, 3);
   }
 
-  public static List<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
+  public static LineBuffer getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
     final var nrColAddrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
     final var scanningReload = (int) (fpgaClockFrequency / 1000);
     final var nrOfScanningBitsCount = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(scanningReload);
     final var maxNrLeds = ((int) Math.pow(2.0, (double) nrColAddrBits)) * nrOfRows;
-
-    final var contents =
-        LineBuffer.getBuffer()
-            .pair("nrOfLeds", NR_OF_LEDS_STRING)
-            .pair("ledsCount", nrOfRows * nrOfColumns)
-            .pair("maxNrLeds", MAX_NR_LEDS_STRING)
-            .pair("maxNrLedsCount", maxNrLeds)
-            .pair("nrOfRows", NR_OF_ROWS_STRING)
-            .pair("nrOfRowsCount", nrOfRows)
-            .pair("nrOfColumns", NR_OF_COLUMNS_STRING)
-            .pair("nrOfColumnsCount", nrOfColumns)
-            .pair("activeLow", ACTIVE_LOW_STRING)
-            .pair("activeLowValue", activeLow ? "1" : "0")
-            .pair("nrColAddrBits", NR_OF_COLUMN_ADDRESS_BITS_STRING)
-            .pair("nrColAddrBitsCount", nrColAddrBits)
-            .pair("scanningCounterBits", SCANNING_COUNTER_BITS_STRING)
-            .pair("nrOfScanningBitsCount", nrOfScanningBitsCount)
-            .pair("scanningCounter", SCANNING_COUNTER_VALUE_STRING)
-            .pair("scanningValue", (scanningReload - 1));
-
-    if (Hdl.isVhdl()) {
-      contents.add("""
-          GENERIC MAP ( {{nrOfLeds}} => {{ledsCount}},
-                        {{nrOfRows}} => {{nrOfRowsCount}},
-                        {{nrOfColumns}} => {{nrOfColumnsCount}},
-                        {{nrColAddrBits}} => {{nrColAddrBitsCount}},
-                        {{scanningCounterBits}} => {{nrOfScanningBitsCount}},
-                        {{scanningCounter}} => {{scanningValue}},
-                        {{maxNrLeds}} => {{maxNrLedsCount}},
-                        {{activeLow}} => {{activeLowValue}} )
-          """);
-    } else {
-      contents.add("""
-          #( .{{nrOfLeds}}({{ledsCount}}),
-             .{{nrOfRows}}({{nrOfRowsCount}}),
-             .{{nrOfColumns}}({{nrOfColumnsCount}}),
-             .{{nrColAddrBits}}({{nrColAddrBitsCount}}),
-             .{{scanningCounterBits}}({{nrOfScanningBitsCount}}),
-             .{{scanningCounter}}({{scanningValue}}),
-             .{{maxNrLeds}}({{maxNrLedsCount}}),
-             .{{activeLow}}({{activeLowValue}}) )
-             """);
-    }
-    return contents.getWithIndent(6);
+    final var generics = new HashMap<String, String>();
+    generics.put(NR_OF_LEDS_STRING, Integer.toString(nrOfRows * nrOfColumns));
+    generics.put(MAX_NR_LEDS_STRING, Integer.toString(maxNrLeds));
+    generics.put(NR_OF_ROWS_STRING, Integer.toString(nrOfRows));
+    generics.put(NR_OF_COLUMNS_STRING, Integer.toString(nrOfColumns));
+    generics.put(ACTIVE_LOW_STRING, activeLow ? "1" : "0");
+    generics.put(NR_OF_COLUMN_ADDRESS_BITS_STRING, Integer.toString(nrColAddrBits));
+    generics.put(SCANNING_COUNTER_BITS_STRING, Integer.toString(nrOfScanningBitsCount));
+    generics.put(SCANNING_COUNTER_VALUE_STRING, Integer.toString(scanningReload - 1));
+    return LedArrayGenericHdlGeneratorFactory.getGenericPortMapAlligned(generics, true);
   }
-
-  public static List<String> getPortMap(int id) {
-    final var contents =
-        LineBuffer.getBuffer()
-            .pair("columnAddress", LedArrayGenericHdlGeneratorFactory.LedArrayColumnAddress)
-            .pair("outs", LedArrayGenericHdlGeneratorFactory.LedArrayRowOutputs)
-            .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK)
-            .pair("ins", LedArrayGenericHdlGeneratorFactory.LedArrayInputs)
-            .pair("id", id);
-
-    if (Hdl.isVhdl()) {
-      contents.add("""
-          PORT MAP ( {{columnAddress}} => {{columnAddress}}{{id}},
-                     {{outs}} => {{outs}}{{id}},
-                     {{clock}} => {{clock}},
-                     {{ins}} => s_{{ins}}{{id}} );
-          """);
-    } else {
-      contents.add("""
-          ( .{{columnAddress}}({{columnAddress}}{{id}}),
-            .{{outs}}({{outs}}{{id}}),
-            .{{clock}}({{clock}}),
-            .{{ins}}({{s_{{ins}}{{id}}) );
-          """);
-    }
-    return contents.getWithIndent(6);
+  
+  public static LineBuffer getPortMap(int id) {
+    final var ports = new HashMap<String, String>();
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayColumnAddress, String.format("%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayColumnAddress, id));
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayRowOutputs, String.format("%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayRowOutputs, id));
+    ports.put(TickComponentHdlGeneratorFactory.FPGA_CLOCK, TickComponentHdlGeneratorFactory.FPGA_CLOCK);
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayInputs, String.format("s_%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayInputs, id));
+    return LedArrayGenericHdlGeneratorFactory.getGenericPortMapAlligned(ports, false);
   }
 
   public List<String> getColumnCounterCode() {

@@ -15,7 +15,8 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.List;
+
+import java.util.HashMap;
 
 public class RgbArrayColumnScanningHdlGeneratorFactory extends LedArrayColumnScanningHdlGeneratorFactory {
 
@@ -39,43 +40,17 @@ public class RgbArrayColumnScanningHdlGeneratorFactory extends LedArrayColumnSca
         .add(Port.OUTPUT, LedArrayGenericHdlGeneratorFactory.LedArrayRowBlueOutputs, NR_OF_ROWS_ID, 7);
   }
 
-  public static List<String> getPortMap(int id) {
-    final var contents =
-        LineBuffer.getBuffer()
-            .pair("addr", LedArrayGenericHdlGeneratorFactory.LedArrayColumnAddress)
-            .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK)
-            .pair("insR", LedArrayGenericHdlGeneratorFactory.LedArrayRedInputs)
-            .pair("insG", LedArrayGenericHdlGeneratorFactory.LedArrayGreenInputs)
-            .pair("insB", LedArrayGenericHdlGeneratorFactory.LedArrayBlueInputs)
-            .pair("outsR", LedArrayGenericHdlGeneratorFactory.LedArrayRowRedOutputs)
-            .pair("outsG", LedArrayGenericHdlGeneratorFactory.LedArrayRowGreenOutputs)
-            .pair("outsB", LedArrayGenericHdlGeneratorFactory.LedArrayRowBlueOutputs)
-            .pair("id", id);
-
-    if (Hdl.isVhdl()) {
-      contents.add("""
-          PORT MAP ( {{addr }} => {{addr}}{{id}},
-                     {{clock}} => {{clock}},
-                     {{outsR}} => {{outsR}}{{id}},
-                     {{outsG}} => {{outsG}}{{id}},
-                     {{outsB}} => {{outsB}}{{id}},
-                     {{insR }} => s_{{insR}}{{id}},
-                     {{insG }} => s_{{insG}}{{id}},
-                     {{insB }} => s_{{insB}}{{id}} );
-          """);
-    } else {
-      contents.add("""
-          ( .{{addr }}({{addr}}{{id}}),
-            .{{clock}}({{clock}}),
-            .{{outsR}}({{outsR}}{{id}}),
-            .{{outsG}}({{outsG}}{{id}}),
-            .{{outsB}}({{outsB}}{{id}}),
-            .{{insR }}(s_{{insR}}{{id}}),
-            .{{insG }}(s_{{insG}}{{id}}),
-            .{{insB }}(s_{{insB}}{{id}}) );
-          """);
-    }
-    return contents.getWithIndent(6);
+  public static LineBuffer getPortMap(int id) {
+    final var ports = new HashMap<String, String>();
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayColumnAddress, String.format("%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayColumnAddress, id));
+    ports.put(TickComponentHdlGeneratorFactory.FPGA_CLOCK, TickComponentHdlGeneratorFactory.FPGA_CLOCK);
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayRowRedOutputs, String.format("%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayRowRedOutputs, id));
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayRowGreenOutputs, String.format("%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayRowGreenOutputs, id));
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayRowBlueOutputs, String.format("%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayRowBlueOutputs, id));
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayRedInputs, String.format("s_%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayRedInputs, id));
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayGreenInputs, String.format("s_%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayGreenInputs, id));
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayBlueInputs, String.format("s_%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayBlueInputs, id));
+    return LedArrayGenericHdlGeneratorFactory.getGenericPortMapAlligned(ports, false);
   }
 
   @Override
