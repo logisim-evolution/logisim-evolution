@@ -15,7 +15,8 @@ import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.List;
+
+import java.util.HashMap;
 
 public class LedArrayLedDefaultHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
@@ -35,63 +36,32 @@ public class LedArrayLedDefaultHdlGeneratorFactory extends AbstractHdlGeneratorF
         .add(Port.OUTPUT, LedArrayGenericHdlGeneratorFactory.LedArrayOutputs, NR_OF_LEDS_ID, 1);
   }
 
-  public static List<String> getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
-    final var contents =
-        LineBuffer.getBuffer()
-            .pair("nrOfLeds", NR_OF_LEDS_STRING)
-            .pair("ledsCount", nrOfRows * nrOfColumns)
-            .pair("rows", nrOfRows)
-            .pair("cols", nrOfColumns)
-            .pair("activeLow", ACTIVE_LOW_STRING)
-            .pair("activeLowVal", activeLow ? "1" : "0");
-
-    if (Hdl.isVhdl()) {
-      contents.add("""
-          GENERIC MAP ( {{nrOfLeds}} => {{ledsCount}},
-                        {{activeLow}} => {{activeLowVal}} )
-          """);
-    } else {
-      contents.add("""
-          #( .{{nrOfLeds}}({{ledsCount}}),
-             .{{activeLow}}({{activeLowVal}}) )
-          """);
-    }
-    return contents.getWithIndent(6);
+  public static LineBuffer getGenericMap(int nrOfRows, int nrOfColumns, long fpgaClockFrequency, boolean activeLow) {
+    final var generics = new HashMap<String, String>();
+    generics.put(NR_OF_LEDS_STRING, Integer.toString(nrOfRows * nrOfColumns));
+    generics.put(ACTIVE_LOW_STRING, activeLow ? "1" : "0");
+    return LedArrayGenericHdlGeneratorFactory.getGenericPortMapAlligned(generics, true);
   }
 
-  public static List<String> getPortMap(int id) {
-    final var map =
-        LineBuffer.getBuffer()
-            .pair("id", id)
-            .pair("ins", LedArrayGenericHdlGeneratorFactory.LedArrayInputs)
-            .pair("outs", LedArrayGenericHdlGeneratorFactory.LedArrayOutputs);
-    if (Hdl.isVhdl()) {
-      map.add("""
-          PORT MAP ( {{outs}} => {{outs}}{{id}},
-                     {{ins }} => s_{{ins}}{{id}} );
-          """);
-    } else {
-      map.add("""
-          ( .{{outs}}({{outs}}{{id}}),
-            .{{ins}}(s_{{ins}}{{id}}) );
-          """);
-    }
-    return map.getWithIndent(6);
+  public static LineBuffer getPortMap(int id) {
+    final var ports = new HashMap<String, String>();
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayOutputs, String.format("%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayOutputs, id));
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayInputs, String.format("s_%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayInputs, id));
+    return LedArrayGenericHdlGeneratorFactory.getGenericPortMapAlligned(ports, false);
   }
 
   @Override
   public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents =
-        LineBuffer.getBuffer()
-            .pair("ins", LedArrayGenericHdlGeneratorFactory.LedArrayInputs)
-            .pair("outs", LedArrayGenericHdlGeneratorFactory.LedArrayOutputs);
+    final var contents = LineBuffer.getHdlBuffer()
+        .pair("ins", LedArrayGenericHdlGeneratorFactory.LedArrayInputs)
+        .pair("outs", LedArrayGenericHdlGeneratorFactory.LedArrayOutputs);
 
     if (Hdl.isVhdl()) {
-      contents.add("""
-          genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE
-             {{outs}}(n) <= NOT({{ins}}(n)) WHEN activeLow = 1 ELSE {{ins}}(n);
-          END GENERATE;
-          """);
+      contents.addVhdlKeywords().add("""
+          genLeds : {{for}} n {{in}} (nrOfLeds-1) {{downto}} 0 {{generate}}
+             {{outs}}(n) <= {{not}}({{ins}}(n)) {{when}} activeLow = 1 {{else}} {{ins}}(n);
+          {{end}} {{generate}};
+          """).empty();
     } else {
       contents.add("""
           genvar i;
@@ -101,7 +71,7 @@ public class LedArrayLedDefaultHdlGeneratorFactory extends AbstractHdlGeneratorF
                 assign {{outs}}[i] = (activeLow == 1) ? ~{{ins}}[i] : {{ins}}[i];
              end
           endgenerate
-          """);
+          """).empty();
     }
     return contents;
   }

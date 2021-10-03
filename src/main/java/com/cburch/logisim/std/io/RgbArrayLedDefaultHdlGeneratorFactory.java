@@ -15,7 +15,8 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.List;
+
+import java.util.HashMap;
 
 public class RgbArrayLedDefaultHdlGeneratorFactory extends LedArrayLedDefaultHdlGeneratorFactory {
 
@@ -33,57 +34,36 @@ public class RgbArrayLedDefaultHdlGeneratorFactory extends LedArrayLedDefaultHdl
         .add(Port.OUTPUT, LedArrayGenericHdlGeneratorFactory.LedArrayBlueOutputs, NR_OF_LEDS_ID, 5);
   }
 
-  private static final LineBuffer.Pairs sharedPairs =
-      new LineBuffer.Pairs() {
-        {
-          pair("outsR", LedArrayGenericHdlGeneratorFactory.LedArrayRedOutputs);
-          pair("outsG", LedArrayGenericHdlGeneratorFactory.LedArrayGreenOutputs);
-          pair("outsB", LedArrayGenericHdlGeneratorFactory.LedArrayBlueOutputs);
-          pair("insR", LedArrayGenericHdlGeneratorFactory.LedArrayRedInputs);
-          pair("insG", LedArrayGenericHdlGeneratorFactory.LedArrayGreenInputs);
-          pair("insB", LedArrayGenericHdlGeneratorFactory.LedArrayBlueInputs);
-          pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK);
-        }
-      };
-
-  public static List<String> getPortMap(int id) {
-    final var contents = new LineBuffer(sharedPairs);
-    contents.add("id", id);
-
-    if (Hdl.isVhdl()) {
-      contents.add("""
-          PORT MAP ( {{outsR}} => {{outsR}}{{id}},
-                     {{outsG}} => {{outsG}}{{id}},
-                     {{outsB}} => {{outsB}}{{id}},
-                     {{insR }} => s_{{insR}}{{id}},
-                     {{insG }} => s_{{insG}}{{id}},
-                     {{insB }} => s_{{insB}}{{id}} );
-          """);
-    } else {
-      contents.add("""
-          ( .{{outsR}}({{outsR}}{{id}}),
-            .{{outsG}}({{outsG}}{{id}}),
-            .{{outsB}}({{outsB}}{{id}}),
-            .{{insR}}(s_{{insR}}{{id}}),
-            .{{insG}}(s_{{insG}}{{id}}),
-            .{{insB}}(s_{{insB}}{{id}}) );
-          """);
-    }
-    return contents.getWithIndent(6);
+  public static LineBuffer getPortMap(int id) {
+    final var ports = new HashMap<String, String>();
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayRedOutputs, String.format("%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayRedOutputs, id));
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayGreenOutputs, String.format("%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayGreenOutputs, id));
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayBlueOutputs, String.format("%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayBlueOutputs, id));
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayRedInputs, String.format("s_%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayRedInputs, id));
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayGreenInputs, String.format("s_%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayGreenInputs, id));
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayBlueInputs, String.format("s_%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayBlueInputs, id));
+    return LedArrayGenericHdlGeneratorFactory.getGenericPortMapAlligned(ports, false);
   }
 
   @Override
   public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = new LineBuffer(sharedPairs);
+    final var contents = LineBuffer.getHdlBuffer()
+        .pair("outsR", LedArrayGenericHdlGeneratorFactory.LedArrayRedOutputs)
+        .pair("outsG", LedArrayGenericHdlGeneratorFactory.LedArrayGreenOutputs)
+        .pair("outsB", LedArrayGenericHdlGeneratorFactory.LedArrayBlueOutputs)
+        .pair("insR", LedArrayGenericHdlGeneratorFactory.LedArrayRedInputs)
+        .pair("insG", LedArrayGenericHdlGeneratorFactory.LedArrayGreenInputs)
+        .pair("insB", LedArrayGenericHdlGeneratorFactory.LedArrayBlueInputs)
+        .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK);
 
     if (Hdl.isVhdl()) {
-      contents.add("""
-          genLeds : FOR n in (nrOfLeds-1) DOWNTO 0 GENERATE
-             {{outsR}}(n) <= NOT({{insR}}(n)) WHEN activeLow = 1 ELSE {{insR}}(n);
-             {{outsG}}(n) <= NOT({{insG}}(n)) WHEN activeLow = 1 ELSE {{insG}}(n);
-             {{outsB}}(n) <= NOT({{insB}}(n)) WHEN activeLow = 1 ELSE {{insB}}(n);
-          END GENERATE;
-          """);
+      contents.addVhdlKeywords().add("""
+          genLeds : {{for}} n {{in}} (nrOfLeds-1) {{downto}} 0 {{generate}}
+             {{outsR}}(n) <= {{not}}({{insR}}(n)) {{when}} activeLow = 1 {{else}} {{insR}}(n);
+             {{outsG}}(n) <= {{not}}({{insG}}(n)) {{when}} activeLow = 1 {{else}} {{insG}}(n);
+             {{outsB}}(n) <= {{not}}({{insB}}(n)) {{when}} activeLow = 1 {{else}} {{insB}}(n);
+          {{end}} {{generate}};
+          """).empty();
     } else {
       contents.add("""
           genvar i;
@@ -95,7 +75,7 @@ public class RgbArrayLedDefaultHdlGeneratorFactory extends LedArrayLedDefaultHdl
                 assign {{outsB}}[i] = (activeLow == 1) ? ~{{insB}}[n] : {{insB}}[n];
              end
           endgenerate
-          """);
+          """).empty();
     }
     return contents;
   }

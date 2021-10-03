@@ -92,42 +92,42 @@ public class LedArrayColumnScanningHdlGeneratorFactory extends AbstractHdlGenera
     return LedArrayGenericHdlGeneratorFactory.getGenericPortMapAlligned(ports, false);
   }
 
-  public List<String> getColumnCounterCode() {
+  public static List<String> getColumnCounterCode() {
     final var contents =
-        LineBuffer.getBuffer()
+        LineBuffer.getHdlBuffer()
             .pair("columnAddress", LedArrayGenericHdlGeneratorFactory.LedArrayColumnAddress)
             .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK)
             .pair("counterBits", SCANNING_COUNTER_BITS_STRING)
             .pair("counterValue", SCANNING_COUNTER_VALUE_STRING);
 
     if (Hdl.isVhdl()) {
-      contents.add(
+      contents.addVhdlKeywords().add(
           """
 
           {{columnAddress}} <= s_columnCounterReg;
 
-          s_tickNext <= '1' WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{counterBits}})) ELSE '0';
+          s_tickNext <= '1' {{when}} s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{counterBits}})) {{else}} '0';
 
-          s_scanningCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation
+          s_scanningCounterNext <= ({{others}} => '0') {{when}} s_tickReg /= '0' {{and}} s_tickReg /= '1' {{else}} -- for simulation
                                    std_logic_vector(to_unsigned({{counterValue}}-1, {{counterBits}}))
-                                      WHEN s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{counterBits}})) ELSE
+                                      {{when}} s_scanningCounterReg = std_logic_vector(to_unsigned(0, {{counterBits}})) {{else}}
                                    std_logic_vector(unsigned(s_scanningCounterReg)-1);
 
-          s_columnCounterNext <= (OTHERS => '0') WHEN s_tickReg /= '0' AND s_tickReg /= '1' ELSE -- for simulation
-                                 s_columnCounterReg WHEN s_tickReg = '0' ELSE
+          s_columnCounterNext <= ({{others}} => '0') {{when}} s_tickReg /= '0' {{and}} s_tickReg /= '1' {{else}} -- for simulation
+                                 s_columnCounterReg {{when}} s_tickReg = '0' ELSE
                                  std_logic_vector(to_unsigned(nrOfColumns-1,nrOfcolumnAddressBits))
-                                    WHEN s_columnCounterReg = std_logic_vector(to_unsigned(0,nrOfColumnAddressBits)) ELSE
+                                    {{when}} s_columnCounterReg = std_logic_vector(to_unsigned(0,nrOfColumnAddressBits)) {{else}}
                                  std_logic_vector(unsigned(s_columnCounterReg)-1);
 
-          makeFlops : PROCESS ({{clock}}) IS
-          BEGIN
-             IF (rising_edge({{clock}})) THEN
+          makeFlops : {{process}} ({{clock}}) {{is}}
+          {{begin}}
+             {{if}} (rising_edge({{clock}})) {{then}}
                 s_columnCounterReg   <= s_columnCounterNext;
                 s_scanningCounterReg <= s_scanningCounterNext;
                 s_tickReg            <= s_tickNext;
-             END IF;
-          END PROCESS makeFlops;
-          """);
+             {{end}} {{if}};
+          {{end}} {{process}} makeFlops;
+          """).empty();
     } else {
       contents
           .add("""
@@ -156,36 +156,34 @@ public class LedArrayColumnScanningHdlGeneratorFactory extends AbstractHdlGenera
               end
               """);
     }
-    return contents.getWithIndent();
+    return contents.get();
   }
 
   @Override
   public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents =
-        LineBuffer.getBuffer()
-            .pair("ins", LedArrayGenericHdlGeneratorFactory.LedArrayInputs)
-            .pair("outs", LedArrayGenericHdlGeneratorFactory.LedArrayRowOutputs)
-            .pair("nrOfLeds", NR_OF_LEDS_STRING)
-            .pair("nrOfRows", NR_OF_ROWS_STRING)
-            .pair("activeLow", ACTIVE_LOW_STRING)
-            .add(getColumnCounterCode());
-
+    final var contents = LineBuffer.getHdlBuffer()
+        .pair("ins", LedArrayGenericHdlGeneratorFactory.LedArrayInputs)
+        .pair("outs", LedArrayGenericHdlGeneratorFactory.LedArrayRowOutputs)
+        .pair("nrOfLeds", NR_OF_LEDS_STRING)
+        .pair("nrOfRows", NR_OF_ROWS_STRING)
+        .pair("activeLow", ACTIVE_LOW_STRING)
+         .add(getColumnCounterCode());
     if (Hdl.isVhdl()) {
-      contents.add("""
-          makeVirtualInputs : PROCESS ( internalLeds ) IS
-          BEGIN
-             s_maxLedInputs <= (OTHERS => '0');
-             IF ({{activeLow}} = 1) THEN
-                s_maxLedInputs( {{nrOfLeds}}-1 DOWNTO 0) <= NOT {{ins}};
-             ELSE
-                s_maxLedInputs( {{nrOfLeds}}-1 DOWNTO 0) <= {{ins}};
-             END IF;
-          END PROCESS makeVirtualInputs;
+      contents.addVhdlKeywords().add("""
+          makeVirtualInputs : {{process}} ( internalLeds ) {{is}}
+          {{begin}}
+             s_maxLedInputs <= ({{others}} => '0');
+             {{if}} ({{activeLow}} = 1) {{then}}
+                s_maxLedInputs( {{nrOfLeds}}-1 {{downto}} 0) <= {{not}} {{ins}};
+             {{else}}
+                s_maxLedInputs( {{nrOfLeds}}-1 {{downto}} 0) <= {{ins}};
+             {{end}} {{if}};
+          {{end}} {{process}} makeVirtualInputs;
 
-          GenOutputs : FOR n IN {{nrOfRows}}-1 DOWNTO 0 GENERATE
+          genOutputs : {{for}} n {{in}} {{nrOfRows}}-1 {{downto}} 0 {{generate}}
              {{outs}}(n) <= s_maxLedInputs(to_integer(unsigned(s_columnCounterReg)) + n*nrOfColumns);
-          END GENERATE GenOutputs;
-          """);
+          {{end}} {{generate}} genOutputs;
+          """).empty();
     } else {
       contents.add("""
           genvar i;
@@ -197,7 +195,7 @@ public class LedArrayColumnScanningHdlGeneratorFactory extends AbstractHdlGenera
                     :  {{ins}}[i * nrOfColumns + s_columnCounterReg];
              end
           endgenerate
-          """);
+          """).empty();
     }
     return contents;
   }
