@@ -71,7 +71,7 @@ public class TickComponentHdlGeneratorFactory extends AbstractHdlGeneratorFactor
         LineBuffer.getHdlBuffer()
             .pair("nrOfCounterBits", NR_OF_COUNTER_BITS_STRING)
             .add("")
-            .addRemarkBlock("Here the Output is defined")
+            .addRemarkBlock("Here the output is defined")
             .add(
                 TheNetlist.requiresGlobalClockConnection()
                     ? "{{assign}} FPGATick {{=}} '1';"

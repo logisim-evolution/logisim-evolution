@@ -188,30 +188,29 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       wires.putAll(getToplevelWires(comp));
     }
     if (!wires.isEmpty()) {
-      contents.addRemarkBlock("All signal adaptations are performed here");
+      contents.empty().addRemarkBlock("All signal adaptations are performed here");
       Hdl.addAllWiresSorted(contents, wires);
-      contents.empty();
     }
     /* now we process the clock tree components */
     if (nrOfClockTrees > 0) {
-      contents.addRemarkBlock("The clock tree components are defined here");
+      contents.empty().addRemarkBlock("The clock tree components are defined here");
       var index = 0L;
       final var ticker = new TickComponentHdlGeneratorFactory(fpgaClockFrequency, tickFrequency);
       contents.add(ticker.getComponentMap(null, index++, null, TickComponentHdlGeneratorFactory.HDL_IDENTIFIER)).empty();
       for (final var clockGen : theNetlist.getAllClockSources()) {
         final var thisClock = new netlistComponent(clockGen);
         contents.add(clockGen.getFactory().getHDLGenerator(thisClock.getComponent().getAttributeSet())
-            .getComponentMap(theNetlist, index++, thisClock, "")).empty();
+            .getComponentMap(theNetlist, index++, thisClock, ""));
       }
     }
 
     /* Here the map is performed */
-    contents.addRemarkBlock("The toplevel component is connected here");
+    contents.empty().addRemarkBlock("The toplevel component is connected here");
     final var dut = new CircuitHdlGeneratorFactory(myCircuit);
-    contents.add(dut.getComponentMap(theNetlist, 0L, myIOComponents, CorrectLabel.getCorrectLabel(myCircuit.getName()))).empty();
+    contents.add(dut.getComponentMap(theNetlist, 0L, myIOComponents, CorrectLabel.getCorrectLabel(myCircuit.getName())));
     // Here the led arrays are connected
     if (hasLedArray) {
-      contents.addRemarkBlock("The Led arrays are connected here");
+      contents.empty().addRemarkBlock("The Led arrays are connected here");
       for (final var array : myLedArrays) {
         contents.add(
             LedArrayGenericHdlGeneratorFactory.getComponentMap(

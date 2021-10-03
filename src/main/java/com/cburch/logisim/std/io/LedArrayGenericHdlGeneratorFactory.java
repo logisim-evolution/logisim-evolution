@@ -145,33 +145,33 @@ public class LedArrayGenericHdlGeneratorFactory {
         break;
       }
       case LedArrayDriving.LED_ROW_SCANNING: {
-        externals.put(String.format("%s%d",LedArrayRowAddress, identifier), nrRowAddressBits);
-        externals.put(String.format("%s%d",LedArrayColumnOutputs, identifier), nrOfColumns);
+        externals.put(String.format("%s%d", LedArrayRowAddress, identifier), nrRowAddressBits);
+        externals.put(String.format("%s%d", LedArrayColumnOutputs, identifier), nrOfColumns);
         break;
       }
       case LedArrayDriving.LED_COLUMN_SCANNING: {
-        externals.put(String.format("%s%d",LedArrayColumnAddress, identifier), nrColumnAddressBits);
-        externals.put(String.format("%s%d",LedArrayRowOutputs, identifier), nrOfRows);
+        externals.put(String.format("%s%d", LedArrayColumnAddress, identifier), nrColumnAddressBits);
+        externals.put(String.format("%s%d", LedArrayRowOutputs, identifier), nrOfRows);
         break;
       }
       case LedArrayDriving.RGB_DEFAULT: {
-        externals.put(String.format("%s%d",LedArrayRedOutputs, identifier), nrOfRows * nrOfColumns);
-        externals.put(String.format("%s%d",LedArrayGreenOutputs, identifier), nrOfRows * nrOfColumns);
-        externals.put(String.format("%s%d",LedArrayBlueOutputs, identifier), nrOfRows * nrOfColumns);
+        externals.put(String.format("%s%d", LedArrayRedOutputs, identifier), nrOfRows * nrOfColumns);
+        externals.put(String.format("%s%d", LedArrayGreenOutputs, identifier), nrOfRows * nrOfColumns);
+        externals.put(String.format("%s%d", LedArrayBlueOutputs, identifier), nrOfRows * nrOfColumns);
         break;
       }
       case LedArrayDriving.RGB_ROW_SCANNING: {
-        externals.put(String.format("%s%d",LedArrayRowAddress, identifier), nrRowAddressBits);
-        externals.put(String.format("%s%d",LedArrayColumnRedOutputs, identifier), nrOfColumns);
-        externals.put(String.format("%s%d",LedArrayColumnGreenOutputs, identifier), nrOfColumns);
-        externals.put(String.format("%s%d",LedArrayColumnBlueOutputs, identifier), nrOfColumns);
+        externals.put(String.format("%s%d", LedArrayRowAddress, identifier), nrRowAddressBits);
+        externals.put(String.format("%s%d", LedArrayColumnRedOutputs, identifier), nrOfColumns);
+        externals.put(String.format("%s%d", LedArrayColumnGreenOutputs, identifier), nrOfColumns);
+        externals.put(String.format("%s%d", LedArrayColumnBlueOutputs, identifier), nrOfColumns);
         break;
       }
       case LedArrayDriving.RGB_COLUMN_SCANNING: {
-        externals.put(String.format("%s%d",LedArrayColumnAddress, identifier), nrColumnAddressBits);
-        externals.put(String.format("%s%d",LedArrayRowRedOutputs, identifier), nrOfRows);
-        externals.put(String.format("%s%d",LedArrayRowGreenOutputs, identifier), nrOfRows);
-        externals.put(String.format("%s%d",LedArrayRowBlueOutputs, identifier), nrOfRows);
+        externals.put(String.format("%s%d", LedArrayColumnAddress, identifier), nrColumnAddressBits);
+        externals.put(String.format("%s%d", LedArrayRowRedOutputs, identifier), nrOfRows);
+        externals.put(String.format("%s%d", LedArrayRowGreenOutputs, identifier), nrOfRows);
+        externals.put(String.format("%s%d", LedArrayRowBlueOutputs, identifier), nrOfRows);
         break;
       }
     }
