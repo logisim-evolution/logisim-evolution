@@ -20,11 +20,11 @@ import com.cburch.logisim.util.LineBuffer;
 
 public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
-  private static final String ByteArrayStr = "BYTE_ARRAY";
+  private static final String ByteArrayStr = "byteArray";
   private static final int ByteArrayId = -1;
-  private static final String RestArrayStr = "REST_ARRAY";
+  private static final String RestArrayStr = "restArray";
   private static final int RestArrayId = -2;
-  private static final String MemArrayStr = "MEMORY_ARRAY";
+  private static final String MemArrayStr = "memoryArray";
   private static final int MemArrayId = -3;
 
   public RamHdlGeneratorFactory() {
@@ -39,55 +39,55 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
     final var byteEnableOffset = RamAppearance.getBEIndex(0, attrs);
     final var nrBePorts = RamAppearance.getNrBEPorts(attrs);
-    final var nrOfAddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
+    final var nrOfaddressLines = attrs.getValue(Mem.ADDR_ATTR).getWidth();
     final var trigger = attrs.getValue(StdAttr.TRIGGER);
     final var async = StdAttr.TRIG_HIGH.equals(trigger) || StdAttr.TRIG_LOW.equals(trigger);
-    final var ramEntries = (1 << nrOfAddressLines);
+    final var ramEntries = (1 << nrOfaddressLines);
     final var truncated = (nrOfBits % 8) != 0;
     myWires
-        .addWire("s_ram_data_out", nrOfBits)
-        .addRegister("s_TickDelayLine", 3)
-        .addRegister("s_DataInReg", nrOfBits)
-        .addRegister("s_Address_reg", nrOfAddressLines)
-        .addRegister("s_WEReg", 1)
-        .addRegister("s_OEReg", 1)
-        .addRegister("s_DataOutReg", nrOfBits);
+        .addWire("s_ramdataOut", nrOfBits)
+        .addRegister("s_tickDelayLine", 3)
+        .addRegister("s_dataInReg", nrOfBits)
+        .addRegister("s_addressReg", nrOfaddressLines)
+        .addRegister("s_weReg", 1)
+        .addRegister("s_oeReg", 1)
+        .addRegister("s_dataOutReg", nrOfBits);
     if (byteEnables) {
       myWires
-          .addRegister("s_ByteEnableReg", nrBePorts);
+          .addRegister("s_byteEnableReg", nrBePorts);
       for (var idx = 0; idx < nrBePorts; idx++) {
         myWires
-            .addWire(String.format("s_byte_enable_%d", idx), 1)
-            .addWire(String.format("s_we_%d", idx), 1);
+            .addWire(String.format("s_byteEnable%d", idx), 1)
+            .addWire(String.format("s_we%d", idx), 1);
         myPorts
-            .add(Port.INPUT, String.format("ByteEnable%d", idx), 1, byteEnableOffset + nrBePorts - idx - 1);
+            .add(Port.INPUT, String.format("byteEnable%d", idx), 1, byteEnableOffset + nrBePorts - idx - 1);
       }
       var nrOfMems = nrBePorts;
       if (truncated) {
         myTypedWires
             .addArray(RestArrayId, RestArrayStr, nrOfBits % 8, ramEntries)
-            .addWire("s_trunc_mem_contents", RestArrayId);
+            .addWire("s_truncMemContents", RestArrayId);
         nrOfMems--;
       }
       myTypedWires
           .addArray(ByteArrayId, ByteArrayStr, 8, ramEntries);
       for (var mem = 0; mem < nrOfMems; mem++)
         myTypedWires
-            .addWire(String.format("s_byte_mem_%d_contents", mem), ByteArrayId);
+            .addWire(String.format("s_byteMem%dContents", mem), ByteArrayId);
     } else {
       myTypedWires
           .addArray(MemArrayId, MemArrayStr, nrOfBits, ramEntries)
-          .addWire("s_mem_contents", MemArrayId);
+          .addWire("s_memContents", MemArrayId);
       myWires
           .addWire("s_we", 1)
           .addWire("s_oe", 1);
     }
     myPorts
-        .add(Port.INPUT, "Address", nrOfAddressLines, RamAppearance.getAddrIndex(0, attrs))
-        .add(Port.INPUT, "DataIn", nrOfBits, RamAppearance.getDataInIndex(0, attrs))
-        .add(Port.INPUT, "WE", 1, RamAppearance.getWEIndex(0, attrs))
-        .add(Port.INPUT, "OE", 1, RamAppearance.getOEIndex(0, attrs))
-        .add(Port.OUTPUT, "DataOut", nrOfBits, RamAppearance.getDataOutIndex(0, attrs));
+        .add(Port.INPUT, "address", nrOfaddressLines, RamAppearance.getAddrIndex(0, attrs))
+        .add(Port.INPUT, "dataIn", nrOfBits, RamAppearance.getDataInIndex(0, attrs))
+        .add(Port.INPUT, "we", 1, RamAppearance.getWEIndex(0, attrs))
+        .add(Port.INPUT, "oe", 1, RamAppearance.getOEIndex(0, attrs))
+        .add(Port.OUTPUT, "dataOut", nrOfBits, RamAppearance.getDataOutIndex(0, attrs));
     if (!async) myPorts.add(Port.CLOCK, HdlPorts.getClockName(1), 1, ByteArrayId);
   }
 
@@ -99,63 +99,62 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var be = attrs.getValue(RamAttributes.ATTR_ByteEnables);
     final var byteEnables = be != null && be.equals(RamAttributes.BUS_WITH_BYTEENABLES);
     if (Hdl.isVhdl()) {
-      contents.addRemarkBlock("Here the control signals are defined");
+      contents.empty().addVhdlKeywords().addRemarkBlock("The control signals are defined here");
       if (byteEnables) {
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
           contents
-              .add("s_byte_enable_{{1}} <= s_ByteEnableReg({{1}}) AND s_TickDelayLine(2) AND s_OEReg;", i)
-              .add("s_we_{{1}}          <= s_ByteEnableReg({{1}}) AND s_TickDelayLine(0) AND s_WEReg;", i);
+              .add("s_byteEnable{{1}} <= s_byteEnableReg({{1}}) {{and}} s_tickDelayLine(2) {{and}} s_oeReg;", i)
+              .add("s_we{{1}}         <= s_byteEnableReg({{1}}) {{and}} s_tickDelayLine(0) {{and}} s_weReg;", i);
         }
       } else {
         contents.add("""
-            s_oe <= s_TickDelayLine(2) AND s_OEReg;
-            s_we <= s_TickDelayLine(0) AND s_WEReg;
+            s_oe <= s_tickDelayLine(2) {{and}} s_oeReg;
+            s_we <= s_tickDelayLine(0) {{and}} s_weReg;
             """);
       }
       contents
           .empty()
-          .addRemarkBlock("Here the input registers are defined")
+          .addRemarkBlock("The input registers are defined here")
           .add("""
-              InputRegs : PROCESS ({{clock}}, {{tick}}, Address, DataIn, WE, OE)
-              BEGIN
-                 IF (rising_edge({{clock}})) THEN
-                    IF ({{tick}} = '1') THEN
-                        s_DataInReg        <= DataIn;
-                        s_Address_reg      <= Address;
-                        s_WEReg            <= WE;
-                        s_OEReg            <= OE;
+              inputRegs : {{process}}({{clock}}, {{tick}}, address, dataIn, we, oe) {{is}}
+              {{begin}}
+                 {{if}} (rising_edge({{clock}})) {{then}}
+                    {{if}} ({{tick}} = '1') {{then}}
+                        s_dataInReg  <= dataIn;
+                        s_addressReg <= address;
+                        s_weReg      <= we;
+                        s_oeReg      <= oe;
               """);
       if (byteEnables) {
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++)
-          contents.add("         s_ByteEnableReg({{1}}) <= ByteEnable{{1}}};", i);
+          contents.add("         s_byteEnableReg({{1}}) <= byteEnable{{1}}};", i);
       }
       contents
           .add("""
-                    END IF;
-                 END IF;
-              END PROCESS InputRegs;
+                    {{end}} {{if}};
+                 {{end}} {{if}};
+              {{end}} {{process}} inputRegs;
               """)
           .empty()
           .add("""
-              TickPipeReg : PROCESS({{clock}})
-              BEGIN
-                 IF (rising_edge({{clock}})) THEN
-                     s_TickDelayLine(0)          <= {{tick}};
-                     s_TickDelayLine(2 DOWNTO 1) <= s_TickDelayLine(1 DOWNTO 0);
-                 END IF;
-              END PROCESS TickPipeReg;
+              tickPipeReg : {{process}}({{clock}}) {{is}}
+              {{begin}}
+                 {{if}} (rising_edge({{clock}})) {{then}}
+                     s_tickDelayLine(0)          <= {{tick}};
+                     s_tickDelayLine(2 {{downto}} 1) <= s_tickDelayLine(1 {{downto}} 0);
+                 {{end}} {{if}};
+              {{end}} {{process}} tickPipeReg;
               """)
           .empty()
-          .addRemarkBlock("Here the actual memorie(s) is(are) defined");
-
+          .addRemarkBlock("The actual memorie(s) is(are) defined here");
       if (byteEnables) {
         final var truncated = (attrs.getValue(Mem.DATA_ATTR).getWidth() % 8) != 0;
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
           contents
-              .add("Mem{{1}} : PROCESS({{clock}}, s_we_{{1}}, s_DataInReg, s_Address_reg)", i)
-              .add("BEGIN")
-              .add("   IF (rising_edge({{clock}})) THEN")
-              .add("      IF (s_we_{{1}} = '1') THEN", i);
+              .add("mem{{1}} : {{process}}({{clock}}, s_we{{1}}, s_dataInReg, s_addressReg) {{is}}", i)
+              .add("{{begin}}")
+              .add("   {{if}} (rising_edge({{clock}})) {{then}}")
+              .add("      {{if}} (s_we{{1}} = '1') {{then}}", i);
           final var startIndex = i * 8;
           final var endIndex =
               (i == (RamAppearance.getNrBEPorts(attrs) - 1))
@@ -163,67 +162,64 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
                   : (i + 1) * 8 - 1;
           final var memName =
               (i == (RamAppearance.getNrBEPorts(attrs) - 1) && truncated)
-                  ? "s_trunc_mem_contents"
-                  : String.format("s_byte_mem_%d_contents", i);
+                  ? "s_truncMemContents"
+                  : String.format("s_byteMem%dContents", i);
           contents
-              .add("         {{1}}(to_integer(unsigned(s_Address_reg))) <= s_DataInReg({{2}} DOWNTO {{3}});", memName, endIndex, startIndex)
-              .add("      END IF;")
-              .add("      s_ram_data_out({{1}} DOWNTO {{2}}) <= {{3}}(to_integer(unsigned(s_Address_reg)));", endIndex, startIndex, memName)
-              .add("   END IF;")
-              .add("END PROCESS Mem{{1}};", i)
+              .add("         {{1}}(to_integer(unsigned(s_addressReg))) <= s_dataInReg({{2}} {{downto}} {{3}});", memName, endIndex, startIndex)
+              .add("      {{end}} {{if}};")
+              .add("      s_ramdataOut({{1}} {{downto}} {{2}}) <= {{3}}(to_integer(unsigned(s_addressReg)));", endIndex, startIndex, memName)
+              .add("   {{end}} {{if}};")
+              .add("{{end}} {{process}} mem{{1}};", i)
               .add("");
         }
       } else {
         contents
             .add("""
-                Mem : PROCESS( {{clock}} , s_we, s_DataInReg, s_Address_reg)
-                BEGIN
-                   IF (rising_edge({{clock}})) THEN
-                      IF (s_we = '1') THEN
-                         s_mem_contents(to_integer(unsigned(s_Address_reg))) <= s_DataInReg;
-                      END IF;
-                      s_ram_data_out <= s_mem_contents(to_integer(unsigned(s_Address_reg)));
-                   END IF;
-                END PROCESS Mem;
-                """)
-            .empty();
+                mem : {{process}}({{clock}} , s_we, s_dataInReg, s_addressReg) {{is}}
+                {{begin}}
+                   {{if}} (rising_edge({{clock}})) {{then}}
+                      {{if}} (s_we = '1') {{then}}
+                         s_memContents(to_integer(unsigned(s_addressReg))) <= s_dataInReg;
+                      {{end}} {{if}};
+                      s_ramdataOut <= s_memContents(to_integer(unsigned(s_addressReg)));
+                   {{end}} {{if}};
+                {{end}} {{process}} mem;
+                """);
       }
-      contents.addRemarkBlock("Here the output register is defined");
+      contents.empty().addRemarkBlock("The output register is defined here");
       if (byteEnables) {
         for (var i = 0; i < RamAppearance.getNrBEPorts(attrs); i++) {
           contents
-              .add("Res{{1}} : PROCESS({{clock}}, s_byte_enable_{{1}}, s_ram_data_out)", i)
-              .add("BEGIN")
-              .add("   IF (rising_edge({{clock}}) THEN")
-              .add("      IF (s_byte_enable_{{1}} = '1') THEN", i);
+              .add("res{{1}} : {{process}}({{clock}}, s_byteEnable{{1}}, s_ramdataOut) {{is}}", i)
+              .add("{{begin}}")
+              .add("   {{if}} (rising_edge({{clock}}) {{then}}")
+              .add("      {{if}} (s_byteEnable{{1}} = '1') {{then}}", i);
           final var startIndex = i * 8;
           final var endIndex =
               (i == (RamAppearance.getNrBEPorts(attrs) - 1))
                   ? attrs.getValue(Mem.DATA_ATTR).getWidth() - 1
                   : (i + 1) * 8 - 1;
           contents
-              .add("         DataOut({{1}} DOWNTO {{2}}) <= s_ram_data_out({{1}} DOWNTO {{2}});", endIndex, startIndex)
-              .add("      END IF;")
-              .add("   END IF;")
-              .add("END PROCESS Res{{1}};", i)
-              .empty();
+              .add("         dataOut({{1}} {{downto}} {{2}}) <= s_ramdataOut({{1}} {{downto}} {{2}});", endIndex, startIndex)
+              .add("      {{end}} {{if}};")
+              .add("   {{end}} {{if}};")
+              .add("{{end}} {{process}} res{{1}};", i);
         }
       } else {
         contents
             .add("""
-                Res : PROCESS( {{clock}} , s_oe, s_ram_data_out)
-                BEGIN
-                   IF (rising_edge({{clock}})) THEN
-                      IF (s_oe = '1') THEN
-                        DataOut <= s_ram_data_out;
-                      END IF;
-                   END IF;
-                END PROCESS Res;
-
+                res : {{process}}({{clock}}, s_oe, s_ramdataOut) {{is}}
+                {{begin}}
+                   {{if}} (rising_edge({{clock}})) {{then}}
+                      {{if}} (s_oe = '1') {{then}}
+                        dataOut <= s_ramdataOut;
+                      {{end}} {{if}};
+                   {{end}} {{if}};
+                {{end}} {{process}} res;
                 """);
       }
     }
-    return contents;
+    return contents.empty();
   }
 
   @Override

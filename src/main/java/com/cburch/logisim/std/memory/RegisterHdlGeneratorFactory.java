@@ -24,25 +24,25 @@ import java.util.TreeMap;
 
 public class RegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
-  private static final String NR_OF_BITS_STRING = "NrOfBits";
-  private static final int NR_OF_BITS_ID = -1;
-  private static final String INVERT_CLOCK_STRING = "InvertClock";
-  private static final int INVERT_CLOCK_ID = -2;
+  private static final String NR_OF_BITS_STRING = "nrOfBits";
+  private static final int NR_OF_BITS_Id = -1;
+  private static final String INVERT_CLOCK_STRING = "invertClock";
+  private static final int INVERT_CLOCK_Id = -2;
 
   public RegisterHdlGeneratorFactory() {
     super();
     myParametersList
-        .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
-        .add(INVERT_CLOCK_STRING, INVERT_CLOCK_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, StdAttr.TRIGGER, AbstractFlipFlopHdlGeneratorFactory.TRIGGER_MAP);
+        .add(NR_OF_BITS_STRING, NR_OF_BITS_Id)
+        .add(INVERT_CLOCK_STRING, INVERT_CLOCK_Id, HdlParameters.MAP_ATTRIBUTE_OPTION, StdAttr.TRIGGER, AbstractFlipFlopHdlGeneratorFactory.TRIGGER_MAP);
     myWires
         .addWire("s_clock", 1)
-        .addRegister("s_state_reg", NR_OF_BITS_ID);
+        .addRegister("s_currentState", NR_OF_BITS_Id);
     myPorts
         .add(Port.CLOCK, HdlPorts.getClockName(1), 1, Register.CK)
-        .add(Port.INPUT, "Reset", 1, Register.CLR)
-        .add(Port.INPUT, "ClockEnable", 1, Register.EN, false)
-        .add(Port.INPUT, "D", NR_OF_BITS_ID, Register.IN)
-        .add(Port.OUTPUT, "Q", NR_OF_BITS_ID, Register.OUT);
+        .add(Port.INPUT, "reset", 1, Register.CLR)
+        .add(Port.INPUT, "clockEnable", 1, Register.EN, false)
+        .add(Port.INPUT, "d", NR_OF_BITS_Id, Register.IN)
+        .add(Port.OUTPUT, "q", NR_OF_BITS_Id, Register.OUT);
   }
 
   @Override
@@ -53,12 +53,12 @@ public class RegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       final var comp = (netlistComponent) MapInfo;
       final var nrOfBits = comp.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
       if (nrOfBits == 1) {
-        final var inMap = map.get("D");
-        final var outMap = map.get("Q");
-        map.remove("D");
-        map.remove("Q");
-        map.put("D(0)", inMap);
-        map.put("Q(0)", outMap);
+        final var inMap = map.get("d");
+        final var outMap = map.get("q");
+        map.remove("d");
+        map.remove("q");
+        map.put("d(0)", inMap);
+        map.put("q(0)", outMap);
       }
     }
     return map;
@@ -71,58 +71,57 @@ public class RegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
             .pair("clock", HdlPorts.getClockName(1))
             .pair("Tick", HdlPorts.getTickName(1));
     if (Hdl.isVhdl()) {
-      contents.add("""
-          Q       <= s_state_reg;
-          s_clock <= {{clock}} WHEN {{invertClock}} = 0 ELSE NOT({{clock}});
+      contents.empty().addVhdlKeywords().add("""
+          q       <= s_currentState;
+          s_clock <= {{clock}} {{when}} {{invertClock}} = 0 {{else}} {{not}}({{clock}});
 
-          make_memory : PROCESS( s_clock , Reset , ClockEnable , {{Tick}} , D )
-          BEGIN
-             IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');
+          makeMemory : {{process}}(s_clock, reset, clockEnable, {{Tick}}, d) {{is}}
+          {{begin}}
+             {{if}} (reset = '1') {{then}} s_currentState <= ({{others}} => '0');
           """);
       if (Netlist.isFlipFlop(attrs)) {
         contents.add("""
-               ELSIF (rising_Edge(s_clock)) THEN
-                  IF (ClockEnable = '1' AND {{Tick}} = '1') THEN
-                     s_state_reg <= D;
-                  END IF;
+               {{elsif}} (rising_Edge(s_clock)) {{then}}
+                  {{if}} (clockEnable = '1' {{and}} {{Tick}} = '1') {{then}}
+                     s_currentState <= d;
+                  {{end}} {{if}};
                """);
       } else {
         contents.add("""
-              ELSIF (s_clock = '1') THEN
-                 IF (ClockEnable = '1' AND {{Tick}} = '1') THEN
-                    s_state_reg <= D;
-                 END IF;
+              {{elsif}} (s_clock = '1') {{then}}
+                 {{if}} (clockEnable = '1' {{and}} {{Tick}} = '1') {{then}}
+                    s_currentState <= d;
+                 {{end}} {{if}};
               """);
       }
       contents.add("""
-                 END IF;
-              END PROCESS make_memory;
+                 {{end}} {{if}};
+              {{end}} {{process}} makeMemory;
               """);
     } else {
-      if (!Netlist.isFlipFlop(attrs)) {
-        contents.add("""
-            assign Q = s_state_reg;
+      contents.empty().add("""
+            assign q = s_currentState;
             assign s_clock = {{invertClock}} == 0 ? {{clock}} : ~{{clock}};
-
-            always @(*)
+            """)
+          .empty();
+      if (Netlist.isFlipFlop(attrs)) {
+        contents.add("""
+            always @(posedge s_clock or posedge reset)
             begin
-               if (Reset) s_state_reg <= 0;
-               else if (s_Clock&ClockEnable&{{Tick}}) s_state_reg <= D;
+               if (reset) s_currentState <= 0;
+               else if (clockEnable&{{Tick}}) s_currentState <= d;
             end
             """);
       } else {
         contents.add("""
-            assign Q = s_state_reg;
-            assign s_clock = {{invertClock}} == 0 ? {{clock}} : ~{{clock}};
-
-            always @(posedge s_clock or posedge Reset)
+            always @(*)
             begin
-               if (Reset) s_state_reg <= 0;
-               else if (ClockEnable&{{Tick}}) s_state_reg <= D;
+               if (reset) s_currentState <= 0;
+               else if (s_Clock&clockEnable&{{Tick}}) s_currentState <= d;
             end
             """);
       }
     }
-    return contents;
+    return contents.empty();
   }
 }

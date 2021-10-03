@@ -61,20 +61,18 @@ public class AbstractFlipFlopHdlGeneratorFactory extends AbstractHdlGeneratorFac
         .pair("Clock", HdlPorts.CLOCK)
         .pair("Tick", HdlPorts.TICK)
         .empty()
-        .addVhdlKeywords()
         .addRemarkBlock("Here the output signals are defined")
         .add("""
              {{assign}}q       {{=}}s_currentState;
              {{assign}}qBar    {{=}}{{not}}(s_currentState);
-             """)
-        .add(Hdl.isVhdl()
-            ? "s_clock {{=}}{{Clock}} {{when}} {{invertClock}} = 0 {{else}} {{not}}({{Clock}});"
-            : "assign s_clock {{=}}({{invertClock}} == 0) ? {{Clock}} : ~{{Clock}};")
-        .empty()
-        .addRemarkBlock("Here the update logic is defined")
-        .add(getUpdateLogic());
-    if (Hdl.isVerilog()) {
+             """);
+    if (Hdl.isVhdl()) {
+      contents.addVhdlKeywords()
+          .add("s_clock {{=}}{{Clock}} {{when}} {{invertClock}} = 0 {{else}} {{not}}({{Clock}});")
+          .empty();
+    } else {
       contents
+          .add("assign s_clock {{=}}({{invertClock}} == 0) ? {{Clock}} : ~{{Clock}};")
           .empty()
           .addRemarkBlock("Here the initial register value is defined; for simulation only")
           .add("""
@@ -82,10 +80,14 @@ public class AbstractFlipFlopHdlGeneratorFactory extends AbstractHdlGeneratorFac
                begin
                   s_currentState = 0;
                end
-
-               """);
+               """)
+          .empty();
     }
-    contents.empty().addRemarkBlock("Here the actual state register is defined");
+    contents
+        .addRemarkBlock("Here the update logic is defined")
+        .add(getUpdateLogic())
+        .empty()
+        .addRemarkBlock("Here the actual state register is defined");
     if (Hdl.isVhdl()) {
       contents.add("""
           makeMemory : {{process}}( s_clock , reset , preset , {{Tick}} , s_nextState ) {{is}}

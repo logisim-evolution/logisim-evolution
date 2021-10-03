@@ -151,27 +151,27 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       }
       if (!inputs.isEmpty()) {
         body.empty().addRemarkBlock("The inputs are defined here");
-        if (!getVerilogSignalSet("input", inputs, attrs, body)) return null;
+        if (!getVerilogSignalSet("input", inputs, attrs, true, body)) return null;
       }
       final var outputs = myPorts.keySet(Port.OUTPUT);
       if (!outputs.isEmpty()) {
         body.empty().addRemarkBlock("The outputs are defined here");
-        if (!getVerilogSignalSet("output", outputs, attrs, body)) return null;
+        if (!getVerilogSignalSet("output", outputs, attrs, true, body)) return null;
       }
       final var inouts = myPorts.keySet(Port.INOUT);
       if (!inouts.isEmpty()) {
         body.empty().addRemarkBlock("The inouts are defined here");
-        if (!getVerilogSignalSet("inout", inouts, attrs, body)) return null;
+        if (!getVerilogSignalSet("inout", inouts, attrs, true, body)) return null;
       }
       final var wires = myWires.wireKeySet();
       if (!wires.isEmpty()) {
         body.empty().addRemarkBlock("The wires are defined here");
-        if (!getVerilogSignalSet("wire", wires, attrs, body)) return null;
+        if (!getVerilogSignalSet("wire", wires, attrs, false, body)) return null;
       }
       final var regs = myWires.registerKeySet();
       if (!regs.isEmpty()) {
         body.empty().addRemarkBlock("The registers are defined here");
-        if (!getVerilogSignalSet("reg", regs, attrs, body)) return null;
+        if (!getVerilogSignalSet("reg", regs, attrs, false, body)) return null;
       }
       final var typedWires = myTypedWires.getTypedWires();
       if (!typedWires.isEmpty()) {
@@ -562,12 +562,12 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     return contents.get(0);
   }
   
-  private boolean getVerilogSignalSet(String preamble, List<String> signals, AttributeSet attrs, LineBuffer contents) {
+  private boolean getVerilogSignalSet(String preamble, List<String> signals, AttributeSet attrs, boolean isPort, LineBuffer contents) {
     if (signals.isEmpty()) return true;
     final var signalSet = new HashMap<String, String>();
     for (final var input : signals) {
       // this we have to check for the tick
-      final var nrOfBits = myPorts.contains(input) ? myPorts.get(input, attrs) : 1;
+      final var nrOfBits = isPort ? myPorts.contains(input) ? myPorts.get(input, attrs) : 1 : myWires.get(input);
       if (nrOfBits < 0) {
         if (myParametersList.containsKey(nrOfBits, attrs)) {
           signalSet.put(input, String.format("%s [%s-1:0]", preamble, myParametersList.get(nrOfBits, attrs)));
