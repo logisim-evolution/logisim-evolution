@@ -572,14 +572,9 @@ public class LineBuffer implements RandomAccess {
    */
   protected ArrayList<String> buildRemarkBlock(String remarkText, Integer nrOfIndentSpaces) {
     final var maxRemarkLength = MAX_LINE_LENGTH - 2 * Hdl.remarkOverhead() - nrOfIndentSpaces;
-    final var remarkWords = remarkText.split(" ");
+    final var remarkLines = remarkText.split("\n");
     final var oneLine = new StringBuilder();
     final var contents = new ArrayList<String>();
-    var maxWordLength = 0;
-    for (final var word : remarkWords) {
-      if (word.length() > maxWordLength) maxWordLength = word.length();
-    }
-    if (maxRemarkLength < maxWordLength) return contents;
     /* we start with generating the first remark line */
     while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
     for (var i = 0; i < MAX_LINE_LENGTH - nrOfIndentSpaces; i++) {
@@ -587,10 +582,38 @@ public class LineBuffer implements RandomAccess {
     }
     contents.add(oneLine.toString());
     oneLine.setLength(0);
-    /* Next we put the remark text block in 1 or multiple lines */
-    for (final var remarkWord : remarkWords) {
-      if ((oneLine.length() + remarkWord.length() + Hdl.remarkOverhead()) > (MAX_LINE_LENGTH - 1)) {
-        /* Next word does not fit, we end this line and create a new one */
+    for (int lineIndex = 0; lineIndex < remarkLines.length; lineIndex++) {
+      final var remarkWords = remarkLines[lineIndex].split(" ");
+      var maxWordLength = 0;
+      for (final var word : remarkWords) {
+        if (word.length() > maxWordLength) maxWordLength = word.length();
+      }
+      if (maxRemarkLength < maxWordLength) return contents;
+      /* Next we put the remark text block in 1 or multiple lines */
+      for (final var remarkWord : remarkWords) {
+        if ((oneLine.length() + remarkWord.length() + Hdl.remarkOverhead()) > (MAX_LINE_LENGTH - 1)) {
+          /* Next word does not fit, we end this line and create a new one */
+          while (oneLine.length() < (MAX_LINE_LENGTH - Hdl.remarkOverhead())) oneLine.append(" ");
+          oneLine
+              .append(" ")
+              .append(Hdl.getRemarkChar(false, false))
+              .append(Hdl.getRemarkChar(false, false));
+          contents.add(oneLine.toString());
+          oneLine.setLength(0);
+        }
+        while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
+        if (oneLine.length() == nrOfIndentSpaces)
+          oneLine.append(Hdl.getRemarkStart()); // we put the preamble
+        if (remarkWord.endsWith("\\")) {
+          // Forced new line
+          oneLine.append(remarkWord, 0, remarkWord.length() - 1);
+          while (oneLine.length() < (MAX_LINE_LENGTH - Hdl.remarkOverhead())) oneLine.append(" ");
+        } else {
+          oneLine.append(remarkWord).append(" ");
+        }
+      }
+      if (oneLine.length() > (nrOfIndentSpaces + Hdl.remarkOverhead())) {
+        // We have an unfinished remark line
         while (oneLine.length() < (MAX_LINE_LENGTH - Hdl.remarkOverhead())) oneLine.append(" ");
         oneLine
             .append(" ")
@@ -599,26 +622,6 @@ public class LineBuffer implements RandomAccess {
         contents.add(oneLine.toString());
         oneLine.setLength(0);
       }
-      while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
-      if (oneLine.length() == nrOfIndentSpaces)
-        oneLine.append(Hdl.getRemarkStart()); // we put the preamble
-      if (remarkWord.endsWith("\\")) {
-        // Forced new line
-        oneLine.append(remarkWord, 0, remarkWord.length() - 1);
-        while (oneLine.length() < (MAX_LINE_LENGTH - Hdl.remarkOverhead())) oneLine.append(" ");
-      } else {
-        oneLine.append(remarkWord).append(" ");
-      }
-    }
-    if (oneLine.length() > (nrOfIndentSpaces + Hdl.remarkOverhead())) {
-      // We have an unfinished remark line
-      while (oneLine.length() < (MAX_LINE_LENGTH - Hdl.remarkOverhead())) oneLine.append(" ");
-      oneLine
-          .append(" ")
-          .append(Hdl.getRemarkChar(false, false))
-          .append(Hdl.getRemarkChar(false, false));
-      contents.add(oneLine.toString());
-      oneLine.setLength(0);
     }
     // We end with generating the last remark line.
     while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");

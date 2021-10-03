@@ -185,7 +185,9 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
           body.add(LineBuffer.format("{{1}}{{2}} {{3}};", typeName, " ".repeat(maxNameLength - typeName.length()), wire));
         }
       }
-      body.add(getModuleFunctionality(theNetlist, attrs));
+      body.empty()
+          .addRemarkBlock("The module functionality is described here")
+          .add(getModuleFunctionality(theNetlist, attrs));
       contents.add(body.getWithIndent()).add("endmodule");
     }
     return contents.get();

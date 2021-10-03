@@ -20,9 +20,9 @@ import com.cburch.logisim.util.LineBuffer;
 
 public class AdderHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
-  private static final String NR_OF_BITS_STRING = "NrOfBits";
+  private static final String NR_OF_BITS_STRING = "nrOfBits";
   private static final int NR_OF_BITS_ID = -1;
-  private static final String EXTENDED_BITS_STRING = "ExtendedBits";
+  private static final String EXTENDED_BITS_STRING = "extendedBits";
   private static final int EXTENDED_BITS_ID = -2;
 
   public AdderHdlGeneratorFactory() {
@@ -31,15 +31,15 @@ public class AdderHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID, HdlParameters.MAP_OFFSET, 1)
         .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID);
     myWires
-        .addWire("s_extended_dataA", EXTENDED_BITS_ID)
-        .addWire("s_extended_dataB", EXTENDED_BITS_ID)
-        .addWire("s_sum_result", EXTENDED_BITS_ID);
+        .addWire("s_extendedDataA", EXTENDED_BITS_ID)
+        .addWire("s_extendedDataB", EXTENDED_BITS_ID)
+        .addWire("s_sumResult", EXTENDED_BITS_ID);
     myPorts
-        .add(Port.INPUT, "DataA", NR_OF_BITS_ID, Adder.IN0, StdAttr.WIDTH)
-        .add(Port.INPUT, "DataB", NR_OF_BITS_ID, Adder.IN1, StdAttr.WIDTH)
-        .add(Port.INPUT, "CarryIn", 1, Adder.C_IN)
-        .add(Port.OUTPUT, "Result", NR_OF_BITS_ID, Adder.OUT, StdAttr.WIDTH)
-        .add(Port.OUTPUT, "CarryOut", 1, Adder.C_OUT);
+        .add(Port.INPUT, "dataA", NR_OF_BITS_ID, Adder.IN0, StdAttr.WIDTH)
+        .add(Port.INPUT, "dataB", NR_OF_BITS_ID, Adder.IN1, StdAttr.WIDTH)
+        .add(Port.INPUT, "carryIn", 1, Adder.C_IN)
+        .add(Port.OUTPUT, "result", NR_OF_BITS_ID, Adder.OUT, StdAttr.WIDTH)
+        .add(Port.OUTPUT, "carryOut", 1, Adder.C_OUT);
   }
 
   @Override
@@ -47,23 +47,22 @@ public class AdderHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var contents = LineBuffer.getBuffer();
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (Hdl.isVhdl()) {
-      contents.add("""
-          s_extended_dataA <= "0"&DataA;
-          s_extended_dataB <= "0"&DataB;
-          s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA) +
-                                               unsigned(s_extended_dataB) +
-                                               (""&CarryIn));
-
+      contents.empty().add("""
+          s_extendedDataA <= "0"&dataA;
+          s_extendedDataB <= "0"&dataB;
+          s_sumResult     <= std_logic_vector(unsigned(s_extendedDataA) +
+                                               unsigned(s_extendedDataB) +
+                                               (""&carryIn));
           """);
       if (nrOfBits == 1) {
-        contents.add("Result <= s_sum_result(0);");
+        contents.add("result   <= s_sumResult(0);");
       } else {
-        contents.add("Result <= s_sum_result( ({{1}}-1) DOWNTO 0 )", NR_OF_BITS_STRING);
+        contents.add("result   <= s_sumResult( ({{1}}-1) DOWNTO 0 )", NR_OF_BITS_STRING);
       }
-      contents.add("CarryOut <= s_sum_result({{1}}-1);", EXTENDED_BITS_STRING);
+      contents.add("carryOut <= s_sumResult({{1}}-1);", EXTENDED_BITS_STRING);
     } else {
-      contents.add("assign   {CarryOut,Result} = DataA + DataB + CarryIn;");
+      contents.add("assign   {carryOut, result} = dataA + dataB + carryIn;");
     }
-    return contents;
+    return contents.empty();
   }
 }
