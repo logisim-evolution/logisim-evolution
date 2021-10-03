@@ -30,13 +30,13 @@ public class TFlipFlop extends AbstractFlipFlop {
 
     public TFFHDLGeneratorFactory() {
       super(1, StdAttr.EDGE_TRIGGER);
-      myPorts.add(Port.INPUT, "T", 1, 0);
+      myPorts.add(Port.INPUT, "t", 1, 0);
     }
 
     @Override
     public LineBuffer getUpdateLogic() {
       return LineBuffer.getHdlBuffer()
-          .add("{{assign}}s_next_state{{=}}s_current_state_reg{{xor}}T;");
+          .add("{{assign}}s_nextState{{=}}s_currentState{{xor}}t;");
     }
   }
 

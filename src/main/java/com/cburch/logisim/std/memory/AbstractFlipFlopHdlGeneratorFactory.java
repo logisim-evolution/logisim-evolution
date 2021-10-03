@@ -25,7 +25,7 @@ import java.util.Map;
 
 public class AbstractFlipFlopHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
-  private static final String INVERT_CLOCK_STRING = "InvertClockEnable";
+  private static final String INVERT_CLOCK_STRING = "invertClockEnable";
   private static final int INVERT_CLOCK_ID = -1;
   private final int nrOfInputs;
 
@@ -43,14 +43,14 @@ public class AbstractFlipFlopHdlGeneratorFactory extends AbstractHdlGeneratorFac
         .add(INVERT_CLOCK_STRING, INVERT_CLOCK_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, triggerAttr, TRIGGER_MAP);
     myWires
         .addWire("s_clock", 1)
-        .addWire("s_next_state", 1)
-        .addRegister("s_current_state_reg", 1);
+        .addWire("s_nextState", 1)
+        .addRegister("s_currentState", 1);
     myPorts
-        .add(Port.INPUT, "Reset", 1, nrOfInputs + 3)
-        .add(Port.INPUT, "Preset", 1, nrOfInputs + 4)
+        .add(Port.INPUT, "reset", 1, nrOfInputs + 3)
+        .add(Port.INPUT, "preset", 1, nrOfInputs + 4)
         .add(Port.CLOCK, HdlPorts.CLOCK, 1, nrOfInputs)
-        .add(Port.OUTPUT, "Q", 1, nrOfInputs + 1)
-        .add(Port.OUTPUT, "Q_bar", 1, nrOfInputs + 2);
+        .add(Port.OUTPUT, "q", 1, nrOfInputs + 1)
+        .add(Port.OUTPUT, "qBar", 1, nrOfInputs + 2);
   }
 
   @Override
@@ -60,57 +60,59 @@ public class AbstractFlipFlopHdlGeneratorFactory extends AbstractHdlGeneratorFac
         .pair("invertClock", INVERT_CLOCK_STRING)
         .pair("Clock", HdlPorts.CLOCK)
         .pair("Tick", HdlPorts.TICK)
+        .empty()
+        .addVhdlKeywords()
         .addRemarkBlock("Here the output signals are defined")
         .add("""
-             {{assign}}Q       {{=}}s_current_state_reg;
-             {{assign}}Q_bar   {{=}}{{not}}(s_current_state_reg);
+             {{assign}}q       {{=}}s_currentState;
+             {{assign}}qBar    {{=}}{{not}}(s_currentState);
              """)
         .add(Hdl.isVhdl()
-            ? "s_clock {{=}} {{Clock}} WHEN {{invertClock}} = 0 ELSE NOT({{Clock}});"
-            : "assign s_clock {{=}} ({{invertClock}} == 0) ? {{Clock}} : ~{{Clock}};")
+            ? "s_clock {{=}}{{Clock}} {{when}} {{invertClock}} = 0 {{else}} {{not}}({{Clock}});"
+            : "assign s_clock {{=}}({{invertClock}} == 0) ? {{Clock}} : ~{{Clock}};")
+        .empty()
         .addRemarkBlock("Here the update logic is defined")
-        .add(getUpdateLogic())
-        .add("");
+        .add(getUpdateLogic());
     if (Hdl.isVerilog()) {
       contents
+          .empty()
           .addRemarkBlock("Here the initial register value is defined; for simulation only")
           .add("""
                initial
                begin
-                  s_current_state_reg = 0;
+                  s_currentState = 0;
                end
 
                """);
     }
-
-    contents.addRemarkBlock("Here the actual state register is defined");
+    contents.empty().addRemarkBlock("Here the actual state register is defined");
     if (Hdl.isVhdl()) {
       contents.add("""
-          make_memory : PROCESS( s_clock , Reset , Preset , {{Tick}} , s_next_state )
-          BEGIN
-             IF (Reset = '1') THEN s_current_state_reg <= '0';
-             ELSIF (Preset = '1') THEN s_current_state_reg <= '1';
+          makeMemory : {{process}}( s_clock , reset , preset , {{Tick}} , s_nextState ) {{is}}
+          {{begin}}
+             {{if}} (reset = '1') {{then}} s_currentState <= '0';
+             {{elsif}} (preset = '1') {{then}} s_currentState <= '1';
           """);
       if (Netlist.isFlipFlop(attrs)) {
-        contents.add("   ELSIF (rising_edge(s_clock)) THEN");
+        contents.add("   {{elsif}} (rising_edge(s_clock)) {{then}}");
       } else {
-        contents.add("   ELSIF (s_clock = '1') THEN");
+        contents.add("   {{elsif}} (s_clock = '1') {{then}}");
       }
       contents.add("""
-                 IF ({{Tick}} = '1') THEN
-                   s_current_state_reg <= s_next_state;
-                END IF;
-             END IF;
-          END PROCESS make_memory;
+                {{if}} ({{Tick}} = '1') {{then}}
+                   s_currentState <= s_nextState;
+                {{end}} {{if}};
+             {{end}} {{if}};
+          {{end}} {{process}} makeMemory;
           """);
     } else {
       if (Netlist.isFlipFlop(attrs)) {
         contents.add("""
-            always @(posedge Reset or posedge Preset or posedge s_clock)
+            always @(posedge reset or posedge preset or posedge s_clock)
             begin
-               if (Reset) s_current_state_reg <= 1'b0;
-               else if (Preset) s_current_state_reg <= 1'b1;
-               else if ({{Tick}}) s_current_state_reg <= s_next_state;
+               if (reset) s_currentState <= 1'b0;
+               else if (preset) s_currentState <= 1'b1;
+               else if ({{Tick}}) s_currentState <= s_nextState;
             end
             """);
       } else {
@@ -118,15 +120,14 @@ public class AbstractFlipFlopHdlGeneratorFactory extends AbstractHdlGeneratorFac
             .add("""
                 always @(*)
                 begin
-                   if (Reset) s_current_state_reg <= 1'b0;
-                   else if (Preset) s_current_state_reg <= 1'b1;
-                   else if ({{Tick}} & (s_clock == 1'b1)) s_current_state_reg <= s_next_state;
+                   if (reset) s_currentState <= 1'b0;
+                   else if (preset) s_currentState <= 1'b1;
+                   else if ({{Tick}} & (s_clock == 1'b1)) s_currentState <= s_nextState;
                 end
                 """);
       }
     }
-    contents.empty();
-    return contents;
+    return contents.empty();
   }
 
   public LineBuffer getUpdateLogic() {

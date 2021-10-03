@@ -77,7 +77,7 @@ public class PortHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
         // simple case first, we have a single output enable
         if (portType == PortIo.INOUTSE) {
           if (Hdl.isVhdl()) {
-            contents.add("{{1}}({{2}} DOWNTO {{3}}) <= {{4}} WHEN {{5}} = '1' ELSE (OTHERS => 'Z');",
+            contents.addVhdlKeywords().add("{{1}}({{2}} {{downto}} {{3}}) <= {{4}} {{when}} {{5}} = '1' {{else}} ({{others}} => 'Z');",
                 LOCAL_INOUT_BUBBLE_BUS_NAME,
                 endIndex,
                 startIndex,
@@ -96,7 +96,7 @@ public class PortHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
           // we have to enumerate over each and every bit
           for (var busBitIndex = 0; busBitIndex < nrOfBitsInThisBus; busBitIndex++) {
             if (Hdl.isVhdl()) {
-              contents.add("{{1}}({{2}}) <= {{3}} WHEN {{4}} = '1' ELSE 'Z';",
+              contents.add("{{1}}({{2}}) <= {{3}} {{when}} {{4}} = '1' {{else}} 'Z';",
                   LOCAL_INOUT_BUBBLE_BUS_NAME,
                   startIndex + busBitIndex,
                   Hdl.getBusEntryName(componentInfo, outputIndex, true, busBitIndex, nets),
