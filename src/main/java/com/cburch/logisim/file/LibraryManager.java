@@ -118,29 +118,31 @@ public final class LibraryManager {
 
   private static String toRelative(Loader loader, File file) {
     final var currentDirectory = loader.getCurrentDirectory();
-    if (currentDirectory == null) {
-      try {
-        return file.getCanonicalPath();
-      } catch (IOException e) {
-        return file.toString();
-      }
-    }
-
-    final var fileDir = file.getParentFile();
-    if (fileDir != null) {
-      if (currentDirectory.equals(fileDir)) {
-        return file.getName();
-      } else if (currentDirectory.equals(fileDir.getParentFile())) {
-        return fileDir.getName() + File.separator + file.getName();
-      } else if (fileDir.equals(currentDirectory.getParentFile())) {
-        return ".." + File.separator + file.getName();
-      }
-    }
+    var fileName = file.toString();
     try {
-      return file.getCanonicalPath();
+      fileName = file.getCanonicalPath(); 
     } catch (IOException e) {
-      return file.toString();
+      // Do nothing as we already have defined the default above
     }
+    if (currentDirectory != null) {
+      final var currentParts = currentDirectory.toString().split(File.separator);
+      final var newParts = fileName.split(File.separator);
+      final var nrOfNewParts = newParts.length;
+      // note that the newParts includes the filename, whilst the old doesn't
+      var nrOfPartsEqual = 0;
+      while ((nrOfPartsEqual < currentParts.length) && (nrOfPartsEqual < (nrOfNewParts-1)) 
+          && (currentParts[nrOfPartsEqual].equals(newParts[nrOfPartsEqual])))
+        nrOfPartsEqual++;
+      final var nrOfLevelsToGoDown = currentParts.length - nrOfPartsEqual;
+      final var relativeFile = new StringBuilder();
+      relativeFile.append(String.format("..%s", File.separator).repeat(nrOfLevelsToGoDown));
+      for (var restingPartId = nrOfPartsEqual; restingPartId < nrOfNewParts; restingPartId++) {
+        relativeFile.append(newParts[restingPartId]);
+        if (restingPartId < (nrOfNewParts - 1)) relativeFile.append(File.separator);
+      }
+      return relativeFile.toString();
+    }
+    return fileName;
   }
 
 

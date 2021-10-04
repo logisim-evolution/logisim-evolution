@@ -356,15 +356,15 @@ public class Loader implements LibraryLoader {
     final var backupCreated = (backup != null) && dest.renameTo(backup);
 
     FileOutputStream fwrite = null;
+    final var oldFile = getMainFile();
     try {
+      setMainFile(dest);
       fwrite = new FileOutputStream(dest);
       file.write(fwrite, this, dest, null);
       file.setName(toProjectName(dest));
-
-      final var oldFile = getMainFile();
-      setMainFile(dest);
       LibraryManager.instance.fileSaved(this, dest, oldFile, file);
     } catch (IOException e) {
+      setMainFile(oldFile);
       if (backupCreated) recoverBackup(backup, dest);
       if (dest.exists() && dest.length() == 0) {
         // FIXME: delete can fail. Ensure we will not have snowball effect here!

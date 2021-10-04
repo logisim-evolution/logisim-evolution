@@ -386,7 +386,7 @@ final class XmlWriter {
       if (!isUsed && !"#Base".equals(desc)) {
         return null;
       }
-      if (lib instanceof LoadedLibrary loadedlib) {
+      if (lib instanceof LoadedLibrary) {
         final var origFile = LibraryManager.getLibraryFilePath(file.getLoader(), desc);
         if (origFile != null) {
           final var names = origFile.split(File.separator);
