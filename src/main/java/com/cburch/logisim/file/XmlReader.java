@@ -104,7 +104,7 @@ class XmlReader {
     }
 
     Library findLibrary(String libName) throws XmlReaderException {
-      if ("".equals(libName)) return file;
+      if (libName == null || libName.isEmpty()) return file;
       final var ret = libs.get(libName);
       if (ret == null) throw new XmlReaderException(S.get("libMissingError", libName));
       return ret;
