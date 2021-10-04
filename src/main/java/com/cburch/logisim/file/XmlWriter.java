@@ -380,7 +380,7 @@ final class XmlWriter {
           isUsed |= lib.contains(tool.getFactory());
         }
       }
-      for (final var tool :file.getOptions().getToolbarData().getContents()) {
+      for (final var tool : file.getOptions().getToolbarData().getContents()) {
         isUsed |= lib.getTools().contains(tool);
       }
       if (!isUsed && !"#Base".equals(desc)) {
