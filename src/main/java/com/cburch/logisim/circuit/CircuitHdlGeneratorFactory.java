@@ -349,14 +349,16 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
             contents.addRemarkBlock("Here all in-lined components are defined");
             isFirstLine = false;
           }
-          final var hasLabel = comp.getComponent().getAttributeSet().containsAttribute(StdAttr.LABEL) 
-              && !comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL).isEmpty();
-          final var compName = hasLabel ? CorrectLabel.getCorrectLabel(comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)) 
-                : "";
+          final var thisAttrs = comp.getComponent().getAttributeSet();
+          final var hasLabel = thisAttrs.containsAttribute(StdAttr.LABEL) 
+              && !thisAttrs.getValue(StdAttr.LABEL).isEmpty();
+          final var compName = hasLabel ? CorrectLabel.getCorrectLabel(thisAttrs.getValue(StdAttr.LABEL)) : "";
           final var remarkLine = LineBuffer.format("{{1}}{{2}}{{3}}", comp.getComponent().getFactory().getDisplayName(),
               hasLabel ? ": " : "", compName);
-          contents.empty().addRemarkLine(remarkLine);
-          contents.add(worker.getInlinedCode(theNetList, id++, comp, inlinedName));
+          contents
+              .empty()
+              .addRemarkLine(remarkLine)
+              .add(worker.getInlinedCode(theNetList, id++, comp, inlinedName));
           compIds.put(InlinedId, id);
         }
       }

@@ -180,7 +180,7 @@ public class LineBuffer implements RandomAccess {
    * @return Instance of self for easy chaining.
    */
   public LineBuffer addVhdlKeywords() {
-    for (var keyword : Vhdl.getVhdlKeywords())
+    for (final var keyword : Vhdl.getVhdlKeywords())
       pair(keyword.toLowerCase(), keyword);
     return this;
   }
@@ -582,12 +582,11 @@ public class LineBuffer implements RandomAccess {
     }
     contents.add(oneLine.toString());
     oneLine.setLength(0);
-    for (int lineIndex = 0; lineIndex < remarkLines.length; lineIndex++) {
+    for (var lineIndex = 0; lineIndex < remarkLines.length; lineIndex++) {
       final var remarkWords = remarkLines[lineIndex].split(" ");
       var maxWordLength = 0;
-      for (final var word : remarkWords) {
-        if (word.length() > maxWordLength) maxWordLength = word.length();
-      }
+      for (final var word : remarkWords)
+        maxWordLength = Math.max(maxWordLength, word.length());
       if (maxRemarkLength < maxWordLength) return contents;
       /* Next we put the remark text block in 1 or multiple lines */
       for (final var remarkWord : remarkWords) {

@@ -151,10 +151,10 @@ public abstract class Hdl {
     // first case, we have to concatinate
     if ((nrHexDigits > 0) && (nrSingleBits > 0)) {
       if (Hdl.isVhdl()) {
-        return LineBuffer.format("\"{{2}}\"&X\"{{1}}\"", hexValue.toString(), singleBits.toString());
+        return LineBuffer.format("\"{{1}}\"&X\"{{2}}\"", singleBits.toString(), hexValue.toString());
       } else {
-        return LineBuffer.format("{{{3}}'b{{4}}, {{1}}'h{{2}}}", nrHexDigits * 4, hexValue.toString(),
-            nrSingleBits, singleBits.toString());
+        return LineBuffer.format("{{{1}}'b{{2}}, {{3}}'h{{4}}}", nrSingleBits, singleBits.toString(),
+            nrHexDigits * 4, hexValue.toString());
       }
     }
     // second case, we have only hex digits
@@ -246,7 +246,7 @@ public abstract class Hdl {
     if (!theNets.isContinuesBus(comp, endIndex)) return null;
     final var ConnectedNet = connectionInformation.get((byte) 0).getParentNet();
     if (ConnectedNet.getBitWidth() != nrOfBits) return getBusNameContinues(comp, endIndex, theNets);
-    return LineBuffer.formatHdl("{{1}}{{2}}", BUS_NAME, theNets.getNetId(ConnectedNet));
+    return LineBuffer.format("{{1}}{{2}}", BUS_NAME, theNets.getNetId(ConnectedNet));
   }
 
   public static String getClockNetName(netlistComponent comp, int endIndex, Netlist theNets) {

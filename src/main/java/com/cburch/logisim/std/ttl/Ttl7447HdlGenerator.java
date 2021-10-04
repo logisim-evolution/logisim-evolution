@@ -44,7 +44,6 @@ public class Ttl7447HdlGenerator extends AbstractHdlGeneratorFactory {
 
   @Override
   public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    final var contents = LineBuffer.getHdlBuffer();
     final var decoder = new WithSelectHdlGenerator("decoder1", "bcd", 4, "segments", 7)
         .setDefault("1110001")
         .add(0L, "0111111")
@@ -62,6 +61,7 @@ public class Ttl7447HdlGenerator extends AbstractHdlGeneratorFactory {
         .add(12L, "0111001")
         .add(13L, "1011110")
         .add(14L, "1111001");
+    final var contents = LineBuffer.getHdlBuffer();
     contents.add(decoder.getHdlCode()).empty();
     if (Hdl.isVhdl()) {
       contents.addVhdlKeywords().add("""

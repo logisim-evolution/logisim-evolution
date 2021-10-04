@@ -52,9 +52,9 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
         .add(Port.INPUT, "reset", 1, ShiftRegister.CLR)
         .add(Port.INPUT, "shiftEnable", 1, ShiftRegister.SH)
         .add(Port.INPUT, "shiftIn", NR_OF_BITS_ID, ShiftRegister.IN)
-        .add(Port.INPUT, "d", NR_OF_PAR_BITS_ID, "dUMMY_{{map}}")
+        .add(Port.INPUT, "d", NR_OF_PAR_BITS_ID, "DUMMY_MAP")
         .add(Port.OUTPUT, "shiftOut", NR_OF_BITS_ID, ShiftRegister.OUT)
-        .add(Port.OUTPUT, "q", NR_OF_PAR_BITS_ID, "dUMMY_{{map}}");
+        .add(Port.OUTPUT, "q", NR_OF_PAR_BITS_ID, "DUMMY_MAP");
     if (hasParallelLoad) {
       myPorts.add(Port.INPUT, "parLoad", 1, ShiftRegister.LD);
     } else {

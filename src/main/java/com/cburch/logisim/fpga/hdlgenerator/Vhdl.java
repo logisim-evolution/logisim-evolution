@@ -114,7 +114,7 @@ public class Vhdl {
   
   public static Set<String> getVhdlKeywords() {
     final var keywords = new TreeSet<String>();
-    for (var keyword : VHDL_KEYWORDS)
+    for (final var keyword : VHDL_KEYWORDS)
       keywords.add(AppPreferences.VhdlKeywordsUpperCase.get() ? keyword.toUpperCase() : keyword);
     return keywords;
   }
