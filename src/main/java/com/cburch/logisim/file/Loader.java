@@ -15,6 +15,7 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.std.Builtin;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.util.JFileChoosers;
+import com.cburch.logisim.util.LineBuffer;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.ZipClassLoader;
 import com.cburch.logisim.vhdl.file.HdlFile;
@@ -327,6 +328,16 @@ public class Loader implements LibraryLoader {
   }
   
   public boolean export(LogisimFile file, String homeDirectory) {
+    try {
+      final var mainCircFile = LineBuffer.format("{{1}}{{2}}{{3}}{{2}}{{4}}", homeDirectory, File.separator,
+          LOGISIM_CIRCUIT_DIR, getMainFile().getName());
+      final var libraryHome = String.format("%s%s%s", homeDirectory, File.separator, LOGISIM_LIBRARY_DIR);
+      final var fwrite = new FileOutputStream(mainCircFile);
+      file.write(fwrite, this, libraryHome);
+    } catch (IOException e) {
+      //TODO: give an error message to the user
+      return false;
+    }
     return true;
   }
 
@@ -347,7 +358,7 @@ public class Loader implements LibraryLoader {
     FileOutputStream fwrite = null;
     try {
       fwrite = new FileOutputStream(dest);
-      file.write(fwrite, this, dest);
+      file.write(fwrite, this, dest, null);
       file.setName(toProjectName(dest));
 
       final var oldFile = getMainFile();

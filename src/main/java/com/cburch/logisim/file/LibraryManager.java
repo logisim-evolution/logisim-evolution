@@ -12,6 +12,8 @@ package com.cburch.logisim.file;
 import static com.cburch.logisim.file.Strings.S;
 
 import com.cburch.logisim.tools.Library;
+import com.cburch.logisim.util.LineBuffer;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -201,7 +203,7 @@ public final class LibraryManager {
       }
     }
   }
-
+  
   Collection<LogisimFile> getLogisimLibraries() {
     final var ret = new ArrayList<LogisimFile>();
     for (final var lib : invMap.keySet()) {
@@ -263,6 +265,36 @@ public final class LibraryManager {
         loader.showError(S.get("fileTypeError", type, desc));
         return null;
     }
+  }
+  
+  public static String getLibraryFilePath(Loader loader, String desc) {
+    int sep = desc.indexOf(DESC_SEP);
+    if (sep < 0) {
+      loader.showError(S.get("fileDescriptorError", desc));
+      return null;
+    }
+    final var type = desc.substring(0, sep);
+    final var name = desc.substring(sep + 1);
+    return switch (type) {
+      case "file" -> loader.getFileFor(name, Loader.LOGISIM_FILTER).getAbsolutePath();
+      case "jar" -> loader.getFileFor(name.substring(0, name.lastIndexOf(DESC_SEP)), Loader.JAR_FILTER).getAbsolutePath(); 
+      default -> null;
+    };
+  }
+
+  public static String getReplacementDescriptor(Loader loader, String desc, String fileName) {
+    int sep = desc.indexOf(DESC_SEP);
+    if (sep < 0) {
+      loader.showError(S.get("fileDescriptorError", desc));
+      return null;
+    }
+    final var type = desc.substring(0, sep);
+    final var name = desc.substring(sep + 1);
+    return switch (type) {
+      case "file" -> String.format("file#%s", fileName);
+      case "jar" -> LineBuffer.format("jar#{{1}}#{{2}}", fileName, name.substring(name.lastIndexOf(DESC_SEP) + 1));
+      default -> null;
+    };
   }
 
   public LoadedLibrary loadLogisimLibrary(Loader loader, File toRead) {
