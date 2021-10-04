@@ -402,8 +402,7 @@ public class ProjectActions {
    * @return true if success, false otherwise 
    */
   public static boolean doExportProject(Project proj) {
-    var ret = true;
-    if (proj.isFileDirty()) ret &= doSave(proj);
+    var ret = proj.isFileDirty() ? doSave(proj) : true;
     if (ret) {
       final var loader = proj.getLogisimFile().getLoader();
       final var oldTool = proj.getTool();
@@ -429,7 +428,8 @@ public class ProjectActions {
         Files.createDirectories(Paths.get(exportLibDir));
         Files.createDirectories(Paths.get(exportCircDir));
       } catch (IOException e) {
-        //TODO: handle exception message to user
+        //TODO: handle exception message to user #1136
+        System.err.println("Unable to create directories for export");
         proj.setTool(oldTool);
         return false;
       }

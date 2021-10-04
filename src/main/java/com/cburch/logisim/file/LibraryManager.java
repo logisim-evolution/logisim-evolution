@@ -131,8 +131,9 @@ public final class LibraryManager {
       // note that the newParts includes the filename, whilst the old doesn't
       var nrOfPartsEqual = 0;
       while ((nrOfPartsEqual < currentParts.length) && (nrOfPartsEqual < (nrOfNewParts - 1)) 
-          && (currentParts[nrOfPartsEqual].equals(newParts[nrOfPartsEqual])))
+          && (currentParts[nrOfPartsEqual].equals(newParts[nrOfPartsEqual]))) {
         nrOfPartsEqual++;
+      }
       final var nrOfLevelsToGoDown = currentParts.length - nrOfPartsEqual;
       final var relativeFile = new StringBuilder();
       relativeFile.append(String.format("..%s", File.separator).repeat(nrOfLevelsToGoDown));
@@ -236,7 +237,7 @@ public final class LibraryManager {
   public Library loadLibrary(Loader loader, String desc) {
     // It may already be loaded.
     // Otherwise we'll have to decode it.
-    int sep = desc.indexOf(DESC_SEP);
+    final var sep = desc.indexOf(DESC_SEP);
     if (sep < 0) {
       loader.showError(S.get("fileDescriptorError", desc));
       return null;
@@ -270,7 +271,7 @@ public final class LibraryManager {
   }
   
   public static String getLibraryFilePath(Loader loader, String desc) {
-    int sep = desc.indexOf(DESC_SEP);
+    final var sep = desc.indexOf(DESC_SEP);
     if (sep < 0) {
       loader.showError(S.get("fileDescriptorError", desc));
       return null;
@@ -285,7 +286,7 @@ public final class LibraryManager {
   }
 
   public static String getReplacementDescriptor(Loader loader, String desc, String fileName) {
-    int sep = desc.indexOf(DESC_SEP);
+    final var sep = desc.indexOf(DESC_SEP);
     if (sep < 0) {
       loader.showError(S.get("fileDescriptorError", desc));
       return null;

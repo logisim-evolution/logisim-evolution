@@ -152,16 +152,18 @@ class MenuFile extends Menu implements ActionListener {
         // Close the current project
         frame.dispose();
       }
-    } else if (src == save && proj != null) {
-      ProjectActions.doSave(proj);
-    } else if (src == saveAs && proj != null) {
-      ProjectActions.doSaveAs(proj);
-    } else if (src == exportProj && proj != null) {
-      ProjectActions.doExportProject(proj);
     } else if (src == prefs) {
       PreferencesFrame.showPreferences();
     } else if (src == quit) {
       ProjectActions.doQuit();
+    } else if (proj != null) {
+      if (src == save) {
+        ProjectActions.doSave(proj);
+      } else if (src == saveAs) {
+        ProjectActions.doSaveAs(proj);
+      } else if (src == exportProj) {
+        ProjectActions.doExportProject(proj);
+      }
     }
   }
 

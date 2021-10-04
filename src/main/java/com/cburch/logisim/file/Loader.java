@@ -335,7 +335,8 @@ public class Loader implements LibraryLoader {
       final var fwrite = new FileOutputStream(mainCircFile);
       file.write(fwrite, this, libraryHome);
     } catch (IOException e) {
-      //TODO: give an error message to the user
+      //TODO: give an error message to the user #1136
+      System.err.println("Unable to export file");
       return false;
     }
     return true;
