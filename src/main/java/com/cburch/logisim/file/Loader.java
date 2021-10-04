@@ -82,6 +82,18 @@ public class Loader implements LibraryLoader {
     }
   }
 
+  private static class LogisimDirectoryFilter extends FileFilter {
+    @Override
+    public boolean accept(File f) {
+      return f.isDirectory();
+    }
+
+    @Override
+    public String getDescription() {
+      return S.get("logisimDirectoryFilter");
+    }
+  }
+
   private static class TclFileFilter extends FileFilter {
     @Override
     public boolean accept(File f) {
@@ -95,7 +107,10 @@ public class Loader implements LibraryLoader {
   }
 
   public static final String LOGISIM_EXTENSION = ".circ";
+  public static final String LOGISIM_LIBRARY_DIR = "library";
+  public static final String LOGISIM_CIRCUIT_DIR = "circuit";
   public static final FileFilter LOGISIM_FILTER = new LogisimFileFilter();
+  public static final FileFilter LOGISIM_DIRECTORY = new LogisimDirectoryFilter();
   public static final FileFilter JAR_FILTER = new JarFileFilter();
   public static final FileFilter TXT_FILTER = new TxtFileFilter();
   public static final FileFilter TCL_FILTER = new TclFileFilter();
