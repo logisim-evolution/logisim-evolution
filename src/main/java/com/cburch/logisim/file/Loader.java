@@ -325,6 +325,10 @@ public class Loader implements LibraryLoader {
   public void reload(LoadedLibrary lib) {
     LibraryManager.instance.reload(this, lib);
   }
+  
+  public boolean export(LogisimFile file, String homeDirectory) {
+    return true;
+  }
 
   public boolean save(LogisimFile file, File dest) {
     final var reference = LibraryManager.instance.findReference(file, dest);
