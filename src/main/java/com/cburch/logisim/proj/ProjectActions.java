@@ -423,8 +423,11 @@ public class ProjectActions {
       final var exportCircDir = String.format("%s%s%s", exportRootDir, File.separator, Loader.LOGISIM_CIRCUIT_DIR);
       try {
         final var path = Paths.get(exportRootDir);
+        // FIXME: Disabled project deletion, ask the user what to do, for the moment the files are "overwritten"
+        /*
         if (Files.exists(path) && Files.exists(Paths.get(exportLibDir)) && Files.exists(Paths.get(exportCircDir)))
           Files.walk(path).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+        */
         Files.createDirectories(Paths.get(exportLibDir));
         Files.createDirectories(Paths.get(exportCircDir));
       } catch (IOException e) {
