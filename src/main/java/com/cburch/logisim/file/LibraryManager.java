@@ -130,7 +130,7 @@ public final class LibraryManager {
       final var nrOfNewParts = newParts.length;
       // note that the newParts includes the filename, whilst the old doesn't
       var nrOfPartsEqual = 0;
-      while ((nrOfPartsEqual < currentParts.length) && (nrOfPartsEqual < (nrOfNewParts-1)) 
+      while ((nrOfPartsEqual < currentParts.length) && (nrOfPartsEqual < (nrOfNewParts - 1)) 
           && (currentParts[nrOfPartsEqual].equals(newParts[nrOfPartsEqual])))
         nrOfPartsEqual++;
       final var nrOfLevelsToGoDown = currentParts.length - nrOfPartsEqual;
