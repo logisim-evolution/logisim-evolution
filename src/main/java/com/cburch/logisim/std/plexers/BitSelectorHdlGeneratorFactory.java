@@ -19,13 +19,13 @@ import com.cburch.logisim.util.LineBuffer;
 
 public class BitSelectorHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
-  private static final String INPUT_BITS_STRING = "NrOfInputBits";
+  private static final String INPUT_BITS_STRING = "nrOfInputBits";
   private static final int INPUT_BITS_ID = -1;
-  private static final String OUTPUTS_BITS_STRING = "NrOfOutputBits";
+  private static final String OUTPUTS_BITS_STRING = "nrOfOutputBits";
   private static final int OUTPUT_BITS_ID = -2;
-  private static final String SELECT_BITS_STRING = "NrOfSelBits";
+  private static final String SELECT_BITS_STRING = "nrOfselBits";
   private static final int SELECT_BITS_ID = -3;
-  private static final String EXTENDED_BITS_STRING = "NrOfExtendedBits";
+  private static final String EXTENDED_BITS_STRING = "nrOfExtendedBits";
   private static final int EXTENDED_BITS_ID = -4;
 
   public BitSelectorHdlGeneratorFactory() {
@@ -36,11 +36,11 @@ public class BitSelectorHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
         .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID)
         .addBusOnly(BitSelector.GROUP_ATTR, OUTPUTS_BITS_STRING, OUTPUT_BITS_ID);
     myWires
-        .addWire("s_extended_vector", EXTENDED_BITS_ID);
+        .addWire("s_extendedVector", EXTENDED_BITS_ID);
     myPorts
-        .add(Port.INPUT, "DataIn", INPUT_BITS_ID, 1)
-        .add(Port.INPUT, "Sel", SELECT_BITS_ID, 2)
-        .add(Port.OUTPUT, "DataOut", OUTPUT_BITS_ID, 0, BitSelector.GROUP_ATTR);
+        .add(Port.INPUT, "dataIn", INPUT_BITS_ID, 1)
+        .add(Port.INPUT, "sel", SELECT_BITS_ID, 2)
+        .add(Port.OUTPUT, "dataOut", OUTPUT_BITS_ID, 0, BitSelector.GROUP_ATTR);
   }
 
   @Override
@@ -52,44 +52,44 @@ public class BitSelectorHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
             .pair("outBits", OUTPUTS_BITS_STRING);
     final var outputBits = attrs.getValue(BitSelector.GROUP_ATTR).getWidth();
     if (Hdl.isVhdl()) {
-      contents
+      contents.empty().addVhdlKeywords()
           .add("""
-              s_extended_vector(({{extBits}}-1) DOWNTO {{inBits}}) <= (OTHERS => '0');
-              s_extended_vector(({{inBits}}-1) DOWNTO 0) <= DataIn;
+              s_extendedVector(({{extBits}}-1) {{downto}} {{inBits}}) <= ({{others}} => '0');
+              s_extendedVector(({{inBits}}-1) {{downto}} 0) <= dataIn;
               """)
           .add(
               outputBits > 1
-                  ? "DataOut <= s_extended_vector( ((to_integer(unsigned(Sel))+1) * {{outBits}})-1 DOWNTO to_integer(unsigned(Sel))*{{outBits}} );"
-                  : "DataOut <= s_extended_vector( to_integer(unsigned(Sel)) );");
+                  ? "dataOut <= s_extendedVector( ((to_integer(unsigned(sel))+1) * {{outBits}})-1 {{downto}} to_integer(unsigned(sel))*{{outBits}} );"
+                  : "dataOut <= s_extendedVector( to_integer(unsigned(sel)) );");
     } else {
       contents.add("""
-          assign s_extended_vector[{{extBits}}-1:{{inBits}}] = 0;
-          assign s_extended_vector[{{inBits}}-1:0] = DataIn;
+          assign s_extendedVector[{{extBits}}-1:{{inBits}}] = 0;
+          assign s_extendedVector[{{inBits}}-1:0] = dataIn;
           """);
       if (outputBits > 1) {
         contents.add("""
-            wire[513:0] s_select_vector;
+            wire[513:0] s_selectVector;
             reg[{{outBits}}-1:0] s_selected_slice;
-            assign s_select_vector[513:{{extBits}}] = 0;
-            assign s_select_vector[{{extBits}}-1:0] = s_extended_vector;
-            assign DataOut = s_selected_slice;
+            assign s_selectVector[513:{{extBits}}] = 0;
+            assign s_selectVector[{{extBits}}-1:0] = s_extendedVector;
+            assign dataOut = s_selected_slice;
 
             always @(*)
             begin
-               case (Sel)
+               case (sel)
             """);
         for (var i = 15; i > 0; i--) {
-          contents.add("{{1}}{{2}} : s_selected_slice <= s_select_vector[({{3}}*{{outBits}})-1:{{2}}*{{outBits}}];", LineBuffer.getIndent(2), i, (i + 1));
+          contents.add("{{1}}{{2}} : s_selected_slice <= s_selectVector[({{3}}*{{outBits}})-1:{{2}}*{{outBits}}];", LineBuffer.getIndent(2), i, (i + 1));
         }
         contents.add("""
-                  default : s_selected_slice <= s_select_vector[{{outBits}}-1:0];
+                  default : s_selected_slice <= s_selectVector[{{outBits}}-1:0];
                endcase
             end
             """);
       } else {
-        contents.add("assign DataOut = s_extended_vector[Sel];");
+        contents.add("assign dataOut = s_extendedVector[sel];");
       }
     }
-    return contents;
+    return contents.empty();
   }
 }

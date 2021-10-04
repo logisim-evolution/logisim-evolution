@@ -19,7 +19,7 @@ import com.cburch.logisim.util.LineBuffer;
 
 public class DemultiplexerHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
-  private static final String NR_OF_BITS_STRING = "NrOfBits";
+  private static final String NR_OF_BITS_STRING = "nrOfBits";
   private static final int NR_OF_BITS_ID = -1;
 
   public DemultiplexerHdlGeneratorFactory() {
@@ -31,16 +31,17 @@ public class DemultiplexerHdlGeneratorFactory extends AbstractHdlGeneratorFactor
   @Override
   public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
     final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
+    final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth() == 1 ? 1 : NR_OF_BITS_ID;
     final var selectInputIndex = (1 << nrOfSelectBits);
-    final var hasEnable = attrs.getValue(PlexersLibrary.ATTR_ENABLE);
+    final var hasenable = attrs.getValue(PlexersLibrary.ATTR_ENABLE);
     for (var outp = 0; outp < selectInputIndex; outp++) {
-      myPorts.add(Port.OUTPUT, String.format("DemuxOut_%d", outp), NR_OF_BITS_ID, outp, StdAttr.WIDTH);
+      myPorts.add(Port.OUTPUT, String.format("demuxOut_%d", outp), nrOfBits, outp, StdAttr.WIDTH);
     }
     myPorts
         .add(Port.INPUT, "sel", nrOfSelectBits, selectInputIndex)
-        .add(Port.INPUT, "DemuxIn", NR_OF_BITS_ID, hasEnable ? selectInputIndex + 2 : selectInputIndex + 1);
-    if (hasEnable)
-      myPorts.add(Port.INPUT, "Enable", 1, selectInputIndex + 1, false);
+        .add(Port.INPUT, "demuxIn", nrOfBits, hasenable ? selectInputIndex + 2 : selectInputIndex + 1);
+    if (hasenable)
+      myPorts.add(Port.INPUT, "enable", 1, selectInputIndex + 1, false);
   }
 
   @Override
@@ -53,14 +54,15 @@ public class DemultiplexerHdlGeneratorFactory extends AbstractHdlGeneratorFactor
       if (i == 10) space = " ";
       final var binValue = Hdl.getConstantVector(i, nrOfSelectBits);
       if (Hdl.isVhdl()) {
-        contents.add("DemuxOut_{{1}}{{2}}<= DemuxIn WHEN sel = {{3}} AND", i, space, binValue);
+        contents.empty().addVhdlKeywords()
+            .add("demuxOut_{{1}}{{2}}<= demuxIn {{when}} sel = {{3}} {{and}}", i, space, binValue);
         if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1) {
-          contents.add("                            Enable = '1' ELSE (OTHERS => '0');");
+          contents.add("                            enable = '1' {{else}} ({{others}} => '0');");
         } else {
-          contents.add("                            Enable = '1' ELSE '0';");
+          contents.add("                            enable = '1' {{else}} '0';");
         }
       } else {
-        contents.add("assign DemuxOut_{{1}}{{2}} = (Enable&(sel == {{3}} )) ? DemuxIn : 0;", i, space, binValue);
+        contents.add("assign demuxOut_{{1}}{{2}} = (enable&(sel == {{3}} )) ? demuxIn : 0;", i, space, binValue);
       }
     }
     return contents;
