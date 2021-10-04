@@ -59,14 +59,14 @@ public class Ttl74283HdlGenerator extends AbstractHdlGeneratorFactory {
             """);
     } else {
       contents.add("""
-        assign   oppA = {A4, A3, A2, A1};
-        assign   oppB = {B4, B4, B2, B1};
-        assign   S1   = result[0];
-        assign   S2   = result[1];
-        assign   S3   = result[2];
-        assign   S4   = result[3];
-        assign   {Cout, result} = oppA + oppB + Cin;        
-        """);
+          assign   oppA = {A4, A3, A2, A1};
+          assign   oppB = {B4, B4, B2, B1};
+          assign   S1   = result[0];
+          assign   S2   = result[1];
+          assign   S3   = result[2];
+          assign   S4   = result[3];
+          assign   {Cout, result} = oppA + oppB + Cin;        
+          """);
     }
     return contents.empty();
   }
