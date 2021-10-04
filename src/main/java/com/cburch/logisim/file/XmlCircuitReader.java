@@ -179,7 +179,7 @@ public class XmlCircuitReader extends CircuitTransaction {
       if ("comp".equals(subEltName)) {
         try {
           var comp = knownComponents.get(sub_elt);
-          if (comp == null) getComponent(sub_elt, reader, isHolyCross, isEvolution);
+          if (comp == null) comp = getComponent(sub_elt, reader, isHolyCross, isEvolution);
           if (comp != null) {
             /* filter out empty text boxes */
             if (comp.getFactory() instanceof Text) {
