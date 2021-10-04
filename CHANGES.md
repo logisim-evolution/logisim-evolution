@@ -21,6 +21,7 @@
   * Cleanup of the HDL-generation
   * Each circuit stores/restores the last board used for Download (handy for templates to give to students)
   * Fixed startup crash related to incorrectly localized date format.
+  * added project export feature
 
 * v3.6.0 (2021-09-05)
   * Introducing project logo.
