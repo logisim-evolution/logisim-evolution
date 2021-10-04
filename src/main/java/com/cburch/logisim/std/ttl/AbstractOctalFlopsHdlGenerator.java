@@ -73,31 +73,31 @@ public class AbstractOctalFlopsHdlGenerator extends AbstractHdlGeneratorFactory 
             Q7     <= state(7);
 
             dffs : {{process}}({{CLK}}, nCLR) {{is}}
-            {{begin}}
-               {{if}} (nCLR = '0') {{then}} state <= ({{others}} => '0');
-               {{elsif}} (rising_edge({{CLK}})) {{then}} state <= next;
-               {{end}} {{if}};
-            {{end}} {{process}} dffs;
+               {{begin}}
+                  {{if}} (nCLR = '0') {{then}} state <= ({{others}} => '0');
+                  {{elsif}} (rising_edge({{CLK}})) {{then}} state <= next;
+                  {{end}} {{if}};
+               {{end}} {{process}} dffs;
               """);
     } else {
       contents.add("""
-        assign enable = {{tick}} & ~nCLKen;
-        assign next   = enable ? {D7, D6, D5, D4, D3, D2, D1, D0} : state;
-        assign Q0     = state[0];
-        assign Q1     = state[1];
-        assign Q2     = state[2];
-        assign Q3     = state[3];
-        assign Q4     = state[4];
-        assign Q5     = state[5];
-        assign Q6     = state[6];
-        assign Q7     = state[7];
-        
-        always @(posedge {{CLK}} or negedge nCLR)
-        begin
-           if (~nCLR) state <= 0;
-           else state <= next;
-        end
-        """);
+          assign enable = {{tick}} & ~nCLKen;
+          assign next   = enable ? {D7, D6, D5, D4, D3, D2, D1, D0} : state;
+          assign Q0     = state[0];
+          assign Q1     = state[1];
+          assign Q2     = state[2];
+          assign Q3     = state[3];
+          assign Q4     = state[4];
+          assign Q5     = state[5];
+          assign Q6     = state[6];
+          assign Q7     = state[7];
+
+          always @(posedge {{CLK}} or negedge nCLR)
+          begin
+             if (~nCLR) state <= 0;
+             else state <= next;
+          end
+          """);
     }
     return contents.empty();
   }
