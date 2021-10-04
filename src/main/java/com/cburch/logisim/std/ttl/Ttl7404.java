@@ -33,7 +33,7 @@ public class Ttl7404 extends AbstractTtlGate {
 
     @Override
     public LineBuffer getLogicFunction(int index) {
-      return LineBuffer.getHdlBuffer().add("{{assign}}gate_{{1}}_O{{assign}}{{not}}(gate_{{1}}_A);", index);
+      return LineBuffer.getHdlBuffer().add("{{assign}}gateO{{1}}{{assign}}{{not}}(gateA{{1}});", index);
     }
   }
 
