@@ -12,7 +12,6 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
-import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
@@ -269,7 +268,7 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
       contents
           .add(super.getEntity(nets, attrs, componentName))
           .empty()
-          .add(FileWriter.getExtendedLibrary())
+          .add(Hdl.getExtendedLibrary())
           .add(getExtraComp(true));
     }
     return contents.get();

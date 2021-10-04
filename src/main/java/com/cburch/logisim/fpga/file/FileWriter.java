@@ -14,7 +14,6 @@ import static com.cburch.logisim.fpga.Strings.S;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.generated.BuildInfo;
-import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
@@ -22,32 +21,8 @@ import java.util.List;
 
 public class FileWriter {
 
-  public static final String REMARK_LINE = "-".repeat(80);
   public static final String ENTITY_EXTENSION = "_entity";
   public static final String ARCHITECTURE_EXTENSION = "_behavior";
-
-  public static List<String> getExtendedLibrary() {
-    final var lines = LineBuffer.getBuffer();
-    lines.add("""
-
-               LIBRARY ieee;
-               USE ieee.std_logic_1164.all;
-               USE ieee.numeric_std.all;
-
-               """);
-    return lines.get();
-  }
-
-  public static List<String> getStandardLibrary() {
-    final var lines = LineBuffer.getBuffer();
-    lines.add("""
-
-              LIBRARY ieee;
-              USE ieee.std_logic_1164.all;
-
-              """);
-    return lines.get();
-  }
 
   public static File getFilePointer(
       String targetDirectory,

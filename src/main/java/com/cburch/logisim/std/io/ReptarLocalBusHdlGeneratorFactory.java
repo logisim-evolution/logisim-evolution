@@ -105,7 +105,7 @@ public class ReptarLocalBusHdlGeneratorFactory extends AbstractHdlGeneratorFacto
     return LineBuffer.getBuffer()
         .pair("compName", componentName)
         .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
-        .add(FileWriter.getExtendedLibrary())
+        .add(Hdl.getExtendedLibrary())
         .add("""
             Library UNISIM;
             use UNISIM.vcomponents.all;

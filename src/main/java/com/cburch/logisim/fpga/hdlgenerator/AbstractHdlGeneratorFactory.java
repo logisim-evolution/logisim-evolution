@@ -328,7 +328,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     final var contents = LineBuffer.getHdlBuffer();
     if (Hdl.isVhdl()) {
       contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
-          .add(FileWriter.getExtendedLibrary())
+          .add(Hdl.getExtendedLibrary())
           .add(getVHDLBlackBox(theNetlist, attrs, componentName, true));
     }
     return contents.get();

@@ -410,4 +410,27 @@ public abstract class Hdl {
       contents.add("{{assign}}{{1}}{{2}}{{=}}{{3}};", wire, " ".repeat(maxNameLength - wire.length()), wires.get(wire));
     wires.clear();
   }
+
+  public static List<String> getExtendedLibrary() {
+    final var lines = LineBuffer.getBuffer();
+    lines.addVhdlKeywords().add("""
+
+               {{library}} ieee;
+               {{use}} ieee.std_logic_1164.all;
+               {{use}} ieee.numeric_std.all;
+
+               """);
+    return lines.get();
+  }
+
+  public static List<String> getStandardLibrary() {
+    final var lines = LineBuffer.getBuffer();
+    lines.addVhdlKeywords().add("""
+
+              {{library}} ieee;
+              {{use}} ieee.std_logic_1164.all;
+
+              """);
+    return lines.get();
+  }
 }
