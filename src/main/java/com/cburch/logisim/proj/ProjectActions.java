@@ -434,8 +434,11 @@ public class ProjectActions {
             isCorrectDirectory = true;
           }
           if (isCorrectDirectory) {
+            // FIXME: deleting removed for the moment only overwriting
+            /*
             if (Files.exists(path))
               Files.walk(path).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+            */
             Files.createDirectories(Paths.get(exportLibDir));
             Files.createDirectories(Paths.get(exportCircDir));
           }
