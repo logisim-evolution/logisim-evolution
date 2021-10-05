@@ -411,31 +411,40 @@ public class ProjectActions {
       chooser.setFileFilter(Loader.LOGISIM_DIRECTORY);
       chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
       chooser.setAcceptAllFileFilterUsed(false);
-      ret &= chooser.showSaveDialog(proj.getFrame()) == JFileChooser.APPROVE_OPTION;
-      if (!ret) {
-        proj.setTool(oldTool);
-        return false;
-      }
-      final var exportHome = chooser.getSelectedFile();
-      final var exportRoot = loader.getMainFile().getName().replace(".circ", "");
-      final var exportRootDir = String.format("%s%s%s", exportHome, File.separator, exportRoot);
-      final var exportLibDir = String.format("%s%s%s", exportRootDir, File.separator, Loader.LOGISIM_LIBRARY_DIR);
-      final var exportCircDir = String.format("%s%s%s", exportRootDir, File.separator, Loader.LOGISIM_CIRCUIT_DIR);
-      try {
-        final var path = Paths.get(exportRootDir);
-        // FIXME: Disabled project deletion, ask the user what to do, for the moment the files are "overwritten"
-        /*
-        if (Files.exists(path) && Files.exists(Paths.get(exportLibDir)) && Files.exists(Paths.get(exportCircDir)))
-          Files.walk(path).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-        */
-        Files.createDirectories(Paths.get(exportLibDir));
-        Files.createDirectories(Paths.get(exportCircDir));
-      } catch (IOException e) {
-        //TODO: handle exception message to user #1136
-        System.err.println("Unable to create directories for export");
-        proj.setTool(oldTool);
-        return false;
-      }
+      var isCorrectDirectory = false;
+      var exportRootDir = "";
+      do {
+        ret &= chooser.showSaveDialog(proj.getFrame()) == JFileChooser.APPROVE_OPTION;
+        if (!ret) {
+          proj.setTool(oldTool);
+          return false;
+        }
+        final var exportHome = chooser.getSelectedFile();
+        final var exportRoot = loader.getMainFile().getName().replace(".circ", "");
+        exportRootDir = String.format("%s%s%s", exportHome, File.separator, exportRoot);
+        final var exportLibDir = String.format("%s%s%s", exportRootDir, File.separator, Loader.LOGISIM_LIBRARY_DIR);
+        final var exportCircDir = String.format("%s%s%s", exportRootDir, File.separator, Loader.LOGISIM_CIRCUIT_DIR);
+        try {
+          final var path = Paths.get(exportRootDir);
+          if (Files.exists(path)) {
+            final var confirm = OptionPane.showConfirmDialog(proj.getFrame(), S.fmt("projExistsOverwrite", exportRoot), 
+                S.get("projExport"), OptionPane.YES_NO_OPTION);
+            isCorrectDirectory = confirm == OptionPane.YES_OPTION;
+          } else {
+            isCorrectDirectory = true;
+          }
+          if (isCorrectDirectory) {
+            if (Files.exists(path))
+              Files.walk(path).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
+            Files.createDirectories(Paths.get(exportLibDir));
+            Files.createDirectories(Paths.get(exportCircDir));
+          }
+        } catch (IOException e) {
+          OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjUnableToCreate"));
+          proj.setTool(oldTool);
+          return false;
+        }
+      } while (!isCorrectDirectory);
       ret &= loader.export(proj.getLogisimFile(), exportRootDir);
       proj.setTool(oldTool);
     }
