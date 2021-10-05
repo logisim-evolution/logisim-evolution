@@ -195,14 +195,16 @@ final class XmlWriter {
     tf.transform(src, dest);
   }
 
-  void addAttributeSetContent(Element elt, AttributeSet attrs, AttributeDefaultProvider source) {
+  void addAttributeSetContent(Element elt, AttributeSet attrs, AttributeDefaultProvider source, boolean userModifOnly) {
     if (attrs == null) return;
     LogisimVersion ver = BuildInfo.version;
     if (source != null && source.isAllDefaultValues(attrs, ver)) return;
-    for (Attribute<?> attrBase : attrs.getAttributes()) {
+    for (final var attrBase : attrs.getAttributes()) {
       @SuppressWarnings("unchecked")
-      Attribute<Object> attr = (Attribute<Object>) attrBase;
-      Object val = attrs.getValue(attr);
+      final var attr = (Attribute<Object>) attrBase;
+      final var val = attrs.getValue(attr);
+      if (userModifOnly && (attrs.isReadOnly(attr) || attr.isHidden())) 
+        continue;
       if (attrs.isToSave(attr) && val != null) {
         Object dflt = source == null ? null : source.getDefaultAttributeValue(attr, ver);
         if (dflt == null || !dflt.equals(val) || attr.equals(StdAttr.APPEARANCE)) {
@@ -250,7 +252,7 @@ final class XmlWriter {
   Element fromCircuit(Circuit circuit) {
     final var ret = doc.createElement("circuit");
     ret.setAttribute("name", circuit.getName());
-    addAttributeSetContent(ret, circuit.getStaticAttributes(), null);
+    addAttributeSetContent(ret, circuit.getStaticAttributes(), null, false);
     if (!circuit.getAppearance().isDefaultAppearance()) {
       final var appear = doc.createElement("appear");
       for (Object obj : circuit.getAppearance().getObjectsFromBottom()) {
@@ -344,7 +346,7 @@ final class XmlWriter {
     if (libName != null) ret.setAttribute("lib", libName);
     ret.setAttribute("name", source.getName());
     ret.setAttribute("loc", comp.getLocation().toString());
-    addAttributeSetContent(ret, comp.getAttributeSet(), comp.getFactory());
+    addAttributeSetContent(ret, comp.getAttributeSet(), comp.getFactory(), false);
     return ret;
   }
 
@@ -365,7 +367,7 @@ final class XmlWriter {
       if (attrs != null) {
         final var toAdd = doc.createElement("tool");
         toAdd.setAttribute("name", t.getName());
-        addAttributeSetContent(toAdd, attrs, t);
+        addAttributeSetContent(toAdd, attrs, t, true);
         if (toAdd.getChildNodes().getLength() > 0) {
           ret.appendChild(toAdd);
         }
@@ -428,7 +430,7 @@ final class XmlWriter {
 
   Element fromOptions() {
     final var elt = doc.createElement("options");
-    addAttributeSetContent(elt, file.getOptions().getAttributeSet(), null);
+    addAttributeSetContent(elt, file.getOptions().getAttributeSet(), null, false);
     return elt;
   }
 
@@ -451,7 +453,7 @@ final class XmlWriter {
     final var elt = doc.createElement("tool");
     if (libName != null) elt.setAttribute("lib", libName);
     elt.setAttribute("name", tool.getName());
-    addAttributeSetContent(elt, tool.getAttributeSet(), tool);
+    addAttributeSetContent(elt, tool.getAttributeSet(), tool, true);
     return elt;
   }
 
