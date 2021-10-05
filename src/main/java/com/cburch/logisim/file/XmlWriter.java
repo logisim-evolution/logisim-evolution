@@ -388,7 +388,7 @@ final class XmlWriter {
       for (final var entry : file.getOptions().getMouseMappings().getMappings().entrySet()) {
         isUsed |= tools.contains(entry.getValue());
       }
-     if (!isUsed && !"#Base".equals(desc)) {
+      if (!isUsed && !"#Base".equals(desc)) {
         return null;
       }
     }
