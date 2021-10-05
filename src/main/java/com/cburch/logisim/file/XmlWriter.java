@@ -21,6 +21,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
@@ -372,20 +373,26 @@ final class XmlWriter {
       return null;
     }
     libs.put(lib, name);
-    if (isProjectExport) {
-      // first we check if the library is used
+    if (isProjectExport || AppPreferences.REMOVE_UNUSED_LIBRARIES.getBoolean()) {
+      // first we check if the library is used and if this is not the case we do not add it
       var isUsed = false;
+      final var tools = lib.getTools();
       for (final var circuit : file.getCircuits()) {
         for (final var tool : circuit.getNonWires()) {
           isUsed |= lib.contains(tool.getFactory());
         }
       }
       for (final var tool : file.getOptions().getToolbarData().getContents()) {
-        isUsed |= lib.getTools().contains(tool);
+        isUsed |= tools.contains(tool);
       }
-      if (!isUsed && !"#Base".equals(desc)) {
+      for (final var entry : file.getOptions().getMouseMappings().getMappings().entrySet()) {
+        isUsed |= tools.contains(entry.getValue());
+      }
+     if (!isUsed && !"#Base".equals(desc)) {
         return null;
       }
+    }
+    if (isProjectExport) {
       if (lib instanceof LoadedLibrary) {
         final var origFile = LibraryManager.getLibraryFilePath(file.getLoader(), desc);
         if (origFile != null) {
