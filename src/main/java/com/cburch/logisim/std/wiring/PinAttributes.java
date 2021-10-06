@@ -58,11 +58,6 @@ class PinAttributes extends ProbeAttributes {
   boolean threeState = false; // true;
   int type = EndData.INPUT_ONLY;
   Object pull = Pin.PULL_NONE;
-  AttributeOption appearance;
-
-  public PinAttributes() {
-    appearance = ProbeAttributes.getDefaultProbeAppearance();
-  }
 
   @Override
   public List<Attribute<?>> getAttributes() {
@@ -125,7 +120,7 @@ class PinAttributes extends ProbeAttributes {
     } else if (attr == PROBEAPPEARANCE) {
       final var newAppearance = (AttributeOption) value;
       if (appearance.equals(newAppearance)) return;
-      Appearance = newAppearance;
+      appearance = newAppearance;
     } else if (attr == RadixOption.ATTRIBUTE) {
       if (width.getWidth() == 1) {
         super.setValue(RadixOption.ATTRIBUTE, RadixOption.RADIX_2);

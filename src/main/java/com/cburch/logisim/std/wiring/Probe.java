@@ -299,7 +299,7 @@ public class Probe extends InstanceFactory {
         attrs.facing,
         attrs.width,
         attrs.radix,
-        attrs.Appearance == ProbeAttributes.APPEAR_EVOLUTION_NEW,
+        attrs.appearance == ProbeAttributes.APPEAR_EVOLUTION_NEW,
         false);
   }
 
