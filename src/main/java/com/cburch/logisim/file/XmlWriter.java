@@ -197,23 +197,22 @@ final class XmlWriter {
     tf.transform(src, dest);
   }
 
-  void addAttributeSetContent(Element elt, AttributeSet attrs, AttributeDefaultProvider source, boolean userModifOnly) {
+  void addAttributeSetContent(Element elt, AttributeSet attrs, AttributeDefaultProvider source, boolean userModifiedOnly) {
     if (attrs == null) return;
-    LogisimVersion ver = BuildInfo.version;
-    if (source != null && source.isAllDefaultValues(attrs, ver)) return;
+    if (source != null && source.isAllDefaultValues(attrs, BuildInfo.version)) return;
     for (final var attrBase : attrs.getAttributes()) {
       @SuppressWarnings("unchecked")
       final var attr = (Attribute<Object>) attrBase;
       final var val = attrs.getValue(attr);
-      if (userModifOnly && (attrs.isReadOnly(attr) || attr.isHidden())) 
+      if (userModifiedOnly && (attrs.isReadOnly(attr) || attr.isHidden())) 
         continue;
       if (attrs.isToSave(attr) && val != null) {
-        final var dflt = source == null ? null : source.getDefaultAttributeValue(attr, ver);
+        final var dflt = source == null ? null : source.getDefaultAttributeValue(attr, BuildInfo.version);
         final var defaultValue = dflt == null ? "" : attr.toStandardString(dflt);
         var newValue = attr.toStandardString(val);
         if (dflt == null || (!dflt.equals(val) && !defaultValue.equals(newValue)) 
-            || (attr.equals(StdAttr.APPEARANCE) && !userModifOnly)
-            || (attr.equals(ProbeAttributes.PROBEAPPEARANCE) && !userModifOnly && val.equals(ProbeAttributes.APPEAR_EVOLUTION_NEW))) {
+            || (attr.equals(StdAttr.APPEARANCE) && !userModifiedOnly)
+            || (attr.equals(ProbeAttributes.PROBEAPPEARANCE) && !userModifiedOnly && val.equals(ProbeAttributes.APPEAR_EVOLUTION_NEW))) {
           final var a = doc.createElement("a");
           a.setAttribute("name", attr.getName());
           if ("filePath".equals(attr.getName()) && outFilepath != null) {

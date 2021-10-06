@@ -73,7 +73,7 @@ public abstract class Attribute<V> {
   public boolean isToSave() {
     return true;
   }
-  
+
   @Override
   public String toString() {
     return name;
