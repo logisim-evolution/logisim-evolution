@@ -10,7 +10,6 @@
 package com.cburch.logisim.file;
 
 import com.cburch.draw.model.AbstractCanvasObject;
-import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.Wire;
@@ -255,6 +254,7 @@ final class XmlWriter {
 
   Element fromCircuit(Circuit circuit) {
     final var ret = doc.createElement("circuit");
+System.out.println("circuit:");
     ret.setAttribute("name", circuit.getName());
     addAttributeSetContent(ret, circuit.getStaticAttributes(), CircuitAttributes.DEFAULT_STATIC_ATTRIBUTES, false);
     if (!circuit.getAppearance().isDefaultAppearance()) {

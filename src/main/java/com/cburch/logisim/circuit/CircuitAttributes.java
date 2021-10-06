@@ -41,7 +41,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
     @Override
     public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
       final var ret = AttributeSets.fixedSet(STATIC_ATTRS, STATIC_DEFAULTS);
-      ret.setValue(APPEARANCE_ATTR, AppPreferences.getDefaultCircuitAppearance());
+      ret.setValue(APPEARANCE_ATTR, StdAttr.APPEAR_CLASSIC);
       return ret.getValue(attr);
     }
 
