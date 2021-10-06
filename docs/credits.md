@@ -13,7 +13,7 @@ The `Logisim-evolution` project is based on `Logisim` software by:
 
 * Carl Burch - [Hendrix College](https://www.hendrix.edu/), USA
 
-The following institutions/people actively contributed to further development of `Logisim-evolution`:
+The following people and institutions actively contributed to further development of `Logisim-evolution`:
 
 * Kevin Walsh - [College of the Holy Cross](http://www.holycross.edu/), USA,
 * [Haute École Spécialisée Bernoise](http://www.bfh.ch/), Switzerland,
