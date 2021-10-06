@@ -99,16 +99,6 @@ public class Multiplexer extends InstanceFactory {
   }
 
   @Override
-  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    if (attr == PlexersLibrary.ATTR_ENABLE) {
-      int newer = ver.compareTo(new LogisimVersion(2, 6, 4));
-      return newer >= 0;
-    } else {
-      return super.getDefaultAttributeValue(attr, ver);
-    }
-  }
-
-  @Override
   public String getHDLName(AttributeSet attrs) {
     final var completeName = new StringBuilder();
     completeName.append(CorrectLabel.getCorrectLabel(this.getName()));

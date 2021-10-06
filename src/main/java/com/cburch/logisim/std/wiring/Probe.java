@@ -184,11 +184,9 @@ public class Probe extends InstanceFactory {
 
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    if (attr.equals(ProbeAttributes.PROBEAPPEARANCE)) {
-      return StdAttr.APPEAR_CLASSIC;
-    } else {
-      return super.getDefaultAttributeValue(attr, ver);
-    }
+    return attr.equals(ProbeAttributes.PROBEAPPEARANCE)
+        ? ProbeAttributes.getDefaultProbeAppearance()
+        : super.getDefaultAttributeValue(attr, ver);
   }
 
   static void paintValue(InstancePainter painter, Value value, boolean colored) {

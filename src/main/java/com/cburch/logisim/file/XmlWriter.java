@@ -12,6 +12,7 @@ package com.cburch.logisim.file;
 import com.cburch.draw.model.AbstractCanvasObject;
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
@@ -206,19 +207,21 @@ final class XmlWriter {
       if (userModifOnly && (attrs.isReadOnly(attr) || attr.isHidden())) 
         continue;
       if (attrs.isToSave(attr) && val != null) {
-        Object dflt = source == null ? null : source.getDefaultAttributeValue(attr, ver);
-        if (dflt == null || !dflt.equals(val) || attr.equals(StdAttr.APPEARANCE)) {
+        final var dflt = source == null ? null : source.getDefaultAttributeValue(attr, ver);
+        final var defaultValue = dflt == null ? "" : attr.toStandardString(dflt);
+        var newValue = attr.toStandardString(val);
+        if (dflt == null || (!dflt.equals(val) && !defaultValue.equals(newValue)) 
+            || (attr.equals(StdAttr.APPEARANCE) && !userModifOnly)) {
           final var a = doc.createElement("a");
           a.setAttribute("name", attr.getName());
-          var value = attr.toStandardString(val);
           if ("filePath".equals(attr.getName()) && outFilepath != null) {
             final var outFP = Paths.get(outFilepath);
-            final var attrValP = Paths.get(value);
-            value = (outFP.relativize(attrValP)).toString();
-            a.setAttribute("val", value);
+            final var attrValP = Paths.get(newValue);
+            newValue = (outFP.relativize(attrValP)).toString();
+            a.setAttribute("val", newValue);
           } else {
-            if (value.contains("\n")) {
-              a.appendChild(doc.createTextNode(value));
+            if (newValue.contains("\n")) {
+              a.appendChild(doc.createTextNode(newValue));
             } else {
               a.setAttribute("val", attr.toStandardString(val));
             }
@@ -252,7 +255,7 @@ final class XmlWriter {
   Element fromCircuit(Circuit circuit) {
     final var ret = doc.createElement("circuit");
     ret.setAttribute("name", circuit.getName());
-    addAttributeSetContent(ret, circuit.getStaticAttributes(), null, false);
+    addAttributeSetContent(ret, circuit.getStaticAttributes(), CircuitAttributes.DEFAULT_STATIC_ATTRIBUTES, false);
     if (!circuit.getAppearance().isDefaultAppearance()) {
       final var appear = doc.createElement("appear");
       for (Object obj : circuit.getAppearance().getObjectsFromBottom()) {

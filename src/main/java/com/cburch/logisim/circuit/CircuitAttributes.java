@@ -11,10 +11,12 @@ package com.cburch.logisim.circuit;
 
 import static com.cburch.logisim.circuit.Strings.S;
 
+import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.appear.CircuitAppearanceEvent;
 import com.cburch.logisim.circuit.appear.CircuitAppearanceListener;
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeOption;
@@ -33,6 +35,22 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CircuitAttributes extends AbstractAttributeSet {
+  
+  private static class defaultStaticAttributeProvider implements AttributeDefaultProvider {
+
+    @Override
+    public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
+      final var ret = AttributeSets.fixedSet(STATIC_ATTRS, STATIC_DEFAULTS);
+      ret.setValue(APPEARANCE_ATTR, AppPreferences.getDefaultCircuitAppearance());
+      return ret.getValue(attr);
+    }
+
+    @Override
+    public boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver) {
+      return false;
+    }
+    
+  }
 
   private class MyListener implements AttributeListener, CircuitAppearanceListener {
     private final Circuit source;
@@ -162,6 +180,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
   public static final Attribute<Double> SIMULATION_FREQUENCY = Attributes.forDouble("simulationFrequency");
   public static final Attribute<Double> DOWNLOAD_FREQUENCY = Attributes.forDouble("downloadFrequency");
   public static final Attribute<String> DOWNLOAD_BOARD = Attributes.forString("downloadBoard");
+  public static final defaultStaticAttributeProvider DEFAULT_STATIC_ATTRIBUTES = new defaultStaticAttributeProvider();
 
   private static final Attribute<?>[] STATIC_ATTRS = {
     NAME_ATTR,

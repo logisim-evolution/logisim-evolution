@@ -766,11 +766,9 @@ public class Pin extends InstanceFactory {
 
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    if (attr.equals(ProbeAttributes.PROBEAPPEARANCE)) {
-      return StdAttr.APPEAR_CLASSIC;
-    } else {
-      return super.getDefaultAttributeValue(attr, ver);
-    }
+    return attr.equals(ProbeAttributes.PROBEAPPEARANCE) 
+        ? ProbeAttributes.getDefaultProbeAppearance()
+        : super.getDefaultAttributeValue(attr, ver);
   }
 
   private void configurePorts(Instance instance) {
@@ -787,9 +785,7 @@ public class Pin extends InstanceFactory {
 
   @Override
   public AttributeSet createAttributeSet() {
-    AttributeSet attrs = new PinAttributes();
-    attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.getDefaultProbeAppearance());
-    return attrs;
+    return new PinAttributes();
   }
 
   @Override
