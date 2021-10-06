@@ -476,7 +476,9 @@ public class AppPreferences {
       create(new PrefMonitorBoolean("NoOpenPinWarnings", false));
   public static final PrefMonitor<Boolean> VhdlKeywordsUpperCase =
       create(new PrefMonitorBoolean("VhdlKeywordsUpperCase", true));
-
+  //file preferences
+  public static final PrefMonitor<Boolean> REMOVE_UNUSED_LIBRARIES =
+      create(new PrefMonitorBoolean("removeUnusedLibs", false));
   // Window preferences
   public static final String TOOLBAR_HIDDEN = "hidden";
   public static final PrefMonitor<Boolean> SHOW_TICK_RATE =

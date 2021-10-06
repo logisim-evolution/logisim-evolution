@@ -12,6 +12,8 @@ package com.cburch.logisim.file;
 import static com.cburch.logisim.file.Strings.S;
 
 import com.cburch.logisim.tools.Library;
+import com.cburch.logisim.util.LineBuffer;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -116,29 +118,32 @@ public final class LibraryManager {
 
   private static String toRelative(Loader loader, File file) {
     final var currentDirectory = loader.getCurrentDirectory();
-    if (currentDirectory == null) {
-      try {
-        return file.getCanonicalPath();
-      } catch (IOException e) {
-        return file.toString();
-      }
-    }
-
-    final var fileDir = file.getParentFile();
-    if (fileDir != null) {
-      if (currentDirectory.equals(fileDir)) {
-        return file.getName();
-      } else if (currentDirectory.equals(fileDir.getParentFile())) {
-        return fileDir.getName() + File.separator + file.getName();
-      } else if (fileDir.equals(currentDirectory.getParentFile())) {
-        return ".." + File.separator + file.getName();
-      }
-    }
+    var fileName = file.toString();
     try {
-      return file.getCanonicalPath();
+      fileName = file.getCanonicalPath(); 
     } catch (IOException e) {
-      return file.toString();
+      // Do nothing as we already have defined the default above
     }
+    if (currentDirectory != null) {
+      final var currentParts = currentDirectory.toString().split(File.separator);
+      final var newParts = fileName.split(File.separator);
+      final var nrOfNewParts = newParts.length;
+      // note that the newParts includes the filename, whilst the old doesn't
+      var nrOfPartsEqual = 0;
+      while ((nrOfPartsEqual < currentParts.length) && (nrOfPartsEqual < (nrOfNewParts - 1)) 
+          && (currentParts[nrOfPartsEqual].equals(newParts[nrOfPartsEqual]))) {
+        nrOfPartsEqual++;
+      }
+      final var nrOfLevelsToGoDown = currentParts.length - nrOfPartsEqual;
+      final var relativeFile = new StringBuilder();
+      relativeFile.append(String.format("..%s", File.separator).repeat(nrOfLevelsToGoDown));
+      for (var restingPartId = nrOfPartsEqual; restingPartId < nrOfNewParts; restingPartId++) {
+        relativeFile.append(newParts[restingPartId]);
+        if (restingPartId < (nrOfNewParts - 1)) relativeFile.append(File.separator);
+      }
+      return relativeFile.toString();
+    }
+    return fileName;
   }
 
 
@@ -201,7 +206,7 @@ public final class LibraryManager {
       }
     }
   }
-
+  
   Collection<LogisimFile> getLogisimLibraries() {
     final var ret = new ArrayList<LogisimFile>();
     for (final var lib : invMap.keySet()) {
@@ -232,7 +237,7 @@ public final class LibraryManager {
   public Library loadLibrary(Loader loader, String desc) {
     // It may already be loaded.
     // Otherwise we'll have to decode it.
-    int sep = desc.indexOf(DESC_SEP);
+    final var sep = desc.indexOf(DESC_SEP);
     if (sep < 0) {
       loader.showError(S.get("fileDescriptorError", desc));
       return null;
@@ -263,6 +268,36 @@ public final class LibraryManager {
         loader.showError(S.get("fileTypeError", type, desc));
         return null;
     }
+  }
+  
+  public static String getLibraryFilePath(Loader loader, String desc) {
+    final var sep = desc.indexOf(DESC_SEP);
+    if (sep < 0) {
+      loader.showError(S.get("fileDescriptorError", desc));
+      return null;
+    }
+    final var type = desc.substring(0, sep);
+    final var name = desc.substring(sep + 1);
+    return switch (type) {
+      case "file" -> loader.getFileFor(name, Loader.LOGISIM_FILTER).getAbsolutePath();
+      case "jar" -> loader.getFileFor(name.substring(0, name.lastIndexOf(DESC_SEP)), Loader.JAR_FILTER).getAbsolutePath(); 
+      default -> null;
+    };
+  }
+
+  public static String getReplacementDescriptor(Loader loader, String desc, String fileName) {
+    final var sep = desc.indexOf(DESC_SEP);
+    if (sep < 0) {
+      loader.showError(S.get("fileDescriptorError", desc));
+      return null;
+    }
+    final var type = desc.substring(0, sep);
+    final var name = desc.substring(sep + 1);
+    return switch (type) {
+      case "file" -> String.format("file#%s", fileName);
+      case "jar" -> LineBuffer.format("jar#{{1}}#{{2}}", fileName, name.substring(name.lastIndexOf(DESC_SEP) + 1));
+      default -> null;
+    };
   }
 
   public LoadedLibrary loadLogisimLibrary(Loader loader, File toRead) {

@@ -22,6 +22,8 @@
   * Each circuit stores/restores the last board used for Download (handy for templates to give to students)
   * Fixed startup crash related to incorrectly localized date format.
   * Added a setting to select lower- or upper-case VHDL keywords
+  * added project export feature
+  * cleaned-up the written .circ file
 
 * v3.6.1 (2021-09-27)
   * Fixed bug in LED-array

@@ -591,12 +591,16 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   // other methods
   //
   void write(OutputStream out, LibraryLoader loader) {
-    write(out, loader, null);
+    write(out, loader, null, null);
   }
 
-  void write(OutputStream out, LibraryLoader loader, File dest) {
+  void write(OutputStream out, LibraryLoader loader, String libraryHome) {
+    write(out, loader, null, libraryHome);
+  }
+
+  void write(OutputStream out, LibraryLoader loader, File dest, String libraryHome) {
     try {
-      XmlWriter.write(this, out, loader, dest);
+      XmlWriter.write(this, out, loader, dest, libraryHome);
     } catch (TransformerConfigurationException e) {
       loader.showError("internal error configuring transformer");
     } catch (ParserConfigurationException e) {
@@ -608,4 +612,5 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       loader.showError(err);
     }
   }
+  
 }
