@@ -31,10 +31,8 @@ import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -436,7 +434,7 @@ public class ProjectActions {
             Files.createDirectories(Paths.get(exportCircDir));
           }
         } catch (IOException e) {
-          OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjUnableToCreate"));
+          OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjUnableToCreate", e.getMessage()));
           proj.setTool(oldTool);
           return false;
         }
