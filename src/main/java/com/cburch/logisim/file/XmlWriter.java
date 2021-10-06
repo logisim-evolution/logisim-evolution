@@ -76,7 +76,7 @@ final class XmlWriter {
   private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilePath) {
     this(file, doc, loader, outFilePath, null);
   }
-  
+
   private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilePath, String librariesPath) {
     this.file = file;
     this.doc = doc;
@@ -488,7 +488,7 @@ final class XmlWriter {
     final var lib = findLibrary(tool);
     String libName;
     if (lib == null) {
-      loader.showError(StringUtil.format("tool `%s' not found", tool.getDisplayName()));
+      loader.showError(String.format("tool `%s' not found", tool.getDisplayName()));
       return null;
     } else if (lib == file) {
       libName = null;
