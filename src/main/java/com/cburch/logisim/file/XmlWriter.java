@@ -21,21 +21,27 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.base.Text;
 import com.cburch.logisim.std.wiring.ProbeAttributes;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
+import com.cburch.logisim.util.LineBuffer;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -58,20 +64,27 @@ final class XmlWriter {
   /**
    * Path of the file which is being written on disk -- used to relativize components stored in it.
    */
-  private final String outFilepath;
-
+  private final String outFilePath;
+  private final String librariesPath;
+  private final boolean isProjectExport;
   private final LibraryLoader loader;
   private final HashMap<Library, String> libs = new HashMap<>();
 
   private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader) {
-    this(file, doc, loader, null);
+    this(file, doc, loader, null, null);
   }
 
-  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilepath) {
+  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilePath) {
+    this(file, doc, loader, outFilePath, null);
+  }
+  
+  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilePath, String librariesPath) {
     this.file = file;
     this.doc = doc;
     this.loader = loader;
-    this.outFilepath = outFilepath;
+    this.outFilePath = outFilePath;
+    this.librariesPath = librariesPath;
+    isProjectExport = (librariesPath != null && !librariesPath.isEmpty());
   }
 
 
@@ -160,7 +173,7 @@ final class XmlWriter {
     }
   }
 
-  static void write(LogisimFile file, OutputStream out, LibraryLoader loader, File destFile)
+  static void write(LogisimFile file, OutputStream out, LibraryLoader loader, File destFile, String libraryHome)
       throws ParserConfigurationException, TransformerException {
 
     final var docFactory = DocumentBuilderFactory.newInstance();
@@ -172,6 +185,8 @@ final class XmlWriter {
       var dstFilePath = destFile.getAbsolutePath();
       dstFilePath = dstFilePath.substring(0, dstFilePath.lastIndexOf(File.separator));
       context = new XmlWriter(file, doc, loader, dstFilePath);
+    } else if (libraryHome != null) {
+      context = new XmlWriter(file, doc, loader, null, libraryHome);
     } else context = new XmlWriter(file, doc, loader);
 
     context.fromLogisimFile();
@@ -356,13 +371,50 @@ final class XmlWriter {
   Element fromLibrary(Library lib) {
     final var ret = doc.createElement("lib");
     if (libs.containsKey(lib)) return null;
-    final var name = "" + libs.size();
-    final var desc = loader.getDescriptor(lib);
+    final var name = Integer.toString(libs.size());
+    var desc = loader.getDescriptor(lib);
     if (desc == null) {
       loader.showError("library location unknown: " + lib.getName());
       return null;
     }
     libs.put(lib, name);
+    if (isProjectExport || AppPreferences.REMOVE_UNUSED_LIBRARIES.getBoolean()) {
+      // first we check if the library is used and if this is not the case we do not add it
+      var isUsed = false;
+      final var tools = lib.getTools();
+      for (final var circuit : file.getCircuits()) {
+        for (final var tool : circuit.getNonWires()) {
+          isUsed |= lib.contains(tool.getFactory());
+        }
+      }
+      for (final var tool : file.getOptions().getToolbarData().getContents()) {
+        isUsed |= tools.contains(tool);
+      }
+      for (final var entry : file.getOptions().getMouseMappings().getMappings().entrySet()) {
+        isUsed |= tools.contains(entry.getValue());
+      }
+      if (!isUsed && !"#Base".equals(desc)) {
+        return null;
+      }
+    }
+    if (isProjectExport) {
+      if (lib instanceof LoadedLibrary) {
+        final var origFile = LibraryManager.getLibraryFilePath(file.getLoader(), desc);
+        if (origFile != null) {
+          final var names = origFile.split(File.separator);
+          final var filename = names[names.length - 1];
+          final var newFile = String.format("%s%s%s", librariesPath, File.separator, filename);
+          try {
+            Files.copy(Paths.get(origFile), Paths.get(newFile), StandardCopyOption.REPLACE_EXISTING);
+          } catch (IOException e) {
+            //TODO: error message to user
+            return null;
+          }
+          final var newFilePath = LineBuffer.format("..{{1}}{{2}}{{1}}{{3}}", File.separator, Loader.LOGISIM_LIBRARY_DIR, filename);
+          desc = LibraryManager.getReplacementDescriptor(file.getLoader(), desc, newFilePath);
+        }
+      }
+    }
     ret.setAttribute("name", name);
     ret.setAttribute("desc", desc);
     for (Tool t : lib.getTools()) {
