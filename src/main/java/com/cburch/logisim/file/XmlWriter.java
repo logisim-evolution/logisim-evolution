@@ -229,8 +229,8 @@ final class XmlWriter {
             || (attr.equals(ProbeAttributes.PROBEAPPEARANCE) && !userModifiedOnly && val.equals(ProbeAttributes.APPEAR_EVOLUTION_NEW))) {
           final var a = doc.createElement("a");
           a.setAttribute("name", attr.getName());
-          if ("filePath".equals(attr.getName()) && outFilepath != null) {
-            final var outFP = Paths.get(outFilepath);
+          if ("filePath".equals(attr.getName()) && outFilePath != null) {
+            final var outFP = Paths.get(outFilePath);
             final var attrValP = Paths.get(newValue);
             newValue = (outFP.relativize(attrValP)).toString();
             a.setAttribute("val", newValue);
