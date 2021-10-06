@@ -15,6 +15,7 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.std.Builtin;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.util.JFileChoosers;
+import com.cburch.logisim.util.LineBuffer;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.ZipClassLoader;
 import com.cburch.logisim.vhdl.file.HdlFile;
@@ -82,6 +83,18 @@ public class Loader implements LibraryLoader {
     }
   }
 
+  private static class LogisimDirectoryFilter extends FileFilter {
+    @Override
+    public boolean accept(File f) {
+      return f.isDirectory();
+    }
+
+    @Override
+    public String getDescription() {
+      return S.get("logisimDirectoryFilter");
+    }
+  }
+
   private static class TclFileFilter extends FileFilter {
     @Override
     public boolean accept(File f) {
@@ -95,7 +108,10 @@ public class Loader implements LibraryLoader {
   }
 
   public static final String LOGISIM_EXTENSION = ".circ";
+  public static final String LOGISIM_LIBRARY_DIR = "library";
+  public static final String LOGISIM_CIRCUIT_DIR = "circuit";
   public static final FileFilter LOGISIM_FILTER = new LogisimFileFilter();
+  public static final FileFilter LOGISIM_DIRECTORY = new LogisimDirectoryFilter();
   public static final FileFilter JAR_FILTER = new JarFileFilter();
   public static final FileFilter TXT_FILTER = new TxtFileFilter();
   public static final FileFilter TCL_FILTER = new TclFileFilter();
@@ -310,6 +326,21 @@ public class Loader implements LibraryLoader {
   public void reload(LoadedLibrary lib) {
     LibraryManager.instance.reload(this, lib);
   }
+  
+  public boolean export(LogisimFile file, String homeDirectory) {
+    try {
+      final var mainCircFile = LineBuffer.format("{{1}}{{2}}{{3}}{{2}}{{4}}", homeDirectory, File.separator,
+          LOGISIM_CIRCUIT_DIR, getMainFile().getName());
+      final var libraryHome = String.format("%s%s%s", homeDirectory, File.separator, LOGISIM_LIBRARY_DIR);
+      final var fwrite = new FileOutputStream(mainCircFile);
+      file.write(fwrite, this, libraryHome);
+    } catch (IOException e) {
+      //TODO: give an error message to the user #1136
+      System.err.println("Unable to export file");
+      return false;
+    }
+    return true;
+  }
 
   public boolean save(LogisimFile file, File dest) {
     final var reference = LibraryManager.instance.findReference(file, dest);
@@ -326,15 +357,15 @@ public class Loader implements LibraryLoader {
     final var backupCreated = (backup != null) && dest.renameTo(backup);
 
     FileOutputStream fwrite = null;
+    final var oldFile = getMainFile();
     try {
-      fwrite = new FileOutputStream(dest);
-      file.write(fwrite, this, dest);
-      file.setName(toProjectName(dest));
-
-      final var oldFile = getMainFile();
       setMainFile(dest);
+      fwrite = new FileOutputStream(dest);
+      file.write(fwrite, this, dest, null);
+      file.setName(toProjectName(dest));
       LibraryManager.instance.fileSaved(this, dest, oldFile, file);
     } catch (IOException e) {
+      setMainFile(oldFile);
       if (backupCreated) recoverBackup(backup, dest);
       if (dest.exists() && dest.length() == 0) {
         // FIXME: delete can fail. Ensure we will not have snowball effect here!

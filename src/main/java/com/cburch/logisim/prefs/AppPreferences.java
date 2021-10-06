@@ -474,6 +474,10 @@ public class AppPreferences {
       create(new PrefMonitorBoolean("NoGatedClockWarnings", false));
   public static final PrefMonitor<Boolean> SupressOpenPinWarnings =
       create(new PrefMonitorBoolean("NoOpenPinWarnings", false));
+  
+  //file preferences
+  public static final PrefMonitor<Boolean> REMOVE_UNUSED_LIBRARIES =
+      create(new PrefMonitorBoolean("removeUnusedLibs", false));
 
   // Window preferences
   public static final String TOOLBAR_HIDDEN = "hidden";

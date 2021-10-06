@@ -16,6 +16,7 @@ import com.cburch.logisim.file.LoaderException;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.prefs.PrefMonitorBoolean;
 import com.cburch.logisim.prefs.Template;
 import com.cburch.logisim.util.JFileChoosers;
 import java.awt.Dimension;
@@ -31,6 +32,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JFileChooser;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
@@ -44,6 +46,7 @@ class TemplateOptions extends OptionsPanel {
   private final JRadioButton custom = new JRadioButton();
   private final JTextField templateField = new JTextField(40);
   private final JButton templateButton = new JButton();
+  private final JCheckBox removeLibs;
   public TemplateOptions(PreferencesFrame window) {
     super(window);
 
@@ -61,12 +64,15 @@ class TemplateOptions extends OptionsPanel {
 
     final var gridbag = new GridBagLayout();
     final var gbc = new GridBagConstraints();
+    removeLibs = ((PrefMonitorBoolean) AppPreferences.REMOVE_UNUSED_LIBRARIES).getCheckBox();
     setLayout(gridbag);
     gbc.weightx = 1.0;
     gbc.gridx = 0;
     gbc.gridy = GridBagConstraints.RELATIVE;
     gbc.gridwidth = 3;
     gbc.anchor = GridBagConstraints.LINE_START;
+    gridbag.setConstraints(removeLibs, gbc);
+    add(removeLibs);
     gridbag.setConstraints(plain, gbc);
     add(plain);
     gridbag.setConstraints(empty, gbc);
@@ -122,6 +128,7 @@ class TemplateOptions extends OptionsPanel {
     empty.setText(S.get("templateEmptyOption"));
     custom.setText(S.get("templateCustomOption"));
     templateButton.setText(S.get("templateSelectButton"));
+    removeLibs.setText(S.get("templateRemoveLibsOnSave"));
   }
 
   private class MyListener implements ActionListener, PropertyChangeListener {
