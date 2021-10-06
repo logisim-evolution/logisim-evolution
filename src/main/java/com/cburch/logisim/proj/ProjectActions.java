@@ -427,18 +427,11 @@ public class ProjectActions {
         try {
           final var path = Paths.get(exportRootDir);
           if (Files.exists(path)) {
-            final var confirm = OptionPane.showConfirmDialog(proj.getFrame(), S.fmt("projExistsOverwrite", exportRoot), 
-                S.get("projExport"), OptionPane.YES_NO_OPTION);
-            isCorrectDirectory = confirm == OptionPane.YES_OPTION;
+            OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjExistsUnableToCreate", exportRoot));
           } else {
             isCorrectDirectory = true;
           }
           if (isCorrectDirectory) {
-            // FIXME: deleting removed for the moment only overwriting
-            /*
-            if (Files.exists(path))
-              Files.walk(path).sorted(Comparator.reverseOrder()).map(Path::toFile).forEach(File::delete);
-            */
             Files.createDirectories(Paths.get(exportLibDir));
             Files.createDirectories(Paths.get(exportCircDir));
           }
