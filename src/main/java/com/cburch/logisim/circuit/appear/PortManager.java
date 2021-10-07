@@ -194,9 +194,6 @@ class PortManager {
       Set<Instance> removes,
       Map<Instance, Instance> replaces,
       Collection<Instance> allPins) {
-//    if (appearance.isDefaultAppearance()) {
-//      appearance.recomputePorts();
-//    } else 
     if (!doingUpdate) {
       // "doingUpdate" ensures infinite recursion doesn't happen
       try {

@@ -38,7 +38,7 @@ import java.util.TreeMap;
 
 public class CircuitAppearance extends Drawing implements AttributeListener {
   public static final int PIN_LENGTH = 10;
-
+  
   private class MyListener implements CanvasModelListener {
     @Override
     public void modelChanged(CanvasModelEvent event) {
@@ -55,7 +55,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
   private final MyListener myListener;
   private final ArrayList<CanvasObject> defaultCanvasObjects;
   private boolean suppressRecompute;
-  private boolean hasCustomAppearance;
+  private List<CanvasObject> defaultCustomAppearance;
 
   public CircuitAppearance(Circuit circuit) {
     this.circuit = circuit;
@@ -68,12 +68,17 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
     circuit.getStaticAttributes().addAttributeListener(this);
     defaultCanvasObjects = new ArrayList<CanvasObject>();
     recomputeDefaultAppearance();
-    setObjectsForce(DefaultCustomAppearance.build(circuitPins.getPins()), false);
-    hasCustomAppearance = false;
+    defaultCustomAppearance = DefaultCustomAppearance.build(circuitPins.getPins()); 
+    setObjectsForce(defaultCustomAppearance, false);
   }
 
   public boolean hasCustomAppearance() {
-    return hasCustomAppearance;
+    final var currentCustom = new ArrayList<CanvasObject>(getCustomObjectsFromBottom());
+    for (final var shape : defaultCustomAppearance) {
+      if (currentCustom.contains(shape))
+        currentCustom.remove(shape);
+    }
+    return !currentCustom.isEmpty();
   }
 
   public String getName() {
@@ -229,7 +234,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
   public boolean isDefaultAppearance() {
     return !circuit.getStaticAttributes().getValue(CircuitAttributes.APPEARANCE_ATTR).equals(CircuitAttributes.APPEAR_CUSTOM);
   }
-
+  
   public List<CanvasObject> getCustomObjectsFromBottom() {
     return super.getObjectsFromBottom();
   }
@@ -282,11 +287,10 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
 
   public boolean isNamedBoxShapedFixedSize() {
     if (circuit == null || circuit.getStaticAttributes() == null) return true;
-    if (circuit
-        .getStaticAttributes()
-        .containsAttribute(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE))
-      return circuit.getStaticAttributes().getValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE);
-    return true;
+    final var staticAttrs = circuit.getStaticAttributes(); 
+    return staticAttrs.containsAttribute(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE) 
+        ? staticAttrs.getValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE) 
+        : true;
   }
 
   public void recomputeDefaultAppearance() {
@@ -296,7 +300,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
   }
 
   void recomputePorts() {
-    if (!circuit.getStaticAttributes().getValue(CircuitAttributes.APPEARANCE_ATTR).equals(CircuitAttributes.APPEAR_CUSTOM)) {
+    if (isDefaultAppearance()) {
       recomputeDefaultAppearance();
     } else {
       fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
@@ -336,8 +340,15 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
     var oldSuppress = suppressRecompute;
     try {
       suppressRecompute = true;
-      removeObjects(removes);
-      addObjects(getCustomObjectsFromBottom().size() - 1, adds);
+      final var hasCustom = hasCustomAppearance(); 
+      if (hasCustom) {
+        removeObjects(removes);
+        addObjects(getCustomObjectsFromBottom().size() - 1, adds);
+      } else {
+        super.removeObjects(defaultCustomAppearance);
+        defaultCustomAppearance = DefaultCustomAppearance.build(circuitPins.getPins()); 
+        setObjectsForce(defaultCustomAppearance, false);
+      }
     } finally {
       suppressRecompute = oldSuppress;
     }
@@ -345,7 +356,6 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
   }
 
   public void setObjectsForce(List<? extends CanvasObject> shapesBase) {
-    hasCustomAppearance = true;
     setObjectsForce(shapesBase, false);
   }
 

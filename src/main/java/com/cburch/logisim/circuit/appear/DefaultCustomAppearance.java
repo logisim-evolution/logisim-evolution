@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.circuit.appear;
 
-import java.awt.Color;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -19,8 +18,6 @@ import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.draw.shapes.Rectangle;
 import com.cburch.draw.shapes.Text;
-import com.cburch.draw.util.EditableLabel;
-import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
@@ -63,12 +60,9 @@ public class DefaultCustomAppearance {
     final var numWest = edge.get(Direction.WEST).size();
     final var maxVert = Math.max(numEast, numWest);
 
-    final var dy = ((DrawAttr.FIXED_FONT_HEIGHT + (DrawAttr.FIXED_FONT_HEIGHT >> 2) + 5) / 10) * 10;
     final var textWidth = 25 * DrawAttr.FIXED_FONT_CHAR_WIDTH;
-    final var thight = ((DrawAttr.FIXED_FONT_HEIGHT + 10) / 10) * 10;
     final var width = (textWidth / 10) * 10 + 20;
-    final var height = (maxVert > 0) ? maxVert * dy + thight : 10 + thight;
-    final var sdy = (DrawAttr.FIXED_FONT_ASCENT - DrawAttr.FIXED_FONT_DESCENT) >> 1;
+    final var height = (maxVert > 0) ? maxVert * 10 + 10 : 10;
 
     // compute position of anchor relative to top left corner of box
     int ax;
@@ -89,8 +83,8 @@ public class DefaultCustomAppearance {
     final var ry = OFFS + (9 - (ay + 9) % 10);
 
     final var ret = new ArrayList<CanvasObject>();
-    placePins(ret, edge.get(Direction.WEST), rx, ry + 10, 0, dy, true, sdy);
-    placePins(ret, edge.get(Direction.EAST), rx + width, ry + 10, 0, dy, false, sdy);
+    placePins(ret, edge.get(Direction.WEST), rx, ry + 10, 0, 10);
+    placePins(ret, edge.get(Direction.EAST), rx + width, ry + 10, 0, 10);
     final var rect = new Rectangle(rx, ry, width, height);
     rect.setValue(DrawAttr.STROKE_WIDTH, 1);
     ret.add(rect);
@@ -104,46 +98,9 @@ public class DefaultCustomAppearance {
       int x,
       int y,
       int dX,
-      int dY,
-      boolean isLeftSide,
-      int ldy) {
-    int hAlign;
-    final var color = Color.DARK_GRAY;
-    int ldX;
+      int dY) {
     for (final var pin : pins) {
-      final var offset =
-          (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1)
-              ? Wire.WIDTH_BUS >> 1
-              : Wire.WIDTH >> 1;
-      final var height = (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1) ? Wire.WIDTH_BUS : Wire.WIDTH;
-      Rectangle rect;
-      if (isLeftSide) {
-        ldX = 15;
-        hAlign = EditableLabel.LEFT;
-        rect = new Rectangle(x, y - offset, 10, height);
-      } else {
-        ldX = -15;
-        hAlign = EditableLabel.RIGHT;
-        rect = new Rectangle(x - 10, y - offset, 10, height);
-      }
-      rect.setValue(DrawAttr.STROKE_WIDTH, 1);
-      rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
-      rect.setValue(DrawAttr.FILL_COLOR, Color.BLACK);
-      dest.add(rect);
       dest.add(new AppearancePort(Location.create(x, y), pin));
-      if (pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
-        var label = pin.getAttributeValue(StdAttr.LABEL);
-        final var maxLength = 12;
-        final var ellipsis = "...";
-        if (label.length() > maxLength) {
-          label = label.substring(0, maxLength - ellipsis.length()).concat(ellipsis);
-        }
-        final var textLabel = new Text(x + ldX, y + ldy, label);
-        textLabel.getLabel().setHorizontalAlignment(hAlign);
-        textLabel.getLabel().setColor(color);
-        textLabel.getLabel().setFont(DrawAttr.DEFAULT_FIXED_PICH_FONT);
-        dest.add(textLabel);
-      }
       x += dX;
       y += dY;
     }
