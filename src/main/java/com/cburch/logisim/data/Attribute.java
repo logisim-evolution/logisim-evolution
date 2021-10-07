@@ -15,18 +15,21 @@ import javax.swing.JTextField;
 
 public abstract class Attribute<V> {
   private final String name;
-  private StringGetter disp;
+  private final StringGetter disp;
   private boolean hidden;
 
   public Attribute() {
-    hidden = true;
-    name = "Dummy";
+    this("dummy", null, true);
   }
 
   public Attribute(String name, StringGetter disp) {
+    this(name, disp, false);
+  }
+
+  public Attribute(String name, StringGetter disp, boolean hidden) {
     this.name = name;
     this.disp = disp;
-    this.hidden = false;
+    this.hidden = hidden;
   }
 
   protected java.awt.Component getCellEditor(V value) {

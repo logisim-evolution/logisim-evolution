@@ -11,7 +11,6 @@ package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -201,13 +200,6 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     ps[numInputs + 3].setToolTip(S.getter("flipFlopResetTip"));
     ps[numInputs + 4].setToolTip(S.getter("flipFlopPresetTip"));
     instance.setPorts(ps);
-  }
-
-  @Override
-  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    return (attr.equals(StdAttr.APPEARANCE))
-        ? StdAttr.APPEAR_CLASSIC
-        : super.getDefaultAttributeValue(attr, ver);
   }
 
   @Override

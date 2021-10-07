@@ -58,9 +58,6 @@ class PinAttributes extends ProbeAttributes {
   boolean threeState = false; // true;
   int type = EndData.INPUT_ONLY;
   Object pull = Pin.PULL_NONE;
-  AttributeOption Appearance = ProbeAttributes.APPEAR_EVOLUTION_NEW;
-
-  public PinAttributes() {}
 
   @Override
   public List<Attribute<?>> getAttributes() {
@@ -79,7 +76,7 @@ class PinAttributes extends ProbeAttributes {
     if (attr == Pin.ATTR_TRISTATE) return (V) Boolean.valueOf(threeState);
     if (attr == Pin.ATTR_TYPE) return (V) Boolean.valueOf(type == EndData.OUTPUT_ONLY);
     if (attr == Pin.ATTR_PULL) return (V) pull;
-    if (attr == PROBEAPPEARANCE) return (V) Appearance;
+    if (attr == PROBEAPPEARANCE) return (V) appearance;
     if (attr == ATTR_DUMMY) return (V) "nochange";
     return super.getValue(attr);
   }
@@ -107,7 +104,7 @@ class PinAttributes extends ProbeAttributes {
       BitWidth NewWidth = (BitWidth) value;
       if (width == NewWidth) return;
       width = (BitWidth) value;
-      if (width.getWidth() > 8 && Appearance == ProbeAttributes.APPEAR_EVOLUTION_NEW)
+      if (width.getWidth() > 8 && appearance == ProbeAttributes.APPEAR_EVOLUTION_NEW)
         super.setValue(RadixOption.ATTRIBUTE, RadixOption.RADIX_16);
     } else if (attr == Pin.ATTR_TRISTATE) {
       boolean NewThree = (Boolean) value;
@@ -121,9 +118,9 @@ class PinAttributes extends ProbeAttributes {
       if (pull.equals(value)) return;
       pull = value;
     } else if (attr == PROBEAPPEARANCE) {
-      AttributeOption NewAppearance = (AttributeOption) value;
-      if (Appearance.equals(NewAppearance)) return;
-      Appearance = NewAppearance;
+      final var newAppearance = (AttributeOption) value;
+      if (appearance.equals(newAppearance)) return;
+      appearance = newAppearance;
     } else if (attr == RadixOption.ATTRIBUTE) {
       if (width.getWidth() == 1) {
         super.setValue(RadixOption.ATTRIBUTE, RadixOption.RADIX_2);
