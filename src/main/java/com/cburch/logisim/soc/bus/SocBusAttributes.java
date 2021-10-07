@@ -148,7 +148,7 @@ public class SocBusAttributes extends AbstractAttributeSet {
     public boolean isHidden() {
       return true;
     }
-
+    
     @Override
     public String toStandardString(SocBusInfo value) {
       return value.getBusId();
