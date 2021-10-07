@@ -26,7 +26,7 @@ https://www.pucminas.br/destaques/Paginas/default.aspx), Brazil,
 * [Tom Niget](https://github.com/zdimension/) - [LEAT](https://leat.univ-cotedazur.fr/), [Polytech Nice-Sophia](https://polytech.univ-cotedazur.fr/),
 France,
 * [Marcin Orlowski](http://MarcinOrlowski.com/), Poland,
-* Prof. Dr. Theo Kluter, [Bern University of Applied Sciences](http://www.microlab.ch/), Switzerland.
+* Theo Kluter, [Bern University of Applied Sciences](http://www.microlab.ch/), Switzerland.
 
 If you feel that your name should be in this list, please feel free
 to [open a ticket](https://github.com/logisim-evolution/logisim-evolution/issues).
