@@ -31,7 +31,7 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
   private final JTextField labelField = new JTextField();
   private final String compName;
 
-  public MatrixPlacerDialog(MatrixPlacerInfo value, String name, boolean isAutoLablerActive) {
+  public MatrixPlacerDialog(MatrixPlacerInfo value, String name, boolean isAutoLabelerActive) {
     super();
     compName = name;
     matrixInfo = value;
@@ -44,7 +44,7 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
     c.anchor = GridBagConstraints.CENTER;
     c.weightx = 1;
     c.weighty = 1;
-    if ((matrixInfo.getLabel() != null) && isAutoLablerActive) {
+    if ((matrixInfo.getLabel() != null) && isAutoLabelerActive) {
       c.gridx = 0;
       c.gridy = 0;
       c.gridwidth = 4;
