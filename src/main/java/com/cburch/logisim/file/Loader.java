@@ -191,7 +191,7 @@ public class Loader implements LibraryLoader {
     }
     while (!file.canRead()) {
       // It doesn't exist. Figure it out from the user.
-      OptionPane.showMessageDialog(parent, StringUtil.format(S.get("fileLibraryMissingError"), file.getName()));
+      OptionPane.showMessageDialog(parent, String.format(S.get("fileLibraryMissingError"), file.getName()));
       final var chooser = createChooser();
       chooser.setFileFilter(filter);
       chooser.setDialogTitle(S.get("fileLibraryMissingTitle", file.getName()));
@@ -326,7 +326,7 @@ public class Loader implements LibraryLoader {
   public void reload(LoadedLibrary lib) {
     LibraryManager.instance.reload(this, lib);
   }
-  
+
   public boolean export(LogisimFile file, String homeDirectory) {
     try {
       final var mainCircFile = LineBuffer.format("{{1}}{{2}}{{3}}{{2}}{{4}}", homeDirectory, File.separator,
