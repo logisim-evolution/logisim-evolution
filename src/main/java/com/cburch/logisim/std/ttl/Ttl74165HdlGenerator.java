@@ -22,10 +22,10 @@ public class Ttl74165HdlGenerator extends AbstractHdlGeneratorFactory {
   public Ttl74165HdlGenerator() {
     super();
     myWires
-        .addWire("CurState", 8)
-        .addWire("NextState", 8)
-        .addWire("ParData", 8)
-        .addWire("Enable", 1);
+        .addWire("curState", 8)
+        .addWire("nextState", 8)
+        .addWire("parData", 8)
+        .addWire("enable", 1);
     myPorts
         .add(Port.CLOCK, HdlPorts.CLOCK, 1, 1)
         .add(Port.INPUT, "SHnLD", 1, 0)
@@ -45,32 +45,48 @@ public class Ttl74165HdlGenerator extends AbstractHdlGeneratorFactory {
 
   @Override
   public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    return LineBuffer.getBuffer()
+    final var contents = LineBuffer.getHdlBuffer()
         .pair("CK", HdlPorts.CLOCK)
-        .pair("Tick", HdlPorts.TICK)
-        .add("""
-            Q7  <= CurState(0);
-            Q7n <= NOT(CurState(0));
+        .pair("Tick", HdlPorts.TICK);
+    if (Hdl.isVhdl()) {
+      contents.empty().addVhdlKeywords().add("""
+          Q7  <= curState(0);
+          Q7n <= {{not}}(curState(0));
 
-            Enable  <= NOT(CKIh) AND {{Tick}};
-            ParData <= P7&P6&P5&P4&P3&P2&P1&P0;
+          enable  <= {{not}}(CKIh) {{and}} {{Tick}};
+          parData <= P7&P6&P5&P4&P3&P2&P1&P0;
 
-            NextState <= CurState WHEN Enable = '0' ELSE
-                         ParData WHEN SHnLD = '0' ELSE
-                         SER&CurState(7 DOWNTO 1);
+          nextState <= curState {{when}} enable = '0' {{else}}
+                       parData {{when}} SHnLD = '0' {{else}}
+                       SER&curState(7 DOWNTO 1);
 
-            dffs : PROCESS( {{CK}} ) IS
-               BEGIN
-                  IF (rising_edge({{CK}})) THEN CurState <= NextState;
-                  END IF;
-               END PROCESS dffs;
-            """);
+          dffs : {{process}}({{CK}}) {{is}}
+          {{begin}}
+             {{if}} (rising_edge({{CK}})) {{then}} curState <= nextState;
+             {{end}} {{if}};
+          {{end}} {{process}} dffs;
+          """);
+    } else {
+      contents.add("""
+          assign Q7        = curState[0];
+          assign Q7n       = ~curState[0];
+          assign enable    = ~CKIh & {{tick}};
+          assign parData   = {P7, P6, P5, P4, P3, P2, P1, P0};
+          assign nextState = enable == 0 ? curState :
+                             SHnLD == 0 ? parData : {SER, curState[7:1]};
+          always @(posedge {{CLK}})
+          begin
+             curState = nextState;
+          end
+          """);
+    }
+    return contents.empty();
   }
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
-    return (!attrs.getValue(TtlLibrary.VCC_GND) && Hdl.isVhdl());
+    return (!attrs.getValue(TtlLibrary.VCC_GND));
   }
 }

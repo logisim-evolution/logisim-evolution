@@ -29,11 +29,7 @@ class XorGate extends AbstractGate {
     @Override
     public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       return LineBuffer.getBuffer()
-          .add(
-              isOneHot
-                  ? getOneHot(false, nrOfInputs, bitwidth > 1)
-                  : getParity(false, nrOfInputs, bitwidth > 1))
-          .empty();
+          .add(isOneHot ? getOneHot(false, nrOfInputs, bitwidth > 1) : getParity(false, nrOfInputs, bitwidth > 1));
     }
   }
 

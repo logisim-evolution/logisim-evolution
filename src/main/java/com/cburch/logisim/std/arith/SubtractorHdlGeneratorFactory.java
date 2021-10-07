@@ -20,9 +20,9 @@ import com.cburch.logisim.util.LineBuffer;
 
 public class SubtractorHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
-  private static final String NR_OF_BITS_STRING = "NrOfBits";
+  private static final String NR_OF_BITS_STRING = "nrOfBits";
   private static final int NR_OF_BITS_ID = -1;
-  private static final String EXTENDED_BITS_STRING = "ExtendedBits";
+  private static final String EXTENDED_BITS_STRING = "extendedBits";
   private static final int EXTENDED_BITS_ID = -2;
 
   public SubtractorHdlGeneratorFactory() {
@@ -31,16 +31,16 @@ public class SubtractorHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID)
         .add(EXTENDED_BITS_STRING, EXTENDED_BITS_ID, HdlParameters.MAP_OFFSET, 1);
     myWires
-        .addWire("s_extended_dataA", EXTENDED_BITS_ID)
-        .addWire("s_extended_dataB", EXTENDED_BITS_ID)
-        .addWire("s_sum_result", EXTENDED_BITS_ID)
+        .addWire("s_extendeddataA", EXTENDED_BITS_ID)
+        .addWire("s_extendeddataB", EXTENDED_BITS_ID)
+        .addWire("s_sumresult", EXTENDED_BITS_ID)
         .addWire("s_carry", 1);
     myPorts
-        .add(Port.INPUT, "DataA", NR_OF_BITS_ID, Subtractor.IN0, StdAttr.WIDTH)
-        .add(Port.INPUT, "DataB", NR_OF_BITS_ID, Subtractor.IN1, StdAttr.WIDTH)
-        .add(Port.INPUT, "BorrowIn", 1, Subtractor.B_IN)
-        .add(Port.OUTPUT, "Result", NR_OF_BITS_ID, Subtractor.OUT, StdAttr.WIDTH)
-        .add(Port.OUTPUT, "BorrowOut", 1, Subtractor.B_OUT);
+        .add(Port.INPUT, "dataA", NR_OF_BITS_ID, Subtractor.IN0, StdAttr.WIDTH)
+        .add(Port.INPUT, "dataB", NR_OF_BITS_ID, Subtractor.IN1, StdAttr.WIDTH)
+        .add(Port.INPUT, "borrowIn", 1, Subtractor.B_IN)
+        .add(Port.OUTPUT, "result", NR_OF_BITS_ID, Subtractor.OUT, StdAttr.WIDTH)
+        .add(Port.OUTPUT, "borrowOut", 1, Subtractor.B_OUT);
   }
 
   @Override
@@ -48,26 +48,25 @@ public class SubtractorHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var contents = LineBuffer.getBuffer();
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (Hdl.isVhdl()) {
-      contents.add("""
-          s_extended_dataA <= "0"&DataA;
-          s_extended_dataB <= "0"&(NOT(DataB));
-          s_carry          <= NOT(BorrowIn);
-          s_sum_result     <= std_logic_vector(unsigned(s_extended_dataA)+
-                              unsigned(s_extended_dataB)+
-                              (""&s_carry));
-
+      contents.empty().addVhdlKeywords().add("""
+          s_extendeddataA <= "0"&dataA;
+          s_extendeddataB <= "0"&({{not}}(dataB));
+          s_carry         <= {{not}}(borrowIn);
+          s_sumresult     <= std_logic_vector(unsigned(s_extendeddataA) +
+                             unsigned(s_extendeddataB) +
+                             (""&s_carry));
           """);
       contents.add(
           (nrOfBits == 1)
-              ? "Result <= s_sum_result(0);"
-              : "Result <= s_sum_result( (" + NR_OF_BITS_STRING + "-1) DOWNTO 0 );");
-      contents.add("BorrowOut <= NOT(s_sum_result(" + EXTENDED_BITS_STRING + "-1));");
+              ? "result    <= s_sumresult(0);"
+              : "result    <= s_sumresult( (" + NR_OF_BITS_STRING + "-1) {{downto}} 0 );");
+      contents.add("borrowOut <= {{not}}(s_sumresult(" + EXTENDED_BITS_STRING + "-1));");
     } else {
       contents.add("""
-          assign   {s_carry,Result} = DataA + ~(DataB) + ~(BorrowIn);
-          assign   BorrowOut = ~s_carry;
+          assign {s_carry,result} = dataA + ~(dataB) + ~(borrowIn);
+          assign borrowOut        = ~s_carry;
           """);
     }
-    return contents;
+    return contents.empty();
   }
 }

@@ -24,7 +24,7 @@ public class Ttl74283HdlGenerator extends AbstractHdlGeneratorFactory {
         .addWire("oppA", 5)
         .addWire("oppB", 5)
         .addWire("oppC", 5)
-        .addWire("Result", 5);
+        .addWire("result", 5);
     myPorts
         .add(Port.INPUT, "A1", 1, 4)
         .add(Port.INPUT, "A2", 1, 2)
@@ -44,24 +44,37 @@ public class Ttl74283HdlGenerator extends AbstractHdlGeneratorFactory {
 
   @Override
   public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
-    return LineBuffer.getBuffer()
-        .add("""
+    final var contents = LineBuffer.getHdlBuffer();
+    if (Hdl.isVhdl()) {
+      contents.empty().add("""
             oppA   <= "0"&A4&A3&A2&A1;
             oppB   <= "0"&B4&B3&B2&B1;
             oppC   <= "0000"&Cin;
-            Result <= std_logic_vector(unsigned(oppA)+unsigned(oppB)+unsigned(oppC));
-            S1     <= Result(0);
-            S2     <= Result(1);
-            S3     <= Result(2);
-            S4     <= Result(3);
-            Cout   <= Result(4);
+            result <= std_logic_vector(unsigned(oppA)+unsigned(oppB)+unsigned(oppC));
+            S1     <= result(0);
+            S2     <= result(1);
+            S3     <= result(2);
+            S4     <= result(3);
+            Cout   <= result(4);
             """);
+    } else {
+      contents.add("""
+          assign   oppA = {A4, A3, A2, A1};
+          assign   oppB = {B4, B4, B2, B1};
+          assign   S1   = result[0];
+          assign   S2   = result[1];
+          assign   S3   = result[2];
+          assign   S4   = result[3];
+          assign   {Cout, result} = oppA + oppB + Cin;        
+          """);
+    }
+    return contents.empty();
   }
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
-    return (!attrs.getValue(TtlLibrary.VCC_GND) && Hdl.isVhdl());
+    return (!attrs.getValue(TtlLibrary.VCC_GND));
   }
 }

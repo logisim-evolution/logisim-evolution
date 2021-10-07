@@ -31,14 +31,14 @@ public class SRFlipFlop extends AbstractFlipFlop {
     public SRFFHDLGeneratorFactory() {
       super(2, StdAttr.TRIGGER);
       myPorts
-          .add(Port.INPUT, "S", 1, 0)
-          .add(Port.INPUT, "R", 1, 1);
+          .add(Port.INPUT, "s", 1, 0)
+          .add(Port.INPUT, "r", 1, 1);
     }
 
     @Override
     public LineBuffer getUpdateLogic() {
       return LineBuffer.getHdlBuffer()
-          .add("{{assign}} s_next_state {{=}} (s_current_state_reg {{or}} S) {{and}} {{not}}(R);");
+          .add("{{assign}} s_next_state{{=}}(s_currentState{{or}}s){{and}}{{not}}(r);");
     }
   }
 

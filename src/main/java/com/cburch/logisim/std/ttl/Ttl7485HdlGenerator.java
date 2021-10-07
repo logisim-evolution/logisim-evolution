@@ -13,6 +13,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.WithSelectHdlGenerator;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 
@@ -26,8 +27,8 @@ public class Ttl7485HdlGenerator extends AbstractHdlGeneratorFactory {
         .addWire("gt", 1)
         .addWire("eq", 1)
         .addWire("lt", 1)
-        .addWire("CompIn", 3)
-        .addWire("CompOut", 3);
+        .addWire("compIn", 3)
+        .addWire("compOut", 3);
     myPorts
         .add(Port.INPUT, "A0", 1, 8)
         .add(Port.INPUT, "A1", 1, 10)
@@ -47,32 +48,48 @@ public class Ttl7485HdlGenerator extends AbstractHdlGeneratorFactory {
 
   @Override
   public LineBuffer getModuleFunctionality(Netlist netlist, AttributeSet attrs) {
-    return LineBuffer.getBuffer()
-        .add("""
+    final var contents = LineBuffer.getHdlBuffer();
+    final var decoder = new WithSelectHdlGenerator("dec1", "compIn", 3, "compOut", 3)
+        .setDefault("001")
+        .add("100", "100")
+        .add("010", "010")
+        .add("110", "000")
+        .add("000", "110");
+    contents.add(decoder.getHdlCode()).empty();
+    if (Hdl.isVerilog()) {
+      contents.addVhdlKeywords().add("""
             oppA   <= A3&A2&A1&A0;
             oppB   <= B3&B2&B1&B0;
-            gt     <= '1' WHEN unsigned(oppA) > unsigned(oppB) ELSE '0';
-            eq     <= '1' WHEN unsigned(oppA) = unsigned(oppB) ELSE '0';
-            lt     <= '1' WHEN unsigned(oppA) < unsigned(oppB) ELSE '0';
+            gt     <= '1' {{when}} unsigned(oppA) > unsigned(oppB) {{else}} '0';
+            eq     <= '1' {{when}} unsigned(oppA) = unsigned(oppB) {{else}} '0';
+            lt     <= '1' {{when}} unsigned(oppA) < unsigned(oppB) {{else}} '0';
 
-            CompIn <= AgtBin&AltBin&AeqBin;
-            WITH (CompIn) SELECT CompOut <=
-               "100" WHEN "100",
-               "010" WHEN "010",
-               "000" WHEN "110",
-               "110" WHEN "000",
-               "001" WHEN OTHERS;
+            compIn <= AgtBin&AltBin&AeqBin;
 
-            AgtBout <= '1' WHEN gt = '1' ELSE '0' WHEN lt = '1' ELSE CompOut(2);
-            AltBout <= '0' WHEN gt = '1' ELSE '1' WHEN lt = '1' ELSE CompOut(1);
-            AeqBout <= '0' WHEN (gt = '1') OR (lt = '1') ELSE CompOut(0);
+            AgtBout <= '1' {{when}} gt = '1' {{else}} '0' {{when}} lt = '1' {{else}} compOut(2);
+            AltBout <= '0' {{when}} gt = '1' {{else}} '1' {{when}} lt = '1' {{else}} compOut(1);
+            AeqBout <= '0' {{when}} (gt = '1') {{or}} (lt = '1') {{else}} compOut(0);
             """);
+    } else {
+      contents.add("""
+          assign oppA    = {A3, A2, A1, A0};
+          assign oppB    = {B3, B2, B1, B0};
+          assign gt      = oppA > oppB ? 1 : 0;
+          assign eq      = oppA == oppB ? 1 : 0;
+          assign lt      = oppA < oppB ? 1 : 0;
+          assign compIn  = {AgtBin, AltBin, AeqBin};
+          assign AgtBout = gt == 1 ? 1 : lt == 1 ? 0 : compOut[2];
+          assign AltBout = gt == 1 ? 0 : lt == 1 ? 1 : compOut[1];
+          assign AeqBout = gt == 1 || lt == 1 ? 0 : compOut[0];
+          """);
+    }
+    return contents.empty();
   }
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
-    return (!attrs.getValue(TtlLibrary.VCC_GND) && Hdl.isVhdl());
+    return (!attrs.getValue(TtlLibrary.VCC_GND));
   }
 }

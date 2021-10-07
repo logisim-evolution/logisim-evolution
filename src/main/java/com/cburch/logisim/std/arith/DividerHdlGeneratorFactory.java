@@ -18,11 +18,11 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
 
 public class DividerHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
-  private static final String NR_OF_BITS_STRING = "NrOfBits";
+  private static final String NR_OF_BITS_STRING = "nrOfBits";
   private static final int NR_OF_BITS_ID = -1;
-  private static final String CALC_BITS_STRING = "CalcBits";
+  private static final String CALC_BITS_STRING = "calcBits";
   private static final int CALC_BITS_ID = -2;
-  private static final String UNSIGNED_STRING = "UnsignedDivider";
+  private static final String UNSIGNED_STRING = "unsignedDivider";
   private static final int UNSIGNED_ID = -3;
 
   public DividerHdlGeneratorFactory() {
@@ -32,15 +32,15 @@ public class DividerHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         .add(CALC_BITS_STRING, CALC_BITS_ID, HdlParameters.MAP_MULTIPLY, 2)
         .add(UNSIGNED_STRING, UNSIGNED_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR, ComparatorHdlGeneratorFactory.SIGNED_MAP);
     myWires
-        .addWire("s_div_result", CALC_BITS_ID)
-        .addWire("s_mod_result", NR_OF_BITS_ID)
-        .addWire("s_extended_dividend", CALC_BITS_ID);
+        .addWire("s_divResult", CALC_BITS_ID)
+        .addWire("s_modResult", NR_OF_BITS_ID)
+        .addWire("s_extendedDividend", CALC_BITS_ID);
     myPorts
-        .add(Port.INPUT, "INP_A", NR_OF_BITS_ID, Divider.IN0)
-        .add(Port.INPUT, "INP_B", NR_OF_BITS_ID, Divider.IN1)
-        .add(Port.INPUT, "Upper", NR_OF_BITS_ID, Divider.UPPER)
-        .add(Port.OUTPUT, "Quotient", NR_OF_BITS_ID, Divider.OUT)
-        .add(Port.OUTPUT, "Remainder", NR_OF_BITS_ID, Divider.REM);
+        .add(Port.INPUT, "inputA", NR_OF_BITS_ID, Divider.IN0)
+        .add(Port.INPUT, "inputB", NR_OF_BITS_ID, Divider.IN1)
+        .add(Port.INPUT, "upper", NR_OF_BITS_ID, Divider.UPPER)
+        .add(Port.OUTPUT, "quotient", NR_OF_BITS_ID, Divider.OUT)
+        .add(Port.OUTPUT, "remainder", NR_OF_BITS_ID, Divider.REM);
   }
 
 
@@ -52,20 +52,20 @@ public class DividerHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
             .pair("calcBits", CALC_BITS_STRING);
 
     if (Hdl.isVhdl()) {
-      contents.add("""
-          s_extended_dividend({{calcBits}}-1 DOWNTO {{nrOfBits}}) <= Upper;
-          s_extended_dividend({{nrOfBits}}-1 DOWNTO 0) <= INP_A;
-          s_div_result <= std_logic_vector(unsigned(s_extended_dividend) / unsigned(INP_B))
-                             WHEN {{unsigned}} = 1 ELSE
-                          std_logic_vector(signed(s_extended_dividend) / signed(INP_B));
-          s_mod_result <= std_logic_vector(unsigned(s_extended_dividend) mod unsigned(INP_B))
-                             WHEN {{unsigned}} = 1 ELSE
-                          std_logic_vector(signed(s_extended_dividend) mod signed(INP_B));
-          Quotient  <= s_div_result({{nrOfBits}}-1 DOWNTO 0);
-          Remainder <= s_mod_result({{nrOfBits}}-1 DOWNTO 0);
+      contents.empty().addVhdlKeywords().add("""
+          s_extendedDividend({{calcBits}}-1 {{downto}} {{nrOfBits}}) <= upper;
+          s_extendedDividend({{nrOfBits}}-1 {{downto}} 0) <= inputA;
+          s_divResult <= std_logic_vector(unsigned(s_extendedDividend) / unsigned(inputB))
+                             {{when}} {{unsigned}} = 1 {{else}}
+                          std_logic_vector(signed(s_extendedDividend) / signed(inputB));
+          s_modResult <= std_logic_vector(unsigned(s_extendedDividend) {{mod}} unsigned(inputB))
+                             {{when}} {{unsigned}} = 1 {{else}}
+                          std_logic_vector(signed(s_extendedDividend) {{mod}} signed(inputB));
+          quotient  <= s_divResult({{nrOfBits}}-1 {{downto}} 0);
+          remainder <= s_modResult({{nrOfBits}}-1 {{downto}} 0);
           """);
     }
-    return contents;
+    return contents.empty();
   }
 
   @Override

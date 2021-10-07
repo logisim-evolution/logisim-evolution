@@ -205,7 +205,9 @@ public class HdlParameters {
           var bubbleMask = 0L;
           var mask = 1L;
           for (var i = 0; i < nrOfInputs; i++) {
-            final var inputIsInverted = attrs.getValue(new NegateAttribute(i, null));
+            // VHDL is particular with the general type std_logic_vector, as it does an upto, so we have to exchange the bits
+            final var realIndex = Hdl.isVhdl() ? nrOfInputs - i - 1 : i;   
+            final var inputIsInverted = attrs.getValue(new NegateAttribute(realIndex, null));
             if (Boolean.TRUE.equals(inputIsInverted)) bubbleMask |= mask;
             mask <<= 1L;
           }
@@ -223,6 +225,7 @@ public class HdlParameters {
                 final var attrValue = attrs.getValue(attr);
                 if (attrValue instanceof Integer intVal) selectedValue *= intVal;
                 else if (attrValue instanceof Long longVal) selectedValue *= longVal;
+                else if (attrValue instanceof BitWidth width) selectedValue *= width.getWidth();
                 else throw new UnsupportedOperationException("Requested attribute is not an Integer or Long");
               }
             }

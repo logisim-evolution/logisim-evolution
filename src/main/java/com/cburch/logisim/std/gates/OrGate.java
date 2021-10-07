@@ -32,7 +32,7 @@ class OrGate extends AbstractGate {
       final var oneLine = new StringBuilder();
       oneLine
           .append(Hdl.assignPreamble())
-          .append("Result")
+          .append("result")
           .append(Hdl.assignOperator());
       final var tabWidth = oneLine.length();
       var first = true;
@@ -45,11 +45,10 @@ class OrGate extends AbstractGate {
         } else {
           first = false;
         }
-        oneLine.append("s_real_input_").append(i + 1);
+        oneLine.append("s_realInput").append(i + 1);
       }
       oneLine.append(";");
       contents.add(oneLine.toString());
-      contents.add("");
       return contents;
     }
   }
