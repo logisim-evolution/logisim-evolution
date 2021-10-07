@@ -106,14 +106,14 @@ public class Canvas extends JComponent {
   private void paintHello(Graphics g) {
     if (helloLoc == null || helloString == null) return;
     g.setColor(Color.YELLOW);
-    final var x = (int)(helloLoc.getX()*getZoomFactor());
-    final var y = (int)(helloLoc.getY()*getZoomFactor());
-    final var width = (int)((helloString.length()* DrawAttr.FIXED_FONT_CHAR_WIDTH)*getZoomFactor());
-    final var height = (int)((DrawAttr.FIXED_FONT_HEIGHT + DrawAttr.FIXED_FONT_HEIGHT >> 1)*getZoomFactor());
+    final var x = (int) (helloLoc.getX() * getZoomFactor());
+    final var y = (int) (helloLoc.getY() * getZoomFactor());
+    final var width = (int) ((helloString.length() * DrawAttr.FIXED_FONT_CHAR_WIDTH) * getZoomFactor());
+    final var height = (int) ((DrawAttr.FIXED_FONT_HEIGHT + DrawAttr.FIXED_FONT_HEIGHT >> 1) * getZoomFactor());
     g.fillRect(x, y, width, height);
     g.setColor(Color.BLUE);
-    g.setFont(DrawAttr.DEFAULT_FIXED_PICH_FONT.deriveFont((float)(getZoomFactor() * DrawAttr.FIXED_FONT_HEIGHT)));
-    GraphicsUtil.drawText(g, helloString, x+2, y, GraphicsUtil.H_LEFT, GraphicsUtil.V_TOP);
+    g.setFont(DrawAttr.DEFAULT_FIXED_PICH_FONT.deriveFont((float) (getZoomFactor() * DrawAttr.FIXED_FONT_HEIGHT)));
+    GraphicsUtil.drawText(g, helloString, x + 2, y, GraphicsUtil.H_LEFT, GraphicsUtil.V_TOP);
   }
 
   protected void paintForeground(Graphics g) {

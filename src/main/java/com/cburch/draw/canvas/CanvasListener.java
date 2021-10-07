@@ -130,6 +130,7 @@ class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListen
 
   @Override
   public void mouseDragged(MouseEvent e) {
+    canvas.setHello(null, null);
     if (isButton1(e)) {
       if (tool != null) tool.mouseDragged(canvas, e);
     } else {
