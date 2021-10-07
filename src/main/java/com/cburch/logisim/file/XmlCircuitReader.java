@@ -263,7 +263,6 @@ public class XmlCircuitReader extends CircuitTransaction {
     }
     if (circData.appearance != null && !circData.appearance.isEmpty()) {
       dest.getAppearance().setObjectsForce(circData.appearance);
-//      dest.getAppearance().setDefaultAppearance(false);
     }
   }
 

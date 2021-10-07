@@ -124,7 +124,7 @@ class PortManager {
     // Find the current objects corresponding to pins
     final var oldObjects = new HashMap<Instance, AppearancePort>();
     AppearanceAnchor anchor = null;
-    for (final var obj : appearance.getObjectsFromBottom()) {
+    for (final var obj : appearance.getCustomObjectsFromBottom()) {
       if (obj instanceof AppearancePort appPort) {
         oldObjects.put(appPort.getPin(), appPort);
       } else if (obj instanceof AppearanceAnchor appAnchor) {
@@ -134,12 +134,7 @@ class PortManager {
 
     // ensure we have the anchor in the circuit
     if (anchor == null) {
-      for (final var obj :
-          DefaultAppearance.build(
-              allPins,
-              appearance.getCircuitAppearance(),
-              appearance.isNamedBoxShapedFixedSize(),
-              appearance.getName())) {
+      for (final var obj : DefaultCustomAppearance.build(allPins)) {
         if (obj instanceof AppearanceAnchor appAnchor) {
           anchor = appAnchor;
         }
@@ -147,7 +142,7 @@ class PortManager {
       if (anchor == null) {
         anchor = new AppearanceAnchor(Location.create(100, 100));
       }
-      final var dest = appearance.getObjectsFromBottom().size();
+      final var dest = appearance.getCustomObjectsFromBottom().size();
       appearance.addObjects(dest, Collections.singleton(anchor));
     }
 
@@ -199,9 +194,10 @@ class PortManager {
       Set<Instance> removes,
       Map<Instance, Instance> replaces,
       Collection<Instance> allPins) {
-    if (appearance.isDefaultAppearance()) {
-      appearance.recomputePorts();
-    } else if (!doingUpdate) {
+//    if (appearance.isDefaultAppearance()) {
+//      appearance.recomputePorts();
+//    } else 
+    if (!doingUpdate) {
       // "doingUpdate" ensures infinite recursion doesn't happen
       try {
         doingUpdate = true;

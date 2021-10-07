@@ -278,7 +278,7 @@ public class Circuit {
 
   public void recalcDefaultShape() {
     if (appearance.isDefaultAppearance()) {
-      appearance.recomputeDefaultAppearance(true);
+      appearance.recomputeDefaultAppearance();
     }
   }
 
