@@ -342,7 +342,7 @@ public class SubcircuitFactory extends InstanceFactory {
 
     @Override
     protected void run(CircuitMutator mutator) {
-      source.getAppearance().recomputeDefaultAppearance();
+      source.getAppearance().recomputeDefaultAppearance(source.getAppearance().isDefaultAppearance());
     }
   }
 

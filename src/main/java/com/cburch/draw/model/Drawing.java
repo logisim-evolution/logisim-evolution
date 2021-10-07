@@ -93,7 +93,7 @@ public class Drawing implements CanvasModel {
   public List<CanvasObject> getObjectsFromBottom() {
     return Collections.unmodifiableList(canvasObjects);
   }
-
+  
   @Override
   public List<CanvasObject> getObjectsFromTop() {
     final var ret = new ArrayList<CanvasObject>(getObjectsFromBottom());
