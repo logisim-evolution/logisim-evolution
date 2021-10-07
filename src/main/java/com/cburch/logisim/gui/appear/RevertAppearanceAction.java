@@ -24,7 +24,7 @@ import java.util.Map;
 public class RevertAppearanceAction extends Action {
   private final Circuit circuit;
   private ArrayList<CanvasObject> old;
-  private boolean wasDefault;
+//  private boolean wasDefault;
 
   public RevertAppearanceAction(Circuit circuit) {
     this.circuit = circuit;
@@ -67,12 +67,12 @@ public class RevertAppearanceAction extends Action {
     protected void run(CircuitMutator mutator) {
       final var appear = circuit.getAppearance();
       if (forward) {
-        wasDefault = appear.isDefaultAppearance();
+ //       wasDefault = appear.isDefaultAppearance();
         old = new ArrayList<>(appear.getObjectsFromBottom());
-        appear.setDefaultAppearance(true);
+//        appear.setDefaultAppearance(true);
       } else {
         appear.setObjectsForce(old);
-        appear.setDefaultAppearance(wasDefault);
+//        appear.setDefaultAppearance(wasDefault);
       }
     }
   }

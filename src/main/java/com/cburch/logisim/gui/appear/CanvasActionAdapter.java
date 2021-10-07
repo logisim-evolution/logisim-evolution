@@ -22,7 +22,7 @@ import java.util.Map;
 public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
   private final Circuit circuit;
   private final UndoAction canvasAction;
-  private boolean wasDefault;
+//  private boolean wasDefault;
 
   public CanvasActionAdapter(Circuit circuit, UndoAction action) {
     this.circuit = circuit;
@@ -40,7 +40,7 @@ public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
 
   @Override
   public void doIt(Project proj) {
-    wasDefault = circuit.getAppearance().isDefaultAppearance();
+//    wasDefault = circuit.getAppearance().isDefaultAppearance();
     if (affectsPorts()) {
       final var xn = new ActionTransaction(true);
       xn.execute();
@@ -62,7 +62,7 @@ public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
     } else {
       canvasAction.undo();
     }
-    circuit.getAppearance().setDefaultAppearance(wasDefault);
+//    circuit.getAppearance().setDefaultAppearance(wasDefault);
   }
 
   private class ActionTransaction extends CircuitTransaction {

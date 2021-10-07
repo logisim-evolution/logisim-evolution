@@ -16,6 +16,8 @@ import com.cburch.draw.model.Drawing;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.data.AttributeEvent;
+import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -33,14 +35,13 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class CircuitAppearance extends Drawing {
+public class CircuitAppearance extends Drawing implements AttributeListener {
   public static final int PIN_LENGTH = 10;
 
   private class MyListener implements CanvasModelListener {
     @Override
     public void modelChanged(CanvasModelEvent event) {
       if (!suppressRecompute) {
-        setDefaultAppearance(false);
         fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
       }
     }
@@ -51,7 +52,6 @@ public class CircuitAppearance extends Drawing {
   private final PortManager portManager;
   private final CircuitPins circuitPins;
   private final MyListener myListener;
-  private boolean isDefault;
   private boolean suppressRecompute;
 
   public CircuitAppearance(Circuit circuit) {
@@ -62,17 +62,14 @@ public class CircuitAppearance extends Drawing {
     myListener = new MyListener();
     suppressRecompute = false;
     addCanvasModelListener(myListener);
-    setDefaultAppearance(true);
+    circuit.getStaticAttributes().addAttributeListener(this);
+    recomputeDefaultAppearance();
   }
 
   public String getName() {
     return (circuit == null || circuit.getStaticAttributes() == null)
         ? null
         : circuit.getStaticAttributes().getValue(CircuitAttributes.NAME_ATTR);
-  }
-
-  public CircuitPins getCircuitPin() {
-    return circuitPins;
   }
 
   public void addCircuitAppearanceListener(CircuitAppearanceListener l) {
@@ -220,7 +217,7 @@ public class CircuitAppearance extends Drawing {
   }
 
   public boolean isDefaultAppearance() {
-    return isDefault;
+    return !circuit.getStaticAttributes().getValue(CircuitAttributes.APPEARANCE_ATTR).equals(CircuitAttributes.APPEAR_CUSTOM);
   }
 
   public void paintSubcircuit(InstancePainter painter, Graphics g, Direction facing) {
@@ -267,7 +264,7 @@ public class CircuitAppearance extends Drawing {
   }
 
   public void recomputeDefaultAppearance() {
-    if (isDefault) {
+    if (!circuit.getStaticAttributes().getValue(CircuitAttributes.APPEARANCE_ATTR).equals(CircuitAttributes.APPEAR_CUSTOM)) {
       final var shapes =
           DefaultAppearance.build(
               circuitPins.getPins(),
@@ -279,7 +276,7 @@ public class CircuitAppearance extends Drawing {
   }
 
   void recomputePorts() {
-    if (isDefault) {
+    if (!circuit.getStaticAttributes().getValue(CircuitAttributes.APPEARANCE_ATTR).equals(CircuitAttributes.APPEAR_CUSTOM)) {
       recomputeDefaultAppearance();
     } else {
       fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
@@ -329,19 +326,6 @@ public class CircuitAppearance extends Drawing {
     fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
   }
 
-  public void setDefaultAppearance(boolean value) {
-    if (isDefault != value) {
-      isDefault = value;
-      if (value) {
-        recomputeDefaultAppearance();
-      } else {
-        circuit
-            .getStaticAttributes()
-            .setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CUSTOM);
-      }
-    }
-  }
-
   public void setObjectsForce(List<? extends CanvasObject> shapesBase) {
     // This shouldn't ever be an issue, but just to make doubly sure, we'll
     // check that the anchor and all ports are in their proper places.
@@ -382,5 +366,16 @@ public class CircuitAppearance extends Drawing {
   public void translateObjects(Collection<? extends CanvasObject> shapes, int dx, int dy) {
     super.translateObjects(shapes, dx, dy);
     checkToFirePortsChanged(shapes);
+  }
+
+  @Override
+  public void attributeValueChanged(AttributeEvent e) {
+    if (e.getAttribute() == CircuitAttributes.APPEARANCE_ATTR) {
+      if (e.getValue() == CircuitAttributes.APPEAR_CLASSIC
+          || e.getValue() == CircuitAttributes.APPEAR_FPGA
+          || e.getValue() == CircuitAttributes.APPEAR_EVOLUTION) {
+        recomputeDefaultAppearance();
+      }
+    }  
   }
 }

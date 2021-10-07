@@ -112,13 +112,6 @@ public class CircuitAttributes extends AbstractAttributeSet {
             source.fireEvent(CircuitEvent.ACTION_SET_NAME, NewName);
           }
         }
-      } else if (e.getAttribute() == APPEARANCE_ATTR) {
-        if (e.getValue() == APPEAR_CLASSIC
-            || e.getValue() == APPEAR_FPGA
-            || e.getValue() == APPEAR_EVOLUTION) {
-          source.getAppearance().setDefaultAppearance(true);
-          source.recalcDefaultShape();
-        }
       }
     }
   }
