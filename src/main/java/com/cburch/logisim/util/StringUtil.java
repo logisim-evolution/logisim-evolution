@@ -28,15 +28,11 @@ public final class StringUtil {
     };
   }
 
-  public static String format(String fmt, String... args) {
-    return String.format(fmt, (Object[]) args);
-  }
-
   public static StringGetter formatter(final StringGetter base, final String arg) {
     return new StringGetter() {
       @Override
       public String toString() {
-        return format(base.toString(), arg);
+        return String.format(base.toString(), arg);
       }
     };
   }
@@ -45,7 +41,7 @@ public final class StringUtil {
     return new StringGetter() {
       @Override
       public String toString() {
-        return format(base.toString(), arg.toString());
+        return String.format(base.toString(), arg.toString());
       }
     };
   }
@@ -55,8 +51,7 @@ public final class StringUtil {
 
     if (width < maxWidth) return value;
     if (value.length() < 4) return value;
-    return resizeString(
-        new StringBuilder(value.substring(0, value.length() - 3) + ".."), metrics, maxWidth);
+    return resizeString(new StringBuilder(value.substring(0, value.length() - 3) + ".."), metrics, maxWidth);
   }
 
   private static String resizeString(StringBuilder value, FontMetrics metrics, int maxWidth) {
@@ -71,8 +66,7 @@ public final class StringUtil {
     if (bits < 64) value &= (1L << bits) - 1;
     final var len = (bits + 3) / 4;
     final var ret = String.format("%0" + len + "x", value);
-    if (ret.length() > len) return ret.substring(ret.length() - len);
-    return ret;
+    return (ret.length() > len) ? ret.substring(ret.length() - len) : ret;
   }
 
   public static Bounds estimateBounds(String text, Font font) {

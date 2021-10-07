@@ -205,46 +205,34 @@ public class Splitter extends ManagedComponent
       }
     }
 
-    if (end == 0) {
-      return S.get("splitterCombinedTip");
-    } else if (end > 0) {
-      var bits = 0;
-      final var buf = new StringBuilder();
-      final var attrs = (SplitterAttributes) getAttributeSet();
-      final var bitEnd = attrs.bitEnd;
-      var inString = false;
-      var beginString = 0;
-      for (var i = 0; i < bitEnd.length; i++) {
-        if (bitEnd[i] == end) {
-          bits++;
-          if (!inString) {
-            inString = true;
-            beginString = i;
-          }
-        } else {
-          if (inString) {
-            appendBuf(buf, i - 1, beginString);
-            inString = false;
-          }
+    if (end == 0) return S.get("splitterCombinedTip");
+    if (end < 0) return null;
+    var bits = 0;
+    final var buffer = new StringBuilder();
+    final var attrs = (SplitterAttributes) getAttributeSet();
+    final var bitEnd = attrs.bitEnd;
+    var inString = false;
+    var beginString = 0;
+    for (var i = 0; i < bitEnd.length; i++) {
+      if (bitEnd[i] == end) {
+        bits++;
+        if (!inString) {
+          inString = true;
+          beginString = i;
         }
+      } else if (inString) {
+        appendBuf(buffer, i - 1, beginString);
+        inString = false;
       }
-      if (inString) appendBuf(buf, bitEnd.length - 1, beginString);
-      String base;
-      switch (bits) {
-        case 0:
-          base = S.get("splitterSplit0Tip");
-          break;
-        case 1:
-          base = S.get("splitterSplit1Tip");
-          break;
-        default:
-          base = S.get("splitterSplitManyTip");
-          break;
-      }
-      return StringUtil.format(base, buf.toString());
-    } else {
-      return null;
     }
+
+    if (inString) appendBuf(buffer, bitEnd.length - 1, beginString);
+    final var base = switch (bits) {
+      case 0 -> S.get("splitterSplit0Tip");
+      case 1 -> S.get("splitterSplit1Tip");
+      default -> S.get("splitterSplitManyTip");
+    };
+    return String.format(base, buffer.toString());
   }
 
   @Override
