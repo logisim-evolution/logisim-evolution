@@ -12,7 +12,6 @@ package com.cburch.logisim.std.memory;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
-import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.hdlgenerator.AbstractHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.HdlParameters;
@@ -28,20 +27,20 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
 
   private static final String NEGATE_CLOCK_STRING = "negateClock";
   private static final int NEGATE_CLOCK_ID = -1;
-  private static final String NR_OF_BITS_STR = "NrOfBits";
+  private static final String NR_OF_BITS_STRING = "nrOfBits";
   private static final int NR_OF_BITS_ID = -2;
-  private static final String NR_OF_STAGES_STR = "NrOfStages";
+  private static final String NR_OF_STAGES_STRING = "nrOfStages";
   private static final int NR_OF_STAGES_ID = -3;
-  private static final String NR_OF_PAR_BITS_STRING = "NrOfParBits";
+  private static final String NR_OF_PAR_BITS_STRING = "nrOfParBits";
   private static final int NR_OF_PAR_BITS_ID = -4;
 
   public ShiftRegisterHdlGeneratorFactory() {
     super();
     myParametersList
         .add(NEGATE_CLOCK_STRING, NEGATE_CLOCK_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, StdAttr.EDGE_TRIGGER, AbstractFlipFlopHdlGeneratorFactory.TRIGGER_MAP)
-        .add(NR_OF_BITS_STR, NR_OF_BITS_ID)
+        .add(NR_OF_BITS_STRING, NR_OF_BITS_ID)
         .add(NR_OF_PAR_BITS_STRING, NR_OF_PAR_BITS_ID, HdlParameters.MAP_MULTIPLY, StdAttr.WIDTH, ShiftRegister.ATTR_LENGTH)
-        .add(NR_OF_STAGES_STR, NR_OF_STAGES_ID, HdlParameters.MAP_INT_ATTRIBUTE, ShiftRegister.ATTR_LENGTH);
+        .add(NR_OF_STAGES_STRING, NR_OF_STAGES_ID, HdlParameters.MAP_INT_ATTRIBUTE, ShiftRegister.ATTR_LENGTH);
     getWiresPortsDuringHDLWriting = true;
   }
 
@@ -50,16 +49,16 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
     final var hasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD);
     myPorts
         .add(Port.CLOCK, HdlPorts.getClockName(1), 1, ShiftRegister.CK)
-        .add(Port.INPUT, "Reset", 1, ShiftRegister.CLR)
-        .add(Port.INPUT, "ShiftEnable", 1, ShiftRegister.SH)
-        .add(Port.INPUT, "ShiftIn", NR_OF_BITS_ID, ShiftRegister.IN)
-        .add(Port.INPUT, "D", NR_OF_PAR_BITS_ID, "DUMMY_MAP")
-        .add(Port.OUTPUT, "ShiftOut", NR_OF_BITS_ID, ShiftRegister.OUT)
-        .add(Port.OUTPUT, "Q", NR_OF_PAR_BITS_ID, "DUMMY_MAP");
+        .add(Port.INPUT, "reset", 1, ShiftRegister.CLR)
+        .add(Port.INPUT, "shiftEnable", 1, ShiftRegister.SH)
+        .add(Port.INPUT, "shiftIn", NR_OF_BITS_ID, ShiftRegister.IN)
+        .add(Port.INPUT, "d", NR_OF_PAR_BITS_ID, "DUMMY_MAP")
+        .add(Port.OUTPUT, "shiftOut", NR_OF_BITS_ID, ShiftRegister.OUT)
+        .add(Port.OUTPUT, "q", NR_OF_PAR_BITS_ID, "DUMMY_MAP");
     if (hasParallelLoad) {
-      myPorts.add(Port.INPUT, "ParLoad", 1, ShiftRegister.LD);
+      myPorts.add(Port.INPUT, "parLoad", 1, ShiftRegister.LD);
     } else {
-      myPorts.add(Port.INPUT, "ParLoad", 1, Hdl.zeroBit());
+      myPorts.add(Port.INPUT, "parLoad", 1, Hdl.zeroBit());
     }
   }
 
@@ -75,38 +74,38 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
       final var hasParallelLoad = attrs.getValue(ShiftRegister.ATTR_LOAD);
       final var vector = new StringBuilder();
       if (Hdl.isVhdl() && nrOfBits == 1) {
-        final var shiftMap = map.get("ShiftIn");
-        final var outMap = map.get("ShiftOut");
-        map.remove("ShiftIn");
-        map.remove("ShiftOut");
-        map.put("ShiftIn(0)", shiftMap);
-        map.put("ShiftOut(0)", outMap);
+        final var shiftMap = map.get("shiftIn");
+        final var outMap = map.get("shiftOut");
+        map.remove("shiftIn");
+        map.remove("shiftOut");
+        map.put("shiftIn(0)", shiftMap);
+        map.put("shiftOut(0)", outMap);
       }
-      map.remove("D");
-      map.remove("Q");
+      map.remove("d");
+      map.remove("q");
       if (hasParallelLoad) {
         if (nrOfBits == 1) {
           if (Hdl.isVhdl()) {
             for (var stage = 0; stage < nrOfStages; stage++)
-              map.putAll(Hdl.getNetMap(String.format("D(%d)", stage), true, comp, 6 + (2 * stage), nets));
+              map.putAll(Hdl.getNetMap(String.format("d(%d)", stage), true, comp, 6 + (2 * stage), nets));
             final var nrOfOutStages = attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC
                 ? nrOfStages : nrOfStages - 1;
             for (var stage = 0; stage < nrOfOutStages; stage++)
-              map.putAll(Hdl.getNetMap(String.format("Q(%d)", stage), true, comp, 7 + (2 * stage), nets));
-            map.put(String.format("Q(%d)", nrOfStages - 1), "OPEN");
+              map.putAll(Hdl.getNetMap(String.format("q(%d)", stage), true, comp, 7 + (2 * stage), nets));
+            map.put(String.format("q(%d)", nrOfStages - 1), "OPEN");
           } else {
             for (var stage = nrOfStages - 1; stage >= 0; stage--) {
               if (vector.length() != 0) vector.append(",");
               vector.append(Hdl.getNetName(comp, 6 + (2 * stage), true, nets));
             }
-            map.put("D", vector.toString());
+            map.put("d", vector.toString());
             vector.setLength(0);
             vector.append("open");
             for (var stage = nrOfStages - 2; stage >= 0; stage--) {
               if (vector.length() != 0) vector.append(",");
               vector.append(Hdl.getNetName(comp, 7 + (2 * stage), true, nets));
             }
-            map.put("Q", vector.toString());
+            map.put("q", vector.toString());
           }
         } else {
           if (Hdl.isVhdl()) {
@@ -114,11 +113,11 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
               for (var stage = 0; stage < nrOfStages; stage++) {
                 final var index = (bit * nrOfStages) + stage;
                 final var id = 6 + (2 * stage);
-                map.put(String.format("D(%d)", index), Hdl.getBusEntryName(comp, id, true, bit, nets));
+                map.put(String.format("d(%d)", index), Hdl.getBusEntryName(comp, id, true, bit, nets));
                 if (stage == nrOfStages - 1) continue;
-                map.put(String.format("Q(%d)", index), Hdl.getBusEntryName(comp, id + 1, true, bit, nets));
+                map.put(String.format("q(%d)", index), Hdl.getBusEntryName(comp, id + 1, true, bit, nets));
               }
-              map.put(String.format("Q(%d)", ((bit + 1) * nrOfStages) - 1), "OPEN");
+              map.put(String.format("q(%d)", ((bit + 1) * nrOfStages) - 1), "OPEN");
             }
           } else {
             vector.setLength(0);
@@ -128,7 +127,7 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
                 vector.append(Hdl.getBusEntryName(comp, 6 + (2 * stage), true, bit, nets));
               }
             }
-            map.put("D", vector.toString());
+            map.put("d", vector.toString());
             vector.setLength(0);
             for (var bit = nrOfBits - 1; bit >= 0; bit--) {
               if (vector.length() != 0) vector.append(",");
@@ -138,12 +137,12 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
                 vector.append(Hdl.getBusEntryName(comp, 7 + (2 * stage), true, bit, nets));
               }
             }
-            map.put("Q", vector.toString());
+            map.put("q", vector.toString());
           }
         }
       } else {
-        map.put("D", Hdl.getConstantVector(0, nrOfBits * nrOfStages));
-        map.put("Q", Hdl.unconnected(true));
+        map.put("d", Hdl.getConstantVector(0, nrOfBits * nrOfStages));
+        map.put("q", Hdl.unconnected(true));
       }
     }
     return map;
@@ -154,141 +153,124 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
     final var contents = LineBuffer.getHdlBuffer()
             .pair("clock", HdlPorts.getClockName(1))
             .pair("tick", HdlPorts.getTickName(1))
-            .pair("nrOfStages", NR_OF_STAGES_STR)
+            .pair("nrOfStages", NR_OF_STAGES_STRING)
             .pair("invertClock", NEGATE_CLOCK_STRING)
-            .add(FileWriter.getGenerateRemark(componentName, nets.projName()));
+            .add(super.getArchitecture(nets, attrs, componentName))
+            .empty(3);
     if (Hdl.isVhdl()) {
-      contents
+      contents.addVhdlKeywords()
           .add("""
-              ARCHITECTURE NoPlatformSpecific OF SingleBitShiftReg IS
+              {{architecture}} noPlatformSpecific {{of}} singleBitShiftReg {{is}}
 
-                 SIGNAL s_state_reg  : std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 );
-                 SIGNAL s_state_next : std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 );
-                 SIGNAL s_clock      : std_logic;
+                 {{signal}} s_stateReg  : std_logic_vector( ({{nrOfStages}}-1) {{downto}} 0 );
+                 {{signal}} s_stateNext : std_logic_vector( ({{nrOfStages}}-1) {{downto}} 0 );
+                 {{signal}} s_clock     : std_logic;
 
-              BEGIN
-                 Q        <= s_state_reg;
-                 ShiftOut <= s_state_reg({{nrOfStages}}-1);
-                 s_clock  <= {{clock}} WHEN {{invertClock}} = 0 ELSE NOT({{clock}});
+              {{begin}}
+                 q        <= s_stateReg;
+                 shiftOut <= s_stateReg({{nrOfStages}}-1);
+                 s_clock  <= {{clock}} {{when}} {{invertClock}} = 0 {{else}} {{not}}({{clock}});
 
-                 s_state_next <= D WHEN ParLoad = '1' ELSE s_state_reg(({{nrOfStages}}-2) DOWNTO 0)&ShiftIn;
+                 s_stateNext <= d {{when}} parLoad = '1' {{else}} s_stateReg(({{nrOfStages}}-2) {{downto}} 0)&shiftIn;
 
-                 make_state : PROCESS(s_clock, ShiftEnable, {{tick}}, Reset, s_state_next, ParLoad)
-                 BEGIN
-                    IF (Reset = '1') THEN s_state_reg <= (OTHERS => '0');
-                    ELSIF (rising_edge(s_clock)) THEN
-                       IF (((ShiftEnable = '1') OR (ParLoad = '1')) AND ({{tick}} = '1')) THEN
-                          s_state_reg <= s_state_next;
-                       END IF;
-                    END IF;
-                 END PROCESS make_state;
-              END NoPlatformSpecific;
+                 makeState : {{process}}(s_clock, shiftEnable, {{tick}}, reset, s_stateNext, parLoad) {{is}}
+                 {{begin}}
+                    {{if}} (reset = '1') {{then}} s_stateReg <= ({{others}} => '0');
+                    {{elsif}} (rising_edge(s_clock)) {{then}}
+                       {{if}} (((shiftEnable = '1') {{or}} (parLoad = '1')) {{and}} ({{tick}} = '1')) {{then}}
+                          s_stateReg <= s_stateNext;
+                       {{end}} {{if}};
+                    {{end}} {{if}};
+                 {{end}} {{process}} makeState;
+              {{end}} noPlatformSpecific;
 
               """);
     } else {
       contents
           .add("""
-              module SingleBitShiftReg ( Reset,
+              module singleBitShiftReg ( reset,
                                          {{tick}},
                                          {{clock}},
-                                         ShiftEnable,
-                                         ParLoad,
-                                         ShiftIn,
-                                         D,
-                                         ShiftOut,
-                                         Q);
+                                         shiftEnable,
+                                         parLoad,
+                                         shiftIn,
+                                         d,
+                                         shiftOut,
+                                         q);
 
                  parameter {{nrOfStages}} = 1;
                  parameter {{invertClock}} = 1;
 
-                 input Reset;
+                 input reset;
                  input {{tick}};
                  input {{clock}};
-                 input ShiftEnable;
-                 input ParLoad;
-                 input ShiftIn;
-                 input[{{nrOfStages}}:0] D;
-                 output ShiftOut;
-                 output[{{nrOfStages}}:0] Q;
+                 input shiftEnable;
+                 input parLoad;
+                 input shiftIn;
+                 input[{{nrOfStages}}:0] d;
+                 output shiftOut;
+                 output[{{nrOfStages}}:0] q;
 
-                 wire[{{nrOfStages}}:0] s_state_next;
+                 wire[{{nrOfStages}}:0] s_stateNext;
                  wire s_clock;
-                 reg[{{nrOfStages}}:0] s_state_reg;
+                 reg[{{nrOfStages}}:0] s_stateReg;
 
-                 assign Q        = s_state_reg;
-                 assign ShiftOut = s_state_reg[{{nrOfStages}}-1];
+                 assign q        = s_stateReg;
+                 assign shiftOut = s_stateReg[{{nrOfStages}}-1];
                  assign s_clock  = {{invertClock}} == 0 ? {{clock}} : ~{{clock}};
-                 assign s_state_next = (ParLoad) ? D : {s_state_reg[{{nrOfStages}}-2:0],ShiftIn};
+                 assign s_stateNext = (parLoad) ? d : {s_stateReg[{{nrOfStages}}-2:0],shiftIn};
 
-                 always @(posedge s_clock or posedge Reset)
+                 always @(posedge s_clock or posedge reset)
                  begin
-                    if (Reset) s_state_reg <= 0;
-                    else if ((ShiftEnable|ParLoad)&{{tick}}) s_state_reg <= s_state_next;
+                    if (reset) s_stateReg <= 0;
+                    else if ((shiftEnable|parLoad)&{{tick}}) s_stateReg <= s_stateNext;
                  end
 
               endmodule
-
               """);
     }
-    contents.add(super.getArchitecture(nets, attrs, componentName));
+    contents.empty();
     return contents.get();
   }
 
   @Override
-  public List<String> getComponentDeclarationSection(Netlist nets, AttributeSet attrs) {
-    return LineBuffer.getHdlBuffer()
+  public LineBuffer getComponentDeclarationSection(Netlist nets, AttributeSet attrs) {
+    return getExtraComp(false);
+  }
+  
+  private LineBuffer getExtraComp(boolean isEntity) {
+    return LineBuffer.getHdlBuffer().addVhdlKeywords()
         .pair("clock", HdlPorts.getClockName(1))
         .pair("tick", HdlPorts.getTickName(1))
-        .pair("nrOfStages", NR_OF_STAGES_STR)
+        .pair("nrOfStages", NR_OF_STAGES_STRING)
         .pair("invertClock", NEGATE_CLOCK_STRING)
+        .add(isEntity ? "{{entity}} singleBitShiftReg {{is}}" : "{{component}} singleBitShiftReg")
         .add("""
-            COMPONENT SingleBitShiftReg
-               GENERIC ( {{invertClock}} : INTEGER;
-                         {{nrOfStages}}  : INTEGER );
-               PORT ( Reset       : IN  std_logic;
-                      {{tick}}        : IN  std_logic;
-                      {{clock}}       : IN  std_logic;
-                      ShiftEnable : IN  std_logic;
-                      ParLoad     : IN  std_logic;
-                      ShiftIn     : IN  std_logic;
-                      D           : IN  std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 );
-                      ShiftOut    : OUT std_logic;
-                      Q           : OUT std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 ) );
-            END COMPONENT;
+               {{generic}} ( {{invertClock}} : {{integer}};
+                         {{nrOfStages}}  : {{integer}} );
+               {{port}} ( reset       : {{in}}  std_logic;
+                      {{tick}}        : {{in}}  std_logic;
+                      {{clock}}       : {{in}}  std_logic;
+                      shiftEnable : {{in}}  std_logic;
+                      parLoad     : {{in}}  std_logic;
+                      shiftIn     : {{in}}  std_logic;
+                      d           : {{in}}  std_logic_vector( ({{nrOfStages}}-1) {{downto}} 0 );
+                      shiftOut    : {{out}} std_logic;
+                      q           : {{out}} std_logic_vector( ({{nrOfStages}}-1) {{downto}} 0 ) );
             """)
-        .getWithIndent();
+        .add(isEntity ? "{{end}} {{entity}} singleBitShiftReg;" : "{{end}} {{component}};");
   }
 
   @Override
   public List<String> getEntity(Netlist nets, AttributeSet attrs, String componentName) {
-
-    final var contents = LineBuffer.getHdlBuffer()
-        .pair("clock", HdlPorts.getClockName(1))
-        .pair("tick", HdlPorts.getTickName(1))
-        .pair("nrOfStages", NR_OF_STAGES_STR)
-        .pair("invertClock", NEGATE_CLOCK_STRING);
+    final var contents = LineBuffer.getHdlBuffer();
     if (Hdl.isVhdl()) {
       contents
-          .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
-          .add(FileWriter.getExtendedLibrary())
-          .add("""
-              ENTITY SingleBitShiftReg IS
-                 GENERIC ( {{invertClock}} : INTEGER;
-                           {{nrOfStages}}  : INTEGER);
-                 PORT ( Reset       : IN  std_logic;
-                        {{tick}}        : IN  std_logic;
-                        {{clock}}       : IN  std_logic;
-                        ShiftEnable : IN  std_logic;
-                        ParLoad     : IN  std_logic;
-                        ShiftIn     : IN  std_logic;
-                        D           : IN  std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 );
-                        ShiftOut    : OUT std_logic;
-                        Q           : OUT std_logic_vector( ({{nrOfStages}}-1) DOWNTO 0 ));
-              END SingleBitShiftReg;
-
-              """);
+          .add(super.getEntity(nets, attrs, componentName))
+          .empty()
+          .add(Hdl.getExtendedLibrary())
+          .add(getExtraComp(true));
     }
-    contents.add(super.getEntity(nets, attrs, componentName));
     return contents.get();
   }
 
@@ -297,25 +279,25 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
     final var contents = LineBuffer.getHdlBuffer()
         .pair("clock", HdlPorts.getClockName(1))
         .pair("tick", HdlPorts.getTickName(1))
-        .pair("nrOfStages", NR_OF_STAGES_STR)
+        .pair("nrOfStages", NR_OF_STAGES_STRING)
         .pair("invertClock", NEGATE_CLOCK_STRING)
-        .pair("nrOfBits", NR_OF_BITS_STR);
+        .pair("nrOfBits", NR_OF_BITS_STRING);
     if (Hdl.isVhdl()) {
-      contents.add("""
-          GenBits : FOR n IN ({{nrOfBits}}-1) DOWNTO 0 GENERATE
-             OneBit : SingleBitShiftReg
-             GENERIC MAP ( {{invertClock}} => {{invertClock}},
+      contents.empty().addVhdlKeywords().add("""
+          genBits : {{for}} n {{in}} ({{nrOfBits}}-1) {{downto}} 0 {{generate}}
+             OneBit : singleBitShiftReg
+             {{generic}} {{map}} ( {{invertClock}} => {{invertClock}},
                            {{nrOfStages}} => {{nrOfStages}} )
-             PORT MAP ( Reset       => Reset,
+             {{port}} {{map}} ( reset       => reset,
                         {{tick}}        => {{tick}},
                         {{clock}}       => {{clock}},
-                        ShiftEnable => ShiftEnable,
-                        ParLoad     => ParLoad,
-                        ShiftIn     => ShiftIn(n),
-                        D           => D( ((n+1) * {{nrOfStages}})-1 DOWNTO (n*{{nrOfStages}})),
-                        ShiftOut    => ShiftOut(n),
-                        Q           => Q( ((n+1) * {{nrOfStages}})-1 DOWNTO (n*{{nrOfStages}})) );
-          END GENERATE genbits;
+                        shiftEnable => shiftEnable,
+                        parLoad     => parLoad,
+                        shiftIn     => shiftIn(n),
+                        d           => d( ((n+1) * {{nrOfStages}})-1 {{downto}} (n*{{nrOfStages}})),
+                        shiftOut    => shiftOut(n),
+                        q           => q( ((n+1) * {{nrOfStages}})-1 {{downto}} (n*{{nrOfStages}})) );
+          {{end}} {{generate}} genBits;
           """);
     } else {
       contents.add("""
@@ -323,21 +305,21 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
           generate
              for (n = 0 ; n < {{nrOfBits}}; n=n+1)
              begin:Bit
-                SingleBitShiftReg #(.{{invertClock}}({{invertClock}}),
+                singleBitShiftReg #(.{{invertClock}}({{invertClock}}),
                                     .{{nrOfStages}}({{nrOfStages}}))
-                   OneBit (.Reset(Reset),
+                   OneBit (.reset(reset),
                            .{{tick}}({{tick}}),
                            .{{clock}}({{clock}}),
-                           .ShiftEnable(ShiftEnable),
-                           .ParLoad(ParLoad),
-                           .ShiftIn(ShiftIn[n]),
-                           .D(D[((n+1)*{{nrOfStages}})-1:(n*{{nrOfStages}})]),
-                           .ShiftOut(ShiftOut[n]),
-                           .Q(Q[((n+1)*{{nrOfStages}})-1:(n*{{nrOfStages}})]) );
+                           .shiftEnable(shiftEnable),
+                           .parLoad(parLoad),
+                           .shiftIn(shiftIn[n]),
+                           .d(d[((n+1)*{{nrOfStages}})-1:(n*{{nrOfStages}})]),
+                           .shiftOut(shiftOut[n]),
+                           .q(q[((n+1)*{{nrOfStages}})-1:(n*{{nrOfStages}})]) );
              end
           endgenerate
           """);
     }
-    return contents;
+    return contents.empty();
   }
 }

@@ -19,7 +19,7 @@ import com.cburch.logisim.util.LineBuffer;
 
 public class NegatorHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
-  private static final String NR_OF_BITS_STRING = "NrOfBits";
+  private static final String NR_OF_BITS_STRING = "nrOfBits";
   private static final int NR_OF_BITS_ID = -1;
 
   public NegatorHdlGeneratorFactory() {
@@ -27,8 +27,8 @@ public class NegatorHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     myParametersList
         .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID);
     myPorts
-        .add(Port.INPUT, "DataX", NR_OF_BITS_ID, Negator.IN, StdAttr.WIDTH)
-        .add(Port.OUTPUT, "MinDataX", NR_OF_BITS_ID, Negator.OUT, StdAttr.WIDTH);
+        .add(Port.INPUT, "dataX", NR_OF_BITS_ID, Negator.IN, StdAttr.WIDTH)
+        .add(Port.OUTPUT, "minDataX", NR_OF_BITS_ID, Negator.OUT, StdAttr.WIDTH);
   }
 
   @Override
@@ -36,13 +36,13 @@ public class NegatorHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var contents = LineBuffer.getBuffer();
     if (Hdl.isVhdl()) {
       int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-      contents.add(
+      contents.empty().addVhdlKeywords().add(
           (nrOfBits == 1)
-              ? "MinDataX <= DataX;"
-              : "MinDataX <= std_logic_vector(unsigned(NOT(DataX)) + 1);");
+              ? "minDataX <= dataX;"
+              : "minDataX <= std_logic_vector(unsigned({{not}}(dataX)) + 1);");
     } else {
-      contents.add("assign   MinDataX = -DataX;");
+      contents.add("assign minDataX = -dataX;");
     }
-    return contents;
+    return contents.empty();
   }
 }

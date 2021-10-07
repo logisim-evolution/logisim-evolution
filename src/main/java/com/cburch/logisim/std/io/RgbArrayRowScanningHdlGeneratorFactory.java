@@ -15,7 +15,8 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.List;
+
+import java.util.HashMap;
 
 public class RgbArrayRowScanningHdlGeneratorFactory extends LedArrayRowScanningHdlGeneratorFactory {
 
@@ -48,73 +49,51 @@ public class RgbArrayRowScanningHdlGeneratorFactory extends LedArrayRowScanningH
           .pair("outsG", LedArrayGenericHdlGeneratorFactory.LedArrayColumnGreenOutputs)
           .pair("outsB", LedArrayGenericHdlGeneratorFactory.LedArrayColumnBlueOutputs);
 
-  public static List<String> getPortMap(int id) {
-    final var contents =
-        (new LineBuffer(sharedPairs))
-            .pair("addr", LedArrayGenericHdlGeneratorFactory.LedArrayRowAddress)
-            .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK)
-            .pair("id", id);
-
-    if (Hdl.isVhdl()) {
-      contents.add("""
-          PORT MAP ( {{addr }} => {{addr}}{{id}}
-                     {{clock}} => {{clock}},
-                     {{outsR}} => {{outsR}}{{id}},
-                     {{outsG}} => {{outsG}}{{id}},
-                     {{outsB}} => {{outsB}}{{id}},
-                     {{insR }} => s_{{insR}}{{id}},
-                     {{insG }} => s_{{insG}}{{id}},
-                     {{insB }} => s_{{insB}}{{id}} );
-          """);
-    } else {
-      contents.add("""
-          ( .{{addr }}({{addr}}{{id}}),
-            .{{clock}}({{clock}}),
-            .{{outsR}}({{outsR}}{{id}}),
-            .{{outsG}}({{outsG}}{{id}}),
-            .{{outsB}}({{outsB}}{{id}}),
-            .{{insR }}(s_{{insR}}{{id}}),
-            .{{insG }}(s_{{insG}}{{id}}),
-            .{{insB }}(s_{{insB}}{{id}}) );
-          """);
-    }
-    return contents.getWithIndent(6);
+  public static LineBuffer getPortMap(int id) {
+    final var ports = new HashMap<String, String>();
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayRowAddress, String.format("%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayRowAddress, id));
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayColumnRedOutputs, String.format("%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayColumnRedOutputs, id));
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayColumnGreenOutputs, String.format("%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayColumnGreenOutputs, id));
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayColumnBlueOutputs, String.format("%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayColumnBlueOutputs, id));
+    ports.put(TickComponentHdlGeneratorFactory.FPGA_CLOCK, TickComponentHdlGeneratorFactory.FPGA_CLOCK);
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayRedInputs, String.format("s_%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayRedInputs, id));
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayGreenInputs, String.format("s_%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayGreenInputs, id));
+    ports.put(LedArrayGenericHdlGeneratorFactory.LedArrayBlueInputs, String.format("s_%s%d", LedArrayGenericHdlGeneratorFactory.LedArrayBlueInputs, id));
+    return LedArrayGenericHdlGeneratorFactory.getGenericPortMapAlligned(ports, false);
   }
 
   @Override
   public LineBuffer getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    final var contents =
-        (new LineBuffer(sharedPairs))
-            .pair("activeLow", ACTIVE_LOW_STRING)
-            .pair("nrOfLeds", NR_OF_LEDS_STRING)
-            .pair("nrOfColumns", NR_OF_COLUMS_STRING);
+    final var contents = LineBuffer.getHdlBuffer()
+        .pair("activeLow", ACTIVE_LOW_STRING)
+        .pair("nrOfLeds", NR_OF_LEDS_STRING)
+        .pair("nrOfColumns", NR_OF_COLUMS_STRING);
 
     contents.add(getRowCounterCode());
     if (Hdl.isVhdl()) {
-      contents.add("""
+      contents.addVhdlKeywords().add("""
+          makeVirtualInputs : {{process}} ( internalRedLeds, internalGreenLeds, internalBlueLeds ) {{is}}
+          {{begin}}
+             s_maxRedLedInputs <= ({{others}} => '0');
+             s_maxGreenLedInputs <= ({{others}} => '0');
+             s_maxBlueLedInputs <= ({{others}} => '0');
+             {{if}} ({{activeLow}} = 1) {{then}}
+                s_maxRedLedInputs({{nrOfLeds}}-1 {{downto}} 0) <= {{not}} {{insR}};
+                s_maxRedLedInputs({{nrOfLeds}}-1 {{downto}} 0) <= {{not}} {{insG}};
+                s_maxRedLedInputs({{nrOfLeds}}-1 {{downto}} 0) <= {{not}} {{insB}};
+             {{else}}
+                s_maxRedLedInputs({{nrOfLeds}}-1 {{downto}} 0) <= {{insR}};
+                s_maxRedLedInputs({{nrOfLeds}}-1 {{downto}} 0) <= {{insG}};
+                s_maxRedLedInputs({{nrOfLeds}}-1 {{downto}} 0) <= {{insB}};
+             {{end}} {{if}};
+          {{end}} {{process}} makeVirtualInputs;
 
-          makeVirtualInputs : PROCESS ( internalRedLeds, internalGreenLeds, internalBlueLeds ) IS
-          BEGIN
-             s_maxRedLedInputs <= (OTHERS => '0');
-             s_maxGreenLedInputs <= (OTHERS => '0');
-             s_maxBlueLedInputs <= (OTHERS => '0');
-             IF ({{activeLow}} = 1) THEN
-                s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{insR}};
-                s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{insG}};
-                s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= NOT {{insB}};
-             ELSE
-                s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{insR}};
-                s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{insG}};
-                s_maxRedLedInputs({{nrOfLeds}}-1 DOWNTO 0) <= {{insB}};
-             END IF;
-          END PROCESS makeVirtualInputs;
-
-          GenOutputs : FOR n IN {{nrOfColumns}}-1 DOWNTO 0 GENERATE
+          genOutputs : {{for}} n {{in}} {{nrOfColumns}}-1 {{downto}} 0 {{generate}}
              {{outsR}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);
              {{outsG}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);
              {{outsB}}(n) <= s_maxRedLedInputs({{nrOfColumns}} * to_integer(unsigned(s_rowCounterReg)) + n);
-          END GENERATE GenOutputs;
-          """);
+          {{end}} {{generate}} genOutputs;
+          """).empty();
     } else {
       contents.add("""
           genvar i;
@@ -132,7 +111,7 @@ public class RgbArrayRowScanningHdlGeneratorFactory extends LedArrayRowScanningH
                    :  {{insB}}[{{nrOfColumns}} * s_rowCounterReg + i];
              end
           endgenerate" +
-          """);
+          """).empty();
     }
     return contents;
   }

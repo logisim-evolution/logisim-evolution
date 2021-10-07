@@ -23,7 +23,7 @@ class EvenParityGate extends AbstractGate {
   private static class XNorGateHdlGeneratorFactory extends AbstractGateHdlGenerator {
     @Override
     public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      return LineBuffer.getBuffer().add(getParity(true, nrOfInputs, bitwidth > 1)).empty();
+      return LineBuffer.getBuffer().add(getParity(true, nrOfInputs, bitwidth > 1));
     }
   }
 

@@ -21,7 +21,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.wiring.ClockHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +63,6 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
   @Override
   public List<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName) {
     final var contents = LineBuffer.getHdlBuffer();
-    final var oneLine = new StringBuilder();
     if (getWiresPortsDuringHDLWriting) {
       myWires.removeWires();
       myTypedWires.clear();
@@ -73,7 +71,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     }
     contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
     if (Hdl.isVhdl()) {
-      contents.add("ARCHITECTURE PlatformIndependent OF {{1}} IS ", componentName).empty();
+      contents.addVhdlKeywords().add("{{architecture}} platformIndependent {{of}} {{1}} {{is}} ", componentName).empty();
       if (myTypedWires.getNrOfTypes() > 0) {
         contents.addRemarkBlock("Here all private types are defined")
             .add(myTypedWires.getTypeDefinitions())
@@ -82,7 +80,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
       final var components = getComponentDeclarationSection(theNetlist, attrs);
       if (!components.isEmpty())
-        contents.addRemarkBlock("Here all used components are defined").add(components).empty();
+        contents.addRemarkBlock("Here all used components are defined", 3).add(components.getWithIndent()).empty();
 
       final var typedWires = myTypedWires.getTypedWires();
       final var mySignals = new HashMap<String, String>();
@@ -104,263 +102,115 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       if (maxNameLength > 0) contents.addRemarkBlock("All used signals are defined here");
       final var sortedSignals = new TreeSet<String>(mySignals.keySet());
       for (final var signal : sortedSignals)
-        contents.add("   SIGNAL {{1}}{{2}} : {{3}};", signal, " ".repeat(maxNameLength - signal.length()),
+        contents.add("   {{signal}} {{1}}{{2}} : {{3}};", signal, " ".repeat(maxNameLength - signal.length()),
             mySignals.get(signal));
       if (maxNameLength > 0) contents.empty();
-      contents.add("BEGIN")
+      contents.add("{{begin}}")
           .add(getModuleFunctionality(theNetlist, attrs).getWithIndent())
-          .add("END PlatformIndependent;");
+          .add("{{end}} platformIndependent;");
     } else {
       final var preamble = String.format("module %s( ", componentName);
-      final var indenting = new StringBuilder();
-      while (indenting.length() < preamble.length()) indenting.append(" ");
+      final var indenting = " ".repeat(preamble.length());
+      final var body = LineBuffer.getHdlBuffer();
       if (myPorts.isEmpty()) {
         contents.add(preamble + " );");
       } else {
-        final var thisLine = new StringBuilder();
-        for (final var inp : myPorts.keySet(Port.INPUT)) {
-          if (thisLine.length() == 0) {
-            thisLine.append(preamble).append(inp);
-          } else {
-            contents.add(thisLine + ",");
-            thisLine.setLength(0);
-            thisLine.append(indenting).append(inp);
-          }
-          // Special case for the clocks we have to add the tick
-          if (myPorts.isClock(inp)) {
-            contents.add(thisLine + ",");
-            thisLine.setLength(0);
-            thisLine.append(indenting).append(myPorts.getTickName(inp));
-          }
-        }
-        for (final var outp : myPorts.keySet(Port.OUTPUT)) {
-          if (thisLine.length() == 0) {
-            thisLine.append(preamble).append(outp);
-          } else {
-            contents.add(thisLine + ",");
-            thisLine.setLength(0);
-            thisLine.append(indenting).append(outp);
-          }
-        }
-        for (final var io : myPorts.keySet(Port.INOUT)) {
-          if (thisLine.length() == 0) {
-            thisLine.append(preamble).append(io);
-          } else {
-            contents.add(thisLine + ",");
-            thisLine.setLength(0);
-            thisLine.append(indenting).append(io);
-          }
-        }
-        if (thisLine.length() != 0) {
-          contents.add(thisLine + ");");
-        } else {
-          // FIXME: hard coded String
-          Reporter.report.addError("Internal Error in Verilog Architecture generation!");
+        final var ports = new TreeSet<String>(myPorts.keySet());
+        for (final var port : myPorts.keySet())
+          if (myPorts.isClock(port)) ports.add(myPorts.getTickName(port));
+        var first = true;
+        var maxNrOfPorts = ports.size();
+        for (final var port : ports) {
+          maxNrOfPorts--;
+          final var end = maxNrOfPorts == 0 ? " );" : ",";
+          contents.add("{{1}}{{2}}{{3}}", first ? preamble : indenting, port, end);
+          first = false;
         }
       }
       if (!myParametersList.isEmpty(attrs)) {
-        contents.empty();
-        contents.addRemarkBlock("Here all module parameters are defined with a dummy value");
-        for (final var param : myParametersList.keySet(attrs)) {
+        body.empty().addRemarkBlock("Here all module parameters are defined with a dummy value");
+        final var parameters = new TreeSet<String>();
+        for (final var paramId : myParametersList.keySet(attrs)) {
           // For verilog we specify a maximum vector, this seems the best way to do it
-          final var vectorString = (myParametersList.isPresentedByInteger(param, attrs)) ? "" : "[64:0]";
-          contents.add("   parameter {{1}} {{2}} = 1;", vectorString, myParametersList.get(param, attrs));
+          final var paramName = myParametersList.isPresentedByInteger(paramId, attrs) 
+              ? myParametersList.get(paramId, attrs) : String.format("[64:0] %s", myParametersList.get(paramId, attrs));
+          parameters.add(paramName);
         }
-        contents.empty();
+        for (final var param : parameters)
+          body.add(String.format("parameter %s = 1;", param));
       }
       if (myTypedWires.getNrOfTypes() > 0) {
-        contents.addRemarkBlock("Here all private types are defined")
-            .add(myTypedWires.getTypeDefinitions())
-            .empty();
+        body.empty()
+            .addRemarkBlock("Here all private types are defined")
+            .add(myTypedWires.getTypeDefinitions());
       }
-      var firstline = true;
-      var nrOfPortBits = 0;
-      for (final var inp : myPorts.keySet(Port.INPUT)) {
-        oneLine.setLength(0);
-        oneLine.append("   input");
-        nrOfPortBits = myPorts.get(inp, attrs);
-        if (nrOfPortBits < 0) {
-          /* we have a parameterized array */
-          if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
-            // FIXME: hard coded String
-            Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            return contents.clear().get();
-          }
-          oneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
-        } else {
-          if (nrOfPortBits > 1) {
-            oneLine.append("[").append(nrOfPortBits - 1).append(":0]");
-          } else {
-            if (nrOfPortBits == 0) {
-              oneLine.append("[0:0]");
-            }
-          }
-        }
-        oneLine.append("  ").append(inp).append(";");
-        if (firstline) {
-          firstline = false;
-          contents.add("");
-          contents.addRemarkBlock("Here the inputs are defined");
-        }
-        contents.add(oneLine.toString());
-        // special case for the clock, we have to add the tick
-        if (myPorts.isClock(inp)) {
-          oneLine.setLength(0);
-          oneLine.append("   input  ").append(myPorts.getTickName(inp)).append(";");
-          contents.add(oneLine.toString());
-        }
+      final var inputs = myPorts.keySet(Port.INPUT);
+      for (final var input : myPorts.keySet(Port.INPUT)) {
+        if (myPorts.isClock(input))
+          inputs.add(myPorts.getTickName(input));
       }
-      firstline = true;
-      for (final var outp : myPorts.keySet(Port.OUTPUT)) {
-        oneLine.setLength(0);
-        oneLine.append("   output");
-        nrOfPortBits = myPorts.get(outp, attrs);
-        if (nrOfPortBits < 0) {
-          /* we have a parameterized array */
-          if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
-            // FIXME: hard coded String
-            Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            contents.clear();
-            return contents.get();
-          }
-          oneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
-        } else {
-          if (nrOfPortBits > 1) {
-            oneLine.append("[").append(nrOfPortBits - 1).append(":0]");
-          } else {
-            if (nrOfPortBits == 0) {
-              oneLine.append("[0:0]");
-            }
-          }
-        }
-        oneLine.append(" ").append(outp).append(";");
-        if (firstline) {
-          firstline = false;
-          contents.empty().addRemarkBlock("Here the outputs are defined");
-        }
-        contents.add(oneLine.toString());
+      if (!inputs.isEmpty()) {
+        body.empty().addRemarkBlock("The inputs are defined here");
+        if (!getVerilogSignalSet("input", inputs, attrs, true, body)) return null;
       }
-      firstline = true;
-      for (final var io : myPorts.keySet(Port.INOUT)) {
-        oneLine.setLength(0);
-        oneLine.append("   inout");
-        nrOfPortBits = myPorts.get(io, attrs);
-        if (nrOfPortBits < 0) {
-          /* we have a parameterized array */
-          if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
-            // FIXME: hard coded String
-            Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            return contents.clear().get();
-          }
-          oneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
-        } else {
-          if (nrOfPortBits > 1) {
-            oneLine.append("[").append(nrOfPortBits - 1).append(":0]");
-          } else {
-            if (nrOfPortBits == 0) {
-              oneLine.append("[0:0]");
-            }
-          }
-        }
-        oneLine.append(" ").append(io).append(";");
-        if (firstline) {
-          firstline = false;
-          contents.empty().addRemarkBlock("Here the ios are defined");
-        }
-        contents.add(oneLine.toString());
+      final var outputs = myPorts.keySet(Port.OUTPUT);
+      if (!outputs.isEmpty()) {
+        body.empty().addRemarkBlock("The outputs are defined here");
+        if (!getVerilogSignalSet("output", outputs, attrs, true, body)) return null;
       }
-      firstline = true;
-      for (final var wire : myWires.wireKeySet()) {
-        oneLine.setLength(0);
-        oneLine.append("   wire");
-        nrOfPortBits = myWires.get(wire);
-        if (nrOfPortBits < 0) {
-          /* we have a parameterized array */
-          if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
-            // FIXME: hard coded String
-            Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            return contents.clear().get();
-          }
-          oneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
-        } else {
-          if (nrOfPortBits > 1) {
-            oneLine.append("[").append(nrOfPortBits - 1).append(":0]");
-          } else {
-            if (nrOfPortBits == 0) oneLine.append("[0:0]");
-          }
-        }
-        oneLine.append(" ").append(wire).append(";");
-        if (firstline) {
-          firstline = false;
-          contents.empty();
-          contents.addRemarkBlock("Here the internal wires are defined");
-        }
-        contents.add(oneLine.toString());
+      final var inouts = myPorts.keySet(Port.INOUT);
+      if (!inouts.isEmpty()) {
+        body.empty().addRemarkBlock("The inouts are defined here");
+        if (!getVerilogSignalSet("inout", inouts, attrs, true, body)) return null;
       }
-      firstline = true;
-      for (final var reg : myWires.registerKeySet()) {
-        oneLine.setLength(0);
-        oneLine.append("   reg");
-        nrOfPortBits = myWires.get(reg);
-        if (nrOfPortBits < 0) {
-          /* we have a parameterized array */
-          if (!myParametersList.containsKey(nrOfPortBits, attrs)) {
-            // FIXME: hard coded String
-            Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
-            return contents.clear().get();
-          }
-          oneLine.append("[").append(myParametersList.get(nrOfPortBits, attrs)).append("-1:0]");
-        } else {
-          if (nrOfPortBits > 1) {
-            oneLine.append("[").append(nrOfPortBits - 1).append(":0]");
-          } else {
-            if (nrOfPortBits == 0) oneLine.append("[0:0]");
-          }
-        }
-        oneLine.append(" ").append(reg).append(";");
-        if (firstline) {
-          firstline = false;
-          contents.empty().addRemarkBlock("Here the internal registers are defined");
-        }
-        contents.add(oneLine.toString());
+      final var wires = myWires.wireKeySet();
+      if (!wires.isEmpty()) {
+        body.empty().addRemarkBlock("The wires are defined here");
+        if (!getVerilogSignalSet("wire", wires, attrs, false, body)) return null;
       }
-      firstline = true;
+      final var regs = myWires.registerKeySet();
+      if (!regs.isEmpty()) {
+        body.empty().addRemarkBlock("The registers are defined here");
+        if (!getVerilogSignalSet("reg", regs, attrs, false, body)) return null;
+      }
       final var typedWires = myTypedWires.getTypedWires();
-      for (final var wire : typedWires.keySet()) {
-        oneLine.setLength(0);
-        oneLine.append("   ").append(typedWires.get(wire)).append(" ").append(wire).append(";");
-        if (firstline) {
-          firstline = false;
-          contents.empty().addRemarkBlock("Here the type defined signals are defined");
+      if (!typedWires.isEmpty()) {
+        body.empty().addRemarkBlock("The type defined signals are defined here");
+        final var sortedWires = new TreeSet<String>(typedWires.keySet());
+        var maxNameLength = 0;
+        for (final var wire : sortedWires)
+          maxNameLength = Math.max(maxNameLength, typedWires.get(wire).length());
+        for (final var wire : sortedWires) {
+          final var typeName = typedWires.get(wire);
+          body.add(LineBuffer.format("{{1}}{{2}} {{3}};", typeName, " ".repeat(maxNameLength - typeName.length()), wire));
         }
-        contents.add("   {{1}}", oneLine.toString());
       }
-      if (!firstline) {
-        contents.empty();
-      }
-      contents.add(getModuleFunctionality(theNetlist, attrs).getWithIndent()).empty().add("endmodule");
+      body.empty()
+          .addRemarkBlock("The module functionality is described here")
+          .add(getModuleFunctionality(theNetlist, attrs));
+      contents.add(body.getWithIndent()).add("endmodule");
     }
     return contents.get();
   }
 
-  public List<String> getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
+  public LineBuffer getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
     /*
      * This method returns all the component definitions used as component
      * in the circuit. This method is only called in case of VHDL-code
      * generation.
      */
-    return new ArrayList<>();
+    return LineBuffer.getHdlBuffer();
   }
 
   @Override
-  public List<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
+  public LineBuffer getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
     final var contents = LineBuffer.getHdlBuffer();
     if (Hdl.isVhdl()) contents.add(getVHDLBlackBox(theNetlist, attrs, componentName, false));
-    return contents.get();
+    return contents;
   }
 
   @Override
-  public List<String> getComponentMap(Netlist nets, Long componentId, Object componentInfo, String name) {
+  public LineBuffer getComponentMap(Netlist nets, Long componentId, Object componentInfo, String name) {
     final var contents = LineBuffer.getHdlBuffer();
     final var parameterMap = new TreeMap<String, String>();
     final var portMap = getPortMap(nets, componentInfo);
@@ -379,7 +229,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     var tabLength = 0;
     var first = true;
     if (Hdl.isVhdl()) {
-      contents.add("{{1}} : {{2}}", thisInstanceIdentifier, compName);
+      contents.addVhdlKeywords().add("{{1}} : {{2}}", thisInstanceIdentifier, compName);
       if (!parameterMap.isEmpty()) {
         // first we gather information on the generic string lengths
         var maxNameLength = 0;
@@ -390,7 +240,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         final var nrOfGenerics = genericNames.size();
         // now we add them
         for (final var generic : genericNames) {
-          final var preamble = currentGeneric == 0 ? "GENERIC MAP (" : " ".repeat(13);
+          final var preamble = currentGeneric == 0 ? "{{generic}} {{map}} (" : " ".repeat(13);
           contents.add("   {{1}} {{2}}{{3}} => {{4}}{{5}}", preamble, generic,
               " ".repeat(Math.max(0, maxNameLength - generic.length())),
               parameterMap.get(generic),
@@ -407,7 +257,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         final var portNames = new TreeSet<String>(portMap.keySet());
         final var nrOfPorts = portNames.size();
         for (final var port : portNames) {
-          final var preamble = currentPort == 0 ? "PORT MAP (" : " ".repeat(10);
+          final var preamble = currentPort == 0 ? "{{port}} {{map}} (" : " ".repeat(10);
           contents.add("   {{1}} {{2}}{{3}} => {{4}}{{5}}", preamble, port,
               " ".repeat(Math.max(0, maxNameLength - port.length())),
               portMap.get(port),
@@ -470,8 +320,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       oneLine.append(");");
       contents.add(oneLine.toString());
     }
-    contents.add("");
-    return contents.getWithIndent();
+    return contents;
   }
 
   @Override
@@ -479,7 +328,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     final var contents = LineBuffer.getHdlBuffer();
     if (Hdl.isVhdl()) {
       contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
-          .add(FileWriter.getExtendedLibrary())
+          .add(Hdl.getExtendedLibrary())
           .add(getVHDLBlackBox(theNetlist, attrs, componentName, true));
     }
     return contents.get();
@@ -597,7 +446,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
   private List<String> getVHDLBlackBox(Netlist theNetlist, AttributeSet attrs,
       String componentName, Boolean isEntity) {
-    final var contents = LineBuffer.getHdlBuffer();
+    final var contents = LineBuffer.getHdlBuffer().addVhdlKeywords();
     var maxNameLength = 0;
     if (getWiresPortsDuringHDLWriting) {
       myWires.removeWires();
@@ -605,7 +454,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       myPorts.removePorts();
       getGenerationTimeWiresPorts(theNetlist, attrs);
     }
-    contents.add("{{1}} {{2}}{{3}}", isEntity ? "ENTITY" : "COMPONENT", componentName, isEntity ? " IS" : "");
+    contents.add(isEntity ? "{{entity}} {{1}} {{is}}" : "{{component}} {{1}}", componentName);
     if (!myParametersList.isEmpty(attrs)) {
       // first we build a list with parameters to determine the max. string length
       final var myParameters = new HashMap<String, Boolean>();
@@ -619,14 +468,14 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       var currentGenericId = 0;
       for (final var thisGeneric : myGenerics) {
         if (currentGenericId == 0) {
-          contents.add("   GENERIC ( {{1}}{{2}}: {{3}}{{4}};", thisGeneric,
+          contents.add("   {{generic}} ( {{1}}{{2}}: {{3}}{{4}};", thisGeneric,
               " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
-              myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector",
+              myParameters.get(thisGeneric) ? "{{integer}}" : "std_logic_vector",
               currentGenericId == (myGenerics.size() - 1) ? " )" : "");
         } else {
           contents.add("             {{1}}{{2}}: {{3}}{{4}};", thisGeneric,
               " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
-              myParameters.get(thisGeneric) ? "INTEGER" : "std_logic_vector",
+              myParameters.get(thisGeneric) ? "{{integer}}" : "std_logic_vector",
               currentGenericId == (myGenerics.size() - 1) ? " )" : "");
         }
         currentGenericId++;
@@ -651,7 +500,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       var firstEntry = true;
       var currentEntry = 0;
       // now we process in order
-      var direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? "IN   " : "IN ";
+      var direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? Vhdl.getVhdlKeyword("IN   ") : Vhdl.getVhdlKeyword("IN ");
       final var myInputs = new TreeSet<String>(myPorts.keySet(Port.INPUT));
       myInputs.addAll(tickers);
       for (final var input : myInputs) {
@@ -660,7 +509,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         firstEntry = getPortEntry(contents, firstEntry, nrOfEntries, currentEntry, input, direction, type, maxNameLength);
         currentEntry++;
       }
-      direction = "INOUT";
+      direction = Vhdl.getVhdlKeyword("INOUT");
       final var myInOuts = new TreeSet<String>(myPorts.keySet(Port.INOUT));
       for (final var inout : myInOuts) {
         nrOfPortBits = myPorts.get(inout, attrs);
@@ -668,7 +517,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         firstEntry = getPortEntry(contents, firstEntry, nrOfEntries, currentEntry, inout, direction, type, maxNameLength);
         currentEntry++;
       }
-      direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? "OUT  " : "OUT";
+      direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? Vhdl.getVhdlKeyword("OUT  ") : Vhdl.getVhdlKeyword("OUT");
       final var myOutputs = new TreeSet<String>(myPorts.keySet(Port.OUTPUT));
       for (final var output : myOutputs) {
         nrOfPortBits = myPorts.get(output, attrs);
@@ -677,14 +526,17 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         currentEntry++;
       }
     }
-    contents.add("{{1}} {{2}};", isEntity ? "END ENTITY" : "END", isEntity ? componentName : "COMPONENT").empty();
+    if (isEntity)
+      contents.add("{{end}} {{entity}} {{1}};", componentName);
+    else
+      contents.add("{{end}} {{component}};");
     return contents.getWithIndent(isEntity ? 0 : 1);
   }
 
   private boolean getPortEntry(LineBuffer contents, boolean firstEntry, int nrOfEntries, int currentEntry,
       String name, String direction, String type, int maxLength) {
     if (firstEntry) {
-      contents.add("   PORT ( {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction,
+      contents.add("   {{port}} ( {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction,
           type, currentEntry == (nrOfEntries - 1) ? " )" : "");
     } else {
       contents.add("          {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction,
@@ -694,17 +546,53 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
   }
 
   private String getTypeIdentifier(int nrOfBits, AttributeSet attrs) {
+    final var contents = LineBuffer.getHdlBuffer().addVhdlKeywords();
     if (nrOfBits < 0) {
       // we have generic based vector
       if (!myParametersList.containsKey(nrOfBits, attrs))
         throw new IllegalArgumentException("Generic parameter not specified in the parameters list");
-      return String.format("std_logic_vector( (%s - 1) DOWNTO 0 )", myParametersList.get(nrOfBits, attrs));
+      contents.add("std_logic_vector( ({{1}} - 1) {{downto}} 0 )", myParametersList.get(nrOfBits, attrs));
     } else if (nrOfBits == 0) {
-      return "std_logic_vector( 0 DOWNTO 0 )";
+      contents.add("std_logic_vector( 0 {{downto}} 0 )");
     } else if (nrOfBits > 1) {
-      return String.format("std_logic_vector( %d DOWNTO 0 )", nrOfBits - 1);
+      contents.add("std_logic_vector( {{1}} {{downto}} 0 )", nrOfBits - 1);
+    } else {
+      contents.add("std_logic");
     }
-    return "std_logic";
+    return contents.get(0);
+  }
+  
+  private boolean getVerilogSignalSet(String preamble, List<String> signals, AttributeSet attrs, boolean isPort, LineBuffer contents) {
+    if (signals.isEmpty()) return true;
+    final var signalSet = new HashMap<String, String>();
+    for (final var input : signals) {
+      // this we have to check for the tick
+      final var nrOfBits = isPort ? myPorts.contains(input) ? myPorts.get(input, attrs) : 1 : myWires.get(input);
+      if (nrOfBits < 0) {
+        if (myParametersList.containsKey(nrOfBits, attrs)) {
+          signalSet.put(input, String.format("%s [%s-1:0]", preamble, myParametersList.get(nrOfBits, attrs)));
+        } else {
+          // FIXME: hard coded String
+          Reporter.report.addFatalError("Internal Error, Parameter not present in HDL generation, your HDL code will not work!");
+          return false;
+        }
+      } else if (nrOfBits == 0) {
+        signalSet.put(input, String.format("%s [0:0]", preamble));
+      } else if (nrOfBits > 1) {
+        signalSet.put(input, String.format("%s [%d:0]", preamble, nrOfBits - 1));
+      } else {
+        signalSet.put(input, preamble);
+      }
+    }
+    final var sortedSignals = new TreeSet<String>(signalSet.keySet());
+    var maxNameLength = 0;
+    for (final var signal : sortedSignals)
+      maxNameLength = Math.max(maxNameLength, signalSet.get(signal).length());
+    for (final var signal : sortedSignals) {
+      final var type = signalSet.get(signal);
+      contents.add(LineBuffer.format("{{1}}{{2}} {{3}};", type, " ".repeat(maxNameLength - type.length()), signal));
+    }
+    return true;
   }
 
   @Override

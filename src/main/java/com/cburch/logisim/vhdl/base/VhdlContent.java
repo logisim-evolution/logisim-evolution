@@ -15,7 +15,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.file.LogisimFile;
-import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.hdlgenerator.Vhdl;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.Softwares;
@@ -207,7 +207,7 @@ public class VhdlContent extends HdlContent {
   public static boolean labelVHDLInvalid(String label) {
     if (!label.matches("^[A-Za-z][A-Za-z0-9_]*") || label.endsWith("_") || label.matches(".*__.*"))
       return (true);
-    return CorrectLabel.VHDL_KEYWORDS.contains(label.toLowerCase());
+    return Vhdl.VHDL_KEYWORDS.contains(label.toLowerCase());
   }
 
   public static boolean labelVHDLInvalidNotify(String label, LogisimFile file) {
@@ -216,7 +216,7 @@ public class VhdlContent extends HdlContent {
         || label.endsWith("_")
         || label.matches(".*__.*")) {
       err = S.get("vhdlInvalidNameError");
-    } else if (CorrectLabel.VHDL_KEYWORDS.contains(label.toLowerCase())) {
+    } else if (Vhdl.VHDL_KEYWORDS.contains(label.toLowerCase())) {
       err = S.get("vhdlKeywordNameError");
     } else if (file != null && file.containsFactory(label)) {
       err = S.get("vhdlDuplicateNameError");

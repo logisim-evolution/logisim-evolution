@@ -79,7 +79,7 @@ public class ReptarLocalBusHdlGeneratorFactory extends AbstractHdlGeneratorFacto
   }
 
   @Override
-  public List<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
+  public LineBuffer getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
     return LineBuffer.getBuffer()
         .add("""
             COMPONENT LocalBus
@@ -97,8 +97,7 @@ public class ReptarLocalBusHdlGeneratorFactory extends AbstractHdlGeneratorFacto
                      Addr_Data_LB_o      : OUT std_logic_vector(15 downto 0);
                      Addr_Data_LB_tris_i : IN std_logic);
             END COMPONENT;
-            """)
-        .getWithIndent();
+            """);
   }
 
   @Override
@@ -106,7 +105,7 @@ public class ReptarLocalBusHdlGeneratorFactory extends AbstractHdlGeneratorFacto
     return LineBuffer.getBuffer()
         .pair("compName", componentName)
         .add(FileWriter.getGenerateRemark(componentName, nets.projName()))
-        .add(FileWriter.getExtendedLibrary())
+        .add(Hdl.getExtendedLibrary())
         .add("""
             Library UNISIM;
             use UNISIM.vcomponents.all;

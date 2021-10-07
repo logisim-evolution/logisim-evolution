@@ -43,42 +43,68 @@ public class Ttl7474HdlGenerator extends AbstractHdlGeneratorFactory {
 
   @Override
   public LineBuffer getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    return LineBuffer.getBuffer()
+    final var contents = LineBuffer.getHdlBuffer()
         .pair("CLK1", HdlPorts.getClockName(1))
         .pair("CLK2", HdlPorts.getClockName(2))
         .pair("tick1", HdlPorts.getTickName(1))
-        .pair("tick2", HdlPorts.getTickName(2))
-        .add("""
+        .pair("tick2", HdlPorts.getTickName(2));
+    if (Hdl.isVhdl()) {
+      contents.empty().addVhdlKeywords().add("""
             Q1  <= state1;
-            nQ1 <= NOT(state1);
+            nQ1 <= {{not}}(state1);
             Q2  <= state1;
-            nQ2 <= NOT(state1);
+            nQ2 <= {{not}}(state1);
 
-            next1 <= D1 WHEN {{tick1}}='1' ELSE state1;
-            next2 <= D2 WHEN {{tick2}}='1' ELSE state2;
+            next1 <= D1 {{when}} {{tick1}}='1' {{else}} state1;
+            next2 <= D2 {{when}} {{tick2}}='1' {{else}} state2;
 
-            ff1 : PROCESS ( {{CLK1}} , nCLR1 , nPRE1 ) IS
+            ff1 : {{process}} ( {{CLK1}} , nCLR1 , nPRE1 ) {{is}}
                BEGIN
-                  IF (nCLR1 = '0') THEN state1 <= '0';
-                  ELSIF (nPRE1 = '1') THEN state1 <= '1';
-                  ELSIF (rising_edge({{CLK1}})) THEN state1 <= next1;
-                  END IF;
-               END PROCESS ff1;
+                  {{if}} (nCLR1 = '0') {{then}} state1 <= '0';
+                  {{elsif}} (nPRE1 = '0') {{then}} state1 <= '1';
+                  {{elsif}} (rising_edge({{CLK1}})) {{then}} state1 <= next1;
+                  {{end}} {{if}};
+               {{end}} {{process}} ff1;
 
-            ff2 : PROCESS ( {{CLK2}} , nCLR2 , nPRE2 ) IS
+            ff2 : {{process}} ( {{CLK2}} , nCLR2 , nPRE2 ) {{is}}
                BEGIN
-                  IF (nCLR2 = '0') THEN state2 <= '0';
-                  ELSIF (nPRE2 = '1') THEN state2 <= '1';
-                  ELSIF (rising_edge({{CLK2}})) THEN state2 <= next2;
-                  END IF;
-               END PROCESS ff2;
+                  {{if}} (nCLR2 = '0') {{then}} state2 <= '0';
+                  {{elsif}} (nPRE2 = '0') {{then}} state2 <= '1';
+                  {{elsif}} (rising_edge({{CLK2}})) {{then}} state2 <= next2;
+                  {{end}} {{if}};
+               {{end}} {{process}} ff2;
            """);
+    } else {
+      contents.add("""
+          assign Q1    = state1;
+          assign nQ1   = ~state1;
+          assign Q2    = state2;
+          assign nQ2   = ~state2;
+          assign next1 = tick1 == 1 ? D1 : state1;
+          assign next2 = tick2 == 1 ? D2 : state2;
+
+          always @(posedge {{CLK1}} or negedge nCLR1 or negedge nPRE1)
+          begin
+             if (nCLR1 == 0) state1 <= 0;
+             else if (nPRE1 == 0) state1 <= 1;
+             else state1 <= next1;
+          end
+
+          always @(posedge {{CLK2}} or negedge nCLR2 or negedge nPRE2)
+          begin
+             if (nCLR2 == 0) state2 <= 0;
+             else if (nPRE2 == 0) state2 <= 1;
+             else state2 <= next2;
+          end
+          """);
+    }
+    return contents.empty();
   }
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
-    return (!attrs.getValue(TtlLibrary.VCC_GND) && Hdl.isVhdl());
+    return (!attrs.getValue(TtlLibrary.VCC_GND));
   }
 }

@@ -23,9 +23,9 @@ import java.util.Map;
 
 public class ComparatorHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
-  private static final String NR_OF_BITS_STRING = "NrOfBits";
+  private static final String NR_OF_BITS_STRING = "nrOfBits";
   private static final int NR_OF_BITS_ID = -1;
-  private static final String TWOS_COMPLEMENT_STRING = "TwosComplement";
+  private static final String TWOS_COMPLEMENT_STRING = "twosComplement";
   private static final int TWOS_COMPLEMENT_ID = -2;
 
   public static final Map<AttributeOption, Integer> SIGNED_MAP = new HashMap<>() {{
@@ -41,22 +41,22 @@ public class ComparatorHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         .add(TWOS_COMPLEMENT_STRING, TWOS_COMPLEMENT_ID, HdlParameters.MAP_ATTRIBUTE_OPTION, Comparator.MODE_ATTR,
             SIGNED_MAP);
     getWiresPortsDuringHDLWriting = true;
-    myPorts
-        .add(Port.INPUT, "DataA", NR_OF_BITS_ID, Comparator.IN0, StdAttr.WIDTH)
-        .add(Port.INPUT, "DataB", NR_OF_BITS_ID, Comparator.IN1, StdAttr.WIDTH)
-        .add(Port.OUTPUT, "A_GT_B", 1, Comparator.GT)
-        .add(Port.OUTPUT, "A_EQ_B", 1, Comparator.EQ)
-        .add(Port.OUTPUT, "A_LT_B", 1, Comparator.LT);
   }
 
   @Override
   public void getGenerationTimeWiresPorts(Netlist theNetlist, AttributeSet attrs) {
+    myPorts
+        .add(Port.INPUT, "dataA", NR_OF_BITS_ID, Comparator.IN0, StdAttr.WIDTH)
+        .add(Port.INPUT, "dataB", NR_OF_BITS_ID, Comparator.IN1, StdAttr.WIDTH)
+        .add(Port.OUTPUT, "aGreaterThanB", 1, Comparator.GT)
+        .add(Port.OUTPUT, "aEqualsB", 1, Comparator.EQ)
+        .add(Port.OUTPUT, "aLessThanB", 1, Comparator.LT);
     if (attrs.getValue(StdAttr.WIDTH).getWidth() > 1)
       myWires
-          .addWire("s_signed_less", 1)
-          .addWire("s_unsigned_less", 1)
-          .addWire("s_signed_greater", 1)
-          .addWire("s_unsigned_greater", 1);
+          .addWire("s_signedLess", 1)
+          .addWire("s_unsignedLess", 1)
+          .addWire("s_signedGreater", 1)
+          .addWire("s_unsignedGreater", 1);
   }
 
 
@@ -66,43 +66,43 @@ public class ComparatorHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (Hdl.isVhdl()) {
       if (nrOfBits == 1) {
-        contents.add("""
-            A_EQ_B <= DataA XNOR DataB;
-            A_LT_B <= DataA AND NOT(DataB) WHEN {{twosComplement}} = 1 ELSE NOT(DataA) AND DataB;
-            A_GT_B <= NOT(DataA) AND DataB WHEN {{twosComplement}} = 1 ELSE DataA AND NOT(DataB);
+        contents.empty().addVhdlKeywords().add("""
+            aEqualsB <= dataA {{xnor}} dataB;
+            aLessThanB <= dataA {{and}} {{not}}(dataB) {{when}} {{twosComplement}} = 1 {{else}} {{not}}(dataA) {{and}} dataB;
+            aGreaterThanB <= {{not}}(dataA) {{and}} dataB {{when}} {{twosComplement}} = 1 {{else}} dataA {{and}} {{not}}(dataB);
             """);
       } else {
-        contents.add("""
-            s_signed_less <= '1' WHEN signed(DataA) < signed(DataB) ELSE '0';
-            s_unsigned_less <= '1' WHEN unsigned(DataA) < unsigned(DataB) ELSE '0';
-            s_signed_greater <= '1' WHEN signed(DataA) > signed(DataB) ELSE '0';
-            s_unsigned_greater <= '1' WHEN unsigned(DataA) > unsigned(DataB) ELSE '0';
+        contents.empty().addVhdlKeywords().add("""
+            s_signedLess      <= '1' {{when}} signed(dataA) < signed(dataB) {{else}} '0';
+            s_unsignedLess    <= '1' {{when}} unsigned(dataA) < unsigned(dataB) {{else}} '0';
+            s_signedGreater   <= '1' {{when}} signed(dataA) > signed(dataB) {{else}} '0';
+            s_unsignedGreater <= '1' {{when}} unsigned(dataA) > unsigned(dataB) {{else}} '0';
 
-            A_EQ_B <= '1' WHEN DataA = DataB ELSE '0';
-            A_GT_B <= s_signed_greater WHEN {{twosComplement}} = 1 ELSE s_unsigned_greater;
-            A_LT_B <= s_signed_less    WHEN {{TwosComplement}} = 1 ELSE s_unsigned_less;
+            aEqualsB      <= '1' {{when}} dataA = dataB ELSE '0';
+            aGreaterThanB <= s_signedGreater {{when}} {{twosComplement}} = 1 {{else}} s_unsignedGreater;
+            aLessThanB    <= s_signedLess {{when}} {{twosComplement}} = 1 {{else}} s_unsignedLess;
             """);
       }
     } else {
       if (nrOfBits == 1) {
         contents.add("""
-            assign A_EQ_B = (DataA == DataB);
-            assign A_LT_B = (DataA < DataB);
-            assign A_GT_B = (DataA > DataB);
+            assign aEqualsB      = (dataA == dataB);
+            assign aLessThanB    = (dataA < dataB);
+            assign aGreaterThanB = (dataA > dataB);
             """);
       } else {
         contents.add("""
-            assign s_signed_less = ($signed(DataA) < $signed(DataB));
-            assign s_unsigned_less = (DataA < DataB);
-            assign s_signed_greater = ($signed(DataA) > $signed(DataB));
-            assign s_unsigned_greater = (DataA > DataB);
+            assign s_signedLess      = ($signed(dataA) < $signed(dataB));
+            assign s_unsignedLess    = (dataA < dataB);
+            assign s_signedGreater   = ($signed(dataA) > $signed(dataB));
+            assign s_unsignedGreater = (dataA > dataB);
 
-            assign A_EQ_B = (DataA == DataB);
-            assign A_GT_B = ({{twosComplement}}==1) ? s_signed_greater : s_unsigned_greater;
-            assign A_LT_B = ({{twosComplement}}==1) ? s_signed_less : s_unsigned_less;
+            assign aEqualsB      = (dataA == dataB);
+            assign aGreaterThanB = ({{twosComplement}}==1) ? s_signedGreater : s_unsignedGreater;
+            assign aLessThanB    = ({{twosComplement}}==1) ? s_signedLess : s_unsignedLess;
             """);
       }
     }
-    return contents;
+    return contents.empty();
   }
 }

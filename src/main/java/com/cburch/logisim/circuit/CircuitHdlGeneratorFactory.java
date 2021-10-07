@@ -217,47 +217,33 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   @Override
-  public List<String> getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
-    final var components = new ArrayList<String>();
+  public LineBuffer getComponentDeclarationSection(Netlist theNetlist, AttributeSet attrs) {
+    final var components = LineBuffer.getBuffer();
     final var instantiatedComponents = new HashSet<String>();
     for (final var gate : theNetlist.getNormalComponents()) {
-      final var compName =
-          gate.getComponent().getFactory().getHDLName(gate.getComponent().getAttributeSet());
+      final var compName = gate.getComponent().getFactory().getHDLName(gate.getComponent().getAttributeSet());
       if (!instantiatedComponents.contains(compName)) {
         instantiatedComponents.add(compName);
-        final var worker =
-            gate.getComponent()
-                .getFactory()
-                .getHDLGenerator(gate.getComponent().getAttributeSet());
+        final var worker = gate.getComponent().getFactory().getHDLGenerator(gate.getComponent().getAttributeSet());
         if (worker != null) {
           if (!worker.isOnlyInlined()) {
-            components.addAll(
-                worker.getComponentInstantiation(
-                    theNetlist,
-                    gate.getComponent().getAttributeSet(),
-                    compName));
+            components.empty().add(worker.getComponentInstantiation(theNetlist, 
+                gate.getComponent().getAttributeSet(), compName));
           }
         }
       }
     }
     instantiatedComponents.clear();
     for (final var gate : theNetlist.getSubCircuits()) {
-      var compName =
-          gate.getComponent().getFactory().getHDLName(gate.getComponent().getAttributeSet());
+      var compName = gate.getComponent().getFactory().getHDLName(gate.getComponent().getAttributeSet());
       if (gate.isGatedInstance()) compName = compName.concat("_gated");
       if (!instantiatedComponents.contains(compName)) {
         instantiatedComponents.add(compName);
-        final var worker =
-            gate.getComponent()
-                .getFactory()
-                .getHDLGenerator(gate.getComponent().getAttributeSet());
+        final var worker = gate.getComponent().getFactory().getHDLGenerator(gate.getComponent().getAttributeSet());
         SubcircuitFactory sub = (SubcircuitFactory) gate.getComponent().getFactory();
         if (worker != null) {
-          components.addAll(
-              worker.getComponentInstantiation(
-                  sub.getSubcircuit().getNetList(),
-                  gate.getComponent().getAttributeSet(),
-                  compName));
+          components.empty().add(worker.getComponentInstantiation(sub.getSubcircuit().getNetList(),
+              gate.getComponent().getAttributeSet(), compName));
         }
       }
     }
@@ -363,7 +349,16 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
             contents.addRemarkBlock("Here all in-lined components are defined");
             isFirstLine = false;
           }
-          contents.add(worker.getInlinedCode(theNetList, id++, comp, inlinedName).getWithIndent());
+          final var thisAttrs = comp.getComponent().getAttributeSet();
+          final var hasLabel = thisAttrs.containsAttribute(StdAttr.LABEL) 
+              && !thisAttrs.getValue(StdAttr.LABEL).isEmpty();
+          final var compName = hasLabel ? CorrectLabel.getCorrectLabel(thisAttrs.getValue(StdAttr.LABEL)) : "";
+          final var remarkLine = LineBuffer.format("{{1}}{{2}}{{3}}", comp.getComponent().getFactory().getDisplayName(),
+              hasLabel ? ": " : "", compName);
+          contents
+              .empty()
+              .addRemarkLine(remarkLine)
+              .add(worker.getInlinedCode(theNetList, id++, comp, inlinedName));
           compIds.put(InlinedId, id);
         }
       }
@@ -378,10 +373,10 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
           final var compId = "NormalComponent";
           var id = (compIds.containsKey(compId)) ? compIds.get(compId) : (long) 1;
           if (isFirstLine) {
-            contents.add("").addRemarkBlock("Here all normal components are defined");
+            contents.empty().addRemarkBlock("Here all normal components are defined");
             isFirstLine = false;
           }
-          contents.add(worker.getComponentMap(theNetList, id++, comp, compName));
+          contents.add(worker.getComponentMap(theNetList, id++, comp, compName)).empty();
           compIds.put(compId, id);
         }
       }
@@ -398,12 +393,11 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         final var compMap = worker.getComponentMap(theNetList, id++, comp, compName);
         if (!compMap.isEmpty()) {
           if (isFirstLine) {
-            contents.add("").addRemarkBlock("Here all sub-circuits are defined");
+            contents.empty().addRemarkBlock("Here all sub-circuits are defined");
             isFirstLine = false;
           }
-          compIds.remove(CompId);
           compIds.put(CompId, id);
-          contents.add(compMap);
+          contents.empty().add(compMap);
         }
       }
     }
@@ -430,14 +424,14 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       portMap.put(TickComponentHdlGeneratorFactory.FPGA_CLOCK, TickComponentHdlGeneratorFactory.FPGA_CLOCK);
     }
     if (myNetList.getNumberOfInputBubbles() > 0) {
-      // FIXME: remove + by concatination.
       portMap.put(LOCAL_INPUT_BUBBLE_BUS_NAME,
-          topLevel ? Preamble + LOCAL_INPUT_BUBBLE_BUS_NAME : LOCAL_INPUT_BUBBLE_BUS_NAME + getBubbleIndex(componentInfo, 0));
+          LineBuffer.format("{{1}}{{2}}", topLevel ? Preamble : LOCAL_INPUT_BUBBLE_BUS_NAME,
+              topLevel ? LOCAL_INPUT_BUBBLE_BUS_NAME : getBubbleIndex(componentInfo, 0)));
     }
     if (myNetList.numberOfOutputBubbles() > 0) {
-      // FIXME: remove + by concatination.
       portMap.put(LOCAL_OUTPUT_BUBBLE_BUS_NAME,
-          topLevel ? Preamble + LOCAL_OUTPUT_BUBBLE_BUS_NAME : LOCAL_OUTPUT_BUBBLE_BUS_NAME + getBubbleIndex(componentInfo, 1));
+          LineBuffer.format("{{1}}{{2}}", topLevel ? Preamble : LOCAL_OUTPUT_BUBBLE_BUS_NAME,
+              topLevel ? LOCAL_OUTPUT_BUBBLE_BUS_NAME : getBubbleIndex(componentInfo, 0)));
     }
 
     final var nrOfIOBubbles = myNetList.numberOfInOutBubbles();
@@ -465,17 +459,15 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
             continue;
           }
           if (!map.isMapped(compPin) || map.isOpenMapped(compPin)) {
-            // FIXME: rewrite using LineBuffer
             if (Hdl.isVhdl())
-              portMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME + "(" + i + ")", "OPEN");
+              portMap.put(LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", LOCAL_INOUT_BUBBLE_BUS_NAME, i), "OPEN");
             else {
               if (vector.length() != 0) vector.append(",");
               vector.append("OPEN"); // still not found the correct method but this seems to work
             }
           } else {
             if (Hdl.isVhdl())
-              portMap.put(
-                  LOCAL_INOUT_BUBBLE_BUS_NAME + "(" + i + ")",
+              portMap.put(LineBuffer.formatHdl("{{1}}{{<}}{{2}}{{>}}", LOCAL_INOUT_BUBBLE_BUS_NAME, i),
                   (map.isExternalInverted(compPin) ? "n_" : "") + map.getHdlString(compPin));
             else {
               if (vector.length() != 0) vector.append(",");
@@ -599,6 +591,7 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       if (!connected) {
         /* Here is the easy case, the bus is unconnected */
         if (!isInputConnection) {
+          // FIXME: hardcoded string
           Reporter.report.addSevereWarning("Found an unconnected output bus pin, tied all the pin bits to ground!");
           signal.put(portName, Hdl.getZeroVector(nrOfBits, true));
         }
@@ -631,8 +624,8 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
                * connection is to a bus or to a normal net
                */
               final var connectedNet = solderPoint.getParentNet().getBitWidth() == 1
-                    ? LineBuffer.format("{{1}}{{2}}", NET_NAME, theNets.getNetId(solderPoint.getParentNet()))
-                    : LineBuffer.format("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME,
+                    ? LineBuffer.formatHdl("{{1}}{{2}}", NET_NAME, theNets.getNetId(solderPoint.getParentNet()))
+                    : LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{>}}", BUS_NAME,
                         theNets.getNetId(solderPoint.getParentNet()), solderPoint.getParentNetBitIndex());
               if (isInputConnection) {
                 signal.put(connectedNet, bitConnection);

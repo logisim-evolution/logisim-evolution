@@ -55,12 +55,14 @@ public class AbstractOctalFlopsHdlGenerator extends AbstractHdlGeneratorFactory 
 
   @Override
   public LineBuffer getModuleFunctionality(Netlist theNetlist, AttributeSet attrs) {
-    return LineBuffer.getBuffer()
+    final var contents = LineBuffer.getHdlBuffer()
         .pair("CLK", HdlPorts.CLOCK)
-        .pair("tick", HdlPorts.TICK)
-        .add("""
-            enable <= {{tick}} and NOT(nCLKen);
-            next   <= D7&D6&D5&D4&D3&D2&D1&D0 WHEN enable = '1' ELSE state;
+        .pair("tick", HdlPorts.TICK);
+    if (Hdl.isVhdl()) {
+      contents.empty().addVhdlKeywords()
+          .add("""
+            enable <= {{tick}} {{and}} {{not}}(nCLKen);
+            next   <= D7&D6&D5&D4&D3&D2&D1&D0 {{when}} enable = '1' {{else}} state;
             Q0     <= state(0);
             Q1     <= state(1);
             Q2     <= state(2);
@@ -70,19 +72,40 @@ public class AbstractOctalFlopsHdlGenerator extends AbstractHdlGeneratorFactory 
             Q6     <= state(6);
             Q7     <= state(7);
 
-            dffs : PROCESS( {{CLK}} , nCLR ) IS
-               BEGIN
-                  IF (nCLR = '1') THEN state <= (OTHERS => '0');
-                  ELSIF (rising_edge({{CLK}})) THEN state <= next;
-                  END IF;
-               END PROCESS dffs;
-            """);
+            dffs : {{process}}({{CLK}}, nCLR) {{is}}
+               {{begin}}
+                  {{if}} (nCLR = '0') {{then}} state <= ({{others}} => '0');
+                  {{elsif}} (rising_edge({{CLK}})) {{then}} state <= next;
+                  {{end}} {{if}};
+               {{end}} {{process}} dffs;
+              """);
+    } else {
+      contents.add("""
+          assign enable = {{tick}} & ~nCLKen;
+          assign next   = enable ? {D7, D6, D5, D4, D3, D2, D1, D0} : state;
+          assign Q0     = state[0];
+          assign Q1     = state[1];
+          assign Q2     = state[2];
+          assign Q3     = state[3];
+          assign Q4     = state[4];
+          assign Q5     = state[5];
+          assign Q6     = state[6];
+          assign Q7     = state[7];
+
+          always @(posedge {{CLK}} or negedge nCLR)
+          begin
+             if (~nCLR) state <= 0;
+             else state <= next;
+          end
+          """);
+    }
+    return contents.empty();
   }
 
   @Override
   public boolean isHdlSupportedTarget(AttributeSet attrs) {
     /* TODO: Add support for the ones with VCC and Ground Pin */
     if (attrs == null) return false;
-    return (!attrs.getValue(TtlLibrary.VCC_GND) && (Hdl.isVhdl()));
+    return (!attrs.getValue(TtlLibrary.VCC_GND));
   }
 }

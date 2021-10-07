@@ -36,10 +36,10 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
         outindex = (gate < 3) ? gate * 2 + 1 : gate * 2;
       }
       myPorts
-          .add(Port.INPUT, String.format("gate_%d_A", gate), 1, inindex1)
-          .add(Port.OUTPUT, String.format("gate_%d_O", gate), 1, outindex);
+          .add(Port.INPUT, String.format("gateA%d", gate), 1, inindex1)
+          .add(Port.OUTPUT, String.format("gateO%d", gate), 1, outindex);
       if (!isInverter)
-        myPorts.add(Port.INPUT, String.format("gate_%d_B", gate), 1, inindex2);
+        myPorts.add(Port.INPUT, String.format("gateB%d", gate), 1, inindex2);
     }
   }
 

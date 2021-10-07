@@ -11,6 +11,7 @@ package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.util.LineBuffer;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -80,22 +81,22 @@ public class LedArrayGenericHdlGeneratorFactory {
     final var nrColumnAddressBits = getNrOfBitsRequired(nrOfColumns);
     switch (typeId) {
       case LedArrayDriving.LED_DEFAULT:
-        return LedArrayOutputs + identifier + "[" + pinNr + "]";
+        return LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayOutputs, identifier, pinNr);
       case LedArrayDriving.LED_ROW_SCANNING:
         return (pinNr < nrRowAddressBits)
-          ? LedArrayRowAddress + identifier + "[" + pinNr + "]"
-          : LedArrayColumnOutputs + identifier + "[" + (pinNr - nrRowAddressBits) + "]";
+          ? LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayRowAddress, identifier, pinNr)
+          : LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayColumnOutputs, identifier, pinNr - nrRowAddressBits);
       case LedArrayDriving.LED_COLUMN_SCANNING:
         return (pinNr < nrColumnAddressBits)
-            ? LedArrayColumnAddress + identifier + "[" + pinNr + "]"
-            : LedArrayRowOutputs + identifier + "[" + (pinNr - nrColumnAddressBits) + "]";
+            ? LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayColumnAddress, identifier, pinNr)
+            : LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayRowOutputs, identifier, pinNr - nrColumnAddressBits);
       case LedArrayDriving.RGB_DEFAULT: {
         final var index = pinNr % 3;
         final var col = pinNr / 3;
         return switch (col) {
-          case 0 -> LedArrayRedOutputs + identifier + "[" + index + "]";
-          case 1 -> LedArrayGreenOutputs + identifier + "[" + index + "]";
-          case 2 -> LedArrayBlueOutputs + identifier + "[" + index + "]";
+          case 0 -> LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayRedOutputs, identifier, index);
+          case 1 -> LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayGreenOutputs, identifier, index);
+          case 2 -> LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayBlueOutputs, identifier, index);
           default -> "";
         };
       }
@@ -103,11 +104,11 @@ public class LedArrayGenericHdlGeneratorFactory {
         final var index = (pinNr - nrRowAddressBits) % nrOfColumns;
         final var col = (pinNr - nrRowAddressBits) / nrOfColumns;
         if (pinNr < nrRowAddressBits)
-          return LedArrayRowAddress + identifier + "[" + pinNr + "]";
+          return LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayRowAddress, identifier, pinNr);
         return switch (col) {
-          case 0 -> LedArrayColumnRedOutputs + identifier + "[" + index + "]";
-          case 1 -> LedArrayColumnGreenOutputs + identifier + "[" + index + "]";
-          case 2 -> LedArrayColumnBlueOutputs + identifier + "[" + index + "]";
+          case 0 -> LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayColumnRedOutputs, identifier, index);
+          case 1 -> LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayColumnGreenOutputs, identifier, index);
+          case 2 -> LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayColumnBlueOutputs, identifier, index);
           default -> "";
         };
       }
@@ -115,11 +116,11 @@ public class LedArrayGenericHdlGeneratorFactory {
         final var index = (pinNr - nrColumnAddressBits) % nrOfRows;
         final var col = (pinNr - nrColumnAddressBits) / nrOfRows;
         if (pinNr < nrColumnAddressBits)
-          return LedArrayColumnAddress + identifier + "[" + pinNr + "]";
+          return LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayColumnAddress, identifier, pinNr);
         return switch (col) {
-          case 0 -> LedArrayRowRedOutputs + identifier + "[" + index + "]";
-          case 1 -> LedArrayRowGreenOutputs + identifier + "[" + index + "]";
-          case 2 -> LedArrayRowBlueOutputs + identifier + "[" + index + "]";
+          case 0 -> LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayRowRedOutputs, identifier, index);
+          case 1 -> LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayRowGreenOutputs, identifier, index);
+          case 2 -> LineBuffer.format("{{1}}{{2}}[{{3}}]", LedArrayRowBlueOutputs, identifier, index);
           default -> "";
         };
       }
@@ -140,37 +141,37 @@ public class LedArrayGenericHdlGeneratorFactory {
     final var nrColumnAddressBits = getNrOfBitsRequired(nrOfColumns);
     switch (typeId) {
       case LedArrayDriving.LED_DEFAULT: {
-        externals.put(LedArrayOutputs + identifier, nrOfRows * nrOfColumns);
+        externals.put(String.format("%s%d", LedArrayOutputs, identifier), nrOfRows * nrOfColumns);
         break;
       }
       case LedArrayDriving.LED_ROW_SCANNING: {
-        externals.put(LedArrayRowAddress + identifier, nrRowAddressBits);
-        externals.put(LedArrayColumnOutputs + identifier, nrOfColumns);
+        externals.put(String.format("%s%d", LedArrayRowAddress, identifier), nrRowAddressBits);
+        externals.put(String.format("%s%d", LedArrayColumnOutputs, identifier), nrOfColumns);
         break;
       }
       case LedArrayDriving.LED_COLUMN_SCANNING: {
-        externals.put(LedArrayColumnAddress + identifier, nrColumnAddressBits);
-        externals.put(LedArrayRowOutputs + identifier, nrOfRows);
+        externals.put(String.format("%s%d", LedArrayColumnAddress, identifier), nrColumnAddressBits);
+        externals.put(String.format("%s%d", LedArrayRowOutputs, identifier), nrOfRows);
         break;
       }
       case LedArrayDriving.RGB_DEFAULT: {
-        externals.put(LedArrayRedOutputs + identifier, nrOfRows * nrOfColumns);
-        externals.put(LedArrayGreenOutputs + identifier, nrOfRows * nrOfColumns);
-        externals.put(LedArrayBlueOutputs + identifier, nrOfRows * nrOfColumns);
+        externals.put(String.format("%s%d", LedArrayRedOutputs, identifier), nrOfRows * nrOfColumns);
+        externals.put(String.format("%s%d", LedArrayGreenOutputs, identifier), nrOfRows * nrOfColumns);
+        externals.put(String.format("%s%d", LedArrayBlueOutputs, identifier), nrOfRows * nrOfColumns);
         break;
       }
       case LedArrayDriving.RGB_ROW_SCANNING: {
-        externals.put(LedArrayRowAddress + identifier, nrRowAddressBits);
-        externals.put(LedArrayColumnRedOutputs + identifier, nrOfColumns);
-        externals.put(LedArrayColumnGreenOutputs + identifier, nrOfColumns);
-        externals.put(LedArrayColumnBlueOutputs + identifier, nrOfColumns);
+        externals.put(String.format("%s%d", LedArrayRowAddress, identifier), nrRowAddressBits);
+        externals.put(String.format("%s%d", LedArrayColumnRedOutputs, identifier), nrOfColumns);
+        externals.put(String.format("%s%d", LedArrayColumnGreenOutputs, identifier), nrOfColumns);
+        externals.put(String.format("%s%d", LedArrayColumnBlueOutputs, identifier), nrOfColumns);
         break;
       }
       case LedArrayDriving.RGB_COLUMN_SCANNING: {
-        externals.put(LedArrayColumnAddress + identifier, nrColumnAddressBits);
-        externals.put(LedArrayRowRedOutputs + identifier, nrOfRows);
-        externals.put(LedArrayRowGreenOutputs + identifier, nrOfRows);
-        externals.put(LedArrayRowBlueOutputs + identifier, nrOfRows);
+        externals.put(String.format("%s%d", LedArrayColumnAddress, identifier), nrColumnAddressBits);
+        externals.put(String.format("%s%d", LedArrayRowRedOutputs, identifier), nrOfRows);
+        externals.put(String.format("%s%d", LedArrayRowGreenOutputs, identifier), nrOfRows);
+        externals.put(String.format("%s%d", LedArrayRowBlueOutputs, identifier), nrOfRows);
         break;
       }
     }
@@ -183,14 +184,14 @@ public class LedArrayGenericHdlGeneratorFactory {
       case LedArrayDriving.LED_DEFAULT:
       case LedArrayDriving.LED_ROW_SCANNING:
       case LedArrayDriving.LED_COLUMN_SCANNING:
-        wires.put("s_" + LedArrayInputs + identifier, nrOfRows * nrOfColumns);
+        wires.put(String.format("s_%s%d", LedArrayInputs, identifier), nrOfRows * nrOfColumns);
         break;
       case LedArrayDriving.RGB_DEFAULT:
       case LedArrayDriving.RGB_ROW_SCANNING:
       case LedArrayDriving.RGB_COLUMN_SCANNING:
-        wires.put("s_" + LedArrayRedInputs + identifier, nrOfRows * nrOfColumns);
-        wires.put("s_" + LedArrayGreenInputs + identifier, nrOfRows * nrOfColumns);
-        wires.put("s_" + LedArrayBlueInputs + identifier, nrOfRows * nrOfColumns);
+        wires.put(String.format("s_%s%d", LedArrayRedInputs, identifier), nrOfRows * nrOfColumns);
+        wires.put(String.format("s_%s%d", LedArrayGreenInputs, identifier), nrOfRows * nrOfColumns);
+        wires.put(String.format("s_%s%d", LedArrayBlueInputs, identifier), nrOfRows * nrOfColumns);
         break;
     }
     return wires;
@@ -199,8 +200,8 @@ public class LedArrayGenericHdlGeneratorFactory {
   public static List<String> getComponentMap(char typeId, int nrOfRows, int nrOfColumns, int identifier, long FpgaClockFrequency, boolean isActiveLow) {
     final var componentMap = LineBuffer.getBuffer()
             .add(Hdl.isVhdl()
-                ? "   array" + identifier + " : " + getSpecificHDLName(typeId)
-                : "   " + getSpecificHDLName(typeId));
+                ? LineBuffer.format("array{{1}} : {{2}}", identifier, getSpecificHDLName(typeId))
+                : getSpecificHDLName(typeId));
     switch (typeId) {
       case LedArrayDriving.RGB_DEFAULT:
       case LedArrayDriving.LED_DEFAULT:
@@ -208,7 +209,7 @@ public class LedArrayGenericHdlGeneratorFactory {
             nrOfRows,
             nrOfColumns,
             FpgaClockFrequency,
-            isActiveLow));
+            isActiveLow).getWithIndent());
         break;
       case LedArrayDriving.RGB_COLUMN_SCANNING:
       case LedArrayDriving.LED_COLUMN_SCANNING:
@@ -216,7 +217,7 @@ public class LedArrayGenericHdlGeneratorFactory {
             nrOfRows,
             nrOfColumns,
             FpgaClockFrequency,
-            isActiveLow));
+            isActiveLow).getWithIndent());
         break;
       case LedArrayDriving.RGB_ROW_SCANNING:
       case LedArrayDriving.LED_ROW_SCANNING:
@@ -224,10 +225,10 @@ public class LedArrayGenericHdlGeneratorFactory {
             nrOfRows,
             nrOfColumns,
             FpgaClockFrequency,
-            isActiveLow));
+            isActiveLow).getWithIndent());
         break;
     }
-    if (Hdl.isVerilog()) componentMap.add("      array{{1}}", identifier);
+    if (Hdl.isVerilog()) componentMap.add("   array{{1}}", identifier);
     switch (typeId) {
       case LedArrayDriving.LED_DEFAULT: {
         componentMap.add(LedArrayLedDefaultHdlGeneratorFactory.getPortMap(identifier));
@@ -238,24 +239,23 @@ public class LedArrayGenericHdlGeneratorFactory {
         break;
       }
       case LedArrayDriving.LED_ROW_SCANNING: {
-        componentMap.add(LedArrayRowScanningHdlGeneratorFactory.getPortMap(identifier));
+        componentMap.add(LedArrayRowScanningHdlGeneratorFactory.getPortMap(identifier).getWithIndent());
         break;
       }
       case LedArrayDriving.RGB_ROW_SCANNING: {
-        componentMap.add(RgbArrayRowScanningHdlGeneratorFactory.getPortMap(identifier));
+        componentMap.add(RgbArrayRowScanningHdlGeneratorFactory.getPortMap(identifier).getWithIndent());
         break;
       }
       case LedArrayDriving.LED_COLUMN_SCANNING: {
-        componentMap.add(LedArrayColumnScanningHdlGeneratorFactory.getPortMap(identifier));
+        componentMap.add(LedArrayColumnScanningHdlGeneratorFactory.getPortMap(identifier).getWithIndent());
         break;
       }
       case LedArrayDriving.RGB_COLUMN_SCANNING: {
-        componentMap.add(RgbArrayColumnScanningHdlGeneratorFactory.getPortMap(identifier));
+        componentMap.add(RgbArrayColumnScanningHdlGeneratorFactory.getPortMap(identifier).getWithIndent());
         break;
       }
     }
-    componentMap.add("");
-    return componentMap.get();
+    return componentMap.empty().get();
   }
 
   public static List<String> getArrayConnections(FpgaIoInformationContainer array, int id) {
@@ -272,19 +272,21 @@ public class LedArrayGenericHdlGeneratorFactory {
 
   public static List<String> getLedArrayConnections(FpgaIoInformationContainer info, int id) {
     final var connections = LineBuffer.getHdlBuffer();
-    connections.pair("id", id).pair("ins", LedArrayInputs);
+    final var wires = new HashMap<String, String>();
     for (var pin = 0; pin < info.getNrOfPins(); pin++) {
-      connections.pair("pin", pin);
+      final var led = LineBuffer.formatHdl("s_{{1}}{{2}}{{<}}{{3}}{{>}}", LedArrayInputs, id, pin);
       if (!info.pinIsMapped(pin)) {
-        connections.add("{{assign}} s_{{ins}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};");
+        wires.put(led, Hdl.zeroBit());
       } else {
-        connections.add("{{assign}} s_{{ins}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{1}};", info.getPinMap(pin).getHdlSignalName(info.getMapPin(pin)));
+        wires.put(led, info.getPinMap(pin).getHdlSignalName(info.getMapPin(pin)));
       }
     }
-    return connections.getWithIndent();
+    Hdl.addAllWiresSorted(connections, wires);
+    return connections.get();
   }
 
   public static List<String> getRGBArrayConnections(FpgaIoInformationContainer array, int id) {
+    final var wires = new HashMap<String, String>();
     final var connections =
         LineBuffer.getHdlBuffer()
            .pair("id", id)
@@ -293,25 +295,19 @@ public class LedArrayGenericHdlGeneratorFactory {
            .pair("insB", LedArrayBlueInputs);
 
     for (var pin = 0; pin < array.getNrOfPins(); pin++) {
-      connections.pair("pin", pin);
+      final var red = LineBuffer.formatHdl("s_{{1}}{{2}}{{<}}{{3}}{{>}}", LedArrayRedInputs, id, pin);
+      final var green = LineBuffer.formatHdl("s_{{1}}{{2}}{{<}}{{3}}{{>}}", LedArrayGreenInputs, id, pin);
+      final var blue = LineBuffer.formatHdl("s_{{1}}{{2}}{{<}}{{3}}{{>}}", LedArrayBlueInputs, id, pin);
       if (!array.pinIsMapped(pin)) {
-        connections.add("""
-            {{assign}} s_{{insR}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};
-            {{assign}} s_{{insG}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};
-            {{assign}} s_{{insB}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{0b}};
-            """);
+        wires.put(red, Hdl.zeroBit());
+        wires.put(green, Hdl.zeroBit());
+        wires.put(blue, Hdl.zeroBit());
       } else {
         final var map = array.getPinMap(pin);
         if (map.getComponentFactory() instanceof RgbLed) {
-          connections
-              .pair("mapR", map.getHdlSignalName(RgbLed.RED))
-              .pair("mapG", map.getHdlSignalName(RgbLed.GREEN))
-              .pair("mapB", map.getHdlSignalName(RgbLed.BLUE))
-              .add("""
-                  {{assign}} s_{{insR}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{mapR}};
-                  {{assign}} s_{{insG}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{mapG}};
-                  {{assign}} s_{{insB}}{{id}}{{<}}{{pin}}{{>}} {{=}} {{mapB}};
-                  """);
+          wires.put(red, map.getHdlSignalName(RgbLed.RED));
+          wires.put(green, map.getHdlSignalName(RgbLed.GREEN));
+          wires.put(blue, map.getHdlSignalName(RgbLed.BLUE));
         } else if (map.getAttributeSet().containsAttribute(IoLibrary.ATTR_ON_COLOR)
             && map.getAttributeSet().containsAttribute(IoLibrary.ATTR_OFF_COLOR)) {
 
@@ -324,29 +320,53 @@ public class LedArrayGenericHdlGeneratorFactory {
           final var gOff = offColor.getGreen();
           final var bOff = offColor.getBlue();
           final var pinName = map.getHdlSignalName(array.getMapPin(pin));
-
-          final var idPin = id + Hdl.bracketOpen() + pin + Hdl.bracketClose();
-          connections.add(getColorMap("s_" + LedArrayRedInputs + idPin, rOn, rOff, pinName));
-          connections.add(getColorMap("s_" + LedArrayGreenInputs + idPin, gOn, gOff, pinName));
-          connections.add(getColorMap("s_" + LedArrayBlueInputs + idPin, bOn, bOff, pinName));
+          wires.putAll(getColorMap(red, rOn, rOff, pinName));
+          wires.putAll(getColorMap(green, gOn, gOff, pinName));
+          wires.putAll(getColorMap(blue, bOn, bOff, pinName));
         } else {
           final var pinName = map.getHdlSignalName(array.getMapPin(pin));
-          final var idPinName = id + Hdl.bracketOpen() + pin + Hdl.bracketClose() + Hdl.assignOperator() + pinName + ";";
-          connections.add("   " + Hdl.assignPreamble() + "s_" + LedArrayRedInputs + idPinName);
-          connections.add("   " + Hdl.assignPreamble() + "s_" + LedArrayGreenInputs + idPinName);
-          connections.add("   " + Hdl.assignPreamble() + "s_" + LedArrayBlueInputs + idPinName);
+          wires.put(red, pinName);
+          wires.put(green, pinName);
+          wires.put(blue, pinName);
         }
       }
     }
-    return connections.getWithIndent();
+    Hdl.addAllWiresSorted(connections, wires);
+    return connections.get();
   }
 
-  private static String getColorMap(String dest, int onColor, int offColor, String source) {
-    final var onBit = (onColor > 128) ? Hdl.oneBit() : Hdl.zeroBit();
-    final var offBit = (offColor > 128) ? Hdl.oneBit() : Hdl.zeroBit();
-    return
-            Hdl.isVhdl()
-        ? dest + Hdl.assignOperator() + onBit + " WHEN " + source + " = '1' ELSE " + offBit + ";"
-        : "assign " + dest + " = (" + source + " == " + Hdl.oneBit() + ") ? " + onBit + " : " + offBit + ";";
+  private static Map<String, String> getColorMap(String dest, int onColor, int offColor, String source) {
+    final var onBit = (onColor > 128);
+    final var offBit = (offColor > 128);
+    final var result = new HashMap<String, String>();
+    if (onBit == offBit) result.put(dest, onBit ? Hdl.oneBit() : Hdl.zeroBit());
+    else if (onBit) result.put(dest, source);
+    else result.put(dest, LineBuffer.format("{{1}}{{2}}", Hdl.notOperator(), source));
+    return result;
   }
+
+  public static LineBuffer getGenericPortMapAlligned(Map<String, String> generics, boolean isGeneric) {
+    var preamble = Hdl.isVhdl() ? LineBuffer.formatVhdl("{{port}} {{map}} ( ") : "( ";
+    if (isGeneric) preamble = Hdl.isVhdl() ? LineBuffer.formatVhdl("{{generic}} {{map}} ( ") : "#( ";
+    final var contents = LineBuffer.getHdlBuffer();
+    var maxNameLength = 0;
+    var first = true;
+    var nrOfGenerics = 0;
+    for (final var generic : generics.keySet()) {
+      maxNameLength = Math.max(maxNameLength, generic.length());
+      nrOfGenerics++;
+    }
+    for (final var generic : generics.keySet()) {
+      nrOfGenerics--;
+      final var intro = first ? preamble : " ".repeat(preamble.length());
+      final var map = Hdl.isVhdl() ? LineBuffer.formatHdl("{{1}}{{2}} => {{3}}", generic,
+          " ".repeat(maxNameLength - generic.length()), generics.get(generic)) 
+          : LineBuffer.formatHdl(".{{1}}({{2}})", generic, generics.get(generic));
+      final var end = (nrOfGenerics == 0) ? isGeneric ? " )" : " );" : ",";
+      contents.add(LineBuffer.format("{{1}}{{2}}{{3}}", intro, map, end));
+      first = false;
+    }
+    return contents; 
+  }
+
 }
