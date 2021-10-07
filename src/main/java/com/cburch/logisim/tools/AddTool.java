@@ -88,7 +88,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
   private boolean keyHandlerTried;
   private boolean matrixPlace = false;
   private KeyConfigurator keyHandler;
-  private final AutoLabel autoLabler = new AutoLabel();
+  private final AutoLabel autoLabeler = new AutoLabel();
 
   private AddTool(AddTool base) {
     this.descriptionBase = base.descriptionBase;
@@ -190,7 +190,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     Color DrawColor;
     /* take care of coloring the components differently that require a label */
     if (state == SHOW_GHOST) {
-      DrawColor = autoLabler.isActive(canvas.getCircuit()) ? Color.MAGENTA : Color.GRAY;
+      DrawColor = autoLabeler.isActive(canvas.getCircuit()) ? Color.MAGENTA : Color.GRAY;
       source.drawGhost(context, DrawColor, x, y, getBaseAttributes());
       if (matrixPlace) {
         source.drawGhost(context, DrawColor, x + bds.getWidth() + 3, y, getBaseAttributes());
@@ -203,7 +203,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
             getBaseAttributes());
       }
     } else if (state == SHOW_ADD) {
-      DrawColor = autoLabler.isActive(canvas.getCircuit()) ? Color.BLUE : Color.BLACK;
+      DrawColor = autoLabeler.isActive(canvas.getCircuit()) ? Color.BLUE : Color.BLACK;
       source.drawGhost(context, DrawColor, x, y, getBaseAttributes());
       if (matrixPlace) {
         source.drawGhost(context, DrawColor, x + bds.getWidth() + 3, y, getBaseAttributes());
@@ -346,7 +346,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
       final var keyEventB = event.getKeyCode();
       final var component = getFactory().getDisplayName();
       if (!GateKeyboardModifier.tookKeyboardStrokes(keyEventB, null, attrs, canvas, null, false))
-        if (autoLabler.labelKeyboardHandler(keyEventB,
+        if (autoLabeler.labelKeyboardHandler(keyEventB,
             getAttributeSet(),
             component,
             null,
@@ -486,14 +486,14 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         label = attrs.getValue(StdAttr.LABEL);
         /* Here we make sure to not overrride labels that have default value */
-        if (autoLabler.isActive(canvas.getCircuit()) && ((label == null) || label.isEmpty())) {
-          label = autoLabler.getCurrent(canvas.getCircuit(), source);
-          if (autoLabler.hasNext(canvas.getCircuit()))
-            autoLabler.getNext(canvas.getCircuit(), source);
-          else autoLabler.stop(canvas.getCircuit());
+        if (autoLabeler.isActive(canvas.getCircuit()) && ((label == null) || label.isEmpty())) {
+          label = autoLabeler.getCurrent(canvas.getCircuit(), source);
+          if (autoLabeler.hasNext(canvas.getCircuit()))
+            autoLabeler.getNext(canvas.getCircuit(), source);
+          else autoLabeler.stop(canvas.getCircuit());
         }
-        if (!autoLabler.isActive(canvas.getCircuit()))
-          autoLabler.setLabel("", canvas.getCircuit(), source);
+        if (!autoLabeler.isActive(canvas.getCircuit()))
+          autoLabeler.setLabel("", canvas.getCircuit(), source);
       }
 
       final var matrix = new MatrixPlacerInfo(label);
@@ -501,20 +501,20 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
         final var base = getBaseAttributes();
         final var bds = source.getOffsetBounds(base).expand(5);
         matrix.setBounds(bds);
-        final var dialog = new MatrixPlacerDialog(matrix, source.getName(), autoLabler.isActive(canvas.getCircuit()));
+        final var dialog = new MatrixPlacerDialog(matrix, source.getName(), autoLabeler.isActive(canvas.getCircuit()));
         var okay = false;
         while (!okay) {
           if (!dialog.execute()) return;
           if (SyntaxChecker.isVariableNameAcceptable(matrix.getLabel(), true)) {
-            autoLabler.setLabel(matrix.getLabel(), canvas.getCircuit(), source);
+            autoLabeler.setLabel(matrix.getLabel(), canvas.getCircuit(), source);
             okay =
-                autoLabler.correctMatrixBaseLabel(
+                autoLabeler.correctMatrixBaseLabel(
                     canvas.getCircuit(),
                     source,
                     matrix.getLabel(),
                     matrix.getCopiesCountX(),
                     matrix.getCopiesCountY());
-            autoLabler.setLabel(label, canvas.getCircuit(), source);
+            autoLabeler.setLabel(label, canvas.getCircuit(), source);
             if (!okay) {
               OptionPane.showMessageDialog(
                   null,
@@ -537,7 +537,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
             final var attrsCopy = (AttributeSet) attrs.clone();
             if (matrix.getLabel() != null) {
               if (matrixPlace)
-                attrsCopy.setValue(StdAttr.LABEL, autoLabler.getMatrixLabel(canvas.getCircuit(),
+                attrsCopy.setValue(StdAttr.LABEL, autoLabeler.getMatrixLabel(canvas.getCircuit(),
                     source, matrix.getLabel(), x, y));
               else {
                 attrsCopy.setValue(StdAttr.LABEL, matrix.getLabel());

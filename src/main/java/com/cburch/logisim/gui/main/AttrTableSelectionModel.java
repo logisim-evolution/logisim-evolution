@@ -140,9 +140,9 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
     } else {
       SetAttributeAction act =
           new SetAttributeAction(circuit, S.getter("selectionAttributeAction"));
-      AutoLabel labler = null;
+      AutoLabel labeler = null;
       if (attr.equals(StdAttr.LABEL)) {
-        labler = new AutoLabel((String) value, circuit);
+        labeler = new AutoLabel((String) value, circuit);
       }
       SortedSet<Component> comps = new TreeSet<>(new PositionComparator());
       comps.addAll(selection.getComponents());
@@ -163,12 +163,12 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
             }
           }
           if (attr.equals(StdAttr.LABEL)) {
-            if (labler.hasNext(circuit)) {
+            if (labeler.hasNext(circuit)) {
               if (comps.size() > 1) {
-                act.set(comp, attr, labler.getNext(circuit, comp.getFactory()));
+                act.set(comp, attr, labeler.getNext(circuit, comp.getFactory()));
               } else {
                 if (getAttributeSet().getValue(StdAttr.LABEL).equals(value)) return;
-                else act.set(comp, attr, labler.getCurrent(circuit, comp.getFactory()));
+                else act.set(comp, attr, labeler.getCurrent(circuit, comp.getFactory()));
               }
             } else act.set(comp, attr, "");
           } else act.set(comp, attr, value);
