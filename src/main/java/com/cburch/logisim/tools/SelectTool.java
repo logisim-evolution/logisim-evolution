@@ -81,7 +81,7 @@ public class SelectTool extends Tool {
 
 
   private final HashSet<Selection> selectionsAdded;
-  private final AutoLabel autoLabler = new AutoLabel();
+  private final AutoLabel autoLabeler = new AutoLabel();
 
   private final Listener selListener;
 
@@ -350,7 +350,7 @@ public class SelectTool extends Tool {
         for (Component comp : comps) {
           final var act = new SetAttributeAction(canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
           keyTaken |=
-              autoLabler.labelKeyboardHandler(
+              autoLabeler.labelKeyboardHandler(
                   keybEvent,
                   comp.getAttributeSet(),
                   comp.getFactory().getDisplayName(),
@@ -532,7 +532,7 @@ public class SelectTool extends Tool {
             final var act =
                 new SetAttributeAction(
                     canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
-            autoLabler.askAndSetLabel(
+            autoLabeler.askAndSetLabel(
                 comp.getFactory().getDisplayName(),
                 OldLabel,
                 canvas.getCircuit(),

@@ -50,6 +50,16 @@ class AboutCredits extends JComponent {
         .h2(String.format("Copyright \u00A92001-%s %s developers", BuildInfo.year, BuildInfo.name))
         .url(BuildInfo.url)
         .space()
+        .h1(S.get("creditsDevelopedBy"))
+        .text("David H. Hutchens")
+        .text("Kevin Walsh")
+        .text("Moshe Berman")
+        .text("Theldo Cruz Franqueira")
+        .text("Theo Kluter")
+        .text("Marcin Orłowski")
+        .text("Tom Niget")
+        .tiny(S.get("creditsDevelopedByAndOthers"))
+        .space()
         .h1(S.get("creditsRoleFork"))
         .text("College of the Holy Cross")
         .url("https://www.holycross.edu")
@@ -162,6 +172,11 @@ class AboutCredits extends JComponent {
 
     public Lines text(String text) {
       add(new TextLine(new Font("Sans Serif", Font.BOLD, 20), new Color(0x30, 0x00, 0x60), text));
+      return this;
+    }
+
+    public Lines tiny(String text) {
+      add(new TextLine(new Font("Sans Serif", Font.PLAIN, 16), new Color(0x30, 0x00, 0x60), text));
       return this;
     }
 
