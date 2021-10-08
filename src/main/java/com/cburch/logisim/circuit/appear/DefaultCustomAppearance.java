@@ -65,17 +65,14 @@ public class DefaultCustomAppearance {
     final var height = (maxVert > 0) ? maxVert * 10 + 10 : 10;
 
     // compute position of anchor relative to top left corner of box
-    int ax;
-    int ay;
+    int ax = 0;
+    int ay = 0;
     if (numEast > 0) { // anchor is on east side
       ax = width;
       ay = 10;
     } else if (numWest > 0) { // anchor is on west side
       ax = 0;
       ay = 10;
-    } else { // anchor is top left corner
-      ax = 0;
-      ay = 0;
     }
 
     // place rectangle so anchor is on the grid

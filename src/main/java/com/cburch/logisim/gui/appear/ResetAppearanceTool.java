@@ -14,9 +14,11 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 
 import javax.swing.Icon;
+import javax.swing.JOptionPane;
 
 import com.cburch.draw.canvas.Canvas;
 import com.cburch.draw.toolbar.ToolbarClickableItem;
+import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.gui.icons.CircuitIcon;
 
@@ -39,7 +41,7 @@ public class ResetAppearanceTool implements ToolbarClickableItem {
 
   @Override
   public String getToolTip() {
-    //FIXME: hardcoded string
+    // FIXME: hardcoded string
     return isClear ? "Restore default custom appearance" : "Clear appearance and load logisim default";
   }
 
@@ -58,9 +60,15 @@ public class ResetAppearanceTool implements ToolbarClickableItem {
     if (canvas == null || canvas.getCircuit() == null) return;
     final var appearance = canvas.getCircuit().getAppearance();
     if (appearance == null) return;
-    if (isClear) appearance.resetDefaultCustomAppearance();
-    else appearance.loadDefaultLogisimAppearance();
-    canvas.repaint(canvas.getBounds(null));
+    // FIXME: hardcoded string
+    if (OptionPane.showConfirmDialog(canvas, 
+        "Are you sure you want to remove the current custom appearance and replace it?", 
+        isClear ? "Restore default custom appearance" : "Clear appearance and load logisim default", 
+        JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+      if (isClear) appearance.resetDefaultCustomAppearance();
+      else appearance.loadDefaultLogisimAppearance();
+      canvas.repaint(canvas.getBounds(null));
+    }
   }
 
   @Override

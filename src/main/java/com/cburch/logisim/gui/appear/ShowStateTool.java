@@ -37,7 +37,7 @@ public class ShowStateTool implements ToolbarClickableItem {
 
   @Override
   public String getToolTip() {
-    //FIXME: hardcoded string
+    // FIXME: hardcoded string
     return "Select state to be shown";
   }
 
