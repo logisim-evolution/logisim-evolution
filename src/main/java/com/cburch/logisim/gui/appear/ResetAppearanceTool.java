@@ -27,9 +27,9 @@ public class ResetAppearanceTool implements ToolbarClickableItem {
   private final Icon icon;
 
   public ResetAppearanceTool(Canvas canvas, boolean isClear) {
-    this.canvas = (canvas instanceof AppearanceCanvas aCanvas) ? aCanvas : null;
+    this.canvas = (canvas instanceof AppearanceCanvas appearanceCanvas) ? appearanceCanvas : null;
     this.isClear = isClear;
-    icon = isClear ? new ArithmeticIcon("RST",3) : new CircuitIcon();
+    icon = isClear ? new ArithmeticIcon("RST", 3) : new CircuitIcon();
   }
 
   @Override
