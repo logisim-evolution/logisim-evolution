@@ -9,7 +9,11 @@
 
 package com.cburch.logisim.util;
 
-
 public class Strings {
+
+  private Strings() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
+
   public static final LocaleManager S = new LocaleManager("resources/logisim", "util");
 }

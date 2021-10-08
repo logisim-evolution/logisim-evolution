@@ -30,7 +30,6 @@ import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.text.DecimalFormat;
-
 import javax.swing.DefaultBoundedRangeModel;
 import javax.swing.Icon;
 import javax.swing.JButton;
@@ -116,7 +115,7 @@ public class ZoomControl extends JPanel {
    */
   public String zoomString() {
     DecimalFormat df = new DecimalFormat("###.##");
-    return "\u00D7" + df.format(model.getZoomFactor()).toString();
+    return "\u00D7" + df.format(model.getZoomFactor());
   }
 
   public void zoomIn() {

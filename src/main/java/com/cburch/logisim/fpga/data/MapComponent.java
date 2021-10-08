@@ -22,6 +22,7 @@ import com.cburch.logisim.std.io.SevenSegment;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.w3c.dom.DOMException;
 import org.w3c.dom.Element;
 
@@ -66,25 +67,25 @@ public class MapComponent {
 
   // In the below structure the first Integer is the pin identifier,
   // the second is the global bubble id
-  private final HashMap<Integer, Integer> myInputBubbles = new HashMap<>();
-  private final HashMap<Integer, Integer> myOutputBubbles = new HashMap<>();
-  private final HashMap<Integer, Integer> myIoBubbles = new HashMap<>();
+  private final Map<Integer, Integer> myInputBubbles = new HashMap<>();
+  private final Map<Integer, Integer> myOutputBubbles = new HashMap<>();
+  private final Map<Integer, Integer> myIoBubbles = new HashMap<>();
   /*
    * The following structure defines if the pin is mapped
    */
   private final ComponentFactory myFactory;
   private final AttributeSet myAttributes;
 
-  private final ArrayList<String> myName;
+  private final List<String> myName;
 
-  private ArrayList<MapClass> maps = new ArrayList<>();
-  private ArrayList<Boolean> opens = new ArrayList<>();
-  private ArrayList<Integer> constants = new ArrayList<>();
-  private final ArrayList<String> pinLabels = new ArrayList<>();
+  private List<MapClass> maps = new ArrayList<>();
+  private List<Boolean> opens = new ArrayList<>();
+  private List<Integer> constants = new ArrayList<>();
+  private final List<String> pinLabels = new ArrayList<>();
 
   private int nrOfPins;
 
-  public MapComponent(ArrayList<String> name, netlistComponent comp) {
+  public MapComponent(List<String> name, netlistComponent comp) {
     myFactory = comp.getComponent().getFactory();
     myAttributes = comp.getComponent().getAttributeSet();
     myName = name;
@@ -313,7 +314,7 @@ public class MapComponent {
     if (cmap.getPinMaps() == null) {
       final var rect = cmap.getRectangle();
       for (var comp : IOcomps) {
-        if (comp.getRectangle().PointInside(rect.getXpos(), rect.getYpos())) {
+        if (comp.getRectangle().isPointInside(rect.getXpos(), rect.getYpos())) {
           if (cmap.isSinglePin()) {
             tryMap(cmap.getPinId(), comp, cmap.getIoId());
           } else {
@@ -342,7 +343,7 @@ public class MapComponent {
             if (iomap1 == iomap2 && iomap2 == iomap3) {
               /* we have a triple map on a LEDArray, so do it */
               for (var comp : IOcomps) {
-                if (comp.getRectangle().PointInside(rect1.getXpos(), rect1.getYpos())) {
+                if (comp.getRectangle().isPointInside(rect1.getXpos(), rect1.getYpos())) {
                   tryCompleteMap(comp, iomap1);
                   return;
                 }
@@ -403,7 +404,7 @@ public class MapComponent {
       number = parts[1].substring(6);
     } else {
       int id = 0;
-      for (var key : SevenSegment.GetLabels()) {
+      for (var key : SevenSegment.getLabels()) {
         if (parts[1].equals(key)) number = Integer.toString(id);
         id++;
       }
@@ -412,7 +413,7 @@ public class MapComponent {
       try {
         final var pinId = Integer.parseUnsignedInt(number);
         for (var comp : IOcomps) {
-          if (comp.getRectangle().PointInside(cmap.getRectangle().getXpos(), cmap.getRectangle().getYpos())) {
+          if (comp.getRectangle().isPointInside(cmap.getRectangle().getXpos(), cmap.getRectangle().getYpos())) {
             return tryMap(pinId, comp, 0);
           }
         }
@@ -551,7 +552,7 @@ public class MapComponent {
     return opens.get(pin);
   }
 
-  public boolean IsConstantMapped(int pin) {
+  public boolean isConstantMapped(int pin) {
     if (pin < 0 || pin >= nrOfPins) return false;
     return (constants.get(pin) >= 0);
   }
@@ -711,7 +712,7 @@ public class MapComponent {
   }
 
   public static void getComplexMap(Element Map, CircuitMapInfo cmap) throws DOMException {
-    ArrayList<CircuitMapInfo> pinmaps = cmap.getPinMaps();
+    List<CircuitMapInfo> pinmaps = cmap.getPinMaps();
     if (pinmaps != null) {
       var s = new StringBuilder();
       var first = true;

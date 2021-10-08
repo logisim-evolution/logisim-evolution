@@ -92,7 +92,7 @@ public class BoardPainter {
     g.setColor(Color.BLUE);
     g.drawString(txt, xpos + height + (height >> 2), ypos + ydif2);
     g.setColor(
-        value == 0 ? Value.FALSE_COLOR : value == 1 ? Value.TRUE_COLOR : Value.UNKNOWN_COLOR);
+            value == 0 ? Value.falseColor : value == 1 ? Value.trueColor : Value.unknownColor);
     g.fillOval(
         xpos + (height >> 3), ypos + (height >> 3), height - (height >> 2), height - (height >> 2));
     g.setColor(Color.WHITE);

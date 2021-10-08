@@ -30,12 +30,12 @@ public class InlinedHdlGeneratorFactory implements HdlGeneratorFactory {
   }
 
   @Override
-  public List<String> getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
+  public LineBuffer getComponentInstantiation(Netlist theNetlist, AttributeSet attrs, String componentName) {
     throw new IllegalAccessError("BUG: getComponentInstantiation not supported");
   }
 
   @Override
-  public List<String> getComponentMap(Netlist nets, Long componentId, Object componentInfo, String name) {
+  public LineBuffer getComponentMap(Netlist nets, Long componentId, Object componentInfo, String name) {
     throw new IllegalAccessError("BUG: getComponentMap not supported");
   }
 

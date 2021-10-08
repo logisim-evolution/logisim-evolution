@@ -68,7 +68,7 @@ public class Multiplexer extends InstanceFactory {
   }
 
   public Multiplexer() {
-    super(_ID, S.getter("multiplexerComponent"), new MultiplexerHDLGeneratorFactory());
+    super(_ID, S.getter("multiplexerComponent"), new MultiplexerHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -96,16 +96,6 @@ public class Multiplexer extends InstanceFactory {
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
     updatePorts(instance);
-  }
-
-  @Override
-  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    if (attr == PlexersLibrary.ATTR_ENABLE) {
-      int newer = ver.compareTo(new LogisimVersion(2, 6, 4));
-      return newer >= 0;
-    } else {
-      return super.getDefaultAttributeValue(attr, ver);
-    }
   }
 
   @Override
@@ -139,7 +129,7 @@ public class Multiplexer extends InstanceFactory {
   }
 
   @Override
-  public boolean HasThreeStateDrivers(AttributeSet attrs) {
+  public boolean hasThreeStateDrivers(AttributeSet attrs) {
     return (attrs.getValue(PlexersLibrary.ATTR_DISABLED) == PlexersLibrary.DISABLED_FLOATING);
   }
 

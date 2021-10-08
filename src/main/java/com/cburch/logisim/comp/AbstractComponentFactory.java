@@ -15,21 +15,19 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.AttributeSets;
-import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.Icons;
+import com.cburch.logisim.util.IconsUtil;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
 import javax.swing.Icon;
 
 public abstract class AbstractComponentFactory implements ComponentFactory {
-  private static final Icon toolIcon = Icons.getIcon("subcirc.gif");
+  private static final Icon toolIcon = IconsUtil.getIcon("subcirc.gif");
 
   private AttributeSet defaultSet;
   private final HdlGeneratorFactory myHDLGenerator;
@@ -61,9 +59,6 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   public void removeComponent(Circuit circ, Component c, CircuitState state) {
     // dummy factory
   }
-
-  @Override
-  public abstract Component createComponent(Location loc, AttributeSet attrs);
 
   //
   // user interface methods
@@ -129,13 +124,7 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   }
 
   @Override
-  public abstract String getName();
-
-  @Override
-  public abstract Bounds getOffsetBounds(AttributeSet attrs);
-
-  @Override
-  public boolean HasThreeStateDrivers(AttributeSet attrs) {
+  public boolean hasThreeStateDrivers(AttributeSet attrs) {
     return false;
   }
 

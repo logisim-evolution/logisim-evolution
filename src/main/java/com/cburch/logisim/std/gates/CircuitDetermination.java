@@ -74,7 +74,7 @@ abstract class CircuitDetermination {
       }
 
       if (aret instanceof Input a) {
-        a.TogleInversion();
+        a.togleInversion();
         return a;
       }
 
@@ -201,7 +201,7 @@ abstract class CircuitDetermination {
         if (inputs.get(i) instanceof CircuitDetermination.Value inp) {
           inp.value ^= 1;
         } else if (inputs.get(i) instanceof CircuitDetermination.Input inp) {
-          inp.TogleInversion();
+          inp.togleInversion();
         } else if (old.isNandNot()) {
           inputs.set(i, ((Gate) old).inputs.get(0));
         } else {
@@ -276,11 +276,11 @@ abstract class CircuitDetermination {
       return name;
     }
 
-    public void TogleInversion() {
+    public void togleInversion() {
       inverted = !inverted;
     }
 
-    boolean IsInvertedVersion() {
+    boolean isInvertedVersion() {
       return inverted;
     }
   }

@@ -41,7 +41,7 @@ public class Decoder extends InstanceFactory {
   public static final String _ID = "Decoder";
 
   public Decoder() {
-    super(_ID, S.getter("decoderComponent"), new DecoderHDLGeneratorFactory());
+    super(_ID, S.getter("decoderComponent"), new DecoderHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -113,7 +113,7 @@ public class Decoder extends InstanceFactory {
   }
 
   @Override
-  public boolean HasThreeStateDrivers(AttributeSet attrs) {
+  public boolean hasThreeStateDrivers(AttributeSet attrs) {
     return (attrs.getValue(PlexersLibrary.ATTR_TRISTATE)
         || (attrs.getValue(PlexersLibrary.ATTR_DISABLED) == PlexersLibrary.DISABLED_FLOATING));
   }

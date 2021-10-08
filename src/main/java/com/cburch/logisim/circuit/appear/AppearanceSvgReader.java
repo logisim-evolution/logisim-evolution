@@ -15,7 +15,7 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
-import com.cburch.logisim.soc.gui.SocCPUShape;
+import com.cburch.logisim.soc.gui.SocCpuShape;
 import com.cburch.logisim.soc.vga.SocVgaShape;
 import com.cburch.logisim.std.io.HexDigitShape;
 import com.cburch.logisim.std.io.LedShape;
@@ -125,7 +125,7 @@ public class AppearanceSvgReader {
       case "visible-register" -> new RegisterShape(x, y, path);
       case "visible-counter" -> new CounterShape(x, y, path);
       case "visible-vga" -> new SocVgaShape(x, y, path);
-      case "visible-soc-cpu" -> new SocCPUShape(x, y, path);
+      case "visible-soc-cpu" -> new SocCpuShape(x, y, path);
       case "visible-tty" -> new TtyShape(x, y, path);
       default -> null;
     };

@@ -52,9 +52,9 @@ public class BusTransactionInsertionGui extends JFrame
   private final JCheckBox byteTrans = new JCheckBox();
   private final CircuitState circuitState;
 
-  public BusTransactionInsertionGui(SocBusStateInfo bus, String BusId, CircuitState state) {
+  public BusTransactionInsertionGui(SocBusStateInfo bus, String busId, CircuitState state) {
     myBus = bus;
-    myBusId = BusId;
+    myBusId = busId;
     LocaleManager.addLocaleListener(this);
     setLayout(new GridBagLayout());
     GridBagConstraints c = new GridBagConstraints();

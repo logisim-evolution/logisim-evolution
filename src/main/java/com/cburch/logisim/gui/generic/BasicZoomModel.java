@@ -13,18 +13,18 @@ import com.cburch.logisim.prefs.PrefMonitor;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
+import java.util.List;
 import javax.swing.SwingUtilities;
 
 public class BasicZoomModel implements ZoomModel {
-  private final ArrayList<Double> zoomOptions;
+  private final List<Double> zoomOptions;
 
   private final PropertyChangeSupport support;
   private final CanvasPane canvas;
   private double zoomFactor;
   private boolean showGrid;
 
-  public BasicZoomModel(PrefMonitor<Boolean> gridPref, PrefMonitor<Double> zoomPref, ArrayList<Double> zoomOpts, CanvasPane pane) {
+  public BasicZoomModel(PrefMonitor<Boolean> gridPref, PrefMonitor<Double> zoomPref, List<Double> zoomOpts, CanvasPane pane) {
     zoomOptions = zoomOpts;
     support = new PropertyChangeSupport(this);
     zoomFactor = 1.0;
@@ -59,7 +59,7 @@ public class BasicZoomModel implements ZoomModel {
   }
 
   @Override
-  public ArrayList<Double> getZoomOptions() {
+  public List<Double> getZoomOptions() {
     return zoomOptions;
   }
 

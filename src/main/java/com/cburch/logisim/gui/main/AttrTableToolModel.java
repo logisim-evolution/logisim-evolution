@@ -9,8 +9,6 @@
 
 package com.cburch.logisim.gui.main;
 
-import static com.cburch.logisim.gui.Strings.S;
-
 import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitException;
 import com.cburch.logisim.circuit.CircuitMutation;

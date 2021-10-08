@@ -24,10 +24,10 @@ import java.util.List;
 
 public class RV32imAttributes extends AbstractAttributeSet {
 
-  private static class Rv32imStateAttribute extends Attribute<RV32im_state> {
+  private static class Rv32imStateAttribute extends Attribute<RV32imState> {
 
     @Override
-    public RV32im_state parse(String value) {
+    public RV32imState parse(String value) {
       return null;
     }
 
@@ -37,7 +37,7 @@ public class RV32imAttributes extends AbstractAttributeSet {
     }
   }
 
-  public static final Attribute<RV32im_state> RV32IM_STATE = new Rv32imStateAttribute();
+  public static final Attribute<RV32imState> RV32IM_STATE = new Rv32imStateAttribute();
   public static final Attribute<BitWidth> NR_OF_IRQS =
       Attributes.forBitWidth("irqWidth", S.getter("rv32imIrqWidth"), 0, 32);
   public static final Attribute<Integer> RESET_VECTOR =
@@ -49,7 +49,7 @@ public class RV32imAttributes extends AbstractAttributeSet {
 
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Boolean labelVisible = true;
-  private RV32im_state upState = new RV32im_state();
+  private RV32imState upState = new RV32imState();
   private Boolean stateVisible = true;
 
   private static final List<Attribute<?>> ATTRIBUTES =
@@ -70,7 +70,7 @@ public class RV32imAttributes extends AbstractAttributeSet {
     d.labelFont = labelFont;
     d.labelVisible = labelVisible;
     d.stateVisible = stateVisible;
-    d.upState = new RV32im_state();
+    d.upState = new RV32imState();
     upState.copyInto(d.upState);
   }
 

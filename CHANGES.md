@@ -18,9 +18,15 @@
     * `-test-fpga-implementation` is now `--test-fpga` or `-f`,
     * `-questa` is removed.
   * PortIO HDL generator and component bug-fixed
-  * Cleanup of the HDL-generation
+  * Cleanup/rework of the HDL-generation
   * Each circuit stores/restores the last board used for Download (handy for templates to give to students)
   * Fixed startup crash related to incorrectly localized date format.
+  * Added a setting to select lower- or upper-case VHDL keywords.
+  * Added project export feature.
+  * Cleaned-up the written .circ file.
+
+* v3.6.1 (2021-09-27)
+  * Fixed bug in LED-array
 
 * v3.6.0 (2021-09-05)
   * Introducing project logo.

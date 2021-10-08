@@ -173,10 +173,10 @@ public abstract class PrintHandler implements Printable {
             ImageIO.write(img, "JPEG", dest);
             break;
           case ExportImage.FORMAT_TIKZ:
-            ((TikZWriter) g2d).WriteFile(dest);
+            ((TikZWriter) g2d).writeFile(dest);
             break;
           case ExportImage.FORMAT_SVG:
-            ((TikZWriter) g2d).WriteSvg(d.width, d.height, dest);
+            ((TikZWriter) g2d).writeSvg(d.width, d.height, dest);
             break;
         }
       } catch (Exception e) {

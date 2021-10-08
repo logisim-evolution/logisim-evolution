@@ -34,11 +34,11 @@ public class MemPoker extends InstancePoker {
         long newScroll = (data.getScroll() * 16 + val) & (data.getLastAddress());
         data.setScroll(newScroll);
       } else if (c == ' ') {
-        data.setScroll(data.getScroll() + (data.GetNrOfLines() - 1) * data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
       } else if (c == '\r' || c == '\n') {
-        data.setScroll(data.getScroll() + data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() + data.getNrOfLineItems());
       } else if (c == '\u0008' || c == '\u007f') {
-        data.setScroll(data.getScroll() - data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() - data.getNrOfLineItems());
       } else if (c == 'R' || c == 'r') {
         data.getContents().clear();
       }
@@ -48,17 +48,17 @@ public class MemPoker extends InstancePoker {
     public void keyPressed(InstanceState state, KeyEvent e) {
       final var data = (MemState) state.getData();
       if (e.getKeyCode() == KeyEvent.VK_UP) {
-        data.setScroll(data.getScroll() - data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() - data.getNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-        data.setScroll(data.getScroll() + data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() + data.getNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-        data.setScroll(data.getScroll() - data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() - data.getNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-        data.setScroll(data.getScroll() + data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() + data.getNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
-        data.setScroll(data.getScroll() - (data.GetNrOfLines() - 1) * data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() - (data.getNrOfLines() - 1) * data.getNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
-        data.setScroll(data.getScroll() + (data.GetNrOfLines() - 1) * data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
       }
     }
 
@@ -109,7 +109,7 @@ public class MemPoker extends InstancePoker {
       } else if (c == ' ' || c == '\t') {
         moveTo(data, data.getCursor() + 1);
       } else if (c == '\r' || c == '\n') {
-        moveTo(data, data.getCursor() + data.GetNrOfLineItems());
+        moveTo(data, data.getCursor() + data.getNrOfLineItems());
       } else if (c == '\u0008' || c == '\u007f') {
         moveTo(data, data.getCursor() - 1);
       } else if (c == 'R' || c == 'r') {
@@ -121,17 +121,17 @@ public class MemPoker extends InstancePoker {
     public void keyPressed(InstanceState state, KeyEvent e) {
       final var data = (MemState) state.getData();
       if (e.getKeyCode() == KeyEvent.VK_UP) {
-        moveTo(data, data.getCursor() - data.GetNrOfLineItems());
+        moveTo(data, data.getCursor() - data.getNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-        moveTo(data, data.getCursor() + data.GetNrOfLineItems());
+        moveTo(data, data.getCursor() + data.getNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
         moveTo(data, data.getCursor() - 1);
       } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
         moveTo(data, data.getCursor() + 1);
       } else if (e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
-        moveTo(data, data.getCursor() - (data.GetNrOfLines() - 1) * data.GetNrOfLineItems());
+        moveTo(data, data.getCursor() - (data.getNrOfLines() - 1) * data.getNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
-        moveTo(data, data.getCursor() + (data.GetNrOfLines() - 1) * data.GetNrOfLineItems());
+        moveTo(data, data.getCursor() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
       }
     }
 

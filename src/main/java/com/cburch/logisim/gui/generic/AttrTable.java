@@ -11,7 +11,7 @@ package com.cburch.logisim.gui.generic;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.fpga.gui.HDLColorRenderer;
+import com.cburch.logisim.fpga.gui.HdlColorRenderer;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.JDialogOk;
 import com.cburch.logisim.util.JInputComponent;
@@ -80,7 +80,7 @@ public class AttrTable extends JPanel implements LocaleListener {
     final var bgColor = new Color(240, 240, 240);
     setBackground(bgColor);
     table.setBackground(bgColor);
-    table.setDefaultRenderer(String.class, new HDLColorRenderer());
+    table.setDefaultRenderer(String.class, new HdlColorRenderer());
 
     final var propPanel = new JPanel(new BorderLayout(0, 0));
     final var tableScroll = new JScrollPane(table);

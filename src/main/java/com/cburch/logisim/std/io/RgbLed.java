@@ -34,6 +34,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   /**
@@ -67,7 +68,7 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
     }
   }
 
-  public static ArrayList<String> getLabels() {
+  public static List<String> getLabels() {
     final var labelNames = new ArrayList<String>();
     for (var i = 0; i < 3; i++) labelNames.add("");
     labelNames.set(RED, "RED");
@@ -86,7 +87,7 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   public static final int BLUE = 2;
 
   public RgbLed() {
-    super(_ID, S.getter("RGBledComponent"), new AbstractSimpleIOHDLGeneratorFactory(false), true);
+    super(_ID, S.getter("RGBledComponent"), new AbstractSimpleIoHdlGeneratorFactory(false), true);
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -188,14 +189,14 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
 
     final var g = painter.getGraphics();
     if (painter.getShowState()) {
-      Boolean activ = painter.getAttributeValue(IoLibrary.ATTR_ACTIVE);
+      final var activ = painter.getAttributeValue(IoLibrary.ATTR_ACTIVE);
       final var mask = activ ? 0 : 7;
       summ ^= mask;
       final var red = ((summ >> RED) & 1) * 0xFF;
       final var green = ((summ >> GREEN) & 1) * 0xFF;
       final var blue = ((summ >> BLUE) & 1) * 0xFF;
-      final var LedColor = new Color(red, green, blue);
-      g.setColor(LedColor);
+      final var ledColor = new Color(red, green, blue);
+      g.setColor(ledColor);
       g.fillOval(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     }
     g.setColor(Color.BLACK);

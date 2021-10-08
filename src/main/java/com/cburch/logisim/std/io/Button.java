@@ -105,7 +105,7 @@ public class Button extends InstanceFactory {
   private static final int DEPTH = 3;
 
   public Button() {
-    super(_ID, S.getter("buttonComponent"), new AbstractSimpleIOHDLGeneratorFactory(true), true);
+    super(_ID, S.getter("buttonComponent"), new AbstractSimpleIoHdlGeneratorFactory(true), true);
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -216,7 +216,7 @@ public class Button extends InstanceFactory {
         int px = p.getX();
         int py = p.getY();
         GraphicsUtil.switchToWidth(g, Wire.WIDTH);
-        g.setColor(Value.TRUE_COLOR);
+        g.setColor(Value.trueColor);
         if (facing == Direction.NORTH) g.drawLine(px, py, px, py + 10);
         else g.drawLine(px, py, px + 10, py);
         GraphicsUtil.switchToWidth(g, 1);

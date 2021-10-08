@@ -10,23 +10,24 @@
 package com.cburch.logisim.fpga.data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ComponentMapInformationContainer {
 
   private int nrOfInputBubbles;
   private int nrOfInOutBubbles;
   private int nrOfOutputBubbles;
-  private ArrayList<String> inputBubbleLabels;
-  private ArrayList<String> inOutBubbleLabels;
-  private ArrayList<String> outputBubbleLabels;
+  private List<String> inputBubbleLabels;
+  private List<String> inOutBubbleLabels;
+  private List<String> outputBubbleLabels;
 
   public ComponentMapInformationContainer(
       int inports,
       int outports,
       int inoutports,
-      ArrayList<String> inportLabels,
-      ArrayList<String> outportLabels,
-      ArrayList<String> inoutportLabels) {
+      List<String> inportLabels,
+      List<String> outportLabels,
+      List<String> inoutportLabels) {
     nrOfInputBubbles = inports;
     nrOfOutputBubbles = outports;
     nrOfInOutBubbles = inoutports;
@@ -55,9 +56,9 @@ public class ComponentMapInformationContainer {
                 nrOfInputBubbles,
                 nrOfOutputBubbles,
                 nrOfInOutBubbles,
-                inputBubbleLabels == null ? null : (ArrayList<String>) inputBubbleLabels.clone(),
-                outputBubbleLabels == null ? null : (ArrayList<String>) outputBubbleLabels.clone(),
-                inOutBubbleLabels == null ? null : (ArrayList<String>) inOutBubbleLabels.clone());
+                inputBubbleLabels == null ? null : (List<String>) ((ArrayList<String>) inputBubbleLabels).clone(),
+                outputBubbleLabels == null ? null : (List<String>) ((ArrayList<String>) outputBubbleLabels).clone(),
+                inOutBubbleLabels == null ? null : (List<String>) ((ArrayList<String>) inOutBubbleLabels).clone());
     return myClone;
   }
 
@@ -91,17 +92,17 @@ public class ComponentMapInformationContainer {
     return outputBubbleLabels.get(outputNr);
   }
 
-  public void setNrOfInOutports(int count, ArrayList<String> labels) {
+  public void setNrOfInOutports(int count, List<String> labels) {
     nrOfInOutBubbles = count;
     inOutBubbleLabels = labels;
   }
 
-  public void setNrOfInports(int count, ArrayList<String> labels) {
+  public void setNrOfInports(int count, List<String> labels) {
     nrOfInputBubbles = count;
     inputBubbleLabels = labels;
   }
 
-  public void setNrOfOutports(int count, ArrayList<String> labels) {
+  public void setNrOfOutports(int count, List<String> labels) {
     nrOfOutputBubbles = count;
     outputBubbleLabels = labels;
   }

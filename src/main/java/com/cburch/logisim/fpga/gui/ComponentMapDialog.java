@@ -16,7 +16,7 @@ import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.ComponentMapParser;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
-import com.cburch.logisim.fpga.file.XMLFileFilter;
+import com.cburch.logisim.fpga.file.XmlFileFilter;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LocaleListener;
@@ -44,36 +44,36 @@ public class ComponentMapDialog implements ActionListener, BaseWindowListenerCon
 
   private final JDialog panel;
   private final JFrame parent;
-  private final JButton DoneButton = new JButton();
-  private final JButton SaveButton = new JButton();
-  private final JButton CancelButton = new JButton();
-  private final JButton LoadButton = new JButton();
-  private final JLabel UnmappedText = new JLabel();
-  private final JLabel MappedText = new JLabel();
-  private final JLabel CommandText = new JLabel();
-  private final JScrollPane UnMappedPane;
-  private final JScrollPane MappedPane;
+  private final JButton doneButton = new JButton();
+  private final JButton saveButton = new JButton();
+  private final JButton cancelButton = new JButton();
+  private final JButton loadButton = new JButton();
+  private final JLabel unmappedText = new JLabel();
+  private final JLabel mappedText = new JLabel();
+  private final JLabel commandText = new JLabel();
+  private final JScrollPane unmappedPane;
+  private final JScrollPane mappedPane;
 
-  private final BoardManipulator BoardPic;
-  private final BoardInformation BoardInfo;
-  private String OldDirectory = "";
+  private final BoardManipulator boardPicture;
+  private final BoardInformation boardInfo;
+  private String oldDirectory = "";
 
-  private final MappableResourcesContainer MappableComponents;
+  private final MappableResourcesContainer mappableComponents;
 
   private final Object lock = new Object();
   private boolean canceled = true;
 
-  public ComponentMapDialog(JFrame parentFrame, String projectPath, BoardInformation Board, MappableResourcesContainer mappable) {
-    OldDirectory = new File(projectPath).getParent();
-    if (OldDirectory == null) OldDirectory = "";
-    else if (OldDirectory.length() != 0 && !OldDirectory.endsWith(File.separator))
-      OldDirectory += File.separator;
+  public ComponentMapDialog(JFrame parentFrame, String projectPath, BoardInformation board, MappableResourcesContainer mappable) {
+    oldDirectory = new File(projectPath).getParent();
+    if (oldDirectory == null) oldDirectory = "";
+    else if (oldDirectory.length() != 0 && !oldDirectory.endsWith(File.separator))
+      oldDirectory += File.separator;
 
     parent = parentFrame;
     if (parent != null) parent.addWindowListener(this);
 
-    BoardInfo = Board;
-    MappableComponents = mappable;
+    boardInfo = board;
+    mappableComponents = mappable;
 
     panel = new JDialog(parentFrame);
     panel.addWindowListener(this);
@@ -86,103 +86,100 @@ public class ComponentMapDialog implements ActionListener, BaseWindowListenerCon
     panel.setLayout(thisLayout);
 
     /* Add the board Picture */
-    BoardPic = new BoardManipulator(panel, parentFrame, mappable);
-    BoardPic.addComponentListener(this);
+    boardPicture = new BoardManipulator(panel, parentFrame, mappable);
+    boardPicture.addComponentListener(this);
     c.gridx = 0;
 
     /* Add some text */
-    UnmappedText.setHorizontalAlignment(JLabel.CENTER);
-    UnmappedText.setPreferredSize(
-        new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    unmappedText.setHorizontalAlignment(JLabel.CENTER);
+    unmappedText.setPreferredSize(new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
     c.gridx = 0;
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
     c.gridwidth = 1;
-    panel.add(UnmappedText, c);
-    MappedText.setHorizontalAlignment(JLabel.CENTER);
-    MappedText.setPreferredSize(
-        new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    panel.add(unmappedText, c);
+    mappedText.setHorizontalAlignment(JLabel.CENTER);
+    mappedText.setPreferredSize(new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
     c.gridx = 1;
-    panel.add(MappedText, c);
-    CommandText.setHorizontalAlignment(JLabel.CENTER);
-    CommandText.setPreferredSize(
-        new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    panel.add(mappedText, c);
+    commandText.setHorizontalAlignment(JLabel.CENTER);
+    commandText.setPreferredSize(new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
     c.gridx = 2;
-    panel.add(CommandText, c);
+    panel.add(commandText, c);
 
     c.gridy = 1;
-    panel.add(BoardPic.getUnmapOneButton(), c);
+    panel.add(boardPicture.getUnmapOneButton(), c);
 
     /* Add the UnMapAll button */
     c.gridy = 2;
-    panel.add(BoardPic.getUnmapAllButton(), c);
+    panel.add(boardPicture.getUnmapAllButton(), c);
 
     /* Add the Load button */
-    LoadButton.setActionCommand("Load");
-    LoadButton.addActionListener(this);
-    LoadButton.setEnabled(true);
+    loadButton.setActionCommand("Load");
+    loadButton.addActionListener(this);
+    loadButton.setEnabled(true);
     c.gridy = 3;
-    panel.add(LoadButton, c);
+    panel.add(loadButton, c);
 
     /* Add the Save button */
-    SaveButton.setActionCommand("Save");
-    SaveButton.addActionListener(this);
-    SaveButton.setEnabled(true);
+    saveButton.setActionCommand("Save");
+    saveButton.addActionListener(this);
+    saveButton.setEnabled(true);
     c.gridy = 4;
-    panel.add(SaveButton, c);
+    panel.add(saveButton, c);
 
     /* Add the Cancel button */
-    CancelButton.setActionCommand("Cancel");
-    CancelButton.addActionListener(this);
-    CancelButton.setEnabled(true);
+    cancelButton.setActionCommand("Cancel");
+    cancelButton.addActionListener(this);
+    cancelButton.setEnabled(true);
     c.gridy = 5;
-    panel.add(CancelButton, c);
+    panel.add(cancelButton, c);
 
     /* Add the Done button */
-    DoneButton.setActionCommand("Done");
-    DoneButton.addActionListener(this);
+    doneButton.setActionCommand("Done");
+    doneButton.addActionListener(this);
     c.gridy = 6;
-    panel.add(DoneButton, c);
+    panel.add(doneButton, c);
 
     /* Add the Zoom button */
     c.gridy = 7;
-    panel.add(BoardPic.getZoomSlider(), c);
+    panel.add(boardPicture.getZoomSlider(), c);
 
 
     /* Add the unmapped list */
-    UnMappedPane = new JScrollPane(BoardPic.getUnmappedList());
+    unmappedPane = new JScrollPane(boardPicture.getUnmappedList());
     c.fill = GridBagConstraints.BOTH;
     c.gridx = 0;
     c.gridy = 1;
     c.gridheight = 7;
-    panel.add(UnMappedPane, c);
+    panel.add(unmappedPane, c);
 
     /* Add the mapped list */
-    MappedPane = new JScrollPane(BoardPic.getMappedList());
+    mappedPane = new JScrollPane(boardPicture.getMappedList());
     c.gridx = 1;
     c.gridheight = 7;
-    panel.add(MappedPane, c);
+    panel.add(mappedPane, c);
 
     c.gridx = 0;
     c.gridheight = 1;
     c.gridy = 8;
     c.gridwidth = 3;
     c.fill = GridBagConstraints.BOTH;
-    panel.add(BoardPic, c);
+    panel.add(boardPicture, c);
     panel.setLocationRelativeTo(null);
     panel.setVisible(true);
     localeChanged();
     int ScreenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
     int ScreenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-    int ImageWidth = BoardPic.getWidth();
-    int ImageHeight = BoardPic.getHeight();
+    int ImageWidth = boardPicture.getWidth();
+    int ImageHeight = boardPicture.getHeight();
     int ImageXBorder = panel.getWidth() - ImageWidth;
     int ImageYBorder = panel.getHeight() - ImageHeight;
     ScreenWidth -= ImageXBorder;
     ScreenHeight -= (ImageYBorder + (ImageYBorder >> 2));
     int zoomX = (ScreenWidth * 100) / ImageWidth;
     int zoomY = (ScreenHeight * 100) / ImageHeight;
-    BoardPic.setMaxZoom(Math.min(zoomX, zoomY));
+    boardPicture.setMaxZoom(Math.min(zoomX, zoomY));
   }
 
   public boolean run() {
@@ -197,7 +194,7 @@ public class ComponentMapDialog implements ActionListener, BaseWindowListenerCon
           }
         });
     t.start();
-    CancelButton.setEnabled(true);
+    cancelButton.setEnabled(true);
     try {
       t.join();
     } catch (InterruptedException e) {
@@ -205,7 +202,7 @@ public class ComponentMapDialog implements ActionListener, BaseWindowListenerCon
     }
     panel.setVisible(false);
     panel.dispose();
-    BoardPic.cleanup();
+    boardPicture.cleanup();
     return !canceled;
   }
 
@@ -219,11 +216,11 @@ public class ComponentMapDialog implements ActionListener, BaseWindowListenerCon
         }
         break;
       case "Save":
-        Save();
+        save();
         break;
       case "Load":
-        Load();
-        MappableComponents.markChanged();
+        load();
+        mappableComponents.markChanged();
         break;
       case "Cancel":
         synchronized (lock) {
@@ -233,35 +230,36 @@ public class ComponentMapDialog implements ActionListener, BaseWindowListenerCon
     }
   }
 
-  private void Load() {
-    JFileChooser fc = new JFileChooser(OldDirectory);
+  private void load() {
+    final var fc = new JFileChooser(oldDirectory);
     fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
+    // FIXME: hardcoded string
     fc.setDialogTitle("Choose XML board description file to use");
-    fc.setFileFilter(XMLFileFilter.XML_FILTER);
+    fc.setFileFilter(XmlFileFilter.XML_FILTER);
     fc.setAcceptAllFileFilterUsed(false);
     panel.setVisible(false);
-    int retval = fc.showOpenDialog(null);
-    if (retval == JFileChooser.APPROVE_OPTION) {
-      File file = fc.getSelectedFile();
-      String FileName = file.getName();
-      String AbsoluteFileName = file.getPath();
-      OldDirectory = AbsoluteFileName.substring(0, AbsoluteFileName.length() - FileName.length());
-      ComponentMapParser parse = new ComponentMapParser(file, MappableComponents, BoardInfo);
-      int result = parse.parseFile();
+    final var retVal = fc.showOpenDialog(null);
+    if (retVal == JFileChooser.APPROVE_OPTION) {
+      final var file = fc.getSelectedFile();
+      final var fileName = file.getName();
+      final var absoluteFileName = file.getPath();
+      oldDirectory = absoluteFileName.substring(0, absoluteFileName.length() - fileName.length());
+      final var parse = new ComponentMapParser(file, mappableComponents, boardInfo);
+      final var result = parse.parseFile();
       if (result == 0) {
         panel.setVisible(true);
-        BoardPic.update();
+        boardPicture.update();
       } else {
-        OptionPane.showMessageDialog(
-            null, parse.getError(result), "Error", OptionPane.ERROR_MESSAGE);
+        // FIXME: hardcoded string
+        OptionPane.showMessageDialog(null, parse.getError(result), "Error", OptionPane.ERROR_MESSAGE);
         panel.setVisible(true);
       }
     }
   }
 
-  private void Save() {
+  private void save() {
     panel.setVisible(false);
-    MappableComponents.save();
+    mappableComponents.save();
     OptionPane.showMessageDialog(
         null, S.get("BoarMapFileSaved"), "", OptionPane.INFORMATION_MESSAGE);
     panel.setVisible(true);
@@ -277,22 +275,22 @@ public class ComponentMapDialog implements ActionListener, BaseWindowListenerCon
   @Override
   public void localeChanged() {
     panel.setTitle(S.get("BoardMapTitle"));
-    UnmappedText.setText(S.get("BoardMapUnmapped"));
-    UnmappedText.setToolTipText(S.get("BoardMapUMTooltip"));
-    MappedText.setText(S.get("BoardMapMapped"));
-    CommandText.setText(S.get("BoardMapActions"));
-    LoadButton.setText(S.get("BoardMapLoad"));
-    SaveButton.setText(S.get("BoardMapSave"));
-    CancelButton.setText(S.get("FpgaBoardCancel"));
-    DoneButton.setText(S.get("FpgaBoardDone"));
+    unmappedText.setText(S.get("BoardMapUnmapped"));
+    unmappedText.setToolTipText(S.get("BoardMapUMTooltip"));
+    mappedText.setText(S.get("BoardMapMapped"));
+    commandText.setText(S.get("BoardMapActions"));
+    loadButton.setText(S.get("BoardMapLoad"));
+    saveButton.setText(S.get("BoardMapSave"));
+    cancelButton.setText(S.get("FpgaBoardCancel"));
+    doneButton.setText(S.get("FpgaBoardDone"));
     panel.pack();
   }
 
   @Override
   public void componentResized(ComponentEvent e) {
-    UnmappedText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
-    MappedText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
-    CommandText.setPreferredSize(new Dimension(BoardPic.getWidth() / 3, AppPreferences.getScaled(25)));
+    unmappedText.setPreferredSize(new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
+    mappedText.setPreferredSize(new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
+    commandText.setPreferredSize(new Dimension(boardPicture.getWidth() / 3, AppPreferences.getScaled(25)));
     panel.pack();
   }
 

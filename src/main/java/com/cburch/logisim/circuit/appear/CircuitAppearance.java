@@ -16,6 +16,8 @@ import com.cburch.draw.model.Drawing;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitState;
+import com.cburch.logisim.data.AttributeEvent;
+import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -28,19 +30,19 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class CircuitAppearance extends Drawing {
+public class CircuitAppearance extends Drawing implements AttributeListener {
   public static final int PIN_LENGTH = 10;
-
+  
   private class MyListener implements CanvasModelListener {
     @Override
     public void modelChanged(CanvasModelEvent event) {
       if (!suppressRecompute) {
-        setDefaultAppearance(false);
         fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
       }
     }
@@ -51,8 +53,9 @@ public class CircuitAppearance extends Drawing {
   private final PortManager portManager;
   private final CircuitPins circuitPins;
   private final MyListener myListener;
-  private boolean isDefault;
+  private final ArrayList<CanvasObject> defaultCanvasObjects;
   private boolean suppressRecompute;
+  private List<CanvasObject> defaultCustomAppearance;
 
   public CircuitAppearance(Circuit circuit) {
     this.circuit = circuit;
@@ -62,17 +65,61 @@ public class CircuitAppearance extends Drawing {
     myListener = new MyListener();
     suppressRecompute = false;
     addCanvasModelListener(myListener);
-    setDefaultAppearance(true);
+    circuit.getStaticAttributes().addAttributeListener(this);
+    defaultCanvasObjects = new ArrayList<CanvasObject>();
+    recomputeDefaultAppearance();
+    defaultCustomAppearance = DefaultCustomAppearance.build(circuitPins.getPins()); 
+    setObjectsForce(defaultCustomAppearance, false);
+  }
+
+  public boolean hasCustomAppearance() {
+    final var currentCustom = new ArrayList<CanvasObject>(getCustomObjectsFromBottom());
+    final var defaultCustom = new ArrayList<CanvasObject>(defaultCustomAppearance);
+    var shapeIterator = currentCustom.iterator();
+    while (shapeIterator.hasNext()) {
+      final var shape = shapeIterator.next(); 
+      if (shape instanceof AppearancePort || shape instanceof AppearanceAnchor)
+        shapeIterator.remove();
+    }
+    shapeIterator = defaultCustom.iterator();
+    while (shapeIterator.hasNext()) {
+      final var shape = shapeIterator.next(); 
+      if (shape instanceof AppearancePort || shape instanceof AppearanceAnchor)
+        shapeIterator.remove();
+    }
+    if (currentCustom.size() != defaultCustom.size()) return true;
+    shapeIterator = currentCustom.iterator();
+    while (shapeIterator.hasNext()) {
+      final var currentShape = shapeIterator.next();
+      var deleteIt = false;
+      final var shapeDefaultIterator = defaultCustom.iterator();
+      while (shapeDefaultIterator.hasNext()) {
+        final var defaultShape = shapeDefaultIterator.next();
+        final var matches = currentShape.matches(defaultShape);
+        deleteIt |= matches;
+        if (matches) shapeDefaultIterator.remove();
+      }
+      if (deleteIt) shapeIterator.remove();
+    }
+    return !currentCustom.isEmpty();
+  }
+
+  public void resetDefaultCustomAppearance() {
+    super.removeObjects(this.getCustomObjectsFromBottom());
+    defaultCustomAppearance = DefaultCustomAppearance.build(circuitPins.getPins()); 
+    setObjectsForce(defaultCustomAppearance, false);
+  }
+  
+  public void loadDefaultLogisimAppearance() {
+    super.removeObjects(this.getCustomObjectsFromBottom());
+    defaultCustomAppearance.clear();
+    setObjectsForce(DefaultEvolutionAppearance.build(circuitPins.getPins(), circuit.getName(), true), false);
   }
 
   public String getName() {
     return (circuit == null || circuit.getStaticAttributes() == null)
         ? null
         : circuit.getStaticAttributes().getValue(CircuitAttributes.NAME_ATTR);
-  }
-
-  public CircuitPins getCircuitPin() {
-    return circuitPins;
   }
 
   public void addCircuitAppearanceListener(CircuitAppearanceListener l) {
@@ -220,7 +267,23 @@ public class CircuitAppearance extends Drawing {
   }
 
   public boolean isDefaultAppearance() {
-    return isDefault;
+    return !circuit.getStaticAttributes().getValue(CircuitAttributes.APPEARANCE_ATTR).equals(CircuitAttributes.APPEAR_CUSTOM);
+  }
+  
+  public List<CanvasObject> getCustomObjectsFromBottom() {
+    return super.getObjectsFromBottom();
+  }
+
+  @Override
+  public List<CanvasObject> getObjectsFromBottom() {
+    return isDefaultAppearance() ? Collections.unmodifiableList(defaultCanvasObjects) : super.getObjectsFromBottom();
+  }
+
+  @Override
+  public List<CanvasObject> getObjectsFromTop() {
+    final var ret = new ArrayList<CanvasObject>(getObjectsFromBottom());
+    Collections.reverse(ret);
+    return ret;
   }
 
   public void paintSubcircuit(InstancePainter painter, Graphics g, Direction facing) {
@@ -259,27 +322,20 @@ public class CircuitAppearance extends Drawing {
 
   public boolean isNamedBoxShapedFixedSize() {
     if (circuit == null || circuit.getStaticAttributes() == null) return true;
-    if (circuit
-        .getStaticAttributes()
-        .containsAttribute(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE))
-      return circuit.getStaticAttributes().getValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE);
-    return true;
+    final var staticAttrs = circuit.getStaticAttributes(); 
+    return staticAttrs.containsAttribute(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE) 
+        ? staticAttrs.getValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE) 
+        : true;
   }
 
   public void recomputeDefaultAppearance() {
-    if (isDefault) {
-      final var shapes =
-          DefaultAppearance.build(
-              circuitPins.getPins(),
-              getCircuitAppearance(),
-              isNamedBoxShapedFixedSize(),
-              getName());
-      setObjectsForce(shapes);
-    }
+    final var shapes = DefaultAppearance.build(circuitPins.getPins(), getCircuitAppearance(), 
+        isNamedBoxShapedFixedSize(), getName());
+    setObjectsForce(shapes, true);
   }
 
   void recomputePorts() {
-    if (isDefault) {
+    if (isDefaultAppearance()) {
       recomputeDefaultAppearance();
     } else {
       fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
@@ -298,7 +354,7 @@ public class CircuitAppearance extends Drawing {
 
   public void removeDynamicElement(InstanceComponent c) {
     final var toRemove = new ArrayList<CanvasObject>();
-    for (final var obj : getObjectsFromBottom()) {
+    for (final var obj : super.getObjectsFromBottom()) {
       if (obj instanceof DynamicElement el && el.getPath().contains(c)) {
         toRemove.add(obj);
       }
@@ -308,7 +364,6 @@ public class CircuitAppearance extends Drawing {
     try {
       suppressRecompute = true;
       removeObjects(toRemove);
-      recomputeDefaultAppearance();
     } finally {
       suppressRecompute = oldSuppress;
     }
@@ -316,33 +371,31 @@ public class CircuitAppearance extends Drawing {
   }
 
   void replaceAutomatically(List<AppearancePort> removes, List<AppearancePort> adds) {
-    // this should be called only when substituting ports via PortManager
+    // this should be called only when substituting ports for the custom appearance
     var oldSuppress = suppressRecompute;
     try {
       suppressRecompute = true;
-      removeObjects(removes);
-      addObjects(getObjectsFromBottom().size() - 1, adds);
-      recomputeDefaultAppearance();
+      final var hasCustom = hasCustomAppearance(); 
+      if (hasCustom) {
+        defaultCustomAppearance = DefaultCustomAppearance.build(circuitPins.getPins()); 
+        removeObjects(removes);
+        addObjects(getCustomObjectsFromBottom().size() - 1, adds);
+      } else {
+        super.removeObjects(getCustomObjectsFromBottom());
+        defaultCustomAppearance = DefaultCustomAppearance.build(circuitPins.getPins()); 
+        setObjectsForce(defaultCustomAppearance, false);
+      }
     } finally {
       suppressRecompute = oldSuppress;
     }
     fireCircuitAppearanceChanged(CircuitAppearanceEvent.ALL_TYPES);
   }
 
-  public void setDefaultAppearance(boolean value) {
-    if (isDefault != value) {
-      isDefault = value;
-      if (value) {
-        recomputeDefaultAppearance();
-      } else {
-        circuit
-            .getStaticAttributes()
-            .setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CUSTOM);
-      }
-    }
+  public void setObjectsForce(List<? extends CanvasObject> shapesBase) {
+    setObjectsForce(shapesBase, false);
   }
 
-  public void setObjectsForce(List<? extends CanvasObject> shapesBase) {
+  public void setObjectsForce(List<? extends CanvasObject> shapesBase, boolean isDefault) {
     // This shouldn't ever be an issue, but just to make doubly sure, we'll
     // check that the anchor and all ports are in their proper places.
     final var shapes = new ArrayList<CanvasObject>(shapesBase);
@@ -370,8 +423,13 @@ public class CircuitAppearance extends Drawing {
 
     try {
       suppressRecompute = true;
-      super.removeObjects(new ArrayList<>(getObjectsFromBottom()));
-      super.addObjects(0, shapes);
+      if (isDefault) {
+        defaultCanvasObjects.clear();
+        defaultCanvasObjects.addAll(shapes);
+      } else {
+        super.removeObjects(new ArrayList<>(getObjectsFromBottom()));
+        super.addObjects(0, shapes);
+      }
     } finally {
       suppressRecompute = false;
     }
@@ -382,5 +440,16 @@ public class CircuitAppearance extends Drawing {
   public void translateObjects(Collection<? extends CanvasObject> shapes, int dx, int dy) {
     super.translateObjects(shapes, dx, dy);
     checkToFirePortsChanged(shapes);
+  }
+
+  @Override
+  public void attributeValueChanged(AttributeEvent e) {
+    if (e.getAttribute() == CircuitAttributes.APPEARANCE_ATTR) {
+      if (e.getValue() == CircuitAttributes.APPEAR_CLASSIC
+          || e.getValue() == CircuitAttributes.APPEAR_FPGA
+          || e.getValue() == CircuitAttributes.APPEAR_EVOLUTION) {
+        recomputeDefaultAppearance();
+      }
+    }  
   }
 }

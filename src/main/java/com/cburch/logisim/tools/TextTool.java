@@ -11,6 +11,7 @@ package com.cburch.logisim.tools;
 
 import static com.cburch.logisim.tools.Strings.S;
 
+import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
@@ -18,12 +19,14 @@ import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentUserEvent;
+import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.std.base.Text;
+
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
@@ -39,6 +42,7 @@ public class TextTool extends Tool {
   public static final String _ID = "Text Tool";
 
   private class MyListener implements CaretListener, CircuitListener {
+    @Override
     public void circuitChanged(CircuitEvent event) {
       if (event.getCircuit() != caretCircuit) {
         event.getCircuit().removeCircuitListener(this);
@@ -56,6 +60,7 @@ public class TextTool extends Tool {
       }
     }
 
+    @Override
     public void editingCanceled(CaretEvent e) {
       if (e.getCaret() != caret) {
         e.getCaret().removeCaretListener(this);
@@ -70,6 +75,7 @@ public class TextTool extends Tool {
       caret = null;
     }
 
+    @Override
     public void editingStopped(CaretEvent e) {
       if (e.getCaret() != caret) {
         e.getCaret().removeCaretListener(this);
@@ -79,7 +85,7 @@ public class TextTool extends Tool {
       caretCircuit.removeCircuitListener(this);
 
       final var val = caret.getText();
-      var isEmpty = (val == null || val.equals(""));
+      var isEmpty = (val == null || "".equals(val));
       Action a;
       final var proj = caretCanvas.getProject();
       if (caretCreatingText) {
@@ -88,7 +94,8 @@ public class TextTool extends Tool {
           xn.add(caretComponent);
           a = xn.toAction(S.getter("addComponentAction", Text.FACTORY.getDisplayGetter()));
         } else {
-          a = null; // don't add the blank text field
+          // don't add the blank text field
+          a = null;
         }
       } else {
         if (isEmpty && caretComponent.getFactory() instanceof Text) {
@@ -97,7 +104,8 @@ public class TextTool extends Tool {
           a = xn.toAction(S.getter("removeComponentAction", Text.FACTORY.getDisplayGetter()));
         } else {
           Object obj = caretComponent.getFeature(TextEditable.class);
-          if (obj == null) { // should never happen
+          if (obj == null) {
+            // should never happen
             a = null;
           } else {
             final var editable = (TextEditable) obj;
@@ -127,6 +135,11 @@ public class TextTool extends Tool {
 
   public TextTool() {
     attrs = Text.FACTORY.createAttributeSet();
+  }
+
+  @Override
+  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
+    return Text.FACTORY.getDefaultAttributeValue(attr, ver);
   }
 
   @Override
@@ -237,7 +250,8 @@ public class TextTool extends Tool {
         caret.mousePressed(e);
         proj.repaintCanvas();
         return;
-      } else { // No. End the current caret.
+      } else {
+        // No. End the current caret.
         caret.stopEditing();
       }
     }

@@ -22,35 +22,35 @@ public class BoardIcon implements Icon {
   private static final int ICON_WIDTH = 240;
   private static final int ICON_HEIGHT = 130;
 
-  public BoardIcon(BufferedImage BoardImage) {
-    if (BoardImage == null) image = null;
-    else
-      image =
-          BoardImage.getScaledInstance(
-              this.getIconWidth(), this.getIconHeight(), BufferedImage.SCALE_SMOOTH);
+  public BoardIcon(BufferedImage boardImage) {
+    image = (boardImage == null)
+            ? null
+            : boardImage.getScaledInstance(this.getIconWidth(), this.getIconHeight(), BufferedImage.SCALE_SMOOTH);
   }
 
+  @Override
   public int getIconHeight() {
     return AppPreferences.getScaled(ICON_HEIGHT);
   }
 
+  @Override
   public int getIconWidth() {
     return AppPreferences.getScaled(ICON_WIDTH);
   }
 
-  public void paintIcon(Component c, Graphics g, int x, int y) {
-    if (image != null) g.drawImage(image, x, y, null);
-    else {
-      g.setColor(Color.gray);
-      g.fillRect(0, 0, this.getIconWidth(), this.getIconHeight());
+  @Override
+  public void paintIcon(Component comp, Graphics gfx, int x, int y) {
+    if (image != null) {
+      gfx.drawImage(image, x, y, null);
+    } else {
+      gfx.setColor(Color.gray);
+      gfx.fillRect(0, 0, this.getIconWidth(), this.getIconHeight());
     }
   }
 
-  public void SetImage(BufferedImage BoardImage) {
-    if (BoardImage == null) image = null;
-    else
-      image =
-          BoardImage.getScaledInstance(
-              this.getIconWidth(), this.getIconHeight(), BufferedImage.SCALE_SMOOTH);
+  public void setImage(BufferedImage boardImage) {
+    image = (boardImage == null)
+            ? null
+            : boardImage.getScaledInstance(this.getIconWidth(), this.getIconHeight(), BufferedImage.SCALE_SMOOTH);
   }
 }

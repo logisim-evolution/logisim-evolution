@@ -34,36 +34,36 @@ public class SymbolTable {
 
   public static final int SYMBOL_TABLE_SIZE = 16;
 
-  private final Integer st_name;
-  private final Integer st_value;
-  private final Integer st_size;
-  private final Integer st_info;
-  private final Integer st_other;
-  private final Integer st_shndx;
+  private final Integer stName;
+  private final Integer stValue;
+  private final Integer stSize;
+  private final Integer stInfo;
+  private final Integer stOther;
+  private final Integer stShndx;
   private String name;
 
   public SymbolTable(byte[] buffer, boolean isLittleEndian, int offset) {
-    int index = offset;
-    st_name = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
+    var index = offset;
+    stName = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
     index += 4;
-    st_value = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
+    stValue = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
     index += 4;
-    st_size = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
+    stSize = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
     index += 4;
-    st_info = ((int) buffer[index++]) & 0xFF;
-    st_other = ((int) buffer[index++]) & 0xFF;
-    st_shndx = ElfHeader.getIntValue(buffer, index, 2, isLittleEndian);
+    stInfo = ((int) buffer[index++]) & 0xFF;
+    stOther = ((int) buffer[index++]) & 0xFF;
+    stShndx = ElfHeader.getIntValue(buffer, index, 2, isLittleEndian);
     name = "";
   }
 
   public SymbolTable(String name, int addr) {
     this.name = name;
-    st_name = 0;
-    st_value = addr;
-    st_size = name.length() + 1;
-    st_info = STT_FUNC;
-    st_other = 0;
-    st_shndx = 0;
+    stName = 0;
+    stValue = addr;
+    stSize = name.length() + 1;
+    stInfo = STT_FUNC;
+    stOther = 0;
+    stShndx = 0;
   }
 
   public void setName(String val) {
@@ -75,22 +75,22 @@ public class SymbolTable {
   }
 
   public int getStType() {
-    return st_info & 0xF;
+    return stInfo & 0xF;
   }
 
   public int getStBind() {
-    return (st_info >> 4) & 0xF;
+    return (stInfo >> 4) & 0xF;
   }
 
   public Integer getValue(int identifier) {
-    switch (identifier) {
-      case ST_NAME  : return st_name;
-      case ST_VALUE : return st_value;
-      case ST_SIZE  : return st_size;
-      case ST_INFO  : return st_info;
-      case ST_OTHER : return st_other;
-      case ST_SHNDX : return st_shndx;
-    }
-    return null;
+    return switch (identifier) {
+      case ST_NAME ->  stName;
+      case ST_VALUE -> stValue;
+      case ST_SIZE -> stSize;
+      case ST_INFO -> stInfo;
+      case ST_OTHER -> stOther;
+      case ST_SHNDX -> stShndx;
+      default -> null;
+    };
   }
 }

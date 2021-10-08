@@ -48,6 +48,7 @@ class SearchNode implements Comparable<SearchNode> {
     this.prev = prev;
   }
 
+  @Override
   public int compareTo(SearchNode o) {
     int ret = this.heur - o.heur;
 
@@ -60,9 +61,7 @@ class SearchNode implements Comparable<SearchNode> {
 
   @Override
   public boolean equals(Object other) {
-    if (other instanceof SearchNode) {
-      SearchNode o = (SearchNode) other;
-
+    if (other instanceof SearchNode o) {
       return (this.loc.equals(o.loc)
           && (this.dir == null ? o.dir == null : (o.dir != null && this.dir.equals(o.dir)))
           && this.dest.equals(o.dest));
@@ -116,7 +115,7 @@ class SearchNode implements Comparable<SearchNode> {
     if (ret < 0) {
       ret = Math.abs(dx) + Math.abs(dy);
     }
-    boolean penalizeDoubleTurn = false;
+    var penalizeDoubleTurn = false;
     if (curDir == Direction.EAST) {
       penalizeDoubleTurn = dx < 0;
     } else if (curDir == Direction.WEST) {
@@ -167,22 +166,16 @@ class SearchNode implements Comparable<SearchNode> {
   }
 
   public SearchNode next(Direction moveDir, boolean crossing) {
-    int newDist = dist;
-    Direction connDir = conn.getDirection();
-    Location nextLoc = loc.translate(moveDir, 10);
-    boolean exWire = extendsWire && moveDir == connDir;
-    if (exWire) {
-      newDist += 9;
-    } else {
-      newDist += 10;
-    }
+    var newDist = dist;
+    final var connDir = conn.getDirection();
+    final var nextLoc = loc.translate(moveDir, 10);
+    final var exWire = extendsWire && moveDir == connDir;
+    newDist += (exWire) ? 9 : 10;
     if (crossing) newDist += CROSSING_PENALTY;
     if (moveDir != dir) newDist += TURN_PENALTY;
-    if (nextLoc.getX() < 0 || nextLoc.getY() < 0) {
-      return null;
-    } else {
-      return new SearchNode(nextLoc, moveDir, conn, dest, newDist, exWire, this);
-    }
+    return (nextLoc.getX() < 0 || nextLoc.getY() < 0)
+      ? null
+      : new SearchNode(nextLoc, moveDir, conn, dest, newDist, exWire, this);
   }
 
   @Override

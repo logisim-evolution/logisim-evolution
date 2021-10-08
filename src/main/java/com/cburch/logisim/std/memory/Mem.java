@@ -139,7 +139,7 @@ public abstract class Mem extends InstanceFactory {
         : super.getInstanceFeature(instance, key);
   }
 
-  protected static String GetSizeLabel(int NrAddressBits) {
+  protected static String getSizeLabel(int NrAddressBits) {
     String[] labels = {"", "K", "M", "G", "T", "P", "E"};
     var pass = 0;
     var addrBits = NrAddressBits;

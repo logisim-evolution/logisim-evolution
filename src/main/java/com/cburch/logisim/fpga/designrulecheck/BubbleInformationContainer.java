@@ -17,13 +17,6 @@ public class BubbleInformationContainer {
   private int myOutBubblesStartIndex;
   private int myOutBubblesEndIndex;
 
-  public void BubbleInformation() {
-    myInBubblesStartIndex =
-        myInBubblesEndIndex =
-            myOutBubblesStartIndex =
-                myOutBubblesEndIndex = myInOutBubblesStartIndex = myInOutBubblesEndIndex = -1;
-  }
-
   public int getInOutEndIndex() {
     return myInOutBubblesEndIndex;
   }
@@ -85,8 +78,8 @@ public class BubbleInformationContainer {
     myInBubblesEndIndex = endIndex;
   }
 
-  public void setOutputBubblesInformation(int startIndex, int EndIndex) {
+  public void setOutputBubblesInformation(int startIndex, int endIndex) {
     myOutBubblesStartIndex = startIndex;
-    myOutBubblesEndIndex = EndIndex;
+    myOutBubblesEndIndex = endIndex;
   }
 }

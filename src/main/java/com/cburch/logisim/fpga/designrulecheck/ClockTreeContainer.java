@@ -67,7 +67,7 @@ public class ClockTreeContainer {
     return result;
   }
 
-  public boolean NetContainsClockConnection(Net netInfo) {
+  public boolean netContainsClockConnection(Net netInfo) {
     for (final var solderPoint : clockSources) {
       if (solderPoint.getParentNet().equals(netInfo)) return true;
     }
@@ -77,7 +77,7 @@ public class ClockTreeContainer {
     return false;
   }
 
-  public boolean NetContainsClockSource(Net netInfo) {
+  public boolean netContainsClockSource(Net netInfo) {
     for (final var solderPoint : clockSources) {
       if (solderPoint.getParentNet().equals(netInfo)) return true;
     }

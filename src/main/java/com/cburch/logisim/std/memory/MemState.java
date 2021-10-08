@@ -45,7 +45,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
   @Override
   public void bytesChanged(HexModel source, long start, long numBytes, long[] oldValues) {}
 
-  private void CalculateDisplayParameters(
+  private void calculateDisplayParameters(
       Graphics g, int offsetX, int offsetY, int DisplayWidth, int DisplayHeight) {
     recalculateParameters = false;
     displayWindow = Bounds.create(offsetX, offsetY, DisplayWidth, DisplayHeight);
@@ -165,11 +165,11 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
     return (1L << contents.getLogLength()) - 1;
   }
 
-  int GetNrOfLineItems() {
+  int getNrOfLineItems() {
     return nrDataSymbolsEachLine;
   }
 
-  int GetNrOfLines() {
+  int getNrOfLines() {
     return NrOfLines;
   }
 
@@ -208,7 +208,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
       int displayHeight,
       int nrItemsToHighlight) {
     if (recalculateParameters || windowChanged(offsetX, offsetY, displayWidth, displayHeight))
-      CalculateDisplayParameters(g, offsetX, offsetY, displayWidth, displayHeight);
+      calculateDisplayParameters(g, offsetX, offsetY, displayWidth, displayHeight);
     final var blockHeight = NrOfLines * (CharHeight + 2);
     final var totalNrOfEntries = (1 << getAddrBits());
     g.setColor(Color.LIGHT_GRAY);

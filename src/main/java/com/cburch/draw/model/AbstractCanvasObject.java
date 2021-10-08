@@ -19,7 +19,6 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Graphics;
-import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import org.w3c.dom.Document;
@@ -72,9 +71,6 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   }
 
   @Override
-  public abstract boolean contains(Location loc, boolean assumeFilled);
-
-  @Override
   public boolean containsAttribute(Attribute<?> attr) {
     return getAttributes().contains(attr);
   }
@@ -101,26 +97,14 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 
   // methods required by AttributeSet interface
   @Override
-  public abstract List<Attribute<?>> getAttributes();
-
-  @Override
   public AttributeSet getAttributeSet() {
     return this;
   }
 
   @Override
-  public abstract Bounds getBounds();
-
-  @Override
-  public abstract String getDisplayName();
-
-  @Override
   public String getDisplayNameAndLabel() {
     return getDisplayName();
   }
-
-  @Override
-  public abstract List<Handle> getHandles(HandleGesture gesture);
 
   protected Location getRandomPoint(Bounds bds, Random rand) {
     final var x = bds.getX();
@@ -133,9 +117,6 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
     }
     return null;
   }
-
-  @Override
-  public abstract <V> V getValue(Attribute<V> attr);
 
   @Override
   public void insertHandle(Handle desired, Handle previous) {
@@ -151,12 +132,6 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   public boolean isToSave(Attribute<?> attr) {
     return attr.isToSave();
   }
-
-  @Override
-  public abstract boolean matches(CanvasObject other);
-
-  @Override
-  public abstract int matchesHashCode();
 
   @Override
   public Handle moveHandle(HandleGesture gesture) {
@@ -190,9 +165,6 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
       return false;
     }
   }
-
-  @Override
-  public abstract void paint(Graphics g, HandleGesture gesture);
 
   @Override
   public void removeAttributeListener(AttributeListener l) {
@@ -256,9 +228,6 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   }
 
   public abstract Element toSvgElement(Document doc);
-
-  @Override
-  public abstract void translate(int dx, int dy);
 
   protected abstract void updateValue(Attribute<?> attr, Object value);
 }

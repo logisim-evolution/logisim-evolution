@@ -87,10 +87,10 @@ class CanvasPainter implements PropertyChangeListener {
         }
         GraphicsUtil.switchToWidth(g, 2);
         if (common != null && !w.equals(common)) {
-          g.setColor(Value.WIDTH_ERROR_HIGHLIGHT_COLOR);
+          g.setColor(Value.widthErrorHighlightColor);
           g.drawOval(p.getX() - 5, p.getY() - 5, 10, 10);
         }
-        g.setColor(Value.WIDTH_ERROR_COLOR);
+        g.setColor(Value.widthErrorColor);
         g.drawOval(p.getX() - 4, p.getY() - 4, 8, 8);
         GraphicsUtil.switchToWidth(g, 3);
         GraphicsUtil.outlineText(
@@ -98,10 +98,10 @@ class CanvasPainter implements PropertyChangeListener {
             caption,
             p.getX() + 4,
             p.getY() + 1 + fm.getAscent(),
-            Value.WIDTH_ERROR_CAPTION_COLOR,
+            Value.widthErrorCaptionColor,
             common != null && !w.equals(common)
-                ? Value.WIDTH_ERROR_HIGHLIGHT_COLOR
-                : Value.WIDTH_ERROR_CAPTION_BGCOLOR);
+                ? Value.widthErrorHighlightColor
+                : Value.widthErrorCaptionBgcolor);
       }
     }
     g.setColor(Color.BLACK);

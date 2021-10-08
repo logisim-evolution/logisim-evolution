@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-public class CollectionUtil {
+public final class CollectionUtil {
   private static class UnionList<E> extends AbstractList<E> {
     private final List<? extends E> listA;
     private final List<? extends E> listB;
@@ -62,6 +62,8 @@ public class CollectionUtil {
     }
   }
 
+  private CollectionUtil() {}
+
   public static <E> List<E> createUnmodifiableListUnion(List<? extends E> a, List<? extends E> b) {
     return new UnionList<>(a, b);
   }
@@ -69,6 +71,4 @@ public class CollectionUtil {
   public static <E> Set<E> createUnmodifiableSetUnion(Set<? extends E> a, Set<? extends E> b) {
     return new UnionSet<>(a, b);
   }
-
-  private CollectionUtil() {}
 }

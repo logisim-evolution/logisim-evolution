@@ -104,29 +104,23 @@ class XmlReader {
     }
 
     Library findLibrary(String libName) throws XmlReaderException {
-      if (libName == null || libName.equals("")) {
-        return file;
-      }
-
+      if (libName == null || libName.isEmpty()) return file;
       final var ret = libs.get(libName);
-      if (ret == null) {
-        throw new XmlReaderException(S.get("libMissingError", libName));
-      }
-
+      if (ret == null) throw new XmlReaderException(S.get("libMissingError", libName));
       return ret;
     }
 
     void initAttributeSet(
-        Element parentElt,
+        Element parent,
         AttributeSet attrs,
         AttributeDefaultProvider defaults,
-        boolean IsHolyCross,
-        boolean IsEvolution)
+        boolean isHolyCross,
+        boolean isEvolution)
         throws XmlReaderException {
-      ArrayList<String> messages = null;
+      List<String> messages = null;
 
       final var attrsDefined = new HashMap<String, String>();
-      for (final var attrElt : XmlIterator.forChildElements(parentElt, "a")) {
+      for (final var attrElt : XmlIterator.forChildElements(parent, "a")) {
         if (!attrElt.hasAttribute("name")) {
           if (messages == null) messages = new ArrayList<>();
           messages.add(S.get("attrNameMissingError"));
@@ -135,7 +129,7 @@ class XmlReader {
           String attrVal;
           if (attrElt.hasAttribute("val")) {
             attrVal = attrElt.getAttribute("val");
-            if (attrName.equals("filePath")) {
+            if ("filePath".equals(attrName)) {
               /* De-relativize the path */
               var dirPath = "";
               if (srcFilePath != null)
@@ -168,8 +162,8 @@ class XmlReader {
           if (attr.equals(ProbeAttributes.PROBEAPPEARANCE)) {
             attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, StdAttr.APPEAR_CLASSIC);
           } else if (attr.equals(StdAttr.APPEARANCE)) {
-            if (IsHolyCross) attrs.setValue(StdAttr.APPEARANCE, StdAttr.APPEAR_CLASSIC);
-            else if (IsEvolution) attrs.setValue(StdAttr.APPEARANCE, StdAttr.APPEAR_EVOLUTION);
+            if (isHolyCross) attrs.setValue(StdAttr.APPEARANCE, StdAttr.APPEAR_CLASSIC);
+            else if (isEvolution) attrs.setValue(StdAttr.APPEARANCE, StdAttr.APPEAR_EVOLUTION);
             else {
               Object val = defaults.getDefaultAttributeValue(attr, ver);
               if (val != null) {
@@ -197,7 +191,7 @@ class XmlReader {
       }
     }
 
-    private void initMouseMappings(Element elt, boolean IsHolyCross, boolean IsEvolution) {
+    private void initMouseMappings(Element elt, boolean isHolyCross, boolean isEvolution) {
       final var map = file.getOptions().getMouseMappings();
       for (final var sub_elt : XmlIterator.forChildElements(elt, "tool")) {
         Tool tool;
@@ -208,22 +202,22 @@ class XmlReader {
           continue;
         }
 
-        final var mods_str = sub_elt.getAttribute("map");
-        if (mods_str == null || mods_str.equals("")) {
+        final var modsStr = sub_elt.getAttribute("map");
+        if (modsStr == null || "".equals(modsStr)) {
           loader.showError(S.get("mappingMissingError"));
           continue;
         }
         int mods;
         try {
-          mods = InputEventUtil.fromString(mods_str);
+          mods = InputEventUtil.fromString(modsStr);
         } catch (NumberFormatException e) {
-          loader.showError(S.get("mappingBadError", mods_str));
+          loader.showError(S.get("mappingBadError", modsStr));
           continue;
         }
 
         tool = tool.cloneTool();
         try {
-          initAttributeSet(sub_elt, tool.getAttributeSet(), tool, IsHolyCross, IsEvolution);
+          initAttributeSet(sub_elt, tool.getAttributeSet(), tool, isHolyCross, isEvolution);
         } catch (XmlReaderException e) {
           addErrors(e, "mapping." + tool.getName());
         }
@@ -232,15 +226,15 @@ class XmlReader {
       }
     }
 
-    private void initToolbarData(Element elt, boolean IsHolyCross, boolean IsEvolution) {
+    private void initToolbarData(Element elt, boolean isHolyCross, boolean isEvolution) {
       final var toolbar = file.getOptions().getToolbarData();
-      for (final var sub_elt : XmlIterator.forChildElements(elt)) {
-        if (sub_elt.getTagName().equals("sep")) {
+      for (final var subElement : XmlIterator.forChildElements(elt)) {
+        if ("sep".equals(subElement.getTagName())) {
           toolbar.addSeparator();
-        } else if (sub_elt.getTagName().equals("tool")) {
+        } else if ("tool".equals(subElement.getTagName())) {
           Tool tool;
           try {
-            tool = toTool(sub_elt);
+            tool = toTool(subElement);
           } catch (XmlReaderException e) {
             addErrors(e, "toolbar");
             continue;
@@ -248,7 +242,7 @@ class XmlReader {
           if (tool != null) {
             tool = tool.cloneTool();
             try {
-              initAttributeSet(sub_elt, tool.getAttributeSet(), tool, IsHolyCross, IsEvolution);
+              initAttributeSet(subElement, tool.getAttributeSet(), tool, isHolyCross, isEvolution);
             } catch (XmlReaderException e) {
               addErrors(e, "toolbar." + tool.getName());
             }
@@ -257,7 +251,7 @@ class XmlReader {
                 tool.getAttributeSet()
                     .setValue(
                         ProbeAttributes.PROBEAPPEARANCE,
-                        ProbeAttributes.GetDefaultProbeAppearance());
+                        ProbeAttributes.getDefaultProbeAppearance());
               if (tool.getAttributeSet().containsAttribute(StdAttr.APPEARANCE))
                 tool.getAttributeSet()
                     .setValue(StdAttr.APPEARANCE, AppPreferences.getDefaultAppearance());
@@ -268,12 +262,11 @@ class XmlReader {
       }
     }
 
-    private Map<Element, Component> loadKnownComponents(
-        Element elt, boolean IsHolyCross, boolean IsEvolution) {
+    private Map<Element, Component> loadKnownComponents(Element elt, boolean isHolyCross, boolean isEvolution) {
       final var known = new HashMap<Element, Component>();
       for (final var sub : XmlIterator.forChildElements(elt, "comp")) {
         try {
-          final var comp = XmlCircuitReader.getComponent(sub, this, IsHolyCross, IsEvolution);
+          final var comp = XmlCircuitReader.getComponent(sub, this, isHolyCross, isEvolution);
           if (comp != null) known.put(sub, comp);
         } catch (XmlReaderException ignored) {
         }
@@ -374,7 +367,7 @@ class XmlReader {
           loader.showError(S.get("toolNameMissingError"));
         } else {
           final var toolStr = subElt.getAttribute("name");
-          Tool tool = ret.getTool(toolStr);
+          final var tool = ret.getTool(toolStr);
           if (tool != null) {
             try {
               initAttributeSet(subElt, tool.getAttributeSet(), tool, isHolyCross, isEvolution);
@@ -392,7 +385,7 @@ class XmlReader {
       final var versionString = elt.getAttribute("source");
       var isHolyCrossFile = false;
       var isEvolutionFile = true;
-      if (versionString.equals("")) {
+      if ("".equals(versionString)) {
         sourceVersion = BuildInfo.version;
       } else {
         sourceVersion = LogisimVersion.fromString(versionString);
@@ -431,7 +424,7 @@ class XmlReader {
         switch (circElt.getTagName()) {
           case "vhdl":
             name = circElt.getAttribute("name");
-            if (name == null || name.equals("")) {
+            if (name == null || "".equals(name)) {
               addError(S.get("circNameMissingError"), "C??");
             }
             final var vhdl = circElt.getTextContent();
@@ -443,7 +436,7 @@ class XmlReader {
           case "circuit":
             name = circElt.getAttribute("name");
 
-            if (name == null || name.equals("")) {
+            if (name == null || "".equals(name)) {
               addError(S.get("circNameMissingError"), "C??");
             }
             final var circData = new CircuitData(circElt, new Circuit(name, file, proj));
@@ -516,7 +509,7 @@ class XmlReader {
     Tool toTool(Element elt) throws XmlReaderException {
       final var lib = findLibrary(elt.getAttribute("lib"));
       final var name = elt.getAttribute("name");
-      if (name == null || name.equals("")) {
+      if (name == null || "".equals(name)) {
         throw new XmlReaderException(S.get("toolNameMissing"));
       }
       final var tool = lib.getTool(name);
@@ -526,6 +519,22 @@ class XmlReader {
       return tool;
     }
   }
+
+  public static final Logger logger = LoggerFactory.getLogger(XmlReader.class);
+  private final LibraryLoader loader;
+
+  /**
+   * Path of the source file -- it is used to make the paths of the components stored in the file
+   * absolute, to prevent the system looking for them in some strange directories.
+   */
+  private final String srcFilePath;
+
+  XmlReader(Loader loader, File file) {
+    this.loader = loader;
+    if (file != null) this.srcFilePath = file.getAbsolutePath();
+    else this.srcFilePath = null;
+  }
+
 
   /**
    * Change label names in an XML tree according to a list of suggested labels.
@@ -573,7 +582,7 @@ class XmlReader {
         // Each attribute node should have a name field
         if (attrElt.hasAttribute("name")) {
           final var aName = attrElt.getAttribute("name");
-          if (aName.equals("label")) {
+          if ("label".equals(aName)) {
             // Found a label node in a tool, clean it up!
             attrElt.setAttribute("val", "");
           }
@@ -779,7 +788,7 @@ class XmlReader {
           for (final var attrElt : XmlIterator.forChildElements(circElt, "a")) {
             if (attrElt.hasAttribute("name")) {
               final var aName = attrElt.getAttribute("name");
-              if (aName.equals("label")) {
+              if ("label".equals(aName)) {
                 final var label = attrElt.getAttribute("val");
                 if (label.length() > 0) {
                   attrValuesList.add(label);
@@ -816,7 +825,7 @@ class XmlReader {
           for (final var attrElt : XmlIterator.forChildElements(compElt, "a")) {
             if (attrElt.hasAttribute("name")) {
               final var aName = attrElt.getAttribute("name");
-              if (aName.equals("label")) {
+              if ("label".equals(aName)) {
                 final var label = attrElt.getAttribute("val");
                 if (label.length() > 0) {
                   attrValuesList.add(label);
@@ -897,7 +906,7 @@ class XmlReader {
           for (final var attrElt : XmlIterator.forChildElements(circElt, "a")) {
             if (attrElt.hasAttribute("name")) {
               final var aName = attrElt.getAttribute("name");
-              if (aName.equals("label")) {
+              if ("label".equals(aName)) {
                 final var label = attrElt.getAttribute("val");
                 if (validLabels.containsKey(label)) {
                   attrElt.setAttribute("val", validLabels.get(label));
@@ -938,7 +947,7 @@ class XmlReader {
           for (final var attrElt : XmlIterator.forChildElements(compElt, "a")) {
             if (attrElt.hasAttribute("name")) {
               final var aName = attrElt.getAttribute("name");
-              if (aName.equals("label")) {
+              if ("label".equals(aName)) {
                 final var label = attrElt.getAttribute("val");
                 if (validLabels.containsKey(label)) {
                   attrElt.setAttribute("val", validLabels.get(label));
@@ -949,22 +958,6 @@ class XmlReader {
         }
       }
     }
-  }
-
-  public static final Logger logger = LoggerFactory.getLogger(XmlReader.class);
-
-  private final LibraryLoader loader;
-
-  /**
-   * Path of the source file -- it is used to make the paths of the components stored in the file
-   * absolute, to prevent the system looking for them in some strange directories.
-   */
-  private final String srcFilePath;
-
-  XmlReader(Loader loader, File file) {
-    this.loader = loader;
-    if (file != null) this.srcFilePath = file.getAbsolutePath();
-    else this.srcFilePath = null;
   }
 
   private void addToLabelMap(HashMap<String, String> labelMap, String srcLabel, String dstLabel, String toolNames) {
@@ -987,7 +980,7 @@ class XmlReader {
         Element edit = null;
         for (final var elt : XmlIterator.forChildElements(toolbar, "tool")) {
           final var eltName = elt.getAttribute("name");
-          if (eltName != null && !eltName.equals("")) {
+          if (eltName != null && !eltName.isEmpty()) {
             if (eltName.equals(SelectTool._ID)) select = elt;
             if (eltName.equals(WiringTool._ID)) wiring = elt;
             if (eltName.equals(EditTool._ID)) edit = elt;
@@ -1081,7 +1074,7 @@ class XmlReader {
     for (final var libElt : XmlIterator.forChildElements(root, "lib")) {
       final var desc = libElt.getAttribute("desc");
       final var label = libElt.getAttribute("name");
-      if (desc != null && desc.equals("#Legacy")) {
+      if ("#Legacy".equals(desc)) {
         legacyElt = libElt;
         legacyLabel = label;
       }
@@ -1098,7 +1091,7 @@ class XmlReader {
         elt.getParentNode().removeChild(elt);
       }
       if (componentsRemoved) {
-        String error = "Some components have been deleted. The Legacy library is not supported.";
+        final var error = "Some components have been deleted. The Legacy library is not supported.";
         final var elt = doc.createElement("message");
         elt.setAttribute("value", error);
         root.appendChild(elt);
@@ -1117,25 +1110,26 @@ class XmlReader {
     for (final var libElt : XmlIterator.forChildElements(root, "lib")) {
       final var desc = libElt.getAttribute("desc");
       final var label = libElt.getAttribute("name");
-      if (desc == null) {
-        // skip these tests
-      } else if (desc.equals("#Base")) {
-        oldBaseElt = libElt;
-        oldBaseLabel = label;
-      } else if (desc.equals("#Wiring")) {
-        // Wiring library already in file. This shouldn't happen, but if
-        // somehow it does, we don't want to add it again.
-        return;
-      } else if (desc.equals("#Gates")) {
-        gatesElt = libElt;
-        gatesLabel = label;
+
+      if (desc != null) {
+        if ("#Base".equals(desc)) {
+          oldBaseElt = libElt;
+          oldBaseLabel = label;
+        } else if ("#Wiring".equals(desc)) {
+          // Wiring library already in file. This shouldn't happen, but if
+          // somehow it does, we don't want to add it again.
+          return;
+        } else if ("#Gates".equals(desc)) {
+          gatesElt = libElt;
+          gatesLabel = label;
+        }
       }
 
       if (firstLibElt == null) firstLibElt = libElt;
       lastLibElt = libElt;
       try {
         if (label != null) {
-          int thisLabel = Integer.parseInt(label);
+          final var thisLabel = Integer.parseInt(label);
           if (thisLabel > maxLabel) maxLabel = thisLabel;
         }
       } catch (NumberFormatException ignored) {

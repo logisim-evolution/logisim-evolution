@@ -11,7 +11,7 @@ package com.cburch.logisim.gui.prefs;
 
 import static com.cburch.logisim.gui.Strings.S;
 
-import com.cburch.logisim.fpga.prefs.FPGAOptions;
+import com.cburch.logisim.fpga.prefs.FpgaOptions;
 import com.cburch.logisim.fpga.prefs.SoftwaresOptions;
 import com.cburch.logisim.gui.generic.LFrame;
 import com.cburch.logisim.util.LocaleListener;
@@ -43,7 +43,7 @@ public class PreferencesFrame extends LFrame.Dialog {
           new SimOptions(this),
           new ExperimentalOptions(this),
           new SoftwaresOptions(this),
-          new FPGAOptions(this),
+          new FpgaOptions(this),
         };
     tabbedPane = new JTabbedPane();
     int intlIndex = -1;
@@ -51,7 +51,7 @@ public class PreferencesFrame extends LFrame.Dialog {
       final var panel = panels[index];
       tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
       if (panel instanceof IntlOptions) intlIndex = index;
-      if (panel instanceof FPGAOptions) fpgaTabIdx = index;
+      if (panel instanceof FpgaOptions) fpgaTabIdx = index;
     }
 
     final var contents = getContentPane();

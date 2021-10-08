@@ -183,7 +183,7 @@ public class GifEncoder {
   }
 
   private static class LZWCompressor {
-    static void LZWCompress(OutputStream output, int codesize, byte[] toCompress)
+    static void lzwCompress(OutputStream output, int codesize, byte[] toCompress)
         throws IOException {
       byte c;
       short index;
@@ -524,7 +524,7 @@ public class GifEncoder {
     if (codesize == 1) ++codesize;
     output.write(codesize);
 
-    LZWCompressor.LZWCompress(output, codesize, pixels);
+    LZWCompressor.lzwCompress(output, codesize, pixels);
     output.write(0);
 
     id = new ImageDescriptor((byte) 0, (byte) 0, ';');

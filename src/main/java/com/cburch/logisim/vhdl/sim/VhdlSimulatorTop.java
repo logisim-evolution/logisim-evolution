@@ -97,7 +97,7 @@ public class VhdlSimulatorTop implements CircuitListener {
 
     /* Hide and empty console log */
     if (getProject().getFrame() != null) {
-      getProject().getFrame().setVhdlSimulatorConsoleStatus(false);
+      getProject().getFrame().setVhdlSimulatorConsoleStatusInvisible();
       getProject().getFrame().getVhdlSimulatorConsole().clear();
     }
   }
@@ -147,7 +147,7 @@ public class VhdlSimulatorTop implements CircuitListener {
     }
 
     if (i != 10) {
-      getProject().getFrame().setVhdlSimulatorConsoleStatus(true);
+      getProject().getFrame().setVhdlSimulatorConsoleStatusVisible();
     }
 
     setState(State.ENABLED);
@@ -199,22 +199,21 @@ public class VhdlSimulatorTop implements CircuitListener {
       e.printStackTrace();
     }
 
-    List<Component> VhdlComponents =
-        VhdlSimConstants.getVhdlComponents(project.getCircuitState(), true);
-    for (int index = 0; index < VhdlComponents.size(); index++) {
-      ComponentFactory fact = VhdlComponents.get(index).getFactory();
+    List<Component> vhdlComponents = VhdlSimConstants.getVhdlComponents(project.getCircuitState(), true);
+    for (int index = 0; index < vhdlComponents.size(); index++) {
+      ComponentFactory fact = vhdlComponents.get(index).getFactory();
       String label = VhdlSimConstants.VHDL_COMPONENT_SIM_NAME + index;
       if (fact instanceof VhdlEntity)
-        ((VhdlEntity) fact).SetSimName(VhdlComponents.get(index).getAttributeSet(), label);
+        ((VhdlEntity) fact).setSimName(vhdlComponents.get(index).getAttributeSet(), label);
       else
-        ((VhdlEntityComponent) fact).SetSimName(VhdlComponents.get(index).getAttributeSet(), label);
+        ((VhdlEntityComponent) fact).setSimName(vhdlComponents.get(index).getAttributeSet(), label);
     }
 
-    vhdlTop.generate(VhdlComponents);
-    tclRun.generate(VhdlComponents);
+    vhdlTop.generate(vhdlComponents);
+    tclRun.generate(vhdlComponents);
 
     /* Generate each component's file */
-    for (Component comp : VhdlComponents) {
+    for (Component comp : vhdlComponents) {
       ComponentFactory fact = comp.getFactory();
       if (fact instanceof VhdlEntity) ((VhdlEntity) fact).saveFile(comp.getAttributeSet());
       else ((VhdlEntityComponent) fact).saveFile(comp.getAttributeSet());

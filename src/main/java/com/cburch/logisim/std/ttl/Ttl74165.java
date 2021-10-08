@@ -51,7 +51,7 @@ public class Ttl74165 extends AbstractTtlGate {
           "P3",
           "Clock Inhibit"
         },
-        new Ttl74165HDLGenerator());
+        new Ttl74165HdlGenerator());
     super.setInstancePoker(Poker.class);
   }
 

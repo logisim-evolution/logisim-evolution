@@ -390,7 +390,7 @@ public class CircuitState implements InstanceData {
         final var remove = ram.reset(this, Instance.getInstanceFor(comp));
         if (remove) componentData.put(comp, null);
       } else if (comp.getFactory() instanceof Buzzer) {
-        Buzzer.StopBuzzerSound(comp, this);
+        Buzzer.stopBuzzerSound(comp, this);
       } else if (!(comp.getFactory() instanceof SubcircuitFactory)) {
         if (componentData.get(comp) instanceof ComponentDataGuiProvider guiProvider)
           guiProvider.destroy();
@@ -411,9 +411,8 @@ public class CircuitState implements InstanceData {
   }
 
   public void setData(Component comp, Object data) {
-    if (data instanceof CircuitState oldState) {
-      final var newState = (CircuitState) data;
-      // FIXME: What's the purpose of this block? The condition always false here.
+    if (data instanceof CircuitState newState) {
+      final var oldState = (CircuitState) componentData.get(comp);
       if (oldState != newState) {
         // There's something new going on with this subcircuit.
         // Maybe the subcircuit is new, or perhaps it's being

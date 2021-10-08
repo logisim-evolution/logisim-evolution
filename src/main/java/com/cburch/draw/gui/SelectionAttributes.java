@@ -75,7 +75,7 @@ public class SelectionAttributes extends AbstractAttributeSet {
 
   public Iterable<Map.Entry<AttributeSet, CanvasObject>> entries() {
     final var raw = selected.entrySet();
-    return new ArrayList<Map.Entry<AttributeSet, CanvasObject>>(raw);
+    return new ArrayList<>(raw);
   }
 
   @Override

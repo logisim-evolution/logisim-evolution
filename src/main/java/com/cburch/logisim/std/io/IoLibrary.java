@@ -55,7 +55,7 @@ public class IoLibrary extends Library {
     new FactoryDescription(HexDigit.class, S.getter("hexDigitComponent"), "hexdig.gif"),
     new FactoryDescription(DotMatrix.class, S.getter("dotMatrixComponent"), "dotmat.gif"),
     new FactoryDescription(Tty.class, S.getter("ttyComponent"), "tty.gif"),
-    new FactoryDescription(PortIO.class, S.getter("pioComponent"), "pio.gif"),
+    new FactoryDescription(PortIo.class, S.getter("pioComponent"), "pio.gif"),
     new FactoryDescription(ReptarLocalBus.class, S.getter("repLBComponent"), "localbus.gif"),
   };
 

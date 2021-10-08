@@ -18,42 +18,42 @@ import java.util.Map;
 
 public class BoardInformation {
 
-  private LinkedList<FpgaIoInformationContainer> MyComponents;
+  private List<FpgaIoInformationContainer> myComponents;
   private String boardName;
-  private BufferedImage BoardPicture;
+  private BufferedImage boardPicture;
   public FpgaClass fpga = new FpgaClass();
 
   public BoardInformation() {
     this.clear();
   }
 
-  public void AddComponent(FpgaIoInformationContainer comp) {
-    MyComponents.add(comp);
+  public void addComponent(FpgaIoInformationContainer comp) {
+    myComponents.add(comp);
   }
 
   public void clear() {
-    if (MyComponents == null) MyComponents = new LinkedList<>();
-    else MyComponents.clear();
+    if (myComponents == null) myComponents = new LinkedList<>();
+    else myComponents.clear();
     boardName = null;
     fpga.clear();
-    BoardPicture = null;
+    boardPicture = null;
   }
 
   public void setComponents(List<FpgaIoInformationContainer> comps) {
-    MyComponents.clear();
-    MyComponents.addAll(comps);
+    myComponents.clear();
+    myComponents.addAll(comps);
   }
 
-  public LinkedList<FpgaIoInformationContainer> GetAllComponents() {
-    return MyComponents;
+  public List<FpgaIoInformationContainer> getAllComponents() {
+    return myComponents;
   }
 
   public String getBoardName() {
     return boardName;
   }
 
-  public FpgaIoInformationContainer GetComponent(BoardRectangle rect) {
-    for (final var comp : MyComponents) {
+  public FpgaIoInformationContainer getComponent(BoardRectangle rect) {
+    for (final var comp : myComponents) {
       if (comp.getRectangle().equals(rect)) {
         return comp;
       }
@@ -69,7 +69,7 @@ public class BoardInformation {
     var count = 0;
     for (final var type : IoComponentTypes.KNOWN_COMPONENT_SET) {
       count = 0;
-      for (final var comp : MyComponents) {
+      for (final var comp : myComponents) {
         if (comp.getType().equals(type)) {
           list.add(count, comp.getNrOfPins());
           count++;
@@ -85,7 +85,7 @@ public class BoardInformation {
   }
 
   public String getComponentType(BoardRectangle rect) {
-    for (final var comp : MyComponents) {
+    for (final var comp : myComponents) {
       if (comp.getRectangle().equals(rect)) {
         return comp.getType().toString();
       }
@@ -94,7 +94,7 @@ public class BoardInformation {
   }
 
   public String getDriveStrength(BoardRectangle rect) {
-    for (final var comp : MyComponents) {
+    for (final var comp : myComponents) {
       if (comp.getRectangle().equals(rect)) {
         return DriveStrength.GetContraintedDriveStrength(comp.getDrive());
       }
@@ -103,12 +103,12 @@ public class BoardInformation {
   }
 
   public BufferedImage getImage() {
-    return BoardPicture;
+    return boardPicture;
   }
 
-  public ArrayList<BoardRectangle> getIoComponentsOfType(IoComponentTypes type, int nrOfPins) {
+  public List<BoardRectangle> getIoComponentsOfType(IoComponentTypes type, int nrOfPins) {
     final var result = new ArrayList<BoardRectangle>();
-    for (final var comp : MyComponents) {
+    for (final var comp : myComponents) {
       if (comp.getType().equals(type)) {
         if (!type.equals(IoComponentTypes.DIPSwitch) || nrOfPins <= comp.getNrOfPins()) {
           if (!type.equals(IoComponentTypes.PortIo) || nrOfPins <= comp.getNrOfPins()) {
@@ -121,7 +121,7 @@ public class BoardInformation {
   }
 
   public String getIoStandard(BoardRectangle rect) {
-    for (final var comp : MyComponents) {
+    for (final var comp : myComponents) {
       if (comp.getRectangle().equals(rect)) {
         return IoStandards.getConstraintedIoStandard(comp.getIoStandard());
       }
@@ -130,11 +130,11 @@ public class BoardInformation {
   }
 
   public int getNrOfDefinedComponents() {
-    return MyComponents.size();
+    return myComponents.size();
   }
 
   public String getPullBehavior(BoardRectangle rect) {
-    for (final var comp : MyComponents) {
+    for (final var comp : myComponents) {
       if (comp.getRectangle().equals(rect)) {
         return PullBehaviors.getContraintedPullString(comp.getPullBehavior());
       }
@@ -147,6 +147,6 @@ public class BoardInformation {
   }
 
   public void setImage(BufferedImage pict) {
-    BoardPicture = pict;
+    boardPicture = pict;
   }
 }

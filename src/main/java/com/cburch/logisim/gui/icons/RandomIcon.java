@@ -11,7 +11,6 @@ package com.cburch.logisim.gui.icons;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class RandomIcon extends BaseIcon {
 

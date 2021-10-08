@@ -26,16 +26,16 @@ public class DFlipFlop extends AbstractFlipFlop {
    */
   public static final String _ID = "D Flip-Flop";
 
-  private static class DFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
+  private static class DFFHDLGeneratorFactory extends AbstractFlipFlopHdlGeneratorFactory {
 
     public DFFHDLGeneratorFactory() {
       super(1, StdAttr.TRIGGER);
-      myPorts.add(Port.INPUT, "D", 1, 0);
+      myPorts.add(Port.INPUT, "d", 1, 0);
     }
 
     @Override
     public LineBuffer getUpdateLogic() {
-      return LineBuffer.getHdlBuffer().add("{{assign}}s_next_state {{=}} D;");
+      return LineBuffer.getHdlBuffer().add("{{assign}}s_nextState {{=}} d;");
     }
   }
 

@@ -27,7 +27,7 @@ public class Ttl7447 extends AbstractTtlGate {
         (byte) 16,
         new byte[] {9, 10, 11, 12, 13, 14, 15},
         new String[] {"B", "C", "LT", "BI", "RBI", "D", "A", "e", "d", "c", "b", "a", "g", "f"},
-        new Ttl7447HDLGenerator());
+        new Ttl7447HdlGenerator());
   }
 
   @Override
@@ -38,7 +38,7 @@ public class Ttl7447 extends AbstractTtlGate {
 
   @Override
   public void propagateTtl(InstanceState state) {
-    DisplayDecoder.ComputeDisplayDecoderOutputs(
+    DisplayDecoder.computeDisplayDecoderOutputs(
         state,
         DisplayDecoder.getdecval(state, false, 0, 6, 0, 1, 5),
         11,

@@ -57,7 +57,6 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -177,7 +176,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
         sz.height - ZOOM_BUTTON_SIZE - 30,
         ZOOM_BUTTON_SIZE,
         ZOOM_BUTTON_SIZE);
-    g.setColor(Value.UNKNOWN_COLOR);
+    g.setColor(Value.unknownColor);
     GraphicsUtil.switchToWidth(g, 3);
     int width = sz.width - ZOOM_BUTTON_MARGIN;
     int height = sz.height - ZOOM_BUTTON_MARGIN;
@@ -1020,8 +1019,8 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
         Circuit circ = null;
         if (t instanceof AddTool) {
           t = ((AddTool) t).getFactory();
-          if (t instanceof SubcircuitFactory) {
-            circ = ((SubcircuitFactory) t).getSubcircuit();
+          if (t instanceof SubcircuitFactory subFact) {
+            circ = subFact.getSubcircuit();
           }
         }
 
@@ -1209,7 +1208,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       Dimension sz = getSize();
 
       if (widthMessage != null) {
-        g.setColor(Value.WIDTH_ERROR_COLOR);
+        g.setColor(Value.widthErrorColor);
         msgY = paintString(g, msgY, widthMessage);
       } else g.setColor(TICK_RATE_COLOR);
 

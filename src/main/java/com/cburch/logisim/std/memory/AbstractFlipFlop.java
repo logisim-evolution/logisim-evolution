@@ -11,7 +11,6 @@ package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -64,7 +63,8 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
     private boolean isInside(InstanceState state, MouseEvent e) {
       final var loc = state.getInstance().getLocation();
-      int dx, dy;
+      int dx;
+      int dy;
       if (state.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
         dx = e.getX() - (loc.getX() - 20);
         dy = e.getY() - (loc.getY() + 10);
@@ -203,13 +203,6 @@ abstract class AbstractFlipFlop extends InstanceFactory {
   }
 
   @Override
-  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    return (attr.equals(StdAttr.APPEARANCE))
-        ? StdAttr.APPEAR_CLASSIC
-        : super.getDefaultAttributeValue(attr, ver);
-  }
-
-  @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     return (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC)
         ? Bounds.create(-40, -10, 40, 40)
@@ -340,16 +333,16 @@ abstract class AbstractFlipFlop extends InstanceFactory {
       GraphicsUtil.drawCenteredText(g, getInputName(i), x + 8, y + 8 + i * 20);
     }
 
-    Object Trigger = painter.getAttributeValue(triggerAttribute);
+    final var trigger = painter.getAttributeValue(triggerAttribute);
     // Draw clock or enable symbol
-    if (Trigger.equals(StdAttr.TRIG_RISING) || Trigger.equals(StdAttr.TRIG_FALLING)) {
+    if (trigger.equals(StdAttr.TRIG_RISING) || trigger.equals(StdAttr.TRIG_FALLING)) {
       painter.drawClockSymbol(x, y + 50);
     } else {
       GraphicsUtil.drawCenteredText(g, "E", x + 8, y + 48);
     }
 
     // Draw regular/negated input
-    if (Trigger.equals(StdAttr.TRIG_RISING) || Trigger.equals(StdAttr.TRIG_HIGH)) {
+    if (trigger.equals(StdAttr.TRIG_RISING) || trigger.equals(StdAttr.TRIG_HIGH)) {
       GraphicsUtil.switchToWidth(g, GraphicsUtil.CONTROL_WIDTH);
       g.drawLine(x - 10, y + 50, x - 1, y + 50);
     } else {

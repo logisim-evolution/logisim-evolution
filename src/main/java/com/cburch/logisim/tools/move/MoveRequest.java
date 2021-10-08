@@ -22,8 +22,7 @@ class MoveRequest {
 
   @Override
   public boolean equals(Object other) {
-    if (other instanceof MoveRequest) {
-      MoveRequest o = (MoveRequest) other;
+    if (other instanceof MoveRequest o) {
       return this.gesture == o.gesture && this.dx == o.dx && this.dy == o.dy;
     } else {
       return false;

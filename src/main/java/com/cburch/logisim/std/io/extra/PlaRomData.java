@@ -22,14 +22,17 @@ import javax.swing.JScrollPane;
 import javax.swing.ScrollPaneConstants;
 
 public class PlaRomData implements InstanceData {
-  private byte inputs, outputs, and;
-  private String SavedData = "";
-  private boolean[][] InputAnd;
-  private boolean[][] AndOutput;
-  public int rowhovered = -1, columnhovered = 0;
-  private Value[] InputValue;
-  private Value[] AndValue;
-  private Value[] OutputValue;
+  private byte inputs;
+  private byte outputs;
+  private byte and;
+  private String savedData = "";
+  private boolean[][] inputAnd;
+  private boolean[][] andOutput;
+  public int rowHovered = -1;
+  public int columnHovered = 0;
+  private Value[] inputValue;
+  private Value[] andValue;
+  private Value[] outputValue;
   private final String[] options =
       new String[] {
         new LocaleManager("resources/logisim", "gui").get("saveOption"), S.get("ramClearMenuItem")
@@ -42,17 +45,17 @@ public class PlaRomData implements InstanceData {
     this.inputs = inputs;
     this.outputs = outputs;
     this.and = and;
-    InputAnd = new boolean[getAnd()][getInputs() * 2];
-    AndOutput = new boolean[getAnd()][getOutputs()];
-    InputValue = new Value[getInputs()];
-    AndValue = new Value[getAnd()];
-    OutputValue = new Value[getOutputs()];
-    InitializeInputValue();
+    inputAnd = new boolean[getAnd()][getInputs() * 2];
+    andOutput = new boolean[getAnd()][getOutputs()];
+    inputValue = new Value[getInputs()];
+    andValue = new Value[getAnd()];
+    outputValue = new Value[getOutputs()];
+    initializeInputValue();
     setAndValue();
     setOutputValue();
   }
 
-  public void ClearMatrixValues() {
+  public void clearMatrixValues() {
     for (byte i = 0; i < getAnd(); i++) {
       for (byte j = 0; j < getOutputs(); j++) {
         setAndOutputValue(i, j, false);
@@ -61,7 +64,7 @@ public class PlaRomData implements InstanceData {
         setInputAndValue(i, k, false);
       }
     }
-    this.SavedData = "";
+    this.savedData = "";
   }
 
   @Override
@@ -73,20 +76,21 @@ public class PlaRomData implements InstanceData {
     }
   }
 
-  public void decodeSavedData(String s) {
+  public void decodeSavedData(String str) {
     // if empty, all to false so don't do anything
-    if (s == null || s.equals("")) return;
+    if (str == null || str.equals("")) return;
     // split the attribute content string in an array of strings with a single
     // information each one
-    String[] datas = s.split(" "), tmp;
+    final var datas = str.split(" ");
+    String[] tmp;
     byte value;
-    int cnt = 0;
-    for (String data : datas) {
+    var cnt = 0;
+    for (final var data : datas) {
       // if contains a '*' it has to fill the array with the first value for x (second
       // number) cycles
       if (data.contains("*")) {
         tmp = data.split("\\*");
-        for (int j = 0; j < Integer.parseInt(tmp[1]); j++) {
+        for (var j = 0; j < Integer.parseInt(tmp[1]); j++) {
           value = (byte) Integer.parseInt(tmp[0]);
           writeData(value, cnt);
           cnt++;
@@ -126,7 +130,7 @@ public class PlaRomData implements InstanceData {
             null,
             this.options,
             null);
-    SaveData();
+    saveData();
     return ret;
   }
 
@@ -135,15 +139,15 @@ public class PlaRomData implements InstanceData {
   }
 
   public boolean getAndOutputValue(int row, int column) {
-    return this.AndOutput[row][column];
+    return this.andOutput[row][column];
   }
 
   public Value getAndValue(byte i) {
-    return AndValue[i];
+    return andValue[i];
   }
 
   public boolean getInputAndValue(int row, int column) {
-    return this.InputAnd[row][column];
+    return this.inputAnd[row][column];
   }
 
   public byte getInputs() {
@@ -151,7 +155,7 @@ public class PlaRomData implements InstanceData {
   }
 
   public Value getInputValue(byte i) {
-    return this.InputValue[i];
+    return this.inputValue[i];
   }
 
   public byte getOutputs() {
@@ -159,45 +163,49 @@ public class PlaRomData implements InstanceData {
   }
 
   public Value getOutputValue(byte i) {
-    return OutputValue[i];
+    return outputValue[i];
   }
 
   public Value[] getOutputValues() {
-    Value[] OutputValuecopy = new Value[getOutputs()];
-    for (byte i = (byte) (getOutputs() - 1); i >= 0; i--) // reverse array
-      OutputValuecopy[i] = OutputValue[OutputValue.length - i - 1];
-    return OutputValuecopy;
+    final var outputValueCopy = new Value[getOutputs()];
+    // reverse array
+    for (byte i = (byte) (getOutputs() - 1); i >= 0; i--) {
+      outputValueCopy[i] = outputValue[outputValue.length - i - 1];
+    }
+    return outputValueCopy;
   }
 
   public String getSavedData() {
     // return the string to save in the .circ
-    return SavedData;
+    return savedData;
   }
 
   public String getSizeString() {
     return this.getInputs() + 'x' + this.getAnd() + "x" + this.getOutputs();
   }
 
-  private void InitializeInputValue() {
-    for (byte i = 0; i < getInputs(); i++) InputValue[i] = Value.UNKNOWN;
+  private void initializeInputValue() {
+    for (byte i = 0; i < getInputs(); i++) {
+      inputValue[i] = Value.UNKNOWN;
+    }
   }
 
-  private void SaveData() {
+  private void saveData() {
     // string to write inside the .circ to not lose data
     int row, column, size1 = getInputs() * getAnd(), size2 = getOutputs() * getAnd(), count = 0;
     char val, last = 'x';
-    boolean dirty = false;
-    StringBuilder data = new StringBuilder();
+    var dirty = false;
+    var data = new StringBuilder();
     // input-and matrix
-    for (int i = 0; i < size1; i++) {
+    for (var i = 0; i < size1; i++) {
       row = i / getInputs();
       column = i - row * getInputs();
       // 1= not line selected, 2 = input line selected, 0 = nothing selected in that
       // input line
-      if (InputAnd[row][column * 2]) {
+      if (inputAnd[row][column * 2]) {
         val = '1';
         dirty = true;
-      } else if (InputAnd[row][column * 2 + 1]) {
+      } else if (inputAnd[row][column * 2 + 1]) {
         val = '2';
         dirty = true;
       } else val = '0';
@@ -221,7 +229,7 @@ public class PlaRomData implements InstanceData {
       row = i / getOutputs();
       column = i - row * getOutputs();
       // 0 = nothing selected, 1 = node selected
-      if (AndOutput[row][column]) {
+      if (andOutput[row][column]) {
         val = '1';
         dirty = true;
       } else val = '0';
@@ -239,11 +247,11 @@ public class PlaRomData implements InstanceData {
       }
     }
     if (!dirty) data = new StringBuilder();
-    SavedData = data.toString();
+    savedData = data.toString();
   }
 
   public void setAndOutputValue(int row, int column, boolean b) {
-    this.AndOutput[row][column] = b;
+    andOutput[row][column] = b;
     // update all values
     setAndValue();
     setOutputValue();
@@ -252,37 +260,37 @@ public class PlaRomData implements InstanceData {
   private void setAndValue() {
     boolean thereisadot = false;
     for (byte i = 0; i < getAnd(); i++) {
-      AndValue[i] = Value.TRUE;
+      andValue[i] = Value.TRUE;
       for (byte j = 0; j < getInputs() * 2; j++) {
         if (getInputAndValue(i, j)) {
           thereisadot = true;
           if (j % 2 == 0) { // not
-            if (!getInputValue((byte) (j / 2)).isFullyDefined()) AndValue[i] = Value.ERROR;
+            if (!getInputValue((byte) (j / 2)).isFullyDefined()) andValue[i] = Value.ERROR;
             else if (getInputValue((byte) (j / 2)) == Value.TRUE) {
-              AndValue[i] = Value.FALSE;
+              andValue[i] = Value.FALSE;
               break;
             }
           } else if (j % 2 == 1) {
-            if (!getInputValue((byte) ((j - 1) / 2)).isFullyDefined()) AndValue[i] = Value.ERROR;
+            if (!getInputValue((byte) ((j - 1) / 2)).isFullyDefined()) andValue[i] = Value.ERROR;
             else if (getInputValue((byte) ((j - 1) / 2)) == Value.FALSE) {
-              AndValue[i] = Value.FALSE;
+              andValue[i] = Value.FALSE;
               break;
             }
           }
         }
       }
-      if (!thereisadot) AndValue[i] = Value.ERROR;
+      if (!thereisadot) andValue[i] = Value.ERROR;
       thereisadot = false;
     }
   }
 
   public void setHovered(int row, int column) {
-    rowhovered = row;
-    columnhovered = column;
+    rowHovered = row;
+    columnHovered = column;
   }
 
   public void setInputAndValue(int row, int column, boolean b) {
-    this.InputAnd[row][column] = b;
+    this.inputAnd[row][column] = b;
     // update all values
     setAndValue();
     setOutputValue();
@@ -290,23 +298,22 @@ public class PlaRomData implements InstanceData {
 
   public void setInputsValue(Value[] inputs) {
     int mininputs = getInputs() < inputs.length ? getInputs() : inputs.length;
-    System.arraycopy(inputs, inputs.length - mininputs, this.InputValue,
-        getInputs() - mininputs, mininputs);
+    System.arraycopy(inputs, inputs.length - mininputs, this.inputValue, getInputs() - mininputs, mininputs);
     setAndValue();
     setOutputValue();
   }
 
   private void setOutputValue() {
-    boolean thereisadot = false;
+    var thereisadot = false;
     for (byte i = 0; i < getOutputs(); i++) {
-      OutputValue[i] = Value.FALSE;
+      outputValue[i] = Value.FALSE;
       for (byte j = 0; j < getAnd(); j++) {
         if (getAndOutputValue(j, i)) {
-          OutputValue[i] = OutputValue[i].or(getAndValue(j));
+          outputValue[i] = outputValue[i].or(getAndValue(j));
           thereisadot = true;
         }
       }
-      if (!thereisadot) OutputValue[i] = Value.ERROR;
+      if (!thereisadot) outputValue[i] = Value.ERROR;
       thereisadot = false;
     }
   }
@@ -319,29 +326,30 @@ public class PlaRomData implements InstanceData {
       this.inputs = inputs;
       this.outputs = outputs;
       this.and = and;
-      boolean[][] oldInputAnd = Arrays.copyOf(InputAnd, InputAnd.length);
-      boolean[][] oldAndOutput = Arrays.copyOf(AndOutput, AndOutput.length);
-      InputAnd = new boolean[getAnd()][getInputs() * 2];
-      AndOutput = new boolean[getAnd()][getOutputs()];
-      InputValue = new Value[getInputs()];
-      AndValue = new Value[getAnd()];
-      OutputValue = new Value[getOutputs()];
+      final var oldInputAnd = Arrays.copyOf(inputAnd, inputAnd.length);
+      final var oldAndOutput = Arrays.copyOf(andOutput, andOutput.length);
+      inputAnd = new boolean[getAnd()][getInputs() * 2];
+      andOutput = new boolean[getAnd()][getOutputs()];
+      inputValue = new Value[getInputs()];
+      andValue = new Value[getAnd()];
+      outputValue = new Value[getOutputs()];
       for (byte i = 0; i < minand; i++) {
-        System.arraycopy(oldInputAnd[i], 0, InputAnd[i], 0, mininputs * 2);
-        System.arraycopy(oldAndOutput[i], 0, AndOutput[i], 0, minoutputs);
+        System.arraycopy(oldInputAnd[i], 0, inputAnd[i], 0, mininputs * 2);
+        System.arraycopy(oldAndOutput[i], 0, andOutput[i], 0, minoutputs);
       }
-      InitializeInputValue();
+      initializeInputValue();
       setAndValue();
       setOutputValue();
       // data to save in the .circ
-      SaveData();
+      saveData();
       return true;
     }
     return false;
   }
 
   private void writeData(byte value, int node) {
-    int row, column;
+    int row;
+    int column;
     // first matrix
     if (node < getInputs() * getAnd()) {
       row = node / getInputs();
@@ -349,18 +357,18 @@ public class PlaRomData implements InstanceData {
       switch (value) {
         case 0:
           // none selected
-          InputAnd[row][column * 2] = false;
-          InputAnd[row][column * 2 + 1] = false;
+          inputAnd[row][column * 2] = false;
+          inputAnd[row][column * 2 + 1] = false;
           break;
         case 1:
           // not selected
-          InputAnd[row][column * 2] = true;
-          InputAnd[row][column * 2 + 1] = false;
+          inputAnd[row][column * 2] = true;
+          inputAnd[row][column * 2 + 1] = false;
           break;
         case 2:
           // normal input selected
-          InputAnd[row][column * 2] = false;
-          InputAnd[row][column * 2 + 1] = true;
+          inputAnd[row][column * 2] = false;
+          inputAnd[row][column * 2 + 1] = true;
           break;
         default:
           System.err.println("PlaRom: Error in saved data ");
@@ -374,10 +382,10 @@ public class PlaRomData implements InstanceData {
       switch (value) {
         case 0:
           // not selected
-          AndOutput[row][column] = false;
+          andOutput[row][column] = false;
           break;
         case 1:
-          AndOutput[row][column] = true;
+          andOutput[row][column] = true;
           break;
         default:
           System.err.println("PlaRom: Error in saved data 2");

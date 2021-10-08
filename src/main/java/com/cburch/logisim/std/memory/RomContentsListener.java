@@ -40,8 +40,7 @@ class RomContentsListener implements HexModelListener {
 
     @Override
     public Action append(Action other) {
-      if (other instanceof Change) {
-        final var o = (Change) other;
+      if (other instanceof Change o) {
         final var oEnd = o.start + o.newValues.length;
         final var end = start + newValues.length;
         if (oEnd >= start && end >= o.start) {
@@ -79,8 +78,7 @@ class RomContentsListener implements HexModelListener {
 
     @Override
     public boolean shouldAppendTo(Action other) {
-      if (other instanceof Change) {
-        final var o = (Change) other;
+      if (other instanceof Change o) {
         final var oEnd = o.start + o.newValues.length;
         final var end = start + newValues.length;
         if (oEnd >= start && end >= o.start) return true;

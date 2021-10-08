@@ -59,7 +59,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.SortedSet;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
@@ -319,7 +318,7 @@ public class Circuit {
       return;
     }
     final var comps = new TreeSet<Component>(Location.CompareVertical);
-    final var lablers = new HashMap<String, AutoLabel>();
+    final var labelers = new HashMap<String, AutoLabel>();
     final var labelNames = new LinkedHashSet<String>();
     final var subCircuits = new LinkedHashSet<String>();
     for (final var comp : getNonWires()) {
@@ -353,8 +352,8 @@ public class Circuit {
         if (comp.getAttributeSet().getValue(StdAttr.LABEL).isEmpty()) {
           comps.add(comp);
           final var componentName = getAnnotationName(comp);
-          if (!lablers.containsKey(componentName)) {
-            lablers.put(componentName, new AutoLabel(componentName + "_0", this));
+          if (!labelers.containsKey(componentName)) {
+            labelers.put(componentName, new AutoLabel(componentName + "_0", this));
           }
         }
       }
@@ -367,14 +366,14 @@ public class Circuit {
     var sizeMightHaveChanged = false;
     for (final var comp : comps) {
       final var componentName = getAnnotationName(comp);
-      if (!lablers.containsKey(componentName) || !lablers.get(componentName).hasNext(this)) {
+      if (!labelers.containsKey(componentName) || !labelers.get(componentName).hasNext(this)) {
         // This should never happen!
         // FIXME: hardcoded string
         Reporter.report.addFatalError(
             "Annotate internal Error: Either there exists duplicate labels or the label syntax is incorrect!\nPlease try annotation on labeled components also\n");
         return;
       } else {
-        final var newLabel = lablers.get(componentName).getNext(this, comp.getFactory());
+        final var newLabel = labelers.get(componentName).getNext(this, comp.getFactory());
         final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
         act.set(comp, StdAttr.LABEL, newLabel);
         proj.doAction(act);

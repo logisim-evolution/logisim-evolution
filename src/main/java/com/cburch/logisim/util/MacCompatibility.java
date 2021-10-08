@@ -12,11 +12,14 @@ package com.cburch.logisim.util;
 import java.awt.Desktop;
 import javax.swing.JMenuBar;
 
-public class MacCompatibility {
+public final class MacCompatibility {
 
-  private static final boolean runningOnMac =
-      System.getProperty("os.name").toLowerCase().contains("mac");
+  private static final boolean runningOnMac = System.getProperty("os.name").toLowerCase().contains("mac");
   private static boolean usingScreenMenuBar = runningOnMac;
+
+  private MacCompatibility() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
 
   public static boolean isRunningOnMac() {
     return runningOnMac;

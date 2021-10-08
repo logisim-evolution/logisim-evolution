@@ -78,7 +78,7 @@ public interface ComponentFactory extends AttributeDefaultProvider {
 
   Bounds getOffsetBounds(AttributeSet attrs);
 
-  boolean HasThreeStateDrivers(AttributeSet attrs);
+  boolean hasThreeStateDrivers(AttributeSet attrs);
 
   boolean isHDLSupportedComponent(AttributeSet attrs);
 

@@ -44,6 +44,7 @@ public class PokeTool extends Tool {
   public static final String _ID = "Poke Tool";
 
   private class Listener implements CircuitListener {
+    @Override
     public void circuitChanged(CircuitEvent event) {
       final var circ = pokedCircuit;
       if (event.getCircuit() == circ
@@ -57,18 +58,16 @@ public class PokeTool extends Tool {
   }
 
   private static class WireCaret extends AbstractCaret {
-    //
     final Canvas canvas;
     final Wire wire;
     final int x;
     final int y;
 
-    WireCaret(Canvas c, Wire w, int x, int y, AttributeSet opts) {
-      canvas = c;
-      wire = w;
+    WireCaret(Canvas canvas, Wire wire, int x, int y, AttributeSet opts) {
+      this.canvas = canvas;
+      this.wire = wire;
       this.x = x;
       this.y = y;
-      // this.opts = opts;
     }
 
     @Override
@@ -89,32 +88,36 @@ public class PokeTool extends Tool {
       g.setColor(caretColor);
 
       var margin = 2;
-      var w = fm.stringWidth(vStr) + 2 * margin;
+      var width = fm.stringWidth(vStr) + 2 * margin;
       var pad = 0;
-      if (w < 45) {
-        pad = (45 - w) / 2;
-        w = 45;
+      if (width < 45) {
+        pad = (45 - width) / 2;
+        width = 45;
       }
       var h = fm.getAscent() + fm.getDescent() + 2 * margin;
 
-      final var r = canvas.getViewableRect();
-      var dx = Math.max(0, w - (r.x + r.width - x));
-      var dxx1 = (dx > w / 2) ? -30 : 15; // offset of callout stem
-      var dxx2 = (dx > w / 2) ? -15 : 30; // offset of callout stem
-      if (y - 15 - h <= r.y) {
-        // callout below cursor
-        int xx = x - dx, yy = y + 15 + h; // bottom left corner of box
-        int[] xp = {xx, xx, x + dxx1, x, x + dxx2, xx + w, x + w};
-        int[] yp = {yy, yy - h, yy - h, y, yy - h, yy - h, yy};
+      final var rect = canvas.getViewableRect();
+      final var dx = Math.max(0, width - (rect.x + rect.width - x));
+      // offset of callout stem
+      final var dxx1 = (dx > width / 2) ? -30 : 15;
+      // offset of callout stem
+      final var dxx2 = (dx > width / 2) ? -15 : 30;
+      if (y - 15 - h <= rect.y) {
+        // callout below cursor - bottom left corner of box
+        final var xx = x - dx;
+        final var yy = y + 15 + h;
+        final int[] xp = {xx, xx, x + dxx1, x, x + dxx2, xx + width, x + width};
+        final int[] yp = {yy, yy - h, yy - h, y, yy - h, yy - h, yy};
         g.fillPolygon(xp, yp, xp.length);
         g.setColor(Color.BLACK);
         g.drawPolygon(xp, yp, xp.length);
         g.drawString(vStr, xx + margin + pad, yy - margin - fm.getDescent());
       } else {
-        // callout above cursor
-        int xx = x - dx, yy = y - 15; // bottom left corner of box
-        int[] xp = {xx, xx, xx + w, xx + w, x + dxx2, x, x + dxx1};
-        int[] yp = {yy, yy - h, yy - h, yy, yy, y, yy};
+        // callout above cursor - bottom left corner of box
+        final var xx = x - dx;
+        final var yy = y - 15;
+        final int[] xp = {xx, xx, xx + width, xx + width, x + dxx2, x, x + dxx1};
+        final int[] yp = {yy, yy - h, yy - h, yy, yy, y, yy};
         g.fillPolygon(xp, yp, xp.length);
         g.setColor(Color.BLACK);
         g.drawPolygon(xp, yp, xp.length);
@@ -132,7 +135,7 @@ public class PokeTool extends Tool {
   private Circuit pokedCircuit;
   private Component pokedComponent;
   private Caret pokeCaret;
-  private Point OldPosition;
+  private Point oldPosition;
 
   public PokeTool() {
     this.listener = new Listener();
@@ -206,12 +209,12 @@ public class PokeTool extends Tool {
     } else {
       // move scrollpane dragging hand
       final var m = canvas.getMousePosition();
-      if (OldPosition == null || m == null) {
-        OldPosition = m;
+      if (oldPosition == null || m == null) {
+        oldPosition = m;
         return;
       }
-      int x = (int) (OldPosition.getX() - m.getX());
-      int y = (int) (OldPosition.getY() - m.getY());
+      int x = (int) (oldPosition.getX() - m.getX());
+      int y = (int) (oldPosition.getY() - m.getY());
       canvas.setCursor(move);
       canvas.setScrollBar(canvas.getHorizzontalScrollBar() + x, canvas.getVerticalScrollBar() + y);
     }
@@ -234,9 +237,8 @@ public class PokeTool extends Tool {
       for (final var c : circ.getAllContaining(loc, g)) {
         if (pokeCaret != null) break;
 
-        if (c instanceof Wire) {
-          final var caret = new WireCaret(
-                  canvas, (Wire) c, x, y, canvas.getProject().getOptions().getAttributeSet());
+        if (c instanceof Wire wire) {
+          final var caret = new WireCaret(canvas, wire, x, y, canvas.getProject().getOptions().getAttributeSet());
           setPokedComponent(circ, c, caret);
           canvas.setHighlightedWires(circ.getWireSet((Wire) c));
         } else {
@@ -245,7 +247,7 @@ public class PokeTool extends Tool {
             final var caret = p.getPokeCaret(event);
             setPokedComponent(circ, c, caret);
             final var attrs = c.getAttributeSet();
-            if (attrs != null && attrs.getAttributes().size() > 0) {
+            if (attrs != null && !attrs.getAttributes().isEmpty()) {
               final var proj = canvas.getProject();
               proj.getFrame().viewComponentAttributes(circ, c);
             }
@@ -262,7 +264,7 @@ public class PokeTool extends Tool {
 
   @Override
   public void mouseReleased(Canvas canvas, Graphics g, MouseEvent e) {
-    OldPosition = null;
+    oldPosition = null;
     if (pokeCaret != null) {
       pokeCaret.mouseReleased(e);
       canvas.getProject().repaintCanvas();

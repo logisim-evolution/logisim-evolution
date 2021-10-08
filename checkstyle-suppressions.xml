@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+        "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+        "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<suppressions>
+    <suppress checks="MissingJavadocMethod"/>
+    <suppress checks="MissingJavadocType"/>
+    <suppress checks="JavadocParagraph"/>
+    <suppress checks="NeedBraces"/>
+    <suppress checks="LineLength"/>
+
+    <suppress checks="LocalVariableName"/>
+    <suppress checks="ParameterName"/>
+    <suppress checks="MemberName"/>
+    <suppress checks="TypeName"/>
+    <suppress checks="VariableDeclarationUsageDistance"/>
+    <suppress checks="AbbreviationAsWordInName"/>
+    <suppress checks="AvoidEscapedUnicodeCharacters"/>
+    <suppress checks="EmptyCatchBlock"/>
+    <suppress checks="MissingSwitchDefault"/>
+    <suppress checks="MultipleVariableDeclarations"/>
+    <suppress checks="EmptyBlock"/>
+    <suppress checks="EmptyLineSeparator"/>
+    <suppress checks="NonEmptyAtclauseDescription"/>
+    <suppress checks="SummaryJavadoc"/>
+    <suppress checks="OverloadMethodsDeclarationOrder"/>
+    <suppress checks="CustomImportOrder"/>
+    <suppress checks="SingleLineJavadoc"/>
+    <suppress checks="FallThrough"/>
+
+    <!-- Auto-generated file. https://github.com/logisim-evolution/logisim-evolution/issues/563-->
+    <suppress id="VhdlSyntax" files="src/main/java/com/cburch/logisim/vhdl/syntax/VhdlSyntax.java"/>
+</suppressions>

@@ -35,14 +35,14 @@ public class ArithmeticLibrary extends Library {
     new FactoryDescription(Shifter.class, S.getter("shifterComponent"), "shifter.gif"),
     new FactoryDescription(BitAdder.class, S.getter("bitAdderComponent"), "bitadder.gif"),
     new FactoryDescription(BitFinder.class, S.getter("bitFinderComponent"), "bitfindr.gif"),
-    new FactoryDescription(FPAdder.class, S.getter("fpAdderComponent"), "adder.gif"),
-    new FactoryDescription(FPSubtractor.class, S.getter("fpSubtractorComponent"), "subtractor.gif"),
-    new FactoryDescription(FPMultiplier.class, S.getter("fpMultiplierComponent"), "multiplier.gif"),
-    new FactoryDescription(FPDivider.class, S.getter("fpDividerComponent"), "divider.gif"),
-    new FactoryDescription(FPNegator.class, S.getter("fpNegatorComponent"), "negator.gif"),
-    new FactoryDescription(FPComparator.class, S.getter("fpComparatorComponent"), "comparator.gif"),
-    new FactoryDescription(FPToInt.class, S.getter("fpToIntComponent")),
-    new FactoryDescription(IntToFP.class, S.getter("intToFPComponent")),
+    new FactoryDescription(FpAdder.class, S.getter("fpAdderComponent"), "adder.gif"),
+    new FactoryDescription(FpSubtractor.class, S.getter("fpSubtractorComponent"), "subtractor.gif"),
+    new FactoryDescription(FpMultiplier.class, S.getter("fpMultiplierComponent"), "multiplier.gif"),
+    new FactoryDescription(FpDivider.class, S.getter("fpDividerComponent"), "divider.gif"),
+    new FactoryDescription(FpNegator.class, S.getter("fpNegatorComponent"), "negator.gif"),
+    new FactoryDescription(FpComparator.class, S.getter("fpComparatorComponent"), "comparator.gif"),
+    new FactoryDescription(FpToInt.class, S.getter("fpToIntComponent")),
+    new FactoryDescription(IntToFp.class, S.getter("intToFPComponent")),
   };
 
   private List<Tool> tools = null;

@@ -415,7 +415,7 @@ public class TruthTable {
     throw new IllegalStateException("missing row");
   }
 
-  public void setVisibleRows(ArrayList<Entry[]> newEntries, boolean force) {
+  public void setVisibleRows(List<Entry[]> newEntries, boolean force) {
     final var ni = getInputColumnCount();
     final var no = getOutputColumnCount();
     final var newRows = new ArrayList<Row>(newEntries.size());

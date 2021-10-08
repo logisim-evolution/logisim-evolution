@@ -57,10 +57,9 @@ public class BaseLibrary extends Library {
 
   @Override
   public Tool getTool(String name) {
-    Tool t = super.getTool(name);
-    if (t == null) {
-      if (name.equals(Text._ID))
-        return textAdder; // needed by XmlCircuitReader
+    final var t = super.getTool(name);
+    if (t == null && name.equals(Text._ID)) {
+      return textAdder; // needed by XmlCircuitReader
     }
     return t;
   }

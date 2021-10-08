@@ -19,6 +19,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.List;
 import javax.swing.ButtonGroup;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
@@ -144,7 +145,7 @@ public class MenuSimulate extends Menu {
     computeEnabled();
   }
 
-  public static ArrayList<String> getTickFrequencyStrings() {
+  public static List<String> getTickFrequencyStrings() {
     final var result = new ArrayList<String>();
     for (final var supportedTickFrequency : SUPPORTED_TICK_FREQUENCIES) {
       if (supportedTickFrequency < 1000) {
@@ -208,7 +209,7 @@ public class MenuSimulate extends Menu {
     assemblyWindow.setText("Assembly viewer");
   }
 
-  private void recreateStateMenu(JMenu menu, ArrayList<CircuitStateMenuItem> items, int code) {
+  private void recreateStateMenu(JMenu menu, List<CircuitStateMenuItem> items, int code) {
     menu.removeAll();
     menu.setEnabled(items.size() > 0);
     var first = true;

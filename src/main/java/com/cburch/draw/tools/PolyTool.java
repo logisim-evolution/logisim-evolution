@@ -12,7 +12,6 @@ package com.cburch.draw.tools;
 import com.cburch.draw.actions.ModelAddAction;
 import com.cburch.draw.canvas.Canvas;
 import com.cburch.draw.icons.DrawPolylineIcon;
-import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.draw.shapes.LineUtil;

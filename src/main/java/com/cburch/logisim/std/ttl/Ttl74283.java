@@ -31,7 +31,7 @@ public class Ttl74283 extends AbstractTtlGate {
         new String[] {
           "∑2", "B2", "A2", "∑1", "A1", "B1", "CIN", "C4", "∑4", "B4", "A4", "∑3", "A3", "B3"
         },
-        new Ttl74283HDLGenerator());
+        new Ttl74283HdlGenerator());
   }
 
   @Override

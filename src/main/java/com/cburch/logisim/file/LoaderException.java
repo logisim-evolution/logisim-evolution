@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.file;
 
+// FIXME: this is unchecked exception. We most likely shall convert this to checked one.
 public class LoaderException extends RuntimeException {
   private static final long serialVersionUID = 1L;
   private final boolean shown;

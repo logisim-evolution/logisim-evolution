@@ -18,7 +18,7 @@ public class Dag {
     @SuppressWarnings("unused")
     Object data;
 
-    final HashSet<Node> succs = new HashSet<>(); // of Nodes
+    final HashSet<Node> succs = new HashSet<>();
     int numPreds = 0;
     boolean mark;
 
@@ -36,7 +36,10 @@ public class Dag {
 
     final var src = createNode(srcData);
     final var dst = createNode(dstData);
-    if (src.succs.add(dst)) ++dst.numPreds; // add since not already present
+    if (src.succs.add(dst)) {
+      // add since not already present
+      ++dst.numPreds;
+    }
     return true;
   }
 
@@ -45,7 +48,8 @@ public class Dag {
 
     // mark all as unvisited
     for (final var n : nodes.values()) {
-      n.mark = false; // will become true once reached
+      // will become true once reached
+      n.mark = false;
     }
 
     // Search starting at query: If base is found, then it follows

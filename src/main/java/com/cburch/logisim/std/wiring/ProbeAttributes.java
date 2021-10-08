@@ -47,7 +47,7 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
           StdAttr.LABEL_FONT,
           PROBEAPPEARANCE);
 
-  public static AttributeOption GetDefaultProbeAppearance() {
+  public static AttributeOption getDefaultProbeAppearance() {
     if (AppPreferences.NEW_INPUT_OUTPUT_SHAPES.getBoolean()) return APPEAR_EVOLUTION_NEW;
     else return StdAttr.APPEAR_CLASSIC;
   }
@@ -58,7 +58,7 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
   Font labelfont = StdAttr.DEFAULT_LABEL_FONT;
   RadixOption radix = RadixOption.RADIX_2;
   BitWidth width = BitWidth.ONE;
-  AttributeOption Appearance = StdAttr.APPEAR_CLASSIC;
+  AttributeOption appearance = StdAttr.APPEAR_CLASSIC;
 
   public ProbeAttributes() {}
 
@@ -80,7 +80,7 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
     if (attr == StdAttr.LABEL_LOC) return (E) labelloc;
     if (attr == StdAttr.LABEL_FONT) return (E) labelfont;
     if (attr == RadixOption.ATTRIBUTE) return (E) radix;
-    if (attr == PROBEAPPEARANCE) return (E) Appearance;
+    if (attr == PROBEAPPEARANCE) return (E) appearance;
     return null;
   }
 
@@ -110,8 +110,8 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
       radix = NewValue;
     } else if (attr == PROBEAPPEARANCE) {
       AttributeOption NewAppearance = (AttributeOption) value;
-      if (Appearance.equals(NewAppearance)) return;
-      Appearance = NewAppearance;
+      if (appearance.equals(NewAppearance)) return;
+      appearance = NewAppearance;
     } else {
       throw new IllegalArgumentException("unknown attribute");
     }

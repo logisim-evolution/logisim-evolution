@@ -16,7 +16,7 @@ import com.cburch.logisim.tools.SetAttributeAction;
 import java.awt.event.KeyEvent;
 
 public class GateKeyboardModifier {
-  public static boolean TookKeyboardStrokes(
+  public static boolean tookKeyboardStrokes(
       int KeyCode,
       Component comp,
       AttributeSet attrs,

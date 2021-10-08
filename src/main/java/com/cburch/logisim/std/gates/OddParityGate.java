@@ -20,10 +20,10 @@ import com.cburch.logisim.util.LineBuffer;
 import java.awt.Graphics2D;
 
 class OddParityGate extends AbstractGate {
-  private static class XorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class XorGateHdlGeneratorFactory extends AbstractGateHdlGenerator {
     @Override
     public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      return LineBuffer.getBuffer().add(getParity(false, nrOfInputs, bitwidth > 1)).empty();
+      return LineBuffer.getBuffer().add(getParity(false, nrOfInputs, bitwidth > 1));
     }
   }
 
@@ -31,7 +31,7 @@ class OddParityGate extends AbstractGate {
   private final String ODD_PARITY_LABEL = "2k+1";
 
   private OddParityGate() {
-    super("Odd Parity", S.getter("oddParityComponent"), new XorGateHDLGeneratorFactory());
+    super("Odd Parity", S.getter("oddParityComponent"), new XorGateHdlGeneratorFactory());
     setRectangularLabel(ODD_PARITY_LABEL);
   }
 

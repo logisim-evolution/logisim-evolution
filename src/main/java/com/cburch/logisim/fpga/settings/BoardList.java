@@ -14,40 +14,40 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Enumeration;
+import java.util.List;
 import java.util.regex.Pattern;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
 
 public class BoardList {
-  public static String getBoardName(String BoardIdentifier) {
-    String[] parts;
-    if (BoardIdentifier.contains("url:")) parts = BoardIdentifier.split("/");
-    else parts = BoardIdentifier.split(Pattern.quote(File.separator));
+  public static String getBoardName(String boardIdentifier) {
+    final var parts =
+        boardIdentifier.contains("url:")
+            ? boardIdentifier.split("/")
+            : boardIdentifier.split(Pattern.quote(File.separator));
     return parts[parts.length - 1].replace(".xml", "");
   }
 
-  private static Collection<String> getBoards(Pattern p, String Match, String Element) {
-    ArrayList<String> ret = new ArrayList<>();
-    File file = new File(Element);
+  private static Collection<String> getBoards(Pattern pattern, String match, String element) {
+    final var ret = new ArrayList<String>();
+    final var file = new File(element);
     if (file.isDirectory()) {
-      ret.addAll(getBoardsfromDirectory(p, Match, file));
+      ret.addAll(getBoardsfromDirectory(pattern, match, file));
     } else {
-      ret.addAll(getBoardsfromJar(p, Match, file));
+      ret.addAll(getBoardsfromJar(pattern, match, file));
     }
     return ret;
   }
 
-  private static Collection<String> getBoardsfromDirectory(Pattern p, String Match, File Dir) {
-    ArrayList<String> ret = new ArrayList<>();
-    File[] fileList = Dir.listFiles();
-    for (File file : fileList) {
+  private static Collection<String> getBoardsfromDirectory(Pattern pattern, String match, File dir) {
+    final var ret = new ArrayList<String>();
+    final var fileList = dir.listFiles();
+    for (final var file : fileList) {
       if (file.isDirectory()) {
-        ret.addAll(getBoardsfromDirectory(p, Match, file));
+        ret.addAll(getBoardsfromDirectory(pattern, match, file));
       } else {
         try {
-          String fileName = file.getCanonicalPath();
-          boolean accept = p.matcher(fileName).matches() && fileName.contains(Match);
+          final var fileName = file.getCanonicalPath();
+          final var accept = pattern.matcher(fileName).matches() && fileName.contains(match);
           if (accept) {
             ret.add("file:" + fileName);
           }
@@ -59,22 +59,22 @@ public class BoardList {
     return ret;
   }
 
-  private static Collection<String> getBoardsfromJar(Pattern p, String Match, File Dir) {
+  private static Collection<String> getBoardsfromJar(Pattern pattern, String match, File dir) {
     // All path separators are defined with File.Separator, but when
     // browsing the .jar, java uses slash even in Windows
-    Match = Match.replaceAll("\\\\", "/");
-    ArrayList<String> ret = new ArrayList<>();
+    match = match.replaceAll("\\\\", "/");
+    final var ret = new ArrayList<String>();
     ZipFile zf;
     try {
-      zf = new ZipFile(Dir);
+      zf = new ZipFile(dir);
     } catch (IOException e) {
       throw new Error(e);
     }
-    Enumeration<? extends ZipEntry> e = zf.entries();
-    while (e.hasMoreElements()) {
-      ZipEntry ze = e.nextElement();
-      String fileName = ze.getName();
-      boolean accept = p.matcher(fileName).matches() && fileName.contains(Match);
+    final var entries = zf.entries();
+    while (entries.hasMoreElements()) {
+      final var ze = entries.nextElement();
+      final var fileName = ze.getName();
+      final var accept = pattern.matcher(fileName).matches() && fileName.contains(match);
       if (accept) {
         ret.add("url:" + fileName);
       }
@@ -87,40 +87,39 @@ public class BoardList {
     return ret;
   }
 
-  private static final String BoardResourcePath =
-      "resources" + File.separator + "logisim" + File.separator + "boards";
+  private static final String boardResourcePath = "resources" + File.separator + "logisim" + File.separator + "boards";
 
-  private final ArrayList<String> DefinedBoards = new ArrayList<>();
+  private final ArrayList<String> definedBoards = new ArrayList<>();
 
   public BoardList() {
-    String classPath = System.getProperty("java.class.path", File.pathSeparator);
-    String[] classPathElements = classPath.split(File.pathSeparator);
-    Pattern p = Pattern.compile(".*.xml");
-    for (String element : classPathElements) {
-      DefinedBoards.addAll(getBoards(p, BoardResourcePath, element));
+    final var classPath = System.getProperty("java.class.path", File.pathSeparator);
+    final var classPathElements = classPath.split(File.pathSeparator);
+    final var pattern = Pattern.compile(".*.xml");
+    for (final var element : classPathElements) {
+      definedBoards.addAll(getBoards(pattern, boardResourcePath, element));
     }
   }
 
-  public boolean AddExternalBoard(String Filename) {
-    if (!DefinedBoards.contains(Filename)) {
-      DefinedBoards.add(Filename);
+  public boolean addExternalBoard(String fileName) {
+    if (!definedBoards.contains(fileName)) {
+      definedBoards.add(fileName);
       return true;
     }
     return false;
   }
 
-  public boolean RemoveExternalBoard(String Filename) {
-    if (DefinedBoards.contains(Filename)) {
-      DefinedBoards.remove(Filename);
+  public boolean removeExternalBoard(String fileName) {
+    if (definedBoards.contains(fileName)) {
+      definedBoards.remove(fileName);
       return true;
     }
     return false;
   }
 
-  public String GetBoardFilePath(String BoardName) {
-    if (BoardName == null) return null;
-    for (String board : DefinedBoards) {
-      if (getBoardName(board).equals(BoardName)) {
+  public String getBoardFilePath(String boardName) {
+    if (boardName == null) return null;
+    for (final var board : definedBoards) {
+      if (getBoardName(board).equals(boardName)) {
         return board;
       }
     }
@@ -134,14 +133,15 @@ public class BoardList {
     public void insertSorted(T value) {
       add(value);
       Comparable<T> cmp = (Comparable<T>) value;
-      for (int i = size() - 1; i > 0 && cmp.compareTo(get(i - 1)) < 0; i--)
+      for (int i = size() - 1; i > 0 && cmp.compareTo(get(i - 1)) < 0; i--) {
         Collections.swap(this, i, i - 1);
+      }
     }
   }
 
-  public ArrayList<String> GetBoardNames() {
-    SortedArrayList<String> ret = new SortedArrayList<>();
-    for (String board : DefinedBoards) {
+  public List<String> getBoardNames() {
+    final var ret = new SortedArrayList<String>();
+    for (final var board : definedBoards) {
       ret.insertSorted(getBoardName(board));
     }
     return ret;

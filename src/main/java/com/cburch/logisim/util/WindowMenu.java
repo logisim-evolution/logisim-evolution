@@ -11,9 +11,7 @@ package com.cburch.logisim.util;
 
 import static com.cburch.logisim.util.Strings.S;
 
-import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -29,17 +27,16 @@ public class WindowMenu extends JMenu {
   private class MyListener implements LocaleListener, ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
-      Object src = e.getSource();
+      final var src = e.getSource();
       if (src == minimize) {
         doMinimize();
       } else if (src == zoom) {
         doZoom();
       } else if (src == close) {
         doClose();
-      } else if (src instanceof WindowMenuItem) {
-        WindowMenuItem choice = (WindowMenuItem) src;
+      } else if (src instanceof WindowMenuItem choice) {
         if (choice.isSelected()) {
-          WindowMenuItem item = findOwnerItem();
+          final var item = findOwnerItem();
           if (item != null) {
             item.setSelected(true);
           }
@@ -111,8 +108,8 @@ public class WindowMenu extends JMenu {
     myListener.localeChanged();
   }
 
-  void addMenuItem(Object source, WindowMenuItem item, boolean persistent) {
-    if (persistent) persistentItems.add(item);
+  void addMenuItem(Object source, WindowMenuItem item, boolean isPersistent) {
+    if (isPersistent) persistentItems.add(item);
     else transientItems.add(item);
     item.addActionListener(myListener);
     computeContents();
@@ -160,8 +157,8 @@ public class WindowMenu extends JMenu {
   }
 
   void doClose() {
-    if (owner instanceof WindowClosable) {
-      ((WindowClosable) owner).requestClose();
+    if (owner instanceof WindowClosable windowClosable) {
+      windowClosable.requestClose();
     } else if (owner != null) {
       int action = owner.getDefaultCloseOperation();
       if (action == JFrame.EXIT_ON_CLOSE) {

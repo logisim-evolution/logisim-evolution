@@ -20,7 +20,7 @@ import com.cburch.logisim.soc.util.AssemblerToken;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class RV32imControlTransferInstructions extends AbstractExecutionUnitWithLabelSupport {
+public class RV32imControlTransferInstructions implements AbstractExecutionUnitWithLabelSupport {
 
   private static final int JAL = 0x6F;
   private static final int JALR = 0x67;
@@ -63,15 +63,17 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
   private int source2;
   public boolean isPcRelative;
 
+  @Override
   public ArrayList<String> getInstructions() {
     ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
     return opcodes;
   }
 
-  public boolean execute(Object state,  CircuitState cState) {
+  @Override
+  public boolean execute(Object state, CircuitState cState) {
     if (!valid)
       return false;
-    RV32im_state.ProcessorState cpuState = (RV32im_state.ProcessorState) state;
+    RV32imState.ProcessorState cpuState = (RV32imState.ProcessorState) state;
     jumped = false;
     int target = cpuState.getProgramCounter() + immediate;
     int nextPc = cpuState.getProgramCounter() + 4;
@@ -135,6 +137,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     return false;
   }
 
+  @Override
   @SuppressWarnings("fallthrough")
   public String getAsmInstruction() {
     if (!valid)
@@ -147,34 +150,35 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
       case INSTR_RET:
         break;
       case INSTR_JAL:
-        s.append(RV32im_state.registerABINames[destination]).append(",");
+        s.append(RV32imState.registerABINames[destination]).append(",");
         // fall through
       case INSTR_J:
         s.append("pc");
         if (immediate != 0) s.append((immediate >= 0) ? "+" : "").append(immediate);
         break;
       case INSTR_JALR:
-        s.append(RV32im_state.registerABINames[destination]).append(",");
+        s.append(RV32imState.registerABINames[destination]).append(",");
         // fall through
       case INSTR_JR:
-        s.append(RV32im_state.registerABINames[source1]);
+        s.append(RV32imState.registerABINames[source1]);
         if (immediate != 0) s.append(",").append(immediate);
         break;
       case INSTR_BEQZ:
       case INSTR_BNEZ:
-        s.append(RV32im_state.registerABINames[source1]).append(",pc");
+        s.append(RV32imState.registerABINames[source1]).append(",pc");
         if (immediate != 0) s.append((immediate >= 0) ? "+" : "").append(immediate);
         break;
       default:
-        s.append(RV32im_state.registerABINames[source1])
+        s.append(RV32imState.registerABINames[source1])
             .append(",")
-            .append(RV32im_state.registerABINames[source2])
+            .append(RV32imState.registerABINames[source2])
             .append(",pc");
         if (immediate != 0) s.append((immediate >= 0) ? "+" : "").append(immediate);
     }
     return s.toString();
   }
 
+  @Override
   @SuppressWarnings("fallthrough")
   public String getAsmInstruction(String label) {
     if (!valid)
@@ -188,36 +192,38 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
       case INSTR_RET:
         break;
       case INSTR_JAL:
-        s.append(RV32im_state.registerABINames[destination]).append(",");
+        s.append(RV32imState.registerABINames[destination]).append(",");
         // fall through
       case INSTR_J:
         s.append(label);
         break;
       case INSTR_JALR:
-        s.append(RV32im_state.registerABINames[destination]).append(",");
+        s.append(RV32imState.registerABINames[destination]).append(",");
         // fall through
       case INSTR_JR:
-        s.append(RV32im_state.registerABINames[source1]);
+        s.append(RV32imState.registerABINames[source1]);
         if (immediate != 0) s.append(",").append(immediate);
         break;
       case INSTR_BEQZ:
       case INSTR_BNEZ:
-        s.append(RV32im_state.registerABINames[source1]).append(",").append(label);
+        s.append(RV32imState.registerABINames[source1]).append(",").append(label);
         break;
       default:
-        s.append(RV32im_state.registerABINames[source2])
+        s.append(RV32imState.registerABINames[source2])
             .append(",")
-            .append(RV32im_state.registerABINames[source1])
+            .append(RV32imState.registerABINames[source1])
             .append(",");
         s.append(label);
     }
     return s.toString();
   }
 
+  @Override
   public int getBinInstruction() {
     return instruction;
   }
 
+  @Override
   public boolean setBinInstruction(int instr) {
     instruction = instr;
     jumped = false;
@@ -225,10 +231,12 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     return valid;
   }
 
+  @Override
   public boolean performedJump() {
     return valid & jumped;
   }
 
+  @Override
   public boolean isValid() {
     return valid;
   }
@@ -264,15 +272,18 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     return false;
   }
 
+  @Override
   public String getErrorMessage() {
     return null;
   }
 
+  @Override
   public int getInstructionSizeInBytes(String instruction) {
     if (getInstructions().contains(instruction.toUpperCase())) return 4;
     return -1;
   }
 
+  @Override
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
     for (int i = 0; i < AsmOpcodes.length; i++)
@@ -311,7 +322,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
           errors = true;
           break;
         }
-        destination = RV32im_state.getRegisterIndex(param1[0].getValue());
+        destination = RV32imState.getRegisterIndex(param1[0].getValue());
         if (destination < 0 || destination > 31) {
           instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));
           errors = true;
@@ -365,7 +376,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
           errors = true;
           break;
         }
-        destination = RV32im_state.getRegisterIndex(param1[0].getValue());
+        destination = RV32imState.getRegisterIndex(param1[0].getValue());
         if (destination < 0 || destination > 31) {
           instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));
           errors = true;
@@ -377,7 +388,7 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
           errors = true;
           break;
         }
-        source1 = source2 = RV32im_state.getRegisterIndex(param2[0].getValue());
+        source1 = source2 = RV32imState.getRegisterIndex(param2[0].getValue());
         if (source1 < 0 || source1 > 31) {
           instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));
           errors = true;
@@ -458,10 +469,12 @@ public class RV32imControlTransferInstructions extends AbstractExecutionUnitWith
     return true;
   }
 
+  @Override
   public boolean isLabelSupported() {
     return isPcRelative;
   }
 
+  @Override
   public long getLabelAddress(long pc) {
     return pc + immediate;
   }

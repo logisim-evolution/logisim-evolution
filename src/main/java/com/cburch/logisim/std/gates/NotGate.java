@@ -173,7 +173,7 @@ class NotGate extends InstanceFactory {
   }
 
   @Override
-  public boolean HasThreeStateDrivers(AttributeSet attrs) {
+  public boolean hasThreeStateDrivers(AttributeSet attrs) {
     if (attrs.containsAttribute(GateAttributes.ATTR_OUTPUT))
       return !(attrs.getValue(GateAttributes.ATTR_OUTPUT) == GateAttributes.OUTPUT_01);
     else return false;
@@ -234,7 +234,7 @@ class NotGate extends InstanceFactory {
     if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR)
       AbstractGate.paintIconIEC(g, RECT_LABEL, true, true);
     else
-      AbstractGate.paintIconBufferANSI(g, true, false);
+      AbstractGate.paintIconBufferAnsi(g, true, false);
   }
 
   @Override

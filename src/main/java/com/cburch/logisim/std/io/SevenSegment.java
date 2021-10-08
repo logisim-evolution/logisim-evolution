@@ -33,6 +33,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 public class SevenSegment extends InstanceFactory implements DynamicElementProvider {
   /**
@@ -43,7 +44,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
    */
   public static final String _ID = "7-Segment Display";
 
-  static void drawBase(InstancePainter painter, boolean DrawPoint) {
+  static void drawBase(InstancePainter painter, boolean drawPoint) {
     ensureSegments();
     final var data = (InstanceDataSingleton) painter.getData();
     int summ = (data == null ? 0 : (Integer) data.getValue());
@@ -73,7 +74,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
         Bounds seg = SEGMENTS[i];
         g.fillRect(x + seg.getX(), y + seg.getY(), seg.getWidth(), seg.getHeight());
       } else {
-        if (DrawPoint) g.fillOval(x + 28, y + 48, 5, 5); // draw decimal point
+        if (drawPoint) g.fillOval(x + 28, y + 48, 5, 5); // draw decimal point
       }
     }
     g.setColor(Color.BLACK);
@@ -96,7 +97,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
     }
   }
 
-  public static ArrayList<String> GetLabels() {
+  public static List<String> getLabels() {
     final var labelNames = new ArrayList<String>();
     for (int i = 0; i < 8; i++) labelNames.add("");
     labelNames.set(Segment_A, "Segment_A");
@@ -111,8 +112,8 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   }
 
   public static String getOutputLabel(int id) {
-    if (id < 0 || id > GetLabels().size()) return "Undefined";
-    return GetLabels().get(id);
+    if (id < 0 || id > getLabels().size()) return "Undefined";
+    return getLabels().get(id);
   }
 
   public static final int Segment_A = 0;
@@ -132,7 +133,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   public static final Attribute<Boolean> ATTR_DP = Attributes.forBoolean("decimalPoint", S.getter("SevenSegDP"));
 
   public SevenSegment() {
-    super(_ID, S.getter("sevenSegmentComponent"), new AbstractSimpleIOHDLGeneratorFactory(false), true);
+    super(_ID, S.getter("sevenSegmentComponent"), new AbstractSimpleIoHdlGeneratorFactory(false), true);
     setAttributes(
         new Attribute[] {
           IoLibrary.ATTR_ON_COLOR,
@@ -156,7 +157,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
           Direction.EAST,
           StdAttr.DEFAULT_LABEL_FONT,
           false,
-          new ComponentMapInformationContainer(0, 8, 0, null, GetLabels(), null)
+          new ComponentMapInformationContainer(0, 8, 0, null, getLabels(), null)
         });
     setOffsetBounds(Bounds.create(-5, 0, 40, 60));
     setIcon(new SevenSegmentIcon(false));
@@ -185,7 +186,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
       ps[DP].setToolTip(S.getter("DecimalPoint"));
     }
     instance.setPorts(ps);
-    instance.getAttributeValue(StdAttr.MAPINFO).setNrOfOutports(hasDp ? 8 : 7, GetLabels());
+    instance.getAttributeValue(StdAttr.MAPINFO).setNrOfOutports(hasDp ? 8 : 7, getLabels());
   }
 
   @Override
@@ -232,7 +233,7 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   protected void configureNewInstance(Instance instance) {
     instance
         .getAttributeSet()
-        .setValue(StdAttr.MAPINFO, new ComponentMapInformationContainer(0, 8, 0, null, GetLabels(), null));
+        .setValue(StdAttr.MAPINFO, new ComponentMapInformationContainer(0, 8, 0, null, getLabels(), null));
     instance.addAttributeListener();
     updatePorts(instance);
     computeTextField(instance);

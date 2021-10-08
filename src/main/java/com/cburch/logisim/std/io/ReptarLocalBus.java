@@ -63,22 +63,23 @@ public class ReptarLocalBus extends InstanceFactory {
     return "Undefined";
   }
 
-  public static final int SP6_LB_nCS3_o = 0;
-  public static final int SP6_LB_nADV_ALE_o = 1;
-  public static final int SP6_LB_RE_nOE_o = 2;
-  public static final int SP6_LB_nWE_o = 3;
-  public static final int SP6_LB_WAIT3_i = 4;
-  public static final int Addr_Data_LB_o = 5;
-  public static final int Addr_Data_LB_i = 6;
-  public static final int Addr_Data_LB_tris_i = 7;
-  public static final int Addr_LB_o = 8;
-  public static final int IRQ_i = 9;
+  // FIXME: these names do not conform to const namich scheme. Maybe instead of "n" we just can add verbose "ACTIVE_LOW"?
+  public static final int SP6_LB_nCS3_O = 0;
+  public static final int SP6_LB_nADV_ALE_O = 1;
+  public static final int SP6_LB_RE_nOE_O = 2;
+  public static final int SP6_LB_nWE_O = 3;
+  public static final int SP_6_LB_WAIT_3_I = 4;
+  public static final int ADDR_DATA_LB_O = 5;
+  public static final int ADDR_DATA_LB_I = 6;
+  public static final int ADDR_DATA_LB_TRIS_I = 7;
+  public static final int ADDR_LB_O = 8;
+  public static final int IRQ_I = 9;
 
   /* Default Name. Very important for the genration of the VDHL Code */
   private static final String defaultLocalBusName = "LocalBus";
 
   public ReptarLocalBus() {
-    super(_ID, S.getter("repLBComponent"), new ReptarLocalBusHDLGeneratorFactory(), false, true);
+    super(_ID, S.getter("repLBComponent"), new ReptarLocalBusHdlGeneratorFactory(), false, true);
 
     final var inpLabels = new ArrayList<String>();
     final var outpLabels = new ArrayList<String>();
@@ -101,27 +102,27 @@ public class ReptarLocalBus extends InstanceFactory {
     setIconName("localbus.gif");
 
     final var ps = new Port[10];
-    ps[SP6_LB_nCS3_o] = new Port(0, 0, Port.OUTPUT, 1);
-    ps[SP6_LB_nADV_ALE_o] = new Port(0, 10, Port.OUTPUT, 1);
-    ps[SP6_LB_RE_nOE_o] = new Port(0, 20, Port.OUTPUT, 1);
-    ps[SP6_LB_nWE_o] = new Port(0, 30, Port.OUTPUT, 1);
-    ps[SP6_LB_WAIT3_i] = new Port(0, 40, Port.INPUT, 1);
-    ps[Addr_Data_LB_o] = new Port(0, 50, Port.OUTPUT, 16);
-    ps[Addr_Data_LB_i] = new Port(0, 60, Port.INPUT, 16);
-    ps[Addr_Data_LB_tris_i] = new Port(0, 70, Port.INPUT, 1);
-    ps[Addr_LB_o] = new Port(0, 80, Port.OUTPUT, 9);
-    ps[IRQ_i] = new Port(0, 90, Port.INPUT, 1);
+    ps[SP6_LB_nCS3_O] = new Port(0, 0, Port.OUTPUT, 1);
+    ps[SP6_LB_nADV_ALE_O] = new Port(0, 10, Port.OUTPUT, 1);
+    ps[SP6_LB_RE_nOE_O] = new Port(0, 20, Port.OUTPUT, 1);
+    ps[SP6_LB_nWE_O] = new Port(0, 30, Port.OUTPUT, 1);
+    ps[SP_6_LB_WAIT_3_I] = new Port(0, 40, Port.INPUT, 1);
+    ps[ADDR_DATA_LB_O] = new Port(0, 50, Port.OUTPUT, 16);
+    ps[ADDR_DATA_LB_I] = new Port(0, 60, Port.INPUT, 16);
+    ps[ADDR_DATA_LB_TRIS_I] = new Port(0, 70, Port.INPUT, 1);
+    ps[ADDR_LB_O] = new Port(0, 80, Port.OUTPUT, 9);
+    ps[IRQ_I] = new Port(0, 90, Port.INPUT, 1);
     // ps[Addr_Data_LB_io ] = new Port(0,80, Port.INOUT,16);
-    ps[SP6_LB_nCS3_o].setToolTip(S.getter("repLBTip"));
-    ps[SP6_LB_nADV_ALE_o].setToolTip(S.getter("repLBTip"));
-    ps[SP6_LB_RE_nOE_o].setToolTip(S.getter("repLBTip"));
-    ps[SP6_LB_nWE_o].setToolTip(S.getter("repLBTip"));
-    ps[SP6_LB_WAIT3_i].setToolTip(S.getter("repLBTip"));
-    ps[Addr_Data_LB_o].setToolTip(S.getter("repLBTip"));
-    ps[Addr_Data_LB_i].setToolTip(S.getter("repLBTip"));
-    ps[Addr_Data_LB_tris_i].setToolTip(S.getter("repLBTip"));
-    ps[Addr_LB_o].setToolTip(S.getter("repLBTip"));
-    ps[IRQ_i].setToolTip(S.getter("repLBTip"));
+    ps[SP6_LB_nCS3_O].setToolTip(S.getter("repLBTip"));
+    ps[SP6_LB_nADV_ALE_O].setToolTip(S.getter("repLBTip"));
+    ps[SP6_LB_RE_nOE_O].setToolTip(S.getter("repLBTip"));
+    ps[SP6_LB_nWE_O].setToolTip(S.getter("repLBTip"));
+    ps[SP_6_LB_WAIT_3_I].setToolTip(S.getter("repLBTip"));
+    ps[ADDR_DATA_LB_O].setToolTip(S.getter("repLBTip"));
+    ps[ADDR_DATA_LB_I].setToolTip(S.getter("repLBTip"));
+    ps[ADDR_DATA_LB_TRIS_I].setToolTip(S.getter("repLBTip"));
+    ps[ADDR_LB_O].setToolTip(S.getter("repLBTip"));
+    ps[IRQ_I].setToolTip(S.getter("repLBTip"));
     // ps[Addr_Data_LB_io ].setToolTip(S.getter("repLBTip"));
     setPorts(ps);
 
@@ -146,16 +147,16 @@ public class ReptarLocalBus extends InstanceFactory {
 
     g.setColor(Color.BLACK);
     g.setFont(g.getFont().deriveFont(g.getFont().getSize2D() - 2));
-    painter.drawPort(SP6_LB_nCS3_o, "SP6_LB_nCS3_o", Direction.WEST);
-    painter.drawPort(SP6_LB_nADV_ALE_o, "SP6_LB_nADV_ALE_o", Direction.WEST);
-    painter.drawPort(SP6_LB_RE_nOE_o, "SP6_LB_RE_nOE_o", Direction.WEST);
-    painter.drawPort(SP6_LB_nWE_o, "SP6_LB_nWE_o", Direction.WEST);
-    painter.drawPort(SP6_LB_WAIT3_i, "SP6_LB_WAIT3_i", Direction.WEST);
-    painter.drawPort(Addr_Data_LB_o, "Addr_Data_LB_o", Direction.WEST);
-    painter.drawPort(Addr_Data_LB_i, "Addr_Data_LB_i", Direction.WEST);
-    painter.drawPort(Addr_Data_LB_tris_i, "Addr_Data_LB_tris_i", Direction.WEST);
-    painter.drawPort(Addr_LB_o, "Addr_LB_o", Direction.WEST);
-    painter.drawPort(IRQ_i, "IRQ_i", Direction.WEST);
+    painter.drawPort(SP6_LB_nCS3_O, "SP6_LB_nCS3_o", Direction.WEST);
+    painter.drawPort(SP6_LB_nADV_ALE_O, "SP6_LB_nADV_ALE_o", Direction.WEST);
+    painter.drawPort(SP6_LB_RE_nOE_O, "SP6_LB_RE_nOE_o", Direction.WEST);
+    painter.drawPort(SP6_LB_nWE_O, "SP6_LB_nWE_o", Direction.WEST);
+    painter.drawPort(SP_6_LB_WAIT_3_I, "SP6_LB_WAIT3_i", Direction.WEST);
+    painter.drawPort(ADDR_DATA_LB_O, "Addr_Data_LB_o", Direction.WEST);
+    painter.drawPort(ADDR_DATA_LB_I, "Addr_Data_LB_i", Direction.WEST);
+    painter.drawPort(ADDR_DATA_LB_TRIS_I, "Addr_Data_LB_tris_i", Direction.WEST);
+    painter.drawPort(ADDR_LB_O, "Addr_LB_o", Direction.WEST);
+    painter.drawPort(IRQ_I, "IRQ_i", Direction.WEST);
     // painter.drawPort(Addr_Data_LB_io ,"Addr_Data_LB_io",Direction.WEST);
 
     // Location loc = painter.getLocation();
