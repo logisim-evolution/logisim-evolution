@@ -51,6 +51,8 @@ class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyCha
     for (final var tool : tools) {
       rawItems.add(new ToolbarToolItem(tool));
     }
+    rawItems.add(new ResetAppearanceTool(canvas, true));
+    rawItems.add(new ResetAppearanceTool(canvas, false));
     rawItems.add(showStateTool);
     items = Collections.unmodifiableList(rawItems);
     canvas.addPropertyChangeListener(Canvas.TOOL_PROPERTY, this);

@@ -74,11 +74,46 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
 
   public boolean hasCustomAppearance() {
     final var currentCustom = new ArrayList<CanvasObject>(getCustomObjectsFromBottom());
-    for (final var shape : defaultCustomAppearance) {
-      if (currentCustom.contains(shape))
-        currentCustom.remove(shape);
+    final var defaultCustom = new ArrayList<CanvasObject>(defaultCustomAppearance);
+    var shapeIterator = currentCustom.iterator();
+    while (shapeIterator.hasNext()) {
+      final var shape = shapeIterator.next(); 
+      if (shape instanceof AppearancePort || shape instanceof AppearanceAnchor)
+        shapeIterator.remove();
+    }
+    shapeIterator = defaultCustom.iterator();
+    while (shapeIterator.hasNext()) {
+      final var shape = shapeIterator.next(); 
+      if (shape instanceof AppearancePort || shape instanceof AppearanceAnchor)
+        shapeIterator.remove();
+    }
+    if (currentCustom.size() != defaultCustom.size()) return true;
+    shapeIterator = currentCustom.iterator();
+    while (shapeIterator.hasNext()) {
+      final var currentShape = shapeIterator.next();
+      var deleteIt = false;
+      final var shapeDefaultIterator = defaultCustom.iterator();
+      while (shapeDefaultIterator.hasNext()) {
+        final var defaultShape = shapeDefaultIterator.next();
+        final var matches = currentShape.matches(defaultShape);
+        deleteIt |= matches;
+        if (matches) shapeDefaultIterator.remove();
+      }
+      if (deleteIt) shapeIterator.remove();
     }
     return !currentCustom.isEmpty();
+  }
+
+  public void resetDefaultCustomAppearance() {
+    super.removeObjects(this.getCustomObjectsFromBottom());
+    defaultCustomAppearance = DefaultCustomAppearance.build(circuitPins.getPins()); 
+    setObjectsForce(defaultCustomAppearance, false);
+  }
+  
+  public void loadDefaultLogisimAppearance() {
+    super.removeObjects(this.getCustomObjectsFromBottom());
+    defaultCustomAppearance.clear();
+    setObjectsForce(DefaultEvolutionAppearance.build(circuitPins.getPins(), circuit.getName(), true), false);
   }
 
   public String getName() {
@@ -342,10 +377,11 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
       suppressRecompute = true;
       final var hasCustom = hasCustomAppearance(); 
       if (hasCustom) {
+        defaultCustomAppearance = DefaultCustomAppearance.build(circuitPins.getPins()); 
         removeObjects(removes);
         addObjects(getCustomObjectsFromBottom().size() - 1, adds);
       } else {
-        super.removeObjects(defaultCustomAppearance);
+        super.removeObjects(getCustomObjectsFromBottom());
         defaultCustomAppearance = DefaultCustomAppearance.build(circuitPins.getPins()); 
         setObjectsForce(defaultCustomAppearance, false);
       }

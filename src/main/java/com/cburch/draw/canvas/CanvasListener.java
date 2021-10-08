@@ -78,8 +78,7 @@ class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListen
     final var ports = new ArrayList<CanvasObject>();
     CanvasObject newSelectedPort = null;
     for (final var object : objects) {
-      if (object instanceof AppearancePort)
-        ports.add(object);
+      if (object instanceof AppearancePort) ports.add(object);
     }
     for (final var port : ports) {
       if (port.contains(loc, false) || port.contains(loc, true)) {
@@ -88,10 +87,10 @@ class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListen
     }
     if (newSelectedPort != selectedPort) {
       if (newSelectedPort == null) {
-        canvas.setHello(null, null);
+        canvas.setTooltip(null, null);
         canvas.repaint(canvas.getVisibleRect());
       } else {
-        canvas.setHello(loc, newSelectedPort.getDisplayNameAndLabel());
+        canvas.setTooltip(loc, newSelectedPort.getDisplayNameAndLabel());
         canvas.repaint(canvas.getVisibleRect());
       }
       selectedPort = newSelectedPort;
@@ -130,7 +129,7 @@ class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListen
 
   @Override
   public void mouseDragged(MouseEvent e) {
-    canvas.setHello(null, null);
+    canvas.setTooltip(null, null);
     if (isButton1(e)) {
       if (tool != null) tool.mouseDragged(canvas, e);
     } else {
