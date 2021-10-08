@@ -162,8 +162,8 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
             null);
     if (option == 0) {
       // save
-      SaveValues(inputs);
-      SaveData();
+      saveValues(inputs);
+      saveData();
     } else if (option == 1) {
       // clear
       clearValues();
@@ -207,7 +207,7 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
     if (this.ticks > getdurationHighValue() + getdurationLowValue()) incrementCurrentState();
   }
 
-  public void SaveData() {
+  public void saveData() {
     int size = this.durationHigh.length * 2, count = 0;
     String val;
     StringBuilder data = new StringBuilder();
@@ -237,7 +237,7 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
     this.SavedData = data.toString();
   }
 
-  private void SaveValues(JTextField[] inputs) {
+  private void saveValues(JTextField[] inputs) {
     StringBuilder onlynumber;
     int value;
     for (byte i = 0; i < inputs.length; i++) {
@@ -278,7 +278,7 @@ public class ProgrammableGeneratorState implements InstanceData, Cloneable {
         durationHigh[i] = oldDurationHigh[i];
         durationLow[i] = oldDurationLow[i];
       }
-      SaveData();
+      saveData();
       return true;
     }
     return false;

@@ -50,15 +50,16 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
   private int operation;
   private boolean valid = false;
 
+  @Override
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
-    return opcodes;
+    return new ArrayList<>(Arrays.asList(AsmOpcodes));
   }
 
+  @Override
   public boolean execute(Object state, CircuitState cState) {
     if (!valid)
       return false;
-    RV32im_state.ProcessorState cpuState = (RV32im_state.ProcessorState) state;
+    RV32imState.ProcessorState cpuState = (RV32imState.ProcessorState) state;
     int opp1 = cpuState.getRegisterValue(source1);
     int opp2 = cpuState.getRegisterValue(source2);
     int result = 0;
@@ -103,6 +104,7 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
     return true;
   }
 
+  @Override
   public String getAsmInstruction() {
     if (!valid)
       return "Unknown";
@@ -110,26 +112,30 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length() < RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
-    s.append(RV32im_state.registerABINames[destination]).append(",")
-        .append((operation == INSTR_SNEZ) ? "" : RV32im_state.registerABINames[source1] + ",")
-        .append(RV32im_state.registerABINames[source2]);
+    s.append(RV32imState.registerABINames[destination]).append(",")
+     .append((operation == INSTR_SNEZ) ? "" : RV32imState.registerABINames[source1] + ",")
+     .append(RV32imState.registerABINames[source2]);
     return s.toString();
   }
 
+  @Override
   public int getBinInstruction() {
     return instruction;
   }
 
+  @Override
   public boolean setBinInstruction(int instr) {
     instruction = instr;
     valid = decodeBin();
     return valid;
   }
 
+  @Override
   public boolean performedJump() {
     return false;
   }
 
+  @Override
   public boolean isValid() {
     return valid;
   }
@@ -174,15 +180,18 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
     return true;
   }
 
+  @Override
   public String getErrorMessage() {
     return null;
   }
 
+  @Override
   public int getInstructionSizeInBytes(String instruction) {
     if (getInstructions().contains(instruction.toUpperCase())) return 4;
     return -1;
   }
 
+  @Override
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
     for (int i = 0; i < AsmOpcodes.length; i++)
@@ -217,9 +226,9 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
       errors = true;
       instr.setError(param3[0], S.getter("AssemblerExpectedRegister"));
     }
-    destination = RV32im_state.getRegisterIndex(param1[0].getValue());
-    source1 = RV32im_state.getRegisterIndex(param2[0].getValue());
-    source2 = RV32im_state.getRegisterIndex(param3[0].getValue());
+    destination = RV32imState.getRegisterIndex(param1[0].getValue());
+    source1 = RV32imState.getRegisterIndex(param2[0].getValue());
+    source2 = RV32imState.getRegisterIndex(param3[0].getValue());
     if (destination < 0 || destination > 31) {
       errors = true;
       instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));

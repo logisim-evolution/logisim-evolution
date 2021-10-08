@@ -22,11 +22,11 @@ public class Ttl7402 extends AbstractTtlGate {
    */
   public static final String _ID = "7402";
 
-  private static class NorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class NorGateHdlGeneratorFactory extends AbstractGateHdlGenerator {
     @Override
     public LineBuffer getLogicFunction(int index) {
       return LineBuffer.getHdlBuffer()
-          .add("{{assign}}gate_{{1}}_O{{=}}{{not}}(gate_{{1}}_A{{or}}gate_{{1}}_B);", index);
+          .add("{{assign}}gateO{{1}}{{=}}{{not}}(gateA{{1}}{{or}}gateB{{1}});", index);
     }
   }
 
@@ -34,11 +34,11 @@ public class Ttl7402 extends AbstractTtlGate {
   private static final byte[] outPorts = {1, 4, 10, 13};
 
   public Ttl7402() {
-    super(_ID, portCount, outPorts, true, new NorGateHDLGeneratorFactory());
+    super(_ID, portCount, outPorts, true, new NorGateHdlGeneratorFactory());
   }
 
   public Ttl7402(String name) {
-    super(name, portCount, outPorts, true, new NorGateHDLGeneratorFactory());
+    super(name, portCount, outPorts, true, new NorGateHdlGeneratorFactory());
   }
 
   @Override

@@ -29,7 +29,7 @@ public class Ttl7430 extends AbstractTtlGate {
         new byte[] {8},
         new byte[] {9, 10, 13},
         new String[] {"A", "B", "C", "D", "E", "F", "Y", "G", "H"},
-        new Ttl7430HDLGenerator());
+        new Ttl7430HdlGenerator());
   }
 
   @Override

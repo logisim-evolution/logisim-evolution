@@ -184,11 +184,9 @@ public class Probe extends InstanceFactory {
 
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    if (attr.equals(ProbeAttributes.PROBEAPPEARANCE)) {
-      return StdAttr.APPEAR_CLASSIC;
-    } else {
-      return super.getDefaultAttributeValue(attr, ver);
-    }
+    return attr.equals(ProbeAttributes.PROBEAPPEARANCE)
+        ? ProbeAttributes.getDefaultProbeAppearance()
+        : super.getDefaultAttributeValue(attr, ver);
   }
 
   static void paintValue(InstancePainter painter, Value value, boolean colored) {
@@ -290,7 +288,7 @@ public class Probe extends InstanceFactory {
   @Override
   public AttributeSet createAttributeSet() {
     AttributeSet attrs = new ProbeAttributes();
-    attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.GetDefaultProbeAppearance());
+    attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.getDefaultProbeAppearance());
     return attrs;
   }
 
@@ -301,7 +299,7 @@ public class Probe extends InstanceFactory {
         attrs.facing,
         attrs.width,
         attrs.radix,
-        attrs.Appearance == ProbeAttributes.APPEAR_EVOLUTION_NEW,
+        attrs.appearance == ProbeAttributes.APPEAR_EVOLUTION_NEW,
         false);
   }
 

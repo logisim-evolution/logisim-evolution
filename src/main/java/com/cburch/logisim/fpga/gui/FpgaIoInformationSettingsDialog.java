@@ -23,7 +23,7 @@ import com.cburch.logisim.fpga.data.LedArrayDriving;
 import com.cburch.logisim.fpga.data.PinActivity;
 import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
-import com.cburch.logisim.std.io.LedArrayGenericHDLGeneratorFactory;
+import com.cburch.logisim.std.io.LedArrayGenericHdlGeneratorFactory;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Frame;
@@ -109,7 +109,7 @@ public class FpgaIoInformationSettingsDialog {
         break;
       }
       case LedArrayDriving.LED_ROW_SCANNING: {
-        final var nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfRows);
+        final var nrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfRows);
         nrOfPins = nrBits + nrOfColumns;
         for (var i = 0; i < nrOfPins; i++) {
           if (i < nrBits) {
@@ -121,7 +121,7 @@ public class FpgaIoInformationSettingsDialog {
         break;
       }
       case LedArrayDriving.LED_COLUMN_SCANNING: {
-        final var nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
+        final var nrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
         nrOfPins = nrBits + nrOfRows;
         for (var i = 0; i < nrOfPins; i++) {
           if (i < nrBits) {
@@ -158,7 +158,7 @@ public class FpgaIoInformationSettingsDialog {
         break;
       }
       case LedArrayDriving.RGB_ROW_SCANNING: {
-        final var nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfRows);
+        final var nrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfRows);
         nrOfPins = nrBits + 3 * nrOfColumns;
         var preamble = "";
         for (var i = 0; i < nrOfPins; i++) {
@@ -188,7 +188,7 @@ public class FpgaIoInformationSettingsDialog {
         break;
       }
       case LedArrayDriving.RGB_COLUMN_SCANNING: {
-        final var nrBits = LedArrayGenericHDLGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
+        final var nrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
         nrOfPins = nrBits + 3 * nrOfRows;
         var preamble = "";
         for (var i = 0; i < nrOfPins; i++) {
@@ -791,7 +791,7 @@ public class FpgaIoInformationSettingsDialog {
     c.gridx = 0;
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
-    if (TheBoard.fpga.FpgaInfoPresent())
+    if (TheBoard.fpga.isFpgaInfoPresent())
       FreqInput.setText(Integer.toString(getFrequencyValue(TheBoard.fpga.getClockFrequency())));
     FreqPanel.add(FreqInput, c);
 
@@ -799,7 +799,7 @@ public class FpgaIoInformationSettingsDialog {
     final var StandardInput = new JComboBox<String>(freqStrs);
     StandardInput.setSelectedIndex(2);
     c.gridx = 1;
-    if (TheBoard.fpga.FpgaInfoPresent())
+    if (TheBoard.fpga.isFpgaInfoPresent())
       StandardInput.setSelectedIndex(getFrequencyIndex(TheBoard.fpga.getClockFrequency()));
     FreqPanel.add(StandardInput, c);
 
@@ -811,7 +811,7 @@ public class FpgaIoInformationSettingsDialog {
     ClockPanel.add(LocText, c);
 
     final var LocInput = new JTextField();
-    if (TheBoard.fpga.FpgaInfoPresent()) LocInput.setText(TheBoard.fpga.getClockPinLocation());
+    if (TheBoard.fpga.isFpgaInfoPresent()) LocInput.setText(TheBoard.fpga.getClockPinLocation());
     c.gridx = 1;
     ClockPanel.add(LocInput, c);
 
@@ -821,7 +821,7 @@ public class FpgaIoInformationSettingsDialog {
     ClockPanel.add(PullText, c);
 
     final var PullInput = new JComboBox<String>(PullBehaviors.BEHAVIOR_STRINGS);
-    if (TheBoard.fpga.FpgaInfoPresent()) {
+    if (TheBoard.fpga.isFpgaInfoPresent()) {
       PullInput.setSelectedIndex(TheBoard.fpga.getClockPull());
     } else PullInput.setSelectedIndex(0);
     c.gridx = 1;
@@ -833,7 +833,7 @@ public class FpgaIoInformationSettingsDialog {
     ClockPanel.add(StandardText, c);
 
     final var StdInput = new JComboBox<String>(IoStandards.BEHAVIOR_STRINGS);
-    if (TheBoard.fpga.FpgaInfoPresent()) {
+    if (TheBoard.fpga.isFpgaInfoPresent()) {
       StdInput.setSelectedIndex(TheBoard.fpga.getClockStandard());
     } else StdInput.setSelectedIndex(0);
     c.gridx = 1;
@@ -853,7 +853,7 @@ public class FpgaIoInformationSettingsDialog {
     fpgaPanel.add(VendorText, c);
 
     final var vendorInput = new JComboBox<String>(VendorSoftware.VENDORS);
-    if (TheBoard.fpga.FpgaInfoPresent()) {
+    if (TheBoard.fpga.isFpgaInfoPresent()) {
       vendorInput.setSelectedIndex(TheBoard.fpga.getVendor());
     } else vendorInput.setSelectedIndex(0);
     c.gridx = 1;
@@ -865,7 +865,7 @@ public class FpgaIoInformationSettingsDialog {
     fpgaPanel.add(familyText, c);
 
     final var familyInput = new JTextField();
-    if (TheBoard.fpga.FpgaInfoPresent()) familyInput.setText(TheBoard.fpga.getTechnology());
+    if (TheBoard.fpga.isFpgaInfoPresent()) familyInput.setText(TheBoard.fpga.getTechnology());
     c.gridx = 1;
     fpgaPanel.add(familyInput, c);
 
@@ -875,7 +875,7 @@ public class FpgaIoInformationSettingsDialog {
     fpgaPanel.add(PartText, c);
 
     final var partInput = new JTextField();
-    if (TheBoard.fpga.FpgaInfoPresent()) partInput.setText(TheBoard.fpga.getPart());
+    if (TheBoard.fpga.isFpgaInfoPresent()) partInput.setText(TheBoard.fpga.getPart());
     c.gridx = 1;
     fpgaPanel.add(partInput, c);
 
@@ -885,7 +885,7 @@ public class FpgaIoInformationSettingsDialog {
     fpgaPanel.add(BoxText, c);
 
     final var boxInput = new JTextField();
-    if (TheBoard.fpga.FpgaInfoPresent()) boxInput.setText(TheBoard.fpga.getPackage());
+    if (TheBoard.fpga.isFpgaInfoPresent()) boxInput.setText(TheBoard.fpga.getPackage());
     c.gridx = 1;
     fpgaPanel.add(boxInput, c);
 
@@ -895,7 +895,7 @@ public class FpgaIoInformationSettingsDialog {
     fpgaPanel.add(speedText, c);
 
     final var speedInput = new JTextField();
-    if (TheBoard.fpga.FpgaInfoPresent()) speedInput.setText(TheBoard.fpga.getSpeedGrade());
+    if (TheBoard.fpga.isFpgaInfoPresent()) speedInput.setText(TheBoard.fpga.getSpeedGrade());
     c.gridx = 1;
     fpgaPanel.add(speedInput, c);
 
@@ -905,7 +905,7 @@ public class FpgaIoInformationSettingsDialog {
     fpgaPanel.add(unusedPinsText, c);
 
     final var unusedPinsInput = new JComboBox<String>(PullBehaviors.BEHAVIOR_STRINGS);
-    if (TheBoard.fpga.FpgaInfoPresent()) {
+    if (TheBoard.fpga.isFpgaInfoPresent()) {
       unusedPinsInput.setSelectedIndex(TheBoard.fpga.getUnusedPinsBehavior());
     } else unusedPinsInput.setSelectedIndex(0);
     c.gridx = 1;
@@ -926,7 +926,7 @@ public class FpgaIoInformationSettingsDialog {
 
     final var PosInput = new JTextField(5);
     PosInput.setText("1");
-    if (TheBoard.fpga.FpgaInfoPresent())
+    if (TheBoard.fpga.isFpgaInfoPresent())
       PosInput.setText(Integer.toString(TheBoard.fpga.getFpgaJTAGChainPosition()));
     c.gridx = 1;
     jtagPanel.add(PosInput, c);
@@ -938,7 +938,7 @@ public class FpgaIoInformationSettingsDialog {
 
     final var flashPosInput = new JTextField(5);
     flashPosInput.setText("2");
-    if (TheBoard.fpga.FpgaInfoPresent())
+    if (TheBoard.fpga.isFpgaInfoPresent())
       flashPosInput.setText(Integer.toString(TheBoard.fpga.getFlashJTAGChainPosition()));
     c.gridx = 1;
     c.fill = GridBagConstraints.HORIZONTAL;
@@ -958,13 +958,13 @@ public class FpgaIoInformationSettingsDialog {
     miscPanel.add(flashName, c);
 
     final var flashNameInput = new JTextField("");
-    if (TheBoard.fpga.FpgaInfoPresent()) flashNameInput.setText(TheBoard.fpga.getFlashName());
+    if (TheBoard.fpga.isFpgaInfoPresent()) flashNameInput.setText(TheBoard.fpga.getFlashName());
     c.gridx = 1;
     miscPanel.add(flashNameInput, c);
 
     final var usbTmc = new JCheckBox(S.get("FpgaBoardUSBTMC"));
     usbTmc.setSelected(false);
-    if (TheBoard.fpga.FpgaInfoPresent()) usbTmc.setSelected(TheBoard.fpga.USBTMCDownloadRequired());
+    if (TheBoard.fpga.isFpgaInfoPresent()) usbTmc.setSelected(TheBoard.fpga.isUsbTmcDownloadRequired());
     c.gridx = 0;
     c.gridy = 1;
     c.gridwidth = 2;
@@ -1051,7 +1051,7 @@ public class FpgaIoInformationSettingsDialog {
           DialogNotification.showDialogNotification(panel, "Error", S.get("FpgaBoardFpgaSpeedMis"));
         }
         if (saveSettings) {
-          TheBoard.fpga.Set(
+          TheBoard.fpga.set(
               getFrequency(FreqInput.getText(), StandardInput.getSelectedItem().toString()),
               LocInput.getText(),
               PullInput.getSelectedItem().toString(),

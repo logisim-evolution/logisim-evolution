@@ -143,13 +143,6 @@ public class ComponentDrawContext {
 
 
   protected void drawPinMarker(int x, int y) {
-    final int defaultRadius = 4;
-    final int defaultOffset = 2;
-    final int mediumDotRadius = 6;
-    final int mediumDotOffset = 3;
-    final int bigDotRadius = 8;
-    final int bigDotOffset = 4;
-
     String appearance = AppPreferences.PinAppearance.get();
     int radius = 4;
     int offset = 2;

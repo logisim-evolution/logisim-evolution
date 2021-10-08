@@ -30,7 +30,7 @@ public class Ttl7485 extends AbstractTtlGate {
         new String[] {
           "B3", "A<B", "A=B", "A>B", "A>B", "A=B", "A<B", "B0", "A0", "B1", "A1", "A2", "B2", "A3"
         },
-        new Ttl7485HDLGenerator());
+        new Ttl7485HdlGenerator());
   }
 
   @Override

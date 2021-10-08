@@ -24,14 +24,14 @@ import com.cburch.logisim.util.LineBuffer;
 import java.awt.Graphics2D;
 
 class NorGate extends AbstractGate {
-  private static class NorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class NorGateHdlGeneratorFactory extends AbstractGateHdlGenerator {
     @Override
     public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       final var contents = LineBuffer.getHdlBuffer();
       final var oneLine = new StringBuilder();
       oneLine
           .append(Hdl.assignPreamble())
-          .append("Result")
+          .append("result")
           .append(Hdl.assignOperator())
           .append(Hdl.notOperator())
           .append("(");
@@ -46,11 +46,10 @@ class NorGate extends AbstractGate {
         } else {
           first = false;
         }
-        oneLine.append("s_real_input_").append(i + 1);
+        oneLine.append("s_realInput").append(i + 1);
       }
       oneLine.append(");");
       contents.add(oneLine.toString());
-      contents.add("");
       return contents;
     }
   }
@@ -58,7 +57,7 @@ class NorGate extends AbstractGate {
   public static final NorGate FACTORY = new NorGate();
 
   private NorGate() {
-    super("NOR Gate", S.getter("norGateComponent"), new NorGateHDLGeneratorFactory());
+    super("NOR Gate", S.getter("norGateComponent"), new NorGateHdlGeneratorFactory());
     setNegateOutput(true);
     setRectangularLabel(OrGate.FACTORY.getRectangularLabel(null));
     setPaintInputLines(true);

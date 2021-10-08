@@ -18,58 +18,68 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-public class LibraryTools {
-  public static void ShowErrors(String LibName, HashMap<String, String> Messages) {
+public final class LibraryTools {
+
+  private LibraryTools() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
+
+  public static void showErrors(String libName, Map<String, String> messages) {
     OptionPane.showMessageDialog(
         null,
-        Message(LibName, Messages),
-        S.get("LibLoadErrors") + " " + LibName + " !",
+        message(libName, messages),
+        S.get("LibLoadErrors") + " " + libName + " !",
         OptionPane.ERROR_MESSAGE);
   }
 
-  private static String Message(String LibName, HashMap<String, String> Messages) {
-    var Message = "";
+  private static String message(String libName, Map<String, String> messages) {
+    var message = "";
     var item = 0;
-    for (final var myerror : Messages.keySet()) {
+    for (final var myerror : messages.keySet()) {
       item++;
-      Message = Message.concat(item + ") " + Messages.get(myerror) + " \"" + myerror + "\".\n");
+      message = message.concat(item + ") " + messages.get(myerror) + " \"" + myerror + "\".\n");
     }
-    return Message;
+    return message;
   }
 
-  public static void BuildToolList(Library lib, HashSet<String> Tools) {
-    for (Tool tool : lib.getTools()) {
-      Tools.add(tool.getName().toUpperCase());
+  public static void buildToolList(Library lib, Set<String> tools) {
+    for (final var tool : lib.getTools()) {
+      tools.add(tool.getName().toUpperCase());
     }
-    for (Library sublib : lib.getLibraries()) BuildToolList(sublib, Tools);
+    for (final var sublib : lib.getLibraries()) {
+      buildToolList(sublib, tools);
+    }
   }
 
-  public static boolean BuildToolList(Library lib, HashMap<String, AddTool> Tools) {
+  public static boolean buildToolList(Library lib, Map<String, AddTool> tools) {
     var ret = true;
-    if (!lib.getName().equals("Base")) {
+    if (!"Base".equals(lib.getName())) {
       for (final var tool1 : lib.getTools()) {
-        if (Tools.containsKey(tool1.getName().toUpperCase()))
+        if (tools.containsKey(tool1.getName().toUpperCase()))
           ret = false;
         else
-          Tools.put(tool1.getName().toUpperCase(), (AddTool) tool1);
+          tools.put(tool1.getName().toUpperCase(), (AddTool) tool1);
       }
     }
     for (final var sublib : lib.getLibraries()) {
-      ret &= BuildToolList(sublib, Tools);
+      ret &= buildToolList(sublib, tools);
     }
     return ret;
   }
 
   // FIXME: why `upperCaseName` even matters here if we do case insensitive comparision?
   public static Circuit getCircuitFromLibs(Library lib, String upperCaseName) {
-    Circuit ret = null;
     if (lib instanceof LogisimFile llib) {
       for (final var circ : llib.getCircuits()) {
         if (circ.getName().equalsIgnoreCase(upperCaseName)) return circ;
       }
     }
+
+    Circuit ret = null;
     for (final var libs : lib.getLibraries()) {
       if (libs instanceof LoadedLibrary lib1) {
         ret = getCircuitFromLibs(lib1.getBase(), upperCaseName);
@@ -79,84 +89,81 @@ public class LibraryTools {
     return null;
   }
 
-  public static ArrayList<String> LibraryCanBeMerged(HashSet<String> SourceTools, HashSet<String> NewTools) {
+  // FIXME: method name is odd.
+  public static List<String> libraryCanBeMerged(Set<String> sourceTools, Set<String> newTools) {
     final var ret = new ArrayList<String>();
-    for (final var This : NewTools) {
-      if (SourceTools.contains(This)) {
+    for (final var This : newTools) {
+      if (sourceTools.contains(This)) {
         ret.add(This);
       }
     }
     return ret;
   }
 
-  public static HashMap<String, String> GetToolLocation(
-      Library lib, String Location, ArrayList<String> UpercaseNames) {
-    Iterator<? extends Tool> tooliter = lib.getTools().iterator();
-    String MyLocation;
+  // Why name case matters that it is reflected in argument `uppercasedNames` name?
+  public static Map<String, String> getToolLocation(Library lib, String location, List<String> upercasedNames) {
+    final var toolIter = lib.getTools().iterator();
     final var ret = new HashMap<String, String>();
-    if (Location.isEmpty()) MyLocation = lib.getName();
-    else MyLocation = Location + "->" + lib.getName();
-    while (tooliter.hasNext()) {
-      Tool tool = tooliter.next();
-      if (UpercaseNames.contains(tool.getName().toUpperCase())) {
+    final var MyLocation = (location.isEmpty()) ? lib.getName() : location + "->" + lib.getName();
+    while (toolIter.hasNext()) {
+      final var tool = toolIter.next();
+      if (upercasedNames.contains(tool.getName().toUpperCase())) {
         ret.put(tool.getName(), MyLocation);
       }
     }
     for (final var sublib : lib.getLibraries()) {
-      ret.putAll(GetToolLocation(sublib, MyLocation, UpercaseNames));
+      ret.putAll(getToolLocation(sublib, MyLocation, upercasedNames));
     }
     return ret;
   }
 
-  public static boolean LibraryIsConform(
-      Library lib, HashSet<String> Names, HashSet<String> Tools, HashMap<String, String> Error) {
-    Iterator<? extends Tool> tooliter = lib.getTools().iterator();
-    boolean HasErrors = false;
-    while (tooliter.hasNext()) {
-      Tool tool = tooliter.next();
-      if (Tools.contains(tool.getName().toUpperCase())) {
-        HasErrors = true;
-        if (!Error.containsKey(tool.getName())) {
-          Error.put(tool.getName(), S.get("LibraryHasDuplicatedTools"));
+  public static boolean isLibraryConform(Library lib, Set<String> names, Set<String> tools, Map<String, String> error) {
+    final var toolIter = lib.getTools().iterator();
+    var hasErrors = false;
+    while (toolIter.hasNext()) {
+      final var tool = toolIter.next();
+      if (tools.contains(tool.getName().toUpperCase())) {
+        hasErrors = true;
+        if (!error.containsKey(tool.getName())) {
+          error.put(tool.getName(), S.get("LibraryHasDuplicatedTools"));
         }
       }
-      Tools.add(tool.getName().toUpperCase());
+      tools.add(tool.getName().toUpperCase());
     }
-    for (Library sublib : lib.getLibraries()) {
-      if (Names.contains(sublib.getName().toUpperCase())) {
-        HasErrors = true;
-        if (!Error.containsKey(sublib.getName())) {
-          Error.put(sublib.getName(), S.get("LibraryHasDuplicatedSublibraries"));
-        }
-      }
-      Names.add(sublib.getName().toUpperCase());
-      HasErrors |= !LibraryIsConform(sublib, Names, Tools, Error);
-    }
-    return !HasErrors;
-  }
-
-  public static void BuildLibraryList(Library lib, HashMap<String, Library> Names) {
-    Names.put(lib.getName().toUpperCase(), lib);
     for (final var sublib : lib.getLibraries()) {
-      BuildLibraryList(sublib, Names);
+      if (names.contains(sublib.getName().toUpperCase())) {
+        hasErrors = true;
+        if (!error.containsKey(sublib.getName())) {
+          error.put(sublib.getName(), S.get("LibraryHasDuplicatedSublibraries"));
+        }
+      }
+      names.add(sublib.getName().toUpperCase());
+      hasErrors |= !isLibraryConform(sublib, names, tools, error);
+    }
+    return !hasErrors;
+  }
+
+  public static void buildLibraryList(Library lib, Map<String, Library> names) {
+    names.put(lib.getName().toUpperCase(), lib);
+    for (final var sublib : lib.getLibraries()) {
+      buildLibraryList(sublib, names);
     }
   }
 
-  public static void RemovePresentLibraries(
-      Library lib, HashMap<String, Library> KnownLibs, boolean AddToSet) {
+  public static void removePresentLibraries(Library lib, Map<String, Library> knownLibs, boolean addToSet) {
     /* we work top -> down */
-    final var ToBeRemoved = new HashSet<String>();
+    final var toBeRemoved = new HashSet<String>();
     for (final var sublib : lib.getLibraries()) {
-      if (KnownLibs.containsKey(sublib.getName().toUpperCase())) {
-        ToBeRemoved.add(sublib.getName());
-      } else if (AddToSet) {
-        KnownLibs.put(sublib.getName().toUpperCase(), sublib);
+      if (knownLibs.containsKey(sublib.getName().toUpperCase())) {
+        toBeRemoved.add(sublib.getName());
+      } else if (addToSet) {
+        knownLibs.put(sublib.getName().toUpperCase(), sublib);
       }
     }
-    for (final var remove : ToBeRemoved) {
+    for (final var remove : toBeRemoved) {
       lib.removeLibrary(remove);
     }
     for (final var sublib : lib.getLibraries())
-      RemovePresentLibraries(sublib, KnownLibs, AddToSet);
+      removePresentLibraries(sublib, knownLibs, addToSet);
   }
 }

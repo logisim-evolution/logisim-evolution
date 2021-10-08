@@ -11,19 +11,16 @@ package com.cburch.logisim.gui.test;
 
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.circuit.Simulator;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.gui.start.SplashScreen;
 import com.cburch.logisim.instance.Instance;
-import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.std.wiring.Pin;
-import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 import java.io.File;
-import java.util.HashMap;
+import java.util.Map;
 
 public class TestBench {
 
@@ -32,13 +29,12 @@ public class TestBench {
   private final Instance[] pinsOutput;
   private Project proj;
 
-  public TestBench(String path, SplashScreen mon, HashMap<File, File> subs) {
+  public TestBench(String path, SplashScreen mon, Map<File, File> subs) {
     this.pinsOutput = new Instance[outputSignals.length];
-    File fileToOpen = new File(path);
+    final var fileToOpen = new File(path);
 
     try {
       this.proj = ProjectActions.doOpenNoWindow(mon, fileToOpen);
-
     } catch (LoadFailedException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
@@ -50,8 +46,7 @@ public class TestBench {
    * located in outputSignals
    *  */
   private boolean checkMatchPinName(String label) {
-
-    for (String outName : outputSignals) {
+    for (final var outName : outputSignals) {
       if (label.equals(outName)) {
         return true;
       }
@@ -60,22 +55,22 @@ public class TestBench {
   }
 
   /* Check if the label correspond to any of the output signals */
-  private boolean searchmatchingPins(Circuit circuit) {
+  private boolean searchMatchingPins(Circuit circuit) {
     /* Going to look for the matching output pin outputSignals */
-    CircuitState state = new CircuitState(proj, proj.getCurrentCircuit());
-    int j = 0;
-    int pinMatched = 0;
+    final var state = new CircuitState(proj, proj.getCurrentCircuit());
+    var j = 0;
+    var pinMatched = 0;
 
-    for (String output : outputSignals) {
-      for (com.cburch.logisim.comp.Component comp : circuit.getNonWires()) {
+    for (final var output : outputSignals) {
+      for (final var comp : circuit.getNonWires()) {
         if (!(comp.getFactory() instanceof Pin)) continue;
 
         /* Retrieve instance of component to then retrieve instance of
          * pins
          */
-        Instance inst = Instance.getInstanceFor(comp);
-        InstanceState pinState = state.getInstanceState(comp);
-        String label = pinState.getAttributeValue(StdAttr.LABEL);
+        final var inst = Instance.getInstanceFor(comp);
+        final var pinState = state.getInstanceState(comp);
+        final var label = pinState.getAttributeValue(StdAttr.LABEL);
 
         if (label == null && checkMatchPinName(label)) continue;
 
@@ -99,18 +94,18 @@ public class TestBench {
 
   /* Start simulator */
   private boolean startSimulator() {
-    Simulator sim = proj == null ? null : proj.getSimulator();
+    final var sim = proj == null ? null : proj.getSimulator();
     if (sim == null) {
       // TODO ERROR
       // logger.error("FATAL ERROR - no simulator available");
       return false;
     }
 
-    VhdlSimulatorTop vsim = sim.getCircuitState().getProject().getVhdlSimulator();
-    vsim.enable();
+    final var vhdlSim = sim.getCircuitState().getProject().getVhdlSimulator();
+    vhdlSim.enable();
     sim.setAutoPropagation(true);
     /* TODO Timeout */
-    while (vsim.isEnabled()) {
+    while (vhdlSim.isEnabled()) {
       Thread.yield();
     }
 
@@ -119,10 +114,10 @@ public class TestBench {
 
   /* Main method in charge of launching the test bench */
   public boolean startTestBench() {
-    Circuit circuit = (proj.getLogisimFile().getCircuit("logisim_test_verif"));
+    final var circuit = (proj.getLogisimFile().getCircuit("logisim_test_verif"));
     proj.setCurrentCircuit(circuit);
 
-    Value[] val = new Value[outputSignals.length];
+    final var val = new Value[outputSignals.length];
 
     if (circuit == null) {
       System.out.println("Circuit is null");
@@ -141,7 +136,7 @@ public class TestBench {
     }
 
     /* Then try to find the pin to verify */
-    if (!searchmatchingPins(circuit)) {
+    if (!searchMatchingPins(circuit)) {
       System.out.println("Error finding the pins");
       return false;
     }

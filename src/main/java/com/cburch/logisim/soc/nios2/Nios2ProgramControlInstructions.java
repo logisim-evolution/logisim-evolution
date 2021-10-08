@@ -18,7 +18,7 @@ import com.cburch.logisim.soc.util.AssemblerAsmInstruction;
 import com.cburch.logisim.soc.util.AssemblerToken;
 import java.util.ArrayList;
 
-public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLabelSupport {
+public class Nios2ProgramControlInstructions implements AbstractExecutionUnitWithLabelSupport {
 
   private static final int INSTR_CALLR = 0;
   private static final int INSTR_RET = 1;
@@ -77,6 +77,7 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
     }
   }
 
+  @Override
   @SuppressWarnings("fallthrough")
   public boolean execute(Object processorState, CircuitState circuitState) {
     if (!valid) return false;
@@ -157,6 +158,7 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
     return true;
   }
 
+  @Override
   public String getAsmInstruction() {
     if (!valid) return null;
     StringBuilder s = new StringBuilder();
@@ -186,10 +188,12 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
     return s.toString();
   }
 
+  @Override
   public int getBinInstruction() {
     return instruction;
   }
 
+  @Override
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     valid = false;
     if (!Opcodes.contains(instr.getOpcode().toLowerCase())) return false;
@@ -331,6 +335,7 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
     return true;
   }
 
+  @Override
   public boolean setBinInstruction(int instr) {
     instruction = instr;
     valid = false;
@@ -344,15 +349,19 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
       int rb = Nios2Support.getRegBIndex(instr, Nios2Support.R_TYPE);
       int rc = Nios2Support.getRegCIndex(instr, Nios2Support.R_TYPE);
       switch (operation) {
-        case INSTR_CALLR : if (rc != 0x1F || rb != 0) return false;
-                           sourceA = ra;
-                           break;
-        case INSTR_RET   : if (ra != 0x1F || rb != 0 || rc != 0) return false;
-                           break;
-        case INSTR_JMP   : if (rb != 0 || rc != 0) return false;
-                           sourceA = ra;
-                           break;
-        default          : return false;
+        case INSTR_CALLR:
+          if (rc != 0x1F || rb != 0) return false;
+          sourceA = ra;
+          break;
+        case INSTR_RET:
+          if (ra != 0x1F || rb != 0 || rc != 0) return false;
+          break;
+        case INSTR_JMP:
+          if (rb != 0 || rc != 0) return false;
+          sourceA = ra;
+          break;
+        default:
+          return false;
       }
       valid = true;
     } else {
@@ -380,31 +389,38 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
     return valid;
   }
 
+  @Override
   public boolean performedJump() {
     return valid && jumped;
   }
 
+  @Override
   public boolean isValid() {
     return valid;
   }
 
+  @Override
   public String getErrorMessage() {
     return null;
   }
 
+  @Override
   public ArrayList<String> getInstructions() {
     return Opcodes;
   }
 
+  @Override
   public int getInstructionSizeInBytes(String instruction) {
     if (Opcodes.contains(instruction.toLowerCase())) return 4;
     return -1;
   }
 
+  @Override
   public boolean isLabelSupported() {
     return operation >= INSTR_CALL;
   }
 
+  @Override
   public long getLabelAddress(long pc) {
     if (!isLabelSupported()) return -1;
     switch (operation) {
@@ -417,6 +433,7 @@ public class Nios2ProgramControlInstructions extends AbstractExecutionUnitWithLa
     }
   }
 
+  @Override
   public String getAsmInstruction(String label) {
     if (!valid) return null;
     StringBuilder s = new StringBuilder();

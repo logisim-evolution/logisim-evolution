@@ -26,21 +26,21 @@ public class JKFlipFlop extends AbstractFlipFlop {
    */
   public static final String _ID = "J-K Flip-Flop";
 
-  private static class JKFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
+  private static class JKFFHDLGeneratorFactory extends AbstractFlipFlopHdlGeneratorFactory {
 
     public JKFFHDLGeneratorFactory() {
       super(2, StdAttr.EDGE_TRIGGER);
       myPorts
-          .add(Port.INPUT, "J", 1, 0)
-          .add(Port.INPUT, "K", 1, 1);
+          .add(Port.INPUT, "j", 1, 0)
+          .add(Port.INPUT, "k", 1, 1);
     }
 
     @Override
     public LineBuffer getUpdateLogic() {
       final var contents = LineBuffer.getHdlBuffer();
-      final var preamble = LineBuffer.formatHdl("{{assign}}s_next_state{{=}}");
-      contents.add("{{1}}({{not}}(s_current_state_reg){{and}}J){{or}}", preamble)
-          .add("{{1}}(s_current_state_reg{{and}}{{not}}(K));", " ".repeat(preamble.length()));
+      final var preamble = LineBuffer.formatHdl("{{assign}}s_nextState{{=}}");
+      contents.add("{{1}}({{not}}(s_currentState){{and}}j){{or}}", preamble)
+          .add("{{1}}(s_currentState{{and}}{{not}}(k));", " ".repeat(preamble.length()));
       return contents;
     }
   }

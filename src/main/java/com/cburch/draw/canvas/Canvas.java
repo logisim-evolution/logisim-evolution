@@ -11,8 +11,13 @@ package com.cburch.draw.canvas;
 
 import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasObject;
-import com.cburch.draw.undo.Action;
+import com.cburch.draw.shapes.DrawAttr;
+import com.cburch.draw.undo.UndoAction;
+import com.cburch.logisim.data.Location;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.GraphicsUtil;
+
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -29,6 +34,8 @@ public class Canvas extends JComponent {
   private CanvasModel model;
   private ActionDispatcher dispatcher;
   private Selection selection;
+  private Location tooltipLocation;
+  private String tooltipName;
 
   public Canvas() {
     model = null;
@@ -41,7 +48,7 @@ public class Canvas extends JComponent {
     setPreferredSize(new Dimension(200, 200));
   }
 
-  public void doAction(Action action) {
+  public void doAction(UndoAction action) {
     dispatcher.doAction(action);
   }
 
@@ -81,7 +88,6 @@ public class Canvas extends JComponent {
       g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
-
     g.clearRect(0, 0, getWidth(), getHeight());
   }
 
@@ -89,6 +95,25 @@ public class Canvas extends JComponent {
   public void paintComponent(Graphics g) {
     paintBackground(g);
     paintForeground(g);
+    paintTooltip(g);
+  }
+  
+  public void setTooltip(Location loc, String name) {
+    tooltipLocation = loc;
+    tooltipName = name;
+  }
+  
+  private void paintTooltip(Graphics g) {
+    if (tooltipLocation == null || tooltipName == null) return;
+    g.setColor(Color.YELLOW);
+    final var x = (int) (tooltipLocation.getX() * getZoomFactor());
+    final var y = (int) (tooltipLocation.getY() * getZoomFactor());
+    final var width = (int) ((tooltipName.length() * DrawAttr.FIXED_FONT_CHAR_WIDTH) * getZoomFactor());
+    final var height = (int) ((DrawAttr.FIXED_FONT_HEIGHT + DrawAttr.FIXED_FONT_HEIGHT >> 1) * getZoomFactor());
+    g.fillRect(x, y, width, height);
+    g.setColor(Color.BLUE);
+    g.setFont(DrawAttr.DEFAULT_FIXED_PICH_FONT.deriveFont((float) (getZoomFactor() * DrawAttr.FIXED_FONT_HEIGHT)));
+    GraphicsUtil.drawText(g, tooltipName, x + 2, y, GraphicsUtil.H_LEFT, GraphicsUtil.V_TOP);
   }
 
   protected void paintForeground(Graphics g) {

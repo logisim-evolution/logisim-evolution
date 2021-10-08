@@ -16,7 +16,6 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
@@ -28,7 +27,6 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
-import java.awt.Graphics;
 
 public class Subtractor extends InstanceFactory {
   /**
@@ -46,13 +44,13 @@ public class Subtractor extends InstanceFactory {
   public static final int B_OUT = 4;
 
   public Subtractor() {
-    super(_ID, S.getter("subtractorComponent"), new SubtractorHDLGeneratorFactory());
+    super(_ID, S.getter("subtractorComponent"), new SubtractorHdlGeneratorFactory());
     setAttributes(new Attribute[] {StdAttr.WIDTH}, new Object[] {BitWidth.create(8)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
     setIcon(new ArithmeticIcon("-"));
 
-    Port[] ps = new Port[5];
+    final var ps = new Port[5];
     ps[IN0] = new Port(-40, -10, Port.INPUT, StdAttr.WIDTH);
     ps[IN1] = new Port(-40, 10, Port.INPUT, StdAttr.WIDTH);
     ps[OUT] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
@@ -68,31 +66,31 @@ public class Subtractor extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuilder CompleteName = new StringBuilder();
-    if (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) CompleteName.append("FullSubtractor");
-    else CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
-    return CompleteName.toString();
+    final var fullName = new StringBuilder();
+    if (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) fullName.append("FullSubtractor");
+    else fullName.append(CorrectLabel.getCorrectLabel(this.getName()));
+    return fullName.toString();
   }
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
+    final var gfx = painter.getGraphics();
     painter.drawBounds();
 
-    g.setColor(Color.GRAY);
+    gfx.setColor(Color.GRAY);
     painter.drawPort(IN0);
     painter.drawPort(IN1);
     painter.drawPort(OUT);
     painter.drawPort(B_IN, "b in", Direction.NORTH);
     painter.drawPort(B_OUT, "b out", Direction.SOUTH);
 
-    Location loc = painter.getLocation();
-    int x = loc.getX();
-    int y = loc.getY();
-    GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(Color.BLACK);
-    g.drawLine(x - 15, y, x - 5, y);
-    GraphicsUtil.switchToWidth(g, 1);
+    final var loc = painter.getLocation();
+    final var x = loc.getX();
+    final var y = loc.getY();
+    GraphicsUtil.switchToWidth(gfx, 2);
+    gfx.setColor(Color.BLACK);
+    gfx.drawLine(x - 15, y, x - 5, y);
+    GraphicsUtil.switchToWidth(gfx, 1);
   }
 
   @Override
@@ -101,14 +99,14 @@ public class Subtractor extends InstanceFactory {
     BitWidth data = state.getAttributeValue(StdAttr.WIDTH);
 
     // compute outputs
-    Value a = state.getPortValue(IN0);
-    Value b = state.getPortValue(IN1);
-    Value b_in = state.getPortValue(B_IN);
-    if (b_in == Value.UNKNOWN || b_in == Value.NIL) b_in = Value.FALSE;
-    Value[] outs = Adder.computeSum(data, a, b.not(), b_in.not());
+    final var a = state.getPortValue(IN0);
+    final var b = state.getPortValue(IN1);
+    var bIn = state.getPortValue(B_IN);
+    if (bIn == Value.UNKNOWN || bIn == Value.NIL) bIn = Value.FALSE;
+    final var outs = Adder.computeSum(data, a, b.not(), bIn.not());
 
     // propagate them
-    int delay = (data.getWidth() + 4) * Adder.PER_DELAY;
+    final var delay = (data.getWidth() + 4) * Adder.PER_DELAY;
     state.setPort(OUT, outs[0], delay);
     state.setPort(B_OUT, outs[1].not(), delay);
   }

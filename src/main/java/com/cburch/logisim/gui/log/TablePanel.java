@@ -18,7 +18,6 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
-import java.awt.Rectangle;
 import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
 import javax.swing.JScrollBar;
@@ -34,21 +33,21 @@ class TablePanel extends LogPanel {
   private static final int HEADER_SEP = 4;
   private final MyListener myListener = new MyListener();
   private final VerticalScrollBar vsb;
-  private final TableView tableview;
+  private final TableView tableView;
   private int cellWidth = 25; // reasonable start values
   private int cellHeight = 15;
   private final int rowCount = 0;
   private int tableWidth;
   private int tableHeight;
 
-  // FIXME: method is unused
+  // FIXME: this constructor is never used
   public TablePanel(LogFrame frame) {
     super(frame);
     vsb = new VerticalScrollBar();
-    tableview = new TableView();
-    JScrollPane pane =
+    tableView = new TableView();
+    final var pane =
         new JScrollPane(
-            tableview,
+                tableView,
             JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
             JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     pane.setVerticalScrollBar(vsb);
@@ -84,7 +83,7 @@ class TablePanel extends LogPanel {
 
   @Override
   public void localeChanged() {
-    tableview.computePreferredSize();
+    tableView.computePreferredSize();
     repaint();
   }
 
@@ -136,7 +135,7 @@ class TablePanel extends LogPanel {
       final int left = Math.max(0, (sz.width - tableWidth) / 2);
       final var model = getModel();
       if (model == null) return;
-      int columns = model.getSignalCount();
+      final var columns = model.getSignalCount();
       if (columns == 0) {
         g.setFont(BODY_FONT);
         GraphicsUtil.drawCenteredText(g, S.get("tableEmptyMessage"), sz.width / 2, sz.height / 2);
@@ -156,12 +155,13 @@ class TablePanel extends LogPanel {
         x = paintHeader(model.getItem(i).getShortName(), x, y, g, headerMetric);
       }
       g.setFont(BODY_FONT);
-      final var bodyMetric = g.getFontMetrics();
-      final var clip = g.getClipBounds();
-      final var firstRow = Math.max(0, (clip.y - y) / cellHeight - 1);
-      final var lastRow = Math.min(rowCount, 2 + (clip.y + clip.height - y) / cellHeight);
-      final var y0 = top + cellHeight + HEADER_SEP;
-      x = left;
+      // FIXME: commented out code - can we remove it?
+      // final var bodyMetric = g.getFontMetrics();
+      // final var clip = g.getClipBounds();
+      // final var firstRow = Math.max(0, (clip.y - y) / cellHeight - 1);
+      // final var lastRow = Math.min(rowCount, 2 + (clip.y + clip.height - y) / cellHeight);
+      // final var y0 = top + cellHeight + HEADER_SEP;
+      // x = left;
       // for (int col = 0; col < columns; col++) {
       //   SignalInfo item = sel.get(col);
       //   ValueLog log = model.getValueLog(item);

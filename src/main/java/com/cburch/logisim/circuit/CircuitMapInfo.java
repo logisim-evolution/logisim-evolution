@@ -12,6 +12,7 @@ package com.cburch.logisim.circuit;
 import com.cburch.logisim.fpga.data.BoardRectangle;
 import com.cburch.logisim.fpga.data.MapComponent;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CircuitMapInfo {
 
@@ -107,7 +108,7 @@ public class CircuitMapInfo {
     return myMap;
   }
 
-  public ArrayList<CircuitMapInfo> getPinMaps() {
+  public List<CircuitMapInfo> getPinMaps() {
     return pinmaps;
   }
 }

@@ -10,7 +10,6 @@
 package com.cburch.logisim.data;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
   private ArrayList<AttributeListener> listeners = null;
@@ -74,12 +73,6 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
   }
 
   @Override
-  public abstract List<Attribute<?>> getAttributes();
-
-  @Override
-  public abstract <V> V getValue(Attribute<V> attr);
-
-  @Override
   public boolean isReadOnly(Attribute<?> attr) {
     return false;
   }
@@ -99,8 +92,5 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
   public void setReadOnly(Attribute<?> attr, boolean value) {
     throw new UnsupportedOperationException();
   }
-
-  @Override
-  public abstract <V> void setValue(Attribute<V> attr, V value);
 
 }

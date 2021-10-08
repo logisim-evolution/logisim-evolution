@@ -63,7 +63,7 @@ public class Led extends InstanceFactory implements DynamicElementProvider {
   }
 
   public Led() {
-    super(_ID, S.getter("ledComponent"), new AbstractSimpleIOHDLGeneratorFactory(false), true);
+    super(_ID, S.getter("ledComponent"), new AbstractSimpleIoHdlGeneratorFactory(false), true);
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,

@@ -730,7 +730,7 @@ public class Pin extends InstanceFactory {
   public static final Pin FACTORY = new Pin();
   private static final Font ICON_WIDTH_FONT = new Font("SansSerif", Font.BOLD, 9);
   public static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
-  private static final Color ICON_WIDTH_COLOR = Value.WIDTH_ERROR_COLOR.darker();
+  private static final Color ICON_WIDTH_COLOR = Value.widthErrorColor.darker();
   public static final int DIGIT_WIDTH = 8;
 
   public Pin() {
@@ -744,7 +744,7 @@ public class Pin extends InstanceFactory {
     setInstancePoker(PinPoker.class);
   }
 
-  private static Direction PinLabelLoc(Direction PinDir) {
+  private static Direction pinLabelLoc(Direction PinDir) {
     if (PinDir == Direction.EAST) return Direction.WEST;
     else if (PinDir == Direction.WEST) return Direction.EAST;
     else if (PinDir == Direction.NORTH) return Direction.SOUTH;
@@ -761,16 +761,14 @@ public class Pin extends InstanceFactory {
     ((PrefMonitorBooleanConvert) AppPreferences.NEW_INPUT_OUTPUT_SHAPES).addConvertListener(attrs);
     configurePorts(instance);
     instance.computeLabelTextField(
-        Instance.AVOID_LEFT, PinLabelLoc(attrs.getValue(StdAttr.FACING)));
+        Instance.AVOID_LEFT, pinLabelLoc(attrs.getValue(StdAttr.FACING)));
   }
 
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    if (attr.equals(ProbeAttributes.PROBEAPPEARANCE)) {
-      return StdAttr.APPEAR_CLASSIC;
-    } else {
-      return super.getDefaultAttributeValue(attr, ver);
-    }
+    return attr.equals(ProbeAttributes.PROBEAPPEARANCE) 
+        ? ProbeAttributes.getDefaultProbeAppearance()
+        : super.getDefaultAttributeValue(attr, ver);
   }
 
   private void configurePorts(Instance instance) {
@@ -787,9 +785,7 @@ public class Pin extends InstanceFactory {
 
   @Override
   public AttributeSet createAttributeSet() {
-    AttributeSet attrs = new PinAttributes();
-    attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.GetDefaultProbeAppearance());
-    return attrs;
+    return new PinAttributes();
   }
 
   @Override
@@ -823,7 +819,7 @@ public class Pin extends InstanceFactory {
   }
 
   @Override
-  public boolean HasThreeStateDrivers(AttributeSet attrs) {
+  public boolean hasThreeStateDrivers(AttributeSet attrs) {
     /*
      * We ignore for the moment the three-state property of the pin, as it
      * is not an active component, just wiring
@@ -846,7 +842,7 @@ public class Pin extends InstanceFactory {
         || attr == ProbeAttributes.PROBEAPPEARANCE) {
       instance.recomputeBounds();
       PinAttributes attrs = (PinAttributes) instance.getAttributeSet();
-      instance.computeLabelTextField(Instance.AVOID_LEFT, PinLabelLoc(attrs.facing));
+      instance.computeLabelTextField(Instance.AVOID_LEFT, pinLabelLoc(attrs.facing));
     } else if (attr == Pin.ATTR_TRISTATE || attr == Pin.ATTR_PULL) {
       instance.fireInvalidated();
     }
@@ -1013,7 +1009,7 @@ public class Pin extends InstanceFactory {
     }
   }
 
-  private void DrawOutputShape(
+  private void drawOutputShape(
       InstancePainter painter,
       int x,
       int y,
@@ -1101,7 +1097,7 @@ public class Pin extends InstanceFactory {
     Graphics g = painter.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
     if (attrs.isOutput()) {
-      DrawOutputShape(
+      drawOutputShape(
           painter,
           x + bds.getX(),
           y + bds.getY(),
@@ -1210,7 +1206,7 @@ public class Pin extends InstanceFactory {
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(Color.black);
     if (IsOutput) {
-      DrawOutputShape(
+      drawOutputShape(
           painter, x + 1, y + 1, bds.getWidth() - 1, bds.getHeight() - 1, found.getColor(), false);
     } else {
       drawInputShape(

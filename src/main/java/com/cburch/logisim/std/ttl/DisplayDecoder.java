@@ -39,7 +39,7 @@ public class DisplayDecoder extends InstanceFactory {
   private static final Attribute<Boolean> MULTI_BIT =
       Attributes.forBoolean("multibit", S.getter("ioMultiBit"));
 
-  public static void ComputeDisplayDecoderOutputs(
+  public static void computeDisplayDecoderOutputs(
       InstanceState state,
       int inputvalue,
       int aPortIndex,
@@ -329,7 +329,7 @@ public class DisplayDecoder extends InstanceFactory {
     final var multibit = state.getAttributeValue(MULTI_BIT);
     byte nports = (byte) (11 + (state.getAttributeValue(MULTI_BIT) ? 1 : 4));
     if (state.getPortValue(7) != Value.FALSE) { // enabled
-      ComputeDisplayDecoderOutputs(
+      computeDisplayDecoderOutputs(
           state,
           getdecval(state, multibit, 8, 8, 9, 10, 11),
           0,

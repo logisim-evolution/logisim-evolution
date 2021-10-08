@@ -514,7 +514,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     return signals.size();
   }
 
-  public ArrayList<Signal> getSignals() {
+  public List<Signal> getSignals() {
     return signals;
   }
 

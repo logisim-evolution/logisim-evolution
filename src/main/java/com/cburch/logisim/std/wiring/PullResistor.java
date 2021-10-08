@@ -28,7 +28,7 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.Icons;
+import com.cburch.logisim.util.IconsUtil;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -63,9 +63,9 @@ public class PullResistor extends InstanceFactory {
           });
   public static final PullResistor FACTORY = new PullResistor();
 
-  private static final Icon ICON_SHAPED = Icons.getIcon("pullshap.gif");
+  private static final Icon ICON_SHAPED = IconsUtil.getIcon("pullshap.gif");
 
-  private static final Icon ICON_RECTANGULAR = Icons.getIcon("pullrect.gif");
+  private static final Icon ICON_RECTANGULAR = IconsUtil.getIcon("pullrect.gif");
 
   public PullResistor() {
     super(_ID, S.getter("pullComponent"));

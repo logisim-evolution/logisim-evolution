@@ -35,10 +35,6 @@ import com.cburch.logisim.std.wiring.Pin;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
-import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
@@ -52,7 +48,7 @@ import org.slf4j.LoggerFactory;
 public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
   static final Logger logger = LoggerFactory.getLogger(VhdlEntity.class);
-  static final Attribute<String> NAME_ATTR = Attributes.forString("vhdlEntity", S.getter("vhdlEntityName"));
+  static final Attribute<String> nameAttr = Attributes.forString("vhdlEntity", S.getter("vhdlEntityName"));
   static final ArithmeticIcon icon = new ArithmeticIcon("VHDL");
 
   static final int WIDTH = 140;
@@ -62,30 +58,30 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
   static final int X_PADDING = 5;
 
   private final VhdlContent content;
-  private final ArrayList<Instance> MyInstances;
+  private final ArrayList<Instance> myInstances;
 
   public VhdlEntity(VhdlContent content) {
-    super("", null, new VhdlHDLGeneratorFactory(), true);
+    super("", null, new VhdlHdlGeneratorFactory(), true);
     this.content = content;
     this.content.addHdlModelListener(this);
     this.setIcon(icon);
     icon.setInvalid(!content.isValid());
     setFacingAttribute(StdAttr.FACING);
     appearance = VhdlAppearance.create(getPins(), getName(), StdAttr.APPEAR_EVOLUTION);
-    MyInstances = new ArrayList<>();
+    myInstances = new ArrayList<>();
   }
 
-  public void SetSimName(AttributeSet attrs, String SName) {
+  public void setSimName(AttributeSet attrs, String sName) {
     if (attrs == null) return;
-    VhdlEntityAttributes atrs = (VhdlEntityAttributes) attrs;
-    String Label = (!attrs.getValue(StdAttr.LABEL).equals("")) ? getHDLTopName(attrs) : SName;
+    final var atrs = (VhdlEntityAttributes) attrs;
+    final var label = (!attrs.getValue(StdAttr.LABEL).equals("")) ? getHDLTopName(attrs) : sName;
     if (atrs.containsAttribute(VhdlSimConstants.SIM_NAME_ATTR))
-      atrs.setValue(VhdlSimConstants.SIM_NAME_ATTR, Label);
+      atrs.setValue(VhdlSimConstants.SIM_NAME_ATTR, label);
   }
 
-  public String GetSimName(AttributeSet attrs) {
+  public String getSimName(AttributeSet attrs) {
     if (attrs == null) return null;
-    VhdlEntityAttributes atrs = (VhdlEntityAttributes) attrs;
+    final var atrs = (VhdlEntityAttributes) attrs;
     return atrs.getValue(VhdlSimConstants.SIM_NAME_ATTR);
   }
 
@@ -107,11 +103,11 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
   @Override
   protected void configureNewInstance(Instance instance) {
-    VhdlEntityAttributes attrs = (VhdlEntityAttributes) instance.getAttributeSet();
+    final var attrs = (VhdlEntityAttributes) instance.getAttributeSet();
     attrs.setInstance(instance);
     instance.addAttributeListener();
     updatePorts(instance);
-    if (!MyInstances.contains(instance)) MyInstances.add(instance);
+    if (!myInstances.contains(instance)) myInstances.add(instance);
   }
 
   @Override
@@ -126,19 +122,16 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
   @Override
   public String getHDLTopName(AttributeSet attrs) {
-
-    String label = "";
-
+    var label = "";
     if (!attrs.getValue(StdAttr.LABEL).equals(""))
       label = "_" + attrs.getValue(StdAttr.LABEL).toLowerCase();
-
     return getHDLName(attrs) + label;
   }
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     if (appearance == null) return Bounds.create(0, 0, 100, 100);
-    Direction facing = attrs.getValue(StdAttr.FACING);
+    final var facing = attrs.getValue(StdAttr.FACING);
     return appearance.getOffsetBounds().rotate(Direction.EAST, facing, 0, 0);
   }
 
@@ -147,7 +140,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
     if (attr == StdAttr.FACING) {
       updatePorts(instance);
     } else if (attr == StdAttr.APPEARANCE) {
-      for (Instance j : MyInstances) {
+      for (final var j : myInstances) {
         updatePorts(j);
       }
     }
@@ -155,26 +148,25 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    VhdlEntityAttributes attrs = (VhdlEntityAttributes) painter.getAttributeSet();
-    Direction facing = attrs.getFacing();
-    Graphics g = painter.getGraphics();
+    final var attrs = (VhdlEntityAttributes) painter.getAttributeSet();
+    final var facing = attrs.getFacing();
+    final var gfx = painter.getGraphics();
 
-    Location loc = painter.getLocation();
-    g.translate(loc.getX(), loc.getY());
-    appearance.paintSubcircuit(painter, g, facing);
-    g.translate(-loc.getX(), -loc.getY());
+    final var loc = painter.getLocation();
+    gfx.translate(loc.getX(), loc.getY());
+    appearance.paintSubcircuit(painter, gfx, facing);
+    gfx.translate(-loc.getX(), -loc.getY());
 
-    String label = painter.getAttributeValue(StdAttr.LABEL);
+    final var label = painter.getAttributeValue(StdAttr.LABEL);
     if (label != null && painter.getAttributeValue(StdAttr.LABEL_VISIBILITY)) {
-      Bounds bds = painter.getBounds();
-      Font oldFont = g.getFont();
-      Color col = g.getColor();
-      g.setFont(painter.getAttributeValue(StdAttr.LABEL_FONT));
-      g.setColor(StdAttr.DEFAULT_LABEL_COLOR);
-      GraphicsUtil.drawCenteredText(
-          g, label, bds.getX() + bds.getWidth() / 2, bds.getY() - g.getFont().getSize());
-      g.setFont(oldFont);
-      g.setColor(col);
+      final var bds = painter.getBounds();
+      final var oldFont = gfx.getFont();
+      final var color = gfx.getColor();
+      gfx.setFont(painter.getAttributeValue(StdAttr.LABEL_FONT));
+      gfx.setColor(StdAttr.DEFAULT_LABEL_COLOR);
+      GraphicsUtil.drawCenteredText(gfx, label, bds.getX() + bds.getWidth() / 2, bds.getY() - gfx.getFont().getSize());
+      gfx.setFont(oldFont);
+      gfx.setColor(color);
     }
     painter.drawPorts();
   }
@@ -194,20 +186,19 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
     if (state.getProject().getVhdlSimulator().isEnabled()
         && state.getProject().getVhdlSimulator().isRunning()) {
 
-      VhdlSimulatorTop vhdlSimulator = state.getProject().getVhdlSimulator();
+      final var vhdlSimulator = state.getProject().getVhdlSimulator();
 
-      for (Port p : state.getInstance().getPorts()) {
-        int index = state.getPortIndex(p);
-        Value val = state.getPortValue(index);
-
-        String vhdlEntityName = GetSimName(state.getAttributeSet());
+      for (final var singlePort : state.getInstance().getPorts()) {
+        final var index = state.getPortIndex(singlePort);
+        final var val = state.getPortValue(index);
+        final var vhdlEntityName = getSimName(state.getAttributeSet());
 
         String message =
-            p.getType()
+            singlePort.getType()
                 + ":"
                 + vhdlEntityName
                 + "_"
-                + p.getToolTip()
+                + singlePort.getToolTip()
                 + ":"
                 + val.toBinaryString()
                 + ":"
@@ -219,58 +210,51 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
       vhdlSimulator.send("sync");
 
       /* Get response from tcl server */
-      String server_response;
-      while ((server_response = vhdlSimulator.receive()) != null
-          && server_response.length() > 0
-          && !server_response.equals("sync")) {
+      String serverResponse;
+      while ((serverResponse = vhdlSimulator.receive()) != null
+          && serverResponse.length() > 0
+          && !serverResponse.equals("sync")) {
 
-        String[] parameters = server_response.split(":");
+        final var parameters = serverResponse.split(":");
+        final var busValue = parameters[1];
+        final var vectorValues = new Value[busValue.length()];
 
-        String busValue = parameters[1];
-
-        Value[] vector_values = new Value[busValue.length()];
-
-        int k = busValue.length() - 1;
-        for (char bit : busValue.toCharArray()) {
+        var idx = busValue.length() - 1;
+        for (final var bit : busValue.toCharArray()) {
 
           try {
-            switch (Character.getNumericValue(bit)) {
-              case 0:
-                vector_values[k] = Value.FALSE;
-                break;
-              case 1:
-                vector_values[k] = Value.TRUE;
-                break;
-              default:
-                vector_values[k] = Value.UNKNOWN;
-                break;
-            }
+            vectorValues[idx] = switch (Character.getNumericValue(bit)) {
+              case 0 -> Value.FALSE;
+              case 1 -> Value.TRUE;
+              default -> Value.UNKNOWN;
+            };
           } catch (NumberFormatException e) {
-            vector_values[k] = Value.UNKNOWN;
+            vectorValues[idx] = Value.UNKNOWN;
           }
-          k--;
+          idx--;
         }
 
-        state.setPort(Integer.parseInt(parameters[2]), Value.create(vector_values), 1);
+        state.setPort(Integer.parseInt(parameters[2]), Value.create(vectorValues), 1);
       }
 
       /* VhdlSimulation stopped/disabled */
     } else {
 
-      for (Port p : state.getInstance().getPorts()) {
-        int index = state.getPortIndex(p);
+      for (final var port : state.getInstance().getPorts()) {
+        final var index = state.getPortIndex(port);
 
         /* If it is an output */
-        if (p.getType() == 2) {
-          Value[] vector_values = new Value[p.getFixedBitWidth().getWidth()];
-          for (int k = 0; k < p.getFixedBitWidth().getWidth(); k++) {
-            vector_values[k] = Value.UNKNOWN;
+        if (port.getType() == 2) {
+          final var vectorValues = new Value[port.getFixedBitWidth().getWidth()];
+          for (var k = 0; k < port.getFixedBitWidth().getWidth(); k++) {
+            vectorValues[k] = Value.UNKNOWN;
           }
 
-          state.setPort(index, Value.create(vector_values), 1);
+          state.setPort(index, Value.create(vectorValues), 1);
         }
       }
 
+      // FIXME: hardcoded string
       throw new UnsupportedOperationException(
           "VHDL component simulation is not supported. This could be because there is no Questasim/Modelsim simulation server running.");
     }
@@ -285,12 +269,12 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
     PrintWriter writer;
     try {
       writer =
-          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + GetSimName(attrs) + ".vhdl",
+          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + getSimName(attrs) + ".vhdl",
               StandardCharsets.UTF_8);
 
       String content = this.content.getContent();
 
-      content = content.replaceAll("(?i)" + getHDLName(attrs), GetSimName(attrs));
+      content = content.replaceAll("(?i)" + getHDLName(attrs), getSimName(attrs));
 
       writer.print(content);
       writer.close();

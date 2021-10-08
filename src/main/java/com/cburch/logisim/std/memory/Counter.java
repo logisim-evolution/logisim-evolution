@@ -11,7 +11,6 @@ package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.appear.DynamicElement;
 import com.cburch.logisim.circuit.appear.DynamicElementProvider;
 import com.cburch.logisim.data.Attribute;
@@ -49,7 +48,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
    */
   public static final String _ID = "Counter";
 
-  public static int SymbolWidth(int NrOfBits) {
+  public static int getSymbolWidth(int NrOfBits) {
     return 150 + ((NrOfBits - 8) / 5) * 10;
   }
 
@@ -84,7 +83,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
   static final int CARRY = 7;
 
   public Counter() {
-    super(_ID, S.getter("counterComponent"), new CounterHDLGeneratorFactory());
+    super(_ID, S.getter("counterComponent"), new CounterHdlGeneratorFactory());
     setOffsetBounds(Bounds.create(-30, -20, 30, 40));
     setIcon(new CounterIcon());
     setInstancePoker(CounterPoker.class);
@@ -100,13 +99,6 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
   protected void configureNewInstance(Instance instance) {
     configurePorts(instance);
     instance.addAttributeListener();
-  }
-
-  @Override
-  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    return (attr.equals(StdAttr.APPEARANCE))
-        ? StdAttr.APPEAR_CLASSIC
-        : super.getDefaultAttributeValue(attr, ver);
   }
 
   private void configurePorts(Instance instance) {
@@ -125,10 +117,10 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       ps[CARRY] = new Port(0, 10, Port.OUTPUT, 1);
     } else {
       if (width == 1) {
-        ps[OUT] = new Port(SymbolWidth(width) + 40, 120, Port.OUTPUT, StdAttr.WIDTH);
+        ps[OUT] = new Port(getSymbolWidth(width) + 40, 120, Port.OUTPUT, StdAttr.WIDTH);
         ps[IN] = new Port(0, 120, Port.INPUT, StdAttr.WIDTH);
       } else {
-        ps[OUT] = new Port(SymbolWidth(width) + 40, 110, Port.OUTPUT, StdAttr.WIDTH);
+        ps[OUT] = new Port(getSymbolWidth(width) + 40, 110, Port.OUTPUT, StdAttr.WIDTH);
         ps[IN] = new Port(0, 110, Port.INPUT, StdAttr.WIDTH);
       }
       ps[CK] = new Port(0, 80, Port.INPUT, 1);
@@ -136,7 +128,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       ps[LD] = new Port(0, 30, Port.INPUT, 1);
       ps[UD] = new Port(0, 50, Port.INPUT, 1);
       ps[EN] = new Port(0, 70, Port.INPUT, 1);
-      ps[CARRY] = new Port(40 + SymbolWidth(width), 50, Port.OUTPUT, 1);
+      ps[CARRY] = new Port(40 + getSymbolWidth(width), 50, Port.OUTPUT, 1);
     }
     ps[OUT].setToolTip(S.getter("counterQTip"));
     ps[IN].setToolTip(S.getter("counterDataTip"));
@@ -161,12 +153,12 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     return new CounterAttributes();
   }
 
-  private void DrawControl(InstancePainter painter, int xpos, int ypos) {
+  private void drawControl(InstancePainter painter, int xpos, int ypos) {
     final var g = painter.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
     final var widthVal = painter.getAttributeValue(StdAttr.WIDTH);
     final var width = widthVal == null ? 8 : widthVal.getWidth();
-    final var symbolWidth = SymbolWidth(width);
+    final var symbolWidth = getSymbolWidth(width);
     // Draw top
     final var controlTopx = new int[8];
     controlTopx[0] = controlTopx[1] = xpos + 30;
@@ -191,7 +183,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     final var label = (isCTRm)
             ? "CTR" + painter.getAttributeValue(StdAttr.WIDTH).getWidth()
             : "CTR DIV0x" + Long.toHexString(max);
-    GraphicsUtil.drawCenteredText(g, label, xpos + (SymbolWidth(width) / 2) + 20, ypos + 5);
+    GraphicsUtil.drawCenteredText(g, label, xpos + (getSymbolWidth(width) / 2) + 20, ypos + 5);
     GraphicsUtil.switchToWidth(g, GraphicsUtil.CONTROL_WIDTH);
     /* Draw Reset Input */
     g.drawLine(xpos, ypos + 20, xpos + 20, ypos + 20);
@@ -234,24 +226,24 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     GraphicsUtil.drawText(g, "2,4,5-", xpos + 30, ypos + 90, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
     painter.drawPort(CK);
     /* Draw Carry */
-    g.drawLine(xpos + 20 + SymbolWidth(width), ypos + 50, xpos + 40 + SymbolWidth(width), ypos + 50);
-    g.drawLine(xpos + 20 + SymbolWidth(width), ypos + 60, xpos + 35 + SymbolWidth(width), ypos + 60);
-    g.drawLine(xpos + 35 + SymbolWidth(width), ypos + 50, xpos + 35 + SymbolWidth(width), ypos + 60);
-    g.fillOval(xpos + 32 + SymbolWidth(width), ypos + 47, 6, 6);
+    g.drawLine(xpos + 20 + getSymbolWidth(width), ypos + 50, xpos + 40 + getSymbolWidth(width), ypos + 50);
+    g.drawLine(xpos + 20 + getSymbolWidth(width), ypos + 60, xpos + 35 + getSymbolWidth(width), ypos + 60);
+    g.drawLine(xpos + 35 + getSymbolWidth(width), ypos + 50, xpos + 35 + getSymbolWidth(width), ypos + 60);
+    g.fillOval(xpos + 32 + getSymbolWidth(width), ypos + 47, 6, 6);
     String maxVal =
         "3CT=0x"
             + Long.toHexString(painter.getAttributeValue(ATTR_MAX)).toUpperCase();
     GraphicsUtil.drawText(
         g,
         maxVal,
-        xpos + 17 + SymbolWidth(width),
+        xpos + 17 + getSymbolWidth(width),
         ypos + 50,
         GraphicsUtil.H_RIGHT,
         GraphicsUtil.V_CENTER);
     GraphicsUtil.drawText(
         g,
         "4CT=0",
-        xpos + 17 + SymbolWidth(width),
+        xpos + 17 + getSymbolWidth(width),
         ypos + 60,
         GraphicsUtil.H_RIGHT,
         GraphicsUtil.V_CENTER);
@@ -260,7 +252,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     RegisterData state = (RegisterData) painter.getData();
     if (painter.getShowState() && (state != null)) {
       final var len = (width + 3) / 4;
-      final var xcenter = SymbolWidth(width) - 25;
+      final var xcenter = getSymbolWidth(width) - 25;
       final var val = state.value;
       if (val.isFullyDefined()) g.setColor(Color.LIGHT_GRAY);
       else if (val.isErrorValue()) g.setColor(Color.RED);
@@ -286,7 +278,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     }
   }
 
-  private void DrawDataBlock(InstancePainter painter, int xpos, int ypos, int bitNr, int nrOfBits) {
+  private void drawDataBlock(InstancePainter painter, int xpos, int ypos, int bitNr, int nrOfBits) {
     final var realYpos = ypos + bitNr * 20;
     final var first = bitNr == 0;
     final var last = bitNr == (nrOfBits - 1);
@@ -294,7 +286,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     final var font = g.getFont();
     g.setFont(font.deriveFont(7.0f));
     GraphicsUtil.switchToWidth(g, 2);
-    g.drawRect(xpos + 20, realYpos, SymbolWidth(nrOfBits), 20);
+    g.drawRect(xpos + 20, realYpos, getSymbolWidth(nrOfBits), 20);
     /* Input Line */
     if (nrOfBits > 1) {
       // Input Line
@@ -304,9 +296,9 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
 
       // Output Line
       int[] oxPoints = {
-        xpos + 20 + SymbolWidth(nrOfBits),
-        xpos + 30 + SymbolWidth(nrOfBits),
-        xpos + 35 + SymbolWidth(nrOfBits)
+        xpos + 20 + getSymbolWidth(nrOfBits),
+        xpos + 30 + getSymbolWidth(nrOfBits),
+        xpos + 35 + getSymbolWidth(nrOfBits)
       };
       int[] oyPoints = {realYpos + 10, realYpos + 10, realYpos + 5};
       g.drawPolyline(oxPoints, oyPoints, 3);
@@ -315,9 +307,9 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       g.drawLine(xpos, realYpos + 10, xpos + 20, realYpos + 10);
       // Output Line
       g.drawLine(
-          xpos + 20 + SymbolWidth(nrOfBits),
+          xpos + 20 + getSymbolWidth(nrOfBits),
           realYpos + 10,
-          xpos + 40 + SymbolWidth(nrOfBits),
+          xpos + 40 + getSymbolWidth(nrOfBits),
           realYpos + 10);
     }
 
@@ -326,7 +318,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       GraphicsUtil.drawText(
           g,
           Integer.toString(bitNr),
-          xpos + 30 + SymbolWidth(nrOfBits),
+          xpos + 30 + getSymbolWidth(nrOfBits),
           realYpos + 8,
           GraphicsUtil.H_RIGHT,
           GraphicsUtil.V_BASELINE);
@@ -354,9 +346,9 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
 
         // Output Line
         int[] oxPoints = {
-          xpos + 35 + SymbolWidth(nrOfBits),
-          xpos + 35 + SymbolWidth(nrOfBits),
-          xpos + 40 + SymbolWidth(nrOfBits)
+          xpos + 35 + getSymbolWidth(nrOfBits),
+          xpos + 35 + getSymbolWidth(nrOfBits),
+          xpos + 40 + getSymbolWidth(nrOfBits)
         };
         int[] oyPoints = {realYpos + 20, realYpos + 5, realYpos};
         g.drawPolyline(oxPoints, oyPoints, 3);
@@ -364,16 +356,16 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     } else if (last) {
       g.drawLine(xpos + 5, realYpos, xpos + 5, realYpos + 5);
       g.drawLine(
-          xpos + 35 + SymbolWidth(nrOfBits),
+          xpos + 35 + getSymbolWidth(nrOfBits),
           realYpos,
-          xpos + 35 + SymbolWidth(nrOfBits),
+          xpos + 35 + getSymbolWidth(nrOfBits),
           realYpos + 5);
     } else {
       g.drawLine(xpos + 5, realYpos, xpos + 5, realYpos + 20);
       g.drawLine(
-          xpos + 35 + SymbolWidth(nrOfBits),
+          xpos + 35 + getSymbolWidth(nrOfBits),
           realYpos,
-          xpos + 35 + SymbolWidth(nrOfBits),
+          xpos + 35 + getSymbolWidth(nrOfBits),
           realYpos + 20);
     }
     GraphicsUtil.switchToWidth(g, 1);
@@ -383,7 +375,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       final var val = state.value;
       final var widthVal = painter.getAttributeValue(StdAttr.WIDTH);
       var width = widthVal == null ? 8 : widthVal.getWidth();
-      var xcenter = (SymbolWidth(width) / 2) + 10;
+      var xcenter = (getSymbolWidth(width) / 2) + 10;
       var value = "";
       if (val.isFullyDefined()) {
         g.setColor(Color.LIGHT_GRAY);
@@ -420,7 +412,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     final var width = widthVal == null ? 8 : widthVal.getWidth();
     return (attrs.getValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC)
         ? Bounds.create(-30, -20, 30, 40)
-        : Bounds.create(0, 0, SymbolWidth(width) + 40, 110 + 20 * width);
+        : Bounds.create(0, 0, getSymbolWidth(width) + 40, 110 + 20 * width);
   }
 
   @Override
@@ -434,7 +426,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     }
   }
 
-  public void DrawCounterClassic(InstancePainter painter) {
+  public void drawCounterClassic(InstancePainter painter) {
     final var g = painter.getGraphics();
     final var bds = painter.getBounds();
     final var state = (RegisterData) painter.getData();
@@ -492,18 +484,18 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
   @Override
   public void paintInstance(InstancePainter painter) {
     if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
-      DrawCounterClassic(painter);
+      drawCounterClassic(painter);
       return;
     }
     final var Xpos = painter.getLocation().getX();
     final var Ypos = painter.getLocation().getY();
     painter.drawLabel();
 
-    DrawControl(painter, Xpos, Ypos);
+    drawControl(painter, Xpos, Ypos);
     final var widthVal = painter.getAttributeValue(StdAttr.WIDTH);
     final var width = widthVal == null ? 8 : widthVal.getWidth();
     for (var bit = 0; bit < width; bit++) {
-      DrawDataBlock(painter, Xpos, Ypos + 110, bit, width);
+      drawDataBlock(painter, Xpos, Ypos + 110, bit, width);
     }
   }
 

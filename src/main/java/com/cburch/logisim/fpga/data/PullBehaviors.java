@@ -11,6 +11,7 @@ package com.cburch.logisim.fpga.data;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 public class PullBehaviors {
   public static String getContraintedPullString(char id) {
@@ -26,8 +27,8 @@ public class PullBehaviors {
 
   public static char getId(String identifier) {
     char result = 0;
-    LinkedList<String> thelist = PullBehaviors.getStrings();
-    Iterator<String> iter = thelist.iterator();
+    final var thelist = PullBehaviors.getStrings();
+    final var iter = thelist.iterator();
     result = 0;
     while (iter.hasNext()) {
       if (iter.next().equals(identifier)) return result;
@@ -36,7 +37,7 @@ public class PullBehaviors {
     return PullBehaviors.UNKNOWN;
   }
 
-  public static LinkedList<String> getStrings() {
+  public static List<String> getStrings() {
     LinkedList<String> result = new LinkedList<>();
 
     result.add(BEHAVIOR_STRINGS[0]);

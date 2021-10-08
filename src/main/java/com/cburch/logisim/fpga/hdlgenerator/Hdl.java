@@ -24,8 +24,8 @@ import com.cburch.logisim.util.LineBuffer;
 
 public abstract class Hdl {
 
-  public static final String NET_NAME = "s_LOGISIM_NET_";
-  public static final String BUS_NAME = "s_LOGISIM_BUS_";
+  public static final String NET_NAME = "s_logisimNet";
+  public static final String BUS_NAME = "s_logisimBus";
 
   public static boolean isVhdl() {
     return AppPreferences.HdlType.get().equals(HdlGeneratorFactory.VHDL);
@@ -121,19 +121,19 @@ public abstract class Hdl {
   }
 
   public static String notOperator() {
-    return isVhdl() ? " NOT " : "~";
+    return isVhdl() ? Vhdl.getVhdlKeyword(" NOT ") : "~";
   }
 
   public static String andOperator() {
-    return isVhdl() ? " AND " : "&";
+    return isVhdl() ? Vhdl.getVhdlKeyword(" AND ") : "&";
   }
 
   public static String orOperator() {
-    return isVhdl() ? " OR " : "|";
+    return isVhdl() ? Vhdl.getVhdlKeyword(" OR ") : "|";
   }
 
   public static String xorOperator() {
-    return isVhdl() ? " XOR " : "^";
+    return isVhdl() ? Vhdl.getVhdlKeyword(" XOR ") : "^";
   }
 
   public static String addOperator(String signalOne, String signalTwo, boolean signed) {
@@ -206,11 +206,11 @@ public abstract class Hdl {
   }
 
   public static String unconnected(boolean empty) {
-    return isVhdl() ? "OPEN" : empty ? "" : "'bz";
+    return isVhdl() ? Vhdl.getVhdlKeyword("OPEN") : empty ? "" : "'bz";
   }
 
   public static String vectorLoopId() {
-    return isVhdl() ? " DOWNTO " : ":";
+    return isVhdl() ? Vhdl.getVhdlKeyword(" DOWNTO ") : ":";
   }
 
   public static String splitVector(int start, int end) {
@@ -254,7 +254,7 @@ public abstract class Hdl {
     final var nrSingleBits = nrOfBits % 4;
     final var hexDigits = new String[nrHexDigits];
     final var singleBits = new StringBuilder();
-    var shiftValue = value >> nrSingleBits;
+    var shiftValue = value;
     for (var hexIndex = nrHexDigits - 1; hexIndex >= 0; hexIndex--) {
       var hexValue = shiftValue & 0xFL;
       shiftValue >>= 4L;
@@ -266,16 +266,16 @@ public abstract class Hdl {
     }
     var mask = (nrSingleBits == 0) ? 0 : 1L << (nrSingleBits - 1);
     while (mask > 0) {
-      singleBits.append((value & mask) == 0 ? "0" : "1");
+      singleBits.append((shiftValue & mask) == 0 ? "0" : "1");
       mask >>= 1L;
     }
     // first case, we have to concatinate
     if ((nrHexDigits > 0) && (nrSingleBits > 0)) {
       if (Hdl.isVhdl()) {
-        return LineBuffer.format("X\"{{1}}\"&\"{{2}}\"", hexValue.toString(), singleBits.toString());
+        return LineBuffer.format("\"{{1}}\"&X\"{{2}}\"", singleBits.toString(), hexValue.toString());
       } else {
-        return LineBuffer.format("{{{1}}'h{{2}}, {{3}}'b{{4}}}", nrHexDigits * 4, hexValue.toString(),
-            nrSingleBits, singleBits.toString());
+        return LineBuffer.format("{{{1}}'b{{2}}, {{3}}'h{{4}}}", nrSingleBits, singleBits.toString(),
+            nrHexDigits * 4, hexValue.toString());
       }
     }
     // second case, we have only hex digits
@@ -351,7 +351,7 @@ public abstract class Hdl {
     if (nrOfBits == 1) return getNetName(comp, endIndex, true, theNets);
     if (!theNets.isContinuesBus(comp, endIndex)) return null;
     final var connectedNet = connectionInformation.get((byte) 0).getParentNet();
-    return LineBuffer.format("{{1}}{{2}}{{3}}",
+    return LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}}",
         BUS_NAME,
         theNets.getNetId(connectedNet),
         splitVector(connectionInformation.get((byte) (connectionInformation.getNrOfBits() - 1)).getParentNetBitIndex(),
@@ -527,7 +527,30 @@ public abstract class Hdl {
       maxNameLength = Math.max(maxNameLength, wire.length());
     final var sortedWires = new TreeSet<String>(wires.keySet());
     for (var wire : sortedWires) 
-      contents.add("   {{assign}}{{1}}{{2}} {{=}} {{3}};", wire, " ".repeat(maxNameLength - wire.length()), wires.get(wire));
+      contents.add("{{assign}}{{1}}{{2}}{{=}}{{3}};", wire, " ".repeat(maxNameLength - wire.length()), wires.get(wire));
     wires.clear();
+  }
+
+  public static List<String> getExtendedLibrary() {
+    final var lines = LineBuffer.getBuffer();
+    lines.addVhdlKeywords().add("""
+
+               {{library}} ieee;
+               {{use}} ieee.std_logic_1164.all;
+               {{use}} ieee.numeric_std.all;
+
+               """);
+    return lines.get();
+  }
+
+  public static List<String> getStandardLibrary() {
+    final var lines = LineBuffer.getBuffer();
+    lines.addVhdlKeywords().add("""
+
+              {{library}} ieee;
+              {{use}} ieee.std_logic_1164.all;
+
+              """);
+    return lines.get();
   }
 }

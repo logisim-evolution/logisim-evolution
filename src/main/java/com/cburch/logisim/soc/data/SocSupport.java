@@ -21,14 +21,14 @@ import javax.swing.JMenuItem;
 
 public class SocSupport {
 
-  private static final long LongMask = (1L << 32) - 1L;
+  private static final long LONG_MASK = (1L << 32) - 1L;
 
   public static long convUnsignedInt(int value) {
-    return ((long) value) & LongMask;
+    return ((long) value) & LONG_MASK;
   }
 
   public static int convUnsignedLong(long value) {
-    return (int) (value & LongMask);
+    return (int) (value & LONG_MASK);
   }
 
   public static void addAllFunctions(PrintWriter h, PrintWriter c, String compName, String functName, int base, int index) {

@@ -292,7 +292,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
 
     RefTreeNode(Object data) {
       super(new CheckBoxNodeData(data.toString(), false));
-      refData = (data instanceof Ref) ? (Ref) data : null;
+      refData = (data instanceof Ref ref) ? ref : null;
     }
   }
 }

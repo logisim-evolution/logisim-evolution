@@ -12,7 +12,18 @@ package com.cburch.logisim.util;
 import java.util.ArrayList;
 import java.util.List;
 
-class WindowMenuManager {
+public final class WindowMenuManager {
+
+  private static final ArrayList<WindowMenu> menus = new ArrayList<>();
+
+  private static final ArrayList<WindowMenuItemManager> managers = new ArrayList<>();
+
+  private static WindowMenuItemManager currentManager = null;
+
+  private WindowMenuManager() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
+
   public static void addManager(WindowMenuItemManager manager) {
     for (final var menu : menus) {
       manager.createMenuItem(menu);
@@ -54,15 +65,11 @@ class WindowMenuManager {
     if (value == currentManager) return;
 
     final var doEnable = (currentManager == null) != (value == null);
-    if (currentManager == null)
-      setNullItems(false);
-    else
-      currentManager.setSelected(false);
+    if (currentManager == null) setNullItems(false);
+    else currentManager.setSelected(false);
     currentManager = value;
-    if (currentManager == null)
-      setNullItems(true);
-    else
-      currentManager.setSelected(true);
+    if (currentManager == null) setNullItems(true);
+    else currentManager.setSelected(true);
     if (doEnable) enableAll();
   }
 
@@ -76,12 +83,4 @@ class WindowMenuManager {
     if (value != currentManager) return;
     setCurrentManager(null);
   }
-
-  private static final ArrayList<WindowMenu> menus = new ArrayList<>();
-
-  private static final ArrayList<WindowMenuItemManager> managers = new ArrayList<>();
-
-  private static WindowMenuItemManager currentManager = null;
-
-  private WindowMenuManager() {}
 }

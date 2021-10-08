@@ -10,6 +10,7 @@
 package com.cburch.logisim.data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
@@ -53,7 +54,7 @@ public class FailException extends TestException {
     return expected;
   }
 
-  public ArrayList<FailException> getMore() {
+  public List<FailException> getMore() {
     return more;
   }
 
@@ -61,7 +62,7 @@ public class FailException extends TestException {
     more.clear();
   }
 
-  public ArrayList<FailException> getAll() {
+  public List<FailException> getAll() {
     final var ret = new ArrayList<FailException>();
     ret.add(this);
     ret.addAll(more);

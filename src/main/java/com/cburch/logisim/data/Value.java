@@ -51,8 +51,9 @@ public class Value {
   public static Value create(Value[] values) {
     if (values.length == 0) return NIL;
     if (values.length == 1) return values[0];
-    if (values.length > MAX_WIDTH)
+    if (values.length > MAX_WIDTH) {
       throw new RuntimeException("Cannot have more than " + MAX_WIDTH + " bits in a value");
+    }
 
     final var width = values.length;
     long value = 0;
@@ -125,10 +126,10 @@ public class Value {
       else if ('A' <= c && c <= 'F') d = 0xA + (c - 'A');
       else
         throw new Exception(
-            "unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
+            "Unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
 
       if (d >= radix)
-        throw new Exception("unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
+        throw new Exception("Unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
 
       value *= radix;
       unknown *= radix;
@@ -145,18 +146,15 @@ public class Value {
 
     if (w == 64) {
       if (((value & 0x7FFFFFFFFFFFFFFFL) >> (w - 1)) != 0)
-        throw new Exception("too many bits in \"" + t + "\"");
+        throw new Exception("Too many bits in \"" + t + "\"");
     } else {
-      if ((value >> w) != 0) throw new Exception("too many bits in \"" + t + "\"");
+      if ((value >> w) != 0) throw new Exception("Too many bits in \"" + t + "\"");
     }
 
     unknown &= ((1L << w) - 1);
     return create(w, 0, unknown, value);
   }
 
-  /**
-   * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
-   */
   public static int radixOfLogString(BitWidth width, String t) {
     if (t.startsWith("0x")) return 16;
     if (t.startsWith("0o")) return 8;
@@ -190,22 +188,18 @@ public class Value {
   public static final Value NIL = new Value(0, 0, 0, 0);
   public static final int MAX_WIDTH = 64;
 
-  public static Color FALSE_COLOR = new Color(AppPreferences.FALSE_COLOR.get());
-  public static Color TRUE_COLOR = new Color(AppPreferences.TRUE_COLOR.get());
-  public static Color UNKNOWN_COLOR = new Color(AppPreferences.UNKNOWN_COLOR.get());
-  public static Color ERROR_COLOR = new Color(AppPreferences.ERROR_COLOR.get());
-  public static Color NIL_COLOR = new Color(AppPreferences.NIL_COLOR.get());
-  public static Color STROKE_COLOR = new Color(AppPreferences.STROKE_COLOR.get());
-  public static Color MULTI_COLOR = new Color(AppPreferences.BUS_COLOR.get());
-  public static Color WIDTH_ERROR_COLOR = new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
-  public static Color WIDTH_ERROR_CAPTION_COLOR =
-      new Color(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.get());
-  public static Color WIDTH_ERROR_HIGHLIGHT_COLOR =
-      new Color(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
-  public static Color WIDTH_ERROR_CAPTION_BGCOLOR =
-      new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
-  public static Color CLOCK_FREQUENCY_COLOR =
-      new Color(AppPreferences.CLOCK_FREQUENCY_COLOR.get());
+  public static Color falseColor = new Color(AppPreferences.FALSE_COLOR.get());
+  public static Color trueColor = new Color(AppPreferences.TRUE_COLOR.get());
+  public static Color unknownColor = new Color(AppPreferences.UNKNOWN_COLOR.get());
+  public static Color errorColor = new Color(AppPreferences.ERROR_COLOR.get());
+  public static Color nilColor = new Color(AppPreferences.NIL_COLOR.get());
+  public static Color strokeColor = new Color(AppPreferences.STROKE_COLOR.get());
+  public static Color multiColor = new Color(AppPreferences.BUS_COLOR.get());
+  public static Color widthErrorColor = new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
+  public static Color widthErrorCaptionColor = new Color(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.get());
+  public static Color widthErrorHighlightColor = new Color(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
+  public static Color widthErrorCaptionBgcolor = new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
+  public static Color clockFrequencyColor = new Color(AppPreferences.CLOCK_FREQUENCY_COLOR.get());
 
   private static final Cache cache = new Cache();
 
@@ -343,15 +337,15 @@ public class Value {
 
   public Color getColor() {
     if (error != 0) {
-      return ERROR_COLOR;
+      return errorColor;
     } else if (width == 0) {
-      return NIL_COLOR;
+      return nilColor;
     } else if (width == 1) {
-      if (this == UNKNOWN) return UNKNOWN_COLOR;
-      else if (this == TRUE) return TRUE_COLOR;
-      else return FALSE_COLOR;
+      if (this == UNKNOWN) return unknownColor;
+      else if (this == TRUE) return trueColor;
+      else return falseColor;
     } else {
-      return MULTI_COLOR;
+      return multiColor;
     }
   }
 

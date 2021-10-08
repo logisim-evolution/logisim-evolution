@@ -80,86 +80,84 @@ public class BoardWriterClass {
 
       final var root = boardInfo.createElement(BoardInfo.getBoardName());
       boardInfo.appendChild(root);
-      final var fpgainfo = boardInfo.createElement(BOARD_INFORMATION_SECTION_STRING);
-      root.appendChild(fpgainfo);
+      final var fpgaInfo = boardInfo.createElement(BOARD_INFORMATION_SECTION_STRING);
+      root.appendChild(fpgaInfo);
       final var comment = boardInfo.createComment("This section decribes the FPGA and its clock");
-      fpgainfo.appendChild(comment);
-      final var clkinfo = boardInfo.createElement(CLOCK_INFORMATION_SECTION_STRING);
-      clkinfo.setAttribute(CLOCK_SECTION_STRINGS[0], Long.toString(BoardInfo.fpga.getClockFrequency()));
+      fpgaInfo.appendChild(comment);
+      final var clkInfo = boardInfo.createElement(CLOCK_INFORMATION_SECTION_STRING);
+      clkInfo.setAttribute(CLOCK_SECTION_STRINGS[0], Long.toString(BoardInfo.fpga.getClockFrequency()));
       final var pin = boardInfo.createAttribute(CLOCK_SECTION_STRINGS[1]);
       pin.setValue(BoardInfo.fpga.getClockPinLocation().toUpperCase());
-      clkinfo.setAttributeNode(pin);
+      clkInfo.setAttributeNode(pin);
       final var pull = boardInfo.createAttribute(CLOCK_SECTION_STRINGS[2]);
       pull.setValue(PullBehaviors.BEHAVIOR_STRINGS[BoardInfo.fpga.getClockPull()]);
-      clkinfo.setAttributeNode(pull);
-      final var IOS = boardInfo.createAttribute(CLOCK_SECTION_STRINGS[3]);
-      IOS.setValue(IoStandards.BEHAVIOR_STRINGS[BoardInfo.fpga.getClockStandard()]);
-      clkinfo.setAttributeNode(IOS);
-      fpgainfo.appendChild(clkinfo);
-      final var FPGA = boardInfo.createElement(FPGA_INFORMATION_SECTION_STRING);
-      FPGA.setAttribute(FPGA_SECTION_STRINGS[0], VendorSoftware.VENDORS[BoardInfo.fpga.getVendor()].toUpperCase());
+      clkInfo.setAttributeNode(pull);
+      final var ios = boardInfo.createAttribute(CLOCK_SECTION_STRINGS[3]);
+      ios.setValue(IoStandards.BEHAVIOR_STRINGS[BoardInfo.fpga.getClockStandard()]);
+      clkInfo.setAttributeNode(ios);
+      fpgaInfo.appendChild(clkInfo);
+      final var fpga = boardInfo.createElement(FPGA_INFORMATION_SECTION_STRING);
+      fpga.setAttribute(FPGA_SECTION_STRINGS[0], VendorSoftware.VENDORS[BoardInfo.fpga.getVendor()].toUpperCase());
       final var part = boardInfo.createAttribute(FPGA_SECTION_STRINGS[1]);
       part.setValue(BoardInfo.fpga.getPart());
-      FPGA.setAttributeNode(part);
+      fpga.setAttributeNode(part);
       final var tech = boardInfo.createAttribute(FPGA_SECTION_STRINGS[2]);
       tech.setValue(BoardInfo.fpga.getTechnology());
-      FPGA.setAttributeNode(tech);
+      fpga.setAttributeNode(tech);
       final var box = boardInfo.createAttribute(FPGA_SECTION_STRINGS[3]);
       box.setValue(BoardInfo.fpga.getPackage());
-      FPGA.setAttributeNode(box);
+      fpga.setAttributeNode(box);
       final var speed = boardInfo.createAttribute(FPGA_SECTION_STRINGS[4]);
       speed.setValue(BoardInfo.fpga.getSpeedGrade());
-      FPGA.setAttributeNode(speed);
-      final var usbtmc = boardInfo.createAttribute(FPGA_SECTION_STRINGS[5]);
-      usbtmc.setValue(BoardInfo.fpga.USBTMCDownloadRequired().toString());
-      FPGA.setAttributeNode(usbtmc);
+      fpga.setAttributeNode(speed);
+      final var usbTmc = boardInfo.createAttribute(FPGA_SECTION_STRINGS[5]);
+      usbTmc.setValue(BoardInfo.fpga.isUsbTmcDownloadRequired().toString());
+      fpga.setAttributeNode(usbTmc);
       final var jtagPos = boardInfo.createAttribute(FPGA_SECTION_STRINGS[6]);
       jtagPos.setValue(String.valueOf(BoardInfo.fpga.getFpgaJTAGChainPosition()));
-      FPGA.setAttributeNode(jtagPos);
+      fpga.setAttributeNode(jtagPos);
       final var flashName = boardInfo.createAttribute(FPGA_SECTION_STRINGS[7]);
       flashName.setValue(String.valueOf(BoardInfo.fpga.getFlashName()));
-      FPGA.setAttributeNode(flashName);
+      fpga.setAttributeNode(flashName);
       final var flashJtagPos = boardInfo.createAttribute(FPGA_SECTION_STRINGS[8]);
       flashJtagPos.setValue(String.valueOf(BoardInfo.fpga.getFlashJTAGChainPosition()));
-      FPGA.setAttributeNode(flashJtagPos);
-      final var UnusedPins = boardInfo.createElement(UNUSED_PINS_STRING);
-      fpgainfo.appendChild(FPGA);
-      UnusedPins.setAttribute("PullBehavior", PullBehaviors.BEHAVIOR_STRINGS[BoardInfo.fpga.getUnusedPinsBehavior()]);
-      fpgainfo.appendChild(UnusedPins);
-      final var Components = boardInfo.createElement(COMPONENTS_SECTION_STRING);
-      root.appendChild(Components);
-      Comment Compcmd = boardInfo.createComment("This section describes all Components present on the boards");
-      Components.appendChild(Compcmd);
-      for (var comp : BoardInfo.GetAllComponents()) {
-        Components.appendChild(comp.getDocumentElement(boardInfo));
+      fpga.setAttributeNode(flashJtagPos);
+      final var unusedPins = boardInfo.createElement(UNUSED_PINS_STRING);
+      fpgaInfo.appendChild(fpga);
+      unusedPins.setAttribute("PullBehavior", PullBehaviors.BEHAVIOR_STRINGS[BoardInfo.fpga.getUnusedPinsBehavior()]);
+      fpgaInfo.appendChild(unusedPins);
+      final var components = boardInfo.createElement(COMPONENTS_SECTION_STRING);
+      root.appendChild(components);
+      final var compCmd = boardInfo.createComment("This section describes all Components present on the boards");
+      components.appendChild(compCmd);
+      for (final var comp : BoardInfo.getAllComponents()) {
+        components.appendChild(comp.getDocumentElement(boardInfo));
       }
       final var writer = new ImageXmlFactory();
-      writer.CreateStream(BoardImage);
-      final var BoardPicture = boardInfo.createElement(IMAGE_INFORMATION_STRING);
-      root.appendChild(BoardPicture);
-      final var Pictcmd = boardInfo.createComment("This section hold the board picture");
-      BoardPicture.appendChild(Pictcmd);
+      writer.createStream(BoardImage);
+      final var boardPicture = boardInfo.createElement(IMAGE_INFORMATION_STRING);
+      root.appendChild(boardPicture);
+      final var pictCmd = boardInfo.createComment("This section hold the board picture");
+      boardPicture.appendChild(pictCmd);
       final var pictsize = boardInfo.createElement("PictureDimension");
       pictsize.setAttribute("Width", Integer.toString(BoardImage.getWidth(null)));
       final var height = boardInfo.createAttribute("Height");
       height.setValue(Integer.toString(BoardImage.getHeight(null)));
       pictsize.setAttributeNode(height);
-      BoardPicture.appendChild(pictsize);
-      final var CodeTable = boardInfo.createElement("CompressionCodeTable");
-      BoardPicture.appendChild(CodeTable);
-      CodeTable.setAttribute("TableData", writer.GetCodeTable());
-      final var PixelData = boardInfo.createElement("PixelData");
-      BoardPicture.appendChild(PixelData);
-      PixelData.setAttribute("PixelRGB", writer.GetCompressedString());
+      boardPicture.appendChild(pictsize);
+      final var codeTable = boardInfo.createElement("CompressionCodeTable");
+      boardPicture.appendChild(codeTable);
+      codeTable.setAttribute("TableData", writer.getCodeTable());
+      final var pixelData = boardInfo.createElement("PixelData");
+      boardPicture.appendChild(pixelData);
+      pixelData.setAttribute("PixelRGB", writer.getCompressedString());
     } catch (Exception e) {
       /* TODO: handle exceptions */
-      logger.error(
-          "Exceptions not handled yet in BoardWriterClass(), but got an exception: {}",
-          e.getMessage());
+      logger.error("Exceptions not handled yet in BoardWriterClass(), but got an exception: {}", e.getMessage());
     }
   }
 
-  public void PrintXml() {
+  public void printXml() {
     try {
       final var tranFactory = TransformerFactory.newInstance();
       final var aTransformer = tranFactory.newTransformer();
@@ -175,7 +173,7 @@ public class BoardWriterClass {
     }
   }
 
-  public void PrintXml(String filename) {
+  public void printXml(String filename) {
     try {
       final var tranFactory = TransformerFactory.newInstance();
       tranFactory.setAttribute("indent-number", 3);
@@ -186,8 +184,7 @@ public class BoardWriterClass {
       final var dest = new StreamResult(file);
       aTransformer.transform(src, dest);
     } catch (Exception e) {
-      logger.error(
-          "Exceptions not handled yet in PrintXml(), but got an exception: {}", e.getMessage());
+      logger.error("Exceptions not handled yet in PrintXml(), but got an exception: {}", e.getMessage());
     }
   }
 }

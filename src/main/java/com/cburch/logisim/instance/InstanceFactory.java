@@ -24,7 +24,7 @@ import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.gui.log.LoggableContract;
 import com.cburch.logisim.tools.Pokable;
 import com.cburch.logisim.tools.key.KeyConfigurator;
-import com.cburch.logisim.util.Icons;
+import com.cburch.logisim.util.IconsUtil;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.UnmodifiableList;
@@ -276,7 +276,7 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
       if (i == null) {
         var n = iconName;
         if (n != null) {
-          i = Icons.getIcon(n);
+          i = IconsUtil.getIcon(n);
           if (i == null) {
             n = null;
           }

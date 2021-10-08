@@ -45,7 +45,7 @@ public class GatesLibrary extends Library {
               new AddTool(EvenParityGate.FACTORY),
               new AddTool(ControlledBuffer.FACTORY_BUFFER),
               new AddTool(ControlledBuffer.FACTORY_INVERTER),
-              new AddTool(PLA.FACTORY)
+              new AddTool(Pla.FACTORY)
             });
   }
 

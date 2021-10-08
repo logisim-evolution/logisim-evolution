@@ -187,8 +187,7 @@ public class PioState implements SocBusSlaveInterface {
   }
 
   public boolean setStartAddress(Integer addr) {
-    if (startAddress == addr)
-      return false;
+    if (startAddress.equals(addr)) return false;
     startAddress = addr;
     firememMapChanged();
     return true;
@@ -202,22 +201,19 @@ public class PioState implements SocBusSlaveInterface {
   }
 
   public boolean setOutputResetValue(Integer val) {
-    if (outputResetValue == val)
-      return false;
+    if (outputResetValue.equals(val)) return false;
     outputResetValue = val;
     return true;
   }
 
   public boolean setOutputBitManupulations(Boolean b) {
-    if (outputEnableBitManipulations == b)
-      return false;
+    if (outputEnableBitManipulations.equals(b)) return false;
     outputEnableBitManipulations = b;
     return true;
   }
 
   public boolean setInputSynchronousCapture(Boolean b) {
-    if (inputSynchronousCapture == b)
-      return false;
+    if (inputSynchronousCapture.equals(b)) return false;
     inputSynchronousCapture = b;
     return true;
   }
@@ -230,15 +226,13 @@ public class PioState implements SocBusSlaveInterface {
   }
 
   public boolean setInputCaptureBitClearing(Boolean b) {
-    if (inputCaptBitClearing == b)
-      return false;
+    if (inputCaptBitClearing.equals(b)) return false;
     inputCaptBitClearing = b;
     return true;
   }
 
   public boolean setIrqGeneration(Boolean b) {
-    if (inputGeneratesIrq == b)
-      return false;
+    if (inputGeneratesIrq.equals(b)) return false;
     inputGeneratesIrq = b;
     return true;
   }

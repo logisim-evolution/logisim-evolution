@@ -11,7 +11,6 @@ package com.cburch.logisim.std.plexers;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
@@ -42,7 +41,7 @@ public class Demultiplexer extends InstanceFactory {
   public static final String _ID = "Demultiplexer";
 
   public Demultiplexer() {
-    super(_ID, S.getter("demultiplexerComponent"), new DemultiplexerHDLGeneratorFactory());
+    super(_ID, S.getter("demultiplexerComponent"), new DemultiplexerHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -83,16 +82,6 @@ public class Demultiplexer extends InstanceFactory {
   }
 
   @Override
-  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    if (attr == PlexersLibrary.ATTR_ENABLE) {
-      int newer = ver.compareTo(new LogisimVersion(2, 6, 4));
-      return newer >= 0;
-    } else {
-      return super.getDefaultAttributeValue(attr, ver);
-    }
-  }
-
-  @Override
   public String getHDLName(AttributeSet attrs) {
     final var completeName = new StringBuilder();
     completeName.append(CorrectLabel.getCorrectLabel(this.getName()));
@@ -113,7 +102,7 @@ public class Demultiplexer extends InstanceFactory {
   }
 
   @Override
-  public boolean HasThreeStateDrivers(AttributeSet attrs) {
+  public boolean hasThreeStateDrivers(AttributeSet attrs) {
     return (attrs.getValue(PlexersLibrary.ATTR_TRISTATE)
         || (attrs.getValue(PlexersLibrary.ATTR_DISABLED) == PlexersLibrary.DISABLED_FLOATING));
   }

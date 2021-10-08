@@ -19,7 +19,6 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.hdl.VhdlContentComponent;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
@@ -50,9 +49,9 @@ public class TclGeneric extends TclComponent {
 
     @Override
     public java.awt.Component getCellEditor(Window source, VhdlContentComponent value) {
-      Project proj =
-          source instanceof com.cburch.logisim.gui.main.Frame
-              ? ((com.cburch.logisim.gui.main.Frame) source).getProject()
+      final var proj =
+          source instanceof com.cburch.logisim.gui.main.Frame frame
+              ? frame.getProject()
               : null;
       return TclGenericAttributes.getContentEditor(source, value, proj);
     }
@@ -194,7 +193,7 @@ public class TclGeneric extends TclComponent {
 
   @Override
   void updatePorts(Instance instance) {
-    VhdlContentComponent content = instance.getAttributeValue(CONTENT_ATTR);
+    final var content = instance.getAttributeValue(CONTENT_ATTR);
     instance.setPorts(content.getPorts());
     setPorts(content.getPorts());
   }

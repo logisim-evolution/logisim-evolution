@@ -64,14 +64,15 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
   private int operation;
   private boolean valid = false;
 
+  @Override
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
-    return opcodes;
+    return new ArrayList<>(Arrays.asList(AsmOpcodes));
   }
 
+  @Override
   public boolean execute(Object state, CircuitState cState) {
     if (!valid) return false;
-    RV32im_state.ProcessorState cpuState = (RV32im_state.ProcessorState) state;
+    RV32imState.ProcessorState cpuState = (RV32imState.ProcessorState) state;
     int result = 0;
     int regVal = cpuState.getRegisterValue(source);
     switch (operation) {
@@ -123,6 +124,7 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
     return true;
   }
 
+  @Override
   public String getAsmInstruction() {
     if (!valid)
       return "Unknown";
@@ -135,45 +137,49 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
       case INSTR_NOP:
         break;
       case INSTR_LI:
-        s.append(RV32im_state.registerABINames[destination]).append(",").append(immediate);
+        s.append(RV32imState.registerABINames[destination]).append(",").append(immediate);
         break;
       case INSTR_LUI:
       case INSTR_AUIPC:
-        s.append(RV32im_state.registerABINames[destination])
+        s.append(RV32imState.registerABINames[destination])
             .append(",")
             .append((immediate >> 12) & 0xFFFFF);
         break;
       case INSTR_MV:
       case INSTR_NOT:
       case INSTR_SEQZ:
-        s.append(RV32im_state.registerABINames[destination])
+        s.append(RV32imState.registerABINames[destination])
             .append(",")
-            .append(RV32im_state.registerABINames[source]);
+            .append(RV32imState.registerABINames[source]);
         break;
       default:
-        s.append(RV32im_state.registerABINames[destination])
+        s.append(RV32imState.registerABINames[destination])
             .append(",")
-            .append(RV32im_state.registerABINames[source])
+            .append(RV32imState.registerABINames[source])
             .append(",")
             .append(immediate);
     }
     return s.toString();
   }
 
+  @Override
   public int getBinInstruction() {
     return instruction;
   }
 
+  @Override
   public boolean setBinInstruction(int instr) {
     instruction = instr;
     decodeBin();
     return valid;
   }
 
+  @Override
   public boolean performedJump() {
     return false;
   }
 
+  @Override
   public boolean isValid() {
     return valid;
   }
@@ -238,15 +244,18 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
     valid = false;
   }
 
+  @Override
   public String getErrorMessage() {
     return null;
   }
 
+  @Override
   public int getInstructionSizeInBytes(String instruction) {
     if (getInstructions().contains(instruction.toUpperCase())) return 4;
     return -1;
   }
 
+  @Override
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
     for (int i = 0; i < AsmOpcodes.length; i++)
@@ -292,7 +301,7 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
         }
         if (operation == INSTR_LI) operation = INSTR_ADDI;
         source = 0;
-        destination = RV32im_state.getRegisterIndex(param1[0].getValue());
+        destination = RV32imState.getRegisterIndex(param1[0].getValue());
         if (destination < 0 || destination > 31) {
           errors = true;
           instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));
@@ -329,12 +338,12 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
           break;
         }
         immediate = -1;
-        source = RV32im_state.getRegisterIndex(param2[0].getValue());
+        source = RV32imState.getRegisterIndex(param2[0].getValue());
         if (source < 0 || source > 31) {
           errors = true;
           instr.setError(param2[0], S.getter("AssemblerUnknownRegister"));
         }
-        destination = RV32im_state.getRegisterIndex(param1[0].getValue());
+        destination = RV32imState.getRegisterIndex(param1[0].getValue());
         if (destination < 0 || destination > 31) {
           errors = true;
           instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));
@@ -381,12 +390,12 @@ public class RV32imIntegerRegisterImmediateInstructions implements AssemblerExec
           break;
         }
         immediate = param3[0].getNumberValue();
-        source = RV32im_state.getRegisterIndex(param2[0].getValue());
+        source = RV32imState.getRegisterIndex(param2[0].getValue());
         if (source < 0 || source > 31) {
           errors = true;
           instr.setError(param2[0], S.getter("AssemblerUnknownRegister"));
         }
-        destination = RV32im_state.getRegisterIndex(param1[0].getValue());
+        destination = RV32imState.getRegisterIndex(param1[0].getValue());
         if (destination < 0 || destination > 31) {
           errors = true;
           instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));

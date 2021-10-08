@@ -30,6 +30,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -84,8 +86,8 @@ public class ProjectActions {
     var isOk = true;
     var tempSet = new HashMap<String, Library>();
     var forbiddenNames = new HashSet<String>();
-    LibraryTools.BuildLibraryList(proj.getLogisimFile(), tempSet);
-    LibraryTools.BuildToolList(proj.getLogisimFile(), forbiddenNames);
+    LibraryTools.buildLibraryList(proj.getLogisimFile(), tempSet);
+    LibraryTools.buildToolList(proj.getLogisimFile(), forbiddenNames);
     forbiddenNames.addAll(tempSet.keySet());
     var pattern = Pattern.compile("[^a-z0-9_.]", Pattern.CASE_INSENSITIVE);
     var matcher = pattern.matcher(filename);
@@ -229,7 +231,7 @@ public class ProjectActions {
       }
       return;
     }
-    baseProject.doAction(LogisimFileActions.MergeFile(mergelib, baseProject.getLogisimFile()));
+    baseProject.doAction(LogisimFileActions.mergeFile(mergelib, baseProject.getLogisimFile()));
   }
 
   private static void updatecircs(LogisimFile lib, Project proj) {
@@ -310,7 +312,7 @@ public class ProjectActions {
       final var lib = loader.openLogisimFile(f);
       AppPreferences.updateRecentFile(f);
       if (lib == null) return null;
-      LibraryTools.RemovePresentLibraries(lib, new HashMap<>(), true);
+      LibraryTools.removePresentLibraries(lib, new HashMap<>(), true);
       if (proj == null) {
         proj = new Project(lib);
         updatecircs(lib, proj);
@@ -380,7 +382,7 @@ public class ProjectActions {
     final var loader = proj.getLogisimFile().getLoader();
     final var oldTool = proj.getTool();
     proj.setTool(null);
-    boolean ret = loader.save(proj.getLogisimFile(), f);
+    final var ret = loader.save(proj.getLogisimFile(), f);
     if (ret) {
       AppPreferences.updateRecentFile(f);
       proj.setFileAsClean();
@@ -389,6 +391,60 @@ public class ProjectActions {
     return ret;
   }
 
+  /**
+   * Exports a Logisim project in a seperate directory
+   *
+   * <p>It is the action listener for the File->Export project... menu option.
+   *
+   * @param proj Project to be exported
+   * @return true if success, false otherwise 
+   */
+  public static boolean doExportProject(Project proj) {
+    var ret = proj.isFileDirty() ? doSave(proj) : true;
+    if (ret) {
+      final var loader = proj.getLogisimFile().getLoader();
+      final var oldTool = proj.getTool();
+      proj.setTool(null);
+      final var chooser = loader.createChooser();
+      chooser.setFileFilter(Loader.LOGISIM_DIRECTORY);
+      chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+      chooser.setAcceptAllFileFilterUsed(false);
+      var isCorrectDirectory = false;
+      var exportRootDir = "";
+      do {
+        ret &= chooser.showSaveDialog(proj.getFrame()) == JFileChooser.APPROVE_OPTION;
+        if (!ret) {
+          proj.setTool(oldTool);
+          return false;
+        }
+        final var exportHome = chooser.getSelectedFile();
+        final var exportRoot = loader.getMainFile().getName().replace(".circ", "");
+        exportRootDir = String.format("%s%s%s", exportHome, File.separator, exportRoot);
+        final var exportLibDir = String.format("%s%s%s", exportRootDir, File.separator, Loader.LOGISIM_LIBRARY_DIR);
+        final var exportCircDir = String.format("%s%s%s", exportRootDir, File.separator, Loader.LOGISIM_CIRCUIT_DIR);
+        try {
+          final var path = Paths.get(exportRootDir);
+          if (Files.exists(path)) {
+            OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjExistsUnableToCreate", exportRoot));
+          } else {
+            isCorrectDirectory = true;
+          }
+          if (isCorrectDirectory) {
+            Files.createDirectories(Paths.get(exportLibDir));
+            Files.createDirectories(Paths.get(exportCircDir));
+          }
+        } catch (IOException e) {
+          OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjUnableToCreate", e.getMessage()));
+          proj.setTool(oldTool);
+          return false;
+        }
+      } while (!isCorrectDirectory);
+      ret &= loader.export(proj.getLogisimFile(), exportRootDir);
+      proj.setTool(oldTool);
+    }
+    return ret;
+  }
+  
   /**
    * Saves a Logisim project in a .circ file.
    *

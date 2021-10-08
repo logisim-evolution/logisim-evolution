@@ -469,12 +469,16 @@ public class AppPreferences {
       create(new PrefMonitorString("SelectedBoard", null));
 
   public static final String EXTERNAL_BOARDS = "ExternalBoards";
-  public static final FPGABoards Boards = new FPGABoards();
+  public static final FpgaBoards Boards = new FpgaBoards();
   public static final PrefMonitor<Boolean> SupressGatedClockWarnings =
       create(new PrefMonitorBoolean("NoGatedClockWarnings", false));
   public static final PrefMonitor<Boolean> SupressOpenPinWarnings =
       create(new PrefMonitorBoolean("NoOpenPinWarnings", false));
-
+  public static final PrefMonitor<Boolean> VhdlKeywordsUpperCase =
+      create(new PrefMonitorBoolean("VhdlKeywordsUpperCase", true));
+  //file preferences
+  public static final PrefMonitor<Boolean> REMOVE_UNUSED_LIBRARIES =
+      create(new PrefMonitorBoolean("removeUnusedLibs", false));
   // Window preferences
   public static final String TOOLBAR_HIDDEN = "hidden";
   public static final PrefMonitor<Boolean> SHOW_TICK_RATE =

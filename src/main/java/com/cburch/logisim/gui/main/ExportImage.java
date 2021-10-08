@@ -255,10 +255,10 @@ public class ExportImage {
             ImageIO.write(img, "JPEG", where);
             break;
           case FORMAT_TIKZ:
-            ((TikZWriter) g).WriteFile(where);
+            ((TikZWriter) g).writeFile(where);
             break;
           case FORMAT_SVG:
-            ((TikZWriter) g).WriteSvg(width, height, where);
+            ((TikZWriter) g).writeSvg(width, height, where);
             break;
         }
       } catch (Exception e) {

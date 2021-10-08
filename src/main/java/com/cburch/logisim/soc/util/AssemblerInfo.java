@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 public class AssemblerInfo {
 
@@ -34,8 +36,8 @@ public class AssemblerInfo {
      */
     private long sectionStart;
     private long sectionEnd;
-    private HashMap<Long, Byte> data;
-    private HashMap<Long, AssemblerAsmInstruction> instructions;
+    private Map<Long, Byte> data;
+    private Map<Long, AssemblerAsmInstruction> instructions;
     private final AssemblerToken identifier;
 
     public AssemblerSectionInfo() {
@@ -74,8 +76,8 @@ public class AssemblerInfo {
 
     public long getEntryPoint() {
       if (instructions.isEmpty()) return -1;
-      long result = -1;
-      for (Long x : instructions.keySet()) {
+      var result = -1L;
+      for (final var x : instructions.keySet()) {
         if (result < 0 || x < result) result = x;
       }
       return result;
@@ -94,7 +96,7 @@ public class AssemblerInfo {
     }
 
     public void addString(String str) {
-      for (int i = 0; i < str.length(); i++) {
+      for (var i = 0; i < str.length(); i++) {
         if (str.charAt(i) == '\\') {
           i++;
           if (i < str.length()) {
@@ -143,33 +145,32 @@ public class AssemblerInfo {
       sectionEnd += instr.getSizeInBytes();
     }
 
-    public boolean replaceLabels(
-        HashMap<String, Long> labels, HashMap<AssemblerToken, StringGetter> errors) {
-      boolean hasError = false;
-      for (long addr : instructions.keySet())
+    public boolean replaceLabels(Map<String, Long> labels, Map<AssemblerToken, StringGetter> errors) {
+      var hasError = false;
+      for (final var addr : instructions.keySet())
         hasError |= !instructions.get(addr).replaceLabels(labels, errors);
       for (String label : labels.keySet()) {
-        long addr = labels.get(label);
+        final var addr = labels.get(label);
         if (addr >= sectionStart && addr < sectionEnd) {
-          SymbolTable st = new SymbolTable(label, SocSupport.convUnsignedLong(addr));
+          final var st = new SymbolTable(label, SocSupport.convUnsignedLong(addr));
           super.addSymbol(st);
         }
       }
       return !hasError;
     }
 
-    public boolean replaceDefines(
-        HashMap<String, Integer> defines, HashMap<AssemblerToken, StringGetter> errors) {
-      boolean errorsFound = false;
-      for (long addr : instructions.keySet())
+    public boolean replaceDefines(Map<String, Integer> defines, Map<AssemblerToken, StringGetter> errors) {
+      var errorsFound = false;
+      for (final var addr : instructions.keySet()) {
         errorsFound |= !instructions.get(addr).replaceDefines(defines, errors);
+      }
       return !errorsFound;
     }
 
-    public HashMap<AssemblerToken, StringGetter> replaceInstructions(AssemblerInterface assembler) {
-      HashMap<AssemblerToken, StringGetter> errors = new HashMap<>();
+    public Map<AssemblerToken, StringGetter> replaceInstructions(AssemblerInterface assembler) {
+      final var errors = new HashMap<AssemblerToken, StringGetter>();
       for (long addr : instructions.keySet()) {
-        AssemblerAsmInstruction asm = instructions.get(addr);
+        final var asm = instructions.get(addr);
         asm.setProgramCounter(addr);
         if (!assembler.assemble(asm)) {
           errors.putAll(asm.getErrors());
@@ -182,10 +183,10 @@ public class AssemblerInfo {
       return errors;
     }
 
-    public boolean Download(SocProcessorInterface cpu, CircuitState state) {
-      for (long i = sectionStart; i < sectionEnd; i++) {
-        byte datab = data.containsKey(i) ? data.get(i) : 0;
-        SocBusTransaction trans =
+    public boolean download(SocProcessorInterface cpu, CircuitState state) {
+      for (var i = sectionStart; i < sectionEnd; i++) {
+        final var datab = data.containsKey(i) ? data.get(i) : 0;
+        final var trans =
             new SocBusTransaction(
                 SocBusTransaction.WRITE_TRANSACTION,
                 SocSupport.convUnsignedLong(i),
@@ -244,21 +245,18 @@ public class AssemblerInfo {
     this.assembler = assembler;
   }
 
-  public HashMap<AssemblerToken, StringGetter> getErrors() {
+  public Map<AssemblerToken, StringGetter> getErrors() {
     return errors;
   }
 
-  public void assemble(
-      LinkedList<AssemblerToken> tokens,
-      HashMap<String, Long> labels,
-      HashMap<String, AssemblerMacro> macros) {
+  public void assemble(List<AssemblerToken> tokens, Map<String, Long> labels, Map<String, AssemblerMacro> macros) {
     errors.clear();
     sections.clear();
-    HashMap<String, Integer> defines = new HashMap<>();
+    final var defines = new HashMap<String, Integer>();
     currentSection = -1;
     /* first pass: go through all tokens and mark the labels */
-    for (int i = 0; i < tokens.size(); i++) {
-      AssemblerToken asm = tokens.get(i);
+    for (var i = 0; i < tokens.size(); i++) {
+      final var asm = tokens.get(i);
       switch (asm.getType()) {
         case AssemblerToken.ASM_INSTRUCTION:
           i += handleAsmInstructions(tokens, i, asm, defines);
@@ -279,7 +277,7 @@ public class AssemblerInfo {
     }
     if (!errors.isEmpty()) return;
     /* second pass: replace all parameter labels by a value */
-    for (String label : labels.keySet()) {
+    for (final var label : labels.keySet()) {
       if (labels.get(label) < 0) {
         /* this should never happen */
         OptionPane.showMessageDialog(null, "Severe bug in AssemblerInfo.java");
@@ -287,45 +285,46 @@ public class AssemblerInfo {
       }
     }
     boolean errorsFound = false;
-    for (AssemblerSectionInfo section : sections.getAll())
+    for (final var section : sections.getAll()) {
       errorsFound |= !section.replaceLabels(labels, errors);
+    }
     if (errorsFound) return;
     errorsFound = false;
-    for (AssemblerSectionInfo section : sections.getAll())
+    for (final var section : sections.getAll()) {
       errorsFound |= !section.replaceDefines(defines, errors);
+    }
     if (errorsFound) return;
     /* third pass: Check for overlapping sections and mark them */
     for (int i = 0; i < sections.size(); i++) {
-      AssemblerSectionInfo section = sections.get(i);
+      final var section = sections.get(i);
       for (int j = i + 1; j < sections.size(); j++) {
-        AssemblerSectionInfo check = sections.get(j);
+        final var check = sections.get(j);
         if ((section.sectionStart > check.sectionStart && section.sectionStart < check.sectionEnd)
             || (section.sectionEnd > check.sectionStart && section.sectionEnd < check.sectionEnd)) {
           errorsFound = true;
-          if (section.getIdentifier() != null)
-            errors.put(section.getIdentifier(), S.getter("AssemblerOverlappingSections"));
-          if (check.getIdentifier() != null)
-            errors.put(section.getIdentifier(), S.getter("AssemblerOverlappingSections"));
+          if (section.getIdentifier() != null) errors.put(section.getIdentifier(), S.getter("AssemblerOverlappingSections"));
+          if (check.getIdentifier() != null) errors.put(section.getIdentifier(), S.getter("AssemblerOverlappingSections"));
         }
       }
     }
     if (errorsFound) return;
     /* last pass: transform instructions to bytes */
-    for (AssemblerSectionInfo section : sections.getAll())
+    for (final var section : sections.getAll()) {
       errors.putAll(section.replaceInstructions(assembler));
+    }
   }
 
   public boolean download(SocProcessorInterface cpu, CircuitState state) {
-    for (AssemblerSectionInfo section : sections.getAll())
-      if (!section.Download(cpu, state)) return false;
+    for (final var section : sections.getAll())
+      if (!section.download(cpu, state)) return false;
     return true;
   }
 
   public long getEntryPoint() {
     long entry = -1;
-    for (AssemblerSectionInfo section : sections.getAll()) {
+    for (final var section : sections.getAll()) {
       if (section.hasInstructions()) {
-        long sentry = section.getEntryPoint();
+        final var sentry = section.getEntryPoint();
         if (entry < 0 || sentry < entry) entry = sentry;
       }
     }
@@ -336,18 +335,14 @@ public class AssemblerInfo {
     return sections;
   }
 
-  private int handleMacros(
-      LinkedList<AssemblerToken> tokens,
-      int index,
-      AssemblerToken current,
-      HashMap<String, AssemblerMacro> macros) {
+  private int handleMacros(List<AssemblerToken> tokens, int index, AssemblerToken current, Map<String, AssemblerMacro> macros) {
     if (!macros.containsKey(current.getValue())) return 0;
-    AssemblerMacro macro = macros.get(current.getValue());
+    final var macro = macros.get(current.getValue());
     macro.clearParameters();
-    HashSet<Integer> acceptedParameters = assembler.getAcceptedParameterTypes();
+    final var acceptedParameters = assembler.getAcceptedParameterTypes();
     int skip = 0;
     if (index + 1 < tokens.size()) {
-      ArrayList<AssemblerToken> params = new ArrayList<>();
+      final var params = new ArrayList<AssemblerToken>();
       AssemblerToken next;
       do {
         next = tokens.get(index + skip + 1);
@@ -358,7 +353,7 @@ public class AssemblerInfo {
               errors.put(next, S.getter("AssemblerExpectedParameter"));
               return tokens.size();
             }
-            AssemblerToken[] set = new AssemblerToken[params.size()];
+            final var set = new AssemblerToken[params.size()];
             for (int i = 0; i < params.size(); i++) set[i] = params.get(i);
             params.clear();
             macro.addParameter(set);
@@ -368,8 +363,10 @@ public class AssemblerInfo {
         }
       } while (index + skip + 1 < tokens.size() && acceptedParameters.contains(next.getType()));
       if (!params.isEmpty()) {
-        AssemblerToken[] set = new AssemblerToken[params.size()];
-        for (int i = 0; i < params.size(); i++) set[i] = params.get(i);
+        final var set = new AssemblerToken[params.size()];
+        for (int i = 0; i < params.size(); i++) {
+          set[i] = params.get(i);
+        }
         params.clear();
         macro.addParameter(set);
       }
@@ -378,9 +375,9 @@ public class AssemblerInfo {
       errors.put(current, S.getter("AssemblerMacroIncorrectNumberOfParameters"));
       return tokens.size();
     }
-    LinkedList<AssemblerToken> macroTokens = macro.getMacroTokens();
+    final var macroTokens = macro.getMacroTokens();
     for (int i = 0; i < macroTokens.size(); i++) {
-      AssemblerToken asm = macroTokens.get(i);
+      final var asm = macroTokens.get(i);
       switch (asm.getType()) {
         case AssemblerToken.INSTRUCTION:
           i += handleInstruction(macroTokens, i, asm);
@@ -396,14 +393,12 @@ public class AssemblerInfo {
     return skip;
   }
 
-  private int handleInstruction(
-      LinkedList<AssemblerToken> tokens, int index, AssemblerToken current) {
-    AssemblerAsmInstruction instruction =
-        new AssemblerAsmInstruction(current, assembler.getInstructionSize(current.getValue()));
-    HashSet<Integer> acceptedParameters = assembler.getAcceptedParameterTypes();
+  private int handleInstruction(List<AssemblerToken> tokens, int index, AssemblerToken current) {
+    final var instruction = new AssemblerAsmInstruction(current, assembler.getInstructionSize(current.getValue()));
+    final var acceptedParameters = assembler.getAcceptedParameterTypes();
     int skip = 0;
     if (index + 1 < tokens.size()) {
-      ArrayList<AssemblerToken> params = new ArrayList<>();
+      final var params = new ArrayList<AssemblerToken>();
       AssemblerToken next;
       do {
         next = tokens.get(index + skip + 1);
@@ -414,7 +409,7 @@ public class AssemblerInfo {
               errors.put(next, S.getter("AssemblerExpectedParameter"));
               return tokens.size();
             }
-            AssemblerToken[] set = new AssemblerToken[params.size()];
+            final var set = new AssemblerToken[params.size()];
             for (int i = 0; i < params.size(); i++) set[i] = params.get(i);
             params.clear();
             instruction.addParameter(set);
@@ -424,7 +419,7 @@ public class AssemblerInfo {
         }
       } while (index + skip + 1 < tokens.size() && acceptedParameters.contains(next.getType()));
       if (!params.isEmpty()) {
-        AssemblerToken[] set = new AssemblerToken[params.size()];
+        final var set = new AssemblerToken[params.size()];
         for (int i = 0; i < params.size(); i++) set[i] = params.get(i);
         params.clear();
         instruction.addParameter(set);
@@ -435,7 +430,7 @@ public class AssemblerInfo {
     return skip;
   }
 
-  private void handleLabels(HashMap<String, Long> labels, AssemblerToken current) {
+  private void handleLabels(Map<String, Long> labels, AssemblerToken current) {
     if (!labels.containsKey(current.getValue())) {
       /* this should never happen as the assembler.java should have taken care of this */
       errors.put(current, S.getter("AssemblerUnknownLabel"));
@@ -449,11 +444,7 @@ public class AssemblerInfo {
     labels.put(current.getValue(), sections.get(currentSection).getSectionEnd());
   }
 
-  private int handleAsmInstructions(
-      LinkedList<AssemblerToken> tokens,
-      int index,
-      AssemblerToken current,
-      HashMap<String, Integer> defines) {
+  private int handleAsmInstructions(List<AssemblerToken> tokens, int index, AssemblerToken current, Map<String, Integer> defines) {
     if (current.getValue().equals(".section")) {
       /* we start a new section, hence the next parameter represents the section name */
       if (index + 1 >= tokens.size()) {
@@ -526,7 +517,7 @@ public class AssemblerInfo {
         errors.put(current, S.getter("AssemblerExpectingString"));
         return 0;
       }
-      AssemblerToken next = tokens.get(index + 1);
+      final var next = tokens.get(index + 1);
       if (next.getType() != AssemblerToken.STRING) {
         errors.put(current, S.getter("AssemblerExpectingString"));
         return 0;
@@ -546,7 +537,7 @@ public class AssemblerInfo {
         errors.put(current, S.getter("AssemblerExpectingNumber"));
         return 0;
       }
-      int maxRange = AssemblerHighlighter.BYTES.contains(current.getValue()) ? 8 :
+      final var maxRange = AssemblerHighlighter.BYTES.contains(current.getValue()) ? 8 :
                      AssemblerHighlighter.SHORTS.contains(current.getValue()) ? 16 :
                      AssemblerHighlighter.INTS.contains(current.getValue()) ? 32 : -1;
       int skip = 0;
@@ -558,13 +549,13 @@ public class AssemblerInfo {
           errors.put(next, S.getter("AssemblerExpectingNumber"));
           return skip;
         }
-        long value = next.getLongValue();
+        var value = next.getLongValue();
         if (maxRange > 0 &&  value >= (1L << maxRange)) {
           errors.put(next, S.getter("AssemblerValueOutOfRange"));
           return skip;
         }
         checkIfActiveSection();
-        int nrOfBytes = (maxRange < 0) ? 8 : maxRange >> 3;
+        final var nrOfBytes = (maxRange < 0) ? 8 : maxRange >> 3;
         for (int i = 0; i < nrOfBytes; i++) {
           sections.get(currentSection).addByte((byte) (value & 0xFF));
           value >>= 8;
@@ -594,8 +585,8 @@ public class AssemblerInfo {
         errors.put(tokens.get(index + 2), S.getter("AssemblerExpectedImmediateValue"));
         return 2;
       }
-      String label = tokens.get(index + 1).getValue();
-      int value = tokens.get(index + 2).getNumberValue();
+      final var label = tokens.get(index + 1).getValue();
+      final var value = tokens.get(index + 2).getNumberValue();
       if (type == AssemblerToken.PARAMETER_LABEL) {
         errors.put(tokens.get(index + 1), S.getter("AssemblerDuplicatedName"));
         return 2;
@@ -616,7 +607,7 @@ public class AssemblerInfo {
 
   private boolean addSection(String name, AssemblerToken identifier) {
     /* first check if a section with this name exists */
-    for (AssemblerSectionInfo section : sections.getAll()) {
+    for (final var section : sections.getAll()) {
       if (section.getSectionName().equals(name)) return false;
     }
     if (currentSection < 0) {
@@ -624,7 +615,7 @@ public class AssemblerInfo {
       currentSection = 0;
     } else {
       long start = sections.get(currentSection).getSectionEnd();
-      AssemblerSectionInfo si = new AssemblerSectionInfo(start, name, identifier);
+      final var si = new AssemblerSectionInfo(start, name, identifier);
       sections.add(si);
       currentSection = sections.indexOf(si);
     }

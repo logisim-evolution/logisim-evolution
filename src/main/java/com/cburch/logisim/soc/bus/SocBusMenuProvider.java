@@ -73,7 +73,7 @@ public class SocBusMenuProvider implements ActionListener {
                 .insertTransaction(inst, info.getCircuitState(), info.getState(), info.getName());
             break;
           case SHOW_TRACES:
-            myInfo.get(inst).ShowTraceWindow(inst, info.getState(), info.getHierInfo());
+            myInfo.get(inst).showTraceWindow(inst, info.getState(), info.getHierInfo());
             break;
         }
       }
@@ -284,7 +284,7 @@ public class SocBusMenuProvider implements ActionListener {
       frame.setExtendedState(fstate);
     }
 
-    public void ShowTraceWindow(
+    public void showTraceWindow(
         Instance instance,
         SocBusStateInfo.SocBusState state,
         CircuitStateHolder.HierarchyInfo name) {

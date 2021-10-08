@@ -12,7 +12,6 @@ package com.cburch.logisim.std.memory;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.contracts.BaseMouseListenerContract;
-import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
@@ -54,8 +53,8 @@ public class Rom extends Mem {
 
     @Override
     public java.awt.Component getCellEditor(Window source, MemContents value) {
-      if (source instanceof Frame) {
-        final var proj = ((Frame) source).getProject();
+      if (source instanceof Frame frame) {
+        final var proj = frame.getProject();
         RomAttributes.register(value, proj);
       }
       final var ret = new ContentsCell(source, value);
@@ -109,7 +108,7 @@ public class Rom extends Mem {
     @Override
     public void mouseClicked(MouseEvent e) {
       if (contents == null) return;
-      final var proj = source instanceof Frame ? ((Frame) source).getProject() : null;
+      final var proj = (source instanceof Frame frame) ? frame.getProject() : null;
       final var frame = RomAttributes.getHexFrame(contents, proj, null);
       frame.setVisible(true);
       frame.toFront();
@@ -141,13 +140,6 @@ public class Rom extends Mem {
   @Override
   void configurePorts(Instance instance) {
     RamAppearance.configurePorts(instance);
-  }
-
-  @Override
-  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    return (attr.equals(StdAttr.APPEARANCE))
-        ? StdAttr.APPEAR_CLASSIC
-        : super.getDefaultAttributeValue(attr, ver);
   }
 
   @Override
@@ -213,9 +205,9 @@ public class Rom extends Mem {
   @Override
   public void paintInstance(InstancePainter painter) {
     if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
-      RamAppearance.DrawRamClassic(painter);
+      RamAppearance.drawRamClassic(painter);
     } else {
-      RamAppearance.DrawRamEvolution(painter);
+      RamAppearance.drawRamEvolution(painter);
     }
   }
 

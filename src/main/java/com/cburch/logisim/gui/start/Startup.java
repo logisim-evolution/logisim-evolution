@@ -785,7 +785,7 @@ public class Startup implements AWTEventListener {
     return doFpgaDownload;
   }
 
-  boolean FpgaDownload(Project proj) {
+  boolean fpgaDownload(Project proj) {
     /* Testing synthesis */
     final var mainCircuit = proj.getLogisimFile().getCircuit(testCircuitImpName);
     if (mainCircuit == null) return false;
@@ -799,7 +799,7 @@ public class Startup implements AWTEventListener {
             testCircuitImpName,
             usedFrequency,
             new BoardReaderClass(AppPreferences.Boards.getBoardFilePath(testCircuitImpBoard))
-                .GetBoardInformation(),
+                .getBoardInformation(),
             testCircuitImpMapFile,
             false,
             false,
@@ -960,12 +960,12 @@ public class Startup implements AWTEventListener {
     }
   }
 
-  private boolean HasIcon(Component comp) {
+  private boolean hasIcon(Component comp) {
     var result = false;
     if (comp instanceof JOptionPane pane) {
-      for (final var comp1 : pane.getComponents()) result |= HasIcon(comp1);
+      for (final var comp1 : pane.getComponents()) result |= hasIcon(comp1);
     } else if (comp instanceof JPanel panel) {
-      for (final var comp1 : panel.getComponents()) result |= HasIcon(comp1);
+      for (final var comp1 : panel.getComponents()) result |= hasIcon(comp1);
     } else if (comp instanceof JLabel label) {
       return label.getIcon() != null;
     }
@@ -1006,7 +1006,7 @@ public class Startup implements AWTEventListener {
         }
         if (container instanceof JOptionPane) {
           final var pane = (JOptionPane) container;
-          if (HasIcon(pane)) {
+          if (hasIcon(pane)) {
             switch (pane.getMessageType()) {
               case OptionPane.ERROR_MESSAGE:
                 pane.setIcon(new ErrorIcon());

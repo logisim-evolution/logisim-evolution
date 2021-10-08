@@ -11,6 +11,7 @@ package com.cburch.logisim.fpga.data;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 public class DriveStrength {
   public static String GetContraintedDriveStrength(char id) {
@@ -32,7 +33,7 @@ public class DriveStrength {
     return UNKNOWN;
   }
 
-  public static LinkedList<String> getStrings() {
+  public static List<String> getStrings() {
     LinkedList<String> result = new LinkedList<>();
 
     result.add(BEHAVIOR_STRINGS[0]);

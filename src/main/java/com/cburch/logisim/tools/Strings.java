@@ -12,5 +12,11 @@ package com.cburch.logisim.tools;
 import com.cburch.logisim.util.LocaleManager;
 
 public class Strings {
+
+  private Strings() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
+
   public static final LocaleManager S = new LocaleManager("resources/logisim", "tools");
+
 }

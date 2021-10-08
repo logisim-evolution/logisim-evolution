@@ -20,14 +20,12 @@ public class ShowStateTool implements ToolbarClickableItem {
 
   private final AppearanceView view;
   private final AppearanceCanvas canvas;
-  private final DrawingAttributeSet attrs;
   private final Icon icon;
   private final Icon pressed;
 
   public ShowStateTool(AppearanceView view, AppearanceCanvas canvas, DrawingAttributeSet attrs) {
     this.view = view;
     this.canvas = canvas;
-    this.attrs = attrs;
     icon = new ShowStateIcon(false);
     pressed = new ShowStateIcon(true);
   }
@@ -39,6 +37,7 @@ public class ShowStateTool implements ToolbarClickableItem {
 
   @Override
   public String getToolTip() {
+    // FIXME: hardcoded string
     return "Select state to be shown";
   }
 

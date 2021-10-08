@@ -17,11 +17,14 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class FileUtil {
+public final class FileUtil {
+
+  private FileUtil() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
 
   public static String correctPath(String path) {
-    if (path.endsWith(File.separator)) return path;
-    else return path + File.separator;
+    return path.endsWith(File.separator) ? path : path + File.separator;
   }
 
   public static File createTmpFile(String content, String prefix, String suffix) throws IOException {

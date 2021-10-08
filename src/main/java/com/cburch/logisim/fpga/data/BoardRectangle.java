@@ -91,23 +91,26 @@ public class BoardRectangle {
 
   public Boolean overlap(BoardRectangle rect) {
     Boolean result;
-    int xl, xr, yt, yb;
+    int xl;
+    int xr;
+    int yt;
+    int yb;
     xl = rect.getXpos();
     xr = xl + rect.getWidth();
     yt = rect.getYpos();
     yb = yt + rect.getHeight();
 
     /* first check for the other corner points inside myself */
-    result = this.PointInside(xl, yt);
-    result |= this.PointInside(xl, yb);
-    result |= this.PointInside(xr, yt);
-    result |= this.PointInside(xr, yb);
+    result = this.isPointInside(xl, yt);
+    result |= this.isPointInside(xl, yb);
+    result |= this.isPointInside(xr, yt);
+    result |= this.isPointInside(xr, yb);
 
     /* check for my corner points inside him */
-    result |= rect.PointInside(xPosition, yPosition);
-    result |= rect.PointInside(xPosition + width, yPosition);
-    result |= rect.PointInside(xPosition, yPosition + height);
-    result |= rect.PointInside(xPosition + width, yPosition + height);
+    result |= rect.isPointInside(xPosition, yPosition);
+    result |= rect.isPointInside(xPosition + width, yPosition);
+    result |= rect.isPointInside(xPosition, yPosition + height);
+    result |= rect.isPointInside(xPosition + width, yPosition + height);
 
     /*
      * if result=false: for sure the corner points are not inside one of
@@ -160,7 +163,7 @@ public class BoardRectangle {
     return result;
   }
 
-  public Boolean PointInside(int x, int y) {
+  public Boolean isPointInside(int x, int y) {
     return ((x >= xPosition)
         && (x <= (xPosition + width))
         && (y >= yPosition)
@@ -184,12 +187,12 @@ public class BoardRectangle {
     }
   }
 
-  public void setActiveOnHigh(boolean IsActiveHigh) {
-    this.isActiveHigh = IsActiveHigh;
+  public void setActiveOnHigh(boolean isActiveHigh) {
+    this.isActiveHigh = isActiveHigh;
   }
 
-  public void setLabel(String Label) {
-    this.label = Label;
+  public void setLabel(String label) {
+    this.label = label;
   }
 
   public void setValue(Long val) {

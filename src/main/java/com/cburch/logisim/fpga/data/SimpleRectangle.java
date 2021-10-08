@@ -47,7 +47,7 @@ public class SimpleRectangle {
         new BoardRectangle(x + width - offset, y + height - offset, offset, offset);
     show = true;
     fill = true;
-    movemode = !test.PointInside(e.getX(), e.getY());
+    movemode = !test.isPointInside(e.getX(), e.getY());
   }
 
   public Rectangle resizeAndGetUpdate(MouseEvent e) {
@@ -104,10 +104,10 @@ public class SimpleRectangle {
     Graphics2D g1 = (Graphics2D) g.create();
     g1.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
     if (fill) {
-      g1.setColor(movemode ? BoardManipulator.MOVE_COLOR : BoardManipulator.RESIZE_COLOR);
+      g1.setColor(movemode ? BoardManipulator.moveColor : BoardManipulator.resizeColor);
       g1.fillRect(xmin, ymin, xmax - xmin, ymax - ymin);
     } else {
-      g1.setColor(BoardManipulator.DEFINE_COLOR);
+      g1.setColor(BoardManipulator.defineColor);
       g1.drawRect(xmin, ymin, xmax - xmin, ymax - ymin);
     }
     g1.dispose();

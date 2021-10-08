@@ -45,6 +45,7 @@ import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import javax.swing.JPanel;
 import org.fife.ui.rsyntaxtextarea.AbstractTokenMakerFactory;
 import org.fife.ui.rsyntaxtextarea.TokenMakerFactory;
@@ -216,7 +217,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
     }
 
     @Override
-    public void SimButtonPressed() {
+    public void simButtonPressed() {
       simState.buttonPressed();
     }
 
@@ -233,10 +234,10 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
 
     @Override
     public String getRegisterValueHex(int index) {
-      return RegisterIsValid(index) ? String.format("0x%08X", getRegisterValue(index)) : "??????????";
+      return isRegisterValid(index) ? String.format("0x%08X", getRegisterValue(index)) : "??????????";
     }
 
-    public Boolean RegisterIsValid(int index) {
+    public Boolean isRegisterValid(int index) {
       if (index == 0) return true;
       if (index > 31) return false;
       return registers_valid[index - 1];
@@ -291,7 +292,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
         Nios2CustomInstructions cust = (Nios2CustomInstructions) ASSEMBLER.getExeUnit();
         if (cust.isValid() && cust.waitingOnReady(this, cState)) return;
       }
-      HashMap<Integer, Integer> breakPoints = bPanel.getBreakPoints();
+      Map<Integer, Integer> breakPoints = bPanel.getBreakPoints();
       if (breakPoints.containsKey(pc)) {
         if (simState.breakPointReached()) {
           bPanel.gotoLine(breakPoints.get(pc) - 1);
@@ -651,7 +652,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
   }
 
   @Override
-  public void SimulationStateChanged() {
+  public void simulationStateChanged() {
     if (attachedBus != null && attachedBus.getComponent() != null)
       ((InstanceComponent) attachedBus.getComponent()).getInstance().fireInvalidated();
   }

@@ -39,7 +39,7 @@ public class Negator extends InstanceFactory {
   public static final int OUT = 1;
 
   public Negator() {
-    super(_ID, S.getter("negatorComponent"), new NegatorHDLGeneratorFactory());
+    super(_ID, S.getter("negatorComponent"), new NegatorHdlGeneratorFactory());
     setAttributes(new Attribute[] {StdAttr.WIDTH}, new Object[] {BitWidth.create(8)});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));

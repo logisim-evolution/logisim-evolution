@@ -133,7 +133,7 @@ public class Multiplier extends InstanceFactory {
   public static final int C_OUT = 4;
 
   public Multiplier() {
-    super(_ID, S.getter("multiplierComponent"), new MultiplierHDLGeneratorFactory());
+    super(_ID, S.getter("multiplierComponent"), new MultiplierHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {StdAttr.WIDTH, Comparator.MODE_ATTR},
         new Object[] {BitWidth.create(8), Comparator.UNSIGNED_OPTION});

@@ -177,7 +177,7 @@ class ControlledBuffer extends InstanceFactory {
     if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR)
       AbstractGate.paintIconIEC(g, "EN1", isInverter, false);
     else
-      AbstractGate.paintIconBufferANSI(g, isInverter, true);
+      AbstractGate.paintIconBufferAnsi(g, isInverter, true);
   }
 
   @Override

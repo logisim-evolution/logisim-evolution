@@ -116,11 +116,11 @@ public class JtagUartState  implements SocBusSlaveInterface {
       return WriteFifo.size() <= writeIrqThreshold;
     }
 
-    public boolean IrqPending() {
-      return readIrqPending() | writeIrqPending();
+    public boolean isIrqPending() {
+      return readIrqPending() || writeIrqPending();
     }
 
-    public boolean WriteFifoEmpty() {
+    public boolean isWriteFifoEmpty() {
       return WriteFifo.isEmpty();
     }
 
@@ -278,8 +278,8 @@ public class JtagUartState  implements SocBusSlaveInterface {
     }
     if (curReset == Value.TRUE) return;
     if (instState.risingEdge(curClock)) {
-      state.setPort(JtagUart.IRQ_PIN, instState.IrqPending() ? Value.TRUE : Value.FALSE, 5);
-      if (instState.WriteFifoEmpty()) {
+      state.setPort(JtagUart.IRQ_PIN, instState.isIrqPending() ? Value.TRUE : Value.FALSE, 5);
+      if (instState.isWriteFifoEmpty()) {
         state.setPort(JtagUart.WRITE_PIN, Value.FALSE, 5);
       } else {
         int val = instState.popWriteFifo();

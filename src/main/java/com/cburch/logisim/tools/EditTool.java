@@ -50,6 +50,7 @@ public class EditTool extends Tool {
   public static final String _ID = "Edit Tool";
 
   private class Listener implements CircuitListener, Selection.Listener {
+    @Override
     public void circuitChanged(CircuitEvent event) {
       if (event.getAction() != CircuitEvent.ACTION_INVALIDATE) {
         lastX = -1;
@@ -58,6 +59,7 @@ public class EditTool extends Tool {
       }
     }
 
+    @Override
     public void selectionChanged(Event event) {
       lastX = -1;
       cache.clear();
@@ -159,7 +161,7 @@ public class EditTool extends Tool {
       final var x = loc.getX();
       final var y = loc.getY();
       final var g = context.getGraphics();
-      g.setColor(Value.TRUE_COLOR);
+      g.setColor(Value.trueColor);
       GraphicsUtil.switchToWidth(g, 2);
       g.drawOval(x - 5, y - 5, 10, 10);
       g.setColor(Color.BLACK);

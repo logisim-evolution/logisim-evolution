@@ -12,6 +12,8 @@ package com.cburch.logisim.file;
 import static com.cburch.logisim.file.Strings.S;
 
 import com.cburch.logisim.tools.Library;
+import com.cburch.logisim.util.LineBuffer;
+
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
@@ -20,8 +22,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.WeakHashMap;
 
-class LibraryManager {
-  private static class JarDescriptor extends LibraryDescriptor {
+public final class LibraryManager {
+
+  public static final LibraryManager instance = new LibraryManager();
+
+  private static final char DESC_SEP = '#';
+  private final HashMap<LibraryDescriptor, WeakReference<LoadedLibrary>> fileMap;
+  private final WeakHashMap<LoadedLibrary, LibraryDescriptor> invMap;
+
+  private static class JarDescriptor implements LibraryDescriptor {
     private final File file;
     private final String className;
 
@@ -31,7 +40,7 @@ class LibraryManager {
     }
 
     @Override
-    boolean concernsFile(File query) {
+    public boolean concernsFile(File query) {
       return file.equals(query);
     }
 
@@ -48,33 +57,33 @@ class LibraryManager {
     }
 
     @Override
-    void setBase(Loader loader, LoadedLibrary lib) throws LoadFailedException {
+    public void setBase(Loader loader, LoadedLibrary lib) throws LoadFailedException {
       lib.setBase(loader.loadJarFile(file, className));
     }
 
     @Override
-    String toDescriptor(Loader loader) {
+    public String toDescriptor(Loader loader) {
       return "jar#" + toRelative(loader, file) + DESC_SEP + className;
     }
   }
 
-  private abstract static class LibraryDescriptor {
-    abstract boolean concernsFile(File query);
+  private interface LibraryDescriptor {
+    boolean concernsFile(File query);
 
-    abstract void setBase(Loader loader, LoadedLibrary lib) throws LoadFailedException;
+    void setBase(Loader loader, LoadedLibrary lib) throws LoadFailedException;
 
-    abstract String toDescriptor(Loader loader);
+    String toDescriptor(Loader loader);
   }
 
-  private static class LogisimProjectDescriptor extends LibraryDescriptor {
+  private static class LogisimProjectDescriptor implements LibraryDescriptor {
     private final File file;
 
-    LogisimProjectDescriptor(File file) {
+    public LogisimProjectDescriptor(File file) {
       this.file = file;
     }
 
     @Override
-    boolean concernsFile(File query) {
+    public boolean concernsFile(File query) {
       return file.equals(query);
     }
 
@@ -91,55 +100,52 @@ class LibraryManager {
     }
 
     @Override
-    void setBase(Loader loader, LoadedLibrary lib) throws LoadFailedException {
+    public void setBase(Loader loader, LoadedLibrary lib) throws LoadFailedException {
       lib.setBase(loader.loadLogisimFile(file));
     }
 
     @Override
-    String toDescriptor(Loader loader) {
+    public String toDescriptor(Loader loader) {
       return "file#" + toRelative(loader, file);
     }
   }
-
-  private static String toRelative(Loader loader, File file) {
-    final var currentDirectory = loader.getCurrentDirectory();
-    if (currentDirectory == null) {
-      try {
-        return file.getCanonicalPath();
-      } catch (IOException e) {
-        return file.toString();
-      }
-    }
-
-    final var fileDir = file.getParentFile();
-    if (fileDir != null) {
-      if (currentDirectory.equals(fileDir)) {
-        return file.getName();
-      } else if (currentDirectory.equals(fileDir.getParentFile())) {
-        return fileDir.getName() + File.separator + file.getName();
-      } else if (fileDir.equals(currentDirectory.getParentFile())) {
-        return ".." + File.separator + file.getName();
-      }
-    }
-    try {
-      return file.getCanonicalPath();
-    } catch (IOException e) {
-      return file.toString();
-    }
-  }
-
-  public static final LibraryManager instance = new LibraryManager();
-
-  private static final char DESC_SEP = '#';
-  private final HashMap<LibraryDescriptor, WeakReference<LoadedLibrary>> fileMap;
-
-  private final WeakHashMap<LoadedLibrary, LibraryDescriptor> invMap;
 
   private LibraryManager() {
     fileMap = new HashMap<>();
     invMap = new WeakHashMap<>();
     ProjectsDirty.initialize();
   }
+
+  private static String toRelative(Loader loader, File file) {
+    final var currentDirectory = loader.getCurrentDirectory();
+    var fileName = file.toString();
+    try {
+      fileName = file.getCanonicalPath(); 
+    } catch (IOException e) {
+      // Do nothing as we already have defined the default above
+    }
+    if (currentDirectory != null) {
+      final var currentParts = currentDirectory.toString().split(File.separator);
+      final var newParts = fileName.split(File.separator);
+      final var nrOfNewParts = newParts.length;
+      // note that the newParts includes the filename, whilst the old doesn't
+      var nrOfPartsEqual = 0;
+      while ((nrOfPartsEqual < currentParts.length) && (nrOfPartsEqual < (nrOfNewParts - 1)) 
+          && (currentParts[nrOfPartsEqual].equals(newParts[nrOfPartsEqual]))) {
+        nrOfPartsEqual++;
+      }
+      final var nrOfLevelsToGoDown = currentParts.length - nrOfPartsEqual;
+      final var relativeFile = new StringBuilder();
+      relativeFile.append(String.format("..%s", File.separator).repeat(nrOfLevelsToGoDown));
+      for (var restingPartId = nrOfPartsEqual; restingPartId < nrOfNewParts; restingPartId++) {
+        relativeFile.append(newParts[restingPartId]);
+        if (restingPartId < (nrOfNewParts - 1)) relativeFile.append(File.separator);
+      }
+      return relativeFile.toString();
+    }
+    return fileName;
+  }
+
 
   public void fileSaved(Loader loader, File dest, File oldFile, LogisimFile file) {
     final var old = findKnown(oldFile);
@@ -177,8 +183,7 @@ class LibraryManager {
       if (desc != null && desc.concernsFile(query)) {
         return lib;
       }
-      if (lib instanceof LoadedLibrary) {
-        final var loadedLib = (LoadedLibrary) lib;
+      if (lib instanceof LoadedLibrary loadedLib) {
         if (loadedLib.getBase() instanceof LogisimFile loadedProj) {
           final var ret = findReference(loadedProj, query);
           if (ret != null) return lib;
@@ -201,7 +206,7 @@ class LibraryManager {
       }
     }
   }
-
+  
   Collection<LogisimFile> getLogisimLibraries() {
     final var ret = new ArrayList<LogisimFile>();
     for (final var lib : invMap.keySet()) {
@@ -232,7 +237,7 @@ class LibraryManager {
   public Library loadLibrary(Loader loader, String desc) {
     // It may already be loaded.
     // Otherwise we'll have to decode it.
-    int sep = desc.indexOf(DESC_SEP);
+    final var sep = desc.indexOf(DESC_SEP);
     if (sep < 0) {
       loader.showError(S.get("fileDescriptorError", desc));
       return null;
@@ -263,6 +268,36 @@ class LibraryManager {
         loader.showError(S.get("fileTypeError", type, desc));
         return null;
     }
+  }
+  
+  public static String getLibraryFilePath(Loader loader, String desc) {
+    final var sep = desc.indexOf(DESC_SEP);
+    if (sep < 0) {
+      loader.showError(S.get("fileDescriptorError", desc));
+      return null;
+    }
+    final var type = desc.substring(0, sep);
+    final var name = desc.substring(sep + 1);
+    return switch (type) {
+      case "file" -> loader.getFileFor(name, Loader.LOGISIM_FILTER).getAbsolutePath();
+      case "jar" -> loader.getFileFor(name.substring(0, name.lastIndexOf(DESC_SEP)), Loader.JAR_FILTER).getAbsolutePath(); 
+      default -> null;
+    };
+  }
+
+  public static String getReplacementDescriptor(Loader loader, String desc, String fileName) {
+    final var sep = desc.indexOf(DESC_SEP);
+    if (sep < 0) {
+      loader.showError(S.get("fileDescriptorError", desc));
+      return null;
+    }
+    final var type = desc.substring(0, sep);
+    final var name = desc.substring(sep + 1);
+    return switch (type) {
+      case "file" -> String.format("file#%s", fileName);
+      case "jar" -> LineBuffer.format("jar#{{1}}#{{2}}", fileName, name.substring(name.lastIndexOf(DESC_SEP) + 1));
+      default -> null;
+    };
   }
 
   public LoadedLibrary loadLogisimLibrary(Loader loader, File toRead) {

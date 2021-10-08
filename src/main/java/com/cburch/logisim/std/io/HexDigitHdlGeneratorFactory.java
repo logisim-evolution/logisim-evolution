@@ -29,7 +29,6 @@ public class HexDigitHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
             .pair("bubbleBusName", bubbleBusName)
             .pair("sigName", signalName)
             .pair("dpName", Hdl.getNetName(componentInfo, HexDigit.DP, true, nets));
-    contents.add("");
     if (componentInfo.isEndConnected(HexDigit.HEX)) {
       final var generator = (new WithSelectHdlGenerator(componentInfo.getComponent().getAttributeSet().getValue(StdAttr.LABEL),
           Hdl.getBusName(componentInfo, HexDigit.HEX, nets), 4, signalName, 7))
@@ -51,10 +50,10 @@ public class HexDigitHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
           .setDefault("1110001");
       contents.add(generator.getHdlCode());
     } else {
-      contents.add("{{assign}} {{sigName}} {{=}} {{1}};", Hdl.getZeroVector(7, true));
+      contents.add("{{assign}}{{sigName}}{{=}}{{1}};", Hdl.getZeroVector(7, true));
     }
     if (componentInfo.getComponent().getAttributeSet().getValue(SevenSegment.ATTR_DP))
-      contents.add("{{assign}} {{bubbleBusName}}{{<}}{{1}}{{>}} {{=}} {{dpName}};", (startId + 7));
+      contents.add("{{assign}}{{bubbleBusName}}{{<}}{{1}}{{>}}{{=}}{{dpName}};", (startId + 7));
     return contents;
   }
 

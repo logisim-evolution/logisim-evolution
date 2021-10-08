@@ -47,6 +47,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class SelectTool extends Tool {
+
   /**
    * Unique identifier of the tool, used as reference in project files.
    * Do NOT change as it will prevent project files from loading.
@@ -54,6 +55,43 @@ public class SelectTool extends Tool {
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Select Tool";
+
+  private static final Cursor selectCursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
+  private static final Cursor rectSelectCursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
+  private static final Cursor moveCursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
+
+  private static final int IDLE = 0;
+  private static final int MOVING = 1;
+  private static final int RECT_SELECT = 2;
+
+  private static final Color COLOR_UNMATCHED = new Color(192, 0, 0);
+  private static final Color COLOR_COMPUTING = new Color(96, 192, 96);
+  private static final Color COLOR_RECT_SELECT = new Color(0, 64, 128, 255);
+  private static final Color BACKGROUND_RECT_SELECT = new Color(192, 192, 255, 192);
+
+  private static final SelectIcon ICON = new SelectIcon();
+
+  private Location start;
+  private int state;
+  private int curDx;
+  private int curDy;
+  private boolean drawConnections;
+  private MoveGesture moveGesture;
+  private HashMap<Component, KeyConfigurator> keyHandlers;
+
+
+  private final HashSet<Selection> selectionsAdded;
+  private final AutoLabel autoLabeler = new AutoLabel();
+
+  private final Listener selListener;
+
+  public SelectTool() {
+    start = null;
+    state = IDLE;
+    selectionsAdded = new HashSet<>();
+    selListener = new Listener();
+    keyHandlers = null;
+  }
 
   private static class ComputingMessage implements StringGetter {
     private final int dx;
@@ -92,8 +130,7 @@ public class SelectTool extends Tool {
 
   private static void clearCanvasMessage(Canvas canvas, int dx, int dy) {
     Object getter = canvas.getErrorMessage();
-    if (getter instanceof ComputingMessage) {
-      ComputingMessage msg = (ComputingMessage) getter;
+    if (getter instanceof ComputingMessage msg) {
       if (msg.dx == dx && msg.dy == dy) {
         canvas.setErrorMessage(null);
         canvas.repaint();
@@ -101,41 +138,7 @@ public class SelectTool extends Tool {
     }
   }
 
-  private static final Cursor selectCursor = Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR);
-  private static final Cursor rectSelectCursor = Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR);
-  private static final Cursor moveCursor = Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR);
 
-  private static final int IDLE = 0;
-  private static final int MOVING = 1;
-  private static final int RECT_SELECT = 2;
-
-  private static final Color COLOR_UNMATCHED = new Color(192, 0, 0);
-
-  private static final Color COLOR_COMPUTING = new Color(96, 192, 96);
-
-  private static final Color COLOR_RECT_SELECT = new Color(0, 64, 128, 255);
-  private static final Color BACKGROUND_RECT_SELECT = new Color(192, 192, 255, 192);
-  private Location start;
-  private int state;
-  private int curDx;
-  private int curDy;
-  private boolean drawConnections;
-  private MoveGesture moveGesture;
-  private HashMap<Component, KeyConfigurator> keyHandlers;
-  private static final SelectIcon ICON = new SelectIcon();
-
-  private final HashSet<Selection> selectionsAdded;
-  private final AutoLabel AutoLabler = new AutoLabel();
-
-  private final Listener selListener;
-
-  public SelectTool() {
-    start = null;
-    state = IDLE;
-    selectionsAdded = new HashSet<>();
-    selListener = new Listener();
-    keyHandlers = null;
-  }
 
   private void computeDxDy(Project proj, MouseEvent e, Graphics g) {
     final var bds = proj.getSelection().getBounds(g);
@@ -249,7 +252,11 @@ public class SelectTool extends Tool {
 
   @Override
   public Cursor getCursor() {
-    return state == IDLE ? selectCursor : (state == RECT_SELECT ? rectSelectCursor : moveCursor);
+    return state == IDLE
+           ? selectCursor
+           : (state == RECT_SELECT
+              ? rectSelectCursor
+              : moveCursor);
   }
 
   @Override
@@ -288,7 +295,7 @@ public class SelectTool extends Tool {
   }
 
   private void handleMoveDrag(Canvas canvas, int dx, int dy, int modsEx) {
-    var connect = shouldConnect(canvas, modsEx);
+    var connect = shouldConnect(modsEx);
     drawConnections = connect;
     if (connect) {
       var gesture = moveGesture;
@@ -332,23 +339,19 @@ public class SelectTool extends Tool {
       handleMoveDrag(canvas, curDx, curDy, e.getModifiersEx());
     } else {
       final var comps = AutoLabel.sort(canvas.getProject().getSelection().getComponents());
-      final var KeybEvent = e.getKeyCode();
-      var KeyTaken = false;
+      final var keybEvent = e.getKeyCode();
+      var keyTaken = false;
       for (final var comp : comps) {
         final var act = new SetAttributeAction(canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
-        KeyTaken |=
-            GateKeyboardModifier.TookKeyboardStrokes(
-                KeybEvent, comp, comp.getAttributeSet(), canvas, act, true);
+        keyTaken |= GateKeyboardModifier.tookKeyboardStrokes(keybEvent, comp, comp.getAttributeSet(), canvas, act, true);
         if (!act.isEmpty()) canvas.getProject().doAction(act);
       }
-      if (!KeyTaken) {
+      if (!keyTaken) {
         for (Component comp : comps) {
-          final var act =
-              new SetAttributeAction(
-                  canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
-          KeyTaken |=
-              AutoLabler.labelKeyboardHandler(
-                  KeybEvent,
+          final var act = new SetAttributeAction(canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
+          keyTaken |=
+              autoLabeler.labelKeyboardHandler(
+                  keybEvent,
                   comp.getAttributeSet(),
                   comp.getFactory().getDisplayName(),
                   comp,
@@ -359,8 +362,8 @@ public class SelectTool extends Tool {
           if (!act.isEmpty()) canvas.getProject().doAction(act);
         }
       }
-      if (!KeyTaken)
-        switch (KeybEvent) {
+      if (!keyTaken) {
+        switch (keybEvent) {
           case KeyEvent.VK_BACK_SPACE:
           case KeyEvent.VK_DELETE:
             if (!canvas.getSelection().isEmpty()) {
@@ -369,10 +372,12 @@ public class SelectTool extends Tool {
               e.consume();
             }
             break;
+
           default:
             processKeyEvent(canvas, e, KeyConfigurationEvent.KEY_PRESSED);
             break;
         }
+      }
     }
   }
 
@@ -409,7 +414,6 @@ public class SelectTool extends Tool {
     canvas.requestFocusInWindow();
     final var proj = canvas.getProject();
     final var sel = proj.getSelection();
-    final var circuit = canvas.getCircuit();
     start = Location.create(e.getX(), e.getY());
     curDx = 0;
     curDy = 0;
@@ -417,22 +421,22 @@ public class SelectTool extends Tool {
 
     // if the user clicks into the selection,
     // selection is being modified
-    final var in_sel = sel.getComponentsContaining(start, g);
-    if (!in_sel.isEmpty()) {
+    final var inSel = sel.getComponentsContaining(start, g);
+    if (!inSel.isEmpty()) {
       if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
         setState(proj, MOVING);
         proj.repaintCanvas();
         return;
       } else {
-        final var act = SelectionActions.drop(sel, in_sel);
+        final var act = SelectionActions.drop(sel, inSel);
         if (act != null) {
           proj.doAction(act);
         }
       }
     }
 
-    // if the user clicks into a component outside selection, user
-    // wants to add/reset selection
+    // if the user clicks into a component outside selection, user wants to add/reset selection
+    final var circuit = canvas.getCircuit();
     final var clicked = circuit.getAllContaining(start, g);
     if (!clicked.isEmpty()) {
       if ((e.getModifiersEx() & InputEvent.SHIFT_DOWN_MASK) == 0) {
@@ -444,7 +448,7 @@ public class SelectTool extends Tool {
         }
       }
       for (final var comp : clicked) {
-        if (!in_sel.contains(comp)) {
+        if (!inSel.contains(comp)) {
           sel.add(comp);
         }
       }
@@ -479,7 +483,7 @@ public class SelectTool extends Tool {
         } else if (proj.getSelection().hasConflictWhenMoved(dx, dy)) {
           canvas.setErrorMessage(S.getter("exclusiveError"));
         } else {
-          final var connect = shouldConnect(canvas, e.getModifiersEx());
+          final var connect = shouldConnect(e.getModifiersEx());
           drawConnections = false;
           ReplacementMap repl;
           if (connect) {
@@ -508,11 +512,11 @@ public class SelectTool extends Tool {
       final var bds = Bounds.create(start).add(start.getX() + curDx, start.getY() + curDy);
       final var circuit = canvas.getCircuit();
       final var sel = proj.getSelection();
-      final var in_sel = sel.getComponentsWithin(bds, g);
+      final var inSel = sel.getComponentsWithin(bds, g);
       for (final var comp : circuit.getAllWithin(bds, g)) {
-        if (!in_sel.contains(comp)) sel.add(comp);
+        if (!inSel.contains(comp)) sel.add(comp);
       }
-      final var act = SelectionActions.drop(sel, in_sel);
+      final var act = SelectionActions.drop(sel, inSel);
       if (act != null) {
         proj.doAction(act);
       }
@@ -528,7 +532,7 @@ public class SelectTool extends Tool {
             final var act =
                 new SetAttributeAction(
                     canvas.getCircuit(), S.getter("changeComponentAttributesAction"));
-            AutoLabler.askAndSetLabel(
+            autoLabeler.askAndSetLabel(
                 comp.getFactory().getDisplayName(),
                 OldLabel,
                 canvas.getCircuit(),
@@ -607,20 +611,16 @@ public class SelectTool extends Tool {
     }
   }
 
-  private void setState(Project proj, int new_state) {
-    if (state == new_state) return; // do nothing if state not new
-
-    state = new_state;
-    proj.getFrame().getCanvas().setCursor(getCursor());
+  private void setState(Project proj, int newState) {
+    if (state != newState) {
+      state = newState;
+      proj.getFrame().getCanvas().setCursor(getCursor());
+    }
   }
 
-  private boolean shouldConnect(Canvas canvas, int modsEx) {
+  private boolean shouldConnect(int modsEx) {
     final var shiftReleased = (modsEx & MouseEvent.SHIFT_DOWN_MASK) == 0;
-    final var dflt = AppPreferences.MOVE_KEEP_CONNECT.getBoolean();
-    if (shiftReleased) {
-      return dflt;
-    } else {
-      return !dflt;
-    }
+    final var defaultValue = AppPreferences.MOVE_KEEP_CONNECT.getBoolean();
+    return shiftReleased ? defaultValue : !defaultValue;
   }
 }

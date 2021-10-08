@@ -36,6 +36,7 @@ import com.cburch.logisim.std.io.ReptarLocalBus;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.EnumSet;
+import java.util.Set;
 
 public enum IoComponentTypes {
   Led,
@@ -486,16 +487,16 @@ public enum IoComponentTypes {
     }
   }
 
-  public static final EnumSet<IoComponentTypes> KNOWN_COMPONENT_SET =
+  public static final Set<IoComponentTypes> KNOWN_COMPONENT_SET =
       EnumSet.range(IoComponentTypes.Led, IoComponentTypes.LocalBus);
 
-  public static final EnumSet<IoComponentTypes> SIMPLE_INPUT_SET =
+  public static final Set<IoComponentTypes> SIMPLE_INPUT_SET =
       EnumSet.range(IoComponentTypes.Led, IoComponentTypes.LocalBus);
 
-  public static final EnumSet<IoComponentTypes> INPUT_COMPONENT_SET =
+  public static final Set<IoComponentTypes> INPUT_COMPONENT_SET =
       EnumSet.of(IoComponentTypes.Button, IoComponentTypes.Pin, IoComponentTypes.DIPSwitch);
 
-  public static final EnumSet<IoComponentTypes> OUTPUT_COMPONENT_SET =
+  public static final Set<IoComponentTypes> OUTPUT_COMPONENT_SET =
       EnumSet.of(
           IoComponentTypes.Led,
           IoComponentTypes.Pin,
@@ -504,6 +505,6 @@ public enum IoComponentTypes {
           IoComponentTypes.LedArray,
           IoComponentTypes.SevenSegmentNoDp);
 
-  public static final EnumSet<IoComponentTypes> IN_OUT_COMPONENT_SET =
+  public static final Set<IoComponentTypes> IN_OUT_COMPONENT_SET =
       EnumSet.of(IoComponentTypes.Pin, IoComponentTypes.PortIo);
 }

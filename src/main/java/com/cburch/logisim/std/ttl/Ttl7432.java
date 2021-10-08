@@ -22,17 +22,17 @@ public class Ttl7432 extends AbstractTtlGate {
    */
   public static final String _ID = "7432";
 
-  private static class OrGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class OrGateHdlGeneratorFactory extends AbstractGateHdlGenerator {
 
     @Override
     public LineBuffer getLogicFunction(int index) {
       return LineBuffer.getHdlBuffer()
-          .add("{{assign}}gate_{{1}}_O{{=}}gate_{{1}}_A{{or}}gate_{{1}}_B;", index);
+          .add("{{assign}}gateO{{1}}{{=}}gateA{{1}}{{or}}gateB{{1}};", index);
     }
   }
 
   public Ttl7432() {
-    super(_ID, (byte) 14, new byte[] {3, 6, 8, 11}, true, new OrGateHDLGeneratorFactory());
+    super(_ID, (byte) 14, new byte[] {3, 6, 8, 11}, true, new OrGateHdlGeneratorFactory());
   }
 
   @Override

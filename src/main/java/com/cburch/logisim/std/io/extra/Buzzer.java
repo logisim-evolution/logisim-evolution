@@ -15,7 +15,6 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -33,7 +32,6 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
-import java.awt.Graphics;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -119,21 +117,21 @@ public class Buzzer extends InstanceFactory {
     setIconName("buzzer.gif");
   }
 
-  public static void StopBuzzerSound(Component comp, CircuitState circState) {
+  public static void stopBuzzerSound(Component comp, CircuitState circState) {
     // static method, have to check if the comp parameter is a Buzzer or contains it
-    ComponentFactory compFact = comp.getFactory();
+    final var compFact = comp.getFactory();
     // if it is a buzzer, stop its sound thread
     if (compFact instanceof Buzzer) {
-      Data d = (Data) circState.getData(comp);
+      final var d = (Data) circState.getData(comp);
       if (d != null && d.thread.isAlive()) {
-        d.is_on.set(false);
+        d.isOn.set(false);
       }
     } else if (compFact instanceof SubcircuitFactory) {
       // if it's a subcircuit search other buzzer's instances inside it and stop all sound threads
-      for (Component subComponent :
+      for (final var subComponent :
           ((SubcircuitFactory) comp.getFactory()).getSubcircuit().getComponents()) {
         // recursive if there are other subcircuits
-        StopBuzzerSound(subComponent, ((SubcircuitFactory) compFact).getSubstate(circState, comp));
+        stopBuzzerSound(subComponent, ((SubcircuitFactory) compFact).getSubstate(circState, comp));
       }
     }
   }
@@ -154,12 +152,10 @@ public class Buzzer extends InstanceFactory {
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
-    Direction dir = attrs.getValue(StdAttr.FACING);
-    if (dir == Direction.EAST || dir == Direction.WEST) {
-      return Bounds.create(-40, -20, 40, 40).rotate(Direction.EAST, dir, 0, 0);
-    } else {
-      return Bounds.create(-20, 0, 40, 40).rotate(Direction.NORTH, dir, 0, 0);
-    }
+    final var dir = attrs.getValue(StdAttr.FACING);
+    return (dir == Direction.EAST || dir == Direction.WEST)
+        ? Bounds.create(-40, -20, 40, 40).rotate(Direction.EAST, dir, 0, 0)
+        : Bounds.create(-20, 0, 40, 40).rotate(Direction.NORTH, dir, 0, 0);
   }
 
   @Override
@@ -176,20 +172,20 @@ public class Buzzer extends InstanceFactory {
 
   @Override
   public void paintGhost(InstancePainter painter) {
-    Bounds b = painter.getBounds();
-    Graphics g = painter.getGraphics();
+    final var b = painter.getBounds();
+    final var g = painter.getGraphics();
     g.setColor(Color.GRAY);
     g.drawOval(b.getX(), b.getY(), 40, 40);
   }
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics g = painter.getGraphics();
-    Bounds b = painter.getBounds();
-    int x = b.getX();
-    int y = b.getY();
-    byte height = (byte) b.getHeight();
-    byte width = (byte) b.getWidth();
+    final var g = painter.getGraphics();
+    final var b = painter.getBounds();
+    final var x = b.getX();
+    final var y = b.getY();
+    final var height = (byte) b.getHeight();
+    final var width = (byte) b.getWidth();
     g.setColor(Color.DARK_GRAY);
     g.fillOval(x, y, 40, 40);
     g.setColor(Color.GRAY);
@@ -209,64 +205,65 @@ public class Buzzer extends InstanceFactory {
   }
 
   private Data getData(InstanceState state) {
-    Data d = (Data) state.getData();
-    if (d == null) {
-      state.setData(d = new Data());
+    var data = (Data) state.getData();
+    if (data == null) {
+      data = new Data();
+      state.setData(data);
     }
-    return d;
+    return data;
   }
 
   @Override
   public void propagate(InstanceState state) {
-    Data d = getData(state);
+    final var data = getData(state);
     var active = state.getPortValue(ENABLE) == Value.TRUE;
-    d.is_on.set(active);
+    data.isOn.set(active);
     var freq = (int) state.getPortValue(FREQ).toLongValue();
     if (freq >= 0) {
       if (state.getAttributeValue(FREQUENCY_MEASURE) == dHz) {
         freq /= 10;
       }
-      d.hz = freq;
+      data.hz = freq;
     } else {
-      d.hz = 440;
+      data.hz = 440;
     }
-    d.wf = (BuzzerWaveform) state.getAttributeValue(WAVEFORM).getValue();
-    d.channels = (Integer) state.getAttributeValue(CHANNEL).getValue();
-    if (state.getPortValue(PW).isFullyDefined())
-      d.pw = (int) state.getPortValue(PW).toLongValue();
-    else
-      d.pw = 128;
-    d.smoothLevel = state.getAttributeValue(SMOOTH_LEVEL);
-    d.smoothWidth = state.getAttributeValue(SMOOTH_WIDTH);
+    data.wf = (BuzzerWaveform) state.getAttributeValue(WAVEFORM).getValue();
+    data.channels = (Integer) state.getAttributeValue(CHANNEL).getValue();
+    data.pw =
+        (state.getPortValue(PW).isFullyDefined())
+            ? (int) state.getPortValue(PW).toLongValue()
+            : 128;
+    data.smoothLevel = state.getAttributeValue(SMOOTH_LEVEL);
+    data.smoothWidth = state.getAttributeValue(SMOOTH_WIDTH);
     if (state.getPortValue(VOL).isFullyDefined()) {
-      int vol = (int) state.getPortValue(VOL).toLongValue();
-      byte VolumeWidth = (byte) state.getAttributeValue(VOLUME_WIDTH).getWidth();
-      d.vol = ((vol & 0xffffffffL) * 32767) / (Math.pow(2, VolumeWidth) - 1);
+      final var vol = (int) state.getPortValue(VOL).toLongValue();
+      final var volumeWidth = (byte) state.getAttributeValue(VOLUME_WIDTH).getWidth();
+      data.vol = ((vol & 0xffffffffL) * 32767) / (Math.pow(2, volumeWidth) - 1);
     } else {
-      d.vol = 0.5;
+      data.vol = 0.5;
     }
-    d.updateRequired = true;
-    if (active && !d.thread.isAlive()) {
-      d.StartThread();
+    data.updateRequired = true;
+    if (active && !data.thread.isAlive()) {
+      data.startThread();
     }
   }
 
   private void updateports(Instance instance) {
-    Direction facing = instance.getAttributeValue(StdAttr.FACING);
-    byte VolumeWidth = (byte) instance.getAttributeValue(VOLUME_WIDTH).getWidth();
-    Port[] p = new Port[4];
+    final var facing = instance.getAttributeValue(StdAttr.FACING);
+    final var volumeWidth = (byte) instance.getAttributeValue(VOLUME_WIDTH).getWidth();
+    final var ports = new Port[4];
     if (facing == Direction.EAST || facing == Direction.WEST) {
-      p[FREQ] = new Port(0, -10, Port.INPUT, 14);
-      p[VOL] = new Port(0, 10, Port.INPUT, VolumeWidth);
+      ports[FREQ] = new Port(0, -10, Port.INPUT, 14);
+      ports[VOL] = new Port(0, 10, Port.INPUT, volumeWidth);
     } else {
-      p[FREQ] = new Port(-10, 0, Port.INPUT, 14);
-      p[VOL] = new Port(10, 0, Port.INPUT, VolumeWidth);
+      ports[FREQ] = new Port(-10, 0, Port.INPUT, 14);
+      ports[VOL] = new Port(10, 0, Port.INPUT, volumeWidth);
     }
-    p[FREQ].setToolTip(S.getter("buzzerFrequecy"));
-    p[VOL].setToolTip(S.getter("buzzerVolume"));
-    p[ENABLE] = new Port(0, 0, Port.INPUT, 1);
-    p[ENABLE].setToolTip(S.getter("enableSound"));
-    Object selectLoc = instance.getAttributeValue(StdAttr.SELECT_LOC);
+    ports[FREQ].setToolTip(S.getter("buzzerFrequecy"));
+    ports[VOL].setToolTip(S.getter("buzzerVolume"));
+    ports[ENABLE] = new Port(0, 0, Port.INPUT, 1);
+    ports[ENABLE].setToolTip(S.getter("enableSound"));
+    final var selectLoc = instance.getAttributeValue(StdAttr.SELECT_LOC);
     var xPw = 20;
     var yPw = 20;
     if (facing == Direction.NORTH || facing == Direction.SOUTH) {
@@ -276,14 +273,14 @@ public class Buzzer extends InstanceFactory {
       xPw *= facing == Direction.EAST ? -1 : 1;
       yPw *= selectLoc == StdAttr.SELECT_TOP_RIGHT ? -1 : 1;
     }
-    p[PW] = new Port(xPw, yPw, Port.INPUT, 8);
-    p[PW].setToolTip(S.getter("buzzerDutyCycle"));
-    instance.setPorts(p);
+    ports[PW] = new Port(xPw, yPw, Port.INPUT, 8);
+    ports[PW].setToolTip(S.getter("buzzerDutyCycle"));
+    instance.setPorts(ports);
   }
 
   @Override
   public void removeComponent(Circuit circ, Component c, CircuitState state) {
-    StopBuzzerSound(c, state);
+    stopBuzzerSound(c, state);
   }
 
   private enum BuzzerWaveform {
@@ -307,7 +304,7 @@ public class Buzzer extends InstanceFactory {
   private static class Data implements InstanceData {
 
     private int sampleRate;
-    private final AtomicBoolean is_on = new AtomicBoolean(false);
+    private final AtomicBoolean isOn = new AtomicBoolean(false);
     public int pw;
     public int channels;
     private int hz;
@@ -319,7 +316,7 @@ public class Buzzer extends InstanceFactory {
     private Thread thread;
 
     public Data() {
-      StartThread();
+      startThread();
     }
 
     @Override
@@ -327,14 +324,14 @@ public class Buzzer extends InstanceFactory {
       return new Data();
     }
 
-    public void ThreadFunc() {
+    public void threadFunc() {
       AudioFormat af = null;
       Clip clip = null;
       AudioInputStream ais = null;
       var oldfreq = -1;
       var oldpw = -1;
       try {
-        while (is_on.get()) {
+        while (isOn.get()) {
           if (updateRequired) {
             updateRequired = false;
 
@@ -375,7 +372,7 @@ public class Buzzer extends InstanceFactory {
               System.arraycopy(values, 2 * cycle, rvalues, i, Math.min(cycle, sampleRate - i));
             }
 
-            byte[] buf = new byte[4 * sampleRate];
+            var buf = new byte[4 * sampleRate];
             for (int i = 0, j = 0; i < buf.length; i += 4, j++) {
               var val = (short) Math.round(rvalues[j] * vol);
               if ((channels & 1) != 0) {
@@ -423,12 +420,10 @@ public class Buzzer extends InstanceFactory {
       }
     }
 
-    public void StartThread() {
+    public void startThread() {
       // avoid crash (for example if you connect a clock at 4KHz to the enable pin)
-      if (Thread.activeCount() > 100) {
-        return;
-      }
-      thread = new Thread(this::ThreadFunc);
+      if (Thread.activeCount() > 100) return;
+      thread = new Thread(this::threadFunc);
       thread.start();
       thread.setName("Sound Thread");
     }

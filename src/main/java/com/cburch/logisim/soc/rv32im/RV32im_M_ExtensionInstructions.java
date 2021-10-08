@@ -43,14 +43,15 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
   private int source1;
   private int source2;
 
+  @Override
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
-    return opcodes;
+    return new ArrayList<>(Arrays.asList(AsmOpcodes));
   }
 
+  @Override
   public boolean execute(Object state, CircuitState cState) {
     if (!valid) return false;
-    RV32im_state.ProcessorState cpuState = (RV32im_state.ProcessorState) state;
+    RV32imState.ProcessorState cpuState = (RV32imState.ProcessorState) state;
     int val1 = cpuState.getRegisterValue(source1);
     int val2 = cpuState.getRegisterValue(source2);
     BigInteger opp1, opp2, res;
@@ -98,32 +99,37 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
     return true;
   }
 
+  @Override
   public String getAsmInstruction() {
     if (!valid) return null;
     StringBuilder s = new StringBuilder();
     s.append(AsmOpcodes[operation].toLowerCase());
     while (s.length() < RV32imSupport.ASM_FIELD_SIZE)
       s.append(" ");
-    s.append(RV32im_state.registerABINames[destination]).append(",")
-        .append(RV32im_state.registerABINames[source1]).append(",")
-        .append(RV32im_state.registerABINames[source2]);
+    s.append(RV32imState.registerABINames[destination]).append(",")
+     .append(RV32imState.registerABINames[source1]).append(",")
+     .append(RV32imState.registerABINames[source2]);
     return s.toString();
   }
 
+  @Override
   public int getBinInstruction() {
     return instruction;
   }
 
+  @Override
   public boolean setBinInstruction(int instr) {
     instruction = instr;
     valid = decodeBin();
     return valid;
   }
 
+  @Override
   public boolean performedJump() {
     return false;
   }
 
+  @Override
   public boolean isValid() {
     return valid;
   }
@@ -141,15 +147,18 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
     return false;
   }
 
+  @Override
   public String getErrorMessage() {
     return null;
   }
 
+  @Override
   public int getInstructionSizeInBytes(String instruction) {
     if (getInstructions().contains(instruction.toUpperCase())) return 4;
     return -1;
   }
 
+  @Override
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
     valid = true;
@@ -180,17 +189,17 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
       instr.setError(param3[0], S.getter("AssemblerExpectedRegister"));
       errors = true;
     }
-    destination = RV32im_state.getRegisterIndex(param1[0].getValue());
+    destination = RV32imState.getRegisterIndex(param1[0].getValue());
     if (destination < 0 || destination > 31) {
       instr.setError(param1[0], S.getter("AssemblerUnknownRegister"));
       errors = true;
     }
-    source1 = RV32im_state.getRegisterIndex(param2[0].getValue());
+    source1 = RV32imState.getRegisterIndex(param2[0].getValue());
     if (source1 < 0 || source1 > 31) {
       instr.setError(param2[0], S.getter("AssemblerUnknownRegister"));
       errors = true;
     }
-    source2 = RV32im_state.getRegisterIndex(param3[0].getValue());
+    source2 = RV32imState.getRegisterIndex(param3[0].getValue());
     if (source2 < 0 || source2 > 31) {
       instr.setError(param3[0], S.getter("AssemblerUnknownRegister"));
       errors = true;

@@ -23,22 +23,18 @@ import com.cburch.logisim.util.LineBuffer;
 import java.awt.Graphics2D;
 
 class XnorGate extends AbstractGate {
-  private static class XNorGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class XNorGateHdlGeneratorFactory extends AbstractGateHdlGenerator {
     @Override
     public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       return LineBuffer.getBuffer()
-          .add(
-              isOneHot
-                  ? getOneHot(true, nrOfInputs, bitwidth > 1)
-                  : getParity(true, nrOfInputs, bitwidth > 1))
-          .empty();
+          .add(isOneHot ? getOneHot(true, nrOfInputs, bitwidth > 1) : getParity(true, nrOfInputs, bitwidth > 1));
     }
   }
 
   public static final XnorGate FACTORY = new XnorGate();
 
   private XnorGate() {
-    super("XNOR Gate", S.getter("xnorGateComponent"), true, new XNorGateHDLGeneratorFactory());
+    super("XNOR Gate", S.getter("xnorGateComponent"), true, new XNorGateHdlGeneratorFactory());
     setNegateOutput(true);
     setAdditionalWidth(10);
     setPaintInputLines(true);

@@ -99,21 +99,21 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     this.portNames = ttlPortNames;
   }
 
-  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] NotUsedPins,
-                            String[] Ttlportnames, HdlGeneratorFactory generator) {
+  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, byte[] notUsedPins,
+                            String[] ttlPortNames, HdlGeneratorFactory generator) {
     this(name, pins, outputPorts, generator);
-    portNames = Ttlportnames;
-    if (NotUsedPins == null) return;
-    for (final var notUsedPin : NotUsedPins) unusedPins.add(notUsedPin);
+    portNames = ttlPortNames;
+    if (notUsedPins == null) return;
+    for (final var notUsedPin : notUsedPins) unusedPins.add(notUsedPin);
   }
 
-  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, String[] Ttlportnames, int height, HdlGeneratorFactory generator) {
+  protected AbstractTtlGate(String name, byte pins, byte[] outputPorts, String[] ttlPortNames, int height, HdlGeneratorFactory generator) {
     // the ttl name, the total number of pins and an array with the indexes of
     // output ports (indexes are the one you can find on Google), an array of
     // strings which will be tooltips of the corresponding port in order
     this(name, pins, outputPorts, generator);
     this.height = height;
-    this.portNames = Ttlportnames;
+    this.portNames = ttlPortNames;
   }
 
   private void computeTextField(Instance instance) {
@@ -162,7 +162,8 @@ public abstract class AbstractTtlGate extends InstanceFactory {
   }
 
   static Point getTranslatedTtlXY(InstanceState state, MouseEvent e) {
-    int x = 0, y = 0;
+    var x = 0;
+    var y = 0;
     final var loc = state.getInstance().getLocation();
     final var height = state.getInstance().getBounds().getHeight();
     final var width = state.getInstance().getBounds().getWidth();

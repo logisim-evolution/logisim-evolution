@@ -289,17 +289,17 @@ public class PlaRomPanel extends JPanel implements BaseMouseListenerContract, Ba
       }
     }
     if (hover) {
-      g.setColor(Value.TRUE_COLOR);
-      if (data.columnhovered < inputs * 2)
+      g.setColor(Value.trueColor);
+      if (data.columnHovered < inputs * 2)
         g.drawOval(
-            IMAGE_BORDER + 4 + 20 * data.columnhovered,
-            IMAGE_BORDER + 64 + 40 * data.rowhovered,
+            IMAGE_BORDER + 4 + 20 * data.columnHovered,
+            IMAGE_BORDER + 64 + 40 * data.rowHovered,
             12,
             12);
       else
         g.drawOval(
-            IMAGE_BORDER + 14 + 40 * (inputs + 1) + 40 * (data.columnhovered - 2 * inputs),
-            IMAGE_BORDER + 64 + 40 * data.rowhovered,
+            IMAGE_BORDER + 14 + 40 * (inputs + 1) + 40 * (data.columnHovered - 2 * inputs),
+            IMAGE_BORDER + 64 + 40 * data.rowHovered,
             12,
             12);
     }

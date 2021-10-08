@@ -11,7 +11,6 @@ package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
@@ -84,10 +83,9 @@ public class Ram extends Mem {
 
     @Override
     public Value getLogValue(InstanceState state, Object option) {
-      if (option instanceof Long) {
-        final var s = (MemState) state.getData();
-        long addr = (Long) option;
-        return Value.createKnown(BitWidth.create(s.getDataBits()), s.getContents().get(addr));
+      if (option instanceof Long addr) {
+        final var memState = (MemState) state.getData();
+        return Value.createKnown(BitWidth.create(memState.getDataBits()), memState.getContents().get(addr));
       } else {
         return Value.NIL;
       }
@@ -98,7 +96,7 @@ public class Ram extends Mem {
   private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
 
   public Ram() {
-    super(_ID, S.getter("ramComponent"), 3, new RamHDLGeneratorFactory(), true);
+    super(_ID, S.getter("ramComponent"), 3, new RamHdlGeneratorFactory(), true);
     setIcon(new ArithmeticIcon("RAM", 3));
     setInstanceLogger(Logger.class);
   }
@@ -107,13 +105,6 @@ public class Ram extends Mem {
   protected void configureNewInstance(Instance instance) {
     super.configureNewInstance(instance);
     instance.addAttributeListener();
-  }
-
-  @Override
-  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    return (attr.equals(StdAttr.APPEARANCE))
-        ? StdAttr.APPEAR_CLASSIC
-        : super.getDefaultAttributeValue(attr, ver);
   }
 
   @Override
@@ -226,9 +217,9 @@ public class Ram extends Mem {
   @Override
   public void paintInstance(InstancePainter painter) {
     if (RamAppearance.classicAppearance(painter.getAttributeSet())) {
-      RamAppearance.DrawRamClassic(painter);
+      RamAppearance.drawRamClassic(painter);
     } else {
-      RamAppearance.DrawRamEvolution(painter);
+      RamAppearance.drawRamEvolution(painter);
     }
   }
 

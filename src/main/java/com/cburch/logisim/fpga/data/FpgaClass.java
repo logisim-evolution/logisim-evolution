@@ -12,11 +12,12 @@ package com.cburch.logisim.fpga.data;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 public class FpgaClass {
   public static char getId(String identifier) {
     char result = 0;
-    LinkedList<String> thelist = VendorSoftware.getVendorStrings();
+    List<String> thelist = VendorSoftware.getVendorStrings();
     Iterator<String> iter = thelist.iterator();
     result = 0;
     while (iter.hasNext()) {
@@ -84,7 +85,7 @@ public class FpgaClass {
     flashDefined = false;
   }
 
-  public boolean FpgaInfoPresent() {
+  public boolean isFpgaInfoPresent() {
     return fpgaDefined;
   }
 
@@ -132,7 +133,7 @@ public class FpgaClass {
     return jtagPos;
   }
 
-  public void Set(
+  public void set(
       long frequency,
       String pin,
       String pull,
@@ -165,7 +166,7 @@ public class FpgaClass {
     this.flashDefined = (flashName != null) && (!flashName.isEmpty()) && (this.flashPos != 0);
   }
 
-  public Boolean USBTMCDownloadRequired() {
+  public Boolean isUsbTmcDownloadRequired() {
     return usbTmcDownload;
   }
 
