@@ -19,9 +19,6 @@ import java.util.Collection;
 import java.util.List;
 
 class DefaultAppearance {
-  private DefaultAppearance() {
-    // dummy, private
-  }
 
   public static List<CanvasObject> build(Collection<Instance> pins, AttributeOption style, boolean isFixed, String circuitName) {
     if (style == CircuitAttributes.APPEAR_CLASSIC) {

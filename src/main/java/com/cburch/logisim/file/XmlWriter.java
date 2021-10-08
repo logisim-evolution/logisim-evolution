@@ -276,9 +276,9 @@ final class XmlWriter {
     final var ret = doc.createElement("circuit");
     ret.setAttribute("name", circuit.getName());
     addAttributeSetContent(ret, circuit.getStaticAttributes(), CircuitAttributes.DEFAULT_STATIC_ATTRIBUTES, false);
-    if (!circuit.getAppearance().isDefaultAppearance()) {
+    if (circuit.getAppearance().hasCustomAppearance()) {
       final var appear = doc.createElement("appear");
-      for (Object obj : circuit.getAppearance().getObjectsFromBottom()) {
+      for (Object obj : circuit.getAppearance().getCustomObjectsFromBottom()) {
         if (obj instanceof AbstractCanvasObject canvasObject) {
           final var elt = canvasObject.toSvgElement(doc);
           if (elt != null) {
