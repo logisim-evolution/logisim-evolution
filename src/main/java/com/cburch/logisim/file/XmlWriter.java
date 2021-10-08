@@ -558,7 +558,7 @@ final class XmlWriter {
     fileReader.close();
   }
   
-  private void writeLogisimFileToZip(ZipOutputStream zipFile,String inputFileName, String outputFileName) throws IOException, LoadFailedException {
+  private void writeLogisimFileToZip(ZipOutputStream zipFile, String inputFileName, String outputFileName) throws IOException, LoadFailedException {
     final var newLoader = new Loader(null);
     newLoader.setZipFile(zipFile);
     final var library = newLoader.openLogisimFile(new File(inputFileName).getCanonicalFile());
