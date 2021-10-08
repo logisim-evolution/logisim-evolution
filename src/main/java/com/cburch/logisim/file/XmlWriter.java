@@ -28,7 +28,6 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
 import com.cburch.logisim.util.LineBuffer;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
 import java.io.IOException;
@@ -271,9 +270,9 @@ final class XmlWriter {
     final var ret = doc.createElement("circuit");
     ret.setAttribute("name", circuit.getName());
     addAttributeSetContent(ret, circuit.getStaticAttributes(), CircuitAttributes.DEFAULT_STATIC_ATTRIBUTES, false);
-    if (!circuit.getAppearance().isDefaultAppearance()) {
+    if (circuit.getAppearance().hasCustomAppearance()) {
       final var appear = doc.createElement("appear");
-      for (Object obj : circuit.getAppearance().getObjectsFromBottom()) {
+      for (Object obj : circuit.getAppearance().getCustomObjectsFromBottom()) {
         if (obj instanceof AbstractCanvasObject canvasObject) {
           final var elt = canvasObject.toSvgElement(doc);
           if (elt != null) {

@@ -325,11 +325,11 @@ public class SubcircuitFactory extends InstanceFactory {
     } else if (attr == CircuitAttributes.APPEARANCE_ATTR) {
       CircuitTransaction xn = new ChangeAppearanceTransaction();
       source.getLocker().execute(xn);
+      computePorts(instance);
     }
   }
 
   private class ChangeAppearanceTransaction extends CircuitTransaction {
-    ChangeAppearanceTransaction() {}
 
     @Override
     protected Map<Circuit, Integer> getAccessedCircuits() {
@@ -341,9 +341,7 @@ public class SubcircuitFactory extends InstanceFactory {
     }
 
     @Override
-    protected void run(CircuitMutator mutator) {
-      source.getAppearance().recomputeDefaultAppearance();
-    }
+    protected void run(CircuitMutator mutator) {}
   }
 
   private void paintBase(InstancePainter painter, Graphics g) {

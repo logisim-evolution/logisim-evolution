@@ -30,8 +30,6 @@ public class DefaultEvolutionAppearance {
 
   private static final int OFFS = 50;
 
-  private DefaultEvolutionAppearance() {}
-
   public static List<CanvasObject> build(Collection<Instance> pins, String circuitName, boolean fixedSize) {
     final var edge = new HashMap<Direction, List<Instance>>();
     edge.put(Direction.EAST, new ArrayList<>());
