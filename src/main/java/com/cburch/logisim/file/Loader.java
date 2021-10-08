@@ -15,8 +15,6 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.std.Builtin;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.util.JFileChoosers;
-import com.cburch.logisim.util.LineBuffer;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.ZipClassLoader;
 import com.cburch.logisim.vhdl.file.HdlFile;
 import java.awt.Component;
@@ -29,6 +27,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
+import java.util.zip.ZipOutputStream;
+
 import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
@@ -109,7 +109,6 @@ public class Loader implements LibraryLoader {
 
   public static final String LOGISIM_EXTENSION = ".circ";
   public static final String LOGISIM_LIBRARY_DIR = "library";
-  public static final String LOGISIM_CIRCUIT_DIR = "circuit";
   public static final FileFilter LOGISIM_FILTER = new LogisimFileFilter();
   public static final FileFilter LOGISIM_DIRECTORY = new LogisimDirectoryFilter();
   public static final FileFilter JAR_FILTER = new JarFileFilter();
@@ -123,6 +122,7 @@ public class Loader implements LibraryLoader {
   private File mainFile = null;
   private final Stack<File> filesOpening = new Stack<>();
   private Map<File, File> substitutions = new HashMap<>();
+  private ZipOutputStream zipFile;
 
   public Loader(Component parent) {
     this.parent = parent;
@@ -327,19 +327,19 @@ public class Loader implements LibraryLoader {
     LibraryManager.instance.reload(this, lib);
   }
 
-  public boolean export(LogisimFile file, String homeDirectory) {
-    try {
-      final var mainCircFile = LineBuffer.format("{{1}}{{2}}{{3}}{{2}}{{4}}", homeDirectory, File.separator,
-          LOGISIM_CIRCUIT_DIR, getMainFile().getName());
-      final var libraryHome = String.format("%s%s%s", homeDirectory, File.separator, LOGISIM_LIBRARY_DIR);
-      final var fwrite = new FileOutputStream(mainCircFile);
-      file.write(fwrite, this, libraryHome);
-    } catch (IOException e) {
-      //TODO: give an error message to the user #1136
-      System.err.println("Unable to export file");
-      return false;
-    }
+  public boolean export(LogisimFile file, ZipOutputStream zipFile) {
+    this.zipFile = zipFile;
+    file.write(zipFile, this, getMainFile().getName());
+    this.zipFile = null;
     return true;
+  }
+
+  public ZipOutputStream getZipFile() {
+    return zipFile;
+  }
+
+  public void setZipFile(ZipOutputStream file) {
+    zipFile = file;
   }
 
   public boolean save(LogisimFile file, File dest) {

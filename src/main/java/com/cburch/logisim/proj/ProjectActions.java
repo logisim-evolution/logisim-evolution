@@ -26,6 +26,7 @@ import com.cburch.logisim.tools.LibraryTools;
 import com.cburch.logisim.util.JFileChoosers;
 import java.awt.Component;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintWriter;
@@ -37,6 +38,9 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
@@ -410,28 +414,27 @@ public class ProjectActions {
       chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
       chooser.setAcceptAllFileFilterUsed(false);
       var isCorrectDirectory = false;
-      var exportRootDir = "";
       do {
         ret &= chooser.showSaveDialog(proj.getFrame()) == JFileChooser.APPROVE_OPTION;
         if (!ret) {
           proj.setTool(oldTool);
           return false;
         }
-        final var exportHome = chooser.getSelectedFile();
-        final var exportRoot = loader.getMainFile().getName().replace(".circ", "");
-        exportRootDir = String.format("%s%s%s", exportHome, File.separator, exportRoot);
-        final var exportLibDir = String.format("%s%s%s", exportRootDir, File.separator, Loader.LOGISIM_LIBRARY_DIR);
-        final var exportCircDir = String.format("%s%s%s", exportRootDir, File.separator, Loader.LOGISIM_CIRCUIT_DIR);
+        final var projectName = loader.getMainFile().getName().replace(".circ", ""); 
+        final var projectPath = chooser.getSelectedFile();
+        final var zipFile = String.format("%s%s%s.zip", projectPath, File.separator, projectName);
         try {
-          final var path = Paths.get(exportRootDir);
+          final var path = Paths.get(zipFile);
           if (Files.exists(path)) {
-            OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjExistsUnableToCreate", exportRoot));
+            OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjExistsUnableToCreate", zipFile));
           } else {
             isCorrectDirectory = true;
-          }
-          if (isCorrectDirectory) {
-            Files.createDirectories(Paths.get(exportLibDir));
-            Files.createDirectories(Paths.get(exportCircDir));
+            final var projectFile = new FileOutputStream(zipFile);
+            final var projectZipFile = new ZipOutputStream(projectFile);
+            projectZipFile.putNextEntry(new ZipEntry(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator)));
+            ret &= loader.export(proj.getLogisimFile(), projectZipFile);
+            projectZipFile.close();
+            projectFile.close();
           }
         } catch (IOException e) {
           OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjUnableToCreate", e.getMessage()));
@@ -439,7 +442,6 @@ public class ProjectActions {
           return false;
         }
       } while (!isCorrectDirectory);
-      ret &= loader.export(proj.getLogisimFile(), exportRootDir);
       proj.setTool(oldTool);
     }
     return ret;

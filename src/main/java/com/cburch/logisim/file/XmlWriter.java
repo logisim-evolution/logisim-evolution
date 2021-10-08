@@ -28,19 +28,19 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
 import com.cburch.logisim.util.LineBuffer;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -65,27 +65,29 @@ final class XmlWriter {
    * Path of the file which is being written on disk -- used to relativize components stored in it.
    */
   private final String outFilePath;
-  private final String librariesPath;
   private final boolean isProjectExport;
   private final LibraryLoader loader;
   private final HashMap<Library, String> libs = new HashMap<>();
+  private final boolean isRecursiveCall;
 
   private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader) {
-    this(file, doc, loader, null, null);
+    this(file, doc, loader, null, null, false);
   }
 
   private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilePath) {
-    this(file, doc, loader, outFilePath, null);
+    this(file, doc, loader, outFilePath, null, false);
   }
 
-  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilePath, String librariesPath) {
+  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilePath, 
+      String mainCircFile, boolean recursiveCall) {
     this.file = file;
     this.doc = doc;
     this.loader = loader;
     this.outFilePath = outFilePath;
-    this.librariesPath = librariesPath;
-    isProjectExport = (librariesPath != null && !librariesPath.isEmpty());
+    isProjectExport = (mainCircFile != null && !mainCircFile.isEmpty());
+    isRecursiveCall = recursiveCall;
   }
+
 
 
   /* We sort some parts of the xml tree, to help with reproducibility and to
@@ -173,8 +175,8 @@ final class XmlWriter {
     }
   }
 
-  static void write(LogisimFile file, OutputStream out, LibraryLoader loader, File destFile, String libraryHome)
-      throws ParserConfigurationException, TransformerException {
+  static void write(LogisimFile file, OutputStream out, LibraryLoader loader, File destFile, String mainCircFile, boolean recurse)
+      throws ParserConfigurationException, TransformerException, IOException, LoadFailedException {
 
     final var docFactory = DocumentBuilderFactory.newInstance();
     final var docBuilder = docFactory.newDocumentBuilder();
@@ -185,8 +187,8 @@ final class XmlWriter {
       var dstFilePath = destFile.getAbsolutePath();
       dstFilePath = dstFilePath.substring(0, dstFilePath.lastIndexOf(File.separator));
       context = new XmlWriter(file, doc, loader, dstFilePath);
-    } else if (libraryHome != null) {
-      context = new XmlWriter(file, doc, loader, null, libraryHome);
+    } else if (mainCircFile != null) {
+      context = new XmlWriter(file, doc, loader, null, mainCircFile, recurse);
     } else context = new XmlWriter(file, doc, loader);
 
     context.fromLogisimFile();
@@ -204,6 +206,9 @@ final class XmlWriter {
     } catch (IllegalArgumentException ignored) {
     }
 
+    if ((mainCircFile != null) && (out instanceof ZipOutputStream zipFile)) {
+      zipFile.putNextEntry(new ZipEntry(mainCircFile));
+    }
     doc.normalize();
     sort(doc);
     Source src = new DOMSource(doc);
@@ -368,7 +373,7 @@ final class XmlWriter {
     return ret;
   }
 
-  Element fromLibrary(Library lib) {
+  Element fromLibrary(Library lib) throws IOException, LoadFailedException {
     final var ret = doc.createElement("lib");
     if (libs.containsKey(lib)) return null;
     final var name = Integer.toString(libs.size());
@@ -400,18 +405,22 @@ final class XmlWriter {
     if (isProjectExport) {
       if (lib instanceof LoadedLibrary) {
         final var origFile = LibraryManager.getLibraryFilePath(file.getLoader(), desc);
+        final var isJarLibrary = LibraryManager.isJarLibrary(file.getLoader(), desc);
         if (origFile != null) {
           final var names = origFile.split(File.separator);
           final var filename = names[names.length - 1];
-          final var newFile = String.format("%s%s%s", librariesPath, File.separator, filename);
-          try {
-            Files.copy(Paths.get(origFile), Paths.get(newFile), StandardCopyOption.REPLACE_EXISTING);
-          } catch (IOException e) {
-            //TODO: error message to user
-            return null;
+          final var newFile = LineBuffer.format("{{1}}{{2}}{{3}}", Loader.LOGISIM_LIBRARY_DIR, File.separator, filename);
+          final var zipFile = file.getLoader().getZipFile();
+          if (zipFile != null) {
+            if (isJarLibrary) {
+              writeJarToZip(zipFile, origFile, newFile);
+            } else {
+              writeLogisimFileToZip(zipFile, origFile, newFile);
+            }
+            desc = LibraryManager.getReplacementDescriptor(file.getLoader(), desc, isRecursiveCall 
+                ? LineBuffer.format(".{{1}}{{2}}", File.separator, filename)
+                : LineBuffer.format(".{{1}}{{2}}{{1}}{{3}}", File.separator, Loader.LOGISIM_LIBRARY_DIR, filename));
           }
-          final var newFilePath = LineBuffer.format("..{{1}}{{2}}{{1}}{{3}}", File.separator, Loader.LOGISIM_LIBRARY_DIR, filename);
-          desc = LibraryManager.getReplacementDescriptor(file.getLoader(), desc, newFilePath);
         }
       }
     }
@@ -431,7 +440,7 @@ final class XmlWriter {
     return ret;
   }
 
-  Element fromLogisimFile() {
+  Element fromLogisimFile() throws IOException, LoadFailedException {
     final var ret = doc.createElement("project");
     doc.appendChild(ret);
     ret.appendChild(
@@ -537,5 +546,22 @@ final class XmlWriter {
       if (tool.sharesSource(query)) return true;
     }
     return false;
+  }
+
+  private void writeJarToZip(ZipOutputStream zipFile, String inputFileName, String outputFileName) throws IOException {
+    final var fileToRead = new File(inputFileName);
+    final var fileReader = new FileInputStream(fileToRead);
+    zipFile.putNextEntry(new ZipEntry(outputFileName));
+    final var bytes = new byte[1024];
+    var length = 0;
+    while ((length = fileReader.read(bytes)) >= 0) zipFile.write(bytes, 0, length);
+    fileReader.close();
+  }
+  
+  private void writeLogisimFileToZip(ZipOutputStream zipFile,String inputFileName, String outputFileName) throws IOException, LoadFailedException {
+    final var newLoader = new Loader(null);
+    newLoader.setZipFile(zipFile);
+    final var library = newLoader.openLogisimFile(new File(inputFileName).getCanonicalFile());
+    library.write(zipFile, newLoader, outputFileName, true);
   }
 }

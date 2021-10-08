@@ -269,7 +269,17 @@ public final class LibraryManager {
         return null;
     }
   }
-  
+
+  public static boolean isJarLibrary(Loader loader, String desc) {
+    final var sep = desc.indexOf(DESC_SEP);
+    if (sep < 0) {
+      loader.showError(S.get("fileDescriptorError", desc));
+      return false;
+    }
+    final var type = desc.substring(0, sep);
+    return "jar".equals(type);
+  }
+
   public static String getLibraryFilePath(Loader loader, String desc) {
     final var sep = desc.indexOf(DESC_SEP);
     if (sep < 0) {
