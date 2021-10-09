@@ -267,7 +267,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
   }
 
   public boolean isDefaultAppearance() {
-    return ((circuit == null) || !circuit.getStaticAttributes().getValue(CircuitAttributes.APPEARANCE_ATTR).equals(CircuitAttributes.APPEAR_CUSTOM));
+    return (circuit == null) || !circuit.getStaticAttributes().getValue(CircuitAttributes.APPEARANCE_ATTR).equals(CircuitAttributes.APPEAR_CUSTOM);
   }
   
   public List<CanvasObject> getCustomObjectsFromBottom() {
