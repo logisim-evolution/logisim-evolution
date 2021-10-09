@@ -346,4 +346,54 @@ public final class LibraryManager {
       lib.setDirty(dirty);
     }
   }
+
+  public static void removeUnusedLibraries(Library lib) {
+    LogisimFile logiLib = null;
+    if (lib instanceof LoadedLibrary lib1) {
+      if (lib1.getBase() instanceof LogisimFile logi) {
+        logiLib = logi;
+      }
+    } else if (lib instanceof LogisimFile logi) {
+      logiLib = logi;
+    }
+    if (logiLib == null) return;
+    final var removes = new HashSet<String>();
+    for (final var library : logiLib.getLibraries()) {
+      var isUsed = false;
+      for (final var circ : logiLib.getCircuits()) {
+        for (final var tool : circ.getNonWires()) {
+          isUsed |= library.contains(tool.getFactory());
+        }
+      }
+      if (!isUsed) {
+        removes.add(library.getName());
+      } else {
+        removeUnusedLibraries(library);
+      }
+    }
+    for (final var remove : removes) {
+      lib.removeLibrary(remove);
+    }
+  }
+
+  public static void getBaseLibraries(Library library, Set<String> baseLibs) {
+    for (final var lib : library.getLibraries()) {
+      getBaseLibraries(lib, baseLibs);
+      if (!(lib instanceof LoadedLibrary) && !(lib instanceof LogisimFile)) {
+        baseLibs.add(lib.getName());
+      }
+    }
+  }
+
+  public static void removeBaseLibraries(Library library, Set<String> baseLibs) {
+    final var libIterator = library.getLibraries().iterator();
+    while (libIterator.hasNext()) {
+      final var lib = libIterator.next();
+      if (baseLibs.contains(lib.getName())) {
+        libIterator.remove();
+      } else {
+        removeBaseLibraries(lib, baseLibs);
+      }
+    }
+  }  
 }
