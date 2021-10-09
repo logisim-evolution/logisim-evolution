@@ -245,6 +245,9 @@ public class LineBufferTest extends TestBase {
     assertEquals(exp, buffer.get(0));
   }
 
+  /**
+   * Ensures format can handle additional opening brackets.
+   */
   @Test
   public void testPlaceholderSoroundedByThreeBrackets() {
     final var fmt = "{{{1}}{{2}},{{{3}}{testText}}};";
@@ -257,7 +260,7 @@ public class LineBufferTest extends TestBase {
 
     buffer.add(fmt, arg1, arg2, arg3);
 
-    final var exp = LineBuffer.format("{{{1}}{{2}},{{{3}}{testText}}};", arg1, arg2, arg3);
+    final var exp = String.format("{%s%s,{%s{testText}}};", arg1, arg2, arg3);
     assertEquals(1, buffer.size());
     assertEquals(exp, buffer.get(0));
   }
