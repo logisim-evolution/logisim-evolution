@@ -20,13 +20,15 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.WeakHashMap;
 
 public final class LibraryManager {
 
   public static final LibraryManager instance = new LibraryManager();
 
-  private static final char DESC_SEP = '#';
+  public static final char DESC_SEP = '#';
   private final HashMap<LibraryDescriptor, WeakReference<LoadedLibrary>> fileMap;
   private final WeakHashMap<LoadedLibrary, LibraryDescriptor> invMap;
 
@@ -232,6 +234,14 @@ public final class LibraryManager {
     fileMap.put(jarDescriptor, new WeakReference<>(ret));
     invMap.put(ret, jarDescriptor);
     return ret;
+  }
+  
+  public static Set<String> getBuildinNames(Loader loader) {
+    final var buildinNames = new HashSet<String>();
+    for (final var lib : loader.getBuiltin().getLibraries()) {
+      buildinNames.add(lib.getName());
+    }
+    return buildinNames;
   }
 
   public Library loadLibrary(Loader loader, String desc) {
