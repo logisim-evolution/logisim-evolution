@@ -34,7 +34,10 @@ import java.util.TreeMap;
 
 public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
-  private enum bubbleType {input, output, inout};
+  private enum bubbleType {
+    input, output, inout 
+  };
+  
   private final Circuit myCircuit;
 
   public CircuitHdlGeneratorFactory(Circuit source) {
