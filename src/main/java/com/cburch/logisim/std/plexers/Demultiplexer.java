@@ -11,6 +11,7 @@ package com.cburch.logisim.std.plexers;
 
 import static com.cburch.logisim.std.Strings.S;
 
+import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
@@ -67,6 +68,16 @@ public class Demultiplexer extends InstanceFactory {
             new BitWidthConfigurator(StdAttr.WIDTH)));
     setFacingAttribute(StdAttr.FACING);
     setIcon(new PlexerIcon(true, false));
+  }
+
+  @Override
+  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
+    // for backward compatibility
+    if (attr == PlexersLibrary.ATTR_ENABLE) {
+      return ver.compareTo(new LogisimVersion(3, 6, 1)) < 0;
+    } else {
+      return super.getDefaultAttributeValue(attr, ver);
+    }
   }
 
   @Override
