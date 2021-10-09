@@ -96,7 +96,7 @@ public class Multiplexer extends InstanceFactory {
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
     // for backward compatibility
     if (attr == PlexersLibrary.ATTR_ENABLE) {
-      return ver.compareTo(new LogisimVersion(3, 6, 1)) < 0;
+      return ver.compareTo(new LogisimVersion(3, 6, 1)) <= 0;
     } else {
       return super.getDefaultAttributeValue(attr, ver);
     }
