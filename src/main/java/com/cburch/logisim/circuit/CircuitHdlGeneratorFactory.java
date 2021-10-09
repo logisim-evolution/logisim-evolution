@@ -70,8 +70,9 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         myPorts.add(Port.INPUT, CorrectLabel.getCorrectLabel(name), nrOfBits, 0);
       }
     }
-    if (outputBubbles > 0)
+    if (outputBubbles > 0) {
       myPorts.add(Port.OUTPUT, LOCAL_OUTPUT_BUBBLE_BUS_NAME, outputBubbles > 1 ? outputBubbles : 0, 0);
+    }
     for (var output = 0; output < theNetlist.numberOfOutputPorts(); output++) {
       final var selectedInput = theNetlist.getOutputPin(output);
       if (selectedInput != null)  {
@@ -431,7 +432,7 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     if (myNetList.numberOfOutputBubbles() > 0) {
       portMap.put(LOCAL_OUTPUT_BUBBLE_BUS_NAME,
           LineBuffer.format("{{1}}{{2}}", topLevel ? Preamble : LOCAL_OUTPUT_BUBBLE_BUS_NAME,
-              topLevel ? LOCAL_OUTPUT_BUBBLE_BUS_NAME : getBubbleIndex(componentInfo, 0)));
+              topLevel ? LOCAL_OUTPUT_BUBBLE_BUS_NAME : getBubbleIndex(componentInfo, 1)));
     }
 
     final var nrOfIOBubbles = myNetList.numberOfInOutBubbles();
