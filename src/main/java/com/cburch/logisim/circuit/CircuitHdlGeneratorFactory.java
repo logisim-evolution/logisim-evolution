@@ -34,7 +34,7 @@ import java.util.TreeMap;
 
 public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
-  private enum bubbleType{input, output, inout};
+  private enum bubbleType {input, output, inout};
   private final Circuit myCircuit;
 
   public CircuitHdlGeneratorFactory(Circuit source) {
@@ -199,11 +199,11 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   /* here the private handles are defined */
   private String getBubbleIndex(netlistComponent comp, bubbleType type) {
     return switch (type) {
-      case input -> LineBuffer.format("{{<}}{{1}} {{2}} {{3}}{{>}}", comp.getLocalBubbleInputEndId() , 
+      case input -> LineBuffer.format("{{<}}{{1}} {{2}} {{3}}{{>}}", comp.getLocalBubbleInputEndId(), 
           Hdl.vectorLoopId(), comp.getLocalBubbleInputStartId());
-      case output -> LineBuffer.format("{{<}}{{1}} {{2}} {{3}}{{>}}", comp.getLocalBubbleOutputEndId() , 
+      case output -> LineBuffer.format("{{<}}{{1}} {{2}} {{3}}{{>}}", comp.getLocalBubbleOutputEndId(), 
           Hdl.vectorLoopId(), comp.getLocalBubbleOutputStartId()); 
-      case inout -> LineBuffer.format("{{<}}{{1}} {{2}} {{3}}{{>}}", comp.getLocalBubbleInOutEndId() , 
+      case inout -> LineBuffer.format("{{<}}{{1}} {{2}} {{3}}{{>}}", comp.getLocalBubbleInOutEndId(), 
           Hdl.vectorLoopId(), comp.getLocalBubbleInOutStartId());
       default -> "";
     };
