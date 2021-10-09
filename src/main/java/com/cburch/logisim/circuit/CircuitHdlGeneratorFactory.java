@@ -34,6 +34,7 @@ import java.util.TreeMap;
 
 public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
+  private enum bubbleType{input, output, inout};
   private final Circuit myCircuit;
 
   public CircuitHdlGeneratorFactory(Circuit source) {
@@ -196,23 +197,14 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   }
 
   /* here the private handles are defined */
-  private String getBubbleIndex(netlistComponent comp, int type) {
+  private String getBubbleIndex(netlistComponent comp, bubbleType type) {
     return switch (type) {
-      case 0 -> Hdl.bracketOpen()
-            + comp.getLocalBubbleInputEndId()
-            + Hdl.vectorLoopId()
-            + comp.getLocalBubbleInputStartId()
-            + Hdl.bracketClose();
-      case 1 -> Hdl.bracketOpen()
-            + comp.getLocalBubbleOutputEndId()
-            + Hdl.vectorLoopId()
-            + comp.getLocalBubbleOutputStartId()
-            + Hdl.bracketClose();
-      case 2 -> Hdl.bracketOpen()
-            + comp.getLocalBubbleInOutEndId()
-            + Hdl.vectorLoopId()
-            + comp.getLocalBubbleInOutStartId()
-            + Hdl.bracketClose();
+      case input -> LineBuffer.format("{{<}}{{1}} {{2}} {{3}}{{>}}", comp.getLocalBubbleInputEndId() , 
+          Hdl.vectorLoopId(), comp.getLocalBubbleInputStartId());
+      case output -> LineBuffer.format("{{<}}{{1}} {{2}} {{3}}{{>}}", comp.getLocalBubbleOutputEndId() , 
+          Hdl.vectorLoopId(), comp.getLocalBubbleOutputStartId()); 
+      case inout -> LineBuffer.format("{{<}}{{1}} {{2}} {{3}}{{>}}", comp.getLocalBubbleInOutEndId() , 
+          Hdl.vectorLoopId(), comp.getLocalBubbleInOutStartId());
       default -> "";
     };
   }
@@ -427,12 +419,12 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     if (myNetList.getNumberOfInputBubbles() > 0) {
       portMap.put(LOCAL_INPUT_BUBBLE_BUS_NAME,
           LineBuffer.format("{{1}}{{2}}", topLevel ? Preamble : LOCAL_INPUT_BUBBLE_BUS_NAME,
-              topLevel ? LOCAL_INPUT_BUBBLE_BUS_NAME : getBubbleIndex(componentInfo, 0)));
+              topLevel ? LOCAL_INPUT_BUBBLE_BUS_NAME : getBubbleIndex(componentInfo, bubbleType.input)));
     }
     if (myNetList.numberOfOutputBubbles() > 0) {
       portMap.put(LOCAL_OUTPUT_BUBBLE_BUS_NAME,
           LineBuffer.format("{{1}}{{2}}", topLevel ? Preamble : LOCAL_OUTPUT_BUBBLE_BUS_NAME,
-              topLevel ? LOCAL_OUTPUT_BUBBLE_BUS_NAME : getBubbleIndex(componentInfo, 1)));
+              topLevel ? LOCAL_OUTPUT_BUBBLE_BUS_NAME : getBubbleIndex(componentInfo, bubbleType.output)));
     }
 
     final var nrOfIOBubbles = myNetList.numberOfInOutBubbles();
@@ -481,7 +473,7 @@ public class CircuitHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         if (Hdl.isVerilog())
           portMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME, vector.toString());
       } else {
-        portMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME, LOCAL_INOUT_BUBBLE_BUS_NAME + getBubbleIndex(componentInfo, 2));
+        portMap.put(LOCAL_INOUT_BUBBLE_BUS_NAME, LOCAL_INOUT_BUBBLE_BUS_NAME + getBubbleIndex(componentInfo, bubbleType.inout));
       }
     }
 
