@@ -16,7 +16,6 @@ import com.cburch.logisim.std.Builtin;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LineBuffer;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.ZipClassLoader;
 import com.cburch.logisim.vhdl.file.HdlFile;
 import java.awt.Component;

@@ -55,6 +55,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -412,9 +413,41 @@ class XmlReader {
       }
 
       // first, load the sublibraries
+      final var libsToAddAfter = new HashSet<LogisimFile>();
+      final var baseLibsToEnable = new HashSet<String>();
+      final var libsLoaded = new HashSet<String>();
       for (final var o : XmlIterator.forChildElements(elt, "lib")) {
         final var lib = toLibrary(o, isHolyCrossFile, isEvolutionFile);
-        if (lib != null) file.addLibrary(lib);
+        if (lib instanceof LoadedLibrary loadedLib) {
+          if (loadedLib.getBase() instanceof LogisimFile logiLib) {
+            libsToAddAfter.add(logiLib);
+            continue;
+          }
+        }
+        if (lib != null) {
+          file.addLibrary(lib);
+          libsLoaded.add(lib.getName());
+        }
+      }
+      // do a post-processing on the .circ libraries
+      for (final var logiLib : libsToAddAfter) {
+        // first cleanup step: remove unused libraries from loaded library
+        LibraryManager.removeUnusedLibraries(logiLib);
+        // second cleanup step: promote base libraries
+        baseLibsToEnable.addAll(LibraryManager.getUsedBaseLibraries(logiLib));
+      }
+      // promote the none visible base libraries to toplevel
+      final var builtinLibraries = LibraryManager.getBuildinNames((Loader) loader);
+      for (final var lib : libsToAddAfter) {
+        final var libName = lib.getName();
+        if (baseLibsToEnable.contains(libName) || !builtinLibraries.contains(libName)) {
+          baseLibsToEnable.remove(libName);
+        }
+      }
+      // remove the promoted base libraries from the loaded library and add them
+      for (final var newLib : libsToAddAfter) {
+        LibraryManager.removeBaseLibraries(newLib, baseLibsToEnable);
+        file.addLibrary(newLib);
       }
 
       // second, create the circuits - empty for now - and the vhdl entities
