@@ -31,7 +31,7 @@ import com.vladsch.flexmark.util.data.MutableDataSet;
 
 public class ProjectBundleManifest extends JDialog implements ActionListener {
 
-  public static final String MANIFEST_FILE_NAME = "README.txt";
+  public static final String MANIFEST_FILE_NAME = "README.md";
 
   private JButton closeButton = new JButton();
   private final Frame parrent;
@@ -40,6 +40,8 @@ public class ProjectBundleManifest extends JDialog implements ActionListener {
     super(project.getFrame(), S.get("projBundleManifestWindow"));
     setPreferredSize(new Dimension(AppPreferences.getScaled(500),AppPreferences.getScaled(400)));
     setModal(true);
+    setLayout(new BorderLayout());
+    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setAlwaysOnTop(true);
     setVisible(false);
     closeButton.addActionListener(this);
@@ -62,18 +64,19 @@ public class ProjectBundleManifest extends JDialog implements ActionListener {
     dialog.setEditable(false);
     dialog.setCaretPosition(0);
     final var scroller = new JScrollPane(dialog);
-    setLayout(new BorderLayout());
     add(scroller, BorderLayout.CENTER);
     closeButton.setText(S.get("projCloseManifest"));
     add(closeButton, BorderLayout.SOUTH);
-    setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-    setLocationRelativeTo(parrent);
     pack();
+    setLocationRelativeTo(parrent);
     setVisible(true);
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    if (closeButton.equals(e.getSource())) setVisible(false);
+    if (closeButton.equals(e.getSource())) {
+      setVisible(false);
+      dispose();
+    }
   }
 }

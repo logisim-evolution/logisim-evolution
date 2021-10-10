@@ -27,7 +27,6 @@ import com.cburch.logisim.tools.LibraryTools;
 import com.cburch.logisim.util.JFileChoosers;
 import java.awt.Component;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -435,6 +434,7 @@ public class ProjectActions {
             final var manifestInStream = zipFile.getInputStream(manifestFileEntry);
             final var dialog = new ProjectBundleManifest(proj);
             dialog.showManifest(manifestInStream);
+            manifestInStream.close();
           }
           chooser.setFileFilter(Loader.LOGISIM_DIRECTORY);
           chooser.setAcceptAllFileFilterUsed(false);
