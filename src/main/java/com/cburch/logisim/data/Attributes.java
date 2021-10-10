@@ -204,7 +204,7 @@ public class Attributes {
     }
 
     public Object getValue() {
-      return getSelectedFont();
+      return getSelectedFont().deriveFont(Font.PLAIN);
     }
 
     public void setValue(Object value) {
