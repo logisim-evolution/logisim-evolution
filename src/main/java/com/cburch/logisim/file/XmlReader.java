@@ -434,7 +434,7 @@ class XmlReader {
         // first cleanup step: remove unused libraries from loaded library
         LibraryManager.removeUnusedLibraries(logiLib);
         // second cleanup step: promote base libraries
-        LibraryManager.buildUsedBaseLibrariesList(logiLib, baseLibsToEnable);
+        baseLibsToEnable.addAll(LibraryManager.getUsedBaseLibraries(logiLib));
       }
       // promote the none visible base libraries to toplevel
       final var builtinLibraries = LibraryManager.getBuildinNames((Loader) loader);

@@ -376,13 +376,15 @@ public final class LibraryManager {
     }
   }
 
-  public static void buildUsedBaseLibrariesList(Library library, Set<String> baseLibs) {
+  public static Set<String> getUsedBaseLibraries(Library library) {
+    final var result = new HashSet<String>();
     for (final var lib : library.getLibraries()) {
-      buildUsedBaseLibrariesList(lib, baseLibs);
+      result.addAll(getUsedBaseLibraries(lib));
       if (!(lib instanceof LoadedLibrary) && !(lib instanceof LogisimFile)) {
-        baseLibs.add(lib.getName());
+        result.add(lib.getName());
       }
     }
+    return result;
   }
 
   public static void removeBaseLibraries(Library library, Set<String> baseLibs) {
