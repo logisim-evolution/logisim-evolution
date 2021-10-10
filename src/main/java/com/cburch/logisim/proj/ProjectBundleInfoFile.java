@@ -68,7 +68,7 @@ public class ProjectBundleInfoFile {
     do {
       kar = projInfoStream.read();
       if (kar == '\n') {
-        projInputLines .add(oneLine.toString());
+        projInputLines.add(oneLine.toString());
         oneLine.setLength(0);
       } else if (kar >= 0) {
         oneLine.append((char) kar);

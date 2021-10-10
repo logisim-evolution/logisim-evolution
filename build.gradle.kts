@@ -41,6 +41,7 @@ dependencies {
   implementation("org.slf4j:slf4j-simple:1.7.30")
   implementation("com.formdev:flatlaf:1.2")
   implementation("commons-cli:commons-cli:1.4")
+  implementation("com.vladsch.flexmark:flexmark-all:0.62.2")
 
   compileOnly("org.jetbrains:annotations:22.0.0")
 

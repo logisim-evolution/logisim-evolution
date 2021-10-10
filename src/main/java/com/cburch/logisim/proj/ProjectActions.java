@@ -27,6 +27,7 @@ import com.cburch.logisim.tools.LibraryTools;
 import com.cburch.logisim.util.JFileChoosers;
 import java.awt.Component;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -429,7 +430,12 @@ public class ProjectActions {
             OptionPane.showMessageDialog(proj.getFrame(), S.fmt("projBundleReadError", S.get("projBundleMainNotFound")));
             return false;
           }
-          // TODO: check for manifest file and show it when present
+          final var manifestFileEntry = zipFile.getEntry(ProjectBundleManifest.MANIFEST_FILE_NAME);
+          if (manifestFileEntry != null) {
+            final var manifestInStream = zipFile.getInputStream(manifestFileEntry);
+            final var dialog = new ProjectBundleManifest(proj);
+            dialog.showManifest(manifestInStream);
+          }
           chooser.setFileFilter(Loader.LOGISIM_DIRECTORY);
           chooser.setAcceptAllFileFilterUsed(false);
           chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
