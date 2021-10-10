@@ -1,4 +1,4 @@
-## Security
+# Security
 
 We take the security of our software seriously, which includes all source code repositories managed through our GitHub
 organizations, which include [Logisim-evolution](https://github.com/logisim-evolution).
@@ -13,7 +13,7 @@ you feel that creating regular bug ticket is not enough, please report it to us 
 Instead, please use the GPG key attached to the end of the file to encrypt your message, then export it as ASCII armour and create
 the regular ticket.
 
-```
+```text
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mQENBGFimkoBCAC+4sm5UXCzlwc1cysTW/RKDoXGkZcfzmIiB/KaVxiokjGGSADZ
