@@ -409,30 +409,38 @@ public class ProjectActions {
       final var loader = proj.getLogisimFile().getLoader();
       final var oldTool = proj.getTool();
       proj.setTool(null);
+      var zipFile = loader.getMainFile().getName().replace(Loader.LOGISIM_EXTENSION, Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION);
       final var chooser = loader.createChooser();
-      chooser.setFileFilter(Loader.LOGISIM_DIRECTORY);
-      chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+      chooser.setFileFilter(Loader.LOGISIM_BUNDLE_FILTER);
       chooser.setAcceptAllFileFilterUsed(false);
-      var isCorrectDirectory = false;
+      chooser.setSelectedFile(new File(zipFile));
+      chooser.setDialogTitle(S.get("projExportBundle"));
+      var isCorrectDirectory = true;
       do {
         ret &= chooser.showSaveDialog(proj.getFrame()) == JFileChooser.APPROVE_OPTION;
         if (!ret) {
           proj.setTool(oldTool);
           return false;
         }
-        final var projectName = loader.getMainFile().getName().replace(".circ", ""); 
-        final var projectPath = chooser.getSelectedFile();
-        final var zipFile = String.format("%s%s%s.zip", projectPath, File.separator, projectName);
         try {
+          zipFile = chooser.getSelectedFile().getAbsolutePath();
+          if (!zipFile.endsWith(Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION)) {
+            zipFile = zipFile.concat(Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION);
+          }
           final var path = Paths.get(zipFile);
           if (Files.exists(path)) {
-            OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjExistsUnableToCreate", zipFile));
-          } else {
-            isCorrectDirectory = true;
+            isCorrectDirectory = OptionPane.showConfirmDialog(proj.getFrame(), S.fmt("projExistsOverwrite", 
+                new File(zipFile).getName()), S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION;
+          }
+          if (isCorrectDirectory) {
             final var projectFile = new FileOutputStream(zipFile);
             final var projectZipFile = new ZipOutputStream(projectFile);
             projectZipFile.putNextEntry(new ZipEntry(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator)));
             ret &= loader.export(proj.getLogisimFile(), projectZipFile);
+            if (OptionPane.showConfirmDialog(proj.getFrame(), S.get("projAddManifest"), 
+                S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION) {
+System.out.println("Add manifest");              
+            }
             projectZipFile.close();
             projectFile.close();
           }
