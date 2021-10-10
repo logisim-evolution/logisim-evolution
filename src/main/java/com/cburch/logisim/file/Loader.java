@@ -122,6 +122,7 @@ public class Loader implements LibraryLoader {
   public static final String LOGISIM_EXTENSION = ".circ";
   public static final String LOGISIM_PROJECT_BUNDLE_EXTENSION = ".lsebdl";
   public static final String LOGISIM_LIBRARY_DIR = "libraries";
+  public static final String LOGISIM_PROJECT_BUNDLE_INFO_FILE = "LogisimEvolutionBundle.info";
   public static final FileFilter LOGISIM_FILTER = new LogisimFileFilter();
   public static final FileFilter LOGISIM_BUNDLE_FILTER = new LogisimProjectBundleFilter();
   public static final FileFilter LOGISIM_DIRECTORY = new LogisimDirectoryFilter();

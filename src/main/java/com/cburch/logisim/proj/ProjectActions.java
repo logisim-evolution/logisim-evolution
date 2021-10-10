@@ -11,12 +11,14 @@ package com.cburch.logisim.proj;
 
 import static com.cburch.logisim.proj.Strings.S;
 
+import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.LoadedLibrary;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.file.LogisimFileActions;
+import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.gui.start.SplashScreen;
@@ -396,9 +398,21 @@ public class ProjectActions {
   }
 
   /**
-   * Exports a Logisim project in a seperate directory
+   * Imports a Logisim project in a zip file
    *
-   * <p>It is the action listener for the File->Export project... menu option.
+   * <p>It is the action listener for the File->Import project bundle... menu option.
+   *
+   * @param proj the current project to perform the file->open action afterwards 
+   * @return true if success, false otherwise 
+   */
+  public static boolean doImportProject(Project proj) {
+    return false;
+  }
+
+  /**
+   * Exports a Logisim project in a zip file
+   *
+   * <p>It is the action listener for the File->Export project bundle... menu option.
    *
    * @param proj Project to be exported
    * @return true if success, false otherwise 
@@ -441,6 +455,9 @@ public class ProjectActions {
                 S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION) {
 System.out.println("Add manifest");              
             }
+            projectZipFile.putNextEntry(new ZipEntry(Loader.LOGISIM_PROJECT_BUNDLE_INFO_FILE));
+            projectZipFile.write(String.format("Created with: %s\n", BuildInfo.displayName).getBytes());
+            projectZipFile.write(String.format("Main file: %s\n", loader.getMainFile().getName()).getBytes());
             projectZipFile.close();
             projectFile.close();
           }

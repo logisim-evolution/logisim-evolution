@@ -34,6 +34,7 @@ class MenuFile extends Menu implements ActionListener {
   private final JMenuItem save = new JMenuItem();
   private final JMenuItem saveAs = new JMenuItem();
   private final JMenuItem exportProj = new JMenuItem();
+  private final JMenuItem importProj = new JMenuItem();
   private final MenuItemImpl print = new MenuItemImpl(this, LogisimMenuBar.PRINT);
   private final MenuItemImpl exportImage = new MenuItemImpl(this, LogisimMenuBar.EXPORT_IMAGE);
   private final JMenuItem prefs = new JMenuItem();
@@ -51,7 +52,8 @@ class MenuFile extends Menu implements ActionListener {
     close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask | InputEvent.SHIFT_DOWN_MASK));
     save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask));
     saveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask | InputEvent.SHIFT_DOWN_MASK));
-    exportProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, menuMask | InputEvent.SHIFT_DOWN_MASK));
+    exportProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, menuMask));
+    importProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, menuMask));
     print.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
     quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask));
 
@@ -63,7 +65,9 @@ class MenuFile extends Menu implements ActionListener {
     add(close);
     add(save);
     add(saveAs);
+    addSeparator();
     add(exportProj);
+    add(importProj);
     addSeparator();
     add(exportImage);
     add(print);
@@ -85,12 +89,14 @@ class MenuFile extends Menu implements ActionListener {
       save.setEnabled(false);
       saveAs.setEnabled(false);
       exportProj.setEnabled(false);
+      importProj.setEnabled(false);
     } else {
       merge.addActionListener(this);
       close.addActionListener(this);
       save.addActionListener(this);
       saveAs.addActionListener(this);
       exportProj.addActionListener(this);
+      importProj.addActionListener(this);
     }
     menubar.registerItem(LogisimMenuBar.EXPORT_IMAGE, exportImage);
     menubar.registerItem(LogisimMenuBar.PRINT, print);
@@ -163,6 +169,8 @@ class MenuFile extends Menu implements ActionListener {
         ProjectActions.doSaveAs(proj);
       } else if (src == exportProj) {
         ProjectActions.doExportProject(proj);
+      } else if (src == importProj) {
+        ProjectActions.doImportProject(proj);
       }
     }
   }
@@ -183,6 +191,7 @@ class MenuFile extends Menu implements ActionListener {
     save.setText(S.get("fileSaveItem"));
     saveAs.setText(S.get("fileSaveAsItem"));
     exportProj.setText(S.get("fileExportProject"));
+    importProj.setText(S.get("fileImportProject"));
     exportImage.setText(S.get("fileExportImageItem"));
     print.setText(S.get("filePrintItem"));
     prefs.setText(S.get("filePreferencesItem"));
