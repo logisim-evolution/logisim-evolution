@@ -383,7 +383,7 @@ final class XmlWriter {
       return null;
     }
     libs.put(lib, name);
-    if (isProjectExport || AppPreferences.REMOVE_UNUSED_LIBRARIES.getBoolean()) {
+    if (AppPreferences.REMOVE_UNUSED_LIBRARIES.getBoolean()) {
       // first we check if the library is used and if this is not the case we do not add it
       var isUsed = false;
       final var tools = lib.getTools();
