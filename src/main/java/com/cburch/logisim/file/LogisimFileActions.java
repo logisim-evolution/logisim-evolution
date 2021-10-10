@@ -355,7 +355,7 @@ public final class LogisimFileActions {
         // first cleanup step: remove unused libraries from loaded library
         LibraryManager.removeUnusedLibraries(newLib);
         // second cleanup step: promote base libraries
-        LibraryManager.getBaseLibraries(newLib, baseLibsToEnable);
+        LibraryManager.buildUsedBaseLibrariesList(newLib, baseLibsToEnable);
       }
       // promote the none visible base libraries to toplevel
       final var builtinLibraries = LibraryManager.getBuildinNames(source.getLoader());

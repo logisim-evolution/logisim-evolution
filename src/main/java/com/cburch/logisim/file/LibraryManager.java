@@ -376,9 +376,9 @@ public final class LibraryManager {
     }
   }
 
-  public static void getBaseLibraries(Library library, Set<String> baseLibs) {
+  public static void buildUsedBaseLibrariesList(Library library, Set<String> baseLibs) {
     for (final var lib : library.getLibraries()) {
-      getBaseLibraries(lib, baseLibs);
+      buildUsedBaseLibrariesList(lib, baseLibs);
       if (!(lib instanceof LoadedLibrary) && !(lib instanceof LogisimFile)) {
         baseLibs.add(lib.getName());
       }
