@@ -426,7 +426,7 @@ public class ProjectActions {
           if (bundleInfo == null) return false;
           final var mainFileEntry = zipFile.getEntry(bundleInfo.getMainLogisimFilename());
           if (mainFileEntry == null) {
-            OptionPane.showMessageDialog(proj.getFrame(), S.fmt("projBundleReadError" , S.get("projBundleMainNotFound")));
+            OptionPane.showMessageDialog(proj.getFrame(), S.fmt("projBundleReadError", S.get("projBundleMainNotFound")));
             return false;
           }
           // TODO: check for manifest file and show it when present
@@ -469,8 +469,8 @@ public class ProjectActions {
                   final var entryName = entry.getName();
                   if (!entryName.startsWith(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator))) continue;
                   if (entryName.lastIndexOf(File.separator) != entryName.indexOf(File.separator)) continue;
-                  if (!entryName.endsWith(Loader.LOGISIM_EXTENSION) &&
-                      !entryName.toLowerCase().endsWith(".jar")) continue;
+                  if (!entryName.endsWith(Loader.LOGISIM_EXTENSION) 
+                      && !entryName.toLowerCase().endsWith(".jar")) continue;
                   // make sure the library dir exists
                   if (!Files.exists(Paths.get(libDir))) new File(libDir).mkdirs();
                   filename = String.format("%s%s%s", exportDirectory, File.separator, entry.getName()); 

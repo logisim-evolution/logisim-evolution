@@ -58,7 +58,7 @@ public class ProjectBundleInfoFile {
   public static infofileInformation getBundleInfoFileContents(ZipFile zipFile, Frame frame) throws IOException {
     final var projInfoEntry = zipFile.getEntry(Loader.LOGISIM_PROJECT_BUNDLE_INFO_FILE);
     if (projInfoEntry == null) {
-      OptionPane.showMessageDialog(frame, S.fmt("projBundleReadError" , S.get("projBundleNoInfo")));
+      OptionPane.showMessageDialog(frame, S.fmt("projBundleReadError", S.get("projBundleNoInfo")));
       return null;
     }
     final var projInfoStream = zipFile.getInputStream(projInfoEntry);
@@ -83,22 +83,22 @@ public class ProjectBundleInfoFile {
       final var infoLine = infoEntryIterator.next();
       if (infoLine.startsWith(VERSION_PREAMBLE)) {
         if (infoCreatedVersion != null) {
-          OptionPane.showMessageDialog(frame, S.fmt("projBundleReadError" , S.get("projBundleMisformatted")));
+          OptionPane.showMessageDialog(frame, S.fmt("projBundleReadError", S.get("projBundleMisformatted")));
           return null;
         }
         infoCreatedVersion = infoLine.replace(VERSION_PREAMBLE, "");
         infoEntryIterator.remove();
       } else if (infoLine.startsWith(MAIN_FILE_PREAMBLE)) {
         if (infoMainCircuit != null) {
-          OptionPane.showMessageDialog(frame, S.fmt("projBundleReadError" , S.get("projBundleMisformatted")));
+          OptionPane.showMessageDialog(frame, S.fmt("projBundleReadError", S.get("projBundleMisformatted")));
           return null;
         }
         infoMainCircuit = infoLine.replace(MAIN_FILE_PREAMBLE, "");
         infoEntryIterator.remove(); 
       }
     }
-    if (projInputLines.size() != 0) {
-      OptionPane.showMessageDialog(frame, S.fmt("projBundleReadError" , S.get("projBundleMisformatted")));
+    if ((projInputLines.size() != 0) || (infoCreatedVersion == null) || (infoMainCircuit == null)) {
+      OptionPane.showMessageDialog(frame, S.fmt("projBundleReadError", S.get("projBundleMisformatted")));
       return null;
     }
     return new infofileInformation(infoCreatedVersion, infoMainCircuit);
