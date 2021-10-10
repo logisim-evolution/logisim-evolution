@@ -13,6 +13,7 @@ you feel that creating regular bug ticket is not enough, please report it to us 
 Instead, please use the GPG key attached to the end of the file to encrypt your message, then export it as ASCII armour and create
 the regular ticket.
 
+```
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 
 mQENBGFimkoBCAC+4sm5UXCzlwc1cysTW/RKDoXGkZcfzmIiB/KaVxiokjGGSADZ
@@ -50,6 +51,7 @@ vC3nb7zYVuErb1AXyfcTtVi4hqgd4AloQzx2mO28mSd4QVfivseES0abmpqKwLaA
 Z9iZimT6H+eeNqCGo5wqXxPIq3w5c5hb
 =8Tnv
 -----END PGP PUBLIC KEY BLOCK-----
+```
 
 Please include the requested information listed below (as much as you can provide) to help us better understand the nature and scope
 of the possible issue:
