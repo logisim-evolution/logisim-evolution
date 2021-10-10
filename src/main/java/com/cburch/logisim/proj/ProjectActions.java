@@ -409,11 +409,12 @@ public class ProjectActions {
     var ret = true;
     final var loader = proj.getLogisimFile().getLoader();
     final var chooser = loader.createChooser();
-    chooser.setFileFilter(Loader.LOGISIM_BUNDLE_FILTER);
-    chooser.setAcceptAllFileFilterUsed(false);
-    chooser.setDialogTitle(S.get("projImportBundle"));
     var isCorrectFile = true;
     do {
+      chooser.setFileFilter(Loader.LOGISIM_BUNDLE_FILTER);
+      chooser.setAcceptAllFileFilterUsed(false);
+      chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);
+      chooser.setDialogTitle(S.get("projImportBundle"));
       ret &= chooser.showOpenDialog(proj.getFrame()) == JFileChooser.APPROVE_OPTION;
       if (!ret) return ret;
       final var zipFileName = chooser.getSelectedFile().getAbsolutePath();
@@ -423,6 +424,80 @@ public class ProjectActions {
           final var zipFile = new ZipFile(zipFileName);
           final var bundleInfo = ProjectBundleInfoFile.getBundleInfoFileContents(zipFile, proj.getFrame());
           if (bundleInfo == null) return false;
+          final var mainFileEntry = zipFile.getEntry(bundleInfo.getMainLogisimFilename());
+          if (mainFileEntry == null) {
+            OptionPane.showMessageDialog(proj.getFrame(), S.fmt("projBundleReadError" , S.get("projBundleMainNotFound")));
+            return false;
+          }
+          // TODO: check for manifest file and show it when present
+          chooser.setFileFilter(Loader.LOGISIM_DIRECTORY);
+          chooser.setAcceptAllFileFilterUsed(false);
+          chooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+          chooser.setDialogTitle(S.get("projBundleDirectory"));
+          var isCorrectDirectory = true;
+          do {
+            ret &= chooser.showOpenDialog(proj.getFrame()) == JFileChooser.APPROVE_OPTION;
+            if (!ret) return ret;
+            final var exportDirectory = chooser.getSelectedFile().getAbsolutePath();
+            final var mainProjectFileName = String.format("%s%s%s", exportDirectory, File.separator, bundleInfo.getMainLogisimFilename()); 
+            var filename =  mainProjectFileName;
+            if (Files.exists(Paths.get(filename)) 
+                || Files.exists(Paths.get(String.format("%s%s%s", exportDirectory, File.separator, Loader.LOGISIM_LIBRARY_DIR)))) {
+              isCorrectDirectory = false;
+              OptionPane.showMessageDialog(proj.getFrame(), S.fmt("projContainsFileDir", bundleInfo.getMainLogisimFilename(), Loader.LOGISIM_LIBRARY_DIR));
+            } else {
+              isCorrectDirectory = true;
+              // extract the main file
+              var zipInput = zipFile.getInputStream(mainFileEntry);
+              var fileOutput = new FileOutputStream(filename);
+              var data = zipInput.read();
+              while (data > 0) {
+                fileOutput.write(data);
+                data = zipInput.read();
+              }
+              zipInput.close();
+              fileOutput.close();
+              final var zipFileEntries = zipFile.entries();
+              final var libDir = String.format("%s%s%s", exportDirectory, File.separator, Loader.LOGISIM_LIBRARY_DIR);
+              while (zipFileEntries.hasMoreElements()) {
+                final var entry = zipFileEntries.nextElement();
+                if (entry.isDirectory()) {
+                  final var dirName = entry.getName();
+                  if (!dirName.equals(Loader.LOGISIM_LIBRARY_DIR)) continue;
+                  new File(String.format("%s%s%s", exportDirectory, File.separator, dirName)).mkdirs();
+                } else {
+                  final var entryName = entry.getName();
+                  if (!entryName.startsWith(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator))) continue;
+                  if (entryName.lastIndexOf(File.separator) != entryName.indexOf(File.separator)) continue;
+                  if (!entryName.endsWith(Loader.LOGISIM_EXTENSION) &&
+                      !entryName.toLowerCase().endsWith(".jar")) continue;
+                  // make sure the library dir exists
+                  if (!Files.exists(Paths.get(libDir))) new File(libDir).mkdirs();
+                  filename = String.format("%s%s%s", exportDirectory, File.separator, entry.getName()); 
+                  zipInput = zipFile.getInputStream(entry);
+                  fileOutput = new FileOutputStream(filename);
+                  data = zipInput.read();
+                  while (data > 0) {
+                    fileOutput.write(data);
+                    data = zipInput.read();
+                  }
+                  zipInput.close();
+                  fileOutput.close();
+                }
+              }
+              // ask to open
+              if (OptionPane.showConfirmDialog(proj.getFrame(), S.get("projOpenProject"), S.get("projImportBundle"), 
+                  JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
+                final var newProj = ProjectActions.doOpen(proj.getFrame().getCanvas(), proj, new File(mainProjectFileName));
+                if (newProj != null
+                    && proj != null
+                    && !proj.isFileDirty()
+                    && proj.getLogisimFile().getLoader().getMainFile() == null) {
+                  proj.getFrame().dispose();
+                }
+              }
+            }
+          } while (!isCorrectDirectory);
           zipFile.close();
         } catch (IOException e) {
           isCorrectFile = false;
@@ -472,6 +547,8 @@ public class ProjectActions {
           if (Files.exists(path)) {
             isCorrectFile = OptionPane.showConfirmDialog(proj.getFrame(), S.fmt("projExistsOverwrite", 
                 new File(zipFile).getName()), S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION;
+          } else {
+            isCorrectFile = true;
           }
           if (isCorrectFile) {
             final var projectFile = new FileOutputStream(zipFile);
