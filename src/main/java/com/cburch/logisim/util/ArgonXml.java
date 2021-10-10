@@ -34,7 +34,7 @@ public class ArgonXml {
 
   private static Element rootElement(InputStream inputStream, String rootName) {
     try {
-      final var builderFactory = DocumentBuilderFactory.newInstance();
+      final var builderFactory = XmlUtil.getHardenedBuilderFactory();
       final var builder = builderFactory.newDocumentBuilder();
       final var document = builder.parse(inputStream);
       final var rootElement = document.getDocumentElement();
