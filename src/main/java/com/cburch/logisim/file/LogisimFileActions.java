@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.jar.JarFile;
 
 public final class LogisimFileActions {
@@ -344,11 +345,30 @@ public final class LogisimFileActions {
 
   private static class LoadLibraries extends Action {
     private final List<Library> mergedLibs = new ArrayList<>();
+    private final Set<String> baseLibsToEnable = new HashSet<>();
 
     LoadLibraries(Library[] libs, LogisimFile source) {
       final var libNames = new HashMap<String, Library>();
       final var toolList = new HashSet<String>();
       final var errors = new HashMap<String, String>();
+      for (final var newLib : libs) {
+        // first cleanup step: remove unused libraries from loaded library
+        LibraryManager.removeUnusedLibraries(newLib);
+        // second cleanup step: promote base libraries
+        baseLibsToEnable.addAll(LibraryManager.getUsedBaseLibraries(newLib));
+      }
+      // promote the none visible base libraries to toplevel
+      final var builtinLibraries = LibraryManager.getBuildinNames(source.getLoader());
+      for (final var lib : source.getLibraries()) {
+        final var libName = lib.getName();
+        if (baseLibsToEnable.contains(libName) || !builtinLibraries.contains(libName)) {
+          baseLibsToEnable.remove(libName);
+        }
+      }
+      // remove the promoted base libraries from the loaded library
+      for (final var newLib : libs) {
+        LibraryManager.removeBaseLibraries(newLib, baseLibsToEnable);
+      }
       for (final var lib : source.getLibraries()) {
         LibraryTools.buildLibraryList(lib, libNames);
       }
@@ -372,8 +392,10 @@ public final class LogisimFileActions {
               LibraryTools.buildLibraryList(lib, libNames);
               toolList.addAll(addedToolList);
               mergedLibs.add(lib);
-            } else
+            } else {
               LibraryTools.showErrors(lib.getName(), errors);
+              baseLibsToEnable.clear();
+            }
           } else
             LibraryTools.showErrors(lib.getName(), errors);
         }
@@ -382,6 +404,10 @@ public final class LogisimFileActions {
 
     @Override
     public void doIt(Project proj) {
+      for (final var lib : baseLibsToEnable) {
+        final var logisimFile = proj.getLogisimFile();
+        logisimFile.addLibrary(logisimFile.getLoader().getBuiltin().getLibrary(lib));
+      }
       for (final var lib : mergedLibs) {
         if (lib instanceof LoadedLibrary lib1) {
           if (lib1.getBase() instanceof LogisimFile) {
@@ -431,6 +457,7 @@ public final class LogisimFileActions {
     @Override
     public void undo(Project proj) {
       for (final var lib : mergedLibs) proj.getLogisimFile().removeLibrary(lib);
+      for (final var lib : baseLibsToEnable) proj.getLogisimFile().removeLibrary(lib);
     }
   }
 

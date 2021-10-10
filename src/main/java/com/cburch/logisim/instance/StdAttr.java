@@ -51,7 +51,7 @@ public interface StdAttr {
       Attributes.forString("label", S.getter("stdLabelAttr"));
   Attribute<Font> LABEL_FONT =
       Attributes.forFont("labelfont", S.getter("stdLabelFontAttr"));
-  Font DEFAULT_LABEL_FONT = new Font("SansSerif", Font.BOLD, 16);
+  Font DEFAULT_LABEL_FONT = new Font("SansSerif.Bold", Font.PLAIN, 16);
   Attribute<Color> LABEL_COLOR =
       Attributes.forColor("labelcolor", S.getter("ioLabelColorAttr"));
   Color DEFAULT_LABEL_COLOR = Color.BLUE;
