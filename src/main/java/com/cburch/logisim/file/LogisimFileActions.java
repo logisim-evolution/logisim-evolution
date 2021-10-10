@@ -358,10 +358,10 @@ public final class LogisimFileActions {
         LibraryManager.getBaseLibraries(newLib, baseLibsToEnable);
       }
       // promote the none visible base libraries to toplevel
-      final var builInLibraries = LibraryManager.getBuildinNames(source.getLoader());
+      final var builtinLibraries = LibraryManager.getBuildinNames(source.getLoader());
       for (final var lib : source.getLibraries()) {
         final var libName = lib.getName();
-        if (baseLibsToEnable.contains(libName) || !builInLibraries.contains(libName)) {
+        if (baseLibsToEnable.contains(libName) || !builtinLibraries.contains(libName)) {
           baseLibsToEnable.remove(libName);
         }
       }

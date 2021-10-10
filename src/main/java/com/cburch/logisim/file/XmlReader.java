@@ -437,10 +437,10 @@ class XmlReader {
         LibraryManager.getBaseLibraries(logiLib, baseLibsToEnable);
       }
       // promote the none visible base libraries to toplevel
-      final var builInLibraries = LibraryManager.getBuildinNames((Loader) loader);
+      final var builtinLibraries = LibraryManager.getBuildinNames((Loader) loader);
       for (final var lib : libsToAddAfter) {
         final var libName = lib.getName();
-        if (baseLibsToEnable.contains(libName) || !builInLibraries.contains(libName)) {
+        if (baseLibsToEnable.contains(libName) || !builtinLibraries.contains(libName)) {
           baseLibsToEnable.remove(libName);
         }
       }

@@ -357,7 +357,7 @@ public final class LibraryManager {
       logiLib = logi;
     }
     if (logiLib == null) return;
-    final var removes = new HashSet<String>();
+    final var toBeRemoved = new HashSet<String>();
     for (final var library : logiLib.getLibraries()) {
       var isUsed = false;
       for (final var circ : logiLib.getCircuits()) {
@@ -366,12 +366,12 @@ public final class LibraryManager {
         }
       }
       if (!isUsed) {
-        removes.add(library.getName());
+        toBeRemoved.add(library.getName());
       } else {
         removeUnusedLibraries(library);
       }
     }
-    for (final var remove : removes) {
+    for (final var remove : toBeRemoved) {
       lib.removeLibrary(remove);
     }
   }
