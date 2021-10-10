@@ -11,7 +11,6 @@ package com.cburch.logisim.proj;
 
 import static com.cburch.logisim.proj.Strings.S;
 
-import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.LoadedLibrary;
@@ -41,6 +40,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipFile;
 import java.util.zip.ZipOutputStream;
 
 import javax.swing.JFileChooser;
@@ -406,7 +406,34 @@ public class ProjectActions {
    * @return true if success, false otherwise 
    */
   public static boolean doImportProject(Project proj) {
-    return false;
+    var ret = true;
+    final var loader = proj.getLogisimFile().getLoader();
+    final var chooser = loader.createChooser();
+    chooser.setFileFilter(Loader.LOGISIM_BUNDLE_FILTER);
+    chooser.setAcceptAllFileFilterUsed(false);
+    chooser.setDialogTitle(S.get("projImportBundle"));
+    var isCorrectFile = true;
+    do {
+      ret &= chooser.showOpenDialog(proj.getFrame()) == JFileChooser.APPROVE_OPTION;
+      if (!ret) return ret;
+      final var zipFileName = chooser.getSelectedFile().getAbsolutePath();
+      isCorrectFile = Files.exists(Paths.get(zipFileName));
+      if (isCorrectFile) {
+        try {
+          final var zipFile = new ZipFile(zipFileName);
+          final var bundleInfo = ProjectBundleInfoFile.getBundleInfoFileContents(zipFile, proj.getFrame());
+          if (bundleInfo == null) return false;
+          zipFile.close();
+        } catch (IOException e) {
+          isCorrectFile = false;
+          OptionPane.showMessageDialog(proj.getFrame(), S.fmt("fileOpenError", 
+              String.format("%s\n%s", zipFileName, e.getMessage())));
+        }
+      } else {
+        OptionPane.showMessageDialog(proj.getFrame(), S.fmt("fileOpenError", zipFileName));
+      }
+    } while (!isCorrectFile);
+    return ret;
   }
 
   /**
@@ -429,7 +456,7 @@ public class ProjectActions {
       chooser.setAcceptAllFileFilterUsed(false);
       chooser.setSelectedFile(new File(zipFile));
       chooser.setDialogTitle(S.get("projExportBundle"));
-      var isCorrectDirectory = true;
+      var isCorrectFile = true;
       do {
         ret &= chooser.showSaveDialog(proj.getFrame()) == JFileChooser.APPROVE_OPTION;
         if (!ret) {
@@ -443,10 +470,10 @@ public class ProjectActions {
           }
           final var path = Paths.get(zipFile);
           if (Files.exists(path)) {
-            isCorrectDirectory = OptionPane.showConfirmDialog(proj.getFrame(), S.fmt("projExistsOverwrite", 
+            isCorrectFile = OptionPane.showConfirmDialog(proj.getFrame(), S.fmt("projExistsOverwrite", 
                 new File(zipFile).getName()), S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION;
           }
-          if (isCorrectDirectory) {
+          if (isCorrectFile) {
             final var projectFile = new FileOutputStream(zipFile);
             final var projectZipFile = new ZipOutputStream(projectFile);
             projectZipFile.putNextEntry(new ZipEntry(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator)));
@@ -455,9 +482,8 @@ public class ProjectActions {
                 S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION) {
 System.out.println("Add manifest");              
             }
-            projectZipFile.putNextEntry(new ZipEntry(Loader.LOGISIM_PROJECT_BUNDLE_INFO_FILE));
-            projectZipFile.write(String.format("Created with: %s\n", BuildInfo.displayName).getBytes());
-            projectZipFile.write(String.format("Main file: %s\n", loader.getMainFile().getName()).getBytes());
+            ProjectBundleInfoFile.writeBundleInfoFile(projectZipFile, 
+                ProjectBundleInfoFile.getInfoContainer(BuildInfo.displayName, loader.getMainFile().getName()));
             projectZipFile.close();
             projectFile.close();
           }
@@ -466,7 +492,7 @@ System.out.println("Add manifest");
           proj.setTool(oldTool);
           return false;
         }
-      } while (!isCorrectDirectory);
+      } while (!isCorrectFile);
       proj.setTool(oldTool);
     }
     return ret;
