@@ -26,6 +26,8 @@ be aware about important limitations that may affect your works:
   reality where phisical characteristics of each element can be different and affect their response time. Equalizing these times
   prevent **discrete** circuits like flip-flops from having undetermined initial state.
 
+If the above is crucial for your project, you may consider trying [alternative software](#alternatives).
+
 ## Project history ##
 
 Logisim is an educational tool for designing and simulating digital logic circuits. It was originally created
