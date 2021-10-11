@@ -6,6 +6,7 @@
 
 * [« Go back](../README.md)
 * **Additional information**
+  * [Limitations](#limitations)
   * [History of Logisim](#project-history)
   * [External documentation](#external-reads)
   * [Legacy support](#legacy-support)
@@ -13,6 +14,17 @@
   * [Alternative software](#alternatives)
 
 ---
+
+## Limitations ##
+
+While `Logisim-evolution` may be perfectly suitable for most of your digital circuit projects, you should
+be aware about important limitations that may affect your works:
+
+* Bidirectional pins (input or output depending on the control line state) are currently not supported by simulation engine,
+  therefore built-in library do not offer such elements, nor you will be able to contribute your own implementation as of today.
+* Each of the component of your circuit will be given equal amount of simulation time and which is not necessary what close to
+  reality where phisical characteristics of each element can be different and affect their response time. Equalizing these times
+  prevent **discrete** circuits like flip-flops from having undetermined initial state.
 
 ## Project history ##
 
