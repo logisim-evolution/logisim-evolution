@@ -413,14 +413,14 @@ class XmlReader {
       }
 
       // first, load the sublibraries
-      final var libsToAddAfter = new HashSet<LogisimFile>();
+      final var libsToAddAfter = new HashSet<Library>();
       final var baseLibsToEnable = new HashSet<String>();
       final var libsLoaded = new HashSet<String>();
       for (final var o : XmlIterator.forChildElements(elt, "lib")) {
         final var lib = toLibrary(o, isHolyCrossFile, isEvolutionFile);
         if (lib instanceof LoadedLibrary loadedLib) {
-          if (loadedLib.getBase() instanceof LogisimFile logiLib) {
-            libsToAddAfter.add(logiLib);
+          if (loadedLib.getBase() instanceof LogisimFile) {
+            libsToAddAfter.add(lib);
             continue;
           }
         }
