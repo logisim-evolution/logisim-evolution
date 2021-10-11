@@ -432,7 +432,7 @@ public class ProjectActions {
           final var manifestFileEntry = zipFile.getEntry(ProjectBundleManifest.MANIFEST_FILE_NAME);
           if (manifestFileEntry != null) {
             final var manifestInStream = zipFile.getInputStream(manifestFileEntry);
-            final var dialog = new ProjectBundleManifest(proj);
+            final var dialog = new ProjectBundleManifest(proj, "");
             dialog.showManifest(manifestInStream);
             manifestInStream.close();
           }
@@ -563,7 +563,13 @@ public class ProjectActions {
             ret &= loader.export(proj.getLogisimFile(), projectZipFile);
             if (OptionPane.showConfirmDialog(proj.getFrame(), S.get("projAddManifest"), 
                 S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION) {
-System.out.println("Add manifest");              
+              final var dialog = new ProjectBundleManifest(proj, loader.getMainFile().getName().replace(Loader.LOGISIM_EXTENSION, ""));
+              if (!dialog.writeManifest(projectZipFile)) {
+                OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjUnableToCreate", S.get("projManifestError")));
+                projectZipFile.close();
+                projectFile.close();
+                return false;
+              }
             }
             ProjectBundleInfoFile.writeBundleInfoFile(projectZipFile, 
                 ProjectBundleInfoFile.getInfoContainer(BuildInfo.displayName, loader.getMainFile().getName()));
