@@ -13,6 +13,8 @@ import static com.cburch.logisim.proj.Strings.S;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -20,7 +22,6 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JEditorPane;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
@@ -32,7 +33,7 @@ import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import com.cburch.logisim.file.Loader;
+import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.vladsch.flexmark.html.HtmlRenderer;
@@ -51,7 +52,7 @@ public class ProjectBundleManifest extends JDialog implements ActionListener {
   private JEditorPane projectDescription = new JEditorPane();
   private final Frame parrent;
   private ZipOutputStream zipfile;
-  private boolean manifestWritten;
+  private boolean manifestWritten = true;
 
   public ProjectBundleManifest(Project project, String projName) {
     super(project.getFrame(), S.get("projBundleManifestWindow"));
@@ -59,7 +60,6 @@ public class ProjectBundleManifest extends JDialog implements ActionListener {
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setAlwaysOnTop(true);
     setVisible(false);
-    setResizable(false);
     closeButton.addActionListener(this);
     writeButton.addActionListener(this);
     projectName.setText(projName);
@@ -93,8 +93,8 @@ public class ProjectBundleManifest extends JDialog implements ActionListener {
 
   public boolean writeManifest(ZipOutputStream zipfile) {
     this.zipfile = zipfile;
-    manifestWritten = false;
     setLayout(new GridBagLayout());
+    setResizable(false);
     final var gbc = new GridBagConstraints();
     gbc.gridx = 0;
     gbc.gridy = 0;
@@ -140,47 +140,73 @@ public class ProjectBundleManifest extends JDialog implements ActionListener {
       setVisible(false);
       dispose();
     } else if (writeButton.equals(e.getSource())) {
-      ceateManifest();
+      writeManifestFile();
       setVisible(false);
       dispose();
     }
   }
 
-  private void ceateManifest() {
+  private void writeManifestFile() {
     if (zipfile == null) return;
     try {
-      final var seperator = "\n---\n";
+      final var seperator = "---\n\n";
       var wroteheader1 = false;
       zipfile.putNextEntry(new ZipEntry(MANIFEST_FILE_NAME));
       final var projName = projectName.getText();
-      zipfile.write(S.get("projHeader").getBytes());
+      zipfile.write(S.get("projHeader").concat("\n\n").getBytes());
       if ((projName != null) && !projName.isEmpty()) {
-        zipfile.write(S.get("projHeader1").getBytes());
+        zipfile.write(S.get("projHeader1").concat("\n\n").getBytes());
         wroteheader1 = true;
-        zipfile.write(S.fmt("projIntro", projName).getBytes());
+        zipfile.write(S.fmt("projIntro", projName).concat("\n\n").getBytes());
       }
       final var projAuthor = projectAuthor.getText();
       if ((projAuthor != null) && !projAuthor.isEmpty()) {
         final var authors = projAuthor.split(",");
         if (authors.length > 0) {
           if (!wroteheader1) {
-            zipfile.write(S.get("projHeader1").getBytes());
+            zipfile.write(S.get("projHeader1").concat("\n\n").getBytes());
             wroteheader1 = true;
           }
           zipfile.write(S.get("projAuthor").getBytes());
-          for (var authorid = 0; authorid < authors.length; authorid++) {
-            if (authorid > 0) {
-              var authSep = authorid == (authors.length - 1) ? authors.length == 2 ? " and " : ", and " : ", ";
+          for (var authorId = 0; authorId < authors.length; authorId++) {
+            if (authorId > 0) {
+              var authSep = authorId == (authors.length - 1) ? authors.length == 2 ? " and " : ", and " : ", ";
               zipfile.write(authSep.getBytes());
             }
-            zipfile.write(String.format("`%s`", authors[authorid]).getBytes());
+            zipfile.write(String.format("`%s`", authors[authorId]).getBytes());
           }
-          zipfile.write("\n".getBytes());
+          zipfile.write("\n\n".getBytes());
         }
       }
+      final var projKeywords = projectKeywords.getText();
+      if ((projKeywords != null) && !projKeywords.isEmpty()) {
+        final var keywords = projKeywords.split(",");
+        if (keywords.length > 0) {
+          if (!wroteheader1) {
+            zipfile.write(S.get("projHeader1").concat("\n\n").getBytes());
+            wroteheader1 = true;
+          } else {
+            zipfile.write(seperator.getBytes());
+          }
+          for (var keywordId = 0; keywordId < keywords.length; keywordId++) {
+            if (keywordId > 0) zipfile.write(", ".getBytes());
+            zipfile.write(String.format("`%s`", keywords[keywordId]).getBytes());
+          }
+          zipfile.write("\n\n".getBytes());
+        }
+      }
+      final var projDescription = projectDescription.getText();
+      if ((projDescription != null) && !projDescription.isEmpty()) {
+        zipfile.write(S.get("projHeader2").concat("\n\n").getBytes());
+        zipfile.write(projDescription.getBytes());
+        zipfile.write("\n".getBytes());
+      }
+      final var dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
+      final var now = LocalDateTime.now();  
+      zipfile.write(S.get("projHeader3").concat("\n\n").getBytes());
+      zipfile.write(S.fmt("projGenerateInfo", BuildInfo.displayName, dtf.format(now)).concat("\n\n").getBytes());
     } catch (IOException e) {
       manifestWritten = false;
     }
-    manifestWritten = true;
   }
 }
