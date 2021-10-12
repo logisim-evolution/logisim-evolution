@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.analyze.gui;
@@ -33,7 +14,7 @@ import static com.cburch.logisim.analyze.Strings.S;
 import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.contracts.BaseMouseMotionListenerContract;
 import com.cburch.logisim.analyze.data.ExpressionRenderData;
-import com.cburch.logisim.analyze.data.KMapGroups;
+import com.cburch.logisim.analyze.data.KarnaughMapGroups;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Entry;
 import com.cburch.logisim.analyze.model.Expression;
@@ -47,6 +28,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.LineBuffer;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -78,21 +60,21 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
 
     @Override
     public void cellsChanged(TruthTableEvent event) {
-      kMapGroups.update();
+      karnaughMapGroups.update();
       repaint();
     }
 
     @Override
     public void expressionChanged(OutputExpressionsEvent event) {
       if (event.getType() == OutputExpressionsEvent.OUTPUT_MINIMAL && event.getVariable().equals(output)) {
-        kMapGroups.update();
+        karnaughMapGroups.update();
         repaint();
       }
     }
 
     @Override
     public void structureChanged(TruthTableEvent event) {
-      kMapGroups.update();
+      karnaughMapGroups.update();
       computePreferredSize();
     }
   }
@@ -149,10 +131,10 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   public static final int MAX_VARS = 6;
   public static final int[] ROW_VARS = {0, 0, 1, 1, 2, 2, 3};
   public static final int[] COL_VARS = {0, 1, 1, 2, 2, 3, 3};
-  private static final int[] BigCOL_Index = {0, 1, 3, 2, 6, 7, 5, 4};
-  private static final int[] BigCOL_Place = {0, 1, 3, 2, 7, 6, 4, 5};
-  private static final int CELL_HORZ_SEP = 10;
-  private static final int CELL_VERT_SEP = 10;
+  private static final int[] bigColIndex = {0, 1, 3, 2, 6, 7, 5, 4};
+  private static final int[] bigColPlace = {0, 1, 3, 2, 7, 6, 4, 5};
+  private static final int cellHorizontalSeparator = 10;
+  private static final int cellVerticalSeparator = 10;
 
   private final MyListener myListener = new MyListener();
   private final ExpressionView completeExpression;
@@ -169,7 +151,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   private Bounds kMapArea;
   private KMapInfo linedKMapInfo;
   private KMapInfo numberedKMapInfo;
-  private final KMapGroups kMapGroups;
+  private final KarnaughMapGroups karnaughMapGroups;
   private Bounds selInfo;
   private final Point hover;
   private Notation notation = Notation.MATHEMATICAL;
@@ -190,7 +172,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     model.getTruthTable().addTruthTableListener(myListener);
     setToolTipText(" ");
     isKMapLined = AppPreferences.KMAP_LINED_STYLE.get();
-    kMapGroups = new KMapGroups(model);
+    karnaughMapGroups = new KarnaughMapGroups(model);
     addMouseMotionListener(this);
     addMouseListener(this);
     hover = new Point(-1, -1);
@@ -316,8 +298,8 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
       cellWidth = 24;
     } else {
       final var fm = gfx.getFontMetrics(entryFont);
-      cellHeight = fm.getAscent() + CELL_VERT_SEP;
-      cellWidth = fm.stringWidth("00") + CELL_HORZ_SEP;
+      cellHeight = fm.getAscent() + cellVerticalSeparator;
+      cellWidth = fm.stringWidth("00") + cellHorizontalSeparator;
     }
     final var rows = 1 << rowVars;
     final var cols = 1 << colVars;
@@ -370,8 +352,8 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
       headHeight = styledHeight(styled("E:2", headerFont), ctx) + (fm.getAscent() - singleheight);
 
       fm = gfx.getFontMetrics(entryFont);
-      cellHeight = fm.getAscent() + CELL_VERT_SEP;
-      cellWidth = fm.stringWidth("00") + CELL_HORZ_SEP;
+      cellHeight = fm.getAscent() + cellVerticalSeparator;
+      cellWidth = fm.stringWidth("00") + cellHorizontalSeparator;
     }
 
     final var rows = 1 << ROW_VARS[table.getInputColumnCount()];
@@ -397,7 +379,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   public static int getCol(int tableRow, int rows, int cols) {
     int ret = tableRow % cols;
     if (cols > 4) {
-      return BigCOL_Place[ret];
+      return bigColPlace[ret];
     }
     switch (ret) {
       case 2:
@@ -428,7 +410,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   public static int getRow(int tableRow, int rows, int cols) {
     int ret = tableRow / cols;
     if (rows > 4) {
-      return BigCOL_Place[ret];
+      return bigColPlace[ret];
     }
     switch (ret) {
       case 2:
@@ -473,7 +455,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
             : entry.getErrorMessage() + "<br>");
     s.append(output).append(" = ").append(entry.getDescription());
     final var inputs = model.getInputs().bits;
-    if (inputs.size() == 0) return "<html>" + s + "</html>";
+    if (inputs.isEmpty()) return "<html>" + s + "</html>";
     s.append("<br>When:");
     final var n = inputs.size();
     for (var i = 0; i < MAX_VARS && i < inputs.size(); i++) {
@@ -497,8 +479,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   }
 
   public void paintKmap(Graphics gfx, boolean selectionBlock) {
-    if (!(gfx instanceof Graphics2D)) return;
-    Graphics2D g2 = (Graphics2D) gfx;
+    if (!(gfx instanceof Graphics2D g2)) return;
     if (AppPreferences.AntiAliassing.getBoolean()) {
       g2.setRenderingHint(
           RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
@@ -545,13 +526,13 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
       x += numberedKMapInfo.getHeaderWidth() + cellWidth;
       y += numberedKMapInfo.getHeaderHeight() + cellHeight;
     }
-    paintKMap(g2, x, y, table);
+    doPaintKMap(g2, x, y, table);
     if (!selectionBlock) return;
 
-    final var expr = kMapGroups.getHighlightedExpression();
+    final var expr = karnaughMapGroups.getHighlightedExpression();
     final var ctx = g2.getFontRenderContext();
     final var ccol = g2.getColor();
-    final var bcol = kMapGroups.getBackgroundColor();
+    final var bcol = karnaughMapGroups.getBackgroundColor();
     if (bcol != null) g2.setColor(bcol);
     else g2.setColor(this.getBackground());
     g2.fillRect(selInfo.getX(), selInfo.getY(), selInfo.getWidth() - 1, selInfo.getHeight() - 1);
@@ -578,50 +559,31 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   }
 
   private String label(int row, int rows) {
-    assert row >= 0 && row < rows : "Row " + row + " is outside range of " + rows + " rows.";
-    switch (rows) {
-      case 2:
-        return "" + row;
-      case 4:
-        switch (row) {
-          case 0:
-            return "00";
-          case 1:
-            return "01";
-          case 2:
-            return "11";
-          case 3:
-            return "10";
-          default:
-            assert false;
-        }
-        break;
-      case 8:
-        switch (row) {
-          case 0:
-            return "000";
-          case 1:
-            return "001";
-          case 2:
-            return "011";
-          case 3:
-            return "010";
-          case 4:
-            return "110";
-          case 5:
-            return "111";
-          case 6:
-            return "101";
-          case 7:
-            return "100";
-          default:
-            assert false;
-        }
-        break;
-      default:
-        assert false : "unhandled number of rows " + rows;
+    if (row >= 0 && row < rows) {
+      throw new RuntimeException(LineBuffer.format("Row {{1}} is outside range of {{2}} rows.", row, rows));
     }
-    return "";
+    return switch (rows) {
+      case 2 -> String.valueOf(row);
+      case 4 -> switch (row) {
+        case 0 -> "00";
+        case 1 -> "01";
+        case 2 -> "11";
+        case 3 -> "10";
+        default -> throw new IllegalStateException(LineBuffer.format("Unexpected value: {{1}} for rows={{2}}", row, rows));
+      };
+      case 8 -> switch (row) {
+        case 0 -> "000";
+        case 1 -> "001";
+        case 2 -> "011";
+        case 3 -> "010";
+        case 4 -> "110";
+        case 5 -> "111";
+        case 6 -> "101";
+        case 7 -> "100";
+        default -> throw new IllegalStateException(LineBuffer.format("Unexpected value: {{1}} for rows={{2}}", row, rows));
+      };
+      default -> throw new IllegalStateException(LineBuffer.format("Unhandled number of rows: {{1}}", rows));
+    };
   }
 
   private void drawNumberedHeader(Graphics2D gfx, int x, int y) {
@@ -919,7 +881,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     }
   }
 
-  private void paintKMap(Graphics2D gfx, int x, int y, TruthTable table) {
+  private void doPaintKMap(Graphics2D gfx, int x, int y, TruthTable table) {
     final var inputCount = table.getInputColumnCount();
     final var rowVars = ROW_VARS[inputCount];
     final var colVars = COL_VARS[inputCount];
@@ -942,7 +904,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
         if (provisionalValue != null && row == provisionalY && outputColumn == provisionalX)
           entry = provisionalValue;
         if (entry.isError()) {
-          gfx.setColor(Value.ERROR_COLOR);
+          gfx.setColor(Value.errorColor);
           gfx.fillRect(x + j * cellWidth, y + i * cellHeight, cellWidth, cellHeight);
           gfx.setColor(Color.BLACK);
         } else if (hover.x == j && hover.y == i) {
@@ -956,7 +918,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
 
     if (outputColumn < 0) return;
 
-    kMapGroups.paint(gfx, x, y, cellWidth, cellHeight);
+    karnaughMapGroups.paint(gfx, x, y, cellWidth, cellHeight);
     gfx.setColor(Color.BLUE);
     for (var i = 0; i < rows; i++) {
       for (var j = 0; j < cols; j++) {
@@ -992,7 +954,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   public void setOutput(String value) {
     final var recompute = (output == null || value == null) && !Objects.equals(output, value);
     output = value;
-    kMapGroups.setOutput(value);
+    karnaughMapGroups.setOutput(value);
     if (recompute) {
       computePreferredSize();
     } else {
@@ -1001,12 +963,12 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   }
 
   public void setFormat(int format) {
-    kMapGroups.setformat(format);
+    karnaughMapGroups.setformat(format);
   }
 
   private int toRow(int row, int rows) {
     if (rows > 4) {
-      return BigCOL_Index[row];
+      return bigColIndex[row];
     }
     if (rows == 4) {
       switch (row) {
@@ -1024,7 +986,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
 
   private int toCol(int col, int cols) {
     if (cols > 4) {
-      return BigCOL_Index[col];
+      return bigColIndex[col];
     }
     if (cols == 4) {
       switch (col) {
@@ -1053,8 +1015,8 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
       final var y = posY - kMapArea.getY();
       final var col = x / cellWidth;
       final var row = y / cellHeight;
-      if (kMapGroups.highlight(col, row)) {
-        Expression expr = kMapGroups.getHighlightedExpression();
+      if (karnaughMapGroups.highlight(col, row)) {
+        Expression expr = karnaughMapGroups.getHighlightedExpression();
         completeExpression.getRenderData().setSubExpression(expr);
         completeExpression.repaint();
         repaint();
@@ -1065,7 +1027,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
         repaint();
       }
     } else {
-      if (!kMapGroups.clearHighlight()) {
+      if (!karnaughMapGroups.clearHighlight()) {
         completeExpression.getRenderData().setSubExpression(null);
         completeExpression.repaint();
         repaint();

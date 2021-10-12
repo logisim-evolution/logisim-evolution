@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.circuit;
@@ -47,6 +28,7 @@ class CircuitMutatorImpl implements CircuitMutator {
     modified = new HashSet<>();
   }
 
+  @Override
   public void add(Circuit circuit, Component comp) {
     modified.add(circuit);
     log.add(CircuitChange.add(circuit, comp));
@@ -58,6 +40,7 @@ class CircuitMutatorImpl implements CircuitMutator {
     circuit.mutatorAdd(comp);
   }
 
+  @Override
   public void clear(Circuit circuit) {
     final var comps = new HashSet<Component>(circuit.getNonWires());
     comps.addAll(circuit.getWires());
@@ -91,7 +74,7 @@ class CircuitMutatorImpl implements CircuitMutator {
   CircuitTransaction getReverseTransaction() {
     final var ret = new CircuitMutation();
     final var log = this.log;
-    for (int i = log.size() - 1; i >= 0; i--) {
+    for (var i = log.size() - 1; i >= 0; i--) {
       ret.change(log.get(i).getReverseChange());
     }
     return ret;
@@ -159,8 +142,7 @@ class CircuitMutatorImpl implements CircuitMutator {
     final var oldValue = attrs.getValue(a);
     log.add(CircuitChange.setForCircuit(circuit, attr, oldValue, newValue));
     attrs.setValue(a, newValue);
-    if (attr == CircuitAttributes.NAME_ATTR
-        || attr == CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE) {
+    if (attr == CircuitAttributes.NAME_ATTR || attr == CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE) {
       circuit.getAppearance().recomputeDefaultAppearance();
     }
   }

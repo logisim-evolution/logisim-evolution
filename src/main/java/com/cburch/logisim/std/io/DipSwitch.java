@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.io;
@@ -39,7 +20,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
-import com.cburch.logisim.gui.icons.DipswitchIcon;
+import com.cburch.logisim.gui.icons.DipSwitchIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -85,7 +66,7 @@ public class DipSwitch extends InstanceFactory {
       } else {
         i = (e.getX() - loc.getX() - 5) / 10;
       }
-      val.ToggleBit(i);
+      val.toggleBit(i);
       state.getInstance().fireInvalidated();
     }
   }
@@ -100,7 +81,7 @@ public class DipSwitch extends InstanceFactory {
       this.size = size;
     }
 
-    public boolean BitSet(int bitindex) {
+    public boolean isBitSet(int bitindex) {
       if (bitindex >= size) {
         return false;
       }
@@ -117,7 +98,7 @@ public class DipSwitch extends InstanceFactory {
       }
     }
 
-    public void ToggleBit(int bitindex) {
+    public void toggleBit(int bitindex) {
       if ((bitindex < 0) || (bitindex >= size)) {
         return;
       }
@@ -126,7 +107,7 @@ public class DipSwitch extends InstanceFactory {
     }
   }
 
-  public static ArrayList<String> GetLabels(int size) {
+  public static ArrayList<String> getLabels(int size) {
     final var labelNames = new ArrayList<String>();
     for (var i = 0; i < size; i++) {
       labelNames.add(getInputLabel(i));
@@ -145,7 +126,7 @@ public class DipSwitch extends InstanceFactory {
       Attributes.forBitWidth("number", S.getter("nrOfSwitch"), MIN_SWITCH, MAX_SWITCH);
 
   public DipSwitch() {
-    super(_ID, S.getter("DipSwitchComponent"));
+    super(_ID, S.getter("DipSwitchComponent"), new AbstractSimpleIoHdlGeneratorFactory(true), true);
     var dipSize = 8;
     setAttributes(
         new Attribute[] {
@@ -166,10 +147,10 @@ public class DipSwitch extends InstanceFactory {
           StdAttr.DEFAULT_LABEL_COLOR,
           true,
           BitWidth.create(dipSize),
-          new ComponentMapInformationContainer(dipSize, 0, 0, GetLabels(dipSize), null, null)
+          new ComponentMapInformationContainer(dipSize, 0, 0, getLabels(dipSize), null, null)
         });
     setFacingAttribute(StdAttr.FACING);
-    setIcon(new DipswitchIcon());
+    setIcon(new DipSwitchIcon());
     setKeyConfigurator(
         JoinedConfigurator.create(
             new BitWidthConfigurator(ATTR_SIZE),
@@ -183,7 +164,7 @@ public class DipSwitch extends InstanceFactory {
     updatePorts(instance);
     instance.computeLabelTextField(Instance.AVOID_LEFT);
     int dipSize = instance.getAttributeValue(ATTR_SIZE).getWidth();
-    instance.getAttributeSet().setValue(StdAttr.MAPINFO, new ComponentMapInformationContainer(dipSize, 0, 0, GetLabels(dipSize), null, null));
+    instance.getAttributeSet().setValue(StdAttr.MAPINFO, new ComponentMapInformationContainer(dipSize, 0, 0, getLabels(dipSize), null, null));
   }
 
   private void updatePorts(Instance instance) {
@@ -218,14 +199,6 @@ public class DipSwitch extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) {
-      MyHDLGenerator = new ButtonHDLGeneratorFactory();
-    }
-    return MyHDLGenerator.HDLTargetSupported(attrs);
-  }
-
-  @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.LABEL_LOC) {
       instance.computeLabelTextField(Instance.AVOID_LEFT);
@@ -236,7 +209,7 @@ public class DipSwitch extends InstanceFactory {
       ComponentMapInformationContainer map = instance.getAttributeValue(StdAttr.MAPINFO);
       if (map != null) {
         map.setNrOfInports(instance.getAttributeValue(ATTR_SIZE).getWidth(),
-            GetLabels(instance.getAttributeValue(ATTR_SIZE).getWidth()));
+            getLabels(instance.getAttributeValue(ATTR_SIZE).getWidth()));
       }
     } else if (attr == StdAttr.FACING) {
       instance.recomputeBounds();
@@ -283,7 +256,7 @@ public class DipSwitch extends InstanceFactory {
       g.setFont(g.getFont().deriveFont(g.getFont().getSize2D() * 0.6f));
     }
     for (var i = 0; i < n; i++) {
-      g.setColor(state.BitSet(i) ? Value.TRUE_COLOR : Color.white);
+      g.setColor(state.isBitSet(i) ? Value.trueColor : Color.white);
       g.fillRect(7 + (i * segmentWidth), 16, 6, 20);
 
       g.setColor(Color.white);
@@ -293,8 +266,8 @@ public class DipSwitch extends InstanceFactory {
 
     // draw each switch state
     for (var i = 0; i < n; i++) {
-      g.setColor(state.BitSet(i) ? Color.DARK_GRAY : Color.GRAY);
-      int ypos = state.BitSet(i) ? 17 : 26;
+      g.setColor(state.isBitSet(i) ? Color.DARK_GRAY : Color.GRAY);
+      int ypos = state.isBitSet(i) ? 17 : 26;
       g.fillRect(8 + (i * segmentWidth), ypos, 4, 9);
     }
 
@@ -316,13 +289,8 @@ public class DipSwitch extends InstanceFactory {
       state.setData(pins);
     }
     for (var i = 0; i < pins.size; i++) {
-      Value pinstate = (pins.BitSet(i)) ? Value.TRUE : Value.FALSE;
+      Value pinstate = (pins.isBitSet(i)) ? Value.TRUE : Value.FALSE;
       state.setPort(i, pinstate, 1);
     }
-  }
-
-  @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
   }
 }

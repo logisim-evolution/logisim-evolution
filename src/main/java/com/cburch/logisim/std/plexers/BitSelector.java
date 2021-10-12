@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.plexers;
@@ -62,12 +43,14 @@ public class BitSelector extends InstanceFactory {
 
   public static final Attribute<BitWidth> GROUP_ATTR =
       Attributes.forBitWidth("group", S.getter("bitSelectorGroupAttr"));
+  public static final Attribute<Integer> SELECT_ATTR = Attributes.forNoSave();
+  public static final Attribute<Integer> EXTENDED_ATTR = Attributes.forNoSave();
 
   public BitSelector() {
-    super(_ID, S.getter("bitSelectorComponent"));
+    super(_ID, S.getter("bitSelectorComponent"), new BitSelectorHdlGeneratorFactory());
     setAttributes(
-        new Attribute[] {StdAttr.FACING, StdAttr.SELECT_LOC, StdAttr.WIDTH, GROUP_ATTR},
-        new Object[] {Direction.EAST, StdAttr.SELECT_BOTTOM_LEFT, BitWidth.create(8), BitWidth.ONE});
+        new Attribute[] {StdAttr.FACING, StdAttr.SELECT_LOC, StdAttr.WIDTH, GROUP_ATTR, SELECT_ATTR, EXTENDED_ATTR},
+        new Object[] {Direction.EAST, StdAttr.SELECT_BOTTOM_LEFT, BitWidth.create(8), BitWidth.ONE, 3, 9});
     setKeyConfigurator(
         JoinedConfigurator.create(
             new BitWidthConfigurator(GROUP_ATTR, 1, Value.MAX_WIDTH, 0),
@@ -85,10 +68,10 @@ public class BitSelector extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    final var CompleteName = new StringBuilder();
-    CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
-    if (attrs.getValue(GROUP_ATTR).getWidth() > 1) CompleteName.append("_bus");
-    return CompleteName.toString();
+    final var completeName = new StringBuilder();
+    completeName.append(CorrectLabel.getCorrectLabel(this.getName()));
+    if (attrs.getValue(GROUP_ATTR).getWidth() > 1) completeName.append("_bus");
+    return completeName.toString();
   }
 
   @Override
@@ -96,12 +79,6 @@ public class BitSelector extends InstanceFactory {
     final var facing = attrs.getValue(StdAttr.FACING);
     final var base = Bounds.create(-30, -15, 30, 30);
     return base.rotate(Direction.EAST, facing, 0, 0);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new BitSelectorHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -176,30 +153,33 @@ public class BitSelector extends InstanceFactory {
       }
     }
     final var select = BitWidth.create(selectBits);
+    instance.getAttributeSet().setValue(SELECT_ATTR, select.getWidth());
+    final var maxGroups = (int) Math.pow(2d, select.getWidth());
+    instance.getAttributeSet().setValue(EXTENDED_ATTR, maxGroups * group.getWidth() + 1);
 
     Location inPt;
     Location selPt;
     if (facing == Direction.WEST) {
       inPt = Location.create(30, 0);
-      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) 
+      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT)
         selPt = Location.create(10, -10);
       else
         selPt = Location.create(10, 10);
     } else if (facing == Direction.NORTH) {
       inPt = Location.create(0, 30);
-      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) 
+      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT)
         selPt = Location.create(-10, 10);
       else
         selPt = Location.create(10, 10);
     } else if (facing == Direction.SOUTH) {
       inPt = Location.create(0, -30);
-      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) 
+      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT)
         selPt = Location.create(-10, -10);
       else
         selPt = Location.create(10, -10);
     } else {
       inPt = Location.create(-30, 0);
-      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) 
+      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT)
         selPt = Location.create(-10, 10);
       else
         selPt = Location.create(-10, -10);

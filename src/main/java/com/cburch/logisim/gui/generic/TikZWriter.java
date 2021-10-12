@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.generic;
@@ -202,8 +183,8 @@ public class TikZWriter extends Graphics2D {
   }
 
   @Override
-  public void transform(AffineTransform Tx) {
-    MyInfo.getAffineTransform().concatenate(Tx);
+  public void transform(AffineTransform tx) {
+    MyInfo.getAffineTransform().concatenate(tx);
   }
 
   @Override
@@ -212,8 +193,8 @@ public class TikZWriter extends Graphics2D {
   }
 
   @Override
-  public void setTransform(AffineTransform Tx) {
-    MyInfo.setAffineTransform(Tx);
+  public void setTransform(AffineTransform tx) {
+    MyInfo.setAffineTransform(tx);
   }
 
   @Override
@@ -311,10 +292,10 @@ public class TikZWriter extends Graphics2D {
   @Override
   public FontMetrics getFontMetrics(Font f) {
     /* TODO: just stubs, not related to LaTeX */
-    GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    GraphicsDevice gd = ge.getDefaultScreenDevice();
-    GraphicsConfiguration config = gd.getDefaultConfiguration();
-    Canvas c = new Canvas(config);
+    final var ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    final var gd = ge.getDefaultScreenDevice();
+    final var config = gd.getDefaultConfiguration();
+    final var c = new Canvas(config);
     return c.getFontMetrics(f);
   }
 
@@ -431,8 +412,7 @@ public class TikZWriter extends Graphics2D {
   }
 
   @Override
-  public boolean drawImage(
-      Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer) {
+  public boolean drawImage(Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer) {
     System.out.println(
         "TikZ not yet supported : drawImage(Image img, int x, int y, int width, int height, Color bgcolor, ImageObserver observer)");
     return false;
@@ -478,12 +458,11 @@ public class TikZWriter extends Graphics2D {
   @Override
   public void dispose() {}
 
-  public void WriteFile(File outfile) throws IOException {
+  public void writeFile(File outfile) throws IOException {
     MyInfo.writeFile(outfile);
   }
 
-  public void WriteSvg(int width, int height, File outfile)
-      throws ParserConfigurationException, TransformerException {
+  public void writeSvg(int width, int height, File outfile) throws ParserConfigurationException, TransformerException {
     MyInfo.writeSvg(width, height, outfile);
   }
 }

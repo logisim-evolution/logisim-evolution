@@ -1,36 +1,15 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.draw.shapes;
 
 import com.cburch.draw.model.AbstractCanvasObject;
-import com.cburch.draw.model.Handle;
-import com.cburch.logisim.data.Location;
 import java.awt.Color;
 import java.awt.Font;
 import org.w3c.dom.Document;
@@ -46,10 +25,10 @@ public class SvgCreator {
   }
 
   public static Element createCurve(Document doc, Curve curve) {
-    Element elt = doc.createElement("path");
-    Location e0 = curve.getEnd0();
-    Location e1 = curve.getEnd1();
-    Location ct = curve.getControl();
+    final var elt = doc.createElement("path");
+    final var e0 = curve.getEnd0();
+    final var e1 = curve.getEnd1();
+    final var ct = curve.getControl();
     elt.setAttribute(
         "d",
         "M" + e0.getX() + "," + e0.getY() + " Q" + ct.getX() + "," + ct.getY() + " " + e1.getX()
@@ -59,9 +38,9 @@ public class SvgCreator {
   }
 
   public static Element createLine(Document doc, Line line) {
-    Element elt = doc.createElement("line");
-    Location v1 = line.getEnd0();
-    Location v2 = line.getEnd1();
+    final var elt = doc.createElement("line");
+    final var v1 = line.getEnd0();
+    final var v2 = line.getEnd1();
     elt.setAttribute("x1", "" + v1.getX());
     elt.setAttribute("y1", "" + v1.getY());
     elt.setAttribute("x2", "" + v2.getX());
@@ -71,11 +50,11 @@ public class SvgCreator {
   }
 
   public static Element createOval(Document doc, Oval oval) {
-    double x = oval.getX();
-    double y = oval.getY();
-    double width = oval.getWidth();
-    double height = oval.getHeight();
-    Element elt = doc.createElement("ellipse");
+    final var x = oval.getX();
+    final var y = oval.getY();
+    final var width = oval.getWidth();
+    final var height = oval.getHeight();
+    final var elt = doc.createElement("ellipse");
     elt.setAttribute("cx", "" + (x + width / 2));
     elt.setAttribute("cy", "" + (y + height / 2));
     elt.setAttribute("rx", "" + (width / 2));
@@ -86,15 +65,11 @@ public class SvgCreator {
 
   public static Element createPoly(Document doc, Poly poly) {
     Element elt;
-    if (poly.isClosed()) {
-      elt = doc.createElement("polygon");
-    } else {
-      elt = doc.createElement("polyline");
-    }
+    elt = (poly.isClosed()) ? doc.createElement("polygon") : doc.createElement("polyline");
 
-    StringBuilder points = new StringBuilder();
-    boolean first = true;
-    for (Handle h : poly.getHandles(null)) {
+    final var points = new StringBuilder();
+    var first = true;
+    for (final var h : poly.getHandles(null)) {
       if (!first) points.append(" ");
       points.append(h.getX()).append(",").append(h.getY());
       first = false;
@@ -110,7 +85,7 @@ public class SvgCreator {
   }
 
   private static Element createRectangular(Document doc, Rectangular rect) {
-    Element elt = doc.createElement("rect");
+    final var elt = doc.createElement("rect");
     elt.setAttribute("x", "" + rect.getX());
     elt.setAttribute("y", "" + rect.getY());
     elt.setAttribute("width", "" + rect.getWidth());
@@ -120,8 +95,8 @@ public class SvgCreator {
   }
 
   public static Element createRoundRectangle(Document doc, RoundRectangle rrect) {
-    Element elt = createRectangular(doc, rrect);
-    int r = rrect.getValue(DrawAttr.CORNER_RADIUS);
+    final var elt = createRectangular(doc, rrect);
+    final var r = rrect.getValue(DrawAttr.CORNER_RADIUS);
     elt.setAttribute("rx", "" + r);
     elt.setAttribute("ry", "" + r);
     return elt;
@@ -166,7 +141,7 @@ public class SvgCreator {
   public static void setFontAttribute(Element elt, Font font, String prefix) {
     elt.setAttribute(prefix + "font-family", font.getFamily());
     elt.setAttribute(prefix + "font-size", "" + font.getSize());
-    int style = font.getStyle();
+    final var style = font.getStyle();
     if ((style & Font.ITALIC) != 0) {
       elt.setAttribute(prefix + "font-style", "italic");
     }
@@ -184,7 +159,7 @@ public class SvgCreator {
   }
 
   private static void populateFill(Element elt, AbstractCanvasObject shape) {
-    Object type = shape.getValue(DrawAttr.PAINT_TYPE);
+    final var type = shape.getValue(DrawAttr.PAINT_TYPE);
     if (type == DrawAttr.PAINT_FILL) {
       elt.setAttribute("stroke", "none");
     } else {
@@ -193,7 +168,7 @@ public class SvgCreator {
     if (type == DrawAttr.PAINT_STROKE) {
       elt.setAttribute("fill", "none");
     } else {
-      Color fill = shape.getValue(DrawAttr.FILL_COLOR);
+      final var fill = shape.getValue(DrawAttr.FILL_COLOR);
       if (colorMatches(fill, Color.BLACK)) {
         elt.removeAttribute("fill");
       } else {
@@ -206,11 +181,11 @@ public class SvgCreator {
   }
 
   private static void populateStroke(Element elt, AbstractCanvasObject shape) {
-    Integer width = shape.getValue(DrawAttr.STROKE_WIDTH);
+    final var width = shape.getValue(DrawAttr.STROKE_WIDTH);
     if (width != null && width != 1) {
       elt.setAttribute("stroke-width", width.toString());
     }
-    Color stroke = shape.getValue(DrawAttr.STROKE_COLOR);
+    final var stroke = shape.getValue(DrawAttr.STROKE_COLOR);
     elt.setAttribute("stroke", getColorString(stroke));
     if (showOpacity(stroke)) {
       elt.setAttribute("stroke-opacity", getOpacityString(stroke));

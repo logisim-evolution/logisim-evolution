@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.hdl;
@@ -47,7 +28,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     synchronized (windowRegistry) {
       HdlContentEditor ret = windowRegistry.get(value);
       if (ret == null) {
-        if (source instanceof Frame) ret = new HdlContentEditor((Frame) source, proj, value);
+        if (source instanceof Frame frame) ret = new HdlContentEditor(frame, proj, value);
         else ret = new HdlContentEditor((Dialog) source, proj, value);
         windowRegistry.put(value, ret);
       }
@@ -117,29 +98,27 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       if (!content.equals(newContent)) content = newContent;
       fireAttributeValueChanged(attr, value, null);
     }
-    if (attr == StdAttr.LABEL && value instanceof String) {
-      final var newLabel = (String) value;
+    if (attr == StdAttr.LABEL && value instanceof String newLabel) {
       final var oldlabel = label;
       if (label.equals(newLabel)) return;
       label = newLabel;
       fireAttributeValueChanged(attr, value, (V) oldlabel);
     }
-    if (attr == StdAttr.LABEL_FONT && value instanceof Font) {
-      final var newFont = (Font) value;
+    if (attr == StdAttr.LABEL_FONT && value instanceof Font newFont) {
       if (labelFont.equals(newFont)) return;
       labelFont = newFont;
       fireAttributeValueChanged(attr, value, null);
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
-      final var newvis = (Boolean) value;
-      if (labelVisible.equals(newvis)) return;
-      labelVisible = newvis;
+      final var newVis = (Boolean) value;
+      if (labelVisible.equals(newVis)) return;
+      labelVisible = newVis;
       fireAttributeValueChanged(attr, value, null);
     }
     if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
-      final var Name = (String) value;
+      final var name = (String) value;
       if (value.equals(simName)) return;
-      simName = Name;
+      simName = name;
       fireAttributeValueChanged(attr, value, null);
     }
   }

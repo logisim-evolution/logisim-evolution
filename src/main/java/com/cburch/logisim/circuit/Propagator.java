@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.circuit;
@@ -53,9 +34,9 @@ public class Propagator {
 
     @Override
     public boolean equals(Object other) {
-      if (!(other instanceof ComponentPoint)) return false;
-      final var o = (ComponentPoint) other;
-      return this.cause.equals(o.cause) && this.loc.equals(o.loc);
+      return (other instanceof ComponentPoint o)
+             ? this.cause.equals(o.cause) && this.loc.equals(o.loc)
+             : false;
     }
 
     @Override
@@ -72,7 +53,9 @@ public class Propagator {
     }
 
     @Override
-    public void attributeListChanged(AttributeEvent e) {}
+    public void attributeListChanged(AttributeEvent e) {
+      // do nothing
+    }
 
     @Override
     public void attributeValueChanged(AttributeEvent e) {
@@ -135,7 +118,7 @@ public class Propagator {
   static Value computeValue(SetData causes) {
     if (causes == null) return Value.NIL;
     var ret = causes.val;
-    for (SetData n = causes.next; n != null; n = n.next) {
+    for (var n = causes.next; n != null; n = n.next) {
       ret = ret.combine(n.val);
     }
     return ret;
@@ -182,8 +165,8 @@ public class Propagator {
     final var causes = state.causes;
 
     // first check whether this is change of previous info.
-    boolean replaced = false;
-    for (SetData n = head; n != null; n = n.next) {
+    var replaced = false;
+    for (var n = head; n != null; n = n.next) {
       if (n.cause == data.cause) {
         n.val = data.val;
         replaced = true;
@@ -449,8 +432,8 @@ public class Propagator {
 
   private void updateRandomness() {
     final var opts = root.getProject().getOptions();
-    Object rand = opts.getAttributeSet().getValue(Options.ATTR_SIM_RAND);
-    final var val = (Integer) rand;
+    final var rand = opts.getAttributeSet().getValue(Options.ATTR_SIM_RAND);
+    final var val = rand;
     var logVal = 0;
     while ((1 << logVal) < val) logVal++;
     simRandomShift = logVal;

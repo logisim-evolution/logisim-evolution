@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.vhdl.base;
@@ -51,12 +32,11 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     final int end;
     final VhdlContent.Generic g;
 
-    private VhdlGenericAttribute(
-        String name, StringGetter disp, int start, int end, VhdlContent.Generic g) {
+    private VhdlGenericAttribute(String name, StringGetter disp, int start, int end, VhdlContent.Generic generic) {
       super(name, disp);
       this.start = start;
       this.end = end;
-      this.g = g;
+      this.g = generic;
     }
 
     public VhdlContent.Generic getGeneric() {
@@ -88,21 +68,20 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     }
   }
 
-  public static Attribute<Integer> forGeneric(VhdlContent.Generic g) {
-    String name = g.getName();
-    StringGetter disp = StringUtil.constantGetter(name);
-    if (g.getType().equals("positive"))
-      return new VhdlGenericAttribute("vhdl_" + name, disp, 1, Integer.MAX_VALUE, g);
-    else if (g.getType().equals("natural"))
-      return new VhdlGenericAttribute("vhdl_" + name, disp, 0, Integer.MAX_VALUE, g);
+  public static Attribute<Integer> forGeneric(VhdlContent.Generic generic) {
+    final var name = generic.getName();
+    final var disp = StringUtil.constantGetter(name);
+    if (generic.getType().equals("positive"))
+      return new VhdlGenericAttribute("vhdl_" + name, disp, 1, Integer.MAX_VALUE, generic);
+    else if (generic.getType().equals("natural"))
+      return new VhdlGenericAttribute("vhdl_" + name, disp, 0, Integer.MAX_VALUE, generic);
     else
-      return new VhdlGenericAttribute(
-          "vhdl_" + name, disp, Integer.MIN_VALUE, Integer.MAX_VALUE, g);
+      return new VhdlGenericAttribute("vhdl_" + name, disp, Integer.MIN_VALUE, Integer.MAX_VALUE, generic);
   }
 
   private static final List<Attribute<?>> static_attributes =
       Arrays.asList(
-          VhdlEntity.NAME_ATTR,
+          VhdlEntity.nameAttr,
           StdAttr.LABEL,
           StdAttr.LABEL_FONT,
           StdAttr.LABEL_VISIBILITY,
@@ -111,11 +90,11 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
           VhdlSimConstants.SIM_NAME_ATTR);
 
   static AttributeSet createBaseAttrs(VhdlContent content) {
-    VhdlContent.Generic[] g = content.getGenerics();
-    List<Attribute<Integer>> a = content.getGenericAttributes();
-    Attribute<?>[] attrs = new Attribute<?>[7 + g.length];
-    Object[] value = new Object[7 + g.length];
-    attrs[0] = VhdlEntity.NAME_ATTR;
+    final var generic = content.getGenerics();
+    final var genericAttr = content.getGenericAttributes();
+    final var attrs = new Attribute<?>[7 + generic.length];
+    final var value = new Object[7 + generic.length];
+    attrs[0] = VhdlEntity.nameAttr;
     value[0] = content.getName();
     attrs[1] = StdAttr.LABEL;
     value[1] = "";
@@ -129,9 +108,9 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
     value[5] = StdAttr.APPEAR_EVOLUTION;
     attrs[6] = VhdlSimConstants.SIM_NAME_ATTR;
     value[6] = "";
-    for (int i = 0; i < g.length; i++) {
-      attrs[6 + i] = a.get(i);
-      value[6 + i] = g[i].getDefaultValue();
+    for (var i = 0; i < generic.length; i++) {
+      attrs[6 + i] = genericAttr.get(i);
+      value[6 + i] = generic[i].getDefaultValue();
     }
     return AttributeSets.fixedSet(attrs, value);
   }
@@ -139,7 +118,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   private VhdlContent content;
   private Instance vhdlInstance;
   private String label = "";
-  private String SimName = "";
+  private String simName = "";
   private Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
   private Direction facing = Direction.EAST;
   private Boolean labelVisible = false;
@@ -174,7 +153,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   void updateGenerics() {
     List<Attribute<Integer>> genericAttrs = content.getGenericAttributes();
     instanceAttrs = new ArrayList<>(6 + genericAttrs.size());
-    instanceAttrs.add(VhdlEntity.NAME_ATTR);
+    instanceAttrs.add(VhdlEntity.nameAttr);
     instanceAttrs.add(StdAttr.LABEL);
     instanceAttrs.add(StdAttr.LABEL_FONT);
     instanceAttrs.add(StdAttr.LABEL_VISIBILITY);
@@ -216,7 +195,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   @SuppressWarnings("unchecked")
   @Override
   public <V> V getValue(Attribute<V> attr) {
-    if (attr == VhdlEntity.NAME_ATTR) {
+    if (attr == VhdlEntity.nameAttr) {
       return (V) content.getName();
     }
     if (attr == StdAttr.LABEL) {
@@ -235,7 +214,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       return (V) facing;
     }
     if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
-      return (V) SimName;
+      return (V) simName;
     }
     if (genericValues.containsKey(attr)) {
       return (V) genericValues.get(attr);
@@ -246,46 +225,44 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
   @SuppressWarnings("unchecked")
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
-    if (attr == VhdlEntity.NAME_ATTR) {
-      String newValue = (String) value;
+    if (attr == VhdlEntity.nameAttr) {
+      final var newValue = (String) value;
       if (content.getName().equals(newValue)) return;
       if (!content.setName(newValue)) return;
       fireAttributeValueChanged(attr, value, null);
       return;
     }
-    if (attr == StdAttr.LABEL && value instanceof String) {
-      String newLabel = (String) value;
-      String oldlabel = label;
+    if (attr == StdAttr.LABEL && value instanceof String newLabel) {
+      final var oldlabel = label;
       if (label.equals(newLabel)) return;
       label = newLabel;
       fireAttributeValueChanged(attr, value, (V) oldlabel);
       return;
     }
-    if (attr == StdAttr.LABEL_FONT && value instanceof Font) {
-      Font newFont = (Font) value;
+    if (attr == StdAttr.LABEL_FONT && value instanceof Font newFont) {
       if (labelFont.equals(newFont)) return;
       labelFont = newFont;
       fireAttributeValueChanged(attr, value, null);
       return;
     }
     if (attr == StdAttr.LABEL_VISIBILITY) {
-      Boolean newvis = (Boolean) value;
-      if (labelVisible.equals(newvis)) return;
-      labelVisible = newvis;
+      final var newVisibility = (Boolean) value;
+      if (labelVisible.equals(newVisibility)) return;
+      labelVisible = newVisibility;
       fireAttributeValueChanged(attr, value, null);
       return;
     }
     if (attr == StdAttr.FACING) {
-      Direction val = (Direction) value;
-      if (facing.equals(val)) return;
-      facing = val;
+      final var direction = (Direction) value;
+      if (facing.equals(direction)) return;
+      facing = direction;
       fireAttributeValueChanged(attr, value, null);
       return;
     }
     if (attr == VhdlSimConstants.SIM_NAME_ATTR) {
-      String Name = (String) value;
-      if (Name.equals(SimName)) return;
-      SimName = Name;
+      final var name = (String) value;
+      if (name.equals(simName)) return;
+      simName = name;
       fireAttributeValueChanged(attr, value, null);
       return;
     }
@@ -293,9 +270,9 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
         && (value == StdAttr.APPEAR_FPGA
             || value == StdAttr.APPEAR_CLASSIC
             || value == StdAttr.APPEAR_EVOLUTION)) {
-      AttributeOption a = (AttributeOption) value;
-      if (content.getAppearance().equals(a)) return;
-      content.setAppearance(a);
+      final var attrOpt = (AttributeOption) value;
+      if (content.getAppearance().equals(attrOpt)) return;
+      content.setAppearance(attrOpt);
       fireAttributeValueChanged(attr, value, null);
       return;
     }
@@ -317,7 +294,7 @@ public class VhdlEntityAttributes extends AbstractAttributeSet {
       attrs.updateGenerics();
       attrs.vhdlInstance.fireInvalidated();
       attrs.vhdlInstance.recomputeBounds();
-      attrs.fireAttributeValueChanged(VhdlEntity.NAME_ATTR, source.getName(), null);
+      attrs.fireAttributeValueChanged(VhdlEntity.nameAttr, source.getName(), null);
     }
 
     @Override

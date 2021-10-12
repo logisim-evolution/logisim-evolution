@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.data;
@@ -70,8 +51,9 @@ public class Value {
   public static Value create(Value[] values) {
     if (values.length == 0) return NIL;
     if (values.length == 1) return values[0];
-    if (values.length > MAX_WIDTH)
+    if (values.length > MAX_WIDTH) {
       throw new RuntimeException("Cannot have more than " + MAX_WIDTH + " bits in a value");
+    }
 
     final var width = values.length;
     long value = 0;
@@ -144,10 +126,10 @@ public class Value {
       else if ('A' <= c && c <= 'F') d = 0xA + (c - 'A');
       else
         throw new Exception(
-            "unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
+            "Unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
 
       if (d >= radix)
-        throw new Exception("unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
+        throw new Exception("Unexpected character '" + t.charAt(i) + "' in \"" + t + "\"");
 
       value *= radix;
       unknown *= radix;
@@ -164,18 +146,15 @@ public class Value {
 
     if (w == 64) {
       if (((value & 0x7FFFFFFFFFFFFFFFL) >> (w - 1)) != 0)
-        throw new Exception("too many bits in \"" + t + "\"");
+        throw new Exception("Too many bits in \"" + t + "\"");
     } else {
-      if ((value >> w) != 0) throw new Exception("too many bits in \"" + t + "\"");
+      if ((value >> w) != 0) throw new Exception("Too many bits in \"" + t + "\"");
     }
 
     unknown &= ((1L << w) - 1);
     return create(w, 0, unknown, value);
   }
 
-  /**
-   * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
-   */
   public static int radixOfLogString(BitWidth width, String t) {
     if (t.startsWith("0x")) return 16;
     if (t.startsWith("0o")) return 8;
@@ -209,20 +188,18 @@ public class Value {
   public static final Value NIL = new Value(0, 0, 0, 0);
   public static final int MAX_WIDTH = 64;
 
-  public static Color FALSE_COLOR = new Color(AppPreferences.FALSE_COLOR.get());
-  public static Color TRUE_COLOR = new Color(AppPreferences.TRUE_COLOR.get());
-  public static Color UNKNOWN_COLOR = new Color(AppPreferences.UNKNOWN_COLOR.get());
-  public static Color ERROR_COLOR = new Color(AppPreferences.ERROR_COLOR.get());
-  public static Color NIL_COLOR = new Color(AppPreferences.NIL_COLOR.get());
-  public static Color STROKE_COLOR = new Color(AppPreferences.STROKE_COLOR.get());
-  public static Color MULTI_COLOR = new Color(AppPreferences.BUS_COLOR.get());
-  public static Color WIDTH_ERROR_COLOR = new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
-  public static Color WIDTH_ERROR_CAPTION_COLOR =
-      new Color(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.get());
-  public static Color WIDTH_ERROR_HIGHLIGHT_COLOR =
-      new Color(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
-  public static Color WIDTH_ERROR_CAPTION_BGCOLOR =
-      new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
+  public static Color falseColor = new Color(AppPreferences.FALSE_COLOR.get());
+  public static Color trueColor = new Color(AppPreferences.TRUE_COLOR.get());
+  public static Color unknownColor = new Color(AppPreferences.UNKNOWN_COLOR.get());
+  public static Color errorColor = new Color(AppPreferences.ERROR_COLOR.get());
+  public static Color nilColor = new Color(AppPreferences.NIL_COLOR.get());
+  public static Color strokeColor = new Color(AppPreferences.STROKE_COLOR.get());
+  public static Color multiColor = new Color(AppPreferences.BUS_COLOR.get());
+  public static Color widthErrorColor = new Color(AppPreferences.WIDTH_ERROR_COLOR.get());
+  public static Color widthErrorCaptionColor = new Color(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.get());
+  public static Color widthErrorHighlightColor = new Color(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
+  public static Color widthErrorCaptionBgcolor = new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
+  public static Color clockFrequencyColor = new Color(AppPreferences.CLOCK_FREQUENCY_COLOR.get());
 
   private static final Cache cache = new Cache();
 
@@ -314,13 +291,13 @@ public class Value {
   }
 
   @Override
-  public boolean equals(Object other_obj) {
-    if (!(other_obj instanceof Value)) return false;
-    final var other = (Value) other_obj;
-    return this.width == other.width
-        && this.error == other.error
-        && this.unknown == other.unknown
-        && this.value == other.value;
+  public boolean equals(Object otherObj) {
+    return (otherObj instanceof Value other)
+           ? this.width == other.width
+              && this.error == other.error
+              && this.unknown == other.unknown
+              && this.value == other.value
+           : false;
   }
 
   public Value extendWidth(int newWidth, Value others) {
@@ -360,15 +337,15 @@ public class Value {
 
   public Color getColor() {
     if (error != 0) {
-      return ERROR_COLOR;
+      return errorColor;
     } else if (width == 0) {
-      return NIL_COLOR;
+      return nilColor;
     } else if (width == 1) {
-      if (this == UNKNOWN) return UNKNOWN_COLOR;
-      else if (this == TRUE) return TRUE_COLOR;
-      else return FALSE_COLOR;
+      if (this == UNKNOWN) return unknownColor;
+      else if (this == TRUE) return trueColor;
+      else return falseColor;
     } else {
-      return MULTI_COLOR;
+      return multiColor;
     }
   }
 

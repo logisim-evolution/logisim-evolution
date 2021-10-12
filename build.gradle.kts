@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 import org.gradle.internal.os.OperatingSystem
@@ -59,6 +40,7 @@ dependencies {
   implementation("org.slf4j:slf4j-api:1.7.30")
   implementation("org.slf4j:slf4j-simple:1.7.30")
   implementation("com.formdev:flatlaf:1.2")
+  implementation("commons-cli:commons-cli:1.4")
 
   compileOnly("org.jetbrains:annotations:22.0.0")
 
@@ -75,6 +57,7 @@ dependencies {
 val APP_DIR_NAME = "appDirName"
 val APP_VERSION = "appVersion"
 val APP_VERSION_SHORT = "appVersionShort"
+val APP_URL = "appUrl"
 val JPACKAGE = "jpackage"
 val LIBS_DIR = "libsDir"
 val LINUX_PARAMS = "linuxParameters"
@@ -83,27 +66,12 @@ val SHARED_PARAMS = "sharedParameters"
 val SUPPORT_DIR = "supportDir"
 val TARGET_DIR = "targetDir"
 val TARGET_FILE_PATH_BASE = "targetFilePathBase"
+val TARGET_FILE_PATH_BASE_SHORT = "targetFilePathBaseShort"
 val UPPERCASE_PROJECT_NAME = "uppercaseProjectName"
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_14
-  targetCompatibility = JavaVersion.VERSION_14
-}
-
-java {
-  sourceSets["main"].java {
-    srcDir("${buildDir}/generated/logisim/java")
-    srcDir("${buildDir}/generated/sources/srcgen")
-  }
-}
-
-task<Jar>("sourcesJar") {
-  group = "build"
-  description = "Creates a JAR archive with project sources."
-  dependsOn.add("classes")
-  classifier = "src"
-
-  from(sourceSets.main.get().allSource)
+  sourceCompatibility = JavaVersion.VERSION_16
+  targetCompatibility = JavaVersion.VERSION_16
 }
 
 /**
@@ -111,14 +79,18 @@ task<Jar>("sourcesJar") {
  */
 extra.apply {
   // NOTE: optional suffix is prefixed with `-` (because of how LogisimVersion class parses it), which
-  // I remove here because `jpackage` tool do not like it when used to build RPM package.
+  // I remove here because `jpackage` tool does not like it when used to build the RPM package.
   // Do NOT use `project.version` instead.
   val appVersion = (project.version as String).replace("-", "")
   set(APP_VERSION, appVersion)
   logger.info("appVersion: ${appVersion}")
 
+  val appUrl = findProperty("url")
+  set(APP_URL, appUrl)
+  logger.info("appUrl: ${appUrl}")
+
   // Short (with suffix removed) version string, i.e. for "3.6.0beta1", short form is "3.6.0".
-  // This is mostly used by createApp as version numbering rule is pretty strict on macOS.
+  // This is used by createApp and createMsi as version numbering is pretty strict on macOS and Windows.
   // Do NOT use `project.version` instead.
   val appVersionShort = (project.version as String).split('-')[0]
   set(APP_VERSION_SHORT, appVersionShort)
@@ -141,6 +113,10 @@ extra.apply {
   set(TARGET_FILE_PATH_BASE, "${targetDir}/${baseFilename}")
   logger.debug("targetFilePathBase: \"${targetDir}/${baseFilename}\"")
 
+  val baseFilenameShort = "${project.name}-${appVersionShort}"
+  set(TARGET_FILE_PATH_BASE_SHORT, "${targetDir}/${baseFilenameShort}")
+  logger.debug("targetFilePathBaseShort: \"${targetDir}/${baseFilenameShort}\"")
+
   // Name of application shadowJar file.
   val shadowJarFilename = "${baseFilename}-all.jar"
   set(SHADOW_JAR_FILE_NAME, shadowJarFilename)
@@ -157,10 +133,12 @@ extra.apply {
   // Platform-agnostic jpackage parameters shared across all the builds.
   var params = listOf(
       jpackage,
+      // NOTE: we cannot use --app-version as part of platform agnostic set as i.e. both macOS and
+      // Windows packages do not allow use of any suffixes like "-dev" etc, so --app-version is set
+      // in these builders separately.
       "--input", libsDir,
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", shadowJarFilename,
-      "--app-version", appVersion,
       "--copyright", copyrights,
       "--dest", targetDir,
       "--description", "Digital logic design tool and simulator",
@@ -174,6 +152,7 @@ extra.apply {
   // Linux (DEB/RPM) specific settings for jpackage.
   val linuxParams = params + listOf(
       "--name", project.name,
+      "--app-version", appVersion,
       "--file-associations", "${supportDir}/linux/file.jpackage",
       "--icon", "${supportDir}/linux/logisim-icon-128.png",
       "--install-dir", "/opt",
@@ -187,8 +166,28 @@ extra.apply {
   set(APP_DIR_NAME, "${targetDir}/${uppercaseProjectName}.app")
 }
 
+java {
+  sourceSets["main"].java {
+    srcDir("${buildDir}/generated/logisim/java")
+    srcDir("${buildDir}/generated/sources/srcgen")
+  }
+}
+
+task<Jar>("sourcesJar") {
+  group = "build"
+  description = "Creates a JAR archive with project sources."
+  dependsOn.add("classes")
+  classifier = "src"
+
+  from(sourceSets.main.get().allSource)
+  archiveVersion.set(ext.get(APP_VERSION) as String)
+}
+
+
+
 /**
- * Creates distribution directory and checks if source.
+ * Creates the distribution directory and removes any extra files from the libs directory
+ * beyond the expected shadowJar file because jpackage puts everything from libs into the package.
  */
 tasks.register("createDistDir") {
   val libsDir = ext.get(LIBS_DIR) as String
@@ -347,7 +346,7 @@ tasks.register("createMsi") {
 
   inputs.dir(ext.get(LIBS_DIR) as String)
   inputs.dir("${supportDir}/windows")
-  outputs.file("${ext.get(TARGET_FILE_PATH_BASE) as String}.msi")
+  outputs.file("${ext.get(TARGET_FILE_PATH_BASE_SHORT) as String}.msi")
 
   doFirst {
     if (!OperatingSystem.current().isWindows) {
@@ -365,6 +364,10 @@ tasks.register("createMsi") {
         "--win-dir-chooser",
         "--win-menu",
         "--type", "msi",
+        // we MUST use short version form (without any suffix like "-dev", as it is not allowed in MSI package:
+        // https://docs.microsoft.com/en-us/windows/win32/msi/productversion?redirectedfrom=MSDN
+        // NOTE: any change to version **format** may require editing of .github/workflows/nightly.yml too!
+        "--app-version", ext.get(APP_VERSION_SHORT) as String,
     )
     runCommand(params, "Error while creating the MSI package.")
   }
@@ -470,10 +473,10 @@ tasks.register("createDmg") {
 fun genBuildInfo(buildInfoFilePath: String) {
   val now = Date()
   val nowIso = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(now)
-  val branchName = runCommand(listOf("git", "-C", "$projectDir", "rev-parse", "--abbrev-ref", "HEAD"),
+  val branchName = runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--abbrev-ref", "HEAD"),
       "Failed getting branch name.")
-  val branchLastCommitHash = runCommand(listOf("git", "-C", "$projectDir", "rev-parse", "--short=8", "HEAD"),
-      "Failed getting last commit has.")
+  val branchLastCommitHash = runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--short=8", "HEAD"),
+      "Failed getting last commit hash.")
   val currentMillis = Date().time
   val buildYear = SimpleDateFormat("yyyy").format(now)
 
@@ -495,7 +498,7 @@ fun genBuildInfo(buildInfoFilePath: String) {
     "    public static final String buildId = \"${branchName}/${branchLastCommitHash}\";",
     "",
     "    // Project build timestamp",
-    "    public static final long millis = ${currentMillis}L;", // keep traling `L`
+    "    public static final long millis = ${currentMillis}L;", // keep trailing `L`
     "    public static final String year = \"${buildYear}\";",
     "    public static final String dateIso8601 = \"${nowIso}\";",
     "    public static final Date date = new Date();",
@@ -504,6 +507,13 @@ fun genBuildInfo(buildInfoFilePath: String) {
     "    // Project version",
     "    public static final LogisimVersion version = LogisimVersion.fromString(\"${ext.get(APP_VERSION) as String}\");",
     "    public static final String name = \"${project.name.capitalize().trim()}\";",
+    "    public static final String displayName = \"${project.name.capitalize().trim()} v${ext.get(APP_VERSION) as String}\";",
+    "    public static final String url = \"${ext.get(APP_URL) as String}\";",
+    "",
+    "    // JRE info",
+    "    public static final String jvm_version = String.format(\"%s v%s\", System.getProperty(\"java.vm.name\"), System.getProperty(\"java.version\"));",
+    "    public static final String jvm_vendor = System.getProperty(\"java.vendor\");",
+    "",
     "} // End of generated BuildInfo",
     "",
   )
@@ -540,9 +550,20 @@ tasks.register("genBuildInfo") {
 }
 
 /**
- * Task: jpackage
+ * Task: genFiles
  *
- * Umbrella task to create packages for all supported platforms.
+ * Umbrella task to generate all generated files
+*/
+tasks.register("genFiles") {
+  group = "build"
+  description = "Generates all generated files."
+  dependsOn("genBuildInfo")
+}
+
+/**
+ * Task: createAll
+ *
+ * Umbrella task to create all packages for the current platform.
  */
 tasks.register("createAll") {
   group = "build"
@@ -578,11 +599,11 @@ val compilerOptions = listOf("-Xlint:deprecation", "-Xlint:unchecked")
 tasks {
   compileJava {
     options.compilerArgs = compilerOptions
-    dependsOn("genBuildInfo")
+    dependsOn("genFiles")
   }
   compileTestJava {
     options.compilerArgs = compilerOptions
-    dependsOn("genBuildInfo")
+    dependsOn("genFiles")
   }
 
   jar {

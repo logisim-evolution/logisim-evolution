@@ -1,36 +1,17 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.file;
 
 import com.cburch.logisim.fpga.data.BoardInformation;
-import com.cburch.logisim.fpga.data.FPGAClass;
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.FpgaClass;
+import com.cburch.logisim.fpga.data.FpgaIoInformationContainer;
 import com.cburch.logisim.fpga.gui.DialogNotification;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -57,14 +38,14 @@ public class BoardReaderClass {
     myfilename = filename;
   }
 
-  private BufferedImage CreateImage(int width, int height, String[] CodeTable, String PixelData) {
+  private BufferedImage createImage(int width, int height, String[] CodeTable, String PixelData) {
     ImageXmlFactory reader = new ImageXmlFactory();
-    reader.SetCodeTable(CodeTable);
-    reader.SetCompressedString(PixelData);
-    return reader.GetPicture(width, height);
+    reader.setCodeTable(CodeTable);
+    reader.setCompressedString(PixelData);
+    return reader.getPicture(width, height);
   }
 
-  public BoardInformation GetBoardInformation() {
+  public BoardInformation getBoardInformation() {
     try {
       // Create instance of DocumentBuilderFactory
       factory = DocumentBuilderFactory.newInstance();
@@ -120,42 +101,45 @@ public class BoardReaderClass {
       }
       if (CodeTable == null) {
         DialogNotification.showDialogNotification(
-            null, "Error", "The selected xml file does not contain a compression code table");
+            // FIXME: hardcoded string
+            null, "Error", "The selected XML file does not contain a compression code table");
         return null;
       }
       if ((PictureWidth == 0) || (PictureHeight == 0)) {
         DialogNotification.showDialogNotification(
-            null, "Error", "The selected xml file does not contain the picture dimensions");
+            // FIXME: hardcoded string
+            null, "Error", "The selected XML file does not contain the picture dimensions");
         return null;
       }
       if (PixelData == null) {
         DialogNotification.showDialogNotification(
-            null, "Error", "The selected xml file does not contain the picture data");
+            // FIXME: hardcoded string
+            null, "Error", "The selected XML file does not contain the picture data");
         return null;
       }
 
       BoardInformation result = new BoardInformation();
       result.setBoardName(BoardDoc.getDocumentElement().getNodeName());
-      BufferedImage Picture = CreateImage(PictureWidth, PictureHeight, CodeTable, PixelData);
+      BufferedImage Picture = createImage(PictureWidth, PictureHeight, CodeTable, PixelData);
       if (Picture == null) return null;
-      result.SetImage(Picture);
-      FPGAClass FPGA = GetFPGAInfo();
+      result.setImage(Picture);
+      FpgaClass FPGA = getFpgaInfo();
       if (FPGA == null) return null;
       result.fpga = FPGA;
       NodeList CompList = BoardDoc.getElementsByTagName("PinsInformation"); // for backward
       // compatibility
-      ProcessComponentList(CompList, result);
+      processComponentList(CompList, result);
       CompList = BoardDoc.getElementsByTagName("ButtonsInformation"); // for
       // backward
       // compatibility
-      ProcessComponentList(CompList, result);
+      processComponentList(CompList, result);
       CompList = BoardDoc.getElementsByTagName("LEDsInformation"); // for
       // backward
       // compatibility
-      ProcessComponentList(CompList, result);
+      processComponentList(CompList, result);
       CompList = BoardDoc.getElementsByTagName(BoardWriterClass.COMPONENTS_SECTION_STRING); // new
       // format
-      ProcessComponentList(CompList, result);
+      processComponentList(CompList, result);
       return result;
     } catch (Exception e) {
       logger.error(
@@ -166,119 +150,119 @@ public class BoardReaderClass {
     }
   }
 
-  private FPGAClass GetFPGAInfo() {
-    NodeList FPGAList =
+  private FpgaClass getFpgaInfo() {
+    var fpgaList =
         BoardDoc.getElementsByTagName(BoardWriterClass.BOARD_INFORMATION_SECTION_STRING);
-    long frequency = -1;
-    String clockpin = null;
-    String clockpull = null;
-    String clockstand = null;
-    String Unusedpull = null;
+    var frequency = -1L;
+    String clockPin = null;
+    String clockPull = null;
+    String clockStand = null;
+    String unusedPull = null;
     String vendor = null;
-    String Part = null;
+    String part = null;
     String family = null;
     String Package = null;
-    String Speed = null;
-    String UsbTmc = null;
-    String JTAGPos = null;
-    String FlashName = null;
-    String FlashPos = null;
-    if (FPGAList.getLength() != 1) return null;
-    Node ThisFPGA = FPGAList.item(0);
-    NodeList FPGAParameters = ThisFPGA.getChildNodes();
-    for (int i = 0; i < FPGAParameters.getLength(); i++) {
-      if (FPGAParameters.item(i)
+    String speed = null;
+    String usbTmc = null;
+    String jtagPos = null;
+    String flashName = null;
+    String flashPos = null;
+    if (fpgaList.getLength() != 1) return null;
+    final var thisFpga = fpgaList.item(0);
+    final var fpgaParams = thisFpga.getChildNodes();
+    for (int i = 0; i < fpgaParams.getLength(); i++) {
+      if (fpgaParams.item(i)
           .getNodeName()
           .equals(BoardWriterClass.CLOCK_INFORMATION_SECTION_STRING)) {
-        NamedNodeMap ClockAttrs = FPGAParameters.item(i).getAttributes();
-        for (int j = 0; j < ClockAttrs.getLength(); j++) {
-          if (ClockAttrs.item(j).getNodeName().equals(BoardWriterClass.CLOCK_SECTION_STRINGS[0]))
-            frequency = Long.parseLong(ClockAttrs.item(j).getNodeValue());
-          if (ClockAttrs.item(j).getNodeName().equals(BoardWriterClass.CLOCK_SECTION_STRINGS[1]))
-            clockpin = ClockAttrs.item(j).getNodeValue();
-          if (ClockAttrs.item(j).getNodeName().equals(BoardWriterClass.CLOCK_SECTION_STRINGS[2]))
-            clockpull = ClockAttrs.item(j).getNodeValue();
-          if (ClockAttrs.item(j).getNodeName().equals(BoardWriterClass.CLOCK_SECTION_STRINGS[3]))
-            clockstand = ClockAttrs.item(j).getNodeValue();
+        final var clockAttrs = fpgaParams.item(i).getAttributes();
+        for (int j = 0; j < clockAttrs.getLength(); j++) {
+          if (clockAttrs.item(j).getNodeName().equals(BoardWriterClass.CLOCK_SECTION_STRINGS[0]))
+            frequency = Long.parseLong(clockAttrs.item(j).getNodeValue());
+          if (clockAttrs.item(j).getNodeName().equals(BoardWriterClass.CLOCK_SECTION_STRINGS[1]))
+            clockPin = clockAttrs.item(j).getNodeValue();
+          if (clockAttrs.item(j).getNodeName().equals(BoardWriterClass.CLOCK_SECTION_STRINGS[2]))
+            clockPull = clockAttrs.item(j).getNodeValue();
+          if (clockAttrs.item(j).getNodeName().equals(BoardWriterClass.CLOCK_SECTION_STRINGS[3]))
+            clockStand = clockAttrs.item(j).getNodeValue();
         }
       }
-      if (FPGAParameters.item(i).getNodeName().equals(BoardWriterClass.UNUSED_PINS_STRING)) {
-        NamedNodeMap UnusedAttrs = FPGAParameters.item(i).getAttributes();
-        for (int j = 0; j < UnusedAttrs.getLength(); j++)
-          if (UnusedAttrs.item(j).getNodeName().equals("PullBehavior"))
-            Unusedpull = UnusedAttrs.item(j).getNodeValue();
+      if (fpgaParams.item(i).getNodeName().equals(BoardWriterClass.UNUSED_PINS_STRING)) {
+        final var unusedAttrs = fpgaParams.item(i).getAttributes();
+        for (int j = 0; j < unusedAttrs.getLength(); j++)
+          if (unusedAttrs.item(j).getNodeName().equals("PullBehavior"))
+            unusedPull = unusedAttrs.item(j).getNodeValue();
       }
-      if (FPGAParameters.item(i)
+      if (fpgaParams.item(i)
           .getNodeName()
           .equals(BoardWriterClass.FPGA_INFORMATION_SECTION_STRING)) {
-        NamedNodeMap FPGAAttrs = FPGAParameters.item(i).getAttributes();
-        for (int j = 0; j < FPGAAttrs.getLength(); j++) {
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[0]))
-            vendor = FPGAAttrs.item(j).getNodeValue();
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[1]))
-            Part = FPGAAttrs.item(j).getNodeValue();
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[2]))
-            family = FPGAAttrs.item(j).getNodeValue();
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[3]))
-            Package = FPGAAttrs.item(j).getNodeValue();
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[4]))
-            Speed = FPGAAttrs.item(j).getNodeValue();
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[5]))
-            UsbTmc = FPGAAttrs.item(j).getNodeValue();
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[6]))
-            JTAGPos = FPGAAttrs.item(j).getNodeValue();
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[7]))
-            FlashName = FPGAAttrs.item(j).getNodeValue();
-          if (FPGAAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[8]))
-            FlashPos = FPGAAttrs.item(j).getNodeValue();
+        final var fpgaAttrs = fpgaParams.item(i).getAttributes();
+        for (int j = 0; j < fpgaAttrs.getLength(); j++) {
+          if (fpgaAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[0]))
+            vendor = fpgaAttrs.item(j).getNodeValue();
+          if (fpgaAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[1]))
+            part = fpgaAttrs.item(j).getNodeValue();
+          if (fpgaAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[2]))
+            family = fpgaAttrs.item(j).getNodeValue();
+          if (fpgaAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[3]))
+            Package = fpgaAttrs.item(j).getNodeValue();
+          if (fpgaAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[4]))
+            speed = fpgaAttrs.item(j).getNodeValue();
+          if (fpgaAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[5]))
+            usbTmc = fpgaAttrs.item(j).getNodeValue();
+          if (fpgaAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[6]))
+            jtagPos = fpgaAttrs.item(j).getNodeValue();
+          if (fpgaAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[7]))
+            flashName = fpgaAttrs.item(j).getNodeValue();
+          if (fpgaAttrs.item(j).getNodeName().equals(BoardWriterClass.FPGA_SECTION_STRINGS[8]))
+            flashPos = fpgaAttrs.item(j).getNodeValue();
         }
       }
     }
     if ((frequency < 0)
-        || (clockpin == null)
-        || (clockpull == null)
-        || (clockstand == null)
-        || (Unusedpull == null)
+        || (clockPin == null)
+        || (clockPull == null)
+        || (clockStand == null)
+        || (unusedPull == null)
         || (vendor == null)
-        || (Part == null)
+        || (part == null)
         || (family == null)
         || (Package == null)
-        || (Speed == null)) {
-      DialogNotification.showDialogNotification(
-          null, "Error", "The selected xml file does not contain the required FPGA parameters");
+        || (speed == null)) {
+      // FIXME: hardcoded string
+      DialogNotification.showDialogNotification(null, "Error", "The selected xml file does not contain the required FPGA parameters");
       return null;
     }
-    if (UsbTmc == null) UsbTmc = Boolean.toString(false);
-    if (JTAGPos == null) JTAGPos = "1";
-    if (FlashPos == null) FlashPos = "2";
-    FPGAClass result = new FPGAClass();
-    result.Set(
+    if (usbTmc == null) usbTmc = Boolean.toString(false);
+    if (jtagPos == null) jtagPos = "1";
+    if (flashPos == null) flashPos = "2";
+    FpgaClass result = new FpgaClass();
+    result.set(
         frequency,
-        clockpin,
-        clockpull,
-        clockstand,
+        clockPin,
+        clockPull,
+        clockStand,
         family,
-        Part,
+        part,
         Package,
-        Speed,
+        speed,
         vendor,
-        Unusedpull,
-        UsbTmc.equals(Boolean.toString(true)),
-        JTAGPos,
-        FlashName,
-        FlashPos);
+        unusedPull,
+        usbTmc.equals(Boolean.toString(true)),
+        jtagPos,
+        flashName,
+        flashPos);
     return result;
   }
 
-  private void ProcessComponentList(NodeList CompList, BoardInformation board) {
+  private void processComponentList(NodeList compList, BoardInformation board) {
     Node tempNode = null;
-    if (CompList.getLength() == 1) {
-      tempNode = CompList.item(0);
-      CompList = tempNode.getChildNodes();
-      for (int i = 0; i < CompList.getLength(); i++) {
-        FPGAIOInformationContainer NewComp = new FPGAIOInformationContainer(CompList.item(i));
-        if (NewComp.IsKnownComponent()) {
-          board.AddComponent(NewComp);
+    if (compList.getLength() == 1) {
+      tempNode = compList.item(0);
+      compList = tempNode.getChildNodes();
+      for (var i = 0; i < compList.getLength(); i++) {
+        final var newComp = new FpgaIoInformationContainer(compList.item(i));
+        if (newComp.isKnownComponent()) {
+          board.addComponent(newComp);
         }
       }
     }

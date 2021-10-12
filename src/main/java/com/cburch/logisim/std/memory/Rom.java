@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.memory;
@@ -31,7 +12,6 @@ package com.cburch.logisim.std.memory;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.contracts.BaseMouseListenerContract;
-import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
@@ -39,7 +19,6 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.gui.hex.HexFile;
 import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
@@ -74,8 +53,8 @@ public class Rom extends Mem {
 
     @Override
     public java.awt.Component getCellEditor(Window source, MemContents value) {
-      if (source instanceof Frame) {
-        final var proj = ((Frame) source).getProject();
+      if (source instanceof Frame frame) {
+        final var proj = frame.getProject();
         RomAttributes.register(value, proj);
       }
       final var ret = new ContentsCell(source, value);
@@ -129,7 +108,7 @@ public class Rom extends Mem {
     @Override
     public void mouseClicked(MouseEvent e) {
       if (contents == null) return;
-      final var proj = source instanceof Frame ? ((Frame) source).getProject() : null;
+      final var proj = (source instanceof Frame frame) ? frame.getProject() : null;
       final var frame = RomAttributes.getHexFrame(contents, proj, null);
       frame.setVisible(true);
       frame.toFront();
@@ -143,7 +122,7 @@ public class Rom extends Mem {
   private final WeakHashMap<Instance, MemListener> memListeners;
 
   public Rom() {
-    super(_ID, S.getter("romComponent"), 0);
+    super(_ID, S.getter("romComponent"), 0, new RomHdlGeneratorFactory(), true);
     setIcon(new ArithmeticIcon("ROM", 3));
     memListeners = new WeakHashMap<>();
   }
@@ -164,21 +143,8 @@ public class Rom extends Mem {
   }
 
   @Override
-  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    return (attr.equals(StdAttr.APPEARANCE))
-        ? StdAttr.APPEAR_CLASSIC
-        : super.getDefaultAttributeValue(attr, ver);
-  }
-
-  @Override
   public AttributeSet createAttributeSet() {
     return new RomAttributes();
-  }
-
-  @Override
-  public String getHDLName(AttributeSet attrs) {
-    final var Label = CorrectLabel.getCorrectLabel(attrs.getValue(StdAttr.LABEL));
-    return (Label.length() == 0) ? "ROM" : "ROMCONTENTS_" + Label;
   }
 
   @Override
@@ -229,12 +195,6 @@ public class Rom extends Mem {
   }
 
   @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new RomHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
-  }
-
-  @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == Mem.DATA_ATTR || attr == Mem.ADDR_ATTR || attr == StdAttr.APPEARANCE || attr == Mem.LINE_ATTR) {
       instance.recomputeBounds();
@@ -245,9 +205,9 @@ public class Rom extends Mem {
   @Override
   public void paintInstance(InstancePainter painter) {
     if (painter.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
-      RamAppearance.DrawRamClassic(painter);
+      RamAppearance.drawRamClassic(painter);
     } else {
-      RamAppearance.DrawRamEvolution(painter);
+      RamAppearance.drawRamEvolution(painter);
     }
   }
 
@@ -291,10 +251,5 @@ public class Rom extends Mem {
   @Override
   public void removeComponent(Circuit circ, Component c, CircuitState state) {
     closeHexFrame(c);
-  }
-
-  @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
   }
 }

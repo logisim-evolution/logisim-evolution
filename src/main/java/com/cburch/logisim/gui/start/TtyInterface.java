@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.start;
@@ -35,9 +16,6 @@ import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.circuit.Analyze;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.circuit.Propagator;
-import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.FileStatistics;
 import com.cburch.logisim.file.LoadFailedException;
@@ -50,11 +28,8 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.io.Keyboard;
 import com.cburch.logisim.std.io.Tty;
-import com.cburch.logisim.std.memory.MemContents;
 import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.wiring.Pin;
-import com.cburch.logisim.tools.Library;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.io.File;
 import java.io.IOException;
@@ -104,8 +79,8 @@ public class TtyInterface {
     logger.info("{}", paramArray);
   }
 
-  private static void displayStatistics(LogisimFile file) {
-    final var stats = FileStatistics.compute(file, file.getMainCircuit());
+  private static void displayStatistics(LogisimFile file, Circuit circuit) {
+    final var stats = FileStatistics.compute(file, circuit);
     final var total = stats.getTotalWithSubcircuits();
     var maxName = 0;
     for (final var count : stats.getCounts()) {
@@ -239,8 +214,7 @@ public class TtyInterface {
 
     var found = false;
     for (final var comp : circState.getCircuit().getNonWires()) {
-      if (comp.getFactory() instanceof Ram) {
-        final var ramFactory = (Ram) comp.getFactory();
+      if (comp.getFactory() instanceof Ram ramFactory) {
         final var ramState = circState.getInstanceState(comp);
         final var m = ramFactory.getContents(ramState);
         HexFile.open(m, loadFile);
@@ -258,8 +232,7 @@ public class TtyInterface {
     var found = false;
     for (final var comp : circState.getCircuit().getNonWires()) {
       final Object factory = comp.getFactory();
-      if (factory instanceof Tty) {
-        final var ttyFactory = (Tty) factory;
+      if (factory instanceof Tty ttyFactory) {
         final var ttyState = circState.getInstanceState(comp);
         ttyFactory.sendToStdout(ttyState);
         found = true;
@@ -288,25 +261,23 @@ public class TtyInterface {
     }
     final var proj = new Project(file);
     if (args.isFpgaDownload()) {
-      if (!args.FpgaDownload(proj)) System.exit(-1);
+      if (!args.fpgaDownload(proj)) System.exit(-1);
     }
+
+    final var circuitToTest = args.getCircuitToTest();
+    final var circuit = (circuitToTest == null || circuitToTest.length() == 0)
+        ? file.getMainCircuit()
+        : file.getCircuit(circuitToTest);
 
     var format = args.getTtyFormat();
     if ((format & FORMAT_STATISTICS) != 0) {
       format &= ~FORMAT_STATISTICS;
-      displayStatistics(file);
+      displayStatistics(file, circuit);
     }
     if (format == 0) { // no simulation remaining to perform, so just exit
       System.exit(0);
     }
 
-    Circuit circuit;
-    final var circuitToTest = args.getCircuitToTest();
-    if (circuitToTest == null || circuitToTest.length() == 0) {
-      circuit = file.getMainCircuit();
-    } else {
-      circuit = file.getCircuit(circuitToTest);
-    }
     final var pinNames = Analyze.getPinLabels(circuit);
     final var outputPins = new ArrayList<Instance>();
     final var inputPins = new ArrayList<Instance>();

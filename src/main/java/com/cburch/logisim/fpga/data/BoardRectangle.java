@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.data;
@@ -33,12 +14,12 @@ import com.cburch.draw.shapes.Rectangle;
 public class BoardRectangle {
   private int xPosition;
   private int yPosition;
-  private int Width;
-  private int Height;
-  private boolean IsActiveHigh = true;
-  private int NrBits = 0;
+  private int width;
+  private int height;
+  private boolean isActiveHigh = true;
+  private int nrBits = 0;
   private Long value = null;
-  private String Label;
+  private String label;
 
   public BoardRectangle(int x, int y, int w, int h) {
     this.set(x, y, w, h);
@@ -49,21 +30,21 @@ public class BoardRectangle {
   }
 
   @Override
-  public boolean equals(Object rect) {
-    if (!(rect instanceof BoardRectangle)) return false;
-    BoardRectangle Rect = (BoardRectangle) rect;
-    return ((Rect.getHeight() == Height)
-        && (Rect.getWidth() == Width)
-        && (Rect.getXpos() == xPosition)
-        && (Rect.getYpos() == yPosition));
+  public boolean equals(Object rectangle) {
+    return (rectangle instanceof BoardRectangle rect)
+           ? ((rect.getHeight() == height)
+              && (rect.getWidth() == width)
+              && (rect.getXpos() == xPosition)
+              && (rect.getYpos() == yPosition))
+           : false;
   }
 
   public int getHeight() {
-    return Height;
+    return height;
   }
 
   public int getWidth() {
-    return Width;
+    return width;
   }
 
   public int getXpos() {
@@ -74,59 +55,62 @@ public class BoardRectangle {
     return yPosition;
   }
 
-  public boolean IsActiveOnHigh() {
-    return IsActiveHigh;
+  public boolean isActiveOnHigh() {
+    return isActiveHigh;
   }
 
-  public String GetLabel() {
-    return Label;
+  public String getLabel() {
+    return label;
   }
 
   public int getNrBits() {
-    return NrBits;
+    return nrBits;
   }
 
   public void setNrBits(int nr) {
-    NrBits = nr;
+    nrBits = nr;
   }
 
   public void updateRectangle(BoardRectangle other) {
     xPosition = other.getXpos();
     yPosition = other.getYpos();
-    Width = other.getWidth();
-    Height = other.getHeight();
+    width = other.getWidth();
+    height = other.getHeight();
   }
 
   public void updateRectangle(Rectangle other) {
     xPosition = other.getX();
     yPosition = other.getY();
-    Width = other.getWidth();
-    Height = other.getHeight();
+    width = other.getWidth();
+    height = other.getHeight();
   }
 
-  public Boolean Overlap(Rectangle rect) {
-    return Overlap(new BoardRectangle(rect));
+  public Boolean overlap(Rectangle rect) {
+    return overlap(new BoardRectangle(rect));
   }
 
-  public Boolean Overlap(BoardRectangle rect) {
+  public Boolean overlap(BoardRectangle rect) {
     Boolean result;
-    int xl, xr, yt, yb;
+    int xl;
+    int xr;
+    int yt;
+    int yb;
     xl = rect.getXpos();
     xr = xl + rect.getWidth();
     yt = rect.getYpos();
     yb = yt + rect.getHeight();
 
     /* first check for the other corner points inside myself */
-    result = this.PointInside(xl, yt);
-    result |= this.PointInside(xl, yb);
-    result |= this.PointInside(xr, yt);
-    result |= this.PointInside(xr, yb);
+    result = this.isPointInside(xl, yt);
+    result |= this.isPointInside(xl, yb);
+    result |= this.isPointInside(xr, yt);
+    result |= this.isPointInside(xr, yb);
 
     /* check for my corner points inside him */
-    result |= rect.PointInside(xPosition, yPosition);
-    result |= rect.PointInside(xPosition + Width, yPosition);
-    result |= rect.PointInside(xPosition, yPosition + Height);
-    result |= rect.PointInside(xPosition + Width, yPosition + Height);
+    result |= rect.isPointInside(xPosition, yPosition);
+    result |= rect.isPointInside(xPosition + width, yPosition);
+    result |= rect.isPointInside(xPosition, yPosition + height);
+    result |= rect.isPointInside(xPosition + width, yPosition + height);
 
     /*
      * if result=false: for sure the corner points are not inside one of
@@ -135,80 +119,80 @@ public class BoardRectangle {
     /* we now have to check for partial overlap */
     if (!result) {
       result = ((xl >= xPosition)
-          && (xl <= (xPosition + Width))
+          && (xl <= (xPosition + width))
           && (yt <= yPosition)
-          && (yb >= (yPosition + Height)));
+          && (yb >= (yPosition + height)));
       result |=
           ((xr >= xPosition)
-              && (xr <= (xPosition + Width))
+              && (xr <= (xPosition + width))
               && (yt <= yPosition)
-              && (yb >= (yPosition + Height)));
+              && (yb >= (yPosition + height)));
       result |=
           ((xl <= xPosition)
-              && (xr >= (xPosition + Width))
+              && (xr >= (xPosition + width))
               && (yt >= yPosition)
-              && (yt <= (yPosition + Height)));
+              && (yt <= (yPosition + height)));
       result |=
           ((xl <= xPosition)
-              && (xr >= (xPosition + Width))
+              && (xr >= (xPosition + width))
               && (yb >= yPosition)
-              && (yb <= (yPosition + Height)));
+              && (yb <= (yPosition + height)));
     }
     if (!result) {
       result = ((xPosition >= xl)
           && (xPosition <= xr)
           && (yPosition <= yt)
-          && ((yPosition + Height) >= yb));
+          && ((yPosition + height) >= yb));
       result |=
-          (((xPosition + Width) >= xl)
-              && ((xPosition + Width) <= xr)
+          (((xPosition + width) >= xl)
+              && ((xPosition + width) <= xr)
               && (yPosition <= yt)
-              && ((yPosition + Height) >= yb));
+              && ((yPosition + height) >= yb));
       result |=
           ((xPosition <= xl)
-              && ((xPosition + Width) >= xr)
+              && ((xPosition + width) >= xr)
               && (yPosition >= yt)
               && (yPosition <= yb));
       result |=
           ((xPosition <= xl)
-              && ((xPosition + Width) >= xr)
-              && ((yPosition + Height) >= yt)
-              && ((yPosition + Height) <= yb));
+              && ((xPosition + width) >= xr)
+              && ((yPosition + height) >= yt)
+              && ((yPosition + height) <= yb));
     }
 
     return result;
   }
 
-  public Boolean PointInside(int x, int y) {
+  public Boolean isPointInside(int x, int y) {
     return ((x >= xPosition)
-        && (x <= (xPosition + Width))
+        && (x <= (xPosition + width))
         && (y >= yPosition)
-        && (y <= (yPosition + Height)));
+        && (y <= (yPosition + height)));
   }
 
   private void set(int x, int y, int w, int h) {
     if (w < 0) {
       xPosition = x + w;
-      Width = -w;
+      width = -w;
     } else {
       xPosition = x;
-      Width = w;
+      width = w;
     }
     if (h < 0) {
       yPosition = y + h;
-      Height = -h;
+      height = -h;
     } else {
       yPosition = y;
-      Height = h;
+      height = h;
     }
   }
 
-  public void SetActiveOnHigh(boolean IsActiveHigh) {
-    this.IsActiveHigh = IsActiveHigh;
+  public void setActiveOnHigh(boolean isActiveHigh) {
+    this.isActiveHigh = isActiveHigh;
   }
 
-  public void SetLabel(String Label) {
-    this.Label = Label;
+  public void setLabel(String label) {
+    this.label = label;
   }
 
   public void setValue(Long val) {

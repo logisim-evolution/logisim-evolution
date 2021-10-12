@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.gates;
@@ -40,7 +21,6 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.Options;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -50,10 +30,8 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.LineBuffer;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 
 class Buffer extends InstanceFactory {
   /**
@@ -63,16 +41,6 @@ class Buffer extends InstanceFactory {
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Buffer";
-
-  private static class BufferGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
-    @Override
-    public ArrayList<String> GetLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
-      return (new LineBuffer())
-          .add(HDL.isVHDL() ? "Result <= Input_1;" : "assign Result = Input_1;")
-          .empty()
-          .getWithIndent();
-    }
-  }
 
   //
   // static methods - shared with other classes
@@ -104,7 +72,7 @@ class Buffer extends InstanceFactory {
   public static final InstanceFactory FACTORY = new Buffer();
 
   private Buffer() {
-    super(_ID, S.getter("bufferComponent"));
+    super(_ID, S.getter("bufferComponent"), new AbstractBufferHdlGenerator(false));
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -146,12 +114,12 @@ class Buffer extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    final var CompleteName = new StringBuilder();
-    CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
-    CompleteName.append("_COMPONENT");
+    final var completeName = new StringBuilder();
+    completeName.append(CorrectLabel.getCorrectLabel(this.getName()).toUpperCase());
+    completeName.append("_COMPONENT");
     final var width = attrs.getValue(StdAttr.WIDTH);
-    if (width.getWidth() > 1) CompleteName.append("_BUS");
-    return CompleteName.toString();
+    if (width.getWidth() > 1) completeName.append("_BUS");
+    return completeName.toString();
   }
 
   @Override
@@ -180,16 +148,10 @@ class Buffer extends InstanceFactory {
   }
 
   @Override
-  public boolean HasThreeStateDrivers(AttributeSet attrs) {
-    if (attrs.containsAttribute(GateAttributes.ATTR_OUTPUT))
-      return !(attrs.getValue(GateAttributes.ATTR_OUTPUT) == GateAttributes.OUTPUT_01);
-    else return false;
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new BufferGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
+  public boolean hasThreeStateDrivers(AttributeSet attrs) {
+    return attrs.containsAttribute(GateAttributes.ATTR_OUTPUT)
+        ? attrs.getValue(GateAttributes.ATTR_OUTPUT) != GateAttributes.OUTPUT_01
+        : false;
   }
 
   @Override
@@ -204,18 +166,18 @@ class Buffer extends InstanceFactory {
   private void paintBase(InstancePainter painter) {
     final var facing = painter.getAttributeValue(StdAttr.FACING);
     final var loc = painter.getLocation();
-    int x = loc.getX();
-    int y = loc.getY();
+    final var x = loc.getX();
+    final var y = loc.getY();
     final var g = painter.getGraphics();
     g.translate(x, y);
-    double rotate = 0.0;
-    if (facing != Direction.EAST && g instanceof Graphics2D) {
+    var rotate = 0.0d;
+    if (facing != Direction.EAST && g instanceof Graphics2D g2d) {
       rotate = -facing.toRadians();
-      ((Graphics2D) g).rotate(rotate);
+      g2d.rotate(rotate);
     }
 
     GraphicsUtil.switchToWidth(g, 2);
-    Object shape = painter.getGateShape();
+    final var shape = painter.getGateShape();
     if (shape == AppPreferences.SHAPE_RECTANGULAR) {
       g.drawRect(-19, -9, 18, 18);
       GraphicsUtil.drawCenteredText(g, "1", -10, 0);
@@ -257,8 +219,7 @@ class Buffer extends InstanceFactory {
 
   @Override
   public void propagate(InstanceState state) {
-    var in = state.getPortValue(1);
-    in = Buffer.repair(state, in);
+    final var in = Buffer.repair(state, state.getPortValue(1));
     state.setPort(0, in.not().not(), GateAttributes.DELAY);
   }
 
@@ -268,6 +229,6 @@ class Buffer extends InstanceFactory {
     if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR)
       AbstractGate.paintIconIEC(g, "1", false, true);
     else
-      AbstractGate.paintIconBufferANSI(g, false, false);
+      AbstractGate.paintIconBufferAnsi(g, false, false);
   }
 }

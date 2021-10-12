@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.gates;
@@ -41,6 +22,7 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.file.Options;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
@@ -86,12 +68,12 @@ abstract class AbstractGate extends InstanceFactory {
 
   private boolean paintInputLines;
 
-  protected AbstractGate(String name, StringGetter desc) {
-    this(name, desc, false);
+  protected AbstractGate(String name, StringGetter desc, HdlGeneratorFactory generator) {
+    this(name, desc, false, generator);
   }
 
-  protected AbstractGate(String name, StringGetter desc, boolean isXor) {
-    super(name, desc);
+  protected AbstractGate(String name, StringGetter desc, boolean isXor, HdlGeneratorFactory generator) {
+    super(name, desc, generator);
     this.isXor = isXor;
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(
@@ -357,7 +339,7 @@ abstract class AbstractGate extends InstanceFactory {
   }
 
   @Override
-  public boolean HasThreeStateDrivers(AttributeSet attrs) {
+  public boolean hasThreeStateDrivers(AttributeSet attrs) {
     return (attrs.containsAttribute(GateAttributes.ATTR_OUTPUT))
         ? (attrs.getValue(GateAttributes.ATTR_OUTPUT) != GateAttributes.OUTPUT_01)
         : false;
@@ -415,9 +397,8 @@ abstract class AbstractGate extends InstanceFactory {
     g.setColor(baseColor);
     g.translate(loc.getX(), loc.getY());
     var rotate = 0.0;
-    if (facing != Direction.EAST && g instanceof Graphics2D) {
+    if (facing != Direction.EAST && g instanceof Graphics2D g2) {
       rotate = -facing.toRadians();
-      final var g2 = (Graphics2D) g;
       g2.rotate(rotate);
     }
 
@@ -473,7 +454,7 @@ abstract class AbstractGate extends InstanceFactory {
     final var iconBorder = AppPreferences.getIconBorder();
     final var iconSize = AppPreferences.getIconSize() - (iconBorder << 1);
     final var negateDiameter = AppPreferences.getScaled(4);
-    final var yoffset = singleInput ? (int) ((double) iconSize / 6.0) : 0;
+    final var yoffset = singleInput ? (int) (iconSize / 6.0) : 0;
     final var ysize = singleInput ? iconSize - (yoffset << 1) : iconSize;
     final var af = g.getTransform();
     g.translate(iconBorder, iconBorder);
@@ -519,23 +500,23 @@ abstract class AbstractGate extends InstanceFactory {
     }
   }
 
-  protected static void paintIconBufferANSI(Graphics2D g, boolean negate, boolean controlled) {
-    GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
+  protected static void paintIconBufferAnsi(Graphics2D gfx, boolean negate, boolean controlled) {
+    GraphicsUtil.switchToWidth(gfx, AppPreferences.getScaled(1));
     final var borderSize = AppPreferences.getIconBorder();
     final var iconSize = AppPreferences.getIconSize() - (borderSize << 1);
     final var negateSize = AppPreferences.getScaled(4);
-    final var af = g.getTransform();
-    g.translate(borderSize, borderSize);
+    final var af = gfx.getTransform();
+    gfx.translate(borderSize, borderSize);
     final var ystart = negateSize >> 1;
     final var yend = iconSize - ystart;
     final var xstart = 0;
     final var xend = iconSize - negateSize;
     final var xpos = new int[] {xstart, xend, xstart, xstart};
     final var ypos = new int[] {ystart, iconSize >> 1, yend, ystart};
-    g.drawPolygon(xpos, ypos, 4);
-    paintIconPins(g, iconSize, borderSize, negateSize, negate, true);
-    if (controlled) g.drawLine(xend >> 1, ((3 * (yend - ystart)) >> 2) + ystart, xend >> 1, yend);
-    g.setTransform(af);
+    gfx.drawPolygon(xpos, ypos, 4);
+    paintIconPins(gfx, iconSize, borderSize, negateSize, negate, true);
+    if (controlled) gfx.drawLine(xend >> 1, ((3 * (yend - ystart)) >> 2) + ystart, xend >> 1, yend);
+    gfx.setTransform(af);
   }
 
   protected abstract void paintIconANSI(Graphics2D g, int iconSize, int borderSize, int negateSize);

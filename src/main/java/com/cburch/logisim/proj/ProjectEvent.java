@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.proj;
@@ -32,7 +13,11 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.tools.Tool;
 
-public class ProjectEvent {
+// NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
+// getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
+// that in future, but for now it looks stupid in this file only.
+public record ProjectEvent(int getAction, Project getProject, Object getOldData, Object getData) {
+
   public static final int ACTION_SET_FILE = 0; // change file
   public static final int ACTION_SET_CURRENT = 1; // change current
   public static final int ACTION_SET_TOOL = 2; // change tool
@@ -48,57 +33,27 @@ public class ProjectEvent {
   public static final int REDO_START = 11;
   public static final int REDO_COMPLETE = 12;
 
-  private final int action;
-  private final Project proj;
-  private Object oldData;
-  private final Object data;
-
-  ProjectEvent(int action, Project proj) {
-    this.action = action;
-    this.proj = proj;
-    this.data = null;
+  public ProjectEvent(int action, Project project) {
+    this(action, project, null, null);
   }
 
-  ProjectEvent(int action, Project proj, Object data) {
-    this.action = action;
-    this.proj = proj;
-    this.data = data;
-  }
-
-  ProjectEvent(int action, Project proj, Object old, Object data) {
-    this.action = action;
-    this.proj = proj;
-    this.oldData = old;
-    this.data = data;
-  }
-
-  // access methods
-  public int getAction() {
-    return action;
-  }
-
-  public Circuit getCircuit() {
-    return proj.getCurrentCircuit();
-  }
-
-  public Object getData() {
-    return data;
+  public ProjectEvent(int action, Project project, Object data) {
+    // FIXME: I'd move oldData to the end of argument list, so all the constructors
+    // would retain the same argument order, just adding new fields at the end.
+    this(action, project, null, data);
   }
 
   // convenience methods
   public LogisimFile getLogisimFile() {
-    return proj.getLogisimFile();
+    return getProject.getLogisimFile();
   }
 
-  public Object getOldData() {
-    return oldData;
-  }
-
-  public Project getProject() {
-    return proj;
+  public Circuit getCircuit() {
+    return getProject.getCurrentCircuit();
   }
 
   public Tool getTool() {
-    return proj.getTool();
+    return getProject.getTool();
   }
+
 }

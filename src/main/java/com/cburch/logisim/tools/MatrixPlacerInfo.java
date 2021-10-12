@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.tools;
@@ -32,90 +13,90 @@ import com.cburch.logisim.data.Bounds;
 
 public class MatrixPlacerInfo {
 
-  private final String OldLabel;
-  private String SharedLabel;
-  private int NrOfXCopies = 1;
-  private int NrOfYCopies = 1;
-  private int XDisplacement = 1;
-  private int YDisplacement = 1;
-  private int XDmin = 1;
-  private int YDmin = 1;
+  private final String oldLabel;
+  private String sharedLabel;
+  private int copiesCountX = 1;
+  private int copiesCountY = 1;
+  private int displacementX = 1;
+  private int displacementY = 1;
+  private int minimalDisplacementX = 1;
+  private int minilamDisplacementY = 1;
 
-  public MatrixPlacerInfo(String Label) {
-    SharedLabel = Label;
-    OldLabel = Label;
+  public MatrixPlacerInfo(String label) {
+    sharedLabel = label;
+    oldLabel = label;
   }
 
-  void SetBounds(Bounds bds) {
-    XDisplacement = XDmin = (bds.getWidth() + 9) / 10;
-    YDisplacement = YDmin = (bds.getHeight() + 9) / 10;
+  void setBounds(Bounds bds) {
+    displacementX = minimalDisplacementX = (bds.getWidth() + 9) / 10;
+    displacementY = minilamDisplacementY = (bds.getHeight() + 9) / 10;
   }
 
-  int getMinimalXDisplacement() {
-    return XDmin;
+  int getMinimalDisplacementX() {
+    return minimalDisplacementX;
   }
 
-  int getMinimalYDisplacement() {
-    return YDmin;
+  int getMinimalDisplacementY() {
+    return minilamDisplacementY;
   }
 
-  String GetLabel() {
-    return SharedLabel;
+  String getLabel() {
+    return sharedLabel;
   }
 
-  void UndoLabel() {
-    SharedLabel = OldLabel;
+  void undoLabel() {
+    sharedLabel = oldLabel;
   }
 
-  void SetLabel(String Lab) {
-    SharedLabel = Lab;
+  void setLabel(String lab) {
+    sharedLabel = lab;
   }
 
-  int getNrOfXCopies() {
-    return NrOfXCopies;
+  int getCopiesCountX() {
+    return copiesCountX;
   }
 
-  void setNrOfXCopies(int val) {
-    NrOfXCopies = val;
+  void setCopiesCountX(int val) {
+    copiesCountX = val;
   }
 
-  int getNrOfYCopies() {
-    return NrOfYCopies;
+  int getCopiesCountY() {
+    return copiesCountY;
   }
 
-  void setNrOfYCopies(int val) {
-    NrOfYCopies = val;
+  void setCopiesCountY(int val) {
+    copiesCountY = val;
   }
 
-  int GetDeltaX() {
-    return XDisplacement * 10;
+  int getDeltaX() {
+    return displacementX * 10;
   }
 
-  void SetDeltaX(int value) {
-    if (value > 0) XDisplacement = (value + 9) / 10;
+  void setDeltaX(int value) {
+    if (value > 0) displacementX = (value + 9) / 10;
   }
 
-  void setXDisplacement(int value) {
-    if (value > 0) XDisplacement = value;
+  void setDisplacementX(int value) {
+    if (value > 0) displacementX = value;
   }
 
-  int getXDisplacement() {
-    return XDisplacement;
+  int getDisplacementX() {
+    return displacementX;
   }
 
-  int GetDeltaY() {
-    return YDisplacement * 10;
+  int getDeltaY() {
+    return displacementY * 10;
   }
 
-  void SetDeltaY(int value) {
-    if (value > 0) YDisplacement = (value + 9) / 10;
+  void setDeltaY(int value) {
+    if (value > 0) displacementY = (value + 9) / 10;
   }
 
-  void setYisplacement(int value) {
-    if (value > 0) YDisplacement = value;
+  void setDisplacementY(int value) {
+    if (value > 0) displacementY = value;
   }
 
-  int getYDisplacement() {
-    return YDisplacement;
+  int getDisplacementY() {
+    return displacementY;
   }
 }

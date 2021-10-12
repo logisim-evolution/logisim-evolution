@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.appear;
@@ -33,8 +14,7 @@ import java.beans.PropertyChangeListener;
 
 class Clipboard {
   public static final String CONTENTS_PROPERTY = "appearance";
-  private static final PropertyChangeWeakSupport propertySupport =
-      new PropertyChangeWeakSupport(Clipboard.class);
+  private static final PropertyChangeWeakSupport propertySupport = new PropertyChangeWeakSupport(Clipboard.class);
   private static ClipboardContents current = ClipboardContents.EMPTY;
 
   private Clipboard() {}
@@ -46,8 +26,7 @@ class Clipboard {
     propertySupport.addPropertyChangeListener(listener);
   }
 
-  public static void addPropertyChangeListener(
-      String propertyName, PropertyChangeListener listener) {
+  public static void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
     propertySupport.addPropertyChangeListener(propertyName, listener);
   }
 
@@ -63,13 +42,12 @@ class Clipboard {
     propertySupport.removePropertyChangeListener(listener);
   }
 
-  public static void removePropertyChangeListener(
-      String propertyName, PropertyChangeListener listener) {
+  public static void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
     propertySupport.removePropertyChangeListener(propertyName, listener);
   }
 
   public static void set(ClipboardContents value) {
-    ClipboardContents old = current;
+    final var old = current;
     current = value;
     propertySupport.firePropertyChange(CONTENTS_PROPERTY, old, current);
   }

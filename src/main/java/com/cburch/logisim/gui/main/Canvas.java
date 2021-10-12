@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.main;
@@ -76,7 +57,6 @@ import java.awt.Color;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -118,7 +98,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
   private static final Color SIM_EXCEPTION_COLOR = DEFAULT_ERROR_COLOR;
   private static final Font ERR_MSG_FONT = new Font("Sans Serif", Font.BOLD, 18);
   private static final Color TICK_RATE_COLOR = new Color(0, 0, 92, 92);
-  private static final Font TICK_RATE_FONT = new Font("serif", Font.BOLD, 12);
+  private static final Font TICK_RATE_FONT = new Font("Monospaced", Font.PLAIN, 28);
   private static final Color SINGLE_STEP_MSG_COLOR = Color.BLUE;
   private static final Font SINGLE_STEP_MSG_FONT = new Font("Sans Serif", Font.BOLD, 12);
   public static final Color DEFAULT_ZOOM_BUTTON_COLOR = Color.WHITE;
@@ -196,7 +176,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
         sz.height - ZOOM_BUTTON_SIZE - 30,
         ZOOM_BUTTON_SIZE,
         ZOOM_BUTTON_SIZE);
-    g.setColor(Value.UNKNOWN_COLOR);
+    g.setColor(Value.unknownColor);
     GraphicsUtil.switchToWidth(g, 3);
     int width = sz.width - ZOOM_BUTTON_MARGIN;
     int height = sz.height - ZOOM_BUTTON_MARGIN;
@@ -466,8 +446,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       ComponentUserEvent e = null;
       for (Component comp : getCircuit().getAllContaining(loc)) {
         Object makerObj = comp.getFeature(ToolTipMaker.class);
-        if (makerObj instanceof ToolTipMaker) {
-          ToolTipMaker maker = (ToolTipMaker) makerObj;
+        if (makerObj instanceof ToolTipMaker maker) {
           if (e == null) {
             e = new ComponentUserEvent(this, loc.getX(), loc.getY());
           }
@@ -1040,8 +1019,8 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
         Circuit circ = null;
         if (t instanceof AddTool) {
           t = ((AddTool) t).getFactory();
-          if (t instanceof SubcircuitFactory) {
-            circ = ((SubcircuitFactory) t).getSubcircuit();
+          if (t instanceof SubcircuitFactory subFact) {
+            circ = subFact.getSubcircuit();
           }
         }
 
@@ -1229,7 +1208,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
       Dimension sz = getSize();
 
       if (widthMessage != null) {
-        g.setColor(Value.WIDTH_ERROR_COLOR);
+        g.setColor(Value.widthErrorColor);
         msgY = paintString(g, msgY, widthMessage);
       } else g.setColor(TICK_RATE_COLOR);
 
@@ -1282,13 +1261,14 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
           GraphicsUtil.drawArrow2(g, 30, sz.height - 5, 5, sz.height - 5, 5, sz.height - 30);
       } else zoomButtonVisible = false;
       if (AppPreferences.SHOW_TICK_RATE.getBoolean()) {
-        String hz = tickCounter.getTickRate();
+        final var hz = tickCounter.getTickRate();
         if (hz != null && !hz.equals("")) {
-          g.setColor(TICK_RATE_COLOR);
+          final var fm = g.getFontMetrics();
+          int x = 10;
+          int y = fm.getAscent() + 10;
+
+          g.setColor(new Color(AppPreferences.CLOCK_FREQUENCY_COLOR.get()));
           g.setFont(TICK_RATE_FONT);
-          FontMetrics fm = g.getFontMetrics();
-          int x = getWidth() - fm.stringWidth(hz) - 5;
-          int y = fm.getAscent() + 5;
           g.drawString(hz, x, y);
         }
       }

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.draw.model;
@@ -38,7 +19,6 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Graphics;
-import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import org.w3c.dom.Document;
@@ -82,16 +62,13 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   @Override
   public CanvasObject clone() {
     try {
-      AbstractCanvasObject ret = (AbstractCanvasObject) super.clone();
+      final var ret = (AbstractCanvasObject) super.clone();
       ret.listeners = new EventSourceWeakSupport<>();
       return ret;
     } catch (CloneNotSupportedException e) {
       return null;
     }
   }
-
-  @Override
-  public abstract boolean contains(Location loc, boolean assumeFilled);
 
   @Override
   public boolean containsAttribute(Attribute<?> attr) {
@@ -104,15 +81,15 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   }
 
   protected void fireAttributeListChanged() {
-    AttributeEvent e = new AttributeEvent(this);
-    for (AttributeListener listener : listeners) {
+    final var e = new AttributeEvent(this);
+    for (final var listener : listeners) {
       listener.attributeListChanged(e);
     }
   }
 
   @Override
   public Attribute<?> getAttribute(String name) {
-    for (Attribute<?> attr : getAttributes()) {
+    for (final var attr : getAttributes()) {
       if (attr.getName().equals(name)) return attr;
     }
     return null;
@@ -120,26 +97,14 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 
   // methods required by AttributeSet interface
   @Override
-  public abstract List<Attribute<?>> getAttributes();
-
-  @Override
   public AttributeSet getAttributeSet() {
     return this;
   }
 
   @Override
-  public abstract Bounds getBounds();
-
-  @Override
-  public abstract String getDisplayName();
-
-  @Override
   public String getDisplayNameAndLabel() {
     return getDisplayName();
   }
-
-  @Override
-  public abstract List<Handle> getHandles(HandleGesture gesture);
 
   protected Location getRandomPoint(Bounds bds, Random rand) {
     final var x = bds.getX();
@@ -152,9 +117,6 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
     }
     return null;
   }
-
-  @Override
-  public abstract <V> V getValue(Attribute<V> attr);
 
   @Override
   public void insertHandle(Handle desired, Handle previous) {
@@ -172,12 +134,6 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   }
 
   @Override
-  public abstract boolean matches(CanvasObject other);
-
-  @Override
-  public abstract int matchesHashCode();
-
-  @Override
   public Handle moveHandle(HandleGesture gesture) {
     throw new UnsupportedOperationException("moveHandle");
   }
@@ -190,14 +146,13 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
     final var rand = new Random();
     if (c.getWidth() == 0 || c.getHeight() == 0) {
       return false;
-    } else if (other instanceof AbstractCanvasObject) {
-      AbstractCanvasObject that = (AbstractCanvasObject) other;
+    } else if (other instanceof AbstractCanvasObject that) {
       for (var i = 0; i < OVERLAP_TRIES; i++) {
         if (i % 2 == 0) {
           final var loc = this.getRandomPoint(c, rand);
           if (loc != null && that.contains(loc, false)) return true;
         } else {
-          Location loc = that.getRandomPoint(c, rand);
+          final var loc = that.getRandomPoint(c, rand);
           if (loc != null && this.contains(loc, false)) return true;
         }
       }
@@ -212,9 +167,6 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   }
 
   @Override
-  public abstract void paint(Graphics g, HandleGesture gesture);
-
-  @Override
   public void removeAttributeListener(AttributeListener l) {
     listeners.remove(l);
   }
@@ -222,7 +174,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   protected boolean setForFill(Graphics g) {
     final var attrs = getAttributes();
     if (attrs.contains(DrawAttr.PAINT_TYPE)) {
-      Object value = getValue(DrawAttr.PAINT_TYPE);
+      final var value = getValue(DrawAttr.PAINT_TYPE);
       if (value == DrawAttr.PAINT_STROKE) return false;
     }
 
@@ -238,7 +190,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   protected boolean setForStroke(Graphics g) {
     final var attrs = getAttributes();
     if (attrs.contains(DrawAttr.PAINT_TYPE)) {
-      Object value = getValue(DrawAttr.PAINT_TYPE);
+      final var value = getValue(DrawAttr.PAINT_TYPE);
       if (value == DrawAttr.PAINT_FILL) return false;
     }
 
@@ -264,7 +216,7 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
 
   @Override
   public final <V> void setValue(Attribute<V> attr, V value) {
-    Object old = getValue(attr);
+    final var old = getValue(attr);
     final var same = Objects.equals(old, value);
     if (!same) {
       updateValue(attr, value);
@@ -276,9 +228,6 @@ public abstract class AbstractCanvasObject implements AttributeSet, CanvasObject
   }
 
   public abstract Element toSvgElement(Document doc);
-
-  @Override
-  public abstract void translate(int dx, int dy);
 
   protected abstract void updateValue(Attribute<?> attr, Object value);
 }

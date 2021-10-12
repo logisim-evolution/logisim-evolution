@@ -1,35 +1,17 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.tools;
 
 import static com.cburch.logisim.tools.Strings.S;
 
+import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
@@ -37,12 +19,14 @@ import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.comp.ComponentUserEvent;
+import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.std.base.Text;
+
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
@@ -58,6 +42,7 @@ public class TextTool extends Tool {
   public static final String _ID = "Text Tool";
 
   private class MyListener implements CaretListener, CircuitListener {
+    @Override
     public void circuitChanged(CircuitEvent event) {
       if (event.getCircuit() != caretCircuit) {
         event.getCircuit().removeCircuitListener(this);
@@ -75,6 +60,7 @@ public class TextTool extends Tool {
       }
     }
 
+    @Override
     public void editingCanceled(CaretEvent e) {
       if (e.getCaret() != caret) {
         e.getCaret().removeCaretListener(this);
@@ -89,6 +75,7 @@ public class TextTool extends Tool {
       caret = null;
     }
 
+    @Override
     public void editingStopped(CaretEvent e) {
       if (e.getCaret() != caret) {
         e.getCaret().removeCaretListener(this);
@@ -98,7 +85,7 @@ public class TextTool extends Tool {
       caretCircuit.removeCircuitListener(this);
 
       final var val = caret.getText();
-      var isEmpty = (val == null || val.equals(""));
+      var isEmpty = (val == null || "".equals(val));
       Action a;
       final var proj = caretCanvas.getProject();
       if (caretCreatingText) {
@@ -107,7 +94,8 @@ public class TextTool extends Tool {
           xn.add(caretComponent);
           a = xn.toAction(S.getter("addComponentAction", Text.FACTORY.getDisplayGetter()));
         } else {
-          a = null; // don't add the blank text field
+          // don't add the blank text field
+          a = null;
         }
       } else {
         if (isEmpty && caretComponent.getFactory() instanceof Text) {
@@ -116,7 +104,8 @@ public class TextTool extends Tool {
           a = xn.toAction(S.getter("removeComponentAction", Text.FACTORY.getDisplayGetter()));
         } else {
           Object obj = caretComponent.getFeature(TextEditable.class);
-          if (obj == null) { // should never happen
+          if (obj == null) {
+            // should never happen
             a = null;
           } else {
             final var editable = (TextEditable) obj;
@@ -146,6 +135,11 @@ public class TextTool extends Tool {
 
   public TextTool() {
     attrs = Text.FACTORY.createAttributeSet();
+  }
+
+  @Override
+  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
+    return Text.FACTORY.getDefaultAttributeValue(attr, ver);
   }
 
   @Override
@@ -256,7 +250,8 @@ public class TextTool extends Tool {
         caret.mousePressed(e);
         proj.repaintCanvas();
         return;
-      } else { // No. End the current caret.
+      } else {
+        // No. End the current caret.
         caret.stopEditing();
       }
     }

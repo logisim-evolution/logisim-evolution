@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.tcl;
@@ -237,23 +218,23 @@ public abstract class TclComponent extends InstanceFactory {
         getPortsFromServer(state, tclComponentData);
       } else {
         tclComponentData.send("sync_examine");
-        String server_response;
+        String serverResponse;
 
         /* Ignore all messages until "sync" is recieved */
-        while ((server_response = tclComponentData.receive()) != null
-            && server_response.length() > 0
-            && !server_response.equals("sync")) ;
+        while ((serverResponse = tclComponentData.receive()) != null
+            && serverResponse.length() > 0
+            && !serverResponse.equals("sync")) ;
       }
     }
   }
 
   void getPortsFromServer(InstanceState state, TclComponentData tclComponentData) {
-    String server_response;
-    while ((server_response = tclComponentData.receive()) != null
-        && server_response.length() > 0
-        && !server_response.equals("sync")) {
+    String serverResponse;
+    while ((serverResponse = tclComponentData.receive()) != null
+        && serverResponse.length() > 0
+        && !serverResponse.equals("sync")) {
 
-      final var parameters = server_response.split(":");
+      final var parameters = serverResponse.split(":");
 
       /* Skip if we receive crap, still better than an out of range */
       if (parameters.length < 2) continue;
@@ -274,35 +255,29 @@ public abstract class TclComponent extends InstanceFactory {
        * If the received value is not wide enough, complete with X on
        * the MSB
        */
-      final var vector_values = new Value[width];
+      final var vectorValues = new Value[width];
       for (var i = width - 1; i >= busValue.length(); i--) {
-        vector_values[i] = Value.UNKNOWN;
+        vectorValues[i] = Value.UNKNOWN;
       }
 
       /* Transform char to Logisim Value */
-      var k = busValue.length() - 1;
+      var idx = busValue.length() - 1;
       for (final var bit : busValue.toCharArray()) {
 
         try {
-          switch (Character.getNumericValue(bit)) {
-            case 0:
-              vector_values[k] = Value.FALSE;
-              break;
-            case 1:
-              vector_values[k] = Value.TRUE;
-              break;
-            default:
-              vector_values[k] = Value.UNKNOWN;
-              break;
-          }
+          vectorValues[idx] = switch (Character.getNumericValue(bit)) {
+            case 0 -> Value.FALSE;
+            case 1 -> Value.TRUE;
+            default -> Value.UNKNOWN;
+          };
         } catch (NumberFormatException e) {
-          vector_values[k] = Value.ERROR;
+          vectorValues[idx] = Value.ERROR;
         }
-        k--;
+        idx--;
       }
 
       /* Affect the value to the port */
-      state.setPort(portId, Value.create(vector_values), 1);
+      state.setPort(portId, Value.create(vectorValues), 1);
     }
   }
 

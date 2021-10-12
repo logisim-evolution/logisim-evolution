@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.circuit;
@@ -41,8 +22,8 @@ class SplitterPainter {
     final var ends = new String[attrs.fanout + 1];
     var curEnd = -1;
     var cur0 = 0;
-    for (int i = 0, n = attrs.bit_end.length; i <= n; i++) {
-      final var bit = i == n ? -1 : attrs.bit_end[i];
+    for (int i = 0, n = attrs.bitEnd.length; i <= n; i++) {
+      final var bit = i == n ? -1 : attrs.bitEnd[i];
       if (bit != curEnd) {
         int cur1 = i - 1;
         String toAdd;
@@ -108,7 +89,7 @@ class SplitterPainter {
     final var fanout = attrs.fanout;
     final var parms = attrs.getParameters();
 
-    g.setColor(Value.MULTI_COLOR);
+    g.setColor(Value.multiColor);
     final var x0 = origin.getX();
     final var y0 = origin.getY();
     final var x1 = x0 + parms.getEnd0X();
@@ -132,11 +113,11 @@ class SplitterPainter {
       }
       if (fanout > 3) {
         GraphicsUtil.switchToWidth(g, SPINE_WIDTH);
-        g.setColor(Value.MULTI_COLOR);
+        g.setColor(Value.multiColor);
         g.drawLine(
             x1 + (dx > 0 ? 10 : -10), ySpine, x1 + (fanout - 1) * dx + (dx > 0 ? 10 : -10), ySpine);
       } else {
-        g.setColor(Value.MULTI_COLOR);
+        g.setColor(Value.multiColor);
         g.fillOval(x0 - SPINE_DOT / 2, ySpine - SPINE_DOT / 2, SPINE_DOT, SPINE_DOT);
       }
     } else {
@@ -156,10 +137,10 @@ class SplitterPainter {
       }
       if (fanout >= 3) {
         GraphicsUtil.switchToWidth(g, SPINE_WIDTH);
-        g.setColor(Value.MULTI_COLOR);
+        g.setColor(Value.multiColor);
         g.drawLine(xSpine, y1 + (dy > 0 ? 10 : -10), xSpine, y1 + (fanout - 1) * dy + (dy > 0 ? 10 : -10));
       } else {
-        g.setColor(Value.MULTI_COLOR);
+        g.setColor(Value.multiColor);
         g.fillOval(xSpine - SPINE_DOT / 2, y0 - SPINE_DOT / 2, SPINE_DOT, SPINE_DOT);
       }
     }
@@ -194,7 +175,7 @@ class SplitterPainter {
       y += dy;
     }
     GraphicsUtil.switchToWidth(g, SPINE_WIDTH);
-    g.setColor(Value.MULTI_COLOR);
+    g.setColor(Value.multiColor);
     var spine0x = x0 + parms.getSpine0X();
     var spine0y = y0 + parms.getSpine0Y();
     var spine1x = x0 + parms.getSpine1X();

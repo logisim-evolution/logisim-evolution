@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.prefs;
@@ -32,7 +13,7 @@ import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.RadixOption;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LocaleListener;
@@ -49,7 +30,6 @@ import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
@@ -68,8 +48,9 @@ public class AppPreferences {
     private static Locale findLocale(String lang) {
       Locale[] check;
       for (int set = 0; set < 2; set++) {
-        if (set == 0) check = new Locale[] {Locale.getDefault(), Locale.ENGLISH};
-        else check = Locale.getAvailableLocales();
+        check = (set == 0)
+          ? new Locale[] {Locale.getDefault(), Locale.ENGLISH}
+          : Locale.getAvailableLocales();
         for (Locale loc : check) {
           if (loc != null && loc.getLanguage().equals(lang)) {
             return loc;
@@ -83,7 +64,7 @@ public class AppPreferences {
       super("locale", "");
 
       String localeStr = this.get();
-      if (localeStr != null && !localeStr.equals("")) {
+      if (!("".equals(localeStr))) {
         LocaleManager.setLocale(new Locale(localeStr));
       }
       LocaleManager.addLocaleListener(myListener);
@@ -115,10 +96,7 @@ public class AppPreferences {
     public void preferenceChange(PreferenceChangeEvent event) {
       final var prefs = event.getNode();
       final var prop = event.getKey();
-      if (ACCENTS_REPLACE.getIdentifier().equals(prop)) {
-        getPrefs();
-        LocaleManager.setReplaceAccents(ACCENTS_REPLACE.getBoolean());
-      } else if (prop.equals(TEMPLATE_TYPE)) {
+      if (prop.equals(TEMPLATE_TYPE)) {
         int oldValue = templateType;
         int value = prefs.getInt(TEMPLATE_TYPE, TEMPLATE_UNKNOWN);
         if (value != oldValue) {
@@ -475,30 +453,32 @@ public class AppPreferences {
           new PrefMonitorStringOpts(
               "gateShape", new String[] {SHAPE_SHAPED, SHAPE_RECTANGULAR}, SHAPE_SHAPED));
   public static final PrefMonitor<String> LOCALE = create(new LocalePreference());
-  public static final PrefMonitor<Boolean> ACCENTS_REPLACE =
-      create(new PrefMonitorBoolean("accentsReplace", false));
 
   // FPGA Commander Preferences
   public static final PrefMonitor<String> FPGA_Workspace =
       create(
           new PrefMonitorString(
               "FPGAWorkspace", System.getProperty("user.home") + "/logisim_evolution_workspace"));
-  public static final PrefMonitor<String> HDL_Type =
+  public static final PrefMonitor<String> HdlType =
       create(
           new PrefMonitorStringOpts(
               "afterAdd",
-              new String[] {HDLGeneratorFactory.VHDL, HDLGeneratorFactory.VERILOG},
-              HDLGeneratorFactory.VHDL));
+              new String[] {HdlGeneratorFactory.VHDL, HdlGeneratorFactory.VERILOG},
+              HdlGeneratorFactory.VHDL));
   public static final PrefMonitor<String> SelectedBoard =
       create(new PrefMonitorString("SelectedBoard", null));
 
   public static final String EXTERNAL_BOARDS = "ExternalBoards";
-  public static final FPGABoards Boards = new FPGABoards();
+  public static final FpgaBoards Boards = new FpgaBoards();
   public static final PrefMonitor<Boolean> SupressGatedClockWarnings =
       create(new PrefMonitorBoolean("NoGatedClockWarnings", false));
   public static final PrefMonitor<Boolean> SupressOpenPinWarnings =
       create(new PrefMonitorBoolean("NoOpenPinWarnings", false));
-
+  public static final PrefMonitor<Boolean> VhdlKeywordsUpperCase =
+      create(new PrefMonitorBoolean("VhdlKeywordsUpperCase", true));
+  //file preferences
+  public static final PrefMonitor<Boolean> REMOVE_UNUSED_LIBRARIES =
+      create(new PrefMonitorBoolean("removeUnusedLibs", false));
   // Window preferences
   public static final String TOOLBAR_HIDDEN = "hidden";
   public static final PrefMonitor<Boolean> SHOW_TICK_RATE =
@@ -671,6 +651,8 @@ public class AppPreferences {
       create(new PrefMonitorInt("SimWidthErrorHighlightColor", 0xFFFF00));
   public static final PrefMonitor<Integer> WIDTH_ERROR_BACKGROUND_COLOR =
       create(new PrefMonitorInt("SimWidthErrorBackgroundColor", 0xFFE6D2));
+  public static final PrefMonitor<Integer> CLOCK_FREQUENCY_COLOR =
+      create(new PrefMonitorInt("SimClockFrequencyColor", 0xFF00B4));
   public static final PrefMonitor<Integer> KMAP1_COLOR =
       create(new PrefMonitorInt("KMAPColor1", 0x800000));
   public static final PrefMonitor<Integer> KMAP2_COLOR =

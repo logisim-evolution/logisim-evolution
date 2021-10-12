@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.log;
@@ -88,7 +69,7 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
     }
     Signal.Iterator[] cur = new Signal.Iterator[model.getSignalCount()];
     for (int i = 0; i < model.getSignalCount(); i++) {
-      Signal s = model.getSignal(i);
+      final var s = model.getSignal(i);
       cur[i] = cursors.get(s);
       if (cur[i] == null) {
         cur[i] = s.new Iterator(timeNextWrite);
@@ -97,19 +78,17 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
     }
     long timeStop = model.getEndTime();
     while (timeNextWrite < timeStop) {
-      long duration = timeStop - timeNextWrite;
-      StringBuilder buf = new StringBuilder();
+      var duration = timeStop - timeNextWrite;
+      final var buf = new StringBuilder();
       for (int i = 0; i < cur.length; i++) {
-        if (i > 0)
-          buf.append("\t");
+        if (i > 0) buf.append("\t");
         buf.append(cur[i].getFormattedValue());
         if (cur[i].duration < duration)
           duration = cur[i].duration;
       }
       // todo: only write duration if not in coarse-step or coarse-clock mode?
       writer.println(buf + "\t# " + Model.formatDuration(duration));
-      for (Signal.Iterator c : cur)
-        c.advance(duration);
+      for (final var c : cur) c.advance(duration);
       timeNextWrite += duration;
     }
     lastWrite = System.currentTimeMillis();

@@ -1,43 +1,20 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.appear;
 
 import java.util.ArrayList;
-import java.util.Enumeration;
-
 import javax.swing.JTree;
+import javax.swing.event.TreeModelEvent;
+import javax.swing.event.TreeModelListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
-import javax.swing.tree.TreeNode;
-import javax.swing.event.TreeModelListener;
-import javax.swing.event.TreeModelEvent;
-
 import org.scijava.swing.checkboxtree.CheckBoxNodeData;
 import org.scijava.swing.checkboxtree.CheckBoxNodeEditor;
 import org.scijava.swing.checkboxtree.CheckBoxNodeRenderer;
@@ -85,23 +62,23 @@ public class CheckBoxTree extends JTree {
   }
 
   private void markDescendents(DefaultMutableTreeNode node, boolean checked) {
-    for (Enumeration<TreeNode> e = node.depthFirstEnumeration(); e.hasMoreElements();) {
-      DefaultMutableTreeNode n = (DefaultMutableTreeNode) (e.nextElement());
+    for (final var e = node.depthFirstEnumeration(); e.hasMoreElements();) {
+      final var n = (DefaultMutableTreeNode) (e.nextElement());
       ((CheckBoxNodeData) (n.getUserObject())).setChecked(checked);
     }
   }
 
   private void adjustParentForChildrenValues(DefaultMutableTreeNode parent) {
-    boolean foundCheck = false;
-    for (Enumeration<TreeNode> e = parent.children(); !foundCheck && e.hasMoreElements(); ) {
-      DefaultMutableTreeNode child = (DefaultMutableTreeNode) (e.nextElement());
+    var foundCheck = false;
+    for (final var e = parent.children(); !foundCheck && e.hasMoreElements(); ) {
+      final var child = (DefaultMutableTreeNode) (e.nextElement());
       foundCheck = (((CheckBoxNodeData) (child.getUserObject())).isChecked());
     }
     ((CheckBoxNodeData) parent.getUserObject()).setChecked(foundCheck);
   }
 
   private void adjustParentsInTree(DefaultMutableTreeNode root) {
-    for (Enumeration<TreeNode> e = root.postorderEnumeration(); e.hasMoreElements();) {
+    for (final var e = root.postorderEnumeration(); e.hasMoreElements();) {
       final var node = (DefaultMutableTreeNode) (e.nextElement());
       if (!node.isLeaf()) {
         adjustParentForChildrenValues(node);
@@ -110,16 +87,16 @@ public class CheckBoxTree extends JTree {
   }
 
   public void setCheckingPaths(TreePath[] paths) {
-    for (TreePath p : paths) {
-      DefaultMutableTreeNode treeNode = (DefaultMutableTreeNode) (p.getLastPathComponent());
+    for (final var path : paths) {
+      final var treeNode = (DefaultMutableTreeNode) (path.getLastPathComponent());
       ((CheckBoxNodeData) (treeNode.getUserObject())).setChecked(true);
     }
     adjustParentsInTree((DefaultMutableTreeNode) getModel().getRoot());
   }
 
   public TreePath[] getCheckingPaths() {
-    ArrayList<TreePath> paths = new ArrayList<>();
-    DefaultMutableTreeNode root = (DefaultMutableTreeNode) getModel().getRoot();
+    final var paths = new ArrayList<TreePath>();
+    final var root = (DefaultMutableTreeNode) getModel().getRoot();
     for (final var e = root.preorderEnumeration(); e.hasMoreElements();) {
       final var n = (DefaultMutableTreeNode) (e.nextElement());
       if (((CheckBoxNodeData) (n.getUserObject())).isChecked()) {

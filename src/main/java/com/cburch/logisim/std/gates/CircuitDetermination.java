@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.gates;
@@ -39,13 +20,10 @@ import java.util.ArrayList;
  */
 abstract class CircuitDetermination {
   private static class Determine implements Expression.Visitor<CircuitDetermination> {
-    private Gate binary(
-        CircuitDetermination aret, CircuitDetermination bret, ComponentFactory factory) {
-      if (aret instanceof Gate) {
-        final var a = (Gate) aret;
+    private Gate binary(CircuitDetermination aret, CircuitDetermination bret, ComponentFactory factory) {
+      if (aret instanceof Gate a) {
         if (a.factory == factory) {
-          if (bret instanceof Gate) {
-            final var b = (Gate) bret;
+          if (bret instanceof Gate b) {
             if (b.factory == factory) {
               a.inputs.addAll(b.inputs);
               return a;
@@ -56,8 +34,7 @@ abstract class CircuitDetermination {
         }
       }
 
-      if (bret instanceof Gate) {
-        final var b = (Gate) bret;
+      if (bret instanceof Gate b) {
         if (b.factory == factory) {
           b.inputs.add(aret);
           return b;
@@ -83,8 +60,7 @@ abstract class CircuitDetermination {
     @Override
     public CircuitDetermination visitNot(Expression aBase) {
       final var aret = aBase.visit(this);
-      if (aret instanceof Gate) {
-        final var a = (Gate) aret;
+      if (aret instanceof Gate a) {
         if (a.factory == AndGate.FACTORY) {
           a.factory = NandGate.FACTORY;
           return a;
@@ -97,9 +73,8 @@ abstract class CircuitDetermination {
         }
       }
 
-      if (aret instanceof Input) {
-        final var a = (Input) aret;
-        a.TogleInversion();
+      if (aret instanceof Input a) {
+        a.togleInversion();
         return a;
       }
 
@@ -223,12 +198,10 @@ abstract class CircuitDetermination {
     private void notAllInputs() {
       for (int i = 0; i < inputs.size(); i++) {
         final var old = inputs.get(i);
-        if (inputs.get(i) instanceof CircuitDetermination.Value) {
-          final var inp = (Value) inputs.get(i);
+        if (inputs.get(i) instanceof CircuitDetermination.Value inp) {
           inp.value ^= 1;
-        } else if (inputs.get(i) instanceof CircuitDetermination.Input) {
-          final var inp = (Input) inputs.get(i);
-          inp.TogleInversion();
+        } else if (inputs.get(i) instanceof CircuitDetermination.Input inp) {
+          inp.togleInversion();
         } else if (old.isNandNot()) {
           inputs.set(i, ((Gate) old).inputs.get(0));
         } else {
@@ -303,11 +276,11 @@ abstract class CircuitDetermination {
       return name;
     }
 
-    public void TogleInversion() {
+    public void togleInversion() {
       inverted = !inverted;
     }
 
-    boolean IsInvertedVersion() {
+    boolean isInvertedVersion() {
       return inverted;
     }
   }

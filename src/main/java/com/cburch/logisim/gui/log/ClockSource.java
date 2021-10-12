@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.log;
@@ -87,32 +68,33 @@ public class ClockSource extends JDialogOk {
     msgLabel.setText("<html>" + msg.toString() + "</html>"); // for line breaking
   }
 
+  @Override
   public void okClicked() {
-    SignalInfo.List list = selector.getSelectedItems();
+    final var list = selector.getSelectedItems();
     if (list == null || list.size() != 1) return;
     item = list.get(0);
   }
 
   public static Component doClockDriverDialog(Circuit circ) {
-    ClockSource dialog = new ClockSource(S.getter("selectClockDriverMessage"), circ, true);
+    final var dialog = new ClockSource(S.getter("selectClockDriverMessage"), circ, true);
     dialog.setVisible(true);
     return dialog.item == null ? null : dialog.item.getComponent(); // always top-level
   }
 
   public static SignalInfo doClockMissingObserverDialog(Circuit circ) {
-    ClockSource dialog = new ClockSource(S.getter("selectClockMissingMessage"), circ, false);
+    final var dialog = new ClockSource(S.getter("selectClockMissingMessage"), circ, false);
     dialog.setVisible(true);
     return dialog.item;
   }
 
   public static SignalInfo doClockMultipleObserverDialog(Circuit circ) {
-    ClockSource dialog = new ClockSource(S.getter("selectClockMultipleMessage"), circ, false);
+    final var dialog = new ClockSource(S.getter("selectClockMultipleMessage"), circ, false);
     dialog.setVisible(true);
     return dialog.item;
   }
 
   public static SignalInfo doClockObserverDialog(Circuit circ) {
-    ClockSource dialog = new ClockSource(S.getter("selectClockObserverMessage"), circ, false);
+    final var dialog = new ClockSource(S.getter("selectClockObserverMessage"), circ, false);
     dialog.setVisible(true);
     return dialog.item;
   }
@@ -134,11 +116,11 @@ public class ClockSource extends JDialogOk {
   public static final CycleInfo DEFAULT_CYCLE_INFO = new CycleInfo(1, 1, 0);
 
   public static CycleInfo getCycleInfo(SignalInfo clockSource) {
-    Component clk = clockSource.getComponent();
+    final var clk = clockSource.getComponent();
     if (clk.getFactory() instanceof Clock) {
-      int hi = clk.getAttributeSet().getValue(Clock.ATTR_HIGH);
-      int lo = clk.getAttributeSet().getValue(Clock.ATTR_LOW);
-      int phase = clk.getAttributeSet().getValue(Clock.ATTR_PHASE);
+      final var hi = clk.getAttributeSet().getValue(Clock.ATTR_HIGH);
+      final var lo = clk.getAttributeSet().getValue(Clock.ATTR_LOW);
+      final var phase = clk.getAttributeSet().getValue(Clock.ATTR_PHASE);
       return new CycleInfo(hi, lo, phase);
     }
     return DEFAULT_CYCLE_INFO;

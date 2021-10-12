@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.hex;
@@ -57,9 +38,9 @@ class Clip implements ClipboardOwner {
   }
 
   public void copy() {
-    Caret caret = editor.getCaret();
-    long p0 = caret.getMark();
-    long p1 = caret.getDot();
+    final var caret = editor.getCaret();
+    var p0 = caret.getMark();
+    var p1 = caret.getDot();
     if (p0 < 0 || p1 < 0) return;
     if (p0 > p1) {
       long t = p0;
@@ -68,29 +49,30 @@ class Clip implements ClipboardOwner {
     }
     p1++;
 
-    long[] data = new long[(int) (p1 - p0)];
-    HexModel model = editor.getModel();
-    for (long i = p0; i < p1; i++) {
+    final var data = new long[(int) (p1 - p0)];
+    final var model = editor.getModel();
+    for (var i = p0; i < p1; i++) {
       data[(int) (i - p0)] = model.get(i);
     }
 
-    Clipboard clip = editor.getToolkit().getSystemClipboard();
+    final var clip = editor.getToolkit().getSystemClipboard();
     clip.setContents(new Data(data), this);
   }
 
+  @Override
   public void lostOwnership(Clipboard clip, Transferable transfer) {}
 
   public void paste() {
-    Clipboard clip = editor.getToolkit().getSystemClipboard();
-    Transferable xfer = clip.getContents(this);
-    MemContents model = (MemContents) editor.getModel();
+    final var clip = editor.getToolkit().getSystemClipboard();
+    final var xfer = clip.getContents(this);
+    final var model = (MemContents) editor.getModel();
     MemContents pasted = null;
-    int numWords = 0;
+    var numWords = 0;
     if (xfer.isDataFlavorSupported(binaryFlavor)) {
       try {
-        long[] data = (long[]) xfer.getTransferData(binaryFlavor);
+        final var data = (long[]) xfer.getTransferData(binaryFlavor);
         numWords = data.length;
-        int addrBits = 32 - Integer.numberOfLeadingZeros(numWords);
+        var addrBits = 32 - Integer.numberOfLeadingZeros(numWords);
         pasted = MemContents.create(addrBits, model.getValueWidth());
         pasted.set(0, data);
       } catch (UnsupportedFlavorException | IOException e) {
@@ -105,8 +87,7 @@ class Clip implements ClipboardOwner {
       }
 
       try {
-        HexFile.ParseResult r =
-            HexFile.parseFromClipboard(buf, model.getLogLength(), model.getValueWidth());
+        final var r = HexFile.parseFromClipboard(buf, model.getLogLength(), model.getValueWidth());
         pasted = r.model;
         numWords = r.numWords;
       } catch (IOException e) {
@@ -126,9 +107,9 @@ class Clip implements ClipboardOwner {
       return;
     }
 
-    Caret caret = editor.getCaret();
-    long p0 = caret.getMark();
-    long p1 = caret.getDot();
+    final var caret = editor.getCaret();
+    var p0 = caret.getMark();
+    var p1 = caret.getDot();
     if (p0 == p1) {
       if (p0 + numWords - 1 <= model.getLastOffset()) {
         model.copyFrom(p0, pasted, 0, numWords);
@@ -144,7 +125,7 @@ class Clip implements ClipboardOwner {
       }
       p1++;
       if (p1 - p0 > numWords) {
-        int action =
+        var action =
             OptionPane.showConfirmDialog(
                 editor.getRootPane(),
                 S.get("hexPasteTooSmall", numWords, p1 - p0),
@@ -154,7 +135,7 @@ class Clip implements ClipboardOwner {
         if (action != OptionPane.OK_OPTION) return;
         p1 = p0 + numWords;
       } else if (p1 - p0 < numWords) {
-        int action =
+        var action =
             OptionPane.showConfirmDialog(
                 editor.getRootPane(),
                 S.get("hexPasteTooSmall", numWords, p1 - p0),
@@ -175,26 +156,24 @@ class Clip implements ClipboardOwner {
       this.data = data;
     }
 
-    public Object getTransferData(DataFlavor flavor)
-        throws UnsupportedFlavorException {
+    @Override
+    public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException {
       if (flavor == binaryFlavor) {
         return data;
       } else if (flavor == DataFlavor.stringFlavor) {
-        int bits = 1;
-        for (long datum : data) {
-          long k = datum >> bits;
+        var bits = 1;
+        for (final var datum : data) {
+          var k = datum >> bits;
           while (k != 0 && bits < 32) {
             bits++;
             k >>= 1;
           }
         }
 
-        int chars = (bits + 3) / 4;
-        StringBuilder buf = new StringBuilder();
-        for (int i = 0; i < data.length; i++) {
-          if (i > 0) {
-            buf.append(i % 8 == 0 ? '\n' : ' ');
-          }
+        var chars = (bits + 3) / 4;
+        final var buf = new StringBuilder();
+        for (var i = 0; i < data.length; i++) {
+          if (i > 0) buf.append(i % 8 == 0 ? '\n' : ' ');
           buf.append(String.format("%0" + chars + "x", data[i]));
         }
         return buf.toString();
@@ -203,10 +182,12 @@ class Clip implements ClipboardOwner {
       }
     }
 
+    @Override
     public DataFlavor[] getTransferDataFlavors() {
       return new DataFlavor[] {binaryFlavor, DataFlavor.stringFlavor};
     }
 
+    @Override
     public boolean isDataFlavorSupported(DataFlavor flavor) {
       return flavor == binaryFlavor || flavor == DataFlavor.stringFlavor;
     }

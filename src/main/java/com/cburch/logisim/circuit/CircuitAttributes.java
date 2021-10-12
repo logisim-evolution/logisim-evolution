@@ -1,39 +1,22 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.circuit;
 
 import static com.cburch.logisim.circuit.Strings.S;
 
+import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.appear.CircuitAppearanceEvent;
 import com.cburch.logisim.circuit.appear.CircuitAppearanceListener;
 import com.cburch.logisim.data.AbstractAttributeSet;
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeOption;
@@ -52,6 +35,22 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CircuitAttributes extends AbstractAttributeSet {
+  
+  private static class defaultStaticAttributeProvider implements AttributeDefaultProvider {
+
+    @Override
+    public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
+      final var ret = AttributeSets.fixedSet(STATIC_ATTRS, STATIC_DEFAULTS);
+      ret.setValue(APPEARANCE_ATTR, StdAttr.APPEAR_CLASSIC);
+      return ret.getValue(attr);
+    }
+
+    @Override
+    public boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver) {
+      return false;
+    }
+    
+  }
 
   private class MyListener implements AttributeListener, CircuitAppearanceListener {
     private final Circuit source;
@@ -61,7 +60,9 @@ public class CircuitAttributes extends AbstractAttributeSet {
     }
 
     @Override
-    public void attributeListChanged(AttributeEvent e) {}
+    public void attributeListChanged(AttributeEvent e) {
+      // Do nothing
+    }
 
     @Override
     public void attributeValueChanged(AttributeEvent e) {
@@ -80,7 +81,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
         subcircInstance.recomputeBounds();
       }
       subcircInstance.fireInvalidated();
-      if (source != null & !source.getAppearance().isDefaultAppearance())
+      if (source != null && !source.getAppearance().isDefaultAppearance())
         source.getStaticAttributes().setValue(APPEARANCE_ATTR, APPEAR_CUSTOM);
     }
   }
@@ -93,7 +94,9 @@ public class CircuitAttributes extends AbstractAttributeSet {
     }
 
     @Override
-    public void attributeListChanged(AttributeEvent e) {}
+    public void attributeListChanged(AttributeEvent e) {
+      // Do nothing
+    }
 
     @Override
     public void attributeValueChanged(AttributeEvent e) {
@@ -126,13 +129,6 @@ public class CircuitAttributes extends AbstractAttributeSet {
             source.fireEvent(CircuitEvent.ACTION_CHECK_NAME, OldName);
             source.fireEvent(CircuitEvent.ACTION_SET_NAME, NewName);
           }
-        }
-      } else if (e.getAttribute() == APPEARANCE_ATTR) {
-        if (e.getValue() == APPEAR_CLASSIC
-            || e.getValue() == APPEAR_FPGA
-            || e.getValue() == APPEAR_EVOLUTION) {
-          source.getAppearance().setDefaultAppearance(true);
-          source.RecalcDefaultShape();
         }
       }
     }
@@ -176,6 +172,8 @@ public class CircuitAttributes extends AbstractAttributeSet {
           new AttributeOption[] {APPEAR_CLASSIC, APPEAR_FPGA, APPEAR_EVOLUTION, APPEAR_CUSTOM});
   public static final Attribute<Double> SIMULATION_FREQUENCY = Attributes.forDouble("simulationFrequency");
   public static final Attribute<Double> DOWNLOAD_FREQUENCY = Attributes.forDouble("downloadFrequency");
+  public static final Attribute<String> DOWNLOAD_BOARD = Attributes.forString("downloadBoard");
+  public static final defaultStaticAttributeProvider DEFAULT_STATIC_ATTRIBUTES = new defaultStaticAttributeProvider();
 
   private static final Attribute<?>[] STATIC_ATTRS = {
     NAME_ATTR,
@@ -186,10 +184,11 @@ public class CircuitAttributes extends AbstractAttributeSet {
     NAMED_CIRCUIT_BOX_FIXED_SIZE,
     SIMULATION_FREQUENCY,
     DOWNLOAD_FREQUENCY,
+    DOWNLOAD_BOARD
   };
 
   private static final Object[] STATIC_DEFAULTS = {
-    "", "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT, APPEAR_CLASSIC, false, -1d, -1d
+    "", "", Direction.EAST, StdAttr.DEFAULT_LABEL_FONT, APPEAR_CLASSIC, false, -1d, -1d, ""
   };
 
   private static final List<Attribute<?>> INSTANCE_ATTRS =
@@ -211,10 +210,10 @@ public class CircuitAttributes extends AbstractAttributeSet {
   private String label;
   private Direction labelLocation;
   private Font labelFont;
-  private Boolean LabelVisible;
+  private Boolean labelVisible;
   private MyListener listener;
   private Instance[] pinInstances;
-  private boolean NameReadOnly;
+  private boolean nameReadOnly;
 
   public CircuitAttributes(Circuit source) {
     this.source = source;
@@ -223,11 +222,12 @@ public class CircuitAttributes extends AbstractAttributeSet {
     label = "";
     labelLocation = Direction.NORTH;
     labelFont = StdAttr.DEFAULT_LABEL_FONT;
-    LabelVisible = true;
+    labelVisible = true;
     pinInstances = new Instance[0];
-    NameReadOnly = false;
+    nameReadOnly = false;
     DOWNLOAD_FREQUENCY.setHidden(true);
     SIMULATION_FREQUENCY.setHidden(true);
+    DOWNLOAD_BOARD.setHidden(true);
   }
 
   @Override
@@ -256,7 +256,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
     if (attr == StdAttr.FACING) return (E) facing;
     if (attr == StdAttr.LABEL) return (E) label;
     if (attr == StdAttr.LABEL_FONT) return (E) labelFont;
-    if (attr == StdAttr.LABEL_VISIBILITY) return (E) LabelVisible;
+    if (attr == StdAttr.LABEL_VISIBILITY) return (E) labelVisible;
     if (attr == LABEL_LOCATION_ATTR) return (E) labelLocation;
     else return source.getStaticAttributes().getValue(attr);
   }
@@ -286,14 +286,14 @@ public class CircuitAttributes extends AbstractAttributeSet {
   @Override
   public void setReadOnly(Attribute<?> attr, boolean value) {
     if (attr == NAME_ATTR) {
-      NameReadOnly = value;
+      nameReadOnly = value;
     }
   }
 
   @Override
   public boolean isReadOnly(Attribute<?> attr) {
     if (attr == NAME_ATTR) {
-      return NameReadOnly;
+      return nameReadOnly;
     }
     return false;
   }
@@ -319,8 +319,8 @@ public class CircuitAttributes extends AbstractAttributeSet {
       fireAttributeValueChanged(StdAttr.LABEL_FONT, val, null);
     } else if (attr == StdAttr.LABEL_VISIBILITY) {
       final var val = (Boolean) value;
-      if (LabelVisible == value) return;
-      LabelVisible = val;
+      if (labelVisible == value) return;
+      labelVisible = val;
       fireAttributeValueChanged(StdAttr.LABEL_VISIBILITY, val, null);
     } else if (attr == LABEL_LOCATION_ATTR) {
       final var val = (Direction) value;

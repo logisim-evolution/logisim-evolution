@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.draw.canvas;
@@ -34,19 +15,22 @@ import com.cburch.contracts.BaseMouseMotionListenerContract;
 import com.cburch.draw.model.CanvasModelEvent;
 import com.cburch.draw.model.CanvasModelListener;
 import com.cburch.draw.model.CanvasObject;
+import com.cburch.logisim.circuit.appear.AppearancePort;
 import com.cburch.logisim.data.Location;
 import java.awt.Cursor;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
-import java.util.List;
+import java.util.ArrayList;
 
 class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListenerContract, BaseKeyListenerContract, CanvasModelListener {
   private final Canvas canvas;
   private CanvasTool tool;
+  private CanvasObject selectedPort;
 
   public CanvasListener(Canvas canvas) {
     this.canvas = canvas;
     tool = null;
+    selectedPort = null;
   }
 
   public CanvasTool getTool() {
@@ -87,6 +71,31 @@ class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListen
     }
     canvas.showPopupMenu(e, clicked);
   }
+  
+  private void handlePorts(MouseEvent e) {
+    final var loc = Location.create(e.getX(), e.getY());
+    final var objects = canvas.getModel().getObjectsFromTop();
+    final var ports = new ArrayList<CanvasObject>();
+    CanvasObject newSelectedPort = null;
+    for (final var object : objects) {
+      if (object instanceof AppearancePort) ports.add(object);
+    }
+    for (final var port : ports) {
+      if (port.contains(loc, false) || port.contains(loc, true)) {
+        newSelectedPort = port;
+      }
+    }
+    if (newSelectedPort != selectedPort) {
+      if (newSelectedPort == null) {
+        canvas.setTooltip(null, null);
+        canvas.repaint(canvas.getVisibleRect());
+      } else {
+        canvas.setTooltip(loc, newSelectedPort.getDisplayNameAndLabel());
+        canvas.repaint(canvas.getVisibleRect());
+      }
+      selectedPort = newSelectedPort;
+    }
+  }
 
   private boolean isButton1(MouseEvent e) {
     return (e.getModifiersEx() & MouseEvent.BUTTON1_DOWN_MASK) != 0;
@@ -120,6 +129,7 @@ class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListen
 
   @Override
   public void mouseDragged(MouseEvent e) {
+    canvas.setTooltip(null, null);
     if (isButton1(e)) {
       if (tool != null) tool.mouseDragged(canvas, e);
     } else {
@@ -139,6 +149,7 @@ class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListen
 
   @Override
   public void mouseMoved(MouseEvent e) {
+    handlePorts(e);
     if (tool != null) tool.mouseMoved(canvas, e);
   }
 

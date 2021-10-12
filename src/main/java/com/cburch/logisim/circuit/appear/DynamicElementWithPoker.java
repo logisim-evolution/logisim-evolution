@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.circuit.appear;
@@ -59,30 +40,30 @@ public abstract class DynamicElementWithPoker extends DynamicElement {
   }
 
   public Bounds getScreenBounds(InstanceState state) {
-    Direction dir = state.getAttributeValue(StdAttr.FACING);
-    Location loc = state.getInstance().getLocation();
+    final var dir = state.getAttributeValue(StdAttr.FACING);
+    final var loc = state.getInstance().getLocation();
     if (dir == Direction.EAST) {
-      int xpos = bounds.getX() - anchorPosition.getX() + loc.getX();
-      int ypos = bounds.getY() - anchorPosition.getY() + loc.getY();
-      return Bounds.create(xpos, ypos, bounds.getWidth(), bounds.getHeight());
+      final var posX = bounds.getX() - anchorPosition.getX() + loc.getX();
+      final var posY = bounds.getY() - anchorPosition.getY() + loc.getY();
+      return Bounds.create(posX, posY, bounds.getWidth(), bounds.getHeight());
     }
     if (dir == Direction.WEST) {
-      int xpos = anchorPosition.getX() - bounds.getX() - bounds.getWidth() + loc.getX();
-      int ypos = anchorPosition.getY() - bounds.getY() - bounds.getHeight() + loc.getY();
-      return Bounds.create(xpos, ypos, bounds.getWidth(), bounds.getHeight());
+      final var posX = anchorPosition.getX() - bounds.getX() - bounds.getWidth() + loc.getX();
+      final var posY = anchorPosition.getY() - bounds.getY() - bounds.getHeight() + loc.getY();
+      return Bounds.create(posX, posY, bounds.getWidth(), bounds.getHeight());
     }
     if (dir == Direction.NORTH) {
-      int xpos = bounds.getY() - anchorPosition.getY() + loc.getX();
-      int ypos = bounds.getX() - anchorPosition.getX() - bounds.getWidth() + loc.getY();
-      return Bounds.create(xpos, ypos, bounds.getHeight(), bounds.getWidth());
+      final var posX = bounds.getY() - anchorPosition.getY() + loc.getX();
+      final var posY = bounds.getX() - anchorPosition.getX() - bounds.getWidth() + loc.getY();
+      return Bounds.create(posX, posY, bounds.getHeight(), bounds.getWidth());
     }
-    int xpos = anchorPosition.getY() - bounds.getY() - bounds.getHeight() + loc.getX();
-    int ypos = bounds.getX() - anchorPosition.getX() + loc.getY();
-    return Bounds.create(xpos, ypos, bounds.getHeight(), bounds.getWidth());
+    final var posX = anchorPosition.getY() - bounds.getY() - bounds.getHeight() + loc.getX();
+    final var posY = bounds.getX() - anchorPosition.getX() + loc.getY();
+    return Bounds.create(posX, posY, bounds.getHeight(), bounds.getWidth());
   }
 
   public Boolean mouseInside(InstanceState state, MouseEvent e) {
-    Bounds b = getScreenBounds(state);
+    final var b = getScreenBounds(state);
     return b.contains(e.getX(), e.getY());
   }
 

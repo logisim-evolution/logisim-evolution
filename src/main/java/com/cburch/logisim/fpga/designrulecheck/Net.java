@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.designrulecheck;
@@ -32,6 +13,7 @@ import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.data.Location;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public class Net {
@@ -72,7 +54,7 @@ public class Net {
     return segments;
   }
 
-  public boolean AddParentBit(byte bitId) {
+  public boolean addParentBit(byte bitId) {
     if (bitId < 0) return false;
     inheritedBits.add(bitId);
     return true;
@@ -128,11 +110,11 @@ public class Net {
     return myPoints.contains(point);
   }
 
-  public boolean ContainsTunnel(String tunnelName) {
+  public boolean containsTunnel(String tunnelName) {
     return tunnelNames.contains(tunnelName);
   }
 
-  public void ForceRootNet() {
+  public void forceRootNet() {
     myParent = null;
     requiresToBeRoot = true;
     inheritedBits.clear();
@@ -151,12 +133,12 @@ public class Net {
     return this.myPoints;
   }
 
-  public ArrayList<ConnectionPoint> getSinkNets(int bitIndex) {
+  public List<ConnectionPoint> getSinkNets(int bitIndex) {
     if ((bitIndex < 0) || (bitIndex >= sinkNetsList.size())) return new ArrayList<>();
     return sinkNetsList.get(bitIndex).getAll();
   }
 
-  public ArrayList<ConnectionPoint> getSourceNets(int bitIndex) {
+  public List<ConnectionPoint> getSourceNets(int bitIndex) {
     if ((bitIndex < 0) || (bitIndex >= sourceNetsList.size())) return new ArrayList<>();
     return sourceNetsList.get(bitIndex).getAll();
   }
@@ -176,13 +158,13 @@ public class Net {
     return sinkList.get(bitid).size() > 0;
   }
 
-  public ArrayList<ConnectionPoint> getBitSinks(int bitIndex) {
+  public List<ConnectionPoint> getBitSinks(int bitIndex) {
     if ((bitIndex < 0) || (bitIndex >= sourceNetsList.size()))
       return new ArrayList<>();
     return new ArrayList<>(sinkList.get(bitIndex).getAll());
   }
 
-  public ArrayList<ConnectionPoint> GetBitSources(int bitIndex) {
+  public List<ConnectionPoint> getBitSources(int bitIndex) {
     if ((bitIndex < 0) || (bitIndex >= sourceNetsList.size())) return null;
     return sourceList.get(bitIndex).getAll();
   }
@@ -220,7 +202,7 @@ public class Net {
     return tunnelNames.size() != 0;
   }
 
-  public void InitializeSourceSinks() {
+  public void initializeSourceSinks() {
     sourceList.clear();
     sinkList.clear();
     sourceNetsList.clear();

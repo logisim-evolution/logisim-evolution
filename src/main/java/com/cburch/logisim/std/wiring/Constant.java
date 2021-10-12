@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.wiring;
@@ -117,6 +98,7 @@ public class Constant extends InstanceFactory {
       this.instance = instance;
     }
 
+    @Override
     public void computeExpression(ExpressionComputer.Map expressionMap) {
       AttributeSet attrs = instance.getAttributeSet();
       int width = attrs.getValue(StdAttr.WIDTH).getWidth();
@@ -127,9 +109,9 @@ public class Constant extends InstanceFactory {
     }
   }
 
-  private static class ConstantHDLGeneratorFactory extends AbstractConstantHDLGeneratorFactory {
+  private static class ConstantHdlGeneratorFactory extends AbstractConstantHdlGeneratorFactory {
     @Override
-    public long GetConstant(AttributeSet attrs) {
+    public long getConstant(AttributeSet attrs) {
       return attrs.getValue(Constant.ATTR_VALUE);
     }
   }
@@ -142,11 +124,10 @@ public class Constant extends InstanceFactory {
   private static final Color BACKGROUND_COLOR = new Color(230, 230, 230);
   private static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
 
-  private static final List<Attribute<?>> ATTRIBUTES =
-      Arrays.asList(StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE);
+  private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE);
 
   public Constant() {
-    super(_ID, S.getter("constantComponent"));
+    super(_ID, S.getter("constantComponent"), new ConstantHdlGeneratorFactory());
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(
         JoinedConfigurator.create(
@@ -181,12 +162,6 @@ public class Constant extends InstanceFactory {
     else if (facing == Direction.SOUTH) return Bounds.create(-w / 2, -16, w, 16);
     else if (facing == Direction.NORTH) return Bounds.create(-w / 2, 0, w, 16);
     else throw new IllegalArgumentException("unrecognized arguments " + facing + " " + width);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new ConstantHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

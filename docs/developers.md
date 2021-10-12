@@ -1,4 +1,4 @@
-[![Logisim-evolution](../artwork/logisim-evolution-logo.svg)](https://github.com/logisim-evolution/logisim-evolution)
+[![Logisim-evolution](img/logisim-evolution-logo.png)](https://github.com/logisim-evolution/logisim-evolution)
 
 ---
 
@@ -14,14 +14,21 @@
   * [Building from sources](#building-from-sources)
   * [Testing development code](#testing-development-code)
   * [Code style](style.md)
+    * [Checking code style with InteliJ IDEA](style.md#checking-code-style-with-intelij-idea)
+    * [Using Gradle plugin](style.md#using-gradle-plugin)
+    * [Using `pre-commit`](style.md#using-pre-commit-hooks)
+  * [Translations](localization.md)
+    * [Updating existing translation](localization.md#updating-existing-translation)
+    * [Adding new translation](localization.md#adding-new-translation)
+    * [Using trans-tool](localization.md#using-trans-tool)
   * [How to contribute](#how-to-contribute)
 
 ---
 
 ## Requirements ##
 
-`Logisim-evolution` is written in Java 14. To build it from sources you need JDK
-(or equivalent, e.g. [OpenJDK](https://adoptopenjdk.net/)) version 14 or newer.
+`Logisim-evolution` is written in Java 16. To build it from sources you need JDK
+(or equivalent, e.g. [OpenJDK](https://adoptopenjdk.net/)) version 16 or newer.
 
 **NOTE:** Ensure your `$JAVA_HOME` environment variable points to the proper JDK version.
 
@@ -38,20 +45,21 @@ How to import a Gradle project:
 * [How to import Gradle project into IntelliJ IDEA](https://www.jetbrains.com/help/idea/gradle.html) (section "Importing a project
   from a Gradle model").
 
-**Note for Eclipse Users:**
+**Note for Eclipse users:**
 
-Eclipse needs to have Gradle build the generated source files before it can build the project.
-You can do this by running task `genBuildInfo` before importing the project.
+To successfully import the project in Eclipse, the complete project structure must be present,
+including Java source files built by Gradle.
+You can do this by running Gradle task `genFiles` before importing the project.
 See [Building from sources](#building-from-sources) for how to run Gradle.
 
-To run the task within Eclipse after importing the logisim-evolution project:
+To run the task within Eclipse after importing the Logisim-evolution project:
 
-* Bring up the `Gradle Tasks` view, if it is not already showing, by selecting the Menu `Window/Show View/Other...`
+* Bring up the `Gradle Tasks` view, if it is not already showing, by selecting the menu `Window/Show View/Other...`
   and selecting `Gradle Tasks` under Gradle.
-* In the `Gradle Tasks` view, double-click on `logisim-evolution/build/genBuildInfo`.
+* In the `Gradle Tasks` view, double-click on `logisim-evolution/build/genFiles`.
   Check the `Console View` to see when it finishes.
-* Right click on the logisim-evolution project in the Project Explorer and select `Gradle/Refresh Gradle Project`.
-* You may then need to Right click on the logisim-evolution project and select `Refresh`
+* Right click on the Logisim-evolution project in the Project Explorer and select `Gradle/Refresh Gradle Project`.
+* You may then need to right click on the Logisim-evolution project and select `Refresh`.
 
 ## Building from sources ##
 
@@ -78,10 +86,16 @@ If you wish to create a Java JAR package, which can then be run without [Gradle]
 ```
 
 which will create `logisim-evolution-<version>-all.jar` in `build/libs/`.
-To run it with JRE/JDK 14 or higher, type:
+To run it with JRE/JDK 16 or higher, type:
 
 ```bash
-java -jar logisim-evolution-<version>-all.jar
+java -jar logisim-evolution-<version>-all-jdk<jdk>.jar
+```
+
+for example:
+
+```bash
+java -jar logisim-evolution-3.6.0-all-jdk16.jar
 ```
 
 You can also generate a platform-specific installer, which gets saved in `build/dist`.

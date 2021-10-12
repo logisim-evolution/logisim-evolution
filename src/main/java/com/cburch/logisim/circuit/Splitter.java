@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.circuit;
@@ -75,7 +56,7 @@ public class Splitter extends ManagedComponent
 
   private boolean isMarked = false;
 
-  public void SetMarked(boolean value) {
+  public void setMarked(boolean value) {
     isMarked = value;
   }
 
@@ -84,10 +65,10 @@ public class Splitter extends ManagedComponent
   }
 
   // basic data
-  byte[] bit_thread; // how each bit maps to thread within end
+  byte[] bitThread; // how each bit maps to thread within end
 
   // derived data
-  CircuitWires.SplitterData wire_data;
+  CircuitWires.SplitterData wireData;
 
   public Splitter(Location loc, AttributeSet attrs) {
     super(loc, attrs, 3);
@@ -110,19 +91,19 @@ public class Splitter extends ManagedComponent
     final var attrs = (SplitterAttributes) getAttributeSet();
     final var parms = attrs.getParameters();
     final var fanout = attrs.fanout;
-    final var bit_end = attrs.bit_end;
+    final var bitEnd = attrs.bitEnd;
 
     // compute width of each end
-    bit_thread = new byte[bit_end.length];
-    final var end_width = new byte[fanout + 1];
-    end_width[0] = (byte) bit_end.length;
-    for (var i = 0; i < bit_end.length; i++) {
-      final var thr = bit_end[i];
+    bitThread = new byte[bitEnd.length];
+    final var endWidth = new byte[fanout + 1];
+    endWidth[0] = (byte) bitEnd.length;
+    for (var i = 0; i < bitEnd.length; i++) {
+      final var thr = bitEnd[i];
       if (thr > 0) {
-        bit_thread[i] = end_width[thr];
-        end_width[thr]++;
+        bitThread[i] = endWidth[thr];
+        endWidth[thr]++;
       } else {
-        bit_thread[i] = -1;
+        bitThread[i] = -1;
       }
     }
 
@@ -134,13 +115,13 @@ public class Splitter extends ManagedComponent
     final var dy = parms.getEndToEndDeltaY();
 
     final var ends = new EndData[fanout + 1];
-    ends[0] = new EndData(origin, BitWidth.create(bit_end.length), EndData.INPUT_OUTPUT);
+    ends[0] = new EndData(origin, BitWidth.create(bitEnd.length), EndData.INPUT_OUTPUT);
     for (var i = 0; i < fanout; i++) {
-      ends[i + 1] = new EndData(Location.create(x, y), BitWidth.create(end_width[i + 1]), EndData.INPUT_OUTPUT);
+      ends[i + 1] = new EndData(Location.create(x, y), BitWidth.create(endWidth[i + 1]), EndData.INPUT_OUTPUT);
       x += dx;
       y += dy;
     }
-    wire_data = new CircuitWires.SplitterData(fanout);
+    wireData = new CircuitWires.SplitterData(fanout);
     setEnds(ends);
     recomputeBounds();
     fireComponentInvalidated(new ComponentEvent(this));
@@ -191,8 +172,8 @@ public class Splitter extends ManagedComponent
     }
   }
 
-  public byte[] GetEndpoints() {
-    return ((SplitterAttributes) getAttributeSet()).bit_end;
+  public byte[] getEndpoints() {
+    return ((SplitterAttributes) getAttributeSet()).bitEnd;
   }
 
   //
@@ -224,46 +205,34 @@ public class Splitter extends ManagedComponent
       }
     }
 
-    if (end == 0) {
-      return S.get("splitterCombinedTip");
-    } else if (end > 0) {
-      var bits = 0;
-      final var buf = new StringBuilder();
-      final var attrs = (SplitterAttributes) getAttributeSet();
-      final var bit_end = attrs.bit_end;
-      var inString = false;
-      var beginString = 0;
-      for (var i = 0; i < bit_end.length; i++) {
-        if (bit_end[i] == end) {
-          bits++;
-          if (!inString) {
-            inString = true;
-            beginString = i;
-          }
-        } else {
-          if (inString) {
-            appendBuf(buf, i - 1, beginString);
-            inString = false;
-          }
+    if (end == 0) return S.get("splitterCombinedTip");
+    if (end < 0) return null;
+    var bits = 0;
+    final var buffer = new StringBuilder();
+    final var attrs = (SplitterAttributes) getAttributeSet();
+    final var bitEnd = attrs.bitEnd;
+    var inString = false;
+    var beginString = 0;
+    for (var i = 0; i < bitEnd.length; i++) {
+      if (bitEnd[i] == end) {
+        bits++;
+        if (!inString) {
+          inString = true;
+          beginString = i;
         }
+      } else if (inString) {
+        appendBuf(buffer, i - 1, beginString);
+        inString = false;
       }
-      if (inString) appendBuf(buf, bit_end.length - 1, beginString);
-      String base;
-      switch (bits) {
-        case 0:
-          base = S.get("splitterSplit0Tip");
-          break;
-        case 1:
-          base = S.get("splitterSplit1Tip");
-          break;
-        default:
-          base = S.get("splitterSplitManyTip");
-          break;
-      }
-      return StringUtil.format(base, buf.toString());
-    } else {
-      return null;
     }
+
+    if (inString) appendBuf(buffer, bitEnd.length - 1, beginString);
+    final var base = switch (bits) {
+      case 0 -> S.get("splitterSplit0Tip");
+      case 1 -> S.get("splitterSplit1Tip");
+      default -> S.get("splitterSplitManyTip");
+    };
+    return String.format(base, buffer.toString());
   }
 
   @Override

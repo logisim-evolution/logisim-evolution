@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.data;
@@ -33,6 +14,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 import javax.swing.filechooser.FileFilter;
 
@@ -43,6 +25,7 @@ public class TestVector {
 
   private static class TestVectorFilter extends FileFilter {
 
+    @Override
     public boolean accept(File f) {
       if (!f.isFile()) return true;
 
@@ -51,6 +34,7 @@ public class TestVector {
       return (i > 0 && name.substring(i).equalsIgnoreCase(".txt"));
     }
 
+    @Override
     public String getDescription() {
       return "Logisim-evolution Test Vector (*.txt)";
     }
@@ -149,7 +133,7 @@ public class TestVector {
   public BitWidth[] columnWidth;
   public int[] columnRadix;
 
-  public ArrayList<Value[]> data;
+  public List<Value[]> data;
 
   public TestVector(File src) throws IOException {
     try (final var in = new BufferedReader(new FileReader(src))) {

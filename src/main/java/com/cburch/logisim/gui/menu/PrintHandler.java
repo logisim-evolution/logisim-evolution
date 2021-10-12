@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.menu;
@@ -155,21 +136,26 @@ public abstract class PrintHandler implements Printable {
 
   public void exportImage(File dest, int fmt) {
     final var d = getExportImageSize();
-    if (d == null && showErr("couldNotCreateImage")) return;
+    if (d == null) {
+      showErr("couldNotCreateImage");
+      return;
+    }
 
     final var img = new BufferedImage(d.width, d.height, BufferedImage.TYPE_INT_RGB);
     final var base = (fmt == ExportImage.FORMAT_TIKZ || fmt == ExportImage.FORMAT_SVG) ? new TikZWriter() : img.getGraphics();
     final var gr = base.create();
 
     try {
-      if (!(gr instanceof Graphics2D) && showErr("couldNotCreateImage")) return;
-      final var g = (Graphics2D) gr;
-      g.setColor(Color.white);
-      g.fillRect(0, 0, d.width, d.height);
-      g.setColor(Color.black);
+      if (!(gr instanceof Graphics2D g2d)) {
+        showErr("couldNotCreateImage");
+        return;
+      }
+      g2d.setColor(Color.white);
+      g2d.fillRect(0, 0, d.width, d.height);
+      g2d.setColor(Color.black);
 
       try {
-        paintExportImage(img, g);
+        paintExportImage(img, g2d);
       } catch (Exception e) {
         showErr("couldNotCreateImage");
         return;
@@ -187,10 +173,10 @@ public abstract class PrintHandler implements Printable {
             ImageIO.write(img, "JPEG", dest);
             break;
           case ExportImage.FORMAT_TIKZ:
-            ((TikZWriter) g).WriteFile(dest);
+            ((TikZWriter) g2d).writeFile(dest);
             break;
           case ExportImage.FORMAT_SVG:
-            ((TikZWriter) g).WriteSvg(d.width, d.height, dest);
+            ((TikZWriter) g2d).writeSvg(d.width, d.height, dest);
             break;
         }
       } catch (Exception e) {

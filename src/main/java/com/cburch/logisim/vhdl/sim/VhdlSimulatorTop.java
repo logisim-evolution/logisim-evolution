@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.vhdl.sim;
@@ -47,6 +28,8 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import javax.help.UnsupportedOperationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * VHDL simulator allows Logisim to simulate the behavior of VHDL architectures. It delegate this
@@ -62,6 +45,8 @@ public class VhdlSimulatorTop implements CircuitListener {
   private final VhdlSimulatorTclComp tclRun = new VhdlSimulatorTclComp(this);
   private VhdlSimulatorTclBinder tclBinder;
   private final SocketClient socketClient = new SocketClient();
+
+  public static final Logger logger = LoggerFactory.getLogger(VhdlSimulatorTop.class);
 
   private final Project project;
 
@@ -112,7 +97,7 @@ public class VhdlSimulatorTop implements CircuitListener {
 
     /* Hide and empty console log */
     if (getProject().getFrame() != null) {
-      getProject().getFrame().setVhdlSimulatorConsoleStatus(false);
+      getProject().getFrame().setVhdlSimulatorConsoleStatusInvisible();
       getProject().getFrame().getVhdlSimulatorConsole().clear();
     }
   }
@@ -162,7 +147,7 @@ public class VhdlSimulatorTop implements CircuitListener {
     }
 
     if (i != 10) {
-      getProject().getFrame().setVhdlSimulatorConsoleStatus(true);
+      getProject().getFrame().setVhdlSimulatorConsoleStatusVisible();
     }
 
     setState(State.ENABLED);
@@ -210,26 +195,25 @@ public class VhdlSimulatorTop implements CircuitListener {
           Paths.get(VhdlSimConstants.SIM_COMP_PATH + "modelsim.ini"),
           StandardCopyOption.REPLACE_EXISTING);
     } catch (IOException e) {
-      VhdlSimConstants.logger.error("Cannot copy simulation files: {}", e.getMessage());
+      VhdlSimulatorTop.logger.error("Cannot copy simulation files: {}", e.getMessage());
       e.printStackTrace();
     }
 
-    List<Component> VhdlComponents =
-        VhdlSimConstants.getVhdlComponents(project.getCircuitState(), true);
-    for (int index = 0; index < VhdlComponents.size(); index++) {
-      ComponentFactory fact = VhdlComponents.get(index).getFactory();
+    List<Component> vhdlComponents = VhdlSimConstants.getVhdlComponents(project.getCircuitState(), true);
+    for (int index = 0; index < vhdlComponents.size(); index++) {
+      ComponentFactory fact = vhdlComponents.get(index).getFactory();
       String label = VhdlSimConstants.VHDL_COMPONENT_SIM_NAME + index;
       if (fact instanceof VhdlEntity)
-        ((VhdlEntity) fact).SetSimName(VhdlComponents.get(index).getAttributeSet(), label);
+        ((VhdlEntity) fact).setSimName(vhdlComponents.get(index).getAttributeSet(), label);
       else
-        ((VhdlEntityComponent) fact).SetSimName(VhdlComponents.get(index).getAttributeSet(), label);
+        ((VhdlEntityComponent) fact).setSimName(vhdlComponents.get(index).getAttributeSet(), label);
     }
 
-    vhdlTop.generate(VhdlComponents);
-    tclRun.generate(VhdlComponents);
+    vhdlTop.generate(vhdlComponents);
+    tclRun.generate(vhdlComponents);
 
     /* Generate each component's file */
-    for (Component comp : VhdlComponents) {
+    for (Component comp : vhdlComponents) {
       ComponentFactory fact = comp.getFactory();
       if (fact instanceof VhdlEntity) ((VhdlEntity) fact).saveFile(comp.getAttributeSet());
       else ((VhdlEntityComponent) fact).saveFile(comp.getAttributeSet());

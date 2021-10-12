@@ -1,37 +1,17 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import java.awt.Graphics;
@@ -52,18 +32,19 @@ public class Ttl74175 extends AbstractTtlGate {
         new byte[] {2, 3, 6, 7, 10, 11, 14, 15},
         new String[] {
           "nCLR", "Q1", "nQ1", "D1", "D2", "nQ2", "Q2", "CLK", "Q3", "nQ3", "D3", "D4", "nQ4", "Q4"
-        });
+        },
+        new Ttl74175HdlGenerator());
   }
 
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     final var g = painter.getGraphics();
     super.paintBase(painter, false, false);
-    DrawFlops(g, x, y, height);
+    drawFlops(g, x, y, height);
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     var data = (TtlRegisterData) state.getData();
     if (data == null) {
       // changed = true;
@@ -91,7 +72,7 @@ public class Ttl74175 extends AbstractTtlGate {
     state.setPort(12, data.getValue().get(3).not(), 8);
   }
 
-  private void DrawFlops(Graphics g, int x, int y, int height) {
+  private void drawFlops(Graphics g, int x, int y, int height) {
     // Reset line
     g.drawLine(x + 10, y + height - 10, x + 10, y + height - AbstractTtlGate.PIN_HEIGHT);
     g.drawLine(x + 10, y + height - 10, x + 140, y + height - 10);
@@ -199,18 +180,12 @@ public class Ttl74175 extends AbstractTtlGate {
   }
 
   @Override
-  public boolean CheckForGatedClocks(NetlistComponent comp) {
+  public boolean checkForGatedClocks(netlistComponent comp) {
     return true;
   }
 
   @Override
-  public int[] ClockPinIndex(NetlistComponent comp) {
+  public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {7};
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new Ttl74175HDLGenerator();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

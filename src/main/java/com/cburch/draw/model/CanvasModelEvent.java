@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.draw.model;
@@ -35,7 +16,6 @@ import java.util.EventObject;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 public class CanvasModelEvent extends EventObject {
   public static final int ACTION_ADDED = 0;
@@ -62,8 +42,7 @@ public class CanvasModelEvent extends EventObject {
 
   // the boolean parameter is just because the compiler insists upon it to
   // avoid an erasure conflict with the first constructor
-  private CanvasModelEvent(
-      boolean dummy, CanvasModel source, int action, Collection<ReorderRequest> requests) {
+  private CanvasModelEvent(boolean dummy, CanvasModel source, int action, Collection<ReorderRequest> requests) {
     this(source, action, Collections.emptySet());
 
     final var affected = new ArrayList<CanvasObject>(requests.size());
@@ -125,10 +104,8 @@ public class CanvasModelEvent extends EventObject {
     }
     this.affected = affected;
 
-    Map<AttributeMapKey, Object> oldValuesCopy;
-    oldValuesCopy = new HashMap<>(oldValues);
-    Map<AttributeMapKey, Object> newValuesCopy;
-    newValuesCopy = new HashMap<>(newValues);
+    final var oldValuesCopy = new HashMap<AttributeMapKey, Object>(oldValues);
+    final var newValuesCopy = new HashMap<AttributeMapKey, Object>(newValues);
 
     this.oldValues = Collections.unmodifiableMap(oldValuesCopy);
     this.newValues = Collections.unmodifiableMap(newValuesCopy);
@@ -138,15 +115,11 @@ public class CanvasModelEvent extends EventObject {
     return new CanvasModelEvent(source, ACTION_ADDED, affected);
   }
 
-  public static CanvasModelEvent forChangeAttributes(
-      CanvasModel source,
-      Map<AttributeMapKey, Object> oldValues,
-      Map<AttributeMapKey, Object> newValues) {
+  public static CanvasModelEvent forChangeAttributes(CanvasModel source, Map<AttributeMapKey, Object> oldValues, Map<AttributeMapKey, Object> newValues) {
     return new CanvasModelEvent(source, ACTION_ATTRIBUTES_CHANGED, oldValues, newValues);
   }
 
-  public static CanvasModelEvent forChangeText(
-      CanvasModel source, CanvasObject obj, String oldText, String newText) {
+  public static CanvasModelEvent forChangeText(CanvasModel source, CanvasObject obj, String oldText, String newText) {
     return new CanvasModelEvent(source, ACTION_TEXT_CHANGED, Collections.singleton(obj), oldText, newText);
   }
 
@@ -162,18 +135,15 @@ public class CanvasModelEvent extends EventObject {
     return new CanvasModelEvent(source, ACTION_HANDLE_MOVED, gesture);
   }
 
-  public static CanvasModelEvent forRemove(
-      CanvasModel source, Collection<? extends CanvasObject> affected) {
+  public static CanvasModelEvent forRemove(CanvasModel source, Collection<? extends CanvasObject> affected) {
     return new CanvasModelEvent(source, ACTION_REMOVED, affected);
   }
 
-  public static CanvasModelEvent forReorder(
-      CanvasModel source, Collection<ReorderRequest> requests) {
+  public static CanvasModelEvent forReorder(CanvasModel source, Collection<ReorderRequest> requests) {
     return new CanvasModelEvent(true, source, ACTION_REORDERED, requests);
   }
 
-  public static CanvasModelEvent forTranslate(
-      CanvasModel source, Collection<? extends CanvasObject> affected, int dx, int dy) {
+  public static CanvasModelEvent forTranslate(CanvasModel source, Collection<? extends CanvasObject> affected, int dx, int dy) {
     return new CanvasModelEvent(source, ACTION_TRANSLATED, affected, 0, 0);
   }
 
@@ -182,12 +152,12 @@ public class CanvasModelEvent extends EventObject {
   }
 
   public Collection<? extends CanvasObject> getAffected() {
-    Collection<? extends CanvasObject> ret = affected;
+    var ret = affected;
     if (ret == null) {
-      Map<AttributeMapKey, Object> newVals = newValues;
+      final var newVals = newValues;
       if (newVals != null) {
-        Set<CanvasObject> keys = new HashSet<>();
-        for (AttributeMapKey key : newVals.keySet()) {
+        final var keys = new HashSet<CanvasObject>();
+        for (final var key : newVals.keySet()) {
           keys.add(key.getObject());
         }
         ret = Collections.unmodifiableCollection(keys);

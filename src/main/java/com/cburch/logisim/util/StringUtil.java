@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.util;
@@ -32,31 +13,35 @@ import com.cburch.logisim.data.Bounds;
 import java.awt.Font;
 import java.awt.FontMetrics;
 
-public class StringUtil {
+public final class StringUtil {
+
+  private StringUtil() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
+
   public static StringGetter constantGetter(final String value) {
     return new StringGetter() {
+      @Override
       public String toString() {
         return value;
       }
     };
   }
 
-  public static String format(String fmt, String... args) {
-    return String.format(fmt, (Object[]) args);
-  }
-
   public static StringGetter formatter(final StringGetter base, final String arg) {
     return new StringGetter() {
+      @Override
       public String toString() {
-        return format(base.toString(), arg);
+        return String.format(base.toString(), arg);
       }
     };
   }
 
   public static StringGetter formatter(final StringGetter base, final StringGetter arg) {
     return new StringGetter() {
+      @Override
       public String toString() {
-        return format(base.toString(), arg.toString());
+        return String.format(base.toString(), arg.toString());
       }
     };
   }
@@ -66,8 +51,7 @@ public class StringUtil {
 
     if (width < maxWidth) return value;
     if (value.length() < 4) return value;
-    return resizeString(
-        new StringBuilder(value.substring(0, value.length() - 3) + ".."), metrics, maxWidth);
+    return resizeString(new StringBuilder(value.substring(0, value.length() - 3) + ".."), metrics, maxWidth);
   }
 
   private static String resizeString(StringBuilder value, FontMetrics metrics, int maxWidth) {
@@ -82,8 +66,7 @@ public class StringUtil {
     if (bits < 64) value &= (1L << bits) - 1;
     final var len = (bits + 3) / 4;
     final var ret = String.format("%0" + len + "x", value);
-    if (ret.length() > len) return ret.substring(ret.length() - len);
-    return ret;
+    return (ret.length() > len) ? ret.substring(ret.length() - len) : ret;
   }
 
   public static Bounds estimateBounds(String text, Font font) {
@@ -93,10 +76,10 @@ public class StringUtil {
   public static Bounds estimateBounds(String text, Font font, int hAlign, int vAlign) {
     // TODO - you can imagine being more clever here
     if (text == null || text.length() == 0) text = "X"; // return Bounds.EMPTY_BOUNDS;
-    int n = 0;
-    int c = 0;
-    int lines = 0;
-    for (int i = 0; i < text.length(); i++) {
+    var n = 0;
+    var c = 0;
+    var lines = 0;
+    for (var i = 0; i < text.length(); i++) {
       if (text.charAt(i) == '\n') {
         n = (Math.max(c, n));
         c = 0;
@@ -132,5 +115,4 @@ public class StringUtil {
     }
     return Bounds.create(x, y, w, h);
   }
-
 }

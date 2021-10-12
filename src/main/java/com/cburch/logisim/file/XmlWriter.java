@@ -1,37 +1,17 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.file;
 
 import com.cburch.draw.model.AbstractCanvasObject;
-import com.cburch.logisim.LogisimVersion;
-import com.cburch.logisim.Main;
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentFactory;
@@ -39,21 +19,28 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.data.MapComponent;
+import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.base.Text;
+import com.cburch.logisim.std.wiring.ProbeAttributes;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
-import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.util.LineBuffer;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
+import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -69,7 +56,36 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 
-class XmlWriter {
+final class XmlWriter {
+
+  private final LogisimFile file;
+  private final Document doc;
+  /**
+   * Path of the file which is being written on disk -- used to relativize components stored in it.
+   */
+  private final String outFilePath;
+  private final String librariesPath;
+  private final boolean isProjectExport;
+  private final LibraryLoader loader;
+  private final HashMap<Library, String> libs = new HashMap<>();
+
+  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader) {
+    this(file, doc, loader, null, null);
+  }
+
+  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilePath) {
+    this(file, doc, loader, outFilePath, null);
+  }
+
+  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilePath, String librariesPath) {
+    this.file = file;
+    this.doc = doc;
+    this.loader = loader;
+    this.outFilePath = outFilePath;
+    this.librariesPath = librariesPath;
+    isProjectExport = (librariesPath != null && !librariesPath.isEmpty());
+  }
+
 
   /* We sort some parts of the xml tree, to help with reproducibility and to
    * ease testing (e.g. diff a circuit file). Attribute name=value pairs seem
@@ -87,23 +103,23 @@ class XmlWriter {
   }
 
   static String attrsToString(NamedNodeMap a) {
-    int n = a.getLength();
+    final var n = a.getLength();
     if (n == 0) return "";
     else if (n == 1) return attrToString((Attr) a.item(0));
-    ArrayList<String> lst = new ArrayList<>();
-    for (int i = 0; i < n; i++) {
+    final var lst = new ArrayList<String>();
+    for (var i = 0; i < n; i++) {
       lst.add(attrToString((Attr) a.item(i)));
     }
     Collections.sort(lst);
     return String.join(" ", lst);
   }
 
-  private static final int stringCompare(String stringA, String stringB) {
+  private static int stringCompare(String stringA, String stringB) {
     if (stringA == null) return -1;
     if (stringB == null) return 1;
     return stringA.compareTo(stringB);
   }
-  
+
   private static final Comparator<Node> nodeComparator =
       (nodeA, nodeB) -> {
         var compareResult = stringCompare(nodeA.getNodeName(), nodeB.getNodeName());
@@ -131,15 +147,15 @@ class XmlWriter {
     //   - a(s)
     //   - comp(s)
     //   - wire(s)
-    if (name.equals("appear")) { 
+    if ("appear".equals(name)) {
       // the appearance section only has to sort the circuit ports, the rest is static.
-      final var circuitPortIndexes = new ArrayList<Integer>(); 
-      for (var nodeIndex = 0; nodeIndex < childrenCount; nodeIndex++) 
-        if (children.item(nodeIndex).getNodeName().equals("circ-port")) circuitPortIndexes.add(nodeIndex);
+      final var circuitPortIndexes = new ArrayList<Integer>();
+      for (var nodeIndex = 0; nodeIndex < childrenCount; nodeIndex++)
+        if ("circ-port".equals(children.item(nodeIndex).getNodeName())) circuitPortIndexes.add(nodeIndex);
       if (circuitPortIndexes.isEmpty()) return;
       final var numberOfPorts = circuitPortIndexes.size();
       final var nodeSet = new Node[numberOfPorts];
-      for (var portIndex = 0; portIndex < numberOfPorts; portIndex++) 
+      for (var portIndex = 0; portIndex < numberOfPorts; portIndex++)
         nodeSet[portIndex] = children.item(circuitPortIndexes.get(portIndex));
       Arrays.sort(nodeSet, nodeComparator);
       for (var portIndex = 0; portIndex < numberOfPorts; portIndex++) top.insertBefore(nodeSet[portIndex], null);
@@ -156,7 +172,7 @@ class XmlWriter {
     }
   }
 
-  static void write(LogisimFile file, OutputStream out, LibraryLoader loader, File destFile)
+  static void write(LogisimFile file, OutputStream out, LibraryLoader loader, File destFile, String libraryHome)
       throws ParserConfigurationException, TransformerException {
 
     final var docFactory = DocumentBuilderFactory.newInstance();
@@ -168,6 +184,8 @@ class XmlWriter {
       var dstFilePath = destFile.getAbsolutePath();
       dstFilePath = dstFilePath.substring(0, dstFilePath.lastIndexOf(File.separator));
       context = new XmlWriter(file, doc, loader, dstFilePath);
+    } else if (libraryHome != null) {
+      context = new XmlWriter(file, doc, loader, null, libraryHome);
     } else context = new XmlWriter(file, doc, loader);
 
     context.fromLogisimFile();
@@ -192,49 +210,32 @@ class XmlWriter {
     tf.transform(src, dest);
   }
 
-  private final LogisimFile file;
-  private final Document doc;
-  /**
-   * Path of the file which is being written on disk -- used to relativize components stored in it.
-   */
-  private final String outFilepath;
-
-  private final LibraryLoader loader;
-  private final HashMap<Library, String> libs = new HashMap<>();
-
-  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader) {
-    this(file, doc, loader, null);
-  }
-
-  private XmlWriter(LogisimFile file, Document doc, LibraryLoader loader, String outFilepath) {
-    this.file = file;
-    this.doc = doc;
-    this.loader = loader;
-    this.outFilepath = outFilepath;
-  }
-
-  void addAttributeSetContent(Element elt, AttributeSet attrs, AttributeDefaultProvider source) {
+  void addAttributeSetContent(Element elt, AttributeSet attrs, AttributeDefaultProvider source, boolean userModifiedOnly) {
     if (attrs == null) return;
-    LogisimVersion ver = Main.VERSION;
-    if (source != null && source.isAllDefaultValues(attrs, ver)) return;
-    for (Attribute<?> attrBase : attrs.getAttributes()) {
+    if (source != null && source.isAllDefaultValues(attrs, BuildInfo.version)) return;
+    for (final var attrBase : attrs.getAttributes()) {
       @SuppressWarnings("unchecked")
-      Attribute<Object> attr = (Attribute<Object>) attrBase;
-      Object val = attrs.getValue(attr);
+      final var attr = (Attribute<Object>) attrBase;
+      final var val = attrs.getValue(attr);
+      if (userModifiedOnly && (attrs.isReadOnly(attr) || attr.isHidden())) 
+        continue;
       if (attrs.isToSave(attr) && val != null) {
-        Object dflt = source == null ? null : source.getDefaultAttributeValue(attr, ver);
-        if (dflt == null || !dflt.equals(val) || attr.equals(StdAttr.APPEARANCE)) {
+        final var dflt = source == null ? null : source.getDefaultAttributeValue(attr, BuildInfo.version);
+        final var defaultValue = dflt == null ? "" : attr.toStandardString(dflt);
+        var newValue = attr.toStandardString(val);
+        if (dflt == null || (!dflt.equals(val) && !defaultValue.equals(newValue)) 
+            || (attr.equals(StdAttr.APPEARANCE) && !userModifiedOnly)
+            || (attr.equals(ProbeAttributes.PROBEAPPEARANCE) && !userModifiedOnly && val.equals(ProbeAttributes.APPEAR_EVOLUTION_NEW))) {
           final var a = doc.createElement("a");
           a.setAttribute("name", attr.getName());
-          var value = attr.toStandardString(val);
-          if (attr.getName().equals("filePath") && outFilepath != null) {
-            final var outFP = Paths.get(outFilepath);
-            final var attrValP = Paths.get(value);
-            value = (outFP.relativize(attrValP)).toString();
-            a.setAttribute("val", value);
+          if ("filePath".equals(attr.getName()) && outFilePath != null) {
+            final var outFP = Paths.get(outFilePath);
+            final var attrValP = Paths.get(newValue);
+            newValue = (outFP.relativize(attrValP)).toString();
+            a.setAttribute("val", newValue);
           } else {
-            if (value.contains("\n")) {
-              a.appendChild(doc.createTextNode(value));
+            if (newValue.contains("\n")) {
+              a.appendChild(doc.createTextNode(newValue));
             } else {
               a.setAttribute("val", attr.toStandardString(val));
             }
@@ -268,12 +269,12 @@ class XmlWriter {
   Element fromCircuit(Circuit circuit) {
     final var ret = doc.createElement("circuit");
     ret.setAttribute("name", circuit.getName());
-    addAttributeSetContent(ret, circuit.getStaticAttributes(), null);
-    if (!circuit.getAppearance().isDefaultAppearance()) {
+    addAttributeSetContent(ret, circuit.getStaticAttributes(), CircuitAttributes.DEFAULT_STATIC_ATTRIBUTES, false);
+    if (circuit.getAppearance().hasCustomAppearance()) {
       final var appear = doc.createElement("appear");
-      for (Object o : circuit.getAppearance().getObjectsFromBottom()) {
-        if (o instanceof AbstractCanvasObject) {
-          final var elt = ((AbstractCanvasObject) o).toSvgElement(doc);
+      for (Object obj : circuit.getAppearance().getCustomObjectsFromBottom()) {
+        if (obj instanceof AbstractCanvasObject canvasObject) {
+          final var elt = canvasObject.toSvgElement(doc);
           if (elt != null) {
             appear.appendChild(elt);
           }
@@ -304,7 +305,7 @@ class XmlWriter {
   }
 
   Element fromMap(Circuit circ, String boardName) {
-    Element ret = doc.createElement("boardmap");
+    final var ret = doc.createElement("boardmap");
     ret.setAttribute("boardname", boardName);
     for (String key : circ.getMapInfo(boardName).keySet()) {
       final var map = doc.createElement("mc");
@@ -339,43 +340,80 @@ class XmlWriter {
   Element fromComponent(Component comp) {
     final var source = comp.getFactory();
     final var lib = findLibrary(source);
-    String lib_name;
+    String libName;
     if (lib == null) {
       loader.showError(source.getName() + " component not found");
       return null;
     } else if (lib == file) {
-      lib_name = null;
+      libName = null;
     } else {
-      lib_name = libs.get(lib);
-      if (lib_name == null) {
+      libName = libs.get(lib);
+      if (libName == null) {
         loader.showError("unknown library within file");
         return null;
       }
     }
-    if (source.getName().equals("Text")) {
+    if ("Text".equals(source.getName())) {
       /* check if the text element is empty, in this case we do not save */
       final var value = comp.getAttributeSet().getValue(Text.ATTR_TEXT);
       if (value.isEmpty()) return null;
     }
 
     final var ret = doc.createElement("comp");
-    if (lib_name != null) ret.setAttribute("lib", lib_name);
+    if (libName != null) ret.setAttribute("lib", libName);
     ret.setAttribute("name", source.getName());
     ret.setAttribute("loc", comp.getLocation().toString());
-    addAttributeSetContent(ret, comp.getAttributeSet(), comp.getFactory());
+    addAttributeSetContent(ret, comp.getAttributeSet(), comp.getFactory(), false);
     return ret;
   }
 
   Element fromLibrary(Library lib) {
     final var ret = doc.createElement("lib");
     if (libs.containsKey(lib)) return null;
-    final var name = "" + libs.size();
-    final var desc = loader.getDescriptor(lib);
+    final var name = Integer.toString(libs.size());
+    var desc = loader.getDescriptor(lib);
     if (desc == null) {
       loader.showError("library location unknown: " + lib.getName());
       return null;
     }
     libs.put(lib, name);
+    if (isProjectExport || AppPreferences.REMOVE_UNUSED_LIBRARIES.getBoolean()) {
+      // first we check if the library is used and if this is not the case we do not add it
+      var isUsed = false;
+      final var tools = lib.getTools();
+      for (final var circuit : file.getCircuits()) {
+        for (final var tool : circuit.getNonWires()) {
+          isUsed |= lib.contains(tool.getFactory());
+        }
+      }
+      for (final var tool : file.getOptions().getToolbarData().getContents()) {
+        isUsed |= tools.contains(tool);
+      }
+      for (final var entry : file.getOptions().getMouseMappings().getMappings().entrySet()) {
+        isUsed |= tools.contains(entry.getValue());
+      }
+      if (!isUsed && !"#Base".equals(desc)) {
+        return null;
+      }
+    }
+    if (isProjectExport) {
+      if (lib instanceof LoadedLibrary) {
+        final var origFile = LibraryManager.getLibraryFilePath(file.getLoader(), desc);
+        if (origFile != null) {
+          final var names = origFile.split(File.separator);
+          final var filename = names[names.length - 1];
+          final var newFile = String.format("%s%s%s", librariesPath, File.separator, filename);
+          try {
+            Files.copy(Paths.get(origFile), Paths.get(newFile), StandardCopyOption.REPLACE_EXISTING);
+          } catch (IOException e) {
+            //TODO: error message to user
+            return null;
+          }
+          final var newFilePath = LineBuffer.format("..{{1}}{{2}}{{1}}{{3}}", File.separator, Loader.LOGISIM_LIBRARY_DIR, filename);
+          desc = LibraryManager.getReplacementDescriptor(file.getLoader(), desc, newFilePath);
+        }
+      }
+    }
     ret.setAttribute("name", name);
     ret.setAttribute("desc", desc);
     for (Tool t : lib.getTools()) {
@@ -383,7 +421,7 @@ class XmlWriter {
       if (attrs != null) {
         final var toAdd = doc.createElement("tool");
         toAdd.setAttribute("name", t.getName());
-        addAttributeSetContent(toAdd, attrs, t);
+        addAttributeSetContent(toAdd, attrs, t, true);
         if (toAdd.getChildNodes().getLength() > 0) {
           ret.appendChild(toAdd);
         }
@@ -399,12 +437,12 @@ class XmlWriter {
         doc.createTextNode(
             "\nThis file is intended to be "
                 + "loaded by "
-                + Main.APP_NAME
+                + BuildInfo.displayName
                 + "("
-                + Main.APP_URL
+                + BuildInfo.url
                 + ").\n"));
     ret.setAttribute("version", "1.0");
-    ret.setAttribute("source", Main.VERSION.toString());
+    ret.setAttribute("source", BuildInfo.version.toString());
 
     for (final var lib : file.getLibraries()) {
       final var elt = fromLibrary(lib);
@@ -446,30 +484,30 @@ class XmlWriter {
 
   Element fromOptions() {
     final var elt = doc.createElement("options");
-    addAttributeSetContent(elt, file.getOptions().getAttributeSet(), null);
+    addAttributeSetContent(elt, file.getOptions().getAttributeSet(), null, false);
     return elt;
   }
 
   Element fromTool(Tool tool) {
     final var lib = findLibrary(tool);
-    String lib_name;
+    String libName;
     if (lib == null) {
-      loader.showError(StringUtil.format("tool `%s' not found", tool.getDisplayName()));
+      loader.showError(String.format("tool `%s' not found", tool.getDisplayName()));
       return null;
     } else if (lib == file) {
-      lib_name = null;
+      libName = null;
     } else {
-      lib_name = libs.get(lib);
-      if (lib_name == null) {
+      libName = libs.get(lib);
+      if (libName == null) {
         loader.showError("unknown library within file");
         return null;
       }
     }
 
     final var elt = doc.createElement("tool");
-    if (lib_name != null) elt.setAttribute("lib", lib_name);
+    if (libName != null) elt.setAttribute("lib", libName);
     elt.setAttribute("name", tool.getName());
-    addAttributeSetContent(elt, tool.getAttributeSet(), tool);
+    addAttributeSetContent(elt, tool.getAttributeSet(), tool, true);
     return elt;
   }
 

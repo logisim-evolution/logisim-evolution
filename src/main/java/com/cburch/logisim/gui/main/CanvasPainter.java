@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.main;
@@ -44,7 +25,6 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
-import java.awt.Dimension;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -107,10 +87,10 @@ class CanvasPainter implements PropertyChangeListener {
         }
         GraphicsUtil.switchToWidth(g, 2);
         if (common != null && !w.equals(common)) {
-          g.setColor(Value.WIDTH_ERROR_HIGHLIGHT_COLOR);
+          g.setColor(Value.widthErrorHighlightColor);
           g.drawOval(p.getX() - 5, p.getY() - 5, 10, 10);
         }
-        g.setColor(Value.WIDTH_ERROR_COLOR);
+        g.setColor(Value.widthErrorColor);
         g.drawOval(p.getX() - 4, p.getY() - 4, 8, 8);
         GraphicsUtil.switchToWidth(g, 3);
         GraphicsUtil.outlineText(
@@ -118,10 +98,10 @@ class CanvasPainter implements PropertyChangeListener {
             caption,
             p.getX() + 4,
             p.getY() + 1 + fm.getAscent(),
-            Value.WIDTH_ERROR_CAPTION_COLOR,
+            Value.widthErrorCaptionColor,
             common != null && !w.equals(common)
-                ? Value.WIDTH_ERROR_HIGHLIGHT_COLOR
-                : Value.WIDTH_ERROR_CAPTION_BGCOLOR);
+                ? Value.widthErrorHighlightColor
+                : Value.widthErrorCaptionBgcolor);
       }
     }
     g.setColor(Color.BLACK);
@@ -222,8 +202,8 @@ class CanvasPainter implements PropertyChangeListener {
     g.setColor(Color.black);
 
     var gfxScaled = g.create();
-    if (zoomFactor != 1.0 && gfxScaled instanceof Graphics2D) {
-      ((Graphics2D) gfxScaled).scale(zoomFactor, zoomFactor);
+    if (zoomFactor != 1.0 && gfxScaled instanceof Graphics2D g2d) {
+      g2d.scale(zoomFactor, zoomFactor);
     }
     drawWithUserState(g, gfxScaled, proj);
     drawWidthIncompatibilityData(g, gfxScaled, proj);
@@ -241,6 +221,7 @@ class CanvasPainter implements PropertyChangeListener {
     gfxScaled.dispose();
   }
 
+  @java.lang.Override
   public void propertyChange(PropertyChangeEvent event) {
     if (AppPreferences.GRID_BG_COLOR.isSource(event)
         || AppPreferences.GRID_DOT_COLOR.isSource(event)

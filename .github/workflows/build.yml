@@ -11,11 +11,13 @@ on:
   pull_request:
     branches: [ master, develop ]
 
+env:
+  JDK_VERSION: 16
+  JDK_DISTRO: 'temurin'
 jobs:
   analyze_sources:
     name: "Do we need to build the application?"
     runs-on: ubuntu-latest
-
     outputs:
       # Export 'filter' step check result so next step can use it.
       run_build: ${{ steps.filter.outputs.src }}
@@ -54,24 +56,18 @@ jobs:
   build:
     name: "Gradle builder"
     runs-on: ubuntu-latest
-
     # Will run only if analyze_sources determined it is needed.
     needs: analyze_sources
     if: needs.analyze_sources.outputs.run_build == 'true'
 
-    strategy:
-      matrix:
-        jdk: [ 14 ]
-
     steps:
     - name: "Checkout sources"
       uses: actions/checkout@v2
-
-    - name: "Set up JDK"
+    - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
       uses: actions/setup-java@v2
       with:
-        java-version: ${{ matrix.jdk }}
-        distribution: 'adopt'
+        java-version: ${{ env.JDK_VERSION }}
+        distribution: ${{ env.JDK_DISTRO }}
 
     - name: "Build with Gradle"
       run: |

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.arith;
@@ -31,8 +12,6 @@ package com.cburch.logisim.std.arith;
 import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.AttributeOption;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
@@ -59,10 +38,6 @@ public class Multiplier extends InstanceFactory {
    * Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Multiplier";
-
-  public static final AttributeOption SIGNED_OPTION = Comparator.SIGNED_OPTION;
-  public static final AttributeOption UNSIGNED_OPTION = Comparator.UNSIGNED_OPTION;
-  public static final Attribute<AttributeOption> MODE_ATTR = Comparator.MODE_ATTRIBUTE;
 
   static BigInteger extend(int w, long v, boolean unsigned) {
     long mask = w == 64 ? 0 : (-1L) << w;
@@ -152,20 +127,16 @@ public class Multiplier extends InstanceFactory {
 
   static final int PER_DELAY = 1;
   public static final int IN0 = 0;
-
   public static final int IN1 = 1;
-
   public static final int OUT = 2;
-
   public static final int C_IN = 3;
-
   public static final int C_OUT = 4;
 
   public Multiplier() {
-    super(_ID, S.getter("multiplierComponent"));
+    super(_ID, S.getter("multiplierComponent"), new MultiplierHdlGeneratorFactory());
     setAttributes(
-        new Attribute[] {StdAttr.WIDTH, MODE_ATTR},
-        new Object[] {BitWidth.create(8), UNSIGNED_OPTION});
+        new Attribute[] {StdAttr.WIDTH, Comparator.MODE_ATTR},
+        new Object[] {BitWidth.create(8), Comparator.UNSIGNED_OPTION});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
     setIcon(new ArithmeticIcon("\u00d7"));
@@ -185,19 +156,13 @@ public class Multiplier extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new MultiplierHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
-  }
-
-  @Override
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
   }
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == MODE_ATTR) instance.fireInvalidated();
+    if (attr == Comparator.MODE_ATTR) instance.fireInvalidated();
   }
 
   @Override
@@ -226,7 +191,7 @@ public class Multiplier extends InstanceFactory {
   public void propagate(InstanceState state) {
     // get attributes
     BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
-    boolean unsigned = state.getAttributeValue(MODE_ATTR).equals(UNSIGNED_OPTION);
+    boolean unsigned = state.getAttributeValue(Comparator.MODE_ATTR).equals(Comparator.UNSIGNED_OPTION);
 
     // compute outputs
     Value a = state.getPortValue(IN0);

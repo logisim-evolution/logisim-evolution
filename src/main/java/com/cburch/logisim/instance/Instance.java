@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.instance;
@@ -42,11 +23,9 @@ import java.util.List;
 public final class Instance implements Location.At {
 
   public static Instance getInstanceFor(Component comp) {
-    if (comp instanceof InstanceComponent) {
-      return ((InstanceComponent) comp).getInstance();
-    } else {
-      return null;
-    }
+    return (comp instanceof InstanceComponent instComp)
+           ? instComp.getInstance()
+           : null;
   }
 
   public static InstanceComponent getComponentFor(Instance instance) {
@@ -95,6 +74,7 @@ public final class Instance implements Location.At {
     return (InstanceFactory) comp.getFactory();
   }
 
+  @Override
   public Location getLocation() {
     return comp.getLocation();
   }
@@ -123,9 +103,8 @@ public final class Instance implements Location.At {
     comp.setPorts(ports);
   }
 
-  public void setTextField(
-      Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
-    comp.setTextField(labelAttr, fontAttr, x, y, halign, valign);
+  public void setTextField(Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int hAlign, int vAlign) {
+    comp.setTextField(labelAttr, fontAttr, x, y, hAlign, vAlign);
   }
 
   public static final int AVOID_TOP = 1;
@@ -142,7 +121,7 @@ public final class Instance implements Location.At {
 
   public void computeLabelTextField(int avoid, Object labelLoc) {
     if (avoid != 0) {
-      Direction facing = getAttributeValue(StdAttr.FACING);
+      final var facing = getAttributeValue(StdAttr.FACING);
       if (facing == Direction.NORTH)
         avoid = (avoid & 0x10) | ((avoid << 1) & 0xf) | ((avoid & 0xf) >> 3);
       else if (facing == Direction.EAST)
@@ -151,45 +130,45 @@ public final class Instance implements Location.At {
         avoid = (avoid & 0x10) | ((avoid << 3) & 0xf) | ((avoid & 0xf) >> 1);
     }
 
-    Bounds bds = getBounds();
-    int x = bds.getX() + bds.getWidth() / 2;
-    int y = bds.getY() + bds.getHeight() / 2;
-    int halign = GraphicsUtil.H_CENTER;
-    int valign = GraphicsUtil.V_CENTER;
+    final var bds = getBounds();
+    var x = bds.getX() + bds.getWidth() / 2;
+    var y = bds.getY() + bds.getHeight() / 2;
+    var hAlign = GraphicsUtil.H_CENTER;
+    var vAlign = GraphicsUtil.V_CENTER;
     if (labelLoc == StdAttr.LABEL_CENTER) {
-      int offset = 0;
+      var offset = 0;
       if ((avoid & AVOID_CENTER) != 0) offset = 3;
       x = bds.getX() + (bds.getWidth() - offset) / 2;
       y = bds.getY() + (bds.getHeight() - offset) / 2;
     } else if (labelLoc == Direction.NORTH) {
       y = bds.getY() - 2;
-      valign = GraphicsUtil.V_BOTTOM;
+      vAlign = GraphicsUtil.V_BOTTOM;
       if ((avoid & AVOID_TOP) != 0) {
         x += 2;
-        halign = GraphicsUtil.H_LEFT;
+        hAlign = GraphicsUtil.H_LEFT;
       }
     } else if (labelLoc == Direction.SOUTH) {
       y = bds.getY() + bds.getHeight() + 2;
-      valign = GraphicsUtil.V_TOP;
+      vAlign = GraphicsUtil.V_TOP;
       if ((avoid & AVOID_BOTTOM) != 0) {
         x += 2;
-        halign = GraphicsUtil.H_LEFT;
+        hAlign = GraphicsUtil.H_LEFT;
       }
     } else if (labelLoc == Direction.EAST) {
       x = bds.getX() + bds.getWidth() + 2;
-      halign = GraphicsUtil.H_LEFT;
+      hAlign = GraphicsUtil.H_LEFT;
       if ((avoid & AVOID_RIGHT) != 0) {
         y -= 2;
-        valign = GraphicsUtil.V_BOTTOM;
+        vAlign = GraphicsUtil.V_BOTTOM;
       }
     } else if (labelLoc == Direction.WEST) {
       x = bds.getX() - 2;
-      halign = GraphicsUtil.H_RIGHT;
+      hAlign = GraphicsUtil.H_RIGHT;
       if ((avoid & AVOID_LEFT) != 0) {
         y -= 2;
-        valign = GraphicsUtil.V_BOTTOM;
+        vAlign = GraphicsUtil.V_BOTTOM;
       }
     }
-    setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, halign, valign);
+    setTextField(StdAttr.LABEL, StdAttr.LABEL_FONT, x, y, hAlign, vAlign);
   }
 }

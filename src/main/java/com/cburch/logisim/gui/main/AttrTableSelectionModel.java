@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.main;
@@ -159,16 +140,15 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
     } else {
       SetAttributeAction act =
           new SetAttributeAction(circuit, S.getter("selectionAttributeAction"));
-      AutoLabel labler = null;
+      AutoLabel labeler = null;
       if (attr.equals(StdAttr.LABEL)) {
-        labler = new AutoLabel((String) value, circuit);
+        labeler = new AutoLabel((String) value, circuit);
       }
       SortedSet<Component> comps = new TreeSet<>(new PositionComparator());
       comps.addAll(selection.getComponents());
       for (Component comp : comps) {
         if (!(comp instanceof Wire)) {
-          if (comp.getFactory() instanceof SubcircuitFactory) {
-            SubcircuitFactory fac = (SubcircuitFactory) comp.getFactory();
+          if (comp.getFactory() instanceof SubcircuitFactory fac) {
             if (attr.equals(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE)
                 || attr.equals(CircuitAttributes.NAME_ATTR)) {
               try {
@@ -183,12 +163,12 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
             }
           }
           if (attr.equals(StdAttr.LABEL)) {
-            if (labler.hasNext(circuit)) {
+            if (labeler.hasNext(circuit)) {
               if (comps.size() > 1) {
-                act.set(comp, attr, labler.getNext(circuit, comp.getFactory()));
+                act.set(comp, attr, labeler.getNext(circuit, comp.getFactory()));
               } else {
                 if (getAttributeSet().getValue(StdAttr.LABEL).equals(value)) return;
-                else act.set(comp, attr, labler.getCurrent(circuit, comp.getFactory()));
+                else act.set(comp, attr, labeler.getCurrent(circuit, comp.getFactory()));
               }
             } else act.set(comp, attr, "");
           } else act.set(comp, attr, value);

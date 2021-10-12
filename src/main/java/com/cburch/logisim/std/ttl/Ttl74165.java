@@ -1,37 +1,17 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
@@ -70,7 +50,8 @@ public class Ttl74165 extends AbstractTtlGate {
           "P2",
           "P3",
           "Clock Inhibit"
-        });
+        },
+        new Ttl74165HdlGenerator());
     super.setInstancePoker(Poker.class);
   }
 
@@ -78,7 +59,7 @@ public class Ttl74165 extends AbstractTtlGate {
     boolean isPressed = true;
 
     private boolean isInside(InstanceState state, MouseEvent e) {
-      final var p = TTLGetTranslatedXY(state, e);
+      final var p = getTranslatedTtlXY(state, e);
       var inside = false;
       for (var i = 0; i < 8; i++) {
         final var dx = p.x - (40 + i * 10);
@@ -90,7 +71,7 @@ public class Ttl74165 extends AbstractTtlGate {
     }
 
     private int getIndex(InstanceState state, MouseEvent e) {
-      final var p = TTLGetTranslatedXY(state, e);
+      final var p = getTranslatedTtlXY(state, e);
       for (var i = 0; i < 8; i++) {
         final var dx = p.x - (40 + i * 10);
         final var dy = p.y - 30;
@@ -161,7 +142,7 @@ public class Ttl74165 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     final var data = getData(state);
     final var triggered = data.updateClock(state.getPortValue(1), StdAttr.TRIG_RISING);
     if (triggered && state.getPortValue(13) != Value.TRUE) {
@@ -184,18 +165,12 @@ public class Ttl74165 extends AbstractTtlGate {
   }
 
   @Override
-  public boolean CheckForGatedClocks(NetlistComponent comp) {
+  public boolean checkForGatedClocks(netlistComponent comp) {
     return true;
   }
 
   @Override
-  public int[] ClockPinIndex(NetlistComponent comp) {
+  public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {1};
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new Ttl74165HDLGenerator();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

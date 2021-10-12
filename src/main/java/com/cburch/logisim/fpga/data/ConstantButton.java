@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.data;
@@ -35,7 +16,7 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import java.awt.Graphics2D;
 import javax.swing.JPanel;
 
-public class ConstantButton extends FPGAIOInformationContainer {
+public class ConstantButton extends FpgaIoInformationContainer {
 
   public static final int CONSTANT_ZERO = 0;
   public static final int CONSTANT_ONE = 1;
@@ -52,7 +33,7 @@ public class ConstantButton extends FPGAIOInformationContainer {
   public ConstantButton(int type) {
     super();
     myType = type;
-    MyRectangle =
+    myRectangle =
         new BoardRectangle(
             type * BoardManipulator.CONSTANT_BUTTON_WIDTH,
             BoardManipulator.IMAGE_HEIGHT,
@@ -74,21 +55,21 @@ public class ConstantButton extends FPGAIOInformationContainer {
   }
 
   private boolean getConstant(int pin, MapComponent map) {
-    long v = 0L;
+    var v = 0L;
     boolean correct;
     do {
       correct = true;
-      String Value = OptionPane.showInputDialog(S.get("FpgaMapSpecConst"));
-      if (Value == null) return false;
-      if (Value.startsWith("0x")) {
+      final var value = OptionPane.showInputDialog(S.get("FpgaMapSpecConst"));
+      if (value == null) return false;
+      if (value.startsWith("0x")) {
         try {
-          v = Long.parseLong(Value.substring(2), 16);
+          v = Long.parseLong(value.substring(2), 16);
         } catch (NumberFormatException e1) {
           correct = false;
         }
       } else {
         try {
-          v = Long.parseLong(Value);
+          v = Long.parseLong(value);
         } catch (NumberFormatException e) {
           correct = false;
         }
@@ -106,7 +87,7 @@ public class ConstantButton extends FPGAIOInformationContainer {
   @Override
   public boolean setSelectable(MapListModel.MapInfo comp) {
     selComp = comp;
-    MapComponent map = comp.getMap();
+    final var map = comp.getMap();
     int connect = comp.getPin();
     if (connect < 0) {
       if (map.hasInputs()) {
@@ -118,11 +99,11 @@ public class ConstantButton extends FPGAIOInformationContainer {
           default -> throw new IllegalStateException("Unexpected value: " + myType);
         };
       }
-      if (map.hasOutputs() || map.hasIOs()) selectable = myType == LEAVE_OPEN;
+      if (map.hasOutputs() || map.hasIos()) selectable = myType == LEAVE_OPEN;
     } else {
       if (map.isInput(connect))
         selectable = myType == CONSTANT_ZERO || myType == CONSTANT_ONE;
-      if (map.isOutput(connect) || map.isIO(connect))
+      if (map.isOutput(connect) || map.isIo(connect))
         selectable = myType == LEAVE_OPEN;
     }
     return selectable;

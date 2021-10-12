@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.soc.pio;
@@ -206,8 +187,7 @@ public class PioState implements SocBusSlaveInterface {
   }
 
   public boolean setStartAddress(Integer addr) {
-    if (startAddress == addr)
-      return false;
+    if (startAddress.equals(addr)) return false;
     startAddress = addr;
     firememMapChanged();
     return true;
@@ -221,22 +201,19 @@ public class PioState implements SocBusSlaveInterface {
   }
 
   public boolean setOutputResetValue(Integer val) {
-    if (outputResetValue == val)
-      return false;
+    if (outputResetValue.equals(val)) return false;
     outputResetValue = val;
     return true;
   }
 
   public boolean setOutputBitManupulations(Boolean b) {
-    if (outputEnableBitManipulations == b)
-      return false;
+    if (outputEnableBitManipulations.equals(b)) return false;
     outputEnableBitManipulations = b;
     return true;
   }
 
   public boolean setInputSynchronousCapture(Boolean b) {
-    if (inputSynchronousCapture == b)
-      return false;
+    if (inputSynchronousCapture.equals(b)) return false;
     inputSynchronousCapture = b;
     return true;
   }
@@ -249,15 +226,13 @@ public class PioState implements SocBusSlaveInterface {
   }
 
   public boolean setInputCaptureBitClearing(Boolean b) {
-    if (inputCaptBitClearing == b)
-      return false;
+    if (inputCaptBitClearing.equals(b)) return false;
     inputCaptBitClearing = b;
     return true;
   }
 
   public boolean setIrqGeneration(Boolean b) {
-    if (inputGeneratesIrq == b)
-      return false;
+    if (inputGeneratesIrq.equals(b)) return false;
     inputGeneratesIrq = b;
     return true;
   }

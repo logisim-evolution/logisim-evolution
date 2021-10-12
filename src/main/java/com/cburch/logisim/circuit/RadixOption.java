@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.circuit;
@@ -45,95 +26,29 @@ public abstract class RadixOption extends AttributeOption {
 
     @Override
     public int getMaxLength(BitWidth width) {
-      switch (width.getWidth()) {
-        case 0:
-          return 1;
-        case 1:
-        case 2:
-        case 3:
-        case 4:
-          return 2; // 1..8
-        case 5:
-        case 6:
-        case 7:
-          return 3; // 16..64
-        case 8:
-        case 9:
-        case 10:
-          return 4; // 128..512
-        case 11:
-        case 12:
-        case 13:
-        case 14:
-          return 5; // 1K..8K
-        case 15:
-        case 16:
-        case 17:
-          return 6; // 16K..64K
-        case 18:
-        case 19:
-        case 20:
-          return 7; // 128K..512K
-        case 21:
-        case 22:
-        case 23:
-        case 24:
-          return 8; // 1M..8M
-        case 25:
-        case 26:
-        case 27:
-          return 9; // 16M..64M
-        case 28:
-        case 29:
-        case 30:
-          return 10; // 128M..512M
-        case 31:
-        case 32:
-        case 33:
-        case 34:
-          return 11; // 1G..8G
-        case 35:
-        case 36:
-        case 37:
-          return 12; // 16G..64G
-        case 38:
-        case 39:
-        case 40:
-          return 13; // 128G..512G
-        case 41:
-        case 42:
-        case 43:
-        case 44:
-          return 14; // 1T..8T
-        case 45:
-        case 46:
-        case 47:
-          return 15; // 16T..64T
-        case 48:
-        case 49:
-        case 50:
-          return 16; // 128..512T
-        case 51:
-        case 52:
-        case 53:
-        case 54:
-          return 17; // 1P..8P
-        case 55:
-        case 56:
-        case 57:
-          return 18; // 16P..64P
-        case 58:
-        case 59:
-        case 60:
-          return 19; // 128P..512P
-        case 61:
-        case 62:
-        case 63:
-        case 64:
-          return 20; // 1E..4E
-        default:
-          throw new AssertionError("unexpected bit width: " + width);
-      }
+      return switch (width.getWidth()) {
+        case 0 -> 1;
+        case 1, 2, 3, 4 -> 2; // 1..8
+        case 5, 6, 7 -> 3; // 16..64
+        case 8, 9, 10 -> 4; // 128..512
+        case 11, 12, 13, 14 -> 5; // 1K..8K
+        case 15, 16, 17 -> 6; // 16K..64K
+        case 18, 19, 20 -> 7; // 128K..512K
+        case 21, 22, 23, 24 -> 8; // 1M..8M
+        case 25, 26, 27 -> 9; // 16M..64M
+        case 28, 29, 30 -> 10; // 128M..512M
+        case 31, 32, 33, 34 -> 11; // 1G..8G
+        case 35, 36, 37 -> 12; // 16G..64G
+        case 38, 39, 40 -> 13; // 128G..512G
+        case 41, 42, 43, 44 -> 14; // 1T..8T
+        case 45, 46, 47 -> 15; // 16T..64T
+        case 48, 49, 50 -> 16; // 128..512T
+        case 51, 52, 53, 54 -> 17; // 1P..8P
+        case 55, 56, 57 -> 18; // 16P..64P
+        case 58, 59, 60 -> 19; // 128P..512P
+        case 61, 62, 63, 64 -> 20; // 1E..4E
+        default -> throw new AssertionError("unexpected bit width: " + width);
+      };
     }
 
     @Override
@@ -142,7 +57,7 @@ public abstract class RadixOption extends AttributeOption {
     }
 
     @Override
-    public String GetIndexChar() {
+    public String getIndexChar() {
       return "s";
     }
   }
@@ -154,95 +69,29 @@ public abstract class RadixOption extends AttributeOption {
 
     @Override
     public int getMaxLength(BitWidth width) {
-      switch (width.getWidth()) {
-        case 0:
-        case 1:
-        case 2:
-        case 3:
-          return 1; // 0..7
-        case 4:
-        case 5:
-        case 6:
-          return 2; // 8..63
-        case 7:
-        case 8:
-        case 9:
-          return 3; // 64..511
-        case 10:
-        case 11:
-        case 12:
-        case 13:
-          return 4; // 512..8K-1
-        case 14:
-        case 15:
-        case 16:
-          return 5; // 8K..64K-1
-        case 17:
-        case 18:
-        case 19:
-          return 6; // 64K..512K-1
-        case 20:
-        case 21:
-        case 22:
-        case 23:
-          return 7; // 512K..8M-1
-        case 24:
-        case 25:
-        case 26:
-          return 8; // 8M..64M-1
-        case 27:
-        case 28:
-        case 29:
-          return 9; // 64M..512M-1
-        case 30:
-        case 31:
-        case 32:
-        case 33:
-          return 10; // 512M..8G-1
-        case 34:
-        case 35:
-        case 36:
-          return 11; // 8G..64G-1
-        case 37:
-        case 38:
-        case 39:
-          return 12; // 64G..512G-1
-        case 40:
-        case 41:
-        case 42:
-        case 43:
-          return 13; // 512G..8T-1
-        case 44:
-        case 45:
-        case 46:
-          return 14; // 8T..64T-1
-        case 47:
-        case 48:
-        case 49:
-          return 15; // 64T..512T-1
-        case 50:
-        case 51:
-        case 52:
-        case 53:
-          return 16; // 512T..8P-1
-        case 54:
-        case 55:
-        case 56:
-          return 17; // 8P..64P-1
-        case 57:
-        case 58:
-        case 59:
-          return 18; // 64P..512P-1
-        case 60:
-        case 61:
-        case 62:
-        case 63:
-          return 19; // 512P..8E-1
-        case 64:
-          return 20; // 8E..16E-1
-        default:
-          throw new AssertionError("unexpected bit width: " + width);
-      }
+      return switch (width.getWidth()) {
+        case 0, 1, 2, 3 -> 1; // 0..7
+        case 4, 5, 6 -> 2; // 8..63
+        case 7, 8, 9 -> 3; // 64..511
+        case 10, 11, 12, 13 -> 4; // 512..8K-1
+        case 14, 15, 16 -> 5; // 8K..64K-1
+        case 17, 18, 19 -> 6; // 64K..512K-1
+        case 20, 21, 22, 23 -> 7; // 512K..8M-1
+        case 24, 25, 26 -> 8; // 8M..64M-1
+        case 27, 28, 29 -> 9; // 64M..512M-1
+        case 30, 31, 32, 33 -> 10; // 512M..8G-1
+        case 34, 35, 36 -> 11; // 8G..64G-1
+        case 37, 38, 39 -> 12; // 64G..512G-1
+        case 40, 41, 42, 43 -> 13; // 512G..8T-1
+        case 44, 45, 46 -> 14; // 8T..64T-1
+        case 47, 48, 49 -> 15; // 64T..512T-1
+        case 50, 51, 52, 53 -> 16; // 512T..8P-1
+        case 54, 55, 56 -> 17; // 8P..64P-1
+        case 57, 58, 59 -> 18; // 64P..512P-1
+        case 60, 61, 62, 63 -> 19; // 512P..8E-1
+        case 64 -> 20; // 8E..16E-1
+        default -> throw new AssertionError("unexpected bit width: " + width);
+      };
     }
 
     @Override
@@ -251,7 +100,7 @@ public abstract class RadixOption extends AttributeOption {
     }
 
     @Override
-    public String GetIndexChar() {
+    public String getIndexChar() {
       return "u";
     }
   }
@@ -272,7 +121,7 @@ public abstract class RadixOption extends AttributeOption {
     }
 
     @Override
-    public String GetIndexChar() {
+    public String getIndexChar() {
       return "h";
     }
   }
@@ -299,7 +148,7 @@ public abstract class RadixOption extends AttributeOption {
     }
 
     @Override
-    public String GetIndexChar() {
+    public String getIndexChar() {
       return "b";
     }
   }
@@ -325,7 +174,7 @@ public abstract class RadixOption extends AttributeOption {
     }
 
     @Override
-    public String GetIndexChar() {
+    public String getIndexChar() {
       return "o";
     }
   }
@@ -346,7 +195,7 @@ public abstract class RadixOption extends AttributeOption {
     }
 
     @Override
-    public String GetIndexChar() {
+    public String getIndexChar() {
       return "f";
     }
   }
@@ -407,7 +256,7 @@ public abstract class RadixOption extends AttributeOption {
     return displayGetter.toString();
   }
 
-  public String GetIndexChar() {
+  public String getIndexChar() {
     return "";
   }
 

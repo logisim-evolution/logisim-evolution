@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.tools.move;
@@ -41,17 +22,13 @@ public class MoveResult {
   private final Collection<Location> unconnectedLocations;
   private final int totalDistance;
 
-  public MoveResult(
-      MoveRequest request,
-      ReplacementMap replacements,
-      Collection<ConnectionData> unsatisfiedConnections,
-      int totalDistance) {
+  public MoveResult(MoveRequest request, ReplacementMap replacements, Collection<ConnectionData> unsatisfiedConnections, int totalDistance) {
     this.replacements = replacements;
     this.unsatisfiedConnections = unsatisfiedConnections;
     this.totalDistance = totalDistance;
 
-    ArrayList<Location> unconnected = new ArrayList<>();
-    for (ConnectionData conn : unsatisfiedConnections) {
+    final var unconnected = new ArrayList<Location>();
+    for (final var conn : unsatisfiedConnections) {
       unconnected.add(conn.getLocation());
     }
     unconnectedLocations = unconnected;
@@ -59,7 +36,7 @@ public class MoveResult {
 
   void addUnsatisfiedConnections(Collection<ConnectionData> toAdd) {
     unsatisfiedConnections.addAll(toAdd);
-    for (ConnectionData conn : toAdd) {
+    for (final var conn : toAdd) {
       unconnectedLocations.add(conn.getLocation());
     }
   }
@@ -80,17 +57,17 @@ public class MoveResult {
     return unsatisfiedConnections;
   }
 
+  @SuppressWarnings("unchecked")
   public Collection<Wire> getWiresToAdd() {
-    @SuppressWarnings("unchecked")
-    Collection<Wire> ret = (Collection<Wire>) replacements.getAdditions();
-    return ret;
+    return (Collection<Wire>) replacements.getAdditions();
   }
 
   public void print(PrintStream out) {
     out.print("MoveResult: ");
     replacements.print(out);
   }
-  
+
+  @Override
   public String toString() {
     return "MoveResult: " + replacements.toString();
   }

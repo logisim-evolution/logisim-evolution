@@ -1,138 +1,109 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.data;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ComponentMapInformationContainer {
 
-  private int NrOfInputBubbles;
-  private int NrOfInOutBubbles;
-  private int NrOfOutputBubbles;
-  private ArrayList<String> InputBubbleLabels;
-  private ArrayList<String> InOutBubbleLabels;
-  private ArrayList<String> OutputBubbleLabels;
+  private int nrOfInputBubbles;
+  private int nrOfInOutBubbles;
+  private int nrOfOutputBubbles;
+  private List<String> inputBubbleLabels;
+  private List<String> inOutBubbleLabels;
+  private List<String> outputBubbleLabels;
 
   public ComponentMapInformationContainer(
       int inports,
       int outports,
       int inoutports,
-      ArrayList<String> inportLabels,
-      ArrayList<String> outportLabels,
-      ArrayList<String> inoutportLabels) {
-    NrOfInputBubbles = inports;
-    NrOfOutputBubbles = outports;
-    NrOfInOutBubbles = inoutports;
-    InputBubbleLabels = inportLabels;
-    OutputBubbleLabels = outportLabels;
-    InOutBubbleLabels = inoutportLabels;
+      List<String> inportLabels,
+      List<String> outportLabels,
+      List<String> inoutportLabels) {
+    nrOfInputBubbles = inports;
+    nrOfOutputBubbles = outports;
+    nrOfInOutBubbles = inoutports;
+    inputBubbleLabels = inportLabels;
+    outputBubbleLabels = outportLabels;
+    inOutBubbleLabels = inoutportLabels;
   }
 
   public ComponentMapInformationContainer(
       int inports,
       int outports,
       int inoutport) {
-    NrOfInputBubbles = inports;
-    NrOfOutputBubbles = outports;
-    NrOfInOutBubbles = inoutport;
-    InputBubbleLabels = null;
-    OutputBubbleLabels = null;
-    InOutBubbleLabels = null;
+    nrOfInputBubbles = inports;
+    nrOfOutputBubbles = outports;
+    nrOfInOutBubbles = inoutport;
+    inputBubbleLabels = null;
+    outputBubbleLabels = null;
+    inOutBubbleLabels = null;
   }
 
+  @Override
   public ComponentMapInformationContainer clone() {
     @SuppressWarnings("unchecked")
-    ComponentMapInformationContainer Myclone =
+    ComponentMapInformationContainer myClone =
         new ComponentMapInformationContainer(
-            NrOfInputBubbles,
-            NrOfOutputBubbles,
-            NrOfInOutBubbles,
-            InputBubbleLabels == null ? null : (ArrayList<String>) InputBubbleLabels.clone(),
-            OutputBubbleLabels == null ? null : (ArrayList<String>) OutputBubbleLabels.clone(),
-            InOutBubbleLabels == null ? null : (ArrayList<String>) InOutBubbleLabels.clone());
-    return Myclone;
+                nrOfInputBubbles,
+                nrOfOutputBubbles,
+                nrOfInOutBubbles,
+                inputBubbleLabels == null ? null : (List<String>) ((ArrayList<String>) inputBubbleLabels).clone(),
+                outputBubbleLabels == null ? null : (List<String>) ((ArrayList<String>) outputBubbleLabels).clone(),
+                inOutBubbleLabels == null ? null : (List<String>) ((ArrayList<String>) inOutBubbleLabels).clone());
+    return myClone;
   }
 
-  public String GetInOutportLabel(int inoutNr) {
-    if (InOutBubbleLabels == null) {
-      return Integer.toString(inoutNr);
-    }
-    if (InOutBubbleLabels.size() <= inoutNr) {
-      return Integer.toString(inoutNr);
-    }
-    return InOutBubbleLabels.get(inoutNr);
+  public String getInOutportLabel(int inOutNr) {
+    if (inOutBubbleLabels == null) return Integer.toString(inOutNr);
+    if (inOutBubbleLabels.size() <= inOutNr) return Integer.toString(inOutNr);
+    return inOutBubbleLabels.get(inOutNr);
   }
 
-  public String GetInportLabel(int inputNr) {
-    if (InputBubbleLabels == null) {
-      return Integer.toString(inputNr);
-    }
-    if (InputBubbleLabels.size() <= inputNr) {
-      return Integer.toString(inputNr);
-    }
-    return InputBubbleLabels.get(inputNr);
+  public String getInPortLabel(int inputNr) {
+    if (inputBubbleLabels == null) return Integer.toString(inputNr);
+    if (inputBubbleLabels.size() <= inputNr) return Integer.toString(inputNr);
+    return inputBubbleLabels.get(inputNr);
   }
 
-  public int GetNrOfInOutports() {
-    return NrOfInOutBubbles;
+  public int getNrOfInOutPorts() {
+    return nrOfInOutBubbles;
   }
 
-  public int GetNrOfInports() {
-    return NrOfInputBubbles;
+  public int getNrOfInPorts() {
+    return nrOfInputBubbles;
   }
 
-  public int GetNrOfOutports() {
-    return NrOfOutputBubbles;
+  public int getNrOfOutPorts() {
+    return nrOfOutputBubbles;
   }
 
-  public String GetOutportLabel(int outputNr) {
-    if (OutputBubbleLabels == null) {
-      return Integer.toString(outputNr);
-    }
-    if (OutputBubbleLabels.size() <= outputNr) {
-      return Integer.toString(outputNr);
-    }
-    return OutputBubbleLabels.get(outputNr);
+  public String getOutPortLabel(int outputNr) {
+    if (outputBubbleLabels == null) return Integer.toString(outputNr);
+    if (outputBubbleLabels.size() <= outputNr) return Integer.toString(outputNr);
+    return outputBubbleLabels.get(outputNr);
   }
 
-  public void setNrOfInOutports(int nb, ArrayList<String> labels) {
-    NrOfInOutBubbles = nb;
-    InOutBubbleLabels = labels;
+  public void setNrOfInOutports(int count, List<String> labels) {
+    nrOfInOutBubbles = count;
+    inOutBubbleLabels = labels;
   }
 
-  public void setNrOfInports(int nb, ArrayList<String> labels) {
-    NrOfInputBubbles = nb;
-    InputBubbleLabels = labels;
+  public void setNrOfInports(int count, List<String> labels) {
+    nrOfInputBubbles = count;
+    inputBubbleLabels = labels;
   }
 
-  public void setNrOfOutports(int nb, ArrayList<String> labels) {
-    NrOfOutputBubbles = nb;
-    OutputBubbleLabels = labels;
+  public void setNrOfOutports(int count, List<String> labels) {
+    nrOfOutputBubbles = count;
+    outputBubbleLabels = labels;
   }
 }

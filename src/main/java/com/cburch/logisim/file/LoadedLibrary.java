@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.file;
@@ -48,10 +29,29 @@ import java.util.Map;
 
 public class LoadedLibrary extends Library implements LibraryEventSource {
   private class MyListener implements LibraryListener {
+    @Override
     public void libraryChanged(LibraryEvent event) {
       fireLibraryEvent(event);
     }
   }
+
+  private Library base;
+  private boolean dirty;
+  private final MyListener myListener;
+  private final EventSourceWeakSupport<LibraryListener> listeners;
+
+  LoadedLibrary(Library base) {
+    dirty = false;
+    myListener = new MyListener();
+    listeners = new EventSourceWeakSupport<>();
+
+    while (base instanceof LoadedLibrary lib) base = lib.base;
+    this.base = base;
+    if (base instanceof LibraryEventSource src) {
+      src.addLibraryListener(myListener);
+    }
+  }
+
 
   static void copyAttributes(AttributeSet dest, AttributeSet src) {
     for (Attribute<?> destAttr : dest.getAttributes()) {
@@ -119,26 +119,7 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     }
   }
 
-  private Library base;
-
-  private boolean dirty;
-
-  private final MyListener myListener;
-
-  private final EventSourceWeakSupport<LibraryListener> listeners;
-
-  LoadedLibrary(Library base) {
-    dirty = false;
-    myListener = new MyListener();
-    listeners = new EventSourceWeakSupport<>();
-
-    while (base instanceof LoadedLibrary) base = ((LoadedLibrary) base).base;
-    this.base = base;
-    if (base instanceof LibraryEventSource) {
-      ((LibraryEventSource) base).addLibraryListener(myListener);
-    }
-  }
-
+  @Override
   public void addLibraryListener(LibraryListener l) {
     listeners.add(l);
   }
@@ -170,8 +151,9 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     return base.getLibraries();
   }
 
-  public boolean removeLibrary(String Name) {
-    return base.removeLibrary(Name);
+  @Override
+  public boolean removeLibrary(String name) {
+    return base.removeLibrary(name);
   }
 
   @Override
@@ -189,6 +171,7 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     return dirty || base.isDirty();
   }
 
+  @Override
   public void removeLibraryListener(LibraryListener l) {
     listeners.remove(l);
   }
@@ -218,10 +201,10 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     for (final var oldTool : old.getTools()) {
       final var newTool = base.getTool(oldTool.getName());
       toolMap.put(oldTool, newTool);
-      if (oldTool instanceof AddTool) {
-        final var oldFactory = ((AddTool) oldTool).getFactory();
+      if (oldTool instanceof AddTool tool) {
+        final var oldFactory = tool.getFactory();
         if (newTool instanceof AddTool) {
-          final var newFactory = ((AddTool) newTool).getFactory();
+          final var newFactory = tool.getFactory();
           componentMap.put(oldFactory, newFactory);
         } else {
           componentMap.put(oldFactory, null);
@@ -244,14 +227,14 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
   }
 
   void setBase(Library value) {
-    if (base instanceof LibraryEventSource) {
-      ((LibraryEventSource) base).removeLibraryListener(myListener);
+    if (base instanceof LibraryEventSource src) {
+      src.removeLibraryListener(myListener);
     }
     final var old = base;
     base = value;
     resolveChanges(old);
-    if (base instanceof LibraryEventSource) {
-      ((LibraryEventSource) base).addLibraryListener(myListener);
+    if (base instanceof LibraryEventSource src) {
+      src.addLibraryListener(myListener);
     }
   }
 

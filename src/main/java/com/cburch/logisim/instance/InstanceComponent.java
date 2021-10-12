@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.instance;
@@ -52,15 +33,12 @@ import com.cburch.logisim.tools.TextEditable;
 import com.cburch.logisim.tools.ToolTipMaker;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.SyntaxChecker;
 import com.cburch.logisim.util.UnmodifiableList;
-import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 
 public final class InstanceComponent implements Component, AttributeListener, ToolTipMaker {
@@ -131,9 +109,9 @@ public final class InstanceComponent implements Component, AttributeListener, To
   //
   @Override
   public void addComponentListener(ComponentListener l) {
-    EventSourceWeakSupport<ComponentListener> ls = listeners;
+    var ls = listeners;
     if (ls == null) {
-      ls = new EventSourceWeakSupport<>();
+      ls = new EventSourceWeakSupport<ComponentListener>();
       ls.add(l);
       listeners = ls;
     } else {
@@ -146,21 +124,21 @@ public final class InstanceComponent implements Component, AttributeListener, To
   //
   @Override
   public void attributeValueChanged(AttributeEvent e) {
-    Attribute<?> attr = e.getAttribute();
+    final var attr = e.getAttribute();
     if (e.getAttribute().equals(StdAttr.LABEL)) {
       @SuppressWarnings("unchecked")
-      Attribute<String> lattr = (Attribute<String>) e.getAttribute();
-      var value = (String) e.getSource().getValue(e.getAttribute());
-      var oldValue = e.getOldValue() != null ? (String) e.getOldValue() : "";
+      final var lAttr = (Attribute<String>) e.getAttribute();
+      final var value = (String) e.getSource().getValue(e.getAttribute());
+      final var oldValue = e.getOldValue() != null ? (String) e.getOldValue() : "";
       if (!oldValue.equals(value)) {
         if (!SyntaxChecker.isVariableNameAcceptable(value, true)) {
-          e.getSource().setValue(lattr, oldValue);
+          e.getSource().setValue(lAttr, oldValue);
         } else if (getFactory().getName().equalsIgnoreCase(value)) {
           OptionPane.showMessageDialog(null, S.get("MatchedLabelNameError"));
-          e.getSource().setValue(lattr, oldValue);
+          e.getSource().setValue(lAttr, oldValue);
         } else if (CorrectLabel.isKeyword(value, false)) {
           OptionPane.showMessageDialog(null, "\"" + value + "\": " + S.get("KeywordNameError"));
-          e.getSource().setValue(lattr, oldValue);
+          e.getSource().setValue(lAttr, oldValue);
         } else {
           fireLabelChanged(e);
         }
@@ -173,26 +151,26 @@ public final class InstanceComponent implements Component, AttributeListener, To
   }
 
   private void computeEnds() {
-    List<Port> ports = portList;
-    EndData[] esOld = endArray;
-    int esOldLength = esOld == null ? 0 : esOld.length;
-    EndData[] es = esOld;
+    final var ports = portList;
+    final var esOld = endArray;
+    final var esOldLength = esOld == null ? 0 : esOld.length;
+    var es = esOld;
     if (es == null || es.length != ports.size()) {
       es = new EndData[ports.size()];
       if (esOldLength > 0) {
-        int toCopy = Math.min(esOldLength, es.length);
+        final var toCopy = Math.min(esOldLength, es.length);
         System.arraycopy(esOld, 0, es, 0, toCopy);
       }
     }
-    HashSet<Attribute<BitWidth>> wattrs = null;
-    boolean toolTipFound = false;
+    HashSet<Attribute<BitWidth>> wAttrs = null;
+    var toolTipFound = false;
     ArrayList<EndData> endsChangedOld = null;
     ArrayList<EndData> endsChangedNew = null;
-    Iterator<Port> pit = ports.iterator();
-    for (int i = 0; pit.hasNext() || i < esOldLength; i++) {
-      Port p = pit.hasNext() ? pit.next() : null;
-      EndData oldEnd = i < esOldLength ? esOld[i] : null;
-      EndData newEnd = p == null ? null : p.toEnd(loc, attrs);
+    final var portIt = ports.iterator();
+    for (var i = 0; portIt.hasNext() || i < esOldLength; i++) {
+      final var p = portIt.hasNext() ? portIt.next() : null;
+      final var oldEnd = i < esOldLength ? esOld[i] : null;
+      final var newEnd = p == null ? null : p.toEnd(loc, attrs);
       if (oldEnd == null || !oldEnd.equals(newEnd)) {
         if (newEnd != null) es[i] = newEnd;
         if (endsChangedOld == null) {
@@ -204,22 +182,22 @@ public final class InstanceComponent implements Component, AttributeListener, To
       }
 
       if (p != null) {
-        Attribute<BitWidth> attr = p.getWidthAttribute();
+        final var attr = p.getWidthAttribute();
         if (attr != null) {
-          if (wattrs == null) {
-            wattrs = new HashSet<>();
+          if (wAttrs == null) {
+            wAttrs = new HashSet<>();
           }
-          wattrs.add(attr);
+          wAttrs.add(attr);
         }
 
         if (p.getToolTip() != null) toolTipFound = true;
       }
     }
     if (!attrListenRequested) {
-      HashSet<Attribute<BitWidth>> oldWattrs = widthAttrs;
-      if (wattrs == null && oldWattrs != null) {
+      final var oldWidthAttrs = widthAttrs;
+      if (wAttrs == null && oldWidthAttrs != null) {
         getAttributeSet().removeAttributeListener(this);
-      } else if (wattrs != null && oldWattrs == null) {
+      } else if (wAttrs != null && oldWidthAttrs == null) {
         getAttributeSet().addAttributeListener(this);
       }
     }
@@ -227,7 +205,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
       endArray = es;
       endList = new UnmodifiableList<>(es);
     }
-    widthAttrs = wattrs;
+    widthAttrs = wAttrs;
     hasToolTips = toolTipFound;
     if (endsChangedOld != null) {
       fireEndsChanged(endsChangedOld, endsChangedNew);
@@ -236,16 +214,15 @@ public final class InstanceComponent implements Component, AttributeListener, To
 
   @Override
   public boolean contains(Location pt) {
-    Location translated = pt.translate(-loc.getX(), -loc.getY());
-    InstanceFactory factory = instance.getFactory();
+    final var translated = pt.translate(-loc.getX(), -loc.getY());
+    final var factory = instance.getFactory();
     return factory.contains(translated, instance.getAttributeSet());
   }
 
   @Override
   public boolean contains(Location pt, Graphics g) {
-    InstanceTextField field = textField;
-    if (field != null && field.getBounds(g).contains(pt)) return true;
-    else return contains(pt);
+    final var field = textField;
+    return (field != null && field.getBounds(g).contains(pt)) ? true : contains(pt);
   }
 
   //
@@ -253,17 +230,16 @@ public final class InstanceComponent implements Component, AttributeListener, To
   //
   @Override
   public void draw(ComponentDrawContext context) {
-    InstancePainter painter = context.getInstancePainter();
+    final var painter = context.getInstancePainter();
     painter.setInstance(this);
     factory.paintInstance(painter);
     if (doMarkInstance) {
-      final Graphics g = painter.getGraphics();
-      final Bounds bds = painter.getBounds();
-      final Color current = g.getColor();
+      final var g = painter.getGraphics();
+      final var bds = painter.getBounds();
+      final var current = g.getColor();
       g.setColor(Netlist.DRC_INSTANCE_MARK_COLOR);
       GraphicsUtil.switchToWidth(g, 2);
-      g.drawRoundRect(
-          bds.getX() - 10, bds.getY() - 10, bds.getWidth() + 20, bds.getHeight() + 20, 40, 40);
+      g.drawRoundRect(bds.getX() - 10, bds.getY() - 10, bds.getWidth() + 20, bds.getHeight() + 20, 40, 40);
       GraphicsUtil.switchToWidth(g, 1);
       g.setColor(current);
     }
@@ -273,17 +249,16 @@ public final class InstanceComponent implements Component, AttributeListener, To
   // methods for InstancePainter
   //
   void drawLabel(ComponentDrawContext context) {
-    InstanceTextField field = textField;
+    final var field = textField;
     if (field != null) {
       field.draw(this, context);
       if (doMarkLabel) {
-        final Graphics g = context.getGraphics();
-        final Bounds bds = field.getBounds(g);
-        final Color current = g.getColor();
+        final var g = context.getGraphics();
+        final var bds = field.getBounds(g);
+        final var current = g.getColor();
         g.setColor(Netlist.DRC_LABEL_MARK_COLOR);
         GraphicsUtil.switchToWidth(g, 2);
-        g.drawRoundRect(
-            bds.getX() - 10, bds.getY() - 10, bds.getWidth() + 20, bds.getHeight() + 20, 40, 40);
+        g.drawRoundRect(bds.getX() - 10, bds.getY() - 10, bds.getWidth() + 20, bds.getHeight() + 20, 40, 40);
         GraphicsUtil.switchToWidth(g, 1);
         g.setColor(current);
       }
@@ -292,8 +267,8 @@ public final class InstanceComponent implements Component, AttributeListener, To
 
   @Override
   public boolean endsAt(Location pt) {
-    EndData[] ends = endArray;
-    for (EndData end : ends) {
+    final var ends = endArray;
+    for (final var end : ends) {
       if (end.getLocation().equals(pt)) return true;
     }
     return false;
@@ -301,39 +276,38 @@ public final class InstanceComponent implements Component, AttributeListener, To
 
   @Override
   public void expose(ComponentDrawContext context) {
-    Bounds b = bounds;
-    context.getDestination().repaint(b.getX(), b.getY(), b.getWidth(), b.getHeight());
+    context.getDestination().repaint(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight());
   }
 
   private void fireLabelChanged(AttributeEvent attre) {
-    EventSourceWeakSupport<ComponentListener> ls = listeners;
-    if (ls != null) {
+    final var listeners = this.listeners;
+    if (listeners != null) {
       ComponentEvent e = null;
-      for (ComponentListener l : ls) {
+      for (final var listener : listeners) {
         if (e == null) e = new ComponentEvent(this, null, attre);
-        l.LabelChanged(e);
+        listener.labelChanged(e);
       }
     }
   }
 
   private void fireEndsChanged(ArrayList<EndData> oldEnds, ArrayList<EndData> newEnds) {
-    EventSourceWeakSupport<ComponentListener> ls = listeners;
-    if (ls != null) {
+    final var listeners = this.listeners;
+    if (listeners != null) {
       ComponentEvent e = null;
-      for (ComponentListener l : ls) {
+      for (final var listener : listeners) {
         if (e == null) e = new ComponentEvent(this, oldEnds, newEnds);
-        l.endChanged(e);
+        listener.endChanged(e);
       }
     }
   }
 
   void fireInvalidated() {
-    EventSourceWeakSupport<ComponentListener> ls = listeners;
-    if (ls != null) {
+    final var listeners = this.listeners;
+    if (listeners != null) {
       ComponentEvent e = null;
-      for (ComponentListener l : ls) {
+      for (final var listener : listeners) {
         if (e == null) e = new ComponentEvent(this);
-        l.componentInvalidated(e);
+        listener.componentInvalidated(e);
       }
     }
   }
@@ -350,9 +324,8 @@ public final class InstanceComponent implements Component, AttributeListener, To
 
   @Override
   public Bounds getBounds(Graphics g) {
-    Bounds ret = bounds;
-    InstanceTextField field = textField;
-    if (field != null) ret = ret.add(field.getBounds(g));
+    var ret = bounds;
+    if (textField != null) ret = ret.add(textField.getBounds(g));
     return ret;
   }
 
@@ -421,17 +394,14 @@ public final class InstanceComponent implements Component, AttributeListener, To
 
   @Override
   public String getToolTip(ComponentUserEvent e) {
-    int x = e.getX();
-    int y = e.getY();
-    int i = -1;
-    for (EndData end : endArray) {
-      i++;
-      if (end.getLocation().manhattanDistanceTo(x, y) < 10) {
-        Port p = portList.get(i);
-        return p.getToolTip();
+    var i = 0;
+    for (final var end : endArray) {
+      if (end.getLocation().manhattanDistanceTo(e.getX(), e.getY()) < 10) {
+        return portList.get(i).getToolTip();
       }
+      i++;
     }
-    StringGetter defaultTip = factory.getDefaultToolTip();
+    final var defaultTip = factory.getDefaultToolTip();
     return defaultTip == null ? null : defaultTip.toString();
   }
 
@@ -458,14 +428,13 @@ public final class InstanceComponent implements Component, AttributeListener, To
   }
 
   void setPorts(Port[] ports) {
-    Port[] portsCopy = ports.clone();
+    final var portsCopy = ports.clone();
     portList = new UnmodifiableList<>(portsCopy);
     computeEnds();
   }
 
-  void setTextField(
-      Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
-    InstanceTextField field = textField;
+  void setTextField(Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
+    var field = textField;
     if (field == null) {
       field = new InstanceTextField(this);
       field.update(labelAttr, fontAttr, x, y, halign, valign);
@@ -477,7 +446,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
 
   @Override
   public String toString() {
-    String label = attrs.getValue(StdAttr.LABEL);
+    final var label = attrs.getValue(StdAttr.LABEL);
     return "InstanceComponent{factory="
         + factory.getName()
         + ",loc=("

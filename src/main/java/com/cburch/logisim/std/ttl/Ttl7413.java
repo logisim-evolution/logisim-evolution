@@ -1,34 +1,14 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 
@@ -49,16 +29,16 @@ public class Ttl7413 extends AbstractTtlGate {
   private static final String[] portNames = {"A0", "B0", "C0", "D0", "Y0", "Y1", "D1", "C1", "B1", "A1"};
 
   public Ttl7413(String name, boolean inv) {
-    super(name, pinCount, outPorts, unusedPorts, portNames);
+    super(name, pinCount, outPorts, unusedPorts, portNames, new Ttl7413HdlGenerator(inv));
     inverted = inv;
   }
 
   public Ttl7413(String name) {
-    super(name, pinCount, outPorts, unusedPorts, portNames);
+    super(name, pinCount, outPorts, unusedPorts, portNames, new Ttl7413HdlGenerator(true));
   }
 
   public Ttl7413() {
-    super(_ID, pinCount, outPorts, unusedPorts, portNames);
+    super(_ID, pinCount, outPorts, unusedPorts, portNames, new Ttl7413HdlGenerator(true));
   }
 
   @Override
@@ -87,7 +67,7 @@ public class Ttl7413 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     var val =
         state
             .getPortValue(0)
@@ -98,11 +78,5 @@ public class Ttl7413 extends AbstractTtlGate {
             .getPortValue(6)
             .and(state.getPortValue(7).and(state.getPortValue(8).and(state.getPortValue(9))));
     state.setPort(5, inverted ? val.not() : val, 4);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new Ttl7413HDLGenerator(inverted);
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

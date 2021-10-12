@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.ttl;
@@ -45,28 +26,26 @@ public class Ttl74163 extends Ttl74161 {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     var data = getStateData(state);
 
     final var triggered = data.updateClock(state.getPortValue(PORT_INDEX_CLK), StdAttr.TRIG_RISING);
+    var counter = data.getValue().toLongValue();
     if (triggered) {
       final var nClear = state.getPortValue(PORT_INDEX_nCLR).toLongValue();
       final var nLoad = state.getPortValue(PORT_INDEX_nLOAD).toLongValue();
-      var counter = data.getValue().toLongValue();
-
       if (nClear == 0) {
         counter = 0;
       } else if (nLoad == 0) {
         counter = state.getPortValue(PORT_INDEX_A).toLongValue()
-            + state.getPortValue(PORT_INDEX_B).toLongValue() << 1
-            + state.getPortValue(PORT_INDEX_C).toLongValue() << 2
-            + state.getPortValue(PORT_INDEX_D).toLongValue() << 3;
-      } else {
-        if (state.getPortValue(PORT_INDEX_EnP).and(state.getPortValue(PORT_INDEX_EnT)).toLongValue() != 1) return; // Nothing changed so return 
+            + (state.getPortValue(PORT_INDEX_B).toLongValue() << 1)
+            + (state.getPortValue(PORT_INDEX_C).toLongValue() << 2)
+            + (state.getPortValue(PORT_INDEX_D).toLongValue() << 3);
+      } else  if (state.getPortValue(PORT_INDEX_EnP).and(state.getPortValue(PORT_INDEX_EnT)).toLongValue() == 1) {
         counter = (counter + 1) & 15;
       }
-      updateState(state, counter);
-    } 
+    }
+    updateState(state, counter);
   }
 
 }

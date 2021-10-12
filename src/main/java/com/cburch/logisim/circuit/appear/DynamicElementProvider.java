@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.circuit.appear;
@@ -38,19 +19,19 @@ public interface DynamicElementProvider {
 
   DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path);
 
-  static void removeDynamicElements(Circuit circuit, Component c) {
-    if (!(c instanceof InstanceComponent)) return;
-    HashSet<Circuit> allAffected = new HashSet<>();
-    LinkedList<Circuit> todo = new LinkedList<>();
+  static void removeDynamicElements(Circuit circuit, Component comp) {
+    if (!(comp instanceof InstanceComponent)) return;
+    final var allAffected = new HashSet<Circuit>();
+    final var todo = new LinkedList<Circuit>();
     todo.add(circuit);
     while (!todo.isEmpty()) {
-      Circuit circ = todo.remove();
+      final var circ = todo.remove();
       if (allAffected.contains(circ)) continue;
       allAffected.add(circ);
-      for (Circuit other : circ.getCircuitsUsingThis())
+      for (final var other : circ.getCircuitsUsingThis())
         if (!allAffected.contains(other)) todo.add(other);
     }
-    for (Circuit circ : allAffected)
-      circ.getAppearance().removeDynamicElement((InstanceComponent) c);
+    for (final var circ : allAffected)
+      circ.getAppearance().removeDynamicElement((InstanceComponent) comp);
   }
 }

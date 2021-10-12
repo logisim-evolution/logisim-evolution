@@ -1,36 +1,17 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.prefs;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.fpga.gui.FPGACommander;
+import com.cburch.logisim.fpga.gui.FpgaCommander;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.gui.prefs.OptionsPanel;
 import com.cburch.logisim.gui.prefs.PreferencesFrame;
@@ -61,12 +42,12 @@ public class SoftwaresOptions extends OptionsPanel {
         Softwares.setQuestaPath(getPreferencesFrame());
       } else if (source == questaValidationCheckBox) {
         AppPreferences.QUESTA_VALIDATION.setBoolean(questaValidationCheckBox.isSelected());
-      } else if (source == QuartusPathButton) {
-        FPGACommander.selectToolPath(VendorSoftware.VENDOR_ALTERA);
-      } else if (source == ISEPathButton) {
-        FPGACommander.selectToolPath(VendorSoftware.VENDOR_XILINX);
-      } else if (source == VivadoPathButton) {
-        FPGACommander.selectToolPath(VendorSoftware.VENDOR_VIVADO);
+      } else if (source == quartusPathButton) {
+        FpgaCommander.selectToolPath(VendorSoftware.VENDOR_ALTERA);
+      } else if (source == isePathButton) {
+        FpgaCommander.selectToolPath(VendorSoftware.VENDOR_XILINX);
+      } else if (source == vivadoPathButton) {
+        FpgaCommander.selectToolPath(VendorSoftware.VENDOR_VIVADO);
       }
     }
 
@@ -79,11 +60,11 @@ public class SoftwaresOptions extends OptionsPanel {
       } else if (property.equals(AppPreferences.QUESTA_VALIDATION.getIdentifier())) {
         questaValidationCheckBox.setSelected(AppPreferences.QUESTA_VALIDATION.getBoolean());
       } else if (property.equals(AppPreferences.QuartusToolPath.getIdentifier())) {
-        QuartusPathField.setText(AppPreferences.QuartusToolPath.get());
+        quartusPathField.setText(AppPreferences.QuartusToolPath.get());
       } else if (property.equals(AppPreferences.ISEToolPath.getIdentifier())) {
-        ISEPathField.setText(AppPreferences.ISEToolPath.get());
+        isePathField.setText(AppPreferences.ISEToolPath.get());
       } else if (property.equals(AppPreferences.VivadoToolPath.getIdentifier())) {
-        VivadoPathField.setText(AppPreferences.VivadoToolPath.get());
+        vivadoPathField.setText(AppPreferences.VivadoToolPath.get());
       }
     }
   }
@@ -96,24 +77,24 @@ public class SoftwaresOptions extends OptionsPanel {
   private final JLabel questaPathLabel = new JLabel();
   private final JTextField questaPathField = new JTextField(40);
   private final JButton questaPathButton = new JButton();
-  private final JLabel QuartusPathLabel = new JLabel();
-  private final JTextField QuartusPathField = new JTextField(40);
-  private final JButton QuartusPathButton = new JButton();
-  private final JLabel ISEPathLabel = new JLabel();
-  private final JTextField ISEPathField = new JTextField(40);
-  private final JButton ISEPathButton = new JButton();
-  private final JLabel VivadoPathLabel = new JLabel();
-  private final JTextField VivadoPathField = new JTextField(40);
-  private final JButton VivadoPathButton = new JButton();
+  private final JLabel quartusPathLabel = new JLabel();
+  private final JTextField quartusPathField = new JTextField(40);
+  private final JButton quartusPathButton = new JButton();
+  private final JLabel isePathLabel = new JLabel();
+  private final JTextField isePathField = new JTextField(40);
+  private final JButton isePathButton = new JButton();
+  private final JLabel vivadoPathLabel = new JLabel();
+  private final JTextField vivadoPathField = new JTextField(40);
+  private final JButton vivadoPathButton = new JButton();
 
   public SoftwaresOptions(PreferencesFrame window) {
     super(window);
 
     questaValidationCheckBox.addActionListener(myListener);
     questaPathButton.addActionListener(myListener);
-    QuartusPathButton.addActionListener(myListener);
-    ISEPathButton.addActionListener(myListener);
-    VivadoPathButton.addActionListener(myListener);
+    quartusPathButton.addActionListener(myListener);
+    isePathButton.addActionListener(myListener);
+    vivadoPathButton.addActionListener(myListener);
     AppPreferences.getPrefs().addPreferenceChangeListener(myListener);
 
     final var sep = new JSeparator(JSeparator.HORIZONTAL);
@@ -176,18 +157,18 @@ public class SoftwaresOptions extends OptionsPanel {
     c.gridwidth = 4;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
-    add(QuartusPathLabel, c);
+    add(quartusPathLabel, c);
 
     c.gridx = 0;
     c.gridy = gridY;
     c.gridwidth = 2;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
-    add(QuartusPathField, c);
+    add(quartusPathField, c);
     c.gridx = 2;
     c.gridy = gridY++;
     c.fill = GridBagConstraints.NONE;
-    add(QuartusPathButton, c);
+    add(quartusPathButton, c);
 
     c.gridx = 0;
     c.gridy = gridY++;
@@ -202,17 +183,17 @@ public class SoftwaresOptions extends OptionsPanel {
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
 
-    add(ISEPathLabel, c);
+    add(isePathLabel, c);
     c.gridx = 0;
     c.gridy = gridY;
     c.gridwidth = 2;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
-    add(ISEPathField, c);
+    add(isePathField, c);
     c.gridx = 2;
     c.gridy = gridY++;
     c.fill = GridBagConstraints.NONE;
-    add(ISEPathButton, c);
+    add(isePathButton, c);
 
     c.gridx = 0;
     c.gridy = gridY++;
@@ -226,28 +207,28 @@ public class SoftwaresOptions extends OptionsPanel {
     c.gridwidth = 4;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
-    add(VivadoPathLabel, c);
+    add(vivadoPathLabel, c);
 
     c.gridx = 0;
     c.gridy = gridY;
     c.gridwidth = 2;
     c.weightx = 1.0;
     c.fill = GridBagConstraints.HORIZONTAL;
-    add(VivadoPathField, c);
+    add(vivadoPathField, c);
 
     c.gridx = 2;
     c.gridy = gridY++;
     c.fill = GridBagConstraints.NONE;
-    add(VivadoPathButton, c);
+    add(vivadoPathButton, c);
 
     questaValidationCheckBox.setSelected(AppPreferences.QUESTA_VALIDATION.getBoolean());
 
-    QuartusPathField.setText(AppPreferences.QuartusToolPath.get());
-    QuartusPathField.setEditable(false);
-    ISEPathField.setText(AppPreferences.ISEToolPath.get());
-    ISEPathField.setEditable(false);
-    VivadoPathField.setText(AppPreferences.VivadoToolPath.get());
-    VivadoPathField.setEditable(false);
+    quartusPathField.setText(AppPreferences.QuartusToolPath.get());
+    quartusPathField.setEditable(false);
+    isePathField.setText(AppPreferences.ISEToolPath.get());
+    isePathField.setEditable(false);
+    vivadoPathField.setText(AppPreferences.VivadoToolPath.get());
+    vivadoPathField.setEditable(false);
     questaPathField.setText(AppPreferences.QUESTA_PATH.get());
     questaPathField.setEditable(false);
   }
@@ -267,11 +248,11 @@ public class SoftwaresOptions extends OptionsPanel {
     questaValidationCheckBox.setText(S.get("softwaresQuestaValidationLabel"));
     questaPathButton.setText(S.get("softwaresQuestaPathButton"));
     questaPathLabel.setText(S.get("softwaresQuestaPathLabel"));
-    QuartusPathButton.setText(S.get("softwaresQuestaPathButton"));
-    QuartusPathLabel.setText(S.get("QuartusToolPath"));
-    ISEPathButton.setText(S.get("softwaresQuestaPathButton"));
-    ISEPathLabel.setText(S.get("ISEToolPath"));
-    VivadoPathButton.setText(S.get("softwaresQuestaPathButton"));
-    VivadoPathLabel.setText(S.get("VivadoToolPath"));
+    quartusPathButton.setText(S.get("softwaresQuestaPathButton"));
+    quartusPathLabel.setText(S.get("QuartusToolPath"));
+    isePathButton.setText(S.get("softwaresQuestaPathButton"));
+    isePathLabel.setText(S.get("ISEToolPath"));
+    vivadoPathButton.setText(S.get("softwaresQuestaPathButton"));
+    vivadoPathLabel.setText(S.get("VivadoToolPath"));
   }
 }

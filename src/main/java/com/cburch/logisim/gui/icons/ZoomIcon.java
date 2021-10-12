@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.icons;
@@ -50,11 +31,12 @@ public class ZoomIcon extends BaseIcon {
     zoomType = type;
   }
 
+  @Override
   protected void paintIcon(Graphics2D g2) {
     g2.setStroke(new BasicStroke((int) AppPreferences.getScaled(1.5)));
     g2.setColor(g2.getBackground().darker());
-    int scaledOne = AppPreferences.getScaled(1);
-    int scaledEleven = AppPreferences.getScaled(10);
+    final var scaledOne = AppPreferences.getScaled(1);
+    final var scaledEleven = AppPreferences.getScaled(10);
     g2.fillOval(scaledOne, scaledOne, scaledEleven, scaledEleven);
     g2.setColor(g2.getBackground().darker().darker().darker());
     if (zoomType != NOZOOM) {
@@ -72,7 +54,7 @@ public class ZoomIcon extends BaseIcon {
     }
     g2.setColor(Color.BLACK);
     g2.drawOval(scaledOne, scaledOne, scaledEleven, scaledEleven);
-    double xyPoint = AppPreferences.getScaled(6.0 + Math.sqrt(12.5));
+    final var xyPoint = AppPreferences.getScaled(6.0 + Math.sqrt(12.5));
     GeneralPath path = new GeneralPath();
     path.moveTo(xyPoint, xyPoint);
     path.lineTo(AppPreferences.getScaled(15), AppPreferences.getScaled(13));

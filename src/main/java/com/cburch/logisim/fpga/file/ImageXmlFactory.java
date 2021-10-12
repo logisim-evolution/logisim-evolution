@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.file;
@@ -50,7 +31,7 @@ public class ImageXmlFactory {
   static final Logger logger = LoggerFactory.getLogger(ImageXmlFactory.class);
 
   private String[] CodeTable;
-  private StringBuffer AsciiStream;
+  private StringBuilder AsciiStream;
   private final String[] InitialCodeTable = {
     "a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o", "p", "q", "r", "s",
     "t", "u", "v", "w", "x", "y", "z", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L",
@@ -71,7 +52,7 @@ public class ImageXmlFactory {
   };
   private final char V2_Identifier = '@';
 
-  private String[] CreateCodeTable(byte[] stream) {
+  private String[] createCodeTable(byte[] stream) {
     String[] result = new String[256];
     Long[] ocurances = new Long[256];
     int[] index = new int[256];
@@ -103,7 +84,7 @@ public class ImageXmlFactory {
     return result;
   }
 
-  public void CreateStream(Image BoardPicture) {
+  public void createStream(Image BoardPicture) {
     BufferedImage result = new BufferedImage(740, 400, BufferedImage.TYPE_3BYTE_BGR);
     Graphics2D g2 = result.createGraphics();
     int width = BoardPicture.getWidth(null);
@@ -153,8 +134,8 @@ public class ImageXmlFactory {
       logger.error("JPEG Writer exception: {}", e.getMessage());
     }
     byte[] data = blaat.toByteArray();
-    CodeTable = CreateCodeTable(data);
-    AsciiStream = new StringBuffer();
+    CodeTable = createCodeTable(data);
+    AsciiStream = new StringBuilder();
     AsciiStream.append(V2_Identifier);
     for (byte datum : data) {
       String code = CodeTable[datum + 128];
@@ -162,7 +143,7 @@ public class ImageXmlFactory {
     }
   }
 
-  public String GetCodeTable() {
+  public String getCodeTable() {
     StringBuilder result = new StringBuilder();
     for (int i = 0; i < CodeTable.length; i++) {
       if (i != 0) {
@@ -173,11 +154,11 @@ public class ImageXmlFactory {
     return result.toString();
   }
 
-  public String GetCompressedString() {
+  public String getCompressedString() {
     return AsciiStream.toString();
   }
 
-  public BufferedImage GetPicture(int width, int height) {
+  public BufferedImage getPicture(int width, int height) {
     if (AsciiStream == null) return null;
     if (CodeTable == null) return null;
     if (CodeTable.length != 256) return null;
@@ -263,12 +244,12 @@ public class ImageXmlFactory {
     return result;
   }
 
-  public void SetCodeTable(String[] Table) {
+  public void setCodeTable(String[] Table) {
     CodeTable = Table.clone();
   }
 
-  public void SetCompressedString(String stream) {
-    AsciiStream = new StringBuffer();
+  public void setCompressedString(String stream) {
+    AsciiStream = new StringBuilder();
     AsciiStream.append(stream);
   }
 }

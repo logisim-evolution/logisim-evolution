@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.wiring;
@@ -77,9 +58,6 @@ class PinAttributes extends ProbeAttributes {
   boolean threeState = false; // true;
   int type = EndData.INPUT_ONLY;
   Object pull = Pin.PULL_NONE;
-  AttributeOption Appearance = ProbeAttributes.APPEAR_EVOLUTION_NEW;
-
-  public PinAttributes() {}
 
   @Override
   public List<Attribute<?>> getAttributes() {
@@ -98,7 +76,7 @@ class PinAttributes extends ProbeAttributes {
     if (attr == Pin.ATTR_TRISTATE) return (V) Boolean.valueOf(threeState);
     if (attr == Pin.ATTR_TYPE) return (V) Boolean.valueOf(type == EndData.OUTPUT_ONLY);
     if (attr == Pin.ATTR_PULL) return (V) pull;
-    if (attr == PROBEAPPEARANCE) return (V) Appearance;
+    if (attr == PROBEAPPEARANCE) return (V) appearance;
     if (attr == ATTR_DUMMY) return (V) "nochange";
     return super.getValue(attr);
   }
@@ -126,7 +104,7 @@ class PinAttributes extends ProbeAttributes {
       BitWidth NewWidth = (BitWidth) value;
       if (width == NewWidth) return;
       width = (BitWidth) value;
-      if (width.getWidth() > 8 && Appearance == ProbeAttributes.APPEAR_EVOLUTION_NEW)
+      if (width.getWidth() > 8 && appearance == ProbeAttributes.APPEAR_EVOLUTION_NEW)
         super.setValue(RadixOption.ATTRIBUTE, RadixOption.RADIX_16);
     } else if (attr == Pin.ATTR_TRISTATE) {
       boolean NewThree = (Boolean) value;
@@ -140,9 +118,9 @@ class PinAttributes extends ProbeAttributes {
       if (pull.equals(value)) return;
       pull = value;
     } else if (attr == PROBEAPPEARANCE) {
-      AttributeOption NewAppearance = (AttributeOption) value;
-      if (Appearance.equals(NewAppearance)) return;
-      Appearance = NewAppearance;
+      final var newAppearance = (AttributeOption) value;
+      if (appearance.equals(newAppearance)) return;
+      appearance = newAppearance;
     } else if (attr == RadixOption.ATTRIBUTE) {
       if (width.getWidth() == 1) {
         super.setValue(RadixOption.ATTRIBUTE, RadixOption.RADIX_2);

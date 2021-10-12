@@ -19,11 +19,9 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import java.util.ArrayList;
+import com.cburch.logisim.util.LineBuffer;
 
 /**
  * TTL 74x34: hex buffer gate
@@ -37,24 +35,15 @@ public class Ttl7434 extends AbstractTtlGate {
    */
   public static final String _ID = "7434";
 
-  private static class BufferGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
-    @Override
-    public boolean IsInverter() {
-      return false;
+  private static class BufferGateHdlGeneratorFactory extends AbstractGateHdlGenerator {
+
+    public BufferGateHdlGeneratorFactory() {
+      super(true);
     }
 
     @Override
-    public String getComponentStringIdentifier() {
-      return "TTL7434";
-    }
-
-    @Override
-    public ArrayList<String> GetLogicFunction(int index) {
-      final var contents = new ArrayList<String>();
-      contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
-                  + "(gate_" + index + "_A);");
-      contents.add("");
-      return contents;
+    public LineBuffer getLogicFunction(int index) {
+      return LineBuffer.getHdlBuffer().add("{{assign}}gateO{{1}}{{=}}gateA{{1}};", index);
     }
   }
 
@@ -62,11 +51,11 @@ public class Ttl7434 extends AbstractTtlGate {
   private static final byte[] outPins = {2, 4, 6, 8, 10, 12};
 
   public Ttl7434() {
-    super(_ID, pinCount, outPins, true);
+    super(_ID, pinCount, outPins, true, new BufferGateHdlGeneratorFactory());
   }
 
   public Ttl7434(String name) {
-    super(name, pinCount, outPins, true);
+    super(name, pinCount, outPins, true, new BufferGateHdlGeneratorFactory());
   }
 
   @Override
@@ -81,18 +70,12 @@ public class Ttl7434 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     for (byte i = 1; i < 6; i += 2) {
       state.setPort(i, state.getPortValue(i - 1), 1);
     }
     for (byte i = 6; i < 12; i += 2) {
       state.setPort(i, state.getPortValue(i + 1), 1);
     }
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new BufferGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.circuit;
@@ -61,7 +42,7 @@ public final class CircuitMutation extends CircuitTransaction {
   }
 
   public void addAll(Collection<? extends Component> comps) {
-    changes.add(CircuitChange.addAll(primary, new ArrayList<Component>(comps)));
+    changes.add(CircuitChange.addAll(primary, new ArrayList<>(comps)));
   }
 
   public void change(CircuitChange change) {
@@ -95,19 +76,18 @@ public final class CircuitMutation extends CircuitTransaction {
         final var factory = change.getComponent().getFactory();
         final var isFirstForSibling = siblingsDone.add(factory);
         if (isFirstForSibling) {
-          if (factory instanceof SubcircuitFactory) {
-            final var sibling = ((SubcircuitFactory) factory).getSubcircuit();
+          if (factory instanceof SubcircuitFactory sub) {
+            final var sibling = sub.getSubcircuit();
             final var isFirstForCirc = supercircsDone.add(sibling);
             if (isFirstForCirc) {
-              for (Circuit supercirc : sibling.getCircuitsUsingThis()) {
+              for (final var supercirc : sibling.getCircuitsUsingThis()) {
                 accessMap.put(supercirc, READ_WRITE);
               }
             }
-          } else if (factory instanceof VhdlEntity) {
-            final var sibling = (VhdlEntity) factory;
-            boolean isFirstForVhdl = vhdlDone.add(sibling);
+          } else if (factory instanceof VhdlEntity sibling) {
+            final var isFirstForVhdl = vhdlDone.add(sibling);
             if (isFirstForVhdl) {
-              for (Circuit supercirc : sibling.getCircuitsUsingThis()) {
+              for (final var supercirc : sibling.getCircuitsUsingThis()) {
                 accessMap.put(supercirc, READ_WRITE);
               }
             }
@@ -127,7 +107,7 @@ public final class CircuitMutation extends CircuitTransaction {
   }
 
   public void removeAll(Collection<? extends Component> comps) {
-    changes.add(CircuitChange.removeAll(primary, new ArrayList<Component>(comps)));
+    changes.add(CircuitChange.removeAll(primary, new ArrayList<>(comps)));
   }
 
   public void replace(Component oldComp, Component newComp) {

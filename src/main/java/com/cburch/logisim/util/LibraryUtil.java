@@ -19,10 +19,14 @@
 
 package com.cburch.logisim.util;
 
-
-public class LibraryUtil {
+public final class LibraryUtil {
 
   public static final String ID_FIELD_NAME = "_ID";
+
+  private LibraryUtil() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
+
 
   /**
    * Tries to read unique identifier from object (mainly Library or Tool) stored in object's class
@@ -37,7 +41,7 @@ public class LibraryUtil {
    * @param cls Class of the object to obtain ID/Name from.
    * @return ID of the object
    */
-  public static String getName(Class cls) {
+  public static String getName(Class<?> cls) {
     try {
       final var fields = cls.getDeclaredFields();
       for (final var field : fields) {
@@ -54,7 +58,8 @@ public class LibraryUtil {
         iaeEx.printStackTrace();
       }
     }
-    // for backward compatibility we return the class name 
+
+    // for backward compatibility we return the class name
     return cls.getSimpleName();
   }
 }

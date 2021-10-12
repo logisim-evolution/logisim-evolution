@@ -1,35 +1,17 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.designrulecheck;
 
 import com.cburch.logisim.comp.Component;
 import java.util.ArrayList;
+import java.util.List;
 
 public class ClockTreeFactory {
 
@@ -40,7 +22,7 @@ public class ClockTreeFactory {
     sourceTrees = new ArrayList<>();
   }
 
-  public void addClockNet(ArrayList<String> hierarchyNames, int clocksourceid, ConnectionPoint connection, boolean isPinClock) {
+  public void addClockNet(List<String> hierarchyNames, int clocksourceid, ConnectionPoint connection, boolean isPinClock) {
     ClockTreeContainer destination = null;
     for (final var search : sourceTrees) {
       if (search.equals(hierarchyNames, clocksourceid)) {
@@ -50,19 +32,19 @@ public class ClockTreeFactory {
     if (destination == null) {
       destination = new ClockTreeContainer(hierarchyNames, clocksourceid, isPinClock);
       sourceTrees.add(destination);
-    } else if (!destination.IsPinClockSource() && isPinClock) destination.setPinClock();
+    } else if (!destination.isPinClockSource() && isPinClock) destination.setPinClock();
     destination.addNet(connection);
   }
 
-  public void addClockSource(ArrayList<String> HierarchyNames, int clocksourceid, ConnectionPoint connection) {
+  public void addClockSource(List<String> hierarchyNames, int clockSourceId, ConnectionPoint connection) {
     ClockTreeContainer destination = null;
     for (final var search : sourceTrees) {
-      if (search.equals(HierarchyNames, clocksourceid)) {
+      if (search.equals(hierarchyNames, clockSourceId)) {
         destination = search;
       }
     }
     if (destination == null) {
-      destination = new ClockTreeContainer(HierarchyNames, clocksourceid, false);
+      destination = new ClockTreeContainer(hierarchyNames, clockSourceId, false);
       sourceTrees.add(destination);
     }
     destination.addSource(connection);
@@ -74,7 +56,7 @@ public class ClockTreeFactory {
     if (sources != null) sources.clear();
   }
 
-  public int getClockSourceId(ArrayList<String> hierarchy, Net selectedNet, byte selectedNetBitIndex) {
+  public int getClockSourceId(List<String> hierarchy, Net selectedNet, byte selectedNetBitIndex) {
     for (var i = 0; i < sources.getNrofSources(); i++) {
       for (final var ThisClockNet : sourceTrees) {
         if (ThisClockNet.equals(hierarchy, i)) {
@@ -82,7 +64,7 @@ public class ClockTreeFactory {
            * we found a clock net corresponding the Hierarchy and
            * clock source id
            */
-          for (final var clockEntry : ThisClockNet.GetClockEntries(selectedNet)) {
+          for (final var clockEntry : ThisClockNet.getClockEntries(selectedNet)) {
             if (clockEntry == selectedNetBitIndex) return i;
           }
         }

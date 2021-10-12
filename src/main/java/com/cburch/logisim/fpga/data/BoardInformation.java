@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.data;
@@ -37,43 +18,43 @@ import java.util.Map;
 
 public class BoardInformation {
 
-  private LinkedList<FPGAIOInformationContainer> MyComponents;
-  private String boardname;
-  private BufferedImage BoardPicture;
-  public FPGAClass fpga = new FPGAClass();
+  private List<FpgaIoInformationContainer> myComponents;
+  private String boardName;
+  private BufferedImage boardPicture;
+  public FpgaClass fpga = new FpgaClass();
 
   public BoardInformation() {
     this.clear();
   }
 
-  public void AddComponent(FPGAIOInformationContainer comp) {
-    MyComponents.add(comp);
+  public void addComponent(FpgaIoInformationContainer comp) {
+    myComponents.add(comp);
   }
 
   public void clear() {
-    if (MyComponents == null) MyComponents = new LinkedList<>();
-    else MyComponents.clear();
-    boardname = null;
+    if (myComponents == null) myComponents = new LinkedList<>();
+    else myComponents.clear();
+    boardName = null;
     fpga.clear();
-    BoardPicture = null;
+    boardPicture = null;
   }
 
-  public void setComponents(List<FPGAIOInformationContainer> comps) {
-    MyComponents.clear();
-    MyComponents.addAll(comps);
+  public void setComponents(List<FpgaIoInformationContainer> comps) {
+    myComponents.clear();
+    myComponents.addAll(comps);
   }
 
-  public LinkedList<FPGAIOInformationContainer> GetAllComponents() {
-    return MyComponents;
+  public List<FpgaIoInformationContainer> getAllComponents() {
+    return myComponents;
   }
 
   public String getBoardName() {
-    return boardname;
+    return boardName;
   }
 
-  public FPGAIOInformationContainer GetComponent(BoardRectangle rect) {
-    for (FPGAIOInformationContainer comp : MyComponents) {
-      if (comp.GetRectangle().equals(rect)) {
+  public FpgaIoInformationContainer getComponent(BoardRectangle rect) {
+    for (final var comp : myComponents) {
+      if (comp.getRectangle().equals(rect)) {
         return comp;
       }
     }
@@ -81,15 +62,15 @@ public class BoardInformation {
   }
 
   @SuppressWarnings("unchecked")
-  public Map<String, ArrayList<Integer>> GetComponents() {
-    Map<String, ArrayList<Integer>> result = new HashMap<>();
-    ArrayList<Integer> list = new ArrayList<>();
+  public Map<String, ArrayList<Integer>> getComponents() {
+    final var result = new HashMap<String, ArrayList<Integer>>();
+    final var list = new ArrayList<Integer>();
 
-    int count = 0;
-    for (IOComponentTypes type : IOComponentTypes.KnownComponentSet) {
+    var count = 0;
+    for (final var type : IoComponentTypes.KNOWN_COMPONENT_SET) {
       count = 0;
-      for (FPGAIOInformationContainer comp : MyComponents) {
-        if (comp.GetType().equals(type)) {
+      for (final var comp : myComponents) {
+        if (comp.getType().equals(type)) {
           list.add(count, comp.getNrOfPins());
           count++;
         }
@@ -103,36 +84,35 @@ public class BoardInformation {
     return result;
   }
 
-  public String GetComponentType(BoardRectangle rect) {
-    for (FPGAIOInformationContainer comp : MyComponents) {
-      if (comp.GetRectangle().equals(rect)) {
-        return comp.GetType().toString();
+  public String getComponentType(BoardRectangle rect) {
+    for (final var comp : myComponents) {
+      if (comp.getRectangle().equals(rect)) {
+        return comp.getType().toString();
       }
     }
-    return IOComponentTypes.Unknown.toString();
+    return IoComponentTypes.Unknown.toString();
   }
 
   public String getDriveStrength(BoardRectangle rect) {
-    for (FPGAIOInformationContainer comp : MyComponents) {
-      if (comp.GetRectangle().equals(rect)) {
-        return DriveStrength.GetContraintedDriveStrength(comp.GetDrive());
+    for (final var comp : myComponents) {
+      if (comp.getRectangle().equals(rect)) {
+        return DriveStrength.GetContraintedDriveStrength(comp.getDrive());
       }
     }
     return "";
   }
 
-  public BufferedImage GetImage() {
-    return BoardPicture;
+  public BufferedImage getImage() {
+    return boardPicture;
   }
 
-  public ArrayList<BoardRectangle> GetIoComponentsOfType(
-      IOComponentTypes type, int nrOfPins) {
-    ArrayList<BoardRectangle> result = new ArrayList<>();
-    for (FPGAIOInformationContainer comp : MyComponents) {
-      if (comp.GetType().equals(type)) {
-        if (!type.equals(IOComponentTypes.DIPSwitch) || nrOfPins <= comp.getNrOfPins()) {
-          if (!type.equals(IOComponentTypes.PortIO) || nrOfPins <= comp.getNrOfPins()) {
-            result.add(comp.GetRectangle());
+  public List<BoardRectangle> getIoComponentsOfType(IoComponentTypes type, int nrOfPins) {
+    final var result = new ArrayList<BoardRectangle>();
+    for (final var comp : myComponents) {
+      if (comp.getType().equals(type)) {
+        if (!type.equals(IoComponentTypes.DIPSwitch) || nrOfPins <= comp.getNrOfPins()) {
+          if (!type.equals(IoComponentTypes.PortIo) || nrOfPins <= comp.getNrOfPins()) {
+            result.add(comp.getRectangle());
           }
         }
       }
@@ -140,33 +120,33 @@ public class BoardInformation {
     return result;
   }
 
-  public String getIOStandard(BoardRectangle rect) {
-    for (FPGAIOInformationContainer comp : MyComponents) {
-      if (comp.GetRectangle().equals(rect)) {
-        return IoStandards.GetConstraintedIoStandard(comp.GetIOStandard());
+  public String getIoStandard(BoardRectangle rect) {
+    for (final var comp : myComponents) {
+      if (comp.getRectangle().equals(rect)) {
+        return IoStandards.getConstraintedIoStandard(comp.getIoStandard());
       }
     }
     return "";
   }
 
-  public int GetNrOfDefinedComponents() {
-    return MyComponents.size();
+  public int getNrOfDefinedComponents() {
+    return myComponents.size();
   }
 
   public String getPullBehavior(BoardRectangle rect) {
-    for (FPGAIOInformationContainer comp : MyComponents) {
-      if (comp.GetRectangle().equals(rect)) {
-        return PullBehaviors.getContraintedPullString(comp.GetPullBehavior());
+    for (final var comp : myComponents) {
+      if (comp.getRectangle().equals(rect)) {
+        return PullBehaviors.getContraintedPullString(comp.getPullBehavior());
       }
     }
     return "";
   }
 
   public void setBoardName(String name) {
-    boardname = name;
+    boardName = name;
   }
 
-  public void SetImage(BufferedImage pict) {
-    BoardPicture = pict;
+  public void setImage(BufferedImage pict) {
+    boardPicture = pict;
   }
 }

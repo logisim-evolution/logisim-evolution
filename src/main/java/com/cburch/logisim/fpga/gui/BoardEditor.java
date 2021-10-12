@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.gui;
@@ -33,10 +14,10 @@ import static com.cburch.logisim.fpga.Strings.S;
 import com.cburch.contracts.BaseComponentListenerContract;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.BoardManipulatorListener;
-import com.cburch.logisim.fpga.data.IOComponentsInformation;
+import com.cburch.logisim.fpga.data.IoComponentsInformation;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.fpga.file.BoardWriterClass;
-import com.cburch.logisim.fpga.file.XMLFileFilter;
+import com.cburch.logisim.fpga.file.XmlFileFilter;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.LocaleListener;
@@ -47,7 +28,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ComponentEvent;
 import java.io.File;
-import java.util.ArrayList;
+import java.util.List;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
@@ -58,26 +39,27 @@ import javax.swing.JTextField;
 public class BoardEditor implements ActionListener, BaseComponentListenerContract, LocaleListener, BoardManipulatorListener {
 
   private final JFrame panel;
-  private BoardInformation TheBoard = new BoardInformation();
-  private final JTextField BoardNameInput;
+  private BoardInformation theBoard = new BoardInformation();
+  private final JTextField boardNameInput;
   private final JButton saveButton = new JButton();
   private final JButton loadButton = new JButton();
   private final JButton importButton = new JButton();
   private final JButton cancelButton = new JButton();
   private final JButton fpgaButton = new JButton();
-  private final JLabel LocText = new JLabel();
+  private final JLabel locTextLabel = new JLabel();
   private final BoardManipulator picturepanel;
-  private static final String CancelStr = "cancel";
-  private static final String FPGAStr = "fpgainfo";
+  // FIXME: hardcoded string (??)
+  private static final String cancelStr = "cancel";
+  private static final String fpgaStr = "fpgainfo";
 
   public BoardEditor() {
-    GridBagConstraints gbc = new GridBagConstraints();
+    final var gbc = new GridBagConstraints();
 
     panel = new JFrame();
     panel.setResizable(false);
     panel.addComponentListener(this);
     panel.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    GridBagLayout thisLayout = new GridBagLayout();
+    final var thisLayout = new GridBagLayout();
     panel.setLayout(thisLayout);
 
     // Set an empty board picture
@@ -85,40 +67,40 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
     picturepanel.addComponentListener(this);
     picturepanel.addBoardManipulatorListener(this);
 
-    JPanel ButtonPanel = new JPanel();
-    GridBagLayout ButtonLayout = new GridBagLayout();
-    ButtonPanel.setLayout(ButtonLayout);
+    final var buttonPanel = new JPanel();
+    final var buttonLayout = new GridBagLayout();
+    buttonPanel.setLayout(buttonLayout);
 
     gbc.gridx = 1;
     gbc.gridy = 0;
     gbc.fill = GridBagConstraints.HORIZONTAL;
-    ButtonPanel.add(LocText, gbc);
+    buttonPanel.add(locTextLabel, gbc);
 
-    BoardNameInput = new JTextField(22);
-    BoardNameInput.setEnabled(false);
+    boardNameInput = new JTextField(22);
+    boardNameInput.setEnabled(false);
     gbc.gridx = 2;
     gbc.gridy = 0;
     gbc.fill = GridBagConstraints.HORIZONTAL;
-    ButtonPanel.add(BoardNameInput, gbc);
+    buttonPanel.add(boardNameInput, gbc);
 
     gbc.gridx = 4;
     gbc.gridy = 1;
     gbc.fill = GridBagConstraints.HORIZONTAL;
-    cancelButton.setActionCommand(CancelStr);
+    cancelButton.setActionCommand(cancelStr);
     cancelButton.addActionListener(this);
-    ButtonPanel.add(cancelButton, gbc);
+    buttonPanel.add(cancelButton, gbc);
 
     gbc.gridx = 1;
     gbc.gridy = 1;
-    fpgaButton.setActionCommand(FPGAStr);
+    fpgaButton.setActionCommand(fpgaStr);
     fpgaButton.addActionListener(this);
     fpgaButton.setEnabled(false);
-    ButtonPanel.add(fpgaButton, gbc);
+    buttonPanel.add(fpgaButton, gbc);
 
     gbc.gridx = 2;
     gbc.gridy = 1;
     gbc.fill = GridBagConstraints.HORIZONTAL;
-    ButtonPanel.add(picturepanel.getZoomSlider(), gbc);
+    buttonPanel.add(picturepanel.getZoomSlider(), gbc);
 
     gbc.gridx = 3;
     gbc.gridy = 0;
@@ -126,12 +108,12 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
     loadButton.setActionCommand("load");
     loadButton.addActionListener(this);
     loadButton.setEnabled(true);
-    ButtonPanel.add(loadButton, gbc);
+    buttonPanel.add(loadButton, gbc);
 
     gbc.gridx = 4;
     importButton.setActionCommand("internal");
     importButton.addActionListener(this);
-    ButtonPanel.add(importButton, gbc);
+    buttonPanel.add(importButton, gbc);
 
     gbc.gridx = 3;
     gbc.gridy = 1;
@@ -139,12 +121,12 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
     saveButton.setActionCommand("save");
     saveButton.addActionListener(this);
     saveButton.setEnabled(false);
-    ButtonPanel.add(saveButton, gbc);
+    buttonPanel.add(saveButton, gbc);
 
     gbc.gridx = 0;
     gbc.gridy = 0;
     gbc.fill = GridBagConstraints.HORIZONTAL;
-    panel.add(ButtonPanel, gbc);
+    panel.add(buttonPanel, gbc);
     gbc.gridx = 0;
     gbc.gridy = 1;
     gbc.fill = GridBagConstraints.HORIZONTAL;
@@ -152,16 +134,16 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
 
     panel.setLocationRelativeTo(null);
     panel.setVisible(true);
-    int ScreenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
-    int ScreenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
-    int ImageWidth = picturepanel.getWidth();
-    int ImageHeight = picturepanel.getHeight();
-    int ImageXBorder = panel.getWidth() - ImageWidth;
-    int ImageYBorder = panel.getHeight() - ImageHeight;
-    ScreenWidth -= ImageXBorder;
-    ScreenHeight -= (ImageYBorder + (ImageYBorder >> 1));
-    int zoomX = (ScreenWidth * 100) / ImageWidth;
-    int zoomY = (ScreenHeight * 100) / ImageHeight;
+    var screenWidth = (int) Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+    var screenHeight = (int) Toolkit.getDefaultToolkit().getScreenSize().getHeight();
+    final var imageWidth = picturepanel.getWidth();
+    final var imageHeight = picturepanel.getHeight();
+    final var imageBorderX = panel.getWidth() - imageWidth;
+    final var imageBorderY = panel.getHeight() - imageHeight;
+    screenWidth -= imageBorderX;
+    screenHeight -= (imageBorderY + (imageBorderY >> 1));
+    final var zoomX = (screenWidth * 100) / imageWidth;
+    final var zoomY = (screenHeight * 100) / imageHeight;
     picturepanel.setMaxZoom(Math.min(zoomX, zoomY));
     localeChanged();
   }
@@ -169,35 +151,35 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
   @Override
   public void actionPerformed(ActionEvent e) {
     switch (e.getActionCommand()) {
-      case CancelStr:
+      case cancelStr:
         this.clear();
         break;
       case "save":
         panel.setVisible(false);
-        TheBoard.setBoardName(BoardNameInput.getText());
+        theBoard.setBoardName(boardNameInput.getText());
         String filename = getDirName("", S.get("FpgaBoardSaveDir"));
-        filename += TheBoard.getBoardName() + ".xml";
-        TheBoard.setComponents(picturepanel.getIOComponents());
-        BoardWriterClass xmlwriter = new BoardWriterClass(TheBoard, picturepanel.getImage());
-        xmlwriter.PrintXml(filename);
+        filename += theBoard.getBoardName() + ".xml";
+        theBoard.setComponents(picturepanel.getIoComponents());
+        BoardWriterClass xmlwriter = new BoardWriterClass(theBoard, picturepanel.getImage());
+        xmlwriter.printXml(filename);
         this.clear();
         break;
       case "load":
         JFileChooser fc = new JFileChooser(S.get("FpgaBoardLoadFile"));
         fc.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-        fc.setFileFilter(XMLFileFilter.XML_FILTER);
+        fc.setFileFilter(XmlFileFilter.XML_FILTER);
         fc.setAcceptAllFileFilterUsed(false);
         int retval = fc.showOpenDialog(null);
         if (retval == JFileChooser.APPROVE_OPTION) {
           File file = fc.getSelectedFile();
           String FileName = file.getPath();
           BoardReaderClass reader = new BoardReaderClass(FileName);
-          UpdateInfo(reader);
+          updateInfo(reader);
         }
         break;
-      case FPGAStr:
-        FPGAIOInformationSettingsDialog.getFpgaInformation(panel, TheBoard);
-        if (picturepanel.hasIOComponents() && TheBoard.fpga.FpgaInfoPresent())
+      case fpgaStr:
+        FpgaIoInformationSettingsDialog.getFpgaInformation(panel, theBoard);
+        if (picturepanel.hasIOComponents() && theBoard.fpga.isFpgaInfoPresent())
           saveButton.setEnabled(true);
         break;
       case "internal":
@@ -205,20 +187,20 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
         if (Board != null) {
           BoardReaderClass reader = new BoardReaderClass(
               AppPreferences.Boards.getBoardFilePath(Board));
-          UpdateInfo(reader);
+          updateInfo(reader);
         }
         break;
     }
   }
 
-  private void UpdateInfo(BoardReaderClass reader) {
-    TheBoard = reader.GetBoardInformation();
-    picturepanel.setBoard(TheBoard);
+  private void updateInfo(BoardReaderClass reader) {
+    theBoard = reader.getBoardInformation();
+    picturepanel.setBoard(theBoard);
     picturepanel.repaint();
   }
 
   private String getInternalBoardName() {
-    ArrayList<String> boards = AppPreferences.Boards.getBoardNames();
+    List<String> boards = AppPreferences.Boards.getBoardNames();
     return (String)
         OptionPane.showInputDialog(
             panel,
@@ -240,8 +222,8 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
   public void clear() {
     if (panel.isVisible()) panel.setVisible(false);
     picturepanel.clear();
-    TheBoard.clear();
-    BoardNameInput.setText("");
+    theBoard.clear();
+    boardNameInput.setText("");
     saveButton.setEnabled(false);
     fpgaButton.setEnabled(false);
     loadButton.setEnabled(true);
@@ -249,14 +231,14 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
   }
 
   @Override
-  public void componentResized(ComponentEvent e) {
+  public void componentResized(ComponentEvent event) {
     panel.pack();
   }
 
-  private String getDirName(String old, String window_name) {
+  private String getDirName(String old, String windowName) {
     JFileChooser fc = new JFileChooser(old);
     fc.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
-    fc.setDialogTitle(window_name);
+    fc.setDialogTitle(windowName);
     int retval = fc.showOpenDialog(null);
     if (retval == JFileChooser.APPROVE_OPTION) {
       File file = fc.getSelectedFile();
@@ -265,7 +247,7 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
     return old;
   }
 
-  public JFrame GetPanel() {
+  public JFrame getPanel() {
     return panel;
   }
 
@@ -281,7 +263,7 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
   @Override
   public void localeChanged() {
     panel.setTitle(S.get("FPGABoardEditor"));
-    LocText.setText(S.get("FpgaBoardName"));
+    locTextLabel.setText(S.get("FpgaBoardName"));
     cancelButton.setText(S.get("FpgaBoardCancel"));
     loadButton.setText(S.get("FpgaBoardLoadExternal"));
     importButton.setText(S.get("FpgaBoardLoadInternal"));
@@ -292,17 +274,17 @@ public class BoardEditor implements ActionListener, BaseComponentListenerContrac
 
   @Override
   public void boardNameChanged(String newBoardName) {
-    BoardNameInput.setEnabled(true);
-    BoardNameInput.setText(newBoardName);
-    TheBoard.setBoardName(newBoardName);
+    boardNameInput.setEnabled(true);
+    boardNameInput.setText(newBoardName);
+    theBoard.setBoardName(newBoardName);
     loadButton.setEnabled(false);
     importButton.setEnabled(false);
     fpgaButton.setEnabled(true);
-    saveButton.setEnabled(picturepanel.hasIOComponents() && TheBoard.fpga.FpgaInfoPresent());
+    saveButton.setEnabled(picturepanel.hasIOComponents() && theBoard.fpga.isFpgaInfoPresent());
   }
 
   @Override
-  public void componentsChanged(IOComponentsInformation IOcomps) {
-    saveButton.setEnabled(IOcomps.hasComponents() && TheBoard.fpga.FpgaInfoPresent());
+  public void componentsChanged(IoComponentsInformation ioComps) {
+    saveButton.setEnabled(ioComps.hasComponents() && theBoard.fpga.isFpgaInfoPresent());
   }
 }

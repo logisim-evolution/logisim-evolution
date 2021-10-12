@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.util;
@@ -37,7 +18,7 @@ public class Dag {
     @SuppressWarnings("unused")
     Object data;
 
-    final HashSet<Node> succs = new HashSet<>(); // of Nodes
+    final HashSet<Node> succs = new HashSet<>();
     int numPreds = 0;
     boolean mark;
 
@@ -55,7 +36,10 @@ public class Dag {
 
     final var src = createNode(srcData);
     final var dst = createNode(dstData);
-    if (src.succs.add(dst)) ++dst.numPreds; // add since not already present
+    if (src.succs.add(dst)) {
+      // add since not already present
+      ++dst.numPreds;
+    }
     return true;
   }
 
@@ -64,7 +48,8 @@ public class Dag {
 
     // mark all as unvisited
     for (final var n : nodes.values()) {
-      n.mark = false; // will become true once reached
+      // will become true once reached
+      n.mark = false;
     }
 
     // Search starting at query: If base is found, then it follows

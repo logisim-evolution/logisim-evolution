@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.instance;
@@ -42,7 +23,6 @@ import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.tools.Caret;
@@ -75,7 +55,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 
   @Override
   public void attributeValueChanged(AttributeEvent e) {
-    Attribute<?> attr = e.getAttribute();
+    final var attr = e.getAttribute();
     if (attr == labelAttr) {
       updateField(comp.getAttributeSet());
     } else if (attr == fontAttr) {
@@ -88,7 +68,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
   }
 
   private void createField(AttributeSet attrs, String text) {
-    Font font = attrs.getValue(fontAttr);
+    final var font = attrs.getValue(fontAttr);
     field = new TextField(fieldX, fieldY, halign, valign, font);
     field.setText(text);
     field.addTextFieldListener(this);
@@ -96,12 +76,12 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 
   void draw(Component comp, ComponentDrawContext context) {
     if (field != null && isLabelVisible) {
-      Graphics g = context.getGraphics().create();
-      Color currentColor = g.getColor();
-      if (!context.isPrintView()) g.setColor(fontColor);
-      field.draw(g);
-      g.setColor(currentColor);
-      g.dispose();
+      final var gfx = context.getGraphics().create();
+      final var currentColor = gfx.getColor();
+      if (!context.isPrintView()) gfx.setColor(fontColor);
+      field.draw(gfx);
+      gfx.setColor(currentColor);
+      gfx.dispose();
     }
   }
 
@@ -111,7 +91,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 
   @Override
   public Action getCommitAction(Circuit circuit, String oldText, String newText) {
-    SetAttributeAction act = new SetAttributeAction(circuit, S.getter("changeLabelAction"));
+    final var act = new SetAttributeAction(circuit, S.getter("changeLabelAction"));
     act.set(comp, labelAttr, newText);
     return act;
   }
@@ -119,24 +99,23 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
   @Override
   public Caret getTextCaret(ComponentUserEvent event) {
     canvas = event.getCanvas();
-    Graphics g = canvas.getGraphics();
+    final var gfx = canvas.getGraphics();
 
     // if field is absent, create it empty
     // and if it is empty, just return a caret at its beginning
     if (field == null) createField(comp.getAttributeSet(), "");
-    String text = field.getText();
-    if (text == null || text.equals("")) return field.getCaret(g, 0);
+    final var text = field.getText();
+    if (text == null || text.equals("")) return field.getCaret(gfx, 0);
 
-    Bounds bds = field.getBounds(g);
+    var bds = field.getBounds(gfx);
     if (bds.getWidth() < 4 || bds.getHeight() < 4) {
-      Location loc = comp.getLocation();
+      final var loc = comp.getLocation();
       bds = bds.add(Bounds.create(loc).expand(2));
     }
 
-    int x = event.getX();
-    int y = event.getY();
-    if (bds.contains(x, y)) return field.getCaret(g, x, y);
-    else return null;
+    final var x = event.getX();
+    final var y = event.getY();
+    return (bds.contains(x, y)) ? field.getCaret(gfx, x, y) : null;
   }
 
   private boolean shouldRegister() {
@@ -145,15 +124,14 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
 
   @Override
   public void textChanged(TextFieldEvent e) {
-    String prev = e.getOldText();
-    String next = e.getText();
+    final var prev = e.getOldText();
+    final var next = e.getText();
     if (!next.equals(prev)) {
       comp.getAttributeSet().setValue(labelAttr, next);
     }
   }
 
-  void update(
-      Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
+  void update(Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
     final var wasReg = shouldRegister();
     this.labelAttr = labelAttr;
     this.fontAttr = fontAttr;
@@ -172,7 +150,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
   }
 
   private void updateField(AttributeSet attrs) {
-    String text = attrs.getValue(labelAttr);
+    final var text = attrs.getValue(labelAttr);
     if (text == null || text.equals("")) {
       if (field != null) {
         field.removeTextFieldListener(this);
@@ -182,7 +160,7 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
       if (field == null) {
         createField(attrs, text);
       } else {
-        Font font = attrs.getValue(fontAttr);
+        final var font = attrs.getValue(fontAttr);
         if (font != null) field.setFont(font);
         field.setLocation(fieldX, fieldY, halign, valign);
         field.setText(text);

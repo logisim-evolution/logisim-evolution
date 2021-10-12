@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.generic;
@@ -36,7 +17,7 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.gui.HDLColorRenderer;
+import com.cburch.logisim.fpga.gui.HdlColorRenderer;
 import java.awt.Component;
 import java.awt.Window;
 import java.util.ArrayList;
@@ -57,11 +38,11 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     this.rows = new ArrayList<>();
     if (attrs != null) {
       /* put the vhdl/verilog row */
-      HDLrow rowd = new HDLrow(null);
+      final var rowd = new HDLrow(null);
       rows.add(rowd);
-      for (Attribute<?> attr : attrs.getAttributes()) {
+      for (final var attr : attrs.getAttributes()) {
         if (!attr.isHidden()) {
-          AttrRow row = new AttrRow(attr);
+          final var row = new AttrRow(attr);
           rowMap.put(attr, row);
           rows.add(row);
         }
@@ -75,9 +56,9 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 
   public void setIsTool() {
     /* We remove the label attribute for a tool */
-    for (Attribute<?> attr : attrs.getAttributes()) {
+    for (final var attr : attrs.getAttributes()) {
       if (attr.getName().equals("label")) {
-        AttrRow row = rowMap.get(attr);
+        final var row = rowMap.get(attr);
         rowMap.remove(attr);
         rows.remove(row);
       }
@@ -98,10 +79,10 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
   @Override
   public void attributeListChanged(AttributeEvent e) {
     // if anything has changed, don't do anything
-    int index = 0;
-    boolean match = true;
-    int rowsSize = rows.size();
-    for (Attribute<?> attr : attrs.getAttributes()) {
+    var index = 0;
+    var match = true;
+    var rowsSize = rows.size();
+    for (final var attr : attrs.getAttributes()) {
       if (!attr.isHidden()) {
         if (index >= rowsSize || rows.get(index).attr != attr) {
           match = false;
@@ -113,14 +94,14 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     if (match && index == rows.size()) return;
 
     // compute the new list of rows, possible adding into hash map
-    ArrayList<AttrRow> newRows = new ArrayList<>();
-    HashSet<Attribute<?>> missing = new HashSet<>(rowMap.keySet());
+    final var newRows = new ArrayList<AttrRow>();
+    final var missing = new HashSet<Attribute<?>>(rowMap.keySet());
     /* put the vhdl/verilog row */
-    HDLrow rowd = new HDLrow(null);
+    final var rowd = new HDLrow(null);
     newRows.add(rowd);
-    for (Attribute<?> attr : attrs.getAttributes()) {
+    for (final var attr : attrs.getAttributes()) {
       if (!attr.isHidden()) {
-        AttrRow row = rowMap.get(attr);
+        var row = rowMap.get(attr);
         if (row == null) {
           row = new AttrRow(attr);
           rowMap.put(attr, row);
@@ -131,7 +112,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
       }
     }
     rows = newRows;
-    for (Attribute<?> attr : missing) {
+    for (final var attr : missing) {
       rowMap.remove(attr);
     }
     fireStructureChanged();
@@ -139,10 +120,10 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 
   @Override
   public void attributeValueChanged(AttributeEvent e) {
-    Attribute<?> attr = e.getAttribute();
-    AttrTableModelRow row = rowMap.get(attr);
+    final var attr = e.getAttribute();
+    final var row = rowMap.get(attr);
     if (row != null) {
-      int index = rows.indexOf(row);
+      final var index = rows.indexOf(row);
       if (index >= 0) {
         fireValueChanged(index);
       }
@@ -150,22 +131,22 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
   }
 
   protected void fireStructureChanged() {
-    AttrTableModelEvent event = new AttrTableModelEvent(this);
-    for (AttrTableModelListener l : listeners) {
+    final var event = new AttrTableModelEvent(this);
+    for (final var l : listeners) {
       l.attrStructureChanged(event);
     }
   }
 
   protected void fireTitleChanged() {
-    AttrTableModelEvent event = new AttrTableModelEvent(this);
-    for (AttrTableModelListener l : listeners) {
+    final var event = new AttrTableModelEvent(this);
+    for (final var l : listeners) {
       l.attrTitleChanged(event);
     }
   }
 
   protected void fireValueChanged(int index) {
-    AttrTableModelEvent event = new AttrTableModelEvent(this, index);
-    for (AttrTableModelListener l : listeners) {
+    final var event = new AttrTableModelEvent(this, index);
+    for (final var l : listeners) {
       l.attrValueChanged(event);
     }
   }
@@ -198,9 +179,6 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
   }
 
   @Override
-  public abstract String getTitle();
-
-  @Override
   public void removeAttrTableModelListener(AttrTableModelListener listener) {
     listeners.remove(listener);
     if (listeners.isEmpty() && attrs != null) {
@@ -208,8 +186,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
     }
   }
 
-  protected abstract void setValueRequested(Attribute<Object> attr, Object value)
-      throws AttrTableSetException;
+  protected abstract void setValueRequested(Attribute<Object> attr, Object value) throws AttrTableSetException;
 
   private class AttrRow implements AttrTableModelRow {
     private final Attribute<Object> attr;
@@ -222,7 +199,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 
     @Override
     public Component getEditor(Window parent) {
-      Object value = attrs.getValue(attr);
+      final var value = attrs.getValue(attr);
       return attr.getCellEditor(parent, value);
     }
 
@@ -233,7 +210,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 
     @Override
     public String getValue() {
-      Object value = attrs.getValue(attr);
+      final var value = attrs.getValue(attr);
       if (value == null) {
         try {
           return attr.toDisplayString(value);
@@ -242,11 +219,11 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
         }
       } else {
         try {
-          var str = attr.toDisplayString(value);
+          final var str = attr.toDisplayString(value);
           if (str.isEmpty()
               && attr.getName().equals("label")
               && compInst != null
-              && compInst.RequiresNonZeroLabel()) return HDLColorRenderer.REQUIRED_FIELD_STRING;
+              && compInst.requiresNonZeroLabel()) return HdlColorRenderer.REQUIRED_FIELD_STRING;
           return str;
         } catch (Exception e) {
           return "???";
@@ -261,18 +238,17 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 
     @Override
     public boolean multiEditCompatible(AttrTableModelRow other) {
-      if (!(other instanceof AttrRow)) return false;
-      AttrRow o = (AttrRow) other;
+      if (!(other instanceof AttrRow o)) return false;
       if (!(((Object) attr) instanceof SplitterAttributes.BitOutAttribute)) return false;
       if (!(((Object) o.attr) instanceof SplitterAttributes.BitOutAttribute)) return false;
-      SplitterAttributes.BitOutAttribute a = (SplitterAttributes.BitOutAttribute) (Object) attr;
-      SplitterAttributes.BitOutAttribute b = (SplitterAttributes.BitOutAttribute) (Object) o.attr;
+      final var a = (SplitterAttributes.BitOutAttribute) (Object) attr;
+      final var b = (SplitterAttributes.BitOutAttribute) (Object) o.attr;
       return a.sameOptions(b);
     }
 
     @Override
     public void setValue(Window parent, Object value) throws AttrTableSetException {
-      Attribute<Object> attr = this.attr;
+      final var attr = this.attr;
       if (attr == null || value == null) return;
 
       try {
@@ -281,12 +257,12 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
         }
         setValueRequested(attr, value);
       } catch (ClassCastException e) {
-        String msg = S.get("attributeChangeInvalidError") + ": " + e;
+        final var msg = S.get("attributeChangeInvalidError") + ": " + e;
         throw new AttrTableSetException(msg);
       } catch (NumberFormatException e) {
-        String msg = S.get("attributeChangeInvalidError");
-        String emsg = e.getMessage();
-        if (emsg != null && emsg.length() > 0) msg += ": " + emsg;
+        var msg = S.get("attributeChangeInvalidError");
+        final var eMsg = e.getMessage();
+        if (eMsg != null && eMsg.length() > 0) msg += ": " + eMsg;
         msg += ".";
         throw new AttrTableSetException(msg);
       }
@@ -306,10 +282,10 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 
     @Override
     public String getValue() {
-      if (compInst == null) return HDLColorRenderer.UNKNOWN_STRING;
-      if (compInst.HDLSupportedComponent(attrs))
-        return HDLColorRenderer.SUPPORT_STRING;
-      return HDLColorRenderer.NO_SUPPORT_STRING;
+      if (compInst == null) return HdlColorRenderer.UNKNOWN_STRING;
+      return (compInst.isHDLSupportedComponent(attrs))
+          ? HdlColorRenderer.SUPPORT_STRING
+          : HdlColorRenderer.NO_SUPPORT_STRING;
     }
 
     @Override

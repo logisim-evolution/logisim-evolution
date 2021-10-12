@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.util;
@@ -34,6 +15,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.zip.ZipFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -254,7 +236,7 @@ public class ZipClassLoader extends ClassLoader {
   private static final int REQUEST_LOAD = 1;
 
   private final File zipPath;
-  private final HashMap<String, Object> classes = new HashMap<>();
+  private final Map<String, Object> classes = new HashMap<>();
   private final Object bgLock = new Object();
   private WorkThread bgThread = null;
 
@@ -283,9 +265,8 @@ public class ZipClassLoader extends ClassLoader {
       final var resourceName = className.replace('.', '/') + ".class";
       result = request(REQUEST_LOAD, resourceName);
 
-      if (result instanceof byte[]) {
+      if (result instanceof byte[] data) {
         if (DEBUG >= 3) logger.debug("  define class");
-        final var data = (byte[]) result;
         result = defineClass(className, data, 0, data.length);
         if (result != null) {
           if (DEBUG >= 3) logger.debug("  class defined");
@@ -302,10 +283,10 @@ public class ZipClassLoader extends ClassLoader {
 
     if (result instanceof Class) {
       return (Class<?>) result;
-    } else if (result instanceof ClassNotFoundException) {
-      throw (ClassNotFoundException) result;
-    } else if (result instanceof Error) {
-      throw (Error) result;
+    } else if (result instanceof ClassNotFoundException classNotFoundEx) {
+      throw classNotFoundEx;
+    } else if (result instanceof Error error) {
+      throw error;
     } else {
       return super.findClass(className);
     }
@@ -316,11 +297,9 @@ public class ZipClassLoader extends ClassLoader {
   public URL findResource(String resourceName) {
     if (DEBUG >= 3) logger.debug("findResource " + resourceName);
     final var ret = request(REQUEST_FIND, resourceName);
-    if (ret instanceof URL) {
-      return (URL) ret;
-    } else {
-      return super.findResource(resourceName);
-    }
+    return (ret instanceof URL url)
+           ? url
+           : super.findResource(resourceName);
   }
 
   private Object request(int action, String resourceName) {

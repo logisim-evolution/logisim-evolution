@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.util;
@@ -49,8 +30,8 @@ import java.util.TreeSet;
 
 public class AutoLabel {
 
-  static final Integer[] UsedKeyStrokes = new Integer[] {KeyEvent.VK_L, KeyEvent.VK_T, KeyEvent.VK_V, KeyEvent.VK_H, KeyEvent.VK_A};
-  public static final Set<Integer> KeyStrokes = new HashSet<>(Arrays.asList(UsedKeyStrokes));
+  public static final Integer[] USED_KEY_STROKES = new Integer[] {KeyEvent.VK_L, KeyEvent.VK_T, KeyEvent.VK_V, KeyEvent.VK_H, KeyEvent.VK_A};
+  public static final Set<Integer> KEY_STROKES = new HashSet<>(Arrays.asList(USED_KEY_STROKES));
 
   private final HashMap<Circuit, String> labelBase = new HashMap<>();
   private final HashMap<Circuit, Integer> currentIndex = new HashMap<>();
@@ -80,7 +61,7 @@ public class AutoLabel {
   public String getCurrent(Circuit circ, ComponentFactory me) {
     if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty())
       return "";
-    if (Circuit.IsCorrectLabel(circ.getName(), currentLabel.get(circ), circ.getNonWires(), null, me, false))
+    if (Circuit.isCorrectLabel(circ.getName(), currentLabel.get(circ), circ.getNonWires(), null, me, false))
       return currentLabel.get(circ);
     else if (hasNext(circ)) {
       return getNext(circ, me);
@@ -103,13 +84,11 @@ public class AutoLabel {
   }
 
   public String getMatrixLabel(Circuit circ, ComponentFactory me, String common, int x, int y) {
-    String label;
     if ((common == null) || (common.isEmpty()) || (x < 0) || (y < 0)) return "";
-    if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty())
-      return "";
-    label = common.concat("_X" + x + "_Y" + y);
-    if (Circuit.IsCorrectLabel(circ.getName(), label, circ.getNonWires(), null, me, false)
-        & SyntaxChecker.isVariableNameAcceptable(label, false)) return label;
+    if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty()) return "";
+    final var label = common.concat("_X" + x + "_Y" + y);
+    if (Circuit.isCorrectLabel(circ.getName(), label, circ.getNonWires(), null, me, false)
+        && SyntaxChecker.isVariableNameAcceptable(label, false)) return label;
     return "";
   }
 
@@ -128,7 +107,7 @@ public class AutoLabel {
       newLabel = baseLabel;
       if (undescore) newLabel = newLabel.concat("_");
       newLabel = newLabel.concat(Integer.toString(curIdx));
-    } while (!Circuit.IsCorrectLabel(circ.getName(), newLabel, circ.getNonWires(), null, me, false));
+    } while (!Circuit.isCorrectLabel(circ.getName(), newLabel, circ.getNonWires(), null, me, false));
     currentIndex.put(circ, curIdx);
     currentLabel.put(circ, newLabel);
     return newLabel;
@@ -212,7 +191,7 @@ public class AutoLabel {
               OptionPane.showInputDialog(null, S.get("editLabelQuestion") + " " + componentName,
                   S.get("editLabelDialog"), OptionPane.QUESTION_MESSAGE, null, null, oldLabel);
       if (newLabel != null) {
-        if (Circuit.IsCorrectLabel(circ.getName(), newLabel, circ.getNonWires(), attrs, compFactory, true)
+        if (Circuit.isCorrectLabel(circ.getName(), newLabel, circ.getNonWires(), attrs, compFactory, true)
             && SyntaxChecker.isVariableNameAcceptable(newLabel, true)
             && !CorrectLabel.isKeyword(newLabel, true)) {
           if (createAction) act.set(comp, StdAttr.LABEL, newLabel);

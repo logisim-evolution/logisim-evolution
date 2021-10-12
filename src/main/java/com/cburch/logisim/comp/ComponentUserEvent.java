@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.comp;
@@ -31,34 +12,17 @@ package com.cburch.logisim.comp;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.gui.main.Canvas;
 
-public class ComponentUserEvent {
-  private final Canvas canvas;
-  private int x = 0;
-  private int y = 0;
+// NOTE: silly members' names are mostly to avoid refactoring of the whole codebase due to record's
+// getters not using Bean naming convention (so i.e. `foo()` instead of `getFoo()`. We may change
+// that in future, but for now it looks stupid in this file only.
+public record ComponentUserEvent(Canvas getCanvas, int getX, int getY) {
 
   ComponentUserEvent(Canvas canvas) {
-    this.canvas = canvas;
-  }
-
-  public ComponentUserEvent(Canvas canvas, int x, int y) {
-    this.canvas = canvas;
-    this.x = x;
-    this.y = y;
-  }
-
-  public Canvas getCanvas() {
-    return canvas;
+    this(canvas, 0, 0);
   }
 
   public CircuitState getCircuitState() {
-    return canvas.getCircuitState();
+    return getCanvas.getCircuitState();
   }
 
-  public int getX() {
-    return x;
-  }
-
-  public int getY() {
-    return y;
-  }
 }

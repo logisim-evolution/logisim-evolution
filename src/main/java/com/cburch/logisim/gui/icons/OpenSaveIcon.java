@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.icons;
@@ -38,8 +19,8 @@ public class OpenSaveIcon extends BaseIcon {
   public static final int FILE_OPEN = 0;
   public static final int FILE_SAVE = 1;
   public static final int FILE_SAVE_AS = 2;
-  private static final int[] Arrowup = new int[] {4, 3, 7, 0, 10, 3, 8, 3, 8, 6, 6, 6, 6, 3};
-  private static final int[] Arrowdown = new int[] {6, 0, 8, 0, 8, 3, 10, 3, 7, 6, 4, 3, 6, 3};
+  private static final int[] arrowUp = new int[] {4, 3, 7, 0, 10, 3, 8, 3, 8, 6, 6, 6, 6, 3};
+  private static final int[] arrowDown = new int[] {6, 0, 8, 0, 8, 3, 10, 3, 7, 6, 4, 3, 6, 3};
   private final int myType;
 
   public OpenSaveIcon(int type) {
@@ -70,27 +51,27 @@ public class OpenSaveIcon extends BaseIcon {
     bds = getScaled(8, 11, 1, 2);
     g2.fillRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     g2.setColor(Color.MAGENTA);
-    int[] xpoints;
-    int[] ypoints;
+    final int[] xPoints;
+    final int[] yPoints;
     switch (myType) {
       case FILE_OPEN:
-        xpoints = new int[7];
-        ypoints = new int[7];
-        for (int i = 0; i < 7; i++) {
-          xpoints[i] = AppPreferences.getScaled(Arrowup[i * 2]);
-          ypoints[i] = AppPreferences.getScaled(Arrowup[i * 2 + 1]);
+        xPoints = new int[7];
+        yPoints = new int[7];
+        for (var i = 0; i < 7; i++) {
+          xPoints[i] = AppPreferences.getScaled(arrowUp[i * 2]);
+          yPoints[i] = AppPreferences.getScaled(arrowUp[i * 2 + 1]);
         }
-        g2.fillPolygon(xpoints, ypoints, 7);
+        g2.fillPolygon(xPoints, yPoints, 7);
         break;
       case FILE_SAVE_AS:
       case FILE_SAVE:
-        xpoints = new int[7];
-        ypoints = new int[7];
-        for (int i = 0; i < 7; i++) {
-          xpoints[i] = AppPreferences.getScaled(Arrowdown[i * 2]);
-          ypoints[i] = AppPreferences.getScaled(Arrowdown[i * 2 + 1]);
+        xPoints = new int[7];
+        yPoints = new int[7];
+        for (var i = 0; i < 7; i++) {
+          xPoints[i] = AppPreferences.getScaled(arrowDown[i * 2]);
+          yPoints[i] = AppPreferences.getScaled(arrowDown[i * 2 + 1]);
         }
-        g2.fillPolygon(xpoints, ypoints, 7);
+        g2.fillPolygon(xPoints, yPoints, 7);
         break;
       default:
         // do nothing. should not really happen.

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.util;
@@ -34,9 +15,21 @@ import java.awt.event.InputEvent;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-public class InputEventUtil {
+public final class InputEventUtil {
+
+  public static final String CTRL = "Ctrl";
+  public static final String SHIFT = "Shift";
+  public static final String ALT = "Alt";
+  public static final String BUTTON1 = "Button1";
+  public static final String BUTTON2 = "Button2";
+  public static final String BUTTON3 = "Button3";
+
+  private InputEventUtil() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
+
   public static int fromDisplayString(String str) {
-    int ret = 0;
+    var ret = 0;
     final var toks = new StringTokenizer(str);
     while (toks.hasMoreTokens()) {
       final var s = toks.nextToken();
@@ -52,22 +45,15 @@ public class InputEventUtil {
   }
 
   private static int parseInput(String s) {
-    switch (s) {
-      case CTRL:
-        return InputEvent.CTRL_DOWN_MASK;
-      case SHIFT:
-        return InputEvent.SHIFT_DOWN_MASK;
-      case ALT:
-        return InputEvent.ALT_DOWN_MASK;
-      case BUTTON1:
-        return InputEvent.BUTTON1_DOWN_MASK;
-      case BUTTON2:
-        return InputEvent.BUTTON2_DOWN_MASK;
-      case BUTTON3:
-        return InputEvent.BUTTON3_DOWN_MASK;
-      default:
-        throw new NumberFormatException("InputEventUtil");
-    }
+    return switch (s) {
+      case CTRL -> InputEvent.CTRL_DOWN_MASK;
+      case SHIFT -> InputEvent.SHIFT_DOWN_MASK;
+      case ALT -> InputEvent.ALT_DOWN_MASK;
+      case BUTTON1 -> InputEvent.BUTTON1_DOWN_MASK;
+      case BUTTON2 -> InputEvent.BUTTON2_DOWN_MASK;
+      case BUTTON3 -> InputEvent.BUTTON3_DOWN_MASK;
+      default -> throw new NumberFormatException("InputEventUtil");
+    };
   }
 
   public static int fromString(String str) {
@@ -149,17 +135,4 @@ public class InputEventUtil {
     }
   }
 
-  public static final String CTRL = "Ctrl";
-
-  public static final String SHIFT = "Shift";
-
-  public static final String ALT = "Alt";
-
-  public static final String BUTTON1 = "Button1";
-
-  public static final String BUTTON2 = "Button2";
-
-  public static final String BUTTON3 = "Button3";
-
-  private InputEventUtil() {}
 }

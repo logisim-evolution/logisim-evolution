@@ -1,133 +1,113 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.gui;
 
-import com.cburch.logisim.fpga.designrulecheck.SimpleDRCContainer;
+import com.cburch.logisim.fpga.designrulecheck.SimpleDrcContainer;
 import javax.swing.JProgressBar;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Reporter {
 
-  public static final Reporter Report = new Reporter();
+  public static final Reporter report = new Reporter();
   private static final Logger logger = LoggerFactory.getLogger(Reporter.class);
-  private FPGAReportTabbedPane myCommander = null;
+  private FpgaReportTabbedPane myCommander = null;
   private JProgressBar progress = null;
 
   public JProgressBar getProgressBar() {
     return progress;
   }
 
-  public void setGuiLogger(FPGAReportTabbedPane gui) {
+  public void setGuiLogger(FpgaReportTabbedPane gui) {
     myCommander = gui;
   }
 
-  public void setProgressBar(JProgressBar prog) {
-    progress = prog;
+  public void setProgressBar(JProgressBar progressBar) {
+    progress = progressBar;
   }
 
-  public void AddErrorIncrement(String Message) {
+  public void addErrorIncrement(String message) {
     if (myCommander == null)
-      logger.error(Message);
+      logger.error(message);
     else
-      myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL, true));
+      myCommander.addErrors(new SimpleDrcContainer(message, SimpleDrcContainer.LEVEL_NORMAL, true));
   }
 
-  public void AddError(Object Message) {
+  public void addError(Object message) {
     if (myCommander == null) {
-      if (Message instanceof String) logger.error((String) Message);
+      if (message instanceof String msg) logger.error(msg);
     } else {
-      if (Message instanceof String)
-        myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL));
-      else myCommander.AddErrors(Message);
+      myCommander.addErrors((message instanceof String)
+          ? new SimpleDrcContainer(message, SimpleDrcContainer.LEVEL_NORMAL)
+          : message);
     }
   }
 
   public void addFatalErrorFmt(String fmt, Object... args) {
-    AddFatalError(String.format(fmt, args));
+    addFatalError(String.format(fmt, args));
   }
 
-  public void AddFatalError(String Message) {
+  public void addFatalError(String message) {
     if (myCommander == null)
-      logger.error(Message);
+      logger.error(message);
     else
-      myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_FATAL));
+      myCommander.addErrors(new SimpleDrcContainer(message, SimpleDrcContainer.LEVEL_FATAL));
   }
 
-  public void AddSevereError(String Message) {
+  public void addSevereError(String message) {
     if (myCommander == null)
-      logger.error(Message);
+      logger.error(message);
     else
-      myCommander.AddErrors(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_SEVERE));
+      myCommander.addErrors(new SimpleDrcContainer(message, SimpleDrcContainer.LEVEL_SEVERE));
   }
 
-  public void AddInfo(String Message) {
+  public void addInfo(String message) {
     if (myCommander == null)
-      logger.info(Message);
+      logger.info(message);
     else
-      myCommander.AddInfo(Message);
+      myCommander.addInfo(message);
   }
 
-  public void AddSevereWarning(String Message) {
+  public void addSevereWarning(String message) {
     if (myCommander == null)
-      logger.warn(Message);
+      logger.warn(message);
     else
-      myCommander.AddWarning(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_SEVERE));
+      myCommander.addWarning(new SimpleDrcContainer(message, SimpleDrcContainer.LEVEL_SEVERE));
   }
 
-  public void AddWarningIncrement(String Message) {
+  public void addWarningIncrement(String message) {
     if (myCommander == null)
-      logger.warn(Message);
+      logger.warn(message);
     else
-      myCommander.AddWarning(
-          new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL, true));
+      myCommander.addWarning(new SimpleDrcContainer(message, SimpleDrcContainer.LEVEL_NORMAL, true));
   }
 
-  public void AddWarning(Object Message) {
+  public void addWarning(Object message) {
     if (myCommander == null) {
-      if (Message instanceof String) logger.warn((String) Message);
+      if (message instanceof String msg) logger.warn(msg);
     } else {
-      if (Message instanceof String)
-        myCommander.AddWarning(new SimpleDRCContainer(Message, SimpleDRCContainer.LEVEL_NORMAL));
-      else myCommander.AddWarning(Message);
+      myCommander.addWarning(message instanceof String
+          ? new SimpleDrcContainer(message, SimpleDrcContainer.LEVEL_NORMAL)
+          : message);
     }
   }
 
-  public void ClsScr() {
+  public void clearConsole() {
     if (myCommander != null)
-      myCommander.ClearConsole();
+      myCommander.clearConsole();
   }
 
-  public void print(String Message) {
+  public void print(String message) {
     if (myCommander == null)
-      logger.info(Message);
+      logger.info(message);
     else
-      myCommander.AddConsole(Message);
+      myCommander.addConsole(message);
   }
 }

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.comp;
@@ -36,8 +17,8 @@ import com.cburch.logisim.data.AttributeDefaultProvider;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Color;
 
@@ -52,7 +33,7 @@ public interface ComponentFactory extends AttributeDefaultProvider {
   Object TOOL_TIP = new Object();
   Object FACING_ATTRIBUTE_KEY = new Object();
 
-  boolean ActiveOnHigh(AttributeSet attrs);
+  boolean activeOnHigh(AttributeSet attrs);
 
   AttributeSet createAttributeSet();
 
@@ -87,7 +68,7 @@ public interface ComponentFactory extends AttributeDefaultProvider {
    */
   Object getFeature(Object key, AttributeSet attrs);
 
-  HDLGeneratorFactory getHDLGenerator(AttributeSet attrs);
+  HdlGeneratorFactory getHDLGenerator(AttributeSet attrs);
 
   String getHDLName(AttributeSet attrs);
 
@@ -97,23 +78,23 @@ public interface ComponentFactory extends AttributeDefaultProvider {
 
   Bounds getOffsetBounds(AttributeSet attrs);
 
-  boolean HasThreeStateDrivers(AttributeSet attrs);
+  boolean hasThreeStateDrivers(AttributeSet attrs);
 
-  boolean HDLSupportedComponent(AttributeSet attrs);
+  boolean isHDLSupportedComponent(AttributeSet attrs);
 
   @Override
   boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver);
 
-  boolean CheckForGatedClocks(NetlistComponent comp);
+  boolean checkForGatedClocks(netlistComponent comp);
 
-  int[] ClockPinIndex(NetlistComponent comp);
+  int[] clockPinIndex(netlistComponent comp);
 
   void paintIcon(ComponentDrawContext context, int x, int y, AttributeSet attrs);
 
-  boolean RequiresGlobalClock();
+  boolean requiresGlobalClock();
 
   /* Added for HDL generation */
-  boolean RequiresNonZeroLabel();
+  boolean requiresNonZeroLabel();
 
   /* Added for Soc simulation core */
   boolean isSocComponent();

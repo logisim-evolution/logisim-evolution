@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.icons;
@@ -55,48 +36,49 @@ public class ArithmeticIcon extends BaseIcon {
     this.invalid = invalid;
   }
 
+  @Override
   protected void paintIcon(Graphics2D g2) {
     g2.setStroke(new BasicStroke(scale(2)));
     g2.setColor(Color.BLACK);
-    float scale = opp.length() >= nrOfChars ? nrOfChars : 1;
-    int yoff = opp.length() > nrOfChars ? getIconHeight() >> 2 : getIconHeight() >> 1;
-    Font f = g2.getFont().deriveFont((float) getIconWidth() / scale).deriveFont(Font.BOLD);
+    final var scale = opp.length() >= nrOfChars ? nrOfChars : 1;
+    final var yOff = opp.length() > nrOfChars ? getIconHeight() >> 2 : getIconHeight() >> 1;
+    var font = g2.getFont().deriveFont((float) getIconWidth() / scale).deriveFont(Font.BOLD);
     g2.drawRect(scale(1), scale(1), getIconWidth() - scale(2), getIconHeight() - scale(2));
-    TextLayout t =
+    var textLayout =
         new TextLayout(
             opp.length() > nrOfChars ? opp.substring(0, nrOfChars) : opp,
-            f,
+            font,
             g2.getFontRenderContext());
-    t.draw(
+    textLayout.draw(
         g2,
-        (float) (getIconWidth() / 2 - t.getBounds().getCenterX()),
-        (float) (yoff - t.getBounds().getCenterY()));
+        (float) (getIconWidth() / 2 - textLayout.getBounds().getCenterX()),
+        (float) (yOff - textLayout.getBounds().getCenterY()));
     if (opp.length() > nrOfChars) {
-      t =
+      textLayout =
           new TextLayout(
               opp.length() > 2 * nrOfChars
                   ? opp.substring(nrOfChars, 2 * nrOfChars)
                   : opp.substring(nrOfChars),
-              f,
+              font,
               g2.getFontRenderContext());
-      t.draw(
+      textLayout.draw(
           g2,
-          (float) (getIconWidth() / 2 - t.getBounds().getCenterX()),
-          (float) (3 * yoff - t.getBounds().getCenterY()));
+          (float) (getIconWidth() / 2 - textLayout.getBounds().getCenterX()),
+          (float) (3 * yOff - textLayout.getBounds().getCenterY()));
     }
     if (invalid) {
       g2.setColor(Color.RED);
       g2.fillOval(0, getIconHeight() / 2, getIconWidth() / 2, getIconHeight() / 2);
-      f =
+      font =
           g2.getFont()
               .deriveFont(scale((float) getIconWidth() / (float) (2.8)))
               .deriveFont(Font.BOLD);
-      t = new TextLayout("!", f, g2.getFontRenderContext());
+      textLayout = new TextLayout("!", font, g2.getFontRenderContext());
       g2.setColor(Color.WHITE);
-      t.draw(
+      textLayout.draw(
           g2,
-          (float) (getIconWidth() / 4 - t.getBounds().getCenterX()),
-          (float) ((3 * getIconHeight()) / 4 - t.getBounds().getCenterY()));
+          (float) (getIconWidth() / 4 - textLayout.getBounds().getCenterX()),
+          (float) ((3 * getIconHeight()) / 4 - textLayout.getBounds().getCenterY()));
     }
   }
 }

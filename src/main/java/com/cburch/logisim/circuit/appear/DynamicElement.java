@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.circuit.appear;
@@ -88,7 +69,7 @@ public abstract class DynamicElement extends AbstractCanvasObject {
     }
 
     public boolean contains(Component c) {
-      for (InstanceComponent ic : elt) {
+      for (final var ic : elt) {
         if (ic == c) return true;
       }
       return false;
@@ -98,14 +79,15 @@ public abstract class DynamicElement extends AbstractCanvasObject {
       return elt[elt.length - 1];
     }
 
+    @Override
     public String toString() {
       return toSvgString();
     }
 
     public String toSvgString() {
-      StringBuilder s = new StringBuilder();
-      for (InstanceComponent instanceComponent : elt) {
-        Location loc = instanceComponent.getLocation();
+      final var s = new StringBuilder();
+      for (final var instanceComponent : elt) {
+        final var loc = instanceComponent.getLocation();
         s.append("/").append(escape(instanceComponent.getFactory().getName())).append(loc);
       }
       return s.toString();
@@ -113,22 +95,22 @@ public abstract class DynamicElement extends AbstractCanvasObject {
 
     public static Path fromSvgString(String s, Circuit circuit) throws IllegalArgumentException {
       if (!s.startsWith("/")) throw new IllegalArgumentException("Bad path: " + s);
-      String[] parts = s.substring(1).split("(?<!\\\\)/");
-      InstanceComponent[] elt = new InstanceComponent[parts.length];
-      for (int i = 0; i < parts.length; i++) {
-        String ss = parts[i];
-        int p = ss.lastIndexOf("(");
-        int c = ss.lastIndexOf(",");
-        int e = ss.lastIndexOf(")");
+      final var parts = s.substring(1).split("(?<!\\\\)/");
+      final var elt = new InstanceComponent[parts.length];
+      for (var i = 0; i < parts.length; i++) {
+        final var ss = parts[i];
+        final var p = ss.lastIndexOf("(");
+        final var c = ss.lastIndexOf(",");
+        final var e = ss.lastIndexOf(")");
         if (e != ss.length() - 1 || p <= 0 || c <= p)
           throw new IllegalArgumentException("Bad path element: " + ss);
-        int x = Integer.parseInt(ss.substring(p + 1, c).trim());
-        int y = Integer.parseInt(ss.substring(c + 1, e).trim());
-        Location loc = Location.create(x, y);
-        String name = unescape(ss.substring(0, p));
-        Circuit circ = circuit;
+        final var x = Integer.parseInt(ss.substring(p + 1, c).trim());
+        final var y = Integer.parseInt(ss.substring(c + 1, e).trim());
+        final var loc = Location.create(x, y);
+        final var name = unescape(ss.substring(0, p));
+        var circ = circuit;
         if (i > 0) circ = ((SubcircuitFactory) elt[i - 1].getFactory()).getSubcircuit();
-        InstanceComponent ic = find(circ, loc, name);
+        final var ic = find(circ, loc, name);
         if (ic == null) throw new IllegalArgumentException("Missing component: " + ss);
         elt[i] = ic;
       }
@@ -136,7 +118,7 @@ public abstract class DynamicElement extends AbstractCanvasObject {
     }
 
     private static InstanceComponent find(Circuit circuit, Location loc, String name) {
-      for (Component c : circuit.getNonWires()) {
+      for (final var c : circuit.getNonWires()) {
         if (name.equals(c.getFactory().getName()) && loc.equals(c.getLocation()))
           return (InstanceComponent) c;
       }
@@ -212,10 +194,10 @@ public abstract class DynamicElement extends AbstractCanvasObject {
 
   @Override
   public List<Handle> getHandles(HandleGesture gesture) {
-    int x0 = bounds.getX();
-    int y0 = bounds.getY();
-    int x1 = x0 + bounds.getWidth();
-    int y1 = y0 + bounds.getHeight();
+    final var x0 = bounds.getX();
+    final var y0 = bounds.getY();
+    final var x1 = x0 + bounds.getWidth();
+    final var y1 = y0 + bounds.getHeight();
     return UnmodifiableList.create(
         new Handle[] {
           new Handle(this, x0, y0),
@@ -226,48 +208,49 @@ public abstract class DynamicElement extends AbstractCanvasObject {
   }
 
   protected Object getData(CircuitState state) {
-    Object o = state.getData(path.elt[0]);
-    for (int i = 1; i < path.elt.length && o != null; i++) {
-      if (!(o instanceof CircuitState)) {
+    var obj = state.getData(path.elt[0]);
+    for (var i = 1; i < path.elt.length && obj != null; i++) {
+      if (!(obj instanceof CircuitState)) {
         throw new IllegalStateException(
             "Expecting CircuitState for path["
                 + (i - 1)
                 + "] "
                 + path.elt[i - 1]
                 + "  but got: "
-                + o);
+                + obj);
       }
-      state = (CircuitState) o;
-      o = state.getData(path.elt[i]);
+      state = (CircuitState) obj;
+      obj = state.getData(path.elt[i]);
     }
-    return o;
+    return obj;
   }
 
   protected InstanceComponent getComponent(CircuitState state) {
-    Object o = state.getData(path.elt[0]);
-    InstanceComponent comp = path.elt[0];
-    for (int i = 1; i < path.elt.length && o != null; i++) {
-      if (!(o instanceof CircuitState)) {
+    var obj = state.getData(path.elt[0]);
+    var comp = path.elt[0];
+    for (var i = 1; i < path.elt.length && obj != null; i++) {
+      if (!(obj instanceof CircuitState)) {
         throw new IllegalStateException(
             "Expecting CircuitState for path["
                 + (i - 1)
                 + "] "
                 + path.elt[i - 1]
                 + "  but got: "
-                + o);
+                + obj);
       }
-      state = (CircuitState) o;
+      state = (CircuitState) obj;
       comp = path.elt[i];
-      o = state.getData(path.elt[i]);
+      obj = state.getData(path.elt[i]);
     }
     return comp;
   }
 
   @Override
   public String getDisplayNameAndLabel() {
-    String label = path.leaf().getInstance().getAttributeValue(StdAttr.LABEL);
-    if (label != null && label.length() > 0) return getDisplayName() + " \"" + label + "\"";
-    else return getDisplayName();
+    final var label = path.leaf().getInstance().getAttributeValue(StdAttr.LABEL);
+    return (label != null && label.length() > 0)
+        ? getDisplayName() + " \"" + label + "\""
+        : getDisplayName();
   }
 
   @Override
@@ -279,28 +262,16 @@ public abstract class DynamicElement extends AbstractCanvasObject {
     if (elt.hasAttribute("stroke-width"))
       strokeWidth = Integer.parseInt(elt.getAttribute("stroke-width").trim());
     if (elt.hasAttribute("label")) {
-      String loc = elt.getAttribute("label").trim().toLowerCase();
-      switch (loc) {
-        case "left":
-          labelLoc = LABEL_LEFT;
-          break;
-        case "right":
-          labelLoc = LABEL_RIGHT;
-          break;
-        case "top":
-          labelLoc = LABEL_TOP;
-          break;
-        case "bottom":
-          labelLoc = LABEL_BOTTOM;
-          break;
-        case "center":
-          labelLoc = LABEL_CENTER;
-          break;
-        default:
-        case "none":
-          labelLoc = LABEL_NONE;
-          break;
-      }
+      final var loc = elt.getAttribute("label").trim().toLowerCase();
+      labelLoc = switch (loc) {
+        case "left" -> LABEL_LEFT;
+        case "right" -> LABEL_RIGHT;
+        case "top" -> LABEL_TOP;
+        case "bottom" -> LABEL_BOTTOM;
+        case "center" -> LABEL_CENTER;
+        case "none" -> LABEL_NONE;
+        default -> LABEL_NONE;
+      };
     }
     labelFont = SvgReader.getFontAttribute(elt, "", "SansSerif", 7);
     if (elt.hasAttribute("label-color"))
@@ -331,31 +302,31 @@ public abstract class DynamicElement extends AbstractCanvasObject {
 
   public void drawLabel(Graphics g) {
     if (labelLoc == LABEL_NONE) return;
-    String label = path.leaf().getAttributeSet().getValue(StdAttr.LABEL);
+    final var label = path.leaf().getAttributeSet().getValue(StdAttr.LABEL);
     if (label == null || label.length() == 0) return;
-    int x = bounds.getX();
-    int y = bounds.getY();
-    int w = bounds.getWidth();
-    int h = bounds.getHeight();
-    int valign = GraphicsUtil.V_CENTER;
-    int halign = GraphicsUtil.H_CENTER;
-    int px = x + w / 2;
-    int py = y + h / 2;
+    final var x = bounds.getX();
+    final var y = bounds.getY();
+    final var w = bounds.getWidth();
+    final var h = bounds.getHeight();
+    var vAlign = GraphicsUtil.V_CENTER;
+    var hAlign = GraphicsUtil.H_CENTER;
+    var pX = x + w / 2;
+    var pY = y + h / 2;
     if (labelLoc == LABEL_TOP) {
-      py = y - 1;
-      valign = GraphicsUtil.V_BOTTOM;
+      pY = y - 1;
+      vAlign = GraphicsUtil.V_BOTTOM;
     } else if (labelLoc == LABEL_BOTTOM) {
-      py = y + h + 1;
-      valign = GraphicsUtil.V_TOP;
+      pY = y + h + 1;
+      vAlign = GraphicsUtil.V_TOP;
     } else if (labelLoc == LABEL_RIGHT) {
-      px = x + w + 1;
-      halign = GraphicsUtil.H_LEFT;
+      pX = x + w + 1;
+      hAlign = GraphicsUtil.H_LEFT;
     } else if (labelLoc == LABEL_LEFT) {
-      px = x - 1;
-      halign = GraphicsUtil.H_RIGHT;
+      pX = x - 1;
+      hAlign = GraphicsUtil.H_RIGHT;
     }
     g.setColor(labelColor);
-    GraphicsUtil.drawText(g, labelFont, label, px, py, halign, valign);
+    GraphicsUtil.drawText(g, labelFont, label, pX, pY, hAlign, vAlign);
   }
 
   @Override

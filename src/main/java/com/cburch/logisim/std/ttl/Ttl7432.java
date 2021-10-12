@@ -1,39 +1,17 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import java.awt.Graphics;
-import java.util.ArrayList;
+import com.cburch.logisim.util.LineBuffer;
 
 public class Ttl7432 extends AbstractTtlGate {
   /**
@@ -44,25 +22,17 @@ public class Ttl7432 extends AbstractTtlGate {
    */
   public static final String _ID = "7432";
 
-  private static class OrGateHDLGeneratorFactory extends AbstractGateHDLGenerator {
+  private static class OrGateHdlGeneratorFactory extends AbstractGateHdlGenerator {
 
     @Override
-    public String getComponentStringIdentifier() {
-      return "TTL7400";
-    }
-
-    @Override
-    public ArrayList<String> GetLogicFunction(int index) {
-      final var contents = new ArrayList<String>();
-      contents.add("   " + HDL.assignPreamble() + "gate_" + index + "_O" + HDL.assignOperator()
-              + "gate_" + index + "_A" + HDL.orOperator() + "gate_" + index + "B;");
-      contents.add("");
-      return contents;
+    public LineBuffer getLogicFunction(int index) {
+      return LineBuffer.getHdlBuffer()
+          .add("{{assign}}gateO{{1}}{{=}}gateA{{1}}{{or}}gateB{{1}};", index);
     }
   }
 
   public Ttl7432() {
-    super(_ID, (byte) 14, new byte[] {3, 6, 8, 11}, true);
+    super(_ID, (byte) 14, new byte[] {3, 6, 8, 11}, true, new OrGateHdlGeneratorFactory());
   }
 
   @Override
@@ -80,18 +50,12 @@ public class Ttl7432 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     for (byte i = 2; i < 6; i += 3) {
       state.setPort(i, state.getPortValue(i - 1).or(state.getPortValue(i - 2)), 1);
     }
     for (byte i = 6; i < 12; i += 3) {
       state.setPort(i, state.getPortValue(i + 1).or(state.getPortValue(i + 2)), 1);
     }
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new OrGateHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

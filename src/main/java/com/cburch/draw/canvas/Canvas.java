@@ -1,37 +1,23 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.draw.canvas;
 
 import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasObject;
-import com.cburch.draw.undo.Action;
+import com.cburch.draw.shapes.DrawAttr;
+import com.cburch.draw.undo.UndoAction;
+import com.cburch.logisim.data.Location;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.GraphicsUtil;
+
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -48,6 +34,8 @@ public class Canvas extends JComponent {
   private CanvasModel model;
   private ActionDispatcher dispatcher;
   private Selection selection;
+  private Location tooltipLocation;
+  private String tooltipName;
 
   public Canvas() {
     model = null;
@@ -60,7 +48,7 @@ public class Canvas extends JComponent {
     setPreferredSize(new Dimension(200, 200));
   }
 
-  public void doAction(Action action) {
+  public void doAction(UndoAction action) {
     dispatcher.doAction(action);
   }
 
@@ -89,18 +77,17 @@ public class Canvas extends JComponent {
     }
   }
 
+  // FIXME: if this is **must** be overriden (as per code comment), then we need to turn this into abstract class.
   public double getZoomFactor() {
     return 1.0; // subclass will have to override this
   }
 
   protected void paintBackground(Graphics g) {
     if (AppPreferences.AntiAliassing.getBoolean()) {
-      Graphics2D g2 = (Graphics2D) g;
-      g2.setRenderingHint(
-          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      final var g2 = (Graphics2D) g;
+      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
-
     g.clearRect(0, 0, getWidth(), getHeight());
   }
 
@@ -108,13 +95,32 @@ public class Canvas extends JComponent {
   public void paintComponent(Graphics g) {
     paintBackground(g);
     paintForeground(g);
+    paintTooltip(g);
+  }
+  
+  public void setTooltip(Location loc, String name) {
+    tooltipLocation = loc;
+    tooltipName = name;
+  }
+  
+  private void paintTooltip(Graphics g) {
+    if (tooltipLocation == null || tooltipName == null) return;
+    g.setColor(Color.YELLOW);
+    final var x = (int) (tooltipLocation.getX() * getZoomFactor());
+    final var y = (int) (tooltipLocation.getY() * getZoomFactor());
+    final var width = (int) ((tooltipName.length() * DrawAttr.FIXED_FONT_CHAR_WIDTH) * getZoomFactor());
+    final var height = (int) ((DrawAttr.FIXED_FONT_HEIGHT + DrawAttr.FIXED_FONT_HEIGHT >> 1) * getZoomFactor());
+    g.fillRect(x, y, width, height);
+    g.setColor(Color.BLUE);
+    g.setFont(DrawAttr.DEFAULT_FIXED_PICH_FONT.deriveFont((float) (getZoomFactor() * DrawAttr.FIXED_FONT_HEIGHT)));
+    GraphicsUtil.drawText(g, tooltipName, x + 2, y, GraphicsUtil.H_LEFT, GraphicsUtil.V_TOP);
   }
 
   protected void paintForeground(Graphics g) {
-    var canvasModel = this.model;
-    var tool = listener.getTool();
+    final var canvasModel = this.model;
+    final var tool = listener.getTool();
     if (canvasModel != null) {
-      var dup = g.create();
+      final var dup = g.create();
       canvasModel.paint(g, selection);
       dup.dispose();
     }
@@ -130,7 +136,7 @@ public class Canvas extends JComponent {
   }
 
   public void setModel(CanvasModel value, ActionDispatcher dispatcher) {
-    CanvasModel oldValue = model;
+    final var oldValue = model;
     if (oldValue != null) {
       if (!oldValue.equals(value)) {
         oldValue.removeCanvasModelListener(listener);
@@ -151,10 +157,12 @@ public class Canvas extends JComponent {
     return null; // subclass will override if it supports popup menus
   }
 
+  // FIXME: if this is **must** be overriden (as per code comment), then we need to turn this into abstract class.
   public int snapX(int x) {
     return x; // subclass will have to override this
   }
 
+  // FIXME: if this is **must** be overriden (as per code comment), then we need to turn this into abstract class.
   public int snapY(int y) {
     return y; // subclass will have to override this
   }

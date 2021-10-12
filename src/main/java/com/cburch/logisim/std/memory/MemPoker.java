@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.memory;
@@ -53,11 +34,11 @@ public class MemPoker extends InstancePoker {
         long newScroll = (data.getScroll() * 16 + val) & (data.getLastAddress());
         data.setScroll(newScroll);
       } else if (c == ' ') {
-        data.setScroll(data.getScroll() + (data.GetNrOfLines() - 1) * data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
       } else if (c == '\r' || c == '\n') {
-        data.setScroll(data.getScroll() + data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() + data.getNrOfLineItems());
       } else if (c == '\u0008' || c == '\u007f') {
-        data.setScroll(data.getScroll() - data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() - data.getNrOfLineItems());
       } else if (c == 'R' || c == 'r') {
         data.getContents().clear();
       }
@@ -67,17 +48,17 @@ public class MemPoker extends InstancePoker {
     public void keyPressed(InstanceState state, KeyEvent e) {
       final var data = (MemState) state.getData();
       if (e.getKeyCode() == KeyEvent.VK_UP) {
-        data.setScroll(data.getScroll() - data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() - data.getNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-        data.setScroll(data.getScroll() + data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() + data.getNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
-        data.setScroll(data.getScroll() - data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() - data.getNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
-        data.setScroll(data.getScroll() + data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() + data.getNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
-        data.setScroll(data.getScroll() - (data.GetNrOfLines() - 1) * data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() - (data.getNrOfLines() - 1) * data.getNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
-        data.setScroll(data.getScroll() + (data.GetNrOfLines() - 1) * data.GetNrOfLineItems());
+        data.setScroll(data.getScroll() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
       }
     }
 
@@ -128,7 +109,7 @@ public class MemPoker extends InstancePoker {
       } else if (c == ' ' || c == '\t') {
         moveTo(data, data.getCursor() + 1);
       } else if (c == '\r' || c == '\n') {
-        moveTo(data, data.getCursor() + data.GetNrOfLineItems());
+        moveTo(data, data.getCursor() + data.getNrOfLineItems());
       } else if (c == '\u0008' || c == '\u007f') {
         moveTo(data, data.getCursor() - 1);
       } else if (c == 'R' || c == 'r') {
@@ -140,17 +121,17 @@ public class MemPoker extends InstancePoker {
     public void keyPressed(InstanceState state, KeyEvent e) {
       final var data = (MemState) state.getData();
       if (e.getKeyCode() == KeyEvent.VK_UP) {
-        moveTo(data, data.getCursor() - data.GetNrOfLineItems());
+        moveTo(data, data.getCursor() - data.getNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_DOWN) {
-        moveTo(data, data.getCursor() + data.GetNrOfLineItems());
+        moveTo(data, data.getCursor() + data.getNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_LEFT) {
         moveTo(data, data.getCursor() - 1);
       } else if (e.getKeyCode() == KeyEvent.VK_RIGHT) {
         moveTo(data, data.getCursor() + 1);
       } else if (e.getKeyCode() == KeyEvent.VK_PAGE_UP) {
-        moveTo(data, data.getCursor() - (data.GetNrOfLines() - 1) * data.GetNrOfLineItems());
+        moveTo(data, data.getCursor() - (data.getNrOfLines() - 1) * data.getNrOfLineItems());
       } else if (e.getKeyCode() == KeyEvent.VK_PAGE_DOWN) {
-        moveTo(data, data.getCursor() + (data.GetNrOfLines() - 1) * data.GetNrOfLineItems());
+        moveTo(data, data.getCursor() + (data.getNrOfLines() - 1) * data.getNrOfLineItems());
       }
     }
 

@@ -1,34 +1,14 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.appear;
 
-import com.cburch.draw.canvas.Selection;
 import com.cburch.draw.model.CanvasModel;
 import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.util.ZOrder;
@@ -76,13 +56,13 @@ class SelectionAction extends Action {
 
   @Override
   public void doIt(Project proj) {
-    Selection sel = canvas.getSelection();
+    final var sel = canvas.getSelection();
     sel.clearSelected();
     if (toRemove != null) canvasModel.removeObjects(toRemove.keySet());
     int dest = AppearanceCanvas.getMaxIndex(canvasModel) + 1;
     if (toAdd != null) canvasModel.addObjects(dest, toAdd);
 
-    AppearanceAnchor anchor = findAnchor(canvasModel);
+    final var anchor = findAnchor(canvasModel);
     if (anchor != null && anchorNewLocation != null) {
       anchorOldLocation = anchor.getLocation();
       anchor.translate(
@@ -90,7 +70,7 @@ class SelectionAction extends Action {
           anchorNewLocation.getY() - anchorOldLocation.getY());
     }
     if (anchor != null && anchorNewFacing != null) {
-      anchorOldFacing = anchor.getFacing();
+      anchorOldFacing = anchor.getFacingDirection();
       anchor.setValue(AppearanceAnchor.FACING, anchorNewFacing);
     }
     sel.setSelected(newSelection, true);
@@ -98,10 +78,8 @@ class SelectionAction extends Action {
   }
 
   private AppearanceAnchor findAnchor(CanvasModel canvasModel) {
-    for (Object o : canvasModel.getObjectsFromTop()) {
-      if (o instanceof AppearanceAnchor) {
-        return (AppearanceAnchor) o;
-      }
+    for (final Object obj : canvasModel.getObjectsFromTop()) {
+      if (obj instanceof AppearanceAnchor anchor) return anchor;
     }
     return null;
   }
@@ -113,7 +91,7 @@ class SelectionAction extends Action {
 
   @Override
   public void undo(Project proj) {
-    AppearanceAnchor anchor = findAnchor(canvasModel);
+    final var anchor = findAnchor(canvasModel);
     if (anchor != null && anchorOldLocation != null) {
       anchor.translate(
           anchorOldLocation.getX() - anchorNewLocation.getX(),
@@ -122,7 +100,7 @@ class SelectionAction extends Action {
     if (anchor != null && anchorOldFacing != null) {
       anchor.setValue(AppearanceAnchor.FACING, anchorOldFacing);
     }
-    Selection sel = canvas.getSelection();
+    final var sel = canvas.getSelection();
     sel.clearSelected();
     if (toAdd != null) canvasModel.removeObjects(toAdd);
     if (toRemove != null) canvasModel.addObjects(toRemove);

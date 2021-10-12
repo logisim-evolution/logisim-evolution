@@ -1,52 +1,51 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim;
 
-/** Logisim follows Semantic Versioning https://semver.org/ */
+import java.util.regex.Pattern;
+
+/**
+ * Version string handling class. Supported version formats:
+ *
+ * - X.Y.Z
+ * - X.Y.Zsuffix
+ * - X.Y.Z-suffix
+ *
+ * where X, Y, Z must be positive integer, while suffix is optional
+ * string starting with a letter. Suffix can be separated from X.Y.Z part
+ * with (optional) dash ("-") character.
+ *
+ * NOTE: toString() form uses no dash separator form by default, however
+ * if object is obtained via `fromString()` call, and version string contains
+ * the "-" separator, output returned by `toString()` will also include
+ * separator character.
+ */
 public class LogisimVersion {
   private int major = 0;
   private int minor = 0;
   private int patch = 0;
+  private String separator = "";
   private String suffix = "";
+
+  private LogisimVersion() {
+    // private
+  }
 
   public LogisimVersion(int major, int minor, int patch) {
     this(major, minor, patch, "");
   }
 
   public LogisimVersion(int major, int minor, int patch, String suffix) {
-    this.major = major;
-    this.minor = minor;
-    this.patch = patch;
-    if (suffix == null) {
-      suffix = "";
-    }
-    this.suffix = suffix.strip();
+    suffix = (suffix == null) ? "" : suffix;
+    final var versionString = String.format("%d.%d.%d%s", major, minor, patch, suffix);
+    initFromVersionString(versionString);
   }
 
   /**
@@ -54,35 +53,68 @@ public class LogisimVersion {
    * No exception is thrown if the version string contains non-integers, because literal values are
    * allowed.
    *
-   * <p>Supported version string formats are `X.Y.Z` or `X.Y.Z-SUFFIX`
+   * <p>Supported version string formats are `X.Y.Z`, `X.Y.Z-suffix` or `X.Y.Zsuffix`.
    *
    * @return LogisimVersion built from the string passed as parameter
    */
   public static LogisimVersion fromString(String versionString) {
+    return new LogisimVersion().initFromVersionString(versionString);
+  }
+
+  private LogisimVersion initFromVersionString(String versionString) throws IllegalArgumentException {
     var major = 0;
     var minor = 0;
     var patch = 0;
+    var separator = "";
     var suffix = "";
 
-    // Let's see if we have suffix segment or not.
-    final var segments = versionString.split("-");
+    var pattern = "^(\\d+.\\d+.\\d+)(.*)$";
+    var m = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(versionString);
+    if (m.matches()) {
+      final var verStr = m.group(1);
+      final var sufStr = m.group(2);
 
-    if (segments.length > 0) {
-      if (segments.length == 2) {
-        suffix = segments[1].strip();
-      }
-
-      final var parts = segments[0].split("\\.");
+      final var parts = m.group(1).split("\\.");
       try {
         if (parts.length >= 1) major = Integer.parseInt(parts[0]);
         if (parts.length >= 2) minor = Integer.parseInt(parts[1]);
         if (parts.length >= 3) patch = Integer.parseInt(parts[2]);
-      } catch (NumberFormatException ignored) {
-        // Just ignore. We will just fall back to `0`
+      } catch (NumberFormatException ex) {
+        throw new IllegalArgumentException(String.format("Version segments must be non-negative integers, '%s' found.", verStr));
+      }
+
+      // suffix part
+      if (sufStr != null) {
+        if (sufStr.length() == 1) {
+          pattern = "^[a-z]+$";
+          m = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(sufStr);
+          if (!m.matches()) {
+            throw new IllegalArgumentException(
+                String.format("Suffix must start with a letter, '%s' found.", sufStr));
+          }
+          suffix = sufStr;
+        } else if (sufStr.length() > 1) {
+          pattern = "^(-)?([a-z][a-z\\d]*)$";
+          m = Pattern.compile(pattern, Pattern.CASE_INSENSITIVE).matcher(sufStr);
+          if (!m.matches()) {
+            throw new IllegalArgumentException(
+                String.format("Invalid version suffix format. '%s' found.", sufStr));
+          }
+          final var sep = m.group(1);
+          separator = (sep != null) ? sep : "";
+          final var s = m.group(2);
+          suffix = (s != null) ? s : "";
+        }
       }
     }
 
-    return new LogisimVersion(major, minor, patch, suffix);
+    this.major = major;
+    this.minor = minor;
+    this.patch = patch;
+    this.separator = separator;
+    this.suffix = suffix;
+
+    return this;
   }
 
   /**
@@ -135,10 +167,20 @@ public class LogisimVersion {
 
   @Override
   public String toString() {
-    String result = major + "." + minor + "." + patch;
-    if (!suffix.equals("")) {
-      result += "-" + suffix;
+    var sfx = "";
+    if (suffix != "") {
+      sfx = separator + suffix;
     }
+    return format(major, minor, patch, sfx);
+  }
+
+  public static String format(int major, int minor, int patch) {
+    return format(major, minor, patch, "");
+  }
+  public static String format(int major, int minor, int patch, String suffix) {
+    var result = String.format("%d.%d.%d", major, minor, patch);
+    if (!suffix.equals("")) result += suffix;
     return result;
   }
+
 }

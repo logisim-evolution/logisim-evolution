@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.generic;
@@ -42,8 +23,7 @@ import com.cburch.logisim.vhdl.base.VhdlEntity;
 /**
  * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
-public class ProjectExplorerToolNode extends ProjectExplorerModel.Node<Tool>
-    implements CircuitListener, HdlModelListener {
+public class ProjectExplorerToolNode extends ProjectExplorerModel.Node<Tool> implements CircuitListener, HdlModelListener {
 
   private static final long serialVersionUID = 1L;
   private Circuit circuit;
@@ -52,18 +32,19 @@ public class ProjectExplorerToolNode extends ProjectExplorerModel.Node<Tool>
   public ProjectExplorerToolNode(ProjectExplorerModel model, Tool tool) {
     super(model, tool);
     if (tool instanceof AddTool) {
-      Object factory = ((AddTool) tool).getFactory();
+      final var factory = ((AddTool) tool).getFactory();
 
-      if (factory instanceof SubcircuitFactory) {
-        circuit = ((SubcircuitFactory) factory).getSubcircuit();
+      if (factory instanceof SubcircuitFactory sub) {
+        circuit = sub.getSubcircuit();
         circuit.addCircuitListener(this);
-      } else if (factory instanceof VhdlEntity) {
-        vhdl = ((VhdlEntity) factory).getContent();
+      } else if (factory instanceof VhdlEntity vhdlEntity) {
+        vhdl = vhdlEntity.getContent();
         vhdl.addHdlModelListener(this);
       }
     }
   }
 
+  @Override
   public void contentSet(HdlModel model) {
     // fireStructureChanged();
     fireNodeChanged();
@@ -80,9 +61,9 @@ public class ProjectExplorerToolNode extends ProjectExplorerModel.Node<Tool>
   @Override
   public void appearanceChanged(HdlModel source) {}
 
+  @Override
   public void circuitChanged(CircuitEvent event) {
-    int act = event.getAction();
-
+    final var act = event.getAction();
     if (act == CircuitEvent.ACTION_SET_NAME || act == CircuitEvent.ACTION_DISPLAY_CHANGE) {
       fireNodeChanged();
     }

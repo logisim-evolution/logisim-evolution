@@ -1,38 +1,17 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.util;
 
 import static com.cburch.logisim.util.Strings.S;
 
-import java.awt.Dimension;
 import java.awt.Frame;
-import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
@@ -48,17 +27,16 @@ public class WindowMenu extends JMenu {
   private class MyListener implements LocaleListener, ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
-      Object src = e.getSource();
+      final var src = e.getSource();
       if (src == minimize) {
         doMinimize();
       } else if (src == zoom) {
         doZoom();
       } else if (src == close) {
         doClose();
-      } else if (src instanceof WindowMenuItem) {
-        WindowMenuItem choice = (WindowMenuItem) src;
+      } else if (src instanceof WindowMenuItem choice) {
         if (choice.isSelected()) {
-          WindowMenuItem item = findOwnerItem();
+          final var item = findOwnerItem();
           if (item != null) {
             item.setSelected(true);
           }
@@ -130,8 +108,8 @@ public class WindowMenu extends JMenu {
     myListener.localeChanged();
   }
 
-  void addMenuItem(Object source, WindowMenuItem item, boolean persistent) {
-    if (persistent) persistentItems.add(item);
+  void addMenuItem(Object source, WindowMenuItem item, boolean isPersistent) {
+    if (isPersistent) persistentItems.add(item);
     else transientItems.add(item);
     item.addActionListener(myListener);
     computeContents();
@@ -179,8 +157,8 @@ public class WindowMenu extends JMenu {
   }
 
   void doClose() {
-    if (owner instanceof WindowClosable) {
-      ((WindowClosable) owner).requestClose();
+    if (owner instanceof WindowClosable windowClosable) {
+      windowClosable.requestClose();
     } else if (owner != null) {
       int action = owner.getDefaultCloseOperation();
       if (action == JFrame.EXIT_ON_CLOSE) {

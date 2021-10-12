@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.data;
@@ -70,7 +51,7 @@ public class Attributes {
     public ComponentMapInformationContainer parse(String value) {
       return null;
     }
-    
+
     @Override
     public boolean isToSave() {
       return false;
@@ -353,7 +334,6 @@ public class Attributes {
       this.end = end;
     }
 
-    @SuppressWarnings("rawtypes")
     @Override
     public java.awt.Component getCellEditor(Integer value) {
       if (end - start > 31) {
@@ -400,7 +380,6 @@ public class Attributes {
       this.vals = vals;
     }
 
-    @SuppressWarnings({"rawtypes", "unchecked"})
     @Override
     public Component getCellEditor(Object value) {
       final var combo = new ComboBox<>(vals);
@@ -422,11 +401,9 @@ public class Attributes {
 
     @Override
     public String toDisplayString(V value) {
-      if (value instanceof AttributeOptionInterface) {
-        return ((AttributeOptionInterface) value).toDisplayString();
-      } else {
-        return value.toString();
-      }
+      return (value instanceof AttributeOptionInterface iface)
+             ? iface.toDisplayString()
+             : value.toString();
     }
   }
 
@@ -472,6 +449,23 @@ public class Attributes {
     public String parse(String value) {
       return value;
     }
+  }
+
+  private static class NoSaveAttribute extends Attribute<Integer> {
+
+    @Override
+    public Integer parse(String value) {
+      return Integer.valueOf(value);
+    }
+
+    @Override
+    public boolean isToSave() {
+      return false;
+    }
+  }
+
+  public static Attribute<Integer> forNoSave() {
+    return new NoSaveAttribute();
   }
 
   public static Attribute<String> forHidden() {

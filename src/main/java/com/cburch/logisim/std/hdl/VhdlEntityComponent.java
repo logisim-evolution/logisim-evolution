@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.hdl;
@@ -43,13 +24,11 @@ import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlSimConstants;
 import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 import java.awt.Color;
-import java.awt.Font;
 import java.awt.Window;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -75,7 +54,7 @@ public class VhdlEntityComponent extends InstanceFactory {
 
     @Override
     public java.awt.Component getCellEditor(Window source, VhdlContentComponent value) {
-      Project proj = source instanceof Frame ? ((Frame) source).getProject() : null;
+      final var proj = (source instanceof Frame frame) ? frame.getProject() : null;
       return VhdlEntityAttributes.getContentEditor(source, value, proj);
     }
 
@@ -126,21 +105,21 @@ public class VhdlEntityComponent extends InstanceFactory {
   private final WeakHashMap<Instance, VhdlEntityListener> contentListeners;
 
   public VhdlEntityComponent() {
-    super(_ID, S.getter("vhdlComponent"));
+    super(_ID, S.getter("vhdlComponent"), new VhdlHdlGeneratorFactory(), true);
 
     this.contentListeners = new WeakHashMap<>();
     this.setIcon(new ArithmeticIcon("VHDL"));
   }
 
-  public void SetSimName(AttributeSet attrs, String SName) {
+  public void setSimName(AttributeSet attrs, String SName) {
     if (attrs == null) return;
-    VhdlEntityAttributes atrs = (VhdlEntityAttributes) attrs;
-    String Label = (!attrs.getValue(StdAttr.LABEL).equals("")) ? getHDLTopName(attrs) : SName;
+    final var atrs = (VhdlEntityAttributes) attrs;
+    final var label = (!attrs.getValue(StdAttr.LABEL).equals("")) ? getHDLTopName(attrs) : SName;
     if (atrs.containsAttribute(VhdlSimConstants.SIM_NAME_ATTR))
-      atrs.setValue(VhdlSimConstants.SIM_NAME_ATTR, Label);
+      atrs.setValue(VhdlSimConstants.SIM_NAME_ATTR, label);
   }
 
-  public String GetSimName(AttributeSet attrs) {
+  public String getSimName(AttributeSet attrs) {
     if (attrs == null) return null;
     final var atrs = (VhdlEntityAttributes) attrs;
     return atrs.getValue(VhdlSimConstants.SIM_NAME_ATTR);
@@ -185,12 +164,6 @@ public class VhdlEntityComponent extends InstanceFactory {
     final var nbOutputs = content.getOutputsNumber();
 
     return Bounds.create(0, 0, WIDTH, Math.max(nbInputs, nbOutputs) * PORT_GAP + HEIGHT);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new VhdlHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -276,7 +249,7 @@ public class VhdlEntityComponent extends InstanceFactory {
         final var index = state.getPortIndex(p);
         final var val = state.getPortValue(index);
 
-        String vhdlEntityName = GetSimName(state.getAttributeSet());
+        String vhdlEntityName = getSimName(state.getAttributeSet());
 
         String message =
             p.getType()
@@ -351,11 +324,6 @@ public class VhdlEntityComponent extends InstanceFactory {
     }
   }
 
-  @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
-  }
-
   /**
    * Save the VHDL entity in a file. The file is used for VHDL components simulation by
    * QUestasim/Modelsim
@@ -365,11 +333,11 @@ public class VhdlEntityComponent extends InstanceFactory {
     PrintWriter writer;
     try {
       writer =
-          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + GetSimName(attrs) + ".vhdl",
+          new PrintWriter(VhdlSimConstants.SIM_SRC_PATH + getSimName(attrs) + ".vhdl",
               StandardCharsets.UTF_8);
 
       var content = attrs.getValue(CONTENT_ATTR).getContent()
-              .replaceAll("(?i)" + getHDLName(attrs), GetSimName(attrs));
+              .replaceAll("(?i)" + getHDLName(attrs), getSimName(attrs));
 
       writer.print(content);
       writer.close();

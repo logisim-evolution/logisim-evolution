@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.log;
@@ -46,9 +27,7 @@ import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.WindowMenuItemManager;
 import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.awt.Toolkit;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -68,16 +47,18 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   private class MyListener
       implements ProjectListener, LibraryListener, Simulator.Listener, LocaleListener {
 
+    @Override
     public void libraryChanged(LibraryEvent event) {
-      int action = event.getAction();
+      final var action = event.getAction();
       if (action == LibraryEvent.SET_NAME) {
         setTitle(computeTitle(curModel, project));
       }
     }
 
+    @Override
     public void localeChanged() {
       setTitle(computeTitle(curModel, project));
-      for (int i = 0; i < panels.length; i++) {
+      for (var i = 0; i < panels.length; i++) {
         tabbedPane.setTitleAt(i, panels[i].getTitle());
         tabbedPane.setToolTipTextAt(i, panels[i].getToolTipText());
         panels[i].localeChanged();
@@ -85,8 +66,9 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
       windowManager.localeChanged();
     }
 
+    @Override
     public void projectChanged(ProjectEvent event) {
-      int action = event.getAction();
+      final var action = event.getAction();
       if (action == ProjectEvent.ACTION_SET_STATE) {
         setSimulator(event.getProject().getSimulator(), event.getProject().getCircuitState());
       } else if (action == ProjectEvent.ACTION_SET_FILE) {
@@ -123,8 +105,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
 
   // TODO should automatically repaint icons when component attr change
   // TODO ? moving a component using Select tool removes it from selection
-  private class WindowMenuManager extends WindowMenuItemManager
-      implements LocaleListener, ProjectListener, LibraryListener {
+  private class WindowMenuManager extends WindowMenuItemManager implements LocaleListener, ProjectListener, LibraryListener {
     final Project proj;
 
     WindowMenuManager(Project p) {
@@ -139,17 +120,20 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
       return LogFrame.this;
     }
 
+    @Override
     public void libraryChanged(LibraryEvent event) {
       if (event.getAction() == LibraryEvent.SET_NAME) {
         localeChanged();
       }
     }
 
+    @Override
     public void localeChanged() {
-      String title = proj.getLogisimFile().getDisplayName();
+      final var title = proj.getLogisimFile().getDisplayName();
       setText(S.get("logFrameMenuItem", title));
     }
 
+    @Override
     public void projectChanged(ProjectEvent event) {
       if (event.getAction() == ProjectEvent.ACTION_SET_FILE) {
         localeChanged();
@@ -158,7 +142,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   }
 
   private static String computeTitle(Model data, Project proj) {
-    String name = data == null ? "???" : data.getCircuitState().getCircuit().getName();
+    final var name = data == null ? "???" : data.getCircuitState().getCircuit().getName();
     return S.get("logFrameTitle", name, proj.getLogisimFile().getDisplayName());
   }
 
@@ -189,15 +173,17 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
       setVisible(true);
     }
 
+    @Override
     public void cancelClicked() {
       okClicked();
     }
 
+    @Override
     public void okClicked() {}
   }
 
   public JButton makeSelectionButton() {
-    JButton button = new JButton(S.get("addRemoveSignals"));
+    final var button = new JButton(S.get("addRemoveSignals"));
     button.addActionListener(event -> SelectionPanel.doDialog(LogFrame.this));
     return button;
   }
@@ -222,9 +208,9 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     tabbedPane.addChangeListener(myChangeListener);
     myChangeListener.stateChanged(null);
 
-    Container contents = getContentPane();
-    int w = Math.max(550, project.getFrame().getWidth());
-    int h = 300;
+    final var contents = getContentPane();
+    final var w = Math.max(550, project.getFrame().getWidth());
+    var h = 300;
     tabbedPane.setPreferredSize(new Dimension(w, h));
     contents.add(tabbedPane, BorderLayout.CENTER);
 
@@ -235,8 +221,8 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
 
     // Try to place below circuit window, or at least near bottom of screen,
     // using same width as circuit window.
-    Dimension d = Toolkit.getDefaultToolkit().getScreenSize();
-    Rectangle r = project.getFrame().getBounds();
+    final var d = Toolkit.getDefaultToolkit().getScreenSize();
+    final var r = project.getFrame().getBounds();
     int x = r.x;
     int y = r.y + r.height;
     if (y + h > d.height) { // too small below circuit
@@ -264,6 +250,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
         });
   }
 
+  @Override
   public LogisimMenuBar getLogisimMenuBar() {
     return menubar;
   }
@@ -289,7 +276,7 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     if (curSimulator != null) curSimulator.removeSimulatorListener(myListener);
     if (curModel != null) curModel.setSelected(false);
 
-    Model oldModel = curModel;
+    final var oldModel = curModel;
     Model data = null;
     if (value != null) {
       data = modelMap.get(value.getCircuitState());
@@ -327,16 +314,16 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   }
 
   private class MyChangeListener implements ChangeListener {
+    @Override
     public void stateChanged(ChangeEvent e) {
       Object selected = tabbedPane.getSelectedComponent();
-      if (selected instanceof JScrollPane) {
-        selected = ((JScrollPane) selected).getViewport().getView();
+      if (selected instanceof JScrollPane scrollPane) {
+        selected = scrollPane.getViewport().getView();
       }
-      if (selected instanceof JPanel) {
-        ((JPanel) selected).requestFocus();
+      if (selected instanceof JPanel panel) {
+        panel.requestFocus();
       }
-      if (selected instanceof LogPanel) {
-        LogPanel tab = (LogPanel) selected;
+      if (selected instanceof LogPanel tab) {
         menuListener.setEditHandler(tab.getEditHandler());
         menuListener.setPrintHandler(tab.getPrintHandler());
         // menuListener.setSimulationHandler(tab.getSimulationHandler());

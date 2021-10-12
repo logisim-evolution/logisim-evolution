@@ -1,36 +1,17 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.gui;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import com.cburch.logisim.fpga.data.FPGAIOInformationContainer;
+import com.cburch.logisim.fpga.data.FpgaIoInformationContainer;
 import com.cburch.logisim.fpga.data.MapComponent;
 import com.cburch.logisim.fpga.data.MapListModel;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -55,7 +36,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
   private static final long serialVersionUID = 1L;
 
   private final MapListModel.MapInfo mapInfo;
-  private final FPGAIOInformationContainer ioComp;
+  private final FpgaIoInformationContainer ioComp;
   private ArrayList<Integer> InputMapSet;
   private ArrayList<Integer> OutputMapSet;
   private ArrayList<Integer> IOMapSet;
@@ -72,7 +53,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
   private final JButton OkButton;
   private final JButton CancelButton;
 
-  public PartialMapDialog(MapListModel.MapInfo map, FPGAIOInformationContainer io, JPanel parent) {
+  public PartialMapDialog(MapListModel.MapInfo map, FpgaIoInformationContainer io, JPanel parent) {
     super();
     mapInfo = map;
     ioComp = io;
@@ -131,7 +112,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
     if (InputMapSet == null)
       InputMapSet = new ArrayList<>();
     if (ioComp.hasInputs()) InputMapSet.addAll(ioComp.getInputs());
-    if (ioComp.hasIOs()) InputMapSet.addAll(ioComp.getIOs());
+    if (ioComp.hasIOs()) InputMapSet.addAll(ioComp.getIos());
     if (InputMapSet.isEmpty()) return null;
     final var panel = new JPanel();
     panel.setBorder(BorderFactory.createTitledBorder(S.get("FpgaInputsMap")));
@@ -145,7 +126,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
       InputSingleMultiple = new JComboBox<>();
       InputSingleMultiple.addItem(S.get("FpgaNotMapped"));
       for (var integer : InputMapSet) {
-        InputSingleMultiple.addItem(ioComp.GetDisplayString() + "/" + ioComp.getPinName(integer));
+        InputSingleMultiple.addItem(ioComp.getDisplayString() + "/" + ioComp.getPinName(integer));
       }
       InputSingleMultiple.addActionListener(this);
       gbc.gridy++;
@@ -171,7 +152,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
       MapTo.add(mapToAdd);
       panel.add(mapToAdd, gbc);
       gbc.gridx++;
-      panel.add(new JLabel(ioComp.GetDisplayString() + "/" + ioComp.getPinName(InputMapSet.get(0))), gbc);
+      panel.add(new JLabel(ioComp.getDisplayString() + "/" + ioComp.getPinName(InputMapSet.get(0))), gbc);
     } else {
       /* multiple on multiple */
       InputMultipleMultiple = new ArrayList<>();
@@ -179,7 +160,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
         final var sels = new JComboBox<String>();
         sels.addItem(S.get("FpgaNotMapped"));
         for (var integer : InputMapSet)
-          sels.addItem(ioComp.GetDisplayString() + "/" + ioComp.getPinName(integer));
+          sels.addItem(ioComp.getDisplayString() + "/" + ioComp.getPinName(integer));
         sels.addActionListener(this);
         InputMultipleMultiple.add(sels);
         gbc.gridx = 0;
@@ -203,7 +184,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
     if (OutputMapSet == null)
       OutputMapSet = new ArrayList<>();
     if (ioComp.hasOutputs()) OutputMapSet.addAll(ioComp.getOutputs());
-    if (ioComp.hasIOs()) OutputMapSet.addAll(ioComp.getIOs());
+    if (ioComp.hasIOs()) OutputMapSet.addAll(ioComp.getIos());
     if (OutputMapSet.isEmpty()) return null;
     final var panel = new JPanel();
     panel.setBorder(BorderFactory.createTitledBorder(S.get("FpgaOutputsMap")));
@@ -217,7 +198,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
       OutputSingleMultiple = new JComboBox<>();
       OutputSingleMultiple.addItem(S.get("FpgaNotMapped"));
       for (var integer : OutputMapSet) {
-        OutputSingleMultiple.addItem(ioComp.GetDisplayString() + "/" + ioComp.getPinName(integer));
+        OutputSingleMultiple.addItem(ioComp.getDisplayString() + "/" + ioComp.getPinName(integer));
       }
       OutputSingleMultiple.addActionListener(this);
       gbc.gridy++;
@@ -243,7 +224,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
       MapTo.add(mapToAdd);
       panel.add(mapToAdd, gbc);
       gbc.gridx++;
-      panel.add(new JLabel(ioComp.GetDisplayString() + "/" + ioComp.getPinName(OutputMapSet.get(0))), gbc);
+      panel.add(new JLabel(ioComp.getDisplayString() + "/" + ioComp.getPinName(OutputMapSet.get(0))), gbc);
     } else {
       /* multiple on multiple */
       OutputMultipleMultiple = new ArrayList<>();
@@ -251,7 +232,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
         final var sels = new JComboBox<String>();
         sels.addItem(S.get("FpgaNotMapped"));
         for (var integer : OutputMapSet)
-          sels.addItem(ioComp.GetDisplayString() + "/" + ioComp.getPinName(integer));
+          sels.addItem(ioComp.getDisplayString() + "/" + ioComp.getPinName(integer));
         sels.addActionListener(this);
         OutputMultipleMultiple.add(sels);
         gbc.gridx = 0;
@@ -270,11 +251,11 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
 
   private JPanel createIOPane() {
     final var map = mapInfo.getMap();
-    if (!map.hasIOs()) return null;
-    if (mapInfo.getPin() >= 0 && !map.isIO(mapInfo.getPin())) return null;
+    if (!map.hasIos()) return null;
+    if (mapInfo.getPin() >= 0 && !map.isIo(mapInfo.getPin())) return null;
     if (IOMapSet == null)
       IOMapSet = new ArrayList<>();
-    if (ioComp.hasIOs()) IOMapSet.addAll(ioComp.getIOs());
+    if (ioComp.hasIOs()) IOMapSet.addAll(ioComp.getIos());
     if (IOMapSet.isEmpty()) return null;
     final var panel = new JPanel();
     panel.setBorder(BorderFactory.createTitledBorder(S.get("FpgaIOsMap")));
@@ -288,7 +269,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
       IOSingleMultiple = new JComboBox<>();
       IOSingleMultiple.addItem(S.get("FpgaNotMapped"));
       for (var integer : IOMapSet) {
-        IOSingleMultiple.addItem(ioComp.GetDisplayString() + "/" + ioComp.getPinName(integer));
+        IOSingleMultiple.addItem(ioComp.getDisplayString() + "/" + ioComp.getPinName(integer));
       }
       IOSingleMultiple.addActionListener(this);
       gbc.gridy++;
@@ -314,7 +295,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
       MapTo.add(mapToAdd);
       panel.add(mapToAdd, gbc);
       gbc.gridx++;
-      panel.add(new JLabel(ioComp.GetDisplayString() + "/" + ioComp.getPinName(IOMapSet.get(0))), gbc);
+      panel.add(new JLabel(ioComp.getDisplayString() + "/" + ioComp.getPinName(IOMapSet.get(0))), gbc);
     } else {
       /* multiple on multiple */
       IOMultipleMultiple = new ArrayList<>();
@@ -322,7 +303,7 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
         final var sels = new JComboBox<String>();
         sels.addItem(S.get("FpgaNotMapped"));
         for (var integer : IOMapSet)
-          sels.addItem(ioComp.GetDisplayString() + "/" + ioComp.getPinName(integer));
+          sels.addItem(ioComp.getDisplayString() + "/" + ioComp.getPinName(integer));
         sels.addActionListener(this);
         IOMultipleMultiple.add(sels);
         gbc.gridx = 0;
@@ -435,8 +416,8 @@ public class PartialMapDialog extends JDialog implements LocaleListener, ActionL
       }
       return;
     }
-    if (e.getSource() instanceof JComboBox) {
-      update((JComboBox<String>) e.getSource());
+    if (e.getSource() instanceof JComboBox box) {
+      update(box);
       return;
     }
     if (e.getActionCommand().equals("Ok")) {

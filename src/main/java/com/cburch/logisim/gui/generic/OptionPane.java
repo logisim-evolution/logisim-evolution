@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.generic;
@@ -62,7 +43,7 @@ public class OptionPane {
   public static void showMessageDialog(Component parentComponent, Object message) {
     if (Main.hasGui()) {
       JOptionPane.showMessageDialog(parentComponent, message);
-    } else if (message instanceof String) logger.info((String) message);
+    } else if (message instanceof String msg) logger.info(msg);
   }
 
   public static void showMessageDialog(
@@ -85,31 +66,26 @@ public class OptionPane {
     }
   }
 
-  public static int showConfirmDialog(
-      Component parentComponent, Object message, String title, int optionType) {
-    if (Main.hasGui())
-      return JOptionPane.showConfirmDialog(parentComponent, message, title, optionType);
-    return CANCEL_OPTION;
+  public static int showConfirmDialog(Component parentComponent, Object message, String title, int optionType) {
+    return Main.hasGui()
+        ? JOptionPane.showConfirmDialog(parentComponent, message, title, optionType)
+        : CANCEL_OPTION;
   }
 
-  public static int showConfirmDialog(
-      Component parentComponent, Object message, String title, int optionType, int messageType) {
-    if (Main.hasGui())
-      return JOptionPane.showConfirmDialog(
-          parentComponent, message, title, optionType, messageType);
-    return CANCEL_OPTION;
+  public static int showConfirmDialog(Component parentComponent, Object message, String title, int optionType, int messageType) {
+    return Main.hasGui()
+        ? JOptionPane.showConfirmDialog(parentComponent, message, title, optionType, messageType)
+        : CANCEL_OPTION;
   }
 
   public static String showInputDialog(Object message) {
-    if (Main.hasGui()) return JOptionPane.showInputDialog(message);
-    return null;
+    return Main.hasGui() ? JOptionPane.showInputDialog(message) : null;
   }
 
-  public static String showInputDialog(
-      Component parentComponent, Object message, String title, int messageType) {
-    if (Main.hasGui())
-      return JOptionPane.showInputDialog(parentComponent, message, title, messageType);
-    return null;
+  public static String showInputDialog(Component parentComponent, Object message, String title, int messageType) {
+    return Main.hasGui()
+        ? JOptionPane.showInputDialog(parentComponent, message, title, messageType)
+        : null;
   }
 
   public static Object showInputDialog(
@@ -120,16 +96,9 @@ public class OptionPane {
       Icon icon,
       Object[] selectionValues,
       Object initialSelectionValue) {
-    if (Main.hasGui())
-      return JOptionPane.showInputDialog(
-          parentComponent,
-          message,
-          title,
-          messageType,
-          icon,
-          selectionValues,
-          initialSelectionValue);
-    return null;
+    return Main.hasGui()
+        ? JOptionPane.showInputDialog(parentComponent, message, title, messageType, icon, selectionValues, initialSelectionValue)
+        : null;
   }
 
   public static int showOptionDialog(
@@ -141,14 +110,12 @@ public class OptionPane {
       Icon icon,
       Object[] options,
       Object initialValue) {
-    if (Main.hasGui())
-      return JOptionPane.showOptionDialog(
-          parentComponent, message, title, optionType, messageType, icon, options, initialValue);
-    return CLOSED_OPTION;
+    return Main.hasGui()
+        ? JOptionPane.showOptionDialog(parentComponent, message, title, optionType, messageType, icon, options, initialValue)
+        : CLOSED_OPTION;
   }
 
   public static Frame getFrameForComponent(Component parentComponent) {
-    if (Main.hasGui()) return JOptionPane.getFrameForComponent(parentComponent);
-    return null;
+    return Main.hasGui() ? JOptionPane.getFrameForComponent(parentComponent) : null;
   }
 }

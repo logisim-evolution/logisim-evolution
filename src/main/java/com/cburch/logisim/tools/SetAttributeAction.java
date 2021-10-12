@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.tools;
@@ -60,12 +41,12 @@ public class SetAttributeAction extends Action {
   @Override
   public void doIt(Project proj) {
     final var xn = new CircuitMutation(circuit);
-    int len = values.size();
+    final var len = values.size();
     oldValues.clear();
     for (var i = 0; i < len; i++) {
       final var comp = comps.get(i);
       final var attr = attrs.get(i);
-      Object value = values.get(i);
+      final var value = values.get(i);
       if (circuit.contains(comp)) {
         oldValues.add(null);
         xn.set(comp, attr, value);
@@ -102,10 +83,10 @@ public class SetAttributeAction extends Action {
   @Override
   public void undo(Project proj) {
     if (xnReverse != null) xnReverse.execute();
-    for (int i = oldValues.size() - 1; i >= 0; i--) {
+    for (var i = oldValues.size() - 1; i >= 0; i--) {
       final var comp = comps.get(i);
       final var attr = attrs.get(i);
-      Object value = oldValues.get(i);
+      final var value = oldValues.get(i);
       if (value != null) {
         comp.getAttributeSet().setValue(attr, value);
       }

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.comp;
@@ -34,32 +15,38 @@ import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.AttributeSets;
-import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.Icons;
+import com.cburch.logisim.util.IconsUtil;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
 import javax.swing.Icon;
 
 public abstract class AbstractComponentFactory implements ComponentFactory {
-  private static final Icon toolIcon = Icons.getIcon("subcirc.gif");
+  private static final Icon toolIcon = IconsUtil.getIcon("subcirc.gif");
 
   private AttributeSet defaultSet;
-  protected HDLGeneratorFactory MyHDLGenerator;
+  private final HdlGeneratorFactory myHDLGenerator;
+  private final boolean requiresLabel;
+  private final boolean requiresGlobalClockConnection;
 
   protected AbstractComponentFactory() {
+    this(null, false, false);
+  }
+
+  protected AbstractComponentFactory(HdlGeneratorFactory generator, boolean requiresLabel, boolean requiresGlobalClock) {
     defaultSet = null;
-    MyHDLGenerator = null;
+    myHDLGenerator = generator;
+    this.requiresLabel = requiresLabel;
+    requiresGlobalClockConnection = requiresGlobalClock;
   }
 
   @Override
-  public boolean ActiveOnHigh(AttributeSet attrs) {
+  public boolean activeOnHigh(AttributeSet attrs) {
     return true;
   }
 
@@ -72,9 +59,6 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   public void removeComponent(Circuit circ, Component c, CircuitState state) {
     // dummy factory
   }
-
-  @Override
-  public abstract Component createComponent(Location loc, AttributeSet attrs);
 
   //
   // user interface methods
@@ -114,8 +98,8 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   }
 
   @Override
-  public HDLGeneratorFactory getHDLGenerator(AttributeSet attrs) {
-    if (HDLSupportedComponent(attrs)) return MyHDLGenerator;
+  public HdlGeneratorFactory getHDLGenerator(AttributeSet attrs) {
+    if (isHDLSupportedComponent(attrs)) return myHDLGenerator;
     else return null;
   }
 
@@ -130,28 +114,23 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   }
 
   @Override
-  public boolean CheckForGatedClocks(NetlistComponent comp) {
+  public boolean checkForGatedClocks(netlistComponent comp) {
     return false;
   }
 
   @Override
-  public int[] ClockPinIndex(NetlistComponent comp) {
+  public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {0};
   }
 
   @Override
-  public abstract String getName();
-
-  @Override
-  public abstract Bounds getOffsetBounds(AttributeSet attrs);
-
-  @Override
-  public boolean HasThreeStateDrivers(AttributeSet attrs) {
+  public boolean hasThreeStateDrivers(AttributeSet attrs) {
     return false;
   }
 
   @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
+  public boolean isHDLSupportedComponent(AttributeSet attrs) {
+    if (myHDLGenerator != null) return myHDLGenerator.isHdlSupportedTarget(attrs);
     return false;
   }
 
@@ -179,8 +158,8 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   }
 
   @Override
-  public boolean RequiresGlobalClock() {
-    return false;
+  public boolean requiresGlobalClock() {
+    return requiresGlobalClockConnection;
   }
 
   @Override
@@ -190,8 +169,8 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
 
   /* HDL Methods */
   @Override
-  public boolean RequiresNonZeroLabel() {
-    return false;
+  public boolean requiresNonZeroLabel() {
+    return requiresLabel;
   }
 
   @Override

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.log;
@@ -49,7 +30,6 @@ import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.Objects;
 import javax.swing.Icon;
 
@@ -126,8 +106,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   }
 
   public void setListener(Listener l) {
-    if (listener != null && l != null && l != listener)
-      throw new IllegalStateException("already have a different listener");
+    if (listener != null && l != null && l != listener) throw new IllegalStateException("already have a different listener");
     listener = l;
   }
 
@@ -141,7 +120,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
     if (obsoleted) {
       return; // this SelectionItem doesn't appear to be alive any more
     }
-    int action = event.getAction();
+    final var action = event.getAction();
     if (action == CircuitEvent.ACTION_CLEAR) {
       // This happens only when analyzer is replacing an entire circuit. Can we
       // match up pin names perhaps? todo later
@@ -151,20 +130,20 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
       // This could remove a component that is on our path, or alter our name.
 
       // Walk through each level of circuit to see if we got removed or
-      boolean changed = false;
+      var changed = false;
       for (int i = 0; i < n; i++) {
-        var t = circ[i];
-        var c = path[i];
+        final var t = circ[i];
+        final var c = path[i];
 
-        var repl = event.getResult().getReplacementMap(t);
+        final var repl = event.getResult().getReplacementMap(t);
         if (repl.isEmpty()) continue; // no changes at all to circuit at this level
 
         if (!repl.getRemovals().contains(c))
           continue; // changes at this level don't affect our path
 
         Component componentNew = null;
-        Collection<Component> newComps = repl.getReplacementsFor(c);
-        for (Component c2 : newComps) {
+        final var newComps = repl.getReplacementsFor(c);
+        for (final var c2 : newComps) {
           if (c2 == c || c2.getFactory() == c.getFactory()) {
             componentNew = c2;
             break;
@@ -181,8 +160,8 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
           path[i].getAttributeSet().addAttributeListener(this);
           if (i < n - 1) {
             // sanity check, path[i] should still lead to circ[i+1]
-            SubcircuitFactory f = (SubcircuitFactory) path[i].getFactory();
-            if (circ[i + 1] != f.getSubcircuit()) {
+            final var factory = (SubcircuitFactory) path[i].getFactory();
+            if (circ[i + 1] != factory.getSubcircuit()) {
               System.out.println("**** failure: subcircuit changed!");
               remove();
               return;
@@ -212,7 +191,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
 
   private static String logName(Component c, Object option) {
     String s = null;
-    Loggable log = (Loggable) c.getFeature(Loggable.class);
+    final var log = (LoggableContract) c.getFeature(LoggableContract.class);
     if (log != null) s = normalize(log.getLogName(option), null);
     if (s == null) s = normalize(c.getAttributeSet().getValue(StdAttr.LABEL), option);
     if (s == null) s = normalize(c.getFactory().getDisplayName() + c.getLocation(), option);
@@ -231,11 +210,11 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   private boolean computeName() {
     boolean changed = false;
 
-    Loggable log = (Loggable) path[n - 1].getFeature(Loggable.class);
+    final var log = (LoggableContract) path[n - 1].getFeature(LoggableContract.class);
     BitWidth bw = null;
     if (log != null) bw = log.getBitWidth(option);
     if (bw == null) bw = path[n - 1].getAttributeSet().getValue(StdAttr.WIDTH);
-    int w = bw.getWidth();
+    final var w = bw.getWidth();
     if (w != width) {
       changed = true;
       width = w;
@@ -246,11 +225,11 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
       nickname = s;
     }
 
-    StringBuilder buf = new StringBuilder();
-    for (int i = 0; i < n - 1; i++) buf.append(logName(path[i], null)).append("/");
+    final var buf = new StringBuilder();
+    for (var i = 0; i < n - 1; i++) buf.append(logName(path[i], null)).append("/");
     buf.append(nickname);
     if (width > 1) buf.append("[").append(width - 1).append("..0]");
-    String f = buf.toString();
+    final var f = buf.toString();
     if (!f.equals(fullname)) {
       changed = true;
       fullname = f;
@@ -260,10 +239,10 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   }
 
   public Value fetchValue(CircuitState root) {
-    Loggable log = (Loggable) path[n - 1].getFeature(Loggable.class);
+    final var log = (LoggableContract) path[n - 1].getFeature(LoggableContract.class);
     if (log == null) return Value.NIL;
-    CircuitState cur = root;
-    for (int i = 0; i < n - 1; i++) cur = circ[i].getSubcircuitFactory().getSubstate(cur, path[i]);
+    var cur = root;
+    for (var i = 0; i < n - 1; i++) cur = circ[i].getSubcircuitFactory().getSubstate(cur, path[i]);
     return log.getLogValue(cur, option);
   }
 
@@ -280,7 +259,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   }
 
   public boolean isInput(Object option) {
-    Loggable log = (Loggable) path[n - 1].getFeature(Loggable.class);
+    LoggableContract log = (LoggableContract) path[n - 1].getFeature(LoggableContract.class);
     return log != null && log.isInput(option);
   }
 
@@ -342,8 +321,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
         }
       };
 
-  public static void paintIcon(
-      Component comp, Object opt, java.awt.Component c, Graphics g, int x, int y) {
+  public static void paintIcon(Component comp, Object opt, java.awt.Component c, Graphics g, int x, int y) {
     if (comp == null) return;
     if (opt != null) {
       // todo
@@ -360,8 +338,7 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   @Override
   public boolean equals(Object other) {
     if (other == this) return true;
-    if (!(other instanceof SignalInfo)) return false;
-    SignalInfo o = (SignalInfo) other;
+    if (!(other instanceof SignalInfo o)) return false;
     return Arrays.equals(path, o.path) && Objects.equals(option, o.option);
   }
 
@@ -373,8 +350,8 @@ public class SignalInfo implements AttributeListener, CircuitListener, Location.
   private void remove() {
     if (obsoleted) return;
     obsoleted = true;
-    for (Circuit t : circ) t.removeCircuitListener(this);
-    for (Component c : path) c.getAttributeSet().removeAttributeListener(this);
+    for (final var t : circ) t.removeCircuitListener(this);
+    for (final var c : path) c.getAttributeSet().removeAttributeListener(this);
     if (listener != null) listener.signalInfoObsoleted(this);
   }
 

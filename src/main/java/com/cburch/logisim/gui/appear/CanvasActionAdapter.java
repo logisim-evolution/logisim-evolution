@@ -1,36 +1,16 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.appear;
 
 import com.cburch.draw.actions.ModelAction;
-import com.cburch.draw.model.CanvasObject;
-import com.cburch.draw.undo.Action;
+import com.cburch.draw.undo.UndoAction;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMutator;
 import com.cburch.logisim.circuit.CircuitTransaction;
@@ -41,20 +21,17 @@ import java.util.Map;
 
 public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
   private final Circuit circuit;
-  private final Action canvasAction;
-  private boolean wasDefault;
+  private final UndoAction canvasAction;
 
-  public CanvasActionAdapter(Circuit circuit, Action action) {
+  public CanvasActionAdapter(Circuit circuit, UndoAction action) {
     this.circuit = circuit;
     this.canvasAction = action;
   }
 
   private boolean affectsPorts() {
-    if (canvasAction instanceof ModelAction) {
-      for (CanvasObject o : ((ModelAction) canvasAction).getObjects()) {
-        if (o instanceof AppearanceElement) {
-          return true;
-        }
+    if (canvasAction instanceof ModelAction action) {
+      for (final var obj : action.getObjects()) {
+        if (obj instanceof AppearanceElement) return true;
       }
     }
     return false;
@@ -62,9 +39,8 @@ public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
 
   @Override
   public void doIt(Project proj) {
-    wasDefault = circuit.getAppearance().isDefaultAppearance();
     if (affectsPorts()) {
-      ActionTransaction xn = new ActionTransaction(true);
+      final var xn = new ActionTransaction(true);
       xn.execute();
     } else {
       canvasAction.doIt();
@@ -79,12 +55,11 @@ public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
   @Override
   public void undo(Project proj) {
     if (affectsPorts()) {
-      ActionTransaction xn = new ActionTransaction(false);
+      final var xn = new ActionTransaction(false);
       xn.execute();
     } else {
       canvasAction.undo();
     }
-    circuit.getAppearance().setDefaultAppearance(wasDefault);
   }
 
   private class ActionTransaction extends CircuitTransaction {
@@ -96,8 +71,8 @@ public class CanvasActionAdapter extends com.cburch.logisim.proj.Action {
 
     @Override
     protected Map<Circuit, Integer> getAccessedCircuits() {
-      Map<Circuit, Integer> accessMap = new HashMap<>();
-      for (Circuit supercirc : circuit.getCircuitsUsingThis()) {
+      final var accessMap = new HashMap<Circuit, Integer>();
+      for (final var supercirc : circuit.getCircuitsUsingThis()) {
         accessMap.put(supercirc, READ_WRITE);
       }
       return accessMap;

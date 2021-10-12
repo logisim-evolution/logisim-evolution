@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.draw.tools;
@@ -75,6 +56,7 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
     values = DEFAULTS_ALL;
   }
 
+  @Override
   public void addAttributeListener(AttributeListener l) {
     listeners.add(l);
   }
@@ -108,6 +90,7 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
     }
   }
 
+  @Override
   public boolean containsAttribute(Attribute<?> attr) {
     return attrs.contains(attr);
   }
@@ -116,6 +99,7 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
     return new Restriction(tool);
   }
 
+  @Override
   public Attribute<?> getAttribute(String name) {
     for (Attribute<?> attr : attrs) {
       if (attr.getName().equals(name)) return attr;
@@ -123,10 +107,12 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
     return null;
   }
 
+  @Override
   public List<Attribute<?>> getAttributes() {
     return attrs;
   }
 
+  @Override
   @SuppressWarnings("unchecked")
   public <V> V getValue(Attribute<V> attr) {
     Iterator<Attribute<?>> ait = attrs.iterator();
@@ -141,22 +127,27 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
     return null;
   }
 
+  @Override
   public boolean isReadOnly(Attribute<?> attr) {
     return false;
   }
 
+  @Override
   public boolean isToSave(Attribute<?> attr) {
     return attr.isToSave();
   }
 
+  @Override
   public void removeAttributeListener(AttributeListener l) {
     listeners.remove(l);
   }
 
+  @Override
   public void setReadOnly(Attribute<?> attr, boolean value) {
     throw new UnsupportedOperationException("setReadOnly");
   }
 
+  @Override
   public <V> void setValue(Attribute<V> attr, V value) {
     Iterator<Attribute<?>> ait = attrs.iterator();
     ListIterator<Object> vit = values.listIterator();
@@ -194,10 +185,12 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
     //
     // AttributeListener methods
     //
+    @Override
     public void attributeListChanged(AttributeEvent e) {
       fireAttributeListChanged();
     }
 
+    @Override
     public void attributeValueChanged(AttributeEvent e) {
       if (selectedAttrs.contains(e.getAttribute())) {
         @SuppressWarnings("unchecked")

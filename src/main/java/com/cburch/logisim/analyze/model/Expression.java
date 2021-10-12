@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.analyze.model;
@@ -34,6 +15,7 @@ import com.cburch.logisim.analyze.data.Range;
 import com.cburch.logisim.analyze.model.Var.Bit;
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 
 public abstract class Expression {
   public interface Visitor<T> {
@@ -163,12 +145,12 @@ public abstract class Expression {
     ALTLOGIC(2),
     PROGBOOLS(3),
     PROGBITS(4),
-    LaTeX(5);
+    LATEX(5);
 
     public final int id;
 
-    public final int[] opLvl;
-    public final String[] opSym;
+    protected final int[] opLvl;
+    protected final String[] opSym;
 
     // Notes on precedence:
     // all forms of NOT are the highest precedence level
@@ -266,9 +248,9 @@ public abstract class Expression {
   //  };
 
 
-  public final ArrayList<Range> nots = new ArrayList<>();
-  public final ArrayList<Range> subscripts = new ArrayList<>();
-  public final ArrayList<Range> marks = new ArrayList<>();
+  public final List<Range> nots = new ArrayList<>();
+  public final List<Range> subscripts = new ArrayList<>();
+  public final List<Range> marks = new ArrayList<>();
   private Integer[] badness;
 
   public abstract int getPrecedence(Notation notation);
@@ -584,7 +566,7 @@ public abstract class Expression {
               notData.stopIndex = text.length();
             } else {
               add(notation.opSym[Op.NOT.id]);
-              if (notation.equals(Notation.LaTeX)) {
+              if (notation.equals(Notation.LATEX)) {
                 a.visit(this);
                 add("} ");
               } else if (levelOfA < opLvl || (levelOfA == opLvl && a.getOp() != Op.NOT)) {
@@ -603,8 +585,8 @@ public abstract class Expression {
 
           @Override
           public Void visitXnor(Expression a, Expression b) {
-            if (inXnor || !notation.equals(Notation.LaTeX)) {
-              visitBinary(a, b, notation.equals(Notation.LaTeX) ? Op.XOR : Op.XNOR);
+            if (inXnor || !notation.equals(Notation.LATEX)) {
+              visitBinary(a, b, notation.equals(Notation.LATEX) ? Op.XOR : Op.XNOR);
             } else {
               inXnor = true;
               text.append(" \\overline{");
@@ -634,7 +616,7 @@ public abstract class Expression {
               add(index);
               subscript.stopIndex = text.length();
               subscripts.add(subscript);
-            } else if (notation.equals(Notation.LaTeX)) {
+            } else if (notation.equals(Notation.LATEX)) {
               add(baseName);
               if (index != null) add("_{" + index + "}");
             } else {
@@ -659,7 +641,7 @@ public abstract class Expression {
           }
         });
     badness = badnessList.toArray(new Integer[0]);
-    return notation.equals(Notation.LaTeX) ? "$" + text + "$" : text.toString();
+    return notation.equals(Notation.LATEX) ? "$" + text + "$" : text.toString();
   }
 
   public Integer[] getBadness() {
@@ -667,21 +649,21 @@ public abstract class Expression {
   }
 
   public static boolean isAssignment(Expression expr) {
-    if (!(expr instanceof Expressions.Eq)) return false;
-    final var eq = (Expressions.Eq) expr;
-    return ((eq.exprA instanceof Expressions.Variable));
+    return (expr instanceof Expressions.Eq eq)
+           ? (eq.exprA instanceof Expressions.Variable)
+           : false;
   }
 
   public static String getAssignmentVariable(Expression expr) {
-    if (!(expr instanceof Expressions.Eq)) return null;
-    final var eq = (Expressions.Eq) expr;
-    return ((eq.exprA instanceof Expressions.Variable)) ? eq.exprA.toString() : null;
+    return (expr instanceof Expressions.Eq eq)
+           ? (eq.exprA instanceof Expressions.Variable) ? eq.exprA.toString() : null
+           : null;
   }
 
   public static Expression getAssignmentExpression(Expression expr) {
-    if (!(expr instanceof Expressions.Eq)) return null;
-    final var eq = (Expressions.Eq) expr;
-    return ((eq.exprA instanceof Expressions.Variable)) ? eq.exprB : null;
+    return (expr instanceof Expressions.Eq eq)
+           ? (eq.exprA instanceof Expressions.Variable) ? eq.exprB : null
+           : null;
   }
 
   public abstract <T> T visit(Visitor<T> visitor);

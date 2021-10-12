@@ -1,34 +1,14 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -48,7 +28,8 @@ public class Ttl7464 extends AbstractTtlGate {
         (byte) 14,
         new byte[] {8},
         new String[] {"A", "E", "F", "G", "H", "I", "Y", "J", "K", "B", "C", "D"},
-        70);
+        70,
+        new Ttl7464HdlGenerator());
   }
 
   @Override
@@ -100,7 +81,7 @@ public class Ttl7464 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     final var val1 = state.getPortValue(1).and(state.getPortValue(2));
     final var val2 = state.getPortValue(3).and(state.getPortValue(4).and(state.getPortValue(5)));
     final var val3 = state.getPortValue(7).and(state.getPortValue(8));
@@ -110,11 +91,5 @@ public class Ttl7464 extends AbstractTtlGate {
             .and(state.getPortValue(10).and(state.getPortValue(11).and(state.getPortValue(0))));
     final var val5 = val1.or(val2.or(val3.or(val4)));
     state.setPort(6, val5.not(), 7);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new Ttl7464HDLGenerator();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

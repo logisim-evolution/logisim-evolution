@@ -1,34 +1,14 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
@@ -42,21 +22,21 @@ public class Ttl7442 extends AbstractTtlGate {
    */
   public static final String _ID = "7442";
 
-  private boolean IsExec3 = false;
-  private boolean IsGray = false;
+  private boolean isExec3 = false;
+  private boolean isGray = false;
 
   private static final byte pinCount = 14;
   private static final byte[] outPins = {1, 2, 3, 4, 5, 6, 7, 9, 10, 11};
   private static final String[] pinNames = {"O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", "D", "C", "B", "A"};
 
   public Ttl7442() {
-    super(_ID, pinCount, outPins, pinNames);
+    super(_ID, pinCount, outPins, pinNames, new Ttl7442HdlGenerator(false, false));
   }
 
   public Ttl7442(String name, int encoding) {
-    super(name, pinCount, outPins, pinNames);
-    IsExec3 = encoding == 1;
-    IsGray = encoding == 2;
+    super(name, pinCount, outPins, pinNames, new Ttl7442HdlGenerator(encoding == 1, encoding == 2));
+    isExec3 = encoding == 1;
+    isGray = encoding == 2;
   }
 
   @Override
@@ -106,7 +86,7 @@ public class Ttl7442 extends AbstractTtlGate {
   }
 
   @Override
-  public void ttlpropagate(InstanceState state) {
+  public void propagateTtl(InstanceState state) {
     int decode = -1;
     if (!(state.getPortValue(13).isErrorValue() | state.getPortValue(13).isUnknown())) {
       decode = state.getPortValue(13) == Value.TRUE ? 1 : 0;
@@ -131,7 +111,7 @@ public class Ttl7442 extends AbstractTtlGate {
       state.setPort(7, Value.UNKNOWN, 1);
       state.setPort(8, Value.UNKNOWN, 1);
       state.setPort(9, Value.UNKNOWN, 1);
-    } else if (IsGray) {
+    } else if (isGray) {
       state.setPort(0, decode == 2 ? Value.FALSE : Value.TRUE, 1);
       state.setPort(1, decode == 6 ? Value.FALSE : Value.TRUE, 1);
       state.setPort(2, decode == 7 ? Value.FALSE : Value.TRUE, 1);
@@ -143,7 +123,7 @@ public class Ttl7442 extends AbstractTtlGate {
       state.setPort(8, decode == 14 ? Value.FALSE : Value.TRUE, 1);
       state.setPort(9, decode == 10 ? Value.FALSE : Value.TRUE, 1);
     } else {
-      if (IsExec3) decode -= 3;
+      if (isExec3) decode -= 3;
       state.setPort(0, decode == 0 ? Value.FALSE : Value.TRUE, 1);
       state.setPort(1, decode == 1 ? Value.FALSE : Value.TRUE, 1);
       state.setPort(2, decode == 2 ? Value.FALSE : Value.TRUE, 1);
@@ -155,11 +135,5 @@ public class Ttl7442 extends AbstractTtlGate {
       state.setPort(8, decode == 8 ? Value.FALSE : Value.TRUE, 1);
       state.setPort(9, decode == 9 ? Value.FALSE : Value.TRUE, 1);
     }
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new Ttl7442HDLGenerator(IsExec3, IsGray);
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

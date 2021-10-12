@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.util;
@@ -164,6 +145,7 @@ public class TableSorter extends AbstractTableModel {
   }
 
   private class MouseHandler extends MouseAdapter {
+    @Override
     public void mouseClicked(MouseEvent e) {
       final var h = (JTableHeader) e.getSource();
       final var columnModel = h.getColumnModel();
@@ -201,7 +183,7 @@ public class TableSorter extends AbstractTableModel {
         Object o1 = tableModel.getValueAt(modelIndex, column);
         Object o2 = tableModel.getValueAt(o.modelIndex, column);
 
-        int comparison = 0;
+        var comparison = 0;
         // Define null less than everything, except null.
         if (o1 == null && o2 == null) {
           comparison = 0;
@@ -233,8 +215,7 @@ public class TableSorter extends AbstractTableModel {
       final var c =
           tableCellRenderer.getTableCellRendererComponent(
               table, value, isSelected, hasFocus, row, column);
-      if (c instanceof JLabel) {
-        final var l = (JLabel) c;
+      if (c instanceof JLabel l) {
         l.setHorizontalTextPosition(JLabel.LEFT);
         final var modelColumn = table.convertColumnIndexToModel(column);
         l.setIcon(getHeaderRendererIcon(modelColumn, l.getFont().getSize()));
@@ -307,46 +288,47 @@ public class TableSorter extends AbstractTableModel {
 
   private static final long serialVersionUID = 1L;
 
-  protected TableModel tableModel;
-
   public static final int DESCENDING = -1;
   public static final int NOT_SORTED = 0;
 
   public static final int ASCENDING = 1;
   private static final Directive EMPTY_DIRECTIVE = new Directive(-1, NOT_SORTED);
+
   public static final Comparator<Object> COMPARABLE_COMPARATOR =
-      (o1, o2) -> {
-        Method m;
-        try {
-          // See if o1 is capable of comparing itself to o2
-          m = o1.getClass().getDeclaredMethod("compareTo", o2.getClass());
-        } catch (NoSuchMethodException e) {
-          throw new ClassCastException();
-        }
+          (o1, o2) -> {
+            Method m;
+            try {
+              // See if o1 is capable of comparing itself to o2
+              m = o1.getClass().getDeclaredMethod("compareTo", o2.getClass());
+            } catch (NoSuchMethodException e) {
+              throw new ClassCastException();
+            }
 
-        Object retVal;
-        try {
-          // make the comparison
-          retVal = m.invoke(o1, o2);
-        } catch (IllegalAccessException e) {
-          throw new ClassCastException();
-        } catch (InvocationTargetException e) {
-          throw new ClassCastException();
-        }
+            Object retVal;
+            try {
+              // make the comparison
+              retVal = m.invoke(o1, o2);
+            } catch (IllegalAccessException e) {
+              throw new ClassCastException();
+            } catch (InvocationTargetException e) {
+              throw new ClassCastException();
+            }
 
-        // Comparable.compareTo() is supposed to return int but invoke()
-        // returns Object. We can't cast an Object to an int but we can
-        // cast it to an Integer and then extract the int from the Integer.
-        // But first, make sure it can be done.
-        Integer i = 0;
-        if (!i.getClass().isInstance(retVal)) {
-          throw new ClassCastException();
-        }
+            // Comparable.compareTo() is supposed to return int but invoke()
+            // returns Object. We can't cast an Object to an int but we can
+            // cast it to an Integer and then extract the int from the Integer.
+            // But first, make sure it can be done.
+            Integer i = 0;
+            if (!i.getClass().isInstance(retVal)) {
+              throw new ClassCastException();
+            }
 
-        return i.getClass().cast(retVal).intValue();
-      };
-  public static final Comparator<Object> LEXICAL_COMPARATOR =
-      (o1, o2) -> o1.toString().compareTo(o2.toString());
+            return i.getClass().cast(retVal).intValue();
+          };
+  public static final Comparator<Object> LEXICAL_COMPARATOR = (o1, o2) -> o1.toString().compareTo(o2.toString());
+
+  protected TableModel tableModel;
+
   private Row[] viewToModel;
 
   private int[] modelToView;
@@ -388,6 +370,7 @@ public class TableSorter extends AbstractTableModel {
     modelToView = null;
   }
 
+  @Override
   public Class<?> getColumnClass(int column) {
     return tableModel.getColumnClass(column);
   }
@@ -397,6 +380,7 @@ public class TableSorter extends AbstractTableModel {
     return (tableModel == null) ? 0 : tableModel.getColumnCount();
   }
 
+  @Override
   public String getColumnName(int column) {
     return tableModel.getColumnName(column);
   }
@@ -423,18 +407,17 @@ public class TableSorter extends AbstractTableModel {
   }
 
   protected Icon getHeaderRendererIcon(int column, int size) {
-    Directive directive = getDirective(column);
-    if (directive == EMPTY_DIRECTIVE) {
-      return null;
-    }
-    return new Arrow(directive.direction == DESCENDING, size, sortingColumns.indexOf(directive));
+    final var directive = getDirective(column);
+    return (directive == EMPTY_DIRECTIVE)
+      ? null
+      : new Arrow(directive.direction == DESCENDING, size, sortingColumns.indexOf(directive));
   }
 
   private int[] getModelToView() {
     if (modelToView == null) {
       final var n = getViewToModel().length;
       modelToView = new int[n];
-      for (int i = 0; i < n; i++) {
+      for (var i = 0; i < n; i++) {
         modelToView[modelIndex(i)] = i;
       }
     }
@@ -480,12 +463,13 @@ public class TableSorter extends AbstractTableModel {
     return viewToModel;
   }
 
+  @Override
   public boolean isCellEditable(int row, int column) {
     return tableModel.isCellEditable(modelIndex(row), column);
   }
 
   public boolean isSorting() {
-    return sortingColumns.size() != 0;
+    return !sortingColumns.isEmpty();
   }
 
   public int modelIndex(int viewIndex) {
@@ -519,9 +503,8 @@ public class TableSorter extends AbstractTableModel {
     if (this.tableHeader != null) {
       this.tableHeader.removeMouseListener(mouseListener);
       final var defaultRenderer = this.tableHeader.getDefaultRenderer();
-      if (defaultRenderer instanceof SortableHeaderRenderer) {
-        this.tableHeader.setDefaultRenderer(
-            ((SortableHeaderRenderer) defaultRenderer).tableCellRenderer);
+      if (defaultRenderer instanceof SortableHeaderRenderer rend) {
+        this.tableHeader.setDefaultRenderer(rend.tableCellRenderer);
       }
     }
     this.tableHeader = tableHeader;
@@ -546,6 +529,7 @@ public class TableSorter extends AbstractTableModel {
     fireTableStructureChanged();
   }
 
+  @Override
   public void setValueAt(Object aValue, int row, int column) {
     tableModel.setValueAt(aValue, modelIndex(row), column);
   }

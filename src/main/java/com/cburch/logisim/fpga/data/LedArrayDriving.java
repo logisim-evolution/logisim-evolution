@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.data;
@@ -32,19 +13,17 @@ import static com.cburch.logisim.fpga.Strings.S;
 
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 
 public class LedArrayDriving {
 
   public static String GetContraintedDriveMode(char id) {
-    if ((id >= LED_DEFAULT) && (id <= RGB_COLUMN_SCANNING)) {
-      return DRIVING_STRINGS[id];
-    }
-    return "Unknown";
+    return ((id >= LED_DEFAULT) && (id <= RGB_COLUMN_SCANNING)) ? DRIVING_STRINGS[id] : "Unknown";
   }
 
   public static char getId(String identifier) {
     char result = 0;
-    LinkedList<String> thelist = LedArrayDriving.getStrings();
+    final var thelist = LedArrayDriving.getStrings();
     Iterator<String> iter = thelist.iterator();
     while (iter.hasNext()) {
       if (iter.next().equals(identifier)) return result;
@@ -53,7 +32,7 @@ public class LedArrayDriving {
     return UNKNOWN;
   }
 
-  public static LinkedList<String> getStrings() {
+  public static List<String> getStrings() {
     var result = new LinkedList<String>();
     result.add(DRIVING_STRINGS[0]);
     result.add(DRIVING_STRINGS[1]);
@@ -64,7 +43,7 @@ public class LedArrayDriving {
     return result;
   }
 
-  public static LinkedList<String> getDisplayStrings() {
+  public static List<String> getDisplayStrings() {
     var result = new LinkedList<String>();
     result.add(S.get(DRIVING_STRINGS[0]));
     result.add(S.get(DRIVING_STRINGS[1]));

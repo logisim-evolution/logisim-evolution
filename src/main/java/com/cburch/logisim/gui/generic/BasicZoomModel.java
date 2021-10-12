@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.generic;
@@ -32,22 +13,18 @@ import com.cburch.logisim.prefs.PrefMonitor;
 import java.awt.event.MouseEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
-import java.util.ArrayList;
+import java.util.List;
 import javax.swing.SwingUtilities;
 
 public class BasicZoomModel implements ZoomModel {
-  private final ArrayList<Double> zoomOptions;
+  private final List<Double> zoomOptions;
 
   private final PropertyChangeSupport support;
   private final CanvasPane canvas;
   private double zoomFactor;
   private boolean showGrid;
 
-  public BasicZoomModel(
-      PrefMonitor<Boolean> gridPref,
-      PrefMonitor<Double> zoomPref,
-      ArrayList<Double> zoomOpts,
-      CanvasPane pane) {
+  public BasicZoomModel(PrefMonitor<Boolean> gridPref, PrefMonitor<Double> zoomPref, List<Double> zoomOpts, CanvasPane pane) {
     zoomOptions = zoomOpts;
     support = new PropertyChangeSupport(this);
     zoomFactor = 1.0;
@@ -82,13 +59,13 @@ public class BasicZoomModel implements ZoomModel {
   }
 
   @Override
-  public ArrayList<Double> getZoomOptions() {
+  public List<Double> getZoomOptions() {
     return zoomOptions;
   }
 
   @Override
   public void setZoomFactor(double value) {
-    double oldValue = zoomFactor;
+    final var oldValue = zoomFactor;
     if (value != oldValue) {
       zoomFactor = value;
       support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);
@@ -97,28 +74,28 @@ public class BasicZoomModel implements ZoomModel {
 
   @Override
   public void setZoomFactor(double value, MouseEvent e) {
-    double oldValue = zoomFactor;
+    final var oldValue = zoomFactor;
     if (value != oldValue) {
       if (canvas == null) setZoomFactor(value);
       // Attempt to maintain mouse position during zoom, using
       // [m]ax, [v]alue, [e]xtent, and [r]elative position within it,
       // to calculate target [n]ew[m]ax, [p]ercent and [n]ew[v]alue.
-      double mx = canvas.getHorizontalScrollBar().getMaximum();
-      int vx = canvas.getHorizontalScrollBar().getValue();
-      double ex = canvas.getHorizontalScrollBar().getVisibleAmount();
-      int rx = e.getX() - vx;
-      double my = canvas.getVerticalScrollBar().getMaximum();
-      int vy = canvas.getVerticalScrollBar().getValue();
-      double ey = canvas.getVerticalScrollBar().getVisibleAmount();
-      int ry = e.getY() - vy;
+      final var mx = canvas.getHorizontalScrollBar().getMaximum();
+      final var vx = canvas.getHorizontalScrollBar().getValue();
+      final var ex = canvas.getHorizontalScrollBar().getVisibleAmount();
+      final var rx = e.getX() - vx;
+      final var my = canvas.getVerticalScrollBar().getMaximum();
+      final var vy = canvas.getVerticalScrollBar().getValue();
+      final var ey = canvas.getVerticalScrollBar().getVisibleAmount();
+      final var ry = e.getY() - vy;
       zoomFactor = value;
       support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);
-      double nmx = mx * value / oldValue;
-      double px = (vx / mx) + (ex / mx - ex / nmx) * (rx / ex);
-      int nvx = (int) (nmx * px);
-      double nmy = my * value / oldValue;
-      double py = (vy / my) + (ey / my - ey / nmy) * (ry / ey);
-      int nvy = (int) (nmy * py);
+      final var nmx = mx * value / oldValue;
+      final var px = (vx / mx) + (ex / mx - ex / nmx) * (rx / ex);
+      final var nvx = (int) (nmx * px);
+      final var nmy = my * value / oldValue;
+      final var py = (vy / my) + (ey / my - ey / nmy) * (ry / ey);
+      final var nvy = (int) (nmy * py);
       canvas.getHorizontalScrollBar().setValue(nvx);
       canvas.getVerticalScrollBar().setValue(nvy);
     }
@@ -131,7 +108,7 @@ public class BasicZoomModel implements ZoomModel {
 
   @Override
   public void setZoomFactorCenter(double value) {
-    double oldValue = zoomFactor;
+    final var oldValue = zoomFactor;
     if (value != oldValue) {
       zoomFactor = value;
       support.firePropertyChange(ZoomModel.ZOOM, oldValue, value);

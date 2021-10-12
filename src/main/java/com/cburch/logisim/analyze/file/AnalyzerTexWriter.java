@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.analyze.file;
@@ -31,7 +12,7 @@ package com.cburch.logisim.analyze.file;
 import static com.cburch.logisim.analyze.Strings.S;
 
 import com.cburch.logisim.analyze.data.CoverColor;
-import com.cburch.logisim.analyze.data.KMapGroups;
+import com.cburch.logisim.analyze.data.KarnaughMapGroups;
 import com.cburch.logisim.analyze.gui.KarnaughMapPanel;
 import com.cburch.logisim.analyze.model.AnalyzerModel;
 import com.cburch.logisim.analyze.model.Expression.Notation;
@@ -167,22 +148,15 @@ public class AnalyzerTexWriter {
    */
 
   private static int[] reordered(int nrOfInputs) {
-    switch (nrOfInputs) {
-      case 1:
-        return new int[]{0};
-      case 2:
-        return new int[]{0, 1};
-      case 3:
-        return new int[]{1, 0, 2};
-      case 4:
-        return new int[]{0, 2, 1, 3};
-      case 5:
-        return new int[]{2, 0, 3, 1, 4};
-      case 6:
-        return new int[]{0, 3, 1, 4, 2, 5};
-      default:
-        return null;
-    }
+    return switch (nrOfInputs) {
+      case 1 -> new int[]{0};
+      case 2 -> new int[]{0, 1};
+      case 3 -> new int[]{1, 0, 2};
+      case 4 -> new int[]{0, 2, 1, 3};
+      case 5 -> new int[]{2, 0, 3, 1, 4};
+      case 6 -> new int[]{0, 3, 1, 4, 2, 5};
+      default -> new int[0];
+    };
   }
 
   private static int reorderedIndex(int nrOfInputs, int row) {
@@ -208,7 +182,7 @@ public class AnalyzerTexWriter {
         if (inp.bitIndex >= 0) content.append("_").append(inp.bitIndex);
         content.append("$}");
       } catch (ParserException e) {
-        // TODO Auto-generated catch block
+        // Do nothing.
       }
     }
     return content.toString();
@@ -235,23 +209,23 @@ public class AnalyzerTexWriter {
     final var topVars = new StringBuilder();
     final var nrLeftVars = KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
     var count = 0;
-    for (final var var : table.getInputVariables()) {
-      if (var.width == 1) {
+    for (final var variable : table.getInputVariables()) {
+      if (variable.width == 1) {
         if (count++ < nrLeftVars) {
           if (leftVars.length() != 0) leftVars.append(", ");
-          leftVars.append("$").append(var.name).append("$");
+          leftVars.append("$").append(variable.name).append("$");
         } else {
           if (topVars.length() != 0) topVars.append(", ");
-          topVars.append("$").append(var.name).append("$");
+          topVars.append("$").append(variable.name).append("$");
         }
       } else {
-        for (int idx = var.width; idx >= 0; idx--) {
+        for (int idx = variable.width; idx >= 0; idx--) {
           if (count++ < nrLeftVars) {
             if (leftVars.length() != 0) leftVars.append(", ");
-            leftVars.append("$").append(var.name).append("_{").append(idx).append("}$");
+            leftVars.append("$").append(variable.name).append("_{").append(idx).append("}$");
           } else {
             if (topVars.length() != 0) topVars.append(", ");
-            topVars.append("$").append(var.name).append("_{").append(idx).append("}$");
+            topVars.append("$").append(variable.name).append("_{").append(idx).append("}$");
           }
         }
       }
@@ -315,14 +289,14 @@ public class AnalyzerTexWriter {
     final var content = new StringBuilder();
     final var table = model.getTruthTable();
     if (table.getInputColumnCount() > KarnaughMapPanel.MAX_VARS) return content.toString();
-    final var groups = new KMapGroups(model);
+    final var groups = new KarnaughMapGroups(model);
     groups.setOutput(name);
     final var df = (DecimalFormat) NumberFormat.getNumberInstance(Locale.ENGLISH);
     var idx = 0;
     final var kmapRows = 1 << KarnaughMapPanel.ROW_VARS[table.getInputColumnCount()];
     for (final var group : groups.getCovers()) {
       for (final var thiscover : group.getAreas()) {
-        content.append("   \\node[grp={").append(CoverColor.COVERCOLOR.getColorName(group.getColor())).append("}");
+        content.append("   \\node[grp={").append(CoverColor.COVER_COLOR.getColorName(group.getColor())).append("}");
         double width = thiscover.getWidth() - OFFSET;
         double height = thiscover.getHeight() - OFFSET;
         content.append("{").append(df.format(width)).append("}{").append(df.format(height)).append("}]");
@@ -385,7 +359,7 @@ public class AnalyzerTexWriter {
       /*
        * Here we define our own colors
        */
-      CoverColor cols = CoverColor.COVERCOLOR;
+      CoverColor cols = CoverColor.COVER_COLOR;
       for (int i = 0; i < cols.nrOfColors(); i++) {
         Color col = cols.getColor(i);
         out.println(
@@ -420,7 +394,7 @@ public class AnalyzerTexWriter {
        */
       out.println("\\section{" + S.get("latexIntroduction") + "}");
       out.println(S.get("latexIntroductionText"));
-      if (model.getInputs().vars.size() == 0 || model.getOutputs().vars.size() == 0) {
+      if (model.getInputs().vars.isEmpty() || model.getOutputs().vars.isEmpty()) {
         out.println(SECTION_SEP);
         out.println("\\section{" + S.get("latexEmpty") + "}");
         out.println(S.get("latexEmptyText"));
@@ -513,13 +487,13 @@ public class AnalyzerTexWriter {
             if (outp.width == 1) {
               final var exp = Expressions.eq(Expressions.variable(outp.name),
                   model.getOutputExpressions().getMinimalExpression(outp.name));
-              out.println(exp.toString(Notation.LaTeX) + "~\\\\");
+              out.println(exp.toString(Notation.LATEX) + "~\\\\");
             } else {
               for (var idx = outp.width - 1; idx >= 0; idx--) {
                 final var name = outp.bitName(idx);
                 final var exp = Expressions.eq(Expressions.variable(name),
                     model.getOutputExpressions().getMinimalExpression(name));
-                out.println(exp.toString(Notation.LaTeX) + "~\\\\");
+                out.println(exp.toString(Notation.LATEX) + "~\\\\");
               }
             }
           }

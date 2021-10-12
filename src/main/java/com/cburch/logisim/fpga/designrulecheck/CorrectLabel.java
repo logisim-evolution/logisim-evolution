@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.designrulecheck;
@@ -31,8 +12,9 @@ package com.cburch.logisim.fpga.designrulecheck;
 import static com.cburch.logisim.fpga.Strings.S;
 
 import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.Vhdl;
 import com.cburch.logisim.gui.generic.OptionPane;
 import java.util.Arrays;
 import java.util.List;
@@ -49,7 +31,7 @@ public class CorrectLabel {
   public static boolean isCorrectLabel(String label, String errorIdentifierString) {
     final var err = nameErrors(label, errorIdentifierString);
     if (err != null) {
-      Reporter.Report.AddFatalError(err);
+      Reporter.report.addFatalError(err);
       return false;
     }
     return true;
@@ -66,12 +48,12 @@ public class CorrectLabel {
         return errorIdentifierString + S.get("IllegalChar", label.substring(i, i + 1));
       }
     }
-    if (HDL.isVHDL()) {
-      if (VHDL_KEYWORDS.contains(label.toLowerCase())) {
+    if (Hdl.isVhdl()) {
+      if (Vhdl.VHDL_KEYWORDS.contains(label.toLowerCase())) {
         return errorIdentifierString + S.get("ReservedVHDLKeyword");
       }
     } else {
-      if (HDL.isVerilog()) {
+      if (Hdl.isVerilog()) {
         if (VERILOG_KEYWORDS.contains(label)) {
           return errorIdentifierString + S.get("ReservedVerilogKeyword");
         }
@@ -82,8 +64,8 @@ public class CorrectLabel {
 
   public static String hdlCorrectLabel(String label) {
     if (label.isEmpty()) return null;
-    if (VHDL_KEYWORDS.contains(label.toLowerCase())) return HDLGeneratorFactory.VHDL;
-    if (VERILOG_KEYWORDS.contains(label)) return HDLGeneratorFactory.VERILOG;
+    if (Vhdl.VHDL_KEYWORDS.contains(label.toLowerCase())) return HdlGeneratorFactory.VHDL;
+    if (VERILOG_KEYWORDS.contains(label)) return HdlGeneratorFactory.VERILOG;
     return null;
   }
 
@@ -106,10 +88,10 @@ public class CorrectLabel {
         return false;
       }
     }
-    if (HDL.isVHDL()) {
-      return !VHDL_KEYWORDS.contains(Label.toLowerCase());
+    if (Hdl.isVhdl()) {
+      return !Vhdl.VHDL_KEYWORDS.contains(Label.toLowerCase());
     } else {
-      if (HDL.isVerilog()) {
+      if (Hdl.isVerilog()) {
         return !VERILOG_KEYWORDS.contains(Label);
       }
     }
@@ -119,7 +101,7 @@ public class CorrectLabel {
   public static boolean isKeyword(String label, Boolean showDialog) {
     boolean ret = false;
 
-    if (VHDL_KEYWORDS.contains(label.toLowerCase())) {
+    if (Vhdl.VHDL_KEYWORDS.contains(label.toLowerCase())) {
       ret = true;
       if (showDialog) OptionPane.showMessageDialog(null, S.get("VHDLKeywordNameError"));
     } else if (VERILOG_KEYWORDS.contains(label.toLowerCase())) {
@@ -136,106 +118,6 @@ public class CorrectLabel {
     "t", "u", "v", "w", "x", "y", "z", " ", "-", "_"
   };
   private static final List<String> CHARS = Arrays.asList(ALLOWED_STRINGS);
-  private static final String[] RESERVED_VHDL_WORDS = {
-    "abs",
-    "access",
-    "after",
-    "alias",
-    "all",
-    "and",
-    "architecture",
-    "array",
-    "assert",
-    "attribute",
-    "begin",
-    "block",
-    "body",
-    "buffer",
-    "bus",
-    "case",
-    "component",
-    "configuration",
-    "constant",
-    "disconnect",
-    "downto",
-    "else",
-    "elsif",
-    "end",
-    "entity",
-    "exit",
-    "file",
-    "for",
-    "function",
-    "generate",
-    "generic",
-    "group",
-    "guarded",
-    "if",
-    "impure",
-    "in",
-    "inertial",
-    "inout",
-    "is",
-    "label",
-    "library",
-    "linkage",
-    "literal",
-    "loop",
-    "map",
-    "mod",
-    "nand",
-    "new",
-    "next",
-    "nor",
-    "not",
-    "null",
-    "of",
-    "on",
-    "open",
-    "or",
-    "others",
-    "out",
-    "package",
-    "port",
-    "postponed",
-    "procedure",
-    "process",
-    "pure",
-    "range",
-    "record",
-    "register",
-    "reject",
-    "rem",
-    "report",
-    "return",
-    "rol",
-    "ror",
-    "select",
-    "severity",
-    "signal",
-    "shared",
-    "sla",
-    "sll",
-    "sra",
-    "srl",
-    "subtype",
-    "then",
-    "to",
-    "transport",
-    "type",
-    "unaffected",
-    "units",
-    "until",
-    "use",
-    "variable",
-    "wait",
-    "when",
-    "while",
-    "with",
-    "xnor",
-    "xor"
-  };
-  public static final List<String> VHDL_KEYWORDS = Arrays.asList(RESERVED_VHDL_WORDS);
 
   private static final String[] RESERVED_VERILOG_WORDS = {
     "always",

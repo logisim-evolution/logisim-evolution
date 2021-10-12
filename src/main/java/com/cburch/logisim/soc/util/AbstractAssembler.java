@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.soc.util;
@@ -45,7 +26,7 @@ import java.util.HashSet;
 
 public abstract class AbstractAssembler implements AssemblerInterface {
 
-  private static final int NR_OF_BYTES_PER_LINE = 16;
+  private static final int nrOfBytesPerLine = 16;
   private final ArrayList<AssemblerExecutionInterface> exeUnits = new ArrayList<>();
   private final HashSet<Integer> acceptedParameterTypes;
 
@@ -62,7 +43,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
     acceptedParameterTypes.addAll(AssemblerToken.MATH_OPERATORS);
   }
 
-  public void AddAcceptedParameterType(int type) {
+  public void addAcceptedParameterType(int type) {
     acceptedParameterTypes.add(type);
   }
 
@@ -156,7 +137,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
 
   private int getData(boolean lookForStrings, Integer[] contents, long sizeInBytes,
                       long startAddress, HashMap<Integer, String> labels, int maxLabelSize,
-                      StringBuffer lines, int lineNum) {
+                      StringBuilder lines, int lineNum) {
     int nrBytesWritten = 0;
     int size = (int) sizeInBytes;
     int i = 0;
@@ -248,20 +229,19 @@ public abstract class AbstractAssembler implements AssemblerInterface {
         }
       }
       if (!stringFound && !zerosFound) {
-        if (nrBytesWritten <= 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE) {
+        if (nrBytesWritten <= 0 || nrBytesWritten >= nrOfBytesPerLine) {
           StringBuilder label = new StringBuilder();
           while (label.length() < maxLabelSize) label.append(" ");
-          if (nrBytesWritten >= NR_OF_BYTES_PER_LINE)
+          if (nrBytesWritten >= nrOfBytesPerLine)
             newLineNum = addLine(lines, "\n", newLineNum, true);
-          if (nrBytesWritten == 0 || nrBytesWritten >= NR_OF_BYTES_PER_LINE)
+          if (nrBytesWritten == 0 || nrBytesWritten >= nrOfBytesPerLine)
             newLineNum = addLine(lines, label.toString(), newLineNum, false);
           newLineNum = addLine(lines, " .byte ", newLineNum, false);
           nrBytesWritten = 0;
         }
         if (nrBytesWritten > 0)
           newLineNum = addLine(lines, ", ", newLineNum, false);
-        newLineNum =
-            addLine(lines, String.format("0x%02X", getByte(contents, i)), newLineNum, false);
+        newLineNum = addLine(lines, String.format("0x%02X", getByte(contents, i)), newLineNum, false);
         nrBytesWritten++;
         i++;
       }
@@ -270,8 +250,8 @@ public abstract class AbstractAssembler implements AssemblerInterface {
     return newLineNum;
   }
 
-  private int addLine(StringBuffer s, String val, int lineNum, boolean completedLine) {
-    s.append(val);
+  private int addLine(StringBuilder str, String val, int lineNum, boolean completedLine) {
+    str.append(val);
     return completedLine ? lineNum + 1 : lineNum;
   }
 
@@ -280,7 +260,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
                            ElfProgramHeader elfHeader, ElfSectionHeader elfSections,
                            HashMap<Integer, Integer> validDebugLines) {
 
-    StringBuffer lines = new StringBuffer();
+    final var lines = new StringBuilder();
     int lineNum = 1;
     if (elfSections != null && elfSections.isValid()) {
       /* The section header gives more information on the program, so we prefer this one over the
@@ -342,8 +322,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
           for (int pc = 0; pc < (size >> 2); pc++) {
             decode(contents[pc]);
             AssemblerExecutionInterface exe = getExeUnit();
-            if (exe instanceof AbstractExecutionUnitWithLabelSupport) {
-              AbstractExecutionUnitWithLabelSupport jump = (AbstractExecutionUnitWithLabelSupport) exe;
+            if (exe instanceof AbstractExecutionUnitWithLabelSupport jump) {
               if (jump.isLabelSupported()) {
                 long addr = startAddress + ((long) pc << 2);
                 long target = jump.getLabelAddress(addr);
@@ -400,8 +379,7 @@ public abstract class AbstractAssembler implements AssemblerInterface {
             line.append(label).append(" ");
             decode(contents[pc]);
             AssemblerExecutionInterface exe = getExeUnit();
-            if (exe instanceof AbstractExecutionUnitWithLabelSupport) {
-              AbstractExecutionUnitWithLabelSupport jump = (AbstractExecutionUnitWithLabelSupport) exe;
+            if (exe instanceof AbstractExecutionUnitWithLabelSupport jump) {
               if (jump.isLabelSupported()) {
                 long target = jump.getLabelAddress(addr);
                 if (labels.containsKey(SocSupport.convUnsignedLong(target)))

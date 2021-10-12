@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.analyze.file;
@@ -163,8 +144,7 @@ public class TruthtableTextFile {
       if (value.equals("|")) {
         if (cur != inputs) throw new IOException(String.format("Line %d: Separator '|' must appear only once.", lineno));
         cur = outputs;
-      }
-      if (value.matches("[a-zA-Z][a-zA-Z_0-9]*")) {
+      } else if (value.matches("[a-zA-Z][a-zA-Z_0-9]*")) {
         cur.add(new Var(value, 1));
       } else {
         var m = NAME_FORMAT.matcher(value);
@@ -191,11 +171,11 @@ public class TruthtableTextFile {
         }
       }
     }
-    if (inputs.vars.size() == 0) throw new IOException(String.format("Line %d: Truth table has no inputs.", lineno));
-    if (outputs.vars.size() == 0) throw new IOException(String.format("Line %d: Truth table has no outputs.", lineno));
+    if (inputs.vars.isEmpty()) throw new IOException(String.format("Line %d: Truth table has no inputs.", lineno));
+    if (outputs.vars.isEmpty()) throw new IOException(String.format("Line %d: Truth table has no outputs.", lineno));
   }
 
-  static Entry parseBit(char c, String sval, Var var, int lineno) throws IOException {
+  static Entry parseBit(char c, String val, int lineNumber) throws IOException {
     if (c == 'x' || c == 'X' || c == '-') {
       return Entry.DONT_CARE;
     } else if (c == '0') {
@@ -204,7 +184,7 @@ public class TruthtableTextFile {
       return Entry.ONE;
     }
 
-    throw new IOException(String.format("Line %d: Bit value '%c' in \"%s\" must be one of '0', '1', 'x', or '-'.", lineno, c, sval));
+    throw new IOException(String.format("Line %d: Bit value '%c' in \"%s\" must be one of '0', '1', 'x', or '-'.", lineNumber, c, val));
   }
 
   static Entry parseHex(char c, int bit, int nbits, String sval, Var var, int lineno) throws IOException {
@@ -231,7 +211,7 @@ public class TruthtableTextFile {
   static int parseVal(Entry[] row, int col, String sval, Var var, int lineno) throws IOException {
     if (sval.length() == var.width) {
       // must be binary
-      for (var i = 0; i < var.width; i++) row[col++] = parseBit(sval.charAt(i), sval, var, lineno);
+      for (var i = 0; i < var.width; i++) row[col++] = parseBit(sval.charAt(i), sval, lineno);
     } else if (sval.length() == (var.width + 3) / 4) {
       // try hex
       for (var i = 0; i < var.width; i++) {
@@ -295,13 +275,13 @@ public class TruthtableTextFile {
         line = line.trim();
         if (line.equals("") || (line.matches("\\s*[~_=-][ ~_=-|]*"))) {
           continue;
-        } else if (inputs.vars.size() == 0) {
+        } else if (inputs.vars.isEmpty()) {
           validateHeader(line, inputs, outputs, lineno);
         } else {
           validateRow(line, inputs, outputs, rows, lineno);
         }
       }
-      if (rows.size() == 0) throw new IOException("End of file: Truth table has no rows.");
+      if (rows.isEmpty()) throw new IOException("End of file: Truth table has no rows.");
       try {
         model.setVariables(inputs.vars, outputs.vars);
       } catch (IllegalArgumentException e) {

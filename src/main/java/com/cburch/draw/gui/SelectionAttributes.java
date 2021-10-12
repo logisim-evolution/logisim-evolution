@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.draw.gui;
@@ -40,7 +21,6 @@ import com.cburch.logisim.data.AttributeSet;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -69,9 +49,9 @@ public class SelectionAttributes extends AbstractAttributeSet {
 
   private static Object getSelectionValue(Attribute<?> attr, Set<AttributeSet> sel) {
     Object ret = null;
-    for (AttributeSet attrs : sel) {
+    for (final var attrs : sel) {
       if (attrs.containsAttribute(attr)) {
-        Object val = attrs.getValue(attr);
+        final var val = attrs.getValue(attr);
         if (ret == null) {
           ret = val;
         } else if (val != null && val.equals(ret)) {
@@ -94,10 +74,8 @@ public class SelectionAttributes extends AbstractAttributeSet {
   }
 
   public Iterable<Map.Entry<AttributeSet, CanvasObject>> entries() {
-    Set<Map.Entry<AttributeSet, CanvasObject>> raw = selected.entrySet();
-    List<Map.Entry<AttributeSet, CanvasObject>> ret;
-    ret = new ArrayList<>(raw);
-    return ret;
+    final var raw = selected.entrySet();
+    return new ArrayList<>(raw);
   }
 
   @Override
@@ -107,9 +85,9 @@ public class SelectionAttributes extends AbstractAttributeSet {
 
   @Override
   public <V> V getValue(Attribute<V> attr) {
-    Attribute<?>[] attrs = this.selAttrs;
-    Object[] values = this.selValues;
-    for (int i = 0; i < attrs.length; i++) {
+    final var attrs = selAttrs;
+    final var values = selValues;
+    for (var i = 0; i < attrs.length; i++) {
       if (attrs[i] == attr) {
         @SuppressWarnings("unchecked")
         V ret = (V) values[i];
@@ -121,14 +99,14 @@ public class SelectionAttributes extends AbstractAttributeSet {
 
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
-    Attribute<?>[] attrs = this.selAttrs;
-    Object[] values = this.selValues;
-    for (int i = 0; i < attrs.length; i++) {
+    final var attrs = this.selAttrs;
+    final var values = this.selValues;
+    for (var i = 0; i < attrs.length; i++) {
       if (attrs[i] == attr) {
-        boolean same = Objects.equals(value, values[i]);
+        final var same = Objects.equals(value, values[i]);
         if (!same) {
           values[i] = value;
-          for (AttributeSet objAttrs : selected.keySet()) {
+          for (final var objAttrs : selected.keySet()) {
             objAttrs.setValue(attr, value);
           }
         }
@@ -152,9 +130,9 @@ public class SelectionAttributes extends AbstractAttributeSet {
       if (selected.containsKey(e.getSource())) {
         @SuppressWarnings("unchecked")
         Attribute<Object> attr = (Attribute<Object>) e.getAttribute();
-        Attribute<?>[] attrs = SelectionAttributes.this.selAttrs;
-        Object[] values = SelectionAttributes.this.selValues;
-        for (int i = 0; i < attrs.length; i++) {
+        final var attrs = SelectionAttributes.this.selAttrs;
+        final var values = SelectionAttributes.this.selValues;
+        for (var i = 0; i < attrs.length; i++) {
           if (attrs[i] == attr) {
             values[i] = getSelectionValue(attr, selected.keySet());
           }
@@ -163,21 +141,21 @@ public class SelectionAttributes extends AbstractAttributeSet {
     }
 
     private void computeAttributeList(Set<AttributeSet> attrsSet) {
-      Set<Attribute<?>> attrSet = new LinkedHashSet<>();
-      Iterator<AttributeSet> sit = attrsSet.iterator();
+      final var attrSet = new LinkedHashSet<Attribute<?>>();
+      final var sit = attrsSet.iterator();
       if (sit.hasNext()) {
-        AttributeSet first = sit.next();
+        final var first = sit.next();
         attrSet.addAll(first.getAttributes());
         while (sit.hasNext()) {
-          AttributeSet next = sit.next();
+          final var next = sit.next();
           attrSet.removeIf(attr -> !next.containsAttribute(attr));
         }
       }
 
-      Attribute<?>[] attrs = new Attribute[attrSet.size()];
-      Object[] values = new Object[attrs.length];
-      int i = 0;
-      for (Attribute<?> attr : attrSet) {
+      final var attrs = new Attribute<?>[attrSet.size()];
+      final var values = new Object[attrs.length];
+      var i = 0;
+      for (final var attr : attrSet) {
         attrs[i] = attr;
         values[i] = getSelectionValue(attr, attrsSet);
         i++;
@@ -193,20 +171,20 @@ public class SelectionAttributes extends AbstractAttributeSet {
     //
     @Override
     public void selectionChanged(SelectionEvent ex) {
-      Map<AttributeSet, CanvasObject> oldSel = selected;
-      Map<AttributeSet, CanvasObject> newSel = new HashMap<>();
-      for (CanvasObject o : selection.getSelected()) {
+      final var oldSel = selected;
+      final var newSel = new HashMap<AttributeSet, CanvasObject>();
+      for (final var o : selection.getSelected()) {
         if (o != null) newSel.put(o.getAttributeSet(), o);
       }
       selected = newSel;
-      boolean change = false;
-      for (AttributeSet attrs : oldSel.keySet()) {
+      var change = false;
+      for (final var attrs : oldSel.keySet()) {
         if (!newSel.containsKey(attrs)) {
           change = true;
           attrs.removeAttributeListener(this);
         }
       }
-      for (AttributeSet attrs : newSel.keySet()) {
+      for (final var attrs : newSel.keySet()) {
         if (!oldSel.containsKey(attrs)) {
           change = true;
           attrs.addAttributeListener(this);

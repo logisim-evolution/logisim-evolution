@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.arith;
@@ -80,16 +61,17 @@ public class Shifter extends InstanceFactory {
             SHIFT_ROLL_LEFT,
             SHIFT_ROLL_RIGHT
           });
+  public static final Attribute<Integer> SHIFT_BITS_ATTR = Attributes.forNoSave();
 
   static final int IN0 = 0;
   static final int IN1 = 1;
   static final int OUT = 2;
 
   public Shifter() {
-    super(_ID, S.getter("shifterComponent"));
+    super(_ID, S.getter("shifterComponent"), new ShifterHdlGeneratorFactory());
     setAttributes(
-        new Attribute[] {StdAttr.WIDTH, ATTR_SHIFT},
-        new Object[] {BitWidth.create(8), SHIFT_LOGICAL_LEFT});
+        new Attribute[] {StdAttr.WIDTH, ATTR_SHIFT, SHIFT_BITS_ATTR},
+        new Object[] {BitWidth.create(8), SHIFT_LOGICAL_LEFT, 4});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
     setIcon(new ArithmeticIcon("\u2b05"));
@@ -106,6 +88,7 @@ public class Shifter extends InstanceFactory {
     int data = dataWid == null ? 32 : dataWid.getWidth();
     int shift = 1;
     while ((1 << shift) < data) shift++;
+    instance.getAttributeSet().setValue(SHIFT_BITS_ATTR, shift);
 
     Port[] ps = new Port[3];
     ps[IN0] = new Port(-40, -10, Port.INPUT, data);
@@ -126,12 +109,6 @@ public class Shifter extends InstanceFactory {
   @Override
   public String getHDLName(AttributeSet attrs) {
     return "Shifter_" + attrs.getValue(StdAttr.WIDTH).getWidth() + "_bit";
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new ShifterHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

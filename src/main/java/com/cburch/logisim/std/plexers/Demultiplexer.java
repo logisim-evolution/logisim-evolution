@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.plexers;
@@ -61,7 +42,7 @@ public class Demultiplexer extends InstanceFactory {
   public static final String _ID = "Demultiplexer";
 
   public Demultiplexer() {
-    super(_ID, S.getter("demultiplexerComponent"));
+    super(_ID, S.getter("demultiplexerComponent"), new DemultiplexerHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -90,6 +71,16 @@ public class Demultiplexer extends InstanceFactory {
   }
 
   @Override
+  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
+    // for backward compatibility, after 2.6.4 the enable pin was "enabled" by default upto and until 3.6.1
+    if (attr == PlexersLibrary.ATTR_ENABLE) {
+      return ver.compareTo(new LogisimVersion(3, 6, 1)) <= 0;
+    } else {
+      return super.getDefaultAttributeValue(attr, ver);
+    }
+  }
+
+  @Override
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
     updatePorts(instance);
@@ -99,16 +90,6 @@ public class Demultiplexer extends InstanceFactory {
   public boolean contains(Location loc, AttributeSet attrs) {
     final var facing = attrs.getValue(StdAttr.FACING).reverse();
     return PlexersLibrary.contains(loc, getOffsetBounds(attrs), facing);
-  }
-
-  @Override
-  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    if (attr == PlexersLibrary.ATTR_ENABLE) {
-      int newer = ver.compareTo(new LogisimVersion(2, 6, 4));
-      return newer >= 0;
-    } else {
-      return super.getDefaultAttributeValue(attr, ver);
-    }
   }
 
   @Override
@@ -132,15 +113,9 @@ public class Demultiplexer extends InstanceFactory {
   }
 
   @Override
-  public boolean HasThreeStateDrivers(AttributeSet attrs) {
+  public boolean hasThreeStateDrivers(AttributeSet attrs) {
     return (attrs.getValue(PlexersLibrary.ATTR_TRISTATE)
         || (attrs.getValue(PlexersLibrary.ATTR_DISABLED) == PlexersLibrary.DISABLED_FLOATING));
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new DemultiplexerHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

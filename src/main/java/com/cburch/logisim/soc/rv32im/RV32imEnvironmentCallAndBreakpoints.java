@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.soc.rv32im;
@@ -50,11 +31,12 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
   private int operation;
   private boolean valid;
 
+  @Override
   public ArrayList<String> getInstructions() {
-    ArrayList<String> opcodes = new ArrayList<>(Arrays.asList(AsmOpcodes));
-    return opcodes;
+    return new ArrayList<>(Arrays.asList(AsmOpcodes));
   }
 
+  @Override
   public boolean execute(Object state, CircuitState cState) {
     if (!valid)
       return false;
@@ -62,26 +44,31 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
     return true;
   }
 
+  @Override
   public String getAsmInstruction() {
     if (!valid)
       return null;
     return AsmOpcodes[operation].toLowerCase();
   }
 
+  @Override
   public int getBinInstruction() {
     return instruction;
   }
 
+  @Override
   public boolean setBinInstruction(int instr) {
     instruction = instr;
     valid = decodeBin();
     return valid;
   }
 
+  @Override
   public boolean performedJump() {
     return false;
   }
 
+  @Override
   public boolean isValid() {
     return valid;
   }
@@ -97,15 +84,18 @@ public class RV32imEnvironmentCallAndBreakpoints implements AssemblerExecutionIn
     return false;
   }
 
+  @Override
   public String getErrorMessage() {
     return null;
   }
 
+  @Override
   public int getInstructionSizeInBytes(String instruction) {
     if (getInstructions().contains(instruction.toUpperCase())) return 4;
     return -1;
   }
 
+  @Override
   public boolean setAsmInstruction(AssemblerAsmInstruction instr) {
     int operation = -1;
     for (int i = 0; i < AsmOpcodes.length; i++)

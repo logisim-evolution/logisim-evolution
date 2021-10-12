@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.circuit;
@@ -36,7 +17,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +55,7 @@ public class ReplacementMap {
   }
 
   void append(ReplacementMap next) {
-    for (Map.Entry<Component, HashSet<Component>> e : next.map.entrySet()) {
+    for (final var e : next.map.entrySet()) {
       final var b = e.getKey();
       final var cs = e.getValue(); // what b is replaced by
       var as = this.inverse.remove(b); // what was replaced
@@ -85,14 +65,14 @@ public class ReplacementMap {
         as.add(b);
       }
 
-      for (Component a : as) {
+      for (final var a : as) {
         final var aDst = this.map.computeIfAbsent(a, k -> new HashSet<>(cs.size()));
         // should happen when b pre-existed only
         aDst.remove(b);
         aDst.addAll(cs);
       }
 
-      for (Component c : cs) {
+      for (final var c : cs) {
         var cSrc = this.inverse.get(c); // should always
         // be null
         if (cSrc == null) {
@@ -103,7 +83,7 @@ public class ReplacementMap {
       }
     }
 
-    for (Map.Entry<Component, HashSet<Component>> e : next.inverse.entrySet()) {
+    for (final var e : next.inverse.entrySet()) {
       final var c = e.getKey();
       if (!inverse.containsKey(c)) {
         final var bs = e.getValue();
@@ -198,6 +178,7 @@ public class ReplacementMap {
     try (final var p = new PrintStream(out, true, StandardCharsets.UTF_8)) {
       print(p);
     } catch (Exception ignored) {
+      // Do nothing.
     }
     return out.toString(StandardCharsets.UTF_8);
   }

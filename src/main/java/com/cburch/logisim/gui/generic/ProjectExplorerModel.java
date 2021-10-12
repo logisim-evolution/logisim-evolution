@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 /**
@@ -61,11 +42,11 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   }
 
   Node<Tool> findTool(Tool tool) {
-    final Node<?> root = (Node<?>) getRoot();
+    final var root = (Node<?>) getRoot();
     if (root == null || tool == null) return null;
-    Enumeration<TreeNode> en = root.depthFirstEnumeration();
+    final var en = root.depthFirstEnumeration();
     while (en.hasMoreElements()) {
-      final Node<?> node = (Node<?>) en.nextElement();
+      final var node = (Node<?>) en.nextElement();
       if (node.getValue() == tool) {
         @SuppressWarnings("unchecked")
         final Node<Tool> nodeTool = (Node<Tool>) node;
@@ -76,8 +57,8 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   }
 
   void fireStructureChanged() {
-    final ProjectExplorerModel model = this;
-    final Node<?> root = (Node<?>) getRoot();
+    final var model = this;
+    final var root = (Node<?>) getRoot();
     SwingUtilities.invokeLater(
         () -> {
           if (root != null) {
@@ -91,8 +72,9 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   }
 
   // ProjectListener methods
+  @Override
   public void projectChanged(ProjectEvent event) {
-    int act = event.getAction();
+    final var act = event.getAction();
     if (act == ProjectEvent.ACTION_SET_FILE) {
       setLogisimFile(proj.getLogisimFile());
       fireStructureChanged();
@@ -100,20 +82,16 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   }
 
   private void setLogisimFile(LogisimFile file) {
-    Node<?> oldRoot = (Node<?>) getRoot();
+    final var oldRoot = (Node<?>) getRoot();
     oldRoot.decommission();
-
-    if (file == null) {
-      setRoot(null);
-    } else {
-      setRoot(new ProjectExplorerLibraryNode(this, file, uiElement, showMouseTools));
-    }
-
+    setRoot((file == null)
+            ? null
+            : new ProjectExplorerLibraryNode(this, file, uiElement, showMouseTools));
     fireStructureChanged();
   }
 
   public void setProject(Project value) {
-    Project old = proj;
+    final var old = proj;
 
     if (old != null) {
       old.removeProjectListener(this);
@@ -150,13 +128,13 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
     abstract void decommission();
 
     public void fireNodeChanged() {
-      Node<?> parent = (Node<?>) this.getParent();
+      final var parent = (Node<?>) this.getParent();
 
       if (parent == null) {
         model.fireTreeNodesChanged(this, null, null, null);
       } else {
-        int[] indices = new int[] {parent.getIndex(this)};
-        Object[] items = new Object[] {this.getUserObject()};
+        final var indices = new int[] {parent.getIndex(this)};
+        final var items = new Object[] {this.getUserObject()};
         model.fireTreeNodesChanged(this, parent.getPath(), indices, items);
       }
     }

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.circuit.appear;
@@ -34,54 +15,53 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
-import com.cburch.logisim.soc.gui.SocCPUShape;
+import com.cburch.logisim.soc.gui.SocCpuShape;
 import com.cburch.logisim.soc.vga.SocVgaShape;
 import com.cburch.logisim.std.io.HexDigitShape;
 import com.cburch.logisim.std.io.LedShape;
-import com.cburch.logisim.std.io.RGBLedShape;
+import com.cburch.logisim.std.io.RgbLedShape;
 import com.cburch.logisim.std.io.SevenSegmentShape;
 import com.cburch.logisim.std.io.TtyShape;
 import com.cburch.logisim.std.memory.CounterShape;
 import com.cburch.logisim.std.memory.RegisterShape;
 import com.cburch.logisim.std.wiring.Pin;
-
 import java.util.List;
 import org.w3c.dom.Element;
 
 public class AppearanceSvgReader {
-  public static class pinInfo {
+  public static class PinInfo {
     private final Location myLocation;
     private final Instance myInstance;
     private Boolean pinIsUsed;
-    
-    public pinInfo(Location loc, Instance inst) {
+
+    public PinInfo(Location loc, Instance inst) {
       myLocation = loc;
       myInstance = inst;
       pinIsUsed = false;
     }
-    
+
     public Boolean pinIsAlreadyUsed() {
       return pinIsUsed;
     }
-    
+
     public Location getPinLocation() {
       return myLocation;
     }
-    
+
     public Instance getPinInstance() {
       return myInstance;
     }
-    
+
     public void setPinIsUsed() {
       pinIsUsed = true;
     }
   }
-  
-  public static pinInfo getPinInfo(Location loc, Instance inst) {
-    return new pinInfo(loc, inst);
+
+  public static PinInfo getPinInfo(Location loc, Instance inst) {
+    return new PinInfo(loc, inst);
   }
-  
-  public static AbstractCanvasObject createShape(Element elt, List<pinInfo> pins, Circuit circuit) {
+
+  public static AbstractCanvasObject createShape(Element elt, List<PinInfo> pins, Circuit circuit) {
     final var name = elt.getTagName();
     if (name.equals("circ-anchor") || name.equals("circ-origin")) {
       final var loc = getLocation(elt);
@@ -91,7 +71,9 @@ public class AppearanceSvgReader {
         ret.setValue(AppearanceAnchor.FACING, facing);
       }
       return ret;
-    } else if (name.equals("circ-port")) {
+    }
+
+    if (name.equals("circ-port")) {
       final var loc = getLocation(elt);
       final var pinStr = elt.getAttribute("pin").split(",");
       final var pinLoc = Location.create(Integer.parseInt(pinStr[0].trim()), Integer.parseInt(pinStr[1].trim()));
@@ -102,64 +84,53 @@ public class AppearanceSvgReader {
           final var isInputRef = isInputPinReference(elt);
           if (isInputPin == isInputRef) {
             pin.setPinIsUsed();
-            return new AppearancePort(loc, pin.getPinInstance()); 
+            return new AppearancePort(loc, pin.getPinInstance());
           }
         }
       }
-      return null; 
-    } else if (name.startsWith("visible-")) {
-      final var pathstr = elt.getAttribute("path");
-      if (pathstr == null || pathstr.length() == 0) return null;
-      DynamicElement.Path path;
+      return null;
+    }
+
+    if (name.startsWith("visible-")) {
+      final var pathStr = elt.getAttribute("path");
+      if (pathStr == null || pathStr.length() == 0) return null;
       try {
-        path = DynamicElement.Path.fromSvgString(pathstr, circuit);
+        final var path = DynamicElement.Path.fromSvgString(pathStr, circuit);
+        final var x = (int) Double.parseDouble(elt.getAttribute("x").trim());
+        final var y = (int) Double.parseDouble(elt.getAttribute("y").trim());
+        final var shape = getDynamicElement(name, path, x, y);
+        if (shape == null) return null;
+        try {
+          shape.parseSvgElement(elt);
+        } catch (Exception e) {
+          e.printStackTrace();
+          throw e;
+        }
+        return shape;
       } catch (IllegalArgumentException e) {
         System.out.println(e.getMessage());
         return null;
       }
-      final var x = (int) Double.parseDouble(elt.getAttribute("x").trim());
-      final var y = (int) Double.parseDouble(elt.getAttribute("y").trim());
-      final var shape = getDynamicElement(name, path, x, y);
-      if (shape == null) {
-        return null;
-      }
-      try {
-        shape.parseSvgElement(elt);
-      } catch (Exception e) {
-        e.printStackTrace();
-        throw e;
-      }
-      return shape;
     }
+
     return SvgReader.createShape(elt);
   }
 
-  private static DynamicElement getDynamicElement(String name, DynamicElement.Path path, int x,
-      int y) {
-    switch (name) {
-      case "visible-led":
-        return new LedShape(x, y, path);
-      case "visible-rgbled":
-        return new RGBLedShape(x, y, path);
-      case "visible-hexdigit":
-        return new HexDigitShape(x, y, path);
-      case "visible-sevensegment":
-        return new SevenSegmentShape(x, y, path);
-      case "visible-register":
-        return new RegisterShape(x, y, path);
-      case "visible-counter":
-        return new CounterShape(x, y, path);
-      case "visible-vga":
-        return new SocVgaShape(x, y, path);
-      case "visible-soc-cpu":
-        return new SocCPUShape(x, y, path);
-      case "visible-tty":
-        return new TtyShape(x, y, path);
-      default:
-        return null;
-    }
+  private static DynamicElement getDynamicElement(String name, DynamicElement.Path path, int x, int y) {
+    return switch (name) {
+      case "visible-led" -> new LedShape(x, y, path);
+      case "visible-rgbled" -> new RgbLedShape(x, y, path);
+      case "visible-hexdigit" -> new HexDigitShape(x, y, path);
+      case "visible-sevensegment" -> new SevenSegmentShape(x, y, path);
+      case "visible-register" -> new RegisterShape(x, y, path);
+      case "visible-counter" -> new CounterShape(x, y, path);
+      case "visible-vga" -> new SocVgaShape(x, y, path);
+      case "visible-soc-cpu" -> new SocCpuShape(x, y, path);
+      case "visible-tty" -> new TtyShape(x, y, path);
+      default -> null;
+    };
   }
-  
+
   private static Boolean isInputPinReference(Element elt) {
     final var width = Double.parseDouble(elt.getAttribute("width"));
     final var radius = (int) Math.round(width / 2.0);
@@ -167,12 +138,12 @@ public class AppearanceSvgReader {
   }
 
   private static Location getLocation(Element elt) {
-    double x = Double.parseDouble(elt.getAttribute("x"));
-    double y = Double.parseDouble(elt.getAttribute("y"));
-    double w = Double.parseDouble(elt.getAttribute("width"));
-    double h = Double.parseDouble(elt.getAttribute("height"));
-    int px = (int) Math.round(x + w / 2);
-    int py = (int) Math.round(y + h / 2);
+    final var x = Double.parseDouble(elt.getAttribute("x"));
+    final var y = Double.parseDouble(elt.getAttribute("y"));
+    final var w = Double.parseDouble(elt.getAttribute("width"));
+    final var h = Double.parseDouble(elt.getAttribute("height"));
+    final var px = (int) Math.round(x + w / 2);
+    final var py = (int) Math.round(y + h / 2);
     return Location.create(px, py);
   }
 }

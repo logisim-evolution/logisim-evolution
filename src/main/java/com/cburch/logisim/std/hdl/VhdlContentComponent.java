@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.hdl;
@@ -80,7 +61,7 @@ public class VhdlContentComponent extends HdlContent {
 
   private static final String TEMPLATE = loadTemplate();
 
-  protected StringBuffer content;
+  protected StringBuilder content;
   protected Port[] inputs;
   protected Port[] outputs;
   protected String name;
@@ -91,10 +72,11 @@ public class VhdlContentComponent extends HdlContent {
     this.parseContent(TEMPLATE);
   }
 
+  @Override
   public VhdlContentComponent clone() {
     try {
       VhdlContentComponent ret = (VhdlContentComponent) super.clone();
-      ret.content = new StringBuffer(this.content);
+      ret.content = new StringBuilder(this.content);
       return ret;
     } catch (CloneNotSupportedException ex) {
       return this;
@@ -215,7 +197,7 @@ public class VhdlContentComponent extends HdlContent {
       outputs[i].setToolTip(S.getter(desc.getName()));
     }
 
-    this.content = new StringBuffer(content);
+    this.content = new StringBuilder(content);
     fireContentSet();
 
     return true;
@@ -223,8 +205,8 @@ public class VhdlContentComponent extends HdlContent {
 
   @Override
   public boolean setContent(String content) {
-    final var title = new StringBuffer();
-    final var result = new StringBuffer();
+    final var title = new StringBuilder();
+    final var result = new StringBuilder();
 
     switch (Softwares.validateVhdl(content, title, result)) {
       case Softwares.ERROR:
@@ -247,7 +229,7 @@ public class VhdlContentComponent extends HdlContent {
             new String[] {S.get("validationErrorButton")},
             S.get("validationErrorButton"));
         return false;
-      case Softwares.ABORD:
+      case Softwares.ABORT:
         OptionPane.showMessageDialog(
             null, result.toString(), title.toString(), OptionPane.INFORMATION_MESSAGE);
         return false;

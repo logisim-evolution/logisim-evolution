@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.data;
@@ -38,7 +19,7 @@ import java.awt.event.MouseEvent;
 public class SimpleRectangle {
 
   private int x, y, width, height;
-  private final FPGAIOInformationContainer toBeModified;
+  private final FpgaIoInformationContainer toBeModified;
   private final boolean movemode;
   private boolean show;
   private final boolean fill;
@@ -54,9 +35,9 @@ public class SimpleRectangle {
     movemode = false;
   }
 
-  public SimpleRectangle(MouseEvent e, FPGAIOInformationContainer IOinfo, float scale) {
+  public SimpleRectangle(MouseEvent e, FpgaIoInformationContainer IOinfo, float scale) {
     toBeModified = IOinfo;
-    BoardRectangle rect = IOinfo.GetRectangle();
+    BoardRectangle rect = IOinfo.getRectangle();
     x = AppPreferences.getScaled(rect.getXpos(), scale);
     y = AppPreferences.getScaled(rect.getYpos(), scale);
     width = AppPreferences.getScaled(rect.getWidth(), scale);
@@ -66,7 +47,7 @@ public class SimpleRectangle {
         new BoardRectangle(x + width - offset, y + height - offset, offset, offset);
     show = true;
     fill = true;
-    movemode = !test.PointInside(e.getX(), e.getY());
+    movemode = !test.isPointInside(e.getX(), e.getY());
   }
 
   public Rectangle resizeAndGetUpdate(MouseEvent e) {
@@ -91,7 +72,7 @@ public class SimpleRectangle {
     return new Rectangle(xmin - off, ymin - off, off2 + xmax - xmin, off2 + ymax - ymin);
   }
 
-  public FPGAIOInformationContainer getIoInfo() {
+  public FpgaIoInformationContainer getIoInfo() {
     return toBeModified;
   }
 
@@ -123,10 +104,10 @@ public class SimpleRectangle {
     Graphics2D g1 = (Graphics2D) g.create();
     g1.setStroke(new BasicStroke(AppPreferences.getScaled(2)));
     if (fill) {
-      g1.setColor(movemode ? BoardManipulator.MOVE_COLOR : BoardManipulator.RESIZE_COLOR);
+      g1.setColor(movemode ? BoardManipulator.moveColor : BoardManipulator.resizeColor);
       g1.fillRect(xmin, ymin, xmax - xmin, ymax - ymin);
     } else {
-      g1.setColor(BoardManipulator.DEFINE_COLOR);
+      g1.setColor(BoardManipulator.defineColor);
       g1.drawRect(xmin, ymin, xmax - xmin, ymax - ymin);
     }
     g1.dispose();

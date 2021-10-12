@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.appear;
@@ -34,7 +15,6 @@ import com.cburch.draw.model.CanvasObject;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitMutator;
 import com.cburch.logisim.circuit.CircuitTransaction;
-import com.cburch.logisim.circuit.appear.CircuitAppearance;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import java.util.ArrayList;
@@ -44,7 +24,6 @@ import java.util.Map;
 public class RevertAppearanceAction extends Action {
   private final Circuit circuit;
   private ArrayList<CanvasObject> old;
-  private boolean wasDefault;
 
   public RevertAppearanceAction(Circuit circuit) {
     this.circuit = circuit;
@@ -52,7 +31,7 @@ public class RevertAppearanceAction extends Action {
 
   @Override
   public void doIt(Project proj) {
-    ActionTransaction xn = new ActionTransaction(true);
+    final var xn = new ActionTransaction(true);
     xn.execute();
   }
 
@@ -63,7 +42,7 @@ public class RevertAppearanceAction extends Action {
 
   @Override
   public void undo(Project proj) {
-    ActionTransaction xn = new ActionTransaction(false);
+    final var xn = new ActionTransaction(false);
     xn.execute();
   }
 
@@ -76,24 +55,20 @@ public class RevertAppearanceAction extends Action {
 
     @Override
     protected Map<Circuit, Integer> getAccessedCircuits() {
-      Map<Circuit, Integer> accessMap = new HashMap<>();
-      for (Circuit supercirc : circuit.getCircuitsUsingThis()) {
-        accessMap.put(supercirc, READ_WRITE);
+      final var accessMap = new HashMap<Circuit, Integer>();
+      for (final var superCircuit : circuit.getCircuitsUsingThis()) {
+        accessMap.put(superCircuit, READ_WRITE);
       }
       return accessMap;
     }
 
     @Override
     protected void run(CircuitMutator mutator) {
+      final var appear = circuit.getAppearance();
       if (forward) {
-        CircuitAppearance appear = circuit.getAppearance();
-        wasDefault = appear.isDefaultAppearance();
         old = new ArrayList<>(appear.getObjectsFromBottom());
-        appear.setDefaultAppearance(true);
       } else {
-        CircuitAppearance appear = circuit.getAppearance();
         appear.setObjectsForce(old);
-        appear.setDefaultAppearance(wasDefault);
       }
     }
   }

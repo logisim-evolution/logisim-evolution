@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.io;
@@ -53,6 +34,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
+import java.util.List;
 
 public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   /**
@@ -79,7 +61,6 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
     @Override
     public Value getLogValue(InstanceState state, Object option) {
       final var data = (InstanceDataSingleton) state.getData();
-      int rgb = 0;
       if (data == null)
         return Value.createUnknown(BITWIDTH);
       else
@@ -87,7 +68,7 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
     }
   }
 
-  public static ArrayList<String> getLabels() {
+  public static List<String> getLabels() {
     final var labelNames = new ArrayList<String>();
     for (var i = 0; i < 3; i++) labelNames.add("");
     labelNames.set(RED, "RED");
@@ -106,7 +87,7 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   public static final int BLUE = 2;
 
   public RgbLed() {
-    super(_ID, S.getter("RGBledComponent"));
+    super(_ID, S.getter("RGBledComponent"), new AbstractSimpleIoHdlGeneratorFactory(false), true);
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -164,7 +145,7 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   }
 
   @Override
-  public boolean ActiveOnHigh(AttributeSet attrs) {
+  public boolean activeOnHigh(AttributeSet attrs) {
     return attrs.getValue(IoLibrary.ATTR_ACTIVE);
   }
 
@@ -179,12 +160,6 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   public Bounds getOffsetBounds(AttributeSet attrs) {
     Direction facing = attrs.getValue(StdAttr.FACING);
     return Bounds.create(0, -10, 20, 20).rotate(Direction.WEST, facing, 0, 0);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new AbstractLedHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -214,14 +189,14 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
 
     final var g = painter.getGraphics();
     if (painter.getShowState()) {
-      Boolean activ = painter.getAttributeValue(IoLibrary.ATTR_ACTIVE);
+      final var activ = painter.getAttributeValue(IoLibrary.ATTR_ACTIVE);
       final var mask = activ ? 0 : 7;
       summ ^= mask;
       final var red = ((summ >> RED) & 1) * 0xFF;
       final var green = ((summ >> GREEN) & 1) * 0xFF;
       final var blue = ((summ >> BLUE) & 1) * 0xFF;
-      final var LedColor = new Color(red, green, blue);
-      g.setColor(LedColor);
+      final var ledColor = new Color(red, green, blue);
+      g.setColor(ledColor);
       g.fillOval(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     }
     g.setColor(Color.BLACK);
@@ -249,12 +224,7 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   }
 
   @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
-  }
-
-  @Override
   public DynamicElement createDynamicElement(int x, int y, DynamicElement.Path path) {
-    return new RGBLedShape(x, y, path);
+    return new RgbLedShape(x, y, path);
   }
 }

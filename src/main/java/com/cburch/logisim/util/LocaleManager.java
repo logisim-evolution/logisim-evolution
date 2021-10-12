@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.util;
@@ -77,7 +58,6 @@ public class LocaleManager {
     }
   }
 
-  /* kwalsh  >> */
   private static class LocaleFormatterWithString extends LocaleGetter {
     final String arg;
 
@@ -105,42 +85,28 @@ public class LocaleManager {
       return source.fmt(key, arg.toString());
     }
   }
-  /* << kwalsh */
+
+  private static final String SETTINGS_NAME = "settings";
+  private static final ArrayList<LocaleManager> managers = new ArrayList<>();
+  public static final SimpleDateFormat PARSER_SDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+  private static final ArrayList<LocaleListener> listeners = new ArrayList<>();
+  private static HashMap<Character, String> repl = null;
+  private static Locale curLocale = null;
+
+  private final String dirName;
+  private final String fileStart;
+  private ResourceBundle settings = null;
+  private ResourceBundle locale = null;
+
+  public LocaleManager(String dirName, String fileStart) {
+    this.dirName = dirName;
+    this.fileStart = fileStart;
+    loadDefault();
+    managers.add(this);
+  }
 
   public static void addLocaleListener(LocaleListener l) {
     listeners.add(l);
-  }
-
-  public static boolean canReplaceAccents() {
-    return fetchReplaceAccents() != null;
-  }
-
-  private static HashMap<Character, String> fetchReplaceAccents() {
-    HashMap<Character, String> ret = null;
-    String val;
-    try {
-      val = S.locale.getString("accentReplacements");
-    } catch (MissingResourceException e) {
-      return null;
-    }
-    final var toks = new StringTokenizer(val, "/");
-    while (toks.hasMoreTokens()) {
-      final var tok = toks.nextToken().trim();
-      var c = '\0';
-      String s = null;
-      if (tok.length() == 1) {
-        c = tok.charAt(0);
-        s = "";
-      } else if (tok.length() >= 2 && tok.charAt(1) == ' ') {
-        c = tok.charAt(0);
-        s = tok.substring(2).trim();
-      }
-      if (s != null) {
-        if (ret == null) ret = new HashMap<>();
-        ret.put(c, s);
-      }
-    }
-    return ret;
   }
 
   private static void fireLocaleChanged() {
@@ -248,46 +214,9 @@ public class LocaleManager {
       for (final var man : managers) {
         man.loadDefault();
       }
-      repl = replaceAccents ? fetchReplaceAccents() : null;
       updateButtonText();
       fireLocaleChanged();
     }
-  }
-
-  public static void setReplaceAccents(boolean value) {
-    final var newRepl = value ? fetchReplaceAccents() : null;
-    replaceAccents = value;
-    repl = newRepl;
-    fireLocaleChanged();
-  }
-
-  // static members
-  private static final String SETTINGS_NAME = "settings";
-
-  private static final ArrayList<LocaleManager> managers = new ArrayList<>();
-
-  private static final String DATE_FORMAT = S.get("dateFormat");
-
-  public static final SimpleDateFormat parserSDF = new SimpleDateFormat(LocaleManager.DATE_FORMAT);
-
-  private static final ArrayList<LocaleListener> listeners = new ArrayList<>();
-
-  private static boolean replaceAccents = false;
-
-  private static HashMap<Character, String> repl = null;
-
-  private static Locale curLocale = null;
-  // instance members
-  private final String dirName;
-  private final String fileStart;
-  private ResourceBundle settings = null;
-  private ResourceBundle locale = null;
-
-  public LocaleManager(String dirName, String fileStart) {
-    this.dirName = dirName;
-    this.fileStart = fileStart;
-    loadDefault();
-    managers.add(this);
   }
 
   public JComponent createLocaleSelector() {
@@ -329,12 +258,13 @@ public class LocaleManager {
     String locs = null;
     try {
       if (settings != null) locs = settings.getString("locales");
-    } catch (java.util.MissingResourceException ignored) {
+    } catch (MissingResourceException ignored) {
+      // Do nothing.
     }
     if (locs == null) return new Locale[] {};
 
     final var retl = new ArrayList<Locale>();
-    StringTokenizer toks = new StringTokenizer(locs);
+    final var toks = new StringTokenizer(locs);
     while (toks.hasMoreTokens()) {
       final var f = toks.nextToken();
       String language;
@@ -347,7 +277,7 @@ public class LocaleManager {
         country = null;
       }
       if (language != null) {
-        Locale loc = country == null ? new Locale(language) : new Locale(language, country);
+        final var loc = country == null ? new Locale(language) : new Locale(language, country);
         retl.add(loc);
       }
     }
@@ -375,19 +305,22 @@ public class LocaleManager {
     if (settings == null) {
       try {
         settings = ResourceBundle.getBundle(dirName + "/" + SETTINGS_NAME);
-      } catch (java.util.MissingResourceException ignored) {
+      } catch (MissingResourceException ignored) {
+        // Do nothing.
       }
     }
 
     try {
       loadLocale(Locale.getDefault());
       if (locale != null) return;
-    } catch (java.util.MissingResourceException ignored) {
+    } catch (MissingResourceException ignored) {
+      // Do nothing.
     }
     try {
       loadLocale(Locale.ENGLISH);
       if (locale != null) return;
-    } catch (java.util.MissingResourceException ignored) {
+    } catch (MissingResourceException ignored) {
+      // Do nothing.
     }
     Locale[] choices = getLocaleOptions();
     if (choices != null && choices.length > 0) loadLocale(choices[0]);

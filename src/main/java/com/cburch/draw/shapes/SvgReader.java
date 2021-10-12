@@ -1,35 +1,15 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.draw.shapes;
 
 import com.cburch.draw.model.AbstractCanvasObject;
-import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.util.UnmodifiableList;
@@ -37,7 +17,6 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.w3c.dom.Element;
 
@@ -49,31 +28,31 @@ public class SvgReader {
   }
 
   private static AbstractCanvasObject createLine(Element elt) {
-    int x0 = Integer.parseInt(elt.getAttribute("x1"));
-    int y0 = Integer.parseInt(elt.getAttribute("y1"));
-    int x1 = Integer.parseInt(elt.getAttribute("x2"));
-    int y1 = Integer.parseInt(elt.getAttribute("y2"));
+    final var x0 = Integer.parseInt(elt.getAttribute("x1"));
+    final var y0 = Integer.parseInt(elt.getAttribute("y1"));
+    final var x1 = Integer.parseInt(elt.getAttribute("x2"));
+    final var y1 = Integer.parseInt(elt.getAttribute("y2"));
     return new Line(x0, y0, x1, y1);
   }
 
   private static AbstractCanvasObject createOval(Element elt) {
-    double cx = Double.parseDouble(elt.getAttribute("cx"));
-    double cy = Double.parseDouble(elt.getAttribute("cy"));
-    double rx = Double.parseDouble(elt.getAttribute("rx"));
-    double ry = Double.parseDouble(elt.getAttribute("ry"));
-    int x = (int) Math.round(cx - rx);
-    int y = (int) Math.round(cy - ry);
-    int w = (int) Math.round(rx * 2);
-    int h = (int) Math.round(ry * 2);
+    final var cx = Double.parseDouble(elt.getAttribute("cx"));
+    final var cy = Double.parseDouble(elt.getAttribute("cy"));
+    final var rx = Double.parseDouble(elt.getAttribute("rx"));
+    final var ry = Double.parseDouble(elt.getAttribute("ry"));
+    final var x = (int) Math.round(cx - rx);
+    final var y = (int) Math.round(cy - ry);
+    final var w = (int) Math.round(rx * 2);
+    final var h = (int) Math.round(ry * 2);
     return new Oval(x, y, w, h);
   }
 
   private static AbstractCanvasObject createPath(Element elt) {
-    Matcher patt = PATH_REGEX.matcher(elt.getAttribute("d"));
-    List<String> tokens = new ArrayList<>();
-    int type = -1; // -1 error, 0 start, 1 curve, 2 polyline
+    final var patt = PATH_REGEX.matcher(elt.getAttribute("d"));
+    final var tokens = new ArrayList<String>();
+    var type = -1; // -1 error, 0 start, 1 curve, 2 polyline
     while (patt.find()) {
-      String token = patt.group();
+      final var token = patt.group();
       tokens.add(token);
       if (Character.isLetter(token.charAt(0))) {
         switch (token.charAt(0)) {
@@ -104,21 +83,21 @@ public class SvgReader {
       if (tokens.size() == 8
           && tokens.get(0).equals("M")
           && tokens.get(3).equalsIgnoreCase("Q")) {
-        int x0 = Integer.parseInt(tokens.get(1));
-        int y0 = Integer.parseInt(tokens.get(2));
-        int x1 = Integer.parseInt(tokens.get(4));
-        int y1 = Integer.parseInt(tokens.get(5));
-        int x2 = Integer.parseInt(tokens.get(6));
-        int y2 = Integer.parseInt(tokens.get(7));
+        final var x0 = Integer.parseInt(tokens.get(1));
+        final var y0 = Integer.parseInt(tokens.get(2));
+        var x1 = Integer.parseInt(tokens.get(4));
+        var y1 = Integer.parseInt(tokens.get(5));
+        var x2 = Integer.parseInt(tokens.get(6));
+        var y2 = Integer.parseInt(tokens.get(7));
         if (tokens.get(3).equals("q")) {
           x1 += x0;
           y1 += y0;
           x2 += x0;
           y2 += y0;
         }
-        Location e0 = Location.create(x0, y0);
-        Location e1 = Location.create(x2, y2);
-        Location ct = Location.create(x1, y1);
+        final var e0 = Location.create(x0, y0);
+        final var e1 = Location.create(x2, y2);
+        final var ct = Location.create(x1, y1);
         return new Curve(e0, e1, ct);
       } else {
         throw new NumberFormatException("Unexpected format for curve");
@@ -137,13 +116,13 @@ public class SvgReader {
   }
 
   private static AbstractCanvasObject createRectangle(Element elt) {
-    int x = Integer.parseInt(elt.getAttribute("x"));
-    int y = Integer.parseInt(elt.getAttribute("y"));
-    int w = Integer.parseInt(elt.getAttribute("width"));
-    int h = Integer.parseInt(elt.getAttribute("height"));
+    final var x = Integer.parseInt(elt.getAttribute("x"));
+    final var y = Integer.parseInt(elt.getAttribute("y"));
+    final var w = Integer.parseInt(elt.getAttribute("width"));
+    final var h = Integer.parseInt(elt.getAttribute("height"));
     if (elt.hasAttribute("rx")) {
-      AbstractCanvasObject ret = new RoundRectangle(x, y, w, h);
-      int rx = Integer.parseInt(elt.getAttribute("rx"));
+      final var ret = new RoundRectangle(x, y, w, h);
+      final var rx = Integer.parseInt(elt.getAttribute("rx"));
       ret.setValue(DrawAttr.CORNER_RADIUS, rx);
       return ret;
     } else {
@@ -152,15 +131,15 @@ public class SvgReader {
   }
 
   public static AbstractCanvasObject createShape(Element elt) {
-    String name = elt.getTagName();
-    AbstractCanvasObject ret = createShapeObject(elt, name);
+    final var name = elt.getTagName();
+    final var ret = createShapeObject(elt, name);
     if (ret == null) {
       return null;
     }
-    List<Attribute<?>> attrs = ret.getAttributes();
+    var attrs = ret.getAttributes();
     if (attrs.contains(DrawAttr.PAINT_TYPE)) {
-      String stroke = elt.getAttribute("stroke");
-      String fill = elt.getAttribute("fill");
+      final var stroke = elt.getAttribute("stroke");
+      final var fill = elt.getAttribute("fill");
       if (stroke.equals("") || stroke.equals("none")) {
         ret.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
       } else if (fill.equals("none")) {
@@ -171,20 +150,20 @@ public class SvgReader {
     }
     attrs = ret.getAttributes(); // since changing paintType could change it
     if (attrs.contains(DrawAttr.STROKE_WIDTH) && elt.hasAttribute("stroke-width")) {
-      Integer width = Integer.valueOf(elt.getAttribute("stroke-width"));
+      final var width = Integer.valueOf(elt.getAttribute("stroke-width"));
       ret.setValue(DrawAttr.STROKE_WIDTH, width);
     }
     if (attrs.contains(DrawAttr.STROKE_COLOR)) {
-      String color = elt.getAttribute("stroke");
-      String opacity = elt.getAttribute("stroke-opacity");
+      final var color = elt.getAttribute("stroke");
+      final var opacity = elt.getAttribute("stroke-opacity");
       if (!color.equals("none")) {
         ret.setValue(DrawAttr.STROKE_COLOR, getColor(color, opacity));
       }
     }
     if (attrs.contains(DrawAttr.FILL_COLOR)) {
-      String color = elt.getAttribute("fill");
+      var color = elt.getAttribute("fill");
       if (color.equals("")) color = "#000000";
-      String opacity = elt.getAttribute("fill-opacity");
+      final var opacity = elt.getAttribute("fill-opacity");
       if (!color.equals("none")) {
         ret.setValue(DrawAttr.FILL_COLOR, getColor(color, opacity));
       }
@@ -193,88 +172,76 @@ public class SvgReader {
   }
 
   private static AbstractCanvasObject createShapeObject(Element elt, String name) {
-    switch (name) {
-      case "ellipse":
-        return createOval(elt);
-      case "line":
-        return createLine(elt);
-      case "path":
-        return createPath(elt);
-      case "polyline":
-        return createPolyline(elt);
-      case "polygon":
-        return createPolygon(elt);
-      case "rect":
-        return createRectangle(elt);
-      case "text":
-        return createText(elt);
-      default:
-        return null;
-    }
+    return switch (name) {
+      case "ellipse" -> createOval(elt);
+      case "line" -> createLine(elt);
+      case "path" -> createPath(elt);
+      case "polyline" -> createPolyline(elt);
+      case "polygon" -> createPolygon(elt);
+      case "rect" -> createRectangle(elt);
+      case "text" -> createText(elt);
+      default -> null;
+    };
   }
 
   private static AbstractCanvasObject createText(Element elt) {
-    int x = Integer.parseInt(elt.getAttribute("x"));
-    int y = Integer.parseInt(elt.getAttribute("y"));
-    String text = elt.getTextContent();
-    Text ret = new Text(x, y, text);
+    final var x = Integer.parseInt(elt.getAttribute("x"));
+    final var y = Integer.parseInt(elt.getAttribute("y"));
+    final var text = elt.getTextContent();
+    final var ret = new Text(x, y, text);
 
-    String fontFamily = elt.getAttribute("font-family");
-    String fontStyle = elt.getAttribute("font-style");
-    String fontWeight = elt.getAttribute("font-weight");
-    String fontSize = elt.getAttribute("font-size");
-    int styleFlags = Font.PLAIN;
+    final var fontFamily = elt.getAttribute("font-family");
+    final var fontStyle = elt.getAttribute("font-style");
+    final var fontWeight = elt.getAttribute("font-weight");
+    final var fontSize = elt.getAttribute("font-size");
+    var styleFlags = Font.PLAIN;
     if (fontStyle.equals("italic")) styleFlags |= Font.ITALIC;
     if (fontWeight.equals("bold")) styleFlags |= Font.BOLD;
-    int size = Integer.parseInt(fontSize);
+    final var size = Integer.parseInt(fontSize);
     ret.setValue(DrawAttr.FONT, new Font(fontFamily, styleFlags, size));
 
-    String halignStr = elt.getAttribute("text-anchor");
-    AttributeOption halign;
-    if (halignStr.equals("start")) {
-      halign = DrawAttr.HALIGN_LEFT;
-    } else if (halignStr.equals("end")) {
-      halign = DrawAttr.HALIGN_RIGHT;
+    final var hAlignStr = elt.getAttribute("text-anchor");
+    AttributeOption hAlign;
+    if (hAlignStr.equals("start")) {
+      hAlign = DrawAttr.HALIGN_LEFT;
+    } else if (hAlignStr.equals("end")) {
+      hAlign = DrawAttr.HALIGN_RIGHT;
     } else {
-      halign = DrawAttr.HALIGN_CENTER;
+      hAlign = DrawAttr.HALIGN_CENTER;
     }
-    ret.setValue(DrawAttr.HALIGNMENT, halign);
+    ret.setValue(DrawAttr.HALIGNMENT, hAlign);
 
-    String valignStr = elt.getAttribute("dominant-baseline");
-    AttributeOption valign = getAlignment(valignStr);
-    ret.setValue(DrawAttr.VALIGNMENT, valign);
+    final var vAlignStr = elt.getAttribute("dominant-baseline");
+    final var vAlign = getAlignment(vAlignStr);
+    ret.setValue(DrawAttr.VALIGNMENT, vAlign);
 
     // fill color is handled after we return
     return ret;
   }
 
   private static AttributeOption getAlignment(String valignStr) {
-    switch (valignStr) {
-      case "top":
-        return DrawAttr.VALIGN_TOP;
-      case "bottom":
-        return DrawAttr.VALIGN_BOTTOM;
-      case "alphabetic":
-        return DrawAttr.VALIGN_BASELINE;
-      default:
-        return DrawAttr.VALIGN_MIDDLE;
-    }
+    return switch (valignStr) {
+      case "top" -> DrawAttr.VALIGN_TOP;
+      case "bottom" -> DrawAttr.VALIGN_BOTTOM;
+      case "alphabetic" -> DrawAttr.VALIGN_BASELINE;
+      default -> DrawAttr.VALIGN_MIDDLE;
+    };
   }
 
-  public static Font getFontAttribute(
-      Element elt, String prefix, String defaultFamily, int defaultSize) {
-    String fontFamily = elt.getAttribute(prefix + "font-family");
+  public static Font getFontAttribute(Element elt, String prefix, String defaultFamily, int defaultSize) {
+    var fontFamily = elt.getAttribute(prefix + "font-family");
+    var fontStyle = elt.getAttribute(prefix + "font-style");
+    var fontWeight = elt.getAttribute(prefix + "font-weight");
+    final var fontSize = elt.getAttribute(prefix + "font-size");
+
     if (fontFamily == null || fontFamily.length() == 0) fontFamily = defaultFamily;
-    String fontStyle = elt.getAttribute(prefix + "font-style");
     if (fontStyle == null || fontStyle.length() == 0) fontStyle = "plain";
-    String fontWeight = elt.getAttribute(prefix + "font-weight");
     if (fontWeight == null || fontWeight.length() == 0) fontWeight = "plain";
-    String fontSize = elt.getAttribute(prefix + "font-size");
-    int styleFlags = Font.PLAIN;
+    var styleFlags = Font.PLAIN;
     if (fontStyle.equals("italic")) styleFlags |= Font.ITALIC;
     if (fontWeight.equals("bold")) styleFlags |= Font.BOLD;
-    int size =
-        (fontSize != null && fontSize.length() > 0 ? Integer.parseInt(fontSize) : defaultSize);
+    final var size = (fontSize != null && fontSize.length() > 0) ? Integer.parseInt(fontSize) : defaultSize;
+
     return new Font(fontFamily, styleFlags, size);
   }
 
@@ -304,10 +271,10 @@ public class SvgReader {
         x = Double.parseDouble(opacity);
       } catch (NumberFormatException e) {
         // some localizations use commas for decimal points
-        int comma = opacity.lastIndexOf(',');
+        final var comma = opacity.lastIndexOf(',');
         if (comma >= 0) {
           try {
-            String repl = opacity.substring(0, comma) + "." + opacity.substring(comma + 1);
+            final var repl = opacity.substring(0, comma) + "." + opacity.substring(comma + 1);
             x = Double.parseDouble(repl);
           } catch (Throwable t) {
             throw e;
@@ -322,12 +289,12 @@ public class SvgReader {
   }
 
   private static List<Location> parsePoints(String points) {
-    Pattern patt = Pattern.compile("[ ,\n\r\t]+");
-    String[] toks = patt.split(points);
-    Location[] ret = new Location[toks.length / 2];
-    for (int i = 0; i < ret.length; i++) {
-      int x = Integer.parseInt(toks[2 * i]);
-      int y = Integer.parseInt(toks[2 * i + 1]);
+    final var patt = Pattern.compile("[ ,\n\r\t]+");
+    final var toks = patt.split(points);
+    final var ret = new Location[toks.length / 2];
+    for (var i = 0; i < ret.length; i++) {
+      final var x = Integer.parseInt(toks[2 * i]);
+      final var y = Integer.parseInt(toks[2 * i + 1]);
       ret[i] = Location.create(x, y);
     }
     return UnmodifiableList.create(ret);

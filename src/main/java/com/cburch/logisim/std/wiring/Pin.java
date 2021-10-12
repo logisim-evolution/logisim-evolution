@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.wiring;
@@ -355,9 +336,9 @@ public class Pin extends InstanceFactory {
           newVal = Value.createUnknown(BitWidth.create(bitWidth));
         } else {
           double val;
-          if (s.toLowerCase().equals("inf") || s.toLowerCase().equals("+inf")) val = Double.POSITIVE_INFINITY;
-          else if (s.toLowerCase().equals("-inf")) val = Double.NEGATIVE_INFINITY;
-          else if (s.toLowerCase().equals("nan")) val = Double.NaN;
+          if (s.equalsIgnoreCase("inf") || s.equalsIgnoreCase("+inf")) val = Double.POSITIVE_INFINITY;
+          else if (s.equalsIgnoreCase("-inf")) val = Double.NEGATIVE_INFINITY;
+          else if (s.equalsIgnoreCase("nan")) val = Double.NaN;
           else val = Double.parseDouble(s);
           newVal = bitWidth == 64 ? Value.createKnown(val) : Value.createKnown((float) val);
         }
@@ -375,10 +356,10 @@ public class Pin extends InstanceFactory {
           && (s.equals(Character.toString(Value.UNKNOWNCHAR).toLowerCase())
               || s.equals(Character.toString(Value.UNKNOWNCHAR).toUpperCase())
               || s.equals("???"))) return true;
-      if (s.toLowerCase().equals("nan")
-          || s.toLowerCase().equals("inf")
-          || s.toLowerCase().equals("+inf")
-          || s.toLowerCase().equals("-inf")) return true;
+      if (s.equalsIgnoreCase("nan")
+          || s.equalsIgnoreCase("inf")
+          || s.equalsIgnoreCase("+inf")
+          || s.equalsIgnoreCase("-inf")) return true;
 
       try {
         Double.parseDouble(s);
@@ -749,7 +730,7 @@ public class Pin extends InstanceFactory {
   public static final Pin FACTORY = new Pin();
   private static final Font ICON_WIDTH_FONT = new Font("SansSerif", Font.BOLD, 9);
   public static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
-  private static final Color ICON_WIDTH_COLOR = Value.WIDTH_ERROR_COLOR.darker();
+  private static final Color ICON_WIDTH_COLOR = Value.widthErrorColor.darker();
   public static final int DIGIT_WIDTH = 8;
 
   public Pin() {
@@ -763,7 +744,7 @@ public class Pin extends InstanceFactory {
     setInstancePoker(PinPoker.class);
   }
 
-  private static Direction PinLabelLoc(Direction PinDir) {
+  private static Direction pinLabelLoc(Direction PinDir) {
     if (PinDir == Direction.EAST) return Direction.WEST;
     else if (PinDir == Direction.WEST) return Direction.EAST;
     else if (PinDir == Direction.NORTH) return Direction.SOUTH;
@@ -780,16 +761,14 @@ public class Pin extends InstanceFactory {
     ((PrefMonitorBooleanConvert) AppPreferences.NEW_INPUT_OUTPUT_SHAPES).addConvertListener(attrs);
     configurePorts(instance);
     instance.computeLabelTextField(
-        Instance.AVOID_LEFT, PinLabelLoc(attrs.getValue(StdAttr.FACING)));
+        Instance.AVOID_LEFT, pinLabelLoc(attrs.getValue(StdAttr.FACING)));
   }
 
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    if (attr.equals(ProbeAttributes.PROBEAPPEARANCE)) {
-      return StdAttr.APPEAR_CLASSIC;
-    } else {
-      return super.getDefaultAttributeValue(attr, ver);
-    }
+    return attr.equals(ProbeAttributes.PROBEAPPEARANCE) 
+        ? ProbeAttributes.getDefaultProbeAppearance()
+        : super.getDefaultAttributeValue(attr, ver);
   }
 
   private void configurePorts(Instance instance) {
@@ -806,9 +785,7 @@ public class Pin extends InstanceFactory {
 
   @Override
   public AttributeSet createAttributeSet() {
-    AttributeSet attrs = new PinAttributes();
-    attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.GetDefaultProbeAppearance());
-    return attrs;
+    return new PinAttributes();
   }
 
   @Override
@@ -842,7 +819,7 @@ public class Pin extends InstanceFactory {
   }
 
   @Override
-  public boolean HasThreeStateDrivers(AttributeSet attrs) {
+  public boolean hasThreeStateDrivers(AttributeSet attrs) {
     /*
      * We ignore for the moment the three-state property of the pin, as it
      * is not an active component, just wiring
@@ -851,7 +828,7 @@ public class Pin extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
+  public boolean isHDLSupportedComponent(AttributeSet attrs) {
     return true;
   }
 
@@ -865,7 +842,7 @@ public class Pin extends InstanceFactory {
         || attr == ProbeAttributes.PROBEAPPEARANCE) {
       instance.recomputeBounds();
       PinAttributes attrs = (PinAttributes) instance.getAttributeSet();
-      instance.computeLabelTextField(Instance.AVOID_LEFT, PinLabelLoc(attrs.facing));
+      instance.computeLabelTextField(Instance.AVOID_LEFT, pinLabelLoc(attrs.facing));
     } else if (attr == Pin.ATTR_TRISTATE || attr == Pin.ATTR_PULL) {
       instance.fireInvalidated();
     }
@@ -904,7 +881,7 @@ public class Pin extends InstanceFactory {
       g.setColor(Color.BLUE);
       g2.scale(0.7, 0.7);
       g2.drawString(
-          radix.GetIndexChar(),
+          radix.getIndexChar(),
           (int) ((double) LabelValueXOffset / 0.7),
           (int) ((double) labelYPos / 0.7));
       g2.scale(1.0 / 0.7, 1.0 / 0.7);
@@ -1032,7 +1009,7 @@ public class Pin extends InstanceFactory {
     }
   }
 
-  private void DrawOutputShape(
+  private void drawOutputShape(
       InstancePainter painter,
       int x,
       int y,
@@ -1120,7 +1097,7 @@ public class Pin extends InstanceFactory {
     Graphics g = painter.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
     if (attrs.isOutput()) {
-      DrawOutputShape(
+      drawOutputShape(
           painter,
           x + bds.getX(),
           y + bds.getY(),
@@ -1229,7 +1206,7 @@ public class Pin extends InstanceFactory {
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(Color.black);
     if (IsOutput) {
-      DrawOutputShape(
+      drawOutputShape(
           painter, x + 1, y + 1, bds.getWidth() - 1, bds.getHeight() - 1, found.getColor(), false);
     } else {
       drawInputShape(
@@ -1277,7 +1254,7 @@ public class Pin extends InstanceFactory {
   }
 
   @Override
-  public boolean RequiresNonZeroLabel() {
+  public boolean requiresNonZeroLabel() {
     return true;
   }
 

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.memory;
@@ -59,8 +40,7 @@ class RomContentsListener implements HexModelListener {
 
     @Override
     public Action append(Action other) {
-      if (other instanceof Change) {
-        final var o = (Change) other;
+      if (other instanceof Change o) {
         final var oEnd = o.start + o.newValues.length;
         final var end = start + newValues.length;
         if (oEnd >= start && end >= o.start) {
@@ -98,8 +78,7 @@ class RomContentsListener implements HexModelListener {
 
     @Override
     public boolean shouldAppendTo(Action other) {
-      if (other instanceof Change) {
-        final var o = (Change) other;
+      if (other instanceof Change o) {
         final var oEnd = o.start + o.newValues.length;
         final var end = start + newValues.length;
         if (oEnd >= start && end >= o.start) return true;
@@ -128,6 +107,7 @@ class RomContentsListener implements HexModelListener {
     this.proj = proj;
   }
 
+  @Override
   public void bytesChanged(HexModel source, long start, long numBytes, long[] oldValues) {
     if (enabled && proj != null && oldValues != null) {
       // this change needs to be logged in the undo log
@@ -139,6 +119,7 @@ class RomContentsListener implements HexModelListener {
     }
   }
 
+  @Override
   public void metainfoChanged(HexModel source) {
     // ignore - this can only come from an already-registered
     // action

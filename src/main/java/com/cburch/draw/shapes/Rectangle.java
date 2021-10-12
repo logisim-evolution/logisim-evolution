@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.draw.shapes;
@@ -68,46 +49,37 @@ public class Rectangle extends Rectangular {
 
   @Override
   protected Location getRandomPoint(Bounds bds, Random rand) {
-    if (getPaintType() == DrawAttr.PAINT_STROKE) {
-      int w = getWidth();
-      int h = getHeight();
-      int u = rand.nextInt(2 * w + 2 * h);
-      int x = getX();
-      int y = getY();
-      if (u < w) {
-        x += u;
-      } else if (u < 2 * w) {
-        x += (u - w);
-        y += h;
-      } else if (u < 2 * w + h) {
-        y += (u - 2 * w);
-      } else {
-        x += w;
-        y += (u - 2 * w - h);
-      }
-      int d = getStrokeWidth();
-      if (d > 1) {
-        x += rand.nextInt(d) - d / 2;
-        y += rand.nextInt(d) - d / 2;
-      }
-      return Location.create(x, y);
-    } else {
+    if (getPaintType() != DrawAttr.PAINT_STROKE) {
       return super.getRandomPoint(bds, rand);
     }
+
+    final var w = getWidth();
+    final var h = getHeight();
+    final var u = rand.nextInt(2 * w + 2 * h);
+    var x = getX();
+    var y = getY();
+    if (u < w) {
+      x += u;
+    } else if (u < 2 * w) {
+      x += (u - w);
+      y += h;
+    } else if (u < 2 * w + h) {
+      y += (u - 2 * w);
+    } else {
+      x += w;
+      y += (u - 2 * w - h);
+    }
+    final var d = getStrokeWidth();
+    if (d > 1) {
+      x += rand.nextInt(d) - d / 2;
+      y += rand.nextInt(d) - d / 2;
+    }
+    return Location.create(x, y);
   }
 
   @Override
   public boolean matches(CanvasObject other) {
-    if (other instanceof Rectangle) {
-      return super.matches(other);
-    } else {
-      return false;
-    }
-  }
-
-  @Override
-  public int matchesHashCode() {
-    return super.matchesHashCode();
+    return (other instanceof Rectangle) && super.matches(other);
   }
 
   @Override

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.soc.data;
@@ -39,6 +20,7 @@ import java.awt.Component;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.JTable;
@@ -51,10 +33,10 @@ public class SocMemMapModel extends AbstractTableModel
   private static final long serialVersionUID = 1L;
   private static final long longMask = Long.parseUnsignedLong("FFFFFFFF", 16);
 
-  public static class memMapHeaderRenderer extends JLabel implements TableCellRenderer {
+  public static class MemoryMapHeaderRenderer extends JLabel implements TableCellRenderer {
     private static final long serialVersionUID = 1L;
 
-    public memMapHeaderRenderer() {
+    public MemoryMapHeaderRenderer() {
       setForeground(Color.BLUE);
       setBorder(BorderFactory.createEtchedBorder());
     }
@@ -218,7 +200,7 @@ public class SocMemMapModel extends AbstractTableModel
   private final ArrayList<SocBusSlaveInterface> slaves;
   private final SlaveMap slaveMap;
   private final SlaveInfoRenderer slaveRenderer;
-  private final memMapHeaderRenderer headRenderer;
+  private final MemoryMapHeaderRenderer headRenderer;
   private InstanceComponent marked;
 
   public SocMemMapModel() {
@@ -227,7 +209,7 @@ public class SocMemMapModel extends AbstractTableModel
     slaveMap = new SlaveMap();
     slaves = new ArrayList<>();
     slaveRenderer = new SlaveInfoRenderer();
-    headRenderer = new memMapHeaderRenderer();
+    headRenderer = new MemoryMapHeaderRenderer();
     marked = null;
     rebuild();
   }
@@ -248,7 +230,7 @@ public class SocMemMapModel extends AbstractTableModel
     }
   }
 
-  public ArrayList<SocBusSlaveInterface> getSlaves() {
+  public List<SocBusSlaveInterface> getSlaves() {
     return slaves;
   }
 
@@ -256,19 +238,19 @@ public class SocMemMapModel extends AbstractTableModel
     return slaveRenderer;
   }
 
-  public memMapHeaderRenderer getHeaderRenderer() {
+  public MemoryMapHeaderRenderer getHeaderRenderer() {
     return headRenderer;
   }
 
 
   @Override
   public String getColumnName(int col) {
-    switch (col) {
-      case 0 : return S.get("SocMemMapStartAddress");
-      case 1 : return S.get("SocMemMapEndAddress");
-      case 2 : return S.get("SocMemMapSlaveName");
-    }
-    return "";
+    return switch (col) {
+      case 0 -> S.get("SocMemMapStartAddress");
+      case 1 -> S.get("SocMemMapEndAddress");
+      case 2 -> S.get("SocMemMapSlaveName");
+      default -> "";
+    };
   }
 
   @Override
@@ -333,13 +315,11 @@ public class SocMemMapModel extends AbstractTableModel
 
   @Override
   public void mouseClicked(MouseEvent e) {
-    if (e.getComponent() instanceof JTable) {
-      JTable t = (JTable) e.getComponent();
-      int row = t.rowAtPoint(e.getPoint());
+    if (e.getComponent() instanceof JTable table) {
+      final var row = table.rowAtPoint(e.getPoint());
       if (row >= 0 && row < slaveMap.size()) {
-        InstanceComponent comp = slaveMap.getSlave(row).getComponent();
-        if (marked != null)
-          marked.clearMarks();
+        final var comp = slaveMap.getSlave(row).getComponent();
+        if (marked != null) marked.clearMarks();
         comp.markInstance();
         comp.getInstance().fireInvalidated();
         marked = comp;

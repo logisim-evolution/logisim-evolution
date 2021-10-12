@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.wiring;
@@ -50,7 +31,7 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.Icons;
+import com.cburch.logisim.util.IconsUtil;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
@@ -112,7 +93,6 @@ public class Clock extends InstanceFactory {
 
   private static class ClockState implements InstanceData, Cloneable {
     Value sending = Value.UNKNOWN;
-    int currentTick;
 
     ClockState(int curTick, AttributeSet attrs) {
       updateTick(curTick, attrs);
@@ -177,10 +157,10 @@ public class Clock extends InstanceFactory {
 
   public static final Clock FACTORY = new Clock();
 
-  private static final Icon toolIcon = Icons.getIcon("clock.gif");
+  private static final Icon toolIcon = IconsUtil.getIcon("clock.gif");
 
   public Clock() {
-    super(_ID, S.getter("clockComponent"));
+    super(_ID, S.getter("clockComponent"), new ClockHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.FACING, ATTR_HIGH, ATTR_LOW, ATTR_PHASE, StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT
@@ -219,14 +199,6 @@ public class Clock extends InstanceFactory {
   public Bounds getOffsetBounds(AttributeSet attrs) {
     return Probe.getOffsetBounds(
         attrs.getValue(StdAttr.FACING), BitWidth.ONE, RadixOption.RADIX_2, false, false);
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) {
-      MyHDLGenerator = new ClockHDLGeneratorFactory();
-    }
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override

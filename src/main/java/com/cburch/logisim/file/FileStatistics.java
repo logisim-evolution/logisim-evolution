@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.file;
@@ -41,8 +22,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class FileStatistics {
-  public static class Count {
+public final class FileStatistics {
+  public static final class Count {
     private Library library;
     private final ComponentFactory factory;
     private int simpleCount;
@@ -78,6 +59,16 @@ public class FileStatistics {
     }
   }
 
+  private final List<Count> counts;
+  private final Count totalWithout;
+  private final Count totalWith;
+
+  private FileStatistics(List<Count> counts, Count totalWithout, Count totalWith) {
+    this.counts = Collections.unmodifiableList(counts);
+    this.totalWithout = totalWithout;
+    this.totalWith = totalWith;
+  }
+
   public static FileStatistics compute(LogisimFile file, Circuit circuit) {
     final var include = new HashSet<Circuit>(file.getCircuits());
     final var countMap = new HashMap<Circuit, Map<ComponentFactory, Count>>();
@@ -87,8 +78,7 @@ public class FileStatistics {
     return new FileStatistics(countList, getTotal(countList, include), getTotal(countList, null));
   }
 
-  private static Map<ComponentFactory, Count> doRecursiveCount(
-      Circuit circuit, Set<Circuit> include, Map<Circuit, Map<ComponentFactory, Count>> countMap) {
+  private static Map<ComponentFactory, Count> doRecursiveCount(Circuit circuit, Set<Circuit> include, Map<Circuit, Map<ComponentFactory, Count>> countMap) {
     if (countMap.containsKey(circuit)) {
       return countMap.get(circuit);
     }
@@ -154,8 +144,8 @@ public class FileStatistics {
     for (final var count : counts) {
       final var factory = count.getFactory();
       Circuit factoryCirc = null;
-      if (factory instanceof SubcircuitFactory) {
-        factoryCirc = ((SubcircuitFactory) factory).getSubcircuit();
+      if (factory instanceof SubcircuitFactory sub) {
+        factoryCirc = sub.getSubcircuit();
       }
       if (exclude == null || !exclude.contains(factoryCirc)) {
         ret.simpleCount += count.simpleCount;
@@ -178,8 +168,8 @@ public class FileStatistics {
     }
     for (final var lib : file.getLibraries()) {
       for (final var tool : lib.getTools()) {
-        if (tool instanceof AddTool) {
-          final var factory = ((AddTool) tool).getFactory();
+        if (tool instanceof AddTool addTool) {
+          final var factory = addTool.getFactory();
           final var count = counts.get(factory);
           if (count != null) {
             count.library = lib;
@@ -189,16 +179,6 @@ public class FileStatistics {
       }
     }
     return ret;
-  }
-
-  private final List<Count> counts;
-  private final Count totalWithout;
-  private final Count totalWith;
-
-  private FileStatistics(List<Count> counts, Count totalWithout, Count totalWith) {
-    this.counts = Collections.unmodifiableList(counts);
-    this.totalWithout = totalWithout;
-    this.totalWith = totalWith;
   }
 
   public List<Count> getCounts() {

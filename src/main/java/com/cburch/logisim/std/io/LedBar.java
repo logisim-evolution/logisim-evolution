@@ -21,7 +21,6 @@ package com.cburch.logisim.std.io;
 
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
@@ -108,7 +107,7 @@ public class LedBar extends DotMatrixBase {
   /* ****************************************************************** */
 
   public LedBar() {
-    super(_ID, S.getter("ioLedBarComponent"), 8, 1);
+    super(_ID, S.getter("ioLedBarComponent"), 8, 1, new LedBarHdlGeneratorFactory());
     setIcon(new LedBarIcon());
 
     ATTR_DOT_SHAPE.setHidden(true);
@@ -119,10 +118,4 @@ public class LedBar extends DotMatrixBase {
   }
 
   /* ****************************************************************** */
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new LedBarHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
-  }
 }

@@ -1,34 +1,16 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.soc.file;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class SectionHeader {
   public static final int SH_NAME = 0;
@@ -39,42 +21,42 @@ public class SectionHeader {
   public static final int SH_SIZE = 5;
   public static final int SH_LINK = 6;
   public static final int SH_INFO = 7;
-  public static final int SH_ADDRALIGN = 8;
+  public static final int SH_ADDR_ALIGN = 8;
   public static final int SH_ENTSIZE = 9;
 
   public static final int SHF_WRITE = 1;
   public static final int SHF_ALLOC = 2;
-  public static final int SHF_EXECINSTR = 4;
-  public static final int SHF_MASKPROC = 0xf0000000;
+  public static final int SHF_EXEC_INSTR = 4;
+  public static final int SHF_MASK_PROC = 0xf0000000;
 
   public static final int SHT_NULL = 0;
-  public static final int SHT_PROGBITS = 1;
+  public static final int SHT_PROG_BITS = 1;
   public static final int SHT_SYMTAB = 2;
   public static final int SHT_STRTAB = 3;
   public static final int SHT_RELA = 4;
   public static final int SHT_HASH = 5;
   public static final int SHT_DYNAMIC = 6;
   public static final int SHT_NOTE = 7;
-  public static final int SHT_NOBITS = 8;
+  public static final int SHT_NO_BITS = 8;
   public static final int SHT_REL = 9;
   public static final int SHT_SHLIB = 10;
-  public static final int SHT_DYNSYM = 11;
-  public static final int SHT_LOPROC = 0x70000000;
-  public static final int SHT_HIPROC = 0x7fffffff;
-  public static final int SHT_LOUSER = 0x80000000;
-  public static final int SHT_HIUSER = 0xffffffff;
+  public static final int SHT_DYN_SYM = 11;
+  public static final int SHT_LO_PROC = 0x70000000;
+  public static final int SHT_HI_PROC = 0x7fffffff;
+  public static final int SHT_LO_USER = 0x80000000;
+  public static final int SHT_HI_USER = 0xffffffff;
 
 
-  private final Integer sh_name;
-  private final Integer sh_type;
-  private Long sh_flags;
-  private Long sh_addr;
-  private final Long sh_offset;
-  private Long sh_size;
-  private final Integer sh_link;
-  private final Integer sh_info;
-  private final Long sh_addrAlign;
-  private final Long sh_entsize;
+  private final Integer shName;
+  private final Integer shType;
+  private Long shFlags;
+  private Long shAddr;
+  private final Long shOffset;
+  private Long shSize;
+  private final Integer shLink;
+  private final Integer shInfo;
+  private final Long shAddrAlign;
+  private final Long shEntSize;
   private final boolean is32Bit;
   private String name;
   private final ArrayList<SymbolTable> symbols;
@@ -83,25 +65,25 @@ public class SectionHeader {
     this.is32Bit = is32Bit;
     int index = offset;
     int increment = is32Bit ? 4 : 8;
-    sh_name = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
+    shName = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
     index += 4;
-    sh_type = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
+    shType = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
     index += 4;
-    sh_flags = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
+    shFlags = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
     index += increment;
-    sh_addr = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
+    shAddr = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
     index += increment;
-    sh_offset = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
+    shOffset = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
     index += increment;
-    sh_size = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
+    shSize = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
     index += increment;
-    sh_link = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
+    shLink = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
     index += 4;
-    sh_info = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
+    shInfo = ElfHeader.getIntValue(buffer, index, 4, isLittleEndian);
     index += 4;
-    sh_addrAlign = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
+    shAddrAlign = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
     index += increment;
-    sh_entsize = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
+    shEntSize = ElfHeader.getLongValue(buffer, index, increment, isLittleEndian);
     name = "";
     symbols = new ArrayList<>();
   }
@@ -110,17 +92,17 @@ public class SectionHeader {
     symbols = new ArrayList<>();
     this.name = name;
     is32Bit = true;
-    sh_name = -1;
-    sh_type = SHT_PROGBITS;
-    sh_flags = (long) SHF_ALLOC;
-    if (!name.equals(".rodata")) sh_flags |= (long) SHF_WRITE;
-    sh_addr = 0L;
-    sh_offset = -1L;
-    sh_size = -1L;
-    sh_link = 0;
-    sh_info = 0;
-    sh_addrAlign = 0L;
-    sh_entsize = 0L;
+    shName = -1;
+    shType = SHT_PROG_BITS;
+    shFlags = (long) SHF_ALLOC;
+    if (!name.equals(".rodata")) shFlags |= (long) SHF_WRITE;
+    shAddr = 0L;
+    shOffset = -1L;
+    shSize = -1L;
+    shLink = 0;
+    shInfo = 0;
+    shAddrAlign = 0L;
+    shEntSize = 0L;
   }
 
   public void setName(String val) {
@@ -135,48 +117,48 @@ public class SectionHeader {
     symbols.add(info);
   }
 
-  public ArrayList<SymbolTable> getSymbols() {
+  public List<SymbolTable> getSymbols() {
     return symbols;
   }
 
   public boolean isWritable() {
-    return (sh_flags & (long) SHF_WRITE) != 0L;
+    return (shFlags & SHF_WRITE) != 0L;
   }
 
   public boolean isAllocated() {
-    return (sh_flags & (long) SHF_ALLOC) != 0L;
+    return (shFlags & SHF_ALLOC) != 0L;
   }
 
   public boolean isExecutable() {
-    return (sh_flags & (long) SHF_EXECINSTR) != 0L;
+    return (shFlags & SHF_EXEC_INSTR) != 0L;
   }
 
   public void setStartAddress(long addr) {
-    sh_addr = addr;
+    shAddr = addr;
   }
 
   public void addExecutableFlag() {
-    sh_flags |= (long) SHF_EXECINSTR;
+    shFlags |= (long) SHF_EXEC_INSTR;
   }
 
   public void setSize(long size) {
-    sh_size = size;
+    shSize = size;
   }
 
   public Object getValue(int identifier) {
-    switch (identifier) {
-      case SH_NAME : return sh_name;
-      case SH_TYPE : return sh_type;
-      case SH_FLAGS : return ElfHeader.returnCorrectValue(sh_flags, is32Bit);
-      case SH_ADDR : return ElfHeader.returnCorrectValue(sh_addr, is32Bit);
-      case SH_OFFSET : return ElfHeader.returnCorrectValue(sh_offset, is32Bit);
-      case SH_SIZE : return ElfHeader.returnCorrectValue(sh_size, is32Bit);
-      case SH_LINK : return sh_link;
-      case SH_INFO : return sh_info;
-      case SH_ADDRALIGN : return ElfHeader.returnCorrectValue(sh_addrAlign, is32Bit);
-      case SH_ENTSIZE : return ElfHeader.returnCorrectValue(sh_entsize, is32Bit);
-    }
-    return null;
+    return switch (identifier) {
+      case SH_NAME -> shName;
+      case SH_TYPE -> shType;
+      case SH_FLAGS -> ElfHeader.returnCorrectValue(shFlags, is32Bit);
+      case SH_ADDR -> ElfHeader.returnCorrectValue(shAddr, is32Bit);
+      case SH_OFFSET -> ElfHeader.returnCorrectValue(shOffset, is32Bit);
+      case SH_SIZE -> ElfHeader.returnCorrectValue(shSize, is32Bit);
+      case SH_LINK -> shLink;
+      case SH_INFO -> shInfo;
+      case SH_ADDR_ALIGN -> ElfHeader.returnCorrectValue(shAddrAlign, is32Bit);
+      case SH_ENTSIZE -> ElfHeader.returnCorrectValue(shEntSize, is32Bit);
+      default -> null;
+    };
   }
 
 }

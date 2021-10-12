@@ -1,41 +1,18 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.tools.move;
 
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 class SearchNode implements Comparable<SearchNode> {
-
-  static final Logger logger = LoggerFactory.getLogger(SearchNode.class);
 
   private static final int CROSSING_PENALTY = 20;
   private static final int TURN_PENALTY = 50;
@@ -71,6 +48,7 @@ class SearchNode implements Comparable<SearchNode> {
     this.prev = prev;
   }
 
+  @Override
   public int compareTo(SearchNode o) {
     int ret = this.heur - o.heur;
 
@@ -83,9 +61,7 @@ class SearchNode implements Comparable<SearchNode> {
 
   @Override
   public boolean equals(Object other) {
-    if (other instanceof SearchNode) {
-      SearchNode o = (SearchNode) other;
-
+    if (other instanceof SearchNode o) {
       return (this.loc.equals(o.loc)
           && (this.dir == null ? o.dir == null : (o.dir != null && this.dir.equals(o.dir)))
           && this.dest.equals(o.dest));
@@ -139,7 +115,7 @@ class SearchNode implements Comparable<SearchNode> {
     if (ret < 0) {
       ret = Math.abs(dx) + Math.abs(dy);
     }
-    boolean penalizeDoubleTurn = false;
+    var penalizeDoubleTurn = false;
     if (curDir == Direction.EAST) {
       penalizeDoubleTurn = dx < 0;
     } else if (curDir == Direction.WEST) {
@@ -190,22 +166,16 @@ class SearchNode implements Comparable<SearchNode> {
   }
 
   public SearchNode next(Direction moveDir, boolean crossing) {
-    int newDist = dist;
-    Direction connDir = conn.getDirection();
-    Location nextLoc = loc.translate(moveDir, 10);
-    boolean exWire = extendsWire && moveDir == connDir;
-    if (exWire) {
-      newDist += 9;
-    } else {
-      newDist += 10;
-    }
+    var newDist = dist;
+    final var connDir = conn.getDirection();
+    final var nextLoc = loc.translate(moveDir, 10);
+    final var exWire = extendsWire && moveDir == connDir;
+    newDist += (exWire) ? 9 : 10;
     if (crossing) newDist += CROSSING_PENALTY;
     if (moveDir != dir) newDist += TURN_PENALTY;
-    if (nextLoc.getX() < 0 || nextLoc.getY() < 0) {
-      return null;
-    } else {
-      return new SearchNode(nextLoc, moveDir, conn, dest, newDist, exWire, this);
-    }
+    return (nextLoc.getX() < 0 || nextLoc.getY() < 0)
+      ? null
+      : new SearchNode(nextLoc, moveDir, conn, dest, newDist, exWire, this);
   }
 
   @Override

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.file;
@@ -35,6 +16,7 @@ import com.cburch.logisim.tools.Tool;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -43,10 +25,10 @@ public class MouseMappings {
     void mouseMappingsChanged();
   }
 
-  private final ArrayList<MouseMappingsListener> listeners;
+  private final List<MouseMappingsListener> listeners;
   private final HashMap<Integer, Tool> map;
-  private int cache_mods;
-  private Tool cache_tool;
+  private int cacheMods;
+  private Tool cacheTool;
 
   public MouseMappings() {
     listeners = new ArrayList<>();
@@ -72,7 +54,7 @@ public class MouseMappings {
   //
   public void copyFrom(MouseMappings other, LogisimFile file) {
     if (this == other) return;
-    cache_mods = -1;
+    cacheMods = -1;
     this.map.clear();
     for (Integer mods : other.map.keySet()) {
       final var srcTool = other.map.get(mods);
@@ -104,23 +86,23 @@ public class MouseMappings {
   }
 
   public Tool getToolFor(int mods) {
-    if (mods == cache_mods) {
-      return cache_tool;
+    if (mods == cacheMods) {
+      return cacheTool;
     } else {
       Tool ret = map.get(mods);
-      cache_mods = mods;
-      cache_tool = ret;
+      cacheMods = mods;
+      cacheTool = ret;
       return ret;
     }
   }
 
   public Tool getToolFor(Integer mods) {
-    if (mods == cache_mods) {
-      return cache_tool;
+    if (mods == cacheMods) {
+      return cacheTool;
     } else {
       Tool ret = map.get(mods);
-      cache_mods = mods;
-      cache_tool = ret;
+      cacheMods = mods;
+      cacheTool = ret;
       return ret;
     }
   }
@@ -141,7 +123,7 @@ public class MouseMappings {
     for (final var entry : map.entrySet()) {
       final var key = entry.getKey();
       final var tool = entry.getValue();
-      final var searchFor = (tool instanceof AddTool) ? ((AddTool) tool).getFactory() : tool;
+      final var searchFor = (tool instanceof AddTool addTool) ? addTool.getFactory() : tool;
       changed |= replaceInMap(toolMap, tool, searchFor, key);
     }
     if (changed) fireMouseMappingsChanged();
@@ -165,7 +147,7 @@ public class MouseMappings {
   }
 
   public void setToolFor(int mods, Tool tool) {
-    if (mods == cache_mods) cache_mods = -1;
+    if (mods == cacheMods) cacheMods = -1;
 
     if (tool == null) {
       Object old = map.remove(mods);
@@ -177,7 +159,7 @@ public class MouseMappings {
   }
 
   public void setToolFor(Integer mods, Tool tool) {
-    if (mods == cache_mods) cache_mods = -1;
+    if (mods == cacheMods) cacheMods = -1;
 
     if (tool == null) {
       Object old = map.remove(mods);

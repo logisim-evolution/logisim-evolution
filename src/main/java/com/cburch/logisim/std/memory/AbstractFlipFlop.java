@@ -1,36 +1,16 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
@@ -39,7 +19,8 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -82,7 +63,8 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
     private boolean isInside(InstanceState state, MouseEvent e) {
       final var loc = state.getInstance().getLocation();
-      int dx, dy;
+      int dx;
+      int dy;
       if (state.getAttributeValue(StdAttr.APPEARANCE) == StdAttr.APPEAR_CLASSIC) {
         dx = e.getX() - (loc.getX() - 20);
         dy = e.getY() - (loc.getY() + 10);
@@ -149,9 +131,9 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
   private final Attribute<AttributeOption> triggerAttribute;
 
-  protected AbstractFlipFlop(
-      String name, String iconName, StringGetter desc, int numInputs, boolean allowLevelTriggers) {
-    super(name, desc);
+  protected AbstractFlipFlop(String name, String iconName, StringGetter desc, int numInputs,
+      boolean allowLevelTriggers, HdlGeneratorFactory generator) {
+    super(name, desc, generator);
     this.numInputs = numInputs;
     setIconName(iconName);
     triggerAttribute = allowLevelTriggers ? StdAttr.TRIGGER : StdAttr.EDGE_TRIGGER;
@@ -165,8 +147,8 @@ abstract class AbstractFlipFlop extends InstanceFactory {
   }
 
   protected AbstractFlipFlop(
-      String name, Icon icon, StringGetter desc, int numInputs, boolean allowLevelTriggers) {
-    super(name, desc);
+      String name, Icon icon, StringGetter desc, int numInputs, boolean allowLevelTriggers, HdlGeneratorFactory generator) {
+    super(name, desc, generator);
     this.numInputs = numInputs;
     setIcon(icon);
     triggerAttribute = allowLevelTriggers ? StdAttr.TRIGGER : StdAttr.EDGE_TRIGGER;
@@ -218,13 +200,6 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     ps[numInputs + 3].setToolTip(S.getter("flipFlopResetTip"));
     ps[numInputs + 4].setToolTip(S.getter("flipFlopPresetTip"));
     instance.setPorts(ps);
-  }
-
-  @Override
-  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    return (attr.equals(StdAttr.APPEARANCE))
-        ? StdAttr.APPEAR_CLASSIC
-        : super.getDefaultAttributeValue(attr, ver);
   }
 
   @Override
@@ -358,16 +333,16 @@ abstract class AbstractFlipFlop extends InstanceFactory {
       GraphicsUtil.drawCenteredText(g, getInputName(i), x + 8, y + 8 + i * 20);
     }
 
-    Object Trigger = painter.getAttributeValue(triggerAttribute);
+    final var trigger = painter.getAttributeValue(triggerAttribute);
     // Draw clock or enable symbol
-    if (Trigger.equals(StdAttr.TRIG_RISING) || Trigger.equals(StdAttr.TRIG_FALLING)) {
+    if (trigger.equals(StdAttr.TRIG_RISING) || trigger.equals(StdAttr.TRIG_FALLING)) {
       painter.drawClockSymbol(x, y + 50);
     } else {
       GraphicsUtil.drawCenteredText(g, "E", x + 8, y + 48);
     }
 
     // Draw regular/negated input
-    if (Trigger.equals(StdAttr.TRIG_RISING) || Trigger.equals(StdAttr.TRIG_HIGH)) {
+    if (trigger.equals(StdAttr.TRIG_RISING) || trigger.equals(StdAttr.TRIG_HIGH)) {
       GraphicsUtil.switchToWidth(g, GraphicsUtil.CONTROL_WIDTH);
       g.drawLine(x - 10, y + 50, x - 1, y + 50);
     } else {
@@ -429,12 +404,12 @@ abstract class AbstractFlipFlop extends InstanceFactory {
   }
 
   @Override
-  public boolean CheckForGatedClocks(NetlistComponent comp) {
+  public boolean checkForGatedClocks(netlistComponent comp) {
     return Netlist.isFlipFlop(comp.getComponent().getAttributeSet());
   }
 
   @Override
-  public int[] ClockPinIndex(NetlistComponent comp) {
+  public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {numInputs};
   }
 

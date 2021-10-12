@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.circuit;
@@ -131,21 +112,19 @@ public class CircuitChange {
     switch (type) {
       case CLEAR:
         return true;
-      case ADD:
-      case REMOVE:
+      case ADD, REMOVE:
         return comp.getFactory() instanceof Pin;
-      case ADD_ALL:
-      case REMOVE_ALL:
-        for (Component comp : comps) {
+      case ADD_ALL, REMOVE_ALL:
+        for (final var comp : comps) {
           if (comp.getFactory() instanceof Pin) return true;
         }
         return false;
       case REPLACE:
-        ReplacementMap repl = (ReplacementMap) newValue;
-        for (Component comp : repl.getRemovals()) {
+        final var repl = (ReplacementMap) newValue;
+        for (final var comp : repl.getRemovals()) {
           if (comp.getFactory() instanceof Pin) return true;
         }
-        for (Component comp : repl.getAdditions()) {
+        for (final var comp : repl.getAdditions()) {
           if (comp.getFactory() instanceof Pin) return true;
         }
         return false;
@@ -180,13 +159,13 @@ public class CircuitChange {
         prevReplacements.add(comp);
         break;
       case ADD_ALL:
-        for (Component comp : comps) prevReplacements.add(comp);
+        for (final var comp : comps) prevReplacements.add(comp);
         break;
       case REMOVE:
         prevReplacements.remove(comp);
         break;
       case REMOVE_ALL:
-        for (Component comp : comps) prevReplacements.remove(comp);
+        for (final var comp : comps) prevReplacements.remove(comp);
         break;
       case REPLACE:
         prevReplacements.append((ReplacementMap) newValue);
@@ -227,26 +206,17 @@ public class CircuitChange {
   }
 
   CircuitChange getReverseChange() {
-    switch (type) {
-      case CLEAR:
-        return CircuitChange.addAll(circuit, comps);
-      case ADD:
-        return CircuitChange.remove(circuit, comp);
-      case ADD_ALL:
-        return CircuitChange.removeAll(circuit, comps);
-      case REMOVE:
-        return CircuitChange.add(circuit, comp);
-      case REMOVE_ALL:
-        return CircuitChange.addAll(circuit, comps);
-      case SET:
-        return CircuitChange.set(circuit, comp, attr, newValue, oldValue);
-      case SET_FOR_CIRCUIT:
-        return CircuitChange.setForCircuit(circuit, attr, newValue, oldValue);
-      case REPLACE:
-        return CircuitChange.replace(circuit, ((ReplacementMap) newValue).getInverseMap());
-      default:
-        throw new IllegalArgumentException("unknown change type " + type);
-    }
+    return switch (type) {
+      case CLEAR -> CircuitChange.addAll(circuit, comps);
+      case ADD -> CircuitChange.remove(circuit, comp);
+      case ADD_ALL -> CircuitChange.removeAll(circuit, comps);
+      case REMOVE -> CircuitChange.add(circuit, comp);
+      case REMOVE_ALL -> CircuitChange.addAll(circuit, comps);
+      case SET -> CircuitChange.set(circuit, comp, attr, newValue, oldValue);
+      case SET_FOR_CIRCUIT -> CircuitChange.setForCircuit(circuit, attr, newValue, oldValue);
+      case REPLACE -> CircuitChange.replace(circuit, ((ReplacementMap) newValue).getInverseMap());
+      default -> throw new IllegalArgumentException("unknown change type " + type);
+    };
   }
 
   public int getType() {

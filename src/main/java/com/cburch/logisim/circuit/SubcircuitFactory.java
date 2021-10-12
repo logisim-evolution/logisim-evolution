@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.circuit;
@@ -37,7 +18,6 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.hdlgenerator.CircuitHDLGeneratorFactory;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -102,8 +82,7 @@ public class SubcircuitFactory extends InstanceFactory {
     public void getSubMenuItems(JPopupMenu menu, Project proj, CircuitState state,
                                 CircuitStateHolder.HierarchyInfo hi) {
       for (final var comp : source.getNonWires()) {
-        if (comp instanceof InstanceComponent) {
-          final var c = (InstanceComponent) comp;
+        if (comp instanceof InstanceComponent c) {
           if (c.getFactory() instanceof SubcircuitFactory) {
             final var m = (CircuitFeature) c.getFeature(MenuExtender.class);
             final var newhi = hi.getCopy();
@@ -111,8 +90,7 @@ public class SubcircuitFactory extends InstanceFactory {
             m.getSubMenuItems(menu, proj, (CircuitState) c.getInstance().getData(state), newhi);
           } else if (c.getInstance().getFactory().providesSubCircuitMenu()) {
             final var m = (MenuExtender) c.getFeature(MenuExtender.class);
-            if (m instanceof CircuitStateHolder) {
-              final var csh = (CircuitStateHolder) m;
+            if (m instanceof CircuitStateHolder csh) {
               csh.setCircuitState(state);
               csh.setHierarchyName(hi);
             }
@@ -131,7 +109,7 @@ public class SubcircuitFactory extends InstanceFactory {
   private Circuit source;
 
   public SubcircuitFactory(Circuit source) {
-    super("", null);
+    super("", null, new CircuitHdlGeneratorFactory(source), true);
     this.source = source;
     setFacingAttribute(StdAttr.FACING);
     setDefaultToolTip(new CircuitFeature(null));
@@ -253,8 +231,7 @@ public class SubcircuitFactory extends InstanceFactory {
       var y = bds.getY() + bds.getHeight() / 2;
       final var g = painter.getGraphics().create();
       final var angle = Math.PI / 2 - (up.toRadians() - defaultFacing.toRadians()) - facing.toRadians();
-      if (g instanceof Graphics2D && Math.abs(angle) > 0.01) {
-        final var g2 = (Graphics2D) g;
+      if (g instanceof Graphics2D g2 && Math.abs(angle) > 0.01) {
         g2.rotate(angle, x, y);
       }
       g.setFont(font);
@@ -340,12 +317,6 @@ public class SubcircuitFactory extends InstanceFactory {
   }
 
   @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new CircuitHDLGeneratorFactory(this.source);
-    return MyHDLGenerator.HDLTargetSupported(attrs);
-  }
-
-  @Override
   public void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     if (attr == StdAttr.FACING) {
       computePorts(instance);
@@ -354,11 +325,11 @@ public class SubcircuitFactory extends InstanceFactory {
     } else if (attr == CircuitAttributes.APPEARANCE_ATTR) {
       CircuitTransaction xn = new ChangeAppearanceTransaction();
       source.getLocker().execute(xn);
+      computePorts(instance);
     }
   }
 
   private class ChangeAppearanceTransaction extends CircuitTransaction {
-    ChangeAppearanceTransaction() {}
 
     @Override
     protected Map<Circuit, Integer> getAccessedCircuits() {
@@ -370,9 +341,7 @@ public class SubcircuitFactory extends InstanceFactory {
     }
 
     @Override
-    protected void run(CircuitMutator mutator) {
-      source.getAppearance().recomputeDefaultAppearance();
-    }
+    protected void run(CircuitMutator mutator) {}
   }
 
   private void paintBase(InstancePainter painter, Graphics g) {
@@ -396,8 +365,8 @@ public class SubcircuitFactory extends InstanceFactory {
     final var fg = g.getColor();
     int v = fg.getRed() + fg.getGreen() + fg.getBlue();
     Composite oldComposite = null;
-    if (g instanceof Graphics2D && v > 50) {
-      oldComposite = ((Graphics2D) g).getComposite();
+    if (g instanceof Graphics2D g2d && v > 50) {
+      oldComposite = g2d.getComposite();
       Composite c = AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.5f);
       ((Graphics2D) g).setComposite(c);
     }
@@ -437,11 +406,6 @@ public class SubcircuitFactory extends InstanceFactory {
   }
 
   @Override
-  public boolean RequiresNonZeroLabel() {
-    return true;
-  }
-
-  @Override
   public void paintIcon(InstancePainter painter) {
     final var g2 = (Graphics2D) painter.getGraphics().create();
     final var attrs = (CircuitAttributes) painter.getAttributeSet();
@@ -472,11 +436,11 @@ public class SubcircuitFactory extends InstanceFactory {
         AppPreferences.getScaled(14));
     final var wh = AppPreferences.getScaled(3);
     for (var y = 0; y < 3; y++) {
-      if (y == 1) g2.setColor(Value.TRUE_COLOR);
-      else g2.setColor(Value.FALSE_COLOR);
+      if (y == 1) g2.setColor(Value.trueColor);
+      else g2.setColor(Value.falseColor);
       g2.fillOval(AppPreferences.getScaled(1), AppPreferences.getScaled(y * 4 + 3), wh, wh);
       if (y < 2) {
-        g2.setColor(Value.UNKNOWN_COLOR);
+        g2.setColor(Value.unknownColor);
         g2.fillOval(AppPreferences.getScaled(12), AppPreferences.getScaled(y * 4 + 3), wh, wh);
       }
     }
@@ -498,11 +462,11 @@ public class SubcircuitFactory extends InstanceFactory {
         (float) (AppPreferences.getIconSize() / 4 - l.getBounds().getCenterY()));
     final var wh = AppPreferences.getScaled(3);
     for (int y = 1; y < 3; y++) {
-      if (y == 1) g2.setColor(Value.TRUE_COLOR);
-      else g2.setColor(Value.FALSE_COLOR);
+      if (y == 1) g2.setColor(Value.trueColor);
+      else g2.setColor(Value.falseColor);
       g2.fillOval(AppPreferences.getScaled(0), AppPreferences.getScaled(y * 4 + 3), wh, wh);
       if (y < 2) {
-        g2.setColor(Value.UNKNOWN_COLOR);
+        g2.setColor(Value.unknownColor);
         g2.fillOval(AppPreferences.getScaled(13), AppPreferences.getScaled(y * 4 + 3), wh, wh);
       }
     }

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.circuit;
@@ -45,7 +26,6 @@ import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.IteratorUtil;
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.awt.Stroke;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -116,16 +96,16 @@ class CircuitWires {
   }
 
   static class SplitterData {
-    final WireBundle[] end_bundle; // PointData associated with each end
+    final WireBundle[] endBundle; // PointData associated with each end
 
-    SplitterData(int fan_out) {
-      end_bundle = new WireBundle[fan_out + 1];
+    SplitterData(int fanOut) {
+      endBundle = new WireBundle[fanOut + 1];
     }
   }
 
   static class State {
     final BundleMap bundleMap;
-    final HashMap<WireThread, Value> thr_values = new HashMap<>();
+    final HashMap<WireThread, Value> thrValues = new HashMap<>();
 
     State(BundleMap bundleMap) {
       this.bundleMap = bundleMap;
@@ -134,7 +114,7 @@ class CircuitWires {
     @Override
     public Object clone() {
       final var ret = new State(this.bundleMap);
-      ret.thr_values.putAll(this.thr_values);
+      ret.thrValues.putAll(this.thrValues);
       return ret;
     }
   }
@@ -151,7 +131,9 @@ class CircuitWires {
 
   private class TunnelListener implements AttributeListener {
     @Override
-    public void attributeListChanged(AttributeEvent e) {}
+    public void attributeListChanged(AttributeEvent e) {
+      // do nothing.
+    }
 
     @Override
     public void attributeValueChanged(AttributeEvent e) {
@@ -209,12 +191,12 @@ class CircuitWires {
   // avoid voiding the bundle map.
   /*synchronized*/ boolean add(Component comp) {
     var added = true;
-    if (comp instanceof Wire) {
-      added = addWire((Wire) comp);
-    } else if (comp instanceof Splitter) {
-      splitters.add((Splitter) comp);
+    if (comp instanceof Wire wire) {
+      added = addWire(wire);
+    } else if (comp instanceof Splitter splitter) {
+      splitters.add(splitter);
     } else {
-      Object factory = comp.getFactory();
+      final var factory = comp.getFactory();
       if (factory instanceof Tunnel) {
         tunnels.add(comp);
         comp.getAttributeSet().addAttributeListener(tunnelListener);
@@ -296,7 +278,7 @@ class CircuitWires {
         final var pb = ret.getBundleAt(p);
         if (pb != null) {
           pb.setWidth(end.getWidth(), p);
-          spl.wire_data.end_bundle[index] = pb;
+          spl.wireData.endBundle[index] = pb;
         }
       }
     }
@@ -304,27 +286,27 @@ class CircuitWires {
     // unite threads going through splitters
     for (final var spl : splitters) {
       synchronized (spl) {
-        final var spl_attrs = (SplitterAttributes) spl.getAttributeSet();
-        final var bit_end = spl_attrs.bit_end;
-        final var spl_data = spl.wire_data;
-        final var from_bundle = spl_data.end_bundle[0];
-        if (from_bundle == null || !from_bundle.isValid()) continue;
+        final var splAttrs = (SplitterAttributes) spl.getAttributeSet();
+        final var bitEnd = splAttrs.bitEnd;
+        final var splData = spl.wireData;
+        final var fromBundle = splData.endBundle[0];
+        if (fromBundle == null || !fromBundle.isValid()) continue;
 
-        for (var i = 0; i < bit_end.length; i++) {
-          var j = bit_end[i];
+        for (var i = 0; i < bitEnd.length; i++) {
+          var j = bitEnd[i];
           if (j > 0) {
-            var thr = spl.bit_thread[i];
-            final var to_bundle = spl_data.end_bundle[j];
-            final var to_threads = to_bundle.threads;
-            if (to_threads != null && to_bundle.isValid()) {
-              final var from_threads = from_bundle.threads;
-              if (i >= from_threads.length) {
-                throw new ArrayIndexOutOfBoundsException("from " + i + " of " + from_threads.length);
+            var thr = spl.bitThread[i];
+            final var toBundle = splData.endBundle[j];
+            final var toThreads = toBundle.threads;
+            if (toThreads != null && toBundle.isValid()) {
+              final var fromThreads = fromBundle.threads;
+              if (i >= fromThreads.length) {
+                throw new ArrayIndexOutOfBoundsException("from " + i + " of " + fromThreads.length);
               }
-              if (thr >= to_threads.length) {
-                throw new ArrayIndexOutOfBoundsException("to " + thr + " of " + to_threads.length);
+              if (thr >= toThreads.length) {
+                throw new ArrayIndexOutOfBoundsException("to " + thr + " of " + toThreads.length);
               }
-              from_threads[i].unite(to_threads[thr]);
+              fromThreads[i].unite(toThreads[thr]);
             }
           }
         }
@@ -345,7 +327,7 @@ class CircuitWires {
     // All threads are sewn together! Compute the exception set before
     // leaving
     final var exceptions = points.getWidthIncompatibilityData();
-    if (exceptions != null && exceptions.size() > 0) {
+    if (exceptions != null && !exceptions.isEmpty()) {
       for (WidthIncompatibilityData wid : exceptions) {
         ret.addWidthIncompatibilityData(wid);
       }
@@ -385,10 +367,10 @@ class CircuitWires {
     for (ArrayList<Location> tunnelSet : tunnelSets.values()) {
       WireBundle foundBundle = null;
       Location foundLocation = null;
-      for (Location loc : tunnelSet) {
-        WireBundle b = ret.getBundleAt(loc);
-        if (b != null) {
-          foundBundle = b;
+      for (final var loc : tunnelSet) {
+        final var bundle = ret.getBundleAt(loc);
+        if (bundle != null) {
+          foundBundle = bundle;
           foundLocation = loc;
           break;
         }
@@ -399,12 +381,12 @@ class CircuitWires {
       }
       for (final var loc : tunnelSet) {
         if (loc != foundLocation) {
-          final var b = ret.getBundleAt(loc);
-          if (b == null) {
+          final var bundle = ret.getBundleAt(loc);
+          if (bundle == null) {
             foundBundle.points.add(loc);
             ret.setBundleAt(loc, foundBundle);
           } else {
-            b.unite(foundBundle);
+            bundle.unite(foundBundle);
           }
         }
       }
@@ -414,18 +396,18 @@ class CircuitWires {
   private void connectWires(BundleMap ret) {
     // make a WireBundle object for each tree of connected wires
     for (final var wire : wires) {
-      final var b0 = ret.getBundleAt(wire.e0);
-      if (b0 == null) {
-        final var b1 = ret.createBundleAt(wire.e1);
-        b1.points.add(wire.e0);
-        ret.setBundleAt(wire.e0, b1);
+      final var bundleA = ret.getBundleAt(wire.e0);
+      if (bundleA == null) {
+        final var bundleB = ret.createBundleAt(wire.e1);
+        bundleB.points.add(wire.e0);
+        ret.setBundleAt(wire.e0, bundleB);
       } else {
-        final var b1 = ret.getBundleAt(wire.e1);
-        if (b1 == null) { // t1 doesn't exist
-          b0.points.add(wire.e1);
-          ret.setBundleAt(wire.e1, b0);
+        final var bundleB = ret.getBundleAt(wire.e1);
+        if (bundleB == null) { // t1 doesn't exist
+          bundleA.points.add(wire.e1);
+          ret.setBundleAt(wire.e1, bundleA);
         } else {
-          b1.unite(b0); // unite b0 and b1
+          bundleB.unite(bundleA); // unite bundles
         }
       }
     }
@@ -441,43 +423,40 @@ class CircuitWires {
 
     final var bmap = getBundleMap();
     final var isValid = bmap.isValid();
-    if (hidden == null || hidden.size() == 0) {
+    if (hidden == null || hidden.isEmpty()) {
       for (final var wire : wires) {
         final var s = wire.e0;
         final var t = wire.e1;
         final var wb = bmap.getBundleAt(s);
         var width = 5;
         if (!wb.isValid()) {
-          g.setColor(Value.WIDTH_ERROR_COLOR);
+          g.setColor(Value.widthErrorColor);
         } else if (showState) {
-          if (!isValid) g.setColor(Value.NIL_COLOR);
-          else g.setColor(state.getValue(s).getColor());
+          g.setColor(!isValid ? Value.nilColor : state.getValue(s).getColor());
         } else {
           g.setColor(Color.BLACK);
         }
         if (highlighted.containsWire(wire)) {
-          if (wb.isBus()) width = Wire.HIGHLIGHTED_WIDTH_BUS;
-          else width = Wire.HIGHLIGHTED_WIDTH;
+          width = wb.isBus() ? Wire.HIGHLIGHTED_WIDTH_BUS : Wire.HIGHLIGHTED_WIDTH;
           GraphicsUtil.switchToWidth(g, width);
           g.drawLine(s.getX(), s.getY(), t.getX(), t.getY());
 
-          Stroke oldStroke = g.getStroke();
+          final var oldStroke = g.getStroke();
           g.setStroke(Wire.HIGHLIGHTED_STROKE);
-          g.setColor(Value.STROKE_COLOR);
+          g.setColor(Value.strokeColor);
           g.drawLine(s.getX(), s.getY(), t.getX(), t.getY());
           g.setStroke(oldStroke);
         } else {
-          if (wb.isBus()) width = Wire.WIDTH_BUS;
-          else width = Wire.WIDTH;
+          width = wb.isBus() ? Wire.WIDTH_BUS : Wire.WIDTH;
           GraphicsUtil.switchToWidth(g, width);
           g.drawLine(s.getX(), s.getY(), t.getX(), t.getY());
         }
         /* The following part is used by the FPGA-commanders DRC to highlight a wire with DRC
          * problems (KTT1)
          */
-        if (wire.IsDRCHighlighted()) {
+        if (wire.isDrcHighlighted()) {
           width += 2;
-          g.setColor(wire.GetDRCHighlightColor());
+          g.setColor(wire.getDrcHighlightColor());
           GraphicsUtil.switchToWidth(g, 2);
           if (wire.isVertical()) {
             g.drawLine(s.getX() - width, s.getY(), t.getX() - width, t.getY());
@@ -495,22 +474,20 @@ class CircuitWires {
           if (wb != null) {
             var color = Color.BLACK;
             if (!wb.isValid()) {
-              color = Value.WIDTH_ERROR_COLOR;
+              color = Value.widthErrorColor;
             } else if (showState) {
-              color = !isValid ? Value.NIL_COLOR : state.getValue(loc).getColor();
+              color = !isValid ? Value.nilColor : state.getValue(loc).getColor();
             }
             g.setColor(color);
 
-            int radius;
-            if (highlighted.containsLocation(loc)) {
-              radius = wb.isBus()
-                      ? (int) (Wire.HIGHLIGHTED_WIDTH_BUS * Wire.DOT_MULTIPLY_FACTOR)
-                      : (int) (Wire.HIGHLIGHTED_WIDTH * Wire.DOT_MULTIPLY_FACTOR);
-            } else {
-              radius = wb.isBus()
-                      ? (int) (Wire.WIDTH_BUS * Wire.DOT_MULTIPLY_FACTOR)
-                      : (int) (Wire.WIDTH * Wire.DOT_MULTIPLY_FACTOR);
-            }
+            int radius =
+                highlighted.containsLocation(loc)
+                    ? wb.isBus()
+                        ? (int) (Wire.HIGHLIGHTED_WIDTH_BUS * Wire.DOT_MULTIPLY_FACTOR)
+                        : (int) (Wire.HIGHLIGHTED_WIDTH * Wire.DOT_MULTIPLY_FACTOR)
+                    : wb.isBus()
+                        ? (int) (Wire.WIDTH_BUS * Wire.DOT_MULTIPLY_FACTOR)
+                        : (int) (Wire.WIDTH * Wire.DOT_MULTIPLY_FACTOR);
             radius = (int) (radius * Wire.DOT_MULTIPLY_FACTOR);
             g.fillOval(loc.getX() - radius, loc.getY() - radius, radius * 2, radius * 2);
           }
@@ -523,10 +500,9 @@ class CircuitWires {
           final var t = wire.e1;
           final var wb = bmap.getBundleAt(s);
           if (!wb.isValid()) {
-            g.setColor(Value.WIDTH_ERROR_COLOR);
+            g.setColor(Value.widthErrorColor);
           } else if (showState) {
-            if (!isValid) g.setColor(Value.NIL_COLOR);
-            else g.setColor(state.getValue(s).getColor());
+            g.setColor(!isValid ? Value.nilColor : state.getValue(s).getColor());
           } else {
             g.setColor(Color.BLACK);
           }
@@ -535,8 +511,7 @@ class CircuitWires {
             g.drawLine(s.getX(), s.getY(), t.getX(), t.getY());
             GraphicsUtil.switchToWidth(g, Wire.WIDTH);
           } else {
-            if (wb.isBus()) GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
-            else GraphicsUtil.switchToWidth(g, Wire.WIDTH);
+            GraphicsUtil.switchToWidth(g, wb.isBus() ? Wire.WIDTH_BUS : Wire.WIDTH);
             g.drawLine(s.getX(), s.getY(), t.getX(), t.getY());
           }
         }
@@ -547,24 +522,23 @@ class CircuitWires {
       // while at a time anway.
       for (final var loc : points.getSplitLocations()) {
         if (points.getComponentCount(loc) > 2) {
-          int icount = 0;
+          var icount = 0;
           for (final var comp : points.getComponents(loc)) {
             if (!hidden.contains(comp)) ++icount;
           }
           if (icount > 2) {
-            final var wb = bmap.getBundleAt(loc);
-            if (wb != null) {
-              if (!wb.isValid()) {
-                g.setColor(Value.WIDTH_ERROR_COLOR);
+            final var wireBundle = bmap.getBundleAt(loc);
+            if (wireBundle != null) {
+              if (!wireBundle.isValid()) {
+                g.setColor(Value.widthErrorColor);
               } else if (showState) {
-                if (!isValid) g.setColor(Value.NIL_COLOR);
-                else g.setColor(state.getValue(loc).getColor());
+                g.setColor(!isValid ? Value.nilColor : state.getValue(loc).getColor());
               } else {
                 g.setColor(Color.BLACK);
               }
-              var radius = (highlighted.containsLocation(loc))
-                      ? (wb.isBus() ? Wire.HIGHLIGHTED_WIDTH_BUS : Wire.HIGHLIGHTED_WIDTH)
-                      : (wb.isBus() ? Wire.WIDTH_BUS : Wire.WIDTH);
+              var radius = highlighted.containsLocation(loc)
+                      ? (wireBundle.isBus() ? Wire.HIGHLIGHTED_WIDTH_BUS : Wire.HIGHLIGHTED_WIDTH)
+                      : (wireBundle.isBus() ? Wire.WIDTH_BUS : Wire.WIDTH);
               radius = (int) (radius * Wire.DOT_MULTIPLY_FACTOR);
               g.fillOval(loc.getX() - radius, loc.getY() - radius, radius * 2, radius * 2);
             }
@@ -573,10 +547,6 @@ class CircuitWires {
       }
     }
   }
-
-  //  void ensureComputed() {
-  //    getBundleMap();
-  //  }
 
   // There are only two threads that need to use the bundle map, I think:
   // the AWT event thread, and the simulation worker thread.
@@ -598,7 +568,7 @@ class CircuitWires {
         masterBundleMap = ret;
       } catch (Exception t) {
         ret.invalidate();
-        logger.error("{}", t.getLocalizedMessage());
+        logger.error(t.getLocalizedMessage());
       }
       return ret;
     } else {
@@ -673,8 +643,8 @@ class CircuitWires {
   }
 
   WireBundle getWireBundle(Location query) {
-    final var bmap = getBundleMap();
-    return bmap.getBundleAt(query);
+    final var bundleMap = getBundleMap();
+    return bundleMap.getBundleAt(query);
   }
 
   Set<Wire> getWires() {
@@ -682,10 +652,10 @@ class CircuitWires {
   }
 
   WireSet getWireSet(Wire start) {
-    final var bundle = getWireBundle(start.e0);
-    if (bundle == null) return WireSet.EMPTY;
+    final var wireBundle = getWireBundle(start.e0);
+    if (wireBundle == null) return WireSet.EMPTY;
     final var wires = new HashSet<Wire>();
-    for (final var loc : bundle.points) {
+    for (final var loc : wireBundle.points) {
       wires.addAll(points.getWires(loc));
     }
     return new WireSet(wires);
@@ -706,31 +676,31 @@ class CircuitWires {
     final var dirtyThreads = new CopyOnWriteArraySet<WireThread>(); // affected threads
 
     // get state, or create a new one if current state is outdated
-    var s = circState.getWireData();
-    if (s == null || s.bundleMap != map) {
+    var state = circState.getWireData();
+    if (state == null || state.bundleMap != map) {
       // if it is outdated, we need to compute for all threads
-      s = new State(map);
-      for (final var b : map.getBundles()) {
-        final var th = b.threads;
-        if (b.isValid() && th != null) {
-          dirtyThreads.addAll(Arrays.asList(th));
+      state = new State(map);
+      for (final var bundle : map.getBundles()) {
+        final var wireThreads = bundle.threads;
+        if (bundle.isValid() && wireThreads != null) {
+          dirtyThreads.addAll(Arrays.asList(wireThreads));
         }
       }
-      circState.setWireData(s);
+      circState.setWireData(state);
     }
 
     // determine affected threads, and set values for unwired points
-    for (final var p : points) {
-      final var pb = map.getBundleAt(p);
-      if (pb == null) { // point is not wired
-        circState.setValueByWire(p, circState.getComponentOutputAt(p));
+    for (final var point : points) {
+      final var wireBundle = map.getBundleAt(point);
+      if (wireBundle == null) { // point is not wired
+        circState.setValueByWire(point, circState.getComponentOutputAt(point));
       } else {
-        final var th = pb.threads;
-        if (!pb.isValid() || th == null) {
+        final var th = wireBundle.threads;
+        if (!wireBundle.isValid() || th == null) {
           // immediately propagate NILs across invalid bundles
-          final var pbPoints = pb.points;
+          final var pbPoints = wireBundle.points;
           if (pbPoints == null) {
-            circState.setValueByWire(p, Value.NIL);
+            circState.setValueByWire(point, Value.NIL);
           } else {
             for (final var loc2 : pbPoints) {
               circState.setValueByWire(loc2, Value.NIL);
@@ -748,7 +718,7 @@ class CircuitWires {
     final var bundles = new HashSet<ThreadBundle>();
     for (final var t : dirtyThreads) {
       final var v = getThreadValue(circState, t);
-      s.thr_values.put(t, v);
+      state.thrValues.put(t, v);
       bundles.addAll(t.getBundles());
     }
 
@@ -760,19 +730,19 @@ class CircuitWires {
       if (!b.isValid() || b.threads == null) {
         // do nothing
       } else if (b.threads.length == 1) {
-        bv = s.thr_values.get(b.threads[0]);
+        bv = state.thrValues.get(b.threads[0]);
       } else {
         final var tvs = new Value[b.threads.length];
-        var tvs_valid = true;
-        for (int i = 0; i < tvs.length; i++) {
-          final var tv = s.thr_values.get(b.threads[i]);
+        var tvsValid = true;
+        for (var i = 0; i < tvs.length; i++) {
+          final var tv = state.thrValues.get(b.threads[i]);
           if (tv == null) {
-            tvs_valid = false;
+            tvsValid = false;
             break;
           }
           tvs[i] = tv;
         }
-        if (tvs_valid) bv = Value.create(tvs);
+        if (tvsValid) bv = Value.create(tvs);
       }
 
       if (bv != null) {
@@ -811,12 +781,12 @@ class CircuitWires {
   }
 
   /*synchronized*/ void remove(Component comp) {
-    if (comp instanceof Wire) {
-      removeWire((Wire) comp);
+    if (comp instanceof Wire wire) {
+      removeWire(wire);
     } else if (comp instanceof Splitter) {
       splitters.remove(comp);
     } else {
-      Object factory = comp.getFactory();
+      final var factory = comp.getFactory();
       if (factory instanceof Tunnel) {
         tunnels.remove(comp);
         comp.getAttributeSet().removeAttributeListener(tunnelListener);

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.circuit;
@@ -85,7 +66,7 @@ public class CircuitLocker {
 
   static void releaseLocks(Map<Circuit, Lock> locks) {
     final var curThread = Thread.currentThread();
-    for (Map.Entry<Circuit, Lock> entry : locks.entrySet()) {
+    for (final var entry : locks.entrySet()) {
       final var circ = entry.getKey();
       final var lock = entry.getValue();
       final var locker = circ.getLocker();
@@ -97,17 +78,17 @@ public class CircuitLocker {
     }
   }
 
-  private static final AtomicInteger NEXT_SERIAL_NUMBER = new AtomicInteger(0);
+  private static final AtomicInteger nextSerialNumber = new AtomicInteger(0);
   private final int serialNumber;
 
   private final ReadWriteLock circuitLock;
 
-  private transient Thread mutatingThread;
+  private Thread mutatingThread;
 
   private CircuitMutatorImpl mutatingMutator;
 
   CircuitLocker() {
-    serialNumber = NEXT_SERIAL_NUMBER.getAndIncrement();
+    serialNumber = nextSerialNumber.getAndIncrement();
     circuitLock = new ReentrantReadWriteLock();
     mutatingThread = null;
     mutatingMutator = null;
@@ -151,8 +132,7 @@ public class CircuitLocker {
     private final transient Thread mutatingThread;
     private final CircuitMutatorImpl mutatingMutator;
 
-    public LockException(
-        String msg, Circuit circ, int serial, Thread thread, CircuitMutatorImpl mutator) {
+    public LockException(String msg, Circuit circ, int serial, Thread thread, CircuitMutatorImpl mutator) {
       super(msg);
       circuit = circ;
       serialNumber = serial;

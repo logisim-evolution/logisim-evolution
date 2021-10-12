@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.file;
@@ -34,7 +15,7 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.std.Builtin;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.util.JFileChoosers;
-import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.util.LineBuffer;
 import com.cburch.logisim.util.ZipClassLoader;
 import com.cburch.logisim.vhdl.file.HdlFile;
 import java.awt.Component;
@@ -101,6 +82,18 @@ public class Loader implements LibraryLoader {
     }
   }
 
+  private static class LogisimDirectoryFilter extends FileFilter {
+    @Override
+    public boolean accept(File f) {
+      return f.isDirectory();
+    }
+
+    @Override
+    public String getDescription() {
+      return S.get("logisimDirectoryFilter");
+    }
+  }
+
   private static class TclFileFilter extends FileFilter {
     @Override
     public boolean accept(File f) {
@@ -111,6 +104,28 @@ public class Loader implements LibraryLoader {
     public String getDescription() {
       return S.get("tclFileFilter");
     }
+  }
+
+  public static final String LOGISIM_EXTENSION = ".circ";
+  public static final String LOGISIM_LIBRARY_DIR = "library";
+  public static final String LOGISIM_CIRCUIT_DIR = "circuit";
+  public static final FileFilter LOGISIM_FILTER = new LogisimFileFilter();
+  public static final FileFilter LOGISIM_DIRECTORY = new LogisimDirectoryFilter();
+  public static final FileFilter JAR_FILTER = new JarFileFilter();
+  public static final FileFilter TXT_FILTER = new TxtFileFilter();
+  public static final FileFilter TCL_FILTER = new TclFileFilter();
+  public static final FileFilter VHDL_FILTER = new VhdlFileFilter();
+
+  private Component parent;
+  private final Builtin builtin = new Builtin();
+  // to be cleared with each new file
+  private File mainFile = null;
+  private final Stack<File> filesOpening = new Stack<>();
+  private Map<File, File> substitutions = new HashMap<>();
+
+  public Loader(Component parent) {
+    this.parent = parent;
+    clear();
   }
 
   private static File determineBackupName(File base) {
@@ -129,33 +144,11 @@ public class Loader implements LibraryLoader {
 
   private static void recoverBackup(File backup, File dest) {
     if (backup != null && backup.exists()) {
+      // FIXME: recovery will fail if delete() failed
       if (dest.exists()) dest.delete();
+      // FIXME: renameTo() can fail. We need to tell the user if so
       backup.renameTo(dest);
     }
-  }
-
-  public static final String LOGISIM_EXTENSION = ".circ";
-
-  public static final FileFilter LOGISIM_FILTER = new LogisimFileFilter();
-
-  public static final FileFilter JAR_FILTER = new JarFileFilter();
-  public static final FileFilter TXT_FILTER = new TxtFileFilter();
-  public static final FileFilter TCL_FILTER = new TclFileFilter();
-  public static final FileFilter VHDL_FILTER = new VhdlFileFilter();
-
-  // fixed
-  private Component parent;
-  private final Builtin builtin = new Builtin();
-  // to be cleared with each new file
-  private File mainFile = null;
-
-  private final Stack<File> filesOpening = new Stack<>();
-
-  private Map<File, File> substitutions = new HashMap<>();
-
-  public Loader(Component parent) {
-    this.parent = parent;
-    clear();
   }
 
   //
@@ -197,7 +190,7 @@ public class Loader implements LibraryLoader {
     }
     while (!file.canRead()) {
       // It doesn't exist. Figure it out from the user.
-      OptionPane.showMessageDialog(parent, StringUtil.format(S.get("fileLibraryMissingError"), file.getName()));
+      OptionPane.showMessageDialog(parent, String.format(S.get("fileLibraryMissingError"), file.getName()));
       final var chooser = createChooser();
       chooser.setFileFilter(filter);
       chooser.setDialogTitle(S.get("fileLibraryMissingTitle", file.getName()));
@@ -333,6 +326,21 @@ public class Loader implements LibraryLoader {
     LibraryManager.instance.reload(this, lib);
   }
 
+  public boolean export(LogisimFile file, String homeDirectory) {
+    try {
+      final var mainCircFile = LineBuffer.format("{{1}}{{2}}{{3}}{{2}}{{4}}", homeDirectory, File.separator,
+          LOGISIM_CIRCUIT_DIR, getMainFile().getName());
+      final var libraryHome = String.format("%s%s%s", homeDirectory, File.separator, LOGISIM_LIBRARY_DIR);
+      final var fwrite = new FileOutputStream(mainCircFile);
+      file.write(fwrite, this, libraryHome);
+    } catch (IOException e) {
+      //TODO: give an error message to the user #1136
+      System.err.println("Unable to export file");
+      return false;
+    }
+    return true;
+  }
+
   public boolean save(LogisimFile file, File dest) {
     final var reference = LibraryManager.instance.findReference(file, dest);
     if (reference != null) {
@@ -345,20 +353,23 @@ public class Loader implements LibraryLoader {
     }
 
     final var backup = determineBackupName(dest);
-    final var backupCreated = backup != null && dest.renameTo(backup);
+    final var backupCreated = (backup != null) && dest.renameTo(backup);
 
     FileOutputStream fwrite = null;
+    final var oldFile = getMainFile();
     try {
-      fwrite = new FileOutputStream(dest);
-      file.write(fwrite, this, dest);
-      file.setName(toProjectName(dest));
-
-      final var oldFile = getMainFile();
       setMainFile(dest);
+      fwrite = new FileOutputStream(dest);
+      file.write(fwrite, this, dest, null);
+      file.setName(toProjectName(dest));
       LibraryManager.instance.fileSaved(this, dest, oldFile, file);
     } catch (IOException e) {
+      setMainFile(oldFile);
       if (backupCreated) recoverBackup(backup, dest);
-      if (dest.exists() && dest.length() == 0) dest.delete();
+      if (dest.exists() && dest.length() == 0) {
+        // FIXME: delete can fail. Ensure we will not have snowball effect here!
+        dest.delete();
+      }
       OptionPane.showMessageDialog(
           parent,
           S.get("fileSaveError", e.toString()),
@@ -371,7 +382,10 @@ public class Loader implements LibraryLoader {
           fwrite.close();
         } catch (IOException e) {
           if (backupCreated) recoverBackup(backup, dest);
-          if (dest.exists() && dest.length() == 0) dest.delete();
+          if (dest.exists() && dest.length() == 0) {
+            // FIXME: delete can fail. Ensure we will not have snowball effect here!
+            dest.delete();
+          }
           OptionPane.showMessageDialog(
               parent,
               S.get("fileSaveCloseError", e.toString()),
@@ -383,9 +397,10 @@ public class Loader implements LibraryLoader {
     }
 
     if (!dest.exists() || dest.length() == 0) {
-      if (backupCreated && backup != null && backup.exists()) {
+      if (backupCreated && backup.exists()) {
         recoverBackup(backup, dest);
       } else {
+        // FIXME: delete can fail. Ensure we will not have snowball effect here!
         dest.delete();
       }
       OptionPane.showMessageDialog(
@@ -397,6 +412,7 @@ public class Loader implements LibraryLoader {
     }
 
     if (backupCreated && backup.exists()) {
+      // FIXME: delete can fail. Ensure we will not have snowball effect here!
       backup.delete();
     }
     return true;

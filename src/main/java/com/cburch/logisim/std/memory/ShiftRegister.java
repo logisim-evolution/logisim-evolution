@@ -1,36 +1,16 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Attributes;
@@ -38,7 +18,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.gui.icons.ShifterIcon;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
@@ -77,7 +57,7 @@ public class ShiftRegister extends InstanceFactory {
   static final int symbolWidth = 100;
 
   public ShiftRegister() {
-    super(_ID, S.getter("shiftRegisterComponent"));
+    super(_ID, S.getter("shiftRegisterComponent"), new ShiftRegisterHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.WIDTH,
@@ -105,15 +85,6 @@ public class ShiftRegister extends InstanceFactory {
     setIcon(new ShifterIcon());
     setInstanceLogger(ShiftRegisterLogger.class);
     setInstancePoker(ShiftRegisterPoker.class);
-  }
-
-  @Override
-  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    if (attr.equals(StdAttr.APPEARANCE)) {
-      return StdAttr.APPEAR_CLASSIC;
-    } else {
-      return super.getDefaultAttributeValue(attr, ver);
-    }
   }
 
   @Override
@@ -181,7 +152,7 @@ public class ShiftRegister extends InstanceFactory {
         GraphicsUtil.V_BASELINE);
   }
 
-  private void DrawControl(
+  private void drawControl(
       InstancePainter painter,
       int xpos,
       int ypos,
@@ -237,7 +208,7 @@ public class ShiftRegister extends InstanceFactory {
     GraphicsUtil.switchToWidth(g, 1);
   }
 
-  private void DrawDataBlock(
+  private void drawDataBlock(
       InstancePainter painter,
       int xpos,
       int ypos,
@@ -380,7 +351,7 @@ public class ShiftRegister extends InstanceFactory {
     }
     return data;
   }
-  
+
   private void updateData(Instance instance) {
     final var comp = instance.getComponent().getInstanceStateImpl();
     if (comp == null) return;
@@ -406,12 +377,6 @@ public class ShiftRegister extends InstanceFactory {
     } else {
       return Bounds.create(0, 0, symbolWidth + 20, 80 + 20 * attrs.getValue(ATTR_LENGTH));
     }
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new ShiftRegisterHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 
   @Override
@@ -445,18 +410,18 @@ public class ShiftRegister extends InstanceFactory {
     final var len = lenObj == null ? 8 : lenObj;
     final var parallelObj = painter.getAttributeValue(ATTR_LOAD);
     final var negEdge = painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
-    DrawControl(painter, xpos, ypos, len, wid, parallelObj, negEdge);
+    drawControl(painter, xpos, ypos, len, wid, parallelObj, negEdge);
     final var data = (ShiftRegisterData) painter.getData();
 
     // In the case data is null we assume that the different value are null. This allow the user to
     // instantiate the shift register without simulation mode
     if (data == null) {
       for (var stage = 0; stage < len; stage++) {
-        DrawDataBlock(painter, xpos, ypos, len, wid, stage, null, parallelObj);
+        drawDataBlock(painter, xpos, ypos, len, wid, stage, null, parallelObj);
       }
     } else {
-      for (var stage = 0; stage < len; stage++) 
-        DrawDataBlock(painter, xpos, ypos, len, wid, stage, data.get(len - stage - 1), parallelObj);
+      for (var stage = 0; stage < len; stage++)
+        drawDataBlock(painter, xpos, ypos, len, wid, stage, data.get(len - stage - 1), parallelObj);
     }
   }
 
@@ -547,12 +512,12 @@ public class ShiftRegister extends InstanceFactory {
   }
 
   @Override
-  public boolean CheckForGatedClocks(NetlistComponent comp) {
+  public boolean checkForGatedClocks(netlistComponent comp) {
     return true;
   }
 
   @Override
-  public int[] ClockPinIndex(NetlistComponent comp) {
+  public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {CK};
   }
 }

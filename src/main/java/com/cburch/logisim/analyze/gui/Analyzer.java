@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.analyze.gui;
@@ -49,7 +30,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import javax.swing.JComponent;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JProgressBar;
@@ -57,6 +37,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingWorker;
+import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
@@ -66,16 +47,14 @@ public class Analyzer extends LFrame.SubWindow {
   private class MyChangeListener implements ChangeListener {
     @Override
     public void stateChanged(ChangeEvent e) {
-
       Object selected = tabbedPane.getSelectedComponent();
-      if (selected instanceof JScrollPane) {
-        selected = ((JScrollPane) selected).getViewport().getView();
+      if (selected instanceof JScrollPane selScrollPane) {
+        selected = selScrollPane.getViewport().getView();
       }
-      if (selected instanceof JPanel) {
-        ((JPanel) selected).requestFocus();
+      if (selected instanceof JPanel selPanel) {
+        selPanel.requestFocus();
       }
-      if (selected instanceof AnalyzerTab) {
-        final var tab = (AnalyzerTab) selected;
+      if (selected instanceof AnalyzerTab tab) {
         menuListener.setEditHandler(tab.getEditHandler());
         menuListener.setPrintHandler(tab.getPrintHandler());
         model.getOutputExpressions().enableUpdates();
@@ -162,7 +141,7 @@ public class Analyzer extends LFrame.SubWindow {
         Parser.parse(s, model); // for testing Parser.parse
       }
     }
-    frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     frame.pack();
     frame.setVisible(true);
   }
@@ -257,10 +236,9 @@ public class Analyzer extends LFrame.SubWindow {
   }
 
   public void setSelectedTab(int index) {
-    Object found = tabbedPane.getComponentAt(index);
-    if (found instanceof AnalyzerTab) {
+    if (tabbedPane.getComponentAt(index) instanceof AnalyzerTab found) {
       model.getOutputExpressions().enableUpdates();
-      ((AnalyzerTab) found).updateTab();
+      found.updateTab();
     } else {
       model.getOutputExpressions().disableUpdates();
     }
@@ -271,15 +249,15 @@ public class Analyzer extends LFrame.SubWindow {
     private static final long serialVersionUID = 1L;
 
     private final SwingWorker<T, Void> worker;
-    private final java.awt.Component parent;
+    private final java.awt.Component parentComponent;
 
     public abstract T doInBackground();
 
     private boolean alreadyFinished = false;
 
-    public PleaseWait(String title, java.awt.Component parent) {
+    public PleaseWait(String title, java.awt.Component parentComponent) {
       super(null, title, ModalityType.APPLICATION_MODAL);
-      this.parent = parent;
+      this.parentComponent = parentComponent;
       worker =
           new SwingWorker<>() {
             @Override
@@ -309,7 +287,7 @@ public class Analyzer extends LFrame.SubWindow {
       setPreferredSize(new Dimension(300, 70));
       setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
       pack();
-      setLocationRelativeTo(parent);
+      setLocationRelativeTo(parentComponent);
       try {
         try {
           return worker.get(300, TimeUnit.MILLISECONDS);

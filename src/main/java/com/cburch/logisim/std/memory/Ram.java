@@ -1,36 +1,16 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
@@ -40,7 +20,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.gui.hex.HexFrame;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
@@ -103,10 +83,9 @@ public class Ram extends Mem {
 
     @Override
     public Value getLogValue(InstanceState state, Object option) {
-      if (option instanceof Long) {
-        final var s = (MemState) state.getData();
-        long addr = (Long) option;
-        return Value.createKnown(BitWidth.create(s.getDataBits()), s.getContents().get(addr));
+      if (option instanceof Long addr) {
+        final var memState = (MemState) state.getData();
+        return Value.createKnown(BitWidth.create(memState.getDataBits()), memState.getContents().get(addr));
       } else {
         return Value.NIL;
       }
@@ -117,7 +96,7 @@ public class Ram extends Mem {
   private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
 
   public Ram() {
-    super(_ID, S.getter("ramComponent"), 3);
+    super(_ID, S.getter("ramComponent"), 3, new RamHdlGeneratorFactory(), true);
     setIcon(new ArithmeticIcon("RAM", 3));
     setInstanceLogger(Logger.class);
   }
@@ -126,13 +105,6 @@ public class Ram extends Mem {
   protected void configureNewInstance(Instance instance) {
     super.configureNewInstance(instance);
     instance.addAttributeListener();
-  }
-
-  @Override
-  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    return (attr.equals(StdAttr.APPEARANCE))
-        ? StdAttr.APPEAR_CLASSIC
-        : super.getDefaultAttributeValue(attr, ver);
   }
 
   @Override
@@ -226,14 +198,6 @@ public class Ram extends Mem {
   }
 
   @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) {
-      MyHDLGenerator = new RamHDLGeneratorFactory();
-    }
-    return MyHDLGenerator.HDLTargetSupported(attrs);
-  }
-
-  @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
     super.instanceAttributeChanged(instance, attr);
     if ((attr == Mem.DATA_ATTR)
@@ -253,9 +217,9 @@ public class Ram extends Mem {
   @Override
   public void paintInstance(InstancePainter painter) {
     if (RamAppearance.classicAppearance(painter.getAttributeSet())) {
-      RamAppearance.DrawRamClassic(painter);
+      RamAppearance.drawRamClassic(painter);
     } else {
-      RamAppearance.DrawRamEvolution(painter);
+      RamAppearance.drawRamEvolution(painter);
     }
   }
 
@@ -418,17 +382,12 @@ public class Ram extends Mem {
   }
 
   @Override
-  public boolean RequiresNonZeroLabel() {
+  public boolean checkForGatedClocks(netlistComponent comp) {
     return true;
   }
 
   @Override
-  public boolean CheckForGatedClocks(NetlistComponent comp) {
-    return true;
-  }
-
-  @Override
-  public int[] ClockPinIndex(NetlistComponent comp) {
+  public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {RamAppearance.getClkIndex(0, comp.getComponent().getAttributeSet())};
   }
 }

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.arith;
@@ -61,22 +42,22 @@ public class Comparator extends InstanceFactory {
       new AttributeOption("twosComplement", "twosComplement", S.getter("twosComplementOption"));
   public static final AttributeOption UNSIGNED_OPTION =
       new AttributeOption("unsigned", "unsigned", S.getter("unsignedOption"));
-  public static final Attribute<AttributeOption> MODE_ATTRIBUTE =
+  public static final Attribute<AttributeOption> MODE_ATTR =
       Attributes.forOption(
           "mode",
           S.getter("comparatorType"),
           new AttributeOption[] {SIGNED_OPTION, UNSIGNED_OPTION});
 
-  private static final int IN0 = 0;
-  private static final int IN1 = 1;
-  private static final int GT = 2;
-  private static final int EQ = 3;
-  private static final int LT = 4;
+  public static final int IN0 = 0;
+  public static final int IN1 = 1;
+  public static final int GT = 2;
+  public static final int EQ = 3;
+  public static final int LT = 4;
 
   public Comparator() {
-    super(_ID, S.getter("comparatorComponent"));
+    super(_ID, S.getter("comparatorComponent"), new ComparatorHdlGeneratorFactory());
     setAttributes(
-        new Attribute[] {StdAttr.WIDTH, MODE_ATTRIBUTE},
+        new Attribute[] {StdAttr.WIDTH, MODE_ATTR},
         new Object[] {BitWidth.create(8), SIGNED_OPTION});
     setKeyConfigurator(new BitWidthConfigurator(StdAttr.WIDTH));
     setOffsetBounds(Bounds.create(-40, -20, 40, 40));
@@ -106,16 +87,10 @@ public class Comparator extends InstanceFactory {
 
   @Override
   public String getHDLName(AttributeSet attrs) {
-    StringBuilder CompleteName = new StringBuilder();
-    if (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) CompleteName.append("BitComparator");
-    else CompleteName.append(CorrectLabel.getCorrectLabel(this.getName()));
-    return CompleteName.toString();
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new ComparatorHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
+    final var completeName = new StringBuilder();
+    if (attrs.getValue(StdAttr.WIDTH).getWidth() == 1) completeName.append("BitComparator");
+    else completeName.append(CorrectLabel.getCorrectLabel(this.getName()));
+    return completeName.toString();
   }
 
   @Override
@@ -152,7 +127,7 @@ public class Comparator extends InstanceFactory {
       Value ab = pos < ax.length ? ax[pos] : Value.ERROR;
       Value bb = pos < bx.length ? bx[pos] : Value.ERROR;
       if (pos == ax.length - 1 && ab != bb) {
-        Object mode = state.getAttributeValue(MODE_ATTRIBUTE);
+        Object mode = state.getAttributeValue(MODE_ATTR);
         if (mode != UNSIGNED_OPTION) {
           Value t = ab;
           ab = bb;

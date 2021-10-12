@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.draw.canvas;
@@ -78,8 +59,7 @@ public class Selection {
 
   public void clearSelected() {
     if (!selected.isEmpty()) {
-      List<CanvasObject> oldSelected;
-      oldSelected = new ArrayList<>(selected);
+      final var oldSelected = new ArrayList<CanvasObject>(selected);
       selected.clear();
       suppressed.clear();
       setHandleSelected(null);
@@ -88,7 +68,7 @@ public class Selection {
   }
 
   public void drawSuppressed(Graphics g, CanvasObject shape) {
-    String state = suppressed.get(shape);
+    final var state = suppressed.get(shape);
     if (state.equals(MOVING_HANDLE)) {
       shape.paint(g, curHandleGesture);
     } else if (state.equals(TRANSLATING)) {
@@ -99,7 +79,7 @@ public class Selection {
 
   private void fireChanged(int action, Collection<CanvasObject> affected) {
     SelectionEvent e = null;
-    for (SelectionListener listener : listeners) {
+    for (final var listener : listeners) {
       if (e == null) e = new SelectionEvent(this, action, affected);
       listener.selectionChanged(e);
     }
@@ -130,15 +110,14 @@ public class Selection {
   }
 
   void modelChanged(CanvasModelEvent event) {
-    int action = event.getAction();
-    switch (action) {
+    switch (event.getAction()) {
       case CanvasModelEvent.ACTION_REMOVED:
-        Collection<? extends CanvasObject> affected = event.getAffected();
+        final var affected = event.getAffected();
         if (affected != null) {
           selected.removeAll(affected);
           suppressed.keySet().removeAll(affected);
-          Handle h = selectedHandle;
-          if (h != null && affected.contains(h.getObject())) {
+          final var handle = selectedHandle;
+          if (handle != null && affected.contains(handle.getObject())) {
             setHandleSelected(null);
           }
         }
@@ -149,7 +128,7 @@ public class Selection {
         }
         break;
       case CanvasModelEvent.ACTION_HANDLE_MOVED:
-        HandleGesture gesture = event.getHandleGesture();
+        final var gesture = event.getHandleGesture();
         if (gesture.getHandle().equals(selectedHandle)) {
           setHandleSelected(gesture.getResultingHandle());
         }
@@ -164,33 +143,29 @@ public class Selection {
   }
 
   public void setHandleGesture(HandleGesture gesture) {
-    HandleGesture g = curHandleGesture;
+    final var g = curHandleGesture;
     if (g != null) suppressed.remove(g.getHandle().getObject());
 
-    Handle h = gesture.getHandle();
+    final var h = gesture.getHandle();
     suppressed.put(h.getObject(), MOVING_HANDLE);
     curHandleGesture = gesture;
   }
 
   public void setHandleSelected(Handle handle) {
-    Handle cur = selectedHandle;
-    boolean same = Objects.equals(cur, handle);
+    final var cur = selectedHandle;
+    final var same = Objects.equals(cur, handle);
     if (!same) {
       selectedHandle = handle;
       curHandleGesture = null;
-      Collection<CanvasObject> objs;
-      if (handle == null) {
-        objs = Collections.emptySet();
-      } else {
-        objs = Collections.singleton(handle.getObject());
-      }
+      final Collection<CanvasObject> objs =
+          (handle == null) ? Collections.emptySet() : Collections.singleton(handle.getObject());
       fireChanged(SelectionEvent.ACTION_HANDLE, objs);
     }
   }
 
   public void setHidden(Collection<? extends CanvasObject> shapes, boolean value) {
     if (value) {
-      for (CanvasObject o : shapes) {
+      for (final var o : shapes) {
         suppressed.put(o, HIDDEN);
       }
     } else {
@@ -204,7 +179,7 @@ public class Selection {
   }
 
   public void setMovingShapes(Collection<? extends CanvasObject> shapes, int dx, int dy) {
-    for (CanvasObject o : shapes) {
+    for (final var o : shapes) {
       suppressed.put(o, TRANSLATING);
     }
     moveDx = dx;
@@ -217,9 +192,8 @@ public class Selection {
 
   public void setSelected(Collection<CanvasObject> shapes, boolean value) {
     if (value) {
-      List<CanvasObject> added;
-      added = new ArrayList<>(shapes.size());
-      for (CanvasObject shape : shapes) {
+      final var added = new ArrayList<CanvasObject>(shapes.size());
+      for (final var shape : shapes) {
         if (selected.add(shape)) {
           added.add(shape);
         }
@@ -228,12 +202,11 @@ public class Selection {
         fireChanged(SelectionEvent.ACTION_ADDED, added);
       }
     } else {
-      List<CanvasObject> removed;
-      removed = new ArrayList<>(shapes.size());
-      for (CanvasObject shape : shapes) {
+      final var removed = new ArrayList<CanvasObject>(shapes.size());
+      for (final var shape : shapes) {
         if (selected.remove(shape)) {
           suppressed.remove(shape);
-          Handle h = selectedHandle;
+          final var h = selectedHandle;
           if (h != null && h.getObject() == shape) setHandleSelected(null);
           removed.add(shape);
         }
@@ -245,15 +218,13 @@ public class Selection {
   }
 
   public void toggleSelected(Collection<CanvasObject> shapes) {
-    List<CanvasObject> added;
-    added = new ArrayList<>(shapes.size());
-    List<CanvasObject> removed;
-    removed = new ArrayList<>(shapes.size());
-    for (CanvasObject shape : shapes) {
+    final var added = new ArrayList<CanvasObject>(shapes.size());
+    final var removed = new ArrayList<CanvasObject>(shapes.size());
+    for (final var shape : shapes) {
       if (selected.contains(shape)) {
         selected.remove(shape);
         suppressed.remove(shape);
-        Handle h = selectedHandle;
+        final var h = selectedHandle;
         if (h != null && h.getObject() == shape) setHandleSelected(null);
         removed.add(shape);
       } else {

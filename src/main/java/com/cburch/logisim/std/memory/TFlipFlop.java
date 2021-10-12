@@ -1,45 +1,21 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.memory;
 
 import static com.cburch.logisim.std.Strings.S;
 
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.NetlistComponent;
-import com.cburch.logisim.fpga.hdlgenerator.HDL;
 import com.cburch.logisim.gui.icons.FlipFlopIcon;
+import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 public class TFlipFlop extends AbstractFlipFlop {
   /**
@@ -50,36 +26,22 @@ public class TFlipFlop extends AbstractFlipFlop {
    */
   public static final String _ID = "T Flip-Flop";
 
-  private static class TFFHDLGeneratorFactory extends AbstractFlipFlopHDLGeneratorFactory {
-    @Override
-    public String ComponentName() {
-      return _ID;
+  private static class TFFHDLGeneratorFactory extends AbstractFlipFlopHdlGeneratorFactory {
+
+    public TFFHDLGeneratorFactory() {
+      super(1, StdAttr.EDGE_TRIGGER);
+      myPorts.add(Port.INPUT, "t", 1, 0);
     }
 
     @Override
-    public Map<String, String> GetInputMaps(NetlistComponent ComponentInfo, Netlist nets) {
-      Map<String, String> PortMap = new HashMap<>();
-      PortMap.putAll(GetNetMap("T", true, ComponentInfo, 0, nets));
-      return PortMap;
-    }
-
-    @Override
-    public Map<String, Integer> GetInputPorts() {
-      Map<String, Integer> Inputs = new HashMap<>();
-      Inputs.put("T", 1);
-      return Inputs;
-    }
-
-    @Override
-    public ArrayList<String> GetUpdateLogic() {
-      return (new LineBuffer())
-          .add("{{1}} s_next_state {{2}} s_current_state_reg {{3}} T;", HDL.assignPreamble(), HDL.assignOperator(), HDL.xorOperator())
-          .getWithIndent();
+    public LineBuffer getUpdateLogic() {
+      return LineBuffer.getHdlBuffer()
+          .add("{{assign}}s_nextState{{=}}s_currentState{{xor}}t;");
     }
   }
 
   public TFlipFlop() {
-    super(_ID, new FlipFlopIcon(FlipFlopIcon.T_FLIPFLOP), S.getter("tFlipFlopComponent"), 1, false);
+    super(_ID, new FlipFlopIcon(FlipFlopIcon.T_FLIPFLOP), S.getter("tFlipFlopComponent"), 1, false, new TFFHDLGeneratorFactory());
   }
 
   @Override
@@ -95,11 +57,5 @@ public class TFlipFlop extends AbstractFlipFlop {
   @Override
   protected String getInputName(int index) {
     return "T";
-  }
-
-  @Override
-  public boolean HDLSupportedComponent(AttributeSet attrs) {
-    if (MyHDLGenerator == null) MyHDLGenerator = new TFFHDLGeneratorFactory();
-    return MyHDLGenerator.HDLTargetSupported(attrs);
   }
 }

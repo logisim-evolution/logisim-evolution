@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.generic;
@@ -32,7 +13,6 @@ import com.cburch.logisim.file.LibraryEvent;
 import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.std.base.BaseLibrary;
-import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import java.util.ArrayList;
 import java.util.Enumeration;
@@ -52,8 +32,7 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
   private JTree guiElement = null;
   private final boolean showMouseTools;
 
-  ProjectExplorerLibraryNode(
-      ProjectExplorerModel model, Library lib, JTree gui, boolean showMouseTools) {
+  ProjectExplorerLibraryNode(ProjectExplorerModel model, Library lib, JTree gui, boolean showMouseTools) {
     super(model, lib);
     guiElement = gui;
     if (lib instanceof LogisimFile) {
@@ -65,9 +44,9 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
   }
 
   private void buildChildren() {
-    Library lib = getValue();
+    final var lib = getValue();
     if (lib != null) {
-      boolean showLib = (showMouseTools & lib instanceof BaseLibrary) || !lib.isHidden();
+      final var showLib = (showMouseTools & lib instanceof BaseLibrary) || !lib.isHidden();
       if (showLib) {
         buildChildren(new ProjectExplorerToolNode(getModel(), null), lib.getTools(), 0);
         buildChildren(
@@ -78,18 +57,17 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
     }
   }
 
-  private <T> void buildChildren(
-      ProjectExplorerModel.Node<T> factory, List<? extends T> items, int startIndex) {
+  private <T> void buildChildren(ProjectExplorerModel.Node<T> factory, List<? extends T> items, int startIndex) {
     // go through previously built children
     Map<T, ProjectExplorerModel.Node<T>> nodeMap = new HashMap<>();
     List<ProjectExplorerModel.Node<T>> nodeList = new ArrayList<>();
-    int oldPos = startIndex;
+    var oldPos = startIndex;
 
     for (Enumeration<?> en = children(); en.hasMoreElements(); ) {
-      Object baseNode = en.nextElement();
+      final var baseNode = en.nextElement();
       if (baseNode.getClass() == factory.getClass()) {
         @SuppressWarnings("unchecked")
-        ProjectExplorerModel.Node<T> node = (ProjectExplorerModel.Node<T>) baseNode;
+        final var node = (ProjectExplorerModel.Node<T>) baseNode;
         nodeMap.put(node.getValue(), node);
         nodeList.add(node);
         node.oldIndex = oldPos;
@@ -98,11 +76,11 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
       }
     }
 
-    int oldCount = oldPos;
+    var oldCount = oldPos;
 
     // go through what should be the children
-    int actualPos = startIndex;
-    int insertionCount = 0;
+    var actualPos = startIndex;
+    var insertionCount = 0;
     oldPos = startIndex;
 
     for (T tool : items) {
@@ -126,19 +104,18 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
 
     // identify removals first
     if (oldPos != oldCount) {
-      int[] delIndex = new int[oldCount - oldPos];
-      ProjectExplorerModel.Node<?>[] delNodes = new ProjectExplorerModel.Node<?>[delIndex.length];
-      int delPos = 0;
+      final var delIndex = new int[oldCount - oldPos];
+      final var delNodes = new ProjectExplorerModel.Node<?>[delIndex.length];
+      var delPos = 0;
 
-      for (int i = nodeList.size() - 1; i >= 0; i--) {
-        ProjectExplorerModel.Node<T> node = nodeList.get(i);
-
+      for (var i = nodeList.size() - 1; i >= 0; i--) {
+        final var node = nodeList.get(i);
         if (node.newIndex < 0) {
           node.decommission();
           remove(node.oldIndex);
           nodeList.remove(node.oldIndex - startIndex);
 
-          for (ProjectExplorerModel.Node<T> other : nodeList) {
+          for (final var other : nodeList) {
             if (other.oldIndex > node.oldIndex) {
               other.oldIndex--;
             }
@@ -152,8 +129,8 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
     }
 
     // identify moved nodes
-    int minChange = Integer.MAX_VALUE >> 3;
-    int maxChange = Integer.MIN_VALUE >> 3;
+    var minChange = Integer.MAX_VALUE >> 3;
+    var maxChange = Integer.MIN_VALUE >> 3;
 
     for (ProjectExplorerModel.Node<T> node : nodeList) {
       if (node.newIndex != node.oldIndex && node.oldIndex >= 0) {
@@ -162,17 +139,17 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
       }
     }
     if (minChange <= maxChange) {
-      int[] moveIndex = new int[maxChange - minChange + 1];
-      ProjectExplorerModel.Node<?>[] moveNodes = new ProjectExplorerModel.Node<?>[moveIndex.length];
+      final var moveIndex = new int[maxChange - minChange + 1];
+      final var moveNodes = new ProjectExplorerModel.Node<?>[moveIndex.length];
 
-      for (int i = maxChange; i >= minChange; i--) {
-        ProjectExplorerModel.Node<T> node = nodeList.get(i);
+      for (var i = maxChange; i >= minChange; i--) {
+        final var node = nodeList.get(i);
         moveIndex[node.newIndex - minChange] = node.newIndex;
         moveNodes[node.newIndex - minChange] = node;
         remove(i);
       }
 
-      for (int i = 0; i < moveIndex.length; i++) {
+      for (var i = 0; i < moveIndex.length; i++) {
         insert(moveNodes[i], moveIndex[i]);
       }
 
@@ -181,11 +158,11 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
 
     // identify inserted nodes
     if (insertionCount > 0) {
-      int[] insIndex = new int[insertionCount];
-      ProjectExplorerModel.Node<?>[] insNodes = new ProjectExplorerModel.Node<?>[insertionCount];
-      int insertionsPos = 0;
+      final var insIndex = new int[insertionCount];
+      final var insNodes = new ProjectExplorerModel.Node<?>[insertionCount];
+      var insertionsPos = 0;
 
-      for (ProjectExplorerModel.Node<T> node : nodeList) {
+      for (final var node : nodeList) {
         if (node.oldIndex < 0) {
           insert(node, node.newIndex);
           insIndex[insertionsPos] = node.newIndex;
@@ -207,10 +184,10 @@ public class ProjectExplorerLibraryNode extends ProjectExplorerModel.Node<Librar
     if (file != null) {
       file.removeLibraryListener(this);
     }
-    for (Enumeration<?> en = children(); en.hasMoreElements(); ) {
-      Object n = en.nextElement();
-      if (n instanceof ProjectExplorerModel.Node<?>) {
-        ((ProjectExplorerModel.Node<?>) n).decommission();
+    for (final var en = children(); en.hasMoreElements(); ) {
+      final var n = en.nextElement();
+      if (n instanceof ProjectExplorerModel.Node<?> node) {
+        node.decommission();
       }
     }
   }

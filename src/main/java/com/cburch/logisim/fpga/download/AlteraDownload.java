@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.download;
@@ -34,16 +15,17 @@ import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.MappableResourcesContainer;
 import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.fpga.hdlgenerator.FileWriter;
-import com.cburch.logisim.fpga.hdlgenerator.HDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.TickComponentHDLGeneratorFactory;
-import com.cburch.logisim.fpga.hdlgenerator.ToplevelHDLGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.ToplevelHdlGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
@@ -56,94 +38,83 @@ import org.w3c.dom.Element;
 
 public class AlteraDownload implements VendorDownload {
 
-  private final VendorSoftware alteraVendor =
-      VendorSoftware.getSoftware(VendorSoftware.VENDOR_ALTERA);
-  private final String ScriptPath;
-  private final String ProjectPath;
-  private final String SandboxPath;
-  private final Netlist RootNetList;
+  private final VendorSoftware alteraVendor = VendorSoftware.getSoftware(VendorSoftware.VENDOR_ALTERA);
+  private final String scriptPath;
+  private final String projectPath;
+  private final String sandboxPath;
+  private final Netlist rootNetList;
   private MappableResourcesContainer mapInfo;
   private final BoardInformation boardInfo;
-  private final ArrayList<String> entities;
-  private final ArrayList<String> architectures;
-  private final String HDLType;
+  private final List<String> entities;
+  private final List<String> architectures;
+  private final String hdlType;
   private String cablename;
-  private final boolean WriteToFlash;
+  private final boolean writeToFlash;
 
   private static final String alteraTclFile = "AlteraDownload.tcl";
   private static final String AlteraCofFile = "AlteraFlash.cof";
 
   public AlteraDownload(
-      String ProjectPath,
-      Netlist RootNetList,
-      BoardInformation BoardInfo,
-      ArrayList<String> Entities,
-      ArrayList<String> Architectures,
-      String HDLType,
-      boolean WriteToFlash) {
-    this.ProjectPath = ProjectPath;
-    this.SandboxPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SANDBOX_PATH);
-    this.ScriptPath = DownloadBase.getDirectoryLocation(ProjectPath, DownloadBase.SCRIPT_PATH);
-    this.RootNetList = RootNetList;
-    this.boardInfo = BoardInfo;
-    this.entities = Entities;
-    this.architectures = Architectures;
-    this.HDLType = HDLType;
-    this.WriteToFlash = WriteToFlash;
+      String projectPath,
+      Netlist rootNetList,
+      BoardInformation boardInfo,
+      List<String> entities,
+      List<String> architectures,
+      String hdlType,
+      boolean writeToFlash) {
+    this.projectPath = projectPath;
+    this.sandboxPath = DownloadBase.getDirectoryLocation(projectPath, DownloadBase.SANDBOX_PATH);
+    this.scriptPath = DownloadBase.getDirectoryLocation(projectPath, DownloadBase.SCRIPT_PATH);
+    this.rootNetList = rootNetList;
+    this.boardInfo = boardInfo;
+    this.entities = entities;
+    this.architectures = architectures;
+    this.hdlType = hdlType;
+    this.writeToFlash = writeToFlash;
     cablename = "";
   }
 
   @Override
-  public void SetMapableResources(MappableResourcesContainer resources) {
+  public void setMapableResources(MappableResourcesContainer resources) {
     mapInfo = resources;
   }
 
   @Override
-  public int GetNumberOfStages() {
+  public int getNumberOfStages() {
     return 3;
   }
 
   @Override
-  public String GetStageMessage(int stage) {
-    switch (stage) {
-      case 0:
-        return S.get("AlteraProject");
-      case 1:
-        return S.get("AlteraOptimize");
-      case 2:
-        return S.get("AlteraSyntPRBit");
-      default:
-        return "Unknown, bizar";
-    }
+  public String getStageMessage(int stage) {
+    return switch (stage) {
+      case 0 -> S.get("AlteraProject");
+      case 1 -> S.get("AlteraOptimize");
+      case 2 -> S.get("AlteraSyntPRBit");
+      default -> "Unknown, bizare";
+    };
   }
 
   @Override
-  public ProcessBuilder PerformStep(int stage) {
-    switch (stage) {
-      case 0:
-        return Stage0Project();
-      case 1:
-        return Stage1Optimize();
-      case 2:
-        return Stage2SPRBit();
-      default:
-        return null;
-    }
+  public ProcessBuilder performStep(int stage) {
+    return switch (stage) {
+      case 0 -> stage0Project();
+      case 1 -> stage1Optimize();
+      case 2 -> stage2SprBit();
+      default -> null;
+    };
   }
 
   @Override
   public boolean readyForDownload() {
-    final var SofFile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof").exists();
-    final var PofFile = new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".pof").exists();
+    final var SofFile = new File(sandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof").exists();
+    final var PofFile = new File(sandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".pof").exists();
     return SofFile || PofFile;
   }
 
   @Override
-  public ProcessBuilder DownloadToBoard() {
-    if (WriteToFlash) {
-      if (!DoFlashing()) return null;
-    }
-    var command = new ArrayList<String>();
+  public ProcessBuilder downloadToBoard() {
+    if (writeToFlash && !doFlashing()) return null;
+    final var command = new ArrayList<String>();
     command.add(alteraVendor.getBinaryPath(1));
     command.add("-c");
     command.add(cablename);
@@ -151,93 +122,95 @@ public class AlteraDownload implements VendorDownload {
     command.add("jtag");
     command.add("-o");
     // if there is no .sof generated, try with the .pof
-    if (new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof").exists()) {
-      command.add("P;" + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof"
+    if (new File(sandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof").exists()) {
+      command.add("P;" + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof"
                   + "@" + boardInfo.fpga.getFpgaJTAGChainPosition());
     } else {
-      command.add("P;" + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".pof"
+      command.add("P;" + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".pof"
                   + "@" + boardInfo.fpga.getFpgaJTAGChainPosition());
     }
-    var Down = new ProcessBuilder(command);
-    Down.directory(new File(SandboxPath));
-    return Down;
+    final var down = new ProcessBuilder(command);
+    down.directory(new File(sandboxPath));
+    return down;
   }
 
-  private ProcessBuilder Stage0Project() {
-    var command = new ArrayList<String>();
+  private ProcessBuilder stage0Project() {
+    final var command = new ArrayList<String>();
     command.add(alteraVendor.getBinaryPath(0));
     command.add("-t");
-    command.add(ScriptPath.replace(ProjectPath, ".." + File.separator) + alteraTclFile);
+    command.add(scriptPath.replace(projectPath, ".." + File.separator) + alteraTclFile);
     final var stage0 = new ProcessBuilder(command);
-    stage0.directory(new File(SandboxPath));
+    stage0.directory(new File(sandboxPath));
     return stage0;
   }
 
-  private ProcessBuilder Stage1Optimize() {
-    var command = new ArrayList<String>();
+  private ProcessBuilder stage1Optimize() {
+    final var command = new ArrayList<String>();
     command.add(alteraVendor.getBinaryPath(2));
-    command.add(ToplevelHDLGeneratorFactory.FPGAToplevelName);
+    command.add(ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME);
     command.add("--optimize=area");
     final var stage1 = new ProcessBuilder(command);
-    stage1.directory(new File(SandboxPath));
+    stage1.directory(new File(sandboxPath));
     return stage1;
   }
 
-  private ProcessBuilder Stage2SPRBit() {
+  private ProcessBuilder stage2SprBit() {
     var command = new ArrayList<String>();
     command.add(alteraVendor.getBinaryPath(0));
     command.add("--flow");
     command.add("compile");
-    command.add(ToplevelHDLGeneratorFactory.FPGAToplevelName);
+    command.add(ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME);
     final var stage2 = new ProcessBuilder(command);
-    stage2.directory(new File(SandboxPath));
+    stage2.directory(new File(sandboxPath));
     return stage2;
   }
 
   @Override
-  public boolean CreateDownloadScripts() {
-    var scriptFile = FileWriter.GetFilePointer(ScriptPath, alteraTclFile);
+  public boolean createDownloadScripts() {
+    var scriptFile = FileWriter.getFilePointer(scriptPath, alteraTclFile);
     if (scriptFile == null) {
-      scriptFile = new File(ScriptPath + alteraTclFile);
+      scriptFile = new File(scriptPath + alteraTclFile);
       return scriptFile.exists();
     }
-    final var fileType = HDLType.equals(HDLGeneratorFactory.VHDL) ? "VHDL_FILE" : "VERILOG_FILE";
-    final var contents = new LineBuffer();
+    final var fileType = hdlType.equals(HdlGeneratorFactory.VHDL) ? "VHDL_FILE" : "VERILOG_FILE";
+    final var contents = LineBuffer.getBuffer();
     contents
-        .pair("topLevelName", ToplevelHDLGeneratorFactory.FPGAToplevelName)
+        .pair("topLevelName", ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME)
         .pair("fileType", fileType)
-        .pair("clock", TickComponentHDLGeneratorFactory.FPGA_CLOCK);
+        .pair("clock", TickComponentHdlGeneratorFactory.FPGA_CLOCK);
 
     contents
-        .addLines(
-            "# Load Quartus II Tcl Project package",
-            "package require ::quartus::project",
-            "",
-            "set need_to_close_project 0",
-            "set make_assignments 1",
-            "",
-            "# Check that the right project is open",
-            "if {[is_project_open]} {",
-            "    if {[string compare $quartus(project) \"{{topLevelName}}\"]} {",
-            "        puts \"Project {{topLevelName}} is not open\"",
-            "        set make_assignments 0",
-            "    }",
-            "} else {",
-            "    # Only open if not already open",
-            "    if {[project_exists {{topLevelName}}]} {",
-            "        project_open -revision {{topLevelName}} {{topLevelName}}",
-            "    } else {",
-            "        project_new -revision {{topLevelName}} {{topLevelName}}",
-            "    }",
-            "    set need_to_close_project 1",
-            "}",
-            "# Make assignments",
-            "if {$make_assignments} {")
+        .add("""
+            # Load Quartus II Tcl Project package
+            package require ::quartus::project
+
+            set need_to_close_project 0
+            set make_assignments 1
+
+            # Check that the right project is open
+            if {[is_project_open]} {
+                if {[string compare $quartus(project) "{{topLevelName}}"]} {
+                    puts "Project {{topLevelName}} is not open"
+                    set make_assignments 0
+                }
+            } else {
+                # Only open if not already open
+                if {[project_exists {{topLevelName}}]} {
+                    project_open -revision {{topLevelName}} {{topLevelName}}
+                } else {
+                    project_new -revision {{topLevelName}} {{topLevelName}}
+                }
+                set need_to_close_project 1
+            }
+            # Make assignments
+            if {$make_assignments} {
+            """)
         .add(getAlteraAssignments(boardInfo))
-        .addLines(
-            "",
-            "    # Include all entities and gates",
-            "");
+        .add("""
+
+                # Include all entities and gates
+
+            """);
     for (var entity : entities) {
       contents.add("    set_global_assignment -name {{fileType}} \"{{1}}\"", entity);
     }
@@ -246,48 +219,49 @@ public class AlteraDownload implements VendorDownload {
     }
     contents.add("");
     contents.add("    # Map fpga_clk and ionets to fpga pins");
-    if (RootNetList.numberOfClockTrees() > 0 || RootNetList.requiresGlobalClockConnection()) {
+    if (rootNetList.numberOfClockTrees() > 0 || rootNetList.requiresGlobalClockConnection()) {
       contents.add("    set_location_assignment {{1}} -to {{clock}}", boardInfo.fpga.getClockPinLocation());
     }
     contents
         .add(getPinLocStrings())
-        .addLines(
-            "    # Commit assignments",
-            "    export_assignments",
-            "",
-            "    # Close project",
-            "    if {$need_to_close_project} {",
-            "        project_close",
-            "    }",
-            "}");
-    return FileWriter.WriteContents(scriptFile, contents.get());
+        .add("""
+                # Commit assignments
+                export_assignments
+
+                # Close project
+                if {$need_to_close_project} {
+                    project_close
+                }
+            }
+            """);
+    return FileWriter.writeContents(scriptFile, contents.get());
   }
 
-  private ArrayList<String> getPinLocStrings() {
-    final var contents = new LineBuffer();
+  private List<String> getPinLocStrings() {
+    final var contents = LineBuffer.getBuffer();
 
     for (final var key : mapInfo.getMappableResources().keySet()) {
       final var map = mapInfo.getMappableResources().get(key);
 
       for (var i = 0; i < map.getNrOfPins(); i++) {
-        if (map.isMapped(i) && !map.IsOpenMapped(i) && !map.IsConstantMapped(i) && !map.isInternalMapped(i)) {
+        if (map.isMapped(i) && !map.isOpenMapped(i) && !map.isConstantMapped(i) && !map.isInternalMapped(i)) {
           final var pairs = new LineBuffer.Pairs()
-                  .add("pinLoc", map.getPinLocation(i))
-                  .add("inv", map.isExternalInverted(i) ? "n_" : "")
-                  .add("hdlStr", map.getHdlString(i));
+                  .pair("pinLoc", map.getPinLocation(i))
+                  .pair("inv", map.isExternalInverted(i) ? "n_" : "")
+                  .pair("hdlStr", map.getHdlString(i));
           contents.add("set_location_assignment {{pinLoc}} -to {{inv}}{{hdlStr}}", pairs);
           if (map.requiresPullup(i))
             contents.add("set_instance_assignment -name WEAK_PULL_UP_RESISTOR ON -to {{inv}}{{hdlStr}}", pairs);
         }
       }
     }
-    final var ledArrayMap = DownloadBase.getLedArrayMaps(mapInfo, RootNetList, boardInfo);
+    final var ledArrayMap = DownloadBase.getLedArrayMaps(mapInfo, rootNetList, boardInfo);
     for (final var key : ledArrayMap.keySet())
       contents.add("set_location_assignment {{1}} -to {{2}}", ledArrayMap.get(key), key);
     return contents.getWithIndent(4);
   }
 
-  private static ArrayList<String> getAlteraAssignments(BoardInformation currentBoard) {
+  private static List<String> getAlteraAssignments(BoardInformation currentBoard) {
     final var pkg = currentBoard.fpga.getPackage().split(" ");
     final var currentBehavior = currentBoard.fpga.getUnusedPinsBehavior();
     final var behavior = switch (currentBehavior) {
@@ -297,91 +271,89 @@ public class AlteraDownload implements VendorDownload {
       default -> throw new IllegalStateException("Unexpected value: " + currentBehavior);
     };
 
-    return (new LineBuffer())
+    return LineBuffer.getBuffer()
         .pair("assignName", "set_global_assignment -name")
         .add("{{assignName}} FAMILY \"{{1}}\"", currentBoard.fpga.getTechnology())
         .add("{{assignName}} DEVICE {{1}}", currentBoard.fpga.getPart())
         .add("{{assignName}} DEVICE_FILTER_PACKAGE {{1}}", pkg[0])
         .add("{{assignName}} DEVICE_FILTER_PIN_COUNT {{1}}", pkg[1])
         .add("{{assignName}} RESERVE_ALL_UNUSED_PINS \"AS INPUT {{1}}\"", behavior)
-        .add("{{assignName}} FMAX_REQUIREMENT \"{{1}}\"", Download.GetClockFrequencyString(currentBoard))
+        .add("{{assignName}} FMAX_REQUIREMENT \"{{1}}\"", Download.getClockFrequencyString(currentBoard))
         .add("{{assignName}} RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
         .add("{{assignName}} CYCLONEII_RESERVE_NCEO_AFTER_CONFIGURATION \"USE AS REGULAR IO\"")
         .getWithIndent();
   }
 
   @Override
-  public boolean BoardConnected() {
+  public boolean isBoardConnected() {
     var command = new ArrayList<String>();
     command.add(alteraVendor.getBinaryPath(1));
     command.add("--list");
-    final var Detect = new ProcessBuilder(command);
-    Detect.directory(new File(SandboxPath));
+    final var detect = new ProcessBuilder(command);
+    detect.directory(new File(sandboxPath));
     var response = new ArrayList<String>();
     try {
-      Reporter.Report.print("");
-      Reporter.Report.print("===");
-      Reporter.Report.print("===> " + S.get("AlteraDetectDevice"));
-      Reporter.Report.print("===");
-      if (Download.execute(Detect, response) != null) return false;
+      Reporter.report.print("");
+      Reporter.report.print("===");
+      Reporter.report.print("===> " + S.get("AlteraDetectDevice"));
+      Reporter.report.print("===");
+      if (Download.execute(detect, response) != null) return false;
     } catch (IOException | InterruptedException e) {
       return false;
     }
-    var Devices = Devices(response);
-    if (Devices == null) return false;
-    if (Devices.size() == 1) {
-      cablename = Devices.get(0);
+    var devices = getDevices(response);
+    if (devices == null) return false;
+    if (devices.size() == 1) {
+      cablename = devices.get(0);
       return true;
     }
-    var selection = Download.ChooseBoard(Devices);
+    var selection = Download.chooseBoard(devices);
     if (selection == null) return false;
     cablename = selection;
     return true;
   }
 
-  private ArrayList<String> Devices(ArrayList<String> lines) {
-    /* This code originates from Kevin Walsh */
-    var dev = new ArrayList<String>();
+  private List<String> getDevices(ArrayList<String> lines) {
+    final var dev = new ArrayList<String>();
     for (var line : lines) {
       var n = dev.size() + 1;
       if (!line.matches("^" + n + "\\) .*")) continue;
       line = line.replaceAll("^" + n + "\\) ", "");
       dev.add(line.trim());
     }
-    if (dev.size() == 0) return null;
-    return dev;
+    return (dev.isEmpty()) ? null : dev;
   }
 
-  private boolean DoFlashing() {
-    if (!CreateCofFile()) {
-      Reporter.Report.AddError(S.get("AlteraFlashError"));
+  private boolean doFlashing() {
+    if (!createCofFile()) {
+      Reporter.report.addError(S.get("AlteraFlashError"));
       return false;
     }
-    if (!CreateJicFile()) {
-      Reporter.Report.AddError(S.get("AlteraFlashError"));
+    if (!createJicFile()) {
+      Reporter.report.addError(S.get("AlteraFlashError"));
       return false;
     }
-    if (!LoadProgrammerSof()) {
-      Reporter.Report.AddError(S.get("AlteraFlashError"));
+    if (!loadProgrammerSoftware()) {
+      Reporter.report.addError(S.get("AlteraFlashError"));
       return false;
     }
-    if (!FlashDevice()) {
-      Reporter.Report.AddError(S.get("AlteraFlashError"));
+    if (!flashDevice()) {
+      Reporter.report.addError(S.get("AlteraFlashError"));
       return false;
     }
     return true;
   }
 
-  private boolean FlashDevice() {
-    final var jicFile = ToplevelHDLGeneratorFactory.FPGAToplevelName + ".jic";
-    Reporter.Report.print("==>");
-    Reporter.Report.print("==> " + S.get("AlteraFlash"));
-    Reporter.Report.print("==>");
-    if (!new File(SandboxPath + jicFile).exists()) {
-      Reporter.Report.AddError(S.get("AlteraFlashError", jicFile));
+  private boolean flashDevice() {
+    final var jicFile = ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".jic";
+    Reporter.report.print("==>");
+    Reporter.report.print("==> " + S.get("AlteraFlash"));
+    Reporter.report.print("==>");
+    if (!new File(sandboxPath + jicFile).exists()) {
+      Reporter.report.addError(S.get("AlteraFlashError", jicFile));
       return false;
     }
-    final var command = new LineBuffer();
+    final var command = LineBuffer.getBuffer();
     command
         .add(alteraVendor.getBinaryPath(1))
         .add("-c")
@@ -391,23 +363,23 @@ public class AlteraDownload implements VendorDownload {
         .add("-o")
         .add("P;{{1}}", jicFile);
     final var prog = new ProcessBuilder(command.get());
-    prog.directory(new File(SandboxPath));
+    prog.directory(new File(sandboxPath));
     try {
       final var result = Download.execute(prog, null);
       if (result != null) {
-        Reporter.Report.AddFatalError(S.get("AlteraFlashFailure"));
+        Reporter.report.addFatalError(S.get("AlteraFlashFailure"));
         return false;
       }
     } catch (IOException | InterruptedException e) {
-      Reporter.Report.AddFatalError(S.get("AlteraFlashFailure"));
+      Reporter.report.addFatalError(S.get("AlteraFlashFailure"));
       return false;
     }
     return true;
   }
 
-  private boolean LoadProgrammerSof() {
-    final var FpgaDevice = StripPackageSpeed();
-    final var ProgrammerSofFile = new File(VendorSoftware.GetToolPath(VendorSoftware.VENDOR_ALTERA)).getParent()
+  private boolean loadProgrammerSoftware() {
+    final var FpgaDevice = stripPackageSpeedSuffix();
+    final var ProgrammerSofFile = new File(VendorSoftware.getToolPath(VendorSoftware.VENDOR_ALTERA)).getParent()
         + File.separator
         + "common"
         + File.separator
@@ -418,14 +390,14 @@ public class AlteraDownload implements VendorDownload {
         + "sfl_"
         + FpgaDevice.toLowerCase()
         + ".sof";
-    Reporter.Report.print("==>");
-    Reporter.Report.print("==> " + S.get("AlteraProgSof"));
-    Reporter.Report.print("==>");
+    Reporter.report.print("==>");
+    Reporter.report.print("==> " + S.get("AlteraProgSof"));
+    Reporter.report.print("==>");
     if (!new File(ProgrammerSofFile).exists()) {
-      Reporter.Report.AddError(S.get("AlteraProgSofError", ProgrammerSofFile));
+      Reporter.report.addError(S.get("AlteraProgSofError", ProgrammerSofFile));
       return false;
     }
-    final var command = new LineBuffer();
+    final var command = LineBuffer.getBuffer();
     command.add(alteraVendor.getBinaryPath(1))
             .add("-c")
             .add(cablename)
@@ -434,21 +406,21 @@ public class AlteraDownload implements VendorDownload {
             .add("-o")
             .add("P;{{1}}", ProgrammerSofFile);
     final var prog = new ProcessBuilder(command.get());
-    prog.directory(new File(SandboxPath));
+    prog.directory(new File(sandboxPath));
     try {
       final var result = Download.execute(prog, null);
       if (result != null) {
-        Reporter.Report.AddFatalError(S.get("AlteraProgSofFailure"));
+        Reporter.report.addFatalError(S.get("AlteraProgSofFailure"));
         return false;
       }
     } catch (IOException | InterruptedException e) {
-      Reporter.Report.AddFatalError(S.get("AlteraProgSofFailure"));
+      Reporter.report.addFatalError(S.get("AlteraProgSofFailure"));
       return false;
     }
     return true;
   }
 
-  private String StripPackageSpeed() {
+  private String stripPackageSpeedSuffix() {
     /* For the Cyclone IV devices the name used for Syntesis is in form
      * EP4CE15F23C8. For the programmer sof-file (for flash writing) we need to strip
      * the part F23C8. For future supported devices this should be checked.
@@ -458,104 +430,104 @@ public class AlteraDownload implements VendorDownload {
     return FpgaDevice.substring(0, index);
   }
 
-  private boolean CreateJicFile() {
-    if (!new File(ScriptPath + AlteraCofFile).exists()) {
-      Reporter.Report.AddError(S.get("AlteraNoCof"));
+  private boolean createJicFile() {
+    if (!new File(scriptPath + AlteraCofFile).exists()) {
+      Reporter.report.addError(S.get("AlteraNoCof"));
       return false;
     }
-    Reporter.Report.print("==>");
-    Reporter.Report.print("==> " + S.get("AlteraJicFile"));
-    Reporter.Report.print("==>");
+    Reporter.report.print("==>");
+    Reporter.report.print("==> " + S.get("AlteraJicFile"));
+    Reporter.report.print("==>");
     var command = new ArrayList<String>();
     command.add(alteraVendor.getBinaryPath(3));
     command.add("-c");
-    command.add((ScriptPath + AlteraCofFile).replace(ProjectPath, "../"));
-    final var Jic = new ProcessBuilder(command);
-    Jic.directory(new File(SandboxPath));
+    command.add((scriptPath + AlteraCofFile).replace(projectPath, "../"));
+    final var jic = new ProcessBuilder(command);
+    jic.directory(new File(sandboxPath));
     try {
-      final var result = Download.execute(Jic, null);
+      final var result = Download.execute(jic, null);
       if (result != null) {
-        Reporter.Report.AddFatalError(S.get("AlteraJicFileError"));
+        Reporter.report.addFatalError(S.get("AlteraJicFileError"));
         return false;
       }
     } catch (IOException | InterruptedException e) {
-      Reporter.Report.AddFatalError(S.get("AlteraJicFileError"));
+      Reporter.report.addFatalError(S.get("AlteraJicFileError"));
       return false;
     }
 
     return true;
   }
 
-  private boolean CreateCofFile() {
-    if (!new File(SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof").exists()) {
-      Reporter.Report.AddFatalError(S.get("AlteraNoSofFile"));
+  private boolean createCofFile() {
+    if (!new File(sandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof").exists()) {
+      Reporter.report.addFatalError(S.get("AlteraNoSofFile"));
       return false;
     }
-    Reporter.Report.print("==>");
-    Reporter.Report.print("==> " + S.get("AlteraCofFile"));
-    Reporter.Report.print("==>");
+    Reporter.report.print("==>");
+    Reporter.report.print("==> " + S.get("AlteraCofFile"));
+    Reporter.report.print("==>");
     try {
       var docFactory = DocumentBuilderFactory.newInstance();
       var docBuilder = docFactory.newDocumentBuilder();
-      var CofFile = docBuilder.newDocument();
-      CofFile.setXmlStandalone(true);
-      var rootElement = CofFile.createElement("cof");
-      CofFile.appendChild(rootElement);
-      AddElement("eprom_name", boardInfo.fpga.getFlashName(), rootElement, CofFile);
-      AddElement("flash_loader_device", StripPackageSpeed(), rootElement, CofFile);
-      AddElement("output_filename",
-          SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".jic",
+      var cofFile = docBuilder.newDocument();
+      cofFile.setXmlStandalone(true);
+      final var rootElement = cofFile.createElement("cof");
+      cofFile.appendChild(rootElement);
+      addElement("eprom_name", boardInfo.fpga.getFlashName(), rootElement, cofFile);
+      addElement("flash_loader_device", stripPackageSpeedSuffix(), rootElement, cofFile);
+      addElement("output_filename",
+          sandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".jic",
           rootElement,
-          CofFile);
-      AddElement("n_pages", "1", rootElement, CofFile);
-      AddElement("width", "1", rootElement, CofFile);
-      AddElement("mode", "7", rootElement, CofFile);
-      Element SofData = CofFile.createElement("sof_data");
-      rootElement.appendChild(SofData);
-      AddElement("user_name", "Page_0", SofData, CofFile);
-      AddElement("page_flags", "1", SofData, CofFile);
-      var BitFile = CofFile.createElement("bit0");
-      SofData.appendChild(BitFile);
-      AddElement("sof_filename",
-          SandboxPath + ToplevelHDLGeneratorFactory.FPGAToplevelName + ".sof",
-          BitFile,
-          CofFile);
-      AddElement("version", "10", rootElement, CofFile);
-      AddElement("create_cvp_file", "0", rootElement, CofFile);
-      AddElement("create_hps_iocsr", "0", rootElement, CofFile);
-      AddElement("auto_create_rpd", "0", rootElement, CofFile);
-      AddElement("rpd_little_endian", "1", rootElement, CofFile);
-      var Options = CofFile.createElement("options");
-      rootElement.appendChild(Options);
-      AddElement("map_file", "0", Options, CofFile);
-      var AdvancedOptions = CofFile.createElement("advanced_options");
-      rootElement.appendChild(AdvancedOptions);
-      AddElement("ignore_epcs_id_check", "2", AdvancedOptions, CofFile);
-      AddElement("ignore_condone_check", "2", AdvancedOptions, CofFile);
-      AddElement("plc_adjustment", "0", AdvancedOptions, CofFile);
-      AddElement("post_chain_bitstream_pad_bytes", "-1", AdvancedOptions, CofFile);
-      AddElement("post_device_bitstream_pad_bytes", "-1", AdvancedOptions, CofFile);
-      AddElement("bitslice_pre_padding", "1", AdvancedOptions, CofFile);
-      var transformerfac = TransformerFactory.newInstance();
-      var transformer = transformerfac.newTransformer();
+          cofFile);
+      addElement("n_pages", "1", rootElement, cofFile);
+      addElement("width", "1", rootElement, cofFile);
+      addElement("mode", "7", rootElement, cofFile);
+      final var sofData = cofFile.createElement("sof_data");
+      rootElement.appendChild(sofData);
+      addElement("user_name", "Page_0", sofData, cofFile);
+      addElement("page_flags", "1", sofData, cofFile);
+      final var bitFile = cofFile.createElement("bit0");
+      sofData.appendChild(bitFile);
+      addElement("sof_filename",
+          sandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof",
+          bitFile,
+          cofFile);
+      addElement("version", "10", rootElement, cofFile);
+      addElement("create_cvp_file", "0", rootElement, cofFile);
+      addElement("create_hps_iocsr", "0", rootElement, cofFile);
+      addElement("auto_create_rpd", "0", rootElement, cofFile);
+      addElement("rpd_little_endian", "1", rootElement, cofFile);
+      final var options = cofFile.createElement("options");
+      rootElement.appendChild(options);
+      addElement("map_file", "0", options, cofFile);
+      final var advancedOptions = cofFile.createElement("advanced_options");
+      rootElement.appendChild(advancedOptions);
+      addElement("ignore_epcs_id_check", "2", advancedOptions, cofFile);
+      addElement("ignore_condone_check", "2", advancedOptions, cofFile);
+      addElement("plc_adjustment", "0", advancedOptions, cofFile);
+      addElement("post_chain_bitstream_pad_bytes", "-1", advancedOptions, cofFile);
+      addElement("post_device_bitstream_pad_bytes", "-1", advancedOptions, cofFile);
+      addElement("bitslice_pre_padding", "1", advancedOptions, cofFile);
+      final var transformerFac = TransformerFactory.newInstance();
+      final var transformer = transformerFac.newTransformer();
       transformer.setOutputProperty(OutputKeys.INDENT, "yes");
       transformer.setOutputProperty(OutputKeys.METHOD, "xml");
       transformer.setOutputProperty(OutputKeys.ENCODING, "US-ASCII");
       transformer.setOutputProperty(OutputKeys.STANDALONE, "yes");
-      var source = new DOMSource(CofFile);
-      var result = new StreamResult(new File(ScriptPath + AlteraCofFile));
+      final var source = new DOMSource(cofFile);
+      final var result = new StreamResult(new File(scriptPath + AlteraCofFile));
       transformer.transform(source, result);
     } catch (ParserConfigurationException | TransformerException e) {
-      Reporter.Report.AddError(S.get("AlteraErrorCof"));
+      Reporter.report.addError(S.get("AlteraErrorCof"));
       return false;
     }
     return true;
   }
 
-  private void AddElement(String ElementName, String ElementValue, Element root, Document doc) {
-    var NamedElement = doc.createElement(ElementName);
-    NamedElement.appendChild(doc.createTextNode(ElementValue));
-    root.appendChild(NamedElement);
+  private void addElement(String elementName, String elementValue, Element root, Document doc) {
+    final var namedElement = doc.createElement(elementName);
+    namedElement.appendChild(doc.createTextNode(elementValue));
+    root.appendChild(namedElement);
   }
 
 }

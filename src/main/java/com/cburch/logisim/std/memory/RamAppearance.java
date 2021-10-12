@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.std.memory;
@@ -226,7 +207,7 @@ public class RamAppearance {
     return attrs.getValue(StdAttr.APPEARANCE).equals(StdAttr.APPEAR_CLASSIC);
   }
 
-  public static void DrawRamClassic(InstancePainter painter) {
+  public static void drawRamClassic(InstancePainter painter) {
     final var attrs = painter.getAttributeSet();
     final var g = painter.getGraphics();
     final var bds = painter.getBounds();
@@ -242,11 +223,11 @@ public class RamAppearance {
     /* draw body */
     painter.drawBounds();
     /* draw connections */
-    DrawConnections(inst, attrs, painter);
+    drawConnections(inst, attrs, painter);
     /* draw the size */
     final var type = inst.getFactory() instanceof Ram ? "RAM " : "ROM ";  // FIXME: hardcoded string
     GraphicsUtil.drawCenteredText(g,
-            type + Mem.GetSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
+            type + Mem.getSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
                 + " x " + painter.getAttributeValue(Mem.DATA_ATTR).getWidth(),
             bds.getX() + (Mem.SymbolWidth / 2) + 20,
             bds.getY() + 6);
@@ -266,7 +247,7 @@ public class RamAppearance {
     }
   }
 
-  public static void DrawRamEvolution(InstancePainter painter) {
+  public static void drawRamEvolution(InstancePainter painter) {
     final var attrs = painter.getAttributeSet();
     final var g = painter.getGraphics();
     final var bds = painter.getBounds();
@@ -280,14 +261,14 @@ public class RamAppearance {
       g.setFont(font);
     }
     /* draw shape */
-    DrawControlBlock(inst, attrs, painter);
-    DrawDataBlocks(inst, attrs, painter);
+    drawControlBlock(inst, attrs, painter);
+    drawDataBlocks(inst, attrs, painter);
     /* draw connections */
-    DrawConnections(inst, attrs, painter);
+    drawConnections(inst, attrs, painter);
     /* draw the size */
     final var type = inst.getFactory() instanceof Ram ? "RAM " : "ROM ";  // FIXME hardcoded string
     GraphicsUtil.drawCenteredText(g,
-            type + Mem.GetSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
+            type + Mem.getSizeLabel(painter.getAttributeValue(Mem.ADDR_ATTR).getWidth())
                 + " x " + painter.getAttributeValue(Mem.DATA_ATTR).getWidth(),
             bds.getX() + (Mem.SymbolWidth / 2) + 20, bds.getY() + 6);
     /* draw the contents */
@@ -540,7 +521,7 @@ public class RamAppearance {
             || attrs.getValue(StdAttr.TRIGGER).equals(StdAttr.TRIG_FALLING));
   }
 
-  private static void DrawConnections(Instance inst, AttributeSet attrs, InstancePainter painter) {
+  private static void drawConnections(Instance inst, AttributeSet attrs, InstancePainter painter) {
     boolean classic = classicAppearance(attrs);
     final var g = (Graphics2D) painter.getGraphics().create();
     final var font = g.getFont();
@@ -628,7 +609,7 @@ public class RamAppearance {
           } else {
             g.drawLine(x, y, x - 20, y);
           }
-          if (!seperate && i == 0) DrawBidir(g, x - 20, y);
+          if (!seperate && i == 0) drawBidir(g, x - 20, y);
           g.setStroke(new BasicStroke(4));
         } else {
           if (i != 0) {
@@ -655,7 +636,7 @@ public class RamAppearance {
             for (var j = 0; j < nrOfBits; j++) {
               g.drawPolyline(xpos, ypos, 3);
               GraphicsUtil.drawText(g, Integer.toString(j), xpos[2] + 3, ypos[2] - 3, GraphicsUtil.H_LEFT, GraphicsUtil.V_BASELINE);
-              if (!seperate) DrawBidir(g, xpos[2], ypos[2]);
+              if (!seperate) drawBidir(g, xpos[2], ypos[2]);
               ypos[0] += 20;
               ypos[1] += 20;
               ypos[2] += 20;
@@ -768,7 +749,7 @@ public class RamAppearance {
     g.dispose();
   }
 
-  private static void DrawControlBlock(Instance inst, AttributeSet attrs, InstancePainter painter) {
+  private static void drawControlBlock(Instance inst, AttributeSet attrs, InstancePainter painter) {
     final var g = (Graphics2D) painter.getGraphics().create();
     final var xpos = new int[8];
     final var ypos = new int[8];
@@ -786,7 +767,7 @@ public class RamAppearance {
     for (var i = 0; i < getNrAddrPorts(attrs); i++) {
       final var idx = getAddrIndex(i, attrs);
       final var loc = inst.getPortLocation(idx);
-      DrawAddress(g, loc.getX(), loc.getY(), attrs.getValue(Mem.ADDR_ATTR).getWidth());
+      drawAddress(g, loc.getX(), loc.getY(), attrs.getValue(Mem.ADDR_ATTR).getWidth());
     }
 
     var cidx = 1;
@@ -830,7 +811,7 @@ public class RamAppearance {
     g.dispose();
   }
 
-  private static void DrawDataBlocks(Instance inst, AttributeSet attrs, InstancePainter painter) {
+  private static void drawDataBlocks(Instance inst, AttributeSet attrs, InstancePainter painter) {
     final var g = (Graphics2D) painter.getGraphics().create();
     final var x = painter.getBounds().getX() + 20;
     var y = painter.getBounds().getY() + getControlHeight(attrs);
@@ -898,7 +879,7 @@ public class RamAppearance {
     g.dispose();
   }
 
-  private static void DrawBidir(Graphics2D g, int x, int y) {
+  private static void drawBidir(Graphics2D g, int x, int y) {
     final var xpos = new int[4];
     final var ypos = new int[4];
     xpos[0] = xpos[3] = x - 10;
@@ -920,7 +901,7 @@ public class RamAppearance {
     g.drawPolyline(xpos, ypos, 3);
   }
 
-  private static void DrawAddress(Graphics2D g, int xpos, int ypos, int nrAddressBits) {
+  private static void drawAddress(Graphics2D g, int xpos, int ypos, int nrAddressBits) {
     GraphicsUtil.switchToWidth(g, 1);
     GraphicsUtil.drawText(g, "0", xpos + 22, ypos + 10, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
     GraphicsUtil.drawText(

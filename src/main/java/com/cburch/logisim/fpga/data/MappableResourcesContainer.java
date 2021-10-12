@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.fpga.data;
@@ -36,18 +17,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class MappableResourcesContainer {
 
-  static final Logger logger = LoggerFactory.getLogger(MappableResourcesContainer.class);
-
   private final Circuit myCircuit;
   private final BoardInformation currentUsedBoard;
-  private IOComponentsInformation IOcomps;
+  private IoComponentsInformation ioComps;
   private Map<ArrayList<String>, MapComponent> myMappableResources;
-  private final List<FPGAIOInformationContainer> myIOComponents;
+  private final List<FpgaIoInformationContainer> myIOComponents;
 
   /*
    * We differentiate two notation for each component, namely: 1) The display
@@ -66,9 +43,9 @@ public class MappableResourcesContainer {
     var BoardId = new ArrayList<String>();
     BoardId.add(CurrentBoard.getBoardName());
     myIOComponents = new ArrayList<>();
-    for (var io : currentUsedBoard.GetAllComponents()) {
+    for (var io : currentUsedBoard.getAllComponents()) {
       try {
-        var clone = (FPGAIOInformationContainer) io.clone();
+        var clone = (FpgaIoInformationContainer) io.clone();
         clone.setMapMode();
         myIOComponents.add(clone);
       } catch (CloneNotSupportedException e) {
@@ -82,13 +59,15 @@ public class MappableResourcesContainer {
    * Here we define the new structure of MappableResourcesContainer that allows for more features
    * and has less complexity; being compatible with the old version
    */
-  public IOComponentsInformation getIOComponentInformation() {
-    if (IOcomps == null) {
-      IOcomps = new IOComponentsInformation(null, true);
-      for (var io : myIOComponents) IOcomps.addComponent(io, 1);
+  public IoComponentsInformation getIoComponentInformation() {
+    if (ioComps == null) {
+      ioComps = new IoComponentsInformation(null, true);
+      for (final var io : myIOComponents) {
+        ioComps.addComponent(io, 1);
+      }
       /* TODO: build-up info */
     }
-    return IOcomps;
+    return ioComps;
   }
 
   public Map<ArrayList<String>, MapComponent> getMappableResources() {
@@ -96,8 +75,8 @@ public class MappableResourcesContainer {
   }
 
   public void destroyIOComponentInformation() {
-    IOcomps.clear();
-    IOcomps = null;
+    ioComps.clear();
+    ioComps = null;
   }
 
   public String getToplevelName() {
@@ -193,14 +172,14 @@ public class MappableResourcesContainer {
     return result;
   }
 
-  public ArrayList<String> GetMappedIOPinNames() {
-    var result = new ArrayList<String>();
-    for (var key : myMappableResources.keySet()) {
-      var map = myMappableResources.get(key);
+  public List<String> getMappedIoPinNames() {
+    final var result = new ArrayList<String>();
+    for (final var key : myMappableResources.keySet()) {
+      final var map = myMappableResources.get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {
-        if (!map.isIO(i) || map.isInternalMapped(i)) continue;
+        if (!map.isIo(i) || map.isInternalMapped(i)) continue;
         if (map.isBoardMapped(i)) {
-          var sb = new StringBuilder();
+          final var sb = new StringBuilder();
           if (map.isExternalInverted(i)) sb.append("n_");
           sb.append(map.getHdlString(i));
           result.add(sb.toString());
@@ -210,14 +189,14 @@ public class MappableResourcesContainer {
     return result;
   }
 
-  public ArrayList<String> GetMappedInputPinNames() {
-    var result = new ArrayList<String>();
-    for (var key : myMappableResources.keySet()) {
-      var map = myMappableResources.get(key);
+  public List<String> getMappedInputPinNames() {
+    final var result = new ArrayList<String>();
+    for (final var key : myMappableResources.keySet()) {
+      final var map = myMappableResources.get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {
         if (!map.isInput(i) || map.isInternalMapped(i)) continue;
         if (map.isBoardMapped(i)) {
-          var sb = new StringBuilder();
+          final var sb = new StringBuilder();
           if (map.isExternalInverted(i)) sb.append("n_");
           sb.append(map.getHdlString(i));
           result.add(sb.toString());
@@ -227,14 +206,14 @@ public class MappableResourcesContainer {
     return result;
   }
 
-  public ArrayList<String> GetMappedOutputPinNames() {
-    var result = new ArrayList<String>();
-    for (var key : myMappableResources.keySet()) {
-      var map = myMappableResources.get(key);
+  public List<String> getMappedOutputPinNames() {
+    final var result = new ArrayList<String>();
+    for (final var key : myMappableResources.keySet()) {
+      final var map = myMappableResources.get(key);
       for (var i = 0; i < map.getNrOfPins(); i++) {
         if (!map.isOutput(i) || map.isInternalMapped(i)) continue;
         if (map.isBoardMapped(i)) {
-          var sb = new StringBuilder();
+          final var sb = new StringBuilder();
           if (map.isExternalInverted(i)) sb.append("n_");
           sb.append(map.getHdlString(i));
           result.add(sb.toString());

@@ -1,29 +1,10 @@
 /*
- * This file is part of logisim-evolution.
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
  *
- * Logisim-evolution is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by the
- * Free Software Foundation, either version 3 of the License, or (at your
- * option) any later version.
+ * https://github.com/logisim-evolution/
  *
- * Logisim-evolution is distributed in the hope that it will be useful, but
- * WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License
- * for more details.
- *
- * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
- *
- * Original code by Carl Burch (http://www.cburch.com), 2011.
- * Subsequent modifications by:
- *   + College of the Holy Cross
- *     http://www.holycross.edu
- *   + Haute École Spécialisée Bernoise/Berner Fachhochschule
- *     http://www.bfh.ch
- *   + Haute École du paysage, d'ingénierie et d'architecture de Genève
- *     http://hepia.hesge.ch/
- *   + Haute École d'Ingénierie et de Gestion du Canton de Vaud
- *     http://www.heig-vd.ch/
+ * This is free software released under GNU GPLv3 license
  */
 
 package com.cburch.logisim.gui.hex;
@@ -64,7 +45,7 @@ public class HexFrame extends LFrame.SubWindow {
   private final JButton save = new JButton();
   private final JButton close = new JButton();
   private final Instance instance;
-  
+
   public HexFrame(Project project, Instance instance, HexModel model) {
     super(project);
     setDefaultCloseOperation(HIDE_ON_CLOSE);
@@ -73,7 +54,7 @@ public class HexFrame extends LFrame.SubWindow {
     this.editor = new HexEditor(model);
     this.instance = instance;
 
-    JPanel buttonPanel = new JPanel();
+    final var buttonPanel = new JPanel();
     buttonPanel.add(open);
     buttonPanel.add(save);
     buttonPanel.add(close);
@@ -81,10 +62,8 @@ public class HexFrame extends LFrame.SubWindow {
     save.addActionListener(myListener);
     close.addActionListener(myListener);
 
-    Dimension pref = editor.getPreferredSize();
-    JScrollPane scroll =
-        new JScrollPane(
-            editor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    final var pref = editor.getPreferredSize();
+    final var scroll = new JScrollPane(editor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     pref.height = Math.min(pref.height, pref.width * 3 / 2);
     scroll.setPreferredSize(pref);
     scroll.getViewport().setBackground(editor.getBackground());
@@ -128,6 +107,7 @@ public class HexFrame extends LFrame.SubWindow {
   private class EditListener implements ActionListener, ChangeListener {
     private Clip clip = null;
 
+    @Override
     public void actionPerformed(ActionEvent e) {
       Object src = e.getSource();
       if (src == LogisimMenuBar.CUT) {
@@ -145,8 +125,8 @@ public class HexFrame extends LFrame.SubWindow {
     }
 
     private void enableItems(LogisimMenuBar menubar) {
-      boolean sel = editor.selectionExists();
-      boolean clip = true; // TODO editor.clipboardExists();
+      final var sel = editor.selectionExists();
+      final var clip = true; // TODO editor.clipboardExists();
       menubar.setEnabled(LogisimMenuBar.CUT, sel);
       menubar.setEnabled(LogisimMenuBar.COPY, sel);
       menubar.setEnabled(LogisimMenuBar.PASTE, clip);
@@ -168,14 +148,16 @@ public class HexFrame extends LFrame.SubWindow {
       enableItems(menubar);
     }
 
+    @Override
     public void stateChanged(ChangeEvent e) {
       enableItems((LogisimMenuBar) getJMenuBar());
     }
   }
 
   private class MyListener implements ActionListener, LocaleListener {
+    @Override
     public void actionPerformed(ActionEvent event) {
-      Object src = event.getSource();
+      final var src = event.getSource();
       if (src == open) {
         HexFile.open((MemContents) model, HexFrame.this, project, instance);
       } else if (src == save) {
@@ -186,6 +168,7 @@ public class HexFrame extends LFrame.SubWindow {
       }
     }
 
+    @Override
     public void localeChanged() {
       setTitle(S.get("hexFrameTitle"));
       open.setText(S.get("openButton"));
@@ -205,6 +188,7 @@ public class HexFrame extends LFrame.SubWindow {
       return HexFrame.this;
     }
 
+    @Override
     public void localeChanged() {
       setText(S.get("hexFrameMenuItem"));
     }
