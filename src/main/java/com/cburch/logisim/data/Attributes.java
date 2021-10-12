@@ -176,7 +176,6 @@ public class Attributes {
 
     @Override
     public java.awt.Component getCellEditor(Font value) {
-//      return new LFontChooser(value);
       FontSelector.FONT_SELECTOR.setValue(value);
       return FontSelector.FONT_SELECTOR;
     }
