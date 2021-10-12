@@ -14,6 +14,7 @@ import static com.cburch.logisim.data.Strings.S;
 import com.bric.colorpicker.ColorPicker;
 import com.cburch.logisim.fpga.data.ComponentMapInformationContainer;
 import com.cburch.logisim.gui.generic.ComboBox;
+import com.cburch.logisim.gui.generic.FontSelector;
 import com.cburch.logisim.util.FontUtil;
 import com.cburch.logisim.util.JInputComponent;
 import com.cburch.logisim.util.StringGetter;
@@ -23,7 +24,6 @@ import java.awt.Font;
 import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.plaf.basic.BasicComboBoxRenderer;
-import org.drjekyll.fontchooser.FontChooser;
 
 public class Attributes {
   private static class BooleanAttribute extends OptionAttribute<Boolean> {
@@ -176,7 +176,9 @@ public class Attributes {
 
     @Override
     public java.awt.Component getCellEditor(Font value) {
-      return new LFontChooser(value);
+//      return new LFontChooser(value);
+      FontSelector.FONT_SELECTOR.setValue(value);
+      return FontSelector.FONT_SELECTOR;
     }
 
     @Override
@@ -185,30 +187,14 @@ public class Attributes {
     }
 
     @Override
-    public String toDisplayString(Font f) {
-      if (f == null) return "???";
-      return f.getFamily() + " " + FontUtil.toStyleDisplayString(f.getStyle()) + " " + f.getSize();
+    public String toDisplayString(Font font) {
+      if (font == null) return "???";
+      return font.getFamily() + " " + FontUtil.toStyleDisplayString(font.getStyle()) + " " + font.getSize();
     }
 
     @Override
-    public String toStandardString(Font f) {
-      return f.getFamily() + " " + FontUtil.toStyleStandardString(f.getStyle()) + " " + f.getSize();
-    }
-  }
-
-  private static class LFontChooser extends FontChooser implements JInputComponent {
-    private static final long serialVersionUID = 1L;
-
-    LFontChooser(Font initial) {
-      super(initial);
-    }
-
-    public Object getValue() {
-      return getSelectedFont();
-    }
-
-    public void setValue(Object value) {
-      setSelectedFont((Font) value);
+    public String toStandardString(Font font) {
+      return toDisplayString(font);
     }
   }
 
