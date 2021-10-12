@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * New take on project export/import a zip-file is generated which can include a user provided manifest
 
 * v3.7.0 (2021-10-12)
   * Reworked the slider component in the I/O extra library
