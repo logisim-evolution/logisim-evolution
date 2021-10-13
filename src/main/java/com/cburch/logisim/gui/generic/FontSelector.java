@@ -9,9 +9,12 @@
 
 package com.cburch.logisim.gui.generic;
 
+import static com.cburch.logisim.gui.Strings.S;
+
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.JInputComponent;
+import com.cburch.logisim.util.LocaleListener;
 
 import java.awt.GraphicsEnvironment;
 import java.awt.Font;
@@ -20,19 +23,20 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BoxLayout;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JCheckBox;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import javax.swing.SwingConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
 import java.util.Set;
 import java.util.TreeSet;
 
-public class FontSelector extends JPanel implements JInputComponent, ActionListener, ListSelectionListener {
+public class FontSelector extends JPanel implements JInputComponent, ActionListener, ListSelectionListener, LocaleListener {
 
   private final Set<String> fontNames;
   private Font currentFont = StdAttr.DEFAULT_LABEL_FONT;
@@ -49,12 +53,11 @@ public class FontSelector extends JPanel implements JInputComponent, ActionListe
   @SuppressWarnings("unchecked")
   public FontSelector() {
     fontNames = new TreeSet<>();
-    for (final var font : GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts())
+    for (final var font : GraphicsEnvironment.getLocalGraphicsEnvironment().getAllFonts()) {
       fontNames.add(font.getFamily());
+    }
     setLayout(new BorderLayout());
     preview.setEditable(false);
-    // FIXME: hardcoded String
-    preview.setText("This is just a small example of the selected font");
     add(new JScrollPane(preview), BorderLayout.SOUTH);
     selectableFontFamilies = new JList(fontNames.toArray());
     selectableFontFamilies.addListSelectionListener(this);
@@ -63,10 +66,12 @@ public class FontSelector extends JPanel implements JInputComponent, ActionListe
       selections.add(size);
     }
     selectableFontSize = new JList(selections.toArray());
+    ((DefaultListCellRenderer) selectableFontSize.getCellRenderer()).setHorizontalAlignment(SwingConstants.RIGHT);
     selectableFontSize.addListSelectionListener(this);
     add(new JScrollPane(selectableFontFamilies), BorderLayout.WEST);
     add(new JScrollPane(selectableFontSize), BorderLayout.CENTER);
     add(new JScrollPane(getStyle()), BorderLayout.EAST);
+    localeChanged();
   }
 
   @Override
@@ -79,13 +84,9 @@ public class FontSelector extends JPanel implements JInputComponent, ActionListe
     panel.setLayout(new BoxLayout(panel, BoxLayout.PAGE_AXIS));
     boldAttribute = new JCheckBox();
     boldAttribute.addActionListener(this);
-    // FIXME: hardcoded String
-    boldAttribute.setText("Bold");
     panel.add(boldAttribute);
     italicAttribute = new JCheckBox();
     italicAttribute.addActionListener(this);
-    // FIXME: hardcoded String
-    italicAttribute.setText("Italic");
     panel.add(italicAttribute);
     return panel;
   }
@@ -106,18 +107,19 @@ public class FontSelector extends JPanel implements JInputComponent, ActionListe
         fontSize = font.getSize();
         fontStyle = font.getStyle();
         boldAttribute.setSelected((fontStyle & Font.BOLD) != 0);
+        italicAttribute.setSelected((fontStyle & Font.ITALIC) != 0);
         fontChanged();
         return;
       } 
     }
-    throw new IllegalArgumentException("Object not a font or not a supported font!");
+    throw new IllegalArgumentException("Object is neither a font nor a supported font type!");
   }
 
   @Override
   public void actionPerformed(ActionEvent e) {
     if (boldAttribute.equals(e.getSource())) {
       final var isChecked = boldAttribute.isSelected();
-      final var newStyle = isChecked ? fontStyle | Font.BOLD : fontStyle & (Font.BOLD ^ Integer.MAX_VALUE);
+      final var newStyle = isChecked ? fontStyle | Font.BOLD : fontStyle & (Font.BOLD ^ 0xFFFFFFFF);
       if (newStyle != fontStyle) {
         fontStyle = newStyle;
         currentFont = new Font(currentFont.getFamily(), fontStyle, fontSize);
@@ -125,7 +127,7 @@ public class FontSelector extends JPanel implements JInputComponent, ActionListe
       }
     } else if (italicAttribute.equals(e.getSource())) {
       final var isChecked = italicAttribute.isSelected();
-      final var newStyle = isChecked ? fontStyle | Font.ITALIC : fontStyle & (Font.ITALIC ^ Integer.MAX_VALUE);
+      final var newStyle = isChecked ? fontStyle | Font.ITALIC : fontStyle & (Font.ITALIC ^ 0xFFFFFFFF);
       if (newStyle != fontStyle) {
         fontStyle = newStyle;
         currentFont = new Font(currentFont.getFamily(), fontStyle, fontSize);
@@ -147,6 +149,14 @@ public class FontSelector extends JPanel implements JInputComponent, ActionListe
       currentFont = new Font(selectedFont, fontStyle, fontSize);
       fontChanged();
     }
+  }
+
+  @Override
+  public void localeChanged() {
+    boldAttribute.setText(S.get("fontBoldFont"));
+    italicAttribute.setText(S.get("fontItalicFont"));
+    preview.setText(S.get("fontExampleLineText"));
+    repaint();
   }
 
 }
