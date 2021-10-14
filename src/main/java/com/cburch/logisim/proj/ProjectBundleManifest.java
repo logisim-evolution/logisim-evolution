@@ -204,7 +204,7 @@ public class ProjectBundleManifest extends JDialog implements ActionListener {
       final var dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
       final var now = LocalDateTime.now();  
       zipfile.write(S.get("projHeader3").concat("\n\n").getBytes());
-      zipfile.write(S.fmt("projGenerateInfo", BuildInfo.displayName, dtf.format(now)).concat("\n\n").getBytes());
+      zipfile.write(S.fmt("projGenerateInfo", BuildInfo.displayName, BuildInfo.url, dtf.format(now)).concat("\n\n").getBytes());
     } catch (IOException e) {
       manifestWritten = false;
     }

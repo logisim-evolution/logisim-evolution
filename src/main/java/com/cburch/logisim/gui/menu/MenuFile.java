@@ -66,8 +66,8 @@ class MenuFile extends Menu implements ActionListener {
     add(save);
     add(saveAs);
     addSeparator();
-    add(exportProj);
     add(importProj);
+    add(exportProj);
     addSeparator();
     add(exportImage);
     add(print);
