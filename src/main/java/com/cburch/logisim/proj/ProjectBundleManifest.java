@@ -61,14 +61,18 @@ public class ProjectBundleManifest {
     return new infofileInformation(logisimVersion, mainCircuitFile);
   }
 
+  /**
+   * This function writes the manifest file to a given zip-file 
+   *
+   * @param zipfile Zipfile to write to
+   * @param info Logisim version with which this manifest was created and main-circuit-file
+   * @throws IOException
+   */
   public static void writeManifest(ZipOutputStream zipfile, infofileInformation info) throws IOException {
     if (zipfile == null) return; 
     try {
-      // Create instance of DocumentBuilderFactory
       final var factory = XmlUtil.getHardenedBuilderFactory();
-      // Get the DocumentBuilder
       final var parser = factory.newDocumentBuilder();
-      // Create blank DOM Document
       final var boardInfo = parser.newDocument();
       final var manifest = boardInfo.createElement("element");
       boardInfo.appendChild(manifest);
@@ -90,24 +94,26 @@ public class ProjectBundleManifest {
       zipfile.putNextEntry(new ZipEntry("manifest.xml"));
       zipfile.write(dest.getWriter().toString().getBytes());
     } catch (ParserConfigurationException e) {
-      //FIXME: handle exception
       System.err.println(e.getMessage());
     } catch (TransformerConfigurationException e) {
-      //FIXME: handle exception
       System.err.println(e.getMessage());
     } catch (TransformerException e) {
-      //FIXME: handle exception
       System.err.println(e.getMessage());
     }
   }
   
+  /**
+   * This function reads the contents of the manifest-file from a given zip-file 
+   *
+   * @param zipFile zipfile to read from
+   * @param frame parrent frame of the caller
+   * @return Information contained in the manifest-file
+   * @throws IOException
+   */
   public static infofileInformation getManifestInfo(ZipFile zipFile, Frame frame) throws IOException {
     try {
-      // Create instance of DocumentBuilderFactory
       final var factory = XmlUtil.getHardenedBuilderFactory();
-      // Get the DocumentBuilder
       final var parser = factory.newDocumentBuilder();
-      // Create blank DOM Document
       final var projInfoEntry = zipFile.getEntry("manifest.xml");
       if (projInfoEntry == null) {
         OptionPane.showMessageDialog(frame, S.fmt("projBundleReadError", S.get("projBundleNoInfo")));
@@ -122,7 +128,7 @@ public class ProjectBundleManifest {
       }
       final var manifestNode = manifestNodes.item(0); 
       final var manifestInfo = manifestNode.getChildNodes();
-      // first we find the version
+      // first we find the version of the manifest to check if we can process
       var versionFound = false;
       for (var nodeId = 0; nodeId < manifestInfo.getLength(); nodeId++) {
         final var node = manifestInfo.item(nodeId);
