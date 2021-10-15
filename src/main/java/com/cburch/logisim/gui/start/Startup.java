@@ -76,7 +76,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.UnrecognizedOptionException;
-import org.drjekyll.fontchooser.FontChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -994,7 +993,6 @@ public class Startup implements AWTEventListener {
             || (container instanceof JHelp)
             || (container instanceof JFileChooser)
             || ((container instanceof JScrollPane) && (!(container instanceof CanvasPane)))
-            || (container instanceof FontChooser)
             || (container instanceof JCheckBoxMenuItem)) {
           AppPreferences.setScaledFonts(((JComponent) container).getComponents());
           try {
