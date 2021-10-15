@@ -33,6 +33,16 @@ public class Drawing implements CanvasModel {
     canvasObjects = new ArrayList<>();
     overlaps = new DrawingOverlaps();
   }
+  
+  public Drawing(ArrayList<CanvasObject> objects, DrawingOverlaps overlaps) {
+    listeners = new EventSourceWeakSupport<>();
+    canvasObjects = objects;
+    this.overlaps = overlaps;
+  }
+  
+  public Drawing getCopy() {
+    return new Drawing(canvasObjects, overlaps);
+  }
 
   @Override
   public void addCanvasModelListener(CanvasModelListener l) {

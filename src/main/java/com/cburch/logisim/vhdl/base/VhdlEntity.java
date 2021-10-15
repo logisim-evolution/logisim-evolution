@@ -287,17 +287,17 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
   private VhdlAppearance appearance;
 
   private ArrayList<Instance> getPins() {
-    ArrayList<Instance> pins = new ArrayList<>();
-    int y = 0;
-    for (VhdlParser.PortDescription p : content.getPorts()) {
-      AttributeSet a = Pin.FACTORY.createAttributeSet();
-      a.setValue(StdAttr.LABEL, p.getName());
-      a.setValue(Pin.ATTR_TYPE, !p.getType().equals(Port.INPUT));
-      a.setValue(StdAttr.FACING, !p.getType().equals(Port.INPUT) ? Direction.WEST : Direction.EAST);
-      a.setValue(StdAttr.WIDTH, p.getWidth());
-      InstanceComponent ic = (InstanceComponent) Pin.FACTORY.createComponent(Location.create(100, y), a);
-      pins.add(ic.getInstance());
-      y += 10;
+    final var pins = new ArrayList<Instance>();
+    var yPos = 0;
+    for (final var port : content.getPorts()) {
+      final var attr = Pin.FACTORY.createAttributeSet();
+      attr.setValue(StdAttr.LABEL, port.getName());
+      attr.setValue(Pin.ATTR_TYPE, !port.getType().equals(Port.INPUT));
+      attr.setValue(StdAttr.FACING, !port.getType().equals(Port.INPUT) ? Direction.WEST : Direction.EAST);
+      attr.setValue(StdAttr.WIDTH, port.getWidth());
+      final var component = (InstanceComponent) Pin.FACTORY.createComponent(Location.create(100, yPos), attr);
+      pins.add(component.getInstance());
+      yPos += 10;
     }
     return pins;
   }

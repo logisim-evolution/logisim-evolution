@@ -125,6 +125,10 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
   public void addCircuitAppearanceListener(CircuitAppearanceListener l) {
     listeners.add(l);
   }
+  
+  public Drawing getCustomAppearanceDrawing() {
+    return super.getCopy();
+  }
 
   public void sortPinsList(List<Instance> pins, Direction facing) {
     DefaultAppearance.sortPinList(pins, facing);
