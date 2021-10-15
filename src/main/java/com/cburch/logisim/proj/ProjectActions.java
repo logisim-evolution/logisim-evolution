@@ -422,7 +422,7 @@ public class ProjectActions {
       if (isCorrectFile) {
         try {
           final var zipFile = new ZipFile(zipFileName);
-          final var bundleInfo = ProjectBundleInfoFile.getBundleInfoFileContents(zipFile, proj.getFrame());
+          final var bundleInfo = ProjectBundleManifest.getManifestInfo(zipFile, proj.getFrame());
           if (bundleInfo == null) return false;
           final var mainFileEntry = zipFile.getEntry(bundleInfo.getMainLogisimFilename());
           if (mainFileEntry == null) {
@@ -571,8 +571,8 @@ public class ProjectActions {
                 return false;
               }
             }
-            ProjectBundleInfoFile.writeBundleInfoFile(projectZipFile, 
-                ProjectBundleInfoFile.getInfoContainer(BuildInfo.displayName, loader.getMainFile().getName()));
+            final var info = ProjectBundleManifest.getInfoContainer(BuildInfo.displayName, loader.getMainFile().getName());
+            ProjectBundleManifest.writeManifest(projectZipFile, info);
             projectZipFile.close();
             projectFile.close();
           }
