@@ -429,12 +429,12 @@ public class ProjectActions {
             OptionPane.showMessageDialog(proj.getFrame(), S.fmt("projBundleReadError", S.get("projBundleMainNotFound")));
             return false;
           }
-          final var manifestFileEntry = zipFile.getEntry(ProjectBundleManifest.MANIFEST_FILE_NAME);
-          if (manifestFileEntry != null) {
-            final var manifestInStream = zipFile.getInputStream(manifestFileEntry);
-            final var dialog = new ProjectBundleManifest(proj, "");
-            dialog.showManifest(manifestInStream);
-            manifestInStream.close();
+          final var readmeFileEntry = zipFile.getEntry(ProjectBundleReadme.README_FILE_NAME);
+          if (readmeFileEntry != null) {
+            final var readmeInStream = zipFile.getInputStream(readmeFileEntry);
+            final var dialog = new ProjectBundleReadme(proj, "");
+            dialog.showReadme(readmeInStream);
+            readmeInStream.close();
           }
           chooser.setFileFilter(Loader.LOGISIM_DIRECTORY);
           chooser.setAcceptAllFileFilterUsed(false);
@@ -561,11 +561,11 @@ public class ProjectActions {
             final var projectZipFile = new ZipOutputStream(projectFile);
             projectZipFile.putNextEntry(new ZipEntry(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator)));
             ret &= loader.export(proj.getLogisimFile(), projectZipFile);
-            if (OptionPane.showConfirmDialog(proj.getFrame(), S.get("projAddManifest"), 
+            if (OptionPane.showConfirmDialog(proj.getFrame(), S.get("projAddReadme"), 
                 S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION) {
-              final var dialog = new ProjectBundleManifest(proj, loader.getMainFile().getName().replace(Loader.LOGISIM_EXTENSION, ""));
-              if (!dialog.writeManifest(projectZipFile)) {
-                OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjUnableToCreate", S.get("projManifestError")));
+              final var dialog = new ProjectBundleReadme(proj, loader.getMainFile().getName().replace(Loader.LOGISIM_EXTENSION, ""));
+              if (!dialog.writeReadme(projectZipFile)) {
+                OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjUnableToCreate", S.get("projReadmeError")));
                 projectZipFile.close();
                 projectFile.close();
                 return false;

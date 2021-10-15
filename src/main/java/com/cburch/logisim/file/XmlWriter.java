@@ -40,13 +40,8 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-<<<<<<< HEAD
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import javax.xml.parsers.DocumentBuilderFactory;
-=======
->>>>>>> f47fe87d51cc50026300ec6374159a7c2c6aab2d
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
@@ -191,17 +186,9 @@ final class XmlWriter {
       var dstFilePath = destFile.getAbsolutePath();
       dstFilePath = dstFilePath.substring(0, dstFilePath.lastIndexOf(File.separator));
       context = new XmlWriter(file, doc, loader, dstFilePath);
-<<<<<<< HEAD
     } else if (mainCircFile != null) {
       context = new XmlWriter(file, doc, loader, null, mainCircFile, recurse);
     } else context = new XmlWriter(file, doc, loader);
-=======
-    } else if (libraryHome != null) {
-      context = new XmlWriter(file, doc, loader, null, libraryHome);
-    } else {
-      context = new XmlWriter(file, doc, loader);
-    }
->>>>>>> f47fe87d51cc50026300ec6374159a7c2c6aab2d
 
     context.fromLogisimFile();
 

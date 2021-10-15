@@ -40,9 +40,9 @@ import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.data.MutableDataSet;
 
-public class ProjectBundleManifest extends JDialog implements ActionListener {
+public class ProjectBundleReadme extends JDialog implements ActionListener {
 
-  public static final String MANIFEST_FILE_NAME = "README.md";
+  public static final String README_FILE_NAME = "README.md";
 
   private JButton closeButton = new JButton();
   private JButton writeButton = new JButton();
@@ -52,10 +52,10 @@ public class ProjectBundleManifest extends JDialog implements ActionListener {
   private JEditorPane projectDescription = new JEditorPane();
   private final Frame parrent;
   private ZipOutputStream zipfile;
-  private boolean manifestWritten = true;
+  private boolean readmeWritten = true;
 
-  public ProjectBundleManifest(Project project, String projName) {
-    super(project.getFrame(), S.get("projBundleManifestWindow"));
+  public ProjectBundleReadme(Project project, String projName) {
+    super(project.getFrame(), S.get("projBundleReadmeWindow"));
     setModal(true);
     setDefaultCloseOperation(DISPOSE_ON_CLOSE);
     setAlwaysOnTop(true);
@@ -66,7 +66,7 @@ public class ProjectBundleManifest extends JDialog implements ActionListener {
     parrent = project.getFrame();
   }
   
-  public void showManifest(InputStream file) throws IOException {
+  public void showReadme(InputStream file) throws IOException {
     final var lines = new StringBuilder();
     var kar = 0;
     do {
@@ -76,22 +76,22 @@ public class ProjectBundleManifest extends JDialog implements ActionListener {
     final var options = new MutableDataSet();
     final var parser = Parser.builder(options).build();
     final var renderer = HtmlRenderer.builder(options).build();
-    final var manifest = parser.parse(lines.toString());
-    final var text = renderer.render(manifest);
+    final var readme = parser.parse(lines.toString());
+    final var text = renderer.render(readme);
     final var dialog = new JEditorPane("text/html", text);
     dialog.setEditable(false);
     dialog.setCaretPosition(0);
     final var scroller = new JScrollPane(dialog);
     setLayout(new BorderLayout());
     add(scroller, BorderLayout.CENTER);
-    closeButton.setText(S.get("projCloseManifest"));
+    closeButton.setText(S.get("projCloseReadme"));
     add(closeButton, BorderLayout.SOUTH);
     pack();
     setLocationRelativeTo(parrent);
     setVisible(true);
   }
 
-  public boolean writeManifest(ZipOutputStream zipfile) {
+  public boolean writeReadme(ZipOutputStream zipfile) {
     this.zipfile = zipfile;
     setLayout(new GridBagLayout());
     setResizable(false);
@@ -125,13 +125,13 @@ public class ProjectBundleManifest extends JDialog implements ActionListener {
     gbc.gridwidth = 1;
     closeButton.setText(S.get("projCancel"));
     add(closeButton, gbc);
-    writeButton.setText(S.get("projWriteManifest"));
+    writeButton.setText(S.get("projWriteReadme"));
     gbc.gridx = 1;
     add(writeButton, gbc);
     pack();
     setLocationRelativeTo(parrent);
     setVisible(true);
-    return manifestWritten;
+    return readmeWritten;
   }
 
   @Override
@@ -140,18 +140,18 @@ public class ProjectBundleManifest extends JDialog implements ActionListener {
       setVisible(false);
       dispose();
     } else if (writeButton.equals(e.getSource())) {
-      writeManifestFile();
+      writeReadmeFile();
       setVisible(false);
       dispose();
     }
   }
 
-  private void writeManifestFile() {
+  private void writeReadmeFile() {
     if (zipfile == null) return;
     try {
       final var seperator = "---\n\n";
       var wroteheader1 = false;
-      zipfile.putNextEntry(new ZipEntry(MANIFEST_FILE_NAME));
+      zipfile.putNextEntry(new ZipEntry(README_FILE_NAME));
       final var projName = projectName.getText();
       zipfile.write(S.get("projHeader").concat("\n\n").getBytes());
       if ((projName != null) && !projName.isEmpty()) {
@@ -206,7 +206,7 @@ public class ProjectBundleManifest extends JDialog implements ActionListener {
       zipfile.write(S.get("projHeader3").concat("\n\n").getBytes());
       zipfile.write(S.fmt("projGenerateInfo", BuildInfo.displayName, BuildInfo.url, dtf.format(now)).concat("\n\n").getBytes());
     } catch (IOException e) {
-      manifestWritten = false;
+      readmeWritten = false;
     }
   }
 }
