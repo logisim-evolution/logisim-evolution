@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Logisim has now an internal font-chooser to comply to the font-values used
 
 * v3.7.0 (2021-10-12)
   * Reworked the slider component in the I/O extra library
