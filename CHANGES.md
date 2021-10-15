@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Logisim has now an internal font-chooser to comply to the font-values used
+  * Fixed VHDL-component pins not visible bug
   * New take on project export/import a zip-file is generated which can include a user provided manifest
 
 * v3.7.0 (2021-10-12)
@@ -15,7 +17,7 @@
     * `-clearprefs` is now `--clear-prefs`,
     * `-clearprops` option is removed (use `--clear-prefs` instead),
     * `-geom` is now `--geometry`,
-    * `-nosplash` is now `--no-splash` or `-ns,
+    * `-nosplash` is now `--no-splash` or `-ns`,
     * `-sub` is now `--substitute` or `-s`,
     * `-testvector` is now `--test-vector` or `-w`,
     * `-test-fpga-implementation` is now `--test-fpga` or `-f`,
@@ -25,7 +27,7 @@
   * Each circuit stores/restores the last board used for Download (handy for templates to give to students)
   * Fixed startup crash related to incorrectly localized date format.
   * Added a setting to select lower- or upper-case VHDL keywords.
-  * Added project export/import feature.
+  * Added project export feature.
   * Cleaned-up the written .circ file.
   * Cleaned-up the library tree of loaded projects.
 

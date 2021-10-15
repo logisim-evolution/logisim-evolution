@@ -28,6 +28,7 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
 import com.cburch.logisim.util.LineBuffer;
+import com.cburch.logisim.util.XmlUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,10 +40,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+<<<<<<< HEAD
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import javax.xml.parsers.DocumentBuilderFactory;
+=======
+>>>>>>> f47fe87d51cc50026300ec6374159a7c2c6aab2d
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
@@ -178,7 +182,7 @@ final class XmlWriter {
   static void write(LogisimFile file, OutputStream out, LibraryLoader loader, File destFile, String mainCircFile, boolean recurse)
       throws ParserConfigurationException, TransformerException, IOException, LoadFailedException {
 
-    final var docFactory = DocumentBuilderFactory.newInstance();
+    final var docFactory = XmlUtil.getHardenedBuilderFactory();
     final var docBuilder = docFactory.newDocumentBuilder();
 
     final var doc = docBuilder.newDocument();
@@ -187,9 +191,17 @@ final class XmlWriter {
       var dstFilePath = destFile.getAbsolutePath();
       dstFilePath = dstFilePath.substring(0, dstFilePath.lastIndexOf(File.separator));
       context = new XmlWriter(file, doc, loader, dstFilePath);
+<<<<<<< HEAD
     } else if (mainCircFile != null) {
       context = new XmlWriter(file, doc, loader, null, mainCircFile, recurse);
     } else context = new XmlWriter(file, doc, loader);
+=======
+    } else if (libraryHome != null) {
+      context = new XmlWriter(file, doc, loader, null, libraryHome);
+    } else {
+      context = new XmlWriter(file, doc, loader);
+    }
+>>>>>>> f47fe87d51cc50026300ec6374159a7c2c6aab2d
 
     context.fromLogisimFile();
 
@@ -197,6 +209,7 @@ final class XmlWriter {
     try {
       tfFactory.setAttribute("indent-number", 2);
     } catch (IllegalArgumentException ignored) {
+      // Do nothing
     }
     final var tf = tfFactory.newTransformer();
     tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
@@ -204,6 +217,7 @@ final class XmlWriter {
     try {
       tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
     } catch (IllegalArgumentException ignored) {
+      // Do nothing
     }
 
     if ((mainCircFile != null) && (out instanceof ZipOutputStream zipFile)) {
@@ -223,13 +237,12 @@ final class XmlWriter {
       @SuppressWarnings("unchecked")
       final var attr = (Attribute<Object>) attrBase;
       final var val = attrs.getValue(attr);
-      if (userModifiedOnly && (attrs.isReadOnly(attr) || attr.isHidden())) 
-        continue;
+      if (userModifiedOnly && (attrs.isReadOnly(attr) || attr.isHidden())) continue;
       if (attrs.isToSave(attr) && val != null) {
         final var dflt = source == null ? null : source.getDefaultAttributeValue(attr, BuildInfo.version);
         final var defaultValue = dflt == null ? "" : attr.toStandardString(dflt);
         var newValue = attr.toStandardString(val);
-        if (dflt == null || (!dflt.equals(val) && !defaultValue.equals(newValue)) 
+        if (dflt == null || (!dflt.equals(val) && !defaultValue.equals(newValue))
             || (attr.equals(StdAttr.APPEARANCE) && !userModifiedOnly)
             || (attr.equals(ProbeAttributes.PROBEAPPEARANCE) && !userModifiedOnly && val.equals(ProbeAttributes.APPEAR_EVOLUTION_NEW))) {
           final var a = doc.createElement("a");
@@ -253,9 +266,7 @@ final class XmlWriter {
   }
 
   Library findLibrary(ComponentFactory source) {
-    if (file.contains(source)) {
-      return file;
-    }
+    if (file.contains(source)) return file;
     for (final var lib : file.getLibraries()) {
       if (lib.contains(source)) return lib;
     }
@@ -263,9 +274,7 @@ final class XmlWriter {
   }
 
   Library findLibrary(Tool tool) {
-    if (libraryContains(file, tool)) {
-      return file;
-    }
+    if (libraryContains(file, tool)) return file;
     for (final var lib : file.getLibraries()) {
       if (libraryContains(lib, tool)) return lib;
     }
