@@ -152,17 +152,24 @@ public class XmlCircuitReader extends CircuitTransaction {
       reader.initAttributeSet(circData.circuitElement, dest.getStaticAttributes(), null, isHolyCross, isEvolution);
       if (circData.circuitElement.hasChildNodes()) {
         if (hasNamedBox) {
-          /* This situation is clear, it is an older logisim-evolution file */
-          dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_EVOLUTION);
+                /* This situation is clear, it is an older logisim-evolution file */
+          if ((circData.appearance != null) && !circData.appearance.isEmpty()) {
+            dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CUSTOM);
+          } else {
+            dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_EVOLUTION);
+          }
         } else {
           if (!hasAppearAttr) {
             /* Here we have 2 possibilities, either a Holycross file or a logisim-evolution file
              * before the introduction of the named circuit boxes. So let's ask the user.
              */
-            if (isHolyCross)
+            if ((circData.appearance != null) && !circData.appearance.isEmpty()) {
+              dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CUSTOM);
+            } else if (isHolyCross) {
               dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_FPGA);
-            else
+            } else {
               dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CLASSIC);
+            }
           }
         }
         if (!hasNamedBoxFixedSize)

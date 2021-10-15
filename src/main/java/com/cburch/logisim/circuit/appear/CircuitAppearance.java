@@ -427,7 +427,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
         defaultCanvasObjects.clear();
         defaultCanvasObjects.addAll(shapes);
       } else {
-        super.removeObjects(new ArrayList<>(getObjectsFromBottom()));
+        super.removeObjects(new ArrayList<>(getCustomObjectsFromBottom()));
         super.addObjects(0, shapes);
       }
     } finally {
