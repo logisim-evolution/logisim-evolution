@@ -168,10 +168,8 @@ public class ProjectBundleManifest {
         }
       }      
     } catch (ParserConfigurationException e) {
-      //FIXME: handle exception
       System.err.println(e.getMessage());
     } catch (SAXException e) {
-      //FIXME: handle exception
       System.err.println(e.getMessage());
     }
     return null;
