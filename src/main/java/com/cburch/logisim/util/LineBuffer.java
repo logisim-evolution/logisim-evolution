@@ -11,6 +11,7 @@ package com.cburch.logisim.util;
 
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.Vhdl;
+import com.cburch.logisim.prefs.AppPreferences;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -20,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.RandomAccess;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -502,7 +504,6 @@ public class LineBuffer implements RandomAccess {
     return result;
   }
 
-
   /**
    * Returns **copy** of internal pair buffer.
    */
@@ -676,6 +677,31 @@ public class LineBuffer implements RandomAccess {
    */
   public static String formatVhdl(String fmt, Object... args) {
     return getHdlBuffer().addVhdlKeywords().add(fmt, args).get(0);
+  }
+
+  /**
+   * Formats the contained contents with either upper or lower case VHDL keywords
+   *
+   */
+  public void doVhdlPostProcessing() {
+    final var replacement = new ArrayList<String>();
+    final var vhdlPatterns = new TreeMap<String, String>();
+    for (final var key : Vhdl.VHDL_KEYWORDS) {
+      vhdlPatterns.put(String.format("%s ", AppPreferences.VhdlKeywordsUpperCase.getBoolean() 
+          ? key.toUpperCase() : key.toLowerCase())
+          , String.format("(?i)%s ", key));
+    }
+    for (final var line : contents) {
+      final var subLines = line.split("\n");
+      for (final var subLine : subLines) {
+        var newLine = subLine;
+        for (final var key : vhdlPatterns.keySet()) {
+          newLine = newLine.replaceAll(vhdlPatterns.get(key), key);
+        }
+        replacement.add(newLine);
+      }
+    }
+    contents = replacement;
   }
 
   /* ********************************************************************************************* */

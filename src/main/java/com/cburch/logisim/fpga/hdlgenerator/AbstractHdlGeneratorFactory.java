@@ -446,7 +446,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
 
   private List<String> getVHDLBlackBox(Netlist theNetlist, AttributeSet attrs,
       String componentName, Boolean isEntity) {
-    final var contents = LineBuffer.getHdlBuffer().addVhdlKeywords();
+    final var contents = LineBuffer.getHdlBuffer();
     var maxNameLength = 0;
     if (getWiresPortsDuringHDLWriting) {
       myWires.removeWires();
@@ -454,7 +454,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       myPorts.removePorts();
       getGenerationTimeWiresPorts(theNetlist, attrs);
     }
-    contents.add(isEntity ? "{{entity}} {{1}} {{is}}" : "{{component}} {{1}}", componentName);
+    contents.add(isEntity ? "entity {{1}} is" : "component {{1}}", componentName);
     if (!myParametersList.isEmpty(attrs)) {
       // first we build a list with parameters to determine the max. string length
       final var myParameters = new HashMap<String, Boolean>();
@@ -468,14 +468,14 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       var currentGenericId = 0;
       for (final var thisGeneric : myGenerics) {
         if (currentGenericId == 0) {
-          contents.add("   {{generic}} ( {{1}}{{2}}: {{3}}{{4}};", thisGeneric,
+          contents.add("   generic ( {{1}}{{2}}: {{3}}{{4}};", thisGeneric,
               " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
-              myParameters.get(thisGeneric) ? "{{integer}}" : "std_logic_vector",
+              myParameters.get(thisGeneric) ? "integer" : "std_logic_vector",
               currentGenericId == (myGenerics.size() - 1) ? " )" : "");
         } else {
           contents.add("             {{1}}{{2}}: {{3}}{{4}};", thisGeneric,
               " ".repeat(Math.max(0, maxNameLength - thisGeneric.length())),
-              myParameters.get(thisGeneric) ? "{{integer}}" : "std_logic_vector",
+              myParameters.get(thisGeneric) ? "integer" : "std_logic_vector",
               currentGenericId == (myGenerics.size() - 1) ? " )" : "");
         }
         currentGenericId++;
@@ -500,7 +500,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       var firstEntry = true;
       var currentEntry = 0;
       // now we process in order
-      var direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? Vhdl.getVhdlKeyword("IN   ") : Vhdl.getVhdlKeyword("IN ");
+      var direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? "IN   " : "IN ";
       final var myInputs = new TreeSet<String>(myPorts.keySet(Port.INPUT));
       myInputs.addAll(tickers);
       for (final var input : myInputs) {
@@ -509,7 +509,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         firstEntry = getPortEntry(contents, firstEntry, nrOfEntries, currentEntry, input, direction, type, maxNameLength);
         currentEntry++;
       }
-      direction = Vhdl.getVhdlKeyword("INOUT");
+      direction = "INOUT";
       final var myInOuts = new TreeSet<String>(myPorts.keySet(Port.INOUT));
       for (final var inout : myInOuts) {
         nrOfPortBits = myPorts.get(inout, attrs);
@@ -517,7 +517,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         firstEntry = getPortEntry(contents, firstEntry, nrOfEntries, currentEntry, inout, direction, type, maxNameLength);
         currentEntry++;
       }
-      direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? Vhdl.getVhdlKeyword("OUT  ") : Vhdl.getVhdlKeyword("OUT");
+      direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? "OUT  " : "OUT";
       final var myOutputs = new TreeSet<String>(myPorts.keySet(Port.OUTPUT));
       for (final var output : myOutputs) {
         nrOfPortBits = myPorts.get(output, attrs);
@@ -527,16 +527,17 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       }
     }
     if (isEntity)
-      contents.add("{{end}} {{entity}} {{1}};", componentName);
+      contents.add("end entity {{1}};", componentName);
     else
-      contents.add("{{end}} {{component}};");
+      contents.add("end component;");
+    contents.doVhdlPostProcessing();
     return contents.getWithIndent(isEntity ? 0 : 1);
   }
 
   private boolean getPortEntry(LineBuffer contents, boolean firstEntry, int nrOfEntries, int currentEntry,
       String name, String direction, String type, int maxLength) {
     if (firstEntry) {
-      contents.add("   {{port}} ( {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction,
+      contents.add("   port ( {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction,
           type, currentEntry == (nrOfEntries - 1) ? " )" : "");
     } else {
       contents.add("          {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction,
