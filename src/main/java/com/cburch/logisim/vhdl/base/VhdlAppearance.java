@@ -22,7 +22,7 @@ import java.util.List;
 public class VhdlAppearance extends CircuitAppearance {
   VhdlAppearance(List<CanvasObject> shapes) {
     super(null);
-    setObjectsForce(shapes);
+    setObjectsForce(shapes, true);
   }
 
   static VhdlAppearance create(List<Instance> pins, String name, AttributeOption style) {
