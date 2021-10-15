@@ -13,6 +13,7 @@ import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.FpgaClass;
 import com.cburch.logisim.fpga.data.FpgaIoInformationContainer;
 import com.cburch.logisim.fpga.gui.DialogNotification;
+import com.cburch.logisim.util.XmlUtil;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.InputStream;
@@ -48,7 +49,7 @@ public class BoardReaderClass {
   public BoardInformation getBoardInformation() {
     try {
       // Create instance of DocumentBuilderFactory
-      factory = DocumentBuilderFactory.newInstance();
+      factory = XmlUtil.getHardenedBuilderFactory();
       // Get the DocumentBuilder
       parser = factory.newDocumentBuilder();
       // Create blank DOM Document

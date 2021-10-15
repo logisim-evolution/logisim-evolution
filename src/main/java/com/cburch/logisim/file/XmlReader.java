@@ -47,6 +47,7 @@ import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.tools.WiringTool;
 import com.cburch.logisim.util.InputEventUtil;
 import com.cburch.logisim.util.LineBuffer;
+import com.cburch.logisim.util.XmlUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
 import java.io.IOException;
@@ -61,7 +62,6 @@ import java.util.Map;
 import java.util.UUID;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -1041,7 +1041,7 @@ class XmlReader {
   }
 
   private Document loadXmlFrom(InputStream is) throws SAXException, IOException {
-    final var factory = DocumentBuilderFactory.newInstance();
+    final var factory = XmlUtil.getHardenedBuilderFactory();
     factory.setNamespaceAware(true);
     try {
       factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
