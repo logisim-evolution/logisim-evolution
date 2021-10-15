@@ -152,7 +152,7 @@ public class XmlCircuitReader extends CircuitTransaction {
       reader.initAttributeSet(circData.circuitElement, dest.getStaticAttributes(), null, isHolyCross, isEvolution);
       if (circData.circuitElement.hasChildNodes()) {
         if (hasNamedBox) {
-                /* This situation is clear, it is an older logisim-evolution file */
+          // This situation is clear, it is an older logisim-evolution file
           if ((circData.appearance != null) && !circData.appearance.isEmpty()) {
             dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CUSTOM);
           } else {
