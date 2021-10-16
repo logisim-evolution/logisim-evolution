@@ -115,4 +115,25 @@ public final class StringUtil {
     }
     return Bounds.create(x, y, w, h);
   }
+
+  /**
+   * Checks if given char sequence is either null or empty.
+   */
+  public static boolean isNullOrEmpty(CharSequence str) {
+    return str == null || str.isEmpty();
+  }
+
+  /**
+   * Checks if given char sequence is not null and not empty.
+   */
+  public static boolean isNotEmpty(CharSequence seq) {
+    return seq != null && !seq.isEmpty();
+  }
+
+  /**
+   * Null safe version of `String.startsWith()`
+   */
+  public static boolean startsWith(String seq, String prefix) {
+    return seq != null && seq.startsWith(prefix);
+  }
 }
