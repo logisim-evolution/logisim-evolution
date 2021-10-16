@@ -120,20 +120,20 @@ public final class StringUtil {
    * Checks if given char sequence is either null or empty.
    */
   public static boolean isNullOrEmpty(CharSequence str) {
-    return str == null || str.isEmpty();
+    return (str == null) ? true : str.isEmpty();
   }
 
   /**
    * Checks if given char sequence is not null and not empty.
    */
   public static boolean isNotEmpty(CharSequence seq) {
-    return seq != null && !seq.isEmpty();
+    return (seq != null) ? !seq.isEmpty() : false;
   }
 
   /**
    * Null safe version of `String.startsWith()`
    */
   public static boolean startsWith(String seq, String prefix) {
-    return seq != null && seq.startsWith(prefix);
+    return (seq != null) ? seq.startsWith(prefix) : false;
   }
 }
