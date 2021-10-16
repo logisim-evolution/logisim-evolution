@@ -45,8 +45,10 @@ import com.cburch.logisim.tools.SelectTool;
 import com.cburch.logisim.tools.TextTool;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.tools.WiringTool;
+import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.InputEventUtil;
 import com.cburch.logisim.util.LineBuffer;
+import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.XmlUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
@@ -105,7 +107,7 @@ class XmlReader {
     }
 
     Library findLibrary(String libName) throws XmlReaderException {
-      if (libName == null || libName.isEmpty()) return file;
+      if (StringUtil.isNullOrEmpty(libName)) return file;
       final var ret = libs.get(libName);
       if (ret == null) throw new XmlReaderException(S.get("libMissingError", libName));
       return ret;
@@ -480,7 +482,7 @@ class XmlReader {
             }
             for (final var boardMap :  XmlIterator.forChildElements(circElt, "boardmap")) {
               final var boardName = boardMap.getAttribute("boardname");
-              if (boardName == null || boardName.isEmpty()) continue;
+              if (StringUtil.isNullOrEmpty(boardName)) continue;
               loadMap(boardMap, boardName, circData.circuit);
             }
             circuitsData.add(circData);
@@ -1013,7 +1015,7 @@ class XmlReader {
         Element edit = null;
         for (final var elt : XmlIterator.forChildElements(toolbar, "tool")) {
           final var eltName = elt.getAttribute("name");
-          if (eltName != null && !eltName.isEmpty()) {
+          if (StringUtil.isNotEmpty(eltName)) {
             if (eltName.equals(SelectTool._ID)) select = elt;
             if (eltName.equals(WiringTool._ID)) wiring = elt;
             if (eltName.equals(EditTool._ID)) edit = elt;
@@ -1029,7 +1031,7 @@ class XmlReader {
       for (final var circElt : XmlIterator.forChildElements(root, "circuit")) {
         for (final var attrElt : XmlIterator.forChildElements(circElt, "a")) {
           final var name = attrElt.getAttribute("name");
-          if (name != null && name.startsWith("label")) {
+          if (StringUtil.startsWith(name, "label")) {
             attrElt.setAttribute("name", "c" + name);
           }
         }
@@ -1072,9 +1074,8 @@ class XmlReader {
     }
     if (!context.messages.isEmpty()) {
       final var all = new StringBuilder();
-      for (String msg : context.messages) {
-        all.append(msg);
-        all.append("\n");
+      for (final var msg : context.messages) {
+        all.append(msg).append("\n");
       }
       loader.showError(all.substring(0, all.length() - 1));
     }

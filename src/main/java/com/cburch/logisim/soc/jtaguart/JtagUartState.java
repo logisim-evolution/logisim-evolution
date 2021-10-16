@@ -21,6 +21,7 @@ import com.cburch.logisim.soc.data.SocBusSlaveListener;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocSupport;
 import com.cburch.logisim.soc.pio.PioState.PioRegState;
+import com.cburch.logisim.util.StringUtil;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
@@ -348,17 +349,11 @@ public class JtagUartState  implements SocBusSlaveInterface {
 
   @Override
   public String getName() {
-    if (attachedBus == null || attachedBus.getComponent() == null)
-      return "BUG: Unknown";
-    String name = label;
-    if (name == null || name.isEmpty()) {
-      Location loc = attachedBus.getComponent().getLocation();
-      name =
-          attachedBus.getComponent().getFactory().getDisplayName()
-              + "@"
-              + loc.getX()
-              + ","
-              + loc.getY();
+    if (attachedBus == null || attachedBus.getComponent() == null) return "BUG: Unknown";
+    var name = label;
+    if (StringUtil.isNullOrEmpty(name)) {
+      final var loc = attachedBus.getComponent().getLocation();
+      name = String.format("%s@%d,%d", attachedBus.getComponent().getFactory().getDisplayName(), loc.getX(), loc.getY());
     }
     return name;
   }

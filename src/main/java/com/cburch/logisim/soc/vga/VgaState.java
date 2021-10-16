@@ -23,6 +23,7 @@ import com.cburch.logisim.soc.data.SocBusSlaveListener;
 import com.cburch.logisim.soc.data.SocBusSnifferInterface;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocSupport;
+import com.cburch.logisim.util.StringUtil;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -411,9 +412,9 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface, S
 
   @Override
   public String getName() {
-    String name = label;
-    if (name == null || name.isEmpty()) {
-      Location loc = attachedBus.getComponent().getLocation();
+    var name = label;
+    if (StringUtil.isNullOrEmpty(name)) {
+      final var loc = attachedBus.getComponent().getLocation();
       name = attachedBus.getComponent().getFactory().getDisplayName() + "@" + loc.getX() + "," + loc.getY();
     }
     return name;

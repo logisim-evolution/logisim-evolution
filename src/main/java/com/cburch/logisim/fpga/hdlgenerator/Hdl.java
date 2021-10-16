@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
+import com.cburch.logisim.util.CollectionUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -280,12 +281,9 @@ public abstract class Hdl {
   }
 
   public static boolean writeArchitecture(String targetDirectory, List<String> contents, String componentName) {
-    if (contents == null || contents.isEmpty()) {
+    if (CollectionUtil.isNullOrEmpty(contents)) {
       // FIXME: hardcoded string
-      Reporter.report.addFatalError(
-          "INTERNAL ERROR: Empty behavior description for Component '"
-              + componentName
-              + "' received!");
+      Reporter.report.addFatalErrorFmt("INTERNAL ERROR: Empty behavior description for Component '%s' received!", componentName);
       return false;
     }
     final var outFile = FileWriter.getFilePointer(targetDirectory, componentName, false);
@@ -406,7 +404,7 @@ public abstract class Hdl {
     for (var wire : wires.keySet())
       maxNameLength = Math.max(maxNameLength, wire.length());
     final var sortedWires = new TreeSet<String>(wires.keySet());
-    for (var wire : sortedWires) 
+    for (var wire : sortedWires)
       contents.add("{{assign}}{{1}}{{2}}{{=}}{{3}};", wire, " ".repeat(maxNameLength - wire.length()), wires.get(wire));
     wires.clear();
   }

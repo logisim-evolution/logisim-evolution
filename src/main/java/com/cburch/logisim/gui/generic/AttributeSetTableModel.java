@@ -67,7 +67,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 
   @Override
   public void addAttrTableModelListener(AttrTableModelListener listener) {
-    if (listeners.isEmpty() && attrs != null) {
+    if (attrs != null && listeners.isEmpty()) {
       attrs.addAttributeListener(this);
     }
     listeners.add(listener);
@@ -181,7 +181,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
   @Override
   public void removeAttrTableModelListener(AttrTableModelListener listener) {
     listeners.remove(listener);
-    if (listeners.isEmpty() && attrs != null) {
+    if (attrs != null && listeners.isEmpty()) {
       attrs.removeAttributeListener(this);
     }
   }

@@ -27,6 +27,7 @@ import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.std.base.Text;
 
+import com.cburch.logisim.util.StringUtil;
 import java.awt.Cursor;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
@@ -85,7 +86,7 @@ public class TextTool extends Tool {
       caretCircuit.removeCircuitListener(this);
 
       final var val = caret.getText();
-      var isEmpty = (val == null || "".equals(val));
+      var isEmpty = StringUtil.isNullOrEmpty(val);
       Action a;
       final var proj = caretCanvas.getProject();
       if (caretCreatingText) {

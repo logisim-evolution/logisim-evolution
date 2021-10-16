@@ -18,6 +18,7 @@ import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.UnmodifiableList;
 import java.util.Collection;
 import java.util.Collections;
@@ -123,7 +124,7 @@ class SelectionAttributes extends AbstractAttributeSet {
 
   private static boolean haveSameElements(Collection<Component> a, Collection<Component> b) {
     if (a == null) {
-      return b == null || b.isEmpty();
+      return CollectionUtil.isNullOrEmpty(b);
     } else if (b == null) {
       return a.isEmpty();
     } else if (a.size() != b.size()) {
@@ -183,12 +184,10 @@ class SelectionAttributes extends AbstractAttributeSet {
 
   @Override
   public List<Attribute<?>> getAttributes() {
-    Circuit circ = canvas.getCircuit();
-    if (selected.isEmpty() && circ != null) {
-      return circ.getStaticAttributes().getAttributes();
-    } else {
-      return attrsView;
-    }
+    final var circ = canvas.getCircuit();
+    return (circ != null && selected.isEmpty())
+        ? circ.getStaticAttributes().getAttributes()
+        : attrsView;
   }
 
   public Selection getSelection() {
@@ -197,29 +196,29 @@ class SelectionAttributes extends AbstractAttributeSet {
 
   @Override
   public <V> V getValue(Attribute<V> attr) {
-    Circuit circ = canvas.getCircuit();
-    if (selected.isEmpty() && circ != null) {
+    final var circ = canvas.getCircuit();
+    if (circ != null && selected.isEmpty()) {
       return circ.getStaticAttributes().getValue(attr);
-    } else {
-      int i = findIndex(attr);
-      Object[] vs = values;
-      @SuppressWarnings("unchecked")
-      V ret = (V) (i >= 0 && i < vs.length ? vs[i] : null);
-      return ret;
     }
+
+    final var i = findIndex(attr);
+    final var vs = values;
+    @SuppressWarnings("unchecked")
+    V ret = (V) (i >= 0 && i < vs.length ? vs[i] : null);
+    return ret;
   }
 
   @Override
   public boolean isReadOnly(Attribute<?> attr) {
-    Project proj = canvas.getProject();
-    Circuit circ = canvas.getCircuit();
+    final var proj = canvas.getProject();
+    final var circ = canvas.getCircuit();
     if (!proj.getLogisimFile().contains(circ)) {
       return true;
-    } else if (selected.isEmpty() && circ != null) {
+    } else if (circ != null && selected.isEmpty()) {
       return circ.getStaticAttributes().isReadOnly(attr);
     } else {
       int i = findIndex(attr);
-      boolean[] ro = readOnly;
+      final var ro = readOnly;
       return i < 0 || i >= ro.length || ro[i];
     }
   }

@@ -24,6 +24,7 @@ import com.cburch.logisim.soc.gui.ListeningFrame;
 import com.cburch.logisim.soc.util.AssemblerInterface;
 import com.cburch.logisim.tools.CircuitStateHolder;
 import com.cburch.logisim.tools.MenuExtender;
+import com.cburch.logisim.util.StringUtil;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -119,7 +120,7 @@ public class SocUpMenuProvider implements ActionListener {
     public void configureMenu(JPopupMenu menu, Project proj) {
       setParentFrame(instance, proj.getFrame());
       var instName = instance.getAttributeValue(StdAttr.LABEL);
-      if (instName == null || instName.isEmpty()) {
+      if (StringUtil.isNullOrEmpty(instName)) {
         final var loc = instance.getLocation();
         instName = instance.getFactory().getHDLName(instance.getAttributeSet()) + "@" + loc.getX() + "," + loc.getY();
       }
@@ -130,7 +131,9 @@ public class SocUpMenuProvider implements ActionListener {
       if (circuitState == null) {
         hinfo = new HierarchyInfo(proj.getCurrentCircuit());
         hinfo.addComponent(instance.getComponent());
-      } else hinfo = hierarchy;
+      } else {
+        hinfo = hierarchy;
+      }
       final var asm = new InstanceMenuItem(instance, name, SHOW_ASM, instance.getData(state), state, hinfo);
       asm.addActionListener(parent);
       asm.setEnabled(true);

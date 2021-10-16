@@ -515,7 +515,7 @@ public class Circuit {
     context.setGraphics(gCopy);
     wires.draw(context, hidden);
 
-    if (hidden == null || hidden.isEmpty()) {
+    if (CollectionUtil.isNullOrEmpty(hidden)) {
       for (final var c : comps) {
         final var gNew = g.create();
         context.setGraphics(gNew);
@@ -535,8 +535,7 @@ public class Circuit {
           try {
             c.draw(context);
           } catch (RuntimeException e) {
-            // this is a JAR developer error - display it and move
-            // on
+            // this is a JAR developer error - display it and move on
             e.printStackTrace();
           }
         }

@@ -22,6 +22,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import java.io.File;
 import java.util.ArrayList;
@@ -428,12 +429,12 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     int action = event.getAction();
     // todo: gracefully handle pin width changes, other circuit changes
     if (action == CircuitEvent.TRANSACTION_DONE) {
-      Circuit circ = circuitState.getCircuit();
-      ReplacementMap repl = event.getResult().getReplacementMap(circ);
+      final var circ = circuitState.getCircuit();
+      final var repl = event.getResult().getReplacementMap(circ);
       if (repl == null || repl.isEmpty()) return;
-      for (Component comp : repl.getAdditions()) {
+      for (final var comp : repl.getAdditions()) {
         if (!repl.getReplacedBy(comp).isEmpty()) continue;
-        SignalInfo item = makeIfDefaultComponent(comp);
+        final var item = makeIfDefaultComponent(comp);
         if (item == null) continue;
         addAndInitialize(item, true);
       }

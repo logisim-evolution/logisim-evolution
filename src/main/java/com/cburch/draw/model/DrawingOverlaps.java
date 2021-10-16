@@ -9,6 +9,7 @@
 
 package com.cburch.draw.model;
 
+import com.cburch.logisim.util.CollectionUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -56,7 +57,7 @@ class DrawingOverlaps {
     ensureUpdated();
 
     final var ret = map.get(o);
-    return (ret == null || ret.isEmpty())
+    return (CollectionUtil.isNullOrEmpty(ret))
         ? Collections.emptyList()
         : Collections.unmodifiableList(ret);
   }

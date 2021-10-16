@@ -10,6 +10,7 @@
 package com.cburch.logisim.fpga.data;
 
 import com.cburch.logisim.fpga.settings.VendorSoftware;
+import com.cburch.logisim.util.StringUtil;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -144,8 +145,8 @@ public class FpgaClass {
       String speed,
       String vend,
       String unused,
-      boolean UsbTmc,
-      String JTAGPos,
+      boolean usbTmc,
+      String jtagPPos,
       String flashName,
       String flashPos) {
     clockFrequency = frequency;
@@ -159,11 +160,11 @@ public class FpgaClass {
     vendor = getId(vend);
     fpgaDefined = true;
     unusedPinsBehavior = PullBehaviors.getId(unused);
-    usbTmcDownload = UsbTmc;
-    this.jtagPos = Integer.parseInt(JTAGPos);
+    usbTmcDownload = usbTmc;
+    this.jtagPos = Integer.parseInt(jtagPPos);
     this.flashName = flashName;
     this.flashPos = Integer.parseInt(flashPos);
-    this.flashDefined = (flashName != null) && (!flashName.isEmpty()) && (this.flashPos != 0);
+    this.flashDefined = StringUtil.isNotEmpty(flashName) && (this.flashPos != 0);
   }
 
   public Boolean isUsbTmcDownloadRequired() {

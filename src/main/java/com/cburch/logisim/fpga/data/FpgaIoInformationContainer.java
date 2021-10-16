@@ -19,6 +19,7 @@ import com.cburch.logisim.std.io.DotMatrix;
 import com.cburch.logisim.std.io.LedBar;
 import com.cburch.logisim.std.io.RgbLed;
 
+import com.cburch.logisim.util.CollectionUtil;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -484,63 +485,62 @@ public class FpgaIoInformationContainer implements Cloneable {
           default: break;
         }
       }
-      if (myInputPins != null && !myInputPins.isEmpty()) {
-        var Set = doc.createAttribute(BoardWriterClass.INPUT_SET_STRING);
-        var s = new StringBuilder();
+      if (CollectionUtil.isNotEmpty(myInputPins)) {
+        final var attrSet = doc.createAttribute(BoardWriterClass.INPUT_SET_STRING);
+        final var sb = new StringBuilder();
         var first = true;
         for (var i = 0; i < nrOfPins; i++)
           if (myInputPins.contains(i)) {
             if (first) first = false;
-            else s.append(",");
-            s.append(myPinLocations.get(i));
+            else sb.append(",");
+            sb.append(myPinLocations.get(i));
           }
-        Set.setValue(s.toString());
-        result.setAttributeNode(Set);
+        attrSet.setValue(sb.toString());
+        result.setAttributeNode(attrSet);
       }
-      if (myOutputPins != null && !myOutputPins.isEmpty()) {
-        var Set = doc.createAttribute(BoardWriterClass.OUTPUT_SET_STRING);
-        var s = new StringBuilder();
+      if (CollectionUtil.isNotEmpty(myOutputPins)) {
+        final var attrSet = doc.createAttribute(BoardWriterClass.OUTPUT_SET_STRING);
+        final var sb = new StringBuilder();
         var first = true;
         for (var i = 0; i < nrOfPins; i++)
           if (myOutputPins.contains(i)) {
             if (first) first = false;
-            else s.append(",");
-            s.append(myPinLocations.get(i));
+            else sb.append(",");
+            sb.append(myPinLocations.get(i));
           }
-        Set.setValue(s.toString());
-        result.setAttributeNode(Set);
+        attrSet.setValue(sb.toString());
+        result.setAttributeNode(attrSet);
       }
-      if (myIoPins != null && !myIoPins.isEmpty()) {
-        var Set = doc.createAttribute(BoardWriterClass.IO_SET_STRING);
-        var s = new StringBuilder();
+      if (CollectionUtil.isNotEmpty(myIoPins)) {
+        final var attrSet = doc.createAttribute(BoardWriterClass.IO_SET_STRING);
+        final var sb = new StringBuilder();
         var first = true;
         for (var i = 0; i < nrOfPins; i++)
           if (myIoPins.contains(i)) {
             if (first) first = false;
-            else s.append(",");
-            s.append(myPinLocations.get(i));
+            else sb.append(",");
+            sb.append(myPinLocations.get(i));
           }
-        Set.setValue(s.toString());
-        result.setAttributeNode(Set);
+        attrSet.setValue(sb.toString());
+        result.setAttributeNode(attrSet);
       }
-      if (myDriveStrength != DriveStrength.UNKNOWN
-          && myDriveStrength != DriveStrength.DEFAULT_STENGTH) {
-        var drive = doc.createAttribute(DriveStrength.DRIVE_ATTRIBUTE_STRING);
+      if (myDriveStrength != DriveStrength.UNKNOWN && myDriveStrength != DriveStrength.DEFAULT_STENGTH) {
+        final var drive = doc.createAttribute(DriveStrength.DRIVE_ATTRIBUTE_STRING);
         drive.setValue(DriveStrength.BEHAVIOR_STRINGS[myDriveStrength]);
         result.setAttributeNode(drive);
       }
       if (myPullBehavior != PullBehaviors.UNKNOWN && myPullBehavior != PullBehaviors.FLOAT) {
-        var pull = doc.createAttribute(PullBehaviors.PULL_ATTRIBUTE_STRING);
+        final var pull = doc.createAttribute(PullBehaviors.PULL_ATTRIBUTE_STRING);
         pull.setValue(PullBehaviors.BEHAVIOR_STRINGS[myPullBehavior]);
         result.setAttributeNode(pull);
       }
       if (nyIoStandard != IoStandards.UNKNOWN && nyIoStandard != IoStandards.DEFAULT_STANDARD) {
-        var stand = doc.createAttribute(IoStandards.IO_ATTRIBUTE_STRING);
+        final var stand = doc.createAttribute(IoStandards.IO_ATTRIBUTE_STRING);
         stand.setValue(IoStandards.BEHAVIOR_STRINGS[nyIoStandard]);
         result.setAttributeNode(stand);
       }
       if (myActivityLevel != PinActivity.Unknown && myActivityLevel != PinActivity.ACTIVE_HIGH) {
-        var act = doc.createAttribute(PinActivity.ACTIVITY_ATTRIBUTE_STRING);
+        final var act = doc.createAttribute(PinActivity.ACTIVITY_ATTRIBUTE_STRING);
         act.setValue(PinActivity.BEHAVIOR_STRINGS[myActivityLevel]);
         result.setAttributeNode(act);
       }
@@ -638,7 +638,7 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
   public void set(
-      IoComponentTypes Type,
+      IoComponentTypes types,
       BoardRectangle rect,
       String loc,
       String pull,
@@ -646,7 +646,7 @@ public class FpgaIoInformationContainer implements Cloneable {
       String standard,
       String drive,
       String label) {
-    myType = Type;
+    myType = types;
     myRectangle = rect;
     rect.setActiveOnHigh(active.equals(PinActivity.BEHAVIOR_STRINGS[PinActivity.ACTIVE_HIGH]));
     setNrOfPins(0);
@@ -870,8 +870,8 @@ public class FpgaIoInformationContainer implements Cloneable {
   private void mappaint(Graphics2D g, float scale) {
     var c = g.getColor();
     var i = nrOfMaps();
-    if (i > 0) paintmapped(g, scale, i);
-    else paintselected(g, scale);
+    if (i > 0) paintMapped(g, scale, i);
+    else paintSelected(g, scale);
     g.setColor(c);
   }
 
@@ -1032,7 +1032,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     return diag.doit();
   }
 
-  private void paintmapped(Graphics2D g, float scale, int nrOfMaps) {
+  private void paintMapped(Graphics2D g, float scale, int nrOfMaps) {
     final var x = AppPreferences.getScaled(myRectangle.getXpos(), scale);
     final var y = AppPreferences.getScaled(myRectangle.getYpos(), scale);
     final var width = AppPreferences.getScaled(myRectangle.getWidth(), scale);
@@ -1058,7 +1058,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     }
   }
 
-  protected void paintselected(Graphics2D g, float scale) {
+  protected void paintSelected(Graphics2D g, float scale) {
     if (!selectable) return;
     final var x = AppPreferences.getScaled(myRectangle.getXpos(), scale);
     final var y = AppPreferences.getScaled(myRectangle.getYpos(), scale);

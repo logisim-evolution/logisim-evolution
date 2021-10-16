@@ -20,6 +20,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.wiring.ClockHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
+import com.cburch.logisim.util.StringUtil;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -132,7 +133,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         final var parameters = new TreeSet<String>();
         for (final var paramId : myParametersList.keySet(attrs)) {
           // For verilog we specify a maximum vector, this seems the best way to do it
-          final var paramName = myParametersList.isPresentedByInteger(paramId, attrs) 
+          final var paramName = myParametersList.isPresentedByInteger(paramId, attrs)
               ? myParametersList.get(paramId, attrs) : String.format("[64:0] %s", myParametersList.get(paramId, attrs));
           parameters.add(paramName);
         }
@@ -214,11 +215,11 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     final var contents = LineBuffer.getHdlBuffer();
     final var parameterMap = new TreeMap<String, String>();
     final var portMap = getPortMap(nets, componentInfo);
-    final var componentHDLName =
+    final var componentHdlName =
             (componentInfo instanceof netlistComponent comp)
               ? comp.getComponent().getFactory().getHDLName(((netlistComponent) componentInfo).getComponent().getAttributeSet())
               : name;
-    final var compName = (name != null && !name.isEmpty()) ? name : componentHDLName;
+    final var compName = StringUtil.isNotEmpty(name) ? name : componentHdlName;
     final var thisInstanceIdentifier = getInstanceIdentifier(componentInfo, componentId);
     final var oneLine = new StringBuilder();
     if (componentInfo == null) parameterMap.putAll(myParametersList.getMaps(null));
@@ -339,8 +340,9 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       final var attrs = comp.getComponent().getAttributeSet();
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         final var label = attrs.getValue(StdAttr.LABEL);
-        if ((label != null) && !label.isEmpty())
+        if (StringUtil.isNotEmpty(label)) {
           return CorrectLabel.getCorrectLabel(label);
+        }
       }
     }
     return LineBuffer.format("{{1}}_{{2}}", subDirectoryName.toUpperCase(), componentId.toString());
@@ -387,7 +389,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
             hasClock = false;
           }
           final var clockNetName = Hdl.getClockNetName(componentInfo, compPinId, nets);
-          if (clockNetName == null || clockNetName.isEmpty()) {
+          if (StringUtil.isNullOrEmpty(clockNetName)) {
             // FIXME hard coded string
             Reporter.report.addSevereWarning(
                 String.format("Component \"%s\" in circuit \"%s\" has a gated clock connection!", compName, nets.getCircuitName()));
@@ -561,7 +563,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     }
     return contents.get(0);
   }
-  
+
   private boolean getVerilogSignalSet(String preamble, List<String> signals, AttributeSet attrs, boolean isPort, LineBuffer contents) {
     if (signals.isEmpty()) return true;
     final var signalSet = new HashMap<String, String>();
