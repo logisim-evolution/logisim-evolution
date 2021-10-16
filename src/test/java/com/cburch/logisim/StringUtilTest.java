@@ -68,5 +68,6 @@ public class StringUtilTest extends TestBase {
     final var needle = "abc";
 
     assertTrue(StringUtil.startsWith(haystick, needle));
+    assertFalse(StringUtil.startsWith(haystick, needle.substring(1)));
   }
 }
