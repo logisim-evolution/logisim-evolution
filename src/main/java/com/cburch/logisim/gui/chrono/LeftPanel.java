@@ -393,12 +393,15 @@ public class LeftPanel extends JTable {
             final var dl = (JTable.DropLocation) support.getDropLocation();
             newIdx = Math.min(newIdx, dl.getRow());
           } catch (ClassCastException ignored) {
+            // Do nothing
           }
         } else {
           final var sel = getSelectedRows();
           if (sel != null && sel.length > 0) {
             newIdx = 0;
-            for (int i : sel) newIdx = Math.max(newIdx, i + 1);
+            for (final var i : sel) {
+              newIdx = Math.max(newIdx, i + 1);
+            }
           }
         }
         final var change = model.addOrMoveSignals(incoming, newIdx);

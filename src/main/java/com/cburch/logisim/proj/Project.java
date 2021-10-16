@@ -29,6 +29,7 @@ import com.cburch.logisim.gui.test.TestThread;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
+import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.vhdl.base.HdlModel;
@@ -52,6 +53,7 @@ public class Project {
   }
 
   private class MyListener implements Selection.Listener, LibraryListener {
+    @Override
     public void libraryChanged(LibraryEvent event) {
       int action = event.getAction();
       if (action == LibraryEvent.REMOVE_LIBRARY) {
@@ -72,6 +74,7 @@ public class Project {
       }
     }
 
+    @Override
     public void selectionChanged(Selection.Event e) {
       fireEvent(ProjectEvent.ACTION_SELECTION, e.getSource());
     }
@@ -389,7 +392,7 @@ public class Project {
   /** Redo actions that were previously undone. */
   public void redoAction() {
     // If there ARE things to undo...
-    if (redoLog != null && redoLog.size() > 0) {
+    if (CollectionUtil.isNotEmpty(redoLog)) {
       // Add the last element of the undo log to the redo log
       undoLog.addLast(redoLog.getLast());
       ++undoMods;
@@ -589,7 +592,7 @@ public class Project {
   }
 
   public void undoAction() {
-    if (undoLog != null && undoLog.size() > 0) {
+    if (CollectionUtil.isNotEmpty(undoLog)) {
       redoLog.addLast(undoLog.getLast());
       final var data = undoLog.removeLast();
       if (data.circuitState != null) setCircuitState(data.circuitState);

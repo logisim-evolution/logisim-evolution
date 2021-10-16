@@ -339,25 +339,23 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
   public boolean hasMap() {
-    boolean ret = false;
-    for (var i = 0; i < nrOfPins; i++)
+    var ret = false;
+    for (var i = 0; i < nrOfPins; i++) {
       ret |= pinIsMapped(i);
+    }
     return ret;
   }
 
   public int getNrOfInputPins() {
-    if (myInputPins == null) return 0;
-    return myInputPins.size();
+    return (myInputPins == null) ? 0 : myInputPins.size();
   }
 
   public int getNrOfOutputPins() {
-    if (myOutputPins == null) return 0;
-    return myOutputPins.size();
+    return (myOutputPins == null) ? 0 : myOutputPins.size();
   }
 
   public int getNrOfIOPins() {
-    if (myIoPins == null) return 0;
-    return myIoPins.size();
+    return (myIoPins == null) ? 0 : myIoPins.size();
   }
 
   public int getNrOfRows() {
@@ -385,8 +383,8 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
 
-  public void edit(Boolean deleteButton, IoComponentsInformation IOcomps) {
-    FpgaIoInformationSettingsDialog.getSimpleInformationDialog(deleteButton, IOcomps, this);
+  public void edit(Boolean deleteButton, IoComponentsInformation IoComps) {
+    FpgaIoInformationSettingsDialog.getSimpleInformationDialog(deleteButton, IoComps, this);
   }
 
   public void setMapMode() {
@@ -416,9 +414,7 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
   public String getPinLocation(int index) {
-    if (myPinLocations.containsKey(index))
-      return myPinLocations.get(index);
-    return "";
+    return myPinLocations.containsKey(index) ? myPinLocations.get(index) : "";
   }
 
   public void setInputPinLocation(int index, String value) {
@@ -446,9 +442,7 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
   public Element getDocumentElement(Document doc) {
-    if (myType.equals(IoComponentTypes.Unknown)) {
-      return null;
-    }
+    if (myType.equals(IoComponentTypes.Unknown)) return null;
     try {
       var result = doc.createElement(myType.toString());
       result.setAttribute(
@@ -477,11 +471,12 @@ public class FpgaIoInformationContainer implements Cloneable {
       if (IoComponentTypes.hasRotationAttribute(myType)) {
         switch (myRotation) {
           case IoComponentTypes.ROTATION_CW_90:
-          case IoComponentTypes.ROTATION_CCW_90: {
+          case IoComponentTypes.ROTATION_CCW_90:
             result.setAttribute(BoardWriterClass.MAP_ROTATION, Integer.toString(myRotation));
             break;
-          }
-          default: break;
+          default:
+            // no rotation
+            break;
         }
       }
       if (CollectionUtil.isNotEmpty(myInputPins)) {
@@ -577,8 +572,8 @@ public class FpgaIoInformationContainer implements Cloneable {
     return nyIoStandard;
   }
 
-  public void setIOStandard(char IOStandard) {
-    nyIoStandard = IOStandard;
+  public void setIOStandard(char IoStandard) {
+    nyIoStandard = IoStandard;
   }
 
   public int getNrOfPins() {
@@ -764,15 +759,15 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
   public boolean hasInputs() {
-    return myInputPins != null && (myInputPins.size() > 0);
+    return CollectionUtil.isNotEmpty(myInputPins);
   }
 
   public boolean hasOutputs() {
-    return myOutputPins != null && (myOutputPins.size() > 0);
+    return CollectionUtil.isNotEmpty(myOutputPins);
   }
 
   public boolean hasIOs() {
-    return myIoPins != null && (myIoPins.size() > 0);
+    return CollectionUtil.isNotEmpty(myIoPins);
   }
 
   public int nrInputs() {
