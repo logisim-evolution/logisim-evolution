@@ -150,9 +150,9 @@ public class VhdlParser {
   private static final Pattern LIBRARY = regex("library  \\w+ ;");
   private static final Pattern USING = regex("use  \\S+ ;");
   private static final Pattern ENTITY = regex("entity  (\\w+)  is");
-  private static final Pattern END = regex("end  (\\w+) ;");
-  private static final Pattern END1 = regex("end entity  (\\w+) ;");
-  private static final Pattern END2 = regex("end;");
+  private static final Pattern END_KEYWORD = regex("end  (\\w+) ;");
+  private static final Pattern END_ENTITY = regex("end entity  (\\w+) ;");
+  private static final Pattern END = regex("end;");
   private static final Pattern ARCHITECTURE = regex("architecture .*");
 
   private static final Pattern SEMICOLON = regex(";");
@@ -235,8 +235,8 @@ public class VhdlParser {
     if (!input.next(ENTITY)) throw new IllegalVhdlContentException(S.get("CannotFindEntityException"));
     name = input.match().group(1);
     while (parsePorts(input) || parseGenerics(input)) ;
-    final var justEndForEntity = input.next(END2);
-    if ((!input.next(END) && !input.next(END1) && !justEndForEntity)
+    final var justEndForEntity = input.next(END);
+    if ((!input.next(END_KEYWORD) && !input.next(END_ENTITY) && !justEndForEntity)
         || (!justEndForEntity && !input.match().group(1).equals(name))) throw new IllegalVhdlContentException(S.get("CannotFindEntityException"));
     parseArchitecture(input);
     if (input.remaining().length() > 0) throw new IllegalVhdlContentException(S.get("CannotFindEntityException"));
