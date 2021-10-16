@@ -48,6 +48,8 @@ public class FpgaIoInformationSettingsDialog {
   private static final int OUTPUT_ID = 1;
   private static final int IO_ID = 2;
 
+  private static boolean abort;
+
   private static void buildPinTable(
       int nr,
       IoComponentTypes type,
@@ -728,8 +730,6 @@ public class FpgaIoInformationSettingsDialog {
     selWindow.dispose();
   }
 
-  private static boolean abort;
-
   public static void getFpgaInformation(Frame panel, BoardInformation TheBoard) {
     final var selWindow = new JDialog(panel, S.get("FpgaBoardFpgaProp"));
     /* here the action listener is defined */
@@ -1045,14 +1045,14 @@ public class FpgaIoInformationSettingsDialog {
   }
 
   private static int getFrequencyValue(long freq) {
-    if ((freq % 1000) != 0) return (int) freq;
-    if ((freq % 1000000) != 0) return (int) freq / 1000;
-    return (int) freq / 1000000;
+    if ((freq % 1_000) != 0) return (int) freq;
+    if ((freq % 1_000_000) != 0) return (int) freq / 1_000;
+    return (int) freq / 1_000_000;
   }
 
   private static int getFrequencyIndex(long freq) {
-    if ((freq % 1000) != 0) return 0;
-    if ((freq % 1000000) != 0) return 1;
+    if ((freq % 1_000) != 0) return 0;
+    if ((freq % 1_000_000) != 0) return 1;
     return 2;
   }
 
@@ -1061,8 +1061,8 @@ public class FpgaIoInformationSettingsDialog {
     var multiplier = 1L;
     var dec_mult = false;
 
-    if (speed.equals("kHz")) multiplier = 1000L;
-    if (speed.equals("MHz")) multiplier = 1000000L;
+    if ("kHz".equals(speed)) multiplier = 1_000L;
+    if ("MHz".equals(speed)) multiplier = 1_000_000L;
     for (var i = 0; i < chars.length(); i++) {
       if (chars.charAt(i) >= '0' && chars.charAt(i) <= '9') {
         result *= 10L;
