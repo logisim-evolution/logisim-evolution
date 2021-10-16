@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 
-public class CanvasModelEvent extends EventObject {
+public final class CanvasModelEvent extends EventObject {
   public static final int ACTION_ADDED = 0;
   public static final int ACTION_REMOVED = 1;
   public static final int ACTION_TRANSLATED = 2;
@@ -143,7 +143,7 @@ public class CanvasModelEvent extends EventObject {
     return new CanvasModelEvent(true, source, ACTION_REORDERED, requests);
   }
 
-  public static CanvasModelEvent forTranslate(CanvasModel source, Collection<? extends CanvasObject> affected, int dx, int dy) {
+  public static CanvasModelEvent forTranslate(CanvasModel source, Collection<? extends CanvasObject> affected) {
     return new CanvasModelEvent(source, ACTION_TRANSLATED, affected, 0, 0);
   }
 
