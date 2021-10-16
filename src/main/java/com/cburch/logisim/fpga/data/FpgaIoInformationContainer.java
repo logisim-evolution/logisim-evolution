@@ -341,7 +341,7 @@ public class FpgaIoInformationContainer implements Cloneable {
   public boolean hasMap() {
     var ret = false;
     for (var i = 0; i < nrOfPins; i++) {
-      ret |= pinIsMapped(i);
+      ret |= isPinMapped(i);
     }
     return ret;
   }
@@ -352,10 +352,6 @@ public class FpgaIoInformationContainer implements Cloneable {
 
   public int getNrOfOutputPins() {
     return (myOutputPins == null) ? 0 : myOutputPins.size();
-  }
-
-  public int getNrOfIOPins() {
-    return (myIoPins == null) ? 0 : myIoPins.size();
   }
 
   public int getNrOfRows() {
@@ -616,7 +612,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     return IoComponentTypes.OUTPUT_COMPONENT_SET.contains(myType);
   }
 
-  public boolean pinIsMapped(int index) {
+  public boolean isPinMapped(int index) {
     if (index < 0 || index >= nrOfPins) return true;
     return pinIsMapped.get(index) != null;
   }
@@ -740,7 +736,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     return true;
   }
 
-  private int nrOfMaps() {
+  private int getNrOfMaps() {
     int res = 0;
     for (var i = 0; i < nrOfPins; i++)
       if (pinIsMapped.get(i) != null)
@@ -766,7 +762,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     return CollectionUtil.isNotEmpty(myOutputPins);
   }
 
-  public boolean hasIOs() {
+  public boolean hasIoPins() {
     return CollectionUtil.isNotEmpty(myIoPins);
   }
 
@@ -778,7 +774,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     return myOutputPins == null ? 0 : myOutputPins.size();
   }
 
-  public int nrIOs() {
+  public int getNrOfIoPins() {
     return myIoPins == null ? 0 : myIoPins.size();
   }
 
@@ -814,13 +810,13 @@ public class FpgaIoInformationContainer implements Cloneable {
     selectedPin = -1;
     selectable = false;
     if (connect < 0) {
-      if (map.hasInputs() && (hasIOs() || hasInputs())) selectable = true;
-      if (map.hasOutputs() && (hasIOs() || hasOutputs())) selectable = true;
-      if (map.hasIos() && hasIOs()) selectable = true;
+      if (map.hasInputs() && (hasIoPins() || hasInputs())) selectable = true;
+      if (map.hasOutputs() && (hasIoPins() || hasOutputs())) selectable = true;
+      if (map.hasIos() && hasIoPins()) selectable = true;
     } else {
-      if (map.isInput(connect) && (hasIOs() || hasInputs())) selectable = true;
-      if (map.isOutput(connect) && (hasIOs() || hasOutputs())) selectable = true;
-      if (map.isIo(connect) && hasIOs()) selectable = true;
+      if (map.isInput(connect) && (hasIoPins() || hasInputs())) selectable = true;
+      if (map.isOutput(connect) && (hasIoPins() || hasOutputs())) selectable = true;
+      if (map.isIo(connect) && hasIoPins()) selectable = true;
     }
     return selectable;
   }
@@ -846,7 +842,7 @@ public class FpgaIoInformationContainer implements Cloneable {
             myRotation,
                 myType);
       }
-      mappaint(g, scale);
+      paintMap(g, scale);
       return;
     }
     var PaintColor = BoardManipulator.getColor(paintColor);
@@ -861,12 +857,12 @@ public class FpgaIoInformationContainer implements Cloneable {
     g.setColor(c);
   }
 
-  private void mappaint(Graphics2D g, float scale) {
-    var c = g.getColor();
-    var i = nrOfMaps();
-    if (i > 0) paintMapped(g, scale, i);
-    else paintSelected(g, scale);
-    g.setColor(c);
+  private void paintMap(Graphics2D gfx, float scale) {
+    var c = gfx.getColor();
+    var i = getNrOfMaps();
+    if (i > 0) paintMapped(gfx, scale, i);
+    else paintSelected(gfx, scale);
+    gfx.setColor(c);
   }
 
   private boolean containsMap() {
@@ -908,14 +904,14 @@ public class FpgaIoInformationContainer implements Cloneable {
     }
     if (map.nrInputs() == nrInputs()
         && map.nrOutputs() == nrOutputs()
-        && map.nrIOs() == nrIOs()
+        && map.nrIOs() == getNrOfIoPins()
         && selComp.getPin() < 0) {
       return true;
     }
     if (nrInputs() == 0
         && nrOutputs() == 0
         && map.nrIOs() == 0
-        && map.nrInputs() == nrIOs()
+        && map.nrInputs() == getNrOfIoPins()
         && map.nrOutputs() == 0
         && selComp.getPin() < 0) {
       return true;
@@ -923,7 +919,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     if (nrInputs() == 0
         && nrOutputs() == 0
         && map.nrIOs() == 0
-        && map.nrOutputs() == nrIOs()
+        && map.nrOutputs() == getNrOfIoPins()
         && map.nrInputs() == 0
         && selComp.getPin() < 0) {
       return true;

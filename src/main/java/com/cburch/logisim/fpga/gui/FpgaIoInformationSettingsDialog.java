@@ -44,6 +44,10 @@ import javax.swing.JTextField;
 
 public class FpgaIoInformationSettingsDialog {
 
+  private static final int INPUT_ID = 0;
+  private static final int OUTPUT_ID = 1;
+  private static final int IO_ID = 2;
+
   private static void buildPinTable(
       int nr,
       IoComponentTypes type,
@@ -51,7 +55,7 @@ public class FpgaIoInformationSettingsDialog {
       ArrayList<JTextField> LocInputs,
       ArrayList<String> PinLabels,
       ArrayList<String> oldLocations) {
-    GridBagConstraints c = new GridBagConstraints();
+    var c = new GridBagConstraints();
     pinPanel.removeAll();
     if (LocInputs.size() == 0) {
       for (var i = 0; i < nr; i++) {
@@ -136,20 +140,11 @@ public class FpgaIoInformationSettingsDialog {
         nrOfPins = nrOfRows * nrOfColumns * 3;
         var preamble = "";
         for (var rgb = 0; rgb < 3; rgb++) {
-          switch (rgb) {
-            case 0: {
-              preamble = "Red_";
-              break;
-            }
-            case 1: {
-              preamble = "Green_";
-              break;
-            }
-            default: {
-              preamble = "Blue_";
-              break;
-            }
-          }
+          preamble = switch (rgb) {
+            case 0 -> "Red_";
+            case 1 -> "Green_";
+            default -> "Blue_";
+          };
           for (var row = 0; row < nrOfRows; row++) {
             for (var col = 0; col < nrOfColumns; col++)
               pinLabels.add(preamble + "Row_" + row + "_Col_" + col);
@@ -168,20 +163,11 @@ public class FpgaIoInformationSettingsDialog {
             final var id = i - nrBits;
             final var rgb = id / nrOfColumns;
             final var col = id % nrOfColumns;
-            switch (rgb) {
-              case 0: {
-                preamble = "Red_";
-                break;
-              }
-              case 1: {
-                preamble = "Green_";
-                break;
-              }
-              default: {
-                preamble = "Blue_";
-                break;
-              }
-            }
+            preamble = switch (rgb) {
+              case 0 -> "Red_";
+              case 1 -> "Green_";
+              default -> "Blue_";
+            };
             pinLabels.add(preamble + "Col_" + col);
           }
         }
@@ -198,20 +184,11 @@ public class FpgaIoInformationSettingsDialog {
             final var id = i - nrBits;
             final var rgb = id / nrOfRows;
             final var col = id % nrOfRows;
-            switch (rgb) {
-              case 0: {
-                preamble = "Red_";
-                break;
-              }
-              case 1: {
-                preamble = "Green_";
-                break;
-              }
-              default: {
-                preamble = "Blue_";
-                break;
-              }
-            }
+            preamble = switch (rgb) {
+              case 0 -> "Red_";
+              case 1 -> "Green_";
+              default -> "Blue_";
+            };
             pinLabels.add(preamble + "Row_" + col);
           }
         }
@@ -252,11 +229,6 @@ public class FpgaIoInformationSettingsDialog {
     return rectPanel;
   }
 
-
-  private static final int INPUT_ID = 0;
-  private static final int OUTPUT_ID = 1;
-  private static final int IO_ID = 2;
-
   public static void getSimpleInformationDialog(Boolean deleteButton, IoComponentsInformation IOcomps, FpgaIoInformationContainer info) {
     final var nrOfPins = new HashMap<Integer, Integer>();
     final var selWindow = new JDialog(IOcomps.getParentFrame(), info.getType() + " " + S.get("FpgaIoProperties"));
@@ -294,7 +266,7 @@ public class FpgaIoInformationSettingsDialog {
     } else {
       nrOfPins.put(INPUT_ID, info.getNrOfInputPins());
       nrOfPins.put(OUTPUT_ID, info.getNrOfOutputPins());
-      nrOfPins.put(IO_ID, info.getNrOfIOPins());
+      nrOfPins.put(IO_ID, info.getNrOfIoPins());
     }
     for (var cnt = 0; cnt < info.getNrOfPins(); cnt++) {
       if (cnt < nrOfPins.get(INPUT_ID)) oldInputLocations.add(info.getPinLocation(cnt));
