@@ -15,7 +15,7 @@ import java.awt.Font;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
-public class SvgCreator {
+public final class SvgCreator {
   private SvgCreator() {
     // dummy
   }

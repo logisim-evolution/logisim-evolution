@@ -29,14 +29,14 @@ public class ModelReorderAction extends ModelAction {
     super(model);
     this.requests = new ArrayList<>(requests);
     this.objects = new ArrayList<>(requests.size());
-    for (ReorderRequest r : requests) {
-      objects.add(r.getObject());
+    for (final var req : requests) {
+      objects.add(req.getObject());
     }
     var typeIndex = 0; // 0 = mixed/unknown, -1 = to greater index, 1 = to
     // smaller index
-    for (final var r : requests) {
-      final var from = r.getFromIndex();
-      final var to = r.getToIndex();
+    for (final var req : requests) {
+      final var from = req.getFromIndex();
+      final var to = req.getToIndex();
       final var thisType = Integer.compare(to, from);
       if (typeIndex == 2) {
         typeIndex = thisType;
