@@ -230,18 +230,16 @@ public class VhdlParser {
   }
 
   public void parse() throws IllegalVhdlContentException {
-    Scanner input = new Scanner(removeComments());
+    final var input = new Scanner(removeComments());
     parseLibraries(input);
-    if (!input.next(ENTITY))
-      throw new IllegalVhdlContentException(S.get("CannotFindEntityException"));
+    if (!input.next(ENTITY)) throw new IllegalVhdlContentException(S.get("CannotFindEntityException"));
     name = input.match().group(1);
     while (parsePorts(input) || parseGenerics(input)) ;
     final var justEndForEntity = input.next(END2);
-    if (!input.next(END) && !input.next(END1) && !justEndForEntity) throw new IllegalVhdlContentException(S.get("CannotFindEntityException"));
-    if (!justEndForEntity && !input.match().group(1).equals(name)) throw new IllegalVhdlContentException(S.get("CannotFindEntityException"));
+    if ((!input.next(END) && !input.next(END1) && !justEndForEntity)
+        || (!justEndForEntity && !input.match().group(1).equals(name))) throw new IllegalVhdlContentException(S.get("CannotFindEntityException"));
     parseArchitecture(input);
-    if (input.remaining().length() > 0)
-      throw new IllegalVhdlContentException(S.get("CannotFindEntityException"));
+    if (input.remaining().length() > 0) throw new IllegalVhdlContentException(S.get("CannotFindEntityException"));
   }
 
   private void parseArchitecture(Scanner input) {
