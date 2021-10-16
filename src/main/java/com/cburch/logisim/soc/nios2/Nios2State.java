@@ -44,7 +44,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import javax.swing.JPanel;

@@ -15,7 +15,6 @@ import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.circuit.ComponentDataGuiProvider;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;

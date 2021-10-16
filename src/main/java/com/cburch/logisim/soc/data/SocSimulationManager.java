@@ -16,7 +16,6 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.InstanceState;

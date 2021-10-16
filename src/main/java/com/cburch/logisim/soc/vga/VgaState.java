@@ -12,7 +12,6 @@ package com.cburch.logisim.soc.vga;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceState;

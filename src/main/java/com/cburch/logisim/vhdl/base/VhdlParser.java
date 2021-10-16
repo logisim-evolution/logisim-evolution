@@ -13,7 +13,6 @@ import static com.cburch.logisim.std.Strings.S;
 
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.Port;
-import com.cburch.logisim.util.StringUtil;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.MatchResult;

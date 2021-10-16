@@ -12,7 +12,6 @@ package com.cburch.logisim.soc.data;
 import static com.cburch.logisim.soc.Strings.S;
 
 import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.Instance;
@@ -21,7 +20,6 @@ import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.soc.file.ProcessorReadElf;
 import com.cburch.logisim.soc.gui.AssemblerPanel;
 import com.cburch.logisim.soc.gui.ListeningFrame;
-import com.cburch.logisim.soc.util.AssemblerInterface;
 import com.cburch.logisim.tools.CircuitStateHolder;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.StringUtil;
@@ -29,9 +27,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 
 public class SocUpMenuProvider implements ActionListener {

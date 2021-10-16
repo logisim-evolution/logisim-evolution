@@ -11,7 +11,6 @@ package com.cburch.logisim.soc.pio;
 
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;

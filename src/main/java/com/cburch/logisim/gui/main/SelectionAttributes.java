@@ -17,7 +17,6 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeEvent;
 import com.cburch.logisim.data.AttributeListener;
 import com.cburch.logisim.data.AttributeSet;
-import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.UnmodifiableList;
 import java.util.Collection;

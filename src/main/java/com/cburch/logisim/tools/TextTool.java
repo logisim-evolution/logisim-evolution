@@ -26,7 +26,6 @@ import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.std.base.Text;
-
 import com.cburch.logisim.util.StringUtil;
 import java.awt.Cursor;
 import java.awt.Graphics;

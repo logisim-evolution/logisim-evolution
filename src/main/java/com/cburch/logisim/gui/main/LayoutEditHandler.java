@@ -20,8 +20,6 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.std.base.BaseLibrary;
 import com.cburch.logisim.tools.EditTool;
-import com.cburch.logisim.tools.Library;
-import com.cburch.logisim.tools.Tool;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 

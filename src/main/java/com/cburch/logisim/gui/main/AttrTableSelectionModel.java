@@ -28,12 +28,10 @@ import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Selection.Event;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.SetAttributeAction;
 import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.vhdl.base.VhdlContent;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 class AttrTableSelectionModel extends AttributeSetTableModel implements Selection.Listener {

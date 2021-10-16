@@ -508,7 +508,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       for (final var input : myInputs) {
         nrOfPortBits = myPorts.contains(input) ? myPorts.get(input, attrs) : 1;
         final var type = getTypeIdentifier(nrOfPortBits, attrs);
-        firstEntry = getPortEntry(contents, firstEntry, nrOfEntries, currentEntry, input, direction, type, maxNameLength);
+        firstEntry = addPortEntry(contents, firstEntry, nrOfEntries, currentEntry, input, direction, type, maxNameLength);
         currentEntry++;
       }
       direction = Vhdl.getVhdlKeyword("INOUT");
@@ -516,7 +516,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       for (final var inout : myInOuts) {
         nrOfPortBits = myPorts.get(inout, attrs);
         final var type = getTypeIdentifier(nrOfPortBits, attrs);
-        firstEntry = getPortEntry(contents, firstEntry, nrOfEntries, currentEntry, inout, direction, type, maxNameLength);
+        firstEntry = addPortEntry(contents, firstEntry, nrOfEntries, currentEntry, inout, direction, type, maxNameLength);
         currentEntry++;
       }
       direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? Vhdl.getVhdlKeyword("OUT  ") : Vhdl.getVhdlKeyword("OUT");
@@ -524,26 +524,26 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       for (final var output : myOutputs) {
         nrOfPortBits = myPorts.get(output, attrs);
         final var type = getTypeIdentifier(nrOfPortBits, attrs);
-        firstEntry = getPortEntry(contents, firstEntry, nrOfEntries, currentEntry, output, direction, type, maxNameLength);
+        firstEntry = addPortEntry(contents, firstEntry, nrOfEntries, currentEntry, output, direction, type, maxNameLength);
         currentEntry++;
       }
     }
-    if (isEntity)
+    if (isEntity) {
       contents.add("{{end}} {{entity}} {{1}};", componentName);
-    else
+    } else {
       contents.add("{{end}} {{component}};");
+    }
     return contents.getWithIndent(isEntity ? 0 : 1);
   }
 
-  private boolean getPortEntry(LineBuffer contents, boolean firstEntry, int nrOfEntries, int currentEntry,
-      String name, String direction, String type, int maxLength) {
-    if (firstEntry) {
-      contents.add("   {{port}} ( {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction,
-          type, currentEntry == (nrOfEntries - 1) ? " )" : "");
-    } else {
-      contents.add("          {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction,
-          type, currentEntry == (nrOfEntries - 1) ? " )" : "");
-    }
+  private boolean addPortEntry(LineBuffer contents, boolean firstEntry, int nrOfEntries, int currentEntry,
+                               String name, String direction, String type, int maxLength) {
+    final var fmt = firstEntry
+                    ? "   {{port}} ( {{1}}{{2}}: {{3}} {{4}}{{5}};"
+                    : "          {{1}}{{2}}: {{3}} {{4}}{{5}};";
+    contents.add(fmt, name, " ".repeat(maxLength - name.length()), direction, type, currentEntry == (nrOfEntries - 1) ? " )" : "");
+
+    // FIXME: refactor code that uses this retval, because as it's a const, then the logic using it can probably be simplified.
     return false;
   }
 

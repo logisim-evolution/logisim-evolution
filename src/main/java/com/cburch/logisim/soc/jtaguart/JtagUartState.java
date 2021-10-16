@@ -10,7 +10,6 @@
 package com.cburch.logisim.soc.jtaguart;
 
 import com.cburch.logisim.data.AttributeOption;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;
@@ -349,11 +348,13 @@ public class JtagUartState  implements SocBusSlaveInterface {
 
   @Override
   public String getName() {
-    if (attachedBus == null || attachedBus.getComponent() == null) return "BUG: Unknown";
-    var name = label;
-    if (StringUtil.isNullOrEmpty(name)) {
-      final var loc = attachedBus.getComponent().getLocation();
-      name = String.format("%s@%d,%d", attachedBus.getComponent().getFactory().getDisplayName(), loc.getX(), loc.getY());
+    var name = "BUG: Unknown";
+    if (attachedBus != null && attachedBus.getComponent() != null) {
+      name = label;
+      if (StringUtil.isNullOrEmpty(name)) {
+        final var loc = attachedBus.getComponent().getLocation();
+        name = String.format("%s@%d,%d", attachedBus.getComponent().getFactory().getDisplayName(), loc.getX(), loc.getY());
+      }
     }
     return name;
   }

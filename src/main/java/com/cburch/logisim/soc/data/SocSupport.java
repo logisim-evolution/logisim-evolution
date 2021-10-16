@@ -12,7 +12,6 @@ package com.cburch.logisim.soc.data;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.event.ActionListener;

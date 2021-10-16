@@ -18,7 +18,6 @@ import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.DotMatrix;
 import com.cburch.logisim.std.io.LedBar;
 import com.cburch.logisim.std.io.RgbLed;
-
 import com.cburch.logisim.util.CollectionUtil;
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -638,7 +637,7 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
   public void set(
-      IoComponentTypes types,
+      IoComponentTypes compType,
       BoardRectangle rect,
       String loc,
       String pull,
@@ -646,7 +645,7 @@ public class FpgaIoInformationContainer implements Cloneable {
       String standard,
       String drive,
       String label) {
-    myType = types;
+    myType = compType;
     myRectangle = rect;
     rect.setActiveOnHigh(active.equals(PinActivity.BEHAVIOR_STRINGS[PinActivity.ACTIVE_HIGH]));
     setNrOfPins(0);

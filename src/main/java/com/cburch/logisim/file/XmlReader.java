@@ -45,7 +45,6 @@ import com.cburch.logisim.tools.SelectTool;
 import com.cburch.logisim.tools.TextTool;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.tools.WiringTool;
-import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.InputEventUtil;
 import com.cburch.logisim.util.LineBuffer;
 import com.cburch.logisim.util.StringUtil;
