@@ -240,8 +240,15 @@ public final class SvgReader {
     var styleFlags = Font.PLAIN;
     if (isItalic(fontStyle)) styleFlags |= Font.ITALIC;
     if (isBold(fontWeight)) styleFlags |= Font.BOLD;
-    final var size = (fontSize != null && fontSize.length() > 0) ? Integer.parseInt(fontSize) : defaultSize;
 
+    var size = defaultSize;
+    if (StringUtil.isNotEmpty(fontSize)) {
+      try {
+        size = Integer.parseInt(fontSize);
+      } catch (NumberFormatException ignored) {
+        // Do nothing, we are using defaultSize
+      }
+    }
     return new Font(fontFamily, styleFlags, size);
   }
 
