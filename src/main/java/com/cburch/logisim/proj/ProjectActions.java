@@ -526,66 +526,65 @@ public class ProjectActions {
    * @return true if success, false otherwise 
    */
   public static boolean doExportProject(Project proj) {
-    var ret = proj.isFileDirty() ? doSave(proj) : true;
-    if (ret) {
-      final var loader = proj.getLogisimFile().getLoader();
-      final var oldTool = proj.getTool();
-      proj.setTool(null);
-      var zipFile = loader.getMainFile().getName().replace(Loader.LOGISIM_EXTENSION, Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION);
-      final var chooser = loader.createChooser();
-      chooser.setFileFilter(Loader.LOGISIM_BUNDLE_FILTER);
-      chooser.setAcceptAllFileFilterUsed(false);
-      chooser.setSelectedFile(new File(zipFile));
-      chooser.setDialogTitle(S.get("projExportBundle"));
-      var isCorrectFile = true;
-      do {
-        ret &= chooser.showSaveDialog(proj.getFrame()) == JFileChooser.APPROVE_OPTION;
-        if (!ret) {
-          proj.setTool(oldTool);
-          return false;
+    var ret = true;
+    final var loader = proj.getLogisimFile().getLoader();
+    final var oldTool = proj.getTool();
+    proj.setTool(null);
+    var zipFile = loader.getMainFile().getName().replace(Loader.LOGISIM_EXTENSION, Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION);
+    final var chooser = loader.createChooser();
+    chooser.setFileFilter(Loader.LOGISIM_BUNDLE_FILTER);
+    chooser.setAcceptAllFileFilterUsed(false);
+    chooser.setSelectedFile(new File(zipFile));
+    chooser.setDialogTitle(S.get("projExportBundle"));
+    var isCorrectFile = true;
+    do {
+      ret &= chooser.showSaveDialog(proj.getFrame()) == JFileChooser.APPROVE_OPTION;
+      if (!ret) {
+        proj.setTool(oldTool);
+        return false;
+      }
+      try {
+        zipFile = chooser.getSelectedFile().getAbsolutePath();
+        if (!zipFile.endsWith(Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION)) {
+          zipFile = zipFile.concat(Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION);
         }
-        try {
-          zipFile = chooser.getSelectedFile().getAbsolutePath();
-          if (!zipFile.endsWith(Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION)) {
-            zipFile = zipFile.concat(Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION);
-          }
-          final var path = Paths.get(zipFile);
-          if (Files.exists(path)) {
-            isCorrectFile = OptionPane.showConfirmDialog(proj.getFrame(), S.fmt("projExistsOverwrite", 
-                new File(zipFile).getName()), S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION;
-          } else {
-            isCorrectFile = true;
-          }
-          if (isCorrectFile) {
-            final var projectFile = new FileOutputStream(zipFile);
-            final var projectZipFile = new ZipOutputStream(projectFile);
-            projectZipFile.putNextEntry(new ZipEntry(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator)));
-            ret &= loader.export(proj.getLogisimFile(), projectZipFile);
-            if (OptionPane.showConfirmDialog(proj.getFrame(), S.get("projAddReadme"), 
-                S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION) {
-              final var dialog = new ProjectBundleReadme(proj, loader.getMainFile().getName().replace(Loader.LOGISIM_EXTENSION, ""));
-              if (!dialog.writeReadme(projectZipFile)) {
-                OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjUnableToCreate", S.get("projReadmeError")));
-                projectZipFile.close();
-                projectFile.close();
-                return false;
-              }
+        final var path = Paths.get(zipFile);
+        if (Files.exists(path)) {
+          isCorrectFile = OptionPane.showConfirmDialog(proj.getFrame(), S.fmt("projExistsOverwrite", 
+              new File(zipFile).getName()), S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION;
+        } else {
+          isCorrectFile = true;
+        }
+        if (isCorrectFile) {
+          final var projectFile = new FileOutputStream(zipFile);
+          final var projectZipFile = new ZipOutputStream(projectFile);
+          projectZipFile.putNextEntry(new ZipEntry(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator)));
+          ret &= loader.export(proj.getLogisimFile(), projectZipFile);
+          if (OptionPane.showConfirmDialog(proj.getFrame(), S.get("projAddReadme"), 
+              S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION) {
+            final var dialog = new ProjectBundleReadme(proj, loader.getMainFile().getName().replace(Loader.LOGISIM_EXTENSION, ""));
+            if (!dialog.writeReadme(projectZipFile)) {
+              OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjUnableToCreate", S.get("projReadmeError")));
+              projectZipFile.close();
+              projectFile.close();
+              return false;
             }
-            final var info = ProjectBundleManifest.getInfoContainer(BuildInfo.displayName, loader.getMainFile().getName());
-            ProjectBundleManifest.writeManifest(projectZipFile, info);
-            projectZipFile.close();
-            projectFile.close();
           }
-        } catch (IOException e) {
-          OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjUnableToCreate", e.getMessage()));
-          proj.setTool(oldTool);
-          return false;
+          final var info = ProjectBundleManifest.getInfoContainer(BuildInfo.displayName, loader.getMainFile().getName());
+          ProjectBundleManifest.writeManifest(projectZipFile, info);
+          projectZipFile.close();
+          projectFile.close();
         }
-      } while (!isCorrectFile);
-      proj.setTool(oldTool);
-    }
+      } catch (IOException e) {
+        OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjUnableToCreate", e.getMessage()));
+        proj.setTool(oldTool);
+        return false;
+      }
+    } while (!isCorrectFile);
+    proj.setTool(oldTool);
     return ret;
   }
+
   
   /**
    * Saves a Logisim project in a .circ file.
