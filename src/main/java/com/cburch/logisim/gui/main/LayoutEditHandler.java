@@ -20,8 +20,6 @@ import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.std.base.BaseLibrary;
 import com.cburch.logisim.tools.EditTool;
-import com.cburch.logisim.tools.Library;
-import com.cburch.logisim.tools.Tool;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 
@@ -45,13 +43,13 @@ public class LayoutEditHandler extends EditHandler
 
   @Override
   public void computeEnabled() {
-    Project proj = frame.getProject();
-    Selection sel = proj == null ? null : proj.getSelection();
-    boolean selEmpty = (sel == null || sel.isEmpty());
-    boolean canChange = proj != null && proj.getLogisimFile().contains(proj.getCurrentCircuit());
+    final var proj = frame.getProject();
+    final var sel = proj == null ? null : proj.getSelection();
+    final var selEmpty = (sel == null || sel.isEmpty());
+    final var canChange = proj != null && proj.getLogisimFile().contains(proj.getCurrentCircuit());
 
-    boolean selectAvailable = false;
-    for (Library lib : proj.getLogisimFile().getLibraries()) {
+    var selectAvailable = false;
+    for (final var lib : proj.getLogisimFile().getLibraries()) {
       if (lib instanceof BaseLibrary) {
         selectAvailable = true;
         break;

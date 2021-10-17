@@ -57,7 +57,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
   public void setIsTool() {
     /* We remove the label attribute for a tool */
     for (final var attr : attrs.getAttributes()) {
-      if (attr.getName().equals("label")) {
+      if ("label".equals(attr.getName())) {
         final var row = rowMap.get(attr);
         rowMap.remove(attr);
         rows.remove(row);
@@ -67,7 +67,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 
   @Override
   public void addAttrTableModelListener(AttrTableModelListener listener) {
-    if (listeners.isEmpty() && attrs != null) {
+    if (attrs != null && listeners.isEmpty()) {
       attrs.addAttributeListener(this);
     }
     listeners.add(listener);
@@ -181,7 +181,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
   @Override
   public void removeAttrTableModelListener(AttrTableModelListener listener) {
     listeners.remove(listener);
-    if (listeners.isEmpty() && attrs != null) {
+    if (attrs != null && listeners.isEmpty()) {
       attrs.removeAttributeListener(this);
     }
   }
@@ -221,7 +221,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
         try {
           final var str = attr.toDisplayString(value);
           if (str.isEmpty()
-              && attr.getName().equals("label")
+              && "label".equals(attr.getName())
               && compInst != null
               && compInst.requiresNonZeroLabel()) return HdlColorRenderer.REQUIRED_FIELD_STRING;
           return str;

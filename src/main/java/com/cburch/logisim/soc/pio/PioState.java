@@ -11,7 +11,6 @@ package com.cburch.logisim.soc.pio;
 
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;
@@ -21,6 +20,7 @@ import com.cburch.logisim.soc.data.SocBusSlaveInterface;
 import com.cburch.logisim.soc.data.SocBusSlaveListener;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocSupport;
+import com.cburch.logisim.util.StringUtil;
 import java.util.ArrayList;
 
 public class PioState implements SocBusSlaveInterface {
@@ -427,13 +427,13 @@ public class PioState implements SocBusSlaveInterface {
 
   @Override
   public String getName() {
-    if (attachedBus == null || attachedBus.getComponent() == null)
-      return "BUG: Unknown";
-    String name = label;
-    if (name == null || name.isEmpty()) {
-      Location loc = attachedBus.getComponent().getLocation();
-      name = attachedBus.getComponent().getFactory().getDisplayName()
-              + "@" + loc.getX() + "," + loc.getY();
+    var name = "BUG: Unknown";
+    if (attachedBus != null && attachedBus.getComponent() != null) {
+      name = label;
+      if (StringUtil.isNullOrEmpty(name)) {
+        final var loc = attachedBus.getComponent().getLocation();
+        name = String.format("%s@%d,%d", attachedBus.getComponent().getFactory().getDisplayName(), loc.getX(), loc.getY());
+      }
     }
     return name;
   }

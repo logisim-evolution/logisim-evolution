@@ -272,7 +272,7 @@ public class Netlist {
       final var compName = comp.getFactory().getHDLName(comp.getAttributeSet());
       if (!compNames.contains(compName)) compNames.add(compName);
     }
-    
+
     drc.add(
         new SimpleDrcContainer(
             myCircuit,

@@ -10,6 +10,7 @@
 package com.cburch.logisim.gui.log;
 
 import com.cburch.logisim.circuit.RadixOption;
+import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.IconsUtil;
 import java.awt.Color;
 import java.awt.Component;
@@ -320,7 +321,7 @@ public class SelectionList extends JTable {
   }
 
   private void addOrMove(SignalInfo.List items, int idx) {
-    if (items == null || items.isEmpty()) return;
+    if (CollectionUtil.isNullOrEmpty(items)) return;
     logModel.addOrMove(items, idx);
     clearSelection();
     for (final var item : items) {

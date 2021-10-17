@@ -9,23 +9,27 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeSet;
-
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.LineBuffer;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
 
 public abstract class Hdl {
 
   public static final String NET_NAME = "s_logisimNet";
   public static final String BUS_NAME = "s_logisimBus";
+
+  private Hdl() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
 
   public static boolean isVhdl() {
     return AppPreferences.HdlType.get().equals(HdlGeneratorFactory.VHDL);
@@ -244,9 +248,9 @@ public abstract class Hdl {
     final var nrOfBits = connectionInformation.getNrOfBits();
     if (nrOfBits == 1)  return getNetName(comp, endIndex, true, theNets);
     if (!theNets.isContinuesBus(comp, endIndex)) return null;
-    final var ConnectedNet = connectionInformation.get((byte) 0).getParentNet();
-    if (ConnectedNet.getBitWidth() != nrOfBits) return getBusNameContinues(comp, endIndex, theNets);
-    return LineBuffer.format("{{1}}{{2}}", BUS_NAME, theNets.getNetId(ConnectedNet));
+    final var connectedNet = connectionInformation.get((byte) 0).getParentNet();
+    if (connectedNet.getBitWidth() != nrOfBits) return getBusNameContinues(comp, endIndex, theNets);
+    return LineBuffer.format("{{1}}{{2}}", BUS_NAME, theNets.getNetId(connectedNet));
   }
 
   public static String getClockNetName(netlistComponent comp, int endIndex, Netlist theNets) {
@@ -254,11 +258,11 @@ public abstract class Hdl {
     if ((theNets.getCurrentHierarchyLevel() != null) && (endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
       final var endData = comp.getEnd(endIndex);
       if (endData.getNrOfBits() == 1) {
-        final var ConnectedNet = endData.get((byte) 0).getParentNet();
+        final var connectedNet = endData.get((byte) 0).getParentNet();
         final var ConnectedNetBitIndex = endData.get((byte) 0).getParentNetBitIndex();
         /* Here we search for a clock net Match */
         final var clocksourceid = theNets.getClockSourceId(
-            theNets.getCurrentHierarchyLevel(), ConnectedNet, ConnectedNetBitIndex);
+            theNets.getCurrentHierarchyLevel(), connectedNet, ConnectedNetBitIndex);
         if (clocksourceid >= 0) {
           contents.append(HdlGeneratorFactory.CLOCK_TREE_NAME).append(clocksourceid);
         }
@@ -280,12 +284,9 @@ public abstract class Hdl {
   }
 
   public static boolean writeArchitecture(String targetDirectory, List<String> contents, String componentName) {
-    if (contents == null || contents.isEmpty()) {
+    if (CollectionUtil.isNullOrEmpty(contents)) {
       // FIXME: hardcoded string
-      Reporter.report.addFatalError(
-          "INTERNAL ERROR: Empty behavior description for Component '"
-              + componentName
-              + "' received!");
+      Reporter.report.addFatalErrorFmt("INTERNAL ERROR: Empty behavior description for Component '%s' received!", componentName);
       return false;
     }
     final var outFile = FileWriter.getFilePointer(targetDirectory, componentName, false);
@@ -406,7 +407,7 @@ public abstract class Hdl {
     for (var wire : wires.keySet())
       maxNameLength = Math.max(maxNameLength, wire.length());
     final var sortedWires = new TreeSet<String>(wires.keySet());
-    for (var wire : sortedWires) 
+    for (var wire : sortedWires)
       contents.add("{{assign}}{{1}}{{2}}{{=}}{{3}};", wire, " ".repeat(maxNameLength - wire.length()), wires.get(wire));
     wires.clear();
   }

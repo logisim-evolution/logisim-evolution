@@ -22,6 +22,7 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.PullResistor;
 import com.cburch.logisim.std.wiring.Tunnel;
+import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.IteratorUtil;
 import java.awt.Color;
@@ -327,8 +328,8 @@ class CircuitWires {
     // All threads are sewn together! Compute the exception set before
     // leaving
     final var exceptions = points.getWidthIncompatibilityData();
-    if (exceptions != null && !exceptions.isEmpty()) {
-      for (WidthIncompatibilityData wid : exceptions) {
+    if (CollectionUtil.isNotEmpty(exceptions)) {
+      for (final var wid : exceptions) {
         ret.addWidthIncompatibilityData(wid);
       }
     }
@@ -414,7 +415,7 @@ class CircuitWires {
   }
 
   void draw(ComponentDrawContext context, Collection<Component> hidden) {
-    boolean showState = context.getShowState();
+    final var showState = context.getShowState();
     final var state = context.getCircuitState();
     final var g = (Graphics2D) context.getGraphics();
     g.setColor(Color.BLACK);
@@ -423,7 +424,7 @@ class CircuitWires {
 
     final var bmap = getBundleMap();
     final var isValid = bmap.isValid();
-    if (hidden == null || hidden.isEmpty()) {
+    if (CollectionUtil.isNullOrEmpty(hidden)) {
       for (final var wire : wires) {
         final var s = wire.e0;
         final var t = wire.e1;

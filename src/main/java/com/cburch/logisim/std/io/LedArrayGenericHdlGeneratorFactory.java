@@ -275,7 +275,7 @@ public class LedArrayGenericHdlGeneratorFactory {
     final var wires = new HashMap<String, String>();
     for (var pin = 0; pin < info.getNrOfPins(); pin++) {
       final var led = LineBuffer.formatHdl("s_{{1}}{{2}}{{<}}{{3}}{{>}}", LedArrayInputs, id, pin);
-      if (!info.pinIsMapped(pin)) {
+      if (!info.isPinMapped(pin)) {
         wires.put(led, Hdl.zeroBit());
       } else {
         wires.put(led, info.getPinMap(pin).getHdlSignalName(info.getMapPin(pin)));
@@ -298,7 +298,7 @@ public class LedArrayGenericHdlGeneratorFactory {
       final var red = LineBuffer.formatHdl("s_{{1}}{{2}}{{<}}{{3}}{{>}}", LedArrayRedInputs, id, pin);
       final var green = LineBuffer.formatHdl("s_{{1}}{{2}}{{<}}{{3}}{{>}}", LedArrayGreenInputs, id, pin);
       final var blue = LineBuffer.formatHdl("s_{{1}}{{2}}{{<}}{{3}}{{>}}", LedArrayBlueInputs, id, pin);
-      if (!array.pinIsMapped(pin)) {
+      if (!array.isPinMapped(pin)) {
         wires.put(red, Hdl.zeroBit());
         wires.put(green, Hdl.zeroBit());
         wires.put(blue, Hdl.zeroBit());
@@ -360,13 +360,13 @@ public class LedArrayGenericHdlGeneratorFactory {
       nrOfGenerics--;
       final var intro = first ? preamble : " ".repeat(preamble.length());
       final var map = Hdl.isVhdl() ? LineBuffer.formatHdl("{{1}}{{2}} => {{3}}", generic,
-          " ".repeat(maxNameLength - generic.length()), generics.get(generic)) 
+          " ".repeat(maxNameLength - generic.length()), generics.get(generic))
           : LineBuffer.formatHdl(".{{1}}({{2}})", generic, generics.get(generic));
       final var end = (nrOfGenerics == 0) ? isGeneric ? " )" : " );" : ",";
       contents.add(LineBuffer.format("{{1}}{{2}}{{3}}", intro, map, end));
       first = false;
     }
-    return contents; 
+    return contents;
   }
 
 }

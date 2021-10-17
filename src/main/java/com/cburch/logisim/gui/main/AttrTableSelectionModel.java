@@ -28,12 +28,10 @@ import com.cburch.logisim.gui.generic.AttributeSetTableModel;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Selection.Event;
 import com.cburch.logisim.instance.StdAttr;
-import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.SetAttributeAction;
 import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.vhdl.base.VhdlContent;
-import java.util.SortedSet;
 import java.util.TreeSet;
 
 class AttrTableSelectionModel extends AttributeSetTableModel implements Selection.Listener {
@@ -132,29 +130,28 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
 
   @Override
   public void setValueRequested(Attribute<Object> attr, Object value) throws AttrTableSetException {
-    Selection selection = frame.getCanvas().getSelection();
-    Circuit circuit = frame.getCanvas().getCircuit();
-    if (selection.isEmpty() && circuit != null) {
-      AttrTableCircuitModel circuitModel = new AttrTableCircuitModel(project, circuit);
+    final var selection = frame.getCanvas().getSelection();
+    final var circuit = frame.getCanvas().getCircuit();
+    if (circuit != null && selection.isEmpty()) {
+      final var circuitModel = new AttrTableCircuitModel(project, circuit);
       circuitModel.setValueRequested(attr, value);
     } else {
-      SetAttributeAction act =
-          new SetAttributeAction(circuit, S.getter("selectionAttributeAction"));
+      final var act = new SetAttributeAction(circuit, S.getter("selectionAttributeAction"));
       AutoLabel labeler = null;
       if (attr.equals(StdAttr.LABEL)) {
         labeler = new AutoLabel((String) value, circuit);
       }
-      SortedSet<Component> comps = new TreeSet<>(new PositionComparator());
+      final var comps = new TreeSet<>(new PositionComparator());
       comps.addAll(selection.getComponents());
-      for (Component comp : comps) {
+      for (final var comp : comps) {
         if (!(comp instanceof Wire)) {
           if (comp.getFactory() instanceof SubcircuitFactory fac) {
             if (attr.equals(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE)
                 || attr.equals(CircuitAttributes.NAME_ATTR)) {
               try {
-                CircuitMutation mutation = new CircuitMutation(fac.getSubcircuit());
+                final var mutation = new CircuitMutation(fac.getSubcircuit());
                 mutation.setForCircuit(attr, value);
-                Action action = mutation.toAction(null);
+                final var action = mutation.toAction(null);
                 project.doAction(action);
               } catch (CircuitException ex) {
                 OptionPane.showMessageDialog(project.getFrame(), ex.getMessage());

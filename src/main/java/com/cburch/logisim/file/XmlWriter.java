@@ -28,6 +28,7 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
 import com.cburch.logisim.util.LineBuffer;
+import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.XmlUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
@@ -83,7 +84,7 @@ final class XmlWriter {
     this.doc = doc;
     this.loader = loader;
     this.outFilePath = outFilePath;
-    isProjectExport = (mainCircFile != null && !mainCircFile.isEmpty());
+    isProjectExport = StringUtil.isNotEmpty(mainCircFile);
     isRecursiveCall = recursiveCall;
   }
 
