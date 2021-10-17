@@ -12,6 +12,7 @@ package com.cburch.draw.shapes;
 import com.cburch.draw.model.AbstractCanvasObject;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.UnmodifiableList;
 import java.awt.Color;
 import java.awt.Font;
@@ -233,9 +234,9 @@ public final class SvgReader {
     var fontWeight = elt.getAttribute(prefix + "font-weight");
     final var fontSize = elt.getAttribute(prefix + "font-size");
 
-    if (fontFamily == null || fontFamily.length() == 0) fontFamily = defaultFamily;
-    if (fontStyle == null || fontStyle.length() == 0) fontStyle = "plain";
-    if (fontWeight == null || fontWeight.length() == 0) fontWeight = "plain";
+    if (StringUtil.isNullOrEmpty(fontFamily)) fontFamily = defaultFamily;
+    if (StringUtil.isNullOrEmpty(fontStyle)) fontStyle = "plain";
+    if (StringUtil.isNullOrEmpty(fontWeight)) fontWeight = "plain";
     var styleFlags = Font.PLAIN;
     if (isItalic(fontStyle)) styleFlags |= Font.ITALIC;
     if (isBold(fontWeight)) styleFlags |= Font.BOLD;

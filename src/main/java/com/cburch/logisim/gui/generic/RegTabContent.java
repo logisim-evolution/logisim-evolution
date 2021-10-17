@@ -22,6 +22,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.std.memory.Register;
 import com.cburch.logisim.util.AlphanumComparator;
+import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.LocaleListener;
 import java.awt.Color;
 import java.awt.Font;
@@ -148,7 +149,7 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
       return cs.getValue(loc);
     }
 
-    if (cs.getSubStates() != null && !cs.getSubStates().isEmpty()) {
+    if (CollectionUtil.isNotEmpty(cs.getSubStates())) {
       for (final var cst : cs.getSubStates()) {
         final var ret = findVal(cst, cn, loc);
         if (ret != null) return ret;
