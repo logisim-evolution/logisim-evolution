@@ -57,7 +57,7 @@ class DrawingOverlaps {
     ensureUpdated();
 
     final var ret = map.get(o);
-    return (CollectionUtil.isNullOrEmpty(ret))
+    return CollectionUtil.isNullOrEmpty(ret)
         ? Collections.emptyList()
         : Collections.unmodifiableList(ret);
   }
