@@ -104,7 +104,7 @@ public class LineTool extends AbstractTool {
       x = canvas.snapX(x);
       y = canvas.snapY(y);
     }
-    Location loc = Location.create(x, y);
+    final var loc = Location.create(x, y);
     mouseStart = loc;
     mouseEnd = loc;
     lastMouseX = loc.getX();

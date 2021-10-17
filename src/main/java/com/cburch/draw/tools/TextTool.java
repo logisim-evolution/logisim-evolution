@@ -69,13 +69,13 @@ public class TextTool extends AbstractTool {
 
   private void commitText(Canvas canvas) {
     final var cur = curText;
-    final var isNew = isTextNew;
-    final var newText = field.getText();
     if (cur == null) {
       return;
     }
     cancelText(canvas);
 
+    final var isNew = isTextNew;
+    final var newText = field.getText();
     if (isNew) {
       if (!newText.equals("")) {
         cur.setText(newText);

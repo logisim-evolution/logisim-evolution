@@ -77,11 +77,6 @@ public class Oval extends Rectangular {
   }
 
   @Override
-  public int matchesHashCode() {
-    return super.matchesHashCode();
-  }
-
-  @Override
   public Element toSvgElement(Document doc) {
     return SvgCreator.createOval(doc, this);
   }

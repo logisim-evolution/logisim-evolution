@@ -11,7 +11,7 @@ package com.cburch.draw.shapes;
 
 import com.cburch.logisim.data.Location;
 
-public class LineUtil {
+public final class LineUtil {
   // a value we consider "small enough" to equal it to zero:
   // (this is used for double solutions in 2nd or 3d degree equation)
   private static final double zeroMax = 0.0000001;

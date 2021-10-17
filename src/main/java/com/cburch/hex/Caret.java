@@ -33,7 +33,7 @@ import javax.swing.event.ChangeListener;
 
 public class Caret {
   private static final Color SELECT_COLOR = new Color(192, 192, 255);
-  private static final Stroke CURSOR_STROKE = new BasicStroke(2.0f);
+  private static final Stroke CURSOR_STROKE = new BasicStroke(2.0F);
   private final HexEditor hex;
   private final List<ChangeListener> listeners;
   private long mark;
