@@ -11,6 +11,7 @@ public class Vhdl {
 
   private static final String[] RESERVED_VHDL_WORDS = {
       "abs",
+      "all",
       "access",
       "after",
       "alias",
@@ -43,8 +44,8 @@ public class Vhdl {
       "generic",
       "group",
       "guarded",
-      "integer",
       "if",
+      "integer",
       "impure",
       "in",
       "inertial",
