@@ -269,7 +269,7 @@ public class VhdlParser {
     final var type = input.match().group(3).trim();
     final var isOneBit = type.equalsIgnoreCase("std_logic");
     final var isBitVector = type.equalsIgnoreCase("std_logic_vector");
-    if (!isOneBit && !isBitVector) throw new IllegalVhdlContentException(S.fmt("portTypeException", type));
+    if (!isOneBit && !isBitVector) throw new IllegalVhdlContentException(S.get("portTypeException", type));
     var width = 1;
     if (isBitVector) {
       if (!input.next(RANGE)) throw new IllegalVhdlContentException(S.get("portDeclarationException"));
