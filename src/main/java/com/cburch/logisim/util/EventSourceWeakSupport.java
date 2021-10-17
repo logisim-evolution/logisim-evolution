@@ -17,8 +17,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 public class EventSourceWeakSupport<L> implements Iterable<L> {
   private final ConcurrentLinkedQueue<WeakReference<L>> listeners = new ConcurrentLinkedQueue<>();
 
-  public EventSourceWeakSupport() {}
-
   public void add(L listener) {
     listeners.add(new WeakReference<>(listener));
   }
