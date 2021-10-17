@@ -16,7 +16,6 @@ import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.RadixOption;
-import com.cburch.logisim.circuit.ReplacementMap;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Location;
@@ -428,12 +427,12 @@ public class Model implements CircuitListener, SignalInfo.Listener {
     int action = event.getAction();
     // todo: gracefully handle pin width changes, other circuit changes
     if (action == CircuitEvent.TRANSACTION_DONE) {
-      Circuit circ = circuitState.getCircuit();
-      ReplacementMap repl = event.getResult().getReplacementMap(circ);
+      final var circ = circuitState.getCircuit();
+      final var repl = event.getResult().getReplacementMap(circ);
       if (repl == null || repl.isEmpty()) return;
-      for (Component comp : repl.getAdditions()) {
+      for (final var comp : repl.getAdditions()) {
         if (!repl.getReplacedBy(comp).isEmpty()) continue;
-        SignalInfo item = makeIfDefaultComponent(comp);
+        final var item = makeIfDefaultComponent(comp);
         if (item == null) continue;
         addAndInitialize(item, true);
       }

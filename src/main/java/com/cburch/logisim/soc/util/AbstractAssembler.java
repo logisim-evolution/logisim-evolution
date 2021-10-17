@@ -20,6 +20,7 @@ import com.cburch.logisim.soc.file.ElfProgramHeader.ProgramHeader;
 import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.soc.file.SectionHeader;
 import com.cburch.logisim.soc.file.SymbolTable;
+import com.cburch.logisim.util.StringUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -99,11 +100,11 @@ public abstract class AbstractAssembler implements AssemblerInterface {
   }
 
   private int addLabels(SectionHeader sh, HashMap<Integer, String> labels) {
-    int maxSize = 0;
-    for (SymbolTable st : sh.getSymbols()) {
-      String stName = st.getName();
-      if (stName != null && !stName.isEmpty()) {
-        int addr = st.getValue(SymbolTable.ST_VALUE);
+    var maxSize = 0;
+    for (final var st : sh.getSymbols()) {
+      var stName = st.getName();
+      if (StringUtil.isNotEmpty(stName)) {
+        var addr = st.getValue(SymbolTable.ST_VALUE);
         if (!labels.containsKey(addr)) {
           if (stName.length() > maxSize) maxSize = stName.length();
           labels.put(addr, stName);

@@ -27,6 +27,7 @@ import com.cburch.logisim.std.memory.Mem;
 import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.memory.RamAttributes;
 import com.cburch.logisim.tools.AddTool;
+import com.cburch.logisim.util.CollectionUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -132,7 +133,7 @@ public class XmlCircuitReader extends CircuitTransaction {
   }
 
   private void buildCircuit(XmlReader.CircuitData circData, CircuitMutator mutator) {
-    final var elt = circData.circuitElement;
+    final var element = circData.circuitElement;
     final var dest = circData.circuit;
     var knownComponents = circData.knownComponents;
     if (knownComponents == null) knownComponents = Collections.emptyMap();
@@ -153,7 +154,7 @@ public class XmlCircuitReader extends CircuitTransaction {
       if (circData.circuitElement.hasChildNodes()) {
         if (hasNamedBox) {
           // This situation is clear, it is an older logisim-evolution file
-          if ((circData.appearance != null) && !circData.appearance.isEmpty()) {
+          if (CollectionUtil.isNotEmpty(circData.appearance)) {
             dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CUSTOM);
           } else {
             dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_EVOLUTION);
@@ -163,7 +164,7 @@ public class XmlCircuitReader extends CircuitTransaction {
             /* Here we have 2 possibilities, either a Holycross file or a logisim-evolution file
              * before the introduction of the named circuit boxes. So let's ask the user.
              */
-            if ((circData.appearance != null) && !circData.appearance.isEmpty()) {
+            if (CollectionUtil.isNotEmpty(circData.appearance)) {
               dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CUSTOM);
             } else if (isHolyCross) {
               dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_FPGA);
@@ -181,12 +182,12 @@ public class XmlCircuitReader extends CircuitTransaction {
 
     final var componentsAt = new HashMap<Bounds, Component>();
     final var overlapComponents = new ArrayList<Component>();
-    for (Element sub_elt : XmlIterator.forChildElements(elt)) {
-      final var subEltName = sub_elt.getTagName();
+    for (final var subElement : XmlIterator.forChildElements(element)) {
+      final var subEltName = subElement.getTagName();
       if ("comp".equals(subEltName)) {
         try {
-          var comp = knownComponents.get(sub_elt);
-          if (comp == null) comp = getComponent(sub_elt, reader, isHolyCross, isEvolution);
+          var comp = knownComponents.get(subElement);
+          if (comp == null) comp = getComponent(subElement, reader, isHolyCross, isEvolution);
           if (comp != null) {
             /* filter out empty text boxes */
             if (comp.getFactory() instanceof Text) {
@@ -210,13 +211,13 @@ public class XmlCircuitReader extends CircuitTransaction {
             }
           }
         } catch (XmlReaderException e) {
-          reader.addErrors(e, circData.circuit.getName() + "." + toComponentString(sub_elt));
+          reader.addErrors(e, circData.circuit.getName() + "." + toComponentString(subElement));
         }
       } else if ("wire".equals(subEltName)) {
         try {
-          addWire(dest, mutator, sub_elt);
+          addWire(dest, mutator, subElement);
         } catch (XmlReaderException e) {
-          reader.addErrors(e, circData.circuit.getName() + "." + toWireString(sub_elt));
+          reader.addErrors(e, circData.circuit.getName() + "." + toWireString(subElement));
         }
       }
     }
@@ -268,7 +269,7 @@ public class XmlCircuitReader extends CircuitTransaction {
         circData.appearance.addAll(shapes);
       }
     }
-    if (circData.appearance != null && !circData.appearance.isEmpty()) {
+    if (CollectionUtil.isNotEmpty(circData.appearance)) {
       dest.getAppearance().setObjectsForce(circData.appearance);
     }
   }

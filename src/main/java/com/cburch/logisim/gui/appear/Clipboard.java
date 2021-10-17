@@ -12,7 +12,7 @@ package com.cburch.logisim.gui.appear;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
 import java.beans.PropertyChangeListener;
 
-class Clipboard {
+final class Clipboard {
   public static final String CONTENTS_PROPERTY = "appearance";
   private static final PropertyChangeWeakSupport propertySupport = new PropertyChangeWeakSupport(Clipboard.class);
   private static ClipboardContents current = ClipboardContents.EMPTY;

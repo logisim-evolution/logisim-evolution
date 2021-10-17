@@ -39,6 +39,7 @@ import com.cburch.logisim.soc.gui.BreakpointPanel;
 import com.cburch.logisim.soc.gui.CpuDrawSupport;
 import com.cburch.logisim.soc.util.AssemblerInterface;
 import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -431,14 +432,9 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
 
   public String getName() {
     var name = label;
-    if (name == null || name.isEmpty()) {
+    if (StringUtil.isNullOrEmpty(name)) {
       final var loc = attachedBus.getComponent().getLocation();
-      name =
-          attachedBus.getComponent().getFactory().getDisplayName()
-              + "@"
-              + loc.getX()
-              + ","
-              + loc.getY();
+      name = String.format("%s@%d,%d", attachedBus.getComponent().getFactory().getDisplayName(), loc.getX(), loc.getY());
     }
     return name;
   }

@@ -17,6 +17,7 @@ import com.cburch.logisim.soc.data.SocBusSlaveInterface;
 import com.cburch.logisim.soc.data.SocBusSlaveListener;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocSupport;
+import com.cburch.logisim.util.StringUtil;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.Random;
@@ -215,7 +216,7 @@ public class SocMemoryState implements SocBusSlaveInterface {
   public String getName() {
     if (attachedBus == null || attachedBus.getComponent() == null) return "BUG: Unknown";
     var name = label;
-    if (name == null || name.isEmpty()) {
+    if (StringUtil.isNullOrEmpty(name)) {
       final var loc = attachedBus.getComponent().getLocation();
       name = String.format("%s@%d,%d", attachedBus.getComponent().getFactory().getDisplayName(), loc.getX(), loc.getY());
     }
