@@ -48,6 +48,7 @@ import com.cburch.logisim.tools.SetAttributeAction;
 import com.cburch.logisim.util.AutoLabel;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.EventSourceWeakSupport;
+import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -455,7 +456,7 @@ public class Circuit {
         }
       }
 
-      if (ts.getTimeout()) {
+      if (ts.isTimeOut()) {
         return false;
       }
     }
@@ -796,7 +797,7 @@ public class Circuit {
         if (comp.getFactory() instanceof Pin) {
           final var dir1 = comp.getAttributeSet().getValue(Pin.ATTR_TYPE);
           final var dir2 = existingComp.getAttributeSet().getValue(Pin.ATTR_TYPE);
-          if (dir1 == dir2) return true;
+          if (dir1.equals(dir2)) return true;
         } else {
           return true;
         }
@@ -835,14 +836,15 @@ public class Circuit {
           if (comp.equals(c) || comp.getFactory() instanceof Tunnel) continue;
           if (comp.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
             final var label = comp.getAttributeSet().getValue(StdAttr.LABEL);
-            if (label != null && !label.isEmpty()) labels.add(label.toUpperCase());
+            if (StringUtil.isNotEmpty(label)) labels.add(label.toUpperCase());
           }
         }
         /* we also have to check for the entity name */
         if (getName() != null && !getName().isEmpty()) labels.add(getName());
         final var label = c.getAttributeSet().getValue(StdAttr.LABEL);
-        if (label != null && !label.isEmpty() && labels.contains(label.toUpperCase()))
+        if (StringUtil.isNotEmpty(label) && labels.contains(label.toUpperCase())) {
           c.getAttributeSet().setValue(StdAttr.LABEL, "");
+        }
       }
       wires.add(c);
       final var factory = c.getFactory();
@@ -947,7 +949,7 @@ public class Circuit {
       timedOut = false;
     }
 
-    public boolean getTimeout() {
+    public boolean isTimeOut() {
       return timedOut;
     }
 

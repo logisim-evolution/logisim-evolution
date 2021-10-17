@@ -281,7 +281,7 @@ class XmlReader {
       for (final var cmap : XmlIterator.forChildElements(board, "mc")) {
         int x, y, w, h;
         final var key = cmap.getAttribute("key");
-        if (key == null || key.isEmpty()) continue;
+        if (StringUtil.isNullOrEmpty(key)) continue;
         if (cmap.hasAttribute("open")) {
           map.put(key, new CircuitMapInfo());
         } else if (cmap.hasAttribute("vconst")) {

@@ -424,7 +424,7 @@ class CircuitWires {
 
     final var bmap = getBundleMap();
     final var isValid = bmap.isValid();
-    if (hidden == null || hidden.isEmpty()) {
+    if (CollectionUtil.isNullOrEmpty(hidden)) {
       for (final var wire : wires) {
         final var s = wire.e0;
         final var t = wire.e1;
