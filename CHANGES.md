@@ -5,7 +5,7 @@
 * @dev (????-??-??)
   * Logisim has now an internal font-chooser to comply to the font-values used
   * Fixed VHDL-component pins not visible bug
-  * New take on project export/import a zip-file is generated which can include a user provided manifest
+  * New take on project export/import a zip-file is generated which can include a user provided "README.md"
 
 * v3.7.0 (2021-10-12)
   * Reworked the slider component in the I/O extra library
