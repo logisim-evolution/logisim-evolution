@@ -49,6 +49,7 @@ public final class SvgReader {
   }
 
   private static AbstractCanvasObject createPath(Element elt) {
+    final var typeError = -1;
     final var patt = PATH_REGEX.matcher(elt.getAttribute("d"));
     final var tokens = new ArrayList<String>();
     var type = -1; // -1 error, 0 start, 1 curve, 2 polyline
@@ -58,12 +59,10 @@ public final class SvgReader {
       if (Character.isLetter(token.charAt(0))) {
         switch (token.charAt(0)) {
           case 'M':
-            if (type == -1) type = 0;
-            else type = -1;
+            type = (type == typeError) ? 0 : typeError;
             break;
           case 'Q', 'q':
-            if (type == 0) type = 1;
-            else type = -1;
+            type = (type == 0) ? 1 : typeError;
             break;
             /*
              * not supported case 'L': case 'l': case 'H': case 'h': case
@@ -71,25 +70,27 @@ public final class SvgReader {
              * type = -1; break;
              */
           default:
-            type = -1;
+            type = typeError;
         }
-        if (type == -1) {
-          throw new NumberFormatException("Unrecognized path command '" + token.charAt(0) + "'");
+        if (type == typeError) {
+          final var tokenStr = String.valueOf(token.charAt(0));
+          final var msg = String.format("Unrecognized path command '%s'", tokenStr);
+          throw new NumberFormatException(msg);
         }
       }
     }
 
     if (type == 1) {
       if (tokens.size() == 8
-          && tokens.get(0).equals("M")
-          && tokens.get(3).equalsIgnoreCase("Q")) {
+          && "M".equals(tokens.get(0))
+          && "Q".equalsIgnoreCase(tokens.get(3))) {
         final var x0 = Integer.parseInt(tokens.get(1));
         final var y0 = Integer.parseInt(tokens.get(2));
         var x1 = Integer.parseInt(tokens.get(4));
         var y1 = Integer.parseInt(tokens.get(5));
         var x2 = Integer.parseInt(tokens.get(6));
         var y2 = Integer.parseInt(tokens.get(7));
-        if (tokens.get(3).equals("q")) {
+        if ("q".equals(tokens.get(3))) {
           x1 += x0;
           y1 += y0;
           x2 += x0;
@@ -162,7 +163,8 @@ public final class SvgReader {
     }
     if (attrs.contains(DrawAttr.FILL_COLOR)) {
       var color = elt.getAttribute("fill");
-      if (color.equals("")) color = "#000000";
+      // FIXME: hardcoded color value
+      if ("".equals(color)) color = "#000000";
       final var opacity = elt.getAttribute("fill-opacity");
       if (!"none".equals(color)) {
         ret.setValue(DrawAttr.FILL_COLOR, getColor(color, opacity));
