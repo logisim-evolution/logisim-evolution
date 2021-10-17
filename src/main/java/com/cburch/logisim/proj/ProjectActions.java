@@ -530,7 +530,8 @@ public class ProjectActions {
     final var loader = proj.getLogisimFile().getLoader();
     final var oldTool = proj.getTool();
     proj.setTool(null);
-    var zipFile = loader.getMainFile().getName().replace(Loader.LOGISIM_EXTENSION, Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION);
+    final var mainFileName = loader.getMainFile() == null ? "Untitled.circ" : loader.getMainFile().getName();
+    var zipFile = mainFileName.replace(Loader.LOGISIM_EXTENSION, Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION);
     final var chooser = loader.createChooser();
     chooser.setFileFilter(Loader.LOGISIM_BUNDLE_FILTER);
     chooser.setAcceptAllFileFilterUsed(false);
@@ -562,7 +563,7 @@ public class ProjectActions {
           ret &= loader.export(proj.getLogisimFile(), projectZipFile);
           if (OptionPane.showConfirmDialog(proj.getFrame(), S.get("projAddReadme"), 
               S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION) {
-            final var dialog = new ProjectBundleReadme(proj, loader.getMainFile().getName().replace(Loader.LOGISIM_EXTENSION, ""));
+            final var dialog = new ProjectBundleReadme(proj, mainFileName.replace(Loader.LOGISIM_EXTENSION, ""));
             if (!dialog.writeReadme(projectZipFile)) {
               OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjUnableToCreate", S.get("projReadmeError")));
               projectZipFile.close();
@@ -570,7 +571,7 @@ public class ProjectActions {
               return false;
             }
           }
-          final var info = ProjectBundleManifest.getInfoContainer(BuildInfo.displayName, loader.getMainFile().getName());
+          final var info = ProjectBundleManifest.getInfoContainer(BuildInfo.displayName, mainFileName);
           ProjectBundleManifest.writeManifest(projectZipFile, info);
           projectZipFile.close();
           projectFile.close();
