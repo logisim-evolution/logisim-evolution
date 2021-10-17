@@ -206,8 +206,8 @@ public class TraceWindowTableModel extends AbstractTableModel
     private static final long serialVersionUID = 1L;
 
     @Override
-    public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                                                            boolean hasFocus, int row, int column) {
+    public java.awt.Component getTableCellRendererComponent(
+            JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       final var label = new JLabel(getColumnHeader(column));
       label.setBorder(BorderFactory.createEtchedBorder());
       return label;
@@ -218,8 +218,8 @@ public class TraceWindowTableModel extends AbstractTableModel
     private static final long serialVersionUID = 1L;
 
     @Override
-    public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
-                                                            boolean hasFocus, int row, int column) {
+    public java.awt.Component getTableCellRendererComponent(
+            JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       return (JPanel) value;
     }
   }
