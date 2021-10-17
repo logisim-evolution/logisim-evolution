@@ -60,7 +60,7 @@ class GrayCounter extends InstanceFactory {
     // These next two lines set it up so that the explorer window shows a
     // customized icon representing the component type. This should be a
     // 16x16 image.
-    URL url = getClass().getClassLoader().getResource("com/cburch/gray/counter.gif");
+    final var url = getClass().getClassLoader().getResource("com/cburch/gray/counter.gif");
     if (url != null) setIcon(new ImageIcon(url));
   }
 
@@ -73,7 +73,7 @@ class GrayCounter extends InstanceFactory {
    */
   @Override
   protected void configureNewInstance(Instance instance) {
-    Bounds bds = instance.getBounds();
+    final var bds = instance.getBounds();
     instance.setTextField(
         StdAttr.LABEL,
         StdAttr.LABEL_FONT,
@@ -93,9 +93,9 @@ class GrayCounter extends InstanceFactory {
     painter.drawLabel();
 
     if (painter.getShowState()) {
-      BitWidth width = painter.getAttributeValue(StdAttr.WIDTH);
-      CounterData state = CounterData.get(painter, width);
-      Bounds bds = painter.getBounds();
+      final var width = painter.getAttributeValue(StdAttr.WIDTH);
+      final var state = CounterData.get(painter, width);
+      final var bds = painter.getBounds();
       GraphicsUtil.drawCenteredText(
           painter.getGraphics(),
           StringUtil.toHexString(width.getWidth(), state.getValue().toLongValue()),
@@ -108,9 +108,9 @@ class GrayCounter extends InstanceFactory {
   public void propagate(InstanceState state) {
     // This is the same as with SimpleGrayCounter, except that we use the
     // StdAttr.WIDTH attribute to determine the bit width to work with.
-    BitWidth width = state.getAttributeValue(StdAttr.WIDTH);
-    CounterData cur = CounterData.get(state, width);
-    boolean trigger = cur.updateClock(state.getPortValue(0));
+    final var width = state.getAttributeValue(StdAttr.WIDTH);
+    final var cur = CounterData.get(state, width);
+    final var trigger = cur.updateClock(state.getPortValue(0));
     if (trigger) cur.setValue(GrayIncrementer.nextGray(cur.getValue()));
     state.setPort(1, cur.getValue(), 9);
   }

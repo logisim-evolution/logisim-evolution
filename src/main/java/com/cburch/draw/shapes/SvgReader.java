@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 import org.w3c.dom.Element;
 
-public class SvgReader {
+public final class SvgReader {
   private static final Pattern PATH_REGEX = Pattern.compile("[a-zA-Z]|[-0-9.]+");
 
   private SvgReader() {
@@ -60,8 +60,7 @@ public class SvgReader {
             if (type == -1) type = 0;
             else type = -1;
             break;
-          case 'Q':
-          case 'q':
+          case 'Q', 'q':
             if (type == 0) type = 1;
             else type = -1;
             break;
@@ -156,7 +155,7 @@ public class SvgReader {
     if (attrs.contains(DrawAttr.STROKE_COLOR)) {
       final var color = elt.getAttribute("stroke");
       final var opacity = elt.getAttribute("stroke-opacity");
-      if (!color.equals("none")) {
+      if (!"none".equals(color)) {
         ret.setValue(DrawAttr.STROKE_COLOR, getColor(color, opacity));
       }
     }
@@ -164,7 +163,7 @@ public class SvgReader {
       var color = elt.getAttribute("fill");
       if (color.equals("")) color = "#000000";
       final var opacity = elt.getAttribute("fill-opacity");
-      if (!color.equals("none")) {
+      if (!"none".equals(color)) {
         ret.setValue(DrawAttr.FILL_COLOR, getColor(color, opacity));
       }
     }
@@ -195,16 +194,16 @@ public class SvgReader {
     final var fontWeight = elt.getAttribute("font-weight");
     final var fontSize = elt.getAttribute("font-size");
     var styleFlags = Font.PLAIN;
-    if (fontStyle.equals("italic")) styleFlags |= Font.ITALIC;
-    if (fontWeight.equals("bold")) styleFlags |= Font.BOLD;
+    if (isItalic(fontStyle)) styleFlags |= Font.ITALIC;
+    if (isBold(fontWeight)) styleFlags |= Font.BOLD;
     final var size = Integer.parseInt(fontSize);
     ret.setValue(DrawAttr.FONT, new Font(fontFamily, styleFlags, size));
 
     final var hAlignStr = elt.getAttribute("text-anchor");
     AttributeOption hAlign;
-    if (hAlignStr.equals("start")) {
+    if ("start".equals(hAlignStr)) {
       hAlign = DrawAttr.HALIGN_LEFT;
-    } else if (hAlignStr.equals("end")) {
+    } else if ("end".equals(hAlignStr)) {
       hAlign = DrawAttr.HALIGN_RIGHT;
     } else {
       hAlign = DrawAttr.HALIGN_CENTER;
@@ -238,8 +237,8 @@ public class SvgReader {
     if (fontStyle == null || fontStyle.length() == 0) fontStyle = "plain";
     if (fontWeight == null || fontWeight.length() == 0) fontWeight = "plain";
     var styleFlags = Font.PLAIN;
-    if (fontStyle.equals("italic")) styleFlags |= Font.ITALIC;
-    if (fontWeight.equals("bold")) styleFlags |= Font.BOLD;
+    if (isItalic(fontStyle)) styleFlags |= Font.ITALIC;
+    if (isBold(fontWeight)) styleFlags |= Font.BOLD;
     final var size = (fontSize != null && fontSize.length() > 0) ? Integer.parseInt(fontSize) : defaultSize;
 
     return new Font(fontFamily, styleFlags, size);
@@ -298,5 +297,12 @@ public class SvgReader {
       ret[i] = Location.create(x, y);
     }
     return UnmodifiableList.create(ret);
+  }
+
+  private static boolean isBold(String fontStyle) {
+    return "bold".equals(fontStyle);
+  }
+  private static boolean isItalic(String fontStyle) {
+    return "italic".equals(fontStyle);
   }
 }

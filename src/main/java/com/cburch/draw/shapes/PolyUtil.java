@@ -12,7 +12,7 @@ package com.cburch.draw.shapes;
 import com.cburch.draw.model.Handle;
 import com.cburch.logisim.data.Location;
 
-public class PolyUtil {
+public final class PolyUtil {
   private PolyUtil() {
     // dummy
   }
