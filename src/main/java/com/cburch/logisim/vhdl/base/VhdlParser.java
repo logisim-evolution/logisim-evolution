@@ -264,22 +264,21 @@ public class VhdlParser {
     // Example: "name1, name2, name3 : OUT std_logic_vector(expr downto expr)"
 
     if (!input.next(PORT)) throw new IllegalVhdlContentException(S.get("portDeclarationException"));
-    String names = input.match().group(1).trim();
-    String ptype = getPortType(input.match().group(2).trim());
-    String type = input.match().group(3).trim();
-
-    int width;
-    if (type.equalsIgnoreCase("std_logic")) {
-      width = 1;
-    } else {
-      if (!input.next(RANGE))
-        throw new IllegalVhdlContentException(S.get("portDeclarationException"));
-      int upper = Integer.parseInt(input.match().group(1));
-      int lower = Integer.parseInt(input.match().group(2));
+    final var names = input.match().group(1).trim();
+    final var ptype = getPortType(input.match().group(2).trim());
+    final var type = input.match().group(3).trim();
+    final var isOneBit = type.equalsIgnoreCase("std_logic");
+    final var isBitVector = type.equalsIgnoreCase("std_logic_vector");
+    if (!isOneBit && !isBitVector) throw new IllegalVhdlContentException(S.get("portTypeException", type));
+    var width = 1;
+    if (isBitVector) {
+      if (!input.next(RANGE)) throw new IllegalVhdlContentException(S.get("portDeclarationException"));
+      final var upper = Integer.parseInt(input.match().group(1));
+      final var lower = Integer.parseInt(input.match().group(2));
       width = upper - lower + 1;
     }
 
-    for (String name : names.split("\\s*,\\s*")) {
+    for (final var name : names.split("\\s*,\\s*")) {
       if (ptype.equals(Port.INPUT)) inputs.add(new PortDescription(name, ptype, width));
       else outputs.add(new PortDescription(name, ptype, width));
     }
@@ -289,12 +288,10 @@ public class VhdlParser {
     // Example: "port ( decl ) ;"
     // Example: "port ( decl ; decl ; decl ) ;"
     if (!input.next(PORTS)) return false;
-    if (!input.next(OPENLIST))
-      throw new IllegalVhdlContentException(S.get("portDeclarationException"));
+    if (!input.next(OPENLIST)) throw new IllegalVhdlContentException(S.get("portDeclarationException"));
     parsePort(input);
     while (input.next(SEMICOLON)) parsePort(input);
-    if (!input.next(DONELIST))
-      throw new IllegalVhdlContentException(S.get("portDeclarationException"));
+    if (!input.next(DONELIST)) throw new IllegalVhdlContentException(S.get("portDeclarationException"));
     return true;
   }
 
