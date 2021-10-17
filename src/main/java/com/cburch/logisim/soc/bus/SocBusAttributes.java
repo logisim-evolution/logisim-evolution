@@ -17,6 +17,7 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.soc.data.SocBusInfo;
+import com.cburch.logisim.util.StringUtil;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.Date;
@@ -68,7 +69,7 @@ public class SocBusAttributes extends AbstractAttributeSet {
     if (attr == StdAttr.LABEL_FONT) return (V) labelfont;
     if (attr == StdAttr.LABEL_VISIBILITY) return (V) labelVisible;
     if (attr == SOC_BUS_ID) {
-      if (id.getBusId() == null || id.getBusId().isEmpty()) {
+      if (StringUtil.isNullOrEmpty(id.getBusId())) {
         final var date = new Date();
         final var names = this.toString().split("@");
         id.setBusId(String.format("0x%016X%s", date.getTime(), names[names.length - 1]));
@@ -148,7 +149,7 @@ public class SocBusAttributes extends AbstractAttributeSet {
     public boolean isHidden() {
       return true;
     }
-    
+
     @Override
     public String toStandardString(SocBusInfo value) {
       return value.getBusId();

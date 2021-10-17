@@ -10,22 +10,16 @@
 package com.cburch.logisim.gui.main;
 
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.circuit.WidthIncompatibilityData;
 import com.cburch.logisim.circuit.WireSet;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
-import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.generic.GridPainter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.tools.Tool;
+import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -56,20 +50,19 @@ class CanvasPainter implements PropertyChangeListener {
   }
 
   private void drawWidthIncompatibilityData(Graphics base, Graphics g, Project proj) {
-    Set<WidthIncompatibilityData> exceptions;
-    exceptions = proj.getCurrentCircuit().getWidthIncompatibilityData();
-    if (exceptions == null || exceptions.size() == 0) return;
+    final var exceptions = proj.getCurrentCircuit().getWidthIncompatibilityData();
+    if (CollectionUtil.isNullOrEmpty(exceptions)) return;
 
-    FontMetrics fm = base.getFontMetrics(g.getFont());
-    for (WidthIncompatibilityData ex : exceptions) {
-      BitWidth common = ex.getCommonBitWidth();
+    final var fm = base.getFontMetrics(g.getFont());
+    for (final var ex : exceptions) {
+      final var common = ex.getCommonBitWidth();
       for (int i = 0; i < ex.size(); i++) {
-        Location p = ex.getPoint(i);
-        BitWidth w = ex.getBitWidth(i);
+        final var p = ex.getPoint(i);
+        final var w = ex.getBitWidth(i);
 
         // ensure it hasn't already been drawn
-        boolean drawn = false;
-        for (int j = 0; j < i; j++) {
+        var drawn = false;
+        for (var j = 0; j < i; j++) {
           if (ex.getPoint(j).equals(p)) {
             drawn = true;
             break;
@@ -78,8 +71,8 @@ class CanvasPainter implements PropertyChangeListener {
         if (drawn) continue;
 
         // compute the caption combining all similar points
-        String caption = "" + w.getWidth();
-        for (int j = i + 1; j < ex.size(); j++) {
+        var caption = "" + w.getWidth();
+        for (var j = i + 1; j < ex.size(); j++) {
           if (ex.getPoint(j).equals(p)) {
             caption += "/" + ex.getBitWidth(j);
             break;
@@ -111,8 +104,8 @@ class CanvasPainter implements PropertyChangeListener {
   private void drawWithUserState(Graphics base, Graphics g, Project proj) {
     final var circ = proj.getCurrentCircuit();
     final var sel = proj.getSelection();
-    Set<Component> hidden;
     var dragTool = canvas.getDragTool();
+    Set<Component> hidden;
     if (dragTool == null) {
       hidden = NO_COMPONENTS;
     } else {
@@ -121,21 +114,21 @@ class CanvasPainter implements PropertyChangeListener {
     }
 
     // draw halo around component whose attributes we are viewing
-    boolean showHalo = AppPreferences.ATTRIBUTE_HALO.getBoolean();
+    final var showHalo = AppPreferences.ATTRIBUTE_HALO.getBoolean();
     if (showHalo
         && haloedComponent != null
         && haloedCircuit == circ
         && !hidden.contains(haloedComponent)) {
       GraphicsUtil.switchToWidth(g, 3);
       g.setColor(Canvas.HALO_COLOR);
-      Bounds bds = haloedComponent.getBounds(g).expand(5);
-      int w = bds.getWidth();
-      int h = bds.getHeight();
-      double a = Canvas.SQRT_2 * w;
-      double b = Canvas.SQRT_2 * h;
+      final var bds = haloedComponent.getBounds(g).expand(5);
+      final var width = bds.getWidth();
+      final var height = bds.getHeight();
+      final var a = Canvas.SQRT_2 * width;
+      final var b = Canvas.SQRT_2 * height;
       g.drawOval(
-          (int) Math.round(bds.getX() + w / 2.0 - a / 2.0),
-          (int) Math.round(bds.getY() + h / 2.0 - b / 2.0),
+          (int) Math.round(bds.getX() + width / 2.0 - a / 2.0),
+          (int) Math.round(bds.getY() + height / 2.0 - b / 2.0),
           (int) Math.round(a),
           (int) Math.round(b));
       GraphicsUtil.switchToWidth(g, 1);
@@ -143,35 +136,34 @@ class CanvasPainter implements PropertyChangeListener {
     }
 
     // draw circuit and selection
-    CircuitState circState = proj.getCircuitState();
-    boolean printerView = AppPreferences.PRINTER_VIEW.getBoolean();
-    ComponentDrawContext context =
-        new ComponentDrawContext(canvas, circ, circState, base, g, printerView);
+    final var circState = proj.getCircuitState();
+    final var printerView = AppPreferences.PRINTER_VIEW.getBoolean();
+    final var context = new ComponentDrawContext(canvas, circ, circState, base, g, printerView);
     context.setHighlightedWires(highlightedWires);
     circ.draw(context, hidden);
     sel.draw(context, hidden);
 
     // draw tool
-    Tool tool = dragTool != null ? dragTool : proj.getTool();
+    final var tool = dragTool != null ? dragTool : proj.getTool();
     if (tool != null && !canvas.isPopupMenuUp()) {
-      var gfxCopy = g.create();
+      final var gfxCopy = g.create();
       context.setGraphics(gfxCopy);
       tool.draw(canvas, context);
       gfxCopy.dispose();
     }
   }
 
-  private void exposeHaloedComponent(Graphics g) {
-    Component c = haloedComponent;
-    if (c == null) return;
-    Bounds bds = c.getBounds(g).expand(7);
-    int w = bds.getWidth();
-    int h = bds.getHeight();
-    double a = Canvas.SQRT_2 * w;
-    double b = Canvas.SQRT_2 * h;
+  private void exposeHaloedComponent(Graphics gfx) {
+    final var comp = haloedComponent;
+    if (comp == null) return;
+    final var bds = comp.getBounds(gfx).expand(7);
+    final var width = bds.getWidth();
+    final var height = bds.getHeight();
+    final var a = Canvas.SQRT_2 * width;
+    final var b = Canvas.SQRT_2 * height;
     canvas.repaint(
-        (int) Math.round(bds.getX() + w / 2.0 - a / 2.0),
-        (int) Math.round(bds.getY() + h / 2.0 - b / 2.0),
+        (int) Math.round(bds.getX() + width / 2.0 - a / 2.0),
+        (int) Math.round(bds.getY() + height / 2.0 - b / 2.0),
         (int) Math.round(a),
         (int) Math.round(b));
   }
@@ -221,7 +213,7 @@ class CanvasPainter implements PropertyChangeListener {
     gfxScaled.dispose();
   }
 
-  @java.lang.Override
+  @Override
   public void propertyChange(PropertyChangeEvent event) {
     if (AppPreferences.GRID_BG_COLOR.isSource(event)
         || AppPreferences.GRID_DOT_COLOR.isSource(event)
@@ -232,7 +224,7 @@ class CanvasPainter implements PropertyChangeListener {
 
   void setHaloedComponent(Circuit circ, Component comp) {
     if (comp == haloedComponent) return;
-    Graphics g = canvas.getGraphics();
+    final var g = canvas.getGraphics();
     exposeHaloedComponent(g);
     haloedCircuit = circ;
     haloedComponent = comp;
