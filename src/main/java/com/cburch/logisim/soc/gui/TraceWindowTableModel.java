@@ -77,7 +77,8 @@ public class TraceWindowTableModel extends AbstractTableModel
       for (var i = 0; i < getColumnCount(); i++) {
         table.getColumnModel().getColumn(i).setPreferredWidth(AppPreferences.getScaled(boxWidth));
       }
-      table.setRowHeight(AppPreferences.getScaled(2 * SocBusStateInfo.TRACE_HEIGHT + SocBusStateInfo.TRACE_HEIGHT / 2));
+      final var height = 2 * SocBusStateInfo.TRACE_HEIGHT + SocBusStateInfo.TRACE_HEIGHT / 2;
+      table.setRowHeight(AppPreferences.getScaled(height));
       table
           .getTableHeader()
           .setPreferredSize(new Dimension(AppPreferences.getScaled(boxWidth), AppPreferences.getScaled(20)));

@@ -110,7 +110,8 @@ public class SocBusMenuProvider implements ActionListener {
     private final CircuitStateHolder.HierarchyInfo csh;
     private final CircuitState circuitState;
 
-    public InstanceMenuItem(Instance inst, String label, int function, Object data, CircuitStateHolder.HierarchyInfo csh) {
+    public InstanceMenuItem(Instance inst, String label, int function, Object data,
+                            CircuitStateHolder.HierarchyInfo csh) {
       super(label);
       instance = inst;
       this.function = function;
@@ -128,7 +129,8 @@ public class SocBusMenuProvider implements ActionListener {
       circuitState = null;
     }
 
-    public InstanceMenuItem(Instance inst, String label, int function, CircuitState state, Object data, CircuitStateHolder.HierarchyInfo csh) {
+    public InstanceMenuItem(Instance inst, String label, int function, CircuitState state,
+                            Object data, CircuitStateHolder.HierarchyInfo csh) {
       super(label);
       instance = inst;
       this.function = function;
