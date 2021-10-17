@@ -342,9 +342,9 @@ public class Loader implements LibraryLoader {
     LibraryManager.instance.reload(this, lib);
   }
 
-  public boolean export(LogisimFile file, ZipOutputStream zipFile) {
+  public boolean export(LogisimFile file, ZipOutputStream zipFile, String mainFileName) {
     this.zipFile = zipFile;
-    file.write(zipFile, this, getMainFile().getName());
+    file.write(zipFile, this, mainFileName);
     this.zipFile = null;
     return true;
   }

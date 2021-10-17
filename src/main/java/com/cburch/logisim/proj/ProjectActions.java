@@ -560,7 +560,7 @@ public class ProjectActions {
           final var projectFile = new FileOutputStream(zipFile);
           final var projectZipFile = new ZipOutputStream(projectFile);
           projectZipFile.putNextEntry(new ZipEntry(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator)));
-          ret &= loader.export(proj.getLogisimFile(), projectZipFile);
+          ret &= loader.export(proj.getLogisimFile(), projectZipFile, mainFileName);
           if (OptionPane.showConfirmDialog(proj.getFrame(), S.get("projAddReadme"), 
               S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION) {
             final var dialog = new ProjectBundleReadme(proj, mainFileName.replace(Loader.LOGISIM_EXTENSION, ""));
