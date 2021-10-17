@@ -69,11 +69,11 @@ public final class Projects {
     }
   }
 
-
   public static final String PROJECT_LIST_PROPERTY = "projectList";
   private static final WeakHashMap<Window, Point> frameLocations = new WeakHashMap<>();
   private static final MyListener myListener = new MyListener();
-  private static final PropertyChangeWeakSupport propertySupport = new PropertyChangeWeakSupport(Projects.class);
+  private static final PropertyChangeWeakSupport propertySupport =
+      new PropertyChangeWeakSupport(Projects.class);
   private static final ArrayList<Project> openProjects = new ArrayList<>();
   private static Frame mostRecentFrame = null;
 

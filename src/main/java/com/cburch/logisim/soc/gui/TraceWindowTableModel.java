@@ -129,8 +129,12 @@ public class TraceWindowTableModel extends AbstractTableModel
     if (stateInfo != null && stateInfo.getTransaction() != null) {
       final var trans = stateInfo.getTransaction();
       final var master = trans.getTransactionInitiator();
-      if (master instanceof Component masterComp) masterComp.addComponentListener(this);
-      if (trans.getTransactionResponder() != null) trans.getTransactionResponder().addComponentListener(this);
+      if (master instanceof Component masterComp) {
+        masterComp.addComponentListener(this);
+      }
+      if (trans.getTransactionResponder() != null) {
+        trans.getTransactionResponder().addComponentListener(this);
+      }
     }
     return stateInfo;
   }
@@ -144,7 +148,8 @@ public class TraceWindowTableModel extends AbstractTableModel
         } else {
           var inserted = false;
           for (var j = 0; j < sortedList.size(); j++) {
-            if (myTraceList.get(info).getName().compareTo(myTraceList.get(sortedList.get(j)).getName()) <= 0) {
+            final var sortedKey = myTraceList.get(sortedList.get(j)).getName();
+            if (myTraceList.get(info).getName().compareTo(sortedKey) <= 0) {
               sortedList.add(j, info);
               inserted = true;
               break;

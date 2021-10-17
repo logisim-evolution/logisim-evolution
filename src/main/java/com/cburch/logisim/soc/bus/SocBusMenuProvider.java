@@ -250,7 +250,8 @@ public class SocBusMenuProvider implements ActionListener {
       state.setVisible(true);
     }
 
-    public void insertTransaction(Instance instance, CircuitState circuitState, SocBusStateInfo.SocBusState state, String name) {
+    public void insertTransaction(Instance instance, CircuitState circuitState,
+                                  SocBusStateInfo.SocBusState state, String name) {
       if (!myInsertionFrames.containsKey(state)) return;
       if (myInsertionFrames.get(state) == null) {
         String id = instance.getAttributeSet().getValue(SocBusAttributes.SOC_BUS_ID).getBusId();
@@ -271,7 +272,8 @@ public class SocBusMenuProvider implements ActionListener {
       frame.setExtendedState(fstate);
     }
 
-    public void showTraceWindow(Instance instance, SocBusStateInfo.SocBusState state, CircuitStateHolder.HierarchyInfo name) {
+    public void showTraceWindow(Instance instance, SocBusStateInfo.SocBusState state,
+                                CircuitStateHolder.HierarchyInfo name) {
       if (!myTraceList.containsKey(state)) return;
       if (myTraceList.get(state) == null) {
         myTraceList.put(state, name);
@@ -313,7 +315,11 @@ public class SocBusMenuProvider implements ActionListener {
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
         myTraceFrame = new ListeningFrame(S.getter("TraceWindowTitleDoubleClickOnTraceToRemoveTrace"));
         myTraceFrame.add(scroll);
-        myTraceFrame.setSize(AppPreferences.getScaled(SocBusStateInfo.BLOCK_WIDTH), AppPreferences.getScaled(320));
+
+        final var scaledWidth = AppPreferences.getScaled(SocBusStateInfo.BLOCK_WIDTH);
+        // FIXME: arbitrary set base heigh
+        final var scaledHeight = AppPreferences.getScaled(320);
+        myTraceFrame.setSize(scaledWidth, scaledHeight);
       }
       myTraceFrame.setVisible(true);
       var fstate = myTraceFrame.getExtendedState();
