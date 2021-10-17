@@ -140,9 +140,9 @@ public final class SvgReader {
     if (attrs.contains(DrawAttr.PAINT_TYPE)) {
       final var stroke = elt.getAttribute("stroke");
       final var fill = elt.getAttribute("fill");
-      if (stroke.equals("") || stroke.equals("none")) {
+      if ("".equals(stroke) || "none".equals(stroke)) {
         ret.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
-      } else if (fill.equals("none")) {
+      } else if ("none".equals(fill)) {
         ret.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_STROKE);
       } else {
         ret.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_STROKE_FILL);
@@ -252,47 +252,48 @@ public final class SvgReader {
     return new Font(fontFamily, styleFlags, size);
   }
 
+  /**
+   * Process color/opactiy string representation and returns instance of `Color`.
+   *
+   * @param hue Color value in HTML format, with `#` as prefix, i.e. #RRGGBB
+   * @param opacity opacity, as floating point (in from 0 to 1 range).
+   */
   public static Color getColor(String hue, String opacity) {
-    int r;
-    int g;
-    int b;
-    if (hue == null || hue.equals("")) {
-      r = 0;
-      g = 0;
-      b = 0;
-    } else {
-      r = Integer.parseInt(hue.substring(1, 3), 16);
-      g = Integer.parseInt(hue.substring(3, 5), 16);
-      b = Integer.parseInt(hue.substring(5, 7), 16);
-    }
-    int a;
-    if (opacity == null || opacity.equals("")) {
-      a = 255;
-    } else {
-      /*
-       * Patch taken from Cornell's version of Logisim:
-       * http://www.cs.cornell.edu/courses/cs3410/2015sp/
-       */
-      double x;
+    var r = 0;
+    var g = 0;
+    var b = 0;
+    final var colorStrLen = 7;
+    if (StringUtil.isNotEmpty(hue) && hue.length() == colorStrLen) {
       try {
-        x = Double.parseDouble(opacity);
-      } catch (NumberFormatException e) {
-        // some localizations use commas for decimal points
-        final var comma = opacity.lastIndexOf(',');
-        if (comma >= 0) {
-          try {
-            final var repl = opacity.substring(0, comma) + "." + opacity.substring(comma + 1);
-            x = Double.parseDouble(repl);
-          } catch (Throwable t) {
-            throw e;
-          }
-        } else {
-          throw e;
+        r = Integer.parseInt(hue.substring(1, 3), 16);
+        g = Integer.parseInt(hue.substring(3, 5), 16);
+        b = Integer.parseInt(hue.substring(5, 7), 16);
+      } catch (NumberFormatException ignored) {
+        // Do nothing and stick to defaults.
+      }
+    }
+    var alpha = 255;
+    if (StringUtil.isNotEmpty(opacity)) {
+      double tmpOpacity;
+      try {
+        tmpOpacity = Double.parseDouble(opacity);
+      } catch (NumberFormatException exception) {
+        // Some localizations use commas for decimal points, so let's try to deal with it.
+        final var commaIdx = opacity.lastIndexOf(',');
+        // No comma. Got no idea why it failed then, so rethrow
+        // FIXME: shall we really throw here? What about falling back to defaults?
+        if (commaIdx < 0) throw exception;
+        try {
+          final var repl = opacity.substring(0, commaIdx) + "." + opacity.substring(commaIdx + 1);
+          tmpOpacity = Double.parseDouble(repl);
+        } catch (Throwable t) {
+          // FIXME: shall we really throw here? What about falling back to defaults?
+          throw exception;
         }
       }
-      a = (int) Math.round(x * 255);
+      alpha = (int) Math.round(tmpOpacity * 255);
     }
-    return new Color(r, g, b, a);
+    return new Color(r, g, b, alpha);
   }
 
   private static List<Location> parsePoints(String points) {
