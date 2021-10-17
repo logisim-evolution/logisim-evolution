@@ -530,7 +530,7 @@ public class ProjectActions {
     final var loader = proj.getLogisimFile().getLoader();
     final var oldTool = proj.getTool();
     proj.setTool(null);
-    final var mainFileName = loader.getMainFile() == null ? "Untitled.circ" : loader.getMainFile().getName();
+    var mainFileName = loader.getMainFile() == null ? "Untitled.circ" : loader.getMainFile().getName();
     var zipFile = mainFileName.replace(Loader.LOGISIM_EXTENSION, Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION);
     final var chooser = loader.createChooser();
     chooser.setFileFilter(Loader.LOGISIM_BUNDLE_FILTER);
@@ -560,6 +560,7 @@ public class ProjectActions {
           final var projectFile = new FileOutputStream(zipFile);
           final var projectZipFile = new ZipOutputStream(projectFile);
           projectZipFile.putNextEntry(new ZipEntry(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator)));
+          mainFileName = chooser.getSelectedFile().getName().replace(Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION, "").concat(Loader.LOGISIM_EXTENSION);
           ret &= loader.export(proj.getLogisimFile(), projectZipFile, mainFileName);
           if (OptionPane.showConfirmDialog(proj.getFrame(), S.get("projAddReadme"), 
               S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION) {
