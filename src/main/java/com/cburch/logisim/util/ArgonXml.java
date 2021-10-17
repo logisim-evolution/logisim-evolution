@@ -78,8 +78,9 @@ public class ArgonXml {
       final var builder = builderFactory.newDocumentBuilder();
       final var document = builder.parse(inputStream);
       final var rootElement = document.getDocumentElement();
-      if (!rootElement.getNodeName().equals(rootName))
+      if (!rootElement.getNodeName().equals(rootName)) {
         throw new RuntimeException("Could not find root node: " + rootName);
+      }
       return rootElement;
     } catch (IOException | SAXException | ParserConfigurationException exception) {
       throw new RuntimeException(exception);
