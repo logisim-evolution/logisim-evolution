@@ -558,7 +558,7 @@ public class LineBuffer implements RandomAccess {
    * @param nrOfIndentSpaces Number of extra indentation spaces.
    * @return Instance of self for easy chaining.
    */
-  public LineBuffer addRemarkBlock(String remarkText, Integer nrOfIndentSpaces) {
+  public LineBuffer addRemarkBlock(String remarkText, int nrOfIndentSpaces) {
     add(buildRemarkBlock(remarkText, nrOfIndentSpaces));
     return this;
   }
@@ -570,7 +570,7 @@ public class LineBuffer implements RandomAccess {
    * @param nrOfIndentSpaces Number of extra indentation spaces.
    * @return Constructed lines of remark block.
    */
-  protected ArrayList<String> buildRemarkBlock(String remarkText, Integer nrOfIndentSpaces) {
+  protected ArrayList<String> buildRemarkBlock(String remarkText, int nrOfIndentSpaces) {
     final var maxRemarkLength = MAX_LINE_LENGTH - 2 * Hdl.remarkOverhead() - nrOfIndentSpaces;
     final var remarkLines = remarkText.split("\n");
     final var oneLine = new StringBuilder();
