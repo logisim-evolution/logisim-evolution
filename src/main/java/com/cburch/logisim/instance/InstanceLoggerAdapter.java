@@ -28,7 +28,7 @@ class InstanceLoggerAdapter implements LoggableContract {
     try {
       this.comp = comp;
       this.logger = loggerClass.getDeclaredConstructor().newInstance();
-      this.state = new InstanceStateImpl(null, comp);
+      this.state = new InstanceStateImpl(comp.getInstanceStateImpl().getCircuitState(), comp);
     } catch (Exception t) {
       final var className = loggerClass.getName();
       loggerS.error("Error while instantiating logger {}: {}", className, t.getClass().getName());
