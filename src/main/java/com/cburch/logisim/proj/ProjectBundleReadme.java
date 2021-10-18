@@ -36,6 +36,7 @@ import java.awt.event.ActionListener;
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.StringUtil;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.data.MutableDataSet;
@@ -50,9 +51,22 @@ public class ProjectBundleReadme extends JDialog implements ActionListener {
   private JTextField projectAuthor = new JTextField(20);
   private JTextField projectKeywords = new JTextField(20);
   private JEditorPane projectDescription = new JEditorPane();
+  private ReadmeInfo projectReadmeInfo;
   private final Frame parrent;
-  private ZipOutputStream zipfile;
-  private boolean readmeWritten = true;
+  
+  public class ReadmeInfo {
+    private String projectName;
+    private String projectAuthor;
+    private String projectKeywords;
+    private String projectDescription;
+    
+    public ReadmeInfo(String name, String author, String keyword, String description) {
+      projectName = name;
+      projectAuthor = author;
+      projectKeywords = keyword;
+      projectDescription = description;
+    }
+  }
 
   public ProjectBundleReadme(Project project, String projName) {
     super(project.getFrame(), S.get("projBundleReadmeWindow"));
@@ -91,8 +105,7 @@ public class ProjectBundleReadme extends JDialog implements ActionListener {
     setVisible(true);
   }
 
-  public boolean writeReadme(ZipOutputStream zipfile) {
-    this.zipfile = zipfile;
+  public ReadmeInfo getReadmeInfo() {
     setLayout(new GridBagLayout());
     setResizable(false);
     final var gbc = new GridBagConstraints();
@@ -124,14 +137,15 @@ public class ProjectBundleReadme extends JDialog implements ActionListener {
     gbc.gridy++;
     gbc.gridwidth = 1;
     closeButton.setText(S.get("projCancel"));
+    gbc.gridx = 1;
     add(closeButton, gbc);
     writeButton.setText(S.get("projWriteReadme"));
-    gbc.gridx = 1;
+    gbc.gridx = 0;
     add(writeButton, gbc);
     pack();
     setLocationRelativeTo(parrent);
     setVisible(true);
-    return readmeWritten;
+    return projectReadmeInfo;
   }
 
   @Override
@@ -140,27 +154,29 @@ public class ProjectBundleReadme extends JDialog implements ActionListener {
       setVisible(false);
       dispose();
     } else if (writeButton.equals(e.getSource())) {
-      writeReadmeFile();
+      projectReadmeInfo = new ReadmeInfo(projectName.getText(), projectAuthor.getText(), 
+          projectKeywords.getText(), projectDescription.getText());
       setVisible(false);
       dispose();
     }
   }
 
-  private void writeReadmeFile() {
-    if (zipfile == null) return;
+  public static void writeReadmeFile(ZipOutputStream zipfile, ReadmeInfo info) {
+    if ((zipfile == null) || (StringUtil.isNullOrEmpty(info.projectAuthor) 
+        && StringUtil.isNullOrEmpty(info.projectDescription) && StringUtil.isNullOrEmpty(info.projectKeywords))) return;
     try {
       final var seperator = "---\n\n";
       var wroteheader1 = false;
       zipfile.putNextEntry(new ZipEntry(README_FILE_NAME));
-      final var projName = projectName.getText();
       zipfile.write(S.get("projHeader").concat("\n\n").getBytes());
-      if ((projName != null) && !projName.isEmpty()) {
+      final var projName = info.projectName;
+      if (StringUtil.isNotEmpty(projName)) {
         zipfile.write(S.get("projHeader1").concat("\n\n").getBytes());
         wroteheader1 = true;
         zipfile.write(S.fmt("projIntro", projName).concat("\n\n").getBytes());
       }
-      final var projAuthor = projectAuthor.getText();
-      if ((projAuthor != null) && !projAuthor.isEmpty()) {
+      final var projAuthor = info.projectAuthor;
+      if (StringUtil.isNotEmpty(projAuthor)) {
         final var authors = projAuthor.split(",");
         if (authors.length > 0) {
           if (!wroteheader1) {
@@ -178,8 +194,8 @@ public class ProjectBundleReadme extends JDialog implements ActionListener {
           zipfile.write("\n\n".getBytes());
         }
       }
-      final var projKeywords = projectKeywords.getText();
-      if ((projKeywords != null) && !projKeywords.isEmpty()) {
+      final var projKeywords = info.projectKeywords;
+      if (StringUtil.isNotEmpty(projKeywords)) {
         final var keywords = projKeywords.split(",");
         if (keywords.length > 0) {
           if (!wroteheader1) {
@@ -195,8 +211,8 @@ public class ProjectBundleReadme extends JDialog implements ActionListener {
           zipfile.write("\n\n".getBytes());
         }
       }
-      final var projDescription = projectDescription.getText();
-      if ((projDescription != null) && !projDescription.isEmpty()) {
+      final var projDescription = info.projectDescription;
+      if (StringUtil.isNotEmpty(projDescription)) {
         zipfile.write(S.get("projHeader2").concat("\n\n").getBytes());
         zipfile.write(projDescription.getBytes());
         zipfile.write("\n".getBytes());
@@ -206,7 +222,7 @@ public class ProjectBundleReadme extends JDialog implements ActionListener {
       zipfile.write(S.get("projHeader3").concat("\n\n").getBytes());
       zipfile.write(S.fmt("projGenerateInfo", BuildInfo.displayName, BuildInfo.url, dtf.format(now)).concat("\n\n").getBytes());
     } catch (IOException e) {
-      readmeWritten = false;
+      System.err.println(e.getMessage());
     }
   }
 }

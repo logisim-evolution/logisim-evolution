@@ -557,21 +557,15 @@ public class ProjectActions {
           isCorrectFile = true;
         }
         if (isCorrectFile) {
+          final var dialog = new ProjectBundleReadme(proj, mainFileName.replace(Loader.LOGISIM_EXTENSION, ""));
+          final var readmeInfo = dialog.getReadmeInfo();
+          if (readmeInfo == null) return false;
           final var projectFile = new FileOutputStream(zipFile);
           final var projectZipFile = new ZipOutputStream(projectFile);
+          ProjectBundleReadme.writeReadmeFile(projectZipFile, readmeInfo);
           projectZipFile.putNextEntry(new ZipEntry(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator)));
           mainFileName = chooser.getSelectedFile().getName().replace(Loader.LOGISIM_PROJECT_BUNDLE_EXTENSION, "").concat(Loader.LOGISIM_EXTENSION);
           ret &= loader.export(proj.getLogisimFile(), projectZipFile, mainFileName);
-          if (OptionPane.showConfirmDialog(proj.getFrame(), S.get("projAddReadme"), 
-              S.get("projExportBundle"), OptionPane.YES_NO_OPTION) == OptionPane.YES_OPTION) {
-            final var dialog = new ProjectBundleReadme(proj, mainFileName.replace(Loader.LOGISIM_EXTENSION, ""));
-            if (!dialog.writeReadme(projectZipFile)) {
-              OptionPane.showMessageDialog(proj.getFrame(), S.get("ProjUnableToCreate", S.get("projReadmeError")));
-              projectZipFile.close();
-              projectFile.close();
-              return false;
-            }
-          }
           final var info = ProjectBundleManifest.getInfoContainer(BuildInfo.displayName, mainFileName);
           ProjectBundleManifest.writeManifest(projectZipFile, info);
           projectZipFile.close();
