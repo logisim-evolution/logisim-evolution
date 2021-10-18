@@ -405,7 +405,7 @@ public class ProjectActions {
    * @param proj the current project to perform the file->open action afterwards 
    * @return true if success, false otherwise 
    */
-  public static boolean doImportProject(Project proj) {
+  public static boolean doExtractAndRunProject(Project proj) {
     var ret = true;
     final var loader = proj.getLogisimFile().getLoader();
     final var chooser = loader.createChooser();
@@ -476,32 +476,24 @@ public class ProjectActions {
                   if (!entryName.startsWith(String.format("%s%s", Loader.LOGISIM_LIBRARY_DIR, File.separator))) continue;
                   if (entryName.lastIndexOf(File.separator) != entryName.indexOf(File.separator)) continue;
                   if (!entryName.endsWith(Loader.LOGISIM_EXTENSION) 
-                      && !entryName.toLowerCase().endsWith(".jar")) continue;
+                      && !entryName.toLowerCase().endsWith(".jar")) {
+                    continue;
+                  }
                   // make sure the library dir exists
                   if (!Files.exists(Paths.get(libDir))) new File(libDir).mkdirs();
                   filename = String.format("%s%s%s", exportDirectory, File.separator, entry.getName()); 
                   zipInput = zipFile.getInputStream(entry);
                   fileOutput = new FileOutputStream(filename);
-                  data = zipInput.read();
-                  while (data > 0) {
-                    fileOutput.write(data);
-                    data = zipInput.read();
+                  final var bytes = new byte[1024];
+                  var length = 0;
+                  while(((length = zipInput.read(bytes)) >= 0)) {
+                    fileOutput.write(bytes, 0, length);
                   }
-                  zipInput.close();
                   fileOutput.close();
+                  zipInput.close();
                 }
               }
-              // ask to open
-              if (OptionPane.showConfirmDialog(proj.getFrame(), S.get("projOpenProject"), S.get("projImportBundle"), 
-                  JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
-                final var newProj = ProjectActions.doOpen(proj.getFrame().getCanvas(), proj, new File(mainProjectFileName));
-                if (newProj != null
-                    && proj != null
-                    && !proj.isFileDirty()
-                    && proj.getLogisimFile().getLoader().getMainFile() == null) {
-                  proj.getFrame().dispose();
-                }
-              }
+              ProjectActions.doOpen(proj.getFrame().getCanvas(), proj, new File(mainProjectFileName));
             }
           } while (!isCorrectDirectory);
           zipFile.close();

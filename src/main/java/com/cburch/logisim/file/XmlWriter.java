@@ -551,7 +551,9 @@ final class XmlWriter {
     zipFile.putNextEntry(new ZipEntry(outputFileName));
     final var bytes = new byte[1024];
     var length = 0;
-    while ((length = fileReader.read(bytes)) >= 0) zipFile.write(bytes, 0, length);
+    while ((length = fileReader.read(bytes)) >= 0) {
+      zipFile.write(bytes, 0, length);
+    }
     fileReader.close();
   }
   
