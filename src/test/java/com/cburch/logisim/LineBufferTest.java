@@ -345,6 +345,27 @@ public class LineBufferTest extends TestBase {
 
   /* ********************************************************************************************* */
 
+  /**
+   * Ensures format() can handle additional opening brackets.
+   */
+  @Test
+  public void testPlaceholderSoroundedByThreeBrackets() {
+    final var fmt = "{{{1}}{{2}},{{{3}}{testText}}};";
+
+    final var buffer = LineBuffer.getBuffer();
+
+    final var arg1 = getRandomString();
+    final var arg2 = getRandomString();
+    final var arg3 = getRandomString();
+
+    buffer.add(fmt, arg1, arg2, arg3);
+
+    final var exp = String.format("{%s%s,{%s{testText}}};", arg1, arg2, arg3);
+    assertEquals(1, buffer.size());
+    assertEquals(exp, buffer.get(0));
+  }
+
+  /* ********************************************************************************************* */
 
   @Test
   public void testBuildRemarkBlock() {
