@@ -112,7 +112,7 @@ public class LineBuffer implements RandomAccess {
   public int size() {
     return contents.size();
   }
-  
+
   /**
    * Returns true in case the buffer is empty otherwise false
    *
@@ -578,20 +578,24 @@ public class LineBuffer implements RandomAccess {
     /* we start with generating the first remark line */
     while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
     for (var i = 0; i < MAX_LINE_LENGTH - nrOfIndentSpaces; i++) {
-      oneLine.append(Hdl.getRemarkChar(i == 0, i == MAX_LINE_LENGTH - nrOfIndentSpaces - 1));
+      final var isFirst = i == 0;
+      final var isLast = i == MAX_LINE_LENGTH - nrOfIndentSpaces - 1;
+      final var remarkChar = Hdl.getRemarkChar(isFirst, isLast);
+      oneLine.append(remarkChar);
     }
     contents.add(oneLine.toString());
     oneLine.setLength(0);
+
     for (var lineIndex = 0; lineIndex < remarkLines.length; lineIndex++) {
       final var remarkWords = remarkLines[lineIndex].split(" ");
       var maxWordLength = 0;
-      for (final var word : remarkWords)
-        maxWordLength = Math.max(maxWordLength, word.length());
+      for (final var word : remarkWords) maxWordLength = Math.max(maxWordLength, word.length());
       if (maxRemarkLength < maxWordLength) return contents;
+
       /* Next we put the remark text block in 1 or multiple lines */
       for (final var remarkWord : remarkWords) {
         if ((oneLine.length() + remarkWord.length() + Hdl.remarkOverhead()) > (MAX_LINE_LENGTH - 1)) {
-          /* Next word does not fit, we end this line and create a new one */
+          // Next word does not fit, we end this line and create a new one
           while (oneLine.length() < (MAX_LINE_LENGTH - Hdl.remarkOverhead())) oneLine.append(" ");
           oneLine
               .append(" ")
@@ -624,13 +628,16 @@ public class LineBuffer implements RandomAccess {
     }
     // We end with generating the last remark line.
     while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
-    for (var i = 0; i < MAX_LINE_LENGTH - nrOfIndentSpaces; i++)
-      oneLine.append(Hdl.getRemarkChar(i == MAX_LINE_LENGTH - nrOfIndentSpaces - 1, i == 0));
+    for (var i = 0; i < MAX_LINE_LENGTH - nrOfIndentSpaces; i++) {
+      final var isFirst = (i == MAX_LINE_LENGTH - nrOfIndentSpaces - 1);
+      final var isLast = (i == 0);
+      oneLine.append(Hdl.getRemarkChar(isFirst, isLast));
+    }
     contents.add(oneLine.toString());
 
     return contents;
   }
-  
+
   /**
    * Builds a single remark line
    *
