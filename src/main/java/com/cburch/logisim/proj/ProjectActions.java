@@ -486,7 +486,7 @@ public class ProjectActions {
                   fileOutput = new FileOutputStream(filename);
                   final var bytes = new byte[1024];
                   var length = 0;
-                  while(((length = zipInput.read(bytes)) >= 0)) {
+                  while (((length = zipInput.read(bytes)) >= 0)) {
                     fileOutput.write(bytes, 0, length);
                   }
                   fileOutput.close();
