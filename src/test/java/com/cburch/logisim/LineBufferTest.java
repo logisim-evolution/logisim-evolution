@@ -13,15 +13,21 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.anyBoolean;
+import static org.mockito.Mockito.mockStatic;
 
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.util.LineBuffer;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /** Tests LogisimVersion class. */
+@ExtendWith(MockitoExtension.class)
 public class LineBufferTest extends TestBase {
 
   private LineBuffer lb;
@@ -335,6 +341,65 @@ public class LineBufferTest extends TestBase {
     }
 
     assertTrue(found, "Default ctor not found!");
+  }
+
+  /* ********************************************************************************************* */
+
+
+  @Test
+  public void testBuildRemarkBlock() {
+    doBuildRemarkBlockTest(getRandomString(), 0);
+  }
+
+  @Test
+  public void testBuildRemarkBlockWithIndent() {
+    doBuildRemarkBlockTest(getRandomString(), getRandomInt(1, 10));
+  }
+
+  // FIXME: The implementation of this test should be improved.
+  // But it is as it is due to some difficulties I stepped on with Mockito 4.0.0
+  // and found no solution in the given time frame. The major issue is that when
+  // I created mock using `mockStatic(Hdl.class, Mockito.CALL_REAL_METHODS)` and
+  // then set the return value on `Hdl::isVhdl` only, it was still calling the
+  // original implementation and failed because of failure of setting up AppPreferences
+  // referenced by original isVhdl(). Oddly enough, 2nd call to isVhdl() method worked
+  // just fine, so either I stepped on the bug or failed to set it all up correctly.
+  // But I haven't had time to sniff more, so current implementation is just a crappy
+  // workaround. Would be nice to fix it at some point.
+  public void doBuildRemarkBlockTest(String remark, int nrOfIndentSpaces) {
+    final var lb = LineBuffer.getBuffer();
+    final var remarkText = getRandomString();
+
+    final var indentStr = " ".repeat(nrOfIndentSpaces);
+
+    try (final var mockedHdl = mockStatic(Hdl.class)) {
+      mockedHdl.when(Hdl::isVhdl).thenReturn(true);
+      mockedHdl.when(() -> Hdl.getRemarkChar(anyBoolean(), anyBoolean())).thenCallRealMethod();
+      mockedHdl.when(() -> Hdl.remarkOverhead()).thenCallRealMethod();
+      mockedHdl.when(() -> Hdl.getRemarkStart()).thenCallRealMethod();
+
+      final var maxLen = LineBuffer.MAX_LINE_LENGTH - nrOfIndentSpaces;
+
+      final var lineSep = indentStr + "-".repeat(maxLen);
+      final var expected = new ArrayList<String>();
+      expected.add(lineSep);
+
+      // Build remark line
+      final var sb = new StringBuilder();
+      final var edgeMarker = "--";
+      sb.append(indentStr + edgeMarker + " " + remarkText);
+      final var edgeMarkerLen = edgeMarker.length() + 1; // +1 to account space separator
+      sb.append(" ".repeat(maxLen - (2 * edgeMarkerLen) - remarkText.length()));
+      sb.append(" " + edgeMarker);
+      expected.add(sb.toString());
+
+      expected.add(lineSep);
+
+      lb.addRemarkBlock(remarkText, nrOfIndentSpaces);
+      final var result = lb.get();
+
+      assertEquals(expected, result);
+    }
   }
 
 }
