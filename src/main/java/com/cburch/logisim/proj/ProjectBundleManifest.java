@@ -143,8 +143,8 @@ public class ProjectBundleManifest {
       }
       final var attr0 = nodeAttr.item(0);
       final var attr1 = nodeAttr.item(1);
-      if (!"type".equals(attr0.getNodeName()) || !"bundle".equals(attr0.getNodeValue()) ||
-          !"version".equals(attr1.getNodeName()) || !"1".equals(attr1.getNodeValue())) {
+      if (!"type".equals(attr0.getNodeName()) || !"bundle".equals(attr0.getNodeValue()) 
+          || !"version".equals(attr1.getNodeName()) || !"1".equals(attr1.getNodeValue())) {
         OptionPane.showMessageDialog(frame, S.fmt("projBundleReadError", S.get("projBundleMisformatted")));
         return null;
       }
