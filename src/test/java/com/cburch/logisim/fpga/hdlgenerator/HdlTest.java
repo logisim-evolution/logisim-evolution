@@ -71,18 +71,17 @@ public class HdlTest extends TestBase {
   }
 
   protected String callMockedHdl(String methodName, boolean isVhdl) {
-
+    String result;
     try {
       final var mockedHdl = mockStatic(Hdl.class, Mockito.CALLS_REAL_METHODS);
       final var method = Hdl.class.getMethod(methodName);
       mockedHdl.when(Hdl::isVhdl).thenReturn(isVhdl);
-      final String result = (String) method.invoke(mockedHdl);
+      result = (String) method.invoke(mockedHdl);
       mockedHdl.close();
-      return result;
     } catch (InvocationTargetException | IllegalAccessException | NoSuchMethodException ex) {
       ex.printStackTrace();
       fail();
     }
-    return null;
+    return result;
   }
 } // end of Test class
