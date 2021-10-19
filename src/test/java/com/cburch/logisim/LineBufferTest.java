@@ -20,6 +20,7 @@ import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.util.LineBuffer;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -377,6 +378,7 @@ public class LineBufferTest extends TestBase {
     doBuildRemarkBlockTest(getRandomString(), getRandomInt(1, 10));
   }
 
+  // FIXME: this test do not cover breaking remark into multiple lines
   // FIXME: The implementation of this test should be improved.
   // But it is as it is due to some difficulties I stepped on with Mockito 4.0.0
   // and found no solution in the given time frame. The major issue is that when
@@ -395,7 +397,10 @@ public class LineBufferTest extends TestBase {
 
     try (final var mockedHdl = mockStatic(Hdl.class)) {
       mockedHdl.when(Hdl::isVhdl).thenReturn(true);
+      mockedHdl.when(Hdl::getRemarkChar).thenCallRealMethod();
       mockedHdl.when(() -> Hdl.getRemarkChar(anyBoolean(), anyBoolean())).thenCallRealMethod();
+      mockedHdl.when(Hdl::getRemarkCharFirst).thenCallRealMethod();
+      mockedHdl.when(Hdl::getRemarkCharLast).thenCallRealMethod();
       mockedHdl.when(() -> Hdl.remarkOverhead()).thenCallRealMethod();
       mockedHdl.when(() -> Hdl.getRemarkStart()).thenCallRealMethod();
 
@@ -422,5 +427,4 @@ public class LineBufferTest extends TestBase {
       assertEquals(expected, result);
     }
   }
-
 }

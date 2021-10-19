@@ -39,7 +39,10 @@ public class LineBuffer implements RandomAccess {
   private ArrayList<String> contents = new java.util.ArrayList<String>();
 
   // Paired placeholders.
-  protected Pairs pairs = new Pairs();
+  private Pairs pairs = new Pairs();
+
+  private final String SPACE = " ";
+
 
   /* ********************************************************************************************* */
 
@@ -567,69 +570,70 @@ public class LineBuffer implements RandomAccess {
    * Builds remark block.
    *
    * @param remarkText Remark text.
-   * @param nrOfIndentSpaces Number of extra indentation spaces.
+   * @param indentSpaces Number of extra indentation spaces.
    * @return Constructed lines of remark block.
    */
-  protected ArrayList<String> buildRemarkBlock(String remarkText, int nrOfIndentSpaces) {
-    final var maxRemarkLength = MAX_LINE_LENGTH - 2 * Hdl.remarkOverhead() - nrOfIndentSpaces;
+  protected ArrayList<String> buildRemarkBlock(String remarkText, int indentSpaces) {
+    final var maxRemarkLength = MAX_LINE_LENGTH - 2 * Hdl.remarkOverhead() - indentSpaces;
     final var remarkLines = remarkText.split("\n");
     final var oneLine = new StringBuilder();
     final var contents = new ArrayList<String>();
-    /* we start with generating the first remark line */
-    while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
-    for (var i = 0; i < MAX_LINE_LENGTH - nrOfIndentSpaces; i++) {
-      final var isFirst = i == 0;
-      final var isLast = i == MAX_LINE_LENGTH - nrOfIndentSpaces - 1;
-      final var remarkChar = Hdl.getRemarkChar(isFirst, isLast);
-      oneLine.append(remarkChar);
-    }
+
+    oneLine
+        .append(SPACE.repeat(indentSpaces - oneLine.length()))
+        .append(Hdl.getRemarkCharFirst())
+        .append(Hdl.getRemarkChar().repeat(MAX_LINE_LENGTH - indentSpaces - 2))
+        .append(Hdl.getRemarkCharLast());
     contents.add(oneLine.toString());
     oneLine.setLength(0);
 
     for (var lineIndex = 0; lineIndex < remarkLines.length; lineIndex++) {
-      final var remarkWords = remarkLines[lineIndex].split(" ");
+      final var remarkWords = remarkLines[lineIndex].split(SPACE);
       var maxWordLength = 0;
       for (final var word : remarkWords) maxWordLength = Math.max(maxWordLength, word.length());
       if (maxRemarkLength < maxWordLength) return contents;
 
       /* Next we put the remark text block in 1 or multiple lines */
-      for (final var remarkWord : remarkWords) {
-        if ((oneLine.length() + remarkWord.length() + Hdl.remarkOverhead()) > (MAX_LINE_LENGTH - 1)) {
+      for (final var word : remarkWords) {
+        if ((oneLine.length() + word.length() + Hdl.remarkOverhead()) > (MAX_LINE_LENGTH - 1)) {
           // Next word does not fit, we end this line and create a new one
-          while (oneLine.length() < (MAX_LINE_LENGTH - Hdl.remarkOverhead())) oneLine.append(" ");
+          final var remainingLength = maxRemarkLength - Hdl.remarkOverhead();
           oneLine
-              .append(" ")
-              .append(Hdl.getRemarkChar(false, false))
-              .append(Hdl.getRemarkChar(false, false));
+              .append(SPACE.repeat(remainingLength > 0 ? remainingLength : 0))
+              .append(SPACE)
+              .append(Hdl.getRemarkChar().repeat(2));
           contents.add(oneLine.toString());
           oneLine.setLength(0);
         }
-        while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
-        if (oneLine.length() == nrOfIndentSpaces)
-          oneLine.append(Hdl.getRemarkStart()); // we put the preamble
-        if (remarkWord.endsWith("\\")) {
-          // Forced new line
-          oneLine.append(remarkWord, 0, remarkWord.length() - 1);
-          while (oneLine.length() < (MAX_LINE_LENGTH - Hdl.remarkOverhead())) oneLine.append(" ");
+        var remainingIndent = indentSpaces - oneLine.length();
+        if (remainingIndent < 0) remainingIndent = 0;
+        oneLine.append(SPACE.repeat(remainingIndent));
+        // Put the preamble if it's time for it.
+        if (oneLine.length() == indentSpaces) oneLine.append(Hdl.getRemarkStart());
+        if (word.endsWith("\\")) {
+          oneLine.append(word, 0, word.length() - 1);
+          oneLine.append(SPACE.repeat(MAX_LINE_LENGTH - Hdl.remarkOverhead()));
         } else {
-          oneLine.append(remarkWord).append(" ");
+          oneLine.append(word).append(SPACE);
         }
       }
-      if (oneLine.length() > (nrOfIndentSpaces + Hdl.remarkOverhead())) {
-        // We have an unfinished remark line
-        while (oneLine.length() < (MAX_LINE_LENGTH - Hdl.remarkOverhead())) oneLine.append(" ");
+      if (oneLine.length() > (indentSpaces + Hdl.remarkOverhead())) {
+        final var remainingSpace = MAX_LINE_LENGTH - Hdl.remarkOverhead();
+        if (oneLine.length() < remainingSpace) {
+          oneLine.append(SPACE.repeat(remainingSpace - oneLine.length()));
+        }
         oneLine
-            .append(" ")
-            .append(Hdl.getRemarkChar(false, false))
-            .append(Hdl.getRemarkChar(false, false));
+            .append(SPACE)
+            .append(Hdl.getRemarkChar())
+            .append(Hdl.getRemarkChar());
         contents.add(oneLine.toString());
         oneLine.setLength(0);
       }
     }
     // We end with generating the last remark line.
-    while (oneLine.length() < nrOfIndentSpaces) oneLine.append(" ");
-    for (var i = 0; i < MAX_LINE_LENGTH - nrOfIndentSpaces; i++) {
-      final var isFirst = (i == MAX_LINE_LENGTH - nrOfIndentSpaces - 1);
+    while (oneLine.length() < indentSpaces) oneLine.append(SPACE);
+    for (var i = 0; i < MAX_LINE_LENGTH - indentSpaces; i++) {
+      final var isFirst = (i == MAX_LINE_LENGTH - indentSpaces - 1);
       final var isLast = (i == 0);
       oneLine.append(Hdl.getRemarkChar(isFirst, isLast));
     }

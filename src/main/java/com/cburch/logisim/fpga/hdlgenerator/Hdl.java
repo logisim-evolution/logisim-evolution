@@ -16,6 +16,7 @@ import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.LineBuffer;
+import com.sun.jdi.request.InvalidRequestStateException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -51,11 +52,22 @@ public abstract class Hdl {
     return isVhdl() ? 3 : 4;
   }
 
+  public static String getRemarkChar() {
+    return isVhdl() ? "-" : "*";
+  }
+
+  public static String getRemarkCharFirst() {
+    return isVhdl() ? "-" : "/";
+  }
+
+  public static String getRemarkCharLast() {
+    return isVhdl() ? "-" : " ";
+  }
+
   public static String getRemarkChar(boolean first, boolean last) {
-    if (isVhdl()) return "-";
-    if (first) return "/";
-    if (last) return " ";
-    return "*";
+    if (first) return getRemarkCharFirst();
+    if (last) return getRemarkCharLast();
+    return getRemarkChar();
   }
 
   public static String getRemarkStart() {
