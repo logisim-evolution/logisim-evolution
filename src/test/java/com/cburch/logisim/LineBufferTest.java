@@ -379,7 +379,7 @@ public class LineBufferTest extends TestBase {
   private void doRemarkLineTest(String remark, boolean isVhdl) {
     try (final var mockedHdl = mockStatic(Hdl.class)) {
       setupMockedHdl(mockedHdl, isVhdl);
-      final var expected = String.format("%s%s", Hdl.getRemarkBlockLineStart(), remark);
+      final var expected = String.format("%s%s", Hdl.getLineCommentStart(), remark);
       final var lb = LineBuffer.getBuffer();
       lb.addRemarkLine(remark);
       assertEquals(1, lb.size());
@@ -484,16 +484,6 @@ public class LineBufferTest extends TestBase {
   }
 
   // FIXME: this test do not cover breaking remark into multiple lines
-  // FIXME: The implementation of this test should be improved.
-  // But it is as it is due to some difficulties I stepped on with Mockito 4.0.0
-  // and found no solution in the given time frame. The major issue is that when
-  // I created mock using `mockStatic(Hdl.class, Mockito.CALL_REAL_METHODS)` and
-  // then set the return value on `Hdl::isVhdl` only, it was still calling the
-  // original implementation and failed because of failure of setting up AppPreferences
-  // referenced by original isVhdl(). Oddly enough, 2nd call to isVhdl() method worked
-  // just fine, so either I stepped on the bug or failed to set it all up correctly.
-  // But I haven't had time to sniff more, so current implementation is just a crappy
-  // workaround. Would be nice to fix it at some point.
   private void doBuildRemarkBlockTest(String remarkText, int indentSpaces, boolean isVhdl) {
     final var lb = LineBuffer.getBuffer();
     final var indent = " ".repeat(indentSpaces);
@@ -550,11 +540,12 @@ public class LineBufferTest extends TestBase {
 
   private void setupMockedHdl(MockedStatic<Hdl> mockedHdl, boolean isVhdl) {
     mockedHdl.when(Hdl::isVhdl).thenReturn(isVhdl);
-    mockedHdl.when(Hdl::getRemarkChar).thenCallRealMethod();
 
+    mockedHdl.when(Hdl::getRemarkChar).thenCallRealMethod();
     mockedHdl.when(Hdl::getRemarkBlockStart).thenCallRealMethod();
     mockedHdl.when(Hdl::getRemarkBlockEnd).thenCallRealMethod();
     mockedHdl.when(Hdl::getRemarkBlockLineStart).thenCallRealMethod();
     mockedHdl.when(Hdl::getRemarkBlockLineEnd).thenCallRealMethod();
+    mockedHdl.when(Hdl::getLineCommentStart).thenCallRealMethod();
   }
 }
