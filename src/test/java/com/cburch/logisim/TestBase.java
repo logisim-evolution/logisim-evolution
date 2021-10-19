@@ -14,7 +14,8 @@ import java.util.Random;
 
 public class TestBase {
 
-  public static final int DEFAULT_RANDOM_STRING_LENGTH = 16;
+  public static final int DEFAULT_RANDOM_STRING_LENGTH_MIN = 16;
+  public static final int DEFAULT_RANDOM_STRING_LENGTH_MAX = 32;
 
   /**
    * Function to generate a random string of specified length.
@@ -41,7 +42,8 @@ public class TestBase {
   }
 
   protected String getRandomString(boolean includeDigits) {
-    return getRandomString(DEFAULT_RANDOM_STRING_LENGTH, includeDigits);
+    final var len = getRandomInt(DEFAULT_RANDOM_STRING_LENGTH_MIN, DEFAULT_RANDOM_STRING_LENGTH_MAX);
+    return getRandomString(len, includeDigits);
   }
 
   protected String getRandomString(int length) {
@@ -49,7 +51,8 @@ public class TestBase {
   }
 
   protected String getRandomString() {
-    return getRandomString(DEFAULT_RANDOM_STRING_LENGTH);
+    final var len = getRandomInt(DEFAULT_RANDOM_STRING_LENGTH_MIN, DEFAULT_RANDOM_STRING_LENGTH_MAX);
+    return getRandomString(len);
   }
 
   protected static int getRandomInt(int min, int max) {

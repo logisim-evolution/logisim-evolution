@@ -440,7 +440,7 @@ public class LineBufferTest extends TestBase {
     final var sb = new StringBuilder();
 
     final var cnt = getRandomInt(20, 30);
-    final var tooLongWord = getRandomString(DEFAULT_RANDOM_STRING_LENGTH * cnt);
+    final var tooLongWord = getRandomString().repeat(cnt);
     assertTrue(tooLongWord.length() > LineBuffer.MAX_LINE_LENGTH);
     sb.append(tooLongWord);
 
