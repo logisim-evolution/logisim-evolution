@@ -30,7 +30,7 @@ public abstract class Hdl {
   /**
    * Length of remark block special sequences (block open/close, line open/close).
    */
-  public static final int REMARK_BLOCK_SEQ_LENGTH = 3;
+  public static final int REMARK_MARKER_LENGTH = 3;
 
   private Hdl() {
     throw new IllegalStateException("Utility class. No instantiation allowed.");

@@ -34,6 +34,8 @@ public class LineBuffer implements RandomAccess {
   // Default indentation string
   public static final String DEFAULT_INDENT_STR = "   "; // three spaces
   public static final int DEFAULT_INDENT = 1;
+  public static final int MAX_ALLOWED_INDENT = MAX_LINE_LENGTH - (2 * Hdl.REMARK_MARKER_LENGTH);
+
 
   // Internal buffer holding separate lines.
   private ArrayList<String> contents = new java.util.ArrayList<String>();
@@ -505,7 +507,6 @@ public class LineBuffer implements RandomAccess {
     return result;
   }
 
-
   /**
    * Returns **copy** of internal pair buffer.
    */
@@ -574,7 +575,16 @@ public class LineBuffer implements RandomAccess {
    * @return Constructed lines of remark block.
    */
   protected ArrayList<String> buildRemarkBlock(String remarkText, int indentSpaces) {
-    final var maxRemarkLineLength = MAX_LINE_LENGTH - indentSpaces - (2 * Hdl.REMARK_BLOCK_SEQ_LENGTH);
+    if (indentSpaces < 0) {
+      throw new IllegalArgumentException("Negative indentation is not allowed.");
+    }
+    if (indentSpaces > MAX_ALLOWED_INDENT) {
+      throw new IllegalArgumentException(
+          format(
+              "Max allowed indentation is {{1}}, {{2}} given.", MAX_ALLOWED_INDENT, indentSpaces));
+    }
+
+    final var maxRemarkLineLength = MAX_LINE_LENGTH - indentSpaces - (2 * Hdl.REMARK_MARKER_LENGTH);
     final var indent = SPACE.repeat(indentSpaces);
     final var contents = new ArrayList<String>();
 
@@ -606,7 +616,7 @@ public class LineBuffer implements RandomAccess {
     // We end with generating the last remark line.
     oneLine
             .append(indent)
-            .append(Hdl.getRemarkChar().repeat(MAX_LINE_LENGTH - oneLine.length() - Hdl.REMARK_BLOCK_SEQ_LENGTH))
+            .append(Hdl.getRemarkChar().repeat(MAX_LINE_LENGTH - oneLine.length() - Hdl.REMARK_MARKER_LENGTH))
             .append(Hdl.getRemarkBlockEnd());
 
     contents.add(oneLine.toString());

@@ -368,16 +368,26 @@ public class LineBufferTest extends TestBase {
 
   /* ********************************************************************************************* */
 
+  /**
+   * Tests remark block generator for non-indented blocks.
+   */
   @Test
   public void testBuildRemarkBlock() {
     doBuildRemarkBlockTest(getRandomString(), 0);
   }
 
+  /**
+   * Ensures that indented remark blocks are correctly generated.
+   */
   @Test
   public void testBuildRemarkBlockWithIndent() {
     doBuildRemarkBlockTest(getRandomString(), getRandomInt(1, 10));
   }
 
+  /**
+   * Ensures that remark with multiple words and total remark length longer
+   * than max line length are correctly word wrapped.
+   */
   @Test
   public void testMultilineRemarkBlock() {
     final var wordCnt = getRandomInt(20, 30);
@@ -388,12 +398,68 @@ public class LineBufferTest extends TestBase {
     doBuildRemarkBlockTest(sb.toString(), 0);
   }
 
+  /**
+   * Ensures that remark with words longer than max line length are
+   * properly force-word wrapped.
+   */
   @Test
   public void testForcedMultilineRemarkBlock() {
     final var cnt = getRandomInt(20, 30);
     final var remark = getRandomString().repeat(cnt);
     assertTrue(remark.length() > LineBuffer.MAX_LINE_LENGTH);
     doBuildRemarkBlockTest(remark, 0);
+  }
+
+  /**
+   * Tests if remark containing multiple words, of which
+   * some are longer than max line length is correctly wrapped.
+   */
+  @Test
+  public void testMixedRemarkWrapping() {
+    final var sb = new StringBuilder();
+
+    final var cnt = getRandomInt(20, 30);
+    final var tooLongWord = getRandomString(DEFAULT_RANDOM_STRING_LENGTH * cnt);
+    assertTrue(tooLongWord.length() > LineBuffer.MAX_LINE_LENGTH);
+    sb.append(tooLongWord);
+
+    final var wordCnt = getRandomInt(20, 30);
+    for (var i = 0; i < wordCnt; i++) {
+      sb.append(getRandomString()).append(" ");
+    }
+
+    doBuildRemarkBlockTest(sb.toString(), 0);
+  }
+
+  /**
+   * Ensures that indentation exceeding allowed range is handled correctly.
+   */
+  @Test
+  public void testEdgeIndentWrappingOfRemarkBlock() {
+    final var remark = getRandomString();
+    assertThrows(IllegalArgumentException.class, () -> {
+      LineBuffer.getBuffer().addRemarkBlock(remark, LineBuffer.MAX_LINE_LENGTH);
+    });
+  }
+
+  /**
+   * Ensures that negative indentation is handled correctly.
+   */
+  @Test
+  public void testNegativeIndentWrappingOfRemarkBlock() {
+    final var remark = getRandomString();
+    final var indent = getRandomInt(-100, -1);
+    assertThrows(IllegalArgumentException.class, () -> {
+      LineBuffer.getBuffer().addRemarkBlock(remark, indent);
+    });
+  }
+
+  /**
+   * Test remark block builder for both Vhdl and non Vhdl modes.
+   */
+  private void doBuildRemarkBlockTest(String remarkText, int indentSpaces) {
+    doBuildRemarkBlockTest(remarkText, indentSpaces, true);
+    doBuildRemarkBlockTest(remarkText, indentSpaces, false);
   }
 
   // FIXME: this test do not cover breaking remark into multiple lines
@@ -407,12 +473,12 @@ public class LineBufferTest extends TestBase {
   // just fine, so either I stepped on the bug or failed to set it all up correctly.
   // But I haven't had time to sniff more, so current implementation is just a crappy
   // workaround. Would be nice to fix it at some point.
-  public void doBuildRemarkBlockTest(String remarkText, int indentSpaces) {
+  private void doBuildRemarkBlockTest(String remarkText, int indentSpaces, boolean isVhdl) {
     final var lb = LineBuffer.getBuffer();
     final var indent = " ".repeat(indentSpaces);
 
     try (final var mockedHdl = mockStatic(Hdl.class)) {
-      mockedHdl.when(Hdl::isVhdl).thenReturn(true);
+      mockedHdl.when(Hdl::isVhdl).thenReturn(isVhdl);
       mockedHdl.when(Hdl::getRemarkChar).thenCallRealMethod();
 
       mockedHdl.when(Hdl::getRemarkBlockStart).thenCallRealMethod();
@@ -420,32 +486,45 @@ public class LineBufferTest extends TestBase {
       mockedHdl.when(Hdl::getRemarkBlockLineStart).thenCallRealMethod();
       mockedHdl.when(Hdl::getRemarkBlockLineEnd).thenCallRealMethod();
 
-      final var maxLen = LineBuffer.MAX_LINE_LENGTH - indentSpaces;
-      final var maxRemarkLineLength = LineBuffer.MAX_LINE_LENGTH - (2 * Hdl.REMARK_BLOCK_SEQ_LENGTH) - indentSpaces;
+      final var maxLineLength = LineBuffer.MAX_LINE_LENGTH - (2 * Hdl.REMARK_MARKER_LENGTH) - indentSpaces;
       final var remarkLines =
-          List.of(WordUtils.wrap(remarkText, maxRemarkLineLength, "\n", true).split("\n"));
+          List.of(WordUtils.wrap(remarkText, maxLineLength, "\n", true).split("\n"));
 
-      final var lineSep = indent + "-".repeat(maxLen);
+      final var lineSep = indent + "-".repeat(LineBuffer.MAX_LINE_LENGTH - indentSpaces);
       final var expected = new ArrayList<String>();
 
       // Header separator line
-      expected.add(lineSep);
+      final var header = new StringBuilder();
+      expected.add(
+          header
+              .append(indent)
+              .append(Hdl.getRemarkBlockStart())
+              .append(Hdl.getRemarkChar().repeat(LineBuffer.MAX_LINE_LENGTH - header.length()))
+              .toString());
 
       // Build remark line
-      final var edgeMarker = "--";
-      final var edgeMarkerLen = edgeMarker.length() + 1; // +1 to account space separator
-      final var sb = new StringBuilder();
-      for (final var line : remarkLines) {
-        sb.append(indent + edgeMarker + " " + line);
-        final var remaining = maxLen - (2 * edgeMarkerLen) - line.length();
-        sb.append(" ".repeat(remaining > 0 ? remaining : 0));
-        sb.append(" " + edgeMarker);
-        expected.add(sb.toString());
-        sb.setLength(0);
+      final var tmpLine = new StringBuilder();
+      for (final var remarkLine : remarkLines) {
+        tmpLine.append(indent + Hdl.getRemarkBlockLineStart() + remarkLine);
+        final var remaining =
+            LineBuffer.MAX_LINE_LENGTH
+                - indentSpaces
+                - (2 * Hdl.REMARK_MARKER_LENGTH)
+                - remarkLine.length();
+        tmpLine.append(" ".repeat(remaining > 0 ? remaining : 0));
+        tmpLine.append(Hdl.getRemarkBlockLineEnd());
+        expected.add(tmpLine.toString());
+        tmpLine.setLength(0);
       }
 
       // Footer separator line
-      expected.add(lineSep);
+      final var footer = new StringBuilder();
+      expected.add(
+          footer
+              .append(indent)
+              .append(Hdl.getRemarkChar().repeat(LineBuffer.MAX_LINE_LENGTH - footer.length() - Hdl.REMARK_MARKER_LENGTH))
+              .append(Hdl.getRemarkBlockEnd())
+              .toString());
 
       lb.addRemarkBlock(remarkText, indentSpaces);
       final var result = lb.get();
