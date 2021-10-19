@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
-public abstract class Hdl {
+public class Hdl {
 
   public static final String NET_NAME = "s_logisimNet";
   public static final String BUS_NAME = "s_logisimBus";
@@ -82,6 +82,10 @@ public abstract class Hdl {
    */
   public static String getRemarkBlockLineEnd() {
     return isVhdl() ? " --" : " **";
+  }
+
+  public static String getLineCommentStart() {
+    return isVhdl() ? "-- " : "// ";
   }
 
   public static String assignPreamble() {
@@ -175,20 +179,16 @@ public abstract class Hdl {
     }
     // first case, we have to concatinate
     if ((nrHexDigits > 0) && (nrSingleBits > 0)) {
-      if (Hdl.isVhdl()) {
-        return LineBuffer.format("\"{{1}}\"&X\"{{2}}\"", singleBits.toString(), hexValue.toString());
-      } else {
-        return LineBuffer.format("{{{1}}'b{{2}}, {{3}}'h{{4}}}", nrSingleBits, singleBits.toString(),
-            nrHexDigits * 4, hexValue.toString());
-      }
+      return Hdl.isVhdl()
+             ? LineBuffer.format("\"{{1}}\"&X\"{{2}}\"", singleBits.toString(), hexValue.toString())
+             : LineBuffer.format("{{{1}}'b{{2}}, {{3}}'h{{4}}}", nrSingleBits, singleBits.toString(),
+                nrHexDigits * 4, hexValue.toString());
     }
     // second case, we have only hex digits
     if (nrHexDigits > 0) {
-      if (Hdl.isVhdl()) {
-        return LineBuffer.format("X\"{{1}}\"", hexValue.toString());
-      } else {
-        return LineBuffer.format("{{1}}'h{{2}}", nrHexDigits * 4, hexValue.toString());
-      }
+      return Hdl.isVhdl()
+        ? LineBuffer.format("X\"{{1}}\"", hexValue.toString())
+        : LineBuffer.format("{{1}}'h{{2}}", nrHexDigits * 4, hexValue.toString());
     }
     // final case, we have only single bits
     if (Hdl.isVhdl()) {
