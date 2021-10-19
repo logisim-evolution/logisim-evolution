@@ -479,8 +479,8 @@ public class LineBufferTest extends TestBase {
    * Test remark block builder for both Vhdl and non Vhdl modes.
    */
   private void doBuildRemarkBlockTest(String remarkText, int indentSpaces) {
-    doBuildRemarkBlockTest(remarkText, indentSpaces, true);
     doBuildRemarkBlockTest(remarkText, indentSpaces, false);
+    doBuildRemarkBlockTest(remarkText, indentSpaces, true);
   }
 
   // FIXME: this test do not cover breaking remark into multiple lines
