@@ -71,7 +71,7 @@ public class HdlTest extends TestBase {
   }
 
   protected String callMockedHdl(String methodName, boolean isVhdl) {
-    String result;
+    String result = null;
     try {
       final var mockedHdl = mockStatic(Hdl.class, Mockito.CALLS_REAL_METHODS);
       final var method = Hdl.class.getMethod(methodName);
