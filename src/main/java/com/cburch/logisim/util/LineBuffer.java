@@ -11,7 +11,6 @@ package com.cburch.logisim.util;
 
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.Vhdl;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -22,6 +21,7 @@ import java.util.RandomAccess;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.apache.commons.text.WordUtils;
 
 /**
  * This class is intended to simplify building any HDL content, which usually contains of fixed text
@@ -574,69 +574,41 @@ public class LineBuffer implements RandomAccess {
    * @return Constructed lines of remark block.
    */
   protected ArrayList<String> buildRemarkBlock(String remarkText, int indentSpaces) {
-    final var maxRemarkLength = MAX_LINE_LENGTH - 2 * Hdl.remarkOverhead() - indentSpaces;
-    final var remarkLines = remarkText.split("\n");
-    final var oneLine = new StringBuilder();
+    final var maxRemarkLineLength = MAX_LINE_LENGTH - indentSpaces - (2 * Hdl.REMARK_BLOCK_SEQ_LENGTH);
+    final var indent = SPACE.repeat(indentSpaces);
     final var contents = new ArrayList<String>();
 
+    final var oneLine = new StringBuilder();
+    final var remarkLines =
+        List.of(WordUtils.wrap(remarkText, maxRemarkLineLength, "\n", true).split("\n"));
+
+    // Generate header line
     oneLine
-        .append(SPACE.repeat(indentSpaces - oneLine.length()))
-        .append(Hdl.getRemarkCharFirst())
-        .append(Hdl.getRemarkChar().repeat(MAX_LINE_LENGTH - indentSpaces - 2))
-        .append(Hdl.getRemarkCharLast());
+        .append(indent)
+        .append(Hdl.getRemarkBlockStart())
+        .append(Hdl.getRemarkChar().repeat(MAX_LINE_LENGTH - oneLine.length()));
     contents.add(oneLine.toString());
     oneLine.setLength(0);
 
-    for (var lineIndex = 0; lineIndex < remarkLines.length; lineIndex++) {
-      final var remarkWords = remarkLines[lineIndex].split(SPACE);
-      var maxWordLength = 0;
-      for (final var word : remarkWords) maxWordLength = Math.max(maxWordLength, word.length());
-      if (maxRemarkLength < maxWordLength) return contents;
+    for (final var remarkLine : remarkLines) {
+      oneLine
+          .append(indent)
+          .append(Hdl.getRemarkBlockLineStart())
+          .append(remarkLine);
+      if (remarkLine.length() < maxRemarkLineLength) {
+        oneLine.append(SPACE.repeat(maxRemarkLineLength - remarkLine.length()));
+      }
+      oneLine.append(Hdl.getRemarkBlockLineEnd());
+      contents.add(oneLine.toString());
+      oneLine.setLength(0);
+    }
 
-      /* Next we put the remark text block in 1 or multiple lines */
-      for (final var word : remarkWords) {
-        if ((oneLine.length() + word.length() + Hdl.remarkOverhead()) > (MAX_LINE_LENGTH - 1)) {
-          // Next word does not fit, we end this line and create a new one
-          final var remainingLength = maxRemarkLength - Hdl.remarkOverhead();
-          oneLine
-              .append(SPACE.repeat(remainingLength > 0 ? remainingLength : 0))
-              .append(SPACE)
-              .append(Hdl.getRemarkChar().repeat(2));
-          contents.add(oneLine.toString());
-          oneLine.setLength(0);
-        }
-        var remainingIndent = indentSpaces - oneLine.length();
-        if (remainingIndent < 0) remainingIndent = 0;
-        oneLine.append(SPACE.repeat(remainingIndent));
-        // Put the preamble if it's time for it.
-        if (oneLine.length() == indentSpaces) oneLine.append(Hdl.getRemarkStart());
-        if (word.endsWith("\\")) {
-          oneLine.append(word, 0, word.length() - 1);
-          oneLine.append(SPACE.repeat(MAX_LINE_LENGTH - Hdl.remarkOverhead()));
-        } else {
-          oneLine.append(word).append(SPACE);
-        }
-      }
-      if (oneLine.length() > (indentSpaces + Hdl.remarkOverhead())) {
-        final var remainingSpace = MAX_LINE_LENGTH - Hdl.remarkOverhead();
-        if (oneLine.length() < remainingSpace) {
-          oneLine.append(SPACE.repeat(remainingSpace - oneLine.length()));
-        }
-        oneLine
-            .append(SPACE)
-            .append(Hdl.getRemarkChar())
-            .append(Hdl.getRemarkChar());
-        contents.add(oneLine.toString());
-        oneLine.setLength(0);
-      }
-    }
     // We end with generating the last remark line.
-    while (oneLine.length() < indentSpaces) oneLine.append(SPACE);
-    for (var i = 0; i < MAX_LINE_LENGTH - indentSpaces; i++) {
-      final var isFirst = (i == MAX_LINE_LENGTH - indentSpaces - 1);
-      final var isLast = (i == 0);
-      oneLine.append(Hdl.getRemarkChar(isFirst, isLast));
-    }
+    oneLine
+            .append(indent)
+            .append(Hdl.getRemarkChar().repeat(MAX_LINE_LENGTH - oneLine.length() - Hdl.REMARK_BLOCK_SEQ_LENGTH))
+            .append(Hdl.getRemarkBlockEnd());
+
     contents.add(oneLine.toString());
 
     return contents;
@@ -648,7 +620,7 @@ public class LineBuffer implements RandomAccess {
    * @param remarkText text to put in the line
    */
   public LineBuffer addRemarkLine(String remarkText) {
-    add("{{1}}{{1}} {{2}}", Hdl.getRemarkChar(true, false), remarkText);
+    add("{{1}}{{2}}", Hdl.getRemarkBlockStart(), remarkText);
     return this;
   }
 
@@ -868,7 +840,6 @@ public class LineBuffer implements RandomAccess {
       for (var i = 1; i <= matcher.groupCount(); i++) {
         var keyStr = matcher.group(i);
         keyStr = keyStr.substring(bracketsCharCount, keyStr.length() - bracketsCharCount).strip();
-
         // FIXME: we shall overwrite old ph or fail?
         if (!keys.contains(keyStr)) keys.add(keyStr);
       }

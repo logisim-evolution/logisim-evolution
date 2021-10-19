@@ -16,7 +16,6 @@ import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.LineBuffer;
-import com.sun.jdi.request.InvalidRequestStateException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +26,11 @@ public abstract class Hdl {
 
   public static final String NET_NAME = "s_logisimNet";
   public static final String BUS_NAME = "s_logisimBus";
+
+  /**
+   * Length of remark block special sequences (block open/close, line open/close).
+   */
+  public static final int REMARK_BLOCK_SEQ_LENGTH = 3;
 
   private Hdl() {
     throw new IllegalStateException("Utility class. No instantiation allowed.");
@@ -48,31 +52,36 @@ public abstract class Hdl {
     return isVhdl() ? ")" : "]";
   }
 
-  public static int remarkOverhead() {
-    return isVhdl() ? 3 : 4;
-  }
-
   public static String getRemarkChar() {
     return isVhdl() ? "-" : "*";
   }
 
-  public static String getRemarkCharFirst() {
-    return isVhdl() ? "-" : "/";
+  /**
+   * Comment block opening sequence. Must be REMARK_BLOCK_SEQ_LEN long.
+   */
+  public static String getRemarkBlockStart() {
+    return isVhdl() ? "---" : "/**";
   }
 
-  public static String getRemarkCharLast() {
-    return isVhdl() ? "-" : " ";
+  /**
+   * Comment block closing sequence. Must be REMARK_BLOCK_SEQ_LEN long.
+   */
+  public static String getRemarkBlockEnd() {
+    return isVhdl() ? "---" : "**/";
   }
 
-  public static String getRemarkChar(boolean first, boolean last) {
-    if (first) return getRemarkCharFirst();
-    if (last) return getRemarkCharLast();
-    return getRemarkChar();
+  /**
+   * Comment block line (mid block) opening sequence. Must be REMARK_BLOCK_SEQ_LEN long.
+   */
+  public static String getRemarkBlockLineStart() {
+    return isVhdl() ? "-- " : "** ";
   }
 
-  public static String getRemarkStart() {
-    if (isVhdl()) return "-- ";
-    return " ** ";
+  /**
+   * Comment block line (mid block) closing sequence. Must be REMARK_BLOCK_SEQ_LEN long.
+   */
+  public static String getRemarkBlockLineEnd() {
+    return isVhdl() ? " --" : " **";
   }
 
   public static String assignPreamble() {
@@ -116,7 +125,7 @@ public abstract class Hdl {
   }
 
   public static String getZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
-    var contents = new StringBuilder();
+    final var contents = new StringBuilder();
     if (isVhdl()) {
       var fillValue = (floatingPinTiedToGround) ? "0" : "1";
       var hexFillValue = (floatingPinTiedToGround) ? "0" : "F";

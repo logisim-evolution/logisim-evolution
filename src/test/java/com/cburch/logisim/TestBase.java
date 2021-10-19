@@ -9,6 +9,7 @@
 
 package com.cburch.logisim;
 
+import java.util.List;
 import java.util.Random;
 
 public class TestBase {
@@ -20,7 +21,6 @@ public class TestBase {
    *
    * @param length Numbers of characters to be generated.
    * @param includeDigits If True, returned string will also contain digits
-   *
    * @return Random string.
    */
   protected String getRandomString(int length, boolean includeDigits) {
@@ -56,4 +56,11 @@ public class TestBase {
     if (min >= max) throw new IllegalArgumentException("Max must be greater than Min.");
     return (new Random()).nextInt((max - min) + 1) + min;
   }
-}
+
+  /** Dumps content of given list to stdout. */
+  protected void printList(List<String> list) {
+    for (final var line : list) {
+      System.out.println(line);
+    }
+  }
+} // End of TestBase

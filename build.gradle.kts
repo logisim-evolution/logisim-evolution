@@ -40,6 +40,7 @@ dependencies {
   implementation("org.slf4j:slf4j-simple:1.7.30")
   implementation("com.formdev:flatlaf:1.2")
   implementation("commons-cli:commons-cli:1.4")
+  implementation("org.apache.commons:commons-text:1.9")
 
   compileOnly("org.jetbrains:annotations:22.0.0")
 

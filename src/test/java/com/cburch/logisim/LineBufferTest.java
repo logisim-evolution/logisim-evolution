@@ -13,7 +13,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.Mockito.mockStatic;
 
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
@@ -22,6 +21,7 @@ import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.text.WordUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -378,6 +378,24 @@ public class LineBufferTest extends TestBase {
     doBuildRemarkBlockTest(getRandomString(), getRandomInt(1, 10));
   }
 
+  @Test
+  public void testMultilineRemarkBlock() {
+    final var wordCnt = getRandomInt(20, 30);
+    final var sb = new StringBuilder();
+    for (var i = 0; i < wordCnt; i++) {
+      sb.append(getRandomString()).append(" ");
+    }
+    doBuildRemarkBlockTest(sb.toString(), 0);
+  }
+
+  @Test
+  public void testForcedMultilineRemarkBlock() {
+    final var cnt = getRandomInt(20, 30);
+    final var remark = getRandomString().repeat(cnt);
+    assertTrue(remark.length() > LineBuffer.MAX_LINE_LENGTH);
+    doBuildRemarkBlockTest(remark, 0);
+  }
+
   // FIXME: this test do not cover breaking remark into multiple lines
   // FIXME: The implementation of this test should be improved.
   // But it is as it is due to some difficulties I stepped on with Mockito 4.0.0
@@ -389,39 +407,47 @@ public class LineBufferTest extends TestBase {
   // just fine, so either I stepped on the bug or failed to set it all up correctly.
   // But I haven't had time to sniff more, so current implementation is just a crappy
   // workaround. Would be nice to fix it at some point.
-  public void doBuildRemarkBlockTest(String remark, int nrOfIndentSpaces) {
+  public void doBuildRemarkBlockTest(String remarkText, int indentSpaces) {
     final var lb = LineBuffer.getBuffer();
-    final var remarkText = getRandomString();
-
-    final var indentStr = " ".repeat(nrOfIndentSpaces);
+    final var indent = " ".repeat(indentSpaces);
 
     try (final var mockedHdl = mockStatic(Hdl.class)) {
       mockedHdl.when(Hdl::isVhdl).thenReturn(true);
       mockedHdl.when(Hdl::getRemarkChar).thenCallRealMethod();
-      mockedHdl.when(() -> Hdl.getRemarkChar(anyBoolean(), anyBoolean())).thenCallRealMethod();
-      mockedHdl.when(Hdl::getRemarkCharFirst).thenCallRealMethod();
-      mockedHdl.when(Hdl::getRemarkCharLast).thenCallRealMethod();
-      mockedHdl.when(() -> Hdl.remarkOverhead()).thenCallRealMethod();
-      mockedHdl.when(() -> Hdl.getRemarkStart()).thenCallRealMethod();
 
-      final var maxLen = LineBuffer.MAX_LINE_LENGTH - nrOfIndentSpaces;
+      mockedHdl.when(Hdl::getRemarkBlockStart).thenCallRealMethod();
+      mockedHdl.when(Hdl::getRemarkBlockEnd).thenCallRealMethod();
+      mockedHdl.when(Hdl::getRemarkBlockLineStart).thenCallRealMethod();
+      mockedHdl.when(Hdl::getRemarkBlockLineEnd).thenCallRealMethod();
 
-      final var lineSep = indentStr + "-".repeat(maxLen);
+      final var maxLen = LineBuffer.MAX_LINE_LENGTH - indentSpaces;
+      final var maxRemarkLineLength = LineBuffer.MAX_LINE_LENGTH - (2 * Hdl.REMARK_BLOCK_SEQ_LENGTH) - indentSpaces;
+      final var remarkLines =
+          List.of(WordUtils.wrap(remarkText, maxRemarkLineLength, "\n", true).split("\n"));
+
+      final var lineSep = indent + "-".repeat(maxLen);
       final var expected = new ArrayList<String>();
+
+      // Header separator line
       expected.add(lineSep);
 
       // Build remark line
-      final var sb = new StringBuilder();
       final var edgeMarker = "--";
-      sb.append(indentStr + edgeMarker + " " + remarkText);
       final var edgeMarkerLen = edgeMarker.length() + 1; // +1 to account space separator
-      sb.append(" ".repeat(maxLen - (2 * edgeMarkerLen) - remarkText.length()));
-      sb.append(" " + edgeMarker);
-      expected.add(sb.toString());
+      final var sb = new StringBuilder();
+      for (final var line : remarkLines) {
+        sb.append(indent + edgeMarker + " " + line);
+        final var remaining = maxLen - (2 * edgeMarkerLen) - line.length();
+        sb.append(" ".repeat(remaining > 0 ? remaining : 0));
+        sb.append(" " + edgeMarker);
+        expected.add(sb.toString());
+        sb.setLength(0);
+      }
 
+      // Footer separator line
       expected.add(lineSep);
 
-      lb.addRemarkBlock(remarkText, nrOfIndentSpaces);
+      lb.addRemarkBlock(remarkText, indentSpaces);
       final var result = lb.get();
 
       assertEquals(expected, result);
