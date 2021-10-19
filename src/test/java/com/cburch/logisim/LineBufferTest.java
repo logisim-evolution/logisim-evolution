@@ -25,6 +25,7 @@ import org.apache.commons.text.WordUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 /** Tests LogisimVersion class. */
@@ -368,6 +369,26 @@ public class LineBufferTest extends TestBase {
 
   /* ********************************************************************************************* */
 
+  @Test
+  public void testRemarkLine() {
+    final var remark = getRandomString();
+    doRemarkLineTest(remark, false);
+    doRemarkLineTest(remark, true);
+  }
+
+  private void doRemarkLineTest(String remark, boolean isVhdl) {
+    try (final var mockedHdl = mockStatic(Hdl.class)) {
+      setupMockedHdl(mockedHdl, isVhdl);
+      final var expected = String.format("%s%s", Hdl.getRemarkBlockLineStart(), remark);
+      final var lb = LineBuffer.getBuffer();
+      lb.addRemarkLine(remark);
+      assertEquals(1, lb.size());
+      assertEquals(expected, lb.get(0));
+    }
+  }
+
+  /* ********************************************************************************************* */
+
   /**
    * Tests remark block generator for non-indented blocks.
    */
@@ -478,13 +499,7 @@ public class LineBufferTest extends TestBase {
     final var indent = " ".repeat(indentSpaces);
 
     try (final var mockedHdl = mockStatic(Hdl.class)) {
-      mockedHdl.when(Hdl::isVhdl).thenReturn(isVhdl);
-      mockedHdl.when(Hdl::getRemarkChar).thenCallRealMethod();
-
-      mockedHdl.when(Hdl::getRemarkBlockStart).thenCallRealMethod();
-      mockedHdl.when(Hdl::getRemarkBlockEnd).thenCallRealMethod();
-      mockedHdl.when(Hdl::getRemarkBlockLineStart).thenCallRealMethod();
-      mockedHdl.when(Hdl::getRemarkBlockLineEnd).thenCallRealMethod();
+      setupMockedHdl(mockedHdl, isVhdl);
 
       final var maxLineLength = LineBuffer.MAX_LINE_LENGTH - (2 * Hdl.REMARK_MARKER_LENGTH) - indentSpaces;
       final var remarkLines =
@@ -531,5 +546,15 @@ public class LineBufferTest extends TestBase {
 
       assertEquals(expected, result);
     }
+  }
+
+  private void setupMockedHdl(MockedStatic<Hdl> mockedHdl, boolean isVhdl) {
+    mockedHdl.when(Hdl::isVhdl).thenReturn(isVhdl);
+    mockedHdl.when(Hdl::getRemarkChar).thenCallRealMethod();
+
+    mockedHdl.when(Hdl::getRemarkBlockStart).thenCallRealMethod();
+    mockedHdl.when(Hdl::getRemarkBlockEnd).thenCallRealMethod();
+    mockedHdl.when(Hdl::getRemarkBlockLineStart).thenCallRealMethod();
+    mockedHdl.when(Hdl::getRemarkBlockLineEnd).thenCallRealMethod();
   }
 }

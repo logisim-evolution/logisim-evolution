@@ -630,7 +630,7 @@ public class LineBuffer implements RandomAccess {
    * @param remarkText text to put in the line
    */
   public LineBuffer addRemarkLine(String remarkText) {
-    add("{{1}}{{2}}", Hdl.getRemarkBlockStart(), remarkText);
+    add("{{1}}{{2}}", Hdl.getRemarkBlockLineStart(), remarkText);
     return this;
   }
 
