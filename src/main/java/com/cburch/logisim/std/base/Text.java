@@ -23,6 +23,7 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
+import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
@@ -44,6 +45,8 @@ public class Text extends InstanceFactory {
       Attributes.forString("text", S.getter("textTextAttr"));
   public static final Attribute<Font> ATTR_FONT =
       Attributes.forFont("font", S.getter("textFontAttr"));
+  public static final Attribute<Color> ATTR_COLOR =
+      Attributes.forColor("color", S.getter("textColorAttr"));
   public static final Attribute<AttributeOption> ATTR_HALIGN =
       Attributes.forOption(
           "halign",
@@ -181,14 +184,14 @@ public class Text extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Location loc = painter.getLocation();
-    int x = loc.getX();
-    int y = loc.getY();
-    Graphics g = painter.getGraphics();
-    g.translate(x, y);
-    g.setColor(Color.BLACK);
+    final var loc = painter.getLocation();
+    final var x = loc.getX();
+    final var y = loc.getY();
+    final var gfx = painter.getGraphics();
+    gfx.translate(x, y);
+    gfx.setColor(painter.getAttributeValue(StdAttr.LABEL_COLOR));
     paintGhost(painter);
-    g.translate(-x, -y);
+    gfx.translate(-x, -y);
   }
 
   @Override
