@@ -187,13 +187,12 @@ public class Attributes {
 
     @Override
     public String toDisplayString(Font font) {
-      if (font == null) return "???";
-      return font.getFamily() + " " + FontUtil.toStyleDisplayString(font.getStyle()) + " " + font.getSize();
+      return font == null ? "???" : String.format("%s %s %s", font.getFamily(), FontUtil.toStyleDisplayString(font.getStyle()), font.getSize());
     }
 
     @Override
     public String toStandardString(Font font) {
-      return toDisplayString(font);
+      return font == null ? "???" : String.format("%s %s %s", font.getFamily(), FontUtil.toStyleStandardString(font.getStyle()), font.getSize());
     }
   }
 
