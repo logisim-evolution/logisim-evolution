@@ -22,20 +22,21 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.geom.QuadCurve2D;
 import java.util.List;
+import lombok.Getter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class Curve extends FillableCanvasObject {
-  private Location p0;
-  private Location p1;
-  private Location p2;
-  private Bounds bounds;
+  @Getter private Location end0;
+  @Getter private Location control;
+  @Getter private Location end1;
+  @Getter private Bounds bounds;
 
   public Curve(Location end0, Location end1, Location ctrl) {
-    this.p0 = end0;
-    this.p1 = ctrl;
-    this.p2 = end1;
-    bounds = CurveUtil.getBounds(toArray(p0), toArray(p1), toArray(p2));
+    this.end0 = end0;
+    this.control = ctrl;
+    this.end1 = end1;
+    bounds = CurveUtil.getBounds(toArray(this.end0), toArray(control), toArray(this.end1));
   }
 
   private static double[] toArray(Location loc) {
@@ -55,9 +56,9 @@ public class Curve extends FillableCanvasObject {
     }
     if (type != DrawAttr.PAINT_FILL) {
       final var q = toArray(loc);
-      final var p0 = toArray(this.p0);
-      final var p1 = toArray(this.p1);
-      final var p2 = toArray(this.p2);
+      final var p0 = toArray(this.end0);
+      final var p1 = toArray(this.control);
+      final var p2 = toArray(this.end1);
       final var p = CurveUtil.findNearestPoint(q, p0, p1, p2);
       if (p == null) return false;
 
@@ -73,22 +74,13 @@ public class Curve extends FillableCanvasObject {
     return DrawAttr.getFillAttributes(getPaintType());
   }
 
-  @Override
-  public Bounds getBounds() {
-    return bounds;
-  }
-
-  public Location getControl() {
-    return p1;
-  }
-
   private QuadCurve2D getCurve(HandleGesture gesture) {
     final var p = getHandleArray(gesture);
     return new QuadCurve2D.Double(p[0].getX(), p[0].getY(), p[1].getX(), p[1].getY(), p[2].getX(), p[2].getY());
   }
 
   public QuadCurve2D getCurve2D() {
-    return new QuadCurve2D.Double(p0.getX(), p0.getY(), p1.getX(), p1.getY(), p2.getX(), p2.getY());
+    return new QuadCurve2D.Double(end0.getX(), end0.getY(), control.getX(), control.getY(), end1.getX(), end1.getY());
   }
 
   @Override
@@ -96,39 +88,31 @@ public class Curve extends FillableCanvasObject {
     return S.get("shapeCurve");
   }
 
-  public Location getEnd0() {
-    return p0;
-  }
-
-  public Location getEnd1() {
-    return p2;
-  }
-
   private Handle[] getHandleArray(HandleGesture gesture) {
     if (gesture == null) {
-      return new Handle[] {new Handle(this, p0), new Handle(this, p1), new Handle(this, p2)};
+      return new Handle[] {new Handle(this, end0), new Handle(this, control), new Handle(this, end1)};
     }
 
     final var g = gesture.getHandle();
     var gx = g.getX() + gesture.getDeltaX();
     var gy = g.getY() + gesture.getDeltaY();
-    Handle[] ret = {new Handle(this, p0), new Handle(this, p1), new Handle(this, p2)};
-    if (g.isAt(p0)) {
+    Handle[] ret = {new Handle(this, end0), new Handle(this, control), new Handle(this, end1)};
+    if (g.isAt(end0)) {
       ret[0] =
           gesture.isShiftDown()
-              ? new Handle(this, LineUtil.snapTo8Cardinals(p2, gx, gy))
+              ? new Handle(this, LineUtil.snapTo8Cardinals(end1, gx, gy))
               : new Handle(this, gx, gy);
-    } else if (g.isAt(p2)) {
+    } else if (g.isAt(end1)) {
       ret[2] =
           gesture.isShiftDown()
-              ? new Handle(this, LineUtil.snapTo8Cardinals(p0, gx, gy))
+              ? new Handle(this, LineUtil.snapTo8Cardinals(end0, gx, gy))
               : new Handle(this, gx, gy);
-    } else if (g.isAt(p1)) {
+    } else if (g.isAt(control)) {
       if (gesture.isShiftDown()) {
-        final var x0 = p0.getX();
-        final var y0 = p0.getY();
-        final var x1 = p2.getX();
-        final var y1 = p2.getY();
+        final var x0 = end0.getX();
+        final var y0 = end0.getY();
+        final var x1 = end1.getX();
+        final var y1 = end1.getY();
         final var midx = (x0 + x1) / 2;
         final var midy = (y0 + y1) / 2;
         final var dx = x1 - x0;
@@ -138,8 +122,8 @@ public class Curve extends FillableCanvasObject {
         gy = (int) Math.round(p[1]);
       }
       if (gesture.isAltDown()) {
-        final double[] e0 = {p0.getX(), p0.getY()};
-        final double[] e1 = {p2.getX(), p2.getY()};
+        final double[] e0 = {end0.getX(), end0.getY()};
+        final double[] e1 = {end1.getX(), end1.getY()};
         final double[] mid = {gx, gy};
         final var ct = CurveUtil.interpolate(e0, e1, mid);
         gx = (int) Math.round(ct[0]);
@@ -162,15 +146,15 @@ public class Curve extends FillableCanvasObject {
   @Override
   public boolean matches(CanvasObject other) {
     return (other instanceof Curve that)
-           ? this.p0.equals(that.p0) && this.p1.equals(that.p1) && this.p2.equals(that.p2) && super.matches(that)
+           ? this.end0.equals(that.end0) && this.control.equals(that.control) && this.end1.equals(that.end1) && super.matches(that)
            : false;
   }
 
   @Override
   public int matchesHashCode() {
-    var ret = p0.hashCode();
-    ret = ret * 31 * 31 + p1.hashCode();
-    ret = ret * 31 * 31 + p2.hashCode();
+    var ret = end0.hashCode();
+    ret = ret * 31 * 31 + control.hashCode();
+    ret = ret * 31 * 31 + end1.hashCode();
     ret = ret * 31 + super.matchesHashCode();
     return ret;
   }
@@ -179,19 +163,19 @@ public class Curve extends FillableCanvasObject {
   public Handle moveHandle(HandleGesture gesture) {
     final var hs = getHandleArray(gesture);
     Handle ret = null;
-    if (!hs[0].getLocation().equals(p0)) {
-      p0 = hs[0].getLocation();
+    if (!hs[0].getLocation().equals(end0)) {
+      end0 = hs[0].getLocation();
       ret = hs[0];
     }
-    if (!hs[1].getLocation().equals(p1)) {
-      p1 = hs[1].getLocation();
+    if (!hs[1].getLocation().equals(control)) {
+      control = hs[1].getLocation();
       ret = hs[1];
     }
-    if (!hs[2].getLocation().equals(p2)) {
-      p2 = hs[2].getLocation();
+    if (!hs[2].getLocation().equals(end1)) {
+      end1 = hs[2].getLocation();
       ret = hs[2];
     }
-    bounds = CurveUtil.getBounds(toArray(p0), toArray(p1), toArray(p2));
+    bounds = CurveUtil.getBounds(toArray(end0), toArray(control), toArray(end1));
     return ret;
   }
 
@@ -213,9 +197,9 @@ public class Curve extends FillableCanvasObject {
 
   @Override
   public void translate(int dx, int dy) {
-    p0 = p0.translate(dx, dy);
-    p1 = p1.translate(dx, dy);
-    p2 = p2.translate(dx, dy);
+    end0 = end0.translate(dx, dy);
+    control = control.translate(dx, dy);
+    end1 = end1.translate(dx, dy);
     bounds = bounds.translate(dx, dy);
   }
 }

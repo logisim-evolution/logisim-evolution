@@ -22,17 +22,18 @@ import java.awt.Graphics;
 import java.awt.geom.GeneralPath;
 import java.util.List;
 import java.util.Random;
+import lombok.Getter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
 public class Poly extends FillableCanvasObject {
-  private final boolean closed;
+  @Getter private final boolean closed;
   // "handles" should be immutable - create a new array and change using
   // setHandles rather than changing contents
   private Handle[] handles;
   private GeneralPath path;
   private double[] lens;
-  private Bounds bounds;
+  @Getter private Bounds bounds;
 
   public Poly(boolean closed, List<Location> locations) {
     final var hs = new Handle[locations.size()];
@@ -151,11 +152,6 @@ public class Poly extends FillableCanvasObject {
   @Override
   public List<Attribute<?>> getAttributes() {
     return DrawAttr.getFillAttributes(getPaintType());
-  }
-
-  @Override
-  public Bounds getBounds() {
-    return bounds;
   }
 
   @Override
@@ -296,10 +292,6 @@ public class Poly extends FillableCanvasObject {
       throw new IllegalArgumentException("no such handle");
     }
     setHandles(is);
-  }
-
-  public boolean isClosed() {
-    return closed;
   }
 
   @Override

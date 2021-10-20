@@ -11,6 +11,7 @@ package com.cburch.draw.shapes;
 
 import com.cburch.draw.model.Handle;
 import com.cburch.logisim.data.Location;
+import lombok.Getter;
 
 public final class PolyUtil {
   private PolyUtil() {
@@ -21,7 +22,7 @@ public final class PolyUtil {
     final var xq = loc.getX();
     final var yq = loc.getY();
     final var ret = new ClosestResult();
-    ret.dist = Double.MAX_VALUE;
+    ret.distanceSq = Double.MAX_VALUE;
     if (hs.length > 0) {
       var h0 = hs[0];
       var x0 = h0.getX();
@@ -32,9 +33,9 @@ public final class PolyUtil {
         final var x1 = h1.getX();
         final var y1 = h1.getY();
         final var d = LineUtil.ptDistSqSegment(x0, y0, x1, y1, xq, yq);
-        if (d < ret.dist) {
-          ret.dist = d;
-          ret.prevHandle = h0;
+        if (d < ret.distanceSq) {
+          ret.distanceSq = d;
+          ret.previousHandle = h0;
           ret.nextHandle = h1;
         }
         h0 = h1;
@@ -42,37 +43,21 @@ public final class PolyUtil {
         y0 = y1;
       }
     }
-    if (ret.dist == Double.MAX_VALUE) {
+    if (ret.distanceSq == Double.MAX_VALUE) {
       return null;
     } else {
-      final var h0 = ret.prevHandle;
+      final var h0 = ret.previousHandle;
       final var h1 = ret.nextHandle;
       final var p = LineUtil.nearestPointSegment(xq, yq, h0.getX(), h0.getY(), h1.getX(), h1.getY());
-      ret.loc = Location.create((int) Math.round(p[0]), (int) Math.round(p[1]));
+      ret.location = Location.create((int) Math.round(p[0]), (int) Math.round(p[1]));
       return ret;
     }
   }
 
   public static class ClosestResult {
-    private double dist;
-    private Location loc;
-    private Handle prevHandle;
-    private Handle nextHandle;
-
-    public double getDistanceSq() {
-      return dist;
-    }
-
-    public Location getLocation() {
-      return loc;
-    }
-
-    public Handle getNextHandle() {
-      return nextHandle;
-    }
-
-    public Handle getPreviousHandle() {
-      return prevHandle;
-    }
+    @Getter private double distanceSq;
+    @Getter private Location location;
+    @Getter private Handle previousHandle;
+    @Getter private Handle nextHandle;
   }
 }
