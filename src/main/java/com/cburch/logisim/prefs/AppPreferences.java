@@ -788,6 +788,7 @@ public class AppPreferences {
                   : 0)));
 
   public static void resetWindow() {
+    CANVAS_PLACEMENT.set(Direction.EAST.toString());
     WINDOW_MAIN_SPLIT.set(0.251);
     WINDOW_LEFT_SPLIT.set(0.51);
     WINDOW_RIGHT_SPLIT.set(0.751);
