@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import lombok.Getter;
 
 public class Selection {
   private static final String MOVING_HANDLE = "movingHandle";
@@ -35,7 +36,7 @@ public class Selection {
   private final Set<CanvasObject> selectedView;
   private final Map<CanvasObject, String> suppressed;
   private final Set<CanvasObject> suppressedView;
-  private Handle selectedHandle;
+  @Getter private Handle selectedHandle;
   private HandleGesture curHandleGesture;
   private int moveDx;
   private int moveDy;
@@ -95,10 +96,6 @@ public class Selection {
 
   public Set<CanvasObject> getSelected() {
     return selectedView;
-  }
-
-  public Handle getSelectedHandle() {
-    return selectedHandle;
   }
 
   public boolean isEmpty() {

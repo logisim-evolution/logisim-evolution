@@ -16,7 +16,6 @@ import com.cburch.draw.undo.UndoAction;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
-
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -25,15 +24,16 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
 import javax.swing.JPopupMenu;
+import lombok.Getter;
 
 public class Canvas extends JComponent {
   public static final String TOOL_PROPERTY = "tool";
   public static final String MODEL_PROPERTY = "model";
   private static final long serialVersionUID = 1L;
   private final CanvasListener listener;
-  private CanvasModel model;
+  @Getter private CanvasModel model;
   private ActionDispatcher dispatcher;
-  private Selection selection;
+  @Getter private Selection selection;
   private Location tooltipLocation;
   private String tooltipName;
 
@@ -50,14 +50,6 @@ public class Canvas extends JComponent {
 
   public void doAction(UndoAction action) {
     dispatcher.doAction(action);
-  }
-
-  public CanvasModel getModel() {
-    return model;
-  }
-
-  public Selection getSelection() {
-    return selection;
   }
 
   protected void setSelection(Selection value) {
@@ -97,12 +89,12 @@ public class Canvas extends JComponent {
     paintForeground(g);
     paintTooltip(g);
   }
-  
+
   public void setTooltip(Location loc, String name) {
     tooltipLocation = loc;
     tooltipName = name;
   }
-  
+
   private void paintTooltip(Graphics g) {
     if (tooltipLocation == null || tooltipName == null) return;
     g.setColor(Color.YELLOW);

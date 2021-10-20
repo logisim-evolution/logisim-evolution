@@ -162,7 +162,7 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
       updateLabels();
     }
     if (e.getSource() == okButton) {
-      param.setValid();
+      param.setValid(true);
       setVisible(false);
       dispose();
     }
