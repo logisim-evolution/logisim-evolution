@@ -151,7 +151,7 @@ public class HexEditor extends JComponent implements Scrollable {
     var baseX = measures.getBaseX();
     var baseY = measures.toY(xaddr0) + baseFm.getAscent() + baseFm.getLeading() / 2;
     var dy = measures.getCellHeight();
-    var labelWidth = measures.getLabelWidth();
+    var labelWidth = measures.getHeaderWidth();
     var labelChars = measures.getLabelChars();
     var cellWidth = measures.getCellWidth();
     var cellChars = measures.getCellChars();
