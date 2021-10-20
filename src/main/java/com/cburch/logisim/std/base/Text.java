@@ -23,7 +23,6 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
@@ -189,7 +188,7 @@ public class Text extends InstanceFactory {
     final var y = loc.getY();
     final var gfx = painter.getGraphics();
     gfx.translate(x, y);
-    gfx.setColor(painter.getAttributeValue(StdAttr.LABEL_COLOR));
+    gfx.setColor(painter.getAttributeValue(ATTR_COLOR));
     paintGhost(painter);
     gfx.translate(-x, -y);
   }
