@@ -47,7 +47,6 @@ import com.cburch.logisim.util.HorizontalSplitPane;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.VerticalSplitPane;
 import com.cburch.logisim.vhdl.base.HdlModel;
 import com.cburch.logisim.vhdl.gui.HdlContentView;
@@ -198,7 +197,11 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     state.stateChanged();
     project.getVhdlSimulator().addVhdlSimStateListener(state);
 
-    mainRegion = new VerticalSplitPane(leftRegion, rightPanel, AppPreferences.WINDOW_MAIN_SPLIT.get());
+    final var canvasOnTheLeft = (Direction.parse(AppPreferences.CANVAS_PLACEMENT.get()) == Direction.EAST);
+    mainRegion = new VerticalSplitPane(
+            canvasOnTheLeft ? leftRegion : rightRegion,
+            canvasOnTheLeft ? rightPanel : leftRegion,
+            AppPreferences.WINDOW_MAIN_SPLIT.get());
 
     getContentPane().add(mainRegion, BorderLayout.CENTER);
 

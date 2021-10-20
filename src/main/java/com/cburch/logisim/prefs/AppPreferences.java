@@ -495,6 +495,16 @@ public class AppPreferences {
                 TOOLBAR_HIDDEN
               },
               Direction.NORTH.toString()));
+
+  public static final PrefMonitor<String> CANVAS_PLACEMENT =
+      create(
+          new PrefMonitorStringOpts(
+              "canvasPlacement",
+              new String[] {
+                      Direction.EAST.toString(),
+                      Direction.WEST.toString()},
+              Direction.EAST.toString()));
+
   public static final PrefMonitor<String> LookAndFeel =
       create(new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
 
