@@ -9,18 +9,16 @@
 
 package com.cburch.logisim.gui.appear;
 
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Graphics;
-
-import javax.swing.Icon;
-import javax.swing.JOptionPane;
-
 import com.cburch.draw.canvas.Canvas;
 import com.cburch.draw.toolbar.ToolbarClickableItem;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.gui.icons.CircuitIcon;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import javax.swing.Icon;
+import javax.swing.JOptionPane;
 
 public class ResetAppearanceTool implements ToolbarClickableItem {
 
@@ -61,9 +59,9 @@ public class ResetAppearanceTool implements ToolbarClickableItem {
     final var appearance = canvas.getCircuit().getAppearance();
     if (appearance == null) return;
     // FIXME: hardcoded string
-    if (OptionPane.showConfirmDialog(canvas, 
-        "Are you sure you want to remove the current custom appearance and replace it?", 
-        isClear ? "Restore default custom appearance" : "Clear appearance and load logisim default", 
+    if (OptionPane.showConfirmDialog(canvas,
+        "Are you sure you want to remove the current custom appearance and replace it?",
+        isClear ? "Restore default custom appearance" : "Clear appearance and load logisim default",
         JOptionPane.YES_NO_OPTION) == JOptionPane.YES_OPTION) {
       if (isClear) appearance.resetDefaultCustomAppearance();
       else appearance.loadDefaultLogisimAppearance();

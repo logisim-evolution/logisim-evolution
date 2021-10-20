@@ -29,11 +29,11 @@ public class AnalyzerMenuListener extends MenuListener {
       if (registered == en) return;
       registered = en;
       if (en) {
-        menubar.addActionListener(LogisimMenuBar.EXPORT_IMAGE, this);
-        menubar.addActionListener(LogisimMenuBar.PRINT, this);
+        menuBar.addActionListener(LogisimMenuBar.EXPORT_IMAGE, this);
+        menuBar.addActionListener(LogisimMenuBar.PRINT, this);
       } else {
-        menubar.removeActionListener(LogisimMenuBar.EXPORT_IMAGE, this);
-        menubar.removeActionListener(LogisimMenuBar.PRINT, this);
+        menuBar.removeActionListener(LogisimMenuBar.EXPORT_IMAGE, this);
+        menuBar.removeActionListener(LogisimMenuBar.PRINT, this);
       }
     }
   }

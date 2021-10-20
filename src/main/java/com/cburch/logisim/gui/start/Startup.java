@@ -69,6 +69,7 @@ import javax.swing.JTextField;
 import javax.swing.JToolTip;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
+import lombok.Getter;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -83,7 +84,7 @@ public class Startup implements AWTEventListener {
 
   static final Logger logger = LoggerFactory.getLogger(Startup.class);
   private static Startup startupTemp = null;
-  private final ArrayList<File> filesToOpen = new ArrayList<>();
+  @Getter private final ArrayList<File> filesToOpen = new ArrayList<>();
   private final HashMap<File, File> substitutions = new HashMap<>();
   private final ArrayList<File> filesToPrint = new ArrayList<>();
   // based on command line
@@ -92,11 +93,11 @@ public class Startup implements AWTEventListener {
   private boolean templEmpty = false;
   private boolean templPlain = false;
   private String testVector = null;
-  private String circuitToTest = null;
+  @Getter private String circuitToTest = null;
   private boolean exitAfterStartup = false;
   private boolean showSplash;
-  private File loadFile;
-  private int ttyFormat = 0;
+  @Getter private File loadFile;
+  @Getter private int ttyFormat = 0;
   // from other sources
   private boolean initialized = false;
   private SplashScreen monitor = null;
@@ -104,7 +105,7 @@ public class Startup implements AWTEventListener {
   private String testCircuitPathInput = null;
   /* Test implementation */
   private String testCircuitImpPath = null;
-  private boolean doFpgaDownload = false;
+  @Getter private boolean fpgaDownload = false;
   private double testTickFrequency = -1;
   /* Name of the circuit withing logisim */
   private String testCircuitImpName = null;
@@ -695,7 +696,7 @@ public class Startup implements AWTEventListener {
       if (handlerRc == RC.QUIT) return handlerRc;
     }
 
-    startup.doFpgaDownload = true;
+    startup.fpgaDownload = true;
     startup.showSplash = false;
     startup.filesToOpen.add(new File(startup.testCircuitImpPath));
     return RC.OK;
@@ -760,28 +761,8 @@ public class Startup implements AWTEventListener {
     }
   }
 
-  List<File> getFilesToOpen() {
-    return filesToOpen;
-  }
-
-  File getLoadFile() {
-    return loadFile;
-  }
-
-  String getCircuitToTest() {
-    return circuitToTest;
-  }
-
   Map<File, File> getSubstitutions() {
     return Collections.unmodifiableMap(substitutions);
-  }
-
-  int getTtyFormat() {
-    return ttyFormat;
-  }
-
-  boolean isFpgaDownload() {
-    return doFpgaDownload;
   }
 
   boolean fpgaDownload(Project proj) {

@@ -13,8 +13,9 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.util.PropertyChangeWeakSupport;
 import java.beans.PropertyChangeListener;
-import java.util.Collection;
 import java.util.HashSet;
+import lombok.Getter;
+import lombok.Setter;
 
 class Clipboard {
   public static final String CONTENTS_PROPERTY = "contents";
@@ -24,9 +25,9 @@ class Clipboard {
   //
   // instance variables and methods
   //
-  private final HashSet<Component> components;
-  private AttributeSet oldAttrs;
-  private AttributeSet newAttrs;
+  @Getter private final HashSet<Component> components;
+  @Setter @Getter private AttributeSet oldAttributeSet;
+  @Getter private AttributeSet newAttributeSet;
 
   /*
    * This function is in charge of copy paste.
@@ -34,8 +35,8 @@ class Clipboard {
    */
   private Clipboard(Selection sel, AttributeSet viewAttrs) {
     components = new HashSet<>();
-    oldAttrs = null;
-    newAttrs = null;
+    oldAttributeSet = null;
+    newAttributeSet = null;
     for (Component base : sel.getComponents()) {
       AttributeSet baseAttrs = base.getAttributeSet();
       AttributeSet copyAttrs = (AttributeSet) baseAttrs.clone();
@@ -43,8 +44,8 @@ class Clipboard {
       Component copy = base.getFactory().createComponent(base.getLocation(), copyAttrs);
       components.add(copy);
       if (baseAttrs == viewAttrs) {
-        oldAttrs = baseAttrs;
-        newAttrs = copyAttrs;
+        oldAttributeSet = baseAttrs;
+        newAttributeSet = copyAttrs;
       }
     }
   }
@@ -88,19 +89,4 @@ class Clipboard {
     set(new Clipboard(value, oldAttrs));
   }
 
-  public Collection<Component> getComponents() {
-    return components;
-  }
-
-  public AttributeSet getNewAttributeSet() {
-    return newAttrs;
-  }
-
-  public AttributeSet getOldAttributeSet() {
-    return oldAttrs;
-  }
-
-  void setOldAttributeSet(AttributeSet value) {
-    oldAttrs = value;
-  }
 }

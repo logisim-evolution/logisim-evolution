@@ -321,7 +321,6 @@ public class TtyInterface {
   }
 
   private static int doTableAnalysis(Project proj, Circuit circuit, Map<Instance, String> pinLabels, int format) {
-
     final var inputPins = new ArrayList<Instance>();
     final var inputVars = new ArrayList<Var>();
     final var inputNames = new ArrayList<String>();

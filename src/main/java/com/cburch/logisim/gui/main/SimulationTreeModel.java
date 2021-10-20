@@ -19,11 +19,12 @@ import javax.swing.event.TreeModelListener;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreePath;
+import lombok.Getter;
 
 public class SimulationTreeModel implements TreeModel {
   private final ArrayList<TreeModelListener> listeners;
   private final SimulationTreeTopNode root;
-  private CircuitState currentView;
+  @Getter private CircuitState currentView;
 
   public SimulationTreeModel(List<CircuitState> allRootStates) {
     this.listeners = new ArrayList<>();
@@ -75,10 +76,6 @@ public class SimulationTreeModel implements TreeModel {
     return (parent instanceof TreeNode node)
            ? node.getChildCount()
            : 0;
-  }
-
-  public CircuitState getCurrentView() {
-    return currentView;
   }
 
   public void setCurrentView(CircuitState value) {

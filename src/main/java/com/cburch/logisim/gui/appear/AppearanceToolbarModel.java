@@ -27,10 +27,11 @@ import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import lombok.Getter;
 
 class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyChangeListener {
   private final Canvas canvas;
-  private final List<ToolbarItem> items;
+  @Getter private final List<ToolbarItem> items;
 
   public AppearanceToolbarModel(AbstractTool selectTool, ShowStateTool showStateTool, Canvas canvas, DrawingAttributeSet attrs) {
     this.canvas = canvas;
@@ -64,18 +65,12 @@ class AppearanceToolbarModel extends AbstractToolbarModel implements PropertyCha
   }
 
   @Override
-  public List<ToolbarItem> getItems() {
-    return items;
-  }
-
-  @Override
   public boolean isSelected(ToolbarItem item) {
     if (item instanceof ToolbarToolItem toolItem) {
       final var tool = toolItem.getTool();
       return canvas != null && tool == canvas.getTool();
-    } else {
-      return false;
     }
+    return false;
   }
 
   @Override

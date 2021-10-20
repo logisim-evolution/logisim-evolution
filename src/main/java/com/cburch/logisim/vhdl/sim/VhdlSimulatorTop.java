@@ -28,6 +28,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.List;
 import javax.help.UnsupportedOperationException;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,16 +45,15 @@ public class VhdlSimulatorTop implements CircuitListener {
   private final VhdlSimulatorVhdlTop vhdlTop = new VhdlSimulatorVhdlTop(this);
   private final VhdlSimulatorTclComp tclRun = new VhdlSimulatorTclComp(this);
   private VhdlSimulatorTclBinder tclBinder;
-  private final SocketClient socketClient = new SocketClient();
+  @Getter private final SocketClient socketClient = new SocketClient();
 
   public static final Logger logger = LoggerFactory.getLogger(VhdlSimulatorTop.class);
 
-  private final Project project;
+  @Getter private final Project project;
 
-  private static final ArrayList<VhdlSimulatorListener> listeners =
-      new ArrayList<>();
+  private static final ArrayList<VhdlSimulatorListener> listeners = new ArrayList<>();
 
-  private State state = State.DISABLED;
+  @Getter private State state = State.DISABLED;
 
   public VhdlSimulatorTop(Project circuitState) {
     this.project = circuitState;
@@ -220,20 +220,7 @@ public class VhdlSimulatorTop implements CircuitListener {
     }
   }
 
-  public Project getProject() {
-    return project;
-  }
-
-  public SocketClient getSocketClient() {
-    return socketClient;
-  }
-
-  public State getState() {
-    return state;
-  }
-
   private boolean hasVhdlComponent(CircuitState s) {
-
     /* Test current circuit */
     for (Component comp : s.getCircuit().getNonWires()) {
       if (comp.getFactory().getClass().equals(VhdlEntity.class)) {
@@ -246,7 +233,6 @@ public class VhdlSimulatorTop implements CircuitListener {
     for (CircuitState sub : s.getSubStates()) {
       if (hasVhdlComponent(sub)) return true;
     }
-
     return false;
   }
 
@@ -314,7 +300,6 @@ public class VhdlSimulatorTop implements CircuitListener {
    */
   public void send(String message) {
     if (!isRunning()) throw new UnsupportedOperationException();
-
     socketClient.send(message);
   }
 

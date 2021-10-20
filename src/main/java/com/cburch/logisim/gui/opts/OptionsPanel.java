@@ -13,10 +13,11 @@ import com.cburch.logisim.file.Options;
 import com.cburch.logisim.proj.Project;
 import java.awt.LayoutManager;
 import javax.swing.JPanel;
+import lombok.Getter;
 
 abstract class OptionsPanel extends JPanel {
   private static final long serialVersionUID = 1L;
-  private final OptionsFrame optionsFrame;
+  @Getter private final OptionsFrame optionsFrame;
 
   public OptionsPanel(OptionsFrame frame) {
     super();
@@ -32,10 +33,6 @@ abstract class OptionsPanel extends JPanel {
 
   Options getOptions() {
     return optionsFrame.getOptions();
-  }
-
-  OptionsFrame getOptionsFrame() {
-    return optionsFrame;
   }
 
   Project getProject() {

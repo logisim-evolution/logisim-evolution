@@ -13,7 +13,6 @@ import com.cburch.contracts.BaseMouseListenerContract;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.ComponentDrawContext;
-import com.cburch.logisim.comp.ComponentFactory;
 import com.cburch.logisim.gui.icons.TreeIcon;
 import com.cburch.logisim.gui.main.Canvas;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -29,7 +28,6 @@ import com.cburch.logisim.vhdl.base.VhdlEntity;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
-import java.awt.Shape;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -51,6 +49,8 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.DefaultTreeSelectionModel;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
@@ -63,8 +63,8 @@ public class ProjectExplorer extends JTree implements LocaleListener {
   private final MyListener myListener = new MyListener();
   private final MyCellRenderer renderer = new MyCellRenderer();
   private final DeleteAction deleteAction = new DeleteAction();
-  private Listener listener = null;
-  private Tool haloedTool = null;
+  @Setter private Listener listener = null;
+  @Setter private Tool haloedTool = null;
 
   public ProjectExplorer(Project proj, boolean showMouseTools) {
     super();
@@ -115,14 +115,6 @@ public class ProjectExplorer extends JTree implements LocaleListener {
     // abbreviated with an ellipsis, even when they fit into the window.
     final ProjectExplorerModel model = (ProjectExplorerModel) getModel();
     model.fireStructureChanged();
-  }
-
-  public void setHaloedTool(Tool t) {
-    haloedTool = t;
-  }
-
-  public void setListener(Listener value) {
-    listener = value;
   }
 
   private class DeleteAction extends AbstractAction {
@@ -454,18 +446,14 @@ public class ProjectExplorer extends JTree implements LocaleListener {
   }
 
   public static class Event {
-    private final TreePath path;
+    @Getter private final TreePath treePath;
 
     public Event(TreePath p) {
-      path = p;
-    }
-
-    public TreePath getTreePath() {
-      return path;
+      treePath = p;
     }
 
     public Object getTarget() {
-      return path == null ? null : path.getLastPathComponent();
+      return treePath == null ? null : treePath.getLastPathComponent();
     }
   }
 }

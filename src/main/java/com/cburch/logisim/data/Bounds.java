@@ -11,6 +11,7 @@ package com.cburch.logisim.data;
 
 import com.cburch.logisim.util.Cache;
 import java.awt.Rectangle;
+import lombok.Getter;
 
 /**
  * Represents an immutable rectangular bounding box. This is analogous to java.awt's <code>Rectangle
@@ -22,7 +23,7 @@ public class Bounds {
     Object cached = cache.get(hashCode);
     if (cached != null) {
       final var bds = (Bounds) cached;
-      if (bds.x == x && bds.y == y && bds.wid == wid && bds.ht == ht) return bds;
+      if (bds.x == x && bds.y == y && bds.width == wid && bds.height == ht) return bds;
     }
     final var ret = new Bounds(x, y, wid, ht);
     cache.put(hashCode, ret);
@@ -41,23 +42,23 @@ public class Bounds {
 
   private static final Cache cache = new Cache();
 
-  private final int x;
-  private final int y;
-  private final int wid;
-  private final int ht;
+  @Getter private final int x;
+  @Getter private final int y;
+  @Getter private final int width;
+  @Getter private final int height;
 
-  private Bounds(int x, int y, int wid, int ht) {
+  private Bounds(int x, int y, int width, int height) {
     this.x = x;
     this.y = y;
-    this.wid = wid;
-    this.ht = ht;
-    if (wid < 0) {
-      x += wid / 2;
-      wid = 0;
+    this.width = width;
+    this.height = height;
+    if (width < 0) {
+      x += width / 2;
+      width = 0;
     }
-    if (ht < 0) {
-      y += ht / 2;
-      ht = 0;
+    if (height < 0) {
+      y += height / 2;
+      height = 0;
     }
   }
 
@@ -66,11 +67,11 @@ public class Bounds {
     if (bd == EMPTY_BOUNDS) return this;
     final var retX = Math.min(bd.x, this.x);
     final var retY = Math.min(bd.y, this.y);
-    final var retWidth = Math.max(bd.x + bd.wid, this.x + this.wid) - retX;
-    final var retHeight = Math.max(bd.y + bd.ht, this.y + this.ht) - retY;
-    if (retX == this.x && retY == this.y && retWidth == this.wid && retHeight == this.ht) {
+    final var retWidth = Math.max(bd.x + bd.width, this.x + this.width) - retX;
+    final var retHeight = Math.max(bd.y + bd.height, this.y + this.height) - retY;
+    if (retX == this.x && retY == this.y && retWidth == this.width && retHeight == this.height) {
       return this;
-    } else if (retX == bd.x && retY == bd.y && retWidth == bd.wid && retHeight == bd.ht) {
+    } else if (retX == bd.x && retY == bd.y && retWidth == bd.width && retHeight == bd.height) {
       return bd;
     } else {
       return Bounds.create(retX, retY, retWidth, retHeight);
@@ -82,20 +83,20 @@ public class Bounds {
     if (contains(x, y)) return this;
 
     var newX = this.x;
-    var newWidth = this.wid;
+    var newWidth = this.width;
     var newY = this.y;
-    var newHeight = this.ht;
+    var newHeight = this.height;
     if (x < this.x) {
       newX = x;
-      newWidth = (this.x + this.wid) - x;
-    } else if (x >= this.x + this.wid) {
+      newWidth = (this.x + this.width) - x;
+    } else if (x >= this.x + this.width) {
       newX = this.x;
       newWidth = x - this.x + 1;
     }
     if (y < this.y) {
       newY = y;
-      newHeight = (this.y + this.ht) - y;
-    } else if (y >= this.y + this.ht) {
+      newHeight = (this.y + this.height) - y;
+    } else if (y >= this.y + this.height) {
       newY = this.y;
       newHeight = y - this.y + 1;
     }
@@ -106,9 +107,9 @@ public class Bounds {
     if (this == EMPTY_BOUNDS) return Bounds.create(x, y, wid, ht);
     final var retX = Math.min(x, this.x);
     final var retY = Math.min(y, this.y);
-    final var retWidth = Math.max(x + wid, this.x + this.wid) - retX;
-    final var retHeight = Math.max(y + ht, this.y + this.ht) - retY;
-    if (retX == this.x && retY == this.y && retWidth == this.wid && retHeight == this.ht) {
+    final var retWidth = Math.max(x + wid, this.x + this.width) - retX;
+    final var retHeight = Math.max(y + ht, this.y + this.height) - retY;
+    if (retX == this.x && retY == this.y && retWidth == this.width && retHeight == this.height) {
       return this;
     } else {
       return Bounds.create(retX, retY, retWidth, retHeight);
@@ -120,8 +121,8 @@ public class Bounds {
   }
 
   public boolean borderContains(int px, int py, int fudge) {
-    final var x1 = x + wid - 1;
-    final var y1 = y + ht - 1;
+    final var x1 = x + width - 1;
+    final var y1 = y + height - 1;
     if (Math.abs(px - x) <= fudge || Math.abs(px - x1) <= fudge) {
       // maybe on east or west border?
       return y - fudge >= py && py <= y1 + fudge;
@@ -138,7 +139,7 @@ public class Bounds {
   }
 
   public boolean contains(Bounds bd) {
-    return contains(bd.x, bd.y, bd.wid, bd.ht);
+    return contains(bd.x, bd.y, bd.width, bd.height);
   }
 
   public boolean contains(int px, int py) {
@@ -147,9 +148,9 @@ public class Bounds {
 
   public boolean contains(int px, int py, int allowedError) {
     return px >= x - allowedError
-        && px < x + wid + allowedError
+        && px < x + width + allowedError
         && py >= y - allowedError
-        && py < y + ht + allowedError;
+        && py < y + height + allowedError;
   }
 
   public boolean contains(int x, int y, int wid, int ht) {
@@ -169,57 +170,41 @@ public class Bounds {
   @Override
   public boolean equals(Object otherObj) {
     return (otherObj instanceof Bounds other)
-           ? x == other.x && y == other.y && wid == other.wid && ht == other.ht
+           ? x == other.x && y == other.y && width == other.width && height == other.height
            : false;
   }
 
   public Bounds expand(int d) { // d pixels in each direction
     if (this == EMPTY_BOUNDS) return this;
     if (d == 0) return this;
-    return create(x - d, y - d, wid + 2 * d, ht + 2 * d);
+    return create(x - d, y - d, width + 2 * d, height + 2 * d);
   }
 
   public int getCenterX() {
-    return (x + wid / 2);
+    return (x + width / 2);
   }
 
   public int getCenterY() {
-    return (y + ht / 2);
-  }
-
-  public int getHeight() {
-    return ht;
-  }
-
-  public int getWidth() {
-    return wid;
-  }
-
-  public int getX() {
-    return x;
-  }
-
-  public int getY() {
-    return y;
+    return (y + height / 2);
   }
 
   @Override
   public int hashCode() {
     int ret = 31 * x + y;
-    ret = 31 * ret + wid;
-    ret = 31 * ret + ht;
+    ret = 31 * ret + width;
+    ret = 31 * ret + height;
     return ret;
   }
 
   public Bounds intersect(Bounds other) {
     var x0 = this.x;
     var y0 = this.y;
-    var x1 = x0 + this.wid;
-    var y1 = y0 + this.ht;
+    var x1 = x0 + this.width;
+    var y1 = y0 + this.height;
     final var x2 = other.x;
     final var y2 = other.y;
-    final var x3 = x2 + other.wid;
-    final var y3 = y2 + other.ht;
+    final var x3 = x2 + other.width;
+    final var y3 = y2 + other.height;
     if (x2 > x0) x0 = x2;
     if (y2 > y0) y0 = y2;
     if (x3 < x1) x1 = x3;
@@ -238,28 +223,28 @@ public class Bounds {
     final var dx = x - xc;
     final var dy = y - yc;
     if (degrees == 90) {
-      return create(xc + dy, yc - dx - wid, ht, wid);
+      return create(xc + dy, yc - dx - width, height, width);
     } else if (degrees == 180) {
-      return create(xc - dx - wid, yc - dy - ht, wid, ht);
+      return create(xc - dx - width, yc - dy - height, width, height);
     } else if (degrees == 270) {
-      return create(xc - dy - ht, yc + dx, ht, wid);
+      return create(xc - dy - height, yc + dx, height, width);
     } else {
       return this;
     }
   }
 
   public Rectangle toRectangle() {
-    return new Rectangle(x, y, wid, ht);
+    return new Rectangle(x, y, width, height);
   }
 
   @Override
   public String toString() {
-    return "(" + x + "," + y + "): " + wid + "x" + ht;
+    return "(" + x + "," + y + "): " + width + "x" + height;
   }
 
   public Bounds translate(int dx, int dy) {
     if (this == EMPTY_BOUNDS) return this;
     if (dx == 0 && dy == 0) return this;
-    return create(x + dx, y + dy, wid, ht);
+    return create(x + dx, y + dy, width, height);
   }
 }

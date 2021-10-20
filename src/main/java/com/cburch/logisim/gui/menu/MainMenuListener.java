@@ -63,8 +63,8 @@ public class MainMenuListener extends MenuListener {
     }
 
     public void register() {
-      menubar.addActionListener(LogisimMenuBar.EXPORT_IMAGE, this);
-      menubar.addActionListener(LogisimMenuBar.PRINT, this);
+      menuBar.addActionListener(LogisimMenuBar.EXPORT_IMAGE, this);
+      menuBar.addActionListener(LogisimMenuBar.PRINT, this);
     }
   }
 
@@ -135,19 +135,19 @@ public class MainMenuListener extends MenuListener {
         canRevert = viewAppearance && !cur.getAppearance().isDefaultAppearance();
       }
 
-      menubar.setEnabled(LogisimMenuBar.ADD_CIRCUIT, true);
-      menubar.setEnabled(LogisimMenuBar.ADD_VHDL, true);
-      menubar.setEnabled(LogisimMenuBar.IMPORT_VHDL, true);
-      menubar.setEnabled(LogisimMenuBar.MOVE_CIRCUIT_UP, canMoveUp);
-      menubar.setEnabled(LogisimMenuBar.MOVE_CIRCUIT_DOWN, canMoveDown);
-      menubar.setEnabled(LogisimMenuBar.SET_MAIN_CIRCUIT, canSetMain);
-      menubar.setEnabled(LogisimMenuBar.REMOVE_CIRCUIT, canRemove);
-      menubar.setEnabled(LogisimMenuBar.EDIT_LAYOUT, viewAppearance);
-      menubar.setEnabled(LogisimMenuBar.EDIT_APPEARANCE, viewLayout);
-      menubar.setEnabled(LogisimMenuBar.TOGGLE_APPEARANCE, true);
-      menubar.setEnabled(LogisimMenuBar.REVERT_APPEARANCE, canRevert);
-      menubar.setEnabled(LogisimMenuBar.ANALYZE_CIRCUIT, true);
-      menubar.setEnabled(LogisimMenuBar.CIRCUIT_STATS, true);
+      menuBar.setEnabled(LogisimMenuBar.ADD_CIRCUIT, true);
+      menuBar.setEnabled(LogisimMenuBar.ADD_VHDL, true);
+      menuBar.setEnabled(LogisimMenuBar.IMPORT_VHDL, true);
+      menuBar.setEnabled(LogisimMenuBar.MOVE_CIRCUIT_UP, canMoveUp);
+      menuBar.setEnabled(LogisimMenuBar.MOVE_CIRCUIT_DOWN, canMoveDown);
+      menuBar.setEnabled(LogisimMenuBar.SET_MAIN_CIRCUIT, canSetMain);
+      menuBar.setEnabled(LogisimMenuBar.REMOVE_CIRCUIT, canRemove);
+      menuBar.setEnabled(LogisimMenuBar.EDIT_LAYOUT, viewAppearance);
+      menuBar.setEnabled(LogisimMenuBar.EDIT_APPEARANCE, viewLayout);
+      menuBar.setEnabled(LogisimMenuBar.TOGGLE_APPEARANCE, true);
+      menuBar.setEnabled(LogisimMenuBar.REVERT_APPEARANCE, canRevert);
+      menuBar.setEnabled(LogisimMenuBar.ANALYZE_CIRCUIT, true);
+      menuBar.setEnabled(LogisimMenuBar.CIRCUIT_STATS, true);
       fireEnableChanged();
     }
 
@@ -159,9 +159,9 @@ public class MainMenuListener extends MenuListener {
       final var isProjectCircuit = file.contains(cur);
       final var viewAppearance = frame.getEditorView().equals(Frame.EDIT_APPEARANCE);
       final var canRevert = isProjectCircuit && viewAppearance && !cur.getAppearance().isDefaultAppearance();
-      final var oldValue = menubar.isEnabled(LogisimMenuBar.REVERT_APPEARANCE);
+      final var oldValue = menuBar.isEnabled(LogisimMenuBar.REVERT_APPEARANCE);
       if (canRevert != oldValue) {
-        menubar.setEnabled(LogisimMenuBar.REVERT_APPEARANCE, canRevert);
+        menuBar.setEnabled(LogisimMenuBar.REVERT_APPEARANCE, canRevert);
         fireEnableChanged();
       }
     }
@@ -210,19 +210,19 @@ public class MainMenuListener extends MenuListener {
         circ.getAppearance().addCanvasModelListener(this);
       }
 
-      menubar.addActionListener(LogisimMenuBar.ADD_CIRCUIT, this);
-      menubar.addActionListener(LogisimMenuBar.ADD_VHDL, this);
-      menubar.addActionListener(LogisimMenuBar.IMPORT_VHDL, this);
-      menubar.addActionListener(LogisimMenuBar.MOVE_CIRCUIT_UP, this);
-      menubar.addActionListener(LogisimMenuBar.MOVE_CIRCUIT_DOWN, this);
-      menubar.addActionListener(LogisimMenuBar.SET_MAIN_CIRCUIT, this);
-      menubar.addActionListener(LogisimMenuBar.REMOVE_CIRCUIT, this);
-      menubar.addActionListener(LogisimMenuBar.EDIT_LAYOUT, this);
-      menubar.addActionListener(LogisimMenuBar.EDIT_APPEARANCE, this);
-      menubar.addActionListener(LogisimMenuBar.TOGGLE_APPEARANCE, this);
-      menubar.addActionListener(LogisimMenuBar.REVERT_APPEARANCE, this);
-      menubar.addActionListener(LogisimMenuBar.ANALYZE_CIRCUIT, this);
-      menubar.addActionListener(LogisimMenuBar.CIRCUIT_STATS, this);
+      menuBar.addActionListener(LogisimMenuBar.ADD_CIRCUIT, this);
+      menuBar.addActionListener(LogisimMenuBar.ADD_VHDL, this);
+      menuBar.addActionListener(LogisimMenuBar.IMPORT_VHDL, this);
+      menuBar.addActionListener(LogisimMenuBar.MOVE_CIRCUIT_UP, this);
+      menuBar.addActionListener(LogisimMenuBar.MOVE_CIRCUIT_DOWN, this);
+      menuBar.addActionListener(LogisimMenuBar.SET_MAIN_CIRCUIT, this);
+      menuBar.addActionListener(LogisimMenuBar.REMOVE_CIRCUIT, this);
+      menuBar.addActionListener(LogisimMenuBar.EDIT_LAYOUT, this);
+      menuBar.addActionListener(LogisimMenuBar.EDIT_APPEARANCE, this);
+      menuBar.addActionListener(LogisimMenuBar.TOGGLE_APPEARANCE, this);
+      menuBar.addActionListener(LogisimMenuBar.REVERT_APPEARANCE, this);
+      menuBar.addActionListener(LogisimMenuBar.ANALYZE_CIRCUIT, this);
+      menuBar.addActionListener(LogisimMenuBar.CIRCUIT_STATS, this);
 
       computeEnabled();
     }
@@ -232,7 +232,7 @@ public class MainMenuListener extends MenuListener {
     @Override
     public void projectChanged(ProjectEvent event) {
       if (event.getAction() == ProjectEvent.ACTION_SET_STATE) {
-        menubar.setCircuitState(
+        menuBar.setCircuitState(
             frame.getProject().getSimulator(), frame.getProject().getCircuitState());
       }
     }
@@ -240,8 +240,8 @@ public class MainMenuListener extends MenuListener {
     void register() {
       final var proj = frame.getProject();
       proj.addProjectListener(this);
-      menubar.setSimulateListener(this);
-      menubar.setCircuitState(proj.getSimulator(), proj.getCircuitState());
+      menuBar.setSimulateListener(this);
+      menuBar.setCircuitState(proj.getSimulator(), proj.getCircuitState());
     }
 
     @Override

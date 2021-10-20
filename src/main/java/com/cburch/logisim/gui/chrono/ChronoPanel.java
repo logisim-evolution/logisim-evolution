@@ -46,6 +46,7 @@ import javax.swing.JViewport;
 import javax.swing.KeyStroke;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.UIManager;
+import lombok.Getter;
 
 public class ChronoPanel extends LogPanel implements Model.Listener {
   private static final long serialVersionUID = 1L;
@@ -53,9 +54,9 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
   public static final int SIGNAL_HEIGHT = 30;
   public static final int GAP = 2;
   public static final int INITIAL_SPLIT = 150;
-  private Model model;
-  private RightPanel rightPanel;
-  private LeftPanel leftPanel;
+  @Getter private Model model;
+  @Getter private RightPanel rightPanel;
+  @Getter private LeftPanel leftPanel;
   private JScrollPane leftScroll;
   private JScrollPane rightScroll;
   private JSplitPane splitPane;
@@ -182,14 +183,6 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
     leftPanel.getSelectionModel().addListSelectionListener(e -> editHandler.computeEnabled());
   }
 
-  public LeftPanel getLeftPanel() {
-    return leftPanel;
-  }
-
-  public RightPanel getRightPanel() {
-    return rightPanel;
-  }
-
   public JScrollBar getVerticalScrollBar() {
     return rightScroll == null ? null : rightScroll.getVerticalScrollBar();
   }
@@ -261,11 +254,6 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
     editHandler.computeEnabled();
   }
 
-  @Override
-  public Model getModel() {
-    return model;
-  }
-
   public void setModel(Model newModel) {
     if (model != null) model.removeModelListener(this);
     model = newModel;
@@ -317,12 +305,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
         : Color.getHSBColor(hsb[0], 1.0f - (1.0f - hsb[1]) * s, hsb[2]);
   }
 
-  @Override
-  public EditHandler getEditHandler() {
-    return editHandler;
-  }
-
-  final EditHandler editHandler =
+  @Getter final EditHandler editHandler =
       new EditHandler() {
         @Override
         public void computeEnabled() {
@@ -350,12 +333,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
         }
       };
 
-  @Override
-  public PrintHandler getPrintHandler() {
-    return printHandler;
-  }
-
-  final PrintHandler printHandler =
+  @Getter final PrintHandler printHandler =
       new PrintHandler() {
         @Override
         public Dimension getExportImageSize() {

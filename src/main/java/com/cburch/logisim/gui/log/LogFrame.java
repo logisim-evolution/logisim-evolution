@@ -40,9 +40,10 @@ import javax.swing.JScrollPane;
 import javax.swing.JTabbedPane;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import lombok.Getter;
 
 public class LogFrame extends LFrame.SubWindowWithSimulation {
-  private final LogMenuListener menuListener;
+  @Getter private final LogMenuListener menuListener;
 
   private class MyListener
       implements ProjectListener, LibraryListener, Simulator.Listener, LocaleListener {
@@ -51,17 +52,17 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
     public void libraryChanged(LibraryEvent event) {
       final var action = event.getAction();
       if (action == LibraryEvent.SET_NAME) {
-        setTitle(computeTitle(curModel, project));
+        setTitle(computeTitle(model, project));
       }
     }
 
     @Override
     public void localeChanged() {
-      setTitle(computeTitle(curModel, project));
-      for (var i = 0; i < panels.length; i++) {
-        tabbedPane.setTitleAt(i, panels[i].getTitle());
-        tabbedPane.setToolTipTextAt(i, panels[i].getToolTipText());
-        panels[i].localeChanged();
+      setTitle(computeTitle(model, project));
+      for (var i = 0; i < prefPanels.length; i++) {
+        tabbedPane.setTitleAt(i, prefPanels[i].getTitle());
+        tabbedPane.setToolTipTextAt(i, prefPanels[i].getToolTipText());
+        prefPanels[i].localeChanged();
       }
       windowManager.localeChanged();
     }
@@ -72,34 +73,34 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
       if (action == ProjectEvent.ACTION_SET_STATE) {
         setSimulator(event.getProject().getSimulator(), event.getProject().getCircuitState());
       } else if (action == ProjectEvent.ACTION_SET_FILE) {
-        setTitle(computeTitle(curModel, project));
+        setTitle(computeTitle(model, project));
       }
     }
 
     @Override
     public void simulatorReset(Simulator.Event e) {
-      curModel.simulatorReset();
+      model.simulatorReset();
     }
 
     @Override
     public void propagationCompleted(Simulator.Event e) {
-      curModel.propagationCompleted(e.didTick(), e.didSingleStep(), e.didPropagate());
+      model.propagationCompleted(e.didTick(), e.didSingleStep(), e.didPropagate());
     }
 
     @Override
     public boolean wantProgressEvents() {
-      return curModel.isFine();
+      return model.isFine();
     }
 
     @Override
     public void propagationInProgress(Simulator.Event e) {
-      curModel.propagationCompleted(false, true, false); // treat as a single-step
+      model.propagationCompleted(false, true, false); // treat as a single-step
     }
 
     @Override
     public void simulatorStateChanged(Simulator.Event e) {
       if (setSimulator(project.getSimulator(), project.getCircuitState())) return;
-      if (curModel != null) curModel.checkForClocks();
+      if (model != null) model.checkForClocks();
     }
   }
 
@@ -148,13 +149,13 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
 
   private static final long serialVersionUID = 1L;
   private Simulator curSimulator = null;
-  private Model curModel;
+  @Getter private Model model;
   private final Map<CircuitState, Model> modelMap = new HashMap<>();
   private final MyListener myListener = new MyListener();
   private final MyChangeListener myChangeListener = new MyChangeListener();
 
   private final WindowMenuManager windowManager;
-  private final LogPanel[] panels;
+  @Getter private final LogPanel[] prefPanels;
   // private SelectionPanel selPanel;
   private final JTabbedPane tabbedPane;
 
@@ -191,18 +192,18 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
   public LogFrame(Project project) {
     super(project);
     windowManager = new WindowMenuManager(project);
-    menuListener = new LogMenuListener(menubar);
+    menuListener = new LogMenuListener(logisimMenuBar);
     project.addProjectListener(myListener);
     project.addLibraryListener(myListener);
     setSimulator(project.getSimulator(), project.getCircuitState());
 
-    panels =
+    prefPanels =
         new LogPanel[] {
           new OptionsPanel(this), new ChronoPanel(this),
         };
     tabbedPane = new JTabbedPane();
     // tabbedPane.setFont(new Font("Dialog", Font.BOLD, 9));
-    for (LogPanel panel : panels) {
+    for (LogPanel panel : prefPanels) {
       tabbedPane.addTab(panel.getTitle(), null, panel, panel.getToolTipText());
     }
     tabbedPane.addChangeListener(myChangeListener);
@@ -250,33 +251,16 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
         });
   }
 
-  @Override
-  public LogisimMenuBar getLogisimMenuBar() {
-    return menubar;
-  }
-
-  public LogMenuListener getMenuListener() {
-    return menuListener;
-  }
-
-  public Model getModel() {
-    return curModel;
-  }
-
-  LogPanel[] getPrefPanels() {
-    return panels;
-  }
-
   private boolean setSimulator(Simulator value, CircuitState state) {
-    if ((value == null) == (curModel == null)) {
-      if (value == null || value.getCircuitState() == curModel.getCircuitState()) return false;
+    if ((value == null) == (model == null)) {
+      if (value == null || value.getCircuitState() == model.getCircuitState()) return false;
     }
-    menubar.setCircuitState(value, state);
+    logisimMenuBar.setCircuitState(value, state);
 
     if (curSimulator != null) curSimulator.removeSimulatorListener(myListener);
-    if (curModel != null) curModel.setSelected(false);
+    if (model != null) model.setSelected(false);
 
-    final var oldModel = curModel;
+    final var oldModel = model;
     Model data = null;
     if (value != null) {
       data = modelMap.get(value.getCircuitState());
@@ -286,14 +270,14 @@ public class LogFrame extends LFrame.SubWindowWithSimulation {
       }
     }
     curSimulator = value;
-    curModel = data;
+    model = data;
 
     if (curSimulator != null) curSimulator.addSimulatorListener(myListener);
-    if (curModel != null) curModel.setSelected(true);
-    setTitle(computeTitle(curModel, project));
-    if (panels != null) {
-      for (LogPanel panel : panels) {
-        panel.modelChanged(oldModel, curModel);
+    if (model != null) model.setSelected(true);
+    setTitle(computeTitle(model, project));
+    if (prefPanels != null) {
+      for (LogPanel panel : prefPanels) {
+        panel.modelChanged(oldModel, model);
       }
     }
     return true;

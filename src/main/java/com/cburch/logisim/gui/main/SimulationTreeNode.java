@@ -14,11 +14,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Enumeration;
 import javax.swing.tree.TreeNode;
+import lombok.Getter;
 
 public class SimulationTreeNode implements TreeNode {
   protected final SimulationTreeModel model;
-  protected final SimulationTreeNode parent;
+  @Getter protected final SimulationTreeNode parent;
   protected ArrayList<TreeNode> children;
+  @Getter final boolean isLeaf = false;
 
   public SimulationTreeNode(SimulationTreeModel model, SimulationTreeNode parent) {
     this.model = model;
@@ -55,17 +57,7 @@ public class SimulationTreeNode implements TreeNode {
     return children.indexOf(node);
   }
 
-  @Override
-  public TreeNode getParent() {
-    return parent;
-  }
-
   public boolean isCurrentView(SimulationTreeModel model) {
-    return false;
-  }
-
-  @Override
-  public boolean isLeaf() {
     return false;
   }
 }

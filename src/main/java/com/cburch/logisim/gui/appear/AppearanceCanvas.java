@@ -37,6 +37,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import javax.swing.JPopupMenu;
+import lombok.Getter;
 
 public class AppearanceCanvas extends Canvas implements CanvasPaneContents, ActionDispatcher {
   private static final long serialVersionUID = 1L;
@@ -46,16 +47,16 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   // don't bother to update the size if it hasn't changed more than this
   private final CanvasTool selectTool;
   private final Listener listener;
-  private final GridPainter grid;
-  private Project proj;
-  private CircuitState circuitState;
+  @Getter private final GridPainter gridPainter;
+  @Getter private Project project;
+  @Getter private CircuitState circuitState;
   private CanvasPane canvasPane;
   private Bounds oldPreferredSize;
   private LayoutPopupManager popupManager;
 
   public AppearanceCanvas(CanvasTool selectTool) {
     this.selectTool = selectTool;
-    this.grid = new GridPainter(this);
+    this.gridPainter = new GridPainter(this);
     this.listener = new Listener();
     this.oldPreferredSize = null;
     setSelection(new AppearanceSelection());
@@ -63,7 +64,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
     CanvasModel model = super.getModel();
     if (model != null) model.addCanvasModelListener(listener);
-    grid.addPropertyChangeListener(GridPainter.ZOOM_PROPERTY, listener);
+    gridPainter.addPropertyChangeListener(GridPainter.ZOOM_PROPERTY, listener);
   }
 
   static int getMaxIndex(CanvasModel model) {
@@ -111,7 +112,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   @Override
   public void doAction(UndoAction canvasAction) {
     final var circuit = circuitState.getCircuit();
-    if (!proj.getLogisimFile().contains(circuit)) {
+    if (!project.getLogisimFile().contains(circuit)) {
       return;
     }
 
@@ -155,28 +156,16 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
       }
     }
 
-    proj.doAction(new CanvasActionAdapter(circuit, canvasAction));
+    project.doAction(new CanvasActionAdapter(circuit, canvasAction));
   }
 
   Circuit getCircuit() {
     return circuitState.getCircuit();
   }
 
-  CircuitState getCircuitState() {
-    return circuitState;
-  }
-
-  GridPainter getGridPainter() {
-    return grid;
-  }
-
   @Override
   public Dimension getPreferredScrollableViewportSize() {
     return getPreferredSize();
-  }
-
-  Project getProject() {
-    return proj;
   }
 
   @Override
@@ -201,7 +190,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
   @Override
   public double getZoomFactor() {
-    return grid.getZoomFactor();
+    return gridPainter.getZoomFactor();
   }
 
   private void hidePopup() {
@@ -214,12 +203,12 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   @Override
   protected void paintBackground(Graphics g) {
     super.paintBackground(g);
-    grid.paintGrid(g);
+    gridPainter.paintGrid(g);
   }
 
   @Override
   protected void paintForeground(Graphics g) {
-    final var zoom = grid.getZoomFactor();
+    final var zoom = gridPainter.getZoomFactor();
     final var gfxScaled = g.create();
     if (zoom != 1.0 && zoom != 0.0 && gfxScaled instanceof Graphics2D g2d) {
       g2d.scale(zoom, zoom);
@@ -230,13 +219,13 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
   @Override
   protected void processMouseEvent(MouseEvent e) {
-    repairEvent(e, grid.getZoomFactor());
+    repairEvent(e, gridPainter.getZoomFactor());
     super.processMouseEvent(e);
   }
 
   @Override
   protected void processMouseMotionEvent(MouseEvent e) {
-    repairEvent(e, grid.getZoomFactor());
+    repairEvent(e, gridPainter.getZoomFactor());
     super.processMouseMotionEvent(e);
   }
 
@@ -248,7 +237,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
   @Override
   public void repaintCanvasCoords(int x, int y, int width, int height) {
-    final var zoom = grid.getZoomFactor();
+    final var zoom = gridPainter.getZoomFactor();
     if (zoom != 1.0) {
       x = (int) (x * zoom - 1);
       y = (int) (y * zoom - 1);
@@ -279,7 +268,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
   }
 
   public void setCircuit(Project proj, CircuitState circuitState) {
-    this.proj = proj;
+    this.project = proj;
     this.circuitState = circuitState;
     final var circuit = circuitState.getCircuit();
     setModel(circuit.getAppearance().getCustomAppearanceDrawing(), this);
@@ -305,7 +294,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
 
   @Override
   public JPopupMenu showPopupMenu(MouseEvent e, CanvasObject clicked) {
-    double zoom = grid.getZoomFactor();
+    double zoom = gridPainter.getZoomFactor();
     int x = (int) Math.round(e.getX() * zoom);
     int y = (int) Math.round(e.getY() * zoom);
     if (clicked != null && getSelection().isSelected(clicked)) {

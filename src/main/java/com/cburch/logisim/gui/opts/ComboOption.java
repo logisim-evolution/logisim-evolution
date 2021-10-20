@@ -12,9 +12,10 @@ package com.cburch.logisim.gui.opts;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.util.StringGetter;
 import javax.swing.JComboBox;
+import lombok.Getter;
 
 class ComboOption {
-  private final Object value;
+  @Getter private final Object value;
   private final StringGetter getter;
 
   ComboOption(AttributeOption value) {
@@ -37,10 +38,6 @@ class ComboOption {
       }
     }
     combo.setSelectedItem(combo.getItemAt(0));
-  }
-
-  public Object getValue() {
-    return value;
   }
 
   @Override

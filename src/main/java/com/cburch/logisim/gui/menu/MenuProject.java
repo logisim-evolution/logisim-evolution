@@ -32,12 +32,10 @@ class MenuProject extends Menu {
   private final MenuItemImpl moveDown = new MenuItemImpl(this, LogisimMenuBar.MOVE_CIRCUIT_DOWN);
   private final MenuItemImpl remove = new MenuItemImpl(this, LogisimMenuBar.REMOVE_CIRCUIT);
   private final MenuItemImpl setAsMain = new MenuItemImpl(this, LogisimMenuBar.SET_MAIN_CIRCUIT);
-  private final MenuItemImpl revertAppearance =
-      new MenuItemImpl(this, LogisimMenuBar.REVERT_APPEARANCE);
+  private final MenuItemImpl revertAppearance = new MenuItemImpl(this, LogisimMenuBar.REVERT_APPEARANCE);
   private final MenuItemImpl layout = new MenuItemImpl(this, LogisimMenuBar.EDIT_LAYOUT);
   private final MenuItemImpl appearance = new MenuItemImpl(this, LogisimMenuBar.EDIT_APPEARANCE);
-  private final MenuItemImpl toggleLayoutAppearance =
-      new MenuItemImpl(this, LogisimMenuBar.TOGGLE_APPEARANCE);
+  private final MenuItemImpl toggleLayoutAppearance = new MenuItemImpl(this, LogisimMenuBar.TOGGLE_APPEARANCE);
   private final MenuItemImpl analyze = new MenuItemImpl(this, LogisimMenuBar.ANALYZE_CIRCUIT);
   private final MenuItemImpl stats = new MenuItemImpl(this, LogisimMenuBar.CIRCUIT_STATS);
   private final JMenuItem options = new JMenuItem();

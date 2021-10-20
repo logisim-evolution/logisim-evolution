@@ -15,13 +15,14 @@ import java.beans.PropertyChangeListener;
 import java.beans.PropertyChangeSupport;
 import java.util.List;
 import javax.swing.SwingUtilities;
+import lombok.Getter;
 
 public class BasicZoomModel implements ZoomModel {
-  private final List<Double> zoomOptions;
+  @Getter private final List<Double> zoomOptions;
 
   private final PropertyChangeSupport support;
   private final CanvasPane canvas;
-  private double zoomFactor;
+  @Getter private double zoomFactor;
   private boolean showGrid;
 
   public BasicZoomModel(PrefMonitor<Boolean> gridPref, PrefMonitor<Double> zoomPref, List<Double> zoomOpts, CanvasPane pane) {
@@ -40,6 +41,7 @@ public class BasicZoomModel implements ZoomModel {
     support.addPropertyChangeListener(prop, l);
   }
 
+  // FIXME: we shall rename this method to follow Java standards
   @Override
   public boolean getShowGrid() {
     return showGrid;
@@ -51,16 +53,6 @@ public class BasicZoomModel implements ZoomModel {
       showGrid = value;
       support.firePropertyChange(ZoomModel.SHOW_GRID, !value, value);
     }
-  }
-
-  @Override
-  public double getZoomFactor() {
-    return zoomFactor;
-  }
-
-  @Override
-  public List<Double> getZoomOptions() {
-    return zoomOptions;
   }
 
   @Override

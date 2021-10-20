@@ -30,8 +30,8 @@ import java.util.ConcurrentModificationException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import lombok.Getter;
 
 public class CircuitState implements InstanceData {
 
@@ -135,9 +135,9 @@ public class CircuitState implements InstanceData {
   private CircuitState parentState = null; // parent in tree of CircuitStates
   private Component parentComp = null; // subcircuit component containing this
   // state
-  private HashSet<CircuitState> subStates = new HashSet<>();
+  @Getter private HashSet<CircuitState> subStates = new HashSet<>();
 
-  private CircuitWires.State wireData = null;
+  @Getter private CircuitWires.State wireData = null;
   private final HashMap<Component, Object> componentData = new HashMap<>();
   private final Map<Location, Value> values = new HashMap<>();
   private CopyOnWriteArraySet<Component> dirtyComponents = new CopyOnWriteArraySet<>();
@@ -264,10 +264,6 @@ public class CircuitState implements InstanceData {
     return parentComp;
   }
 
-  public Set<CircuitState> getSubStates() { // returns Set of CircuitStates
-    return subStates;
-  }
-
   public Value getValue(Location pt) {
     final var ret = values.get(pt);
     if (ret != null) return ret;
@@ -278,10 +274,6 @@ public class CircuitState implements InstanceData {
 
   Value getValueByWire(Location p) {
     return values.get(p);
-  }
-
-  CircuitWires.State getWireData() {
-    return wireData;
   }
 
   //
@@ -511,7 +503,7 @@ public class CircuitState implements InstanceData {
   }
 
   private boolean knownClocks;
-  private Component temporaryClock;
+  @Getter private Component temporaryClock;
 
   public boolean hasKnownClocks() {
     return knownClocks || temporaryClock != null;
@@ -524,10 +516,6 @@ public class CircuitState implements InstanceData {
   public boolean setTemporaryClock(Component clk) {
     temporaryClock = clk;
     return clk == null || temporaryClockValidateOrTick(-1);
-  }
-
-  public Component getTemporaryClock() {
-    return temporaryClock;
   }
 
   @Override

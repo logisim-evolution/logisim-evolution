@@ -15,10 +15,11 @@ import com.cburch.logisim.gui.menu.PrintHandler;
 import com.cburch.logisim.proj.Project;
 import java.awt.LayoutManager;
 import javax.swing.JPanel;
+import lombok.Getter;
 
 public abstract class LogPanel extends JPanel {
   private static final long serialVersionUID = 1L;
-  private final LogFrame logFrame;
+  @Getter private final LogFrame logFrame;
 
   public LogPanel(LogFrame frame) {
     super();
@@ -43,10 +44,6 @@ public abstract class LogPanel extends JPanel {
 
   public PrintHandler getPrintHandler() {
     return null;
-  }
-
-  public LogFrame getLogFrame() {
-    return logFrame;
   }
 
   protected LogisimMenuBar getLogisimMenuBar() {

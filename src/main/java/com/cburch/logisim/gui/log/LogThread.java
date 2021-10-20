@@ -57,7 +57,7 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
       modeDirty = false;
     }
     if (headerDirty) {
-      if (model.getFileHeader()) {
+      if (model.isFileHeader()) {
         StringBuilder buf = new StringBuilder();
         for (int i = 0; i < model.getSignalCount(); i++) {
           if (i > 0) buf.append("\t");

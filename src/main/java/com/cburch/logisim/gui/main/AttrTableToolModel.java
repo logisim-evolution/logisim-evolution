@@ -20,10 +20,11 @@ import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.tools.Tool;
+import lombok.Getter;
 
 public class AttrTableToolModel extends AttributeSetTableModel {
   final Project proj;
-  final Tool tool;
+  @Getter final Tool tool;
 
   public AttrTableToolModel(Project proj, Tool tool) {
     super(tool.getAttributeSet());
@@ -38,10 +39,6 @@ public class AttrTableToolModel extends AttributeSetTableModel {
   @Override
   public String getTitle() {
     return tool.getDisplayName();
-  }
-
-  public Tool getTool() {
-    return tool;
   }
 
   @Override

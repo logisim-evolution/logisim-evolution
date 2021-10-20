@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
+import lombok.Getter;
 
 public class LFrame extends JFrame implements WindowClosable {
   private static final long serialVersionUID = 1L;
@@ -50,8 +51,8 @@ public class LFrame extends JFrame implements WindowClosable {
    */
   public static final int TYPE_DIALOG = 3;
 
-  protected final LogisimMenuBar menubar;
-  protected final Project project;
+  @Getter protected final LogisimMenuBar logisimMenuBar;
+  @Getter protected final Project project;
   protected final int type;
 
   public static class MainWindow extends LFrame {
@@ -93,14 +94,14 @@ public class LFrame extends JFrame implements WindowClosable {
     type = t;
     LFrame.attachIcon(this);
     if (type == TYPE_MAIN_WINDOW) {
-      menubar = new LogisimMenuBar(this, p, p, p);
-      setJMenuBar(menubar);
+      logisimMenuBar = new LogisimMenuBar(this, p, p, p);
+      setJMenuBar(logisimMenuBar);
     } else if (type == TYPE_SUB_WINDOW || MacCompatibility.isRunningOnMac()) {
       // use null project so there will be no Close, Save, etc.
-      menubar = new LogisimMenuBar(this, null, p, enableSim ? p : null);
-      setJMenuBar(menubar);
+      logisimMenuBar = new LogisimMenuBar(this, null, p, enableSim ? p : null);
+      setJMenuBar(logisimMenuBar);
     } else {
-      menubar = null;
+      logisimMenuBar = null;
     }
     if (type != TYPE_MAIN_WINDOW && project != null) {
       project.getFrame().addWindowListener(new WindowAdapter() {
@@ -149,13 +150,5 @@ public class LFrame extends JFrame implements WindowClosable {
   public void requestClose() {
     final var closing = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
     processWindowEvent(closing);
-  }
-
-  public Project getProject() {
-    return project;
-  }
-
-  public LogisimMenuBar getLogisimMenuBar() {
-    return menubar;
   }
 }

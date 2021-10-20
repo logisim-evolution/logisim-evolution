@@ -116,7 +116,7 @@ public class TestFrame extends LFrame.SubWindowWithSimulation {
       if (value == null || value.getCircuitState().getCircuit() == curModel.getCircuit()) return;
     }
 
-    menubar.setCircuitState(value, value.getCircuitState());
+    logisimMenuBar.setCircuitState(value, value.getCircuitState());
 
     if (curSimulator != null) curSimulator.removeSimulatorListener(myListener);
     if (curModel != null) curModel.setSelected(false);

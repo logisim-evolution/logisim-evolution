@@ -22,10 +22,11 @@ import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
 import java.util.Comparator;
 import javax.swing.tree.TreeNode;
+import lombok.Getter;
 
 class SimulationTreeCircuitNode extends SimulationTreeNode
     implements CircuitListener, AttributeListener, Comparator<Component> {
-  private final CircuitState circuitState;
+  @Getter private final CircuitState circuitState;
   private final Component subcircComp;
 
   public SimulationTreeCircuitNode(
@@ -118,10 +119,6 @@ class SimulationTreeCircuitNode extends SimulationTreeNode
     } else {
       return false;
     }
-  }
-
-  public CircuitState getCircuitState() {
-    return circuitState;
   }
 
   @Override

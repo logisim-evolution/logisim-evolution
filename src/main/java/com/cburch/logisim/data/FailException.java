@@ -11,6 +11,7 @@ package com.cburch.logisim.data;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 
 /**
  * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
@@ -18,10 +19,10 @@ import java.util.List;
 public class FailException extends TestException {
 
   private static final long serialVersionUID = 1L;
-  private final int column;
-  private final Value expected;
-  private final Value computed;
-  private final ArrayList<FailException> more = new ArrayList<>();
+  @Getter private final int column;
+  @Getter private final Value expected;
+  @Getter private final Value computed;
+  @Getter private final ArrayList<FailException> more = new ArrayList<>();
 
   public FailException(int column, String columnName, Value expected, Value computed) {
     super(
@@ -40,22 +41,6 @@ public class FailException extends TestException {
     more.add(another);
     more.addAll(another.getMore());
     another.clearMore();
-  }
-
-  public int getColumn() {
-    return column;
-  }
-
-  public Value getComputed() {
-    return computed;
-  }
-
-  public Value getExpected() {
-    return expected;
-  }
-
-  public List<FailException> getMore() {
-    return more;
   }
 
   public void clearMore() {

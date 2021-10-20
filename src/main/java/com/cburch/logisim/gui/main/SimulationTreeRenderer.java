@@ -19,6 +19,7 @@ import javax.swing.Icon;
 import javax.swing.JLabel;
 import javax.swing.JTree;
 import javax.swing.tree.DefaultTreeCellRenderer;
+import lombok.Getter;
 
 public class SimulationTreeRenderer extends DefaultTreeCellRenderer {
   private static final long serialVersionUID = 1L;
@@ -50,19 +51,12 @@ public class SimulationTreeRenderer extends DefaultTreeCellRenderer {
     private final ComponentFactory factory;
     private final boolean isCurrentView;
 
+    @Getter final int iconWidth = 20;
+    @Getter final int iconHeight = 20;
+
     RendererIcon(ComponentFactory factory, boolean isCurrentView) {
       this.factory = factory;
       this.isCurrentView = isCurrentView;
-    }
-
-    @Override
-    public int getIconHeight() {
-      return 20;
-    }
-
-    @Override
-    public int getIconWidth() {
-      return 20;
     }
 
     @Override

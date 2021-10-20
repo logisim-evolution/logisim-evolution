@@ -36,10 +36,12 @@ import com.cburch.logisim.vhdl.base.HdlModel;
 import com.cburch.logisim.vhdl.sim.VhdlSimulatorTop;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
 import javax.swing.JFileChooser;
+import lombok.Getter;
+import lombok.Setter;
 
 public class Project {
+
   private static class ActionData {
     final CircuitState circuitState;
     final HdlModel hdlModel;
@@ -55,19 +57,19 @@ public class Project {
   private class MyListener implements Selection.Listener, LibraryListener {
     @Override
     public void libraryChanged(LibraryEvent event) {
-      int action = event.getAction();
+      final var action = event.getAction();
       if (action == LibraryEvent.REMOVE_LIBRARY) {
         final var unloaded = (Library) event.getData();
         if (tool != null && unloaded.containsFromSource(tool)) {
           setTool(null);
         }
       } else if (action == LibraryEvent.REMOVE_TOOL) {
-        Object data = event.getData();
+        final var data = event.getData();
         if (data instanceof AddTool) {
-          Object factory = ((AddTool) data).getFactory();
+          final var factory = ((AddTool) data).getFactory();
           if (factory instanceof SubcircuitFactory fact) {
             if (fact.getSubcircuit() == getCurrentCircuit()) {
-              setCurrentCircuit(file.getMainCircuit());
+              setCurrentCircuit(logisimFile.getMainCircuit());
             }
           }
         }
@@ -75,40 +77,52 @@ public class Project {
     }
 
     @Override
-    public void selectionChanged(Selection.Event e) {
-      fireEvent(ProjectEvent.ACTION_SELECTION, e.getSource());
+    public void selectionChanged(Selection.Event event) {
+      fireEvent(ProjectEvent.ACTION_SELECTION, event.source());
     }
   }
 
   private static final int MAX_UNDO_SIZE = 64;
 
-  private final Simulator simulator = new Simulator();
+  @Getter private final Simulator simulator = new Simulator();
   private VhdlSimulatorTop vhdlSimulator = null;
 
-  private LogisimFile file;
+  @Getter private LogisimFile logisimFile;
   private HdlModel hdlModel;
-  private CircuitState circuitState; // active sim state
-  private final HashMap<Circuit, CircuitState> recentRootState =
-      new HashMap<>(); // most recent root sim state for each circuit
-  private final LinkedList<CircuitState> allRootStates =
-      new LinkedList<>(); // all root sim states, in display order
-  private Frame frame = null;
+
+  /**
+   * Active sim state.
+   */
+  @Getter private CircuitState circuitState;
+
+  /**
+   * Most recent root sim state for each circuit.
+   */
+  private final HashMap<Circuit, CircuitState> recentRootState = new HashMap<>();
+
+  /**
+   * All root sim states, in display order.
+   */
+  @Getter private final LinkedList<CircuitState> rootCircuitStates = new LinkedList<>();
+  @Getter private Frame frame = null;
   private OptionsFrame optionsFrame = null;
   private LogFrame logFrame = null;
   private TestFrame testFrame = null;
-  private Tool tool = null;
+  @Getter private Tool tool = null;
   private final LinkedList<ActionData> undoLog = new LinkedList<>();
   private int undoMods = 0;
   private final LinkedList<ActionData> redoLog = new LinkedList<>();
-  private final EventSourceWeakSupport<ProjectListener> projectListeners =
-      new EventSourceWeakSupport<>();
-  private final EventSourceWeakSupport<LibraryListener> fileListeners =
-      new EventSourceWeakSupport<>();
-  private final EventSourceWeakSupport<CircuitListener> circuitListeners =
-      new EventSourceWeakSupport<>();
-  private Dependencies depends;
+  private final EventSourceWeakSupport<ProjectListener> projectListeners = new EventSourceWeakSupport<>();
+  private final EventSourceWeakSupport<LibraryListener> fileListeners = new EventSourceWeakSupport<>();
+  private final EventSourceWeakSupport<CircuitListener> circuitListeners = new EventSourceWeakSupport<>();
+  @Getter private Dependencies dependencies;
   private final MyListener myListener = new MyListener();
-  private boolean startupScreen = false;
+
+  /**
+   * We track whether this project is the empty project opened at startup by default, because we want to
+   * close it immediately as another project is opened, if there haven't been any changes to it.
+   */
+  @Setter @Getter private boolean startupScreen = false;
   private boolean forcedDirty = false;
 
   public Project(LogisimFile file) {
@@ -124,7 +138,7 @@ public class Project {
 
   public void addLibraryListener(LibraryListener value) {
     fileListeners.add(value);
-    if (file != null) file.addLibraryListener(value);
+    if (logisimFile != null) logisimFile.addLibraryListener(value);
   }
 
   //
@@ -139,16 +153,14 @@ public class Project {
   }
 
   public JFileChooser createChooser() {
-    if (file == null) return JFileChoosers.create();
-    final var loader = file.getLoader();
+    if (logisimFile == null) return JFileChoosers.create();
+    final var loader = logisimFile.getLoader();
     return loader == null ? JFileChoosers.create() : loader.createChooser();
   }
 
   public void doAction(Action act) {
-    if (act == null) {
-      return;
-    }
-    Action toAdd = act;
+    if (act == null) return;
+    var toAdd = act;
     startupScreen = false;
     redoLog.clear();
 
@@ -179,7 +191,7 @@ public class Project {
         System.out.println("  with mutator: " + e.getCircuitMutator());
         throw e;
       }
-      file.setDirty(isFileDirty());
+      logisimFile.setDirty(isFileDirty());
       fireEvent(new ProjectEvent(ProjectEvent.ACTION_COMPLETE, this, act));
       fireEvent(new ProjectEvent(ProjectEvent.ACTION_MERGE, this, first, toAdd));
       return;
@@ -207,12 +219,12 @@ public class Project {
     if (toAdd.isModification()) {
       ++undoMods;
     }
-    file.setDirty(isFileDirty());
+    logisimFile.setDirty(isFileDirty());
     fireEvent(new ProjectEvent(ProjectEvent.ACTION_COMPLETE, this, act));
   }
 
   public int doTestVector(String vectorname, String name) {
-    final var circuit = (name == null ? file.getMainCircuit() : file.getCircuit(name));
+    final var circuit = (name == null ? logisimFile.getMainCircuit() : logisimFile.getCircuit(name));
     if (circuit == null) {
       System.err.println("Circuit '" + name + "' not found.");
       return -1;
@@ -247,14 +259,6 @@ public class Project {
     return redoLog.size() > 0;
   }
 
-  public List<CircuitState> getRootCircuitStates() {
-    return allRootStates;
-  }
-
-  public CircuitState getCircuitState() {
-    return circuitState;
-  }
-
   public CircuitState getCircuitState(Circuit circuit) {
     if (circuitState != null && circuitState.getCircuit() == circuit) {
       return circuitState;
@@ -263,7 +267,7 @@ public class Project {
       if (ret == null) {
         ret = new CircuitState(this, circuit);
         recentRootState.put(circuit, ret);
-        allRootStates.add(ret);
+        rootCircuitStates.add(ret);
       }
       return ret;
     }
@@ -302,14 +306,6 @@ public class Project {
     hdl.displayChanged();
   }
 
-  public Dependencies getDependencies() {
-    return depends;
-  }
-
-  public Frame getFrame() {
-    return frame;
-  }
-
   public Action getLastAction() {
     if (undoLog.size() == 0) {
       return null;
@@ -333,12 +329,8 @@ public class Project {
     return logFrame;
   }
 
-  public LogisimFile getLogisimFile() {
-    return file;
-  }
-
   public Options getOptions() {
-    return file.getOptions();
+    return logisimFile.getOptions();
   }
 
   public OptionsFrame getOptionsFrame() {
@@ -353,22 +345,15 @@ public class Project {
     return canvas.getSelection();
   }
 
-  public Simulator getSimulator() {
-    return simulator;
-  }
-
   public TestFrame getTestFrame() {
     if (testFrame == null) testFrame = new TestFrame(this);
     return testFrame;
   }
 
-  public Tool getTool() {
-    return tool;
-  }
-
   public VhdlSimulatorTop getVhdlSimulator() {
-    if (vhdlSimulator == null) vhdlSimulator = new VhdlSimulatorTop(this);
-
+    if (vhdlSimulator == null) {
+      vhdlSimulator = new VhdlSimulatorTop(this);
+    }
     return vhdlSimulator;
   }
 
@@ -376,17 +361,9 @@ public class Project {
     return (undoMods > 0) || forcedDirty;
   }
 
-  // We track whether this project is the empty project opened
-  // at startup by default, because we want to close it
-  // immediately as another project is opened, if there
-  // haven't been any changes to it.
-  public boolean isStartupScreen() {
-    return startupScreen;
-  }
-
   public void setForcedDirty() {
     forcedDirty = true;
-    file.setDirty(true);
+    logisimFile.setDirty(true);
   }
 
   /** Redo actions that were previously undone. */
@@ -426,7 +403,7 @@ public class Project {
 
   public void removeLibraryListener(LibraryListener value) {
     fileListeners.remove(value);
-    if (file != null) file.removeLibraryListener(value);
+    if (logisimFile != null) logisimFile.removeLibraryListener(value);
   }
 
   public void removeProjectListener(ProjectListener what) {
@@ -501,7 +478,7 @@ public class Project {
     if (circState == null) {
       circState = new CircuitState(this, circuit);
       recentRootState.put(circuit, circState);
-      allRootStates.add(circState);
+      rootCircuitStates.add(circState);
     }
     setCircuitState(circState);
   }
@@ -509,11 +486,11 @@ public class Project {
   public void setFileAsClean() {
     undoMods = 0;
     forcedDirty = false;
-    file.setDirty(isFileDirty());
+    logisimFile.setDirty(isFileDirty());
   }
 
   public void setFileAsDirty() {
-    file.setDirty(true);
+    logisimFile.setDirty(true);
   }
 
   public void setFrame(Frame value) {
@@ -525,7 +502,7 @@ public class Project {
   }
 
   public void setLogisimFile(LogisimFile value) {
-    final var old = this.file;
+    final var old = this.logisimFile;
     if (old != null) {
       for (final var l : fileListeners) {
         old.removeLibraryListener(l);
@@ -535,31 +512,27 @@ public class Project {
       optionsFrame.dispose();
       optionsFrame = null;
     }
-    file = value;
+    logisimFile = value;
     recentRootState.clear();
-    allRootStates.clear();
-    depends = new Dependencies(file);
+    rootCircuitStates.clear();
+    dependencies = new Dependencies(logisimFile);
     undoLog.clear();
     redoLog.clear();
     undoMods = 0;
-    fireEvent(ProjectEvent.ACTION_SET_FILE, old, file);
-    setCurrentCircuit(file.getMainCircuit());
-    if (file != null) {
+    fireEvent(ProjectEvent.ACTION_SET_FILE, old, logisimFile);
+    setCurrentCircuit(logisimFile.getMainCircuit());
+    if (logisimFile != null) {
       for (final var l : fileListeners) {
-        file.addLibraryListener(l);
+        logisimFile.addLibraryListener(l);
       }
     }
-    file.setDirty(true); // toggle it so that everybody hears the file is fresh
-    file.setDirty(false);
+    logisimFile.setDirty(true); // toggle it so that everybody hears the file is fresh
+    logisimFile.setDirty(false);
   }
 
   //
   // actions
   //
-  public void setStartupScreen(boolean value) {
-    startupScreen = value;
-  }
-
   public void setTool(Tool value) {
     if (tool == value) return;
     final var old = tool;
@@ -603,7 +576,7 @@ public class Project {
       }
       fireEvent(new ProjectEvent(ProjectEvent.UNDO_START, this, action));
       action.undo(this);
-      file.setDirty(isFileDirty());
+      logisimFile.setDirty(isFileDirty());
       fireEvent(new ProjectEvent(ProjectEvent.UNDO_COMPLETE, this, action));
     }
   }

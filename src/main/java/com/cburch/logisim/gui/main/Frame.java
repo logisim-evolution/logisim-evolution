@@ -47,7 +47,6 @@ import com.cburch.logisim.util.HorizontalSplitPane;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.VerticalSplitPane;
 import com.cburch.logisim.vhdl.base.HdlModel;
 import com.cburch.logisim.vhdl.gui.HdlContentView;
@@ -72,6 +71,7 @@ import javax.swing.JTabbedPane;
 import javax.swing.WindowConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import lombok.Getter;
 
 public class Frame extends LFrame.MainWindow implements LocaleListener {
   private static final long serialVersionUID = 1L;
@@ -86,7 +86,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   private final MyProjectListener myProjectListener = new MyProjectListener();
   // GUI elements shared between views
   private final MainMenuListener menuListener;
-  private final Toolbar toolbar;
+  @Getter private final Toolbar toolbar;
   private final HorizontalSplitPane leftRegion;
   private final HorizontalSplitPane rightRegion;
   private final HorizontalSplitPane editRegion;
@@ -100,13 +100,19 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   private final Toolbox toolbox;
   private final SimulationExplorer simExplorer;
   private final AttrTable attrTable;
-  private final ZoomControl zoom;
+  @Getter private final ZoomControl zoomControl;
   // for the Layout view
   private final LayoutToolbarModel layoutToolbarModel;
-  private final Canvas layoutCanvas;
-  private final VhdlSimulatorConsole vhdlSimulatorConsole;
+  /**
+   * Layout canvas.
+   */
+  @Getter private final Canvas canvas;
+  @Getter private final VhdlSimulatorConsole vhdlSimulatorConsole;
   private final HdlContentView hdlEditor;
-  private final ZoomModel layoutZoomModel;
+  /**
+   * Layout zoom model.
+   */
+  @Getter private final ZoomModel zoomModel;
   private final LayoutEditHandler layoutEditHandler;
   private final AttrTableSelectionModel attrTableSelectionModel;
   // for the Appearance view
@@ -127,22 +133,22 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
     // set up elements for the Layout view
     layoutToolbarModel = new LayoutToolbarModel(this, project);
-    layoutCanvas = new Canvas(project);
-    final var canvasPane = new CanvasPane(layoutCanvas);
+    canvas = new Canvas(project);
+    final var canvasPane = new CanvasPane(canvas);
 
-    layoutZoomModel =
+    zoomModel =
         new BasicZoomModel(
             AppPreferences.LAYOUT_SHOW_GRID,
             AppPreferences.LAYOUT_ZOOM,
             buildZoomSteps(),
             canvasPane);
 
-    layoutCanvas.getGridPainter().setZoomModel(layoutZoomModel);
+    canvas.getGridPainter().setZoomModel(zoomModel);
     layoutEditHandler = new LayoutEditHandler(this);
     attrTableSelectionModel = new AttrTableSelectionModel(project, this);
 
     // set up menu bar and toolbar
-    menuListener = new MainMenuListener(this, menubar);
+    menuListener = new MainMenuListener(this, logisimMenuBar);
     menuListener.setEditHandler(layoutEditHandler);
     toolbar = new Toolbar(layoutToolbarModel);
 
@@ -154,11 +160,11 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     bottomTab.add(attrTable = new AttrTable(this));
     bottomTab.add(new RegTabContent(this));
 
-    zoom = new ZoomControl(layoutZoomModel, layoutCanvas);
+    zoomControl = new ZoomControl(zoomModel, canvas);
 
     // set up the central area
     mainPanelSuper = new JPanel(new BorderLayout());
-    canvasPane.setZoomModel(layoutZoomModel);
+    canvasPane.setZoomModel(zoomModel);
     mainPanel = new CardPanel();
     mainPanel.addView(EDIT_LAYOUT, canvasPane);
     mainPanel.setView(EDIT_LAYOUT);
@@ -179,7 +185,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     topTab.add(simPanel);
 
     final var attrFooter = new JPanel(new BorderLayout());
-    attrFooter.add(zoom);
+    attrFooter.add(zoomControl);
 
     final var bottomTabAndZoom = new JPanel(new BorderLayout());
     bottomTabAndZoom.add(bottomTab, BorderLayout.CENTER);
@@ -313,10 +319,6 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     rightRegion.setFraction(1.0);
   }
 
-  public Toolbar getToolbar() {
-    return toolbar;
-  }
-
   /**
    * Generates String to be used as generic Frame title, taking
    * names of circuits or app version or type.
@@ -373,10 +375,6 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     return ret;
   }
 
-  public Canvas getCanvas() {
-    return layoutCanvas;
-  }
-
   public String getEditorView() {
     return (getHdlEditorView() != null ? EDIT_HDL : mainPanel.getView());
   }
@@ -398,33 +396,21 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
       }
       toolbar.setToolbarModel(app.getToolbarModel());
       app.getAttrTableDrawManager(attrTable).attributesSelected();
-      zoom.setZoomModel(app.getZoomModel());
-      zoom.setAutoZoomButtonEnabled(false);
+      zoomControl.setZoomModel(app.getZoomModel());
+      zoomControl.setAutoZoomButtonEnabled(false);
       menuListener.setEditHandler(app.getEditHandler());
       mainPanel.setView(view);
       app.getCanvas().requestFocus();
     } else {
       // layout view
       toolbar.setToolbarModel(layoutToolbarModel);
-      zoom.setZoomModel(layoutZoomModel);
-      zoom.setAutoZoomButtonEnabled(true);
+      zoomControl.setZoomModel(zoomModel);
+      zoomControl.setAutoZoomButtonEnabled(true);
       menuListener.setEditHandler(layoutEditHandler);
       viewAttributes(project.getTool(), true);
       mainPanel.setView(view);
-      layoutCanvas.requestFocus();
+      canvas.requestFocus();
     }
-  }
-
-  public ZoomControl getZoomControl() {
-    return this.zoom;
-  }
-
-  public VhdlSimulatorConsole getVhdlSimulatorConsole() {
-    return vhdlSimulatorConsole;
-  }
-
-  public ZoomModel getZoomModel() {
-    return layoutZoomModel;
   }
 
   @Override
@@ -463,8 +449,8 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
   public void savePreferences() {
     AppPreferences.TICK_FREQUENCY.set(project.getSimulator().getTickFrequency());
-    AppPreferences.LAYOUT_SHOW_GRID.setBoolean(layoutZoomModel.getShowGrid());
-    AppPreferences.LAYOUT_ZOOM.set(layoutZoomModel.getZoomFactor());
+    AppPreferences.LAYOUT_SHOW_GRID.setBoolean(zoomModel.getShowGrid());
+    AppPreferences.LAYOUT_ZOOM.set(zoomModel.getZoomFactor());
     if (appearance != null) {
       final var appearanceZoom = appearance.getZoomModel();
       AppPreferences.APPEARANCE_SHOW_GRID.setBoolean(appearanceZoom.getShowGrid());
@@ -501,9 +487,9 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     if (value instanceof AttrTableComponentModel model) {
       final var circ = model.getCircuit();
       final var comp = model.getComponent();
-      layoutCanvas.setHaloedComponent(circ, comp);
+      canvas.setHaloedComponent(circ, comp);
     } else {
-      layoutCanvas.setHaloedComponent(null, null);
+      canvas.setHaloedComponent(null, null);
     }
   }
 
@@ -522,7 +508,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
   private void setHdlEditorView(HdlModel hdl) {
     hdlEditor.setHdlModel(hdl);
-    zoom.setZoomModel(null);
+    zoomControl.setZoomModel(null);
     editRegion.setFraction(0.0);
     toolbar.setToolbarModel(hdlEditor.getToolbarModel());
   }
@@ -543,7 +529,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
         return;
       }
     } else {
-      newAttrs = newTool.getAttributeSet(layoutCanvas);
+      newAttrs = newTool.getAttributeSet(canvas);
     }
     if (newAttrs == null) {
       final var oldModel = attrTable.getAttrTableModel();
@@ -659,7 +645,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     @Override
     public void windowClosing(WindowEvent e) {
       if (confirmClose(S.get("confirmCloseTitle"))) {
-        layoutCanvas.closeCanvas();
+        canvas.closeCanvas();
         timer.cancel();
         Frame.this.dispose();
       }
@@ -667,7 +653,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
     @Override
     public void windowOpened(WindowEvent e) {
-      layoutCanvas.computeSize(true);
+      canvas.computeSize(true);
     }
   }
 }

@@ -14,29 +14,18 @@ import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
 import java.util.Collection;
 import java.util.Collections;
+import lombok.Getter;
 
 class ClipboardContents {
   static final ClipboardContents EMPTY = new ClipboardContents(Collections.emptySet(), null, null);
 
-  private final Collection<CanvasObject> onClipboard;
-  private final Location anchorLocation;
-  private final Direction anchorFacing;
+  @Getter private final Collection<CanvasObject> elements;
+  @Getter private final Location anchorLocation;
+  @Getter private final Direction anchorFacing;
 
   public ClipboardContents(Collection<CanvasObject> onClipboard, Location anchorLocation, Direction anchorFacing) {
-    this.onClipboard = java.util.List.copyOf(onClipboard);
+    this.elements = java.util.List.copyOf(onClipboard);
     this.anchorLocation = anchorLocation;
     this.anchorFacing = anchorFacing;
-  }
-
-  public Direction getAnchorFacing() {
-    return anchorFacing;
-  }
-
-  public Location getAnchorLocation() {
-    return anchorLocation;
-  }
-
-  public Collection<CanvasObject> getElements() {
-    return onClipboard;
   }
 }

@@ -12,6 +12,7 @@ package com.cburch.logisim.data;
 import com.cburch.logisim.gui.generic.ComboBox;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Component;
+import lombok.Getter;
 
 public class BitWidth implements Comparable<BitWidth> {
   static class Attribute extends com.cburch.logisim.data.Attribute<BitWidth> {
@@ -93,7 +94,7 @@ public class BitWidth implements Comparable<BitWidth> {
 
   private static BitWidth[] prefab = null;
 
-  final int width;
+  @Getter final int width;
 
   private BitWidth(int width) {
     this.width = width;
@@ -117,10 +118,6 @@ public class BitWidth implements Comparable<BitWidth> {
     else return (1L << width) - 1;
   }
 
-  public int getWidth() {
-    return width;
-  }
-
   @Override
   public int hashCode() {
     return width;
@@ -128,6 +125,6 @@ public class BitWidth implements Comparable<BitWidth> {
 
   @Override
   public String toString() {
-    return "" + width;
+    return String.valueOf(width);
   }
 }

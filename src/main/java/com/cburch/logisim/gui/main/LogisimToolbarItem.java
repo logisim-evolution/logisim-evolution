@@ -22,12 +22,13 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import javax.swing.Icon;
+import lombok.Setter;
 
 public class LogisimToolbarItem implements ToolbarItem {
   private final MenuListener menu;
   private final LogisimMenuItem action;
   private Icon icon;
-  private StringGetter toolTip;
+  @Setter private StringGetter toolTip;
 
   public LogisimToolbarItem(
       MenuListener menu, String iconName, LogisimMenuItem action, StringGetter toolTip) {
@@ -71,10 +72,6 @@ public class LogisimToolbarItem implements ToolbarItem {
     } else {
       return null;
     }
-  }
-
-  public void setToolTip(StringGetter toolTip) {
-    this.toolTip = toolTip;
   }
 
   @Override

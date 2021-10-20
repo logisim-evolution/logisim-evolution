@@ -32,6 +32,8 @@ import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import lombok.AccessLevel;
+import lombok.Getter;
 
 public class RightPanel extends JPanel {
 
@@ -56,7 +58,7 @@ public class RightPanel extends JPanel {
   private int width;
   private int height;
   private final MyListener myListener = new MyListener();
-  private Timeline header;
+  @Getter(AccessLevel.PUBLIC) private JPanel timelineHeader;
 
   public RightPanel(ChronoPanel p, ListSelectionModel m) {
     chronoPanel = p;
@@ -73,8 +75,8 @@ public class RightPanel extends JPanel {
     final var timeScale = model.getTimeScale();
     final var numTicks = ((model.getEndTime() - model.getStartTime()) + timeScale - 1) / timeScale;
     width = (int) (tickWidth * numTicks + EXTRA_SPACE + 0.5);
-    header = new Timeline();
-    header.setPreferredSize(new Dimension(width, ChronoPanel.HEADER_HEIGHT));
+    timelineHeader = new Timeline();
+    timelineHeader.setPreferredSize(new Dimension(width, ChronoPanel.HEADER_HEIGHT));
     addMouseListener(myListener);
     addMouseMotionListener(myListener);
     final var tracker =
@@ -93,8 +95,8 @@ public class RightPanel extends JPanel {
             track(e);
           }
         };
-    header.addMouseListener(tracker);
-    header.addMouseMotionListener(tracker);
+    timelineHeader.addMouseListener(tracker);
+    timelineHeader.addMouseMotionListener(tracker);
     updateSignals();
   }
 
@@ -141,7 +143,7 @@ public class RightPanel extends JPanel {
     timeNextDraw = t1;
     updateSize(true);
     flushWaveforms();
-    header.repaint();
+    timelineHeader.repaint();
     repaint();
   }
 
@@ -160,7 +162,7 @@ public class RightPanel extends JPanel {
 
     d.width = width;
     d.height = height;
-    header.setPreferredSize(new Dimension(width, ChronoPanel.HEADER_HEIGHT));
+    timelineHeader.setPreferredSize(new Dimension(width, ChronoPanel.HEADER_HEIGHT));
     setPreferredSize(d); // necessary for scrollbar
     revalidate();
 
@@ -216,7 +218,7 @@ public class RightPanel extends JPanel {
       curX = Integer.MAX_VALUE; // pin to right side
       curT = Long.MAX_VALUE;
     }
-    header.repaint();
+    timelineHeader.repaint();
     repaint();
   }
 
@@ -257,7 +259,9 @@ public class RightPanel extends JPanel {
   }
 
   private void flushWaveforms() {
-    for (final var w : rows) w.flush();
+    for (final var w : rows) {
+      w.flush();
+    }
   }
 
   @Override
@@ -604,7 +608,7 @@ public class RightPanel extends JPanel {
   public void zoom(int sens, int posX) {
     if (zoom + sens < 1 || zoom + sens > 40) return;
 
-    // fixme: Offscreen image can be max 32k pixels wide. We should not be
+    // FIXME: Offscreen image can be max 32k pixels wide. We should not be
     // making such huge offscreen images anyway.
     final var timeScale = model.getTimeScale();
     final var t0 = model.getStartTime();
@@ -639,7 +643,7 @@ public class RightPanel extends JPanel {
 
     // repaint
     flushWaveforms();
-    header.repaint();
+    timelineHeader.repaint();
     repaint();
   }
 
@@ -735,7 +739,7 @@ public class RightPanel extends JPanel {
   public void addNotify() {
     super.addNotify();
     final var jsp = (JScrollPane) SwingUtilities.getAncestorOfClass(JScrollPane.class, this);
-    if (jsp != null && header != null) jsp.setColumnHeaderView(header);
+    if (jsp != null && timelineHeader != null) jsp.setColumnHeaderView(timelineHeader);
   }
 
   @Override
@@ -743,9 +747,5 @@ public class RightPanel extends JPanel {
     super.addNotify();
     final var jsp = (JScrollPane) SwingUtilities.getAncestorOfClass(JScrollPane.class, this);
     if (jsp != null) jsp.setColumnHeaderView(null);
-  }
-
-  public JPanel getTimelineHeader() {
-    return header;
   }
 }

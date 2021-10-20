@@ -33,9 +33,11 @@ import com.cburch.logisim.util.SyntaxChecker;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 public class CircuitAttributes extends AbstractAttributeSet {
-  
+
   private static class defaultStaticAttributeProvider implements AttributeDefaultProvider {
 
     @Override
@@ -49,7 +51,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
     public boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver) {
       return false;
     }
-    
+
   }
 
   private class MyListener implements AttributeListener, CircuitAppearanceListener {
@@ -206,13 +208,13 @@ public class CircuitAttributes extends AbstractAttributeSet {
 
   private final Circuit source;
   private Instance subcircInstance;
-  private Direction facing;
+  @Getter private Direction facing;
   private String label;
   private Direction labelLocation;
   private Font labelFont;
   private Boolean labelVisible;
   private MyListener listener;
-  private Instance[] pinInstances;
+  @Setter @Getter private Instance[] pinInstances;
   private boolean nameReadOnly;
 
   public CircuitAttributes(Circuit source) {
@@ -242,14 +244,6 @@ public class CircuitAttributes extends AbstractAttributeSet {
     return INSTANCE_ATTRS;
   }
 
-  public Direction getFacing() {
-    return facing;
-  }
-
-  public Instance[] getPinInstances() {
-    return pinInstances;
-  }
-
   @Override
   @SuppressWarnings("unchecked")
   public <E> E getValue(Attribute<E> attr) {
@@ -268,10 +262,6 @@ public class CircuitAttributes extends AbstractAttributeSet {
         return false;
     }
     return attr.isToSave();
-  }
-
-  void setPinInstances(Instance[] value) {
-    pinInstances = value;
   }
 
   void setSubcircuit(Instance value) {

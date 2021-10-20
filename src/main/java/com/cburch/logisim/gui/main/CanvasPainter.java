@@ -27,19 +27,20 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Collections;
 import java.util.Set;
+import lombok.Getter;
 
 class CanvasPainter implements PropertyChangeListener {
   private static final Set<Component> NO_COMPONENTS = Collections.emptySet();
 
   private final Canvas canvas;
-  private final GridPainter grid;
-  private Component haloedComponent = null;
+  @Getter private final GridPainter gridPainter;
+  @Getter private Component haloedComponent = null;
   private Circuit haloedCircuit = null;
   private WireSet highlightedWires = WireSet.EMPTY;
 
   CanvasPainter(Canvas canvas) {
     this.canvas = canvas;
-    this.grid = new GridPainter(canvas);
+    this.gridPainter = new GridPainter(canvas);
 
     AppPreferences.PRINTER_VIEW.addPropertyChangeListener(this);
     AppPreferences.ATTRIBUTE_HALO.addPropertyChangeListener(this);
@@ -169,17 +170,6 @@ class CanvasPainter implements PropertyChangeListener {
   }
 
   //
-  // accessor methods
-  //
-  GridPainter getGridPainter() {
-    return grid;
-  }
-
-  Component getHaloedComponent() {
-    return haloedComponent;
-  }
-
-  //
   // painting methods
   //
   void paintContents(Graphics g, Project proj) {
@@ -190,7 +180,7 @@ class CanvasPainter implements PropertyChangeListener {
       clip = new Rectangle(0, 0, size.width, size.height);
     }
 
-    grid.paintGrid(g);
+    gridPainter.paintGrid(g);
     g.setColor(Color.black);
 
     var gfxScaled = g.create();

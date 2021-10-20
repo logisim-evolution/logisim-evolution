@@ -200,7 +200,7 @@ class FilePanel extends LogPanel {
       fileField.setText(file == null ? "" : file.getPath());
       enableButton.setEnabled(file != null);
 
-      headerCheckBox.setSelected(model.getFileHeader());
+      headerCheckBox.setSelected(model.isFileHeader());
     }
   }
 }

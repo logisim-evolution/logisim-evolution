@@ -19,11 +19,12 @@ import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.util.ArrayList;
 import javax.swing.SwingUtilities;
+import lombok.Getter;
 
 public class Simulator {
 
   public static class Event {
-    private final Simulator source;
+    @Getter private final Simulator source;
     private final boolean didTick;
     private final boolean didSingleStep;
     private final boolean didPropagate;
@@ -33,10 +34,6 @@ public class Simulator {
       didTick = t;
       didSingleStep = s;
       didPropagate = p;
-    }
-
-    public Simulator getSource() {
-      return source;
     }
 
     public boolean didTick() {

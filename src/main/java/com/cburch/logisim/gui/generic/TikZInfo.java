@@ -29,13 +29,13 @@ import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import lombok.Getter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -55,10 +55,10 @@ public class TikZInfo implements Cloneable {
   private boolean fontItalic;
   private String currentDrawColor;
   private String currentBackColor;
-  private Font curFont;
+  @Getter private Font font;
   private BasicStroke curStroke = new BasicStroke(1);
   private double myRotation = 0;
-  private Rectangle clip;
+  @Getter private Rectangle clip;
 
   public TikZInfo() {
     setFont(DrawAttr.DEFAULT_FONT);
@@ -88,7 +88,7 @@ public class TikZInfo implements Cloneable {
     newInst.customColors = customColors;
     newInst.currentDrawColor = currentDrawColor;
     newInst.currentBackColor = currentBackColor;
-    newInst.curFont = curFont;
+    newInst.font = font;
     newInst.curStroke = curStroke;
     newInst.myRotation = myRotation;
     newInst.fontIndex = fontIndex;
@@ -228,12 +228,8 @@ public class TikZInfo implements Cloneable {
     myRotation += theta;
   }
 
-  public Font getFont() {
-    return curFont;
-  }
-
   public void setFont(Font f) {
-    curFont = f;
+    font = f;
     final var fontName = f.getFamily();
     fontSize = f.getSize();
     fontBold = f.isBold();
@@ -259,10 +255,6 @@ public class TikZInfo implements Cloneable {
 
   public void setClip(int x, int y, int width, int height) {
     clip = new Rectangle(x, y, width, height);
-  }
-
-  public Rectangle getClip() {
-    return clip;
   }
 
   public void drawGlyphVector(GlyphVector g, float x, float y) {

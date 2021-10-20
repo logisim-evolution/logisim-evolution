@@ -41,6 +41,11 @@ dependencies {
   implementation("com.formdev:flatlaf:1.2")
   implementation("commons-cli:commons-cli:1.4")
 
+  compileOnly("org.projectlombok:lombok:1.18.22")
+  annotationProcessor("org.projectlombok:lombok:1.18.22")
+  testCompileOnly("org.projectlombok:lombok:1.18.22")
+  testAnnotationProcessor("org.projectlombok:lombok:1.18.22")
+
   compileOnly("org.jetbrains:annotations:22.0.0")
 
   // NOTE: Be aware of reported issues with Eclipse and Batik

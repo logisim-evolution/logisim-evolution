@@ -86,7 +86,7 @@ public class HexFrame extends LFrame.SubWindow {
 
     editor.getCaret().addChangeListener(editListener);
     editor.getCaret().setDot(0, false);
-    editListener.register(menubar);
+    editListener.register(logisimMenuBar);
     setLocationRelativeTo(project.getFrame());
   }
 

@@ -31,6 +31,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,14 +39,12 @@ class SelectionBase {
 
   static final Logger logger = LoggerFactory.getLogger(SelectionBase.class);
   static final Set<Component> NO_COMPONENTS = Collections.emptySet();
-  final HashSet<Component> selected = new HashSet<>(); // of selected
+  final Set<Component> selected = new HashSet<>(); // of selected
+  // Components in circuit
+  final Set<Component> floatingComponents = new HashSet<>(); // of selected
+  final Collection<Component> suppressHandles = new HashSet<>(); // of
   // Components
-  // in
-  // circuit
-  final HashSet<Component> lifted = new HashSet<>(); // of selected
-  final HashSet<Component> suppressHandles = new HashSet<>(); // of
-  // Components
-  final Set<Component> unionSet = CollectionUtil.createUnmodifiableSetUnion(selected, lifted);
+  @Getter final Set<Component> components = CollectionUtil.createUnmodifiableSetUnion(selected, floatingComponents);
   private final ArrayList<Selection.Listener> listeners = new ArrayList<>();
   final Project proj;
   // Components
@@ -107,14 +106,14 @@ class SelectionBase {
 
   // removes all from selection - NOT from circuit
   void clear(CircuitMutation xn, boolean dropLifted) {
-    if (selected.isEmpty() && lifted.isEmpty()) return;
+    if (selected.isEmpty() && floatingComponents.isEmpty()) return;
 
-    if (dropLifted && !lifted.isEmpty()) {
-      xn.addAll(lifted);
+    if (dropLifted && !floatingComponents.isEmpty()) {
+      xn.addAll(floatingComponents);
     }
 
     selected.clear();
-    lifted.clear();
+    floatingComponents.clear();
     shouldSnap = false;
     bounds = Bounds.EMPTY_BOUNDS;
 
@@ -126,7 +125,7 @@ class SelectionBase {
   //
   private void computeShouldSnap() {
     shouldSnap = false;
-    for (Component comp : unionSet) {
+    for (Component comp : components) {
       if (shouldSnapComponent(comp)) {
         shouldSnap = true;
         return;
@@ -206,21 +205,21 @@ class SelectionBase {
       xn.remove(comp);
     }
     selected.clear();
-    lifted.clear();
+    floatingComponents.clear();
     fireSelectionChanged();
   }
 
   void dropAll(CircuitMutation xn) {
-    if (!lifted.isEmpty()) {
-      xn.addAll(lifted);
-      selected.addAll(lifted);
-      lifted.clear();
+    if (!floatingComponents.isEmpty()) {
+      xn.addAll(floatingComponents);
+      selected.addAll(floatingComponents);
+      floatingComponents.clear();
     }
   }
 
   void duplicateHelper(CircuitMutation xn) {
     HashSet<Component> oldSelected = new HashSet<>(selected);
-    oldSelected.addAll(lifted);
+    oldSelected.addAll(floatingComponents);
     pasteHelper(xn, oldSelected);
   }
 
@@ -238,13 +237,13 @@ class SelectionBase {
   //
   public Bounds getBounds() {
     if (bounds == null) {
-      bounds = computeBounds(unionSet);
+      bounds = computeBounds(components);
     }
     return bounds;
   }
 
   public Bounds getBounds(Graphics g) {
-    Iterator<Component> it = unionSet.iterator();
+    Iterator<Component> it = components.iterator();
     if (it.hasNext()) {
       bounds = it.next().getBounds(g);
       while (it.hasNext()) {
@@ -287,14 +286,14 @@ class SelectionBase {
   }
 
   public boolean hasConflictWhenMoved(int dx, int dy) {
-    return hasConflictTranslated(unionSet, dx, dy, false);
+    return hasConflictTranslated(components, dx, dy, false);
   }
 
   void pasteHelper(CircuitMutation xn, Collection<Component> comps) {
     clear(xn);
 
     Map<Component, Component> newLifted = copyComponents(comps, false);
-    lifted.addAll(newLifted.values());
+    floatingComponents.addAll(newLifted.values());
     fireSelectionChanged();
   }
 
@@ -310,7 +309,7 @@ class SelectionBase {
     }
 
     hasPrinted = false;
-    for (Component comp : lifted) {
+    for (Component comp : floatingComponents) {
       if (hasPrinted) logger.debug("       : {}  [{}]", comp, comp.hashCode());
       else logger.debug(" lifted: {}  [{}]", comp, comp.hashCode());
       hasPrinted = true;
@@ -320,11 +319,11 @@ class SelectionBase {
   // removes from selection - NOT from circuit
   void remove(CircuitMutation xn, Component comp) {
     boolean removed = selected.remove(comp);
-    if (lifted.contains(comp)) {
+    if (floatingComponents.contains(comp)) {
       if (xn == null) {
         throw new IllegalStateException("cannot remove");
       } else {
-        lifted.remove(comp);
+        floatingComponents.remove(comp);
         removed = true;
         xn.add(comp);
       }
@@ -356,8 +355,8 @@ class SelectionBase {
       selected.add(entry.getValue());
     }
 
-    Map<Component, Component> liftedAfter = copyComponents(lifted, dx, dy, true);
-    lifted.clear();
+    Map<Component, Component> liftedAfter = copyComponents(floatingComponents, dx, dy, true);
+    floatingComponents.clear();
     for (Map.Entry<Component, Component> entry : liftedAfter.entrySet()) {
       xn.add(entry.getValue());
       selected.add(entry.getValue());

@@ -30,6 +30,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.WeakHashMap;
+import lombok.Getter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,19 +39,19 @@ public class Selection extends SelectionBase {
   static final Logger logger = LoggerFactory.getLogger(Selection.class);
   private final MyListener myListener;
   private final boolean isVisible = true;
-  private final SelectionAttributes attrs;
+  @Getter private final SelectionAttributes attributeSet;
 
   public Selection(Project proj, Canvas canvas) {
     super(proj);
 
     myListener = new MyListener();
-    attrs = new SelectionAttributes(canvas, this);
+    attributeSet = new SelectionAttributes(canvas, this);
     proj.addProjectListener(myListener);
     proj.addCircuitListener(myListener);
   }
 
   public boolean contains(Component comp) {
-    return unionSet.contains(comp);
+    return components.contains(comp);
   }
 
   //
@@ -59,7 +60,7 @@ public class Selection extends SelectionBase {
   public void draw(ComponentDrawContext context, Set<Component> hidden) {
     Graphics g = context.getGraphics();
 
-    for (Component c : lifted) {
+    for (Component c : floatingComponents) {
       if (!hidden.contains(c)) {
         var loc = c.getLocation();
 
@@ -70,7 +71,7 @@ public class Selection extends SelectionBase {
       }
     }
 
-    for (Component comp : unionSet) {
+    for (Component comp : components) {
       if (!suppressHandles.contains(comp) && !hidden.contains(comp)) {
         var gfxNew = g.create();
         context.setGraphics(gfxNew);
@@ -93,7 +94,7 @@ public class Selection extends SelectionBase {
       dy = Canvas.snapYToGrid(dy);
     }
     Graphics g = context.getGraphics();
-    for (Component comp : unionSet) {
+    for (Component comp : components) {
       AttributeSet attrs = comp.getAttributeSet();
       Location loc = comp.getLocation();
       int x = loc.getX() + dx;
@@ -108,7 +109,7 @@ public class Selection extends SelectionBase {
   @Override
   public boolean equals(Object other) {
     return (other instanceof Selection otherSelection)
-           ? this.selected.equals(otherSelection.selected) && this.lifted.equals(otherSelection.lifted)
+           ? this.selected.equals(otherSelection.selected) && this.floatingComponents.equals(otherSelection.floatingComponents)
            : false;
   }
 
@@ -116,17 +117,9 @@ public class Selection extends SelectionBase {
     return selected;
   }
 
-  public AttributeSet getAttributeSet() {
-    return attrs;
-  }
-
-  public Set<Component> getComponents() {
-    return unionSet;
-  }
-
   public Collection<Component> getComponentsContaining(Location query) {
     HashSet<Component> ret = new HashSet<>();
-    for (Component comp : unionSet) {
+    for (Component comp : components) {
       if (comp.contains(query)) ret.add(comp);
     }
     return ret;
@@ -134,7 +127,7 @@ public class Selection extends SelectionBase {
 
   public Collection<Component> getComponentsContaining(Location query, Graphics g) {
     HashSet<Component> ret = new HashSet<>();
-    for (Component comp : unionSet) {
+    for (Component comp : components) {
       if (comp.contains(query, g)) ret.add(comp);
     }
     return ret;
@@ -142,7 +135,7 @@ public class Selection extends SelectionBase {
 
   public Collection<Component> getComponentsWithin(Bounds bds) {
     HashSet<Component> ret = new HashSet<>();
-    for (Component comp : unionSet) {
+    for (Component comp : components) {
       if (bds.contains(comp.getBounds())) ret.add(comp);
     }
     return ret;
@@ -150,21 +143,21 @@ public class Selection extends SelectionBase {
 
   public Collection<Component> getComponentsWithin(Bounds bds, Graphics g) {
     HashSet<Component> ret = new HashSet<>();
-    for (Component comp : unionSet) {
+    for (Component comp : components) {
       if (bds.contains(comp.getBounds(g))) ret.add(comp);
     }
     return ret;
   }
 
   public Collection<Component> getFloatingComponents() {
-    return lifted;
+    return floatingComponents;
   }
 
   //
   // query methods
   //
   public boolean isEmpty() {
-    return selected.isEmpty() && lifted.isEmpty();
+    return selected.isEmpty() && floatingComponents.isEmpty();
   }
 
   @Override
@@ -177,17 +170,7 @@ public class Selection extends SelectionBase {
     void selectionChanged(Selection.Event event);
   }
 
-  public static class Event {
-    final Object source;
-
-    Event(Object source) {
-      this.source = source;
-    }
-
-    public Object getSource() {
-      return source;
-    }
-  }
+  public static record Event(Object source) {}
 
   private class MyListener implements ProjectListener, CircuitListener {
     private final WeakHashMap<Action, SelectionSave> savedSelections;
@@ -210,12 +193,12 @@ public class Selection extends SelectionBase {
           if (replacedBy != null) {
             change = true;
             selected.remove(comp);
-            lifted.remove(comp);
+            floatingComponents.remove(comp);
             for (Component add : replacedBy) {
               if (circuit.contains(add)) {
                 selected.add(add);
               } else {
-                lifted.add(add);
+                floatingComponents.add(add);
               }
             }
           }
@@ -246,7 +229,7 @@ public class Selection extends SelectionBase {
         Action act = (Action) event.getData();
         SelectionSave save = savedSelections.get(act);
         if (save != null) {
-          lifted.clear();
+          floatingComponents.clear();
           selected.clear();
           for (int i = 0; i < 2; i++) {
             Component[] cs;
@@ -258,7 +241,7 @@ public class Selection extends SelectionBase {
                 if (circ.contains(c)) {
                   selected.add(c);
                 } else {
-                  lifted.add(c);
+                  floatingComponents.add(c);
                 }
               }
             }

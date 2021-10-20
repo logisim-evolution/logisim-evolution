@@ -21,6 +21,7 @@ import com.cburch.logisim.util.UnmodifiableList;
 import java.util.List;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import lombok.Getter;
 
 public class SimulationToolbarModel extends AbstractToolbarModel implements ChangeListener {
   private static final SimulationIcon RunToggleIcon = new SimulationIcon(SimulationIcon.SIM_PLAY);
@@ -31,7 +32,7 @@ public class SimulationToolbarModel extends AbstractToolbarModel implements Chan
   private final LogisimToolbarItem tickEnable;
   private final LogisimToolbarItem tickHalf;
   private final LogisimToolbarItem tickFull;
-  private final List<ToolbarItem> items;
+  @Getter private final List<ToolbarItem> items;
 
   public SimulationToolbarModel(Project project, MenuListener menu) {
     this.project = project;
@@ -72,11 +73,6 @@ public class SimulationToolbarModel extends AbstractToolbarModel implements Chan
 
     menu.getMenuBar().addEnableListener(this);
     stateChanged(null);
-  }
-
-  @Override
-  public List<ToolbarItem> getItems() {
-    return items;
   }
 
   @Override

@@ -309,7 +309,7 @@ final class XmlWriter {
     for (String key : circ.getMapInfo(boardName).keySet()) {
       final var map = doc.createElement("mc");
       final var mapInfo = circ.getMapInfo(boardName).get(key);
-      if (mapInfo.isOldFormat()) {
+      if (mapInfo.isOldMapFormat()) {
         map.setAttribute("key", key);
         if (mapInfo.isOpen()) {
           map.setAttribute(MapComponent.OPEN_KEY, MapComponent.OPEN_KEY);

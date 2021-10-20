@@ -33,18 +33,12 @@ import java.io.File;
 import javax.imageio.ImageIO;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
+import lombok.Getter;
+import lombok.Setter;
 
 public abstract class PrintHandler implements Printable {
 
-  static File lastExportedFile;
-
-  public static File getLastExported() {
-    return lastExportedFile;
-  }
-
-  public static void setLastExported(File f) {
-    lastExportedFile = f;
-  }
+  @Setter @Getter static File lastExportedFile;
 
   public void actionPerformed(ActionEvent e) {
     final var src = e.getSource();
@@ -87,7 +81,7 @@ public abstract class PrintHandler implements Printable {
       ExportImage.getFilter(ExportImage.FORMAT_TIKZ),
       ExportImage.getFilter(ExportImage.FORMAT_SVG)
     };
-    final var chooser = JFileChoosers.createSelected(getLastExported());
+    final var chooser = JFileChoosers.createSelected(getLastExportedFile());
     chooser.setAcceptAllFileFilterUsed(false);
     for (final var ff : filters) {
       chooser.addChoosableFileFilter(ff);
@@ -113,7 +107,7 @@ public abstract class PrintHandler implements Printable {
       else if (ff == filters[3]) dest = new File(dest + ".tex");
       else dest = new File(dest + ".svg");
     }
-    setLastExported(dest);
+    setLastExportedFile(dest);
     if (dest.exists()) {
       final var confirm =
           OptionPane.showConfirmDialog(

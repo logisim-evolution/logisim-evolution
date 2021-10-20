@@ -47,6 +47,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableModel;
+import lombok.Getter;
 
 @SuppressWarnings("serial")
 public class AttrTable extends JPanel implements LocaleListener {
@@ -173,21 +174,14 @@ public class AttrTable extends JPanel implements LocaleListener {
 
   private static class NullAttrModel implements AttrTableModel {
 
+    @Getter private final int rowCount = 0;
+    @Getter private final String title = null;
+
     @Override
     public void addAttrTableModelListener(AttrTableModelListener listener) {}
 
     @Override
     public AttrTableModelRow getRow(int rowIndex) {
-      return null;
-    }
-
-    @Override
-    public int getRowCount() {
-      return 0;
-    }
-
-    @Override
-    public String getTitle() {
       return null;
     }
 

@@ -13,10 +13,11 @@ import com.cburch.logisim.comp.Component;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import lombok.Getter;
 
 class SelectionSave {
-  private Component[] floating;
-  private Component[] anchored;
+  @Getter private Component[] floatingComponents;
+  @Getter private Component[] anchoredComponents;
 
   private SelectionSave() {}
 
@@ -25,14 +26,13 @@ class SelectionSave {
 
     Collection<Component> lifted = sel.getFloatingComponents();
     if (!lifted.isEmpty()) {
-      save.floating = lifted.toArray(new Component[0]);
+      save.floatingComponents = lifted.toArray(new Component[0]);
     }
 
     Collection<Component> selected = sel.getAnchoredComponents();
     if (!selected.isEmpty()) {
-      save.anchored = selected.toArray(new Component[0]);
+      save.anchoredComponents = selected.toArray(new Component[0]);
     }
-
     return save;
   }
 
@@ -57,8 +57,8 @@ class SelectionSave {
   }
 
   public boolean isSame(Selection sel) {
-    return isSame(floating, sel.getFloatingComponents())
-        && isSame(anchored, sel.getAnchoredComponents());
+    return isSame(floatingComponents, sel.getFloatingComponents())
+        && isSame(anchoredComponents, sel.getAnchoredComponents());
   }
 
   private static HashSet<Component> toSet(Component[] comps) {
@@ -70,26 +70,18 @@ class SelectionSave {
   @Override
   public boolean equals(Object other) {
     return (other instanceof SelectionSave o)
-           ? isSame(this.floating, o.floating) && isSame(this.anchored, o.anchored)
+           ? isSame(this.floatingComponents, o.floatingComponents) && isSame(this.anchoredComponents, o.anchoredComponents)
            : false;
-  }
-
-  public Component[] getAnchoredComponents() {
-    return anchored;
-  }
-
-  public Component[] getFloatingComponents() {
-    return floating;
   }
 
   @Override
   public int hashCode() {
     int ret = 0;
-    if (floating != null) {
-      for (Component c : floating) ret += c.hashCode();
+    if (floatingComponents != null) {
+      for (Component c : floatingComponents) ret += c.hashCode();
     }
-    if (anchored != null) {
-      for (Component c : anchored) ret += c.hashCode();
+    if (anchoredComponents != null) {
+      for (Component c : anchoredComponents) ret += c.hashCode();
     }
     return ret;
   }

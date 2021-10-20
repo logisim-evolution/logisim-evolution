@@ -18,6 +18,7 @@ import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
+import lombok.Getter;
 
 /**
  * BufferedLineReader combines features of RandomAccessFile, StringReader, and BufferedReader, along
@@ -26,9 +27,9 @@ import java.nio.charset.StandardCharsets;
  */
 abstract class BufferedLineReader {
 
-  protected long bufSize;
-  protected int bPos;
-  protected int charPos;
+  @Getter protected long byteLength;
+  @Getter protected int bytePosition;
+  @Getter protected int charPosition;
   protected char[] buf = new char[4096];
   protected int bufCount = 0; // how much of buf is full
   protected int bufPos = 0; // read position in buf
@@ -45,23 +46,11 @@ abstract class BufferedLineReader {
   }
 
   public void reset() throws IOException {
-    bPos = 0;
-    charPos = 0;
+    bytePosition = 0;
+    charPosition = 0;
     bufPos = 0;
     bufCount = 0;
     skipNextNewline = false;
-  }
-
-  public int bytePosition() {
-    return bPos;
-  }
-
-  public int charPosition() {
-    return charPos;
-  }
-
-  public long byteLength() {
-    return bufSize;
   }
 
   abstract int underlyingReadUtf8(char[] cbuf, int off, int len) throws IOException;
@@ -77,8 +66,8 @@ abstract class BufferedLineReader {
       throw new IOException("raw byte read after unicode I/O");
     int total = underlyingReadBytes(bbuf, off, len);
     if (total <= 0) return total;
-    bPos += total;
-    while (total < len && bPos < bufSize) {
+    bytePosition += total;
+    while (total < len && bytePosition < byteLength) {
       int n = underlyingReadBytes(bbuf, off + total, len - total);
       if (n <= 0) break;
       total += n;
@@ -94,7 +83,7 @@ abstract class BufferedLineReader {
 
     // skip old leftover linefeed
     if (skipNextNewline && buf[bufPos] == '\n') {
-      charPos++;
+      charPosition++;
       bufPos++;
 
       // refill buffer, if necessary and possible
@@ -109,7 +98,7 @@ abstract class BufferedLineReader {
       while (bufPos < bufCount) {
         // consume one
         char c = buf[bufPos];
-        charPos++;
+        charPosition++;
         bufPos++;
         // check for end of line
         if (c == '\n' || c == '\r') {
@@ -135,7 +124,7 @@ abstract class BufferedLineReader {
     // zero-copy read, like BufferedReader does
     if (!skipNextNewline && bufPos >= bufCount && len >= buf.length) {
       int n = underlyingReadUtf8(cbuf, off, len);
-      if (n > 0) charPos += n;
+      if (n > 0) charPosition += n;
       return n;
     }
 
@@ -144,7 +133,7 @@ abstract class BufferedLineReader {
 
     // skip old leftover linefeed
     if (skipNextNewline && buf[bufPos] == '\n') {
-      charPos++;
+      charPosition++;
       bufPos++;
 
       // refill buffer, if necessary and possible
@@ -154,7 +143,7 @@ abstract class BufferedLineReader {
 
     int n = Math.min(len, bufCount - bufPos);
     System.arraycopy(buf, bufPos, cbuf, off, n);
-    charPos += n;
+    charPosition += n;
     bufPos += n;
     return n;
   }
@@ -182,9 +171,9 @@ abstract class BufferedLineReader {
       cin = new StringReader(s);
       byte[] b = s.getBytes(StandardCharsets.UTF_8);
       bin = new ByteArrayInputStream(b);
-      bufSize = b.length;
-      bPos = 0;
-      charPos = 0;
+      byteLength = b.length;
+      bytePosition = 0;
+      charPosition = 0;
     }
 
     @Override
@@ -246,9 +235,9 @@ abstract class BufferedLineReader {
     ReaderForFile(File f) throws IOException {
       bin = new RandomAccessFile(f, "r");
       cin = new InputStreamReader(new Adapter(bin), StandardCharsets.UTF_8);
-      bufSize = bin.length();
-      bPos = 0;
-      charPos = 0;
+      byteLength = bin.length();
+      bytePosition = 0;
+      charPosition = 0;
     }
 
     @Override

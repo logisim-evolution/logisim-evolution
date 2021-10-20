@@ -13,6 +13,7 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.Cache;
 import java.awt.Color;
 import java.util.Arrays;
+import lombok.Getter;
 
 public class Value {
 
@@ -203,7 +204,7 @@ public class Value {
 
   private static final Cache cache = new Cache();
 
-  private final int width;
+  @Getter private final int width;
 
   private final long error;
   private final long unknown;
@@ -347,10 +348,6 @@ public class Value {
     } else {
       return multiColor;
     }
-  }
-
-  public int getWidth() {
-    return width;
   }
 
   @Override

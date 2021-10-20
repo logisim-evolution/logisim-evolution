@@ -81,10 +81,6 @@ public class OptionsFrame extends LFrame.Dialog {
     return project.getLogisimFile().getOptions();
   }
 
-  OptionsPanel[] getPrefPanels() {
-    return panels;
-  }
-
   @Override
   public void setVisible(boolean value) {
     if (value) {

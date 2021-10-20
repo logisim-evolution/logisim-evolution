@@ -223,7 +223,7 @@ class CircuitWires {
     if (!added) return false;
 
     if (bounds != Bounds.EMPTY_BOUNDS) { // update bounds
-      bounds = bounds.add(w.e0).add(w.e1);
+      bounds = bounds.add(w.end0).add(w.end1);
     }
     return true;
   }
@@ -397,16 +397,16 @@ class CircuitWires {
   private void connectWires(BundleMap ret) {
     // make a WireBundle object for each tree of connected wires
     for (final var wire : wires) {
-      final var bundleA = ret.getBundleAt(wire.e0);
+      final var bundleA = ret.getBundleAt(wire.end0);
       if (bundleA == null) {
-        final var bundleB = ret.createBundleAt(wire.e1);
-        bundleB.points.add(wire.e0);
-        ret.setBundleAt(wire.e0, bundleB);
+        final var bundleB = ret.createBundleAt(wire.end1);
+        bundleB.points.add(wire.end0);
+        ret.setBundleAt(wire.end0, bundleB);
       } else {
-        final var bundleB = ret.getBundleAt(wire.e1);
+        final var bundleB = ret.getBundleAt(wire.end1);
         if (bundleB == null) { // t1 doesn't exist
-          bundleA.points.add(wire.e1);
-          ret.setBundleAt(wire.e1, bundleA);
+          bundleA.points.add(wire.end1);
+          ret.setBundleAt(wire.end1, bundleA);
         } else {
           bundleB.unite(bundleA); // unite bundles
         }
@@ -426,8 +426,8 @@ class CircuitWires {
     final var isValid = bmap.isValid();
     if (CollectionUtil.isNullOrEmpty(hidden)) {
       for (final var wire : wires) {
-        final var s = wire.e0;
-        final var t = wire.e1;
+        final var s = wire.end0;
+        final var t = wire.end1;
         final var wb = bmap.getBundleAt(s);
         var width = 5;
         if (!wb.isValid()) {
@@ -497,8 +497,8 @@ class CircuitWires {
     } else {
       for (final var wire : wires) {
         if (!hidden.contains(wire)) {
-          final var s = wire.e0;
-          final var t = wire.e1;
+          final var s = wire.end0;
+          final var t = wire.end1;
           final var wb = bmap.getBundleAt(s);
           if (!wb.isValid()) {
             g.setColor(Value.widthErrorColor);
@@ -653,7 +653,7 @@ class CircuitWires {
   }
 
   WireSet getWireSet(Wire start) {
-    final var wireBundle = getWireBundle(start.e0);
+    final var wireBundle = getWireBundle(start.end0);
     if (wireBundle == null) return WireSet.EMPTY;
     final var wires = new HashSet<Wire>();
     for (final var loc : wireBundle.points) {
@@ -762,19 +762,19 @@ class CircuitWires {
     }
 
     var w = it.next();
-    var xmin = w.e0.getX();
-    var ymin = w.e0.getY();
-    var xmax = w.e1.getX();
-    var ymax = w.e1.getY();
+    var xmin = w.end0.getX();
+    var ymin = w.end0.getY();
+    var xmax = w.end1.getX();
+    var ymax = w.end1.getY();
     while (it.hasNext()) {
       w = it.next();
-      final var x0 = w.e0.getX();
+      final var x0 = w.end0.getX();
       if (x0 < xmin) xmin = x0;
-      final var x1 = w.e1.getX();
+      final var x1 = w.end1.getX();
       if (x1 > xmax) xmax = x1;
-      final var y0 = w.e0.getY();
+      final var y0 = w.end0.getY();
       if (y0 < ymin) ymin = y0;
-      final var y1 = w.e1.getY();
+      final var y1 = w.end1.getY();
       if (y1 > ymax) ymax = y1;
     }
     bounds = Bounds.create(xmin, ymin, xmax - xmin + 1, ymax - ymin + 1);
@@ -811,7 +811,7 @@ class CircuitWires {
     if (bounds != Bounds.EMPTY_BOUNDS) {
       // bounds is valid - invalidate if endpoint on border
       final var smaller = bounds.expand(-2);
-      if (!smaller.contains(w.e0) || !smaller.contains(w.e1)) {
+      if (!smaller.contains(w.end0) || !smaller.contains(w.end1)) {
         bounds = Bounds.EMPTY_BOUNDS;
       }
     }

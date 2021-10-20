@@ -12,14 +12,15 @@ package com.cburch.logisim.gui.menu;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import lombok.Getter;
 
 public class MenuListener {
-  protected final LogisimMenuBar menubar;
+  @Getter protected final LogisimMenuBar menuBar;
   protected final ArrayList<EnabledListener> listeners;
   protected final EditListener editListener = new EditListener();
 
-  public MenuListener(LogisimMenuBar menubar) {
-    this.menubar = menubar;
+  public MenuListener(LogisimMenuBar menuBar) {
+    this.menuBar = menuBar;
     this.listeners = new ArrayList<>();
   }
 
@@ -42,15 +43,11 @@ public class MenuListener {
   }
 
   public void doAction(LogisimMenuItem item) {
-    menubar.doAction(item);
-  }
-
-  public LogisimMenuBar getMenuBar() {
-    return menubar;
+    menuBar.doAction(item);
   }
 
   public boolean isEnabled(LogisimMenuItem item) {
-    return menubar.isEnabled(item);
+    return menuBar.isEnabled(item);
   }
 
   public interface EnabledListener {
@@ -68,14 +65,14 @@ public class MenuListener {
     @Override
     public void enableChanged(EditHandler handler, LogisimMenuItem action, boolean value) {
       if (handler == this.handler) {
-        menubar.setEnabled(action, value);
+        menuBar.setEnabled(action, value);
         fireEnableChanged();
       }
     }
 
     public void register() {
       for (final var item : LogisimMenuBar.EDIT_ITEMS) {
-        menubar.addActionListener(item, this);
+        menuBar.addActionListener(item, this);
       }
       computeEnabled();
     }
@@ -85,7 +82,7 @@ public class MenuListener {
         handler.computeEnabled();
       } else {
         for (final var item : LogisimMenuBar.EDIT_ITEMS) {
-          menubar.setEnabled(item, false);
+          menuBar.setEnabled(item, false);
         }
       }
     }

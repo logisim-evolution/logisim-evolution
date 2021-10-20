@@ -12,6 +12,7 @@ package com.cburch.logisim.data;
 import static com.cburch.logisim.data.Strings.S;
 
 import com.cburch.logisim.util.StringGetter;
+import lombok.Getter;
 
 public class Direction implements AttributeOptionInterface {
   public static Direction parse(String str) {
@@ -34,23 +35,19 @@ public class Direction implements AttributeOptionInterface {
   public static final Direction[] cardinals = {NORTH, EAST, SOUTH, WEST};
 
   private final String name;
-  private final StringGetter disp;
+  @Getter private final StringGetter displayGetter;
   private final StringGetter vert;
   private final int id;
 
-  private Direction(String name, StringGetter disp, StringGetter vert, int id) {
+  private Direction(String name, StringGetter displayGetter, StringGetter vert, int id) {
     this.name = name;
-    this.disp = disp;
+    this.displayGetter = displayGetter;
     this.vert = vert;
     this.id = id;
   }
 
   public boolean equals(Direction other) {
     return this.id == other.id;
-  }
-
-  public StringGetter getDisplayGetter() {
-    return disp;
   }
 
   public Direction getLeft() {
@@ -69,6 +66,7 @@ public class Direction implements AttributeOptionInterface {
   }
 
   // for AttributeOptionInterface
+  @Override
   public Object getValue() {
     return this;
   }
@@ -94,8 +92,9 @@ public class Direction implements AttributeOptionInterface {
     return 0;
   }
 
+  @Override
   public String toDisplayString() {
-    return disp.toString();
+    return displayGetter.toString();
   }
 
   public double toRadians() {

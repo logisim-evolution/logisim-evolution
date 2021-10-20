@@ -34,6 +34,7 @@ import javax.swing.ListSelectionModel;
 import javax.swing.TransferHandler;
 import javax.swing.table.AbstractTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
+import lombok.Getter;
 
 // This is more like a JTree, but wedged into a JTable because it looks more
 // reasonable sitting next to the SelectionList JTable .
@@ -53,6 +54,8 @@ public class ComponentSelector extends JTable {
       (a, b) -> a.toString().compareToIgnoreCase(b.toString());
 
   static class TableTreeModel extends AbstractTableModel {
+    @Getter private final int columnCount = 1;
+
     TreeNode<CircuitNode> root;
     final ArrayList<TreeNode<?>> rows = new ArrayList<>();
 
@@ -66,11 +69,6 @@ public class ComponentSelector extends JTable {
     @Override
     public Object getValueAt(int row, int column) {
       return rows.get(row);
-    }
-
-    @Override
-    public int getColumnCount() {
-      return 1;
     }
 
     @Override
@@ -308,6 +306,7 @@ public class ComponentSelector extends JTable {
   private class TreeNodeRenderer extends DefaultTableCellRenderer implements Icon {
 
     private TreeNode<?> node;
+    @Getter private final int iconHeight = 20;
 
     @Override
     public java.awt.Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
@@ -318,11 +317,6 @@ public class ComponentSelector extends JTable {
         ((JLabel) ret).setIcon(this);
       }
       return ret;
-    }
-
-    @Override
-    public int getIconHeight() {
-      return 20;
     }
 
     @Override

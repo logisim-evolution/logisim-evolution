@@ -119,7 +119,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     } else {
       this.vendor = myBoardInformation.fpga.getVendor();
     }
-    this.useGui = !Main.headless;
+    this.useGui = Main.hasGui();
     this.topLevelSheet = topLevelSheet;
     this.tickFrequency = tickFrequency;
     this.mapFileName = mapFileName;

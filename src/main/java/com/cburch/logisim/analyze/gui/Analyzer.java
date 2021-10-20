@@ -170,11 +170,11 @@ public class Analyzer extends LFrame.SubWindow {
     super(null);
     final var tableListener = new TableListener();
     model.getTruthTable().addTruthTableListener(tableListener);
-    menuListener = new AnalyzerMenuListener(menubar);
-    ioPanel = new VariableTab(model.getInputs(), model.getOutputs(), menubar);
+    menuListener = new AnalyzerMenuListener(logisimMenuBar);
+    ioPanel = new VariableTab(model.getInputs(), model.getOutputs(), logisimMenuBar);
     truthTablePanel = new TableTab(model.getTruthTable());
-    expressionPanel = new ExpressionTab(model, menubar);
-    minimizedPanel = new MinimizedTab(model, menubar);
+    expressionPanel = new ExpressionTab(model, logisimMenuBar);
+    minimizedPanel = new MinimizedTab(model, logisimMenuBar);
     importTable = new ImportTableButton(this, model);
     buildCircuit = new BuildCircuitButton(this, model);
     buildCircuit.setEnabled(false);

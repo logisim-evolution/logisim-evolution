@@ -9,23 +9,20 @@
 
 package com.cburch.logisim.gui.appear;
 
-import com.cburch.draw.canvas.Canvas;
 import com.cburch.draw.gui.AttrTableDrawManager;
-import com.cburch.draw.toolbar.ToolbarModel;
 import com.cburch.draw.tools.DrawingAttributeSet;
 import com.cburch.draw.tools.SelectTool;
 import com.cburch.logisim.circuit.CircuitState;
-import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.gui.generic.AttrTable;
 import com.cburch.logisim.gui.generic.BasicZoomModel;
 import com.cburch.logisim.gui.generic.CanvasPane;
 import com.cburch.logisim.gui.generic.ZoomModel;
-import com.cburch.logisim.gui.menu.EditHandler;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import java.util.ArrayList;
 import javax.swing.JFrame;
 import javax.swing.SwingUtilities;
+import lombok.Getter;
 
 public class AppearanceView {
   private static final ArrayList<Double> ZOOM_OPTIONS =
@@ -41,21 +38,21 @@ public class AppearanceView {
         }
       };
 
-  private final DrawingAttributeSet attrs;
-  private final AppearanceCanvas canvas;
-  private final CanvasPane canvasPane;
-  private final AppearanceToolbarModel toolbarModel;
-  private final ZoomModel zoomModel;
-  private final AppearanceEditHandler editHandler;
+  @Getter private final DrawingAttributeSet attributeSet;
+  @Getter private final AppearanceCanvas canvas;
+  @Getter private final CanvasPane canvasPane;
+  @Getter private final AppearanceToolbarModel toolbarModel;
+  @Getter private final ZoomModel zoomModel;
+  @Getter private final AppearanceEditHandler editHandler;
   private AttrTableDrawManager attrTableManager;
 
   public AppearanceView() {
-    attrs = new DrawingAttributeSet();
+    attributeSet = new DrawingAttributeSet();
     final var selectTool = new SelectTool();
     canvas = new AppearanceCanvas(selectTool);
     canvasPane = new CanvasPane(canvas);
-    final var ssTool = new ShowStateTool(this, canvas, attrs);
-    toolbarModel = new AppearanceToolbarModel(selectTool, ssTool, canvas, attrs);
+    final var ssTool = new ShowStateTool(this, canvas, attributeSet);
+    toolbarModel = new AppearanceToolbarModel(selectTool, ssTool, canvas, attributeSet);
     zoomModel =
         new BasicZoomModel(
             AppPreferences.APPEARANCE_SHOW_GRID,
@@ -72,37 +69,13 @@ public class AppearanceView {
     return (JFrame) SwingUtilities.getAncestorOfClass(JFrame.class, canvasPane);
   }
 
-  public AttributeSet getAttributeSet() {
-    return attrs;
-  }
-
   public AttrTableDrawManager getAttrTableDrawManager(AttrTable table) {
     var ret = attrTableManager;
     if (ret == null) {
-      ret = new AttrTableDrawManager(canvas, table, attrs);
+      ret = new AttrTableDrawManager(canvas, table, attributeSet);
       attrTableManager = ret;
     }
     return ret;
-  }
-
-  public Canvas getCanvas() {
-    return canvas;
-  }
-
-  public CanvasPane getCanvasPane() {
-    return canvasPane;
-  }
-
-  public EditHandler getEditHandler() {
-    return editHandler;
-  }
-
-  public ToolbarModel getToolbarModel() {
-    return toolbarModel;
-  }
-
-  public ZoomModel getZoomModel() {
-    return zoomModel;
   }
 
   public void setCircuit(Project proj, CircuitState circuitState) {

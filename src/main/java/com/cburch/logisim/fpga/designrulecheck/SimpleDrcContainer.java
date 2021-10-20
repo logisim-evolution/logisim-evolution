@@ -133,7 +133,7 @@ public class SimpleDrcContainer {
     for (final var obj : drcComponents) {
       if (obj instanceof Wire wire) {
         if ((markType & MARK_WIRE) != 0) {
-          wire.setDrcHighlight(true);
+          wire.setDrcHighlighted(true);
         }
       } else if (obj instanceof Splitter split) {
         if ((markType & MARK_INSTANCE) != 0) {
@@ -152,7 +152,7 @@ public class SimpleDrcContainer {
     for (final var obj : drcComponents) {
       if (obj instanceof Wire wire) {
         if ((markType & MARK_WIRE) != 0) {
-          wire.setDrcHighlight(false);
+          wire.setDrcHighlighted(false);
         }
       } else if (obj instanceof Splitter split) {
         if ((markType & MARK_INSTANCE) != 0) {

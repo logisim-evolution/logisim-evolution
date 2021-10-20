@@ -64,6 +64,8 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.TreeSet;
 import java.util.WeakHashMap;
+import lombok.Getter;
+import lombok.Setter;
 
 public class Circuit {
   private class EndChangedTransaction extends CircuitTransaction {
@@ -111,7 +113,7 @@ public class Circuit {
     public void endChanged(ComponentEvent e) {
       locker.checkForWritePermission("ends changed", Circuit.this);
       isAnnotated = false;
-      myNetList.clear();
+      netList.clear();
       final var comp = e.getSource();
       final var toRemove = toMap(e.getOldData());
       final var toAdd = toMap(e.getData());
@@ -222,52 +224,40 @@ public class Circuit {
 
   private static final int maxTimeoutTestBenchSec = 60000;
   private final MyComponentListener myComponentListener = new MyComponentListener();
-  private final CircuitAppearance appearance;
-  private final AttributeSet staticAttrs;
-  private final SubcircuitFactory subcircuitFactory;
+  @Getter private final CircuitAppearance appearance;
+  @Getter private final AttributeSet staticAttributes;
+  @Getter private final SubcircuitFactory subcircuitFactory;
   private final EventSourceWeakSupport<CircuitListener> listeners = new EventSourceWeakSupport<>();
   private LinkedHashSet<Component> comps = new LinkedHashSet<>(); // doesn't include wires
   CircuitWires wires = new CircuitWires();
-  private final List<Component> clocks = new ArrayList<>();
-  private final CircuitLocker locker;
+  @Getter private final List<Component> clocks = new ArrayList<>();
+  @Getter private final CircuitLocker locker;
 
   private final WeakHashMap<Component, Circuit> circuitsUsingThis;
-  private final Netlist myNetList;
+  @Getter private final Netlist netList;
   private final Map<String, MappableResourcesContainer> myMappableResources;
   private final Map<String, Map<String, CircuitMapInfo>> loadedMaps;
   private boolean isAnnotated;
-  private Project proj;
-  private final SocSimulationManager socSim = new SocSimulationManager();
+  @Getter @Setter private Project project;
+  @Getter private final SocSimulationManager socSimulationManager = new SocSimulationManager();
 
   private final LogisimFile logiFile;
 
-  public Circuit(String name, LogisimFile file, Project proj) {
-    staticAttrs = CircuitAttributes.createBaseAttrs(this, name);
+  public Circuit(String name, LogisimFile file, Project project) {
+    staticAttributes = CircuitAttributes.createBaseAttrs(this, name);
     appearance = new CircuitAppearance(this);
     subcircuitFactory = new SubcircuitFactory(this);
     locker = new CircuitLocker();
     circuitsUsingThis = new WeakHashMap<>();
-    myNetList = new Netlist(this);
+    netList = new Netlist(this);
     myMappableResources = new HashMap<>();
     loadedMaps = new HashMap<>();
     isAnnotated = false;
     logiFile = file;
-    staticAttrs.setValue(
+    staticAttributes.setValue(
         CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE,
         AppPreferences.NAMED_CIRCUIT_BOXES_FIXED_SIZE.getBoolean());
-    this.proj = proj;
-  }
-
-  public void setProject(Project proj) {
-    this.proj = proj;
-  }
-
-  public Project getProject() {
-    return proj;
-  }
-
-  public SocSimulationManager getSocSimulationManager() {
-    return socSim;
+    this.project = project;
   }
 
   //
@@ -307,7 +297,7 @@ public class Circuit {
   }
 
   public void annotate(Project proj, boolean clearExistingLabels, boolean insideLibrary) {
-    if (this.proj == null) this.proj = proj;
+    if (this.project == null) this.project = proj;
     this.annotate(clearExistingLabels, insideLibrary);
   }
 
@@ -332,7 +322,7 @@ public class Circuit {
           if (labelNames.contains(label.toUpperCase())) {
             final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
             act.set(comp, StdAttr.LABEL, "");
-            proj.doAction(act);
+            project.doAction(act);
             // FIXME: hardcoded string
             Reporter.report.addSevereWarning("Removed duplicated label " + this.getName() + "/" + label);
           } else {
@@ -348,7 +338,7 @@ public class Circuit {
           Reporter.report.addInfo("Cleared " + this.getName() + "/" + comp.getAttributeSet().getValue(StdAttr.LABEL));
           final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
           act.set(comp, StdAttr.LABEL, "");
-          proj.doAction(act);
+          project.doAction(act);
         }
         if (comp.getAttributeSet().getValue(StdAttr.LABEL).isEmpty()) {
           comps.add(comp);
@@ -377,7 +367,7 @@ public class Circuit {
         final var newLabel = labelers.get(componentName).getNext(this, comp.getFactory());
         final var act = new SetAttributeAction(this, S.getter("changeComponentAttributesAction"));
         act.set(comp, StdAttr.LABEL, newLabel);
-        proj.doAction(act);
+        project.doAction(act);
         Reporter.report.addInfo("Labeled " + this.getName() + "/" + newLabel);
         if (comp.getFactory() instanceof Pin) {
           sizeMightHaveChanged = true;
@@ -400,9 +390,9 @@ public class Circuit {
     isAnnotated = true;
     /* Now annotate all circuits below me */
     for (final var subs : subCircuits) {
-      final var circ = LibraryTools.getCircuitFromLibs(proj.getLogisimFile(), subs.toUpperCase());
-      final var inLibrary = !proj.getLogisimFile().getCircuits().contains(circ);
-      circ.annotate(proj, clearExistingLabels, inLibrary);
+      final var circ = LibraryTools.getCircuitFromLibs(project.getLogisimFile(), subs.toUpperCase());
+      final var inLibrary = !project.getLogisimFile().getCircuits().contains(circ);
+      circ.annotate(project, clearExistingLabels, inLibrary);
     }
   }
 
@@ -410,7 +400,7 @@ public class Circuit {
   // Annotation module for all components that require a non-zero-length label
   public void clearAnnotationLevel() {
     isAnnotated = false;
-    myNetList.clear();
+    netList.clear();
     for (final var comp : this.getNonWires()) {
       if (comp.getFactory() instanceof SubcircuitFactory sub) {
         sub.getSubcircuit().clearAnnotationLevel();
@@ -592,10 +582,6 @@ public class Circuit {
     return ret;
   }
 
-  public CircuitAppearance getAppearance() {
-    return appearance;
-  }
-
   public Bounds getBounds() {
     final var wireBounds = wires.getWireBounds();
     final var it = comps.iterator();
@@ -661,10 +647,6 @@ public class Circuit {
     circuitsUsingThis.remove(c);
   }
 
-  public List<Component> getClocks() {
-    return clocks;
-  }
-
   public Set<Component> getComponents() {
     return CollectionUtil.createUnmodifiableSetUnion(comps, wires.getWires());
   }
@@ -677,19 +659,11 @@ public class Circuit {
     return wires.points.getExclusive(loc);
   }
 
-  public CircuitLocker getLocker() {
-    return locker;
-  }
-
   //
   // access methods
   //
   public String getName() {
-    return staticAttrs.getValue(CircuitAttributes.NAME_ATTR);
-  }
-
-  public Netlist getNetList() {
-    return myNetList;
+    return staticAttributes.getValue(CircuitAttributes.NAME_ATTR);
   }
 
   public void addLoadedMap(String boardName, Map<String, CircuitMapInfo> map) {
@@ -752,14 +726,6 @@ public class Circuit {
     return wires.points.getSplitLocations();
   }
 
-  public AttributeSet getStaticAttributes() {
-    return staticAttrs;
-  }
-
-  public SubcircuitFactory getSubcircuitFactory() {
-    return subcircuitFactory;
-  }
-
   public BitWidth getWidth(Location p) {
     return wires.getWidth(p);
   }
@@ -817,7 +783,7 @@ public class Circuit {
     locker.checkForWritePermission("add", this);
 
     isAnnotated = false;
-    myNetList.clear();
+    netList.clear();
     if (c instanceof Wire wire) {
       if (wire.getEnd0().equals(wire.getEnd1())) return;
       var added = wires.add(wire);
@@ -826,7 +792,7 @@ public class Circuit {
       // add it into the circuit
       var added = comps.add(c);
       if (!added) return;
-      socSim.registerComponent(c);
+      socSimulationManager.registerComponent(c);
       // Here we check for duplicated labels and clear the label
       // if it already exists in the circuit
       if (c.getAttributeSet().containsAttribute(StdAttr.LABEL)
@@ -872,12 +838,12 @@ public class Circuit {
     comps = new LinkedHashSet<>();
     wires = new CircuitWires();
     clocks.clear();
-    myNetList.clear();
+    netList.clear();
     isAnnotated = false;
     for (final var comp : oldComps) {
-      socSim.removeComponent(comp);
+      socSimulationManager.removeComponent(comp);
       final var factory = comp.getFactory();
-      factory.removeComponent(this, comp, proj.getCircuitState(this));
+      factory.removeComponent(this, comp, project.getCircuitState(this));
     }
     fireEvent(CircuitEvent.ACTION_CLEAR, oldComps);
   }
@@ -886,15 +852,15 @@ public class Circuit {
     locker.checkForWritePermission("remove", this);
 
     isAnnotated = false;
-    myNetList.clear();
+    netList.clear();
     if (c instanceof Wire) {
       wires.remove(c);
     } else {
       wires.remove(c);
       comps.remove(c);
-      socSim.removeComponent(c);
+      socSimulationManager.removeComponent(c);
       final var factory = c.getFactory();
-      factory.removeComponent(this, c, proj.getCircuitState(this));
+      factory.removeComponent(this, c, project.getCircuitState(this));
       if (factory instanceof Clock) {
         clocks.remove(c);
       } else if (factory instanceof DynamicElementProvider) {
@@ -932,64 +898,60 @@ public class Circuit {
   // action methods
   //
   public void setName(String name) {
-    staticAttrs.setValue(CircuitAttributes.NAME_ATTR, name);
+    staticAttributes.setValue(CircuitAttributes.NAME_ATTR, name);
   }
 
   @Override
   public String toString() {
-    return staticAttrs.getValue(CircuitAttributes.NAME_ATTR);
+    return staticAttributes.getValue(CircuitAttributes.NAME_ATTR);
   }
 
   public static class TimeoutSimulation extends TimerTask {
 
     /* Make it atomic */
-    private volatile boolean timedOut;
+    @Getter private volatile boolean timeOut;
 
     public TimeoutSimulation() {
-      timedOut = false;
-    }
-
-    public boolean isTimeOut() {
-      return timedOut;
+      timeOut = false;
     }
 
     @Override
     public void run() {
-      timedOut = true;
+      timeOut = true;
     }
   }
 
   public double getTickFrequency() {
-    return staticAttrs.getValue(CircuitAttributes.SIMULATION_FREQUENCY);
+    return staticAttributes.getValue(CircuitAttributes.SIMULATION_FREQUENCY);
   }
 
   public void setTickFrequency(double value) {
-    final var currentTickFrequency = staticAttrs.getValue(CircuitAttributes.SIMULATION_FREQUENCY);
+    final var currentTickFrequency = staticAttributes.getValue(CircuitAttributes.SIMULATION_FREQUENCY);
     if (value != currentTickFrequency) {
-      staticAttrs.setValue(CircuitAttributes.SIMULATION_FREQUENCY, value);
-      if ((proj != null) && (currentTickFrequency > 0)) proj.setForcedDirty();
+      staticAttributes.setValue(CircuitAttributes.SIMULATION_FREQUENCY, value);
+      if ((project != null) && (currentTickFrequency > 0)) project.setForcedDirty();
     }
   }
 
   public double getDownloadFrequency() {
-    return staticAttrs.getValue(CircuitAttributes.DOWNLOAD_FREQUENCY);
+    return staticAttributes.getValue(CircuitAttributes.DOWNLOAD_FREQUENCY);
   }
 
   public void setDownloadFrequency(double value) {
-    if (value != staticAttrs.getValue(CircuitAttributes.DOWNLOAD_FREQUENCY)) {
-      staticAttrs.setValue(CircuitAttributes.DOWNLOAD_FREQUENCY, value);
-      if (proj != null) proj.setForcedDirty();
+    if (value != staticAttributes.getValue(CircuitAttributes.DOWNLOAD_FREQUENCY)) {
+      staticAttributes.setValue(CircuitAttributes.DOWNLOAD_FREQUENCY, value);
+      if (project != null) project.setForcedDirty();
     }
   }
 
   public String getDownloadBoard() {
-    return staticAttrs.getValue(CircuitAttributes.DOWNLOAD_BOARD);
+    return staticAttributes.getValue(CircuitAttributes.DOWNLOAD_BOARD);
   }
 
   public void setDownloadBoard(String board) {
-    if (!board.equals(staticAttrs.getValue(CircuitAttributes.DOWNLOAD_BOARD))) {
-      staticAttrs.setValue(CircuitAttributes.DOWNLOAD_BOARD, board);
-      if (proj != null) proj.setForcedDirty();
+    if (!board.equals(staticAttributes.getValue(CircuitAttributes.DOWNLOAD_BOARD))) {
+      staticAttributes.setValue(CircuitAttributes.DOWNLOAD_BOARD, board);
+      if (project != null) project.setForcedDirty();
     }
   }
 }

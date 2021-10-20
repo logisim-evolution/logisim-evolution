@@ -25,6 +25,8 @@ import javax.swing.JMenuBar;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import lombok.Getter;
+import lombok.Setter;
 
 @SuppressWarnings("serial")
 public class LogisimMenuBar extends JMenuBar {
@@ -66,8 +68,7 @@ public class LogisimMenuBar extends JMenuBar {
   public static final LogisimMenuItem REMOVE_CIRCUIT = new LogisimMenuItem("RemoveCircuit");
   public static final LogisimMenuItem EDIT_LAYOUT = new LogisimMenuItem("EditLayout");
   public static final LogisimMenuItem EDIT_APPEARANCE = new LogisimMenuItem("EditAppearance");
-  public static final LogisimMenuItem TOGGLE_APPEARANCE =
-      new LogisimMenuItem("ToggleEditLayoutAppearance");
+  public static final LogisimMenuItem TOGGLE_APPEARANCE = new LogisimMenuItem("ToggleEditLayoutAppearance");
   public static final LogisimMenuItem REVERT_APPEARANCE = new LogisimMenuItem("RevertAppearance");
   public static final LogisimMenuItem ANALYZE_CIRCUIT = new LogisimMenuItem("AnalyzeCircuit");
   public static final LogisimMenuItem CIRCUIT_STATS = new LogisimMenuItem("GetCircuitStatistics");
@@ -75,10 +76,8 @@ public class LogisimMenuBar extends JMenuBar {
   public static final LogisimMenuItem SIMULATE_RUN = new LogisimMenuItem("SimulateRun");
   public static final LogisimMenuItem SIMULATE_RUN_TOGGLE = new LogisimMenuItem("SimulateRun");
   public static final LogisimMenuItem SIMULATE_STEP = new LogisimMenuItem("SimulateStep");
-  public static final LogisimMenuItem SIMULATE_VHDL_ENABLE =
-      new LogisimMenuItem("SimulateVhdlEnable");
-  public static final LogisimMenuItem GENERATE_VHDL_SIM_FILES =
-      new LogisimMenuItem("GenerateVhdlSimFiles");
+  public static final LogisimMenuItem SIMULATE_VHDL_ENABLE = new LogisimMenuItem("SimulateVhdlEnable");
+  public static final LogisimMenuItem GENERATE_VHDL_SIM_FILES = new LogisimMenuItem("GenerateVhdlSimFiles");
   public static final LogisimMenuItem TICK_ENABLE = new LogisimMenuItem("TickEnable");
   public static final LogisimMenuItem TICK_HALF = new LogisimMenuItem("TickHalf");
   public static final LogisimMenuItem TICK_FULL = new LogisimMenuItem("TickFull");
@@ -88,28 +87,28 @@ public class LogisimMenuBar extends JMenuBar {
   public final MenuSimulate simulate;
   public final MenuHelp help;
   public final MenuFpga fpga;
-  private final LFrame parent;
+  @Getter private final LFrame parentFrame;
   private final MyListener listener;
-  private final Project saveProj;
-  private final Project baseProj;
-  private final Project simProj;
+  @Getter private final Project saveProject;
+  @Getter private final Project baseProject;
+  @Getter private final Project simulationProject;
   private final HashMap<LogisimMenuItem, MenuItem> menuItems = new HashMap<>();
   private final ArrayList<ChangeListener> enableListeners;
-  private SimulateListener simulateListener = null;
+  @Setter private SimulateListener simulateListener = null;
 
-  public LogisimMenuBar(LFrame parent, Project saveProj, Project baseProj, Project simProj) {
-    this.parent = parent;
+  public LogisimMenuBar(LFrame parentFrame, Project saveProj, Project baseProject, Project simProj) {
+    this.parentFrame = parentFrame;
     this.listener = new MyListener();
-    this.saveProj = saveProj;
-    this.baseProj = baseProj;
-    this.simProj = simProj;
+    this.saveProject = saveProj;
+    this.baseProject = baseProject;
+    this.simulationProject = simProj;
     this.enableListeners = new ArrayList<>();
     add(file = new MenuFile(this));
     add(edit = new MenuEdit(this));
     add(project = new MenuProject(this));
     add(simulate = new MenuSimulate(this));
-    add(fpga = new MenuFpga(parent, this, saveProj));
-    add(new WindowMenu(parent));
+    add(fpga = new MenuFpga(parentFrame, this, saveProj));
+    add(new WindowMenu(parentFrame));
     add(help = new MenuHelp(this));
 
     LocaleManager.addLocaleListener(listener);
@@ -156,22 +155,6 @@ public class LogisimMenuBar extends JMenuBar {
     }
   }
 
-  LFrame getParentFrame() {
-    return parent;
-  }
-
-  public Project getSaveProject() {
-    return saveProj;
-  }
-
-  public Project getBaseProject() {
-    return baseProj;
-  }
-
-  public Project getSimulationProject() {
-    return simProj;
-  }
-
   public boolean isEnabled(LogisimMenuItem item) {
     final var menuItem = menuItems.get(item);
     return menuItem != null && menuItem.isEnabled();
@@ -197,10 +180,6 @@ public class LogisimMenuBar extends JMenuBar {
   public void setEnabled(LogisimMenuItem which, boolean value) {
     final var item = menuItems.get(which);
     if (item != null) item.setEnabled(value);
-  }
-
-  public void setSimulateListener(SimulateListener l) {
-    simulateListener = l;
   }
 
   private class MyListener implements LocaleListener {

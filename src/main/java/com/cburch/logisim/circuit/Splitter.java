@@ -31,8 +31,9 @@ import com.cburch.logisim.tools.ToolTipMaker;
 import com.cburch.logisim.tools.WireRepair;
 import com.cburch.logisim.tools.WireRepairData;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.StringUtil;
 import javax.swing.JPopupMenu;
+import lombok.Getter;
+import lombok.Setter;
 
 public class Splitter extends ManagedComponent
     implements WireRepair, ToolTipMaker, MenuExtender, AttributeListener {
@@ -54,15 +55,7 @@ public class Splitter extends ManagedComponent
     }
   }
 
-  private boolean isMarked = false;
-
-  public void setMarked(boolean value) {
-    isMarked = value;
-  }
-
-  public boolean isMarked() {
-    return isMarked;
-  }
+  @Getter @Setter private boolean marked = false;
 
   // basic data
   byte[] bitThread; // how each bit maps to thread within end
@@ -163,7 +156,7 @@ public class Splitter extends ManagedComponent
       SplitterPainter.drawLabels(context, attrs, loc);
       context.drawPins(this);
     }
-    if (isMarked) {
+    if (marked) {
       final var g = context.getGraphics();
       final var bds = this.getBounds();
       g.setColor(Netlist.DRC_INSTANCE_MARK_COLOR);

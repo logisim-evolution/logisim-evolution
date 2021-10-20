@@ -12,8 +12,6 @@ package com.cburch.logisim.gui.hex;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.Main;
-import com.cburch.logisim.file.Loader;
-import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.prefs.AppPreferences;
@@ -22,7 +20,6 @@ import com.cburch.logisim.std.memory.Mem;
 import com.cburch.logisim.std.memory.MemContents;
 import com.cburch.logisim.util.JDialogOk;
 import com.cburch.logisim.util.JFileChoosers;
-import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.OutputStreamBinarySanitizer;
 import com.cburch.logisim.util.OutputStreamEscaper;
 import com.cburch.logisim.util.TextLineNumber;
@@ -758,7 +755,7 @@ public class HexFile {
       preview.add(previewHdr);
       preview.add(new JScrollPane(previewMem));
 
-      originalHdr = new JLabel(this.reader.in.byteLength() + " bytes");
+      originalHdr = new JLabel(this.reader.in.getByteLength() + " bytes");
       originalTxt = new JTextArea();
       originalTxt.setEditable(false);
       originalTxt.setFont(new Font("monospaced", Font.PLAIN, scaledTen));
@@ -1152,7 +1149,7 @@ public class HexFile {
     }
 
     protected MemContents detectFormatAndDecode() throws IOException {
-      if (in.byteLength() == 0) throw new IOException("File contains no data.");
+      if (in.getByteLength() == 0) throw new IOException("File contains no data.");
 
       var hdr = in.readLine();
       while (hdr != null && (hdr = hdr.trim()).length() == 0) hdr = in.readLine();

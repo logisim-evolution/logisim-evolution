@@ -17,6 +17,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import lombok.Getter;
 
 public class CircuitLocker {
   private static class CircuitComparator implements Comparator<Circuit> {
@@ -53,7 +54,7 @@ public class CircuitLocker {
             if (mutator == null) {
               mutator = new CircuitMutatorImpl();
             }
-            locker.mutatingMutator = mutator;
+            locker.mutator = mutator;
           }
         }
       }
@@ -72,7 +73,7 @@ public class CircuitLocker {
       final var locker = circ.getLocker();
       if (locker.mutatingThread == curThread) {
         locker.mutatingThread = null;
-        locker.mutatingMutator = null;
+        locker.mutator = null;
       }
       lock.unlock();
     }
@@ -85,13 +86,13 @@ public class CircuitLocker {
 
   private Thread mutatingThread;
 
-  private CircuitMutatorImpl mutatingMutator;
+  @Getter private CircuitMutatorImpl mutator;
 
   CircuitLocker() {
     serialNumber = nextSerialNumber.getAndIncrement();
     circuitLock = new ReentrantReadWriteLock();
     mutatingThread = null;
-    mutatingMutator = null;
+    mutator = null;
   }
 
   public int getSerialNumber() {
@@ -105,20 +106,16 @@ public class CircuitLocker {
           circuit,
           serialNumber,
           mutatingThread,
-          mutatingMutator);
+          mutator);
     }
   }
 
   void execute(CircuitTransaction xn) {
     if (mutatingThread == Thread.currentThread()) {
-      xn.run(mutatingMutator);
+      xn.run(mutator);
     } else {
       xn.execute();
     }
-  }
-
-  CircuitMutatorImpl getMutator() {
-    return mutatingMutator;
   }
 
   public boolean hasWriteLock() {
@@ -127,33 +124,17 @@ public class CircuitLocker {
 
   public static class LockException extends IllegalStateException {
     private static final long serialVersionUID = 1L;
-    private final Circuit circuit;
-    private final int serialNumber;
-    private final transient Thread mutatingThread;
-    private final CircuitMutatorImpl mutatingMutator;
+    @Getter private final Circuit circuit;
+    @Getter private final int serialNumber;
+    @Getter private final transient Thread mutatingThread;
+    @Getter private final CircuitMutatorImpl circuitMutator;
 
     public LockException(String msg, Circuit circ, int serial, Thread thread, CircuitMutatorImpl mutator) {
       super(msg);
       circuit = circ;
       serialNumber = serial;
       mutatingThread = thread;
-      mutatingMutator = mutator;
-    }
-
-    public Circuit getCircuit() {
-      return circuit;
-    }
-
-    public int getSerialNumber() {
-      return serialNumber;
-    }
-
-    public Thread getMutatingThread() {
-      return mutatingThread;
-    }
-
-    public CircuitMutatorImpl getCircuitMutator() {
-      return mutatingMutator;
+      circuitMutator = mutator;
     }
   }
 }

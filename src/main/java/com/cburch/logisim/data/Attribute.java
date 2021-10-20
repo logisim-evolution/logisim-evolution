@@ -12,11 +12,13 @@ package com.cburch.logisim.data;
 import com.cburch.logisim.util.StringGetter;
 import java.awt.Window;
 import javax.swing.JTextField;
+import lombok.Getter;
+import lombok.Setter;
 
 public abstract class Attribute<V> {
-  private final String name;
+  @Getter private final String name;
   private final StringGetter disp;
-  private boolean hidden;
+  @Getter @Setter private boolean hidden;
 
   public Attribute() {
     this("dummy", null, true);
@@ -44,10 +46,6 @@ public abstract class Attribute<V> {
     return (disp != null) ? disp.toString() : name;
   }
 
-  public String getName() {
-    return name;
-  }
-
   public V parse(Window source, String value) {
     return parse(value);
   }
@@ -62,14 +60,6 @@ public abstract class Attribute<V> {
     return value.toString().replaceAll("[\u0000-\u001f]", "").replaceAll("&#.*?;", "");
   }
 
-  public void setHidden(boolean val) {
-    this.hidden = val;
-  }
-
-  public boolean isHidden() {
-    return hidden;
-  }
-  
   public boolean isToSave() {
     return true;
   }
