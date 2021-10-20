@@ -13,7 +13,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -21,14 +20,15 @@ import java.awt.RenderingHints;
 import javax.swing.JComponent;
 import javax.swing.Scrollable;
 import javax.swing.SwingConstants;
+import lombok.Getter;
 
 public class HexEditor extends JComponent implements Scrollable {
   private static final long serialVersionUID = 1L;
   private final Listener listener;
-  private final Measures measures;
-  private final Caret caret;
-  private final Highlighter highlighter;
-  private HexModel model;
+  @Getter private final Measures measures;
+  @Getter private final Caret caret;
+  @Getter private final Highlighter highlighter;
+  @Getter private HexModel model;
 
   public HexEditor(HexModel model) {
     this.model = model;
@@ -58,22 +58,6 @@ public class HexEditor extends JComponent implements Scrollable {
       p1 = t;
     }
     model.fill(p0, p1 - p0 + 1, 0);
-  }
-
-  public Caret getCaret() {
-    return caret;
-  }
-
-  Highlighter getHighlighter() {
-    return highlighter;
-  }
-
-  Measures getMeasures() {
-    return measures;
-  }
-
-  public HexModel getModel() {
-    return model;
   }
 
   public void setModel(HexModel value) {

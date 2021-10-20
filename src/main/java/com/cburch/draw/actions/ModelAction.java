@@ -16,9 +16,10 @@ import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.undo.UndoAction;
 import java.util.Collection;
 import java.util.Collections;
+import lombok.Getter;
 
 public abstract class ModelAction implements UndoAction {
-  private final CanvasModel model;
+  @Getter private final CanvasModel model;
 
   public ModelAction(CanvasModel model) {
     this.model = model;
@@ -39,10 +40,6 @@ public abstract class ModelAction implements UndoAction {
   }
 
   abstract void doSub(CanvasModel model);
-
-  public CanvasModel getModel() {
-    return model;
-  }
 
   @Override
   public abstract String getName();

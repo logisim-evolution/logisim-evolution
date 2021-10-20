@@ -30,13 +30,14 @@ import javax.swing.AbstractAction;
 import javax.swing.KeyStroke;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import lombok.Getter;
 
 public class Caret {
   private static final Color SELECT_COLOR = new Color(192, 192, 255);
   private static final Stroke CURSOR_STROKE = new BasicStroke(2.0F);
   private final HexEditor hex;
   private final List<ChangeListener> listeners;
-  private long mark;
+  @Getter private long mark;
   private long cursor;
   private Object highlight;
 
@@ -95,10 +96,6 @@ public class Caret {
 
   public long getDot() {
     return cursor;
-  }
-
-  public long getMark() {
-    return mark;
   }
 
   void paintForeground(Graphics g, long start, long end) {

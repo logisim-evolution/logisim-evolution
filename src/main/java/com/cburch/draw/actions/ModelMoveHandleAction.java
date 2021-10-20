@@ -17,10 +17,11 @@ import com.cburch.draw.model.Handle;
 import com.cburch.draw.model.HandleGesture;
 import java.util.Collection;
 import java.util.Collections;
+import lombok.Getter;
 
 public class ModelMoveHandleAction extends ModelAction {
   private final HandleGesture gesture;
-  private Handle newHandle;
+  @Getter private Handle newHandle;
 
   public ModelMoveHandleAction(CanvasModel model, HandleGesture gesture) {
     super(model);
@@ -35,10 +36,6 @@ public class ModelMoveHandleAction extends ModelAction {
   @Override
   public String getName() {
     return S.get("actionMoveHandle");
-  }
-
-  public Handle getNewHandle() {
-    return newHandle;
   }
 
   @Override
