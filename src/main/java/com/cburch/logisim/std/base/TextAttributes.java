@@ -14,6 +14,8 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.StdAttr;
+
+import java.awt.Color;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
@@ -22,10 +24,11 @@ import java.util.Objects;
 public class TextAttributes extends AbstractAttributeSet {
   private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
-          Text.ATTR_TEXT, Text.ATTR_FONT, Text.ATTR_HALIGN, Text.ATTR_VALIGN);
+          Text.ATTR_TEXT, Text.ATTR_FONT, Text.ATTR_COLOR, Text.ATTR_HALIGN, Text.ATTR_VALIGN);
 
   private String text;
   private Font font;
+  private Color color;
   private AttributeOption halign;
   private AttributeOption valign;
   private Bounds offsetBounds;
@@ -33,6 +36,7 @@ public class TextAttributes extends AbstractAttributeSet {
   public TextAttributes() {
     text = "";
     font = StdAttr.DEFAULT_LABEL_FONT;
+    color = Color.BLACK;
     halign = Text.ATTR_HALIGN.parse("center");
     valign = Text.ATTR_VALIGN.parse("base");
     offsetBounds = null;
@@ -71,6 +75,7 @@ public class TextAttributes extends AbstractAttributeSet {
     if (attr == Text.ATTR_FONT) return (V) font;
     if (attr == Text.ATTR_HALIGN) return (V) halign;
     if (attr == Text.ATTR_VALIGN) return (V) valign;
+    if (attr == Text.ATTR_COLOR) return (V) color;
     return null;
   }
 
@@ -97,6 +102,8 @@ public class TextAttributes extends AbstractAttributeSet {
       halign = (AttributeOption) value;
     } else if (attr == Text.ATTR_VALIGN) {
       valign = (AttributeOption) value;
+    } else if (attr == Text.ATTR_COLOR) {
+      color = (Color) value;
     } else {
       throw new IllegalArgumentException("unknown attribute");
     }
