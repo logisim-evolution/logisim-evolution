@@ -10,33 +10,11 @@
 package com.cburch.logisim.analyze.data;
 
 import com.cburch.logisim.analyze.file.TruthtableCsvFile;
+import lombok.Getter;
+import lombok.Setter;
 
 public class CsvParameter {
-  private char quote = TruthtableCsvFile.DEFAULT_QUOTE;
-  private char seperator = TruthtableCsvFile.DEFAULT_SEPARATOR;
-  private boolean valid = false;
-
-  public void setQuote(char quote) {
-    this.quote = quote;
-  }
-
-  public void setSeperator(char seperator) {
-    this.seperator = seperator;
-  }
-
-  public char quote() {
-    return quote;
-  }
-
-  public char seperator() {
-    return seperator;
-  }
-
-  public void setValid() {
-    valid = true;
-  }
-
-  public boolean isValid() {
-    return valid;
-  }
+  @Getter @Setter private char quote = TruthtableCsvFile.DEFAULT_QUOTE;
+  @Getter @Setter private char seperator = TruthtableCsvFile.DEFAULT_SEPARATOR;
+  @Getter @Setter private boolean valid = false;
 }

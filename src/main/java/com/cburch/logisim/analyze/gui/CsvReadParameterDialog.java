@@ -120,7 +120,7 @@ public class CsvReadParameterDialog extends JDialog implements ActionListener {
       for (int y = 0; y < 4; y++) {
         List<String> line = null;
         if (scan.hasNext())
-          line = CsvInterpretor.parseCsvLine(scan.next(), param.seperator(), param.quote());
+          line = CsvInterpretor.parseCsvLine(scan.next(), param.getSeperator(), param.getQuote());
         for (int x = 0; x < 4; x++) {
           if (line == null || x >= line.size()) {
             labels[y * 4 + x].setText("");

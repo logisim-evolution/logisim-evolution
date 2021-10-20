@@ -381,7 +381,7 @@ public class CsvInterpretor {
     try {
       final var scanner = new Scanner(file);
       while (scanner.hasNext()) {
-        content.add(parseCsvLine(scanner.next(), param.seperator(), param.quote()));
+        content.add(parseCsvLine(scanner.next(), param.getSeperator(), param.getQuote()));
       }
       scanner.close();
     } catch (FileNotFoundException e) {

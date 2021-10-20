@@ -17,36 +17,21 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 
 public class KarnaughMapGroups {
 
   public static class CoverInfo {
-    private final int startRow;
-    private final int startCol;
-    private int width;
-    private int height;
+    @Getter private final int startRow;
+    @Getter private final int startCol;
+    @Getter private int width;
+    @Getter private int height;
 
     public CoverInfo(int col, int row) {
       this.startRow = row;
       this.startCol = col;
       this.width = 1;
       this.height = 1;
-    }
-
-    public int getCol() {
-      return startCol;
-    }
-
-    public int getRow() {
-      return startRow;
-    }
-
-    public int getWidth() {
-      return width;
-    }
-
-    public int getHeight() {
-      return height;
     }
 
     private boolean canMerge(int col, int row) {
@@ -89,8 +74,8 @@ public class KarnaughMapGroups {
   }
 
   public class KMapGroupInfo {
-    private final ArrayList<CoverInfo> areas;
-    private final Color color;
+    @Getter private final ArrayList<CoverInfo> areas;
+    @Getter private final Color color;
     private final ArrayList<Implicant> singleCoveredImplicants;
     private final Expression expression;
 
@@ -102,14 +87,6 @@ public class KarnaughMapGroups {
       one.add(imp);
       expression = Implicant.toExpression(format, model, one);
       build(imp);
-    }
-
-    public List<CoverInfo> getAreas() {
-      return areas;
-    }
-
-    public Color getColor() {
-      return color;
     }
 
     public void removeSingleCover(Implicant imp) {
@@ -137,8 +114,8 @@ public class KarnaughMapGroups {
       else g.setColor(new Color(128, 128, 128, 128));
       for (CoverInfo cover : areas) {
         g.fillRoundRect(
-            x + cover.getCol() * cellWidth + IMP_INSET,
-            y + cover.getRow() * cellHeight + IMP_INSET,
+            x + cover.getStartCol() * cellWidth + IMP_INSET,
+            y + cover.getStartRow() * cellHeight + IMP_INSET,
             cover.getWidth() * cellWidth - 2 * IMP_INSET,
             cover.getHeight() * cellHeight - 2 * IMP_INSET,
             d,
@@ -225,7 +202,7 @@ public class KarnaughMapGroups {
   private final AnalyzerModel model;
   private String output;
   private int format;
-  private ArrayList<KMapGroupInfo> covers;
+  @Getter private ArrayList<KMapGroupInfo> covers;
   private static final int IMP_RADIUS = 5;
   private static final int IMP_INSET = 4;
   private int highlighted;
@@ -238,10 +215,6 @@ public class KarnaughMapGroups {
   public void setformat(int format) {
     this.format = format;
     update();
-  }
-
-  public List<KMapGroupInfo> getCovers() {
-    return covers;
   }
 
   public void setOutput(String name) {

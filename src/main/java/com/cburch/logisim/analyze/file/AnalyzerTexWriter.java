@@ -301,8 +301,8 @@ public class AnalyzerTexWriter {
         double height = thiscover.getHeight() - OFFSET;
         content.append("{").append(df.format(width)).append("}{").append(df.format(height)).append("}]");
         content.append("(n").append(idx++).append(") at");
-        double y = (double) kmapRows - ((double) thiscover.getHeight()) / 2.0 - thiscover.getRow();
-        double x = ((double) thiscover.getWidth()) / 2.0 + thiscover.getCol();
+        double y = (double) kmapRows - ((double) thiscover.getHeight()) / 2.0 - thiscover.getStartRow();
+        double x = ((double) thiscover.getWidth()) / 2.0 + thiscover.getStartCol();
         content.append("(").append(df.format(x)).append(",").append(df.format(y)).append(") {};\n");
       }
     }

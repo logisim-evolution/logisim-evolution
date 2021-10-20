@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.analyze.data;
 
+// FIXME: this should be converted into record
 public class Range {
   public int startIndex;
   public int stopIndex;
