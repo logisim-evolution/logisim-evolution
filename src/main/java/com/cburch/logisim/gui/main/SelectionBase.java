@@ -184,7 +184,7 @@ class SelectionBase {
     for (Component comp : components) {
       Location oldLoc = comp.getLocation();
       AttributeSet attrs =
-          translate | (comp.getFactory() instanceof Rom) | (comp.getFactory() instanceof Ram)
+          translate || (comp.getFactory() instanceof Rom) || (comp.getFactory() instanceof Ram)
               ? comp.getAttributeSet()
               : (AttributeSet) comp.getAttributeSet().clone();
       int newX = oldLoc.getX() + dx;
