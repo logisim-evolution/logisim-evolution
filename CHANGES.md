@@ -2,8 +2,9 @@
 
 # Changes #
 
-* @dev (????-??-??)
+* v3.7.1 (2021-10-21)
   * Logisim has now an internal font-chooser to comply to the font-values used
+  * Several bug fixes
 
 * v3.7.0 (2021-10-12)
   * Reworked the slider component in the I/O extra library
