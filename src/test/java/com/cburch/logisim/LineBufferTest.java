@@ -9,29 +9,25 @@
 
 package com.cburch.logisim;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import com.cburch.draw.shapes.Line;
 import com.cburch.logisim.util.LineBuffer;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /** Tests LogisimVersion class. */
 public class LineBufferTest extends TestBase {
 
   private LineBuffer lb;
 
-  @Before
-  public void SetUp() {
+  @BeforeEach
+  public void setup() {
     lb = LineBuffer.getBuffer();
     assertEquals(0, lb.size());
   }
@@ -338,7 +334,7 @@ public class LineBufferTest extends TestBase {
       break;
     }
 
-    assertTrue("Default ctor not found!", found);
+    assertTrue(found, "Default ctor not found!");
   }
 
 }
