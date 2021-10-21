@@ -12,6 +12,7 @@ package com.cburch.logisim.fpga.hdlgenerator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
 
 public class HdlWires {
 
@@ -19,27 +20,18 @@ public class HdlWires {
   public static final int REGISTER = 1;
 
   private class Wire {
-
     private final int myType;
-    private final String myName;
-    private final int myNrOfBits;
+    @Getter private final String name;
+    @Getter private final int nrOfBits;
 
     public Wire(int type, String name, int nrOfBits) {
       myType = type;
-      myName = name;
-      myNrOfBits = nrOfBits;
+      this.name = name;
+      this.nrOfBits = nrOfBits;
     }
 
     public boolean isWire() {
       return myType == WIRE;
-    }
-
-    public String getName() {
-      return myName;
-    }
-
-    public int getNrOfBits() {
-      return myNrOfBits;
     }
   }
 
@@ -70,8 +62,9 @@ public class HdlWires {
 
   public List<String> registerKeySet() {
     final var keys = new ArrayList<String>();
-    for (var wire : myWires)
+    for (var wire : myWires) {
       if (!wire.isWire()) keys.add(wire.getName());
+    }
     return keys;
   }
 
@@ -83,7 +76,8 @@ public class HdlWires {
 
   public void removeWires() {
     final var iterator = myWires.iterator();
-    while (iterator.hasNext())
+    while (iterator.hasNext()) {
       if (iterator.next().isWire()) iterator.remove();
+    }
   }
 }

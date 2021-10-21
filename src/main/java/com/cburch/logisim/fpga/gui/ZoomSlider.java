@@ -13,19 +13,12 @@ import com.cburch.logisim.prefs.AppPreferences;
 import java.util.Hashtable;
 import javax.swing.JLabel;
 import javax.swing.JSlider;
+import lombok.Getter;
 
 public class ZoomSlider extends JSlider {
 
-  private int zoomMin;
-  private int zoomMax;
-
-  public int getMaxZoom() {
-    return zoomMax;
-  }
-
-  public int getMinZoom() {
-    return zoomMin;
-  }
+  @Getter private int zoomMin;
+  @Getter private int zoomMax;
 
   public ZoomSlider(int orientation, int min, int max, int value) {
     setup(orientation, min, max, value);

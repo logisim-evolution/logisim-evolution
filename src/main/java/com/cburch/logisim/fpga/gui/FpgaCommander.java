@@ -98,28 +98,29 @@ public class FpgaCommander
 
   @Override
   public void libraryChanged(LibraryEvent event) {
-    if (event.getAction() == LibraryEvent.ADD_TOOL
-        || event.getAction() == LibraryEvent.REMOVE_TOOL) {
-      rebuildCircuitSelection();
+    switch (event.getAction()) {
+      case LibraryEvent.ADD_TOOL, LibraryEvent.REMOVE_TOOL:
+        rebuildCircuitSelection();
+        break;
     }
   }
 
   @Override
   public void projectChanged(ProjectEvent event) {
-    if (event.getAction() == ProjectEvent.ACTION_SET_CURRENT) {
-      Circuit circ = event.getCircuit();
-      if (circ != null) setCurrentSheet(circ.getName());
-    } else if (event.getAction() == ProjectEvent.ACTION_SET_FILE) {
-      rebuildCircuitSelection();
+    switch (event.getAction()) {
+      case ProjectEvent.ACTION_SET_CURRENT:
+        final var circ = event.getCircuit();
+        if (circ != null) setCurrentSheet(circ.getName());
+        break;
+      case ProjectEvent.ACTION_SET_FILE:
+        rebuildCircuitSelection();
+        break;
     }
   }
 
-
   @Override
   public void circuitChanged(CircuitEvent event) {
-    int act = event.getAction();
-
-    if (act == CircuitEvent.ACTION_SET_NAME) {
+    if (event.getAction() == CircuitEvent.ACTION_SET_NAME) {
       rebuildCircuitSelection();
     }
     ReporterGui.clearDrcTrace();
@@ -314,8 +315,7 @@ public class FpgaCommander
     int nrItems = 1;
     actionCommands.removeAllItems();
     actionCommands.addItem(S.getter("FpgaGuiHdlOnly"));
-    ToolPath.setText(S.get("FpgaGuiToolpath",
-          VendorSoftware.getVendorString(MyBoardInformation.fpga.getVendor())));
+    ToolPath.setText(S.get("FpgaGuiToolpath", VendorSoftware.getVendorString(MyBoardInformation.fpga.getVendor())));
     if (MyBoardInformation != null
         && VendorSoftware.toolsPresent(
             MyBoardInformation.fpga.getVendor(),

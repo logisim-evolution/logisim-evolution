@@ -134,7 +134,7 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
   private void setup(boolean MapMode) {
     zoom = new ZoomSlider();
     zoom.addChangeListener(this);
-    maxZoom = zoom.getMaxZoom();
+    maxZoom = zoom.getZoomMax();
     scale = (float) 1.0;
     image = null;
     setPreferredSize(new Dimension(getWidth(), getHeight()));
@@ -291,9 +291,9 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
   }
 
   public void setMaxZoom(int value) {
-    maxZoom = (value < zoom.getMinZoom())
-              ? zoom.getMinZoom()
-              : Math.min(value, zoom.getMaxZoom());
+    maxZoom = (value < zoom.getZoomMin())
+              ? zoom.getZoomMin()
+              : Math.min(value, zoom.getZoomMax());
   }
 
   private void defineIOComponent() {

@@ -1084,5 +1084,4 @@ public class FpgaIoInformationSettingsDialog {
     return result;
   }
 
-
 }

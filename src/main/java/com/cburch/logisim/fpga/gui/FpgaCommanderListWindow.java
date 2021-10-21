@@ -20,69 +20,64 @@ import javax.swing.JList;
 import javax.swing.JScrollPane;
 import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataEvent;
+import lombok.Getter;
 
 @SuppressWarnings("serial")
 public class FpgaCommanderListWindow extends JFrame implements BaseWindowListenerContract, BaseListDataListenerContract {
 
   private final String Title;
-  private final JList<Object> textArea = new JList<>();
-  private boolean IsActive = false;
-  private final boolean count;
+  /**
+   * text area
+   */
+  @Getter private final JList<Object> listObject = new JList<>();
+  @Getter private boolean activated = false;
+  private final boolean shouldCount;
   private final FpgaCommanderListModel model;
   private final JScrollPane textMessages;
 
-  public FpgaCommanderListWindow(
-      String Title, Color fg, boolean count, FpgaCommanderListModel model) {
-    super((count) ? Title + " (" + model.getCount() + ")" : Title);
-    this.Title = Title;
+  public FpgaCommanderListWindow(String title, Color fg, boolean shouldCount, FpgaCommanderListModel model) {
+    super((shouldCount) ? title + " (" + model.getCount() + ")" : title);
+    this.Title = title;
     setResizable(true);
     setAlwaysOnTop(false);
     setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
-    Color bg = Color.black;
+    final var bg = Color.black;
 
-    textArea.setBackground(bg);
-    textArea.setForeground(fg);
-    textArea.setSelectionBackground(fg);
-    textArea.setSelectionForeground(bg);
-    textArea.setFont(new Font("monospaced", Font.PLAIN, 14));
-    textArea.setModel(model);
-    textArea.setCellRenderer(model.getMyRenderer());
-    textArea.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    listObject.setBackground(bg);
+    listObject.setForeground(fg);
+    listObject.setSelectionBackground(fg);
+    listObject.setSelectionForeground(bg);
+    listObject.setFont(new Font("monospaced", Font.PLAIN, 14));
+    listObject.setModel(model);
+    listObject.setCellRenderer(model.getMyRenderer());
+    listObject.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
     model.addListDataListener(this);
 
-    textMessages = new JScrollPane(textArea);
+    textMessages = new JScrollPane(listObject);
     textMessages.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     textMessages.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     add(textMessages);
     setLocationRelativeTo(null);
     pack();
     addWindowListener(this);
-    this.count = count;
+    this.shouldCount = shouldCount;
     this.model = model;
-  }
-
-  public boolean isActivated() {
-    return IsActive;
-  }
-
-  public JList<Object> getListObject() {
-    return textArea;
   }
 
   @Override
   public void windowClosing(WindowEvent e) {
-    IsActive = false;
+    activated = false;
     setVisible(false);
   }
 
   @Override
   public void windowActivated(WindowEvent e) {
-    IsActive = true;
+    activated = true;
   }
 
   @Override
   public void contentsChanged(ListDataEvent e) {
-    setTitle((count) ? Title + " (" + model.getCount() + ")" : Title);
+    setTitle((shouldCount) ? Title + " (" + model.getCount() + ")" : Title);
     this.revalidate();
     this.repaint();
   }

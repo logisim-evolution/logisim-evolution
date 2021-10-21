@@ -21,6 +21,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.text.DefaultCaret;
+import lombok.Getter;
 
 @SuppressWarnings("serial")
 public class FpgaCommanderTextWindow extends JFrame implements BaseKeyListenerContract, BaseWindowListenerContract {
@@ -28,7 +29,7 @@ public class FpgaCommanderTextWindow extends JFrame implements BaseKeyListenerCo
   private int FontSize;
   private final String Title;
   private final JTextArea textArea;
-  private boolean IsActive = false;
+  @Getter private boolean activated = false;
   private final boolean count;
 
   public FpgaCommanderTextWindow(String Title, Color fg, boolean count) {
@@ -57,10 +58,6 @@ public class FpgaCommanderTextWindow extends JFrame implements BaseKeyListenerCo
     addWindowListener(this);
     this.count = count;
     FontSize = textMessages.getFont().getSize();
-  }
-
-  public boolean isActivated() {
-    return IsActive;
   }
 
   public void clear() {
@@ -108,12 +105,12 @@ public class FpgaCommanderTextWindow extends JFrame implements BaseKeyListenerCo
 
   @Override
   public void windowClosing(WindowEvent e) {
-    IsActive = false;
+    activated = false;
     setVisible(false);
   }
 
   @Override
   public void windowActivated(WindowEvent e) {
-    IsActive = true;
+    activated = true;
   }
 }
