@@ -21,14 +21,15 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import lombok.Getter;
 
 public final class FileStatistics {
   public static final class Count {
-    private Library library;
-    private final ComponentFactory factory;
-    private int simpleCount;
-    private int uniqueCount;
-    private int recursiveCount;
+    @Getter private Library library;
+    @Getter private final ComponentFactory factory;
+    @Getter private int simpleCount;
+    @Getter private int uniqueCount;
+    @Getter private int recursiveCount;
 
     private Count(ComponentFactory factory) {
       this.library = null;
@@ -37,36 +38,16 @@ public final class FileStatistics {
       this.uniqueCount = 0;
       this.recursiveCount = 0;
     }
-
-    public ComponentFactory getFactory() {
-      return factory;
-    }
-
-    public Library getLibrary() {
-      return library;
-    }
-
-    public int getRecursiveCount() {
-      return recursiveCount;
-    }
-
-    public int getSimpleCount() {
-      return simpleCount;
-    }
-
-    public int getUniqueCount() {
-      return uniqueCount;
-    }
   }
 
-  private final List<Count> counts;
-  private final Count totalWithout;
-  private final Count totalWith;
+  @Getter private final List<Count> counts;
+  @Getter private final Count totalWithoutSubcircuits;
+  @Getter private final Count totalWithSubcircuits;
 
-  private FileStatistics(List<Count> counts, Count totalWithout, Count totalWith) {
+  private FileStatistics(List<Count> counts, Count totalWithoutSubcircuits, Count totalWithSubcircuits) {
     this.counts = Collections.unmodifiableList(counts);
-    this.totalWithout = totalWithout;
-    this.totalWith = totalWith;
+    this.totalWithoutSubcircuits = totalWithoutSubcircuits;
+    this.totalWithSubcircuits = totalWithSubcircuits;
   }
 
   public static FileStatistics compute(LogisimFile file, Circuit circuit) {
@@ -179,17 +160,5 @@ public final class FileStatistics {
       }
     }
     return ret;
-  }
-
-  public List<Count> getCounts() {
-    return counts;
-  }
-
-  public Count getTotalWithoutSubcircuits() {
-    return totalWithout;
-  }
-
-  public Count getTotalWithSubcircuits() {
-    return totalWith;
   }
 }

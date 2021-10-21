@@ -32,6 +32,8 @@ import javax.swing.JFileChooser;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.filechooser.FileFilter;
+import lombok.Getter;
+import lombok.Setter;
 
 public class Loader implements LibraryLoader {
   private static class JarFileFilter extends FileFilter {
@@ -116,10 +118,10 @@ public class Loader implements LibraryLoader {
   public static final FileFilter TCL_FILTER = new TclFileFilter();
   public static final FileFilter VHDL_FILTER = new VhdlFileFilter();
 
-  private Component parent;
-  private final Builtin builtin = new Builtin();
+  @Setter private Component parent;
+  @Getter private final Builtin builtin = new Builtin();
   // to be cleared with each new file
-  private File mainFile = null;
+  @Getter @Setter private File mainFile = null;
   private final Stack<File> filesOpening = new Stack<>();
   private Map<File, File> substitutions = new HashMap<>();
 
@@ -163,10 +165,6 @@ public class Loader implements LibraryLoader {
     return JFileChoosers.createAt(getCurrentDirectory());
   }
 
-  public Builtin getBuiltin() {
-    return builtin;
-  }
-
   // used here and in LibraryManager only, also in MemMenu
   public File getCurrentDirectory() {
     final var ref = (!filesOpening.empty()) ? filesOpening.peek() : mainFile;
@@ -206,10 +204,6 @@ public class Loader implements LibraryLoader {
   //
   // file chooser related methods
   //
-  public File getMainFile() {
-    return mainFile;
-  }
-
   private File getSubstitution(File source) {
     final var ret = substitutions.get(source);
     return ret == null ? source : ret;
@@ -416,14 +410,6 @@ public class Loader implements LibraryLoader {
       backup.delete();
     }
     return true;
-  }
-
-  private void setMainFile(File value) {
-    mainFile = value;
-  }
-
-  public void setParent(Component value) {
-    parent = value;
   }
 
   @Override

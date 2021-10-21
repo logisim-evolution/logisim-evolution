@@ -16,6 +16,7 @@ import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.AttributeSets;
 import com.cburch.logisim.data.Attributes;
+import lombok.Getter;
 
 public class Options {
   public static final AttributeOption GATE_UNDEFINED_IGNORE =
@@ -40,31 +41,19 @@ public class Options {
   };
   private static final Object[] DEFAULTS = {GATE_UNDEFINED_IGNORE, 1000, 0};
 
-  private final AttributeSet attrs;
-  private final MouseMappings mmappings;
-  private final ToolbarData toolbar;
+  @Getter private final AttributeSet attributeSet;
+  @Getter private final MouseMappings mouseMappings;
+  @Getter private final ToolbarData toolbarData;
 
   public Options() {
-    attrs = AttributeSets.fixedSet(ATTRIBUTES, DEFAULTS);
-    mmappings = new MouseMappings();
-    toolbar = new ToolbarData();
+    attributeSet = AttributeSets.fixedSet(ATTRIBUTES, DEFAULTS);
+    mouseMappings = new MouseMappings();
+    toolbarData = new ToolbarData();
   }
 
   public void copyFrom(Options other, LogisimFile dest) {
-    AttributeSets.copy(other.attrs, this.attrs);
-    this.toolbar.copyFrom(other.toolbar, dest);
-    this.mmappings.copyFrom(other.mmappings, dest);
-  }
-
-  public AttributeSet getAttributeSet() {
-    return attrs;
-  }
-
-  public MouseMappings getMouseMappings() {
-    return mmappings;
-  }
-
-  public ToolbarData getToolbarData() {
-    return toolbar;
+    AttributeSets.copy(other.attributeSet, this.attributeSet);
+    this.toolbarData.copyFrom(other.toolbarData, dest);
+    this.mouseMappings.copyFrom(other.mouseMappings, dest);
   }
 }

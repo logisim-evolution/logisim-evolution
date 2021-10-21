@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
 
 public class LoadedLibrary extends Library implements LibraryEventSource {
   private class MyListener implements LibraryListener {
@@ -35,7 +36,7 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     }
   }
 
-  private Library base;
+  @Getter private Library base;
   private boolean dirty;
   private final MyListener myListener;
   private final EventSourceWeakSupport<LibraryListener> listeners;
@@ -135,10 +136,6 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
     for (final var l : listeners) {
       l.libraryChanged(event);
     }
-  }
-
-  public Library getBase() {
-    return base;
   }
 
   @Override

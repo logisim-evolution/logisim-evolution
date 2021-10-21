@@ -46,6 +46,7 @@ import java.util.List;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
+import lombok.Getter;
 import org.xml.sax.SAXException;
 
 public class LogisimFile extends Library implements LibraryEventSource, CircuitListener {
@@ -73,12 +74,12 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
   private final EventSourceWeakSupport<LibraryListener> listeners = new EventSourceWeakSupport<>();
   private final LinkedList<String> messages = new LinkedList<>();
-  private final Options options = new Options();
-  private final List<AddTool> tools = new LinkedList<>();
-  private final List<Library> libraries = new LinkedList<>();
-  private Loader loader;
-  private Circuit main = null;
-  private String name;
+  @Getter private final Options options = new Options();
+  @Getter private final List<AddTool> tools = new LinkedList<>();
+  @Getter private final List<Library> libraries = new LinkedList<>();
+  @Getter private Loader loader;
+  @Getter private Circuit mainCircuit = null;
+  @Getter private String name;
   private boolean isDirty = false;
 
   LogisimFile(Loader loader) {
@@ -142,9 +143,9 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   //
   public static LogisimFile createNew(Loader loader, Project proj) {
     final var ret = new LogisimFile(loader);
-    ret.main = new Circuit("main", ret, proj);
+    ret.mainCircuit = new Circuit("main", ret, proj);
     // The name will be changed in LogisimPreferences
-    ret.tools.add(new AddTool(ret.main.getSubcircuitFactory()));
+    ret.tools.add(new AddTool(ret.mainCircuit.getSubcircuitFactory()));
     return ret;
   }
 
@@ -443,19 +444,6 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     return -1;
   }
 
-  @Override
-  public List<Library> getLibraries() {
-    return libraries;
-  }
-
-  public Loader getLoader() {
-    return loader;
-  }
-
-  public Circuit getMainCircuit() {
-    return main;
-  }
-
   public String getMessage() {
     return (messages.isEmpty()) ? null : messages.removeFirst();
   }
@@ -463,20 +451,6 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
   //
   // access methods
   //
-  @Override
-  public String getName() {
-    return name;
-  }
-
-  public Options getOptions() {
-    return options;
-  }
-
-  @Override
-  public List<AddTool> getTools() {
-    return tools;
-  }
-
   public String getUnloadLibraryMessage(Library lib) {
     final var factories = new HashSet<ComponentFactory>();
     for (final var tool : lib.getTools()) {
@@ -533,7 +507,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
     if (index >= 0) {
       final Tool circuitTool = tools.remove(index);
 
-      if (main == circuit) {
+      if (mainCircuit == circuit) {
         setMainCircuit(((SubcircuitFactory) tools.get(0).getFactory()).getSubcircuit());
       }
       fireEvent(LibraryEvent.REMOVE_TOOL, circuitTool);
@@ -578,7 +552,7 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
 
   public void setMainCircuit(Circuit circuit) {
     if (circuit == null) return;
-    this.main = circuit;
+    this.mainCircuit = circuit;
     fireEvent(LibraryEvent.SET_MAIN, circuit);
   }
 
@@ -612,5 +586,5 @@ public class LogisimFile extends Library implements LibraryEventSource, CircuitL
       loader.showError(err);
     }
   }
-  
+
 }

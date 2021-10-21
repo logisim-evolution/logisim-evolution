@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.WeakHashMap;
 
-public final class LibraryManager {
+public final class  LibraryManager {
 
   public static final LibraryManager instance = new LibraryManager();
 
@@ -122,7 +122,7 @@ public final class LibraryManager {
     final var currentDirectory = loader.getCurrentDirectory();
     var fileName = file.toString();
     try {
-      fileName = file.getCanonicalPath(); 
+      fileName = file.getCanonicalPath();
     } catch (IOException e) {
       // Do nothing as we already have defined the default above
     }
@@ -132,7 +132,7 @@ public final class LibraryManager {
       final var nrOfNewParts = newParts.length;
       // note that the newParts includes the filename, whilst the old doesn't
       var nrOfPartsEqual = 0;
-      while ((nrOfPartsEqual < currentParts.length) && (nrOfPartsEqual < (nrOfNewParts - 1)) 
+      while ((nrOfPartsEqual < currentParts.length) && (nrOfPartsEqual < (nrOfNewParts - 1))
           && (currentParts[nrOfPartsEqual].equals(newParts[nrOfPartsEqual]))) {
         nrOfPartsEqual++;
       }
@@ -208,7 +208,7 @@ public final class LibraryManager {
       }
     }
   }
-  
+
   Collection<LogisimFile> getLogisimLibraries() {
     final var ret = new ArrayList<LogisimFile>();
     for (final var lib : invMap.keySet()) {
@@ -235,7 +235,7 @@ public final class LibraryManager {
     invMap.put(ret, jarDescriptor);
     return ret;
   }
-  
+
   public static Set<String> getBuildinNames(Loader loader) {
     final var buildinNames = new HashSet<String>();
     for (final var lib : loader.getBuiltin().getLibraries()) {
@@ -279,7 +279,7 @@ public final class LibraryManager {
         return null;
     }
   }
-  
+
   public static String getLibraryFilePath(Loader loader, String desc) {
     final var sep = desc.indexOf(DESC_SEP);
     if (sep < 0) {
@@ -290,7 +290,7 @@ public final class LibraryManager {
     final var name = desc.substring(sep + 1);
     return switch (type) {
       case "file" -> loader.getFileFor(name, Loader.LOGISIM_FILTER).getAbsolutePath();
-      case "jar" -> loader.getFileFor(name.substring(0, name.lastIndexOf(DESC_SEP)), Loader.JAR_FILTER).getAbsolutePath(); 
+      case "jar" -> loader.getFileFor(name.substring(0, name.lastIndexOf(DESC_SEP)), Loader.JAR_FILTER).getAbsolutePath();
       default -> null;
     };
   }
@@ -397,5 +397,5 @@ public final class LibraryManager {
         removeBaseLibraries(lib, baseLibs);
       }
     }
-  }  
+  }
 }
