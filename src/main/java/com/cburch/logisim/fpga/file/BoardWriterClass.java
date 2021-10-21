@@ -13,6 +13,7 @@ import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.data.IoStandards;
 import com.cburch.logisim.fpga.data.PullBehaviors;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
+import com.cburch.logisim.util.XmlUtil;
 import java.awt.Image;
 import java.io.File;
 import java.io.StringWriter;
@@ -24,7 +25,6 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
 
 public class BoardWriterClass {
@@ -72,7 +72,7 @@ public class BoardWriterClass {
   public BoardWriterClass(BoardInformation BoardInfo, Image BoardImage) {
     try {
       // Create instance of DocumentBuilderFactory
-      factory = DocumentBuilderFactory.newInstance();
+      factory = XmlUtil.getHardenedBuilderFactory();
       // Get the DocumentBuilder
       parser = factory.newDocumentBuilder();
       // Create blank DOM Document

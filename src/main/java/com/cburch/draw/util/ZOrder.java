@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-public class ZOrder {
+public final class ZOrder {
   private ZOrder() {
     // dummy
   }
@@ -91,7 +91,7 @@ public class ZOrder {
   private static <E extends CanvasObject> List<E> sortXFirst(Collection<E> objects, CanvasModel model, Collection<CanvasObject> objs) {
     Set<E> set = toSet(objects);
     List<E> ret = new ArrayList<>(objects.size());
-    for (CanvasObject o : objs) {
+    for (final var o : objs) {
       if (set.contains(o)) {
         @SuppressWarnings("unchecked")
         E toAdd = (E) o;

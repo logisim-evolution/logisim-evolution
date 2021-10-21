@@ -11,7 +11,7 @@ package com.cburch.draw.shapes;
 
 import com.cburch.logisim.data.Bounds;
 
-public class CurveUtil {
+public final class CurveUtil {
   /**
    * getBounds and findNearestPoint are based translated from the ActionScript of Olivier Besson's
    * Bezier class for collision detection. Code from:

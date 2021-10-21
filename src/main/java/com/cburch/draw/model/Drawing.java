@@ -34,6 +34,16 @@ public class Drawing implements CanvasModel {
     overlaps = new DrawingOverlaps();
   }
 
+  public Drawing(ArrayList<CanvasObject> objects, DrawingOverlaps overlaps) {
+    listeners = new EventSourceWeakSupport<>();
+    canvasObjects = objects;
+    this.overlaps = overlaps;
+  }
+
+  public Drawing getCopy() {
+    return new Drawing(canvasObjects, overlaps);
+  }
+
   @Override
   public void addCanvasModelListener(CanvasModelListener l) {
     listeners.add(l);
@@ -253,7 +263,7 @@ public class Drawing implements CanvasModel {
   @Override
   public void translateObjects(Collection<? extends CanvasObject> shapes, int dx, int dy) {
     final var found = restrict(shapes);
-    final var e = CanvasModelEvent.forTranslate(this, found, dx, dy);
+    final var e = CanvasModelEvent.forTranslate(this, found);
     if (!found.isEmpty() && (dx != 0 || dy != 0) && isChangeAllowed(e)) {
       for (final var shape : shapes) {
         shape.translate(dx, dy);

@@ -11,6 +11,7 @@ package com.cburch.logisim.util;
 
 import java.util.AbstractList;
 import java.util.AbstractSet;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -70,5 +71,19 @@ public final class CollectionUtil {
 
   public static <E> Set<E> createUnmodifiableSetUnion(Set<? extends E> a, Set<? extends E> b) {
     return new UnionSet<>(a, b);
+  }
+
+  /**
+   * Checks if given collection is either null or empty.
+   */
+  public static boolean isNullOrEmpty(Collection collection) {
+    return collection == null || collection.isEmpty();
+  }
+
+  /**
+   * Checks if given collection is not empty and not null.
+   */
+  public static boolean isNotEmpty(Collection collection) {
+    return collection != null && !collection.isEmpty();
   }
 }

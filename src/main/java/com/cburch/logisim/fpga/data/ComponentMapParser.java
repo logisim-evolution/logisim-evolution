@@ -11,10 +11,10 @@ package com.cburch.logisim.fpga.data;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
+import com.cburch.logisim.util.XmlUtil;
 import java.io.File;
 import java.io.IOException;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
@@ -57,7 +57,7 @@ public class ComponentMapParser {
     String absoluteFileName = fileToPase.getPath();
 
     // Create instance of DocumentBuilderFactory
-    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+    final var factory = XmlUtil.getHardenedBuilderFactory();
     // Get the DocumentBuilder
     DocumentBuilder parser = null;
 

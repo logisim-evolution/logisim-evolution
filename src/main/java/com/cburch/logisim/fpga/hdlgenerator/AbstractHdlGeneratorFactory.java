@@ -20,6 +20,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.wiring.ClockHdlGeneratorFactory;
 import com.cburch.logisim.util.LineBuffer;
+import com.cburch.logisim.util.StringUtil;
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
@@ -132,7 +133,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
         final var parameters = new TreeSet<String>();
         for (final var paramId : myParametersList.keySet(attrs)) {
           // For verilog we specify a maximum vector, this seems the best way to do it
-          final var paramName = myParametersList.isPresentedByInteger(paramId, attrs) 
+          final var paramName = myParametersList.isPresentedByInteger(paramId, attrs)
               ? myParametersList.get(paramId, attrs) : String.format("[64:0] %s", myParametersList.get(paramId, attrs));
           parameters.add(paramName);
         }
@@ -214,11 +215,11 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     final var contents = LineBuffer.getHdlBuffer();
     final var parameterMap = new TreeMap<String, String>();
     final var portMap = getPortMap(nets, componentInfo);
-    final var componentHDLName =
+    final var componentHdlName =
             (componentInfo instanceof netlistComponent comp)
               ? comp.getComponent().getFactory().getHDLName(((netlistComponent) componentInfo).getComponent().getAttributeSet())
               : name;
-    final var compName = (name != null && !name.isEmpty()) ? name : componentHDLName;
+    final var compName = StringUtil.isNotEmpty(name) ? name : componentHdlName;
     final var thisInstanceIdentifier = getInstanceIdentifier(componentInfo, componentId);
     final var oneLine = new StringBuilder();
     if (componentInfo == null) parameterMap.putAll(myParametersList.getMaps(null));
@@ -339,8 +340,9 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       final var attrs = comp.getComponent().getAttributeSet();
       if (attrs.containsAttribute(StdAttr.LABEL)) {
         final var label = attrs.getValue(StdAttr.LABEL);
-        if ((label != null) && !label.isEmpty())
+        if (StringUtil.isNotEmpty(label)) {
           return CorrectLabel.getCorrectLabel(label);
+        }
       }
     }
     return LineBuffer.format("{{1}}_{{2}}", subDirectoryName.toUpperCase(), componentId.toString());
@@ -387,7 +389,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
             hasClock = false;
           }
           final var clockNetName = Hdl.getClockNetName(componentInfo, compPinId, nets);
-          if (clockNetName == null || clockNetName.isEmpty()) {
+          if (StringUtil.isNullOrEmpty(clockNetName)) {
             // FIXME hard coded string
             Reporter.report.addSevereWarning(
                 String.format("Component \"%s\" in circuit \"%s\" has a gated clock connection!", compName, nets.getCircuitName()));
@@ -506,7 +508,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       for (final var input : myInputs) {
         nrOfPortBits = myPorts.contains(input) ? myPorts.get(input, attrs) : 1;
         final var type = getTypeIdentifier(nrOfPortBits, attrs);
-        firstEntry = getPortEntry(contents, firstEntry, nrOfEntries, currentEntry, input, direction, type, maxNameLength);
+        firstEntry = addPortEntry(contents, firstEntry, nrOfEntries, currentEntry, input, direction, type, maxNameLength);
         currentEntry++;
       }
       direction = Vhdl.getVhdlKeyword("INOUT");
@@ -514,7 +516,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       for (final var inout : myInOuts) {
         nrOfPortBits = myPorts.get(inout, attrs);
         final var type = getTypeIdentifier(nrOfPortBits, attrs);
-        firstEntry = getPortEntry(contents, firstEntry, nrOfEntries, currentEntry, inout, direction, type, maxNameLength);
+        firstEntry = addPortEntry(contents, firstEntry, nrOfEntries, currentEntry, inout, direction, type, maxNameLength);
         currentEntry++;
       }
       direction = (!myPorts.keySet(Port.INOUT).isEmpty()) ? Vhdl.getVhdlKeyword("OUT  ") : Vhdl.getVhdlKeyword("OUT");
@@ -522,26 +524,26 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
       for (final var output : myOutputs) {
         nrOfPortBits = myPorts.get(output, attrs);
         final var type = getTypeIdentifier(nrOfPortBits, attrs);
-        firstEntry = getPortEntry(contents, firstEntry, nrOfEntries, currentEntry, output, direction, type, maxNameLength);
+        firstEntry = addPortEntry(contents, firstEntry, nrOfEntries, currentEntry, output, direction, type, maxNameLength);
         currentEntry++;
       }
     }
-    if (isEntity)
+    if (isEntity) {
       contents.add("{{end}} {{entity}} {{1}};", componentName);
-    else
+    } else {
       contents.add("{{end}} {{component}};");
+    }
     return contents.getWithIndent(isEntity ? 0 : 1);
   }
 
-  private boolean getPortEntry(LineBuffer contents, boolean firstEntry, int nrOfEntries, int currentEntry,
-      String name, String direction, String type, int maxLength) {
-    if (firstEntry) {
-      contents.add("   {{port}} ( {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction,
-          type, currentEntry == (nrOfEntries - 1) ? " )" : "");
-    } else {
-      contents.add("          {{1}}{{2}}: {{3}} {{4}}{{5}};", name, " ".repeat(maxLength - name.length()), direction,
-          type, currentEntry == (nrOfEntries - 1) ? " )" : "");
-    }
+  private boolean addPortEntry(LineBuffer contents, boolean firstEntry, int nrOfEntries, int currentEntry,
+                               String name, String direction, String type, int maxLength) {
+    final var fmt = firstEntry
+                    ? "   {{port}} ( {{1}}{{2}}: {{3}} {{4}}{{5}};"
+                    : "          {{1}}{{2}}: {{3}} {{4}}{{5}};";
+    contents.add(fmt, name, " ".repeat(maxLength - name.length()), direction, type, currentEntry == (nrOfEntries - 1) ? " )" : "");
+
+    // FIXME: refactor code that uses this retval, because as it's a const, then the logic using it can probably be simplified.
     return false;
   }
 
@@ -561,7 +563,7 @@ public class AbstractHdlGeneratorFactory implements HdlGeneratorFactory {
     }
     return contents.get(0);
   }
-  
+
   private boolean getVerilogSignalSet(String preamble, List<String> signals, AttributeSet attrs, boolean isPort, LineBuffer contents) {
     if (signals.isEmpty()) return true;
     final var signalSet = new HashMap<String, String>();

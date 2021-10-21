@@ -38,7 +38,7 @@ public class SRFlipFlop extends AbstractFlipFlop {
     @Override
     public LineBuffer getUpdateLogic() {
       return LineBuffer.getHdlBuffer()
-          .add("{{assign}} s_next_state{{=}}(s_currentState{{or}}s){{and}}{{not}}(r);");
+          .add("{{assign}} s_nextState{{=}}(s_currentState{{or}}s){{and}}{{not}}(r);");
     }
   }
 

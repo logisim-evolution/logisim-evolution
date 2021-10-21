@@ -34,7 +34,6 @@ dependencies {
   implementation("com.fifesoft:rsyntaxtextarea:3.1.2")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
   implementation("org.drjekyll:colorpicker:1.3")
-  implementation("org.drjekyll:fontchooser:2.4")
   implementation("at.swimmesberger:swingx-core:1.6.8")
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
   implementation("org.slf4j:slf4j-api:1.7.30")

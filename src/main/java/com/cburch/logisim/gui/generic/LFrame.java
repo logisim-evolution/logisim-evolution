@@ -11,6 +11,7 @@ package com.cburch.logisim.gui.generic;
 
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.MacCompatibility;
 import com.cburch.logisim.util.WindowClosable;
 import java.awt.Image;
@@ -130,7 +131,7 @@ public class LFrame extends JFrame implements WindowClosable {
 
     boolean success = false;
     try {
-      if (allIcons != null && !allIcons.isEmpty()) {
+      if (CollectionUtil.isNotEmpty(allIcons)) {
         final var set = frame.getClass().getMethod("setIconImages", List.class);
         set.invoke(frame, allIcons);
         success = true;

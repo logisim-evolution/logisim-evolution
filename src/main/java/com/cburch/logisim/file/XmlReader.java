@@ -47,6 +47,8 @@ import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.tools.WiringTool;
 import com.cburch.logisim.util.InputEventUtil;
 import com.cburch.logisim.util.LineBuffer;
+import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.util.XmlUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
 import java.io.IOException;
@@ -61,7 +63,6 @@ import java.util.Map;
 import java.util.UUID;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +106,7 @@ class XmlReader {
     }
 
     Library findLibrary(String libName) throws XmlReaderException {
-      if (libName == null || libName.isEmpty()) return file;
+      if (StringUtil.isNullOrEmpty(libName)) return file;
       final var ret = libs.get(libName);
       if (ret == null) throw new XmlReaderException(S.get("libMissingError", libName));
       return ret;
@@ -280,7 +281,7 @@ class XmlReader {
       for (final var cmap : XmlIterator.forChildElements(board, "mc")) {
         int x, y, w, h;
         final var key = cmap.getAttribute("key");
-        if (key == null || key.isEmpty()) continue;
+        if (StringUtil.isNullOrEmpty(key)) continue;
         if (cmap.hasAttribute("open")) {
           map.put(key, new CircuitMapInfo());
         } else if (cmap.hasAttribute("vconst")) {
@@ -480,7 +481,7 @@ class XmlReader {
             }
             for (final var boardMap :  XmlIterator.forChildElements(circElt, "boardmap")) {
               final var boardName = boardMap.getAttribute("boardname");
-              if (boardName == null || boardName.isEmpty()) continue;
+              if (StringUtil.isNullOrEmpty(boardName)) continue;
               loadMap(boardMap, boardName, circData.circuit);
             }
             circuitsData.add(circData);
@@ -1013,7 +1014,7 @@ class XmlReader {
         Element edit = null;
         for (final var elt : XmlIterator.forChildElements(toolbar, "tool")) {
           final var eltName = elt.getAttribute("name");
-          if (eltName != null && !eltName.isEmpty()) {
+          if (StringUtil.isNotEmpty(eltName)) {
             if (eltName.equals(SelectTool._ID)) select = elt;
             if (eltName.equals(WiringTool._ID)) wiring = elt;
             if (eltName.equals(EditTool._ID)) edit = elt;
@@ -1029,7 +1030,7 @@ class XmlReader {
       for (final var circElt : XmlIterator.forChildElements(root, "circuit")) {
         for (final var attrElt : XmlIterator.forChildElements(circElt, "a")) {
           final var name = attrElt.getAttribute("name");
-          if (name != null && name.startsWith("label")) {
+          if (StringUtil.startsWith(name, "label")) {
             attrElt.setAttribute("name", "c" + name);
           }
         }
@@ -1041,7 +1042,7 @@ class XmlReader {
   }
 
   private Document loadXmlFrom(InputStream is) throws SAXException, IOException {
-    final var factory = DocumentBuilderFactory.newInstance();
+    final var factory = XmlUtil.getHardenedBuilderFactory();
     factory.setNamespaceAware(true);
     try {
       factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -1072,9 +1073,8 @@ class XmlReader {
     }
     if (!context.messages.isEmpty()) {
       final var all = new StringBuilder();
-      for (String msg : context.messages) {
-        all.append(msg);
-        all.append("\n");
+      for (final var msg : context.messages) {
+        all.append(msg).append("\n");
       }
       loader.showError(all.substring(0, all.length() - 1));
     }

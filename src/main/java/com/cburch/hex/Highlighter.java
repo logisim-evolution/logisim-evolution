@@ -23,7 +23,7 @@ class Highlighter {
   }
 
   public synchronized Object add(long start, long end, Color color) {
-    HexModel model = hex.getModel();
+    final var model = hex.getModel();
     if (model == null) return null;
     if (start > end) {
       long t = start;
@@ -34,7 +34,7 @@ class Highlighter {
     if (end > model.getLastOffset()) end = model.getLastOffset();
     if (start >= end) return null;
 
-    Entry entry = new Entry(start, end, color);
+    final var entry = new Entry(start, end, color);
     entries.add(entry);
     expose(entry);
     return entry;
@@ -49,18 +49,18 @@ class Highlighter {
   }
 
   private void expose(Entry entry) {
-    Measures m = hex.getMeasures();
-    int y0 = m.toY(entry.start);
-    int y1 = m.toY(entry.end);
-    int h = m.getCellHeight();
-    int cellWidth = m.getCellWidth();
+    final var m = hex.getMeasures();
+    final var y0 = m.toY(entry.start);
+    final var y1 = m.toY(entry.end);
+    final var h = m.getCellHeight();
+    final var cellWidth = m.getCellWidth();
     if (y0 == y1) {
-      int x0 = m.toX(entry.start);
-      int x1 = m.toX(entry.end) + cellWidth;
+      final var x0 = m.toX(entry.start);
+      final var x1 = m.toX(entry.end) + cellWidth;
       hex.repaint(x0, y0, x1 - x0, h);
     } else {
-      int lineStart = m.getValuesX();
-      int lineWidth = m.getValuesWidth();
+      final var lineStart = m.getValuesX();
+      final var lineWidth = m.getValuesWidth();
       hex.repaint(lineStart, y0, lineWidth, y1 - y0 + h);
     }
   }
@@ -68,17 +68,17 @@ class Highlighter {
   synchronized void paint(Graphics g, long start, long end) {
     int size = entries.size();
     if (size == 0) return;
-    Measures m = hex.getMeasures();
-    int lineStart = m.getValuesX();
-    int lineWidth = m.getValuesWidth();
-    int cellWidth = m.getCellWidth();
-    int cellHeight = m.getCellHeight();
-    for (Entry e : entries) {
+    final var m = hex.getMeasures();
+    final var lineStart = m.getValuesX();
+    final var lineWidth = m.getValuesWidth();
+    final var cellWidth = m.getCellWidth();
+    final var cellHeight = m.getCellHeight();
+    for (final var e : entries) {
       if (e.start <= end && e.end >= start) {
-        int y0 = m.toY(e.start);
-        int y1 = m.toY(e.end);
-        int x0 = m.toX(e.start);
-        int x1 = m.toX(e.end);
+        final var y0 = m.toY(e.start);
+        final var y1 = m.toY(e.end);
+        final var x0 = m.toX(e.start);
+        final var x1 = m.toX(e.end);
         g.setColor(e.color);
         if (y0 == y1) {
           g.fillRect(x0, y0, x1 - x0 + cellWidth, cellHeight);
@@ -94,7 +94,7 @@ class Highlighter {
 
   public synchronized void remove(Object tag) {
     if (entries.remove(tag)) {
-      Entry entry = (Entry) tag;
+      final var entry = (Entry) tag;
       expose(entry);
     }
   }

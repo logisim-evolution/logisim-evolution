@@ -54,7 +54,6 @@ public class Curve extends FillableCanvasObject {
       type = DrawAttr.PAINT_STROKE_FILL;
     }
     if (type != DrawAttr.PAINT_FILL) {
-      final var stroke = getStrokeWidth();
       final var q = toArray(loc);
       final var p0 = toArray(this.p0);
       final var p1 = toArray(this.p1);
@@ -62,15 +61,11 @@ public class Curve extends FillableCanvasObject {
       final var p = CurveUtil.findNearestPoint(q, p0, p1, p2);
       if (p == null) return false;
 
+      final var stroke = getStrokeWidth();
       final var thr = (type == DrawAttr.PAINT_STROKE) ? Math.max(Line.ON_LINE_THRESH, stroke / 2) : stroke / 2;
-      if (LineUtil.distanceSquared(p[0], p[1], q[0], q[1]) < thr * thr) {
-        return true;
-      }
+      if (LineUtil.distanceSquared(p[0], p[1], q[0], q[1]) < thr * thr) return true;
     }
-    if (type != DrawAttr.PAINT_STROKE) {
-      return getCurve(null).contains(loc.getX(), loc.getY());
-    }
-    return false;
+    return (type != DrawAttr.PAINT_STROKE) ? getCurve(null).contains(loc.getX(), loc.getY()) : false;
   }
 
   @Override

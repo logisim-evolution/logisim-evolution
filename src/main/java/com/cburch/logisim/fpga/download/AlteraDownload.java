@@ -22,6 +22,7 @@ import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHdlGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.util.LineBuffer;
+import com.cburch.logisim.util.XmlUtil;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -467,9 +468,9 @@ public class AlteraDownload implements VendorDownload {
     Reporter.report.print("==> " + S.get("AlteraCofFile"));
     Reporter.report.print("==>");
     try {
-      var docFactory = DocumentBuilderFactory.newInstance();
-      var docBuilder = docFactory.newDocumentBuilder();
-      var cofFile = docBuilder.newDocument();
+      final var docFactory = XmlUtil.getHardenedBuilderFactory();
+      final var docBuilder = docFactory.newDocumentBuilder();
+      final var cofFile = docBuilder.newDocument();
       cofFile.setXmlStandalone(true);
       final var rootElement = cofFile.createElement("cof");
       cofFile.appendChild(rootElement);
