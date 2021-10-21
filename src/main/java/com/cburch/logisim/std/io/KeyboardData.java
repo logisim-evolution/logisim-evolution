@@ -12,16 +12,17 @@ package com.cburch.logisim.std.io;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstanceData;
 import java.awt.FontMetrics;
+import lombok.Getter;
 
 class KeyboardData implements InstanceData, Cloneable {
   private Value lastClock;
   private char[] buffer;
   private String str;
   private int bufferLength;
-  private int cursorPos;
-  private boolean dispValid;
-  private int dispStart;
-  private int dispEnd;
+  @Getter private int cursorPosition;
+  @Getter private boolean displayValid;
+  @Getter private int displayStart;
+  @Getter private int displayEnd;
 
   public KeyboardData(int capacity) {
     lastClock = Value.UNKNOWN;
@@ -31,11 +32,11 @@ class KeyboardData implements InstanceData, Cloneable {
 
   public void clear() {
     bufferLength = 0;
-    cursorPos = 0;
+    cursorPosition = 0;
     str = "";
-    dispValid = false;
-    dispStart = 0;
-    dispEnd = 0;
+    displayValid = false;
+    displayStart = 0;
+    displayEnd = 0;
   }
 
   @Override
@@ -52,13 +53,13 @@ class KeyboardData implements InstanceData, Cloneable {
   public boolean delete() {
     final var buf = buffer;
     final var len = bufferLength;
-    final var pos = cursorPos;
+    final var pos = cursorPosition;
     if (pos >= len) return false;
     if (len >= pos + 1)
       System.arraycopy(buf, pos + 1, buf, pos, len - (pos + 1));
     bufferLength = len - 1;
     str = null;
-    dispValid = false;
+    displayValid = false;
     return true;
   }
 
@@ -70,10 +71,10 @@ class KeyboardData implements InstanceData, Cloneable {
     if (len >= 1)
       System.arraycopy(buf, 1, buf, 0, len - 1);
     bufferLength = len - 1;
-    final var pos = cursorPos;
-    if (pos > 0) cursorPos = pos - 1;
+    final var pos = cursorPosition;
+    if (pos > 0) cursorPosition = pos - 1;
     str = null;
-    dispValid = false;
+    displayValid = false;
     return ret;
   }
 
@@ -88,19 +89,7 @@ class KeyboardData implements InstanceData, Cloneable {
   }
 
   public char getChar(int pos) {
-    return pos >= 0 && pos < bufferLength ? buffer[pos] : '\0';
-  }
-
-  public int getCursorPosition() {
-    return cursorPos;
-  }
-
-  public int getDisplayEnd() {
-    return dispEnd;
-  }
-
-  public int getDisplayStart() {
-    return dispStart;
+    return (pos >= 0 && pos < bufferLength) ? buffer[pos] : '\0';
   }
 
   public int getNextSpecial(int pos) {
@@ -117,38 +106,34 @@ class KeyboardData implements InstanceData, Cloneable {
     final var buf = buffer;
     final var len = bufferLength;
     if (len >= buf.length) return false;
-    final var pos = cursorPos;
+    final var pos = cursorPosition;
     if (len >= pos)
       System.arraycopy(buf, pos, buf, pos + 1, len - pos);
     buf[pos] = value;
     bufferLength = len + 1;
-    cursorPos = pos + 1;
+    cursorPosition = pos + 1;
     str = null;
-    dispValid = false;
+    displayValid = false;
     return true;
-  }
-
-  public boolean isDisplayValid() {
-    return dispValid;
   }
 
   public boolean moveCursorBy(int delta) {
     final var len = bufferLength;
-    final var pos = cursorPos;
+    final var pos = cursorPosition;
     final var newPos = pos + delta;
     if (newPos < 0 || newPos > len) return false;
-    cursorPos = newPos;
-    dispValid = false;
+    cursorPosition = newPos;
+    displayValid = false;
     return true;
   }
 
   public boolean setCursor(int value) {
     final var len = bufferLength;
     if (value > len) value = len;
-    final var pos = cursorPos;
+    final var pos = cursorPosition;
     if (pos == value) return false;
-    cursorPos = value;
-    dispValid = false;
+    cursorPosition = value;
+    displayValid = false;
     return true;
   }
 
@@ -182,20 +167,20 @@ class KeyboardData implements InstanceData, Cloneable {
         System.arraycopy(buf, 0, newBuf, 0, Math.min(len, oldLen));
         if (len < oldLen) {
           if (bufferLength > len) bufferLength = len;
-          if (cursorPos > len) cursorPos = len;
+          if (cursorPosition > len) cursorPosition = len;
         }
         buffer = newBuf;
         str = null;
-        dispValid = false;
+        displayValid = false;
       }
     }
   }
 
   public void updateDisplay(FontMetrics fm) {
-    if (dispValid) return;
-    final var pos = cursorPos;
-    var i0 = dispStart;
-    var i1 = dispEnd;
+    if (displayValid) return;
+    final var pos = cursorPosition;
+    var i0 = displayStart;
+    var i1 = displayEnd;
     final var str = toString();
     final var len = str.length();
     final var max = Keyboard.WIDTH - 8 - 4;
@@ -247,8 +232,8 @@ class KeyboardData implements InstanceData, Cloneable {
       }
       if (i0 == 1) i0 = 0;
     }
-    dispStart = i0;
-    dispEnd = i1;
-    dispValid = true;
+    displayStart = i0;
+    displayEnd = i1;
+    displayValid = true;
   }
 }

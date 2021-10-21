@@ -25,6 +25,7 @@ import com.cburch.logisim.data.Attributes;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.LedBarIcon;
+import lombok.Getter;
 
 import static com.cburch.logisim.std.Strings.S;
 
@@ -44,7 +45,7 @@ public class LedBar extends DotMatrixBase {
   public static final Attribute<BitWidth> ATTR_MATRIX_COLS =
       Attributes.forBitWidth("matrixcols", S.getter("ioLedBarSegments"), 1, Value.MAX_WIDTH);
 
-  protected static final Attribute<AttributeOption> ATTR_DOT_SHAPE =
+  @Getter protected final Attribute<AttributeOption> attributeShape =
       Attributes.forOption(
           "dotshape",
           S.getter("ioMatrixShape"),
@@ -71,11 +72,6 @@ public class LedBar extends DotMatrixBase {
   @Override
   public Attribute<BitWidth> getAttributeColumns() {
     return ATTR_MATRIX_COLS;
-  }
-
-  @Override
-  public Attribute<AttributeOption> getAttributeShape() {
-    return ATTR_DOT_SHAPE;
   }
 
   @Override
@@ -110,7 +106,7 @@ public class LedBar extends DotMatrixBase {
     super(_ID, S.getter("ioLedBarComponent"), 8, 1, new LedBarHdlGeneratorFactory());
     setIcon(new LedBarIcon());
 
-    ATTR_DOT_SHAPE.setHidden(true);
+    attributeShape.setHidden(true);
     ATTR_MATRIX_ROWS.setHidden(true);
 
     setScaleY(3);
