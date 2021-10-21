@@ -17,9 +17,10 @@ import com.cburch.logisim.data.Location;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import lombok.Getter;
 
 public abstract class AppearanceElement extends AbstractCanvasObject {
-  private Location location;
+  @Getter private Location location;
 
   public AppearanceElement(Location location) {
     this.location = location;
@@ -37,10 +38,6 @@ public abstract class AppearanceElement extends AbstractCanvasObject {
 
   protected Bounds getBounds(int radius) {
     return Bounds.create(location.getX() - radius, location.getY() - radius, 2 * radius, 2 * radius);
-  }
-
-  public Location getLocation() {
-    return location;
   }
 
   @Override

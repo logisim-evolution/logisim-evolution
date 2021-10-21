@@ -15,11 +15,12 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import java.awt.event.MouseEvent;
+import lombok.Setter;
 
 public abstract class DynamicElementWithPoker extends DynamicElement {
 
   private boolean isPressed;
-  private Location anchorPosition;
+  @Setter private Location anchorPosition;
 
   public DynamicElementWithPoker(Path p, Bounds b) {
     super(p, b);
@@ -33,10 +34,6 @@ public abstract class DynamicElementWithPoker extends DynamicElement {
   public void mouseReleased(InstanceState state, MouseEvent e) {
     if (isPressed) performClickAction(state, e);
     isPressed = false;
-  }
-
-  public void setAnchor(Location loc) {
-    anchorPosition = loc;
   }
 
   public Bounds getScreenBounds(InstanceState state) {

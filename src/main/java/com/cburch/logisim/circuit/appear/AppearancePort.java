@@ -23,6 +23,7 @@ import com.cburch.logisim.util.UnmodifiableList;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.List;
+import lombok.Getter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 
@@ -32,7 +33,7 @@ public class AppearancePort extends AppearanceElement {
   private static final int MINOR_RADIUS = 2;
   public static final Color COLOR = Color.BLUE;
 
-  private Instance pin;
+  @Getter private Instance pin;
 
   public AppearancePort(Location location, Instance pin) {
     super(location);
@@ -79,10 +80,6 @@ public class AppearancePort extends AppearanceElement {
           new Handle(this, loc.translate(r, r)),
           new Handle(this, loc.translate(-r, r))
         });
-  }
-
-  public Instance getPin() {
-    return pin;
   }
 
   private boolean isInput() {

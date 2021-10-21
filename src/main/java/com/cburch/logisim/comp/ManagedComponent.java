@@ -18,19 +18,20 @@ import com.cburch.logisim.util.EventSourceWeakSupport;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 public abstract class ManagedComponent extends AbstractComponent {
-  private final EventSourceWeakSupport<ComponentListener> listeners =
-      new EventSourceWeakSupport<>();
-  private final Location loc;
-  private AttributeSet attrs;
+  private final EventSourceWeakSupport<ComponentListener> listeners = new EventSourceWeakSupport<>();
+  @Getter private final Location location;
+  @Getter @Setter private AttributeSet attributeSet;
   private final ArrayList<EndData> ends;
   private final List<EndData> endsView;
-  private Bounds bounds = null;
+  @Setter private Bounds bounds = null;
 
-  public ManagedComponent(Location loc, AttributeSet attrs, int num_ends) {
-    this.loc = loc;
-    this.attrs = attrs;
+  public ManagedComponent(Location location, AttributeSet attrs, int num_ends) {
+    this.location = location;
+    this.attributeSet = attrs;
     this.ends = new ArrayList<>(num_ends);
     this.endsView = Collections.unmodifiableList(ends);
   }
@@ -92,11 +93,6 @@ public abstract class ManagedComponent extends AbstractComponent {
   }
 
   @Override
-  public AttributeSet getAttributeSet() {
-    return attrs;
-  }
-
-  @Override
   public Bounds getBounds() {
     if (bounds == null) {
       final var loc = getLocation();
@@ -125,13 +121,9 @@ public abstract class ManagedComponent extends AbstractComponent {
   @Override
   public abstract ComponentFactory getFactory();
 
+  @Override
   public Object getFeature(Object key) {
     return null;
-  }
-
-  @Override
-  public Location getLocation() {
-    return loc;
   }
 
   @Override
@@ -148,14 +140,6 @@ public abstract class ManagedComponent extends AbstractComponent {
 
   public void removeEnd(int index) {
     ends.remove(index);
-  }
-
-  public void setAttributeSet(AttributeSet value) {
-    attrs = value;
-  }
-
-  public void setBounds(Bounds bounds) {
-    this.bounds = bounds;
   }
 
   public void setEnd(int i, EndData data) {

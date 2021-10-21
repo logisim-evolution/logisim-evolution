@@ -84,8 +84,8 @@ class TextFieldCaret implements Caret, TextFieldListener {
   public void draw(Graphics g) {
     final var x = field.getX();
     final var y = field.getY();
-    final var halign = field.getHAlign();
-    final var valign = field.getVAlign();
+    final var halign = field.getHorizontalAlign();
+    final var valign = field.getVerticalAlign();
     if (field.getFont() != null) g.setFont(field.getFont());
 
     // draw boundary
@@ -123,8 +123,8 @@ class TextFieldCaret implements Caret, TextFieldListener {
   public Bounds getBounds(Graphics g) {
     final var x = field.getX();
     final var y = field.getY();
-    final var halign = field.getHAlign();
-    final var valign = field.getVAlign();
+    final var halign = field.getHorizontalAlign();
+    final var valign = field.getVerticalAlign();
     final var font = field.getFont();
     final var bds = Bounds.create(GraphicsUtil.getTextBounds(g, font, curText, x, y, halign, valign));
     return bds.add(field.getBounds(g)).expand(3);
@@ -360,8 +360,8 @@ class TextFieldCaret implements Caret, TextFieldListener {
   protected int findCaret(int x, int y) {
     x -= field.getX();
     y -= field.getY();
-    final var halign = field.getHAlign();
-    final var valign = field.getVAlign();
+    final var halign = field.getHorizontalAlign();
+    final var valign = field.getVerticalAlign();
     return GraphicsUtil.getTextPosition(g, curText, x, y, halign, valign);
   }
 

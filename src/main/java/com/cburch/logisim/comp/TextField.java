@@ -15,6 +15,8 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.util.ArrayList;
 import java.util.LinkedList;
+import lombok.Getter;
+import lombok.Setter;
 
 public class TextField {
   public static final int H_LEFT = GraphicsUtil.H_LEFT;
@@ -26,23 +28,23 @@ public class TextField {
   public static final int V_BASELINE = GraphicsUtil.V_BASELINE;
   public static final int V_BOTTOM = GraphicsUtil.V_BOTTOM;
 
-  private int x;
-  private int y;
-  private int halign;
-  private int valign;
-  private Font font;
-  private String text = "";
+  @Getter private int x;
+  @Getter private int y;
+  @Getter @Setter private int horizontalAlign;
+  @Getter @Setter private int verticalAlign;
+  @Getter @Setter private Font font;
+  @Getter private String text = "";
   private final LinkedList<TextFieldListener> listeners = new LinkedList<>();
 
-  public TextField(int x, int y, int halign, int valign) {
-    this(x, y, halign, valign, null);
+  public TextField(int x, int y, int horizontalAlign, int verticalAlign) {
+    this(x, y, horizontalAlign, verticalAlign, null);
   }
 
-  public TextField(int x, int y, int halign, int valign, Font font) {
+  public TextField(int x, int y, int horizontalAlign, int verticalAlign, Font font) {
     this.x = x;
     this.y = y;
-    this.halign = halign;
-    this.valign = valign;
+    this.horizontalAlign = horizontalAlign;
+    this.verticalAlign = verticalAlign;
     this.font = font;
   }
 
@@ -63,7 +65,7 @@ public class TextField {
     final var width = fm.stringWidth(text);
     final var ascent = fm.getAscent();
     final var descent = fm.getDescent();
-    switch (halign) {
+    switch (horizontalAlign) {
       case TextField.H_CENTER:
         x -= width / 2;
         break;
@@ -73,7 +75,7 @@ public class TextField {
       default:
         break;
     }
-    switch (valign) {
+    switch (verticalAlign) {
       case TextField.V_TOP:
         y += ascent;
         break;
@@ -107,7 +109,7 @@ public class TextField {
     final var ascent = fm.getAscent();
     final var descent = fm.getDescent();
 
-    switch (halign) {
+    switch (horizontalAlign) {
       case TextField.H_CENTER:
         x -= width / 2;
         break;
@@ -118,7 +120,7 @@ public class TextField {
         break;
     }
 
-    switch (valign) {
+    switch (verticalAlign) {
       case TextField.V_TOP:
         y += ascent;
         break;
@@ -148,48 +150,16 @@ public class TextField {
     return new TextFieldCaret(this, g, x, y);
   }
 
-  public Font getFont() {
-    return font;
-  }
-
-  public int getHAlign() {
-    return halign;
-  }
-
-  public String getText() {
-    return text;
-  }
-
-  public int getVAlign() {
-    return valign;
-  }
-
   //
   // access methods
   //
-  public int getX() {
-    return x;
-  }
-
-  public int getY() {
-    return y;
-  }
-
   public void removeTextFieldListener(TextFieldListener l) {
     listeners.remove(l);
   }
 
   public void setAlign(int halign, int valign) {
-    this.halign = halign;
-    this.valign = valign;
-  }
-
-  public void setFont(Font font) {
-    this.font = font;
-  }
-
-  public void setHorzAlign(int halign) {
-    this.halign = halign;
+    this.horizontalAlign = halign;
+    this.verticalAlign = valign;
   }
 
   public void setLocation(int x, int y) {
@@ -200,8 +170,8 @@ public class TextField {
   public void setLocation(int x, int y, int halign, int valign) {
     this.x = x;
     this.y = y;
-    this.halign = halign;
-    this.valign = valign;
+    this.horizontalAlign = halign;
+    this.verticalAlign = valign;
   }
 
   //
@@ -215,7 +185,4 @@ public class TextField {
     }
   }
 
-  public void setVertAlign(int valign) {
-    this.valign = valign;
-  }
 }

@@ -11,25 +11,26 @@ package com.cburch.logisim.comp;
 
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Location;
+import lombok.Getter;
 
 public class EndData {
   public static final int INPUT_ONLY = 1;
   public static final int OUTPUT_ONLY = 2;
   public static final int INPUT_OUTPUT = 3;
 
-  private final Location loc;
-  private final BitWidth width;
-  private final int i_o;
-  private final boolean exclusive;
+  @Getter private final Location location;
+  @Getter private final BitWidth width;
+  @Getter private final int type;
+  @Getter private final boolean exclusive;
 
-  public EndData(Location loc, BitWidth width, int type) {
-    this(loc, width, type, type == OUTPUT_ONLY);
+  public EndData(Location location, BitWidth width, int type) {
+    this(location, width, type, type == OUTPUT_ONLY);
   }
 
-  public EndData(Location loc, BitWidth width, int type, boolean exclusive) {
-    this.loc = loc;
+  public EndData(Location location, BitWidth width, int type, boolean exclusive) {
+    this.location = location;
     this.width = width;
-    this.i_o = type;
+    this.type = type;
     this.exclusive = exclusive;
   }
 
@@ -37,33 +38,17 @@ public class EndData {
   public boolean equals(Object other) {
     if (!(other instanceof EndData o)) return false;
     if (other == this) return true;
-    return o.loc.equals(this.loc)
+    return o.location.equals(this.location)
         && o.width.equals(this.width)
-        && o.i_o == this.i_o
+        && o.type == this.type
         && o.exclusive == this.exclusive;
   }
 
-  public Location getLocation() {
-    return loc;
-  }
-
-  public int getType() {
-    return i_o;
-  }
-
-  public BitWidth getWidth() {
-    return width;
-  }
-
-  public boolean isExclusive() {
-    return exclusive;
-  }
-
   public boolean isInput() {
-    return (i_o & INPUT_ONLY) != 0;
+    return (type & INPUT_ONLY) != 0;
   }
 
   public boolean isOutput() {
-    return (i_o & OUTPUT_ONLY) != 0;
+    return (type & OUTPUT_ONLY) != 0;
   }
 }
