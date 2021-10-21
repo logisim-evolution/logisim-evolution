@@ -22,6 +22,7 @@ import java.awt.Window;
 import java.util.Arrays;
 import java.util.List;
 import java.util.WeakHashMap;
+import lombok.Getter;
 
 /**
  * This attribute set is the same as the one for the TclComponent but it adds an attribute to
@@ -45,7 +46,7 @@ public class TclGenericAttributes extends TclComponentAttributes {
     }
   }
 
-  private static final List<Attribute<?>> attributes =
+  @Getter private final List<Attribute<?>> attributes =
       Arrays.asList(CONTENT_FILE_ATTR, TclGeneric.CONTENT_ATTR, StdAttr.LABEL, StdAttr.LABEL_FONT);
 
   private static final WeakHashMap<HdlContent, HdlContentEditor> windowRegistry = new WeakHashMap<>();
@@ -66,13 +67,7 @@ public class TclGenericAttributes extends TclComponentAttributes {
   protected void copyInto(AbstractAttributeSet dest) {
     final var attr = (TclGenericAttributes) dest;
     attr.vhdlEntitiy = vhdlEntitiy;
-
     super.copyInto(dest);
-  }
-
-  @Override
-  public List<Attribute<?>> getAttributes() {
-    return attributes;
   }
 
   @SuppressWarnings("unchecked")

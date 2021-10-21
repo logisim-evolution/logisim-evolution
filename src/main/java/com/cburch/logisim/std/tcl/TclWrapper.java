@@ -49,7 +49,10 @@ public class TclWrapper {
 
   private Process process;
   private final TclComponentData tclConsole;
-  private File tclContentFile;
+  /**
+   * TCL content file
+   */
+  private File file;
 
   private TclWrapperState state = TclWrapperState.STOPPED;
 
@@ -62,20 +65,15 @@ public class TclWrapper {
     start();
   }
 
-  public void setFile(File file) {
-    tclContentFile = file;
-  }
-
   public void start() {
-
     /* Do not start if already running */
     if (state != TclWrapperState.STOPPED) return;
 
-    tclContentFile =
+    file =
         tclConsole.getState().getAttributeValue(TclComponentAttributes.CONTENT_FILE_ATTR);
 
     /* Do not start if Tcl file doesn't exist */
-    if (!tclContentFile.isFile()) return;
+    if (!file.isFile()) return;
 
     /* We are ready to start */
     state = TclWrapperState.STARTING;
@@ -103,7 +101,7 @@ public class TclWrapper {
     command.add("tclsh");
     command.add(TCL_PATH + "tcl_wrapper.tcl");
     command.add("" + tclConsole.getTclClient().getServerPort());
-    command.add(tclContentFile.getAbsolutePath());
+    command.add(file.getAbsolutePath());
 
     builder = new ProcessBuilder(command);
 
@@ -111,7 +109,7 @@ public class TclWrapper {
      * We want to run the process from the selected Tcl file, so if some
      * includes happens the path are correct
      */
-    builder.directory(tclContentFile.getParentFile());
+    builder.directory(file.getParentFile());
 
     /* Redirect error on stdout */
     builder.redirectErrorStream(true);

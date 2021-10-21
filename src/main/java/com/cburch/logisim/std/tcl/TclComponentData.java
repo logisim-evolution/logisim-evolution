@@ -14,6 +14,7 @@ import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.InstanceStateImpl;
 import com.cburch.logisim.util.SocketClient;
+import lombok.Getter;
 
 /**
  * The TCL components needs some activity for each instance of component. Here we extend the
@@ -37,19 +38,20 @@ public class TclComponentData implements InstanceData {
     return ret;
   }
 
-  private final SocketClient tclClient;
-
+  @Getter private final SocketClient tclClient;
   private TclWrapperListenerThread tclWrapperListenerThread;
+  @Getter private final TclWrapper tclWrapper;
 
-  private final TclWrapper tclWrapper;
-
-  private final InstanceState instanceState;
+  /**
+   * Instance state
+   */
+  @Getter private final InstanceState state;
 
   private Value prevClockValue = Value.UNKNOWN;
 
   TclComponentData(InstanceState state) {
 
-    instanceState = state;
+    this.state = state;
 
     tclClient = new SocketClient();
     tclWrapper = new TclWrapper(this);
@@ -60,18 +62,6 @@ public class TclComponentData implements InstanceData {
     return null;
   }
 
-  public InstanceState getState() {
-    return instanceState;
-  }
-
-  public SocketClient getTclClient() {
-    return tclClient;
-  }
-
-  public TclWrapper getTclWrapper() {
-    return tclWrapper;
-  }
-
   public boolean isConnected() {
     return tclClient.isConnected();
   }
@@ -80,9 +70,9 @@ public class TclComponentData implements InstanceData {
     var newTick = false;
     var found = false;
 
-    for (final var p : instanceState.getInstance().getPorts()) {
+    for (final var p : state.getInstance().getPorts()) {
       if (p.getToolTip().equals("sysclk_i")) {
-        final var val = instanceState.getPortValue(instanceState.getPortIndex(p));
+        final var val = state.getPortValue(state.getPortIndex(p));
         newTick = (val != prevClockValue);
         if (newTick) {
           prevClockValue = val;
@@ -95,7 +85,6 @@ public class TclComponentData implements InstanceData {
     if (!found) {
       throw new UnsupportedOperationException("Could not find the 'sysclock' in the TCL component");
     }
-
     return newTick;
   }
 
@@ -108,13 +97,11 @@ public class TclComponentData implements InstanceData {
   }
 
   public void tclWrapperStartCallback() {
-
     tclClient.start();
-
     tclWrapperListenerThread =
         new TclWrapperListenerThread(
             tclClient,
-            ((InstanceStateImpl) instanceState).getCircuitState().getProject().getSimulator());
+            ((InstanceStateImpl) state).getCircuitState().getProject().getSimulator());
     tclWrapperListenerThread.start();
   }
 }

@@ -27,6 +27,7 @@ import java.awt.Color;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.WeakHashMap;
+import lombok.Getter;
 
 /**
  * This is the component one should extend to implement the different TCL components.
@@ -35,28 +36,9 @@ import java.util.WeakHashMap;
  */
 public abstract class TclComponent extends InstanceFactory {
 
-  public static class PortDescription {
-
-    private final String name;
-    private final String type;
-    private final BitWidth width;
-
+  public record PortDescription(String getName, String getType, BitWidth getWidth) {
     public PortDescription(String name, String type, int width) {
-      this.name = name;
-      this.type = type;
-      this.width = BitWidth.create(width);
-    }
-
-    public String getName() {
-      return this.name;
-    }
-
-    public String getType() {
-      return this.type;
-    }
-
-    public BitWidth getWidth() {
-      return this.width;
+      this(name, type, BitWidth.create(width));
     }
   }
 
@@ -110,7 +92,6 @@ public abstract class TclComponent extends InstanceFactory {
   public Bounds getOffsetBounds(AttributeSet attrs) {
     int nbInputs = inputs.length;
     int nbOutputs = outputs.length;
-
     return Bounds.create(0, 0, WIDTH, Math.max(nbInputs, nbOutputs) * PORT_GAP + HEIGHT);
   }
 
@@ -140,8 +121,7 @@ public abstract class TclComponent extends InstanceFactory {
     if (glbLabel != null) {
       Font font = g.getFont();
       g.setFont(painter.getAttributeValue(StdAttr.LABEL_FONT));
-      GraphicsUtil.drawCenteredText(
-          g, glbLabel, bds.getX() + bds.getWidth() / 2, bds.getY() - g.getFont().getSize());
+      GraphicsUtil.drawCenteredText(g, glbLabel, bds.getX() + bds.getWidth() / 2, bds.getY() - g.getFont().getSize());
       g.setFont(font);
     }
 
