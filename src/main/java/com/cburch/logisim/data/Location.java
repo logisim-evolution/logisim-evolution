@@ -12,6 +12,7 @@ package com.cburch.logisim.data;
 import com.cburch.logisim.util.Cache;
 import java.util.Comparator;
 import java.util.List;
+import lombok.Getter;
 
 /**
  * Represents an immutable rectangular bounding box. This is analogous to java.awt's <code>Point
@@ -57,9 +58,8 @@ public class Location implements Comparable<Location> {
   private static final Cache cache = new Cache();
   private final int hashCode;
 
-  private final int x;
-
-  private final int y;
+  @Getter private final int x;
+  @Getter private final int y;
 
   private Location(int hashCode, int x, int y) {
     this.hashCode = hashCode;
@@ -77,14 +77,6 @@ public class Location implements Comparable<Location> {
     return (otherObj instanceof Location other)
            ? this.x == other.x && this.y == other.y
            : false;
-  }
-
-  public int getX() {
-    return x;
-  }
-
-  public int getY() {
-    return y;
   }
 
   @Override
