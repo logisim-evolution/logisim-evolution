@@ -52,7 +52,8 @@ dependencies {
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation("org.junit.vintage:junit-vintage-engine:5.7.1")
+  testImplementation(platform("org.junit:junit-bom:5.8.1"))
+  testImplementation("org.junit.jupiter:junit-jupiter")
 }
 
 /**
@@ -608,6 +609,13 @@ tasks {
   compileTestJava {
     options.compilerArgs = compilerOptions
     dependsOn("genFiles")
+  }
+
+  test {
+    useJUnitPlatform()
+//    testLogging {
+//      events("passed", "skipped", "failed")
+//    }
   }
 
   jar {
