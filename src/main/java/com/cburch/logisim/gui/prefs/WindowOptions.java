@@ -171,7 +171,7 @@ class WindowOptions extends OptionsPanel {
     setLayout(new TableLayout(1));
     final var but = new JButton();
     but.addActionListener(listener);
-    but.setActionCommand("reset");
+    but.setActionCommand(cmdResetWindowLayout);
     but.setText(S.get("windowToolbarReset"));
     add(but);
     for (final var check : checks) {
