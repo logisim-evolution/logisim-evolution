@@ -15,12 +15,17 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
 public class BoardInformation {
 
-  private List<FpgaIoInformationContainer> myComponents;
-  private String boardName;
-  private BufferedImage boardPicture;
+  @Getter private List<FpgaIoInformationContainer> allComponents;
+  @Getter @Setter private String boardName;
+  /**
+   * Board picture.
+   */
+  @Getter @Setter private BufferedImage image;
   public FpgaClass fpga = new FpgaClass();
 
   public BoardInformation() {
@@ -28,32 +33,24 @@ public class BoardInformation {
   }
 
   public void addComponent(FpgaIoInformationContainer comp) {
-    myComponents.add(comp);
+    allComponents.add(comp);
   }
 
   public void clear() {
-    if (myComponents == null) myComponents = new LinkedList<>();
-    else myComponents.clear();
+    if (allComponents == null) allComponents = new LinkedList<>();
+    else allComponents.clear();
     boardName = null;
     fpga.clear();
-    boardPicture = null;
+    image = null;
   }
 
   public void setComponents(List<FpgaIoInformationContainer> comps) {
-    myComponents.clear();
-    myComponents.addAll(comps);
-  }
-
-  public List<FpgaIoInformationContainer> getAllComponents() {
-    return myComponents;
-  }
-
-  public String getBoardName() {
-    return boardName;
+    allComponents.clear();
+    allComponents.addAll(comps);
   }
 
   public FpgaIoInformationContainer getComponent(BoardRectangle rect) {
-    for (final var comp : myComponents) {
+    for (final var comp : allComponents) {
       if (comp.getRectangle().equals(rect)) {
         return comp;
       }
@@ -69,7 +66,7 @@ public class BoardInformation {
     var count = 0;
     for (final var type : IoComponentTypes.KNOWN_COMPONENT_SET) {
       count = 0;
-      for (final var comp : myComponents) {
+      for (final var comp : allComponents) {
         if (comp.getType().equals(type)) {
           list.add(count, comp.getNrOfPins());
           count++;
@@ -85,7 +82,7 @@ public class BoardInformation {
   }
 
   public String getComponentType(BoardRectangle rect) {
-    for (final var comp : myComponents) {
+    for (final var comp : allComponents) {
       if (comp.getRectangle().equals(rect)) {
         return comp.getType().toString();
       }
@@ -94,7 +91,7 @@ public class BoardInformation {
   }
 
   public String getDriveStrength(BoardRectangle rect) {
-    for (final var comp : myComponents) {
+    for (final var comp : allComponents) {
       if (comp.getRectangle().equals(rect)) {
         return DriveStrength.GetContraintedDriveStrength(comp.getDrive());
       }
@@ -102,13 +99,9 @@ public class BoardInformation {
     return "";
   }
 
-  public BufferedImage getImage() {
-    return boardPicture;
-  }
-
   public List<BoardRectangle> getIoComponentsOfType(IoComponentTypes type, int nrOfPins) {
     final var result = new ArrayList<BoardRectangle>();
-    for (final var comp : myComponents) {
+    for (final var comp : allComponents) {
       if (comp.getType().equals(type)) {
         if (!type.equals(IoComponentTypes.DIPSwitch) || nrOfPins <= comp.getNrOfPins()) {
           if (!type.equals(IoComponentTypes.PortIo) || nrOfPins <= comp.getNrOfPins()) {
@@ -121,7 +114,7 @@ public class BoardInformation {
   }
 
   public String getIoStandard(BoardRectangle rect) {
-    for (final var comp : myComponents) {
+    for (final var comp : allComponents) {
       if (comp.getRectangle().equals(rect)) {
         return IoStandards.getConstraintedIoStandard(comp.getIoStandard());
       }
@@ -130,23 +123,15 @@ public class BoardInformation {
   }
 
   public int getNrOfDefinedComponents() {
-    return myComponents.size();
+    return allComponents.size();
   }
 
   public String getPullBehavior(BoardRectangle rect) {
-    for (final var comp : myComponents) {
+    for (final var comp : allComponents) {
       if (comp.getRectangle().equals(rect)) {
         return PullBehaviors.getContraintedPullString(comp.getPullBehavior());
       }
     }
     return "";
-  }
-
-  public void setBoardName(String name) {
-    boardName = name;
-  }
-
-  public void setImage(BufferedImage pict) {
-    boardPicture = pict;
   }
 }
