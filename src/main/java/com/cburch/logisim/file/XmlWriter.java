@@ -317,8 +317,8 @@ final class XmlWriter {
           map.setAttribute(MapComponent.CONSTANT_KEY, Long.toString(mapInfo.getConstValue()));
         } else {
           final var rect = mapInfo.getRectangle();
-          map.setAttribute("valx", Integer.toString(rect.getXpos()));
-          map.setAttribute("valy", Integer.toString(rect.getYpos()));
+          map.setAttribute("valx", Integer.toString(rect.getPositionX()));
+          map.setAttribute("valy", Integer.toString(rect.getPositionY()));
           map.setAttribute("valw", Integer.toString(rect.getWidth()));
           map.setAttribute("valh", Integer.toString(rect.getHeight()));
         }

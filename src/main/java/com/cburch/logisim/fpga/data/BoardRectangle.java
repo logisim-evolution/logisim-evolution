@@ -10,16 +10,18 @@
 package com.cburch.logisim.fpga.data;
 
 import com.cburch.draw.shapes.Rectangle;
+import lombok.Getter;
+import lombok.Setter;
 
 public class BoardRectangle {
-  private int xPosition;
-  private int yPosition;
-  private int width;
-  private int height;
-  private boolean isActiveHigh = true;
-  private int nrBits = 0;
-  private Long value = null;
-  private String label;
+  @Getter private int positionX;
+  @Getter private int positionY;
+  @Getter private int width;
+  @Getter private int height;
+  @Getter @Setter private boolean activeOnHigh = true;
+  @Getter @Setter private int nrBits = 0;
+  @Getter @Setter private Long value = null;
+  @Getter @Setter private String label;
 
   public BoardRectangle(int x, int y, int w, int h) {
     this.set(x, y, w, h);
@@ -34,53 +36,21 @@ public class BoardRectangle {
     return (rectangle instanceof BoardRectangle rect)
            ? ((rect.getHeight() == height)
               && (rect.getWidth() == width)
-              && (rect.getXpos() == xPosition)
-              && (rect.getYpos() == yPosition))
+              && (rect.getPositionX() == positionX)
+              && (rect.getPositionY() == positionY))
            : false;
   }
 
-  public int getHeight() {
-    return height;
-  }
-
-  public int getWidth() {
-    return width;
-  }
-
-  public int getXpos() {
-    return xPosition;
-  }
-
-  public int getYpos() {
-    return yPosition;
-  }
-
-  public boolean isActiveOnHigh() {
-    return isActiveHigh;
-  }
-
-  public String getLabel() {
-    return label;
-  }
-
-  public int getNrBits() {
-    return nrBits;
-  }
-
-  public void setNrBits(int nr) {
-    nrBits = nr;
-  }
-
   public void updateRectangle(BoardRectangle other) {
-    xPosition = other.getXpos();
-    yPosition = other.getYpos();
+    positionX = other.getPositionX();
+    positionY = other.getPositionY();
     width = other.getWidth();
     height = other.getHeight();
   }
 
   public void updateRectangle(Rectangle other) {
-    xPosition = other.getX();
-    yPosition = other.getY();
+    positionX = other.getX();
+    positionY = other.getY();
     width = other.getWidth();
     height = other.getHeight();
   }
@@ -95,9 +65,9 @@ public class BoardRectangle {
     int xr;
     int yt;
     int yb;
-    xl = rect.getXpos();
+    xl = rect.getPositionX();
     xr = xl + rect.getWidth();
-    yt = rect.getYpos();
+    yt = rect.getPositionY();
     yb = yt + rect.getHeight();
 
     /* first check for the other corner points inside myself */
@@ -107,10 +77,10 @@ public class BoardRectangle {
     result |= this.isPointInside(xr, yb);
 
     /* check for my corner points inside him */
-    result |= rect.isPointInside(xPosition, yPosition);
-    result |= rect.isPointInside(xPosition + width, yPosition);
-    result |= rect.isPointInside(xPosition, yPosition + height);
-    result |= rect.isPointInside(xPosition + width, yPosition + height);
+    result |= rect.isPointInside(positionX, positionY);
+    result |= rect.isPointInside(positionX + width, positionY);
+    result |= rect.isPointInside(positionX, positionY + height);
+    result |= rect.isPointInside(positionX + width, positionY + height);
 
     /*
      * if result=false: for sure the corner points are not inside one of
@@ -118,88 +88,73 @@ public class BoardRectangle {
      */
     /* we now have to check for partial overlap */
     if (!result) {
-      result = ((xl >= xPosition)
-          && (xl <= (xPosition + width))
-          && (yt <= yPosition)
-          && (yb >= (yPosition + height)));
+      result = ((xl >= positionX)
+          && (xl <= (positionX + width))
+          && (yt <= positionY)
+          && (yb >= (positionY + height)));
       result |=
-          ((xr >= xPosition)
-              && (xr <= (xPosition + width))
-              && (yt <= yPosition)
-              && (yb >= (yPosition + height)));
+          ((xr >= positionX)
+              && (xr <= (positionX + width))
+              && (yt <= positionY)
+              && (yb >= (positionY + height)));
       result |=
-          ((xl <= xPosition)
-              && (xr >= (xPosition + width))
-              && (yt >= yPosition)
-              && (yt <= (yPosition + height)));
+          ((xl <= positionX)
+              && (xr >= (positionX + width))
+              && (yt >= positionY)
+              && (yt <= (positionY + height)));
       result |=
-          ((xl <= xPosition)
-              && (xr >= (xPosition + width))
-              && (yb >= yPosition)
-              && (yb <= (yPosition + height)));
+          ((xl <= positionX)
+              && (xr >= (positionX + width))
+              && (yb >= positionY)
+              && (yb <= (positionY + height)));
     }
     if (!result) {
-      result = ((xPosition >= xl)
-          && (xPosition <= xr)
-          && (yPosition <= yt)
-          && ((yPosition + height) >= yb));
+      result = ((positionX >= xl)
+          && (positionX <= xr)
+          && (positionY <= yt)
+          && ((positionY + height) >= yb));
       result |=
-          (((xPosition + width) >= xl)
-              && ((xPosition + width) <= xr)
-              && (yPosition <= yt)
-              && ((yPosition + height) >= yb));
+          (((positionX + width) >= xl)
+              && ((positionX + width) <= xr)
+              && (positionY <= yt)
+              && ((positionY + height) >= yb));
       result |=
-          ((xPosition <= xl)
-              && ((xPosition + width) >= xr)
-              && (yPosition >= yt)
-              && (yPosition <= yb));
+          ((positionX <= xl)
+              && ((positionX + width) >= xr)
+              && (positionY >= yt)
+              && (positionY <= yb));
       result |=
-          ((xPosition <= xl)
-              && ((xPosition + width) >= xr)
-              && ((yPosition + height) >= yt)
-              && ((yPosition + height) <= yb));
+          ((positionX <= xl)
+              && ((positionX + width) >= xr)
+              && ((positionY + height) >= yt)
+              && ((positionY + height) <= yb));
     }
 
     return result;
   }
 
   public Boolean isPointInside(int x, int y) {
-    return ((x >= xPosition)
-        && (x <= (xPosition + width))
-        && (y >= yPosition)
-        && (y <= (yPosition + height)));
+    return ((x >= positionX)
+        && (x <= (positionX + width))
+        && (y >= positionY)
+        && (y <= (positionY + height)));
   }
 
   private void set(int x, int y, int w, int h) {
     if (w < 0) {
-      xPosition = x + w;
+      positionX = x + w;
       width = -w;
     } else {
-      xPosition = x;
+      positionX = x;
       width = w;
     }
     if (h < 0) {
-      yPosition = y + h;
+      positionY = y + h;
       height = -h;
     } else {
-      yPosition = y;
+      positionY = y;
       height = h;
     }
   }
 
-  public void setActiveOnHigh(boolean isActiveHigh) {
-    this.isActiveHigh = isActiveHigh;
-  }
-
-  public void setLabel(String label) {
-    this.label = label;
-  }
-
-  public void setValue(Long val) {
-    this.value = val;
-  }
-
-  public Long getValue() {
-    return value;
-  }
 }

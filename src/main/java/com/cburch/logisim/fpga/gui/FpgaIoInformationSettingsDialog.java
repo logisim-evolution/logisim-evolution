@@ -339,10 +339,10 @@ public class FpgaIoInformationSettingsDialog {
     c.gridy = -1;
     if (MyRectangle != null) {
       var tf = new JTextField(5);
-      tf.setText(Integer.toString(MyRectangle.getXpos()));
+      tf.setText(Integer.toString(MyRectangle.getPositionX()));
       rectLocations.add(tf);
       tf = new JTextField(5);
-      tf.setText(Integer.toString(MyRectangle.getYpos()));
+      tf.setText(Integer.toString(MyRectangle.getPositionY()));
       rectLocations.add(tf);
       tf = new JTextField(5);
       tf.setText(Integer.toString(MyRectangle.getWidth()));
@@ -657,8 +657,8 @@ public class FpgaIoInformationSettingsDialog {
               }
             }
             if (!correct) continue;
-            if (values[0] != MyRectangle.getXpos()
-                || values[1] != MyRectangle.getYpos()
+            if (values[0] != MyRectangle.getPositionX()
+                || values[1] != MyRectangle.getPositionY()
                 || values[2] != MyRectangle.getWidth()
                 || values[3] != MyRectangle.getHeight()) {
               final var update = new Rectangle(values[0], values[1], values[2], values[3]);
@@ -794,7 +794,7 @@ public class FpgaIoInformationSettingsDialog {
 
     final var PullInput = new JComboBox<String>(PullBehaviors.BEHAVIOR_STRINGS);
     if (TheBoard.fpga.isFpgaInfoPresent()) {
-      PullInput.setSelectedIndex(TheBoard.fpga.getClockPull());
+      PullInput.setSelectedIndex(TheBoard.fpga.getClockPullBehavior());
     } else PullInput.setSelectedIndex(0);
     c.gridx = 1;
     ClockPanel.add(PullInput, c);
@@ -899,7 +899,7 @@ public class FpgaIoInformationSettingsDialog {
     final var PosInput = new JTextField(5);
     PosInput.setText("1");
     if (TheBoard.fpga.isFpgaInfoPresent())
-      PosInput.setText(Integer.toString(TheBoard.fpga.getFpgaJTAGChainPosition()));
+      PosInput.setText(Integer.toString(TheBoard.fpga.getFpgaJtagChainPosition()));
     c.gridx = 1;
     jtagPanel.add(PosInput, c);
 
@@ -911,7 +911,7 @@ public class FpgaIoInformationSettingsDialog {
     final var flashPosInput = new JTextField(5);
     flashPosInput.setText("2");
     if (TheBoard.fpga.isFpgaInfoPresent())
-      flashPosInput.setText(Integer.toString(TheBoard.fpga.getFlashJTAGChainPosition()));
+      flashPosInput.setText(Integer.toString(TheBoard.fpga.getFlashJtagChainPosition()));
     c.gridx = 1;
     c.fill = GridBagConstraints.HORIZONTAL;
     jtagPanel.add(flashPosInput, c);

@@ -205,7 +205,7 @@ public class VivadoDownload implements VendorDownload {
     contents.clear();
 
     // load bitstream
-    final var jtagPos = String.valueOf(boardInfo.fpga.getFpgaJTAGChainPosition());
+    final var jtagPos = String.valueOf(boardInfo.fpga.getFpgaJtagChainPosition());
     final var lindex = "[lindex [get_hw_devices] " + jtagPos + "]";
     contents.add("open_hw");
     contents.add("connect_hw_server");

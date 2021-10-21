@@ -90,7 +90,7 @@ public class BoardWriterClass {
       pin.setValue(BoardInfo.fpga.getClockPinLocation().toUpperCase());
       clkInfo.setAttributeNode(pin);
       final var pull = boardInfo.createAttribute(CLOCK_SECTION_STRINGS[2]);
-      pull.setValue(PullBehaviors.BEHAVIOR_STRINGS[BoardInfo.fpga.getClockPull()]);
+      pull.setValue(PullBehaviors.BEHAVIOR_STRINGS[BoardInfo.fpga.getClockPullBehavior()]);
       clkInfo.setAttributeNode(pull);
       final var ios = boardInfo.createAttribute(CLOCK_SECTION_STRINGS[3]);
       ios.setValue(IoStandards.BEHAVIOR_STRINGS[BoardInfo.fpga.getClockStandard()]);
@@ -111,16 +111,16 @@ public class BoardWriterClass {
       speed.setValue(BoardInfo.fpga.getSpeedGrade());
       fpga.setAttributeNode(speed);
       final var usbTmc = boardInfo.createAttribute(FPGA_SECTION_STRINGS[5]);
-      usbTmc.setValue(BoardInfo.fpga.isUsbTmcDownloadRequired().toString());
+      usbTmc.setValue(String.valueOf(BoardInfo.fpga.isUsbTmcDownloadRequired()));
       fpga.setAttributeNode(usbTmc);
       final var jtagPos = boardInfo.createAttribute(FPGA_SECTION_STRINGS[6]);
-      jtagPos.setValue(String.valueOf(BoardInfo.fpga.getFpgaJTAGChainPosition()));
+      jtagPos.setValue(String.valueOf(BoardInfo.fpga.getFpgaJtagChainPosition()));
       fpga.setAttributeNode(jtagPos);
       final var flashName = boardInfo.createAttribute(FPGA_SECTION_STRINGS[7]);
       flashName.setValue(String.valueOf(BoardInfo.fpga.getFlashName()));
       fpga.setAttributeNode(flashName);
       final var flashJtagPos = boardInfo.createAttribute(FPGA_SECTION_STRINGS[8]);
-      flashJtagPos.setValue(String.valueOf(BoardInfo.fpga.getFlashJTAGChainPosition()));
+      flashJtagPos.setValue(String.valueOf(BoardInfo.fpga.getFlashJtagChainPosition()));
       fpga.setAttributeNode(flashJtagPos);
       final var unusedPins = boardInfo.createElement(UNUSED_PINS_STRING);
       fpgaInfo.appendChild(fpga);

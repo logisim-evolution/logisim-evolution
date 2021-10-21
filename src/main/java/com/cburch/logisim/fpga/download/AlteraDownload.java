@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;
@@ -125,10 +124,10 @@ public class AlteraDownload implements VendorDownload {
     // if there is no .sof generated, try with the .pof
     if (new File(sandboxPath + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof").exists()) {
       command.add("P;" + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".sof"
-                  + "@" + boardInfo.fpga.getFpgaJTAGChainPosition());
+                  + "@" + boardInfo.fpga.getFpgaJtagChainPosition());
     } else {
       command.add("P;" + ToplevelHdlGeneratorFactory.FPGA_TOP_LEVEL_NAME + ".pof"
-                  + "@" + boardInfo.fpga.getFpgaJTAGChainPosition());
+                  + "@" + boardInfo.fpga.getFpgaJtagChainPosition());
     }
     final var down = new ProcessBuilder(command);
     down.directory(new File(sandboxPath));

@@ -13,6 +13,7 @@ import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.util.StringUtil;
 import java.util.Iterator;
 import java.util.List;
+import lombok.Getter;
 
 public class FpgaClass {
   public static char getId(String identifier) {
@@ -27,42 +28,42 @@ public class FpgaClass {
     return VendorSoftware.VENDOR_UNKNOWN;
   }
 
-  private long clockFrequency;
-  private String clockPinLocation;
-  private char clockPullBehavior;
-  private char clockIOStandard;
-  private String technology;
-  private String part;
+  @Getter private long clockFrequency;
+  @Getter private String clockPinLocation;
+  @Getter private char clockPullBehavior;
+  @Getter private char clockStandard;
+  @Getter private String technology;
+  @Getter private String part;
   private String Package;
-  private String speedGrade;
-  private char vendor;
-  private char unusedPinsBehavior;
-  private boolean fpgaDefined;
+  @Getter private String speedGrade;
+  @Getter private char vendor;
+  @Getter private char unusedPinsBehavior;
+  @Getter private boolean fpgaInfoPresent;
 
-  private boolean usbTmcDownload;
+  @Getter private boolean usbTmcDownloadRequired;
 
-  private int jtagPos;
+  @Getter private int fpgaJtagChainPosition;
 
-  private String flashName;
-  private int flashPos;
-  private boolean flashDefined;
+  @Getter private String flashName;
+  @Getter private int flashJtagChainPosition;
+  @Getter private boolean flashDefined;
 
   public FpgaClass() {
     clockFrequency = 0;
     clockPinLocation = null;
     clockPullBehavior = 0;
-    clockIOStandard = 0;
+    clockStandard = 0;
     technology = null;
     part = null;
     Package = null;
     speedGrade = null;
     vendor = 0;
-    fpgaDefined = false;
+    fpgaInfoPresent = false;
     unusedPinsBehavior = 0;
-    usbTmcDownload = false;
-    jtagPos = 1;
+    usbTmcDownloadRequired = false;
+    fpgaJtagChainPosition = 1;
     flashName = null;
-    flashPos = 2;
+    flashJtagChainPosition = 2;
     flashDefined = false;
   }
 
@@ -70,67 +71,23 @@ public class FpgaClass {
     clockFrequency = 0;
     clockPinLocation = null;
     clockPullBehavior = 0;
-    clockIOStandard = 0;
+    clockStandard = 0;
     technology = null;
     part = null;
     Package = null;
     speedGrade = null;
     vendor = 0;
-    fpgaDefined = false;
+    fpgaInfoPresent = false;
     unusedPinsBehavior = 0;
-    usbTmcDownload = false;
-    jtagPos = 1;
+    usbTmcDownloadRequired = false;
+    fpgaJtagChainPosition = 1;
     flashName = null;
-    flashPos = 2;
+    flashJtagChainPosition = 2;
     flashDefined = false;
-  }
-
-  public boolean isFpgaInfoPresent() {
-    return fpgaDefined;
-  }
-
-  public long getClockFrequency() {
-    return clockFrequency;
-  }
-
-  public String getClockPinLocation() {
-    return clockPinLocation;
-  }
-
-  public char getClockPull() {
-    return clockPullBehavior;
-  }
-
-  public char getClockStandard() {
-    return clockIOStandard;
   }
 
   public String getPackage() {
     return Package;
-  }
-
-  public String getPart() {
-    return part;
-  }
-
-  public String getSpeedGrade() {
-    return speedGrade;
-  }
-
-  public String getTechnology() {
-    return technology;
-  }
-
-  public char getUnusedPinsBehavior() {
-    return unusedPinsBehavior;
-  }
-
-  public char getVendor() {
-    return vendor;
-  }
-
-  public int getFpgaJTAGChainPosition() {
-    return jtagPos;
   }
 
   public void set(
@@ -151,34 +108,19 @@ public class FpgaClass {
     clockFrequency = frequency;
     clockPinLocation = pin;
     clockPullBehavior = PullBehaviors.getId(pull);
-    clockIOStandard = IoStandards.getId(standard);
+    clockStandard = IoStandards.getId(standard);
     technology = tech;
     part = device;
     Package = box;
     speedGrade = speed;
     vendor = getId(vend);
-    fpgaDefined = true;
+    fpgaInfoPresent = true;
     unusedPinsBehavior = PullBehaviors.getId(unused);
-    usbTmcDownload = usbTmc;
-    this.jtagPos = Integer.parseInt(jtagPPos);
+    usbTmcDownloadRequired = usbTmc;
+    this.fpgaJtagChainPosition = Integer.parseInt(jtagPPos);
     this.flashName = flashName;
-    this.flashPos = Integer.parseInt(flashPos);
-    this.flashDefined = StringUtil.isNotEmpty(flashName) && (this.flashPos != 0);
+    this.flashJtagChainPosition = Integer.parseInt(flashPos);
+    this.flashDefined = StringUtil.isNotEmpty(flashName) && (this.flashJtagChainPosition != 0);
   }
 
-  public Boolean isUsbTmcDownloadRequired() {
-    return usbTmcDownload;
-  }
-
-  public String getFlashName() {
-    return flashName;
-  }
-
-  public int getFlashJTAGChainPosition() {
-    return flashPos;
-  }
-
-  public boolean isFlashDefined() {
-    return flashDefined;
-  }
 }

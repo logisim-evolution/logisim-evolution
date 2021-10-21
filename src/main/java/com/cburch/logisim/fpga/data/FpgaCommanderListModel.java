@@ -18,13 +18,14 @@ import javax.swing.AbstractListModel;
 import javax.swing.ListCellRenderer;
 import javax.swing.event.ListDataEvent;
 import javax.swing.event.ListDataListener;
+import lombok.Getter;
 
 @SuppressWarnings("serial")
 public class FpgaCommanderListModel extends AbstractListModel<Object> {
 
   private final ArrayList<Object> myData;
   private final Set<ListDataListener> myListeners;
-  private int count = 0;
+  @Getter private int count = 0;
   private final ListModelCellRenderer myRender;
 
   public FpgaCommanderListModel(boolean CountLines) {
@@ -52,10 +53,6 @@ public class FpgaCommanderListModel extends AbstractListModel<Object> {
     myData.add(toAdd);
     ListDataEvent e = new ListDataEvent(this, ListDataEvent.CONTENTS_CHANGED, 0, myData.size());
     fireEvent(e);
-  }
-
-  public int getCountNr() {
-    return count;
   }
 
   @Override

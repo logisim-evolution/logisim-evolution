@@ -165,7 +165,7 @@ public class XilinxDownload implements VendorDownload {
 
   @Override
   public boolean createDownloadScripts() {
-    final var jtagPos = String.valueOf(boardInfo.fpga.getFpgaJTAGChainPosition());
+    final var jtagPos = String.valueOf(boardInfo.fpga.getFpgaJtagChainPosition());
     var scriptFile = FileWriter.getFilePointer(scriptPath, SCRIPT_FILE);
     var vhdlListFile = FileWriter.getFilePointer(scriptPath, VHDL_LIST_FILE);
     var ucfFile = FileWriter.getFilePointer(ucfPath, UCF_FILE);
@@ -210,7 +210,7 @@ public class XilinxDownload implements VendorDownload {
         Reporter.report.addFatalError(S.get("XilinxFlashMissing", boardInfo.getBoardName()));
       }
 
-      contents.pair("flashPos", String.valueOf(boardInfo.fpga.getFlashJTAGChainPosition()))
+      contents.pair("flashPos", String.valueOf(boardInfo.fpga.getFlashJtagChainPosition()))
               .pair("flashName", boardInfo.fpga.getFlashName())
               .add("""
                 setmode -pff
@@ -414,10 +414,10 @@ public class XilinxDownload implements VendorDownload {
   private static String getXilinxClockPin(BoardInformation currentBoard) {
     final var result = new StringBuilder();
     result.append("LOC = \"").append(currentBoard.fpga.getClockPinLocation()).append("\"");
-    if (currentBoard.fpga.getClockPull() == PullBehaviors.PULL_UP) {
+    if (currentBoard.fpga.getClockPullBehavior() == PullBehaviors.PULL_UP) {
       result.append(" | PULLUP");
     }
-    if (currentBoard.fpga.getClockPull() == PullBehaviors.PULL_DOWN) {
+    if (currentBoard.fpga.getClockPullBehavior() == PullBehaviors.PULL_DOWN) {
       result.append(" | PULLDOWN");
     }
     if (currentBoard.fpga.getClockStandard() != IoStandards.DEFAULT_STANDARD

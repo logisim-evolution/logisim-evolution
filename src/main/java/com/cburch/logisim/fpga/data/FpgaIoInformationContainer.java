@@ -443,9 +443,9 @@ public class FpgaIoInformationContainer implements Cloneable {
       var result = doc.createElement(myType.toString());
       result.setAttribute(
           BoardWriterClass.RECT_SET_STRING,
-          myRectangle.getXpos()
+          myRectangle.getPositionX()
               + ","
-              + myRectangle.getYpos()
+              + myRectangle.getPositionY()
               + ","
               + myRectangle.getWidth()
               + ","
@@ -850,8 +850,8 @@ public class FpgaIoInformationContainer implements Cloneable {
     var c = g.getColor();
     g.setColor(PaintColor);
     g.fillRect(
-        AppPreferences.getScaled(myRectangle.getXpos(), scale),
-        AppPreferences.getScaled(myRectangle.getYpos(), scale),
+        AppPreferences.getScaled(myRectangle.getPositionX(), scale),
+        AppPreferences.getScaled(myRectangle.getPositionY(), scale),
         AppPreferences.getScaled(myRectangle.getWidth(), scale),
         AppPreferences.getScaled(myRectangle.getHeight(), scale));
     g.setColor(c);
@@ -887,7 +887,7 @@ public class FpgaIoInformationContainer implements Cloneable {
           myRotation,
               myType);
     }
-    var selPin = partialMapArray[xPos - myRectangle.getXpos()][Ypos - myRectangle.getYpos()];
+    var selPin = partialMapArray[xPos - myRectangle.getPositionX()][Ypos - myRectangle.getPositionY()];
     if (selPin != selectedPin) {
       selectedPin = selPin;
       return true;
@@ -1023,8 +1023,8 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
   private void paintMapped(Graphics2D g, float scale, int nrOfMaps) {
-    final var x = AppPreferences.getScaled(myRectangle.getXpos(), scale);
-    final var y = AppPreferences.getScaled(myRectangle.getYpos(), scale);
+    final var x = AppPreferences.getScaled(myRectangle.getPositionX(), scale);
+    final var y = AppPreferences.getScaled(myRectangle.getPositionY(), scale);
     final var width = AppPreferences.getScaled(myRectangle.getWidth(), scale);
     final var height = AppPreferences.getScaled(myRectangle.getHeight(), scale);
     var alpha = highlighted && selectable ? 200 : 100;
@@ -1050,8 +1050,8 @@ public class FpgaIoInformationContainer implements Cloneable {
 
   protected void paintSelected(Graphics2D g, float scale) {
     if (!selectable) return;
-    final var x = AppPreferences.getScaled(myRectangle.getXpos(), scale);
-    final var y = AppPreferences.getScaled(myRectangle.getYpos(), scale);
+    final var x = AppPreferences.getScaled(myRectangle.getPositionX(), scale);
+    final var y = AppPreferences.getScaled(myRectangle.getPositionY(), scale);
     final var width = AppPreferences.getScaled(myRectangle.getWidth(), scale);
     final var height = AppPreferences.getScaled(myRectangle.getHeight(), scale);
     var alpha = 150;

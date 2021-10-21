@@ -38,8 +38,8 @@ public class SimpleRectangle {
   public SimpleRectangle(MouseEvent e, FpgaIoInformationContainer IOinfo, float scale) {
     toBeModified = IOinfo;
     BoardRectangle rect = IOinfo.getRectangle();
-    x = AppPreferences.getScaled(rect.getXpos(), scale);
-    y = AppPreferences.getScaled(rect.getYpos(), scale);
+    x = AppPreferences.getScaled(rect.getPositionX(), scale);
+    y = AppPreferences.getScaled(rect.getPositionY(), scale);
     width = AppPreferences.getScaled(rect.getWidth(), scale);
     height = AppPreferences.getScaled(rect.getHeight(), scale);
     int offset = AppPreferences.getScaled(5, scale);

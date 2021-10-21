@@ -219,7 +219,7 @@ public class FpgaReportTabbedPane extends JTabbedPane implements BaseMouseListen
     final var idx = indexOfComponent(panelWarnings);
     if (idx >= 0) {
       setSelectedIndex(idx);
-      setTitleAt(idx, "Warnings (" + warningsList.getCountNr() + ")");
+      setTitleAt(idx, "Warnings (" + warningsList.getCount() + ")");
       panelWarnings.revalidate();
       panelWarnings.repaint();
     }
@@ -230,7 +230,7 @@ public class FpgaReportTabbedPane extends JTabbedPane implements BaseMouseListen
     final var idx = indexOfComponent(panelErrors);
     if (idx >= 0) {
       setSelectedIndex(idx);
-      setTitleAt(idx, "Errors (" + errorsList.getCountNr() + ")");
+      setTitleAt(idx, "Errors (" + errorsList.getCount() + ")");
       panelErrors.revalidate();
       panelErrors.repaint();
     }
@@ -290,10 +290,10 @@ public class FpgaReportTabbedPane extends JTabbedPane implements BaseMouseListen
     }
     warningsList.clear();
     idx = indexOfComponent(panelWarnings);
-    if (idx >= 0) setTitleAt(idx, "Warnings (" + warningsList.getCountNr() + ")");
+    if (idx >= 0) setTitleAt(idx, "Warnings (" + warningsList.getCount() + ")");
     errorsList.clear();
     idx = indexOfComponent(panelErrors);
-    if (idx >= 0) setTitleAt(idx, "Errors (" + errorsList.getCountNr() + ")");
+    if (idx >= 0) setTitleAt(idx, "Errors (" + errorsList.getCount() + ")");
     final var rect = getBounds();
     rect.x = 0;
     rect.y = 0;
@@ -313,7 +313,7 @@ public class FpgaReportTabbedPane extends JTabbedPane implements BaseMouseListen
       if (warningsWindow.isVisible()) {
         warningsWindow.setVisible(false);
         add(panelWarnings, warningsTabIndex);
-        setTitleAt(warningsTabIndex, "Warnings (" + warningsList.getCountNr() + ")");
+        setTitleAt(warningsTabIndex, "Warnings (" + warningsList.getCount() + ")");
         clearDrcTrace();
       }
     }
@@ -321,7 +321,7 @@ public class FpgaReportTabbedPane extends JTabbedPane implements BaseMouseListen
       if (errorsWindow.isVisible()) {
         errorsWindow.setVisible(false);
         add(panelErrors, errorsTabIndex);
-        setTitleAt(errorsTabIndex, "Errors (" + errorsList.getCountNr() + ")");
+        setTitleAt(errorsTabIndex, "Errors (" + errorsList.getCount() + ")");
         clearDrcTrace();
       }
     if (consoleWindow != null)
@@ -433,7 +433,7 @@ public class FpgaReportTabbedPane extends JTabbedPane implements BaseMouseListen
       if (comps.contains(panelConsole)) idx = indexOfComponent(panelConsole);
       if (comps.contains(panelErrors)) idx = indexOfComponent(panelErrors);
       add(panelWarnings, idx);
-      setTitleAt(idx, "Warnings (" + warningsList.getCountNr() + ")");
+      setTitleAt(idx, "Warnings (" + warningsList.getCount() + ")");
       setSelectedIndex(idx);
       clearDrcTrace();
     }
@@ -442,7 +442,7 @@ public class FpgaReportTabbedPane extends JTabbedPane implements BaseMouseListen
       final var comps = new HashSet<>(Arrays.asList(getComponents()));
       if (comps.contains(panelConsole)) idx = indexOfComponent(panelConsole);
       add(panelErrors, idx);
-      setTitleAt(idx, "Errors (" + errorsList.getCountNr() + ")");
+      setTitleAt(idx, "Errors (" + errorsList.getCount() + ")");
       setSelectedIndex(idx);
       clearDrcTrace();
     }

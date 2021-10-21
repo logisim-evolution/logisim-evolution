@@ -361,7 +361,7 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
       repaint(defineRectangle.resizeAndGetUpdate(e));
     } else if (ioComps.hasHighlighted()) {
       /* resize or move the current highlighted component */
-      final var edit = ioComps.getHighligted();
+      final var edit = ioComps.getHighlighted();
       ioComps.removeComponent(edit, scale);
       defineRectangle = new SimpleRectangle(e, edit, scale);
       repaint(defineRectangle.resizeAndGetUpdate(e));
@@ -418,11 +418,11 @@ public class BoardManipulator extends JPanel implements BaseMouseListenerContrac
         /* Edit the current highligted component */
         if (e.getClickCount() > 1) {
           try {
-            final var clone = (FpgaIoInformationContainer) ioComps.getHighligted().clone();
+            final var clone = (FpgaIoInformationContainer) ioComps.getHighlighted().clone();
             clone.edit(true, ioComps);
-            if (clone.isToBeDeleted()) ioComps.removeComponent(ioComps.getHighligted(), scale);
+            if (clone.isToBeDeleted()) ioComps.removeComponent(ioComps.getHighlighted(), scale);
             else if (clone.isKnownComponent())
-              ioComps.replaceComponent(ioComps.getHighligted(), clone, e, scale);
+              ioComps.replaceComponent(ioComps.getHighlighted(), clone, e, scale);
           } catch (CloneNotSupportedException err) {
             OptionPane.showMessageDialog(
                 ioComps.getParentFrame(),

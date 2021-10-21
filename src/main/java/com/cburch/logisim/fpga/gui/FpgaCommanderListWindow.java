@@ -33,7 +33,7 @@ public class FpgaCommanderListWindow extends JFrame implements BaseWindowListene
 
   public FpgaCommanderListWindow(
       String Title, Color fg, boolean count, FpgaCommanderListModel model) {
-    super((count) ? Title + " (" + model.getCountNr() + ")" : Title);
+    super((count) ? Title + " (" + model.getCount() + ")" : Title);
     this.Title = Title;
     setResizable(true);
     setAlwaysOnTop(false);
@@ -82,7 +82,7 @@ public class FpgaCommanderListWindow extends JFrame implements BaseWindowListene
 
   @Override
   public void contentsChanged(ListDataEvent e) {
-    setTitle((count) ? Title + " (" + model.getCountNr() + ")" : Title);
+    setTitle((count) ? Title + " (" + model.getCount() + ")" : Title);
     this.revalidate();
     this.repaint();
   }
