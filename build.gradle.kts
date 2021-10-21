@@ -473,10 +473,17 @@ tasks.register("createDmg") {
 fun genBuildInfo(buildInfoFilePath: String) {
   val now = Date()
   val nowIso = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(now)
-  val branchName = runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--abbrev-ref", "HEAD"),
-      "Failed getting branch name.")
-  val branchLastCommitHash = runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--short=8", "HEAD"),
-      "Failed getting last commit hash.")
+
+  var branchName = "";
+  var branchLastCommitHash = "";
+  var buildId = "(Not built from Git repo)";
+  if (file(".git").exists()) {
+    branchName =
+      runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--abbrev-ref", "HEAD"), "Failed getting branch name.")
+    branchLastCommitHash =
+      runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--short=8", "HEAD"), "Failed getting last commit hash.")
+    buildId = "${branchName}/${branchLastCommitHash}";
+  }
   val currentMillis = Date().time
   val buildYear = SimpleDateFormat("yyyy").format(now)
 
@@ -495,7 +502,7 @@ fun genBuildInfo(buildInfoFilePath: String) {
     "    // Build time VCS details",
     "    public static final String branchName = \"${branchName}\";",
     "    public static final String branchLastCommitHash = \"${branchLastCommitHash}\";",
-    "    public static final String buildId = \"${branchName}/${branchLastCommitHash}\";",
+    "    public static final String buildId = \"${buildId}\";",
     "",
     "    // Project build timestamp",
     "    public static final long millis = ${currentMillis}L;", // keep trailing `L`
