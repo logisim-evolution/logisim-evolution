@@ -40,47 +40,25 @@ public class Text extends InstanceFactory {
    */
   public static final String _ID = "Text";
 
-  public static final Attribute<String> ATTR_TEXT =
-      Attributes.forString("text", S.getter("textTextAttr"));
-  public static final Attribute<Font> ATTR_FONT =
-      Attributes.forFont("font", S.getter("textFontAttr"));
-  public static final Attribute<Color> ATTR_COLOR =
-      Attributes.forColor("color", S.getter("textColorAttr"));
+  public static final Attribute<String> ATTR_TEXT = Attributes.forString("text", S.getter("textTextAttr"));
+  public static final Attribute<Font> ATTR_FONT = Attributes.forFont("font", S.getter("textFontAttr"));
+  public static final Attribute<Color> ATTR_COLOR = Attributes.forColor("color", S.getter("textColorAttr"));
   public static final Attribute<AttributeOption> ATTR_HALIGN =
       Attributes.forOption(
           "halign",
           S.getter("textHorzAlignAttr"),
           new AttributeOption[] {
-            new AttributeOption(
-                TextField.H_LEFT, "left", S.getter("textHorzAlignLeftOpt")),
-            new AttributeOption(
-                TextField.H_RIGHT,
-                "right",
-                S.getter("textHorzAlignRightOpt")),
-            new AttributeOption(
-                TextField.H_CENTER,
-                "center",
-                S.getter("textHorzAlignCenterOpt")),
+            new AttributeOption(TextField.H_LEFT, "left", S.getter("textHorzAlignLeftOpt")),
+            new AttributeOption(TextField.H_RIGHT, "right", S.getter("textHorzAlignRightOpt")),
+            new AttributeOption(TextField.H_CENTER, "center", S.getter("textHorzAlignCenterOpt")),
           });
   public static final Attribute<AttributeOption> ATTR_VALIGN =
-      Attributes.forOption(
-          "valign",
-          S.getter("textVertAlignAttr"),
+      Attributes.forOption("valign", S.getter("textVertAlignAttr"),
           new AttributeOption[] {
-            new AttributeOption(
-                TextField.V_TOP, "top", S.getter("textVertAlignTopOpt")),
-            new AttributeOption(
-                TextField.V_BASELINE,
-                "base",
-                S.getter("textVertAlignBaseOpt")),
-            new AttributeOption(
-                TextField.V_BOTTOM,
-                "bottom",
-                S.getter("textVertAlignBottomOpt")),
-            new AttributeOption(
-                TextField.H_CENTER,
-                "center",
-                S.getter("textVertAlignCenterOpt")),
+            new AttributeOption(TextField.V_TOP, "top", S.getter("textVertAlignTopOpt")),
+            new AttributeOption(TextField.V_BASELINE, "base", S.getter("textVertAlignBaseOpt")),
+            new AttributeOption(TextField.V_BOTTOM, "bottom", S.getter("textVertAlignBottomOpt")),
+            new AttributeOption(TextField.H_CENTER, "center", S.getter("textVertAlignCenterOpt")),
           });
 
   public static final Text FACTORY = new Text();

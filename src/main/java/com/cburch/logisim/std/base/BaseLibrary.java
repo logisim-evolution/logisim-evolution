@@ -23,6 +23,7 @@ import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.tools.WiringTool;
 import java.util.Arrays;
 import java.util.List;
+import lombok.Getter;
 
 public class BaseLibrary extends Library {
   /**
@@ -33,7 +34,7 @@ public class BaseLibrary extends Library {
    */
   public static final String _ID = "Base";
 
-  private final List<Tool> tools;
+  @Getter private final List<Tool> tools;
   private final AddTool textAdder = new AddTool(Text.FACTORY);
   private final SelectTool selectTool = new SelectTool();
 
@@ -69,8 +70,4 @@ public class BaseLibrary extends Library {
     return S.get("baseLibrary");
   }
 
-  @Override
-  public List<Tool> getTools() {
-    return tools;
-  }
 }

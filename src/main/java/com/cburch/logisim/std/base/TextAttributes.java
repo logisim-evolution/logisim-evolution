@@ -14,24 +14,24 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.StdAttr;
-
 import java.awt.Color;
 import java.awt.Font;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
+import lombok.Getter;
 
 public class TextAttributes extends AbstractAttributeSet {
-  private static final List<Attribute<?>> ATTRIBUTES =
+  @Getter private final List<Attribute<?>> attributes =
       Arrays.asList(
           Text.ATTR_TEXT, Text.ATTR_FONT, Text.ATTR_COLOR, Text.ATTR_HALIGN, Text.ATTR_VALIGN);
 
-  private String text;
-  private Font font;
+  @Getter private String text;
+  @Getter private Font font;
   private Color color;
   private AttributeOption halign;
   private AttributeOption valign;
-  private Bounds offsetBounds;
+  @Getter private Bounds offsetBounds;
 
   public TextAttributes() {
     text = "";
@@ -48,27 +48,6 @@ public class TextAttributes extends AbstractAttributeSet {
   }
 
   @Override
-  public List<Attribute<?>> getAttributes() {
-    return ATTRIBUTES;
-  }
-
-  Font getFont() {
-    return font;
-  }
-
-  int getHorizontalAlign() {
-    return (Integer) halign.getValue();
-  }
-
-  Bounds getOffsetBounds() {
-    return offsetBounds;
-  }
-
-  String getText() {
-    return text;
-  }
-
-  @Override
   @SuppressWarnings("unchecked")
   public <V> V getValue(Attribute<V> attr) {
     if (attr == Text.ATTR_TEXT) return (V) text;
@@ -77,19 +56,6 @@ public class TextAttributes extends AbstractAttributeSet {
     if (attr == Text.ATTR_VALIGN) return (V) valign;
     if (attr == Text.ATTR_COLOR) return (V) color;
     return null;
-  }
-
-  int getVerticalAlign() {
-    return (Integer) valign.getValue();
-  }
-
-  boolean setOffsetBounds(Bounds value) {
-    Bounds old = offsetBounds;
-    boolean same = Objects.equals(old, value);
-    if (!same) {
-      offsetBounds = value;
-    }
-    return !same;
   }
 
   @Override
@@ -110,4 +76,22 @@ public class TextAttributes extends AbstractAttributeSet {
     offsetBounds = null;
     fireAttributeValueChanged(attr, value, null);
   }
+
+  int getHorizontalAlign() {
+    return (Integer) halign.getValue();
+  }
+
+  int getVerticalAlign() {
+    return (Integer) valign.getValue();
+  }
+
+  boolean setOffsetBounds(Bounds value) {
+    Bounds old = offsetBounds;
+    boolean same = Objects.equals(old, value);
+    if (!same) {
+      offsetBounds = value;
+    }
+    return !same;
+  }
+
 }
