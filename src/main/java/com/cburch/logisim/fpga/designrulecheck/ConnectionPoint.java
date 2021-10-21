@@ -10,44 +10,26 @@
 package com.cburch.logisim.fpga.designrulecheck;
 
 import com.cburch.logisim.comp.Component;
+import lombok.Getter;
+import lombok.Setter;
 
 public class ConnectionPoint {
 
-  private Net myOwnNet;
-  private Byte myOwnNetBitIndex;
-  private int myChildsPortIndex;
-  private final Component myComp;
+  @Getter private Net parentNet;
+  @Getter private Byte parentNetBitIndex;
+  @Getter @Setter private int childsPortIndex;
+  @Getter private final Component comp;
 
-  public ConnectionPoint(Component comp) {
-    myOwnNet = null;
-    myOwnNetBitIndex = -1;
-    myChildsPortIndex = -1;
-    myComp = comp;
-  }
-
-  public Component getComp() {
-    return myComp;
-  }
-
-  public int getChildsPortIndex() {
-    return myChildsPortIndex;
-  }
-
-  public Net getParentNet() {
-    return myOwnNet;
-  }
-
-  public Byte getParentNetBitIndex() {
-    return myOwnNetBitIndex;
-  }
-
-  public void setChildsPortIndex(int index) {
-    myChildsPortIndex = index;
+  public ConnectionPoint(Component component) {
+    parentNet = null;
+    parentNetBitIndex = -1;
+    childsPortIndex = -1;
+    comp = component;
   }
 
   public void setParentNet(Net connectedNet, Byte bitIndex) {
-    myOwnNet = connectedNet;
-    myOwnNetBitIndex = bitIndex;
+    parentNet = connectedNet;
+    parentNetBitIndex = bitIndex;
   }
 
 }

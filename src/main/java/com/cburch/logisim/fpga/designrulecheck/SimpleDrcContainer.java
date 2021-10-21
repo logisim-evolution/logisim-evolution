@@ -15,6 +15,8 @@ import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.instance.InstanceComponent;
 import java.util.HashSet;
 import java.util.Set;
+import lombok.Getter;
+import lombok.Setter;
 
 public class SimpleDrcContainer {
 
@@ -27,61 +29,61 @@ public class SimpleDrcContainer {
   public static final int MARK_WIRE = 4;
 
   private final String message;
-  private final int severityLevel;
+  @Getter private final int severity;
   private Set<Object> drcComponents;
-  private Circuit myCircuit;
+  @Getter private Circuit circuit;
   private final int markType;
-  private int listNumber;
-  private final boolean suppressCount;
+  @Getter @Setter private int listNumber;
+  @Getter private final boolean suppressionCountEnabled;
 
   public SimpleDrcContainer(String message, int level) {
     this.message = message;
-    this.severityLevel = level;
+    this.severity = level;
     this.markType = MARK_NONE;
     this.listNumber = 0;
-    this.suppressCount = false;
+    this.suppressionCountEnabled = false;
   }
 
-  public SimpleDrcContainer(String message, int level, boolean supressCount) {
+  public SimpleDrcContainer(String message, int level, boolean suppressionCountEnabled) {
     this.message = message;
-    this.severityLevel = level;
+    this.severity = level;
     this.markType = MARK_NONE;
     this.listNumber = 0;
-    this.suppressCount = supressCount;
+    this.suppressionCountEnabled = suppressionCountEnabled;
   }
 
   public SimpleDrcContainer(Object message, int level) {
     this.message = message.toString();
-    this.severityLevel = level;
+    this.severity = level;
     this.markType = MARK_NONE;
     this.listNumber = 0;
-    this.suppressCount = false;
+    this.suppressionCountEnabled = false;
   }
 
-  public SimpleDrcContainer(Object message, int level, boolean supressCount) {
+  public SimpleDrcContainer(Object message, int level, boolean suppressionCountEnabled) {
     this.message = message.toString();
-    this.severityLevel = level;
+    this.severity = level;
     this.markType = MARK_NONE;
     this.listNumber = 0;
-    this.suppressCount = supressCount;
+    this.suppressionCountEnabled = suppressionCountEnabled;
   }
 
   public SimpleDrcContainer(Circuit circ, Object message, int level, int markMask) {
     this.message = message.toString();
-    this.severityLevel = level;
-    this.myCircuit = circ;
+    this.severity = level;
+    this.circuit = circ;
     this.markType = markMask;
     this.listNumber = 0;
-    this.suppressCount = false;
+    this.suppressionCountEnabled = false;
   }
 
-  public SimpleDrcContainer(Circuit circ, Object message, int level, int markMask, boolean supressCount) {
+  public SimpleDrcContainer(Circuit circ, Object message, int level, int markMask, boolean suppressionCountEnabled) {
     this.message = message.toString();
-    this.severityLevel = level;
-    this.myCircuit = circ;
+    this.severity = level;
+    this.circuit = circ;
     this.markType = markMask;
     this.listNumber = 0;
-    this.suppressCount = supressCount;
+    this.suppressionCountEnabled = suppressionCountEnabled;
   }
 
   @Override
@@ -89,21 +91,13 @@ public class SimpleDrcContainer {
     return message;
   }
 
-  public int getSeverity() {
-    return severityLevel;
-  }
-
   public boolean isDrcInfoPresent() {
-    if (drcComponents == null || myCircuit == null) return false;
+    if (drcComponents == null || circuit == null) return false;
     return !drcComponents.isEmpty();
   }
 
-  public Circuit getCircuit() {
-    return myCircuit;
-  }
-
   public boolean hasCircuit() {
-    return (myCircuit != null);
+    return (circuit != null);
   }
 
   public void addMarkComponent(Object comp) {
@@ -114,18 +108,6 @@ public class SimpleDrcContainer {
   public void addMarkComponents(Set<?> set) {
     if (drcComponents == null) drcComponents = new HashSet<>();
     drcComponents.addAll(set);
-  }
-
-  public void setListNumber(int number) {
-    listNumber = number;
-  }
-
-  public boolean getSupressCount() {
-    return suppressCount;
-  }
-
-  public int getListNumber() {
-    return listNumber;
   }
 
   public void markComponents() {
@@ -143,6 +125,7 @@ public class SimpleDrcContainer {
         if ((markType & MARK_INSTANCE) != 0) comp.markInstance();
         if ((markType & MARK_LABEL) != 0) comp.markLabel();
       } else {
+        // FIXME: ???
       }
     }
   }

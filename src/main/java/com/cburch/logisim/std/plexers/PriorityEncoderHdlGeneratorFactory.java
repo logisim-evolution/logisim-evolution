@@ -53,7 +53,7 @@ public class PriorityEncoderHdlGeneratorFactory extends AbstractHdlGeneratorFact
     final var map = new TreeMap<String, String>();
     if (!(mapInfo instanceof netlistComponent)) return map;
     final var comp = (netlistComponent) mapInfo;
-    final var nrOfBits = comp.nrOfEnds() - 4;
+    final var nrOfBits = comp.getNrOfEnds() - 4;
     map.putAll(Hdl.getNetMap("enable", false, comp, nrOfBits + PriorityEncoder.EN_IN, nets));
     final var vectorList = new StringBuilder();
     for (var i = nrOfBits - 1; i >= 0; i--) {

@@ -12,32 +12,36 @@ package com.cburch.logisim.fpga.designrulecheck;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.std.wiring.Clock;
 import java.util.ArrayList;
-import java.util.List;
+import lombok.Getter;
+import lombok.Setter;
 
 public class ClockSourceContainer {
 
-  final ArrayList<Component> sources;
-  boolean requiresFpgaGlobalClock;
+  @Getter final ArrayList<Component> sources;
+  @Getter @Setter boolean fpgaGlobalClockRequired;
 
   public ClockSourceContainer() {
     sources = new ArrayList<>();
-    requiresFpgaGlobalClock = false;
+    fpgaGlobalClockRequired = false;
   }
 
   public void clear() {
     sources.clear();
-    requiresFpgaGlobalClock = false;
+    fpgaGlobalClockRequired = false;
   }
 
   private boolean equals(Component comp1, Component comp2) {
-    if (comp1.getAttributeSet().getValue(Clock.ATTR_PHASE).intValue()
-        != comp2.getAttributeSet().getValue(Clock.ATTR_PHASE).intValue()) return false;
-    if (comp1.getAttributeSet().getValue(Clock.ATTR_HIGH).intValue()
-        != comp2.getAttributeSet().getValue(Clock.ATTR_HIGH).intValue()) {
-      return false;
-    }
-    return comp1.getAttributeSet().getValue(Clock.ATTR_LOW).intValue()
-        == comp2.getAttributeSet().getValue(Clock.ATTR_LOW).intValue();
+    final var phase1 = comp1.getAttributeSet().getValue(Clock.ATTR_PHASE).intValue();
+    final var phase2 = comp2.getAttributeSet().getValue(Clock.ATTR_PHASE).intValue();
+    if (phase1 != phase2) return false;
+
+    final var high1 = comp1.getAttributeSet().getValue(Clock.ATTR_HIGH).intValue();
+    final var high2 = comp2.getAttributeSet().getValue(Clock.ATTR_HIGH).intValue();
+    if (high1 != high2) return false;
+
+    final var low1 = comp1.getAttributeSet().getValue(Clock.ATTR_LOW).intValue();
+    final var low2 = comp2.getAttributeSet().getValue(Clock.ATTR_LOW).intValue();
+    return low1 == low2;
   }
 
   public int getClockId(Component comp) {
@@ -53,19 +57,8 @@ public class ClockSourceContainer {
     return sources.indexOf(comp);
   }
 
-  public int getNrofSources() {
+  public int getNrOfSources() {
     return sources.size();
   }
 
-  public List<Component> getSources() {
-    return sources;
-  }
-
-  public boolean getRequiresFpgaGlobalClock() {
-    return requiresFpgaGlobalClock;
-  }
-
-  public void setRequiresFpgaGlobalClock() {
-    requiresFpgaGlobalClock = true;
-  }
 }

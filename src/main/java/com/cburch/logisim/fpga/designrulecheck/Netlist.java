@@ -397,7 +397,7 @@ public class Netlist {
     /* Check for unconnected input pins on components and generate warnings */
     for (final var comp : myComponents) {
       var openInputs = false;
-      for (var j = 0; j < comp.nrOfEnds(); j++) {
+      for (var j = 0; j < comp.getNrOfEnds(); j++) {
         if (comp.isEndInput(j) && !comp.isEndConnected(j)) openInputs = true;
       }
       if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
@@ -414,7 +414,7 @@ public class Netlist {
     /* Check for unconnected input pins on subcircuits and generate warnings */
     for (final var comp : mySubCircuits) {
       var openInputs = false;
-      for (var j = 0; j < comp.nrOfEnds(); j++) {
+      for (var j = 0; j < comp.getNrOfEnds(); j++) {
         if (comp.isEndInput(j) && !comp.isEndConnected(j)) openInputs = true;
       }
       if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
@@ -431,7 +431,7 @@ public class Netlist {
     /* Check for unconnected input pins in my circuit and generate warnings */
     for (final var comp : myInputPorts) {
       var openInputs = false;
-      for (var j = 0; j < comp.nrOfEnds(); j++) {
+      for (var j = 0; j < comp.getNrOfEnds(); j++) {
         if (!comp.isEndConnected(j)) openInputs = true;
       }
       if (openInputs && !AppPreferences.SupressOpenPinWarnings.get()) {
@@ -448,7 +448,7 @@ public class Netlist {
     /* Check for unconnected output pins in my circuit and generate warnings */
     for (final var comp : myOutputPorts) {
       var openOutputs = false;
-      for (var j = 0; j < comp.nrOfEnds(); j++) {
+      for (var j = 0; j < comp.getNrOfEnds(); j++) {
         if (!comp.isEndConnected(j)) openOutputs = true;
       }
       if (openOutputs && !AppPreferences.SupressOpenPinWarnings.get()) {
@@ -1125,7 +1125,7 @@ public class Netlist {
   public int getEndIndex(netlistComponent comp, String pinLabel, boolean isOutputPort) {
     final var label = CorrectLabel.getCorrectLabel(pinLabel);
     final var subFactory = (SubcircuitFactory) comp.getComponent().getFactory();
-    for (var end = 0; end < comp.nrOfEnds(); end++) {
+    for (var end = 0; end < comp.getNrOfEnds(); end++) {
       if ((comp.getEnd(end).isOutputEnd() == isOutputPort)
           && (comp.getEnd(end).get((byte) 0).getChildsPortIndex() == subFactory.getSubcircuit().getNetList().getPortInfo(label))) {
         return end;
@@ -1281,7 +1281,7 @@ public class Netlist {
       final var circuitLabel = CorrectLabel.getCorrectLabel(search.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
       if (circuitLabel.equals(label)) {
         // Found the component, let's search the ends
-        for (var i = 0; i < search.nrOfEnds(); i++) {
+        for (var i = 0; i < search.getNrOfEnds(); i++) {
           final var thisEnd = search.getEnd(i);
           if (thisEnd.isOutputEnd() && (bitindex < thisEnd.getNrOfBits())) {
             if (thisEnd.get(bitindex).getChildsPortIndex() == PortIndex)
@@ -1298,7 +1298,7 @@ public class Netlist {
       final var circuitLabel = CorrectLabel.getCorrectLabel(search.getComponent().getAttributeSet().getValue(StdAttr.LABEL));
       if (circuitLabel.equals(label)) {
         // Found the component, let's search the ends.
-        for (var i = 0; i < search.nrOfEnds(); i++) {
+        for (var i = 0; i < search.getNrOfEnds(); i++) {
           final var thisEnd = search.getEnd(i);
           if (!thisEnd.isOutputEnd() && (bitIndex < thisEnd.getNrOfBits())) {
             if (thisEnd.get(bitIndex).getChildsPortIndex() == portIndex)
@@ -1512,7 +1512,7 @@ public class Netlist {
   // FIXME: This method name is very unfortunate.
   public boolean isContinuesBus(netlistComponent comp, int endIndex) {
     var continuesBus = true;
-    if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) return true;
+    if ((endIndex < 0) || (endIndex >= comp.getNrOfEnds())) return true;
 
     final var connInfo = comp.getEnd(endIndex);
     final var nrOfBits = connInfo.getNrOfBits();
@@ -1557,11 +1557,11 @@ public class Netlist {
     }
     // We see if some components require the Global fast FPGA clock
     for (final var comp : myCircuit.getNonWires()) {
-      if (comp.getFactory().requiresGlobalClock()) clockSources.setRequiresFpgaGlobalClock();
+      if (comp.getFactory().requiresGlobalClock()) clockSources.setFpgaGlobalClockRequired(true);
     }
     /* Second pass: We mark all clock sources */
     for (final var clockSource : myClockGenerators) {
-      if (clockSource.nrOfEnds() != 1) {
+      if (clockSource.getNrOfEnds() != 1) {
         Reporter.report.addFatalErrorFmt(
             "BUG: Found a clock source with more than 1 connection\n ==> %s:%d\n",
             this.getClass().getName().replace(".", "/"),
@@ -1703,7 +1703,7 @@ public class Netlist {
   }
 
   public int numberOfClockTrees() {
-    return myClockInformation.getSourceContainer().getNrofSources();
+    return myClockInformation.getSourceContainer().getNrOfSources();
   }
 
   public int numberOfInOutBubbles() {
@@ -1866,7 +1866,7 @@ public class Netlist {
   }
 
   public boolean requiresGlobalClockConnection() {
-    return myClockInformation.getSourceContainer().getRequiresFpgaGlobalClock();
+    return myClockInformation.getSourceContainer().isFpgaGlobalClockRequired();
   }
 
   public void setCurrentHierarchyLevel(List<String> level) {
@@ -2031,7 +2031,7 @@ public class Netlist {
         }
         instances = gatedSet.get(key);
         for (final var comp : instances.keySet()) {
-          comp.setIsGatedInstance();
+          comp.setGatedInstance(true);
           final var warn =
               new SimpleDrcContainer(
                       instances.get(comp),

@@ -179,7 +179,7 @@ public abstract class Hdl {
 
   public static String getNetName(netlistComponent comp, int endIndex, boolean floatingNetTiedToGround, Netlist myNetlist) {
     var netName = "";
-    if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
+    if ((endIndex >= 0) && (endIndex < comp.getNrOfEnds())) {
       final var floatingValue = floatingNetTiedToGround ? zeroBit() : oneBit();
       final var thisEnd = comp.getEnd(endIndex);
       final var isOutput = thisEnd.isOutputEnd();
@@ -204,7 +204,7 @@ public abstract class Hdl {
 
   public static String getBusEntryName(netlistComponent comp, int endIndex, boolean floatingNetTiedToGround, int bitindex, Netlist theNets) {
     var busName = "";
-    if ((endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
+    if ((endIndex >= 0) && (endIndex < comp.getNrOfEnds())) {
       final var thisEnd = comp.getEnd(endIndex);
       final var isOutput = thisEnd.isOutputEnd();
       final var nrOfBits = thisEnd.getNrOfBits();
@@ -228,7 +228,7 @@ public abstract class Hdl {
   }
 
   public static String getBusNameContinues(netlistComponent comp, int endIndex, Netlist theNets) {
-    if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) return null;
+    if ((endIndex < 0) || (endIndex >= comp.getNrOfEnds())) return null;
     final var connectionInformation = comp.getEnd(endIndex);
     final var nrOfBits = connectionInformation.getNrOfBits();
     if (nrOfBits == 1) return getNetName(comp, endIndex, true, theNets);
@@ -243,7 +243,7 @@ public abstract class Hdl {
   }
 
   public static String getBusName(netlistComponent comp, int endIndex, Netlist theNets) {
-    if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) return null;
+    if ((endIndex < 0) || (endIndex >= comp.getNrOfEnds())) return null;
     final var connectionInformation = comp.getEnd(endIndex);
     final var nrOfBits = connectionInformation.getNrOfBits();
     if (nrOfBits == 1)  return getNetName(comp, endIndex, true, theNets);
@@ -255,7 +255,7 @@ public abstract class Hdl {
 
   public static String getClockNetName(netlistComponent comp, int endIndex, Netlist theNets) {
     var contents = new StringBuilder();
-    if ((theNets.getCurrentHierarchyLevel() != null) && (endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
+    if ((theNets.getCurrentHierarchyLevel() != null) && (endIndex >= 0) && (endIndex < comp.getNrOfEnds())) {
       final var endData = comp.getEnd(endIndex);
       if (endData.getNrOfBits() == 1) {
         final var connectedNet = endData.get((byte) 0).getParentNet();
@@ -297,7 +297,7 @@ public abstract class Hdl {
   public static Map<String, String> getNetMap(String sourceName, boolean floatingPinTiedToGround,
       netlistComponent comp, int endIndex, Netlist theNets) {
     final var netMap = new HashMap<String, String>();
-    if ((endIndex < 0) || (endIndex >= comp.nrOfEnds())) {
+    if ((endIndex < 0) || (endIndex >= comp.getNrOfEnds())) {
       Reporter.report.addFatalError("INTERNAL ERROR: Component tried to index non-existing SolderPoint");
       return netMap;
     }

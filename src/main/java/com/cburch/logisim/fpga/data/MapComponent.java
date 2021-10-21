@@ -89,7 +89,7 @@ public class MapComponent {
       maps.add(null);
       opens.add(false);
       constants.add(-1);
-      var idx = BubbleInfo == null ? -1 : BubbleInfo.getInputStartIndex() + i;
+      var idx = BubbleInfo == null ? -1 : BubbleInfo.getInBubblesStartIndex() + i;
       pinLabels.add(mapInfo.getInPortLabel(i));
       myInputBubbles.put(nrOfPins++, idx);
     }
@@ -97,7 +97,7 @@ public class MapComponent {
       maps.add(null);
       opens.add(false);
       constants.add(-1);
-      var idx = BubbleInfo == null ? -1 : BubbleInfo.getOutputStartIndex() + i;
+      var idx = BubbleInfo == null ? -1 : BubbleInfo.getOutBubblesStartIndex() + i;
       pinLabels.add(mapInfo.getOutPortLabel(i));
       myOutputBubbles.put(nrOfPins++, idx);
     }
@@ -105,7 +105,7 @@ public class MapComponent {
       maps.add(null);
       opens.add(false);
       constants.add(-1);
-      var idx = BubbleInfo == null ? -1 : BubbleInfo.getInOutStartIndex() + i;
+      var idx = BubbleInfo == null ? -1 : BubbleInfo.getInOutBubblesStartIndex() + i;
       pinLabels.add(mapInfo.getInOutportLabel(i));
       myIoBubbles.put(nrOfPins++, idx);
     }

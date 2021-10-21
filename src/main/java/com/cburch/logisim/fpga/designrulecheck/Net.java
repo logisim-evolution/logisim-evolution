@@ -15,14 +15,18 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import lombok.Getter;
 
 public class Net {
-  private final Set<Location> myPoints = new HashSet<>();
-  private final Set<String> tunnelNames = new HashSet<>();
-  private final Set<Wire> segments = new HashSet<>();
-  private int nrOfBits;
-  private Net myParent;
-  private Boolean requiresToBeRoot;
+  @Getter private final Set<Location> points = new HashSet<>();
+  @Getter private final Set<String> tunnelNames = new HashSet<>();
+  @Getter private final Set<Wire> wires = new HashSet<>();
+  @Getter private int bitWidth;
+  @Getter private Net parent;
+  /**
+   * Tells if it is required to be root
+   */
+  @Getter private boolean forcedRootNet;
   private final ArrayList<Byte> inheritedBits = new ArrayList<>();
   private final ArrayList<ConnectionPointArray> sourceList = new ArrayList<>();
   private final ArrayList<ConnectionPointArray> sinkList = new ArrayList<>();
@@ -35,23 +39,19 @@ public class Net {
 
   public Net(Location loc) {
     cleanup();
-    myPoints.add(loc);
+    points.add(loc);
   }
 
   public Net(Location loc, int width) {
     cleanup();
-    myPoints.add(loc);
-    nrOfBits = width;
+    points.add(loc);
+    bitWidth = width;
   }
 
   public void add(Wire segment) {
-    myPoints.add(segment.getEnd0());
-    myPoints.add(segment.getEnd1());
-    segments.add(segment);
-  }
-
-  public Set<Wire> getWires() {
-    return segments;
+    points.add(segment.getEnd0());
+    points.add(segment.getEnd1());
+    wires.add(segment);
   }
 
   public boolean addParentBit(byte bitId) {
@@ -88,17 +88,13 @@ public class Net {
     tunnelNames.add(tunnelName);
   }
 
-  public int getBitWidth() {
-    return nrOfBits;
-  }
-
   private void cleanup() {
-    myPoints.clear();
-    segments.clear();
+    points.clear();
+    wires.clear();
     tunnelNames.clear();
-    nrOfBits = 0;
-    myParent = null;
-    requiresToBeRoot = false;
+    bitWidth = 0;
+    parent = null;
+    forcedRootNet = false;
     inheritedBits.clear();
     sourceList.clear();
     sinkList.clear();
@@ -107,7 +103,7 @@ public class Net {
   }
 
   public boolean contains(Location point) {
-    return myPoints.contains(point);
+    return points.contains(point);
   }
 
   public boolean containsTunnel(String tunnelName) {
@@ -115,22 +111,14 @@ public class Net {
   }
 
   public void forceRootNet() {
-    myParent = null;
-    requiresToBeRoot = true;
+    parent = null;
+    forcedRootNet = true;
     inheritedBits.clear();
   }
 
   public byte getBit(byte bit) {
     if ((bit < 0) || (bit >= inheritedBits.size()) || isRootNet()) return -1;
     return inheritedBits.get(bit);
-  }
-
-  public Net getParent() {
-    return myParent;
-  }
-
-  public Set<Location> getPoints() {
-    return this.myPoints;
   }
 
   public List<ConnectionPoint> getSinkNets(int bitIndex) {
@@ -174,13 +162,13 @@ public class Net {
 
   public boolean hasShortCircuit() {
     var ret = false;
-    for (var i = 0; i < nrOfBits; i++) ret |= sourceList.get(i).size() > 1;
+    for (var i = 0; i < bitWidth; i++) ret |= sourceList.get(i).size() > 1;
     return ret;
   }
 
   public boolean hasSinks() {
     var ret = false;
-    for (var i = 0; i < nrOfBits; i++) {
+    for (var i = 0; i < bitWidth; i++) {
       ret |= sinkList.get(i).size() > 0;
     }
     return ret;
@@ -188,13 +176,13 @@ public class Net {
 
   public Set<ConnectionPoint> getSinks() {
     final var sinks = new HashSet<ConnectionPoint>();
-    for (var i = 0; i < nrOfBits; i++) sinks.addAll(sinkList.get(i).getAll());
+    for (var i = 0; i < bitWidth; i++) sinks.addAll(sinkList.get(i).getAll());
     return sinks;
   }
 
   public boolean hasSource() {
     var ret = false;
-    for (var i = 0; i < nrOfBits; i++) {
+    for (var i = 0; i < bitWidth; i++) {
       ret |= sourceList.get(i).size() > 0;
     }
     return ret;
@@ -209,7 +197,7 @@ public class Net {
     sinkList.clear();
     sourceNetsList.clear();
     sinkNetsList.clear();
-    for (var i = 0; i < nrOfBits; i++) {
+    for (var i = 0; i < bitWidth; i++) {
       sourceList.add(new ConnectionPointArray());
       sinkList.add(new ConnectionPointArray());
       sourceNetsList.add(new ConnectionPointArray());
@@ -218,25 +206,21 @@ public class Net {
   }
 
   public boolean isBus() {
-    return nrOfBits > 1;
+    return bitWidth > 1;
   }
 
   public boolean isEmpty() {
-    return myPoints.isEmpty();
-  }
-
-  public boolean isForcedRootNet() {
-    return requiresToBeRoot;
+    return points.isEmpty();
   }
 
   public boolean isRootNet() {
-    return (myParent == null) || requiresToBeRoot;
+    return (parent == null) || forcedRootNet;
   }
 
   public boolean merge(Net theNet) {
-    if (theNet.getBitWidth() == nrOfBits) {
-      myPoints.addAll(theNet.getPoints());
-      segments.addAll(theNet.getWires());
+    if (theNet.getBitWidth() == bitWidth) {
+      points.addAll(theNet.getPoints());
+      wires.addAll(theNet.getWires());
       tunnelNames.addAll(theNet.getTunnelNames());
       return true;
     }
@@ -244,20 +228,17 @@ public class Net {
   }
 
   public boolean setWidth(int width) {
-    if ((nrOfBits > 0) && (width != nrOfBits)) return false;
-    nrOfBits = width;
+    if ((bitWidth > 0) && (width != bitWidth)) return false;
+    bitWidth = width;
     return true;
   }
 
   public boolean setParent(Net parent) {
-    if (requiresToBeRoot) return false;
+    if (forcedRootNet) return false;
     if (parent == null) return false;
-    if (myParent != null) return false;
-    myParent = parent;
+    if (this.parent != null) return false;
+    this.parent = parent;
     return true;
   }
 
-  public Set<String> getTunnelNames() {
-    return this.tunnelNames;
-  }
 }

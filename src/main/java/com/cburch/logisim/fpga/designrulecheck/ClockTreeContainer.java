@@ -11,6 +11,7 @@ package com.cburch.logisim.fpga.designrulecheck;
 
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 
 public class ClockTreeContainer {
 
@@ -18,7 +19,7 @@ public class ClockTreeContainer {
   private final ArrayList<ConnectionPoint> clockNets;
   private final int clockSourceId;
   private final ArrayList<String> hierarchyId;
-  private boolean isPinClockSource;
+  @Getter private boolean isPinClockSource;
 
   public ClockTreeContainer(List<String> hierarchy, int sourceId, boolean pinClockSource) {
     clockSources = new ArrayList<>();
@@ -44,10 +45,6 @@ public class ClockTreeContainer {
 
   public void setPinClock() {
     isPinClockSource = true;
-  }
-
-  public boolean isPinClockSource() {
-    return isPinClockSource;
   }
 
   public boolean equals(List<String> hierarchy, int sourceId) {

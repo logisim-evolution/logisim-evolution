@@ -11,15 +11,16 @@ package com.cburch.logisim.fpga.designrulecheck;
 
 import com.cburch.logisim.comp.Component;
 import java.util.ArrayList;
+import lombok.Getter;
 
 public class ConnectionEnd {
 
-  private final boolean isOutput;
-  private final Byte nrOfBits;
+  @Getter private final boolean isOutputEnd;
+  @Getter private final Byte nrOfBits;
   private final ArrayList<ConnectionPoint> myConnections;
 
   public ConnectionEnd(boolean isOutputEnd, Byte nrOfBits, Component comp) {
-    this.isOutput = isOutputEnd;
+    this.isOutputEnd = isOutputEnd;
     this.nrOfBits = nrOfBits;
     this.myConnections = new ArrayList<>();
     for (byte i = 0; i < nrOfBits; i++) {
@@ -30,14 +31,6 @@ public class ConnectionEnd {
   public ConnectionPoint get(Byte bitIndex) {
     if ((bitIndex < 0) || (bitIndex >= nrOfBits)) return null;
     return myConnections.get(bitIndex);
-  }
-
-  public boolean isOutputEnd() {
-    return isOutput;
-  }
-
-  public int getNrOfBits() {
-    return nrOfBits;
   }
 
   public boolean setChildPortIndex(Net connectedNet, Byte bitIndex, int portIndex) {

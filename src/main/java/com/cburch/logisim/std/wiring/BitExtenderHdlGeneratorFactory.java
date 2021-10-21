@@ -21,7 +21,7 @@ public class BitExtenderHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
   @Override
   public LineBuffer getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
     final var contents = LineBuffer.getBuffer();
-    int nrOfPins = componentInfo.nrOfEnds();
+    int nrOfPins = componentInfo.getNrOfEnds();
     for (int i = 1; i < nrOfPins; i++) {
       if (!componentInfo.isEndConnected(i)) {
         // FIXME: hardcoded string

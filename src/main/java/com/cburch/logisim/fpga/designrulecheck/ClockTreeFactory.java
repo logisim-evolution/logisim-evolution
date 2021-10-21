@@ -12,10 +12,11 @@ package com.cburch.logisim.fpga.designrulecheck;
 import com.cburch.logisim.comp.Component;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Setter;
 
 public class ClockTreeFactory {
 
-  private ClockSourceContainer sources;
+  @Setter private ClockSourceContainer sourceContainer;
   private final ArrayList<ClockTreeContainer> sourceTrees;
 
   public ClockTreeFactory() {
@@ -53,11 +54,11 @@ public class ClockTreeFactory {
   public void clean() {
     for (final var tree : sourceTrees) tree.clear();
     sourceTrees.clear();
-    if (sources != null) sources.clear();
+    if (sourceContainer != null) sourceContainer.clear();
   }
 
   public int getClockSourceId(List<String> hierarchy, Net selectedNet, byte selectedNetBitIndex) {
-    for (var i = 0; i < sources.getNrofSources(); i++) {
+    for (var i = 0; i < sourceContainer.getNrOfSources(); i++) {
       for (final var ThisClockNet : sourceTrees) {
         if (ThisClockNet.equals(hierarchy, i)) {
           /*
@@ -74,16 +75,13 @@ public class ClockTreeFactory {
   }
 
   public int getClockSourceId(Component comp) {
-    if (sources == null) return -1;
-    return sources.getClockId(comp);
+    if (sourceContainer == null) return -1;
+    return sourceContainer.getClockId(comp);
   }
 
   public ClockSourceContainer getSourceContainer() {
-    if (sources == null) sources = new ClockSourceContainer();
-    return sources;
+    if (sourceContainer == null) sourceContainer = new ClockSourceContainer();
+    return sourceContainer;
   }
 
-  public void setSourceContainer(ClockSourceContainer source) {
-    sources = source;
-  }
 }

@@ -17,19 +17,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import lombok.Getter;
+import lombok.Setter;
 
 public class netlistComponent {
 
-  private final int nrOfEnds;
+  @Getter private final int nrOfEnds;
   private final Component compReference;
   private final ArrayList<ConnectionEnd> endEnds;
   final ComponentMapInformationContainer myMapInformation;
   private Map<List<String>, BubbleInformationContainer> globalIds;
   private BubbleInformationContainer localId;
-  private boolean isGatedInstance;
+  @Getter @Setter private boolean gatedInstance;
 
   public netlistComponent(Component ref) {
-    isGatedInstance = false;
+    gatedInstance = false;
     nrOfEnds = ref.getEnds().size();
     compReference = ref;
     endEnds = new ArrayList<>();
@@ -149,27 +151,27 @@ public class netlistComponent {
   }
 
   public int getLocalBubbleInOutEndId() {
-    return (localId == null) ? 0 : localId.getInOutEndIndex();
+    return (localId == null) ? 0 : localId.getInOutBubblesEndIndex();
   }
 
   public int getLocalBubbleInOutStartId() {
-    return (localId == null) ? 0 : localId.getInOutStartIndex();
+    return (localId == null) ? 0 : localId.getInOutBubblesStartIndex();
   }
 
   public int getLocalBubbleInputEndId() {
-    return (localId == null) ? 0 : localId.getInputEndIndex();
+    return (localId == null) ? 0 : localId.getInBubblesEndIndex();
   }
 
   public int getLocalBubbleInputStartId() {
-    return (localId == null) ? 0 : localId.getInputStartIndex();
+    return (localId == null) ? 0 : localId.getInBubblesStartIndex();
   }
 
   public int getLocalBubbleOutputEndId() {
-    return (localId == null) ? 0 : localId.getOutputEndIndex();
+    return (localId == null) ? 0 : localId.getOutBubblesEndIndex();
   }
 
   public int getLocalBubbleOutputStartId() {
-    return (localId == null) ? 0 : localId.getOutputStartIndex();
+    return (localId == null) ? 0 : localId.getOutBubblesStartIndex();
   }
 
   public boolean hasConnection(Net rootNet, byte bitIndex) {
@@ -182,10 +184,6 @@ public class netlistComponent {
       }
     }
     return false;
-  }
-
-  public int nrOfEnds() {
-    return nrOfEnds;
   }
 
   public boolean setEnd(int index, ConnectionEnd End) {
@@ -215,13 +213,5 @@ public class netlistComponent {
     if (nrOfOutputBubbles > 0) {
       localId.setOutputBubblesInformation(outputBubblesStartId, outputBubblesStartId + nrOfOutputBubbles - 1);
     }
-  }
-
-  public boolean isGatedInstance() {
-    return isGatedInstance;
-  }
-
-  public void setIsGatedInstance() {
-    isGatedInstance = true;
   }
 }

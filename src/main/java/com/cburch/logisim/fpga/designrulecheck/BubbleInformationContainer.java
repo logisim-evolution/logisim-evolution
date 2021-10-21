@@ -9,77 +9,55 @@
 
 package com.cburch.logisim.fpga.designrulecheck;
 
+import lombok.Getter;
+
 public class BubbleInformationContainer {
-  private int myInBubblesStartIndex;
-  private int myInBubblesEndIndex;
-  private int myInOutBubblesStartIndex;
-  private int myInOutBubblesEndIndex;
-  private int myOutBubblesStartIndex;
-  private int myOutBubblesEndIndex;
-
-  public int getInOutEndIndex() {
-    return myInOutBubblesEndIndex;
-  }
-
-  public int getInOutStartIndex() {
-    return myInOutBubblesStartIndex;
-  }
-
-  public int getInputEndIndex() {
-    return myInBubblesEndIndex;
-  }
-
-  public int getInputStartIndex() {
-    return myInBubblesStartIndex;
-  }
-
-  public int getOutputEndIndex() {
-    return myOutBubblesEndIndex;
-  }
-
-  public int getOutputStartIndex() {
-    return myOutBubblesStartIndex;
-  }
+  @Getter private int inBubblesStartIndex;
+  @Getter private int inBubblesEndIndex;
+  @Getter private int inOutBubblesStartIndex;
+  @Getter private int inOutBubblesEndIndex;
+  @Getter private int outBubblesStartIndex;
+  @Getter private int outBubblesEndIndex;
 
   public boolean hasInOutBubbles() {
-    return ((myInOutBubblesStartIndex >= 0) && (myInOutBubblesEndIndex >= 0));
+    return ((inOutBubblesStartIndex >= 0) && (inOutBubblesEndIndex >= 0));
   }
 
   public boolean hasInputBubbles() {
-    return ((myInBubblesStartIndex >= 0) && (myInBubblesEndIndex >= 0));
+    return ((inBubblesStartIndex >= 0) && (inBubblesEndIndex >= 0));
   }
 
   public boolean hasOutputBubbles() {
-    return ((myOutBubblesStartIndex >= 0) && (myOutBubblesEndIndex >= 0));
+    return ((outBubblesStartIndex >= 0) && (outBubblesEndIndex >= 0));
   }
 
   public int nrOfInOutBubbles() {
-    if ((myInOutBubblesStartIndex < 0) || (myInOutBubblesEndIndex < 0)) return 0;
-    return (myInOutBubblesEndIndex - myInOutBubblesStartIndex) + 1;
+    if ((inOutBubblesStartIndex < 0) || (inOutBubblesEndIndex < 0)) return 0;
+    return (inOutBubblesEndIndex - inOutBubblesStartIndex) + 1;
   }
 
   public int nrOfInputBubbles() {
-    if ((myInBubblesStartIndex < 0) || (myInBubblesEndIndex < 0)) return 0;
-    return (myInBubblesEndIndex - myInBubblesStartIndex) + 1;
+    if ((inBubblesStartIndex < 0) || (inBubblesEndIndex < 0)) return 0;
+    return (inBubblesEndIndex - inBubblesStartIndex) + 1;
   }
 
   public int nrOfOutputBubbles() {
-    if ((myOutBubblesStartIndex < 0) || (myOutBubblesEndIndex < 0)) return 0;
-    return (myOutBubblesEndIndex - myOutBubblesStartIndex) + 1;
+    if ((outBubblesStartIndex < 0) || (outBubblesEndIndex < 0)) return 0;
+    return (outBubblesEndIndex - outBubblesStartIndex) + 1;
   }
 
   public void setInOutBubblesInformation(int startIndex, int endIndex) {
-    myInOutBubblesStartIndex = startIndex;
-    myInOutBubblesEndIndex = endIndex;
+    inOutBubblesStartIndex = startIndex;
+    inOutBubblesEndIndex = endIndex;
   }
 
   public void setInputBubblesInformation(int startIndex, int endIndex) {
-    myInBubblesStartIndex = startIndex;
-    myInBubblesEndIndex = endIndex;
+    inBubblesStartIndex = startIndex;
+    inBubblesEndIndex = endIndex;
   }
 
   public void setOutputBubblesInformation(int startIndex, int endIndex) {
-    myOutBubblesStartIndex = startIndex;
-    myOutBubblesEndIndex = endIndex;
+    outBubblesStartIndex = startIndex;
+    outBubblesEndIndex = endIndex;
   }
 }
