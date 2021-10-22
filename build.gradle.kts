@@ -477,11 +477,12 @@ fun genBuildInfo(buildInfoFilePath: String) {
   var branchName = "";
   var branchLastCommitHash = "";
   var buildId = "(Not built from Git repo)";
-  if (file(".git").exists()) {
-    branchName =
-      runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--abbrev-ref", "HEAD"), "Failed getting branch name.")
-    branchLastCommitHash =
-      runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--short=8", "HEAD"), "Failed getting last commit hash.")
+  if (file("${projectDir}/.git").exists()) {
+    var errMsg = "Failed getting branch name."
+    branchName = runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--abbrev-ref", "HEAD"), errMsg)
+
+    errMsg = "Failed getting last commit hash."
+    branchLastCommitHash = runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--short=8", "HEAD"), errMsg)
     buildId = "${branchName}/${branchLastCommitHash}";
   }
   val currentMillis = Date().time
