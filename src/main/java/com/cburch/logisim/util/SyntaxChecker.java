@@ -30,31 +30,28 @@ public final class SyntaxChecker {
   }
 
   public static String getErrorMessage(String val) {
-    if (val.length() == 0) return null;
-    if (val.length() > 0) {
-      variableMatcher = variablePattern.matcher(val);
-      forbiddenMatcher = forbiddenPattern.matcher(val);
-      final var hdl = CorrectLabel.hdlCorrectLabel(val);
-      var message = "";
-      if (!variableMatcher.matches()) {
-        message = message.concat(S.get("variableInvalidCharacters"));
-      }
-      if (forbiddenMatcher.find()) {
-        message = message.concat(S.get("variableDoubleUnderscore"));
-      }
-      if (hdl != null) {
-        message =
-            message.concat(
-                hdl.equals(HdlGeneratorFactory.VHDL)
-                    ? S.get("variableVHDLKeyword")
-                    : S.get("variableVerilogKeyword"));
-      }
-      if (val.endsWith("_")) {
-        message = message.concat(S.get("variableEndsWithUndescore"));
-      }
-      return (message.length() == 0) ? null : message;
+    if (StringUtil.isNullOrEmpty(val)) return null;
+    variableMatcher = variablePattern.matcher(val);
+    forbiddenMatcher = forbiddenPattern.matcher(val);
+    final var hdl = CorrectLabel.hdlCorrectLabel(val);
+    var message = "";
+    if (!variableMatcher.matches()) {
+      message = message.concat(S.get("variableInvalidCharacters"));
     }
-    return null;
+    if (forbiddenMatcher.find()) {
+      message = message.concat(S.get("variableDoubleUnderscore"));
+    }
+    if (hdl != null) {
+      message =
+          message.concat(
+              hdl.equals(HdlGeneratorFactory.VHDL)
+                  ? S.get("variableVHDLKeyword")
+                  : S.get("variableVerilogKeyword"));
+    }
+    if (val.endsWith("_")) {
+      message = message.concat(S.get("variableEndsWithUndescore"));
+    }
+    return (message.length() == 0) ? null : message;
   }
 
   public static boolean isVariableNameAcceptable(String val, Boolean showDialog) {

@@ -29,13 +29,13 @@ public class Dag {
 
   private final HashMap<Object, Node> nodes = new HashMap<>();
 
-  public Dag() {}
-
   public boolean addEdge(Object srcData, Object dstData) {
     if (!canFollow(dstData, srcData)) return false;
 
     final var src = createNode(srcData);
+    if (src == null) return false;
     final var dst = createNode(dstData);
+    if (dst == null) return false;
     if (src.succs.add(dst)) {
       // add since not already present
       ++dst.numPreds;
@@ -70,13 +70,12 @@ public class Dag {
   }
 
   public boolean canFollow(Object query, Object base) {
+    if (base == null || query == null) return false;
     final var queryNode = findNode(query);
     final var baseNode = findNode(base);
-    if (baseNode == null || queryNode == null) {
-      return !base.equals(query);
-    } else {
-      return canFollow(queryNode, baseNode);
-    }
+    return (baseNode == null || queryNode == null)
+        ? !query.equals(base)
+        : canFollow(queryNode, baseNode);
   }
 
   private Node createNode(Object data) {

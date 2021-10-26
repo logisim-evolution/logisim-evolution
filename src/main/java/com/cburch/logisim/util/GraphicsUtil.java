@@ -233,9 +233,9 @@ public final class GraphicsUtil {
     return ret;
   }
 
-  public static void switchToWidth(Graphics g, int width) {
-    if (g instanceof Graphics2D g2d) {
-      g2d.setStroke(new BasicStroke((float) width));
+  public static void switchToWidth(Graphics gfx, int width) {
+    if (gfx instanceof Graphics2D g2d) {
+      g2d.setStroke(new BasicStroke(width));
     }
   }
 
