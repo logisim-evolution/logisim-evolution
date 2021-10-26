@@ -495,6 +495,16 @@ public class AppPreferences {
                 TOOLBAR_HIDDEN
               },
               Direction.NORTH.toString()));
+
+  public static final PrefMonitor<String> CANVAS_PLACEMENT =
+      create(
+          new PrefMonitorStringOpts(
+              "canvasPlacement",
+              new String[] {
+                      Direction.EAST.toString(),
+                      Direction.WEST.toString()},
+              Direction.EAST.toString()));
+
   public static final PrefMonitor<String> LookAndFeel =
       create(new PrefMonitorString("LookAndFeel", FlatIntelliJLaf.class.getName()));
 
@@ -778,6 +788,7 @@ public class AppPreferences {
                   : 0)));
 
   public static void resetWindow() {
+    CANVAS_PLACEMENT.set(Direction.EAST.toString());
     WINDOW_MAIN_SPLIT.set(0.251);
     WINDOW_LEFT_SPLIT.set(0.51);
     WINDOW_RIGHT_SPLIT.set(0.751);

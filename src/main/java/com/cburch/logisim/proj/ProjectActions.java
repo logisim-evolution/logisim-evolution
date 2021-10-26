@@ -41,9 +41,11 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-public class ProjectActions {
+public final class ProjectActions {
   private static final String FILE_NAME_FORMAT_ERROR = "FileNameError";
   private static final String FILE_NAME_KEYWORD_ERROR = "ExistingToolName";
+
+  private ProjectActions() {}
 
   private static class CreateFrame implements Runnable {
     private final Loader loader;
@@ -142,7 +144,8 @@ public class ProjectActions {
   }
 
   public static LogisimFile createNewFile(Project baseProject) {
-    final var loader = new Loader(baseProject == null ? null : baseProject.getFrame());
+    final var parent = (baseProject == null) ? null : baseProject.getFrame();
+    final var loader = new Loader(parent);
     final var templReader = AppPreferences.getTemplate().createStream();
     LogisimFile file;
     try {
@@ -154,6 +157,7 @@ public class ProjectActions {
       try {
         templReader.close();
       } catch (IOException ignored) {
+        // Do nothing.
       }
     }
     return file;
@@ -201,7 +205,6 @@ public class ProjectActions {
 
   public static void doMerge(Component parent, Project baseProject) {
     JFileChooser chooser;
-    LogisimFile mergelib;
     if (baseProject != null) {
       final var oldLoader = baseProject.getLogisimFile().getLoader();
       chooser = oldLoader.createChooser();
@@ -214,6 +217,7 @@ public class ProjectActions {
     chooser.setFileFilter(Loader.LOGISIM_FILTER);
     chooser.setDialogTitle(S.get("FileMergeItem"));
 
+    LogisimFile mergelib;
     int returnVal = chooser.showOpenDialog(parent);
     if (returnVal != JFileChooser.APPROVE_OPTION) return;
     final var selected = chooser.getSelectedFile();
@@ -397,7 +401,7 @@ public class ProjectActions {
    * <p>It is the action listener for the File->Export project... menu option.
    *
    * @param proj Project to be exported
-   * @return true if success, false otherwise 
+   * @return true if success, false otherwise
    */
   public static boolean doExportProject(Project proj) {
     var ret = proj.isFileDirty() ? doSave(proj) : true;
@@ -444,7 +448,7 @@ public class ProjectActions {
     }
     return ret;
   }
-  
+
   /**
    * Saves a Logisim project in a .circ file.
    *
@@ -522,6 +526,4 @@ public class ProjectActions {
     }
     return doSave(proj, selectedFile);
   }
-
-  private ProjectActions() {}
 }

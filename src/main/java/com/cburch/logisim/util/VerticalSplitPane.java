@@ -44,6 +44,7 @@ public class VerticalSplitPane extends JPanel {
   }
 
   private class MyLayout implements BaseLayoutManagerContract {
+
     @Override
     public void layoutContainer(Container parent) {
       final var in = parent.getInsets();
@@ -56,12 +57,12 @@ public class VerticalSplitPane extends JPanel {
         split = maxWidth;
       } else {
         split = (int) Math.round(maxWidth * fraction);
-        split = Math.min(split, maxWidth - comp1.getMinimumSize().width);
-        split = Math.max(split, comp0.getMinimumSize().width);
+        split = Math.min(split, maxWidth - compRight.getMinimumSize().width);
+        split = Math.max(split, compLeft.getMinimumSize().width);
       }
 
-      comp0.setBounds(in.left, in.top, split, maxHeight);
-      comp1.setBounds(in.left + split, in.top, maxWidth - split, maxHeight);
+      compLeft.setBounds(in.left, in.top, split, maxHeight);
+      compRight.setBounds(in.left + split, in.top, maxWidth - split, maxHeight);
       dragbar.setBounds(
           in.left + split - HorizontalSplitPane.DRAG_TOLERANCE,
           in.top,
@@ -71,11 +72,11 @@ public class VerticalSplitPane extends JPanel {
 
     @Override
     public Dimension minimumLayoutSize(Container parent) {
-      if (fraction <= 0.0) return comp1.getMinimumSize();
-      if (fraction >= 1.0) return comp0.getMinimumSize();
+      if (fraction <= 0.0) return compRight.getMinimumSize();
+      if (fraction >= 1.0) return compLeft.getMinimumSize();
       final var in = parent.getInsets();
-      final var d0 = comp0.getMinimumSize();
-      final var d1 = comp1.getMinimumSize();
+      final var d0 = compLeft.getMinimumSize();
+      final var d1 = compRight.getMinimumSize();
       return new Dimension(
           in.left + d0.width + d1.width + in.right,
           in.top + Math.max(d0.height, d1.height) + in.bottom);
@@ -83,11 +84,11 @@ public class VerticalSplitPane extends JPanel {
 
     @Override
     public Dimension preferredLayoutSize(Container parent) {
-      if (fraction <= 0.0) return comp1.getPreferredSize();
-      if (fraction >= 1.0) return comp0.getPreferredSize();
+      if (fraction <= 0.0) return compRight.getPreferredSize();
+      if (fraction >= 1.0) return compLeft.getPreferredSize();
       final var in = parent.getInsets();
-      final var d0 = comp0.getPreferredSize();
-      final var d1 = comp1.getPreferredSize();
+      final var d0 = compLeft.getPreferredSize();
+      final var d1 = compRight.getPreferredSize();
       return new Dimension(
           in.left + d0.width + d1.width + in.right,
           in.top + Math.max(d0.height, d1.height) + in.bottom);
@@ -96,25 +97,30 @@ public class VerticalSplitPane extends JPanel {
 
   private static final long serialVersionUID = 1L;
 
-  private final JComponent comp0;
-  private final JComponent comp1;
-  private final MyDragbar dragbar;
-  private double fraction;
+  protected JComponent compLeft;
+  protected JComponent compRight;
+  protected final MyDragbar dragbar = new MyDragbar();
+  protected double fraction;
 
-  public VerticalSplitPane(JComponent comp0, JComponent comp1) {
-    this(comp0, comp1, 0.5);
+  protected VerticalSplitPane() {}
+
+  public VerticalSplitPane(JComponent compLeft, JComponent compRight, double fraction) {
+    init(compLeft, compRight, fraction);
   }
 
-  public VerticalSplitPane(JComponent comp0, JComponent comp1, double fraction) {
-    this.comp0 = comp0;
-    this.comp1 = comp1;
-    this.dragbar = new MyDragbar(); // above the other components
+  protected MyLayout layout = new MyLayout();
+
+  protected void init(JComponent compLeft, JComponent compRight, double fraction) {
+    removeAll();
+
+    this.compLeft = compLeft;
+    this.compRight = compRight;
     this.fraction = fraction;
 
-    setLayout(new MyLayout());
+    setLayout(layout);
     add(dragbar); // above the other components
-    add(comp0);
-    add(comp1);
+    add(compLeft);
+    add(compRight);
   }
 
   public double getFraction() {
