@@ -335,7 +335,7 @@ public class Simulator {
 
       if (doProp || doNudge)
         try {
-          sim._firePropagationStarted(ticked); // FIXME: ack, wrong thread!
+          sim.firePropagationStarted(ticked); // FIXME: ack, wrong thread!
           propagated = doProp;
           final var p = sim.getPropagationListener();
           final var evt = p == null ? null : new Event(sim, false, false, false);
@@ -478,7 +478,7 @@ public class Simulator {
   }
 
   //called from simThread, but probably should not be
-  private void _firePropagationStarted(boolean t) {
+  private void firePropagationStarted(boolean t) {
     final var e = new Event(this, t, false, false);
     for (final var l : copyListeners())
       l.propagationStarted(e);
