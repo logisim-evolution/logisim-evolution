@@ -245,23 +245,6 @@ public class LineBufferTest extends TestBase {
     assertEquals(exp, buffer.get(0));
   }
 
-  @Test
-  public void testPlaceholderSoroundedByThreeBrackets() {
-    final var fmt = "{{{1}}{{2}},{{{3}}{testText}}};";
-
-    final var buffer = LineBuffer.getBuffer();
-
-    final var arg1 = getRandomString();
-    final var arg2 = getRandomString();
-    final var arg3 = getRandomString();
-
-    buffer.add(fmt, arg1, arg2, arg3);
-
-    final var exp = LineBuffer.format("{{{1}}{{2}},{{{3}}{testText}}};", arg1, arg2, arg3);
-    assertEquals(1, buffer.size());
-    assertEquals(exp, buffer.get(0));
-  }
-
   /**
    * Ensures that we properly deal with special chars in replacement string as backslashes (\)
    * and dollar signs ($) in the replacement string may cause the results to be different
