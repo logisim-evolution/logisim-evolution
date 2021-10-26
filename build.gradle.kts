@@ -40,6 +40,7 @@ dependencies {
   implementation("org.slf4j:slf4j-simple:1.7.30")
   implementation("com.formdev:flatlaf:1.2")
   implementation("commons-cli:commons-cli:1.4")
+  implementation("org.apache.commons:commons-text:1.9")
 
   compileOnly("org.jetbrains:annotations:22.0.0")
 
@@ -49,6 +50,8 @@ dependencies {
 
   testImplementation(platform("org.junit:junit-bom:5.8.1"))
   testImplementation("org.junit.jupiter:junit-jupiter")
+  testImplementation("org.mockito:mockito-inline:4.0.0")
+  testImplementation("org.mockito:mockito-junit-jupiter:4.0.0")
 }
 
 /**
