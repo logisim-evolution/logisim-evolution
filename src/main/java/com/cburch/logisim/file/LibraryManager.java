@@ -17,12 +17,7 @@ import com.cburch.logisim.util.LineBuffer;
 import java.io.File;
 import java.io.IOException;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 
 public final class LibraryManager {
 
@@ -118,6 +113,41 @@ public final class LibraryManager {
     ProjectsDirty.initialize();
   }
 
+  public static String[] split(String string, String separator)
+  {
+    List<String> strings = new ArrayList<>();
+
+    if (separator.length() > 1)
+    {
+      throw new RuntimeException(String.format("Separator [%s] must be exactly one character long.", separator));
+    }
+
+    char charSeparator = separator.charAt(0);
+
+    int index = 0;
+    for (int i = 0; i < string.length(); i++)
+    {
+      char c = string.charAt(i);
+      if (charSeparator == c)
+      {
+        strings.add(string.substring(index, i));
+        index = i + 1;
+      }
+    }
+
+    int length = string.length();
+    if (index > length)
+    {
+      strings.add("");
+    }
+    else
+    {
+      strings.add(string.substring(index, length));
+    }
+
+    return strings.toArray(new String[strings.size()]);
+  }
+
   private static String toRelative(Loader loader, File file) {
     final var currentDirectory = loader.getCurrentDirectory();
     var fileName = file.toString();
@@ -127,8 +157,8 @@ public final class LibraryManager {
       // Do nothing as we already have defined the default above
     }
     if (currentDirectory != null) {
-      final var currentParts = currentDirectory.toString().split(File.separator);
-      final var newParts = fileName.split(File.separator);
+      String[] currentParts = split(currentDirectory.toString(), File.separator);
+      String[] newParts = split(fileName, File.separator);
       final var nrOfNewParts = newParts.length;
       // note that the newParts includes the filename, whilst the old doesn't
       var nrOfPartsEqual = 0;
