@@ -47,7 +47,6 @@ import com.cburch.logisim.util.HorizontalSplitPane;
 import com.cburch.logisim.util.JFileChoosers;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.util.VerticalSplitPane;
 import com.cburch.logisim.vhdl.base.HdlModel;
 import com.cburch.logisim.vhdl.gui.HdlContentView;
@@ -66,6 +65,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Timer;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JTabbedPane;
@@ -90,7 +90,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   private final HorizontalSplitPane leftRegion;
   private final HorizontalSplitPane rightRegion;
   private final HorizontalSplitPane editRegion;
-  private final VerticalSplitPane mainRegion;
+  private MainRegionVerticalSplitPane mainRegion;
   private final JPanel rightPanel;
   private final JPanel mainPanelSuper;
   private final CardPanel mainPanel;
@@ -198,8 +198,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     state.stateChanged();
     project.getVhdlSimulator().addVhdlSimStateListener(state);
 
-    mainRegion = new VerticalSplitPane(leftRegion, rightPanel, AppPreferences.WINDOW_MAIN_SPLIT.get());
-
+    mainRegion = new MainRegionVerticalSplitPane(leftRegion, rightRegion);
     getContentPane().add(mainRegion, BorderLayout.CENTER);
 
     localeChanged();
@@ -224,6 +223,87 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
     LocaleManager.addLocaleListener(this);
     toolbox.updateStructure();
+  }
+
+  /**
+   * Content aware VerticalSplitPane that handles main layout changes with bit of extra logic.
+   */
+  private class MainRegionVerticalSplitPane extends VerticalSplitPane implements PropertyChangeListener {
+    private final JComponent componentTree;
+    private final JComponent mainCanvas;
+    private Direction orientation;
+
+    public MainRegionVerticalSplitPane(JComponent componentTree, JComponent mainCanvas) {
+      this(componentTree, mainCanvas, AppPreferences.WINDOW_MAIN_SPLIT.get(),
+              Direction.parse(AppPreferences.CANVAS_PLACEMENT.get()));
+    }
+
+    public MainRegionVerticalSplitPane(JComponent componentTree, JComponent mainCanvas, double fraction,
+                                       Direction orientation) {
+      super();
+
+      this.componentTree = componentTree;
+      this.mainCanvas = mainCanvas;
+      this.orientation = orientation;
+      this.realFraction = fraction;
+
+      if (orientation == Direction.EAST) {
+        init(componentTree, mainCanvas, fraction);
+      } else {
+        init(mainCanvas, componentTree, fraction);
+      }
+
+      AppPreferences.CANVAS_PLACEMENT.addPropertyChangeListener(this);
+    }
+
+    public void setOrientation(Direction newOrientation) {
+      if (newOrientation != orientation) {
+        orientation = newOrientation;
+      }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent event) {
+      if (AppPreferences.CANVAS_PLACEMENT.isSource(event)) {
+        swapComponents();
+      }
+    }
+
+    /**
+     * As pane swapping should be fully transparent to the outer world, we must facade real
+     * fraction value here, as it must stay unaltered regardles of the real content order.
+     */
+    private double realFraction;
+
+    @Override
+    public double getFraction() {
+      return realFraction;
+    }
+
+    @Override
+    public void setFraction(double value) {
+      realFraction = value;
+      super.setFraction(orientation == Direction.EAST ? value : 1 - value);
+    }
+
+    protected void swapComponents() {
+      final var tmpOrient = Direction.parse(AppPreferences.CANVAS_PLACEMENT.get());
+      if (orientation != tmpOrient) {
+        orientation = tmpOrient;
+
+        final var isSwapped = (orientation == Direction.WEST);
+        compLeft = isSwapped ? mainCanvas : componentTree;
+        compRight = isSwapped ? componentTree : mainCanvas;
+
+        setFraction(realFraction);
+
+        // setFraction() calls revalidate() if fraction changed, so for value of 0.5
+        // the swap needs manual trigger
+        if (super.getFraction() == realFraction) {
+          revalidate();
+        }
+      }
+    }
   }
 
   /**
@@ -309,6 +389,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
 
   public void resetLayout() {
     mainRegion.setFraction(0.25);
+    mainRegion.setOrientation(Direction.EAST);
     leftRegion.setFraction(0.5);
     rightRegion.setFraction(1.0);
   }

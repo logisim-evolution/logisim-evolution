@@ -4,7 +4,7 @@
 
 * @dev (????-??-??)
   * Logisim has now an internal font-chooser to comply to the font-values used
-  * Fixed Preferences/Window "Reset window layout to defaults" not doing much.
+  * You can now swap the placement of main canvas and component tree/properties pane
 
 * v3.7.0 (2021-10-12)
   * Reworked the slider component in the I/O extra library
