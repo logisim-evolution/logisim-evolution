@@ -34,13 +34,13 @@ dependencies {
   implementation("com.fifesoft:rsyntaxtextarea:3.1.2")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
   implementation("org.drjekyll:colorpicker:1.3")
-  implementation("org.drjekyll:fontchooser:2.4")
   implementation("at.swimmesberger:swingx-core:1.6.8")
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
   implementation("org.slf4j:slf4j-api:1.7.30")
   implementation("org.slf4j:slf4j-simple:1.7.30")
   implementation("com.formdev:flatlaf:1.2")
   implementation("commons-cli:commons-cli:1.4")
+  implementation("org.apache.commons:commons-text:1.9")
 
   compileOnly("org.jetbrains:annotations:22.0.0")
 
@@ -48,7 +48,10 @@ dependencies {
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation("org.junit.vintage:junit-vintage-engine:5.7.1")
+  testImplementation(platform("org.junit:junit-bom:5.8.1"))
+  testImplementation("org.junit.jupiter:junit-jupiter")
+  testImplementation("org.mockito:mockito-inline:4.0.0")
+  testImplementation("org.mockito:mockito-junit-jupiter:4.0.0")
 }
 
 /**
@@ -473,10 +476,18 @@ tasks.register("createDmg") {
 fun genBuildInfo(buildInfoFilePath: String) {
   val now = Date()
   val nowIso = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(now)
-  val branchName = runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--abbrev-ref", "HEAD"),
-      "Failed getting branch name.")
-  val branchLastCommitHash = runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--short=8", "HEAD"),
-      "Failed getting last commit hash.")
+
+  var branchName = "";
+  var branchLastCommitHash = "";
+  var buildId = "(Not built from Git repo)";
+  if (file("${projectDir}/.git").exists()) {
+    var errMsg = "Failed getting branch name."
+    branchName = runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--abbrev-ref", "HEAD"), errMsg)
+
+    errMsg = "Failed getting last commit hash."
+    branchLastCommitHash = runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--short=8", "HEAD"), errMsg)
+    buildId = "${branchName}/${branchLastCommitHash}";
+  }
   val currentMillis = Date().time
   val buildYear = SimpleDateFormat("yyyy").format(now)
 
@@ -495,7 +506,7 @@ fun genBuildInfo(buildInfoFilePath: String) {
     "    // Build time VCS details",
     "    public static final String branchName = \"${branchName}\";",
     "    public static final String branchLastCommitHash = \"${branchLastCommitHash}\";",
-    "    public static final String buildId = \"${branchName}/${branchLastCommitHash}\";",
+    "    public static final String buildId = \"${buildId}\";",
     "",
     "    // Project build timestamp",
     "    public static final long millis = ${currentMillis}L;", // keep trailing `L`
@@ -604,6 +615,13 @@ tasks {
   compileTestJava {
     options.compilerArgs = compilerOptions
     dependsOn("genFiles")
+  }
+
+  test {
+    useJUnitPlatform()
+//    testLogging {
+//      events("passed", "skipped", "failed")
+//    }
   }
 
   jar {

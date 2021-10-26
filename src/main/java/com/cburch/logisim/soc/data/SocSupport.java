@@ -12,8 +12,8 @@ package com.cburch.logisim.soc.data;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.Component;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.util.StringUtil;
 import java.awt.event.ActionListener;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -71,10 +71,10 @@ public class SocSupport {
   }
 
   public static String getComponentName(Component comp) {
-    String name = comp.getAttributeSet().getValue(StdAttr.LABEL);
-    if (name == null || name.isEmpty()) {
-      Location loc = comp.getLocation();
-      name = comp.getFactory().getDisplayName() + "@" + loc.getX() + "," + loc.getY();
+    var name = comp.getAttributeSet().getValue(StdAttr.LABEL);
+    if (StringUtil.isNullOrEmpty(name)) {
+      final var loc = comp.getLocation();
+      name = String.format("%s@%d,%d", comp.getFactory().getDisplayName(), loc.getX(), loc.getY());
     }
     return name;
   }

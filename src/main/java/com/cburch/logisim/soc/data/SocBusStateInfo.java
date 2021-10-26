@@ -15,7 +15,6 @@ import com.cburch.contracts.BaseWindowListenerContract;
 import com.cburch.logisim.circuit.ComponentDataGuiProvider;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;
@@ -27,6 +26,7 @@ import com.cburch.logisim.soc.gui.TraceWindowTableModel;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
+import com.cburch.logisim.util.StringUtil;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -246,9 +246,9 @@ public class SocBusStateInfo extends JDialog
 
   @Override
   public String getName() {
-    String name = myComp.getAttributeSet().getValue(StdAttr.LABEL);
-    if (name == null || name.isEmpty()) {
-      Location loc = myComp.getLocation();
+    var name = myComp.getAttributeSet().getValue(StdAttr.LABEL);
+    if (StringUtil.isNullOrEmpty(name)) {
+      final var loc = myComp.getLocation();
       name = myComp.getFactory().getDisplayName() + "@" + loc.getX() + "," + loc.getY();
     }
     return name;

@@ -57,7 +57,7 @@ public class AdderHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       if (nrOfBits == 1) {
         contents.add("result   <= s_sumResult(0);");
       } else {
-        contents.add("result   <= s_sumResult( ({{1}}-1) DOWNTO 0 )", NR_OF_BITS_STRING);
+        contents.add("result   <= s_sumResult( ({{1}}-1) DOWNTO 0 );", NR_OF_BITS_STRING);
       }
       contents.add("carryOut <= s_sumResult({{1}}-1);", EXTENDED_BITS_STRING);
     } else {

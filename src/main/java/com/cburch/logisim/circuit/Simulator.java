@@ -15,6 +15,7 @@ import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.log.ClockSource;
 import com.cburch.logisim.gui.log.ComponentSelector;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.util.ArrayList;
 import javax.swing.SwingUtilities;
@@ -466,30 +467,29 @@ public class Simulator {
 
   // called from simThread, but probably should not be
   private void fireSimulatorReset() {
-    final var e = new Event(this, false, false, false);
-    for (final var l : copyListeners())
-      l.simulatorReset(e);
+    final var event = new Event(this, false, false, false);
+    for (final var listener : copyListeners())
+      listener.simulatorReset(event);
   }
 
   //called from simThread, but probably should not be
   private void firePropagationCompleted(boolean t, boolean s, boolean p) {
-    final var e = new Event(this, t, s, p);
-    for (final var l : copyListeners())
-      l.propagationCompleted(e);
+    final var event = new Event(this, t, s, p);
+    for (final var listener : copyListeners()) {
+      listener.propagationCompleted(event);
+    }
   }
 
   // called from simThread, but probably should not be
   private Listener getPropagationListener() {
-    Listener p = null;
-    for (final var l : copyListeners()) {
-      if (l.wantProgressEvents()) {
-        if (p != null)
-          throw new IllegalStateException("only one chronogram listener supported");
-        else
-          p = l;
+    Listener propagationListener = null;
+    for (final var listener : copyListeners()) {
+      if (listener.wantProgressEvents()) {
+        if (propagationListener != null) throw new IllegalStateException("Only one chronogram listener supported");
+        propagationListener = listener;
       }
     }
-    return p;
+    return propagationListener;
   }
 
   // called only from gui thread, but need copy here anyway because listeners
@@ -537,18 +537,14 @@ public class Simulator {
   }
 
   public void setAutoTicking(boolean value) {
-    if (value && !ensureClocks())
-      return;
-    if (simThread.setAutoTicking(value))
-      fireSimulatorStateChanged();
+    if (value && !ensureClocks()) return;
+    if (simThread.setAutoTicking(value)) fireSimulatorStateChanged();
   }
 
   public void setTickFrequency(double freq) {
     final var circuitState = getCircuitState();
-    if (circuitState != null)
-      circuitState.getCircuit().setTickFrequency(freq);
-    if (simThread.setTickFrequency(freq))
-      fireSimulatorStateChanged();
+    if (circuitState != null) circuitState.getCircuit().setTickFrequency(freq);
+    if (simThread.setTickFrequency(freq)) fireSimulatorStateChanged();
   }
 
   public void step() {
@@ -556,8 +552,7 @@ public class Simulator {
   }
 
   public void tick(int count) {
-    if (!ensureClocks())
-      return;
+    if (!ensureClocks()) return;
     simThread.requestTick(count);
   }
 
@@ -577,18 +572,17 @@ public class Simulator {
 
   private boolean ensureClocks() {
     final var cs = getCircuitState();
-    if (cs == null) return false;
-    if (cs.hasKnownClocks()) return true;
+    if (cs == null || cs.hasKnownClocks()) return true;
     final var circ = cs.getCircuit();
     final var clocks = ComponentSelector.findClocks(circ);
-    if (clocks != null && !clocks.isEmpty()) {
+    if (CollectionUtil.isNotEmpty(clocks)) {
       cs.markKnownClocks();
       return true;
     }
 
     final var clk = ClockSource.doClockDriverDialog(circ);
-    if (clk == null) return false;
-    if (!cs.setTemporaryClock(clk)) return false;
+    if (clk == null || !cs.setTemporaryClock(clk)) return false;
+
     fireSimulatorStateChanged();
     return true;
   }

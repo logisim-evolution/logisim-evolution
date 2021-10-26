@@ -93,6 +93,16 @@ public class Multiplexer extends InstanceFactory {
   }
 
   @Override
+  public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
+    // for backward compatibility, after 2.6.4 the enable pin was "enabled" by default upto and until 3.6.1
+    if (attr == PlexersLibrary.ATTR_ENABLE) {
+      return ver.compareTo(new LogisimVersion(3, 6, 1)) <= 0;
+    } else {
+      return super.getDefaultAttributeValue(attr, ver);
+    }
+  }
+
+  @Override
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
     updatePorts(instance);

@@ -6,7 +6,6 @@
  *
  * This is free software released under GNU GPLv3 license
  */
-
 package com.cburch.contracts;
 
 import java.awt.event.MouseEvent;

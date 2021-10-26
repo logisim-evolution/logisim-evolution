@@ -9,23 +9,33 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
+import com.cburch.logisim.fpga.designrulecheck.Netlist;
+import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
+import com.cburch.logisim.fpga.file.FileWriter;
+import com.cburch.logisim.fpga.gui.Reporter;
+import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.CollectionUtil;
+import com.cburch.logisim.util.LineBuffer;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeSet;
 
-import com.cburch.logisim.fpga.designrulecheck.Netlist;
-import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
-import com.cburch.logisim.fpga.file.FileWriter;
-import com.cburch.logisim.fpga.gui.Reporter;
-import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.util.LineBuffer;
-
-public abstract class Hdl {
+public class Hdl {
 
   public static final String NET_NAME = "s_logisimNet";
   public static final String BUS_NAME = "s_logisimBus";
+
+  /**
+   * Length of remark block special sequences (block open/close, line open/close).
+   */
+  public static final int REMARK_MARKER_LENGTH = 3;
+
+  private Hdl() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
 
   public static boolean isVhdl() {
     return AppPreferences.HdlType.get().equals(HdlGeneratorFactory.VHDL);
@@ -43,20 +53,40 @@ public abstract class Hdl {
     return isVhdl() ? ")" : "]";
   }
 
-  public static int remarkOverhead() {
-    return isVhdl() ? 3 : 4;
+  public static String getRemarkChar() {
+    return isVhdl() ? "-" : "*";
   }
 
-  public static String getRemarkChar(boolean first, boolean last) {
-    if (isVhdl()) return "-";
-    if (first) return "/";
-    if (last) return " ";
-    return "*";
+  /**
+   * Comment block opening sequence. Must be REMARK_BLOCK_SEQ_LEN long.
+   */
+  public static String getRemarkBlockStart() {
+    return isVhdl() ? "---" : "/**";
   }
 
-  public static String getRemarkStart() {
-    if (isVhdl()) return "-- ";
-    return " ** ";
+  /**
+   * Comment block closing sequence. Must be REMARK_BLOCK_SEQ_LEN long.
+   */
+  public static String getRemarkBlockEnd() {
+    return isVhdl() ? "---" : "**/";
+  }
+
+  /**
+   * Comment block line (mid block) opening sequence. Must be REMARK_BLOCK_SEQ_LEN long.
+   */
+  public static String getRemarkBlockLineStart() {
+    return isVhdl() ? "-- " : "** ";
+  }
+
+  /**
+   * Comment block line (mid block) closing sequence. Must be REMARK_BLOCK_SEQ_LEN long.
+   */
+  public static String getRemarkBlockLineEnd() {
+    return isVhdl() ? " --" : " **";
+  }
+
+  public static String getLineCommentStart() {
+    return isVhdl() ? "-- " : "// ";
   }
 
   public static String startIf(String condition) {
@@ -221,7 +251,7 @@ public abstract class Hdl {
   }
 
   public static String getZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
-    var contents = new StringBuilder();
+    final var contents = new StringBuilder();
     if (isVhdl()) {
       var fillValue = (floatingPinTiedToGround) ? "0" : "1";
       var hexFillValue = (floatingPinTiedToGround) ? "0" : "F";
@@ -271,20 +301,16 @@ public abstract class Hdl {
     }
     // first case, we have to concatinate
     if ((nrHexDigits > 0) && (nrSingleBits > 0)) {
-      if (Hdl.isVhdl()) {
-        return LineBuffer.format("\"{{1}}\"&X\"{{2}}\"", singleBits.toString(), hexValue.toString());
-      } else {
-        return LineBuffer.format("{{{1}}'b{{2}}, {{3}}'h{{4}}}", nrSingleBits, singleBits.toString(),
-            nrHexDigits * 4, hexValue.toString());
-      }
+      return Hdl.isVhdl()
+             ? LineBuffer.format("\"{{1}}\"&X\"{{2}}\"", singleBits.toString(), hexValue.toString())
+             : LineBuffer.format("{{{1}}'b{{2}}, {{3}}'h{{4}}}", nrSingleBits, singleBits.toString(),
+                nrHexDigits * 4, hexValue.toString());
     }
     // second case, we have only hex digits
     if (nrHexDigits > 0) {
-      if (Hdl.isVhdl()) {
-        return LineBuffer.format("X\"{{1}}\"", hexValue.toString());
-      } else {
-        return LineBuffer.format("{{1}}'h{{2}}", nrHexDigits * 4, hexValue.toString());
-      }
+      return Hdl.isVhdl()
+        ? LineBuffer.format("X\"{{1}}\"", hexValue.toString())
+        : LineBuffer.format("{{1}}'h{{2}}", nrHexDigits * 4, hexValue.toString());
     }
     // final case, we have only single bits
     if (Hdl.isVhdl()) {
@@ -364,9 +390,9 @@ public abstract class Hdl {
     final var nrOfBits = connectionInformation.getNrOfBits();
     if (nrOfBits == 1)  return getNetName(comp, endIndex, true, theNets);
     if (!theNets.isContinuesBus(comp, endIndex)) return null;
-    final var ConnectedNet = connectionInformation.get((byte) 0).getParentNet();
-    if (ConnectedNet.getBitWidth() != nrOfBits) return getBusNameContinues(comp, endIndex, theNets);
-    return LineBuffer.format("{{1}}{{2}}", BUS_NAME, theNets.getNetId(ConnectedNet));
+    final var connectedNet = connectionInformation.get((byte) 0).getParentNet();
+    if (connectedNet.getBitWidth() != nrOfBits) return getBusNameContinues(comp, endIndex, theNets);
+    return LineBuffer.format("{{1}}{{2}}", BUS_NAME, theNets.getNetId(connectedNet));
   }
 
   public static String getClockNetName(netlistComponent comp, int endIndex, Netlist theNets) {
@@ -374,11 +400,11 @@ public abstract class Hdl {
     if ((theNets.getCurrentHierarchyLevel() != null) && (endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
       final var endData = comp.getEnd(endIndex);
       if (endData.getNrOfBits() == 1) {
-        final var ConnectedNet = endData.get((byte) 0).getParentNet();
+        final var connectedNet = endData.get((byte) 0).getParentNet();
         final var ConnectedNetBitIndex = endData.get((byte) 0).getParentNetBitIndex();
         /* Here we search for a clock net Match */
         final var clocksourceid = theNets.getClockSourceId(
-            theNets.getCurrentHierarchyLevel(), ConnectedNet, ConnectedNetBitIndex);
+            theNets.getCurrentHierarchyLevel(), connectedNet, ConnectedNetBitIndex);
         if (clocksourceid >= 0) {
           contents.append(HdlGeneratorFactory.CLOCK_TREE_NAME).append(clocksourceid);
         }
@@ -400,12 +426,9 @@ public abstract class Hdl {
   }
 
   public static boolean writeArchitecture(String targetDirectory, List<String> contents, String componentName) {
-    if (contents == null || contents.isEmpty()) {
+    if (CollectionUtil.isNullOrEmpty(contents)) {
       // FIXME: hardcoded string
-      Reporter.report.addFatalError(
-          "INTERNAL ERROR: Empty behavior description for Component '"
-              + componentName
-              + "' received!");
+      Reporter.report.addFatalErrorFmt("INTERNAL ERROR: Empty behavior description for Component '%s' received!", componentName);
       return false;
     }
     final var outFile = FileWriter.getFilePointer(targetDirectory, componentName, false);
@@ -526,7 +549,7 @@ public abstract class Hdl {
     for (var wire : wires.keySet())
       maxNameLength = Math.max(maxNameLength, wire.length());
     final var sortedWires = new TreeSet<String>(wires.keySet());
-    for (var wire : sortedWires) 
+    for (var wire : sortedWires)
       contents.add("{{assign}}{{1}}{{2}}{{=}}{{3}};", wire, " ".repeat(maxNameLength - wire.length()), wires.get(wire));
     wires.clear();
   }

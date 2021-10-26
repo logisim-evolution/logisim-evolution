@@ -59,11 +59,14 @@ public class AutoLabel {
   }
 
   public String getCurrent(Circuit circ, ComponentFactory me) {
-    if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty())
+    if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty()) {
       return "";
-    if (Circuit.isCorrectLabel(circ.getName(), currentLabel.get(circ), circ.getNonWires(), null, me, false))
+    }
+    if (Circuit.isCorrectLabel(circ.getName(), currentLabel.get(circ), circ.getNonWires(), null, me, false)) {
       return currentLabel.get(circ);
-    else if (hasNext(circ)) {
+    }
+
+    if (hasNext(circ)) {
       return getNext(circ, me);
     } else {
       setLabel("", circ, me);
@@ -72,7 +75,7 @@ public class AutoLabel {
   }
 
   public boolean correctMatrixBaseLabel(Circuit circ, ComponentFactory me, String common, int maxX, int maxY) {
-    if ((common == null) || (common.isEmpty()) || (maxX < 0) || (maxY < 0)) return true;
+    if (StringUtil.isNullOrEmpty(common) || (maxX < 0) || (maxY < 0)) return true;
     if (!SyntaxChecker.isVariableNameAcceptable(common, true)) return false;
     for (var x = 0; x < maxX; x++)
       for (var y = 0; y < maxY; y++) {
@@ -84,7 +87,7 @@ public class AutoLabel {
   }
 
   public String getMatrixLabel(Circuit circ, ComponentFactory me, String common, int x, int y) {
-    if ((common == null) || (common.isEmpty()) || (x < 0) || (y < 0)) return "";
+    if (StringUtil.isNullOrEmpty(common) || (x < 0) || (y < 0)) return "";
     if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty()) return "";
     final var label = common.concat("_X" + x + "_Y" + y);
     if (Circuit.isCorrectLabel(circ.getName(), label, circ.getNonWires(), null, me, false)

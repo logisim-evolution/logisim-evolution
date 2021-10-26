@@ -12,7 +12,6 @@ package com.cburch.logisim.util;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.lang.ref.WeakReference;
-import java.util.Iterator;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class PropertyChangeWeakSupport {
@@ -46,16 +45,16 @@ public class PropertyChangeWeakSupport {
 
   public <T> void firePropertyChange(String property, T oldValue, T newValue) {
     PropertyChangeEvent e = null;
-    for (Iterator<ListenerData> it = listeners.iterator(); it.hasNext(); ) {
-      ListenerData data = it.next();
-      final var l = data.listener.get();
-      if (l == null) {
+    for (final var it = listeners.iterator(); it.hasNext(); ) {
+      final var data = it.next();
+      final var singleListener = data.listener.get();
+      if (singleListener == null) {
         it.remove();
       } else if (data.property.equals(ALL_PROPERTIES) || data.property.equals(property)) {
         if (e == null) {
           e = new PropertyChangeEvent(source, property, oldValue, newValue);
         }
-        l.propertyChange(e);
+        singleListener.propertyChange(e);
       }
     }
   }
@@ -65,12 +64,12 @@ public class PropertyChangeWeakSupport {
   }
 
   public void removePropertyChangeListener(String property, PropertyChangeListener listener) {
-    for (Iterator<ListenerData> it = listeners.iterator(); it.hasNext(); ) {
-      ListenerData data = it.next();
-      PropertyChangeListener l = data.listener.get();
-      if (l == null) {
+    for (final var it = listeners.iterator(); it.hasNext(); ) {
+      final var data = it.next();
+      final var singleListener = data.listener.get();
+      if (singleListener == null) {
         it.remove();
-      } else if (data.property.equals(property) && l == listener) {
+      } else if (data.property.equals(property) && singleListener == listener) {
         it.remove();
       }
     }

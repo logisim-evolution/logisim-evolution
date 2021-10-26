@@ -17,6 +17,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.util.CollectionUtil;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.datatransfer.Transferable;
@@ -477,7 +478,7 @@ public class ComponentSelector extends JTable {
       sending = true;
       final var tree = (ComponentSelector) c;
       final var items = tree.getSelectedItems();
-      return items == null || items.isEmpty() ? null : items;
+      return CollectionUtil.isNullOrEmpty(items) ? null : items;
     }
 
     @Override

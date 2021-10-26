@@ -96,8 +96,7 @@ public class CurveTool extends AbstractTool {
 
   @Override
   public void keyTyped(Canvas canvas, KeyEvent e) {
-    char ch = e.getKeyChar();
-    if (ch == '\u001b') { // escape key
+    if (e.getKeyChar() == '\u001b') { // escape key
       state = BEFORE_CREATION;
       repaintArea(canvas);
       canvas.toolGestureComplete(this, null);

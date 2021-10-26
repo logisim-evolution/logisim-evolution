@@ -73,19 +73,19 @@ public class EditableLabel implements Cloneable {
   }
 
   public void configureTextField(EditableLabelField field, double zoom) {
-    Font f = font;
+    var font = this.font;
     if (zoom != 1.0) {
-      f = f.deriveFont(AffineTransform.getScaleInstance(zoom, zoom));
+      font = font.deriveFont(AffineTransform.getScaleInstance(zoom, zoom));
     }
-    field.setFont(f);
+    field.setFont(font);
 
-    Dimension dim = field.getPreferredSize();
+    final var dim = field.getPreferredSize();
     int w;
-    int border = EditableLabelField.FIELD_BORDER;
+    final var border = EditableLabelField.FIELD_BORDER;
     if (dimsKnown) {
       w = width + 1 + 2 * border;
     } else {
-      TextMetrics tm = new TextMetrics(field, font, text);
+      final var tm = new TextMetrics(field, this.font, text);
       ascent = tm.ascent;
       descent = tm.descent;
       w = tm.width;
@@ -101,19 +101,12 @@ public class EditableLabel implements Cloneable {
 
     w = Math.max(w, dim.width);
     final int h = dim.height;
-    switch (horzAlign) {
-      case LEFT:
-        x0 = x0 - border;
-        break;
-      case CENTER:
-        x0 = x0 - (w / 2.0f) + 1;
-        break;
-      case RIGHT:
-        x0 = x0 - w + border + 1;
-        break;
-      default:
-        x0 = x0 - border;
-    }
+    x0 = switch (horzAlign) {
+      case LEFT -> x0 - border;
+      case CENTER -> x0 - (w / 2.0F) + 1;
+      case RIGHT -> x0 - w + border + 1;
+      default -> x0 - border;
+    };
     y0 = y0 - border;
 
     field.setHorizontalAlignment(horzAlign);
@@ -143,18 +136,13 @@ public class EditableLabel implements Cloneable {
   }
 
   private float getBaseY() {
-    switch (vertAlign) {
-      case TOP:
-        return y + ascent;
-      case MIDDLE:
-        return y + (ascent - descent) / 2.0f;
-      case BASELINE:
-        return y;
-      case BOTTOM:
-        return y - descent;
-      default:
-        return y;
-    }
+    return switch (vertAlign) {
+      case TOP -> y + ascent;
+      case MIDDLE -> y + (ascent - descent) / 2.0F;
+      case BASELINE -> y;
+      case BOTTOM -> y - descent;
+      default -> y;
+    };
   }
 
   //
@@ -198,16 +186,12 @@ public class EditableLabel implements Cloneable {
   }
 
   private float getLeftX() {
-    switch (horzAlign) {
-      case LEFT:
-        return x;
-      case CENTER:
-        return x - width / 2.0f;
-      case RIGHT:
-        return x - width;
-      default:
-        return x;
-    }
+    return switch (horzAlign) {
+      case LEFT -> x;
+      case CENTER -> x - width / 2.0F;
+      case RIGHT -> x - width;
+      default -> x;
+    };
   }
 
   public String getText() {

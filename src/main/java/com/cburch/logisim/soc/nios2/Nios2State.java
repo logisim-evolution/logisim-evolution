@@ -38,12 +38,12 @@ import com.cburch.logisim.soc.gui.BreakpointPanel;
 import com.cburch.logisim.soc.gui.CpuDrawSupport;
 import com.cburch.logisim.soc.util.AssemblerInterface;
 import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import javax.swing.JPanel;
@@ -559,7 +559,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
 
   public String getName() {
     var name = label;
-    if (name == null || name.isEmpty()) {
+    if (StringUtil.isNullOrEmpty(name)) {
       final var loc = attachedBus.getComponent().getLocation();
       name = String.format("%s@%d,%d", attachedBus.getComponent().getFactory().getDisplayName(), loc.getX(), loc.getY());
     }

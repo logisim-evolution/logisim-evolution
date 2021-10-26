@@ -21,7 +21,6 @@ import com.cburch.draw.model.CanvasObject;
 import com.cburch.draw.model.ReorderRequest;
 import com.cburch.draw.undo.UndoAction;
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.circuit.appear.AppearanceElement;
 import com.cburch.logisim.data.Bounds;
@@ -283,8 +282,7 @@ public class AppearanceCanvas extends Canvas implements CanvasPaneContents, Acti
     this.proj = proj;
     this.circuitState = circuitState;
     final var circuit = circuitState.getCircuit();
-    circuit.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CUSTOM);
-    setModel(circuit.getAppearance(), this);
+    setModel(circuit.getAppearance().getCustomAppearanceDrawing(), this);
   }
 
   @Override

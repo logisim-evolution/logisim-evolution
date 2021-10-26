@@ -65,7 +65,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
     myListener = new MyListener();
     suppressRecompute = false;
     addCanvasModelListener(myListener);
-    circuit.getStaticAttributes().addAttributeListener(this);
+    if (circuit != null) circuit.getStaticAttributes().addAttributeListener(this);
     defaultCanvasObjects = new ArrayList<CanvasObject>();
     recomputeDefaultAppearance();
     defaultCustomAppearance = DefaultCustomAppearance.build(circuitPins.getPins()); 
@@ -124,6 +124,10 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
 
   public void addCircuitAppearanceListener(CircuitAppearanceListener l) {
     listeners.add(l);
+  }
+  
+  public Drawing getCustomAppearanceDrawing() {
+    return super.getCopy();
   }
 
   public void sortPinsList(List<Instance> pins, Direction facing) {
@@ -267,7 +271,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
   }
 
   public boolean isDefaultAppearance() {
-    return !circuit.getStaticAttributes().getValue(CircuitAttributes.APPEARANCE_ATTR).equals(CircuitAttributes.APPEAR_CUSTOM);
+    return (circuit == null) || !circuit.getStaticAttributes().getValue(CircuitAttributes.APPEARANCE_ATTR).equals(CircuitAttributes.APPEAR_CUSTOM);
   }
   
   public List<CanvasObject> getCustomObjectsFromBottom() {
@@ -427,7 +431,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
         defaultCanvasObjects.clear();
         defaultCanvasObjects.addAll(shapes);
       } else {
-        super.removeObjects(new ArrayList<>(getObjectsFromBottom()));
+        super.removeObjects(new ArrayList<>(getCustomObjectsFromBottom()));
         super.addObjects(0, shapes);
       }
     } finally {

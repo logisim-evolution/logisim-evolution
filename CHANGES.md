@@ -3,13 +3,19 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Logisim has now an internal font-chooser to comply to the font-values used
+  * Fixed Preferences/Window "Reset window layout to defaults" not doing much.
+  * Fixed Gradle builder failing to compile LSe if sources were not checked out from Git.
+  * You can now swap the placement of main canvas and component tree/properties pane
+
+* v3.7.0 (2021-10-12)
   * Reworked the slider component in the I/O extra library
   * Tick clock frequency display moved to left corner. It's also bigger and text color is configurable.
   * Completely rewritten command line argument parser:
     * All options have both short and long version now,
     * All long arguments require `--` prefix i.e. `--version`,
-    * All long arguments require single `-` as prefix i.e. `-v`,
-    * `-clearprefs` is now `--clear-prefs` or `-cp`,
+    * All short arguments require single `-` as prefix i.e. `-v`,
+    * `-clearprefs` is now `--clear-prefs`,
     * `-clearprops` option is removed (use `--clear-prefs` instead),
     * `-geom` is now `--geometry`,
     * `-nosplash` is now `--no-splash` or `-ns,

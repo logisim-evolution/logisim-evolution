@@ -28,24 +28,6 @@ public final class StringUtil {
     };
   }
 
-  public static StringGetter formatter(final StringGetter base, final String arg) {
-    return new StringGetter() {
-      @Override
-      public String toString() {
-        return String.format(base.toString(), arg);
-      }
-    };
-  }
-
-  public static StringGetter formatter(final StringGetter base, final StringGetter arg) {
-    return new StringGetter() {
-      @Override
-      public String toString() {
-        return String.format(base.toString(), arg.toString());
-      }
-    };
-  }
-
   public static String resizeString(String value, FontMetrics metrics, int maxWidth) {
     final var width = metrics.stringWidth(value);
 
@@ -114,5 +96,26 @@ public final class StringUtil {
       y = -h;
     }
     return Bounds.create(x, y, w, h);
+  }
+
+  /**
+   * Checks if given char sequence is either null or empty.
+   */
+  public static boolean isNullOrEmpty(CharSequence str) {
+    return (str == null) ? true : str.isEmpty();
+  }
+
+  /**
+   * Checks if given char sequence is not null and not empty.
+   */
+  public static boolean isNotEmpty(CharSequence seq) {
+    return (seq != null) ? !seq.isEmpty() : false;
+  }
+
+  /**
+   * Null safe version of `String.startsWith()`
+   */
+  public static boolean startsWith(String seq, String prefix) {
+    return (seq != null) ? seq.startsWith(prefix) : false;
   }
 }
