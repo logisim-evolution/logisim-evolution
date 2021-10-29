@@ -417,6 +417,7 @@ tasks.register("createApp") {
     runCommand(listOf(
         "awk",
         "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};"
+            + "/utilities/{sub(/public.app-category.utilities/,\"public.app-category.education\")};"
             + "{print >\"${targetDir}/Info.plist\"};"
             + "/NSHighResolutionCapable/{"
             + "print \"  <string>true</string>\" >\"${targetDir}/Info.plist\";"
@@ -430,8 +431,8 @@ tasks.register("createApp") {
     ), "Error while moving Info.plist into the .app directory.")
 
     runCommand(listOf(
-        "codesign", "--remove-signature", appDirName
-    ), "Error while executing: codesign --remove-signature")
+        "codesign", "--force", "--sign", "-", appDirName
+    ), "Error while executing: codesign")
   }
 }
 
