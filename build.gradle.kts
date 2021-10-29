@@ -492,48 +492,49 @@ fun genBuildInfo(buildInfoFilePath: String) {
   val currentMillis = Date().time
   val buildYear = SimpleDateFormat("yyyy").format(now)
 
-  val buildInfoClass = arrayOf(
-    "// ************************************************************************",
-    "// THIS IS COMPILE TIME GENERATED FILE! DO NOT EDIT BY HAND!",
-    "// Generated at ${nowIso}",
-    "// ************************************************************************",
-    "",
-    "package com.cburch.logisim.generated;",
-    "",
-    "import com.cburch.logisim.LogisimVersion;",
-    "import java.util.Date;",
-    "",
-    "public final class BuildInfo {",
-    "    // Build time VCS details",
-    "    public static final String branchName = \"${branchName}\";",
-    "    public static final String branchLastCommitHash = \"${branchLastCommitHash}\";",
-    "    public static final String buildId = \"${buildId}\";",
-    "",
-    "    // Project build timestamp",
-    "    public static final long millis = ${currentMillis}L;", // keep trailing `L`
-    "    public static final String year = \"${buildYear}\";",
-    "    public static final String dateIso8601 = \"${nowIso}\";",
-    "    public static final Date date = new Date();",
-    "    static { date.setTime(millis); }",
-    "",
-    "    // Project version",
-    "    public static final LogisimVersion version = LogisimVersion.fromString(\"${ext.get(APP_VERSION) as String}\");",
-    "    public static final String name = \"${project.name.capitalize().trim()}\";",
-    "    public static final String displayName = \"${project.name.capitalize().trim()} v${ext.get(APP_VERSION) as String}\";",
-    "    public static final String url = \"${ext.get(APP_URL) as String}\";",
-    "",
-    "    // JRE info",
-    "    public static final String jvm_version = String.format(\"%s v%s\", System.getProperty(\"java.vm.name\"), System.getProperty(\"java.version\"));",
-    "    public static final String jvm_vendor = System.getProperty(\"java.vendor\");",
-    "",
-    "} // End of generated BuildInfo",
-    "",
-  )
+  val buildInfoClass = """
+      // ************************************************************************
+      // THIS IS A COMPILE TIME GENERATED FILE! DO NOT EDIT BY HAND!
+      // Generated at ${nowIso}
+      // ************************************************************************
+
+      package com.cburch.logisim.generated;
+
+      import com.cburch.logisim.LogisimVersion;
+      import java.util.Date;
+
+      public final class BuildInfo {
+        // Build time VCS details
+        public static final String branchName = "${branchName}";
+        public static final String branchLastCommitHash = "${branchLastCommitHash}";
+        public static final String buildId = "${buildId}";
+
+        // Project build timestamp
+        public static final long millis = ${currentMillis}L; // keep trailing 'L'
+        public static final String year = "${buildYear}";
+        public static final String dateIso8601 = "${nowIso}";
+        public static final Date date = new Date();
+        static { date.setTime(millis); }
+
+        // Project version
+        public static final LogisimVersion version = LogisimVersion.fromString("${ext.get(APP_VERSION) as String}");
+        public static final String name = "${project.name.capitalize().trim()}";
+        public static final String displayName = "${project.name.capitalize().trim()} v${ext.get(APP_VERSION) as String}";
+        public static final String url = "${ext.get(APP_URL) as String}";
+
+        // JRE info
+        public static final String jvm_version =
+            String.format("%s v%s", System.getProperty("java.vm.name"), System.getProperty("java.version"));
+        public static final String jvm_vendor = System.getProperty("java.vendor");
+      }
+      // End of generated BuildInfo
+
+      """
 
   logger.info("Generating: ${buildInfoFilePath}")
   val buildInfoFile = File(buildInfoFilePath)
   buildInfoFile.parentFile.mkdirs()
-  file(buildInfoFilePath).writeText(buildInfoClass.joinToString("\n"))
+  file(buildInfoFilePath).writeText(buildInfoClass.trimIndent())
 }
 
 /**
