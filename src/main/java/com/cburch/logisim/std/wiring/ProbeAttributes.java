@@ -58,7 +58,7 @@ public class ProbeAttributes extends AbstractAttributeSet implements ConvertEven
   Font labelfont = StdAttr.DEFAULT_LABEL_FONT;
   RadixOption radix = RadixOption.RADIX_2;
   BitWidth width = BitWidth.ONE;
-  AttributeOption appearance = StdAttr.APPEAR_CLASSIC;
+  AttributeOption appearance = getDefaultProbeAppearance();
 
   public ProbeAttributes() {}
 
