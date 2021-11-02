@@ -74,12 +74,17 @@ The Java JAR [`logisim-evolution-<version>-all.jar`](https://github.com/logisim-
 is also available and can be run on any system with a supported Java runtime installed.
 
 **Note for macOS users**:
-The Logisim-evolution.app is not code-signed.
+The Logisim-evolution.app is not signed with an Apple approved certificate.
 
 When launching the application for the first time, you will have to start it via the "Open" entry in the
 application icon's context menu in the macOS Finder. This is either done by clicking the application
 icon with the right mouse button or holding down <kbd>CTRL</kbd> while clicking the icon with the
 left mouse button. This will open a panel asking you to verify that you wish to launch the application.
+On more recent versions of macOS, the panel will only give you a choice of moving the app to the trash or Cancel.
+On those systems, click Cancel, open `System Preferences`, and select `Security & Privacy`.
+There you may need to click the lock to make changes and authenticate with an administrative acccount.
+It should show an option to open the app.
+See [Safely open apps on your Mac](https://support.apple.com/en-us/HT202491) for more information.
 
 Depending on your security settings, you may also get a panel asking if you wish to allow it to accept
 network connections. You can click "Deny" as we do not need network access currently nor we do request any.

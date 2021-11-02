@@ -403,35 +403,36 @@ tasks.register("createApp") {
 
     var params = ext.get(SHARED_PARAMS) as List<String>
     params += listOf(
-      "--name", ext.get(UPPERCASE_PROJECT_NAME) as String,
-      "--file-associations", "${supportDir}/macos/file.jpackage",
-      "--icon", "${supportDir}/macos/Logisim-evolution.icns",
-      // app versioning is strictly checked for macOS. No suffix allowed for `app-image` type.
-      "--app-version", ext.get(APP_VERSION_SHORT) as String,
-      "--type", "app-image",
+        "--name", ext.get(UPPERCASE_PROJECT_NAME) as String,
+        "--file-associations", "${supportDir}/macos/file.jpackage",
+        "--icon", "${supportDir}/macos/Logisim-evolution.icns",
+        // app versioning is strictly checked for macOS. No suffix allowed for `app-image` type.
+        "--app-version", ext.get(APP_VERSION_SHORT) as String,
+        "--type", "app-image",
     )
     runCommand(params, "Error while creating the .app directory.")
 
     val targetDir = ext.get(TARGET_DIR) as String
     val pListFilename = "${appDirName}/Contents/Info.plist"
     runCommand(listOf(
-      "awk",
-      "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};"
-              + "{print >\"${targetDir}/Info.plist\"};"
-              + "/NSHighResolutionCapable/{"
-              + "print \"  <string>true</string>\" >\"${targetDir}/Info.plist\";"
-              + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${targetDir}/Info.plist\""
-              + "}",
-      pListFilename,
+        "awk",
+        "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};"
+            + "/utilities/{sub(/public.app-category.utilities/,\"public.app-category.education\")};"
+            + "{print >\"${targetDir}/Info.plist\"};"
+            + "/NSHighResolutionCapable/{"
+            + "print \"  <string>true</string>\" >\"${targetDir}/Info.plist\";"
+            + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${targetDir}/Info.plist\""
+            + "}",
+        pListFilename,
     ), "Error while patching Info.plist file.")
 
     runCommand(listOf(
-      "mv", "${targetDir}/Info.plist", pListFilename
+        "mv", "${targetDir}/Info.plist", pListFilename
     ), "Error while moving Info.plist into the .app directory.")
 
     runCommand(listOf(
-        "codesign", "--remove-signature", appDirName
-    ), "Error while executing: codesign --remove-signature")
+        "codesign", "--force", "--sign", "-", appDirName
+    ), "Error while executing: codesign")
   }
 }
 
