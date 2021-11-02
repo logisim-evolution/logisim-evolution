@@ -42,6 +42,8 @@ dependencies {
   implementation("commons-cli:commons-cli:1.4")
   implementation("org.apache.commons:commons-text:1.9")
 
+  // NOTE: Do not upgrade the jflex version. Later versions do not work.
+  compileOnly("de.jflex:jflex:1.4.1")
   compileOnly("org.jetbrains:annotations:22.0.0")
 
   // NOTE: Be aware of reported issues with Eclipse and Batik
@@ -567,6 +569,53 @@ tasks.register("genBuildInfo") {
 }
 
 /**
+ * Task genVhdlSyntax
+ *
+ * Generates the VhdlSyntax.java file
+*/
+tasks.register("genVhdlSyntax") {
+  val sourceFile = "${projectDir}/src/main/jflex/com/cburch/logisim/vhdl/syntax/VhdlSyntax.jflex"
+  val skeletonFile = "${projectDir}/support/jflex/skeleton.default"
+  val targetDir = "${buildDir}/generated/logisim/java/com/cburch/logisim/vhdl/syntax/"
+
+  group = "build"
+  description = "Generates VhdlSyntax.java"
+  inputs.files(sourceFile)
+  inputs.files(skeletonFile)
+  outputs.dir(targetDir)
+
+  var jflexJarFileName = ""
+
+  doFirst() {
+    configurations.compileClasspath {
+      resolvedConfiguration.resolvedArtifacts.forEach { ra: ResolvedArtifact ->
+        val id = ra.moduleVersion.id
+        if ("de.jflex".equals(id.group) && "jflex".equals(id.name)) {
+          jflexJarFileName = ra.file.toString()
+        }
+      }
+    }
+    if (jflexJarFileName.isEmpty()) {
+      throw GradleException("Could not find jflex jar file.")
+    }
+  }
+
+  doLast() {
+    logging.captureStandardOutput(LogLevel.DEBUG)
+    javaexec {
+      main="-jar"
+      args = listOf(
+          jflexJarFileName,
+          "--nobak",
+          "-d", targetDir,
+          "--skel", skeletonFile,
+          sourceFile
+      )
+    }
+  }
+}
+
+/**
  * Task: genFiles
  *
  * Umbrella task to generate all generated files
@@ -574,7 +623,7 @@ tasks.register("genBuildInfo") {
 tasks.register("genFiles") {
   group = "build"
   description = "Generates all generated files."
-  dependsOn("genBuildInfo")
+  dependsOn("genBuildInfo", "genVhdlSyntax")
 }
 
 /**
