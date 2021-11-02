@@ -12,6 +12,7 @@ package com.cburch.logisim.file;
 import static com.cburch.logisim.file.Strings.S;
 
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitMutation;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
@@ -286,26 +287,34 @@ public final class LogisimFileActions {
           }
         }
         if (newCircuit == null) newCircuit = new Circuit(circ.getName(), proj.getLogisimFile(), proj);
+        CircuitAttributes.copyStaticAttributes(newCircuit.getStaticAttributes(), circ.getStaticAttributes());
         final var result = new CircuitMutation(newCircuit);
-        if (replace) result.clear();
+        if (replace) {
+          result.clear();
+        }
         for (final var wir : circ.getWires()) {
           result.add(Wire.create(wir.getEnd0(), wir.getEnd1()));
         }
         for (final var comp : circ.getNonWires()) {
           if (comp.getFactory() instanceof Pin) {
-            result.add(
-                Pin.FACTORY.createComponent(
-                    comp.getLocation(), (AttributeSet) comp.getAttributeSet().clone()));
+            result.add(Pin.FACTORY.createComponent(comp.getLocation(), (AttributeSet) comp.getAttributeSet().clone()));
           }
         }
         if (!replace) {
           result.execute();
           proj.doAction(LogisimFileActions.addCircuit(newCircuit));
-        } else proj.doAction(result.toAction(S.getter("replaceCircuitAction")));
+        } else {
+          proj.doAction(result.toAction(S.getter("replaceCircuitAction")));
+        }
+        if (circ.getAppearance().hasCustomAppearance()) {
+          /* TODO: repair custom appearance */
+          System.out.println("repair: " + circ.getName());
+          newCircuit.getAppearance().setObjectsForce(circ.getAppearance().getCustomObjectsFromBottom());
+        }
       }
       final var availableTools = new HashMap<String, AddTool>();
       LibraryTools.buildToolList(proj.getLogisimFile(), availableTools);
-      /* in the second step we are going to add the rest of the contents */
+      // in the second step we are going to add the rest of the contents
       for (final var circ : mergedCircuits) {
         final var newCirc = proj.getLogisimFile().getCircuit(circ.getName());
         if (newCirc != null) {

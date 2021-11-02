@@ -133,6 +133,17 @@ public class CircuitAttributes extends AbstractAttributeSet {
       }
     }
   }
+  
+  public static void copyStaticAttributes(AttributeSet destination, AttributeSet source) {
+    destination.setValue(CIRCUIT_LABEL_ATTR, source.getValue(CIRCUIT_LABEL_ATTR));
+    destination.setValue(CIRCUIT_LABEL_FACING_ATTR, source.getValue(CIRCUIT_LABEL_FACING_ATTR));
+    destination.setValue(CIRCUIT_LABEL_FONT_ATTR, source.getValue(CIRCUIT_LABEL_FONT_ATTR));
+    destination.setValue(APPEARANCE_ATTR, source.getValue(APPEARANCE_ATTR));
+    destination.setValue(NAMED_CIRCUIT_BOX_FIXED_SIZE, source.getValue(NAMED_CIRCUIT_BOX_FIXED_SIZE));
+    destination.setValue(SIMULATION_FREQUENCY, source.getValue(SIMULATION_FREQUENCY));
+    destination.setValue(DOWNLOAD_FREQUENCY, source.getValue(DOWNLOAD_FREQUENCY));
+    destination.setValue(DOWNLOAD_BOARD, source.getValue(DOWNLOAD_BOARD));
+  }
 
   static AttributeSet createBaseAttrs(Circuit source, String name) {
     final var ret = AttributeSets.fixedSet(STATIC_ATTRS, STATIC_DEFAULTS);
