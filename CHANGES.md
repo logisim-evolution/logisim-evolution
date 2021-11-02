@@ -8,6 +8,10 @@
   * Fixed Gradle builder failing to compile LSe if sources were not checked out from Git.
   * You can now swap the placement of main canvas and component tree/properties pane
 
+* v3.7.1 (2021-10-21)
+  * Logisim has now an internal font-chooser to comply to the font-values used
+  * Several bug fixes
+
 * v3.7.0 (2021-10-12)
   * Reworked the slider component in the I/O extra library
   * Tick clock frequency display moved to left corner. It's also bigger and text color is configurable.
