@@ -198,7 +198,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
     state.stateChanged();
     project.getVhdlSimulator().addVhdlSimStateListener(state);
 
-    mainRegion = new MainRegionVerticalSplitPane(leftRegion, rightRegion);
+    mainRegion = new MainRegionVerticalSplitPane(leftRegion, rightPanel);
     getContentPane().add(mainRegion, BorderLayout.CENTER);
 
     localeChanged();
