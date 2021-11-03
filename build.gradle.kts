@@ -1,6 +1,6 @@
 /*
  * Logisim-evolution - digital logic design tool and simulator
- * Copyright by the Logisim-evolution developers
+ * © 2001 Logisim-evolution contributors
  *
  * https://github.com/logisim-evolution/
  *
@@ -127,7 +127,7 @@ extra.apply {
   set(JPACKAGE, jpackage)
 
   // Copyrights note.
-  val copyrights = "Copyright ©2001–${SimpleDateFormat("yyyy").format(Date())} ${project.name} developers"
+  val copyrights = "Copyright ©2001 ${project.name} contributors"
 
   // Platform-agnostic jpackage parameters shared across all the builds.
   var params = listOf(
@@ -141,7 +141,7 @@ extra.apply {
       "--copyright", copyrights,
       "--dest", targetDir,
       "--description", "Digital logic design tool and simulator",
-      "--vendor", "${project.name} developers",
+      "--vendor", "${project.name} contributors",
   )
   if (logger.isDebugEnabled()) {
     params += listOf("--verbose")
