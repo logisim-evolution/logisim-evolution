@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.circuit.appear;
 
+import com.cburch.draw.actions.ModelAddAction;
+import com.cburch.draw.actions.ModelRemoveAction;
 import com.cburch.draw.model.CanvasModelEvent;
 import com.cburch.draw.model.CanvasModelListener;
 import com.cburch.draw.model.CanvasObject;
@@ -22,9 +24,11 @@ import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.gui.appear.CanvasActionAdapter;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstancePainter;
+import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
@@ -277,7 +281,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
   public List<CanvasObject> getCustomObjectsFromBottom() {
     return super.getObjectsFromBottom();
   }
-
+  
   @Override
   public List<CanvasObject> getObjectsFromBottom() {
     return isDefaultAppearance() ? Collections.unmodifiableList(defaultCanvasObjects) : super.getObjectsFromBottom();
@@ -354,6 +358,37 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
   public void removeObjects(Collection<? extends CanvasObject> shapes) {
     super.removeObjects(shapes);
     checkToFirePortsChanged(shapes);
+  }
+
+  public void repairCustomAppearance(List<CanvasObject> oldCustomAppearanceEleents, Project proj, Circuit circ) {
+    final var toBeRemoved = new ArrayList<CanvasObject>();
+    final var toBeAdded = new ArrayList<CanvasObject>();
+    final var apearanceToBeRemoved = new ArrayList<AppearanceElement>(); 
+    final var apearanceToBeAdded = new ArrayList<AppearanceElement>(); 
+    for (final var obj : getCustomObjectsFromBottom()) {
+      if (obj instanceof AppearanceElement element) {
+        apearanceToBeRemoved.add(element);
+      } else {
+        toBeRemoved.add(obj);
+      }
+    }
+    for (final var obj : oldCustomAppearanceEleents) {
+      if (obj instanceof AppearanceElement element) {
+        apearanceToBeAdded.add(element);
+      } else {
+        toBeAdded.add(obj);
+      }
+    }
+    for (final var obj : apearanceToBeRemoved) {
+      final var action = new ModelRemoveAction(this, obj);
+      proj.doAction(new CanvasActionAdapter(circ, action));
+    }
+    for (final var obj : apearanceToBeAdded) {
+      final var action = new ModelAddAction(this, obj.clone());
+      proj.doAction(new CanvasActionAdapter(circ, action));
+    }
+    removeObjects(toBeRemoved);
+    addObjects(getCustomObjectsFromBottom().size() - 1, toBeAdded);
   }
 
   public void removeDynamicElement(InstanceComponent c) {

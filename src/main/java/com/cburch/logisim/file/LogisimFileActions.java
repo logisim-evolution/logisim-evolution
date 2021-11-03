@@ -306,15 +306,17 @@ public final class LogisimFileActions {
         } else {
           proj.doAction(result.toAction(S.getter("replaceCircuitAction")));
         }
-        if (circ.getAppearance().hasCustomAppearance()) {
-          /* TODO: repair custom appearance */
-          System.out.println("repair: " + circ.getName());
-          newCircuit.getAppearance().setObjectsForce(circ.getAppearance().getCustomObjectsFromBottom());
-        }
       }
       final var availableTools = new HashMap<String, AddTool>();
       LibraryTools.buildToolList(proj.getLogisimFile(), availableTools);
-      // in the second step we are going to add the rest of the contents
+      // Second pass, restore the custom appearance
+      for (final var circ : mergedCircuits) {
+        if (circ.getAppearance().hasCustomAppearance()) {
+          final var newCirc = proj.getLogisimFile().getCircuit(circ.getName());
+          newCirc.getAppearance().repairCustomAppearance(circ.getAppearance().getCustomObjectsFromBottom(), proj, newCirc);
+        }
+      }
+      // in the third step we are going to add the rest of the contents
       for (final var circ : mergedCircuits) {
         final var newCirc = proj.getLogisimFile().getCircuit(circ.getName());
         if (newCirc != null) {
@@ -329,7 +331,7 @@ public final class LogisimFileActions {
               } else System.out.println("Not found:" + comp.getFactory().getName());
             }
           }
-          result.execute();
+          proj.doAction(result.toAction(S.getter("replaceCircuitAction")));
         }
       }
       mergedCircuits.clear();
