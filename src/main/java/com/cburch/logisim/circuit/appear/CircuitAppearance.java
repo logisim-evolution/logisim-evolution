@@ -387,6 +387,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
           if (item instanceof AppearanceAnchor newAnchor) {
             final var translates = new HashSet<CanvasObject>();
             translates.add(oldAnchor);
+            oldAnchor.setValue(AppearanceAnchor.FACING, newAnchor.getValue(AppearanceAnchor.FACING));
             final var dx = newAnchor.getLocation().getX() - oldAnchor.getLocation().getX();
             final var dy = newAnchor.getLocation().getY() - oldAnchor.getLocation().getY();
             final var action = new ModelTranslateAction(this, translates, dx , dy);
