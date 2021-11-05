@@ -390,7 +390,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
             oldAnchor.setValue(AppearanceAnchor.FACING, newAnchor.getValue(AppearanceAnchor.FACING));
             final var dx = newAnchor.getLocation().getX() - oldAnchor.getLocation().getX();
             final var dy = newAnchor.getLocation().getY() - oldAnchor.getLocation().getY();
-            final var action = new ModelTranslateAction(this, translates, dx , dy);
+            final var action = new ModelTranslateAction(this, translates, dx, dy);
             proj.doAction(new CanvasActionAdapter(circ, action));
             iterator.remove();
             break;
@@ -409,7 +409,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
               translates.add(oldPort);
               final var dx = newPort.getLocation().getX() - oldPort.getLocation().getX();
               final var dy = newPort.getLocation().getY() - oldPort.getLocation().getY();
-              final var action = new ModelTranslateAction(this, translates, dx , dy);
+              final var action = new ModelTranslateAction(this, translates, dx, dy);
               proj.doAction(new CanvasActionAdapter(circ, action));
               iterator.remove();
               break;
