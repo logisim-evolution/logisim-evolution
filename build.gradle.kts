@@ -491,6 +491,10 @@ fun genBuildInfo(buildInfoFilePath: String) {
   }
   val currentMillis = Date().time
   val buildYear = SimpleDateFormat("yyyy").format(now)
+  val appVersion = ext.get(APP_VERSION) as String
+  val projectName = project.name.capitalize().trim()
+  val displayName = "${projectName} v${appVersion}"
+  val url = ext.get(APP_URL) as String
 
   val buildInfoClass = """
       // ************************************************************************
@@ -517,10 +521,10 @@ fun genBuildInfo(buildInfoFilePath: String) {
         static { date.setTime(millis); }
 
         // Project version
-        public static final LogisimVersion version = LogisimVersion.fromString("${ext.get(APP_VERSION) as String}");
-        public static final String name = "${project.name.capitalize().trim()}";
-        public static final String displayName = "${project.name.capitalize().trim()} v${ext.get(APP_VERSION) as String}";
-        public static final String url = "${ext.get(APP_URL) as String}";
+        public static final LogisimVersion version = LogisimVersion.fromString("${appVersion}");
+        public static final String name = "${projectName}";
+        public static final String displayName = "${displayName}";
+        public static final String url = "${url}";
 
         // JRE info
         public static final String jvm_version =
