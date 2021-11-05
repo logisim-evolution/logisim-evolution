@@ -271,6 +271,14 @@ public class CircuitAttributes extends AbstractAttributeSet {
     if (attr == LABEL_LOCATION_ATTR) return (E) labelLocation;
     else return source.getStaticAttributes().getValue(attr);
   }
+  
+  public static void copyInto(AttributeSet source, AttributeSet destination) {
+    destination.setValue(StdAttr.FACING, source.getValue(StdAttr.FACING));
+    destination.setValue(StdAttr.LABEL, source.getValue(StdAttr.LABEL));
+    destination.setValue(StdAttr.LABEL_FONT, source.getValue(StdAttr.LABEL_FONT));
+    destination.setValue(StdAttr.LABEL_VISIBILITY, source.getValue(StdAttr.LABEL_VISIBILITY));
+    destination.setValue(LABEL_LOCATION_ATTR, source.getValue(LABEL_LOCATION_ATTR));
+  }
 
   @Override
   public boolean isToSave(Attribute<?> attr) {

@@ -9,8 +9,7 @@
 
 package com.cburch.logisim.circuit.appear;
 
-import com.cburch.draw.actions.ModelAddAction;
-import com.cburch.draw.actions.ModelRemoveAction;
+import com.cburch.draw.actions.ModelTranslateAction;
 import com.cburch.draw.model.CanvasModelEvent;
 import com.cburch.draw.model.CanvasModelListener;
 import com.cburch.draw.model.CanvasObject;
@@ -35,6 +34,7 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -131,7 +131,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
   }
   
   public Drawing getCustomAppearanceDrawing() {
-    return super.getCopy();
+    return new CircuitCustomAppearance(this);
   }
 
   public void sortPinsList(List<Instance> pins, Direction facing) {
@@ -360,7 +360,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
     checkToFirePortsChanged(shapes);
   }
 
-  public void repairCustomAppearance(List<CanvasObject> oldCustomAppearanceEleents, Project proj, Circuit circ) {
+  public void repairCustomAppearance(List<CanvasObject> oldCustomAppearanceElements, Project proj, Circuit circ) {
     final var toBeRemoved = new ArrayList<CanvasObject>();
     final var toBeAdded = new ArrayList<CanvasObject>();
     final var apearanceToBeRemoved = new ArrayList<AppearanceElement>(); 
@@ -372,7 +372,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
         toBeRemoved.add(obj);
       }
     }
-    for (final var obj : oldCustomAppearanceEleents) {
+    for (final var obj : oldCustomAppearanceElements) {
       if (obj instanceof AppearanceElement element) {
         apearanceToBeAdded.add(element);
       } else {
@@ -380,12 +380,42 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
       }
     }
     for (final var obj : apearanceToBeRemoved) {
-      final var action = new ModelRemoveAction(this, obj);
-      proj.doAction(new CanvasActionAdapter(circ, action));
+      if (obj instanceof AppearanceAnchor oldAnchor) {
+        final var iterator = apearanceToBeAdded.iterator();
+        while (iterator.hasNext()) {
+          final var item = iterator.next();
+          if (item instanceof AppearanceAnchor newAnchor) {
+            final var translates = new HashSet<CanvasObject>();
+            translates.add(oldAnchor);
+            final var dx = newAnchor.getLocation().getX() - oldAnchor.getLocation().getX();
+            final var dy = newAnchor.getLocation().getY() - oldAnchor.getLocation().getY();
+            final var action = new ModelTranslateAction(this, translates, dx , dy);
+            proj.doAction(new CanvasActionAdapter(circ, action));
+            iterator.remove();
+            break;
+          }
+        }
+      }
     }
-    for (final var obj : apearanceToBeAdded) {
-      final var action = new ModelAddAction(this, obj.clone());
-      proj.doAction(new CanvasActionAdapter(circ, action));
+    for (final var obj : apearanceToBeRemoved) {
+      if (obj instanceof AppearancePort oldPort) {
+        final var iterator = apearanceToBeAdded.iterator();
+        while (iterator.hasNext()) {
+          final var item = iterator.next();
+          if (item instanceof AppearancePort newPort) {
+            if (newPort.getPin().getLocation().equals(oldPort.getPin().getLocation())) {
+              final var translates = new HashSet<CanvasObject>();
+              translates.add(oldPort);
+              final var dx = newPort.getLocation().getX() - oldPort.getLocation().getX();
+              final var dy = newPort.getLocation().getY() - oldPort.getLocation().getY();
+              final var action = new ModelTranslateAction(this, translates, dx , dy);
+              proj.doAction(new CanvasActionAdapter(circ, action));
+              iterator.remove();
+              break;
+            }
+          }
+        }
+      }
     }
     removeObjects(toBeRemoved);
     addObjects(getCustomObjectsFromBottom().size() - 1, toBeAdded);
