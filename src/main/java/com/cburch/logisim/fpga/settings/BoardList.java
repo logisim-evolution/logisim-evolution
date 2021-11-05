@@ -93,7 +93,7 @@ public class BoardList {
 
   public BoardList() {
     final var classPath = System.getProperty("java.class.path", File.pathSeparator);
-    final var classPathElements = classPath.split(File.pathSeparator);
+    final var classPathElements = classPath.split(Pattern.quote(File.pathSeparator));
     final var pattern = Pattern.compile(".*.xml");
     for (final var element : classPathElements) {
       definedBoards.addAll(getBoards(pattern, boardResourcePath, element));
