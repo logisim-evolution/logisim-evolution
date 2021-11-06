@@ -95,16 +95,17 @@ public class Hdl {
   }
 
   public static String elseStatement() {
-    return isVhdl() ? "ELSE" : "end else begin";
+    return isVhdl() ? Vhdl.getVhdlKeyword("ELSE") : "end else begin";
   }
 
   public static String elseIf(String condition) {
-    return isVhdl() ? LineBuffer.formatHdl("ELSIF {{1}} THEN", condition)
+    return isVhdl() ? LineBuffer.formatHdl("{{1}} {{2}} {{3}}", Vhdl.getVhdlKeyword("ELSIF"), condition, Vhdl.getVhdlKeyword("THEN"))
                     : LineBuffer.formatHdl("end else if ({{1}}) begin", condition);
   }
 
   public static String endIf() {
-    return isVhdl() ? "END IF;" : "end";
+    return isVhdl() ? LineBuffer.formatHdl("{{1}} {{2}};", Vhdl.getVhdlKeyword("END"), Vhdl.getVhdlKeyword("IF"))
+                    : "end";
   }
 
   public static String assignPreamble() {
@@ -192,7 +193,7 @@ public class Hdl {
     if (distance == 0) return signal;
     if (arithmetic) {
       return isVhdl()
-        ? LineBuffer.formatHdl("({{1}} DOWNTO 0 => {{2}}({{1}})) & {{2}}{{3}}", width - 1, signal, splitVector(width - 1, width - distance))
+        ? LineBuffer.formatHdl("({{1}}{{2}}0 => {{3}}({{1}})) & {{3}}{{4}}", width - 1, vectorLoopId(), signal, splitVector(width - 1, width - distance))
         : LineBuffer.formatHdl("{ {{{1}}{{{2}}[{{1}}-1]}},{{2}}{{3}}}", width, signal, splitVector(width - 1, width - distance));
     } else {
       return isVhdl()
@@ -246,7 +247,7 @@ public class Hdl {
   public static String splitVector(int start, int end) {
     if (start == end) return LineBuffer.formatHdl("{{<}}{{2}}{{>}}", start);
     return isVhdl()
-                ? LineBuffer.formatHdl("({{1}} DOWNTO {{2}}) ", start, end)
+                ? LineBuffer.formatHdl("({{1}}{{2}}{{3}}) ", start, vectorLoopId(), end)
                 : LineBuffer.formatHdl("[{{1}}:{{2}}]", start, end);
   }
 
