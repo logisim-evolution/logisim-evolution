@@ -26,7 +26,7 @@
   * Each circuit stores/restores the last board used for Download (handy for templates to give to students)
   * Fixed startup crash related to incorrectly localized date format.
   * Added a setting to select lower- or upper-case VHDL keywords.
-  * Added project export feature.* Cleaned-up the library tree of loaded projects.
+  * Added project export feature.
   * Cleaned-up the written .circ file.
   * Cleaned-up the library tree of loaded projects.
 
