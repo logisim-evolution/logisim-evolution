@@ -615,10 +615,12 @@ val compilerOptions = listOf("-Xlint:deprecation", "-Xlint:unchecked")
 
 tasks {
   compileJava {
+    options.encoding = "UTF-8"
     options.compilerArgs = compilerOptions
     dependsOn("genFiles")
   }
   compileTestJava {
+    options.encoding = "UTF-8"
     options.compilerArgs = compilerOptions
     dependsOn("genFiles")
   }
