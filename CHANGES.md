@@ -3,17 +3,17 @@
 # Changes #
 
 * @dev (????-??-??)
-  * Logisim has now an internal font-chooser to comply to the font-values used
   * Fixed Preferences/Window "Reset window layout to defaults" not doing much.
   * Fixed Gradle builder failing to compile LSe if sources were not checked out from Git.
-  * You can now swap the placement of main canvas and component tree/properties pane
+  * You can now swap the placement of main canvas and component tree/properties pane.
+  * Several bug fixes.
 
 * v3.7.1 (2021-10-21)
-  * Logisim has now an internal font-chooser to comply to the font-values used
-  * Several bug fixes
+  * Logisim has now an internal font-chooser to comply to the font-values used.
+  * Several bug fixes.
 
 * v3.7.0 (2021-10-12)
-  * Reworked the slider component in the I/O extra library
+  * Reworked the slider component in the I/O extra library.
   * Tick clock frequency display moved to left corner. It's also bigger and text color is configurable.
   * Completely rewritten command line argument parser:
     * All options have both short and long version now,
@@ -22,13 +22,13 @@
     * `-clearprefs` is now `--clear-prefs`,
     * `-clearprops` option is removed (use `--clear-prefs` instead),
     * `-geom` is now `--geometry`,
-    * `-nosplash` is now `--no-splash` or `-ns,
+    * `-nosplash` is now `--no-splash` or `-ns`,
     * `-sub` is now `--substitute` or `-s`,
     * `-testvector` is now `--test-vector` or `-w`,
     * `-test-fpga-implementation` is now `--test-fpga` or `-f`,
     * `-questa` is removed.
-  * PortIO HDL generator and component bug-fixed
-  * Cleanup/rework of the HDL-generation
+  * PortIO HDL generator and component bug-fixed.
+  * Cleanup/rework of the HDL-generation.
   * Each circuit stores/restores the last board used for Download (handy for templates to give to students)
   * Fixed startup crash related to incorrectly localized date format.
   * Added a setting to select lower- or upper-case VHDL keywords.
