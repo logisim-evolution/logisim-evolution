@@ -80,7 +80,7 @@ class PinAttributes extends ProbeAttributes {
     if (attr == ATTR_DUMMY) return (V) "nochange";
     return super.getValue(attr);
   }
-
+  
   boolean isInput() {
     return type != EndData.OUTPUT_ONLY;
   }

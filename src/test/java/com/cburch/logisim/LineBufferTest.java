@@ -9,29 +9,33 @@
 
 package com.cburch.logisim;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mockStatic;
 
-import com.cburch.draw.shapes.Line;
+import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.util.LineBuffer;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
-import org.junit.Before;
-import org.junit.Test;
+import org.apache.commons.text.WordUtils;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.MockedStatic;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 /** Tests LogisimVersion class. */
+@ExtendWith(MockitoExtension.class)
 public class LineBufferTest extends TestBase {
 
   private LineBuffer lb;
 
-  @Before
-  public void SetUp() {
+  @BeforeEach
+  public void setup() {
     lb = LineBuffer.getBuffer();
     assertEquals(0, lb.size());
   }
@@ -338,7 +342,210 @@ public class LineBufferTest extends TestBase {
       break;
     }
 
-    assertTrue("Default ctor not found!", found);
+    assertTrue(found, "Default ctor not found!");
   }
 
+  /* ********************************************************************************************* */
+
+  /**
+   * Ensures format() can handle additional opening brackets.
+   */
+  @Test
+  public void testPlaceholderSoroundedByThreeBrackets() {
+    final var fmt = "{{{1}}{{2}},{{{3}}{testText}}};";
+
+    final var buffer = LineBuffer.getBuffer();
+
+    final var arg1 = getRandomString();
+    final var arg2 = getRandomString();
+    final var arg3 = getRandomString();
+
+    buffer.add(fmt, arg1, arg2, arg3);
+
+    final var exp = String.format("{%s%s,{%s{testText}}};", arg1, arg2, arg3);
+    assertEquals(1, buffer.size());
+    assertEquals(exp, buffer.get(0));
+  }
+
+  /* ********************************************************************************************* */
+
+  @Test
+  public void testRemarkLine() {
+    final var remark = getRandomString();
+    doRemarkLineTest(remark, false);
+    doRemarkLineTest(remark, true);
+  }
+
+  private void doRemarkLineTest(String remark, boolean isVhdl) {
+    try (final var mockedHdl = mockStatic(Hdl.class)) {
+      setupMockedHdl(mockedHdl, isVhdl);
+      final var expected = String.format("%s%s", Hdl.getLineCommentStart(), remark);
+      final var lb = LineBuffer.getBuffer();
+      lb.addRemarkLine(remark);
+      assertEquals(1, lb.size());
+      assertEquals(expected, lb.get(0));
+    }
+  }
+
+  /* ********************************************************************************************* */
+
+  /**
+   * Tests remark block generator for non-indented blocks.
+   */
+  @Test
+  public void testBuildRemarkBlock() {
+    doBuildRemarkBlockTest(getRandomString(), 0);
+  }
+
+  /**
+   * Ensures that indented remark blocks are correctly generated.
+   */
+  @Test
+  public void testBuildRemarkBlockWithIndent() {
+    doBuildRemarkBlockTest(getRandomString(), getRandomInt(1, 10));
+  }
+
+  /**
+   * Ensures that remark with multiple words and total remark length longer
+   * than max line length are correctly word wrapped.
+   */
+  @Test
+  public void testMultilineRemarkBlock() {
+    final var wordCnt = getRandomInt(20, 30);
+    final var sb = new StringBuilder();
+    for (var i = 0; i < wordCnt; i++) {
+      sb.append(getRandomString()).append(" ");
+    }
+    doBuildRemarkBlockTest(sb.toString(), 0);
+  }
+
+  /**
+   * Ensures that remark with words longer than max line length are
+   * properly force-word wrapped.
+   */
+  @Test
+  public void testForcedMultilineRemarkBlock() {
+    final var cnt = getRandomInt(20, 30);
+    final var remark = getRandomString().repeat(cnt);
+    assertTrue(remark.length() > LineBuffer.MAX_LINE_LENGTH);
+    doBuildRemarkBlockTest(remark, 0);
+  }
+
+  /**
+   * Tests if remark containing multiple words, of which
+   * some are longer than max line length is correctly wrapped.
+   */
+  @Test
+  public void testMixedRemarkWrapping() {
+    final var sb = new StringBuilder();
+
+    final var cnt = getRandomInt(20, 30);
+    final var tooLongWord = getRandomString().repeat(cnt);
+    assertTrue(tooLongWord.length() > LineBuffer.MAX_LINE_LENGTH);
+    sb.append(tooLongWord);
+
+    final var wordCnt = getRandomInt(20, 30);
+    for (var i = 0; i < wordCnt; i++) {
+      sb.append(getRandomString()).append(" ");
+    }
+
+    doBuildRemarkBlockTest(sb.toString(), 0);
+  }
+
+  /**
+   * Ensures that indentation exceeding allowed range is handled correctly.
+   */
+  @Test
+  public void testEdgeIndentWrappingOfRemarkBlock() {
+    final var remark = getRandomString();
+    assertThrows(IllegalArgumentException.class, () -> {
+      LineBuffer.getBuffer().addRemarkBlock(remark, LineBuffer.MAX_LINE_LENGTH);
+    });
+  }
+
+  /**
+   * Ensures that negative indentation is handled correctly.
+   */
+  @Test
+  public void testNegativeIndentWrappingOfRemarkBlock() {
+    final var remark = getRandomString();
+    final var indent = getRandomInt(-100, -1);
+    assertThrows(IllegalArgumentException.class, () -> {
+      LineBuffer.getBuffer().addRemarkBlock(remark, indent);
+    });
+  }
+
+  /**
+   * Test remark block builder for both Vhdl and non Vhdl modes.
+   */
+  private void doBuildRemarkBlockTest(String remarkText, int indentSpaces) {
+    doBuildRemarkBlockTest(remarkText, indentSpaces, false);
+    doBuildRemarkBlockTest(remarkText, indentSpaces, true);
+  }
+
+  // FIXME: this test do not cover breaking remark into multiple lines
+  private void doBuildRemarkBlockTest(String remarkText, int indentSpaces, boolean isVhdl) {
+    final var lb = LineBuffer.getBuffer();
+    final var indent = " ".repeat(indentSpaces);
+
+    try (final var mockedHdl = mockStatic(Hdl.class)) {
+      setupMockedHdl(mockedHdl, isVhdl);
+
+      final var maxLineLength = LineBuffer.MAX_LINE_LENGTH - (2 * Hdl.REMARK_MARKER_LENGTH) - indentSpaces;
+      final var remarkLines =
+          List.of(WordUtils.wrap(remarkText, maxLineLength, "\n", true).split("\n"));
+
+      final var lineSep = indent + "-".repeat(LineBuffer.MAX_LINE_LENGTH - indentSpaces);
+      final var expected = new ArrayList<String>();
+
+      // Header separator line
+      final var header = new StringBuilder();
+      expected.add(
+          header
+              .append(indent)
+              .append(Hdl.getRemarkBlockStart())
+              .append(Hdl.getRemarkChar().repeat(LineBuffer.MAX_LINE_LENGTH - header.length()))
+              .toString());
+
+      // Build remark line
+      final var tmpLine = new StringBuilder();
+      for (final var remarkLine : remarkLines) {
+        tmpLine.append(indent + Hdl.getRemarkBlockLineStart() + remarkLine);
+        final var remaining =
+            LineBuffer.MAX_LINE_LENGTH
+                - indentSpaces
+                - (2 * Hdl.REMARK_MARKER_LENGTH)
+                - remarkLine.length();
+        tmpLine.append(" ".repeat(remaining > 0 ? remaining : 0));
+        tmpLine.append(Hdl.getRemarkBlockLineEnd());
+        expected.add(tmpLine.toString());
+        tmpLine.setLength(0);
+      }
+
+      // Footer separator line
+      final var footer = new StringBuilder();
+      expected.add(
+          footer
+              .append(indent)
+              .append(Hdl.getRemarkChar().repeat(LineBuffer.MAX_LINE_LENGTH - footer.length() - Hdl.REMARK_MARKER_LENGTH))
+              .append(Hdl.getRemarkBlockEnd())
+              .toString());
+
+      lb.addRemarkBlock(remarkText, indentSpaces);
+      final var result = lb.get();
+
+      assertEquals(expected, result);
+    }
+  }
+
+  private void setupMockedHdl(MockedStatic<Hdl> mockedHdl, boolean isVhdl) {
+    mockedHdl.when(Hdl::isVhdl).thenReturn(isVhdl);
+
+    mockedHdl.when(Hdl::getRemarkChar).thenCallRealMethod();
+    mockedHdl.when(Hdl::getRemarkBlockStart).thenCallRealMethod();
+    mockedHdl.when(Hdl::getRemarkBlockEnd).thenCallRealMethod();
+    mockedHdl.when(Hdl::getRemarkBlockLineStart).thenCallRealMethod();
+    mockedHdl.when(Hdl::getRemarkBlockLineEnd).thenCallRealMethod();
+    mockedHdl.when(Hdl::getLineCommentStart).thenCallRealMethod();
+  }
 }

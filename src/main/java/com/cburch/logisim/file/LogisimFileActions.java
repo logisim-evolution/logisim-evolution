@@ -12,7 +12,9 @@ package com.cburch.logisim.file;
 import static com.cburch.logisim.file.Strings.S;
 
 import com.cburch.logisim.circuit.Circuit;
+import com.cburch.logisim.circuit.CircuitAttributes;
 import com.cburch.logisim.circuit.CircuitMutation;
+import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
@@ -286,26 +288,29 @@ public final class LogisimFileActions {
           }
         }
         if (newCircuit == null) newCircuit = new Circuit(circ.getName(), proj.getLogisimFile(), proj);
+        CircuitAttributes.copyStaticAttributes(newCircuit.getStaticAttributes(), circ.getStaticAttributes());
         final var result = new CircuitMutation(newCircuit);
-        if (replace) result.clear();
-        for (final var wir : circ.getWires()) {
-          result.add(Wire.create(wir.getEnd0(), wir.getEnd1()));
+        if (replace) {
+          result.clear();
         }
         for (final var comp : circ.getNonWires()) {
           if (comp.getFactory() instanceof Pin) {
-            result.add(
-                Pin.FACTORY.createComponent(
-                    comp.getLocation(), (AttributeSet) comp.getAttributeSet().clone()));
+            result.add(Pin.FACTORY.createComponent(comp.getLocation(), (AttributeSet) comp.getAttributeSet().clone()));
           }
+        }
+        for (final var wir : circ.getWires()) {
+          result.add(Wire.create(wir.getEnd0(), wir.getEnd1()));
         }
         if (!replace) {
           result.execute();
           proj.doAction(LogisimFileActions.addCircuit(newCircuit));
-        } else proj.doAction(result.toAction(S.getter("replaceCircuitAction")));
+        } else {
+          proj.doAction(result.toAction(S.getter("replaceCircuitAction")));
+        }
       }
       final var availableTools = new HashMap<String, AddTool>();
       LibraryTools.buildToolList(proj.getLogisimFile(), availableTools);
-      /* in the second step we are going to add the rest of the contents */
+      // in the second step we are going to add the rest of the contents
       for (final var circ : mergedCircuits) {
         final var newCirc = proj.getLogisimFile().getCircuit(circ.getName());
         if (newCirc != null) {
@@ -314,13 +319,27 @@ public final class LogisimFileActions {
             if (!(comp.getFactory() instanceof Pin)) {
               final var current = availableTools.get(comp.getFactory().getName().toUpperCase());
               if (current != null) {
-                result.add(current.getFactory().createComponent(comp.getLocation(), (AttributeSet) comp.getAttributeSet().clone()));
+                final var factory = current.getFactory();
+                if (factory instanceof SubcircuitFactory subcirc) {
+                  final var newAttrs = factory.createAttributeSet();
+                  CircuitAttributes.copyInto(comp.getAttributeSet(), newAttrs);
+                  result.add(factory.createComponent(comp.getLocation(), newAttrs));
+                } else {
+                  result.add(factory.createComponent(comp.getLocation(), (AttributeSet) comp.getAttributeSet().clone()));
+                }
               } else if ("Text".equals(comp.getFactory().getName())) {
                 result.add(Text.FACTORY.createComponent(comp.getLocation(), (AttributeSet) comp.getAttributeSet().clone()));
               } else System.out.println("Not found:" + comp.getFactory().getName());
             }
           }
-          result.execute();
+          proj.doAction(result.toAction(S.getter("replaceCircuitAction")));
+        }
+      }
+      // Last pass, restore the custom appearance
+      for (final var circ : mergedCircuits) {
+        if (circ.getAppearance().hasCustomAppearance()) {
+          final var newCirc = proj.getLogisimFile().getCircuit(circ.getName());
+          newCirc.getAppearance().repairCustomAppearance(circ.getAppearance().getCustomObjectsFromBottom(), proj, newCirc);
         }
       }
       mergedCircuits.clear();

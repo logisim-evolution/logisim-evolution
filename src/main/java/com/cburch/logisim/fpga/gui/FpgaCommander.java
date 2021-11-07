@@ -382,9 +382,11 @@ public class FpgaCommander
       Progress.setString(S.get("FpgaGuiIdle"));
       Progress.setValue(0);
     } else if (e.getActionCommand().equals("mainCircuit")) {
-      final var circuitName = circuitsList.getSelectedItem().toString();
-      FrequencyPanel.updateFrequencyList(circuitName);
-      updateCircuitBoard(circuitName);
+      if (circuitsList.getSelectedItem() != null) {
+        final var circuitName = circuitsList.getSelectedItem().toString();
+        FrequencyPanel.updateFrequencyList(circuitName);
+        updateCircuitBoard(circuitName);
+      }
     }
   }
 

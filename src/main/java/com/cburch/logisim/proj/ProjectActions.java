@@ -47,9 +47,11 @@ import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
-public class ProjectActions {
+public final class ProjectActions {
   private static final String FILE_NAME_FORMAT_ERROR = "FileNameError";
   private static final String FILE_NAME_KEYWORD_ERROR = "ExistingToolName";
+
+  private ProjectActions() {}
 
   private static class CreateFrame implements Runnable {
     private final Loader loader;
@@ -148,7 +150,8 @@ public class ProjectActions {
   }
 
   public static LogisimFile createNewFile(Project baseProject) {
-    final var loader = new Loader(baseProject == null ? null : baseProject.getFrame());
+    final var parent = (baseProject == null) ? null : baseProject.getFrame();
+    final var loader = new Loader(parent);
     final var templReader = AppPreferences.getTemplate().createStream();
     LogisimFile file;
     try {
@@ -160,6 +163,7 @@ public class ProjectActions {
       try {
         templReader.close();
       } catch (IOException ignored) {
+        // Do nothing.
       }
     }
     return file;
@@ -207,7 +211,6 @@ public class ProjectActions {
 
   public static void doMerge(Component parent, Project baseProject) {
     JFileChooser chooser;
-    LogisimFile mergelib;
     if (baseProject != null) {
       final var oldLoader = baseProject.getLogisimFile().getLoader();
       chooser = oldLoader.createChooser();
@@ -220,6 +223,7 @@ public class ProjectActions {
     chooser.setFileFilter(Loader.LOGISIM_FILTER);
     chooser.setDialogTitle(S.get("FileMergeItem"));
 
+    LogisimFile mergelib;
     int returnVal = chooser.showOpenDialog(parent);
     if (returnVal != JFileChooser.APPROVE_OPTION) return;
     final var selected = chooser.getSelectedFile();
@@ -402,8 +406,13 @@ public class ProjectActions {
    *
    * <p>It is the action listener for the File->Import project bundle... menu option.
    *
+<<<<<<< HEAD
    * @param proj the current project to perform the file->open action afterwards 
    * @return true if success, false otherwise 
+=======
+   * @param proj Project to be exported
+   * @return true if success, false otherwise
+>>>>>>> 442ec770176ad3894378ec0e981b5c6bf1d32d6d
    */
   public static boolean doExtractAndRunProject(Project proj) {
     var ret = true;
@@ -651,6 +660,4 @@ public class ProjectActions {
     }
     return doSave(proj, selectedFile);
   }
-
-  private ProjectActions() {}
 }
