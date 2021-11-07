@@ -406,13 +406,8 @@ public final class ProjectActions {
    *
    * <p>It is the action listener for the File->Import project bundle... menu option.
    *
-<<<<<<< HEAD
    * @param proj the current project to perform the file->open action afterwards 
    * @return true if success, false otherwise 
-=======
-   * @param proj Project to be exported
-   * @return true if success, false otherwise
->>>>>>> 442ec770176ad3894378ec0e981b5c6bf1d32d6d
    */
   public static boolean doExtractAndRunProject(Project proj) {
     var ret = true;
