@@ -28,6 +28,7 @@ import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.memory.RamAttributes;
 import com.cburch.logisim.tools.AddTool;
 import com.cburch.logisim.util.CollectionUtil;
+import com.cburch.logisim.util.StringUtil;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -36,6 +37,8 @@ import java.util.Map;
 import org.w3c.dom.Element;
 
 public class XmlCircuitReader extends CircuitTransaction {
+
+  private static final String contextFmt = "%s.%s";
 
   private final XmlReader.ReadContext reader;
 
@@ -61,45 +64,47 @@ public class XmlCircuitReader extends CircuitTransaction {
 
     // Determine the factory that creates this element
     final var name = elt.getAttribute("name");
-    if (name == null || "".equals(name)) {
+    if (StringUtil.isNullOrEmpty(name)) {
       throw new XmlReaderException(S.get("compNameMissingError"));
     }
 
     final var libName = elt.getAttribute("lib");
     final var lib = reader.findLibrary(libName);
     if (lib == null) {
+      // FIXME: the "no-lib" thing may not be clear enough
       throw new XmlReaderException(S.get("compUnknownError", "no-lib"));
     }
 
     final var tool = lib.getTool(name);
     if (!(tool instanceof AddTool)) {
-      if (libName == null || "".equals(libName)) {
-        throw new XmlReaderException(S.get("compUnknownError", name));
-      } else {
-        throw new XmlReaderException(S.get("compAbsentError", name, libName));
-      }
+      final var msg =
+          StringUtil.isNullOrEmpty(libName)
+              ? S.get("compUnknownError", name)
+              : S.get("compAbsentError", name, libName);
+      throw new XmlReaderException(msg);
     }
     final var source = ((AddTool) tool).getFactory();
 
     // Determine attributes
     final var locStr = elt.getAttribute("loc");
     final var attrs = source.createAttributeSet();
-    if (source instanceof Ram && isHolyCross) {
-      RamAttributes rattrs = (RamAttributes) attrs;
-      rattrs.setValue(Mem.ENABLES_ATTR, Mem.USELINEENABLES);
-      rattrs.updateAttributes();
-      reader.initAttributeSet(elt, attrs, null, isHolyCross, isEvolution);
-    } else reader.initAttributeSet(elt, attrs, source, isHolyCross, isEvolution);
+    var defaults = source;
+    if (isHolyCross && source instanceof Ram) {
+      final var ramAttrs = (RamAttributes) attrs;
+      ramAttrs.setValue(Mem.ENABLES_ATTR, Mem.USELINEENABLES);
+      ramAttrs.updateAttributes();
+      defaults = null;
+    }
+    reader.initAttributeSet(elt, attrs, defaults, isHolyCross, isEvolution);
 
     // Create component if location known
-    if (locStr == null || "".equals(locStr)) {
+    if (StringUtil.isNullOrEmpty(locStr)) {
       throw new XmlReaderException(S.get("compLocMissingError", source.getName()));
-    } else {
-      try {
-        return source.createComponent(Location.parse(locStr), attrs);
-      } catch (NumberFormatException e) {
-        throw new XmlReaderException(S.get("compLocInvalidError", source.getName(), locStr));
-      }
+    }
+    try {
+      return source.createComponent(Location.parse(locStr), attrs);
+    } catch (NumberFormatException e) {
+      throw new XmlReaderException(S.get("compLocInvalidError", source.getName(), locStr));
     }
   }
 
@@ -154,27 +159,25 @@ public class XmlCircuitReader extends CircuitTransaction {
       if (circData.circuitElement.hasChildNodes()) {
         if (hasNamedBox) {
           // This situation is clear, it is an older logisim-evolution file
-          if (CollectionUtil.isNotEmpty(circData.appearance)) {
-            dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CUSTOM);
-          } else {
-            dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_EVOLUTION);
-          }
+          final var appear = CollectionUtil.isNotEmpty(circData.appearance)
+                             ? CircuitAttributes.APPEAR_CUSTOM : CircuitAttributes.APPEAR_EVOLUTION;
+          dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, appear);
         } else {
           if (!hasAppearAttr) {
-            /* Here we have 2 possibilities, either a Holycross file or a logisim-evolution file
-             * before the introduction of the named circuit boxes. So let's ask the user.
-             */
+            // Here we have 2 possibilities, either a Holycross file or a logisim-evolution file
+            // before the introduction of the named circuit boxes. So let's ask the user.
+            var appear = CircuitAttributes.APPEAR_CLASSIC;
             if (CollectionUtil.isNotEmpty(circData.appearance)) {
-              dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CUSTOM);
+              appear = CircuitAttributes.APPEAR_CUSTOM;
             } else if (isHolyCross) {
-              dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_FPGA);
-            } else {
-              dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, CircuitAttributes.APPEAR_CLASSIC);
+              appear = CircuitAttributes.APPEAR_FPGA;
             }
+            dest.getStaticAttributes().setValue(CircuitAttributes.APPEARANCE_ATTR, appear);
           }
         }
-        if (!hasNamedBoxFixedSize)
+        if (!hasNamedBoxFixedSize) {
           dest.getStaticAttributes().setValue(CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE, false);
+        }
       }
     } catch (XmlReaderException e) {
       reader.addErrors(e, circData.circuit.getName() + ".static");
@@ -198,12 +201,10 @@ public class XmlCircuitReader extends CircuitTransaction {
             final var bds = comp.getBounds();
             final var conflict = componentsAt.get(bds);
             if (conflict != null) {
-              reader.addError(
-                  S.get(
-                      "fileComponentOverlapError",
-                      conflict.getFactory().getName() + conflict.getLocation(),
-                      comp.getFactory().getName() + conflict.getLocation()),
-                  circData.circuit.getName());
+              final var msg = S.get("fileComponentOverlapError",
+                  conflict.getFactory().getName() + conflict.getLocation(),
+                  comp.getFactory().getName() + conflict.getLocation());
+              reader.addError(msg, circData.circuit.getName());
               overlapComponents.add(comp);
             } else {
               mutator.add(dest, comp);
@@ -211,13 +212,15 @@ public class XmlCircuitReader extends CircuitTransaction {
             }
           }
         } catch (XmlReaderException e) {
-          reader.addErrors(e, circData.circuit.getName() + "." + toComponentString(subElement));
+          final var context = String.format(contextFmt, circData.circuit.getName(), toComponentString(subElement));
+          reader.addErrors(e, context);
         }
       } else if ("wire".equals(subEltName)) {
         try {
           addWire(dest, mutator, subElement);
         } catch (XmlReaderException e) {
-          reader.addErrors(e, circData.circuit.getName() + "." + toWireString(subElement));
+          final var context = String.format(contextFmt, circData.circuit.getName(), toWireString(subElement));
+          reader.addErrors(e, context);
         }
       }
     }
@@ -249,16 +252,14 @@ public class XmlCircuitReader extends CircuitTransaction {
         try {
           final var m = AppearanceSvgReader.createShape(sub, null, dest);
           if (m == null) {
-            reader.addError(
-                S.get("fileAppearanceNotFound", sub.getTagName()),
-                circData.circuit.getName() + "." + sub.getTagName());
+            final var context = String.format(contextFmt, circData.circuit.getName(), sub.getTagName());
+            reader.addError(S.get("fileAppearanceNotFound", sub.getTagName()), context);
           } else {
             shapes.add(m);
           }
         } catch (RuntimeException e) {
-          reader.addError(
-              S.get("fileAppearanceError", sub.getTagName()),
-              circData.circuit.getName() + "." + sub.getTagName());
+          final var context = String.format(contextFmt, circData.circuit.getName(), sub.getTagName());
+          reader.addError(S.get("fileAppearanceError", sub.getTagName()), context);
         }
       }
     }
@@ -296,12 +297,12 @@ public class XmlCircuitReader extends CircuitTransaction {
   private String toComponentString(Element elt) {
     final var name = elt.getAttribute("name");
     final var loc = elt.getAttribute("loc");
-    return name + "(" + loc + ")";
+    return String.format("%s(%s)", name, loc);
   }
 
   private String toWireString(Element elt) {
     final var from = elt.getAttribute("from");
     final var to = elt.getAttribute("to");
-    return "w" + from + "-" + to;
+    return String.format("w%s-%s", from, to);
   }
 }

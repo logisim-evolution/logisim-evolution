@@ -2,6 +2,12 @@
 
 # Changes #
 
+* v3.7.2 (2021-11-09)
+  * Fixed Preferences/Window "Reset window layout to defaults" not doing much.
+  * Fixed Gradle builder failing to compile LSe if sources were not checked out from Git.
+  * You can now swap the placement of main canvas and component tree/properties pane.
+  * Several bug fixes.
+
 * v3.7.1 (2021-10-21)
   * Logisim has now an internal font-chooser to comply to the font-values used.
   * Several bug fixes.

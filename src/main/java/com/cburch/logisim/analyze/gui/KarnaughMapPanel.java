@@ -559,7 +559,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
   }
 
   private String label(int row, int rows) {
-    if (row >= 0 && row < rows) {
+    if (row < 0 || row >= rows) {
       throw new RuntimeException(LineBuffer.format("Row {{1}} is outside range of {{2}} rows.", row, rows));
     }
     return switch (rows) {

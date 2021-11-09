@@ -24,6 +24,8 @@ import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.Constant;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.std.wiring.ProbeAttributes;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -708,6 +710,7 @@ public class CircuitBuilder {
     attrs.setValue(Pin.ATTR_TYPE, Boolean.FALSE);
     attrs.setValue(Pin.ATTR_TRISTATE, Boolean.FALSE);
     attrs.setValue(StdAttr.LABEL, name);
+    attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.getDefaultProbeAppearance());
     attrs.setValue(StdAttr.WIDTH, BitWidth.create(nrOfBits));
     result.add(factory.createComponent(loc, attrs));
   }
@@ -813,6 +816,7 @@ public class CircuitBuilder {
     final var attrs = factory.createAttributeSet();
     attrs.setValue(StdAttr.FACING, Direction.WEST);
     attrs.setValue(Pin.ATTR_TYPE, Boolean.TRUE);
+    attrs.setValue(ProbeAttributes.PROBEAPPEARANCE, ProbeAttributes.getDefaultProbeAppearance());
     attrs.setValue(StdAttr.LABEL, name);
     attrs.setValue(StdAttr.WIDTH, BitWidth.create(nrOfBits));
     result.add(factory.createComponent(loc, attrs));

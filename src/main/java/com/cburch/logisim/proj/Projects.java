@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.WeakHashMap;
 
-public class Projects {
+public final class Projects {
 
   private static class MyListener extends WindowAdapter {
 
@@ -69,6 +69,16 @@ public class Projects {
     }
   }
 
+  public static final String PROJECT_LIST_PROPERTY = "projectList";
+  private static final WeakHashMap<Window, Point> frameLocations = new WeakHashMap<>();
+  private static final MyListener myListener = new MyListener();
+  private static final PropertyChangeWeakSupport propertySupport =
+      new PropertyChangeWeakSupport(Projects.class);
+  private static final ArrayList<Project> openProjects = new ArrayList<>();
+  private static Frame mostRecentFrame = null;
+
+  private Projects() {}
+
   //
   // PropertyChangeSource methods
   //
@@ -96,13 +106,14 @@ public class Projects {
   }
 
   public static Point getCenteredLoc(int width, int height) {
-    int x = 0;
-    int y = 0;
+    var x = 0;
+    var y = 0;
 
-    if (getTopFrame() != null) {
-      x = getTopFrame().getX() + getTopFrame().getWidth() / 2;
+    final var topFrame = getTopFrame();
+    if (topFrame != null) {
+      x = topFrame.getX() + topFrame.getWidth() / 2;
       x -= width / 2;
-      y = getTopFrame().getY() + getTopFrame().getHeight() / 2;
+      y = topFrame.getY() + topFrame.getHeight() / 2;
       y -= height / 2;
     }
     return new Point(x, y);
@@ -122,7 +133,7 @@ public class Projects {
     if (ret == null) {
       Frame backup = null;
       for (final var proj : openProjects) {
-        Frame frame = proj.getFrame();
+        final var frame = proj.getFrame();
         if (ret == null) {
           ret = frame;
         }
@@ -203,18 +214,4 @@ public class Projects {
     return false;
   }
 
-  public static final String PROJECT_LIST_PROPERTY = "projectList";
-
-  private static final WeakHashMap<Window, Point> frameLocations = new WeakHashMap<>();
-
-  private static final MyListener myListener = new MyListener();
-
-  private static final PropertyChangeWeakSupport propertySupport =
-      new PropertyChangeWeakSupport(Projects.class);
-
-  private static final ArrayList<Project> openProjects = new ArrayList<>();
-
-  private static Frame mostRecentFrame = null;
-
-  private Projects() {}
 }

@@ -16,43 +16,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 public class ArgonXml {
-
-  private static FileInputStream fileInputStream(String filename) {
-    try {
-      return new FileInputStream(filename);
-    } catch (IOException exception) {
-      throw new RuntimeException(exception);
-    }
-  }
-
-  private static Element rootElement(InputStream inputStream, String rootName) {
-    try {
-      final var builderFactory = XmlUtil.getHardenedBuilderFactory();
-      final var builder = builderFactory.newDocumentBuilder();
-      final var document = builder.parse(inputStream);
-      final var rootElement = document.getDocumentElement();
-      if (!rootElement.getNodeName().equals(rootName))
-        throw new RuntimeException("Could not find root node: " + rootName);
-      return rootElement;
-    } catch (IOException | SAXException | ParserConfigurationException exception) {
-      throw new RuntimeException(exception);
-    } finally {
-      if (inputStream != null) {
-        try {
-          inputStream.close();
-        } catch (Exception exception) {
-          throw new RuntimeException(exception);
-        }
-      }
-    }
-  }
 
   private final String name;
   private String content;
@@ -93,6 +62,37 @@ public class ArgonXml {
 
   public ArgonXml(String filename, String rootName) {
     this(fileInputStream(filename), rootName);
+  }
+
+  private static FileInputStream fileInputStream(String filename) {
+    try {
+      return new FileInputStream(filename);
+    } catch (IOException exception) {
+      throw new RuntimeException(exception);
+    }
+  }
+
+  private static Element rootElement(InputStream inputStream, String rootName) {
+    try {
+      final var builderFactory = XmlUtil.getHardenedBuilderFactory();
+      final var builder = builderFactory.newDocumentBuilder();
+      final var document = builder.parse(inputStream);
+      final var rootElement = document.getDocumentElement();
+      if (!rootElement.getNodeName().equals(rootName)) {
+        throw new RuntimeException("Could not find root node: " + rootName);
+      }
+      return rootElement;
+    } catch (IOException | SAXException | ParserConfigurationException exception) {
+      throw new RuntimeException(exception);
+    } finally {
+      if (inputStream != null) {
+        try {
+          inputStream.close();
+        } catch (Exception exception) {
+          throw new RuntimeException(exception);
+        }
+      }
+    }
   }
 
   public void addAttribute(String name, String value) {

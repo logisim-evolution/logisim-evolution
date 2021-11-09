@@ -133,6 +133,17 @@ public class CircuitAttributes extends AbstractAttributeSet {
       }
     }
   }
+  
+  public static void copyStaticAttributes(AttributeSet destination, AttributeSet source) {
+    destination.setValue(CIRCUIT_LABEL_ATTR, source.getValue(CIRCUIT_LABEL_ATTR));
+    destination.setValue(CIRCUIT_LABEL_FACING_ATTR, source.getValue(CIRCUIT_LABEL_FACING_ATTR));
+    destination.setValue(CIRCUIT_LABEL_FONT_ATTR, source.getValue(CIRCUIT_LABEL_FONT_ATTR));
+    destination.setValue(APPEARANCE_ATTR, source.getValue(APPEARANCE_ATTR));
+    destination.setValue(NAMED_CIRCUIT_BOX_FIXED_SIZE, source.getValue(NAMED_CIRCUIT_BOX_FIXED_SIZE));
+    destination.setValue(SIMULATION_FREQUENCY, source.getValue(SIMULATION_FREQUENCY));
+    destination.setValue(DOWNLOAD_FREQUENCY, source.getValue(DOWNLOAD_FREQUENCY));
+    destination.setValue(DOWNLOAD_BOARD, source.getValue(DOWNLOAD_BOARD));
+  }
 
   static AttributeSet createBaseAttrs(Circuit source, String name) {
     final var ret = AttributeSets.fixedSet(STATIC_ATTRS, STATIC_DEFAULTS);
@@ -259,6 +270,14 @@ public class CircuitAttributes extends AbstractAttributeSet {
     if (attr == StdAttr.LABEL_VISIBILITY) return (E) labelVisible;
     if (attr == LABEL_LOCATION_ATTR) return (E) labelLocation;
     else return source.getStaticAttributes().getValue(attr);
+  }
+  
+  public static void copyInto(AttributeSet source, AttributeSet destination) {
+    destination.setValue(StdAttr.FACING, source.getValue(StdAttr.FACING));
+    destination.setValue(StdAttr.LABEL, source.getValue(StdAttr.LABEL));
+    destination.setValue(StdAttr.LABEL_FONT, source.getValue(StdAttr.LABEL_FONT));
+    destination.setValue(StdAttr.LABEL_VISIBILITY, source.getValue(StdAttr.LABEL_VISIBILITY));
+    destination.setValue(LABEL_LOCATION_ATTR, source.getValue(LABEL_LOCATION_ATTR));
   }
 
   @Override

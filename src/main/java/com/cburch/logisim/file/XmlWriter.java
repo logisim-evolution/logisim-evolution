@@ -42,6 +42,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
@@ -399,7 +400,7 @@ final class XmlWriter {
       if (lib instanceof LoadedLibrary) {
         final var origFile = LibraryManager.getLibraryFilePath(file.getLoader(), desc);
         if (origFile != null) {
-          final var names = origFile.split(File.separator);
+          final var names = origFile.split(Pattern.quote(File.separator));
           final var filename = names[names.length - 1];
           final var newFile = String.format("%s%s%s", librariesPath, File.separator, filename);
           try {

@@ -24,6 +24,8 @@ import com.cburch.logisim.soc.gui.ListeningFrame;
 import com.cburch.logisim.soc.gui.TraceWindowTableModel;
 import com.cburch.logisim.tools.CircuitStateHolder;
 import com.cburch.logisim.tools.MenuExtender;
+import com.cburch.logisim.util.LineBuffer;
+import com.cburch.logisim.util.StringUtil;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -82,17 +84,22 @@ public class SocBusMenuProvider implements ActionListener {
   }
 
   private void setParentFrame(Instance inst, Frame frame) {
-    if (myInfo.containsKey(inst)) myInfo.get(inst).setParentFrame(frame);
+    if (myInfo.containsKey(inst)) {
+      myInfo.get(inst).setParentFrame(frame);
+    }
   }
 
   public void registerBusState(SocBusStateInfo.SocBusState state, Instance instance) {
-    if (!myInfo.containsKey(instance))
+    if (!myInfo.containsKey(instance)) {
       myInfo.put(instance, new InstanceInformation(instance, this));
+    }
     myInfo.get(instance).registerBusState(state);
   }
 
   public void deregisterBusState(SocBusStateInfo.SocBusState state, Instance instance) {
-    if (myInfo.containsKey(instance)) myInfo.get(instance).deregisterBusState(state);
+    if (myInfo.containsKey(instance)) {
+      myInfo.get(instance).deregisterBusState(state);
+    }
   }
 
   private static class InstanceMenuItem extends JMenuItem {
@@ -103,12 +110,8 @@ public class SocBusMenuProvider implements ActionListener {
     private final CircuitStateHolder.HierarchyInfo csh;
     private final CircuitState circuitState;
 
-    public InstanceMenuItem(
-        Instance inst,
-        String label,
-        int function,
-        Object data,
-        CircuitStateHolder.HierarchyInfo csh) {
+    public InstanceMenuItem(Instance inst, String label, int function, Object data,
+                            CircuitStateHolder.HierarchyInfo csh) {
       super(label);
       instance = inst;
       this.function = function;
@@ -126,13 +129,8 @@ public class SocBusMenuProvider implements ActionListener {
       circuitState = null;
     }
 
-    public InstanceMenuItem(
-        Instance inst,
-        String label,
-        int function,
-        CircuitState state,
-        Object data,
-        CircuitStateHolder.HierarchyInfo csh) {
+    public InstanceMenuItem(Instance inst, String label, int function, CircuitState state,
+                            Object data, CircuitStateHolder.HierarchyInfo csh) {
       super(label);
       instance = inst;
       this.function = function;
@@ -181,22 +179,21 @@ public class SocBusMenuProvider implements ActionListener {
     @Override
     public void configureMenu(JPopupMenu menu, Project proj) {
       setParentFrame(instance, proj.getFrame());
-      var instName = instance.getAttributeValue(StdAttr.LABEL);
-      if (instName == null || instName.isEmpty()) {
+      var instanceName = instance.getAttributeValue(StdAttr.LABEL);
+      if (StringUtil.isNullOrEmpty(instanceName)) {
         final var loc = instance.getLocation();
-        instName =
-            instance.getFactory().getHDLName(instance.getAttributeSet())
-                + "@"
-                + loc.getX()
-                + ","
-                + loc.getY();
+        instanceName = LineBuffer.format("{{1}}@{{2}},{{3}}",
+                instance.getFactory().getHDLName(instance.getAttributeSet()), loc.getX(), loc.getY());
       }
-      var name = circuitState != null ? instName + " : " + S.get("SocBusMemMap") : S.get("SocBusMemMap");
+
+      var name = (circuitState != null) ? (instanceName + ": ") : "";
+      name += S.get("SocBusMemMap");
       menu.addSeparator();
       final var memMap = new InstanceMenuItem(instance, name, SHOW_MEMORY_MAP);
       memMap.addActionListener(parent);
       memMap.setEnabled(true);
       menu.add(memMap);
+
       InstanceMenuItem insertTrans;
       if (circuitState == null) {
         name = S.get("insertTrans");
@@ -204,14 +201,14 @@ public class SocBusMenuProvider implements ActionListener {
         final var istate = instance.getData(cstate);
         insertTrans = new InstanceMenuItem(instance, name, INSERT_TRANSACTION, cstate, istate, hierarchy);
       } else {
-        name = instName + " : " + S.get("insertTrans");
+        name = instanceName + ": " + S.get("insertTrans");
         insertTrans = new InstanceMenuItem(instance, name, INSERT_TRANSACTION, circuitState, data, hierarchy);
       }
       insertTrans.addActionListener(parent);
       insertTrans.setEnabled(true);
       menu.add(insertTrans);
       if (circuitState != null) {
-        name = instName + " : " + S.get("SocBusTraceWindow");
+        name = instanceName + ": " + S.get("SocBusTraceWindow");
         final var traceWin = new InstanceMenuItem(instance, name, SHOW_TRACES, data, hierarchy);
         traceWin.addActionListener(parent);
         traceWin.setEnabled(true);
@@ -221,9 +218,10 @@ public class SocBusMenuProvider implements ActionListener {
 
     @Override
     public void setCircuitState(CircuitState state) {
-      if (state == null) return;
-      circuitState = state;
-      data = (SocBusStateInfo.SocBusState) state.getData(instance.getComponent());
+      if (state != null) {
+        circuitState = state;
+        data = (SocBusStateInfo.SocBusState) state.getData(instance.getComponent());
+      }
     }
 
     @Override
@@ -233,10 +231,8 @@ public class SocBusMenuProvider implements ActionListener {
   }
 
   public static class InstanceInformation {
-    private final HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo>
-        myTraceList;
-    private final HashMap<SocBusStateInfo.SocBusState, BusTransactionInsertionGui>
-        myInsertionFrames;
+    private final HashMap<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> myTraceList;
+    private final HashMap<SocBusStateInfo.SocBusState, BusTransactionInsertionGui> myInsertionFrames;
     private Frame parentFrame;
     private TraceWindowTableModel traceModel;
     private ListeningFrame myTraceFrame;
@@ -256,11 +252,8 @@ public class SocBusMenuProvider implements ActionListener {
       state.setVisible(true);
     }
 
-    public void insertTransaction(
-        Instance instance,
-        CircuitState circuitState,
-        SocBusStateInfo.SocBusState state,
-        String name) {
+    public void insertTransaction(Instance instance, CircuitState circuitState,
+                                  SocBusStateInfo.SocBusState state, String name) {
       if (!myInsertionFrames.containsKey(state)) return;
       if (myInsertionFrames.get(state) == null) {
         String id = instance.getAttributeSet().getValue(SocBusAttributes.SOC_BUS_ID).getBusId();
@@ -281,12 +274,14 @@ public class SocBusMenuProvider implements ActionListener {
       frame.setExtendedState(fstate);
     }
 
-    public void showTraceWindow(Instance instance, SocBusStateInfo.SocBusState state, CircuitStateHolder.HierarchyInfo name) {
+    public void showTraceWindow(Instance instance, SocBusStateInfo.SocBusState state,
+                                CircuitStateHolder.HierarchyInfo name) {
       if (!myTraceList.containsKey(state)) return;
       if (myTraceList.get(state) == null) {
         myTraceList.put(state, name);
         if (traceModel != null) traceModel.rebuild();
       }
+
       if (myTraceFrame == null) {
         traceModel = new TraceWindowTableModel(myTraceList, this);
         final var table = new JTable(traceModel) {
@@ -320,14 +315,16 @@ public class SocBusMenuProvider implements ActionListener {
         final var scroll = new JScrollPane(table);
         scroll.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
         scroll.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
-        myTraceFrame =
-            new ListeningFrame(S.getter("TraceWindowTitleDoubleClickOnTraceToRemoveTrace"));
+        myTraceFrame = new ListeningFrame(S.getter("TraceWindowTitleDoubleClickOnTraceToRemoveTrace"));
         myTraceFrame.add(scroll);
-        myTraceFrame.setSize(
-                AppPreferences.getScaled(SocBusStateInfo.BLOCK_WIDTH), AppPreferences.getScaled(320));
+
+        final var scaledWidth = AppPreferences.getScaled(SocBusStateInfo.BLOCK_WIDTH);
+        // FIXME: arbitrary set base heigh
+        final var scaledHeight = AppPreferences.getScaled(320);
+        myTraceFrame.setSize(scaledWidth, scaledHeight);
       }
       myTraceFrame.setVisible(true);
-      int fstate = myTraceFrame.getExtendedState();
+      var fstate = myTraceFrame.getExtendedState();
       fstate &= ~Frame.ICONIFIED;
       myTraceFrame.setExtendedState(fstate);
     }
