@@ -59,6 +59,10 @@ public class Simulator {
       return false;
     }
 
+    default void propagationStarted(Event e) {
+      // do nothing
+    }
+
     default void propagationInProgress(Event e) {
       // do nothing
     }
@@ -331,6 +335,7 @@ public class Simulator {
 
       if (doProp || doNudge)
         try {
+          sim.firePropagationStarted(ticked); // FIXME: ack, wrong thread!
           propagated = doProp;
           final var p = sim.getPropagationListener();
           final var evt = p == null ? null : new Event(sim, false, false, false);
@@ -470,6 +475,13 @@ public class Simulator {
     final var event = new Event(this, false, false, false);
     for (final var listener : copyListeners())
       listener.simulatorReset(event);
+  }
+
+  //called from simThread, but probably should not be
+  private void firePropagationStarted(boolean t) {
+    final var e = new Event(this, t, false, false);
+    for (final var l : copyListeners())
+      l.propagationStarted(e);
   }
 
   //called from simThread, but probably should not be
