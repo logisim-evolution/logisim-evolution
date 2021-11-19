@@ -104,7 +104,7 @@ public class Hdl {
   }
 
   public static String endIf() {
-    return isVhdl() ? LineBuffer.formatHdl("{{1}} {{2}};", Vhdl.getVhdlKeyword("END"), Vhdl.getVhdlKeyword("IF"))
+    return isVhdl() ? Vhdl.getVhdlKeyword("END ") + Vhdl.getVhdlKeyword("IF")
                     : "end";
   }
 
@@ -126,7 +126,7 @@ public class Hdl {
 
   private static String typecast(String signal, boolean signed) {
     return isVhdl()
-                ? LineBuffer.formatHdl("{{1}}({{2}})", signed ? "signed" : "unsigned", signal)
+                ? LineBuffer.formatHdl("{{1}}({{2}})", (signed ? "signed" : "unsigned"), signal)
                 : (signed ? "$signed(" + signal + ")" : signal);
   }
 
@@ -197,7 +197,7 @@ public class Hdl {
         : LineBuffer.formatHdl("{ {{{1}}{{{2}}[{{1}}-1]}},{{2}}{{3}}}", width, signal, splitVector(width - 1, width - distance));
     } else {
       return isVhdl()
-        ? LineBuffer.formatHdl("{{1}}{{2}}{{1}} & {{3}}{{4}", distance == 1 ? "'" : "\"", "0".repeat(distance), signal, splitVector(width - 1, width - distance))
+        ? LineBuffer.formatHdl("{{1}}{{2}}{{1}} & {{3}}{{4}", (distance == 1 ? "'" : "\""), "0".repeat(distance), signal, splitVector(width - 1, width - distance))
         : LineBuffer.formatHdl("{ {{{1}}{1'b0}},{{2}}{{3}}}", width, signal, splitVector(width - 1, width - distance));
     }
   }
@@ -219,13 +219,11 @@ public class Hdl {
   }
 
   public static String rolOperator(String signal, int width, int distance) {
-    return isVhdl() ? LineBuffer.formatHdl("{{1}}{{2}} & {{1}}{{3}}", signal, splitVector(width - 1 - distance, 0), splitVector(width - 1, width - distance))
-                    : LineBuffer.formatHdl("{{{1}}{{2}},{{1}}{{3}}}", signal, splitVector(width - 1 - distance, 0), splitVector(width - 1, width - distance));
+    return LineBuffer.formatHdl("{{1}}{{2}}{{3}}{{1}}{{4}}", signal, splitVector(width - 1 - distance, 0), (isVhdl() ? " & " : ","), splitVector(width - 1, width - distance));
   }
 
   public static String rorOperator(String signal, int width, int distance) {
-    return isVhdl() ? LineBuffer.formatHdl("{{1}}{{2}} & {{1}}{{3}}", signal, splitVector(distance, 0), splitVector(width - 1, distance))
-                    : LineBuffer.formatHdl("{{{1}}{{2}},{{1}}{{3}}}", signal, splitVector(distance, 0), splitVector(width - 1, distance));
+    return LineBuffer.formatHdl("{{1}}{{2}}{{3}}{{1}}{{4}}", signal, splitVector(distance, 0), (isVhdl() ? " & " : ","), splitVector(width - 1, distance));
   }
 
   public static String zeroBit() {
