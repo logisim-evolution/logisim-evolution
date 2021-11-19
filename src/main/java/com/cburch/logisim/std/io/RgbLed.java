@@ -184,17 +184,17 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var data = (InstanceDataSingleton) painter.getData();
-    int summ = (data == null ? 0 : (Integer) data.getValue());
+    int sum = (data == null ? 0 : (Integer) data.getValue());
     final var bds = painter.getBounds().expand(-1);
 
     final var g = painter.getGraphics();
     if (painter.getShowState()) {
       final var activ = painter.getAttributeValue(IoLibrary.ATTR_ACTIVE);
       final var mask = activ ? 0 : 7;
-      summ ^= mask;
-      final var red = ((summ >> RED) & 1) * 0xFF;
-      final var green = ((summ >> GREEN) & 1) * 0xFF;
-      final var blue = ((summ >> BLUE) & 1) * 0xFF;
+      sum ^= mask;
+      final var red = ((sum >> RED) & 1) * 0xFF;
+      final var green = ((sum >> GREEN) & 1) * 0xFF;
+      final var blue = ((sum >> BLUE) & 1) * 0xFF;
       final var ledColor = new Color(red, green, blue);
       g.setColor(ledColor);
       g.fillOval(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());

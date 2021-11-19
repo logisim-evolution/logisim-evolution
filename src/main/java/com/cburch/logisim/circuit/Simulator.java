@@ -114,7 +114,7 @@ public class Simulator {
     private boolean autoPropagating = true;
     private boolean autoTicking = false;
     private double autoTickFreq = 1.0; // Hz
-    private long autoTickNanos = Math.round(1e9 / autoTickFreq);
+    private long autoTickNanos = Math.round(1.0e9 / autoTickFreq);
     private int manualTicksRequested = 0;
     private int manualStepsRequested = 0;
     private boolean nudgeRequested = false;
@@ -201,7 +201,7 @@ public class Simulator {
       if (autoTickFreq == freq)
         return false;
       autoTickFreq = freq;
-      autoTickNanos = freq <= 0 ? 0 : Math.round(1e9 / autoTickFreq);
+      autoTickNanos = freq <= 0 ? 0 : Math.round(1.0e9 / autoTickFreq);
       notifyAll();
       return true;
     }
@@ -321,7 +321,7 @@ public class Simulator {
         try {
           stepPoints.clear();
           if (prop != null) prop.reset();
-          sim.fireSimulatorReset(); // todo: fixme: ack, wrong thread!
+          sim.fireSimulatorReset(); // TODO: fixme: ack, wrong thread!
         } catch (Exception err) {
           oops = true;
           err.printStackTrace();

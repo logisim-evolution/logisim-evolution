@@ -56,16 +56,15 @@ public class Direction implements AttributeOptionInterface {
   public Direction getLeft() {
     if (this == Direction.EAST) return Direction.NORTH;
     if (this == Direction.WEST) return Direction.SOUTH;
-    if (this == Direction.NORTH) return Direction.WEST;
     if (this == Direction.SOUTH) return Direction.EAST;
-    return Direction.WEST;
+    return Direction.WEST;    // this == Direction.NORTH
   }
 
   public Direction getRight() {
     if (this == Direction.EAST) return Direction.SOUTH;
     if (this == Direction.WEST) return Direction.NORTH;
     if (this == Direction.NORTH) return Direction.EAST;
-    return Direction.WEST;
+    return Direction.WEST;    // this == Direction.SOUTH
   }
 
   // for AttributeOptionInterface
@@ -79,19 +78,17 @@ public class Direction implements AttributeOptionInterface {
   }
 
   public Direction reverse() {
-    if (this == Direction.EAST) return Direction.WEST;
     if (this == Direction.WEST) return Direction.EAST;
     if (this == Direction.NORTH) return Direction.SOUTH;
     if (this == Direction.SOUTH) return Direction.NORTH;
-    return Direction.WEST;
+    return Direction.WEST;    // this == Direction.EAST
   }
 
   public int toDegrees() {
-    if (this == Direction.EAST) return 0;
     if (this == Direction.WEST) return 180;
     if (this == Direction.NORTH) return 90;
     if (this == Direction.SOUTH) return 270;
-    return 0;
+    return 0;     // this == Direction.EAST
   }
 
   public String toDisplayString() {
@@ -99,11 +96,10 @@ public class Direction implements AttributeOptionInterface {
   }
 
   public double toRadians() {
-    if (this == Direction.EAST) return 0.0;
     if (this == Direction.WEST) return Math.PI;
     if (this == Direction.NORTH) return Math.PI / 2.0;
     if (this == Direction.SOUTH) return -Math.PI / 2.0;
-    return 0.0;
+    return 0.0;     // this == Direction.EAST
   }
 
   @Override
