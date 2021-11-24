@@ -167,14 +167,16 @@ public class LineBuffer implements RandomAccess {
   public LineBuffer addHdlPairs() {
     return pair("assign", Hdl.assignPreamble())
         .pair("=", Hdl.assignOperator())
+        .pair("==", Hdl.equalOperator())
+        .pair("!=", Hdl.notEqualOperator())
         .pair("or", Hdl.orOperator())
         .pair("and", Hdl.andOperator())
-        .pair("not", Hdl.notOperator())
         .pair("xor", Hdl.xorOperator())
-        .pair("bracketOpen", Hdl.bracketOpen())
-        .pair("bracketClose", Hdl.bracketClose())
+        .pair("not", Hdl.notOperator())
         .pair("<", Hdl.bracketOpen())
         .pair(">", Hdl.bracketClose())
+        .pair("else", Hdl.elseStatement())
+        .pair("endif", Hdl.endIf())
         .pair("0b", Hdl.zeroBit())
         .pair("1b", Hdl.oneBit());
   }
