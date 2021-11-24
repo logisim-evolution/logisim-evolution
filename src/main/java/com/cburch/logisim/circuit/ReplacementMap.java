@@ -67,7 +67,6 @@ public class ReplacementMap {
 
       for (final var a : as) {
         final var aDst = this.map.computeIfAbsent(a, k -> new HashSet<>(cs.size()));
-        // should happen when b pre-existed only
         aDst.remove(b);
         aDst.addAll(cs);
       }
