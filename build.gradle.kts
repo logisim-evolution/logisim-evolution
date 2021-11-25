@@ -18,6 +18,7 @@ plugins {
   java
   application
   id("com.github.johnrengelman.shadow") version "7.0.0"
+  id("org.sonarqube") version "3.3"
 }
 
 repositories {
@@ -52,6 +53,14 @@ dependencies {
   testImplementation("org.junit.jupiter:junit-jupiter")
   testImplementation("org.mockito:mockito-inline:4.0.0")
   testImplementation("org.mockito:mockito-junit-jupiter:4.0.0")
+}
+
+sonarqube {
+  properties {
+    property("sonar.projectKey", "logisim-evolution_logisim-evolution")
+    property("sonar.organization", "logisim-evolution")
+    property("sonar.host.url", "https://sonarcloud.io")
+  }
 }
 
 /**
