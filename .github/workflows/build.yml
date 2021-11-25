@@ -56,7 +56,6 @@ jobs:
   build:
     name: "Gradle builder"
     runs-on: ubuntu-latest
-    environment: SonarCloud
     # Will run only if analyze_sources determined it is needed.
     needs: analyze_sources
     if: needs.analyze_sources.outputs.run_build == 'true'
@@ -87,4 +86,4 @@ jobs:
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
       run: |
        chmod +x gradlew
-       ./gradlew build sonarqube  -x checkstyleMain -x checkstyleTest
+       ./gradlew build sonarqube -x checkstyleMain -x checkstyleTest
