@@ -96,7 +96,7 @@ public class BoardInformation {
   public String getDriveStrength(BoardRectangle rect) {
     for (final var comp : myComponents) {
       if (comp.getRectangle().equals(rect)) {
-        return DriveStrength.GetContraintedDriveStrength(comp.getDrive());
+        return DriveStrength.getContraintedDriveStrength(comp.getDrive());
       }
     }
     return "";

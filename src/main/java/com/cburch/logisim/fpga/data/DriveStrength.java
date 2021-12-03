@@ -9,12 +9,11 @@
 
 package com.cburch.logisim.fpga.data;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 public class DriveStrength {
-  public static String GetContraintedDriveStrength(char id) {
+  public static String getContraintedDriveStrength(char id) {
     if ((id > DEFAULT_STENGTH) && (id <= DRIVE_24)) {
       return BEHAVIOR_STRINGS[id].replace(" mA", " ");
     }
@@ -48,10 +47,10 @@ public class DriveStrength {
 
   public static final String DRIVE_ATTRIBUTE_STRING = "FPGAPinDriveStrength";
   public static final char DEFAULT_STENGTH = 0;
-  public static char DRIVE_2 = 1;
-  public static char DRIVE_4 = 2;
-  public static char DRIVE_8 = 3;
-  public static char DRIVE_16 = 4;
+  public static final char DRIVE_2 = 1;
+  public static final char DRIVE_4 = 2;
+  public static final char DRIVE_8 = 3;
+  public static final char DRIVE_16 = 4;
   public static final char DRIVE_24 = 5;
 
   public static final char UNKNOWN = 255;

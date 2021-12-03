@@ -282,7 +282,7 @@ public class XilinxDownload implements VendorDownload {
             if (info.getDrive() != DriveStrength.UNKNOWN
                 && info.getDrive() != DriveStrength.DEFAULT_STENGTH) {
               temp.append("| DRIVE = ")
-                  .append(DriveStrength.GetContraintedDriveStrength(info.getDrive())).append(" ");
+                  .append(DriveStrength.getContraintedDriveStrength(info.getDrive())).append(" ");
             }
             if (info.getIoStandard() != IoStandards.UNKNOWN
                 && info.getIoStandard() != IoStandards.DEFAULT_STANDARD) {
