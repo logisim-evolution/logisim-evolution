@@ -13,7 +13,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class DriveStrength {
-  public static String getContraintedDriveStrength(char id) {
+  public static String getConstrainedDriveStrength(char id) {
     if ((id > DEFAULT_STENGTH) && (id <= DRIVE_24)) {
       return BEHAVIOR_STRINGS[id].replace(" mA", " ");
     }
