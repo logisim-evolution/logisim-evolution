@@ -24,14 +24,14 @@ public class Direction implements AttributeOptionInterface {
 
   public static final Direction EAST =
       new Direction("east", S.getter("directionEastOption"), S.getter("directionEastVertical"), 0);
-  public static final Direction WEST =
-      new Direction("west", S.getter("directionWestOption"), S.getter("directionWestVertical"), 1);
   public static final Direction NORTH =
-      new Direction("north", S.getter("directionNorthOption"), S.getter("directionNorthVertical"), 2);
+      new Direction("north", S.getter("directionNorthOption"), S.getter("directionNorthVertical"), 1);
+  public static final Direction WEST =
+      new Direction("west", S.getter("directionWestOption"), S.getter("directionWestVertical"), 2);
   public static final Direction SOUTH =
       new Direction("south", S.getter("directionSouthOption"), S.getter("directionSouthVertical"), 3);
 
-  public static final Direction[] cardinals = {NORTH, EAST, SOUTH, WEST};
+  public static final Direction[] cardinals = {EAST, NORTH, WEST, SOUTH};
 
   private final String name;
   private final StringGetter disp;
@@ -54,17 +54,11 @@ public class Direction implements AttributeOptionInterface {
   }
 
   public Direction getLeft() {
-    if (this == Direction.EAST) return Direction.NORTH;
-    if (this == Direction.WEST) return Direction.SOUTH;
-    if (this == Direction.SOUTH) return Direction.EAST;
-    return Direction.WEST;    // this == Direction.NORTH
+    return cardinals[(id + 1) % 4];
   }
 
   public Direction getRight() {
-    if (this == Direction.EAST) return Direction.SOUTH;
-    if (this == Direction.WEST) return Direction.NORTH;
-    if (this == Direction.NORTH) return Direction.EAST;
-    return Direction.WEST;    // this == Direction.SOUTH
+    return cardinals[(id + 3) % 4];
   }
 
   // for AttributeOptionInterface
@@ -78,17 +72,11 @@ public class Direction implements AttributeOptionInterface {
   }
 
   public Direction reverse() {
-    if (this == Direction.WEST) return Direction.EAST;
-    if (this == Direction.NORTH) return Direction.SOUTH;
-    if (this == Direction.SOUTH) return Direction.NORTH;
-    return Direction.WEST;    // this == Direction.EAST
+    return cardinals[(id + 2) % 4];
   }
 
   public int toDegrees() {
-    if (this == Direction.WEST) return 180;
-    if (this == Direction.NORTH) return 90;
-    if (this == Direction.SOUTH) return 270;
-    return 0;     // this == Direction.EAST
+    return id * 90;
   }
 
   public String toDisplayString() {
@@ -96,10 +84,7 @@ public class Direction implements AttributeOptionInterface {
   }
 
   public double toRadians() {
-    if (this == Direction.WEST) return Math.PI;
-    if (this == Direction.NORTH) return Math.PI / 2.0;
-    if (this == Direction.SOUTH) return -Math.PI / 2.0;
-    return 0.0;     // this == Direction.EAST
+    return id * Math.PI / 2.0;
   }
 
   @Override
