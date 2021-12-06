@@ -245,7 +245,7 @@ public class Hdl {
   public static String splitVector(int start, int end) {
     if (start == end) return LineBuffer.formatHdl("{{<}}{{2}}{{>}}", start);
     return isVhdl()
-                ? LineBuffer.formatHdl("({{1}}{{2}}{{3}}) ", start, vectorLoopId(), end)
+                ? LineBuffer.formatHdl("({{1}}{{2}}{{3}})", start, vectorLoopId(), end)
                 : LineBuffer.formatHdl("[{{1}}:{{2}}]", start, end);
   }
 
@@ -376,7 +376,7 @@ public class Hdl {
     if (nrOfBits == 1) return getNetName(comp, endIndex, true, theNets);
     if (!theNets.isContinuesBus(comp, endIndex)) return null;
     final var connectedNet = connectionInformation.get((byte) 0).getParentNet();
-    return LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}}",
+    return LineBuffer.formatHdl("{{1}}{{2}}{{3}}",
         BUS_NAME,
         theNets.getNetId(connectedNet),
         splitVector(connectionInformation.get((byte) (connectionInformation.getNrOfBits() - 1)).getParentNetBitIndex(),
