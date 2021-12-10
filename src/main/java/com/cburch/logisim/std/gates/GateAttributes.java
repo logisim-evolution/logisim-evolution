@@ -66,7 +66,7 @@ public class GateAttributes extends AbstractAttributeSet {
   Font labelFont = StdAttr.DEFAULT_LABEL_FONT;
 
   GateAttributes(boolean isXor) {
-    xorBehave = isXor ? XOR_ONE : null;
+    xorBehave = isXor ? XOR_ODD : null;
   }
 
   @Override
