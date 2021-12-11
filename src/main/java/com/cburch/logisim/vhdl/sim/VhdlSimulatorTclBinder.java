@@ -139,6 +139,9 @@ public class VhdlSimulatorTclBinder {
 
                 vsim.tclStartCallback();
                 return;
+              } else if (line.contains("\"vcom -reportprogress 300 -work work ../src/LogisimVhdlSimComp")) {
+                // Last line of error log. Do not read next line or it will be stuck
+                break;
               }
             }
 
