@@ -66,7 +66,7 @@ public class VhdlSimulatorTclComp {
             : ((VhdlEntityComponent) fact).getSimName(state.getInstance().getAttributeSet());
 
         // FIXME: hardcoded path. The "../src/" asks for troubles!
-        compFiles.append("vcom -reportprogress 300 -work work ../src/")
+        compFiles.append(VhdlSimConstants.VHDL_COMPILE_COMMAND)
             .append(componentName)
             .append(".vhdl")
             .append(System.getProperty("line.separator"));

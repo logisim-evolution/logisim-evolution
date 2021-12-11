@@ -105,6 +105,8 @@ public class VhdlSimulatorTclBinder {
             // FIXME: hardcoded string
             final var errorMessage = new StringBuilder(
                     "You may disable VHDL simulation in the simulation menu if this occurs again\n\n");
+            
+            String msgCheckOnError = "\"" + VhdlSimConstants.VHDL_COMPILE_COMMAND + VhdlSimConstants.VHDL_COMPONENT_SIM_NAME;
 
             /* Here we check that the binder has correctly started */
             while ((line = reader.readLine()) != null) {
@@ -142,7 +144,8 @@ public class VhdlSimulatorTclBinder {
 
                 vsim.tclStartCallback();
                 return;
-              } else if (line.contains("\"vcom -reportprogress 300 -work work ../src/LogisimVhdlSimComp")) {
+
+              } else if (line.contains(msgCheckOnError)) {
                 // Last line of error log. Do not read next line or it will be stuck
                 break;
               }
