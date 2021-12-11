@@ -115,7 +115,7 @@ public class VhdlSimulatorTclBinder {
               }
 
               /* Only add logs that contains "error" to the message box */
-              if(line.toLowerCase().contains("error"))
+              if (line.toLowerCase().contains("error"))
                 errorMessage.append("\n").append(line);
 
               if (line.contains("TCL_BINDER_RUNNING")) {
