@@ -32,9 +32,6 @@ public interface HdlModel {
   /** Sets the content of the component. */
   boolean setContent(String content);
 
-  /** Sets the content of the component without validating the code. */
-  boolean setContentNoValidation(String content);
-
   /** Checks whether the content of the component is valid. */
   boolean isValid();
 

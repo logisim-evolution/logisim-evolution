@@ -94,7 +94,7 @@ public class HdlContentView extends JPanel implements BaseDocumentListenerContra
 
   void docChanged() {
     if (model == null) return;
-    model.setContentNoValidation(editor.getText());
+    model.setContent(editor.getText());
     if (dirty || model == null) return;
     toolbar.setDirty(true);
     project.doAction(new HdlEditAction(model, model.getContent()));
