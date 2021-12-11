@@ -114,7 +114,10 @@ public class VhdlSimulatorTclBinder {
                 vsim.getProject().getFrame().getVhdlSimulatorConsole().append(line + "\n");
               }
 
-              errorMessage.append("\n").append(line);
+              /* Only add logs that contains "error" to the message box */
+              if(line.toLowerCase().contains("error"))
+                errorMessage.append("\n").append(line);
+
               if (line.contains("TCL_BINDER_RUNNING")) {
                 running = true;
 
