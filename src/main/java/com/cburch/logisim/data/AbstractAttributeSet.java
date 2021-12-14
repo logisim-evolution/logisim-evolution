@@ -92,5 +92,4 @@ public abstract class AbstractAttributeSet implements Cloneable, AttributeSet {
   public void setReadOnly(Attribute<?> attr, boolean value) {
     throw new UnsupportedOperationException();
   }
-
 }

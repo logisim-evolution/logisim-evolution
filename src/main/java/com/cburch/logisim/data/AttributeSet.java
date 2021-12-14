@@ -41,4 +41,16 @@ public interface AttributeSet {
   void setReadOnly(Attribute<?> attr, boolean value); // optional
 
   <V> void setValue(Attribute<V> attr, V value);
+
+  /**
+   * Returns attributes that may also be changed as a side effect of changing attr to value
+   * or changing attr back to its current value from value. This method does not change attr.
+   *
+   * @param attr The attribute whose change is being considered
+   * @param value The new value for attr that is being considered
+   * @return a List of attributes that may also be changed, or null if there are no such attributes.
+   */
+  default <V> List<Attribute<?>> attributesMayAlsoBeChanged(Attribute<V> attr, V value) {
+    return null;
+  }
 }

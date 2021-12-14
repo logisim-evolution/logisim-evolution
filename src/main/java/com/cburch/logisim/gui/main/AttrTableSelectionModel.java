@@ -168,7 +168,19 @@ class AttrTableSelectionModel extends AttributeSetTableModel implements Selectio
                 else act.set(comp, attr, labeler.getCurrent(circuit, comp.getFactory()));
               }
             } else act.set(comp, attr, "");
-          } else act.set(comp, attr, value);
+          } else {
+            final var compAttrSet = comp.getAttributeSet();
+            if (compAttrSet != null) {
+              final var mayBeChangedList = compAttrSet.attributesMayAlsoBeChanged(attr, value);
+              if (mayBeChangedList != null) {
+                for (final var mayChangeAttr : mayBeChangedList) {
+                  // mayChangeAttr is set to its current value to have it restored on undo
+                  act.set(comp, mayChangeAttr, compAttrSet.getValue(mayChangeAttr));
+                }
+              }
+            }
+            act.set(comp, attr, value);
+          }
         }
       }
       project.doAction(act);
