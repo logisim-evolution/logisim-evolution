@@ -106,7 +106,8 @@ public class VhdlSimulatorTclBinder {
             final var errorMessage = new StringBuilder(
                     "You may disable VHDL simulation in the simulation menu if this occurs again\n\n");
             
-            String msgCheckOnError = "\"" + VhdlSimConstants.VHDL_COMPILE_COMMAND + VhdlSimConstants.VHDL_COMPONENT_SIM_NAME;
+            String msgCheckOnError = String.format("\"%s%s",
+                    VhdlSimConstants.VHDL_COMPILE_COMMAND, VhdlSimConstants.VHDL_COMPONENT_SIM_NAME);
 
             /* Here we check that the binder has correctly started */
             while ((line = reader.readLine()) != null) {

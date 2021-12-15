@@ -65,7 +65,6 @@ public class VhdlSimulatorTclComp {
             ? ((VhdlEntity) fact).getSimName(state.getInstance().getAttributeSet())
             : ((VhdlEntityComponent) fact).getSimName(state.getInstance().getAttributeSet());
 
-        // FIXME: hardcoded path. The "../src/" asks for troubles!
         compFiles.append(VhdlSimConstants.VHDL_COMPILE_COMMAND)
             .append(componentName)
             .append(".vhdl")

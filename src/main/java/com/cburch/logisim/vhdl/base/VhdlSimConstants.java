@@ -77,6 +77,7 @@ public class VhdlSimConstants {
   public static final String SIM_COMP_PATH = SIM_PATH + "comp/";
   public static final String SIM_TOP_FILENAME = "top_sim.vhdl";
   public static final String VHDL_COMPONENT_SIM_NAME = "LogisimVhdlSimComp_";
+  // FIXME: hardcoded path. The "../src/" asks for troubles!
   public static final String VHDL_COMPILE_COMMAND = "vcom -reportprogress 300 -work work ../src/";
   public static final VhdlSimNameAttribute SIM_NAME_ATTR =
       new VhdlSimNameAttribute("vhdlSimName", S.getter("vhdlSimName"));
