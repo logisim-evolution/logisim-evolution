@@ -289,7 +289,7 @@ public class VhdlContent extends HdlContent {
 
   @Override
   public boolean setContent(String vhdl) {
-	if (setContentNoValidation(vhdl)) return true;
+    if (setContentNoValidation(vhdl)) return true;
 	
     try {
       errTitle.setLength(0);
