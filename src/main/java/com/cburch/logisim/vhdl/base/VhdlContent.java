@@ -289,9 +289,8 @@ public class VhdlContent extends HdlContent {
 
   @Override
   public boolean setContent(String vhdl) {
-    if (valid && content.toString().equals(vhdl)) return true;
-    content = new StringBuilder(vhdl);
-    valid = false;
+    if (setContentNoValidation(vhdl)) return true;
+    
     try {
       errTitle.setLength(0);
       errMessage.setLength(0);
