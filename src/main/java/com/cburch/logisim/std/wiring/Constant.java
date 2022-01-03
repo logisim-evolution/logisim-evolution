@@ -36,6 +36,7 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class Constant extends InstanceFactory {
   /**
@@ -88,6 +89,14 @@ public class Constant extends InstanceFactory {
         throw new IllegalArgumentException("unknown attribute " + attr);
       }
       fireAttributeValueChanged(attr, value, null);
+    }
+
+    @Override
+    public <V> List<Attribute<?>> attributesMayAlsoBeChanged(Attribute<V> attr, V value) {
+      if (attr != StdAttr.WIDTH || Objects.equals(getValue(attr), value)) {
+        return null;
+      }
+      return List.of(ATTR_VALUE);
     }
   }
 
