@@ -48,7 +48,7 @@ public class Ttl7464 extends AbstractTtlGate {
     int[] posX, posY;
     for (var i = 0; i < 4; i++) {
       if (!isIEC) {
-        int tmpOff = (i == 0) | (i == 3) ? 2 : 0;
+        int tmpOff = (i == 0) || (i == 3) ? 2 : 0;
         posX = new int[] {x + 105, x + 107 + tmpOff, x + 107 + tmpOff, x + 111};
         posY = new int[] {y + 20 + i * 10, y + 20 + i * 10, y + 32 + i * 2, y + 32 + i * 2};
         gfx.drawPolyline(posX, posY, 4);

@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed bug preventing TTL 7442, 7443 and 7444 from being placed on the circuit canvas.
   * Fixed Simulate -> Timing Diagram not opening when using "Nimbus" look and feel.
 
 * v3.7.2 (2021-11-09)
