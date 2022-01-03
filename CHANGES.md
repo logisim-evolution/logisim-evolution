@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed Simulate -> Timing Diagram not opening when using "Nimbus" look and feel.
 
 * v3.7.2 (2021-11-09)
   * Fixed Preferences/Window "Reset window layout to defaults" not doing much.
