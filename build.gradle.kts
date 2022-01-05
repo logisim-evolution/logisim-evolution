@@ -13,10 +13,10 @@ import java.util.Date
 
 plugins {
   checkstyle
-  id("com.github.ben-manes.versions") version "0.39.0"
+  id("com.github.ben-manes.versions") version "0.41.0"
   java
   application
-  id("com.github.johnrengelman.shadow") version "7.1.0"
+  id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 repositories {
@@ -30,7 +30,7 @@ application {
 dependencies {
   implementation("org.hamcrest:hamcrest:2.2")
   implementation("javax.help:javahelp:2.0.05")
-  implementation("com.fifesoft:rsyntaxtextarea:3.1.3")
+  implementation("com.fifesoft:rsyntaxtextarea:3.1.5")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
   implementation("org.drjekyll:colorpicker:1.3")
   implementation("at.swimmesberger:swingx-core:1.6.8")
@@ -48,10 +48,10 @@ dependencies {
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation(platform("org.junit:junit-bom:5.8.1"))
-  testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
-  testImplementation("org.mockito:mockito-inline:4.1.0")
-  testImplementation("org.mockito:mockito-junit-jupiter:4.1.0")
+  testImplementation(platform("org.junit:junit-bom:5.8.2"))
+  testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+  testImplementation("org.mockito:mockito-inline:4.2.0")
+  testImplementation("org.mockito:mockito-junit-jupiter:4.2.0")
 }
 
 /**
