@@ -305,11 +305,11 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
   public Color[] rowColors(SignalInfo item, boolean isSelected) {
     if (isSelected) return selectColors;
     final var spotlight = model.getSpotlight();
-    if (spotlight != null && spotlight.info == item) return SPOT;
-    return PLAIN;
+    return (spotlight != null && spotlight.info == item) ? SPOT : PLAIN;
   }
 
   private static Color darker(Color c) {
+    if (c == null) return null;
     final var hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
     final var s = 0.8f;
     return (hsb[1] == 0.0)

@@ -5,6 +5,7 @@
 * @dev (????-??-??)
   * Fixed bug preventing TTL 7442, 7443 and 7444 from being placed on the circuit canvas.
   * Sub-circuit can now be deleted with `DELETE` key, along with `BACKSPACE` used so far.
+  * Fixed `Simulate` -> `Timing Diagram` not opening when using "Nimbus" look and feel.
 
 * v3.7.2 (2021-11-09)
   * Fixed Preferences/Window "Reset window layout to defaults" not doing much.
