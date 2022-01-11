@@ -88,10 +88,10 @@ public class HdlTypes {
       final var contents = new StringBuilder();
       if (Hdl.isVhdl()) {
         contents.append(
-            LineBuffer.formatVhdl("{{type}} {{1}} {{is}} {{array}} ( {{2}} {{downto}} 0 ) {{of}}std_logic_vector( ", 
+            LineBuffer.formatVhdl("{{type}} {{1}} {{is}} {{array}} ( {{2}} {{downto}} 0 ) {{of}} std_logic_vector( ", 
                 myTypeName, myNrOfEntries))
             .append(myGenericBitWidth == null ? Integer.toString(myBitWidth - 1) : String.format("%s - 1", myGenericBitWidth))
-            .append(LineBuffer.formatVhdl("{{downto}} 0);"));
+            .append(LineBuffer.formatVhdl(" " + "{{downto}} 0);")); // Important: The leading space is required 
       } else {
         contents.append("typedef logic [")
             .append(myGenericBitWidth == null ? Integer.toString(myBitWidth - 1) : String.format("%s - 1", myGenericBitWidth))
