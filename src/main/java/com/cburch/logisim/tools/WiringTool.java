@@ -49,6 +49,7 @@ public class WiringTool extends Tool {
   private static final int VERTICAL = 2;
 
   private boolean exists = false;
+  private boolean dragFinished = false;
   private boolean inCanvas = false;
   private Location start = Location.create(0, 0);
   private Location cur = Location.create(0, 0);
@@ -274,22 +275,17 @@ public class WiringTool extends Tool {
       canvas.setErrorMessage(S.getter("cannotModifyError"));
       return;
     }
+    Canvas.snapToGrid(e);
+    start = Location.create(e.getX(), e.getY());
+    cur = start;
+    exists = true;
+    hasDragged = false;
 
-    if (exists) {
-      mouseDragged(canvas, g, e);
-    } else {
-      Canvas.snapToGrid(e);
-      start = Location.create(e.getX(), e.getY());
-      cur = start;
-      exists = true;
-      hasDragged = false;
+    startShortening = !canvas.getCircuit().getWires(start).isEmpty();
+    shortening = null;
 
-      startShortening = !canvas.getCircuit().getWires(start).isEmpty();
-      shortening = null;
-
-      super.mousePressed(canvas, g, e);
-      canvas.getProject().repaintCanvas();
-    }
+    super.mousePressed(canvas, g, e);
+    canvas.getProject().repaintCanvas();
   }
 
   @Override
