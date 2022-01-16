@@ -893,6 +893,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     public void mouseWheelMoved(MouseWheelEvent mwe) {
       final var tool = proj.getTool();
       if (mwe.isControlDown()) {
+        /*
         final var zoomModel = proj.getFrame().getZoomModel();
         var zoom = zoomModel.getZoomFactor();
         final var opts = zoomModel.getZoomOptions();
@@ -904,6 +905,14 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
           zoom -= 0.1;
           final var min = opts.get(0) / 100.0;
           zoomModel.setZoomFactor(Math.max(zoom, min), mwe);
+        }
+        */
+        // Just use the frame's ZoomControl, since it centres automatically
+        var zoom = proj.getFrame().getZoomControl();
+        if (mwe.getWheelRotation() < 0) {
+          zoom.zoomIn();
+        } else {
+          zoom.zoomOut();
         }
       } else if (tool instanceof PokeTool && ((PokeTool) tool).isScrollable()) {
         final var id = (mwe.getWheelRotation() < 0) ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;
