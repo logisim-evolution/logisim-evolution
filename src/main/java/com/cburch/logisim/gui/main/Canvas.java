@@ -908,12 +908,19 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
         }
         */
         // Just use the frame's ZoomControl, since it centres automatically
-        var zoom = proj.getFrame().getZoomControl();
+        var zoomControl = proj.getFrame().getZoomControl();
+    
+        repairMouseEvent(mwe);
         if (mwe.getWheelRotation() < 0) {
-          zoom.zoomIn();
+          zoomControl.zoomIn();
         } else {
-          zoom.zoomOut();
+          zoomControl.zoomOut();
         }
+        var rect = getViewableRect();
+        var zoom = proj.getFrame().getZoomModel().getZoomFactor();
+        canvasPane.getHorizontalScrollBar().setValue((int)((mwe.getX() - rect.width/2)*zoom));
+        canvasPane.getVerticalScrollBar().setValue((int)((mwe.getY() - rect.height/2)*zoom));
+
       } else if (tool instanceof PokeTool && ((PokeTool) tool).isScrollable()) {
         final var id = (mwe.getWheelRotation() < 0) ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;
         final var e = new KeyEvent(mwe.getComponent(), KeyEvent.KEY_PRESSED, mwe.getWhen(), 0, id, '\0');
