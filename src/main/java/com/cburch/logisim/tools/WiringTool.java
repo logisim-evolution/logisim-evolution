@@ -49,7 +49,6 @@ public class WiringTool extends Tool {
   private static final int VERTICAL = 2;
 
   private boolean exists = false;
-  private boolean dragFinished = false;
   private boolean inCanvas = false;
   private Location start = Location.create(0, 0);
   private Location cur = Location.create(0, 0);
