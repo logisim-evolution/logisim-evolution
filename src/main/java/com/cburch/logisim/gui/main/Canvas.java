@@ -903,8 +903,8 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
         }
         var rect = getViewableRect();
         var zoom = proj.getFrame().getZoomModel().getZoomFactor();
-        setHorizontalScrollBar((int)((mwe.getX() - rect.width/2)*zoom));
-        setVerticalScrollBar((int)((mwe.getY() - rect.height/2)*zoom));
+        setHorizontalScrollBar((int) ((mwe.getX() - rect.width / 2) * zoom));
+        setVerticalScrollBar((int) ((mwe.getY() - rect.height / 2) * zoom));
 
       } else if (tool instanceof PokeTool && ((PokeTool) tool).isScrollable()) {
         final var id = (mwe.getWheelRotation() < 0) ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;
