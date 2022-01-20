@@ -20,7 +20,7 @@ public class BitExtenderHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
 
   @Override
   public LineBuffer getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
-    final var contents = LineBuffer.getBuffer();
+    final var contents = LineBuffer.getHdlBuffer();
     int nrOfPins = componentInfo.nrOfEnds();
     for (int i = 1; i < nrOfPins; i++) {
       if (!componentInfo.isEndConnected(i)) {
@@ -60,7 +60,7 @@ public class BitExtenderHdlGeneratorFactory extends InlinedHdlGeneratorFactory {
           if (componentInfo.getEnd(1).getNrOfBits() > 1) {
             contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getBusEntryName(componentInfo, 0, true, bit, nets), Hdl.getBusEntryName(componentInfo, 1, true, bit, nets));
           } else {
-            contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getBusEntryName(componentInfo, 0, true, bit, nets) + Hdl.getNetName(componentInfo, 1, true, nets));
+            contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getBusEntryName(componentInfo, 0, true, bit, nets), Hdl.getNetName(componentInfo, 1, true, nets));
           }
         } else {
           contents.add("{{assign}} {{1}} {{=}} {{2}};", Hdl.getBusEntryName(componentInfo, 0, true, bit, nets), replacement);

@@ -14,7 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class PullBehaviors {
-  public static String getContraintedPullString(char id) {
+  public static String getConstrainedPullString(char id) {
     switch (id) {
       case PULL_UP:
         return "PULLUP";

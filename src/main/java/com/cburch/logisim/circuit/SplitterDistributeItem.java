@@ -36,7 +36,6 @@ class SplitterDistributeItem extends JMenuItem implements ActionListener {
     for (var i = 0; same && i < desired.length; i++) {
       if (actual[i] != desired[i]) {
         same = false;
-        break;
       }
     }
     setEnabled(!same);

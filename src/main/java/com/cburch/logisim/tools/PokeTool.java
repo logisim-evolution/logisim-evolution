@@ -216,7 +216,7 @@ public class PokeTool extends Tool {
       int x = (int) (oldPosition.getX() - m.getX());
       int y = (int) (oldPosition.getY() - m.getY());
       canvas.setCursor(move);
-      canvas.setScrollBar(canvas.getHorizzontalScrollBar() + x, canvas.getVerticalScrollBar() + y);
+      canvas.setScrollBar(canvas.getHorizontalScrollBar() + x, canvas.getVerticalScrollBar() + y);
     }
   }
 

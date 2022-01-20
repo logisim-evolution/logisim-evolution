@@ -22,6 +22,7 @@ import com.cburch.logisim.instance.StdAttr;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class SplitterAttributes extends AbstractAttributeSet {
   public static class BitOutAttribute extends Attribute<Integer> {
@@ -365,5 +366,21 @@ public class SplitterAttributes extends AbstractAttributeSet {
       throw new IllegalArgumentException("unknown attribute " + attr);
     }
     fireAttributeValueChanged(attr, value, null);
+  }
+
+  @Override
+  public <V> List<Attribute<?>> attributesMayAlsoBeChanged(Attribute<V> attr, V value) {
+    if (attr != ATTR_FANOUT && attr != ATTR_WIDTH) {
+      return null;
+    }
+    if (Objects.equals(getValue(attr), value)) {
+      return null;
+    }
+
+    final var answer = new ArrayList<Attribute<?>>(bitEnd.length);
+    for (int index = 0; index < bitEnd.length; index++) {
+      answer.add(getBitOutAttribute(index));
+    }
+    return answer;
   }
 }

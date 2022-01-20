@@ -70,7 +70,7 @@ public class HdlContentView extends JPanel implements BaseDocumentListenerContra
     @Override
     public void undo(Project proj) {
       setText(original);
-      model.setContent(original);
+      model.setContentNoValidation(original);
       toolbar.setDirty(!model.isValid());
       dirty = false;
       if (HdlContentView.this.model != model) setHdlModel(model);
@@ -94,7 +94,7 @@ public class HdlContentView extends JPanel implements BaseDocumentListenerContra
 
   void docChanged() {
     if (model == null) return;
-    model.setContent(editor.getText());
+    model.setContentNoValidation(editor.getText());
     if (dirty || model == null) return;
     toolbar.setDirty(true);
     project.doAction(new HdlEditAction(model, model.getContent()));

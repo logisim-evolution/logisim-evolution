@@ -48,6 +48,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Random;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -472,7 +473,7 @@ public class HexFile {
     return dst;
   }
 
-  private static void randomTests(java.util.Random rng) throws Exception {
+  private static void randomTests(Random rng) throws Exception {
     Main.headless = true;
     var addrSize = rng.nextInt(14) + 1;
     var wordSize = rng.nextInt(64) + 1;
@@ -516,7 +517,7 @@ public class HexFile {
 
   public static void main(String[] args) {
     try {
-      java.util.Random rng = new java.util.Random(1234L);
+      Random rng = new Random(1234L);
       if (args.length == 0) {
         randomTests(rng);
       } else if (args.length == 1) {

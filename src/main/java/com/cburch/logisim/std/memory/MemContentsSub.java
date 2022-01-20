@@ -11,6 +11,8 @@ package com.cburch.logisim.std.memory;
 
 import com.cburch.logisim.prefs.AppPreferences;
 
+import java.util.Random;
+
 class MemContentsSub {
   private static class BytePage extends MemContents.Page {
     private byte[] data;
@@ -20,7 +22,7 @@ class MemContentsSub {
       this.mask = mask;
       data = new byte[size];
       if (AppPreferences.Memory_Startup_Unknown.get()) {
-        final var generator = new java.util.Random();
+        final var generator = new Random();
         for (var i = 0; i < size; i++) {
           data[i] = (byte) (generator.nextInt(256) & mask);
         }
@@ -75,7 +77,7 @@ class MemContentsSub {
       this.mask = mask;
       data = new int[size];
       if (AppPreferences.Memory_Startup_Unknown.get()) {
-        final var generator = new java.util.Random();
+        final var generator = new Random();
         for (var i = 0; i < size; i++) data[i] = (int) (generator.nextInt() & mask);
       }
     }
@@ -128,7 +130,7 @@ class MemContentsSub {
       data = new short[size];
       this.mask = mask;
       if (AppPreferences.Memory_Startup_Unknown.get()) {
-        final var generator = new java.util.Random();
+        final var generator = new Random();
         for (var i = 0; i < size; i++) data[i] = (short) (generator.nextInt(1 << 16) & mask);
       }
     }
@@ -185,7 +187,7 @@ class MemContentsSub {
       this.mask = mask;
       data = new long[size];
       if (AppPreferences.Memory_Startup_Unknown.get()) {
-        final var generator = new java.util.Random();
+        final var generator = new Random();
         for (var i = 0; i < size; i++) data[i] = (int) generator.nextLong() & mask;
       }
     }

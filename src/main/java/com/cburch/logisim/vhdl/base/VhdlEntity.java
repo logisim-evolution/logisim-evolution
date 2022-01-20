@@ -256,7 +256,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
 
       // FIXME: hardcoded string
       throw new UnsupportedOperationException(
-          "VHDL component simulation is not supported. This could be because there is no Questasim/Modelsim simulation server running.");
+          "VHDL component simulation is not supported. This could be because there is no Questasim/Modelsim simulation server running.");     // FIXME: hardcoded string
     }
   }
 
@@ -279,7 +279,7 @@ public class VhdlEntity extends InstanceFactory implements HdlModelListener {
       writer.print(content);
       writer.close();
     } catch (IOException e) {
-      logger.error("Could not create vhdl file: {}", e.getMessage());
+      logger.error("Could not create VHDL file: {}", e.getMessage());     // FIXME: hardcoded string
       e.printStackTrace();
     }
   }
