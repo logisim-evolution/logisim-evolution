@@ -272,6 +272,7 @@ class WindowOptions extends OptionsPanel {
       } else if (e.getActionCommand().equals(cmdSetAutoScaleFactor)) {
         final var tmp = AppPreferences.getAutoScaleFactor();
         AppPreferences.SCALE_FACTOR.set(tmp);
+        AppPreferences.getPrefs().remove(AppPreferences.SCALE_FACTOR.getIdentifier());
         zoomValue.setValue((int) (tmp * 100));
       }
     }
