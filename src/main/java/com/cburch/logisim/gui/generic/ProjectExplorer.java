@@ -83,6 +83,7 @@ public class ProjectExplorer extends JTree implements LocaleListener {
 
     InputMap imap = getInputMap(JComponent.WHEN_ANCESTOR_OF_FOCUSED_COMPONENT);
     imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_BACK_SPACE, 0), deleteAction);
+    imap.put(KeyStroke.getKeyStroke(KeyEvent.VK_DELETE, 0), deleteAction);
     ActionMap amap = getActionMap();
     amap.put(deleteAction, deleteAction);
 
