@@ -54,14 +54,6 @@ dependencies {
   testImplementation("org.mockito:mockito-junit-jupiter:4.2.0")
 }
 
-sonarqube {
-  properties {
-    property("sonar.projectKey", "logisim-evolution_logisim-evolution")
-    property("sonar.organization", "logisim-evolution")
-    property("sonar.host.url", "https://sonarcloud.io")
-  }
-}
-
 /**
  * Strings used as keys to reference shared variables (via `ext.*`)
  */
