@@ -33,11 +33,12 @@ public class PopupMenu extends MouseAdapter {
       RadixOption radix = null;
       if (signals.size() > 0) {
         radix = signals.get(0).info.getRadix();
-        for (var i = 1; i < signals.size(); i++)
+        for (var i = 1; i < signals.size(); i++) {
           if (signals.get(i).info.getRadix() != radix) {
             radix = null;
             break;
           }
+        }
       }
       final var g = new ButtonGroup();
       for (final var r : RadixOption.OPTIONS) {
@@ -57,8 +58,9 @@ public class PopupMenu extends MouseAdapter {
       m.setEnabled(signals.size() > 0);
       m.addActionListener(e -> {
         final var items = new SignalInfo.List();
-        for (final var s : signals)
+        for (final var s : signals) {
           items.add(s.info);
+        }
         chronoPanel.getModel().remove(items);
       });
       addSeparator();

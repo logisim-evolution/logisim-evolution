@@ -59,6 +59,10 @@ public class Simulator {
       return false;
     }
 
+    default void propagationStarted(Event e) {
+      // do nothing
+    }
+
     default void propagationInProgress(Event e) {
       // do nothing
     }
@@ -110,7 +114,7 @@ public class Simulator {
     private boolean autoPropagating = true;
     private boolean autoTicking = false;
     private double autoTickFreq = 1.0; // Hz
-    private long autoTickNanos = Math.round(1e9 / autoTickFreq);
+    private long autoTickNanos = Math.round(1.0e9 / autoTickFreq);
     private int manualTicksRequested = 0;
     private int manualStepsRequested = 0;
     private boolean nudgeRequested = false;
@@ -197,7 +201,7 @@ public class Simulator {
       if (autoTickFreq == freq)
         return false;
       autoTickFreq = freq;
-      autoTickNanos = freq <= 0 ? 0 : Math.round(1e9 / autoTickFreq);
+      autoTickNanos = freq <= 0 ? 0 : Math.round(1.0e9 / autoTickFreq);
       notifyAll();
       return true;
     }
@@ -317,7 +321,7 @@ public class Simulator {
         try {
           stepPoints.clear();
           if (prop != null) prop.reset();
-          sim.fireSimulatorReset(); // todo: fixme: ack, wrong thread!
+          sim.fireSimulatorReset(); // TODO: fixme: ack, wrong thread!
         } catch (Exception err) {
           oops = true;
           err.printStackTrace();
@@ -331,6 +335,7 @@ public class Simulator {
 
       if (doProp || doNudge)
         try {
+          sim.firePropagationStarted(ticked); // FIXME: ack, wrong thread!
           propagated = doProp;
           final var p = sim.getPropagationListener();
           final var evt = p == null ? null : new Event(sim, false, false, false);
@@ -470,6 +475,13 @@ public class Simulator {
     final var event = new Event(this, false, false, false);
     for (final var listener : copyListeners())
       listener.simulatorReset(event);
+  }
+
+  //called from simThread, but probably should not be
+  private void firePropagationStarted(boolean t) {
+    final var e = new Event(this, t, false, false);
+    for (final var l : copyListeners())
+      l.propagationStarted(e);
   }
 
   //called from simThread, but probably should not be

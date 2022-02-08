@@ -19,7 +19,7 @@ class WireBundle {
   private Value pullValue = Value.UNKNOWN;
   private WireBundle parent;
   private Location widthDeterminant = null;
-  private boolean isBuss = false;
+  private boolean isBus_ = false;
   WireThread[] threads = null;
   final CopyOnWriteArraySet<Location> points = new CopyOnWriteArraySet<>(); // points
   // bundle
@@ -69,7 +69,7 @@ class WireBundle {
   }
 
   boolean isBus() {
-    return isBuss;
+    return isBus_;
   }
 
   void isolate() {
@@ -88,7 +88,7 @@ class WireBundle {
     }
     if (this.width != BitWidth.UNKNOWN) {
       if (width.equals(this.width)) {
-        isBuss = width.getWidth() > 1;
+        isBus_ = width.getWidth() > 1;
         // nothing to do
       } else { // the widths are broken: Create incompatibilityData
         // holding this info

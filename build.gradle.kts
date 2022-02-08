@@ -10,15 +10,13 @@
 import org.gradle.internal.os.OperatingSystem
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.io.*
 
 plugins {
   checkstyle
-  id("com.github.ben-manes.versions") version "0.38.0"
+  id("com.github.ben-manes.versions") version "0.41.0"
   java
   application
-  id("com.github.johnrengelman.shadow") version "7.0.0"
-  id("org.sonarqube") version "3.3"
+  id("com.github.johnrengelman.shadow") version "7.1.2"
 }
 
 repositories {
@@ -32,27 +30,28 @@ application {
 dependencies {
   implementation("org.hamcrest:hamcrest:2.2")
   implementation("javax.help:javahelp:2.0.05")
-  implementation("com.fifesoft:rsyntaxtextarea:3.1.2")
+  implementation("com.fifesoft:rsyntaxtextarea:3.1.5")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
   implementation("org.drjekyll:colorpicker:1.3")
   implementation("at.swimmesberger:swingx-core:1.6.8")
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
-  implementation("org.slf4j:slf4j-api:1.7.30")
-  implementation("org.slf4j:slf4j-simple:1.7.30")
-  implementation("com.formdev:flatlaf:1.2")
-  implementation("commons-cli:commons-cli:1.4")
+  implementation("org.slf4j:slf4j-api:1.7.32")
+  implementation("org.slf4j:slf4j-simple:1.7.32")
+  implementation("com.formdev:flatlaf:1.6.4")
+  implementation("commons-cli:commons-cli:1.5.0")
   implementation("org.apache.commons:commons-text:1.9")
 
-  compileOnly("org.jetbrains:annotations:22.0.0")
+  // NOTE: Do not upgrade the jflex version. Later versions do not work.
+  compileOnly("de.jflex:jflex:1.4.1")
 
   // NOTE: Be aware of reported issues with Eclipse and Batik
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation(platform("org.junit:junit-bom:5.8.1"))
-  testImplementation("org.junit.jupiter:junit-jupiter")
-  testImplementation("org.mockito:mockito-inline:4.0.0")
-  testImplementation("org.mockito:mockito-junit-jupiter:4.0.0")
+  testImplementation(platform("org.junit:junit-bom:5.8.2"))
+  testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
+  testImplementation("org.mockito:mockito-inline:4.2.0")
+  testImplementation("org.mockito:mockito-junit-jupiter:4.2.0")
 }
 
 sonarqube {
@@ -576,6 +575,52 @@ tasks.register("genBuildInfo") {
 }
 
 /**
+ * Task genVhdlSyntax
+ *
+ * Generates the VhdlSyntax.java file
+*/
+tasks.register("genVhdlSyntax") {
+  val sourceFile = "${projectDir}/src/main/jflex/com/cburch/logisim/vhdl/syntax/VhdlSyntax.jflex"
+  val skeletonFile = "${projectDir}/support/jflex/skeleton.default"
+  val targetDir = "${buildDir}/generated/logisim/java/com/cburch/logisim/vhdl/syntax/"
+
+  group = "build"
+  description = "Generates VhdlSyntax.java"
+  inputs.files(sourceFile)
+  inputs.files(skeletonFile)
+  outputs.dir(targetDir)
+
+  var jflexJarFileName = ""
+
+  doFirst() {
+    configurations.compileClasspath {
+      resolvedConfiguration.resolvedArtifacts.forEach { ra: ResolvedArtifact ->
+        val id = ra.moduleVersion.id
+        if ("de.jflex".equals(id.group) && "jflex".equals(id.name)) {
+          jflexJarFileName = ra.file.toString()
+        }
+      }
+    }
+    if (jflexJarFileName.isEmpty()) {
+      throw GradleException("Could not find jflex jar file.")
+    }
+  }
+
+  doLast() {
+    logging.captureStandardOutput(LogLevel.DEBUG)
+    javaexec {
+      classpath = files(jflexJarFileName)
+      args = listOf(
+          "--nobak",
+          "-d", targetDir,
+          "--skel", skeletonFile,
+          sourceFile
+      )
+    }
+  }
+}
+
+/**
  * Task: genFiles
  *
  * Umbrella task to generate all generated files
@@ -583,7 +628,7 @@ tasks.register("genBuildInfo") {
 tasks.register("genFiles") {
   group = "build"
   description = "Generates all generated files."
-  dependsOn("genBuildInfo")
+  dependsOn("genBuildInfo", "genVhdlSyntax")
 }
 
 /**
