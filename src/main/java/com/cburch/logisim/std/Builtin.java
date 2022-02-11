@@ -26,6 +26,7 @@ import com.cburch.logisim.std.ttl.TtlLibrary;
 import com.cburch.logisim.std.wiring.WiringLibrary;
 import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
+import edu.cornell.cs3410.Components;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -55,6 +56,7 @@ public class Builtin extends Library {
             new HdlLibrary(),
             new TclLibrary(),
             new BfhLibrary(),
+            new Components(),
             new ExtraIoLibrary(),
             new Soc());
   }

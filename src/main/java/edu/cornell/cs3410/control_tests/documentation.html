@@ -1,0 +1,72 @@
+<html>
+<head>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+</head>
+<p>
+    <b>Control Unit</b>.
+    The control unit goes in the decode stage of the pipeline and its purpose is to take in a MIPS instruction and output necessary signals that the rest of the processor will use to perform the instruction. Many output pins are provided here so that you can make your own design decisions regarding your circuit - you are not required, nor expected, to use all of them.
+</p>
+
+
+<table class="table table-condensed table-hover table-bordered code" style="font-size: 80%; font-family: monospace">
+        <thead><tr><td><strong>Output Pin</strong></td><td><strong>Use</strong></td></tr></thead>
+        <tbody>
+            <tr><td>IsImmediate</td><td>1 only for I type instructions</td></tr>
+            <tr><td>IsRegister</td><td>1 only for R type instructions</td></tr>
+            <tr><td>IsTableB</td><td>1 only for Table B instructions</td></tr>
+            <tr><td>IsJump</td><td>1 only for J type instructions</td></tr>
+            <tr><td>IsBranch</td><td>1 only for branch instructions</td></tr>
+            <tr><td>IsMem</td><td>1 only for load (but not LUI) or store instructions</td></tr>
+            <tr><td>Immediate</td><td>The 16 bit immediate value if the instruction is I type, 0 otherwise</td></tr>
+            <tr><td>Offset</td><td>The 16 bit offset for a branch or memory instruction, 0 otherwise</td></tr>
+            <tr><td>JumpTarget</td><td>The 26 bit absolute jump target if it exists, 0 if there is no absolute jump target</td></tr>
+            <tr><td>ShiftAmount</td><td>The amount to shift in a non-variable Shift instruction, 0 otherwise</td></tr>
+
+            <tr><td>ALUOpCode</td><td><p>The 4 bit opcode needed for the ALU for that instruction, 0 otherwise</p>
+                                        <p>For Branch instructions this will be the opcode for ADD, if you choose to do branch calculations in execute</p></td></tr>
+
+            <tr><td>ImmediateSelect</td><td>1 when the immediate value should be used as an input to the ALU instead of the value read from register slot B, 0 otherwise</td></tr>
+            <tr><td>ImmSignExt</td><td>1 if the immediate should be sign extended, 0 otherwise</td></tr>
+            <tr><td>CompSign</td><td>1 if a comparison should treat values as signed (SLT, SLTI, and branch instructions)</td></tr>
+            <tr><td>Ra</td><td>Register number to read from register file input A (Typically will go into ALU slot A)</td></tr>
+            <tr><td>Rb</td><td>Register number to read from register file input B (Typically will go into ALU slot B)</td></tr>
+            <tr><td>Rd</td><td>Register number to write to if necessary</td></tr>
+            <tr><td>PC Select</td><td><p>Selects what the next PC will be</p>
+                                        <p>00 : PC + 4</p>
+                                        <p>01 : PCReg : you are going to need to fetch the PC from a register</p>
+                                        <p>10 : PCAbsolute : PC encoded in the instruction</p>
+                                        <p>11 : PCRelative : Indicates a branch instruction</p>
+            </td></tr>
+            <tr><td>Branch Select</td><td><p>Selects which branch computation should be used </p>
+                                            <p>000 → instructions for which this is irrelevant</p>
+                                            <p>001 : A > 0 </p>
+                                            <p>010 : A < 0</p>
+                                            <p>011 : A >= 0</p>
+                                            <p>100 : A <= 0</p>
+                                            <p>101 : A == B</p>
+                                            <p>110 : A != B</p>
+            </td></tr>
+            <tr><td>MemLoad</td><td>1 only for load instructions (LUI is not considered a load instruction in this case)</td></tr>
+            <tr><td>MemStore</td><td>1 only for store instructions</td></tr>
+            <tr><td>MemWord</td><td>1 only for load or store instructions that operate on the word level</td></tr>
+            <tr><td>MemSignExt</td><td>1 only if bytes loaded from memory are treated as unsigned</td></tr>
+            <tr><td>FuncField</td><td>A convenience output that is 1 when the opcode (the first six bits) of a function are 0. This can be used for a "complement" bit if needed</td></tr>
+            <tr><td>SaControl</td><td><p>2 bit opcode to indicate what goes into the Sa input in the ALU</p>
+                                        <p>00 : 00 (to be used for nops)</p>
+                                        <p>01 : 16 (for LUI, if you choose to accomplish it this way)</p>
+                                        <p>10 : ShiftAmount</p>
+                                        <p>11 : the bottom five bits of A (for variable shifts)</p>
+            </td></tr>
+            <tr><td>ASelect</td><td><p>2 bits selects what goes into ALU input A </p>
+                                    <p>00 : value of A fetched from register file </p>
+                                    <p>01 : 0b00000000 ( for move instructions ) </p>
+                                    <p>10 : PC + 4 (for calculating addresses from offset in branches)</p>
+            </td></tr>
+            <tr><td>ExecOut</td><td><p>Indicator of which signal the execute stage should output </p>
+                                    <p>00 : output of ALU (default behavior if none matter i.e. branch instructions)</p>
+                                    <p>01 : A  unchanged (move instructions)</p>
+                                    <p>10 : output of the comparator (Set Less Than instructions)</p>
+                                    <p>11 : PC + 8 (JAL and JALR)</p>
+            </td></tr>
+</tbody></table>
+</html>
