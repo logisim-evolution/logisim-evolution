@@ -21,7 +21,6 @@ public class Components extends Library {
                 // new AddTool(new Bypass()),
                 new AddTool(new Incrementer()),
                 new AddTool(new Video()),
-                new AddTool(new Ram()),
                 new AddTool(new SPIM()),
                 // new AddTool(new RamIO())
         });

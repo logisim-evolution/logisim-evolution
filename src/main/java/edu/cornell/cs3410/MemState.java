@@ -219,7 +219,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
             }
             g.setColor(Color.BLACK);
             for(int col = 0; col < columns && isValidAddr(addr); col++) {
-                int val = contents.get(addr);
+                int val = (int) contents.get(addr);
                 if(addr == curAddr) {
 		    int x0 = x + entryWidth / 2 + DATA_WIDTH_PER_BYTE;
 		    for (int i = 0; i < 4; i++) {
@@ -271,5 +271,5 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
         setBits(contents.getLogLength(), contents.getWidth());
     }
 
-    public void bytesChanged(HexModel source, long start, long numBytes, int[] oldValues) { }
+    public void bytesChanged(HexModel source, long start, long numBytes, long[] oldValues) { }
 }

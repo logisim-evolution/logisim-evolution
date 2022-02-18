@@ -57,9 +57,12 @@ class MemContents implements Cloneable, HexModel {
             int[] oldValues) {
         if (listeners == null) return;
         boolean found = false;
+        long[] oldValuesInLong = new long[oldValues.length];
+        for (int i = 0; i < oldValues.length; i++)
+            oldValuesInLong[i] = (long) oldValues[i];
         for (HexModelListener l : listeners) {
             found = true;
-            l.bytesChanged(this, start, numBytes, oldValues);
+            l.bytesChanged(this, start, numBytes, oldValuesInLong);
         }
         if (!found) listeners = null;
     }
@@ -85,7 +88,7 @@ class MemContents implements Cloneable, HexModel {
     public int getLogLength() { return addrBits; }
     public int getWidth() { return width; }
 
-    public int get(long addr) {
+    public long get(long addr) {
         int page = (int) (addr >>> PAGE_SIZE_BITS);
         int offs = (int) (addr & PAGE_MASK);
         if (page < 0 || page >= pages.length || pages[page] == null) return 0;
@@ -104,7 +107,8 @@ class MemContents implements Cloneable, HexModel {
         return true;
     }
 
-    public void set(long addr, int value) {
+    public void set(long addr, long value_long) {
+        int value = (int) value_long;
         int page = (int) (addr >>> PAGE_SIZE_BITS);
         int offs = (int) (addr & PAGE_MASK);
         int old = pages[page] == null ? 0 : pages[page].get(offs) & mask;
@@ -118,7 +122,12 @@ class MemContents implements Cloneable, HexModel {
         }
     }
 
-    public void set(long start, int[] values) {
+    @Override
+    public void set(long start, long[] values_long) {
+        int[] values = new int[values_long.length];
+        for(int i = 0; i< values.length; i++){
+            values[i] = (int) values_long[i];
+        }
         if (values.length == 0) return;
 
         int pageStart = (int) (start >>> PAGE_SIZE_BITS);
@@ -192,7 +201,8 @@ class MemContents implements Cloneable, HexModel {
         }
     }
 
-    public void fill(long start, long len, int value) {
+    public void fill(long start, long len, long value_long) {
+        int value = (int) value_long;
         if (len == 0) return;
 
         int pageStart = (int) (start >>> PAGE_SIZE_BITS);

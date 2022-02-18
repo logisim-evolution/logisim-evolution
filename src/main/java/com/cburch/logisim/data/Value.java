@@ -533,6 +533,15 @@ public class Value {
     return value;
   }
 
+  // Dangerous convert to integer
+  public int toIntValue(){
+    if (error != 0) return -1;
+    if (unknown != 0) return -1;
+    if (value > Integer.MAX_VALUE)
+      return -1;
+    return (int) value;
+  }
+
   public float toFloatValue() {
     if (error != 0 || unknown != 0 || width != 32) return Float.NaN;
     return Float.intBitsToFloat((int) value);

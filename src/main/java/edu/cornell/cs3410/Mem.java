@@ -137,12 +137,12 @@ abstract class Mem extends InstanceFactory {
         currentInstanceFiles.put(instance, value);
     }
 
-    public void loadImage(InstanceState instanceState, File imageFile)
-            throws IOException {
-        MemState s = this.getState(instanceState);
-        HexFile.open(s.getContents(), imageFile);
-        this.setCurrentImage(instanceState.getInstance(), imageFile);
-    }
+//    public void loadImage(InstanceState instanceState, File imageFile)
+//            throws IOException {
+//        MemState s = this.getState(instanceState);
+//        HexFile.open(s.getContents(), imageFile);
+//        this.setCurrentImage(instanceState.getInstance(), imageFile);
+//    }
 
     @Override
     protected Object getInstanceFeature(Instance instance, Object key) {
@@ -154,12 +154,14 @@ abstract class Mem extends InstanceFactory {
         Instance instance;
         
         MemListener(Instance instance) { this.instance = instance; }
-        
-        public void metainfoChanged(HexModel source) { }
 
-        public void bytesChanged(HexModel source, long start,
-                long numBytes, int[] values) {
+
+        @Override
+        public void bytesChanged(HexModel source, long start, long numBytes, long[] oldValues) {
             instance.fireInvalidated();
         }
+
+        public void metainfoChanged(HexModel source) { }
+
     }
 }

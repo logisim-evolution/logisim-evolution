@@ -28,6 +28,11 @@ public final class StringUtil {
     };
   }
 
+  public static String format(String fmt, String... args) {
+    return String.format(fmt, (Object[]) args);
+  }
+
+
   public static String resizeString(String value, FontMetrics metrics, int maxWidth) {
     final var width = metrics.stringWidth(value);
 
