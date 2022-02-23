@@ -39,6 +39,7 @@ class WindowOptions extends OptionsPanel {
   private final PrefOptionList toolbarPlacement;
   private final PrefOptionList canvasPlacement;
   private final ZoomSlider zoomValue;
+  private final JButton zoomAutoButton;
   private final JLabel lookfeelLabel;
   private final JLabel zoomLabel;
   private final JLabel importantA;
@@ -60,6 +61,7 @@ class WindowOptions extends OptionsPanel {
 
   protected final String cmdResetWindowLayout = "reset-window-layout";
   protected final String cmdResetGridColors = "reset-grid-colors";
+  protected final String cmdSetAutoScaleFactor = "set-auto-scale-factor";
 
   public WindowOptions(PreferencesFrame window) {
     super(window);
@@ -136,9 +138,14 @@ class WindowOptions extends OptionsPanel {
 
     zoomLabel = new JLabel(S.get("windowToolbarZoomfactor"));
     zoomValue = new ZoomSlider(JSlider.HORIZONTAL, 100, 300, (int) (AppPreferences.SCALE_FACTOR.get() * 100));
-
+    zoomAutoButton = new JButton();
+    zoomAutoButton.addActionListener(listener);
+    zoomAutoButton.setActionCommand(cmdSetAutoScaleFactor);
+    zoomAutoButton.setText(S.get("windowSetAutoScaleFactor"));
     panel.add(zoomLabel);
     panel.add(zoomValue);
+    panel.add(new JLabel(" "));
+    panel.add(zoomAutoButton);
     zoomValue.addChangeListener(listener);
 
     panel.add(new JLabel(" "));
@@ -262,6 +269,11 @@ class WindowOptions extends OptionsPanel {
         for (final var proj : nowOpen) {
           proj.getFrame().repaint();
         }
+      } else if (e.getActionCommand().equals(cmdSetAutoScaleFactor)) {
+        final var tmp = AppPreferences.getAutoScaleFactor();
+        AppPreferences.SCALE_FACTOR.set(tmp);
+        AppPreferences.getPrefs().remove(AppPreferences.SCALE_FACTOR.getIdentifier());
+        zoomValue.setValue((int) (tmp * 100));
       }
     }
   }

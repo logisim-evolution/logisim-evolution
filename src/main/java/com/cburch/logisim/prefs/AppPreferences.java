@@ -575,17 +575,21 @@ public class AppPreferences {
 
   public static final PrefMonitor<Boolean> NEW_INPUT_OUTPUT_SHAPES =
       create(new PrefMonitorBooleanConvert("oldIO", true));
+
+  public static double getAutoScaleFactor() {
+    return (((!GraphicsEnvironment.isHeadless())
+                  ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
+                  : 0)
+              / 1000);
+  }
+
   public static final PrefMonitor<Double> SCALE_FACTOR =
       create(
           new PrefMonitorDouble(
               "Scale",
               Math.max(
-                  (((!GraphicsEnvironment.isHeadless())
-                          ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
-                          : 0)
-                      / 1000),
+                  getAutoScaleFactor(),
                   1.0)));
-
   public static final PrefMonitor<String> ADD_AFTER =
       create(
           new PrefMonitorStringOpts(
