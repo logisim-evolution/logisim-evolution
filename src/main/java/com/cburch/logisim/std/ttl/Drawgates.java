@@ -141,21 +141,22 @@ public class Drawgates {
 
   static void paintPortNames(InstancePainter painter, int x, int y, int height, String[] portNames) {
     final var gfx = painter.getGraphics();
+    final var portsPerRow = portNames.length / 2;
     gfx.drawRect(
         x + 10,
         y + AbstractTtlGate.PIN_HEIGHT + 10,
         portNames.length * 10,
         height - 2 * AbstractTtlGate.PIN_HEIGHT - 20);
     for (var i = 0; i < 2; i++) {
-      for (var j = 0; j < portNames.length / 2; j++) {
+      for (var j = 0; j < portsPerRow; j++) {
         GraphicsUtil.drawCenteredText(
             gfx,
-            portNames[j + (i * 7)],
-            i == 0 ? x + 10 + j * 20 : x + 160 - j * 20 - 10,
+            portNames[j + (i * portsPerRow)],
+            i == 0 ? x + 10 + j * 20 : x + 20 * portsPerRow - j * 20 + 10,
             y
                 + height
                 - AbstractTtlGate.PIN_HEIGHT
-                - 7
+                - portsPerRow
                 - i * (height - 2 * AbstractTtlGate.PIN_HEIGHT - 11));
       }
     }
