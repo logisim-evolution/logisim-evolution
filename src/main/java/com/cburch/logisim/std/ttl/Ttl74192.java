@@ -222,7 +222,7 @@ public class Ttl74192 extends AbstractTtlGate {
       if (counter < 0) {
         counter = maxVal;
       }
-    }else if (cntU_rising && cntD_unchanged_high) { // count up
+    } else if (cntU_rising && cntD_unchanged_high) { // count up
       counter++;
       if (counter > maxVal) {
         counter = 0;

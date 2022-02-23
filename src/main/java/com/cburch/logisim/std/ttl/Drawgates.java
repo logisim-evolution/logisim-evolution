@@ -156,7 +156,7 @@ public class Drawgates {
             y
                 + height
                 - AbstractTtlGate.PIN_HEIGHT
-                - portsPerRow
+                - 7
                 - i * (height - 2 * AbstractTtlGate.PIN_HEIGHT - 11));
       }
     }
