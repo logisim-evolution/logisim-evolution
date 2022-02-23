@@ -71,9 +71,7 @@ public class Ttl74192 extends AbstractTtlGate {
   private Value upPrev = Value.NIL;
 
   public Ttl74192() {
-    super(_ID, (byte) 16, OUTPUT_PORTS, PORT_NAMES, null);
-    super.setInstancePoker(Poker.class);
-    this.maxVal = 9;
+    this(_ID, 9);
   }
 
   public Ttl74192(String name, int maxVal) {
