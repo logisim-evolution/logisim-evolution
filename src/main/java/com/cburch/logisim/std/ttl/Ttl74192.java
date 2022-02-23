@@ -67,8 +67,8 @@ public class Ttl74192 extends AbstractTtlGate {
 
   private final int maxVal;
 
-  private Value cntD_prev = Value.NIL;
-  private Value cntU_prev = Value.NIL;
+  private Value downPrev = Value.NIL;
+  private Value upPrev = Value.NIL;
 
   public Ttl74192() {
     super(_ID, (byte) 16, OUTPUT_PORTS, PORT_NAMES, null);
@@ -197,16 +197,16 @@ public class Ttl74192 extends AbstractTtlGate {
     counter += data.getValue().get(2).toLongValue() << 2;
     counter += data.getValue().get(3).toLongValue() << 3;
 
-    final var cntD_cur = state.getPortValue(PORT_INDEX_DOWN);
-    final var cntU_cur = state.getPortValue(PORT_INDEX_UP);
-    final var cntD_falling = cntD_prev == Value.TRUE && cntD_cur == Value.FALSE;
-    final var cntD_rising = cntD_prev == Value.FALSE && cntD_cur == Value.TRUE;
-    final var cntU_falling = cntU_prev == Value.TRUE && cntU_cur == Value.FALSE;
-    final var cntU_rising = cntU_prev == Value.FALSE && cntU_cur == Value.TRUE;
-    final var cntD_unchanged_high = cntD_prev == Value.TRUE && cntD_cur == Value.TRUE;
-    final var cntU_unchanged_high = cntU_prev == Value.TRUE && cntU_cur == Value.TRUE;
-    cntD_prev = cntD_cur;
-    cntU_prev = cntU_cur;
+    final var downCur = state.getPortValue(PORT_INDEX_DOWN);
+    final var upCur = state.getPortValue(PORT_INDEX_UP);
+    final var downFalling = downPrev == Value.TRUE && downCur == Value.FALSE;
+    final var downRising = downPrev == Value.FALSE && downCur == Value.TRUE;
+    final var upFalling = upPrev == Value.TRUE && upCur == Value.FALSE;
+    final var upRising = upPrev == Value.FALSE && upCur == Value.TRUE;
+    final var downUnchangedHigh = downPrev == Value.TRUE && downCur == Value.TRUE;
+    final var upUnchangedHigh = upPrev == Value.TRUE && upCur == Value.TRUE;
+    downPrev = downCur;
+    upPrev = upCur;
 
     if (state.getPortValue(PORT_INDEX_CLEAR) == Value.TRUE) { // reset
       counter = 0;
@@ -216,21 +216,21 @@ public class Ttl74192 extends AbstractTtlGate {
       inputValue += state.getPortValue(PORT_INDEX_C).toLongValue() << 2;
       inputValue += state.getPortValue(PORT_INDEX_D).toLongValue() << 3;
       counter = inputValue > maxVal ? 0 : inputValue; // TODO: not sure
-    } else if (cntD_rising && cntU_unchanged_high) { // count down
+    } else if (downRising && upUnchangedHigh) { // count down
       counter--;
       if (counter < 0) {
         counter = maxVal;
       }
-    } else if (cntU_rising && cntD_unchanged_high) { // count up
+    } else if (upRising && downUnchangedHigh) { // count up
       counter++;
       if (counter > maxVal) {
         counter = 0;
       }
-    } else if (cntU_falling && cntD_unchanged_high) { // carry
+    } else if (upFalling && downUnchangedHigh) { // carry
       if (counter == maxVal) {
         carry = Value.FALSE;
       }
-    } else if (cntD_falling && cntU_unchanged_high) { // borrow
+    } else if (downFalling && upUnchangedHigh) { // borrow
       if (counter == 0) {
         borrow = Value.FALSE;
       }
