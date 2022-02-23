@@ -143,15 +143,14 @@ public class Ttl74164 extends AbstractTtlGate {
   }
 
   private void drawState(Graphics2D gfx, int x, int y, int height, ShiftRegisterData state) {
-    if (state != null) {
-      for (var i = 0; i < 8; i++) {
-        gfx.setColor(state.get(7 - i).getColor());
-        gfx.fillOval(x + 36 + i * 10, y + height / 2 - 4, 8, 8);
-        gfx.setColor(Color.WHITE);
-        GraphicsUtil.drawCenteredText(gfx, state.get(7 - i).toDisplayString(), x + 40 + i * 10, y + height / 2);
-      }
-      gfx.setColor(Color.BLACK);
+    if (state != null) return;
+    for (var i = 0; i < 8; i++) {
+      gfx.setColor(state.get(7 - i).getColor());
+      gfx.fillOval(x + 36 + i * 10, y + height / 2 - 4, 8, 8);
+      gfx.setColor(Color.WHITE);
+      GraphicsUtil.drawCenteredText(gfx, state.get(7 - i).toDisplayString(), x + 40 + i * 10, y + height / 2);
     }
+    gfx.setColor(Color.BLACK);
   }
 
   @Override
@@ -162,11 +161,11 @@ public class Ttl74164 extends AbstractTtlGate {
       data.clear();
     } else if (triggered) {
       data.clear();
-      if (state.getPortValue(PORT_INDEX_A) == Value.TRUE && state.getPortValue(PORT_INDEX_B) == Value.TRUE) {
-        data.push(Value.TRUE);
-      } else {
-        data.push(Value.FALSE);
-      }
+
+      data.push(state.getPortValue(PORT_INDEX_A) == Value.TRUE
+                && state.getPortValue(PORT_INDEX_B) == Value.TRUE
+                ? Value.TRUE : Value.FALSE);
+
       data.push(state.getPortValue(PORT_INDEX_QA));
       data.push(state.getPortValue(PORT_INDEX_QB));
       data.push(state.getPortValue(PORT_INDEX_QC));

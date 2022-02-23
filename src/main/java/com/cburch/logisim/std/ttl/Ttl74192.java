@@ -36,8 +36,8 @@ public class Ttl74192 extends AbstractTtlGate {
   public static final int PORT_INDEX_B = 0;
   public static final int PORT_INDEX_QB = 1;
   public static final int PORT_INDEX_QA = 2;
-  public static final int PORT_INDEX_CntD = 3;
-  public static final int PORT_INDEX_CntU = 4;
+  public static final int PORT_INDEX_DOWN = 3;
+  public static final int PORT_INDEX_UP = 4;
   public static final int PORT_INDEX_QC = 5;
   public static final int PORT_INDEX_QD = 6;
   public static final int PORT_INDEX_D = 7;
@@ -73,7 +73,7 @@ public class Ttl74192 extends AbstractTtlGate {
   public Ttl74192() {
     super(_ID, (byte) 16, OUTPUT_PORTS, PORT_NAMES, null);
     super.setInstancePoker(Poker.class);
-    maxVal = 9;
+    this.maxVal = 9;
   }
 
   public Ttl74192(String name, int maxVal) {
@@ -146,21 +146,20 @@ public class Ttl74192 extends AbstractTtlGate {
   }
 
   private void drawState(Graphics2D gfx, int x, int y, int height, TtlRegisterData state) {
-    if (state != null) {
-      long value = state.getValue().toLongValue();
-      for (var i = 0; i < 4; i++) {
-        final var isSetBitValue = (value & (1 << (3 - i))) != 0;
-        gfx.setColor(isSetBitValue ? trueColor : falseColor);
-        gfx.fillOval(x + 52 + i * 10, y + height / 2 - 4, 8, 8);
-        gfx.setColor(Color.WHITE);
-        GraphicsUtil.drawCenteredText(gfx, isSetBitValue ? "1" : "0", x + 56 + i * 10, y + height / 2);
-      }
-      gfx.setColor(Color.BLACK);
+    if (state == null) return;
+    long value = state.getValue().toLongValue();
+    for (var i = 0; i < 4; i++) {
+      final var isSetBitValue = (value & (1 << (3 - i))) != 0;
+      gfx.setColor(isSetBitValue ? trueColor : falseColor);
+      gfx.fillOval(x + 52 + i * 10, y + height / 2 - 4, 8, 8);
+      gfx.setColor(Color.WHITE);
+      GraphicsUtil.drawCenteredText(gfx, isSetBitValue ? "1" : "0", x + 56 + i * 10, y + height / 2);
     }
+    gfx.setColor(Color.BLACK);
   }
 
   public static void updateState(InstanceState state, Long value, Value carry, Value borrow) {
-    var data = getStateData(state);
+    final var data = getStateData(state);
 
     data.setValue(Value.createKnown(BitWidth.create(6), value + (carry.toLongValue() << 4) + (borrow.toLongValue() << 5)));
     final var vA = data.getValue().get(0);
@@ -189,7 +188,7 @@ public class Ttl74192 extends AbstractTtlGate {
 
   @Override
   public void propagateTtl(InstanceState state) {
-    var data = getStateData(state);
+    final var data = getStateData(state);
 
     var carry = Value.TRUE;
     var borrow = Value.TRUE;
@@ -198,14 +197,14 @@ public class Ttl74192 extends AbstractTtlGate {
     counter += data.getValue().get(2).toLongValue() << 2;
     counter += data.getValue().get(3).toLongValue() << 3;
 
-    var cntD_cur = state.getPortValue(PORT_INDEX_CntD);
-    var cntU_cur = state.getPortValue(PORT_INDEX_CntU);
-    var cntD_falling = cntD_prev == Value.TRUE && cntD_cur == Value.FALSE;
-    var cntD_rising = cntD_prev == Value.FALSE && cntD_cur == Value.TRUE;
-    var cntU_falling = cntU_prev == Value.TRUE && cntU_cur == Value.FALSE;
-    var cntU_rising = cntU_prev == Value.FALSE && cntU_cur == Value.TRUE;
-    var cntD_unchanged_high = cntD_prev == Value.TRUE && cntD_cur == Value.TRUE;
-    var cntU_unchanged_high = cntU_prev == Value.TRUE && cntU_cur == Value.TRUE;
+    final var cntD_cur = state.getPortValue(PORT_INDEX_DOWN);
+    final var cntU_cur = state.getPortValue(PORT_INDEX_UP);
+    final var cntD_falling = cntD_prev == Value.TRUE && cntD_cur == Value.FALSE;
+    final var cntD_rising = cntD_prev == Value.FALSE && cntD_cur == Value.TRUE;
+    final var cntU_falling = cntU_prev == Value.TRUE && cntU_cur == Value.FALSE;
+    final var cntU_rising = cntU_prev == Value.FALSE && cntU_cur == Value.TRUE;
+    final var cntD_unchanged_high = cntD_prev == Value.TRUE && cntD_cur == Value.TRUE;
+    final var cntU_unchanged_high = cntU_prev == Value.TRUE && cntU_cur == Value.TRUE;
     cntD_prev = cntD_cur;
     cntU_prev = cntU_cur;
 
