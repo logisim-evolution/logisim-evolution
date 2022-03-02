@@ -35,10 +35,11 @@ dependencies {
   implementation("org.drjekyll:colorpicker:1.3")
   implementation("at.swimmesberger:swingx-core:1.6.8")
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
-  implementation("org.slf4j:slf4j-api:1.7.32")
-  implementation("org.slf4j:slf4j-simple:1.7.32")
-  implementation("com.formdev:flatlaf:1.6.4")
-  implementation("commons-cli:commons-cli:1.5.0")
+  implementation("org.slf4j:slf4j-api:1.7.30")
+  implementation("org.slf4j:slf4j-simple:1.7.30")
+  implementation("com.formdev:flatlaf:1.2")
+  implementation("commons-cli:commons-cli:1.4")
+  implementation("com.vladsch.flexmark:flexmark-all:0.62.2")
   implementation("org.apache.commons:commons-text:1.9")
 
   // NOTE: Do not upgrade the jflex version. Later versions do not work.
