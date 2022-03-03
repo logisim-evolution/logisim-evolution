@@ -82,8 +82,6 @@ public class HdlWires {
   }
 
   public void removeWires() {
-    final var iterator = myWires.iterator();
-    while (iterator.hasNext())
-      if (iterator.next().isWire()) iterator.remove();
+    myWires.clear();
   }
 }
