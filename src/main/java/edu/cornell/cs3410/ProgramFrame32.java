@@ -6,10 +6,14 @@
  
 package edu.cornell.cs3410;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.io.File;
 import java.io.IOException;
 
@@ -39,11 +43,6 @@ public class ProgramFrame32 extends JFrame {
     private class WindowMenuManager extends WindowMenuItemManager {
         WindowMenuManager() { super("RISC-V Program Listing", false); }
         public JFrame getJFrame(boolean create) { return ProgramFrame32.this; }
-
-        @Override
-        public JFrame getJFrame(boolean create, Component parent) {
-            return ProgramFrame32.this;
-        }
     }
 	
 	private class Change extends Action {

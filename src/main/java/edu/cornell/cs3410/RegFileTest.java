@@ -341,7 +341,7 @@ public class RegFileTest {
             // Two ticks make one cycle, so go to cycles * 2
             // Add one more half-cycle for falling edge people
             for (int i = 0; i < cycles * 2 + 1; ++i) {
-                prop.toggleClocks();
+                prop.tick();
                 prop.propagate();
             }
 
