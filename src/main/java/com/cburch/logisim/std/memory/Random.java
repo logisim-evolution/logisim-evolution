@@ -71,70 +71,95 @@ public class Random extends InstanceFactory {
   }
 
   private static class StateData extends ClockState implements InstanceData {
-    private static final long MULTIPLIER = 0x5DEECE66DL;
-    private static final long ADDEND = 0xBL;
-    private static final long MASK = (1L << 48) - 1;
-
-    private long initSeed;
-    private long curSeed;
-    private int value;
-    private long resetValue;
+    private final long[] INIT_SEEDS;
+    private long[] curSeeds;
+    private long[] resetSeeds;
+    private long value;
     private Value oldReset;
 
-    public StateData(Object seed) {
-      resetValue = this.initSeed = this.curSeed = getRandomSeed(seed);
-      this.value = (int) this.initSeed;
+    public StateData(Object seed, final long[] init_seeds) {
+      INIT_SEEDS = init_seeds;
+      this.curSeeds = getRandomSeeds(seed);
+      this.value = result();
       oldReset = Value.UNKNOWN;
     }
 
     private void propagateReset(Value reset, Object seed) {
       if (oldReset == Value.FALSE && reset == Value.TRUE) {
-        resetValue = getRandomSeed(seed);
+        this.resetSeeds = getRandomSeeds(seed);
       }
       oldReset = reset;
     }
 
     public void reset(Object seed) {
-      this.initSeed = resetValue;
-      this.curSeed = resetValue;
-      this.value = (int) resetValue;
+      this.curSeeds = resetSeeds;
+      this.value = result();
     }
 
-    private long getRandomSeed(Object seed) {
+    private long[] getRandomSeeds(Object seed) {
       long retValue = seed instanceof Integer ? (Integer) seed : 0;
       if (retValue == 0) {
         // Prior to 2.7.0, this would reset to the seed at the time of
         // the StateData's creation. It seems more likely that what
         // would be intended was starting a new sequence entirely...
-        retValue = (System.currentTimeMillis() ^ MULTIPLIER) & MASK;
-        if (retValue == initSeed) {
-          retValue = (retValue + MULTIPLIER) & MASK;
-        }
+        retValue = System.currentTimeMillis(); // TODO
       }
-      return retValue;
+      long[] seeds = INIT_SEEDS.clone();
+      seeds[0] = retValue;
+      return seeds;
     }
 
-    void step() {
-      long v = curSeed;
-      v = (v * MULTIPLIER + ADDEND) & MASK;
-      curSeed = v;
-      value = (int) (v >> 12);
+    private long result() {
+      return Long.rotateLeft(curSeeds[0] + curSeeds[3], 23) + curSeeds[0];
+    }
+
+    /**
+     * Advance the state of the PRNG by one.
+     * Implements the xoshiro256++ algorithm.
+     * Information about it can be found here: https://prng.di.unimi.it
+     */
+    public void step() {
+      long t = curSeeds[1] << 17;
+
+      curSeeds[2] ^= curSeeds[0];
+      curSeeds[3] ^= curSeeds[1];
+      curSeeds[1] ^= curSeeds[2];
+      curSeeds[0] ^= curSeeds[3];
+
+      curSeeds[2] ^= t;
+
+      curSeeds[3] = Long.rotateLeft(curSeeds[3], 45);
+
+      value = result();
     }
   }
 
-  static final Attribute<Integer> ATTR_SEED =
+  public static final Attribute<Integer> ATTR_SEED0 =
       Attributes.forInteger("seed", S.getter("randomSeedAttr"));
+  public static final Attribute<Integer> ATTR_SEED1 = Attributes.forNoSave();
+  public static final Attribute<Integer> ATTR_SEED2 = Attributes.forNoSave();
+  public static final Attribute<Integer> ATTR_SEED3 = Attributes.forNoSave();
+
   public static final int OUT = 0;
   public static final int CK = 1;
   public static final int NXT = 2;
   public static final int RST = 3;
+
+  private static final long[] INIT_SEEDS = { // initial seeds
+      0x0L,                // will be overwritten by attribute
+      0x0123456789ABCDEFL, // fixed
+      0xAAAAAAAAAAAAAAAAL, // fixed
+      0xFEDCBA987654321L}; // fixed
 
   public Random() {
     super(_ID, S.getter("randomComponent"), new RandomHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {
           StdAttr.WIDTH,
-          ATTR_SEED,
+          ATTR_SEED0,
+          ATTR_SEED1,
+          ATTR_SEED2,
+          ATTR_SEED3,
           StdAttr.EDGE_TRIGGER,
           StdAttr.LABEL,
           StdAttr.LABEL_FONT,
@@ -142,7 +167,10 @@ public class Random extends InstanceFactory {
         },
         new Object[] {
           BitWidth.create(8),
-            0,
+          INIT_SEEDS[0],
+          INIT_SEEDS[1],
+          INIT_SEEDS[2],
+          INIT_SEEDS[3],
           StdAttr.TRIG_RISING,
           "",
           StdAttr.DEFAULT_LABEL_FONT,
@@ -203,6 +231,8 @@ public class Random extends InstanceFactory {
     if (attr == StdAttr.APPEARANCE) {
       instance.recomputeBounds();
       updatePorts(instance);
+    } else if (attr == ATTR_SEED0) {
+      // TODO
     }
   }
 
@@ -235,7 +265,7 @@ public class Random extends InstanceFactory {
     GraphicsUtil.switchToWidth(g, 1);
   }
 
-  private void drawData(InstancePainter painter, int xpos, int ypos, int nrOfBits, int value) {
+  private void drawData(InstancePainter painter, int xpos, int ypos, int nrOfBits, long value) {
     final var g = painter.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
     g.drawRect(xpos, ypos, 80, 20);
@@ -258,7 +288,7 @@ public class Random extends InstanceFactory {
     String a;
     String b = null;
     if (painter.getShowState()) {
-      int val = state == null ? 0 : state.value;
+      long val = state == null ? 0 : state.value;
       final var str = StringUtil.toHexString(width, val);
       if (str.length() <= 4) {
         a = str;
@@ -327,7 +357,7 @@ public class Random extends InstanceFactory {
   public void propagate(InstanceState state) {
     var data = (StateData) state.getData();
     if (data == null) {
-      data = new StateData(state.getAttributeValue(ATTR_SEED));
+      data = new StateData(state.getAttributeValue(ATTR_SEED0), INIT_SEEDS);
       state.setData(data);
     }
 
@@ -335,9 +365,9 @@ public class Random extends InstanceFactory {
     Object triggerType = state.getAttributeValue(StdAttr.EDGE_TRIGGER);
     final var triggered = data.updateClock(state.getPortValue(CK), triggerType);
 
-    data.propagateReset(state.getPortValue(RST), state.getAttributeValue(ATTR_SEED));
+    data.propagateReset(state.getPortValue(RST), state.getAttributeValue(ATTR_SEED0));
     if (state.getPortValue(RST) == Value.TRUE) {
-      data.reset(state.getAttributeValue(ATTR_SEED));
+      data.reset(state.getAttributeValue(ATTR_SEED0));
     } else if (triggered && state.getPortValue(NXT) != Value.FALSE) {
       data.step();
     }
