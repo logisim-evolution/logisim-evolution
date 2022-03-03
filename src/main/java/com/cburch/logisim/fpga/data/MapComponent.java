@@ -190,7 +190,7 @@ public class MapComponent {
 
   public boolean isInternalMapped(int pin) {
     if (pin < 0 || pin >= nrOfPins) return false;
-    return isMapped(pin) && maps.get(pin).getIoComp().getType().equals(IoComponentTypes.LedArray);
+    return isBoardMapped(pin) && maps.get(pin).getIoComp().getType().equals(IoComponentTypes.LedArray);
   }
 
   public boolean isBoardMapped(int pin) {
@@ -313,6 +313,7 @@ public class MapComponent {
     }
     if (cmap.getPinMaps() == null) {
       final var rect = cmap.getRectangle();
+      if (rect == null) return;
       for (var comp : IOcomps) {
         if (comp.getRectangle().isPointInside(rect.getXpos(), rect.getYpos())) {
           if (cmap.isSinglePin()) {
@@ -651,6 +652,7 @@ public class MapComponent {
           ioConst |= constants.get(i) & 1;
         }
       }
+      if (pin < -1) return s.toString();
       if (outAllOpens || ioAllOpens || inpAllConst || ioAllConst) s.append("->");
       var addcomma = false;
       if (inpAllConst) {
@@ -678,7 +680,7 @@ public class MapComponent {
 
   public void getMapElement(Element Map) throws DOMException {
     if (!hasMap()) return;
-    Map.setAttribute(MAP_KEY, getDisplayString(-1));
+    Map.setAttribute(MAP_KEY, getDisplayString(-2));
     if (isCompleteMap(true)) {
       if (opens.get(0)) {
         Map.setAttribute("open", "open");
