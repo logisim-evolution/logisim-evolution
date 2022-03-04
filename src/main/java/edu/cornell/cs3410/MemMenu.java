@@ -112,22 +112,7 @@ class MemMenu implements ActionListener, MenuExtender {
     }
 
     private void doSave() {
-        MemState s = factory.getState(instance, circState);
-
-        JFileChooser chooser = proj.createChooser();
-        File oldSelected = factory.getCurrentImage(instance);
-        if(oldSelected != null) chooser.setSelectedFile(oldSelected);
-        chooser.setDialogTitle(Strings.get("ramSaveDialogTitle"));
-        int choice = chooser.showSaveDialog(frame);
-        if(choice == JFileChooser.APPROVE_OPTION) {
-            File f = chooser.getSelectedFile();
-            try {
-                HexFile.save(f, s.getContents());
-                factory.setCurrentImage(instance, f);
-            } catch(IOException e) {
-                JOptionPane.showMessageDialog(frame, e.getMessage(),
-                        Strings.get("ramSaveErrorTitle"), JOptionPane.ERROR_MESSAGE);
-            }
-        }
+        final var m = factory.getState(instance, circState).getContents();
+        HexFile.save(m, frame, proj, instance);
     }
 }

@@ -12,6 +12,7 @@ import com.cburch.hex.HexModel;
 import com.cburch.hex.HexModelListener;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.InstanceData;
+import com.cburch.logisim.std.memory.MemContents;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 

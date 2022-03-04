@@ -33,6 +33,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.std.memory.MemContents;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
 import com.cburch.logisim.util.StringUtil;
@@ -184,7 +185,7 @@ public class RamIO extends Mem {
   @Override
     HexFrame getHexFrame(Project proj, Instance instance, CircuitState circState) {
       RamState state = (RamState) getState(instance, circState);
-      return state.getHexFrame(proj);
+      return state.getHexFrame(proj, instance);
     }
 
   static final Value[] vmask = new Value[] {
@@ -230,9 +231,9 @@ public class RamIO extends Mem {
         p("----read------");
         int rcr = 0xFF0000;
         int rdr = 0xFF0004;
-        int _rcr = myState.getContents().get(rcr);
+        int _rcr = (int)myState.getContents().get(rcr);
         p("rcr value=" + Integer.toHexString(_rcr));
-        int _rdr = myState.getContents().get(rdr);
+        int _rdr = (int)myState.getContents().get(rdr);
         p("rdr value=" + Integer.toHexString(_rdr));
         // handle rx and generate irq.
         Value ka_value = state.getPortValue(KAVAIL);
@@ -261,8 +262,8 @@ public class RamIO extends Mem {
         p("----write-----");
         int tcr = 0xFF0008;
         int tdr = 0xFF000C;
-        int _tcr = myState.getContents().get(tcr) ;
-        int _tdr = myState.getContents().get(tdr) ;
+        int _tcr = (int)myState.getContents().get(tcr) ;
+        int _tdr = (int)myState.getContents().get(tdr) ;
         p("tcr value = " + Integer.toHexString(_tcr));
         p("tdr value = " + Integer.toHexString(_tdr));
 
@@ -328,14 +329,14 @@ public class RamIO extends Mem {
         if(shouldStore) {
           Value dataValue = state.getPortValue(separate ? DIN : DATA);
           int newVal = dataValue.toIntValue();
-          int oldVal = myState.getContents().get(addr);
+          int oldVal = (int)myState.getContents().get(addr);
           newVal = (newVal & bmask) | (oldVal & ~bmask);
           myState.getContents().set(addr, newVal);
         }
       }
 
       if(outputEnabled) {
-        int val = myState.getContents().get(addr);
+        int val = (int)myState.getContents().get(addr);
         Value[] vals = vmask[mask].getAll();
         // vmask[mask] is x's and zeroes right now.
         // Just need to change any zeroes to ones if they are 1 in val.
@@ -485,9 +486,9 @@ public class RamIO extends Mem {
         }
 
       // Retrieves a HexFrame for editing within a separate window
-      public HexFrame getHexFrame(Project proj) {
+      public HexFrame getHexFrame(Project proj, Instance instance) {
         if(hexFrame == null) {
-          hexFrame = new HexFrame(proj, getContents());
+          hexFrame = new HexFrame(proj, instance ,getContents());
           hexFrame.addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosed(WindowEvent e) {
@@ -542,6 +543,11 @@ public class RamIO extends Mem {
           return null;
         }
       }
+
+    @Override
+    public BitWidth getBitWidth(InstanceState state, Object option) {
+      return null;
+    }
 
     @Override
       public Value getLogValue(InstanceState state, Object option) {

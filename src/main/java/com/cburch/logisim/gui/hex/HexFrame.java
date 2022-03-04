@@ -90,6 +90,8 @@ public class HexFrame extends LFrame.SubWindow {
     setLocationRelativeTo(project.getFrame());
   }
 
+
+
   public void closeAndDispose() {
     WindowEvent e = new WindowEvent(this, WindowEvent.WINDOW_CLOSING);
     processWindowEvent(e);

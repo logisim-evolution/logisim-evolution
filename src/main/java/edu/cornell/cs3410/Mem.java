@@ -123,10 +123,10 @@ abstract class Mem extends InstanceFactory {
         }
 
         // draw input and output ports
-        painter.drawPort(DATA, Strings.get("ramDataLabel"), Direction.WEST);
-        painter.drawPort(ADDR, Strings.get("ramAddrLabel"), Direction.EAST);
+        painter.drawPort(DATA, Strings.get("Data"), Direction.WEST);
+        painter.drawPort(ADDR, Strings.get("Addr"), Direction.EAST);
         g.setColor(Color.GRAY);
-        painter.drawPort(CS, Strings.get("ramCSLabel"), Direction.SOUTH);
+        painter.drawPort(CS, Strings.get("CS"), Direction.SOUTH);
     }
     
     File getCurrentImage(Instance instance) {
@@ -137,12 +137,12 @@ abstract class Mem extends InstanceFactory {
         currentInstanceFiles.put(instance, value);
     }
 
-//    public void loadImage(InstanceState instanceState, File imageFile)
-//            throws IOException {
-//        MemState s = this.getState(instanceState);
-//        HexFile.open(s.getContents(), imageFile);
-//        this.setCurrentImage(instanceState.getInstance(), imageFile);
-//    }
+    public void loadImage(InstanceState instanceState, File imageFile)
+            throws IOException {
+        MemState s = this.getState(instanceState);
+        HexFile.open(s.getContents(), imageFile);
+        this.setCurrentImage(instanceState.getInstance(), imageFile);
+    }
 
     @Override
     protected Object getInstanceFeature(Instance instance, Object key) {

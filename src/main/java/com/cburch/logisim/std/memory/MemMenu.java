@@ -23,7 +23,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 
-class MemMenu implements ActionListener, MenuExtender {
+public class MemMenu implements ActionListener, MenuExtender {
   private final Mem factory;
   private final Instance instance;
   private Project proj;
@@ -34,7 +34,7 @@ class MemMenu implements ActionListener, MenuExtender {
   private JMenuItem load;
   private JMenuItem save;
 
-  MemMenu(Mem factory, Instance instance) {
+  public MemMenu(Mem factory, Instance instance) {
     this.factory = factory;
     this.instance = instance;
   }

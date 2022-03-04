@@ -52,7 +52,7 @@ public class MemPoker extends InstancePoker {
 
         private DataPoker(InstanceState state, MemState data, long addr) {
             data.setCursor(addr);
-            initValue = data.getContents().get(data.getCursor());
+            initValue =  (int) data.getContents().get(data.getCursor());
             curValue = initValue;
 
             Object attrs = state.getInstance().getAttributeSet();
@@ -102,7 +102,7 @@ public class MemPoker extends InstancePoker {
             if(data.isValidAddr(addr)) {
                 data.setCursor(addr);
                 data.scrollToShow(addr);
-                initValue = data.getContents().get(addr);
+                initValue = (int) data.getContents().get(addr);
                 curValue = initValue;
             }
         }
