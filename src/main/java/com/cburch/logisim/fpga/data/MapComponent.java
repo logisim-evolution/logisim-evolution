@@ -34,6 +34,7 @@ public class MapComponent {
   public static final String CONSTANT_KEY = "vconst";
   public static final String PIN_MAP = "pmap";
   public static final String NO_MAP = "u";
+  private static final int ONLY_IO_MAP_NAME = -2;
 
   private static class MapClass {
     private final FpgaIoInformationContainer IOcomp;
@@ -652,7 +653,7 @@ public class MapComponent {
           ioConst |= constants.get(i) & 1;
         }
       }
-      if (pin < -1) return s.toString();
+      if (pin == ONLY_IO_MAP_NAME) return s.toString();
       if (outAllOpens || ioAllOpens || inpAllConst || ioAllConst) s.append("->");
       var addcomma = false;
       if (inpAllConst) {
@@ -680,7 +681,7 @@ public class MapComponent {
 
   public void getMapElement(Element Map) throws DOMException {
     if (!hasMap()) return;
-    Map.setAttribute(MAP_KEY, getDisplayString(-2));
+    Map.setAttribute(MAP_KEY, getDisplayString(ONLY_IO_MAP_NAME));
     if (isCompleteMap(true)) {
       if (opens.get(0)) {
         Map.setAttribute("open", "open");
