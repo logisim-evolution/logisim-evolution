@@ -42,6 +42,8 @@ public class DemultiplexerHdlGeneratorFactory extends AbstractHdlGeneratorFactor
         .add(Port.INPUT, "demuxIn", nrOfBits, hasenable ? selectInputIndex + 2 : selectInputIndex + 1);
     if (hasenable)
       myPorts.add(Port.INPUT, "enable", 1, selectInputIndex + 1, false);
+    else
+      myPorts.add(Port.INPUT, "enable", 1, Hdl.oneBit());
   }
 
   @Override
