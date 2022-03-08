@@ -143,7 +143,7 @@ public class Ttl74164 extends AbstractTtlGate {
   }
 
   private void drawState(Graphics2D gfx, int x, int y, int height, ShiftRegisterData state) {
-    if (state != null) return;
+    if (state == null) return;
     for (var i = 0; i < 8; i++) {
       gfx.setColor(state.get(7 - i).getColor());
       gfx.fillOval(x + 36 + i * 10, y + height / 2 - 4, 8, 8);
