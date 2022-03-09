@@ -87,10 +87,11 @@ public abstract class DownloadBase {
      * name plus component/sub-circuit name
      */
     myMappableResources = rootSheet.getBoardMap(myBoardInformation.getBoardName());
-    if (myMappableResources == null)
+    if (myMappableResources == null) {
       myMappableResources = new MappableResourcesContainer(myBoardInformation, rootSheet);
-    else
+    } else {
       myMappableResources.updateMapableComponents();
+    }
 
     return true;
   }
