@@ -9,9 +9,6 @@
 
 package com.cburch.logisim.std.ttl;
 
-import static com.cburch.logisim.data.Value.falseColor;
-import static com.cburch.logisim.data.Value.trueColor;
-
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
