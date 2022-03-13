@@ -63,10 +63,7 @@ public class Ttl74192 extends AbstractTtlGate {
 
   private static final BitWidth WIDTH = BitWidth.create(4);
   private final int maxVal;
-/*
-  private Value downPrev = Value.NIL;
-  private Value upPrev = Value.NIL;
-*/
+
   public Ttl74192() {
     this(_ID, 9);
   }
