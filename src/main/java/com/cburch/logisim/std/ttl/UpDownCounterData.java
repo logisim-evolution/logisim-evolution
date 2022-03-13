@@ -36,11 +36,11 @@ public class UpDownCounterData extends ClockState implements InstanceData {
   }
 
   public void setAll(Value value, Value carry, Value borrow, Value down, Value up) {
-      this.value = value;
-      this.carry = carry;
-      this.borrow = borrow;
-      this.upPrev = up;
-      this.downPrev = down;
+    this.value = value;
+    this.carry = carry;
+    this.borrow = borrow;
+    this.upPrev = up;
+    this.downPrev = down;
   }
 
   public Value getValue() {
