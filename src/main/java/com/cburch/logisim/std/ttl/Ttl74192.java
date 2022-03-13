@@ -11,7 +11,6 @@ package com.cburch.logisim.std.ttl;
 
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
@@ -62,11 +61,12 @@ public class Ttl74192 extends AbstractTtlGate {
   };
   private static final byte[] OUTPUT_PORTS = {2, 3, 6, 7, 12, 13};
 
+  private static final BitWidth WIDTH = BitWidth.create(4);
   private final int maxVal;
-
+/*
   private Value downPrev = Value.NIL;
   private Value upPrev = Value.NIL;
-
+*/
   public Ttl74192() {
     this(_ID, 9);
   }
@@ -113,12 +113,12 @@ public class Ttl74192 extends AbstractTtlGate {
       if (!state.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE).booleanValue()) return;
       if (isPressed && isInside(state, e)) {
         var index = getIndex(state, e);
-        final var data = (TtlRegisterData) state.getData();
+        final var data = (UpDownCounterData) state.getData();
         if (data == null) return;
         var current = data.getValue().toLongValue();
         final long bitValue = 1 << index;
         current ^= bitValue;
-        updateState(state, current, Value.FALSE, Value.FALSE);
+        updateState(state, Value.createKnown(WIDTH, current), Value.FALSE, Value.FALSE, Value.FALSE, Value.FALSE);
       }
       isPressed = false;
     }
@@ -136,11 +136,11 @@ public class Ttl74192 extends AbstractTtlGate {
         new String[] {
           "B", "QB", "QA", "CntD", "CntU", "QC", "QD", "D", "C", "LOAD", "CAR", "BOR", "CLR", "A"
         });
-    TtlRegisterData data = (TtlRegisterData) painter.getData();
+    UpDownCounterData data = (UpDownCounterData) painter.getData();
     drawState(gfx, x, y, height, data);
   }
 
-  private void drawState(Graphics2D gfx, int x, int y, int height, TtlRegisterData state) {
+  private void drawState(Graphics2D gfx, int x, int y, int height, UpDownCounterData state) {
     if (state == null) return;
     var value = state.getValue();
     for (var i = 0; i < 4; i++) {
@@ -153,16 +153,16 @@ public class Ttl74192 extends AbstractTtlGate {
     gfx.setColor(Color.BLACK);
   }
 
-  public static void updateState(InstanceState state, Long value, Value carry, Value borrow) {
+  public static void updateState(InstanceState state, Value value, Value carry, Value borrow, Value down, Value up) {
     final var data = getStateData(state);
 
-    data.setValue(Value.createKnown(BitWidth.create(6), value + (carry.toLongValue() << 4) + (borrow.toLongValue() << 5)));
+    data.setAll(value, carry, borrow, down, up);
     final var vA = data.getValue().get(0);
     final var vB = data.getValue().get(1);
     final var vC = data.getValue().get(2);
     final var vD = data.getValue().get(3);
-    final var vCar = data.getValue().get(4);
-    final var vBor = data.getValue().get(5);
+    final var vCar = data.getCarry();
+    final var vBor = data.getBorrow();
 
     state.setPort(PORT_INDEX_QA, vA, 4);
     state.setPort(PORT_INDEX_QB, vB, 4);
@@ -172,10 +172,10 @@ public class Ttl74192 extends AbstractTtlGate {
     state.setPort(PORT_INDEX_BORROW, vBor, 4);
   }
 
-  public static TtlRegisterData getStateData(InstanceState state) {
-    var data = (TtlRegisterData) state.getData();
+  public static UpDownCounterData getStateData(InstanceState state) {
+    var data = (UpDownCounterData) state.getData();
     if (data == null) {
-      data = new TtlRegisterData(BitWidth.create(6)); // 4 Data + carry + borrow
+      data = new UpDownCounterData();
       state.setData(data);
     }
     return data;
@@ -187,11 +187,10 @@ public class Ttl74192 extends AbstractTtlGate {
 
     var carry = Value.TRUE;
     var borrow = Value.TRUE;
-    var counter = data.getValue().get(0).toLongValue();
-    counter += data.getValue().get(1).toLongValue() << 1;
-    counter += data.getValue().get(2).toLongValue() << 2;
-    counter += data.getValue().get(3).toLongValue() << 3;
+    var counter = data.getValue().toLongValue();
 
+    final var downPrev = data.getDownPrev();
+    final var upPrev = data.getUpPrev();
     final var downCur = state.getPortValue(PORT_INDEX_DOWN);
     final var upCur = state.getPortValue(PORT_INDEX_UP);
     final var downFalling = downPrev == Value.TRUE && downCur == Value.FALSE;
@@ -200,8 +199,6 @@ public class Ttl74192 extends AbstractTtlGate {
     final var upRising = upPrev == Value.FALSE && upCur == Value.TRUE;
     final var downUnchangedHigh = downPrev == Value.TRUE && downCur == Value.TRUE;
     final var upUnchangedHigh = upPrev == Value.TRUE && upCur == Value.TRUE;
-    downPrev = downCur;
-    upPrev = upCur;
 
     if (state.getPortValue(PORT_INDEX_CLEAR) == Value.TRUE) { // reset
       counter = 0;
@@ -230,9 +227,9 @@ public class Ttl74192 extends AbstractTtlGate {
         borrow = Value.FALSE;
       }
     } else {  // state does not change
-      carry = data.getValue().get(4);
-      borrow = data.getValue().get(5);
+      carry = data.getCarry();
+      borrow = data.getBorrow();
     }
-    updateState(state, counter, carry, borrow);
+    updateState(state, Value.createKnown(WIDTH, counter), carry, borrow, downCur, upCur);
   }
 }
