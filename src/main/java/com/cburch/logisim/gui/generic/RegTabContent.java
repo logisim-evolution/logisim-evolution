@@ -111,6 +111,7 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
         constraints.gridx++;
         final var selReg = registers.get(key);
         var mainCircState = proj.getCircuitState();
+        if (mainCircState == null) continue;
         while (mainCircState.getParentState() != null) { // Get the main circuit
           mainCircState = mainCircState.getParentState();
         }
