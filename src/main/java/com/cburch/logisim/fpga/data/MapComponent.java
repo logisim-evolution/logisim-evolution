@@ -34,6 +34,7 @@ public class MapComponent {
   public static final String CONSTANT_KEY = "vconst";
   public static final String PIN_MAP = "pmap";
   public static final String NO_MAP = "u";
+  private static final int ONLY_IO_MAP_NAME = -2;
 
   private static class MapClass {
     private final FpgaIoInformationContainer IOcomp;
@@ -190,7 +191,7 @@ public class MapComponent {
 
   public boolean isInternalMapped(int pin) {
     if (pin < 0 || pin >= nrOfPins) return false;
-    return isMapped(pin) && maps.get(pin).getIoComp().getType().equals(IoComponentTypes.LedArray);
+    return isBoardMapped(pin) && maps.get(pin).getIoComp().getType().equals(IoComponentTypes.LedArray);
   }
 
   public boolean isBoardMapped(int pin) {
@@ -313,6 +314,7 @@ public class MapComponent {
     }
     if (cmap.getPinMaps() == null) {
       final var rect = cmap.getRectangle();
+      if (rect == null) return;
       for (var comp : IOcomps) {
         if (comp.getRectangle().isPointInside(rect.getXpos(), rect.getYpos())) {
           if (cmap.isSinglePin()) {
@@ -651,6 +653,7 @@ public class MapComponent {
           ioConst |= constants.get(i) & 1;
         }
       }
+      if (pin == ONLY_IO_MAP_NAME) return s.toString();
       if (outAllOpens || ioAllOpens || inpAllConst || ioAllConst) s.append("->");
       var addcomma = false;
       if (inpAllConst) {
@@ -678,7 +681,7 @@ public class MapComponent {
 
   public void getMapElement(Element Map) throws DOMException {
     if (!hasMap()) return;
-    Map.setAttribute(MAP_KEY, getDisplayString(-1));
+    Map.setAttribute(MAP_KEY, getDisplayString(ONLY_IO_MAP_NAME));
     if (isCompleteMap(true)) {
       if (opens.get(0)) {
         Map.setAttribute("open", "open");

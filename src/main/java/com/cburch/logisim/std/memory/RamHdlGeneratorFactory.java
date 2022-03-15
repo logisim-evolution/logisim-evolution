@@ -88,7 +88,7 @@ public class RamHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         .add(Port.INPUT, "we", 1, RamAppearance.getWEIndex(0, attrs))
         .add(Port.INPUT, "oe", 1, RamAppearance.getOEIndex(0, attrs))
         .add(Port.OUTPUT, "dataOut", nrOfBits, RamAppearance.getDataOutIndex(0, attrs));
-    if (!async) myPorts.add(Port.CLOCK, HdlPorts.getClockName(1), 1, ByteArrayId);
+    if (!async) myPorts.add(Port.CLOCK, HdlPorts.getClockName(1), 1, RamAppearance.getClkIndex(0, attrs));
   }
 
   @Override
