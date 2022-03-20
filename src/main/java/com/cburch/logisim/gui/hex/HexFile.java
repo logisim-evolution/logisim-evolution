@@ -503,11 +503,13 @@ public class HexFile {
         final var endian = desc.endsWith("big-endian") ? "big-endian" : "little-endian";
 
         final var other = new File(tmp + ".xxd");
-        Runtime.getRuntime().exec(String.format("xxd %s %s", tmp, other)).waitFor();
+        final String[] cmd1 = {"xxd", tmp.toString(), other.toString()};
+        Runtime.getRuntime().exec(cmd1).waitFor();
         compare(false, "v3.0 hex bytes addressed " + endian, other, addrSize, wordSize, vals);
 
         final var plain = new File(tmp + ".xxd-plain");
-        Runtime.getRuntime().exec(String.format("xxd -p %s %s", tmp, plain)).waitFor();
+        final String[] cmd2 = {"xxd", "-p", tmp.toString(), plain.toString()};
+        Runtime.getRuntime().exec(cmd2).waitFor();
         compare(false, "v3.0 hex bytes plain " + endian, plain, addrSize, wordSize, vals);
       }
 
