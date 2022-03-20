@@ -41,16 +41,16 @@ public class Ttl74139 extends AbstractTtlGate {
   public static final byte L1_nEN = 1;
   public static final byte L1_A = 2;
   public static final byte L1_B = 3;
-  public static final byte L1_Y0 = 4;
-  public static final byte L1_Y1 = 5;
-  public static final byte L1_Y2 = 6;
-  public static final byte L1_Y3 = 7;
+  public static final byte L1_nY0 = 4;
+  public static final byte L1_nY1 = 5;
+  public static final byte L1_nY2 = 6;
+  public static final byte L1_nY3 = 7;
   public static final byte GND = 8;
 
-  public static final byte L2_Y3 = 9;
-  public static final byte L2_Y2 = 10;
-  public static final byte L2_Y1 = 11;
-  public static final byte L2_Y0 = 12;
+  public static final byte L2_nY3 = 9;
+  public static final byte L2_nY2 = 10;
+  public static final byte L2_nY1 = 11;
+  public static final byte L2_nY0 = 12;
   public static final byte L2_B = 13;
   public static final byte L2_A = 14;
   public static final byte L2_nEN = 15;
@@ -63,12 +63,12 @@ public class Ttl74139 extends AbstractTtlGate {
         _ID,
         (byte) 16,
         new byte[] {
-          L1_Y0, L1_Y1, L1_Y2, L1_Y3,
-          L2_Y0, L2_Y1, L2_Y2, L2_Y3
+                L1_nY0, L1_nY1, L1_nY2, L1_nY3,
+                L2_nY0, L2_nY1, L2_nY2, L2_nY3
         },
         new String[] {
-          "1nG Enable (active LOW)", "1A", "1B", "1Y0", "1Y1", "1Y2", "1Y3",
-          "2Y3", "2Y2", "2Y1", "2Y0", "2B", "2A", "1nG Enable (active LOW)"
+          "1nG Enable (active LOW)", "1A", "1B", "1nY0", "1nY1", "1nY2", "1nY3",
+          "2nY3", "2nY2", "2nY1", "2nY0", "2B", "2A", "2nG Enable (active LOW)"
         },
         null);
   }
@@ -113,9 +113,9 @@ public class Ttl74139 extends AbstractTtlGate {
 
   @Override
   public void propagateTtl(InstanceState state) {
-    byte[] out1 = {L1_Y0, L1_Y1, L1_Y2, L1_Y3};
+    byte[] out1 = {L1_nY0, L1_nY1, L1_nY2, L1_nY3};
     computeState(state, L1_nEN, L1_A, L1_B, out1);
-    byte[] out2 = {L2_Y0, L2_Y1, L2_Y2, L2_Y3};
+    byte[] out2 = {L2_nY0, L2_nY1, L2_nY2, L2_nY3};
     computeState(state, L2_nEN, L2_A, L2_B, out2);
   }
 
