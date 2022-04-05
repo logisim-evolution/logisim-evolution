@@ -47,7 +47,8 @@ public class MultiplexerHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
   @Override
   public LineBuffer getModuleFunctionality(Netlist theNetList, AttributeSet attrs) {
     final var contents = LineBuffer.getBuffer();
-    int nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
+    final var nrOfSelectBits = attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth();
+    final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
     if (Hdl.isVhdl()) {
       contents.empty().addVhdlKeywords().add("makeMux : {{process}}(enable,");
       for (var i = 0; i < (1 << nrOfSelectBits); i++)
@@ -73,15 +74,18 @@ public class MultiplexerHdlGeneratorFactory extends AbstractHdlGeneratorFactory 
                    {{end}} {{process}} makeMux;
                    """);
     } else {
+      if (nrOfBits == 1) 
+        contents.add("reg s_selected_vector;");
+      else
+        contents.add("reg [{{1}}:0] s_selected_vector;", NR_OF_BITS_STRING);
       contents.add("""
-          reg [{{1}}:0] s_selected_vector;
           assign muxOut = s_selected_vector;
 
           always @(*)
           begin
              if (~enable) s_selected_vector <= 0;
              else case (sel)
-          """, NR_OF_BITS_STRING);
+          """);
       for (var i = 0; i < (1 << nrOfSelectBits) - 1; i++) {
         contents
             .add("      {{1}}:", Hdl.getConstantVector(i, nrOfSelectBits))
