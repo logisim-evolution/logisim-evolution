@@ -94,7 +94,7 @@ public class ShifterHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         contents
             .empty()
             .addRemarkBlock("The result is assigned here")
-            .add("assign result = s_stage{{1}}Result", nrOfShiftBits - 1);
+            .add("assign result = s_stage{{1}}Result;", nrOfShiftBits - 1);
       }
     }
     return contents.empty();
@@ -135,7 +135,7 @@ public class ShifterHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
                                      ({{shiftMode}} == 4) ?
                                      s_stage{{stageNumber1}}Result[{{nrOfBitsToShift1}}:0] : 0;
 
-          assign s_stage{{stageNumber1}}Result  = (shiftAmount[{{stageNumber}}]==0) ?
+          assign s_stage{{stageNumber}}Result  = (shiftAmount[{{stageNumber}}]==0) ?
                                      s_stage{{stageNumber1}}Result :
                                      (({{shiftMode}} == 0)||({{shiftMode}} == 1)) ?
                                      {s_stage{{stageNumber1}}Result[{{bitsShiftDiff1}}:0],s_stage{{stageNumber}}ShiftIn} :
