@@ -1526,7 +1526,7 @@ public class HexFile {
           for (; j < m; j++) {
             int d;
             try {
-              d = hex2int(word.charAt(i));
+              d = hex2int(word.charAt(j));
             } catch (NumberFormatException e) {
               warn("Character '%s' is not a hex digit.", OutputStreamEscaper.escape(word.charAt(i)));
               continue;
