@@ -217,7 +217,7 @@ public class HexFile {
   static final int MAX_PREVIEW_SIZE = 10 * 1024; // 10KB max size for displaying files
   private static final Logger logger = LoggerFactory.getLogger(HexFile.class);
   private static final String autoFormat = "Any data file (auto-detects format)";
-  private static final String[] formatDescriptions = {
+  protected static final String[] formatDescriptions = {
     "v3.0 hex words addressed", // header = desc
     "v3.0 hex words plain", // header = desc
     "v3.0 hex bytes addressed big-endian", // header = desc
@@ -259,7 +259,7 @@ public class HexFile {
     return open(dst, src, null);
   }
 
-  private static boolean open(MemContents dst, File src, String desc) throws IOException {
+  protected static boolean open(MemContents dst, File src, String desc) throws IOException {
     final var in = BufferedLineReader.forFile(src);
     try {
       final var r = new HexReader(in, dst.getLogLength(), dst.getValueWidth());
@@ -339,7 +339,7 @@ public class HexFile {
     }
   }
 
-  private static void save(File f, MemContents src, String desc) throws IOException {
+  protected static void save(File f, MemContents src, String desc) throws IOException {
     OutputStream out;
     try {
       out = new FileOutputStream(f);
