@@ -426,50 +426,6 @@ public class HexFile {
     return chooser;
   }
 
-  public static void main(String[] args) {
-    try {
-      if (args.length > 0) {
-        final var addrSize = Integer.parseInt(args[0]);
-        final var wordSize = Integer.parseInt(args[1]);
-
-        final var m = MemContents.create(addrSize, wordSize);
-
-        // open file
-        File f;
-        if (args.length >= 3) {
-          f = new File(args[2]);
-        } else {
-          final var chooser = createFileOpenChooser(null);
-          chooser.setDialogTitle("Open Data File");
-          final var choice = chooser.showSaveDialog(null);
-          if (choice != JFileChooser.APPROVE_OPTION) {
-            System.out.println("cancelled");
-            return;
-          }
-          f = chooser.getSelectedFile();
-        }
-        final var b = open(m, f);
-        if (!b) {
-          System.out.println("cancelled");
-          return;
-        }
-
-        // save file
-        final var chooser = createFileSaveChooser(null, m);
-        chooser.setDialogTitle("Save Data File");
-        final var choice = chooser.showOpenDialog(null);
-        if (choice != JFileChooser.APPROVE_OPTION) {
-          System.out.println("cancelled");
-          return;
-        }
-        f = chooser.getSelectedFile();
-        save(f, m, chooser.getFileFilter().getDescription());
-      }
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
   private static int scaled(int i) {
     return AppPreferences.getScaled(i);
   }

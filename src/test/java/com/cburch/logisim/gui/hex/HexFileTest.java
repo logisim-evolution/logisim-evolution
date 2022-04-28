@@ -71,7 +71,7 @@ public class HexFileTest {
    */
   public static int[][] formatTriples() {
     final var max = HexFile.formatDescriptions.length;
-    final int[] aSizes = {1, 5, 12};
+    final int[] aSizes = {1, 11};
     final int[] wSizes = {1, 8, 61, 64};
     final var triples = new int[max * aSizes.length * wSizes.length][3];
     var tIndex = 0;
