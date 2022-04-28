@@ -31,7 +31,7 @@ public class Main {
    *
    * @param args Optional arguments.
    */
-  public static void main(String[] args) {
+  public static void main(String[] args) throws Exception {
     System.setProperty("apple.awt.application.name", BuildInfo.name);
     try {
       if (!GraphicsEnvironment.isHeadless()) {
