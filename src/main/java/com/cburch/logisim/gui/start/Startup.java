@@ -41,6 +41,8 @@ import java.awt.Toolkit;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ContainerEvent;
 import java.io.File;
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -79,6 +81,8 @@ import org.apache.commons.cli.UnrecognizedOptionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import edu.cornell.cs3410.RegFileTest;
+
 public class Startup implements AWTEventListener {
 
   static final Logger logger = LoggerFactory.getLogger(Startup.class);
@@ -93,6 +97,7 @@ public class Startup implements AWTEventListener {
   private boolean templPlain = false;
   private String testVector = null;
   private String circuitToTest = null;
+  private String testRisc = null;
   private boolean exitAfterStartup = false;
   private boolean showSplash;
   private File loadFile;
@@ -139,6 +144,7 @@ public class Startup implements AWTEventListener {
   private static final String ARG_TEST_CIRCUIT_LONG = "test-circuit";
   private static final String ARG_TEST_FGPA_SHORT = "f";
   private static final String ARG_TEST_FGPA_LONG = "test-fpga";
+  private static final String ARG_TEST_RISC_LONG = "test-risc";
   private static final String ARG_GATES_SHORT = "g";
   private static final String ARG_GATES_LONG = "gates";
   private static final String ARG_HELP_SHORT = "h";
@@ -301,7 +307,7 @@ public class Startup implements AWTEventListener {
    *
    * @return Instance of Startup class.
    */
-  public static Startup parseArgs(String[] args) {
+  public static Startup parseArgs(String[] args) throws Exception {
 
     final var opts = new Options();
     addOption(opts, "argHelpOption", ARG_HELP_LONG, ARG_HELP_SHORT);
@@ -320,6 +326,7 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argLocaleOption", ARG_LOCALE_LONG, ARG_LOCALE_SHORT, 1);
     addOption(opts, "argTemplateOption", ARG_TEMPLATE_LONG, ARG_TEMPLATE_SHORT, 1);
     addOption(opts, "argNoSplashOption", ARG_NO_SPLASH_LONG);
+    addOption(opts, "argTestRiscOption", ARG_TEST_RISC_LONG);
     addOption(opts, "argMainCircuitOption", ARG_MAIN_CIRCUIT, 1);
     addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR_LONG, ARG_TEST_VECTOR_SHORT, 2);
     addOption(opts, "argTestCircuitOption", ARG_TEST_CIRCUIT_LONG, ARG_TEST_CIRCUIT_SHORT, 1);     // FIXME add "Option" suffix to key name
@@ -390,6 +397,7 @@ public class Startup implements AWTEventListener {
         case ARG_TEST_CIRCUIT_LONG -> handleArgTestCircuit(startup, opt);
         case ARG_TEST_CIRC_GEN_LONG -> handleArgTestCircGen(startup, opt);
         case ARG_MAIN_CIRCUIT -> handleArgMainCircuit(startup, opt);
+        case ARG_TEST_RISC_LONG -> handleArgTestRisc(startup, opt);
         default -> RC.OK; // should not really happen IRL.
       };
       lastHandlerRc = optHandlerRc;
@@ -611,6 +619,16 @@ public class Startup implements AWTEventListener {
     startup.showSplash = false;
     startup.exitAfterStartup = true;
     // This is to test a test bench. It will return 0 or 1 depending on if the tests pass or not.
+    return RC.OK;
+  }
+
+  private static RC handleArgTestRisc(Startup startup, Option opt) throws Exception {
+    String testRisc = opt.getValues()[0];
+    String file = opt.getValues()[1];
+    startup.showSplash = false;
+    startup.exitAfterStartup = true;
+    // This is to test a test bench. It will return 0 or 1 depending on if the tests pass or not.
+    RegFileTest.runRiscTest(testRisc, file);
     return RC.OK;
   }
 
