@@ -24,9 +24,9 @@ public class LedArrayDriving {
   public static char getId(String identifier) {
     char result = 0;
     final var thelist = LedArrayDriving.getStrings();
-    Iterator<String> iter = thelist.iterator();
-    while (iter.hasNext()) {
-      if (iter.next().equals(identifier)) return result;
+    for (String s : thelist) {
+      if (s.equals(identifier))
+        return result;
       result++;
     }
     return UNKNOWN;

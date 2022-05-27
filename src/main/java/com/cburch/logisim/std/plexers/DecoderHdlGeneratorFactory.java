@@ -31,7 +31,7 @@ public class DecoderHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       myPorts.add(Port.OUTPUT, String.format("decoderOut_%d", outp), 1, outp);
     }
     myPorts.add(Port.INPUT, "sel", nrOfselectBits, selectInputIndex);
-    if (attrs.getValue(PlexersLibrary.ATTR_ENABLE).booleanValue())
+    if (attrs.getValue(PlexersLibrary.ATTR_ENABLE))
         myPorts.add(Port.INPUT, "enable", 1, selectInputIndex + 1, false);
   }
 

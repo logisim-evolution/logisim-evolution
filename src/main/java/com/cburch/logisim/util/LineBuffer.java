@@ -778,7 +778,7 @@ public class LineBuffer implements RandomAccess {
 
       // count matches, let's see if contents too.
       for (final var posKey : positionalPlaceholders) {
-        if (Integer.valueOf(posKey) > posArgsCnt) {
+        if (Integer.parseInt(posKey) > posArgsCnt) {
           // Reference to non-existing position found. Warn about all detected issues. We fail
           // later.
           warn(
