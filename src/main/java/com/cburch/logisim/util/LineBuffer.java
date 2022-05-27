@@ -38,7 +38,7 @@ public class LineBuffer implements RandomAccess {
 
 
   // Internal buffer holding separate lines.
-  private final ArrayList<String> contents = new java.util.ArrayList<String>();
+  private final ArrayList<String> contents = new java.util.ArrayList<>();
 
   // Paired placeholders.
   private final Pairs pairs = new Pairs();
@@ -910,7 +910,7 @@ public class LineBuffer implements RandomAccess {
     /**
      * Internal pair container.
      */
-    private final HashMap<String, Object> pairContainer = new HashMap<String, Object>();
+    private final HashMap<String, Object> pairContainer = new HashMap<>();
 
     /**
      * Default constructor.

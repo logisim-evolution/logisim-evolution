@@ -111,7 +111,7 @@ public final class InstanceComponent implements Component, AttributeListener, To
   public void addComponentListener(ComponentListener l) {
     var ls = listeners;
     if (ls == null) {
-      ls = new EventSourceWeakSupport<ComponentListener>();
+      ls = new EventSourceWeakSupport<>();
       ls.add(l);
       listeners = ls;
     } else {

@@ -104,8 +104,8 @@ public final class CanvasModelEvent extends EventObject {
     }
     this.affected = affected;
 
-    final var oldValuesCopy = new HashMap<AttributeMapKey, Object>(oldValues);
-    final var newValuesCopy = new HashMap<AttributeMapKey, Object>(newValues);
+    final var oldValuesCopy = new HashMap<>(oldValues);
+    final var newValuesCopy = new HashMap<>(newValues);
 
     this.oldValues = Collections.unmodifiableMap(oldValuesCopy);
     this.newValues = Collections.unmodifiableMap(newValuesCopy);

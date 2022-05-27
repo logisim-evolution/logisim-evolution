@@ -534,7 +534,7 @@ public class Assembler extends AbstractParser implements LocaleListener {
 
   @Override
   public void localeChanged() {
-    final var oldSet = new HashMap<GutterIconInfo, StringGetter>(errorMarkers);
+    final var oldSet = new HashMap<>(errorMarkers);
     errorMarkers.clear();
     for (final var error : oldSet.keySet()) {
       pane.getGutter().removeTrackingIcon(error);

@@ -235,9 +235,9 @@ public class FpgaIoInformationSettingsDialog {
     final var nrOfPins = new HashMap<Integer, Integer>();
     final var selWindow = new JDialog(IOcomps.getParentFrame(), info.getType() + " " + S.get("FpgaIoProperties"));
     final var contents = new JPanel();
-    final var driveInput = new JComboBox<String>(DriveStrength.BEHAVIOR_STRINGS);
-    final var pullInput = new JComboBox<String>(PullBehaviors.BEHAVIOR_STRINGS);
-    final var activeInput = new JComboBox<String>(PinActivity.BEHAVIOR_STRINGS);
+    final var driveInput = new JComboBox<>(DriveStrength.BEHAVIOR_STRINGS);
+    final var pullInput = new JComboBox<>(PullBehaviors.BEHAVIOR_STRINGS);
+    final var activeInput = new JComboBox<>(PinActivity.BEHAVIOR_STRINGS);
     final var inputSize = new JComboBox<Integer>();
     final var outputSize = new JComboBox<Integer>();
     final var ioSize = new JComboBox<Integer>();
@@ -526,7 +526,7 @@ public class FpgaIoInformationSettingsDialog {
     c.gridy++;
     c.gridx = 0;
     contents.add(StandardText, c);
-    final var StandardInput = new JComboBox<String>(IoStandards.BEHAVIOR_STRINGS);
+    final var StandardInput = new JComboBox<>(IoStandards.BEHAVIOR_STRINGS);
     if (info.getIoStandard() != IoStandards.UNKNOWN)
       StandardInput.setSelectedIndex(info.getIoStandard());
     else StandardInput.setSelectedIndex(IOcomps.getDefaultStandard());
@@ -768,7 +768,7 @@ public class FpgaIoInformationSettingsDialog {
     FreqPanel.add(FreqInput, c);
 
     String[] freqStrs = {"Hz", "kHz", "MHz"};
-    final var StandardInput = new JComboBox<String>(freqStrs);
+    final var StandardInput = new JComboBox<>(freqStrs);
     StandardInput.setSelectedIndex(2);
     c.gridx = 1;
     if (TheBoard.fpga.isFpgaInfoPresent())
@@ -792,7 +792,7 @@ public class FpgaIoInformationSettingsDialog {
     c.gridx = 0;
     ClockPanel.add(PullText, c);
 
-    final var PullInput = new JComboBox<String>(PullBehaviors.BEHAVIOR_STRINGS);
+    final var PullInput = new JComboBox<>(PullBehaviors.BEHAVIOR_STRINGS);
     if (TheBoard.fpga.isFpgaInfoPresent()) {
       PullInput.setSelectedIndex(TheBoard.fpga.getClockPull());
     } else PullInput.setSelectedIndex(0);
@@ -804,7 +804,7 @@ public class FpgaIoInformationSettingsDialog {
     c.gridx = 0;
     ClockPanel.add(StandardText, c);
 
-    final var StdInput = new JComboBox<String>(IoStandards.BEHAVIOR_STRINGS);
+    final var StdInput = new JComboBox<>(IoStandards.BEHAVIOR_STRINGS);
     if (TheBoard.fpga.isFpgaInfoPresent()) {
       StdInput.setSelectedIndex(TheBoard.fpga.getClockStandard());
     } else StdInput.setSelectedIndex(0);
@@ -824,7 +824,7 @@ public class FpgaIoInformationSettingsDialog {
     c.fill = GridBagConstraints.HORIZONTAL;
     fpgaPanel.add(VendorText, c);
 
-    final var vendorInput = new JComboBox<String>(VendorSoftware.VENDORS);
+    final var vendorInput = new JComboBox<>(VendorSoftware.VENDORS);
     if (TheBoard.fpga.isFpgaInfoPresent()) {
       vendorInput.setSelectedIndex(TheBoard.fpga.getVendor());
     } else vendorInput.setSelectedIndex(0);
@@ -876,7 +876,7 @@ public class FpgaIoInformationSettingsDialog {
     c.gridx = 0;
     fpgaPanel.add(unusedPinsText, c);
 
-    final var unusedPinsInput = new JComboBox<String>(PullBehaviors.BEHAVIOR_STRINGS);
+    final var unusedPinsInput = new JComboBox<>(PullBehaviors.BEHAVIOR_STRINGS);
     if (TheBoard.fpga.isFpgaInfoPresent()) {
       unusedPinsInput.setSelectedIndex(TheBoard.fpga.getUnusedPinsBehavior());
     } else unusedPinsInput.setSelectedIndex(0);

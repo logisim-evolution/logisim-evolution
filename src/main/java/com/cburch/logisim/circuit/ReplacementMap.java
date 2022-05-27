@@ -152,7 +152,7 @@ public class ReplacementMap {
     oldBs.addAll(bs);
 
     for (final var b : bs) {
-      final var oldAs = inverse.computeIfAbsent(b, k -> new HashSet<Component>(3));
+      final var oldAs = inverse.computeIfAbsent(b, k -> new HashSet<>(3));
       oldAs.add(a);
     }
   }

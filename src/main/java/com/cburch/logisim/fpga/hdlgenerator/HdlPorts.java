@@ -82,7 +82,7 @@ public class HdlPorts {
     }
   }
 
-  private final List<PortInfo> myPorts = new ArrayList<PortInfo>();
+  private final List<PortInfo> myPorts = new ArrayList<>();
 
   public HdlPorts add(String type, String name, int nrOfBits, String fixedMap) {
     final var realType = Port.CLOCK.equals(type) ? Port.INPUT : type;

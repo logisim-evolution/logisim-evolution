@@ -42,7 +42,7 @@ class CircuitMutatorImpl implements CircuitMutator {
 
   @Override
   public void clear(Circuit circuit) {
-    final var comps = new HashSet<Component>(circuit.getNonWires());
+    final var comps = new HashSet<>(circuit.getNonWires());
     comps.addAll(circuit.getWires());
     if (!comps.isEmpty()) modified.add(circuit);
     log.add(CircuitChange.clear(circuit, comps));

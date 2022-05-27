@@ -37,7 +37,7 @@ public class WindowManagers {
   private static void computeListeners() {
     final var nowOpen = Projects.getOpenProjects();
 
-    final var closed = new HashSet<Project>(projectMap.keySet());
+    final var closed = new HashSet<>(projectMap.keySet());
     nowOpen.forEach(closed::remove);
     for (final var proj : closed) {
       final var manager = projectMap.get(proj);
@@ -45,7 +45,7 @@ public class WindowManagers {
       projectMap.remove(proj);
     }
 
-    final var opened = new LinkedHashSet<Project>(nowOpen);
+    final var opened = new LinkedHashSet<>(nowOpen);
     opened.removeAll(projectMap.keySet());
     for (final var proj : opened) {
       final var manager = new ProjectManager(proj);

@@ -72,9 +72,9 @@ public class PortIo extends InstanceFactory {
 
     public PortState(int size) {
       this.size = size;
-      inputState = new ArrayList<Value>();
-      pokeState = new ArrayList<Value>();
-      enableState = new ArrayList<Value>();
+      inputState = new ArrayList<>();
+      pokeState = new ArrayList<>();
+      enableState = new ArrayList<>();
       for (var pin = 0; pin < size; pin++) {
         inputState.add(Value.createUnknown(BIT_WIDTH));
         pokeState.add(Value.createUnknown(BIT_WIDTH));

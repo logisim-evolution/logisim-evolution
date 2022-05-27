@@ -170,7 +170,7 @@ public class Netlist {
     localNrOfInOutBubbles = 0;
     for (final var comp : mySubCircuits) {
       final var subFactory = (SubcircuitFactory) comp.getComponent().getFactory();
-      final var names = new ArrayList<String>(name);
+      final var names = new ArrayList<>(name);
       names.add(
           CorrectLabel.getCorrectLabel(
               comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
@@ -204,7 +204,7 @@ public class Netlist {
      */
     for (final var comp : myComponents) {
       if (comp.getMapInformationContainer() != null) {
-        final var myHierarchyName = new ArrayList<String>(name);
+        final var myHierarchyName = new ArrayList<>(name);
         myHierarchyName.add(
             CorrectLabel.getCorrectLabel(
                 comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
@@ -508,7 +508,7 @@ public class Netlist {
   private void enumerateGlobalBubbleTree(ArrayList<String> hierarchyname, int startInputID, int startOutputID, int startInOutID) {
     for (final var comp : mySubCircuits) {
       final var sub = (SubcircuitFactory) comp.getComponent().getFactory();
-      final var myHierarchyName = new ArrayList<String>(hierarchyname);
+      final var myHierarchyName = new ArrayList<>(hierarchyname);
       myHierarchyName.add(
           CorrectLabel.getCorrectLabel(
               comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
@@ -522,7 +522,7 @@ public class Netlist {
     }
     for (final var comp : myComponents) {
       if (comp.getMapInformationContainer() != null) {
-        final var myHierarchyName = new ArrayList<String>(hierarchyname);
+        final var myHierarchyName = new ArrayList<>(hierarchyname);
         myHierarchyName.add(
             CorrectLabel.getCorrectLabel(
                 comp.getComponent().getAttributeSet().getValue(StdAttr.LABEL)));
@@ -1067,7 +1067,8 @@ public class Netlist {
                 solderPoint.setParentNet(rootBus, connectedBusIndex);
                 var isSink = true;
                 if (!thisNet.hasBitSource(bit)) {
-                  if (hasHiddenSource(thisNet, (byte) bit, rootBus, connectedBusIndex, mySplitters, new HashSet<String>(), comp)) {
+                  if (hasHiddenSource(thisNet, (byte) bit, rootBus, connectedBusIndex, mySplitters,
+                      new HashSet<>(), comp)) {
                     isSink = false;
                   }
                 }
@@ -1617,7 +1618,7 @@ public class Netlist {
           // We have to check if the net is connected to multiple drivers
           final var sourceNets = net.getSourceNets(0);
           final var sourceConnections = new HashMap<Component, Integer>();
-          final var segments = new HashSet<Wire>(net.getWires());
+          final var segments = new HashSet<>(net.getWires());
           var foundShortCrcuit = false;
           final var error = new SimpleDrcContainer(myCircuit, S.get("NetList_ShortCircuit"), SimpleDrcContainer.LEVEL_FATAL, SimpleDrcContainer.MARK_WIRE | SimpleDrcContainer.MARK_INSTANCE);
           for (ConnectionPoint sourceNet : sourceNets) {
@@ -1966,7 +1967,7 @@ public class Netlist {
         }
         if (subClockNet.getParentNet() == null) {
         } else {
-          final var newHierarchyNames = new ArrayList<String>(hierarchyNames);
+          final var newHierarchyNames = new ArrayList<>(hierarchyNames);
           newHierarchyNames.remove(newHierarchyNames.size() - 1);
           final var newHierarchyNetlists = new ArrayList<>(hierarchyNetlists);
           newHierarchyNetlists.remove(newHierarchyNetlists.size() - 1);

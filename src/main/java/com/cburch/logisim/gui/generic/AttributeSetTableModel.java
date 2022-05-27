@@ -95,7 +95,7 @@ public abstract class AttributeSetTableModel implements AttrTableModel, Attribut
 
     // compute the new list of rows, possible adding into hash map
     final var newRows = new ArrayList<AttrRow>();
-    final var missing = new HashSet<Attribute<?>>(rowMap.keySet());
+    final var missing = new HashSet<>(rowMap.keySet());
     /* put the vhdl/verilog row */
     final var rowd = new HDLrow(null);
     newRows.add(rowd);
