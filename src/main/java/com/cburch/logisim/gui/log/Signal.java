@@ -33,7 +33,8 @@ public class Signal {
   private int maxSize; // limit, or zero for unlimited
   private short firstIndex; // for wrapping, only when limited
 
-  public Signal(int idx, SignalInfo info, Value initialValue, long duration, long timeStart, int maxSize) {
+  public Signal(
+      int idx, SignalInfo info, Value initialValue, long duration, long timeStart, int maxSize) {
     this.idx = idx;
     this.info = info;
     this.timeStart = timeStart;
@@ -343,7 +344,11 @@ public class Signal {
     static {
       DataFlavor f = null;
       try {
-        f = new DataFlavor(String.format("%s;class=\"%s\"", DataFlavor.javaJVMLocalObjectMimeType, List.class.getName()));
+        f =
+            new DataFlavor(
+                String.format(
+                    "%s;class=\"%s\"",
+                    DataFlavor.javaJVMLocalObjectMimeType, List.class.getName()));
       } catch (ClassNotFoundException e) {
         e.printStackTrace();
       }

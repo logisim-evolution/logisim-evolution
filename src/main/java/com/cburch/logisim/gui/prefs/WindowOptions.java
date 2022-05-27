@@ -137,7 +137,9 @@ class WindowOptions extends OptionsPanel {
     panel.add(importantB);
 
     zoomLabel = new JLabel(S.get("windowToolbarZoomfactor"));
-    zoomValue = new ZoomSlider(JSlider.HORIZONTAL, 100, 300, (int) (AppPreferences.SCALE_FACTOR.get() * 100));
+    zoomValue =
+        new ZoomSlider(
+            JSlider.HORIZONTAL, 100, 300, (int) (AppPreferences.SCALE_FACTOR.get() * 100));
     zoomAutoButton = new JButton();
     zoomAutoButton.addActionListener(listener);
     zoomAutoButton.setActionCommand(cmdSetAutoScaleFactor);
@@ -196,7 +198,7 @@ class WindowOptions extends OptionsPanel {
       previewPanel.add(new JButton("Preview"));
       previewPanel.add(new JCheckBox("Preview"));
       previewPanel.add(new JRadioButton("Preview"));
-      previewPanel.add(new JComboBox<>(new String[]{"Preview 1", "Preview 2"}));
+      previewPanel.add(new JComboBox<>(new String[] {"Preview 1", "Preview 2"}));
       previewContainer.add(previewPanel);
       UIManager.setLookAndFeel(previousLF);
     } catch (IllegalAccessException

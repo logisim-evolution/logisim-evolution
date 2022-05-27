@@ -102,8 +102,7 @@ public class AssemblerMacro {
           errors.put(token, S.getter("AssemblerMacroCannotUseRecurency"));
           hasErrors = true;
         }
-        if (names.contains(token.getValue()))
-          token.setType(AssemblerToken.MACRO);
+        if (names.contains(token.getValue())) token.setType(AssemblerToken.MACRO);
       }
     }
     return hasErrors;

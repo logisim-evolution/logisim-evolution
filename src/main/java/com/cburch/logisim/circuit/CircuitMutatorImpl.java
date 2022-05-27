@@ -142,7 +142,8 @@ class CircuitMutatorImpl implements CircuitMutator {
     final var oldValue = attrs.getValue(a);
     log.add(CircuitChange.setForCircuit(circuit, attr, oldValue, newValue));
     attrs.setValue(a, newValue);
-    if (attr == CircuitAttributes.NAME_ATTR || attr == CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE) {
+    if (attr == CircuitAttributes.NAME_ATTR
+        || attr == CircuitAttributes.NAMED_CIRCUIT_BOX_FIXED_SIZE) {
       circuit.getAppearance().recomputeDefaultAppearance();
     }
   }

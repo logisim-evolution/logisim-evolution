@@ -66,7 +66,7 @@ public class Parser {
   }
 
   public static Expression parseMaybeAssignment(String in, AnalyzerModel model)
-          throws ParserException {
+      throws ParserException {
     return parse(in, model, true);
   }
 
@@ -101,7 +101,11 @@ public class Parser {
               stack,
               current,
               Expression.Notation.IMPLICIT_AND_PRECEDENCE,
-              new Token(TOKEN_AND, t.offset, S.get("implicitAndOperator"), Notation.IMPLICIT_AND_PRECEDENCE));
+              new Token(
+                  TOKEN_AND,
+                  t.offset,
+                  S.get("implicitAndOperator"),
+                  Notation.IMPLICIT_AND_PRECEDENCE));
         }
         push(stack, null, Expression.Notation.NOT_PRECEDENCE, t);
         current = null;
@@ -109,8 +113,16 @@ public class Parser {
         throw t.error(S.getter("unexpectedApostrophe"));
       } else if (t.type == TOKEN_LPAREN) {
         if (current != null) {
-          push(stack, current, Notation.IMPLICIT_AND_PRECEDENCE,
-              new Token(TOKEN_AND, t.offset, 0, S.get("implicitAndOperator"), Notation.IMPLICIT_AND_PRECEDENCE));
+          push(
+              stack,
+              current,
+              Notation.IMPLICIT_AND_PRECEDENCE,
+              new Token(
+                  TOKEN_AND,
+                  t.offset,
+                  0,
+                  S.get("implicitAndOperator"),
+                  Notation.IMPLICIT_AND_PRECEDENCE));
         }
         push(stack, null, -2, t);
         current = null;
@@ -222,18 +234,12 @@ public class Parser {
       final var top = pop(stack);
       if (current == null)
         throw top.cause.error(S.getter("missingRightOperandError", top.cause.text));
-      else if (top.cause.type == TOKEN_AND)
-          current = Expressions.and(top.current, current);
-      else if (top.cause.type == TOKEN_OR)
-          current = Expressions.or(top.current, current);
-      else if (top.cause.type == TOKEN_XOR)
-          current = Expressions.xor(top.current, current);
-      else if (top.cause.type == TOKEN_XNOR)
-          current = Expressions.xnor(top.current, current);
-      else if (top.cause.type == TOKEN_EQ)
-          current = Expressions.eq(top.current, current);
-      else if (top.cause.type == TOKEN_NOT)
-          current = Expressions.not(current);
+      else if (top.cause.type == TOKEN_AND) current = Expressions.and(top.current, current);
+      else if (top.cause.type == TOKEN_OR) current = Expressions.or(top.current, current);
+      else if (top.cause.type == TOKEN_XOR) current = Expressions.xor(top.current, current);
+      else if (top.cause.type == TOKEN_XNOR) current = Expressions.xnor(top.current, current);
+      else if (top.cause.type == TOKEN_EQ) current = Expressions.eq(top.current, current);
+      else if (top.cause.type == TOKEN_NOT) current = Expressions.not(current);
     }
     return current;
   }
@@ -242,7 +248,7 @@ public class Parser {
     stack.add(new Context(expr, level, cause));
   }
 
-  //Note: Doing this without "tokenizing then re-stringify" is tricky.
+  // Note: Doing this without "tokenizing then re-stringify" is tricky.
   static String replaceVariable(String in, String oldName, String newName) {
     final var ret = new StringBuilder();
     final var tokens = toTokens(in, true);

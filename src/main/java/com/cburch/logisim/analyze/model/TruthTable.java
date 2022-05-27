@@ -60,8 +60,7 @@ public class TruthTable {
 
     public int duplicity() {
       int count = 1;
-      for (Entry input : inputs)
-        count *= (input == Entry.DONT_CARE ? 2 : 1);
+      for (Entry input : inputs) count *= (input == Entry.DONT_CARE ? 2 : 1);
       return count;
     }
 
@@ -451,7 +450,8 @@ public class TruthTable {
     for (var i = 0; i < getRowCount(); i++) {
       if (taken[i] == 0 && !force) {
         throw new IllegalArgumentException(
-            String.format("Some inputs are missing." + " For example, there is no row for input %s.",
+            String.format(
+                "Some inputs are missing." + " For example, there is no row for input %s.",
                 new Row(i, ni, 0).toBitString(ivars)));
       } else if (taken[i] == 0) {
         newRows.add(new Row(i, ni, 0));

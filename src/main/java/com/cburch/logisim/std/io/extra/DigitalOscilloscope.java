@@ -35,10 +35,10 @@ import java.awt.event.KeyEvent;
 
 public class DigitalOscilloscope extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Digital Oscilloscope";
 
@@ -224,9 +224,8 @@ public class DigitalOscilloscope extends InstanceFactory {
           },
           3);
       if (showclock == 1 && i == 0) // clock diagram color
-        g.setColor(painter.getAttributeValue(ATTR_COLOR).darker().darker());
-      else
-        g.setColor(Color.BLACK);  // input diagrams color
+      g.setColor(painter.getAttributeValue(ATTR_COLOR).darker().darker());
+      else g.setColor(Color.BLACK); // input diagrams color
       // draw diagram
       for (byte j = 0; j < length; j++) {
         // vertical line

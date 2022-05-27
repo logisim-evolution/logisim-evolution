@@ -81,7 +81,8 @@ public final class ConnectorThread extends UniquelyNamedThread {
       } catch (Exception t) {
         t.printStackTrace();
         if (wasOverride) {
-          final var result = new MoveResult(req, new ReplacementMap(), req.getMoveGesture().getConnections(), 0);
+          final var result =
+              new MoveResult(req, new ReplacementMap(), req.getMoveGesture().getConnections(), 0);
           req.getMoveGesture().notifyResult(req, result);
         }
       }

@@ -38,7 +38,8 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
     this(null, false, false);
   }
 
-  protected AbstractComponentFactory(HdlGeneratorFactory generator, boolean requiresLabel, boolean requiresGlobalClock) {
+  protected AbstractComponentFactory(
+      HdlGeneratorFactory generator, boolean requiresLabel, boolean requiresGlobalClock) {
     defaultSet = null;
     myHDLGenerator = generator;
     this.requiresLabel = requiresLabel;
@@ -64,7 +65,8 @@ public abstract class AbstractComponentFactory implements ComponentFactory {
   // user interface methods
   //
   @Override
-  public void drawGhost(ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs) {
+  public void drawGhost(
+      ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs) {
     final var g = context.getGraphics();
     final var bds = getOffsetBounds(attrs);
     g.setColor(color);

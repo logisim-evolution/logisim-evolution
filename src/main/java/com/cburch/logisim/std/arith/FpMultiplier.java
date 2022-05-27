@@ -27,10 +27,10 @@ import java.awt.Color;
 
 public class FpMultiplier extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "FPMultiplier";
 
@@ -97,7 +97,10 @@ public class FpMultiplier extends InstanceFactory {
     final var b_val = dataWidth.getWidth() == 64 ? b.toDoubleValue() : b.toFloatValue();
 
     final var out_val = a_val * b_val;
-    final var out = dataWidth.getWidth() == 64 ? Value.createKnown(out_val) : Value.createKnown((float) out_val);
+    final var out =
+        dataWidth.getWidth() == 64
+            ? Value.createKnown(out_val)
+            : Value.createKnown((float) out_val);
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;

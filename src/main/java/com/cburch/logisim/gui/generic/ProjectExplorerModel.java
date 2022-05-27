@@ -84,7 +84,8 @@ class ProjectExplorerModel extends DefaultTreeModel implements ProjectListener {
   private void setLogisimFile(LogisimFile file) {
     final var oldRoot = (Node<?>) getRoot();
     oldRoot.decommission();
-    setRoot((file == null)
+    setRoot(
+        (file == null)
             ? null
             : new ProjectExplorerLibraryNode(this, file, uiElement, showMouseTools));
     fireStructureChanged();

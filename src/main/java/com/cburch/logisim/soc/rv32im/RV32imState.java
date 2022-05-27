@@ -79,8 +79,9 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
       lastClock = Value.createUnknown(BitWidth.ONE);
       simState = new SocUpSimulationState();
       myInstance = inst;
-      this.setSize(AppPreferences.getScaled(CpuDrawSupport.upStateBounds.getWidth()),
-              AppPreferences.getScaled(CpuDrawSupport.upStateBounds.getHeight()));
+      this.setSize(
+          AppPreferences.getScaled(CpuDrawSupport.upStateBounds.getWidth()),
+          AppPreferences.getScaled(CpuDrawSupport.upStateBounds.getHeight()));
       SocUpMenuProvider.SOCUPMENUPROVIDER.registerCpuState(this, inst);
       visible = false;
       entryPoint = null;
@@ -102,7 +103,8 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
       reset(null, null, null, null);
     }
 
-    public void reset(CircuitState state, Integer entry, ElfProgramHeader progInfo, ElfSectionHeader sectInfo) {
+    public void reset(
+        CircuitState state, Integer entry, ElfProgramHeader progInfo, ElfSectionHeader sectInfo) {
       if (entry != null) entryPoint = entry;
       if (progInfo != null || sectInfo != null) {
         programLoaded = true;
@@ -164,15 +166,16 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
 
     public int getRegisterValue(int index) {
       return (index == 0 || index > 31)
-              ? 0
-              : registers[index - 1]; // TODO: handle correctly undefined registers instead of returning 0
+          ? 0
+          : registers[
+              index - 1]; // TODO: handle correctly undefined registers instead of returning 0
     }
 
     @Override
     public String getRegisterValueHex(int index) {
       return isRegisterValid(index)
-        ? String.format("0x%08X", getRegisterValue(index))
-        : "??????????";
+          ? String.format("0x%08X", getRegisterValue(index))
+          : "??????????";
     }
 
     public Boolean isRegisterValid(int index) {
@@ -240,8 +243,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
       /* execute instruction */
       final var exe = ASSEMBLER.getExeUnit();
       lastRegisterWritten = -1;
-      while (instrTrace.size() >= CpuDrawSupport.NR_OF_TRACES)
-        instrTrace.removeLast();
+      while (instrTrace.size() >= CpuDrawSupport.NR_OF_TRACES) instrTrace.removeLast();
       if (exe == null) {
         OptionPane.showMessageDialog(
             null,
@@ -259,8 +261,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
       if (!exe.execute(this, cState)) {
         final var s = new StringBuilder();
         s.append(S.get("RV32imFetchExecutionError"));
-        if (exe.getErrorMessage() != null)
-          s.append("\n").append(exe.getErrorMessage());
+        if (exe.getErrorMessage() != null) s.append("\n").append(exe.getErrorMessage());
         OptionPane.showMessageDialog(
             null,
             s.toString(),
@@ -275,8 +276,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
       }
       instrTrace.addFirst(trace);
       /* all done increment pc */
-      if (!exe.performedJump())
-        pc = pc + 4;
+      if (!exe.performedJump()) pc = pc + 4;
       if (visible) repaint();
     }
 
@@ -393,10 +393,10 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
 
   public static final AssemblerInterface ASSEMBLER = new RV32imAssembler();
   public static final String[] registerABINames = {
-      "zero", "ra", "sp", "gp", "tp", "t0", "t1", "t2",
-      "s0", "s1", "a0", "a1", "a2", "a3", "a4", "a5",
-      "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9",
-      "s10", "s11", "t3", "t4", "t5", "t6"};
+    "zero", "ra", "sp", "gp", "tp", "t0", "t1", "t2", "s0", "s1", "a0", "a1", "a2", "a3", "a4",
+    "a5", "a6", "a7", "s2", "s3", "s4", "s5", "s6", "s7", "s8", "s9", "s10", "s11", "t3", "t4",
+    "t5", "t6"
+  };
 
   public static int getRegisterIndex(String name) {
     final var regName = name.toLowerCase();
@@ -434,7 +434,10 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
     var name = label;
     if (StringUtil.isNullOrEmpty(name)) {
       final var loc = attachedBus.getComponent().getLocation();
-      name = String.format("%s@%d,%d", attachedBus.getComponent().getFactory().getDisplayName(), loc.getX(), loc.getY());
+      name =
+          String.format(
+              "%s@%d,%d",
+              attachedBus.getComponent().getFactory().getDisplayName(), loc.getX(), loc.getY());
     }
     return name;
   }
@@ -460,8 +463,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
   }
 
   public boolean setNrOfIrqs(int value) {
-    if (nrOfIrqs == value)
-      return false;
+    if (nrOfIrqs == value) return false;
     nrOfIrqs = value;
     return true;
   }
@@ -471,8 +473,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
   }
 
   public boolean setLabel(String value) {
-    if (label.equals(value))
-      return false;
+    if (label.equals(value)) return false;
     label = value;
     return true;
   }
@@ -482,8 +483,7 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
   }
 
   public boolean setAttachedBus(SocBusInfo value) {
-    if (attachedBus.getBusId().equals(value.getBusId()))
-      return false;
+    if (attachedBus.getBusId().equals(value.getBusId())) return false;
     attachedBus.setBusId(value.getBusId());
     return true;
   }
@@ -525,8 +525,8 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
   }
 
   @Override
-  public void setEntryPointandReset(CircuitState state, long entryPoint, ElfProgramHeader progInfo,
-                                    ElfSectionHeader sectInfo) {
+  public void setEntryPointandReset(
+      CircuitState state, long entryPoint, ElfProgramHeader progInfo, ElfSectionHeader sectInfo) {
     int entry = (int) entryPoint;
     if (attachedBus != null && attachedBus.getComponent() != null) {
       InstanceComponent comp = (InstanceComponent) attachedBus.getComponent();
@@ -543,11 +543,9 @@ public class RV32imState implements SocUpSimulationStateListener, SocProcessorIn
     if (hidden) trans.setAsHiddenTransaction();
     if (cState == null) {
       InstanceComponent comp = (InstanceComponent) attachedBus.getComponent();
-      if (comp == null)
-        return;
+      if (comp == null) return;
       InstanceStateImpl state = comp.getInstanceStateImpl();
-      if (state == null)
-        return;
+      if (state == null) return;
       cState = state.getProject().getCircuitState();
     }
     attachedBus

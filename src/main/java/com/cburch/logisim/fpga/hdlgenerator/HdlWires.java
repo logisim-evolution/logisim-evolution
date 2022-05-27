@@ -56,28 +56,24 @@ public class HdlWires {
   }
 
   public HdlWires addAllWires(Map<String, Integer> wires) {
-    for (var wire : wires.keySet())
-      myWires.add(new Wire(WIRE, wire, wires.get(wire)));
+    for (var wire : wires.keySet()) myWires.add(new Wire(WIRE, wire, wires.get(wire)));
     return this;
   }
 
   public List<String> wireKeySet() {
     final var keys = new ArrayList<String>();
-    for (var wire : myWires)
-      if (wire.isWire()) keys.add(wire.getName());
+    for (var wire : myWires) if (wire.isWire()) keys.add(wire.getName());
     return keys;
   }
 
   public List<String> registerKeySet() {
     final var keys = new ArrayList<String>();
-    for (var wire : myWires)
-      if (!wire.isWire()) keys.add(wire.getName());
+    for (var wire : myWires) if (!wire.isWire()) keys.add(wire.getName());
     return keys;
   }
 
   public int get(String wireName) {
-    for (var wire : myWires)
-      if (wire.getName().equals(wireName)) return wire.getNrOfBits();
+    for (var wire : myWires) if (wire.getName().equals(wireName)) return wire.getNrOfBits();
     throw new ArrayStoreException("Wire or register not contained in structure");
   }
 

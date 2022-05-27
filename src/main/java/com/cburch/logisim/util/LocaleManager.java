@@ -40,10 +40,9 @@ public class LocaleManager {
   }
 
   /**
-   * Always returns "fixed" value. Implements StringGetter interface
-   * to let this class be used for i.e. settings for which there's no
-   * point of providing localizable strings (i.e. screen resolutsions,
-   * or plain numeric values), thus using LocaleGetter is an overkill.
+   * Always returns "fixed" value. Implements StringGetter interface to let this class be used for
+   * i.e. settings for which there's no point of providing localizable strings (i.e. screen
+   * resolutsions, or plain numeric values), thus using LocaleGetter is an overkill.
    */
   private static class FixedString implements StringGetter {
     final String value;
@@ -165,7 +164,8 @@ public class LocaleManager {
     UIManager.put("FileChooser.homeFolderToolTipText", S.get("LMhomeFolderToolTipText"));
     UIManager.put("FileChooser.newFolderToolTipText", S.get("LMnewFolderToolTipText"));
     UIManager.put("FileChooser.listViewButtonToolTipText", S.get("LMlistViewButtonToolTipText"));
-    UIManager.put("FileChooser.detailsViewButtonToolTipText", S.get("LMdetailsViewButtonToolTipText"));
+    UIManager.put(
+        "FileChooser.detailsViewButtonToolTipText", S.get("LMdetailsViewButtonToolTipText"));
     UIManager.put("FileChooser.fileNameHeaderText", S.get("LMfileNameHeaderText"));
     UIManager.put("FileChooser.fileSizeHeaderText", S.get("LMfileSizeHeaderText"));
     UIManager.put("FileChooser.fileTypeHeaderText", S.get("LMfileTypeHeaderText"));
@@ -178,7 +178,8 @@ public class LocaleManager {
     UIManager.put("FileChooser.saveButtonText", S.get("LMsaveButtonText"));
     UIManager.put("FileChooser.saveButtonToolTipText", S.get("LMsaveButtonToolTipText"));
     UIManager.put("FileChooser.directoryOpenButtonText", S.get("LMdirectoryOpenButtonText"));
-    UIManager.put("FileChooser.directoryOpenButtonToolTipText", S.get("LMdirectoryOpenButtonToolTipText"));
+    UIManager.put(
+        "FileChooser.directoryOpenButtonToolTipText", S.get("LMdirectoryOpenButtonToolTipText"));
     UIManager.put("FileChooser.cancelButtonText", S.get("LMcancelButtonText"));
     UIManager.put("FileChooser.cancelButtonToolTipText", S.get("LMcancelButtonToolTipText"));
     UIManager.put("FileChooser.newFolderErrorText", S.get("LMnewFolderErrorText"));
@@ -247,7 +248,6 @@ public class LocaleManager {
 
   /**
    * @Deprecated Use get(key, ...)
-   *
    */
   public String fmt(String key, Object... args) {
     return String.format(get(key), args);

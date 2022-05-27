@@ -30,36 +30,19 @@ public interface HdlGeneratorFactory {
   String FPGA_TOP_LEVEL_NAME = "logisimTopLevelShell";
 
   boolean generateAllHDLDescriptions(
-      Set<String> handledComponents,
-      String workingDirectory,
-      List<String> hierarchy);
+      Set<String> handledComponents, String workingDirectory, List<String> hierarchy);
 
-  List<String> getEntity(
-      Netlist theNetlist,
-      AttributeSet attrs,
-      String componentName);
+  List<String> getEntity(Netlist theNetlist, AttributeSet attrs, String componentName);
 
-  List<String> getArchitecture(
-      Netlist theNetlist,
-      AttributeSet attrs,
-      String componentName);
+  List<String> getArchitecture(Netlist theNetlist, AttributeSet attrs, String componentName);
 
   LineBuffer getComponentInstantiation(
-      Netlist theNetlist,
-      AttributeSet attrs,
-      String componentName);
+      Netlist theNetlist, AttributeSet attrs, String componentName);
 
-  LineBuffer getComponentMap(
-      Netlist nets,
-      Long componentId,
-      Object componentInfo,
-      String name);
+  LineBuffer getComponentMap(Netlist nets, Long componentId, Object componentInfo, String name);
 
   LineBuffer getInlinedCode(
-      Netlist nets,
-      Long componentId,
-      netlistComponent componentInfo,
-      String circuitName);
+      Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName);
 
   String getRelativeDirectory();
 

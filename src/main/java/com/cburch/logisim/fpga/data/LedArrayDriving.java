@@ -25,8 +25,7 @@ public class LedArrayDriving {
     char result = 0;
     final var thelist = LedArrayDriving.getStrings();
     for (String s : thelist) {
-      if (s.equals(identifier))
-        return result;
+      if (s.equals(identifier)) return result;
       result++;
     }
     return UNKNOWN;
@@ -65,6 +64,11 @@ public class LedArrayDriving {
   public static final char UNKNOWN = 255;
 
   public static final String[] DRIVING_STRINGS = {
-    "LedDefault", "LedRowScanning", "LedColumnScanning", "RgbDefault", "RgbRowScanning", "RgbColScanning"
+    "LedDefault",
+    "LedRowScanning",
+    "LedColumnScanning",
+    "RgbDefault",
+    "RgbRowScanning",
+    "RgbColScanning"
   };
 }

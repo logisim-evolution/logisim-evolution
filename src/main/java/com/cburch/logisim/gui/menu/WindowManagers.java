@@ -28,8 +28,7 @@ import javax.swing.JFrame;
 
 public class WindowManagers {
   private static final MyListener myListener = new MyListener();
-  private static final HashMap<Project, ProjectManager> projectMap =
-      new LinkedHashMap<>();
+  private static final HashMap<Project, ProjectManager> projectMap = new LinkedHashMap<>();
   private static boolean initialized = false;
 
   private WindowManagers() {}

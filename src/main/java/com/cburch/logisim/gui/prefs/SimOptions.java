@@ -188,19 +188,22 @@ public class SimOptions extends OptionsPanel {
     c.gridx++;
     add(widthErrorCaptionColorTitle, c);
     c.gridx++;
-    widthErrorCaptionColor = new ColorChooserButton(window, AppPreferences.WIDTH_ERROR_CAPTION_COLOR);
+    widthErrorCaptionColor =
+        new ColorChooserButton(window, AppPreferences.WIDTH_ERROR_CAPTION_COLOR);
     add(widthErrorCaptionColor, c);
 
     c.gridx = 0;
     c.gridy++;
     add(widthErrorHighlightColorTitle, c);
     c.gridx++;
-    widthErrorHighlightColor = new ColorChooserButton(window, AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR);
+    widthErrorHighlightColor =
+        new ColorChooserButton(window, AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR);
     add(widthErrorHighlightColor, c);
     c.gridx++;
     add(widthErrorBackgroundColorTitle, c);
     c.gridx++;
-    widthErrorBackgroundColor = new ColorChooserButton(window, AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR);
+    widthErrorBackgroundColor =
+        new ColorChooserButton(window, AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR);
     add(widthErrorBackgroundColor, c);
 
     c.gridx = 0;
@@ -420,7 +423,7 @@ public class SimOptions extends OptionsPanel {
     AppPreferences.WIDTH_ERROR_CAPTION_COLOR.set(0x560000);
     AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.set(0xFFFE00);
     AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.set(0xFFE6D2);
-    AppPreferences.CLOCK_FREQUENCY_COLOR.set(0xFF00B4);   // FIXME: Calculate proper color!
+    AppPreferences.CLOCK_FREQUENCY_COLOR.set(0xFF00B4); // FIXME: Calculate proper color!
     AppPreferences.KMAP1_COLOR.set(0x490092);
     AppPreferences.KMAP2_COLOR.set(0x920000);
     AppPreferences.KMAP3_COLOR.set(0x004949);
@@ -489,10 +492,12 @@ public class SimOptions extends OptionsPanel {
         Value.widthErrorCaptionColor = new Color(AppPreferences.WIDTH_ERROR_CAPTION_COLOR.get());
         update = true;
       } else if (key.equals(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.getIdentifier())) {
-        Value.widthErrorHighlightColor = new Color(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
+        Value.widthErrorHighlightColor =
+            new Color(AppPreferences.WIDTH_ERROR_HIGHLIGHT_COLOR.get());
         update = true;
       } else if (key.equals(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.getIdentifier())) {
-        Value.widthErrorCaptionBgcolor = new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
+        Value.widthErrorCaptionBgcolor =
+            new Color(AppPreferences.WIDTH_ERROR_BACKGROUND_COLOR.get());
         update = true;
       } else if (key.equals(AppPreferences.CLOCK_FREQUENCY_COLOR.getIdentifier())) {
         Value.clockFrequencyColor = new Color(AppPreferences.CLOCK_FREQUENCY_COLOR.get());

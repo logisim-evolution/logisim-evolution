@@ -67,39 +67,60 @@ public abstract class Mem extends InstanceFactory {
   }
 
   public static final int SymbolWidth = 200;
-  public static final Attribute<BitWidth> ADDR_ATTR = Attributes.forBitWidth("addrWidth", S.getter("ramAddrWidthAttr"), 2, 24);
+  public static final Attribute<BitWidth> ADDR_ATTR =
+      Attributes.forBitWidth("addrWidth", S.getter("ramAddrWidthAttr"), 2, 24);
 
-  public static final Attribute<BitWidth> DATA_ATTR = Attributes.forBitWidth("dataWidth", S.getter("ramDataWidthAttr"));
-  public static final AttributeOption SEL_HIGH = new AttributeOption("high", S.getter("stdTriggerHigh"));
+  public static final Attribute<BitWidth> DATA_ATTR =
+      Attributes.forBitWidth("dataWidth", S.getter("ramDataWidthAttr"));
+  public static final AttributeOption SEL_HIGH =
+      new AttributeOption("high", S.getter("stdTriggerHigh"));
 
-  public static final AttributeOption SEL_LOW = new AttributeOption("low", S.getter("stdTriggerLow"));
+  public static final AttributeOption SEL_LOW =
+      new AttributeOption("low", S.getter("stdTriggerLow"));
 
   public static final Attribute<AttributeOption> ATTR_SELECTION =
-      Attributes.forOption("Select", S.getter("ramSelAttr"), new AttributeOption[] {SEL_HIGH, SEL_LOW});
+      Attributes.forOption(
+          "Select", S.getter("ramSelAttr"), new AttributeOption[] {SEL_HIGH, SEL_LOW});
 
   public static final AttributeOption SINGLE = new AttributeOption("single", S.getter("memSingle"));
   public static final AttributeOption DUAL = new AttributeOption("dual", S.getter("memDual"));
   public static final AttributeOption QUAD = new AttributeOption("quad", S.getter("memQuad"));
   public static final AttributeOption OCTO = new AttributeOption("octo", S.getter("memOcto"));
   public static final Attribute<AttributeOption> LINE_ATTR =
-      Attributes.forOption("line", S.getter("memLineSize"), new AttributeOption[] {SINGLE, DUAL, QUAD, OCTO});
-  public static final Attribute<Boolean> ALLOW_MISALIGNED = Attributes.forBoolean("misaligned", S.getter("memMisaligned"));
+      Attributes.forOption(
+          "line", S.getter("memLineSize"), new AttributeOption[] {SINGLE, DUAL, QUAD, OCTO});
+  public static final Attribute<Boolean> ALLOW_MISALIGNED =
+      Attributes.forBoolean("misaligned", S.getter("memMisaligned"));
   static final AttributeOption WRITEAFTERREAD = new AttributeOption("war", S.getter("memWar"));
   static final AttributeOption READAFTERWRITE = new AttributeOption("raw", S.getter("memRaw"));
-  static final Attribute<AttributeOption> READ_ATTR = Attributes.forOption("readbehav", S.getter("memReadBehav"),
-               new AttributeOption[] {WRITEAFTERREAD, READAFTERWRITE});
-  public static final AttributeOption USEBYTEENABLES = new AttributeOption("byte", S.getter("memByte"));
-  public static final AttributeOption USELINEENABLES = new AttributeOption("line", S.getter("memLine"));
-  public static final Attribute<AttributeOption> ENABLES_ATTR = Attributes.forOption("enables", S.getter("memEnables"),
-               new AttributeOption[] {USEBYTEENABLES, USELINEENABLES});
-  static final Attribute<Boolean> ASYNC_READ = Attributes.forBoolean("asyncread", S.getter("memAsyncRead"));
+  static final Attribute<AttributeOption> READ_ATTR =
+      Attributes.forOption(
+          "readbehav",
+          S.getter("memReadBehav"),
+          new AttributeOption[] {WRITEAFTERREAD, READAFTERWRITE});
+  public static final AttributeOption USEBYTEENABLES =
+      new AttributeOption("byte", S.getter("memByte"));
+  public static final AttributeOption USELINEENABLES =
+      new AttributeOption("line", S.getter("memLine"));
+  public static final Attribute<AttributeOption> ENABLES_ATTR =
+      Attributes.forOption(
+          "enables",
+          S.getter("memEnables"),
+          new AttributeOption[] {USEBYTEENABLES, USELINEENABLES});
+  static final Attribute<Boolean> ASYNC_READ =
+      Attributes.forBoolean("asyncread", S.getter("memAsyncRead"));
 
   // other constants
   public static final int DELAY = 10;
 
   private final WeakHashMap<Instance, File> currentInstanceFiles;
 
-  Mem(String name, StringGetter desc, int extraPorts, HdlGeneratorFactory generator, boolean needsLabel) {
+  Mem(
+      String name,
+      StringGetter desc,
+      int extraPorts,
+      HdlGeneratorFactory generator,
+      boolean needsLabel) {
     super(name, desc, generator, needsLabel);
     currentInstanceFiles = new WeakHashMap<>();
     setInstancePoker(MemPoker.class);
@@ -161,5 +182,4 @@ public abstract class Mem extends InstanceFactory {
   public void setCurrentImage(Instance instance, File value) {
     currentInstanceFiles.put(instance, value);
   }
-
 }

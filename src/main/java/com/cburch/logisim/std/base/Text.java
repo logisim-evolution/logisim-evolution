@@ -33,10 +33,10 @@ import java.awt.Rectangle;
 
 public class Text extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Text";
 
@@ -51,36 +51,19 @@ public class Text extends InstanceFactory {
           "halign",
           S.getter("textHorzAlignAttr"),
           new AttributeOption[] {
-            new AttributeOption(
-                TextField.H_LEFT, "left", S.getter("textHorzAlignLeftOpt")),
-            new AttributeOption(
-                TextField.H_RIGHT,
-                "right",
-                S.getter("textHorzAlignRightOpt")),
-            new AttributeOption(
-                TextField.H_CENTER,
-                "center",
-                S.getter("textHorzAlignCenterOpt")),
+            new AttributeOption(TextField.H_LEFT, "left", S.getter("textHorzAlignLeftOpt")),
+            new AttributeOption(TextField.H_RIGHT, "right", S.getter("textHorzAlignRightOpt")),
+            new AttributeOption(TextField.H_CENTER, "center", S.getter("textHorzAlignCenterOpt")),
           });
   public static final Attribute<AttributeOption> ATTR_VALIGN =
       Attributes.forOption(
           "valign",
           S.getter("textVertAlignAttr"),
           new AttributeOption[] {
-            new AttributeOption(
-                TextField.V_TOP, "top", S.getter("textVertAlignTopOpt")),
-            new AttributeOption(
-                TextField.V_BASELINE,
-                "base",
-                S.getter("textVertAlignBaseOpt")),
-            new AttributeOption(
-                TextField.V_BOTTOM,
-                "bottom",
-                S.getter("textVertAlignBottomOpt")),
-            new AttributeOption(
-                TextField.H_CENTER,
-                "center",
-                S.getter("textVertAlignCenterOpt")),
+            new AttributeOption(TextField.V_TOP, "top", S.getter("textVertAlignTopOpt")),
+            new AttributeOption(TextField.V_BASELINE, "base", S.getter("textVertAlignBaseOpt")),
+            new AttributeOption(TextField.V_BOTTOM, "bottom", S.getter("textVertAlignBottomOpt")),
+            new AttributeOption(TextField.H_CENTER, "center", S.getter("textVertAlignCenterOpt")),
           });
 
   public static final Text FACTORY = new Text();

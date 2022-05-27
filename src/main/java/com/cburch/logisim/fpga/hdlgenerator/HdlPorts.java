@@ -17,7 +17,6 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.instance.Port;
 
-
 public class HdlPorts {
 
   public static final String CLOCK = "clock";
@@ -56,7 +55,8 @@ public class HdlPorts {
       myPullToZero = pullToZero;
     }
 
-    public PortInfo(String type, String name, int nrOfBits, int compPinId, Attribute<?> nrOfBitsAttr) {
+    public PortInfo(
+        String type, String name, int nrOfBits, int compPinId, Attribute<?> nrOfBitsAttr) {
       myPortType = type;
       myName = name;
       myNrOfBits = nrOfBits;
@@ -68,7 +68,8 @@ public class HdlPorts {
 
     int getNrOfBits(AttributeSet attrs) {
       if (mySinglePinException) {
-        if (!attrs.containsAttribute(myBitWidthAttribute)) throw new IllegalArgumentException("Bitwidth attribute not found");
+        if (!attrs.containsAttribute(myBitWidthAttribute))
+          throw new IllegalArgumentException("Bitwidth attribute not found");
         final var value = attrs.getValue(myBitWidthAttribute);
         var nrOfBits = 0;
         if (value instanceof BitWidth) {
@@ -108,7 +109,8 @@ public class HdlPorts {
     return this;
   }
 
-  public HdlPorts add(String type, String name, int nrOfBits, int compPinId, Attribute<?> nrOfBitsAttr) {
+  public HdlPorts add(
+      String type, String name, int nrOfBits, int compPinId, Attribute<?> nrOfBitsAttr) {
     final var realType = Port.CLOCK.equals(type) ? Port.INPUT : type;
     final var newPort = new PortInfo(realType, name, nrOfBits, compPinId, nrOfBitsAttr);
     newPort.isClock = Port.CLOCK.equals(type);
@@ -127,14 +129,12 @@ public class HdlPorts {
   public ArrayList<String> keySet(String type) {
     final var keySet = new ArrayList<String>();
     for (final var port : myPorts)
-      if (type == null || port.myPortType.equals(type))
-        keySet.add(port.myName);
+      if (type == null || port.myPortType.equals(type)) keySet.add(port.myName);
     return keySet;
   }
 
   public int get(String name, AttributeSet attrs) {
-    for (final var port : myPorts)
-      if (port.myName.equals(name)) return port.getNrOfBits(attrs);
+    for (final var port : myPorts) if (port.myName.equals(name)) return port.getNrOfBits(attrs);
     throw new ArrayStoreException("port not contained in structure");
   }
 
@@ -148,15 +148,13 @@ public class HdlPorts {
 
   public String getFixedMap(String name) {
     if (isFixedMapped(name)) {
-      for (final var port : myPorts)
-        if (port.myName.equals(name)) return port.myFixedMap;
+      for (final var port : myPorts) if (port.myName.equals(name)) return port.myFixedMap;
     }
     throw new ArrayStoreException("port not contained in structure or not fixed mapped");
   }
 
   public int getComponentPortId(String name) {
-    for (final var port : myPorts)
-      if (port.myName.equals(name)) return port.myComponentPinId;
+    for (final var port : myPorts) if (port.myName.equals(name)) return port.myComponentPinId;
     throw new ArrayStoreException("port not contained in structure");
   }
 
@@ -165,20 +163,17 @@ public class HdlPorts {
   }
 
   public boolean doPullDownOnFloat(String name) {
-    for (final var port : myPorts)
-      if (port.myName.equals(name)) return port.myPullToZero;
+    for (final var port : myPorts) if (port.myName.equals(name)) return port.myPullToZero;
     throw new ArrayStoreException("port not contained in structure");
   }
 
   public boolean contains(String name) {
-    for (final var port : myPorts)
-      if (port.myName.equals(name)) return true;
+    for (final var port : myPorts) if (port.myName.equals(name)) return true;
     return false;
   }
 
   public boolean isClock(String name) {
-    for (final var port : myPorts)
-      if (port.myName.equals(name)) return port.isClock;
+    for (final var port : myPorts) if (port.myName.equals(name)) return port.isClock;
     throw new ArrayStoreException("port not contained in structure");
   }
 

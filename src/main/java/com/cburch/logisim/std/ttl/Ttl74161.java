@@ -48,20 +48,20 @@ public class Ttl74161 extends AbstractTtlGate {
   public static final int PORT_INDEX_QA = 12;
   public static final int PORT_INDEX_RC0 = 13;
   private static final String[] PORT_NAMES = {
-      "MR/CLR (Reset, active LOW)",
-      "CP/CLK (Clock)",
-      "D0/A",
-      "D1/B",
-      "D2/C",
-      "D3/D",
-      "CE/ENP (Count Enable)",
-      "PE/LOAD (Parallel Enable, active LOW)",
-      "CET/ENT (Count Enable Carry)",
-      "Q3/QD",
-      "Q2/QC",
-      "A1/QB",
-      "A0/QA",
-      "TC/RC0 (Terminal Count)"
+    "MR/CLR (Reset, active LOW)",
+    "CP/CLK (Clock)",
+    "D0/A",
+    "D1/B",
+    "D2/C",
+    "D3/D",
+    "CE/ENP (Count Enable)",
+    "PE/LOAD (Parallel Enable, active LOW)",
+    "CET/ENT (Count Enable Carry)",
+    "Q3/QD",
+    "Q2/QC",
+    "A1/QB",
+    "A0/QA",
+    "TC/RC0 (Terminal Count)"
   };
   private static final byte[] OUTPUT_PORTS = {11, 12, 13, 14, 15};
 
@@ -146,7 +146,8 @@ public class Ttl74161 extends AbstractTtlGate {
         gfx.setColor(isSetBitValue ? trueColor : falseColor);
         gfx.fillOval(x + 52 + i * 10, y + height / 2 - 4, 8, 8);
         gfx.setColor(Color.WHITE);
-        GraphicsUtil.drawCenteredText(gfx, isSetBitValue ? "1" : "0", x + 56 + i * 10, y + height / 2);
+        GraphicsUtil.drawCenteredText(
+            gfx, isSetBitValue ? "1" : "0", x + 56 + i * 10, y + height / 2);
       }
       gfx.setColor(Color.BLACK);
     }
@@ -167,7 +168,8 @@ public class Ttl74161 extends AbstractTtlGate {
     state.setPort(PORT_INDEX_QD, vD, 1);
 
     // RC0 = QA AND QB AND QC AND QD AND ENT
-    state.setPort(PORT_INDEX_RC0, state.getPortValue(PORT_INDEX_EnT).and(vA).and(vB).and(vC).and(vD), 1);
+    state.setPort(
+        PORT_INDEX_RC0, state.getPortValue(PORT_INDEX_EnT).and(vA).and(vB).and(vC).and(vD), 1);
   }
 
   public static TtlRegisterData getStateData(InstanceState state) {
@@ -196,7 +198,11 @@ public class Ttl74161 extends AbstractTtlGate {
         counter += state.getPortValue(PORT_INDEX_C).toLongValue() << 2;
         counter += state.getPortValue(PORT_INDEX_D).toLongValue() << 3;
       } else {
-        final var enpAndEnt = state.getPortValue(PORT_INDEX_EnP).and(state.getPortValue(PORT_INDEX_EnT)).toLongValue();
+        final var enpAndEnt =
+            state
+                .getPortValue(PORT_INDEX_EnP)
+                .and(state.getPortValue(PORT_INDEX_EnT))
+                .toLongValue();
         if (enpAndEnt == 1) {
           counter++;
           if (counter > 15) {

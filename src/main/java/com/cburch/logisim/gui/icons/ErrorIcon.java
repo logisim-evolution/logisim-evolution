@@ -88,7 +88,9 @@ public class ErrorIcon implements Icon {
       final var seven = (7 * wh) >> 3;
       final int[] axPos = {xoff, five, five, seven, five, five, xoff};
       final var yOff = AppPreferences.getScaled(1);
-      final int[] ayPos = {seven - yOff, seven - yOff, six, seven, wh - 1, seven + yOff, seven + yOff};
+      final int[] ayPos = {
+        seven - yOff, seven - yOff, six, seven, wh - 1, seven + yOff, seven + yOff
+      };
       g2.fillPolygon(axPos, ayPos, 7);
     }
     if (backwardArrow) {
@@ -98,7 +100,9 @@ public class ErrorIcon implements Icon {
       final var seven = (7 * wh) >> 3;
       final int[] axPos = {seven, three, three, xoff, three, three, seven};
       final var yOff = AppPreferences.getScaled(1);
-      final int[] ayPos = {seven - yOff, seven - yOff, six, seven, wh - 1, seven + yOff, seven + yOff};
+      final int[] ayPos = {
+        seven - yOff, seven - yOff, six, seven, wh - 1, seven + yOff, seven + yOff
+      };
       g2.fillPolygon(axPos, ayPos, 7);
     }
     g2.dispose();

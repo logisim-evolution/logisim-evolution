@@ -212,9 +212,7 @@ public class VhdlContent extends HdlContent {
 
   public static boolean labelVHDLInvalidNotify(String label, LogisimFile file) {
     String err = null;
-    if (!label.matches("^[A-Za-z]\\w*")
-        || label.endsWith("_")
-        || label.matches(".*__.*")) {
+    if (!label.matches("^[A-Za-z]\\w*") || label.endsWith("_") || label.matches(".*__.*")) {
       err = S.get("vhdlInvalidNameError");
     } else if (Vhdl.VHDL_KEYWORDS.contains(label.toLowerCase())) {
       err = S.get("vhdlKeywordNameError");
@@ -290,7 +288,7 @@ public class VhdlContent extends HdlContent {
   @Override
   public boolean setContent(String vhdl) {
     if (setContentNoValidation(vhdl)) return true;
-    
+
     try {
       errTitle.setLength(0);
       errMessage.setLength(0);

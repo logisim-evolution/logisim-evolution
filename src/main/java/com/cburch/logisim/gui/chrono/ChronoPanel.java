@@ -404,7 +404,10 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
 
           GraphicsUtil.drawText(
               g,
-              S.get("ChronoPrintTitle", model.getCircuit().getName(), getProject().getLogisimFile().getDisplayName()),
+              S.get(
+                  "ChronoPrintTitle",
+                  model.getCircuit().getName(),
+                  getProject().getLogisimFile().getDisplayName()),
               (int) (w / 2),
               0,
               GraphicsUtil.H_CENTER,

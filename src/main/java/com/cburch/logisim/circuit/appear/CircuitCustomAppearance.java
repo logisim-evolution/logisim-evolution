@@ -28,11 +28,11 @@ import com.cburch.logisim.data.Bounds;
 public class CircuitCustomAppearance extends Drawing {
 
   private final CircuitAppearance parent;
-  
+
   public CircuitCustomAppearance(CircuitAppearance parent) {
     this.parent = parent;
   }
-  
+
   @Override
   public void addObjects(int index, Collection<? extends CanvasObject> shapes) {
     parent.addObjects(index, shapes);

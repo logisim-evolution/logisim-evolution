@@ -47,7 +47,7 @@ class TablePanel extends LogPanel {
     tableView = new TableView();
     final var pane =
         new JScrollPane(
-                tableView,
+            tableView,
             JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
             JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     pane.setVerticalScrollBar(vsb);

@@ -361,7 +361,8 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       } else {
         final var d = clockDiscipline.getValue();
         final var discipline = clockDisciplines[Arrays.asList(clockDisciplineNames).indexOf(d)];
-        m.setClockMode(clockFine.isSelected(), discipline, clockScale.getValue(), clockGate.getValue());
+        m.setClockMode(
+            clockFine.isSelected(), discipline, clockScale.getValue(), clockGate.getValue());
       }
       updateDescription();
     }
@@ -483,7 +484,8 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       private static final long serialVersionUID = 1L;
 
       @Override
-      public java.awt.Component getListCellRendererComponent(JList<?> list, Object w, int index, boolean isSelected, boolean cellHasFocus) {
+      public java.awt.Component getListCellRendererComponent(
+          JList<?> list, Object w, int index, boolean isSelected, boolean cellHasFocus) {
         @SuppressWarnings("unchecked")
         final String s = renderAsText((E) w);
         return super.getListCellRendererComponent(list, s, index, isSelected, cellHasFocus);
@@ -611,7 +613,8 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       mode = "clockTime";
       boolean fine = clockFine.isSelected();
       final var disciplineName = clockDiscipline.getValue();
-      final var discipline = clockDisciplines[Arrays.asList(clockDisciplineNames).indexOf(disciplineName)];
+      final var discipline =
+          clockDisciplines[Arrays.asList(clockDisciplineNames).indexOf(disciplineName)];
       boolean levelSensitive = (discipline == Model.CLOCK_HIGH || discipline == Model.CLOCK_LOW);
       clockGate.setEnabled(fine || levelSensitive);
       int ticks = 2;
@@ -649,7 +652,8 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
       stepGate.setSelectedItem(clockGate.getValue());
     }
     ((CardLayout) optionsPanel.getLayout()).show(optionsPanel, mode);
-    optionsPanel.setBorder(BorderFactory.createTitledBorder(S.get("timingLabel") + ": " + S.get(mode)));
+    optionsPanel.setBorder(
+        BorderFactory.createTitledBorder(S.get("timingLabel") + ": " + S.get(mode)));
     description.setText("<html>" + d + "</html>"); // html to enable line wrapping
   }
 

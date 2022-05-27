@@ -38,8 +38,8 @@ import javax.swing.ProgressMonitor;
  *       HREF="http://www.csd.uwo.ca/faculty/wu/cq.c">C source</A>.
  *   <LI>Since the image must be completely loaded into memory, GIFEncoder may have problems with
  *       large images. Attempting to encode an image which will not fit into memory will probably
- *       result in the following exception:
- *       <CODE>java.awt.AWTException: Grabber returned false: 192</CODE>
+ *       result in the following exception: <CODE>java.awt.AWTException: Grabber returned false: 192
+ *       </CODE>
  * </UL>
  *
  * <p>GIFEncoder is based upon gifsave.c, which was written and released by:
