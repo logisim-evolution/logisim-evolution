@@ -325,7 +325,8 @@ public class TableSorter extends AbstractTableModel {
 
             return i.getClass().cast(retVal).intValue();
           };
-  public static final Comparator<Object> LEXICAL_COMPARATOR = (o1, o2) -> o1.toString().compareTo(o2.toString());
+  public static final Comparator<Object> LEXICAL_COMPARATOR =
+      Comparator.comparing(Object::toString);
 
   protected TableModel tableModel;
 

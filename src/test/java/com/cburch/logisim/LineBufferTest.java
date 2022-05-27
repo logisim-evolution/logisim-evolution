@@ -270,9 +270,7 @@ public class LineBufferTest extends TestBase {
    */
   @Test
   public void testAddTooLittlePosArgs() {
-    assertThrows(RuntimeException.class, () -> {
-      this.lb.add("This is {{1}} bar {{   2}} test", 666);
-    });
+    assertThrows(RuntimeException.class, () -> this.lb.add("This is {{1}} bar {{   2}} test", 666));
   }
 
   /**
@@ -280,9 +278,7 @@ public class LineBufferTest extends TestBase {
    */
   @Test
   public void testGetUsedPlaceholders() {
-    assertThrows(RuntimeException.class, () -> {
-      this.lb.validateLineNoPositionals("This is {{foo}} bar {{   2}} test");
-    });
+    assertThrows(RuntimeException.class, () -> this.lb.validateLineNoPositionals("This is {{foo}} bar {{   2}} test"));
   }
 
   /* ********************************************************************************************* */
@@ -458,9 +454,7 @@ public class LineBufferTest extends TestBase {
   @Test
   public void testEdgeIndentWrappingOfRemarkBlock() {
     final var remark = getRandomString();
-    assertThrows(IllegalArgumentException.class, () -> {
-      LineBuffer.getBuffer().addRemarkBlock(remark, LineBuffer.MAX_LINE_LENGTH);
-    });
+    assertThrows(IllegalArgumentException.class, () -> LineBuffer.getBuffer().addRemarkBlock(remark, LineBuffer.MAX_LINE_LENGTH));
   }
 
   /**
@@ -470,9 +464,7 @@ public class LineBufferTest extends TestBase {
   public void testNegativeIndentWrappingOfRemarkBlock() {
     final var remark = getRandomString();
     final var indent = getRandomInt(-100, -1);
-    assertThrows(IllegalArgumentException.class, () -> {
-      LineBuffer.getBuffer().addRemarkBlock(remark, indent);
-    });
+    assertThrows(IllegalArgumentException.class, () -> LineBuffer.getBuffer().addRemarkBlock(remark, indent));
   }
 
   /**

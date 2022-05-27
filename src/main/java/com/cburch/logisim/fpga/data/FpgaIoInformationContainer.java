@@ -432,7 +432,7 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
   public String getPinLocation(int index) {
-    return myPinLocations.containsKey(index) ? myPinLocations.get(index) : "";
+    return myPinLocations.getOrDefault(index, "");
   }
 
   public void setInputPinLocation(int index, String value) {
