@@ -1145,16 +1145,19 @@ class XmlReader {
       final var label = libElt.getAttribute("name");
 
       if (desc != null) {
-        if ("#Base".equals(desc)) {
-          oldBaseElt = libElt;
-          oldBaseLabel = label;
-        } else if ("#Wiring".equals(desc)) {
-          // Wiring library already in file. This shouldn't happen, but if
-          // somehow it does, we don't want to add it again.
-          return;
-        } else if ("#Gates".equals(desc)) {
-          gatesElt = libElt;
-          gatesLabel = label;
+        switch (desc) {
+          case "#Base":
+            oldBaseElt = libElt;
+            oldBaseLabel = label;
+            break;
+          case "#Wiring":
+            // Wiring library already in file. This shouldn't happen, but if
+            // somehow it does, we don't want to add it again.
+            return;
+          case "#Gates":
+            gatesElt = libElt;
+            gatesLabel = label;
+            break;
         }
       }
 
