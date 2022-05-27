@@ -276,7 +276,6 @@ public class Startup implements AWTEventListener {
    * @param stringBaseKey String localization base key.
    * @param shortKey Argument short key (i.e. "c" for "-c").
    * @param longKey Argument ling key (i.e. "foo" for "--foo").
-   * @param expectedArgsCount Number of required option arguments.
    */
   protected static void addOption(Options opts, String stringBaseKey, String shortKey, String longKey) {
     addOption(opts, stringBaseKey, shortKey, longKey, 0);

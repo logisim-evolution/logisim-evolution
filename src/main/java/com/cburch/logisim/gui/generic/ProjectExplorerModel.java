@@ -7,7 +7,7 @@
  * This is free software released under GNU GPLv3 license
  */
 
-/**
+/*
  * Code taken from Cornell's version of Logisim: http://www.cs.cornell.edu/courses/cs3410/2015sp/
  */
 
