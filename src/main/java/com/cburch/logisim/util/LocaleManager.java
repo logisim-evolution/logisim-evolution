@@ -90,7 +90,7 @@ public class LocaleManager {
   private static final ArrayList<LocaleManager> managers = new ArrayList<>();
   public static final SimpleDateFormat PARSER_SDF = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
   private static final ArrayList<LocaleListener> listeners = new ArrayList<>();
-  private static HashMap<Character, String> repl = null;
+  private static final HashMap<Character, String> repl = null;
   private static Locale curLocale = null;
 
   private final String dirName;

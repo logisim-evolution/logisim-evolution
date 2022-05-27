@@ -90,7 +90,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   private final HorizontalSplitPane leftRegion;
   private final HorizontalSplitPane rightRegion;
   private final HorizontalSplitPane editRegion;
-  private MainRegionVerticalSplitPane mainRegion;
+  private final MainRegionVerticalSplitPane mainRegion;
   private final JPanel rightPanel;
   private final JPanel mainPanelSuper;
   private final CardPanel mainPanel;

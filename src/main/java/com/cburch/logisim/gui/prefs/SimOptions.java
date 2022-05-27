@@ -85,22 +85,22 @@ public class SimOptions extends OptionsPanel {
   private final JLabel kmap15ColorTitle = new JLabel();
   private final JLabel kmap16ColorTitle = new JLabel();
   private final JLabel kmapColorsTitle = new JLabel("", SwingConstants.CENTER);
-  private ColorChooserButton kmap1Color;
-  private ColorChooserButton kmap2Color;
-  private ColorChooserButton kmap3Color;
-  private ColorChooserButton kmap4Color;
-  private ColorChooserButton kmap5Color;
-  private ColorChooserButton kmap6Color;
-  private ColorChooserButton kmap7Color;
-  private ColorChooserButton kmap8Color;
-  private ColorChooserButton kmap9Color;
-  private ColorChooserButton kmap10Color;
-  private ColorChooserButton kmap11Color;
-  private ColorChooserButton kmap12Color;
-  private ColorChooserButton kmap13Color;
-  private ColorChooserButton kmap14Color;
-  private ColorChooserButton kmap15Color;
-  private ColorChooserButton kmap16Color;
+  private final ColorChooserButton kmap1Color;
+  private final ColorChooserButton kmap2Color;
+  private final ColorChooserButton kmap3Color;
+  private final ColorChooserButton kmap4Color;
+  private final ColorChooserButton kmap5Color;
+  private final ColorChooserButton kmap6Color;
+  private final ColorChooserButton kmap7Color;
+  private final ColorChooserButton kmap8Color;
+  private final ColorChooserButton kmap9Color;
+  private final ColorChooserButton kmap10Color;
+  private final ColorChooserButton kmap11Color;
+  private final ColorChooserButton kmap12Color;
+  private final ColorChooserButton kmap13Color;
+  private final ColorChooserButton kmap14Color;
+  private final ColorChooserButton kmap15Color;
+  private final ColorChooserButton kmap16Color;
 
   public SimOptions(PreferencesFrame window) {
     super(window);

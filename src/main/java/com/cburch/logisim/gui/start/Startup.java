@@ -111,7 +111,7 @@ public class Startup implements AWTEventListener {
   /* Name of the board to run on i.e Reptar, MAXV ...*/
   private String testCircuitImpBoard = null;
   /* Path folder containing Map file */
-  private String testCircuitImpMapFile = null;
+  private final String testCircuitImpMapFile = null;
   /* Indicate if only the HDL should be generated */
   private Boolean testCircuitHdlOnly = false;
   /* Testing Xml (circ file) Variable */

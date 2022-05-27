@@ -43,7 +43,7 @@ public class HdlParameters {
     private long parameterValue = -1;
     private long multiplyValue = 1;
     private long offsetValue = 0;
-    private List<Attribute<?>> attributesList = new ArrayList<>();
+    private final List<Attribute<?>> attributesList = new ArrayList<>();
     private Map<AttributeOption, Integer> attributeOptionMap = new HashMap<>();
     private final Attribute<BitWidth> attributeToCheckForBus;
 

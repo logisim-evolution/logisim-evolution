@@ -19,7 +19,7 @@ import com.cburch.logisim.util.LineBuffer;
 
 public class AbstractBufferHdlGenerator extends InlinedHdlGeneratorFactory {
 
-  private boolean isInverter;
+  private final boolean isInverter;
 
   public AbstractBufferHdlGenerator(boolean isInverter) {
     this.isInverter = isInverter;

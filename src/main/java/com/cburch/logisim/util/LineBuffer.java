@@ -38,10 +38,10 @@ public class LineBuffer implements RandomAccess {
 
 
   // Internal buffer holding separate lines.
-  private ArrayList<String> contents = new java.util.ArrayList<String>();
+  private final ArrayList<String> contents = new java.util.ArrayList<String>();
 
   // Paired placeholders.
-  private Pairs pairs = new Pairs();
+  private final Pairs pairs = new Pairs();
 
   private final String SPACE = " ";
 
@@ -709,8 +709,8 @@ public class LineBuffer implements RandomAccess {
   /* ********************************************************************************************* */
 
   private List<String> placeholders = new ArrayList<>();
-  private List<String> positionalPlaceholders = new ArrayList<>();
-  private List<String> pairedPlaceholders = new ArrayList<>();
+  private final List<String> positionalPlaceholders = new ArrayList<>();
+  private final List<String> pairedPlaceholders = new ArrayList<>();
 
   // check if we have positional args and/or paired
   // if positional: check if we have args given, then check all the rest
@@ -910,7 +910,7 @@ public class LineBuffer implements RandomAccess {
     /**
      * Internal pair container.
      */
-    private HashMap<String, Object> pairContainer = new HashMap<String, Object>();
+    private final HashMap<String, Object> pairContainer = new HashMap<String, Object>();
 
     /**
      * Default constructor.
