@@ -406,9 +406,10 @@ class XmlReader {
         OptionPane.showMessageDialog(
             null,
             // FIXME: hardcoded string
-            "You are opening a file created with original Logisim code.\n"
-                + "You might encounter some problems in the execution, since some components evolved since then.\n"
-                + "Moreover, labels will be converted to match VHDL limitations for variable names.",
+            """
+                You are opening a file created with original Logisim code.
+                You might encounter some problems in the execution, since some components evolved since then.
+                Moreover, labels will be converted to match VHDL limitations for variable names.""",
             "Old file format -- compatibility mode",
             OptionPane.WARNING_MESSAGE);
       }
