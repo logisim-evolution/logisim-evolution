@@ -132,8 +132,7 @@ public class ReptarLocalBusHdlGeneratorFactory extends AbstractHdlGeneratorFacto
   @Override
   public Map<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
-    if (!(mapInfo instanceof netlistComponent)) return map;
-    final var ComponentInfo = (netlistComponent) mapInfo;
+    if (!(mapInfo instanceof final netlistComponent ComponentInfo)) return map;
     map.putAll(super.getPortMap(nets, mapInfo));
     map.put(
         "Addr_Data_LB_io",

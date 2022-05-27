@@ -87,10 +87,8 @@ public class LeftPanel extends JTable {
     public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int col) {
       if (!(value instanceof SignalInfo)) return null;
       final var ret = super.getTableCellRendererComponent(table, value, false, false, row, col);
-      if (ret instanceof JLabel && value instanceof SignalInfo) {
-        final var label = (JLabel) ret;
+      if (ret instanceof final JLabel label && value instanceof final SignalInfo item) {
         label.setBorder(rowInsets);
-        final var item = (SignalInfo) value;
         label.setBackground(chronoPanel.rowColors(item, isSelected)[0]);
         label.setIcon(item.icon);
       }

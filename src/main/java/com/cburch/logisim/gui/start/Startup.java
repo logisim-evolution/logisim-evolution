@@ -1002,8 +1002,7 @@ public class Startup implements AWTEventListener {
           } catch (Exception ignored) {
           }
         }
-        if (container instanceof JOptionPane) {
-          final var pane = (JOptionPane) container;
+        if (container instanceof final JOptionPane pane) {
           if (hasIcon(pane)) {
             switch (pane.getMessageType()) {
               case OptionPane.ERROR_MESSAGE -> pane.setIcon(new ErrorIcon());

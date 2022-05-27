@@ -341,7 +341,7 @@ public class Netlist {
             labels.put(label, comp);
           }
         }
-        if (comp.getFactory() instanceof SubcircuitFactory) {
+        if (comp.getFactory() instanceof final SubcircuitFactory sub) {
           // Special care has to be taken for sub-circuits
           if (label.equals(componentName.toUpperCase())) {
             drc.get(1).addMarkComponent(comp);
@@ -352,7 +352,6 @@ public class Netlist {
               S.get("FoundBadComponent", comp.getFactory().getName(), myCircuit.getName()))) {
             drcStatus |= DRC_ERROR;
           }
-          final var sub = (SubcircuitFactory) comp.getFactory();
           localNrOfInportBubbles += sub.getSubcircuit().getNetList().getNumberOfInputBubbles();
           localNrOfOutportBubbles += sub.getSubcircuit().getNetList().numberOfOutputBubbles();
           localNrOfInOutBubbles += sub.getSubcircuit().getNetList().numberOfInOutBubbles();
@@ -2316,8 +2315,7 @@ public class Netlist {
         }
       }
     }
-    if (comp.getFactory() instanceof SubcircuitFactory) {
-      final var sub = (SubcircuitFactory) comp.getFactory();
+    if (comp.getFactory() instanceof final SubcircuitFactory sub) {
       if (sourcePoint.getChildsPortIndex() < 0) {
         Reporter.report.addFatalErrorFmt(
             "BUG: Subcircuit port is not annotated!\n ==> %s:%d\n",

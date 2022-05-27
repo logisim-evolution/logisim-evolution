@@ -279,8 +279,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       /* check the simulation state */
       if (!simState.canExecute()) return;
       /* here we handle the custom instructions */
-      if (ASSEMBLER.getExeUnit() != null && ASSEMBLER.getExeUnit() instanceof Nios2CustomInstructions) {
-        Nios2CustomInstructions cust = (Nios2CustomInstructions) ASSEMBLER.getExeUnit();
+      if (ASSEMBLER.getExeUnit() != null && ASSEMBLER.getExeUnit() instanceof Nios2CustomInstructions cust) {
         if (cust.isValid() && cust.waitingOnReady(this, cState)) return;
       }
       Map<Integer, Integer> breakPoints = bPanel.getBreakPoints();

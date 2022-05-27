@@ -66,8 +66,7 @@ public class ShiftRegisterHdlGeneratorFactory extends AbstractHdlGeneratorFactor
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
     map.putAll(super.getPortMap(nets, mapInfo));
-    if (mapInfo instanceof netlistComponent) {
-      final var comp = ((netlistComponent) mapInfo);
+    if (mapInfo instanceof final netlistComponent comp) {
       final var attrs = comp.getComponent().getAttributeSet();
       final var nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
       final var nrOfStages = attrs.getValue(ShiftRegister.ATTR_LENGTH);
