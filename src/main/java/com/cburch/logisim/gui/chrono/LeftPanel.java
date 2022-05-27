@@ -318,18 +318,10 @@ public class LeftPanel extends JTable {
     if (last == -1) return;
 
     switch (d) {
-      case -2:
-        model.addOrMoveSignals(sel, 0);
-        break;
-      case -1:
-        model.addOrMoveSignals(sel, Math.max(0, first - 1));
-        break;
-      case 1:
-        model.addOrMoveSignals(sel, Math.min(model.getSignalCount(), last + 2));
-        break;
-      default:
-        model.addOrMoveSignals(sel, model.getSignalCount());
-        break;
+      case -2 -> model.addOrMoveSignals(sel, 0);
+      case -1 -> model.addOrMoveSignals(sel, Math.max(0, first - 1));
+      case 1 -> model.addOrMoveSignals(sel, Math.min(model.getSignalCount(), last + 2));
+      default -> model.addOrMoveSignals(sel, model.getSignalCount());
     }
 
     setSelectedRows(sel);

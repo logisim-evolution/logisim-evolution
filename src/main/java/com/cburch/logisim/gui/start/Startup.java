@@ -1006,18 +1006,10 @@ public class Startup implements AWTEventListener {
           final var pane = (JOptionPane) container;
           if (hasIcon(pane)) {
             switch (pane.getMessageType()) {
-              case OptionPane.ERROR_MESSAGE:
-                pane.setIcon(new ErrorIcon());
-                break;
-              case OptionPane.QUESTION_MESSAGE:
-                pane.setIcon(new QuestionIcon());
-                break;
-              case OptionPane.INFORMATION_MESSAGE:
-                pane.setIcon(new InfoIcon());
-                break;
-              case OptionPane.WARNING_MESSAGE:
-                pane.setIcon(new WarningIcon());
-                break;
+              case OptionPane.ERROR_MESSAGE -> pane.setIcon(new ErrorIcon());
+              case OptionPane.QUESTION_MESSAGE -> pane.setIcon(new QuestionIcon());
+              case OptionPane.INFORMATION_MESSAGE -> pane.setIcon(new InfoIcon());
+              case OptionPane.WARNING_MESSAGE -> pane.setIcon(new WarningIcon());
             }
           }
         }

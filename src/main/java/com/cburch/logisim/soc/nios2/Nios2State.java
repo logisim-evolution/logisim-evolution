@@ -184,20 +184,11 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
 
     public void setControlRegister(int index, int value) {
       switch (index) {
-        case 0:
-          setStatus(value);
-          break;
-        case 1:
-          estatus = value;
-          break;
-        case 2:
-          bstatus = value;
-          break;
-        case 3:
-          ienable = value;
-          break;
-        default:
-          throw new IllegalStateException("Unsupported index value: " + index);
+        case 0 -> setStatus(value);
+        case 1 -> estatus = value;
+        case 2 -> bstatus = value;
+        case 3 -> ienable = value;
+        default -> throw new IllegalStateException("Unsupported index value: " + index);
       }
     }
 

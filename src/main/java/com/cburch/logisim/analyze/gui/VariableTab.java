@@ -490,24 +490,14 @@ public class VariableTab extends AnalyzerTab {
       updateCopy();
       Integer idx = event.getIndex();
       switch (event.getType()) {
-        case VariableListEvent.ALL_REPLACED:
-          fireTableRowsUpdated(0, oldSize);
-          break;
-        case VariableListEvent.ADD:
-          fireTableRowsInserted(idx, idx);
-          break;
-        case VariableListEvent.REMOVE:
-          fireTableRowsDeleted(idx, idx);
-          break;
-        case VariableListEvent.MOVE:
-          fireTableRowsUpdated(0, listCopy.length - 1);
-          break;
-        case VariableListEvent.REPLACE:
-          fireTableRowsUpdated(idx, idx);
-          break;
-        default:
-          // do nothing
-          break;
+        case VariableListEvent.ALL_REPLACED -> fireTableRowsUpdated(0, oldSize);
+        case VariableListEvent.ADD -> fireTableRowsInserted(idx, idx);
+        case VariableListEvent.REMOVE -> fireTableRowsDeleted(idx, idx);
+        case VariableListEvent.MOVE -> fireTableRowsUpdated(0, listCopy.length - 1);
+        case VariableListEvent.REPLACE -> fireTableRowsUpdated(idx, idx);
+        default -> {
+        }
+        // do nothing
       }
     }
 

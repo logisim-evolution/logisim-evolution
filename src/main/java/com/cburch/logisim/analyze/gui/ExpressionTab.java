@@ -164,22 +164,25 @@ class ExpressionTab extends AnalyzerTab {
       updateCopy();
       final var idx = event.getIndex();
       switch (event.getType()) {
-        case VariableListEvent.ALL_REPLACED:
-        case VariableListEvent.MOVE:
+        case VariableListEvent.ALL_REPLACED, VariableListEvent.MOVE -> {
           fireTableDataChanged();
           return;
-        case VariableListEvent.ADD:
+        }
+        case VariableListEvent.ADD -> {
           fireTableRowsInserted(idx, idx);
           return;
-        case VariableListEvent.REMOVE:
+        }
+        case VariableListEvent.REMOVE -> {
           fireTableRowsDeleted(idx, idx);
           return;
-        case VariableListEvent.REPLACE:
+        }
+        case VariableListEvent.REPLACE -> {
           fireTableRowsUpdated(idx, idx);
           return;
-        default:
-          // none
-          break;
+        }
+        default -> {
+        }
+        // none
       }
     }
 

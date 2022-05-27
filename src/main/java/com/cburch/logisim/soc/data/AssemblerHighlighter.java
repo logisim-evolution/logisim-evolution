@@ -198,17 +198,14 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
       else currentTokenType = newTokenType;
     }
     switch (currentTokenType) {
-      case Token.LITERAL_STRING_DOUBLE_QUOTE:
-        addToken(
-            arg0, currentTokenStart, end - 1, currentTokenType, newStartOffset + currentTokenStart);
-        break;
-      case Token.NULL:
-        addNullToken();
-        break;
-      default:
+      case Token.LITERAL_STRING_DOUBLE_QUOTE -> addToken(
+          arg0, currentTokenStart, end - 1, currentTokenType, newStartOffset + currentTokenStart);
+      case Token.NULL -> addNullToken();
+      default -> {
         addToken(
             arg0, currentTokenStart, end - 1, currentTokenType, newStartOffset + currentTokenStart);
         addNullToken();
+      }
     }
     return firstToken;
   }

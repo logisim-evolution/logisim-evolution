@@ -456,7 +456,7 @@ class XmlReader {
       for (final var circElt : XmlIterator.forChildElements(elt)) {
         String name;
         switch (circElt.getTagName()) {
-          case "vhdl":
+          case "vhdl" -> {
             name = circElt.getAttribute("name");
             if (name == null || "".equals(name)) {
               addError(S.get("circNameMissingError"), "C??");
@@ -466,28 +466,30 @@ class XmlReader {
             if (contents != null) {
               file.addVhdlContent(contents);
             }
-            break;
-          case "circuit":
+          }
+          case "circuit" -> {
             name = circElt.getAttribute("name");
-
             if (name == null || "".equals(name)) {
               addError(S.get("circNameMissingError"), "C??");
             }
             final var circData = new CircuitData(circElt, new Circuit(name, file, proj));
             file.addCircuit(circData.circuit);
-            circData.knownComponents = loadKnownComponents(circElt, isHolyCrossFile, isEvolutionFile);
+            circData.knownComponents = loadKnownComponents(circElt, isHolyCrossFile,
+                isEvolutionFile);
             for (Element appearElt : XmlIterator.forChildElements(circElt, "appear")) {
               loadAppearance(appearElt, circData, name + ".appear");
             }
-            for (final var boardMap :  XmlIterator.forChildElements(circElt, "boardmap")) {
+            for (final var boardMap : XmlIterator.forChildElements(circElt, "boardmap")) {
               final var boardName = boardMap.getAttribute("boardname");
-              if (StringUtil.isNullOrEmpty(boardName)) continue;
+              if (StringUtil.isNullOrEmpty(boardName))
+                continue;
               loadMap(boardMap, boardName, circData.circuit);
             }
             circuitsData.add(circData);
-            break;
-          default:
-            // do nothing
+          }
+          default -> {
+          }
+          // do nothing
         }
       }
 
@@ -590,14 +592,9 @@ class XmlReader {
     if (validLabels == null) throw new RuntimeException("Value of 'validLabels' cannot be null");
 
     switch (nodeType) {
-      case "circuit":
-        replaceCircuitNodes(root, attrType, validLabels);
-        break;
-      case "comp":
-        replaceCompNodes(root, validLabels);
-        break;
-      default:
-        throw new IllegalArgumentException("Invalid node type requested: " + nodeType);
+      case "circuit" -> replaceCircuitNodes(root, attrType, validLabels);
+      case "comp" -> replaceCompNodes(root, validLabels);
+      default -> throw new IllegalArgumentException("Invalid node type requested: " + nodeType);
     }
   }
 
@@ -783,14 +780,9 @@ class XmlReader {
     final var attrValuesList = new ArrayList<String>();
 
     switch (nodeType) {
-      case "circuit":
-        inspectCircuitNodes(root, attrType, attrValuesList);
-        break;
-      case "comp":
-        inspectCompNodes(root, attrValuesList);
-        break;
-      default:
-        throw new IllegalArgumentException("Invalid node type requested: " + nodeType);
+      case "circuit" -> inspectCircuitNodes(root, attrType, attrValuesList);
+      case "comp" -> inspectCompNodes(root, attrValuesList);
+      default -> throw new IllegalArgumentException("Invalid node type requested: " + nodeType);
     }
     return attrValuesList;
   }

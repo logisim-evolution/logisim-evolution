@@ -57,21 +57,16 @@ public final class SvgReader {
       final var token = patt.group();
       tokens.add(token);
       if (Character.isLetter(token.charAt(0))) {
-        switch (token.charAt(0)) {
-          case 'M':
-            type = (type == typeError) ? 0 : typeError;
-            break;
-          case 'Q', 'q':
-            type = (type == 0) ? 1 : typeError;
-            break;
-            /*
-             * not supported case 'L': case 'l': case 'H': case 'h': case
-             * 'V': case 'v': if (type == 0 || type == 2) type = 2; else
-             * type = -1; break;
-             */
-          default:
-            type = typeError;
-        }
+        type = switch (token.charAt(0)) {
+          case 'M' -> (type == typeError) ? 0 : typeError;
+          case 'Q', 'q' -> (type == 0) ? 1 : typeError;
+          /*
+           * not supported case 'L': case 'l': case 'H': case 'h': case
+           * 'V': case 'v': if (type == 0 || type == 2) type = 2; else
+           * type = -1; break;
+           */
+          default -> typeError;
+        };
         if (type == typeError) {
           final var tokenStr = String.valueOf(token.charAt(0));
           final var msg = String.format("Unrecognized path command '%s'", tokenStr);

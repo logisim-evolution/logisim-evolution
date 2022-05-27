@@ -106,7 +106,7 @@ public class FpgaIoInformationSettingsDialog {
     NrOfPins.put(IO_ID, 0);
     var nrOfPins = 0;
     switch (driveMode) {
-      case LedArrayDriving.LED_DEFAULT: {
+      case LedArrayDriving.LED_DEFAULT -> {
         nrOfPins = nrOfRows * nrOfColumns;
         for (var row = 0; row < nrOfRows; row++) {
           for (var col = 0; col < nrOfColumns; col++)
@@ -114,7 +114,7 @@ public class FpgaIoInformationSettingsDialog {
         }
         break;
       }
-      case LedArrayDriving.LED_ROW_SCANNING: {
+      case LedArrayDriving.LED_ROW_SCANNING -> {
         final var nrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfRows);
         nrOfPins = nrBits + nrOfColumns;
         for (var i = 0; i < nrOfPins; i++) {
@@ -126,7 +126,7 @@ public class FpgaIoInformationSettingsDialog {
         }
         break;
       }
-      case LedArrayDriving.LED_COLUMN_SCANNING: {
+      case LedArrayDriving.LED_COLUMN_SCANNING -> {
         final var nrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
         nrOfPins = nrBits + nrOfRows;
         for (var i = 0; i < nrOfPins; i++) {
@@ -138,7 +138,7 @@ public class FpgaIoInformationSettingsDialog {
         }
         break;
       }
-      case LedArrayDriving.RGB_DEFAULT: {
+      case LedArrayDriving.RGB_DEFAULT -> {
         nrOfPins = nrOfRows * nrOfColumns * 3;
         var preamble = "";
         for (var rgb = 0; rgb < 3; rgb++) {
@@ -154,7 +154,7 @@ public class FpgaIoInformationSettingsDialog {
         }
         break;
       }
-      case LedArrayDriving.RGB_ROW_SCANNING: {
+      case LedArrayDriving.RGB_ROW_SCANNING -> {
         final var nrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfRows);
         nrOfPins = nrBits + 3 * nrOfColumns;
         var preamble = "";
@@ -175,7 +175,7 @@ public class FpgaIoInformationSettingsDialog {
         }
         break;
       }
-      case LedArrayDriving.RGB_COLUMN_SCANNING: {
+      case LedArrayDriving.RGB_COLUMN_SCANNING -> {
         final var nrBits = LedArrayGenericHdlGeneratorFactory.getNrOfBitsRequired(nrOfColumns);
         nrOfPins = nrBits + 3 * nrOfRows;
         var preamble = "";
@@ -196,7 +196,7 @@ public class FpgaIoInformationSettingsDialog {
         }
         break;
       }
-      default: {
+      default -> {
         nrOfPins = 0;
       }
     }
@@ -280,7 +280,7 @@ public class FpgaIoInformationSettingsDialog {
     ActionListener actionListener =
         e -> {
           switch (e.getActionCommand()) {
-            case "inputSize": {
+            case "inputSize" -> {
               var nr = (int) inputSize.getSelectedItem();
               nrOfPins.put(INPUT_ID, nr);
               pinLabels.clear();
@@ -290,7 +290,7 @@ public class FpgaIoInformationSettingsDialog {
               selWindow.pack();
               return;
             }
-            case "outputSize": {
+            case "outputSize" -> {
               var nr = (int) outputSize.getSelectedItem();
               nrOfPins.put(OUTPUT_ID, nr);
               pinLabels.clear();
@@ -300,7 +300,7 @@ public class FpgaIoInformationSettingsDialog {
               selWindow.pack();
               return;
             }
-            case "ioSize": {
+            case "ioSize" -> {
               var nr = (int) ioSize.getSelectedItem();
               nrOfPins.put(IO_ID, nr);
               pinLabels.clear();
@@ -310,7 +310,7 @@ public class FpgaIoInformationSettingsDialog {
               selWindow.pack();
               return;
             }
-            case "LedArray": {
+            case "LedArray" -> {
               info.setNrOfRows(rowSize.getSelectedIndex() + 1);
               info.setNrOfColumns(colSize.getSelectedIndex() + 1);
               info.setArrayDriveMode((char) eEncoding.getSelectedIndex());
@@ -324,12 +324,8 @@ public class FpgaIoInformationSettingsDialog {
               selWindow.pack();
               return;
             }
-            case "cancel":
-              info.setType(IoComponentTypes.Unknown);
-              break;
-            case "delete":
-              info.setToBeDeleted();
-              break;
+            case "cancel" -> info.setType(IoComponentTypes.Unknown);
+            case "delete" -> info.setToBeDeleted();
           }
           selWindow.setVisible(false);
           selWindow.dispose();
@@ -367,15 +363,15 @@ public class FpgaIoInformationSettingsDialog {
       mapRotation.addItem(S.get(IoComponentTypes.getRotationString(myType, IoComponentTypes.ROTATION_CCW_90)));
       panel.add(mapRotation, BorderLayout.CENTER);
       switch (myRotation) {
-        case IoComponentTypes.ROTATION_CW_90: {
+        case IoComponentTypes.ROTATION_CW_90 -> {
           mapRotation.setSelectedIndex(1);
           break;
         }
-        case IoComponentTypes.ROTATION_CCW_90: {
+        case IoComponentTypes.ROTATION_CCW_90 -> {
           mapRotation.setSelectedIndex(2);
           break;
         }
-        default: {
+        default -> {
           mapRotation.setSelectedIndex(0);
           break;
         }
@@ -987,20 +983,20 @@ public class FpgaIoInformationSettingsDialog {
         saveSettings = true;
         switch ((int)
             getFrequency(FreqInput.getText(), StandardInput.getSelectedItem().toString())) {
-          case -2:
+          case -2 -> {
             saveSettings = false;
             DialogNotification.showDialogNotification(panel, "Error", S.get("FpgaBoardFreqError"));
-            break;
-          case -1:
+          }
+          case -1 -> {
             saveSettings = false;
             DialogNotification.showDialogNotification(panel, "Error", S.get("FpgaBoardFracError"));
-            break;
-          case 0:
+          }
+          case 0 -> {
             saveSettings = false;
             DialogNotification.showDialogNotification(panel, "Error", S.get("FpgaBoardClkReq"));
-            break;
-          default:
-            break;
+          }
+          default -> {
+          }
         }
         if (saveSettings && LocInput.getText().isEmpty()) {
           saveSettings = false;
