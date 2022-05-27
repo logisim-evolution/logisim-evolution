@@ -34,7 +34,7 @@ public class HdlParameters {
   public static final int MAP_GATE_INPUT_BUBLE = 7;
   public static final int MAP_POW2 = 8;
 
-  private class ParameterInfo {
+  private static class ParameterInfo {
     private final boolean isOnlyUsedForBusses;
     private boolean isIntParameter = true;
     private final String parameterName;

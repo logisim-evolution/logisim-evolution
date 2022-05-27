@@ -228,7 +228,7 @@ public class Frame extends LFrame.MainWindow implements LocaleListener {
   /**
    * Content aware VerticalSplitPane that handles main layout changes with bit of extra logic.
    */
-  private class MainRegionVerticalSplitPane extends VerticalSplitPane implements PropertyChangeListener {
+  private static class MainRegionVerticalSplitPane extends VerticalSplitPane implements PropertyChangeListener {
     private final JComponent componentTree;
     private final JComponent mainCanvas;
     private Direction orientation;

@@ -25,7 +25,7 @@ public class HdlPorts {
   public static final String PULL_DOWN = "fixed_pull_down";
   public static final String PULL_UP = "fixed_pull_up";
 
-  private class PortInfo {
+  private static class PortInfo {
 
     private final String myPortType;
     private final String myName;

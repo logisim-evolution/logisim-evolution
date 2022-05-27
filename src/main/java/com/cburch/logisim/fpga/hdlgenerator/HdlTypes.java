@@ -23,7 +23,7 @@ public class HdlTypes {
     String getTypeName();
   }
 
-  private class HdlEnum implements HdlType {
+  private static class HdlEnum implements HdlType {
     private final List<String> myEntries = new ArrayList<>();
     private final String myTypeName;
 
@@ -63,7 +63,7 @@ public class HdlTypes {
     }
   }
 
-  private class HdlArray implements HdlType {
+  private static class HdlArray implements HdlType {
     private final String myTypeName;
     private final String myGenericBitWidth;
     private final int myBitWidth;

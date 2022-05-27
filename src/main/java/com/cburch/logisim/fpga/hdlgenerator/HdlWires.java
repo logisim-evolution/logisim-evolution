@@ -18,7 +18,7 @@ public class HdlWires {
   public static final int WIRE = 0;
   public static final int REGISTER = 1;
 
-  private class Wire {
+  private static class Wire {
 
     private final int myType;
     private final String myName;
