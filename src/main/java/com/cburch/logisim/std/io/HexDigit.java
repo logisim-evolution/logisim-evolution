@@ -201,7 +201,7 @@ public class HexDigit extends InstanceFactory implements DynamicElementProvider 
           case U -> SEG_B_MASK | SEG_C_MASK | SEG_E_MASK | SEG_F_MASK
               | SEG_D_MASK;  // a "U" for static icon
           case u -> SEG_C_MASK | SEG_E_MASK | SEG_D_MASK;  // a "u" for static icon
-          case BLANK, default -> 0;
+          default -> 0;
         };
 
         break;

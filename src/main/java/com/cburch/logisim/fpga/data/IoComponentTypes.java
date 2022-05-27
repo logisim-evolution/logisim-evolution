@@ -358,7 +358,7 @@ public enum IoComponentTypes {
             part = (float) width / (float) nrOfPins;
             boxXpos = x + (int) ((float) pinNr * part);
             boxYpos = y;
-            boxWidth = (int) ((float) (pinNr + 1) * part) - (int) ((float) (pinNr * part));
+            boxWidth = (int) ((float) (pinNr + 1) * part) - (int) (pinNr * part);
             boxHeight = height;
             break;
           }

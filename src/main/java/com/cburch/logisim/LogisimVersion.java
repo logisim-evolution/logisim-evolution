@@ -168,7 +168,7 @@ public class LogisimVersion {
   @Override
   public String toString() {
     var sfx = "";
-    if (suffix != "") {
+    if (!suffix.equals("")) {
       sfx = separator + suffix;
     }
     return format(major, minor, patch, sfx);

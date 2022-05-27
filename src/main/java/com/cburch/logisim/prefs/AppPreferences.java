@@ -245,7 +245,7 @@ public class AppPreferences {
     return switch (templateType) {
       case TEMPLATE_EMPTY -> getEmptyTemplate();
       case TEMPLATE_CUSTOM -> getCustomTemplate();
-      case TEMPLATE_PLAIN, default -> getPlainTemplate();
+      default -> getPlainTemplate();
     };
   }
 

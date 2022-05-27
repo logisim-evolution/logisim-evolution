@@ -48,7 +48,7 @@ public class DrawShapeIcon extends BaseIcon {
         // FIXME: rounded rect shape looks almost as regular rectangle on smaller zoom factor
         gfx.drawRoundRect(x, y, width, height, y, y);
       }
-      case ELIPSE, default -> {
+      default -> {
         gfx.setColor(Color.BLUE);
         gfx.drawOval(x, y, width, height);
       }

@@ -100,7 +100,7 @@ public class FpToInt extends InstanceFactory {
 
     if (roundMode.getValue().equals("ceil")) out_val = (long) Math.ceil(a_val);
     else if (roundMode.getValue().equals("floor")) out_val = (long) Math.floor(a_val);
-    else if (roundMode.getValue().equals("round")) out_val = (long) Math.round(a_val);
+    else if (roundMode.getValue().equals("round")) out_val = Math.round(a_val);
     else out_val = (long) a_val;
 
     final var out = Value.createKnown(dataWidthOut, out_val);
