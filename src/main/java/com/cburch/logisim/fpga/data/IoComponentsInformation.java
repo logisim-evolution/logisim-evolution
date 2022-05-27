@@ -103,9 +103,9 @@ public class IoComponentsInformation {
   }
 
   public void removeSelectable(float scale) {
-    for (var compId = 0; compId < ioComps.size(); compId++) {
-      final var io = ioComps.get(compId);
-      if (io.removeSelectable()) this.fireRedraw(io.getRectangle(), scale);
+    for (final FpgaIoInformationContainer io : ioComps) {
+      if (io.removeSelectable())
+        this.fireRedraw(io.getRectangle(), scale);
     }
   }
 

@@ -501,9 +501,9 @@ public class LineBuffer implements RandomAccess {
     final var result = new ArrayList<String>();
     for (final var line : contents) {
       final var lines = line.split("\n");
-      for (var idx = 0; idx < lines.length; idx++) {
+      for (String s : lines) {
         // We do not indent empty lines, just ones with content.
-        result.add((lines[idx].length() == 0) ? lines[idx] : indent + lines[idx]);
+        result.add((s.length() == 0) ? s : indent + s);
       }
     }
     return result;
