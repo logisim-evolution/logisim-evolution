@@ -305,7 +305,7 @@ public class AssemblyWindow implements ActionListener, BaseWindowListenerContrac
         if (where.isEmpty()) {
           where = "0";
         }
-        final var pattern = Pattern.compile("^[ ]+" + where + ":", Pattern.MULTILINE + Pattern.CASE_INSENSITIVE);
+        final var pattern = Pattern.compile("^ +" + where + ":", Pattern.MULTILINE + Pattern.CASE_INSENSITIVE);
         final var m = pattern.matcher(document.getText().replaceAll("\r", ""));
         if (m.find()) {
           document.setCaretPosition(m.start());

@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 import org.w3c.dom.Element;
 
 public final class SvgReader {
-  private static final Pattern PATH_REGEX = Pattern.compile("[a-zA-Z]|[-0-9.]+");
+  private static final Pattern PATH_REGEX = Pattern.compile("[a-zA-Z]|[-\\d.]+");
 
   private SvgReader() {
     // dummy

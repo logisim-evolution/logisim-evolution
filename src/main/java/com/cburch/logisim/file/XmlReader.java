@@ -747,7 +747,7 @@ class XmlReader {
     if (!label.matches("^[A-Za-z].*$")) label = "L_" + label;
 
     // Force the rest to be either letters, or numbers, or underscores
-    label = label.replaceAll("[^A-Za-z0-9_]", "_");
+    label = label.replaceAll("\\W", "_");
     // Suppress multiple successive underscores and an underscore at the end
     label = label.replaceAll("_+", "_");
     if (label.endsWith("_")) label = label.substring(0, label.length() - 1);
@@ -872,7 +872,7 @@ class XmlReader {
    * @return true if the label is NOT a valid name, false otherwise
    */
   public static boolean labelVHDLInvalid(String label) {
-    return !label.matches("^[A-Za-z][A-Za-z0-9_]*") || label.endsWith("_") || label
+    return !label.matches("^[A-Za-z]\\w*") || label.endsWith("_") || label
         .matches(".*__.*");
   }
 
