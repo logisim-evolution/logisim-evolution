@@ -44,8 +44,8 @@ public class VhdlHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
       Netlist theNetlist,
       AttributeSet attrs,
       String componentName) {
-    ArrayList<String> contents = new ArrayList<>();
-    contents.addAll(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
+    ArrayList<String> contents = new ArrayList<>(
+        FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
 
     VhdlContentComponent content =
         attrs.getValue(VhdlEntityComponent.CONTENT_ATTR);
