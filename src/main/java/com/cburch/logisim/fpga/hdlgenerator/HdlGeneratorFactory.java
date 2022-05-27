@@ -19,15 +19,15 @@ import java.util.Set;
 
 public interface HdlGeneratorFactory {
 
-  public static final String NET_NAME = Hdl.NET_NAME;
-  public static final String BUS_NAME = Hdl.BUS_NAME;
-  public static final String CLOCK_TREE_NAME = "logisimClockTree";
-  public static final String VHDL = "VHDL";
-  public static final String VERILOG = "Verilog";
-  public static final String LOCAL_INPUT_BUBBLE_BUS_NAME = "logisimInputBubbles";
-  public static final String LOCAL_OUTPUT_BUBBLE_BUS_NAME = "logisimOutputBubbles";
-  public static final String LOCAL_INOUT_BUBBLE_BUS_NAME = "logisimInOutBubbles";
-  public static final String FPGA_TOP_LEVEL_NAME = "logisimTopLevelShell";
+  String NET_NAME = Hdl.NET_NAME;
+  String BUS_NAME = Hdl.BUS_NAME;
+  String CLOCK_TREE_NAME = "logisimClockTree";
+  String VHDL = "VHDL";
+  String VERILOG = "Verilog";
+  String LOCAL_INPUT_BUBBLE_BUS_NAME = "logisimInputBubbles";
+  String LOCAL_OUTPUT_BUBBLE_BUS_NAME = "logisimOutputBubbles";
+  String LOCAL_INOUT_BUBBLE_BUS_NAME = "logisimInOutBubbles";
+  String FPGA_TOP_LEVEL_NAME = "logisimTopLevelShell";
 
   boolean generateAllHDLDescriptions(
       Set<String> handledComponents,

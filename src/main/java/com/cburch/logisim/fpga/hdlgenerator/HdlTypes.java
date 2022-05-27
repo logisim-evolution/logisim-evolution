@@ -19,8 +19,8 @@ import com.cburch.logisim.util.LineBuffer;
 public class HdlTypes {
 
   private interface HdlType {
-    public String getTypeDefinition();
-    public String getTypeName();
+    String getTypeDefinition();
+    String getTypeName();
   }
 
   private class HdlEnum implements HdlType {

@@ -427,7 +427,7 @@ public class Startup implements AWTEventListener {
   /**
    * Supported return codes from command handlers;
    */
-  public static enum RC {
+  public enum RC {
     /**
      * Handler completed succesfuly. We can proceed with another argument.
      */
