@@ -9,6 +9,7 @@
   * Fixed pressing `CTRL`+`0` selecting the wrong element in the toolbar.
   * Fixed TTL 7485 `7485HdlGenerator` generating wrong HDL type.
   * Fixed TTL 74139, 7447 outputting inverted logic
+  * Added TTL 74166: 8-bit parallel-to-serial shift register with clear
 
 * v3.7.2 (2021-11-09)
   * Fixed Preferences/Window "Reset window layout to defaults" not doing much.
