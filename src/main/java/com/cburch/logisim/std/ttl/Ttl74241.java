@@ -15,7 +15,7 @@ import com.cburch.logisim.instance.InstanceState;
 import java.awt.Graphics;
 
 /**
- * TTL 74x240 octal buffers and line drivers with three-state outputs
+ * TTL 74x241 octal buffers and line drivers with three-state outputs
  * Model based on https://www.ti.com/product/SN74LS241 datasheet.
  */
 public class Ttl74241 extends AbstractTtlGate {
@@ -51,9 +51,9 @@ public class Ttl74241 extends AbstractTtlGate {
     if (state.getPortValue(0) == Value.TRUE) {
       // Channel 1 disabled
       state.setPort(16, Value.UNKNOWN, 1);
-        state.setPort(14, Value.UNKNOWN, 1);
-        state.setPort(12, Value.UNKNOWN, 1);
-        state.setPort(10, Value.UNKNOWN, 1);
+      state.setPort(14, Value.UNKNOWN, 1);
+      state.setPort(12, Value.UNKNOWN, 1);
+      state.setPort(10, Value.UNKNOWN, 1);
     } else {
       // Channel 1 enabled, 1A->1Y
       state.setPort(16, state.getPortValue(1), 1);
