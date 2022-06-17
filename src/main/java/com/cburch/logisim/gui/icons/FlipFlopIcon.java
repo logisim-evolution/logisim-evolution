@@ -108,8 +108,8 @@ public class FlipFlopIcon extends BaseIcon {
         p.lineTo(scale(8), scale(9));
       }
       default -> {
+        // do nothing. Should not really happen.
       }
-      // do nothing. Should not really happen.
     }
     g2.draw(p);
   }
