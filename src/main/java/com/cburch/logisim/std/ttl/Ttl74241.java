@@ -10,7 +10,7 @@
 package com.cburch.logisim.std.ttl;
 
 /**
- * TTL 74x241 octal buffers and line drivers with three-state outputs
+ * TTL 74x241 octal buffers and line drivers with three-state outputs and complementary enables
  * Model based on https://www.ti.com/product/SN74LS241 datasheet.
  */
 public class Ttl74241 extends AbstractOctalBuffers {
