@@ -268,9 +268,9 @@ public class SocBusStateInfo extends JDialog
     if (slaves.isEmpty()) trans.setError(SocBusTransaction.NO_SLAVES_ERROR);
     else if (trans.isReadTransaction()
         && trans.isWriteTransaction()
-        && !trans.isAtomicTransaction())
+        && !trans.isAtomicTransaction()) {
       trans.setError(SocBusTransaction.NONE_ATOMIC_READ_WRITE_ERROR);
-    else {
+    } else {
       for (int i = 0; i < slaves.size(); i++) {
         if (slaves.get(i).canHandleTransaction(trans)) {
           nrOfReponders++;

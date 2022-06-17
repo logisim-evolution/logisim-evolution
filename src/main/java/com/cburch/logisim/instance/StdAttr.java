@@ -75,7 +75,8 @@ public interface StdAttr {
 
   AttributeOption SELECT_BOTTOM_LEFT =
       new AttributeOption("bl", S.getter("stdSelectBottomLeftOption"));
-  AttributeOption SELECT_TOP_RIGHT = new AttributeOption("tr", S.getter("stdSelectTopRightOption"));
+  AttributeOption SELECT_TOP_RIGHT =
+      new AttributeOption("tr", S.getter("stdSelectTopRightOption"));
   Attribute<AttributeOption> SELECT_LOC =
       Attributes.forOption(
           "selloc",
