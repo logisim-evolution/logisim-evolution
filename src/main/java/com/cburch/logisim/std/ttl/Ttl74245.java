@@ -16,7 +16,7 @@ import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Graphics;
 
 /**
- * TTL 74x240 octal buffers and line drivers with three-state outputs
+ * TTL 74x245 octal bus transceivers with three-state outputs
  * Model based on https://www.ti.com/product/SN74LS245 datasheet.
  */
 public class Ttl74245 extends AbstractTtlGate {
