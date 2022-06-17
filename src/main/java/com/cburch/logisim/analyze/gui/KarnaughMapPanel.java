@@ -869,8 +869,8 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
                 x + cols * cellWidth + 8 + headHeight + (headHeight >> 2), y + 7 * cellHeight));
       }
       default -> {
+        // none
       }
-      // none
     }
   }
 

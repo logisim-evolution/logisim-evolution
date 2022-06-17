@@ -89,8 +89,8 @@ class TableTabCaret {
           model.expandVisibleRows();
         }
         default -> {
+          // do nothing
         }
-        // do nothing
       }
     }
 

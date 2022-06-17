@@ -496,8 +496,8 @@ public class VariableTab extends AnalyzerTab {
         case VariableListEvent.MOVE -> fireTableRowsUpdated(0, listCopy.length - 1);
         case VariableListEvent.REPLACE -> fireTableRowsUpdated(idx, idx);
         default -> {
+          // do nothing
         }
-        // do nothing
       }
     }
 
