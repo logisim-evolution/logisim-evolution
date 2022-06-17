@@ -489,8 +489,8 @@ class XmlReader {
             circuitsData.add(circData);
           }
           default -> {
+            // do nothing
           }
-          // do nothing
         }
       }
 

@@ -261,8 +261,8 @@ public class AutoLabel {
         return true;
       }
       default -> {
+        // nothing
       }
-      // nothing
     }
     return false;
   }

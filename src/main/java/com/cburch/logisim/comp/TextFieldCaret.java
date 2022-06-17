@@ -302,7 +302,8 @@ class TextFieldCaret implements Caret, TextFieldListener {
         }
       }
       default -> {
-      }// ignore
+        // ignore
+      }
     }
   }
 

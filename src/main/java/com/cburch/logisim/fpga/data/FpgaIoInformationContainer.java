@@ -491,8 +491,8 @@ public class FpgaIoInformationContainer implements Cloneable {
           case IoComponentTypes.ROTATION_CW_90, IoComponentTypes.ROTATION_CCW_90 ->
               result.setAttribute(BoardWriterClass.MAP_ROTATION, Integer.toString(myRotation));
           default -> {
+            // no rotation
           }
-          // no rotation
         }
       }
       if (CollectionUtil.isNotEmpty(myInputPins)) {

@@ -49,8 +49,8 @@ public class FlipFlopIcon extends BaseIcon {
       case SR_FLIPFLOP -> str = "SR";
       case REGISTER -> str = "00";
       default -> {
+        // do nothing. Should not really happen.
       }
-      // do nothing. Should not really happen.
     }
     final var f = g2.getFont().deriveFont((float) ((double) AppPreferences.getIconSize() / 2.1));
     final var l = new TextLayout(str, f, g2.getFontRenderContext());

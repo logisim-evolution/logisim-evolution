@@ -77,8 +77,8 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
       case HDL_EXPORT -> editor.doExport();
       case HDL_VALIDATE -> editor.doValidate();
       default -> {
+        // nothing to do here
       }
-      // nothing to do here
     }
   }
 

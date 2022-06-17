@@ -73,8 +73,8 @@ public class OpenSaveIcon extends BaseIcon {
         g2.fillPolygon(xPoints, yPoints, 7);
       }
       default -> {
+        // do nothing. should not really happen.
       }
-      // do nothing. should not really happen.
     }
   }
 }
