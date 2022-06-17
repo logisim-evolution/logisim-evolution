@@ -83,7 +83,7 @@ class LogThread extends UniquelyNamedThread implements Model.Listener {
         buf.append(cur[i].getFormattedValue());
         if (cur[i].duration < duration) duration = cur[i].duration;
       }
-      // todo: only write duration if not in coarse-step or coarse-clock mode?
+      // TODO: only write duration if not in coarse-step or coarse-clock mode?
       writer.println(buf + "\t# " + Model.formatDuration(duration));
       for (final var c : cur) c.advance(duration);
       timeNextWrite += duration;

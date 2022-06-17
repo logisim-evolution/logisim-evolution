@@ -293,7 +293,7 @@ public class Signal {
     }
   }
 
-  // todo: easily optimized
+  // TODO: easily optimized
   public Value getValue(long t) { // always current width, even when width changes
     if (t < timeStart) return null;
     final var width = info.getWidth();
@@ -318,13 +318,13 @@ public class Signal {
 
   public String getFormattedMaxValue() {
     final var width = info.getWidth();
-    // todo: signed decimal should maybe use a large positive value?
+    // TODO: signed decimal should maybe use a large positive value?
     return format(Value.createKnown(BitWidth.create(width), -1));
   }
 
   public String getFormattedMinValue() {
     final var width = info.getWidth();
-    // todo: signed decimal should maybe use a large negative value?
+    // TODO: signed decimal should maybe use a large negative value?
     return format(Value.createKnown(BitWidth.create(width), 0));
   }
 

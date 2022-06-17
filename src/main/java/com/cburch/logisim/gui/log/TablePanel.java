@@ -97,7 +97,7 @@ class TablePanel extends LogPanel {
     private static final long serialVersionUID = 1L;
 
     private void computePreferredSize() {
-      // todo: sizing is terrible
+      // TODO: sizing is terrible
       final var model = getModel();
       final var columns = model.getSignalCount();
       if (columns == 0) {

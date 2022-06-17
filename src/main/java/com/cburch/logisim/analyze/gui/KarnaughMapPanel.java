@@ -808,7 +808,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
     /* Here the lines are placed */
     switch (cols) {
       case 2 ->
-          drawKmapLine(gfx, new Point(x + cellWidth, y - 8), new Point(x + 2 * cellWidth, y - 8));
+        drawKmapLine(gfx, new Point(x + cellWidth, y - 8), new Point(x + 2 * cellWidth, y - 8));
       case 4 -> {
         drawKmapLine(gfx, new Point(x + 2 * cellWidth, y - 8), new Point(x + 4 * cellWidth, y - 8));
         drawKmapLine(

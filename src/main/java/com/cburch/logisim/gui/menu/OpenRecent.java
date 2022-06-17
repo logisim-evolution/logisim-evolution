@@ -119,7 +119,7 @@ class OpenRecent extends JMenu implements PropertyChangeListener {
       // If the current project hasn't been touched and has no file associated
       // with it (i.e. is entirely blank), and the new file was opened
       // successfully, then go ahead and close the old blank window.
-      // todo: and has no subwindows or dialogs open?
+      // TODO: and has no subwindows or dialogs open?
       if (newProj != null
           && proj != null
           && !proj.isFileDirty()

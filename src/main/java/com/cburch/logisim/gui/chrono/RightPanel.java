@@ -596,7 +596,7 @@ public class RightPanel extends JPanel {
 
     public void paintWaveform(Graphics2D g) {
       if (buf == null) {
-        // todo: reallocating image each time seems silly
+        // TODO: reallocating image each time seems silly
         createOffscreen();
       }
       final var y = WAVE_HEIGHT * signal.idx;
@@ -701,7 +701,7 @@ public class RightPanel extends JPanel {
       //   10,  20,  25,  50
       //   100, 200, 250, 500
       //   etc., such that labels are at least TIMELINE_SPACING pixels apart.
-      // todo: in clock and step mode, maybe use timeScale as unit?
+      // TODO: in clock and step mode, maybe use timeScale as unit?
       var b = 1L;
       var j = 0;
       while ((int) (unit[j] * b * pixelPerTime) < TIMELINE_SPACING) {

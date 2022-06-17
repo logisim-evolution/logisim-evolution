@@ -746,7 +746,7 @@ class TableTab extends AnalyzerTab implements Entry.EntryChangedListener {
           final var s = caret.getSelection();
           final var inputs = table.getInputColumnCount();
           for (var c = s.x; c < s.x + s.width; c++) {
-            if (c < inputs) continue; // todo: allow input row delete?
+            if (c < inputs) continue; // TODO: allow input row delete?
             for (var r = s.y; r < s.y + s.height; r++) {
               table.setVisibleOutputEntry(r, c - inputs, Entry.DONT_CARE);
             }

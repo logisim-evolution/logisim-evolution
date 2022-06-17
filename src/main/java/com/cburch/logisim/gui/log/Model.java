@@ -426,7 +426,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   @Override
   public void circuitChanged(CircuitEvent event) {
     int action = event.getAction();
-    // todo: gracefully handle pin width changes, other circuit changes
+    // TODO: gracefully handle pin width changes, other circuit changes
     if (action == CircuitEvent.TRANSACTION_DONE) {
       final var circ = circuitState.getCircuit();
       final var repl = event.getResult().getReplacementMap(circ);

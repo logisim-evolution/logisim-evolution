@@ -29,7 +29,7 @@ public class TruthTable {
   private static final CompareInputs sortByInputs = new CompareInputs();
 
   private static class Row implements Iterable<Integer> {
-    // todo: probably more efficient to store this in baseIdx/dcMask format.
+    // TODO: probably more efficient to store this in baseIdx/dcMask format.
     final Entry[] inputs;
 
     Row(int idx, int numInputs, int mask) {
@@ -438,7 +438,7 @@ public class TruthTable {
                   newRows.get(taken[idx] - 1).toBitString(ivars),
                   r.toBitString(ivars)));
         } else if (taken[idx] != 0) {
-          // todo: split row
+          // TODO: split row
           throw new IllegalArgumentException(
               "Sorry, this error can't yet be fixed. Eliminate duplicate rows then try again.");
         } else {

@@ -88,7 +88,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
   final JRadioButton realTime = new JRadioButton();
   final JRadioButton clockTime = new JRadioButton();
 
-  // todo: save defaults with project and/or compute from circuit clocks
+  // TODO: save defaults with project and/or compute from circuit clocks
   final JCheckBox stepFine = new JCheckBox();
   final JCheckBox realFine = new JCheckBox();
   final JCheckBox clockFine = new JCheckBox();
@@ -132,7 +132,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
 
   final JScrollPane pane;
 
-  // todo: tooltips?
+  // TODO: tooltips?
   OptionsPanel(LogFrame frame) {
     super(frame);
 
@@ -439,7 +439,7 @@ class OptionsPanel extends LogPanel implements ActionListener, ChangeListener, M
     }
   }
 
-  // todo: listen to locale here, but need to make LocaleManager hold weak ref
+  // TODO: listen to locale here, but need to make LocaleManager hold weak ref
   static class JLabeledComboBox<E> extends JComboBox<E> {
     private static final long serialVersionUID = 1L;
     final String labelKey;
