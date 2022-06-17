@@ -181,8 +181,8 @@ class ExpressionTab extends AnalyzerTab {
           return;
         }
         default -> {
+          // none
         }
-        // none
       }
     }
 

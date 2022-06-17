@@ -465,8 +465,8 @@ public class RamAppearance {
       case 2 -> result.setToolTip(S.getter("ramLETip2"));
       case 3 -> result.setToolTip(S.getter("ramLETip3"));
       default -> {
+        // none
       }
-      // none
     }
     return result;
   }
@@ -483,8 +483,8 @@ public class RamAppearance {
       case 2 -> result.setToolTip(S.getter("ramByteEnableTip2"));
       case 3 -> result.setToolTip(S.getter("ramByteEnableTip3"));
       default -> {
+        // none
       }
-      // none
     }
     return result;
   }
