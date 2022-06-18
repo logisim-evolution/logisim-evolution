@@ -11,13 +11,12 @@ package com.cburch.logisim.fpga.data;
 
 import static com.cburch.logisim.fpga.Strings.S;
 
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 public class LedArrayDriving {
 
-  public static String GetContraintedDriveMode(char id) {
+  public static String getConstrainedDriveMode(char id) {
     return ((id >= LED_DEFAULT) && (id <= RGB_COLUMN_SCANNING)) ? DRIVING_STRINGS[id] : "Unknown";
   }
 

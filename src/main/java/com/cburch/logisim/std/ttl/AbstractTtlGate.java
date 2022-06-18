@@ -325,7 +325,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
           else if (dir == Direction.NORTH)
             g.fillArc(xp + width / 2 - 7, yp + height - 11, 14, 14, 0, 180);
           else // east
-          g.fillArc(xp - 7, yp + height / 2 - 7, 14, 14, 270, 180);
+            g.fillArc(xp - 7, yp + height / 2 - 7, 14, 14, 270, 180);
         }
         if (i < this.pinNumber / 2) {
           if (dir == Direction.WEST || dir == Direction.EAST)

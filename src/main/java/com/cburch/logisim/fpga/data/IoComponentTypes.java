@@ -183,7 +183,7 @@ public enum IoComponentTypes {
        : (nrPins > 1) ? S.get("FpgaIoPins", id) : S.get("FpgaIoPin");
   }
 
-  public static int GetNrOfFPGAPins(IoComponentTypes comp) {
+  public static int getNrOfFPGAPins(IoComponentTypes comp) {
     return getFpgaInOutRequirement(comp)
         + getFpgaInputRequirement(comp)
         + getFpgaOutputRequirement(comp);

@@ -224,7 +224,7 @@ public class DigitalOscilloscope extends InstanceFactory {
           },
           3);
       if (showclock == 1 && i == 0) // clock diagram color
-      g.setColor(painter.getAttributeValue(ATTR_COLOR).darker().darker());
+        g.setColor(painter.getAttributeValue(ATTR_COLOR).darker().darker());
       else g.setColor(Color.BLACK); // input diagrams color
       // draw diagram
       for (byte j = 0; j < length; j++) {

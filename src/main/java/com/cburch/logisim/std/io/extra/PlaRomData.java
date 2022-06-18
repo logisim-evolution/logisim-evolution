@@ -382,7 +382,7 @@ public class PlaRomData implements InstanceData {
       column = node - row * getOutputs();
       switch (value) {
         case 0 ->
-          // not selected
+            // not selected
             andOutput[row][column] = false;
         case 1 -> andOutput[row][column] = true;
         default -> {
