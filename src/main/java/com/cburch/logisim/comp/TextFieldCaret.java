@@ -267,8 +267,6 @@ class TextFieldCaret implements Caret, TextFieldListener {
         }
         e.consume();
       }
-      default -> {
-      }
     }
   }
 

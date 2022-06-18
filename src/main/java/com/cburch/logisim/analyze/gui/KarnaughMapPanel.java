@@ -835,6 +835,7 @@ public class KarnaughMapPanel extends JPanel implements BaseMouseMotionListenerC
             new Point(x + 8 * cellWidth, y + 8 + rows * cellHeight));
       }
       default -> {
+        // none
       }
     }
     switch (rows) {
