@@ -14,7 +14,7 @@ import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.util.LineBuffer;
 
 /**
- * TTL 74x266: quad 2-input XNOR gate
+ * TTL 74x7266: quad 2-input XNOR gate
  * Model based on https://www.ti.com/product/CD74HC7266 datasheet.
  */
 public class Ttl747266 extends AbstractTtlGate {
