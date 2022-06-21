@@ -96,6 +96,7 @@ public class Startup implements AWTEventListener {
   private boolean exitAfterStartup = false;
   private boolean showSplash;
   private File loadFile;
+  private File saveFile;
   private int ttyFormat = 0;
   // from other sources
   private boolean initialized = false;
@@ -145,6 +146,7 @@ public class Startup implements AWTEventListener {
   private static final String ARG_HELP_LONG = "help";
   private static final String ARG_LOAD_SHORT = "l";
   private static final String ARG_LOAD_LONG = "load";
+  private static final String ARG_SAVE_LONG = "save";
   private static final String ARG_GEOMETRY_SHORT = "m";
   private static final String ARG_GEOMETRY_LONG = "geometry";
   private static final String ARG_TEST_CIRC_GEN_SHORT = "n";
@@ -315,6 +317,7 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argClearOption", ARG_CLEAR_PREFS_LONG);
     addOption(opts, "argSubOption", ARG_SUBSTITUTE_LONG, ARG_SUBSTITUTE_SHORT, 2);
     addOption(opts, "argLoadOption", ARG_LOAD_LONG, ARG_LOAD_SHORT, 1);
+    addOption(opts, "argSaveOption", ARG_SAVE_LONG, 1);
     addOption(opts, "argGatesOption", ARG_GATES_LONG, ARG_GATES_SHORT, 1);
     addOption(opts, "argGeometryOption", ARG_GEOMETRY_LONG, ARG_GEOMETRY_SHORT, 1);
     addOption(opts, "argLocaleOption", ARG_LOCALE_LONG, ARG_LOCALE_SHORT, 1);
@@ -380,6 +383,7 @@ public class Startup implements AWTEventListener {
         case ARG_TTY_LONG -> handleArgTty(startup, opt);
         case ARG_SUBSTITUTE_LONG -> handleArgSubstitute(startup, opt);
         case ARG_LOAD_LONG -> handleArgLoad(startup, opt);
+        case ARG_SAVE_LONG -> handleArgSave(startup, opt);
         case ARG_GATES_LONG -> handleArgGates(startup, opt);
         case ARG_GEOMETRY_LONG -> handleArgGeometry(startup, opt);
         case ARG_LOCALE_LONG -> handleArgLocale(startup, opt);
@@ -416,6 +420,10 @@ public class Startup implements AWTEventListener {
     }
     if (startup.loadFile != null && !startup.isTty) {
       logger.error(S.get("loadNeedsTtyError"));
+      return null;
+    }
+    if (startup.saveFile != null && !startup.isTty) {
+      logger.error(S.get("saveNeedsTtyError"));
       return null;
     }
 
@@ -464,16 +472,14 @@ public class Startup implements AWTEventListener {
 
         if (val == 0) {
           logger.error(S.get("ttyFormatError"));
-          // FIXME: Shouldn't we exit here -> RC.QUIT;
-          continue;
+          return RC.QUIT;
         }
         startup.ttyFormat |= val;
         return RC.OK;
       }
     }
     logger.error(S.get("ttyFormatError"));
-    // FIXME: Shouldn't we exit here; -> RC.QUIT
-    return RC.WARN;
+    return RC.QUIT;
   }
 
   private static RC handleArgSubstitute(Startup startup, Option opt) {
@@ -497,6 +503,16 @@ public class Startup implements AWTEventListener {
     }
     final var fileName = opt.getValue();
     startup.loadFile = new File(fileName);
+    return RC.OK;
+  }
+
+  private static RC handleArgSave(Startup startup, Option opt) {
+    if (startup.saveFile != null) {
+      logger.error(S.get("saveMultipleError"));
+      return RC.WARN;
+    }
+    final var fileName = opt.getValue();
+    startup.saveFile = new File(fileName);
     return RC.OK;
   }
 
@@ -766,6 +782,10 @@ public class Startup implements AWTEventListener {
 
   File getLoadFile() {
     return loadFile;
+  }
+
+  File getSaveFile() {
+    return saveFile;
   }
 
   String getCircuitToTest() {

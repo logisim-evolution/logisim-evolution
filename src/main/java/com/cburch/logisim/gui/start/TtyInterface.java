@@ -75,8 +75,7 @@ public class TtyInterface {
     else precision = 0.0000001;
     hertz = (int) (hertz / precision) * precision;
     var hertzStr = hertz == (int) hertz ? "" + (int) hertz : "" + hertz;
-    final Object[] paramArray = {S.get("ttySpeedMsg"), hertzStr, tickCount, elapse};
-    logger.info("{}", paramArray);
+    System.out.printf(S.get("ttySpeedMsg")+"\n", hertzStr, tickCount, elapse);
   }
 
   private static void displayStatistics(LogisimFile file, Circuit circuit) {
@@ -228,6 +227,25 @@ public class TtyInterface {
     return found;
   }
 
+  private static boolean saveRam(CircuitState circState, File saveFile) throws IOException {
+    if (saveFile == null) return false;
+
+    var found = false;
+    for (final var comp : circState.getCircuit().getNonWires()) {
+      if (comp.getFactory() instanceof Ram ramFactory) {
+        final var ramState = circState.getInstanceState(comp);
+        final var m = ramFactory.getContents(ramState);
+        HexFile.save(saveFile,m,"v3.0 hex words plain");
+        found = true;
+      }
+    }
+
+    for (final var sub : circState.getSubStates()) {
+      found |= saveRam(sub, saveFile);
+    }
+    return found;
+  }
+
   private static boolean prepareForTty(CircuitState circState, ArrayList<InstanceState> keybStates) {
     var found = false;
     for (final var comp : circState.getCircuit().getNonWires()) {
@@ -317,6 +335,20 @@ public class TtyInterface {
     }
     final var ttyFormat = args.getTtyFormat();
     final var simCode = runSimulation(circState, outputPins, haltPin, ttyFormat);
+
+    if (args.getSaveFile() != null) {
+      try {
+        final var saved = saveRam(circState, args.getSaveFile());
+        if (!saved) {
+          logger.error("{}", S.get("saveNoRamError"));
+          System.exit(-1);
+        }
+      } catch (IOException e) {
+        logger.error("{}: {}", S.get("saveIoError"), e.toString());
+        System.exit(-1);
+      }
+    }
+
     System.exit(simCode);
   }
 
