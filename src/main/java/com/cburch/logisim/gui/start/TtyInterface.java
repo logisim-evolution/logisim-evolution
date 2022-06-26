@@ -75,7 +75,7 @@ public class TtyInterface {
     else precision = 0.0000001;
     hertz = (int) (hertz / precision) * precision;
     var hertzStr = hertz == (int) hertz ? "" + (int) hertz : "" + hertz;
-    System.out.printf(S.get("ttySpeedMsg")+"\n", hertzStr, tickCount, elapse);
+    System.out.printf(S.get("ttySpeedMsg") + "\n", hertzStr, tickCount, elapse);
   }
 
   private static void displayStatistics(LogisimFile file, Circuit circuit) {
@@ -235,7 +235,7 @@ public class TtyInterface {
       if (comp.getFactory() instanceof Ram ramFactory) {
         final var ramState = circState.getInstanceState(comp);
         final var m = ramFactory.getContents(ramState);
-        HexFile.save(saveFile,m,"v3.0 hex words plain");
+        HexFile.save(saveFile, m, "v3.0 hex words plain");
         found = true;
       }
     }
