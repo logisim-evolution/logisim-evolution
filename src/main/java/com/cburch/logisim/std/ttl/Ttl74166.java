@@ -22,7 +22,7 @@ import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 
 /**
- * TTL 74x166 8-bit parallel-to-serial shift register with clear
+ * TTL 74x166 8-bit parallel-to-serial shift register with asynchronous clear
  * Model based on https://www.ti.com/product/SN74LS166A datasheet.
  */
 public class Ttl74166 extends AbstractTtlGate {
