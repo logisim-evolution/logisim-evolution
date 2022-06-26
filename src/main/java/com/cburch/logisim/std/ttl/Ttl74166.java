@@ -95,7 +95,6 @@ public class Ttl74166 extends AbstractTtlGate {
       if (!state.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE)) return;
       if (isPressed && isInside(state, e)) {
         final var index = getIndex(state, e);
-        System.out.println(index);
         final var myState = (ShiftRegisterData) state.getData();
         if (myState == null) return;
         if (myState.get(index).isFullyDefined())
