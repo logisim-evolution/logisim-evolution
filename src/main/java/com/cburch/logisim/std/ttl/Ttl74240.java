@@ -24,14 +24,14 @@ public class Ttl74240 extends AbstractOctalBuffers {
 
   public Ttl74240() {
     super(
-      _ID,
-      (byte) 20,
-      new byte[] {3, 5, 7, 9, 12, 14, 16, 18},
-      new String[] {
-        "n1G", "1A1", "n2Y4", "1A2", "n2Y3", "1A3", "n2Y2", "1A4", "n2Y1",
-        "2A1", "n1Y4", "2A2", "n1Y3", "2A3", "n1Y2", "2A4", "n1Y1", "n2G",
-      },
-      null);
+        _ID,
+        (byte) 20,
+        new byte[] {3, 5, 7, 9, 12, 14, 16, 18},
+        new String[] {
+          "n1G", "1A1", "n2Y4", "1A2", "n2Y3", "1A3", "n2Y2", "1A4", "n2Y1",
+          "2A1", "n1Y4", "2A2", "n1Y3", "2A3", "n1Y2", "2A4", "n1Y1", "n2G",
+        },
+        null);
     super.setOutputInverted(true, true);
     super.setEnableInverted(true, true);
   }

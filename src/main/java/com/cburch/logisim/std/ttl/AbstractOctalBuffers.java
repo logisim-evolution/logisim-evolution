@@ -90,62 +90,62 @@ public class AbstractOctalBuffers extends AbstractTtlGate {
     // channel 1 enable
     if (ch1EnableInverted) {
       g.drawPolyline(
-        new int[] { x + 10, x + 10, x + 20, x + 20 },
-        new int[] { y + height - AbstractTtlGate.PIN_HEIGHT, y + height - 10, y + height - 10, y + height - 13 },
-        4);
+          new int[] { x + 10, x + 10, x + 20, x + 20 },
+          new int[] { y + height - AbstractTtlGate.PIN_HEIGHT, y + height - 10, y + height - 10, y + height - 13 },
+          4);
       g.drawOval(x + 18, y + height - 17, 4, 4);
     } else {
       g.drawPolyline(
-        new int[] { x + 10, x + 10, x + 20, x + 20 },
-        new int[] { y + height - AbstractTtlGate.PIN_HEIGHT, y + height - 10, y + height - 10, y + height - 17 },
-        4);
+          new int[] { x + 10, x + 10, x + 20, x + 20 },
+          new int[] { y + height - AbstractTtlGate.PIN_HEIGHT, y + height - 10, y + height - 10, y + height - 17 },
+          4);
     }
 
     g.drawPolyline(
-      new int[] { x + 15, x + 20, x + 25, x + 15 },
-      new int[] { y + height - 17, y + height - 25, y + height - 17, y + height - 17 },
-      4);
+        new int[] { x + 15, x + 20, x + 25, x + 15 },
+        new int[] { y + height - 17, y + height - 25, y + height - 17, y + height - 17 },
+        4);
 
     g.drawPolyline(
-      new int[] { x + 20, x + 20, x + 155 },
-      new int[] { y + height - 25, y + height - 28, y + height - 28 },
-      3);
+        new int[] { x + 20, x + 20, x + 155 },
+        new int[] { y + height - 25, y + height - 28, y + height - 28 },
+        3);
 
     // channel 1 buffers
     for (int i = x + 30; i < x + 190; i += 40) {
       // input
       g.drawPolyline(
-        new int[] { i, i, i + 10, i + 10 },
-        new int[] { y + height - AbstractTtlGate.PIN_HEIGHT, y + height - 10, y + height - 10, y + height - 16 },
-        4);
+          new int[] { i, i, i + 10, i + 10 },
+          new int[] { y + height - AbstractTtlGate.PIN_HEIGHT, y + height - 10, y + height - 10, y + height - 16 },
+          4);
 
       // buffer
       g.drawPolyline(
-        new int[] { i + 6, i + 10, i + 14, i + 6 },
-        new int[] { y + height - 16, y + height - 22, y + height - 16, y + height - 16 },
-        4);
+          new int[] { i + 6, i + 10, i + 14, i + 6 },
+          new int[] { y + height - 16, y + height - 22, y + height - 16, y + height - 16 },
+          4);
       
       // enable
-      if ( i < x + 150 ) {
+      if (i < x + 150) {
         g.fillOval(i + 4, y + height - 29, 2, 2);
       }
       g.drawPolyline(
-        new int[] { i + 5, i + 5, i + 8 },
-        new int[] { y + height - 28, y + height - 20, y + height - 20 },
-        3);
+          new int[] { i + 5, i + 5, i + 8 },
+          new int[] { y + height - 28, y + height - 20, y + height - 20 },
+          3);
 
       // output
       if (ch1OutputInverted) {
         g.drawOval(i + 9, y + height - 25, 2, 2);
         g.drawPolyline(
-          new int[] { i + 10, i + 10, i + 20, i + 20 },
-          new int[] { y + height - 25, y + 10, y + 10, y + AbstractTtlGate.PIN_HEIGHT },
-          4);
+            new int[] { i + 10, i + 10, i + 20, i + 20 },
+            new int[] { y + height - 25, y + 10, y + 10, y + AbstractTtlGate.PIN_HEIGHT },
+            4);
       } else {
         g.drawPolyline(
-          new int[] { i + 10, i + 10, i + 20, i + 20 },
-          new int[] { y + height - 22, y + 10, y + 10, y + AbstractTtlGate.PIN_HEIGHT },
-          4);
+            new int[] { i + 10, i + 10, i + 20, i + 20 },
+            new int[] { y + height - 22, y + 10, y + 10, y + AbstractTtlGate.PIN_HEIGHT },
+            4);
       }
     }
 
@@ -158,50 +158,50 @@ public class AbstractOctalBuffers extends AbstractTtlGate {
     }
 
     g.drawPolyline(
-      new int[] { x + 25, x + 30, x + 35, x + 25 },
-      new int[] { y + 17, y + 25, y + 17, y + 17 },
-      4);
+        new int[] { x + 25, x + 30, x + 35, x + 25 },
+        new int[] { y + 17, y + 25, y + 17, y + 17 },
+        4);
 
     g.drawPolyline(
-      new int[] { x + 30, x + 30, x + 175 },
-      new int[] { y + 25, y + 28, y + 28 },
-      3);
+        new int[] { x + 30, x + 30, x + 175 },
+        new int[] { y + 25, y + 28, y + 28 },
+        3);
 
     // channel 2 buffers
     for (int i = x + 70; i < x + 230; i += 40) {
       // input
       g.drawPolyline(
-        new int[] { i, i, i - 10, i - 10 },
-        new int[] { y + AbstractTtlGate.PIN_HEIGHT, y +  10, y + 10, y + 16 },
-        4);
+          new int[] { i, i, i - 10, i - 10 },
+          new int[] { y + AbstractTtlGate.PIN_HEIGHT, y +  10, y + 10, y + 16 },
+          4);
 
       // buffer
       g.drawPolyline(
-        new int[] { i - 6, i - 10, i - 14, i - 6 },
-        new int[] { y + 16, y + 22, y + 16, y + 16 },
-        4);
+          new int[] { i - 6, i - 10, i - 14, i - 6 },
+          new int[] { y + 16, y + 22, y + 16, y + 16 },
+          4);
       
       // enable
-      if ( i < x + 190 ) {
+      if (i < x + 190) {
         g.fillOval(i - 16, y + 27, 2, 2);
       }
       g.drawPolyline(
-        new int[] { i - 15, i - 15, i - 12 },
-        new int[] { y + 28, y + 20, y + 20 },
-        3);
+          new int[] { i - 15, i - 15, i - 12 },
+          new int[] { y + 28, y + 20, y + 20 },
+          3);
 
       // output
       if (ch2OutputInverted) {
         g.drawOval(i - 11, y + 23, 2, 2);
         g.drawPolyline(
-          new int[] { i - 10, i - 10, i - 20, i - 20 },
-          new int[] { y + 25, y + height - 10, y + height - 10, y + height - AbstractTtlGate.PIN_HEIGHT },
-          4);
+            new int[] { i - 10, i - 10, i - 20, i - 20 },
+            new int[] { y + 25, y + height - 10, y + height - 10, y + height - AbstractTtlGate.PIN_HEIGHT },
+            4);
       } else {
         g.drawPolyline(
-          new int[] { i - 10, i - 10, i - 20, i - 20 },
-          new int[] { y + 22, y + height - 10, y + height - 10, y + height - AbstractTtlGate.PIN_HEIGHT },
-          4);
+            new int[] { i - 10, i - 10, i - 20, i - 20 },
+            new int[] { y + 22, y + height - 10, y + height - 10, y + height - AbstractTtlGate.PIN_HEIGHT },
+            4);
       }
     }
   }
