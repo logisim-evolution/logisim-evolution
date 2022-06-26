@@ -13,6 +13,10 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 
+/**
+ * TTL 74x266: quad 2-input XNOR gate (open-collector)
+ * Model based on https://www.ti.com/product/SN74LS266 datasheet.
+ */
 public class Ttl74266 extends AbstractTtlGate {
   /**
    * Unique identifier of the tool, used as reference in project files.
@@ -22,10 +26,6 @@ public class Ttl74266 extends AbstractTtlGate {
    */
   public static final String _ID = "74266";
 
-/**
- * TTL 74x266: quad 2-input XNOR gate (open-collector)
- * Model based on https://www.ti.com/product/SN74LS266 datasheet.
- */
   public Ttl74266() {
     super(_ID, (byte) 14, new byte[] {3, 6, 8, 11}, true, null);
   }
@@ -49,10 +49,10 @@ public class Ttl74266 extends AbstractTtlGate {
   @Override
   public void propagateTtl(InstanceState state) {
     for (byte i = 2; i < 6; i += 3) {
-      state.setPort(i, (state.getPortValue(i - 1).xor(state.getPortValue(i - 2)).not() == Value.TRUE)?Value.UNKNOWN:Value.FALSE, 1);
+      state.setPort(i, (state.getPortValue(i - 1).xor(state.getPortValue(i - 2)).not() == Value.TRUE) ? Value.UNKNOWN : Value.FALSE, 1);
     }
     for (byte i = 6; i < 12; i += 3) {
-      state.setPort(i, (state.getPortValue(i + 1).xor(state.getPortValue(i + 2)).not() == Value.TRUE)?Value.UNKNOWN:Value.FALSE, 1);
+      state.setPort(i, (state.getPortValue(i + 1).xor(state.getPortValue(i + 2)).not() == Value.TRUE) ? Value.UNKNOWN : Value.FALSE, 1);
     }
   }
 }
