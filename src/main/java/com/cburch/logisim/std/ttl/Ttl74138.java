@@ -93,9 +93,9 @@ public class Ttl74138 extends AbstractTtlGate {
 
   protected void computeState(InstanceState state, byte inEn1, byte inEn2a, byte inEn2b, byte inA, byte inB, byte inC, byte[] outPorts) {
     final var enabled =
-      state.getPortValue(mapPort(inEn1)) == Value.TRUE &&   // Active HIGH
-      state.getPortValue(mapPort(inEn2a)) == Value.FALSE && // Active LOW
-      state.getPortValue(mapPort(inEn2b)) == Value.FALSE;   // Active LOW
+        state.getPortValue(mapPort(inEn1)) == Value.TRUE        // Active HIGH
+        && state.getPortValue(mapPort(inEn2a)) == Value.FALSE   // Active LOW
+        && state.getPortValue(mapPort(inEn2b)) == Value.FALSE;  // Active LOW
     final var A = state.getPortValue(mapPort(inA)) == Value.TRUE ? (byte) 1 : 0;
     final var B = state.getPortValue(mapPort(inB)) == Value.TRUE ? (byte) 2 : 0;
     final var C = state.getPortValue(mapPort(inC)) == Value.TRUE ? (byte) 4 : 0;
