@@ -21,6 +21,10 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 
+/**
+ * TTL 74x165 8-bit parallel-to-serial shift register with asynchronous load
+ * Model based on https://www.ti.com/product/SN74LS165A datasheet.
+ */
 public class Ttl74165 extends AbstractTtlGate {
   /**
    * Unique identifier of the tool, used as reference in project files.
