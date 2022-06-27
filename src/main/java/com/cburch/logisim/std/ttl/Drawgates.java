@@ -183,7 +183,7 @@ public class Drawgates {
 
   /**
    * Draws the schematic symbol for an open-collector/open-drain output
-   * 
+   *
    * @param g Graphics context to draw to
    * @param x x position of symbol
    * @param y y position of symbol
