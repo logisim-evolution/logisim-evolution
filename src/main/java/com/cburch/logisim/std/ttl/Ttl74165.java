@@ -145,20 +145,18 @@ public class Ttl74165 extends AbstractTtlGate {
   public void propagateTtl(InstanceState state) {
     final var data = getData(state);
     final var triggered = data.updateClock(state.getPortValue(1), StdAttr.TRIG_RISING);
-    if (triggered && state.getPortValue(13) != Value.TRUE) {
-      if (state.getPortValue(0) == Value.FALSE) { // load
-        data.clear();
-        data.push(state.getPortValue(9));
-        data.push(state.getPortValue(10));
-        data.push(state.getPortValue(11));
-        data.push(state.getPortValue(12));
-        data.push(state.getPortValue(2));
-        data.push(state.getPortValue(3));
-        data.push(state.getPortValue(4));
-        data.push(state.getPortValue(5));
-      } else if (state.getPortValue(0) == Value.TRUE) { // shift
-        data.push(state.getPortValue(8));
-      }
+    if (state.getPortValue(0) == Value.FALSE) { // load
+      data.clear();
+      data.push(state.getPortValue(9));
+      data.push(state.getPortValue(10));
+      data.push(state.getPortValue(11));
+      data.push(state.getPortValue(12));
+      data.push(state.getPortValue(2));
+      data.push(state.getPortValue(3));
+      data.push(state.getPortValue(4));
+      data.push(state.getPortValue(5));
+    } else if (triggered && state.getPortValue(13) == Value.FALSE) { // shift
+      data.push(state.getPortValue(8));
     }
     state.setPort(6, data.get(0).not(), 4);
     state.setPort(7, data.get(0), 4);
