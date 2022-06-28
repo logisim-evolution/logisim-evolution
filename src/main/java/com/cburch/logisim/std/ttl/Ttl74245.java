@@ -69,6 +69,14 @@ public class Ttl74245 extends AbstractTtlGate {
       state.setPort(16, Value.UNKNOWN, 1);
     } else if (state.getPortValue(0) == Value.TRUE) {
       // DIR HIGH = A->B
+      state.setPort(1, Value.UNKNOWN, 1);
+      state.setPort(2, Value.UNKNOWN, 1);
+      state.setPort(3, Value.UNKNOWN, 1);
+      state.setPort(4, Value.UNKNOWN, 1);
+      state.setPort(5, Value.UNKNOWN, 1);
+      state.setPort(6, Value.UNKNOWN, 1);
+      state.setPort(7, Value.UNKNOWN, 1);
+      state.setPort(8, Value.UNKNOWN, 1);
       state.setPort(9, state.getPortValue(8), 1);
       state.setPort(10, state.getPortValue(7), 1);
       state.setPort(11, state.getPortValue(6), 1);
@@ -87,6 +95,14 @@ public class Ttl74245 extends AbstractTtlGate {
       state.setPort(6, state.getPortValue(11), 1);
       state.setPort(7, state.getPortValue(10), 1);
       state.setPort(8, state.getPortValue(9), 1);
+      state.setPort(9, Value.UNKNOWN, 1);
+      state.setPort(10, Value.UNKNOWN, 1);
+      state.setPort(11, Value.UNKNOWN, 1);
+      state.setPort(12, Value.UNKNOWN, 1);
+      state.setPort(13, Value.UNKNOWN, 1);
+      state.setPort(14, Value.UNKNOWN, 1);
+      state.setPort(15, Value.UNKNOWN, 1);
+      state.setPort(16, Value.UNKNOWN, 1);
     }
   }
 
