@@ -113,7 +113,7 @@ public class Ttl74192 extends AbstractTtlGate {
         final var data = (UpDownCounterData) state.getData();
         if (data == null) return;
         var current = data.getValue().toLongValue();
-        final long bitValue = 1 << index;
+        final var bitValue = 1L << index;
         current ^= bitValue;
         updateState(state, Value.createKnown(WIDTH, current), Value.FALSE, Value.FALSE, Value.FALSE, Value.FALSE);
       }
