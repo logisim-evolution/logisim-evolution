@@ -137,7 +137,7 @@ public class Ttl7474 extends AbstractTtlGate {
   }
 
   private void drawState(Graphics g, int x, int y, int ID, TtlRegisterData state) {
-    if (state != null) return;
+    if (state == null) return;
     g.setColor(state.getValue().get(ID).getColor());
     g.fillOval(x + 33, y + 30, 8, 8);
     g.setColor(Color.WHITE);
