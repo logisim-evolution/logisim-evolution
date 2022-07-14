@@ -114,7 +114,7 @@ public class Ttl74161 extends AbstractTtlGate {
         final var data = (TtlRegisterData) state.getData();
         if (data == null) return;
         var current = data.getValue().toLongValue();
-        final long bitValue = 1 << index;
+        final var bitValue = 1L << index;
         current ^= bitValue;
         updateState(state, current);
       }
@@ -139,17 +139,16 @@ public class Ttl74161 extends AbstractTtlGate {
   }
 
   private void drawState(Graphics2D gfx, int x, int y, int height, TtlRegisterData state) {
-    if (state != null) {
-      long value = state.getValue().toLongValue();
-      for (var i = 0; i < 4; i++) {
-        final var isSetBitValue = (value & (1 << (3 - i))) != 0;
-        gfx.setColor(isSetBitValue ? trueColor : falseColor);
-        gfx.fillOval(x + 52 + i * 10, y + height / 2 - 4, 8, 8);
-        gfx.setColor(Color.WHITE);
-        GraphicsUtil.drawCenteredText(gfx, isSetBitValue ? "1" : "0", x + 56 + i * 10, y + height / 2);
-      }
-      gfx.setColor(Color.BLACK);
+    if (state == null) return;
+    long value = state.getValue().toLongValue();
+    for (var i = 0; i < 4; i++) {
+      final var isSetBitValue = (value & (1 << (3 - i))) != 0;
+      gfx.setColor(isSetBitValue ? trueColor : falseColor);
+      gfx.fillOval(x + 52 + i * 10, y + height / 2 - 4, 8, 8);
+      gfx.setColor(Color.WHITE);
+      GraphicsUtil.drawCenteredText(gfx, isSetBitValue ? "1" : "0", x + 56 + i * 10, y + height / 2);
     }
+    gfx.setColor(Color.BLACK);
   }
 
   public static void updateState(InstanceState state, Long value) {
