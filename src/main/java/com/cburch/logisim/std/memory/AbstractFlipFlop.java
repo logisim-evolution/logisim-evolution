@@ -267,6 +267,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
   private void paintInstanceClassic(InstancePainter painter) {
     final var g = painter.getGraphics();
+    final var baseColor = new Color(AppPreferences.COMPONENT_COLOR.get());
     painter.drawBounds();
     painter.drawLabel();
     if (painter.getShowState()) {
@@ -279,7 +280,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
         g.fillOval(x - 26, y + 4, 13, 13);
         g.setColor(Color.WHITE);
         GraphicsUtil.drawCenteredText(g, myState.curValue.toDisplayString(), x - 20, y + 9);
-        g.setColor(Color.BLACK);
+        g.setColor(baseColor);
       }
     }
 
@@ -287,7 +288,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     g.setColor(Color.GRAY);
     painter.drawPort(n + 3, "0", Direction.SOUTH);
     painter.drawPort(n + 4, "1", Direction.SOUTH);
-    g.setColor(Color.BLACK);
+    g.setColor(baseColor);
     for (var i = 0; i < n; i++) {
       painter.drawPort(i, getInputName(i), Direction.EAST);
     }
@@ -302,8 +303,10 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     final var loc = painter.getLocation();
     int x = loc.getX();
     int y = loc.getY();
+    final var baseColor = new Color(AppPreferences.COMPONENT_COLOR.get());
 
     // Draw outer rectangle
+    g.setColor(baseColor);
     GraphicsUtil.switchToWidth(g, 2);
     g.drawRect(x, y, 40, 60);
 
@@ -315,7 +318,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
         g.fillOval(x + 13, y + 23, 14, 14);
         g.setColor(Color.WHITE);
         GraphicsUtil.drawCenteredText(g, myState.curValue.toDisplayString(), x + 20, y + 28);
-        g.setColor(Color.BLACK);
+        g.setColor(baseColor);
       }
     }
 
@@ -323,7 +326,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     g.setColor(Color.GRAY);
     painter.drawPort(n + 3, "R", Direction.SOUTH);
     painter.drawPort(n + 4, "S", Direction.NORTH);
-    g.setColor(Color.BLACK);
+    g.setColor(baseColor);
 
     // Draw input ports (J/K, S/R, D, T)
     for (var i = 0; i < n; i++) {

@@ -513,6 +513,7 @@ public class AppPreferences {
   public static final int DEFAULT_GRID_BG_COLOR = 0xFFFFFFFF;
   public static final int DEFAULT_GRID_DOT_COLOR = 0xFF777777;
   public static final int DEFAULT_ZOOMED_DOT_COLOR = 0xFFCCCCCC;
+  public static final int DEFAULT_COMPONENT_COLOR = 0x00000000;
 
   // restores default grid colors
   public static void setDefaultGridColors() {
@@ -520,6 +521,7 @@ public class AppPreferences {
     GRID_BG_COLOR.set(DEFAULT_GRID_BG_COLOR);
     GRID_DOT_COLOR.set(DEFAULT_GRID_DOT_COLOR);
     GRID_ZOOMED_DOT_COLOR.set(DEFAULT_ZOOMED_DOT_COLOR);
+    COMPONENT_COLOR.set(DEFAULT_COMPONENT_COLOR);
   }
 
   public static final PrefMonitor<Integer> CANVAS_BG_COLOR =
@@ -530,6 +532,8 @@ public class AppPreferences {
       create(new PrefMonitorInt("gridDotColor", DEFAULT_GRID_DOT_COLOR));
   public static final PrefMonitor<Integer> GRID_ZOOMED_DOT_COLOR =
       create(new PrefMonitorInt("gridZoomedDotColor", DEFAULT_ZOOMED_DOT_COLOR));
+  public static final PrefMonitor<Integer> COMPONENT_COLOR =
+      create(new PrefMonitorInt("componentColor", DEFAULT_COMPONENT_COLOR));
 
   // Layout preferences
   public static final String ADD_AFTER_UNCHANGED = "unchanged";

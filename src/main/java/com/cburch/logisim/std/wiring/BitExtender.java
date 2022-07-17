@@ -25,9 +25,11 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 
@@ -114,6 +116,8 @@ public class BitExtender extends InstanceFactory {
     int asc = fm.getAscent();
 
     painter.drawBounds();
+
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
 
     String s0;
     String type = getType(painter.getAttributeSet());

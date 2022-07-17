@@ -35,6 +35,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
@@ -267,7 +268,7 @@ class Pla extends InstanceFactory {
       g.fillRect(x, y, w, h);
     }
 
-    if (!ghost) g.setColor(Color.BLACK);
+    if (!ghost) g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     GraphicsUtil.switchToWidth(g, 2);
     g.drawRect(x, y, bds.getWidth(), bds.getHeight());
 

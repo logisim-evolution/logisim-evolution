@@ -86,7 +86,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
         for (int i = 0; i < len; i++) str = str.concat("?");
       }
       GraphicsUtil.drawCenteredText(g, str, x + 30, y + 8);
-      g.setColor(Color.black);
+      g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     }
     GraphicsUtil.switchToWidth(g, 2);
     g.drawRect(x + 10, y + 20, 40, 60);
@@ -114,7 +114,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     GraphicsUtil.switchToWidth(g, 1);
     g.setColor(Color.GRAY);
     GraphicsUtil.drawCenteredText(g, "R", x + 30, y + 68);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     if (hasWE) {
       GraphicsUtil.drawCenteredText(g, "WE", x + 22, y + 48);
       GraphicsUtil.switchToWidth(g, 2);
@@ -177,7 +177,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     g.setColor(Color.GRAY);
     painter.drawPort(CLR, "0", Direction.SOUTH);
     painter.drawPort(EN, S.get("memEnableLabel"), Direction.EAST);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawClock(CK, Direction.NORTH);
 
     // draw contents

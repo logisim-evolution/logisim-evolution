@@ -19,6 +19,7 @@ import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.std.hdl.VhdlContentComponent;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
@@ -143,6 +144,7 @@ public class TclGeneric extends TclComponent {
     final var g = painter.getGraphics();
     final var content = painter.getAttributeValue(CONTENT_ATTR);
     var metric = g.getFontMetrics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
 
     final var bds = painter.getBounds();
     final var x0 = bds.getX() + (bds.getWidth() / 2);

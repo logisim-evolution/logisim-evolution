@@ -24,6 +24,8 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
@@ -303,6 +305,7 @@ public class Keyboard extends InstanceFactory {
     painter.drawPort(RE);
     painter.drawPort(AVL);
     painter.drawPort(OUT);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
 
     if (showState) {
       String str;

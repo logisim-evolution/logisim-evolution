@@ -24,6 +24,7 @@ import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlSimConstants;
@@ -183,6 +184,7 @@ public class VhdlEntityComponent extends InstanceFactory {
     final var bds = painter.getBounds();
     final var x0 = bds.getX() + (bds.getWidth() / 2);
     final var y0 = bds.getY() + metric.getHeight() + 12;
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     GraphicsUtil.drawText(
         g,
         StringUtil.resizeString(content.getName(), metric, WIDTH),

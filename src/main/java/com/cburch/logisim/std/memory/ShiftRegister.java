@@ -163,6 +163,7 @@ public class ShiftRegister extends InstanceFactory {
     final var g = painter.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
     final var blockwidth = symbolWidth;
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawLine(xpos + 10, ypos, xpos + blockwidth + 10, ypos);
     g.drawLine(xpos + 10, ypos, xpos + 10, ypos + 60);
     g.drawLine(xpos + blockwidth + 10, ypos, xpos + blockwidth + 10, ypos + 60);
@@ -334,7 +335,7 @@ public class ShiftRegister extends InstanceFactory {
           realYpos + yoff + 10,
           GraphicsUtil.H_LEFT,
           GraphicsUtil.V_CENTER);
-      g.setColor(Color.BLACK);
+      g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     }
   }
 

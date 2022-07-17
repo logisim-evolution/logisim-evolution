@@ -24,6 +24,7 @@ import com.cburch.logisim.instance.InstanceFactory;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import java.awt.Color;
 
@@ -54,7 +55,6 @@ public class BinToBcd extends InstanceFactory {
     final var nrOfBits = painter.getAttributeValue(BinToBcd.ATTR_BinBits);
     final var nrOfPorts = (int) (Math.log10(Math.pow(2.0, nrOfBits.getWidth())) + 1.0);
 
-    gfx.setColor(Color.GRAY);
     painter.drawBounds();
     painter.drawPort(BINin, "Bin", Direction.EAST);
     for (var i = nrOfPorts; i > 0; i--)

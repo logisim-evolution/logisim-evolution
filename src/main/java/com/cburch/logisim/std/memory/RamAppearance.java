@@ -18,7 +18,9 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
+import java.awt.Color;
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 
@@ -212,6 +214,7 @@ public class RamAppearance {
     final var g = painter.getGraphics();
     final var bds = painter.getBounds();
     final var inst = painter.getInstance();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     /* draw label */
     final var Label = painter.getAttributeValue(StdAttr.LABEL);
     if (Label != null && painter.getAttributeValue(StdAttr.LABEL_VISIBILITY)) {
@@ -252,6 +255,7 @@ public class RamAppearance {
     final var g = painter.getGraphics();
     final var bds = painter.getBounds();
     final var inst = painter.getInstance();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     /* draw label */
     final var Label = painter.getAttributeValue(StdAttr.LABEL);
     if (Label != null && painter.getAttributeValue(StdAttr.LABEL_VISIBILITY)) {

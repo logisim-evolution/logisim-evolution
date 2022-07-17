@@ -649,7 +649,7 @@ public class Pin extends InstanceFactory {
         GraphicsUtil.switchToWidth(g, 2);
         g.drawLine(x - 6, y, x, y);
       }
-      g.setColor(Color.BLACK);
+      g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     }
   }
 
@@ -864,12 +864,13 @@ public class Pin extends InstanceFactory {
     RadixOption radix = painter.getAttributeValue(RadixOption.ATTRIBUTE);
     Direction dir = painter.getAttributeSet().getValue(StdAttr.FACING);
     int westTranslate = (isOutput) ? width : width + 10;
+    final var baseColor = new Color(AppPreferences.COMPONENT_COLOR.get());
     if (dir == Direction.WEST) {
       g2.rotate(-Math.PI);
       g2.translate(westTranslate, 0);
     }
     if (!painter.getShowState()) {
-      g.setColor(Color.BLACK);
+      g.setColor(baseColor);
       GraphicsUtil.drawCenteredText(
           g,
           "x" + ((PinAttributes) painter.getAttributeSet()).width.getWidth(),
@@ -885,7 +886,7 @@ public class Pin extends InstanceFactory {
           (int) ((double) LabelValueXOffset / 0.7),
           (int) ((double) labelYPos / 0.7));
       g2.scale(1.0 / 0.7, 1.0 / 0.7);
-      g.setColor(Color.BLACK);
+      g.setColor(baseColor);
       if (radix == null || radix == RadixOption.RADIX_2) {
         int wid = value.getWidth();
         if (wid == 0) {
@@ -909,7 +910,7 @@ public class Pin extends InstanceFactory {
             g.setColor(Color.WHITE);
           }
           GraphicsUtil.drawCenteredText(g, value.get(k).toDisplayString(), cx, cy);
-          if (radix == RadixOption.RADIX_2 && !isOutput) g.setColor(Color.BLACK);
+          if (radix == RadixOption.RADIX_2 && !isOutput) g.setColor(baseColor);
           ++cur;
           if (cur == 8) {
             cur = 0;
@@ -952,7 +953,7 @@ public class Pin extends InstanceFactory {
       g.drawRect(x + 1, y + 1, width - 1, height - 1);
       if (!isGhost) {
         if (!painter.getShowState()) {
-          g.setColor(Color.BLACK);
+          g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
           GraphicsUtil.drawCenteredText(
               g, "x" + attrs.width.getWidth(), x + width / 2, y + height / 2);
         } else {
@@ -1077,7 +1078,7 @@ public class Pin extends InstanceFactory {
       }
       if (!isGhost) {
         if (!painter.getShowState()) {
-          g.setColor(Color.BLACK);
+          g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
           GraphicsUtil.drawCenteredText(
               g, "x" + attrs.width.getWidth(), x + width / 2, y + height / 2);
         } else {
@@ -1130,6 +1131,7 @@ public class Pin extends InstanceFactory {
     GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
     BitWidth w = attrs.getValue(StdAttr.WIDTH);
     int pinSize = iconSize >> 2;
+    final var baseColor = new Color(AppPreferences.COMPONENT_COLOR.get());
     if (attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW) {
       int arrowHeight = (10 * iconSize) >> 4;
       int yoff = (3 * iconSize) >> 4;
@@ -1204,7 +1206,7 @@ public class Pin extends InstanceFactory {
     int x = bds.getX();
     int y = bds.getY();
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(Color.black);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     if (IsOutput) {
       drawOutputShape(
           painter, x + 1, y + 1, bds.getWidth() - 1, bds.getHeight() - 1, found.getColor(), false);

@@ -19,7 +19,7 @@ public class RandomIcon extends BaseIcon {
     // zero count, so 4 means 5 on a dice face.
     final int state = 4;
 
-    g2.setColor(Color.BLACK);
+//    g2.setColor(Color.BLACK); // WIP
     g2.drawRoundRect(0, 0, scale(16), scale(16), scale(5), scale(5));
     if (state == 1 || state > 2) g2.fillOval(scale(2), scale(2), scale(3), scale(3));
     if (state == 5) {

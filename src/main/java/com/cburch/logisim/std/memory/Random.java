@@ -209,6 +209,7 @@ public class Random extends InstanceFactory {
   private void drawControl(InstancePainter painter, int xpos, int ypos, int nrOfBits) {
     final var g = painter.getGraphics();
     GraphicsUtil.switchToWidth(g, 2);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawLine(xpos + 10, ypos, xpos + 70, ypos);
     g.drawLine(xpos + 10, ypos, xpos + 10, ypos + 60);
     g.drawLine(xpos + 70, ypos, xpos + 70, ypos + 60);
@@ -285,7 +286,7 @@ public class Random extends InstanceFactory {
     g.setColor(Color.GRAY);
     painter.drawPort(RST, "0", Direction.SOUTH);
     painter.drawPort(NXT, S.get("memEnableLabel"), Direction.EAST);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawClock(CK, Direction.NORTH);
 
     // draw contents

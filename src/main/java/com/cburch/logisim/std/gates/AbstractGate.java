@@ -9,6 +9,11 @@
 
 package com.cburch.logisim.std.gates;
 
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics2D;
+import java.awt.font.TextLayout;
+
 import com.cburch.logisim.LogisimVersion;
 import com.cburch.logisim.analyze.model.Expression;
 import com.cburch.logisim.analyze.model.Expressions;
@@ -37,10 +42,6 @@ import com.cburch.logisim.tools.key.IntegerConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.Graphics2D;
-import java.awt.font.TextLayout;
 
 abstract class AbstractGate extends InstanceFactory {
   static Value pullOutput(Value value, Object outType) {
@@ -380,7 +381,7 @@ abstract class AbstractGate extends InstanceFactory {
     }
 
     final var g = painter.getGraphics();
-    final var baseColor = g.getColor();
+    final var baseColor = new Color(AppPreferences.COMPONENT_COLOR.get());
     if (shape == AppPreferences.SHAPE_SHAPED && paintInputLines) {
       PainterShaped.paintInputLines(painter, this);
     } else if (negated != 0) {
@@ -438,7 +439,6 @@ abstract class AbstractGate extends InstanceFactory {
   @Override
   public final void paintIcon(InstancePainter painter) {
     final var g = (Graphics2D) painter.getGraphics().create();
-    g.setColor(Color.black);
     GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
     final var border = AppPreferences.getIconBorder();
     if (painter.getGateShape().equals(AppPreferences.SHAPE_RECTANGULAR))

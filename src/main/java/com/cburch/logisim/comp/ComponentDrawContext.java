@@ -70,15 +70,15 @@ public class ComponentDrawContext {
   //
   public void drawBounds(Component comp) {
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     final var bds = comp.getBounds();
     g.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     GraphicsUtil.switchToWidth(g, 1);
   }
 
   public void drawClock(Component comp, int i, Direction dir) {
-    final var curColor = g.getColor();
-    g.setColor(Color.BLACK);
+    final var curColor = new Color(AppPreferences.COMPONENT_COLOR.get());
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     GraphicsUtil.switchToWidth(g, 2);
 
     final var e = comp.getEnd(i);
@@ -169,7 +169,7 @@ public class ComponentDrawContext {
     final var curColor = g.getColor();
     g.setColor(getShowState()
             ? getCircuitState().getValue(pt).getColor()
-            : Color.BLACK);
+            : new Color(AppPreferences.COMPONENT_COLOR.get()));
     drawPinMarker(pt.getX(), pt.getY());
     g.setColor(curColor);
   }
@@ -317,7 +317,7 @@ public class ComponentDrawContext {
       g.setColor(color);
       g.fillRoundRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight(), 10, 10);
     }
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawRoundRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight(), 10, 10);
     GraphicsUtil.switchToWidth(g, 1);
   }
