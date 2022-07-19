@@ -165,7 +165,6 @@ public class TclGeneric extends TclComponent {
       g.setFont(font);
     }
 
-    g.setColor(Color.GRAY);
     g.setFont(g.getFont().deriveFont((float) 10));
     metric = g.getFontMetrics();
 

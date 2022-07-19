@@ -147,7 +147,6 @@ public abstract class TclComponent extends InstanceFactory {
       g.setFont(font);
     }
 
-    g.setColor(Color.GRAY);
     g.setFont(g.getFont().deriveFont((float) 10));
     metric = g.getFontMetrics();
 

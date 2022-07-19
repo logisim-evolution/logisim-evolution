@@ -306,7 +306,6 @@ public class PlaRom extends InstanceFactory {
         bds.getY() + bds.getHeight() / 3 * 2 - 3);
     painter.drawPort(0);
     painter.drawPort(1);
-    g.setColor(Color.GRAY);
     painter.drawPort(2, S.get("ramCSLabel"), Direction.SOUTH);
     painter.drawLabel();
   }

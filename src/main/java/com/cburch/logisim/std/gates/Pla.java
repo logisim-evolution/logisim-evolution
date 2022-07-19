@@ -69,8 +69,6 @@ class Pla extends InstanceFactory {
 
   public static final InstanceFactory FACTORY = new Pla();
 
-  private static final Color BACKGROUND_COLOR = new Color(230, 230, 230);
-
   private static final List<Attribute<?>> ATTRIBUTES =
       Arrays.asList(
           StdAttr.FACING,
@@ -262,11 +260,6 @@ class Pla extends InstanceFactory {
     int y = bds.getY();
     int w = bds.getWidth();
     int h = bds.getHeight();
-
-    if (!ghost && painter.shouldDrawColor()) {
-      g.setColor(BACKGROUND_COLOR);
-      g.fillRect(x, y, w, h);
-    }
 
     if (!ghost) g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     GraphicsUtil.switchToWidth(g, 2);

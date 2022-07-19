@@ -63,7 +63,7 @@ public class FpNegator extends InstanceFactory {
     final var g = painter.getGraphics();
     painter.drawBounds();
 
-    g.setColor(Color.GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawPort(IN);
     painter.drawPort(OUT, "-x", Direction.WEST);
     painter.drawPort(ERR);
@@ -72,7 +72,6 @@ public class FpNegator extends InstanceFactory {
     final var x = loc.getX();
     final var y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawLine(x - 35, y - 15, x - 35, y + 5);
     g.drawLine(x - 35, y - 15, x - 25, y - 15);
     g.drawLine(x - 35, y - 5, x - 25, y - 5);

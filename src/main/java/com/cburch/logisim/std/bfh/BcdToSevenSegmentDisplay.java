@@ -71,13 +71,12 @@ public class BcdToSevenSegmentDisplay extends InstanceFactory {
   public void paintInstance(InstancePainter painter) {
     final var gfx = painter.getGraphics();
     final var myBounds = painter.getBounds();
-    if (!painter.isPrintView()) gfx.setColor(Color.BLUE);
+    gfx.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawRectangle(myBounds, "");
     painter.drawPort(BCD_IN, "BCD", Direction.SOUTH);
     for (var i = 0; i < 7; i++) {
       painter.drawPort(i);
     }
-    gfx.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawRectangle(
         myBounds.getX() + 5,
         myBounds.getY() + 20,
