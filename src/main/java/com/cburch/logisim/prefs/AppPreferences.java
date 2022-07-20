@@ -534,8 +534,6 @@ public class AppPreferences {
   // Layout preferences
   public static final String ADD_AFTER_UNCHANGED = "unchanged";
   public static final String ADD_AFTER_EDIT = "edit";
-  public static final PrefMonitor<Boolean> PRINTER_VIEW =
-      create(new PrefMonitorBoolean("printerView", false));
   public static final PrefMonitor<Boolean> ATTRIBUTE_HALO =
       create(new PrefMonitorBoolean("attributeHalo", true));
   public static final PrefMonitor<Boolean> COMPONENT_TIPS =
