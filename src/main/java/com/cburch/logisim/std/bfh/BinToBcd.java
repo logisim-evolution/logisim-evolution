@@ -55,6 +55,7 @@ public class BinToBcd extends InstanceFactory {
     final var nrOfBits = painter.getAttributeValue(BinToBcd.ATTR_BinBits);
     final var nrOfPorts = (int) (Math.log10(Math.pow(2.0, nrOfBits.getWidth())) + 1.0);
 
+    gfx.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     painter.drawPort(BINin, "Bin", Direction.EAST);
     for (var i = nrOfPorts; i > 0; i--)

@@ -224,7 +224,7 @@ public class Probe extends InstanceFactory {
         (int) ((bds.getX() + bds.getWidth() - LabelValueXOffset) / 0.7),
         (int) ((bds.getY() + bds.getHeight() - 2) / 0.7));
     g2.scale(1.0 / 0.7, 1.0 / 0.7);
-    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+    g.setColor(Color.BLACK);
     if (radix == null || radix == RadixOption.RADIX_2) {
       int x = bds.getX();
       int y = bds.getY();

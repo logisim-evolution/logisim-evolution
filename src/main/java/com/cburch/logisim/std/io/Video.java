@@ -211,14 +211,14 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
       g.setColor(new Color(cm.getRGB(color)));
       g.fillRect(x, y, 1, 1);
       if (RESET_SYNC.equals(resetOption) && val(circuitState, P_RST) == Value.TRUE) {
-        g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+        g.setColor(Color.BLACK);
         g.fillRect(0, 0, w, h);
       }
     }
 
     if (!RESET_SYNC.equals(resetOption) && val(circuitState, P_RST) == Value.TRUE) {
       final var g = state.img.getGraphics();
-      g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+      g.setColor(Color.BLACK);
       g.fillRect(0, 0, w, h);
     }
   }
