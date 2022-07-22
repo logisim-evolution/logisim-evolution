@@ -9,6 +9,7 @@
   * Fixed pressing `CTRL`+`0` selecting the wrong element in the toolbar.
   * Fixed TTL 7485 `7485HdlGenerator` generating wrong HDL type.
   * Fixed TTL 74139, 7447 outputting inverted logic
+  * Fixed TTL 74175, CLR inverted
   * Added TTL 74240, 74241, 74244: octal buffers with three-state outputs.
 
 * v3.7.2 (2021-11-09)
