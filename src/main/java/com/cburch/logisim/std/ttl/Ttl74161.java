@@ -140,7 +140,7 @@ public class Ttl74161 extends AbstractTtlGate {
 
   private void drawState(Graphics2D gfx, int x, int y, int height, TtlRegisterData state) {
     if (state == null) return;
-    long value = state.getValue().toLongValue();
+    final var value = state.getValue().toLongValue();
     for (var i = 0; i < 4; i++) {
       final var isSetBitValue = (value & (1 << (3 - i))) != 0;
       gfx.setColor(isSetBitValue ? trueColor : falseColor);
