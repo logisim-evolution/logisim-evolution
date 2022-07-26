@@ -10,6 +10,7 @@
   * Fixed TTL 7485 `7485HdlGenerator` generating wrong HDL type.
   * Fixed TTL 74139, 7447 outputting inverted logic
   * Fixed TTL 74175, CLR inverted
+  * Fixed TTL 7436 pin arrangement
   * Added TTL 74245: octal bus transceivers with three-state outputs.
 
 * v3.7.2 (2021-11-09)
