@@ -10,8 +10,9 @@
   * Fixed TTL 7485 `7485HdlGenerator` generating wrong HDL type.
   * Fixed TTL 74139, 7447 outputting inverted logic
   * Fixed TTL 74175, CLR inverted
-* Added TTL 74138: 3-line to 8-line decoder
-  
+  * Fixed TTL 7436 pin arrangement
+  * Added TTL 74138: 3-line to 8-line decoder
+
 * v3.7.2 (2021-11-09)
   * Fixed Preferences/Window "Reset window layout to defaults" not doing much.
   * Fixed Gradle builder failing to compile LSe if sources were not checked out from Git.
