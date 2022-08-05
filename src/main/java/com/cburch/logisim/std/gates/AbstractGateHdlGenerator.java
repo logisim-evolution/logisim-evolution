@@ -40,8 +40,14 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
     final var bitWidth = attrs.getValue(StdAttr.WIDTH).getWidth();
     for (var input = 1; input <= nrOfInputs; input++) {
       myWires.addWire(String.format("s_realInput%d", input), bitWidth == 1 ? 1 : BIT_WIDTH_GENERIC);
-      final var floatingToZero = getFloatingValue(attrs.getValue(new NegateAttribute(input - 1, null)));
-      myPorts.add(Port.INPUT, String.format("input%d", input), bitWidth == 1 ? 1 : BIT_WIDTH_GENERIC, input, floatingToZero);
+      final var floatingToZero =
+          getFloatingValue(attrs.getValue(new NegateAttribute(input - 1, null)));
+      myPorts.add(
+          Port.INPUT,
+          String.format("input%d", input),
+          bitWidth == 1 ? 1 : BIT_WIDTH_GENERIC,
+          input,
+          floatingToZero);
     }
     myPorts.add(Port.OUTPUT, "result", BIT_WIDTH_GENERIC, 0, StdAttr.WIDTH);
   }
@@ -68,9 +74,15 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
       contents.addRemarkBlock("Here the bubbles are processed");
       for (var i = 0; i < nrOfInputs; i++) {
         if (Hdl.isVhdl()) {
-          contents.addVhdlKeywords().add("s_realInput{{1}} <= input{{1}} {{when}} {{2}}{{<}}{{3}}{{>}} = '0' {{else}} {{not}}(input{{1}});", (i + 1), BUBBLES_MASK, i);
+          contents
+              .addVhdlKeywords()
+              .add(
+                  "s_realInput{{1}} <= input{{1}} {{when}} {{2}}{{<}}{{3}}{{>}} = '0' {{else}} {{not}}(input{{1}});",
+                  (i + 1), BUBBLES_MASK, i);
         } else {
-          contents.add("{{assign}} s_realInput{{1}} = ({{2}}{{<}}{{3}}{{>}} == 1'b0) ? input{{1}} : ~input{{1}};", (i + 1), BUBBLES_MASK, i);
+          contents.add(
+              "{{assign}} s_realInput{{1}} = ({{2}}{{<}}{{3}}{{>}} == 1'b0) ? input{{1}} : ~input{{1}};",
+              (i + 1), BUBBLES_MASK, i);
         }
       }
     }
@@ -89,7 +101,13 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
     var indexString = "";
     if (isBus) {
       if (Hdl.isVhdl()) {
-        lines.addVhdlKeywords().add(spaces + "genBits : {{for}} n {{in}} (" + BIT_WIDTH_STRING + "-1) {{downto}} 0 {{generate}}");
+        lines
+            .addVhdlKeywords()
+            .add(
+                spaces
+                    + "genBits : {{for}} n {{in}} ("
+                    + BIT_WIDTH_STRING
+                    + "-1) {{downto}} 0 {{generate}}");
         spaces += "   ";
         indexString = "(n)";
       } else {
@@ -119,7 +137,12 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
         if (i == termloop) {
           oneLine.append("s_realInput").append(i + 1).append(indexString);
         } else {
-          oneLine.append(Hdl.notOperator()).append("(s_realInput").append(i + 1).append(indexString).append(")");
+          oneLine
+              .append(Hdl.notOperator())
+              .append("(s_realInput")
+              .append(i + 1)
+              .append(indexString)
+              .append(")");
         }
         if (i < (nrOfInputs - 1)) {
           oneLine.append(Hdl.andOperator());
@@ -152,7 +175,13 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
     var indexString = "";
     if (isBus) {
       if (Hdl.isVhdl()) {
-        lines.addVhdlKeywords().add(spaces + "genBits : {{for}} n {{in}} (" + BIT_WIDTH_STRING + "-1) {{downto}} 0 {{generate}}");
+        lines
+            .addVhdlKeywords()
+            .add(
+                spaces
+                    + "genBits : {{for}} n {{in}} ("
+                    + BIT_WIDTH_STRING
+                    + "-1) {{downto}} 0 {{generate}}");
         spaces += "   ";
         indexString = "(n)";
       } else {
@@ -165,7 +194,12 @@ public class AbstractGateHdlGenerator extends AbstractHdlGeneratorFactory {
       }
     }
     final var oneLine = new StringBuilder();
-    oneLine.append(spaces).append(Hdl.assignPreamble()).append("result").append(indexString).append(Hdl.assignOperator());
+    oneLine
+        .append(spaces)
+        .append(Hdl.assignPreamble())
+        .append("result")
+        .append(indexString)
+        .append(Hdl.assignOperator());
     if (inverted) oneLine.append(Hdl.notOperator()).append("(");
     final var spacesLen = oneLine.length();
     for (var i = 0; i < nrOfInputs; i++) {

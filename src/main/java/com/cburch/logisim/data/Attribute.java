@@ -69,7 +69,7 @@ public abstract class Attribute<V> {
   public boolean isHidden() {
     return hidden;
   }
-  
+
   public boolean isToSave() {
     return true;
   }

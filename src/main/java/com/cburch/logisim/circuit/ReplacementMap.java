@@ -42,7 +42,8 @@ public class ReplacementMap {
     inverse.put(newComp, oldSet);
   }
 
-  private ReplacementMap(HashMap<Component, HashSet<Component>> map, HashMap<Component, HashSet<Component>> inverse) {
+  private ReplacementMap(
+      HashMap<Component, HashSet<Component>> map, HashMap<Component, HashSet<Component>> inverse) {
     this.map = map;
     this.inverse = inverse;
   }
@@ -128,8 +129,7 @@ public class ReplacementMap {
       if (!found) out.println("  removals:");
       found = true;
       out.println("    " + comp.toString());
-      for (final var b : map.get(comp))
-        out.println("     `--> " + b.toString());
+      for (final var b : map.get(comp)) out.println("     `--> " + b.toString());
     }
     if (!found) out.println("  removals: none");
 
@@ -138,21 +138,19 @@ public class ReplacementMap {
       if (!found) out.println("  additions:");
       found = true;
       out.println("    " + b.toString());
-      for (final var a : inverse.get(b))
-        out.println("     ^-- " + a.toString());
+      for (final var a : inverse.get(b)) out.println("     ^-- " + a.toString());
     }
     if (!found) out.println("  additions: none");
   }
 
   public void put(Component a, Collection<? extends Component> bs) {
-    if (frozen)
-      throw new IllegalStateException("cannot change map after frozen");
+    if (frozen) throw new IllegalStateException("cannot change map after frozen");
 
     final var oldBs = map.computeIfAbsent(a, k -> new HashSet<>(bs.size()));
     oldBs.addAll(bs);
 
     for (final var b : bs) {
-      final var oldAs = inverse.computeIfAbsent(b, k -> new HashSet<Component>(3));
+      final var oldAs = inverse.computeIfAbsent(b, k -> new HashSet<>(3));
       oldAs.add(a);
     }
   }

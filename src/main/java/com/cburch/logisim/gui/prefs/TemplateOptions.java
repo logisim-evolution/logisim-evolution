@@ -99,15 +99,9 @@ class TemplateOptions extends OptionsPanel {
     AppPreferences.addPropertyChangeListener(AppPreferences.TEMPLATE_TYPE, myListener);
     AppPreferences.addPropertyChangeListener(AppPreferences.TEMPLATE_FILE, myListener);
     switch (AppPreferences.getTemplateType()) {
-      case AppPreferences.TEMPLATE_PLAIN:
-        plain.setSelected(true);
-        break;
-      case AppPreferences.TEMPLATE_EMPTY:
-        empty.setSelected(true);
-        break;
-      case AppPreferences.TEMPLATE_CUSTOM:
-        custom.setSelected(true);
-        break;
+      case AppPreferences.TEMPLATE_PLAIN -> plain.setSelected(true);
+      case AppPreferences.TEMPLATE_EMPTY -> empty.setSelected(true);
+      case AppPreferences.TEMPLATE_CUSTOM -> custom.setSelected(true);
     }
     myListener.setTemplateField(AppPreferences.getTemplateFile());
   }

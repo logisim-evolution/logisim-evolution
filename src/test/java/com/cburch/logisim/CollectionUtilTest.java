@@ -19,18 +19,14 @@ import org.junit.jupiter.api.Test;
 
 public class CollectionUtilTest extends TestBase {
 
-  /**
-   * Checks if isNotEmpty() correctly handles non-null and non-empty collections.
-   */
+  /** Checks if isNotEmpty() correctly handles non-null and non-empty collections. */
   @Test
   public void testIsNotEmptyPositive() {
     final var collection = List.of(getRandomString());
     assertTrue(CollectionUtil.isNotEmpty(collection));
   }
 
-  /**
-   * Checks if isNotEmpty() correctly handles null or empty collections.
-   */
+  /** Checks if isNotEmpty() correctly handles null or empty collections. */
   @Test
   public void testIsNotEmptyNegative() {
     assertFalse(CollectionUtil.isNotEmpty(null));
@@ -39,18 +35,14 @@ public class CollectionUtilTest extends TestBase {
     assertFalse(CollectionUtil.isNotEmpty(emptyCollection));
   }
 
-  /**
-   * Checks if isNullOrEmpty() correctly handles null or empty collections.
-   */
+  /** Checks if isNullOrEmpty() correctly handles null or empty collections. */
   @Test
   public void testIsNullOrEmptyPositive() {
     assertTrue(CollectionUtil.isNullOrEmpty(null));
     assertTrue(CollectionUtil.isNullOrEmpty(new ArrayList()));
   }
 
-  /**
-   * Checks if isNullOrEmpty() correctly handles non-empty collections.
-   */
+  /** Checks if isNullOrEmpty() correctly handles non-empty collections. */
   @Test
   public void testIsNullOrEmptyNegative() {
     final var nonEmptyCollection = List.of(getRandomString());

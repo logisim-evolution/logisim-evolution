@@ -46,7 +46,8 @@ public class MenuSimulate extends Menu {
   private final MenuItemImpl tickHalf;
   private final MenuItemImpl tickFull;
   private final JMenu tickFreq = new JMenu();
-  private final TickFrequencyChoice[] tickFreqs = new TickFrequencyChoice[SUPPORTED_TICK_FREQUENCIES.length];
+  private final TickFrequencyChoice[] tickFreqs =
+      new TickFrequencyChoice[SUPPORTED_TICK_FREQUENCIES.length];
   private final JMenu downStateMenu = new JMenu();
   private final ArrayList<CircuitStateMenuItem> downStateItems = new ArrayList<>();
   private final JMenu upStateMenu = new JMenu();
@@ -149,8 +150,10 @@ public class MenuSimulate extends Menu {
     final var result = new ArrayList<String>();
     for (final var supportedTickFrequency : SUPPORTED_TICK_FREQUENCIES) {
       if (supportedTickFrequency < 1000) {
-        final var small = (Math.abs(supportedTickFrequency - Math.round(supportedTickFrequency)) < 0.0001);
-        final var freqHz = "" + ((small) ? (int) Math.round(supportedTickFrequency) : supportedTickFrequency);
+        final var small =
+            (Math.abs(supportedTickFrequency - Math.round(supportedTickFrequency)) < 0.0001);
+        final var freqHz =
+            "" + ((small) ? (int) Math.round(supportedTickFrequency) : supportedTickFrequency);
         result.add(S.get("simulateTickFreqItem", freqHz));
       } else {
         final var kf = Math.round(supportedTickFrequency / 100) / 10.0;
@@ -330,9 +333,11 @@ public class MenuSimulate extends Menu {
       final var proj = menubar.getSimulationProject();
       if (proj == null) return;
       final var vhdl = proj.getVhdlSimulator();
-      if (vhdl != null && (src == simulateVhdlEnable || src == LogisimMenuBar.SIMULATE_VHDL_ENABLE)) {
+      if (vhdl != null
+          && (src == simulateVhdlEnable || src == LogisimMenuBar.SIMULATE_VHDL_ENABLE)) {
         vhdl.setEnabled(!vhdl.isEnabled());
-      } else if (vhdl != null && (src == vhdlSimFiles || src == LogisimMenuBar.GENERATE_VHDL_SIM_FILES)) {
+      } else if (vhdl != null
+          && (src == vhdlSimFiles || src == LogisimMenuBar.GENERATE_VHDL_SIM_FILES)) {
         vhdl.restart();
       } else if (src == log) {
         proj.getLogFrame().setVisible(true);

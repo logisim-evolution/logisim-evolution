@@ -36,10 +36,7 @@ public class ComponentMapInformationContainer {
     inOutBubbleLabels = inoutportLabels;
   }
 
-  public ComponentMapInformationContainer(
-      int inports,
-      int outports,
-      int inoutport) {
+  public ComponentMapInformationContainer(int inports, int outports, int inoutport) {
     nrOfInputBubbles = inports;
     nrOfOutputBubbles = outports;
     nrOfInOutBubbles = inoutport;
@@ -53,12 +50,18 @@ public class ComponentMapInformationContainer {
     @SuppressWarnings("unchecked")
     ComponentMapInformationContainer myClone =
         new ComponentMapInformationContainer(
-                nrOfInputBubbles,
-                nrOfOutputBubbles,
-                nrOfInOutBubbles,
-                inputBubbleLabels == null ? null : (List<String>) ((ArrayList<String>) inputBubbleLabels).clone(),
-                outputBubbleLabels == null ? null : (List<String>) ((ArrayList<String>) outputBubbleLabels).clone(),
-                inOutBubbleLabels == null ? null : (List<String>) ((ArrayList<String>) inOutBubbleLabels).clone());
+            nrOfInputBubbles,
+            nrOfOutputBubbles,
+            nrOfInOutBubbles,
+            inputBubbleLabels == null
+                ? null
+                : (List<String>) ((ArrayList<String>) inputBubbleLabels).clone(),
+            outputBubbleLabels == null
+                ? null
+                : (List<String>) ((ArrayList<String>) outputBubbleLabels).clone(),
+            inOutBubbleLabels == null
+                ? null
+                : (List<String>) ((ArrayList<String>) inOutBubbleLabels).clone());
     return myClone;
   }
 

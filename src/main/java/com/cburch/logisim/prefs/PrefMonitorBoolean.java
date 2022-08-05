@@ -67,7 +67,6 @@ public class PrefMonitorBoolean extends AbstractPrefMonitor<Boolean> implements 
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    if (e.getSource() == box)
-      set(box.isSelected());
+    if (e.getSource() == box) set(box.isSelected());
   }
 }

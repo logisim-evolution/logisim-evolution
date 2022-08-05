@@ -37,7 +37,8 @@ public class SocVgaShape extends DynamicElement {
 
   @Override
   public void paintDynamic(Graphics g, CircuitState state) {
-    VgaState.VgaDisplayState data = (state == null) ? null : (VgaState.VgaDisplayState) getData(state);
+    VgaState.VgaDisplayState data =
+        (state == null) ? null : (VgaState.VgaDisplayState) getData(state);
     if (state == null || data == null) {
       Color c = g.getColor();
       g.setColor(Color.BLUE);

@@ -22,7 +22,8 @@ import javax.swing.ListSelectionModel;
 import javax.swing.event.ListDataEvent;
 
 @SuppressWarnings("serial")
-public class FpgaCommanderListWindow extends JFrame implements BaseWindowListenerContract, BaseListDataListenerContract {
+public class FpgaCommanderListWindow extends JFrame
+    implements BaseWindowListenerContract, BaseListDataListenerContract {
 
   private final String Title;
   private final JList<Object> textArea = new JList<>();

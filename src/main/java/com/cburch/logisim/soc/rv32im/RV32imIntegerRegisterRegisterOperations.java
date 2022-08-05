@@ -150,7 +150,7 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
     source1 = RV32imSupport.getSourceRegister1Index(instruction);
     source2 = RV32imSupport.getSourceRegister2Index(instruction);
     switch (funct3) {
-      case ADD_SUB:
+      case ADD_SUB -> {
         if (funct7 == 0) {
           operation = INSTR_ADD;
           break;
@@ -160,7 +160,8 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
           break;
         }
         return false;
-      case SRL_SRA:
+      }
+      case SRL_SRA -> {
         if (funct7 == 0) {
           operation = INSTR_SRL;
           break;
@@ -170,10 +171,12 @@ public class RV32imIntegerRegisterRegisterOperations implements AssemblerExecuti
           break;
         }
         return false;
-      default:
-        if (funct7 != 0) return false;
+      }
+      default -> {
+        if (funct7 != 0)
+          return false;
         operation = funct3;
-        break;
+      }
     }
     if (operation == INSTR_SLTU && source1 == 0)
       operation = INSTR_SNEZ;

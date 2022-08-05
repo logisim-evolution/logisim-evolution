@@ -183,7 +183,7 @@ public class LoadedLibrary extends Library implements LibraryEventSource {
       fireLibraryEvent(LibraryEvent.SET_NAME, base.getDisplayName());
     }
 
-    final var changes = new HashSet<Library>(old.getLibraries());
+    final var changes = new HashSet<>(old.getLibraries());
     base.getLibraries().forEach(changes::remove);
     for (final var lib : changes) {
       fireLibraryEvent(LibraryEvent.REMOVE_LIBRARY, lib);

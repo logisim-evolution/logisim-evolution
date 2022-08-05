@@ -26,7 +26,12 @@ public class AbstractOctalFlops extends AbstractTtlGate {
 
   private boolean hasWe;
 
-  protected AbstractOctalFlops(String name, byte pins, byte[] outputPorts, String[] ttlPortNames, HdlGeneratorFactory generator) {
+  protected AbstractOctalFlops(
+      String name,
+      byte pins,
+      byte[] outputPorts,
+      String[] ttlPortNames,
+      HdlGeneratorFactory generator) {
     super(name, pins, outputPorts, ttlPortNames, 80, generator);
     super.setInstancePoker(Poker.class);
   }
@@ -70,10 +75,8 @@ public class AbstractOctalFlops extends AbstractTtlGate {
         TtlRegisterData myState = (TtlRegisterData) state.getData();
         if (myState == null) return;
         final var values = myState.getValue().getAll();
-        if (values[index].isFullyDefined())
-          values[index] = values[index].not();
-        else
-          values[index] = Value.createKnown(1, 0);
+        if (values[index].isFullyDefined()) values[index] = values[index].not();
+        else values[index] = Value.createKnown(1, 0);
         myState.setValue(Value.create(values));
         state.fireInvalidated();
       }
@@ -237,5 +240,4 @@ public class AbstractOctalFlops extends AbstractTtlGate {
   public int[] clockPinIndex(netlistComponent comp) {
     return new int[] {9};
   }
-
 }

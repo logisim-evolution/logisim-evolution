@@ -48,10 +48,8 @@ class AttrTableComponentModel extends AttributeSetTableModel {
     String label = comp.getAttributeSet().getValue(StdAttr.LABEL);
     Location loc = comp.getLocation();
     String s = comp.getFactory().getDisplayName();
-    if (label != null && label.length() > 0)
-      s += " \"" + label + "\"";
-    else if (loc != null)
-      s += " " + loc;
+    if (label != null && label.length() > 0) s += " \"" + label + "\"";
+    else if (loc != null) s += " " + loc;
     return s;
   }
 

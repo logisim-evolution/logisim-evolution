@@ -27,10 +27,10 @@ import java.util.List;
 
 public class PlexersLibrary extends Library {
   /**
-   * Unique identifier of the library, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the library, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all libraries.
+   * <p>Identifier value must MUST be unique string among all libraries.
    */
   public static final String _ID = "Plexers";
 
@@ -94,8 +94,7 @@ public class PlexersLibrary extends Library {
     g.drawPolygon(xp, yp, 4);
   }
 
-  static final AttributeOption SIZE_NARROW =
-      new AttributeOption(20, S.getter("gateSizeNarrowOpt"));
+  static final AttributeOption SIZE_NARROW = new AttributeOption(20, S.getter("gateSizeNarrowOpt"));
   static final AttributeOption SIZE_WIDE =
       new AttributeOption(40, S.getter("gateSizeWideOpt")); /* 30 for 2-to-1 */
   public static final Attribute<AttributeOption> ATTR_SIZE =
@@ -128,9 +127,11 @@ public class PlexersLibrary extends Library {
 
   private static final FactoryDescription[] DESCRIPTIONS = {
     new FactoryDescription(Multiplexer.class, S.getter("multiplexerComponent"), "multiplexer.gif"),
-    new FactoryDescription(Demultiplexer.class, S.getter("demultiplexerComponent"), "demultiplexer.gif"),
+    new FactoryDescription(
+        Demultiplexer.class, S.getter("demultiplexerComponent"), "demultiplexer.gif"),
     new FactoryDescription(Decoder.class, S.getter("decoderComponent"), "decoder.gif"),
-    new FactoryDescription(PriorityEncoder.class, S.getter("priorityEncoderComponent"), "priencod.gif"),
+    new FactoryDescription(
+        PriorityEncoder.class, S.getter("priorityEncoderComponent"), "priencod.gif"),
     new FactoryDescription(BitSelector.class, S.getter("bitSelectorComponent"), "bitSelector.gif"),
   };
 
@@ -140,7 +141,6 @@ public class PlexersLibrary extends Library {
   public String getDisplayName() {
     return S.get("plexerLibrary");
   }
-
 
   @Override
   public List<Tool> getTools() {

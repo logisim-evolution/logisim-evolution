@@ -33,8 +33,7 @@ public class ExportTableButton extends JButton {
   ExportTableButton(JFrame parent, AnalyzerModel model) {
     this.parent = parent;
     this.model = model;
-    addActionListener(
-        event -> doSave());
+    addActionListener(event -> doSave());
   }
 
   void localeChanged() {
