@@ -62,8 +62,7 @@ public class IoComponentsInformation {
 
   public boolean hasOverlap(BoardRectangle rect) {
     var overlap = false;
-    for (var io : ioComps)
-      overlap |= io.getRectangle().overlap(rect);
+    for (var io : ioComps) overlap |= io.getRectangle().overlap(rect);
     return overlap;
   }
 
@@ -103,8 +102,7 @@ public class IoComponentsInformation {
   }
 
   public void removeSelectable(float scale) {
-    for (var compId = 0; compId < ioComps.size(); compId++) {
-      final var io = ioComps.get(compId);
+    for (final FpgaIoInformationContainer io : ioComps) {
       if (io.removeSelectable()) this.fireRedraw(io.getRectangle(), scale);
     }
   }
@@ -133,8 +131,8 @@ public class IoComponentsInformation {
     }
   }
 
-  public void replaceComponent(FpgaIoInformationContainer oldI, FpgaIoInformationContainer newI,
-                               MouseEvent e, float scale) {
+  public void replaceComponent(
+      FpgaIoInformationContainer oldI, FpgaIoInformationContainer newI, MouseEvent e, float scale) {
     if (!ioComps.contains(oldI)) return;
     removeComponent(oldI, scale);
     addComponent(newI, scale);
@@ -181,8 +179,7 @@ public class IoComponentsInformation {
   }
 
   public void removeListener(IoComponentsListener l) {
-    if (listeners != null)
-      listeners.remove(l);
+    if (listeners != null) listeners.remove(l);
   }
 
   public int getDefaultActivity() {
@@ -218,17 +215,17 @@ public class IoComponentsInformation {
   }
 
   public void paint(Graphics2D g, float scale) {
-    for (var c : ioComps)
-      c.paint(g, scale);
+    for (var c : ioComps) c.paint(g, scale);
   }
 
   private void fireRedraw(BoardRectangle rect, float scale) {
     if (listeners == null) return;
-    var area = new Rectangle(
-        AppPreferences.getScaled(rect.getXpos() - 2, scale),
-        AppPreferences.getScaled(rect.getYpos() - 2, scale),
-        AppPreferences.getScaled(rect.getWidth() + 4, scale),
-        AppPreferences.getScaled(rect.getHeight() + 4, scale));
+    var area =
+        new Rectangle(
+            AppPreferences.getScaled(rect.getXpos() - 2, scale),
+            AppPreferences.getScaled(rect.getYpos() - 2, scale),
+            AppPreferences.getScaled(rect.getWidth() + 4, scale),
+            AppPreferences.getScaled(rect.getHeight() + 4, scale));
     for (var l : listeners) l.repaintRequest(area);
   }
 }

@@ -33,10 +33,10 @@ import java.awt.Color;
 
 public class Decoder extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Decoder";
 
@@ -89,7 +89,8 @@ public class Decoder extends InstanceFactory {
   @Override
   public String getHDLName(AttributeSet attrs) {
     return CorrectLabel.getCorrectLabel(this.getName())
-        + "_" + (1 << attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth());
+        + "_"
+        + (1 << attrs.getValue(PlexersLibrary.ATTR_SELECT).getWidth());
   }
 
   @Override
@@ -120,7 +121,9 @@ public class Decoder extends InstanceFactory {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == StdAttr.FACING || attr == StdAttr.SELECT_LOC || attr == PlexersLibrary.ATTR_SELECT) {
+    if (attr == StdAttr.FACING
+        || attr == StdAttr.SELECT_LOC
+        || attr == PlexersLibrary.ATTR_SELECT) {
       instance.recomputeBounds();
       updatePorts(instance);
     } else if (attr == PlexersLibrary.ATTR_ENABLE) {

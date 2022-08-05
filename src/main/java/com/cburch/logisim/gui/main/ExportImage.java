@@ -245,21 +245,11 @@ public class ExportImage {
       }
       try {
         switch (filter.type) {
-          case FORMAT_GIF:
-            GifEncoder.toFile(img, where, monitor);
-            break;
-          case FORMAT_PNG:
-            ImageIO.write(img, "PNG", where);
-            break;
-          case FORMAT_JPG:
-            ImageIO.write(img, "JPEG", where);
-            break;
-          case FORMAT_TIKZ:
-            ((TikZWriter) g).writeFile(where);
-            break;
-          case FORMAT_SVG:
-            ((TikZWriter) g).writeSvg(width, height, where);
-            break;
+          case FORMAT_GIF -> GifEncoder.toFile(img, where, monitor);
+          case FORMAT_PNG -> ImageIO.write(img, "PNG", where);
+          case FORMAT_JPG -> ImageIO.write(img, "JPEG", where);
+          case FORMAT_TIKZ -> ((TikZWriter) g).writeFile(where);
+          case FORMAT_SVG -> ((TikZWriter) g).writeSvg(width, height, where);
         }
       } catch (Exception e) {
         OptionPane.showMessageDialog(frame, S.get("couldNotCreateFile"));

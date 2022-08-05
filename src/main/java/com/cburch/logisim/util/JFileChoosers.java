@@ -117,5 +117,4 @@ public final class JFileChoosers {
   public static String getCurrentDirectory() {
     return currentDirectory;
   }
-
 }

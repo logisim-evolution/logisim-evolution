@@ -91,7 +91,8 @@ public class Popups {
         }
       }
       main.setEnabled(canChange && file.getMainCircuit() != circuit);
-      remove.setEnabled(canChange && file.getCircuitCount() > 1 && proj.getDependencies().canRemove(circuit));
+      remove.setEnabled(
+          canChange && file.getCircuitCount() > 1 && proj.getDependencies().canRemove(circuit));
     }
 
     @Override

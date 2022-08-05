@@ -48,8 +48,7 @@ public class PioMenu implements ActionListener, MenuExtender {
   @Override
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
-    if (src == exportC)
-      exportC();
+    if (src == exportC) exportC();
   }
 
   private void exportC() {
@@ -58,8 +57,7 @@ public class PioMenu implements ActionListener, MenuExtender {
     int result = fc.showDialog(frame, S.get("SelectDirectoryToStoreC"));
     if (result == JFileChooser.APPROVE_OPTION) {
       PioState myState = instance.getAttributeValue(PioAttributes.PIO_STATE);
-      if (myState == null)
-        throw new NullPointerException("BUG in PioMenu.java");
+      if (myState == null) throw new NullPointerException("BUG in PioMenu.java");
       String compName =
           myState.getName().replace(" ", "_").replace("@", "_").replace(",", "_").toUpperCase();
       String headerFileName =
@@ -158,5 +156,4 @@ public class PioMenu implements ActionListener, MenuExtender {
           frame, S.get("SuccesCreatingHeaderAndCFile", headerFileName, cFileName));
     }
   }
-
 }

@@ -44,7 +44,8 @@ class WireFactory extends AbstractComponentFactory {
   // user interface methods
   //
   @Override
-  public void drawGhost(ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs) {
+  public void drawGhost(
+      ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs) {
     final var g = context.getGraphics();
     final var dir = attrs.getValue(Wire.DIR_ATTR);
     final var len = attrs.getValue(Wire.LEN_ATTR);

@@ -91,7 +91,7 @@ public final class ProjectActions {
     LibraryTools.buildLibraryList(proj.getLogisimFile(), tempSet);
     LibraryTools.buildToolList(proj.getLogisimFile(), forbiddenNames);
     forbiddenNames.addAll(tempSet.keySet());
-    var pattern = Pattern.compile("[^a-z0-9_.]", Pattern.CASE_INSENSITIVE);
+    var pattern = Pattern.compile("[^a-z\\d_.]", Pattern.CASE_INSENSITIVE);
     var matcher = pattern.matcher(filename);
     if (matcher.find()) {
       isOk = false;
@@ -489,7 +489,7 @@ public final class ProjectActions {
     if (!selectedFile.getName().endsWith(Loader.LOGISIM_EXTENSION)) {
       var old = selectedFile.getName();
       int ext0 = old.lastIndexOf('.');
-      if (ext0 < 0 || !Pattern.matches("\\.\\p{L}{2,}[0-9]?", old.substring(ext0))) {
+      if (ext0 < 0 || !Pattern.matches("\\.\\p{L}{2,}\\d?", old.substring(ext0))) {
         selectedFile = new File(selectedFile.getParentFile(), old + Loader.LOGISIM_EXTENSION);
       } else {
         var ext = old.substring(ext0);

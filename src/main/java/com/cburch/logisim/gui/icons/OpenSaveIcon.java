@@ -54,7 +54,7 @@ public class OpenSaveIcon extends BaseIcon {
     final int[] xPoints;
     final int[] yPoints;
     switch (myType) {
-      case FILE_OPEN:
+      case FILE_OPEN -> {
         xPoints = new int[7];
         yPoints = new int[7];
         for (var i = 0; i < 7; i++) {
@@ -62,9 +62,8 @@ public class OpenSaveIcon extends BaseIcon {
           yPoints[i] = AppPreferences.getScaled(arrowUp[i * 2 + 1]);
         }
         g2.fillPolygon(xPoints, yPoints, 7);
-        break;
-      case FILE_SAVE_AS:
-      case FILE_SAVE:
+      }
+      case FILE_SAVE_AS, FILE_SAVE -> {
         xPoints = new int[7];
         yPoints = new int[7];
         for (var i = 0; i < 7; i++) {
@@ -72,10 +71,10 @@ public class OpenSaveIcon extends BaseIcon {
           yPoints[i] = AppPreferences.getScaled(arrowDown[i * 2 + 1]);
         }
         g2.fillPolygon(xPoints, yPoints, 7);
-        break;
-      default:
+      }
+      default -> {
         // do nothing. should not really happen.
-        break;
+      }
     }
   }
 }

@@ -94,7 +94,8 @@ public class ReaderInputStream extends InputStream {
   }
 
   /**
-   *  @return false - mark is not supported */
+   * @return false - mark is not supported
+   */
   @Override
   public boolean markSupported() {
     return false; // would be imprecise

@@ -43,15 +43,9 @@ class TestPanel extends JPanel implements ValueTable.Model {
     if (i == 0) return;
     TestVector vec = getModel().getVector();
     switch (vec.columnRadix[i - 1]) {
-      case 2:
-        vec.columnRadix[i - 1] = 10;
-        break;
-      case 10:
-        vec.columnRadix[i - 1] = 16;
-        break;
-      default:
-        vec.columnRadix[i - 1] = 2;
-        break;
+      case 2 -> vec.columnRadix[i - 1] = 10;
+      case 10 -> vec.columnRadix[i - 1] = 16;
+      default -> vec.columnRadix[i - 1] = 2;
     }
     table.modelChanged();
   }
