@@ -48,10 +48,13 @@ class MenuFile extends Menu implements ActionListener {
     newi.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_N, menuMask));
     merge.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_M, menuMask));
     open.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, menuMask));
-    close.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask | InputEvent.SHIFT_DOWN_MASK));
+    close.setAccelerator(
+        KeyStroke.getKeyStroke(KeyEvent.VK_W, menuMask | InputEvent.SHIFT_DOWN_MASK));
     save.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask));
-    saveAs.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask | InputEvent.SHIFT_DOWN_MASK));
-    exportProj.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_E, menuMask | InputEvent.SHIFT_DOWN_MASK));
+    saveAs.setAccelerator(
+        KeyStroke.getKeyStroke(KeyEvent.VK_S, menuMask | InputEvent.SHIFT_DOWN_MASK));
+    exportProj.setAccelerator(
+        KeyStroke.getKeyStroke(KeyEvent.VK_E, menuMask | InputEvent.SHIFT_DOWN_MASK));
     print.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_P, menuMask));
     quit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, menuMask));
 
@@ -108,7 +111,9 @@ class MenuFile extends Menu implements ActionListener {
     } else if (src == merge) {
       ProjectActions.doMerge(baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
     } else if (src == open) {
-      final var newProj = ProjectActions.doOpen(baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
+      final var newProj =
+          ProjectActions.doOpen(
+              baseProj == null ? null : baseProj.getFrame().getCanvas(), baseProj);
       if (newProj != null
           && proj != null
           && !proj.isFileDirty()
@@ -120,7 +125,8 @@ class MenuFile extends Menu implements ActionListener {
       final var frame = proj.getFrame();
       if (proj.isFileDirty()) {
         /* Must use hardcoded strings here, because the string management is rotten */
-        final var message = "What should happen to your unsaved changes to " + proj.getLogisimFile().getName();
+        final var message =
+            "What should happen to your unsaved changes to " + proj.getLogisimFile().getName();
         String[] options = {"Save", "Discard", "Cancel"};
         result =
             OptionPane.showOptionDialog(

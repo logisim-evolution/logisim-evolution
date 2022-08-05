@@ -311,24 +311,24 @@ public class Nios2ArithmeticAndLogicalInstructions implements AssemblerExecution
       immediate = param2[0].getNumberValue();
       sourceA = sourceB = 0;
       switch (operation) {
-        case INSTR_MOVUI:
-        case INSTR_MOVHI:
+        case INSTR_MOVUI, INSTR_MOVHI -> {
           if (immediate >= (1 << 16) || immediate < 0) {
             valid = false;
             instr.setError(param2[0], S.getter("AssemblerImmediateOutOfRange"));
           }
           operation = operation == INSTR_MOVHI ? INSTR_ORHI : INSTR_ORI;
-          break;
-        case INSTR_MOVI:
+        }
+        case INSTR_MOVI -> {
           if (immediate >= (1 << 15) || immediate < -(1 << 15)) {
             valid = false;
             instr.setError(param2[0], S.getter("AssemblerImmediateOutOfRange"));
           }
           operation = INSTR_ADDI;
-          break;
-        default:
+        }
+        default -> {
           valid = false;
           return false;
+        }
       }
       if (valid) {
         instruction =

@@ -30,7 +30,8 @@ public class DefaultEvolutionAppearance {
 
   private static final int OFFS = 50;
 
-  public static List<CanvasObject> build(Collection<Instance> pins, String circuitName, boolean fixedSize) {
+  public static List<CanvasObject> build(
+      Collection<Instance> pins, String circuitName, boolean fixedSize) {
     final var edge = new HashMap<Direction, List<Instance>>();
     edge.put(Direction.EAST, new ArrayList<>());
     edge.put(Direction.WEST, new ArrayList<>());
@@ -111,7 +112,8 @@ public class DefaultEvolutionAppearance {
     if (fixedSize && label.length() > maxLength) {
       label = label.substring(0, maxLength - ellipsis.length()).concat(ellipsis);
     }
-    final var textLabel = new Text(rx + (width >> 1), ry + (height - DrawAttr.FIXED_FONT_DESCENT - 5), label);
+    final var textLabel =
+        new Text(rx + (width >> 1), ry + (height - DrawAttr.FIXED_FONT_DESCENT - 5), label);
     textLabel.getLabel().setHorizontalAlignment(EditableLabel.CENTER);
     textLabel.getLabel().setColor(Color.WHITE);
     textLabel.getLabel().setFont(DrawAttr.DEFAULT_NAME_FONT);
@@ -138,7 +140,8 @@ public class DefaultEvolutionAppearance {
           (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1)
               ? Wire.WIDTH_BUS >> 1
               : Wire.WIDTH >> 1;
-      final var height = (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1) ? Wire.WIDTH_BUS : Wire.WIDTH;
+      final var height =
+          (pin.getAttributeValue(StdAttr.WIDTH).getWidth() > 1) ? Wire.WIDTH_BUS : Wire.WIDTH;
       Rectangle rect;
       if (isLeftSide) {
         ldX = 15;

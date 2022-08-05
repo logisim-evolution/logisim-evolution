@@ -30,9 +30,7 @@ public class LogisimVersionTest extends TestBase {
   @Test
   public void testFromString() {
     final String[] tests = {
-      "1.2.3-beta1",
-      "1.2.3beta1",
-      "1.2.3",
+      "1.2.3-beta1", "1.2.3beta1", "1.2.3",
     };
     for (final var test : tests) {
       var vfs = LogisimVersion.fromString(test);
@@ -43,10 +41,7 @@ public class LogisimVersionTest extends TestBase {
     }
   }
 
-  /**
-   * Ensures default implementation for toString() uses no dash separator
-   * even if suffix is set.
-   */
+  /** Ensures default implementation for toString() uses no dash separator even if suffix is set. */
   @Test
   public void testToStringReturnsNoSeparator() {
     var major = getRandomInt(0, 10);
@@ -65,10 +60,7 @@ public class LogisimVersionTest extends TestBase {
     assertEquals(exp, lsv.toString());
   }
 
-  /**
-   * Ensures toString() preserves dash separator if original source version
-   * string had one.
-   */
+  /** Ensures toString() preserves dash separator if original source version string had one. */
   @Test
   public void testToStringPreservesGivenSeparator() {
     for (var i = 0; i < 10; i++) {
@@ -83,9 +75,7 @@ public class LogisimVersionTest extends TestBase {
     }
   }
 
-  /**
-   * Tests if one letter suffix (i.e. 1.2.3a) is handled properly
-   */
+  /** Tests if one letter suffix (i.e. 1.2.3a) is handled properly */
   @Test
   public void testFromStringHandlesOneLetterSuffix() {
     final var major = getRandomInt(0, 10);
@@ -99,8 +89,7 @@ public class LogisimVersionTest extends TestBase {
   }
 
   /**
-   * Ensures version string is properly validated and invalid format causes
-   * exception to be thrown.
+   * Ensures version string is properly validated and invalid format causes exception to be thrown.
    */
   @Test
   public void testToStringInvalidVersionStrings() {
@@ -112,14 +101,17 @@ public class LogisimVersionTest extends TestBase {
     };
 
     for (final var test : tests) {
-      assertThrows(IllegalArgumentException.class, () -> {
-        var vfs = LogisimVersion.fromString(test);
-      });
+      assertThrows(
+          IllegalArgumentException.class,
+          () -> {
+            var vfs = LogisimVersion.fromString(test);
+          });
     }
   }
 
   /**
-   * Test method for {@link com.cburch.logisim.LogisimVersion#compareTo(com.cburch.logisim.LogisimVersion)} .
+   * Test method for {@link
+   * com.cburch.logisim.LogisimVersion#compareTo(com.cburch.logisim.LogisimVersion)} .
    */
   @Test
   public void testCompareTo() {
@@ -133,10 +125,7 @@ public class LogisimVersionTest extends TestBase {
     assertTrue(newerB.compareTo(newA) > 0);
   }
 
-  /**
-   * Tests if compareTo() properly compares versions
-   * with suffix.
-   */
+  /** Tests if compareTo() properly compares versions with suffix. */
   @Test
   public void testCompareToWithSuffix() {
     newA = new LogisimVersion(1, 2, 3, "beta1");
@@ -165,9 +154,7 @@ public class LogisimVersionTest extends TestBase {
     assertNotEquals(newA, newerB);
   }
 
-  /**
-   * Checks if result of isStable() matche expectations.
-   */
+  /** Checks if result of isStable() matche expectations. */
   @Test
   public void testIsStable() {
     final var tests =

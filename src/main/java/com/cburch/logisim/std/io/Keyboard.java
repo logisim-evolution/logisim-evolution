@@ -78,23 +78,12 @@ public class Keyboard extends InstanceFactory {
 
       synchronized (data) {
         switch (e.getKeyCode()) {
-          case KeyEvent.VK_DELETE:
-            changed = data.delete();
-            break;
-          case KeyEvent.VK_LEFT:
-            data.moveCursorBy(-1);
-            break;
-          case KeyEvent.VK_RIGHT:
-            data.moveCursorBy(1);
-            break;
-          case KeyEvent.VK_HOME:
-            data.setCursor(0);
-            break;
-          case KeyEvent.VK_END:
-            data.setCursor(Integer.MAX_VALUE);
-            break;
-          default:
-            used = false;
+          case KeyEvent.VK_DELETE -> changed = data.delete();
+          case KeyEvent.VK_LEFT -> data.moveCursorBy(-1);
+          case KeyEvent.VK_RIGHT -> data.moveCursorBy(1);
+          case KeyEvent.VK_HOME -> data.setCursor(0);
+          case KeyEvent.VK_END -> data.setCursor(Integer.MAX_VALUE);
+          default -> used = false;
         }
       }
       if (used) e.consume();

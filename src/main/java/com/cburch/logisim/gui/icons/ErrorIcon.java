@@ -61,15 +61,15 @@ public class ErrorIcon implements Icon {
     final var trd = mywh / 3;
     int[] xPos = {
       xoff,
-      xoff + (int) trd,
-      xoff + (int) (2 * trd),
+      xoff + trd,
+      xoff + (2 * trd),
       xoff + mywh - 1,
       xoff + mywh - 1,
-      xoff + (int) (2 * trd),
-      xoff + (int) trd,
+      xoff + (2 * trd),
+      xoff + trd,
       xoff
     };
-    int[] ypos = {(int) trd, 0, 0, (int) trd, (int) (2 * trd), mywh - 1, mywh - 1, (int) (2 * trd)};
+    int[] ypos = {trd, 0, 0, trd, 2 * trd, mywh - 1, mywh - 1, 2 * trd};
     g2.setColor(Color.RED.brighter().brighter());
     g2.fillPolygon(xPos, ypos, 8);
     g2.setStroke(new BasicStroke(scale(1)));
@@ -88,7 +88,9 @@ public class ErrorIcon implements Icon {
       final var seven = (7 * wh) >> 3;
       final int[] axPos = {xoff, five, five, seven, five, five, xoff};
       final var yOff = AppPreferences.getScaled(1);
-      final int[] ayPos = {seven - yOff, seven - yOff, six, seven, wh - 1, seven + yOff, seven + yOff};
+      final int[] ayPos = {
+        seven - yOff, seven - yOff, six, seven, wh - 1, seven + yOff, seven + yOff
+      };
       g2.fillPolygon(axPos, ayPos, 7);
     }
     if (backwardArrow) {
@@ -98,7 +100,9 @@ public class ErrorIcon implements Icon {
       final var seven = (7 * wh) >> 3;
       final int[] axPos = {seven, three, three, xoff, three, three, seven};
       final var yOff = AppPreferences.getScaled(1);
-      final int[] ayPos = {seven - yOff, seven - yOff, six, seven, wh - 1, seven + yOff, seven + yOff};
+      final int[] ayPos = {
+        seven - yOff, seven - yOff, six, seven, wh - 1, seven + yOff, seven + yOff
+      };
       g2.fillPolygon(axPos, ayPos, 7);
     }
     g2.dispose();

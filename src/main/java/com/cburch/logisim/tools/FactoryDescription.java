@@ -22,8 +22,8 @@ import org.slf4j.LoggerFactory;
 /**
  * This class allows an object to be created holding all the information essential to showing a
  * ComponentFactory in the explorer window, but without actually loading the ComponentFactory unless
- * a program genuinely gets around to needing to use it. Note that for this to work, the ComponentFactory
- * class must be public, and it must include a public no-arguments constructor.
+ * a program genuinely gets around to needing to use it. Note that for this to work, the
+ * ComponentFactory class must be public, and it must include a public no-arguments constructor.
  */
 public class FactoryDescription {
 
@@ -38,18 +38,21 @@ public class FactoryDescription {
   private ComponentFactory factory;
   private StringGetter toolTip;
 
-  public FactoryDescription(Class<? extends ComponentFactory> factoryClass, StringGetter displayName, Icon icon) {
+  public FactoryDescription(
+      Class<? extends ComponentFactory> factoryClass, StringGetter displayName, Icon icon) {
     this(factoryClass, displayName);
   }
 
-  public FactoryDescription(Class<? extends ComponentFactory> factoryClass, StringGetter displayName, String iconName) {
+  public FactoryDescription(
+      Class<? extends ComponentFactory> factoryClass, StringGetter displayName, String iconName) {
     this(factoryClass, displayName);
     this.iconName = iconName;
     this.iconLoadAttempted = false;
     this.icon = null;
   }
 
-  public FactoryDescription(Class<? extends ComponentFactory> factoryClass, StringGetter displayName) {
+  public FactoryDescription(
+      Class<? extends ComponentFactory> factoryClass, StringGetter displayName) {
     this.displayName = displayName;
     this.iconName = "???";
     this.iconLoadAttempted = true;
@@ -60,7 +63,8 @@ public class FactoryDescription {
     this.toolTip = null;
   }
 
-  public static List<Tool> getTools(Class<? extends Library> base, FactoryDescription[] descriptions) {
+  public static List<Tool> getTools(
+      Class<? extends Library> base, FactoryDescription[] descriptions) {
     var tools = new Tool[descriptions.length];
     for (var i = 0; i < tools.length; i++) {
       tools[i] = new AddTool(base, descriptions[i]);
@@ -117,8 +121,8 @@ public class FactoryDescription {
   /**
    * Returns unique library identifier.
    *
-   * As we want to have static _ID per library, generic
-   * implementation must look for it in the current instance
+   * <p>As we want to have static _ID per library, generic implementation must look for it in the
+   * current instance
    */
   public String getName() {
     return LibraryUtil.getName(factoryClass);

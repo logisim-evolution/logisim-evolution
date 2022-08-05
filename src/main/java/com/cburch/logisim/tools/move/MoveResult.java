@@ -22,7 +22,11 @@ public class MoveResult {
   private final Collection<Location> unconnectedLocations;
   private final int totalDistance;
 
-  public MoveResult(MoveRequest request, ReplacementMap replacements, Collection<ConnectionData> unsatisfiedConnections, int totalDistance) {
+  public MoveResult(
+      MoveRequest request,
+      ReplacementMap replacements,
+      Collection<ConnectionData> unsatisfiedConnections,
+      int totalDistance) {
     this.replacements = replacements;
     this.unsatisfiedConnections = unsatisfiedConnections;
     this.totalDistance = totalDistance;

@@ -40,10 +40,10 @@ import java.awt.Graphics2D;
 
 public class Rv32imRiscV extends SocInstanceFactory implements DynamicElementProvider {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Rv32im";
 
@@ -92,12 +92,12 @@ public class Rv32imRiscV extends SocInstanceFactory implements DynamicElementPro
     updatePorts(instance);
     final var bds = instance.getBounds();
     instance.setTextField(
-            StdAttr.LABEL,
-            StdAttr.LABEL_FONT,
-            bds.getX() + bds.getWidth() / 2,
-            bds.getY() - 3,
-            GraphicsUtil.H_CENTER,
-            GraphicsUtil.V_BASELINE);
+        StdAttr.LABEL,
+        StdAttr.LABEL_FONT,
+        bds.getX() + bds.getWidth() / 2,
+        bds.getY() - 3,
+        GraphicsUtil.H_CENTER,
+        GraphicsUtil.V_BASELINE);
   }
 
   @Override
@@ -119,7 +119,9 @@ public class Rv32imRiscV extends SocInstanceFactory implements DynamicElementPro
     painter.drawLabel();
     painter.drawClock(1, Direction.EAST);
     painter.drawPort(0, "Reset", Direction.EAST);
-    for (int i = 0; i < painter.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNrOfIrqs(); i++) {
+    for (int i = 0;
+        i < painter.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNrOfIrqs();
+        i++) {
       painter.drawPort(i + 2, "IRQ" + i, Direction.EAST);
     }
     final var f = g2.getFont();
@@ -150,13 +152,12 @@ public class Rv32imRiscV extends SocInstanceFactory implements DynamicElementPro
   public void propagate(InstanceState state) {
     RV32imState.ProcessorState data = (RV32imState.ProcessorState) state.getData();
     if (data == null) {
-      data = state.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNewState(state.getInstance());
+      data =
+          state.getAttributeValue(RV32imAttributes.RV32IM_STATE).getNewState(state.getInstance());
       state.setData(data);
     }
-    if (state.getPortValue(0) == Value.TRUE)
-      data.reset();
-    else
-      data.setClock(state.getPortValue(1), ((InstanceStateImpl) state).getCircuitState());
+    if (state.getPortValue(0) == Value.TRUE) data.reset();
+    else data.setClock(state.getPortValue(1), ((InstanceStateImpl) state).getCircuitState());
   }
 
   @Override

@@ -38,7 +38,8 @@ public class BoardList {
     return ret;
   }
 
-  private static Collection<String> getBoardsfromDirectory(Pattern pattern, String match, File dir) {
+  private static Collection<String> getBoardsfromDirectory(
+      Pattern pattern, String match, File dir) {
     final var ret = new ArrayList<String>();
     final var fileList = dir.listFiles();
     for (final var file : fileList) {
@@ -87,7 +88,8 @@ public class BoardList {
     return ret;
   }
 
-  private static final String boardResourcePath = "resources" + File.separator + "logisim" + File.separator + "boards";
+  private static final String boardResourcePath =
+      "resources" + File.separator + "logisim" + File.separator + "boards";
 
   private final ArrayList<String> definedBoards = new ArrayList<>();
 

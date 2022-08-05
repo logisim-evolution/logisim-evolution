@@ -11,7 +11,9 @@ package com.cburch.logisim.soc.util;
 
 public interface AbstractExecutionUnitWithLabelSupport extends AssemblerExecutionInterface {
 
-  public abstract boolean isLabelSupported();
-  public abstract long getLabelAddress(long pc);
-  public abstract String getAsmInstruction(String label);
+  boolean isLabelSupported();
+
+  long getLabelAddress(long pc);
+
+  String getAsmInstruction(String label);
 }
