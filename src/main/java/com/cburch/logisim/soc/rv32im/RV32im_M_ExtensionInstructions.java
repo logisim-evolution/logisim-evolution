@@ -58,8 +58,7 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
     BigInteger mask = BigInteger.valueOf(1).shiftLeft(32).subtract(BigInteger.valueOf(1));
     int result = 0;
     switch (operation) {
-      case INSTR_MULH:
-      case INSTR_MUL:
+      case INSTR_MULH, INSTR_MUL -> {
         opp1 = BigInteger.valueOf(val1);
         opp2 = BigInteger.valueOf(val2);
         res = opp1.multiply(opp2);
@@ -67,33 +66,31 @@ public class RV32im_M_ExtensionInstructions implements AssemblerExecutionInterfa
             (operation == INSTR_MUL)
                 ? res.and(mask).intValue()
                 : res.shiftRight(32).and(mask).intValue();
-        break;
-      case INSTR_MULHSU:
+      }
+      case INSTR_MULHSU -> {
         opp1 = BigInteger.valueOf(val1);
         opp2 = BigInteger.valueOf(ElfHeader.getLongValue(val2));
         res = opp1.multiply(opp2);
         result = res.shiftRight(32).and(mask).intValue();
-        break;
-      case INSTR_MULHU:
+      }
+      case INSTR_MULHU -> {
         opp1 = BigInteger.valueOf(ElfHeader.getLongValue(val1));
         opp2 = BigInteger.valueOf(ElfHeader.getLongValue(val2));
         res = opp1.multiply(opp2);
         result = res.shiftRight(32).and(mask).intValue();
-        break;
-      case INSTR_DIV:
-      case INSTR_REM:
+      }
+      case INSTR_DIV, INSTR_REM -> {
         opp1 = BigInteger.valueOf(val1);
         opp2 = BigInteger.valueOf(val2);
         res = (operation == INSTR_REM) ? opp1.remainder(opp2) : opp1.divide(opp2);
         result = res.and(mask).intValue();
-        break;
-      case INSTR_DIVU:
-      case INSTR_REMU:
+      }
+      case INSTR_DIVU, INSTR_REMU -> {
         opp1 = BigInteger.valueOf(ElfHeader.getLongValue(val1));
         opp2 = BigInteger.valueOf(ElfHeader.getLongValue(val2));
         res = (operation == INSTR_REMU) ? opp1.remainder(opp2) : opp1.divide(opp2);
         result = res.and(mask).intValue();
-        break;
+      }
     }
     cpuState.writeRegister(destination, result);
     return true;

@@ -114,7 +114,8 @@ abstract class RectangularTool extends AbstractTool {
   @Override
   public void keyPressed(Canvas canvas, KeyEvent e) {
     final var code = e.getKeyCode();
-    if (active && (code == KeyEvent.VK_SHIFT || code == KeyEvent.VK_ALT || code == KeyEvent.VK_CONTROL)) {
+    if (active
+        && (code == KeyEvent.VK_SHIFT || code == KeyEvent.VK_ALT || code == KeyEvent.VK_CONTROL)) {
       updateMouse(canvas, lastMouseX, lastMouseY, e.getModifiersEx());
     }
   }

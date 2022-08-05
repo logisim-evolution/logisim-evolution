@@ -57,9 +57,11 @@ class LayoutOptions extends OptionsPanel {
         items[j] = new PrefOption(opts[j].getSaveString(), opts[j].getDisplayGetter());
       }
       if (i == 0) {
-        radix1 = new PrefOptionList(AppPreferences.POKE_WIRE_RADIX1, S.getter("layoutRadix1"), items);
+        radix1 =
+            new PrefOptionList(AppPreferences.POKE_WIRE_RADIX1, S.getter("layoutRadix1"), items);
       } else {
-        radix2 = new PrefOptionList(AppPreferences.POKE_WIRE_RADIX2, S.getter("layoutRadix2"), items);
+        radix2 =
+            new PrefOptionList(AppPreferences.POKE_WIRE_RADIX2, S.getter("layoutRadix2"), items);
       }
     }
     afterAdd =
@@ -139,7 +141,6 @@ class LayoutOptions extends OptionsPanel {
     afterAdd.localeChanged();
     defaultAppearance.localeChanged();
   }
-
 
   private static class MyListener implements PreferenceChangeListener {
     @Override

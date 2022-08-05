@@ -238,7 +238,7 @@ public class Implicant implements Comparable<Implicant> {
 
     // Now build up our sum-of-products expression
     // from the remaining terms
-    final var ret = new ArrayList<Implicant>(retSet);
+    final var ret = new ArrayList<>(retSet);
     Collections.sort(ret);
     return ret;
   }
@@ -356,7 +356,7 @@ public class Implicant implements Comparable<Implicant> {
       final var idx = table.getVisibleRowIndex(i);
       final var dc = table.getVisibleRowDcMask(i);
       final var imp = new Implicant(dc, idx);
-      final var region = regions.computeIfAbsent(val, k -> new HashSet<Implicant>());
+      final var region = regions.computeIfAbsent(val, k -> new HashSet<>());
       region.add(imp);
     }
     // For each region...
@@ -383,7 +383,7 @@ public class Implicant implements Comparable<Implicant> {
         current = next;
       }
 
-      final var sorted = new ArrayList<Implicant>(all);
+      final var sorted = new ArrayList<>(all);
       sorted.sort(sortByGenerality);
       final var chosen = new ArrayList<Implicant>();
       for (final var implicant : sorted) {

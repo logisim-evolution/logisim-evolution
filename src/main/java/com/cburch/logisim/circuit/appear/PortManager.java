@@ -158,7 +158,7 @@ class PortManager {
       }
     }
     // handle replacements
-    final var addsCopy = new ArrayList<Instance>(adds);
+    final var addsCopy = new ArrayList<>(adds);
     for (final var entry : replaces.entrySet()) {
       final var port = oldObjects.remove(entry.getKey());
       if (port != null) {

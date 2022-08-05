@@ -104,8 +104,7 @@ public class PioAttributes extends AbstractAttributeSet {
       changes |= !myAttributes.contains(PIO_OUT_RESET);
       newList.add(PIO_OUT_RESET);
       newList.add(PIO_OUT_BIT);
-    } else
-      changes |= myAttributes.contains(PIO_OUT_RESET);
+    } else changes |= myAttributes.contains(PIO_OUT_RESET);
     if (state.getPortDirection() != PORT_OUTPUT) {
       changes |= !myAttributes.contains(PIO_SYNC_CAPT);
       newList.add(PIO_SYNC_CAPT);
@@ -113,16 +112,13 @@ public class PioAttributes extends AbstractAttributeSet {
         changes |= !myAttributes.contains(PIO_CAPT_TYPE);
         newList.add(PIO_CAPT_TYPE);
         newList.add(PIO_CAPT_BIT);
-      } else
-        changes |= myAttributes.contains(PIO_CAPT_TYPE);
+      } else changes |= myAttributes.contains(PIO_CAPT_TYPE);
       newList.add(PIO_GEN_IRQ);
       if (state.inputIsCapturedSynchronisely()) {
         changes |= !myAttributes.contains(PIO_IRQ_TYPE);
         newList.add(PIO_IRQ_TYPE);
-      } else
-        changes |= myAttributes.contains(PIO_IRQ_TYPE);
-    } else
-      changes |= myAttributes.contains(PIO_SYNC_CAPT);
+      } else changes |= myAttributes.contains(PIO_IRQ_TYPE);
+    } else changes |= myAttributes.contains(PIO_SYNC_CAPT);
     newList.add(StdAttr.LABEL);
     newList.add(StdAttr.LABEL_FONT);
     newList.add(StdAttr.LABEL_VISIBILITY);

@@ -40,9 +40,9 @@ public class FontSelector extends JPanel implements JInputComponent, ActionListe
 
   private final Set<String> fontNames;
   private Font currentFont = StdAttr.DEFAULT_LABEL_FONT;
-  private JTextArea preview = new JTextArea(3, 20);
-  private JList<String> selectableFontFamilies;
-  private JList<Integer> selectableFontSize;
+  private final JTextArea preview = new JTextArea(3, 20);
+  private final JList<String> selectableFontFamilies;
+  private final JList<Integer> selectableFontSize;
   private JCheckBox boldAttribute;
   private JCheckBox italicAttribute;
   private int fontSize;

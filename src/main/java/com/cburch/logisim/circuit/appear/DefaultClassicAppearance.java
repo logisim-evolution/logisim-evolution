@@ -115,17 +115,11 @@ public class DefaultClassicAppearance {
 
   private static int computeOffset(int numFacing, int numOpposite, int maxOthers) {
     final var maxThis = Math.max(numFacing, numOpposite);
-    int maxOffs;
-    switch (maxThis) {
-      case 0, 1:
-        maxOffs = (maxOthers == 0 ? 15 : 10);
-        break;
-      case 2:
-        maxOffs = 10;
-        break;
-      default:
-        maxOffs = (maxOthers == 0 ? 5 : 10);
-    }
+    int maxOffs = switch (maxThis) {
+      case 0, 1 -> (maxOthers == 0 ? 15 : 10);
+      case 2 -> 10;
+      default -> (maxOthers == 0 ? 5 : 10);
+    };
     return maxOffs + 10 * ((maxThis - numFacing) / 2);
   }
 

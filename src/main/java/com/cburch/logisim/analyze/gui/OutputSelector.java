@@ -50,11 +50,7 @@ class OutputSelector {
 
       @Override
       public Component getListCellRendererComponent(
-          JList<?> list,
-          Object value,
-          int index,
-          boolean isSelected,
-          boolean cellHasFocus) {
+          JList<?> list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
         this.setText((String) value);
         return this;

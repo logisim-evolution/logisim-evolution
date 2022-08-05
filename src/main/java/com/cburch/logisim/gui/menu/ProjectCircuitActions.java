@@ -49,7 +49,8 @@ public class ProjectCircuitActions {
   }
 
   private static void analyzeError(Project proj, String message) {
-    OptionPane.showMessageDialog(proj.getFrame(), message, S.get("analyzeErrorTitle"), OptionPane.ERROR_MESSAGE);
+    OptionPane.showMessageDialog(
+        proj.getFrame(), message, S.get("analyzeErrorTitle"), OptionPane.ERROR_MESSAGE);
   }
 
   private static void configureAnalyzer(
@@ -100,7 +101,8 @@ public class ProjectCircuitActions {
         error = new JLabel("\"" + name + "\": " + S.get("circuitNameExists"));
       }
       if (error != null) {
-        OptionPane.showMessageDialog(proj.getFrame(), error, S.get("circuitCreateTitle"), OptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(
+            proj.getFrame(), error, S.get("circuitCreateTitle"), OptionPane.ERROR_MESSAGE);
       } else {
         final var circuit = new Circuit(name, proj.getLogisimFile(), proj);
         proj.doAction(LogisimFileActions.addCircuit(circuit));
@@ -254,7 +256,8 @@ public class ProjectCircuitActions {
     return name;
   }
 
-  private static String promptForNewName(JFrame frame, Library lib, String initialValue, boolean vhdl) {
+  private static String promptForNewName(
+      JFrame frame, Library lib, String initialValue, boolean vhdl) {
     String title;
     String prompt;
     if (vhdl) {
@@ -286,7 +289,8 @@ public class ProjectCircuitActions {
     panel.add(error);
     gb.setConstraints(strut, gc);
     panel.add(strut);
-    final var pane = new JOptionPane(panel, OptionPane.QUESTION_MESSAGE, OptionPane.OK_CANCEL_OPTION);
+    final var pane =
+        new JOptionPane(panel, OptionPane.QUESTION_MESSAGE, OptionPane.OK_CANCEL_OPTION);
     pane.setInitialValue(field);
     final var dlog = pane.createDialog(frame, title);
     dlog.addWindowFocusListener(

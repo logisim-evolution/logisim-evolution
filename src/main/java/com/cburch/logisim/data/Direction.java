@@ -25,11 +25,13 @@ public class Direction implements AttributeOptionInterface {
   public static final Direction EAST =
       new Direction("east", S.getter("directionEastOption"), S.getter("directionEastVertical"), 0);
   public static final Direction NORTH =
-      new Direction("north", S.getter("directionNorthOption"), S.getter("directionNorthVertical"), 1);
+      new Direction(
+          "north", S.getter("directionNorthOption"), S.getter("directionNorthVertical"), 1);
   public static final Direction WEST =
       new Direction("west", S.getter("directionWestOption"), S.getter("directionWestVertical"), 2);
   public static final Direction SOUTH =
-      new Direction("south", S.getter("directionSouthOption"), S.getter("directionSouthVertical"), 3);
+      new Direction(
+          "south", S.getter("directionSouthOption"), S.getter("directionSouthVertical"), 3);
 
   public static final Direction[] cardinals = {EAST, NORTH, WEST, SOUTH};
 
