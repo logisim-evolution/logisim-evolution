@@ -100,20 +100,11 @@ public class Print {
         start = mark + 2, mark = header.indexOf('%', start)) {
       ret.append(header, start, mark);
       switch (header.charAt(mark + 1)) {
-        case 'n':
-          ret.append(circName);
-          break;
-        case 'p':
-          ret.append("").append(index);
-          break;
-        case 'P':
-          ret.append("").append(max);
-          break;
-        case '%':
-          ret.append("%");
-          break;
-        default:
-          ret.append("%").append(header.charAt(mark + 1));
+        case 'n' -> ret.append(circName);
+        case 'p' -> ret.append("").append(index);
+        case 'P' -> ret.append("").append(max);
+        case '%' -> ret.append("%");
+        default -> ret.append("%").append(header.charAt(mark + 1));
       }
     }
     if (start < header.length()) {

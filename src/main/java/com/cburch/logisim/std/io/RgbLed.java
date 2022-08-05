@@ -38,10 +38,10 @@ import java.util.List;
 
 public class RgbLed extends InstanceFactory implements DynamicElementProvider {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "RGBLED";
 
@@ -61,10 +61,8 @@ public class RgbLed extends InstanceFactory implements DynamicElementProvider {
     @Override
     public Value getLogValue(InstanceState state, Object option) {
       final var data = (InstanceDataSingleton) state.getData();
-      if (data == null)
-        return Value.createUnknown(BITWIDTH);
-      else
-        return Value.createKnown(BITWIDTH, (Integer) data.getValue());
+      if (data == null) return Value.createUnknown(BITWIDTH);
+      else return Value.createKnown(BITWIDTH, (Integer) data.getValue());
     }
   }
 

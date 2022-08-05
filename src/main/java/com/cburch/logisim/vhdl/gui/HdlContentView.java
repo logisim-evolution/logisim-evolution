@@ -36,7 +36,8 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-public class HdlContentView extends JPanel implements BaseDocumentListenerContract, HdlModelListener {
+public class HdlContentView extends JPanel
+    implements BaseDocumentListenerContract, HdlModelListener {
 
   private class HdlEditAction extends Action {
     final HdlModel model;

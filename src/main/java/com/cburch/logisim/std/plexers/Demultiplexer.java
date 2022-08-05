@@ -34,10 +34,10 @@ import java.awt.Color;
 
 public class Demultiplexer extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Demultiplexer";
 
@@ -72,7 +72,8 @@ public class Demultiplexer extends InstanceFactory {
 
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    // for backward compatibility, after 2.6.4 the enable pin was "enabled" by default upto and until 3.6.1
+    // for backward compatibility, after 2.6.4 the enable pin was "enabled" by default upto and
+    // until 3.6.1
     if (attr == PlexersLibrary.ATTR_ENABLE) {
       return ver.compareTo(new LogisimVersion(3, 6, 1)) <= 0;
     } else {
@@ -106,7 +107,8 @@ public class Demultiplexer extends InstanceFactory {
     final var facing = attrs.getValue(StdAttr.FACING);
     final var select = attrs.getValue(PlexersLibrary.ATTR_SELECT);
     final var outputs = 1 << select.getWidth();
-    final var bds = (outputs == 2)
+    final var bds =
+        (outputs == 2)
             ? Bounds.create(0, -25, 30, 50)
             : Bounds.create(0, -(outputs / 2) * 10 - 10, 40, outputs * 10 + 20);
     return bds.rotate(Direction.EAST, facing, 0, 0);
@@ -120,7 +122,9 @@ public class Demultiplexer extends InstanceFactory {
 
   @Override
   protected void instanceAttributeChanged(Instance instance, Attribute<?> attr) {
-    if (attr == StdAttr.FACING || attr == StdAttr.SELECT_LOC || attr == PlexersLibrary.ATTR_SELECT) {
+    if (attr == StdAttr.FACING
+        || attr == StdAttr.SELECT_LOC
+        || attr == PlexersLibrary.ATTR_SELECT) {
       instance.recomputeBounds();
       updatePorts(instance);
     } else if (attr == StdAttr.WIDTH || attr == PlexersLibrary.ATTR_ENABLE) {

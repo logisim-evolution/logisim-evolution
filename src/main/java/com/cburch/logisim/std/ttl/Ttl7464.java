@@ -15,10 +15,10 @@ import com.cburch.logisim.prefs.AppPreferences;
 
 public class Ttl7464 extends AbstractTtlGate {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "7464";
 
@@ -76,7 +76,10 @@ public class Ttl7464 extends AbstractTtlGate {
     posX = new int[] {x + 110, x + 110, x + 93 + AndOffset, x + 93 + AndOffset, x + 95 + AndOffset};
     posY = new int[] {y + AbstractTtlGate.PIN_HEIGHT, y + 12, y + 12, y + 18, y + 18};
     gfx.drawPolyline(posX, posY, 5);
-    posY = new int[] {y + height - AbstractTtlGate.PIN_HEIGHT, y + height - 12, y + height - 12, y + 53, y + 53};
+    posY =
+        new int[] {
+          y + height - AbstractTtlGate.PIN_HEIGHT, y + height - 12, y + height - 12, y + 53, y + 53
+        };
     gfx.drawPolyline(posX, posY, 5);
   }
 

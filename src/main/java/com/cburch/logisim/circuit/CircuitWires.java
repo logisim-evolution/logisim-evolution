@@ -251,7 +251,7 @@ class CircuitWires {
 
     // make a WireBundle object for each end of a splitter
     for (final var spl : splitters) {
-      final var ends = new ArrayList<EndData>(spl.getEnds());
+      final var ends = new ArrayList<>(spl.getEnds());
       for (final var end : ends) {
         final var p = end.getLocation();
         final var pb = ret.createBundleAt(p);
@@ -271,7 +271,7 @@ class CircuitWires {
 
     // determine the bundles at the end of each splitter
     for (final var spl : splitters) {
-      final var ends = new ArrayList<EndData>(spl.getEnds());
+      final var ends = new ArrayList<>(spl.getEnds());
       int index = -1;
       for (final var end : ends) {
         index++;
@@ -359,7 +359,7 @@ class CircuitWires {
     for (final var comp : tunnels) {
       final var label = comp.getAttributeSet().getValue(StdAttr.LABEL).trim();
       if (!label.equals("")) {
-        final var tunnelSet = tunnelSets.computeIfAbsent(label, k -> new ArrayList<Location>(3));
+        final var tunnelSet = tunnelSets.computeIfAbsent(label, k -> new ArrayList<>(3));
         tunnelSet.add(comp.getLocation());
       }
     }

@@ -65,5 +65,4 @@ public class IoComponentSelector implements ActionListener {
     action_id = e.getActionCommand();
     diag.setVisible(false);
   }
-
 }

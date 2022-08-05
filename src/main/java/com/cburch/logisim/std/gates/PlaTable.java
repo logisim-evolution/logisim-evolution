@@ -7,7 +7,6 @@
  * This is free software released under GNU GPLv3 license
  */
 
-
 /* This file is adopted from the MIPS.jar library by
  * Martin Dybdal <dybber@dybber.dk> and
  * Anders Boesen Lindbo Larsen <abll@diku.dk>.
@@ -144,7 +143,8 @@ public class PlaTable {
       try {
         tt = parseOneLine(tt, line);
       } catch (IOException e) {
-        OptionPane.showMessageDialog(null, e.getMessage(), "Error in PLA Table", OptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(
+            null, e.getMessage(), "Error in PLA Table", OptionPane.ERROR_MESSAGE);
       }
     }
     if (tt == null) tt = new PlaTable(2, 2, "PLA");
@@ -569,7 +569,8 @@ public class PlaTable {
           rm.setFont(AppPreferences.getScaledFont(rm.getFont().deriveFont(smallFont)));
           rm.addActionListener(e -> deleteRow(RowPanel.this));
           rm.setMargin(new Insets(0, 0, 0, 0));
-          rm.setPreferredSize(new Dimension(AppPreferences.getScaled(75), AppPreferences.getScaled(17)));
+          rm.setPreferredSize(
+              new Dimension(AppPreferences.getScaled(75), AppPreferences.getScaled(17)));
           add(rm);
 
           int inSz = row.inBits.length;
@@ -709,7 +710,7 @@ public class PlaTable {
         i.setFont(AppPreferences.getScaledFont(i.getFont().deriveFont(smallFont)));
         i.setPreferredSize(
             new Dimension(
-                    AppPreferences.getScaled(Math.max(inSz, 3) * BS), AppPreferences.getScaled(15)));
+                AppPreferences.getScaled(Math.max(inSz, 3) * BS), AppPreferences.getScaled(15)));
         add(i);
 
         final var o = new JLabel("output", SwingConstants.RIGHT);
@@ -736,7 +737,8 @@ public class PlaTable {
     private static final int BUTTON_HGAP = 2;
     private static final int EDGE_THICKNESS = 2;
     private static final Border STD_BORDER = BorderFactory.createEtchedBorder();
-    private static final Border CLICK_BORDER = BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
+    private static final Border CLICK_BORDER =
+        BorderFactory.createEtchedBorder(EtchedBorder.RAISED);
     private static final Dimension BUTTON_SIZE =
         new Dimension(
             AppPreferences.getScaled(BS - 2 * EDGE_THICKNESS - BUTTON_HGAP),

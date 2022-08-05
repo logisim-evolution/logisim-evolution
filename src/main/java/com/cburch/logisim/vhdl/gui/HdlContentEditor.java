@@ -193,13 +193,11 @@ public class HdlContentEditor extends JDialog implements JInputDialog {
             options[0]);
 
     switch (n) {
-      case OptionPane.YES_OPTION:
-        dispose();
-        break;
-      case OptionPane.CANCEL_OPTION:
+      case OptionPane.YES_OPTION -> dispose();
+      case OptionPane.CANCEL_OPTION -> {
         save.doClick();
         dispose();
-        break;
+      }
     }
   }
 

@@ -71,8 +71,7 @@ public abstract class Tool implements AttributeDefaultProvider {
   /**
    * Returns Tool unique ID as defined in its _ID constant.
    *
-   * For each tool extending this class, define
-   *    public static final String _ID = "UNIQUE ID"
+   * <p>For each tool extending this class, define public static final String _ID = "UNIQUE ID"
    *
    * @return unique ID of the tool
    */
@@ -128,7 +127,6 @@ public abstract class Tool implements AttributeDefaultProvider {
   public void paintIcon(ComponentDrawContext c, int x, int y) {
     // no-op implementation
   }
-
 
   public void select(Canvas canvas) {
     // no-op implementation

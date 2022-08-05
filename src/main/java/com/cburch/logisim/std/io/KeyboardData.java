@@ -54,8 +54,7 @@ class KeyboardData implements InstanceData, Cloneable {
     final var len = bufferLength;
     final var pos = cursorPos;
     if (pos >= len) return false;
-    if (len >= pos + 1)
-      System.arraycopy(buf, pos + 1, buf, pos, len - (pos + 1));
+    if (len >= pos + 1) System.arraycopy(buf, pos + 1, buf, pos, len - (pos + 1));
     bufferLength = len - 1;
     str = null;
     dispValid = false;
@@ -67,8 +66,7 @@ class KeyboardData implements InstanceData, Cloneable {
     final var len = bufferLength;
     if (len == 0) return '\0';
     final var ret = buf[0];
-    if (len >= 1)
-      System.arraycopy(buf, 1, buf, 0, len - 1);
+    if (len >= 1) System.arraycopy(buf, 1, buf, 0, len - 1);
     bufferLength = len - 1;
     final var pos = cursorPos;
     if (pos > 0) cursorPos = pos - 1;
@@ -118,8 +116,7 @@ class KeyboardData implements InstanceData, Cloneable {
     final var len = bufferLength;
     if (len >= buf.length) return false;
     final var pos = cursorPos;
-    if (len >= pos)
-      System.arraycopy(buf, pos, buf, pos + 1, len - pos);
+    if (len >= pos) System.arraycopy(buf, pos, buf, pos + 1, len - pos);
     buf[pos] = value;
     bufferLength = len + 1;
     cursorPos = pos + 1;

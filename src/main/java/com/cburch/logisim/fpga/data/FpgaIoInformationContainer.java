@@ -432,7 +432,7 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
   public String getPinLocation(int index) {
-    return myPinLocations.containsKey(index) ? myPinLocations.get(index) : "";
+    return myPinLocations.getOrDefault(index, "");
   }
 
   public void setInputPinLocation(int index, String value) {
@@ -488,13 +488,11 @@ public class FpgaIoInformationContainer implements Cloneable {
       }
       if (IoComponentTypes.hasRotationAttribute(myType)) {
         switch (myRotation) {
-          case IoComponentTypes.ROTATION_CW_90:
-          case IoComponentTypes.ROTATION_CCW_90:
-            result.setAttribute(BoardWriterClass.MAP_ROTATION, Integer.toString(myRotation));
-            break;
-          default:
+          case IoComponentTypes.ROTATION_CW_90, IoComponentTypes.ROTATION_CCW_90 ->
+              result.setAttribute(BoardWriterClass.MAP_ROTATION, Integer.toString(myRotation));
+          default -> {
             // no rotation
-            break;
+          }
         }
       }
       if (CollectionUtil.isNotEmpty(myInputPins)) {

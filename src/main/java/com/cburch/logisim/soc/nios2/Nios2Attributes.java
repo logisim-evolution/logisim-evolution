@@ -55,17 +55,17 @@ public class Nios2Attributes extends AbstractAttributeSet {
   private Boolean stateVisible = true;
 
   private static final List<Attribute<?>> ATTRIBUTES =
-        Arrays.asList(
-            RESET_VECTOR,
-            EXCEPTION_VECTOR,
-            BREAK_VECTOR,
-            NR_OF_IRQS,
-            NIOS_STATE_VISIBLE,
-            StdAttr.LABEL,
-            StdAttr.LABEL_FONT,
-            StdAttr.LABEL_VISIBILITY,
-            SocSimulationManager.SOC_BUS_SELECT,
-            NIOS2_STATE);
+      Arrays.asList(
+          RESET_VECTOR,
+          EXCEPTION_VECTOR,
+          BREAK_VECTOR,
+          NR_OF_IRQS,
+          NIOS_STATE_VISIBLE,
+          StdAttr.LABEL,
+          StdAttr.LABEL_FONT,
+          StdAttr.LABEL_VISIBILITY,
+          SocSimulationManager.SOC_BUS_SELECT,
+          NIOS2_STATE);
 
   @Override
   protected void copyInto(AbstractAttributeSet dest) {
@@ -112,18 +112,15 @@ public class Nios2Attributes extends AbstractAttributeSet {
   public <V> void setValue(Attribute<V> attr, V value) {
     V oldValue = getValue(attr);
     if (attr == RESET_VECTOR) {
-      if (upState.setResetVector((int) value))
-        fireAttributeValueChanged(attr, value, oldValue);
+      if (upState.setResetVector((int) value)) fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == EXCEPTION_VECTOR) {
-      if (upState.setExceptionVector((int) value))
-        fireAttributeValueChanged(attr, value, oldValue);
+      if (upState.setExceptionVector((int) value)) fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == BREAK_VECTOR) {
-      if (upState.setBreakVector((int) value))
-        fireAttributeValueChanged(attr, value, oldValue);
+      if (upState.setBreakVector((int) value)) fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == NR_OF_IRQS) {
@@ -137,8 +134,7 @@ public class Nios2Attributes extends AbstractAttributeSet {
       return;
     }
     if (attr == StdAttr.LABEL) {
-      if (upState.setLabel((String) value))
-        fireAttributeValueChanged(attr, value, oldValue);
+      if (upState.setLabel((String) value)) fireAttributeValueChanged(attr, value, oldValue);
       return;
     }
     if (attr == StdAttr.LABEL_FONT) {
@@ -166,5 +162,4 @@ public class Nios2Attributes extends AbstractAttributeSet {
       return;
     }
   }
-
 }

@@ -99,7 +99,7 @@ public class RegTabContent extends JScrollPane implements LocaleListener, Simula
     y++;
 
     if (!registers.isEmpty()) {
-      final var keys = registers.keySet().stream().sorted(new AlphanumComparator()).collect(Collectors.toList());
+      final var keys = registers.keySet().stream().sorted(new AlphanumComparator()).toList();
       for (final var key : keys) {
         constraints.gridy = y;
         constraints.gridx = 0;

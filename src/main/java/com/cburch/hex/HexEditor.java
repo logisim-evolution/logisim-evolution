@@ -139,7 +139,8 @@ public class HexEditor extends JComponent implements Scrollable {
   protected void paintComponent(Graphics gfx) {
     if (AppPreferences.AntiAliassing.getBoolean()) {
       final var g2 = (Graphics2D) gfx;
-      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      g2.setRenderingHint(
+          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
     measures.ensureComputed(gfx);
@@ -174,7 +175,8 @@ public class HexEditor extends JComponent implements Scrollable {
     for (var a = xaddr0; a < xaddr1; a += cols, baseY += dy) {
       final var label = toHex(a, labelChars);
       gfx.setFont(labelFont);
-      gfx.drawString(label, baseX - labelWidth + (labelWidth - labelFm.stringWidth(label)) / 2, baseY);
+      gfx.drawString(
+          label, baseX - labelWidth + (labelWidth - labelFm.stringWidth(label)) / 2, baseY);
       gfx.setFont(baseFont);
       var b = a;
       for (var j = 0; j < cols; j++, b++) {
@@ -233,9 +235,7 @@ public class HexEditor extends JComponent implements Scrollable {
 
   private String toHex(long value, int chars) {
     final var ret = String.format("%0" + chars + "x", value);
-    return (ret.length() > chars)
-      ? ret.substring(ret.length() - chars)
-      : ret;
+    return (ret.length() > chars) ? ret.substring(ret.length() - chars) : ret;
   }
 
   private class Listener implements HexModelListener {

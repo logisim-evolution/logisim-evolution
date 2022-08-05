@@ -27,10 +27,10 @@ import java.awt.event.MouseEvent;
  */
 public class Ttl74165 extends AbstractTtlGate {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "74165";
 
@@ -138,15 +138,14 @@ public class Ttl74165 extends AbstractTtlGate {
   }
 
   private void drawState(Graphics2D g, int x, int y, int height, ShiftRegisterData state) {
-    if (state != null) {
-      for (var i = 0; i < 8; i++) {
-        g.setColor(state.get(7 - i).getColor());
-        g.fillOval(x + 36 + i * 10, y + height / 2 - 4, 8, 8);
-        g.setColor(Color.WHITE);
-        GraphicsUtil.drawCenteredText(g, state.get(7 - i).toDisplayString(), x + 40 + i * 10, y + height / 2);
-      }
-      g.setColor(Color.BLACK);
+    if (state == null) return;
+    for (var i = 0; i < 8; i++) {
+      g.setColor(state.get(7 - i).getColor());
+      g.fillOval(x + 36 + i * 10, y + height / 2 - 4, 8, 8);
+      g.setColor(Color.WHITE);
+      GraphicsUtil.drawCenteredText(g, state.get(7 - i).toDisplayString(), x + 40 + i * 10, y + height / 2);
     }
+    g.setColor(Color.BLACK);
   }
 
   @Override

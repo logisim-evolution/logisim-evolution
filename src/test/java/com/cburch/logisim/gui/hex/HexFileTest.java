@@ -17,25 +17,18 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class HexFileTest {
 
-  @TempDir
-  File tempDir;
+  @TempDir File tempDir;
 
   /**
-   * Tests to see if the values matches the contents of the memory saved in savedFile.
-   * If there is a mismatch, a junit assertion failure occurs.
+   * Tests to see if the values matches the contents of the memory saved in savedFile. If there is a
+   * mismatch, a junit assertion failure occurs.
    *
    * @param autodetect allows autodetect if true
-   *
    * @param desc the file type description
-   *
    * @param savedFile the file containing saved memory to be read
-   *
    * @param addressSize the size of the address
-   *
    * @param wordSize the size of a word of memory
-   *
    * @param values a HashMap from address to expected value (0 values may be omitted)
-   *
    * @throws IOException
    */
   private void compare(
@@ -66,8 +59,8 @@ public class HexFileTest {
   }
 
   /**
-   * returns an array of triples of [description index, address size, and word size]
-   * which should be tested
+   * returns an array of triples of [description index, address size, and word size] which should be
+   * tested
    */
   public static int[][] formatTriples() {
     final var max = HexFile.formatDescriptions.length;
@@ -86,13 +79,11 @@ public class HexFileTest {
     return triples;
   }
 
-  /**
-   * Test method for {@link
-   * com.cburch.logisim.gui.hex.HexFile}
-   */
+  /** Test method for {@link com.cburch.logisim.gui.hex.HexFile} */
   @ParameterizedTest
   @MethodSource(value = "formatTriples")
-  public final void testSaveLoadMemoryContents(int[] triple) throws IOException, InterruptedException {
+  public final void testSaveLoadMemoryContents(int[] triple)
+      throws IOException, InterruptedException {
     final var index = triple[0];
     final var addressSize = triple[1];
     final var wordSize = triple[2];
@@ -131,7 +122,8 @@ public class HexFileTest {
       final var otherFile = new File(tempFile + ".xxd");
       final String[] cmd1 = {"xxd", tempFile.toString(), otherFile.toString()};
       Runtime.getRuntime().exec(cmd1).waitFor();
-      compare(false, "v3.0 hex bytes addressed " + endian, otherFile, addressSize, wordSize, values);
+      compare(
+          false, "v3.0 hex bytes addressed " + endian, otherFile, addressSize, wordSize, values);
 
       final var plainFile = new File(tempFile + ".xxd-plain");
       final String[] cmd2 = {"xxd", "-p", tempFile.toString(), plainFile.toString()};

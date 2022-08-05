@@ -460,20 +460,13 @@ public class RamAppearance {
     ypos += portIndex * 10;
     final var result = new Port(0, ypos, Port.INPUT, 1);
     switch (portIndex) {
-      case 0:
-        result.setToolTip(S.getter("ramLETip0"));
-        break;
-      case 1:
-        result.setToolTip(S.getter("ramLETip1"));
-        break;
-      case 2:
-        result.setToolTip(S.getter("ramLETip2"));
-        break;
-      case 3:
-        result.setToolTip(S.getter("ramLETip3"));
-        break;
-      default:
+      case 0 -> result.setToolTip(S.getter("ramLETip0"));
+      case 1 -> result.setToolTip(S.getter("ramLETip1"));
+      case 2 -> result.setToolTip(S.getter("ramLETip2"));
+      case 3 -> result.setToolTip(S.getter("ramLETip3"));
+      default -> {
         // none
+      }
     }
     return result;
   }
@@ -485,20 +478,13 @@ public class RamAppearance {
     final var ypos = 70 + (nrBEs - portIndex - 1) * 10;
     final var result = new Port(0, ypos, Port.INPUT, 1);
     switch (portIndex) {
-      case 0:
-        result.setToolTip(S.getter("ramByteEnableTip0"));
-        break;
-      case 1:
-        result.setToolTip(S.getter("ramByteEnableTip1"));
-        break;
-      case 2:
-        result.setToolTip(S.getter("ramByteEnableTip2"));
-        break;
-      case 3:
-        result.setToolTip(S.getter("ramByteEnableTip3"));
-        break;
-      default:
+      case 0 -> result.setToolTip(S.getter("ramByteEnableTip0"));
+      case 1 -> result.setToolTip(S.getter("ramByteEnableTip1"));
+      case 2 -> result.setToolTip(S.getter("ramByteEnableTip2"));
+      case 3 -> result.setToolTip(S.getter("ramByteEnableTip3"));
+      default -> {
         // none
+      }
     }
     return result;
   }

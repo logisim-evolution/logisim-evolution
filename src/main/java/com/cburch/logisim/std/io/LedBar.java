@@ -32,10 +32,10 @@ import static com.cburch.logisim.std.Strings.S;
 public class LedBar extends DotMatrixBase {
 
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "LedBar";
 
@@ -102,7 +102,6 @@ public class LedBar extends DotMatrixBase {
   public AttributeOption getAttributeItemSelect() {
     return INPUT_SELECT;
   }
-
 
   /* ****************************************************************** */
 
