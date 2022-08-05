@@ -283,7 +283,7 @@ public class SelectTool extends Tool {
       if (gesture != null && drawConnections) {
         final var result = gesture.findResult(dx, dy);
         if (result != null) {
-          final var ret = new HashSet<Component>(sel);
+          final var ret = new HashSet<>(sel);
           ret.addAll(result.getReplacementMap().getRemovals());
           return ret;
         }

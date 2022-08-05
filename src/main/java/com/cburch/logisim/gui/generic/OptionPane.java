@@ -53,15 +53,9 @@ public class OptionPane {
     } else if (message instanceof String) {
       String logMessage = title + ":" + message;
       switch (messageType) {
-        case ERROR_MESSAGE:
-          logger.error(logMessage);
-          break;
-        case OptionPane.WARNING_MESSAGE:
-          logger.warn(logMessage);
-          break;
-        default:
-          logger.info(logMessage);
-          break;
+        case ERROR_MESSAGE -> logger.error(logMessage);
+        case OptionPane.WARNING_MESSAGE -> logger.warn(logMessage);
+        default -> logger.info(logMessage);
       }
     }
   }

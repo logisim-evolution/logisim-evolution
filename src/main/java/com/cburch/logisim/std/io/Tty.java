@@ -33,17 +33,15 @@ import java.awt.Font;
 
 public class Tty extends InstanceFactory implements DynamicElementProvider {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "TTY";
 
   private static int getColumnCount(Object val) {
-    return (val instanceof Integer)
-           ? (Integer) val
-           : 16;
+    return (val instanceof Integer) ? (Integer) val : 16;
   }
 
   private static int getRowCount(Object val) {
@@ -74,15 +72,13 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
     super(_ID, S.getter("ttyComponent"));
     setAttributes(
         new Attribute[] {
-          ATTR_ROWS, ATTR_COLUMNS, StdAttr.EDGE_TRIGGER, IoLibrary.ATTR_COLOR, IoLibrary.ATTR_BACKGROUND
+          ATTR_ROWS,
+          ATTR_COLUMNS,
+          StdAttr.EDGE_TRIGGER,
+          IoLibrary.ATTR_COLOR,
+          IoLibrary.ATTR_BACKGROUND
         },
-        new Object[] {
-            8,
-            32,
-          StdAttr.TRIG_RISING,
-          Color.BLACK,
-          DEFAULT_BACKGROUND
-        });
+        new Object[] {8, 32, StdAttr.TRIG_RISING, Color.BLACK, DEFAULT_BACKGROUND});
     setIcon(new TtyIcon());
 
     final var ps = new Port[4];
@@ -217,7 +213,8 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
       if (clear == Value.TRUE) {
         state.clear();
       } else if (enable != Value.FALSE) {
-        final var go = (trigger == StdAttr.TRIG_FALLING)
+        final var go =
+            (trigger == StdAttr.TRIG_FALLING)
                 ? lastClock == Value.TRUE && clock == Value.FALSE
                 : lastClock == Value.FALSE && clock == Value.TRUE;
         if (go) state.add(in.isFullyDefined() ? (char) in.toLongValue() : '?');

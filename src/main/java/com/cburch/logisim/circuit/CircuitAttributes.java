@@ -35,7 +35,7 @@ import java.util.Arrays;
 import java.util.List;
 
 public class CircuitAttributes extends AbstractAttributeSet {
-  
+
   private static class defaultStaticAttributeProvider implements AttributeDefaultProvider {
 
     @Override
@@ -49,7 +49,6 @@ public class CircuitAttributes extends AbstractAttributeSet {
     public boolean isAllDefaultValues(AttributeSet attrs, LogisimVersion ver) {
       return false;
     }
-    
   }
 
   private class MyListener implements AttributeListener, CircuitAppearanceListener {
@@ -102,10 +101,12 @@ public class CircuitAttributes extends AbstractAttributeSet {
     public void attributeValueChanged(AttributeEvent e) {
       if (e.getAttribute() == NAME_ATTR) {
         final var NewName = (String) e.getValue();
-        final var OldName = e.getOldValue() == null ? "ThisShouldNotHappen" : (String) e.getOldValue();
+        final var OldName =
+            e.getOldValue() == null ? "ThisShouldNotHappen" : (String) e.getOldValue();
         if (!NewName.equals(OldName)) {
           if (NewName.isEmpty()) {
-            OptionPane.showMessageDialog(null, S.get("EmptyNameError"), "", OptionPane.ERROR_MESSAGE);
+            OptionPane.showMessageDialog(
+                null, S.get("EmptyNameError"), "", OptionPane.ERROR_MESSAGE);
             e.getSource().setValue(NAME_ATTR, OldName);
             source.fireEvent(CircuitEvent.ACTION_SET_NAME, OldName);
             return;
@@ -133,13 +134,14 @@ public class CircuitAttributes extends AbstractAttributeSet {
       }
     }
   }
-  
+
   public static void copyStaticAttributes(AttributeSet destination, AttributeSet source) {
     destination.setValue(CIRCUIT_LABEL_ATTR, source.getValue(CIRCUIT_LABEL_ATTR));
     destination.setValue(CIRCUIT_LABEL_FACING_ATTR, source.getValue(CIRCUIT_LABEL_FACING_ATTR));
     destination.setValue(CIRCUIT_LABEL_FONT_ATTR, source.getValue(CIRCUIT_LABEL_FONT_ATTR));
     destination.setValue(APPEARANCE_ATTR, source.getValue(APPEARANCE_ATTR));
-    destination.setValue(NAMED_CIRCUIT_BOX_FIXED_SIZE, source.getValue(NAMED_CIRCUIT_BOX_FIXED_SIZE));
+    destination.setValue(
+        NAMED_CIRCUIT_BOX_FIXED_SIZE, source.getValue(NAMED_CIRCUIT_BOX_FIXED_SIZE));
     destination.setValue(SIMULATION_FREQUENCY, source.getValue(SIMULATION_FREQUENCY));
     destination.setValue(DOWNLOAD_FREQUENCY, source.getValue(DOWNLOAD_FREQUENCY));
     destination.setValue(DOWNLOAD_BOARD, source.getValue(DOWNLOAD_BOARD));
@@ -181,10 +183,13 @@ public class CircuitAttributes extends AbstractAttributeSet {
           "appearance",
           S.getter("circuitAppearanceAttr"),
           new AttributeOption[] {APPEAR_CLASSIC, APPEAR_FPGA, APPEAR_EVOLUTION, APPEAR_CUSTOM});
-  public static final Attribute<Double> SIMULATION_FREQUENCY = Attributes.forDouble("simulationFrequency");
-  public static final Attribute<Double> DOWNLOAD_FREQUENCY = Attributes.forDouble("downloadFrequency");
+  public static final Attribute<Double> SIMULATION_FREQUENCY =
+      Attributes.forDouble("simulationFrequency");
+  public static final Attribute<Double> DOWNLOAD_FREQUENCY =
+      Attributes.forDouble("downloadFrequency");
   public static final Attribute<String> DOWNLOAD_BOARD = Attributes.forString("downloadBoard");
-  public static final defaultStaticAttributeProvider DEFAULT_STATIC_ATTRIBUTES = new defaultStaticAttributeProvider();
+  public static final defaultStaticAttributeProvider DEFAULT_STATIC_ATTRIBUTES =
+      new defaultStaticAttributeProvider();
 
   private static final Attribute<?>[] STATIC_ATTRS = {
     NAME_ATTR,
@@ -271,7 +276,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
     if (attr == LABEL_LOCATION_ATTR) return (E) labelLocation;
     else return source.getStaticAttributes().getValue(attr);
   }
-  
+
   public static void copyInto(AttributeSet source, AttributeSet destination) {
     destination.setValue(StdAttr.FACING, source.getValue(StdAttr.FACING));
     destination.setValue(StdAttr.LABEL, source.getValue(StdAttr.LABEL));
@@ -283,8 +288,7 @@ public class CircuitAttributes extends AbstractAttributeSet {
   @Override
   public boolean isToSave(Attribute<?> attr) {
     for (Attribute<?> aStatic : STATIC_ATTRS) {
-      if (aStatic == attr)
-        return false;
+      if (aStatic == attr) return false;
     }
     return attr.isToSave();
   }

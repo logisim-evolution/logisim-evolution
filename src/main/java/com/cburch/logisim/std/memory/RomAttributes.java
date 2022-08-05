@@ -68,8 +68,7 @@ class RomAttributes extends AbstractAttributeSet {
   private static final WeakHashMap<MemContents, RomContentsListener> listenerRegistry =
       new WeakHashMap<>();
 
-  private static final WeakHashMap<MemContents, HexFrame> windowRegistry =
-      new WeakHashMap<>();
+  private static final WeakHashMap<MemContents, HexFrame> windowRegistry = new WeakHashMap<>();
   private BitWidth addrBits = BitWidth.create(8);
   private BitWidth dataBits = BitWidth.create(8);
   private MemContents contents;

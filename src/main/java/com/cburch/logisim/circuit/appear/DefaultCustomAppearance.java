@@ -90,12 +90,7 @@ public class DefaultCustomAppearance {
   }
 
   private static void placePins(
-      List<CanvasObject> dest,
-      List<Instance> pins,
-      int x,
-      int y,
-      int dX,
-      int dY) {
+      List<CanvasObject> dest, List<Instance> pins, int x, int y, int dX, int dY) {
     for (final var pin : pins) {
       dest.add(new AppearancePort(Location.create(x, y), pin));
       x += dX;

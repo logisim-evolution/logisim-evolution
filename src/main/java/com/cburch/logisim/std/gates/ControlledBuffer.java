@@ -130,10 +130,11 @@ class ControlledBuffer extends InstanceFactory {
   @Override
   public Object getInstanceFeature(final Instance instance, Object key) {
     if (key == WireRepair.class) {
-      return (WireRepair) data -> {
-        final var port2 = instance.getPortLocation(2);
-        return data.getPoint().equals(port2);
-      };
+      return (WireRepair)
+          data -> {
+            final var port2 = instance.getPortLocation(2);
+            return data.getPoint().equals(port2);
+          };
     }
     return super.getInstanceFeature(instance, key);
   }
@@ -176,8 +177,7 @@ class ControlledBuffer extends InstanceFactory {
     final var g = (Graphics2D) painter.getGraphics();
     if (painter.getGateShape() == AppPreferences.SHAPE_RECTANGULAR)
       AbstractGate.paintIconIEC(g, "EN1", isInverter, false);
-    else
-      AbstractGate.paintIconBufferAnsi(g, isInverter, true);
+    else AbstractGate.paintIconBufferAnsi(g, isInverter, true);
   }
 
   @Override
@@ -268,5 +268,4 @@ class ControlledBuffer extends InstanceFactory {
       state.setPort(0, out, GateAttributes.DELAY);
     }
   }
-
 }

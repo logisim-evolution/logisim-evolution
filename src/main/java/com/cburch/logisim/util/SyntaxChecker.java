@@ -61,5 +61,4 @@ public final class SyntaxChecker {
     }
     return message == null;
   }
-
 }

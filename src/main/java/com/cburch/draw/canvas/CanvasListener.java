@@ -22,7 +22,11 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
-class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListenerContract, BaseKeyListenerContract, CanvasModelListener {
+class CanvasListener
+    implements BaseMouseListenerContract,
+        BaseMouseMotionListenerContract,
+        BaseKeyListenerContract,
+        CanvasModelListener {
   private final Canvas canvas;
   private CanvasTool tool;
   private CanvasObject selectedPort;
@@ -71,7 +75,7 @@ class CanvasListener implements BaseMouseListenerContract, BaseMouseMotionListen
     }
     canvas.showPopupMenu(e, clicked);
   }
-  
+
   private void handlePorts(MouseEvent e) {
     final var loc = Location.create(e.getX(), e.getY());
     final var objects = canvas.getModel().getObjectsFromTop();

@@ -97,15 +97,13 @@ public class SelectTool extends AbstractTool {
     HandleGesture gesture = null;
     boolean drawHandles;
     switch (action) {
-      case MOVE_ALL:
+      case MOVE_ALL -> drawHandles = !dragEffective;
+      case MOVE_HANDLE -> {
         drawHandles = !dragEffective;
-        break;
-      case MOVE_HANDLE:
-        drawHandles = !dragEffective;
-        if (dragEffective) gesture = curGesture;
-        break;
-      default:
-        drawHandles = true;
+        if (dragEffective)
+          gesture = curGesture;
+      }
+      default -> drawHandles = true;
     }
 
     CanvasObject moveHandleObj = null;
@@ -450,7 +448,7 @@ public class SelectTool extends AbstractTool {
     final var ctrlPressed = (mods & InputEvent.CTRL_DOWN_MASK) != 0;
 
     switch (curAction) {
-      case MOVE_HANDLE:
+      case MOVE_HANDLE -> {
         final var gesture = curGesture;
         if (ctrlPressed) {
           final var h = gesture.getHandle();
@@ -459,8 +457,8 @@ public class SelectTool extends AbstractTool {
         }
         curGesture = new HandleGesture(gesture.getHandle(), dx, dy, mods);
         canvas.getSelection().setHandleGesture(curGesture);
-        break;
-      case MOVE_ALL:
+      }
+      case MOVE_ALL -> {
         if (ctrlPressed) {
           var minX = Integer.MAX_VALUE;
           var minY = Integer.MAX_VALUE;
@@ -468,8 +466,10 @@ public class SelectTool extends AbstractTool {
             for (final var handle : o.getHandles(null)) {
               final var x = handle.getX();
               final var y = handle.getY();
-              if (x < minX) minX = x;
-              if (y < minY) minY = y;
+              if (x < minX)
+                minX = x;
+              if (y < minY)
+                minY = y;
             }
           }
           dx = canvas.snapX(minX + dx) - minX;
@@ -483,9 +483,9 @@ public class SelectTool extends AbstractTool {
           }
         }
         canvas.getSelection().setMovingDelta(dx, dy);
-        break;
-      default:
-        break;
+      }
+      default -> {
+      }
     }
     repaintArea(canvas);
   }

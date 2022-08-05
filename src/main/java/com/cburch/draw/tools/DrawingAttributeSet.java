@@ -43,9 +43,15 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
           });
   static final List<Object> DEFAULTS_ALL =
       Arrays.asList(
-          DrawAttr.DEFAULT_FONT, DrawAttr.HALIGN_CENTER, DrawAttr.VALIGN_MIDDLE,
-          DrawAttr.PAINT_STROKE, 1, Color.BLACK,
-          Color.WHITE, Color.BLACK, 10);
+          DrawAttr.DEFAULT_FONT,
+          DrawAttr.HALIGN_CENTER,
+          DrawAttr.VALIGN_MIDDLE,
+          DrawAttr.PAINT_STROKE,
+          1,
+          Color.BLACK,
+          Color.WHITE,
+          Color.BLACK,
+          10);
   private final List<Attribute<?>> attrs;
   private EventSourceWeakSupport<AttributeListener> listeners;
   private List<Object> values;

@@ -42,7 +42,8 @@ public class TestBase {
   }
 
   protected String getRandomString(boolean includeDigits) {
-    final var len = getRandomInt(DEFAULT_RANDOM_STRING_LENGTH_MIN, DEFAULT_RANDOM_STRING_LENGTH_MAX);
+    final var len =
+        getRandomInt(DEFAULT_RANDOM_STRING_LENGTH_MIN, DEFAULT_RANDOM_STRING_LENGTH_MAX);
     return getRandomString(len, includeDigits);
   }
 
@@ -51,7 +52,8 @@ public class TestBase {
   }
 
   protected String getRandomString() {
-    final var len = getRandomInt(DEFAULT_RANDOM_STRING_LENGTH_MIN, DEFAULT_RANDOM_STRING_LENGTH_MAX);
+    final var len =
+        getRandomInt(DEFAULT_RANDOM_STRING_LENGTH_MIN, DEFAULT_RANDOM_STRING_LENGTH_MAX);
     return getRandomString(len);
   }
 

@@ -18,5 +18,4 @@ public class Strings {
   }
 
   public static final LocaleManager S = new LocaleManager("resources/logisim", "tools");
-
 }
