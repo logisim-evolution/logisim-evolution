@@ -52,7 +52,7 @@ public class Ttl74175 extends AbstractTtlGate {
       state.setData(data);
     }
     var triggered = data.updateClock(state.getPortValue(7));
-    if (state.getPortValue(0) == Value.TRUE) {
+    if (state.getPortValue(0) == Value.FALSE) {
       data.setValue(Value.createKnown(data.getWidth(), 0));
     } else if (triggered) {
       Value[] vals = data.getValue().getAll();
