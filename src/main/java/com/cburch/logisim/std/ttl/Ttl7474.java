@@ -135,13 +135,12 @@ public class Ttl7474 extends AbstractTtlGate {
   }
 
   private void drawState(Graphics g, int x, int y, int ID, TtlRegisterData state) {
-    if (state != null) {
-      g.setColor(state.getValue().get(ID).getColor());
-      g.fillOval(x + 33, y + 30, 8, 8);
-      g.setColor(Color.WHITE);
-      GraphicsUtil.drawCenteredText(g, state.getValue().get(ID).toDisplayString(), x + 36, y + 33);
-      g.setColor(Color.BLACK);
-    }
+    if (state == null) return;
+    g.setColor(state.getValue().get(ID).getColor());
+    g.fillOval(x + 33, y + 30, 8, 8);
+    g.setColor(Color.WHITE);
+    GraphicsUtil.drawCenteredText(g, state.getValue().get(ID).toDisplayString(), x + 36, y + 33);
+    g.setColor(Color.BLACK);
   }
 
   private void drawflop(Graphics g, int x, int y) {

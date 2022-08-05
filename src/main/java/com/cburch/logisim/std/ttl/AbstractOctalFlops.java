@@ -219,18 +219,16 @@ public class AbstractOctalFlops extends AbstractTtlGate {
   }
 
   private void drawState(Graphics2D g, int x, int y, TtlRegisterData state) {
-    if (state != null) {
-      g.rotate(-Math.PI / 2, x, y);
-      for (var i = 0; i < 8; i++) {
-        g.setColor(state.getValue().get(i).getColor());
-        g.fillOval(x - 44, y + 91 + i * 10, 8, 8);
-        g.setColor(Color.WHITE);
-        GraphicsUtil.drawCenteredText(
-            g, state.getValue().get(i).toDisplayString(), x - 41, y + 94 + i * 10);
-      }
-      g.rotate(-Math.PI / 2, x, y);
-      g.setColor(Color.BLACK);
+    if (state == null) return;
+    g.rotate(-Math.PI / 2, x, y);
+    for (var i = 0; i < 8; i++) {
+      g.setColor(state.getValue().get(i).getColor());
+      g.fillOval(x - 44, y + 91 + i * 10, 8, 8);
+      g.setColor(Color.WHITE);
+      GraphicsUtil.drawCenteredText(g, state.getValue().get(i).toDisplayString(), x - 41, y + 94 + i * 10);
     }
+    g.rotate(-Math.PI / 2, x, y);
+    g.setColor(Color.BLACK);
   }
 
   @Override
