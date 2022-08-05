@@ -468,8 +468,14 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
   public void setObjectsForce(List<? extends CanvasObject> shapesBase, boolean isDefault) {
     // This shouldn't ever be an issue, but just to make doubly sure, we'll
     // check that the anchor and all ports are in their proper places.
-    final var shapes = new ArrayList<CanvasObject>(shapesBase);
-    final var n = shapes.size();
+    
+    // Must manually deep-copy arrays in Java...
+    // final var shapes = new ArrayList<CanvasObject>(shapesBase);
+    final var n = shapesBase.size();
+    final var shapes = new ArrayList<CanvasObject>(n);
+    for (var i = 0; i < n; i++) {
+      shapes.add(shapesBase.get(i).clone());
+    }
     var ports = 0;
     for (var i = n - 1; i >= 0; i--) { // count ports, move anchor to end
       final var obj = shapes.get(i);
