@@ -249,8 +249,7 @@ public class EditTool extends Tool {
       Collection<Component> sel = canvas.getSelection().getComponents();
       if (sel != null) {
         for (final var c : sel) {
-          if (c instanceof Wire) {
-            final var w = (Wire) c;
+          if (c instanceof final Wire w) {
             if (w.contains(loc) && !w.endsAt(loc)) return select;
           }
         }

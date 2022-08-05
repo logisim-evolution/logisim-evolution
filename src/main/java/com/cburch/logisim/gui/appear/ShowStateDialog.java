@@ -159,7 +159,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
 
     // TreePath[] roots = tree.getCheckingRoots();
     final var checked = tree.getCheckingPaths();
-    final var toAdd = new ArrayList<TreePath>(Arrays.asList(checked));
+    final var toAdd = new ArrayList<>(Arrays.asList(checked));
 
     // Remove existing dynamic objects that are no longer checked.
     final var toRemove = new ArrayList<CanvasObject>();
@@ -182,7 +182,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     // sort the remaining shapes
     toAdd.sort(new CompareByLocations());
 
-    final var avoid = new ArrayList<CanvasObject>(model.getObjectsFromBottom());
+    final var avoid = new ArrayList<>(model.getObjectsFromBottom());
     for (var i = avoid.size() - 1; i >= 0; i--) {
       if (avoid.get(i) instanceof AppearanceAnchor) avoid.remove(i);
     }

@@ -51,8 +51,7 @@ public class PriorityEncoderHdlGeneratorFactory extends AbstractHdlGeneratorFact
   @Override
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
-    if (!(mapInfo instanceof netlistComponent)) return map;
-    final var comp = (netlistComponent) mapInfo;
+    if (!(mapInfo instanceof final netlistComponent comp)) return map;
     final var nrOfBits = comp.nrOfEnds() - 4;
     map.putAll(Hdl.getNetMap("enable", false, comp, nrOfBits + PriorityEncoder.EN_IN, nets));
     final var vectorList = new StringBuilder();

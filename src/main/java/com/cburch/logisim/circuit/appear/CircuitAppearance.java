@@ -70,15 +70,15 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
     suppressRecompute = false;
     addCanvasModelListener(myListener);
     if (circuit != null) circuit.getStaticAttributes().addAttributeListener(this);
-    defaultCanvasObjects = new ArrayList<CanvasObject>();
+    defaultCanvasObjects = new ArrayList<>();
     recomputeDefaultAppearance();
     defaultCustomAppearance = DefaultCustomAppearance.build(circuitPins.getPins()); 
     setObjectsForce(defaultCustomAppearance, false);
   }
 
   public boolean hasCustomAppearance() {
-    final var currentCustom = new ArrayList<CanvasObject>(getCustomObjectsFromBottom());
-    final var defaultCustom = new ArrayList<CanvasObject>(defaultCustomAppearance);
+    final var currentCustom = new ArrayList<>(getCustomObjectsFromBottom());
+    final var defaultCustom = new ArrayList<>(defaultCustomAppearance);
     var shapeIterator = currentCustom.iterator();
     while (shapeIterator.hasNext()) {
       final var shape = shapeIterator.next(); 
@@ -289,7 +289,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
 
   @Override
   public List<CanvasObject> getObjectsFromTop() {
-    final var ret = new ArrayList<CanvasObject>(getObjectsFromBottom());
+    final var ret = new ArrayList<>(getObjectsFromBottom());
     Collections.reverse(ret);
     return ret;
   }

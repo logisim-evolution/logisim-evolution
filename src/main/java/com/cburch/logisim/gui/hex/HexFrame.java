@@ -63,7 +63,9 @@ public class HexFrame extends LFrame.SubWindow {
     close.addActionListener(myListener);
 
     final var pref = editor.getPreferredSize();
-    final var scroll = new JScrollPane(editor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    final var scroll =
+        new JScrollPane(
+            editor, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     pref.height = Math.min(pref.height, pref.width * 3 / 2);
     scroll.setPreferredSize(pref);
     scroll.getViewport().setBackground(editor.getBackground());

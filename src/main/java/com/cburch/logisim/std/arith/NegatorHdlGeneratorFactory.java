@@ -24,8 +24,7 @@ public class NegatorHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   public NegatorHdlGeneratorFactory() {
     super();
-    myParametersList
-        .addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID);
+    myParametersList.addBusOnly(NR_OF_BITS_STRING, NR_OF_BITS_ID);
     myPorts
         .add(Port.INPUT, "dataX", NR_OF_BITS_ID, Negator.IN, StdAttr.WIDTH)
         .add(Port.OUTPUT, "minDataX", NR_OF_BITS_ID, Negator.OUT, StdAttr.WIDTH);
@@ -36,10 +35,13 @@ public class NegatorHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var contents = LineBuffer.getBuffer();
     if (Hdl.isVhdl()) {
       int nrOfBits = attrs.getValue(StdAttr.WIDTH).getWidth();
-      contents.empty().addVhdlKeywords().add(
-          (nrOfBits == 1)
-              ? "minDataX <= dataX;"
-              : "minDataX <= std_logic_vector(unsigned({{not}}(dataX)) + 1);");
+      contents
+          .empty()
+          .addVhdlKeywords()
+          .add(
+              (nrOfBits == 1)
+                  ? "minDataX <= dataX;"
+                  : "minDataX <= std_logic_vector(unsigned({{not}}(dataX)) + 1);");
     } else {
       contents.add("assign minDataX = -dataX;");
     }

@@ -36,10 +36,10 @@ import java.util.Set;
 
 public class WiringTool extends Tool {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Wiring Tool";
 
@@ -325,7 +325,8 @@ public class WiringTool extends Tool {
       if (!wires.isEmpty()) {
         final var mutation = new CircuitMutation(canvas.getCircuit());
         mutation.addAll(wires);
-        final var desc = (wires.size() == 1) ? S.getter("addWireAction") : S.getter("addWiresAction");
+        final var desc =
+            (wires.size() == 1) ? S.getter("addWireAction") : S.getter("addWiresAction");
         final var act = mutation.toAction(desc);
         canvas.getProject().doAction(act);
         lastAction = act;

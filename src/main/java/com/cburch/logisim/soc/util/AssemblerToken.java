@@ -41,19 +41,20 @@ public class AssemblerToken {
    * be used for custom purposes.
    */
 
-  public static final Set<Integer> MATH_OPERATORS = new HashSet<>() {
-    private static final long serialVersionUID = 1L;
+  public static final Set<Integer> MATH_OPERATORS =
+      new HashSet<>() {
+        private static final long serialVersionUID = 1L;
 
-    {
-      add(MATH_ADD);
-      add(MATH_SUBTRACT);
-      add(MATH_MUL);
-      add(MATH_DIV);
-      add(MATH_REM);
-      add(MATH_SHIFT_LEFT);
-      add(MATH_SHIFT_RIGHT);
-    }
-  };
+        {
+          add(MATH_ADD);
+          add(MATH_SUBTRACT);
+          add(MATH_MUL);
+          add(MATH_DIV);
+          add(MATH_REM);
+          add(MATH_SHIFT_LEFT);
+          add(MATH_SHIFT_RIGHT);
+        }
+      };
 
   private int type;
   private String value;
@@ -105,8 +106,7 @@ public class AssemblerToken {
 
   public void setType(int type) {
     this.type = type;
-    if (type == LABEL || type == LABEL_IDENTIFIER || type == PARAMETER_LABEL)
-      isLabel = true;
+    if (type == LABEL || type == LABEL_IDENTIFIER || type == PARAMETER_LABEL) isLabel = true;
   }
 
   public String getValue() {
@@ -139,17 +139,13 @@ public class AssemblerToken {
       }
       return Integer.parseUnsignedInt(value, 16);
     } else if (type == MACRO_PARAMETER) {
-      if (value.length() > 0)
-        return Integer.parseUnsignedInt(value.substring(1));
-      else
-        return 0;
-    } else
-        return 0;
+      if (value.length() > 0) return Integer.parseUnsignedInt(value.substring(1));
+      else return 0;
+    } else return 0;
   }
 
   public long getLongValue() {
-    if (type == DEC_NUMBER)
-      return Long.parseLong(value);
+    if (type == DEC_NUMBER) return Long.parseLong(value);
     else if (type == HEX_NUMBER) {
       if (value.toUpperCase().contains("X")) {
         String[] split = value.toUpperCase().split("X");

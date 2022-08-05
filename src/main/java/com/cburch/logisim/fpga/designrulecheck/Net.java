@@ -158,8 +158,7 @@ public class Net {
   }
 
   public List<ConnectionPoint> getBitSinks(int bitIndex) {
-    if ((bitIndex < 0) || (bitIndex >= sourceNetsList.size()))
-      return new ArrayList<>();
+    if ((bitIndex < 0) || (bitIndex >= sourceNetsList.size())) return new ArrayList<>();
     return new ArrayList<>(sinkList.get(bitIndex).getAll());
   }
 

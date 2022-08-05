@@ -76,18 +76,13 @@ public class BitAdder extends InstanceFactory {
     int y;
     int dy = 10;
     switch (inputs) {
-      case 1:
-        y = 0;
-        break;
-      case 2:
+      case 1 -> y = 0;
+      case 2 -> {
         y = -10;
         dy = 20;
-        break;
-      case 3:
-        y = -10;
-        break;
-      default:
-        y = ((inputs - 1) / 2) * -10;
+      }
+      case 3 -> y = -10;
+      default -> y = ((inputs - 1) / 2) * -10;
     }
 
     Port[] ps = new Port[inputs + 1];

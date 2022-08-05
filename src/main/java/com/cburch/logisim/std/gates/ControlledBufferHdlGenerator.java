@@ -19,13 +19,15 @@ import com.cburch.logisim.util.LineBuffer;
 public class ControlledBufferHdlGenerator extends InlinedHdlGeneratorFactory {
 
   @Override
-  public LineBuffer getInlinedCode(Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
+  public LineBuffer getInlinedCode(
+      Netlist nets, Long componentId, netlistComponent componentInfo, String circuitName) {
     final var contents = LineBuffer.getBuffer();
     final var triName = Hdl.getNetName(componentInfo, 2, true, nets);
     var inpName = "";
     var outpName = "";
     var triState = "";
-    final var nrBits = componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
+    final var nrBits =
+        componentInfo.getComponent().getAttributeSet().getValue(StdAttr.WIDTH).getWidth();
     if (nrBits > 1) {
       inpName = Hdl.getBusName(componentInfo, 1, nets);
       outpName = Hdl.getBusName(componentInfo, 0, nets);
@@ -36,14 +38,20 @@ public class ControlledBufferHdlGenerator extends InlinedHdlGeneratorFactory {
       triState = Hdl.isVhdl() ? "'Z'" : "1'bZ";
     }
     if (componentInfo.isEndConnected(2) && componentInfo.isEndConnected(0)) {
-      final var invert = ((ControlledBuffer) componentInfo.getComponent().getFactory()).isInverter()
+      final var invert =
+          ((ControlledBuffer) componentInfo.getComponent().getFactory()).isInverter()
               ? Hdl.notOperator()
               : "";
       if (Hdl.isVhdl()) {
-        contents.addVhdlKeywords()
-            .add("{{1}}<= {{2}}{{3}} {{when}} {{4}} = '1' {{else}} {{5}};", outpName, invert, inpName, triName, triState);
+        contents
+            .addVhdlKeywords()
+            .add(
+                "{{1}}<= {{2}}{{3}} {{when}} {{4}} = '1' {{else}} {{5}};",
+                outpName, invert, inpName, triName, triState);
       } else {
-        contents.add("assign {{1}} = ({{2}}) ? {{3}}{{4}} : {{5}};", outpName, triName, invert, inpName, triState);
+        contents.add(
+            "assign {{1}} = ({{2}}) ? {{3}}{{4}} : {{5}};",
+            outpName, triName, invert, inpName, triState);
       }
     }
     return contents;

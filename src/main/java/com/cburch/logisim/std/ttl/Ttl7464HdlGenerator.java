@@ -37,7 +37,8 @@ public class Ttl7464HdlGenerator extends AbstractHdlGeneratorFactory {
   @Override
   public LineBuffer getModuleFunctionality(Netlist nets, AttributeSet attrs) {
     return LineBuffer.getHdlBuffer()
-        .add("{{assign}}Y{{=}}{{not}}((A{{and}}B{{and}}C{{and}}D){{or}}(E{{and}}F){{or}}(G{{and}}H{{and}}I){{or}}(J{{and}}K));");
+        .add(
+            "{{assign}}Y{{=}}{{not}}((A{{and}}B{{and}}C{{and}}D){{or}}(E{{and}}F){{or}}(G{{and}}H{{and}}I){{or}}(J{{and}}K));");
   }
 
   @Override

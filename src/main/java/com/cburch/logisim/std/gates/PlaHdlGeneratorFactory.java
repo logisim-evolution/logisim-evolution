@@ -50,7 +50,9 @@ public class PlaHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
         contents.add("{{1}}{{2}};", leader, zeros(outSz));
       } else {
         for (PlaTable.Row r : tt.rows()) {
-          contents.add("{{1}}{{2}} {{when}} std_match(Index, {{3}}) {{else}}", leader, bits(r.outBits), bits(r.inBits));
+          contents.add(
+              "{{1}}{{2}} {{when}} std_match(Index, {{3}}) {{else}}",
+              leader, bits(r.outBits), bits(r.inBits));
           leader = " ".repeat(leader.length());
         }
         contents.add("{{1}}{{2}};", leader, zeros(outSz));

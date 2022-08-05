@@ -211,22 +211,22 @@ public class ElfSectionHeader {
   }
 
   public String getErrorString() {
-    switch (status) {
-      case SUCCESS : return S.get("ElfSectHeadSuccess");
-      case SECTION_HEADER_NOT_FOUND_ERROR : return S.get("ElfSectHeadNotFound");
-      case SECTION_HEADER_READ_ERROR : return S.get("ElfSectHeadReadError");
-      case SECTION_HEADER_SIZE_ERROR : return S.get("ElfSectHeadSizeError");
-      case SECTION_STRING_TABLE_INDEX_ERROR : return S.get("ElfSectHeadStingIdxError");
-      case SECTION_STRING_TABLE_WRONG_TYPE : return S.get("ElfSectHeadStingTypeError");
-      case SECTION_STRING_TABLE_NOT_FOUND_ERROR : return S.get("ElfSectHeadStingNotFound");
-      case SECTION_STRING_TABLE_READ_ERROR : return S.get("ElfSectHeadStingReadError");
-      case SYMBOL_TABLE_MULTIPLE_TABLES_NOT_SUPPORT : return S.get("ElfSectHeadMultiSymtabError");
-      case SYMBOL_TABLE_MULTIPLE_STRING_TABLES_NOT_SUPPORT:
-        return S.get("ElfSectHeadMultiStringtabError");
-      case SYMBOL_TABLE_NOT_FOUND_ERROR : return S.get("ElfSymTableNotFound");
-      case SYMBOL_TABLE_READ_ERROR : return S.get("ElfSymTableReadError");
-    }
-    return "BUG: This should never happen in ElfSectionHeader";
+    return switch (status) {
+      case SUCCESS -> S.get("ElfSectHeadSuccess");
+      case SECTION_HEADER_NOT_FOUND_ERROR -> S.get("ElfSectHeadNotFound");
+      case SECTION_HEADER_READ_ERROR -> S.get("ElfSectHeadReadError");
+      case SECTION_HEADER_SIZE_ERROR -> S.get("ElfSectHeadSizeError");
+      case SECTION_STRING_TABLE_INDEX_ERROR -> S.get("ElfSectHeadStingIdxError");
+      case SECTION_STRING_TABLE_WRONG_TYPE -> S.get("ElfSectHeadStingTypeError");
+      case SECTION_STRING_TABLE_NOT_FOUND_ERROR -> S.get("ElfSectHeadStingNotFound");
+      case SECTION_STRING_TABLE_READ_ERROR -> S.get("ElfSectHeadStingReadError");
+      case SYMBOL_TABLE_MULTIPLE_TABLES_NOT_SUPPORT -> S.get("ElfSectHeadMultiSymtabError");
+      case SYMBOL_TABLE_MULTIPLE_STRING_TABLES_NOT_SUPPORT ->
+          S.get("ElfSectHeadMultiStringtabError");
+      case SYMBOL_TABLE_NOT_FOUND_ERROR -> S.get("ElfSymTableNotFound");
+      case SYMBOL_TABLE_READ_ERROR -> S.get("ElfSymTableReadError");
+      default -> "BUG: This should never happen in ElfSectionHeader";
+    };
   }
 
   public int getNrOfHeaders() {
