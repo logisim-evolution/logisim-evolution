@@ -43,7 +43,8 @@ public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
   private final Map<ArrayList<String>, MapComponent> myMappableResources;
   private ArrayList<MapInfo> myItems;
 
-  public MapListModel(boolean mappedList, Map<ArrayList<String>, MapComponent> myMappableResources) {
+  public MapListModel(
+      boolean mappedList, Map<ArrayList<String>, MapComponent> myMappableResources) {
     this.mappedList = mappedList;
     this.myMappableResources = myMappableResources;
     rebuild();
@@ -90,11 +91,13 @@ public class MapListModel extends DefaultListModel<MapListModel.MapInfo> {
   private int getInsertionPoint(MapComponent map) {
     if (myItems.isEmpty()) return 0;
     var idx = 0;
-    while (idx < myItems.size() && myItems
-        .get(idx)
-        .getMap()
-        .getDisplayString(-1)
-        .compareToIgnoreCase(map.getDisplayString(-1)) < 0) idx++;
+    while (idx < myItems.size()
+        && myItems
+                .get(idx)
+                .getMap()
+                .getDisplayString(-1)
+                .compareToIgnoreCase(map.getDisplayString(-1))
+            < 0) idx++;
     return idx;
   }
 

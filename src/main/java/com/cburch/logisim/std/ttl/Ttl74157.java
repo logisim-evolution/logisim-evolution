@@ -27,14 +27,14 @@ import java.util.ArrayList;
 /**
  * TTL 74x157: Quadruple 2-line to 1-line data selector
  *
- * Model based on https://www.ti.com/product/SN74LS157 datasheet.
+ * <p>Model based on https://www.ti.com/product/SN74LS157 datasheet.
  */
 public class Ttl74157 extends AbstractTtlGate {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "74157";
 
@@ -68,7 +68,7 @@ public class Ttl74157 extends AbstractTtlGate {
   };
 
   private static final byte pinCount = 16;
-  private static final byte[] outPins = { L1_Y, L2_Y, L3_Y, L4_Y };
+  private static final byte[] outPins = {L1_Y, L2_Y, L3_Y, L4_Y};
 
   public Ttl74157() {
     super(_ID, pinCount, outPins, pinNames, null);
@@ -119,5 +119,4 @@ public class Ttl74157 extends AbstractTtlGate {
     state.setPort(mapPort(L3_Y), computeState(state, L3_A, L3_B), DELAY);
     state.setPort(mapPort(L4_Y), computeState(state, L4_A, L4_B), DELAY);
   }
-
 }

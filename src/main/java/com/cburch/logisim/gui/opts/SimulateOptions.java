@@ -115,7 +115,9 @@ class SimulateOptions extends OptionsPanel {
         final var opt = (ComboOption) gateUndefined.getSelectedItem();
         if (opt != null) {
           final var attrs = getOptions().getAttributeSet();
-          getProject().doAction(OptionsActions.setAttribute(attrs, Options.ATTR_GATE_UNDEFINED, opt.getValue()));
+          getProject()
+              .doAction(
+                  OptionsActions.setAttribute(attrs, Options.ATTR_GATE_UNDEFINED, opt.getValue()));
         }
       } else if (source == memUnknown) {
         AppPreferences.Memory_Startup_Unknown.set(memUnknown.isSelected());

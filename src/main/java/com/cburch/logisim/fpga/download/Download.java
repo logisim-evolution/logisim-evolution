@@ -128,40 +128,35 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     var steps = basicSteps;
     if (!this.generateHdlOnly && useGui) rootSheet.setDownloadBoard(myBoardInformation.getBoardName());
     switch (vendor) {
-      case VendorSoftware.VENDOR_ALTERA:
-        downloader =
-            new AlteraDownload(
-                getProjDir(topLevelSheet),
-                rootSheet.getNetList(),
-                myBoardInformation,
-                    entities,
-                    architectures,
-                AppPreferences.HdlType.get(),
-                writeToFlash);
-        break;
-      case VendorSoftware.VENDOR_XILINX:
-        downloader =
-            new XilinxDownload(
-                getProjDir(topLevelSheet),
-                rootSheet.getNetList(),
-                myBoardInformation,
-                    entities,
-                    architectures,
-                AppPreferences.HdlType.get(),
-                writeToFlash);
-        break;
-      case VendorSoftware.VENDOR_VIVADO:
-        downloader =
-            new VivadoDownload(
-                getProjDir(topLevelSheet),
-                rootSheet.getNetList(),
-                myBoardInformation,
-                    entities,
-                    architectures);
-        break;
-      default:
+      case VendorSoftware.VENDOR_ALTERA -> downloader =
+          new AlteraDownload(
+              getProjDir(topLevelSheet),
+              rootSheet.getNetList(),
+              myBoardInformation,
+              entities,
+              architectures,
+              AppPreferences.HdlType.get(),
+              writeToFlash);
+      case VendorSoftware.VENDOR_XILINX -> downloader =
+          new XilinxDownload(
+              getProjDir(topLevelSheet),
+              rootSheet.getNetList(),
+              myBoardInformation,
+              entities,
+              architectures,
+              AppPreferences.HdlType.get(),
+              writeToFlash);
+      case VendorSoftware.VENDOR_VIVADO -> downloader =
+          new VivadoDownload(
+              getProjDir(topLevelSheet),
+              rootSheet.getNetList(),
+              myBoardInformation,
+              entities,
+              architectures);
+      default -> {
         Reporter.report.addFatalError("BUG: Tried to Download to an unknown target");
         return;
+      }
     }
     if (progressBar == null) useGui = false;
     if (useGui) {

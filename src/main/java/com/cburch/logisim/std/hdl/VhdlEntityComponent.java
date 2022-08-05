@@ -283,15 +283,9 @@ public class VhdlEntityComponent extends InstanceFactory {
         for (final var bit : busValue.toCharArray()) {
           try {
             switch (Character.getNumericValue(bit)) {
-              case 0:
-                vector_values[k] = Value.FALSE;
-                break;
-              case 1:
-                vector_values[k] = Value.TRUE;
-                break;
-              default:
-                vector_values[k] = Value.UNKNOWN;
-                break;
+              case 0 -> vector_values[k] = Value.FALSE;
+              case 1 -> vector_values[k] = Value.TRUE;
+              default -> vector_values[k] = Value.UNKNOWN;
             }
           } catch (NumberFormatException e) {
             vector_values[k] = Value.UNKNOWN;

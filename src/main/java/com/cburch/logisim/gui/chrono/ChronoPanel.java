@@ -334,7 +334,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
           setEnabled(LogisimMenuBar.DELETE, sel);
           setEnabled(LogisimMenuBar.DUPLICATE, false);
           setEnabled(LogisimMenuBar.SELECT_ALL, !empty);
-          // todo: raise/lower handlers
+          // TODO: raise/lower handlers
           setEnabled(LogisimMenuBar.RAISE, sel);
           setEnabled(LogisimMenuBar.LOWER, sel);
           setEnabled(LogisimMenuBar.RAISE_TOP, sel);
@@ -404,7 +404,10 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
 
           GraphicsUtil.drawText(
               g,
-              S.get("ChronoPrintTitle", model.getCircuit().getName(), getProject().getLogisimFile().getDisplayName()),
+              S.get(
+                  "ChronoPrintTitle",
+                  model.getCircuit().getName(),
+                  getProject().getLogisimFile().getDisplayName()),
               (int) (w / 2),
               0,
               GraphicsUtil.H_CENTER,

@@ -47,5 +47,4 @@ public abstract class AbstractComponent implements Component {
   public EndData getEnd(int index) {
     return getEnds().get(index);
   }
-
 }

@@ -30,7 +30,8 @@ public final class LineUtil {
     return dx * dx + dy * dy;
   }
 
-  private static double[] nearestPoint(double xq, double yq, double x0, double y0, double x1, double y1, boolean isSegment) {
+  private static double[] nearestPoint(
+      double xq, double yq, double x0, double y0, double x1, double y1, boolean isSegment) {
     final var dx = x1 - x0;
     final var dy = y1 - y0;
     final var len2 = dx * dx + dy * dy;
@@ -51,15 +52,18 @@ public final class LineUtil {
     return new double[] {x0 + u * dx, y0 + u * dy};
   }
 
-  public static double[] nearestPointInfinite(double xq, double yq, double x0, double y0, double x1, double y1) {
+  public static double[] nearestPointInfinite(
+      double xq, double yq, double x0, double y0, double x1, double y1) {
     return nearestPoint(xq, yq, x0, y0, x1, y1, false);
   }
 
-  public static double[] nearestPointSegment(double xq, double yq, double x0, double y0, double x1, double y1) {
+  public static double[] nearestPointSegment(
+      double xq, double yq, double x0, double y0, double x1, double y1) {
     return nearestPoint(xq, yq, x0, y0, x1, y1, true);
   }
 
-  public static double ptDistSqSegment(double x0, double y0, double x1, double y1, double xq, double yq) {
+  public static double ptDistSqSegment(
+      double x0, double y0, double x1, double y1, double xq, double yq) {
     final var dx = x1 - x0;
     final var dy = y1 - y0;
     final var len2 = dx * dx + dy * dy;

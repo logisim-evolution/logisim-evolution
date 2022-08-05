@@ -95,17 +95,17 @@ public class ElfProgramHeader {
     }
 
     public Object getValue(int identifier) {
-      switch (identifier) {
-        case P_TYPE : return p_type;
-        case P_FLAGS : return p_flags;
-        case P_OFFSET : return ElfHeader.returnCorrectValue(p_offset, is32Bit);
-        case P_VADDR : return ElfHeader.returnCorrectValue(p_vaddr, is32Bit);
-        case P_PADDR : return ElfHeader.returnCorrectValue(p_paddr, is32Bit);
-        case P_FILESZ : return ElfHeader.returnCorrectValue(p_filesz, is32Bit);
-        case P_MEMSZ : return ElfHeader.returnCorrectValue(p_memsz, is32Bit);
-        case P_ALIGN : return ElfHeader.returnCorrectValue(p_align, is32Bit);
-      }
-      return null;
+      return switch (identifier) {
+        case P_TYPE -> p_type;
+        case P_FLAGS -> p_flags;
+        case P_OFFSET -> ElfHeader.returnCorrectValue(p_offset, is32Bit);
+        case P_VADDR -> ElfHeader.returnCorrectValue(p_vaddr, is32Bit);
+        case P_PADDR -> ElfHeader.returnCorrectValue(p_paddr, is32Bit);
+        case P_FILESZ -> ElfHeader.returnCorrectValue(p_filesz, is32Bit);
+        case P_MEMSZ -> ElfHeader.returnCorrectValue(p_memsz, is32Bit);
+        case P_ALIGN -> ElfHeader.returnCorrectValue(p_align, is32Bit);
+        default -> null;
+      };
     }
 
     public String toString() {
@@ -179,13 +179,13 @@ public class ElfProgramHeader {
   }
 
   public String getErrorString() {
-    switch (status) {
-      case SUCCESS : return S.get("ProgHeaderSuccess");
-      case PROGRAM_HEADER_NOT_FOUND_ERROR : return S.get("ProgHeaderNotFound");
-      case PROGRAM_HEADER_READ_ERROR : return S.get("ProgHeaderReadError");
-      case PROGRAM_HEADER_SIZE_ERROR : return S.get("ProgHeaderSizeError");
-    }
-    return "BUG: this should never happen in ElfProgramHeader";
+    return switch (status) {
+      case SUCCESS -> S.get("ProgHeaderSuccess");
+      case PROGRAM_HEADER_NOT_FOUND_ERROR -> S.get("ProgHeaderNotFound");
+      case PROGRAM_HEADER_READ_ERROR -> S.get("ProgHeaderReadError");
+      case PROGRAM_HEADER_SIZE_ERROR -> S.get("ProgHeaderSizeError");
+      default -> "BUG: this should never happen in ElfProgramHeader";
+    };
   }
 
   public int getNrOfHeaders() {

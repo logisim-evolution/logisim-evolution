@@ -31,9 +31,7 @@ public class LFrame extends JFrame implements WindowClosable {
   private static List<Image> allIcons = null;
   private static Image defaultIcon = null;
 
-  /**
-   * A main window holds a circuit, always has menubar with Close, Save, etc.
-   */
+  /** A main window holds a circuit, always has menubar with Close, Save, etc. */
   public static final int TYPE_MAIN_WINDOW = 1;
 
   /**
@@ -59,8 +57,7 @@ public class LFrame extends JFrame implements WindowClosable {
 
     public MainWindow(Project p) {
       super(TYPE_MAIN_WINDOW, p, true);
-      if (p == null)
-        throw new IllegalArgumentException("project is null");
+      if (p == null) throw new IllegalArgumentException("project is null");
     }
   }
 
@@ -103,12 +100,15 @@ public class LFrame extends JFrame implements WindowClosable {
       menubar = null;
     }
     if (type != TYPE_MAIN_WINDOW && project != null) {
-      project.getFrame().addWindowListener(new WindowAdapter() {
-        @Override
-        public void windowClosed(WindowEvent e) {
-          LFrame.this.dispose();
-        }
-      });
+      project
+          .getFrame()
+          .addWindowListener(
+              new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                  LFrame.this.dispose();
+                }
+              });
     }
   }
 
