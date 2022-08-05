@@ -15,10 +15,10 @@ import com.cburch.logisim.prefs.AppPreferences;
 
 public class Ttl7458 extends AbstractTtlGate {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "7458";
 
@@ -38,7 +38,8 @@ public class Ttl7458 extends AbstractTtlGate {
     Drawgates.paintOr(gfx, x + 107, y + 39, 10, 10, false, false);
     Drawgates.paintAnd(gfx, x + 86, y + 34, 10, 10, false);
     Drawgates.paintAnd(gfx, x + 86, y + 44, 10, 10, false);
-    final var OrOffset = (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) ? 4 : 0;
+    final var OrOffset =
+        (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) ? 4 : 0;
     var posX = new int[] {x + 86, x + 90, x + 90, x + 93 + OrOffset};
     var posY = new int[] {y + 34, y + 34, y + 36, y + 36};
     gfx.drawPolyline(posX, posY, 4);
@@ -49,7 +50,10 @@ public class Ttl7458 extends AbstractTtlGate {
     gfx.drawPolyline(posX, posY, 3);
     for (var i = 0; i < 3; i++) {
       gfx.drawLine(
-          x + 30 + i * 20, y + 32 + i * 5, x + 30 + i * 20, y + height - AbstractTtlGate.PIN_HEIGHT);
+          x + 30 + i * 20,
+          y + 32 + i * 5,
+          x + 30 + i * 20,
+          y + height - AbstractTtlGate.PIN_HEIGHT);
       gfx.drawLine(x + 30 + i * 20, y + 32 + i * 5, x + 76, y + 32 + i * 5);
     }
     posX = new int[] {x + 76, x + 73, x + 73, x + 90, x + 90};

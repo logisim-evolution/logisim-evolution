@@ -35,7 +35,8 @@ import javax.swing.UIManager;
 
 public class RightPanel extends JPanel {
 
-  private static final Font MSG_FONT = AppPreferences.getScaledFont(new Font("Serif", Font.ITALIC, 12));
+  private static final Font MSG_FONT =
+      AppPreferences.getScaledFont(new Font("Serif", Font.ITALIC, 12));
   private static final Font TIME_FONT = new Font("Serif", Font.ITALIC, 9);
   private static final long serialVersionUID = 1L;
   private static final int WAVE_HEIGHT = ChronoPanel.SIGNAL_HEIGHT;
@@ -264,7 +265,8 @@ public class RightPanel extends JPanel {
   public void paintComponent(Graphics graphics) {
     final var gfx = (Graphics2D) graphics;
     /* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
-    gfx.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+    gfx.setRenderingHint(
+        RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
     gfx.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     gfx.setColor(Color.WHITE);
     gfx.fillRect(0, 0, getWidth(), getHeight()); // entire viewport, not just (width, height)
@@ -485,7 +487,8 @@ public class RightPanel extends JPanel {
               //   ____X_____
               //
               g.setColor(prevFill);
-              g.fillPolygon(new int[] {x0, x0 + (xt - x0) / 2, x0}, new int[] {HIGH, MID, LOW + 1}, 3);
+              g.fillPolygon(
+                  new int[] {x0, x0 + (xt - x0) / 2, x0}, new int[] {HIGH, MID, LOW + 1}, 3);
               g.setColor(fillColor);
               g.fillPolygon(
                   new int[] {x0 + (xt - x0) / 2, xt, x1, x1, xt},
@@ -514,7 +517,8 @@ public class RightPanel extends JPanel {
                 g.fillPolygon(new int[] {x0, xt, x0}, new int[] {HIGH, HIGH, LOW + 1}, 3);
               }
               g.setColor(fillColor);
-              g.fillPolygon(new int[] {x0, xt, x1, x1, x0}, new int[] {LOW + 1, HIGH, HIGH, LOW + 1}, 4);
+              g.fillPolygon(
+                  new int[] {x0, xt, x1, x1, x0}, new int[] {LOW + 1, HIGH, HIGH, LOW + 1}, 4);
               g.setColor(lineColor);
               g.drawLine(x0, LOW, xt, HIGH);
               g.drawLine(prevHi ? x0 : xt, HIGH, x1, HIGH);
@@ -523,7 +527,8 @@ public class RightPanel extends JPanel {
               //   _____/_____
               //
               g.setColor(fillColor);
-              g.fillPolygon(new int[] {x0, xt, x1, x1, x0}, new int[] {LOW + 1, HIGH, HIGH, LOW + 1}, 4);
+              g.fillPolygon(
+                  new int[] {x0, xt, x1, x1, x0}, new int[] {LOW + 1, HIGH, HIGH, LOW + 1}, 4);
               g.setColor(lineColor);
               g.drawLine(x0, LOW, x1, LOW);
               g.drawLine(x0, LOW, xt, HIGH);
@@ -535,7 +540,8 @@ public class RightPanel extends JPanel {
               g.setColor(prevFill);
               g.fillPolygon(new int[] {x0, xt, x0}, new int[] {HIGH, LOW + 1, LOW + 1}, 3);
               g.setColor(fillColor);
-              g.fillPolygon(new int[] {x0, x1, x1, xt}, new int[] {HIGH, HIGH, LOW + 1, LOW + 1}, 4);
+              g.fillPolygon(
+                  new int[] {x0, x1, x1, xt}, new int[] {HIGH, HIGH, LOW + 1, LOW + 1}, 4);
               g.setColor(lineColor);
               g.drawLine(x0, HIGH, x1, HIGH);
               g.drawLine(x0, HIGH, xt, LOW);
@@ -573,7 +579,8 @@ public class RightPanel extends JPanel {
       buf = (BufferedImage) createImage(width, WAVE_HEIGHT);
       final var g = buf.createGraphics();
       g.setRenderingHint(RenderingHints.KEY_STROKE_CONTROL, RenderingHints.VALUE_STROKE_DEFAULT);
-      g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      g.setRenderingHint(
+          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       final var isBold = (model.getSpotlight() == signal);
       final var colors = chronoPanel.rowColors(signal.info, selected);
@@ -589,7 +596,7 @@ public class RightPanel extends JPanel {
 
     public void paintWaveform(Graphics2D g) {
       if (buf == null) {
-        // todo: reallocating image each time seems silly
+        // TODO: reallocating image each time seems silly
         createOffscreen();
       }
       final var y = WAVE_HEIGHT * signal.idx;
@@ -654,7 +661,8 @@ public class RightPanel extends JPanel {
     public void paintComponent(Graphics gr) {
       final var g = (Graphics2D) gr;
       /* Anti-aliasing changes from https://github.com/hausen/logisim-evolution */
-      g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      g.setRenderingHint(
+          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
       g.setColor(getBackground());
       g.fillRect(0, 0, getWidth() - 1, height - 1);
@@ -693,7 +701,7 @@ public class RightPanel extends JPanel {
       //   10,  20,  25,  50
       //   100, 200, 250, 500
       //   etc., such that labels are at least TIMELINE_SPACING pixels apart.
-      // todo: in clock and step mode, maybe use timeScale as unit?
+      // TODO: in clock and step mode, maybe use timeScale as unit?
       var b = 1L;
       var j = 0;
       while ((int) (unit[j] * b * pixelPerTime) < TIMELINE_SPACING) {

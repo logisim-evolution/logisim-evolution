@@ -76,7 +76,8 @@ class PainterDin {
     paint(painter, width, height, drawBubble, OR);
   }
 
-  private static void paintOrLines(InstancePainter painter, int width, int height, boolean hasBubble) {
+  private static void paintOrLines(
+      InstancePainter painter, int width, int height, boolean hasBubble) {
     final var baseAttrs = (GateAttributes) painter.getAttributeSet();
     final var inputs = baseAttrs.inputs;
     final var attrs = (GateAttributes) OrGate.FACTORY.createAttributeSet();

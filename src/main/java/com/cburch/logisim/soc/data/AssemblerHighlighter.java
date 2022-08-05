@@ -34,31 +34,31 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
   @SuppressWarnings("serial")
   public static final HashSet<String> BYTES = new HashSet<>() {{
       add(".byte");
-  }};
+    }};
   @SuppressWarnings("serial")
   public static final HashSet<String> SHORTS = new HashSet<>() {{
       add(".half");
       add(".2byte");
       add(".short");
-  }};
+    }};
   @SuppressWarnings("serial")
   public static final HashSet<String> INTS = new HashSet<>() {{
       add(".word");
       add(".4byte");
       add(".long");
-  }};
+    }};
   @SuppressWarnings("serial")
   public static final HashSet<String> LONGS = new HashSet<>() {{
       add(".dword");
       add(".8byte");
       add(".quad");
-  }};
+    }};
   @SuppressWarnings("serial")
   public static final HashSet<String> STRINGS = new HashSet<>() {{
       add(".ascii");
       add(".asciz");
       add(".string");
-  }};
+    }};
 
 
   @Override
@@ -198,17 +198,14 @@ public class AssemblerHighlighter extends AbstractTokenMaker {
       else currentTokenType = newTokenType;
     }
     switch (currentTokenType) {
-      case Token.LITERAL_STRING_DOUBLE_QUOTE:
-        addToken(
-            arg0, currentTokenStart, end - 1, currentTokenType, newStartOffset + currentTokenStart);
-        break;
-      case Token.NULL:
-        addNullToken();
-        break;
-      default:
+      case Token.LITERAL_STRING_DOUBLE_QUOTE -> addToken(
+          arg0, currentTokenStart, end - 1, currentTokenType, newStartOffset + currentTokenStart);
+      case Token.NULL -> addNullToken();
+      default -> {
         addToken(
             arg0, currentTokenStart, end - 1, currentTokenType, newStartOffset + currentTokenStart);
         addNullToken();
+      }
     }
     return firstToken;
   }

@@ -302,8 +302,7 @@ public class OutputExpressions {
 
   private static boolean isAllUndefined(Entry[] a) {
     for (final var entry : a) {
-      if (entry == Entry.ZERO || entry == Entry.ONE)
-        return false;
+      if (entry == Entry.ZERO || entry == Entry.ONE) return false;
     }
     return true;
   }

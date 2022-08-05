@@ -13,15 +13,13 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.util.LineBuffer;
 
-/**
- * TTL 74x00: quad 2-input NAND gate
- */
+/** TTL 74x00: quad 2-input NAND gate */
 public class Ttl7400 extends AbstractTtlGate {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "7400";
 
@@ -54,7 +52,8 @@ public class Ttl7400 extends AbstractTtlGate {
     // output line
     Drawgates.paintOutputgate(g, x + 50, y, x + 44, youtput, up, height);
     // input lines
-    Drawgates.paintDoubleInputgate(g, x + 30, y, x + 44 - portwidth, youtput, portheight, up, false, height);
+    Drawgates.paintDoubleInputgate(
+        g, x + 30, y, x + 44 - portwidth, youtput, portheight, up, false, height);
   }
 
   @Override

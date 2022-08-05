@@ -41,7 +41,8 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   public static final int COARSE = 1;
   public static final int FINE = 2;
 
-  // FIXME: it looks we can get rid of Even class as it's a) dummy b) unused which forcess callers to pass `null`
+  // FIXME: it looks we can get rid of Even class as it's a) dummy b) unused which forcess callers
+  // to pass `null`
   public static class Event {
     // no-op implementation
   }
@@ -425,7 +426,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
   @Override
   public void circuitChanged(CircuitEvent event) {
     int action = event.getAction();
-    // todo: gracefully handle pin width changes, other circuit changes
+    // TODO: gracefully handle pin width changes, other circuit changes
     if (action == CircuitEvent.TRANSACTION_DONE) {
       final var circ = circuitState.getCircuit();
       final var repl = event.getResult().getReplacementMap(circ);
@@ -772,8 +773,7 @@ public class Model implements CircuitListener, SignalInfo.Listener {
       return S.get("usFormat", String.format("%.1f", t / 1000.0));
     else if (t < 100000000 || (t % 100000000) != 0)
       return S.get("msFormat", String.format("%.1f", t / 1000000.0));
-    else
-      return S.get("sFormat", String.format("%.1f", t / 1000000000.0));
+    else return S.get("sFormat", String.format("%.1f", t / 1000000000.0));
   }
 
   public void setRadix(SignalInfo s, RadixOption value) {

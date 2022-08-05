@@ -153,7 +153,7 @@ public class FpgaOptions extends OptionsPanel {
     add(getMapCols(), c);
     localeChanged();
   }
-  
+
   private JPanel getVhdlOptions() {
     final var isVhdl = AppPreferences.HdlType.get().equals(HdlGeneratorFactory.VHDL);
     vhdlPan = new JPanel();
@@ -162,7 +162,8 @@ public class FpgaOptions extends OptionsPanel {
     gbc.gridx = 0;
     gbc.gridy = 0;
     gbc.fill = GridBagConstraints.HORIZONTAL;
-    vhdlKeywordUpperCase = ((PrefMonitorBoolean) AppPreferences.VhdlKeywordsUpperCase).getCheckBox();
+    vhdlKeywordUpperCase =
+        ((PrefMonitorBoolean) AppPreferences.VhdlKeywordsUpperCase).getCheckBox();
     vhdlPan.add(vhdlKeywordUpperCase, gbc);
     vhdlPan.setEnabled(isVhdl);
     vhdlKeywordUpperCase.setEnabled(isVhdl);
@@ -304,5 +305,4 @@ public class FpgaOptions extends OptionsPanel {
       AppPreferences.FPGA_Workspace.set(file.getPath() + File.separator);
     }
   }
-
 }

@@ -31,21 +31,13 @@ public class RV32imSupport {
     int bits11_8 = (instruction >> 8) & 0xF;
     int bit7 = (instruction >> 7) & 0x1;
     switch (type) {
-      case I_TYPE:
-        result |= (bits30_25 << 5) | (bits24_21 << 1) | bit20;
-        break;
-      case S_TYPE:
-        result |= (bits30_25 << 5) | (bits11_8 << 1) | bit7;
-        break;
-      case B_TYPE:
-        result |= (bit7 << 11) | (bits30_25 << 5) | (bits11_8 << 1);
-        break;
-      case U_TYPE:
-        result |= (bits30_25 << 25) | (bits24_21 << 21) | (bit20 << 20) | (bits19_12 << 12);
-        break;
-      case J_TYPE:
-        result |= (bits19_12 << 12) | (bit20 << 11) | (bits30_25 << 5) | (bits24_21 << 1);
-        break;
+      case I_TYPE -> result |= (bits30_25 << 5) | (bits24_21 << 1) | bit20;
+      case S_TYPE -> result |= (bits30_25 << 5) | (bits11_8 << 1) | bit7;
+      case B_TYPE -> result |= (bit7 << 11) | (bits30_25 << 5) | (bits11_8 << 1);
+      case U_TYPE ->
+          result |= (bits30_25 << 25) | (bits24_21 << 21) | (bit20 << 20) | (bits19_12 << 12);
+      case J_TYPE ->
+          result |= (bits19_12 << 12) | (bit20 << 11) | (bits30_25 << 5) | (bits24_21 << 1);
     }
     return result;
   }

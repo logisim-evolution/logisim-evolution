@@ -20,15 +20,27 @@ import java.util.LinkedList;
 
 public interface AssemblerInterface {
   void decode(int instruction);
+
   boolean assemble(AssemblerAsmInstruction instruction);
+
   AssemblerExecutionInterface getExeUnit();
+
   ArrayList<String> getOpcodes();
+
   int getInstructionSize(String opcode);
+
   boolean usesRoundedBrackets();
-  String getProgram(CircuitState circuitState, SocProcessorInterface processorInterface,
-      ElfProgramHeader elfHeader, ElfSectionHeader elfSections,
+
+  String getProgram(
+      CircuitState circuitState,
+      SocProcessorInterface processorInterface,
+      ElfProgramHeader elfHeader,
+      ElfSectionHeader elfSections,
       HashMap<Integer, Integer> validDebugLines);
+
   String getHighlightStringIdentifier();
+
   void performUpSpecificOperationsOnTokens(LinkedList<AssemblerToken> tokens);
+
   HashSet<Integer> getAcceptedParameterTypes();
 }

@@ -23,9 +23,11 @@ public class BoardIcon implements Icon {
   private static final int ICON_HEIGHT = 130;
 
   public BoardIcon(BufferedImage boardImage) {
-    image = (boardImage == null)
+    image =
+        (boardImage == null)
             ? null
-            : boardImage.getScaledInstance(this.getIconWidth(), this.getIconHeight(), BufferedImage.SCALE_SMOOTH);
+            : boardImage.getScaledInstance(
+                this.getIconWidth(), this.getIconHeight(), BufferedImage.SCALE_SMOOTH);
   }
 
   @Override
@@ -49,8 +51,10 @@ public class BoardIcon implements Icon {
   }
 
   public void setImage(BufferedImage boardImage) {
-    image = (boardImage == null)
+    image =
+        (boardImage == null)
             ? null
-            : boardImage.getScaledInstance(this.getIconWidth(), this.getIconHeight(), BufferedImage.SCALE_SMOOTH);
+            : boardImage.getScaledInstance(
+                this.getIconWidth(), this.getIconHeight(), BufferedImage.SCALE_SMOOTH);
   }
 }
