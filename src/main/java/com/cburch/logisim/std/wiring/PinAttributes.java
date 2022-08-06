@@ -122,6 +122,8 @@ class PinAttributes extends ProbeAttributes {
       boolean NewThree = (Boolean) value;
       if (threeState == NewThree) return;
       threeState = NewThree;
+      updateAttributes();
+      fireAttributeListChanged();
     } else if (attr == Pin.ATTR_TYPE) {
       int Newtype = (Boolean) value ? EndData.OUTPUT_ONLY : EndData.INPUT_ONLY;
       if (type == Newtype) return;
