@@ -41,7 +41,6 @@ class CanvasPainter implements PropertyChangeListener {
     this.canvas = canvas;
     this.grid = new GridPainter(canvas);
 
-    AppPreferences.PRINTER_VIEW.addPropertyChangeListener(this);
     AppPreferences.ATTRIBUTE_HALO.addPropertyChangeListener(this);
     AppPreferences.CANVAS_BG_COLOR.addPropertyChangeListener(this);
     AppPreferences.GRID_BG_COLOR.addPropertyChangeListener(this);
@@ -137,8 +136,7 @@ class CanvasPainter implements PropertyChangeListener {
 
     // draw circuit and selection
     final var circState = proj.getCircuitState();
-    final var printerView = AppPreferences.PRINTER_VIEW.getBoolean();
-    final var context = new ComponentDrawContext(canvas, circ, circState, base, g, printerView);
+    final var context = new ComponentDrawContext(canvas, circ, circState, base, g, false);
     context.setHighlightedWires(highlightedWires);
     circ.draw(context, hidden);
     sel.draw(context, hidden);
