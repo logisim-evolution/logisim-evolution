@@ -321,7 +321,7 @@ class MemState implements InstanceData, Cloneable, HexModelListener {
   private void setBits(int addrBits, int dataBits) {
     recalculateParameters = true;
     if (contents == null) {
-      contents = MemContents.create(addrBits, dataBits);
+      contents = MemContents.create(addrBits, dataBits, false);
     } else {
       contents.setDimensions(addrBits, dataBits);
     }
