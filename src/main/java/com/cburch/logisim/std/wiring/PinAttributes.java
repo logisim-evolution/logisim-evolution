@@ -48,7 +48,7 @@ class PinAttributes extends ProbeAttributes {
   boolean threeState = false; // true;
   int type = EndData.INPUT_ONLY;
   Object pull = Pin.PULL_NONE;
-  Long initialValue = 0;
+  Long initialValue = 0L;
 
   public PinAttributes() {
     updateAttributes();
