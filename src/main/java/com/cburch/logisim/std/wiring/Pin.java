@@ -678,12 +678,9 @@ public class Pin extends InstanceFactory {
     var ret = (PinState) state.getData();
     if (ret == null) {
       var initialValue = attrs.getValue(ATTR_INITIAL);
-      Value newValue;
-      if (attrs.threeState) {
-        newValue = Value.createUnknown(width); 
-      } else {
-        newValue = Value.createKnown(width.getWidth(), initialValue);
-      }
+      final var newValue = attrs.threeState
+            ? Value.createUnknown(width)
+            : Value.createKnown(width.getWidth(), initialValue);
       ret = new PinState(newValue, newValue);
       state.setData(ret);
     }
