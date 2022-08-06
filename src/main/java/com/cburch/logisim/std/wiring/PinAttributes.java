@@ -64,7 +64,7 @@ class PinAttributes extends ProbeAttributes {
     myAttributes.add(StdAttr.LABEL);
     myAttributes.add(StdAttr.LABEL_FONT);
     myAttributes.add(RadixOption.ATTRIBUTE);
-    if (type == EndData.INPUT_ONLY) myAttributes.add(Pin.ATTR_INITIAL);
+    if ((type == EndData.INPUT_ONLY) && !threeState) myAttributes.add(Pin.ATTR_INITIAL);
     myAttributes.add(PROBEAPPEARANCE);
     myAttributes.add(ATTR_DUMMY);
   }
