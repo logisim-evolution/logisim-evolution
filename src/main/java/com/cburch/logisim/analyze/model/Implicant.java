@@ -129,10 +129,10 @@ public class Implicant implements Comparable<Implicant> {
           maximalKey = key;
       }
       for (var key = minimalKey; key < maximalKey; key++) {
-        if (currentTable.containsKey(key) && currentTable.containsKey(key+1)) {
+        if (currentTable.containsKey(key) && currentTable.containsKey(key + 1)) {
           // we see if we can merge terms
-          for (var termGroup1: currentTable.get(key).keySet()) {
-            for (var termGroup2: currentTable.get(key+1).keySet()) {
+          for (var termGroup1 : currentTable.get(key).keySet()) {
+            for (var termGroup2 : currentTable.get(key + 1).keySet()) {
               if (termGroup1.unknowns != termGroup2.unknowns)
                 continue;
               final var differenceMask = termGroup1.values ^ termGroup2.values;
@@ -145,11 +145,11 @@ public class Implicant implements Comparable<Implicant> {
                 couldMerge = true;
                 termGroup1.isPrime = termGroup2.isPrime = false;
                 newImplicantTerms.addAll(currentTable.get(key).get(termGroup1));
-                newImplicantTerms.addAll(currentTable.get(key+1).get(termGroup2));
+                newImplicantTerms.addAll(currentTable.get(key + 1).get(termGroup2));
                 if (newTable.containsKey(key)) {
                   // see if the new implicant already is in the set
                   var found = false;
-                  for (final var implicant: newTable.get(key).keySet()) {
+                  for (final var implicant : newTable.get(key).keySet()) {
                     found |= (implicant.values == newValue) && (implicant.unknowns == dontCareMask);
                   }
                   if (!found)
@@ -173,8 +173,8 @@ public class Implicant implements Comparable<Implicant> {
     } while (couldMerge);
 
     // we build now the table, with for each term which prime it covers
-    for (final var prime: primes.keySet()) {
-      for (final var term: termsToCover.keySet()) {
+    for (final var prime : primes.keySet()) {
+      for (final var term : termsToCover.keySet()) {
         if (primes.get(prime).contains(term))
           termsToCover.get(term).add(prime);
       }
@@ -189,14 +189,14 @@ public class Implicant implements Comparable<Implicant> {
       couldDoColumnReduction = false;
       final var termsToRemove = new ArrayList<Implicant>();
       // we first try a column reduction
-      for (final var term: termsToCover.keySet()) {
+      for (final var term : termsToCover.keySet()) {
         final var termInfo = termsToCover.get(term);
         if (termInfo.size() == 1) {
           // we found a prime cover, as this cover only covers this term
           final var prime = termInfo.get(0);
           if (!primes.containsKey(prime)) 
             continue;
-          for (final var terms: primes.get(prime)) {
+          for (final var terms : primes.get(prime)) {
             for (final var currentPrime : primes.keySet()) {
               if (currentPrime.equals(prime)) 
                 continue;
@@ -215,7 +215,7 @@ public class Implicant implements Comparable<Implicant> {
       // now we perform the row reduction
       // first we look for empty primes
       final var primesToRemove = new HashSet<Implicant>();
-      final var primeHierarchy = new HashMap<Integer,HashSet<Implicant>>();
+      final var primeHierarchy = new HashMap<Integer, HashSet<Implicant>>();
       final var nrOfElementGroups = new ArrayList<Integer>();
       for (final var prime : primes.keySet()) {
         final var primeElements = primes.get(prime);
@@ -249,7 +249,7 @@ public class Implicant implements Comparable<Implicant> {
           }
         }
       }
-      for (final var prime: primesToRemove) {
+      for (final var prime : primesToRemove) {
         primes.remove(prime);
         for (final var element : termsToCover.keySet())
           termsToCover.get(element).remove(prime);
