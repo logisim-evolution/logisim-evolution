@@ -57,190 +57,224 @@ public class Implicant implements Comparable<Implicant> {
     }
   }
 
+  private static int getNrOfOnes(int value, int nrOfBits) {
+    var nrOfOnes = 0;
+    var mask = 1;
+    for (var bitIndex = 0; bitIndex < nrOfBits; bitIndex++) {
+      if ((value & mask) != 0)
+        nrOfOnes++;
+      mask <<= 1;
+    }
+    return nrOfOnes;
+  }
+
   static List<Implicant> computeMinimal(int format, AnalyzerModel model, String variable) {
     final var table = model.getTruthTable();
-    final var column = model.getOutputs().bits.indexOf(variable);
-    if (column < 0) return Collections.emptyList();
+    final var outputVariableIndex = model.getOutputs().bits.indexOf(variable);
+    if (outputVariableIndex < 0) return Collections.emptyList();
 
-    final var desired = format == AnalyzerModel.FORMAT_SUM_OF_PRODUCTS ? Entry.ONE : Entry.ZERO;
-    final var undesired = desired == Entry.ONE ? Entry.ZERO : Entry.ONE;
+    // first we do some house keeping
+    final var desiredTerm = format == AnalyzerModel.FORMAT_SUM_OF_PRODUCTS ? Entry.ONE : Entry.ZERO;
+    final var skippedTerm = desiredTerm == Entry.ONE ? Entry.ZERO : Entry.ONE;
+    final var nrOfInputs = table.getInputColumnCount();
+    final var oneHotTable = new HashSet<Integer>();
+    var mask = 1;
+    for (var bitIndex = 0; bitIndex < nrOfInputs; bitIndex++) {
+      oneHotTable.add(mask);
+      mask <<= 1;
+    }
 
-    // determine the first-cut implicants, as well as the rows
-    // that we need to cover.
-    final var base = new HashMap<Implicant, Entry>();
-    final var toCover = new HashSet<Implicant>();
-    var knownFound = false;
-    for (var i = 0; i < table.getRowCount(); i++) {
-      final var entry = table.getOutputEntry(i, column);
-      if (entry == undesired) {
-        knownFound = true;
-      } else if (entry == desired) {
-        knownFound = true;
-        final var imp = new Implicant(0, i);
-        base.put(imp, entry);
-        toCover.add(imp);
-      } else {
-        base.put(new Implicant(0, i), entry);
+    // Here we define the first table with all desired terms (minterms or maxterms) and we add also the don´t cares
+    // for the primes we have the group (key) and the min/maxterms in this group (HashSet)
+    final var primes = new HashMap<Implicant,HashSet<Implicant>>();
+    final var essentialPrimes = new ArrayList<Implicant>();
+    // for the currentTable and the nextTable the key is the number of ones in the min/maxterms (groupid)
+    // the HashMap keeps track of the group (key) implicant and the number of min/max terms in this group (HashSet)
+    final var currentTable = new HashMap<Integer,HashMap<Implicant, HashSet<Implicant>>>();
+    final var newTable = new HashMap<Integer,HashMap<Implicant, HashSet<Implicant>>>();
+    // for terms to cover is the "key" the min/maxterms that need to be covered, and the ArrayList 
+    // the set of prime covers that cover the key
+    final var termsToCover = new HashMap<Implicant,ArrayList<Implicant>>();
+    for (var inputCombination = 0; inputCombination < table.getRowCount(); inputCombination++) {
+      final var term = table.getOutputEntry(inputCombination, outputVariableIndex);
+      if (term == skippedTerm) 
+        continue;
+      final var nrOfOnes = getNrOfOnes(inputCombination, nrOfInputs);
+      final var isDontCare = term != desiredTerm;
+      final var implicant = new Implicant(inputCombination, isDontCare);
+      final var implicantsSet = new HashSet<Implicant>();
+      if (!isDontCare) {
+        termsToCover.put(implicant,new ArrayList<>());
+        implicantsSet.add(implicant);
+      }
+      if (!newTable.containsKey(nrOfOnes)) {
+        newTable.put(nrOfOnes,new HashMap<>());
+      }
+      newTable.get(nrOfOnes).put(implicant,implicantsSet);
+    }
+
+    // Here the real work starts, we determine all primes
+    var couldMerge = false;
+    do {
+      couldMerge = false;
+      currentTable.clear();
+      currentTable.putAll(newTable);
+      newTable.clear();
+      var minimalKey = Integer.MAX_VALUE;
+      var maximalKey = 0;
+      for (var key : currentTable.keySet()) {
+        if (key < minimalKey)
+          minimalKey = key;
+        if (key > maximalKey)
+          maximalKey = key;
+      }
+      for (var key = minimalKey; key < maximalKey; key++) {
+        if (currentTable.containsKey(key) && currentTable.containsKey(key+1)) {
+          // we see if we can merge terms
+          for (var termGroup1: currentTable.get(key).keySet()) {
+            for (var termGroup2: currentTable.get(key+1).keySet()) {
+              if (termGroup1.unknowns != termGroup2.unknowns)
+                continue;
+              final var differenceMask = termGroup1.values ^ termGroup2.values;
+              if (oneHotTable.contains(differenceMask)) {
+                final var dontCareMask = termGroup1.unknowns | differenceMask;
+                final var newValue = (termGroup1.values & differenceMask) == 0 ? termGroup1.values : termGroup2.values;
+                final var isDontCareGroup = termGroup1.isDontCare && termGroup2.isDontCare;
+                final var newImplicant = new Implicant(dontCareMask, newValue, isDontCareGroup);
+                final var newImplicantTerms = new HashSet<Implicant>();
+                couldMerge = true;
+                termGroup1.isPrime = termGroup2.isPrime = false;
+                newImplicantTerms.addAll(currentTable.get(key).get(termGroup1));
+                newImplicantTerms.addAll(currentTable.get(key+1).get(termGroup2));
+                if (newTable.containsKey(key)) {
+                  // see if the new implicant already is in the set
+                  var found = false;
+                  for (final var implicant: newTable.get(key).keySet()) {
+                    found |= (implicant.values == newValue) && (implicant.unknowns == dontCareMask);
+                  }
+                  if (!found)
+                    newTable.get(key).put(newImplicant, newImplicantTerms);
+                } else {
+                  newTable.put(key, new HashMap<>());
+                  newTable.get(key).put(newImplicant, newImplicantTerms);
+                }
+              }
+            }
+          } 
+        }
+      }
+      // now we add the primes to the set
+      for (final var key : currentTable.keySet()) {
+        for (final var implicant : currentTable.get(key).keySet()) {
+          if (implicant.isPrime && !implicant.isDontCare)
+            primes.put(implicant, currentTable.get(key).get(implicant));
+        }
+      }
+    } while (couldMerge);
+
+    // we build now the table, with for each term which prime it covers
+    for (final var prime: primes.keySet()) {
+      for (final var term: termsToCover.keySet()) {
+        if (primes.get(prime).contains(term))
+          termsToCover.get(term).add(prime);
       }
     }
-    if (!knownFound) return null;
+  
+    // finally we have to find the essential primes
+    var couldDoRowReduction = false;
+    var couldDoColumnReduction = false;
 
-    // work up to more general implicants, discovering
-    // any prime implicants.
-    final var primes = new HashSet<Implicant>();
-    var current = base;
-    while (current.size() > 1) {
-      final var toRemove = new HashSet<Implicant>();
-      final var next = new HashMap<Implicant, Entry>();
-      for (final var curEntry : current.entrySet()) {
-        final var imp = curEntry.getKey();
-        final var detEntry = curEntry.getValue();
-        for (var j = 1; j <= imp.values; j *= 2) {
-          if ((imp.values & j) != 0) {
-            final var opp = new Implicant(imp.unknowns, imp.values ^ j);
-            final var oppEntry = current.get(opp);
-            if (oppEntry != null) {
-              toRemove.add(imp);
-              toRemove.add(opp);
-              final var i = new Implicant(opp.unknowns | j, opp.values);
-              Entry e;
-              if (oppEntry == Entry.DONT_CARE && detEntry == Entry.DONT_CARE) {
-                e = Entry.DONT_CARE;
-              } else {
-                e = desired;
+    do {
+      couldDoRowReduction = false;
+      couldDoColumnReduction = false;
+      final var termsToRemove = new ArrayList<Implicant>();
+      // we first try a column reduction
+      for (final var term: termsToCover.keySet()) {
+        final var termInfo = termsToCover.get(term);
+        if (termInfo.size() == 1) {
+          // we found a prime cover, as this cover only covers this term
+          final var prime = termInfo.get(0);
+          if (!primes.containsKey(prime)) 
+            continue;
+          for (final var terms: primes.get(prime)) {
+            for (final var currentPrime : primes.keySet()) {
+              if (currentPrime.equals(prime)) 
+                continue;
+              couldDoColumnReduction |= primes.get(currentPrime).contains(terms);
+              primes.get(currentPrime).remove(terms);
+            }
+            termsToRemove.add(terms);
+          }
+          essentialPrimes.add(prime);
+          primes.remove(prime);
+        }
+      }
+      // we do the cleanup
+      for (final var term : termsToRemove)
+        termsToCover.remove(term);
+      // now we perform the row reduction
+      // first we look for empty primes
+      final var primesToRemove = new HashSet<Implicant>();
+      final var primeHierarchy = new HashMap<Integer,HashSet<Implicant>>();
+      final var nrOfElementGroups = new ArrayList<Integer>();
+      for (final var prime : primes.keySet()) {
+        final var primeElements = primes.get(prime);
+        if (primeElements.isEmpty()) {
+          primesToRemove.add(prime);
+          couldDoRowReduction = true;
+        } else {
+          final var nrOfElements = primeElements.size();
+          if (!primeHierarchy.containsKey(nrOfElements)) {
+            primeHierarchy.put(nrOfElements, new HashSet<>());
+          }
+          primeHierarchy.get(nrOfElements).add(prime);
+          if (!nrOfElementGroups.contains(nrOfElements))
+            nrOfElementGroups.add(nrOfElements);
+        }
+      }
+      Collections.sort(nrOfElementGroups);
+      if (!nrOfElementGroups.isEmpty()) {
+        for (var mergeGroupId = nrOfElementGroups.size() - 1; mergeGroupId > 0; mergeGroupId--) {
+          for (final var bigPrime : primeHierarchy.get(nrOfElementGroups.get(mergeGroupId))) {
+            if (primesToRemove.contains(bigPrime)) continue;
+            for (var checkGroupId = mergeGroupId - 1; checkGroupId >= 0; checkGroupId--) {
+              for (final var smallPrime : primeHierarchy.get(nrOfElementGroups.get(checkGroupId))) {
+                if (primesToRemove.contains(smallPrime)) continue;
+                if (primes.get(bigPrime).containsAll(primes.get(smallPrime))) {
+                  couldDoRowReduction = true;
+                  primesToRemove.add(smallPrime);
+                }
               }
-              next.put(i, e);
             }
           }
         }
       }
-
-      for (final var curEntry : current.entrySet()) {
-        final var det = curEntry.getKey();
-        if (!toRemove.contains(det) && curEntry.getValue() == desired) {
-          primes.add(det);
-        }
+      for (final var prime: primesToRemove) {
+        primes.remove(prime);
+        for (final var element : termsToCover.keySet())
+          termsToCover.get(element).remove(prime);
       }
+    } while (couldDoRowReduction || couldDoColumnReduction);
 
-      current = next;
+    // It can happen that we still have max/min terms left that are covered by multiple groups.
+    // To find the minimal cover here we should implement the Petrick's method (https://en.wikipedia.org/wiki/Petrick%27s_method)
+    // For the moment we are just going to greedyly pick
+    // TODO: Implement Petrick's method
+    while (!termsToCover.isEmpty()) {
+      final var termsToRemove = new ArrayList<Implicant>();
+      for (final var term : termsToCover.keySet()) {
+        if (termsToRemove.contains(term)) continue;
+        final var group = termsToCover.get(term).get(0);
+        essentialPrimes.add(group);
+        termsToRemove.addAll(primes.get(group));
+      }
+      for (final var term : termsToRemove)
+        termsToCover.remove(term);
     }
 
-    // we won't have more than one implicant left, but it
-    // is probably prime.
-    for (final var curEntry : current.entrySet()) {
-      final var imp = curEntry.getKey();
-      if (current.get(imp) == desired) {
-        primes.add(imp);
-      }
-    }
+    // TODO: Return multiple minimal covers if present (Petrick's method)
 
-    // determine the essential prime implicants
-    final var retSet = new HashSet<Implicant>();
-    final var covered = new HashSet<Implicant>();
-    for (final var required : toCover) {
-      if (covered.contains(required)) continue;
-      final var row = required.getRow();
-      Implicant essential = null;
-      for (final var implicant : primes) {
-        if ((row & ~implicant.unknowns) == implicant.values) {
-          essential = (essential == null) ? implicant : null;
-        }
-      }
-      if (essential != null) {
-        retSet.add(essential);
-        primes.remove(essential);
-        for (final var implicant : essential.getTerms()) {
-          covered.add(implicant);
-        }
-      }
-    }
-    toCover.removeAll(covered);
-
-    // This is an unusual case, but it's possible that the
-    // essential prime implicants don't cover everything.
-    // In that case, greedily pick out prime implicants
-    // that cover the most uncovered rows.
-    // BUG: This algorithm does not always find the correct solution
-    // Fix: We are first making a set that contains primes without the don't care set
-    boolean containsDontCare;
-    final var primesNoDontCare = new HashSet<Implicant>();
-    for (final var implicant : primes) {
-      containsDontCare = false;
-      for (final var term : implicant.getTerms()) {
-        if (table.getOutputEntry(term.getRow(), column).equals(Entry.DONT_CARE))
-          containsDontCare = true;
-      }
-      if (!containsDontCare) {
-        primesNoDontCare.add(implicant);
-      }
-    }
-
-    // Now we determine again the essential primes of this reduced set
-    for (final var required : toCover) {
-      if (covered.contains(required)) continue;
-      final var row = required.getRow();
-      Implicant essential = null;
-      for (final var implicant : primesNoDontCare) {
-        if ((row & ~implicant.unknowns) == implicant.values) {
-          if (essential == null) {
-            essential = implicant;
-          } else {
-            essential = null;
-            break;
-          }
-        }
-      }
-      if (essential != null) {
-        retSet.add(essential);
-        primesNoDontCare.remove(essential);
-        primes.remove(essential);
-        for (final var implicant : essential.getTerms()) covered.add(implicant);
-      }
-    }
-    toCover.removeAll(covered);
-
-    /* When this did not do the job we use a greedy algorithm */
-    while (!toCover.isEmpty()) {
-      // find the implicant covering the most rows
-      Implicant max = null;
-      var maxCount = 0;
-      var maxUnknowns = Integer.MAX_VALUE;
-      for (final var it = primes.iterator(); it.hasNext(); ) {
-        final var imp = it.next();
-        var count = 0;
-        for (final var term : imp.getTerms()) {
-          if (toCover.contains(term)) ++count;
-        }
-        if (count == 0) {
-          it.remove();
-        } else if (count > maxCount) {
-          max = imp;
-          maxCount = count;
-          maxUnknowns = imp.getUnknownCount();
-        } else if (count == maxCount) {
-          final var unk = imp.getUnknownCount();
-          if (unk > maxUnknowns) {
-            max = imp;
-            maxUnknowns = unk;
-          }
-        }
-      }
-
-      // add it to our choice, and remove the covered rows
-      if (max != null) {
-        retSet.add(max);
-        primes.remove(max);
-        for (final var term : max.getTerms()) {
-          toCover.remove(term);
-        }
-      }
-    }
-
-    // Now build up our sum-of-products expression
-    // from the remaining terms
-    final var ret = new ArrayList<>(retSet);
-    Collections.sort(ret);
-    return ret;
+    return essentialPrimes;
   }
 
   public static Expression toExpression(int format, AnalyzerModel model, List<Implicant> implicants) {
@@ -266,10 +300,25 @@ public class Implicant implements Comparable<Implicant> {
 
   final int unknowns;
   final int values;
+  final boolean isDontCare;
+  boolean isPrime = true;
 
   private Implicant(int unknowns, int values) {
     this.unknowns = unknowns;
     this.values = values;
+    isDontCare = false;
+  }
+
+  private Implicant(int unknowns, int values, boolean dontCareTerm) {
+    this.unknowns = unknowns;
+    this.values = values;
+    isDontCare = dontCareTerm;
+  }
+
+  private Implicant(int values, boolean dontCareTerm) {
+    this.unknowns = 0;
+    this.values = values;
+    isDontCare = dontCareTerm;
   }
 
   @Override
