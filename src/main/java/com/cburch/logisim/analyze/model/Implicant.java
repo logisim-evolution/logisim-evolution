@@ -86,15 +86,15 @@ public class Implicant implements Comparable<Implicant> {
 
     // Here we define the first table with all desired terms (minterms or maxterms) and we add also the don´t cares
     // for the primes we have the group (key) and the min/maxterms in this group (HashSet)
-    final var primes = new HashMap<Implicant,HashSet<Implicant>>();
+    final var primes = new HashMap<Implicant, HashSet<Implicant>>();
     final var essentialPrimes = new ArrayList<Implicant>();
     // for the currentTable and the nextTable the key is the number of ones in the min/maxterms (groupid)
     // the HashMap keeps track of the group (key) implicant and the number of min/max terms in this group (HashSet)
-    final var currentTable = new HashMap<Integer,HashMap<Implicant, HashSet<Implicant>>>();
-    final var newTable = new HashMap<Integer,HashMap<Implicant, HashSet<Implicant>>>();
+    final var currentTable = new HashMap<Integer, HashMap<Implicant, HashSet<Implicant>>>();
+    final var newTable = new HashMap<Integer, HashMap<Implicant, HashSet<Implicant>>>();
     // for terms to cover is the "key" the min/maxterms that need to be covered, and the ArrayList 
     // the set of prime covers that cover the key
-    final var termsToCover = new HashMap<Implicant,ArrayList<Implicant>>();
+    final var termsToCover = new HashMap<Implicant, ArrayList<Implicant>>();
     for (var inputCombination = 0; inputCombination < table.getRowCount(); inputCombination++) {
       final var term = table.getOutputEntry(inputCombination, outputVariableIndex);
       if (term == skippedTerm) 
@@ -104,13 +104,13 @@ public class Implicant implements Comparable<Implicant> {
       final var implicant = new Implicant(inputCombination, isDontCare);
       final var implicantsSet = new HashSet<Implicant>();
       if (!isDontCare) {
-        termsToCover.put(implicant,new ArrayList<>());
+        termsToCover.put(implicant, new ArrayList<>());
         implicantsSet.add(implicant);
       }
       if (!newTable.containsKey(nrOfOnes)) {
-        newTable.put(nrOfOnes,new HashMap<>());
+        newTable.put(nrOfOnes, new HashMap<>());
       }
-      newTable.get(nrOfOnes).put(implicant,implicantsSet);
+      newTable.get(nrOfOnes).put(implicant, implicantsSet);
     }
 
     // Here the real work starts, we determine all primes
