@@ -19,6 +19,8 @@ import java.util.List;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import javax.swing.JTextArea;
+
 public class Implicant implements Comparable<Implicant> {
   private static class TermIterator implements Iterable<Implicant>, Iterator<Implicant> {
     final Implicant source;
@@ -68,11 +70,28 @@ public class Implicant implements Comparable<Implicant> {
     return nrOfOnes;
   }
 
-  static List<Implicant> computeMinimal(int format, AnalyzerModel model, String variable) {
+  private static void report(JTextArea out, String info) {
+    if (out != null) out.append(info);
+  }
+
+  private static String getGroupRepresentation(int value, int dontCares, int nrOfBits) {
+    final var result = new StringBuffer();
+    var mask = 1 << (nrOfBits - 1);
+    while (mask > 0) {
+      if ((dontCares & mask) != 0) {
+        result.append("-");
+      } else {
+        result.append((value & mask) != 0 ? "1" : "0");
+      }
+      mask >>= 1;
+    }
+    return result.toString();
+  }
+
+  static List<Implicant> computeMinimal(int format, AnalyzerModel model, String variable, JTextArea outputArea) {
     final var table = model.getTruthTable();
     final var outputVariableIndex = model.getOutputs().bits.indexOf(variable);
     if (outputVariableIndex < 0) return Collections.emptyList();
-
     // first we do some house keeping
     final var desiredTerm = format == AnalyzerModel.FORMAT_SUM_OF_PRODUCTS ? Entry.ONE : Entry.ZERO;
     final var skippedTerm = desiredTerm == Entry.ONE ? Entry.ZERO : Entry.ONE;
@@ -95,10 +114,13 @@ public class Implicant implements Comparable<Implicant> {
     // for terms to cover is the "key" the min/maxterms that need to be covered, and the ArrayList 
     // the set of prime covers that cover the key
     final var termsToCover = new HashMap<Implicant, ArrayList<Implicant>>();
+    var allDontCare = true;
     for (var inputCombination = 0; inputCombination < table.getRowCount(); inputCombination++) {
       final var term = table.getOutputEntry(inputCombination, outputVariableIndex);
-      if (term == skippedTerm) 
+      if (term == skippedTerm) {
+        allDontCare = false;
         continue;
+      }
       final var nrOfOnes = getNrOfOnes(inputCombination, nrOfInputs);
       final var isDontCare = term != desiredTerm;
       final var implicant = new Implicant(inputCombination, isDontCare);
@@ -106,6 +128,7 @@ public class Implicant implements Comparable<Implicant> {
       if (!isDontCare) {
         termsToCover.put(implicant, new ArrayList<>());
         implicantsSet.add(implicant);
+        allDontCare = false;
       }
       if (!newTable.containsKey(nrOfOnes)) {
         newTable.put(nrOfOnes, new HashMap<>());
@@ -113,9 +136,21 @@ public class Implicant implements Comparable<Implicant> {
       newTable.get(nrOfOnes).put(implicant, implicantsSet);
     }
 
+    if (allDontCare) return Collections.emptyList();
+    // In case the number of inputs is bigger than approx. 8 inputs, this
+    // algorithm takes a long time. To prevent "freezing" of logisim, we
+    // only perform an optimization for systems with more than 6 inputs on
+    // user request. Otherwise we exit here and return the set of min/maxterms
+    if ((nrOfInputs > MAXIMAL_NR_OF_INPUTS_FOR_AUTO_MINIMAL_FORM) && (outputArea == null)) {
+      return Collections.emptyList();
+    }
+    report(outputArea, String.format("\nOptimizing output: %s\n", variable));
     // Here the real work starts, we determine all primes
     var couldMerge = false;
+    var groupSize = 2;
     do {
+      report(outputArea, String.format("\nFinding primes of size: %d", groupSize));
+      var nrOfPrimes = 0L;
       couldMerge = false;
       currentTable.clear();
       currentTable.putAll(newTable);
@@ -123,18 +158,15 @@ public class Implicant implements Comparable<Implicant> {
       var minimalKey = Integer.MAX_VALUE;
       var maximalKey = 0;
       for (var key : currentTable.keySet()) {
-        if (key < minimalKey)
-          minimalKey = key;
-        if (key > maximalKey)
-          maximalKey = key;
+        if (key < minimalKey) minimalKey = key;
+        if (key > maximalKey) maximalKey = key;
       }
       for (var key = minimalKey; key < maximalKey; key++) {
         if (currentTable.containsKey(key) && currentTable.containsKey(key + 1)) {
           // we see if we can merge terms
           for (var termGroup1 : currentTable.get(key).keySet()) {
             for (var termGroup2 : currentTable.get(key + 1).keySet()) {
-              if (termGroup1.unknowns != termGroup2.unknowns)
-                continue;
+              if (termGroup1.unknowns != termGroup2.unknowns) continue;
               final var differenceMask = termGroup1.values ^ termGroup2.values;
               if (oneHotTable.contains(differenceMask)) {
                 final var dontCareMask = termGroup1.unknowns | differenceMask;
@@ -146,14 +178,13 @@ public class Implicant implements Comparable<Implicant> {
                 termGroup1.isPrime = termGroup2.isPrime = false;
                 newImplicantTerms.addAll(currentTable.get(key).get(termGroup1));
                 newImplicantTerms.addAll(currentTable.get(key + 1).get(termGroup2));
+                var found = false;
                 if (newTable.containsKey(key)) {
                   // see if the new implicant already is in the set
-                  var found = false;
                   for (final var implicant : newTable.get(key).keySet()) {
                     found |= (implicant.values == newValue) && (implicant.unknowns == dontCareMask);
                   }
-                  if (!found)
-                    newTable.get(key).put(newImplicant, newImplicantTerms);
+                  if (!found) newTable.get(key).put(newImplicant, newImplicantTerms);
                 } else {
                   newTable.put(key, new HashMap<>());
                   newTable.get(key).put(newImplicant, newImplicantTerms);
@@ -166,24 +197,31 @@ public class Implicant implements Comparable<Implicant> {
       // now we add the primes to the set
       for (final var key : currentTable.keySet()) {
         for (final var implicant : currentTable.get(key).keySet()) {
-          if (implicant.isPrime && !implicant.isDontCare)
+          if (implicant.isPrime && !implicant.isDontCare) {
             primes.put(implicant, currentTable.get(key).get(implicant));
+            if ((nrOfPrimes % 16L) == 0L) report(outputArea,"\n");
+            report(outputArea, String.format("%s ", 
+                  getGroupRepresentation(implicant.values, implicant.unknowns, nrOfInputs)));
+            nrOfPrimes++;
+          }
         }
       }
+      if (nrOfPrimes == 0) report(outputArea, "\nNone");
+      groupSize <<= 1;
     } while (couldMerge);
 
     // we build now the table, with for each term which prime it covers
     for (final var prime : primes.keySet()) {
       for (final var term : termsToCover.keySet()) {
-        if (primes.get(prime).contains(term))
-          termsToCover.get(term).add(prime);
+        if (primes.get(prime).contains(term)) termsToCover.get(term).add(prime);
       }
     }
-  
     // finally we have to find the essential primes
     var couldDoRowReduction = false;
     var couldDoColumnReduction = false;
 
+    report(outputArea, "\nFinding essential primes by column-row reduction:");
+    var nrEssentialPrimes = 0L;
     do {
       couldDoRowReduction = false;
       couldDoColumnReduction = false;
@@ -194,12 +232,10 @@ public class Implicant implements Comparable<Implicant> {
         if (termInfo.size() == 1) {
           // we found a prime cover, as this cover only covers this term
           final var prime = termInfo.get(0);
-          if (!primes.containsKey(prime)) 
-            continue;
+          if (!primes.containsKey(prime)) continue;
           for (final var terms : primes.get(prime)) {
             for (final var currentPrime : primes.keySet()) {
-              if (currentPrime.equals(prime)) 
-                continue;
+              if (currentPrime.equals(prime)) continue;
               couldDoColumnReduction |= primes.get(currentPrime).contains(terms);
               primes.get(currentPrime).remove(terms);
             }
@@ -207,11 +243,12 @@ public class Implicant implements Comparable<Implicant> {
           }
           essentialPrimes.add(prime);
           primes.remove(prime);
+          if ((nrEssentialPrimes++ % 16L) == 0) report(outputArea, "\n");
+          report(outputArea, String.format(" %s", getGroupRepresentation(prime.values, prime.unknowns, nrOfInputs)));
         }
       }
       // we do the cleanup
-      for (final var term : termsToRemove)
-        termsToCover.remove(term);
+      for (final var term : termsToRemove) termsToCover.remove(term);
       // now we perform the row reduction
       // first we look for empty primes
       final var primesToRemove = new HashSet<Implicant>();
@@ -228,8 +265,9 @@ public class Implicant implements Comparable<Implicant> {
             primeHierarchy.put(nrOfElements, new HashSet<>());
           }
           primeHierarchy.get(nrOfElements).add(prime);
-          if (!nrOfElementGroups.contains(nrOfElements))
+          if (!nrOfElementGroups.contains(nrOfElements)) {
             nrOfElementGroups.add(nrOfElements);
+          }
         }
       }
       Collections.sort(nrOfElementGroups);
@@ -251,29 +289,29 @@ public class Implicant implements Comparable<Implicant> {
       }
       for (final var prime : primesToRemove) {
         primes.remove(prime);
-        for (final var element : termsToCover.keySet())
-          termsToCover.get(element).remove(prime);
+        for (final var element : termsToCover.keySet()) termsToCover.get(element).remove(prime);
       }
     } while (couldDoRowReduction || couldDoColumnReduction);
-
     // It can happen that we still have max/min terms left that are covered by multiple groups.
     // To find the minimal cover here we should implement the Petrick's method (https://en.wikipedia.org/wiki/Petrick%27s_method)
     // For the moment we are just going to greedyly pick
     // TODO: Implement Petrick's method
+    if (!termsToCover.isEmpty()) report(outputArea, "\n\nUsing greedy to pick last essential primes:");
+    nrEssentialPrimes = 0L;
     while (!termsToCover.isEmpty()) {
       final var termsToRemove = new ArrayList<Implicant>();
       for (final var term : termsToCover.keySet()) {
         if (termsToRemove.contains(term)) continue;
         final var group = termsToCover.get(term).get(0);
         essentialPrimes.add(group);
-        termsToRemove.addAll(primes.get(group));
+        if ((nrEssentialPrimes++ % 16L) == 0) report(outputArea, "\n");
+        report(outputArea, String.format(" %s", getGroupRepresentation(group.values, group.unknowns, nrOfInputs)));
+      termsToRemove.addAll(primes.get(group));
       }
-      for (final var term : termsToRemove)
-        termsToCover.remove(term);
+      for (final var term : termsToRemove) termsToCover.remove(term);
     }
 
     // TODO: Return multiple minimal covers if present (Petrick's method)
-
     return essentialPrimes;
   }
 
@@ -297,6 +335,7 @@ public class Implicant implements Comparable<Implicant> {
 
   static final Implicant MINIMAL_IMPLICANT = new Implicant(0, -1);
   static final List<Implicant> MINIMAL_LIST = Collections.singletonList(MINIMAL_IMPLICANT);
+  public static final int MAXIMAL_NR_OF_INPUTS_FOR_AUTO_MINIMAL_FORM = 6;
 
   final int unknowns;
   final int values;
