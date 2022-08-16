@@ -720,7 +720,7 @@ public class Pin extends InstanceFactory {
   public static final AttributeOption PULL_DOWN =
       new AttributeOption("down", S.getter("pinPullDownOption"));
   public static final Attribute<Long> ATTR_INITIAL =
-      Attributes.forHexLong("initial", S.getter("pinInitialValue"));
+      Attributes.forHexLong("initial", S.getter("pinResetValue"));
 
   public static final Attribute<AttributeOption> ATTR_PULL =
       Attributes.forOption(
