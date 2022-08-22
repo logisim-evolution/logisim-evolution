@@ -29,10 +29,12 @@ public class MinimizeButton  extends JButton {
 
   private final JFrame parent;
   private final AnalyzerModel model;
+  private final int format;
     
-  public MinimizeButton(JFrame parent, AnalyzerModel model) {
+  public MinimizeButton(JFrame parent, AnalyzerModel model, int format) {
     this.parent = parent;
     this.model = model;
+    this.format = format;
     addActionListener(event -> doOptimize());
   }
 
@@ -40,10 +42,10 @@ public class MinimizeButton  extends JButton {
     final var choice = OptionPane.showConfirmDialog(
           parent, 
           S.get("OptimizeLongTimeWarning"), 
-          S.get("minimizeFunctionButton"), 
+          S.get("minimizeFunctionTitle"), 
           OptionPane.YES_NO_OPTION);
-    if (choice == OptionPane.CANCEL_OPTION) return;
-    final var info = new JTextArea(10,50);
+    if (choice != OptionPane.YES_OPTION) return;
+    final var info = new JTextArea(10, 50);
     info.setEditable(false);
     info.setFont(new Font("monospaced", Font.PLAIN, 12));
     info.setForeground(Color.WHITE);
@@ -53,10 +55,10 @@ public class MinimizeButton  extends JButton {
     final var pane = new JScrollPane(info);
     pane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
     pane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-    final var doneButton = new JButton("Done");
+    final var doneButton = new JButton(S.get("minimizeDone"));
     final var infoPanel = new JDialog(
           parent, 
-          S.get("minimizeFunctionButton"), 
+          S.get("minimizeFunctionTitle"), 
           true);
     infoPanel.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
     infoPanel.add(pane, BorderLayout.CENTER);
@@ -71,8 +73,8 @@ public class MinimizeButton  extends JButton {
               }
 
               public void run() {
-                  doneButton.addActionListener(Event -> done());
-                  infoPanel.setVisible(true);
+                doneButton.addActionListener(Event -> done());
+                infoPanel.setVisible(true);
               }
           }
     );
@@ -80,7 +82,7 @@ public class MinimizeButton  extends JButton {
     final var optimizeThread = new Thread(
         new Runnable() {
             public void run() {
-                model.getOutputExpressions().forcedOptimize(info);
+                model.getOutputExpressions().forcedOptimize(info, format);
                 doneButton.setVisible(true);
             }
         }

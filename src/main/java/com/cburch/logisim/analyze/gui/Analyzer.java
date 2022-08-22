@@ -82,7 +82,8 @@ public class Analyzer extends LFrame.SubWindow {
       buildCircuit.setText(S.get("buildCircuitButton"));
       exportTable.setText(S.get("exportTableButton"));
       exportTex.setText(S.get("exportLatexButton"));
-      minimizeFunction.setText(S.get("minimizeFunctionButton"));
+      minimizeMinterms.setText(S.get("minimizeMintermsButton"));
+      minimizeMaxterms.setText(S.get("minimizeMaxtermsButton"));
       ioPanel.localeChanged();
       truthTablePanel.localeChanged();
       expressionPanel.localeChanged();
@@ -116,7 +117,9 @@ public class Analyzer extends LFrame.SubWindow {
       final var nrOfOutputs = tt.getOutputColumnCount();
       final var hasInputsAndOutputs = (nrOfInputs > 0) && (nrOfOutputs > 0);
       buildCircuit.setEnabled(hasInputsAndOutputs);
-      minimizeFunction.setEnabled(hasInputsAndOutputs
+      minimizeMinterms.setEnabled(hasInputsAndOutputs
+              && (nrOfInputs > Implicant.MAXIMAL_NR_OF_INPUTS_FOR_AUTO_MINIMAL_FORM));
+      minimizeMaxterms.setEnabled(hasInputsAndOutputs
               && (nrOfInputs > Implicant.MAXIMAL_NR_OF_INPUTS_FOR_AUTO_MINIMAL_FORM));
       exportTable.setEnabled(hasInputsAndOutputs);
       exportTex.setEnabled(hasInputsAndOutputs
@@ -177,7 +180,8 @@ public class Analyzer extends LFrame.SubWindow {
   private final ImportTableButton importTable;
   private final ExportTableButton exportTable;
   private final ExportLatexButton exportTex;
-  private final MinimizeButton minimizeFunction;
+  private final MinimizeButton minimizeMinterms;
+  private final MinimizeButton minimizeMaxterms;
 
   Analyzer() {
     super(null);
@@ -195,8 +199,10 @@ public class Analyzer extends LFrame.SubWindow {
     exportTable.setEnabled(false);
     exportTex = new ExportLatexButton(this, model);
     exportTex.setEnabled(false);
-    minimizeFunction = new MinimizeButton(this, model);
-    minimizeFunction.setEnabled(false);
+    minimizeMinterms = new MinimizeButton(this, model, AnalyzerModel.FORMAT_SUM_OF_PRODUCTS);
+    minimizeMinterms.setEnabled(false);
+    minimizeMaxterms = new MinimizeButton(this, model, AnalyzerModel.FORMAT_PRODUCT_OF_SUMS);
+    minimizeMaxterms.setEnabled(false);
 
     tabbedPane = new JTabbedPane();
     addTab(IO_TAB, ioPanel);
@@ -215,7 +221,8 @@ public class Analyzer extends LFrame.SubWindow {
     final var buttonPanel = new JPanel();
     buttonPanel.add(importTable);
     buttonPanel.add(buildCircuit);
-    buttonPanel.add(minimizeFunction);
+    buttonPanel.add(minimizeMinterms);
+    buttonPanel.add(minimizeMaxterms);
     buttonPanel.add(exportTable);
     buttonPanel.add(exportTex);
     contents.add(vertStrut, BorderLayout.WEST);

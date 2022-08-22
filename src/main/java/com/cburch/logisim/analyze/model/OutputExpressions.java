@@ -326,9 +326,10 @@ public class OutputExpressions {
     model.getTruthTable().addTruthTableListener(myListener);
   }
 
-  public void forcedOptimize(JTextArea outtextArea) {
+  public void forcedOptimize(JTextArea outtextArea, int format) {
     for (final var output : outputData.keySet()) {
       final var data = outputData.get(output);
+      data.setMinimizedFormat(format);
       data.invalidate(false, false, outtextArea);
     }
   }

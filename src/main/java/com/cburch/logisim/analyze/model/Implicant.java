@@ -9,6 +9,8 @@
 
 package com.cburch.logisim.analyze.model;
 
+import static com.cburch.logisim.analyze.Strings.S;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -144,12 +146,12 @@ public class Implicant implements Comparable<Implicant> {
     if ((nrOfInputs > MAXIMAL_NR_OF_INPUTS_FOR_AUTO_MINIMAL_FORM) && (outputArea == null)) {
       return Collections.emptyList();
     }
-    report(outputArea, String.format("\nOptimizing output: %s\n", variable));
+    report(outputArea, String.format("\n%s\n", S.fmt("implicantOutputName", variable)));
     // Here the real work starts, we determine all primes
     var couldMerge = false;
     var groupSize = 2;
     do {
-      report(outputArea, String.format("\nFinding primes of size: %d", groupSize));
+      report(outputArea, String.format("\n%s", S.fmt("implicantGroupSize", groupSize)));
       var nrOfPrimes = 0L;
       couldMerge = false;
       currentTable.clear();
@@ -199,14 +201,14 @@ public class Implicant implements Comparable<Implicant> {
         for (final var implicant : currentTable.get(key).keySet()) {
           if (implicant.isPrime && !implicant.isDontCare) {
             primes.put(implicant, currentTable.get(key).get(implicant));
-            if ((nrOfPrimes % 16L) == 0L) report(outputArea,"\n");
+            if ((nrOfPrimes % 16L) == 0L) report(outputArea, "\n");
             report(outputArea, String.format("%s ", 
                   getGroupRepresentation(implicant.values, implicant.unknowns, nrOfInputs)));
             nrOfPrimes++;
           }
         }
       }
-      if (nrOfPrimes == 0) report(outputArea, "\nNone");
+      if (nrOfPrimes == 0) report(outputArea, String.format("\n%s", S.get("implicantNoneFound")));
       groupSize <<= 1;
     } while (couldMerge);
 
@@ -220,7 +222,7 @@ public class Implicant implements Comparable<Implicant> {
     var couldDoRowReduction = false;
     var couldDoColumnReduction = false;
 
-    report(outputArea, "\nFinding essential primes by column-row reduction:");
+    report(outputArea, String.format("\n%s", S.get("implicantColumRowReduction")));
     var nrEssentialPrimes = 0L;
     do {
       couldDoRowReduction = false;
@@ -296,7 +298,7 @@ public class Implicant implements Comparable<Implicant> {
     // To find the minimal cover here we should implement the Petrick's method (https://en.wikipedia.org/wiki/Petrick%27s_method)
     // For the moment we are just going to greedyly pick
     // TODO: Implement Petrick's method
-    if (!termsToCover.isEmpty()) report(outputArea, "\n\nUsing greedy to pick last essential primes:");
+    if (!termsToCover.isEmpty()) report(outputArea, String.format("\n\n\s", S.get("implicantGreedy")));
     nrEssentialPrimes = 0L;
     while (!termsToCover.isEmpty()) {
       final var termsToRemove = new ArrayList<Implicant>();
@@ -306,7 +308,7 @@ public class Implicant implements Comparable<Implicant> {
         essentialPrimes.add(group);
         if ((nrEssentialPrimes++ % 16L) == 0) report(outputArea, "\n");
         report(outputArea, String.format(" %s", getGroupRepresentation(group.values, group.unknowns, nrOfInputs)));
-      termsToRemove.addAll(primes.get(group));
+        termsToRemove.addAll(primes.get(group));
       }
       for (final var term : termsToRemove) termsToCover.remove(term);
     }
