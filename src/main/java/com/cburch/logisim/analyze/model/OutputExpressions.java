@@ -430,7 +430,7 @@ public class OutputExpressions {
 
   public boolean hasExpressions() {
     var returnValue = false;
-    for (final var output: outputData.keySet()) {
+    for (final var output : outputData.keySet()) {
       final var data = outputData.get(output);
       returnValue |= data.getMinimalImplicants().size() != 0;
     }
