@@ -45,7 +45,7 @@ public class MinimizeButton  extends JButton {
           S.get("minimizeFunctionTitle"), 
           OptionPane.YES_NO_OPTION);
     if (choice != OptionPane.YES_OPTION) return;
-    final var info = new JTextArea(10, 50);
+    final var info = new JTextArea(20, 80);
     info.setEditable(false);
     info.setFont(new Font("monospaced", Font.PLAIN, 12));
     info.setForeground(Color.WHITE);

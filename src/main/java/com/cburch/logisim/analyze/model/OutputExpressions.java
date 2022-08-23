@@ -428,6 +428,15 @@ public class OutputExpressions {
     }
   }
 
+  public boolean hasExpressions() {
+    var returnValue = false;
+    for (final var output: outputData.keySet()) {
+      final var data = outputData.get(output);
+      returnValue |= data.getMinimalImplicants().size() != 0;
+    }
+    return returnValue;
+  }
+
   public boolean isExpressionMinimal(String output) {
     final var data = getOutputData(output, false);
     return data == null || data.isExpressionMinimal();
