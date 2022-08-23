@@ -59,7 +59,7 @@ public class Selection {
 
   public void clearSelected() {
     if (!selected.isEmpty()) {
-      final var oldSelected = new ArrayList<CanvasObject>(selected);
+      final var oldSelected = new ArrayList<>(selected);
       selected.clear();
       suppressed.clear();
       setHandleSelected(null);

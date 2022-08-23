@@ -20,10 +20,10 @@ import java.util.List;
 
 public class TtlLibrary extends Library {
   /**
-   * Unique identifier of the library, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the library, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all libraries.
+   * <p>Identifier value must MUST be unique string among all libraries.
    */
   public static final String _ID = "TTL";
 
@@ -68,6 +68,7 @@ public class TtlLibrary extends Library {
       new FactoryDescription(Ttl74175.class, S.getter("TTL74175"), "ttl.gif"),
       new FactoryDescription(Ttl74192.class, S.getter("TTL74192"), "ttl.gif"),
       new FactoryDescription(Ttl74193.class, S.getter("TTL74193"), "ttl.gif"),
+      new FactoryDescription(Ttl74245.class, S.getter("TTL74245"), "ttl.gif"),
       new FactoryDescription(Ttl74266.class, S.getter("TTL74266"), "ttl.gif"),
       new FactoryDescription(Ttl74273.class, S.getter("TTL74273"), "ttl.gif"),
       new FactoryDescription(Ttl74283.class, S.getter("TTL74283"), "ttl.gif"),

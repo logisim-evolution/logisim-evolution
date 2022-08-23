@@ -65,19 +65,14 @@ public class SocBusMenuProvider implements ActionListener {
       if (myInfo.containsKey(inst)) {
         final var function = info.getFunction();
         switch (function) {
-          case SHOW_MEMORY_MAP:
-            myInfo.get(inst).showMemoryMap(inst);
-            break;
-          case INSERT_TRANSACTION:
-            myInfo
-                .get(inst)
-                .insertTransaction(inst, info.getCircuitState(), info.getState(), info.getName());
-            break;
-          case SHOW_TRACES:
-            myInfo.get(inst).showTraceWindow(inst, info.getState(), info.getHierInfo());
-            break;
-          default:
-            throw new IllegalStateException(String.format("Unsupported function: %d", function));
+          case SHOW_MEMORY_MAP -> myInfo.get(inst).showMemoryMap(inst);
+          case INSERT_TRANSACTION -> myInfo
+              .get(inst)
+              .insertTransaction(inst, info.getCircuitState(), info.getState(), info.getName());
+          case SHOW_TRACES ->
+              myInfo.get(inst).showTraceWindow(inst, info.getState(), info.getHierInfo());
+          default ->
+              throw new IllegalStateException(String.format("Unsupported function: %d", function));
         }
       }
     }

@@ -73,18 +73,12 @@ public class HdlToolbarModel extends AbstractToolbarModel implements HdlModelLis
 
   void doAction(String action) {
     switch (action) {
-      case HDL_IMPORT:
-        editor.doImport();
-        break;
-      case HDL_EXPORT:
-        editor.doExport();
-        break;
-      case HDL_VALIDATE:
-        editor.doValidate();
-        break;
-      default:
+      case HDL_IMPORT -> editor.doImport();
+      case HDL_EXPORT -> editor.doExport();
+      case HDL_VALIDATE -> editor.doValidate();
+      default -> {
         // nothing to do here
-        break;
+      }
     }
   }
 

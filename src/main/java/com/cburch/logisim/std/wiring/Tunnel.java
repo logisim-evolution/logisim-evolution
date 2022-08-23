@@ -65,26 +65,16 @@ public class Tunnel extends InstanceFactory {
     int bh = Math.max(minDim, textHeight);
     int bx;
     int by;
-    switch (halign) {
-      case TextField.H_LEFT:
-        bx = x;
-        break;
-      case TextField.H_RIGHT:
-        bx = x - bw;
-        break;
-      default:
-        bx = x - (bw / 2);
-    }
-    switch (valign) {
-      case TextField.V_TOP:
-        by = y;
-        break;
-      case TextField.V_BOTTOM:
-        by = y - bh;
-        break;
-      default:
-        by = y - (bh / 2);
-    }
+    bx = switch (halign) {
+      case TextField.H_LEFT -> x;
+      case TextField.H_RIGHT -> x - bw;
+      default -> x - (bw / 2);
+    };
+    by = switch (valign) {
+      case TextField.V_TOP -> y;
+      case TextField.V_BOTTOM -> y - bh;
+      default -> y - (bh / 2);
+    };
 
     if (g != null) {
       GraphicsUtil.drawText(

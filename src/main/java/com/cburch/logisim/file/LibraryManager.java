@@ -257,27 +257,29 @@ public final class LibraryManager {
     final var name = desc.substring(sep + 1);
 
     switch (type) {
-      case "":
+      case "" -> {
         final var ret = loader.getBuiltin().getLibrary(name);
         if (ret == null) {
           loader.showError(S.get("fileBuiltinMissingError", name));
           return null;
         }
         return ret;
-      case "file": {
+      }
+      case "file" -> {
         final var toRead = loader.getFileFor(name, Loader.LOGISIM_FILTER);
         return loadLogisimLibrary(loader, toRead);
       }
-      case "jar": {
+      case "jar" -> {
         final var sepLoc = name.lastIndexOf(DESC_SEP);
         final var fileName = name.substring(0, sepLoc);
         final var className = name.substring(sepLoc + 1);
         final var toRead = loader.getFileFor(fileName, Loader.JAR_FILTER);
         return loadJarLibrary(loader, toRead, className);
       }
-      default:
+      default -> {
         loader.showError(S.get("fileTypeError", type, desc));
         return null;
+      }
     }
   }
 

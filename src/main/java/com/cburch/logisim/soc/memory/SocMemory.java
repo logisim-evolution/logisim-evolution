@@ -32,10 +32,10 @@ import java.awt.Graphics2D;
 
 public class SocMemory extends SocInstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Socmem";
 
@@ -55,12 +55,12 @@ public class SocMemory extends SocInstanceFactory {
     instance.addAttributeListener();
     Bounds bds = instance.getBounds();
     instance.setTextField(
-            StdAttr.LABEL,
-            StdAttr.LABEL_FONT,
-            bds.getX() + bds.getWidth() / 2,
-            bds.getY() - 3,
-            GraphicsUtil.H_CENTER,
-            GraphicsUtil.V_BASELINE);
+        StdAttr.LABEL,
+        StdAttr.LABEL_FONT,
+        bds.getX() + bds.getWidth() / 2,
+        bds.getY() - 3,
+        GraphicsUtil.H_CENTER,
+        GraphicsUtil.V_BASELINE);
   }
 
   @Override
@@ -91,13 +91,20 @@ public class SocMemory extends SocInstanceFactory {
     GraphicsUtil.drawCenteredText(g2, "SOC Memory", loc.getX() + 160, loc.getY() + 10);
     g2.setFont(f);
     GraphicsUtil.drawCenteredText(
-        g2, S.get("SocMemBase") + String.format("0x%08X", painter.getAttributeValue(SocMemoryAttributes.START_ADDRESS)),
-        loc.getX() + 80, loc.getY() + 30);
+        g2,
+        S.get("SocMemBase")
+            + String.format("0x%08X", painter.getAttributeValue(SocMemoryAttributes.START_ADDRESS)),
+        loc.getX() + 80,
+        loc.getY() + 30);
     GraphicsUtil.drawCenteredText(
-        g2, S.get("SocMemSizeStr") + getSizeString(painter.getAttributeValue(SocMemoryAttributes.MEM_SIZE)),
-        loc.getX() + 240, loc.getY() + 30);
+        g2,
+        S.get("SocMemSizeStr")
+            + getSizeString(painter.getAttributeValue(SocMemoryAttributes.MEM_SIZE)),
+        loc.getX() + 240,
+        loc.getY() + 30);
     if (painter.isPrintView()) return;
-    painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT)
+    painter
+        .getAttributeValue(SocSimulationManager.SOC_BUS_SELECT)
         .paint(g2, Bounds.create(loc.getX() + 5, loc.getY() + 40, 310, 18));
   }
 

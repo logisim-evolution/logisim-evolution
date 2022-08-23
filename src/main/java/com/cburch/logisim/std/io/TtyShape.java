@@ -48,15 +48,26 @@ public class TtyShape extends DynamicElement {
     }
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(Color.YELLOW);
-    g.fillRoundRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), 2 * Tty.BORDER, 2 * Tty.BORDER);
+    g.fillRoundRect(
+        bounds.getX(),
+        bounds.getY(),
+        bounds.getWidth(),
+        bounds.getHeight(),
+        2 * Tty.BORDER,
+        2 * Tty.BORDER);
     g.setColor(Color.BLACK);
-    g.drawRoundRect(bounds.getX(), bounds.getY(), bounds.getWidth(), bounds.getHeight(), 2 * Tty.BORDER, 2 * Tty.BORDER);
+    g.drawRoundRect(
+        bounds.getX(),
+        bounds.getY(),
+        bounds.getWidth(),
+        bounds.getHeight(),
+        2 * Tty.BORDER,
+        2 * Tty.BORDER);
     if (data != null) {
       final var rows = data.getNrRows();
       final var rowData = new String[rows];
       synchronized (data) {
-        for (var i = 0; i < rows; i++)
-          rowData[i] = data.getRowString(i);
+        for (var i = 0; i < rows; i++) rowData[i] = data.getRowString(i);
       }
       g.setFont(Tty.DEFAULT_FONT);
       final var fm = g.getFontMetrics();
@@ -71,13 +82,15 @@ public class TtyShape extends DynamicElement {
 
   @Override
   public List<Attribute<?>> getAttributes() {
-    return UnmodifiableList.create(new Attribute<?>[] {ATTR_LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR});
+    return UnmodifiableList.create(
+        new Attribute<?>[] {ATTR_LABEL, StdAttr.LABEL_FONT, StdAttr.LABEL_COLOR});
   }
 
   @Override
   public Element toSvgElement(Document doc) {
     return toSvgElement(doc.createElement("visible-tty"));
   }
+
   @Override
   public String getDisplayName() {
     return S.get("ttyComponent");

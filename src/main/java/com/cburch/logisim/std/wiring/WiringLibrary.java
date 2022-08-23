@@ -23,10 +23,10 @@ import java.util.List;
 public class WiringLibrary extends Library {
 
   /**
-   * Unique identifier of the library, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the library, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all libraries.
+   * <p>Identifier value must MUST be unique string among all libraries.
    */
   public static final String _ID = "Wiring";
 
@@ -46,7 +46,8 @@ public class WiringLibrary extends Library {
     new FactoryDescription(Ground.class, S.getter("groundComponent"), "ground.gif"),
     new FactoryDescription(DoNotConnect.class, S.getter("noConnectionComponent"), "noconnect.gif"),
     new FactoryDescription(Transistor.class, S.getter("transistorComponent"), "trans0.gif"),
-    new FactoryDescription(TransmissionGate.class, S.getter("transmissionGateComponent"), "transmis.gif"),
+    new FactoryDescription(
+        TransmissionGate.class, S.getter("transmissionGateComponent"), "transmis.gif"),
     new FactoryDescription(BitExtender.class, S.getter("extenderComponent"), "extender.gif"),
   };
 

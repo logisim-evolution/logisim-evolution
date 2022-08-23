@@ -13,10 +13,11 @@ import java.util.Date
 
 plugins {
   checkstyle
-  id("com.github.ben-manes.versions") version "0.41.0"
+  id("com.github.ben-manes.versions") version "0.42.0"
   java
   application
   id("com.github.johnrengelman.shadow") version "7.1.2"
+  id("org.sonarqube") version "3.4.0.2513"
 }
 
 repositories {
@@ -30,14 +31,14 @@ application {
 dependencies {
   implementation("org.hamcrest:hamcrest:2.2")
   implementation("javax.help:javahelp:2.0.05")
-  implementation("com.fifesoft:rsyntaxtextarea:3.1.5")
+  implementation("com.fifesoft:rsyntaxtextarea:3.2.0")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
-  implementation("org.drjekyll:colorpicker:1.3")
+  implementation("org.drjekyll:colorpicker:1.4.3")
   implementation("at.swimmesberger:swingx-core:1.6.8")
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
-  implementation("org.slf4j:slf4j-api:1.7.32")
-  implementation("org.slf4j:slf4j-simple:1.7.32")
-  implementation("com.formdev:flatlaf:1.6.4")
+  implementation("org.slf4j:slf4j-api:2.0.0")
+  implementation("org.slf4j:slf4j-simple:2.0.0")
+  implementation("com.formdev:flatlaf:2.4")
   implementation("commons-cli:commons-cli:1.5.0")
   implementation("org.apache.commons:commons-text:1.9")
 
@@ -48,10 +49,10 @@ dependencies {
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation(platform("org.junit:junit-bom:5.8.2"))
-  testImplementation("org.junit.jupiter:junit-jupiter:5.8.2")
-  testImplementation("org.mockito:mockito-inline:4.2.0")
-  testImplementation("org.mockito:mockito-junit-jupiter:4.2.0")
+  testImplementation(platform("org.junit:junit-bom:5.9.0"))
+  testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
+  testImplementation("org.mockito:mockito-inline:4.7.0")
+  testImplementation("org.mockito:mockito-junit-jupiter:4.7.0")
 }
 
 /**

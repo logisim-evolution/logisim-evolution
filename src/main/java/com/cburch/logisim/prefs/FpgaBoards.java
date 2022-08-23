@@ -125,14 +125,9 @@ public class FpgaBoards implements ActionListener {
     private void fireChange(ListDataEvent e) {
       for (final var listener : myListeners) {
         switch (e.getType()) {
-          case ListDataEvent.CONTENTS_CHANGED:
-            listener.contentsChanged(e);
-            break;
-          case ListDataEvent.INTERVAL_ADDED:
-            listener.intervalAdded(e);
-            break;
-          default:
-            listener.intervalRemoved(e);
+          case ListDataEvent.CONTENTS_CHANGED -> listener.contentsChanged(e);
+          case ListDataEvent.INTERVAL_ADDED -> listener.intervalAdded(e);
+          default -> listener.intervalRemoved(e);
         }
       }
     }
