@@ -65,7 +65,7 @@ public final class AvoidanceMap {
     y0 += 9 - (y0 + 9) % 10;
     for (var x = x0; x <= x1; x += 10) {
       for (var y = y0; y <= y1; y += 10) {
-        final var loc = Location.create(x, y);
+        final var loc = Location.create(x, y, false);
         // loc is most likely in the component, so go ahead and
         // put it into the map as if it is - and in the rare event
         // that loc isn't in the component, we can remove it.

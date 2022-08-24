@@ -124,7 +124,7 @@ class NotGate extends InstanceFactory {
 
     final var ports = new Port[2];
     ports[0] = new Port(0, 0, Port.OUTPUT, StdAttr.WIDTH);
-    Location out = Location.create(0, 0).translate(facing, dx);
+    Location out = Location.create(0, 0, true).translate(facing, dx);
     ports[1] = new Port(out.getX(), out.getY(), Port.INPUT, StdAttr.WIDTH);
     instance.setPorts(ports);
   }

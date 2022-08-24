@@ -92,7 +92,7 @@ public class TransmissionGate extends InstanceFactory {
   public boolean contains(Location loc, AttributeSet attrs) {
     if (super.contains(loc, attrs)) {
       Direction facing = attrs.getValue(StdAttr.FACING);
-      Location center = Location.create(0, 0).translate(facing, -20);
+      Location center = Location.create(0, 0, true).translate(facing, -20);
       return center.manhattanDistanceTo(loc) < 24;
     } else {
       return false;

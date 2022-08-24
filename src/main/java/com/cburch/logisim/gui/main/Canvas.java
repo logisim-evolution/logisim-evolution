@@ -442,7 +442,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     boolean showTips = AppPreferences.COMPONENT_TIPS.getBoolean();
     if (showTips) {
       Canvas.snapToGrid(event);
-      Location loc = Location.create(event.getX(), event.getY());
+      Location loc = Location.create(event.getX(), event.getY(), false);
       ComponentUserEvent e = null;
       for (Component comp : getCircuit().getAllContaining(loc)) {
         Object makerObj = comp.getFeature(ToolTipMaker.class);
