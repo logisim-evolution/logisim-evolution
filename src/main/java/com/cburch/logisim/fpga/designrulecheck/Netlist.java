@@ -2183,36 +2183,41 @@ public class Netlist {
       final var connection = comp.getEnd(clockPinIndex).get((byte) 0);
       final var connectedNet = connection.getParentNet();
       final var connectedNetindex = connection.getParentNetBitIndex();
+      var hasSource = false;
       if (connectedNet != null) {
         isGatedClock = true;
         final var segments = new HashSet<Wire>();
         final var source = getHiddenSource(null, (byte) 0, connectedNet, connectedNetindex, mySplitters, new HashSet<>(), segments, null);
-        final var sourceCon = source.getSource();
-        if (sourceCon.getComp().getFactory() instanceof Pin) {
-          var index = getEntryIndex(pinSources, sourceCon, (int) connectedNetindex);
-          if (index < 0) {
-            pinSources.add(source);
-            pinWires.add(segments);
-            final var comps = new HashSet<netlistComponent>();
-            comps.add(comp);
-            comps.add(new netlistComponent(sourceCon.getComp()));
-            pinGatedComponents.add(comps);
+        hasSource = source != null;
+        if (hasSource) {
+          final var sourceCon = source.getSource();
+          if (sourceCon.getComp().getFactory() instanceof Pin) {
+            var index = getEntryIndex(pinSources, sourceCon, (int) connectedNetindex);
+            if (index < 0) {
+              pinSources.add(source);
+              pinWires.add(segments);
+              final var comps = new HashSet<netlistComponent>();
+              comps.add(comp);
+              comps.add(new netlistComponent(sourceCon.getComp()));
+              pinGatedComponents.add(comps);
+            } else {
+              pinGatedComponents.get(index).add(comp);
+            }
           } else {
-            pinGatedComponents.get(index).add(comp);
-          }
-        } else {
-          int index = getEntryIndex(nonPinSources, sourceCon, (int) connectedNetindex);
-          if (index < 0) {
-            nonPinSources.add(source);
-            nonPinWires.add(segments);
-            final var comps = new HashSet<netlistComponent>();
-            comps.add(comp);
-            nonPinGatedComponents.add(comps);
-          } else {
-            nonPinGatedComponents.get(index).add(comp);
+            int index = getEntryIndex(nonPinSources, sourceCon, (int) connectedNetindex);
+            if (index < 0) {
+              nonPinSources.add(source);
+              nonPinWires.add(segments);
+              final var comps = new HashSet<netlistComponent>();
+              comps.add(comp);
+              nonPinGatedComponents.add(comps);
+            } else {
+              nonPinGatedComponents.get(index).add(comp);
+            }
           }
         }
-      } else {
+      }
+      if (!hasSource) {
         /* Add severe warning, we found a sequential element with an unconnected clock input */
         if (!warnedComponents.contains(comp)) {
           final var warn =
