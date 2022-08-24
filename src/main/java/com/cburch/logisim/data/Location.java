@@ -20,8 +20,8 @@ import java.util.List;
 public class Location implements Comparable<Location> {
   public static Location create(int x, int y, boolean hasToSnap) {
     // we round to half-grid base
-    final var xrounded = hasToSnap ? Math.round(x/5)*5 : x;
-    final var yrounded = hasToSnap ? Math.round(y/5)*5 : y;
+    final var xrounded = hasToSnap ? Math.round(x / 5) * 5 : x;
+    final var yrounded = hasToSnap ? Math.round(y / 5) * 5 : y;
     int hashCode = 31 * xrounded + yrounded;
     Object ret = cache.get(hashCode);
     if (ret != null) {
