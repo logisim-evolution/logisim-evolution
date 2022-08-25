@@ -159,6 +159,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
   static final int P_X = 3;
   static final int P_Y = 4;
   static final int P_DATA = 5;
+  static final int P_CLR = 6;
 
   private Video(Location loc, AttributeSet attrs) {
     super(loc, attrs, 6);
@@ -211,14 +212,20 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
       g.setColor(new Color(cm.getRGB(color)));
       g.fillRect(x, y, 1, 1);
       if (RESET_SYNC.equals(resetOption) && val(circuitState, P_RST) == Value.TRUE) {
-        g.setColor(Color.BLACK);
+        g.setColor(Color.YELLOW);
         g.fillRect(0, 0, w, h);
       }
     }
 
+    if (val(circuitState, P_CLR) == Value.TRUE) {
+      final var g = state.img.getGraphics();
+      g.setColor(Color.YELLOW);
+      g.fillRect(x, y, 1, 1);
+    }
+
     if (!RESET_SYNC.equals(resetOption) && val(circuitState, P_RST) == Value.TRUE) {
       final var g = state.img.getGraphics();
-      g.setColor(Color.BLACK);
+      g.setColor(Color.YELLOW);
       g.fillRect(0, 0, w, h);
     }
   }
@@ -381,7 +388,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     y += (-bh);
 
     g.drawRoundRect(x, y, bw, bh, 6, 6);
-    for (var i = 0; i < 6; i++) {
+    for (var i = 0; i < 7; i++) {
       if (i != P_CLK) context.drawPin(this, i);
     }
     context.drawClock(this, P_CLK, Direction.NORTH);
@@ -472,6 +479,8 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
         return S.get("rgbVideoData", attrs.getValue(COLOR_OPTION));
       case P_RST:
         return S.get("rgbVideoRST");
+      case P_CLR:
+        return S.get("rgbVideoCLR");
       default:
         return null;
     }
@@ -493,6 +502,7 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     setEnd(P_X, getLocation().translate(40, 0), BitWidth.create(xs), EndData.INPUT_ONLY);
     setEnd(P_Y, getLocation().translate(50, 0), BitWidth.create(ys), EndData.INPUT_ONLY);
     setEnd(P_DATA, getLocation().translate(60, 0), BitWidth.create(bpp), EndData.INPUT_ONLY);
+    setEnd(P_CLR, getLocation().translate(30, 0), BitWidth.ONE, EndData.INPUT_ONLY);
     recomputeBounds();
     fireComponentInvalidated(new ComponentEvent(this));
   }
