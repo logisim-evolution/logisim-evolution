@@ -22,23 +22,37 @@
  * any specification.
 */
 
-package com.cburch.logisim.analyze.model;
+package com.cburch.logisim.analyze.data;
 
-import com.cburch.logisim.analyze.data.EspressoCubeStruct;
-import com.cburch.logisim.analyze.data.EspressoPlaStruct;
+import java.util.ArrayList;
 
-public class EspressoOptimize {
-  
-  private final EspressoCubeStruct cube;
-  private final EspressoPlaStruct pla;
+public class EspressoPset {
 
-  public EspressoOptimize(int format, AnalyzerModel model) {
-    cube = new EspressoCubeStruct(format, model);
-    pla = new EspressoPlaStruct(format, model, cube);
+  private ArrayList<Integer> tempSet;
+  private final ArrayList<ArrayList<Integer>> cover;
+
+  public EspressoPset(ArrayList<ArrayList<Integer>> cover, EspressoCubeStruct cube) {
+    this.cover = cover;
+    tempSet = cube.newCube();
   }
-  
-  public void doSomething() {
-    System.out.println("Espresso!");
-    
+
+  public ArrayList<ArrayList<Integer>> getCover() {
+    return cover;
+  }
+
+  public ArrayList<Integer> getTempSet() {
+    return tempSet;
+  }
+
+  public void setTempSet(ArrayList<Integer> value) {
+    tempSet = value;
+  }
+
+  public boolean coverIsEmpty() {
+    return cover.size() == 0;
+  }
+
+  public boolean singleElementCover() {
+    return cover.size() == 1;
   }
 }
