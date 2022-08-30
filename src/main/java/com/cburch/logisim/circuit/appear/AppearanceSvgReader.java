@@ -136,12 +136,11 @@ public class AppearanceSvgReader {
     if (elt.hasAttribute("dir")) {
       final var direction = elt.getAttribute("dir");
       return direction.equals("in");
-    } else {
-      // for backward compatability
-      final var width = Double.parseDouble(elt.getAttribute("width"));
-      final var radius = (int) Math.round(width / 2.0);
-      return AppearancePort.isInputAppearance(radius);
     }
+    // for backward compatability
+    final var width = Double.parseDouble(elt.getAttribute("width"));
+    final var radius = (int) Math.round(width / 2.0);
+    return AppearancePort.isInputAppearance(radius);
   }
 
   private static Location getLocation(Element elt, boolean hasToSnap) {

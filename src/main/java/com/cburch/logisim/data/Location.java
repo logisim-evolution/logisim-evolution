@@ -20,15 +20,15 @@ import java.util.List;
 public class Location implements Comparable<Location> {
   public static Location create(int x, int y, boolean hasToSnap) {
     // we round to half-grid base
-    final var xrounded = hasToSnap ? Math.round(x / 5) * 5 : x;
-    final var yrounded = hasToSnap ? Math.round(y / 5) * 5 : y;
-    int hashCode = 31 * xrounded + yrounded;
-    Object ret = cache.get(hashCode);
+    final var xRounded = hasToSnap ? Math.round(x / 5) * 5 : x;
+    final var yRounded = hasToSnap ? Math.round(y / 5) * 5 : y;
+    final var hashCode = 31 * xRounded + yRounded;
+    final var ret = cache.get(hashCode);
     if (ret != null) {
       final var loc = (Location) ret;
-      if (loc.x == xrounded && loc.y == yrounded) return loc;
+      if (loc.x == xRounded && loc.y == yRounded) return loc;
     }
-    Location loc = new Location(hashCode, xrounded, yrounded, hasToSnap);
+    final var loc = new Location(hashCode, xRounded, yRounded, hasToSnap);
     cache.put(hashCode, loc);
     return loc;
   }
