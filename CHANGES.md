@@ -4,6 +4,7 @@
 
 * @dev (????-??-??)
   * Added reset value attribute to input pins
+  * Removed autolabler for tunnels, such that all get the same label in case of renaming.
   * Fixed bug preventing TTL 7442, 7443 and 7444 from being placed on the circuit canvas.
   * Sub-circuit can now be deleted with `DELETE` key, along with `BACKSPACE` used so far.
   * Fixed `Simulate` -> `Timing Diagram` not opening when using "Nimbus" look and feel.
