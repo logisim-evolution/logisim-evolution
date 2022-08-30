@@ -18,13 +18,16 @@
 ## Limitations ##
 
 While `Logisim-evolution` may be perfectly suitable for most of your digital circuit projects, you should
-be aware about important limitations that may affect your works:
+be aware of important limitations that may affect your work:
 
-* Bidirectional pins (input or output depending on the control line state) are currently not supported by simulation engine,
-  therefore built-in library do not offer such elements, nor you will be able to contribute your own implementation as of today.
-* Each of the component of your circuit will be given equal amount of simulation time and which is not necessary what close to
-  reality where phisical characteristics of each element can be different and affect their response time. Equalizing these times
-  prevent **discrete** circuits like flip-flops from having undetermined initial state.
+* Bidirectional pins (input or output depending on the control line state) are not currently supported by the simulation engine.
+  Therefore, the built-in libraries do not offer such elements and you cannot create your own.
+* By default, memory elements are initially set to 0 when simulation starts. This may not reflect the circuit behaviour in
+  reality after switching it on. This can be changed in `Project -> Options...` menu,  with the option
+  `Memory elements start in unknown/random state (rather than 0)`.
+* Transistors have a simplified digital simulation, mostly designed for the limited use of showing how a logic gate
+  is constructed. There are many things one can do with actual transistors that cannot be simulated with our
+  simulation engine.
 
 If the above is crucial for your project, you may consider trying [alternative software](#alternatives).
 
