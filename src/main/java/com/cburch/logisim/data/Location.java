@@ -18,14 +18,17 @@ import java.util.List;
  * </code> class, except that objects of this type are immutable.
  */
 public class Location implements Comparable<Location> {
-  public static Location create(int x, int y) {
-    int hashCode = 31 * x + y;
-    Object ret = cache.get(hashCode);
+  public static Location create(int x, int y, boolean hasToSnap) {
+    // we round to half-grid base
+    final var xRounded = hasToSnap ? Math.round(x / 5) * 5 : x;
+    final var yRounded = hasToSnap ? Math.round(y / 5) * 5 : y;
+    final var hashCode = 31 * xRounded + yRounded;
+    final var ret = cache.get(hashCode);
     if (ret != null) {
       final var loc = (Location) ret;
-      if (loc.x == x && loc.y == y) return loc;
+      if (loc.x == xRounded && loc.y == yRounded) return loc;
     }
-    Location loc = new Location(hashCode, x, y);
+    final var loc = new Location(hashCode, xRounded, yRounded, hasToSnap);
     cache.put(hashCode, loc);
     return loc;
   }
@@ -51,18 +54,18 @@ public class Location implements Comparable<Location> {
     }
     final var x = Integer.parseInt(value.substring(0, comma).trim());
     final var y = Integer.parseInt(value.substring(comma + 1).trim());
-    return Location.create(x, y);
+    return Location.create(x, y, true);
   }
 
   private static final Cache cache = new Cache();
   private final int hashCode;
-
   private final int x;
-
   private final int y;
+  private final boolean hasToSnap;
 
-  private Location(int hashCode, int x, int y) {
+  private Location(int hashCode, int x, int y, boolean hasToSnap) {
     this.hashCode = hashCode;
+    this.hasToSnap = hasToSnap;
     this.x = x;
     this.y = y;
   }
@@ -110,11 +113,11 @@ public class Location implements Comparable<Location> {
     final var dx = x - xc;
     final var dy = y - yc;
     if (degrees == 90) {
-      return create(xc + dy, yc - dx);
+      return create(xc + dy, yc - dx, hasToSnap);
     } else if (degrees == 180) {
-      return create(xc - dx, yc - dy);
+      return create(xc - dx, yc - dy, hasToSnap);
     } else if (degrees == 270) {
-      return create(xc - dy, yc + dx);
+      return create(xc - dy, yc + dx, hasToSnap);
     } else {
       return this;
     }
@@ -131,16 +134,16 @@ public class Location implements Comparable<Location> {
 
   public Location translate(Direction dir, int dist, int right) {
     if (dist == 0 && right == 0) return this;
-    if (dir == Direction.EAST) return Location.create(x + dist, y + right);
-    if (dir == Direction.WEST) return Location.create(x - dist, y - right);
-    if (dir == Direction.SOUTH) return Location.create(x - right, y + dist);
-    if (dir == Direction.NORTH) return Location.create(x + right, y - dist);
-    return Location.create(x + dist, y + right);
+    if (dir == Direction.EAST) return Location.create(x + dist, y + right, hasToSnap);
+    if (dir == Direction.WEST) return Location.create(x - dist, y - right, hasToSnap);
+    if (dir == Direction.SOUTH) return Location.create(x - right, y + dist, hasToSnap);
+    if (dir == Direction.NORTH) return Location.create(x + right, y - dist, hasToSnap);
+    return Location.create(x + dist, y + right, hasToSnap);
   }
 
   public Location translate(int dx, int dy) {
     if (dx == 0 && dy == 0) return this;
-    return Location.create(x + dx, y + dy);
+    return Location.create(x + dx, y + dy, hasToSnap);
   }
 
   public interface At {

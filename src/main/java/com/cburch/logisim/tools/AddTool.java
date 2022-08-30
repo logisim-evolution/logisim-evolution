@@ -532,7 +532,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
         for (var x = 0; x < matrix.getCopiesCountX(); x++) {
           for (var y = 0; y < matrix.getCopiesCountY(); y++) {
             final var loc = Location.create(event.getX() + (matrix.getDeltaX() * x),
-                event.getY() + (matrix.getDeltaY() * y));
+                event.getY() + (matrix.getDeltaY() * y), true);
             final var attrsCopy = (AttributeSet) attrs.clone();
             if (matrix.getLabel() != null) {
               if (matrixPlace)

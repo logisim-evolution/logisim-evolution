@@ -164,21 +164,21 @@ public class BitSelector extends InstanceFactory {
     Location inPt;
     Location selPt;
     if (facing == Direction.WEST) {
-      inPt = Location.create(30, 0);
-      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) selPt = Location.create(10, -10);
-      else selPt = Location.create(10, 10);
+      inPt = Location.create(30, 0, true);
+      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) selPt = Location.create(10, -10, true);
+      else selPt = Location.create(10, 10, true);
     } else if (facing == Direction.NORTH) {
-      inPt = Location.create(0, 30);
-      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) selPt = Location.create(-10, 10);
-      else selPt = Location.create(10, 10);
+      inPt = Location.create(0, 30, true);
+      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) selPt = Location.create(-10, 10, true);
+      else selPt = Location.create(10, 10, true);
     } else if (facing == Direction.SOUTH) {
-      inPt = Location.create(0, -30);
-      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) selPt = Location.create(-10, -10);
-      else selPt = Location.create(10, -10);
+      inPt = Location.create(0, -30, true);
+      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) selPt = Location.create(-10, -10, true);
+      else selPt = Location.create(10, -10, true);
     } else {
-      inPt = Location.create(-30, 0);
-      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) selPt = Location.create(-10, 10);
-      else selPt = Location.create(-10, -10);
+      inPt = Location.create(-30, 0, true);
+      if (selectLoc == StdAttr.SELECT_BOTTOM_LEFT) selPt = Location.create(-10, 10, true);
+      else selPt = Location.create(-10, -10, true);
     }
 
     final var ps = new Port[3];

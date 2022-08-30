@@ -414,7 +414,7 @@ public class SelectTool extends Tool {
     canvas.requestFocusInWindow();
     final var proj = canvas.getProject();
     final var sel = proj.getSelection();
-    start = Location.create(e.getX(), e.getY());
+    start = Location.create(e.getX(), e.getY(), false);
     curDx = 0;
     curDy = 0;
     moveGesture = null;

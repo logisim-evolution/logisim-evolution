@@ -308,21 +308,21 @@ public class Multiplexer extends InstanceFactory {
       Location end0;
       Location end1;
       if (dir == Direction.WEST) {
-        end0 = Location.create(w, -10);
-        end1 = Location.create(w, 10);
-        sel = Location.create(s, selMult * 20);
+        end0 = Location.create(w, -10, true);
+        end1 = Location.create(w, 10, true);
+        sel = Location.create(s, selMult * 20, true);
       } else if (dir == Direction.NORTH) {
-        end0 = Location.create(-10, w);
-        end1 = Location.create(10, w);
-        sel = Location.create(selMult * -20, s);
+        end0 = Location.create(-10, w, true);
+        end1 = Location.create(10, w, true);
+        sel = Location.create(selMult * -20, s, true);
       } else if (dir == Direction.SOUTH) {
-        end0 = Location.create(-10, -w);
-        end1 = Location.create(10, -w);
-        sel = Location.create(selMult * -20, -s);
+        end0 = Location.create(-10, -w, true);
+        end1 = Location.create(10, -w, true);
+        sel = Location.create(selMult * -20, -s, true);
       } else {
-        end0 = Location.create(-w, -10);
-        end1 = Location.create(-w, 10);
-        sel = Location.create(-s, selMult * 20);
+        end0 = Location.create(-w, -10, true);
+        end1 = Location.create(-w, 10, true);
+        sel = Location.create(-s, selMult * 20, true);
       }
       ps[0] = new Port(end0.getX(), end0.getY(), Port.INPUT, data.getWidth());
       ps[1] = new Port(end1.getX(), end1.getY(), Port.INPUT, data.getWidth());
@@ -336,19 +336,19 @@ public class Multiplexer extends InstanceFactory {
       if (dir == Direction.WEST) {
         dx = w;
         ddx = 0;
-        sel = Location.create(s, selMult * (dy + 10 * inputs));
+        sel = Location.create(s, selMult * (dy + 10 * inputs), true);
       } else if (dir == Direction.NORTH) {
         dy = w;
         ddy = 0;
-        sel = Location.create(selMult * dx, s);
+        sel = Location.create(selMult * dx, s, true);
       } else if (dir == Direction.SOUTH) {
         dy = -w;
         ddy = 0;
-        sel = Location.create(selMult * dx, -s);
+        sel = Location.create(selMult * dx, -s, true);
       } else {
         dx = -w;
         ddx = 0;
-        sel = Location.create(-s, selMult * (dy + 10 * inputs));
+        sel = Location.create(-s, selMult * (dy + 10 * inputs), true);
       }
       for (var i = 0; i < inputs; i++) {
         ps[i] = new Port(dx, dy, Port.INPUT, data.getWidth());

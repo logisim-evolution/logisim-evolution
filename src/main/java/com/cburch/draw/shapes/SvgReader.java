@@ -91,9 +91,9 @@ public final class SvgReader {
           x2 += x0;
           y2 += y0;
         }
-        final var e0 = Location.create(x0, y0);
-        final var e1 = Location.create(x2, y2);
-        final var ct = Location.create(x1, y1);
+        final var e0 = Location.create(x0, y0, false);
+        final var e1 = Location.create(x2, y2, false);
+        final var ct = Location.create(x1, y1, false);
         return new Curve(e0, e1, ct);
       } else {
         throw new NumberFormatException("Unexpected format for curve");
@@ -300,7 +300,7 @@ public final class SvgReader {
     for (var i = 0; i < ret.length; i++) {
       final var x = Integer.parseInt(toks[2 * i]);
       final var y = Integer.parseInt(toks[2 * i + 1]);
-      ret[i] = Location.create(x, y);
+      ret[i] = Location.create(x, y, false);
     }
     return UnmodifiableList.create(ret);
   }

@@ -49,7 +49,7 @@ public final class PolyUtil {
       final var h1 = ret.nextHandle;
       final var p =
           LineUtil.nearestPointSegment(xq, yq, h0.getX(), h0.getY(), h1.getX(), h1.getY());
-      ret.loc = Location.create((int) Math.round(p[0]), (int) Math.round(p[1]));
+      ret.loc = Location.create((int) Math.round(p[0]), (int) Math.round(p[1]), false);
       return ret;
     }
   }
