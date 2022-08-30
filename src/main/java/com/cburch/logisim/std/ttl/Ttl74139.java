@@ -25,15 +25,15 @@ import com.cburch.logisim.instance.InstanceState;
 import java.util.ArrayList;
 
 /**
- * TTL 74x139 Dual 2-line to 4-line decoders/multiplexers
- * Model based on https://www.ti.com/product/SN74LS139A datasheet.
+ * TTL 74x139 Dual 2-line to 4-line decoders/multiplexers Model based on
+ * https://www.ti.com/product/SN74LS139A datasheet.
  */
 public class Ttl74139 extends AbstractTtlGate {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "74139";
 
@@ -106,7 +106,8 @@ public class Ttl74139 extends AbstractTtlGate {
     };
 
     for (var i = 0; i < 4; i++) { // Active LOW
-      final var val = enabled ? (outputPortStates[A + B][i] == 0 ? Value.TRUE : Value.FALSE) : Value.TRUE;
+      final var val =
+          enabled ? (outputPortStates[A + B][i] == 0 ? Value.TRUE : Value.FALSE) : Value.TRUE;
       state.setPort(mapPort(outPorts[i]), val, DELAY);
     }
   }
@@ -118,5 +119,4 @@ public class Ttl74139 extends AbstractTtlGate {
     byte[] out2 = {L2_nY0, L2_nY1, L2_nY2, L2_nY3};
     computeState(state, L2_nEN, L2_A, L2_B, out2);
   }
-
 }

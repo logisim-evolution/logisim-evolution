@@ -15,14 +15,11 @@ import java.util.List;
 
 public class PullBehaviors {
   public static String getConstrainedPullString(char id) {
-    switch (id) {
-      case PULL_UP:
-        return "PULLUP";
-      case PULL_DOWN:
-        return "PULLDOWN";
-      default:
-        return "";
-    }
+    return switch (id) {
+      case PULL_UP -> "PULLUP";
+      case PULL_DOWN -> "PULLDOWN";
+      default -> "";
+    };
   }
 
   public static char getId(String identifier) {

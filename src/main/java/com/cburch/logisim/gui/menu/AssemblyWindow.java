@@ -49,7 +49,11 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultHighlighter;
 import javax.swing.text.Document;
 
-public class AssemblyWindow implements ActionListener, BaseWindowListenerContract, Simulator.Listener, BaseKeyListenerContract {
+public class AssemblyWindow
+    implements ActionListener,
+        BaseWindowListenerContract,
+        Simulator.Listener,
+        BaseKeyListenerContract {
 
   private static Circuit curCircuit;
   private static CircuitState curCircuitState;
@@ -123,7 +127,8 @@ public class AssemblyWindow implements ActionListener, BaseWindowListenerContrac
 
     document.setFont(new Font(Font.MONOSPACED, Font.PLAIN, 12));
     document.setEditable(false);
-    document.setPreferredSize(new Dimension(document.getWidth() * 4 / 5, Math.max(200, document.getHeight() * 2 / 3)));
+    document.setPreferredSize(
+        new Dimension(document.getWidth() * 4 / 5, Math.max(200, document.getHeight() * 2 / 3)));
     document.addKeyListener(this);
     main.add(new JScrollPane(document), BorderLayout.CENTER);
     main.add(north, BorderLayout.NORTH);
@@ -134,7 +139,8 @@ public class AssemblyWindow implements ActionListener, BaseWindowListenerContrac
     windows.pack();
     prefs = Preferences.userRoot().node(this.getClass().getName());
     windows.setLocation(prefs.getInt("X", 0), prefs.getInt("Y", 0));
-    windows.setSize(prefs.getInt("W", windows.getSize().width), prefs.getInt("H", windows.getSize().height));
+    windows.setSize(
+        prefs.getInt("W", windows.getSize().width), prefs.getInt("H", windows.getSize().height));
   }
 
   @Override
@@ -305,7 +311,8 @@ public class AssemblyWindow implements ActionListener, BaseWindowListenerContrac
         if (where.isEmpty()) {
           where = "0";
         }
-        final var pattern = Pattern.compile("^[ ]+" + where + ":", Pattern.MULTILINE + Pattern.CASE_INSENSITIVE);
+        final var pattern =
+            Pattern.compile("^ +" + where + ":", Pattern.MULTILINE + Pattern.CASE_INSENSITIVE);
         final var m = pattern.matcher(document.getText().replaceAll("\r", ""));
         if (m.find()) {
           document.setCaretPosition(m.start());

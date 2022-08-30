@@ -32,10 +32,10 @@ import java.awt.Graphics;
 
 public class Adder extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Adder";
 
@@ -53,9 +53,7 @@ public class Adder extends InstanceFactory {
         final var cInLast = (((ax & mask) + (bx & mask) + cx) < 0);
         final var cOut = (aLast && bLast) || (aLast && cInLast) || (bLast && cInLast);
         final var sum = valueA.toLongValue() + valueB.toLongValue() + cIn.toLongValue();
-        return new Value[] {
-          Value.createKnown(width, sum), cOut ? Value.TRUE : Value.FALSE
-        };
+        return new Value[] {Value.createKnown(width, sum), cOut ? Value.TRUE : Value.FALSE};
       } else {
         final var sum = valueA.toLongValue() + valueB.toLongValue() + cIn.toLongValue();
         return new Value[] {

@@ -98,7 +98,8 @@ public class VariableList {
       throw new IllegalArgumentException("cannot move index " + index + " by " + delta);
     }
     if (newIndex > data.size() - 1) {
-      throw new IllegalArgumentException("Cannot move index " + index + " by " + delta + ": size " + data.size());
+      throw new IllegalArgumentException(
+          "Cannot move index " + index + " by " + delta + ": size " + data.size());
     }
     if (index == newIndex) return;
     data.remove(index);

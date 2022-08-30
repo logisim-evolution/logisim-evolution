@@ -40,10 +40,10 @@ import java.util.Objects;
 
 public class Constant extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Constant";
 
@@ -113,7 +113,8 @@ public class Constant extends InstanceFactory {
       int width = attrs.getValue(StdAttr.WIDTH).getWidth();
       Value v = Value.createKnown(BitWidth.create(width), attrs.getValue(ATTR_VALUE));
       for (int b = 0; b < width; b++) {
-        expressionMap.put(instance.getLocation(), b, Expressions.constant((int) v.get(b).toLongValue()));
+        expressionMap.put(
+            instance.getLocation(), b, Expressions.constant((int) v.get(b).toLongValue()));
       }
     }
   }
@@ -133,7 +134,8 @@ public class Constant extends InstanceFactory {
   private static final Color BACKGROUND_COLOR = new Color(230, 230, 230);
   private static final Font DEFAULT_FONT = new Font("monospaced", Font.PLAIN, 12);
 
-  private static final List<Attribute<?>> ATTRIBUTES = Arrays.asList(StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE);
+  private static final List<Attribute<?>> ATTRIBUTES =
+      Arrays.asList(StdAttr.FACING, StdAttr.WIDTH, ATTR_VALUE);
 
   public Constant() {
     super(_ID, S.getter("constantComponent"), new ConstantHdlGeneratorFactory());

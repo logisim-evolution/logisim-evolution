@@ -15,10 +15,10 @@ import com.cburch.logisim.instance.InstanceState;
 
 public class Ttl7442 extends AbstractTtlGate {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "7442";
 
@@ -27,7 +27,9 @@ public class Ttl7442 extends AbstractTtlGate {
 
   private static final byte pinCount = 16;
   private static final byte[] outPins = {1, 2, 3, 4, 5, 6, 7, 9, 10, 11};
-  private static final String[] pinNames = {"O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", "D", "C", "B", "A"};
+  private static final String[] pinNames = {
+    "O0", "O1", "O2", "O3", "O4", "O5", "O6", "O7", "O8", "O9", "D", "C", "B", "A"
+  };
 
   public Ttl7442() {
     super(_ID, pinCount, outPins, pinNames, new Ttl7442HdlGenerator(false, false));

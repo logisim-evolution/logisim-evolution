@@ -163,21 +163,11 @@ public abstract class PrintHandler implements Printable {
 
       try {
         switch (fmt) {
-          case ExportImage.FORMAT_GIF:
-            GifEncoder.toFile(img, dest, null);
-            break;
-          case ExportImage.FORMAT_PNG:
-            ImageIO.write(img, "PNG", dest);
-            break;
-          case ExportImage.FORMAT_JPG:
-            ImageIO.write(img, "JPEG", dest);
-            break;
-          case ExportImage.FORMAT_TIKZ:
-            ((TikZWriter) g2d).writeFile(dest);
-            break;
-          case ExportImage.FORMAT_SVG:
-            ((TikZWriter) g2d).writeSvg(d.width, d.height, dest);
-            break;
+          case ExportImage.FORMAT_GIF -> GifEncoder.toFile(img, dest, null);
+          case ExportImage.FORMAT_PNG -> ImageIO.write(img, "PNG", dest);
+          case ExportImage.FORMAT_JPG -> ImageIO.write(img, "JPEG", dest);
+          case ExportImage.FORMAT_TIKZ -> ((TikZWriter) g2d).writeFile(dest);
+          case ExportImage.FORMAT_SVG -> ((TikZWriter) g2d).writeSvg(d.width, d.height, dest);
         }
       } catch (Exception e) {
         showErr("couldNotCreateFile");

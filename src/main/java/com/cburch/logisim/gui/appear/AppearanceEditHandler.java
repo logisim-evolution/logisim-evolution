@@ -225,7 +225,7 @@ public class AppearanceEditHandler extends EditHandler implements SelectionListe
     // find how far we have to translate shapes so that at least one of the
     // pasted shapes doesn't match what's already in the model
     final var raw = canvas.getModel().getObjectsFromBottom();
-    final var cur = new MatchingSet<CanvasObject>(raw);
+    final var cur = new MatchingSet<>(raw);
     int dx = 0;
     while (true) {
       // if any shapes in "add" aren't in canvas, we are done

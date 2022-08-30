@@ -35,10 +35,10 @@ import java.awt.Graphics;
 
 public class Multiplexer extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Multiplexer";
 
@@ -94,7 +94,8 @@ public class Multiplexer extends InstanceFactory {
 
   @Override
   public Object getDefaultAttributeValue(Attribute<?> attr, LogisimVersion ver) {
-    // for backward compatibility, after 2.6.4 the enable pin was "enabled" by default upto and until 3.6.1
+    // for backward compatibility, after 2.6.4 the enable pin was "enabled" by default upto and
+    // until 3.6.1
     if (attr == PlexersLibrary.ATTR_ENABLE) {
       return ver.compareTo(new LogisimVersion(3, 6, 1)) <= 0;
     } else {
@@ -165,7 +166,8 @@ public class Multiplexer extends InstanceFactory {
     final var facing = painter.getAttributeValue(StdAttr.FACING);
     final var select = painter.getAttributeValue(PlexersLibrary.ATTR_SELECT);
     final var bds = painter.getBounds();
-    final var lean = (select.getWidth() == 1)
+    final var lean =
+        (select.getWidth() == 1)
             ? (size == PlexersLibrary.SIZE_NARROW ? 7 : 10)
             : (size == PlexersLibrary.SIZE_NARROW ? 10 : 20);
     PlexersLibrary.drawTrapezoid(painter.getGraphics(), bds, facing, lean);
@@ -246,12 +248,14 @@ public class Multiplexer extends InstanceFactory {
 
     // draw the trapezoid, "MUX" string, the individual ports
     g.setColor(Color.BLACK);
-    final var lean = (inputs == 2)
+    final var lean =
+        (inputs == 2)
             ? (size == PlexersLibrary.SIZE_NARROW ? 7 : 10)
             : (size == PlexersLibrary.SIZE_NARROW ? 10 : 20);
     PlexersLibrary.drawTrapezoid(g, bds, facing, lean);
     if (size == PlexersLibrary.SIZE_WIDE)
-      GraphicsUtil.drawCenteredText(g, "MUX", bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2);
+      GraphicsUtil.drawCenteredText(
+          g, "MUX", bds.getX() + bds.getWidth() / 2, bds.getY() + bds.getHeight() / 2);
     painter.drawPorts();
   }
 

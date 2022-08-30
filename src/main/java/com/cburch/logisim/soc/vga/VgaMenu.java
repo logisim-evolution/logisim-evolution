@@ -48,8 +48,7 @@ public class VgaMenu implements ActionListener, MenuExtender {
   @Override
   public void actionPerformed(ActionEvent e) {
     Object src = e.getSource();
-    if (src == exportC)
-      exportC();
+    if (src == exportC) exportC();
   }
 
   public void exportC() {
@@ -58,10 +57,11 @@ public class VgaMenu implements ActionListener, MenuExtender {
     int result = fc.showDialog(frame, S.get("SelectDirectoryToStoreC"));
     if (result == JFileChooser.APPROVE_OPTION) {
       VgaState myState = instance.getAttributeValue(VgaAttributes.VGA_STATE);
-      if (myState == null)
-        throw new NullPointerException("BUG in VgaMenu.java");
-      String compName = myState.getName().replace(" ", "_").replace("@", "_").replace(",", "_").toUpperCase();
-      String headerFileName = fc.getSelectedFile().getAbsolutePath() + File.separator + compName + ".h";
+      if (myState == null) throw new NullPointerException("BUG in VgaMenu.java");
+      String compName =
+          myState.getName().replace(" ", "_").replace("@", "_").replace(",", "_").toUpperCase();
+      String headerFileName =
+          fc.getSelectedFile().getAbsolutePath() + File.separator + compName + ".h";
       String cFileName = fc.getSelectedFile().getAbsolutePath() + File.separator + compName + ".c";
       FileWriter headerFile = null;
       FileWriter cFile = null;
@@ -76,7 +76,11 @@ public class VgaMenu implements ActionListener, MenuExtender {
         cFile = null;
       }
       if (headerFile == null || cFile == null) {
-        OptionPane.showMessageDialog(frame, S.get("ErrorCreatingHeaderAndOrCFile"), S.get("ExportC"), OptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(
+            frame,
+            S.get("ErrorCreatingHeaderAndOrCFile"),
+            S.get("ExportC"),
+            OptionPane.ERROR_MESSAGE);
         return;
       }
       PrintWriter headerWriter = new PrintWriter(headerFile);
@@ -98,7 +102,8 @@ public class VgaMenu implements ActionListener, MenuExtender {
       headerWriter.println("#endif");
       headerWriter.close();
       cWriter.close();
-      OptionPane.showMessageDialog(frame, S.get("SuccesCreatingHeaderAndCFile", headerFileName, cFileName));
+      OptionPane.showMessageDialog(
+          frame, S.get("SuccesCreatingHeaderAndCFile", headerFileName, cFileName));
     }
   }
 }

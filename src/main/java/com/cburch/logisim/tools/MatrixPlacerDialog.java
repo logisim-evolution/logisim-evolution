@@ -60,7 +60,10 @@ public class MatrixPlacerDialog extends JPanel implements ActionListener {
       for (var y = 5; y < 12; y++) {
         c.gridx = x;
         c.gridy = y;
-        final var symbol = (((x == 4) || (x == 7) || (x == 10)) && ((y == 5) || (y == 8) || (y == 11))) ? "O" : ".";
+        final var symbol =
+            (((x == 4) || (x == 7) || (x == 10)) && ((y == 5) || (y == 8) || (y == 11)))
+                ? "O"
+                : ".";
         final var spacer = " ".repeat(3);
         final var compText = new JLabel(spacer + symbol + spacer);
         this.add(compText, c);

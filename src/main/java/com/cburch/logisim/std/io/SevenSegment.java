@@ -37,10 +37,10 @@ import java.util.List;
 
 public class SevenSegment extends InstanceFactory implements DynamicElementProvider {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "7-Segment Display";
 
@@ -130,10 +130,15 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
 
   static final Color DEFAULT_OFF = new Color(220, 220, 220);
 
-  public static final Attribute<Boolean> ATTR_DP = Attributes.forBoolean("decimalPoint", S.getter("SevenSegDP"));
+  public static final Attribute<Boolean> ATTR_DP =
+      Attributes.forBoolean("decimalPoint", S.getter("SevenSegDP"));
 
   public SevenSegment() {
-    super(_ID, S.getter("sevenSegmentComponent"), new AbstractSimpleIoHdlGeneratorFactory(false), true);
+    super(
+        _ID,
+        S.getter("sevenSegmentComponent"),
+        new AbstractSimpleIoHdlGeneratorFactory(false),
+        true);
     setAttributes(
         new Attribute[] {
           IoLibrary.ATTR_ON_COLOR,
@@ -233,7 +238,9 @@ public class SevenSegment extends InstanceFactory implements DynamicElementProvi
   protected void configureNewInstance(Instance instance) {
     instance
         .getAttributeSet()
-        .setValue(StdAttr.MAPINFO, new ComponentMapInformationContainer(0, 8, 0, null, getLabels(), null));
+        .setValue(
+            StdAttr.MAPINFO,
+            new ComponentMapInformationContainer(0, 8, 0, null, getLabels(), null));
     instance.addAttributeListener();
     updatePorts(instance);
     computeTextField(instance);

@@ -90,16 +90,12 @@ public class VhdlParser {
     }
 
     public String getVhdlType() {
-      switch (type) {
-        case Port.INPUT:
-          return "in";
-        case Port.OUTPUT:
-          return "out";
-        case Port.INOUT:
-          return "inout";
-        default:
-          throw new IllegalArgumentException("Not recognized port type: " + type);
-      }
+      return switch (type) {
+        case Port.INPUT -> "in";
+        case Port.OUTPUT -> "out";
+        case Port.INOUT -> "inout";
+        default -> throw new IllegalArgumentException("Not recognized port type: " + type);
+      };
     }
 
     public BitWidth getWidth() {
