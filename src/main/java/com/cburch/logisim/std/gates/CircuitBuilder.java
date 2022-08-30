@@ -232,7 +232,7 @@ public class CircuitBuilder {
         int dy = 0;
         if (layout.outputY < 20) dy = 20 - layout.outputY;
         height = Math.max(dy + layout.height, 40);
-        output = Location.create(outputX, y + dy + layout.outputY);
+        output = Location.create(outputX, y + dy + layout.outputY, true);
         outputData.addInput(outputName, new SingleInput(outputX, y + dy + layout.outputY));
         placeComponents(result, layouts[i], x, y + dy, inputData, output);
       }
@@ -436,13 +436,13 @@ public class CircuitBuilder {
       CircuitMutation result, Layout layout, int x, int y, InputData inputData, Location output) {
     if (layout.inputName != null) {
       final var inputX = inputData.getSpineX(layout.inputName, layout.inverted);
-      final var input = Location.create(inputX, output.getY());
+      final var input = Location.create(inputX, output.getY(), true);
       inputData.registerConnection(layout.inputName, input, layout.inverted);
       result.add(Wire.create(input, output));
       return;
     }
 
-    final var compOutput = Location.create(x + layout.width, output.getY());
+    final var compOutput = Location.create(x + layout.width, output.getY(), true);
     final var parent = layout.factory.createComponent(compOutput, layout.attrs);
     result.add(parent);
     if (!compOutput.equals(output)) {
@@ -459,9 +459,9 @@ public class CircuitBuilder {
       final var input1 = parent.getEnd(2).getLocation();
 
       int midX = input0.getX() - 20;
-      final var subOutput = Location.create(midX, output.getY());
-      final var midInput0 = Location.create(midX, input0.getY());
-      final var midInput1 = Location.create(midX, input1.getY());
+      final var subOutput = Location.create(midX, output.getY(), true);
+      final var midInput0 = Location.create(midX, input0.getY(), true);
+      final var midInput1 = Location.create(midX, input1.getY(), true);
       result.add(Wire.create(subOutput, midInput0));
       result.add(Wire.create(midInput0, input0));
       result.add(Wire.create(subOutput, midInput1));
@@ -520,8 +520,8 @@ public class CircuitBuilder {
           }
         }
         int subOutputX = subDest.getX() - 20 - 10 * back;
-        subOutput = Location.create(subOutputX, subOutputY);
-        final var mid = Location.create(subOutputX, subDest.getY());
+        subOutput = Location.create(subOutputX, subOutputY, true);
+        final var mid = Location.create(subOutputX, subDest.getY(), true);
         result.add(Wire.create(subOutput, mid));
         result.add(Wire.create(mid, subDest));
       }
@@ -541,29 +541,29 @@ public class CircuitBuilder {
           final var fact = NandGate.FACTORY;
           final var attrs = fact.createAttributeSet();
           attrs.setValue(GateAttributes.ATTR_SIZE, GateAttributes.SIZE_NARROW);
-          var ipLoc1 = Location.create(inputData.getSpineX("1", false), invPosY - 10);
+          var ipLoc1 = Location.create(inputData.getSpineX("1", false), invPosY - 10, true);
           inputData.registerConnection("1", ipLoc1, false);
-          final var Ploc = Location.create(inputData.getInverterXLoc(), invPosY);
+          final var Ploc = Location.create(inputData.getInverterXLoc(), invPosY, true);
           result.add(fact.createComponent(Ploc, attrs));
-          var ipLoc2 = Location.create(inputData.getInverterXLoc() - NAND_WIDTH, invPosY - 10);
+          var ipLoc2 = Location.create(inputData.getInverterXLoc() - NAND_WIDTH, invPosY - 10, true);
           result.add(Wire.create(ipLoc1, ipLoc2));
-          ipLoc1 = Location.create(inputData.getSpineX(inputName, false), invPosY + 10);
-          ipLoc2 = Location.create(inputData.getInverterXLoc() - NAND_WIDTH, invPosY + 10);
+          ipLoc1 = Location.create(inputData.getSpineX(inputName, false), invPosY + 10, true);
+          ipLoc2 = Location.create(inputData.getInverterXLoc() - NAND_WIDTH, invPosY + 10, true);
           result.add(Wire.create(ipLoc1, ipLoc2));
           inputData.registerConnection(inputName, ipLoc1, false);
-          final var IPloc3 = Location.create(inputData.getSpineX(inputName, true), invPosY);
+          final var IPloc3 = Location.create(inputData.getSpineX(inputName, true), invPosY, true);
           result.add(Wire.create(Ploc, IPloc3));
           inputData.registerConnection(inputName, IPloc3, true);
         } else {
           final var fact = NotGate.FACTORY;
           final var attrs = fact.createAttributeSet();
-          final var Ploc = Location.create(inputData.getInverterXLoc(), invPosY);
+          final var Ploc = Location.create(inputData.getInverterXLoc(), invPosY, true);
           result.add(fact.createComponent(Ploc, attrs));
-          final var IPloc1 = Location.create(inputData.getSpineX(inputName, false), invPosY);
-          final var IPloc2 = Location.create(inputData.getInverterXLoc() - INVERTER_WIDTH, invPosY);
+          final var IPloc1 = Location.create(inputData.getSpineX(inputName, false), invPosY, true);
+          final var IPloc2 = Location.create(inputData.getInverterXLoc() - INVERTER_WIDTH, invPosY, true);
           result.add(Wire.create(IPloc1, IPloc2));
           inputData.registerConnection(inputName, IPloc1, false);
-          final var IPloc3 = Location.create(inputData.getSpineX(inputName, true), invPosY);
+          final var IPloc3 = Location.create(inputData.getSpineX(inputName, true), invPosY, true);
           result.add(Wire.create(Ploc, IPloc3));
           inputData.registerConnection(inputName, IPloc3, true);
         }
@@ -580,7 +580,7 @@ public class CircuitBuilder {
       final var attrs = fact.createAttributeSet();
       attrs.setValue(StdAttr.FACING, Direction.SOUTH);
       attrs.setValue(Constant.ATTR_VALUE, 0L);
-      final var loc = Location.create(inputData.getSpineX("0", false), inputData.startY - 10);
+      final var loc = Location.create(inputData.getSpineX("0", false), inputData.startY - 10, true);
       result.add(fact.createComponent(loc, attrs));
       inputData.registerConnection("0", loc, false);
       createSpine(result, inputData.getInputLocs("0", false).ys, new CompareYs());
@@ -589,7 +589,7 @@ public class CircuitBuilder {
       final var attrs = fact.createAttributeSet();
       attrs.setValue(StdAttr.FACING, Direction.SOUTH);
       attrs.setValue(Constant.ATTR_VALUE, 1L);
-      final var loc = Location.create(inputData.getSpineX("1", false), inputData.startY - 10);
+      final var loc = Location.create(inputData.getSpineX("1", false), inputData.startY - 10, true);
       result.add(fact.createComponent(loc, attrs));
       inputData.registerConnection("1", loc, false);
       createSpine(result, inputData.getInputLocs("1", false).ys, new CompareYs());
@@ -622,7 +622,7 @@ public class CircuitBuilder {
 
         // determine point where we can intersect with spine
         int spineX = singleInput.spineX;
-        var spineLoc = Location.create(spineX, curY);
+        var spineLoc = Location.create(spineX, curY, true);
         if (!singleInput.ys.isEmpty()) {
           // search for a Y that won't intersect with others
           // (we needn't bother if the pin doesn't connect
@@ -630,11 +630,11 @@ public class CircuitBuilder {
           forbiddenYs.sort(compareYs);
           while (Collections.binarySearch(forbiddenYs, spineLoc, compareYs) >= 0) {
             curY += 10;
-            spineLoc = Location.create(spineX, curY);
+            spineLoc = Location.create(spineX, curY, true);
           }
           singleInput.ys.add(spineLoc);
         }
-        Location loc = Location.create(curX, curY);
+        Location loc = Location.create(curX, curY, true);
 
         // now create the pin
         placeInput(result, loc, name, 1);
@@ -653,18 +653,18 @@ public class CircuitBuilder {
       } else {
         /* first place the input and the splitter */
         final var name = inp.name;
-        final var ploc = Location.create(curX, curY);
+        final var ploc = Location.create(curX, curY, true);
         /* create the pin */
         placeInput(result, ploc, name, inp.width);
         /* determine the position of the splitter */
         var msbName = inputData.getInputName(idx);
         var singleInput = inputData.getInputLocs(msbName, false);
         int spineX = singleInput.spineX;
-        final var sloc = Location.create(spineX - 10, busY - SPLITTER_HEIGHT);
+        final var sloc = Location.create(spineX - 10, busY - SPLITTER_HEIGHT, true);
         placeSplitter(result, sloc, inp.width, true);
         /* place the bus connection */
-        final var BI1 = Location.create(ploc.getX() + 10 + busNr * SPINE_DISTANCE, ploc.getY());
-        final var BI2 = Location.create(BI1.getX(), sloc.getY());
+        final var BI1 = Location.create(ploc.getX() + 10 + busNr * SPINE_DISTANCE, ploc.getY(), true);
+        final var BI2 = Location.create(BI1.getX(), sloc.getY(), true);
         result.add(Wire.create(ploc, BI1));
         result.add(Wire.create(BI1, BI2));
         result.add(Wire.create(BI2, sloc));
@@ -677,7 +677,7 @@ public class CircuitBuilder {
           final var spine = singleInput.ys;
           if (!spine.isEmpty()) {
             /* add a location for the bus entry */
-            final var bloc = Location.create(spineX, busY);
+            final var bloc = Location.create(spineX, busY, true);
             spine.add(bloc);
             forbiddenYs.sort(compareYs);
             // create spine
@@ -756,47 +756,48 @@ public class CircuitBuilder {
       final var outp = outputs.vars.get(idx);
       final var name = outputData.getInputName(cnt);
       if (outp.width == 1) {
-        final var pointP = Location.create(pinX, pinY);
+        final var pointP = Location.create(pinX, pinY, true);
         placeOutput(result, pointP, outp.name, 1);
         final var singleOutput = outputData.getInputLocs(name, false);
         if (singleOutput != null) {
-          final var pointC = Location.create(singleOutput.spineX, singleOutput.spineY);
+          final var pointC = Location.create(singleOutput.spineX, singleOutput.spineY, true);
           int xOffset = startX + cnt * SPINE_DISTANCE;
-          final var pointI1 = Location.create(xOffset, pointC.getY());
-          final var pointI2 = Location.create(xOffset, pointP.getY());
+          final var pointI1 = Location.create(xOffset, pointC.getY(), true);
+          final var pointI2 = Location.create(xOffset, pointP.getY(), true);
           if (pointC.getX() != pointI1.getX()) result.add(Wire.create(pointC, pointI1));
           if (pointI1.getY() != pointI2.getY()) result.add(Wire.create(pointI1, pointI2));
           if (pointI2.getX() != pointP.getX()) result.add(Wire.create(pointI2, pointP));
         }
         cnt++;
       } else {
-        final var pointP = Location.create(pinX, pinY);
+        final var pointP = Location.create(pinX, pinY, true);
         placeOutput(result, pointP, outp.name, outp.width);
         /* process the splitter */
         int sStartX = startX + cnt * SPINE_DISTANCE;
         final var pointS =
             Location.create(
                 sStartX + (outp.width - 1) * SPINE_DISTANCE + 10,
-                TOP_BORDER + busID * SPLITTER_HEIGHT);
+                TOP_BORDER + busID * SPLITTER_HEIGHT,
+                true);
         placeSplitter(result, pointS, outp.width, false);
         // process the bus connection
-        final var pointI1 = Location.create(busX - busID * SPINE_DISTANCE, pointS.getY());
-        final var pointI2 = Location.create(pointI1.getX(), pointP.getY());
+        final var pointI1 = Location.create(busX - busID * SPINE_DISTANCE, pointS.getY(), true);
+        final var pointI2 = Location.create(pointI1.getX(), pointP.getY(), true);
         busID++;
         if (pointS.getX() != pointI1.getX()) result.add(Wire.create(pointS, pointI1));
         if (pointI1.getY() != pointI2.getY()) result.add(Wire.create(pointI1, pointI2));
         if (pointI2.getX() != pointP.getX()) result.add(Wire.create(pointI2, pointP));
         // process the connections
         for (int bit = 0; bit < outp.width; bit++) {
-          final var pointSe = Location.create(sStartX + bit * SPINE_DISTANCE, pointS.getY() + 20);
+          final var pointSe = Location.create(sStartX + bit * SPINE_DISTANCE, pointS.getY() + 20, true);
           final var tName = outputData.getInputName(cnt + bit);
           final var singleOutput = outputData.getInputLocs(tName, false);
           if (singleOutput != null) {
-            final var pointC = Location.create(singleOutput.spineX, singleOutput.spineY);
+            final var pointC = Location.create(singleOutput.spineX, singleOutput.spineY, true);
             if (pointSe.getX() == pointC.getX()) {
               result.add(Wire.create(pointSe, pointC));
             } else {
-              final var pointI = Location.create(pointSe.getX(), pointC.getY());
+              final var pointI = Location.create(pointSe.getX(), pointC.getY(), true);
               result.add(Wire.create(pointC, pointI));
               result.add(Wire.create(pointSe, pointI));
             }

@@ -120,10 +120,8 @@ public class AppearanceAnchor extends AppearanceElement {
   public Element toSvgElement(Document doc) {
     final var loc = getLocation();
     final var ret = doc.createElement("circ-anchor");
-    ret.setAttribute("x", "" + (loc.getX() - RADIUS));
-    ret.setAttribute("y", "" + (loc.getY() - RADIUS));
-    ret.setAttribute("width", "" + 2 * RADIUS);
-    ret.setAttribute("height", "" + 2 * RADIUS);
+    ret.setAttribute("x", Integer.toString(loc.getX()));
+    ret.setAttribute("y", Integer.toString(loc.getY()));
     ret.setAttribute("facing", factingDirection.toString());
     return ret;
   }
