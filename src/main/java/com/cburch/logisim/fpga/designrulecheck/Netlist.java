@@ -2192,7 +2192,7 @@ public class Netlist {
         if (hasSource) {
           final var sourceCon = source.getSource();
           if (sourceCon.getComp().getFactory() instanceof Pin) {
-            var index = getEntryIndex(pinSources, sourceCon, (int) connectedNetindex);
+            final var index = getEntryIndex(pinSources, sourceCon, (int) connectedNetindex);
             if (index < 0) {
               pinSources.add(source);
               pinWires.add(segments);
@@ -2204,7 +2204,7 @@ public class Netlist {
               pinGatedComponents.get(index).add(comp);
             }
           } else {
-            int index = getEntryIndex(nonPinSources, sourceCon, (int) connectedNetindex);
+            final var index = getEntryIndex(nonPinSources, sourceCon, (int) connectedNetindex);
             if (index < 0) {
               nonPinSources.add(source);
               nonPinWires.add(segments);
