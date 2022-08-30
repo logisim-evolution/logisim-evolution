@@ -19,6 +19,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.std.wiring.Tunnel;
 import com.cburch.logisim.tools.SetAttributeAction;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
@@ -99,6 +100,9 @@ public class AutoLabel {
     if (circ == null) return "";
     if (useLabelBaseOnly.get(circ)) {
       useLabelBaseOnly.put(circ, false);
+      return labelBase.get(circ);
+    }
+    if (me instanceof Tunnel) {
       return labelBase.get(circ);
     }
     var newLabel = "";
