@@ -104,7 +104,7 @@ class SplitterPainter {
       var yi = y1;
       for (int i = 1; i <= fanout; i++) {
         if (context.getShowState()) {
-          g.setColor(state.getValue(Location.create(xi, yi)).getColor());
+          g.setColor(state.getValue(Location.create(xi, yi, true)).getColor());
         }
         final var xSpine = xi + (xi == x0 ? 0 : (xi < x0 ? 10 : -10));
         g.drawLine(xi, yi, xSpine, ySpine);
@@ -128,7 +128,7 @@ class SplitterPainter {
       var yi = y1;
       for (int i = 1; i <= fanout; i++) {
         if (context.getShowState()) {
-          g.setColor(state.getValue(Location.create(xi, yi)).getColor());
+          g.setColor(state.getValue(Location.create(xi, yi, true)).getColor());
         }
         final var ySpine = yi + (yi == y0 ? 0 : (yi < y0 ? 10 : -10));
         g.drawLine(xi, yi, xSpine, ySpine);
@@ -168,7 +168,7 @@ class SplitterPainter {
     GraphicsUtil.switchToWidth(g, Wire.WIDTH);
     for (int i = 0, n = attrs.fanout; i < n; i++) {
       if (showState) {
-        final var val = state.getValue(Location.create(x, y));
+        final var val = state.getValue(Location.create(x, y, true));
         g.setColor(val.getColor());
       }
       g.drawLine(x, y, x + dxEndSpine, y + dyEndSpine);

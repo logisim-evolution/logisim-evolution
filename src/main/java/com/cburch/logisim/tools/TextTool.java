@@ -260,7 +260,7 @@ public class TextTool extends Tool {
     // Otherwise search for a new caret.
     int x = e.getX();
     int y = e.getY();
-    final var loc = Location.create(x, y);
+    final var loc = Location.create(x, y, false);
     final var event = new ComponentUserEvent(canvas, x, y);
 
     // First search in selection.
