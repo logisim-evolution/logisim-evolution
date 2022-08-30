@@ -43,11 +43,10 @@ class LocaleSelector extends JList implements LocaleListener, ListSelectionListe
     }
 
     void update(Locale current) {
-      if (current != null && current.equals(locale)) {
-        text = locale.getDisplayName(locale);
-      } else {
-        text = locale.getDisplayName(locale) + " / " + locale.getDisplayName(current);
-      }
+      text =
+          (current != null && current.equals(locale))
+              ? locale.getDisplayName(locale)
+              : locale.getDisplayName(locale) + " / " + locale.getDisplayName(current);
     }
   }
 
@@ -58,7 +57,7 @@ class LocaleSelector extends JList implements LocaleListener, ListSelectionListe
   @SuppressWarnings("unchecked")
   LocaleSelector(Locale[] locales) {
     setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
-    DefaultListModel<LocaleOption> model = new DefaultListModel<>();
+    final var model = new DefaultListModel<LocaleOption>();
     items = new LocaleOption[locales.length];
     for (var i = 0; i < locales.length; i++) {
       items[i] = new LocaleOption(locales[i]);
@@ -77,8 +76,7 @@ class LocaleSelector extends JList implements LocaleListener, ListSelectionListe
     LocaleOption sel = null;
     for (final var item : items) {
       item.update(current);
-      if (current.equals(item.locale))
-        sel = item;
+      if (current.equals(item.locale)) sel = item;
     }
     if (sel != null) {
       setSelectedValue(sel, true);

@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.analyze.model;
 
+import com.cburch.logisim.util.CollectionUtil;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -287,7 +288,7 @@ public class OutputExpressions {
   }
 
   private static boolean implicantsSame(List<Implicant> a, List<Implicant> b) {
-    if (a == null) return b == null || b.isEmpty();
+    if (a == null) return CollectionUtil.isNullOrEmpty(b);
     if (b == null) return a.isEmpty();
     if (a.size() != b.size()) return false;
     final var ait = a.iterator();
@@ -301,8 +302,7 @@ public class OutputExpressions {
 
   private static boolean isAllUndefined(Entry[] a) {
     for (final var entry : a) {
-      if (entry == Entry.ZERO || entry == Entry.ONE)
-        return false;
+      if (entry == Entry.ZERO || entry == Entry.ONE) return false;
     }
     return true;
   }

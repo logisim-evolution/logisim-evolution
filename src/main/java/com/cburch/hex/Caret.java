@@ -33,7 +33,7 @@ import javax.swing.event.ChangeListener;
 
 public class Caret {
   private static final Color SELECT_COLOR = new Color(192, 192, 255);
-  private static final Stroke CURSOR_STROKE = new BasicStroke(2.0f);
+  private static final Stroke CURSOR_STROKE = new BasicStroke(2.0F);
   private final HexEditor hex;
   private final List<ChangeListener> listeners;
   private long mark;
@@ -147,7 +147,11 @@ public class Caret {
     }
   }
 
-  private class Listener implements BaseMouseListenerContract, BaseMouseMotionListenerContract, BaseKeyListenerContract, FocusListener {
+  private class Listener
+      implements BaseMouseListenerContract,
+          BaseMouseMotionListenerContract,
+          BaseKeyListenerContract,
+          FocusListener {
     @Override
     public void focusGained(FocusEvent e) {
       expose(cursor, false);
@@ -171,12 +175,14 @@ public class Caret {
           if (cursor >= 1) setDot(cursor - 1, shift);
           break;
         case KeyEvent.VK_DOWN:
-          if (cursor >= hex.getModel().getFirstOffset() && cursor <= hex.getModel().getLastOffset() - cols) {
+          if (cursor >= hex.getModel().getFirstOffset()
+              && cursor <= hex.getModel().getLastOffset() - cols) {
             setDot(cursor + cols, shift);
           }
           break;
         case KeyEvent.VK_RIGHT:
-          if (cursor >= hex.getModel().getFirstOffset() && cursor <= hex.getModel().getLastOffset() - 1) {
+          if (cursor >= hex.getModel().getFirstOffset()
+              && cursor <= hex.getModel().getLastOffset() - 1) {
             setDot(cursor + 1, shift);
           }
           break;

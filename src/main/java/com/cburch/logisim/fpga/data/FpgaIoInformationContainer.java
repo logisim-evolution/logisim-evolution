@@ -18,7 +18,7 @@ import com.cburch.logisim.std.io.DipSwitch;
 import com.cburch.logisim.std.io.DotMatrix;
 import com.cburch.logisim.std.io.LedBar;
 import com.cburch.logisim.std.io.RgbLed;
-
+import com.cburch.logisim.util.CollectionUtil;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -88,7 +88,7 @@ public class FpgaIoInformationContainer implements Cloneable {
   private Integer myArrayId = -1;
   private char myPullBehavior;
   private char myActivityLevel;
-  private char nyIoStandard;
+  private char myIoStandard;
   private char myDriveStrength;
   private String myLabel;
   private boolean toBeDeleted = false;
@@ -110,7 +110,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     setNrOfPins(0);
     myPullBehavior = PullBehaviors.UNKNOWN;
     myActivityLevel = PinActivity.Unknown;
-    nyIoStandard = IoStandards.UNKNOWN;
+    myIoStandard = IoStandards.UNKNOWN;
     myDriveStrength = DriveStrength.UNKNOWN;
     myLabel = null;
   }
@@ -123,7 +123,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     setNrOfPins(0);
     myPullBehavior = PullBehaviors.UNKNOWN;
     myActivityLevel = PinActivity.Unknown;
-    nyIoStandard = IoStandards.UNKNOWN;
+    myIoStandard = IoStandards.UNKNOWN;
     myDriveStrength = DriveStrength.UNKNOWN;
     myLabel = null;
     if (rect != null) rect.setLabel(null);
@@ -157,7 +157,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     setNrOfPins(0);
     myPullBehavior = PullBehaviors.UNKNOWN;
     myActivityLevel = PinActivity.Unknown;
-    nyIoStandard = IoStandards.UNKNOWN;
+    myIoStandard = IoStandards.UNKNOWN;
     myDriveStrength = DriveStrength.UNKNOWN;
     myLabel = null;
     ArrayList<String> InputLocs = new ArrayList<>();
@@ -236,7 +236,7 @@ public class FpgaIoInformationContainer implements Cloneable {
         myPullBehavior = PullBehaviors.getId(thisAttr.getNodeValue());
       }
       if (thisAttr.getNodeName().equals(IoStandards.IO_ATTRIBUTE_STRING)) {
-        nyIoStandard = IoStandards.getId(thisAttr.getNodeValue());
+        myIoStandard = IoStandards.getId(thisAttr.getNodeValue());
       }
       if (thisAttr.getNodeName().equals(PinActivity.ACTIVITY_ATTRIBUTE_STRING)) {
         myActivityLevel = PinActivity.getId(thisAttr.getNodeValue());
@@ -339,25 +339,19 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
   public boolean hasMap() {
-    boolean ret = false;
-    for (var i = 0; i < nrOfPins; i++)
-      ret |= pinIsMapped(i);
+    var ret = false;
+    for (var i = 0; i < nrOfPins; i++) {
+      ret |= isPinMapped(i);
+    }
     return ret;
   }
 
   public int getNrOfInputPins() {
-    if (myInputPins == null) return 0;
-    return myInputPins.size();
+    return (myInputPins == null) ? 0 : myInputPins.size();
   }
 
   public int getNrOfOutputPins() {
-    if (myOutputPins == null) return 0;
-    return myOutputPins.size();
-  }
-
-  public int getNrOfIOPins() {
-    if (myIoPins == null) return 0;
-    return myIoPins.size();
+    return (myOutputPins == null) ? 0 : myOutputPins.size();
   }
 
   public int getNrOfRows() {
@@ -385,8 +379,8 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
 
-  public void edit(Boolean deleteButton, IoComponentsInformation IOcomps) {
-    FpgaIoInformationSettingsDialog.getSimpleInformationDialog(deleteButton, IOcomps, this);
+  public void edit(Boolean deleteButton, IoComponentsInformation IoComps) {
+    FpgaIoInformationSettingsDialog.getSimpleInformationDialog(deleteButton, IoComps, this);
   }
 
   public void setMapMode() {
@@ -412,13 +406,33 @@ public class FpgaIoInformationContainer implements Cloneable {
 
   @Override
   public Object clone() throws CloneNotSupportedException {
-    return super.clone();
+    var clone = new FpgaIoInformationContainer();
+    clone.myType = myType;
+    clone.myRectangle = myRectangle;
+    clone.myRotation = myRotation;
+    clone.myPinLocations = myPinLocations;
+    clone.myInputPins = myInputPins;
+    clone.myOutputPins = myOutputPins;
+    clone.myIoPins = myIoPins;
+    clone.nrOfPins = nrOfPins;
+    clone.nrOfExternalPins = nrOfExternalPins;
+    clone.myArrayId = myArrayId;
+    clone.myPullBehavior = myPullBehavior;
+    clone.myActivityLevel = myActivityLevel;
+    clone.myIoStandard = myIoStandard;
+    clone.myDriveStrength = myDriveStrength;
+    clone.myLabel = myLabel;
+    clone.driving = driving;
+    clone.nrOfRows = nrOfRows;
+    clone.nrOfColumns = nrOfColumns;
+    for (var pinId = 0; pinId < nrOfPins; pinId++) {
+      clone.pinIsMapped.add(null);
+    }
+    return clone;
   }
 
   public String getPinLocation(int index) {
-    if (myPinLocations.containsKey(index))
-      return myPinLocations.get(index);
-    return "";
+    return myPinLocations.getOrDefault(index, "");
   }
 
   public void setInputPinLocation(int index, String value) {
@@ -446,9 +460,7 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
   public Element getDocumentElement(Document doc) {
-    if (myType.equals(IoComponentTypes.Unknown)) {
-      return null;
-    }
+    if (myType.equals(IoComponentTypes.Unknown)) return null;
     try {
       var result = doc.createElement(myType.toString());
       result.setAttribute(
@@ -476,71 +488,69 @@ public class FpgaIoInformationContainer implements Cloneable {
       }
       if (IoComponentTypes.hasRotationAttribute(myType)) {
         switch (myRotation) {
-          case IoComponentTypes.ROTATION_CW_90:
-          case IoComponentTypes.ROTATION_CCW_90: {
-            result.setAttribute(BoardWriterClass.MAP_ROTATION, Integer.toString(myRotation));
-            break;
+          case IoComponentTypes.ROTATION_CW_90, IoComponentTypes.ROTATION_CCW_90 ->
+              result.setAttribute(BoardWriterClass.MAP_ROTATION, Integer.toString(myRotation));
+          default -> {
+            // no rotation
           }
-          default: break;
         }
       }
-      if (myInputPins != null && !myInputPins.isEmpty()) {
-        var Set = doc.createAttribute(BoardWriterClass.INPUT_SET_STRING);
-        var s = new StringBuilder();
+      if (CollectionUtil.isNotEmpty(myInputPins)) {
+        final var attrSet = doc.createAttribute(BoardWriterClass.INPUT_SET_STRING);
+        final var sb = new StringBuilder();
         var first = true;
         for (var i = 0; i < nrOfPins; i++)
           if (myInputPins.contains(i)) {
             if (first) first = false;
-            else s.append(",");
-            s.append(myPinLocations.get(i));
+            else sb.append(",");
+            sb.append(myPinLocations.get(i));
           }
-        Set.setValue(s.toString());
-        result.setAttributeNode(Set);
+        attrSet.setValue(sb.toString());
+        result.setAttributeNode(attrSet);
       }
-      if (myOutputPins != null && !myOutputPins.isEmpty()) {
-        var Set = doc.createAttribute(BoardWriterClass.OUTPUT_SET_STRING);
-        var s = new StringBuilder();
+      if (CollectionUtil.isNotEmpty(myOutputPins)) {
+        final var attrSet = doc.createAttribute(BoardWriterClass.OUTPUT_SET_STRING);
+        final var sb = new StringBuilder();
         var first = true;
         for (var i = 0; i < nrOfPins; i++)
           if (myOutputPins.contains(i)) {
             if (first) first = false;
-            else s.append(",");
-            s.append(myPinLocations.get(i));
+            else sb.append(",");
+            sb.append(myPinLocations.get(i));
           }
-        Set.setValue(s.toString());
-        result.setAttributeNode(Set);
+        attrSet.setValue(sb.toString());
+        result.setAttributeNode(attrSet);
       }
-      if (myIoPins != null && !myIoPins.isEmpty()) {
-        var Set = doc.createAttribute(BoardWriterClass.IO_SET_STRING);
-        var s = new StringBuilder();
+      if (CollectionUtil.isNotEmpty(myIoPins)) {
+        final var attrSet = doc.createAttribute(BoardWriterClass.IO_SET_STRING);
+        final var sb = new StringBuilder();
         var first = true;
         for (var i = 0; i < nrOfPins; i++)
           if (myIoPins.contains(i)) {
             if (first) first = false;
-            else s.append(",");
-            s.append(myPinLocations.get(i));
+            else sb.append(",");
+            sb.append(myPinLocations.get(i));
           }
-        Set.setValue(s.toString());
-        result.setAttributeNode(Set);
+        attrSet.setValue(sb.toString());
+        result.setAttributeNode(attrSet);
       }
-      if (myDriveStrength != DriveStrength.UNKNOWN
-          && myDriveStrength != DriveStrength.DEFAULT_STENGTH) {
-        var drive = doc.createAttribute(DriveStrength.DRIVE_ATTRIBUTE_STRING);
+      if (myDriveStrength != DriveStrength.UNKNOWN && myDriveStrength != DriveStrength.DEFAULT_STENGTH) {
+        final var drive = doc.createAttribute(DriveStrength.DRIVE_ATTRIBUTE_STRING);
         drive.setValue(DriveStrength.BEHAVIOR_STRINGS[myDriveStrength]);
         result.setAttributeNode(drive);
       }
       if (myPullBehavior != PullBehaviors.UNKNOWN && myPullBehavior != PullBehaviors.FLOAT) {
-        var pull = doc.createAttribute(PullBehaviors.PULL_ATTRIBUTE_STRING);
+        final var pull = doc.createAttribute(PullBehaviors.PULL_ATTRIBUTE_STRING);
         pull.setValue(PullBehaviors.BEHAVIOR_STRINGS[myPullBehavior]);
         result.setAttributeNode(pull);
       }
-      if (nyIoStandard != IoStandards.UNKNOWN && nyIoStandard != IoStandards.DEFAULT_STANDARD) {
-        var stand = doc.createAttribute(IoStandards.IO_ATTRIBUTE_STRING);
-        stand.setValue(IoStandards.BEHAVIOR_STRINGS[nyIoStandard]);
+      if (myIoStandard != IoStandards.UNKNOWN && myIoStandard != IoStandards.DEFAULT_STANDARD) {
+        final var stand = doc.createAttribute(IoStandards.IO_ATTRIBUTE_STRING);
+        stand.setValue(IoStandards.BEHAVIOR_STRINGS[myIoStandard]);
         result.setAttributeNode(stand);
       }
       if (myActivityLevel != PinActivity.Unknown && myActivityLevel != PinActivity.ACTIVE_HIGH) {
-        var act = doc.createAttribute(PinActivity.ACTIVITY_ATTRIBUTE_STRING);
+        final var act = doc.createAttribute(PinActivity.ACTIVITY_ATTRIBUTE_STRING);
         act.setValue(PinActivity.BEHAVIOR_STRINGS[myActivityLevel]);
         result.setAttributeNode(act);
       }
@@ -575,11 +585,11 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
   public char getIoStandard() {
-    return nyIoStandard;
+    return myIoStandard;
   }
 
-  public void setIOStandard(char IOStandard) {
-    nyIoStandard = IOStandard;
+  public void setIOStandard(char IoStandard) {
+    myIoStandard = IoStandard;
   }
 
   public int getNrOfPins() {
@@ -622,7 +632,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     return IoComponentTypes.OUTPUT_COMPONENT_SET.contains(myType);
   }
 
-  public boolean pinIsMapped(int index) {
+  public boolean isPinMapped(int index) {
     if (index < 0 || index >= nrOfPins) return true;
     return pinIsMapped.get(index) != null;
   }
@@ -638,7 +648,7 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
   public void set(
-      IoComponentTypes Type,
+      IoComponentTypes compType,
       BoardRectangle rect,
       String loc,
       String pull,
@@ -646,14 +656,14 @@ public class FpgaIoInformationContainer implements Cloneable {
       String standard,
       String drive,
       String label) {
-    myType = Type;
+    myType = compType;
     myRectangle = rect;
     rect.setActiveOnHigh(active.equals(PinActivity.BEHAVIOR_STRINGS[PinActivity.ACTIVE_HIGH]));
     setNrOfPins(0);
     myPinLocations.put(0, loc);
     myPullBehavior = PullBehaviors.getId(pull);
     myActivityLevel = PinActivity.getId(active);
-    nyIoStandard = IoStandards.getId(standard);
+    myIoStandard = IoStandards.getId(standard);
     myDriveStrength = DriveStrength.getId(drive);
     myLabel = label;
     if (rect != null) rect.setLabel(label);
@@ -746,7 +756,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     return true;
   }
 
-  private int nrOfMaps() {
+  private int getNrOfMaps() {
     int res = 0;
     for (var i = 0; i < nrOfPins; i++)
       if (pinIsMapped.get(i) != null)
@@ -765,15 +775,15 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
   public boolean hasInputs() {
-    return myInputPins != null && (myInputPins.size() > 0);
+    return CollectionUtil.isNotEmpty(myInputPins);
   }
 
   public boolean hasOutputs() {
-    return myOutputPins != null && (myOutputPins.size() > 0);
+    return CollectionUtil.isNotEmpty(myOutputPins);
   }
 
-  public boolean hasIOs() {
-    return myIoPins != null && (myIoPins.size() > 0);
+  public boolean hasIoPins() {
+    return CollectionUtil.isNotEmpty(myIoPins);
   }
 
   public int nrInputs() {
@@ -784,7 +794,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     return myOutputPins == null ? 0 : myOutputPins.size();
   }
 
-  public int nrIOs() {
+  public int getNrOfIoPins() {
     return myIoPins == null ? 0 : myIoPins.size();
   }
 
@@ -820,13 +830,13 @@ public class FpgaIoInformationContainer implements Cloneable {
     selectedPin = -1;
     selectable = false;
     if (connect < 0) {
-      if (map.hasInputs() && (hasIOs() || hasInputs())) selectable = true;
-      if (map.hasOutputs() && (hasIOs() || hasOutputs())) selectable = true;
-      if (map.hasIos() && hasIOs()) selectable = true;
+      if (map.hasInputs() && (hasIoPins() || hasInputs())) selectable = true;
+      if (map.hasOutputs() && (hasIoPins() || hasOutputs())) selectable = true;
+      if (map.hasIos() && hasIoPins()) selectable = true;
     } else {
-      if (map.isInput(connect) && (hasIOs() || hasInputs())) selectable = true;
-      if (map.isOutput(connect) && (hasIOs() || hasOutputs())) selectable = true;
-      if (map.isIo(connect) && hasIOs()) selectable = true;
+      if (map.isInput(connect) && (hasIoPins() || hasInputs())) selectable = true;
+      if (map.isOutput(connect) && (hasIoPins() || hasOutputs())) selectable = true;
+      if (map.isIo(connect) && hasIoPins()) selectable = true;
     }
     return selectable;
   }
@@ -852,7 +862,7 @@ public class FpgaIoInformationContainer implements Cloneable {
             myRotation,
                 myType);
       }
-      mappaint(g, scale);
+      paintMap(g, scale);
       return;
     }
     var PaintColor = BoardManipulator.getColor(paintColor);
@@ -867,12 +877,12 @@ public class FpgaIoInformationContainer implements Cloneable {
     g.setColor(c);
   }
 
-  private void mappaint(Graphics2D g, float scale) {
-    var c = g.getColor();
-    var i = nrOfMaps();
-    if (i > 0) paintmapped(g, scale, i);
-    else paintselected(g, scale);
-    g.setColor(c);
+  private void paintMap(Graphics2D gfx, float scale) {
+    var c = gfx.getColor();
+    var i = getNrOfMaps();
+    if (i > 0) paintMapped(gfx, scale, i);
+    else paintSelected(gfx, scale);
+    gfx.setColor(c);
   }
 
   private boolean containsMap() {
@@ -914,14 +924,14 @@ public class FpgaIoInformationContainer implements Cloneable {
     }
     if (map.nrInputs() == nrInputs()
         && map.nrOutputs() == nrOutputs()
-        && map.nrIOs() == nrIOs()
+        && map.nrIOs() == getNrOfIoPins()
         && selComp.getPin() < 0) {
       return true;
     }
     if (nrInputs() == 0
         && nrOutputs() == 0
         && map.nrIOs() == 0
-        && map.nrInputs() == nrIOs()
+        && map.nrInputs() == getNrOfIoPins()
         && map.nrOutputs() == 0
         && selComp.getPin() < 0) {
       return true;
@@ -929,7 +939,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     if (nrInputs() == 0
         && nrOutputs() == 0
         && map.nrIOs() == 0
-        && map.nrOutputs() == nrIOs()
+        && map.nrOutputs() == getNrOfIoPins()
         && map.nrInputs() == 0
         && selComp.getPin() < 0) {
       return true;
@@ -1032,7 +1042,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     return diag.doit();
   }
 
-  private void paintmapped(Graphics2D g, float scale, int nrOfMaps) {
+  private void paintMapped(Graphics2D g, float scale, int nrOfMaps) {
     final var x = AppPreferences.getScaled(myRectangle.getXpos(), scale);
     final var y = AppPreferences.getScaled(myRectangle.getYpos(), scale);
     final var width = AppPreferences.getScaled(myRectangle.getWidth(), scale);
@@ -1058,7 +1068,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     }
   }
 
-  protected void paintselected(Graphics2D g, float scale) {
+  protected void paintSelected(Graphics2D g, float scale) {
     if (!selectable) return;
     final var x = AppPreferences.getScaled(myRectangle.getXpos(), scale);
     final var y = AppPreferences.getScaled(myRectangle.getYpos(), scale);

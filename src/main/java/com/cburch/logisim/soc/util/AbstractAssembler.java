@@ -20,6 +20,7 @@ import com.cburch.logisim.soc.file.ElfProgramHeader.ProgramHeader;
 import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.soc.file.SectionHeader;
 import com.cburch.logisim.soc.file.SymbolTable;
+import com.cburch.logisim.util.StringUtil;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -99,11 +100,11 @@ public abstract class AbstractAssembler implements AssemblerInterface {
   }
 
   private int addLabels(SectionHeader sh, HashMap<Integer, String> labels) {
-    int maxSize = 0;
-    for (SymbolTable st : sh.getSymbols()) {
-      String stName = st.getName();
-      if (stName != null && !stName.isEmpty()) {
-        int addr = st.getValue(SymbolTable.ST_VALUE);
+    var maxSize = 0;
+    for (final var st : sh.getSymbols()) {
+      var stName = st.getName();
+      if (StringUtil.isNotEmpty(stName)) {
+        var addr = st.getValue(SymbolTable.ST_VALUE);
         if (!labels.containsKey(addr)) {
           if (stName.length() > maxSize) maxSize = stName.length();
           labels.put(addr, stName);
@@ -117,21 +118,12 @@ public abstract class AbstractAssembler implements AssemblerInterface {
     int index = byteIndex >> 2;
     int byteSelect = byteIndex & 3;
     int data = buffer[index];
-    int info;
-    switch (byteSelect) {
-      case 0:
-        info = data & 0xFF;
-        break;
-      case 1:
-        info = (data >> 8) & 0xFF;
-        break;
-      case 2:
-        info = (data >> 16) & 0xFF;
-        break;
-      default:
-        info = (data >> 24) & 0xFF;
-        break;
-    }
+    int info = switch (byteSelect) {
+      case 0 -> data & 0xFF;
+      case 1 -> (data >> 8) & 0xFF;
+      case 2 -> (data >> 16) & 0xFF;
+      default -> (data >> 24) & 0xFF;
+    };
     return info;
   }
 
@@ -163,30 +155,27 @@ public abstract class AbstractAssembler implements AssemblerInterface {
           while (j < size) {
             kar = getByte(contents, j);
             switch (kar) {
-              case 8:
+              case 8 -> {
                 str.append("\\");
                 kar = 'b';
-                break;
-              case 9:
+              }
+              case 9 -> {
                 str.append("\\");
                 kar = 't';
-                break;
-              case 10:
+              }
+              case 10 -> {
                 str.append("\\");
                 kar = 'n';
-                break;
-              case 12:
+              }
+              case 12 -> {
                 str.append("\\");
                 kar = 'f';
-                break;
-              case 13:
+              }
+              case 13 -> {
                 str.append("\\");
                 kar = 'r';
-                break;
-              case 34:
-              case 92:
-                str.append("\\");
-                break;
+              }
+              case 34, 92 -> str.append("\\");
             }
             if (kar < 32 || kar >= 127) break;
             str.append((char) kar);

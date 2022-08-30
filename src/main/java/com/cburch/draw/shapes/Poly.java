@@ -229,13 +229,13 @@ public class Poly extends FillableCanvasObject {
     return p;
   }
 
-  private Location getRandomBoundaryPoint(Bounds bds, Random rand) {
+  private Location getRandomBoundaryPoint(Random rand) {
     final var hs = handles;
     var ls = lens;
     if (ls == null) {
       ls = new double[hs.length + (closed ? 1 : 0)];
       var total = 0.0;
-      for (int i = 0; i < ls.length; i++) {
+      for (var i = 0; i < ls.length; i++) {
         final var j = (i + 1) % hs.length;
         total += LineUtil.distance(hs[i].getX(), hs[i].getY(), hs[j].getX(), hs[j].getY());
         ls[i] = total;
@@ -260,7 +260,7 @@ public class Poly extends FillableCanvasObject {
     if (getPaintType() != DrawAttr.PAINT_STROKE) {
       return super.getRandomPoint(bds, rand);
     }
-    var ret = getRandomBoundaryPoint(bds, rand);
+    var ret = getRandomBoundaryPoint(rand);
     final var w = getStrokeWidth();
     if (w > 1) {
       final var dx = rand.nextInt(w) - w / 2;
@@ -335,7 +335,7 @@ public class Poly extends FillableCanvasObject {
   public Handle moveHandle(HandleGesture gesture) {
     final var hs = getHandles(gesture);
     final var is = new Handle[hs.size()];
-    int i = 0;
+    var i = 0;
     for (final var h : hs) {
       is[i++] = h;
     }

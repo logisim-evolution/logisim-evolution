@@ -10,6 +10,7 @@
 package com.cburch.logisim.gui.generic;
 
 import com.cburch.draw.shapes.DrawAttr;
+import com.cburch.logisim.util.XmlUtil;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -296,11 +297,9 @@ public class TikZInfo implements Cloneable {
   }
 
   private String getCharRepresentation(int i) {
-    final var chars = new StringBuilder();
     final var repeat = i / 26;
     final var charId = i % 26;
-    chars.append(String.valueOf((char) (charId + 'A')).repeat(repeat + 1));
-    return chars.toString();
+    return String.valueOf((char) (charId + 'A')).repeat(repeat + 1);
   }
 
   private String getFontDefinition(int i) {
@@ -366,7 +365,7 @@ public class TikZInfo implements Cloneable {
 
   public void writeSvg(int width, int height, File outfile) throws ParserConfigurationException, TransformerException {
     optimize();
-    final var factory = DocumentBuilderFactory.newInstance();
+    final var factory = XmlUtil.getHardenedBuilderFactory();
     final var parser = factory.newDocumentBuilder();
     final var svgInfo = parser.newDocument();
     final var svg = svgInfo.createElement("svg");

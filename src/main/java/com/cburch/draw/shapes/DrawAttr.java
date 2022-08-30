@@ -96,6 +96,10 @@ public class DrawAttr {
       createAttributes(
           new Attribute[] {PAINT_TYPE, STROKE_WIDTH, STROKE_COLOR, FILL_COLOR, CORNER_RADIUS});
 
+  private DrawAttr() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
+
   private static List<Attribute<?>> createAttributes(Attribute<?>[] values) {
     return UnmodifiableList.create(values);
   }

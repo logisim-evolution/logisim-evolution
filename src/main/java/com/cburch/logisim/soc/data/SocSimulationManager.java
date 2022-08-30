@@ -16,12 +16,12 @@ import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.main.Frame;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.soc.bus.SocBusAttributes;
+import com.cburch.logisim.util.StringUtil;
 import java.awt.Window;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
@@ -50,23 +50,20 @@ public class SocSimulationManager implements SocBusMasterInterface {
 
     @Override
     public void mouseClicked(MouseEvent e) {
-      if (myCirc == null)
-        return;
+      if (myCirc == null) return;
       SocSimulationManager socMan = myCirc.getSocSimulationManager();
       if (!socMan.hasSocBusses()) {
-        OptionPane.showMessageDialog(
-            null, S.get("SocManagerNoBusses"), S.get("SocBusSelectAttr"), OptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(null, S.get("SocManagerNoBusses"), S.get("SocBusSelectAttr"), OptionPane.ERROR_MESSAGE);
         return;
       }
-      String id = socMan.getGuiBusId();
-      if (id != null && !id.isEmpty()) {
-        String oldId = myValue.getBusId();
-        Component comp = myValue.getComponent();
-        if (comp == null)
-          return;
+      final var id = socMan.getGuiBusId();
+      if (StringUtil.isNotEmpty(id)) {
+        final var oldId = myValue.getBusId();
+        final var comp = myValue.getComponent();
+        if (comp == null) return;
         if (oldId != null && !oldId.equals(id)) {
           myValue.getSocSimulationManager().reRegisterSlaveSniffer(oldId, id, comp);
-          SocBusInfo newId = new SocBusInfo(id);
+          final var newId = new SocBusInfo(id);
           newId.setSocSimulationManager(myValue.getSocSimulationManager(), comp);
           comp.getAttributeSet().setValue(SOC_BUS_SELECT, newId);
         }
@@ -109,17 +106,18 @@ public class SocSimulationManager implements SocBusMasterInterface {
   private CircuitState state;
 
   public String getSocBusDisplayString(String id) {
-    if (id == null || id.isEmpty() || !socBusses.containsKey(id))
-      return null;
-    SocBusStateInfo bus = socBusses.get(id);
-    Component c = bus.getComponent();
-    String name = c == null ? null : c.getAttributeSet().getValue(StdAttr.LABEL);
-    if ((name == null || name.isEmpty()) && c != null) {
-      Location loc = c.getLocation();
-      name = c.getFactory().getDisplayName() + "@" + loc.getX() + "," + loc.getY();
+    if (StringUtil.isNullOrEmpty(id) || !socBusses.containsKey(id)) return null;
+    final var bus = socBusses.get(id);
+    final var comp = bus.getComponent();
+
+    String name = null;
+    if (comp != null) {
+      name = comp.getAttributeSet().getValue(StdAttr.LABEL);
+      if (StringUtil.isNullOrEmpty(name)) {
+        final var loc = comp.getLocation();
+        name = String.format("%s@%d,%d", comp.getFactory().getDisplayName(), loc.getX(), loc.getY());
+      }
     }
-    if (c == null)
-      name = null;
     return name;
   }
 
@@ -201,8 +199,8 @@ public class SocSimulationManager implements SocBusMasterInterface {
         null,
         busses.keySet().toArray(),
         "");
-    if (res != null && !res.isEmpty()) return busses.get(res);
-    return "";
+
+    return StringUtil.isNotEmpty(res) ? busses.get(res) : "";
   }
 
   public SocBusStateInfo getSocBusState(String busId) {
@@ -233,7 +231,6 @@ public class SocSimulationManager implements SocBusMasterInterface {
     if (state == null) return null;
     return state.getInstanceState(comp);
   }
-
 
   @Override
   public void initializeTransaction(SocBusTransaction trans, String busId, CircuitState cState) {

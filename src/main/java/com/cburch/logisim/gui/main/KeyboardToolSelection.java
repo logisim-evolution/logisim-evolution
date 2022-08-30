@@ -35,7 +35,7 @@ public class KeyboardToolSelection extends AbstractAction {
     int mask = toolbar.getToolkit().getMenuShortcutKeyMaskEx();
     for (int i = 0; i < 10; i++) {
       KeyStroke keyStroke = KeyStroke.getKeyStroke((char) ('0' + i), mask);
-      int j = (i == 0 ? 10 : i - 1);
+      int j = (i == 0 ? 10 - 1 : i - 1);
       KeyboardToolSelection action = new KeyboardToolSelection(toolbar, j);
       String key = "ToolSelect" + i;
       amap.put(key, action);

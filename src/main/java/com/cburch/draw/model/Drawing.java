@@ -96,7 +96,7 @@ public class Drawing implements CanvasModel {
 
   @Override
   public List<CanvasObject> getObjectsFromTop() {
-    final var ret = new ArrayList<CanvasObject>(getObjectsFromBottom());
+    final var ret = new ArrayList<>(getObjectsFromBottom());
     Collections.reverse(ret);
     return ret;
   }
@@ -253,7 +253,7 @@ public class Drawing implements CanvasModel {
   @Override
   public void translateObjects(Collection<? extends CanvasObject> shapes, int dx, int dy) {
     final var found = restrict(shapes);
-    final var e = CanvasModelEvent.forTranslate(this, found, dx, dy);
+    final var e = CanvasModelEvent.forTranslate(this, found);
     if (!found.isEmpty() && (dx != 0 || dy != 0) && isChangeAllowed(e)) {
       for (final var shape : shapes) {
         shape.translate(dx, dy);

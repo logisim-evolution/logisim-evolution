@@ -19,7 +19,6 @@ import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.soc.bus.SocBusMenuProvider;
 import com.cburch.logisim.soc.data.SocBusStateInfo;
 import com.cburch.logisim.soc.data.SocBusStateInfo.SocBusState;
-import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.tools.CircuitStateHolder;
 import java.awt.Dimension;
 import java.awt.event.MouseEvent;
@@ -42,7 +41,8 @@ public class TraceWindowTableModel extends AbstractTableModel
   private final SocBusMenuProvider.InstanceInformation parent;
   private final Map<SocBusStateInfo.SocBusState, CircuitStateHolder.HierarchyInfo> myTraceList;
   private JTable table;
-  private int BoxWidth = SocBusStateInfo.BLOCK_WIDTH;
+  private int boxWidth = SocBusStateInfo.BLOCK_WIDTH;
+
   public TraceWindowTableModel(Map<SocBusState, CircuitStateHolder.HierarchyInfo> traceList,
                                SocBusMenuProvider.InstanceInformation p) {
     myTraceList = traceList;
@@ -67,44 +67,52 @@ public class TraceWindowTableModel extends AbstractTableModel
 
   public void rebuild() {
     for (SocBusStateInfo.SocBusState i : myTraceList.keySet())
-      if (myTraceList.get(i) != null) i.registerListener(this);
-      else i.deregisterListener(this);
+      if (myTraceList.get(i) != null) {
+        i.registerListener(this);
+      } else {
+        i.deregisterListener(this);
+      }
     fireTableStructureChanged();
     if (table != null) {
-      for (int i = 0; i < getColumnCount(); i++)
-        table.getColumnModel().getColumn(i).setPreferredWidth(AppPreferences.getScaled(BoxWidth));
-      table.setRowHeight(
-          AppPreferences.getScaled(
-              2 * SocBusStateInfo.TRACE_HEIGHT + SocBusStateInfo.TRACE_HEIGHT / 2));
+      for (var i = 0; i < getColumnCount(); i++) {
+        table.getColumnModel().getColumn(i).setPreferredWidth(AppPreferences.getScaled(boxWidth));
+      }
+      final var height = 2 * SocBusStateInfo.TRACE_HEIGHT + SocBusStateInfo.TRACE_HEIGHT / 2;
+      table.setRowHeight(AppPreferences.getScaled(height));
       table
           .getTableHeader()
-          .setPreferredSize(
-              new Dimension(AppPreferences.getScaled(BoxWidth), AppPreferences.getScaled(20)));
+          .setPreferredSize(new Dimension(AppPreferences.getScaled(boxWidth), AppPreferences.getScaled(20)));
     }
   }
 
   public int getBoxWidth() {
-    return BoxWidth;
+    return boxWidth;
   }
 
   public void setBoxWidth(int value) {
-    BoxWidth = value;
+    boxWidth = value;
     rebuild();
   }
 
   @Override
   public int getRowCount() {
-    int max = 1;
-    for (SocBusStateInfo.SocBusState i : myTraceList.keySet())
-      if (myTraceList.get(i) != null) if (i.getNrOfEntires() > max) max = i.getNrOfEntires();
+    var max = 1;
+    for (final var i : myTraceList.keySet()) {
+      if (myTraceList.get(i) != null) {
+        if (i.getNrOfEntires() > max) {
+          max = i.getNrOfEntires();
+        }
+      }
+    }
     return max;
   }
 
   @Override
   public int getColumnCount() {
-    int cols = 0;
-    for (SocBusStateInfo.SocBusState i : myTraceList.keySet())
+    var cols = 0;
+    for (final var i : myTraceList.keySet()) {
       if (myTraceList.get(i) != null) cols++;
+    }
     return cols;
   }
 
@@ -115,39 +123,43 @@ public class TraceWindowTableModel extends AbstractTableModel
 
   @Override
   public Object getValueAt(int rowIndex, int columnIndex) {
-    SocBusStateInfo.SocBusState.SocBusStateTrace info =
-        getInfoAtColumn(columnIndex).getEntry(rowIndex, this);
-    if (info != null && info.getTransaction() != null) {
-      SocBusTransaction trans = info.getTransaction();
-      Object master = trans.getTransactionInitiator();
-      if (master instanceof Component) ((Component) master).addComponentListener(this);
-      if (trans.getTransactionResponder() != null)
+    final var info = getInfoAtColumn(columnIndex);
+    if (info == null) return null;
+
+    final var stateInfo = info.getEntry(rowIndex, this);
+    if (stateInfo != null && stateInfo.getTransaction() != null) {
+      final var trans = stateInfo.getTransaction();
+      final var master = trans.getTransactionInitiator();
+      if (master instanceof Component masterComp) {
+        masterComp.addComponentListener(this);
+      }
+      if (trans.getTransactionResponder() != null) {
         trans.getTransactionResponder().addComponentListener(this);
+      }
     }
-    return info;
+    return stateInfo;
   }
 
   private SocBusStateInfo.SocBusState getInfoAtColumn(int column) {
-    ArrayList<SocBusStateInfo.SocBusState> sortedList =
-        new ArrayList<>();
-    for (SocBusStateInfo.SocBusState i : myTraceList.keySet())
-      if (myTraceList.get(i) != null) {
-        if (sortedList.isEmpty()) sortedList.add(i);
-        else {
-          boolean inserted = false;
-          for (int j = 0; j < sortedList.size(); j++) {
-            if (myTraceList.get(i).getName().compareTo(myTraceList.get(sortedList.get(j)).getName())
-                <= 0) {
-              sortedList.add(j, i);
+    final var sortedList = new ArrayList<SocBusStateInfo.SocBusState>();
+    for (final var info : myTraceList.keySet())
+      if (myTraceList.get(info) != null) {
+        if (sortedList.isEmpty()) {
+          sortedList.add(info);
+        } else {
+          var inserted = false;
+          for (var j = 0; j < sortedList.size(); j++) {
+            final var sortedKey = myTraceList.get(sortedList.get(j)).getName();
+            if (myTraceList.get(info).getName().compareTo(sortedKey) <= 0) {
+              sortedList.add(j, info);
               inserted = true;
               break;
             }
           }
-          if (!inserted) sortedList.add(i);
+          if (!inserted) sortedList.add(info);
         }
       }
-    if (column < 0 || column >= sortedList.size()) return null;
-    return sortedList.get(column);
+    return (column < 0 || column >= sortedList.size()) ? null : sortedList.get(column);
   }
 
   @Override
@@ -166,14 +178,14 @@ public class TraceWindowTableModel extends AbstractTableModel
   @Override
   public void mouseClicked(MouseEvent e) {
     if (e.getClickCount() > 1) {
-      java.awt.Point p = e.getPoint();
-      int index = table.getColumnModel().getColumnIndexAtX(p.x);
-      int realIndex = table.getColumnModel().getColumn(index).getModelIndex();
-      SocBusStateInfo.SocBusState i = getInfoAtColumn(realIndex);
-      if (i != null && myTraceList.get(i) != null) {
-        myTraceList.get(i).deregisterCircuitListener(this);
-        myTraceList.get(i).deregisterComponentListener(this);
-        myTraceList.put(i, null);
+      final var point = e.getPoint();
+      final var index = table.getColumnModel().getColumnIndexAtX(point.x);
+      final var realIndex = table.getColumnModel().getColumn(index).getModelIndex();
+      final var info = getInfoAtColumn(realIndex);
+      if (info != null && myTraceList.get(info) != null) {
+        myTraceList.get(info).deregisterCircuitListener(this);
+        myTraceList.get(info).deregisterComponentListener(this);
+        myTraceList.put(info, null);
         rebuild();
         if (getColumnCount() == 0) parent.destroyTraceWindow();
       }
@@ -195,10 +207,10 @@ public class TraceWindowTableModel extends AbstractTableModel
 
     @Override
     public java.awt.Component getTableCellRendererComponent(
-        JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
-      JLabel l = new JLabel(getColumnHeader(column));
-      l.setBorder(BorderFactory.createEtchedBorder());
-      return l;
+            JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+      final var label = new JLabel(getColumnHeader(column));
+      label.setBorder(BorderFactory.createEtchedBorder());
+      return label;
     }
   }
 
@@ -207,7 +219,7 @@ public class TraceWindowTableModel extends AbstractTableModel
 
     @Override
     public java.awt.Component getTableCellRendererComponent(
-        JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+            JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
       return (JPanel) value;
     }
   }

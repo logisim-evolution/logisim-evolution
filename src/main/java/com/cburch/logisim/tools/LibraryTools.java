@@ -59,10 +59,11 @@ public final class LibraryTools {
     var ret = true;
     if (!"Base".equals(lib.getName())) {
       for (final var tool1 : lib.getTools()) {
-        if (tools.containsKey(tool1.getName().toUpperCase()))
+        if (tools.containsKey(tool1.getName().toUpperCase())) {
           ret = false;
-        else
+        } else {
           tools.put(tool1.getName().toUpperCase(), (AddTool) tool1);
+        }
       }
     }
     for (final var sublib : lib.getLibraries()) {

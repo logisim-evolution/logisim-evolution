@@ -30,13 +30,13 @@ public class SocUpSimulationState {
   private boolean canContinueAfterBreak = false;
 
   public String getStateString() {
-    switch (simulationState) {
-      case SIMULATION_RUNNING: return S.get("SocUpSimRunning");
-      case SIMULATION_HALTED_BY_ERROR: return S.get("SocUpSimHaltError");
-      case SIMULATION_HALTED_BY_BREAKPOINT: return S.get("SocUpSimHaltBreak");
-      case SIMULATION_HALTED_BY_STOP: return S.get("SocUpSimHalt");
-    }
-    return S.get("SocUpUnknown");
+    return switch (simulationState) {
+      case SIMULATION_RUNNING -> S.get("SocUpSimRunning");
+      case SIMULATION_HALTED_BY_ERROR -> S.get("SocUpSimHaltError");
+      case SIMULATION_HALTED_BY_BREAKPOINT -> S.get("SocUpSimHaltBreak");
+      case SIMULATION_HALTED_BY_STOP -> S.get("SocUpSimHalt");
+      default -> S.get("SocUpUnknown");
+    };
   }
 
   public void registerListener(SocUpSimulationStateListener l) {
@@ -101,15 +101,9 @@ public class SocUpSimulationState {
     g.setColor(Color.BLACK);
     g.drawRect(state.getX(), state.getY(), state.getWidth(), state.getHeight());
     switch (simulationState) {
-      case SIMULATION_RUNNING:
-        g.setColor(Color.GREEN);
-        break;
-      case SIMULATION_HALTED_BY_ERROR:
-        g.setColor(Color.RED);
-        break;
-      case SIMULATION_HALTED_BY_BREAKPOINT:
-        g.setColor(Color.MAGENTA);
-        break;
+      case SIMULATION_RUNNING -> g.setColor(Color.GREEN);
+      case SIMULATION_HALTED_BY_ERROR -> g.setColor(Color.RED);
+      case SIMULATION_HALTED_BY_BREAKPOINT -> g.setColor(Color.MAGENTA);
     }
     GraphicsUtil.drawCenteredText(g, getStateString(), state.getCenterX(), state.getCenterY());
   }

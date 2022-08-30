@@ -96,7 +96,8 @@ class PinAttributes extends ProbeAttributes {
       if (value.equals("output")) {
         if (type != EndData.OUTPUT_ONLY) {
           type = EndData.OUTPUT_ONLY;
-          fireAttributeValueChanged((Attribute<V>) Pin.ATTR_TYPE, (V) Boolean.valueOf(type == EndData.OUTPUT_ONLY), null);
+          fireAttributeValueChanged(
+              (Attribute<V>) Pin.ATTR_TYPE, (V) Boolean.valueOf(type == EndData.OUTPUT_ONLY), null);
           return;
         }
       }

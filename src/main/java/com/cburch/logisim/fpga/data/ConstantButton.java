@@ -81,7 +81,7 @@ public class ConstantButton extends FpgaIoInformationContainer {
 
   @Override
   public void paint(Graphics2D g, float scale) {
-    super.paintselected(g, scale);
+    super.paintSelected(g, scale);
   }
 
   @Override

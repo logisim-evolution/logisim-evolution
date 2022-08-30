@@ -72,8 +72,14 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   public InstanceFactory(String name, HdlGeneratorFactory generator, boolean requiresGlobalClock) {
     this(name, StringUtil.constantGetter(name), generator, requiresGlobalClock, false);
   }
-  public InstanceFactory(String name, HdlGeneratorFactory generator, boolean requiresLabel, boolean requiresGlobalClock) {
-    this(name, StringUtil.constantGetter(name), generator, requiresGlobalClock, requiresGlobalClock);
+
+  public InstanceFactory(
+      String name,
+      HdlGeneratorFactory generator,
+      boolean requiresLabel,
+      boolean requiresGlobalClock) {
+    this(
+        name, StringUtil.constantGetter(name), generator, requiresGlobalClock, requiresGlobalClock);
   }
 
   public InstanceFactory(String name, StringGetter displayName) {
@@ -84,12 +90,20 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
     this(name, displayName, generator, false, false);
   }
 
-  public InstanceFactory(String name, StringGetter displayName, HdlGeneratorFactory generator, boolean requiresGlobalClock) {
+  public InstanceFactory(
+      String name,
+      StringGetter displayName,
+      HdlGeneratorFactory generator,
+      boolean requiresGlobalClock) {
     this(name, displayName, generator, requiresGlobalClock, false);
   }
 
-  public InstanceFactory(String name, StringGetter displayName, HdlGeneratorFactory generator,
-      boolean requiresLabel, boolean requiresGlobalClock) {
+  public InstanceFactory(
+      String name,
+      StringGetter displayName,
+      HdlGeneratorFactory generator,
+      boolean requiresLabel,
+      boolean requiresGlobalClock) {
     super(generator, requiresLabel, requiresGlobalClock);
     this.name = name;
     this.displayName = displayName;
@@ -142,7 +156,8 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   }
 
   @Override
-  public final void drawGhost(ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs) {
+  public final void drawGhost(
+      ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs) {
     final var painter = context.getInstancePainter();
     final var gfx = painter.getGraphics();
     gfx.setColor(color);
@@ -230,7 +245,8 @@ public abstract class InstanceFactory extends AbstractComponentFactory {
   @Override
   public Bounds getOffsetBounds(AttributeSet attrs) {
     if (bounds != null) return bounds;
-    throw new RuntimeException("offset bounds unknown: use setOffsetBounds() or override getOffsetBounds()");
+    throw new RuntimeException(
+        "offset bounds unknown: use setOffsetBounds() or override getOffsetBounds()");
   }
 
   public List<Port> getPorts() {

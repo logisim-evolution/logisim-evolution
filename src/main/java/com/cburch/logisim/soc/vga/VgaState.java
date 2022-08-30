@@ -12,7 +12,6 @@ package com.cburch.logisim.soc.vga;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Bounds;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;
 import com.cburch.logisim.instance.InstanceState;
@@ -23,6 +22,7 @@ import com.cburch.logisim.soc.data.SocBusSlaveListener;
 import com.cburch.logisim.soc.data.SocBusSnifferInterface;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocSupport;
+import com.cburch.logisim.util.StringUtil;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -67,26 +67,26 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface, S
         return false;
       clear();
       switch (getMode()) {
-        case VgaAttributes.MODE_160_120:
+        case VgaAttributes.MODE_160_120 -> {
           lineSize = 160;
           nrOfLines = 120;
-          break;
-        case VgaAttributes.MODE_320_240:
+        }
+        case VgaAttributes.MODE_320_240 -> {
           lineSize = 320;
           nrOfLines = 240;
-          break;
-        case VgaAttributes.MODE_640_480:
+        }
+        case VgaAttributes.MODE_640_480 -> {
           lineSize = 640;
           nrOfLines = 480;
-          break;
-        case VgaAttributes.MODE_800_600:
+        }
+        case VgaAttributes.MODE_800_600 -> {
           lineSize = 800;
           nrOfLines = 600;
-          break;
-        case VgaAttributes.MODE_1024_768:
+        }
+        case VgaAttributes.MODE_1024_768 -> {
           lineSize = 1024;
           nrOfLines = 768;
-          break;
+        }
       }
       myImage = new BufferedImage(lineSize, nrOfLines, BufferedImage.TYPE_INT_RGB);
       return true;
@@ -300,18 +300,18 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface, S
   }
 
   public static Bounds getSize(int mode) {
-    switch (mode) {
-      case VgaAttributes.MODE_320_240:
-        return Bounds.create(0, 0, LEFT_MARGIN + 320 + RIGHT_MARGIN, TOP_MARGIN + 240 + BOTTOM_MARGIN);
-      case VgaAttributes.MODE_640_480:
-        return Bounds.create(0, 0, LEFT_MARGIN + 640 + RIGHT_MARGIN, TOP_MARGIN + 480 + BOTTOM_MARGIN);
-      case VgaAttributes.MODE_800_600:
-        return Bounds.create(0, 0, LEFT_MARGIN + 800 + RIGHT_MARGIN, TOP_MARGIN + 600 + BOTTOM_MARGIN);
-      case VgaAttributes.MODE_1024_768:
-        return Bounds.create(0, 0, LEFT_MARGIN + 1024 + RIGHT_MARGIN, TOP_MARGIN + 768 + BOTTOM_MARGIN);
-      default:
-        return Bounds.create(0, 0, LEFT_MARGIN + 160 + RIGHT_MARGIN, TOP_MARGIN + 120 + BOTTOM_MARGIN);
-    }
+    return switch (mode) {
+      case VgaAttributes.MODE_320_240 ->
+          Bounds.create(0, 0, LEFT_MARGIN + 320 + RIGHT_MARGIN, TOP_MARGIN + 240 + BOTTOM_MARGIN);
+      case VgaAttributes.MODE_640_480 ->
+          Bounds.create(0, 0, LEFT_MARGIN + 640 + RIGHT_MARGIN, TOP_MARGIN + 480 + BOTTOM_MARGIN);
+      case VgaAttributes.MODE_800_600 ->
+          Bounds.create(0, 0, LEFT_MARGIN + 800 + RIGHT_MARGIN, TOP_MARGIN + 600 + BOTTOM_MARGIN);
+      case VgaAttributes.MODE_1024_768 ->
+          Bounds.create(0, 0, LEFT_MARGIN + 1024 + RIGHT_MARGIN, TOP_MARGIN + 768 + BOTTOM_MARGIN);
+      default ->
+          Bounds.create(0, 0, LEFT_MARGIN + 160 + RIGHT_MARGIN, TOP_MARGIN + 120 + BOTTOM_MARGIN);
+    };
   }
 
   public VgaDisplayState getNewState() {
@@ -411,9 +411,9 @@ public class VgaState implements SocBusSlaveInterface, SocBusSnifferInterface, S
 
   @Override
   public String getName() {
-    String name = label;
-    if (name == null || name.isEmpty()) {
-      Location loc = attachedBus.getComponent().getLocation();
+    var name = label;
+    if (StringUtil.isNullOrEmpty(name)) {
+      final var loc = attachedBus.getComponent().getLocation();
       name = attachedBus.getComponent().getFactory().getDisplayName() + "@" + loc.getX() + "," + loc.getY();
     }
     return name;

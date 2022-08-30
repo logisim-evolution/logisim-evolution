@@ -59,11 +59,14 @@ public class AutoLabel {
   }
 
   public String getCurrent(Circuit circ, ComponentFactory me) {
-    if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty())
+    if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty()) {
       return "";
-    if (Circuit.isCorrectLabel(circ.getName(), currentLabel.get(circ), circ.getNonWires(), null, me, false))
+    }
+    if (Circuit.isCorrectLabel(circ.getName(), currentLabel.get(circ), circ.getNonWires(), null, me, false)) {
       return currentLabel.get(circ);
-    else if (hasNext(circ)) {
+    }
+
+    if (hasNext(circ)) {
       return getNext(circ, me);
     } else {
       setLabel("", circ, me);
@@ -72,7 +75,7 @@ public class AutoLabel {
   }
 
   public boolean correctMatrixBaseLabel(Circuit circ, ComponentFactory me, String common, int maxX, int maxY) {
-    if ((common == null) || (common.isEmpty()) || (maxX < 0) || (maxY < 0)) return true;
+    if (StringUtil.isNullOrEmpty(common) || (maxX < 0) || (maxY < 0)) return true;
     if (!SyntaxChecker.isVariableNameAcceptable(common, true)) return false;
     for (var x = 0; x < maxX; x++)
       for (var y = 0; y < maxY; y++) {
@@ -84,7 +87,7 @@ public class AutoLabel {
   }
 
   public String getMatrixLabel(Circuit circ, ComponentFactory me, String common, int x, int y) {
-    if ((common == null) || (common.isEmpty()) || (x < 0) || (y < 0)) return "";
+    if (StringUtil.isNullOrEmpty(common) || (x < 0) || (y < 0)) return "";
     if (circ == null || !currentLabel.containsKey(circ) || currentLabel.get(circ).isEmpty()) return "";
     final var label = common.concat("_X" + x + "_Y" + y);
     if (Circuit.isCorrectLabel(circ.getName(), label, circ.getNonWires(), null, me, false)
@@ -209,10 +212,11 @@ public class AutoLabel {
   public boolean labelKeyboardHandler(int keyCode, AttributeSet attrs, String componentName, Component comp,
       ComponentFactory compFactory, Circuit circ, SetAttributeAction act, boolean createAction) {
     switch (keyCode) {
-      case KeyEvent.VK_L:
+      case KeyEvent.VK_L -> {
         if (attrs.containsAttribute(StdAttr.LABEL)) {
           final var oldLabel = attrs.getValue(StdAttr.LABEL);
-          final var newLabel = askAndSetLabel(componentName, oldLabel, circ, comp, compFactory, attrs, act, createAction);
+          final var newLabel = askAndSetLabel(componentName, oldLabel, circ, comp, compFactory,
+              attrs, act, createAction);
           if (!newLabel.equals(oldLabel)) {
             if (!newLabel.isEmpty() && labelEndsWithNumber(newLabel)) {
               activate(circ);
@@ -222,33 +226,43 @@ public class AutoLabel {
           }
         }
         return true;
-      case KeyEvent.VK_T:
+      }
+      case KeyEvent.VK_T -> {
         if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)) {
           if (createAction)
             act.set(comp, StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
-          else attrs.setValue(StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
+          else
+            attrs.setValue(StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
         }
         return true;
-      case KeyEvent.VK_V:
+      }
+      case KeyEvent.VK_V -> {
         if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)
             && !attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
-          if (createAction) act.set(comp, StdAttr.LABEL_VISIBILITY, true);
-          else attrs.setValue(StdAttr.LABEL_VISIBILITY, true);
+          if (createAction)
+            act.set(comp, StdAttr.LABEL_VISIBILITY, true);
+          else
+            attrs.setValue(StdAttr.LABEL_VISIBILITY, true);
         }
         return true;
-      case KeyEvent.VK_H:
+      }
+      case KeyEvent.VK_H -> {
         if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)
             && attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
-          if (createAction) act.set(comp, StdAttr.LABEL_VISIBILITY, false);
-          else attrs.setValue(StdAttr.LABEL_VISIBILITY, false);
+          if (createAction)
+            act.set(comp, StdAttr.LABEL_VISIBILITY, false);
+          else
+            attrs.setValue(StdAttr.LABEL_VISIBILITY, false);
         }
         return true;
-      case KeyEvent.VK_A:
+      }
+      case KeyEvent.VK_A -> {
         stop(circ);
         return true;
-      default:
+      }
+      default -> {
         // nothing
-        break;
+      }
     }
     return false;
   }

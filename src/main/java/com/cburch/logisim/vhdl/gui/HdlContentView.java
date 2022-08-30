@@ -36,7 +36,8 @@ import org.fife.ui.rsyntaxtextarea.RSyntaxTextArea;
 import org.fife.ui.rsyntaxtextarea.SyntaxConstants;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
-public class HdlContentView extends JPanel implements BaseDocumentListenerContract, HdlModelListener {
+public class HdlContentView extends JPanel
+    implements BaseDocumentListenerContract, HdlModelListener {
 
   private class HdlEditAction extends Action {
     final HdlModel model;
@@ -70,7 +71,7 @@ public class HdlContentView extends JPanel implements BaseDocumentListenerContra
     @Override
     public void undo(Project proj) {
       setText(original);
-      model.setContent(original);
+      model.setContentNoValidation(original);
       toolbar.setDirty(!model.isValid());
       dirty = false;
       if (HdlContentView.this.model != model) setHdlModel(model);
@@ -94,7 +95,7 @@ public class HdlContentView extends JPanel implements BaseDocumentListenerContra
 
   void docChanged() {
     if (model == null) return;
-    model.setContent(editor.getText());
+    model.setContentNoValidation(editor.getText());
     if (dirty || model == null) return;
     toolbar.setDirty(true);
     project.doAction(new HdlEditAction(model, model.getContent()));

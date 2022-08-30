@@ -22,6 +22,7 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.PullResistor;
 import com.cburch.logisim.std.wiring.Tunnel;
+import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.IteratorUtil;
 import java.awt.Color;
@@ -250,7 +251,7 @@ class CircuitWires {
 
     // make a WireBundle object for each end of a splitter
     for (final var spl : splitters) {
-      final var ends = new ArrayList<EndData>(spl.getEnds());
+      final var ends = new ArrayList<>(spl.getEnds());
       for (final var end : ends) {
         final var p = end.getLocation();
         final var pb = ret.createBundleAt(p);
@@ -270,7 +271,7 @@ class CircuitWires {
 
     // determine the bundles at the end of each splitter
     for (final var spl : splitters) {
-      final var ends = new ArrayList<EndData>(spl.getEnds());
+      final var ends = new ArrayList<>(spl.getEnds());
       int index = -1;
       for (final var end : ends) {
         index++;
@@ -327,8 +328,8 @@ class CircuitWires {
     // All threads are sewn together! Compute the exception set before
     // leaving
     final var exceptions = points.getWidthIncompatibilityData();
-    if (exceptions != null && !exceptions.isEmpty()) {
-      for (WidthIncompatibilityData wid : exceptions) {
+    if (CollectionUtil.isNotEmpty(exceptions)) {
+      for (final var wid : exceptions) {
         ret.addWidthIncompatibilityData(wid);
       }
     }
@@ -358,7 +359,7 @@ class CircuitWires {
     for (final var comp : tunnels) {
       final var label = comp.getAttributeSet().getValue(StdAttr.LABEL).trim();
       if (!label.equals("")) {
-        final var tunnelSet = tunnelSets.computeIfAbsent(label, k -> new ArrayList<Location>(3));
+        final var tunnelSet = tunnelSets.computeIfAbsent(label, k -> new ArrayList<>(3));
         tunnelSet.add(comp.getLocation());
       }
     }
@@ -414,7 +415,7 @@ class CircuitWires {
   }
 
   void draw(ComponentDrawContext context, Collection<Component> hidden) {
-    boolean showState = context.getShowState();
+    final var showState = context.getShowState();
     final var state = context.getCircuitState();
     final var g = (Graphics2D) context.getGraphics();
     g.setColor(Color.BLACK);
@@ -423,7 +424,7 @@ class CircuitWires {
 
     final var bmap = getBundleMap();
     final var isValid = bmap.isValid();
-    if (hidden == null || hidden.isEmpty()) {
+    if (CollectionUtil.isNullOrEmpty(hidden)) {
       for (final var wire : wires) {
         final var s = wire.e0;
         final var t = wire.e1;

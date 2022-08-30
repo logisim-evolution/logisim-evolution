@@ -10,14 +10,14 @@
 import org.gradle.internal.os.OperatingSystem
 import java.text.SimpleDateFormat
 import java.util.Date
-import java.io.*
 
 plugins {
   checkstyle
-  id("com.github.ben-manes.versions") version "0.38.0"
+  id("com.github.ben-manes.versions") version "0.42.0"
   java
   application
-  id("com.github.johnrengelman.shadow") version "7.0.0"
+  id("com.github.johnrengelman.shadow") version "7.1.2"
+  id("org.sonarqube") version "3.4.0.2513"
 }
 
 repositories {
@@ -31,24 +31,28 @@ application {
 dependencies {
   implementation("org.hamcrest:hamcrest:2.2")
   implementation("javax.help:javahelp:2.0.05")
-  implementation("com.fifesoft:rsyntaxtextarea:3.1.2")
+  implementation("com.fifesoft:rsyntaxtextarea:3.2.0")
   implementation("net.sf.nimrod:nimrod-laf:1.2")
-  implementation("org.drjekyll:colorpicker:1.3")
-  implementation("org.drjekyll:fontchooser:2.4")
+  implementation("org.drjekyll:colorpicker:1.4.3")
   implementation("at.swimmesberger:swingx-core:1.6.8")
   implementation("org.scijava:swing-checkbox-tree:1.0.2")
-  implementation("org.slf4j:slf4j-api:1.7.30")
-  implementation("org.slf4j:slf4j-simple:1.7.30")
-  implementation("com.formdev:flatlaf:1.2")
-  implementation("commons-cli:commons-cli:1.4")
+  implementation("org.slf4j:slf4j-api:2.0.0")
+  implementation("org.slf4j:slf4j-simple:2.0.0")
+  implementation("com.formdev:flatlaf:2.4")
+  implementation("commons-cli:commons-cli:1.5.0")
+  implementation("org.apache.commons:commons-text:1.9")
 
-  compileOnly("org.jetbrains:annotations:22.0.0")
+  // NOTE: Do not upgrade the jflex version. Later versions do not work.
+  compileOnly("de.jflex:jflex:1.4.1")
 
   // NOTE: Be aware of reported issues with Eclipse and Batik
   // See: https://github.com/logisim-evolution/logisim-evolution/issues/709
   // implementation("org.apache.xmlgraphics:batik-swing:1.14")
 
-  testImplementation("org.junit.vintage:junit-vintage-engine:5.7.1")
+  testImplementation(platform("org.junit:junit-bom:5.9.0"))
+  testImplementation("org.junit.jupiter:junit-jupiter:5.9.0")
+  testImplementation("org.mockito:mockito-inline:4.7.0")
+  testImplementation("org.mockito:mockito-junit-jupiter:4.7.0")
 }
 
 /**
@@ -400,35 +404,36 @@ tasks.register("createApp") {
 
     var params = ext.get(SHARED_PARAMS) as List<String>
     params += listOf(
-      "--name", ext.get(UPPERCASE_PROJECT_NAME) as String,
-      "--file-associations", "${supportDir}/macos/file.jpackage",
-      "--icon", "${supportDir}/macos/Logisim-evolution.icns",
-      // app versioning is strictly checked for macOS. No suffix allowed for `app-image` type.
-      "--app-version", ext.get(APP_VERSION_SHORT) as String,
-      "--type", "app-image",
+        "--name", ext.get(UPPERCASE_PROJECT_NAME) as String,
+        "--file-associations", "${supportDir}/macos/file.jpackage",
+        "--icon", "${supportDir}/macos/Logisim-evolution.icns",
+        // app versioning is strictly checked for macOS. No suffix allowed for `app-image` type.
+        "--app-version", ext.get(APP_VERSION_SHORT) as String,
+        "--type", "app-image",
     )
     runCommand(params, "Error while creating the .app directory.")
 
     val targetDir = ext.get(TARGET_DIR) as String
     val pListFilename = "${appDirName}/Contents/Info.plist"
     runCommand(listOf(
-      "awk",
-      "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};"
-              + "{print >\"${targetDir}/Info.plist\"};"
-              + "/NSHighResolutionCapable/{"
-              + "print \"  <string>true</string>\" >\"${targetDir}/Info.plist\";"
-              + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${targetDir}/Info.plist\""
-              + "}",
-      pListFilename,
+        "awk",
+        "/Unknown/{sub(/Unknown/,\"public.app-category.education\")};"
+            + "/utilities/{sub(/public.app-category.utilities/,\"public.app-category.education\")};"
+            + "{print >\"${targetDir}/Info.plist\"};"
+            + "/NSHighResolutionCapable/{"
+            + "print \"  <string>true</string>\" >\"${targetDir}/Info.plist\";"
+            + "print \"  <key>NSSupportsAutomaticGraphicsSwitching</key>\" >\"${targetDir}/Info.plist\""
+            + "}",
+        pListFilename,
     ), "Error while patching Info.plist file.")
 
     runCommand(listOf(
-      "mv", "${targetDir}/Info.plist", pListFilename
+        "mv", "${targetDir}/Info.plist", pListFilename
     ), "Error while moving Info.plist into the .app directory.")
 
     runCommand(listOf(
-        "codesign", "--remove-signature", appDirName
-    ), "Error while executing: codesign --remove-signature")
+        "codesign", "--force", "--sign", "-", appDirName
+    ), "Error while executing: codesign")
   }
 }
 
@@ -473,55 +478,68 @@ tasks.register("createDmg") {
 fun genBuildInfo(buildInfoFilePath: String) {
   val now = Date()
   val nowIso = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ").format(now)
-  val branchName = runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--abbrev-ref", "HEAD"),
-      "Failed getting branch name.")
-  val branchLastCommitHash = runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--short=8", "HEAD"),
-      "Failed getting last commit hash.")
+
+  var branchName = "";
+  var branchLastCommitHash = "";
+  var buildId = "(Not built from Git repo)";
+  if (file("${projectDir}/.git").exists()) {
+    var errMsg = "Failed getting branch name."
+    branchName = runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--abbrev-ref", "HEAD"), errMsg)
+
+    errMsg = "Failed getting last commit hash."
+    branchLastCommitHash = runCommand(listOf("git", "-C", projectDir.toString(), "rev-parse", "--short=8", "HEAD"), errMsg)
+    buildId = "${branchName}/${branchLastCommitHash}";
+  }
   val currentMillis = Date().time
   val buildYear = SimpleDateFormat("yyyy").format(now)
+  val appVersion = ext.get(APP_VERSION) as String
+  val projectName = project.name.capitalize().trim()
+  val displayName = "${projectName} v${appVersion}"
+  val url = ext.get(APP_URL) as String
 
-  val buildInfoClass = arrayOf(
-    "// ************************************************************************",
-    "// THIS IS COMPILE TIME GENERATED FILE! DO NOT EDIT BY HAND!",
-    "// Generated at ${nowIso}",
-    "// ************************************************************************",
-    "",
-    "package com.cburch.logisim.generated;",
-    "",
-    "import com.cburch.logisim.LogisimVersion;",
-    "import java.util.Date;",
-    "",
-    "public final class BuildInfo {",
-    "    // Build time VCS details",
-    "    public static final String branchName = \"${branchName}\";",
-    "    public static final String branchLastCommitHash = \"${branchLastCommitHash}\";",
-    "    public static final String buildId = \"${branchName}/${branchLastCommitHash}\";",
-    "",
-    "    // Project build timestamp",
-    "    public static final long millis = ${currentMillis}L;", // keep trailing `L`
-    "    public static final String year = \"${buildYear}\";",
-    "    public static final String dateIso8601 = \"${nowIso}\";",
-    "    public static final Date date = new Date();",
-    "    static { date.setTime(millis); }",
-    "",
-    "    // Project version",
-    "    public static final LogisimVersion version = LogisimVersion.fromString(\"${ext.get(APP_VERSION) as String}\");",
-    "    public static final String name = \"${project.name.capitalize().trim()}\";",
-    "    public static final String displayName = \"${project.name.capitalize().trim()} v${ext.get(APP_VERSION) as String}\";",
-    "    public static final String url = \"${ext.get(APP_URL) as String}\";",
-    "",
-    "    // JRE info",
-    "    public static final String jvm_version = String.format(\"%s v%s\", System.getProperty(\"java.vm.name\"), System.getProperty(\"java.version\"));",
-    "    public static final String jvm_vendor = System.getProperty(\"java.vendor\");",
-    "",
-    "} // End of generated BuildInfo",
-    "",
-  )
+  val buildInfoClass = """
+      // ************************************************************************
+      // THIS IS A COMPILE TIME GENERATED FILE! DO NOT EDIT BY HAND!
+      // Generated at ${nowIso}
+      // ************************************************************************
+
+      package com.cburch.logisim.generated;
+
+      import com.cburch.logisim.LogisimVersion;
+      import java.util.Date;
+
+      public final class BuildInfo {
+        // Build time VCS details
+        public static final String branchName = "${branchName}";
+        public static final String branchLastCommitHash = "${branchLastCommitHash}";
+        public static final String buildId = "${buildId}";
+
+        // Project build timestamp
+        public static final long millis = ${currentMillis}L; // keep trailing 'L'
+        public static final String year = "${buildYear}";
+        public static final String dateIso8601 = "${nowIso}";
+        public static final Date date = new Date();
+        static { date.setTime(millis); }
+
+        // Project version
+        public static final LogisimVersion version = LogisimVersion.fromString("${appVersion}");
+        public static final String name = "${projectName}";
+        public static final String displayName = "${displayName}";
+        public static final String url = "${url}";
+
+        // JRE info
+        public static final String jvm_version =
+            String.format("%s v%s", System.getProperty("java.vm.name"), System.getProperty("java.version"));
+        public static final String jvm_vendor = System.getProperty("java.vendor");
+      }
+      // End of generated BuildInfo
+
+      """
 
   logger.info("Generating: ${buildInfoFilePath}")
   val buildInfoFile = File(buildInfoFilePath)
   buildInfoFile.parentFile.mkdirs()
-  file(buildInfoFilePath).writeText(buildInfoClass.joinToString("\n"))
+  file(buildInfoFilePath).writeText(buildInfoClass.trimIndent())
 }
 
 /**
@@ -550,6 +568,52 @@ tasks.register("genBuildInfo") {
 }
 
 /**
+ * Task genVhdlSyntax
+ *
+ * Generates the VhdlSyntax.java file
+*/
+tasks.register("genVhdlSyntax") {
+  val sourceFile = "${projectDir}/src/main/jflex/com/cburch/logisim/vhdl/syntax/VhdlSyntax.jflex"
+  val skeletonFile = "${projectDir}/support/jflex/skeleton.default"
+  val targetDir = "${buildDir}/generated/logisim/java/com/cburch/logisim/vhdl/syntax/"
+
+  group = "build"
+  description = "Generates VhdlSyntax.java"
+  inputs.files(sourceFile)
+  inputs.files(skeletonFile)
+  outputs.dir(targetDir)
+
+  var jflexJarFileName = ""
+
+  doFirst() {
+    configurations.compileClasspath {
+      resolvedConfiguration.resolvedArtifacts.forEach { ra: ResolvedArtifact ->
+        val id = ra.moduleVersion.id
+        if ("de.jflex".equals(id.group) && "jflex".equals(id.name)) {
+          jflexJarFileName = ra.file.toString()
+        }
+      }
+    }
+    if (jflexJarFileName.isEmpty()) {
+      throw GradleException("Could not find jflex jar file.")
+    }
+  }
+
+  doLast() {
+    logging.captureStandardOutput(LogLevel.DEBUG)
+    javaexec {
+      classpath = files(jflexJarFileName)
+      args = listOf(
+          "--nobak",
+          "-d", targetDir,
+          "--skel", skeletonFile,
+          sourceFile
+      )
+    }
+  }
+}
+
+/**
  * Task: genFiles
  *
  * Umbrella task to generate all generated files
@@ -557,7 +621,7 @@ tasks.register("genBuildInfo") {
 tasks.register("genFiles") {
   group = "build"
   description = "Generates all generated files."
-  dependsOn("genBuildInfo")
+  dependsOn("genBuildInfo", "genVhdlSyntax")
 }
 
 /**
@@ -598,12 +662,21 @@ val compilerOptions = listOf("-Xlint:deprecation", "-Xlint:unchecked")
 
 tasks {
   compileJava {
+    options.encoding = "UTF-8"
     options.compilerArgs = compilerOptions
     dependsOn("genFiles")
   }
   compileTestJava {
+    options.encoding = "UTF-8"
     options.compilerArgs = compilerOptions
     dependsOn("genFiles")
+  }
+
+  test {
+    useJUnitPlatform()
+//    testLogging {
+//      events("passed", "skipped", "failed")
+//    }
   }
 
   jar {

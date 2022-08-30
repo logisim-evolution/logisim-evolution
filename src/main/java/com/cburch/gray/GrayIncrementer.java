@@ -25,10 +25,10 @@ import com.cburch.logisim.instance.StdAttr;
  */
 class GrayIncrementer extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Gray Code Incrementer";
 
@@ -84,10 +84,10 @@ class GrayIncrementer extends InstanceFactory {
    * BitWidth objects.
    */
   static Value nextGray(Value prev) {
-    BitWidth bits = prev.getBitWidth();
+    final var bits = prev.getBitWidth();
     if (!prev.isFullyDefined()) return Value.createError(bits);
-    long x = prev.toLongValue();
-    long ct = (x >> 32) ^ x; // compute parity of x
+    var x = prev.toLongValue();
+    var ct = (x >> 32) ^ x; // compute parity of x
     ct = (ct >> 16) ^ ct;
     ct = (ct >> 8) ^ ct;
     ct = (ct >> 4) ^ ct;
@@ -124,11 +124,11 @@ class GrayIncrementer extends InstanceFactory {
     // First we retrieve the value being fed into the input. Note that in
     // the setPorts invocation above, the component's input was included at
     // index 0 in the parameter array, so we use 0 as the parameter below.
-    Value in = state.getPortValue(0);
+    final var in = state.getPortValue(0);
 
     // Now compute the output. We've farmed this out to a helper method,
     // since the same logic is needed for the library's other components.
-    Value out = nextGray(in);
+    final var out = nextGray(in);
 
     // Finally we propagate the output into the circuit. The first parameter
     // is 1 because in our list of ports (configured by invocation of

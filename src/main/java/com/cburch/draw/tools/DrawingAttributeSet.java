@@ -43,9 +43,15 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
           });
   static final List<Object> DEFAULTS_ALL =
       Arrays.asList(
-          DrawAttr.DEFAULT_FONT, DrawAttr.HALIGN_CENTER, DrawAttr.VALIGN_MIDDLE,
-          DrawAttr.PAINT_STROKE, 1, Color.BLACK,
-          Color.WHITE, Color.BLACK, 10);
+          DrawAttr.DEFAULT_FONT,
+          DrawAttr.HALIGN_CENTER,
+          DrawAttr.VALIGN_MIDDLE,
+          DrawAttr.PAINT_STROKE,
+          1,
+          Color.BLACK,
+          Color.WHITE,
+          Color.BLACK,
+          10);
   private final List<Attribute<?>> attrs;
   private EventSourceWeakSupport<AttributeListener> listeners;
   private List<Object> values;
@@ -64,15 +70,14 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
   public <E extends CanvasObject> E applyTo(E drawable) {
     AbstractCanvasObject d = (AbstractCanvasObject) drawable;
     // use a for(i...) loop since the attribute list may change as we go on
-    for (int i = 0; i < d.getAttributes().size(); i++) {
+    for (var i = 0; i < d.getAttributes().size(); i++) {
       Attribute<?> attr = d.getAttributes().get(i);
       @SuppressWarnings("unchecked")
       Attribute<Object> a = (Attribute<Object>) attr;
       if (attr == DrawAttr.FILL_COLOR && this.containsAttribute(DrawAttr.TEXT_DEFAULT_FILL)) {
         d.setValue(a, this.getValue(DrawAttr.TEXT_DEFAULT_FILL));
       } else if (this.containsAttribute(a)) {
-        Object value = this.getValue(a);
-        d.setValue(a, value);
+        d.setValue(a, this.getValue(a));
       }
     }
     return drawable;
@@ -149,21 +154,21 @@ public class DrawingAttributeSet implements AttributeSet, Cloneable {
 
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
-    Iterator<Attribute<?>> ait = attrs.iterator();
-    ListIterator<Object> vit = values.listIterator();
+    final var ait = attrs.iterator();
+    final var vit = values.listIterator();
     while (ait.hasNext()) {
-      Object a = ait.next();
+      final var a = ait.next();
       vit.next();
       if (a.equals(attr)) {
         vit.set(value);
-        AttributeEvent e = new AttributeEvent(this, attr, value, null);
-        for (AttributeListener listener : listeners) {
-          listener.attributeValueChanged(e);
+        var event = new AttributeEvent(this, attr, value, null);
+        for (final var listener : listeners) {
+          listener.attributeValueChanged(event);
         }
         if (attr == DrawAttr.PAINT_TYPE) {
-          e = new AttributeEvent(this);
-          for (AttributeListener listener : listeners) {
-            listener.attributeListChanged(e);
+          event = new AttributeEvent(this);
+          for (final var listener : listeners) {
+            listener.attributeListChanged(event);
           }
         }
         return;

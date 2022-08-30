@@ -38,7 +38,8 @@ public class BoardList {
     return ret;
   }
 
-  private static Collection<String> getBoardsfromDirectory(Pattern pattern, String match, File dir) {
+  private static Collection<String> getBoardsfromDirectory(
+      Pattern pattern, String match, File dir) {
     final var ret = new ArrayList<String>();
     final var fileList = dir.listFiles();
     for (final var file : fileList) {
@@ -87,13 +88,14 @@ public class BoardList {
     return ret;
   }
 
-  private static final String boardResourcePath = "resources" + File.separator + "logisim" + File.separator + "boards";
+  private static final String boardResourcePath =
+      "resources" + File.separator + "logisim" + File.separator + "boards";
 
   private final ArrayList<String> definedBoards = new ArrayList<>();
 
   public BoardList() {
     final var classPath = System.getProperty("java.class.path", File.pathSeparator);
-    final var classPathElements = classPath.split(File.pathSeparator);
+    final var classPathElements = classPath.split(Pattern.quote(File.pathSeparator));
     final var pattern = Pattern.compile(".*.xml");
     for (final var element : classPathElements) {
       definedBoards.addAll(getBoards(pattern, boardResourcePath, element));

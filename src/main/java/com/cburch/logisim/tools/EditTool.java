@@ -28,6 +28,7 @@ import com.cburch.logisim.gui.main.Selection;
 import com.cburch.logisim.gui.main.Selection.Event;
 import com.cburch.logisim.gui.main.SelectionActions;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -248,8 +249,7 @@ public class EditTool extends Tool {
       Collection<Component> sel = canvas.getSelection().getComponents();
       if (sel != null) {
         for (final var c : sel) {
-          if (c instanceof Wire) {
-            final var w = (Wire) c;
+          if (c instanceof final Wire w) {
             if (w.contains(loc) && !w.endsAt(loc)) return select;
           }
         }
@@ -259,12 +259,9 @@ public class EditTool extends Tool {
     final var circ = canvas.getCircuit();
     if (circ == null) return false;
     final var at = circ.getComponents(loc);
-    if (at != null && at.size() > 0) return wiring;
-
+    if (CollectionUtil.isNotEmpty(at)) return wiring;
     for (final var w : circ.getWires()) {
-      if (w.contains(loc)) {
-        return wiring;
-      }
+      if (w.contains(loc)) return wiring;
     }
     return select;
   }

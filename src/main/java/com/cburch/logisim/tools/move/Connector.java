@@ -64,7 +64,7 @@ class Connector {
     final var stopTime = System.currentTimeMillis() + MAX_SECONDS * 1000;
     for (var tryNum = 0; tryNum < tries && stopTime - System.currentTimeMillis() > 0; tryNum++) {
       if (ConnectorThread.isOverrideRequested()) return null;
-      final var connects = new ArrayList<ConnectionData>(baseConnects);
+      final var connects = new ArrayList<>(baseConnects);
       if (tryNum < 2) {
         sortConnects(connects, dx, dy);
         if (tryNum == 1) Collections.reverse(connects);
@@ -117,7 +117,7 @@ class Connector {
   }
 
   private static SearchNode findShortestPath(List<SearchNode> nodes, Set<Location> pathLocs, AvoidanceMap avoid) {
-    final var q = new PriorityQueue<SearchNode>(nodes);
+    final var q = new PriorityQueue<>(nodes);
     final var visited = new HashSet<SearchNode>();
     var iters = 0;
     while (!q.isEmpty() && iters < MAX_SEARCH_ITERATIONS) {

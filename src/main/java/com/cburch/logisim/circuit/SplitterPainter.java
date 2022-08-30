@@ -138,7 +138,8 @@ class SplitterPainter {
       if (fanout >= 3) {
         GraphicsUtil.switchToWidth(g, SPINE_WIDTH);
         g.setColor(Value.multiColor);
-        g.drawLine(xSpine, y1 + (dy > 0 ? 10 : -10), xSpine, y1 + (fanout - 1) * dy + (dy > 0 ? 10 : -10));
+        g.drawLine(
+            xSpine, y1 + (dy > 0 ? 10 : -10), xSpine, y1 + (fanout - 1) * dy + (dy > 0 ? 10 : -10));
       } else {
         g.setColor(Value.multiColor);
         g.fillOval(xSpine - SPINE_DOT / 2, y0 - SPINE_DOT / 2, SPINE_DOT, SPINE_DOT);

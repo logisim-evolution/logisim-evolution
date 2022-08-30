@@ -56,7 +56,7 @@ public class Ttl7485HdlGenerator extends AbstractHdlGeneratorFactory {
         .add("110", "000")
         .add("000", "110");
     contents.add(decoder.getHdlCode()).empty();
-    if (Hdl.isVerilog()) {
+    if (Hdl.isVhdl()) {
       contents.addVhdlKeywords().add("""
             oppA   <= A3&A2&A1&A0;
             oppB   <= B3&B2&B1&B0;

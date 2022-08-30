@@ -47,6 +47,8 @@ import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.tools.WiringTool;
 import com.cburch.logisim.util.InputEventUtil;
 import com.cburch.logisim.util.LineBuffer;
+import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.util.XmlUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
 import java.io.IOException;
@@ -61,7 +63,6 @@ import java.util.Map;
 import java.util.UUID;
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,7 +106,7 @@ class XmlReader {
     }
 
     Library findLibrary(String libName) throws XmlReaderException {
-      if (libName == null || libName.isEmpty()) return file;
+      if (StringUtil.isNullOrEmpty(libName)) return file;
       final var ret = libs.get(libName);
       if (ret == null) throw new XmlReaderException(S.get("libMissingError", libName));
       return ret;
@@ -280,7 +281,7 @@ class XmlReader {
       for (final var cmap : XmlIterator.forChildElements(board, "mc")) {
         int x, y, w, h;
         final var key = cmap.getAttribute("key");
-        if (key == null || key.isEmpty()) continue;
+        if (StringUtil.isNullOrEmpty(key)) continue;
         if (cmap.hasAttribute("open")) {
           map.put(key, new CircuitMapInfo());
         } else if (cmap.hasAttribute("vconst")) {
@@ -405,9 +406,10 @@ class XmlReader {
         OptionPane.showMessageDialog(
             null,
             // FIXME: hardcoded string
-            "You are opening a file created with original Logisim code.\n"
-                + "You might encounter some problems in the execution, since some components evolved since then.\n"
-                + "Moreover, labels will be converted to match VHDL limitations for variable names.",
+            """
+                You are opening a file created with original Logisim code.
+                You might encounter some problems in the execution, since some components evolved since then.
+                Moreover, labels will be converted to match VHDL limitations for variable names.""",
             "Old file format -- compatibility mode",
             OptionPane.WARNING_MESSAGE);
       }
@@ -455,7 +457,7 @@ class XmlReader {
       for (final var circElt : XmlIterator.forChildElements(elt)) {
         String name;
         switch (circElt.getTagName()) {
-          case "vhdl":
+          case "vhdl" -> {
             name = circElt.getAttribute("name");
             if (name == null || "".equals(name)) {
               addError(S.get("circNameMissingError"), "C??");
@@ -465,28 +467,30 @@ class XmlReader {
             if (contents != null) {
               file.addVhdlContent(contents);
             }
-            break;
-          case "circuit":
+          }
+          case "circuit" -> {
             name = circElt.getAttribute("name");
-
             if (name == null || "".equals(name)) {
               addError(S.get("circNameMissingError"), "C??");
             }
             final var circData = new CircuitData(circElt, new Circuit(name, file, proj));
             file.addCircuit(circData.circuit);
-            circData.knownComponents = loadKnownComponents(circElt, isHolyCrossFile, isEvolutionFile);
+            circData.knownComponents = loadKnownComponents(circElt, isHolyCrossFile,
+                isEvolutionFile);
             for (Element appearElt : XmlIterator.forChildElements(circElt, "appear")) {
               loadAppearance(appearElt, circData, name + ".appear");
             }
-            for (final var boardMap :  XmlIterator.forChildElements(circElt, "boardmap")) {
+            for (final var boardMap : XmlIterator.forChildElements(circElt, "boardmap")) {
               final var boardName = boardMap.getAttribute("boardname");
-              if (boardName == null || boardName.isEmpty()) continue;
+              if (StringUtil.isNullOrEmpty(boardName))
+                continue;
               loadMap(boardMap, boardName, circData.circuit);
             }
             circuitsData.add(circData);
-            break;
-          default:
+          }
+          default -> {
             // do nothing
+          }
         }
       }
 
@@ -589,14 +593,9 @@ class XmlReader {
     if (validLabels == null) throw new RuntimeException("Value of 'validLabels' cannot be null");
 
     switch (nodeType) {
-      case "circuit":
-        replaceCircuitNodes(root, attrType, validLabels);
-        break;
-      case "comp":
-        replaceCompNodes(root, validLabels);
-        break;
-      default:
-        throw new IllegalArgumentException("Invalid node type requested: " + nodeType);
+      case "circuit" -> replaceCircuitNodes(root, attrType, validLabels);
+      case "comp" -> replaceCompNodes(root, validLabels);
+      default -> throw new IllegalArgumentException("Invalid node type requested: " + nodeType);
     }
   }
 
@@ -748,7 +747,7 @@ class XmlReader {
     if (!label.matches("^[A-Za-z].*$")) label = "L_" + label;
 
     // Force the rest to be either letters, or numbers, or underscores
-    label = label.replaceAll("[^A-Za-z0-9_]", "_");
+    label = label.replaceAll("\\W", "_");
     // Suppress multiple successive underscores and an underscore at the end
     label = label.replaceAll("_+", "_");
     if (label.endsWith("_")) label = label.substring(0, label.length() - 1);
@@ -782,14 +781,9 @@ class XmlReader {
     final var attrValuesList = new ArrayList<String>();
 
     switch (nodeType) {
-      case "circuit":
-        inspectCircuitNodes(root, attrType, attrValuesList);
-        break;
-      case "comp":
-        inspectCompNodes(root, attrValuesList);
-        break;
-      default:
-        throw new IllegalArgumentException("Invalid node type requested: " + nodeType);
+      case "circuit" -> inspectCircuitNodes(root, attrType, attrValuesList);
+      case "comp" -> inspectCompNodes(root, attrValuesList);
+      default -> throw new IllegalArgumentException("Invalid node type requested: " + nodeType);
     }
     return attrValuesList;
   }
@@ -878,7 +872,7 @@ class XmlReader {
    * @return true if the label is NOT a valid name, false otherwise
    */
   public static boolean labelVHDLInvalid(String label) {
-    return !label.matches("^[A-Za-z][A-Za-z0-9_]*") || label.endsWith("_") || label
+    return !label.matches("^[A-Za-z]\\w*") || label.endsWith("_") || label
         .matches(".*__.*");
   }
 
@@ -1013,7 +1007,7 @@ class XmlReader {
         Element edit = null;
         for (final var elt : XmlIterator.forChildElements(toolbar, "tool")) {
           final var eltName = elt.getAttribute("name");
-          if (eltName != null && !eltName.isEmpty()) {
+          if (StringUtil.isNotEmpty(eltName)) {
             if (eltName.equals(SelectTool._ID)) select = elt;
             if (eltName.equals(WiringTool._ID)) wiring = elt;
             if (eltName.equals(EditTool._ID)) edit = elt;
@@ -1029,7 +1023,7 @@ class XmlReader {
       for (final var circElt : XmlIterator.forChildElements(root, "circuit")) {
         for (final var attrElt : XmlIterator.forChildElements(circElt, "a")) {
           final var name = attrElt.getAttribute("name");
-          if (name != null && name.startsWith("label")) {
+          if (StringUtil.startsWith(name, "label")) {
             attrElt.setAttribute("name", "c" + name);
           }
         }
@@ -1041,7 +1035,7 @@ class XmlReader {
   }
 
   private Document loadXmlFrom(InputStream is) throws SAXException, IOException {
-    final var factory = DocumentBuilderFactory.newInstance();
+    final var factory = XmlUtil.getHardenedBuilderFactory();
     factory.setNamespaceAware(true);
     try {
       factory.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
@@ -1072,9 +1066,8 @@ class XmlReader {
     }
     if (!context.messages.isEmpty()) {
       final var all = new StringBuilder();
-      for (String msg : context.messages) {
-        all.append(msg);
-        all.append("\n");
+      for (final var msg : context.messages) {
+        all.append(msg).append("\n");
       }
       loader.showError(all.substring(0, all.length() - 1));
     }
@@ -1145,16 +1138,19 @@ class XmlReader {
       final var label = libElt.getAttribute("name");
 
       if (desc != null) {
-        if ("#Base".equals(desc)) {
-          oldBaseElt = libElt;
-          oldBaseLabel = label;
-        } else if ("#Wiring".equals(desc)) {
-          // Wiring library already in file. This shouldn't happen, but if
-          // somehow it does, we don't want to add it again.
-          return;
-        } else if ("#Gates".equals(desc)) {
-          gatesElt = libElt;
-          gatesLabel = label;
+        switch (desc) {
+          case "#Base":
+            oldBaseElt = libElt;
+            oldBaseLabel = label;
+            break;
+          case "#Wiring":
+            // Wiring library already in file. This shouldn't happen, but if
+            // somehow it does, we don't want to add it again.
+            return;
+          case "#Gates":
+            gatesElt = libElt;
+            gatesLabel = label;
+            break;
         }
       }
 

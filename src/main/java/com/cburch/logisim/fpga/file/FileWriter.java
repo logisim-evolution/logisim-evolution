@@ -25,9 +25,7 @@ public class FileWriter {
   public static final String ARCHITECTURE_EXTENSION = "_behavior";
 
   public static File getFilePointer(
-      String targetDirectory,
-      String componentName,
-      boolean isEntity) {
+      String targetDirectory, String componentName, boolean isEntity) {
     final var fileName = new StringBuilder();
     try {
       final var outDir = new File(targetDirectory);
@@ -86,8 +84,13 @@ public class FileWriter {
     final String headOpen;
     final String headClose;
 
-    final var headText = " " + BuildInfo.name + " goes FPGA automatic generated " + (Hdl.isVhdl() ? "VHDL" : "Verilog") + " code";
-    final var headUrl  = " " + BuildInfo.url;
+    final var headText =
+        " "
+            + BuildInfo.name
+            + " goes FPGA automatic generated "
+            + (Hdl.isVhdl() ? "VHDL" : "Verilog")
+            + " code";
+    final var headUrl = " " + BuildInfo.url;
     final var headProj = " Project   : " + projName;
     final var headComp = " Component : " + compName;
 
@@ -97,12 +100,16 @@ public class FileWriter {
       headClose = "==";
 
       lines.add(headOpen + "=".repeat(headWidth) + headClose);
-      lines.add(headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
-      lines.add(headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
+      lines.add(
+          headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
+      lines.add(
+          headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
       lines.add(headOpen + " ".repeat(headWidth) + headClose);
       lines.add(headOpen + " ".repeat(headWidth) + headClose);
-      lines.add(headOpen + headProj + " ".repeat(Math.max(0, headWidth - headProj.length())) + headClose);
-      lines.add(headOpen + headComp + " ".repeat(Math.max(0, headWidth - headComp.length())) + headClose);
+      lines.add(
+          headOpen + headProj + " ".repeat(Math.max(0, headWidth - headProj.length())) + headClose);
+      lines.add(
+          headOpen + headComp + " ".repeat(Math.max(0, headWidth - headComp.length())) + headClose);
       lines.add(headOpen + " ".repeat(headWidth) + headClose);
       lines.add(headOpen + "=".repeat(headWidth) + headClose);
       lines.add("");
@@ -112,10 +119,13 @@ public class FileWriter {
       headClose = "**";
 
       lines.add("/**" + "*".repeat(headWidth) + headClose);
-      lines.add(headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
-      lines.add(headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
+      lines.add(
+          headOpen + headText + " ".repeat(Math.max(0, headWidth - headText.length())) + headClose);
+      lines.add(
+          headOpen + headUrl + " ".repeat(Math.max(0, headWidth - headUrl.length())) + headClose);
       lines.add(headOpen + " ".repeat(headWidth) + headClose);
-      lines.add(headOpen + headComp + " ".repeat(Math.max(0, headWidth - headComp.length())) + headClose);
+      lines.add(
+          headOpen + headComp + " ".repeat(Math.max(0, headWidth - headComp.length())) + headClose);
       lines.add(headOpen + " ".repeat(headWidth) + headClose);
       lines.add(headOpen + "*".repeat(headWidth) + "*/");
       lines.add("");

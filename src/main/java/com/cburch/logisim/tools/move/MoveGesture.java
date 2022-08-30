@@ -14,6 +14,7 @@ import com.cburch.logisim.circuit.Wire;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.util.CollectionUtil;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -43,7 +44,7 @@ public class MoveGesture {
   }
 
   private static Set<ConnectionData> computeConnections(Circuit circuit, Set<Component> selected) {
-    if (selected == null || selected.isEmpty()) return Collections.emptySet();
+    if (CollectionUtil.isNullOrEmpty(selected)) return Collections.emptySet();
 
     // first identify locations that might be connected
     final var locs = new HashSet<Location>();
@@ -160,7 +161,7 @@ public class MoveGesture {
   AvoidanceMap getFixedAvoidanceMap() {
     var ret = initAvoid;
     if (ret == null) {
-      final var comps = new HashSet<Component>(circuit.getNonWires());
+      final var comps = new HashSet<>(circuit.getNonWires());
       comps.addAll(circuit.getWires());
       comps.removeAll(selected);
       ret = AvoidanceMap.create(comps, 0, 0);

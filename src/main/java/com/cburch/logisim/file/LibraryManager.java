@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.WeakHashMap;
+import java.util.regex.Pattern;
 
 public final class LibraryManager {
 
@@ -122,17 +123,17 @@ public final class LibraryManager {
     final var currentDirectory = loader.getCurrentDirectory();
     var fileName = file.toString();
     try {
-      fileName = file.getCanonicalPath(); 
+      fileName = file.getCanonicalPath();
     } catch (IOException e) {
       // Do nothing as we already have defined the default above
     }
     if (currentDirectory != null) {
-      final var currentParts = currentDirectory.toString().split(File.separator);
-      final var newParts = fileName.split(File.separator);
+      final var currentParts = currentDirectory.toString().split(Pattern.quote(File.separator));
+      final var newParts = fileName.split(Pattern.quote(File.separator));
       final var nrOfNewParts = newParts.length;
       // note that the newParts includes the filename, whilst the old doesn't
       var nrOfPartsEqual = 0;
-      while ((nrOfPartsEqual < currentParts.length) && (nrOfPartsEqual < (nrOfNewParts - 1)) 
+      while ((nrOfPartsEqual < currentParts.length) && (nrOfPartsEqual < (nrOfNewParts - 1))
           && (currentParts[nrOfPartsEqual].equals(newParts[nrOfPartsEqual]))) {
         nrOfPartsEqual++;
       }
@@ -208,7 +209,7 @@ public final class LibraryManager {
       }
     }
   }
-  
+
   Collection<LogisimFile> getLogisimLibraries() {
     final var ret = new ArrayList<LogisimFile>();
     for (final var lib : invMap.keySet()) {
@@ -235,7 +236,7 @@ public final class LibraryManager {
     invMap.put(ret, jarDescriptor);
     return ret;
   }
-  
+
   public static Set<String> getBuildinNames(Loader loader) {
     final var buildinNames = new HashSet<String>();
     for (final var lib : loader.getBuiltin().getLibraries()) {
@@ -256,30 +257,32 @@ public final class LibraryManager {
     final var name = desc.substring(sep + 1);
 
     switch (type) {
-      case "":
+      case "" -> {
         final var ret = loader.getBuiltin().getLibrary(name);
         if (ret == null) {
           loader.showError(S.get("fileBuiltinMissingError", name));
           return null;
         }
         return ret;
-      case "file": {
+      }
+      case "file" -> {
         final var toRead = loader.getFileFor(name, Loader.LOGISIM_FILTER);
         return loadLogisimLibrary(loader, toRead);
       }
-      case "jar": {
+      case "jar" -> {
         final var sepLoc = name.lastIndexOf(DESC_SEP);
         final var fileName = name.substring(0, sepLoc);
         final var className = name.substring(sepLoc + 1);
         final var toRead = loader.getFileFor(fileName, Loader.JAR_FILTER);
         return loadJarLibrary(loader, toRead, className);
       }
-      default:
+      default -> {
         loader.showError(S.get("fileTypeError", type, desc));
         return null;
+      }
     }
   }
-  
+
   public static String getLibraryFilePath(Loader loader, String desc) {
     final var sep = desc.indexOf(DESC_SEP);
     if (sep < 0) {
@@ -290,7 +293,7 @@ public final class LibraryManager {
     final var name = desc.substring(sep + 1);
     return switch (type) {
       case "file" -> loader.getFileFor(name, Loader.LOGISIM_FILTER).getAbsolutePath();
-      case "jar" -> loader.getFileFor(name.substring(0, name.lastIndexOf(DESC_SEP)), Loader.JAR_FILTER).getAbsolutePath(); 
+      case "jar" -> loader.getFileFor(name.substring(0, name.lastIndexOf(DESC_SEP)), Loader.JAR_FILTER).getAbsolutePath();
       default -> null;
     };
   }
@@ -397,5 +400,5 @@ public final class LibraryManager {
         removeBaseLibraries(lib, baseLibs);
       }
     }
-  }  
+  }
 }

@@ -162,7 +162,8 @@ public class ExpressionRenderData {
     var i = bestBreakPositions.size() - 1;
     var breakPosition = 0;
     while (i >= 0 && text.length() > 0 && (bestBreakPositions.get(i) - breakPosition) > 0) {
-      if (getWidth(ctx, text, bestBreakPositions.get(i) - breakPosition, expr.subscripts, expr.marks)
+      if (getWidth(
+              ctx, text, bestBreakPositions.get(i) - breakPosition, expr.subscripts, expr.marks)
           <= parentWidth) {
         String addedLine = text.substring(0, bestBreakPositions.get(i) - breakPosition);
         lines.add(addedLine);
@@ -237,7 +238,8 @@ public class ExpressionRenderData {
     return new Dimension(prefWidth, height);
   }
 
-  private AttributedString style(String s, int end, List<Range> subs, List<Range> marks, boolean replaceSpaces) {
+  private AttributedString style(
+      String s, int end, List<Range> subs, List<Range> marks, boolean replaceSpaces) {
     /* This is a hack to get TextLayout to correctly format and calculate the width
      * of this substring (see remark in getWidth(...) below. As we have a mono spaced
      * font the size of all chars is equal.
@@ -251,7 +253,8 @@ public class ExpressionRenderData {
     as.addAttribute(TextAttribute.SIZE, expressionBaseFont.getSize());
     for (Range r : subs) {
       if (r.stopIndex <= end)
-        as.addAttribute(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, r.startIndex, r.stopIndex);
+        as.addAttribute(
+            TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, r.startIndex, r.stopIndex);
     }
     for (Range m : marks) {
       if (m.stopIndex <= end)
@@ -265,7 +268,8 @@ public class ExpressionRenderData {
     final var g = (Graphics2D) img.getGraphics().create();
     g.setFont(expressionBaseFont);
     if (AppPreferences.AntiAliassing.getBoolean()) {
-      g.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      g.setRenderingHint(
+          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
     final var ctx = g.getFontRenderContext();
@@ -291,14 +295,14 @@ public class ExpressionRenderData {
     var width = 0;
     for (AttributedString attributedString : lineStyled) {
       final var test = new TextLayout(attributedString.getIterator(), ctx);
-      if (test.getBounds().getWidth() > width)
-        width = (int) test.getBounds().getWidth();
+      if (test.getBounds().getWidth() > width) width = (int) test.getBounds().getWidth();
     }
     g.dispose();
     return width;
   }
 
-  private int getWidth(FontRenderContext ctx, String s, int end, List<Range> subs, List<Range> marks) {
+  private int getWidth(
+      FontRenderContext ctx, String s, int end, List<Range> subs, List<Range> marks) {
     if (end == 0) return 0;
     final var as = style(s, end, subs, marks, true);
     /* The TextLayout class will omit trailing spaces,
@@ -314,7 +318,8 @@ public class ExpressionRenderData {
     g.setFont(expressionBaseFont);
     if (AppPreferences.AntiAliassing.getBoolean()) {
       final var g2 = (Graphics2D) g;
-      g2.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+      g2.setRenderingHint(
+          RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
     final var fm = g.getFontMetrics();
@@ -370,5 +375,4 @@ public class ExpressionRenderData {
       }
     }
   }
-
 }

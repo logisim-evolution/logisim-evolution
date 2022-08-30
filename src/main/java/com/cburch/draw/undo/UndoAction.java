@@ -11,9 +11,9 @@ package com.cburch.draw.undo;
 
 public interface UndoAction {
 
-  public void doIt();
+  void doIt();
 
-  public String getName();
+  String getName();
 
-  public void undo();
+  void undo();
 }

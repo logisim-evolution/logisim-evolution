@@ -24,7 +24,11 @@ public class BasicZoomModel implements ZoomModel {
   private double zoomFactor;
   private boolean showGrid;
 
-  public BasicZoomModel(PrefMonitor<Boolean> gridPref, PrefMonitor<Double> zoomPref, List<Double> zoomOpts, CanvasPane pane) {
+  public BasicZoomModel(
+      PrefMonitor<Boolean> gridPref,
+      PrefMonitor<Double> zoomPref,
+      List<Double> zoomOpts,
+      CanvasPane pane) {
     zoomOptions = zoomOpts;
     support = new PropertyChangeSupport(this);
     zoomFactor = 1.0;

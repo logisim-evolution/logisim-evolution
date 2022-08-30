@@ -17,6 +17,7 @@ import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.Clock;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.util.CollectionUtil;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.datatransfer.Transferable;
@@ -224,7 +225,7 @@ public class ComponentSelector extends JTable {
       final var newChildren = new ArrayList<TreeNode<?>>();
       final var subcircs = new ArrayList<Component>();
       var changed = false;
-      // todo: hide from display any unselectable things that also have no children
+      // TODO: hide from display any unselectable things that also have no children
       for (final var c : circ.getNonWires()) {
         // For DRIVEABLE_CLOCKS do not recurse into subcircuits
         if (c.getFactory() instanceof SubcircuitFactory && mode != DRIVEABLE_CLOCKS) {
@@ -477,7 +478,7 @@ public class ComponentSelector extends JTable {
       sending = true;
       final var tree = (ComponentSelector) c;
       final var items = tree.getSelectedItems();
-      return items == null || items.isEmpty() ? null : items;
+      return CollectionUtil.isNullOrEmpty(items) ? null : items;
     }
 
     @Override

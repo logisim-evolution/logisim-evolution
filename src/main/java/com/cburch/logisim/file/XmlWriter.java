@@ -28,6 +28,8 @@ import com.cburch.logisim.tools.Library;
 import com.cburch.logisim.tools.Tool;
 import com.cburch.logisim.util.InputEventUtil;
 import com.cburch.logisim.util.LineBuffer;
+import com.cburch.logisim.util.StringUtil;
+import com.cburch.logisim.util.XmlUtil;
 import com.cburch.logisim.vhdl.base.VhdlContent;
 import java.io.File;
 import java.io.IOException;
@@ -40,8 +42,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-
-import javax.xml.parsers.DocumentBuilderFactory;
+import java.util.regex.Pattern;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Result;
@@ -83,7 +84,7 @@ final class XmlWriter {
     this.loader = loader;
     this.outFilePath = outFilePath;
     this.librariesPath = librariesPath;
-    isProjectExport = (librariesPath != null && !librariesPath.isEmpty());
+    isProjectExport = StringUtil.isNotEmpty(librariesPath);
   }
 
 
@@ -175,7 +176,7 @@ final class XmlWriter {
   static void write(LogisimFile file, OutputStream out, LibraryLoader loader, File destFile, String libraryHome)
       throws ParserConfigurationException, TransformerException {
 
-    final var docFactory = DocumentBuilderFactory.newInstance();
+    final var docFactory = XmlUtil.getHardenedBuilderFactory();
     final var docBuilder = docFactory.newDocumentBuilder();
 
     final var doc = docBuilder.newDocument();
@@ -186,7 +187,9 @@ final class XmlWriter {
       context = new XmlWriter(file, doc, loader, dstFilePath);
     } else if (libraryHome != null) {
       context = new XmlWriter(file, doc, loader, null, libraryHome);
-    } else context = new XmlWriter(file, doc, loader);
+    } else {
+      context = new XmlWriter(file, doc, loader);
+    }
 
     context.fromLogisimFile();
 
@@ -194,6 +197,7 @@ final class XmlWriter {
     try {
       tfFactory.setAttribute("indent-number", 2);
     } catch (IllegalArgumentException ignored) {
+      // Do nothing
     }
     final var tf = tfFactory.newTransformer();
     tf.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
@@ -201,6 +205,7 @@ final class XmlWriter {
     try {
       tf.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
     } catch (IllegalArgumentException ignored) {
+      // Do nothing
     }
 
     doc.normalize();
@@ -217,13 +222,12 @@ final class XmlWriter {
       @SuppressWarnings("unchecked")
       final var attr = (Attribute<Object>) attrBase;
       final var val = attrs.getValue(attr);
-      if (userModifiedOnly && (attrs.isReadOnly(attr) || attr.isHidden())) 
-        continue;
+      if (userModifiedOnly && (attrs.isReadOnly(attr) || attr.isHidden())) continue;
       if (attrs.isToSave(attr) && val != null) {
         final var dflt = source == null ? null : source.getDefaultAttributeValue(attr, BuildInfo.version);
         final var defaultValue = dflt == null ? "" : attr.toStandardString(dflt);
         var newValue = attr.toStandardString(val);
-        if (dflt == null || (!dflt.equals(val) && !defaultValue.equals(newValue)) 
+        if (dflt == null || (!dflt.equals(val) && !defaultValue.equals(newValue))
             || (attr.equals(StdAttr.APPEARANCE) && !userModifiedOnly)
             || (attr.equals(ProbeAttributes.PROBEAPPEARANCE) && !userModifiedOnly && val.equals(ProbeAttributes.APPEAR_EVOLUTION_NEW))) {
           final var a = doc.createElement("a");
@@ -247,9 +251,7 @@ final class XmlWriter {
   }
 
   Library findLibrary(ComponentFactory source) {
-    if (file.contains(source)) {
-      return file;
-    }
+    if (file.contains(source)) return file;
     for (final var lib : file.getLibraries()) {
       if (lib.contains(source)) return lib;
     }
@@ -257,9 +259,7 @@ final class XmlWriter {
   }
 
   Library findLibrary(Tool tool) {
-    if (libraryContains(file, tool)) {
-      return file;
-    }
+    if (libraryContains(file, tool)) return file;
     for (final var lib : file.getLibraries()) {
       if (libraryContains(lib, tool)) return lib;
     }
@@ -400,7 +400,7 @@ final class XmlWriter {
       if (lib instanceof LoadedLibrary) {
         final var origFile = LibraryManager.getLibraryFilePath(file.getLoader(), desc);
         if (origFile != null) {
-          final var names = origFile.split(File.separator);
+          final var names = origFile.split(Pattern.quote(File.separator));
           final var filename = names[names.length - 1];
           final var newFile = String.format("%s%s%s", librariesPath, File.separator, filename);
           try {

@@ -76,7 +76,6 @@ import org.apache.commons.cli.Option;
 import org.apache.commons.cli.Options;
 import org.apache.commons.cli.ParseException;
 import org.apache.commons.cli.UnrecognizedOptionException;
-import org.drjekyll.fontchooser.FontChooser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,7 +111,7 @@ public class Startup implements AWTEventListener {
   /* Name of the board to run on i.e Reptar, MAXV ...*/
   private String testCircuitImpBoard = null;
   /* Path folder containing Map file */
-  private String testCircuitImpMapFile = null;
+  private final String testCircuitImpMapFile = null;
   /* Indicate if only the HDL should be generated */
   private Boolean testCircuitHdlOnly = false;
   /* Testing Xml (circ file) Variable */
@@ -277,7 +276,6 @@ public class Startup implements AWTEventListener {
    * @param stringBaseKey String localization base key.
    * @param shortKey Argument short key (i.e. "c" for "-c").
    * @param longKey Argument ling key (i.e. "foo" for "--foo").
-   * @param expectedArgsCount Number of required option arguments.
    */
   protected static void addOption(Options opts, String stringBaseKey, String shortKey, String longKey) {
     addOption(opts, stringBaseKey, shortKey, longKey, 0);
@@ -428,7 +426,7 @@ public class Startup implements AWTEventListener {
   /**
    * Supported return codes from command handlers;
    */
-  public static enum RC {
+  public enum RC {
     /**
      * Handler completed succesfuly. We can proceed with another argument.
      */
@@ -994,7 +992,6 @@ public class Startup implements AWTEventListener {
             || (container instanceof JHelp)
             || (container instanceof JFileChooser)
             || ((container instanceof JScrollPane) && (!(container instanceof CanvasPane)))
-            || (container instanceof FontChooser)
             || (container instanceof JCheckBoxMenuItem)) {
           AppPreferences.setScaledFonts(((JComponent) container).getComponents());
           try {
@@ -1004,22 +1001,13 @@ public class Startup implements AWTEventListener {
           } catch (Exception ignored) {
           }
         }
-        if (container instanceof JOptionPane) {
-          final var pane = (JOptionPane) container;
+        if (container instanceof final JOptionPane pane) {
           if (hasIcon(pane)) {
             switch (pane.getMessageType()) {
-              case OptionPane.ERROR_MESSAGE:
-                pane.setIcon(new ErrorIcon());
-                break;
-              case OptionPane.QUESTION_MESSAGE:
-                pane.setIcon(new QuestionIcon());
-                break;
-              case OptionPane.INFORMATION_MESSAGE:
-                pane.setIcon(new InfoIcon());
-                break;
-              case OptionPane.WARNING_MESSAGE:
-                pane.setIcon(new WarningIcon());
-                break;
+              case OptionPane.ERROR_MESSAGE -> pane.setIcon(new ErrorIcon());
+              case OptionPane.QUESTION_MESSAGE -> pane.setIcon(new QuestionIcon());
+              case OptionPane.INFORMATION_MESSAGE -> pane.setIcon(new InfoIcon());
+              case OptionPane.WARNING_MESSAGE -> pane.setIcon(new WarningIcon());
             }
           }
         }

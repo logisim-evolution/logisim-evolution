@@ -37,7 +37,9 @@ class WindowOptions extends OptionsPanel {
   private static final long serialVersionUID = 1L;
   private final PrefBoolean[] checks;
   private final PrefOptionList toolbarPlacement;
+  private final PrefOptionList canvasPlacement;
   private final ZoomSlider zoomValue;
+  private final JButton zoomAutoButton;
   private final JLabel lookfeelLabel;
   private final JLabel zoomLabel;
   private final JLabel importantA;
@@ -59,16 +61,27 @@ class WindowOptions extends OptionsPanel {
 
   protected final String cmdResetWindowLayout = "reset-window-layout";
   protected final String cmdResetGridColors = "reset-grid-colors";
+  protected final String cmdSetAutoScaleFactor = "set-auto-scale-factor";
 
   public WindowOptions(PreferencesFrame window) {
     super(window);
 
-    SettingsChangeListener listener = new SettingsChangeListener();
+    final var listener = new SettingsChangeListener();
+    final var panel = new JPanel(new TableLayout(2));
 
     checks =
         new PrefBoolean[] {
           new PrefBoolean(AppPreferences.SHOW_TICK_RATE, S.getter("windowTickRate")),
         };
+
+    canvasPlacement =
+        new PrefOptionList(
+            AppPreferences.CANVAS_PLACEMENT,
+            S.getter("windowCanvasLocation"),
+            new PrefOption[] {
+              new PrefOption(Direction.EAST.toString(), Direction.EAST.getDisplayGetter()),
+              new PrefOption(Direction.WEST.toString(), Direction.WEST.getDisplayGetter())
+            });
 
     toolbarPlacement =
         new PrefOptionList(
@@ -82,10 +95,11 @@ class WindowOptions extends OptionsPanel {
               new PrefOption(AppPreferences.TOOLBAR_HIDDEN, S.getter("windowToolbarHidden"))
             });
 
-    final var panel = new JPanel(new TableLayout(2));
+    panel.add(canvasPlacement.getJLabel());
+    panel.add(canvasPlacement.getJComboBox());
+
     panel.add(toolbarPlacement.getJLabel());
     panel.add(toolbarPlacement.getJComboBox());
-
 
     canvasBgColorTitle = new JLabel(S.get("windowCanvasBgColor"));
     canvasBgColor = new ColorChooserButton(window, AppPreferences.CANVAS_BG_COLOR);
@@ -123,10 +137,17 @@ class WindowOptions extends OptionsPanel {
     panel.add(importantB);
 
     zoomLabel = new JLabel(S.get("windowToolbarZoomfactor"));
-    zoomValue = new ZoomSlider(JSlider.HORIZONTAL, 100, 300, (int) (AppPreferences.SCALE_FACTOR.get() * 100));
-
+    zoomValue =
+        new ZoomSlider(
+            JSlider.HORIZONTAL, 100, 300, (int) (AppPreferences.SCALE_FACTOR.get() * 100));
+    zoomAutoButton = new JButton();
+    zoomAutoButton.addActionListener(listener);
+    zoomAutoButton.setActionCommand(cmdSetAutoScaleFactor);
+    zoomAutoButton.setText(S.get("windowSetAutoScaleFactor"));
     panel.add(zoomLabel);
     panel.add(zoomValue);
+    panel.add(new JLabel(" "));
+    panel.add(zoomAutoButton);
     zoomValue.addChangeListener(listener);
 
     panel.add(new JLabel(" "));
@@ -159,7 +180,7 @@ class WindowOptions extends OptionsPanel {
     setLayout(new TableLayout(1));
     final var but = new JButton();
     but.addActionListener(listener);
-    but.setActionCommand("reset");
+    but.setActionCommand(cmdResetWindowLayout);
     but.setText(S.get("windowToolbarReset"));
     add(but);
     for (final var check : checks) {
@@ -250,6 +271,11 @@ class WindowOptions extends OptionsPanel {
         for (final var proj : nowOpen) {
           proj.getFrame().repaint();
         }
+      } else if (e.getActionCommand().equals(cmdSetAutoScaleFactor)) {
+        final var tmp = AppPreferences.getAutoScaleFactor();
+        AppPreferences.SCALE_FACTOR.set(tmp);
+        AppPreferences.getPrefs().remove(AppPreferences.SCALE_FACTOR.getIdentifier());
+        zoomValue.setValue((int) (tmp * 100));
       }
     }
   }

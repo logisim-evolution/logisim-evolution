@@ -14,6 +14,7 @@ import static com.cburch.logisim.gui.Strings.S;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.data.Attribute;
+import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Location;
 import com.cburch.logisim.gui.generic.AttrTableSetException;
 import com.cburch.logisim.gui.generic.AttributeSetTableModel;
@@ -47,10 +48,8 @@ class AttrTableComponentModel extends AttributeSetTableModel {
     String label = comp.getAttributeSet().getValue(StdAttr.LABEL);
     Location loc = comp.getLocation();
     String s = comp.getFactory().getDisplayName();
-    if (label != null && label.length() > 0)
-      s += " \"" + label + "\"";
-    else if (loc != null)
-      s += " " + loc;
+    if (label != null && label.length() > 0) s += " \"" + label + "\"";
+    else if (loc != null) s += " " + loc;
     return s;
   }
 
@@ -61,6 +60,16 @@ class AttrTableComponentModel extends AttributeSetTableModel {
       throw new AttrTableSetException(msg);
     } else {
       SetAttributeAction act = new SetAttributeAction(circ, S.getter("changeAttributeAction"));
+      AttributeSet compAttrSet = comp.getAttributeSet();
+      if (compAttrSet != null) {
+        final var mayBeChangedList = compAttrSet.attributesMayAlsoBeChanged(attr, value);
+        if (mayBeChangedList != null) {
+          for (final var mayChangeAttr : mayBeChangedList) {
+            // mayChangeAttr is set to its current value to have it restored on undo
+            act.set(comp, mayChangeAttr, compAttrSet.getValue(mayChangeAttr));
+          }
+        }
+      }
       act.set(comp, attr, value);
       proj.doAction(act);
     }

@@ -109,7 +109,7 @@ public class CircuitLocker {
     }
   }
 
-  void execute(CircuitTransaction xn) {
+  public void execute(CircuitTransaction xn) {
     if (mutatingThread == Thread.currentThread()) {
       xn.run(mutatingMutator);
     } else {
@@ -132,7 +132,8 @@ public class CircuitLocker {
     private final transient Thread mutatingThread;
     private final CircuitMutatorImpl mutatingMutator;
 
-    public LockException(String msg, Circuit circ, int serial, Thread thread, CircuitMutatorImpl mutator) {
+    public LockException(
+        String msg, Circuit circ, int serial, Thread thread, CircuitMutatorImpl mutator) {
       super(msg);
       circuit = circ;
       serialNumber = serial;

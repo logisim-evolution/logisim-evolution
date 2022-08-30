@@ -33,7 +33,8 @@ class NandGate extends AbstractGate {
     public LineBuffer getLogicFunction(int nrOfInputs, int bitwidth, boolean isOneHot) {
       final var contents = LineBuffer.getHdlBuffer();
       final var oneLine = new StringBuilder();
-      oneLine.append(Hdl.assignPreamble())
+      oneLine
+          .append(Hdl.assignPreamble())
           .append("result")
           .append(Hdl.assignOperator())
           .append(Hdl.notOperator())

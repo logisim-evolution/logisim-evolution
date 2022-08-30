@@ -81,12 +81,13 @@ public class FpgaCommander
   private final Project MyProject;
   private BoardInformation MyBoardInformation = null;
 
-
   @Override
   public void preferenceChange(PreferenceChangeEvent pce) {
     String property = pce.getKey();
     if (property.equals(AppPreferences.SelectedBoard.getIdentifier())) {
-      MyBoardInformation = new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName()).getBoardInformation();
+      MyBoardInformation =
+          new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName())
+              .getBoardInformation();
       MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
       boardIcon = new BoardIcon(MyBoardInformation.getImage());
       boardPic.setIcon(boardIcon);
@@ -114,7 +115,6 @@ public class FpgaCommander
     }
   }
 
-
   @Override
   public void circuitChanged(CircuitEvent event) {
     int act = event.getAction();
@@ -135,7 +135,9 @@ public class FpgaCommander
     c.gridx = 0;
     c.gridy = 0;
     c.fill = GridBagConstraints.HORIZONTAL;
-    MyBoardInformation = new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName()).getBoardInformation();
+    MyBoardInformation =
+        new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName())
+            .getBoardInformation();
     MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
     boardIcon = new BoardIcon(MyBoardInformation.getImage());
     JComboBox<String> selector = AppPreferences.Boards.boardSelector();
@@ -165,8 +167,9 @@ public class FpgaCommander
   private JPanel getProgressBar() {
     JPanel pan = new JPanel();
     pan.setLayout(new BorderLayout());
-    pan.setBorder(BorderFactory.createTitledBorder(
-        BorderFactory.createStrokeBorder(new BasicStroke(2)), S.get("FpgaGuiProgress")));
+    pan.setBorder(
+        BorderFactory.createTitledBorder(
+            BorderFactory.createStrokeBorder(new BasicStroke(2)), S.get("FpgaGuiProgress")));
     Progress.setStringPainted(true);
     pan.add(Progress, BorderLayout.CENTER);
     StopButton.setEnabled(false);
@@ -182,8 +185,10 @@ public class FpgaCommander
   private JPanel getAnnotationWindow() {
     JPanel pan = new JPanel();
     pan.setLayout(new BorderLayout());
-    pan.setBorder(BorderFactory.createTitledBorder(
-        BorderFactory.createStrokeBorder(new BasicStroke(2)), S.get("FpgaGuiAnnotationMethod")));
+    pan.setBorder(
+        BorderFactory.createTitledBorder(
+            BorderFactory.createStrokeBorder(new BasicStroke(2)),
+            S.get("FpgaGuiAnnotationMethod")));
     annotationList.addItem(S.getter("FpgaGuiRelabelAll"));
     annotationList.addItem(S.getter("FpgaGuiRelabelEmpty"));
     annotationList.setSelectedIndex(1);
@@ -202,8 +207,9 @@ public class FpgaCommander
   private JPanel getExecuteWindow() {
     JPanel pan = new JPanel();
     pan.setLayout(new BorderLayout());
-    pan.setBorder(BorderFactory.createTitledBorder(
-        BorderFactory.createStrokeBorder(new BasicStroke(2)), S.get("FpgaGuiExecution")));
+    pan.setBorder(
+        BorderFactory.createTitledBorder(
+            BorderFactory.createStrokeBorder(new BasicStroke(2)), S.get("FpgaGuiExecution")));
     JPanel pan1 = new JPanel();
     pan1.setLayout(new BorderLayout());
     pan1.add(textMainCircuit, BorderLayout.WEST);
@@ -274,7 +280,6 @@ public class FpgaCommander
     panel.add(pan1, c);
     c.gridheight = 1;
 
-
     // Progress bar
     c.gridx = 0;
     c.gridy = 3;
@@ -301,7 +306,8 @@ public class FpgaCommander
 
   private void updateCircuitBoard(String circuitName) {
     final var circuit = MyProject.getLogisimFile().getCircuit(circuitName);
-    if (circuit != null && !AppPreferences.Boards.getSelectedBoardFileName().equals(circuit.getDownloadBoard())) {
+    if (circuit != null
+        && !AppPreferences.Boards.getSelectedBoardFileName().equals(circuit.getDownloadBoard())) {
       final var boardName = circuit.getDownloadBoard();
       final var boardIndex = AppPreferences.Boards.getBoardNames().indexOf(boardName);
       if (boardIndex >= 0) AppPreferences.Boards.boardSelector().setSelectedIndex(boardIndex + 1);
@@ -314,8 +320,10 @@ public class FpgaCommander
     int nrItems = 1;
     actionCommands.removeAllItems();
     actionCommands.addItem(S.getter("FpgaGuiHdlOnly"));
-    ToolPath.setText(S.get("FpgaGuiToolpath",
-          VendorSoftware.getVendorString(MyBoardInformation.fpga.getVendor())));
+    ToolPath.setText(
+        S.get(
+            "FpgaGuiToolpath",
+            VendorSoftware.getVendorString(MyBoardInformation.fpga.getVendor())));
     if (MyBoardInformation != null
         && VendorSoftware.toolsPresent(
             MyBoardInformation.fpga.getVendor(),
@@ -382,9 +390,11 @@ public class FpgaCommander
       Progress.setString(S.get("FpgaGuiIdle"));
       Progress.setValue(0);
     } else if (e.getActionCommand().equals("mainCircuit")) {
-      final var circuitName = circuitsList.getSelectedItem().toString();
-      FrequencyPanel.updateFrequencyList(circuitName);
-      updateCircuitBoard(circuitName);
+      if (circuitsList.getSelectedItem() != null) {
+        final var circuitName = circuitsList.getSelectedItem().toString();
+        FrequencyPanel.updateFrequencyList(circuitName);
+        updateCircuitBoard(circuitName);
+      }
     }
   }
 

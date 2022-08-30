@@ -11,6 +11,7 @@ package com.cburch.logisim.gui.generic;
 
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.MacCompatibility;
 import com.cburch.logisim.util.WindowClosable;
 import java.awt.Image;
@@ -30,9 +31,7 @@ public class LFrame extends JFrame implements WindowClosable {
   private static List<Image> allIcons = null;
   private static Image defaultIcon = null;
 
-  /**
-   * A main window holds a circuit, always has menubar with Close, Save, etc.
-   */
+  /** A main window holds a circuit, always has menubar with Close, Save, etc. */
   public static final int TYPE_MAIN_WINDOW = 1;
 
   /**
@@ -58,8 +57,7 @@ public class LFrame extends JFrame implements WindowClosable {
 
     public MainWindow(Project p) {
       super(TYPE_MAIN_WINDOW, p, true);
-      if (p == null)
-        throw new IllegalArgumentException("project is null");
+      if (p == null) throw new IllegalArgumentException("project is null");
     }
   }
 
@@ -102,12 +100,15 @@ public class LFrame extends JFrame implements WindowClosable {
       menubar = null;
     }
     if (type != TYPE_MAIN_WINDOW && project != null) {
-      project.getFrame().addWindowListener(new WindowAdapter() {
-        @Override
-        public void windowClosed(WindowEvent e) {
-          LFrame.this.dispose();
-        }
-      });
+      project
+          .getFrame()
+          .addWindowListener(
+              new WindowAdapter() {
+                @Override
+                public void windowClosed(WindowEvent e) {
+                  LFrame.this.dispose();
+                }
+              });
     }
   }
 
@@ -130,7 +131,7 @@ public class LFrame extends JFrame implements WindowClosable {
 
     boolean success = false;
     try {
-      if (allIcons != null && !allIcons.isEmpty()) {
+      if (CollectionUtil.isNotEmpty(allIcons)) {
         final var set = frame.getClass().getMethod("setIconImages", List.class);
         set.invoke(frame, allIcons);
         success = true;

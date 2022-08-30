@@ -154,13 +154,11 @@ public class Net {
   }
 
   public boolean hasBitSinks(int bitid) {
-    if (bitid < 0 || bitid >= sinkList.size()) return false;
-    return sinkList.get(bitid).size() > 0;
+    return (bitid < 0 || bitid >= sinkList.size()) ? false : sinkList.get(bitid).size() > 0;
   }
 
   public List<ConnectionPoint> getBitSinks(int bitIndex) {
-    if ((bitIndex < 0) || (bitIndex >= sourceNetsList.size()))
-      return new ArrayList<>();
+    if ((bitIndex < 0) || (bitIndex >= sourceNetsList.size())) return new ArrayList<>();
     return new ArrayList<>(sinkList.get(bitIndex).getAll());
   }
 
@@ -170,8 +168,7 @@ public class Net {
   }
 
   public boolean hasBitSource(int bitid) {
-    if (bitid < 0 || bitid >= sourceList.size()) return false;
-    return sourceList.get(bitid).size() > 0;
+    return (bitid < 0 || bitid >= sourceList.size()) ? false : sourceList.get(bitid).size() > 0;
   }
 
   public boolean hasShortCircuit() {
@@ -182,7 +179,9 @@ public class Net {
 
   public boolean hasSinks() {
     var ret = false;
-    for (var i = 0; i < nrOfBits; i++) ret |= sinkList.get(i).size() > 0;
+    for (var i = 0; i < nrOfBits; i++) {
+      ret |= sinkList.get(i).size() > 0;
+    }
     return ret;
   }
 
@@ -194,7 +193,9 @@ public class Net {
 
   public boolean hasSource() {
     var ret = false;
-    for (var i = 0; i < nrOfBits; i++) ret |= sourceList.get(i).size() > 0;
+    for (var i = 0; i < nrOfBits; i++) {
+      ret |= sourceList.get(i).size() > 0;
+    }
     return ret;
   }
 

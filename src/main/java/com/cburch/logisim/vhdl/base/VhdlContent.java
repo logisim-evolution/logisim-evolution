@@ -205,16 +205,14 @@ public class VhdlContent extends HdlContent {
    * @return true if the label is NOT a valid name, false otherwise
    */
   public static boolean labelVHDLInvalid(String label) {
-    if (!label.matches("^[A-Za-z][A-Za-z0-9_]*") || label.endsWith("_") || label.matches(".*__.*"))
+    if (!label.matches("^[A-Za-z]\\w*") || label.endsWith("_") || label.matches(".*__.*"))
       return (true);
     return Vhdl.VHDL_KEYWORDS.contains(label.toLowerCase());
   }
 
   public static boolean labelVHDLInvalidNotify(String label, LogisimFile file) {
     String err = null;
-    if (!label.matches("^[A-Za-z][A-Za-z0-9_]*")
-        || label.endsWith("_")
-        || label.matches(".*__.*")) {
+    if (!label.matches("^[A-Za-z]\\w*") || label.endsWith("_") || label.matches(".*__.*")) {
       err = S.get("vhdlInvalidNameError");
     } else if (Vhdl.VHDL_KEYWORDS.contains(label.toLowerCase())) {
       err = S.get("vhdlKeywordNameError");
@@ -279,10 +277,18 @@ public class VhdlContent extends HdlContent {
   }
 
   @Override
-  public boolean setContent(String vhdl) {
+  public boolean setContentNoValidation(String vhdl) {
     if (valid && content.toString().equals(vhdl)) return true;
     content = new StringBuilder(vhdl);
     valid = false;
+
+    return false;
+  }
+
+  @Override
+  public boolean setContent(String vhdl) {
+    if (setContentNoValidation(vhdl)) return true;
+
     try {
       errTitle.setLength(0);
       errMessage.setLength(0);

@@ -29,14 +29,14 @@ public class ModelReorderAction extends ModelAction {
     super(model);
     this.requests = new ArrayList<>(requests);
     this.objects = new ArrayList<>(requests.size());
-    for (ReorderRequest r : requests) {
-      objects.add(r.getObject());
+    for (final var req : requests) {
+      objects.add(req.getObject());
     }
     var typeIndex = 0; // 0 = mixed/unknown, -1 = to greater index, 1 = to
     // smaller index
-    for (final var r : requests) {
-      final var from = r.getFromIndex();
-      final var to = r.getToIndex();
+    for (final var req : requests) {
+      final var from = req.getFromIndex();
+      final var to = req.getToIndex();
       final var thisType = Integer.compare(to, from);
       if (typeIndex == 2) {
         typeIndex = thisType;
@@ -48,7 +48,8 @@ public class ModelReorderAction extends ModelAction {
     this.type = typeIndex;
   }
 
-  public static ModelReorderAction createLower(CanvasModel model, Collection<? extends CanvasObject> objects) {
+  public static ModelReorderAction createLower(
+      CanvasModel model, Collection<? extends CanvasObject> objects) {
     final var reqs = new ArrayList<ReorderRequest>();
     final var zmap = ZOrder.getZIndex(objects, model);
     for (final var entry : zmap.entrySet()) {
@@ -70,7 +71,8 @@ public class ModelReorderAction extends ModelAction {
     return new ModelReorderAction(model, reqs);
   }
 
-  public static ModelReorderAction createLowerBottom(CanvasModel model, Collection<? extends CanvasObject> objects) {
+  public static ModelReorderAction createLowerBottom(
+      CanvasModel model, Collection<? extends CanvasObject> objects) {
     final var reqs = new ArrayList<ReorderRequest>();
     final var zmap = ZOrder.getZIndex(objects, model);
     var to = 0;
@@ -86,7 +88,8 @@ public class ModelReorderAction extends ModelAction {
     return new ModelReorderAction(model, reqs);
   }
 
-  public static ModelReorderAction createRaise(CanvasModel model, Collection<? extends CanvasObject> objects) {
+  public static ModelReorderAction createRaise(
+      CanvasModel model, Collection<? extends CanvasObject> objects) {
     final var reqs = new ArrayList<ReorderRequest>();
     final var zmap = ZOrder.getZIndex(objects, model);
     for (final var entry : zmap.entrySet()) {
@@ -108,7 +111,8 @@ public class ModelReorderAction extends ModelAction {
     return new ModelReorderAction(model, reqs);
   }
 
-  public static ModelReorderAction createRaiseTop(CanvasModel model, Collection<? extends CanvasObject> objects) {
+  public static ModelReorderAction createRaiseTop(
+      CanvasModel model, Collection<? extends CanvasObject> objects) {
     final var reqs = new ArrayList<ReorderRequest>();
     final var zmap = ZOrder.getZIndex(objects, model);
 
@@ -187,7 +191,8 @@ public class ModelReorderAction extends ModelAction {
     final var inv = new ArrayList<ReorderRequest>(requests.size());
     for (var i = requests.size() - 1; i >= 0; i--) {
       final var request = requests.get(i);
-      inv.add(new ReorderRequest(request.getObject(), request.getToIndex(), request.getFromIndex()));
+      inv.add(
+          new ReorderRequest(request.getObject(), request.getToIndex(), request.getFromIndex()));
     }
     model.reorderObjects(inv);
   }

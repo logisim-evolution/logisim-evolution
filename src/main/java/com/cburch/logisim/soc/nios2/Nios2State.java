@@ -38,12 +38,12 @@ import com.cburch.logisim.soc.gui.BreakpointPanel;
 import com.cburch.logisim.soc.gui.CpuDrawSupport;
 import com.cburch.logisim.soc.util.AssemblerInterface;
 import com.cburch.logisim.util.GraphicsUtil;
+import com.cburch.logisim.util.StringUtil;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import javax.swing.JPanel;
@@ -184,20 +184,11 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
 
     public void setControlRegister(int index, int value) {
       switch (index) {
-        case 0:
-          setStatus(value);
-          break;
-        case 1:
-          estatus = value;
-          break;
-        case 2:
-          bstatus = value;
-          break;
-        case 3:
-          ienable = value;
-          break;
-        default:
-          throw new IllegalStateException("Unsupported index value: " + index);
+        case 0 -> setStatus(value);
+        case 1 -> estatus = value;
+        case 2 -> bstatus = value;
+        case 3 -> ienable = value;
+        default -> throw new IllegalStateException("Unsupported index value: " + index);
       }
     }
 
@@ -288,8 +279,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
       /* check the simulation state */
       if (!simState.canExecute()) return;
       /* here we handle the custom instructions */
-      if (ASSEMBLER.getExeUnit() != null && ASSEMBLER.getExeUnit() instanceof Nios2CustomInstructions) {
-        Nios2CustomInstructions cust = (Nios2CustomInstructions) ASSEMBLER.getExeUnit();
+      if (ASSEMBLER.getExeUnit() != null && ASSEMBLER.getExeUnit() instanceof Nios2CustomInstructions cust) {
         if (cust.isValid() && cust.waitingOnReady(this, cState)) return;
       }
       Map<Integer, Integer> breakPoints = bPanel.getBreakPoints();
@@ -559,7 +549,7 @@ public class Nios2State implements SocUpSimulationStateListener, SocProcessorInt
 
   public String getName() {
     var name = label;
-    if (name == null || name.isEmpty()) {
+    if (StringUtil.isNullOrEmpty(name)) {
       final var loc = attachedBus.getComponent().getLocation();
       name = String.format("%s@%d,%d", attachedBus.getComponent().getFactory().getDisplayName(), loc.getX(), loc.getY());
     }

@@ -45,11 +45,11 @@ public class IoStandards {
 
   public static final String IO_ATTRIBUTE_STRING = "FPGAPinIOStandard";
   public static final char DEFAULT_STANDARD = 0;
-  public static char LVCMOS12 = 1;
-  public static char LVCMOS15 = 2;
-  public static char LVCMOS18 = 3;
-  public static char LVCMOS25 = 4;
-  public static char LVCMOS33 = 5;
+  public static final char LVCMOS12 = 1;
+  public static final char LVCMOS15 = 2;
+  public static final char LVCMOS18 = 3;
+  public static final char LVCMOS25 = 4;
+  public static final char LVCMOS33 = 5;
 
   public static final char LVTTL = 6;
 

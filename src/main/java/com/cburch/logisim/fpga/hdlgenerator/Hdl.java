@@ -9,23 +9,33 @@
 
 package com.cburch.logisim.fpga.hdlgenerator;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeSet;
-
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.prefs.AppPreferences;
+import com.cburch.logisim.util.CollectionUtil;
 import com.cburch.logisim.util.LineBuffer;
-import java.util.List;
 
-public abstract class Hdl {
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeSet;
+
+public class Hdl {
 
   public static final String NET_NAME = "s_logisimNet";
   public static final String BUS_NAME = "s_logisimBus";
+
+  /**
+   * Length of remark block special sequences (block open/close, line open/close).
+   */
+  public static final int REMARK_MARKER_LENGTH = 3;
+
+  private Hdl() {
+    throw new IllegalStateException("Utility class. No instantiation allowed.");
+  }
 
   public static boolean isVhdl() {
     return AppPreferences.HdlType.get().equals(HdlGeneratorFactory.VHDL);
@@ -43,20 +53,59 @@ public abstract class Hdl {
     return isVhdl() ? ")" : "]";
   }
 
-  public static int remarkOverhead() {
-    return isVhdl() ? 3 : 4;
+  public static String getRemarkChar() {
+    return isVhdl() ? "-" : "*";
   }
 
-  public static String getRemarkChar(boolean first, boolean last) {
-    if (isVhdl()) return "-";
-    if (first) return "/";
-    if (last) return " ";
-    return "*";
+  /**
+   * Comment block opening sequence. Must be REMARK_BLOCK_SEQ_LEN long.
+   */
+  public static String getRemarkBlockStart() {
+    return isVhdl() ? "---" : "/**";
   }
 
-  public static String getRemarkStart() {
-    if (isVhdl()) return "-- ";
-    return " ** ";
+  /**
+   * Comment block closing sequence. Must be REMARK_BLOCK_SEQ_LEN long.
+   */
+  public static String getRemarkBlockEnd() {
+    return isVhdl() ? "---" : "**/";
+  }
+
+  /**
+   * Comment block line (mid block) opening sequence. Must be REMARK_BLOCK_SEQ_LEN long.
+   */
+  public static String getRemarkBlockLineStart() {
+    return isVhdl() ? "-- " : "** ";
+  }
+
+  /**
+   * Comment block line (mid block) closing sequence. Must be REMARK_BLOCK_SEQ_LEN long.
+   */
+  public static String getRemarkBlockLineEnd() {
+    return isVhdl() ? " --" : " **";
+  }
+
+  public static String getLineCommentStart() {
+    return isVhdl() ? "-- " : "// ";
+  }
+
+  public static String startIf(String condition) {
+    return isVhdl() ? LineBuffer.formatHdl("IF {{1}} THEN", condition)
+                    : LineBuffer.formatHdl("if ({{1}}) begin", condition);
+  }
+
+  public static String elseStatement() {
+    return isVhdl() ? Vhdl.getVhdlKeyword("ELSE") : "end else begin";
+  }
+
+  public static String elseIf(String condition) {
+    return isVhdl() ? LineBuffer.formatHdl("{{1}} {{2}} {{3}}", Vhdl.getVhdlKeyword("ELSIF"), condition, Vhdl.getVhdlKeyword("THEN"))
+                    : LineBuffer.formatHdl("end else if ({{1}}) begin", condition);
+  }
+
+  public static String endIf() {
+    return isVhdl() ? Vhdl.getVhdlKeyword("END ") + Vhdl.getVhdlKeyword("IF")
+                    : "end";
   }
 
   public static String assignPreamble() {
@@ -65,6 +114,41 @@ public abstract class Hdl {
 
   public static String assignOperator() {
     return isVhdl() ? " <= " : " = ";
+  }
+
+  public static String equalOperator() {
+    return isVhdl() ? " = " : "==";
+  }
+
+  public static String notEqualOperator() {
+    return isVhdl() ? " \\= " : "!=";
+  }
+
+  private static String typecast(String signal, boolean signed) {
+    return isVhdl()
+                ? LineBuffer.formatHdl("{{1}}({{2}})", (signed ? "signed" : "unsigned"), signal)
+                : (signed ? "$signed(" + signal + ")" : signal);
+  }
+
+  public static String greaterOperator(String signalOne, String signalTwo, boolean signed, boolean equal) {
+    return LineBuffer.formatHdl("{{1}} >{{2}} {{3}}", typecast(signalOne, signed), equal ? "=" : "", typecast(signalTwo, signed));
+  }
+
+  public static String lessOperator(String signalOne, String signalTwo, boolean signed, boolean equal) {
+    return LineBuffer.formatHdl("{{1}} <{{2}} {{3}}", typecast(signalOne, signed), equal ? "=" : "", typecast(signalTwo, signed));
+  }
+
+  public static String leqOperator(String signalOne, String signalTwo, boolean signed) {
+    return lessOperator(signalOne, signalTwo, signed, true);
+  }
+
+  public static String geqOperator(String signalOne, String signalTwo, boolean signed) {
+    return greaterOperator(signalOne, signalTwo, signed, true);
+  }
+
+  public static String risingEdge(String signal) {
+    return isVhdl() ? "rising_edge(" + signal + ")"
+                    : "posedge " + signal;
   }
 
   public static String notOperator() {
@@ -83,6 +167,65 @@ public abstract class Hdl {
     return isVhdl() ? Vhdl.getVhdlKeyword(" XOR ") : "^";
   }
 
+  public static String addOperator(String signalOne, String signalTwo, boolean signed) {
+    return (isVhdl() ? "std_logic_vector(" : "")
+            + typecast(signalOne, signed)
+            + " + "
+            + typecast(signalTwo, signed)
+            + (isVhdl() ? ")" : "");
+  }
+
+  public static String subOperator(String signalOne, String signalTwo, boolean signed) {
+    return (isVhdl() ? "std_logic_vector(" : "")
+            + typecast(signalOne, signed)
+            + " - "
+            + typecast(signalTwo, signed)
+            + (isVhdl() ? ")" : "");
+  }
+
+  public static String shiftlOperator(String signal, int width, int distance, boolean arithmetic) {
+    if (distance == 0) return signal;
+    return isVhdl() ? LineBuffer.formatHdl("{{1}}{{2}} & {{4}}{{3}}{{4}}", signal, splitVector(width - 1 - distance, 0), "0".repeat(distance), distance == 1 ? "'" : "\"")
+                    : LineBuffer.formatHdl("{{{1}}{{2}},{{{3}}{1'b0}}}", signal, splitVector(width - 1 - distance, 0), distance);
+  }
+
+  public static String shiftrOperator(String signal, int width, int distance, boolean arithmetic) {
+    if (distance == 0) return signal;
+    if (arithmetic) {
+      return isVhdl()
+        ? LineBuffer.formatHdl("({{1}}{{2}}0 => {{3}}({{1}})) & {{3}}{{4}}", width - 1, vectorLoopId(), signal, splitVector(width - 1, width - distance))
+        : LineBuffer.formatHdl("{ {{{1}}{{{2}}[{{1}}-1]}},{{2}}{{3}}}", width, signal, splitVector(width - 1, width - distance));
+    } else {
+      return isVhdl()
+        ? LineBuffer.formatHdl("{{1}}{{2}}{{1}} & {{3}}{{4}", (distance == 1 ? "'" : "\""), "0".repeat(distance), signal, splitVector(width - 1, width - distance))
+        : LineBuffer.formatHdl("{ {{{1}}{1'b0}},{{2}}{{3}}}", width, signal, splitVector(width - 1, width - distance));
+    }
+  }
+
+  public static String sllOperator(String signal, int width, int distance) {
+    return shiftlOperator(signal, width, distance, false);
+  }
+
+  public static String slaOperator(String signal, int width, int distance) {
+    return shiftlOperator(signal, width, distance, true);
+  }
+
+  public static String srlOperator(String signal, int width, int distance) {
+    return shiftrOperator(signal, width, distance, false);
+  }
+
+  public static String sraOperator(String signal, int width, int distance) {
+    return shiftrOperator(signal, width, distance, true);
+  }
+
+  public static String rolOperator(String signal, int width, int distance) {
+    return LineBuffer.formatHdl("{{1}}{{2}}{{3}}{{1}}{{4}}", signal, splitVector(width - 1 - distance, 0), (isVhdl() ? " & " : ","), splitVector(width - 1, width - distance));
+  }
+
+  public static String rorOperator(String signal, int width, int distance) {
+    return LineBuffer.formatHdl("{{1}}{{2}}{{3}}{{1}}{{4}}", signal, splitVector(distance, 0), (isVhdl() ? " & " : ","), splitVector(width - 1, distance));
+  }
+
   public static String zeroBit() {
     return isVhdl() ? "'0'" : "1'b0";
   }
@@ -99,8 +242,15 @@ public abstract class Hdl {
     return isVhdl() ? Vhdl.getVhdlKeyword(" DOWNTO ") : ":";
   }
 
+  public static String splitVector(int start, int end) {
+    if (start == end) return LineBuffer.formatHdl("{{<}}{{2}}{{>}}", start);
+    return isVhdl()
+                ? LineBuffer.formatHdl("({{1}}{{2}}{{3}})", start, vectorLoopId(), end)
+                : LineBuffer.formatHdl("[{{1}}:{{2}}]", start, end);
+  }
+
   public static String getZeroVector(int nrOfBits, boolean floatingPinTiedToGround) {
-    var contents = new StringBuilder();
+    final var contents = new StringBuilder();
     if (isVhdl()) {
       var fillValue = (floatingPinTiedToGround) ? "0" : "1";
       var hexFillValue = (floatingPinTiedToGround) ? "0" : "F";
@@ -150,20 +300,16 @@ public abstract class Hdl {
     }
     // first case, we have to concatinate
     if ((nrHexDigits > 0) && (nrSingleBits > 0)) {
-      if (Hdl.isVhdl()) {
-        return LineBuffer.format("\"{{1}}\"&X\"{{2}}\"", singleBits.toString(), hexValue.toString());
-      } else {
-        return LineBuffer.format("{{{1}}'b{{2}}, {{3}}'h{{4}}}", nrSingleBits, singleBits.toString(),
-            nrHexDigits * 4, hexValue.toString());
-      }
+      return Hdl.isVhdl()
+             ? LineBuffer.format("\"{{1}}\"&X\"{{2}}\"", singleBits.toString(), hexValue.toString())
+             : LineBuffer.format("{{{1}}'b{{2}}, {{3}}'h{{4}}}", nrSingleBits, singleBits.toString(),
+                nrHexDigits * 4, hexValue.toString());
     }
     // second case, we have only hex digits
     if (nrHexDigits > 0) {
-      if (Hdl.isVhdl()) {
-        return LineBuffer.format("X\"{{1}}\"", hexValue.toString());
-      } else {
-        return LineBuffer.format("{{1}}'h{{2}}", nrHexDigits * 4, hexValue.toString());
-      }
+      return Hdl.isVhdl()
+        ? LineBuffer.format("X\"{{1}}\"", hexValue.toString())
+        : LineBuffer.format("{{1}}'h{{2}}", nrHexDigits * 4, hexValue.toString());
     }
     // final case, we have only single bits
     if (Hdl.isVhdl()) {
@@ -230,12 +376,11 @@ public abstract class Hdl {
     if (nrOfBits == 1) return getNetName(comp, endIndex, true, theNets);
     if (!theNets.isContinuesBus(comp, endIndex)) return null;
     final var connectedNet = connectionInformation.get((byte) 0).getParentNet();
-    return LineBuffer.formatHdl("{{1}}{{2}}{{<}}{{3}}{{4}}{{5}}{{>}}",
+    return LineBuffer.formatHdl("{{1}}{{2}}{{3}}",
         BUS_NAME,
         theNets.getNetId(connectedNet),
-        connectionInformation.get((byte) (connectionInformation.getNrOfBits() - 1)).getParentNetBitIndex(),
-        Hdl.vectorLoopId(),
-        connectionInformation.get((byte) (0)).getParentNetBitIndex());
+        splitVector(connectionInformation.get((byte) (connectionInformation.getNrOfBits() - 1)).getParentNetBitIndex(),
+                    connectionInformation.get((byte) (0)).getParentNetBitIndex()));
   }
 
   public static String getBusName(netlistComponent comp, int endIndex, Netlist theNets) {
@@ -244,9 +389,9 @@ public abstract class Hdl {
     final var nrOfBits = connectionInformation.getNrOfBits();
     if (nrOfBits == 1)  return getNetName(comp, endIndex, true, theNets);
     if (!theNets.isContinuesBus(comp, endIndex)) return null;
-    final var ConnectedNet = connectionInformation.get((byte) 0).getParentNet();
-    if (ConnectedNet.getBitWidth() != nrOfBits) return getBusNameContinues(comp, endIndex, theNets);
-    return LineBuffer.format("{{1}}{{2}}", BUS_NAME, theNets.getNetId(ConnectedNet));
+    final var connectedNet = connectionInformation.get((byte) 0).getParentNet();
+    if (connectedNet.getBitWidth() != nrOfBits) return getBusNameContinues(comp, endIndex, theNets);
+    return LineBuffer.format("{{1}}{{2}}", BUS_NAME, theNets.getNetId(connectedNet));
   }
 
   public static String getClockNetName(netlistComponent comp, int endIndex, Netlist theNets) {
@@ -254,11 +399,11 @@ public abstract class Hdl {
     if ((theNets.getCurrentHierarchyLevel() != null) && (endIndex >= 0) && (endIndex < comp.nrOfEnds())) {
       final var endData = comp.getEnd(endIndex);
       if (endData.getNrOfBits() == 1) {
-        final var ConnectedNet = endData.get((byte) 0).getParentNet();
+        final var connectedNet = endData.get((byte) 0).getParentNet();
         final var ConnectedNetBitIndex = endData.get((byte) 0).getParentNetBitIndex();
         /* Here we search for a clock net Match */
         final var clocksourceid = theNets.getClockSourceId(
-            theNets.getCurrentHierarchyLevel(), ConnectedNet, ConnectedNetBitIndex);
+            theNets.getCurrentHierarchyLevel(), connectedNet, ConnectedNetBitIndex);
         if (clocksourceid >= 0) {
           contents.append(HdlGeneratorFactory.CLOCK_TREE_NAME).append(clocksourceid);
         }
@@ -280,12 +425,9 @@ public abstract class Hdl {
   }
 
   public static boolean writeArchitecture(String targetDirectory, List<String> contents, String componentName) {
-    if (contents == null || contents.isEmpty()) {
+    if (CollectionUtil.isNullOrEmpty(contents)) {
       // FIXME: hardcoded string
-      Reporter.report.addFatalError(
-          "INTERNAL ERROR: Empty behavior description for Component '"
-              + componentName
-              + "' received!");
+      Reporter.report.addFatalErrorFmt("INTERNAL ERROR: Empty behavior description for Component '%s' received!", componentName);
       return false;
     }
     final var outFile = FileWriter.getFilePointer(targetDirectory, componentName, false);
@@ -405,8 +547,8 @@ public abstract class Hdl {
     var maxNameLength = 0;
     for (var wire : wires.keySet())
       maxNameLength = Math.max(maxNameLength, wire.length());
-    final var sortedWires = new TreeSet<String>(wires.keySet());
-    for (var wire : sortedWires) 
+    final var sortedWires = new TreeSet<>(wires.keySet());
+    for (var wire : sortedWires)
       contents.add("{{assign}}{{1}}{{2}}{{=}}{{3}};", wire, " ".repeat(maxNameLength - wire.length()), wires.get(wire));
     wires.clear();
   }

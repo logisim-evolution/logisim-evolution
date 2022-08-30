@@ -11,7 +11,6 @@ package com.cburch.logisim.soc.pio;
 
 import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.BitWidth;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstanceData;
@@ -21,6 +20,7 @@ import com.cburch.logisim.soc.data.SocBusSlaveInterface;
 import com.cburch.logisim.soc.data.SocBusSlaveListener;
 import com.cburch.logisim.soc.data.SocBusTransaction;
 import com.cburch.logisim.soc.data.SocSupport;
+import com.cburch.logisim.util.StringUtil;
 import java.util.ArrayList;
 
 public class PioState implements SocBusSlaveInterface {
@@ -390,28 +390,18 @@ public class PioState implements SocBusSlaveInterface {
       return;
     }
     switch (index) {
-      case DATA_REG_INDEX:
-        if (trans.isWriteTransaction()) handleOutputWriteTransaction(trans);
-        if (trans.isReadTransaction()) handleInputReadTransaction(trans);
-        break;
-      case DIR_REG_INDEX:
-        handleDirectionRegister(trans);
-        break;
-      case IRQ_MASK_INDEX:
-        handleIrqMaskRegister(trans);
-        break;
-      case EDGE_CAPT_INDEX:
-        handleCaptureRegister(trans);
-        break;
-      case OUT_SET_INDEX:
-        handleOutputBitOperation(trans, false);
-        break;
-      case OUT_CLEAR_INDEX:
-        handleOutputBitOperation(trans, true);
-        break;
-      default:
-        trans.setError(SocBusTransaction.MISALIGNED_ADDRESS_ERROR);
-        break;
+      case DATA_REG_INDEX -> {
+        if (trans.isWriteTransaction())
+          handleOutputWriteTransaction(trans);
+        if (trans.isReadTransaction())
+          handleInputReadTransaction(trans);
+      }
+      case DIR_REG_INDEX -> handleDirectionRegister(trans);
+      case IRQ_MASK_INDEX -> handleIrqMaskRegister(trans);
+      case EDGE_CAPT_INDEX -> handleCaptureRegister(trans);
+      case OUT_SET_INDEX -> handleOutputBitOperation(trans, false);
+      case OUT_CLEAR_INDEX -> handleOutputBitOperation(trans, true);
+      default -> trans.setError(SocBusTransaction.MISALIGNED_ADDRESS_ERROR);
     }
   }
 
@@ -427,13 +417,13 @@ public class PioState implements SocBusSlaveInterface {
 
   @Override
   public String getName() {
-    if (attachedBus == null || attachedBus.getComponent() == null)
-      return "BUG: Unknown";
-    String name = label;
-    if (name == null || name.isEmpty()) {
-      Location loc = attachedBus.getComponent().getLocation();
-      name = attachedBus.getComponent().getFactory().getDisplayName()
-              + "@" + loc.getX() + "," + loc.getY();
+    var name = "BUG: Unknown";
+    if (attachedBus != null && attachedBus.getComponent() != null) {
+      name = label;
+      if (StringUtil.isNullOrEmpty(name)) {
+        final var loc = attachedBus.getComponent().getLocation();
+        name = String.format("%s@%d,%d", attachedBus.getComponent().getFactory().getDisplayName(), loc.getX(), loc.getY());
+      }
     }
     return name;
   }

@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.circuit.appear;
 
+import com.cburch.draw.actions.ModelTranslateAction;
 import com.cburch.draw.model.CanvasModelEvent;
 import com.cburch.draw.model.CanvasModelListener;
 import com.cburch.draw.model.CanvasObject;
@@ -22,15 +23,18 @@ import com.cburch.logisim.data.AttributeOption;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.gui.appear.CanvasActionAdapter;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceComponent;
 import com.cburch.logisim.instance.InstancePainter;
+import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.EventSourceWeakSupport;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -66,15 +70,15 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
     suppressRecompute = false;
     addCanvasModelListener(myListener);
     if (circuit != null) circuit.getStaticAttributes().addAttributeListener(this);
-    defaultCanvasObjects = new ArrayList<CanvasObject>();
+    defaultCanvasObjects = new ArrayList<>();
     recomputeDefaultAppearance();
     defaultCustomAppearance = DefaultCustomAppearance.build(circuitPins.getPins()); 
     setObjectsForce(defaultCustomAppearance, false);
   }
 
   public boolean hasCustomAppearance() {
-    final var currentCustom = new ArrayList<CanvasObject>(getCustomObjectsFromBottom());
-    final var defaultCustom = new ArrayList<CanvasObject>(defaultCustomAppearance);
+    final var currentCustom = new ArrayList<>(getCustomObjectsFromBottom());
+    final var defaultCustom = new ArrayList<>(defaultCustomAppearance);
     var shapeIterator = currentCustom.iterator();
     while (shapeIterator.hasNext()) {
       final var shape = shapeIterator.next(); 
@@ -124,6 +128,10 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
 
   public void addCircuitAppearanceListener(CircuitAppearanceListener l) {
     listeners.add(l);
+  }
+  
+  public Drawing getCustomAppearanceDrawing() {
+    return new CircuitCustomAppearance(this);
   }
 
   public void sortPinsList(List<Instance> pins, Direction facing) {
@@ -273,7 +281,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
   public List<CanvasObject> getCustomObjectsFromBottom() {
     return super.getObjectsFromBottom();
   }
-
+  
   @Override
   public List<CanvasObject> getObjectsFromBottom() {
     return isDefaultAppearance() ? Collections.unmodifiableList(defaultCanvasObjects) : super.getObjectsFromBottom();
@@ -281,7 +289,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
 
   @Override
   public List<CanvasObject> getObjectsFromTop() {
-    final var ret = new ArrayList<CanvasObject>(getObjectsFromBottom());
+    final var ret = new ArrayList<>(getObjectsFromBottom());
     Collections.reverse(ret);
     return ret;
   }
@@ -352,6 +360,68 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
     checkToFirePortsChanged(shapes);
   }
 
+  public void repairCustomAppearance(List<CanvasObject> oldCustomAppearanceElements, Project proj, Circuit circ) {
+    final var toBeRemoved = new ArrayList<CanvasObject>();
+    final var toBeAdded = new ArrayList<CanvasObject>();
+    final var apearanceToBeRemoved = new ArrayList<AppearanceElement>(); 
+    final var apearanceToBeAdded = new ArrayList<AppearanceElement>(); 
+    for (final var obj : getCustomObjectsFromBottom()) {
+      if (obj instanceof AppearanceElement element) {
+        apearanceToBeRemoved.add(element);
+      } else {
+        toBeRemoved.add(obj);
+      }
+    }
+    for (final var obj : oldCustomAppearanceElements) {
+      if (obj instanceof AppearanceElement element) {
+        apearanceToBeAdded.add(element);
+      } else {
+        toBeAdded.add(obj);
+      }
+    }
+    for (final var obj : apearanceToBeRemoved) {
+      if (obj instanceof AppearanceAnchor oldAnchor) {
+        final var iterator = apearanceToBeAdded.iterator();
+        while (iterator.hasNext()) {
+          final var item = iterator.next();
+          if (item instanceof AppearanceAnchor newAnchor) {
+            final var translates = new HashSet<CanvasObject>();
+            translates.add(oldAnchor);
+            oldAnchor.setValue(AppearanceAnchor.FACING, newAnchor.getValue(AppearanceAnchor.FACING));
+            final var dx = newAnchor.getLocation().getX() - oldAnchor.getLocation().getX();
+            final var dy = newAnchor.getLocation().getY() - oldAnchor.getLocation().getY();
+            final var action = new ModelTranslateAction(this, translates, dx, dy);
+            proj.doAction(new CanvasActionAdapter(circ, action));
+            iterator.remove();
+            break;
+          }
+        }
+      }
+    }
+    for (final var obj : apearanceToBeRemoved) {
+      if (obj instanceof AppearancePort oldPort) {
+        final var iterator = apearanceToBeAdded.iterator();
+        while (iterator.hasNext()) {
+          final var item = iterator.next();
+          if (item instanceof AppearancePort newPort) {
+            if (newPort.getPin().getLocation().equals(oldPort.getPin().getLocation())) {
+              final var translates = new HashSet<CanvasObject>();
+              translates.add(oldPort);
+              final var dx = newPort.getLocation().getX() - oldPort.getLocation().getX();
+              final var dy = newPort.getLocation().getY() - oldPort.getLocation().getY();
+              final var action = new ModelTranslateAction(this, translates, dx, dy);
+              proj.doAction(new CanvasActionAdapter(circ, action));
+              iterator.remove();
+              break;
+            }
+          }
+        }
+      }
+    }
+    removeObjects(toBeRemoved);
+    addObjects(getCustomObjectsFromBottom().size() - 1, toBeAdded);
+  }
+
   public void removeDynamicElement(InstanceComponent c) {
     final var toRemove = new ArrayList<CanvasObject>();
     for (final var obj : super.getObjectsFromBottom()) {
@@ -398,8 +468,14 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
   public void setObjectsForce(List<? extends CanvasObject> shapesBase, boolean isDefault) {
     // This shouldn't ever be an issue, but just to make doubly sure, we'll
     // check that the anchor and all ports are in their proper places.
-    final var shapes = new ArrayList<CanvasObject>(shapesBase);
-    final var n = shapes.size();
+    
+    // Must manually deep-copy arrays in Java...
+    // final var shapes = new ArrayList<CanvasObject>(shapesBase);
+    final var n = shapesBase.size();
+    final var shapes = new ArrayList<CanvasObject>(n);
+    for (var i = 0; i < n; i++) {
+      shapes.add(shapesBase.get(i).clone());
+    }
     var ports = 0;
     for (var i = n - 1; i >= 0; i--) { // count ports, move anchor to end
       final var obj = shapes.get(i);
@@ -427,7 +503,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
         defaultCanvasObjects.clear();
         defaultCanvasObjects.addAll(shapes);
       } else {
-        super.removeObjects(new ArrayList<>(getObjectsFromBottom()));
+        super.removeObjects(new ArrayList<>(getCustomObjectsFromBottom()));
         super.addObjects(0, shapes);
       }
     } finally {

@@ -89,10 +89,12 @@ public class HexEditor extends JComponent implements Scrollable {
   //
   // Scrollable methods
   //
+  @Override
   public Dimension getPreferredScrollableViewportSize() {
     return getPreferredSize();
   }
 
+  @Override
   public int getScrollableBlockIncrement(Rectangle vis, int orientation, int direction) {
     if (orientation == SwingConstants.VERTICAL) {
       int height = measures.getCellHeight();
@@ -108,14 +110,17 @@ public class HexEditor extends JComponent implements Scrollable {
     }
   }
 
+  @Override
   public boolean getScrollableTracksViewportHeight() {
     return false;
   }
 
+  @Override
   public boolean getScrollableTracksViewportWidth() {
     return true;
   }
 
+  @Override
   public int getScrollableUnitIncrement(Rectangle vis, int orientation, int direction) {
     if (orientation == SwingConstants.VERTICAL) {
       int ret = measures.getCellHeight();
@@ -131,59 +136,59 @@ public class HexEditor extends JComponent implements Scrollable {
   }
 
   @Override
-  protected void paintComponent(Graphics g) {
+  protected void paintComponent(Graphics gfx) {
     if (AppPreferences.AntiAliassing.getBoolean()) {
-      Graphics2D g2 = (Graphics2D) g;
+      final var g2 = (Graphics2D) gfx;
       g2.setRenderingHint(
           RenderingHints.KEY_TEXT_ANTIALIASING, RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
       g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
     }
-    measures.ensureComputed(g);
+    measures.ensureComputed(gfx);
 
-    Rectangle clip = g.getClipBounds();
+    final var clip = gfx.getClipBounds();
     if (isOpaque()) {
-      g.setColor(getBackground());
-      g.fillRect(clip.x, clip.y, clip.width, clip.height);
+      gfx.setColor(getBackground());
+      gfx.fillRect(clip.x, clip.y, clip.width, clip.height);
     }
 
-    long addr0 = model.getFirstOffset();
-    long addr1 = model.getLastOffset();
+    var addr0 = model.getFirstOffset();
+    var addr1 = model.getLastOffset();
 
-    long xaddr0 = measures.toAddress(0, clip.y);
+    var xaddr0 = measures.toAddress(0, clip.y);
     if (xaddr0 == addr0) xaddr0 = measures.getBaseAddress(model);
     long xaddr1 = measures.toAddress(getWidth(), clip.y + clip.height) + 1;
-    highlighter.paint(g, xaddr0, xaddr1);
+    highlighter.paint(gfx, xaddr0, xaddr1);
 
-    g.setColor(getForeground());
-    Font baseFont = g.getFont();
-    FontMetrics baseFm = g.getFontMetrics(baseFont);
-    Font labelFont = baseFont.deriveFont(Font.ITALIC);
-    FontMetrics labelFm = g.getFontMetrics(labelFont);
-    int cols = measures.getColumnCount();
-    int baseX = measures.getBaseX();
-    int baseY = measures.toY(xaddr0) + baseFm.getAscent() + baseFm.getLeading() / 2;
-    int dy = measures.getCellHeight();
-    int labelWidth = measures.getLabelWidth();
-    int labelChars = measures.getLabelChars();
-    int cellWidth = measures.getCellWidth();
-    int cellChars = measures.getCellChars();
-    for (long a = xaddr0; a < xaddr1; a += cols, baseY += dy) {
-      String label = toHex(a, labelChars);
-      g.setFont(labelFont);
-      g.drawString(
+    gfx.setColor(getForeground());
+    final var baseFont = gfx.getFont();
+    final var baseFm = gfx.getFontMetrics(baseFont);
+    final var labelFont = baseFont.deriveFont(Font.ITALIC);
+    final var labelFm = gfx.getFontMetrics(labelFont);
+    var cols = measures.getColumnCount();
+    var baseX = measures.getBaseX();
+    var baseY = measures.toY(xaddr0) + baseFm.getAscent() + baseFm.getLeading() / 2;
+    var dy = measures.getCellHeight();
+    var labelWidth = measures.getLabelWidth();
+    var labelChars = measures.getLabelChars();
+    var cellWidth = measures.getCellWidth();
+    var cellChars = measures.getCellChars();
+    for (var a = xaddr0; a < xaddr1; a += cols, baseY += dy) {
+      final var label = toHex(a, labelChars);
+      gfx.setFont(labelFont);
+      gfx.drawString(
           label, baseX - labelWidth + (labelWidth - labelFm.stringWidth(label)) / 2, baseY);
-      g.setFont(baseFont);
-      long b = a;
-      for (int j = 0; j < cols; j++, b++) {
+      gfx.setFont(baseFont);
+      var b = a;
+      for (var j = 0; j < cols; j++, b++) {
         if (b >= addr0 && b <= addr1) {
-          String val = toHex(model.get(b), cellChars);
-          int x = measures.toX(b) + (cellWidth - baseFm.stringWidth(val)) / 2;
-          g.drawString(val, x, baseY);
+          final var val = toHex(model.get(b), cellChars);
+          final var x = measures.toX(b) + (cellWidth - baseFm.stringWidth(val)) / 2;
+          gfx.drawString(val, x, baseY);
         }
       }
     }
 
-    caret.paintForeground(g, xaddr0, xaddr1);
+    caret.paintForeground(gfx, xaddr0, xaddr1);
   }
 
   public void removeHighlight(Object tag) {
@@ -229,14 +234,12 @@ public class HexEditor extends JComponent implements Scrollable {
   }
 
   private String toHex(long value, int chars) {
-    String ret = String.format("%0" + chars + "x", value);
-    if (ret.length() > chars) {
-      return ret.substring(ret.length() - chars);
-    }
-    return ret;
+    final var ret = String.format("%0" + chars + "x", value);
+    return (ret.length() > chars) ? ret.substring(ret.length() - chars) : ret;
   }
 
   private class Listener implements HexModelListener {
+    @Override
     public void bytesChanged(HexModel source, long start, long numBytes, long[] oldValues) {
       repaint(
           0,
@@ -245,6 +248,7 @@ public class HexEditor extends JComponent implements Scrollable {
           measures.toY(start + numBytes) + measures.getCellHeight());
     }
 
+    @Override
     public void metainfoChanged(HexModel source) {
       measures.recompute();
       repaint();
