@@ -120,12 +120,12 @@ public class CurveTool extends AbstractTool {
 
     switch (state) {
       case BEFORE_CREATION, CONTROL_DRAG -> {
-        end0 = Location.create(mx, my);
+        end0 = Location.create(mx, my, false);
         end1 = end0;
         state = ENDPOINT_DRAG;
       }
       case ENDPOINT_DRAG -> {
-        curCurve = new Curve(end0, end1, Location.create(mx, my));
+        curCurve = new Curve(end0, end1, Location.create(mx, my, false));
         state = CONTROL_DRAG;
       }
       default -> {
@@ -180,7 +180,7 @@ public class CurveTool extends AbstractTool {
             mx = canvas.snapX(mx);
             my = canvas.snapY(my);
           }
-          end1 = Location.create(mx, my);
+          end1 = Location.create(mx, my, false);
         }
         break;
       case CONTROL_DRAG:
@@ -212,7 +212,7 @@ public class CurveTool extends AbstractTool {
             cx = (int) Math.round(ct[0]);
             cy = (int) Math.round(ct[1]);
           }
-          ret = new Curve(end0, end1, Location.create(cx, cy));
+          ret = new Curve(end0, end1, Location.create(cx, cy, false));
           curCurve = ret;
         }
         break;
