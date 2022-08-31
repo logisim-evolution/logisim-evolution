@@ -5,6 +5,7 @@
 * @dev (????-??-??)
   * Fixed boolean algebra minimal form bug
   * Fixed random fill Rom bug
+  * Added TTL 74164, 74192 and 74193.
   * Fixed off grid components bug that could lead to OutOfMemory error.
   * Removed autolabler for tunnels, such that all get the same label in case of renaming.
   * Fixed bug preventing TTL 7442, 7443 and 7444 from being placed on the circuit canvas.
