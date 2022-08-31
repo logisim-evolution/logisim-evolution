@@ -56,7 +56,7 @@ public class SplitterFactory extends AbstractComponentFactory {
   public void drawGhost(ComponentDrawContext context, Color color, int x, int y, AttributeSet attrsBase) {
     final var attrs = (SplitterAttributes) attrsBase;
     context.getGraphics().setColor(color);
-    final var loc = Location.create(x, y);
+    final var loc = Location.create(x, y, true);
     if (attrs.appear == SplitterAttributes.APPEAR_LEGACY) {
       SplitterPainter.drawLegacy(context, attrs, loc);
     } else {

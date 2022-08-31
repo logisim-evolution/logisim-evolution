@@ -16,8 +16,8 @@ import com.cburch.logisim.util.EventSourceWeakSupport;
 import java.util.Arrays;
 
 public class MemContents implements Cloneable, HexModel {
-  public static MemContents create(int addrBits, int width) {
-    return new MemContents(addrBits, width);
+  public static MemContents create(int addrBits, int width, boolean randomize) {
+    return new MemContents(addrBits, width, randomize);
   }
 
   private static final int PAGE_SIZE_BITS = 12;
@@ -30,10 +30,12 @@ public class MemContents implements Cloneable, HexModel {
   private int addrBits;
   private long mask;
   private Page[] pages;
+  private boolean randomize;
 
-  private MemContents(int addrBits, int width) {
+  private MemContents(int addrBits, int width, boolean randomize) {
     listeners = null;
     setDimensions(addrBits, width);
+    this.randomize = randomize;
   }
 
   //
@@ -56,7 +58,7 @@ public class MemContents implements Cloneable, HexModel {
     else {
       for (var i = 0; i < pages.length; i++) {
         long[] oldValues = pages[i] != null ? pages[i].get(0, pages[i].getLength()) : null;
-        pages[i] = MemContentsSub.createPage(PAGE_SIZE, width);
+        pages[i] = MemContentsSub.createPage(PAGE_SIZE, width, randomize);
         if (oldValues != null) fireBytesChanged(i << PAGE_SIZE_BITS, oldValues.length, oldValues);
         else
           fireBytesChanged(
@@ -102,7 +104,7 @@ public class MemContents implements Cloneable, HexModel {
 
   private void ensurePage(int index) {
     if (pages[index] == null) {
-      pages[index] = MemContentsSub.createPage(PAGE_SIZE, width);
+      pages[index] = MemContentsSub.createPage(PAGE_SIZE, width, randomize);
     }
   }
 
@@ -260,7 +262,7 @@ public class MemContents implements Cloneable, HexModel {
     long val = value & mask;
     if (old != val) {
       if (pages[page] == null) {
-        pages[page] = MemContentsSub.createPage(PAGE_SIZE, width);
+        pages[page] = MemContentsSub.createPage(PAGE_SIZE, width, randomize);
       }
       pages[page].set(offs, val);
       fireBytesChanged(addr, 1, new long[] {old});
@@ -316,7 +318,7 @@ public class MemContents implements Cloneable, HexModel {
             }
           }
           if (!allZeroes) {
-            page = MemContentsSub.createPage(PAGE_SIZE, width);
+            page = MemContentsSub.createPage(PAGE_SIZE, width, randomize);
             pages[i] = page;
           }
         }
@@ -375,7 +377,7 @@ public class MemContents implements Cloneable, HexModel {
         // clearing locations di..di+n on this page
         fill(dp * PAGE_SIZE + di, n, 0);
       } else {
-        if (dstPage == null) dstPage = pages[dp] = MemContentsSub.createPage(PAGE_SIZE, width);
+        if (dstPage == null) dstPage = pages[dp] = MemContentsSub.createPage(PAGE_SIZE, width, randomize);
         // copy locations di..di+n on this page
         final var vals = srcPage.get(si, n);
         dstPage.set(di, vals);
@@ -416,7 +418,7 @@ public class MemContents implements Cloneable, HexModel {
       final var n = Math.min(oldPages.length, pages.length);
       for (var i = 0; i < n; i++) {
         if (oldPages[i] != null) {
-          pages[i] = MemContentsSub.createPage(pageLength, width);
+          pages[i] = MemContentsSub.createPage(pageLength, width, randomize);
           final var m = Math.min(oldPages[i].getLength(), pageLength);
           for (var j = 0; j < m; j++) {
             pages[i].set(j, oldPages[i].get(j));
@@ -425,7 +427,7 @@ public class MemContents implements Cloneable, HexModel {
       }
     }
     if (pageCount == 0 && pages[0] == null) {
-      pages[0] = MemContentsSub.createPage(pageLength, width);
+      pages[0] = MemContentsSub.createPage(pageLength, width, randomize);
     }
 
     fireMetainfoChanged();
@@ -435,7 +437,7 @@ public class MemContents implements Cloneable, HexModel {
     if (AppPreferences.Memory_Startup_Unknown.get()) {
       final var pageLength = (addrBits < PAGE_SIZE_BITS) ? 1 << addrBits : PAGE_SIZE;
       for (var i = 0; i < pages.length; i++)
-        if (pages[i] == null) pages[i] = MemContentsSub.createPage(pageLength, width);
+        if (pages[i] == null) pages[i] = MemContentsSub.createPage(pageLength, width, randomize);
     }
   }
 

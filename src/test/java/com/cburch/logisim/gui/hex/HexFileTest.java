@@ -39,7 +39,7 @@ public class HexFileTest {
       int wordSize,
       HashMap<Long, Long> values)
       throws IOException {
-    final var memory = MemContents.create(addressSize, wordSize);
+    final var memory = MemContents.create(addressSize, wordSize, true);
     if (desc.startsWith("Binary") || desc.startsWith("ASCII") || !autodetect) {
       // these can't be auto-detected
       if (!HexFile.open(memory, savedFile, desc)) {
@@ -97,7 +97,7 @@ public class HexFileTest {
 
     final var rng = new Random(index * addressSize * wordSize + 1);
 
-    final var memoryContents = MemContents.create(addressSize, wordSize);
+    final var memoryContents = MemContents.create(addressSize, wordSize, true);
 
     final var values = new HashMap<Long, Long>();
     // (1L << size) doesn't work if size is 64

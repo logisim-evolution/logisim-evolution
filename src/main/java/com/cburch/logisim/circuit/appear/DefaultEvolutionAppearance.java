@@ -118,7 +118,7 @@ public class DefaultEvolutionAppearance {
     textLabel.getLabel().setColor(Color.WHITE);
     textLabel.getLabel().setFont(DrawAttr.DEFAULT_NAME_FONT);
     ret.add(textLabel);
-    ret.add(new AppearanceAnchor(Location.create(rx + ax, ry + ay)));
+    ret.add(new AppearanceAnchor(Location.create(rx + ax, ry + ay, true)));
     return ret;
   }
 
@@ -156,7 +156,7 @@ public class DefaultEvolutionAppearance {
       rect.setValue(DrawAttr.PAINT_TYPE, DrawAttr.PAINT_FILL);
       rect.setValue(DrawAttr.FILL_COLOR, Color.BLACK);
       dest.add(rect);
-      dest.add(new AppearancePort(Location.create(x, y), pin));
+      dest.add(new AppearancePort(Location.create(x, y, true), pin));
       if (pin.getAttributeSet().containsAttribute(StdAttr.LABEL)) {
         var label = pin.getAttributeValue(StdAttr.LABEL);
         final var maxLength = 12;

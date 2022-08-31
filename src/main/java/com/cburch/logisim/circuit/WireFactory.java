@@ -28,7 +28,7 @@ class WireFactory extends AbstractComponentFactory {
 
   @Override
   public AttributeSet createAttributeSet() {
-    return Wire.create(Location.create(0, 0), Location.create(100, 0));
+    return Wire.create(Location.create(0, 0, true), Location.create(100, 0, true));
   }
 
   @Override

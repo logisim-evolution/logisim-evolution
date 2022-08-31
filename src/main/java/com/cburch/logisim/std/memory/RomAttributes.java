@@ -80,7 +80,7 @@ class RomAttributes extends AbstractAttributeSet {
   private AttributeOption appearance = AppPreferences.getDefaultAppearance();
 
   RomAttributes() {
-    contents = MemContents.create(addrBits.getWidth(), dataBits.getWidth());
+    contents = MemContents.create(addrBits.getWidth(), dataBits.getWidth(), false);
   }
 
   @Override
