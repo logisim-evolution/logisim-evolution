@@ -111,7 +111,7 @@ class ControlledBuffer extends InstanceFactory {
     final var facing = instance.getAttributeValue(StdAttr.FACING);
     final var bds = getOffsetBounds(instance.getAttributeSet());
     int d = Math.max(bds.getWidth(), bds.getHeight()) - 20;
-    final var loc0 = Location.create(0, 0);
+    final var loc0 = Location.create(0, 0, true);
     final var loc1 = loc0.translate(facing.reverse(), 20 + d);
     Location loc2;
     if (instance.getAttributeValue(ATTR_CONTROL) == LEFT_HANDED) {

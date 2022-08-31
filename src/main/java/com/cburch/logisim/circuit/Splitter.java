@@ -31,7 +31,6 @@ import com.cburch.logisim.tools.ToolTipMaker;
 import com.cburch.logisim.tools.WireRepair;
 import com.cburch.logisim.tools.WireRepairData;
 import com.cburch.logisim.util.GraphicsUtil;
-import com.cburch.logisim.util.StringUtil;
 import javax.swing.JPopupMenu;
 
 public class Splitter extends ManagedComponent
@@ -117,7 +116,7 @@ public class Splitter extends ManagedComponent
     final var ends = new EndData[fanout + 1];
     ends[0] = new EndData(origin, BitWidth.create(bitEnd.length), EndData.INPUT_OUTPUT);
     for (var i = 0; i < fanout; i++) {
-      ends[i + 1] = new EndData(Location.create(x, y), BitWidth.create(endWidth[i + 1]), EndData.INPUT_OUTPUT);
+      ends[i + 1] = new EndData(Location.create(x, y, true), BitWidth.create(endWidth[i + 1]), EndData.INPUT_OUTPUT);
       x += dx;
       y += dy;
     }
