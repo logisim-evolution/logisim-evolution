@@ -65,8 +65,7 @@ public class Implicant implements Comparable<Implicant> {
     var nrOfOnes = 0;
     var mask = 1;
     for (var bitIndex = 0; bitIndex < nrOfBits; bitIndex++) {
-      if ((value & mask) != 0)
-        nrOfOnes++;
+      if ((value & mask) != 0) nrOfOnes++;
       mask <<= 1;
     }
     return nrOfOnes;
