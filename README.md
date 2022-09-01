@@ -14,6 +14,7 @@ Branch [develop](https://github.com/logisim-evolution/logisim-evolution/tree/dev
   * [Features](#features)
   * [Requirements](#requirements)
   * **[Downloads](#download)**
+    * [Package Manager](#package-manager)
     * [Nightly builds (unstable)](#nightly-builds)
   * [Pictures of Logisim-evolution](docs/pics.md)
   * [More Information](docs/docs.md)
@@ -66,9 +67,7 @@ include the Java runtime and do not require it to be installed separately:
 * `logisim-evolution_<version>-1_amd64.deb`: Debian package (also suitable for Ubuntu and derivatives),
 * `logisim-evolution-<version>-1.x86_64.rpm`: Package for Fedora/Redhat/CentOS/SuSE Linux distributions,
 * `logisim-evolution-<version>.msi`: Installer package for Microsoft Windows,
-* `logisim-evolution-<version>.dmg`: macOS package. Note that `Logisim-evolution` may also be installed
-  using [MacPorts](https://www.macports.org/) (by typing `sudo port install logisim-evolution`)
-  or via [Homebrew](https://brew.sh/) (by typing `brew install --cask logisim-evolution`).
+* `logisim-evolution-<version>.dmg`: macOS package.
 
 The Java JAR [`logisim-evolution-<version>-all.jar`](https://github.com/logisim-evolution/logisim-evolution/releases)
 is also available and can be run on any system with a supported Java runtime installed.
@@ -88,6 +87,17 @@ See [Safely open apps on your Mac](https://support.apple.com/en-us/HT202491) for
 
 Depending on your security settings, you may also get a panel asking if you wish to allow it to accept
 network connections. You can click "Deny" as we do not need network access currently nor we do request any.
+
+### Package Manager ###
+`Logisim-evolution` is available from a bunch of package managers.  
+Note that these are not mentained by the core developers.
+- [Flathub](https://flathub.org/apps/details/com.github.reds.LogisimEvolution) (`flatpak install flathub com.github.reds.LogisimEvolution`)
+- [Snap](https://snapcraft.io/logisim-evolution-snapcraft) (`snap install logisim-evolution-snapcraft`)
+- [Homebrew](https://formulae.brew.sh/cask/logisim-evolution) (`brew install --cask logisim-evolution`)
+- [MacPorts](https://ports.macports.org/port/logisim-evolution/details/) (`port install logisim-evolution`)
+- [Chocolatey](https://community.chocolatey.org/packages/logisim-evolution) (`choco install logisim-evolution`)
+- [winget](https://wingetgui.com/apps?id=Logisim-evolution.Logisim-evolution) (`winget install --id=Logisim-evolution.Logisim-evolution  -e`)
+- [Arch User Repository](https://aur.archlinux.org/packages/logisim-evolution)
 
 ### Nightly builds ###
 
