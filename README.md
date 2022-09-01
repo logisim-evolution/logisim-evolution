@@ -89,15 +89,17 @@ Depending on your security settings, you may also get a panel asking if you wish
 network connections. You can click "Deny" as we do not need network access currently nor we do request any.
 
 ### Package Manager ###
+
 `Logisim-evolution` is available from a bunch of package managers.  
 Note that these are not mentained by the core developers.
-- [Flathub](https://flathub.org/apps/details/com.github.reds.LogisimEvolution) (`flatpak install flathub com.github.reds.LogisimEvolution`)
-- [Snap](https://snapcraft.io/logisim-evolution-snapcraft) (`snap install logisim-evolution-snapcraft`)
-- [Homebrew](https://formulae.brew.sh/cask/logisim-evolution) (`brew install --cask logisim-evolution`)
-- [MacPorts](https://ports.macports.org/port/logisim-evolution/details/) (`port install logisim-evolution`)
-- [Chocolatey](https://community.chocolatey.org/packages/logisim-evolution) (`choco install logisim-evolution`)
-- [winget](https://wingetgui.com/apps?id=Logisim-evolution.Logisim-evolution) (`winget install --id=Logisim-evolution.Logisim-evolution  -e`)
-- [Arch User Repository](https://aur.archlinux.org/packages/logisim-evolution)
+
+* [Flathub](https://flathub.org/apps/details/com.github.reds.LogisimEvolution) (`flatpak install flathub com.github.reds.LogisimEvolution`)
+* [Snap](https://snapcraft.io/logisim-evolution-snapcraft) (`snap install logisim-evolution-snapcraft`)
+* [Homebrew](https://formulae.brew.sh/cask/logisim-evolution) (`brew install --cask logisim-evolution`)
+* [MacPorts](https://ports.macports.org/port/logisim-evolution/details/) (`port install logisim-evolution`)
+* [Chocolatey](https://community.chocolatey.org/packages/logisim-evolution) (`choco install logisim-evolution`)
+* [winget](https://wingetgui.com/apps?id=Logisim-evolution.Logisim-evolution) (`winget install --id=Logisim-evolution.Logisim-evolution  -e`)
+* [Arch User Repository](https://aur.archlinux.org/packages/logisim-evolution)
 
 ### Nightly builds ###
 
