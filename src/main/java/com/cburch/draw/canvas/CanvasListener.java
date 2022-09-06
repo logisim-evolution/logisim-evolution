@@ -56,7 +56,7 @@ class CanvasListener
   }
 
   private void handlePopupTrigger(MouseEvent e) {
-    final var loc = Location.create(e.getX(), e.getY());
+    final var loc = Location.create(e.getX(), e.getY(), false);
     final var objects = canvas.getModel().getObjectsFromTop();
     CanvasObject clicked = null;
     for (final var o : objects) {
@@ -77,7 +77,7 @@ class CanvasListener
   }
 
   private void handlePorts(MouseEvent e) {
-    final var loc = Location.create(e.getX(), e.getY());
+    final var loc = Location.create(e.getX(), e.getY(), true);
     final var objects = canvas.getModel().getObjectsFromTop();
     final var ports = new ArrayList<CanvasObject>();
     CanvasObject newSelectedPort = null;

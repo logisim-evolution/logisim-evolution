@@ -88,22 +88,22 @@ public final class LineUtil {
         case 0:
         case 8: // going west
         case 4: // going east
-          return Location.create(mx, py);
+          return Location.create(mx, py, false);
         case 2: // going north
         case 6: // going south
-          return Location.create(px, my);
+          return Location.create(px, my, false);
         case 1: // going northwest
-          return Location.create(px - d45, py - d45);
+          return Location.create(px - d45, py - d45, false);
         case 3: // going northeast
-          return Location.create(px + d45, py - d45);
+          return Location.create(px + d45, py - d45, false);
         case 5: // going southeast
-          return Location.create(px + d45, py + d45);
+          return Location.create(px + d45, py + d45, false);
         case 7: // going southwest
-          return Location.create(px - d45, py + d45);
+          return Location.create(px - d45, py + d45, false);
         default:
           break;
       }
     }
-    return Location.create(mx, my); // should never happen
+    return Location.create(mx, my, false); // should never happen
   }
 }

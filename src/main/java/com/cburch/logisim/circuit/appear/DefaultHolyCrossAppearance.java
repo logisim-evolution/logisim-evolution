@@ -21,7 +21,6 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.std.wiring.Pin;
 import java.awt.Canvas;
 import java.awt.Color;
-import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -188,7 +187,7 @@ public class DefaultHolyCrossAppearance {
       ret.add(label);
     }
 
-    ret.add(new AppearanceAnchor(Location.create(rx + aX, ry + aY)));
+    ret.add(new AppearanceAnchor(Location.create(rx + aX, ry + aY, true)));
     return ret;
   }
 
@@ -208,7 +207,7 @@ public class DefaultHolyCrossAppearance {
     final var color = Color.DARK_GRAY; // maybe GRAY instead?
     int ldx;
     for (final var pin : pins) {
-      dest.add(new AppearancePort(Location.create(x, y), pin));
+      dest.add(new AppearancePort(Location.create(x, y, true), pin));
       if (isLeftSide) {
         ldx = LABEL_OUTSIDE;
         hAlign = EditableLabel.LEFT;
