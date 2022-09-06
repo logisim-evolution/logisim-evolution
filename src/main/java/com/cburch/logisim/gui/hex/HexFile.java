@@ -971,7 +971,7 @@ public class HexFile {
 
     protected HexReader(BufferedLineReader in, int addrBits, int width) {
       this.in = in;
-      this.dst = MemContents.create(addrBits, width);
+      this.dst = MemContents.create(addrBits, width, false);
     }
 
     ////////////////////////////////////////////////////////

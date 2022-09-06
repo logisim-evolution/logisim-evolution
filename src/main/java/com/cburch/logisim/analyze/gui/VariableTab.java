@@ -63,8 +63,6 @@ import org.jdesktop.swingx.prompt.BuddySupport;
 
 public class VariableTab extends AnalyzerTab {
   private static final long serialVersionUID = 1L;
-  private final VariableList inputs;
-  private final VariableList outputs;
   private final JTable inputsTable;
   private final JTable outputsTable;
   private final JLabel error = new JLabel(" ");
@@ -212,8 +210,6 @@ public class VariableTab extends AnalyzerTab {
   }
 
   VariableTab(VariableList inputs, VariableList outputs, LogisimMenuBar menubar) {
-    this.inputs = inputs;
-    this.outputs = outputs;
     inputs.addCompanion(outputs);
     outputs.addCompanion(inputs);
 

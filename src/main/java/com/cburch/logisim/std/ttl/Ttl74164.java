@@ -21,41 +21,51 @@ import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;
 
-/**
- * TTL 74x165 8-bit parallel-to-serial shift register with asynchronous load
- * Model based on https://www.ti.com/product/SN74LS165A datasheet.
- */
-public class Ttl74165 extends AbstractTtlGate {
+public class Ttl74164 extends AbstractTtlGate {
   /**
-   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
-   * prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files.
+   * Do NOT change as it will prevent project files from loading.
    *
-   * <p>Identifier value must MUST be unique string among all tools.
+   * Identifier value must MUST be unique string among all tools.
    */
-  public static final String _ID = "74165";
+  public static final String _ID = "74164";
 
-  public Ttl74165() {
+  public static final int PORT_INDEX_A = 0;
+  public static final int PORT_INDEX_B = 1;
+  public static final int PORT_INDEX_QA = 2;
+  public static final int PORT_INDEX_QB = 3;
+  public static final int PORT_INDEX_QC = 4;
+  public static final int PORT_INDEX_QD = 5;
+  public static final int PORT_INDEX_CLK = 6;
+  public static final int PORT_INDEX_CLR = 7;
+  public static final int PORT_INDEX_QE = 8;
+  public static final int PORT_INDEX_QF = 9;
+  public static final int PORT_INDEX_QG = 10;
+  public static final int PORT_INDEX_QH = 11;
+
+
+
+
+  public Ttl74164() {
     super(
         _ID,
-        (byte) 16,
-        new byte[] {7, 9},
+        (byte) 14,
+        new byte[] {3, 4, 5, 6, 10, 11, 12, 13},
         new String[] {
-          "Shift/Load",
+          "A",
+          "B",
+          "QA",
+          "QB",
+          "QC",
+          "QD",
           "Clock",
-          "P4",
-          "P5",
-          "P6",
-          "P7",
-          "Q7n",
-          "Q7",
-          "Serial Input",
-          "P0",
-          "P1",
-          "P2",
-          "P3",
-          "Clock Inhibit"
+          "Clear",
+          "QE",
+          "QF",
+          "QG",
+          "QH"
         },
-        new Ttl74165HdlGenerator());
+        null);
     super.setInstancePoker(Poker.class);
   }
 
@@ -92,20 +102,15 @@ public class Ttl74165 extends AbstractTtlGate {
 
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
-      if (!state.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE)) {
-        return;
-      }
+      if (!state.getAttributeValue(TtlLibrary.DRAW_INTERNAL_STRUCTURE)) return;
       if (isPressed && isInside(state, e)) {
         final var index = getIndex(state, e);
         final var myState = (ShiftRegisterData) state.getData();
-        if (myState == null) {
-          return;
-        }
-        if (myState.get(index).isFullyDefined()) {
+        if (myState == null) return;
+        if (myState.get(index).isFullyDefined())
           myState.set(index, myState.get(index).not());
-        } else {
+        else
           myState.set(index, Value.createKnown(1, 0));
-        }
         state.fireInvalidated();
       }
       isPressed = false;
@@ -123,7 +128,7 @@ public class Ttl74165 extends AbstractTtlGate {
 
   @Override
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
-    final var g = (Graphics2D) painter.getGraphics();
+    final var gfx = (Graphics2D) painter.getGraphics();
     super.paintBase(painter, false, false);
     Drawgates.paintPortNames(
         painter,
@@ -131,42 +136,52 @@ public class Ttl74165 extends AbstractTtlGate {
         y,
         height,
         new String[] {
-          "ShLd", "CK", "P4", "P5", "P6", "P7", "Q7n", "Q7", "SER", "P0", "P1", "P2", "P3", "CkIh"
+          "A", "B", "QA", "QB", "QC", "QD", "CLK", "CLR", "QE", "QF", "QG", "QH"
         });
     ShiftRegisterData data = getData(painter);
-    drawState(g, x, y, height, data);
+    drawState(gfx, x, y, height, data);
   }
 
-  private void drawState(Graphics2D g, int x, int y, int height, ShiftRegisterData state) {
+  private void drawState(Graphics2D gfx, int x, int y, int height, ShiftRegisterData state) {
     if (state == null) return;
     for (var i = 0; i < 8; i++) {
-      g.setColor(state.get(7 - i).getColor());
-      g.fillOval(x + 36 + i * 10, y + height / 2 - 4, 8, 8);
-      g.setColor(Color.WHITE);
-      GraphicsUtil.drawCenteredText(g, state.get(7 - i).toDisplayString(), x + 40 + i * 10, y + height / 2);
+      gfx.setColor(state.get(7 - i).getColor());
+      gfx.fillOval(x + 36 + i * 10, y + height / 2 - 4, 8, 8);
+      gfx.setColor(Color.WHITE);
+      GraphicsUtil.drawCenteredText(gfx, state.get(7 - i).toDisplayString(), x + 40 + i * 10, y + height / 2);
     }
-    g.setColor(Color.BLACK);
+    gfx.setColor(Color.BLACK);
   }
 
   @Override
   public void propagateTtl(InstanceState state) {
     final var data = getData(state);
-    final var triggered = data.updateClock(state.getPortValue(1), StdAttr.TRIG_RISING);
-    if (state.getPortValue(0) == Value.FALSE) { // load
+    final var triggered = data.updateClock(state.getPortValue(PORT_INDEX_CLK), StdAttr.TRIG_RISING);
+    if (state.getPortValue(PORT_INDEX_CLR) == Value.FALSE) { // Clear
       data.clear();
-      data.push(state.getPortValue(5));
-      data.push(state.getPortValue(4));
-      data.push(state.getPortValue(3));
-      data.push(state.getPortValue(2));
-      data.push(state.getPortValue(12));
-      data.push(state.getPortValue(11));
-      data.push(state.getPortValue(10));
-      data.push(state.getPortValue(9));
-    } else if (triggered && state.getPortValue(13) == Value.FALSE) { // shift
-      data.push(state.getPortValue(8));
+    } else if (triggered) {
+      data.clear();
+
+      data.push(state.getPortValue(PORT_INDEX_A) == Value.TRUE
+                && state.getPortValue(PORT_INDEX_B) == Value.TRUE
+                ? Value.TRUE : Value.FALSE);
+
+      data.push(state.getPortValue(PORT_INDEX_QA));
+      data.push(state.getPortValue(PORT_INDEX_QB));
+      data.push(state.getPortValue(PORT_INDEX_QC));
+      data.push(state.getPortValue(PORT_INDEX_QD));
+      data.push(state.getPortValue(PORT_INDEX_QE));
+      data.push(state.getPortValue(PORT_INDEX_QF));
+      data.push(state.getPortValue(PORT_INDEX_QG));
     }
-    state.setPort(6, data.get(0).not(), 4);
-    state.setPort(7, data.get(0), 4);
+    state.setPort(PORT_INDEX_QA, data.get(0), 4);
+    state.setPort(PORT_INDEX_QB, data.get(1), 4);
+    state.setPort(PORT_INDEX_QC, data.get(2), 4);
+    state.setPort(PORT_INDEX_QD, data.get(3), 4);
+    state.setPort(PORT_INDEX_QE, data.get(4), 4);
+    state.setPort(PORT_INDEX_QF, data.get(5), 4);
+    state.setPort(PORT_INDEX_QG, data.get(6), 4);
+    state.setPort(PORT_INDEX_QH, data.get(7), 4);
   }
 
   @Override
@@ -176,6 +191,6 @@ public class Ttl74165 extends AbstractTtlGate {
 
   @Override
   public int[] clockPinIndex(netlistComponent comp) {
-    return new int[] {1};
+    return new int[] {6};
   }
 }

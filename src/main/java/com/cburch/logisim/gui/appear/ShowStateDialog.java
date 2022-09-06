@@ -155,7 +155,7 @@ public class ShowStateDialog extends JDialog implements ActionListener {
     for (final var shape : model.getObjectsFromBottom()) {
       boundingBox = boundingBox.add(shape.getBounds());
     }
-    var loc = Location.create(((boundingBox.getX() + 9) / 10 * 10), ((boundingBox.getY() + 9) / 10 * 10));
+    var loc = Location.create(boundingBox.getX(), boundingBox.getY(), true);
 
     // TreePath[] roots = tree.getCheckingRoots();
     final var checked = tree.getCheckingPaths();
