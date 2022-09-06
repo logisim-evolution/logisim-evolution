@@ -73,7 +73,7 @@ class Clip implements ClipboardOwner {
         final var data = (long[]) xfer.getTransferData(binaryFlavor);
         numWords = data.length;
         var addrBits = 32 - Integer.numberOfLeadingZeros(numWords);
-        pasted = MemContents.create(addrBits, model.getValueWidth());
+        pasted = MemContents.create(addrBits, model.getValueWidth(), false);
         pasted.set(0, data);
       } catch (UnsupportedFlavorException | IOException e) {
         return;

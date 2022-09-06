@@ -301,21 +301,21 @@ public class Demultiplexer extends InstanceFactory {
       Location end0;
       Location end1;
       if (facing == Direction.WEST) {
-        end0 = Location.create(-30, -10);
-        end1 = Location.create(-30, 10);
-        sel = Location.create(-20, selMult * 20);
+        end0 = Location.create(-30, -10, true);
+        end1 = Location.create(-30, 10, true);
+        sel = Location.create(-20, selMult * 20, true);
       } else if (facing == Direction.NORTH) {
-        end0 = Location.create(-10, -30);
-        end1 = Location.create(10, -30);
-        sel = Location.create(selMult * -20, -20);
+        end0 = Location.create(-10, -30, true);
+        end1 = Location.create(10, -30, true);
+        sel = Location.create(selMult * -20, -20, true);
       } else if (facing == Direction.SOUTH) {
-        end0 = Location.create(-10, 30);
-        end1 = Location.create(10, 30);
-        sel = Location.create(selMult * -20, 20);
+        end0 = Location.create(-10, 30, true);
+        end1 = Location.create(10, 30, true);
+        sel = Location.create(selMult * -20, 20, true);
       } else {
-        end0 = Location.create(30, -10);
-        end1 = Location.create(30, 10);
-        sel = Location.create(20, selMult * 20);
+        end0 = Location.create(30, -10, true);
+        end1 = Location.create(30, 10, true);
+        sel = Location.create(20, selMult * 20, true);
       }
       ps[0] = new Port(end0.getX(), end0.getY(), Port.OUTPUT, data.getWidth());
       ps[1] = new Port(end1.getX(), end1.getY(), Port.OUTPUT, data.getWidth());
@@ -327,19 +327,19 @@ public class Demultiplexer extends InstanceFactory {
       if (facing == Direction.WEST) {
         dx = -40;
         ddx = 0;
-        sel = Location.create(-20, selMult * (dy + 10 * outputs));
+        sel = Location.create(-20, selMult * (dy + 10 * outputs), true);
       } else if (facing == Direction.NORTH) {
         dy = -40;
         ddy = 0;
-        sel = Location.create(selMult * dx, -20);
+        sel = Location.create(selMult * dx, -20, true);
       } else if (facing == Direction.SOUTH) {
         dy = 40;
         ddy = 0;
-        sel = Location.create(selMult * dx, 20);
+        sel = Location.create(selMult * dx, 20, true);
       } else {
         dx = 40;
         ddx = 0;
-        sel = Location.create(20, selMult * (dy + 10 * outputs));
+        sel = Location.create(20, selMult * (dy + 10 * outputs), true);
       }
       for (var i = 0; i < outputs; i++) {
         ps[i] = new Port(dx, dy, Port.OUTPUT, data.getWidth());

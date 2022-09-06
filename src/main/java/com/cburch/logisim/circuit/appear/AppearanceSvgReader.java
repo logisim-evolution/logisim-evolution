@@ -64,7 +64,7 @@ public class AppearanceSvgReader {
   public static AbstractCanvasObject createShape(Element elt, List<PinInfo> pins, Circuit circuit) {
     final var name = elt.getTagName();
     if (name.equals("circ-anchor") || name.equals("circ-origin")) {
-      final var loc = getLocation(elt);
+      final var loc = getLocation(elt, true);
       final var ret = new AppearanceAnchor(loc);
       if (elt.hasAttribute("facing")) {
         final var facing = Direction.parse(elt.getAttribute("facing"));
@@ -74,9 +74,9 @@ public class AppearanceSvgReader {
     }
 
     if (name.equals("circ-port")) {
-      final var loc = getLocation(elt);
+      final var loc = getLocation(elt, true);
       final var pinStr = elt.getAttribute("pin").split(",");
-      final var pinLoc = Location.create(Integer.parseInt(pinStr[0].trim()), Integer.parseInt(pinStr[1].trim()));
+      final var pinLoc = Location.create(Integer.parseInt(pinStr[0].trim()), Integer.parseInt(pinStr[1].trim()), true);
       for (final var pin : pins) {
         if (pin.pinIsAlreadyUsed()) continue;
         if (pin.getPinLocation().equals(pinLoc)) {
@@ -132,18 +132,32 @@ public class AppearanceSvgReader {
   }
 
   private static Boolean isInputPinReference(Element elt) {
+    
+    if (elt.hasAttribute("dir")) {
+      final var direction = elt.getAttribute("dir");
+      return direction.equals("in");
+    }
+    // for backward compatability
     final var width = Double.parseDouble(elt.getAttribute("width"));
     final var radius = (int) Math.round(width / 2.0);
     return AppearancePort.isInputAppearance(radius);
   }
 
-  private static Location getLocation(Element elt) {
-    final var x = Double.parseDouble(elt.getAttribute("x"));
-    final var y = Double.parseDouble(elt.getAttribute("y"));
-    final var w = Double.parseDouble(elt.getAttribute("width"));
-    final var h = Double.parseDouble(elt.getAttribute("height"));
-    final var px = (int) Math.round(x + w / 2);
-    final var py = (int) Math.round(y + h / 2);
-    return Location.create(px, py);
+  private static Location getLocation(Element elt, boolean hasToSnap) {
+    // for backward compatability
+    var px = 0;
+    var py = 0;
+    if (elt.hasAttribute("width") && elt.hasAttribute("height")) {
+      final var x = Double.parseDouble(elt.getAttribute("x"));
+      final var y = Double.parseDouble(elt.getAttribute("y"));
+      final var w = Double.parseDouble(elt.getAttribute("width"));
+      final var h = Double.parseDouble(elt.getAttribute("height"));
+      px = (int) Math.round(x + w / 2);
+      py = (int) Math.round(y + h / 2);
+    } else {
+      px = Integer.parseInt(elt.getAttribute("x"));
+      py = Integer.parseInt(elt.getAttribute("y"));
+    }
+    return Location.create(px, py, hasToSnap);
   }
 }

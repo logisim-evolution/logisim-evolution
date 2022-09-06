@@ -193,7 +193,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
 
   private Location findAnchorLocation() {
     final var anchor = findAnchor();
-    return (anchor == null) ? Location.create(100, 100) : anchor.getLocation();
+    return (anchor == null) ? Location.create(100, 100, true) : anchor.getLocation();
   }
 
   void fireCircuitAppearanceChanged(int affected) {

@@ -126,6 +126,15 @@ class BuildCircuitButton extends JButton {
       var useNands = false;
       var replace = false;
 
+      if (!model.getOutputExpressions().hasExpressions()) {
+        OptionPane.showMessageDialog(
+                parent,
+                S.get("zeroOrNotOptimizedMessage"),
+                S.get("buildDialogTitle"),
+                OptionPane.ERROR_MESSAGE);
+        return;
+      }
+
       var ok = false;
       while (!ok) {
         DialogPanel dlog = new DialogPanel();

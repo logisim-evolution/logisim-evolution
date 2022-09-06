@@ -207,7 +207,7 @@ public class LocaleManager {
         }
       }
       if (select == null) {
-        select = Objects.requireNonNullElseGet(backup, () -> new Locale("en"));
+        select = Objects.requireNonNullElseGet(backup, () -> Locale.ENGLISH);
       }
 
       curLocale = select;
@@ -224,7 +224,7 @@ public class LocaleManager {
     var locales = getLocaleOptions();
     if (locales == null || locales.length == 0) {
       var cur = getLocale();
-      if (cur == null) cur = new Locale("en");
+      if (cur == null) cur = Locale.ENGLISH;
       locales = new Locale[] {cur};
     }
     return new JScrollPane(new LocaleSelector(locales));
@@ -277,7 +277,7 @@ public class LocaleManager {
         country = null;
       }
       if (language != null) {
-        final var loc = country == null ? new Locale(language) : new Locale(language, country);
+        final var loc = new Locale.Builder().setLanguage(language).setRegion(country).build();
         retl.add(loc);
       }
     }
