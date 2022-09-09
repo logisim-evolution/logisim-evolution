@@ -301,20 +301,20 @@ public class Decoder extends InstanceFactory {
       if (facing == Direction.NORTH || facing == Direction.SOUTH) {
         int y = facing == Direction.NORTH ? -10 : 10;
         if (selectLoc == StdAttr.SELECT_TOP_RIGHT) {
-          end0 = Location.create(-30, y);
-          end1 = Location.create(-10, y);
+          end0 = Location.create(-30, y, true);
+          end1 = Location.create(-10, y, true);
         } else {
-          end0 = Location.create(10, y);
-          end1 = Location.create(30, y);
+          end0 = Location.create(10, y, true);
+          end1 = Location.create(30, y, true);
         }
       } else {
         int x = facing == Direction.WEST ? -10 : 10;
         if (selectLoc == StdAttr.SELECT_TOP_RIGHT) {
-          end0 = Location.create(x, 10);
-          end1 = Location.create(x, 30);
+          end0 = Location.create(x, 10, true);
+          end1 = Location.create(x, 30, true);
         } else {
-          end0 = Location.create(x, -30);
-          end1 = Location.create(x, -10);
+          end0 = Location.create(x, -30, true);
+          end1 = Location.create(x, -10, true);
         }
       }
       ps[0] = new Port(end0.getX(), end0.getY(), Port.OUTPUT, 1);
@@ -341,7 +341,7 @@ public class Decoder extends InstanceFactory {
         dy += ddy;
       }
     }
-    final var en = Location.create(0, 0).translate(facing, -10);
+    final var en = Location.create(0, 0, true).translate(facing, -10);
     ps[outputs] = new Port(0, 0, Port.INPUT, select.getWidth());
     if (enable) {
       ps[outputs + 1] = new Port(en.getX(), en.getY(), Port.INPUT, BitWidth.ONE);

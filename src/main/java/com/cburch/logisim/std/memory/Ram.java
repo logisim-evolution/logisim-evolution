@@ -128,7 +128,7 @@ public class Ram extends Mem {
   private MemContents getNewContents(AttributeSet attrs) {
     final var contents =
         MemContents.create(
-            attrs.getValue(Mem.ADDR_ATTR).getWidth(), attrs.getValue(Mem.DATA_ATTR).getWidth());
+            attrs.getValue(Mem.ADDR_ATTR).getWidth(), attrs.getValue(Mem.DATA_ATTR).getWidth(), true);
     contents.condFillRandom();
     return contents;
   }

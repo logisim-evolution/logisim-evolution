@@ -90,7 +90,7 @@ public class Selection {
   }
 
   public Location getMovingDelta() {
-    return Location.create(moveDx, moveDy);
+    return Location.create(moveDx, moveDy, false);
   }
 
   public Set<CanvasObject> getSelected() {

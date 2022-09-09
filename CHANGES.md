@@ -3,6 +3,11 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed boolean algebra minimal form bug
+  * Fixed random fill Rom bug
+  * Added TTL 74164, 74192 and 74193.
+  * Fixed off grid components bug that could lead to OutOfMemory error.
+  * Removed autolabler for tunnels, such that all get the same label in case of renaming.
   * Fixed bug preventing TTL 7442, 7443 and 7444 from being placed on the circuit canvas.
   * Sub-circuit can now be deleted with `DELETE` key, along with `BACKSPACE` used so far.
   * Fixed `Simulate` -> `Timing Diagram` not opening when using "Nimbus" look and feel.
@@ -12,6 +17,7 @@
   * Fixed TTL 74175, CLR inverted
   * Fixed TTL 7436 pin arrangement
   * Added TTL 74245: octal bus transceivers with three-state outputs.
+  * Fixed TTL 74165, correct order of inputs, load asynchronously
   * Added TTL 74166: 8-bit parallel-to-serial shift register with clear
 
 * v3.7.2 (2021-11-09)
