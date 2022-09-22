@@ -69,10 +69,10 @@ public class BitWidth implements Comparable<BitWidth> {
 
   public static BitWidth create(int width) {
     ensurePrefab();
-    if (width < 0 ) {
-        throw new IllegalArgumentException("width " + width + " must be positive");
+    if (width < 0) {
+      throw new IllegalArgumentException("width " + width + " must be positive");
     } else if (width >= prefab.length) {
-        throw new IllegalArgumentException("width " + width + " must be at most " + MAXWIDTH);
+      throw new IllegalArgumentException("width " + width + " must be at most " + MAXWIDTH);
     }
     return prefab[width];
   }
