@@ -18,13 +18,12 @@ on:
   # want "schedule" to be the trigger.
   # NOTE: remove `if` condition marked with `HACK` once merged.
   pull_request:
-#  # Nightly must be run against "develop" branch only.
-#    branches: [ develop ]
-#    branches: [ snap-packages-test-1 ]
-#    types: [ closed ]
-#  schedule:
-#    # every day at midnight
-#    - cron: "0 0 * * *"
+  # Nightly must be run against "develop" branch only.
+    branches: [ develop ]
+    types: [ closed ]
+  schedule:
+    # every day at midnight
+    - cron: "0 0 * * *"
 
 env:
   JDK_VERSION: 16
