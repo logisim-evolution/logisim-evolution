@@ -1,5 +1,5 @@
 /*
- * This file is part of logisim-evolution.
+ * This file is part of Logisim-evolution.
  *
  * Logisim-evolution is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by the
@@ -12,7 +12,7 @@
  * for more details.
  *
  * You should have received a copy of the GNU General Public License along
- * with logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
+ * with Logisim-evolution. If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
