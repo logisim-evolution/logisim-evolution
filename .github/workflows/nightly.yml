@@ -235,8 +235,7 @@ jobs:
       - name: "Checkout sources"
         uses: actions/checkout@v2
         with:
-#          ref: ${{ github.ref_name }}
-          ref: snap-packages-test-1
+          ref: ${{ github.ref_name }}
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
         uses: actions/setup-java@v2
         with:
