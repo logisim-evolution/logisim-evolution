@@ -92,7 +92,10 @@ network connections. You can click "Deny" as we do not need network access curre
 
 `Logisim-evolution` is available from a bunch of package managers.  
 Note that these (except of Snap) exare not maintained by the core developers.
-If you should observe a bug in Logisim-evolution while using one of these packages, first make sure that it can be reproduced with the most recent official packages [provided through this repository](https://github.com/logisim-evolution/logisim-evolution/releases) and ideally the HEAD of our [develop branch](https://github.com/logisim-evolution/logisim-evolution/tree/develop) before [creating an issue](https://github.com/logisim-evolution/logisim-evolution/issues) on the official [Logisim-evolution repository](https://github.com/logisim-evolution/logisim-evolution). Otherwise, report the issue to the package maintainer!
+If you should observe a bug in Logisim-evolution while using one of these packages,
+first make sure that it can be reproduced with the most recent official packages [provided through this repository](https://github.com/logisim-evolution/logisim-evolution/releases)
+and ideally the HEAD of our [develop branch](https://github.com/logisim-evolution/logisim-evolution/tree/develop) before [creating an issue](https://github.com/logisim-evolution/logisim-evolution/issues) on the official [Logisim-evolution repository](https://github.com/logisim-evolution/logisim-evolution).
+Otherwise, report the issue to the package maintainer!
 
 * [Snap](https://snapcraft.io/logisim-evolution) (`snap install logisim-evolution`)
 * [Flathub](https://flathub.org/apps/details/com.github.reds.LogisimEvolution) (`flatpak install flathub com.github.reds.LogisimEvolution`)
