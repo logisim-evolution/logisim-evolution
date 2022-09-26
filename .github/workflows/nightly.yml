@@ -110,7 +110,8 @@ jobs:
     needs: git_check
     if: needs.git_check.outputs.run_build == 'true'
     steps:
-      - name: 'Checkout "develop" branch'
+      # https://github.com/z0al/dependent-issues
+      - name: 'Checkout branch: ${{ env.GITHUB_REF }}'
         uses: actions/checkout@v2
         with:
           ref: 'develop'
