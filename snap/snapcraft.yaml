@@ -1,8 +1,6 @@
 #
-# Logisim-evolution nightly builder
-# https://github.com/logisim-evolution/logisim-evolution
-#
 # Control file to build SNAP package of LSe
+# https://github.com/logisim-evolution/logisim-evolution
 # https://snapcraft.io/
 #
 # Marcin Orlowski
