@@ -61,11 +61,11 @@ public class Ttl74138 extends AbstractTtlGate {
             _ID,
             (byte) 16,
             new byte[] {
-                    Y0, Y1, Y2, Y3, Y4, Y5, Y6, Y7
+              Y0, Y1, Y2, Y3, Y4, Y5, Y6, Y7
             },
             new String[] {
-                    "A", "B", "C", "EN2a Enable (active LOW)", "EN2b Enable (active LOW)", "EN1 Enable (active HIGH)",
-                    "Y7", "Y6", "Y5", "Y4", "Y3", "Y2", "Y1", "Y0"
+              "A", "B", "C", "EN2a Enable (active LOW)", "EN2b Enable (active LOW)", "EN1 Enable (active HIGH)",
+              "Y7", "Y6", "Y5", "Y4", "Y3", "Y2", "Y1", "Y0"
             },
             null);
   }
