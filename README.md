@@ -91,7 +91,7 @@ network connections. You can click "Deny" as we do not need network access curre
 ### Package Manager ###
 
 `Logisim-evolution` is available from a bunch of package managers.  
-Note that these (except of Snap) exare not maintained by the core developers.  
+Note that these (except for Snap) are not maintained by the core developers.  
 If you should observe a bug in Logisim-evolution while using one of these packages,
 first make sure that it can be reproduced with the most recent official packages
 [provided through this repository](https://github.com/logisim-evolution/logisim-evolution/releases)
