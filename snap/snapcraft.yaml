@@ -1,0 +1,87 @@
+#
+# Control file to build SNAP package of LSe
+# https://github.com/logisim-evolution/logisim-evolution
+# https://snapcraft.io/
+#
+# Marcin Orlowski
+#
+
+name: logisim-evolution
+base: core22
+confinement: strict
+icon: support/jpackage/linux/logisim-icon-128.png
+license: GPL-3.0
+summary: Digital logic design tool and simulator
+description: |
+ Logisim-evolution is educational software for designing and simulating digital logic circuits.
+ Logisim-evolution is free, open-source, and cross-platform.
+
+ Project highlights:
+  * easy to use circuit designer,
+  * logic circuit simulations,
+  * chronogram (to see the evolution of signals in your circuit),
+  * electronic board integration (schematics can be simulated on real hardware),
+  * VHDL components (components behavior can be specified in VHDL!),
+  * TCL/TK console (interfaces between the circuit and the user),
+  * huge library of components (LEDs, TTLs, switches, SoCs),
+  * supports multiple languages,
+  * and more!
+grade: stable
+
+adopt-info: logisim-evolution
+
+architectures:
+  - build-on: amd64
+
+layout:
+  /etc/fonts:
+    bind: $SNAP/etc/fonts
+  /usr/share/fonts:
+    bind: $SNAP/usr/share/fonts
+  /var/cache/fontconfig:
+    bind: $SNAP_DATA/var/cache/fontconfig
+
+apps:
+  logisim-evolution:
+    extensions: [gnome]
+    command: usr/lib/jvm/java-17-openjdk-$CRAFT_TARGET_ARCH/bin/java -jar $SNAP/logisim-evolution/logisim-evolution.jar
+    environment:
+      _JAVA_OPTIONS: "-Duser.home=$SNAP_USER_DATA"
+      XDG_DATA_HOME: $SNAP/usr/share
+      FONTCONFIG_PATH: $SNAP/etc/fonts/conf.d
+      FONTCONFIG_FILE: $SNAP/etc/fonts/fonts.conf
+    plugs:
+      - desktop
+      - desktop-legacy
+      - gsettings
+      - home
+      - opengl
+      - unity7
+      - wayland
+      - x11
+
+parts:
+  logisim-evolution:
+    plugin: nil
+    source: https://github.com/MarcinOrlowski/logisim-evolution.git
+    source-type: git
+    override-pull: |
+      craftctl default
+      git checkout snap-packages-test-1
+      git status
+      LSE_VERSION="$(cat gradle.properties | grep '^version\s*=.*' | awk '{print $3}')"
+      craftctl set version="${LSE_VERSION}"
+    override-build: |
+      bash gradlew "$@" shadowJar && \
+      mkdir -p "$CRAFT_PART_INSTALL"/logisim-evolution && \
+        ls -ld build/libs/*
+        mv build/libs/logisim-evolution-*-all.jar "$CRAFT_PART_INSTALL"/logisim-evolution/logisim-evolution.jar
+    build-packages:
+      - git
+      - openjdk-17-jdk
+      - libfontconfig1-dev
+    stage-packages:
+      - openjdk-17-jre
+      - fonts-freefont-ttf
+      - fonts-arphic-uming
+      - fontconfig-config
