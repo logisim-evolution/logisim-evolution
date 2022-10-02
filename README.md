@@ -126,7 +126,7 @@ Note that these builds may be unstable since the develop branch is a work in pro
 
 To get nightly downloads, please
 [click here](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/nightly.yml)
-and browse to the last successful run of `Nightly build`, which should be on top. Note that due to Github internals,
+and browse to the last successful run of `Build` worker, which should be on top. Note that due to Github internals,
 all files are provided as ZIP archives. You must unzip the downloaded file to get the package for installation.
 
 Please share your experience in [Discussions](https://github.com/logisim-evolution/logisim-evolution/discussions)
