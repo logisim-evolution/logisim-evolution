@@ -204,4 +204,16 @@ public class Drawgates {
       GraphicsUtil.drawCenteredArc(g, x - 32, y, 15, -27, 54);
     }
   }
+
+  /**
+   * Draws the schematic symbol for an open-collector/open-drain output
+   *
+   * @param g Graphics context to draw to
+   * @param x x position of symbol
+   * @param y y position of symbol
+   */
+  static void paintOpenCollector(Graphics g, int x, int y) {
+    g.drawPolyline(new int[] {x, x + 3, x + 6, x + 3, x}, new int[] {y, y + 3, y, y - 3, y}, 5);
+    g.drawLine(x, y + 3, x + 6, y + 3);
+  }
 }
