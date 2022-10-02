@@ -121,7 +121,7 @@ public class TextTool extends AbstractTool {
     var found = false;
     final var mx = e.getX();
     final var my = e.getY();
-    final var mloc = Location.create(mx, my);
+    final var mloc = Location.create(mx, my, false);
     for (final var o : canvas.getModel().getObjectsFromTop()) {
       if (o instanceof Text && o.contains(mloc, true)) {
         clicked = (Text) o;

@@ -392,7 +392,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     return painter.getHaloedComponent();
   }
 
-  public int getHorizzontalScrollBar() {
+  public int getHorizontalScrollBar() {
     return canvasPane.getHorizontalScrollBar().getValue();
   }
 
@@ -442,7 +442,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     boolean showTips = AppPreferences.COMPONENT_TIPS.getBoolean();
     if (showTips) {
       Canvas.snapToGrid(event);
-      Location loc = Location.create(event.getX(), event.getY());
+      final var loc = Location.create(event.getX(), event.getY(), false);
       ComponentUserEvent e = null;
       for (Component comp : getCircuit().getAllContaining(loc)) {
         Object makerObj = comp.getFeature(ToolTipMaker.class);
@@ -840,7 +840,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
           && viewport.zoomButtonVisible
           && autoZoomButtonClicked(
               viewport.getSize(),
-              e.getX() * getZoomFactor() - getHorizzontalScrollBar(),
+              e.getX() * getZoomFactor() - getHorizontalScrollBar(),
               e.getY() * getZoomFactor() - getVerticalScrollBar())) {
         viewport.zoomButtonColor = DEFAULT_ZOOM_BUTTON_COLOR.darker();
         viewport.repaint();
@@ -864,7 +864,7 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
               && viewport.zoomButtonVisible
               && autoZoomButtonClicked(
                   viewport.getSize(),
-                  e.getX() * getZoomFactor() - getHorizzontalScrollBar(),
+                  e.getX() * getZoomFactor() - getHorizontalScrollBar(),
                   e.getY() * getZoomFactor() - getVerticalScrollBar())
               && viewport.zoomButtonColor != DEFAULT_ZOOM_BUTTON_COLOR)
           || e.getButton() == MouseEvent.BUTTON2 && e.getClickCount() == 2) {
@@ -893,18 +893,19 @@ public class Canvas extends JPanel implements LocaleListener, CanvasPaneContents
     public void mouseWheelMoved(MouseWheelEvent mwe) {
       final var tool = proj.getTool();
       if (mwe.isControlDown()) {
-        final var zoomModel = proj.getFrame().getZoomModel();
-        var zoom = zoomModel.getZoomFactor();
-        final var opts = zoomModel.getZoomOptions();
-        if (mwe.getWheelRotation() < 0) { // ZOOM IN
-          zoom += 0.1;
-          double max = opts.get(opts.size() - 1) / 100.0;
-          zoomModel.setZoomFactor(Math.min(zoom, max), mwe);
-        } else { // ZOOM OUT
-          zoom -= 0.1;
-          final var min = opts.get(0) / 100.0;
-          zoomModel.setZoomFactor(Math.max(zoom, min), mwe);
+        var zoomControl = proj.getFrame().getZoomControl();
+    
+        repairMouseEvent(mwe);
+        if (mwe.getWheelRotation() < 0) {
+          zoomControl.zoomIn();
+        } else {
+          zoomControl.zoomOut();
         }
+        var rect = getViewableRect();
+        var zoom = proj.getFrame().getZoomModel().getZoomFactor();
+        setHorizontalScrollBar((int) ((mwe.getX() - rect.width / 2) * zoom));
+        setVerticalScrollBar((int) ((mwe.getY() - rect.height / 2) * zoom));
+
       } else if (tool instanceof PokeTool && ((PokeTool) tool).isScrollable()) {
         final var id = (mwe.getWheelRotation() < 0) ? KeyEvent.VK_UP : KeyEvent.VK_DOWN;
         final var e = new KeyEvent(mwe.getComponent(), KeyEvent.KEY_PRESSED, mwe.getWhen(), 0, id, '\0');

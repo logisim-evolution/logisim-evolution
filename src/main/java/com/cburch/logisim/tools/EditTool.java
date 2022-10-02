@@ -71,7 +71,7 @@ public class EditTool extends Tool {
   private static final int CACHE_MAX_SIZE = 32;
 
   private static final Location NULL_LOCATION =
-      Location.create(Integer.MIN_VALUE, Integer.MIN_VALUE);
+      Location.create(Integer.MIN_VALUE, Integer.MIN_VALUE, false);
 
   private final Listener listener;
   private final SelectTool select;
@@ -249,8 +249,7 @@ public class EditTool extends Tool {
       Collection<Component> sel = canvas.getSelection().getComponents();
       if (sel != null) {
         for (final var c : sel) {
-          if (c instanceof Wire) {
-            final var w = (Wire) c;
+          if (c instanceof final Wire w) {
             if (w.contains(loc) && !w.endsAt(loc)) return select;
           }
         }
@@ -445,7 +444,7 @@ public class EditTool extends Tool {
     if (lastX == snapx && lastY == snapy && modsSame) { // already computed
       return wireLoc != NULL_LOCATION;
     } else {
-      final var snap = Location.create(snapx, snapy);
+      final var snap = Location.create(snapx, snapy, false);
       if (modsSame) {
         Object o = cache.get(snap);
         if (o != null) {

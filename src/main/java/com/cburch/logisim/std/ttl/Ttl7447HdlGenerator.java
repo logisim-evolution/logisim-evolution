@@ -45,22 +45,22 @@ public class Ttl7447HdlGenerator extends AbstractHdlGeneratorFactory {
   @Override
   public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var decoder = new WithSelectHdlGenerator("decoder1", "bcd", 4, "segments", 7)
-        .setDefault("1110001")
+        .setDefault("0000000") // selectValue = 15L
         .add(0L, "0111111")
         .add(1L, "0000110")
         .add(2L, "1011011")
         .add(3L, "1001111")
         .add(4L, "1100110")
         .add(5L, "1101101")
-        .add(6L, "1111101")
+        .add(6L, "1111100")
         .add(7L, "0000111")
         .add(8L, "1111111")
         .add(9L, "1100111")
-        .add(10L, "1110111")
-        .add(11L, "1111100")
-        .add(12L, "0111001")
-        .add(13L, "1011110")
-        .add(14L, "1111001");
+        .add(10L, "1011000")
+        .add(11L, "1001100")
+        .add(12L, "1100010")
+        .add(13L, "1101001")
+        .add(14L, "1111000");
     final var contents = LineBuffer.getHdlBuffer();
     contents.add(decoder.getHdlCode()).empty();
     if (Hdl.isVhdl()) {
@@ -75,10 +75,10 @@ public class Ttl7447HdlGenerator extends AbstractHdlGeneratorFactory {
 
             bcd   <= BCD3&BCD2&BCD1&BCD0;
             
-            realSegments <= ({{others}} => '0') {{when}} BI = '0' {{else}}
-                            ({{others}} => '1') {{when}} LT = '0' {{else}}
-                            ({{others}} => '0') {{when}} (RBI='0') {{and}} (bcd=x"0") {{else}}
-                            segments; 
+            realSegments <= ({{others}} => '1') {{when}} BI = '0' {{else}}
+                            ({{others}} => '0') {{when}} LT = '0' {{else}}
+                            ({{others}} => '1') {{when}} (RBI='0') {{and}} (bcd=x"0") {{else}}
+                            {{not}}(segments);
           """);
     } else {
       contents.add("""
@@ -91,7 +91,7 @@ public class Ttl7447HdlGenerator extends AbstractHdlGeneratorFactory {
           assign Segg = realSegments[6];
           assign bcd  = {BCD3, BCD2, BCD1, BCD0};
           
-          assign realSegments = BI == 0 ? 0 : LT == 0 ? 7'h7F : RBI == 0 && bcd == 0 ? 0 : segments;
+          assign realSegments = BI == 0 ? 7'h7F : LT == 0 ? 0 : RBI == 0 && bcd == 0 ? 7'h7F : !segments;
           """);
     }
     return contents.empty();

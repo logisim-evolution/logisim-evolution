@@ -27,7 +27,8 @@ import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import javax.swing.JPanel;
 
-public class PlaRomPanel extends JPanel implements BaseMouseListenerContract, BaseMouseMotionListenerContract {
+public class PlaRomPanel extends JPanel
+    implements BaseMouseListenerContract, BaseMouseMotionListenerContract {
 
   /** */
   private static final long serialVersionUID = 7182231893518001053L;

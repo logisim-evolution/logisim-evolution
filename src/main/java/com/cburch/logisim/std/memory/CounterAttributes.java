@@ -17,6 +17,7 @@ import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Direction;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
+
 import java.util.List;
 import java.util.Objects;
 
@@ -39,7 +40,7 @@ class CounterAttributes extends AbstractAttributeSet {
             },
             new Object[] {
               BitWidth.create(8),
-                0xFFL,
+              0xFFL,
               Counter.ON_GOAL_WRAP,
               StdAttr.TRIG_RISING,
               "",
@@ -87,42 +88,38 @@ class CounterAttributes extends AbstractAttributeSet {
   @SuppressWarnings("unchecked")
   @Override
   public <V> void setValue(Attribute<V> attr, V value) {
-    Object oldValue = base.getValue(attr);
-    if (Objects.equals(oldValue, value)) return;
+    V oldValue = base.getValue(attr);
+    if (Objects.equals(oldValue, value)) {
+      return;
+    }
+    V newValue = value;
 
-    Long newMax = null;
     if (attr == StdAttr.WIDTH) {
-      final var oldWidth = base.getValue(StdAttr.WIDTH);
-      final var newWidth = (BitWidth) value;
-      final var oldW = oldWidth.getWidth();
-      final var newW = newWidth.getWidth();
-      final var oldValObj = base.getValue(Counter.ATTR_MAX);
-      long oldVal = oldValObj;
-      base.setValue(StdAttr.WIDTH, newWidth);
-      if (newW > oldW) {
-        newMax = newWidth.getMask();
-      } else {
-        final long v = oldVal & newWidth.getMask();
-        if (v != oldVal) {
-          Long newValObj = v;
-          base.setValue(Counter.ATTR_MAX, newValObj);
-          fireAttributeValueChanged(Counter.ATTR_MAX, newValObj, null);
-        }
+      final var oldWidth = (BitWidth) oldValue;
+      final var newWidth = (BitWidth) newValue;
+      final var mask = newWidth.getMask();
+      final var oldMax = base.getValue(Counter.ATTR_MAX);
+      final var newMax = (newWidth.getWidth() < oldWidth.getWidth()) ? (mask & oldMax) : mask;
+      if (oldMax != newMax) {
+        base.setValue(Counter.ATTR_MAX, newMax);
+        fireAttributeValueChanged(Counter.ATTR_MAX, newMax, oldMax);
       }
-      fireAttributeValueChanged(StdAttr.WIDTH, newWidth, null);
     } else if (attr == Counter.ATTR_MAX) {
-      final long oldVal = base.getValue(Counter.ATTR_MAX);
       final var width = base.getValue(StdAttr.WIDTH);
-      final long newVal = (Long) value & width.getMask();
-      if (newVal != oldVal) {
-        value = (V) Long.valueOf(newVal);
+      newValue = (V) Long.valueOf(width.getMask() & (Long) newValue);
+      if (Objects.equals(oldValue, newValue)) {
+        return;
       }
     }
-    base.setValue(attr, value);
-    fireAttributeValueChanged(attr, value, (V) oldValue);
-    if (newMax != null) {
-      base.setValue(Counter.ATTR_MAX, newMax);
-      fireAttributeValueChanged(Counter.ATTR_MAX, newMax, null);
+    base.setValue(attr, newValue);
+    fireAttributeValueChanged(attr, newValue, oldValue);
+  }
+
+  @Override
+  public <V> List<Attribute<?>> attributesMayAlsoBeChanged(Attribute<V> attr, V value) {
+    if (attr != StdAttr.WIDTH || Objects.equals(base.getValue(attr), value)) {
+      return null;
     }
+    return List.of(Counter.ATTR_MAX);
   }
 }

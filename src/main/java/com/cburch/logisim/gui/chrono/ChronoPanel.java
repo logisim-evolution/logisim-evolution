@@ -305,11 +305,11 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
   public Color[] rowColors(SignalInfo item, boolean isSelected) {
     if (isSelected) return selectColors;
     final var spotlight = model.getSpotlight();
-    if (spotlight != null && spotlight.info == item) return SPOT;
-    return PLAIN;
+    return (spotlight != null && spotlight.info == item) ? SPOT : PLAIN;
   }
 
   private static Color darker(Color c) {
+    if (c == null) return null;
     final var hsb = Color.RGBtoHSB(c.getRed(), c.getGreen(), c.getBlue(), null);
     final var s = 0.8f;
     return (hsb[1] == 0.0)
@@ -334,7 +334,7 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
           setEnabled(LogisimMenuBar.DELETE, sel);
           setEnabled(LogisimMenuBar.DUPLICATE, false);
           setEnabled(LogisimMenuBar.SELECT_ALL, !empty);
-          // todo: raise/lower handlers
+          // TODO: raise/lower handlers
           setEnabled(LogisimMenuBar.RAISE, sel);
           setEnabled(LogisimMenuBar.LOWER, sel);
           setEnabled(LogisimMenuBar.RAISE_TOP, sel);
@@ -404,7 +404,10 @@ public class ChronoPanel extends LogPanel implements Model.Listener {
 
           GraphicsUtil.drawText(
               g,
-              S.get("ChronoPrintTitle", model.getCircuit().getName(), getProject().getLogisimFile().getDisplayName()),
+              S.get(
+                  "ChronoPrintTitle",
+                  model.getCircuit().getName(),
+                  getProject().getLogisimFile().getDisplayName()),
               (int) (w / 2),
               0,
               GraphicsUtil.H_CENTER,

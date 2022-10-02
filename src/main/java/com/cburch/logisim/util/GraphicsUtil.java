@@ -205,13 +205,10 @@ public final class GraphicsUtil {
 
     final var ret = new Rectangle(x, y, width, height);
     switch (halign) {
-      case H_CENTER:
-        ret.translate(-(width / 2), 0);
-        break;
-      case H_RIGHT:
-        ret.translate(-width, 0);
-        break;
-      default:
+      case H_CENTER -> ret.translate(-(width / 2), 0);
+      case H_RIGHT -> ret.translate(-width, 0);
+      default -> {
+      }
     }
     switch (valign) {
       case V_TOP:

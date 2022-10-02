@@ -27,7 +27,8 @@ public final class FileUtil {
     return path.endsWith(File.separator) ? path : path + File.separator;
   }
 
-  public static File createTmpFile(String content, String prefix, String suffix) throws IOException {
+  public static File createTmpFile(String content, String prefix, String suffix)
+      throws IOException {
     final var tmp = File.createTempFile(prefix, suffix);
 
     try (final var out = new BufferedWriter(new FileWriter(tmp))) {

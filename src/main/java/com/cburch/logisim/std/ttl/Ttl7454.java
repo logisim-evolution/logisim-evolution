@@ -15,10 +15,10 @@ import com.cburch.logisim.prefs.AppPreferences;
 
 public class Ttl7454 extends AbstractTtlGate {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "7454";
 
@@ -42,7 +42,8 @@ public class Ttl7454 extends AbstractTtlGate {
     Drawgates.paintAnd(g, x + 65, y + 20, 10, 10, false);
     Drawgates.paintAnd(g, x + 65, y + 40, 10, 10, false);
     // TODO Auto-generated method stub
-    final var offset = (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) ? 4 : 0;
+    final var offset =
+        (AppPreferences.GATE_SHAPE.get().equals(AppPreferences.SHAPE_RECTANGULAR)) ? 4 : 0;
     var xpos = new int[] {x + 105, x + 108, x + 108, x + 111 + offset};
     var ypos = new int[] {y + 20, y + 20, y + 27, y + 27};
     g.drawPolyline(xpos, ypos, 4);

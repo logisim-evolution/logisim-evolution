@@ -51,7 +51,8 @@ public class FactoryAttributes implements AttributeSet, AttributeListener, Clone
     AttributeEvent e = null;
     for (final var l : listeners) {
       if (e == null) {
-        e = new AttributeEvent(
+        e =
+            new AttributeEvent(
                 this, baseEvent.getAttribute(), baseEvent.getValue(), baseEvent.getOldValue());
       }
       l.attributeListChanged(e);
@@ -63,7 +64,8 @@ public class FactoryAttributes implements AttributeSet, AttributeListener, Clone
     AttributeEvent e = null;
     for (final var l : listeners) {
       if (e == null) {
-        e = new AttributeEvent(
+        e =
+            new AttributeEvent(
                 this, baseEvent.getAttribute(), baseEvent.getValue(), baseEvent.getOldValue());
       }
       l.attributeValueChanged(e);

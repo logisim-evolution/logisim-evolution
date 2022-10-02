@@ -326,18 +326,24 @@ public class SocUpMenuProvider implements ActionListener {
       final var inst = info.getInstance();
       if (myInfo.containsKey(inst)) {
         switch (info.getFunction()) {
-          case LOAD_ELF_FUNCTION:
+          case LOAD_ELF_FUNCTION -> {
             myInfo.get(inst).readElf(inst, info.getCircuitState());
             return;
-          case SHOW_STATE_FUNCTION:
+          }
+          case SHOW_STATE_FUNCTION -> {
             myInfo.get(inst).showState(info.getState(), info.getHierarchyInfo());
             return;
-          case SHOW_PROGRAM:
-            myInfo.get(inst).showProgram(info.getState(), info.getHierarchyInfo(), info.getCircuitState());
+          }
+          case SHOW_PROGRAM -> {
+            myInfo.get(inst)
+                .showProgram(info.getState(), info.getHierarchyInfo(), info.getCircuitState());
             return;
-          case SHOW_ASM:
-            myInfo.get(inst).showAsmWindow(inst, info.getState(), info.getHierarchyInfo(), info.getCircuitState());
+          }
+          case SHOW_ASM -> {
+            myInfo.get(inst).showAsmWindow(inst, info.getState(), info.getHierarchyInfo(),
+                info.getCircuitState());
             return;
+          }
         }
       }
     }

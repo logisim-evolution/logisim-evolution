@@ -32,8 +32,7 @@ public class ImportTableButton extends JButton {
   ImportTableButton(JFrame parent, AnalyzerModel model) {
     this.parent = parent;
     this.model = model;
-    addActionListener(
-        event -> doLoad());
+    addActionListener(event -> doLoad());
   }
 
   void localeChanged() {
@@ -90,7 +89,8 @@ public class ImportTableButton extends JButton {
         }
         lastFile = file;
       } catch (IOException e) {
-        OptionPane.showMessageDialog(parent, e.getMessage(), S.get("openErrorTitle"), OptionPane.ERROR_MESSAGE);
+        OptionPane.showMessageDialog(
+            parent, e.getMessage(), S.get("openErrorTitle"), OptionPane.ERROR_MESSAGE);
       }
     }
   }

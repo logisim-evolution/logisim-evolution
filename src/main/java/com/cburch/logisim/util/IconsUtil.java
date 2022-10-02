@@ -39,7 +39,8 @@ public final class IconsUtil {
     return icon;
   }
 
-  public static void paintRotated(Graphics g, int x, int y, Direction dir, Icon icon, Component dest) {
+  public static void paintRotated(
+      Graphics g, int x, int y, Direction dir, Icon icon, Component dest) {
     if (!(g instanceof Graphics2D) || dir == Direction.EAST) {
       icon.paintIcon(dest, g, x, y);
       return;

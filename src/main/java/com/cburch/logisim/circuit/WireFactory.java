@@ -28,7 +28,7 @@ class WireFactory extends AbstractComponentFactory {
 
   @Override
   public AttributeSet createAttributeSet() {
-    return Wire.create(Location.create(0, 0), Location.create(100, 0));
+    return Wire.create(Location.create(0, 0, true), Location.create(100, 0, true));
   }
 
   @Override
@@ -44,7 +44,8 @@ class WireFactory extends AbstractComponentFactory {
   // user interface methods
   //
   @Override
-  public void drawGhost(ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs) {
+  public void drawGhost(
+      ComponentDrawContext context, Color color, int x, int y, AttributeSet attrs) {
     final var g = context.getGraphics();
     final var dir = attrs.getValue(Wire.DIR_ATTR);
     final var len = attrs.getValue(Wire.LEN_ATTR);

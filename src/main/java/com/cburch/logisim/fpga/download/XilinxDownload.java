@@ -276,13 +276,13 @@ public class XilinxDownload implements VendorDownload {
             if (info.getPullBehavior() != PullBehaviors.UNKNOWN
                 && info.getPullBehavior() != PullBehaviors.FLOAT) {
               temp.append("| ")
-                  .append(PullBehaviors.getContraintedPullString(info.getPullBehavior()))
+                  .append(PullBehaviors.getConstrainedPullString(info.getPullBehavior()))
                   .append(" ");
             }
             if (info.getDrive() != DriveStrength.UNKNOWN
                 && info.getDrive() != DriveStrength.DEFAULT_STENGTH) {
               temp.append("| DRIVE = ")
-                  .append(DriveStrength.GetContraintedDriveStrength(info.getDrive())).append(" ");
+                  .append(DriveStrength.getConstrainedDriveStrength(info.getDrive())).append(" ");
             }
             if (info.getIoStandard() != IoStandards.UNKNOWN
                 && info.getIoStandard() != IoStandards.DEFAULT_STANDARD) {

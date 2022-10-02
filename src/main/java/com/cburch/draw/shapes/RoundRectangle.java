@@ -119,7 +119,7 @@ public class RoundRectangle extends Rectangular {
       x += rand.nextInt(d) - d / 2;
       y += rand.nextInt(d) - d / 2;
     }
-    return Location.create(x, y);
+    return Location.create(x, y, false);
   }
 
   @Override

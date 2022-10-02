@@ -18,10 +18,10 @@ import java.awt.Graphics;
 
 public class Ttl74175 extends AbstractTtlGate {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "74175";
 
@@ -52,7 +52,7 @@ public class Ttl74175 extends AbstractTtlGate {
       state.setData(data);
     }
     var triggered = data.updateClock(state.getPortValue(7));
-    if (state.getPortValue(0) == Value.TRUE) {
+    if (state.getPortValue(0) == Value.FALSE) {
       data.setValue(Value.createKnown(data.getWidth(), 0));
     } else if (triggered) {
       Value[] vals = data.getValue().getAll();

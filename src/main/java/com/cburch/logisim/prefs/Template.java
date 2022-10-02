@@ -38,11 +38,15 @@ public class Template {
 
   public static Template createEmpty() {
     final var circName = S.get("newCircuitName");
-    final var buf = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
-        + "<project source=\"" + BuildInfo.version
-        + "\" version=\"1.0\">"
-        + " <circuit name=\"" + circName + "\" />"
-        + "</project>";
+    final var buf =
+        "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+            + "<project source=\""
+            + BuildInfo.version
+            + "\" version=\"1.0\">"
+            + " <circuit name=\""
+            + circName
+            + "\" />"
+            + "</project>";
     return new Template(buf);
   }
 

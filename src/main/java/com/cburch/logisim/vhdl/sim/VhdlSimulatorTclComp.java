@@ -61,12 +61,13 @@ public class VhdlSimulatorTclComp {
 
         final var state = vsim.getProject().getCircuitState().getInstanceState(comp);
         final var fact = comp.getFactory();
-        final var componentName = (fact instanceof VhdlEntity)
-            ? ((VhdlEntity) fact).getSimName(state.getInstance().getAttributeSet())
-            : ((VhdlEntityComponent) fact).getSimName(state.getInstance().getAttributeSet());
+        final var componentName =
+            (fact instanceof VhdlEntity)
+                ? ((VhdlEntity) fact).getSimName(state.getInstance().getAttributeSet())
+                : ((VhdlEntityComponent) fact).getSimName(state.getInstance().getAttributeSet());
 
-        // FIXME: hardcoded path. The "../src/" asks for troubles!
-        compFiles.append("vcom -reportprogress 300 -work work ../src/")
+        compFiles
+            .append(VhdlSimConstants.VHDL_COMPILE_COMMAND)
             .append(componentName)
             .append(".vhdl")
             .append(System.getProperty("line.separator"));

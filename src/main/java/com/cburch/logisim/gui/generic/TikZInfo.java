@@ -297,11 +297,9 @@ public class TikZInfo implements Cloneable {
   }
 
   private String getCharRepresentation(int i) {
-    final var chars = new StringBuilder();
     final var repeat = i / 26;
     final var charId = i % 26;
-    chars.append(String.valueOf((char) (charId + 'A')).repeat(repeat + 1));
-    return chars.toString();
+    return String.valueOf((char) (charId + 'A')).repeat(repeat + 1);
   }
 
   private String getFontDefinition(int i) {

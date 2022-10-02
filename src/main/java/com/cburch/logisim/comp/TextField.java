@@ -64,30 +64,18 @@ public class TextField {
     final var ascent = fm.getAscent();
     final var descent = fm.getDescent();
     switch (halign) {
-      case TextField.H_CENTER:
-        x -= width / 2;
-        break;
-      case TextField.H_RIGHT:
-        x -= width;
-        break;
-      default:
-        break;
+      case TextField.H_CENTER -> x -= width / 2;
+      case TextField.H_RIGHT -> x -= width;
+      default -> {
+      }
     }
     switch (valign) {
-      case TextField.V_TOP:
-        y += ascent;
-        break;
-      case TextField.V_CENTER:
-        y += ascent / 2;
-        break;
-      case TextField.V_CENTER_OVERALL:
-        y += (ascent - descent) / 2;
-        break;
-      case TextField.V_BOTTOM:
-        y -= descent;
-        break;
-      default:
-        break;
+      case TextField.V_TOP -> y += ascent;
+      case TextField.V_CENTER -> y += ascent / 2;
+      case TextField.V_CENTER_OVERALL -> y += (ascent - descent) / 2;
+      case TextField.V_BOTTOM -> y -= descent;
+      default -> {
+      }
     }
     g.drawString(text, x, y);
     g.setFont(old);
@@ -108,31 +96,19 @@ public class TextField {
     final var descent = fm.getDescent();
 
     switch (halign) {
-      case TextField.H_CENTER:
-        x -= width / 2;
-        break;
-      case TextField.H_RIGHT:
-        x -= width;
-        break;
-      default:
-        break;
+      case TextField.H_CENTER -> x -= width / 2;
+      case TextField.H_RIGHT -> x -= width;
+      default -> {
+      }
     }
 
     switch (valign) {
-      case TextField.V_TOP:
-        y += ascent;
-        break;
-      case TextField.V_CENTER:
-        y += ascent / 2;
-        break;
-      case TextField.V_CENTER_OVERALL:
-        y += (ascent - descent) / 2;
-        break;
-      case TextField.V_BOTTOM:
-        y -= descent;
-        break;
-      default:
-        break;
+      case TextField.V_TOP -> y += ascent;
+      case TextField.V_CENTER -> y += ascent / 2;
+      case TextField.V_CENTER_OVERALL -> y += (ascent - descent) / 2;
+      case TextField.V_BOTTOM -> y -= descent;
+      default -> {
+      }
     }
     return Bounds.create(x, y - ascent, width, ascent + descent);
   }

@@ -65,7 +65,7 @@ public class AppPreferences {
 
       String localeStr = this.get();
       if (!("".equals(localeStr))) {
-        LocaleManager.setLocale(new Locale(localeStr));
+        LocaleManager.setLocale(Locale.forLanguageTag(localeStr));
       }
       LocaleManager.addLocaleListener(myListener);
       myListener.localeChanged();
@@ -242,15 +242,11 @@ public class AppPreferences {
   //
   public static Template getTemplate() {
     getPrefs();
-    switch (templateType) {
-      case TEMPLATE_EMPTY:
-        return getEmptyTemplate();
-      case TEMPLATE_CUSTOM:
-        return getCustomTemplate();
-      case TEMPLATE_PLAIN:
-      default:
-        return getPlainTemplate();
-    }
+    return switch (templateType) {
+      case TEMPLATE_EMPTY -> getEmptyTemplate();
+      case TEMPLATE_CUSTOM -> getCustomTemplate();
+      default -> getPlainTemplate();
+    };
   }
 
   public static File getTemplateFile() {
@@ -534,8 +530,6 @@ public class AppPreferences {
   // Layout preferences
   public static final String ADD_AFTER_UNCHANGED = "unchanged";
   public static final String ADD_AFTER_EDIT = "edit";
-  public static final PrefMonitor<Boolean> PRINTER_VIEW =
-      create(new PrefMonitorBoolean("printerView", false));
   public static final PrefMonitor<Boolean> ATTRIBUTE_HALO =
       create(new PrefMonitorBoolean("attributeHalo", true));
   public static final PrefMonitor<Boolean> COMPONENT_TIPS =
@@ -575,17 +569,21 @@ public class AppPreferences {
 
   public static final PrefMonitor<Boolean> NEW_INPUT_OUTPUT_SHAPES =
       create(new PrefMonitorBooleanConvert("oldIO", true));
+
+  public static double getAutoScaleFactor() {
+    return (((!GraphicsEnvironment.isHeadless())
+                  ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
+                  : 0)
+              / 1000);
+  }
+
   public static final PrefMonitor<Double> SCALE_FACTOR =
       create(
           new PrefMonitorDouble(
               "Scale",
               Math.max(
-                  (((!GraphicsEnvironment.isHeadless())
-                          ? Toolkit.getDefaultToolkit().getScreenSize().getHeight()
-                          : 0)
-                      / 1000),
+                  getAutoScaleFactor(),
                   1.0)));
-
   public static final PrefMonitor<String> ADD_AFTER =
       create(
           new PrefMonitorStringOpts(

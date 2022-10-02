@@ -39,10 +39,10 @@ import java.awt.event.MouseEvent;
 
 public class Button extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Button";
 
@@ -52,9 +52,9 @@ public class Button extends InstanceFactory {
       new AttributeOption("passive", S.getter("buttonPressPassive"));
   public static final Attribute<AttributeOption> ATTR_PRESS =
       Attributes.forOption(
-        "press",
-        S.getter("buttonPressAttr"),
-        new AttributeOption[] {BUTTON_PRESS_ACTIVE, BUTTON_PRESS_PASSIVE});
+          "press",
+          S.getter("buttonPressAttr"),
+          new AttributeOption[] {BUTTON_PRESS_ACTIVE, BUTTON_PRESS_PASSIVE});
 
   public static class Logger extends InstanceLogger {
     @Override
@@ -70,7 +70,8 @@ public class Button extends InstanceFactory {
     @Override
     public Value getLogValue(InstanceState state, Object option) {
       InstanceDataSingleton data = (InstanceDataSingleton) state.getData();
-      final var defaultButtonState = state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_ACTIVE ? Value.FALSE : Value.TRUE;
+      final var defaultButtonState =
+          state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_ACTIVE ? Value.FALSE : Value.TRUE;
       return data == null ? defaultButtonState : (Value) data.getValue();
     }
 
@@ -83,12 +84,16 @@ public class Button extends InstanceFactory {
   public static class Poker extends InstancePoker {
     @Override
     public void mousePressed(InstanceState state, MouseEvent e) {
-      setValue(state, state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_PASSIVE ? Value.FALSE : Value.TRUE);
+      setValue(
+          state,
+          state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_PASSIVE ? Value.FALSE : Value.TRUE);
     }
 
     @Override
     public void mouseReleased(InstanceState state, MouseEvent e) {
-      setValue(state, state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_PASSIVE ? Value.TRUE : Value.FALSE);
+      setValue(
+          state,
+          state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_PASSIVE ? Value.TRUE : Value.FALSE);
     }
 
     private void setValue(InstanceState state, Value val) {
@@ -165,7 +170,11 @@ public class Button extends InstanceFactory {
       if (state == null) return;
       final var data = (InstanceDataSingleton) state.getData();
       if (data == null) {
-        state.setData(new InstanceDataSingleton(state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_PASSIVE ? Value.TRUE : Value.FALSE));
+        state.setData(
+            new InstanceDataSingleton(
+                state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_PASSIVE
+                    ? Value.TRUE
+                    : Value.FALSE));
       } else {
         data.setValue(data.getValue() == Value.TRUE ? Value.FALSE : Value.TRUE);
       }
@@ -175,7 +184,8 @@ public class Button extends InstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    final var defaultButtonState = painter.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_ACTIVE ? Value.FALSE : Value.TRUE;
+    final var defaultButtonState =
+        painter.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_ACTIVE ? Value.FALSE : Value.TRUE;
     final var bds = painter.getBounds();
     var x = bds.getX();
     var y = bds.getY();
@@ -249,7 +259,8 @@ public class Button extends InstanceFactory {
   @Override
   public void propagate(InstanceState state) {
     final var data = (InstanceDataSingleton) state.getData();
-    final var defaultButtonState = state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_ACTIVE ? Value.FALSE : Value.TRUE;
+    final var defaultButtonState =
+        state.getAttributeValue(ATTR_PRESS) == BUTTON_PRESS_ACTIVE ? Value.FALSE : Value.TRUE;
     final var val = data == null ? defaultButtonState : (Value) data.getValue();
     state.setPort(0, val, 1);
   }
