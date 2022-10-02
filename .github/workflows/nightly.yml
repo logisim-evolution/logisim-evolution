@@ -17,12 +17,13 @@ on:
   # Keep it disabled once it's merged into main branch as we only
   # want "schedule" to be the trigger.
   # NOTE: remove `if` condition marked with `HACK` once merged.
-  pull_request:
-    branches: [ develop ]
-    types: [ closed ]
-  schedule:
-    # every day at midnight
-    - cron: "0 0 * * *"
+#  pull_request:
+#  # Nightly must be run against "develop" branch only.
+#    branches: [ develop ]
+#    types: [ closed ]
+#  schedule:
+#    # every day at midnight
+#    - cron: "0 0 * * *"
 
 env:
   JDK_VERSION: 16
@@ -64,6 +65,7 @@ jobs:
 
           # Short name for branch in which action was triggered.
           declare -r branch_name="${GITHUB_BASE_REF:-${GITHUB_REF#refs/heads/}}"
+          echo "Triggered for branch: ${branch_name}"
 
           # Get SHA of last commit in that branch.
           declare -r last_commit_sha="$(git rev-parse HEAD)"
@@ -83,7 +85,6 @@ jobs:
           # Gradle artifact for "1.2.3-dev" uses "1.2.3dev" in file names, so we need to
           # consider that whlie looking for artifacts (i.e. for upload).
           declare -r version_prop=$(grep '^version\s*=.*' gradle.properties | awk '{print $3}')
-
 
           # Remove "-" (if present) from version string.
           declare -r lse_version=$(echo "${version_prop}" | awk '{gsub("-","", $0); print}')
@@ -109,12 +110,39 @@ jobs:
     needs: git_check
     if: needs.git_check.outputs.run_build == 'true'
     steps:
-      # https://github.com/marketplace/actions/checkout
-      - name: "Checkout sources"
+      # https://github.com/z0al/dependent-issues
+      - name: 'Checkout branch: ${{ env.GITHUB_REF }}'
         uses: actions/checkout@v2
         with:
-          # We want develop branch only.
           ref: 'develop'
+
+      - name: 'Build Snap package'
+        # https://github.com/snapcore/action-build
+        uses: snapcore/action-build@v1
+        id: snapcraft
+
+      - name: 'Upload *.snap artifact.'
+        uses: actions/upload-artifact@v3
+        if: success()
+        with:
+           path: ${{ steps.snapcraft.outputs.snap }}
+           name: ${{ needs.git_check.outputs.base_name }}_amd64.snap
+
+#      - name: 'Pushing *.snap to snapcraft.io'
+#        # https://github.com/snapcore/action-publish
+#        uses: snapcore/action-publish@v1
+#        if: success()
+#        env:
+#          # Obtain Snapcraft.io store token:
+#          # $ snapcraft export-login --snaps=logisim-evolution --acls package_access,package_push,package_update,package_release token.txt
+#          # then open Github repository settings and add new secred named SNAPCRAFT_STORE_TOKEN with the value of token.txt
+#          SNAPCRAFT_STORE_CREDENTIALS: ${{ secrets.SNAPCRAFT_STORE_TOKEN }}
+#        with:
+#          snap: ${{ steps.snapcraft.outputs.snap }}
+#          release: edge
+
+        # ###########################################################################################
+
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
         uses: actions/setup-java@v2
         with:
@@ -133,7 +161,7 @@ jobs:
 
       # https://github.com/marketplace/actions/upload-a-build-artifact
       - name: 'Upload binary JAR'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-all.jar
@@ -150,7 +178,7 @@ jobs:
           ./gradlew createDeb -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *.deb'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}_${{ needs.git_check.outputs.lse_version }}-1_amd64.deb
@@ -168,7 +196,7 @@ jobs:
           ./gradlew createRpm -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload *.rpm'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-1.x86_64.rpm
@@ -187,13 +215,13 @@ jobs:
           ./gradlew sourcesJar
 
       - name: 'Upload sources JAR'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: success()
         with:
           path: build/libs/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-src.jar
           name: ${{ needs.git_check.outputs.base_name }}-src.jar
 
-  # ##################################
+  # ###############################################################################################
 
   # Building for macOS.
   build_macos:
@@ -208,8 +236,7 @@ jobs:
       - name: "Checkout sources"
         uses: actions/checkout@v2
         with:
-          # We want develop branch only.
-          ref: 'develop'
+          ref: ${{ github.ref_name }}
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
         uses: actions/setup-java@v2
         with:
@@ -225,7 +252,7 @@ jobs:
           ./gradlew createDmg -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload DMG'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: success()
         with:
           path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}.dmg
@@ -255,7 +282,7 @@ jobs:
         run: .\gradlew.bat createMsi -x checkstyleMain -x checkstyleTest
 
       - name: 'Upload MSI'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         if: success()
         with:
           # NOTE: Gradle builder creates MSI file that always uses short version format in file name.

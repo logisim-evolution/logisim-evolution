@@ -336,7 +336,7 @@ public class HexFile {
     }
   }
 
-  protected static void save(File f, MemContents src, String desc) throws IOException {
+  public static void save(File f, MemContents src, String desc) throws IOException {
     OutputStream out;
     try {
       out = new FileOutputStream(f);
