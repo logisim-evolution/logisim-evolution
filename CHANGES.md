@@ -17,6 +17,7 @@
   * Fixed TTL 74175, CLR inverted
   * Fixed TTL 7436 pin arrangement
   * Added TTL 74245: octal bus transceivers with three-state outputs.
+  * Added TTL 74138: 3-line to 8-line decoder
   * Fixed TTL 74165, correct order of inputs, load asynchronously
   * Added TTL 74166: 8-bit parallel-to-serial shift register with clear
 
