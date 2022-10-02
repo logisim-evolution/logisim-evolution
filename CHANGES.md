@@ -3,6 +3,8 @@
 # Changes #
 
 * @dev (????-??-??)
+
+* v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins
   * Fixed boolean algebra minimal form bug
   * Fixed random fill Rom bug
