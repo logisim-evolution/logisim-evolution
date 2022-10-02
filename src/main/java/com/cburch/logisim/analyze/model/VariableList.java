@@ -58,7 +58,7 @@ public class VariableList {
   }
 
   public void add(Var variable) {
-    if (data.size() + variable.width >= maxSize) {
+    if (data.size() + variable.width > maxSize) {
       throw new IllegalArgumentException("maximum size is " + maxSize);
     }
     final var index = data.size();

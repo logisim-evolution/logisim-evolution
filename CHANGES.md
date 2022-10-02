@@ -18,6 +18,7 @@
   * Fixed TTL 7436 pin arrangement
   * Added TTL 74245: octal bus transceivers with three-state outputs.
   * Fixed TTL 74165, correct order of inputs, load asynchronously
+  * Removed fixed LM_Licence setting
 
 * v3.7.2 (2021-11-09)
   * Fixed Preferences/Window "Reset window layout to defaults" not doing much.
