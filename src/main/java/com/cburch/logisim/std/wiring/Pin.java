@@ -673,17 +673,15 @@ public class Pin extends InstanceFactory {
   }
 
   private static PinState getState(InstanceState state) {
-    PinAttributes attrs = (PinAttributes) state.getAttributeSet();
-    BitWidth width = attrs.width;
-    PinState ret = (PinState) state.getData();
+    final var attrs = (PinAttributes) state.getAttributeSet();
+    final var width = attrs.width;
+    var ret = (PinState) state.getData();
     if (ret == null) {
-      Value val = attrs.threeState ? Value.UNKNOWN : Value.FALSE;
-      if (width.getWidth() > 1) {
-        Value[] arr = new Value[width.getWidth()];
-        java.util.Arrays.fill(arr, val);
-        val = Value.create(arr);
-      }
-      ret = new PinState(val, val);
+      var initialValue = attrs.getValue(ATTR_INITIAL);
+      final var newValue = attrs.threeState
+            ? Value.createUnknown(width)
+            : Value.createKnown(width.getWidth(), initialValue);
+      ret = new PinState(newValue, newValue);
       state.setData(ret);
     }
     if (ret.intendedValue.getWidth() != width.getWidth()) {
@@ -721,6 +719,8 @@ public class Pin extends InstanceFactory {
       new AttributeOption("up", S.getter("pinPullUpOption"));
   public static final AttributeOption PULL_DOWN =
       new AttributeOption("down", S.getter("pinPullDownOption"));
+  public static final Attribute<Long> ATTR_INITIAL =
+      Attributes.forHexLong("initial", S.getter("pinResetValue"));
 
   public static final Attribute<AttributeOption> ATTR_PULL =
       Attributes.forOption(

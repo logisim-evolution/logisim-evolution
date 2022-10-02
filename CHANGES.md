@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added reset value attribute to input pins
   * Fixed boolean algebra minimal form bug
   * Fixed random fill Rom bug
   * Added TTL 74164, 74192 and 74193.
