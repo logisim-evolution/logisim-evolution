@@ -23,6 +23,7 @@
   * Moved TTL 74266 to 747266, correctly reimplemented 74266 with open-collector outputs.
   * Fixed TTL 74165, correct order of inputs, load asynchronously
   * Added TTL 74166: 8-bit parallel-to-serial shift register with clear
+  * Removed fixed LM_Licence setting
 
 * v3.7.2 (2021-11-09)
   * Fixed Preferences/Window "Reset window layout to defaults" not doing much.

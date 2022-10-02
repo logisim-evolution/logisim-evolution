@@ -70,8 +70,7 @@ public class VhdlSimulatorTclBinder {
     builder = new ProcessBuilder(command);
 
     Map<String, String> env = builder.environment();
-    env.put("LM_LICENSE_FILE", "1650@eilic01");
-
+    
     builder.directory(new File(VhdlSimConstants.SIM_PATH + "comp/"));
 
     /* Redirect error on stdout */
