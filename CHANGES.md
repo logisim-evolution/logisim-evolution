@@ -16,9 +16,12 @@
   * Fixed TTL 74139, 7447 outputting inverted logic
   * Fixed TTL 74175, CLR inverted
   * Fixed TTL 7436 pin arrangement
+  * Added TTL 74138: 3-line to 8-line decoder
+  * Added TTL 74240, 74241, 74244: octal buffers with three-state outputs.
   * Added TTL 74245: octal bus transceivers with three-state outputs.
   * Moved TTL 74266 to 747266, correctly reimplemented 74266 with open-collector outputs.
   * Fixed TTL 74165, correct order of inputs, load asynchronously
+  * Added TTL 74166: 8-bit parallel-to-serial shift register with clear
 
 * v3.7.2 (2021-11-09)
   * Fixed Preferences/Window "Reset window layout to defaults" not doing much.
