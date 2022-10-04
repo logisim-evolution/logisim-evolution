@@ -42,10 +42,10 @@ import org.slf4j.LoggerFactory;
 
 public class Counter extends InstanceFactory implements DynamicElementProvider {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Counter";
 
@@ -64,8 +64,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
 
   static final AttributeOption ON_GOAL_LOAD =
       new AttributeOption("load", "load", S.getter("counterGoalLoad"));
-  static final Attribute<Long> ATTR_MAX =
-      Attributes.forHexLong("max", S.getter("counterMaxAttr"));
+  static final Attribute<Long> ATTR_MAX = Attributes.forHexLong("max", S.getter("counterMaxAttr"));
 
   static final Attribute<AttributeOption> ATTR_ON_GOAL =
       Attributes.forOption(
@@ -182,7 +181,8 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     var isCTRm = (max == painter.getAttributeValue(StdAttr.WIDTH).getMask());
     Object onGoal = painter.getAttributeValue(ATTR_ON_GOAL);
     isCTRm |= onGoal == ON_GOAL_CONT;
-    final var label = (isCTRm)
+    final var label =
+        (isCTRm)
             ? "CTR" + painter.getAttributeValue(StdAttr.WIDTH).getWidth()
             : "CTR DIV0x" + Long.toHexString(max);
     GraphicsUtil.drawCenteredText(g, label, xpos + (getSymbolWidth(width) / 2) + 20, ypos + 5);
@@ -198,23 +198,29 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     g.drawOval(xpos + 12, ypos + 36, 8, 8);
     g.fillOval(xpos + 2, ypos + 27, 6, 6);
     painter.drawPort(LD);
-    GraphicsUtil.drawText(g, "M2 [count]", xpos + 30, ypos + 40, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
-    GraphicsUtil.drawText(g, "M1 [load]", xpos + 30, ypos + 30, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+    GraphicsUtil.drawText(
+        g, "M2 [count]", xpos + 30, ypos + 40, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+    GraphicsUtil.drawText(
+        g, "M1 [load]", xpos + 30, ypos + 30, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
     /* Draw UpDn input */
     g.drawLine(xpos, ypos + 50, xpos + 20, ypos + 50);
     g.drawLine(xpos + 5, ypos + 60, xpos + 12, ypos + 60);
     g.drawLine(xpos + 5, ypos + 50, xpos + 5, ypos + 60);
     g.drawOval(xpos + 12, ypos + 56, 8, 8);
     g.fillOval(xpos + 2, ypos + 47, 6, 6);
-    GraphicsUtil.drawText(g, "M3 [up]", xpos + 30, ypos + 50, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
-    GraphicsUtil.drawText(g, "M4 [down]", xpos + 30, ypos + 60, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+    GraphicsUtil.drawText(
+        g, "M3 [up]", xpos + 30, ypos + 50, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+    GraphicsUtil.drawText(
+        g, "M4 [down]", xpos + 30, ypos + 60, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
     painter.drawPort(UD);
     /* Draw Enable Port */
     g.drawLine(xpos, ypos + 70, xpos + 20, ypos + 70);
-    GraphicsUtil.drawText(g, "G5", xpos + 30, ypos + 70, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+    GraphicsUtil.drawText(
+        g, "G5", xpos + 30, ypos + 70, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
     painter.drawPort(EN);
     /* Draw Clock */
-    final var inverted = painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
+    final var inverted =
+        painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
     final var xend = (inverted) ? xpos + 12 : xpos + 20;
     g.drawLine(xpos, ypos + 80, xend, ypos + 80);
     g.drawLine(xpos + 5, ypos + 90, xend, ypos + 90);
@@ -224,17 +230,20 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       g.drawOval(xend, ypos + 76, 8, 8);
       g.drawOval(xend, ypos + 86, 8, 8);
     }
-    GraphicsUtil.drawText(g, "2,3,5+/C6", xpos + 30, ypos + 80, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
-    GraphicsUtil.drawText(g, "2,4,5-", xpos + 30, ypos + 90, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+    GraphicsUtil.drawText(
+        g, "2,3,5+/C6", xpos + 30, ypos + 80, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+    GraphicsUtil.drawText(
+        g, "2,4,5-", xpos + 30, ypos + 90, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
     painter.drawPort(CK);
     /* Draw Carry */
-    g.drawLine(xpos + 20 + getSymbolWidth(width), ypos + 50, xpos + 40 + getSymbolWidth(width), ypos + 50);
-    g.drawLine(xpos + 20 + getSymbolWidth(width), ypos + 60, xpos + 35 + getSymbolWidth(width), ypos + 60);
-    g.drawLine(xpos + 35 + getSymbolWidth(width), ypos + 50, xpos + 35 + getSymbolWidth(width), ypos + 60);
+    g.drawLine(
+        xpos + 20 + getSymbolWidth(width), ypos + 50, xpos + 40 + getSymbolWidth(width), ypos + 50);
+    g.drawLine(
+        xpos + 20 + getSymbolWidth(width), ypos + 60, xpos + 35 + getSymbolWidth(width), ypos + 60);
+    g.drawLine(
+        xpos + 35 + getSymbolWidth(width), ypos + 50, xpos + 35 + getSymbolWidth(width), ypos + 60);
     g.fillOval(xpos + 32 + getSymbolWidth(width), ypos + 47, 6, 6);
-    String maxVal =
-        "3CT=0x"
-            + Long.toHexString(painter.getAttributeValue(ATTR_MAX)).toUpperCase();
+    String maxVal = "3CT=0x" + Long.toHexString(painter.getAttributeValue(ATTR_MAX)).toUpperCase();
     GraphicsUtil.drawText(
         g,
         maxVal,
@@ -335,7 +344,8 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     g.setFont(font);
     GraphicsUtil.drawText(
         g, "1,6D", xpos + 21, realYpos + 10, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
-    final var LineWidth = (nrOfBits == 1) ? GraphicsUtil.DATA_SINGLE_WIDTH : GraphicsUtil.DATA_MULTI_WIDTH;
+    final var LineWidth =
+        (nrOfBits == 1) ? GraphicsUtil.DATA_SINGLE_WIDTH : GraphicsUtil.DATA_MULTI_WIDTH;
     GraphicsUtil.switchToWidth(g, LineWidth);
     if (first) {
       painter.drawPort(IN);
@@ -476,10 +486,13 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
 
     // draw contents
     if (b == null) {
-      GraphicsUtil.drawText(g, a, bds.getX() + 15, bds.getY() + 4, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+      GraphicsUtil.drawText(
+          g, a, bds.getX() + 15, bds.getY() + 4, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
     } else {
-      GraphicsUtil.drawText(g, a, bds.getX() + 15, bds.getY() + 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
-      GraphicsUtil.drawText(g, b, bds.getX() + 15, bds.getY() + 15, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+      GraphicsUtil.drawText(
+          g, a, bds.getX() + 15, bds.getY() + 3, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
+      GraphicsUtil.drawText(
+          g, b, bds.getX() + 15, bds.getY() + 15, GraphicsUtil.H_CENTER, GraphicsUtil.V_TOP);
     }
   }
 
@@ -526,14 +539,14 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       final var UpCount = state.getPortValue(UD) != Value.FALSE;
       final var oldVal = data.value;
       final var oldValue = new BigInteger(Long.toUnsignedString(oldVal.toLongValue()));
-      final var loadValue = new BigInteger(Long.toUnsignedString(state.getPortValue(IN).toLongValue()));
+      final var loadValue =
+          new BigInteger(Long.toUnsignedString(state.getPortValue(IN).toLongValue()));
       BigInteger newVal;
       if (!triggered) {
         newVal = new BigInteger(Long.toUnsignedString(oldVal.toLongValue()));
       } else if (ld) {
         newVal = loadValue;
-        if (newVal.compareTo(max) > 0)
-          newVal = newVal.and(max);
+        if (newVal.compareTo(max) > 0) newVal = newVal.and(max);
       } else if (!oldVal.isFullyDefined()) {
         newVal = null;
       } else if (en) {
@@ -559,7 +572,10 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       } else {
         newVal = oldValue;
       }
-      newValue = newVal == null ? Value.createError(dataWidth) : Value.createKnown(dataWidth, newVal.longValue());
+      newValue =
+          newVal == null
+              ? Value.createError(dataWidth)
+              : Value.createKnown(dataWidth, newVal.longValue());
       final var compVal = (UpCount) ? max : BigInteger.ZERO;
       carry = newVal.compareTo(compVal) == 0;
       /*

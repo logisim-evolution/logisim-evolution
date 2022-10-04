@@ -52,8 +52,10 @@ class MenuEdit extends Menu {
     selall.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_A, menuMask));
     raise.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, menuMask));
     lower.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, menuMask));
-    raiseTop.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_UP, menuMask | KeyEvent.SHIFT_DOWN_MASK));
-    lowerBottom.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, menuMask | KeyEvent.SHIFT_DOWN_MASK));
+    raiseTop.setAccelerator(
+        KeyStroke.getKeyStroke(KeyEvent.VK_UP, menuMask | KeyEvent.SHIFT_DOWN_MASK));
+    lowerBottom.setAccelerator(
+        KeyStroke.getKeyStroke(KeyEvent.VK_DOWN, menuMask | KeyEvent.SHIFT_DOWN_MASK));
 
     add(undo);
     add(redo);
@@ -139,10 +141,8 @@ class MenuEdit extends Menu {
     public void actionPerformed(ActionEvent e) {
       final var src = e.getSource();
       final var proj = menubar.getSaveProject();
-      if (src == undo && proj != null)
-        proj.undoAction();
-      else if (src == redo && proj != null)
-        proj.redoAction();
+      if (src == undo && proj != null) proj.undoAction();
+      else if (src == redo && proj != null) proj.redoAction();
     }
 
     @Override

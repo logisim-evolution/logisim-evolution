@@ -44,8 +44,10 @@ public class TraceInfo {
     xOff += blockWidth + 5;
     g.setColor(error ? Color.RED : Color.BLACK);
     Font f = g.getFont();
-    Font myFont = scale
-            ? AppPreferences.getScaledFont(new Font("Monospaced", Font.PLAIN, 12).deriveFont(Font.BOLD))
+    Font myFont =
+        scale
+            ? AppPreferences.getScaledFont(
+                new Font("Monospaced", Font.PLAIN, 12).deriveFont(Font.BOLD))
             : new Font("Monospaced", Font.PLAIN, 12).deriveFont(Font.BOLD);
     g.setFont(myFont);
     Bounds bds = CpuDrawSupport.getBounds(xOff, yOffset + 15, 0, 0, scale);
@@ -61,7 +63,9 @@ public class TraceInfo {
     g.setColor(Color.BLACK);
     g.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     g.setColor(error ? Color.RED : Color.DARK_GRAY);
-    bds = CpuDrawSupport.getBounds(x + blockWidth / 2, y + CpuDrawSupport.TRACE_HEIGHT / 2, 0, 0, scale);
+    bds =
+        CpuDrawSupport.getBounds(
+            x + blockWidth / 2, y + CpuDrawSupport.TRACE_HEIGHT / 2, 0, 0, scale);
     GraphicsUtil.drawCenteredText(g, String.format("0x%08X", value), bds.getX(), bds.getY());
     g.setColor(Color.BLACK);
   }

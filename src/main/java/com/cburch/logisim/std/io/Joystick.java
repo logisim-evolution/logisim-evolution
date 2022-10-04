@@ -35,10 +35,10 @@ import java.awt.event.MouseEvent;
 
 public class Joystick extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Joystick";
 
@@ -142,17 +142,9 @@ public class Joystick extends InstanceFactory {
     super(_ID, S.getter("joystickComponent"));
     setAttributes(
         new Attribute[] {
-          StdAttr.FACING,
-          ATTR_WIDTH,
-          IoLibrary.ATTR_COLOR,
-          IoLibrary.ATTR_BACKGROUND
+          StdAttr.FACING, ATTR_WIDTH, IoLibrary.ATTR_COLOR, IoLibrary.ATTR_BACKGROUND
         },
-        new Object[] {
-          Direction.EAST,
-          BitWidth.create(4),
-          Color.RED,
-          IoLibrary.DEFAULT_BACKGROUND
-        });
+        new Object[] {Direction.EAST, BitWidth.create(4), Color.RED, IoLibrary.DEFAULT_BACKGROUND});
     setFacingAttribute(StdAttr.FACING);
     setKeyConfigurator(new BitWidthConfigurator(ATTR_WIDTH, 2, 5));
     setOffsetBounds(Bounds.create(-30, -10, 30, 30));
@@ -163,13 +155,13 @@ public class Joystick extends InstanceFactory {
         });
     setInstancePoker(Poker.class);
   }
-  
+
   @Override
   protected void configureNewInstance(Instance instance) {
     updatePorts(instance);
     instance.addAttributeListener();
   }
-  
+
   private void updatePorts(Instance instance) {
     final var facing = instance.getAttributeValue(StdAttr.FACING);
     int x0, y0;
@@ -222,7 +214,12 @@ public class Joystick extends InstanceFactory {
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawRoundRect(x - 30, y - 10, 30, 30, 8, 8);
     g.drawRoundRect(x - 28, y - 8, 26, 26, 4, 4);
-    drawBall(g, x - 15, y + 5, painter.getAttributeValue(IoLibrary.ATTR_COLOR), painter.shouldDrawColor());
+    drawBall(
+        g,
+        x - 15,
+        y + 5,
+        painter.getAttributeValue(IoLibrary.ATTR_COLOR),
+        painter.shouldDrawColor());
     painter.drawPorts();
   }
 

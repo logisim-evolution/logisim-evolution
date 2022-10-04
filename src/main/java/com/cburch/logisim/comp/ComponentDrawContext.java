@@ -147,18 +147,18 @@ public class ComponentDrawContext {
     int radius = 4;
     int offset = 2;
     switch (appearance) {
-      case AppPreferences.PIN_APPEAR_DOT_MEDIUM:
+      case AppPreferences.PIN_APPEAR_DOT_MEDIUM -> {
         radius = 6;
         offset = 3;
-        break;
-      case AppPreferences.PIN_APPEAR_DOT_BIG:
+      }
+      case AppPreferences.PIN_APPEAR_DOT_BIG -> {
         radius = 8;
         offset = 4;
-        break;
-      case AppPreferences.PIN_APPEAR_DOT_BIGGER:
+      }
+      case AppPreferences.PIN_APPEAR_DOT_BIGGER -> {
         radius = 10;
         offset = 5;
-        break;
+      }
     }
     g.fillOval(x - offset, y - offset, radius, radius);
   }

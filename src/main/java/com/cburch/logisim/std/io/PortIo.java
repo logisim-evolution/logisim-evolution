@@ -42,10 +42,10 @@ import java.util.List;
 
 public class PortIo extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "PortIO";
 
@@ -73,9 +73,9 @@ public class PortIo extends InstanceFactory {
 
     public PortState(int size) {
       this.size = size;
-      inputState = new ArrayList<Value>();
-      pokeState = new ArrayList<Value>();
-      enableState = new ArrayList<Value>();
+      inputState = new ArrayList<>();
+      pokeState = new ArrayList<>();
+      enableState = new ArrayList<>();
       for (var pin = 0; pin < size; pin++) {
         inputState.add(Value.createUnknown(BIT_WIDTH));
         pokeState.add(Value.createUnknown(BIT_WIDTH));
@@ -108,8 +108,7 @@ public class PortIo extends InstanceFactory {
         pokeState.set(pinIndex, Value.createKnown(BIT_WIDTH, 0L));
       else if (pokeValue.equals(Value.FALSE))
         pokeState.set(pinIndex, Value.createKnown(BIT_WIDTH, 1L));
-      else
-        pokeState.set(pinIndex, Value.createUnknown(BIT_WIDTH));
+      else pokeState.set(pinIndex, Value.createUnknown(BIT_WIDTH));
     }
 
     public void setInputValue(int pinIndex, Value value) {
@@ -130,7 +129,10 @@ public class PortIo extends InstanceFactory {
       final var inputValue = inputState.get(pinIndex);
       final var pokeValue = pokeState.get(pinIndex);
       final var enableValue = enableState.get(pinIndex);
-      final var resultValue = (pokeValue.equals(Value.UNKNOWN) || pokeValue.equals(inputValue)) ? inputValue : Value.ERROR;
+      final var resultValue =
+          (pokeValue.equals(Value.UNKNOWN) || pokeValue.equals(inputValue))
+              ? inputValue
+              : Value.ERROR;
       if (enableValue.equals(Value.UNKNOWN)) return Value.ERROR;
       return enableValue.equals(Value.TRUE) ? resultValue : pokeValue;
     }
@@ -181,13 +183,20 @@ public class PortIo extends InstanceFactory {
   public static final Attribute<BitWidth> ATTR_SIZE =
       Attributes.forBitWidth("number", S.getter("pioNumber"), MIN_IO, MAX_IO);
 
-  public static final AttributeOption INPUT = new AttributeOption("onlyinput", S.getter("pioInput"));
-  public static final AttributeOption OUTPUT = new AttributeOption("onlyOutput", S.getter("pioOutput"));
-  public static final AttributeOption INOUTSE = new AttributeOption("IOSingleEnable", S.getter("pioIOSingle"));
-  public static final AttributeOption INOUTME = new AttributeOption("IOMultiEnable", S.getter("pioIOMultiple"));
+  public static final AttributeOption INPUT =
+      new AttributeOption("onlyinput", S.getter("pioInput"));
+  public static final AttributeOption OUTPUT =
+      new AttributeOption("onlyOutput", S.getter("pioOutput"));
+  public static final AttributeOption INOUTSE =
+      new AttributeOption("IOSingleEnable", S.getter("pioIOSingle"));
+  public static final AttributeOption INOUTME =
+      new AttributeOption("IOMultiEnable", S.getter("pioIOMultiple"));
 
   public static final Attribute<AttributeOption> ATTR_DIR =
-      Attributes.forOption("direction", S.getter("pioDirection"), new AttributeOption[] {INPUT, OUTPUT, INOUTSE, INOUTME});
+      Attributes.forOption(
+          "direction",
+          S.getter("pioDirection"),
+          new AttributeOption[] {INPUT, OUTPUT, INOUTSE, INOUTME});
 
   protected static final int DELAY = 1;
 
@@ -214,11 +223,13 @@ public class PortIo extends InstanceFactory {
           false,
           BitWidth.create(INITPORTSIZE),
           INOUTSE,
-          new ComponentMapInformationContainer(0, 0, INITPORTSIZE, null, null, getLabels(INITPORTSIZE))
+          new ComponentMapInformationContainer(
+              0, 0, INITPORTSIZE, null, null, getLabels(INITPORTSIZE))
         });
     setFacingAttribute(StdAttr.FACING);
     setIconName("pio.gif");
-    setKeyConfigurator(JoinedConfigurator.create(
+    setKeyConfigurator(
+        JoinedConfigurator.create(
             new BitWidthConfigurator(ATTR_SIZE, MIN_IO, MAX_IO, KeyEvent.ALT_DOWN_MASK),
             new DirectionConfigurator(StdAttr.LABEL_LOC, KeyEvent.ALT_DOWN_MASK)));
     setInstancePoker(PortPoker.class);
@@ -231,7 +242,9 @@ public class PortIo extends InstanceFactory {
     instance.computeLabelTextField(Instance.AVOID_BOTTOM);
     ComponentMapInformationContainer map = instance.getAttributeSet().getValue(StdAttr.MAPINFO);
     if (map == null) {
-      map = new ComponentMapInformationContainer(0, 0, INITPORTSIZE, null, null, getLabels(INITPORTSIZE));
+      map =
+          new ComponentMapInformationContainer(
+              0, 0, INITPORTSIZE, null, null, getLabels(INITPORTSIZE));
       instance.getAttributeSet().setValue(ATTR_SIZE, BitWidth.create(INITPORTSIZE));
       instance.getAttributeSet().setValue(ATTR_DIR, INOUTSE);
     }
@@ -245,12 +258,9 @@ public class PortIo extends InstanceFactory {
     // logisim max bus size is BitWidth.MAXWIDTH, so use multiple buses if needed
     final var nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
     var nPorts = -1;
-    if (dir == INPUT || dir == OUTPUT)
-      nPorts = nBus;
-    else if (dir == INOUTME)
-      nPorts = 3 * nBus;
-    else if (dir == INOUTSE)
-      nPorts = 2 * nBus + 1;
+    if (dir == INPUT || dir == OUTPUT) nPorts = nBus;
+    else if (dir == INOUTME) nPorts = 3 * nBus;
+    else if (dir == INOUTSE) nPorts = 2 * nBus + 1;
     Port[] ps = new Port[nPorts];
     var p = 0;
 
@@ -258,14 +268,10 @@ public class PortIo extends InstanceFactory {
     var y = 0;
     var dx = 0;
     var dy = 0;
-    if (facing == Direction.NORTH)
-      dy = -10;
-    else if (facing == Direction.SOUTH)
-      dy = 10;
-    else if (facing == Direction.WEST)
-      dx = -10;
-    else
-      dx = 10;
+    if (facing == Direction.NORTH) dy = -10;
+    else if (facing == Direction.SOUTH) dy = 10;
+    else if (facing == Direction.WEST) dx = -10;
+    else dx = 10;
     if (dir == INPUT || dir == OUTPUT) {
       x += dx;
       y += dy;
@@ -321,8 +327,7 @@ public class PortIo extends InstanceFactory {
   public Bounds getOffsetBounds(AttributeSet attrs) {
     final var facing = attrs.getValue(StdAttr.FACING);
     var n = attrs.getValue(ATTR_SIZE).getWidth();
-    if (n < 8)
-      n = 8;
+    if (n < 8) n = 8;
     return Bounds.create(0, 0, 10 + (n + 1) / 2 * 10, 50).rotate(Direction.EAST, facing, 0, 0);
   }
 
@@ -403,9 +408,8 @@ public class PortIo extends InstanceFactory {
     final var nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
     if (!painter.getShowState()) {
       g.setColor(Color.LIGHT_GRAY);
-      for (var i = 0; i < size; i++)
-        g.fillRect(7 + ((i / 2) * 10), 25 + (i % 2) * 10, 6, 6);
-    }  else {
+      for (var i = 0; i < size; i++) g.fillRect(7 + ((i / 2) * 10), 25 + (i % 2) * 10, 6, 6);
+    } else {
       PortState data = getState(painter);
       for (var i = 0; i < size; i++) {
         g.setColor(data.getPinColor(i, painter.getAttributeValue(ATTR_DIR)));
@@ -473,8 +477,7 @@ public class PortIo extends InstanceFactory {
       state.setData(data);
       return data;
     }
-    if (data.size != size)
-      data.resize(size);
+    if (data.size != size) data.resize(size);
     return data;
   }
 

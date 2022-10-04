@@ -33,10 +33,10 @@ import java.math.BigInteger;
 
 public class Divider extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Divider";
 
@@ -131,7 +131,8 @@ public class Divider extends InstanceFactory {
   public void propagate(InstanceState state) {
     // get attributes
     BitWidth dataWidth = state.getAttributeValue(StdAttr.WIDTH);
-    boolean unsigned = state.getAttributeValue(Comparator.MODE_ATTR).equals(Comparator.UNSIGNED_OPTION);
+    boolean unsigned =
+        state.getAttributeValue(Comparator.MODE_ATTR).equals(Comparator.UNSIGNED_OPTION);
 
     // compute outputs
     Value a = state.getPortValue(IN0);

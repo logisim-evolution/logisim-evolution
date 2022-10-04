@@ -14,13 +14,22 @@ import java.util.ArrayList;
 
 public interface AssemblerExecutionInterface {
   boolean execute(Object processorState, CircuitState circuitState);
+
   String getAsmInstruction();
+
   int getBinInstruction();
+
   boolean setAsmInstruction(AssemblerAsmInstruction instruction);
+
   boolean setBinInstruction(int instr);
+
   boolean performedJump();
+
   boolean isValid();
+
   String getErrorMessage();
+
   ArrayList<String> getInstructions();
+
   int getInstructionSizeInBytes(String instruction);
 }

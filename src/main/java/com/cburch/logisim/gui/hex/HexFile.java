@@ -336,7 +336,7 @@ public class HexFile {
     }
   }
 
-  protected static void save(File f, MemContents src, String desc) throws IOException {
+  public static void save(File f, MemContents src, String desc) throws IOException {
     OutputStream out;
     try {
       out = new FileOutputStream(f);
@@ -971,7 +971,7 @@ public class HexFile {
 
     protected HexReader(BufferedLineReader in, int addrBits, int width) {
       this.in = in;
-      this.dst = MemContents.create(addrBits, width);
+      this.dst = MemContents.create(addrBits, width, false);
     }
 
     ////////////////////////////////////////////////////////

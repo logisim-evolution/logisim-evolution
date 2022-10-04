@@ -30,10 +30,10 @@ import java.awt.Color;
 
 public class FpComparator extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "FPComparator";
 
@@ -121,6 +121,7 @@ public class FpComparator extends InstanceFactory {
     state.setPort(GT, Value.createKnown(1, a_val > b_val ? 1 : 0), delay);
     state.setPort(EQ, Value.createKnown(1, a_val == b_val ? 1 : 0), delay);
     state.setPort(LT, Value.createKnown(1, a_val < b_val ? 1 : 0), delay);
-    state.setPort(ERR, Value.createKnown(1, (Double.isNaN(a_val) || Double.isNaN(b_val)) ? 1 : 0), delay);
+    state.setPort(
+        ERR, Value.createKnown(1, (Double.isNaN(a_val) || Double.isNaN(b_val)) ? 1 : 0), delay);
   }
 }

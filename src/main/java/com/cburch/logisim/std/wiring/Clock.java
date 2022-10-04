@@ -41,10 +41,10 @@ import javax.swing.Icon;
 
 public class Clock extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Clock";
 
@@ -106,8 +106,7 @@ public class Clock extends InstanceFactory {
       int phase = ((attrs.getValue(ATTR_PHASE) % cycle) + cycle) % cycle;
       boolean isLow = ((ticks + phase) % cycle) < durationLow;
       Value desired = (isLow ? Value.FALSE : Value.TRUE);
-      if (sending.equals(desired))
-        return false;
+      if (sending.equals(desired)) return false;
       sending = desired;
       return true;
     }
@@ -142,8 +141,7 @@ public class Clock extends InstanceFactory {
     } else {
       dirty = state.updateTick(ticks, attrs);
     }
-    if (dirty)
-      Instance.getInstanceFor(comp).fireInvalidated();
+    if (dirty) Instance.getInstanceFor(comp).fireInvalidated();
     return true;
   }
 
@@ -153,8 +151,8 @@ public class Clock extends InstanceFactory {
   public static final Attribute<Integer> ATTR_LOW =
       new DurationAttribute("lowDuration", S.getter("clockLowAttr"), 1, Integer.MAX_VALUE, true);
 
-  public static final Attribute<Integer> ATTR_PHASE = new DurationAttribute(
-      "phaseOffset", S.getter("clockPhaseAttr"), 0, Integer.MAX_VALUE, true);
+  public static final Attribute<Integer> ATTR_PHASE =
+      new DurationAttribute("phaseOffset", S.getter("clockPhaseAttr"), 0, Integer.MAX_VALUE, true);
 
   public static final Clock FACTORY = new Clock();
 
@@ -164,17 +162,15 @@ public class Clock extends InstanceFactory {
     super(_ID, S.getter("clockComponent"), new ClockHdlGeneratorFactory());
     setAttributes(
         new Attribute[] {
-          StdAttr.FACING, ATTR_HIGH, ATTR_LOW, ATTR_PHASE, StdAttr.LABEL, StdAttr.LABEL_LOC, StdAttr.LABEL_FONT
+          StdAttr.FACING,
+          ATTR_HIGH,
+          ATTR_LOW,
+          ATTR_PHASE,
+          StdAttr.LABEL,
+          StdAttr.LABEL_LOC,
+          StdAttr.LABEL_FONT
         },
-        new Object[] {
-          Direction.EAST,
-            1,
-            1,
-            0,
-          "",
-          Direction.WEST,
-          StdAttr.DEFAULT_LABEL_FONT
-        });
+        new Object[] {Direction.EAST, 1, 1, 0, "", Direction.WEST, StdAttr.DEFAULT_LABEL_FONT});
     setFacingAttribute(StdAttr.FACING);
     setInstanceLogger(ClockLogger.class);
     setInstancePoker(ClockPoker.class);

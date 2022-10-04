@@ -29,10 +29,10 @@ import java.awt.Color;
 
 public class FpNegator extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "FPNegator";
 
@@ -88,7 +88,10 @@ public class FpNegator extends InstanceFactory {
     final var a_val = dataWidth.getWidth() == 64 ? a.toDoubleValue() : a.toFloatValue();
 
     final var out_val = a_val * -1;
-    final var out = dataWidth.getWidth() == 64 ? Value.createKnown(out_val) : Value.createKnown((float) out_val);
+    final var out =
+        dataWidth.getWidth() == 64
+            ? Value.createKnown(out_val)
+            : Value.createKnown((float) out_val);
 
     // propagate them
     final var delay = (dataWidth.getWidth() + 2) * PER_DELAY;

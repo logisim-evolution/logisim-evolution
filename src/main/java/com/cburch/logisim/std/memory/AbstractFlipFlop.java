@@ -131,8 +131,13 @@ abstract class AbstractFlipFlop extends InstanceFactory {
 
   private final Attribute<AttributeOption> triggerAttribute;
 
-  protected AbstractFlipFlop(String name, String iconName, StringGetter desc, int numInputs,
-      boolean allowLevelTriggers, HdlGeneratorFactory generator) {
+  protected AbstractFlipFlop(
+      String name,
+      String iconName,
+      StringGetter desc,
+      int numInputs,
+      boolean allowLevelTriggers,
+      HdlGeneratorFactory generator) {
     super(name, desc, generator);
     this.numInputs = numInputs;
     setIconName(iconName);
@@ -147,7 +152,12 @@ abstract class AbstractFlipFlop extends InstanceFactory {
   }
 
   protected AbstractFlipFlop(
-      String name, Icon icon, StringGetter desc, int numInputs, boolean allowLevelTriggers, HdlGeneratorFactory generator) {
+      String name,
+      Icon icon,
+      StringGetter desc,
+      int numInputs,
+      boolean allowLevelTriggers,
+      HdlGeneratorFactory generator) {
     super(name, desc, generator);
     this.numInputs = numInputs;
     setIcon(icon);

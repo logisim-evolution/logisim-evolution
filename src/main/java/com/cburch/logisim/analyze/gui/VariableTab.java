@@ -63,8 +63,6 @@ import org.jdesktop.swingx.prompt.BuddySupport;
 
 public class VariableTab extends AnalyzerTab {
   private static final long serialVersionUID = 1L;
-  private final VariableList inputs;
-  private final VariableList outputs;
   private final JTable inputsTable;
   private final JTable outputsTable;
   private final JLabel error = new JLabel(" ");
@@ -212,8 +210,6 @@ public class VariableTab extends AnalyzerTab {
   }
 
   VariableTab(VariableList inputs, VariableList outputs, LogisimMenuBar menubar) {
-    this.inputs = inputs;
-    this.outputs = outputs;
     inputs.addCompanion(outputs);
     outputs.addCompanion(inputs);
 
@@ -490,24 +486,14 @@ public class VariableTab extends AnalyzerTab {
       updateCopy();
       Integer idx = event.getIndex();
       switch (event.getType()) {
-        case VariableListEvent.ALL_REPLACED:
-          fireTableRowsUpdated(0, oldSize);
-          break;
-        case VariableListEvent.ADD:
-          fireTableRowsInserted(idx, idx);
-          break;
-        case VariableListEvent.REMOVE:
-          fireTableRowsDeleted(idx, idx);
-          break;
-        case VariableListEvent.MOVE:
-          fireTableRowsUpdated(0, listCopy.length - 1);
-          break;
-        case VariableListEvent.REPLACE:
-          fireTableRowsUpdated(idx, idx);
-          break;
-        default:
+        case VariableListEvent.ALL_REPLACED -> fireTableRowsUpdated(0, oldSize);
+        case VariableListEvent.ADD -> fireTableRowsInserted(idx, idx);
+        case VariableListEvent.REMOVE -> fireTableRowsDeleted(idx, idx);
+        case VariableListEvent.MOVE -> fireTableRowsUpdated(0, listCopy.length - 1);
+        case VariableListEvent.REPLACE -> fireTableRowsUpdated(idx, idx);
+        default -> {
           // do nothing
-          break;
+        }
       }
     }
 

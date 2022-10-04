@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 import org.w3c.dom.Element;
 
 public final class SvgReader {
-  private static final Pattern PATH_REGEX = Pattern.compile("[a-zA-Z]|[-0-9.]+");
+  private static final Pattern PATH_REGEX = Pattern.compile("[a-zA-Z]|[-\\d.]+");
 
   private SvgReader() {
     // dummy
@@ -57,21 +57,16 @@ public final class SvgReader {
       final var token = patt.group();
       tokens.add(token);
       if (Character.isLetter(token.charAt(0))) {
-        switch (token.charAt(0)) {
-          case 'M':
-            type = (type == typeError) ? 0 : typeError;
-            break;
-          case 'Q', 'q':
-            type = (type == 0) ? 1 : typeError;
-            break;
-            /*
-             * not supported case 'L': case 'l': case 'H': case 'h': case
-             * 'V': case 'v': if (type == 0 || type == 2) type = 2; else
-             * type = -1; break;
-             */
-          default:
-            type = typeError;
-        }
+        type = switch (token.charAt(0)) {
+          case 'M' -> (type == typeError) ? 0 : typeError;
+          case 'Q', 'q' -> (type == 0) ? 1 : typeError;
+          /*
+           * not supported case 'L': case 'l': case 'H': case 'h': case
+           * 'V': case 'v': if (type == 0 || type == 2) type = 2; else
+           * type = -1; break;
+           */
+          default -> typeError;
+        };
         if (type == typeError) {
           final var tokenStr = String.valueOf(token.charAt(0));
           final var msg = String.format("Unrecognized path command '%s'", tokenStr);
@@ -96,9 +91,9 @@ public final class SvgReader {
           x2 += x0;
           y2 += y0;
         }
-        final var e0 = Location.create(x0, y0);
-        final var e1 = Location.create(x2, y2);
-        final var ct = Location.create(x1, y1);
+        final var e0 = Location.create(x0, y0, false);
+        final var e1 = Location.create(x2, y2, false);
+        final var ct = Location.create(x1, y1, false);
         return new Curve(e0, e1, ct);
       } else {
         throw new NumberFormatException("Unexpected format for curve");
@@ -305,7 +300,7 @@ public final class SvgReader {
     for (var i = 0; i < ret.length; i++) {
       final var x = Integer.parseInt(toks[2 * i]);
       final var y = Integer.parseInt(toks[2 * i + 1]);
-      ret[i] = Location.create(x, y);
+      ret[i] = Location.create(x, y, false);
     }
     return UnmodifiableList.create(ret);
   }

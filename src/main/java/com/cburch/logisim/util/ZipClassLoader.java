@@ -168,12 +168,8 @@ public class ZipClassLoader extends ClassLoader {
           if (DEBUG >= 2) logger.debug("processing " + request);
           try {
             switch (request.action) {
-              case REQUEST_LOAD:
-                performLoad(request);
-                break;
-              case REQUEST_FIND:
-                performFind(request);
-                break;
+              case REQUEST_LOAD -> performLoad(request);
+              case REQUEST_FIND -> performFind(request);
             }
           } finally {
             request.ensureDone();

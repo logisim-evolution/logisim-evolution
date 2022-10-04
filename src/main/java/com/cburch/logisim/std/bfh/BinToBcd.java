@@ -30,10 +30,10 @@ import java.awt.Color;
 
 public class BinToBcd extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Binary_to_BCD_converter";
 
@@ -41,7 +41,8 @@ public class BinToBcd extends InstanceFactory {
   private static final int BINin = 0;
   private static final int InnerDistance = 60;
 
-  public static final Attribute<BitWidth> ATTR_BinBits = Attributes.forBitWidth("binvalue", S.getter("BinaryDataBits"), 4, 13);
+  public static final Attribute<BitWidth> ATTR_BinBits =
+      Attributes.forBitWidth("binvalue", S.getter("BinaryDataBits"), 4, 13);
 
   public BinToBcd() {
     super(_ID, S.getter("Bin2BCD"), new BinToBcdHdlGeneratorFactory());
