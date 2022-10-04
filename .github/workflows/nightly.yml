@@ -17,13 +17,13 @@ on:
   # Keep it disabled once it's merged into main branch as we only
   # want "schedule" to be the trigger.
   # NOTE: remove `if` condition marked with `HACK` once merged.
-#  pull_request:
-#  # Nightly must be run against "develop" branch only.
-#    branches: [ develop ]
-#    types: [ closed ]
-#  schedule:
-#    # every day at midnight
-#    - cron: "0 0 * * *"
+  pull_request:
+  # Nightly must be run against "develop" branch only.
+    branches: [ develop ]
+    types: [ closed ]
+  schedule:
+    # every day at midnight
+    - cron: "0 0 * * *"
 
 env:
   JDK_VERSION: 16
