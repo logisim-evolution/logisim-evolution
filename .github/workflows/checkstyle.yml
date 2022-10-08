@@ -73,7 +73,7 @@ jobs:
       run: |
         # Run CheckStyle
         # https://github.com/checkstyle/checkstyle/releases/
-        CHECKSTYLE_VERSION="9.0"
+        CHECKSTYLE_VERSION="10.3.4"
         JAR="checkstyle-${CHECKSTYLE_VERSION}-all.jar"
         URL="https://github.com/checkstyle/checkstyle/releases/download/checkstyle-${CHECKSTYLE_VERSION}/${JAR}"
 
