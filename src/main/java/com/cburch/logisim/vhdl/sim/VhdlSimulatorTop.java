@@ -298,8 +298,7 @@ public class VhdlSimulatorTop implements CircuitListener {
         stop();
         start();
       }
-      default -> throw new UnsupportedOperationException(
-          "Cannot restart VHDL simulator from " + state + " state");
+      default -> throw new UnsupportedOperationException("Cannot restart VHDL simulator from " + state + " state");
     }
   }
 
