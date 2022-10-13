@@ -22,10 +22,12 @@ import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.gui.hex.HexFile;
+import com.cburch.logisim.gui.test.TestBench;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.std.io.Keyboard;
 import com.cburch.logisim.std.io.Tty;
 import com.cburch.logisim.std.memory.Ram;
@@ -274,18 +276,40 @@ public class TtyInterface {
       file = loader.openLogisimFile(fileToOpen, args.getSubstitutions());
     } catch (LoadFailedException e) {
       logger.error("{}", S.get("ttyLoadError", fileToOpen.getName()));
-      System.exit(-1);
-      return;
+      file = null;
     }
+    if (file == null) System.exit(2);
+
     final var proj = new Project(file);
     if (args.isFpgaDownload()) {
-      if (!args.fpgaDownload(proj)) System.exit(-1);
+      if (!args.fpgaDownload(proj)) System.exit(2);
     }
 
     final var circuitToTest = args.getCircuitToTest();
     final var circuit = (circuitToTest == null || circuitToTest.length() == 0)
         ? file.getMainCircuit()
         : file.getCircuit(circuitToTest);
+
+    if (args.getTestVector() != null) {
+      proj.doTestVector(args.getTestVector(), circuitToTest);
+      System.exit(0);
+    }
+
+    if (args.getTestCircPathOutput() != null) {
+      ProjectActions.doSave(proj, new File(args.getTestCircPathOutput()));
+      System.exit(0);
+    }
+
+    if (args.getTestCircuitPathInput() != null) {
+      final var testB = new TestBench(proj);
+      if (testB.startTestBench()) {
+        System.out.println("Test bench pass\n");
+        System.exit(0);
+      } else {
+        System.out.println("Test bench fail\n");
+        System.exit(-1);
+      }
+    }
 
     var format = args.getTtyFormat();
     if ((format & FORMAT_STATISTICS) != 0) {
@@ -326,11 +350,11 @@ public class TtyInterface {
         final var loaded = loadRam(circState, args.getLoadFile());
         if (!loaded) {
           logger.error("{}", S.get("loadNoRamError"));
-          System.exit(-1);
+          System.exit(2);
         }
       } catch (IOException e) {
         logger.error("{}: {}", S.get("loadIoError"), e.toString());
-        System.exit(-1);
+        System.exit(2);
       }
     }
     final var ttyFormat = args.getTtyFormat();
@@ -341,11 +365,11 @@ public class TtyInterface {
         final var saved = saveRam(circState, args.getSaveFile());
         if (!saved) {
           logger.error("{}", S.get("saveNoRamError"));
-          System.exit(-1);
+          System.exit(2);
         }
       } catch (IOException e) {
         logger.error("{}: {}", S.get("saveIoError"), e.toString());
-        System.exit(-1);
+        System.exit(2);
       }
     }
 
@@ -460,7 +484,7 @@ public class TtyInterface {
       final var ttyFound = prepareForTty(circState, keyboardStates);
       if (!ttyFound) {
         logger.error("{}", S.get("ttyNoTtyError"));
-        System.exit(-1);
+        System.exit(1);
       }
       if (keyboardStates.isEmpty()) {
         keyboardStates = null;

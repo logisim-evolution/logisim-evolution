@@ -26,7 +26,6 @@ import com.cburch.logisim.gui.icons.WarningIcon;
 import com.cburch.logisim.gui.main.Print;
 import com.cburch.logisim.gui.menu.LogisimMenuBar;
 import com.cburch.logisim.gui.menu.WindowManagers;
-import com.cburch.logisim.gui.test.TestBench;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectActions;
@@ -87,13 +86,11 @@ public class Startup implements AWTEventListener {
   private final HashMap<File, File> substitutions = new HashMap<>();
   private final ArrayList<File> filesToPrint = new ArrayList<>();
   // based on command line
-  final boolean isTty;
   private File templFile = null;
   private boolean templEmpty = false;
   private boolean templPlain = false;
   private String testVector = null;
   private String circuitToTest = null;
-  private boolean exitAfterStartup = false;
   private boolean showSplash;
   private File loadFile;
   private File saveFile;
@@ -119,9 +116,8 @@ public class Startup implements AWTEventListener {
   private String testCircPathInput = null;
   private String testCircPathOutput = null;
 
-  private Startup(boolean isTty) {
-    this.isTty = isTty;
-    this.showSplash = !isTty;
+  private Startup() {
+    this.showSplash = !Main.headless;
   }
 
   static void doOpen(File file) {
@@ -203,7 +199,7 @@ public class Startup implements AWTEventListener {
     final var formatter = new HelpFormatter();
     formatter.setWidth(100);  // Arbitrary chosen value.
     formatter.printHelp(BuildInfo.name, null, opts, null, true);
-    return RC.QUIT;
+    return RC.EXIT;
   }
 
   /**
@@ -216,7 +212,7 @@ public class Startup implements AWTEventListener {
     System.out.println(BuildInfo.url);
     System.out.println(LineBuffer.format("{{1}} ({{2}})", BuildInfo.buildId, BuildInfo.dateIso8601));
     System.out.println(LineBuffer.format("{{1}} ({{2}})", BuildInfo.jvm_version, BuildInfo.jvm_vendor));
-    return RC.QUIT;
+    return RC.EXIT;
   }
 
   /**
@@ -284,18 +280,6 @@ public class Startup implements AWTEventListener {
   }
 
   /**
-   * Return code of last run argument handler.
-   */
-  private static RC lastHandlerRc;
-
-  /**
-   * Returns {@true} if last argument handler called requested app termination (w/o error).
-   */
-  public boolean shallQuit() {
-    return lastHandlerRc == RC.QUIT;
-  }
-
-  /**
    * Parses CLI arguments
    *
    * @param args CLI arguments
@@ -305,12 +289,12 @@ public class Startup implements AWTEventListener {
   public static Startup parseArgs(String[] args) {
 
     final var opts = new Options();
-    addOption(opts, "argHelpOption", ARG_HELP_LONG, ARG_HELP_SHORT);
-    addOption(opts, "argVersionOption", ARG_VERSION_LONG, ARG_VERSION_SHORT);
 
     // Set up supported arguments for the arg parser to look for.
     // Note: you need to create handler for each option. See handler loop below.
     // It is assumed that evey option always has long-form switch. Short forms are optional.
+    addOption(opts, "argHelpOption", ARG_HELP_LONG, ARG_HELP_SHORT);
+    addOption(opts, "argVersionOption", ARG_VERSION_LONG, ARG_VERSION_SHORT);
     addOption(opts, "argTtyOption", ARG_TTY_LONG, ARG_TTY_SHORT, 1);
     addOption(opts, "argTestImplement", ARG_TEST_FGPA_LONG, ARG_TEST_FGPA_SHORT, Option.UNLIMITED_VALUES);  // We can have 3, 4 or 5 arguments here
     addOption(opts, "argClearOption", ARG_CLEAR_PREFS_LONG);
@@ -324,8 +308,8 @@ public class Startup implements AWTEventListener {
     addOption(opts, "argNoSplashOption", ARG_NO_SPLASH_LONG);
     addOption(opts, "argMainCircuitOption", ARG_MAIN_CIRCUIT, 1);
     addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR_LONG, ARG_TEST_VECTOR_SHORT, 2);
-    addOption(opts, "argTestCircuitOption", ARG_TEST_CIRCUIT_LONG, ARG_TEST_CIRCUIT_SHORT, 1);     // FIXME add "Option" suffix to key name
-    addOption(opts, "argTestCircGenOption", ARG_TEST_CIRC_GEN_LONG, ARG_TEST_CIRC_GEN_SHORT, 2);   // FIXME add "Option" suffix to key name
+    addOption(opts, "argTestCircuitOption", ARG_TEST_CIRCUIT_LONG, ARG_TEST_CIRCUIT_SHORT, 1);
+    addOption(opts, "argTestCircGenOption", ARG_TEST_CIRC_GEN_LONG, ARG_TEST_CIRC_GEN_SHORT, 2);
 
     CommandLine cmd;
     try {
@@ -334,24 +318,21 @@ public class Startup implements AWTEventListener {
       // FIXME: hardcoded string
       logger.error("Unrecognized option: '" + ex + ".);");
       logger.error("Use --help for more info.");
-      return null;
+      cmd = null;
     } catch (ParseException ex) {
       // FIXME: hardcoded string
       logger.error("Failed processing command line arguments.");
-      return null;
+      cmd = null;
     }
+
+    if (cmd == null) System.exit(1);
 
     // see whether we'll be using any graphics
-    var isTty = false;
-    var shallClearPreferences = false;
     if (cmd.hasOption(ARG_TTY_SHORT) || cmd.hasOption(ARG_TEST_FGPA_SHORT) || cmd.hasOption(ARG_TEST_FGPA_LONG)) {
-      isTty = true;
       Main.headless = true;
-    } else {
-      shallClearPreferences = cmd.hasOption(ARG_CLEAR_PREFS_LONG);
-    }
+    } 
 
-    if (!isTty) {
+    if (!Main.headless) {
       // we're using the GUI: Set up the Look&Feel to match the platform
       System.setProperty("apple.laf.useScreenMenuBar", "true");
       // Initialize graphics acceleration if appropriate
@@ -359,13 +340,13 @@ public class Startup implements AWTEventListener {
     }
 
     // Initialize startup object.
-    final var startup = new Startup(isTty);
+    final var startup = new Startup();
     startupTemp = startup;
-    if (!isTty) {
+    if (!Main.headless) {
       MacOsAdapter.addListeners();
     }
 
-    if (shallClearPreferences) {
+    if (cmd.hasOption(ARG_CLEAR_PREFS_LONG)) {
       AppPreferences.clear();
     }
 
@@ -395,12 +376,11 @@ public class Startup implements AWTEventListener {
         case ARG_MAIN_CIRCUIT -> handleArgMainCircuit(startup, opt);
         default -> RC.OK; // should not really happen IRL.
       };
-      lastHandlerRc = optHandlerRc;
       switch (optHandlerRc) {
-        case QUIT:
-          return startup;
-        default:
-          continue;
+        case EXIT: System.exit(0); 
+        case IO_ERROR: System.exit(2);
+        case CLI_ERROR: System.exit(1);
+        case OK: break;
       }
     }
 
@@ -408,20 +388,18 @@ public class Startup implements AWTEventListener {
     for (final var arg : cmd.getArgs()) {
       startup.filesToOpen.add(new File(arg));
     }
+    
+    // TODO: errors if any test and filesToOpen().count != 1
 
-    if (startup.exitAfterStartup && startup.filesToOpen.isEmpty()) {
-      printHelp(opts);
-      return null;
-    }
-    if (startup.isTty && startup.filesToOpen.isEmpty()) {
+    if (Main.headless && startup.filesToOpen.isEmpty()) {
       logger.error(S.get("ttyNeedsFileError"));
       return null;
     }
-    if (startup.loadFile != null && !startup.isTty) {
+    if (startup.loadFile != null && !Main.headless) {
       logger.error(S.get("loadNeedsTtyError"));
       return null;
     }
-    if (startup.saveFile != null && !startup.isTty) {
+    if (startup.saveFile != null && !Main.headless) {
       logger.error(S.get("saveNeedsTtyError"));
       return null;
     }
@@ -440,13 +418,17 @@ public class Startup implements AWTEventListener {
      */
     OK,
     /**
-     * Handler had some minor propblems, but it is recoverable, so parsing should keep going.
+     * Unrecoverable I/O error occured.
      */
-    WARN,
+    IO_ERROR,
     /**
-     * Unrecoverable error occured while handling option. No fall back, must quit.
+     * Unrecoverable error occured while handling option.
      */
-    QUIT
+    CLI_ERROR,
+    /** 
+     * Handler requests an immediate exit.
+     */
+    EXIT
   }
 
   private static RC handleArgTty(Startup startup, Option opt) {
@@ -471,14 +453,14 @@ public class Startup implements AWTEventListener {
 
         if (val == 0) {
           logger.error(S.get("ttyFormatError"));
-          return RC.QUIT;
+          return RC.CLI_ERROR;
         }
         startup.ttyFormat |= val;
         return RC.OK;
       }
     }
     logger.error(S.get("ttyFormatError"));
-    return RC.QUIT;
+    return RC.CLI_ERROR;
   }
 
   private static RC handleArgSubstitute(Startup startup, Option opt) {
@@ -489,16 +471,14 @@ public class Startup implements AWTEventListener {
       return RC.OK;
     }
 
-    // FIXME: warning should be sufficient here maybe?
     logger.error(S.get("argDuplicateSubstitutionError"));
-    return RC.QUIT;
+    return RC.CLI_ERROR;
   }
 
   private static RC handleArgLoad(Startup startup, Option opt) {
     if (startup.loadFile != null) {
       logger.error(S.get("loadMultipleError"));
-      // FIXME: shouldn't we quit here? -> RC.QUIT;
-      return RC.WARN;
+      return RC.CLI_ERROR;
     }
     final var fileName = opt.getValue();
     startup.loadFile = new File(fileName);
@@ -508,7 +488,7 @@ public class Startup implements AWTEventListener {
   private static RC handleArgSave(Startup startup, Option opt) {
     if (startup.saveFile != null) {
       logger.error(S.get("saveMultipleError"));
-      return RC.WARN;
+      return RC.CLI_ERROR;
     }
     final var fileName = opt.getValue();
     startup.saveFile = new File(fileName);
@@ -526,7 +506,7 @@ public class Startup implements AWTEventListener {
     }
 
     logger.error(S.get("argGatesOptionError"));
-    return RC.QUIT;
+    return RC.CLI_ERROR;
   }
 
   private static RC handleArgGeometry(Startup startup, Option opt) {
@@ -535,7 +515,7 @@ public class Startup implements AWTEventListener {
 
     if (wxh.length != 2 || wxh[0].length() < 1 || wxh[1].length() < 1) {
       logger.error(S.get("argGeometryError"));
-      return RC.QUIT;
+      return RC.CLI_ERROR;
     }
 
     final var p = wxh[1].indexOf('+', 1);
@@ -548,14 +528,14 @@ public class Startup implements AWTEventListener {
       final var xy = loc.split("\\+");
       if (xy.length != 2 || xy[0].length() < 1 || xy[1].length() < 1) {
         logger.error(S.get("argGeometryError"));
-        return RC.QUIT;
+        return RC.CLI_ERROR;
       }
       try {
         x = Integer.parseInt(xy[0]);
         y = Integer.parseInt(xy[1]);
       } catch (NumberFormatException e) {
         logger.error(S.get("argGeometryError"));
-        return RC.QUIT;
+        return RC.CLI_ERROR;
       }
     }
 
@@ -566,11 +546,11 @@ public class Startup implements AWTEventListener {
       h = Integer.parseInt(wxh[1]);
     } catch (NumberFormatException e) {
       logger.error(S.get("argGeometryError"));
-      return RC.QUIT;
+      return RC.CLI_ERROR;
     }
     if (w <= 0 || h <= 0) {
       logger.error(S.get("argGeometryError"));
-      return RC.QUIT;
+      return RC.CLI_ERROR;
     }
     AppPreferences.WINDOW_WIDTH.set(w);
     AppPreferences.WINDOW_HEIGHT.set(h);
@@ -581,14 +561,13 @@ public class Startup implements AWTEventListener {
   }
 
   private static RC handleArgLocale(Startup startup, Option opt) {
-    setLocale(opt.getValue());
-    return RC.OK;
+    return setLocale(opt.getValue());
   }
 
   private static RC handleArgTemplate(Startup startup, Option opt) {
     if (startup.templFile != null || startup.templEmpty || startup.templPlain) {
       logger.error(S.get("argOneTemplateError"));
-      return RC.QUIT;
+      return RC.CLI_ERROR;
     }
     // first we get the option
     final var option = opt.getValue();
@@ -598,7 +577,7 @@ public class Startup implements AWTEventListener {
       startup.templFile = file;
       if (!startup.templFile.canRead()) {
         logger.error(S.get("templateCannotReadError", file));
-        return RC.QUIT;
+        return RC.IO_ERROR;
       }
       return RC.OK;
     }
@@ -612,7 +591,7 @@ public class Startup implements AWTEventListener {
       return RC.OK;
     }
     logger.error(S.get("argOneTemplateError"));
-    return RC.QUIT;
+    return RC.CLI_ERROR;
   }
 
   private static RC handleArgNoSplash(Startup startup, Option opt) {
@@ -623,8 +602,6 @@ public class Startup implements AWTEventListener {
   private static RC handleArgTestVector(Startup startup, Option opt) {
     startup.circuitToTest = opt.getValues()[0];
     startup.testVector = opt.getValues()[1];
-    startup.showSplash = false;
-    startup.exitAfterStartup = true;
     // This is to test a test bench. It will return 0 or 1 depending on if the tests pass or not.
     return RC.OK;
   }
@@ -675,7 +652,7 @@ public class Startup implements AWTEventListener {
     }
 
     logger.error(S.get("argTestUnknownFlagOrValue", String.valueOf(argVal)));
-    return RC.QUIT;
+    return RC.CLI_ERROR;
   }
 
   // Indicates if handleArgTestFpgaParseArg() successfuly parsed and set tick freq.
@@ -686,13 +663,13 @@ public class Startup implements AWTEventListener {
 
     if (optArgs == null) {
       logger.error(S.get("argTestInvalidArguments"));
-      return RC.QUIT;
+      return RC.CLI_ERROR;
     }
 
     final var argsCnt = optArgs.length;
     if (argsCnt < 3 || argsCnt > 5) {
       logger.error(S.get("argTestInvalidArguments"));
-      return RC.QUIT;
+      return RC.CLI_ERROR;
     }
 
     // already handled above
@@ -700,14 +677,13 @@ public class Startup implements AWTEventListener {
     startup.testCircuitImpName = optArgs[1];
     startup.testCircuitImpBoard = optArgs[2];
 
-    var handlerRc = RC.OK;
     if (argsCnt >= 4) {
-      handlerRc = handleArgTestFpgaParseArg(startup, optArgs[3]);
-      if (handlerRc == RC.QUIT) return handlerRc;
+      RC rc = handleArgTestFpgaParseArg(startup, optArgs[3]);
+      if (rc != RC.OK) return rc;
     }
     if (argsCnt >= 5) {
-      handlerRc = handleArgTestFpgaParseArg(startup, optArgs[4]);
-      if (handlerRc == RC.QUIT) return handlerRc;
+      RC rc = handleArgTestFpgaParseArg(startup, optArgs[4]);
+      if (rc != RC.OK) return rc;
     }
 
     startup.doFpgaDownload = true;
@@ -720,8 +696,6 @@ public class Startup implements AWTEventListener {
     final var fileName = opt.getValue();
     startup.testCircuitPathInput = fileName;
     startup.filesToOpen.add(new File(fileName));
-    startup.showSplash = false;
-    startup.exitAfterStartup = true;
     return RC.OK;
   }
 
@@ -733,28 +707,25 @@ public class Startup implements AWTEventListener {
     startup.filesToOpen.add(new File(startup.testCircPathInput));
     // This is the output file's path. The comparaison shall be done between the  testCircPathInput and the testCircPathOutput
     startup.testCircPathOutput = optArgs[1];
-    startup.showSplash = false;
-    startup.exitAfterStartup = true;
     return RC.OK;
   }
 
   /* ********************************************************************************************* */
 
-  private static void setLocale(String lang) {
+  private static RC setLocale(String lang) {
     final var opts = S.getLocaleOptions();
     for (final var locale : opts) {
       if (lang.equals(locale.toString())) {
         LocaleManager.setLocale(locale);
-        return;
+        return RC.OK;
       }
     }
-    logger.warn(S.get("invalidLocaleError"));
-    logger.warn(S.get("invalidLocaleOptionsHeader"));
-
+    logger.error(S.get("invalidLocaleError"));
+    logger.error(S.get("invalidLocaleOptionsHeader"));
     for (final var opt : opts) {
-      logger.warn("   {}", opt.toString());
+      logger.error("   {}", opt.toString());
     }
-    System.exit(-1);
+    return RC.CLI_ERROR;
   }
 
   private void doOpenFile(File file) {
@@ -777,6 +748,18 @@ public class Startup implements AWTEventListener {
 
   List<File> getFilesToOpen() {
     return filesToOpen;
+  }
+
+  String getTestVector() {
+      return testVector;
+  }
+
+  String getTestCircPathOutput() {
+    return testCircPathOutput;
+  }
+
+  String getTestCircuitPathInput() {
+    return testCircuitPathInput;
   }
 
   File getLoadFile() {
@@ -840,10 +823,9 @@ public class Startup implements AWTEventListener {
   }
 
   public void run() {
-    if (isTty) {
+    if (Main.headless) {
       try {
         TtyInterface.run(this);
-        System.exit(0);
       } catch (Exception t) {
         t.printStackTrace();
         System.exit(-1);
@@ -876,7 +858,6 @@ public class Startup implements AWTEventListener {
             + templLoader.getBuiltin().getLibrary(GatesLibrary._ID).getTools().size();
     if (count < 0) {
       // this will never happen, but the optimizer doesn't know that...
-      // FIXME: hardcoded string
       logger.error("FATAL ERROR - no components");
       System.exit(-1);
     }
@@ -925,35 +906,9 @@ public class Startup implements AWTEventListener {
     } else {
       var numOpened = 0;
       var first = true;
-      Project proj;
       for (final var fileToOpen : filesToOpen) {
         try {
-          if (testVector != null) {
-            proj = ProjectActions.doOpenNoWindow(monitor, fileToOpen);
-            proj.doTestVector(testVector, circuitToTest);
-          } else if (testCircPathInput != null && testCircPathOutput != null) {
-            /* This part of the function will create a new circuit file (
-             * XML) which will be open and saved again using the  */
-            proj = ProjectActions.doOpen(monitor, fileToOpen, substitutions);
-
-            ProjectActions.doSave(proj, new File(testCircPathOutput));
-          } else if (testCircuitPathInput != null) {
-            /* Testing test bench*/
-            final var testB = new TestBench(testCircuitPathInput, monitor, substitutions);
-
-            if (testB.startTestBench()) {
-              // FIXME: hardcoded string
-              System.out.println("Test bench pass\n");
-              System.exit(0);
-            } else {
-              // FIXME: hardcoded string
-              // FIXME: I'd capitalize FAIL to make it stand out.
-              System.out.println("Test bench fail\n");
-              System.exit(-1);
-            }
-          } else {
-            ProjectActions.doOpen(monitor, fileToOpen, substitutions);
-          }
+          ProjectActions.doOpen(monitor, fileToOpen, substitutions);
           numOpened++;
         } catch (LoadFailedException ex) {
           logger.error("{} : {}", fileToOpen.getName(), ex.getMessage());
@@ -971,10 +926,6 @@ public class Startup implements AWTEventListener {
 
     for (final var fileToPrint : filesToPrint) {
       doPrintFile(fileToPrint);
-    }
-
-    if (exitAfterStartup) {
-      System.exit(0);
     }
   }
 

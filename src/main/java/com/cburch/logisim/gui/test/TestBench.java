@@ -12,15 +12,10 @@ package com.cburch.logisim.gui.test;
 import com.cburch.logisim.circuit.Circuit;
 import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.data.Value;
-import com.cburch.logisim.file.LoadFailedException;
-import com.cburch.logisim.gui.start.SplashScreen;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.proj.ProjectActions;
 import com.cburch.logisim.std.wiring.Pin;
-import java.io.File;
-import java.util.Map;
 
 public class TestBench {
 
@@ -29,17 +24,9 @@ public class TestBench {
   private final Instance[] pinsOutput;
   private Project proj;
 
-  public TestBench(String path, SplashScreen mon, Map<File, File> subs) {
+  public TestBench(Project p) {
     this.pinsOutput = new Instance[outputSignals.length];
-    final var fileToOpen = new File(path);
-
-    try {
-      this.proj = ProjectActions.doOpenNoWindow(mon, fileToOpen);
-    } catch (LoadFailedException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-      System.exit(-1);
-    }
+    this.proj = p;
   }
 
   /* Check if the label correspond to any of the strings

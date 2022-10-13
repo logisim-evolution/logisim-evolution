@@ -1,0 +1,435 @@
+======== Startup.parseArgs() ==========
+
+unrecognized options / parse error
+    logger error
+    exit(10)
+
+--tty || --test-fpga                    !!! should include test-vector, test-circuit, new-file-format
+    Main.headless = t
+
+--help
+    print version
+    print help
+    exit(0)
+
+--version
+    print version
+    exit(0)
+
+--tty unknown format or missing format
+    logger error
+    exit(0)
+else
+    Startup.ttyFormat = ...
+
+--substitution error (duplicate sub)
+    logger error
+    exit(0)
+else
+    Startup.substitutions
+
+--load/save error (duplicate option)
+    logger error
+    ignore it (only use of RC.WARN)     !!!
+    should exit(0)                      !!!
+else 
+    Startup.load/saveFile
+
+--gates error (unknown shape)
+    logger error
+    exit(0)
+else 
+    AppPreferences.GATE_SHAPE
+
+--geometry error 
+    logger error
+    exit(0)
+else
+    AppPreferences.WINDOW_WIDTH/HEIGHT
+
+--locale error (unknown name)
+    logger warn
+    should be error                     !!!
+    exit(-1)                            !!!
+else
+    LocaleManager.setLocale
+
+--user-template error
+    logger error
+    exit(0)
+else
+    Startup.templFile = name
+    Startup.templEmpty = t/f
+    Startup.templPlain = t/f
+
+--no-splash
+    Startup.showSplash = f
+
+--test-vector
+    Startup.showSplash = f              !!! unnecessary
+    Startup.exitAfterStartup = t        !!! should just use TtyInterface
+    Startup.circuitToTest 
+    Startup.testVector 
+
+--toplevel-circuit 
+    Startup.circuitToTest 
+
+--test-fpga error 
+    logger error
+    exit(0)
+else
+    startup.testCircuitImpPath
+    startup.testCircuitImpName
+    startup.testCircuitImpBoard
+    startup.doFpgaDownload = t
+    startup.showSplash = f                              !!! unnecessary
+    startup.filesToOpen
+    startup.testCircuitHdlOnly
+    startup.testFpgaFlagTickFreqSet (static member)     !!!
+
+--test-circuit
+    startup.testCircuitPathInput
+    startup.filesToOpen
+    startup.showSplash = f                              !!! unnecessary
+    startup.exitAfterStartup = t                        !!! (explicit exit)
+                                                        !!! should just use TtyInterface
+
+--new-file-format
+    startup.testCircPathInput
+    startup.filesToOpen
+    startup.testCircPathOutput
+    startup.showSplash = f                              !!! unnecessary
+    startup.exitAfterStartup = t                        !!! should just use TtyInterface
+
+non-option args
+    startup.filesToOpen
+
+no files && startup.exitAfterStartup
+    print version
+    print help
+    exit(10)                                        !!!
+
+no files && Main.headless
+    logger error
+    exit(10)                                        !!!
+
+Startup.load/saveFile && !Main.headless
+    logger error
+    exit(10)                                        !!!
+
+========== Startup.run() =============
+
+if Main.headless
+
+        ========== TtyInterface.run() ============
+
+        fail to open Startup.filesToOpen
+            logger error
+            exit(-1)
+
+        Startup.isFpgaDownload && Startup.fpga.Download() fails
+            exit(-1)
+
+        Startup.format & STATISTICS                         !!! should be a separate flag
+            displayStatistics()
+            maybe exit(0)                                   !!!
+
+        no halt pin && Startup.format & TABLE
+            doTableAnalysis()
+            exit(0) (via return)                            !!! prevents other analysis??
+
+        loadRam() fails
+            logger error
+            exit(-1)
+
+        ========== TtyInterface.runSimulation() ============
+
+        Startup.format & TTY && no tty found
+            logger error
+            exit(-1)
+
+        Startup.format & TABLE 
+            displayTableRow()
+
+        Startup.format & HALT || oscillating                !!! should be a separate flag????
+            logger error                                    !!!
+            (requested output goes to stderr??)             !!!
+
+        Startup.format & SPEED                              !!! should be a separate flag
+            displaySpeed()
+
+        ========== TtyInterface.run() ============
+
+        saveRam exception
+            logger error
+            exit(-1)
+
+        exit(0/1) depending on oscillating                  !!! (use exitAfterStartup??)
+
+        exceptions from TtyInterface.run()
+            stack trace
+            exit(-1)
+
+========== Startup.run() =============
+
+Startup.testVector                                          !!! should be part of TtyInterface
+    doOpenNoWindow(Startup.filesToOpen)
+    doTestVector(Startup.testVector,Startup.circuitToTest)
+    (should exit??)                                         !!! (uses exitAfterStartup)
+
+Startup.testCircPathInput && Startup.testCircPathOutput     !!! should be part of TtyInterface
+    (testCircPathInput is ignored)                          !!!
+    doOpen(Startup.filesToOpen)
+    doSave(Startup.testCircPathOutput
+    (should exit??)                                         !!! (uses exitAfterStartup)
+
+Startup.testCircuitPathInput                                !!! should be part of TtyInterface
+    TestBench(Startup.testCircuitPathInput,Startup.substitutions)
+    println pass/fail
+    exit(0/-1)
+
+open failure
+    logger error
+
+no files opened successfully
+    exit(-1)
+
+Startup.exitAfterStartup
+    exit(0)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+======== Startup.parseArgs() ==========
+
+unrecognized options / parse error
+    logger error
+    exit(10)
+
+--tty || --test-fpga                    !!! should include test-vector, test-circuit, new-file-format
+    Main.headless = t
+
+--help
+    print version
+    print help
+    exit(0)
+
+--version
+    print version
+    exit(0)
+
+--tty unknown format or missing format
+    logger error
+    exit(0)
+else
+    Startup.ttyFormat = ...
+
+--substitution error (duplicate)
+    logger error
+    exit(0)
+else
+    Startup.substitutions
+
+--load/save error (duplicate)
+    logger error
+    ignore it (only use of RC.WARN)     !!!
+    should exit(0)                      !!!
+else 
+    Startup.load/saveFile
+
+--gates error (unknown)
+    logger error
+    exit(0)
+else 
+    AppPreferences.GATE_SHAPE
+
+--geometry error 
+    logger error
+    exit(0)
+else
+    AppPreferences.WINDOW_WIDTH/HEIGHT
+
+--locale error (unknown)
+    logger warn
+    should be error                     !!!
+    exit(-1)                            !!!
+else
+    LocaleManager.setLocale
+
+--user-template error
+    logger error
+    exit(0)
+else
+    Startup.templFile = name
+    Startup.templEmpty = t/f
+    Startup.templPlain = t/f
+
+--no-splash
+    Startup.showSplash = f
+
+--test-vector
+    Startup.showSplash = f              !!! unnecessary
+    Startup.exitAfterStartup = t        !!! should just use TtyInterface
+    Startup.circuitToTest 
+    Startup.testVector 
+
+--toplevel-circuit 
+    Startup.circuitToTest 
+
+--test-fpga error 
+    logger error
+    exit(0)
+else
+    startup.testCircuitImpPath
+    startup.testCircuitImpName
+    startup.testCircuitImpBoard
+    startup.doFpgaDownload = t
+    startup.showSplash = f                              !!! unnecessary
+    startup.filesToOpen
+    startup.testCircuitHdlOnly
+    startup.testFpgaFlagTickFreqSet (static member)     !!!
+
+--test-circuit
+    startup.testCircuitPathInput
+    startup.filesToOpen
+    startup.showSplash = f                              !!! unnecessary
+    startup.exitAfterStartup = t                        !!! (explicit exit)
+
+--new-file-format
+    startup.testCircPathInput
+    startup.filesToOpen
+    startup.testCircPathOutput
+    startup.showSplash = f                              !!! unnecessary
+    startup.exitAfterStartup = t                        !!! should just use TtyInterface
+
+non-option args
+    startup.filesToOpen
+
+no files && startup.exitAfterStartup
+    print version
+    print help
+    exit(10)                                        !!!
+
+no files && Main.headless
+    logger error
+    exit(10)                                        !!!
+
+Startup.load/saveFile && !Main.headless
+    logger error
+    exit(10)                                        !!!
+
+========== Startup.run() =============
+
+if Main.headless
+
+        ========== TtyInterface.run() ============
+
+        fail to open Startup.filesToOpen
+            logger error
+            exit(-1)
+
+        Startup.isFpgaDownload && Startup.fpga.Download() fails
+            exit(-1)
+
+        Startup.testVector                                              !!! added/moved
+            doTestVector(Startup.testVector,Startup.circuitToTest)
+            exit(0)
+
+        Startup.testCircPathOutput                                      !!! added/moved
+            doSave(Startup.testCircPathOutput)                          !!! ignores Startup.substitutions
+            exit(0)
+
+        Startup.testCircuitPathInput                                    !!! added/moved
+            TestBench().start()
+            println pass/fail
+            exit(0/-1)
+
+        Startup.format & STATISTICS                         !!! should be a separate flag
+            displayStatistics()
+            maybe exit(0)                                   !!!
+
+        no halt pin && Startup.format & TABLE
+            doTableAnalysis()
+            exit(0) (via return)                            !!! prevents other analysis??
+
+        loadRam() fails
+            logger error
+            exit(-1)
+
+        ========== TtyInterface.runSimulation() ============
+
+        Startup.format & TTY && no tty found
+            logger error
+            exit(-1)
+
+        Startup.format & TABLE 
+            displayTableRow()
+
+        Startup.format & HALT || oscillating                !!! should be a separate flag????
+            logger error                                    !!!
+            (requested output goes to stderr??)             !!!
+
+        Startup.format & SPEED                              !!! should be a separate flag
+            displaySpeed()
+
+        ========== TtyInterface.run() ============
+
+        saveRam exception
+            logger error
+            exit(-1)
+
+        exit(0/1) depending on oscillating
+
+        exceptions from TtyInterface.run()
+            stack trace
+            exit(-1)
+
+========== Startup.run() =============
+
+Startup.testVector                                          !!! removed
+    doOpenNoWindow(Startup.filesToOpen)
+    doTestVector(Startup.testVector,Startup.circuitToTest)
+
+Startup.testCircPathInput && Startup.testCircPathOutput     !!! removed
+    (testCircPathInput is ignored)                          !!!
+    doOpen(Startup.filesToOpen)
+    doSave(Startup.testCircPathOutput
+
+Startup.testCircuitPathInput                                !!! removed
+    TestBench(Startup.testCircuitPathInput,Startup.substitutions)
+    println pass/fail
+    exit(0/-1)
+
+open failure
+    logger error
+
+no files opened successfully
+    exit(-1)
+
+Startup.exitAfterStartup                            !!! removed
+    exit(0)
+
+
+
+----------------
+Exit codes:
+    0: all okay
+    1: there was a command-line error (syntax)
+    2: there was a file error
+   -1: there was an exception/unexpected error
+    
+    0/-1: --test-circuit results
+
+    

@@ -53,8 +53,6 @@ public class Main {
     }
 
     final var startup = Startup.parseArgs(args);
-    if (startup == null) System.exit(10);
-    if (startup.shallQuit()) System.exit(0);
 
     try {
       startup.run();
@@ -63,7 +61,7 @@ public class Main {
       final var printWriter = new PrintWriter(strWriter);
       e.printStackTrace(printWriter);
       OptionPane.showMessageDialog(null, strWriter.toString());
-      System.exit(100);
+      System.exit(-1);
     }
   }
 
