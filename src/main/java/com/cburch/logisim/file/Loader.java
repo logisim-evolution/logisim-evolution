@@ -206,7 +206,8 @@ public class Loader implements LibraryLoader {
     }
     while (!file.canRead()) {
       // It doesn't exist. Figure it out from the user.
-      OptionPane.showMessageDialog(parent, String.format(S.get("fileLibraryMissingError"), file.getName()));
+      OptionPane.showMessageDialog(
+          parent, String.format(S.get("fileLibraryMissingError"), file.getName()));
       final var chooser = createChooser();
       chooser.setFileFilter(filter);
       chooser.setDialogTitle(S.get("fileLibraryMissingTitle", file.getName()));
@@ -342,10 +343,28 @@ public class Loader implements LibraryLoader {
     LibraryManager.instance.reload(this, lib);
   }
 
+<<<<<<< HEAD
   public boolean export(LogisimFile file, ZipOutputStream zipFile, String mainFileName) {
     this.zipFile = zipFile;
     file.write(zipFile, this, mainFileName);
     this.zipFile = null;
+=======
+  public boolean export(LogisimFile file, String homeDirectory) {
+    try {
+      final var mainCircFile =
+          LineBuffer.format(
+              "{{1}}{{2}}{{3}}{{2}}{{4}}",
+              homeDirectory, File.separator, LOGISIM_CIRCUIT_DIR, getMainFile().getName());
+      final var libraryHome =
+          String.format("%s%s%s", homeDirectory, File.separator, LOGISIM_LIBRARY_DIR);
+      final var fwrite = new FileOutputStream(mainCircFile);
+      file.write(fwrite, this, libraryHome);
+    } catch (IOException e) {
+      // TODO: give an error message to the user #1136
+      System.err.println("Unable to export file");
+      return false;
+    }
+>>>>>>> 16419656c23f2540946a8528dfdd0b520d978e54
     return true;
   }
 
@@ -479,7 +498,8 @@ public class Loader implements LibraryLoader {
     if (source == null) return;
     var message = source.getMessage();
     while (message != null) {
-      OptionPane.showMessageDialog(parent, message, S.get("fileMessageTitle"), OptionPane.INFORMATION_MESSAGE);
+      OptionPane.showMessageDialog(
+          parent, message, S.get("fileMessageTitle"), OptionPane.INFORMATION_MESSAGE);
       message = source.getMessage();
     }
   }
@@ -503,7 +523,8 @@ public class Loader implements LibraryLoader {
     try {
       return HdlFile.load(selected);
     } catch (IOException e) {
-      OptionPane.showMessageDialog(window, e.getMessage(), S.get("hexOpenErrorTitle"), OptionPane.ERROR_MESSAGE);
+      OptionPane.showMessageDialog(
+          window, e.getMessage(), S.get("hexOpenErrorTitle"), OptionPane.ERROR_MESSAGE);
       return null;
     }
   }

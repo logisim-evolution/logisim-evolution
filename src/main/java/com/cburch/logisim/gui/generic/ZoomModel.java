@@ -35,5 +35,4 @@ public interface ZoomModel {
   void addPropertyChangeListener(String prop, PropertyChangeListener l);
 
   void removePropertyChangeListener(String prop, PropertyChangeListener l);
-
 }

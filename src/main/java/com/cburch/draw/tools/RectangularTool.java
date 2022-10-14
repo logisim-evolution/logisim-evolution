@@ -114,7 +114,8 @@ abstract class RectangularTool extends AbstractTool {
   @Override
   public void keyPressed(Canvas canvas, KeyEvent e) {
     final var code = e.getKeyCode();
-    if (active && (code == KeyEvent.VK_SHIFT || code == KeyEvent.VK_ALT || code == KeyEvent.VK_CONTROL)) {
+    if (active
+        && (code == KeyEvent.VK_SHIFT || code == KeyEvent.VK_ALT || code == KeyEvent.VK_CONTROL)) {
       updateMouse(canvas, lastMouseX, lastMouseY, e.getModifiersEx());
     }
   }
@@ -131,7 +132,7 @@ abstract class RectangularTool extends AbstractTool {
 
   @Override
   public void mousePressed(Canvas canvas, MouseEvent e) {
-    final var loc = Location.create(e.getX(), e.getY());
+    final var loc = Location.create(e.getX(), e.getY(), false);
     final var bds = Bounds.create(loc);
     dragStart = loc;
     lastMouseX = loc.getX();

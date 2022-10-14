@@ -34,7 +34,9 @@ public class netlistComponent {
     compReference = ref;
     endEnds = new ArrayList<>();
     for (var i = 0; i < ref.getEnds().size(); i++) {
-      endEnds.add(new ConnectionEnd(ref.getEnd(i).isOutput(), (byte) ref.getEnd(i).getWidth().getWidth(), ref));
+      endEnds.add(
+          new ConnectionEnd(
+              ref.getEnd(i).isOutput(), (byte) ref.getEnd(i).getWidth().getWidth(), ref));
     }
     if (ref.getAttributeSet().containsAttribute(StdAttr.MAPINFO)) {
       myMapInformation = ref.getAttributeSet().getValue(StdAttr.MAPINFO).clone();
@@ -72,13 +74,16 @@ public class netlistComponent {
     }
     final var thisInfo = new BubbleInformationContainer();
     if (nrOfInputBubbles > 0) {
-      thisInfo.setInputBubblesInformation(inputBubblesStartId, inputBubblesStartId + nrOfInputBubbles - 1);
+      thisInfo.setInputBubblesInformation(
+          inputBubblesStartId, inputBubblesStartId + nrOfInputBubbles - 1);
     }
     if (nrOfInOutBubbles > 0) {
-      thisInfo.setInOutBubblesInformation(inOutBubblesStartId, inOutBubblesStartId + nrOfInOutBubbles - 1);
+      thisInfo.setInOutBubblesInformation(
+          inOutBubblesStartId, inOutBubblesStartId + nrOfInOutBubbles - 1);
     }
     if (nrOfOutputBubbles > 0) {
-      thisInfo.setOutputBubblesInformation(outputBubblesStartId, outputBubblesStartId + nrOfOutputBubbles - 1);
+      thisInfo.setOutputBubblesInformation(
+          outputBubblesStartId, outputBubblesStartId + nrOfOutputBubbles - 1);
     }
     globalIds.put(hierarchyName, thisInfo);
   }
@@ -207,13 +212,16 @@ public class netlistComponent {
       localId = new BubbleInformationContainer();
     }
     if (nrOfInputBubbles > 0) {
-      localId.setInputBubblesInformation(inputBubblesStartId, inputBubblesStartId + nrOfInputBubbles - 1);
+      localId.setInputBubblesInformation(
+          inputBubblesStartId, inputBubblesStartId + nrOfInputBubbles - 1);
     }
     if (nrOfInOutBubbles > 0) {
-      localId.setInOutBubblesInformation(inOutBubblesStartId, inOutBubblesStartId + nrOfInOutBubbles - 1);
+      localId.setInOutBubblesInformation(
+          inOutBubblesStartId, inOutBubblesStartId + nrOfInOutBubbles - 1);
     }
     if (nrOfOutputBubbles > 0) {
-      localId.setOutputBubblesInformation(outputBubblesStartId, outputBubblesStartId + nrOfOutputBubbles - 1);
+      localId.setOutputBubblesInformation(
+          outputBubblesStartId, outputBubblesStartId + nrOfOutputBubbles - 1);
     }
   }
 

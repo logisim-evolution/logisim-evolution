@@ -65,7 +65,8 @@ class SplitterParameters {
     } else { // > or <
       final var m = facing == Direction.WEST ? -1 : 1;
       dxEnd0 = m * width;
-      dyEnd0 = justify == 0 ? -gap * (fanout / 2) : m * justify > 0 ? 10 : -(10 + gap * (fanout - 1));
+      dyEnd0 =
+          justify == 0 ? -gap * (fanout / 2) : m * justify > 0 ? 10 : -(10 + gap * (fanout - 1));
       ddxEnd = 0;
       ddyEnd = gap;
       dxEndSpine = -m * (width - offs);

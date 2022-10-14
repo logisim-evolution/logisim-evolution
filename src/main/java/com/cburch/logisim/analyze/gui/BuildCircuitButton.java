@@ -126,6 +126,15 @@ class BuildCircuitButton extends JButton {
       var useNands = false;
       var replace = false;
 
+      if (!model.getOutputExpressions().hasExpressions()) {
+        OptionPane.showMessageDialog(
+                parent,
+                S.get("zeroOrNotOptimizedMessage"),
+                S.get("buildDialogTitle"),
+                OptionPane.ERROR_MESSAGE);
+        return;
+      }
+
       var ok = false;
       while (!ok) {
         DialogPanel dlog = new DialogPanel();
@@ -167,10 +176,10 @@ class BuildCircuitButton extends JButton {
         for (final var label : model.getOutputs().getNames()) labels.add(label.toUpperCase());
         if (labels.contains(name.toUpperCase())) {
           OptionPane.showMessageDialog(
-                parent,
-                S.get("buildDuplicatedNameError"),
-                S.get("buildDialogErrorTitle"),
-                OptionPane.ERROR_MESSAGE);
+              parent,
+              S.get("buildDuplicatedNameError"),
+              S.get("buildDialogErrorTitle"),
+              OptionPane.ERROR_MESSAGE);
           continue;
         }
 
@@ -234,7 +243,8 @@ class BuildCircuitButton extends JButton {
     setText(S.get("buildCircuitButton"));
   }
 
-  private void performAction(Project dest, String name, boolean replace, final boolean twoInputs, final boolean useNands) {
+  private void performAction(
+      Project dest, String name, boolean replace, final boolean twoInputs, final boolean useNands) {
     if (replace) {
       final var circuit = dest.getLogisimFile().getCircuit(name);
       if (circuit == null) {

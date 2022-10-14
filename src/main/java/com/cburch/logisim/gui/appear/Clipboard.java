@@ -14,7 +14,8 @@ import java.beans.PropertyChangeListener;
 
 final class Clipboard {
   public static final String CONTENTS_PROPERTY = "appearance";
-  private static final PropertyChangeWeakSupport propertySupport = new PropertyChangeWeakSupport(Clipboard.class);
+  private static final PropertyChangeWeakSupport propertySupport =
+      new PropertyChangeWeakSupport(Clipboard.class);
   private static ClipboardContents current = ClipboardContents.EMPTY;
 
   private Clipboard() {}
@@ -26,7 +27,8 @@ final class Clipboard {
     propertySupport.addPropertyChangeListener(listener);
   }
 
-  public static void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public static void addPropertyChangeListener(
+      String propertyName, PropertyChangeListener listener) {
     propertySupport.addPropertyChangeListener(propertyName, listener);
   }
 
@@ -42,7 +44,8 @@ final class Clipboard {
     propertySupport.removePropertyChangeListener(listener);
   }
 
-  public static void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+  public static void removePropertyChangeListener(
+      String propertyName, PropertyChangeListener listener) {
     propertySupport.removePropertyChangeListener(propertyName, listener);
   }
 

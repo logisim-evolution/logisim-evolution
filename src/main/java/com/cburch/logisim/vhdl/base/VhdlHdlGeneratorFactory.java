@@ -36,11 +36,9 @@ public class VhdlHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   @Override
   public ArrayList<String> getArchitecture(
-      Netlist theNetlist,
-      AttributeSet attrs,
-      String componentName) {
-    ArrayList<String> contents = new ArrayList<>();
-    contents.addAll(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
+      Netlist theNetlist, AttributeSet attrs, String componentName) {
+    ArrayList<String> contents =
+        new ArrayList<>(FileWriter.getGenerateRemark(componentName, theNetlist.projName()));
 
     VhdlContent content = ((VhdlEntityAttributes) attrs).getContent();
     contents.add(content.getLibraries());

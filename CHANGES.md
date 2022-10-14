@@ -3,10 +3,30 @@
 # Changes #
 
 * @dev (????-??-??)
+  * New take on project export/import a zip-file is generated which can include a user provided "README.md".
+
+* v3.8.0 (2022-10-02)
+  * Added reset value attribute to input pins
+  * Fixed boolean algebra minimal form bug
+  * Fixed random fill Rom bug
+  * Added TTL 74164, 74192 and 74193.
+  * Fixed off grid components bug that could lead to OutOfMemory error.
+  * Removed autolabler for tunnels, such that all get the same label in case of renaming.
   * Fixed bug preventing TTL 7442, 7443 and 7444 from being placed on the circuit canvas.
   * Sub-circuit can now be deleted with `DELETE` key, along with `BACKSPACE` used so far.
   * Fixed `Simulate` -> `Timing Diagram` not opening when using "Nimbus" look and feel.
-  * New take on project export/import a zip-file is generated which can include a user provided "README.md".
+  * Fixed pressing `CTRL`+`0` selecting the wrong element in the toolbar.
+  * Fixed TTL 7485 `7485HdlGenerator` generating wrong HDL type.
+  * Fixed TTL 74139, 7447 outputting inverted logic
+  * Fixed TTL 74175, CLR inverted
+  * Fixed TTL 7436 pin arrangement
+  * Added TTL 74138: 3-line to 8-line decoder
+  * Added TTL 74240, 74241, 74244: octal buffers with three-state outputs.
+  * Added TTL 74245: octal bus transceivers with three-state outputs.
+  * Moved TTL 74266 to 747266, correctly reimplemented 74266 with open-collector outputs.
+  * Fixed TTL 74165, correct order of inputs, load asynchronously
+  * Added TTL 74166: 8-bit parallel-to-serial shift register with clear
+  * Removed fixed LM_Licence setting
 
 * v3.7.2 (2021-11-09)
   * Fixed Preferences/Window "Reset window layout to defaults" not doing much.

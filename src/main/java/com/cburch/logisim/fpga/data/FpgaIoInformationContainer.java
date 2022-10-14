@@ -88,7 +88,7 @@ public class FpgaIoInformationContainer implements Cloneable {
   private Integer myArrayId = -1;
   private char myPullBehavior;
   private char myActivityLevel;
-  private char nyIoStandard;
+  private char myIoStandard;
   private char myDriveStrength;
   private String myLabel;
   private boolean toBeDeleted = false;
@@ -110,7 +110,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     setNrOfPins(0);
     myPullBehavior = PullBehaviors.UNKNOWN;
     myActivityLevel = PinActivity.Unknown;
-    nyIoStandard = IoStandards.UNKNOWN;
+    myIoStandard = IoStandards.UNKNOWN;
     myDriveStrength = DriveStrength.UNKNOWN;
     myLabel = null;
   }
@@ -123,7 +123,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     setNrOfPins(0);
     myPullBehavior = PullBehaviors.UNKNOWN;
     myActivityLevel = PinActivity.Unknown;
-    nyIoStandard = IoStandards.UNKNOWN;
+    myIoStandard = IoStandards.UNKNOWN;
     myDriveStrength = DriveStrength.UNKNOWN;
     myLabel = null;
     if (rect != null) rect.setLabel(null);
@@ -157,7 +157,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     setNrOfPins(0);
     myPullBehavior = PullBehaviors.UNKNOWN;
     myActivityLevel = PinActivity.Unknown;
-    nyIoStandard = IoStandards.UNKNOWN;
+    myIoStandard = IoStandards.UNKNOWN;
     myDriveStrength = DriveStrength.UNKNOWN;
     myLabel = null;
     ArrayList<String> InputLocs = new ArrayList<>();
@@ -236,7 +236,7 @@ public class FpgaIoInformationContainer implements Cloneable {
         myPullBehavior = PullBehaviors.getId(thisAttr.getNodeValue());
       }
       if (thisAttr.getNodeName().equals(IoStandards.IO_ATTRIBUTE_STRING)) {
-        nyIoStandard = IoStandards.getId(thisAttr.getNodeValue());
+        myIoStandard = IoStandards.getId(thisAttr.getNodeValue());
       }
       if (thisAttr.getNodeName().equals(PinActivity.ACTIVITY_ATTRIBUTE_STRING)) {
         myActivityLevel = PinActivity.getId(thisAttr.getNodeValue());
@@ -406,11 +406,33 @@ public class FpgaIoInformationContainer implements Cloneable {
 
   @Override
   public Object clone() throws CloneNotSupportedException {
-    return super.clone();
+    var clone = new FpgaIoInformationContainer();
+    clone.myType = myType;
+    clone.myRectangle = myRectangle;
+    clone.myRotation = myRotation;
+    clone.myPinLocations = myPinLocations;
+    clone.myInputPins = myInputPins;
+    clone.myOutputPins = myOutputPins;
+    clone.myIoPins = myIoPins;
+    clone.nrOfPins = nrOfPins;
+    clone.nrOfExternalPins = nrOfExternalPins;
+    clone.myArrayId = myArrayId;
+    clone.myPullBehavior = myPullBehavior;
+    clone.myActivityLevel = myActivityLevel;
+    clone.myIoStandard = myIoStandard;
+    clone.myDriveStrength = myDriveStrength;
+    clone.myLabel = myLabel;
+    clone.driving = driving;
+    clone.nrOfRows = nrOfRows;
+    clone.nrOfColumns = nrOfColumns;
+    for (var pinId = 0; pinId < nrOfPins; pinId++) {
+      clone.pinIsMapped.add(null);
+    }
+    return clone;
   }
 
   public String getPinLocation(int index) {
-    return myPinLocations.containsKey(index) ? myPinLocations.get(index) : "";
+    return myPinLocations.getOrDefault(index, "");
   }
 
   public void setInputPinLocation(int index, String value) {
@@ -466,13 +488,11 @@ public class FpgaIoInformationContainer implements Cloneable {
       }
       if (IoComponentTypes.hasRotationAttribute(myType)) {
         switch (myRotation) {
-          case IoComponentTypes.ROTATION_CW_90:
-          case IoComponentTypes.ROTATION_CCW_90:
-            result.setAttribute(BoardWriterClass.MAP_ROTATION, Integer.toString(myRotation));
-            break;
-          default:
+          case IoComponentTypes.ROTATION_CW_90, IoComponentTypes.ROTATION_CCW_90 ->
+              result.setAttribute(BoardWriterClass.MAP_ROTATION, Integer.toString(myRotation));
+          default -> {
             // no rotation
-            break;
+          }
         }
       }
       if (CollectionUtil.isNotEmpty(myInputPins)) {
@@ -524,9 +544,9 @@ public class FpgaIoInformationContainer implements Cloneable {
         pull.setValue(PullBehaviors.BEHAVIOR_STRINGS[myPullBehavior]);
         result.setAttributeNode(pull);
       }
-      if (nyIoStandard != IoStandards.UNKNOWN && nyIoStandard != IoStandards.DEFAULT_STANDARD) {
+      if (myIoStandard != IoStandards.UNKNOWN && myIoStandard != IoStandards.DEFAULT_STANDARD) {
         final var stand = doc.createAttribute(IoStandards.IO_ATTRIBUTE_STRING);
-        stand.setValue(IoStandards.BEHAVIOR_STRINGS[nyIoStandard]);
+        stand.setValue(IoStandards.BEHAVIOR_STRINGS[myIoStandard]);
         result.setAttributeNode(stand);
       }
       if (myActivityLevel != PinActivity.Unknown && myActivityLevel != PinActivity.ACTIVE_HIGH) {
@@ -565,11 +585,11 @@ public class FpgaIoInformationContainer implements Cloneable {
   }
 
   public char getIoStandard() {
-    return nyIoStandard;
+    return myIoStandard;
   }
 
   public void setIOStandard(char IoStandard) {
-    nyIoStandard = IoStandard;
+    myIoStandard = IoStandard;
   }
 
   public int getNrOfPins() {
@@ -643,7 +663,7 @@ public class FpgaIoInformationContainer implements Cloneable {
     myPinLocations.put(0, loc);
     myPullBehavior = PullBehaviors.getId(pull);
     myActivityLevel = PinActivity.getId(active);
-    nyIoStandard = IoStandards.getId(standard);
+    myIoStandard = IoStandards.getId(standard);
     myDriveStrength = DriveStrength.getId(drive);
     myLabel = label;
     if (rect != null) rect.setLabel(label);

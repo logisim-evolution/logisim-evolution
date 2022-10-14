@@ -14,12 +14,27 @@ import com.cburch.logisim.instance.InstanceState;
 
 public class Ttl7447 extends AbstractTtlGate {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "7447";
+
+  public static final int PORT_INDEX_B = 0;
+  public static final int PORT_INDEX_C = 1;
+  public static final int PORT_INDEX_LT = 2;
+  public static final int PORT_INDEX_BI = 3;
+  public static final int PORT_INDEX_RBI = 4;
+  public static final int PORT_INDEX_D = 5;
+  public static final int PORT_INDEX_A = 6;
+  public static final int PORT_INDEX_QE = 7;
+  public static final int PORT_INDEX_QD = 8;
+  public static final int PORT_INDEX_QC = 9;
+  public static final int PORT_INDEX_QB = 10;
+  public static final int PORT_INDEX_QA = 11;
+  public static final int PORT_INDEX_QG = 12;
+  public static final int PORT_INDEX_QF = 13;
 
   public Ttl7447() {
     super(
@@ -40,16 +55,16 @@ public class Ttl7447 extends AbstractTtlGate {
   public void propagateTtl(InstanceState state) {
     DisplayDecoder.computeDisplayDecoderOutputs(
         state,
-        DisplayDecoder.getdecval(state, false, 0, 6, 0, 1, 5),
-        11,
-        10,
-        9,
-        8,
-        7,
-        13,
-        12,
-        2,
-        3,
-        4);
+        DisplayDecoder.getdecval(state, false, 0, PORT_INDEX_A, PORT_INDEX_B, PORT_INDEX_C, PORT_INDEX_D),
+        PORT_INDEX_QA,
+        PORT_INDEX_QB,
+        PORT_INDEX_QC,
+        PORT_INDEX_QD,
+        PORT_INDEX_QE,
+        PORT_INDEX_QF,
+        PORT_INDEX_QG,
+        PORT_INDEX_LT,
+        PORT_INDEX_BI,
+        PORT_INDEX_RBI);
   }
 }

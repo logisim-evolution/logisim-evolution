@@ -200,7 +200,4 @@ public class GridPainter implements PropertyChangeListener {
       }
     }
   }
-
-
-
 }

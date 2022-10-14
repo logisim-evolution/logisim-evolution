@@ -6,6 +6,7 @@
 
 * [« Go back](../README.md)
 * **Additional information**
+  * [Limitations](#limitations)
   * [History of Logisim](#project-history)
   * [External documentation](#external-reads)
   * [Legacy support](#legacy-support)
@@ -13,6 +14,22 @@
   * [Alternative software](#alternatives)
 
 ---
+
+## Limitations ##
+
+While `Logisim-evolution` may be perfectly suitable for most of your digital circuit projects, you should
+be aware of important limitations that may affect your work:
+
+* Bidirectional pins (input or output depending on the control line state) are not currently supported by the simulation engine.
+  Therefore, the built-in libraries do not offer such elements and you cannot create your own.
+* By default, memory elements are initially set to 0 when simulation starts. This may not reflect the circuit behaviour in
+  reality after switching it on. This can be changed in `Project -> Options...` menu,  with the option
+  `Memory elements start in unknown/random state (rather than 0)`.
+* Transistors have a simplified digital simulation, mostly designed for the limited use of showing how a logic gate
+  is constructed. There are many things one can do with actual transistors that cannot be simulated with our
+  simulation engine.
+
+If the above is crucial for your project, you may consider trying [alternative software](#alternatives).
 
 ## Project history ##
 

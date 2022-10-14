@@ -63,8 +63,7 @@ public class ClockHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   @Override
   public SortedMap<String, String> getPortMap(Netlist nets, Object mapInfo) {
     final var map = new TreeMap<String, String>();
-    if (!(mapInfo instanceof netlistComponent)) return map;
-    final var componentInfo = (netlistComponent) mapInfo;
+    if (!(mapInfo instanceof final netlistComponent componentInfo)) return map;
     map.put("globalClock", TickComponentHdlGeneratorFactory.FPGA_CLOCK);
     map.put("clockTick", TickComponentHdlGeneratorFactory.FPGA_TICK);
     map.put("clockBus", getClockNetName(componentInfo.getComponent(), nets));
