@@ -1,0 +1,109 @@
+/*
+ * Logisim-evolution - digital logic design tool and simulator
+ * Copyright by the Logisim-evolution developers
+ *
+ * https://github.com/logisim-evolution/
+ *
+ * This is free software released under GNU GPLv3 license
+ */
+
+package com.cburch.logisim;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.mockConstruction;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
+
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
+import org.mockito.MockedConstruction;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
+
+import com.cburch.logisim.fpga.download.Download;
+import com.cburch.logisim.gui.start.Startup;
+import com.cburch.logisim.gui.start.TtyInterface;
+import com.cburch.logisim.proj.Project;
+import com.cburch.logisim.util.LocaleManager;
+
+/** Tests command-line parsing. */
+@ExtendWith(MockitoExtension.class)
+public class TtyInterfaceTest extends TestBase {
+
+  @Test
+  public void testNotTty() {
+    final Startup startup = new Startup(new String[0]);
+    assertThrows(AssertionError.class, () -> new TtyInterface(startup));
+  }
+
+  @Test
+  public void testOpenError() throws IllegalAccessException {
+    final Startup startup = new Startup("--tty table missing-file".split(" "));
+    final var tty = new TtyInterface(startup);
+
+    LocaleManager S = mock(LocaleManager.class);
+    when(S.get(anyString(),anyString())).thenAnswer(i -> i.getArguments()[0]+":"+i.getArguments()[1]);
+    Logger logger = mock(Logger.class);
+    FieldUtils.writeField(tty,"S",S,true);
+    FieldUtils.writeField(tty,"logger",logger,true);
+
+    final int rc = tty.run();
+    
+    assertEquals(2,rc);
+    verify(logger).error(anyString(),ArgumentMatchers.eq("ttyLoadError:missing-file"));
+    verifyNoMoreInteractions(logger);
+  }
+
+  @Test
+  public void testFPGA() {
+    final Startup startup = new Startup("--test-fpga a b missing-file".split(" "));
+    final var tty = new TtyInterface(startup);
+    final int rc = tty.run();
+    assertEquals(2,rc); // due to missing file
+  }
+
+  @Test
+  public void testTestVector() {
+    final Startup startup = new Startup("--test-vector a b missing-file".split(" "));
+    final var tty = new TtyInterface(startup);
+    final int rc = tty.run();
+    assertEquals(2,rc); // due to missing file
+  }
+
+  @Test
+  public void testNewFileFormat() {
+    final Startup startup = new Startup("--new-file-format a missing-file".split(" "));
+    final var tty = new TtyInterface(startup);
+    final int rc = tty.run();
+    assertEquals(2,rc); // due to missing file
+  }
+
+  @Test
+  public void testTestCircuit() {
+    final Startup startup = new Startup("--test-circuit missing-file".split(" "));
+    assertEquals(Startup.UI.TTY,startup.ui);
+    final var tty = new TtyInterface(startup);
+    final int rc = tty.run();
+    assertEquals(2,rc); // due to missing file
+  }
+
+  @Test
+  public void testTty() {
+    final Startup startup = new Startup("--tty table missing-file".split(" "));
+    final var tty = new TtyInterface(startup);
+    final int rc = tty.run();
+    assertEquals(2,rc); // due to missing file
+  }
+
+  // TODO success cases for all of above
+  // TODO --tty combinations
+  // TODO --load/save fails
+  // TODO --tty halt messages and RC
+  // TODO --tty TTY not found
+}

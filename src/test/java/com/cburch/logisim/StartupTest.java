@@ -64,48 +64,44 @@ public class StartupTest extends TestBase {
   }
   private static Stream<String> testCLIErrors() {
     return Stream.of(
-      "--tty",              // missing required parameter
-      "--tty other-thing",  // sub-option does not exist
-      "--load",             // missing required parameter
-      "--load file",        // missing --tty
-      "-l a -l b",          // can't load twice
-      "--save",             // missing required parameter
-      "--save file",        // missing --tty
-      "--save a --save b",  // can't save twice
-      "-s",                 // missing required parameters
-      "-s a",               // missing required parameter
-      "-s a b -s a c",      // can't substitute the same thing twice
-      "--gates",            // missing required parameter
-      "--gates wrong",      // sub-option does not exist
-      "-m",                 // missing required parameter
-      "-m 123",             // bad format, missing 'x'
-      "-m 0x0",             // bad size, must be positive
-      "-m x",               // bad format, missing sizes
-      "-m 10x10+",          // bad format, missing location
-      "--locale",           // missing require parameter
-      "--locale wrong",     // sub-option does not exist
-      "--user-template",    // missing required parameter
-      "-u a -u b",          // can't template twice
-      "--toplevel-circuit", // missing required parameter
-      "--test-vector",      // missing required parameters
-      "--test-vector a",    // missing required parameter
-      "--test-fpga",        // missing required parameters
-      "--test-fpga a",      // missing required parameter
-      "--test-circuit",     // missing required parameter
-      "--new-file-format",  // missing required parameters
-      "-n a",               // missing required parameter
+      "--tty",                // missing required parameter
+      "-t table a b",         // too many files for --tty
+      "-t table",             // not enough files for --tty
+      "--tty other-thing",    // sub-option does not exist
+      "--load",               // missing required parameter
+      "--load file",          // missing --tty
+      "-l a -l b",            // can't load twice
+      "--save",               // missing required parameter
+      "--save file",          // missing --tty
+      "--save a --save b",    // can't save twice
+      "-s",                   // missing required parameters
+      "-s a",                 // missing required parameter
+      "-s a b -s a c",        // can't substitute the same thing twice
+      "--gates",              // missing required parameter
+      "--gates wrong",        // sub-option does not exist
+      "-m",                   // missing required parameter
+      "-m 123",               // bad format, missing 'x'
+      "-m 0x0",               // bad size, must be positive
+      "-m x",                 // bad format, missing sizes
+      "-m 10x10+",            // bad format, missing location
+      "--locale",             // missing require parameter
+      "--locale wrong",       // sub-option does not exist
+      "--user-template",      // missing required parameter
+      "-u a -u b",            // can't template twice
+      "--toplevel-circuit",   // missing required parameter
+      "--test-vector",        // missing required parameters
+      "--test-vector a",      // missing required parameter
+      "--test-fpga",          // missing required parameters
+      "--test-fpga a",        // missing required parameter
+      "--test-fpga a b c d",  // too many files
+      "--test-circuit",       // missing required parameter
+      "--test-circuit a b",   // too many files
+      "--new-file-format",    // missing required parameters
+      "-n a",                 // missing required parameter
+      "-n a b c",             // too many files
       "--does-not-exist"
     );
     // TODO combinations for --tty that don't make sense
+    // TODO combinations for TTY that don't are mutally exclusive
   }
-
-  // some of these might be TtyInterface tests
-  // TODO --tty combinations
-  // TODO --load/save fails
-  // TODO --tty halt messages and RC
-  // TODO --tty TTY not found
-  // TODO --test-vector
-  // TODO --test-circuit
 }
-
-//List<String> out = p.inputReader().lines().collect(Collectors.toList());

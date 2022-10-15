@@ -64,7 +64,8 @@ public class Main {
       case TTY:
         useGui = false;
         try {
-          exitCode = TtyInterface.run(startup);
+          final var tty = new TtyInterface(startup);
+          exitCode = tty.run();
         } catch (Exception e) {
           e.printStackTrace();
           exitCode = -1;

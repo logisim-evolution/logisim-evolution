@@ -77,6 +77,8 @@ public class GuiInterface implements AWTEventListener {
   private HashMap<File, File> substitutions;
 
   public GuiInterface(Startup startup) {
+    assert startup.ui == Startup.UI.GUI;
+
     gateShape         = startup.gateShape;
     windowSize        = startup.windowSize;
     windowLocation    = startup.windowLocation;
@@ -90,7 +92,7 @@ public class GuiInterface implements AWTEventListener {
     substitutions     = startup.substitutions;
   }
 
-  public int run() {    
+  public int run() {
     // Set up the Look&Feel to match the platform
     System.setProperty("apple.laf.useScreenMenuBar", "true");
     // Initialize graphics acceleration if appropriate

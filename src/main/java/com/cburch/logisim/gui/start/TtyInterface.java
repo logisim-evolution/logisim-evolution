@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.gui.start;
 
-import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.Var;
@@ -23,6 +22,7 @@ import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.file.LogisimFile;
 import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
+import com.cburch.logisim.gui.Strings;
 import com.cburch.logisim.gui.hex.HexFile;
 import com.cburch.logisim.gui.test.TestBench;
 import com.cburch.logisim.instance.Instance;
@@ -35,6 +35,7 @@ import com.cburch.logisim.std.io.Keyboard;
 import com.cburch.logisim.std.io.Tty;
 import com.cburch.logisim.std.memory.Ram;
 import com.cburch.logisim.std.wiring.Pin;
+import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.UniquelyNamedThread;
 import java.io.File;
 import java.io.IOException;
@@ -48,22 +49,55 @@ import org.slf4j.LoggerFactory;
 
 public class TtyInterface {
 
-  public static int run(Startup startup) {
-    if (startup.filesToOpen.isEmpty()) {
-      logger.error(S.get("ttyNeedsFileError"));
-      return 1;
-    }
+  // these make unit tests MUCH easier
+  private LocaleManager S = Strings.S;
+  private Logger logger = LoggerFactory.getLogger(TtyInterface.class);
 
-    if (startup.filesToOpen.size() != 1) {
-      logger.error(S.get("ttyNeedsFileError")); // TODO need better error message
-      return 1;
-    }
+  private File fileToOpen;
+  private HashMap<File, File> substitutions;
+  private String testVector = null;
+  private String circuitToTest = null;
+  private File loadFile = null;
+  private File saveFile = null;
+  private int ttyFormat = 0;
+  private String testCircuitPathInput = null;
+  private String testCircuitImpPath = null;
+  private String testCircPathInput = null;
+  private String testCircPathOutput = null;
+  // fpga
+  private String fpgaCircuit = null;
+  private String fpgaBoard = null;
+  private String fpgaMapFile = null;
+  private double fpgaFreq = -1;
+  private boolean fpgaHdlOnly = false;
 
-    final var fileToOpen = startup.filesToOpen.get(0);
+  public TtyInterface(Startup startup) {
+    assert startup.ui == Startup.UI.TTY;
+    assert startup.filesToOpen.size() == 1;
+
+    fileToOpen              = startup.filesToOpen.get(0);
+    substitutions           = startup.substitutions;
+    testVector              = startup.testVector;
+    circuitToTest           = startup.circuitToTest;
+    loadFile                = startup.loadFile;
+    saveFile                = startup.saveFile;
+    ttyFormat               = startup.ttyFormat;
+    testCircuitPathInput    = startup.testCircuitPathInput;
+    testCircuitImpPath      = startup.testCircuitImpPath;
+    testCircPathInput       = startup.testCircPathInput;
+    testCircPathOutput      = startup.testCircPathOutput;
+    fpgaCircuit             = startup.testCircuitImpName;
+    fpgaBoard               = startup.testCircuitImpBoard;
+    fpgaMapFile             = startup.testCircuitImpMapFile;
+    fpgaFreq                = startup.testTickFrequency;
+    fpgaHdlOnly             = startup.testCircuitHdlOnly;
+  }
+
+  public int run() {
     final var loader = new Loader(null);
     LogisimFile file;
     try {
-      file = loader.openLogisimFile(fileToOpen, startup.substitutions);
+      file = loader.openLogisimFile(fileToOpen, substitutions);
     } catch (LoadFailedException e) {
       logger.error("{}", S.get("ttyLoadError", fileToOpen.getName()));
       file = null;
@@ -72,33 +106,31 @@ public class TtyInterface {
 
     final var proj = new Project(file);
     
-    // probably each of the following sections should be mutally exclusive,
-    // but they are currently allowed, but some take precedence over others
+    // each of the following sections are mutally exclusive (to avoid weirdness)
 
     // --test-fpga
-    if (startup.doFpgaDownload) {
-      if (!fpgaDownload(startup,proj)) return 2;
+    if (fpgaCircuit != null) {
+      if (!fpgaDownload(proj)) return 2;
     }
 
     // --test-vector
-    final var circuitToTest = startup.circuitToTest;
     final var circuit = (circuitToTest == null || circuitToTest.length() == 0)
         ? file.getMainCircuit()
         : file.getCircuit(circuitToTest);
 
-    if (startup.testVector != null) {
-      proj.doTestVector(startup.testVector, circuitToTest);
+    if (testVector != null) {
+      proj.doTestVector(testVector, circuitToTest);
       return 0;
     }
 
     // --new-file-format
-    if (startup.testCircPathOutput != null) {
-      ProjectActions.doSave(proj, new File(startup.testCircPathOutput));
+    if (testCircPathOutput != null) {
+      ProjectActions.doSave(proj, new File(testCircPathOutput));
       return 0;
     }
 
     // --test-circuit
-    if (startup.testCircuitPathInput != null) {
+    if (testCircuitPathInput != null) {
       final var testB = new TestBench(proj);
       if (testB.startTestBench()) {
         System.out.println("Test bench pass\n");
@@ -110,7 +142,7 @@ public class TtyInterface {
     }
 
     // --tty
-    var format = startup.ttyFormat;
+    var format = ttyFormat;
     if ((format & FORMAT_STATISTICS) != 0) {
       displayStatistics(file, circuit);
       if (format == FORMAT_STATISTICS) return 0;
@@ -141,9 +173,9 @@ public class TtyInterface {
     // we have to do our initial propagation before the simulation starts -
     // it's necessary to populate the circuit with substates.
     circState.getPropagator().propagate();
-    if (startup.loadFile != null) {
+    if (loadFile != null) {
       try {
-        final var loaded = loadRam(circState, startup.loadFile);
+        final var loaded = loadRam(circState, loadFile);
         if (!loaded) {
           logger.error("{}", S.get("loadNoRamError"));
           return 2;
@@ -155,9 +187,9 @@ public class TtyInterface {
     }
     final var simCode = runSimulation(circState, outputPins, haltPin, format);
 
-    if (startup.saveFile != null) {
+    if (saveFile != null) {
       try {
-        final var saved = saveRam(circState, startup.saveFile);
+        final var saved = saveRam(circState, saveFile);
         if (!saved) {
           logger.error("{}", S.get("saveNoRamError"));
           return 2;
@@ -173,25 +205,23 @@ public class TtyInterface {
 
   // --test-fpga --------------------------------
 
-  private static boolean fpgaDownload(Startup startup,Project proj) {
+  private boolean fpgaDownload(Project proj) {
     /* Testing synthesis */
-    final var mainCircuit = proj.getLogisimFile().getCircuit(startup.testCircuitImpName);
+    final var mainCircuit = proj.getLogisimFile().getCircuit(fpgaCircuit);
     if (mainCircuit == null) return false;
     final var simTickFreq = mainCircuit.getTickFrequency();
     final var downTickFreq = mainCircuit.getDownloadFrequency();
-    final var usedFrequency = (startup.testTickFrequency > 0) ? startup.testTickFrequency :
-        (downTickFreq > 0) ? downTickFreq : simTickFreq;
-    Download downloader =
-        new Download(
-            proj,
-            startup.testCircuitImpName,
-            usedFrequency,
-            new BoardReaderClass(AppPreferences.Boards.getBoardFilePath(startup.testCircuitImpBoard))
-                .getBoardInformation(),
-            startup.testCircuitImpMapFile,
-            false,
-            false,
-            startup.testCircuitHdlOnly);
+    final var usedFrequency = (fpgaFreq > 0) ? fpgaFreq : (downTickFreq > 0) ? downTickFreq : simTickFreq;
+    final var boardReader = new BoardReaderClass(AppPreferences.Boards.getBoardFilePath(fpgaBoard));
+    Download downloader = new Download(
+      proj,
+      fpgaCircuit,
+      usedFrequency,
+      boardReader.getBoardInformation(),
+      fpgaMapFile,
+      false,
+      false,
+      fpgaHdlOnly);
     return downloader.runTty();
   }
 
@@ -206,10 +236,8 @@ public class TtyInterface {
   public static final int FORMAT_TABLE_CSV = 64;
   public static final int FORMAT_TABLE_BIN = 128;
   public static final int FORMAT_TABLE_HEX = 256;
-  static final Logger logger = LoggerFactory.getLogger(TtyInterface.class);
-  private static boolean lastIsNewline = true;
 
-  private static int doTableAnalysis(Project proj, Circuit circuit, Map<Instance, String> pinLabels, int format) {
+  private int doTableAnalysis(Project proj, Circuit circuit, Map<Instance, String> pinLabels, int format) {
 
     final var inputPins = new ArrayList<Instance>();
     final var inputVars = new ArrayList<Var>();
@@ -304,7 +332,7 @@ public class TtyInterface {
     return 0;
   }
 
-  private static int runSimulation(CircuitState circState, ArrayList<Instance> outputPins, Instance haltPin, int format) {
+  private int runSimulation(CircuitState circState, ArrayList<Instance> outputPins, Instance haltPin, int format) {
     final var showTable = (format & FORMAT_TABLE) != 0;
     final var showSpeed = (format & FORMAT_SPEED) != 0;
     final var showTty = (format & FORMAT_TTY) != 0;
@@ -384,7 +412,7 @@ public class TtyInterface {
     return retCode;
   }
 
-  private static int countDigits(int num) {
+  private int countDigits(int num) {
     int digits = 1;
     int lessThan = 10;
     while (num >= lessThan) {
@@ -394,7 +422,7 @@ public class TtyInterface {
     return digits;
   }
 
-  private static void displaySpeed(long tickCount, long elapse) {
+  private void displaySpeed(long tickCount, long elapse) {
     var hertz = (double) tickCount / elapse * 1000.0;
     double precision;
     if (hertz >= 100) precision = 1.0;
@@ -407,7 +435,7 @@ public class TtyInterface {
     System.out.printf(S.get("ttySpeedMsg") + "\n", hertzStr, tickCount, elapse);
   }
 
-  private static void displayStatistics(LogisimFile file, Circuit circuit) {
+  private void displayStatistics(LogisimFile file, Circuit circuit) {
     final var stats = FileStatistics.compute(file, circuit);
     final var total = stats.getTotalWithSubcircuits();
     var maxName = 0;
@@ -446,7 +474,7 @@ public class TtyInterface {
         S.get("statsTotalWith"));
   }
 
-  private static void displayTableRow(ArrayList<Value> prevOutputs, ArrayList<Value> curOutputs) {
+  private void displayTableRow(ArrayList<Value> prevOutputs, ArrayList<Value> curOutputs) {
     var shouldPrint = false;
     if (prevOutputs == null) {
       shouldPrint = true;
@@ -469,7 +497,7 @@ public class TtyInterface {
     }
   }
 
-  private static boolean displayTableRow(boolean showHeader, ArrayList<Value> prevOutputs, ArrayList<Value> curOutputs,
+  private boolean displayTableRow(boolean showHeader, ArrayList<Value> prevOutputs, ArrayList<Value> curOutputs,
                                          ArrayList<String> headers, ArrayList<String> formats, int format) {
     var shouldPrint = false;
     if (prevOutputs == null) {
@@ -515,7 +543,7 @@ public class TtyInterface {
     return shouldPrint;
   }
 
-  private static String valueFormat(Value v, int format) {
+  private String valueFormat(Value v, int format) {
     if ((format & FORMAT_TABLE_BIN) != 0) {
       // everything in binary
       return v.toString();
@@ -530,7 +558,7 @@ public class TtyInterface {
     }
   }
 
-  private static boolean loadRam(CircuitState circState, File loadFile) throws IOException {
+  private boolean loadRam(CircuitState circState, File loadFile) throws IOException {
     if (loadFile == null) return false;
 
     var found = false;
@@ -549,7 +577,7 @@ public class TtyInterface {
     return found;
   }
 
-  private static boolean saveRam(CircuitState circState, File saveFile) throws IOException {
+  private boolean saveRam(CircuitState circState, File saveFile) throws IOException {
     if (saveFile == null) return false;
 
     var found = false;
@@ -568,7 +596,7 @@ public class TtyInterface {
     return found;
   }
 
-  private static boolean prepareForTty(CircuitState circState, ArrayList<InstanceState> keybStates) {
+  private boolean prepareForTty(CircuitState circState, ArrayList<InstanceState> keybStates) {
     var found = false;
     for (final var comp : circState.getCircuit().getNonWires()) {
       final Object factory = comp.getFactory();
@@ -588,6 +616,8 @@ public class TtyInterface {
     return found;
   }
 
+  private static boolean lastIsNewline = true;
+
   private static void ensureLineTerminated() {
     if (!lastIsNewline) {
       lastIsNewline = true;
@@ -604,7 +634,7 @@ public class TtyInterface {
   // System.in.available(),
   // but this doesn't quite work because on some systems, the keyboard input
   // is not interactively echoed until System.in.read() is invoked.
-  private static class StdinThread extends UniquelyNamedThread {
+  private class StdinThread extends UniquelyNamedThread {
     private final LinkedList<char[]> queue; // of char[]
 
     public StdinThread() {

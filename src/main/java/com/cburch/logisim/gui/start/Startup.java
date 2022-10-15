@@ -60,6 +60,7 @@ public class Startup {
   public final ArrayList<File> filesToOpen = new ArrayList<>();
   public final HashMap<File, File> substitutions = new HashMap<>();
   public UI ui = UI.NONE;
+  public int exitCode = 0;
 
   // Gui only options
   public String gateShape = null;
@@ -74,7 +75,6 @@ public class Startup {
   public boolean initialized = false; // TODO remove this
   
   // Tty only options
-  public int exitCode = 0;
   public String testVector = null;
   public String circuitToTest = null;
   public File loadFile;
@@ -212,6 +212,13 @@ public class Startup {
     }
     if (saveFile != null && ui != UI.TTY) {
       logger.error(S.get("saveNeedsTtyError"));
+      ui = UI.NONE;
+      exitCode = 1;
+      return;
+    }
+
+    if (ui == UI.TTY && filesToOpen.size() != 1) {
+      logger.error(S.get("ttyNeedsFileError"));
       ui = UI.NONE;
       exitCode = 1;
       return;
