@@ -41,14 +41,14 @@ public class OptionPane {
   static final Logger logger = LoggerFactory.getLogger(OptionPane.class);
 
   public static void showMessageDialog(Component parentComponent, Object message) {
-    if (Main.hasGui()) {
+    if (Main.useGui) {
       JOptionPane.showMessageDialog(parentComponent, message);
     } else if (message instanceof String msg) logger.info(msg);
   }
 
   public static void showMessageDialog(
       Component parentComponent, Object message, String title, int messageType) {
-    if (Main.hasGui()) {
+    if (Main.useGui) {
       JOptionPane.showMessageDialog(parentComponent, message, title, messageType);
     } else if (message instanceof String) {
       String logMessage = title + ":" + message;
@@ -61,23 +61,23 @@ public class OptionPane {
   }
 
   public static int showConfirmDialog(Component parentComponent, Object message, String title, int optionType) {
-    return Main.hasGui()
+    return Main.useGui
         ? JOptionPane.showConfirmDialog(parentComponent, message, title, optionType)
         : CANCEL_OPTION;
   }
 
   public static int showConfirmDialog(Component parentComponent, Object message, String title, int optionType, int messageType) {
-    return Main.hasGui()
+    return Main.useGui
         ? JOptionPane.showConfirmDialog(parentComponent, message, title, optionType, messageType)
         : CANCEL_OPTION;
   }
 
   public static String showInputDialog(Object message) {
-    return Main.hasGui() ? JOptionPane.showInputDialog(message) : null;
+    return Main.useGui ? JOptionPane.showInputDialog(message) : null;
   }
 
   public static String showInputDialog(Component parentComponent, Object message, String title, int messageType) {
-    return Main.hasGui()
+    return Main.useGui
         ? JOptionPane.showInputDialog(parentComponent, message, title, messageType)
         : null;
   }
@@ -90,7 +90,7 @@ public class OptionPane {
       Icon icon,
       Object[] selectionValues,
       Object initialSelectionValue) {
-    return Main.hasGui()
+    return Main.useGui
         ? JOptionPane.showInputDialog(parentComponent, message, title, messageType, icon, selectionValues, initialSelectionValue)
         : null;
   }
@@ -104,12 +104,12 @@ public class OptionPane {
       Icon icon,
       Object[] options,
       Object initialValue) {
-    return Main.hasGui()
+    return Main.useGui
         ? JOptionPane.showOptionDialog(parentComponent, message, title, optionType, messageType, icon, options, initialValue)
         : CLOSED_OPTION;
   }
 
   public static Frame getFrameForComponent(Component parentComponent) {
-    return Main.hasGui() ? JOptionPane.getFrameForComponent(parentComponent) : null;
+    return Main.useGui ? JOptionPane.getFrameForComponent(parentComponent) : null;
   }
 }

@@ -11,6 +11,12 @@ package com.cburch.logisim.gui.start;
 
 import static com.cburch.logisim.gui.Strings.S;
 
+import java.awt.Point;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 import com.cburch.logisim.Main;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
@@ -34,40 +40,6 @@ import com.cburch.logisim.std.gates.GatesLibrary;
 import com.cburch.logisim.util.LineBuffer;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.MacCompatibility;
-import java.awt.AWTEvent;
-import java.awt.Component;
-import java.awt.Toolkit;
-import java.awt.event.AWTEventListener;
-import java.awt.event.ContainerEvent;
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import javax.help.JHelp;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComboBox;
-import javax.swing.JComponent;
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JProgressBar;
-import javax.swing.JRadioButton;
-import javax.swing.JRadioButtonMenuItem;
-import javax.swing.JScrollPane;
-import javax.swing.JSpinner;
-import javax.swing.JTabbedPane;
-import javax.swing.JTextArea;
-import javax.swing.JTextField;
-import javax.swing.JToolTip;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -78,58 +50,177 @@ import org.apache.commons.cli.UnrecognizedOptionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Startup implements AWTEventListener {
+public class Startup {
 
   static final Logger logger = LoggerFactory.getLogger(Startup.class);
-  private static Startup startupTemp = null;
-  private final ArrayList<File> filesToOpen = new ArrayList<>();
-  private final HashMap<File, File> substitutions = new HashMap<>();
-  private final ArrayList<File> filesToPrint = new ArrayList<>();
-  // based on command line
-  private File templFile = null;
-  private boolean templEmpty = false;
-  private boolean templPlain = false;
-  private String testVector = null;
-  private String circuitToTest = null;
-  private boolean showSplash;
-  private File loadFile;
-  private File saveFile;
-  private int ttyFormat = 0;
-  // from other sources
-  private boolean initialized = false;
-  private SplashScreen monitor = null;
-  /* Testing Circuit Variable */
-  private String testCircuitPathInput = null;
-  /* Test implementation */
-  private String testCircuitImpPath = null;
-  private boolean doFpgaDownload = false;
-  private double testTickFrequency = -1;
-  /* Name of the circuit withing logisim */
-  private String testCircuitImpName = null;
+
+  public enum UI { NONE, TTY, GUI };
+
+  // shared options (TODO should these be shared?)
+  public final ArrayList<File> filesToOpen = new ArrayList<>();
+  public final HashMap<File, File> substitutions = new HashMap<>();
+  public UI ui = UI.NONE;
+
+  // Gui only options
+  public String gateShape = null;
+  public Point windowSize = null;
+  public Point windowLocation = null;
+  public final ArrayList<File> filesToPrint = new ArrayList<>();
+  public File templFile = null;
+  public boolean templEmpty = false;
+  public boolean templPlain = false;
+  public boolean showSplash = true;
+  public boolean clearPreferences = false;
+  public boolean initialized = false; // TODO remove this
+  
+  // Tty only options
+  public int exitCode = 0;
+  public String testVector = null;
+  public String circuitToTest = null;
+  public File loadFile;
+  public File saveFile;
+  public int ttyFormat = 0;
+  public String testCircuitPathInput = null;
+  public String testCircuitImpPath = null;
+  public String testCircPathInput = null;
+  public String testCircPathOutput = null;
+  public boolean doFpgaDownload = false;
+  public double testTickFrequency = -1;
+  /* Name of the circuit within logisim */
+  public String testCircuitImpName = null;
   /* Name of the board to run on i.e Reptar, MAXV ...*/
-  private String testCircuitImpBoard = null;
+  public String testCircuitImpBoard = null;
   /* Path folder containing Map file */
-  private final String testCircuitImpMapFile = null;
+  public final String testCircuitImpMapFile = null;
   /* Indicate if only the HDL should be generated */
-  private Boolean testCircuitHdlOnly = false;
-  /* Testing Xml (circ file) Variable */
-  private String testCircPathInput = null;
-  private String testCircPathOutput = null;
+  public boolean testCircuitHdlOnly = false;
+  // Indicates if handleArgTestFpgaParseArg() successfuly parsed and set tick freq.
+  public boolean testFpgaFlagTickFreqSet = false;
 
-  private Startup() {
-    this.showSplash = !Main.headless;
-  }
+  /**
+   * Parses CLI arguments, report any errors, and fill public members for use by 
+   * TtyInterface or GuiInterface.
+   * 
+   * If .ui == UI.NONE, exit w/ .exitCode.
+   * If .ui == UI.TTY, TtyInterface.run(startup).
+   * If .ui == UI.GUI, GuiInterface.run(startup).
+   *
+   * @param args CLI arguments
+   */
+  public Startup(String[] args) {
 
-  static void doOpen(File file) {
-    if (startupTemp != null) {
-      startupTemp.doOpenFile(file);
+    final var opts = new Options();
+
+    // Set up supported arguments for the arg parser to look for.
+    // Note: you need to create handler for each option. See handler loop below.
+    // It is assumed that evey option always has long-form switch. Short forms are optional.
+    addOption(opts, "argHelpOption", ARG_HELP_LONG, ARG_HELP_SHORT);
+    addOption(opts, "argVersionOption", ARG_VERSION_LONG, ARG_VERSION_SHORT);
+    addOption(opts, "argTtyOption", ARG_TTY_LONG, ARG_TTY_SHORT, 1);
+    addOption(opts, "argTestImplement", ARG_TEST_FGPA_LONG, ARG_TEST_FGPA_SHORT, Option.UNLIMITED_VALUES);  // We can have 3, 4 or 5 arguments here
+    addOption(opts, "argClearOption", ARG_CLEAR_PREFS_LONG);
+    addOption(opts, "argSubOption", ARG_SUBSTITUTE_LONG, ARG_SUBSTITUTE_SHORT, 2);
+    addOption(opts, "argLoadOption", ARG_LOAD_LONG, ARG_LOAD_SHORT, 1);
+    addOption(opts, "argSaveOption", ARG_SAVE_LONG, 1);
+    addOption(opts, "argGatesOption", ARG_GATES_LONG, ARG_GATES_SHORT, 1);
+    addOption(opts, "argGeometryOption", ARG_GEOMETRY_LONG, ARG_GEOMETRY_SHORT, 1);
+    addOption(opts, "argLocaleOption", ARG_LOCALE_LONG, ARG_LOCALE_SHORT, 1);
+    addOption(opts, "argTemplateOption", ARG_TEMPLATE_LONG, ARG_TEMPLATE_SHORT, 1);
+    addOption(opts, "argNoSplashOption", ARG_NO_SPLASH_LONG);
+    addOption(opts, "argMainCircuitOption", ARG_MAIN_CIRCUIT, 1);
+    addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR_LONG, ARG_TEST_VECTOR_SHORT, 2);
+    addOption(opts, "argTestCircuitOption", ARG_TEST_CIRCUIT_LONG, ARG_TEST_CIRCUIT_SHORT, 1);
+    addOption(opts, "argTestCircGenOption", ARG_TEST_CIRC_GEN_LONG, ARG_TEST_CIRC_GEN_SHORT, 2);
+
+    CommandLine cmd;
+    try {
+      cmd = (new DefaultParser()).parse(opts, args);
+    } catch (UnrecognizedOptionException ex) {
+      // FIXME: hardcoded string
+      logger.error("Unrecognized option: '" + ex + ".);");
+      logger.error("Use --help for more info.");
+      cmd = null;
+    } catch (ParseException ex) {
+      // FIXME: hardcoded string
+      logger.error("Failed processing command line arguments.");
+      cmd = null;
     }
-  }
 
-  static void doPrint(File file) {
-    if (startupTemp != null) {
-      startupTemp.doPrintFile(file);
+    if (cmd == null) {
+      exitCode = 1;
+      return;
     }
+
+    // Iterate over parsed arguments and invoke option handler
+    // for each detected argument.
+    for (var opt : cmd.getOptions()) {
+      // Note: you should have handler for each option. So number of `case`s
+      // here should equal number of calls to `addOption()` above.
+      final var optHandlerRc = switch (opt.getLongOpt()) {
+        case ARG_HELP_LONG -> printHelp(opts);
+        case ARG_VERSION_LONG -> printVersion();
+        case ARG_TTY_LONG -> handleArgTty(opt);
+        case ARG_SUBSTITUTE_LONG -> handleArgSubstitute(opt);
+        case ARG_LOAD_LONG -> handleArgLoad(opt);
+        case ARG_SAVE_LONG -> handleArgSave(opt);
+        case ARG_GATES_LONG -> handleArgGates(opt);
+        case ARG_GEOMETRY_LONG -> handleArgGeometry(opt);
+        case ARG_LOCALE_LONG -> handleArgLocale(opt);
+        case ARG_TEMPLATE_LONG -> handleArgTemplate(opt);
+        case ARG_NO_SPLASH_LONG -> handleArgNoSplash();
+        case ARG_TEST_VECTOR_LONG -> handleArgTestVector(opt);
+        case ARG_TEST_FGPA_LONG -> handleArgTestFpga(opt);
+        case ARG_TEST_CIRCUIT_LONG -> handleArgTestCircuit(opt);
+        case ARG_TEST_CIRC_GEN_LONG -> handleArgTestCircGen(opt);
+        case ARG_MAIN_CIRCUIT -> handleArgMainCircuit(opt);
+        case ARG_CLEAR_PREFS_LONG -> handleArgClearPreferences();
+        default -> RC.EXIT; // should never happen
+      };
+      switch (optHandlerRc) {
+        case EXIT:
+          exitCode = 0;
+          return;
+        case IO_ERROR: 
+          exitCode = 2;
+          return;
+        case CLI_ERROR: 
+          exitCode = 1;
+          return;
+        case OK: 
+          break;
+      }
+    }
+
+    ui = cmd.hasOption(ARG_TTY_SHORT) 
+      || cmd.hasOption(ARG_TEST_FGPA_SHORT) 
+      || cmd.hasOption(ARG_TEST_VECTOR_SHORT) 
+      || cmd.hasOption(ARG_TEST_CIRCUIT_SHORT) 
+      || cmd.hasOption(ARG_TEST_CIRC_GEN_LONG) ? UI.TTY : UI.GUI;
+
+    // positional arguments are files to load
+    for (final var arg : cmd.getArgs()) {
+      filesToOpen.add(new File(arg));
+    }
+
+    // check for combinations of options that are not considered legal
+
+    if (loadFile != null && ui != UI.TTY) {
+      logger.error(S.get("loadNeedsTtyError"));
+      ui = UI.NONE;
+      exitCode = 1;
+      return;
+    }
+    if (saveFile != null && ui != UI.TTY) {
+      logger.error(S.get("saveNeedsTtyError"));
+      ui = UI.NONE;
+      exitCode = 1;
+      return;
+    }
+
+    // TTY && --gates is meaningless
+    // TTY && --geometry is meaningless
+    // TTY && --user-template is meaningless
+    // is GUI && --substitutions ok?
   }
 
   private static final String ARG_TEST_CIRCUIT_SHORT = "b";
@@ -193,7 +284,7 @@ public class Startup implements AWTEventListener {
    *
    * @return Handler return code enum (RC.xxx)
    */
-  protected static RC printHelp(Options opts) {
+  protected RC printHelp(Options opts) {
     printVersion();
     System.out.println();
     final var formatter = new HelpFormatter();
@@ -207,7 +298,7 @@ public class Startup implements AWTEventListener {
    *
    * @return Handler return code enum (RC.xxx)
    */
-  protected static RC printVersion() {
+  protected RC printVersion() {
     System.out.println(BuildInfo.displayName);
     System.out.println(BuildInfo.url);
     System.out.println(LineBuffer.format("{{1}} ({{2}})", BuildInfo.buildId, BuildInfo.dateIso8601));
@@ -222,7 +313,7 @@ public class Startup implements AWTEventListener {
    * @param stringBaseKey String localization base key.
    * @param longKey Argument ling key (i.e. "foo" for "--foo").
    */
-  protected static void addOption(Options opts, String stringBaseKey, String longKey) {
+  protected void addOption(Options opts, String stringBaseKey, String longKey) {
     addOption(opts, stringBaseKey, longKey, null, 0);
   }
 
@@ -239,7 +330,7 @@ public class Startup implements AWTEventListener {
    * @param longKey Argument ling key (i.e. "foo" for "--foo").
    * @param expectedArgsCount Number of required option arguments.
    */
-  protected static void addOption(Options opts, String stringBaseKey, String longKey, int expectedArgsCount) {
+  protected void addOption(Options opts, String stringBaseKey, String longKey, int expectedArgsCount) {
     addOption(opts, stringBaseKey, longKey, null, expectedArgsCount);
   }
 
@@ -257,7 +348,7 @@ public class Startup implements AWTEventListener {
    * @param shortKey Argument short key (i.e. "c" for "-c") or null if none.
    * @param expectedArgsCount Number of required option arguments.
    */
-  protected static void addOption(Options opts, String stringBaseKey, String longKey, String shortKey, int expectedArgsCount) {
+  protected void addOption(Options opts, String stringBaseKey, String longKey, String shortKey, int expectedArgsCount) {
     final var builder = Option.builder(shortKey).longOpt(longKey).desc(S.get(stringBaseKey));
     if (expectedArgsCount == Option.UNLIMITED_VALUES || expectedArgsCount > 0) {
       final var argNameKey = LineBuffer.format("{{1}}ArgName", stringBaseKey);
@@ -275,136 +366,8 @@ public class Startup implements AWTEventListener {
    * @param shortKey Argument short key (i.e. "c" for "-c").
    * @param longKey Argument ling key (i.e. "foo" for "--foo").
    */
-  protected static void addOption(Options opts, String stringBaseKey, String shortKey, String longKey) {
+  protected void addOption(Options opts, String stringBaseKey, String shortKey, String longKey) {
     addOption(opts, stringBaseKey, shortKey, longKey, 0);
-  }
-
-  /**
-   * Parses CLI arguments
-   *
-   * @param args CLI arguments
-   *
-   * @return Instance of Startup class.
-   */
-  public static Startup parseArgs(String[] args) {
-
-    final var opts = new Options();
-
-    // Set up supported arguments for the arg parser to look for.
-    // Note: you need to create handler for each option. See handler loop below.
-    // It is assumed that evey option always has long-form switch. Short forms are optional.
-    addOption(opts, "argHelpOption", ARG_HELP_LONG, ARG_HELP_SHORT);
-    addOption(opts, "argVersionOption", ARG_VERSION_LONG, ARG_VERSION_SHORT);
-    addOption(opts, "argTtyOption", ARG_TTY_LONG, ARG_TTY_SHORT, 1);
-    addOption(opts, "argTestImplement", ARG_TEST_FGPA_LONG, ARG_TEST_FGPA_SHORT, Option.UNLIMITED_VALUES);  // We can have 3, 4 or 5 arguments here
-    addOption(opts, "argClearOption", ARG_CLEAR_PREFS_LONG);
-    addOption(opts, "argSubOption", ARG_SUBSTITUTE_LONG, ARG_SUBSTITUTE_SHORT, 2);
-    addOption(opts, "argLoadOption", ARG_LOAD_LONG, ARG_LOAD_SHORT, 1);
-    addOption(opts, "argSaveOption", ARG_SAVE_LONG, 1);
-    addOption(opts, "argGatesOption", ARG_GATES_LONG, ARG_GATES_SHORT, 1);
-    addOption(opts, "argGeometryOption", ARG_GEOMETRY_LONG, ARG_GEOMETRY_SHORT, 1);
-    addOption(opts, "argLocaleOption", ARG_LOCALE_LONG, ARG_LOCALE_SHORT, 1);
-    addOption(opts, "argTemplateOption", ARG_TEMPLATE_LONG, ARG_TEMPLATE_SHORT, 1);
-    addOption(opts, "argNoSplashOption", ARG_NO_SPLASH_LONG);
-    addOption(opts, "argMainCircuitOption", ARG_MAIN_CIRCUIT, 1);
-    addOption(opts, "argTestVectorOption", ARG_TEST_VECTOR_LONG, ARG_TEST_VECTOR_SHORT, 2);
-    addOption(opts, "argTestCircuitOption", ARG_TEST_CIRCUIT_LONG, ARG_TEST_CIRCUIT_SHORT, 1);
-    addOption(opts, "argTestCircGenOption", ARG_TEST_CIRC_GEN_LONG, ARG_TEST_CIRC_GEN_SHORT, 2);
-
-    CommandLine cmd;
-    try {
-      cmd = (new DefaultParser()).parse(opts, args);
-    } catch (UnrecognizedOptionException ex) {
-      // FIXME: hardcoded string
-      logger.error("Unrecognized option: '" + ex + ".);");
-      logger.error("Use --help for more info.");
-      cmd = null;
-    } catch (ParseException ex) {
-      // FIXME: hardcoded string
-      logger.error("Failed processing command line arguments.");
-      cmd = null;
-    }
-
-    if (cmd == null) System.exit(1);
-
-    // see whether we'll be using any graphics
-    if (cmd.hasOption(ARG_TTY_SHORT) || cmd.hasOption(ARG_TEST_FGPA_SHORT) || cmd.hasOption(ARG_TEST_FGPA_LONG)) {
-      Main.headless = true;
-    } 
-
-    if (!Main.headless) {
-      // we're using the GUI: Set up the Look&Feel to match the platform
-      System.setProperty("apple.laf.useScreenMenuBar", "true");
-      // Initialize graphics acceleration if appropriate
-      AppPreferences.handleGraphicsAcceleration();
-    }
-
-    // Initialize startup object.
-    final var startup = new Startup();
-    startupTemp = startup;
-    if (!Main.headless) {
-      MacOsAdapter.addListeners();
-    }
-
-    if (cmd.hasOption(ARG_CLEAR_PREFS_LONG)) {
-      AppPreferences.clear();
-    }
-
-    // Iterate over parsed arguments and invoke option handler
-    // for each detected argument.
-    final var optionIter = cmd.iterator();
-    while (optionIter.hasNext()) {
-      final var opt = optionIter.next();
-      // Note: you should have handler for each option. So number of `case`s
-      // here should equal number of calls to `addOption()` above.
-      final var optHandlerRc = switch (opt.getLongOpt()) {
-        case ARG_HELP_LONG -> printHelp(opts);
-        case ARG_VERSION_LONG -> printVersion();
-        case ARG_TTY_LONG -> handleArgTty(startup, opt);
-        case ARG_SUBSTITUTE_LONG -> handleArgSubstitute(startup, opt);
-        case ARG_LOAD_LONG -> handleArgLoad(startup, opt);
-        case ARG_SAVE_LONG -> handleArgSave(startup, opt);
-        case ARG_GATES_LONG -> handleArgGates(startup, opt);
-        case ARG_GEOMETRY_LONG -> handleArgGeometry(startup, opt);
-        case ARG_LOCALE_LONG -> handleArgLocale(startup, opt);
-        case ARG_TEMPLATE_LONG -> handleArgTemplate(startup, opt);
-        case ARG_NO_SPLASH_LONG -> handleArgNoSplash(startup, opt);
-        case ARG_TEST_VECTOR_LONG -> handleArgTestVector(startup, opt);
-        case ARG_TEST_FGPA_LONG -> handleArgTestFpga(startup, opt);
-        case ARG_TEST_CIRCUIT_LONG -> handleArgTestCircuit(startup, opt);
-        case ARG_TEST_CIRC_GEN_LONG -> handleArgTestCircGen(startup, opt);
-        case ARG_MAIN_CIRCUIT -> handleArgMainCircuit(startup, opt);
-        default -> RC.OK; // should not really happen IRL.
-      };
-      switch (optHandlerRc) {
-        case EXIT: System.exit(0); 
-        case IO_ERROR: System.exit(2);
-        case CLI_ERROR: System.exit(1);
-        case OK: break;
-      }
-    }
-
-    // positional argument being files to load
-    for (final var arg : cmd.getArgs()) {
-      startup.filesToOpen.add(new File(arg));
-    }
-    
-    // TODO: errors if any test and filesToOpen().count != 1
-
-    if (Main.headless && startup.filesToOpen.isEmpty()) {
-      logger.error(S.get("ttyNeedsFileError"));
-      return null;
-    }
-    if (startup.loadFile != null && !Main.headless) {
-      logger.error(S.get("loadNeedsTtyError"));
-      return null;
-    }
-    if (startup.saveFile != null && !Main.headless) {
-      logger.error(S.get("saveNeedsTtyError"));
-      return null;
-    }
-
-    return startup;
   }
 
   /* ********************************************************************************************* */
@@ -431,7 +394,7 @@ public class Startup implements AWTEventListener {
     EXIT
   }
 
-  private static RC handleArgTty(Startup startup, Option opt) {
+  private RC handleArgTty(Option opt) {
     // TTY format parsing
     final var ttyVal = opt.getValue();
     final var fmts = ttyVal.split(",");
@@ -455,7 +418,7 @@ public class Startup implements AWTEventListener {
           logger.error(S.get("ttyFormatError"));
           return RC.CLI_ERROR;
         }
-        startup.ttyFormat |= val;
+        ttyFormat |= val;
         return RC.OK;
       }
     }
@@ -463,11 +426,11 @@ public class Startup implements AWTEventListener {
     return RC.CLI_ERROR;
   }
 
-  private static RC handleArgSubstitute(Startup startup, Option opt) {
+  private RC handleArgSubstitute(Option opt) {
     final var fileA = new File(opt.getValues()[0]);
     final var fileB = new File(opt.getValues()[1]);
-    if (!startup.substitutions.containsKey(fileA)) {
-      startup.substitutions.put(fileA, fileB);
+    if (!substitutions.containsKey(fileA)) {
+      substitutions.put(fileA, fileB);
       return RC.OK;
     }
 
@@ -475,33 +438,33 @@ public class Startup implements AWTEventListener {
     return RC.CLI_ERROR;
   }
 
-  private static RC handleArgLoad(Startup startup, Option opt) {
-    if (startup.loadFile != null) {
+  private RC handleArgLoad(Option opt) {
+    if (loadFile != null) {
       logger.error(S.get("loadMultipleError"));
       return RC.CLI_ERROR;
     }
     final var fileName = opt.getValue();
-    startup.loadFile = new File(fileName);
+    loadFile = new File(fileName);
     return RC.OK;
   }
 
-  private static RC handleArgSave(Startup startup, Option opt) {
-    if (startup.saveFile != null) {
+  private RC handleArgSave(Option opt) {
+    if (saveFile != null) {
       logger.error(S.get("saveMultipleError"));
       return RC.CLI_ERROR;
     }
     final var fileName = opt.getValue();
-    startup.saveFile = new File(fileName);
+    saveFile = new File(fileName);
     return RC.OK;
   }
 
-  private static RC handleArgGates(Startup startup, Option opt) {
-    final var gateShape = opt.getValue().toLowerCase();
-    if ("ansi".equals(gateShape)) {
-      AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_SHAPED);
+  private RC handleArgGates(Option opt) {
+    final var shape = opt.getValue().toLowerCase();
+    if ("ansi".equals(shape)) {
+      gateShape = AppPreferences.SHAPE_SHAPED;
       return RC.OK;
-    } else if ("iec".equals(gateShape)) {
-      AppPreferences.GATE_SHAPE.set(AppPreferences.SHAPE_RECTANGULAR);
+    } else if ("iec".equals(shape)) {
+      gateShape = AppPreferences.SHAPE_RECTANGULAR;
       return RC.OK;
     }
 
@@ -509,7 +472,7 @@ public class Startup implements AWTEventListener {
     return RC.CLI_ERROR;
   }
 
-  private static RC handleArgGeometry(Startup startup, Option opt) {
+  private RC handleArgGeometry(Option opt) {
     final var geometry = opt.getValue();
     final var wxh = geometry.split("[xX]");
 
@@ -552,30 +515,41 @@ public class Startup implements AWTEventListener {
       logger.error(S.get("argGeometryError"));
       return RC.CLI_ERROR;
     }
-    AppPreferences.WINDOW_WIDTH.set(w);
-    AppPreferences.WINDOW_HEIGHT.set(h);
-    if (loc != null) {
-      AppPreferences.WINDOW_LOCATION.set(x + "," + y);
-    }
+    windowSize = new Point(w,h);
+    if (loc != null) windowLocation = new Point(x,y);
     return RC.OK;
   }
 
-  private static RC handleArgLocale(Startup startup, Option opt) {
-    return setLocale(opt.getValue());
+  private RC handleArgLocale(Option opt) {
+    String lang = opt.getValue();
+    final var opts = S.getLocaleOptions();
+    for (final var locale : opts) {
+      if (lang.equals(locale.toString())) {
+        LocaleManager.setLocale(locale);
+        return RC.OK;
+      }
+    }
+    logger.error(S.get("invalidLocaleError"));
+    logger.error(S.get("invalidLocaleOptionsHeader"));
+    for (final var o : opts) {
+      logger.error("   {}", o.toString());
+    }
+    return RC.CLI_ERROR;
   }
 
-  private static RC handleArgTemplate(Startup startup, Option opt) {
-    if (startup.templFile != null || startup.templEmpty || startup.templPlain) {
+  private RC handleArgTemplate(Option opt) {
+    // duplicates are not allowed
+    if (templFile != null || templEmpty || templPlain) {
       logger.error(S.get("argOneTemplateError"));
       return RC.CLI_ERROR;
     }
-    // first we get the option
+
     final var option = opt.getValue();
     // we look if it is a file
     final var file = new File(option);
     if (file.exists()) {
-      startup.templFile = file;
-      if (!startup.templFile.canRead()) {
+      templFile = file;
+      if (!templFile.canRead()) {
         logger.error(S.get("templateCannotReadError", file));
         return RC.IO_ERROR;
       }
@@ -583,34 +557,34 @@ public class Startup implements AWTEventListener {
     }
     // okay, not a file, let's look for empty and plain
     if (option.equalsIgnoreCase("empty")) {
-      startup.templEmpty = true;
+      templEmpty = true;
       return RC.OK;
     }
     if (option.equalsIgnoreCase("plain")) {
-      startup.templPlain = true;
+      templPlain = true;
       return RC.OK;
     }
+
     logger.error(S.get("argOneTemplateError"));
     return RC.CLI_ERROR;
   }
 
-  private static RC handleArgNoSplash(Startup startup, Option opt) {
-    startup.showSplash = false;
+  private RC handleArgNoSplash() {
+    showSplash = false;
     return RC.OK;
   }
 
-  private static RC handleArgTestVector(Startup startup, Option opt) {
-    startup.circuitToTest = opt.getValues()[0];
-    startup.testVector = opt.getValues()[1];
+  private RC handleArgTestVector(Option opt) {
     // This is to test a test bench. It will return 0 or 1 depending on if the tests pass or not.
+    circuitToTest = opt.getValues()[0];
+    testVector = opt.getValues()[1];
     return RC.OK;
   }
 
-  private static RC handleArgMainCircuit(Startup startup, Option opt) {
-    startup.circuitToTest = opt.getValues()[0];
+  private RC handleArgMainCircuit(Option opt) {
+    circuitToTest = opt.getValues()[0];
     return RC.OK;
   }
-
 
   /**
    * Handles 4th argument of `--test-fpga` argument which can be either string literal
@@ -631,10 +605,10 @@ public class Startup implements AWTEventListener {
    * * `tick_freq` is optional tick frequency.<br />
    * * `HDLONLY` (literal), uses HDL only.<br />
    */
-  private static RC handleArgTestFpgaParseArg(Startup startup, String argVal) {
+  private RC handleArgTestFpgaParseArg(String argVal) {
     if ("HDLONLY".equals(argVal)) {
       if (!testFpgaFlagTickFreqSet) {
-        startup.testCircuitHdlOnly = true;
+        testCircuitHdlOnly = true;
       }
       return RC.OK;
     }
@@ -643,7 +617,7 @@ public class Startup implements AWTEventListener {
     try {
       freq = Integer.parseUnsignedInt(argVal);
       if (!testFpgaFlagTickFreqSet) {
-        startup.testTickFrequency = freq;
+        testTickFrequency = freq;
         testFpgaFlagTickFreqSet = true;
       }
       return RC.OK;
@@ -655,10 +629,7 @@ public class Startup implements AWTEventListener {
     return RC.CLI_ERROR;
   }
 
-  // Indicates if handleArgTestFpgaParseArg() successfuly parsed and set tick freq.
-  private static boolean testFpgaFlagTickFreqSet = false;
-
-  private static RC handleArgTestFpga(Startup startup, Option opt) {
+  private RC handleArgTestFpga(Option opt) {
     final var optArgs = opt.getValues();
 
     if (optArgs == null) {
@@ -672,318 +643,44 @@ public class Startup implements AWTEventListener {
       return RC.CLI_ERROR;
     }
 
-    // already handled above
-    startup.testCircuitImpPath = optArgs[0];
-    startup.testCircuitImpName = optArgs[1];
-    startup.testCircuitImpBoard = optArgs[2];
+    testCircuitImpPath = optArgs[0];
+    testCircuitImpName = optArgs[1];
+    testCircuitImpBoard = optArgs[2];
 
     if (argsCnt >= 4) {
-      RC rc = handleArgTestFpgaParseArg(startup, optArgs[3]);
+      RC rc = handleArgTestFpgaParseArg(optArgs[3]);
       if (rc != RC.OK) return rc;
     }
     if (argsCnt >= 5) {
-      RC rc = handleArgTestFpgaParseArg(startup, optArgs[4]);
+      RC rc = handleArgTestFpgaParseArg(optArgs[4]);
       if (rc != RC.OK) return rc;
     }
 
-    startup.doFpgaDownload = true;
-    startup.showSplash = false;
-    startup.filesToOpen.add(new File(startup.testCircuitImpPath));
+    doFpgaDownload = true;
+    filesToOpen.add(new File(testCircuitImpPath));
     return RC.OK;
   }
 
-  private static RC handleArgTestCircuit(Startup startup, Option opt) {
+  private RC handleArgTestCircuit(Option opt) {
     final var fileName = opt.getValue();
-    startup.testCircuitPathInput = fileName;
-    startup.filesToOpen.add(new File(fileName));
+    testCircuitPathInput = fileName;
+    filesToOpen.add(new File(fileName)); // TODO fix this, fileToOpen AND(!) testCircuitPathInput
     return RC.OK;
   }
 
-  private static RC handleArgTestCircGen(Startup startup, Option opt) {
+  private RC handleArgTestCircGen(Option opt) {
+    // This is to test the XML consistency over different versions of the Logisim.
     final var optArgs = opt.getValues();
-    // This is to test the XML consistency over different version of the Logisim
     // This is the input path of the file to open
-    startup.testCircPathInput = optArgs[0];
-    startup.filesToOpen.add(new File(startup.testCircPathInput));
-    // This is the output file's path. The comparaison shall be done between the  testCircPathInput and the testCircPathOutput
-    startup.testCircPathOutput = optArgs[1];
+    testCircPathInput = optArgs[0];
+    filesToOpen.add(new File(testCircPathInput)); // TODO fix this, fileToOpen AND(!) testCircPathInput
+    // This is the output file's path. The comparaison shall be done between the testCircPathInput and the testCircPathOutput
+    testCircPathOutput = optArgs[1];
     return RC.OK;
   }
 
-  /* ********************************************************************************************* */
-
-  private static RC setLocale(String lang) {
-    final var opts = S.getLocaleOptions();
-    for (final var locale : opts) {
-      if (lang.equals(locale.toString())) {
-        LocaleManager.setLocale(locale);
-        return RC.OK;
-      }
-    }
-    logger.error(S.get("invalidLocaleError"));
-    logger.error(S.get("invalidLocaleOptionsHeader"));
-    for (final var opt : opts) {
-      logger.error("   {}", opt.toString());
-    }
-    return RC.CLI_ERROR;
+  private RC handleArgClearPreferences() {
+    clearPreferences = true;
+    return RC.OK;
   }
-
-  private void doOpenFile(File file) {
-    if (initialized) {
-      ProjectActions.doOpen(null, null, file);
-    } else {
-      filesToOpen.add(file);
-    }
-  }
-
-  private void doPrintFile(File file) {
-    if (initialized) {
-      final var toPrint = ProjectActions.doOpen(null, null, file);
-      Print.doPrint(toPrint);
-      toPrint.getFrame().dispose();
-    } else {
-      filesToPrint.add(file);
-    }
-  }
-
-  List<File> getFilesToOpen() {
-    return filesToOpen;
-  }
-
-  String getTestVector() {
-      return testVector;
-  }
-
-  String getTestCircPathOutput() {
-    return testCircPathOutput;
-  }
-
-  String getTestCircuitPathInput() {
-    return testCircuitPathInput;
-  }
-
-  File getLoadFile() {
-    return loadFile;
-  }
-
-  File getSaveFile() {
-    return saveFile;
-  }
-
-  String getCircuitToTest() {
-    return circuitToTest;
-  }
-
-  Map<File, File> getSubstitutions() {
-    return Collections.unmodifiableMap(substitutions);
-  }
-
-  int getTtyFormat() {
-    return ttyFormat;
-  }
-
-  boolean isFpgaDownload() {
-    return doFpgaDownload;
-  }
-
-  boolean fpgaDownload(Project proj) {
-    /* Testing synthesis */
-    final var mainCircuit = proj.getLogisimFile().getCircuit(testCircuitImpName);
-    if (mainCircuit == null) return false;
-    final var simTickFreq = mainCircuit.getTickFrequency();
-    final var downTickFreq = mainCircuit.getDownloadFrequency();
-    final var usedFrequency = (testTickFrequency > 0) ? testTickFrequency :
-        (downTickFreq > 0) ? downTickFreq : simTickFreq;
-    Download downloader =
-        new Download(
-            proj,
-            testCircuitImpName,
-            usedFrequency,
-            new BoardReaderClass(AppPreferences.Boards.getBoardFilePath(testCircuitImpBoard))
-                .getBoardInformation(),
-            testCircuitImpMapFile,
-            false,
-            false,
-            testCircuitHdlOnly);
-    return downloader.runTty();
-  }
-
-  private void loadTemplate(Loader loader, File templFile, boolean templEmpty) {
-    if (showSplash) {
-      monitor.setProgress(SplashScreen.TEMPLATE_OPEN);
-    }
-    if (templFile != null) {
-      AppPreferences.setTemplateFile(templFile);
-      AppPreferences.setTemplateType(AppPreferences.TEMPLATE_CUSTOM);
-    } else if (templEmpty) {
-      AppPreferences.setTemplateType(AppPreferences.TEMPLATE_EMPTY);
-    } else if (templPlain) {
-      AppPreferences.setTemplateType(AppPreferences.TEMPLATE_PLAIN);
-    }
-  }
-
-  public void run() {
-    if (Main.headless) {
-      try {
-        TtyInterface.run(this);
-      } catch (Exception t) {
-        t.printStackTrace();
-        System.exit(-1);
-      }
-    }
-
-    // kick off the progress monitor
-    // (The values used for progress values are based on a single run where
-    // I loaded a large file.)
-    if (showSplash) {
-      try {
-        monitor = new SplashScreen();
-        monitor.setVisible(true);
-      } catch (Exception t) {
-        monitor = null;
-        showSplash = false;
-      }
-    }
-
-    Toolkit.getDefaultToolkit()
-        .addAWTEventListener(this, AWTEvent.COMPONENT_EVENT_MASK | AWTEvent.CONTAINER_EVENT_MASK);
-    // pre-load the two basic component libraries, just so that the time
-    // taken is shown separately in the progress bar.
-    if (showSplash) {
-      monitor.setProgress(SplashScreen.LIBRARIES);
-    }
-    final var templLoader = new Loader(monitor);
-    final var count =
-        templLoader.getBuiltin().getLibrary(BaseLibrary._ID).getTools().size()
-            + templLoader.getBuiltin().getLibrary(GatesLibrary._ID).getTools().size();
-    if (count < 0) {
-      // this will never happen, but the optimizer doesn't know that...
-      logger.error("FATAL ERROR - no components");
-      System.exit(-1);
-    }
-
-    // load in template
-    loadTemplate(templLoader, templFile, templEmpty);
-
-    // now that the splash screen is almost gone, we do some last-minute
-    // interface initialization
-    if (showSplash) {
-      monitor.setProgress(SplashScreen.GUI_INIT);
-    }
-    WindowManagers.initialize();
-    if (MacCompatibility.isSwingUsingScreenMenuBar()) {
-      MacCompatibility.setFramelessJMenuBar(new LogisimMenuBar(null, null, null, null));
-    } else {
-      new LogisimMenuBar(null, null, null, null);
-      // most of the time occupied here will be in loading menus, which
-      // will occur eventually anyway; we might as well do it when the
-      // monitor says we are
-    }
-
-    // Make ENTER and SPACE have the same effect for focused buttons.
-    UIManager.getDefaults()
-        .put(
-            "Button.focusInputMap",
-            new UIDefaults.LazyInputMap(
-                new Object[] {
-                  "ENTER", "pressed",
-                  "released ENTER", "released",
-                  "SPACE", "pressed",
-                  "released SPACE", "released"
-                }));
-
-    // if user has double-clicked a file to open, we'll
-    // use that as the file to open now.
-    initialized = true;
-
-    // load file
-    if (filesToOpen.isEmpty()) {
-      final var proj = ProjectActions.doNew(monitor);
-      proj.setStartupScreen(true);
-      if (showSplash) {
-        monitor.close();
-      }
-    } else {
-      var numOpened = 0;
-      var first = true;
-      for (final var fileToOpen : filesToOpen) {
-        try {
-          ProjectActions.doOpen(monitor, fileToOpen, substitutions);
-          numOpened++;
-        } catch (LoadFailedException ex) {
-          logger.error("{} : {}", fileToOpen.getName(), ex.getMessage());
-        }
-        if (first) {
-          first = false;
-          if (showSplash) {
-            monitor.close();
-          }
-          monitor = null;
-        }
-      }
-      if (numOpened == 0) System.exit(-1);
-    }
-
-    for (final var fileToPrint : filesToPrint) {
-      doPrintFile(fileToPrint);
-    }
-  }
-
-  private boolean hasIcon(Component comp) {
-    var result = false;
-    if (comp instanceof JOptionPane pane) {
-      for (final var comp1 : pane.getComponents()) result |= hasIcon(comp1);
-    } else if (comp instanceof JPanel panel) {
-      for (final var comp1 : panel.getComponents()) result |= hasIcon(comp1);
-    } else if (comp instanceof JLabel label) {
-      return label.getIcon() != null;
-    }
-    return result;
-  }
-
-  @Override
-  public void eventDispatched(AWTEvent event) {
-    if (event instanceof ContainerEvent containerEvent) {
-      if (containerEvent.getID() == ContainerEvent.COMPONENT_ADDED) {
-        final var container = containerEvent.getChild();
-        if ((container instanceof JButton)
-            || (container instanceof JCheckBox)
-            || (container instanceof JComboBox)
-            || (container instanceof JToolTip)
-            || (container instanceof JLabel)
-            || (container instanceof JFrame)
-            || (container instanceof JMenuItem)
-            || (container instanceof JRadioButton)
-            || (container instanceof JRadioButtonMenuItem)
-            || (container instanceof JProgressBar)
-            || (container instanceof JSpinner)
-            || (container instanceof JTabbedPane)
-            || (container instanceof JTextField)
-            || (container instanceof JTextArea)
-            || (container instanceof JHelp)
-            || (container instanceof JFileChooser)
-            || ((container instanceof JScrollPane) && (!(container instanceof CanvasPane)))
-            || (container instanceof JCheckBoxMenuItem)) {
-          AppPreferences.setScaledFonts(((JComponent) container).getComponents());
-          try {
-            container.setFont(AppPreferences.getScaledFont(containerEvent.getChild().getFont()));
-            container.revalidate();
-            container.repaint();
-          } catch (Exception ignored) {
-          }
-        }
-        if (container instanceof final JOptionPane pane) {
-          if (hasIcon(pane)) {
-            switch (pane.getMessageType()) {
-              case OptionPane.ERROR_MESSAGE -> pane.setIcon(new ErrorIcon());
-              case OptionPane.QUESTION_MESSAGE -> pane.setIcon(new QuestionIcon());
-              case OptionPane.INFORMATION_MESSAGE -> pane.setIcon(new InfoIcon());
-              case OptionPane.WARNING_MESSAGE -> pane.setIcon(new WarningIcon());
-            }
-          }
-        }
-      }
-    }
-  }
-
-} // Startup
+}

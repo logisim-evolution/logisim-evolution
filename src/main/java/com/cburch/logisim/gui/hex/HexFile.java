@@ -1002,7 +1002,7 @@ public class HexFile {
     }
 
     protected MemContents warnAndAsk(String errmsg) {
-      if (Main.headless) {
+      if (!Main.useGui) {
         System.out.println(errmsg);
         System.out.println("Warnings:\n" + warnings.toString());
         return null;

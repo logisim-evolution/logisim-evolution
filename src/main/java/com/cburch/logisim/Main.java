@@ -12,6 +12,8 @@ package com.cburch.logisim;
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.start.Startup;
+import com.cburch.logisim.gui.start.GuiInterface;
+import com.cburch.logisim.gui.start.TtyInterface;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import com.formdev.flatlaf.FlatDarkLaf;
@@ -52,25 +54,42 @@ public class Main {
       e.printStackTrace();
     }
 
-    final var startup = Startup.parseArgs(args);
-
-    try {
-      startup.run();
-    } catch (Throwable e) {
-      final var strWriter = new StringWriter();
-      final var printWriter = new PrintWriter(strWriter);
-      e.printStackTrace(printWriter);
-      OptionPane.showMessageDialog(null, strWriter.toString());
-      System.exit(-1);
+    
+    final var startup = new Startup(args);
+    int exitCode = 0;
+    switch (startup.ui) {
+      case NONE:
+        exitCode = startup.exitCode;
+        break;
+      case TTY:
+        useGui = false;
+        try {
+          exitCode = TtyInterface.run(startup);
+        } catch (Exception e) {
+          e.printStackTrace();
+          exitCode = -1;
+        }
+        break;
+      case GUI:
+        try {
+          final var gui = new GuiInterface(startup);
+          exitCode = gui.run();
+        } catch (Throwable e) {
+          final var strWriter = new StringWriter();
+          final var printWriter = new PrintWriter(strWriter);
+          e.printStackTrace(printWriter);
+          OptionPane.showMessageDialog(null, strWriter.toString());
+          exitCode = -1;
+        }
+      default:
     }
+
+    if (exitCode != 0) System.exit(exitCode);
   }
 
-  public static boolean headless = false;
+  // FIXME: figure out how to NOT have this global
+  public static boolean useGui = true;
 
   // FloppyDisk unicode character: https://charbase.com/1f4be-unicode-floppy-disk
   public static final String DIRTY_MARKER = "\ud83d\udcbe";
-
-  public static boolean hasGui() {
-    return !headless;
-  }
 }

@@ -55,7 +55,7 @@ class MacOsAdapter {
         dt.setPrintFileHandler(
             e -> {
               for (File f : e.getFiles()) {
-                Startup.doPrint(f);
+                GuiInterface.doPrint(f);
               }
             });
       } catch (Exception ignored) {
@@ -65,7 +65,7 @@ class MacOsAdapter {
         dt.setOpenFileHandler(
             e -> {
               for (File f : e.getFiles()) {
-                Startup.doOpen(f);
+                GuiInterface.doOpen(f);
               }
             });
       } catch (Exception ignored) {

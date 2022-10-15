@@ -40,7 +40,6 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
   private boolean downloadOnly;
   private boolean generateHdlOnly;
   private char vendor;
-  private boolean useGui;
   private JProgressBar progressBar;
   private VendorDownload downloader;
   private String topLevelSheet;
@@ -89,6 +88,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       boolean writeToFlash,
       boolean downloadOnly,
       boolean generateHdlOnly) {
+    this.progressBar = null;
     setUpDownload(
         myProject,
         topLevelSheet,
@@ -119,14 +119,13 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     } else {
       this.vendor = myBoardInformation.fpga.getVendor();
     }
-    this.useGui = !Main.headless;
     this.topLevelSheet = topLevelSheet;
     this.tickFrequency = tickFrequency;
     this.mapFileName = mapFileName;
     final var rootSheet = myProject.getLogisimFile().getCircuit(topLevelSheet);
     if (rootSheet == null) return;
     var steps = basicSteps;
-    if (!this.generateHdlOnly && useGui) rootSheet.setDownloadBoard(myBoardInformation.getBoardName());
+    if (!this.generateHdlOnly && Main.useGui) rootSheet.setDownloadBoard(myBoardInformation.getBoardName());
     switch (vendor) {
       case VendorSoftware.VENDOR_ALTERA -> downloader =
           new AlteraDownload(
@@ -158,8 +157,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
         return;
       }
     }
-    if (progressBar == null) useGui = false;
-    if (useGui) {
+    if (progressBar != null) {
       if (downloader != null) steps += downloader.getNumberOfStages();
       progressBar.setMaximum(steps);
       progressBar.setString(S.get("FpgaDownloadInfo"));
@@ -248,14 +246,14 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
           final var result = execute(downloader.getStageMessage(stages), currentStage);
           if (result != null) return result;
         }
-        if (useGui) progressBar.setValue(stages + basicSteps);
+        if (progressBar != null) progressBar.setValue(stages + basicSteps);
       }
     }
-    if (useGui) progressBar.setValue(downloader.getNumberOfStages() + basicSteps - 1);
+    if (progressBar != null) progressBar.setValue(downloader.getNumberOfStages() + basicSteps - 1);
     if (generateHdlOnly) return null;
     if (stopRequested) return S.get("FPGAInterrupted");
     Object[] options = {S.get("FPGADownloadOk"), S.get("FPGADownloadCancel")};
-    if (useGui)
+    if (progressBar != null)
       if (OptionPane.showOptionDialog(
               null,
               S.get("FPGAVerifyMsg1"),
@@ -292,7 +290,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
   }
 
   private String execute(String StageName, ProcessBuilder process) throws IOException, InterruptedException {
-    if (useGui) progressBar.setString(StageName);
+    if (progressBar != null) progressBar.setString(StageName);
     Reporter.report.print(" ");
     Reporter.report.print("==>");
     Reporter.report.print("==> " + StageName);
@@ -319,7 +317,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
   private boolean prepareDownload() {
     if (downloadOnly && downloader.readyForDownload()) return true;
     /* Stage 0 DRC */
-    if (useGui) progressBar.setString(S.get("FPGAState0"));
+    if (progressBar != null) progressBar.setString(S.get("FPGAState0"));
     if (!performDrc(topLevelSheet, AppPreferences.HdlType.get())) {
       return false;
     }
@@ -329,14 +327,14 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       return false;
     }
     /* Stage 1 Is design map able on Board */
-    if (useGui) {
+    if (progressBar != null) {
       progressBar.setValue(1);
       progressBar.setString(S.get("FPGAState2"));
     }
     if (!mapDesign(topLevelSheet)) {
       return false;
     }
-    if (useGui) {
+    if (progressBar != null) {
       /* Stage 2 Map design on board */
       progressBar.setValue(2);
       progressBar.setString(S.get("FPGAState3"));
@@ -365,7 +363,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       return false;
     }
     /* Stage 3 HDL generation */
-    if (useGui) {
+    if (progressBar != null) {
       progressBar.setValue(3);
       progressBar.setString(S.get("FPGAState1"));
     }
@@ -378,7 +376,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
     final var projectPath = getProjDir(topLevelSheet);
     final var sourcePath = projectPath + AppPreferences.HdlType.get().toLowerCase() + File.separator;
     getVhdlFiles(projectPath, sourcePath, entities, architectures, AppPreferences.HdlType.get());
-    if (useGui) {
+    if (progressBar != null) {
       progressBar.setValue(4);
       progressBar.setString(S.get("FPGAState4"));
     }
@@ -412,7 +410,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
 
   public static String chooseBoard(List<String> devices) {
     /* This code is based on the version of Kevin Walsh */
-    if (Main.hasGui()) {
+    if (Main.useGui) {
       var choices = new String[devices.size()];
       for (var i = 0; i < devices.size(); i++) choices[i] = devices.get(i);
       return (String)
