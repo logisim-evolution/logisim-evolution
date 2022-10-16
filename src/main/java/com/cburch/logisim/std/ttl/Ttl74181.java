@@ -22,8 +22,6 @@ package com.cburch.logisim.std.ttl;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -77,7 +75,6 @@ public class Ttl74181 extends AbstractTtlGate {
   public static final int DELAY = 1;
 
   private InstanceState _state;
-  static final Logger logger = LoggerFactory.getLogger(Ttl74181.class);
 
   public Ttl74181() {
     super(
