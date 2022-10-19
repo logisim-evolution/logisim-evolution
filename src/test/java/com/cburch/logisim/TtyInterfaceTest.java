@@ -26,10 +26,10 @@ import org.mockito.MockedConstruction;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.slf4j.Logger;
 
+import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.gui.start.TtyInterface;
-import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.util.LocaleManager;
 
 /** Tests command-line parsing. */
@@ -53,7 +53,8 @@ public class TtyInterfaceTest extends TestBase {
     FieldUtils.writeField(tty,"S",S,true);
     FieldUtils.writeField(tty,"logger",logger,true);
 
-    final int rc = tty.run();
+    Loader loader = new Loader(null);
+    final int rc = tty.run(loader);
     
     assertEquals(2,rc);
     verify(logger).error(anyString(),ArgumentMatchers.eq("ttyLoadError:missing-file"));
@@ -61,43 +62,63 @@ public class TtyInterfaceTest extends TestBase {
   }
 
   @Test
-  public void testFPGA() {
+  public void testFPGAFail() {
     final Startup startup = new Startup("--test-fpga a b missing-file".split(" "));
     final var tty = new TtyInterface(startup);
-    final int rc = tty.run();
+    Loader loader = mock(Loader.class);
+    final int rc = tty.run(loader);
     assertEquals(2,rc); // due to missing file
   }
 
   @Test
-  public void testTestVector() {
+  public void testFPGASucceed() {
+    final Startup startup = new Startup("--test-fpga a b missing-file".split(" "));
+    final var tty = new TtyInterface(startup);
+    
+    Loader loader = mock(Loader.class);
+    try (MockedConstruction<Download> download = mockConstruction(Download.class,
+      (mock, context) -> {
+        when(mock.runTty()).thenReturn(false);
+      })) {
+      final int rc = tty.run(loader);
+      assertEquals(2,rc);
+    }
+  }
+
+  @Test
+  public void testTestVectorFail() {
     final Startup startup = new Startup("--test-vector a b missing-file".split(" "));
     final var tty = new TtyInterface(startup);
-    final int rc = tty.run();
+    Loader loader = mock(Loader.class);
+    final int rc = tty.run(loader);
     assertEquals(2,rc); // due to missing file
   }
 
   @Test
-  public void testNewFileFormat() {
+  public void testNewFileFormatFail() {
     final Startup startup = new Startup("--new-file-format a missing-file".split(" "));
     final var tty = new TtyInterface(startup);
-    final int rc = tty.run();
+    Loader loader = mock(Loader.class);
+    final int rc = tty.run(loader);
     assertEquals(2,rc); // due to missing file
   }
 
   @Test
-  public void testTestCircuit() {
+  public void testTestCircuitFail() {
     final Startup startup = new Startup("--test-circuit missing-file".split(" "));
     assertEquals(Startup.UI.TTY,startup.ui);
     final var tty = new TtyInterface(startup);
-    final int rc = tty.run();
+    Loader loader = mock(Loader.class);
+    final int rc = tty.run(loader);
     assertEquals(2,rc); // due to missing file
   }
 
   @Test
-  public void testTty() {
+  public void testTtyFail() {
     final Startup startup = new Startup("--tty table missing-file".split(" "));
     final var tty = new TtyInterface(startup);
-    final int rc = tty.run();
+    Loader loader = mock(Loader.class);
+    final int rc = tty.run(loader);
     assertEquals(2,rc); // due to missing file
   }
 
