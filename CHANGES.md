@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added TTL 74182: look-ahead carry generator
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins
