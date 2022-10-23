@@ -38,7 +38,11 @@ public class Ttl74181 extends AbstractTtlGate {
    */
   public static final String _ID = "74181";
 
+  public static final int DELAY = 1;
+
   // IC pin indices as specified in the datasheet
+
+  // Inputs
   public static final byte A0 = 2;
   public static final byte A1 = 23;
   public static final byte A2 = 21;
@@ -59,20 +63,21 @@ public class Ttl74181 extends AbstractTtlGate {
   public static final byte S2 = 4;
   public static final byte S3 = 3;
 
-  public static final byte nCi = 7;
-  public static final byte nCo = 16;
+  public static final byte Ci = 7;
 
   public static final byte M = 8;
 
+  // Outputs
   public static final byte AeqB = 14;
 
-  public static final byte X = 15;
-  public static final byte Y = 17;
+  public static final byte Co = 16;
 
+  public static final byte P = 15;
+  public static final byte G = 17;
+
+  // Power supply
   public static final byte GND = 12;
   public static final byte VCC = 24;
-
-  public static final int DELAY = 1;
 
   private InstanceState _state;
 
@@ -81,11 +86,11 @@ public class Ttl74181 extends AbstractTtlGate {
             _ID,
             (byte) 24,
             new byte[] {
-              F0, F1, F2, F3, nCo, AeqB, X, Y
+              F0, F1, F2, F3, Co, AeqB, P, G
             },
             new String[] {
               "B0", "A0", "S3", "S2", "S1", "S0", "nCi", "M", "F0", "F1", "F2",
-              "F3", "A=B", "X", "nCo", "Y", "B3", "A3", "B2", "A2", "B1", "A1"
+              "F3", "A=B", "Pn", "Co", "Gn", "B3", "A3", "B2", "A2", "B1", "A1"
             },
             null);
   }
@@ -137,7 +142,7 @@ public class Ttl74181 extends AbstractTtlGate {
    *
    * @param in the inputs
    * @param products list of products, if bit n of a product is a one, then input n is part of that product
-   * @return the sum of products
+   * @return the active-low sum of products
    */
   private boolean pal32L1(ArrayList<Boolean> in, int[] products) {
     var or = false;
@@ -155,7 +160,7 @@ public class Ttl74181 extends AbstractTtlGate {
       or = and;
     }
 
-    return or;
+    return !or; // Active low
   }
 
   @Override
@@ -166,10 +171,26 @@ public class Ttl74181 extends AbstractTtlGate {
     var b = new ArrayList<>(Arrays.asList(getPort(B0), getPort(B1), getPort(B2), getPort(B3)));
     var bn = new ArrayList<>(b.stream().map(x -> !x).toList());
     var s = new ArrayList<>(Arrays.asList(getPort(S0), getPort(S1), getPort(S2), getPort(S3)));
-    var ci = getPort(nCi);
+    var ci = getPort(Ci);
     var m = getPort(M);
 
+    // The logic diagram in the datasheet shows two layers of AND/NOR networks.
+    //
+    // The first layer is connected to A, B and S and produces two outputs.
+    // The second layer is connected to the outputs of the first layer plus M and Ci
+    // and also has a small bit of additional logic (some XOR gates etc.).
+    //
+    // Output 1 of the first layer, formed by a 2-AND/1-NOR network, is called x.
+    // Output 2 of the first layer, formed by a 3-AND/1-NOR network, is called y.
+    //
+    // The output of second layer, formed by an n-AND/1-NOR network, is called z.
+
     // Level 1 PAL
+    //
+    //   15   14   13   12    11    10    9     8    7    6    5    4    3    2    1    0    input number.
+    // +----+----+----+----+-----+-----+-----+-----+----+----+----+----+----+----+----+----+
+    // | S3 | S2 | S1 | S0 | /B3 | /B2 | /B1 | /B0 | B3 | B2 | B1 | B0 | A3 | A2 | A1 | A0 |
+    // +----+----+----+----+-----+-----+-----+-----+----+----+----+----+----+----+----+----+
     var level1 = new ArrayList<Boolean>() {
       {
         addAll(a);
@@ -179,50 +200,55 @@ public class Ttl74181 extends AbstractTtlGate {
       }
     };
 
-    var p = new ArrayList<>(Arrays.asList(
-        !pal32L1(level1, new int[] { 0x00008011, 0x00004101 }),
-        !pal32L1(level1, new int[] { 0x00008022, 0x00004202 }),
-        !pal32L1(level1, new int[] { 0x00008044, 0x00004404 }),
-        !pal32L1(level1, new int[] { 0x00008088, 0x00004808 })));
+    var x = new ArrayList<>(Arrays.asList(
+        pal32L1(level1, new int[] { 0x00008011, 0x00004101 }),
+        pal32L1(level1, new int[] { 0x00008022, 0x00004202 }),
+        pal32L1(level1, new int[] { 0x00008044, 0x00004404 }),
+        pal32L1(level1, new int[] { 0x00008088, 0x00004808 })));
 
-    var q = new ArrayList<>(Arrays.asList(
-        !pal32L1(level1, new int[] { 0x00002100, 0x00001010, 0x00000001 }),
-        !pal32L1(level1, new int[] { 0x00002200, 0x00001020, 0x00000002 }),
-        !pal32L1(level1, new int[] { 0x00002400, 0x00001040, 0x00000004 }),
-        !pal32L1(level1, new int[] { 0x00002800, 0x00001080, 0x00000008 })));
+    var y = new ArrayList<>(Arrays.asList(
+        pal32L1(level1, new int[] { 0x00002100, 0x00001010, 0x00000001 }),
+        pal32L1(level1, new int[] { 0x00002200, 0x00001020, 0x00000002 }),
+        pal32L1(level1, new int[] { 0x00002400, 0x00001040, 0x00000004 }),
+        pal32L1(level1, new int[] { 0x00002800, 0x00001080, 0x00000008 })));
 
     // Level 2 PAL
+    //
+    //   9    8    7    6    5    4    3    2    1    0    input number
+    // +----+----+----+----+----+----+----+----+----+----+
+    // | Ci | /M | Y3 | Y2 | Y1 | Y0 | X3 | X2 | X1 | X0 |
+    // +----+----+----+----+----+----+----+----+----+----+
     var level2 = new ArrayList<Boolean>() {
       {
-        addAll(p);
-        addAll(q);
+        addAll(x);
+        addAll(y);
         add(!m);
         add(ci);
       }
     };
 
-    var r = new ArrayList<>(Arrays.asList(
-        !pal32L1(level2, new int[] { 0x00000300                                     }),
-        !pal32L1(level2, new int[] { 0x00000301,                         0x00000110 }),
-        !pal32L1(level2, new int[] { 0x00000303,             0x00000112, 0x00000120 }),
-        !pal32L1(level2, new int[] { 0x00000307, 0x00000116, 0x00000124, 0x00000140 })));
+    var z = new ArrayList<>(Arrays.asList(
+        pal32L1(level2, new int[] { 0x00000300                                     }),
+        pal32L1(level2, new int[] { 0x00000301,                         0x00000110 }),
+        pal32L1(level2, new int[] { 0x00000303,             0x00000112, 0x00000120 }),
+        pal32L1(level2, new int[] { 0x00000307, 0x00000116, 0x00000124, 0x00000140 })));
 
     // Determine outputs
-    var x = !pal32L1(level2, new int[] { 0x00000080, 0x00000048, 0x0000002c, 0x0000001e });
-    var y = !pal32L1(level2, new int[] { 0x0000000f });
-    var co = !(!pal32L1(level2, new int[] { 0x0000020f }) && x);
+    var p = pal32L1(level2, new int[] { 0x0000000f });
+    var g = pal32L1(level2, new int[] { 0x00000080, 0x00000048, 0x0000002c, 0x0000001e });
+    var co = !pal32L1(level2, new int[] { 0x0000020f }) || !g;
 
     var eq = (a.get(0) == b.get(0)) && (a.get(1) == b.get(1)) && (a.get(2) == b.get(2) && a.get(3) == b.get(3));
 
-    var f0 = p.get(0) ^ q.get(0) ^ r.get(0);
-    var f1 = p.get(1) ^ q.get(1) ^ r.get(1);
-    var f2 = p.get(2) ^ q.get(2) ^ r.get(2);
-    var f3 = p.get(3) ^ q.get(3) ^ r.get(3);
+    var f0 = x.get(0) ^ y.get(0) ^ z.get(0);
+    var f1 = x.get(1) ^ y.get(1) ^ z.get(1);
+    var f2 = x.get(2) ^ y.get(2) ^ z.get(2);
+    var f3 = x.get(3) ^ y.get(3) ^ z.get(3);
 
     // Set outputs
-    setPort(X, x);
-    setPort(Y, y);
-    setPort(nCo, co);
+    setPort(P, p);
+    setPort(G, g);
+    setPort(Co, co);
     setPort(AeqB, eq);
 
     setPort(F3, f3);
