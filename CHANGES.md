@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added TTL 74381: arithmetic logic unit
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins
