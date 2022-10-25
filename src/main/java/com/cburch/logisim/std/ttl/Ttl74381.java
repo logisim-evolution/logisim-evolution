@@ -28,7 +28,7 @@ import java.util.Arrays;
 
 /**
  * TTL 74x381 arithmetic logic unit
- * Model based on <a href="http://bitsavers.org/components/ti/_dataBooks/1976_TI_The_TTL_Data_Book_2ed/07.pdf">74LS181 datasheet, p 7-484 to 7-486</a>.
+ * Model based on <a href="http://bitsavers.org/components/ti/_dataBooks/1976_TI_The_TTL_Data_Book_2ed/07.pdf">74LS381 datasheet, p 7-484 to 7-486</a>.
  */
 public class Ttl74381 extends AbstractTtlGate {
   /**
@@ -72,7 +72,7 @@ public class Ttl74381 extends AbstractTtlGate {
   public static final byte GND = 10;
   public static final byte VCC = 20;
 
-  private InstanceState _state;
+  private InstanceState state;
 
   public Ttl74381() {
     super(
@@ -92,11 +92,11 @@ public class Ttl74381 extends AbstractTtlGate {
   public void paintInternal(InstancePainter painter, int x, int y, int height, boolean up) {
     // As tooltips can be longer than what can fit as pin name while painting IC internals,
     // we need to shorten it first to up to 4 characters to keep the diagram readable.
-    final var label_len_max = 4;
+    final var labelLenMax = 4;
     final var names = new ArrayList<String>();
     for (final var name : portNames) {
       final var tmp = name.split("\\s+");
-      names.add((tmp[0].length() <= label_len_max) ? tmp[0] : tmp[0].substring(0, label_len_max));
+      names.add((tmp[0].length() <= labelLenMax) ? tmp[0] : tmp[0].substring(0, labelLenMax));
     }
     super.paintBase(painter, true, false);
     Drawgates.paintPortNames(painter, x, y, height, names.toArray(new String[0]));
@@ -117,7 +117,7 @@ public class Ttl74381 extends AbstractTtlGate {
    * @return true if the specified pin has a logic high level
    */
   private boolean getPort(byte dsPinNr) {
-    return _state.getPortValue(pinNrToPortNr(dsPinNr)) == Value.TRUE;
+    return state.getPortValue(pinNrToPortNr(dsPinNr)) == Value.TRUE;
   }
 
   /** Sets the specified pin to the specified level
@@ -126,7 +126,7 @@ public class Ttl74381 extends AbstractTtlGate {
    * @param b the logic level for the pin
    */
   private void setPort(byte dsPinNr, boolean b) {
-    _state.setPort(pinNrToPortNr(dsPinNr), b ? Value.TRUE : Value.FALSE, DELAY);
+    state.setPort(pinNrToPortNr(dsPinNr), b ? Value.TRUE : Value.FALSE, DELAY);
   }
 
   /**
@@ -141,7 +141,7 @@ public class Ttl74381 extends AbstractTtlGate {
     var or = false;
 
     for (var i = 0; i < products.length && !or; i++) {
-      var product = products[i];
+      final var product = products[i];
       var and = true;
 
       for (var j = 0; j < 32 && and; j++) {
@@ -158,14 +158,14 @@ public class Ttl74381 extends AbstractTtlGate {
 
   @Override
   public void propagateTtl(InstanceState state) {
-    _state = state;
+    this.state = state;
 
-    var a = new ArrayList<>(Arrays.asList(getPort(A0), getPort(A1), getPort(A2), getPort(A3)));
-    var an = new ArrayList<>(a.stream().map(x -> !x).toList());
-    var b = new ArrayList<>(Arrays.asList(getPort(B0), getPort(B1), getPort(B2), getPort(B3)));
-    var bn = new ArrayList<>(b.stream().map(x -> !x).toList());
-    var s = new ArrayList<>(Arrays.asList(getPort(S0), getPort(S1), getPort(S2)));
-    var ci = getPort(Ci);
+    final var a = new ArrayList<>(Arrays.asList(getPort(A0), getPort(A1), getPort(A2), getPort(A3)));
+    final var an = new ArrayList<>(a.stream().map(x -> !x).toList());
+    final var b = new ArrayList<>(Arrays.asList(getPort(B0), getPort(B1), getPort(B2), getPort(B3)));
+    final var bn = new ArrayList<>(b.stream().map(x -> !x).toList());
+    final var s = new ArrayList<>(Arrays.asList(getPort(S0), getPort(S1), getPort(S2)));
+    final var ci = getPort(Ci);
 
     // The logic diagram in the datasheet shows two layers of AND/NOR networks
     // plus some combinatorial functions based on S.
@@ -182,12 +182,12 @@ public class Ttl74381 extends AbstractTtlGate {
     //
     // The output of second layer, formed by an n-AND/1-NOR network, is called L.
 
-    var u =   s.get(0) ||  s.get(1);
-    var v =   s.get(1) ||  s.get(2);
-    var w =   s.get(0) || !s.get(1);
-    var x = !(s.get(0) &&  s.get(1)) ||  s.get(2);
-    var y =  (s.get(0) &&  s.get(1)) || !s.get(2);
-    var z =  !s.get(2) &&  u;
+    final var u =   s.get(0) ||  s.get(1);
+    final var v =   s.get(1) ||  s.get(2);
+    final var w =   s.get(0) || !s.get(1);
+    final var x = !(s.get(0) &&  s.get(1)) ||  s.get(2);
+    final var y =  (s.get(0) &&  s.get(1)) || !s.get(2);
+    final var z =  !s.get(2) &&  u;
 
     // Level 1 PAL
     //
@@ -196,7 +196,7 @@ public class Ttl74381 extends AbstractTtlGate {
     // +---+---+---+---+---+-----+-----+-----+-----+----+----+----+----+-----+-----+-----+-----+----+----+----+----+
     // | U | V | W | X | Y | /B3 | /B2 | /B1 | /B0 | B3 | B2 | B1 | B0 | /A3 | /A2 | /A1 | /A0 | A3 | A2 | A1 | A0 |
     // +---+---+---+---+---+-----+-----+-----+-----+----+----+----+----+-----+-----+-----+-----+----+----+----+----+
-    var level1 = new ArrayList<Boolean>() {
+    final var level1 = new ArrayList<Boolean>() {
       {
         addAll(a);
         addAll(an);
@@ -210,13 +210,13 @@ public class Ttl74381 extends AbstractTtlGate {
       }
     };
 
-    var j = new ArrayList<>(Arrays.asList(
+    final var j = new ArrayList<>(Arrays.asList(
             pal32L1(level1, new int[] { 0x000c1010, 0x00161001, 0x000a0110 }),
             pal32L1(level1, new int[] { 0x000c2020, 0x00162002, 0x000a0220 }),
             pal32L1(level1, new int[] { 0x000c4040, 0x00164004, 0x000a0440 }),
             pal32L1(level1, new int[] { 0x000c8080, 0x00168008, 0x000a0880 })));
 
-    var k = new ArrayList<>(Arrays.asList(
+    final var k = new ArrayList<>(Arrays.asList(
             pal32L1(level1, new int[] { 0x00131010, 0x000c1001, 0x000c0110, 0x00120101 }),
             pal32L1(level1, new int[] { 0x00132020, 0x000c2002, 0x000c0220, 0x00120202 }),
             pal32L1(level1, new int[] { 0x00134040, 0x000c4004, 0x000c0440, 0x00120404 }),
@@ -229,7 +229,7 @@ public class Ttl74381 extends AbstractTtlGate {
     // +----+---+----+----+----+----+----+----+----+----+
     // | Ci | Z | K3 | K2 | K1 | K0 | J3 | J2 | J1 | J0 |
     // +----+---+----+----+----+----+----+----+----+----+
-    var level2 = new ArrayList<Boolean>() {
+    final var level2 = new ArrayList<Boolean>() {
       {
         addAll(j);
         addAll(k);
@@ -238,20 +238,20 @@ public class Ttl74381 extends AbstractTtlGate {
       }
     };
 
-    var l = new ArrayList<>(Arrays.asList(
+    final var l = new ArrayList<>(Arrays.asList(
             pal32L1(level2, new int[] { 0x00000300                                     }),
             pal32L1(level2, new int[] { 0x00000301,                         0x00000111 }),
             pal32L1(level2, new int[] { 0x00000303,             0x00000113, 0x00000122 }),
             pal32L1(level2, new int[] { 0x00000307, 0x00000117, 0x00000126, 0x00000144 })));
 
     // Determine outputs
-    var p = pal32L1(level2, new int[] { 0x0000000f });
-    var g = pal32L1(level2, new int[] { 0x00000088, 0x0000004c, 0x0000002e, 0x0000001f });
+    final var p = pal32L1(level2, new int[] { 0x0000000f });
+    final var g = pal32L1(level2, new int[] { 0x00000088, 0x0000004c, 0x0000002e, 0x0000001f });
 
-    var f0 = l.get(0) ^ k.get(0);
-    var f1 = l.get(1) ^ k.get(1);
-    var f2 = l.get(2) ^ k.get(2);
-    var f3 = l.get(3) ^ k.get(3);
+    final var f0 = l.get(0) ^ k.get(0);
+    final var f1 = l.get(1) ^ k.get(1);
+    final var f2 = l.get(2) ^ k.get(2);
+    final var f3 = l.get(3) ^ k.get(3);
 
     // Set outputs
     setPort(P, p);
