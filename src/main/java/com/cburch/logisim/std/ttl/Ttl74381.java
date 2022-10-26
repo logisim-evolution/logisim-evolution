@@ -146,11 +146,11 @@ public class Ttl74381 extends AbstractTtlGate {
 
       for (var j = 0; j < 32 && and; j++) {
         if ((product & (1 << j)) != 0) {
-          and = in.get(j);
+          and = in.get(j);  // will break the inner loop at the first false product term
         }
       }
 
-      or = and;
+      or = and; // will break the outer loop at the first true sum term
     }
 
     return !or; // Active low
