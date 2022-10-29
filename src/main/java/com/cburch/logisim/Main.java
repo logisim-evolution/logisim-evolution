@@ -9,6 +9,7 @@
 
 package com.cburch.logisim;
 
+import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.start.Startup;
@@ -54,8 +55,8 @@ public class Main {
       e.printStackTrace();
     }
 
-    
     final var startup = new Startup(args);
+    final var loader = new Loader(null);
     int exitCode = 0;
     switch (startup.ui) {
       case NONE:
@@ -65,7 +66,7 @@ public class Main {
         useGui = false;
         try {
           final var tty = new TtyInterface(startup);
-          exitCode = tty.run();
+          exitCode = tty.run(loader);
         } catch (Exception e) {
           e.printStackTrace();
           exitCode = -1;
@@ -74,7 +75,7 @@ public class Main {
       case GUI:
         try {
           final var gui = new GuiInterface(startup);
-          exitCode = gui.run();
+          exitCode = gui.run(loader);
         } catch (Throwable e) {
           final var strWriter = new StringWriter();
           final var printWriter = new PrintWriter(strWriter);

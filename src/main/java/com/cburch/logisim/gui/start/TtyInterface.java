@@ -53,23 +53,35 @@ public class TtyInterface {
   private LocaleManager S = Strings.S;
   private Logger logger = LoggerFactory.getLogger(TtyInterface.class);
 
+  //public enum Task { FPGA, TEST_VECTOR, TEST_CIRCUIT, RESAVE, SIMULATION };
+
   private File fileToOpen;
-  private HashMap<File, File> substitutions;
-  private String testVector = null;
-  private String circuitToTest = null;
-  private File loadFile = null;
-  private File saveFile = null;
-  private int ttyFormat = 0;
-  private String testCircuitPathInput = null;
-  private String testCircuitImpPath = null;
-  private String testCircPathInput = null;
-  private String testCircPathOutput = null;
-  // fpga
+  //private Task task;
+
+  // FPGA
   private String fpgaCircuit = null;
   private String fpgaBoard = null;
   private String fpgaMapFile = null;
   private double fpgaFreq = -1;
   private boolean fpgaHdlOnly = false;
+  
+  // TEST_VECTOR
+  private String testVector = null;
+  private String testCircuitPathInput = null;
+  private String testCircuitImpPath = null;
+  private String testCircPathInput = null;
+  private String testCircPathOutput = null;
+
+  // TEST_CIRCUIT
+  private String circuitToTest = null;
+
+  // RESAVE
+  private File loadFile = null;
+  private File saveFile = null;
+
+  // SIMULATION
+  private int ttyFormat = 0;
+  private HashMap<File, File> substitutions;
 
   public TtyInterface(Startup startup) {
     assert startup.ui == Startup.UI.TTY;
@@ -93,8 +105,7 @@ public class TtyInterface {
     fpgaHdlOnly             = startup.testCircuitHdlOnly;
   }
 
-  public int run() {
-    final var loader = new Loader(null);
+  public int run(Loader loader) {
     LogisimFile file;
     try {
       file = loader.openLogisimFile(fileToOpen, substitutions);

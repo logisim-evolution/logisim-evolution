@@ -56,7 +56,7 @@ public class Startup {
 
   public enum UI { NONE, TTY, GUI };
 
-  // shared options (TODO should these be shared?)
+  // shared options (TODO should substitutions[] be shared?)
   public final ArrayList<File> filesToOpen = new ArrayList<>();
   public final HashMap<File, File> substitutions = new HashMap<>();
   public UI ui = UI.NONE;
@@ -72,7 +72,6 @@ public class Startup {
   public boolean templPlain = false;
   public boolean showSplash = true;
   public boolean clearPreferences = false;
-  public boolean initialized = false; // TODO remove this
   
   // Tty only options
   public String testVector = null;

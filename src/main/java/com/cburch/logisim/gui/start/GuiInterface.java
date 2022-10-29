@@ -92,7 +92,7 @@ public class GuiInterface implements AWTEventListener {
     substitutions     = startup.substitutions;
   }
 
-  public int run() {
+  public int run(Loader templLoader) {
     // Set up the Look&Feel to match the platform
     System.setProperty("apple.laf.useScreenMenuBar", "true");
     // Initialize graphics acceleration if appropriate
@@ -132,7 +132,7 @@ public class GuiInterface implements AWTEventListener {
     if (monitor != null) {
       monitor.setProgress(SplashScreen.LIBRARIES);
     }
-    final var templLoader = new Loader(monitor);
+    templLoader.setParent(monitor);
     final var count = templLoader.getBuiltin().getLibrary(BaseLibrary._ID).getTools().size()
                     + templLoader.getBuiltin().getLibrary(GatesLibrary._ID).getTools().size();
     assert(count >= 0);
