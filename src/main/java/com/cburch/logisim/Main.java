@@ -59,6 +59,7 @@ public class Main {
     final var loader = new Loader(null);
     int exitCode = 0;
     switch (startup.ui) {
+      default:
       case NONE:
         exitCode = startup.exitCode;
         break;
@@ -83,7 +84,6 @@ public class Main {
           OptionPane.showMessageDialog(null, strWriter.toString());
           exitCode = -1;
         }
-      default:
     }
 
     if (exitCode != 0) System.exit(exitCode);

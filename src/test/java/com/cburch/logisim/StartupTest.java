@@ -102,6 +102,6 @@ public class StartupTest extends TestBase {
       "--does-not-exist"
     );
     // TODO combinations for --tty that don't make sense
-    // TODO combinations for TTY that don't are mutally exclusive
+    // TODO TTY options should be mutally exclusive
   }
 }

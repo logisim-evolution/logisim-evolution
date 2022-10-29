@@ -197,7 +197,7 @@ public class GuiInterface implements AWTEventListener {
           ProjectActions.doOpen(monitor, fileToOpen, substitutions);
           numOpened++;
         } catch (LoadFailedException ex) {
-          // TODO report error opening: fileToOpen.getName()
+          // FIXME: report error opening: fileToOpen.getName()
         }
         if (first) {
           first = false;

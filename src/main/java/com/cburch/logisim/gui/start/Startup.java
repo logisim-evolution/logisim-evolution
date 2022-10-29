@@ -17,29 +17,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import com.cburch.logisim.Main;
-import com.cburch.logisim.file.LoadFailedException;
-import com.cburch.logisim.file.Loader;
-import com.cburch.logisim.fpga.download.Download;
-import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.generated.BuildInfo;
-import com.cburch.logisim.gui.generic.CanvasPane;
-import com.cburch.logisim.gui.generic.OptionPane;
-import com.cburch.logisim.gui.icons.ErrorIcon;
-import com.cburch.logisim.gui.icons.InfoIcon;
-import com.cburch.logisim.gui.icons.QuestionIcon;
-import com.cburch.logisim.gui.icons.WarningIcon;
-import com.cburch.logisim.gui.main.Print;
-import com.cburch.logisim.gui.menu.LogisimMenuBar;
-import com.cburch.logisim.gui.menu.WindowManagers;
 import com.cburch.logisim.prefs.AppPreferences;
-import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.proj.ProjectActions;
-import com.cburch.logisim.std.base.BaseLibrary;
-import com.cburch.logisim.std.gates.GatesLibrary;
 import com.cburch.logisim.util.LineBuffer;
 import com.cburch.logisim.util.LocaleManager;
-import com.cburch.logisim.util.MacCompatibility;
 import org.apache.commons.cli.CommandLine;
 import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.HelpFormatter;
@@ -56,9 +37,8 @@ public class Startup {
 
   public enum UI { NONE, TTY, GUI };
 
-  // shared options (TODO should substitutions[] be shared?)
+  // shared options
   public final ArrayList<File> filesToOpen = new ArrayList<>();
-  public final HashMap<File, File> substitutions = new HashMap<>();
   public UI ui = UI.NONE;
   public int exitCode = 0;
 
@@ -74,27 +54,18 @@ public class Startup {
   public boolean clearPreferences = false;
   
   // Tty only options
-  public String testVector = null;
+  public TtyInterface.Task task;
   public String circuitToTest = null;
+  public final HashMap<File, File> substitutions = new HashMap<>();
   public File loadFile;
   public File saveFile;
   public int ttyFormat = 0;
-  public String testCircuitPathInput = null;
-  public String testCircuitImpPath = null;
-  public String testCircPathInput = null;
-  public String testCircPathOutput = null;
-  public boolean doFpgaDownload = false;
-  public double testTickFrequency = -1;
-  /* Name of the circuit within logisim */
-  public String testCircuitImpName = null;
-  /* Name of the board to run on i.e Reptar, MAXV ...*/
-  public String testCircuitImpBoard = null;
-  /* Path folder containing Map file */
-  public final String testCircuitImpMapFile = null;
-  /* Indicate if only the HDL should be generated */
-  public boolean testCircuitHdlOnly = false;
-  // Indicates if handleArgTestFpgaParseArg() successfuly parsed and set tick freq.
-  public boolean testFpgaFlagTickFreqSet = false;
+  public String testVector = null;
+  public String resaveOutput = null;
+  public String fpgaCircuit = null;       // Name of the circuit within logisim
+  public String fpgaBoard = null;         // Name of the board to run on i.e Reptar, MAXV ...
+  public double fpgaFreq = -1;
+  public boolean fpgaHdlOnly = false;
 
   /**
    * Parses CLI arguments, report any errors, and fill public members for use by 
@@ -217,7 +188,7 @@ public class Startup {
     }
 
     if (ui == UI.TTY && filesToOpen.size() != 1) {
-      logger.error(S.get("ttyNeedsFileError"));
+      logger.error(S.get("ttyNeedsFileError")); // TODO this applies to ALL TTY options
       ui = UI.NONE;
       exitCode = 1;
       return;
@@ -582,6 +553,7 @@ public class Startup {
 
   private RC handleArgTestVector(Option opt) {
     // This is to test a test bench. It will return 0 or 1 depending on if the tests pass or not.
+    task = TtyInterface.Task.TEST_VECTOR;
     circuitToTest = opt.getValues()[0];
     testVector = opt.getValues()[1];
     return RC.OK;
@@ -599,7 +571,7 @@ public class Startup {
    * Supported argument formats for `--test-fpga`:<br /><br />
    * * circ_file name board<br />
    * * circ_file name board [HDLONLY]<br />
-   * * circ_file name board [HDLONLY] [tick frequency]<br />
+   * * circ_file name board [HDLONLY] [tick_freq]<br />
    * * circ_file name board [tick_freq]<br />
    * * circ_file name board [tick_freq] [HDLONLY]<br />
    * <br />
@@ -613,8 +585,8 @@ public class Startup {
    */
   private RC handleArgTestFpgaParseArg(String argVal) {
     if ("HDLONLY".equals(argVal)) {
-      if (!testFpgaFlagTickFreqSet) {
-        testCircuitHdlOnly = true;
+      if (fpgaFreq != -1) {
+        fpgaHdlOnly = true;
       }
       return RC.OK;
     }
@@ -622,9 +594,8 @@ public class Startup {
     int freq;
     try {
       freq = Integer.parseUnsignedInt(argVal);
-      if (!testFpgaFlagTickFreqSet) {
-        testTickFrequency = freq;
-        testFpgaFlagTickFreqSet = true;
+      if (fpgaFreq != -1) {
+        fpgaFreq = freq;
       }
       return RC.OK;
     } catch (NumberFormatException ex) {
@@ -649,9 +620,10 @@ public class Startup {
       return RC.CLI_ERROR;
     }
 
-    testCircuitImpPath = optArgs[0];
-    testCircuitImpName = optArgs[1];
-    testCircuitImpBoard = optArgs[2];
+    task = TtyInterface.Task.FPGA;
+    filesToOpen.add(new File(optArgs[0]));
+    fpgaCircuit = optArgs[1];
+    fpgaBoard = optArgs[2];
 
     if (argsCnt >= 4) {
       RC rc = handleArgTestFpgaParseArg(optArgs[3]);
@@ -662,26 +634,24 @@ public class Startup {
       if (rc != RC.OK) return rc;
     }
 
-    doFpgaDownload = true;
-    filesToOpen.add(new File(testCircuitImpPath));
     return RC.OK;
   }
 
   private RC handleArgTestCircuit(Option opt) {
     final var fileName = opt.getValue();
-    testCircuitPathInput = fileName;
-    filesToOpen.add(new File(fileName)); // TODO fix this, fileToOpen AND(!) testCircuitPathInput
+    task = TtyInterface.Task.TEST_CIRCUIT;
+    filesToOpen.add(new File(fileName));
     return RC.OK;
   }
 
   private RC handleArgTestCircGen(Option opt) {
     // This is to test the XML consistency over different versions of the Logisim.
+    task = TtyInterface.Task.RESAVE;
     final var optArgs = opt.getValues();
-    // This is the input path of the file to open
-    testCircPathInput = optArgs[0];
-    filesToOpen.add(new File(testCircPathInput)); // TODO fix this, fileToOpen AND(!) testCircPathInput
-    // This is the output file's path. The comparaison shall be done between the testCircPathInput and the testCircPathOutput
-    testCircPathOutput = optArgs[1];
+    // This is the input path of the file to open.
+    filesToOpen.add(new File(optArgs[0]));
+    // This is the output file's path. The comparaison shall be done between the filesToOpen[0] and testCircPathOutput.
+    resaveOutput = optArgs[1];
     return RC.OK;
   }
 

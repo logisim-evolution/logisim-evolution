@@ -53,56 +53,52 @@ public class TtyInterface {
   private LocaleManager S = Strings.S;
   private Logger logger = LoggerFactory.getLogger(TtyInterface.class);
 
-  //public enum Task { FPGA, TEST_VECTOR, TEST_CIRCUIT, RESAVE, SIMULATION };
+  public enum Task { FPGA, TEST_VECTOR, TEST_CIRCUIT, RESAVE, SIMULATION };
 
   private File fileToOpen;
-  //private Task task;
+  private Task task;
 
   // FPGA
   private String fpgaCircuit = null;
   private String fpgaBoard = null;
-  private String fpgaMapFile = null;
   private double fpgaFreq = -1;
   private boolean fpgaHdlOnly = false;
   
   // TEST_VECTOR
   private String testVector = null;
-  private String testCircuitPathInput = null;
-  private String testCircuitImpPath = null;
-  private String testCircPathInput = null;
-  private String testCircPathOutput = null;
 
   // TEST_CIRCUIT
   private String circuitToTest = null;
 
   // RESAVE
-  private File loadFile = null;
-  private File saveFile = null;
+  private String resaveOutput = null;
 
   // SIMULATION
   private int ttyFormat = 0;
   private HashMap<File, File> substitutions;
+  private File loadFile = null;
+  private File saveFile = null;
 
   public TtyInterface(Startup startup) {
     assert startup.ui == Startup.UI.TTY;
     assert startup.filesToOpen.size() == 1;
 
+    task                    = startup.task;
     fileToOpen              = startup.filesToOpen.get(0);
     substitutions           = startup.substitutions;
     testVector              = startup.testVector;
     circuitToTest           = startup.circuitToTest;
     loadFile                = startup.loadFile;
     saveFile                = startup.saveFile;
+
     ttyFormat               = startup.ttyFormat;
-    testCircuitPathInput    = startup.testCircuitPathInput;
-    testCircuitImpPath      = startup.testCircuitImpPath;
-    testCircPathInput       = startup.testCircPathInput;
-    testCircPathOutput      = startup.testCircPathOutput;
-    fpgaCircuit             = startup.testCircuitImpName;
-    fpgaBoard               = startup.testCircuitImpBoard;
-    fpgaMapFile             = startup.testCircuitImpMapFile;
-    fpgaFreq                = startup.testTickFrequency;
-    fpgaHdlOnly             = startup.testCircuitHdlOnly;
+
+    resaveOutput            = startup.resaveOutput;
+
+    fpgaCircuit             = startup.fpgaCircuit;
+    fpgaBoard               = startup.fpgaBoard;
+    fpgaFreq                = startup.fpgaFreq;
+    fpgaHdlOnly             = startup.fpgaHdlOnly;
   }
 
   public int run(Loader loader) {
@@ -120,28 +116,32 @@ public class TtyInterface {
     // each of the following sections are mutally exclusive (to avoid weirdness)
 
     // --test-fpga
-    if (fpgaCircuit != null) {
-      if (!fpgaDownload(proj)) return 2;
-    }
-
-    // --test-vector
-    final var circuit = (circuitToTest == null || circuitToTest.length() == 0)
-        ? file.getMainCircuit()
-        : file.getCircuit(circuitToTest);
-
-    if (testVector != null) {
-      proj.doTestVector(testVector, circuitToTest);
-      return 0;
+    if (task == Task.FPGA) {
+      final var mainCircuit = proj.getLogisimFile().getCircuit(fpgaCircuit);
+      if (mainCircuit == null) return 2;
+      final var simTickFreq = mainCircuit.getTickFrequency();
+      final var downTickFreq = mainCircuit.getDownloadFrequency();
+      final var boardReader = new BoardReaderClass(AppPreferences.Boards.getBoardFilePath(fpgaBoard));
+      Download downloader = new Download(
+        proj,
+        fpgaCircuit,
+        (fpgaFreq > 0) ? fpgaFreq : (downTickFreq > 0) ? downTickFreq : simTickFreq,
+        boardReader.getBoardInformation(),
+        null,
+        false,
+        false,
+        fpgaHdlOnly);
+      return downloader.runTty() ? 0 : 2;
     }
 
     // --new-file-format
-    if (testCircPathOutput != null) {
-      ProjectActions.doSave(proj, new File(testCircPathOutput));
+    if (task == Task.RESAVE) {
+      ProjectActions.doSave(proj, new File(resaveOutput));
       return 0;
     }
 
     // --test-circuit
-    if (testCircuitPathInput != null) {
+    if (task == Task.TEST_CIRCUIT) {
       final var testB = new TestBench(proj);
       if (testB.startTestBench()) {
         System.out.println("Test bench pass\n");
@@ -152,7 +152,18 @@ public class TtyInterface {
       }
     }
 
+    final var circuit = (circuitToTest == null || circuitToTest.length() == 0)
+        ? file.getMainCircuit()
+        : file.getCircuit(circuitToTest);
+
+    // --test-vector
+    if (task == Task.TEST_VECTOR) {
+      proj.doTestVector(testVector, circuitToTest);
+      return 0;
+    }
+
     // --tty
+    assert(task == Task.SIMULATION);
     var format = ttyFormat;
     if ((format & FORMAT_STATISTICS) != 0) {
       displayStatistics(file, circuit);
@@ -212,28 +223,6 @@ public class TtyInterface {
     }
 
     return simCode;
-  }
-
-  // --test-fpga --------------------------------
-
-  private boolean fpgaDownload(Project proj) {
-    /* Testing synthesis */
-    final var mainCircuit = proj.getLogisimFile().getCircuit(fpgaCircuit);
-    if (mainCircuit == null) return false;
-    final var simTickFreq = mainCircuit.getTickFrequency();
-    final var downTickFreq = mainCircuit.getDownloadFrequency();
-    final var usedFrequency = (fpgaFreq > 0) ? fpgaFreq : (downTickFreq > 0) ? downTickFreq : simTickFreq;
-    final var boardReader = new BoardReaderClass(AppPreferences.Boards.getBoardFilePath(fpgaBoard));
-    Download downloader = new Download(
-      proj,
-      fpgaCircuit,
-      usedFrequency,
-      boardReader.getBoardInformation(),
-      fpgaMapFile,
-      false,
-      false,
-      fpgaHdlOnly);
-    return downloader.runTty();
   }
 
   // --tty --------------------------------
