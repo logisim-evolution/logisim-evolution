@@ -370,69 +370,7 @@ public class Startup {
     EXIT
   }
 
-  private RC handleArgTty(Option opt) {
-    // TTY format parsing
-    final var ttyVal = opt.getValue();
-    final var fmts = ttyVal.split(",");
-    if (fmts.length > 0) {
-      // FIXME: why we support multiple TTY types in one invocation? fallback?
-      for (final var singleFmt : fmts) {
-        final var val = switch (singleFmt.trim()) {
-          case "table" -> TtyInterface.FORMAT_TABLE;
-          case "speed" -> TtyInterface.FORMAT_SPEED;
-          case "tty" -> TtyInterface.FORMAT_TTY;
-          case "halt" -> TtyInterface.FORMAT_HALT;
-          case "stats" -> TtyInterface.FORMAT_STATISTICS;
-          case "binary" -> TtyInterface.FORMAT_TABLE_BIN;
-          case "hex" -> TtyInterface.FORMAT_TABLE_HEX;
-          case "csv" -> TtyInterface.FORMAT_TABLE_CSV;
-          case "tabs" -> TtyInterface.FORMAT_TABLE_TABBED;
-          default -> 0;
-        };
-
-        if (val == 0) {
-          logger.error(S.get("ttyFormatError"));
-          return RC.CLI_ERROR;
-        }
-        ttyFormat |= val;
-        return RC.OK;
-      }
-    }
-    logger.error(S.get("ttyFormatError"));
-    return RC.CLI_ERROR;
-  }
-
-  private RC handleArgSubstitute(Option opt) {
-    final var fileA = new File(opt.getValues()[0]);
-    final var fileB = new File(opt.getValues()[1]);
-    if (!substitutions.containsKey(fileA)) {
-      substitutions.put(fileA, fileB);
-      return RC.OK;
-    }
-
-    logger.error(S.get("argDuplicateSubstitutionError"));
-    return RC.CLI_ERROR;
-  }
-
-  private RC handleArgLoad(Option opt) {
-    if (loadFile != null) {
-      logger.error(S.get("loadMultipleError"));
-      return RC.CLI_ERROR;
-    }
-    final var fileName = opt.getValue();
-    loadFile = new File(fileName);
-    return RC.OK;
-  }
-
-  private RC handleArgSave(Option opt) {
-    if (saveFile != null) {
-      logger.error(S.get("saveMultipleError"));
-      return RC.CLI_ERROR;
-    }
-    final var fileName = opt.getValue();
-    saveFile = new File(fileName);
-    return RC.OK;
-  }
+  //* *********************** GUI arguments ********************** */
 
   private RC handleArgGates(Option opt) {
     final var shape = opt.getValue().toLowerCase();
@@ -512,6 +450,11 @@ public class Startup {
     }
     return RC.CLI_ERROR;
   }
+  
+  private RC handleArgClearPreferences() {
+    clearPreferences = true;
+    return RC.OK;
+  }
 
   private RC handleArgTemplate(Option opt) {
     // duplicates are not allowed
@@ -548,6 +491,72 @@ public class Startup {
 
   private RC handleArgNoSplash() {
     showSplash = false;
+    return RC.OK;
+  }
+
+  //* *********************** TTY arguments ********************** */
+
+  private RC handleArgTty(Option opt) {
+    // TTY format parsing
+    final var ttyVal = opt.getValue();
+    final var fmts = ttyVal.split(",");
+    if (fmts.length > 0) {
+      // FIXME: why we support multiple TTY types in one invocation? fallback?
+      for (final var singleFmt : fmts) {
+        final var val = switch (singleFmt.trim()) {
+          case "table" -> TtyInterface.FORMAT_TABLE;
+          case "speed" -> TtyInterface.FORMAT_SPEED;
+          case "tty" -> TtyInterface.FORMAT_TTY;
+          case "halt" -> TtyInterface.FORMAT_HALT;
+          case "stats" -> TtyInterface.FORMAT_STATISTICS;
+          case "binary" -> TtyInterface.FORMAT_TABLE_BIN;
+          case "hex" -> TtyInterface.FORMAT_TABLE_HEX;
+          case "csv" -> TtyInterface.FORMAT_TABLE_CSV;
+          case "tabs" -> TtyInterface.FORMAT_TABLE_TABBED;
+          default -> 0;
+        };
+
+        if (val == 0) {
+          logger.error(S.get("ttyFormatError"));
+          return RC.CLI_ERROR;
+        }
+        ttyFormat |= val;
+        return RC.OK;
+      }
+    }
+    logger.error(S.get("ttyFormatError"));
+    return RC.CLI_ERROR;
+  }
+
+  private RC handleArgSubstitute(Option opt) {
+    final var fileA = new File(opt.getValues()[0]);
+    final var fileB = new File(opt.getValues()[1]);
+    if (!substitutions.containsKey(fileA)) {
+      substitutions.put(fileA, fileB);
+      return RC.OK;
+    }
+
+    logger.error(S.get("argDuplicateSubstitutionError"));
+    return RC.CLI_ERROR;
+  }
+
+  private RC handleArgLoad(Option opt) {
+    if (loadFile != null) {
+      logger.error(S.get("loadMultipleError"));
+      return RC.CLI_ERROR;
+    }
+    final var fileName = opt.getValue();
+    loadFile = new File(fileName);
+    return RC.OK;
+  }
+
+  private RC handleArgSave(Option opt) {
+    if (saveFile != null) {
+      logger.error(S.get("saveMultipleError"));
+      return RC.CLI_ERROR;
+    }
+    final var fileName = opt.getValue();
+    saveFile = new File(fileName);
     return RC.OK;
   }
 
@@ -594,9 +603,7 @@ public class Startup {
     int freq;
     try {
       freq = Integer.parseUnsignedInt(argVal);
-      if (fpgaFreq != -1) {
-        fpgaFreq = freq;
-      }
+      if (fpgaFreq != -1) fpgaFreq = freq;
       return RC.OK;
     } catch (NumberFormatException ex) {
       // Do nothing here, we fail later.
@@ -652,11 +659,6 @@ public class Startup {
     filesToOpen.add(new File(optArgs[0]));
     // This is the output file's path. The comparaison shall be done between the filesToOpen[0] and testCircPathOutput.
     resaveOutput = optArgs[1];
-    return RC.OK;
-  }
-
-  private RC handleArgClearPreferences() {
-    clearPreferences = true;
     return RC.OK;
   }
 }

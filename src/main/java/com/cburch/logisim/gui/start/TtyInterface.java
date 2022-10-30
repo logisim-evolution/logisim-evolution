@@ -53,9 +53,9 @@ public class TtyInterface {
   private LocaleManager S = Strings.S;
   private Logger logger = LoggerFactory.getLogger(TtyInterface.class);
 
-  public enum Task { FPGA, TEST_VECTOR, TEST_CIRCUIT, RESAVE, SIMULATION };
-
   private File fileToOpen;
+
+  public enum Task { FPGA, TEST_VECTOR, TEST_CIRCUIT, RESAVE, SIMULATION };
   private Task task;
 
   // FPGA
@@ -79,9 +79,17 @@ public class TtyInterface {
   private File loadFile = null;
   private File saveFile = null;
 
+  private static final int EXITCODE_OK = 0;
+  private static final int EXITCODE_ARG_ERROR = 1;
+  private static final int EXITCODE_OSCILLATION = 1;
+  private static final int EXITCODE_IO_ERROR = 2;
+  private static final int EXITCODE_TEST_FAIL = -1;
+  
   public TtyInterface(Startup startup) {
     assert startup.ui == Startup.UI.TTY;
     assert startup.filesToOpen.size() == 1;
+
+    // TODO STARTUP asserts for each task type
 
     task                    = startup.task;
     fileToOpen              = startup.filesToOpen.get(0);
@@ -109,11 +117,12 @@ public class TtyInterface {
       logger.error("{}", S.get("ttyLoadError", fileToOpen.getName()));
       file = null;
     }
-    if (file == null) return 2;
+    if (file == null) return EXITCODE_IO_ERROR;
 
     final var proj = new Project(file);
     
     // each of the following sections are mutally exclusive (to avoid weirdness)
+    // TODO STARTUP switch-statement and method calls to simplify this logic
 
     // --test-fpga
     if (task == Task.FPGA) {
@@ -131,13 +140,13 @@ public class TtyInterface {
         false,
         false,
         fpgaHdlOnly);
-      return downloader.runTty() ? 0 : 2;
+      return downloader.runTty() ? EXITCODE_OK : EXITCODE_IO_ERROR;
     }
 
     // --new-file-format
     if (task == Task.RESAVE) {
       ProjectActions.doSave(proj, new File(resaveOutput));
-      return 0;
+      return EXITCODE_OK;
     }
 
     // --test-circuit
@@ -145,10 +154,10 @@ public class TtyInterface {
       final var testB = new TestBench(proj);
       if (testB.startTestBench()) {
         System.out.println("Test bench pass\n");
-        return 0;
+        return EXITCODE_OK;
       } else {
         System.out.println("Test bench fail\n");
-        return -1;
+        return EXITCODE_TEST_FAIL;
       }
     }
 
@@ -159,7 +168,7 @@ public class TtyInterface {
     // --test-vector
     if (task == Task.TEST_VECTOR) {
       proj.doTestVector(testVector, circuitToTest);
-      return 0;
+      return EXITCODE_OK;
     }
 
     // --tty
@@ -167,7 +176,7 @@ public class TtyInterface {
     var format = ttyFormat;
     if ((format & FORMAT_STATISTICS) != 0) {
       displayStatistics(file, circuit);
-      if (format == FORMAT_STATISTICS) return 0;
+      if (format == FORMAT_STATISTICS) return EXITCODE_OK;
     }
 
     final var pinNames = Analyze.getPinLabels(circuit);
@@ -188,7 +197,7 @@ public class TtyInterface {
     }
     if (haltPin == null && (format & FORMAT_TABLE) != 0) {
       doTableAnalysis(proj, circuit, pinNames, format);
-      return 0;
+      return EXITCODE_OK;
     }
 
     CircuitState circState = new CircuitState(proj, circuit);
@@ -200,11 +209,11 @@ public class TtyInterface {
         final var loaded = loadRam(circState, loadFile);
         if (!loaded) {
           logger.error("{}", S.get("loadNoRamError"));
-          return 2;
+          return EXITCODE_IO_ERROR;
         }
       } catch (IOException e) {
         logger.error("{}: {}", S.get("loadIoError"), e.toString());
-        return 2;
+        return EXITCODE_IO_ERROR;
       }
     }
     final var simCode = runSimulation(circState, outputPins, haltPin, format);
@@ -214,11 +223,11 @@ public class TtyInterface {
         final var saved = saveRam(circState, saveFile);
         if (!saved) {
           logger.error("{}", S.get("saveNoRamError"));
-          return 2;
+          return EXITCODE_IO_ERROR;
         }
       } catch (IOException e) {
         logger.error("{}: {}", S.get("saveIoError"), e.toString());
-        return 2;
+        return EXITCODE_IO_ERROR;
       }
     }
 
@@ -237,7 +246,7 @@ public class TtyInterface {
   public static final int FORMAT_TABLE_BIN = 128;
   public static final int FORMAT_TABLE_HEX = 256;
 
-  private int doTableAnalysis(Project proj, Circuit circuit, Map<Instance, String> pinLabels, int format) {
+  private void doTableAnalysis(Project proj, Circuit circuit, Map<Instance, String> pinLabels, int format) {
 
     final var inputPins = new ArrayList<Instance>();
     final var inputVars = new ArrayList<Var>();
@@ -328,8 +337,6 @@ public class TtyInterface {
       displayTableRow(needTableHeader, null, currValues, headers, formats, format);
       needTableHeader = false;
     }
-
-    return 0;
   }
 
   private int runSimulation(CircuitState circState, ArrayList<Instance> outputPins, Instance haltPin, int format) {
@@ -345,7 +352,7 @@ public class TtyInterface {
       final var ttyFound = prepareForTty(circState, keyboardStates);
       if (!ttyFound) {
         logger.error("{}", S.get("ttyNoTtyError"));
-        return 1;
+        return EXITCODE_ARG_ERROR;
       }
       if (keyboardStates.isEmpty()) {
         keyboardStates = null;
@@ -377,11 +384,11 @@ public class TtyInterface {
       }
 
       if (halted) {
-        retCode = 0; // normal exit
+        retCode = EXITCODE_OK; // normal exit
         break;
       }
       if (prop.isOscillating()) {
-        retCode = 1; // abnormal exit
+        retCode = EXITCODE_OSCILLATION; // abnormal exit
         break;
       }
       if (keyboardStates != null) {
@@ -399,7 +406,7 @@ public class TtyInterface {
     }
     final var elapse = System.currentTimeMillis() - start;
     if (showTty) ensureLineTerminated();
-    if (showHalt || retCode != 0) {
+    if (showHalt || retCode != EXITCODE_OK) {
       if (retCode == 0) {
         logger.error("{}", S.get("ttyHaltReasonPin"));
       } else if (retCode == 1) {
