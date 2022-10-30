@@ -47,9 +47,8 @@ public class Startup {
   public Point windowSize = null;
   public Point windowLocation = null;
   public final ArrayList<File> filesToPrint = new ArrayList<>();
-  public File templFile = null;
-  public boolean templEmpty = false;
-  public boolean templPlain = false;
+  public File templateFile = null;
+  public int templateType = AppPreferences.TEMPLATE_UNKNOWN;
   public boolean showSplash = true;
   public boolean clearPreferences = false;
   
@@ -193,11 +192,11 @@ public class Startup {
       exitCode = 1;
       return;
     }
+    // TODO STARTUP GUI && --substitutions
 
-    // TTY && --gates is meaningless
-    // TTY && --geometry is meaningless
-    // TTY && --user-template is meaningless
-    // is GUI && --substitutions ok?
+    // TODO STARTUP TTY && --gates is meaningless
+    // TODO STARTUP TTY && --geometry is meaningless
+    // TODO STARTUP TTY && --user-template is meaningless
   }
 
   private static final String ARG_TEST_CIRCUIT_SHORT = "b";
@@ -516,7 +515,7 @@ public class Startup {
 
   private RC handleArgTemplate(Option opt) {
     // duplicates are not allowed
-    if (templFile != null || templEmpty || templPlain) {
+    if (templateType != AppPreferences.TEMPLATE_UNKNOWN) {
       logger.error(S.get("argOneTemplateError"));
       return RC.CLI_ERROR;
     }
@@ -525,20 +524,21 @@ public class Startup {
     // we look if it is a file
     final var file = new File(option);
     if (file.exists()) {
-      templFile = file;
-      if (!templFile.canRead()) {
+      templateType = AppPreferences.TEMPLATE_CUSTOM;
+      templateFile = file;
+      if (!templateFile.canRead()) {
         logger.error(S.get("templateCannotReadError", file));
         return RC.IO_ERROR;
       }
       return RC.OK;
     }
-    // okay, not a file, let's look for empty and plain
+    // okay, not a file, let's look for "empty" and "plain"
     if (option.equalsIgnoreCase("empty")) {
-      templEmpty = true;
+      templateType = AppPreferences.TEMPLATE_EMPTY;
       return RC.OK;
     }
     if (option.equalsIgnoreCase("plain")) {
-      templPlain = true;
+      templateType = AppPreferences.TEMPLATE_PLAIN;
       return RC.OK;
     }
 

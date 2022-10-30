@@ -346,11 +346,11 @@ public final class ProjectActions {
     return proj;
   }
 
-  public static Project doOpen(SplashScreen monitor, File source, Map<File, File> substitutions)
+  public static Project doOpen(SplashScreen monitor, File source)
       throws LoadFailedException {
     if (monitor != null) monitor.setProgress(SplashScreen.FILE_LOAD);
     final var loader = new Loader(monitor);
-    final var file = loader.openLogisimFile(source, substitutions);
+    final var file = loader.openLogisimFile(source);
     AppPreferences.updateRecentFile(source);
 
     return completeProject(monitor, loader, file, false);

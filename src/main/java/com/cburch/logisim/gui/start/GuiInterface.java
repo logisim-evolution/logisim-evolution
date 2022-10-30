@@ -17,7 +17,6 @@ import java.awt.event.AWTEventListener;
 import java.awt.event.ContainerEvent;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 import javax.help.JHelp;
 import javax.swing.JButton;
@@ -69,12 +68,10 @@ public class GuiInterface implements AWTEventListener {
   private String gateShape = null;
   private Point windowSize = null;
   private Point windowLocation = null;
-  private File templFile = null;
-  private boolean templEmpty = false;
-  private boolean templPlain = false;
+  private File templateFile = null;
+  private int templateType = AppPreferences.TEMPLATE_UNKNOWN;
   private boolean showSplash = true;
   private boolean clearPreferences = false;
-  private HashMap<File, File> substitutions;
 
   public GuiInterface(Startup startup) {
     assert startup.ui == Startup.UI.GUI;
@@ -84,12 +81,10 @@ public class GuiInterface implements AWTEventListener {
     windowLocation    = startup.windowLocation;
     filesToOpen       = startup.filesToOpen;
     filesToPrint      = startup.filesToPrint;
-    templFile         = startup.templFile;
-    templEmpty        = startup.templEmpty;
-    templPlain        = startup.templPlain;
+    templateFile      = startup.templateFile;
+    templateType      = startup.templateType;
     showSplash        = startup.showSplash;
     clearPreferences  = startup.clearPreferences;
-    substitutions     = startup.substitutions;
   }
 
   public int run(Loader templLoader) {
@@ -141,13 +136,9 @@ public class GuiInterface implements AWTEventListener {
     if (monitor != null) {
       monitor.setProgress(SplashScreen.TEMPLATE_OPEN);
     }
-    if (templFile != null) {
-      AppPreferences.setTemplateFile(templFile);
-      AppPreferences.setTemplateType(AppPreferences.TEMPLATE_CUSTOM);
-    } else if (templEmpty) {
-      AppPreferences.setTemplateType(AppPreferences.TEMPLATE_EMPTY);
-    } else if (templPlain) {
-      AppPreferences.setTemplateType(AppPreferences.TEMPLATE_PLAIN);
+    if (templateType != AppPreferences.TEMPLATE_UNKNOWN) {
+      AppPreferences.setTemplateType(templateType);
+      if (templateFile != null) AppPreferences.setTemplateFile(templateFile);
     }
 
     // now that the splash screen is almost gone, we do some last-minute
@@ -194,7 +185,7 @@ public class GuiInterface implements AWTEventListener {
       var first = true;
       for (final var fileToOpen : filesToOpen) {
         try {
-          ProjectActions.doOpen(monitor, fileToOpen, substitutions);
+          ProjectActions.doOpen(monitor, fileToOpen);
           numOpened++;
         } catch (LoadFailedException ex) {
           // FIXME: report error opening: fileToOpen.getName()
