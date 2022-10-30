@@ -36,6 +36,7 @@ import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.event.KeyEvent;
@@ -112,7 +113,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     GraphicsUtil.switchToWidth(g, 2);
     g.drawLine(x + 30, y + 81, x + 30, y + 90);
     GraphicsUtil.switchToWidth(g, 1);
-    g.setColor(Color.GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     GraphicsUtil.drawCenteredText(g, "R", x + 30, y + 68);
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     if (hasWE) {
@@ -175,7 +176,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       painter.drawPort(IN);
       painter.drawPort(OUT);
     }
-    g.setColor(Color.GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(CLR, "0", Direction.SOUTH);
     painter.drawPort(EN, S.get("memEnableLabel"), Direction.EAST);
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));

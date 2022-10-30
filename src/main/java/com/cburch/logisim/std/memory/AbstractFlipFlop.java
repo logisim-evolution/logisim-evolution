@@ -33,6 +33,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringGetter;
+
 import java.awt.Color;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
@@ -286,7 +287,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     }
 
     int n = numInputs;
-    g.setColor(Color.GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(n + 3, "0", Direction.SOUTH);
     painter.drawPort(n + 4, "1", Direction.SOUTH);
     g.setColor(baseColor);
@@ -324,7 +325,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
     }
 
     int n = numInputs;
-    g.setColor(Color.GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(n + 3, "R", Direction.SOUTH);
     painter.drawPort(n + 4, "S", Direction.NORTH);
     g.setColor(baseColor);

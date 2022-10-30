@@ -467,7 +467,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       painter.drawPort(IN);
       painter.drawPort(OUT);
     }
-    g.setColor(Color.GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(LD);
     painter.drawPort(UD);
     painter.drawPort(CARRY);
