@@ -453,6 +453,8 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       b = S.get("registerWidthLabel", "" + widthVal.getWidth());
     }
 
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+
     // draw boundary, label
     painter.drawBounds();
     painter.drawLabel();

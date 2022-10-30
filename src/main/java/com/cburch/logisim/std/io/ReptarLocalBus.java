@@ -144,10 +144,11 @@ public class ReptarLocalBus extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
-    painter.drawBounds();
-
+    
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.setFont(g.getFont().deriveFont(g.getFont().getSize2D() - 2));
+
+    painter.drawBounds();
     painter.drawPort(SP6_LB_nCS3_O, "SP6_LB_nCS3_o", Direction.WEST);
     painter.drawPort(SP6_LB_nADV_ALE_O, "SP6_LB_nADV_ALE_o", Direction.WEST);
     painter.drawPort(SP6_LB_RE_nOE_O, "SP6_LB_RE_nOE_o", Direction.WEST);

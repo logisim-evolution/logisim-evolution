@@ -299,13 +299,13 @@ public class Keyboard extends InstanceFactory {
   public void paintInstance(InstancePainter painter) {
     final var showState = painter.getShowState();
     final var g = painter.getGraphics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawClock(CK, Direction.EAST);
     painter.drawBounds();
     painter.drawPort(CLR);
     painter.drawPort(RE);
     painter.drawPort(AVL);
     painter.drawPort(OUT);
-    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
 
     if (showState) {
       String str;

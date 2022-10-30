@@ -274,6 +274,7 @@ public class Random extends InstanceFactory {
     }
 
     // draw boundary, label
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     g.setColor(painter.getAttributeValue(StdAttr.LABEL_COLOR));
     painter.drawLabel();
@@ -283,7 +284,7 @@ public class Random extends InstanceFactory {
       painter.drawPort(OUT, "Q", Direction.WEST);
     else
       painter.drawPort(OUT);
-    g.setColor(Color.GRAY);
+      g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(RST, "0", Direction.SOUTH);
     painter.drawPort(NXT, S.get("memEnableLabel"), Direction.EAST);
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));

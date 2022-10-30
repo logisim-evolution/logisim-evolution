@@ -70,15 +70,12 @@ public class ComponentDrawContext {
   //
   public void drawBounds(Component comp) {
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     final var bds = comp.getBounds();
     g.drawRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight());
     GraphicsUtil.switchToWidth(g, 1);
   }
 
   public void drawClock(Component comp, int i, Direction dir) {
-    final var curColor = new Color(AppPreferences.COMPONENT_COLOR.get());
-    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     GraphicsUtil.switchToWidth(g, 2);
 
     final var e = comp.getEnd(i);
@@ -100,8 +97,7 @@ public class ComponentDrawContext {
       g.drawLine(x - 1, y - CLK_SZD, x - CLK_SZ, y);
       g.drawLine(x - 1, y + CLK_SZD, x - CLK_SZ, y);
     }
-
-    g.setColor(curColor);
+    
     GraphicsUtil.switchToWidth(g, 1);
   }
 

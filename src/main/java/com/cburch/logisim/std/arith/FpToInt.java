@@ -26,6 +26,7 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
+
 import java.awt.Color;
 
 public class FpToInt extends InstanceFactory {
@@ -78,9 +79,8 @@ public class FpToInt extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
-    painter.drawBounds();
-
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+    painter.drawBounds();
     painter.drawPort(IN);
     painter.drawPort(OUT, "F\u2192I", Direction.WEST);
     painter.drawPort(ERR);

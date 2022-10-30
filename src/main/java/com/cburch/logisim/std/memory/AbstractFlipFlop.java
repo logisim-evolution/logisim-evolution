@@ -268,6 +268,7 @@ abstract class AbstractFlipFlop extends InstanceFactory {
   private void paintInstanceClassic(InstancePainter painter) {
     final var g = painter.getGraphics();
     final var baseColor = new Color(AppPreferences.COMPONENT_COLOR.get());
+    g.setColor(baseColor);
     painter.drawBounds();
     painter.drawLabel();
     if (painter.getShowState()) {

@@ -97,6 +97,7 @@ public class PriorityEncoder extends InstanceFactory {
     final var g = painter.getGraphics();
     final var facing = painter.getAttributeValue(StdAttr.FACING);
 
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     final var bds = painter.getBounds();
     g.setColor(Color.GRAY);

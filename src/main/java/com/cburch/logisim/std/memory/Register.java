@@ -162,6 +162,7 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
     }
 
     // draw boundary, label
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     g.setColor(painter.getAttributeValue(StdAttr.LABEL_COLOR));
     painter.drawLabel();

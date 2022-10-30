@@ -125,10 +125,9 @@ public class Shifter extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     Graphics g = painter.getGraphics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-
     painter.drawPorts();
-
     Location loc = painter.getLocation();
     int x = loc.getX() - 15;
     int y = loc.getY();

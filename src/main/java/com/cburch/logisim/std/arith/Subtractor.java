@@ -27,6 +27,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+
 import java.awt.Color;
 
 public class Subtractor extends InstanceFactory {
@@ -76,9 +77,9 @@ public class Subtractor extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var gfx = painter.getGraphics();
+    painter.getGraphics().setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-
-    gfx.setColor(Color.GRAY);
+    painter.getGraphics().setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(IN0);
     painter.drawPort(IN1);
     painter.drawPort(OUT);

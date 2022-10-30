@@ -22,6 +22,7 @@ import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.soc.data.SocBusSlaveInterface;
 import com.cburch.logisim.soc.data.SocBusSnifferInterface;
 import com.cburch.logisim.soc.data.SocInstanceFactory;
@@ -29,6 +30,8 @@ import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.data.SocSimulationManager;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
+
+import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 
@@ -92,11 +95,12 @@ public class SocVga extends SocInstanceFactory implements DynamicElementProvider
   public void paintInstance(InstancePainter painter) {
     Bounds bds1 = painter.getBounds();
     Bounds bds2 = getOffsetBounds(painter.getAttributeSet());
+    Graphics g = painter.getGraphics().create();
     if (bds1.getWidth() != bds2.getWidth() || bds1.getHeight() != bds2.getHeight())
       setTextField(painter.getInstance());
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     painter.drawLabel();
-    Graphics g = painter.getGraphics().create();
     Location loc = painter.getLocation();
     Bounds bds = painter.getBounds();
     g.translate(loc.getX(), loc.getY());

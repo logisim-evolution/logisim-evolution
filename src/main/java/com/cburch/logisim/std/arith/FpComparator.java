@@ -26,6 +26,7 @@ import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+
 import java.awt.Color;
 
 public class FpComparator extends InstanceFactory {
@@ -84,9 +85,8 @@ public class FpComparator extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
-    painter.drawBounds();
-
     g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+    painter.drawBounds();
     painter.drawPort(IN0);
     painter.drawPort(IN1);
     painter.drawPort(GT, ">", Direction.WEST);

@@ -202,7 +202,7 @@ public class VhdlEntityComponent extends InstanceFactory {
       g.setFont(font);
     }
 
-    g.setColor(Color.GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     g.setFont(g.getFont().deriveFont((float) 10));
     metric = g.getFontMetrics();
 
@@ -226,6 +226,7 @@ public class VhdlEntityComponent extends InstanceFactory {
           GraphicsUtil.H_RIGHT,
           GraphicsUtil.V_CENTER);
 
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     painter.drawPorts();
   }
