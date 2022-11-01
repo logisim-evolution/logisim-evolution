@@ -20,7 +20,7 @@ import java.util.prefs.PreferenceChangeListener;
 public class CoverColor implements PreferenceChangeListener {
   public static final CoverColor COVER_COLOR = new CoverColor();
 
-  private int index = -1;
+  private int index = 0;
   private final List<Color> colors = new ArrayList<>();
 
   private final List<PrefMonitor<Integer>> availableColors =
@@ -63,9 +63,8 @@ public class CoverColor implements PreferenceChangeListener {
   }
 
   public Color getNext() {
-    index++;
     if (index < 0 || index >= colors.size()) index = 0;
-    return colors.get(index);
+    return colors.get(index++);
   }
 
   public void reset() {
