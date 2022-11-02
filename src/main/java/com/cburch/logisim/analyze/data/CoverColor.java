@@ -57,13 +57,13 @@ public class CoverColor implements PreferenceChangeListener {
     return colors.size();
   }
 
-  public Color getColor(int index) {
-    if (index < 0 || index >= colors.size()) return null;
-    return colors.get(index);
+  public Color getColor(int colorIndex) {
+    if (colorIndex < 0 || colorIndex >= colors.size()) return null;
+    return colors.get(colorIndex);
   }
 
   public Color getNext() {
-    if (index < 0 || index >= colors.size()) index = 0;
+    if (index >= colors.size()) index = 0;
     return colors.get(index++);
   }
 
