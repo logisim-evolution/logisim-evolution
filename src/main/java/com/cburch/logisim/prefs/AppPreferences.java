@@ -511,7 +511,7 @@ public class AppPreferences {
   public static final int DEFAULT_ZOOMED_DOT_COLOR = 0xFFCCCCCC;
   public static final int DEFAULT_COMPONENT_COLOR = 0x00000000;
   public static final int DEFAULT_COMPONENT_SECONDARY_COLOR = 0x99999999;
-  public static final int DEFAULT_COMPONENT_GHOST_COLOR = 0xffff0000; // WIP //0x99999999;
+  public static final int DEFAULT_COMPONENT_GHOST_COLOR = 0x99999999;
 
   // restores default grid colors
   public static void setDefaultGridColors() {
