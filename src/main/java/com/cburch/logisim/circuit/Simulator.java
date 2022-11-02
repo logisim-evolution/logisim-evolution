@@ -155,8 +155,7 @@ public class Simulator {
     }
 
     synchronized void drawPendingInputs(ComponentDrawContext context) {
-      if (!autoPropagating)
-        stepPoints.drawPendingInputs(context);
+      if (!autoPropagating) stepPoints.drawPendingInputs(context);
     }
 
     synchronized void addPendingInput(CircuitState state, Component comp) {
@@ -168,8 +167,7 @@ public class Simulator {
     }
 
     synchronized boolean setPropagator(Propagator value) {
-      if (propagator == value)
-        return false;
+      if (propagator == value) return false;
       propagator = value;
       manualTicksRequested = 0;
       manualStepsRequested = 0;
@@ -178,28 +176,24 @@ public class Simulator {
     }
 
     synchronized boolean setAutoPropagation(boolean value) {
-      if (autoPropagating == value)
-        return false;
+      if (autoPropagating == value) return false;
       autoPropagating = value;
       if (autoPropagating)
         manualStepsRequested = 0; // manual steps not allowed in autoPropagating mode
-      else
-        nudgeRequested = false; // nudges not allowed in single-step mode
+      else nudgeRequested = false; // nudges not allowed in single-step mode
       notifyAll();
       return true;
     }
 
     synchronized boolean setAutoTicking(boolean value) {
-      if (autoTicking == value)
-        return false;
+      if (autoTicking == value) return false;
       autoTicking = value;
       notifyAll();
       return true;
     }
 
     synchronized boolean setTickFrequency(double freq) {
-      if (autoTickFreq == freq)
-        return false;
+      if (autoTickFreq == freq) return false;
       autoTickFreq = freq;
       autoTickNanos = freq <= 0 ? 0 : Math.round(1.0e9 / autoTickFreq);
       notifyAll();
@@ -225,8 +219,7 @@ public class Simulator {
     }
 
     synchronized boolean requestNudge() {
-      if (!autoPropagating)
-        return false;
+      if (!autoPropagating) return false;
       nudgeRequested = true;
       notifyAll();
       return true;
@@ -340,8 +333,7 @@ public class Simulator {
           final var p = sim.getPropagationListener();
           final var evt = p == null ? null : new Event(sim, false, false, false);
           stepPoints.clear();
-          if (prop != null)
-            propagated |= prop.propagate(p, evt);
+          if (prop != null) propagated |= prop.propagate(p, evt);
         } catch (Exception err) {
           oops = true;
           err.printStackTrace();
@@ -378,7 +370,8 @@ public class Simulator {
       // accompanied by a tick, step, or propagate. That allows for a repaint in
       // some components.
       if (ticked || stepped || propagated || doNudge)
-        sim.firePropagationCompleted(ticked, stepped && !propagated, propagated); // FIXME: ack, wrong thread!
+        sim.firePropagationCompleted(
+            ticked, stepped && !propagated, propagated); // FIXME: ack, wrong thread!
       if (clockDied) sim.fireSimulatorStateChanged(); // FIXME: ack, wrong thread!
       return true;
     }
@@ -473,18 +466,16 @@ public class Simulator {
   // called from simThread, but probably should not be
   private void fireSimulatorReset() {
     final var event = new Event(this, false, false, false);
-    for (final var listener : copyListeners())
-      listener.simulatorReset(event);
+    for (final var listener : copyListeners()) listener.simulatorReset(event);
   }
 
-  //called from simThread, but probably should not be
+  // called from simThread, but probably should not be
   private void firePropagationStarted(boolean t) {
     final var e = new Event(this, t, false, false);
-    for (final var l : copyListeners())
-      l.propagationStarted(e);
+    for (final var l : copyListeners()) l.propagationStarted(e);
   }
 
-  //called from simThread, but probably should not be
+  // called from simThread, but probably should not be
   private void firePropagationCompleted(boolean t, boolean s, boolean p) {
     final var event = new Event(this, t, s, p);
     for (final var listener : copyListeners()) {
@@ -497,7 +488,8 @@ public class Simulator {
     Listener propagationListener = null;
     for (final var listener : copyListeners()) {
       if (listener.wantProgressEvents()) {
-        if (propagationListener != null) throw new IllegalStateException("Only one chronogram listener supported");
+        if (propagationListener != null)
+          throw new IllegalStateException("Only one chronogram listener supported");
         propagationListener = listener;
       }
     }
@@ -508,8 +500,7 @@ public class Simulator {
   // can add/remove from listeners list?
   private void fireSimulatorStateChanged() {
     final var e = new Event(this, false, false, false);
-    for (final var l : copyListeners())
-      l.simulatorStateChanged(e);
+    for (final var l : copyListeners()) l.simulatorStateChanged(e);
   }
 
   public double getTickFrequency() {
@@ -544,8 +535,7 @@ public class Simulator {
   }
 
   public void setAutoPropagation(boolean value) {
-    if (simThread.setAutoPropagation(value))
-      fireSimulatorStateChanged();
+    if (simThread.setAutoPropagation(value)) fireSimulatorStateChanged();
   }
 
   public void setAutoTicking(boolean value) {
@@ -598,5 +588,4 @@ public class Simulator {
     fireSimulatorStateChanged();
     return true;
   }
-
 }

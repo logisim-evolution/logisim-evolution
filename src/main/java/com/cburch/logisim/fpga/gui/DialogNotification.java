@@ -36,8 +36,7 @@ public class DialogNotification {
     GridBagConstraints c = new GridBagConstraints();
     JLabel message = new JLabel(string);
     JButton close = new JButton(S.get("FpgaBoardClose"));
-    ActionListener actionListener =
-        e -> dialog.dispose();
+    ActionListener actionListener = e -> dialog.dispose();
     close.addActionListener(actionListener);
 
     c.gridx = 0;
@@ -57,5 +56,4 @@ public class DialogNotification {
     dialog.setAlwaysOnTop(true);
     dialog.setVisible(true);
   }
-
 }

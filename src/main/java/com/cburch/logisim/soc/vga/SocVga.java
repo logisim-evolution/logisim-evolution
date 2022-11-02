@@ -37,10 +37,10 @@ import java.awt.Graphics;
 
 public class SocVga extends SocInstanceFactory implements DynamicElementProvider {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "SocVga";
 
@@ -64,17 +64,18 @@ public class SocVga extends SocInstanceFactory implements DynamicElementProvider
     instance.recomputeBounds();
     Bounds bds = instance.getBounds();
     instance.setTextField(
-            StdAttr.LABEL,
-            StdAttr.LABEL_FONT,
-            bds.getX() + bds.getWidth() / 2,
-            bds.getY() - 3,
-            GraphicsUtil.H_CENTER,
-            GraphicsUtil.V_BASELINE);
+        StdAttr.LABEL,
+        StdAttr.LABEL_FONT,
+        bds.getX() + bds.getWidth() / 2,
+        bds.getY() - 3,
+        GraphicsUtil.H_CENTER,
+        GraphicsUtil.V_BASELINE);
   }
 
   @Override
   public Bounds getOffsetBounds(AttributeSet attrsBase) {
-    return VgaState.getSize(VgaAttributes.getModeIndex(attrsBase.getValue(VgaAttributes.VGA_STATE).getCurrentMode()));
+    return VgaState.getSize(
+        VgaAttributes.getModeIndex(attrsBase.getValue(VgaAttributes.VGA_STATE).getCurrentMode()));
   }
 
   @Override
@@ -108,12 +109,17 @@ public class SocVga extends SocInstanceFactory implements DynamicElementProvider
     g.setFont(StdAttr.DEFAULT_LABEL_FONT);
     GraphicsUtil.drawCenteredText(g, "SOC VGA", bds.getWidth() / 2, 10);
     g.setFont(f);
-    painter.getAttributeValue(SocSimulationManager.SOC_BUS_SELECT)
-        .paint(g, Bounds.create(VgaState.LEFT_MARGIN, bds.getHeight() - VgaState.BOTTOM_MARGIN + 1,
-                bds.getWidth() - VgaState.LEFT_MARGIN - VgaState.RIGHT_MARGIN, VgaState.BOTTOM_MARGIN - 2));
+    painter
+        .getAttributeValue(SocSimulationManager.SOC_BUS_SELECT)
+        .paint(
+            g,
+            Bounds.create(
+                VgaState.LEFT_MARGIN,
+                bds.getHeight() - VgaState.BOTTOM_MARGIN + 1,
+                bds.getWidth() - VgaState.LEFT_MARGIN - VgaState.RIGHT_MARGIN,
+                VgaState.BOTTOM_MARGIN - 2));
     VgaState.VgaDisplayState data = (VgaState.VgaDisplayState) painter.getData();
-    if (data != null)
-      data.paint(g, painter.getCircuitState());
+    if (data != null) data.paint(g, painter.getCircuitState());
     g.dispose();
   }
 

@@ -36,10 +36,10 @@ import java.awt.Graphics2D;
 
 public class SocPio extends SocInstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "SocPio";
 
@@ -142,10 +142,12 @@ public class SocPio extends SocInstanceFactory {
         GraphicsUtil.drawCenteredText(g2, S.get("SocPioInputs"), loc.getX() + 210, loc.getY() + 95);
         GraphicsUtil.drawCenteredText(g2, "0", loc.getX() + 370, loc.getY() + 110);
         if (nrBits > 9) {
-          GraphicsUtil.drawCenteredText(g2, Integer.toString(nrBits - 1), loc.getX() + 380 - nrBits * 10, loc.getY() + 110);
+          GraphicsUtil.drawCenteredText(
+              g2, Integer.toString(nrBits - 1), loc.getX() + 380 - nrBits * 10, loc.getY() + 110);
         } else {
           for (int b = 1; b < nrBits; b++)
-            GraphicsUtil.drawCenteredText(g2, Integer.toString(b), loc.getX() + 370 - b * 10, loc.getY() + 110);
+            GraphicsUtil.drawCenteredText(
+                g2, Integer.toString(b), loc.getX() + 370 - b * 10, loc.getY() + 110);
         }
       }
     }
@@ -154,15 +156,18 @@ public class SocPio extends SocInstanceFactory {
         || dir == PioAttributes.PORT_BIDIR) {
       for (int b = 0; b < nrBits; b++) painter.drawPort(index + b);
       if (!painter.isPrintView()) {
-        final var name = (dir == PioAttributes.PORT_BIDIR) ? S.get("SocPioBidirs") : S.get("SocPioOutputs");
+        final var name =
+            (dir == PioAttributes.PORT_BIDIR) ? S.get("SocPioBidirs") : S.get("SocPioOutputs");
         g2.drawRect(loc.getX() + 40, loc.getY(), 340, 40);
         GraphicsUtil.drawCenteredText(g2, name, loc.getX() + 210, loc.getY() + 25);
         GraphicsUtil.drawCenteredText(g2, "0", loc.getX() + 370, loc.getY() + 10);
         if (nrBits > 9) {
-          GraphicsUtil.drawCenteredText(g2, Integer.toString(nrBits - 1), loc.getX() + 380 - nrBits * 10, loc.getY() + 10);
+          GraphicsUtil.drawCenteredText(
+              g2, Integer.toString(nrBits - 1), loc.getX() + 380 - nrBits * 10, loc.getY() + 10);
         } else {
           for (int b = 1; b < nrBits; b++)
-            GraphicsUtil.drawCenteredText(g2, Integer.toString(b), loc.getX() + 370 - b * 10, loc.getY() + 10);
+            GraphicsUtil.drawCenteredText(
+                g2, Integer.toString(b), loc.getX() + 370 - b * 10, loc.getY() + 10);
         }
       }
     }

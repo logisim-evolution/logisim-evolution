@@ -80,12 +80,12 @@ public class DefaultClassicAppearance {
     }
 
     // place rectangle so anchor is on the grid
-    final var rX = OFFS + (9 - (ax + 9) % 10);
-    final var rY = OFFS + (9 - (ay + 9) % 10);
+    final var rX = Math.round((OFFS + ax) / 10) * 10;
+    final var rY = Math.round((OFFS + ay) / 10) * 10;
 
-    final var e0 = Location.create(rX + (width - 8) / 2, rY + 1);
-    final var e1 = Location.create(rX + (width + 8) / 2, rY + 1);
-    final var ct = Location.create(rX + width / 2, rY + 11);
+    final var e0 = Location.create(rX + (width - 8) / 2, rY + 1, false);
+    final var e1 = Location.create(rX + (width + 8) / 2, rY + 1, false);
+    final var ct = Location.create(rX + width / 2, rY + 11, false);
     final var notch = new Curve(e0, e1, ct);
     notch.setValue(DrawAttr.STROKE_WIDTH, 2);
     notch.setValue(DrawAttr.STROKE_COLOR, Color.GRAY);
@@ -99,7 +99,7 @@ public class DefaultClassicAppearance {
     placePins(ret, edge.get(Direction.EAST), rX + width, rY + offsEast, 0, 10);
     placePins(ret, edge.get(Direction.NORTH), rX + offsNorth, rY, 10, 0);
     placePins(ret, edge.get(Direction.SOUTH), rX + offsSouth, rY + height, 10, 0);
-    ret.add(new AppearanceAnchor(Location.create(rX + ax, rY + ay)));
+    ret.add(new AppearanceAnchor(Location.create(rX + ax, rY + ay, true)));
     return ret;
   }
 
@@ -115,23 +115,17 @@ public class DefaultClassicAppearance {
 
   private static int computeOffset(int numFacing, int numOpposite, int maxOthers) {
     final var maxThis = Math.max(numFacing, numOpposite);
-    int maxOffs;
-    switch (maxThis) {
-      case 0, 1:
-        maxOffs = (maxOthers == 0 ? 15 : 10);
-        break;
-      case 2:
-        maxOffs = 10;
-        break;
-      default:
-        maxOffs = (maxOthers == 0 ? 5 : 10);
-    }
+    int maxOffs = switch (maxThis) {
+      case 0, 1 -> (maxOthers == 0 ? 15 : 10);
+      case 2 -> 10;
+      default -> (maxOthers == 0 ? 5 : 10);
+    };
     return maxOffs + 10 * ((maxThis - numFacing) / 2);
   }
 
   private static void placePins(List<CanvasObject> dest, List<Instance> pins, int x, int y, int dx, int dy) {
     for (final var pin : pins) {
-      dest.add(new AppearancePort(Location.create(x, y), pin));
+      dest.add(new AppearancePort(Location.create(x, y, true), pin));
       x += dx;
       y += dy;
     }

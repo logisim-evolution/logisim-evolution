@@ -131,7 +131,8 @@ public class InstanceTextField implements AttributeListener, TextFieldListener, 
     }
   }
 
-  void update(Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
+  void update(
+      Attribute<String> labelAttr, Attribute<Font> fontAttr, int x, int y, int halign, int valign) {
     final var wasReg = shouldRegister();
     this.labelAttr = labelAttr;
     this.fontAttr = fontAttr;

@@ -266,7 +266,7 @@ class MinimizedTab extends AnalyzerTab {
   @SuppressWarnings({"rawtypes", "unchecked"})
   private final JComboBox formatStyle = new JComboBox<>(new StyleModel());
 
-  @SuppressWarnings({ "unchecked", "rawtypes" })
+  @SuppressWarnings({"unchecked", "rawtypes"})
   private final JComboBox notationChoice = new JComboBox<>(new NotationModel());
 
   private final ExpressionView minimizedExpr = new ExpressionView();
@@ -348,12 +348,13 @@ class MinimizedTab extends AnalyzerTab {
     karnaughMap.addMouseMotionListener(m);
     minimizedExpr.addMouseMotionListener(m);
 
-    addMouseListener(new MouseAdapter() {
-      @Override
-      public void mouseClicked(MouseEvent e) {
-        requestFocusInWindow();
-      }
-    });
+    addMouseListener(
+        new MouseAdapter() {
+          @Override
+          public void mouseClicked(MouseEvent e) {
+            requestFocusInWindow();
+          }
+        });
 
     final var f =
         new FocusListener() {
@@ -552,7 +553,7 @@ class MinimizedTab extends AnalyzerTab {
 
     @Override
     public DataFlavor[] getTransferDataFlavors() {
-      return new DataFlavor[] { DataFlavor.imageFlavor };
+      return new DataFlavor[] {DataFlavor.imageFlavor};
     }
 
     @Override
@@ -600,7 +601,6 @@ class MinimizedTab extends AnalyzerTab {
       setImage(img);
     }
   }
-
 
   @Override
   PrintHandler getPrintHandler() {

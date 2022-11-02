@@ -136,8 +136,7 @@ public class PowerOnReset extends InstanceFactory {
     int wide = Math.max(bds.getWidth(), bds.getHeight());
     int offset = (wide - fm.stringWidth(txt)) / 2;
     Direction facing = painter.getAttributeValue(StdAttr.FACING);
-    if (((facing == Direction.NORTH) || (facing == Direction.SOUTH)) && (g instanceof Graphics2D)) {
-      Graphics2D g2 = (Graphics2D) g;
+    if (((facing == Direction.NORTH) || (facing == Direction.SOUTH)) && (g instanceof Graphics2D g2)) {
       int xpos = facing == Direction.NORTH ? x + 20 - fm.getDescent() : x + 20 + fm.getDescent();
       int ypos = facing == Direction.NORTH ? y + offset : y + bds.getHeight() - offset;
       g2.translate(xpos, ypos);

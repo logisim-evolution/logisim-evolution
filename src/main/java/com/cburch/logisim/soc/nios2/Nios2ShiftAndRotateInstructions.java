@@ -31,11 +31,9 @@ public class Nios2ShiftAndRotateInstructions implements AssemblerExecutionInterf
   private static final int INSTR_SRLI = 8;
 
   private static final String[] AsmOpcodes = {
-      "ROL", "ROR", "SLL", "SRA", "SRL",
-      "ROLI", "SLLI", "SRAI", "SRLI" };
-  private static final Integer[] AsmOpxs = {
-      0x03, 0x0B, 0x13, 0x3B, 0x1B,
-      0x02, 0x12, 0x3A, 0x1A };
+    "ROL", "ROR", "SLL", "SRA", "SRL", "ROLI", "SLLI", "SRAI", "SRLI"
+  };
+  private static final Integer[] AsmOpxs = {0x03, 0x0B, 0x13, 0x3B, 0x1B, 0x02, 0x12, 0x3A, 0x1A};
 
   private final ArrayList<String> Opcodes = new ArrayList<>();
   private final ArrayList<Integer> OpxCodes = new ArrayList<>();

@@ -36,10 +36,10 @@ import java.awt.Color;
 
 public class ShiftRegister extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Shift Register";
 
@@ -70,7 +70,7 @@ public class ShiftRegister extends InstanceFactory {
         },
         new Object[] {
           BitWidth.ONE,
-            8,
+          8,
           Boolean.TRUE,
           StdAttr.TRIG_RISING,
           "",
@@ -191,15 +191,18 @@ public class ShiftRegister extends InstanceFactory {
     else g.drawLine(xpos, ypos + 50, xpos + 10, ypos + 50);
     painter.drawPort(CK);
     final var cntrl = "1\u2192/C3";
-    GraphicsUtil.drawText(g, cntrl, xpos + 20, ypos + 50, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+    GraphicsUtil.drawText(
+        g, cntrl, xpos + 20, ypos + 50, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
     /* draw shift input */
     g.drawLine(xpos, ypos + 40, xpos + 10, ypos + 40);
-    GraphicsUtil.drawText(g, "M1 [shift]", xpos + 20, ypos + 40, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+    GraphicsUtil.drawText(
+        g, "M1 [shift]", xpos + 20, ypos + 40, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
     painter.drawPort(SH);
     /* draw load input */
     if (has_load) {
       g.drawLine(xpos, ypos + 30, xpos + 10, ypos + 30);
-      GraphicsUtil.drawText(g, "M2 [load]", xpos + 20, ypos + 30, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
+      GraphicsUtil.drawText(
+          g, "M2 [load]", xpos + 20, ypos + 30, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
       painter.drawPort(LD);
     }
     /* draw reset */
@@ -240,18 +243,12 @@ public class ShiftRegister extends InstanceFactory {
           realYpos + height + 5);
       if (lastBlock) {
         g.drawLine(
-            realXpos + 5,
-            realYpos + height + 5,
-            realXpos + blockWidth + 5,
-            realYpos + height + 5);
+            realXpos + 5, realYpos + height + 5, realXpos + blockWidth + 5, realYpos + height + 5);
         g.drawLine(realXpos + 5, realYpos + height, realXpos + 5, realYpos + height + 5);
       }
       if (nrOfBits > 2) {
         g.drawLine(
-            realXpos + blockWidth + 5,
-            realYpos + 10,
-            realXpos + blockWidth + 10,
-            realYpos + 10);
+            realXpos + blockWidth + 5, realYpos + 10, realXpos + blockWidth + 10, realYpos + 10);
         g.drawLine(
             realXpos + blockWidth + 10,
             realYpos + 10,
@@ -263,8 +260,7 @@ public class ShiftRegister extends InstanceFactory {
               realYpos + height + 10,
               realXpos + blockWidth + 10,
               realYpos + height + 10);
-          g.drawLine(
-              realXpos + 10, realYpos + height + 5, realXpos + 10, realYpos + height + 10);
+          g.drawLine(realXpos + 10, realYpos + height + 5, realXpos + 10, realYpos + height + 10);
         }
       }
     }
@@ -419,7 +415,8 @@ public class ShiftRegister extends InstanceFactory {
     final var lenObj = painter.getAttributeValue(ATTR_LENGTH);
     final var len = lenObj == null ? 8 : lenObj;
     final var parallelObj = painter.getAttributeValue(ATTR_LOAD);
-    final var negEdge = painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
+    final var negEdge =
+        painter.getAttributeValue(StdAttr.EDGE_TRIGGER).equals(StdAttr.TRIG_FALLING);
     drawControl(painter, xpos, ypos, len, wid, parallelObj, negEdge);
     final var data = (ShiftRegisterData) painter.getData();
 

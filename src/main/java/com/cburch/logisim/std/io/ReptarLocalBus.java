@@ -49,14 +49,11 @@ public class ReptarLocalBus extends InstanceFactory {
   }
 
   public static String getOutputLabel(int id) {
-    switch (id) {
-      case 0:
-        return "SP6_LB_WAIT3_o";
-      case 1:
-        return "IRQ_o";
-      default:
-        return "Undefined";
-    }
+    return switch (id) {
+      case 0 -> "SP6_LB_WAIT3_o";
+      case 1 -> "IRQ_o";
+      default -> "Undefined";
+    };
   }
 
   public static String getIoLabel(int id) {

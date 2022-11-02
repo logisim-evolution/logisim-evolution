@@ -220,8 +220,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   @Override
   public boolean equals(Object other) {
-    if (!(other instanceof AddTool)) return false;
-    final var o = (AddTool) other;
+    if (!(other instanceof final AddTool o)) return false;
     if (this.description != null) {
       return this.descriptionBase == o.descriptionBase && this.description.equals(o.description);
     } else {
@@ -533,7 +532,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
         for (var x = 0; x < matrix.getCopiesCountX(); x++) {
           for (var y = 0; y < matrix.getCopiesCountY(); y++) {
             final var loc = Location.create(event.getX() + (matrix.getDeltaX() * x),
-                event.getY() + (matrix.getDeltaY() * y));
+                event.getY() + (matrix.getDeltaY() * y), true);
             final var attrsCopy = (AttributeSet) attrs.clone();
             if (matrix.getLabel() != null) {
               if (matrixPlace)
@@ -677,8 +676,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
 
   @Override
   public boolean sharesSource(Tool other) {
-    if (!(other instanceof AddTool)) return false;
-    final var o = (AddTool) other;
+    if (!(other instanceof final AddTool o)) return false;
     if (this.sourceLoadAttempted && o.sourceLoadAttempted) {
       return this.factory.equals(o.factory);
     } else if (this.description == null) {

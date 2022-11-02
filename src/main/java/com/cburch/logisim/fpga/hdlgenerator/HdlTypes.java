@@ -19,11 +19,12 @@ import com.cburch.logisim.util.LineBuffer;
 public class HdlTypes {
 
   private interface HdlType {
-    public String getTypeDefinition();
-    public String getTypeName();
+    String getTypeDefinition();
+
+    String getTypeName();
   }
 
-  private class HdlEnum implements HdlType {
+  private static class HdlEnum implements HdlType {
     private final List<String> myEntries = new ArrayList<>();
     private final String myTypeName;
 
@@ -44,7 +45,8 @@ public class HdlTypes {
     @Override
     public String getTypeDefinition() {
       final var contents = new StringBuilder();
-      if (Hdl.isVhdl()) contents.append(LineBuffer.formatVhdl("{{type}} {{1}} {{is}} (", myTypeName));
+      if (Hdl.isVhdl())
+        contents.append(LineBuffer.formatVhdl("{{type}} {{1}} {{is}} (", myTypeName));
       else contents.append("typedef enum { ");
       var first = true;
       for (final var entry : myEntries) {
@@ -63,7 +65,7 @@ public class HdlTypes {
     }
   }
 
-  private class HdlArray implements HdlType {
+  private static class HdlArray implements HdlType {
     private final String myTypeName;
     private final String myGenericBitWidth;
     private final int myBitWidth;
@@ -87,14 +89,25 @@ public class HdlTypes {
     public String getTypeDefinition() {
       final var contents = new StringBuilder();
       if (Hdl.isVhdl()) {
-        contents.append(
-            LineBuffer.formatVhdl("{{type}} {{1}} {{is}} {{array}} ( {{2}} {{downto}} 0 ) {{of}} std_logic_vector( ", 
-                myTypeName, myNrOfEntries))
-            .append(myGenericBitWidth == null ? Integer.toString(myBitWidth - 1) : String.format("%s - 1", myGenericBitWidth))
-            .append(LineBuffer.formatVhdl(" " + "{{downto}} 0);")); // Important: The leading space is required 
+        contents
+            .append(
+                LineBuffer.formatVhdl(
+                    "{{type}} {{1}} {{is}} {{array}} ( {{2}} {{downto}} 0 ) {{of}} std_logic_vector( ",
+                    myTypeName, myNrOfEntries))
+            .append(
+                myGenericBitWidth == null
+                    ? Integer.toString(myBitWidth - 1)
+                    : String.format("%s - 1", myGenericBitWidth))
+            .append(
+                LineBuffer.formatVhdl(
+                    " " + "{{downto}} 0);")); // Important: The leading space is required
       } else {
-        contents.append("typedef logic [")
-            .append(myGenericBitWidth == null ? Integer.toString(myBitWidth - 1) : String.format("%s - 1", myGenericBitWidth))
+        contents
+            .append("typedef logic [")
+            .append(
+                myGenericBitWidth == null
+                    ? Integer.toString(myBitWidth - 1)
+                    : String.format("%s - 1", myGenericBitWidth))
             .append(String.format(":0] %s [%d:0];", myTypeName, myNrOfEntries));
       }
       return contents.toString();
@@ -115,7 +128,8 @@ public class HdlTypes {
   }
 
   public HdlTypes addEnumEntry(int identifier, String entry) {
-    if (!myTypes.containsKey(identifier)) throw new IllegalArgumentException("Enum type not contained in array");
+    if (!myTypes.containsKey(identifier))
+      throw new IllegalArgumentException("Enum type not contained in array");
     final var myEnum = (HdlEnum) myTypes.get(identifier);
     myEnum.add(entry);
     return this;
@@ -142,8 +156,7 @@ public class HdlTypes {
 
   public List<String> getTypeDefinitions() {
     final var defs = LineBuffer.getHdlBuffer();
-    for (final var entry : myTypes.keySet())
-      defs.add(myTypes.get(entry).getTypeDefinition());
+    for (final var entry : myTypes.keySet()) defs.add(myTypes.get(entry).getTypeDefinition());
     return defs.getWithIndent();
   }
 
@@ -151,7 +164,8 @@ public class HdlTypes {
     final var contents = new HashMap<String, String>();
     for (final var wire : myWires.keySet()) {
       final var typeId = myWires.get(wire);
-      if (!myTypes.containsKey(typeId)) throw new IllegalArgumentException("Enum or array type not contained in array");
+      if (!myTypes.containsKey(typeId))
+        throw new IllegalArgumentException("Enum or array type not contained in array");
       contents.put(wire, myTypes.get(typeId).getTypeName());
     }
     return contents;

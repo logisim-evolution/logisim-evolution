@@ -28,11 +28,11 @@ import com.cburch.logisim.data.Bounds;
 public class CircuitCustomAppearance extends Drawing {
 
   private final CircuitAppearance parent;
-  
+
   public CircuitCustomAppearance(CircuitAppearance parent) {
     this.parent = parent;
   }
-  
+
   @Override
   public void addObjects(int index, Collection<? extends CanvasObject> shapes) {
     parent.addObjects(index, shapes);
@@ -50,7 +50,7 @@ public class CircuitCustomAppearance extends Drawing {
 
   @Override
   public List<CanvasObject> getObjectsFromTop() {
-    final var ret = new ArrayList<CanvasObject>(getObjectsFromBottom());
+    final var ret = new ArrayList<>(getObjectsFromBottom());
     Collections.reverse(ret);
     return ret;
   }

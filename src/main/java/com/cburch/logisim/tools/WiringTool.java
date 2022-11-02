@@ -36,10 +36,10 @@ import java.util.Set;
 
 public class WiringTool extends Tool {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Wiring Tool";
 
@@ -50,8 +50,8 @@ public class WiringTool extends Tool {
 
   private boolean exists = false;
   private boolean inCanvas = false;
-  private Location start = Location.create(0, 0);
-  private Location cur = Location.create(0, 0);
+  private Location start = Location.create(0, 0, true);
+  private Location cur = Location.create(0, 0, true);
   private boolean hasDragged = false;
   private boolean startShortening = false;
   private Wire shortening = null;
@@ -70,9 +70,9 @@ public class WiringTool extends Tool {
     int delta = (end.equals(w.getEnd0()) ? 10 : -10);
     Location cand;
     if (w.isVertical()) {
-      cand = Location.create(end.getX(), end.getY() + delta);
+      cand = Location.create(end.getX(), end.getY() + delta, true);
     } else {
-      cand = Location.create(end.getX() + delta, end.getY());
+      cand = Location.create(end.getX() + delta, end.getY(), true);
     }
 
     for (final var comp : canvas.getCircuit().getNonWires(cand)) {
@@ -213,7 +213,7 @@ public class WiringTool extends Tool {
       rect.add(curX, curY);
       rect.grow(3, 3);
 
-      cur = Location.create(curX, curY);
+      cur = Location.create(curX, curY, true);
       super.mouseDragged(canvas, g, e);
 
       Wire shorten = null;
@@ -261,7 +261,7 @@ public class WiringTool extends Tool {
       final var curX = e.getX();
       final var curY = e.getY();
       if (cur.getX() != curX || cur.getY() != curY) {
-        cur = Location.create(curX, curY);
+        cur = Location.create(curX, curY, true);
       }
       canvas.getProject().repaintCanvas();
     }
@@ -275,7 +275,7 @@ public class WiringTool extends Tool {
       return;
     }
     Canvas.snapToGrid(e);
-    start = Location.create(e.getX(), e.getY());
+    start = Location.create(e.getX(), e.getY(), true);
     cur = start;
     exists = true;
     hasDragged = false;
@@ -295,7 +295,7 @@ public class WiringTool extends Tool {
     final var curX = e.getX();
     final var curY = e.getY();
     if (computeMove(curX, curY)) {
-      cur = Location.create(curX, curY);
+      cur = Location.create(curX, curY, true);
     }
     if (hasDragged) {
       exists = false;
@@ -311,9 +311,9 @@ public class WiringTool extends Tool {
       } else {
         Location m;
         if (direction == HORIZONTAL) {
-          m = Location.create(cur.getX(), start.getY());
+          m = Location.create(cur.getX(), start.getY(), true);
         } else {
-          m = Location.create(start.getX(), cur.getY());
+          m = Location.create(start.getX(), cur.getY(), true);
         }
         var wire0 = Wire.create(start, m);
         var wire1 = Wire.create(m, cur);
@@ -325,7 +325,8 @@ public class WiringTool extends Tool {
       if (!wires.isEmpty()) {
         final var mutation = new CircuitMutation(canvas.getCircuit());
         mutation.addAll(wires);
-        final var desc = (wires.size() == 1) ? S.getter("addWireAction") : S.getter("addWiresAction");
+        final var desc =
+            (wires.size() == 1) ? S.getter("addWireAction") : S.getter("addWiresAction");
         final var act = mutation.toAction(desc);
         canvas.getProject().doAction(act);
         lastAction = act;
@@ -374,8 +375,8 @@ public class WiringTool extends Tool {
   private void reset() {
     exists = false;
     inCanvas = false;
-    start = Location.create(0, 0);
-    cur = Location.create(0, 0);
+    start = Location.create(0, 0, true);
+    cur = Location.create(0, 0, true);
     startShortening = false;
     shortening = null;
     direction = 0;

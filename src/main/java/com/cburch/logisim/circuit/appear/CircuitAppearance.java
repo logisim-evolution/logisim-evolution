@@ -70,15 +70,15 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
     suppressRecompute = false;
     addCanvasModelListener(myListener);
     if (circuit != null) circuit.getStaticAttributes().addAttributeListener(this);
-    defaultCanvasObjects = new ArrayList<CanvasObject>();
+    defaultCanvasObjects = new ArrayList<>();
     recomputeDefaultAppearance();
     defaultCustomAppearance = DefaultCustomAppearance.build(circuitPins.getPins()); 
     setObjectsForce(defaultCustomAppearance, false);
   }
 
   public boolean hasCustomAppearance() {
-    final var currentCustom = new ArrayList<CanvasObject>(getCustomObjectsFromBottom());
-    final var defaultCustom = new ArrayList<CanvasObject>(defaultCustomAppearance);
+    final var currentCustom = new ArrayList<>(getCustomObjectsFromBottom());
+    final var defaultCustom = new ArrayList<>(defaultCustomAppearance);
     var shapeIterator = currentCustom.iterator();
     while (shapeIterator.hasNext()) {
       final var shape = shapeIterator.next(); 
@@ -193,7 +193,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
 
   private Location findAnchorLocation() {
     final var anchor = findAnchor();
-    return (anchor == null) ? Location.create(100, 100) : anchor.getLocation();
+    return (anchor == null) ? Location.create(100, 100, true) : anchor.getLocation();
   }
 
   void fireCircuitAppearanceChanged(int affected) {
@@ -289,7 +289,7 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
 
   @Override
   public List<CanvasObject> getObjectsFromTop() {
-    final var ret = new ArrayList<CanvasObject>(getObjectsFromBottom());
+    final var ret = new ArrayList<>(getObjectsFromBottom());
     Collections.reverse(ret);
     return ret;
   }
@@ -468,8 +468,14 @@ public class CircuitAppearance extends Drawing implements AttributeListener {
   public void setObjectsForce(List<? extends CanvasObject> shapesBase, boolean isDefault) {
     // This shouldn't ever be an issue, but just to make doubly sure, we'll
     // check that the anchor and all ports are in their proper places.
-    final var shapes = new ArrayList<CanvasObject>(shapesBase);
-    final var n = shapes.size();
+    
+    // Must manually deep-copy arrays in Java...
+    // final var shapes = new ArrayList<CanvasObject>(shapesBase);
+    final var n = shapesBase.size();
+    final var shapes = new ArrayList<CanvasObject>(n);
+    for (var i = 0; i < n; i++) {
+      shapes.add(shapesBase.get(i).clone());
+    }
     var ports = 0;
     for (var i = n - 1; i >= 0; i--) { // count ports, move anchor to end
       final var obj = shapes.get(i);

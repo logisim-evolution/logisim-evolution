@@ -167,7 +167,7 @@ public class InstancePainter implements InstanceState {
   }
 
   public Location getLocation() {
-    return comp == null ? Location.create(0, 0) : comp.getLocation();
+    return comp == null ? Location.create(0, 0, false) : comp.getLocation();
   }
 
   public Bounds getOffsetBounds() {

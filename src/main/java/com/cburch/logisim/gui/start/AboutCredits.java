@@ -41,7 +41,12 @@ class AboutCredits extends JComponent {
   private final Lines lines;
 
   public AboutCredits(int width, int height) {
-    final var jvm = LineBuffer.format("{{1}} v{{2}} ({{3}})", System.getProperty("java.vm.name"), System.getProperty("java.version"), System.getProperty("java.vendor"));
+    final var jvm =
+        LineBuffer.format(
+            "{{1}} v{{2}} ({{3}})",
+            System.getProperty("java.vm.name"),
+            System.getProperty("java.version"),
+            System.getProperty("java.vendor"));
     System.out.println(S.get("appVersionJvm", jvm));
 
     lines = new Lines();
@@ -99,7 +104,8 @@ class AboutCredits extends JComponent {
 
     final var height = getHeight();
     final var maxOffsetY = lines.totalScrollLinesHeight + height;
-    final var offsetY = ((int) (System.currentTimeMillis() - startMillis) / MILLIS_PER_RASTER) % maxOffsetY;
+    final var offsetY =
+        ((int) (System.currentTimeMillis() - startMillis) / MILLIS_PER_RASTER) % maxOffsetY;
     final var yPos = offsetY - height;
 
     for (final var line : lines) {

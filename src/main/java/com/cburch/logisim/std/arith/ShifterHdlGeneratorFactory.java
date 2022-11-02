@@ -177,7 +177,7 @@ public class ShifterHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
           .add("""
                                dataA({{nrOfBits2}} {{downto}} 0)&s_stage0ShiftIn
                                   {{when}} {{shiftMode}} = 0 {{or}} {{shiftMode}} = 1 {{else}}
-                               s_stage0ShiftIn&dataA( {{nrOfBits2}} {{downto}} 1 );
+                               s_stage0ShiftIn&dataA( {{nrOfBits1}} {{downto}} 1 );
             """);
     } else {
       contents

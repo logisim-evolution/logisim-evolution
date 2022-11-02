@@ -19,6 +19,7 @@ import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.fpga.designrulecheck.CorrectLabel;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.std.wiring.Tunnel;
 import com.cburch.logisim.tools.SetAttributeAction;
 import java.awt.event.KeyEvent;
 import java.util.Arrays;
@@ -99,6 +100,9 @@ public class AutoLabel {
     if (circ == null) return "";
     if (useLabelBaseOnly.get(circ)) {
       useLabelBaseOnly.put(circ, false);
+      return labelBase.get(circ);
+    }
+    if (me instanceof Tunnel) {
       return labelBase.get(circ);
     }
     var newLabel = "";
@@ -212,10 +216,11 @@ public class AutoLabel {
   public boolean labelKeyboardHandler(int keyCode, AttributeSet attrs, String componentName, Component comp,
       ComponentFactory compFactory, Circuit circ, SetAttributeAction act, boolean createAction) {
     switch (keyCode) {
-      case KeyEvent.VK_L:
+      case KeyEvent.VK_L -> {
         if (attrs.containsAttribute(StdAttr.LABEL)) {
           final var oldLabel = attrs.getValue(StdAttr.LABEL);
-          final var newLabel = askAndSetLabel(componentName, oldLabel, circ, comp, compFactory, attrs, act, createAction);
+          final var newLabel = askAndSetLabel(componentName, oldLabel, circ, comp, compFactory,
+              attrs, act, createAction);
           if (!newLabel.equals(oldLabel)) {
             if (!newLabel.isEmpty() && labelEndsWithNumber(newLabel)) {
               activate(circ);
@@ -225,33 +230,43 @@ public class AutoLabel {
           }
         }
         return true;
-      case KeyEvent.VK_T:
+      }
+      case KeyEvent.VK_T -> {
         if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)) {
           if (createAction)
             act.set(comp, StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
-          else attrs.setValue(StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
+          else
+            attrs.setValue(StdAttr.LABEL_VISIBILITY, !attrs.getValue(StdAttr.LABEL_VISIBILITY));
         }
         return true;
-      case KeyEvent.VK_V:
+      }
+      case KeyEvent.VK_V -> {
         if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)
             && !attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
-          if (createAction) act.set(comp, StdAttr.LABEL_VISIBILITY, true);
-          else attrs.setValue(StdAttr.LABEL_VISIBILITY, true);
+          if (createAction)
+            act.set(comp, StdAttr.LABEL_VISIBILITY, true);
+          else
+            attrs.setValue(StdAttr.LABEL_VISIBILITY, true);
         }
         return true;
-      case KeyEvent.VK_H:
+      }
+      case KeyEvent.VK_H -> {
         if (attrs.containsAttribute(StdAttr.LABEL_VISIBILITY)
             && attrs.getValue(StdAttr.LABEL_VISIBILITY)) {
-          if (createAction) act.set(comp, StdAttr.LABEL_VISIBILITY, false);
-          else attrs.setValue(StdAttr.LABEL_VISIBILITY, false);
+          if (createAction)
+            act.set(comp, StdAttr.LABEL_VISIBILITY, false);
+          else
+            attrs.setValue(StdAttr.LABEL_VISIBILITY, false);
         }
         return true;
-      case KeyEvent.VK_A:
+      }
+      case KeyEvent.VK_A -> {
         stop(circ);
         return true;
-      default:
+      }
+      default -> {
         // nothing
-        break;
+      }
     }
     return false;
   }

@@ -70,7 +70,7 @@ public final class FileStatistics {
   }
 
   public static FileStatistics compute(LogisimFile file, Circuit circuit) {
-    final var include = new HashSet<Circuit>(file.getCircuits());
+    final var include = new HashSet<>(file.getCircuits());
     final var countMap = new HashMap<Circuit, Map<ComponentFactory, Count>>();
     doRecursiveCount(circuit, include, countMap);
     doUniqueCounts(countMap.get(circuit), countMap);

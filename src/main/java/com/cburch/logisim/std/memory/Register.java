@@ -43,10 +43,10 @@ import java.awt.event.KeyEvent;
 
 public class Register extends InstanceFactory implements DynamicElementProvider {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "Register";
 
@@ -305,7 +305,8 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
       // determine text to draw in label
       Object Trigger = painter.getAttributeValue(StdAttr.TRIGGER);
       final var IsLatch = Trigger.equals(StdAttr.TRIG_HIGH) || Trigger.equals(StdAttr.TRIG_LOW);
-      final var NegActive = Trigger.equals(StdAttr.TRIG_FALLING) || Trigger.equals(StdAttr.TRIG_LOW);
+      final var NegActive =
+          Trigger.equals(StdAttr.TRIG_FALLING) || Trigger.equals(StdAttr.TRIG_LOW);
 
       drawRegisterEvolution(
           painter, x, y, width, IsLatch, NegActive, true, (state == null) ? null : state.value);

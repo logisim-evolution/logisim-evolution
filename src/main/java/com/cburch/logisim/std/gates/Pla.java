@@ -7,7 +7,6 @@
  * This is free software released under GNU GPLv3 license
  */
 
-
 /* This file is adopted from the MIPS.jar library by
  * Martin Dybdal <dybber@dybber.dk> and
  * Anders Boesen Lindbo Larsen <abll@diku.dk>.
@@ -51,10 +50,10 @@ import javax.swing.JPopupMenu;
 
 class Pla extends InstanceFactory {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "PLA";
 

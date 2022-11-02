@@ -13,15 +13,13 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.prefs.AppPreferences;
 
-/**
- * TTL 74x10: triple 3-input NAND gate
- */
+/** TTL 74x10: triple 3-input NAND gate */
 public class Ttl7410 extends AbstractTtlGate {
   /**
-   * Unique identifier of the tool, used as reference in project files.
-   * Do NOT change as it will prevent project files from loading.
+   * Unique identifier of the tool, used as reference in project files. Do NOT change as it will
+   * prevent project files from loading.
    *
-   * Identifier value must MUST be unique string among all tools.
+   * <p>Identifier value must MUST be unique string among all tools.
    */
   public static final String _ID = "7410";
 
@@ -36,12 +34,12 @@ public class Ttl7410 extends AbstractTtlGate {
   }
 
   public Ttl7410(String val, boolean inverted) {
-    super(val, (byte) pinCount, outPorts, new Ttl7410HdlGenerator(inverted, true));
+    super(val, pinCount, outPorts, new Ttl7410HdlGenerator(inverted, true));
     this.inverted = inverted;
   }
 
   public Ttl7410(String val, boolean inverted, boolean isOR) {
-    super(val, (byte) pinCount, outPorts, new Ttl7410HdlGenerator(inverted, !isOR));
+    super(val, pinCount, outPorts, new Ttl7410HdlGenerator(inverted, !isOR));
     this.inverted = inverted;
     isAND = !isOR;
   }

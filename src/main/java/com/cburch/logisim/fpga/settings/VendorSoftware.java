@@ -38,15 +38,12 @@ public class VendorSoftware {
   }
 
   public String getToolPath() {
-    switch (vendor) {
-      case VENDOR_ALTERA:
-        return AppPreferences.QuartusToolPath.get();
-      case VENDOR_XILINX:
-        return AppPreferences.ISEToolPath.get();
-      case VENDOR_VIVADO:
-        return AppPreferences.VivadoToolPath.get();
-    }
-    return "Unknown";
+    return switch (vendor) {
+      case VENDOR_ALTERA -> AppPreferences.QuartusToolPath.get();
+      case VENDOR_XILINX -> AppPreferences.ISEToolPath.get();
+      case VENDOR_VIVADO -> AppPreferences.VivadoToolPath.get();
+      default -> "Unknown";
+    };
   }
 
   public String getName() {
@@ -76,42 +73,30 @@ public class VendorSoftware {
   }
 
   public static String getVendorString(char vendor) {
-    switch (vendor) {
-      case VENDOR_ALTERA:
-        return VENDORS[0];
-      case VENDOR_XILINX:
-        return VENDORS[1];
-      case VENDOR_VIVADO:
-        return VENDORS[2];
-      default:
-        return "Unknown";
-    }
+    return switch (vendor) {
+      case VENDOR_ALTERA -> VENDORS[0];
+      case VENDOR_XILINX -> VENDORS[1];
+      case VENDOR_VIVADO -> VENDORS[2];
+      default -> "Unknown";
+    };
   }
 
   public static VendorSoftware getSoftware(char vendor) {
-    switch (vendor) {
-      case VENDOR_ALTERA:
-        return new VendorSoftware(VENDOR_ALTERA, AlteraName, load(VENDOR_ALTERA));
-      case VENDOR_XILINX:
-        return new VendorSoftware(VENDOR_XILINX, XilinxName, load(VENDOR_XILINX));
-      case VENDOR_VIVADO:
-        return new VendorSoftware(VENDOR_VIVADO, VivadoName, load(VENDOR_VIVADO));
-      default:
-        return null;
-    }
+    return switch (vendor) {
+      case VENDOR_ALTERA -> new VendorSoftware(VENDOR_ALTERA, AlteraName, load(VENDOR_ALTERA));
+      case VENDOR_XILINX -> new VendorSoftware(VENDOR_XILINX, XilinxName, load(VENDOR_XILINX));
+      case VENDOR_VIVADO -> new VendorSoftware(VENDOR_VIVADO, VivadoName, load(VENDOR_VIVADO));
+      default -> null;
+    };
   }
 
   public static String getToolPath(char vendor) {
-    switch (vendor) {
-      case VENDOR_ALTERA:
-        return AppPreferences.QuartusToolPath.get();
-      case VENDOR_XILINX:
-        return AppPreferences.ISEToolPath.get();
-      case VENDOR_VIVADO:
-        return AppPreferences.VivadoToolPath.get();
-      default:
-        return null;
-    }
+    return switch (vendor) {
+      case VENDOR_ALTERA -> AppPreferences.QuartusToolPath.get();
+      case VENDOR_XILINX -> AppPreferences.ISEToolPath.get();
+      case VENDOR_VIVADO -> AppPreferences.VivadoToolPath.get();
+      default -> null;
+    };
   }
 
   public static boolean setToolPath(char vendor, String path) {
