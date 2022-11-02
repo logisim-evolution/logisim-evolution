@@ -337,6 +337,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
         g, "1,6D", xpos + 21, realYpos + 10, GraphicsUtil.H_LEFT, GraphicsUtil.V_CENTER);
     final var LineWidth = (nrOfBits == 1) ? GraphicsUtil.DATA_SINGLE_WIDTH : GraphicsUtil.DATA_MULTI_WIDTH;
     GraphicsUtil.switchToWidth(g, LineWidth);
+    g.setColor(Value.multiColor);
     if (first) {
       painter.drawPort(IN);
       painter.drawPort(OUT);

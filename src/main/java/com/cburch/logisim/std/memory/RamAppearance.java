@@ -14,6 +14,7 @@ import static com.cburch.logisim.std.Strings.S;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
+import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.Port;
@@ -533,6 +534,8 @@ public class RamAppearance {
     String label;
     final var nrOfBits = attrs.getValue(Mem.DATA_ATTR).getWidth();
     final var nrOfDataPorts = Math.max(getNrDataInPorts(attrs), getNrDataOutPorts(attrs));
+
+    /* Draw data input conections */
     for (var i = 0; i < getNrDataInPorts(attrs); i++) {
       label = !classic ? "" : getNrDataInPorts(attrs) == 1 ? "D" : "D" + i;
       final var idx = getDataInIndex(i, attrs);
@@ -564,12 +567,6 @@ public class RamAppearance {
           } else {
             final var xpos = new int[3];
             final var ypos = new int[3];
-            xpos[0] = x;
-            xpos[1] = xpos[2] = x + 5;
-            ypos[0] = y;
-            ypos[1] = y + 5;
-            ypos[2] = y + 5 + (nrOfBits - 1) * 20;
-            g.drawPolyline(xpos, ypos, 3);
             g.setStroke(new BasicStroke(2));
             xpos[0] = x + 5;
             xpos[1] = x + 10;
@@ -577,6 +574,7 @@ public class RamAppearance {
             ypos[0] = y + 5;
             ypos[1] = ypos[2] = y + 10;
             g.setFont(font.deriveFont(7.0f));
+            g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
             for (var j = 0; j < nrOfBits; j++) {
               g.drawPolyline(xpos, ypos, 3);
               GraphicsUtil.drawText(g, Integer.toString(j), xpos[2] - 3, ypos[2] - 3, GraphicsUtil.H_RIGHT, GraphicsUtil.V_BASELINE);
@@ -584,13 +582,21 @@ public class RamAppearance {
               ypos[1] += 20;
               ypos[2] += 20;
             }
+            g.setColor(Value.multiColor);
             g.setStroke(new BasicStroke(4));
+            xpos[0] = x;
+            xpos[1] = xpos[2] = x + 5;
+            ypos[0] = y;
+            ypos[1] = y + 5;
+            ypos[2] = y + 5 + (nrOfBits - 1) * 20;
+            g.drawPolyline(xpos, ypos, 3);
           }
         }
       }
       painter.drawPort(idx, label, Direction.EAST);
     }
 
+    /* Draw data output conections (& in/out)*/
     for (var i = 0; i < getNrDataOutPorts(attrs); i++) {
       label = !classic ? "" : getNrDataOutPorts(attrs) == 1 ? "D" : "D" + i;
       int idx = getDataOutIndex(i, attrs);
@@ -624,12 +630,6 @@ public class RamAppearance {
           } else {
             final var xpos = new int[3];
             final var ypos = new int[3];
-            xpos[0] = x;
-            xpos[1] = xpos[2] = x - 5;
-            ypos[0] = y;
-            ypos[1] = y + 5;
-            ypos[2] = y + 5 + (nrOfBits - 1) * 20;
-            g.drawPolyline(xpos, ypos, 3);
             g.setStroke(new BasicStroke(2));
             xpos[0] = x - 5;
             xpos[1] = x - 10;
@@ -637,6 +637,7 @@ public class RamAppearance {
             ypos[0] = y + 5;
             ypos[1] = ypos[2] = y + 10;
             g.setFont(font.deriveFont(7.0f));
+            g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
             for (var j = 0; j < nrOfBits; j++) {
               g.drawPolyline(xpos, ypos, 3);
               GraphicsUtil.drawText(g, Integer.toString(j), xpos[2] + 3, ypos[2] - 3, GraphicsUtil.H_LEFT, GraphicsUtil.V_BASELINE);
@@ -646,6 +647,13 @@ public class RamAppearance {
               ypos[2] += 20;
             }
             g.setStroke(new BasicStroke(4));
+            g.setColor(Value.multiColor);
+            xpos[0] = x;
+            xpos[1] = xpos[2] = x - 5;
+            ypos[0] = y;
+            ypos[1] = y + 5;
+            ypos[2] = y + 5 + (nrOfBits - 1) * 20;
+            g.drawPolyline(xpos, ypos, 3);
           }
         }
       }
@@ -661,13 +669,8 @@ public class RamAppearance {
         int y = loc.getY();
         final var xpos = new int[3];
         final var ypos = new int[3];
-        xpos[0] = x;
-        xpos[1] = xpos[2] = x + 5;
-        ypos[0] = y;
-        ypos[1] = y + 5;
-        ypos[2] = y + 25;
-        g.drawPolyline(xpos, ypos, 3);
         g.setStroke(new BasicStroke(2));
+        g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
         xpos[0] = x + 5;
         xpos[1] = x + 10;
         xpos[2] = x + 20;
@@ -680,9 +683,21 @@ public class RamAppearance {
             g.drawLine(x + 15, y + 13 + j * 6, x + 15, y + 15 + j * 6);
         }
         g.drawPolyline(xpos, ypos, 3);
+        g.setColor(Value.multiColor);
+        g.setStroke(new BasicStroke(4));
+        xpos[0] = x;
+        xpos[1] = xpos[2] = x + 5;
+        ypos[0] = y;
+        ypos[1] = y + 5;
+        ypos[2] = y + 25;
+        g.drawPolyline(xpos, ypos, 3);
       }
       painter.drawPort(idx, label, Direction.EAST);
     }
+
+
+    /* draw controllblock conections */
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
 
     g.setStroke(new BasicStroke(2));
     for (var i = 0; i < getNrOEPorts(attrs); i++) {
@@ -755,6 +770,7 @@ public class RamAppearance {
 
   private static void drawControlBlock(Instance inst, AttributeSet attrs, InstancePainter painter) {
     final var g = (Graphics2D) painter.getGraphics().create();
+    /* draw outer line of the controlblock */
     final var xpos = new int[8];
     final var ypos = new int[8];
     final var x = painter.getBounds().getX();
@@ -768,6 +784,8 @@ public class RamAppearance {
     ypos[3] = ypos[4] = y;
     GraphicsUtil.switchToWidth(g, 2);
     g.drawPolyline(xpos, ypos, 8);
+
+    /* draw address text*/
     for (var i = 0; i < getNrAddrPorts(attrs); i++) {
       final var idx = getAddrIndex(i, attrs);
       final var loc = inst.getPortLocation(idx);
@@ -775,6 +793,7 @@ public class RamAppearance {
     }
 
     var cidx = 1;
+    /* draw clock port text*/
     for (var i = 0; i < getNrClkPorts(attrs); i++) {
       final var idx = getClkIndex(i, attrs);
       final var loc = inst.getPortLocation(idx);
@@ -782,7 +801,8 @@ public class RamAppearance {
       cidx++;
       g.drawString(label, loc.getX() + 33, loc.getY() + 5);
     }
-
+    
+    /* draw output enable text*/
     for (var i = 0; i < getNrOEPorts(attrs); i++) {
       final var idx = getOEIndex(i, attrs);
       final var loc = inst.getPortLocation(idx);
@@ -791,6 +811,7 @@ public class RamAppearance {
       g.drawString(label, loc.getX() + 33, loc.getY() + 5);
     }
 
+    /* draw write enable text */
     for (var i = 0; i < getNrWEPorts(attrs); i++) {
       final var idx = getWEIndex(i, attrs);
       final var loc = inst.getPortLocation(idx);
@@ -798,6 +819,8 @@ public class RamAppearance {
       cidx++;
       g.drawString(label, loc.getX() + 33, loc.getY() + 5);
     }
+
+    /* draw line enable text */
     for (var i = 0; i < getNrLEPorts(attrs); i++) {
       final var idx = getLEIndex(i, attrs);
       final var loc = inst.getPortLocation(idx);
@@ -805,6 +828,8 @@ public class RamAppearance {
       cidx++;
       g.drawString(label, loc.getX() + 33, loc.getY() + 5);
     }
+
+    /* TODO */
     for (var i = 0; i < getNrBEPorts(attrs); i++) {
       final var idx = getBEIndex(i, attrs);
       final var loc = inst.getPortLocation(idx);

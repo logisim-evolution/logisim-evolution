@@ -986,19 +986,20 @@ public class Pin extends InstanceFactory {
       }
       g2.translate(xpos, ypos);
       g2.rotate(rotation);
+      Color col = g.getColor();
       if (isBus) {
+        g.setColor(Value.multiColor);
         GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
         g.drawLine(Wire.WIDTH_BUS / 2 - 5, 0, 0, 0);
         GraphicsUtil.switchToWidth(g, 2);
       } else {
-        Color col = g.getColor();
         if (painter.getShowState())
           g.setColor(LineColor);
         GraphicsUtil.switchToWidth(g, Wire.WIDTH);
         g.drawLine(-5, 0, 0, 0);
         GraphicsUtil.switchToWidth(g, 2);
-        g.setColor(col);
       }
+      g.setColor(col);
       g.drawLine(-15, -rheight / 2, -5, 0);
       g.drawLine(-15, rheight / 2, -5, 0);
       g.drawLine(-rwidth, -rheight / 2, -rwidth, rheight / 2);
@@ -1049,19 +1050,20 @@ public class Pin extends InstanceFactory {
       }
       g2.translate(xpos, ypos);
       g2.rotate(rotation);
+      Color col = g.getColor();
       if (isBus) {
+        g.setColor(Value.multiColor);
         GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
         g.drawLine(-3, 0, -Wire.WIDTH_BUS / 2, 0);
         GraphicsUtil.switchToWidth(g, 2);
       } else {
-        Color col = g.getColor();
         if (painter.getShowState())
           g.setColor(LineColor);
         GraphicsUtil.switchToWidth(g, Wire.WIDTH);
         g.drawLine(-3, 0, 0, 0);
         GraphicsUtil.switchToWidth(g, 2);
-        g.setColor(col);
       }
+      g.setColor(col);
       g.drawLine(10 - rwidth, -rheight / 2, -rwidth, 0);
       g.drawLine(10 - rwidth, rheight / 2, -rwidth, 0);
       g.drawLine(-5, -rheight / 2, -5, rheight / 2);

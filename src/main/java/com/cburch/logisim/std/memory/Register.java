@@ -87,10 +87,9 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
         for (int i = 0; i < len; i++) str = str.concat("?");
       }
       GraphicsUtil.drawCenteredText(g, str, x + 30, y + 8);
-      g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     }
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     GraphicsUtil.switchToWidth(g, 2);
-    g.drawRect(x + 10, y + 20, 40, 60);
     if (nrOfBits > 1) {
       g.drawLine(x + 15, y + 80, x + 15, y + 85);
       g.drawLine(x + 15, y + 85, x + 55, y + 85);
@@ -102,11 +101,14 @@ public class Register extends InstanceFactory implements DynamicElementProvider 
         g.drawLine(x + 60, y + 30, x + 60, y + 90);
         g.drawLine(x + 55, y + 30, x + 60, y + 30);
       }
+      g.setColor(Value.multiColor);
     }
-    GraphicsUtil.switchToWidth(g, 1);
     GraphicsUtil.switchToWidth(g, dq_widtdqWidth);
     g.drawLine(x, y + 30, x + 8, y + 30);
     g.drawLine(x + 52, y + 30, x + 60, y + 30);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+    GraphicsUtil.switchToWidth(g, 2);
+    g.drawRect(x + 10, y + 20, 40, 60);
     GraphicsUtil.switchToWidth(g, 1);
     GraphicsUtil.drawCenteredText(g, "D", x + 18, y + 28);
     GraphicsUtil.drawCenteredText(g, "Q", x + 41, y + 28);
