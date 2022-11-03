@@ -15,7 +15,6 @@ import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Direction;
-import com.cburch.logisim.data.Location;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.gui.icons.ArithmeticIcon;
 import com.cburch.logisim.instance.Instance;
@@ -31,7 +30,6 @@ import com.cburch.logisim.soc.data.SocInstanceFactory;
 import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
-import java.awt.Font;
 import java.awt.Graphics2D;
 
 public class SocBus extends SocInstanceFactory {
@@ -76,11 +74,11 @@ public class SocBus extends SocInstanceFactory {
   @Override
   protected void configureNewInstance(Instance instance) {
     instance.addAttributeListener();
-    Port[] ps = new Port[1];
+    final var ps = new Port[1];
     ps[0] = new Port(0, 10, Port.INPUT, 1);
     ps[0].setToolTip(S.getter("Rv32imResetInput"));
     instance.setPorts(ps);
-    Bounds bds = instance.getBounds();
+    final var bds = instance.getBounds();
     instance.setTextField(
         StdAttr.LABEL,
         StdAttr.LABEL_FONT,
@@ -95,17 +93,17 @@ public class SocBus extends SocInstanceFactory {
     painter.drawBounds();
     painter.drawLabel();
     painter.drawPort(0, "Reset", Direction.EAST);
-    Graphics2D g2 = (Graphics2D) painter.getGraphics();
-    Location loc = painter.getLocation();
-    Font f = g2.getFont();
+    final var g2 = (Graphics2D) painter.getGraphics();
+    final var loc = painter.getLocation();
+    final var font = g2.getFont();
     g2.setFont(StdAttr.DEFAULT_LABEL_FONT);
     GraphicsUtil.drawCenteredText(g2, "SOC Bus Interconnect", loc.getX() + 320, loc.getY() + 10);
-    g2.setFont(f);
+    g2.setFont(font);
     if (painter.isPrintView()) return;
-    SocBusInfo info = painter.getAttributeValue(SocBusAttributes.SOC_BUS_ID);
-    SocBusStateInfo data = info.getSocSimulationManager().getSocBusState(info.getBusId());
-    if (data != null)
-      data.paint(
+    var socBusInfo = painter.getAttributeValue(SocBusAttributes.SOC_BUS_ID);
+    var socBusStateInfo = socBusInfo.getSocSimulationManager().getSocBusState(socBusInfo.getBusId());
+    if (socBusStateInfo != null)
+      socBusStateInfo.paint(
           loc.getX(),
           loc.getY(),
           g2,
@@ -119,8 +117,13 @@ public class SocBus extends SocInstanceFactory {
     SocBusInfo info = state.getAttributeValue(SocBusAttributes.SOC_BUS_ID);
     SocBusStateInfo data = info.getSocSimulationManager().getSocBusState(info.getBusId());
     SocBusStateInfo.SocBusState dat = (SocBusStateInfo.SocBusState) state.getData();
-    if (dat == null) state.setData(data.getNewState(state.getInstance()));
-    if (state.getPortValue(0) == Value.TRUE) dat.clear();
+    if (dat == null) {
+      state.setData(data.getNewState(state.getInstance()));
+    } else {
+      if (state.getPortValue(0) == Value.TRUE) {
+        dat.clear();
+      }
+    }
   }
 
   @Override

@@ -20,7 +20,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 import org.slf4j.Logger;
@@ -70,7 +69,7 @@ public class VhdlSimulatorTclBinder {
     builder = new ProcessBuilder(command);
 
     Map<String, String> env = builder.environment();
-    
+
     builder.directory(new File(VhdlSimConstants.SIM_PATH + "comp/"));
 
     /* Redirect error on stdout */
@@ -98,9 +97,8 @@ public class VhdlSimulatorTclBinder {
     new Thread(
             () -> {
               /* Through this we can get the process output */
-              BufferedReader reader =
-                  new BufferedReader(new InputStreamReader(process.getInputStream()));
-              String line;
+              final var reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+              var line = "";
               try {
                 // FIXME: hardcoded string
                 final var errorMessage =
@@ -129,9 +127,8 @@ public class VhdlSimulatorTclBinder {
 
                     new Thread(
                             () -> {
-                              Scanner sc =
-                                  new Scanner(new InputStreamReader(process.getInputStream()));
-                              String nextLine;
+                              final var sc = new Scanner(new InputStreamReader(process.getInputStream()));
+                              var nextLine = "";
                               while (sc.hasNextLine()) {
                                 nextLine = sc.nextLine();
                                 if (nextLine.length() > 0)
@@ -148,15 +145,13 @@ public class VhdlSimulatorTclBinder {
 
                     vsim.tclStartCallback();
                     return;
-
                   } else if (line.contains(msgCheckOnError)) {
                     // Last line of error log. Do not read next line or it will be stuck
                     break;
                   }
                 }
 
-                MessageBox userInfoBox =
-                    new MessageBox(
+                final var userInfoBox = new MessageBox(
                         "Error starting VHDL simulator",
                         errorMessage.toString(),
                         OptionPane.ERROR_MESSAGE);
@@ -171,15 +166,14 @@ public class VhdlSimulatorTclBinder {
   }
 
   public void stop() {
-    if (!running) return;
+    if (running.equals(Boolean.FALSE)) return;
 
     /* We ask the binder to end itself */
     if (vsim.getSocketClient() != null) vsim.getSocketClient().send("end");
 
-    /* Wait for the process to end */
     /*
-     * FIXME: this can be a bad idea, it will crash logisim if the binder
-     * doesn't end
+     * Wait for the process to end
+     * * FIXME: this can be a bad idea, it will crash logisim if the binder doesn't end
      */
     // try {
     // process.waitFor();
