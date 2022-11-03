@@ -151,7 +151,7 @@ public class VhdlSimulatorTclBinder {
                   }
                 }
 
-                final var userInfoBox =                    new MessageBox(
+                final var userInfoBox = new MessageBox(
                         "Error starting VHDL simulator",
                         errorMessage.toString(),
                         OptionPane.ERROR_MESSAGE);
