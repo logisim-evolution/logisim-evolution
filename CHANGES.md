@@ -5,6 +5,7 @@
 * @dev (????-??-??)
   * Added TTL 74182: look-ahead carry generator
   * Added TTL 74181: arithmetic logic unit
+  * Fixed Karnaugh map color index bug
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins
