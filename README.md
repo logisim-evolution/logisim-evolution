@@ -2,12 +2,6 @@
 
 ---
 
-Branch [master](https://github.com/logisim-evolution/logisim-evolution/tree/master): [![Build](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/build.yml)
-
-Branch [develop](https://github.com/logisim-evolution/logisim-evolution/tree/develop): [![Build](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/build.yml/badge.svg?branch=develop)](https://github.com/logisim-evolution/logisim-evolution/actions/workflows/build.yml)
-
----
-
 # Logisim-evolution #
 
 * **Table of contents**
