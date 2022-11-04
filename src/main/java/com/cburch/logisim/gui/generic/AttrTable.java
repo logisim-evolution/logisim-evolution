@@ -19,7 +19,6 @@ import com.cburch.logisim.util.JInputDialog;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -77,9 +76,6 @@ public class AttrTable extends JPanel implements LocaleListener {
     final var titleSize = Math.round(baseFont.getSize() * 1.2f);
     final var titleFont = baseFont.deriveFont(AppPreferences.getScaled((float) titleSize)).deriveFont(Font.BOLD);
     title.setFont(titleFont);
-    final var bgColor = new Color(240, 240, 240);
-    setBackground(bgColor);
-    table.setBackground(bgColor);
     table.setDefaultRenderer(String.class, new HdlColorRenderer());
 
     final var propPanel = new JPanel(new BorderLayout(0, 0));
