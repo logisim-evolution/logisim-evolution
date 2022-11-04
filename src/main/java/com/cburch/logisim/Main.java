@@ -58,21 +58,14 @@ public class Main {
     final var startup = new Startup(args);
     final var loader = new Loader(null);
     int exitCode = 0;
-    switch (startup.ui) {
-      default:
+    switch (startup.task) {
       case NONE:
-        exitCode = startup.exitCode;
         break;
-      case TTY:
-        useGui = false;
-        try {
-          final var tty = new TtyInterface(startup);
-          exitCode = tty.run(loader);
-        } catch (Exception e) {
-          e.printStackTrace();
-          exitCode = -1;
-        }
+
+      case ERROR:
+        exitCode = 1;
         break;
+
       case GUI:
         try {
           final var gui = new GuiInterface(startup);
@@ -84,6 +77,18 @@ public class Main {
           OptionPane.showMessageDialog(null, strWriter.toString());
           exitCode = -1;
         }
+        break;
+
+      default:
+        useGui = false;
+        try {
+          final var tty = new TtyInterface(startup);
+          exitCode = tty.run(loader);
+        } catch (Exception e) {
+          e.printStackTrace();
+          exitCode = -1;
+        }
+        break;
     }
 
     if (exitCode != 0) System.exit(exitCode);

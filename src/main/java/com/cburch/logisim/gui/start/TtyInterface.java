@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.gui.start;
 
-
 import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.circuit.Analyze;
@@ -24,6 +23,7 @@ import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
 import com.cburch.logisim.gui.Strings;
 import com.cburch.logisim.gui.hex.HexFile;
+import com.cburch.logisim.gui.start.Startup.Task;
 import com.cburch.logisim.gui.test.TestBench;
 import com.cburch.logisim.instance.Instance;
 import com.cburch.logisim.instance.InstanceState;
@@ -54,8 +54,6 @@ public class TtyInterface {
   private Logger logger = LoggerFactory.getLogger(TtyInterface.class);
 
   private File fileToOpen;
-
-  public enum Task { FPGA, TEST_VECTOR, TEST_CIRCUIT, RESAVE, SIMULATION };
   private Task task;
 
   // FPGA
@@ -73,11 +71,21 @@ public class TtyInterface {
   // RESAVE
   private String resaveOutput = null;
 
-  // SIMULATION
+  // ANALYSIS
   private int ttyFormat = 0;
   private HashMap<File, File> substitutions;
   private File loadFile = null;
   private File saveFile = null;
+
+  public static final int FORMAT_TABLE = 1;
+  public static final int FORMAT_SPEED = 2;
+  public static final int FORMAT_TTY = 4;
+  public static final int FORMAT_HALT = 8;
+  public static final int FORMAT_STATISTICS = 16;
+  public static final int FORMAT_TABLE_TABBED = 32;
+  public static final int FORMAT_TABLE_CSV = 64;
+  public static final int FORMAT_TABLE_BIN = 128;
+  public static final int FORMAT_TABLE_HEX = 256;
 
   private static final int EXITCODE_OK = 0;
   private static final int EXITCODE_ARG_ERROR = 1;
@@ -86,27 +94,31 @@ public class TtyInterface {
   private static final int EXITCODE_TEST_FAIL = -1;
   
   public TtyInterface(Startup startup) {
-    assert startup.ui == Startup.UI.TTY;
+    assert startup.task.compareTo(Task.GUI) > 0;
     assert startup.filesToOpen.size() == 1;
+    assert (startup.fpgaCircuit != null) == (startup.task == Task.FPGA);
+    assert (startup.fpgaBoard != null) == (startup.task == Task.FPGA);
+    assert (startup.testVector != null) == (startup.task == Task.TEST_VECTOR);
+    assert startup.circuitToTest == null || startup.task == Task.TEST_VECTOR || startup.task == Task.ANALYSIS;
+    assert (startup.resaveOutput != null) == (startup.task == Task.RESAVE);
+    assert (startup.ttyFormat != 0) == (startup.task == Task.ANALYSIS);
+    assert startup.substitutions.isEmpty() || startup.task == Task.ANALYSIS;
+    assert startup.loadFile == null || startup.task == Task.ANALYSIS;
+    assert startup.saveFile == null || startup.task == Task.ANALYSIS;
 
-    // TODO STARTUP asserts for each task type
-
-    task                    = startup.task;
-    fileToOpen              = startup.filesToOpen.get(0);
-    substitutions           = startup.substitutions;
-    testVector              = startup.testVector;
-    circuitToTest           = startup.circuitToTest;
-    loadFile                = startup.loadFile;
-    saveFile                = startup.saveFile;
-
-    ttyFormat               = startup.ttyFormat;
-
-    resaveOutput            = startup.resaveOutput;
-
-    fpgaCircuit             = startup.fpgaCircuit;
-    fpgaBoard               = startup.fpgaBoard;
-    fpgaFreq                = startup.fpgaFreq;
-    fpgaHdlOnly             = startup.fpgaHdlOnly;
+    task          = startup.task;
+    fileToOpen    = startup.filesToOpen.get(0);
+    fpgaCircuit   = startup.fpgaCircuit;
+    fpgaBoard     = startup.fpgaBoard;
+    fpgaFreq      = startup.fpgaFreq;
+    fpgaHdlOnly   = startup.fpgaHdlOnly;
+    testVector    = startup.testVector;
+    circuitToTest = startup.circuitToTest;
+    resaveOutput  = startup.resaveOutput;
+    ttyFormat     = startup.ttyFormat;
+    substitutions = startup.substitutions;
+    loadFile      = startup.loadFile;
+    saveFile      = startup.saveFile;
   }
 
   public int run(Loader loader) {
@@ -120,59 +132,60 @@ public class TtyInterface {
     if (file == null) return EXITCODE_IO_ERROR;
 
     final var proj = new Project(file);
-    
-    // each of the following sections are mutally exclusive (to avoid weirdness)
-    // TODO STARTUP switch-statement and method calls to simplify this logic
 
-    // --test-fpga
-    if (task == Task.FPGA) {
-      final var mainCircuit = proj.getLogisimFile().getCircuit(fpgaCircuit);
-      if (mainCircuit == null) return 2;
-      final var simTickFreq = mainCircuit.getTickFrequency();
-      final var downTickFreq = mainCircuit.getDownloadFrequency();
-      final var boardReader = new BoardReaderClass(AppPreferences.Boards.getBoardFilePath(fpgaBoard));
-      Download downloader = new Download(
-        proj,
-        fpgaCircuit,
-        (fpgaFreq > 0) ? fpgaFreq : (downTickFreq > 0) ? downTickFreq : simTickFreq,
-        boardReader.getBoardInformation(),
-        null,
-        false,
-        false,
-        fpgaHdlOnly);
-      return downloader.runTty() ? EXITCODE_OK : EXITCODE_IO_ERROR;
-    }
-
-    // --new-file-format
-    if (task == Task.RESAVE) {
-      ProjectActions.doSave(proj, new File(resaveOutput));
-      return EXITCODE_OK;
-    }
-
-    // --test-circuit
-    if (task == Task.TEST_CIRCUIT) {
-      final var testB = new TestBench(proj);
-      if (testB.startTestBench()) {
-        System.out.println("Test bench pass\n");
+    switch (task) {
+      case FPGA: 
+        return fpgaDownload(proj);
+      case TEST_VECTOR:
+        proj.doTestVector(testVector, circuitToTest);
         return EXITCODE_OK;
-      } else {
-        System.out.println("Test bench fail\n");
-        return EXITCODE_TEST_FAIL;
-      }
+      case TEST_CIRCUIT:
+        return testCircuit(proj);
+      case RESAVE:
+        ProjectActions.doSave(proj,new File(resaveOutput));
+        return EXITCODE_OK;
+      default:
+      case ANALYSIS:
+        return doAnalysis(file,proj);
     }
+  }
 
-    final var circuit = (circuitToTest == null || circuitToTest.length() == 0)
-        ? file.getMainCircuit()
-        : file.getCircuit(circuitToTest);
+  // --fpga --------------------------------
 
-    // --test-vector
-    if (task == Task.TEST_VECTOR) {
-      proj.doTestVector(testVector, circuitToTest);
+  int fpgaDownload(Project proj) {
+    final var mainCircuit = proj.getLogisimFile().getCircuit(fpgaCircuit);
+    if (mainCircuit == null) return EXITCODE_IO_ERROR;
+    final var simTickFreq = mainCircuit.getTickFrequency();
+    final var downTickFreq = mainCircuit.getDownloadFrequency();
+    final var boardReader = new BoardReaderClass(AppPreferences.Boards.getBoardFilePath(fpgaBoard));
+    Download downloader = new Download(
+      proj,
+      fpgaCircuit,
+      (fpgaFreq > 0) ? fpgaFreq : (downTickFreq > 0) ? downTickFreq : simTickFreq,
+      boardReader.getBoardInformation(),
+      null,
+      false,
+      false,
+      fpgaHdlOnly);
+    return downloader.runTty() ? EXITCODE_OK : EXITCODE_IO_ERROR;
+  }
+
+  // --test-circuit --------------------------------
+
+  int testCircuit(Project proj) {
+    final var testBench = new TestBench(proj);
+    if (testBench.startTestBench()) {
+      System.out.println("Test bench pass\n");
       return EXITCODE_OK;
-    }
+    } 
+    System.out.println("Test bench fail\n");
+    return EXITCODE_TEST_FAIL;
+  }
+  
+  // --tty --------------------------------
 
-    // --tty
-    assert(task == Task.SIMULATION);
+  private int doAnalysis(LogisimFile file, Project proj) {
+    final var circuit = circuitToTest == null ? file.getMainCircuit() : file.getCircuit(circuitToTest);
     var format = ttyFormat;
     if ((format & FORMAT_STATISTICS) != 0) {
       displayStatistics(file, circuit);
@@ -233,18 +246,6 @@ public class TtyInterface {
 
     return simCode;
   }
-
-  // --tty --------------------------------
-
-  public static final int FORMAT_TABLE = 1;
-  public static final int FORMAT_SPEED = 2;
-  public static final int FORMAT_TTY = 4;
-  public static final int FORMAT_HALT = 8;
-  public static final int FORMAT_STATISTICS = 16;
-  public static final int FORMAT_TABLE_TABBED = 32;
-  public static final int FORMAT_TABLE_CSV = 64;
-  public static final int FORMAT_TABLE_BIN = 128;
-  public static final int FORMAT_TABLE_HEX = 256;
 
   private void doTableAnalysis(Project proj, Circuit circuit, Map<Instance, String> pinLabels, int format) {
 

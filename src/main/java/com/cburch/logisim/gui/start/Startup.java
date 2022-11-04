@@ -35,12 +35,12 @@ public class Startup {
 
   static final Logger logger = LoggerFactory.getLogger(Startup.class);
 
-  public enum UI { NONE, TTY, GUI };
+  // WARN: order matters, TTY tasks should be AFTER GUI
+  public enum Task { NONE, ERROR, GUI, FPGA, TEST_VECTOR, TEST_CIRCUIT, RESAVE, ANALYSIS };
 
   // shared options
+  public Task task = null;
   public final ArrayList<File> filesToOpen = new ArrayList<>();
-  public UI ui = UI.NONE;
-  public int exitCode = 0;
 
   // Gui only options
   public String gateShape = null;
@@ -53,7 +53,6 @@ public class Startup {
   public boolean clearPreferences = false;
   
   // Tty only options
-  public TtyInterface.Task task;
   public String circuitToTest = null;
   public final HashMap<File, File> substitutions = new HashMap<>();
   public File loadFile;
@@ -70,9 +69,10 @@ public class Startup {
    * Parses CLI arguments, report any errors, and fill public members for use by 
    * TtyInterface or GuiInterface.
    * 
-   * If .ui == UI.NONE, exit w/ .exitCode.
-   * If .ui == UI.TTY, TtyInterface.run(startup).
-   * If .ui == UI.GUI, GuiInterface.run(startup).
+   * If .task == Task.NONE, exit(0).
+   * If .task == Task.ERROR, exit(1).
+   * If .task == Task.GUI, GuiInterface.run(startup).
+   * otherwise, TtyInterface.run(startup).
    *
    * @param args CLI arguments
    */
@@ -116,7 +116,7 @@ public class Startup {
     }
 
     if (cmd == null) {
-      exitCode = 1;
+      task = Task.ERROR;
       return;
     }
 
@@ -147,24 +147,18 @@ public class Startup {
       };
       switch (optHandlerRc) {
         case EXIT:
-          exitCode = 0;
+          task = Task.NONE;
           return;
         case IO_ERROR: 
-          exitCode = 2;
-          return;
         case CLI_ERROR: 
-          exitCode = 1;
+          task = Task.ERROR;
           return;
         case OK: 
           break;
       }
     }
 
-    ui = cmd.hasOption(ARG_TTY_SHORT) 
-      || cmd.hasOption(ARG_TEST_FGPA_SHORT) 
-      || cmd.hasOption(ARG_TEST_VECTOR_SHORT) 
-      || cmd.hasOption(ARG_TEST_CIRCUIT_SHORT) 
-      || cmd.hasOption(ARG_TEST_CIRC_GEN_LONG) ? UI.TTY : UI.GUI;
+    if (task == null) task = Task.GUI;
 
     // positional arguments are files to load
     for (final var arg : cmd.getArgs()) {
@@ -173,30 +167,55 @@ public class Startup {
 
     // check for combinations of options that are not considered legal
 
-    if (loadFile != null && ui != UI.TTY) {
+    if (loadFile != null && task != Task.ANALYSIS) {
       logger.error(S.get("loadNeedsTtyError"));
-      ui = UI.NONE;
-      exitCode = 1;
+      task = Task.ERROR;
       return;
     }
-    if (saveFile != null && ui != UI.TTY) {
+
+    if (saveFile != null && task != Task.ANALYSIS) {
       logger.error(S.get("saveNeedsTtyError"));
-      ui = UI.NONE;
-      exitCode = 1;
+      task = Task.ERROR;
       return;
     }
 
-    if (ui == UI.TTY && filesToOpen.size() != 1) {
-      logger.error(S.get("ttyNeedsFileError")); // TODO this applies to ALL TTY options
-      ui = UI.NONE;
-      exitCode = 1;
+    if (!substitutions.isEmpty() && task != Task.ANALYSIS) {
+      logger.error(S.get("substitutionsNeedsTtyError"));
+      task = Task.ERROR;
       return;
     }
-    // TODO STARTUP GUI && --substitutions
 
-    // TODO STARTUP TTY && --gates is meaningless
-    // TODO STARTUP TTY && --geometry is meaningless
-    // TODO STARTUP TTY && --user-template is meaningless
+    if (circuitToTest != null && task != Task.ANALYSIS && task != Task.TEST_VECTOR) {
+      logger.error(S.get("topLevelCircuitNeedsTtyError")); // TODO STARTUP add
+      task = Task.ERROR;
+      return;
+    }
+
+    if (task != Task.GUI) {
+      if (filesToOpen.size() != 1) {
+        logger.error(S.get("ttyNeedsFileError")); // TODO STARTUP not just --tty
+        task = Task.ERROR;
+        return;
+      }
+
+      if (gateShape != null) {
+        logger.error(S.get("gateShapeNeedsGuiError")); // TODO STARTUP add
+        task = Task.ERROR;
+        return;
+      }
+
+      if (windowSize != null || windowLocation != null) {
+        logger.error(S.get("geometryNeedsGuiError")); // TODO STARTUP add
+        task = Task.ERROR;
+        return;
+      }
+
+      if (templateType != AppPreferences.TEMPLATE_UNKNOWN) {
+        logger.error(S.get("templateNeedsGuiError")); // TODO STARTUP add
+        task = Task.ERROR;
+        return;
+      }
+    }
   }
 
   private static final String ARG_TEST_CIRCUIT_SHORT = "b";
@@ -496,8 +515,18 @@ public class Startup {
 
   //* *********************** TTY arguments ********************** */
 
+  private boolean setTask(Task t) {
+    if (task != null) {
+      logger.error(S.get("ttyMutualExclusion")); // TODO STARTUP add
+      return false;
+    }
+    task = t;
+    return true;
+  }
+
   private RC handleArgTty(Option opt) {
     // TTY format parsing
+    if (!setTask(Task.ANALYSIS)) return RC.CLI_ERROR;
     final var ttyVal = opt.getValue();
     final var fmts = ttyVal.split(",");
     if (fmts.length > 0) {
@@ -562,14 +591,14 @@ public class Startup {
 
   private RC handleArgTestVector(Option opt) {
     // This is to test a test bench. It will return 0 or 1 depending on if the tests pass or not.
-    task = TtyInterface.Task.TEST_VECTOR;
+    if (!setTask(Task.TEST_VECTOR)) return RC.CLI_ERROR;
     circuitToTest = opt.getValues()[0];
     testVector = opt.getValues()[1];
     return RC.OK;
   }
 
   private RC handleArgMainCircuit(Option opt) {
-    circuitToTest = opt.getValues()[0];
+    if (opt.getValue().length() > 0) circuitToTest = opt.getValue();
     return RC.OK;
   }
 
@@ -627,7 +656,7 @@ public class Startup {
       return RC.CLI_ERROR;
     }
 
-    task = TtyInterface.Task.FPGA;
+    if (!setTask(Task.FPGA)) return RC.CLI_ERROR;
     filesToOpen.add(new File(optArgs[0]));
     fpgaCircuit = optArgs[1];
     fpgaBoard = optArgs[2];
@@ -645,19 +674,18 @@ public class Startup {
   }
 
   private RC handleArgTestCircuit(Option opt) {
-    final var fileName = opt.getValue();
-    task = TtyInterface.Task.TEST_CIRCUIT;
-    filesToOpen.add(new File(fileName));
+    if (!setTask(Task.TEST_CIRCUIT)) return RC.CLI_ERROR;
+    filesToOpen.add(new File(opt.getValue()));
     return RC.OK;
   }
 
   private RC handleArgTestCircGen(Option opt) {
     // This is to test the XML consistency over different versions of the Logisim.
-    task = TtyInterface.Task.RESAVE;
+    if (!setTask(Task.RESAVE)) return RC.CLI_ERROR;
     final var optArgs = opt.getValues();
     // This is the input path of the file to open.
     filesToOpen.add(new File(optArgs[0]));
-    // This is the output file's path. The comparaison shall be done between the filesToOpen[0] and testCircPathOutput.
+    // This is the output file's path. The comparison shall be done between filesToOpen[0] and testCircPathOutput.
     resaveOutput = optArgs[1];
     return RC.OK;
   }

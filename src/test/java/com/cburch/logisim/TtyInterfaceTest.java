@@ -10,7 +10,9 @@
 package com.cburch.logisim;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.mockConstruction;
@@ -30,6 +32,7 @@ import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.gui.start.Startup;
 import com.cburch.logisim.gui.start.TtyInterface;
+import com.cburch.logisim.gui.start.Startup.Task;
 import com.cburch.logisim.util.LocaleManager;
 
 /** Tests command-line parsing. */
@@ -45,6 +48,7 @@ public class TtyInterfaceTest extends TestBase {
   @Test
   public void testOpenError() throws IllegalAccessException {
     final Startup startup = new Startup("--tty table missing-file".split(" "));
+    assertNotNull(startup);
     final var tty = new TtyInterface(startup);
 
     LocaleManager S = mock(LocaleManager.class);
@@ -106,7 +110,7 @@ public class TtyInterfaceTest extends TestBase {
   @Test
   public void testTestCircuitFail() {
     final Startup startup = new Startup("--test-circuit missing-file".split(" "));
-    assertEquals(Startup.UI.TTY,startup.ui);
+    assertTrue(startup.task.compareTo(Task.GUI) > 0);
     final var tty = new TtyInterface(startup);
     Loader loader = mock(Loader.class);
     final int rc = tty.run(loader);
