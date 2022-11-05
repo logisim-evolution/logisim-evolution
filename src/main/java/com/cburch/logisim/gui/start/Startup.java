@@ -507,7 +507,7 @@ public class Startup {
 
   private boolean setTask(Task t) {
     if (task != null) {
-      logger.error(S.get("ttyMutuallyExclusiveError")); // TODO STARTUP add
+      logger.error(S.get("ttyMutuallyExclusiveError"));
       return false;
     }
     task = t;
