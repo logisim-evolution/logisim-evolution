@@ -57,7 +57,8 @@ public class HdlColorRenderer extends JLabel implements TableCellRenderer {
     // Render all the rest
     if (value.equals(REQUIRED_FIELD_STRING)) {
       // This field (mostly lables) is required to be set for FGPA support to work.
-      setCellColors(Color.RED);
+      // But this is not an error if user do not really care FPGA at this moment, so let's color differently.
+      setCellColors(Color.ORANGE);
       setHorizontalAlignment(JLabel.CENTER);
       setText(S.get("FPGAHdlRequired"));
     } else if ((value.length() == 7 || value.length() == 9) && value.indexOf('#') == 0) {
