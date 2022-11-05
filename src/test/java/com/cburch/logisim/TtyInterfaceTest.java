@@ -126,9 +126,10 @@ public class TtyInterfaceTest extends TestBase {
     assertEquals(2,rc); // due to missing file
   }
 
-  // TODO success cases for all of above
-  // TODO --tty combinations
-  // TODO --load/save fails
-  // TODO --tty halt messages and RC
-  // TODO --tty TTY not found
+  // FIXME: verify logger/error messages for all of above
+
+  // FIXME: add success cases for all of above, will be easier if code is refactored 
+  // to avoid cumbersome constructor mocks
+
+  // FIXME: add tests for --tty table --load/save
 }
