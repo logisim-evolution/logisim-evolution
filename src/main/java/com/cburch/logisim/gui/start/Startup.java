@@ -180,38 +180,28 @@ public class Startup {
     }
 
     if (!substitutions.isEmpty() && task != Task.ANALYSIS) {
-      logger.error(S.get("substitutionsNeedsTtyError"));
+      logger.error(S.get("substituteNeedsTtyError"));
       task = Task.ERROR;
       return;
     }
 
     if (circuitToTest != null && task != Task.ANALYSIS && task != Task.TEST_VECTOR) {
-      logger.error(S.get("topLevelCircuitNeedsTtyError")); // TODO STARTUP add
+      logger.error(S.get("topLevelCircuitNeedsTtyError"));
       task = Task.ERROR;
       return;
     }
 
     if (task != Task.GUI) {
       if (filesToOpen.size() != 1) {
-        logger.error(S.get("ttyNeedsFileError")); // TODO STARTUP not just --tty
+        logger.error(S.get("ttyNeedsFileError"));
         task = Task.ERROR;
         return;
       }
 
-      if (gateShape != null) {
-        logger.error(S.get("gateShapeNeedsGuiError")); // TODO STARTUP add
-        task = Task.ERROR;
-        return;
-      }
-
-      if (windowSize != null || windowLocation != null) {
-        logger.error(S.get("geometryNeedsGuiError")); // TODO STARTUP add
-        task = Task.ERROR;
-        return;
-      }
-
-      if (templateType != AppPreferences.TEMPLATE_UNKNOWN) {
-        logger.error(S.get("templateNeedsGuiError")); // TODO STARTUP add
+      if (gateShape != null
+      ||  windowSize != null || windowLocation != null
+      ||  templateType != AppPreferences.TEMPLATE_UNKNOWN) {
+        logger.error(S.get("guiOptionUsedWithTtyError"));
         task = Task.ERROR;
         return;
       }
@@ -517,7 +507,7 @@ public class Startup {
 
   private boolean setTask(Task t) {
     if (task != null) {
-      logger.error(S.get("ttyMutualExclusion")); // TODO STARTUP add
+      logger.error(S.get("ttyMutuallyExclusiveError")); // TODO STARTUP add
       return false;
     }
     task = t;
