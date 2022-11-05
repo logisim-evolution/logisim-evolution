@@ -133,9 +133,10 @@ If you want to contribute to Logisim-evolution, this is how to do it:
 
 * Make a local *fork* of `Logisim-evolution` by clicking the *Fork* button on the
   [project GitHub page](https://github.com/logisim-evolution/logisim-evolution). This will create
-  copy of `Logisim-evolution` repository on your own Github account.
+  a copy of the `Logisim-evolution` repository on your own Github account.
 * As all the development happens on [`develop` branch](https://github.com/logisim-evolution/logisim-evolution/tree/develop),
-  ensure you checkout it before you create own branch
+  ensure you checkout [`develop` branch](https://github.com/logisim-evolution/logisim-evolution/tree/develop) before you
+  create your own branch.
 * Fix the bugs you want to fix on your local fork in the
   [`develop` branch](https://github.com/logisim-evolution/logisim-evolution/tree/develop).
 * Add the features you want to add on your local fork.

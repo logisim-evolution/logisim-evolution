@@ -41,9 +41,9 @@ Edit the existing Google Checks configuration:
 
 * Open the `Tools -> Checkstyle` plugin settings.
 * Activate the `Google Checks` configuration.
-* Some rules should be disabled, so we also ship `checkstyle-suppressions.xml` config file. It
-  lives in project's root directory and should be picked automatically and there should not be
-  necessary to do anything extra to make it used.
+* Some rules should be disabled, so we also ship a `checkstyle-suppressions.xml` config file. It
+  lives in the project's root directory and should be picked up automatically. It should not be
+  necessary to do anything else with it for it to be used.
 * You can now run CheckStyle using the `Checkstyle` command or directly from the CheckStyle tab.
 * Ensure `Rules:`, shown in the scan result window, reads `Google Checks`.
 
@@ -62,11 +62,11 @@ You can configure InteliJ's CheckStyle plugin to behave exactly as we configure 
   * Select `Use a local Checkstyle file`.
   * Click `Browse` and point to the `google_checks.xml` file.
   * Enable `Store relative to project location` and click `Next`.
-  * Some rules should be disabled, so we also ship `checkstyle-suppressions.xml` config file. It
-    lives in project's root directory and should be picked automatically and there should not be
-    necessary to do anything extra to make it used. If for any reason you need that changed, 
+  * Some rules should be disabled, so we also ship a `checkstyle-suppressions.xml` config file. It
+    lives in the project's root directory and should be picked up automatically. It should not be
+    necessary to do anything else with it for it to be used. If for any reason you need that changed,
     edit configuration and look for a property named `org.checkstyle.google.suppressionfilter.config`,
-    then set its value `checksyle-suppressions.xml` and click `Next.
+    then set its value to `checksyle-suppressions.xml` and click `Next.
   * Click "Finish".
 * You can now run CheckStyle using the `Checkstyle` command or directly from the CheckStyle tab.
 * Ensure `Rules:`, shown in the scan result window, reads `Logisim-evolution`.
