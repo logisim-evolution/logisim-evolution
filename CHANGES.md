@@ -3,8 +3,10 @@
 # Changes #
 
 * @dev (????-??-??)
-  * Added TTL 74182: look-ahead carry generator
-  * Added TTL 74181: arithmetic logic unit
+  * Added TTL 74182: look-ahead carry generator.
+  * Added TTL 74181: arithmetic logic unit.
+  * Attribute sheet now honors application color theme.
+  * Attribute sheet now displays HEX value of color properties.
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins
