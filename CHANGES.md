@@ -5,7 +5,7 @@
 * @dev (????-??-??)
   * Added TTL 74182: look-ahead carry generator.
   * Added TTL 74181: arithmetic logic unit.
-  * Fixed Karnaugh map color index bug
+  * Fixed Karnaugh map color index bug.
   * Attribute sheet now honors application color theme.
   * Attribute sheet now displays HEX value of color properties.
 
