@@ -95,7 +95,7 @@ public class SocBus extends SocInstanceFactory {
 
   @Override
   public void paintInstance(InstancePainter painter) {
-    Graphics2D g2 = (Graphics2D) painter.getGraphics();
+    final var g2 = (Graphics2D) painter.getGraphics();
     g2.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     painter.drawLabel();

@@ -3,7 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
-  * Introduced user-defined colors for components.
+  * Introduced user-defined color for components.
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins

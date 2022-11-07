@@ -1049,7 +1049,7 @@ public class Pin extends InstanceFactory {
       }
       g2.translate(xpos, ypos);
       g2.rotate(rotation);
-      Color col = g.getColor();
+      final var col = g.getColor();
       if (isBus) {
         g.setColor(Value.multiColor);
         GraphicsUtil.switchToWidth(g, Wire.WIDTH_BUS);
