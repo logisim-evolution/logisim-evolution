@@ -51,7 +51,7 @@ import javax.swing.table.TableModel;
 
 /*
  * Attribute table panel
- * Shows detailed attributes of selected element.
+ * Shows detailed attributes of the selected element.
  */
 public class AttrTable extends JPanel implements LocaleListener {
 

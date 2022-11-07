@@ -56,8 +56,8 @@ public class HdlColorRenderer extends JLabel implements TableCellRenderer {
 
     // Render all the rest
     if (value.equals(REQUIRED_FIELD_STRING)) {
-      // This field (mostly lables) is required to be set for FGPA support to work.
-      // But this is not an error if user do not really care FPGA at this moment, so let's color differently.
+      // This field (mostly labels) is required to be set for FGPA support to work.
+      // But this is not an error if the user does not really care about FPGA at this moment, so let's color it differently."
       setCellColors(Color.ORANGE);
       setHorizontalAlignment(JLabel.CENTER);
       setText(S.get("FPGAHdlRequired"));
@@ -85,7 +85,7 @@ public class HdlColorRenderer extends JLabel implements TableCellRenderer {
   }
 
   /**
-   * First attribute table rows always shows component FPGA support status.
+   * First attribute table row always shows the component's FPGA support status.
    */
   protected Component renderFpgaSupportRow(int columnIdx, String value) {
 
@@ -95,7 +95,7 @@ public class HdlColorRenderer extends JLabel implements TableCellRenderer {
       return this;
     }
 
-    // Let's color the status cell fancy way.
+    // Let's color the status cell in a fancy way
     final String labelKey;
     var bg = javax.swing.UIManager.getColor("Table.background");
     if (!value.equals(UNKNOWN_STRING)) {

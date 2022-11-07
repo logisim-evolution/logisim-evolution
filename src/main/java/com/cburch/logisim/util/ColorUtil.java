@@ -12,10 +12,9 @@ package com.cburch.logisim.util;
 import java.awt.Color;
 
 /**
- * Some Color management helper methods.
+ * Some color management helper methods.
  *
  * For Swing's UIManager color keys see:
- * https://thebadprogrammer.com/swing-uimanager-keys/
  */
 public final class ColorUtil {
 
