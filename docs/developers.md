@@ -132,7 +132,11 @@ and build `Logisim-evolution` from source as described above.
 If you want to contribute to Logisim-evolution, this is how to do it:
 
 * Make a local *fork* of `Logisim-evolution` by clicking the *Fork* button on the
-  [project GitHub page](https://github.com/logisim-evolution/logisim-evolution).
+  [project GitHub page](https://github.com/logisim-evolution/logisim-evolution). This will create
+  a copy of the `Logisim-evolution` repository on your own Github account.
+* As all the development happens on [`develop` branch](https://github.com/logisim-evolution/logisim-evolution/tree/develop),
+  ensure you checkout [`develop` branch](https://github.com/logisim-evolution/logisim-evolution/tree/develop) before you
+  create your own branch.
 * Fix the bugs you want to fix on your local fork in the
   [`develop` branch](https://github.com/logisim-evolution/logisim-evolution/tree/develop).
 * Add the features you want to add on your local fork.
@@ -144,8 +148,9 @@ Once it is running without bugs on your local fork, request a *Pull request* by:
 * Click on *compare across forks*.
 * On the right hand side select your fork, for example: *head repository: BFH-ktt1/logisim-evolution*
 * On the right hand side select your branch, for example: *base: bugfixes*
-* On the left hand side select the development branch *base: develop* (**Important:** All pull requests must be on
-  the [branch `develop`](https://github.com/logisim-evolution/logisim-evolution/tree/develop) as
-  the [branch `master`](https://github.com/logisim-evolution/logisim-evolution/tree/master) only holds the code
-  of the latest stable release!)
+* On the left hand side select the development branch *base: develop* (**Important:** All pull requests **MUST**
+  be on the [branch `develop`](https://github.com/logisim-evolution/logisim-evolution/tree/develop) as
+  the [branch `master`](https://github.com/logisim-evolution/logisim-evolution/tree/master) only
+  holds the code of the latest stable release and we do not allow any external contributions to that
+  particular branch.
 * Make sure that there are no conflicts reported.
