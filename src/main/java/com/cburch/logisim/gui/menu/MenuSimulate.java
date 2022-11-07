@@ -214,7 +214,7 @@ public class MenuSimulate extends Menu {
 
   private void recreateStateMenu(JMenu menu, List<CircuitStateMenuItem> items, int code) {
     menu.removeAll();
-    menu.setEnabled(items.size() > 0);
+    menu.setEnabled(!items.isEmpty());
     var first = true;
     final var mask = getToolkit().getMenuShortcutKeyMaskEx();
     for (var i = items.size() - 1; i >= 0; i--) {
@@ -333,11 +333,9 @@ public class MenuSimulate extends Menu {
       final var proj = menubar.getSimulationProject();
       if (proj == null) return;
       final var vhdl = proj.getVhdlSimulator();
-      if (vhdl != null
-          && (src == simulateVhdlEnable || src == LogisimMenuBar.SIMULATE_VHDL_ENABLE)) {
+      if (vhdl != null && (src == simulateVhdlEnable || src == LogisimMenuBar.SIMULATE_VHDL_ENABLE)) {
         vhdl.setEnabled(!vhdl.isEnabled());
-      } else if (vhdl != null
-          && (src == vhdlSimFiles || src == LogisimMenuBar.GENERATE_VHDL_SIM_FILES)) {
+      } else if (vhdl != null && (src == vhdlSimFiles || src == LogisimMenuBar.GENERATE_VHDL_SIM_FILES)) {
         vhdl.restart();
       } else if (src == log) {
         proj.getLogFrame().setVisible(true);
@@ -348,7 +346,9 @@ public class MenuSimulate extends Menu {
       final var sim = proj.getSimulator();
       if (sim == null) {
         return;
-      } else if (src == LogisimMenuBar.SIMULATE_STOP) {
+      }
+
+      if (src == LogisimMenuBar.SIMULATE_STOP) {
         sim.setAutoPropagation(false);
         proj.repaintCanvas();
       } else if (src == LogisimMenuBar.SIMULATE_RUN) {

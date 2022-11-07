@@ -37,9 +37,7 @@ import org.slf4j.LoggerFactory;
  * @author christian.mueller@heig-vd.ch
  */
 public class VhdlSimulatorVhdlTop {
-
   static final Logger logger = LoggerFactory.getLogger(VhdlSimulatorVhdlTop.class);
-
   private boolean valid = false;
   private final VhdlSimulatorTop vhdlSimulator;
   private boolean firstPort;
@@ -221,15 +219,15 @@ public class VhdlSimulatorVhdlTop {
       return;
     }
 
-    template = template.replaceAll("%date%", LocaleManager.PARSER_SDF.format(new Date()));
-    template = template.replaceAll("%ports%", ports.toString());
-    template = template.replaceAll("%components%", components.toString());
-    template = template.replaceAll("%map%", map.toString());
+    template = template
+            .replaceAll("%date%", LocaleManager.PARSER_SDF.format(new Date()))
+            .replaceAll("%ports%", ports.toString())
+            .replaceAll("%components%", components.toString())
+            .replaceAll("%map%", map.toString());
 
     PrintWriter writer;
     try {
-      writer =
-          new PrintWriter(
+      writer = new PrintWriter(
               VhdlSimConstants.SIM_SRC_PATH + VhdlSimConstants.SIM_TOP_FILENAME,
               StandardCharsets.UTF_8);
       writer.print(template);
