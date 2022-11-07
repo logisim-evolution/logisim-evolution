@@ -53,9 +53,9 @@ repos:
       - id: checkstyle-jar
       # This hook trims trailing whitespace.
       - id: trailing-whitespaces
-        exclude_types: ['xml']
+        exclude_types: ['xml','png','jpeg','svg']
         args: ['--markdown-linebreak-ext=md', '--fix=yes']
       # Ensures that a file is either empty, or ends with one newline
       - id: end-of-file
-        exclude_types: ['xml']
+        exclude_types: ['xml','png','jpeg','svg']
         args: ['--fix=yes']
