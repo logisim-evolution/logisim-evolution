@@ -96,7 +96,7 @@ public class SocVga extends SocInstanceFactory implements DynamicElementProvider
   public void paintInstance(InstancePainter painter) {
     Bounds bds1 = painter.getBounds();
     Bounds bds2 = getOffsetBounds(painter.getAttributeSet());
-    Graphics gfx= painter.getGraphics().create();
+    Graphics gfx = painter.getGraphics().create();
     if (bds1.getWidth() != bds2.getWidth() || bds1.getHeight() != bds2.getHeight())
       setTextField(painter.getInstance());
     gfx.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
