@@ -68,16 +68,16 @@ public class Dependencies {
     public void libraryChanged(LibraryEvent e) {
       switch (e.getAction()) {
         case LibraryEvent.ADD_TOOL:
-          if (e.getData() instanceof AddTool) {
-            final var factory = ((AddTool) e.getData()).getFactory();
+          if (e.getData() instanceof AddTool tool) {
+            final var factory = tool.getFactory();
             if (factory instanceof SubcircuitFactory circFact) {
               processCircuit(circFact.getSubcircuit());
             }
           }
           break;
         case LibraryEvent.REMOVE_TOOL:
-          if (e.getData() instanceof AddTool) {
-            final var factory = ((AddTool) e.getData()).getFactory();
+          if (e.getData() instanceof AddTool tool) {
+            final var factory = tool.getFactory();
             if (factory instanceof SubcircuitFactory circFact) {
               final var circ = circFact.getSubcircuit();
               depends.removeNode(circ);

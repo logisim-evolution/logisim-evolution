@@ -4,6 +4,10 @@
 
 * @dev (????-??-??)
   * Introduced user-defined color for components.
+  * Added TTL 74182: look-ahead carry generator
+  * Added TTL 74181: arithmetic logic unit
+  * Fixed Karnaugh map color index bug
+  * Added TTL 74381: arithmetic logic unit
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins

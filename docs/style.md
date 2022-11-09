@@ -18,8 +18,9 @@
 # Coding style #
 
 `Logisim-evolution` uses `Google Java Style` code style as provided with the `CodeStyle`
-static anaylyzer tool, with a few checks disabled as specified in the `suppressions.xml`
-config file.
+static anaylyzer tool, with a few checks disabled as specified in the `checkstyle-suppressions.xml`
+config file located in project root directory (from where it should be automatically picked
+by Checkstyle).
 
 ---
 
@@ -31,8 +32,8 @@ config file.
 Either way, you need to install the `CheckStyle-IDEA` plugin first:
 
 * Go to `Settings -> Plugins`.
-* Install [CheckStyle-IDEA plugin](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea) (by Jamie Shiell)
-  from the Marketplace.
+* Install [CheckStyle-IDEA plugin](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea)
+  (by Jamie Shiell) from the Jetbrain's Marketplace repository.
 
 ## Editing built-in config ##
 
@@ -40,10 +41,9 @@ Edit the existing Google Checks configuration:
 
 * Open the `Tools -> Checkstyle` plugin settings.
 * Activate the `Google Checks` configuration.
-* Highlight the `Google Checks` row and click the `Pen` icon above the list to edit it.
-* Look for the `org.checkstyle.google.suppressionfilter.config` named property and set its value
-  to `config/checkstyle/suppressions.xml`.
-* Click `Finish`.
+* Some rules should be disabled, so we also ship a `checkstyle-suppressions.xml` config file. It
+  lives in the project's root directory and should be picked up automatically. It should not be
+  necessary to do anything else with it for it to be used.
 * You can now run CheckStyle using the `Checkstyle` command or directly from the CheckStyle tab.
 * Ensure `Rules:`, shown in the scan result window, reads `Google Checks`.
 
@@ -53,17 +53,20 @@ You can configure InteliJ's CheckStyle plugin to behave exactly as we configure 
 
 * Open the `Tools -> Checkstyle` plugin settings.
 * Set the `Checkstyle version` to your liking.
-* Go to the [Checkstyle GitHub page](https://github.com/checkstyle/checkstyle/releases) and look for a release matching the
-  selected `Checkstyle version` and download the source archive.
-* Unpack it and copy out the `src/main/resources/google_checks.xml` file to Logisim's `config/checkstyle/`.
+* Go to the [Checkstyle GitHub page](https://github.com/checkstyle/checkstyle/releases) and look
+  for a release matching the selected `Checkstyle version` and download the source archive.
+* Unpack it and copy out the `src/main/resources/google_checks.xml` file to project root directory.
 * Go back to the plugin configuration and add a new "Configuration file":
   * Click the `+` icon.
   * Set the description to `Logisim-evolution`.
   * Select `Use a local Checkstyle file`.
-  * Click `Browse` and point to the `config/checkstyle/google_checks.xml` file.
+  * Click `Browse` and point to the `google_checks.xml` file.
   * Enable `Store relative to project location` and click `Next`.
-  * On the `Property` table, look for a property named `org.checkstyle.google.suppressionfilter.config`. Set the value
-    to `config/checkstyle/suppressions.xml` and click `Next.
+  * Some rules should be disabled, so we also ship a `checkstyle-suppressions.xml` config file. It
+    lives in the project's root directory and should be picked up automatically. It should not be
+    necessary to do anything else with it for it to be used. If for any reason you need that changed,
+    edit configuration and look for a property named `org.checkstyle.google.suppressionfilter.config`,
+    then set its value to `checksyle-suppressions.xml` and click `Next.
   * Click "Finish".
 * You can now run CheckStyle using the `Checkstyle` command or directly from the CheckStyle tab.
 * Ensure `Rules:`, shown in the scan result window, reads `Logisim-evolution`.
@@ -72,10 +75,18 @@ You can configure InteliJ's CheckStyle plugin to behave exactly as we configure 
 
 # Using Gradle plugin #
 
-CheckStyle is also plugged into the project's Gradle build system and provides the `checkstyleMain` and `checkstyleTest` tasks:
+CheckStyle is also plugged into the project's Gradle build system and provides the `checkstyleMain`
+and `checkstyleTest` tasks:
 
 ```bash
 $ ./gradlew checkstyleMain
+```
+
+This should kick in automatically for some build tasks but if for any reason you want Checkstyle
+to not be run during your builds, exclude these tasks with `-x`, i.e:
+
+```bash
+$ ./gradlew build -x checkstyleMain -x checkstyleTest
 ```
 
 ---
