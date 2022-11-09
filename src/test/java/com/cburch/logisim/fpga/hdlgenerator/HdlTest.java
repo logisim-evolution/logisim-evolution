@@ -10,14 +10,10 @@
 package com.cburch.logisim.fpga.hdlgenerator;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.fail;
 import static org.mockito.Mockito.mockStatic;
 
 import com.cburch.logisim.TestBase;
-import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import org.junit.jupiter.api.Test;

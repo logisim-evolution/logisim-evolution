@@ -21,10 +21,9 @@ import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.soc.file.SectionHeader;
 import com.cburch.logisim.soc.file.SymbolTable;
 import com.cburch.logisim.util.StringGetter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
