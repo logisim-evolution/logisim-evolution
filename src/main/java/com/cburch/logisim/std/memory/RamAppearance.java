@@ -815,7 +815,7 @@ public class RamAppearance {
       g.drawString(label, loc.getX() + 33, loc.getY() + 5);
     }
 
-    /* TODO */
+    /* draw byte enable text */
     for (var i = 0; i < getNrBEPorts(attrs); i++) {
       final var idx = getBEIndex(i, attrs);
       final var loc = inst.getPortLocation(idx);

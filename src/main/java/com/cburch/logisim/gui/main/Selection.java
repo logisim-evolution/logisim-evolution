@@ -102,8 +102,7 @@ public class Selection extends SelectionBase {
       int x = loc.getX() + dx;
       int y = loc.getY() + dy;
       context.setGraphics(g.create());
-      //comp.getFactory().drawGhost(context, Color.gray, x, y, attrs);
-      comp.getFactory().drawGhost(context, new Color(AppPreferences.COMPONENT_GHOST_COLOR.get()), x, y, attrs); // WIP
+      comp.getFactory().drawGhost(context, new Color(AppPreferences.COMPONENT_GHOST_COLOR.get()), x, y, attrs);
       context.getGraphics().dispose();
     }
     context.setGraphics(g);

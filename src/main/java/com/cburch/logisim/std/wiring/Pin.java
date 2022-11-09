@@ -1034,7 +1034,7 @@ public class Pin extends InstanceFactory {
         rotation = -Math.PI / 2;
         xpos = x + width / 2;
         ypos = y;
-        rwidth = height;
+        rwidth = height;    //g2.setColor(Color.BLACK); // WIP
         rheight = width;
       } else if (dir == Direction.SOUTH) {
         rotation = Math.PI / 2;
@@ -1132,7 +1132,7 @@ public class Pin extends InstanceFactory {
     GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(1));
     BitWidth w = attrs.getValue(StdAttr.WIDTH);
     int pinSize = iconSize >> 2;
-    final var baseColor = new Color(AppPreferences.COMPONENT_COLOR.get());
+    final var baseColor = g.getColor();
     if (attrs.getValue(ProbeAttributes.PROBEAPPEARANCE) == ProbeAttributes.APPEAR_EVOLUTION_NEW) {
       int arrowHeight = (10 * iconSize) >> 4;
       int yoff = (3 * iconSize) >> 4;
@@ -1147,7 +1147,7 @@ public class Pin extends InstanceFactory {
             xoff + iconSize - (pinSize << 1),
             xoff
           };
-      g.setColor(Color.black);
+      g.setColor(baseColor);
       g.drawPolygon(xPoints, yPoints, xPoints.length);
       g.setColor(Value.TRUE.getColor());
       GraphicsUtil.switchToWidth(g, AppPreferences.getScaled(2));
@@ -1170,7 +1170,7 @@ public class Pin extends InstanceFactory {
         pinx = iconOffset + (boxWidth >> 1) - (pinWidth >> 1);
         piny = iconOffset + boxWidth;
       }
-      g.setColor(Color.black);
+      g.setColor(baseColor);
       if (output) {
         g.drawOval(iconOffset, iconOffset, boxWidth, boxWidth);
       } else {
@@ -1192,7 +1192,7 @@ public class Pin extends InstanceFactory {
         else
           xpos = (iconSize - pinSize) / 2 - (float) bw.getBounds().getCenterX();
       bw.draw(g, xpos, ypos);
-      g.setColor(Color.BLACK);
+      g.setColor(baseColor);
     }
   }
 
