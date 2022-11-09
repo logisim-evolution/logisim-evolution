@@ -28,6 +28,7 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
@@ -399,7 +400,7 @@ public class PortIo extends InstanceFactory {
     int[] bx = {1, 1, 5, w - 6, w - 2, w - 2, 1};
     int[] by = {20, h - 8, h - 4, h - 4, h - 8, 20, 20};
     g.fillPolygon(bx, by, 6);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     GraphicsUtil.switchToWidth(g, 1);
     g.drawPolyline(bx, by, 7);
 
@@ -415,7 +416,7 @@ public class PortIo extends InstanceFactory {
         g.fillRect(7 + ((i / 2) * 10), 25 + (i % 2) * 10, 6, 6);
       }
     }
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     AttributeOption dir = painter.getAttributeValue(ATTR_DIR);
     var px = ((dir == INOUTSE || dir == INOUTME) ? 0 : 10);
     final var py = 0;

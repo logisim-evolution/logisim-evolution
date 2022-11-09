@@ -19,7 +19,6 @@ public class CounterIcon extends BaseIcon {
 
   @Override
   protected void paintIcon(Graphics2D g2) {
-    g2.setColor(Color.BLACK);
     g2.fillRect(scale(1), 0, scale(6), scale(16));
     g2.fillRect(scale(9), 0, scale(6), scale(16));
     g2.drawRect(scale(1), 0, scale(6), scale(16));
@@ -27,7 +26,7 @@ public class CounterIcon extends BaseIcon {
     final var f = g2.getFont().deriveFont(scale((float) 6));
     final var tens = state / 10;
     final var ones = state % 10;
-    g2.setColor(Color.WHITE);
+    g2.setColor(Color.WHITE); // TODO should be set to the inverted default color  
     for (int i = -1; i < 2; i++) {
       final var val = Math.abs((ones + i) % 10);
       final var c = (char) ('0' + val);

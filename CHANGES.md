@@ -2,6 +2,9 @@
 
 # Changes #
 
+* @dev (????-??-??)
+  * Introduced user-defined color for components.
+
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins
   * Fixed boolean algebra minimal form bug
