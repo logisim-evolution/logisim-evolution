@@ -1034,7 +1034,7 @@ public class Pin extends InstanceFactory {
         rotation = -Math.PI / 2;
         xpos = x + width / 2;
         ypos = y;
-        rwidth = height;    //g2.setColor(Color.BLACK); // WIP
+        rwidth = height;
         rheight = width;
       } else if (dir == Direction.SOUTH) {
         rotation = Math.PI / 2;
