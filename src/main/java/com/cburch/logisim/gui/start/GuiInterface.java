@@ -74,7 +74,8 @@ public class GuiInterface implements AWTEventListener {
   private boolean clearPreferences = false;
 
   public GuiInterface(Startup startup) {
-    assert startup.task == Startup.Task.GUI;
+    if (startup.task != Startup.Task.GUI)
+      throw new IllegalArgumentException("must be GUI task");
 
     gateShape         = startup.gateShape;
     windowSize        = startup.windowSize;

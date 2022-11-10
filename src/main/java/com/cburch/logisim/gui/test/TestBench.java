@@ -24,9 +24,9 @@ public class TestBench {
   private final Instance[] pinsOutput;
   private Project proj;
 
-  public TestBench(Project p) {
+  public TestBench(Project project) {
     this.pinsOutput = new Instance[outputSignals.length];
-    this.proj = p;
+    this.proj = project;
   }
 
   /* Check if the label correspond to any of the strings

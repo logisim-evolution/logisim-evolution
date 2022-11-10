@@ -40,7 +40,7 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
   private boolean downloadOnly;
   private boolean generateHdlOnly;
   private char vendor;
-  private JProgressBar progressBar;
+  private JProgressBar progressBar = null;
   private VendorDownload downloader;
   private String topLevelSheet;
   private double tickFrequency;
@@ -88,7 +88,6 @@ public class Download extends DownloadBase implements Runnable, BaseWindowListen
       boolean writeToFlash,
       boolean downloadOnly,
       boolean generateHdlOnly) {
-    this.progressBar = null;
     setUpDownload(
         myProject,
         topLevelSheet,

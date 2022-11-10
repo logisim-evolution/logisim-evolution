@@ -42,7 +42,7 @@ public class TtyInterfaceTest extends TestBase {
   @Test
   public void testNotTty() {
     final Startup startup = new Startup(new String[0]);
-    assertThrows(AssertionError.class, () -> new TtyInterface(startup));
+    assertThrows(IllegalArgumentException.class, () -> new TtyInterface(startup));
   }
 
   @Test

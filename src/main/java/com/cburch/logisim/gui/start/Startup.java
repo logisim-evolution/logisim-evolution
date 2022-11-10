@@ -454,8 +454,8 @@ public class Startup {
     }
     logger.error(S.get("invalidLocaleError"));
     logger.error(S.get("invalidLocaleOptionsHeader"));
-    for (final var o : opts) {
-      logger.error("   {}", o.toString());
+    for (final var option : opts) {
+      logger.error("   {}", option.toString());
     }
     return RC.CLI_ERROR;
   }
@@ -505,12 +505,12 @@ public class Startup {
 
   //* *********************** TTY arguments ********************** */
 
-  private boolean setTask(Task t) {
+  private boolean setTask(Task newTask) {
     if (task != null) {
       logger.error(S.get("ttyMutuallyExclusiveError"));
       return false;
     }
-    task = t;
+    task = newTask;
     return true;
   }
 

@@ -94,17 +94,28 @@ public class TtyInterface {
   private static final int EXITCODE_TEST_FAIL = -1;
   
   public TtyInterface(Startup startup) {
-    assert startup.task.compareTo(Task.GUI) > 0;
-    assert startup.filesToOpen.size() == 1;
-    assert (startup.fpgaCircuit != null) == (startup.task == Task.FPGA);
-    assert (startup.fpgaBoard != null) == (startup.task == Task.FPGA);
-    assert (startup.testVector != null) == (startup.task == Task.TEST_VECTOR);
-    assert startup.circuitToTest == null || startup.task == Task.TEST_VECTOR || startup.task == Task.ANALYSIS;
-    assert (startup.resaveOutput != null) == (startup.task == Task.RESAVE);
-    assert (startup.ttyFormat != 0) == (startup.task == Task.ANALYSIS);
-    assert startup.substitutions.isEmpty() || startup.task == Task.ANALYSIS;
-    assert startup.loadFile == null || startup.task == Task.ANALYSIS;
-    assert startup.saveFile == null || startup.task == Task.ANALYSIS;
+    if (startup.task.compareTo(Task.GUI) <= 0) 
+      throw new IllegalArgumentException("must be a TTY task");
+    if (startup.filesToOpen.size() != 1) 
+      throw new IllegalArgumentException("only one .circ file allowed");
+    if ((startup.fpgaCircuit != null) != (startup.task == Task.FPGA)) 
+      throw new IllegalArgumentException("fpgaCircuit only applies to FPGA task");
+    if ((startup.fpgaBoard != null) != (startup.task == Task.FPGA))
+      throw new IllegalArgumentException("fpgaBoard only applies to FPGA task");
+    if ((startup.testVector != null) != (startup.task == Task.TEST_VECTOR)) 
+      throw new IllegalArgumentException("testVector only applies to TEST_VECTOR task");
+    if (startup.circuitToTest != null && startup.task != Task.TEST_VECTOR && startup.task != Task.ANALYSIS)
+      throw new IllegalArgumentException("circuitToTest only applies to TEST_VECTOR and ANALYSIS tasks");
+    if ((startup.resaveOutput != null) != (startup.task == Task.RESAVE))
+      throw new IllegalArgumentException("resaveOutput only applies to RESAVE task");
+    if ((startup.ttyFormat != 0) != (startup.task == Task.ANALYSIS))
+      throw new IllegalArgumentException("ttyFormat only applies to ANALYSIS task");
+    if (!startup.substitutions.isEmpty() && startup.task != Task.ANALYSIS)
+      throw new IllegalArgumentException("substitutions only applies to ANALYSIS task");
+    if (startup.loadFile != null && startup.task != Task.ANALYSIS)
+      throw new IllegalArgumentException("loadFile only applies to ANALYSIS task");
+    if (startup.saveFile != null && startup.task != Task.ANALYSIS)
+      throw new IllegalArgumentException("saveFile only applies to ANALYSIS task");
 
     task          = startup.task;
     fileToOpen    = startup.filesToOpen.get(0);
