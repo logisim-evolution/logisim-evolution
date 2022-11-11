@@ -440,7 +440,7 @@ public class Startup {
   }
 
   private RC handleArgLocale(Option opt) {
-    String lang = opt.getValue();
+    final var lang = opt.getValue();
     final var opts = S.getLocaleOptions();
     for (final var locale : opts) {
       if (lang.equals(locale.toString())) {
@@ -648,11 +648,11 @@ public class Startup {
     fpgaBoard = optArgs[2];
 
     if (argsCnt >= 4) {
-      RC rc = handleArgTestFpgaParseArg(optArgs[3]);
+      final var rc = handleArgTestFpgaParseArg(optArgs[3]);
       if (rc != RC.OK) return rc;
     }
     if (argsCnt >= 5) {
-      RC rc = handleArgTestFpgaParseArg(optArgs[4]);
+      final var rc = handleArgTestFpgaParseArg(optArgs[4]);
       if (rc != RC.OK) return rc;
     }
 

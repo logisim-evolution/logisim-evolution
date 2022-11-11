@@ -33,8 +33,8 @@ public class StartupTest extends TestBase {
   @ParameterizedTest
   @MethodSource
   public void testVersion(String options) {
-    String[] args = options.split(" ");
-    var startup = new Startup(args);
+    final var args = options.split(" ");
+    final var startup = new Startup(args);
     assertEquals(Task.NONE,startup.task);
   }
   static Stream<String> testVersion() {
@@ -50,8 +50,8 @@ public class StartupTest extends TestBase {
   @ParameterizedTest
   @MethodSource
   public void testCLIErrors(String options) {
-    String[] args = options.split(" ");
-    var startup = new Startup(args);
+    final var args = options.split(" ");
+    final var startup = new Startup(args);
     assertEquals(Task.ERROR,startup.task);
   }
   private static Stream<String> testCLIErrors() {
@@ -121,8 +121,8 @@ public class StartupTest extends TestBase {
   @ParameterizedTest
   @MethodSource
   public void testGoodTty(String options) {
-    String[] args = options.split(" ");
-    var startup = new Startup(args);
+    final var args = options.split(" ");
+    final var startup = new Startup(args);
 
     assertTrue(startup.task.compareTo(Task.GUI) > 0);
     assertEquals(1, startup.filesToOpen.size());
@@ -162,8 +162,8 @@ public class StartupTest extends TestBase {
   @ParameterizedTest
   @MethodSource
   public void testGoodGui(String options) {
-    String[] args = options.split(" ");
-    var startup = new Startup(args);
+    final var args = options.split(" ");
+    final var startup = new Startup(args);
     assertEquals(Task.GUI,startup.task);
     assertNull(startup.fpgaCircuit);
     assertNull(startup.fpgaBoard);

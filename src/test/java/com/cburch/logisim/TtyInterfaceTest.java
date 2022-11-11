@@ -47,7 +47,7 @@ public class TtyInterfaceTest extends TestBase {
 
   @Test
   public void testOpenError() throws IllegalAccessException {
-    final Startup startup = new Startup("--tty table missing-file".split(" "));
+    final var startup = new Startup("--tty table missing-file".split(" "));
     assertNotNull(startup);
     final var tty = new TtyInterface(startup);
 
@@ -57,8 +57,8 @@ public class TtyInterfaceTest extends TestBase {
     FieldUtils.writeField(tty,"S",S,true);
     FieldUtils.writeField(tty,"logger",logger,true);
 
-    Loader loader = new Loader(null);
-    final int rc = tty.run(loader);
+    final var loader = new Loader(null);
+    final var rc = tty.run(loader);
     
     assertEquals(Main.EXITCODE_ARG_ERROR,rc);
     verify(logger).error(anyString(),ArgumentMatchers.eq("ttyLoadError:missing-file"));
@@ -67,16 +67,16 @@ public class TtyInterfaceTest extends TestBase {
 
   @Test
   public void testFPGAFail() {
-    final Startup startup = new Startup("--test-fpga a b missing-file".split(" "));
+    final var startup = new Startup("--test-fpga a b missing-file".split(" "));
     final var tty = new TtyInterface(startup);
-    Loader loader = mock(Loader.class);
-    final int rc = tty.run(loader);
+    final var loader = mock(Loader.class);
+    final var rc = tty.run(loader);
     assertEquals(Main.EXITCODE_ARG_ERROR,rc); // due to missing file
   }
 
   @Test
   public void testFPGASucceed() {
-    final Startup startup = new Startup("--test-fpga a b missing-file".split(" "));
+    final var startup = new Startup("--test-fpga a b missing-file".split(" "));
     final var tty = new TtyInterface(startup);
     
     Loader loader = mock(Loader.class);
@@ -84,45 +84,45 @@ public class TtyInterfaceTest extends TestBase {
       (mock, context) -> {
         when(mock.runTty()).thenReturn(false);
       })) {
-      final int rc = tty.run(loader);
+      final var rc = tty.run(loader);
       assertEquals(Main.EXITCODE_ARG_ERROR,rc);
     }
   }
 
   @Test
   public void testTestVectorFail() {
-    final Startup startup = new Startup("--test-vector a b missing-file".split(" "));
+    final var startup = new Startup("--test-vector a b missing-file".split(" "));
     final var tty = new TtyInterface(startup);
-    Loader loader = mock(Loader.class);
-    final int rc = tty.run(loader);
+    final var loader = mock(Loader.class);
+    final var rc = tty.run(loader);
     assertEquals(Main.EXITCODE_ARG_ERROR,rc); // due to missing file
   }
 
   @Test
   public void testNewFileFormatFail() {
-    final Startup startup = new Startup("--new-file-format a missing-file".split(" "));
+    final var startup = new Startup("--new-file-format a missing-file".split(" "));
     final var tty = new TtyInterface(startup);
-    Loader loader = mock(Loader.class);
-    final int rc = tty.run(loader);
+    final var loader = mock(Loader.class);
+    final var rc = tty.run(loader);
     assertEquals(Main.EXITCODE_ARG_ERROR,rc); // due to missing file
   }
 
   @Test
   public void testTestCircuitFail() {
-    final Startup startup = new Startup("--test-circuit missing-file".split(" "));
+    final var startup = new Startup("--test-circuit missing-file".split(" "));
     assertTrue(startup.task.compareTo(Task.GUI) > 0);
     final var tty = new TtyInterface(startup);
-    Loader loader = mock(Loader.class);
-    final int rc = tty.run(loader);
+    final var loader = mock(Loader.class);
+    final var rc = tty.run(loader);
     assertEquals(Main.EXITCODE_ARG_ERROR,rc); // due to missing file
   }
 
   @Test
   public void testTtyFail() {
-    final Startup startup = new Startup("--tty table missing-file".split(" "));
+    final var startup = new Startup("--tty table missing-file".split(" "));
     final var tty = new TtyInterface(startup);
-    Loader loader = mock(Loader.class);
-    final int rc = tty.run(loader);
+    final var loader = mock(Loader.class);
+    final var rc = tty.run(loader);
     assertEquals(Main.EXITCODE_ARG_ERROR,rc); // due to missing file
   }
 
