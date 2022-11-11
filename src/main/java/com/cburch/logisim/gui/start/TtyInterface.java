@@ -9,6 +9,7 @@
 
 package com.cburch.logisim.gui.start;
 
+import com.cburch.logisim.Main;
 import com.cburch.logisim.analyze.model.TruthTable;
 import com.cburch.logisim.analyze.model.Var;
 import com.cburch.logisim.circuit.Analyze;
@@ -86,12 +87,6 @@ public class TtyInterface {
   public static final int FORMAT_TABLE_CSV = 64;
   public static final int FORMAT_TABLE_BIN = 128;
   public static final int FORMAT_TABLE_HEX = 256;
-
-  private static final int EXITCODE_OK = 0;
-  private static final int EXITCODE_ARG_ERROR = 1;
-  private static final int EXITCODE_OSCILLATION = 1;
-  private static final int EXITCODE_IO_ERROR = 2;
-  private static final int EXITCODE_TEST_FAIL = -1;
   
   public TtyInterface(Startup startup) {
     if (startup.task.compareTo(Task.GUI) <= 0) 
@@ -140,7 +135,7 @@ public class TtyInterface {
       logger.error("{}", S.get("ttyLoadError", fileToOpen.getName()));
       file = null;
     }
-    if (file == null) return EXITCODE_IO_ERROR;
+    if (file == null) return Main.EXITCODE_ARG_ERROR;
 
     final var proj = new Project(file);
 
@@ -149,12 +144,12 @@ public class TtyInterface {
         return fpgaDownload(proj);
       case TEST_VECTOR:
         proj.doTestVector(testVector, circuitToTest);
-        return EXITCODE_OK;
+        return Main.EXITCODE_OK;
       case TEST_CIRCUIT:
         return testCircuit(proj);
       case RESAVE:
         ProjectActions.doSave(proj,new File(resaveOutput));
-        return EXITCODE_OK;
+        return Main.EXITCODE_OK;
       default:
       case ANALYSIS:
         return doAnalysis(file,proj);
@@ -165,7 +160,7 @@ public class TtyInterface {
 
   int fpgaDownload(Project proj) {
     final var mainCircuit = proj.getLogisimFile().getCircuit(fpgaCircuit);
-    if (mainCircuit == null) return EXITCODE_IO_ERROR;
+    if (mainCircuit == null) return Main.EXITCODE_ARG_ERROR;
     final var simTickFreq = mainCircuit.getTickFrequency();
     final var downTickFreq = mainCircuit.getDownloadFrequency();
     final var boardReader = new BoardReaderClass(AppPreferences.Boards.getBoardFilePath(fpgaBoard));
@@ -178,7 +173,7 @@ public class TtyInterface {
       false,
       false,
       fpgaHdlOnly);
-    return downloader.runTty() ? EXITCODE_OK : EXITCODE_IO_ERROR;
+    return downloader.runTty() ? Main.EXITCODE_OK : Main.EXITCODE_ARG_ERROR;
   }
 
   // --test-circuit --------------------------------
@@ -187,10 +182,10 @@ public class TtyInterface {
     final var testBench = new TestBench(proj);
     if (testBench.startTestBench()) {
       System.out.println("Test bench pass\n");
-      return EXITCODE_OK;
+      return Main.EXITCODE_OK;
     } 
     System.out.println("Test bench fail\n");
-    return EXITCODE_TEST_FAIL;
+    return Main.EXITCODE_TEST_FAIL;
   }
   
   // --tty --------------------------------
@@ -200,7 +195,7 @@ public class TtyInterface {
     var format = ttyFormat;
     if ((format & FORMAT_STATISTICS) != 0) {
       displayStatistics(file, circuit);
-      if (format == FORMAT_STATISTICS) return EXITCODE_OK;
+      if (format == FORMAT_STATISTICS) return Main.EXITCODE_OK;
     }
 
     final var pinNames = Analyze.getPinLabels(circuit);
@@ -221,7 +216,7 @@ public class TtyInterface {
     }
     if (haltPin == null && (format & FORMAT_TABLE) != 0) {
       doTableAnalysis(proj, circuit, pinNames, format);
-      return EXITCODE_OK;
+      return Main.EXITCODE_OK;
     }
 
     CircuitState circState = new CircuitState(proj, circuit);
@@ -233,11 +228,11 @@ public class TtyInterface {
         final var loaded = loadRam(circState, loadFile);
         if (!loaded) {
           logger.error("{}", S.get("loadNoRamError"));
-          return EXITCODE_IO_ERROR;
+          return Main.EXITCODE_ARG_ERROR;
         }
       } catch (IOException e) {
         logger.error("{}: {}", S.get("loadIoError"), e.toString());
-        return EXITCODE_IO_ERROR;
+        return Main.EXITCODE_ARG_ERROR;
       }
     }
     final var simCode = runSimulation(circState, outputPins, haltPin, format);
@@ -247,11 +242,11 @@ public class TtyInterface {
         final var saved = saveRam(circState, saveFile);
         if (!saved) {
           logger.error("{}", S.get("saveNoRamError"));
-          return EXITCODE_IO_ERROR;
+          return Main.EXITCODE_ARG_ERROR;
         }
       } catch (IOException e) {
         logger.error("{}: {}", S.get("saveIoError"), e.toString());
-        return EXITCODE_IO_ERROR;
+        return Main.EXITCODE_ARG_ERROR;
       }
     }
 
@@ -364,7 +359,7 @@ public class TtyInterface {
       final var ttyFound = prepareForTty(circState, keyboardStates);
       if (!ttyFound) {
         logger.error("{}", S.get("ttyNoTtyError"));
-        return EXITCODE_ARG_ERROR;
+        return Main.EXITCODE_ARG_ERROR;
       }
       if (keyboardStates.isEmpty()) {
         keyboardStates = null;
@@ -396,11 +391,11 @@ public class TtyInterface {
       }
 
       if (halted) {
-        retCode = EXITCODE_OK; // normal exit
+        retCode = Main.EXITCODE_OK; // normal exit
         break;
       }
       if (prop.isOscillating()) {
-        retCode = EXITCODE_OSCILLATION; // abnormal exit
+        retCode = Main.EXITCODE_OSCILLATION; // abnormal exit
         break;
       }
       if (keyboardStates != null) {
@@ -418,10 +413,10 @@ public class TtyInterface {
     }
     final var elapse = System.currentTimeMillis() - start;
     if (showTty) ensureLineTerminated();
-    if (showHalt || retCode != EXITCODE_OK) {
-      if (retCode == 0) {
+    if (showHalt || retCode != Main.EXITCODE_OK) {
+      if (retCode == Main.EXITCODE_OK) {
         logger.error("{}", S.get("ttyHaltReasonPin"));
-      } else if (retCode == 1) {
+      } else {
         logger.error("{}", S.get("ttyHaltReasonOscillation"));
       }
     }

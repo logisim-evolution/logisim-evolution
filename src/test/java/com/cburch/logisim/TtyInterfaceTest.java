@@ -60,7 +60,7 @@ public class TtyInterfaceTest extends TestBase {
     Loader loader = new Loader(null);
     final int rc = tty.run(loader);
     
-    assertEquals(2,rc);
+    assertEquals(Main.EXITCODE_ARG_ERROR,rc);
     verify(logger).error(anyString(),ArgumentMatchers.eq("ttyLoadError:missing-file"));
     verifyNoMoreInteractions(logger);
   }
@@ -71,7 +71,7 @@ public class TtyInterfaceTest extends TestBase {
     final var tty = new TtyInterface(startup);
     Loader loader = mock(Loader.class);
     final int rc = tty.run(loader);
-    assertEquals(2,rc); // due to missing file
+    assertEquals(Main.EXITCODE_ARG_ERROR,rc); // due to missing file
   }
 
   @Test
@@ -85,7 +85,7 @@ public class TtyInterfaceTest extends TestBase {
         when(mock.runTty()).thenReturn(false);
       })) {
       final int rc = tty.run(loader);
-      assertEquals(2,rc);
+      assertEquals(Main.EXITCODE_ARG_ERROR,rc);
     }
   }
 
@@ -95,7 +95,7 @@ public class TtyInterfaceTest extends TestBase {
     final var tty = new TtyInterface(startup);
     Loader loader = mock(Loader.class);
     final int rc = tty.run(loader);
-    assertEquals(2,rc); // due to missing file
+    assertEquals(Main.EXITCODE_ARG_ERROR,rc); // due to missing file
   }
 
   @Test
@@ -104,7 +104,7 @@ public class TtyInterfaceTest extends TestBase {
     final var tty = new TtyInterface(startup);
     Loader loader = mock(Loader.class);
     final int rc = tty.run(loader);
-    assertEquals(2,rc); // due to missing file
+    assertEquals(Main.EXITCODE_ARG_ERROR,rc); // due to missing file
   }
 
   @Test
@@ -114,7 +114,7 @@ public class TtyInterfaceTest extends TestBase {
     final var tty = new TtyInterface(startup);
     Loader loader = mock(Loader.class);
     final int rc = tty.run(loader);
-    assertEquals(2,rc); // due to missing file
+    assertEquals(Main.EXITCODE_ARG_ERROR,rc); // due to missing file
   }
 
   @Test
@@ -123,7 +123,7 @@ public class TtyInterfaceTest extends TestBase {
     final var tty = new TtyInterface(startup);
     Loader loader = mock(Loader.class);
     final int rc = tty.run(loader);
-    assertEquals(2,rc); // due to missing file
+    assertEquals(Main.EXITCODE_ARG_ERROR,rc); // due to missing file
   }
 
   // FIXME: verify logger/error messages for all of above

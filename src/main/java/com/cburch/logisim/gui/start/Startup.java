@@ -149,8 +149,8 @@ public class Startup {
         case EXIT:
           task = Task.NONE;
           return;
-        case IO_ERROR: 
-        case CLI_ERROR: 
+        default:
+        case ERROR: 
           task = Task.ERROR;
           return;
         case OK: 
@@ -366,13 +366,9 @@ public class Startup {
      */
     OK,
     /**
-     * Unrecoverable I/O error occured.
-     */
-    IO_ERROR,
-    /**
      * Unrecoverable error occured while handling option.
      */
-    CLI_ERROR,
+    ERROR,
     /** 
      * Handler requests an immediate exit.
      */
@@ -392,7 +388,7 @@ public class Startup {
     }
 
     logger.error(S.get("argGatesOptionError"));
-    return RC.CLI_ERROR;
+    return RC.ERROR;
   }
 
   private RC handleArgGeometry(Option opt) {
@@ -401,7 +397,7 @@ public class Startup {
 
     if (wxh.length != 2 || wxh[0].length() < 1 || wxh[1].length() < 1) {
       logger.error(S.get("argGeometryError"));
-      return RC.CLI_ERROR;
+      return RC.ERROR;
     }
 
     final var p = wxh[1].indexOf('+', 1);
@@ -414,14 +410,14 @@ public class Startup {
       final var xy = loc.split("\\+");
       if (xy.length != 2 || xy[0].length() < 1 || xy[1].length() < 1) {
         logger.error(S.get("argGeometryError"));
-        return RC.CLI_ERROR;
+        return RC.ERROR;
       }
       try {
         x = Integer.parseInt(xy[0]);
         y = Integer.parseInt(xy[1]);
       } catch (NumberFormatException e) {
         logger.error(S.get("argGeometryError"));
-        return RC.CLI_ERROR;
+        return RC.ERROR;
       }
     }
 
@@ -432,11 +428,11 @@ public class Startup {
       h = Integer.parseInt(wxh[1]);
     } catch (NumberFormatException e) {
       logger.error(S.get("argGeometryError"));
-      return RC.CLI_ERROR;
+      return RC.ERROR;
     }
     if (w <= 0 || h <= 0) {
       logger.error(S.get("argGeometryError"));
-      return RC.CLI_ERROR;
+      return RC.ERROR;
     }
     windowSize = new Point(w,h);
     if (loc != null) windowLocation = new Point(x,y);
@@ -457,7 +453,7 @@ public class Startup {
     for (final var option : opts) {
       logger.error("   {}", option.toString());
     }
-    return RC.CLI_ERROR;
+    return RC.ERROR;
   }
   
   private RC handleArgClearPreferences() {
@@ -469,7 +465,7 @@ public class Startup {
     // duplicates are not allowed
     if (templateType != AppPreferences.TEMPLATE_UNKNOWN) {
       logger.error(S.get("argOneTemplateError"));
-      return RC.CLI_ERROR;
+      return RC.ERROR;
     }
 
     final var option = opt.getValue();
@@ -480,7 +476,7 @@ public class Startup {
       templateFile = file;
       if (!templateFile.canRead()) {
         logger.error(S.get("templateCannotReadError", file));
-        return RC.IO_ERROR;
+        return RC.ERROR;
       }
       return RC.OK;
     }
@@ -495,7 +491,7 @@ public class Startup {
     }
 
     logger.error(S.get("argOneTemplateError"));
-    return RC.CLI_ERROR;
+    return RC.ERROR;
   }
 
   private RC handleArgNoSplash() {
@@ -516,7 +512,7 @@ public class Startup {
 
   private RC handleArgTty(Option opt) {
     // TTY format parsing
-    if (!setTask(Task.ANALYSIS)) return RC.CLI_ERROR;
+    if (!setTask(Task.ANALYSIS)) return RC.ERROR;
     final var ttyVal = opt.getValue();
     final var fmts = ttyVal.split(",");
     if (fmts.length > 0) {
@@ -537,14 +533,14 @@ public class Startup {
 
         if (val == 0) {
           logger.error(S.get("ttyFormatError"));
-          return RC.CLI_ERROR;
+          return RC.ERROR;
         }
         ttyFormat |= val;
         return RC.OK;
       }
     }
     logger.error(S.get("ttyFormatError"));
-    return RC.CLI_ERROR;
+    return RC.ERROR;
   }
 
   private RC handleArgSubstitute(Option opt) {
@@ -556,13 +552,13 @@ public class Startup {
     }
 
     logger.error(S.get("argDuplicateSubstitutionError"));
-    return RC.CLI_ERROR;
+    return RC.ERROR;
   }
 
   private RC handleArgLoad(Option opt) {
     if (loadFile != null) {
       logger.error(S.get("loadMultipleError"));
-      return RC.CLI_ERROR;
+      return RC.ERROR;
     }
     final var fileName = opt.getValue();
     loadFile = new File(fileName);
@@ -572,7 +568,7 @@ public class Startup {
   private RC handleArgSave(Option opt) {
     if (saveFile != null) {
       logger.error(S.get("saveMultipleError"));
-      return RC.CLI_ERROR;
+      return RC.ERROR;
     }
     final var fileName = opt.getValue();
     saveFile = new File(fileName);
@@ -581,7 +577,7 @@ public class Startup {
 
   private RC handleArgTestVector(Option opt) {
     // This is to test a test bench. It will return 0 or 1 depending on if the tests pass or not.
-    if (!setTask(Task.TEST_VECTOR)) return RC.CLI_ERROR;
+    if (!setTask(Task.TEST_VECTOR)) return RC.ERROR;
     circuitToTest = opt.getValues()[0];
     testVector = opt.getValues()[1];
     return RC.OK;
@@ -629,7 +625,7 @@ public class Startup {
     }
 
     logger.error(S.get("argTestUnknownFlagOrValue", String.valueOf(argVal)));
-    return RC.CLI_ERROR;
+    return RC.ERROR;
   }
 
   private RC handleArgTestFpga(Option opt) {
@@ -637,16 +633,16 @@ public class Startup {
 
     if (optArgs == null) {
       logger.error(S.get("argTestInvalidArguments"));
-      return RC.CLI_ERROR;
+      return RC.ERROR;
     }
 
     final var argsCnt = optArgs.length;
     if (argsCnt < 3 || argsCnt > 5) {
       logger.error(S.get("argTestInvalidArguments"));
-      return RC.CLI_ERROR;
+      return RC.ERROR;
     }
 
-    if (!setTask(Task.FPGA)) return RC.CLI_ERROR;
+    if (!setTask(Task.FPGA)) return RC.ERROR;
     filesToOpen.add(new File(optArgs[0]));
     fpgaCircuit = optArgs[1];
     fpgaBoard = optArgs[2];
@@ -664,14 +660,14 @@ public class Startup {
   }
 
   private RC handleArgTestCircuit(Option opt) {
-    if (!setTask(Task.TEST_CIRCUIT)) return RC.CLI_ERROR;
+    if (!setTask(Task.TEST_CIRCUIT)) return RC.ERROR;
     filesToOpen.add(new File(opt.getValue()));
     return RC.OK;
   }
 
   private RC handleArgTestCircGen(Option opt) {
     // This is to test the XML consistency over different versions of the Logisim.
-    if (!setTask(Task.RESAVE)) return RC.CLI_ERROR;
+    if (!setTask(Task.RESAVE)) return RC.ERROR;
     final var optArgs = opt.getValues();
     // This is the input path of the file to open.
     filesToOpen.add(new File(optArgs[0]));

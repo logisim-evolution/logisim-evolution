@@ -29,6 +29,12 @@ import javax.swing.UnsupportedLookAndFeelException;
 import javax.swing.plaf.FontUIResource;
 
 public class Main {
+  public static final int EXITCODE_OK = 0;
+  public static final int EXITCODE_ARG_ERROR = 1;
+  public static final int EXITCODE_OSCILLATION = 1;
+  public static final int EXITCODE_TEST_FAIL = -1;
+  public static final int EXITCODE_UNCAUGHT_EXCEPTION = -1; // should never happen, theoretically
+
   /**
    * Application entry point.
    *
@@ -57,13 +63,13 @@ public class Main {
 
     final var startup = new Startup(args);
     final var loader = new Loader(null);
-    int exitCode = 0;
+    int exitCode = EXITCODE_OK;
     switch (startup.task) {
       case NONE:
         break;
 
       case ERROR:
-        exitCode = 1;
+        exitCode = EXITCODE_ARG_ERROR;
         break;
 
       case GUI:
@@ -75,7 +81,7 @@ public class Main {
           final var printWriter = new PrintWriter(strWriter);
           e.printStackTrace(printWriter);
           OptionPane.showMessageDialog(null, strWriter.toString());
-          exitCode = -1;
+          exitCode = EXITCODE_UNCAUGHT_EXCEPTION;
         }
         break;
 
@@ -86,12 +92,12 @@ public class Main {
           exitCode = tty.run(loader);
         } catch (Exception e) {
           e.printStackTrace();
-          exitCode = -1;
+          exitCode = EXITCODE_UNCAUGHT_EXCEPTION;
         }
         break;
     }
 
-    if (exitCode != 0) System.exit(exitCode);
+    if (exitCode != EXITCODE_OK) System.exit(exitCode);
   }
 
   // FIXME: figure out how to NOT have this global

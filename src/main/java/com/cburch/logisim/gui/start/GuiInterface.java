@@ -42,6 +42,7 @@ import javax.swing.JToolTip;
 import javax.swing.UIDefaults;
 import javax.swing.UIManager;
 
+import com.cburch.logisim.Main;
 import com.cburch.logisim.file.LoadFailedException;
 import com.cburch.logisim.file.Loader;
 import com.cburch.logisim.gui.generic.CanvasPane;
@@ -199,14 +200,14 @@ public class GuiInterface implements AWTEventListener {
           }
         }
       }
-      if (numOpened == 0) return -1;
+      if (numOpened == 0) return Main.EXITCODE_ARG_ERROR;
     }
 
     for (final var fileToPrint : filesToPrint) {
       doPrint(fileToPrint);
     }
 
-    return 0;
+    return Main.EXITCODE_OK;
   }
 
   private boolean hasIcon(Component comp) {
