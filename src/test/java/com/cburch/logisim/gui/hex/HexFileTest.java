@@ -94,9 +94,9 @@ public class HexFileTest {
     assertTrue(index >= 0);
     assertTrue(index < HexFile.formatDescriptions.length);
 
-    final var rng = new Random(index * addressSize * wordSize + 1);
+    final var rng = new Random((long) index * addressSize * wordSize + 1);
 
-    final var memoryContents = MemContents.create(addressSize, wordSize, true);
+    final var memoryContents = MemContents.create(addressSize, wordSize, false);
 
     final var values = new HashMap<Long, Long>();
     // (1L << size) doesn't work if size is 64
