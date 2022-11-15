@@ -14,8 +14,8 @@ import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.event.MouseEvent;

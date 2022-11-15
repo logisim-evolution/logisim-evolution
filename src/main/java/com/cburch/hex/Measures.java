@@ -9,8 +9,6 @@
 
 package com.cburch.hex;
 
-import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics;
 

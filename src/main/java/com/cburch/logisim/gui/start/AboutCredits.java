@@ -13,7 +13,7 @@ import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.generated.BuildInfo;
 import com.cburch.logisim.util.LineBuffer;
-import com.cburch.logisim.util.StringUtil;
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;

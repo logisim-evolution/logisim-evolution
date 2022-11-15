@@ -12,14 +12,12 @@ package com.cburch.logisim.gui.main;
 import static com.cburch.logisim.gui.Strings.S;
 
 import com.cburch.logisim.circuit.Circuit;
-import com.cburch.logisim.circuit.CircuitState;
 import com.cburch.logisim.comp.Component;
 import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Project;
-import com.cburch.logisim.util.StringUtil;
-import java.awt.FontMetrics;
+
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;

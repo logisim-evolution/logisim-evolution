@@ -11,6 +11,7 @@ package com.cburch.logisim.gui.generic;
 
 import com.cburch.draw.shapes.DrawAttr;
 import com.cburch.logisim.util.XmlUtil;
+
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Font;
@@ -29,7 +30,6 @@ import java.io.IOException;
 import java.text.AttributedCharacterIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.TransformerException;

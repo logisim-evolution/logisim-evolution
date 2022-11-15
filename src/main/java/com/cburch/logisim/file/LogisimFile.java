@@ -17,7 +17,6 @@ import com.cburch.logisim.circuit.CircuitEvent;
 import com.cburch.logisim.circuit.CircuitListener;
 import com.cburch.logisim.circuit.SubcircuitFactory;
 import com.cburch.logisim.comp.ComponentFactory;
-import com.cburch.logisim.data.Attribute;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.Projects;

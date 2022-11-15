@@ -19,10 +19,10 @@ import com.cburch.logisim.soc.file.ElfSectionHeader;
 import com.cburch.logisim.util.LocaleListener;
 import com.cburch.logisim.util.LocaleManager;
 import com.cburch.logisim.util.StringGetter;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
@@ -35,7 +35,6 @@ import org.fife.ui.rsyntaxtextarea.parser.DefaultParseResult;
 import org.fife.ui.rsyntaxtextarea.parser.DefaultParserNotice;
 import org.fife.ui.rsyntaxtextarea.parser.ParseResult;
 import org.fife.ui.rtextarea.GutterIconInfo;
-import org.fife.ui.rtextarea.RTextArea;
 import org.fife.ui.rtextarea.RTextScrollPane;
 
 public class Assembler extends AbstractParser implements LocaleListener {
