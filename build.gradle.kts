@@ -65,6 +65,7 @@ val APP_URL = "appUrl"
 val JPACKAGE = "jpackage"
 val LIBS_DIR = "libsDir"
 val LINUX_PARAMS = "linuxParameters"
+val OS_ARCH = "osArch"
 val SHADOW_JAR_FILE_NAME = "shadowJarFilename"
 val SHARED_PARAMS = "sharedParameters"
 val SUPPORT_DIR = "supportDir"
@@ -144,7 +145,6 @@ extra.apply {
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", shadowJarFilename,
       "--copyright", copyrights,
-      "--dest", targetDir,
       "--description", "Digital logic design tool and simulator",
       "--vendor", "${project.name} developers",
   )
@@ -156,6 +156,7 @@ extra.apply {
   // Linux (DEB/RPM) specific settings for jpackage.
   val linuxParams = params + listOf(
       "--name", project.name,
+      "--dest", targetDir,
       "--app-version", appVersion,
       "--file-associations", "${supportDir}/linux/file.jpackage",
       "--icon", "${supportDir}/linux/logisim-icon-128.png",
@@ -167,7 +168,9 @@ extra.apply {
   // All the macOS specific stuff.
   val uppercaseProjectName = project.name.capitalize().trim()
   set(UPPERCASE_PROJECT_NAME, uppercaseProjectName)
-  set(APP_DIR_NAME, "${targetDir}/${uppercaseProjectName}.app")
+  val osArch = System.getProperty("os.arch") ?: throw GradleException("os.arch is not set")
+  set(OS_ARCH, osArch)
+  set(APP_DIR_NAME, "${buildDir}/macOS-${osArch}/${uppercaseProjectName}.app")
 }
 
 java {
@@ -361,6 +364,7 @@ tasks.register("createMsi") {
   doLast {
     val params = ext.get(SHARED_PARAMS) as List<String> + listOf(
         "--name", project.name,
+        "--dest", ext.get(TARGET_DIR) as String,
         "--file-associations", "${supportDir}/windows/file.jpackage",
         "--icon", "${supportDir}/windows/Logisim-evolution.ico",
         "--win-menu-group", project.name as String,
@@ -404,6 +408,7 @@ tasks.register("createApp") {
 
     var params = ext.get(SHARED_PARAMS) as List<String>
     params += listOf(
+        "--dest", "${buildDir}/macOS-${ext.get(OS_ARCH) as String}",
         "--name", ext.get(UPPERCASE_PROJECT_NAME) as String,
         "--file-associations", "${supportDir}/macos/file.jpackage",
         "--icon", "${supportDir}/macos/Logisim-evolution.icns",
@@ -448,9 +453,10 @@ tasks.register("createDmg") {
   dependsOn("createApp")
 
   val appDirName = ext.get(APP_DIR_NAME) as String
+  val osArch = ext.get(OS_ARCH) as String
 
   inputs.dir(appDirName)
-  outputs.file(ext.get(TARGET_FILE_PATH_BASE) as String + ".dmg")
+  outputs.file("${ext.get(TARGET_FILE_PATH_BASE) as String}-${osArch}.dmg")
 
   doFirst {
     if (!OperatingSystem.current().isMacOsX) {
@@ -464,7 +470,8 @@ tasks.register("createDmg") {
         "--app-image", appDirName,
         "--name", project.name,
         // We can pass full version here, even if contains suffix part too.
-        "--app-version", ext.get(APP_VERSION) as String,
+        // We also append the architecture to add it to the package name.
+        "--app-version", "${ext.get(APP_VERSION) as String}-${osArch}",
         "--dest", ext.get(TARGET_DIR) as String,
         "--type", "dmg",
       )
