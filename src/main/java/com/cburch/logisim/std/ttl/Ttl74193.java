@@ -9,9 +9,6 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.instance.InstanceState;
-import com.cburch.logisim.instance.StdAttr;
-
 public class Ttl74193 extends Ttl74192 {
   /**
    * Unique identifier of the tool, used as reference in project files. Do NOT change as it will

@@ -19,11 +19,11 @@ import com.cburch.logisim.fpga.hdlgenerator.Vhdl;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.Softwares;
+
 import java.awt.Dimension;
 import java.awt.Insets;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;

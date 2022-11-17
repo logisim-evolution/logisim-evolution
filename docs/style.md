@@ -26,9 +26,9 @@ by Checkstyle).
 
 # Checking code style with InteliJ IDEA #
 
--As we use a suppression config file, you can set up InteliJ's Checkstyle plugin in
--two ways - one adds our suppressions to the built-in "Google Checks" config, the other
--creates a completely new config using a copy from the Checkstyle source archive.
+As we use a suppression config file, you can set up InteliJ's Checkstyle plugin in
+two ways: one adds our suppressions to the built-in "Google Checks" config, the other
+creates a completely new config using a copy from the Checkstyle source archive.
 Either way, you need to install the `CheckStyle-IDEA` plugin first:
 
 * Go to `Settings -> Plugins`.
