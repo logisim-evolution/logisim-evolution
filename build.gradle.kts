@@ -101,6 +101,10 @@ extra.apply {
   set(APP_VERSION_SHORT, appVersionShort)
   logger.info("appVersionShort: ${appVersionShort}")
 
+  // Architecture used for build
+  val osArch = System.getProperty("os.arch") ?: throw GradleException("os.arch is not set")
+  set(OS_ARCH, osArch)
+
   // Destination folder where packages are stored.
   val targetDir="${buildDir}/dist"
   set(TARGET_DIR, targetDir)
@@ -168,8 +172,6 @@ extra.apply {
   // All the macOS specific stuff.
   val uppercaseProjectName = project.name.capitalize().trim()
   set(UPPERCASE_PROJECT_NAME, uppercaseProjectName)
-  val osArch = System.getProperty("os.arch") ?: throw GradleException("os.arch is not set")
-  set(OS_ARCH, osArch)
   set(APP_DIR_NAME, "${buildDir}/macOS-${osArch}/${uppercaseProjectName}.app")
 }
 
@@ -342,18 +344,19 @@ tasks.register("createRpm") {
 /**
  * Task: createMsi
  *
- * Creates MSI installater file for Microsoft Windows.
+ * Creates MSI installer file for Microsoft Windows.
  */
 tasks.register("createMsi") {
   group = "build"
   description = "Makes the Windows installation package."
   dependsOn("shadowJar", "createDistDir")
 
-  val supportDir = ext.get(SUPPORT_DIR) as String;
+  val supportDir = ext.get(SUPPORT_DIR) as String
+  val osArch = ext.get(OS_ARCH) as String
 
   inputs.dir(ext.get(LIBS_DIR) as String)
   inputs.dir("${supportDir}/windows")
-  outputs.file("${ext.get(TARGET_FILE_PATH_BASE_SHORT) as String}.msi")
+  outputs.file("${ext.get(TARGET_FILE_PATH_BASE_SHORT) as String}-${osArch}.msi")
 
   doFirst {
     if (!OperatingSystem.current().isWindows) {
@@ -362,9 +365,11 @@ tasks.register("createMsi") {
   }
 
   doLast {
+    val targetDir = ext.get(TARGET_DIR) as String
+    val version = ext.get(APP_VERSION_SHORT) as String
     val params = ext.get(SHARED_PARAMS) as List<String> + listOf(
         "--name", project.name,
-        "--dest", ext.get(TARGET_DIR) as String,
+        "--dest", targetDir,
         "--file-associations", "${supportDir}/windows/file.jpackage",
         "--icon", "${supportDir}/windows/Logisim-evolution.ico",
         "--win-menu-group", project.name as String,
@@ -375,9 +380,17 @@ tasks.register("createMsi") {
         // we MUST use short version form (without any suffix like "-dev", as it is not allowed in MSI package:
         // https://docs.microsoft.com/en-us/windows/win32/msi/productversion?redirectedfrom=MSDN
         // NOTE: any change to version **format** may require editing of .github/workflows/nightly.yml too!
-        "--app-version", ext.get(APP_VERSION_SHORT) as String,
+        "--app-version", version,
     )
     runCommand(params, "Error while creating the MSI package.")
+    val fromFile = "${project.name}-${version}.msi"
+    copy {
+      from(targetDir)
+      into(targetDir)
+      include(fromFile)
+      rename(fromFile, "${project.name}-${version}-${osArch}.msi")
+    }
+    delete("${targetDir}/${fromFile}")
   }
 }
 
