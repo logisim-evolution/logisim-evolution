@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Added architecture designation to macOS build
   * Added TTL 74182: look-ahead carry generator.
   * Added TTL 74181: arithmetic logic unit.
   * Fixed Karnaugh map color index bug.
