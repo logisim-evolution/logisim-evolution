@@ -65,6 +65,7 @@ val APP_URL = "appUrl"
 val JPACKAGE = "jpackage"
 val LIBS_DIR = "libsDir"
 val LINUX_PARAMS = "linuxParameters"
+val OS_ARCH = "osArch"
 val SHADOW_JAR_FILE_NAME = "shadowJarFilename"
 val SHARED_PARAMS = "sharedParameters"
 val SUPPORT_DIR = "supportDir"
@@ -99,6 +100,10 @@ extra.apply {
   val appVersionShort = (project.version as String).split('-')[0]
   set(APP_VERSION_SHORT, appVersionShort)
   logger.info("appVersionShort: ${appVersionShort}")
+
+  // Architecture used for build
+  val osArch = System.getProperty("os.arch") ?: throw GradleException("os.arch is not set")
+  set(OS_ARCH, osArch)
 
   // Destination folder where packages are stored.
   val targetDir="${buildDir}/dist"
@@ -144,7 +149,6 @@ extra.apply {
       "--main-class", "com.cburch.logisim.Main",
       "--main-jar", shadowJarFilename,
       "--copyright", copyrights,
-      "--dest", targetDir,
       "--description", "Digital logic design tool and simulator",
       "--vendor", "${project.name} developers",
   )
@@ -156,6 +160,7 @@ extra.apply {
   // Linux (DEB/RPM) specific settings for jpackage.
   val linuxParams = params + listOf(
       "--name", project.name,
+      "--dest", targetDir,
       "--app-version", appVersion,
       "--file-associations", "${supportDir}/linux/file.jpackage",
       "--icon", "${supportDir}/linux/logisim-icon-128.png",
@@ -167,7 +172,7 @@ extra.apply {
   // All the macOS specific stuff.
   val uppercaseProjectName = project.name.capitalize().trim()
   set(UPPERCASE_PROJECT_NAME, uppercaseProjectName)
-  set(APP_DIR_NAME, "${targetDir}/${uppercaseProjectName}.app")
+  set(APP_DIR_NAME, "${buildDir}/macOS-${osArch}/${uppercaseProjectName}.app")
 }
 
 java {
@@ -339,18 +344,19 @@ tasks.register("createRpm") {
 /**
  * Task: createMsi
  *
- * Creates MSI installater file for Microsoft Windows.
+ * Creates MSI installer file for Microsoft Windows.
  */
 tasks.register("createMsi") {
   group = "build"
   description = "Makes the Windows installation package."
   dependsOn("shadowJar", "createDistDir")
 
-  val supportDir = ext.get(SUPPORT_DIR) as String;
+  val supportDir = ext.get(SUPPORT_DIR) as String
+  val osArch = ext.get(OS_ARCH) as String
 
   inputs.dir(ext.get(LIBS_DIR) as String)
   inputs.dir("${supportDir}/windows")
-  outputs.file("${ext.get(TARGET_FILE_PATH_BASE_SHORT) as String}.msi")
+  outputs.file("${ext.get(TARGET_FILE_PATH_BASE_SHORT) as String}-${osArch}.msi")
 
   doFirst {
     if (!OperatingSystem.current().isWindows) {
@@ -359,8 +365,11 @@ tasks.register("createMsi") {
   }
 
   doLast {
+    val targetDir = ext.get(TARGET_DIR) as String
+    val version = ext.get(APP_VERSION_SHORT) as String
     val params = ext.get(SHARED_PARAMS) as List<String> + listOf(
         "--name", project.name,
+        "--dest", targetDir,
         "--file-associations", "${supportDir}/windows/file.jpackage",
         "--icon", "${supportDir}/windows/Logisim-evolution.ico",
         "--win-menu-group", project.name as String,
@@ -371,9 +380,17 @@ tasks.register("createMsi") {
         // we MUST use short version form (without any suffix like "-dev", as it is not allowed in MSI package:
         // https://docs.microsoft.com/en-us/windows/win32/msi/productversion?redirectedfrom=MSDN
         // NOTE: any change to version **format** may require editing of .github/workflows/nightly.yml too!
-        "--app-version", ext.get(APP_VERSION_SHORT) as String,
+        "--app-version", version,
     )
     runCommand(params, "Error while creating the MSI package.")
+    val fromFile = "${project.name}-${version}.msi"
+    copy {
+      from(targetDir)
+      into(targetDir)
+      include(fromFile)
+      rename(fromFile, "${project.name}-${version}-${osArch}.msi")
+    }
+    delete("${targetDir}/${fromFile}")
   }
 }
 
@@ -404,6 +421,7 @@ tasks.register("createApp") {
 
     var params = ext.get(SHARED_PARAMS) as List<String>
     params += listOf(
+        "--dest", "${buildDir}/macOS-${ext.get(OS_ARCH) as String}",
         "--name", ext.get(UPPERCASE_PROJECT_NAME) as String,
         "--file-associations", "${supportDir}/macos/file.jpackage",
         "--icon", "${supportDir}/macos/Logisim-evolution.icns",
@@ -448,9 +466,10 @@ tasks.register("createDmg") {
   dependsOn("createApp")
 
   val appDirName = ext.get(APP_DIR_NAME) as String
+  val osArch = ext.get(OS_ARCH) as String
 
   inputs.dir(appDirName)
-  outputs.file(ext.get(TARGET_FILE_PATH_BASE) as String + ".dmg")
+  outputs.file("${ext.get(TARGET_FILE_PATH_BASE) as String}-${osArch}.dmg")
 
   doFirst {
     if (!OperatingSystem.current().isMacOsX) {
@@ -464,7 +483,8 @@ tasks.register("createDmg") {
         "--app-image", appDirName,
         "--name", project.name,
         // We can pass full version here, even if contains suffix part too.
-        "--app-version", ext.get(APP_VERSION) as String,
+        // We also append the architecture to add it to the package name.
+        "--app-version", "${ext.get(APP_VERSION) as String}-${osArch}",
         "--dest", ext.get(TARGET_DIR) as String,
         "--type", "dmg",
       )

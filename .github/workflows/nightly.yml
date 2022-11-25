@@ -255,8 +255,8 @@ jobs:
         uses: actions/upload-artifact@v3
         if: success()
         with:
-          path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}.dmg
-          name: ${{ needs.git_check.outputs.base_name }}.dmg
+          path: build/dist/${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version }}-x86_64.dmg
+          name: ${{ needs.git_check.outputs.base_name }}-x86_64.dmg
 
   # ###############################################################################################
 
@@ -286,5 +286,5 @@ jobs:
         if: success()
         with:
           # NOTE: Gradle builder creates MSI file that always uses short version format in file name.
-          path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version_short }}.msi
-          name: ${{ needs.git_check.outputs.base_name }}.msi
+          path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version_short }}-x86_64.msi
+          name: ${{ needs.git_check.outputs.base_name }}-x86_64.msi

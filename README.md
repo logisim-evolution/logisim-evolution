@@ -63,8 +63,10 @@ include the Java runtime and do not require it to be installed separately:
 * `logisim-evolution-<version>-1.x86_64.rpm`: Package for Fedora/Redhat/CentOS/SuSE Linux distributions,
 * `logisim-evolution-<version>_amd64.snap`: The [Snap](https://snapcraft.io/docs) archive for all
   supported Linux distributions (also available in [Snapcraft store](https://snapcraft.io/logisim-evolution)),
-* `logisim-evolution-<version>.msi`: Installer package for Microsoft Windows,
-* `logisim-evolution-<version>.dmg`: macOS package.
+* `logisim-evolution-<version>-AArch64.msi`: Installer package for Microsoft Windows for Arm processors,
+* `logisim-evolution-<version>-x86_64.msi`: Installer package for Microsoft Windows for Intel processors,
+* `logisim-evolution-<version>-AArch64.dmg`: macOS package for Apple processors,
+* `logisim-evolution-<version>-x86_64.dmg`: macOS package for Intel processors (also runs on Apple processors in simulation).
 
 The Java JAR [`logisim-evolution-<version>-all.jar`](https://github.com/logisim-evolution/logisim-evolution/releases)
 is also available and can be run on any system with a supported Java runtime installed.
