@@ -52,7 +52,7 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: 'Checkout sources'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       # Check if latest commit is less than a day.
       - name: "ANY CHANGES SINCE LAST BUILD?"
@@ -72,7 +72,7 @@ jobs:
 
           # Let's see if we have any commits in last 24 hours.
           if [[ -n "$(git rev-list --after="24 hours" ${last_commit_sha})" ]]; then
-            echo "::set-output name=run_build::true"
+            echo "run_build=true" >> $GITHUB_OUTPUT
           else
             echo "*** No code changes since yesterday. Skipping."
           fi
@@ -88,17 +88,17 @@ jobs:
 
           # Remove "-" (if present) from version string.
           declare -r lse_version=$(echo "${version_prop}" | awk '{gsub("-","", $0); print}')
-          echo "::set-output name=lse_version::${lse_version}"
+          echo "lse_version=${lse_version}" >> $GITHUB_OUTPUT
 
           # Version string with suffix stripped. Required for some packages/platforms.
           declare -r lse_version_short=$(echo "${version_prop}" | awk '{ split($0, v, "-")} {print v[1]}')
-          echo "::set-output name=lse_version_short::${lse_version_short}"
+          echo "lse_version_short=${lse_version_short}" >> $GITHUB_OUTPUT
 
           declare -r lse_name="$(fgrep name gradle.properties | awk '{print $3}')"
-          echo "::set-output name=lse_name::${lse_name}"
+          echo "lse_name=${lse_name}" >> $GITHUB_OUTPUT
 
           # Base name for uploaded artifacts.
-          echo "::set-output name=base_name::${lse_name}_${branch_name}_$(date +%Y%m%d)"
+          echo "base_name=${lse_name}_${branch_name}_$(date +%Y%m%d)" >> $GITHUB_OUTPUT
 
   # ###############################################################################################
 
@@ -112,7 +112,7 @@ jobs:
     steps:
       # https://github.com/z0al/dependent-issues
       - name: 'Checkout branch: ${{ env.GITHUB_REF }}'
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: 'develop'
 
@@ -144,7 +144,7 @@ jobs:
         # ###########################################################################################
 
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -234,11 +234,11 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           ref: ${{ github.ref_name }}
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
@@ -271,9 +271,9 @@ jobs:
     steps:
       # https://github.com/marketplace/actions/checkout
       - name: "Checkout sources"
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Set up JDK ${{ env.JDK_VERSION }} ${{ env.JDK_DISTRO }}
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: ${{ env.JDK_VERSION }}
           distribution: ${{ env.JDK_DISTRO }}
