@@ -93,7 +93,7 @@ public class HdlTypes {
             .append(
                 LineBuffer.formatVhdl(
                     "{{type}} {{1}} {{is}} {{array}} ( {{2}} {{downto}} 0 ) {{of}} std_logic_vector( ",
-                    myTypeName, myNrOfEntries))
+                    myTypeName, myNrOfEntries - 1))
             .append(
                 myGenericBitWidth == null
                     ? Integer.toString(myBitWidth - 1)
@@ -108,7 +108,7 @@ public class HdlTypes {
                 myGenericBitWidth == null
                     ? Integer.toString(myBitWidth - 1)
                     : String.format("%s - 1", myGenericBitWidth))
-            .append(String.format(":0] %s [%d:0];", myTypeName, myNrOfEntries));
+            .append(String.format(":0] %s [%d:0];", myTypeName, myNrOfEntries - 1));
       }
       return contents.toString();
     }
