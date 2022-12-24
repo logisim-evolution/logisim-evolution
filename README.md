@@ -60,15 +60,11 @@ include the Java runtime and do not require it to be installed separately:
 
 * `logisim-evolution_<version>-1_amd64.deb`: Debian package (also suitable for Ubuntu and derivatives),
 * `logisim-evolution-<version>-1.x86_64.rpm`: Package for Fedora/Redhat/CentOS/SuSE Linux distributions,
-* `logisim-evolution-<version>_amd64.snap`: The [Snap](https://snapcraft.io/docs) archive for all
-  supported Linux distributions (also available in [Snapcraft store](https://snapcraft.io/logisim-evolution)),
 * `logisim-evolution-<version>.msi`: Installer package for Microsoft Windows,
 * `logisim-evolution-<version>.dmg`: macOS package.
 
 The Java JAR [`logisim-evolution-<version>-all.jar`](https://github.com/logisim-evolution/logisim-evolution/releases)
 is also available and can be run on any system with a supported Java runtime installed.
-
-[![Get it from the Snap Store](https://snapcraft.io/static/images/badges/en/snap-store-black.svg)](https://snapcraft.io/logisim-evolution)
 
 ---
 
@@ -91,7 +87,7 @@ network connections. You can click "Deny" as we do not need network access curre
 ### Package Manager ###
 
 `Logisim-evolution` is available from a bunch of package managers.  
-Note that these (except for Snap) are not maintained by the core developers.  
+Note that these are not maintained by the core developers.  
 If you should observe a bug in Logisim-evolution while using one of these packages,
 first make sure that it can be reproduced with the most recent official packages
 [provided through this repository](https://github.com/logisim-evolution/logisim-evolution/releases)
