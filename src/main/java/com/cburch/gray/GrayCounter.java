@@ -21,7 +21,6 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.StringUtil;
-import java.net.URL;
 import javax.swing.ImageIcon;
 
 /**

@@ -15,7 +15,7 @@ import javax.swing.JTextField;
 
 public abstract class Attribute<V> {
   private final String name;
-  private final StringGetter disp;
+  private final StringGetter displayName;
   private boolean hidden;
 
   public Attribute() {
@@ -28,7 +28,7 @@ public abstract class Attribute<V> {
 
   public Attribute(String name, StringGetter disp, boolean hidden) {
     this.name = name;
-    this.disp = disp;
+    this.displayName = disp;
     this.hidden = hidden;
   }
 
@@ -41,7 +41,7 @@ public abstract class Attribute<V> {
   }
 
   public String getDisplayName() {
-    return (disp != null) ? disp.toString() : name;
+    return (displayName != null) ? displayName.toString() : name;
   }
 
   public String getName() {

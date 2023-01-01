@@ -12,11 +12,8 @@ package com.cburch.draw.util;
 import java.awt.Canvas;
 import java.awt.Component;
 import java.awt.Font;
-import java.awt.FontMetrics;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
-import java.awt.font.FontRenderContext;
-import java.awt.font.LineMetrics;
 
 public class TextMetrics {
 

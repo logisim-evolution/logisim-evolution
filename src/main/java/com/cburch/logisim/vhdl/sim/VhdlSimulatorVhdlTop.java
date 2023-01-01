@@ -15,11 +15,11 @@ import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.std.hdl.VhdlEntityComponent;
 import com.cburch.logisim.util.FileUtil;
 import com.cburch.logisim.util.LocaleManager;
-import com.cburch.logisim.util.StringUtil;
 import com.cburch.logisim.vhdl.base.VhdlEntity;
 import com.cburch.logisim.vhdl.base.VhdlEntityAttributes;
 import com.cburch.logisim.vhdl.base.VhdlParser;
 import com.cburch.logisim.vhdl.base.VhdlSimConstants;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.StandardCharsets;
