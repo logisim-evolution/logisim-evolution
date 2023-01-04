@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.std.ttl;
 
-import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.data.Value;
 import com.cburch.logisim.instance.StdAttr;
 
@@ -29,9 +28,7 @@ class ClockState implements Cloneable {
     }
   }
 
-  public boolean updateClock(Value newClock, Object trigger) {
-    final var oldClock = lastClock;
-    lastClock = newClock;
+  private boolean isTriggered(Value oldClock, Value newClock, Object trigger) {
     if (trigger == null || trigger == StdAttr.TRIG_RISING) {
       return oldClock == Value.FALSE && newClock == Value.TRUE;
     } else if (trigger == StdAttr.TRIG_FALLING) {
@@ -45,22 +42,27 @@ class ClockState implements Cloneable {
     }
   }
 
-  public boolean updateClock(Value newClock) {
-    final var oldClock = lastClock;
-    lastClock = newClock;
-    return oldClock == Value.FALSE && newClock == Value.TRUE;
+  public boolean updateClock(Value newClock, int which, Object trigger) {
+    if (lastClock.getWidth() <= which) {
+      lastClock = lastClock.extendWidth(which + 1, Value.FALSE);
+    }
+
+    final var oldClock = lastClock.get(which);
+
+    lastClock = lastClock.set(which, newClock);
+
+    return isTriggered(oldClock, newClock, trigger);
   }
 
   public boolean updateClock(Value newClock, int which) {
-    var values = lastClock.getAll();
-    if (values.length <= which) {
-      final var nvalue = (Value.createKnown(BitWidth.create(which + 1), 0)).getAll();
-      System.arraycopy(values, 0, nvalue, 0, values.length);
-      values = nvalue;
-    }
-    final var oldClock = values[which];
-    values[which] = newClock;
-    lastClock = Value.create(values);
-    return oldClock == Value.FALSE && newClock == Value.TRUE;
+    return updateClock(newClock, which, StdAttr.TRIG_RISING);
+  }
+
+  public boolean updateClock(Value newClock, Object trigger) {
+    return updateClock(newClock, 0, trigger);
+  }
+
+  public boolean updateClock(Value newClock) {
+    return updateClock(newClock, 0, StdAttr.TRIG_RISING);
   }
 }
