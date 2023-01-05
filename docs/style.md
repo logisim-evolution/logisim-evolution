@@ -5,7 +5,7 @@
 * [« Go back](developers.md)
 * **Source code quality**
   * [Coding style](#coding-style)
-  * [Checking code style with InteliJ IDEA](#checking-code-style-with-intelij-idea)
+  * [Checking code style with IntelliJ IDEA](#checking-code-style-with-intelij-idea)
     * [Editing built-in config](#editing-built-in-config)
     * [Using cloned config](#using-cloned-config)
   * [Using Gradle plugin](#using-gradle-plugin)
@@ -17,23 +17,23 @@
 
 # Coding style #
 
-`Logisim-evolution` uses `Google Java Style` code style as provided with the `CodeStyle`
-static anaylyzer tool, with a few checks disabled as specified in the `checkstyle-suppressions.xml`
+`Logisim-evolution` uses `Google Java Style` code style as provided with the `Checkstyle`
+static analyzer tool, with a few checks disabled as specified in the `checkstyle-suppressions.xml`
 config file located in project root directory (from where it should be automatically picked
 by Checkstyle).
 
 ---
 
-# Checking code style with InteliJ IDEA #
+# Checking code style with IntelliJ IDEA #
 
-As we use a suppression config file, you can set up InteliJ's Checkstyle plugin in
+As we use a suppression config file, you can set up IntelliJ's Checkstyle plugin in
 two ways: one adds our suppressions to the built-in "Google Checks" config, the other
 creates a completely new config using a copy from the Checkstyle source archive.
 Either way, you need to install the `CheckStyle-IDEA` plugin first:
 
 * Go to `Settings -> Plugins`.
 * Install [CheckStyle-IDEA plugin](https://plugins.jetbrains.com/plugin/1065-checkstyle-idea)
-  (by Jamie Shiell) from the Jetbrain's Marketplace repository.
+  (by Jamie Shiell) from the JetBrains' Marketplace repository.
 
 ## Editing built-in config ##
 
@@ -44,7 +44,7 @@ Edit the existing Google Checks configuration:
 * Some rules should be disabled, so we also ship a `checkstyle-suppressions.xml` config file. It
   lives in the project's root directory and should be picked up automatically. It should not be
   necessary to do anything else with it for it to be used.
-* You can now run CheckStyle using the `Checkstyle` command or directly from the CheckStyle tab.
+* You can now run Checkstyle using the `Checkstyle` command or directly from the CheckStyle tab.
 * Ensure `Rules:`, shown in the scan result window, reads `Google Checks`.
 
 ## Using cloned config ##
@@ -68,14 +68,14 @@ You can configure InteliJ's CheckStyle plugin to behave exactly as we configure 
     edit configuration and look for a property named `org.checkstyle.google.suppressionfilter.config`,
     then set its value to `checksyle-suppressions.xml` and click `Next.
   * Click "Finish".
-* You can now run CheckStyle using the `Checkstyle` command or directly from the CheckStyle tab.
+* You can now run Checkstyle using the `Checkstyle` command or directly from the CheckStyle tab.
 * Ensure `Rules:`, shown in the scan result window, reads `Logisim-evolution`.
 
 ---
 
 # Using Gradle plugin #
 
-CheckStyle is also plugged into the project's Gradle build system and provides the `checkstyleMain`
+Checkstyle is also plugged into the project's Gradle build system and provides the `checkstyleMain`
 and `checkstyleTest` tasks:
 
 ```bash
@@ -107,7 +107,7 @@ Brief installation instruction (see `pre-commit` [official installation docs](ht
 
 ## Disabling hooks for a commit ##
 
-Not all hooks are perfect so sometimes you may need to skip execution of one or more (or even all) hooks.
+Not all hooks are perfect, so sometimes you may need to skip execution of one or more (or even all) hooks.
 `pre-commit` solves this in two ways. To disable `pre-commit` completely, pass `--no-verify` to `git`:
 
 ```bash
@@ -115,7 +115,7 @@ $ git commit -a --no-verify
 ```
 
 Alternatively, you may disable specific hooks only by using a `SKIP` environment variable, that is holds a comma separated
-list of hook IDs to be ommited:
+list of hook IDs to be omitted:
 
 $ SKIP=checkstyle-jar git commit -a -m "Some changes"
 
