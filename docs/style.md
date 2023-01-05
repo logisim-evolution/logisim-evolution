@@ -5,7 +5,7 @@
 * [« Go back](developers.md)
 * **Source code quality**
   * [Coding style](#coding-style)
-  * [Checking code style with IntelliJ IDEA](#checking-code-style-with-intelij-idea)
+  * [Checking code style with IntelliJ IDEA](#checking-code-style-with-intellij-idea)
     * [Editing built-in config](#editing-built-in-config)
     * [Using cloned config](#using-cloned-config)
   * [Using Gradle plugin](#using-gradle-plugin)
