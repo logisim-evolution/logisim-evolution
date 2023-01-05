@@ -58,8 +58,8 @@ To run the task within Eclipse after importing the Logisim-evolution project:
   and selecting `Gradle Tasks` under Gradle.
 * In the `Gradle Tasks` view, double-click on `logisim-evolution/build/genFiles`.
   Check the `Console View` to see when it finishes.
-* Right click on the Logisim-evolution project in the Project Explorer and select `Gradle/Refresh Gradle Project`.
-* You may then need to right click on the Logisim-evolution project and select `Refresh`.
+* Right-click on the Logisim-evolution project in the Project Explorer and select `Gradle/Refresh Gradle Project`.
+* You may then need to right-click on the Logisim-evolution project and select `Refresh`.
 
 ## Building from sources ##
 
@@ -89,25 +89,25 @@ which will create `logisim-evolution-<version>-all.jar` in `build/libs/`.
 To run it with JRE/JDK 16 or higher, type:
 
 ```bash
-java -jar logisim-evolution-<version>-all-jdk<jdk>.jar
+java -jar logisim-evolution-<version>-all.jar
 ```
 
 for example:
 
 ```bash
-java -jar logisim-evolution-3.6.0-all-jdk16.jar
+java -jar logisim-evolution-3.6.0-all.jar
 ```
 
 You can also generate a platform-specific installer, which gets saved in `build/dist`.
-Packages can be built by running the `jpackage` task:
+Packages can be built by running the `createAll` task:
 
 ```bash
-./gradlew jpackage
+./gradlew createAll
 ```
 
 > **NOTE:** `jpackage` creates the installer for the platform that builds it. Building cross-platform installers is not supported
 > by Java's `jpackage` utility. You may also need to install additional developer tools for the platform in order to build the
-> installer. See Java's [jpackage documentation](https://docs.oracle.com/en/java/javase/14/jpackage/packaging-overview.html)
+> installer. See Java's [jpackage documentation](https://docs.oracle.com/en/java/javase/16/jpackage/packaging-overview.html)
 > for more details of tool requirements.
 
 To see all available tasks run: `./gradlew tasks --all`
@@ -133,7 +133,7 @@ If you want to contribute to Logisim-evolution, this is how to do it:
 
 * Make a local *fork* of `Logisim-evolution` by clicking the *Fork* button on the
   [project GitHub page](https://github.com/logisim-evolution/logisim-evolution). This will create
-  a copy of the `Logisim-evolution` repository on your own Github account.
+  a copy of the `Logisim-evolution` repository on your own GitHub account.
 * As all the development happens on [`develop` branch](https://github.com/logisim-evolution/logisim-evolution/tree/develop),
   ensure you checkout [`develop` branch](https://github.com/logisim-evolution/logisim-evolution/tree/develop) before you
   create your own branch.
@@ -146,11 +146,11 @@ Once it is running without bugs on your local fork, request a *Pull request* by:
 
 * Go to the *Pull request*-tab and click the button *New pull request*.
 * Click on *compare across forks*.
-* On the right hand side select your fork, for example: *head repository: BFH-ktt1/logisim-evolution*
-* On the right hand side select your branch, for example: *base: bugfixes*
-* On the left hand side select the development branch *base: develop* (**Important:** All pull requests **MUST**
+* On the right-hand side select your fork, for example: *head repository: BFH-ktt1/logisim-evolution*
+* On the right-hand side select your branch, for example: *base: bugfixes*
+* On the left-hand side select the development branch *base: develop* (**Important:** All pull requests **MUST**
   be on the [branch `develop`](https://github.com/logisim-evolution/logisim-evolution/tree/develop) as
   the [branch `master`](https://github.com/logisim-evolution/logisim-evolution/tree/master) only
-  holds the code of the latest stable release and we do not allow any external contributions to that
+  holds the code of the latest stable release, and we do not allow any external contributions to that
   particular branch.
 * Make sure that there are no conflicts reported.
