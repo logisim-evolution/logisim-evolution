@@ -732,13 +732,13 @@ tasks {
     // let's use google_checks.xml config provided with Checkstyle.
     // https://stackoverflow.com/a/67513272/1235698
     val archive = configurations.checkstyle.get().resolve().filter {
-      name.startsWith("checkstyle")
+      it.name.startsWith("checkstyle")
     }
     config = resources.text.fromArchiveEntry(archive, "google_checks.xml")
 
     // FIXME: There should be cleaner way of using custom suppression config with built-in style.
     // https://stackoverflow.com/a/64703619/1235698
-    System.setProperty( "org.checkstyle.google.suppressionfilter.config", "${projectDir}/config/checkstyle/suppressions.xml")
+    System.setProperty( "org.checkstyle.google.suppressionfilter.config", "${projectDir}/checkstyle-suppressions.xml")
   }
   checkstyleMain {
     source = fileTree("src/main/java")
