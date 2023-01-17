@@ -23,8 +23,8 @@ public class CounterIcon extends BaseIcon {
     final var f = g2.getFont().deriveFont(scale((float) 6));
 
     for (int i = -1; i <= 1; i++) {
-      final var ones = new TextLayout(Integer.toString((count+i)%10), f, g2.getFontRenderContext());  // Math.abs()
-      final var tens = new TextLayout(Integer.toString(count/10 + i), f, g2.getFontRenderContext());
+      final var ones = new TextLayout(Integer.toString((count + i) % 10), f, g2.getFontRenderContext());  // Math.abs()
+      final var tens = new TextLayout(Integer.toString(count / 10 + i), f, g2.getFontRenderContext());
       final var y = scale((float) (8.5 + i * 5)) - (float) ones.getBounds().getCenterY();
       final var xOnes = scale((float) 11.5) - (float) ones.getBounds().getCenterX();
       final var xTens = scale((float) 3.5) - (float) tens.getBounds().getCenterX();
