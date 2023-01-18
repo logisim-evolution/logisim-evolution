@@ -176,8 +176,8 @@ public class PortIo extends InstanceFactory {
     }
   }
 
-  public static final int MAX_IO = 128;
-  public static final int MIN_IO = 2;
+  public static final int MAX_IO = 64;
+  public static final int MIN_IO = 1;
   private static final int INITPORTSIZE = 8;
   public static final Attribute<BitWidth> ATTR_SIZE =
       Attributes.forBitWidth("number", S.getter("pioNumber"), MIN_IO, MAX_IO);
@@ -200,7 +200,7 @@ public class PortIo extends InstanceFactory {
   protected static final int DELAY = 1;
 
   public PortIo() {
-    super(_ID, S.getter("pioComponent"), new PortHdlGeneratorFactory(), true);
+    super(_ID, S.getter("pioComponent"), new PortHdlGeneratorFactory(), false);
     setAttributes(
         new Attribute[] {
           StdAttr.FACING,
@@ -239,27 +239,19 @@ public class PortIo extends InstanceFactory {
     instance.addAttributeListener();
     updatePorts(instance);
     instance.computeLabelTextField(Instance.AVOID_BOTTOM);
-    ComponentMapInformationContainer map = instance.getAttributeSet().getValue(StdAttr.MAPINFO);
-    if (map == null) {
-      map =
-          new ComponentMapInformationContainer(
-              0, 0, INITPORTSIZE, null, null, getLabels(INITPORTSIZE));
-      instance.getAttributeSet().setValue(ATTR_SIZE, BitWidth.create(INITPORTSIZE));
-      instance.getAttributeSet().setValue(ATTR_DIR, INOUTSE);
-    }
-    instance.getAttributeSet().setValue(StdAttr.MAPINFO, map.clone());
+    int dipSize = instance.getAttributeValue(ATTR_SIZE).getWidth();
+    instance
+        .getAttributeSet()
+        .setValue(
+            StdAttr.MAPINFO,
+            new ComponentMapInformationContainer(0, 0, dipSize, null, null, getLabels(dipSize)));
   }
 
   private void updatePorts(Instance instance) {
     final var facing = instance.getAttributeValue(StdAttr.FACING);
     final var dir = instance.getAttributeValue(ATTR_DIR);
     final var size = instance.getAttributeValue(ATTR_SIZE).getWidth();
-    // logisim max bus size is BitWidth.MAXWIDTH, so use multiple buses if needed
-    final var nBus = (((size - 1) / BitWidth.MAXWIDTH) + 1);
-    var nPorts = -1;
-    if (dir == INPUT || dir == OUTPUT) nPorts = nBus;
-    else if (dir == INOUTME) nPorts = 3 * nBus;
-    else if (dir == INOUTSE) nPorts = 2 * nBus + 1;
+    final var nPorts = (dir == INPUT || dir == OUTPUT) ? 1 : 3;
     Port[] ps = new Port[nPorts];
     var p = 0;
 

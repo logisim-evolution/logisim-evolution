@@ -79,7 +79,7 @@ public class BitWidth implements Comparable<BitWidth> {
 
   private static void ensurePrefab() {
     if (prefab == null) {
-      prefab = new BitWidth[Math.min(64, MAXWIDTH) + 1];
+      prefab = new BitWidth[MAXWIDTH + 1];
       prefab[0] = UNKNOWN;
       prefab[1] = ONE;
       for (int i = 2; i < prefab.length; i++) {
