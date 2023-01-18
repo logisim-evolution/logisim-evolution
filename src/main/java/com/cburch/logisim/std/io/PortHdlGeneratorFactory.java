@@ -9,7 +9,6 @@
 
 package com.cburch.logisim.std.io;
 
-import com.cburch.logisim.data.BitWidth;
 import com.cburch.logisim.fpga.designrulecheck.Netlist;
 import com.cburch.logisim.fpga.designrulecheck.netlistComponent;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
