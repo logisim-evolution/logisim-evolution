@@ -286,5 +286,5 @@ jobs:
         if: success()
         with:
           # NOTE: Gradle builder creates MSI file that always uses short version format in file name.
-          path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version_short }}-x86_64.msi
-          name: ${{ needs.git_check.outputs.base_name }}-x86_64.msi
+          path: build\dist\${{ needs.git_check.outputs.lse_name }}-${{ needs.git_check.outputs.lse_version_short }}-amd64.msi
+          name: ${{ needs.git_check.outputs.base_name }}-amd64.msi
