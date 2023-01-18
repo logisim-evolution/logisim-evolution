@@ -10,7 +10,7 @@
   * Added TTL 74381: arithmetic logic unit
   * Attribute sheet now honors application color theme.
   * Attribute sheet now displays HEX value of color properties.
-  * Fixed bugs in PortIO component and added the single bit version.
+  * Fixed Wrong HDL generation bug in the PortIO component and added the single bit version.
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins
