@@ -190,7 +190,7 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     Color drawColor;
     /* take care of coloring the components differently that require a label */
     if (state == SHOW_GHOST) {
-      drawColor = autoLabeler.isActive(canvas.getCircuit()) ? Color.MAGENTA : Color.GRAY; // WIP
+      drawColor = autoLabeler.isActive(canvas.getCircuit()) ? Color.MAGENTA : new Color(AppPreferences.COMPONENT_GHOST_COLOR.get());
       source.drawGhost(context, drawColor, x, y, getBaseAttributes());
       if (matrixPlace) {
         source.drawGhost(context, drawColor, x + bds.getWidth() + 3, y, getBaseAttributes());

@@ -67,7 +67,7 @@ public class Selection extends SelectionBase {
 
         var gfxNew = g.create();
         context.setGraphics(gfxNew);
-        c.getFactory().drawGhost(context, new Color(AppPreferences.COMPONENT_GHOST_COLOR.get()), loc.getX(), loc.getY(), c.getAttributeSet()); // WIP
+        c.getFactory().drawGhost(context, new Color(AppPreferences.COMPONENT_GHOST_COLOR.get()), loc.getX(), loc.getY(), c.getAttributeSet());
         gfxNew.dispose();
       }
     }
