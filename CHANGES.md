@@ -4,7 +4,8 @@
 
 * @dev (????-??-??)
   * Introduced user-defined color for components.
-  * Added architecture designation to macOS build
+  * Made component icons more uniform.
+  * Added architecture designation to macOS build.
   * Added TTL 74182: look-ahead carry generator.
   * Added TTL 74181: arithmetic logic unit.
   * Fixed Karnaugh map color index bug.
