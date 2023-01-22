@@ -45,7 +45,7 @@ public class Ttl747266 extends AbstractTtlGate {
     final var portwidth = 18;
     final var portheight = 15;
     final var youtput = y + (up ? 20 : 40);
-    Drawgates.paintXor(g, x + 44, youtput, portwidth - 4, portheight, true);
+    Drawgates.paintXor(g, x + 44, youtput, portwidth, portheight, true);
     // output line
     Drawgates.paintOutputgate(g, x + 50, y, x + 48, youtput, up, height);
     // input lines
