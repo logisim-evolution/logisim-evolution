@@ -108,8 +108,6 @@ Otherwise, report the issue to the package maintainer!
 * [Homebrew](https://formulae.brew.sh/cask/logisim-evolution) (`brew install --cask logisim-evolution`)
 * [MacPorts](https://ports.macports.org/port/logisim-evolution/details/) (`port install logisim-evolution`)
 * [Chocolatey](https://community.chocolatey.org/packages/logisim-evolution) (`choco install logisim-evolution`)
-* [winget](https://wingetgui.com/apps?id=Logisim-evolution.Logisim-evolution)
-(`winget install --id=Logisim-evolution.Logisim-evolution  -e`)
 * [Arch User Repository](https://aur.archlinux.org/packages/logisim-evolution)
 
 ### Nightly builds ###
