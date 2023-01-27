@@ -93,7 +93,7 @@ network connections. You can click "Deny" as we do not need network access curre
 
 ### Package Manager ###
 
-`Logisim-evolution` is available from a bunch of package managers.  
+`Logisim-evolution` is available from a bunch of [package managers](https://repology.org/project/logisim-evolution/versions).  
 Note that these (except for Snap) are not maintained by the core developers.  
 If you should observe a bug in Logisim-evolution while using one of these packages,
 first make sure that it can be reproduced with the most recent official packages
@@ -108,6 +108,7 @@ Otherwise, report the issue to the package maintainer!
 * [Homebrew](https://formulae.brew.sh/cask/logisim-evolution) (`brew install --cask logisim-evolution`)
 * [MacPorts](https://ports.macports.org/port/logisim-evolution/details/) (`port install logisim-evolution`)
 * [Chocolatey](https://community.chocolatey.org/packages/logisim-evolution) (`choco install logisim-evolution`)
+* [winget](https://winget.run/pkg/logisim-evolution/logisim-evolution) (`winget install -e --id logisim-evolution.logisim-evolution`)
 * [Arch User Repository](https://aur.archlinux.org/packages/logisim-evolution)
 
 ### Nightly builds ###
