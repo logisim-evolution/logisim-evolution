@@ -223,7 +223,7 @@ public abstract class AbstractTtlGate extends InstanceFactory {
     var height = bds.getHeight();
     if (!ghost) {
       g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
-    } // temp for git to notice this change
+    }
     for (byte i = 0; i < this.pinNumber; i++) {
       if (i < this.pinNumber / 2) {
         if (dir == Direction.WEST || dir == Direction.EAST) xp = i * 20 + (10 - PIN_WIDTH / 2) + x;
