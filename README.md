@@ -63,9 +63,9 @@ include the Java runtime and do not require it to be installed separately:
 * `logisim-evolution-<version>-1.x86_64.rpm`: Package for Fedora/Redhat/CentOS/SuSE Linux distributions,
 * `logisim-evolution-<version>_amd64.snap`: The [Snap](https://snapcraft.io/docs) archive for all
   supported Linux distributions (also available in [Snapcraft store](https://snapcraft.io/logisim-evolution)),
-* `logisim-evolution-<version>-AArch64.msi`: Installer package for Microsoft Windows for Arm processors,
-* `logisim-evolution-<version>-x86_64.msi`: Installer package for Microsoft Windows for Intel processors,
-* `logisim-evolution-<version>-AArch64.dmg`: macOS package for Apple processors,
+* `logisim-evolution-<version>-aarch64.msi`: Installer package for Microsoft Windows for Arm processors,
+* `logisim-evolution-<version>-amd64.msi`: Installer package for Microsoft Windows for Intel processors,
+* `logisim-evolution-<version>-aarch64.dmg`: macOS package for Apple processors,
 * `logisim-evolution-<version>-x86_64.dmg`: macOS package for Intel processors (also runs on Apple processors in simulation).
 
 The Java JAR [`logisim-evolution-<version>-all.jar`](https://github.com/logisim-evolution/logisim-evolution/releases)
@@ -93,7 +93,7 @@ network connections. You can click "Deny" as we do not need network access curre
 
 ### Package Manager ###
 
-`Logisim-evolution` is available from a bunch of package managers.  
+`Logisim-evolution` is available from a bunch of [package managers](https://repology.org/project/logisim-evolution/versions).  
 Note that these (except for Snap) are not maintained by the core developers.  
 If you should observe a bug in Logisim-evolution while using one of these packages,
 first make sure that it can be reproduced with the most recent official packages
@@ -108,8 +108,7 @@ Otherwise, report the issue to the package maintainer!
 * [Homebrew](https://formulae.brew.sh/cask/logisim-evolution) (`brew install --cask logisim-evolution`)
 * [MacPorts](https://ports.macports.org/port/logisim-evolution/details/) (`port install logisim-evolution`)
 * [Chocolatey](https://community.chocolatey.org/packages/logisim-evolution) (`choco install logisim-evolution`)
-* [winget](https://wingetgui.com/apps?id=Logisim-evolution.Logisim-evolution)
-(`winget install --id=Logisim-evolution.Logisim-evolution  -e`)
+* [winget](https://winget.run/pkg/logisim-evolution/logisim-evolution) (`winget install -e --id logisim-evolution.logisim-evolution`)
 * [Arch User Repository](https://aur.archlinux.org/packages/logisim-evolution)
 
 ### Nightly builds ###
