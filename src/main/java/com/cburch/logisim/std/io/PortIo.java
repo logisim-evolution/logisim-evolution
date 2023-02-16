@@ -176,7 +176,7 @@ public class PortIo extends InstanceFactory {
     }
   }
 
-  public static final int MAX_IO = 64;
+  public static final int MAX_IO = BitWidth.MAXWIDTH;
   public static final int MIN_IO = 1;
   private static final int INITPORTSIZE = 8;
   public static final Attribute<BitWidth> ATTR_SIZE =

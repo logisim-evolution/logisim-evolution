@@ -4,13 +4,18 @@
 
 * @dev (????-??-??)
   * Added architecture designation to macOS build
-  * Added TTL 74182: look-ahead carry generator.
-  * Added TTL 74181: arithmetic logic unit.
   * Fixed Karnaugh map color index bug.
-  * Added TTL 74381: arithmetic logic unit
   * Attribute sheet now honors application color theme.
   * Attribute sheet now displays HEX value of color properties.
   * Fixed Wrong HDL generation bug in the PortIO component and added the single bit version.
+  * Added TTL 74151: 8-line to 1 line data selector
+  * Added TTL 74153: dual 4-line to 1 line data selector
+  * Added TTL 74181: arithmetic logic unit.
+  * Added TTL 74182: look-ahead carry generator.
+  * Added TTL 74299: 8-bit universal shift register with three-state outputs
+  * Added TTL 74381: arithmetic logic unit
+  * Added TTL 74541: Octal buffers with three-state outputs
+  * Added TTL 74670: 4-by-4 register file with three-state outputs
 
 * v3.8.0 (2022-10-02)
   * Added reset value attribute to input pins
