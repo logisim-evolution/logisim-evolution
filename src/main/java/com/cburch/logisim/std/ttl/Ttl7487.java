@@ -73,21 +73,31 @@ public class Ttl7487 extends AbstractTtlGate {
 			state.setPort(Y2,state.getPortValue(C).not(),DELAY);
 			state.setPort(Y3,state.getPortValue(C).not(),DELAY);
 			state.setPort(Y4,state.getPortValue(C).not(),DELAY);
-		} else {
+		} else if (state.getPortValue(B) == Value.FALSE){
 			if(state.getPortValue(C) == Value.TRUE) {
 				//not inverted
-				state.setPort(Y1,state.getPortValue(A1),DELAY);
 				state.setPort(Y1,state.getPortValue(A1),DELAY);
 				state.setPort(Y2,state.getPortValue(A2),DELAY);
 				state.setPort(Y3,state.getPortValue(A3),DELAY);
 				state.setPort(Y4,state.getPortValue(A4),DELAY);
-			} else {
+			} else if(state.getPortValue(C) == Value.FALSE) {
 				//inverted
 				state.setPort(Y1,state.getPortValue(A1).not(),DELAY);
 				state.setPort(Y2,state.getPortValue(A2).not(),DELAY);
 				state.setPort(Y3,state.getPortValue(A3).not(),DELAY);
 				state.setPort(Y4,state.getPortValue(A4).not(),DELAY);
+			} else{
+				state.setPort(Y1,Value.ERROR,DELAY);
+				state.setPort(Y2,Value.ERROR,DELAY);
+				state.setPort(Y3,Value.ERROR,DELAY);
+				state.setPort(Y4,Value.ERROR,DELAY);
 			}
+		}
+		else{
+			state.setPort(Y1,Value.ERROR,DELAY);
+			state.setPort(Y2,Value.ERROR,DELAY);
+			state.setPort(Y3,Value.ERROR,DELAY);
+			state.setPort(Y4,Value.ERROR,DELAY);
 		}
 		
 	}
