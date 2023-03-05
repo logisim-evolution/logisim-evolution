@@ -7,6 +7,7 @@
   * Fixed Karnaugh map color index bug.
   * Attribute sheet now honors application color theme.
   * Attribute sheet now displays HEX value of color properties.
+  * ADDED TTL 7487: 7487: 4-bit True/complement, zero/one
   * Added TTL 74151: 8-line to 1 line data selector
   * Added TTL 74153: dual 4-line to 1 line data selector
   * Added TTL 74181: arithmetic logic unit.
