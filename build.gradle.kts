@@ -13,11 +13,11 @@ import java.util.Date
 
 plugins {
   checkstyle
-  id("com.github.ben-manes.versions") version "0.42.0"
+  id("com.github.ben-manes.versions") version "0.46.0"
   java
   application
-  id("com.github.johnrengelman.shadow") version "7.1.2"
-  id("org.sonarqube") version "3.4.0.2513"
+  id("com.github.johnrengelman.shadow") version "8.1.0"
+  id("org.sonarqube") version "4.0.0.2929"
 }
 
 repositories {
@@ -186,7 +186,7 @@ task<Jar>("sourcesJar") {
   group = "build"
   description = "Creates a JAR archive with project sources."
   dependsOn.add("classes")
-  classifier = "src"
+  archiveClassifier.set("src")
 
   from(sourceSets.main.get().allSource)
   archiveVersion.set(ext.get(APP_VERSION) as String)
