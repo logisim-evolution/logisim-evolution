@@ -54,6 +54,7 @@ class SimulateOptions extends OptionsPanel {
     final var simLimitPanel = new JPanel();
     simLimitPanel.add(simLimitLabel);
     simLimitPanel.add(simLimit);
+    simLimit.setSelectedIndex(2);
     simLimit.addActionListener(myListener);
 
     final var gateUndefinedPanel = new JPanel();
