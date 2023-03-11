@@ -54,7 +54,6 @@ class SimulateOptions extends OptionsPanel {
     final var simLimitPanel = new JPanel();
     simLimitPanel.add(simLimitLabel);
     simLimitPanel.add(simLimit);
-    simLimit.setSelectedIndex(2);
     simLimit.addActionListener(myListener);
 
     final var gateUndefinedPanel = new JPanel();
@@ -150,7 +149,7 @@ class SimulateOptions extends OptionsPanel {
       final var model = simLimit.getModel();
       for (var i = 0; i < model.getSize(); i++) {
         final var opt = (Integer) model.getElementAt(i);
-        if (opt == value) {
+        if (opt.equals(value)) {
           simLimit.setSelectedItem(opt);
         }
       }
