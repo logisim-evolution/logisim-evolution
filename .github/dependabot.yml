@@ -8,7 +8,7 @@ updates:
     ignore:
       - dependency-name: "de.jflex:jflex"
 
-  - package-echosystem: "github-actions"
+  - package-ecosystem: "github-actions"
     # directory of "/" for github-actions means .github/workflows
     directory: "/"
     schedule:
