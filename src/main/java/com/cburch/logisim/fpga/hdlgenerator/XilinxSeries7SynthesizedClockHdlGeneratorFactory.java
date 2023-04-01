@@ -37,7 +37,7 @@ public class XilinxSeries7SynthesizedClockHdlGeneratorFactory extends Synthesize
    * @param preDivider            A double to three decimals that will divide the
    *                              clock frequency.
    * @throws Exception
-   * @see                         https://docs.xilinx.com/v/u/en-US/ug472_7Series_Clocking
+   * @see                         <a href="https://docs.xilinx.com/v/u/en-US/ug472_7Series_Clocking" target="_top">Xilinx 7-Series Clocking</a>
    */
   public XilinxSeries7SynthesizedClockHdlGeneratorFactory(long fpga_clock_frequency, double preMultiplier, double preDivider) throws Exception {
     super();
@@ -52,25 +52,25 @@ public class XilinxSeries7SynthesizedClockHdlGeneratorFactory extends Synthesize
     // Get precision to the ps
     mmcmPeriodNs = Math.round(1000000000000.0 / (double) fpgaClockFrequency) / 1000.0;
     myWires
-    .addWire(SYNTHESIZED_CLOCK, 1)
-    .addWire("s_unbufferedSynthClk", 1)
-    .addWire("s_clkfbout", 1)
-    .addWire("s_bufferedFPGAClock", 1);
+        .addWire(SYNTHESIZED_CLOCK, 1)
+        .addWire("s_unbufferedSynthClk", 1)
+        .addWire("s_clkfbout", 1)
+        .addWire("s_bufferedFPGAClock", 1);
   }
 
   @Override
   public LineBuffer getModuleFunctionality(Netlist TheNetlist, AttributeSet attrs) {
     final var contents =
-      LineBuffer.getHdlBuffer()
-        .pair("synthesizedClock", SYNTHESIZED_CLOCK)
-        .pair("preDivider", String.valueOf(preDivider))
-        .pair("preMultiplier", String.valueOf(preMultiplier))
-        .pair("clkInPeriodNs", String.valueOf(mmcmPeriodNs))
-        .add("")
-        .addRemarkBlock("Here the output is defined.")
-        .add("{{assign}} SynthesizedClock {{=}} {{synthesizedClock}};")
-        .add("")
-        .addRemarkBlock("Here the update logic is defined.");
+        LineBuffer.getHdlBuffer()
+          .pair("synthesizedClock", SYNTHESIZED_CLOCK)
+          .pair("preDivider", String.valueOf(preDivider))
+          .pair("preMultiplier", String.valueOf(preMultiplier))
+          .pair("clkInPeriodNs", String.valueOf(mmcmPeriodNs))
+          .add("")
+          .addRemarkBlock("Here the output is defined.")
+          .add("{{assign}} SynthesizedClock {{=}} {{synthesizedClock}};")
+          .add("")
+          .addRemarkBlock("Here the update logic is defined.");
 
     if (Hdl.isVhdl()) {
       contents.addVhdlKeywords().add("""
@@ -129,10 +129,10 @@ public class XilinxSeries7SynthesizedClockHdlGeneratorFactory extends Synthesize
     final var lines = LineBuffer.getBuffer();
     lines.addVhdlKeywords().add("""
 
-      {{library}} unisim;
-      {{use}} unisim.vcomponents.all;
+          {{library}} unisim;
+          {{use}} unisim.vcomponents.all;
 
-    """);
+        """);
     return lines.get();
   }
 
@@ -142,9 +142,9 @@ public class XilinxSeries7SynthesizedClockHdlGeneratorFactory extends Synthesize
     final var contents = LineBuffer.getHdlBuffer();
     if (Hdl.isVhdl()) {
       contents.add(FileWriter.getGenerateRemark(componentName, theNetlist.projName()))
-        .add(Hdl.getExtendedLibrary())
-        .add(getUnisimLibrary())
-        .add(getVHDLBlackBox(theNetlist, attrs, componentName, true));
+          .add(Hdl.getExtendedLibrary())
+          .add(getUnisimLibrary())
+          .add(getVHDLBlackBox(theNetlist, attrs, componentName, true));
     }
     return contents.get();
   }

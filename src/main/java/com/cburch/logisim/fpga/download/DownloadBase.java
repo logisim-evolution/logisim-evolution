@@ -197,7 +197,7 @@ public abstract class DownloadBase {
         myBoardInformation.fpga.getClockFrequency(),
         preMultiplier,
         preDivider);
-    } catch(Exception e) {
+    } catch (Exception e) {
       Reporter.report.addFatalError(e.getMessage());
       return false;
     }

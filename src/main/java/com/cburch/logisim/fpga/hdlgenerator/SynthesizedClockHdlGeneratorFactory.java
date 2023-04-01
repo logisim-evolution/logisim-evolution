@@ -16,12 +16,12 @@ import com.cburch.logisim.util.LineBuffer;
 import java.util.SortedMap;
 import java.util.TreeMap;
  
- /*
-  * Base class for generating a synthesized clock that hooks in to the clock
-  * chain right after the hardware clock. This class simply generates a loopback.
-  * Override this class to use a clock tile for a given vendor's chips to 
-  * in order to accelerate the clock for your project.
-  */
+/*
+ * Base class for generating a synthesized clock that hooks in to the clock
+ * chain right after the hardware clock. This class simply generates a loopback.
+ * Override this class to use a clock tile for a given vendor's chips to 
+ * in order to accelerate the clock for your project.
+ */
 public class SynthesizedClockHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
 
   public static final String FPGA_CLOCK = "fpgaGlobalClock";
