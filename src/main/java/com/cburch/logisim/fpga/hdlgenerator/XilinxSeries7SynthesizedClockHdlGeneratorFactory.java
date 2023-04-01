@@ -30,7 +30,8 @@ public class XilinxSeries7SynthesizedClockHdlGeneratorFactory extends Synthesize
    * Instantiates an HDL clock generator for the Xilinx 7-series FPGA.
    * A pre-multiplier and a pre-divider can be specified to set the output
    * frequency. There are limitations for the settings of each of these parameters.
-   * Base frequency must be 10Mhz or greater, which is edited here.
+   * See referenced docs. Base frequency must be 10Mhz or greater, which is edited here.
+   * 
    * @param fpga_clock_frequency  Clock frequency in hertz.
    * @param preMultiplier         A double to three decimals that will multiply the 
    *                              clock frequency.
