@@ -20,6 +20,7 @@ import com.cburch.logisim.file.LibraryListener;
 import com.cburch.logisim.fpga.data.BoardInformation;
 import com.cburch.logisim.fpga.download.Download;
 import com.cburch.logisim.fpga.file.BoardReaderClass;
+import com.cburch.logisim.fpga.hdlgenerator.SynthesizedClockHdlGeneratorInstanceFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
 import com.cburch.logisim.gui.generic.OptionPane;
 import com.cburch.logisim.gui.icons.ProjectAddIcon;
@@ -93,6 +94,11 @@ public class FpgaCommander
       boardPic.setIcon(boardIcon);
       boardPic.repaint();
       FrequencyPanel.setFpgaClockFrequency(MyBoardInformation.fpga.getClockFrequency());
+      if (SynthesizedClockHdlGeneratorInstanceFactory.isClockScalingSupported(MyBoardInformation.fpga.getTechnology(), MyBoardInformation.fpga.getVendor())) {
+        FrequencyPanel.setClockScaling(true);
+      } else {
+        FrequencyPanel.setClockScaling(false);
+      }
       handleHdlOnly();
     }
   }
@@ -139,6 +145,11 @@ public class FpgaCommander
         new BoardReaderClass(AppPreferences.Boards.getSelectedBoardFileName())
             .getBoardInformation();
     MyBoardInformation.setBoardName(AppPreferences.SelectedBoard.get());
+    if (SynthesizedClockHdlGeneratorInstanceFactory.isClockScalingSupported(MyBoardInformation.fpga.getTechnology(), MyBoardInformation.fpga.getVendor())) {
+      FrequencyPanel.setClockScaling(true);
+    } else {
+      FrequencyPanel.setClockScaling(false);
+    }
     boardIcon = new BoardIcon(MyBoardInformation.getImage());
     JComboBox<String> selector = AppPreferences.Boards.boardSelector();
     selector.setPreferredSize(
@@ -376,6 +387,8 @@ public class FpgaCommander
               writeFlash,
               DownloadOnly,
               HdlOnly,
+              FrequencyPanel.getPreMultiplierValue(),
+              FrequencyPanel.getPreDividerValue(),
               Progress,
               panel);
       downloader.addListener(this);

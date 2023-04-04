@@ -40,15 +40,17 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
   private final boolean hasLedArray;
   private final ArrayList<FpgaIoInformationContainer> myLedArrays;
   private final HashMap<String, Boolean> ledArrayTypesUsed;
+  private final SynthesizedClockHdlGeneratorFactory mySynthesizedClockHdlGeneratorFactory;
   public static final String HDL_DIRECTORY = "toplevel";
 
   public ToplevelHdlGeneratorFactory(
-      long fpgaClock, double tickClock, Circuit topLevel, MappableResourcesContainer ioComponents) {
+      long fpgaClock, double tickClock, Circuit topLevel, MappableResourcesContainer ioComponents, SynthesizedClockHdlGeneratorFactory synthesizedClockHdlGeneratorFactory) {
     super(HDL_DIRECTORY);
     fpgaClockFrequency = fpgaClock;
     tickFrequency = tickClock;
     myCircuit = topLevel;
     myIOComponents = ioComponents;
+    mySynthesizedClockHdlGeneratorFactory = synthesizedClockHdlGeneratorFactory;
     var hasScanningLedArray = false;
     var hasLedArray = false;
     final var nets = topLevel.getNetList();
@@ -79,6 +81,8 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     this.ledArrayTypesUsed = ledArrayTypesUsed;
     myLedArrays = ledArrays;
     if (nrOfClockTrees > 0) {
+      // Add wire to hold clock synthesizer output
+      myWires.addWire(SynthesizedClockHdlGeneratorFactory.SYNTHESIZED_CLOCK, 1);
       myWires.addWire(TickComponentHdlGeneratorFactory.FPGA_TICK, 1);
       for (var clockId = 0; clockId < nrOfClockTrees; clockId++)
         myWires.addWire(
@@ -179,6 +183,10 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     final var components = LineBuffer.getHdlBuffer();
     final var nrOfClockTrees = theNetlist.numberOfClockTrees();
     if (nrOfClockTrees > 0) {
+      // Add clock synthesizer
+      components
+          .add(mySynthesizedClockHdlGeneratorFactory.getComponentInstantiation(theNetlist, null, SynthesizedClockHdlGeneratorFactory.HDL_IDENTIFIER))
+          .empty();
       final var ticker = new TickComponentHdlGeneratorFactory(fpgaClockFrequency, tickFrequency);
       components
           .add(
@@ -236,6 +244,11 @@ public class ToplevelHdlGeneratorFactory extends AbstractHdlGeneratorFactory {
     if (nrOfClockTrees > 0) {
       contents.empty().addRemarkBlock("The clock tree components are defined here");
       var index = 0L;
+      // Add the clock synthesizer port map
+      contents
+          .add(
+            mySynthesizedClockHdlGeneratorFactory.getComponentMap(null, index++, null, SynthesizedClockHdlGeneratorFactory.HDL_IDENTIFIER))
+          .empty();
       final var ticker = new TickComponentHdlGeneratorFactory(fpgaClockFrequency, tickFrequency);
       contents
           .add(
