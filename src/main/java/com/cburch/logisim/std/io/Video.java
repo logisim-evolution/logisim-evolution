@@ -372,6 +372,8 @@ class Video extends ManagedComponent implements ToolTipMaker, AttributeListener 
     x += (-30);
     y += (-bh);
 
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+
     g.drawRoundRect(x, y, bw, bh, 6, 6);
     for (var i = 0; i < 6; i++) {
       if (i != P_CLK) context.drawPin(this, i);
