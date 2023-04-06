@@ -4,7 +4,6 @@
 
 * @dev (????-??-??)
   * Update controlled buffer behavior to pass U and E inputs while enabled [#1642]
-  * Added architecture designation to macOS build
   * Introduced user-defined color for components.
   * Made component icons more uniform.
   * Added architecture designation to macOS build.
