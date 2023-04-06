@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Update controlled buffer behavior to pass U and E inputs while enabled [#1642]
   * Added architecture designation to macOS build
   * Fixed Karnaugh map color index bug.
   * Attribute sheet now honors application color theme.
