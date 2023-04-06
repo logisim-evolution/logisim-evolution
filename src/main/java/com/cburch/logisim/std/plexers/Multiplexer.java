@@ -27,6 +27,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
@@ -247,7 +248,7 @@ public class Multiplexer extends InstanceFactory {
     GraphicsUtil.drawText(g, "0", x0, y0, halign, GraphicsUtil.V_BASELINE);
 
     // draw the trapezoid, "MUX" string, the individual ports
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     final var lean =
         (inputs == 2)
             ? (size == PlexersLibrary.SIZE_NARROW ? 7 : 10)

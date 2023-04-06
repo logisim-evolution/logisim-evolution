@@ -21,6 +21,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import java.awt.Color;
 
 public class BcdToSevenSegmentDisplay extends InstanceFactory {
@@ -70,13 +71,12 @@ public class BcdToSevenSegmentDisplay extends InstanceFactory {
   public void paintInstance(InstancePainter painter) {
     final var gfx = painter.getGraphics();
     final var myBounds = painter.getBounds();
-    if (!painter.isPrintView()) gfx.setColor(Color.BLUE);
+    gfx.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawRectangle(myBounds, "");
     painter.drawPort(BCD_IN, "BCD", Direction.SOUTH);
     for (var i = 0; i < 7; i++) {
       painter.drawPort(i);
     }
-    gfx.setColor(Color.BLACK);
     painter.drawRectangle(
         myBounds.getX() + 5,
         myBounds.getY() + 20,

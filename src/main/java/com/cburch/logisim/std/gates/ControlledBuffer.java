@@ -201,7 +201,7 @@ class ControlledBuffer extends InstanceFactory {
     g.drawLine(pt0.getX(), pt0.getY(), pt1.getX(), pt1.getY());
 
     // draw triangle
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     paintShape(painter);
 
     // draw input and output pins

@@ -21,8 +21,10 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
+
 import java.awt.Color;
 
 public class FpDivider extends InstanceFactory {
@@ -62,9 +64,9 @@ public class FpDivider extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-
-    g.setColor(Color.GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(IN0);
     painter.drawPort(IN1);
     painter.drawPort(OUT);
@@ -74,7 +76,7 @@ public class FpDivider extends InstanceFactory {
     final var x = loc.getX();
     final var y = loc.getY();
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.fillOval(x - 12, y - 7, 4, 4);
     g.drawLine(x - 15, y, x - 5, y);
     g.fillOval(x - 12, y + 3, 4, 4);

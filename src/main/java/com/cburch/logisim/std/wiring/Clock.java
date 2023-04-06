@@ -29,6 +29,7 @@ import com.cburch.logisim.instance.InstancePoker;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import com.cburch.logisim.util.IconsUtil;
@@ -248,7 +249,7 @@ public class Clock extends InstanceFactory {
     int x = bds.getX();
     int y = bds.getY();
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawRect(x, y, bds.getWidth(), bds.getHeight());
 
     painter.drawLabel();
@@ -259,7 +260,7 @@ public class Clock extends InstanceFactory {
       g.setColor(state.sending.getColor());
       drawUp = state.sending == Value.TRUE;
     } else {
-      g.setColor(Color.BLACK);
+      g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
       drawUp = true;
     }
     x += 10;

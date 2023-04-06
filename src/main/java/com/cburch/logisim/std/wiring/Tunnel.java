@@ -23,6 +23,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
@@ -216,7 +217,7 @@ public class Tunnel extends InstanceFactory {
     int y = loc.getY();
     Graphics g = painter.getGraphics();
     g.translate(x, y);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     paintGhost(painter);
     g.translate(-x, -y);
     painter.drawPorts();

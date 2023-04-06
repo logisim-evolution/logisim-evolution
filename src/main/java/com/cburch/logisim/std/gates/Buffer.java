@@ -211,7 +211,7 @@ class Buffer extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     paintBase(painter);
     painter.drawPorts();
     painter.drawLabel();

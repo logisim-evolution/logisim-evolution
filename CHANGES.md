@@ -5,14 +5,17 @@
 * @dev (????-??-??)
   * Update controlled buffer behavior to pass U and E inputs while enabled [#1642]
   * Added architecture designation to macOS build
+  * Introduced user-defined color for components.
+  * Made component icons more uniform.
+  * Added architecture designation to macOS build.
   * Fixed Karnaugh map color index bug.
   * Attribute sheet now honors application color theme.
   * Attribute sheet now displays HEX value of color properties.
   * Fixed Wrong HDL generation bug in the PortIO component and added the single bit version.
   * Added TTL 74151: 8-line to 1 line data selector
   * Added TTL 74153: dual 4-line to 1 line data selector
-  * Added TTL 74181: arithmetic logic unit.
-  * Added TTL 74182: look-ahead carry generator.
+  * Added TTL 74181: arithmetic logic unit
+  * Added TTL 74182: look-ahead carry generator
   * Added TTL 74299: 8-bit universal shift register with three-state outputs
   * Added TTL 74381: arithmetic logic unit
   * Added TTL 74541: Octal buffers with three-state outputs

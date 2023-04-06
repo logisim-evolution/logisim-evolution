@@ -88,7 +88,6 @@ public class Ttl74153 extends AbstractTtlGate {
    */
   private void drawMux(Graphics2D graphics, int x, int y, int top, int bottom, Direction direction) {
     final var g =  (Graphics2D) graphics.create();
-    final var defColor = g.getColor();
     final var defStroke = g.getStroke();
     final var metrics = g.getFontMetrics();
 
@@ -102,10 +101,7 @@ public class Ttl74153 extends AbstractTtlGate {
 
     g.setStroke(new BasicStroke(2));
     g.drawPolygon(mux);
-    g.setColor(Color.lightGray);
-    g.fillPolygon(mux);
 
-    g.setColor(defColor);
     g.setStroke(defStroke);
 
     var height = metrics.getAscent();

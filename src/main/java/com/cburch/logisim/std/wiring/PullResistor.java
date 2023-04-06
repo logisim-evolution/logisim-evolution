@@ -111,7 +111,7 @@ public class PullResistor extends InstanceFactory {
     boolean color = painter.shouldDrawColor();
     Direction facing = painter.getAttributeValue(StdAttr.FACING);
     Graphics g = painter.getGraphics();
-    Color baseColor = g.getColor();
+    final var baseColor = new Color(AppPreferences.COMPONENT_COLOR.get());
     GraphicsUtil.switchToWidth(g, 3);
     if (color && inColor != null) g.setColor(inColor);
     if (facing == Direction.EAST) {

@@ -18,11 +18,13 @@ import com.cburch.logisim.comp.ComponentDrawContext;
 import com.cburch.logisim.data.AttributeSet;
 import com.cburch.logisim.data.Bounds;
 import com.cburch.logisim.data.Location;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.proj.Action;
 import com.cburch.logisim.proj.Project;
 import com.cburch.logisim.proj.ProjectEvent;
 import com.cburch.logisim.proj.ProjectListener;
 import com.cburch.logisim.tools.CustomHandles;
+
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
@@ -65,7 +67,7 @@ public class Selection extends SelectionBase {
 
         var gfxNew = g.create();
         context.setGraphics(gfxNew);
-        c.getFactory().drawGhost(context, Color.GRAY, loc.getX(), loc.getY(), c.getAttributeSet());
+        c.getFactory().drawGhost(context, new Color(AppPreferences.COMPONENT_GHOST_COLOR.get()), loc.getX(), loc.getY(), c.getAttributeSet());
         gfxNew.dispose();
       }
     }
@@ -99,7 +101,7 @@ public class Selection extends SelectionBase {
       int x = loc.getX() + dx;
       int y = loc.getY() + dy;
       context.setGraphics(g.create());
-      comp.getFactory().drawGhost(context, Color.gray, x, y, attrs);
+      comp.getFactory().drawGhost(context, new Color(AppPreferences.COMPONENT_GHOST_COLOR.get()), x, y, attrs);
       context.getGraphics().dispose();
     }
     context.setGraphics(g);
