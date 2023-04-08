@@ -429,7 +429,9 @@ public class TruthTable {
       final var r = newRows.get(i);
       for (final var idx : r) {
         if (taken[idx] != 0 && !force) {
-          throw new IllegalArgumentException(
+          boolean outputsEqual = getVisibleOutputs(taken[idx]).equals(getVisibleOutputs(i+1));
+          if(!outputsEqual) {
+            throw new IllegalArgumentException(
               String.format(
                   "Some inputs are repeated."
                       + " For example, rows %d and %d have overlapping input values %s and %s.",
@@ -437,6 +439,7 @@ public class TruthTable {
                   i + 1,
                   newRows.get(taken[idx] - 1).toBitString(ivars),
                   r.toBitString(ivars)));
+          }
         } else if (taken[idx] != 0) {
           // TODO: split row
           throw new IllegalArgumentException(
