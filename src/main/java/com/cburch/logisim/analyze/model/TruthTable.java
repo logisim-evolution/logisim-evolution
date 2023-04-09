@@ -429,7 +429,20 @@ public class TruthTable {
       final var r = newRows.get(i);
       for (final var idx : r) {
         if (taken[idx] != 0 && !force) {
-          boolean outputsEqual = getVisibleOutputs(taken[idx]).equals(getVisibleOutputs(i+1));
+          boolean outputsEqual = true;
+          final var existingValues = newEntries.get(taken[idx] - 1);
+          final var currentValues = newEntries.get(i);
+          for (int col = 0; col < no; col++) {
+            final var existingValue = existingValues[ni + col];
+            final var currentValue = currentValues[ni + col];
+            if(existingValue == Entry.DONT_CARE || currentValue == Entry.DONT_CARE) {
+              continue;
+            }
+            if (!currentValue.equals(existingValue)) {
+              outputsEqual = false;
+              break;
+            }
+          }
           if(!outputsEqual) {
             throw new IllegalArgumentException(
               String.format(
