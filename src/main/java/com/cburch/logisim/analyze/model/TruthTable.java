@@ -435,7 +435,7 @@ public class TruthTable {
           for (int col = 0; col < no; col++) {
             final var existingValue = existingValues[ni + col];
             final var currentValue = currentValues[ni + col];
-            if(existingValue == Entry.DONT_CARE || currentValue == Entry.DONT_CARE) {
+            if (existingValue == Entry.DONT_CARE || currentValue == Entry.DONT_CARE) {
               continue;
             }
             if (!currentValue.equals(existingValue)) {
@@ -443,7 +443,7 @@ public class TruthTable {
               break;
             }
           }
-          if(!outputsEqual) {
+          if (!outputsEqual) {
             throw new IllegalArgumentException(
               String.format(
                   "Some inputs are repeated."
