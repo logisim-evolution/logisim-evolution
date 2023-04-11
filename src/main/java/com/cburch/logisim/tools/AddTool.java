@@ -187,30 +187,30 @@ public class AddTool extends Tool implements Transferable, PropertyChangeListene
     if (source == null) return;
     final var base = getBaseAttributes();
     final var bds = source.getOffsetBounds(base);
-    Color DrawColor;
+    Color drawColor;
     /* take care of coloring the components differently that require a label */
     if (state == SHOW_GHOST) {
-      DrawColor = autoLabeler.isActive(canvas.getCircuit()) ? Color.MAGENTA : Color.GRAY;
-      source.drawGhost(context, DrawColor, x, y, getBaseAttributes());
+      drawColor = autoLabeler.isActive(canvas.getCircuit()) ? Color.MAGENTA : new Color(AppPreferences.COMPONENT_GHOST_COLOR.get());
+      source.drawGhost(context, drawColor, x, y, getBaseAttributes());
       if (matrixPlace) {
-        source.drawGhost(context, DrawColor, x + bds.getWidth() + 3, y, getBaseAttributes());
-        source.drawGhost(context, DrawColor, x, y + bds.getHeight() + 3, getBaseAttributes());
+        source.drawGhost(context, drawColor, x + bds.getWidth() + 3, y, getBaseAttributes());
+        source.drawGhost(context, drawColor, x, y + bds.getHeight() + 3, getBaseAttributes());
         source.drawGhost(
             context,
-            DrawColor,
+            drawColor,
             x + bds.getWidth() + 3,
             y + bds.getHeight() + 3,
             getBaseAttributes());
       }
     } else if (state == SHOW_ADD) {
-      DrawColor = autoLabeler.isActive(canvas.getCircuit()) ? Color.BLUE : Color.BLACK;
-      source.drawGhost(context, DrawColor, x, y, getBaseAttributes());
+      drawColor = autoLabeler.isActive(canvas.getCircuit()) ? Color.BLUE : Color.BLACK;
+      source.drawGhost(context, drawColor, x, y, getBaseAttributes());
       if (matrixPlace) {
-        source.drawGhost(context, DrawColor, x + bds.getWidth() + 3, y, getBaseAttributes());
-        source.drawGhost(context, DrawColor, x, y + bds.getHeight() + 3, getBaseAttributes());
+        source.drawGhost(context, drawColor, x + bds.getWidth() + 3, y, getBaseAttributes());
+        source.drawGhost(context, drawColor, x, y + bds.getHeight() + 3, getBaseAttributes());
         source.drawGhost(
             context,
-            DrawColor,
+            drawColor,
             x + bds.getWidth() + 3,
             y + bds.getHeight() + 3,
             getBaseAttributes());

@@ -21,6 +21,8 @@ import com.cburch.logisim.fpga.file.FileWriter;
 import com.cburch.logisim.fpga.gui.Reporter;
 import com.cburch.logisim.fpga.hdlgenerator.Hdl;
 import com.cburch.logisim.fpga.hdlgenerator.HdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.SynthesizedClockHdlGeneratorFactory;
+import com.cburch.logisim.fpga.hdlgenerator.SynthesizedClockHdlGeneratorInstanceFactory;
 import com.cburch.logisim.fpga.hdlgenerator.TickComponentHdlGeneratorFactory;
 import com.cburch.logisim.fpga.hdlgenerator.ToplevelHdlGeneratorFactory;
 import com.cburch.logisim.fpga.settings.VendorSoftware;
@@ -40,6 +42,8 @@ public abstract class DownloadBase {
   protected Project myProject;
   protected BoardInformation myBoardInformation = null;
   protected MappableResourcesContainer myMappableResources;
+  protected double preMultiplier = 1.0;
+  protected double preDivider = 1.0;
   static final String[] HDLPaths = {
     HdlGeneratorFactory.VERILOG.toLowerCase(),
     HdlGeneratorFactory.VHDL.toLowerCase(),
@@ -54,6 +58,18 @@ public abstract class DownloadBase {
   public static final Integer SANDBOX_PATH = 3;
   public static final Integer UCF_PATH = 4;
   public static final Integer XDC_PATH = 5;
+
+  protected boolean isClockScalingRequested() {
+    return !(preDivider == 1.0 && preMultiplier == 1.0);
+  }
+
+  public long getSynthesizedFrequency() {
+    if (isClockScalingRequested()) {
+      return Math.round(myBoardInformation.fpga.getClockFrequency() * preMultiplier / preDivider);
+    } else {
+      return myBoardInformation.fpga.getClockFrequency();
+    }
+  }
 
   protected boolean isVendorSoftwarePresent() {
     return VendorSoftware.toolsPresent(
@@ -171,11 +187,41 @@ public abstract class DownloadBase {
     if (!worker.generateAllHDLDescriptions(generatedHDLComponents, projectDir, null)) {
       return false;
     }
+    // Instantiate the clock synthesizer component
+    SynthesizedClockHdlGeneratorFactory synthesizer;
+    try {
+      synthesizer = SynthesizedClockHdlGeneratorInstanceFactory.getSynthesizedClockHdlGeneratorFactory(
+        myBoardInformation.fpga.getTechnology(),
+        myBoardInformation.fpga.getVendor(),
+        isClockScalingRequested(), 
+        myBoardInformation.fpga.getClockFrequency(),
+        preMultiplier,
+        preDivider);
+    } catch (Exception e) {
+      Reporter.report.addFatalError(e.getMessage());
+      return false;
+    }
     /* Here we generate the top-level shell */
     if (rootSheet.getNetList().numberOfClockTrees() > 0) {
+      // Write the clock synthesizer component
+      if (!Hdl.writeEntity(
+          projectDir + synthesizer.getRelativeDirectory(),
+          synthesizer.getEntity(
+              rootSheet.getNetList(), null, SynthesizedClockHdlGeneratorFactory.HDL_IDENTIFIER),
+          SynthesizedClockHdlGeneratorFactory.HDL_IDENTIFIER)) {
+        return false;
+      }
+      if (!Hdl.writeArchitecture(
+          projectDir + synthesizer.getRelativeDirectory(),
+          synthesizer.getArchitecture(
+              rootSheet.getNetList(), null, SynthesizedClockHdlGeneratorFactory.HDL_IDENTIFIER),
+          SynthesizedClockHdlGeneratorFactory.HDL_IDENTIFIER)) {
+        return false;
+      }
+
       final var ticker =
           new TickComponentHdlGeneratorFactory(
-              myBoardInformation.fpga.getClockFrequency(),
+              getSynthesizedFrequency(),
               frequency /* , boardFreq.isSelected() */);
       if (!Hdl.writeEntity(
           projectDir + ticker.getRelativeDirectory(),
@@ -217,7 +263,7 @@ public abstract class DownloadBase {
     }
     final var top =
         new ToplevelHdlGeneratorFactory(
-            myBoardInformation.fpga.getClockFrequency(), frequency, rootSheet, myMappableResources);
+            getSynthesizedFrequency(), frequency, rootSheet, myMappableResources, synthesizer);
     if (top.hasLedArray()) {
       for (var type : LedArrayDriving.DRIVING_STRINGS) {
         if (top.hasLedArrayType(type)) {

@@ -53,7 +53,7 @@ public class TickComponentHdlGeneratorFactory extends AbstractHdlGeneratorFactor
         .addRegister("s_tickReg", 1)
         .addRegister("s_countReg", NR_OF_COUNTER_BITS_ID);
     myPorts
-         .add(Port.INPUT, "FPGAClock", 1, FPGA_CLOCK)
+         .add(Port.INPUT, "FPGAClock", 1, SynthesizedClockHdlGeneratorFactory.SYNTHESIZED_CLOCK)
          .add(Port.OUTPUT, "FPGATick", 1, FPGA_TICK);
   }
 

@@ -39,7 +39,6 @@ public class ArithmeticIcon extends BaseIcon {
   @Override
   protected void paintIcon(Graphics2D g2) {
     g2.setStroke(new BasicStroke(scale(2)));
-    g2.setColor(Color.BLACK);
     final var scale = opp.length() >= nrOfChars ? nrOfChars : 1;
     final var yOff = opp.length() > nrOfChars ? getIconHeight() >> 2 : getIconHeight() >> 1;
     var font = g2.getFont().deriveFont((float) getIconWidth() / scale).deriveFont(Font.BOLD);
