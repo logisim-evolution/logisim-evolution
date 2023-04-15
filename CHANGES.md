@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed appearance of LSe desktop icon [#1662]
   * Update controlled buffer behavior to pass U and E inputs while enabled [#1642]
   * Introduced user-defined color for components.
   * Made component icons more uniform.
