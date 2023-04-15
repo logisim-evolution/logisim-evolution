@@ -173,7 +173,7 @@ public class HdlParameters {
               totalValue += bitWidth.getWidth();
             } else throw new UnsupportedOperationException(notAnIntExMsg);
           }
-          selectedValue = (long) Math.pow(totalValue, 2D);
+          selectedValue = (long) Math.pow(2D, totalValue);
           break;
 
         case MAP_LN2:

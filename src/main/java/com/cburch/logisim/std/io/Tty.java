@@ -27,6 +27,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Font;
@@ -142,13 +143,13 @@ public class Tty extends InstanceFactory implements DynamicElementProvider {
     final var showState = painter.getShowState();
     final var g = painter.getGraphics();
     final var bds = painter.getBounds();
-    painter.drawClock(CK, Direction.EAST);
     if (painter.shouldDrawColor()) {
       g.setColor(painter.getAttributeValue(IoLibrary.ATTR_BACKGROUND));
       g.fillRoundRect(bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight(), 10, 10);
     }
     GraphicsUtil.switchToWidth(g, 2);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+    painter.drawClock(CK, Direction.EAST);
     g.drawRoundRect(
         bds.getX(), bds.getY(), bds.getWidth(), bds.getHeight(), 2 * BORDER, 2 * BORDER);
     GraphicsUtil.switchToWidth(g, 1);

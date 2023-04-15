@@ -30,6 +30,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
@@ -206,6 +207,7 @@ public class Buzzer extends InstanceFactory {
     g.drawLine(x + width / 2, y + 4, x + width / 2, y + 36);
     g.setColor(Color.BLACK);
     g.fillOval(x + 15, y + 15, 10, 10);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawOval(x, y, 40, 40);
     painter.drawPorts();
     painter.drawLabel();
@@ -336,7 +338,6 @@ public class Buzzer extends InstanceFactory {
       Clip clip = null;
       AudioInputStream ais = null;
       var oldfreq = -1;
-      var oldpw = -1;
       try {
         while (isOn.get()) {
           if (updateRequired) {

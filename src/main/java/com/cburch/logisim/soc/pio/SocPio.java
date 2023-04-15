@@ -22,6 +22,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.soc.data.SocBusSlaveInterface;
 import com.cburch.logisim.soc.data.SocBusSnifferInterface;
 import com.cburch.logisim.soc.data.SocInstanceFactory;
@@ -29,6 +30,8 @@ import com.cburch.logisim.soc.data.SocProcessorInterface;
 import com.cburch.logisim.soc.data.SocSimulationManager;
 import com.cburch.logisim.tools.MenuExtender;
 import com.cburch.logisim.util.GraphicsUtil;
+
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 public class SocPio extends SocInstanceFactory {
@@ -180,6 +183,7 @@ public class SocPio extends SocInstanceFactory {
   public void paintInstance(InstancePainter painter) {
     final var g2 = (Graphics2D) painter.getGraphics();
     final var loc = painter.getLocation();
+    g2.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
     painter.drawLabel();
     paintPins(painter, g2, loc);

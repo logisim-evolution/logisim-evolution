@@ -28,6 +28,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.DirectionConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
@@ -169,6 +170,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     controlTopy[0] = controlTopy[7] = ypos + 110;
     controlTopy[1] = controlTopy[2] = controlTopy[5] = controlTopy[6] = ypos + 100;
     controlTopy[3] = controlTopy[4] = ypos;
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawPolyline(controlTopx, controlTopy, controlTopx.length);
     // These are up here because they reset the width to 1 when done.
     painter.drawClockSymbol(xpos + 20, ypos + 80);
@@ -283,7 +285,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
           ypos + 30,
           GraphicsUtil.H_LEFT,
           GraphicsUtil.V_CENTER);
-      g.setColor(Color.BLACK);
+      g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     }
   }
 
@@ -322,7 +324,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
           realYpos + 10);
     }
 
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     if (nrOfBits > 1) {
       GraphicsUtil.drawText(
           g,
@@ -345,6 +347,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
     final var LineWidth =
         (nrOfBits == 1) ? GraphicsUtil.DATA_SINGLE_WIDTH : GraphicsUtil.DATA_MULTI_WIDTH;
     GraphicsUtil.switchToWidth(g, LineWidth);
+    g.setColor(Value.multiColor);
     if (first) {
       painter.drawPort(IN);
       painter.drawPort(OUT);
@@ -407,7 +410,7 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
           realYpos + 10,
           GraphicsUtil.H_CENTER,
           GraphicsUtil.V_CENTER);
-      g.setColor(Color.BLACK);
+      g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     }
   }
 
@@ -461,6 +464,8 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       b = S.get("registerWidthLabel", "" + widthVal.getWidth());
     }
 
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
+
     // draw boundary, label
     painter.drawBounds();
     painter.drawLabel();
@@ -473,13 +478,13 @@ public class Counter extends InstanceFactory implements DynamicElementProvider {
       painter.drawPort(IN);
       painter.drawPort(OUT);
     }
-    g.setColor(Color.GRAY);
+    g.setColor(new Color(AppPreferences.COMPONENT_SECONDARY_COLOR.get()));
     painter.drawPort(LD);
     painter.drawPort(UD);
     painter.drawPort(CARRY);
     painter.drawPort(CLR, "0", Direction.SOUTH);
     painter.drawPort(EN, S.get("counterEnableLabel"), Direction.EAST);
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawClock(CK, Direction.NORTH);
 
     // draw contents
