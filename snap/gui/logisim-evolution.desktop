@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Logisim-evolution
+Comment=Logisim-evolution is educational software for designing and simulating digital logic circuits.
+GenericName=Digital logic design tool and simulator
+Exec=logisim-evolution %f
+Icon=${SNAP}/meta/gui/logisim-icon-128.png
+Type=Application
+StartupNotify=false
+Categories=Electronics
+MimeType=application/x-logisim-circuit;
+Actions=new-empty-window;
+Keywords=circuits;simulation;logic;HDL;chronogram;

@@ -247,11 +247,8 @@ class ControlledBuffer extends InstanceFactory {
     final var width = state.getAttributeValue(StdAttr.WIDTH);
     if (control == Value.TRUE) {
       final var in = state.getPortValue(1);
-      /* in cannot passed directly, as the simulator would pass an u at the input to an u at the output.
-       * Doing double inversion is the correct way to resolve this problem.
-       */
-      state.setPort(0, isInverter ? in.not() : in.not().not(), GateAttributes.DELAY);
-    } else if (control == Value.ERROR || control == Value.UNKNOWN) {
+      state.setPort(0, isInverter ? in.not() : in, GateAttributes.DELAY);
+    } else if (control == Value.ERROR) {
       state.setPort(0, Value.createError(width), GateAttributes.DELAY);
     } else {
       Value out;
