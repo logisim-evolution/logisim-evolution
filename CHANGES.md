@@ -3,6 +3,7 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Fixed select port positioning on Multiplexer to be more consistent in some cases [#1734]
   * Fixed appearance of LSe desktop icon [#1662]
   * Update controlled buffer behavior to pass U and E inputs while enabled [#1642]
   * Introduced user-defined color for components.
