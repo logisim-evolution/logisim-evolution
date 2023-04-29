@@ -154,13 +154,13 @@
                 <tocitem target="arith_divider" text="מְחַלֵק" image="icon_divider"/>
                 <tocitem target="arith_negator" text="מבטל" image="icon_negator"/>
                 <tocitem target="arith_comparator" text="משווה" image="icon_comparator"/>
-                    <tocitem target="arith_shifter" text="שיפטר" image="icon_shifter"/>
-                    <tocitem target="arith_bitadder" text="מוסיף סיביות" image="icon_bitadder"/>
+                <tocitem target="arith_shifter" text="שיפטר" image="icon_shifter"/>
+                <tocitem target="arith_bitadder" text="מוסיף סיביות" image="icon_bitadder"/>
                 <tocitem target="arith_bitfinder" text="מחפש סיביות" image="icon_bitfinder"/>
             </tocitem>
             <tocitem target="mem" text="Memory library">
                 <tocitem target="mem_flipflops" text="D/T/J-K/S-R דלגלג" image="icon_flipflops"/>
-                    <tocitem target="mem_register" text="אוגר" image="icon_register"/>
+                <tocitem target="mem_register" text="אוגר" image="icon_register"/>
                 <tocitem target="mem_counter" text="מוֹנֶה" image="icon_counter"/>
                 <tocitem target="mem_shiftreg" text="אוגר הזזה" image="icon_shiftreg"/>
                 <tocitem target="mem_random" text="אַקרַאִי" image="icon_random"/>
