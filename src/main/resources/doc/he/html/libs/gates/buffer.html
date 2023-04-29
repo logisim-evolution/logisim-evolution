@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-08-09T06:18:42.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Buffer
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/ansbuffergate.png" alt="#########" width="32" height="32">&nbsp; 
+		<img class="iconlibs" src="../../../../icons/6464/iecbuffergate.png" alt="#########" width="32" height="32">&nbsp;  
+		<em>Buffer</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Library:</strong>
+            </td>
+            <td>
+              <a href="index.html">Gates</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduced:</strong>
+            </td>
+            <td>
+              2.0 Beta 1
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Appearance:</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                    <th>
+                      ANSI:
+                    </th>
+                    <th>
+                      IEC:
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ansbuffergate.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecbuffergate.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Behavior
+      </h2>
+      <p>
+        The buffer simply passes through to its right output whatever input it receives on the left side. The way data is presented on the output is defined by the <b class="propertie">output value</b> attribute. The truth table for a one-bit buffer is the following.
+      </p>
+      <center>
+        <table class="encapsul">
+          <tbody>
+             <tr>
+              <th class="tspace">
+                &nbsp;In&nbsp;
+              </th>
+              <th class="tspace" colspan="3">
+                &nbsp;Out&nbsp;
+              </th>
+            </tr>
+            <tr>
+              <th class="tspace"></th>
+              <th class="tspace">
+                &nbsp;&nbsp;O/1&nbsp;&nbsp;
+              </th>
+              <th class="tspace">
+                O/flt.
+              </th>
+              <th class="tspace">
+                flt./1
+              </th>
+            </tr>
+            <tr>
+              <td class="tzerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="zerov">
+                0
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="tunov">
+                1
+              </td>
+              <td class="unov">
+                1
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="unov">
+                1
+              </td>
+            </tr>
+            <tr>
+              <td class="tuvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+              <td class="uvalue">
+                U
+              </td>
+            </tr>
+            <tr>
+              <td class="tevalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+              <td class="evalue">
+                E
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </center>
+      <p>
+        If the input is unspecified (i.e., floating <b class="uvalue">U</b>), then the output will also be unspecified. If the input is an error (<b class="evalue">E</b>) value, then the output will also be.
+      </p>
+      <p>
+        Buffers are the most useless of the gate components provided in Logisim; its presence in the Gates library is just as much a matter of completeness (a component for each possible one-input truth table) as it is a matter of providing useful functionality. Still, it can be occasionally useful to ensure that values propagate in only one direction along a wire.
+      </p>
+      <h2>
+        Pins (assuming component faces east)
+      </h2>
+      <dl>
+        <dt>
+          West edge :
+        </dt>
+        <dd>
+          The input into the component. Bit width according to Data  <b class="propertie">Bits attribute</b>.
+        </dd>
+        <dt>
+          East edge :
+        </dt>
+        <dd>
+          The output, which always matches the input into the left side. <b class="propertie">Bits attribute</b>.
+		  The data presentation mode is defined by the <b class="propertie">Output Value</b> attribute. 
+        </dd>
+      </dl>
+      <h2>
+        Attributes
+      </h2>
+      <p>
+        When the component is selected or being added, <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute and the arrow keys alter its <b class="propertie">Facing</b> attribute.
+      </p>
+      <div class="attliste">
+        <dl>
+          <dt>
+            <b class="propertie">Facing</b>
+          </dt>
+          <dd>
+            The direction of the component (its output relative to its input).
+          </dd>
+          <dt>
+            <b class="propertie">Data Bits</b>
+          </dt>
+          <dd>
+            The bit width of the component's inputs and outputs.
+          </dd>
+          <dt>
+            <b class="propertie">Output Value</b>
+          </dt>
+          <dd>
+            Indicates how false and true results should be translated into output values. By default, false is indicated by a low voltage (<b class="zerov">0</b>) and true by a high voltage (<b class="unov">1</b>), but one or the other can be replaced by a high-impedance (<q>floating</q>) value instead. This allows wired-or and wired-and connections, as illustrated in the <a href="basic.html">AND/OR/NAND/NOR Gate documentation</a>.
+          </dd>
+          <dt>
+            <b class="propertie">Label</b>
+          </dt>
+          <dd>
+            The text within the label associated with the gate.
+          </dd>
+          <dt>
+            <b class="propertie">Label Font</b>
+          </dt>
+          <dd>
+            The font with which to render the label.
+          </dd>
+        </dl>
+        <h2>
+          Poke Tool Behavior
+        </h2>
+        <p>
+          None.
+        </p>
+        <h2>
+          Text Tool Behavior
+        </h2>
+        <p>
+          Allows the label associated with the gate to be edited.
+        </p>
+        <p>
+          <b>Back to</b> <a href="../index.html">Library Reference</a>
+        </p>
+      </div>
+    </div>
+  </body>
+</html>

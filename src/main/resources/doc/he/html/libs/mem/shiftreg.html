@@ -1,0 +1,170 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-05-21T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Shift Register
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/shiftreg.png" alt="#########" width="32" height="32"> <em>Shift Register</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Library:</strong>
+            </td>
+            <td>
+              <a href="index.html">Memory</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduced:</strong>
+            </td>
+            <td>
+              2.3.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Appearance:</strong>
+            </td>
+            <td valign="top">
+              <img class="appearancelibs" src="../../../../img-libs/shiftreg.png"alt="#########"  width="64" height="64">
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Behavior
+      </h2>
+      <p>
+        This register consists of several stages, where each clock may lead to each stage receiving the value in the previous stage, while a new value is loaded into the first stage. The component optionally also supports parallel loads and stores to all stages' values.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <p>
+        * An asterisk marks pins that exist only when the Parallel Load attribute is enabled.
+      </p>
+      <dl>
+        <dt>
+          West edge, top pin labeled <var>R</var> (input, bit width 1)
+        </dt>
+        <dd>
+          Clear: When 1, all stages are reset to 0 (all zeroes) asynchronously; that is, as long as the <var>clear</var> input is 1, all values are pinned to 0, regardless of the clock input.
+        </dd>
+        <dt>
+          West edge, second pin labeled <var>M2 [load]</var> (input, bit width 1)
+        </dt>
+        <dd>
+          Load: When 1 and <var>clear</var> is 0, all stages are loaded from data pins. When 0 or disconnected, no load occurs.
+        </dd>
+        <dt>
+          West edge, third pin labeled <var>M1 [shift]</var> (input, bit width 1)
+        </dt>
+        <dd>
+          Shift: When 1 or disconnected, all stages advance with the clock trigger; but if it is 0, no advance takes place. This input is ignored if <var>load</var> is 1.
+        </dd>
+        <dt>
+          West edge, fourth pin labeled <var>1&#8594;C3</var> marked with triangle (input, bit width 1)
+        </dt>
+        <dd>
+          Clock: At the instant that this is triggered as specified by the Trigger attribute, the component may advance the stages or load new values.
+        </dd>
+        <dt>
+          West edge, fifth pin labeled <var>1,3D</var> (input, bit width matches Data Bits attribute)
+        </dt>
+        <dd>
+          Data: When advancing the stages, the value found at this input is loaded into the first stage.
+        </dd>
+        <dt>
+          *West edge, other pins labeled <var>2,3D</var> (input, bit width matches Data Bits attribute)
+        </dt>
+        <dd>
+          Data: These values are loaded into all stages when the clock is triggered while the <var>load</var> input is 1. The topmost input corresponds to the first (youngest) stage.
+        </dd>
+        <dt>
+          East edge bottom pin (output, bit width matches Data Bits attribute)
+        </dt>
+        <dd>
+          Output: Emits the value stored in the final (oldest) stage.
+        </dd>
+        <dt>
+          *East edge, other pins (output, bit width matches Data Bits attribute)
+        </dt>
+        <dd>
+          Output: Emits the value stored in each stage, with the first (youngest) stage reflected on the topmost pin.
+        </dd>
+      </dl>
+      <h2>
+        Attributes
+      </h2>
+      <p>
+        When the component is selected or being added, the digits '0' through '9' alter its <q>Number of Stages</q> attribute and Alt-0 through Alt-9 alter its <q>Data Bits</q> attribute.
+      </p>
+      <dl>
+        <dt>
+          Data Bits
+        </dt>
+        <dd>
+          The bit width of the value stored in each stage.
+        </dd>
+        <dt>
+          Number of Stages
+        </dt>
+        <dd>
+          The number of stages included in the component.
+        </dd>
+        <dt>
+          Parallel Load
+        </dt>
+        <dd>
+          If <q>yes</q>, then the component includes inputs and outputs facilitating parallel access to all the stages' values.
+        </dd>
+        <dt>
+          Trigger
+        </dt>
+        <dd>
+          Configures how the clock input is interpreted. The value <q>rising edge</q> indicates that the register should update its value at the instant when the clock rises from 0 to 1. The <q>falling edge</q> value indicates that it should update at the instant the clock falls from 1 to 0.
+        </dd>
+        <dt>
+          Label
+        </dt>
+        <dd>
+          The text within the label associated with the component.
+        </dd>
+        <dt>
+          Label Font
+        </dt>
+        <dd>
+          The font with which to render the label.
+        </dd>
+      </dl>
+      <h2>
+        Poke Tool Behavior
+      </h2>
+      <p>
+        If the Parallel Load attribute is no, or if the Data Bits attribute is more than 4, then poking the register has no effect. Otherwise, clicking the component will bring keyboard focus to the clicked stage (indicated by a red rectangle), and typing a hexadecimal digit will change the value stored in that stage.
+      </p>
+      <h2>
+        Text Tool Behavior
+      </h2>
+      <p>
+        Allows the label associated with the component to be edited.
+      </p>
+      <p>
+        <a href="../index.html">Back to <em>Library Reference</em></a>
+      </p>
+    </div>
+  </body>
+</html>

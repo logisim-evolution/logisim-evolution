@@ -1,0 +1,122 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-05-21T06:18:42.262000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      TCL Library
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        TCL library
+      </h1>
+      <p>
+        The TCL components allows you to have a component who's behavior is defined by a TCL script.
+      </p>
+      <table>
+        <tbody>
+          <tr>
+            <td align="right">
+              <a href="redsconsole.html"><img class="iconlibs" src="../../../../icons/tcl.gif" alt="#########"></a>
+            </td>
+            <td>
+              <a href="redsconsole.html">REDS console</a>
+            </td>
+          </tr>
+          <tr>
+            <td align="right">
+              <a href="tclgeneric.html"><img class="iconlibs" src="../../../../icons/tcl.gif"  alt="#########" alt="#########"></a>
+            </td>
+            <td>
+              <a href="tclgeneric.html">TCL generic</a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        TCL script specification
+      </h2>
+      <p>
+        The TCL script is launched by a Logisim into a wrapper.
+      </p>
+      <h3>
+        Wrapper API
+      </h3>
+      <p>
+        The wrapper serves an API that is compatible with the Questasim/Modelsim API to run simulations. Only a few functions are proposed :
+      </p>
+      <dl>
+        <dt>
+          <code>examine &lt;signal&gt;</code>
+        </dt>
+        <dd>
+          Gets a buffered signal value. The returned value is a string with the binary value of the signal.
+        </dd>
+        <dd>
+          &lt;signal&gt; the signal name. If it has a path to the signal (for Questasim), the path will be ignore (eg. <code>/top_sim/component2/Signal_2_i</code> will become <code>Signal_2_i</code>.
+        </dd>
+        <dd>
+          <i>Single bit read (eg. <code>examine Signal_2_i(3)</code>) is not supported.</i>
+        </dd>
+        <dd>
+          <br>
+        </dd>
+        <dt>
+          <code>force &lt;signal&gt; &lt;value&gt;</code>
+        </dt>
+        <dd>
+          Set a buffered signal value.
+        </dd>
+        <dd>
+          &lt;signal&gt; the signal name. If it has a path to the signal (for Questasim), the path will be ignore (eg. <code>/top_sim/component2/Signal_2_i</code> will become <code>Signal_2_i</code>.
+        </dd>
+        <dd>
+          &lt;value&gt; string of the binary value. If the string is incomplete (MSB missing) it will be completed by X (eg. 10100 set to a 8 bits signal becomes XXX10100).
+        </dd>
+        <dd>
+          <br>
+        </dd>
+        <dt>
+          <code>run</code>
+        </dt>
+        <dd>
+          Request a single simulation step to Logisim.
+        </dd>
+      </dl>
+      <h3>
+        Wrapper callback
+      </h3>
+      <p>
+        At each simulation step, the wrapper calls a <code>refresh {}</code> callback. You may usually put the code necessary to read the inputs, compute the output, refresh the GUI and set the outputs in this wrapper.
+      </p>
+      <p>
+        The refresh callback is not allowed to contain the <code>run</code> function call. If you do so, you will create en infinite loop, as the <code>run</code> function makes a simulation step that will call the refresh callback.
+      </p><code>refresh {} {<br></code>
+      <dl>
+        <dd>
+          <code># Read inputs with examine function</code>
+        </dd>
+        <dd>
+          <code># Compute some values</code>
+        </dd>
+        <dd>
+          <code># Refresh the UI</code>
+        </dd>
+        <dd>
+          <code># Set the outputs with force function</code>
+        </dd>
+        <dt>
+          <code>}</code><br>
+          <a href="../index.html">Back to <em>Library Reference</em></a><br>
+          <br>
+        </dt>
+      </dl>
+    </div>
+  </body>
+</html>

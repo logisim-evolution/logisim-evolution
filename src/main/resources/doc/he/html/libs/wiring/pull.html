@@ -1,0 +1,130 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Pull Resistor
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/anspull.png" alt="#########" width="32" height="32"> 
+		<img class="iconlibs" src="../../../../icons/6464/iecpull.png" alt="#########" width="32" height="32"> 
+		<em> Pull Resistor</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Library:</strong>
+            </td>
+            <td>
+              <a href="index.html">Wiring</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduced:</strong>
+            </td>
+            <td>
+              2.5.0 (in Base library, moved to Wiring in 2.7.0)
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Appearance:</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                     <th colspan="2">
+                      ANSI:
+                    </th>
+                    <th colspan="2">
+                      IEC:
+                    </th>
+                  </tr>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/anspull0.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/anspull1.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecpull0.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/iecpull1.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Behavior
+      </h2>
+      <p>
+        When connected to a point, this component has an effect only when the value at that point is the floating value (<b class="uvalue">U</b>). In this case, the resistor pulls the wire to which it is connected toward the value indicated in its <b class="propertie">Pull Direction</b> attribute.
+      </p>
+      <p>
+        If it is connected to a multiple-bit value, then each bit in the value that is floating is pulled in the direction specified, while the bits that are not floating are left unchanged.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <p>
+        The resistor has just one pin, which is an output and has a bit width that is derived from whichever component it is connected.
+      </p>
+      <h2>
+        Attributes
+      </h2>
+
+      <p>
+        When the component is selected or being added, the arrow keys alter its <b class="propertie">Facing</b> attribute.
+      </p>
+      <dl>
+	  <div class="attliste">
+        <dt>
+           <b class="propertie">Facing</b>
+        </dt>
+        <dd>
+          The direction in which the component's pin lies from component's center.
+        </dd>
+        <dt>
+           <b class="propertie">Pull Direction</b>
+        </dt>
+        <dd>
+          Specifies the value to which a floating value should be pulled. This could be <b class="zerov">0</b>, <b class="unov">1</b>, or the error value (<b class="evalue">E</b>).
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Poke Tool Behavior
+      </h2>
+      <p>
+        None.
+      </p>
+      <h2>
+        Text Tool Behavior
+      </h2>
+      <p>
+        None.
+      </p>
+      <p>
+        <b>Back to</b> <a href="../index.html">Library Reference</a>
+      </p>
+
+    </div>
+  </body>
+</html>

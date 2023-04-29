@@ -1,0 +1,114 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html lang="en">
+  <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="created" content="2018-10-23T06:18:10.521000000">
+    <meta name="changed" content="2021-07-18T10:59:00.000000000">
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta http-equiv="Content-Language" content="en">
+    <title>
+      Power / Grounde
+    </title>
+    <link rel="stylesheet" type="text/css" href="../../style.css">
+  </head>
+  <body>
+    <div class="maindiv">
+      <h1>
+        <img class="iconlibs" src="../../../../icons/6464/power.png" alt="#########" width="32" height="32"> 
+		<img class="iconlibs" src="../../../../icons/6464/ground.png" alt="#########" width="32" height="32"> 
+		<em>Power / Grounde</em>
+      </h1>
+      <table>
+        <tbody>
+          <tr>
+            <td>
+              <strong>Library:</strong>
+            </td>
+            <td>
+              <a href="index.html">Wiring</a>
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <strong>Introduced:</strong>
+            </td>
+            <td>
+              2.7.0
+            </td>
+          </tr>
+          <tr>
+            <td valign="top">
+              <strong>Appearance:</strong>
+            </td>
+            <td valign="top">
+              <table>
+                <tbody>
+                  <tr>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/power.png" alt="#########" width="64" height="64">
+                    </td>
+                    <td>
+                      <img class="appearancelibs" src="../../../../img-libs/ground.png" alt="#########" width="64" height="64">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <h2>
+        Behavior
+      </h2>
+      <p>
+        Emits a single logical value onto a wire. For the power element,(<img class="intxt" src="../../../../icons/1616/power.png" alt="#########">) indicated by a triangle , this value will be <b class="unov">1</b> (or, if the Data Bits attribute is greater than 1, an all-1's value). For a ground element,(<img class="intxt" src="../../../../icons/1616/ground.png" alt="#########">) indicated by an arrow of three decreasing-length, horizontal lines, this value will be <b class="zerov">0</b> (or, if the Data Bits attribute is more than 1, an all-0's value).
+      </p>
+      <p>
+        The same functionality can be achieved by using the more versatile <a href="constant.html">Constant</a> component. The only reason to prefer ground and power is that they are commonly-used electronic symbols.
+      </p>
+      <h2>
+        Pins
+      </h2>
+      <p>
+        Each component has only one pin, an output whose bit-width matches the Data Bits attribute. The component constantly outputs the same value on this pin: for a ground component, the output is an all-0 value, and for a power component, the output is an all-1 value.
+      </p>
+      <h2>
+        Attributes
+      </h2>
+      <p>
+         When the component is selected or being added, <b class="tkeybd">Alt-0</b> through <b class="tkeybd">Alt-9</b> alter its <b class="propertie">Data Bits</b> attribute. Quick use of the keys allows the entry of larger values for example <b class="tkeybd">Alt-0</b>ALT-1 ALT-2</b> gives 12. The arrow keys alter its <b class="propertie">Facing</b> attribute.
+      </p>
+	  <div class="attliste">
+      <dl>
+        <dt>
+          <b class="propertie">Facing</b>
+        </dt>
+        <dd>
+          The direction of the <q>point</q> of the component's arrow, opposite from the location of its pin.
+        </dd>
+        <dt>
+          <b class="propertie">Data Bits</b>
+        </dt>
+        <dd>
+          The bit width of the value placed onto the wire.
+        </dd>
+      </dl>
+	  </div>
+      <h2>
+        Poke Tool Behavior
+      </h2>
+      <p>
+        None.
+      </p>
+      <h2>
+        Text Tool Behavior
+      </h2>
+      <p>
+        None.
+      </p>
+      <p>
+        <b>Back to</b> <a href="../index.html">Library Reference</a>
+      </p>
+    </div>
+  </body>
+</html>
