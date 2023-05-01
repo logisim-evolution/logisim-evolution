@@ -357,9 +357,9 @@ public class Multiplexer extends InstanceFactory {
         dy += ddy;
       }
     }
-    if (!wide && !vertical && botLeft)
+    if (!wide && !vertical && botLeft && inputs > 2)
       sel = sel.translate(-10, 0); // left side, adjust selector left
-    else if (!wide && vertical && !botLeft)
+    else if (!wide && vertical && !botLeft && inputs > 2)
       sel = sel.translate(0, -10); // top side, adjust selector up
     final var en = sel.translate(dir, 10);
     ps[inputs] = new Port(sel.getX(), sel.getY(), Port.INPUT, select.getWidth());
