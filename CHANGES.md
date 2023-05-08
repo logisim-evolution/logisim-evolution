@@ -3,6 +3,9 @@
 # Changes #
 
 * @dev (????-??-??)
+  * Improved Chinese localization
+    * Changed language code from `cn` to `zh`.
+    * Chinese users (also including who use other forks of Logisim that are using `cn` language code) will be required to manually modify language settings.
   * Fixed select port positioning on Multiplexer to be more consistent in some cases [#1734]
   * Fixed appearance of LSe desktop icon [#1662]
   * Update controlled buffer behavior to pass U and E inputs while enabled [#1642]
