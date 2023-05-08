@@ -24,7 +24,7 @@ The following people and institutions actively contributed to further developmen
 * [Marcin Orlowski](http://MarcinOrlowski.com/), Poland,
 * [Tom Niget](https://github.com/zdimension/), [LEAT](https://leat.univ-cotedazur.fr/),
   [Polytech Nice-Sophia](https://polytech.univ-cotedazur.fr/), France,
-* [Liu Yuchen](https://github.com/smallg0at), 
+* [Liu Yuchen](https://github.com/smallg0at),
   [Beijing University of Technology](https://www.bjut.edu.cn/), China
 * [Haute École Spécialisée Bernoise](http://www.bfh.ch/), Switzerland,
 * [Haute École du paysage, d'ingénierie et d'architecture de Genève](http://hepia.hesge.ch/), Switzerland,
