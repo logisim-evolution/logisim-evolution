@@ -27,6 +27,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
 import com.cburch.logisim.tools.key.JoinedConfigurator;
 import com.cburch.logisim.util.GraphicsUtil;
@@ -221,7 +222,7 @@ public class Demultiplexer extends InstanceFactory {
         g, "0", bds.getX() + x0, bds.getY() + y0, halign, GraphicsUtil.V_BASELINE);
 
     // draw trapezoid, "DMX" label, and ports
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     if (outputs == 2) {
       if (facing == Direction.EAST || facing == Direction.WEST) {
         PlexersLibrary.drawTrapezoid(

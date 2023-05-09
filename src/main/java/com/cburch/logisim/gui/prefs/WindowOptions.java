@@ -58,6 +58,8 @@ class WindowOptions extends OptionsPanel {
   private final JLabel gridDotColorTitle;
   private final ColorChooserButton gridZoomedDotColor;
   private final JLabel gridZoomedDotColorTitle;
+  private final ColorChooserButton componentColor;
+  private final JLabel componentColorTitle;
 
   protected final String cmdResetWindowLayout = "reset-window-layout";
   protected final String cmdResetGridColors = "reset-grid-colors";
@@ -117,6 +119,10 @@ class WindowOptions extends OptionsPanel {
     gridZoomedDotColor = new ColorChooserButton(window, AppPreferences.GRID_ZOOMED_DOT_COLOR);
     panel.add(gridZoomedDotColorTitle);
     panel.add(gridZoomedDotColor);
+    componentColorTitle = new JLabel(S.get("windowComponentColor"));
+    componentColor = new ColorChooserButton(window, AppPreferences.COMPONENT_COLOR);
+    panel.add(componentColorTitle);
+    panel.add(componentColor);
 
     final var gridColorsResetButton = new JButton();
     gridColorsResetButton.addActionListener(listener);

@@ -24,6 +24,7 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.util.GraphicsUtil;
 import java.awt.Color;
 import java.awt.Font;
@@ -126,7 +127,7 @@ public class PowerOnReset extends InstanceFactory {
     GraphicsUtil.switchToWidth(g, 2);
     g.setColor(Color.ORANGE);
     g.fillRect(x, y, bds.getWidth(), bds.getHeight());
-    g.setColor(Color.BLACK);
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     g.drawRect(x, y, bds.getWidth(), bds.getHeight());
     Font old = g.getFont();
     g.setFont(old.deriveFont(18.0f).deriveFont(Font.BOLD));

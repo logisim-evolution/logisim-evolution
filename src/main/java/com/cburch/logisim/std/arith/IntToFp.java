@@ -22,7 +22,9 @@ import com.cburch.logisim.instance.InstancePainter;
 import com.cburch.logisim.instance.InstanceState;
 import com.cburch.logisim.instance.Port;
 import com.cburch.logisim.instance.StdAttr;
+import com.cburch.logisim.prefs.AppPreferences;
 import com.cburch.logisim.tools.key.BitWidthConfigurator;
+
 import java.awt.Color;
 import java.math.BigInteger;
 
@@ -71,9 +73,8 @@ public class IntToFp extends InstanceFactory {
   @Override
   public void paintInstance(InstancePainter painter) {
     final var g = painter.getGraphics();
+    g.setColor(new Color(AppPreferences.COMPONENT_COLOR.get()));
     painter.drawBounds();
-
-    g.setColor(Color.GRAY);
     painter.drawPort(IN);
     painter.drawPort(OUT, "I\u2192F", Direction.WEST);
     painter.drawPort(ERR);
