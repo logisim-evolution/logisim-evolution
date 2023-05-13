@@ -10,7 +10,6 @@
 import org.gradle.internal.os.OperatingSystem
 import java.text.SimpleDateFormat
 import java.util.Date
-
 plugins {
   checkstyle
   id("com.github.ben-manes.versions") version "0.42.0"
