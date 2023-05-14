@@ -13,6 +13,7 @@
   * Attribute sheet now honors application color theme.
   * Attribute sheet now displays HEX value of color properties.
   * Fixed Wrong HDL generation bug in the PortIO component and added the single bit version.
+  * Added Hebrew localization.
   * Added TTL 74151: 8-line to 1 line data selector
   * Added TTL 74153: dual 4-line to 1 line data selector
   * Added TTL 74181: arithmetic logic unit
